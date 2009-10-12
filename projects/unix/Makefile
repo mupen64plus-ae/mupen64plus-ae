@@ -90,6 +90,11 @@ ifeq ($(CPU), PPC)
   CFLAGS += -mcpu=powerpc
 endif
 
+# set special flags for given Makefile parameters
+ifneq ($(PLUGINDIR), )
+  CFLAGS += -DPLUGINDIR="$(PLUGINDIR)"
+endif
+
 # set shell function names
 CC      = gcc
 CXX     = g++
