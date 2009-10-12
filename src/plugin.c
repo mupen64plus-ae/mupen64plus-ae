@@ -165,7 +165,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
                 osal_lib_search *curr = lib_filelist;
                 while (curr != NULL && g_PluginMap[i].handle == NULL)
                 {
-                    if (strstr(cmdline_path, curr->filename) != NULL)
+                    if (strncmp(curr->filename, cmdline_path, strlen(cmdline_path)) == 0)
                         PluginLoadTry(curr->filepath, i);
                     curr = curr->next;
                 }
@@ -181,7 +181,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
         else /* otherwise search for a plugin specified in the config file */
         {
             const char *config_path = (*ConfigGetParamString)(ConfigUI, config_var);
-            if (config_path != NULL)
+            if (config_path != NULL && strlen(config_path) > 0)
             {
                 /* if full path was given, try loading exactly this file */
                 if (strchr(config_path, OSAL_DIR_SEPARATOR) != NULL)
@@ -197,7 +197,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
                     osal_lib_search *curr = lib_filelist;
                     while (curr != NULL && g_PluginMap[i].handle == NULL)
                     {
-                        if (strstr(config_path, curr->filename) != NULL)
+                        if (strncmp(curr->filename, config_path, strlen(config_path)) == 0)
                             PluginLoadTry(curr->filepath, i);
                         curr = curr->next;
                     }
