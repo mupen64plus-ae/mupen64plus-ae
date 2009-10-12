@@ -145,6 +145,7 @@ static void printUsage(const char *progname)
            "    --windowed            : use windowed display mode\n"
            "    --corelib (filepath)  : use core library (filepath) (can be only filename or full path)\n"
            "    --configdir (dir)     : force configation directory to (dir); should contain mupen64plus.conf\n"
+           "    --datadir (dir)       : search for shared data files (.ini files, languages, etc) in (dir)\n"
            "    --plugindir (dir)     : search for plugins in (dir)\n"
            "    --sshotdir (dir)      : set screenshot directory to (dir)\n"
            "    --gfx (plugin-spec)   : use gfx plugin given by (plugin-spec)\n"
@@ -227,6 +228,11 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         }
         else if (strcmp(argv[i], "--configdir") == 0 && ArgsLeft >= 1)
         {   /* this is handled before calling parseCommandLine */
+            i++;
+        }
+        else if (strcmp(argv[i], "--datadir") == 0 && ArgsLeft >= 1)
+        {
+            (*ConfigSetParameter)(l_ConfigCore, "SharedDataPath", M64TYPE_STRING, argv[i+1]);
             i++;
         }
         else if (strcmp(argv[i], "--plugindir") == 0 && ArgsLeft >= 1)
