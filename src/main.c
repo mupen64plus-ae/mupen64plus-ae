@@ -52,9 +52,15 @@ static int   l_SaveOptions = 0;          // save command-line options in configu
  *  Callback functions from the core
  */
 
-void DebugCallback(void *Context, const char *message)
+void DebugCallback(void *Context, int level, const char *message)
 {
-    printf("%s: %s\n", (const char *) Context, message);
+    if (level <= 1)
+        printf("%s Error: %s\n", (const char *) Context, message);
+    else if (level == 2)
+        printf("%s Warning: %s\n", (const char *) Context, message);
+    else if (level == 3)
+        printf("%s: %s\n", (const char *) Context, message);
+    /* ignore the verbose info for now */
 }
 
 static void FrameCallback(unsigned char *pixels, int bitsperpixel, int width, int height)
