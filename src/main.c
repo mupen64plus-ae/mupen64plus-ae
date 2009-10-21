@@ -41,6 +41,7 @@ static m64p_handle l_ConfigUI = NULL;
 
 static const char *l_CoreLibPath = NULL;
 static const char *l_ConfigDirPath = NULL;
+static const char *l_DataDirPath = NULL;
 static const char *l_ROMFilepath = NULL;       // filepath of ROM to load & run at startup
 
 static int   l_CurrentFrame = 0;         // frame counter
@@ -60,6 +61,8 @@ void DebugCallback(void *Context, int level, const char *message)
         printf("%s Warning: %s\n", (const char *) Context, message);
     else if (level == 3)
         printf("%s: %s\n", (const char *) Context, message);
+    else if (level == 4)
+        printf("%s Status: %s\n", (const char *) Context, message);
     /* ignore the verbose info for now */
 }
 
@@ -121,6 +124,10 @@ static m64p_error OpenConfigurationHandles(void)
 
 static m64p_error SaveConfigurationOptions(void)
 {
+    /* if shared data directory was given on the command line, write it into the config file */
+    if (l_DataDirPath != NULL)
+        (*ConfigSetParameter)(l_ConfigCore, "SharedDataPath", M64TYPE_STRING, l_DataDirPath);
+
     /* if any plugin filepaths were given on the command line, write them into the config file */
     if (g_PluginDir != NULL)
         (*ConfigSetParameter)(l_ConfigUI, "PluginDir", M64TYPE_STRING, g_PluginDir);
@@ -190,6 +197,11 @@ static int ParseCommandLineInitial(int argc, const char **argv)
             l_ConfigDirPath = argv[i+1];
             i++;
         }
+        else if (strcmp(argv[i], "--datadir") == 0 && ArgsLeft >= 1)
+        {
+            l_DataDirPath = argv[i+1];
+            i++;
+        }
         else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0)
         {
             printUsage(argv[0]);
@@ -228,17 +240,9 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
             int Fullscreen = 0;
             (*ConfigSetParameter)(l_ConfigCore, "Fullscreen", M64TYPE_BOOL, &Fullscreen);
         }
-        else if (strcmp(argv[i], "--corelib") == 0 && ArgsLeft >= 1)
-        {   /* this is handled before calling parseCommandLine */
-            i++;
-        }
-        else if (strcmp(argv[i], "--configdir") == 0 && ArgsLeft >= 1)
-        {   /* this is handled before calling parseCommandLine */
-            i++;
-        }
-        else if (strcmp(argv[i], "--datadir") == 0 && ArgsLeft >= 1)
-        {
-            (*ConfigSetParameter)(l_ConfigCore, "SharedDataPath", M64TYPE_STRING, argv[i+1]);
+        else if ((strcmp(argv[i], "--corelib") == 0 || strcmp(argv[i], "--configdir") == 0 ||
+                  strcmp(argv[i], "--datadir") == 0) && ArgsLeft >= 1)
+        {   /* these are handled in ParseCommandLineInitial */
             i++;
         }
         else if (strcmp(argv[i], "--plugindir") == 0 && ArgsLeft >= 1)
@@ -348,7 +352,7 @@ int main(int argc, char *argv[])
         return 2;
 
     /* start the Mupen64Plus core library, load the configuration file */
-    m64p_error rval = (*CoreStartup)(CONSOLE_API_VERSION, l_ConfigDirPath, "Core", DebugCallback, NULL, NULL);
+    m64p_error rval = (*CoreStartup)(CONSOLE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, NULL);
     if (rval != M64ERR_SUCCESS)
     {
         printf("UI-console: error starting Mupen64Plus core library.\n");
@@ -433,7 +437,11 @@ int main(int argc, char *argv[])
         }
         else
         {
-            if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int) romlength, ROM_buffer) == M64ERR_SUCCESS)
+            if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int) romlength, ROM_buffer) != M64ERR_SUCCESS)
+            {
+                fprintf(stderr, "Error: core failed to open ROM image file '%s'.\n", l_ROMFilepath);
+            }
+            else
             {
                 /* run the game */
                 (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
