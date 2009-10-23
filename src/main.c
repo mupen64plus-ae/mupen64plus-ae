@@ -24,9 +24,6 @@
 #include "./winproject/resource.h"
 #include "./win/win.h"
 #else
-#ifdef USE_GTK
-#include <gtk/gtk.h>
-#endif
 #include "wintypes.h"
 #include <string.h>
 #endif
@@ -54,31 +51,6 @@ __declspec(dllexport) void DllAbout ( HWND hParent )
 {
 #ifdef __WIN32__
    MessageBox(NULL, "Mupen64 HLE RSP plugin v0.2 with Azimers code by Hacktarux", "RSP HLE", MB_OK);
-#else
-#ifdef USE_GTK
-   char tMsg[256];
-   GtkWidget *dialog, *label, *okay_button;
-
-   dialog = gtk_dialog_new();
-   sprintf(tMsg,"Mupen64 HLE RSP plugin v0.2 with Azimers code by Hacktarux");
-   label = gtk_label_new(tMsg);
-   okay_button = gtk_button_new_with_label("OK");
-
-   gtk_signal_connect_object(GTK_OBJECT(okay_button), "clicked",
-                 GTK_SIGNAL_FUNC(gtk_widget_destroy),
-                 GTK_OBJECT(dialog));
-   gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->action_area),
-             okay_button);
-
-   gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),
-             label);
-   gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-   gtk_widget_show_all(dialog);
-#else
-   char tMsg[256];
-   sprintf(tMsg,"Mupen64 HLE RSP plugin v0.2 with Azimers code by Hacktarux");
-   fprintf(stderr, "About\n%s\n", tMsg);
-#endif
 #endif
 }
 
