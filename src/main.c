@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - main.c                                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,57 +20,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef __WIN32__
-#include <windows.h>
-#include "./winproject/resource.h"
-#include "./win/win.h"
-#else
-#include "wintypes.h"
 #include <string.h>
-#endif
 #include <stdio.h>
 
-#include "Audio_1.1.h"
-#include "Rsp_1.1.h"
+#include "m64p_types.h"
+#include "m64p_plugin.h"
 #include "hle.h"
 
 RSP_INFO rsp;
 
-BOOL AudioHle = FALSE, GraphicsHle = TRUE, SpecificHle = FALSE;
-
-#ifdef __WIN32__
-extern void (*processAList)();
-static BOOL firstTime = TRUE;
-void loadPlugin();
-#endif
-
-__declspec(dllexport) void CloseDLL (void)
-{
-}
-
-__declspec(dllexport) void DllAbout ( HWND hParent )
-{
-#ifdef __WIN32__
-   MessageBox(NULL, "Mupen64 HLE RSP plugin v0.2 with Azimers code by Hacktarux", "RSP HLE", MB_OK);
-#endif
-}
-
-__declspec(dllexport) void DllConfig ( HWND hParent )
-{
-#ifdef __WIN32__
-    if (firstTime)
-    DialogBox(dll_hInstance,
-                     MAKEINTRESOURCE(IDD_RSPCONFIG), hParent, ConfigDlgProc);
-   //MessageBox(NULL, "no config", "noconfig", MB_OK);
-#endif
-}
-
-__declspec(dllexport) void DllTest ( HWND hParent )
-{
-#ifdef __WIN32__
-   MessageBox(NULL, "no test", "no test", MB_OK);
-#endif
-}
+static const int AudioHle = 0, GraphicsHle = 1;
 
 static int audio_ucode_detect(OSTask_t *task)
 {
@@ -115,13 +75,8 @@ static int audio_ucode(OSTask_t *task)
         break;
     default:
         {
-/*      char s[1024];
-        sprintf(s, "unknown audio\n\tsum:%x", sum);
-#ifdef __WIN32__
-        MessageBox(NULL, s, "unknown task", MB_OK);
-#else
-        printf("%s\n", s);
-#endif*/
+/*      printf("unknown audio ucode\n\tsum:%x", sum);
+*/
         return -1;
         }
     }
@@ -138,18 +93,10 @@ static int audio_ucode(OSTask_t *task)
     return 0;
 }
 
-__declspec(dllexport) DWORD DoRspCycles ( DWORD Cycles )
+EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 {
    OSTask_t *task = (OSTask_t*)(rsp.DMEM + 0xFC0);
    unsigned int i, sum=0;
-#ifdef __WIN32__
-   if(firstTime)
-   {
-      firstTime=FALSE;
-      if (SpecificHle)
-            loadPlugin();
-   }
-#endif
 
    if( task->type == 1 && task->data_ptr != 0 && GraphicsHle) {
       if (rsp.ProcessDlistList != NULL) {
@@ -164,11 +111,6 @@ __declspec(dllexport) DWORD DoRspCycles ( DWORD Cycles )
       *rsp.DPC_STATUS_REG &= ~0x0002;
       return Cycles;
    } else if (task->type == 2 && AudioHle) {
-#ifdef __WIN32__
-      if (SpecificHle)
-            processAList();
-      else
-#endif
       if (rsp.ProcessAlistList != NULL) {
      rsp.ProcessAlistList();
       }
@@ -244,13 +186,7 @@ __declspec(dllexport) DWORD DoRspCycles ( DWORD Cycles )
           break;
         default:
             {
-               char s[1024];
-               sprintf(s, "unknown jpeg:\n\tsum:%x", sum);
-#ifdef __WIN32__
-               MessageBox(NULL, s, "unknown task", MB_OK);
-#else
-               printf("%s\n", s);
-#endif
+               printf("unknown jpeg task:\n\tsum:%x", sum);
             }
            }
          break;
@@ -258,14 +194,8 @@ __declspec(dllexport) DWORD DoRspCycles ( DWORD Cycles )
      }
 
      {
-    char s[1024];
     FILE *f;
-    sprintf(s, "unknown task:\n\ttype:%d\n\tsum:%x\n\tPC:%lx", (int)task->type, sum, (long) rsp.SP_PC_REG);
-#ifdef __WIN32__
-    MessageBox(NULL, s, "unknown task", MB_OK);
-#else
-    printf("%s\n", s);
-#endif
+    printf("unknown task:\n\ttype:%d\n\tsum:%x\n\tPC:%lx", (int)task->type, sum, (long) rsp.SP_PC_REG);
 
     if (task->ucode_size <= 0x1000)
       {
@@ -292,6 +222,7 @@ __declspec(dllexport) DWORD DoRspCycles ( DWORD Cycles )
    return Cycles;
 }
 
+/*
 __declspec(dllexport) void GetDllInfo ( PLUGIN_INFO * PluginInfo )
 {
    PluginInfo->Version = 0x0101;
@@ -300,13 +231,14 @@ __declspec(dllexport) void GetDllInfo ( PLUGIN_INFO * PluginInfo )
    PluginInfo->NormalMemory = TRUE;
    PluginInfo->MemoryBswaped = TRUE;
 }
+*/
 
-__declspec(dllexport) void InitiateRSP ( RSP_INFO Rsp_Info, DWORD * CycleCount)
+EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, unsigned int *CycleCount)
 {
    rsp = Rsp_Info;
 }
 
-__declspec(dllexport) void RomClosed (void)
+EXPORT void CALL RomClosed(void)
 {
    int i;
    for (i=0; i<0x1000; i++)
@@ -315,8 +247,5 @@ __declspec(dllexport) void RomClosed (void)
      }
 /*   init_ucode1();
    init_ucode2();*/
-#ifdef __WIN32__
-   firstTime = TRUE;
-#endif
 }
 

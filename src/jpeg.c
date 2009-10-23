@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - jpeg.h                                                  *
+ *   Mupen64plus - jpeg.c                                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,16 +20,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef __WIN32__
-#include <windows.h>
-#else
-#include "wintypes.h"
 #include <string.h>
 #include <stdlib.h>
-#endif
 #include <stdio.h>
 
-#include "Rsp_1.1.h"
+#include "m64p_types.h"
+#include "m64p_plugin.h"
 #include "hle.h"
 
 static struct 
@@ -76,13 +73,9 @@ void jpg_uncompress(OSTask_t *task)
       }
      }
    else
-     {
-#ifdef __WIN32__
-    MessageBox(NULL, "!flags", "!flags", MB_OK);
-#else
-    printf("!flags\n");
-#endif
-     }
+   {
+     printf("!flags\n");
+   }
    pic = (short*)(rsp.RDRAM + jpg_data.pic);
 
    temp1 = (short*)malloc((jpg_data.h+4)*64*2);
@@ -284,11 +277,7 @@ void jpg_uncompress(OSTask_t *task)
     
     if (jpg_data.h == 0)
       {
-#ifdef __WIN32
-         MessageBox(NULL, "h==0", "h==0", MB_OK);
-#else
          printf("h==0\n");
-#endif
       }
     else
       {

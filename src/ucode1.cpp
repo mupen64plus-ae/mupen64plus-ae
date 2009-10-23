@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - ucode1.cpp                                              *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,12 +20,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef __WIN32__
-# include <windows.h>
-#else
-# include "wintypes.h"
 # include <string.h>
-#endif
 
 #include "hle.h"
 //#include "rsp.h"
@@ -182,7 +178,7 @@ static void ENVMIXER () {
     s32 AuxR;
     s32 AuxL;
     int i1,o1,a1,a2=0,a3=0;
-    WORD AuxIncRate=1;
+    unsigned short AuxIncRate=1;
     short zero[8];
     memset(zero,0,16);
     s32 LVol, RVol;
@@ -388,11 +384,11 @@ static void ENVMIXER () {
 }
 
 static void RESAMPLE () {
-    BYTE Flags=(u8)((inst1>>16)&0xff);
-    DWORD Pitch=((inst1&0xffff))<<1;
+    unsigned char Flags=(u8)((inst1>>16)&0xff);
+    unsigned int Pitch=((inst1&0xffff))<<1;
     u32 addy = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
-    DWORD Accum=0;
-    DWORD location;
+    unsigned int Accum=0;
+    unsigned int location;
     s16 *lut/*, *lut2*/;
     short *dst;
     s16 *src;
@@ -516,19 +512,19 @@ static void SETLOOP () {
 }
 
 static void ADPCM () { // Work in progress! :)
-    BYTE Flags=(u8)(inst1>>16)&0xff;
-    //WORD Gain=(u16)(inst1&0xffff);
-    DWORD Address=(inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
-    WORD inPtr=0;
+    unsigned char Flags=(u8)(inst1>>16)&0xff;
+    //unsigned short Gain=(u16)(inst1&0xffff);
+    unsigned int Address=(inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
+    unsigned short inPtr=0;
     //short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
     short *out=(short *)(BufferSpace+AudioOutBuffer);
-    //BYTE *in=(BYTE *)(BufferSpace+AudioInBuffer);
+    //unsigned char *in=(unsigned char *)(BufferSpace+AudioInBuffer);
     short count=(short)AudioCount;
-    BYTE icode;
-    BYTE code;
+    unsigned char icode;
+    unsigned char code;
     int vscale;
-    WORD index;
-    WORD j;
+    unsigned short index;
+    unsigned short j;
     int a[8];
     short *book1,*book2;
 /*

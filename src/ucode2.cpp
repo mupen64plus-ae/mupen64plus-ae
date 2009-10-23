@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - ucode2.cpp                                              *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,14 +20,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef __WIN32__
-# include <windows.h>
-# include <stdio.h>
-#else
-# include "wintypes.h"
 # include <string.h>
 # include <stdio.h>
-#endif
 
 #include "hle.h"
 
@@ -35,11 +30,7 @@ extern u8 BufferSpace[0x10000];
 static void SPNOOP () {
     char buff[0x100];
     sprintf (buff, "Unknown/Unimplemented Audio Command %i in ABI 2", (int)(inst1 >> 24));
-#ifdef __WIN32__
-    MessageBox (NULL, buff, "Audio HLE Error", MB_OK);
-#else
     printf( "Audio HLE Error: %s\n", buff );
-#endif
 }
 extern u16 AudioInBuffer;       // 0x0000(T8)
 extern u16 AudioOutBuffer;      // 0x0002(T8)
@@ -86,19 +77,19 @@ static void SETBUFF2 () {
 }
 
 static void ADPCM2 () { // Verified to be 100% Accurate...
-    BYTE Flags=(u8)(inst1>>16)&0xff;
-    //WORD Gain=(u16)(inst1&0xffff);
-    DWORD Address=(inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
-    WORD inPtr=0;
+    unsigned char Flags=(u8)(inst1>>16)&0xff;
+    //unsigned short Gain=(u16)(inst1&0xffff);
+    unsigned int Address=(inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
+    unsigned short inPtr=0;
     //short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
     short *out=(short *)(BufferSpace+AudioOutBuffer);
-    //BYTE *in=(BYTE *)(BufferSpace+AudioInBuffer);
+    //unsigned char *in=(unsigned char *)(BufferSpace+AudioInBuffer);
     short count=(short)AudioCount;
-    BYTE icode;
-    BYTE code;
+    unsigned char icode;
+    unsigned char code;
     int vscale;
-    WORD index;
-    WORD j;
+    unsigned short index;
+    unsigned short j;
     int a[8];
     short *book1,*book2;
 
@@ -409,11 +400,11 @@ static void MIXER2 () { // Needs accuracy verification...
 
 
 static void RESAMPLE2 () {
-    BYTE Flags=(u8)((inst1>>16)&0xff);
-    DWORD Pitch=((inst1&0xffff))<<1;
+    unsigned char Flags=(u8)((inst1>>16)&0xff);
+    unsigned int Pitch=((inst1&0xffff))<<1;
     u32 addy = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
-    DWORD Accum=0;
-    DWORD location;
+    unsigned int Accum=0;
+    unsigned int location;
     s16 *lut;
     short *dst;
     s16 *src;
@@ -625,11 +616,11 @@ static void ENVMIXER2 () {
 }
 
 static void DUPLICATE2() {
-    WORD Count = (inst1 >> 16) & 0xff;
-    WORD In  = inst1&0xffff;
-    WORD Out = (inst2>>16);
+    unsigned short Count = (inst1 >> 16) & 0xff;
+    unsigned short In  = inst1&0xffff;
+    unsigned short Out = (inst2>>16);
 
-    WORD buff[64];
+    unsigned short buff[64];
     
     memcpy(buff,BufferSpace+In,128);
 
@@ -642,8 +633,8 @@ static void DUPLICATE2() {
 /*
 static void INTERL2 () { // Make your own...
     short Count = inst1 & 0xffff;
-    WORD  Out   = inst2 & 0xffff;
-    WORD In     = (inst2 >> 16);
+    unsigned short  Out   = inst2 & 0xffff;
+    unsigned short In     = (inst2 >> 16);
 
     short *src,*dst,tmp;
     src=(short *)&BufferSpace[In];
@@ -673,12 +664,12 @@ static void INTERL2 () { // Make your own...
 
 static void INTERL2 () {
     short Count = inst1 & 0xffff;
-    WORD  Out   = inst2 & 0xffff;
-    WORD In     = (inst2 >> 16);
+    unsigned short  Out   = inst2 & 0xffff;
+    unsigned short In     = (inst2 >> 16);
 
-    BYTE *src,*dst/*,tmp*/;
-    src=(BYTE *)(BufferSpace);//[In];
-    dst=(BYTE *)(BufferSpace);//[Out];
+    unsigned char *src,*dst/*,tmp*/;
+    src=(unsigned char *)(BufferSpace);//[In];
+    dst=(unsigned char *)(BufferSpace);//[Out];
     while(Count) {
         *(short *)(dst+(Out^3)) = *(short *)(src+(In^3));
         Out += 2;

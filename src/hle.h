@@ -22,7 +22,7 @@
 #ifndef HLE_H
 #define HLE_H
 
-#include "Rsp_1.1.h"
+#include "m64p_plugin.h"
 
 #ifdef _BIG_ENDIAN
 #define S 0

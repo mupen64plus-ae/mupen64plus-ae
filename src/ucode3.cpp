@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - ucode3.cpp                                              *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,25 +20,15 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef __WIN32__
-# include <windows.h>
-# include <stdio.h>
-#else
-# include "wintypes.h"
 # include <string.h>
 # include <stdio.h>
-#endif
 
 #include "hle.h"
 
 static void SPNOOP () {
     char buff[0x100];
     sprintf (buff, "Unknown/Unimplemented Audio Command %i in ABI 3", (int)(inst1 >> 24));
-#ifdef __WIN32__
-    MessageBox (NULL, buff, "Audio HLE Error", MB_OK);
-#else
     printf( "Audio HLE Error: %s\n", buff );
-#endif
 }
 
 extern u16 ResampleLUT [0x200];
@@ -111,7 +102,7 @@ static void ENVMIXER3 () {
     s32 AuxR;
     s32 AuxL;
     int i1,o1,a1,a2,a3;
-    //WORD AuxIncRate=1;
+    //unsigned short AuxIncRate=1;
     short zero[8];
     memset(zero,0,16);
 
@@ -261,11 +252,7 @@ static void ENVMIXER3o () {
     //static FILE *dfile = fopen ("d:\\envmix.txt", "wt");
 // ********* Make sure these conditions are met... ***********
     if ((AudioInBuffer | AudioOutBuffer | AudioAuxA | AudioAuxC | AudioAuxE | AudioCount) & 0x3) {
-#ifdef __WIN32__
-        MessageBox (NULL, "Unaligned EnvMixer... please report this to Azimer with the following information: RomTitle, Place in the rom it occurred, and any save state just before the error", "AudioHLE Error", MB_OK);
-#else
         printf( "Unaligned EnvMixer... please report this to Azimer with the following information: RomTitle, Place in the rom it occurred, and any save state just before the error" );
-#endif
     }
 // ------------------------------------------------------------
     short *inp=(short *)(BufferSpace+0x4F0);
@@ -279,7 +266,7 @@ static void ENVMIXER3o () {
     int AuxR;
     int AuxL;
     int i1,o1,a1,a2,a3;
-    WORD AuxIncRate=1;
+    unsigned short AuxIncRate=1;
     short zero[8];
     memset(zero,0,16);
     s32 LVol, RVol;
@@ -434,7 +421,7 @@ static void ENVMIXER3 () { // Borrowed from RCP...
     int AuxR;
     int AuxL;
 
-    WORD AuxIncRate=1;
+    unsigned short AuxIncRate=1;
     short zero[8];
     memset(zero,0,16);
     if(flags & A_INIT) {
@@ -577,19 +564,19 @@ static void SETLOOP3 () {
 }
 
 static void ADPCM3 () { // Verified to be 100% Accurate...
-    BYTE Flags=(u8)(inst2>>0x1c)&0xff;
-    //WORD Gain=(u16)(inst1&0xffff);
-    DWORD Address=(inst1 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
-    WORD inPtr=(inst2>>12)&0xf;
+    unsigned char Flags=(u8)(inst2>>0x1c)&0xff;
+    //unsigned short Gain=(u16)(inst1&0xffff);
+    unsigned int Address=(inst1 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
+    unsigned short inPtr=(inst2>>12)&0xf;
     //short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
     short *out=(short *)(BufferSpace+(inst2&0xfff)+0x4f0);
-    //BYTE *in=(BYTE *)(BufferSpace+((inst2>>12)&0xf)+0x4f0);
+    //unsigned char *in=(unsigned char *)(BufferSpace+((inst2>>12)&0xf)+0x4f0);
     short count=(short)((inst2 >> 16)&0xfff);
-    BYTE icode;
-    BYTE code;
+    unsigned char icode;
+    unsigned char code;
     int vscale;
-    WORD index;
-    WORD j;
+    unsigned short index;
+    unsigned short j;
     int a[8];
     short *book1,*book2;
 
@@ -833,11 +820,11 @@ static void ADPCM3 () { // Verified to be 100% Accurate...
 }
 
 static void RESAMPLE3 () {
-    BYTE Flags=(u8)((inst2>>0x1e));
-    DWORD Pitch=((inst2>>0xe)&0xffff)<<1;
+    unsigned char Flags=(u8)((inst2>>0x1e));
+    unsigned int Pitch=((inst2>>0xe)&0xffff)<<1;
     u32 addy = (inst1 & 0xffffff);
-    DWORD Accum=0;
-    DWORD location;
+    unsigned int Accum=0;
+    unsigned int location;
     s16 *lut;
     short *dst;
     s16 *src;
@@ -966,23 +953,23 @@ static void INTERLEAVE3 () { // Needs accuracy verification...
 //static void UNKNOWN ();
 /*
 typedef struct {
-    BYTE sync;
+    unsigned char sync;
 
-    BYTE error_protection   : 1;    //  0=yes, 1=no
-    BYTE lay                : 2;    // 4-lay = layerI, II or III
-    BYTE version            : 1;    // 3=mpeg 1.0, 2=mpeg 2.5 0=mpeg 2.0
-    BYTE sync2              : 4;
+    unsigned char error_protection   : 1;    //  0=yes, 1=no
+    unsigned char lay                : 2;    // 4-lay = layerI, II or III
+    unsigned char version            : 1;    // 3=mpeg 1.0, 2=mpeg 2.5 0=mpeg 2.0
+    unsigned char sync2              : 4;
 
-    BYTE extension          : 1;    // Unknown
-    BYTE padding            : 1;    // padding
-    BYTE sampling_freq      : 2;    // see table below
-    BYTE bitrate_index      : 4;    //     see table below
+    unsigned char extension          : 1;    // Unknown
+    unsigned char padding            : 1;    // padding
+    unsigned char sampling_freq      : 2;    // see table below
+    unsigned char bitrate_index      : 4;    //     see table below
 
-    BYTE emphasis           : 2;    //see table below
-    BYTE original           : 1;    // 0=no 1=yes
-    BYTE copyright          : 1;    // 0=no 1=yes
-    BYTE mode_ext           : 2;    // used with "joint stereo" mode
-    BYTE mode               : 2;    // Channel Mode
+    unsigned char emphasis           : 2;    //see table below
+    unsigned char original           : 1;    // 0=no 1=yes
+    unsigned char copyright          : 1;    // 0=no 1=yes
+    unsigned char mode_ext           : 2;    // used with "joint stereo" mode
+    unsigned char mode               : 2;    // Channel Mode
 } mp3struct;
 
 mp3struct mp3;
@@ -1000,7 +987,7 @@ static void MP3ADDY () {
 
 extern "C" {
     void rsp_run();
-    void mp3setup (DWORD inst1, DWORD inst2, DWORD t8);
+    void mp3setup (unsigned int inst1, unsigned int inst2, unsigned int t8);
 }
 
 extern u32 base, dmembase;
