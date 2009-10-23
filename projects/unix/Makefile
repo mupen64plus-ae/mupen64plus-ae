@@ -61,10 +61,30 @@ ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src -I../../../mupen64plus-core/src/api
+CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
 LDFLAGS = -ldl
 ifneq ($(OS), FREEBSD)
   CFLAGS += -pipe -O3
+endif
+
+# set mupen64plus core API header path
+ifneq ("$(APIDIR)","")
+  CFLAGS += "-I$(APIDIR)"
+else
+  TRYDIR = ../../../mupen64plus-core/src/api
+  ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+    CFLAGS += -I$(TRYDIR)
+  else
+    TRYDIR = /usr/local/include/mupen64plus
+    ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+      CFLAGS += -I$(TRYDIR)
+    else
+      TRYDIR = /usr/include/mupen64plus
+      ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+        CFLAGS += -I$(TRYDIR)
+      endif
+    endif
+  endif
 endif
 
 # set special flags per-system
