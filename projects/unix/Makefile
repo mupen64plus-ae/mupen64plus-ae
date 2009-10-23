@@ -1,7 +1,8 @@
 #/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-# *   Mupen64plus - Makefile                                                *
+# *   mupen64plus-rsp-hle - Makefile                                        *
 # *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
-# *   Copyright (C) 2007-2008 DarkJeztr Tillin9 Richard42                   *
+# *   Copyright (C) 2008-2009 Richard Goedeken                              *
+# *   Copyright (C) 2007-2008 DarkJeztr Tillin9                             *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU General Public License as published by  *
@@ -20,28 +21,154 @@
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 # Makefile for Mupen64 HLE RSP plugin in Mupen64plus.
 
-# include pre-make file with a bunch of definitions
-include ../pre.mk
+# detect operation system
+UNAME = $(shell uname -s)
+ifeq ("$(UNAME)","Linux")
+  OS = LINUX
+endif
+ifeq ("$(UNAME)","linux")
+  OS = LINUX
+endif
+ifeq ("$(UNAME)","Darwin")
+  OS = OSX
+  LDFLAGS += -liconv -lpng
+endif
+ifeq ("$(UNAME)","FreeBSD")
+  OS = FREEBSD
+endif
 
-# local CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -fpic -DPIC
+# detect system architecture
+HOST_CPU ?= $(shell uname -m)
+NO_ASM ?= 1
+ifneq ("$(filter x86_64 amd64,$(HOST_CPU))","")
+  CPU := X86
+  ifeq ("$(BITS)", "32")
+    ARCH_DETECTED := 64BITS_32
+  else
+    ARCH_DETECTED := 64BITS
+  endif
+endif
+ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
+  CPU := X86
+  ARCH_DETECTED := 32BITS
+endif
+ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 32BITS
+endif
+ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 64BITS
+endif
 
-# list of object files to generate
-OBJECTS = main.o jpeg.o ucode3.o ucode2.o ucode1.o ucode3mp3.o
+# base CFLAGS, LIBS, and LDFLAGS
+CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
+LDFLAGS = -ldl
+ifneq ($(OS), FREEBSD)
+  CFLAGS += -pipe -O3
+endif
+
+# set mupen64plus core API header path
+ifneq ("$(APIDIR)","")
+  CFLAGS += "-I$(APIDIR)"
+else
+  TRYDIR = ../../../mupen64plus-core/src/api
+  ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+    CFLAGS += -I$(TRYDIR)
+  else
+    TRYDIR = /usr/local/include/mupen64plus
+    ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+      CFLAGS += -I$(TRYDIR)
+    else
+      TRYDIR = /usr/include/mupen64plus
+      ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+        CFLAGS += -I$(TRYDIR)
+      endif
+    endif
+  endif
+endif
+
+# Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
+# On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
+ifeq ($(ARCH_DETECTED), 64BITS)
+  CFLAGS += -fPIC -DPIC -fvisibility=hidden
+endif
+
+# set special flags per-system
+ifneq ($(OS), FREEBSD)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -march=athlon64
+    else
+      CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+    endif
+    # tweak flags for 32-bit build on 64-bit system
+    ifeq ($(ARCH_DETECTED), 64BITS_32)
+      CFLAGS += -m32
+      LDFLAGS += -m32 -m elf_i386
+    endif
+  endif
+else
+  ifeq ($(ARCH_DETECTED), 64BITS_32)
+    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
+  endif
+endif
+ifeq ($(CPU), PPC)
+  CFLAGS += -mcpu=powerpc
+endif
+
+# set shell function names
+CC      = gcc
+CXX     = g++
+LD      = g++
+ifeq ($(OS),LINUX)
+  STRIP	= strip -s
+endif
+ifeq ($(OS),OSX)
+  STRIP	= strip -x 
+endif
+
+# set special flags for given Makefile parameters
+ifeq ($(DEBUG),1)
+  CFLAGS += -g
+  STRIP = true # disable binary strip
+endif
+
+SRCDIR = ../../src
+OBJDIR = _obj
+
+# list of source files to compile
+SOURCE = \
+	$(SRCDIR)/main.c \
+	$(SRCDIR)/jpeg.c \
+	$(SRCDIR)/ucode3.cpp \
+	$(SRCDIR)/ucode2.cpp \
+	$(SRCDIR)/ucode1.cpp \
+	$(SRCDIR)/ucode3mp3.cpp
+
+# generate a list of object files build, make a temporary directory for them
+OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
+OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE)))
+OBJDIRS = $(dir $(OBJECTS))
+$(shell mkdir -p $(OBJDIRS))
 
 # build targets
-all: mupen64_hle_rsp_azimer.so
+all: mupen64plus-hle-rsp.so
 
 clean:
-	rm -f *.o *.so
+	rm -rf ./_obj mupen64plus-hle-rsp.so
 
 # build rules
-.c.o:
+
+mupen64plus-hle-rsp.so: $(OBJECTS)
+	$(LD) -shared $^ $(LDFLAGS) -o $@
+	$(STRIP) $@
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -o $@ $(CFLAGS) -c $<
-.cpp.o:
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) -o $@ $(CFLAGS) -c $<
 
-mupen64_hle_rsp_azimer.so: $(OBJECTS)
-	$(CXX) $^ $(LDFLAGS) $(PLUGIN_LDFLAGS) -o $@
-	$(STRIP) $@
+
 
