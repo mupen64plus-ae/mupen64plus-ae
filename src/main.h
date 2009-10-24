@@ -24,5 +24,7 @@
 
 extern void DebugCallback(void *Context, int level, const char *message);
 
+extern int  g_Verbose;
+
 #endif /* __MAIN_H__ */
 

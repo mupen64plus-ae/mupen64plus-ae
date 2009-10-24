@@ -221,8 +221,10 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
         }
         else
         {
-            printf("UI-console: using %s plugin: '%s' v%i.%i.%i, %s\n", g_PluginMap[i].name,
-                   g_PluginMap[i].libname, VERSION_PRINTF_SPLIT(g_PluginMap[i].libversion), g_PluginMap[i].filename);
+            printf("UI-console: using %s plugin: '%s' v%i.%i.%i\n", g_PluginMap[i].name,
+                   g_PluginMap[i].libname, VERSION_PRINTF_SPLIT(g_PluginMap[i].libversion));
+            if (g_Verbose)
+                printf("UI-console: %s plugin library: %s\n", g_PluginMap[i].name, g_PluginMap[i].filename);
         }
     }
 

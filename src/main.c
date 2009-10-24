@@ -35,6 +35,9 @@
 #include "core_interface.h"
 #include "osal_preproc.h"
 
+/** global variables **/
+int    g_Verbose = 0;
+
 /** static (local) variables **/
 static m64p_handle l_ConfigCore = NULL;
 static m64p_handle l_ConfigUI = NULL;
@@ -59,7 +62,7 @@ void DebugCallback(void *Context, int level, const char *message)
         printf("%s Error: %s\n", (const char *) Context, message);
     else if (level == 2)
         printf("%s Warning: %s\n", (const char *) Context, message);
-    else if (level == 3)
+    else if (level == 3 || (level == 5 && g_Verbose))
         printf("%s: %s\n", (const char *) Context, message);
     else if (level == 4)
         printf("%s Status: %s\n", (const char *) Context, message);
@@ -168,6 +171,7 @@ static void printUsage(const char *progname)
            "    --emumode (mode)      : set emu mode to: 0=Interpreter 1=DynaRec 2=Pure Interpreter\n"
            "    --testshots (list)    : take screenshots at frames given in comma-separated (list), then quit\n"
            "    --saveoptions         : save the given command-line options in configuration file for future\n"
+           "    --verbose             : print lots of information\n"
            "    --help                : see this help message\n\n"
            "(plugin-spec):\n"
            "    (pluginname)          : filename (without path) of plugin to find in plugin directory\n"
@@ -314,6 +318,10 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
             /* this is the last arg, it should be a ROM filename */
             l_ROMFilepath = argv[i];
             return M64ERR_SUCCESS;
+        }
+        else if (strcmp(argv[i], "--verbose") == 0)
+        {
+            g_Verbose = 1;
         }
         else
         {
