@@ -21,72 +21,170 @@
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 # Makefile for SDL Audio plugin in Mupen64plus
 
-# include pre-make file with a bunch of definitions
-include ../pre.mk
+# detect operation system
+UNAME = $(shell uname -s)
+ifeq ("$(UNAME)","Linux")
+  OS = LINUX
+endif
+ifeq ("$(UNAME)","linux")
+  OS = LINUX
+endif
+ifeq ("$(UNAME)","Darwin")
+  OS = OSX
+  LDFLAGS += -liconv -lpng
+endif
+ifeq ("$(UNAME)","FreeBSD")
+  OS = FREEBSD
+endif
+
+# detect system architecture
+HOST_CPU ?= $(shell uname -m)
+NO_ASM ?= 1
+ifneq ("$(filter x86_64 amd64,$(HOST_CPU))","")
+  CPU := X86
+  ifeq ("$(BITS)", "32")
+    ARCH_DETECTED := 64BITS_32
+  else
+    ARCH_DETECTED := 64BITS
+  endif
+endif
+ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
+  CPU := X86
+  ARCH_DETECTED := 32BITS
+endif
+ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 32BITS
+endif
+ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 64BITS
+endif
+
+# base CFLAGS, LIBS, and LDFLAGS
+CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
+LDFLAGS = -ldl
+ifneq ($(OS), FREEBSD)
+  CFLAGS += -pipe -O3
+endif
+
+# test for presence of SDL
+ifeq ($(shell which sdl-config 2>/dev/null),)
+  $(error No SDL development libraries found!)
+endif
+ifeq ($(OS),FREEBSD)
+    CFLAGS  += `${SDL_CONFIG} --cflags`
+    LDFLAGS += `${SDL_CONFIG} --libs`
+else
+    CFLAGS  += $(shell sdl-config --cflags)
+    LDFLAGS += $(shell sdl-config --libs)
+endif
 
 # test for presence of libsamplerate
 ifneq ($(strip $(shell pkg-config samplerate --modversion 2> /dev/null)),)
   ifneq ($(NO_RESAMP), 1)
     # set libsamplerate flags and libraries
-    SRC_FLAGS	= `pkg-config samplerate --cflags` -DUSE_SRC
-    SRC_LIBS	= `pkg-config samplerate --libs`
-  else
-    # clear libsamplerate flags and libraries
-    SRC_FLAGS	=
-    SRC_LIBS	=
+    CFLAGS	= `pkg-config samplerate --cflags` -DUSE_SRC
+    LDFLAGS = `pkg-config samplerate --libs`
   endif
 else
   # warn user
   $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without Best Quality SINC resampler.)
-  # clear libsamplerate flags and libraries
-  SRC_FLAGS	=
-  SRC_LIBS	=
 endif
 
-# local CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -fpic -DPIC
-
-# list of object files to generate
-OBJECTS = main.o volume.o
-
-ifneq ($(findstring $(GUI), GTK2 QT4),)
-  CFLAGS += $(GTK_FLAGS)
-  PLUGIN_LDFLAGS += $(GTK_LIBS)
-  OBJECTS += gui_gtk2.o
+# set mupen64plus core API header path
+ifneq ("$(APIDIR)","")
+  CFLAGS += "-I$(APIDIR)"
+else
+  TRYDIR = ../../../mupen64plus-core/src/api
+  ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+    CFLAGS += -I$(TRYDIR)
+  else
+    TRYDIR = /usr/local/include/mupen64plus
+    ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+      CFLAGS += -I$(TRYDIR)
+    else
+      TRYDIR = /usr/include/mupen64plus
+      ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+        CFLAGS += -I$(TRYDIR)
+      else
+        $(error Mupen64Plus API header files not found! Use makefile parameter APIDIR to force a location.)
+      endif
+    endif
+  endif
 endif
 
-ifeq ($(GUI),NONE)
-  OBJECTS += gui_none.o
+# Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
+# On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
+ifeq ($(ARCH_DETECTED), 64BITS)
+  CFLAGS += -fpic -DPIC -fvisibility=hidden
 endif
 
-ifeq ($(DBGSYM), 1)
-  STRIP=true
+# set special flags per-system
+ifneq ($(OS), FREEBSD)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -march=athlon64
+    else
+      CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+    endif
+    # tweak flags for 32-bit build on 64-bit system
+    ifeq ($(ARCH_DETECTED), 64BITS_32)
+      CFLAGS += -m32
+      LDFLAGS += -m32 -m elf_i386
+    endif
+  endif
+else
+  ifeq ($(ARCH_DETECTED), 64BITS_32)
+    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
+  endif
+endif
+ifeq ($(CPU), PPC)
+  CFLAGS += -mcpu=powerpc
+endif
+
+# set shell function names
+CC      = gcc
+CXX     = g++
+LD      = g++
+ifeq ($(OS),LINUX)
+  STRIP	= strip -s
+endif
+ifeq ($(OS),OSX)
+  STRIP	= strip -x 
+endif
+
+# set special flags for given Makefile parameters
+ifeq ($(DEBUG),1)
   CFLAGS += -g
-  LDFLAGS += -g
+  STRIP = true # disable binary strip
 endif
 
-ifeq ($(PLUGINDBG), 1)
-  CFLAGS += -DDEBUG
-endif
+SRCDIR = ../../src
+OBJDIR = _obj
+
+# list of source files to compile
+SOURCE = \
+	$(SRCDIR)/main.c \
+	$(SRCDIR)/volume.c
+
+# generate a list of object files build, make a temporary directory for them
+OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
+OBJDIRS = $(dir $(OBJECTS))
+$(shell mkdir -p $(OBJDIRS))
 
 # build targets
-all: version.h jttl_audio.so
+all: mupen64plus-audio-sdl.so
 
 clean:
-	rm -f *.o *.so
+	rm -rf ./_obj mupen64plus-audio-sdl.so
 
 # build rules
-version.h: FORCE
-	@sed 's|@MUPEN_VERSION@|\"$(MUPEN_VERSION)\"| ; s|@PLUGIN_VERSION@|\"$(PLUGIN_VERSION)\"|' \
-        ../main/version.template > version.h
-	@$(MV) version.h ../main/version.h
-
-.c.o:
-	$(CC) $(CFLAGS) $(SDL_FLAGS) $(SRC_FLAGS) -c -o $@ $<
-
-jttl_audio.so: $(OBJECTS)
-	$(CC) $^ $(LDFLAGS) $(PLUGIN_LDFLAGS) $(SDL_LIBS) $(SRC_LIBS) -o $@
+mupen64plus-hle-rsp.so: $(OBJECTS)
+	$(LD) -shared $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
-FORCE:
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
 
