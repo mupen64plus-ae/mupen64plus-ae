@@ -84,8 +84,8 @@ endif
 ifneq ($(strip $(shell pkg-config samplerate --modversion 2> /dev/null)),)
   ifneq ($(NO_RESAMP), 1)
     # set libsamplerate flags and libraries
-    CFLAGS	= `pkg-config samplerate --cflags` -DUSE_SRC
-    LDFLAGS = `pkg-config samplerate --libs`
+    CFLAGS	+= $(shell pkg-config samplerate --cflags) -DUSE_SRC
+    LDFLAGS += $(shell pkg-config samplerate --libs)
   endif
 else
   # warn user
@@ -180,7 +180,7 @@ clean:
 	rm -rf ./_obj mupen64plus-audio-sdl.so
 
 # build rules
-mupen64plus-hle-rsp.so: $(OBJECTS)
+mupen64plus-audio-sdl.so: $(OBJECTS)
 	$(LD) -shared $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 

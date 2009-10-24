@@ -33,7 +33,6 @@
 #include <errno.h>
 
 #include "volume.h"
-#include "../main/translate.h"
 
 /* volSet
  *  Sets volume of left and right PCM channels to given percentage (0-100) value.
