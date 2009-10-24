@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
 #include <SDL.h>
 #include <SDL_audio.h>
@@ -124,13 +123,15 @@ static int VolMutedSave = -1;
 static int VolumeControlType = VOLUME_TYPE_OSS;
 
 static int OutputFreq;
-static char configdir[PATH_MAX] = {0};
+
+static void InitializeAudio(int freq);
+static void ReadConfig();
+static void InitializeSDL();
+
+static int critical_failure = 0;
 
 /* definitions of pointers to Core config functions */
-ptr_ConfigListSections     ConfigListSections = NULL;
 ptr_ConfigOpenSection      ConfigOpenSection = NULL;
-ptr_ConfigListParameters   ConfigListParameters = NULL;
-ptr_ConfigSaveFile         ConfigSaveFile = NULL;
 ptr_ConfigSetParameter     ConfigSetParameter = NULL;
 ptr_ConfigGetParameter     ConfigGetParameter = NULL;
 ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
@@ -237,12 +238,6 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
 }
 
 /* ----------- Audio Functions ------------- */
-void InitializeAudio(int freq);
-void ReadConfig();
-void InitializeSDL();
-
-int critical_failure = 0;
-
 EXPORT void CALL AiDacrateChanged( int SystemType )
 {
     int f = GameFreq;
@@ -452,7 +447,7 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
     return j * 4; //number of bytes consumed
 }
 
-void my_audio_callback(void *userdata, unsigned char *stream, int len)
+static void my_audio_callback(void *userdata, unsigned char *stream, int len)
 {
     if (!l_PluginInit)
         return;
@@ -492,9 +487,8 @@ EXPORT void CALL RomOpen()
     InitializeAudio(GameFreq);
 }
 
-void InitializeSDL()
+static void InitializeSDL()
 {
-    ReadConfig();
     DebugMessage(M64MSG_INFO, "Initializing SDL audio subsystem...");
 
     DebugMessage(M64MSG_VERBOSE, "Primary buffer: %i bytes.", PrimaryBufferSize);
@@ -511,11 +505,12 @@ void InitializeSDL()
     critical_failure = 0;
 
 }
-void InitializeAudio(int freq)
+
+static void InitializeAudio(int freq)
 {
     if(SDL_WasInit(SDL_INIT_AUDIO|SDL_INIT_TIMER) == (SDL_INIT_AUDIO|SDL_INIT_TIMER) ) 
     {
-        DebugMessage(M64MSG_WARNING, "Audio and timer allready initialized.");
+        DebugMessage(M64MSG_VERBOSE, "Audio and timer already initialized.");
     }
     else 
     {
@@ -663,121 +658,40 @@ EXPORT void CALL SetSpeedFactor(int percentage)
         speed_factor = percentage;
 }
 
-void SaveConfig()
+static void ReadConfig()
 {
-    FILE *config_file;
-    char path[PATH_MAX];
+    m64p_handle ConfigAudio;
 
-    if(strlen(configdir) > 0) strncpy(path, configdir, PATH_MAX);
-
-    // Ensure that there's a trailing '/' 
-    if(path[strlen(path)-1] != '/') strncat(path, "/", PATH_MAX - strlen(path));
-
-    strncat(path, CONFIG_FILE, PATH_MAX - strlen(path));
-    if ((config_file = fopen(path, "w")) == NULL)
+    /* get a configuration section handle */
+    if (ConfigOpenSection("Audio-SDL", &ConfigAudio) != M64ERR_SUCCESS)
     {
-        DebugMessage(M64MSG_ERROR, "Cannot open config file for saving.\n");
-        return;
-    }
-    fprintf(config_file, "# SDL sound plugin's config-file\n\n"
-                         "# This sets default frequency which is used if rom doesn't want to change it.\n"
-                         "# Probably only game that needs this is Zelda: Ocarina Of Time Master Quest\n");
-    fprintf(config_file, "DEFAULT_FREQUENCY %d\n\n", GameFreq);
-
-    fprintf(config_file, "# Swaps left and right channels ( 0 = no, 1 = yes )\n");
-    fprintf(config_file, "SWAP_CHANNELS %d\n\n", SwapChannels);
-
-    fprintf(config_file, "# Size of primary buffer in bytes. This is the buffer where audio is loaded\n"
-                         "# after it's extracted from n64's memory.\n");
-    fprintf(config_file, "PRIMARY_BUFFER_SIZE %d\n\n", PrimaryBufferSize);
-
-    fprintf(config_file, "# If buffer load goes under LOW_BUFFER_LOAD_LEVEL then game is speeded up to\n"
-                         "# fill the buffer. If buffer load exeeds HIGH_BUFFER_LOAD_LEVEL then some\n"
-                         "# extra slowdown is added to prevent buffer overflow (which is not supposed\n"
-                         "# to happen in any circumstanses if syncronization is working but because\n"
-                         "# computer's clock is such inaccurate (10ms) that might happen. I'm planning\n"
-                         "# to add support for Real Time Clock for greater accuracy but we will see.\n\n"
-                         "# The plugin tries to keep the buffer's load always between these values.\n"
-                         "# So if you change only PRIMARY_BUFFER_SIZE, nothing changes. You have to\n"
-                         "# adjust these values instead. You probably want to play with\n"
-                         "# LOW_BUFFER_LOAD_LEVEL if you get dropouts.\n\n");
-    fprintf(config_file, "LOW_BUFFER_LOAD_LEVEL %d\n", LowBufferLoadLevel);
-    fprintf(config_file, "HIGH_BUFFER_LOAD_LEVEL %d\n\n", HighBufferLoadLevel);
-
-    fprintf(config_file, "# Size of secondary buffer. This is actually SDL's hardware buffer. This is\n"
-                         "# amount of samples, so final buffer size is four times this.\n\n");
-    fprintf(config_file, "SECONDARY_BUFFER_SIZE %d\n\n", SecondaryBufferSize);
-
-    fprintf(config_file, "# Enable Linear Resampling.\n"
-                         "# Possible values:\n"
-                         "#  1. Unfiltered resampling (very fast, okay quality)\n"
-                         "#  2. SINC resampling (Best Quality, requires libsamplerate)\n");
-    fprintf(config_file, "RESAMPLE %d\n\n", Resample);
-
-    fprintf(config_file, "# Select volume control type\n"
-                         "# Possible values:\n"
-                         "#  1. Use internal SDL volume control.  Changing the volume will only affect\n"
-                         "#     the volume of mupen64plus and works independently of the hardware mixer.\n"
-                         "#  2. Use the OSS mixer.  This directly controls the OSS mixer, adjusting the\n"
-                         "#     master volume for PC\n");
-    fprintf(config_file, "VOLUME_CONTROL_TYPE %d\n\n", VolumeControlType);
-
-    fprintf(config_file, "# Default Volume (0-100%%)\n"
-                         "# Only used if you set VOLUME_CONTROL_TYPE to 1.  Otherwise the default volume\n"
-                         "# is the volume that the harware mixer is set to when mupen64plus loads.\n");
-    fprintf(config_file, "VOLUME_DEFAULT %d\n\n", VolPercent);
-
-    fprintf(config_file, "# Volume increment/decrement\n"
-                         "# Set the percentage change each time the volume is increased or decreased.\n");
-    fprintf(config_file, "VOLUME_ADJUST %d\n\n", VolDelta);
-
-    fclose(config_file);
-}
-
-void ReadConfig()
-{
-    FILE * config_file;
-    char line[256];
-    char param[128];
-    char *value;
-    char path[PATH_MAX];
-
-    if(strlen(configdir) > 0) strncpy(path, configdir, PATH_MAX);
-
-    // Ensure that there's a trailing '/' 
-    if(path[strlen(path)-1] != '/') strncat(path, "/", PATH_MAX - strlen(path));
-
-    strncat(path, CONFIG_FILE, PATH_MAX - strlen(path));
-
-    if ((config_file = fopen(path, "r")) == NULL)
-    {
-        DebugMessage(M64MSG_ERROR, "Cannot open config file.");
+        DebugMessage(M64MSG_ERROR, "Couldn't open config section 'Audio-SDL'");
         return;
     }
 
-    while(!feof(config_file))
-    {
-        fgets(line, 256, config_file);
-        if((line[0] != '#') && (strlen(line) > 1))
-        {
-            value = strchr(line, ' ');
-            if (value[strlen(value)-1] == '\n') value[strlen(value)-1] = '\0';
+    /* set the default values for this plugin */
+    ConfigSetDefaultInt(ConfigAudio, "DEFAULT_FREQUENCY",     DEFAULT_FREQUENCY,     "Frequency which is used if rom doesn't want to change it");
+    ConfigSetDefaultBool(ConfigAudio, "SWAP_CHANNELS",        0,                     "Swaps left and right channels");
+    ConfigSetDefaultInt(ConfigAudio, "PRIMARY_BUFFER_SIZE",   PRIMARY_BUFFER_SIZE,   "Size of primary buffer in bytes. This is where audio is loaded after it's extracted from n64's memory.");
+    ConfigSetDefaultInt(ConfigAudio, "SECONDARY_BUFFER_SIZE", SECONDARY_BUFFER_SIZE, "Size of secondary buffer in samples. This is SDL's hardware buffer."); 
+    ConfigSetDefaultInt(ConfigAudio, "LOW_BUFFER_LOAD_LEVEL", LOW_BUFFER_LOAD_LEVEL, "If the primary buffer level falls below this level, then the audio sync delay is skipped to speed up playback");
+    ConfigSetDefaultInt(ConfigAudio, "HIGH_BUFFER_LOAD_LEVEL",HIGH_BUFFER_LOAD_LEVEL,"If the primary buffer level goes above this level, then extra audio sync delay is inserted reduce the buffer level");
+    ConfigSetDefaultInt(ConfigAudio, "RESAMPLE",              1,                     "Audio resampling algorithm.  1 = unfiltered, 2 = SINC resampling (Best Quality, requires libsamplerate)");
+    ConfigSetDefaultInt(ConfigAudio, "VOLUME_CONTROL_TYPE",   VOLUME_TYPE_OSS,       "Volume control type: 1 = SDL (only affects Mupen64Plus output)  2 = OSS mixer (adjusts master PC volume)");
+    ConfigSetDefaultInt(ConfigAudio, "VOLUME_ADJUST",         5,                     "Percentage change each time the volume is increased or decreased");
+    ConfigSetDefaultInt(ConfigAudio, "VOLUME_DEFAULT",        80,                    "Default volume when a game is started.  Only used if VOLUME_CONTROL_TYPE is 1");
 
-            strncpy(param, line, (strlen(line) - strlen(value)));
-            param[(strlen(line) - strlen(value))] = '\0';
-            if(strcasecmp(param, "DEFAULT_FREQUENCY") == 0) GameFreq = atoi(value);
-            if(strcasecmp(param, "SWAP_CHANNELS") == 0) SwapChannels = atoi(value);
-            if(strcasecmp(param, "PRIMARY_BUFFER_SIZE") == 0) PrimaryBufferSize = atoi(value);
-            if(strcasecmp(param, "SECONDARY_BUFFER_SIZE") == 0) SecondaryBufferSize = atoi(value);
-            if(strcasecmp(param, "LOW_BUFFER_LOAD_LEVEL") == 0) LowBufferLoadLevel = atoi(value);
-            if(strcasecmp(param, "HIGH_BUFFER_LOAD_LEVEL") == 0) HighBufferLoadLevel = atoi(value);
-            if(strcasecmp(param, "RESAMPLE") == 0) Resample = atoi(value);
-            if(strcasecmp(param, "VOLUME_CONTROL_TYPE") == 0) VolumeControlType = atoi(value);
-            if(strcasecmp(param, "VOLUME_ADJUST") == 0) VolDelta = atoi(value);
-            if(strcasecmp(param, "VOLUME_DEFAULT") == 0) VolPercent = atoi(value);
-        }
-    }
-    fclose(config_file);
+    /* read the configuration values into our static variables */
+    GameFreq = ConfigGetParamInt(ConfigAudio, "DEFAULT_FREQUENCY");
+    SwapChannels = ConfigGetParamBool(ConfigAudio, "SWAP_CHANNELS");
+    PrimaryBufferSize = ConfigGetParamInt(ConfigAudio, "PRIMARY_BUFFER_SIZE");
+    SecondaryBufferSize = ConfigGetParamInt(ConfigAudio, "SECONDARY_BUFFER_SIZE");
+    LowBufferLoadLevel = ConfigGetParamInt(ConfigAudio, "LOW_BUFFER_LOAD_LEVEL");
+    HighBufferLoadLevel = ConfigGetParamInt(ConfigAudio, "HIGH_BUFFER_LOAD_LEVEL");
+    Resample = ConfigGetParamInt(ConfigAudio, "RESAMPLE");
+    VolumeControlType = ConfigGetParamInt(ConfigAudio, "VOLUME_CONTROL_TYPE");
+    VolDelta = ConfigGetParamInt(ConfigAudio, "VOLUME_ADJUST");
+    VolPercent = ConfigGetParamInt(ConfigAudio, "VOLUME_DEFAULT");
 }
 
 EXPORT void CALL VolumeMute(void)
