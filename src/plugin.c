@@ -65,7 +65,7 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
     int PluginVersion = 0;
     const char *PluginName = NULL;
     (*PluginGetVersion)(&PluginType, &PluginVersion, NULL, &PluginName, NULL);
-    if (PluginType != g_PluginMap[MapIndex].type);
+    if (PluginType != g_PluginMap[MapIndex].type)
     {
         /* the type of this plugin doesn't match with the type that was requested by the caller */
         osal_dynlib_close(handle);
