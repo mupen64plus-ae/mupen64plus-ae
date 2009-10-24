@@ -74,7 +74,7 @@ void jpg_uncompress(OSTask_t *task)
      }
    else
    {
-     printf("!flags\n");
+     DebugMessage(M64MSG_WARNING, "jpg_uncompress(): unexpected flags\n");
    }
    pic = (short*)(rsp.RDRAM + jpg_data.pic);
 
@@ -277,7 +277,7 @@ void jpg_uncompress(OSTask_t *task)
     
     if (jpg_data.h == 0)
       {
-         printf("h==0\n");
+         DebugMessage(M64MSG_WARNING, "jpg_uncompress: jpg_data.h==0\n");
       }
     else
       {

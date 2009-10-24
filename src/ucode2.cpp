@@ -23,14 +23,15 @@
 # include <string.h>
 # include <stdio.h>
 
-#include "hle.h"
+extern "C" {
+  #include "m64p_types.h"
+  #include "hle.h"
+}
 
 extern u8 BufferSpace[0x10000];
 
 static void SPNOOP () {
-    char buff[0x100];
-    sprintf (buff, "Unknown/Unimplemented Audio Command %i in ABI 2", (int)(inst1 >> 24));
-    printf( "Audio HLE Error: %s\n", buff );
+    DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 2", (int)(inst1 >> 24));
 }
 extern u16 AudioInBuffer;       // 0x0000(T8)
 extern u16 AudioOutBuffer;      // 0x0002(T8)

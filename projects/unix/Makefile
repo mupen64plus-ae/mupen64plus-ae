@@ -83,6 +83,8 @@ else
       TRYDIR = /usr/include/mupen64plus
       ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
         CFLAGS += -I$(TRYDIR)
+      else
+        $(error Mupen64Plus API header files not found! Use makefile parameter APIDIR to force a location.)
       endif
     endif
   endif

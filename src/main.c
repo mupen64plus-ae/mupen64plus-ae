@@ -20,6 +20,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -27,10 +28,16 @@
 #include "m64p_plugin.h"
 #include "hle.h"
 
+/* global variables */
 RSP_INFO rsp;
 
+/* local variables */
 static const int AudioHle = 0, GraphicsHle = 1;
+void (*l_DebugCallback)(void *, int, const char *) = NULL;
+void *l_DebugCallContext = NULL;
+static int l_PluginInit = 0;
 
+/* local functions */
 static int audio_ucode_detect(OSTask_t *task)
 {
    if (*(unsigned int*)(rsp.RDRAM + task->ucode_data + 0) != 0x1)
@@ -75,8 +82,7 @@ static int audio_ucode(OSTask_t *task)
         break;
     default:
         {
-/*      printf("unknown audio ucode\n\tsum:%x", sum);
-*/
+        DebugMessage(M64MSG_WARNING, "unknown audio ucode");
         return -1;
         }
     }
@@ -91,6 +97,76 @@ static int audio_ucode(OSTask_t *task)
     }
 
     return 0;
+}
+
+/* Global functions */
+void DebugMessage(int level, const char *message, ...)
+{
+  char msgbuf[1024];
+  va_list args;
+
+  if (l_DebugCallback == NULL)
+      return;
+
+  va_start(args, message);
+  vsprintf(msgbuf, message, args);
+
+  (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
+
+  va_end(args);
+}
+
+/* DLL-exported functions */
+EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
+                                   void (*DebugCallback)(void *, int, const char *))
+{
+    if (l_PluginInit)
+        return M64ERR_ALREADY_INIT;
+
+    /* first thing is to set the callback function for debug info */
+    l_DebugCallback = DebugCallback;
+    l_DebugCallContext = Context;
+
+    /* this plugin doesn't use any Core library functions (ex for Configuration), so no need to keep the CoreLibHandle */
+
+    l_PluginInit = 1;
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL PluginShutdown(void)
+{
+    if (!l_PluginInit)
+        return M64ERR_NOT_INIT;
+
+    /* reset some local variable */
+    l_DebugCallback = NULL;
+    l_DebugCallContext = NULL;
+
+    l_PluginInit = 0;
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
+{
+    /* set version info */
+    if (PluginType != NULL)
+        *PluginType = M64PLUGIN_RSP;
+
+    if (PluginVersion != NULL)
+        *PluginVersion = 0x20000;
+
+    if (APIVersion != NULL)
+        *APIVersion = PLUGIN_API_VERSION;
+    
+    if (PluginNamePtr != NULL)
+        *PluginNamePtr = "Hacktarux/Azimer High-Level Emulation RSP Plugin";
+
+    if (Capabilities != NULL)
+    {
+        *Capabilities = 0;
+    }
+                    
+    return M64ERR_SUCCESS;
 }
 
 EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
@@ -186,16 +262,16 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
           break;
         default:
             {
-               printf("unknown jpeg task:\n\tsum:%x", sum);
+               DebugMessage(M64MSG_WARNING, "unknown jpeg task:  sum:%x", sum);
             }
-           }
+        }
          break;
       }
      }
 
      {
     FILE *f;
-    printf("unknown task:\n\ttype:%d\n\tsum:%x\n\tPC:%lx", (int)task->type, sum, (long) rsp.SP_PC_REG);
+    DebugMessage(M64MSG_WARNING, "unknown task:  type:%d  sum:%x  PC:%lx", (int)task->type, sum, (unsigned long) rsp.SP_PC_REG);
 
     if (task->ucode_size <= 0x1000)
       {
@@ -222,17 +298,6 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
    return Cycles;
 }
 
-/*
-__declspec(dllexport) void GetDllInfo ( PLUGIN_INFO * PluginInfo )
-{
-   PluginInfo->Version = 0x0101;
-   PluginInfo->Type = PLUGIN_TYPE_RSP;
-   strcpy(PluginInfo->Name, "Hacktarux/Azimer hle rsp plugin");
-   PluginInfo->NormalMemory = TRUE;
-   PluginInfo->MemoryBswaped = TRUE;
-}
-*/
-
 EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, unsigned int *CycleCount)
 {
    rsp = Rsp_Info;
@@ -242,9 +307,9 @@ EXPORT void CALL RomClosed(void)
 {
    int i;
    for (i=0; i<0x1000; i++)
-     {
-    rsp.DMEM[i] = rsp.IMEM[i] = 0;
-     }
+   {
+     rsp.DMEM[i] = rsp.IMEM[i] = 0;
+   }
 /*   init_ucode1();
    init_ucode2();*/
 }

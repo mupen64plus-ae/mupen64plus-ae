@@ -22,7 +22,10 @@
 
 # include <string.h>
 
-#include "hle.h"
+extern "C" {
+  #include "hle.h"
+}
+
 //#include "rsp.h"
 //#define SAFE_MEMORY
 /*

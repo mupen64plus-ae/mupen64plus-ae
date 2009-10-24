@@ -23,12 +23,13 @@
 # include <string.h>
 # include <stdio.h>
 
-#include "hle.h"
+extern "C" {
+  #include "m64p_types.h"
+  #include "hle.h"
+}
 
 static void SPNOOP () {
-    char buff[0x100];
-    sprintf (buff, "Unknown/Unimplemented Audio Command %i in ABI 3", (int)(inst1 >> 24));
-    printf( "Audio HLE Error: %s\n", buff );
+    DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 3", (int)(inst1 >> 24));
 }
 
 extern u16 ResampleLUT [0x200];
@@ -252,7 +253,7 @@ static void ENVMIXER3o () {
     //static FILE *dfile = fopen ("d:\\envmix.txt", "wt");
 // ********* Make sure these conditions are met... ***********
     if ((AudioInBuffer | AudioOutBuffer | AudioAuxA | AudioAuxC | AudioAuxE | AudioCount) & 0x3) {
-        printf( "Unaligned EnvMixer... please report this to Azimer with the following information: RomTitle, Place in the rom it occurred, and any save state just before the error" );
+        DebugMessage(M64MSG_ERROR, "Unaligned EnvMixer");
     }
 // ------------------------------------------------------------
     short *inp=(short *)(BufferSpace+0x4F0);

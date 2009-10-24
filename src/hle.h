@@ -90,6 +90,8 @@ typedef struct
    unsigned int yield_data_size;
 } OSTask_t;
 
+void DebugMessage(int level, const char *message, ...);
+
 void jpg_uncompress(OSTask_t *task);
 /*void ucode1(OSTask_t *task);
 void ucode2(OSTask_t *task);
