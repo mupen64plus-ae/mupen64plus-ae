@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - main.h                                                  *
+ *   Mupen64plus-core - osal/dynamiclib.h                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2008 Tillin9                                            *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,20 +19,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* declarations of pointers to Core config functions */
-extern ptr_ConfigListSections     ConfigListSections;
-extern ptr_ConfigOpenSection      ConfigOpenSection;
-extern ptr_ConfigListParameters   ConfigListParameters;
-extern ptr_ConfigSaveFile         ConfigSaveFile;
-extern ptr_ConfigSetParameter     ConfigSetParameter;
-extern ptr_ConfigGetParameter     ConfigGetParameter;
-extern ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
-extern ptr_ConfigSetDefaultInt    ConfigSetDefaultInt;
-extern ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat;
-extern ptr_ConfigSetDefaultBool   ConfigSetDefaultBool;
-extern ptr_ConfigSetDefaultString ConfigSetDefaultString;
-extern ptr_ConfigGetParamInt      ConfigGetParamInt;
-extern ptr_ConfigGetParamFloat    ConfigGetParamFloat;
-extern ptr_ConfigGetParamBool     ConfigGetParamBool;
-extern ptr_ConfigGetParamString   ConfigGetParamString;
+#if !defined(OSAL_DYNAMICLIB_H)
+#define OSAL_DYNAMICLIB_H
+
+#include "m64p_types.h"
+
+m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath);
+
+void *     osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName);
+
+m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle);
+
+#endif /* #define OSAL_DYNAMICLIB_H */
 

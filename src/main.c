@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - main.c                                                  *
+ *   Mupen64plus-sdl-audio - main.c                                        *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2007-2009 Richard Goedeken                              *
  *   Copyright (C) 2007-2008 Ebenblues                                     *
@@ -36,9 +36,11 @@
 
 #include "m64p_types.h"
 #include "m64p_plugin.h"
+#include "m64p_config.h"
 
-#include "volume.h"
 #include "main.h"
+#include "volume.h"
+#include "osal_dynamiclib.h"
 
 /* Size of primary buffer in bytes. This is the buffer where audio is loaded
 after it's extracted from n64's memory. */
@@ -124,6 +126,23 @@ static int VolumeControlType = VOLUME_TYPE_OSS;
 static int OutputFreq;
 static char configdir[PATH_MAX] = {0};
 
+/* definitions of pointers to Core config functions */
+ptr_ConfigListSections     ConfigListSections = NULL;
+ptr_ConfigOpenSection      ConfigOpenSection = NULL;
+ptr_ConfigListParameters   ConfigListParameters = NULL;
+ptr_ConfigSaveFile         ConfigSaveFile = NULL;
+ptr_ConfigSetParameter     ConfigSetParameter = NULL;
+ptr_ConfigGetParameter     ConfigGetParameter = NULL;
+ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
+ptr_ConfigSetDefaultInt    ConfigSetDefaultInt = NULL;
+ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat = NULL;
+ptr_ConfigSetDefaultBool   ConfigSetDefaultBool = NULL;
+ptr_ConfigSetDefaultString ConfigSetDefaultString = NULL;
+ptr_ConfigGetParamInt      ConfigGetParamInt = NULL;
+ptr_ConfigGetParamFloat    ConfigGetParamFloat = NULL;
+ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
+ptr_ConfigGetParamString   ConfigGetParamString = NULL;
+
 /* Global functions */
 void DebugMessage(int level, const char *message, ...)
 {
@@ -153,6 +172,22 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     l_DebugCallContext = Context;
 
     /* Get the core config function pointers from the library handle */
+    ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
+    ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
+    ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
+    ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
+    ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultFloat");
+    ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultBool");
+    ConfigSetDefaultString = (ptr_ConfigSetDefaultString) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultString");
+    ConfigGetParamInt = (ptr_ConfigGetParamInt) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamInt");
+    ConfigGetParamFloat = (ptr_ConfigGetParamFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamFloat");
+    ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
+    ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
+
+    if (!ConfigOpenSection || !ConfigSetParameter || !ConfigGetParameter ||
+        !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
+        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString)
+        return M64ERR_INCOMPATIBLE;
 
     l_PluginInit = 1;
     return M64ERR_SUCCESS;
@@ -211,6 +246,10 @@ int critical_failure = 0;
 EXPORT void CALL AiDacrateChanged( int SystemType )
 {
     int f = GameFreq;
+
+    if (!l_PluginInit)
+        return;
+
     switch (SystemType)
     {
         case SYSTEM_NTSC:
@@ -231,6 +270,9 @@ EXPORT void CALL AiLenChanged( void )
 {
     if (critical_failure == 1)
         return;
+    if (!l_PluginInit)
+        return;
+
     unsigned int LenReg = *AudioInfo.AI_LEN_REG;
     unsigned char *p = (unsigned char*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
 
@@ -320,6 +362,9 @@ EXPORT void CALL AiLenChanged( void )
 
 EXPORT int CALL InitiateAudio( AUDIO_INFO Audio_Info )
 {
+    if (!l_PluginInit)
+        return 0;
+
     AudioInfo = Audio_Info;
     return 1;
 }
@@ -409,6 +454,9 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
 
 void my_audio_callback(void *userdata, unsigned char *stream, int len)
 {
+    if (!l_PluginInit)
+        return;
+
     int newsamplerate = OutputFreq * 100 / speed_factor;
     int oldsamplerate = GameFreq;
 
@@ -437,10 +485,13 @@ void my_audio_callback(void *userdata, unsigned char *stream, int len)
 }
 EXPORT void CALL RomOpen()
 {
-    /* This function is for compatibility with Mupen64. */
+    if (!l_PluginInit)
+        return;
+
     ReadConfig();
-    InitializeAudio( GameFreq );
+    InitializeAudio(GameFreq);
 }
+
 void InitializeSDL()
 {
     ReadConfig();
@@ -568,6 +619,8 @@ void InitializeAudio(int freq)
 }
 EXPORT void CALL RomClosed( void )
 {
+    if (!l_PluginInit)
+        return;
    if (critical_failure == 1)
        return;
     DebugMessage(M64MSG_VERBOSE, "Cleaning up SDL sound plugin...");
@@ -604,6 +657,8 @@ EXPORT void CALL ProcessAList()
 
 EXPORT void CALL SetSpeedFactor(int percentage)
 {
+    if (!l_PluginInit)
+        return;
     if (percentage >= 10 && percentage <= 300)
         speed_factor = percentage;
 }
@@ -727,6 +782,9 @@ void ReadConfig()
 
 EXPORT void CALL VolumeMute(void)
 {
+    if (!l_PluginInit)
+        return;
+
     if (VolMutedSave > -1)
     {
         //unmute
@@ -761,6 +819,9 @@ EXPORT void CALL VolumeMute(void)
 
 EXPORT void CALL VolumeUp(void)
 {
+    if (!l_PluginInit)
+        return;
+
     //if muted, unmute first
     if (VolMutedSave > -1)
         VolumeMute();
@@ -789,6 +850,9 @@ EXPORT void CALL VolumeUp(void)
 
 EXPORT void CALL VolumeDown(void)
 {
+    if (!l_PluginInit)
+        return;
+
     //if muted, unmute first
     if (VolMutedSave > -1)
         VolumeMute();
@@ -822,6 +886,9 @@ EXPORT int CALL VolumeGetLevel(void)
 
 EXPORT void CALL VolumeSetLevel(int level)
 {
+    if (!l_PluginInit)
+        return;
+
     // adjust volume 
     VolPercent = level;
     if (VolPercent < 0)

@@ -166,7 +166,8 @@ OBJDIR = _obj
 # list of source files to compile
 SOURCE = \
 	$(SRCDIR)/main.c \
-	$(SRCDIR)/volume.c
+	$(SRCDIR)/volume.c \
+	$(SRCDIR)/osal_dynamiclib_unix.c
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))

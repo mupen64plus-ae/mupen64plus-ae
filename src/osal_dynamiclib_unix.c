@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - main.h                                                  *
+ *   Mupen64plus-core - osal/dynamiclib_unix.c                             *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2008 Tillin9                                            *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,20 +19,48 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* declarations of pointers to Core config functions */
-extern ptr_ConfigListSections     ConfigListSections;
-extern ptr_ConfigOpenSection      ConfigOpenSection;
-extern ptr_ConfigListParameters   ConfigListParameters;
-extern ptr_ConfigSaveFile         ConfigSaveFile;
-extern ptr_ConfigSetParameter     ConfigSetParameter;
-extern ptr_ConfigGetParameter     ConfigGetParameter;
-extern ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
-extern ptr_ConfigSetDefaultInt    ConfigSetDefaultInt;
-extern ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat;
-extern ptr_ConfigSetDefaultBool   ConfigSetDefaultBool;
-extern ptr_ConfigSetDefaultString ConfigSetDefaultString;
-extern ptr_ConfigGetParamInt      ConfigGetParamInt;
-extern ptr_ConfigGetParamFloat    ConfigGetParamFloat;
-extern ptr_ConfigGetParamBool     ConfigGetParamBool;
-extern ptr_ConfigGetParamString   ConfigGetParamString;
+#include <stdlib.h>
+#include <stdio.h>
+#include <dlfcn.h>
+
+#include "m64p_types.h"
+#include "osal_dynamiclib.h"
+
+m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath)
+{
+    if (pLibHandle == NULL || pccLibraryPath == NULL)
+        return M64ERR_INPUT_ASSERT;
+
+    *pLibHandle = dlopen(pccLibraryPath, RTLD_NOW);
+
+    if (*pLibHandle == NULL)
+    {
+        fprintf(stderr, "dlopen('%s') error: %s\n", pccLibraryPath, dlerror());
+        return M64ERR_INPUT_NOT_FOUND;
+    }
+
+    return M64ERR_SUCCESS;
+}
+
+void * osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName)
+{
+    if (pccProcedureName == NULL)
+        return NULL;
+
+    return dlsym(LibHandle, pccProcedureName);
+}
+
+m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle)
+{
+    int rval = dlclose(LibHandle);
+
+    if (rval != 0)
+    {
+        fprintf(stderr, "dlclose() error: %s\n", dlerror());
+        return M64ERR_INTERNAL;
+    }
+
+    return M64ERR_SUCCESS;
+}
+
 

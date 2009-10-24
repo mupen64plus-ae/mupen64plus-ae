@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - nogui.h                                                 *
+ *   Mupen64plus-sdl-audio - volume.c                                      *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2007-2008 Richard42 Ebenblues                           *
  *   Copyright (C) 2002 Hacktarux                                          *
