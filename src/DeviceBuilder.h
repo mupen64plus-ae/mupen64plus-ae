@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _DEVICE_BUILDER_H
 #define _DEVICE_BUILDER_H
 
-#include "blender.h"
+#include "Blender.h"
 #include "Combiner.h"
 #include "Config.h"
 #include "GraphicsContext.h"

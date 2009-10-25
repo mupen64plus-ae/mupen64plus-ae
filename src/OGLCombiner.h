@@ -22,7 +22,7 @@
 #ifndef _OGL_COMBINER_H_
 #define _OGL_COMBINER_H_
 
-#include "blender.h"
+#include "Blender.h"
 #include "Combiner.h"
 
 class OGLRender;

@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _RICE_RENDER_H
 #define _RICE_RENDER_H
 
-#include "blender.h"
+#include "Blender.h"
 #include "Combiner.h"
 #include "Config.h"
 #include "Debugger.h"

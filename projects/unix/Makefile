@@ -153,49 +153,49 @@ OBJDIR = _obj
 
 # list of source files to compile
 SOURCE = \
-	$(SRCDIR)/OGLGraphicsContext.cpp \
-	$(SRCDIR)/Debugger.cpp \
-	$(SRCDIR)/Video.cpp \
-	$(SRCDIR)/Config.cpp \
-	$(SRCDIR)/GraphicsContext.cpp \
-	$(SRCDIR)/TextureFilters.cpp \
-	$(SRCDIR)/DeviceBuilder.cpp \
-	$(SRCDIR)/Render.cpp \
-	$(SRCDIR)/RSP_Parser.cpp \
-	$(SRCDIR)/TextureManager.cpp \
-	$(SRCDIR)/RenderBase.cpp \
-	$(SRCDIR)/FrameBuffer.cpp \
-	$(SRCDIR)/Texture.cpp \
-	$(SRCDIR)/TextureFilters_2xsai.cpp \
-	$(SRCDIR)/TextureFilters_hq2x.cpp \
-	$(SRCDIR)/TextureFilters_hq4x.cpp \
 	$(SRCDIR)/liblinux/BMGImage.c \
 	$(SRCDIR)/liblinux/BMGUtils.cpp \
 	$(SRCDIR)/liblinux/bmp.c \
 	$(SRCDIR)/liblinux/pngrw.c \
-	$(SRCDIR)/OGLRender.cpp \
-	$(SRCDIR)/OGLTexture.cpp \
-	$(SRCDIR)/OGLFragmentShaders.cpp \
-	$(SRCDIR)/OGLCombinerNV.cpp \
-	$(SRCDIR)/OGLCombinerTNT2.cpp \
-	$(SRCDIR)/OGLExtCombiner.cpp \
-	$(SRCDIR)/OGLCombiner.cpp \
-	$(SRCDIR)/OGLExtRender.cpp \
-	$(SRCDIR)/blender.cpp \
-	$(SRCDIR)/math.cpp \
+	$(SRCDIR)/Blender.cpp \
 	$(SRCDIR)/Combiner.cpp \
-	$(SRCDIR)/RSP_S2DEX.cpp \
-	$(SRCDIR)/RenderExt.cpp \
+	$(SRCDIR)/CombinerTable.cpp \
+	$(SRCDIR)/Config.cpp \
 	$(SRCDIR)/ConvertImage.cpp \
 	$(SRCDIR)/ConvertImage16.cpp \
-	$(SRCDIR)/DecodedMux.cpp \
-	$(SRCDIR)/RenderTexture.cpp \
-	$(SRCDIR)/OGLDecodedMux.cpp \
 	$(SRCDIR)/CNvTNTCombiner.cpp \
-	$(SRCDIR)/GeneralCombiner.cpp \
+	$(SRCDIR)/Debugger.cpp \
+	$(SRCDIR)/DecodedMux.cpp \
 	$(SRCDIR)/DirectXDecodedMux.cpp \
-	$(SRCDIR)/CombinerTable.cpp \
-	$(SRCDIR)/OGLRenderExt.cpp
+	$(SRCDIR)/DeviceBuilder.cpp \
+	$(SRCDIR)/FrameBuffer.cpp \
+	$(SRCDIR)/GeneralCombiner.cpp \
+	$(SRCDIR)/GraphicsContext.cpp \
+	$(SRCDIR)/OGLCombiner.cpp \
+	$(SRCDIR)/OGLCombinerNV.cpp \
+	$(SRCDIR)/OGLCombinerTNT2.cpp \
+	$(SRCDIR)/OGLDecodedMux.cpp \
+	$(SRCDIR)/OGLExtCombiner.cpp \
+	$(SRCDIR)/OGLExtRender.cpp \
+	$(SRCDIR)/OGLFragmentShaders.cpp \
+	$(SRCDIR)/OGLGraphicsContext.cpp \
+	$(SRCDIR)/OGLRender.cpp \
+	$(SRCDIR)/OGLRenderExt.cpp \
+	$(SRCDIR)/OGLTexture.cpp \
+	$(SRCDIR)/Math.cpp \
+	$(SRCDIR)/Render.cpp \
+	$(SRCDIR)/RenderBase.cpp \
+	$(SRCDIR)/RenderExt.cpp \
+	$(SRCDIR)/RenderTexture.cpp \
+	$(SRCDIR)/RSP_Parser.cpp \
+	$(SRCDIR)/RSP_S2DEX.cpp \
+	$(SRCDIR)/Texture.cpp \
+	$(SRCDIR)/TextureFilters.cpp \
+	$(SRCDIR)/TextureFilters_2xsai.cpp \
+	$(SRCDIR)/TextureFilters_hq2x.cpp \
+	$(SRCDIR)/TextureFilters_hq4x.cpp \
+	$(SRCDIR)/TextureManager.cpp \
+	$(SRCDIR)/Video.cpp
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
