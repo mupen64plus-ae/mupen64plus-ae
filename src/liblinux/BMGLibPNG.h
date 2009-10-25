@@ -35,12 +35,6 @@
 
 #include "pngrw.h"
 
-#ifdef BUILD_BMG_DLL
-#   define BMG_EXPORT __cdecl __declspec( dllexport ) 
-#else
-#   define BMG_EXPORT __cdecl
-#endif
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -49,14 +43,14 @@ extern "C" {
 /* saves the contents of an HBITMAP to a file.  The extension of the file name
 // determines the file type.  returns 1 if successfull, 0 otherwise */
 extern
-BMGError BMG_EXPORT SaveBitmapToPNGFile( HBITMAP hBitmap,      /* bitmap to be saved */
+BMGError  SaveBitmapToPNGFile( HBITMAP hBitmap,      /* bitmap to be saved */
                                     const char *filename); /* name of output file */
 
 /* Creates an HBITMAP to an image file.  The extension of the file name
 // determines the file type.  returns an HBITMAP if successfull, NULL
 // otherwise */
 extern
-HBITMAP BMG_EXPORT CreateBitmapFromPNGFile( const char *filename,
+HBITMAP  CreateBitmapFromPNGFile( const char *filename,
                                             int blend );
 
 #if defined(__cplusplus)

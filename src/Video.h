@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _DLLINTERFACE_H_
 
 #include "typedefs.h"
-#include <limits.h> // PATH_MAX
+#include "m64p_plugin.h"
 
 typedef struct {
     float   fViWidth, fViHeight;
@@ -132,7 +132,7 @@ typedef struct {
 
     bool    toShowCFB;
     bool    toCaptureScreen;
-    char    screenCaptureFilename[MAX_PATH];
+    char    screenCaptureFilename[1024];
 
     char    CPUCoreMsgToDisplay[256];
     bool    CPUCoreMsgIsSet;
@@ -155,6 +155,8 @@ typedef struct {
 } PluginStatus;
 
 extern PluginStatus status;
+extern GFX_INFO g_GraphicsInfo;
+
 extern char generalText[];
 extern void (*renderCallback)();
 

@@ -42,12 +42,6 @@
 // POSSESSION, USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#ifdef BUILD_BMG_DLL
-#   define BMG_EXPORT __cdecl __declspec( dllexport )
-#else
-#   define BMG_EXPORT __cdecl
-#endif
-
 #include "BMGImage.h"
 #include "tiffrw.h"
 #include "pngrw.h"
@@ -61,7 +55,7 @@ extern "C" {
   bit count, and compression scheme.  This structure DOES NOT contain any
   palette information (bmiColors = NULL) */
 extern
-BITMAPINFO BMG_EXPORT CreateBMI( DWORD dwWidth,      /* width in pixels */
+BITMAPINFO  CreateBMI( DWORD dwWidth,      /* width in pixels */
                                  DWORD dwHeight,     /* height in pixels */
                                  WORD wBitCount,     /* 1, 4, 8, 16, 24, & 32 */
                                  int compression );  /* biCompression value */
@@ -70,7 +64,7 @@ BITMAPINFO BMG_EXPORT CreateBMI( DWORD dwWidth,      /* width in pixels */
    formats.  The RGBA pixel format is supported by all versions of OpenGL.
    The BGRA format is an extension supported by may OpenGL vendors. */
 extern
-BMGError BMG_EXPORT GetUnpackedArray( const char *filename,
+BMGError  GetUnpackedArray( const char *filename,
                                  unsigned int *width,
                                  unsigned int *height,
                                  unsigned char **bits,
@@ -80,7 +74,7 @@ BMGError BMG_EXPORT GetUnpackedArray( const char *filename,
    pixel formats are supported by OpenGL.  The BGR and BGRA extensions are
    supported by many OpenGL vendors */
 extern
-BMGError BMG_EXPORT SaveUnpackedArray( const char *filename,
+BMGError  SaveUnpackedArray( const char *filename,
                                   unsigned char bytes_per_pixel,
                                   unsigned int width,
                                   unsigned int height,
@@ -90,7 +84,7 @@ BMGError BMG_EXPORT SaveUnpackedArray( const char *filename,
 /* saves the contents of an HBITMAP to a file.  The extension of the file name
 // determines the file type.  returns 1 if successfull, 0 otherwise */
 extern
-BMGError BMG_EXPORT SaveBitmapToFile( HBITMAP hBitmap,      /* bitmap to be saved */
+BMGError  SaveBitmapToFile( HBITMAP hBitmap,      /* bitmap to be saved */
                                  const char *filename, /* name of output file */
                                  void *parameters );
 
@@ -98,59 +92,59 @@ BMGError BMG_EXPORT SaveBitmapToFile( HBITMAP hBitmap,      /* bitmap to be save
 // determines the file type.  returns an HBITMAP if successfull, NULL
 // otherwise */
 extern
-HBITMAP BMG_EXPORT CreateBitmapFromFile( const char *filename,
+HBITMAP  CreateBitmapFromFile( const char *filename,
                                          void *parameters,
                                          int blend );
 
 /* extracts a BMGImageStruct from any one of the supported image files */
 extern 
-BMGError BMG_EXPORT GetDataFromFile( const char *filename,
+BMGError  GetDataFromFile( const char *filename,
                                      struct BMGImageStruct *img,
                                      void *parameters );
 
 /* the following functions will read/write image files using raw data */
 extern
-BMGError BMG_EXPORT ReadRGB( const char *filename,
+BMGError  ReadRGB( const char *filename,
                         struct BMGImageStruct *img );
 
 extern
-BMGError BMG_EXPORT WriteRGB( const char *filename,
+BMGError  WriteRGB( const char *filename,
                          struct BMGImageStruct img );
 
 extern
-BMGError BMG_EXPORT ReadTGA( const char *filename,
+BMGError  ReadTGA( const char *filename,
                         struct BMGImageStruct *img );
 
 extern
-BMGError BMG_EXPORT WriteTGA( const char *filename,
+BMGError  WriteTGA( const char *filename,
                         struct BMGImageStruct img );
 
 extern
-BMGError BMG_EXPORT ReadBMP( const char *filename,
+BMGError  ReadBMP( const char *filename,
                         struct BMGImageStruct *img );
 
 extern
-BMGError BMG_EXPORT WriteBMP( const char *filename,
+BMGError  WriteBMP( const char *filename,
                          struct BMGImageStruct img );
 
 extern
-BMGError BMG_EXPORT ReadCEL( const char *filename,
+BMGError  ReadCEL( const char *filename,
                         struct BMGImageStruct *img );
 
 extern
-BMGError BMG_EXPORT ReadGIF( const char *filename,
+BMGError  ReadGIF( const char *filename,
                         struct BMGImageStruct *img );
 
 extern
-BMGError BMG_EXPORT ReadPSD( const char *filename, 
+BMGError  ReadPSD( const char *filename, 
                         struct BMGImageStruct *img );
 
 extern
-BMGError BMG_EXPORT ReadIFF( const char *filename, 
+BMGError  ReadIFF( const char *filename, 
                         struct BMGImageStruct *img );
 
 extern
-BMGError BMG_EXPORT ReadPCX( const char *filename, 
+BMGError  ReadPCX( const char *filename, 
                         struct BMGImageStruct *img );
 
 #if defined(__cplusplus)

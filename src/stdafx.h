@@ -24,10 +24,7 @@
 
 #include <SDL/SDL.h>
 
-#define EXPORT              __declspec(dllexport)
-
 #include <stdio.h>
-#include "winlnxdefs.h"
 #include "math.h"
 #include "COLOR.h"
 
@@ -47,7 +44,6 @@
 #endif
 
 #include "typedefs.h"
-#include "Graphics_1.3.h"
 #include "Video.h"
 #include "Config.h"
 #include "Debugger.h"
@@ -112,8 +108,6 @@ extern uint32 g_dwRamSize;
 extern uint32 * g_pRDRAMu32;
 extern signed char* g_pRDRAMs8;
 extern unsigned char *g_pRDRAMu8;
-
-extern GFX_INFO g_GraphicsInfo;
 
 extern const char *project_name;
 #endif

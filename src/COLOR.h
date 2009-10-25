@@ -33,50 +33,50 @@ typedef struct _COLORVALUE
 
 
 typedef struct XCOLOR {
-   FLOAT r, g, b, a;
+   float r, g, b, a;
 #ifdef __cplusplus
  public:
    XCOLOR() 
      {
      }
    
-   XCOLOR( DWORD argb );
-   XCOLOR( CONST FLOAT * );
-   XCOLOR( CONST COLORVALUE& );
-   XCOLOR( FLOAT r, FLOAT g, FLOAT b, FLOAT a );
+   XCOLOR( unsigned int argb );
+   XCOLOR( const float * );
+   XCOLOR( const COLORVALUE& );
+   XCOLOR( float r, float g, float b, float a );
    
    // casting
-   operator DWORD () const;
+   operator unsigned int () const;
    
-   operator FLOAT* ();
-   operator CONST FLOAT* () const;
+   operator float* ();
+   operator const float* () const;
    
    operator COLORVALUE* ();
-   operator CONST COLORVALUE* () const;
+   operator const COLORVALUE* () const;
     
    operator COLORVALUE& ();
-   operator CONST COLORVALUE& () const;
+   operator const COLORVALUE& () const;
    
    // assignment operators
-   XCOLOR& operator += ( CONST XCOLOR& );
-   XCOLOR& operator -= ( CONST XCOLOR& );
-   XCOLOR& operator *= ( FLOAT );
-   XCOLOR& operator /= ( FLOAT );
+   XCOLOR& operator += ( const XCOLOR& );
+   XCOLOR& operator -= ( const XCOLOR& );
+   XCOLOR& operator *= ( float );
+   XCOLOR& operator /= ( float );
    
    // unary operators
    XCOLOR operator + () const;
    XCOLOR operator - () const;
    
    // binary operators
-   XCOLOR operator + ( CONST XCOLOR& ) const;
-   XCOLOR operator - ( CONST XCOLOR& ) const;
-   XCOLOR operator * ( FLOAT ) const;
-   XCOLOR operator / ( FLOAT ) const;
+   XCOLOR operator + ( const XCOLOR& ) const;
+   XCOLOR operator - ( const XCOLOR& ) const;
+   XCOLOR operator * ( float ) const;
+   XCOLOR operator / ( float ) const;
    
-   friend XCOLOR operator * (FLOAT, CONST XCOLOR& );
+   friend XCOLOR operator * (float, const XCOLOR& );
     
-   BOOL operator == ( CONST XCOLOR& ) const;
-   BOOL operator != ( CONST XCOLOR& ) const;
+   bool operator == ( const XCOLOR& ) const;
+   bool operator != ( const XCOLOR& ) const;
    
 #endif //__cplusplus
 } XCOLOR;

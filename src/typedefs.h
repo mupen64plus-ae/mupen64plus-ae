@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _TYPEDEFS_H_
 #define _TYPEDEFS_H_
 
+#include "osal_win32types.h"
+
 #define uchar  unsigned char
 #define uint16 unsigned short
 #define uint32 unsigned int
@@ -28,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 typedef unsigned char               uint8;
 
 typedef signed char                 s8; 
-typedef int                     s32;
+typedef int                         s32;
 typedef unsigned int                u32;
 typedef unsigned char               u8;
 
@@ -426,12 +428,12 @@ typedef union {
 typedef struct {
     uint32 dwFormat;
     uint32 dwSize;
-    BOOL  bSetBy;
+    bool  bSetBy;
 
     uint32 dwLoadAddress;
     uint32 dwTotalWords;
     uint32 dxt;
-    BOOL  bSwapped;
+    bool  bSwapped;
 
     uint32 dwWidth;
     uint32 dwLine;

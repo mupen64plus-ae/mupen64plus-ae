@@ -21,7 +21,6 @@
 
 #include <string.h>
 
-#include "winlnxdefs.h"
 #include "math.h"
 
 //---------- XMATRIX
@@ -63,12 +62,12 @@ XMATRIX::XMATRIX( float _11, float _12, float _13, float _14,
    this->_44 = _44;
 }
 
-float& XMATRIX::operator () ( uint Row, uint Col )
+float& XMATRIX::operator () ( unsigned int Row, unsigned int Col )
 {
    return m[Row][Col];
 }
 
-float  XMATRIX::operator () ( uint Row, uint Col ) const
+float  XMATRIX::operator () ( unsigned int Row, unsigned int Col ) const
 {
    return m[Row][Col];
 }
@@ -260,7 +259,7 @@ XVECTOR4::XVECTOR4()
 
 XMATRIX* MatrixTranspose(
                 XMATRIX* pOut,
-                CONST XMATRIX* pM
+                const XMATRIX* pM
                 )
 {
    pOut->_11 = pM->_11;

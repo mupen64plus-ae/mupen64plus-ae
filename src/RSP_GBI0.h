@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include <cmath>
+
 void RSP_GBI1_SpNoop(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_SpNoop);

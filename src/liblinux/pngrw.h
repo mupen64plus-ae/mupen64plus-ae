@@ -34,22 +34,16 @@
 */
 #include "BMGImage.h"
 
-#ifdef BUILD_BMG_DLL
-#   define BMG_EXPORT __cdecl __declspec( dllexport )
-#else
-#   define BMG_EXPORT __cdecl
-#endif
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 extern
-BMGError BMG_EXPORT ReadPNG( const char *filename,
+BMGError  ReadPNG( const char *filename,
                         struct BMGImageStruct *img );
 
 extern
-BMGError BMG_EXPORT WritePNG( const char *filename,
+BMGError  WritePNG( const char *filename,
                          struct BMGImageStruct img );
 
 #if defined(__cplusplus)

@@ -37,9 +37,9 @@ unsigned char InverseAlphaComp( unsigned char fg,
                                 unsigned char alpha,
                                 unsigned char bg );
 
-BITMAPINFO InternalCreateBMI( DWORD dwWidth,  /* width */
-                              DWORD dwHeight, /* height */
-                              WORD wBitCount, /* bit count */
+BITMAPINFO InternalCreateBMI( unsigned int dwWidth,  /* width */
+                              unsigned int dwHeight, /* height */
+                              unsigned short wBitCount, /* bit count */
                               int compression );  /* compression type */
 
 void SetLastBMGError( BMGError err );

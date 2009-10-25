@@ -21,12 +21,10 @@
 extern "C" {
 #endif
 
-extern
-BMGError BMG_EXPORT ReadJPEG( const char *filename,
+extern BMGError  ReadJPEG( const char *filename,
                          struct BMGImageStruct *img );
 
-extern
-BMGError BMG_EXPORT WriteJPEG( const char *filename,
+extern BMGError  WriteJPEG( const char *filename,
                           struct BMGImageStruct img,
                           int quality );
 

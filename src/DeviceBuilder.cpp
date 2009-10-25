@@ -162,10 +162,6 @@ void CDeviceBuilder::DeleteAlphaBlender(void)
 
 CGraphicsContext * OGLDeviceBuilder::CreateGraphicsContext(void)
 {
-    if( g_GraphicsInfo.hStatusBar )
-    {
-        printf("[RiceVideo] Creating OpenGL Device Context\n");
-    }
     if( m_pGraphicsContext == NULL )
     {
         m_pGraphicsContext = new COGLGraphicsContext();

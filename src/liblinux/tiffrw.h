@@ -51,25 +51,17 @@ struct TIFFInfoStruct
 };
 #pragma pack(pop)
 
-
-#ifdef BUILD_BMG_DLL
-#   define BMG_EXPORT __cdecl __declspec( dllexport )
-#else
-#   define BMG_EXPORT __cdecl
-#endif
-
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 extern
-BMGError BMG_EXPORT ReadTIFF( const char *filename,
+BMGError  ReadTIFF( const char *filename,
                          struct BMGImageStruct *img,
                          struct TIFFInfoStruct *info );
 
 extern
-BMGError BMG_EXPORT WriteTIFF( const char *filename,
+BMGError  WriteTIFF( const char *filename,
                           struct BMGImageStruct img,
                           struct TIFFInfoStruct *info );
 

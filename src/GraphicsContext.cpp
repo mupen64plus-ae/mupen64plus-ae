@@ -18,6 +18,7 @@
 
 */
 
+#include "m64p_plugin.h"
 #include "stdafx.h"
 
 CGraphicsContext* CGraphicsContext::g_pGraphicsContext = NULL;

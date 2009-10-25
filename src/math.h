@@ -48,8 +48,8 @@ public:
                 float _31, float _32, float _33, float _34,
                 float _41, float _42, float _43, float _44 );
 
-    float& operator () ( uint Row, uint Col );
-    float  operator () ( uint Row, uint Col ) const;
+    float& operator () ( unsigned int Row, unsigned int Col );
+    float  operator () ( unsigned int Row, unsigned int Col ) const;
 
     operator float* ();
     operator const float* () const;
@@ -170,7 +170,7 @@ public:
 
 XVECTOR4 Vec3Transform(XVECTOR4 *pOut, const XVECTOR3 *pV, const XMATRIX *pM);
 
-XMATRIX* MatrixTranspose(XMATRIX* pOut, CONST XMATRIX* pM);
+XMATRIX* MatrixTranspose(XMATRIX* pOut, const XMATRIX* pM);
 
 #endif
 

@@ -23,10 +23,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <SDL_opengl.h>
 
+#include "m64p_types.h"
+#include "m64p_plugin.h"
 #include "stdafx.h"
-#include "messagebox.h"
-
-#include "../main/version.h"
 
 PluginStatus status;
 char generalText[256];
@@ -123,6 +122,7 @@ void GetPluginDir( char * Directory )
 }
 
 //-------------------------------------------------------------------------------------
+/*
 EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
 {
 #ifdef _DEBUG
@@ -157,6 +157,7 @@ EXPORT void CALL DllConfig ( HWND hParent )
 {
    ShowConfigBox();
 }
+*/
 
 void ChangeWindowStep2()
 {
@@ -208,7 +209,7 @@ void StartVideo(void)
 
     g_CritialSection.Lock();
 
-    memcpy(&g_curRomInfo.romheader, g_GraphicsInfo.HEADER, sizeof(ROMHeader));
+    /*memcpy(&g_curRomInfo.romheader, g_GraphicsInfo.HEADER, sizeof(ROMHeader));  FIXME fixme RG */
     unsigned char *puc = (unsigned char *) &g_curRomInfo.romheader;
     unsigned int i;
     unsigned char temp;
@@ -245,7 +246,7 @@ void StartVideo(void)
         CGraphicsContext::InitWindowInfo();
         
         windowSetting.bDisplayFullscreen = FALSE;
-        bool res = CGraphicsContext::Get()->Initialize(g_GraphicsInfo.hWnd, g_GraphicsInfo.hStatusBar, 640, 480, TRUE);
+        bool res = CGraphicsContext::Get()->Initialize(0, NULL, 640, 480, TRUE);  /* fixme hWnd and hStatusBar are removed */
         CDeviceBuilder::GetBuilder()->CreateRender();
         CRender::GetRender()->Initialize();
         
@@ -691,7 +692,7 @@ EXPORT void CALL UpdateScreen(void)
         if(lastTick + 5000 <= nowTick)
         {
             char caption[200];
-            sprintf(caption, "RiceVideoLinux N64 Plugin %s - %.3f VI/S", PLUGIN_VERSION, frames/5.0);
+            sprintf(caption, "Mupen64plus-video-rice N64 Plugin - %.3f VI/S", frames/5.0);
             SDL_WM_SetCaption(caption, caption);
             frames = 0;
             lastTick = nowTick;
@@ -766,11 +767,10 @@ EXPORT BOOL CALL InitiateGFX(GFX_INFO Gfx_Info)
     CGraphicsContext::InitWindowInfo();
     CGraphicsContext::InitDeviceParameters();
 
-    gui_init();
     return(TRUE);
 }
 
-
+/* fixme 
 void __cdecl MsgInfo (char * Message, ...)
 {
     char Msg[400];
@@ -796,6 +796,7 @@ void __cdecl ErrorMsg (const char* Message, ...)
     sprintf(generalText, "%s %s",project_name, PLUGIN_VERSION);
    messagebox(generalText, MB_OK|MB_ICONERROR, Msg);
 }
+*/
 
 //---------------------------------------------------------------------------------------
 
@@ -990,13 +991,6 @@ input:    FrameBufferInfo pinfo[6]
 output:   Values are return in the FrameBufferInfo structure
           Plugin can return up to 6 frame buffer info
  ************************************************************************/
-typedef struct
-{
-    uint32  addr;
-    uint32  size;
-    uint32  width;
-    uint32  height;
-} FrameBufferInfo;
 
 EXPORT void CALL FBGetFrameBufferInfo(void *p)
 {

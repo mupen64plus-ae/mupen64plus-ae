@@ -26,17 +26,7 @@
 // POSSESSION, USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#ifdef _WIN32
-#include <windows.h>
-#else // _WIN32
-#include "../winlnxdefs.h"
-#endif // _WIN32
-
-#ifdef BUILD_BMG_DLL
-#   define BMG_EXPORT __cdecl __declspec( dllexport )
-#else
-#   define BMG_EXPORT __cdecl
-#endif
+#include "../osal_win32types.h"
 
 enum BMG_Error 
 { 
@@ -83,11 +73,11 @@ extern "C" {
 
 /* initializes a BMGImage to default values */
 extern
-void BMG_EXPORT InitBMGImage( struct BMGImageStruct *img );
+void  InitBMGImage(struct BMGImageStruct *img );
 
 /* frees memory allocated to a BMGImage */
 extern
-void __cdecl BMG_EXPORT FreeBMGImage( struct BMGImageStruct *img );
+void  FreeBMGImage( struct BMGImageStruct *img );
 
 /* allocates memory (bits & palette) for a BMGImage.
    returns 1 if successfull, 0 otherwise.
@@ -96,70 +86,70 @@ void __cdecl BMG_EXPORT FreeBMGImage( struct BMGImageStruct *img );
    Assumes that all images with bits_per_pixel <= 8 requires a palette.
    will set bits_per_palette_entry, scan_width, bits, & palette */
 extern
-BMGError BMG_EXPORT AllocateBMGImage( struct BMGImageStruct *img );
+BMGError  AllocateBMGImage( struct BMGImageStruct *img );
 
 /* compresses 8 BPP paletted images to 1 BPP or 4 BPP paletted images if
    possible */
 extern
-BMGError BMG_EXPORT CompressBMGImage( struct BMGImageStruct *img );
+BMGError  CompressBMGImage( struct BMGImageStruct *img );
 
 
 /* a utility function for freeing memory created in BMGLib */
 extern
-void BMG_EXPORT FreeBMGMemory( unsigned char *mem );
+void  FreeBMGMemory( unsigned char *mem );
 
 /* converts a color image to a gray scale image */
 extern
-BMGError BMG_EXPORT ConvertToGrayScale( struct BMGImageStruct *img );
+BMGError  ConvertToGrayScale( struct BMGImageStruct *img );
 
 /* converts a color image to a pseudo-gray scale image */
 extern
-BMGError BMG_EXPORT ConvertToPseudoGrayScale( struct BMGImageStruct *img );
+BMGError  ConvertToPseudoGrayScale( struct BMGImageStruct *img );
 
 /* stores the contents of a bitmap into a BMGImageStruct */
 extern
-BMGError BMG_EXPORT GetDataFromBitmap( HBITMAP hBitmap,
+BMGError  GetDataFromBitmap( HBITMAP hBitmap,
                                   struct BMGImageStruct *img,
                                   int remove_alpha );
 
 /* creates an HBITMAP from a BMGImageStruct */
 extern
-HBITMAP BMG_EXPORT CreateBitmapFromData( struct BMGImageStruct img,
+HBITMAP  CreateBitmapFromData( struct BMGImageStruct img,
                                          int alpha_blend );
 
 /* sets the background color for alpha blending
   color points to an array of 4 unsigned chars
   color[0] = blue, color[1] = green, color[2] = red, color[3] = unused */
 extern
-void BMG_EXPORT SetBMGBackgroundColor( unsigned char *color );
+void  SetBMGBackgroundColor( unsigned char *color );
 
 /* defines the background bitmap that is used for alpha blending & transparent
    pixels */
 extern
-BMGError BMG_EXPORT SetBMGBackgroundBitmap( HBITMAP hBitmap );
+BMGError  SetBMGBackgroundBitmap( HBITMAP hBitmap );
 
 /* defines the background image that is used for alpha blending & transparent
    pixels */
 extern
-BMGError BMG_EXPORT SetBMGBackgroundImage( struct BMGImageStruct img );
+BMGError  SetBMGBackgroundImage( struct BMGImageStruct img );
 
 /* Converts paletted images and 16-BPP images to 24-BPP images */
 extern
-BMGError BMG_EXPORT ConvertPaletteToRGB( struct BMGImageStruct img_in,
+BMGError  ConvertPaletteToRGB( struct BMGImageStruct img_in,
                                          struct BMGImageStruct *img_out );
 
 /* copies the contents of the input image into the output image */
 extern
-BMGError BMG_EXPORT CopyBMGImage( struct BMGImageStruct img_in,
+BMGError  CopyBMGImage( struct BMGImageStruct img_in,
                                   struct BMGImageStruct *img_out );
 
 /* returns the last error state */
 extern
-BMGError BMG_EXPORT GetLastBMGError();
+BMGError  GetLastBMGError();
 
 /* gets the error message */
 extern
-void BMG_EXPORT GetLastBMGErrorMessage( const char **msg );
+void  GetLastBMGErrorMessage( const char **msg );
 
 #if defined(__cplusplus)
  }

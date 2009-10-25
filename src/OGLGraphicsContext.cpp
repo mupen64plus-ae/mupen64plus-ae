@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <SDL_opengl.h>
 
+#include "m64p_plugin.h"
+
 #include "stdafx.h"
 
 #include "liblinux/BMGLibPNG.h"
-
-#include "../main/version.h"
 
 COGLGraphicsContext::COGLGraphicsContext() :
     m_pScreen(0),
@@ -122,7 +122,7 @@ bool COGLGraphicsContext::Initialize(HWND hWnd, HWND hWndStatus, uint32 dwWidth,
      }
    
    char caption[500];
-   sprintf(caption, "RiceVideoLinux N64 Plugin %s", MUPEN_VERSION);
+   sprintf(caption, "Mupen64plus-video-rice N64 Plugin v2.0.0");  /* fixme */
    SDL_WM_SetCaption(caption, caption);
    SetWindowMode();
 

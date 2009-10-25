@@ -80,18 +80,6 @@ else
     LDFLAGS += $(shell sdl-config --libs)
 endif
 
-# test for presence of libsamplerate
-ifneq ($(strip $(shell pkg-config samplerate --modversion 2> /dev/null)),)
-  ifneq ($(NO_RESAMP), 1)
-    # set libsamplerate flags and libraries
-    CFLAGS	+= $(shell pkg-config samplerate --cflags) -DUSE_SRC
-    LDFLAGS += $(shell pkg-config samplerate --libs)
-  endif
-else
-  # warn user
-  $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without Best Quality SINC resampler.)
-endif
-
 # set mupen64plus core API header path
 ifneq ("$(APIDIR)","")
   CFLAGS += "-I$(APIDIR)"
@@ -181,8 +169,9 @@ SOURCE = \
 	$(SRCDIR)/TextureFilters_2xsai.cpp \
 	$(SRCDIR)/TextureFilters_hq2x.cpp \
 	$(SRCDIR)/TextureFilters_hq4x.cpp \
-	$(SRCDIR)/liblinux/bmp.c \
 	$(SRCDIR)/liblinux/BMGImage.c \
+	$(SRCDIR)/liblinux/BMGUtils.cpp \
+	$(SRCDIR)/liblinux/bmp.c \
 	$(SRCDIR)/liblinux/pngrw.c \
 	$(SRCDIR)/OGLRender.cpp \
 	$(SRCDIR)/OGLTexture.cpp \
@@ -201,7 +190,6 @@ SOURCE = \
 	$(SRCDIR)/ConvertImage16.cpp \
 	$(SRCDIR)/DecodedMux.cpp \
 	$(SRCDIR)/RenderTexture.cpp \
-	$(SRCDIR)/liblinux/BMGUtils.cpp \
 	$(SRCDIR)/OGLDecodedMux.cpp \
 	$(SRCDIR)/CNvTNTCombiner.cpp \
 	$(SRCDIR)/GeneralCombiner.cpp \

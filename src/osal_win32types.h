@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - winlnxdefs.h                                            *
+ *   Mupen64plus - osal_win32types.h                                       *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,17 +20,20 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef WINLNXDEFS_H
-#define WINLNXDEFS_H
+#if defined(WIN32)
+  #include <windows.h>
+#elif !defined(WIN32TYPES_H)
+#define WIN32TYPES_H
 
 typedef unsigned int BOOL;
-typedef unsigned short WORD;
-typedef unsigned int DWORD, *LPDWORD;
 typedef unsigned char BYTE, CHAR, TCHAR, *LPBYTE;
 typedef unsigned int UINT, uint, ULONG;
-typedef int LONG;
 typedef void VOID, *LPVOID;
 typedef float FLOAT;
+
+typedef unsigned int DWORD, *LPDWORD;
+typedef unsigned short WORD;
+typedef int LONG;
 
 #define __int16 short
 #define __int32 int
@@ -48,8 +52,8 @@ typedef struct
 
 typedef struct _COORDRECT
 {
-   LONG x1,y1;
-   LONG x2,y2;
+   int x1,y1;
+   int x2,y2;
 } COORDRECT;
 
 #define __declspec(dllexport)
@@ -67,7 +71,7 @@ typedef struct _COORDRECT
 #define MAX_PATH PATH_MAX
 #define _MAX_PATH PATH_MAX
 
-typedef DWORD COLOR;
+typedef unsigned int COLOR;
 typedef int SURFFORMAT;
 
 #define SURFFMT_A8R8G8B8 21
@@ -78,17 +82,17 @@ typedef int SURFFORMAT;
 
 typedef struct tagBITMAPINFOHEADER
 {
-   DWORD biSize;
-   LONG biWidth;
-   LONG biHeight;
-   WORD biPlanes;
-   WORD biBitCount;
-   DWORD biCompression;
-   DWORD biSizeImage;
-   LONG biXPelsPerMeter;
-   LONG biYPelsPerMeter;
-   DWORD biClrUsed;
-   DWORD biClrImportant;
+   unsigned int biSize;
+   int biWidth;
+   int biHeight;
+   unsigned short biPlanes;
+   unsigned short biBitCount;
+   unsigned int biCompression;
+   unsigned int biSizeImage;
+   int biXPelsPerMeter;
+   int biYPelsPerMeter;
+   unsigned int biClrUsed;
+   unsigned int biClrImportant;
 }  __attribute__ ((packed)) BITMAPINFOHEADER;
 
 typedef struct tagRGBQUAD
@@ -132,11 +136,11 @@ typedef struct _IMAGE_INFO
 
 typedef struct tagBITMAPFILEHEADER
 {
-   WORD    bfType; 
-   DWORD   bfSize; 
-   WORD    bfReserved1; 
-   WORD    bfReserved2; 
-   DWORD   bfOffBits; 
+   unsigned short    bfType; 
+   unsigned int   bfSize; 
+   unsigned short    bfReserved1; 
+   unsigned short    bfReserved2; 
+   unsigned int   bfOffBits; 
 } __attribute__ ((packed)) BITMAPFILEHEADER, *PBITMAPFILEHEADER;
 
 #define BI_RGB 0
@@ -161,5 +165,5 @@ typedef enum _BLEND
      BLEND_FORCE_DWORD = 0x7fffffff
 } BLEND;
 
-#endif // _WINLNXDEFS_H
+#endif // WIN32TYPES_H
 

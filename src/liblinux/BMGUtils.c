@@ -310,13 +310,13 @@ unsigned char InverseAlphaComp( unsigned char fg, unsigned char alpha,
 // Creates a BITMAPINFOHEADER for the given width, height, bit count, and
 // compression.  Compression must = BI_RGB, BI_BITFIELDS, BI_RLE4, or BI_RLE8.
 */
-BITMAPINFO InternalCreateBMI( DWORD dwWidth,  /* width */
-                              DWORD dwHeight, /* height */
-                              WORD wBitCount, /* bit count */
+BITMAPINFO InternalCreateBMI( unsigned int dwWidth,  /* width */
+                              unsigned int dwHeight, /* height */
+                              unsigned short wBitCount, /* bit count */
                               int compression )  /* compression type */
 {
    BITMAPINFO bi;         /* bitmap header */
-   DWORD dwBytesPerLine;        /* Number of bytes per scanline */
+   unsigned int dwBytesPerLine;        /* Number of bytes per scanline */
 
    /* clear the bitmapinfo structure */
    memset(&bi, 0, sizeof(BITMAPINFO));

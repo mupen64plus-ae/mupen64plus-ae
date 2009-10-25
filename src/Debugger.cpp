@@ -17,8 +17,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "m64p_plugin.h"
 #include "stdafx.h"
-#include "../main/version.h"
 
 #ifndef _DEBUG
 void __cdecl DebuggerAppendMsg(const char * Message, ...) {}
