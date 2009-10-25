@@ -19,7 +19,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define GL_GLEXT_PROTOTYPES
 #include <SDL_opengl.h>
 
-#include "stdafx.h"
+#include "OGLFragmentShaders.h"
+#include "OGLRender.h"
+#include "OGLGraphicsContext.h"
 
 COGLFragmentShaderCombiner::COGLFragmentShaderCombiner(CRender *pRender)
 : COGLColorCombiner(pRender)

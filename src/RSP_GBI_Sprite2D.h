@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // Sprite2D Ucodes
 
+#include "Render.h"
 
 Sprite2DInfo g_Sprite2DInfo;
 uint32 g_SavedUcode=1;

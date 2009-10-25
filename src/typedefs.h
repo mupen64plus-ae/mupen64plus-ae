@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _TYPEDEFS_H_
 
 #include "osal_win32types.h"
+#include "math.h"
 
 #define uchar  unsigned char
 #define uint16 unsigned short
@@ -203,6 +204,7 @@ typedef struct {
     COLOR dcDiffuse;
 } FILLRECTVERTEX, *LPFILLRECTVERTEX;
 
+#include "COLOR.h"
 #include "IColor.h"
 
 typedef struct

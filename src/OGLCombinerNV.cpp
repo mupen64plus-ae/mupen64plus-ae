@@ -19,7 +19,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define GL_GLEXT_PROTOTYPES
 #include <SDL_opengl.h>
 
-#include "stdafx.h"
+#include "OGLCombinerNV.h"
+#include "OGLRender.h"
+#include "OGLGraphicsContext.h"
 
 //========================================================================
 #define MUX_E_F             (MUX_PRIMLODFRAC+1)

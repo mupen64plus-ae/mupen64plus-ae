@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include <vector>
+
 #include <dirent.h>
 #include <stdarg.h>
 #include <limits.h> // PATH_MAX
@@ -25,7 +27,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "m64p_types.h"
 #include "m64p_plugin.h"
-#include "stdafx.h"
+
+#include "Config.h"
+#include "Debugger.h"
+#include "DeviceBuilder.h"
+#include "FrameBuffer.h"
+#include "GraphicsContext.h"
+#include "Render.h"
+#include "RSP_Parser.h"
+#include "TextureManager.h"
+#include "Video.h"
 
 PluginStatus status;
 char generalText[256];
@@ -79,7 +90,7 @@ void GetPluginDir( char * Directory )
    else
    {
       char path[PATH_MAX];
-      int n = readlink("/proc/self/exe", path, PATH_MAX);
+      int n = -1; /* fixme remove this function readlink("/proc/self/exe", path, PATH_MAX);*/
       if(n == -1) strcpy(path, "./");
       else
         {

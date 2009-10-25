@@ -18,7 +18,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "m64p_plugin.h"
-#include "stdafx.h"
+
+#include "ConvertImage.h"
+#include "DeviceBuilder.h"
+#include "FrameBuffer.h"
+#include "Render.h"
+
 #include "liblinux/BMGLibPNG.h"
 
 extern FiddledVtx * g_pVtxBase;

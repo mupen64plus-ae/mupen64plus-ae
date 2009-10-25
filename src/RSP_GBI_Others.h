@@ -19,6 +19,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // A few ucode used in DKR and Others Special games
 
+#include <algorithm>
+
+#include "Render.h"
+#include "Timing.h"
+
 uint32 dwConkerVtxZAddr=0;
 
 static void RDP_GFX_DumpVtxInfoDKR(uint32 dwAddr, uint32 dwV0, uint32 dwN);

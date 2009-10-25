@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _RICE_RENDER_BASE_H
 #define _RICE_RENDER_BASE_H
 
+#include "Debugger.h"
+#include "RSP_Parser.h"
+#include "Video.h"
+
 /*
  *  Global variables defined in this file were moved out of Render class
  *  to make them be accessed faster

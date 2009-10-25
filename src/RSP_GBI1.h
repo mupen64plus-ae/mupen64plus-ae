@@ -17,6 +17,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "Render.h"
+#include "Timing.h"
+
 void RSP_GBI1_Vtx(Gfx *gfx)
 {
     uint32 addr = RSPSegmentAddr((gfx->gbi1vtx.addr));

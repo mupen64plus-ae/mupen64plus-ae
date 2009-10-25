@@ -19,6 +19,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _OGL_CONTEXT_H_
 #define _OGL_CONTEXT_H_
 
+#include "typedefs.h"
+#include "GraphicsContext.h"
+
 class COGLGraphicsContext : public CGraphicsContext
 {
     friend class OGLRender;

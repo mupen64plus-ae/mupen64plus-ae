@@ -17,7 +17,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "stdafx.h"
+#include <SDL_opengl.h>
+
+#include "FrameBuffer.h"
+#include "Render.h"
 
 extern uObjMtxReal gObjMtxReal;
 extern Matrix g_MtxReal;

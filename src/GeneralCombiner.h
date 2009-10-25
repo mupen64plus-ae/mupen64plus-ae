@@ -19,6 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _GENERAL_COMBINER_H_
 #define _GENERAL_COMBINER_H_
 
+#include <vector>
+
+#include "DecodedMux.h"
+
 class GeneralCombineStage
 {
 public:

@@ -16,7 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "stdafx.h"
+#include "Combiner.h"
+#include "DirectXDecodedMux.h"
 
 //This function is called after Reformat to handel two texels in 1 cycle, D3D can not handle
 //two texels in a single stage, the texels must be splited into multiple stages

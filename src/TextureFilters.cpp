@@ -18,8 +18,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "m64p_plugin.h"
-#include "stdafx.h"
+#include "typedefs.h"
+#include "ConvertImage.h"
+#include "DeviceBuilder.h"
 #include "TextureFilters.h"
+#include "Render.h"
+
 #include "liblinux/BMGLibPNG.h"
 #include "liblinux/BMGDLL.h"
 #include <sys/types.h>

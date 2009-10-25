@@ -21,7 +21,11 @@
 
 #include <SDL_opengl.h>
 
-#include "stdafx.h"
+#include "OGLCombiner.h"
+#include "OGLRender.h"
+#include "OGLGraphicsContext.h"
+#include "OGLDecodedMux.h"
+#include "OGLTexture.h"
 
 //========================================================================
 uint32 DirectX_OGL_BlendFuncMaps [] =

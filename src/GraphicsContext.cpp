@@ -19,7 +19,10 @@
 */
 
 #include "m64p_plugin.h"
-#include "stdafx.h"
+
+#include "FrameBuffer.h"
+#include "OGLGraphicsContext.h"
+#include "Video.h"
 
 CGraphicsContext* CGraphicsContext::g_pGraphicsContext = NULL;
 bool CGraphicsContext::m_deviceCapsIsInitialized = false;

@@ -19,8 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _OGL_RENDER_H_
 #define _OGL_RENDER_H_
 
-#include "stdafx.h"
 #include "Combiner.h"
+#include "Render.h"
 
 class OGLRender : public CRender
 {

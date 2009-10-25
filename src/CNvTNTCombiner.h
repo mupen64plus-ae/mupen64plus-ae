@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _NVIDIA_TNT_COMBINER_H_
 #define _NVIDIA_TNT_COMBINER_H_
 
+#include <vector>
+
 #include "Combiner.h"
 
 typedef struct

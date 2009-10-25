@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _COMBINER_DEFS_H_
 #define _COMBINER_DEFS_H_
 
+#include "typedefs.h"
+
 #define MUX_MASK            0x1F
 #define MUX_MASK_WITH_ALPHA 0x5F
 #define MUX_MASK_WITH_NEG   0x3F

@@ -20,7 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _COMBINER_H_
 #define _COMBINER_H_
 
+#include "typedefs.h"
+#include "CombinerDefs.h"
 #include "CSortedList.h"
+#include "DecodedMux.h"
 
 class CRender;
 

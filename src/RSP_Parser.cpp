@@ -17,7 +17,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "stdafx.h"
+#include <algorithm>
+
+#include "ConvertImage.h"
+#include "GraphicsContext.h"
+#include "Render.h"
+#include "RenderTexture.h"
+#include "Video.h"
 #include "ucode.h"
 #include <sys/time.h>
 

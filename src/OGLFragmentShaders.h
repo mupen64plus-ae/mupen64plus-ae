@@ -19,9 +19,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _OGL_FRAGMENT_SHADER_H_
 #define _OGL_FRAGMENT_SHADER_H_
 
+#include <vector>
+
 #include <SDL_opengl.h>
 
 #include "OGLCombiner.h"
+#include "OGLExtCombiner.h"
 #include "GeneralCombiner.h"
 
 typedef struct {

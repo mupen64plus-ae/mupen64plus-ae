@@ -56,8 +56,6 @@ typedef struct {
     uint32  lastSecDlistCount;
 }WindowSettingStruct;
 
-extern WindowSettingStruct windowSetting;
-
 typedef enum 
 {
     PRIM_TRI1,
@@ -154,11 +152,21 @@ typedef struct {
 
 } PluginStatus;
 
+#define MI_INTR_DP          0x00000020  
+#define MI_INTR_SP          0x00000001  
+
 extern PluginStatus status;
 extern GFX_INFO g_GraphicsInfo;
+extern WindowSettingStruct windowSetting;
+
+extern unsigned int   g_dwRamSize;
+extern unsigned int  *g_pRDRAMu32;
+extern signed char   *g_pRDRAMs8;
+extern unsigned char *g_pRDRAMu8;
 
 extern char generalText[];
 extern void (*renderCallback)();
+void ErrorMsg (const char* Message, ...);
 
 void SetVIScales();
 extern void _VIDEO_DisplayTemporaryMessage2(const char *msg, ...);

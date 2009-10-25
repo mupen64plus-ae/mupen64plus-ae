@@ -17,7 +17,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "stdafx.h"
+#include "DeviceBuilder.h"
+#include "FrameBuffer.h"
+#include "OGLCombinerNV.h"
+#include "OGLCombinerTNT2.h"
+#include "OGLFragmentShaders.h"
+#include "OGLExtRender.h"
+#include "OGLGraphicsContext.h"
+#include "OGLTexture.h"
 
 //========================================================================
 CDeviceBuilder* CDeviceBuilder::m_pInstance=NULL;

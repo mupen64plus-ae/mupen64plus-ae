@@ -17,10 +17,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include <vector>
+#include <fstream>
+
+#include <stdlib.h>
 #include <limits.h> // PATH_MAX
 
 #include "m64p_plugin.h"
-#include "stdafx.h"
+#include "Config.h"
+#include "Debugger.h"
+#include "DeviceBuilder.h"
+#include "RenderBase.h"
+#include "TextureManager.h"
+#include "Video.h"
 
 #define INI_FILE        "RiceVideoLinux.ini"
 #define CONFIG_FILE     "RiceVideo.cfg"

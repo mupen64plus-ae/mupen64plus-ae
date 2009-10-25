@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "stdafx.h"
+#include "GeneralCombiner.h"
 
 //Attention
 // If using CUR as an argument, use it as Arg2, not Arg1. I don't know why, 

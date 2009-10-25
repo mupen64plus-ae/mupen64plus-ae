@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #if !defined(DEBUGGER_H)
 #define DEBUGGER_H
 
+#include "typedefs.h"
+
 #if defined(_DEBUG)
 
 // Debugger.h : header file

@@ -19,7 +19,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "stdafx.h"
+#include <stdlib.h>
+
+#include "typedefs.h"
 
 static int   RGBtoYUV[4096];
 //#define RGB32toYUV(val) (RGBtoYUV[((val&0x00FF0000)>>20)+((val&0x0000FF00)>>12)+((val&0x000000FF)>>4)])

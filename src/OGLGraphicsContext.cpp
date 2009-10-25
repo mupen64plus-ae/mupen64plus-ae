@@ -19,8 +19,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <SDL_opengl.h>
 
 #include "m64p_plugin.h"
-
-#include "stdafx.h"
+#include "Config.h"
+#include "Debugger.h"
+#include "OGLGraphicsContext.h"
+#include "TextureManager.h"
+#include "Video.h"
 
 #include "liblinux/BMGLibPNG.h"
 

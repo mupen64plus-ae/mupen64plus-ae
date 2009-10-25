@@ -18,7 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <SDL_opengl.h>
 
-#include "stdafx.h"
+#include "Debugger.h"
+#include "FrameBuffer.h"
+#include "OGLTexture.h"
 
 // ===========================================================================
 COGLRenderTexture::COGLRenderTexture(int width, int height, RenderTextureInfo* pInfo, TextureUsage usage)

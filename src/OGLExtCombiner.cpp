@@ -16,10 +16,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <algorithm>
+
+#include "OGLExtCombiner.h"
+#include "OGLExtRender.h"
+#include "OGLDecodedMux.h"
+#include "OGLGraphicsContext.h"
+#include "OGLTexture.h"
+#include "DirectXDecodedMux.h"
+
 #define GL_GLEXT_PROTOTYPES
 #include <SDL_opengl.h>
-
-#include "stdafx.h"
 
 #define         GL_MODULATE_ADD_ATI                   0x8744
 #define         GL_MODULATE_SUBTRACT_ATI              0x8746

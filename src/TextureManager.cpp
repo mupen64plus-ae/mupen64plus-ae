@@ -17,9 +17,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include <exception>
 #include <cmath>
 
-#include "stdafx.h"
+#include "ConvertImage.h"
+#include "DeviceBuilder.h"
+#include "FrameBuffer.h"
+#include "RenderBase.h"
+#include "TextureManager.h"
 
 CTextureManager gTextureManager;
 

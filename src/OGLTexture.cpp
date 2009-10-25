@@ -16,7 +16,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "stdafx.h"
+#include <stdlib.h>
+
+#include "Config.h"
+#include "Debugger.h"
+#include "OGLTexture.h"
+#include "TextureManager.h"
 
 COGLTexture::COGLTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
     CTexture(dwWidth,dwHeight,usage),
