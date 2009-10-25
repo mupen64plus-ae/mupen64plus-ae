@@ -898,18 +898,3 @@ void OGLRender::glViewportWrapper(GLint x, GLint y, GLsizei width, GLsizei heigh
     }
 }
 
-void OGLRender::CaptureScreen(char *filename)
-{
-    unsigned char *buffer = (unsigned char*)malloc( windowSetting.uDisplayWidth * windowSetting.uDisplayHeight * 3 );
-
-    GLint oldMode;
-    glGetIntegerv( GL_READ_BUFFER, &oldMode );
-    glReadBuffer( GL_FRONT );
-    glReadPixels( 0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, GL_BGR_EXT, GL_UNSIGNED_BYTE, buffer );
-    glReadBuffer( oldMode );
-
-    SaveRGBBufferToFile(filename, buffer, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
-
-    free( buffer );
-}
-

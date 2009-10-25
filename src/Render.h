@@ -85,7 +85,6 @@ public:
     virtual void UpdateClipRectangle();
     virtual void UpdateScissorWithClipRatio();
     virtual void ApplyScissorWithClipRatio(bool force=false) {}
-    virtual void CaptureScreen(char *folder) {}
 
     void SetTextureEnableAndScale(int dwTile, bool enable, float fScaleX, float fScaleY);
     

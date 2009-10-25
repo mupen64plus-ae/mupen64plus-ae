@@ -129,11 +129,6 @@ typedef struct {
     bool    bUseHW_T_L;                 // Use hardware T&L, for debug purpose only
 
     bool    toShowCFB;
-    bool    toCaptureScreen;
-    char    screenCaptureFilename[1024];
-
-    char    CPUCoreMsgToDisplay[256];
-    bool    CPUCoreMsgIsSet;
 
     bool    bAllowLoadFromTMEM;
 

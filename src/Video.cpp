@@ -127,14 +127,6 @@ static void UpdateScreenStep2 (void)
         return;
     }
 
-
-    if( status.toCaptureScreen )
-    {
-        status.toCaptureScreen = false;
-        // Capture screen here
-        CRender::g_pRender->CaptureScreen(status.screenCaptureFilename);
-    }
-
     TXTRBUF_DETAIL_DUMP(TRACE1("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG));
 
     if( currentRomOptions.screenUpdateSetting == SCREEN_UPDATE_AT_VI_UPDATE )
@@ -591,6 +583,10 @@ void TriggerSPInterrupt(void)
     g_GraphicsInfo.CheckInterrupts();
 }
 
+void _VIDEO_DisplayTemporaryMessage(const char *Message)
+{
+}
+
 //---------------------------------------------------------------------------------------
 // Global functions, exported for use by the core library
 
@@ -617,12 +613,6 @@ EXPORT void CALL ChangeWindow (void)
         status.ToToggleFullScreen = FALSE;
     else
         status.ToToggleFullScreen = TRUE;
-}
-
-//---------------------------------------------------------------------------------------
-
-EXPORT void CALL DrawScreen (void)
-{
 }
 
 //---------------------------------------------------------------------------------------
@@ -749,26 +739,6 @@ EXPORT void CALL ViWidthChanged(void)
     g_CritialSection.Unlock();
 }
 
-EXPORT BOOL CALL GetFullScreenStatus(void);
-EXPORT void CALL SetOnScreenText(char *msg)
-{
-    status.CPUCoreMsgIsSet = true;
-    memset(&status.CPUCoreMsgToDisplay, 0, 256);
-    strncpy(status.CPUCoreMsgToDisplay, msg, 255);
-}
-
-EXPORT BOOL CALL GetFullScreenStatus(void)
-{
-    if( CGraphicsContext::g_pGraphicsContext )
-    {
-        return CGraphicsContext::g_pGraphicsContext->IsWindowed() ? FALSE : TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }
-}
-
 EXPORT BOOL CALL InitiateGFX(GFX_INFO Gfx_Info)
 {
     memset(&status, 0, sizeof(status));
@@ -804,10 +774,6 @@ void __cdecl ErrorMsg (const char* Message, ...)
     sprintf(generalText, "%s %s",project_name, PLUGIN_VERSION);
    messagebox(generalText, MB_OK|MB_ICONERROR, Msg);
 }
-*/
-
-//---------------------------------------------------------------------------------------
-
 EXPORT void CALL CloseDLL(void)
 { 
     if( status.bGameIsRunning )
@@ -821,42 +787,9 @@ EXPORT void CALL CloseDLL(void)
         TRACE0("Write back INI file");
     }
 }
+*/
 
-EXPORT uint32 CALL ProcessDListCountCycles(void)
-{
-#ifdef USING_THREAD
-    if (videoThread)
-    {
-        SetEvent( threadMsg[RSPMSG_PROCESSDLIST] );
-        WaitForSingleObject( threadFinished, INFINITE );
-    }
-    return 0;
-#else
-    g_CritialSection.Lock();
-    status.SPCycleCount = 100;
-    status.DPCycleCount = 0;
-    try
-    {
-        DLParser_Process((OSTask *)(g_GraphicsInfo.DMEM + 0x0FC0));
-    }
-    catch (...)
-    {
-        TRACE0("Unknown Error in ProcessDListCountCycles");
-        TriggerDPInterrupt();
-        TriggerSPInterrupt();
-    }
-    status.SPCycleCount *= 6;
-    //status.DPCycleCount += status.SPCycleCount;
-    //status.DPCycleCount *=4;
-    //status.DPCycleCount = min(200,status.DPCycleCount);
-    //status.DPCycleCount *= 15;
-    status.DPCycleCount *= 5;
-    status.DPCycleCount += status.SPCycleCount;
-
-    g_CritialSection.Unlock();
-    return (status.DPCycleCount<<16)+status.SPCycleCount;
-#endif
-}   
+//---------------------------------------------------------------------------------------
 
 EXPORT void CALL ProcessRDPList(void)
 {
@@ -939,10 +872,6 @@ EXPORT void CALL FBWrite(uint32 addr, uint32 size)
     g_pFrameBufferManager->FrameBufferWriteByCPU(addr, size);
 }
 
-void _VIDEO_DisplayTemporaryMessage(const char *Message)
-{
-}
-
 /************************************************************************
 Function: FBGetFrameBufferInfo
 Purpose:  This function is called by the emulator core to retrieve frame
@@ -1007,32 +936,6 @@ EXPORT void CALL ShowCFB(void)
     status.toShowCFB = true;
 }
 
-EXPORT void CALL CaptureScreen( char * Directory )
-{
-    // start by getting the base file path
-    char filepath[2048], filename[2048];
-    filepath[0] = 0;
-    filename[0] = 0;
-    strcpy(filepath, Directory);
-    if (strlen(filepath) > 0 && filepath[strlen(filepath)-1] != '/')
-        strcat(filepath, "/");
-    strcat(filepath, "mupen64");
-    // look for a file
-    int i;
-    for (i = 0; i < 100; i++)
-    {
-        sprintf(filename, "%s_%03i.png", filepath, i);
-        FILE *pFile = fopen(filename, "r");
-        if (pFile == NULL)
-            break;
-        fclose(pFile);
-    }
-    if (i == 100) return;
-    // save filename for screen saving at next refresh
-    strcpy(status.screenCaptureFilename, filename);
-    status.toCaptureScreen = true;
-}
-
 //void ReadScreen( void **dest, int *width, int *height )
 EXPORT void CALL ReadScreen(void **dest, int *width, int *height)
 {
@@ -1052,20 +955,6 @@ EXPORT void CALL ReadScreen(void **dest, int *width, int *height)
    glReadBuffer( oldMode );
 }
     
-/******************************************************************
-   NOTE: THIS HAS BEEN ADDED FOR MUPEN64PLUS AND IS NOT PART OF THE
-         ORIGINAL SPEC
-  Function: SetConfigDir
-  Purpose:  To pass the location where config files should be read/
-            written to.
-  input:    path to config directory
-  output:   none
-*******************************************************************/
-EXPORT void CALL SetConfigDir(char *configDir)
-{
-    strncpy(g_ConfigDir, configDir, PATH_MAX);
-}
-
 /******************************************************************
    NOTE: THIS HAS BEEN ADDED FOR MUPEN64PLUS AND IS NOT PART OF THE
          ORIGINAL SPEC

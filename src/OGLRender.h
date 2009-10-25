@@ -38,8 +38,6 @@ public:
     bool InitDeviceObjects();
     bool ClearDeviceObjects();
 
-    void CaptureScreen(char *filename);
-
     void ApplyTextureFilter();
 
     void SetShadeMode(RenderShadeMode mode);
