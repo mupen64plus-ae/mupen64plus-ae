@@ -35,6 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "GraphicsContext.h"
 #include "Render.h"
 #include "RSP_Parser.h"
+#include "TextureFilters.h"
 #include "TextureManager.h"
 #include "Video.h"
 
@@ -77,79 +78,8 @@ bool frameWriteByCPURectFlag[20][20];
 std::vector<uint32> frameWriteRecord;
 
 //---------------------------------------------------------------------------------------
-
-void GetPluginDir( char * Directory ) 
-{
-   if(strlen(g_ConfigDir) > 0)
-   {
-      strncpy(Directory, g_ConfigDir, PATH_MAX);
-      // make sure there's a trailing '/'
-      if(Directory[strlen(Directory)-1] != '/')
-          strncat(Directory, "/", PATH_MAX - strlen(Directory));
-   }
-   else
-   {
-      char path[PATH_MAX];
-      int n = -1; /* fixme remove this function readlink("/proc/self/exe", path, PATH_MAX);*/
-      if(n == -1) strcpy(path, "./");
-      else
-        {
-           char path2[PATH_MAX];
-           int i;
-           
-           path[n] = '\0';
-           strcpy(path2, path);
-           for (i=strlen(path2)-1; i>0; i--)
-             {
-                if(path2[i] == '/') break;
-             }
-           if(i == 0) strcpy(path, "./");
-           else
-             {
-                DIR *dir;
-                struct dirent *entry;
-                int gooddir = 0;
-                
-                path2[i+1] = '\0';
-                dir = opendir(path2);
-                while((entry = readdir(dir)) != NULL)
-                  {
-              if(!strcmp(entry->d_name, "plugins"))
-                gooddir = 1;
-                  }
-                closedir(dir);
-                if(!gooddir) strcpy(path, "./");
-             }
-        }
-      int i;
-      for(i=strlen(path)-1; i>0; i--)
-        {
-           if(path[i] == '/') break;
-        }
-      path[i+1] = '\0';
-      strcat(path, "plugins/");
-      strcpy(Directory, path);
-   }
-}
-
-//-------------------------------------------------------------------------------------
-/*
-EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
-{
-#ifdef _DEBUG
-    sprintf(PluginInfo->Name, "%s %s Debug",project_name, PLUGIN_VERSION);
-#else
-    sprintf(PluginInfo->Name, "%s %s",project_name, PLUGIN_VERSION);
-#endif
-    PluginInfo->Version        = 0x0103;
-    PluginInfo->Type           = PLUGIN_TYPE_GFX;
-    PluginInfo->NormalMemory   = FALSE;
-    PluginInfo->MemoryBswaped  = TRUE;
-}
-
-*/
-
-void ChangeWindowStep2()
+// Static (local) functions
+static void ChangeWindowStep2()
 {
     status.bDisableFPS = true;
     windowSetting.bDisplayFullscreen = 1-windowSetting.bDisplayFullscreen;
@@ -167,32 +97,148 @@ void ChangeWindowStep2()
     status.ToToggleFullScreen = FALSE;
 }
 
-EXPORT void CALL ChangeWindow (void)
+static void UpdateScreenStep2 (void)
 {
-    if( status.ToToggleFullScreen )
-        status.ToToggleFullScreen = FALSE;
-    else
-        status.ToToggleFullScreen = TRUE;
+    status.bVIOriginIsUpdated = false;
+
+    if( status.ToToggleFullScreen && status.gDlistCount > 0 )
+    {
+        ChangeWindowStep2();
+        return;
+    }
+
+    g_CritialSection.Lock();
+    if( status.bHandleN64RenderTexture )
+        g_pFrameBufferManager->CloseRenderTexture(true);
+    
+    g_pFrameBufferManager->SetAddrBeDisplayed(*g_GraphicsInfo.VI_ORIGIN_REG);
+
+    if( status.gDlistCount == 0 )
+    {
+        // CPU frame buffer update
+        uint32 width = *g_GraphicsInfo.VI_WIDTH_REG;
+        if( (*g_GraphicsInfo.VI_ORIGIN_REG & (g_dwRamSize-1) ) > width*2 && *g_GraphicsInfo.VI_H_START_REG != 0 && width != 0 )
+        {
+            SetVIScales();
+            CRender::GetRender()->DrawFrameBuffer(true);
+            CGraphicsContext::Get()->UpdateFrame();
+        }
+        g_CritialSection.Unlock();
+        return;
+    }
+
+
+    if( status.toCaptureScreen )
+    {
+        status.toCaptureScreen = false;
+        // Capture screen here
+        CRender::g_pRender->CaptureScreen(status.screenCaptureFilename);
+    }
+
+    TXTRBUF_DETAIL_DUMP(TRACE1("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG));
+
+    if( currentRomOptions.screenUpdateSetting == SCREEN_UPDATE_AT_VI_UPDATE )
+    {
+        CGraphicsContext::Get()->UpdateFrame();
+
+        DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("Update Screen: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
+        DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
+        DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
+        g_CritialSection.Unlock();
+        return;
+    }
+
+    TXTRBUF_DETAIL_DUMP(TRACE1("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG));
+
+    if( currentRomOptions.screenUpdateSetting == SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN )
+    {
+        if( status.bScreenIsDrawn )
+        {
+            CGraphicsContext::Get()->UpdateFrame();
+            DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("Update Screen: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
+        }
+        else
+        {
+            DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("Skip Screen Update: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
+        }
+
+        DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
+        DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
+        g_CritialSection.Unlock();
+        return;
+    }
+
+    if( currentRomOptions.screenUpdateSetting==SCREEN_UPDATE_AT_VI_CHANGE )
+    {
+
+        if( *g_GraphicsInfo.VI_ORIGIN_REG != status.curVIOriginReg )
+        {
+            if( *g_GraphicsInfo.VI_ORIGIN_REG < status.curDisplayBuffer || *g_GraphicsInfo.VI_ORIGIN_REG > status.curDisplayBuffer+0x2000  )
+            {
+                status.curDisplayBuffer = *g_GraphicsInfo.VI_ORIGIN_REG;
+                status.curVIOriginReg = status.curDisplayBuffer;
+                //status.curRenderBuffer = NULL;
+
+                CGraphicsContext::Get()->UpdateFrame();
+                DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("Update Screen: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
+                DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
+                DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
+            }
+            else
+            {
+                status.curDisplayBuffer = *g_GraphicsInfo.VI_ORIGIN_REG;
+                status.curVIOriginReg = status.curDisplayBuffer;
+                DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_FRAME, {DebuggerAppendMsg("Skip Screen Update, closed to the display buffer, VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG);});
+            }
+        }
+        else
+        {
+            DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_FRAME, {DebuggerAppendMsg("Skip Screen Update, the same VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG);});
+        }
+
+        g_CritialSection.Unlock();
+        return;
+    }
+
+    if( currentRomOptions.screenUpdateSetting >= SCREEN_UPDATE_AT_1ST_CI_CHANGE )
+    {
+        status.bVIOriginIsUpdated=true;
+        DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_FRAME, {DebuggerAppendMsg("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG);});
+        g_CritialSection.Unlock();
+        return;
+    }
+
+    DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("VI is updated, No screen update: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
+    DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
+    DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
+
+    g_CritialSection.Unlock();
 }
 
-//---------------------------------------------------------------------------------------
-
-EXPORT void CALL DrawScreen (void)
+static void ProcessDListStep2(void)
 {
-}
+    g_CritialSection.Lock();
+    if( status.toShowCFB )
+    {
+        CRender::GetRender()->DrawFrameBuffer(true);
+        status.toShowCFB = false;
+    }
 
-//---------------------------------------------------------------------------------------
+    try
+    {
+        DLParser_Process((OSTask *)(g_GraphicsInfo.DMEM + 0x0FC0));
+    }
+    catch (...)
+    {
+        TRACE0("Unknown Error in ProcessDList");
+        TriggerDPInterrupt();
+        TriggerSPInterrupt();
+    }
 
-EXPORT void CALL MoveScreen (int xpos, int ypos)
-{ 
-}
+    g_CritialSection.Unlock();
+}   
 
-void Ini_GetRomOptions(LPGAMESETTING pGameSetting);
-void Ini_StoreRomOptions(LPGAMESETTING pGameSetting);
-void GenerateCurrentRomOptions();
-
-extern void InitExternalTextures(void);
-void StartVideo(void)
+static void StartVideo(void)
 {
     windowSetting.dps = windowSetting.fps = -1;
     windowSetting.lastSecDlistCount = windowSetting.lastSecFrameCount = 0xFFFFFFFF;
@@ -256,8 +302,7 @@ void StartVideo(void)
     g_CritialSection.Unlock();
 }
 
-extern void CloseExternalTextures(void);
-void StopVideo()
+static void StopVideo()
 {
     if( CGraphicsContext::Get()->IsWindowed() == false )
     {
@@ -295,12 +340,7 @@ void StopVideo()
 }
 
 #ifdef USING_THREAD
-void ChangeWindowStep2();
-void UpdateScreenStep2 (void);
-void ProcessDListStep2(void);
-
-//BOOL SwitchToThread(void);
-uint32 VideoThreadProc(void *lpParameter)
+static uint32 VideoThreadProc(void *lpParameter)
 {
     BOOL res;
 
@@ -349,74 +389,61 @@ uint32 VideoThreadProc(void *lpParameter)
 #endif
 
 //---------------------------------------------------------------------------------------
-EXPORT void CALL RomClosed(void)
+// Global functions, for use by other source files in this plugin
+
+void GetPluginDir( char * Directory ) 
 {
-    TRACE0("To stop video");
-    Ini_StoreRomOptions(&g_curRomInfo);
-#ifdef USING_THREAD
-    if(videoThread)
-    {
-        SetEvent( threadMsg[RSPMSG_CLOSE] );
-        WaitForSingleObject( threadFinished, INFINITE );
-        for (int i = 0; i < 5; i++)
+   if(strlen(g_ConfigDir) > 0)
+   {
+      strncpy(Directory, g_ConfigDir, PATH_MAX);
+      // make sure there's a trailing '/'
+      if(Directory[strlen(Directory)-1] != '/')
+          strncat(Directory, "/", PATH_MAX - strlen(Directory));
+   }
+   else
+   {
+      char path[PATH_MAX];
+      int n = -1; /* fixme remove this function readlink("/proc/self/exe", path, PATH_MAX);*/
+      if(n == -1) strcpy(path, "./");
+      else
         {
-            if (threadMsg[i])   CloseHandle( threadMsg[i] );
+           char path2[PATH_MAX];
+           int i;
+           
+           path[n] = '\0';
+           strcpy(path2, path);
+           for (i=strlen(path2)-1; i>0; i--)
+             {
+                if(path2[i] == '/') break;
+             }
+           if(i == 0) strcpy(path, "./");
+           else
+             {
+                DIR *dir;
+                struct dirent *entry;
+                int gooddir = 0;
+                
+                path2[i+1] = '\0';
+                dir = opendir(path2);
+                while((entry = readdir(dir)) != NULL)
+                  {
+              if(!strcmp(entry->d_name, "plugins"))
+                gooddir = 1;
+                  }
+                closedir(dir);
+                if(!gooddir) strcpy(path, "./");
+             }
         }
-        CloseHandle( threadFinished );
-        CloseHandle( videoThread );
-    }
-    videoThread = NULL;
-#else
-    StopVideo();
-#endif
-    TRACE0("Video is stopped");
+      int i;
+      for(i=strlen(path)-1; i>0; i--)
+        {
+           if(path[i] == '/') break;
+        }
+      path[i+1] = '\0';
+      strcat(path, "plugins/");
+      strcpy(Directory, path);
+   }
 }
-
-EXPORT void CALL RomOpen(void)
-{
-   InitConfiguration();
-
-    if( g_CritialSection.IsLocked() )
-    {
-        g_CritialSection.Unlock();
-        TRACE0("g_CritialSection is locked when game is starting, unlock it now.");
-    }
-    status.bDisableFPS=false;
-
-   g_dwRamSize = 0x800000;
-    
-#ifdef _DEBUG
-    if( debuggerPause )
-    {
-        debuggerPause = FALSE;
-        usleep(100 * 1000);
-    }
-#endif
-
-#ifdef USING_THREAD
-    uint32 threadID;
-    for(int i = 0; i < 5; i++) 
-    { 
-        threadMsg[i] = CreateEvent( NULL, FALSE, FALSE, NULL );
-        if (threadMsg[i] == NULL)
-        { 
-            ErrorMsg( "Error creating thread message events");
-            return;
-        } 
-    } 
-    threadFinished = CreateEvent( NULL, FALSE, FALSE, NULL );
-    if (threadFinished == NULL)
-    { 
-        ErrorMsg( "Error creating video thread finished event");
-        return;
-    } 
-    videoThread = CreateThread( NULL, 4096, VideoThreadProc, NULL, NULL, &threadID );
-
-#else
-    StartVideo();
-#endif
-}
-
 
 void SetVIScales()
 {
@@ -552,125 +579,129 @@ void SetVIScales()
     SetScreenMult(windowSetting.uDisplayWidth/windowSetting.fViWidth, windowSetting.uDisplayHeight/windowSetting.fViHeight);
 }
 
-//---------------------------------------------------------------------------------------
-void UpdateScreenStep2 (void)
+void TriggerDPInterrupt(void)
 {
-    status.bVIOriginIsUpdated = false;
-
-    if( status.ToToggleFullScreen && status.gDlistCount > 0 )
-    {
-        ChangeWindowStep2();
-        return;
-    }
-
-    g_CritialSection.Lock();
-    if( status.bHandleN64RenderTexture )
-        g_pFrameBufferManager->CloseRenderTexture(true);
-    
-    g_pFrameBufferManager->SetAddrBeDisplayed(*g_GraphicsInfo.VI_ORIGIN_REG);
-
-    if( status.gDlistCount == 0 )
-    {
-        // CPU frame buffer update
-        uint32 width = *g_GraphicsInfo.VI_WIDTH_REG;
-        if( (*g_GraphicsInfo.VI_ORIGIN_REG & (g_dwRamSize-1) ) > width*2 && *g_GraphicsInfo.VI_H_START_REG != 0 && width != 0 )
-        {
-            SetVIScales();
-            CRender::GetRender()->DrawFrameBuffer(true);
-            CGraphicsContext::Get()->UpdateFrame();
-        }
-        g_CritialSection.Unlock();
-        return;
-    }
-
-
-    if( status.toCaptureScreen )
-    {
-        status.toCaptureScreen = false;
-        // Capture screen here
-        CRender::g_pRender->CaptureScreen(status.screenCaptureFilename);
-    }
-
-    TXTRBUF_DETAIL_DUMP(TRACE1("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG));
-
-    if( currentRomOptions.screenUpdateSetting == SCREEN_UPDATE_AT_VI_UPDATE )
-    {
-        CGraphicsContext::Get()->UpdateFrame();
-
-        DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("Update Screen: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
-        DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
-        DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
-        g_CritialSection.Unlock();
-        return;
-    }
-
-    TXTRBUF_DETAIL_DUMP(TRACE1("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG));
-
-    if( currentRomOptions.screenUpdateSetting == SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN )
-    {
-        if( status.bScreenIsDrawn )
-        {
-            CGraphicsContext::Get()->UpdateFrame();
-            DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("Update Screen: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
-        }
-        else
-        {
-            DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("Skip Screen Update: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
-        }
-
-        DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
-        DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
-        g_CritialSection.Unlock();
-        return;
-    }
-
-    if( currentRomOptions.screenUpdateSetting==SCREEN_UPDATE_AT_VI_CHANGE )
-    {
-
-        if( *g_GraphicsInfo.VI_ORIGIN_REG != status.curVIOriginReg )
-        {
-            if( *g_GraphicsInfo.VI_ORIGIN_REG < status.curDisplayBuffer || *g_GraphicsInfo.VI_ORIGIN_REG > status.curDisplayBuffer+0x2000  )
-            {
-                status.curDisplayBuffer = *g_GraphicsInfo.VI_ORIGIN_REG;
-                status.curVIOriginReg = status.curDisplayBuffer;
-                //status.curRenderBuffer = NULL;
-
-                CGraphicsContext::Get()->UpdateFrame();
-                DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("Update Screen: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
-                DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
-                DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
-            }
-            else
-            {
-                status.curDisplayBuffer = *g_GraphicsInfo.VI_ORIGIN_REG;
-                status.curVIOriginReg = status.curDisplayBuffer;
-                DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_FRAME, {DebuggerAppendMsg("Skip Screen Update, closed to the display buffer, VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG);});
-            }
-        }
-        else
-        {
-            DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_FRAME, {DebuggerAppendMsg("Skip Screen Update, the same VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG);});
-        }
-
-        g_CritialSection.Unlock();
-        return;
-    }
-
-    if( currentRomOptions.screenUpdateSetting >= SCREEN_UPDATE_AT_1ST_CI_CHANGE )
-    {
-        status.bVIOriginIsUpdated=true;
-        DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_FRAME, {DebuggerAppendMsg("VI ORIG is updated to %08X", *g_GraphicsInfo.VI_ORIGIN_REG);});
-        g_CritialSection.Unlock();
-        return;
-    }
-
-    DEBUGGER_IF_DUMP( pauseAtNext, TRACE1("VI is updated, No screen update: VIORIG=%08X", *g_GraphicsInfo.VI_ORIGIN_REG));
-    DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_FRAME);
-    DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(NEXT_SET_CIMG);
-
-    g_CritialSection.Unlock();
+    *(g_GraphicsInfo.MI_INTR_REG) |= MI_INTR_DP;
+    g_GraphicsInfo.CheckInterrupts();
 }
 
+void TriggerSPInterrupt(void)
+{
+    *(g_GraphicsInfo.MI_INTR_REG) |= MI_INTR_SP;
+    g_GraphicsInfo.CheckInterrupts();
+}
+
+//---------------------------------------------------------------------------------------
+// Global functions, exported for use by the core library
+
+//-------------------------------------------------------------------------------------
+/*
+EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
+{
+#ifdef _DEBUG
+    sprintf(PluginInfo->Name, "%s %s Debug",project_name, PLUGIN_VERSION);
+#else
+    sprintf(PluginInfo->Name, "%s %s",project_name, PLUGIN_VERSION);
+#endif
+    PluginInfo->Version        = 0x0103;
+    PluginInfo->Type           = PLUGIN_TYPE_GFX;
+    PluginInfo->NormalMemory   = FALSE;
+    PluginInfo->MemoryBswaped  = TRUE;
+}
+
+*/
+
+EXPORT void CALL ChangeWindow (void)
+{
+    if( status.ToToggleFullScreen )
+        status.ToToggleFullScreen = FALSE;
+    else
+        status.ToToggleFullScreen = TRUE;
+}
+
+//---------------------------------------------------------------------------------------
+
+EXPORT void CALL DrawScreen (void)
+{
+}
+
+//---------------------------------------------------------------------------------------
+
+EXPORT void CALL MoveScreen (int xpos, int ypos)
+{ 
+}
+
+//---------------------------------------------------------------------------------------
+EXPORT void CALL RomClosed(void)
+{
+    TRACE0("To stop video");
+    Ini_StoreRomOptions(&g_curRomInfo);
+#ifdef USING_THREAD
+    if(videoThread)
+    {
+        SetEvent( threadMsg[RSPMSG_CLOSE] );
+        WaitForSingleObject( threadFinished, INFINITE );
+        for (int i = 0; i < 5; i++)
+        {
+            if (threadMsg[i])   CloseHandle( threadMsg[i] );
+        }
+        CloseHandle( threadFinished );
+        CloseHandle( videoThread );
+    }
+    videoThread = NULL;
+#else
+    StopVideo();
+#endif
+    TRACE0("Video is stopped");
+}
+
+EXPORT void CALL RomOpen(void)
+{
+   InitConfiguration();
+
+    if( g_CritialSection.IsLocked() )
+    {
+        g_CritialSection.Unlock();
+        TRACE0("g_CritialSection is locked when game is starting, unlock it now.");
+    }
+    status.bDisableFPS=false;
+
+   g_dwRamSize = 0x800000;
+    
+#ifdef _DEBUG
+    if( debuggerPause )
+    {
+        debuggerPause = FALSE;
+        usleep(100 * 1000);
+    }
+#endif
+
+#ifdef USING_THREAD
+    uint32 threadID;
+    for(int i = 0; i < 5; i++) 
+    { 
+        threadMsg[i] = CreateEvent( NULL, FALSE, FALSE, NULL );
+        if (threadMsg[i] == NULL)
+        { 
+            ErrorMsg( "Error creating thread message events");
+            return;
+        } 
+    } 
+    threadFinished = CreateEvent( NULL, FALSE, FALSE, NULL );
+    if (threadFinished == NULL)
+    { 
+        ErrorMsg( "Error creating video thread finished event");
+        return;
+    } 
+    videoThread = CreateThread( NULL, 4096, VideoThreadProc, NULL, NULL, &threadID );
+
+#else
+    StartVideo();
+#endif
+}
+
+
+//---------------------------------------------------------------------------------------
 EXPORT void CALL UpdateScreen(void)
 {
     if(options.bShowFPS)
@@ -791,29 +822,6 @@ EXPORT void CALL CloseDLL(void)
     }
 }
 
-void ProcessDListStep2(void)
-{
-    g_CritialSection.Lock();
-    if( status.toShowCFB )
-    {
-        CRender::GetRender()->DrawFrameBuffer(true);
-        status.toShowCFB = false;
-    }
-
-    try
-    {
-        DLParser_Process((OSTask *)(g_GraphicsInfo.DMEM + 0x0FC0));
-    }
-    catch (...)
-    {
-        TRACE0("Unknown Error in ProcessDList");
-        TriggerDPInterrupt();
-        TriggerSPInterrupt();
-    }
-
-    g_CritialSection.Unlock();
-}   
-
 EXPORT uint32 CALL ProcessDListCountCycles(void)
 {
 #ifdef USING_THREAD
@@ -886,18 +894,6 @@ EXPORT void CALL ProcessDList(void)
 }   
 
 //---------------------------------------------------------------------------------------
-
-void TriggerDPInterrupt(void)
-{
-    *(g_GraphicsInfo.MI_INTR_REG) |= MI_INTR_DP;
-    g_GraphicsInfo.CheckInterrupts();
-}
-
-void TriggerSPInterrupt(void)
-{
-    *(g_GraphicsInfo.MI_INTR_REG) |= MI_INTR_SP;
-    g_GraphicsInfo.CheckInterrupts();
-}
 
 /******************************************************************
   Function: FrameBufferRead

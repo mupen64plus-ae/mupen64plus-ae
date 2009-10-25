@@ -246,8 +246,6 @@ typedef struct {
     HACK_FOR_GAMES  enableHackForGames;
 } GlobalOptions;
 
-extern GlobalOptions options;
-
 typedef struct {
     bool    bUpdateCIInfo;
 
@@ -271,10 +269,6 @@ typedef struct {
     //bool  bFillColor;
 } FrameBufferOptions;
 
-extern FrameBufferOptions frameBufferOptions;
-
-BOOL InitConfiguration(void);
-
 typedef struct {
     uint32  N64FrameBufferEmuType;
     uint32  N64FrameBufferWriteBackControl;
@@ -289,9 +283,6 @@ typedef struct {
     BOOL    bSaveVRAM;
     BOOL    bOverlapAutoWriteBack;
 } RomOptions;
-
-extern RomOptions defaultRomOptions;
-extern RomOptions currentRomOptions;
 
 typedef struct IniSection
 {
@@ -334,14 +325,6 @@ typedef struct IniSection
     BOOL    bTxtSizeMethod2;
     BOOL    bEnableTxtLOD;
 } section;
-
-extern bool bIniIsChanged;
-extern char szIniFileName[300];
-    void WriteIniFile();
-BOOL ReadIniFile();
-    void OutputSectionDetails(uint32 i, FILE * fh);
-int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName); 
-
 
 struct ROMHeader
 {
@@ -413,19 +396,6 @@ typedef struct
     uint32 nTvType;
 } CountryIDInfo;
 
-
-extern const CountryIDInfo g_CountryCodeInfo[];
-
-extern GameSetting g_curRomInfo;
-
-void ROM_GetRomNameFromHeader(unsigned char * szName, ROMHeader * pHdr);
-
-#define TV_SYSTEM_NTSC      1
-#define TV_SYSTEM_PAL       0
-uint32 CountryCodeToTVSystem(uint32 countryCode);
-
-extern const char *project_name;
-
 enum {
     PSH_OPTIONS,
     PSH_DIRECTX,
@@ -434,6 +404,30 @@ enum {
     PSH_DEFAULTS,
     PSH_ROM_SETTINGS,
 };
+
+#define TV_SYSTEM_NTSC      1
+#define TV_SYSTEM_PAL       0
+
+extern GlobalOptions       options;
+extern FrameBufferOptions  frameBufferOptions;
+extern RomOptions          defaultRomOptions;
+extern RomOptions          currentRomOptions;
+extern const CountryIDInfo g_CountryCodeInfo[];
+extern GameSetting         g_curRomInfo;
+extern const char         *project_name;
+extern bool                bIniIsChanged;
+extern char                szIniFileName[300];
+
+extern BOOL InitConfiguration(void);
+extern void WriteIniFile();
+extern BOOL ReadIniFile();
+extern void OutputSectionDetails(uint32 i, FILE * fh);
+extern int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName); 
+extern void GenerateCurrentRomOptions();
+extern void Ini_GetRomOptions(LPGAMESETTING pGameSetting);
+extern void Ini_StoreRomOptions(LPGAMESETTING pGameSetting);
+extern uint32 CountryCodeToTVSystem(uint32 countryCode);
+extern void ROM_GetRomNameFromHeader(unsigned char * szName, ROMHeader * pHdr);
 
 #endif
 
