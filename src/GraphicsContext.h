@@ -55,7 +55,7 @@ public:
     bool Ready() { return m_bReady; }
     bool IsWindowed() {return m_bWindowed;}
 
-    virtual bool Initialize(HWND hWnd, HWND hWndStatus, uint32 dwWidth, uint32 dwHeight, BOOL bWindowed );
+    virtual bool Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed );
     virtual void CleanUp();
 
     virtual void Clear(ClearFlag flags, uint32 color=0xFF000000, float depth=1.0f) = 0;
@@ -68,12 +68,12 @@ public:
     bool m_supportTextureMirror;
 
 public:
-    static  int         m_maxFSAA;
-    static  int         m_maxAnisotropy;
-    static  UINT        m_FullScreenRefreshRates[40];
-    static  UINT        m_ColorBufferDepths[4];
-    static  int         m_FullScreenResolutions[40][2];
-    static  int         m_numOfResolutions;
+    static  int          m_maxFSAA;
+    static  int          m_maxAnisotropy;
+    static  unsigned int m_FullScreenRefreshRates[40];
+    static  unsigned int m_ColorBufferDepths[4];
+    static  int          m_FullScreenResolutions[40][2];
+    static  int          m_numOfResolutions;
 
 protected:
     static  uint32      m_dwWindowStyle;     // Saved window style for mode switches

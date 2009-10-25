@@ -31,8 +31,8 @@ typedef struct {
     unsigned short int  dwHeight;           // Describes the height of the real texture area
     unsigned short int  dwCreatedWidth;     // Describes the width of the created texture area. Use lPitch to move between successive lines
     unsigned short int  dwCreatedHeight;    // Describes the height of the created texture area
-    LONG        lPitch;             // Specifies the number of bytes on each row (not necessarily bitdepth*width/8)
-    VOID        *lpSurface;         // Pointer to the top left pixel of the image
+    int        lPitch;             // Specifies the number of bytes on each row (not necessarily bitdepth*width/8)
+    void        *lpSurface;         // Pointer to the top left pixel of the image
 } DrawInfo;
 
 

@@ -309,7 +309,7 @@ void CRender::RenderReset()
     gRSP.fTexScaleY = 1/32.0f;
 }
 
-bool CRender::FillRect(LONG nX0, LONG nY0, LONG nX1, LONG nY1, uint32 dwColor)
+bool CRender::FillRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor)
 {
   LOG_UCODE("FillRect: X0=%d, Y0=%d, X1=%d, Y1=%d, Color=0x%8X", nX0, nY0, nX1, nY1, dwColor);
 
@@ -519,7 +519,7 @@ bool CRender::RemapTextureCoordinate
     }
 }
 
-bool CRender::TexRect(LONG nX0, LONG nY0, LONG nX1, LONG nY1, float fS0, float fT0, float fScaleS, float fScaleT, bool colorFlag, uint32 diffuseColor)
+bool CRender::TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, float fScaleS, float fScaleT, bool colorFlag, uint32 diffuseColor)
 {
     if( options.enableHackForGames == HACK_FOR_DUKE_NUKEM )
     {
@@ -823,7 +823,7 @@ bool CRender::TexRect(LONG nX0, LONG nY0, LONG nX1, LONG nY1, float fS0, float f
 }
 
 
-bool CRender::TexRectFlip(LONG nX0, LONG nY0, LONG nX1, LONG nY1, float fS0, float fT0, float fS1, float fT1)
+bool CRender::TexRectFlip(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, float fS1, float fT1)
 {
     LOG_UCODE("TexRectFlip: X0=%d, Y0=%d, X1=%d, Y1=%d,\n\t\tfS0=%f, fT0=%f, fS1=%f, fT1=%f ",
             nX0, nY0, nX1, nY1, fS0, fT0, fS1, fT1);
@@ -961,7 +961,7 @@ void CRender::StartDrawSimple2DTexture(float x0, float y0, float x1, float y1, f
     g_texRectTVtx[0].rhw = g_texRectTVtx[1].rhw = g_texRectTVtx[2].rhw = g_texRectTVtx[3].rhw = rhw;
 }
 
-void CRender::StartDrawSimpleRect(LONG nX0, LONG nY0, LONG nX1, LONG nY1, uint32 dwColor, float depth, float rhw)
+void CRender::StartDrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor, float depth, float rhw)
 {
     m_simpleRectVtx[0].x = ViewPortTranslatei_x(nX0);
     m_simpleRectVtx[1].x = ViewPortTranslatei_x(nX1);
@@ -1390,7 +1390,7 @@ bool SaveCITextureToFile(TxtrCacheEntry &entry, char *filename, bool bShow, bool
     int height = bWholeTexture ? texture.m_dwCreatedTextureHeight : entry.ti.HeightToLoad;
     int bufSizePerLine = (((((width << entry.ti.Size) + 1 ) >> 1)+3) >> 2)*4;   // pad to 32bit boundary
     int bufSize = bufSizePerLine*height;
-    BYTE *pbuf = new BYTE[bufSize];
+    unsigned char *pbuf = new unsigned char[bufSize];
 
     DrawInfo srcInfo;
     if( texture.StartUpdate(&srcInfo) )
@@ -1398,7 +1398,7 @@ bool SaveCITextureToFile(TxtrCacheEntry &entry, char *filename, bool bShow, bool
         int idx = 0;
         for( int i=height-1; i>=0; i--)
         {
-            uint32 *pSrc = (uint32*)((BYTE*)srcInfo.lpSurface+srcInfo.lPitch * i);
+            uint32 *pSrc = (uint32*)((unsigned char*)srcInfo.lpSurface+srcInfo.lPitch * i);
             for( int j=0; j<width; j++)
             {
                 int val = ReverseCITableLookup(pTable, tableSize, *pSrc);
@@ -1416,14 +1416,14 @@ bool SaveCITextureToFile(TxtrCacheEntry &entry, char *filename, bool bShow, bool
                     else
                     {
                         // 0
-                        pbuf[idx>>1] = (BYTE)val;
+                        pbuf[idx>>1] = (unsigned char)val;
                         idx++;
                     }
                 }
                 else
                 {
                     // 8 bits
-                    pbuf[idx++] = (BYTE)val;
+                    pbuf[idx++] = (unsigned char)val;
                 }
             }
             if( entry.ti.Size == TXT_SIZE_4b )
@@ -1496,7 +1496,7 @@ void CRender::SaveTextureToFile(CTexture &texture, char *filename, TextureChanne
         height = bWholeTexture ? texture.m_dwCreatedTextureHeight : texture.m_dwHeight;
     }
 
-    BYTE *pbuf = new BYTE[width*height* (channel == TXT_RGBA ? 4 : 3)];
+    unsigned char *pbuf = new unsigned char[width*height* (channel == TXT_RGBA ? 4 : 3)];
     if( pbuf )
     {
         DrawInfo srcInfo;   
@@ -1507,24 +1507,24 @@ void CRender::SaveTextureToFile(CTexture &texture, char *filename, TextureChanne
                 uint32 *pbuf2 = (uint32*)pbuf;
                 for( int i=height-1; i>=0; i--)
                 {
-                    uint32 *pSrc = (uint32*)((BYTE*)srcInfo.lpSurface+srcInfo.lPitch * i);
+                    uint32 *pSrc = (uint32*)((unsigned char*)srcInfo.lpSurface+srcInfo.lPitch * i);
                     for( int j=0; j<width; j++)
                     {
                         *pbuf2++ = *pSrc++;
                     }
                 }
 
-                if( SaveRGBABufferToPNGFile(filename, (BYTE*)pbuf, width, height ) )
-                //if( SaveRGBABufferToPNGFile(filename, (BYTE*)srcInfo.lpSurface, width, height, srcInfo.lPitch ) )
+                if( SaveRGBABufferToPNGFile(filename, (unsigned char*)pbuf, width, height ) )
+                //if( SaveRGBABufferToPNGFile(filename, (unsigned char*)srcInfo.lpSurface, width, height, srcInfo.lPitch ) )
                 {
                 }
             }
             else
             {
-                BYTE *pbuf2 = pbuf;
+                unsigned char *pbuf2 = pbuf;
                 for( int i=height-1; i>=0; i--)
                 {
-                    BYTE *pSrc = (BYTE*)srcInfo.lpSurface+srcInfo.lPitch * i;
+                    unsigned char *pSrc = (unsigned char*)srcInfo.lpSurface+srcInfo.lPitch * i;
                     for( int j=0; j<width; j++)
                     {
                         if( channel == TXT_ALPHA )
@@ -1729,7 +1729,7 @@ void CRender::SetClipRatio(uint32 type, uint32 w1)
     switch(type)
     {
     case RSP_MV_WORD_OFFSET_CLIP_RNX:
-        LOG_UCODE("    RSP_MOVE_WORD_CLIP  NegX: %d", (LONG)(short)w1);
+        LOG_UCODE("    RSP_MOVE_WORD_CLIP  NegX: %d", (int)(short)w1);
         if( gRSP.clip_ratio_negx != (short)w1 )
         {
             gRSP.clip_ratio_negx = (short)w1;
@@ -1737,7 +1737,7 @@ void CRender::SetClipRatio(uint32 type, uint32 w1)
         }
         break;
     case RSP_MV_WORD_OFFSET_CLIP_RNY:
-        LOG_UCODE("    RSP_MOVE_WORD_CLIP  NegY: %d", (LONG)(short)w1);
+        LOG_UCODE("    RSP_MOVE_WORD_CLIP  NegY: %d", (int)(short)w1);
         if( gRSP.clip_ratio_negy != (short)w1 )
         {
             gRSP.clip_ratio_negy = (short)w1;
@@ -1745,7 +1745,7 @@ void CRender::SetClipRatio(uint32 type, uint32 w1)
         }
         break;
     case RSP_MV_WORD_OFFSET_CLIP_RPX:
-        LOG_UCODE("    RSP_MOVE_WORD_CLIP  PosX: %d", (LONG)(short)w1);
+        LOG_UCODE("    RSP_MOVE_WORD_CLIP  PosX: %d", (int)(short)w1);
         if( gRSP.clip_ratio_posx != -(short)w1 )
         {
             gRSP.clip_ratio_posx = -(short)w1;
@@ -1753,7 +1753,7 @@ void CRender::SetClipRatio(uint32 type, uint32 w1)
         }
         break;
     case RSP_MV_WORD_OFFSET_CLIP_RPY:
-        LOG_UCODE("    RSP_MOVE_WORD_CLIP  PosY: %d", (LONG)(short)w1);
+        LOG_UCODE("    RSP_MOVE_WORD_CLIP  PosY: %d", (int)(short)w1);
         if( gRSP.clip_ratio_posy != -(short)w1 )
         {
             gRSP.clip_ratio_posy = -(short)w1;

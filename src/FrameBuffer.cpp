@@ -752,17 +752,17 @@ l1:             mov esi, [ecx+ebx]
     }
     return dwAsmCRC;
 }
-BYTE CalculateMaxCI(void *pPhysicalAddress, uint32 left, uint32 top, uint32 width, uint32 height, uint32 size, uint32 pitchInBytes )
+unsigned char CalculateMaxCI(void *pPhysicalAddress, uint32 left, uint32 top, uint32 width, uint32 height, uint32 size, uint32 pitchInBytes )
 {
     uint32 x, y;
-    BYTE *buf;
-    BYTE val = 0;
+    unsigned char *buf;
+    unsigned char val = 0;
 
     if( TXT_SIZE_8b == size )
     {
         for( y = 0; y<height; y++ )
         {
-            buf = (BYTE*)pPhysicalAddress + left + pitchInBytes * (y+top);
+            buf = (unsigned char*)pPhysicalAddress + left + pitchInBytes * (y+top);
             for( x=0; x<width; x++ )
             {
                 if( buf[x] > val )  val = buf[x];
@@ -773,12 +773,12 @@ BYTE CalculateMaxCI(void *pPhysicalAddress, uint32 left, uint32 top, uint32 widt
     }
     else
     {
-        BYTE val1,val2;
+        unsigned char val1,val2;
         left >>= 1;
         width >>= 1;
         for( y = 0; y<height; y++ )
         {
-            buf = (BYTE*)pPhysicalAddress + left + pitchInBytes * (y+top);
+            buf = (unsigned char*)pPhysicalAddress + left + pitchInBytes * (y+top);
             for( x=0; x<width; x++ )
             {
                 val1 = buf[x]>>4;

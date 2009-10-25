@@ -939,7 +939,7 @@ void GenerateCurrentRomOptions()
 
 void Ini_GetRomOptions(LPGAMESETTING pGameSetting)
 {
-    LONG i;
+    int i;
 
     i = FindIniEntry(pGameSetting->romheader.dwCRC1,
                               pGameSetting->romheader.dwCRC2,
@@ -979,7 +979,7 @@ void Ini_GetRomOptions(LPGAMESETTING pGameSetting)
 
 void Ini_StoreRomOptions(LPGAMESETTING pGameSetting)
 {
-    LONG i;
+    int i;
 
     i = FindIniEntry(pGameSetting->romheader.dwCRC1,
         pGameSetting->romheader.dwCRC2,
@@ -1718,13 +1718,13 @@ std::ifstream & getline(std::ifstream & is, char *str)
 
 void WriteIniFile()
 {
-    TCHAR szFileNameOut[PATH_MAX+1];
-    TCHAR szFileNameDelete[PATH_MAX+1];
-    TCHAR filename[PATH_MAX+1];
+    unsigned char szFileNameOut[PATH_MAX+1];
+    unsigned char szFileNameDelete[PATH_MAX+1];
+    unsigned char filename[PATH_MAX+1];
     uint32 i;
     FILE * fhIn;
     FILE * fhOut;
-    TCHAR szBuf[1024+1];
+    unsigned char szBuf[1024+1];
 
     GetPluginDir((char*)szFileNameOut);
     GetPluginDir((char*)szFileNameDelete);
@@ -1920,7 +1920,7 @@ void __cdecl DebuggerAppendMsg (const char * Message, ...);
 int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName)
 {
     uint32 i;
-    CHAR szCRC[50+1];
+    unsigned char szCRC[50+1];
 
     // Generate the CRC-ID for this rom:
     sprintf((char*)szCRC, "%08x%08x-%02x", (unsigned int)dwCRC1, (unsigned int)dwCRC2, nCountryID);
@@ -1977,9 +1977,9 @@ int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName)
 
 GameSetting g_curRomInfo;
 
-void ROM_GetRomNameFromHeader(TCHAR * szName, ROMHeader * pHdr)
+void ROM_GetRomNameFromHeader(unsigned char * szName, ROMHeader * pHdr)
 {
-    TCHAR * p;
+    unsigned char * p;
 
     memcpy(szName, pHdr->szName, 20);
     szName[20] = '\0';

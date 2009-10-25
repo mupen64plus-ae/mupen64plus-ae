@@ -191,7 +191,7 @@ void ConvertRGBA32(CTexture *pTexture, const TxtrInfo &tinfo)
 
                     uint32 *pDst = (uint32 *)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
                     uint8 *pS = (uint8 *)pSrc;
-                    LONG n;
+                    int n;
 
                     n = (y+tinfo.TopToLoad) * tinfo.Pitch + (tinfo.LeftToLoad*4);
                     for (uint32 x = 0; x < tinfo.WidthToLoad; x++)
@@ -893,7 +893,7 @@ void ConvertCI8_RGBA16(CTexture *pTexture, const TxtrInfo &tinfo)
         {
             uint32 *pDst = (uint32 *)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
 
-            LONG dwByteOffset = ((y+tinfo.TopToLoad) * tinfo.Pitch) + tinfo.LeftToLoad;
+            int dwByteOffset = ((y+tinfo.TopToLoad) * tinfo.Pitch) + tinfo.LeftToLoad;
             
             for (uint32 x = 0; x < tinfo.WidthToLoad; x++)
             {

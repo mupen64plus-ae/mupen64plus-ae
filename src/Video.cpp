@@ -136,27 +136,6 @@ EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
     PluginInfo->MemoryBswaped  = TRUE;
 }
 
-//---------------------------------------------------------------------------------------
-
-EXPORT void CALL DllAbout ( HWND hParent )
-{
-    char temp[300];
-    sprintf(temp,"%s %s \nOpenGL 1.1-1.4/ATI/Nvidia TNT/Geforce Extension\n", project_name, PLUGIN_VERSION);
-    MsgInfo(temp);
-}
-
-
-//---------------------------------------------------------------------------------------
-
-EXPORT void CALL DllTest ( HWND hParent )
-{
-    MsgInfo((char*)"TODO: Test");
-}
-
-EXPORT void CALL DllConfig ( HWND hParent )
-{
-   ShowConfigBox();
-}
 */
 
 void ChangeWindowStep2()
@@ -246,7 +225,7 @@ void StartVideo(void)
         CGraphicsContext::InitWindowInfo();
         
         windowSetting.bDisplayFullscreen = FALSE;
-        bool res = CGraphicsContext::Get()->Initialize(0, NULL, 640, 480, TRUE);  /* fixme hWnd and hStatusBar are removed */
+        bool res = CGraphicsContext::Get()->Initialize(640, 480, TRUE);
         CDeviceBuilder::GetBuilder()->CreateRender();
         CRender::GetRender()->Initialize();
         
@@ -309,8 +288,8 @@ void ChangeWindowStep2();
 void UpdateScreenStep2 (void);
 void ProcessDListStep2(void);
 
-//BOOL SwitchToThread(VOID);
-uint32 VideoThreadProc( LPVOID lpParameter )
+//BOOL SwitchToThread(void);
+uint32 VideoThreadProc(void *lpParameter)
 {
     BOOL res;
 
@@ -771,19 +750,6 @@ EXPORT BOOL CALL InitiateGFX(GFX_INFO Gfx_Info)
 }
 
 /* fixme 
-void __cdecl MsgInfo (char * Message, ...)
-{
-    char Msg[400];
-    va_list ap;
-
-    va_start( ap, Message );
-    vsprintf( Msg, Message, ap );
-    va_end( ap );
-
-    sprintf(generalText, "%s %s",project_name, PLUGIN_VERSION);
-   messagebox(generalText, MB_OK|MB_ICONINFORMATION, Msg);
-}
-
 void __cdecl ErrorMsg (const char* Message, ...)
 {
     char Msg[400];

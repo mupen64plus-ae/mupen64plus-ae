@@ -2088,8 +2088,8 @@ void DLParser_TexRectFlip(Gfx *gfx)
     uint32 dwYL     = (((gfx->words.w1)    )&0x0FFF)/4;
     uint32 dwS      = (  dwCmd2>>16)&0xFFFF;
     uint32 dwT      = (  dwCmd2    )&0xFFFF;
-    LONG  nDSDX     = (LONG)(short)((  dwCmd3>>16)&0xFFFF);
-    LONG  nDTDY     = (LONG)(short)((  dwCmd3    )&0xFFFF);
+    int  nDSDX     = (int)(short)((  dwCmd3>>16)&0xFFFF);
+    int  nDTDY     = (int)(short)((  dwCmd3    )&0xFFFF);
 
     uint32 curTile = gRSP.curTile;
     ForceMainTextureIndex(tileno);

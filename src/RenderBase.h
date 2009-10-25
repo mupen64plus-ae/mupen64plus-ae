@@ -42,7 +42,7 @@ void myVec3Transform(float *vecout, float *vecin, float* m);
 // to be accessed in faster speed
 extern XVECTOR4 g_vtxTransformed[MAX_VERTS];
 extern XVECTOR4 g_vecProjected[MAX_VERTS];
-extern FLOAT        g_vtxProjected5[1000][5];
+extern float        g_vtxProjected5[1000][5];
 extern float        g_vtxProjected5Clipped[2000][5];
 extern VECTOR2      g_fVtxTxtCoords[MAX_VERTS];
 extern uint32       g_dwVtxDifColor[MAX_VERTS];
@@ -259,8 +259,8 @@ void ResetTextureCoordsLog(float maxs0, float maxt0, float maxs1, float maxt1);
 
 inline float ViewPortTranslatef_x(float x) { return ( (x+1) * windowSetting.vpWidthW/2) + windowSetting.vpLeftW; }
 inline float ViewPortTranslatef_y(float y) { return ( (1-y) * windowSetting.vpHeightW/2) + windowSetting.vpTopW; }
-inline float ViewPortTranslatei_x(LONG x) { return x*windowSetting.fMultX; }
-inline float ViewPortTranslatei_y(LONG y) { return y*windowSetting.fMultY; }
+inline float ViewPortTranslatei_x(int x) { return x*windowSetting.fMultX; }
+inline float ViewPortTranslatei_y(int y) { return y*windowSetting.fMultY; }
 inline float ViewPortTranslatei_x(float x) { return x*windowSetting.fMultX; }
 inline float ViewPortTranslatei_y(float y) { return y*windowSetting.fMultY; }
 

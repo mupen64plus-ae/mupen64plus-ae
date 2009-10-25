@@ -1746,7 +1746,7 @@ void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
     Matrix &matWorldProject = gRSP.DKRMatrixes[gRSP.DKRCMatrixIndex];
 
     uint32 i;
-    LONG nOff;
+    int nOff;
 
     bool addbase=false;
     if ((!gRSP.DKRBillBoard) || (gRSP.DKRCMatrixIndex != 2) )
@@ -1835,7 +1835,7 @@ void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
         }
         else
         {
-            LONG nR, nG, nB, nA;
+            int nR, nG, nB, nA;
 
             nR = r;
             nG = g;

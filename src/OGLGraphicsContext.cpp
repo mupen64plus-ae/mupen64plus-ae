@@ -52,13 +52,13 @@ COGLGraphicsContext::~COGLGraphicsContext()
 {
 }
 
-bool COGLGraphicsContext::Initialize(HWND hWnd, HWND hWndStatus, uint32 dwWidth, uint32 dwHeight, BOOL bWindowed )
+bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed )
 {
     printf("Initializing OpenGL Device Context\n");
     Lock();
 
     CGraphicsContext::Get()->m_supportTextureMirror = false;
-    CGraphicsContext::Initialize(hWnd, hWndStatus, dwWidth, dwHeight, bWindowed );
+    CGraphicsContext::Initialize(dwWidth, dwHeight, bWindowed );
 
     if( bWindowed )
     {

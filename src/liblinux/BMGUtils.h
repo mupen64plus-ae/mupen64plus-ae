@@ -9,6 +9,7 @@
 */
 
 #include "BMGImage.h"
+#include "../osal_win32types.h"
 
 /* the following 3 functions are used to access the background color
 // and the background image */

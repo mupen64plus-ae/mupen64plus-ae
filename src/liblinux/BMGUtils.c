@@ -72,29 +72,10 @@ void GetLastBMGErrorMessage( const char **msg )
 {
     if ( LastBMGError == errWindowsAPI )
     {
-#ifdef _WIN32
-          LPVOID lpMsgBuf;
-
-          FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-            NULL,
-            GetLastError(),
-            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-            (LPTSTR) &lpMsgBuf,
-            0,
-            NULL
-          );
-#else // _WIN32
        char* lpMsgBuf = "Erreur BMG\n";
-#endif // _WIN32
 
         /* copy the string. */
           strcpy( BMGErrorStrings[(int)LastBMGError], (char *)lpMsgBuf );
-
-#ifdef _WIN32
-        /* Free the buffer. */
-          LocalFree( lpMsgBuf );
-#endif // _WIN32
     }
 
     *msg = BMGErrorStrings[(int)LastBMGError];

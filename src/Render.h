@@ -169,9 +169,9 @@ public:
     bool DrawTriangles();
     virtual bool RenderFlushTris()=0;
 
-    bool TexRect(LONG nX0, LONG nY0, LONG nX1, LONG nY1, float fS0, float fT0, float fScaleS, float fScaleT, bool colorFlag=false, uint32 difcolor=0xFFFFFFFF);
-    bool TexRectFlip(LONG nX0, LONG nY0, LONG nX1, LONG nY1, float fS0, float fT0, float fS1, float fT1);
-    bool FillRect(LONG nX0, LONG nY0, LONG nX1, LONG nY1, uint32 dwColor);
+    bool TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, float fScaleS, float fScaleT, bool colorFlag=false, uint32 difcolor=0xFFFFFFFF);
+    bool TexRectFlip(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, float fS1, float fT1);
+    bool FillRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor);
     bool Line3D(uint32 dwV0, uint32 dwV1, uint32 dwWidth);
 
     virtual void SetAddressUAllStages(uint32 dwTile, TextureUVFlag dwFlag); // For DirectX only, fix me
@@ -246,7 +246,7 @@ protected:
     virtual void    StartDrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, COLOR spe, float z, float rhw);
 
     // DrawSimpleRect
-    virtual void    StartDrawSimpleRect(LONG nX0, LONG nY0, LONG nX1, LONG nY1, uint32 dwColor, float depth, float rhw);
+    virtual void    StartDrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor, float depth, float rhw);
     VECTOR2         m_simpleRectVtx[2];
 
     bool            RemapTextureCoordinate(float s0, float s1, uint32 tileWidth, uint32 mask, float textureWidth,

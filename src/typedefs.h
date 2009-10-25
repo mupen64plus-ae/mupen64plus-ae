@@ -350,24 +350,24 @@ typedef struct {
 
 typedef struct
 {
-    unsigned __int32    dwFormat;
-    unsigned __int32    dwSize;
-    unsigned __int32    dwWidth;
-    unsigned __int32    dwAddr;
+    unsigned int    dwFormat;
+    unsigned int    dwSize;
+    unsigned int    dwWidth;
+    unsigned int    dwAddr;
 
-    unsigned __int32    dwLastWidth;
-    unsigned __int32    dwLastHeight;
+    unsigned int    dwLastWidth;
+    unsigned int    dwLastHeight;
 
-    unsigned __int32    dwHeight;
-    unsigned __int32    dwMemSize;
+    unsigned int    dwHeight;
+    unsigned int    dwMemSize;
 
     bool                bCopied;
-    unsigned __int32    dwCopiedAtFrame;
+    unsigned int    dwCopiedAtFrame;
 
-    unsigned __int32    dwCRC;
-    unsigned __int32    lastUsedFrame;
-    unsigned __int32    bUsedByVIAtFrame;
-    unsigned __int32    lastSetAtUcode;
+    unsigned int    dwCRC;
+    unsigned int    lastUsedFrame;
+    unsigned int    bUsedByVIAtFrame;
+    unsigned int    lastSetAtUcode;
 } RecentCIInfo;
 
 typedef struct
@@ -419,7 +419,7 @@ typedef struct {
 
 typedef union {
     uint8   g_Tmem8bit[0x1000];
-    __int16 g_Tmem16bit[0x800];
+    short   g_Tmem16bit[0x800];
     uint32  g_Tmem32bit[0x300];
     uint64  g_Tmem64bit[0x200];
 } TmemType;

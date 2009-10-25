@@ -50,7 +50,7 @@ public:
     uint32      muxDWords[4];   // Simplified Mux
     uint32      dwMux0;
     uint32      dwMux1;
-    LONG        nStages;
+    int        nStages;
     
     BlendingFunc  blendingFunc;
     uint32      TFactor;
@@ -66,7 +66,7 @@ public:
     BOOL operator!=(const GeneralCombinerInfo & sci) const { return !(operator==(sci)); }
     BOOL operator==(const GeneralCombinerInfo & sci) const 
     {
-        LONG i;
+        int i;
         
         if (sci.nStages != nStages)
             return FALSE;

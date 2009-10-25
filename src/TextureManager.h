@@ -37,8 +37,8 @@ public:
     uint32 Format;
     uint32 Size;
 
-    LONG  LeftToLoad;
-    LONG  TopToLoad;
+    int  LeftToLoad;
+    int  TopToLoad;
     uint32 WidthToLoad;
     uint32 HeightToLoad;
     uint32 Pitch;
@@ -216,7 +216,7 @@ protected:
     TxtrCacheEntry * GetPrimLODFracTexture(uint8 fac);
 
     void MakeTextureYoungest(TxtrCacheEntry *pEntry);
-    DWORD m_currentTextureMemUsage;
+    unsigned int m_currentTextureMemUsage;
     TxtrCacheEntry *m_pYoungestTexture;
     TxtrCacheEntry *m_pOldestTexture;
 

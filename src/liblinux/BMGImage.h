@@ -28,6 +28,16 @@
 
 #include "../osal_win32types.h"
 
+#if !defined(WIN32)
+    typedef struct tagRGBQUAD
+    {
+       unsigned char rgbBlue;
+       unsigned char rgbGreen;
+       unsigned char rgbRed;
+       unsigned char rgbReserved;
+    } RGBQUAD;
+#endif
+
 enum BMG_Error 
 { 
     BMG_OK = 0,

@@ -389,7 +389,7 @@ typedef struct
     uint32      ucode;
     uint32      crc_size;
     uint32      crc_800;
-    const CHAR * ucode_name;
+    const unsigned char * ucode_name;
     bool        non_nearclip;
     bool        reject;
 } UcodeData;
@@ -612,7 +612,7 @@ void RDP_GFX_PopDL();
 extern Matrix matToLoad;
 void LoadMatrix(uint32 addr);
 
-ULONG ComputeCRC32(ULONG crc, const uint8 *buf, UINT len);
+unsigned int ComputeCRC32(unsigned int crc, const uint8 *buf, unsigned int len);
 
 void TriggerDPInterrupt();
 void TriggerSPInterrupt();

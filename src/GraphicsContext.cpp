@@ -26,13 +26,13 @@ bool CGraphicsContext::m_deviceCapsIsInitialized = false;
 bool CGraphicsContext::needCleanScene = false;
 int CGraphicsContext::m_maxFSAA = 16;
 int CGraphicsContext::m_maxAnisotropy = 16;
-UINT CGraphicsContext::m_FullScreenRefreshRates[40] = { 0, 50, 55, 60, 65, 70, 72, 75, 80, 85, 90, 95, 100, 110, 120};
+unsigned int CGraphicsContext::m_FullScreenRefreshRates[40] = { 0, 50, 55, 60, 65, 70, 72, 75, 80, 85, 90, 95, 100, 110, 120};
 int CGraphicsContext::m_FullScreenResolutions[40][2] = {
     {320,200}, {400,300}, {480,360}, {512,384}, {640,480}, 
     {800,600}, {1024,768}, {1152,864}, {1280,960}, 
     {1400,1050}, {1600,1200}, {1920,1440}, {2048,1536}};
 int CGraphicsContext::m_numOfResolutions = 0;
-UINT CGraphicsContext::m_ColorBufferDepths[4] = {16, 32, 0, 0};
+unsigned int CGraphicsContext::m_ColorBufferDepths[4] = {16, 32, 0, 0};
 
 CGraphicsContext * CGraphicsContext::Get(void)
 {   
@@ -59,7 +59,7 @@ void CGraphicsContext::InitWindowInfo()
 {
 }
 
-bool CGraphicsContext::Initialize(HWND hWnd, HWND hWndStatus, uint32 dwWidth, uint32 dwHeight, BOOL bWindowed )
+bool CGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed )
 {
 if(windowSetting.bDisplayFullscreen)
     {
@@ -94,10 +94,10 @@ void CGraphicsContext::CleanUp()
 }
 
 
-int _cdecl SortFrequenciesCallback( const VOID* arg1, const VOID* arg2 )
+int __cdecl SortFrequenciesCallback( const void* arg1, const void* arg2 )
 {
-    UINT* p1 = (UINT*)arg1;
-    UINT* p2 = (UINT*)arg2;
+    unsigned int* p1 = (unsigned int*)arg1;
+    unsigned int* p2 = (unsigned int*)arg2;
 
     if( *p1 < *p2 )   
         return -1;
@@ -106,10 +106,10 @@ int _cdecl SortFrequenciesCallback( const VOID* arg1, const VOID* arg2 )
     else 
         return 0;
 }
-int _cdecl SortResolutionsCallback( const VOID* arg1, const VOID* arg2 )
+int __cdecl SortResolutionsCallback( const void* arg1, const void* arg2 )
 {
-    UINT* p1 = (UINT*)arg1;
-    UINT* p2 = (UINT*)arg2;
+    unsigned int* p1 = (unsigned int*)arg1;
+    unsigned int* p2 = (unsigned int*)arg2;
 
     if( *p1 < *p2 )   
         return -1;
@@ -134,9 +134,9 @@ void CGraphicsContext::InitDeviceParameters(void)
     int i=0, j;
     int numOfFrequency=0, numOfColorDepth = 0;
     CGraphicsContext::m_numOfResolutions=0;
-    memset(&CGraphicsContext::m_FullScreenRefreshRates,0,40*sizeof(UINT));
+    memset(&CGraphicsContext::m_FullScreenRefreshRates,0,40*sizeof(unsigned int));
     memset(&CGraphicsContext::m_FullScreenResolutions, 0, 40*2*sizeof(int));
-    memset(&CGraphicsContext::m_ColorBufferDepths, 0, 4*sizeof(UINT));
+    memset(&CGraphicsContext::m_ColorBufferDepths, 0, 4*sizeof(unsigned int));
 
    if(SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
      printf("(EE) Error initializing SDL video subsystem: %s\n", SDL_GetError());
@@ -180,7 +180,7 @@ void CGraphicsContext::InitDeviceParameters(void)
    CGraphicsContext::m_ColorBufferDepths[numOfColorDepth++] = 32;
    CGraphicsContext::m_FullScreenRefreshRates[numOfFrequency++] = 60;
 
-    qsort( &CGraphicsContext::m_FullScreenRefreshRates, numOfFrequency, sizeof(UINT), SortFrequenciesCallback );
+    qsort( &CGraphicsContext::m_FullScreenRefreshRates, numOfFrequency, sizeof(unsigned int), SortFrequenciesCallback );
     qsort( &CGraphicsContext::m_FullScreenResolutions, CGraphicsContext::m_numOfResolutions, sizeof(int)*2, SortResolutionsCallback );
 
     // To initialze device parameters for OpenGL

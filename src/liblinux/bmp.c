@@ -68,7 +68,7 @@ BMGError ReadBMP( const char *filename,
     BITMAPFILEHEADER bmfh;
     BITMAPINFOHEADER bmih;
 /*
-    DWORD mask[3];
+    unsigned int mask[3];
 */
 
     unsigned int DIBScanWidth;

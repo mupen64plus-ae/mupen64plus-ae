@@ -26,20 +26,6 @@
 #define WIN32TYPES_H
 
 typedef unsigned int BOOL;
-typedef unsigned char BYTE, CHAR, TCHAR, *LPBYTE;
-typedef unsigned int UINT, uint, ULONG;
-typedef void VOID, *LPVOID;
-typedef float FLOAT;
-
-typedef unsigned int DWORD, *LPDWORD;
-typedef unsigned short WORD;
-typedef int LONG;
-
-#define __int16 short
-#define __int32 int
-#define __int64 long long
-
-typedef int HWND;
 typedef void* HBITMAP;
 
 typedef struct
@@ -56,8 +42,6 @@ typedef struct _COORDRECT
    int x2,y2;
 } COORDRECT;
 
-#define __declspec(dllexport)
-#define _cdecl
 #define __cdecl
 
 #ifndef FALSE
@@ -68,17 +52,11 @@ typedef struct _COORDRECT
 #define TRUE 1
 #endif
 
-#define MAX_PATH PATH_MAX
-#define _MAX_PATH PATH_MAX
-
 typedef unsigned int COLOR;
-typedef int SURFFORMAT;
 
 #define SURFFMT_A8R8G8B8 21
 
 #define COLOR_RGBA(r,g,b,a) (((r&0xFF)<<16) | ((g&0xFF)<<8) | ((b&0xFF)<<0) | ((a&0xFF)<<24))
-#define CONST const
-
 
 typedef struct tagBITMAPINFOHEADER
 {
@@ -95,44 +73,11 @@ typedef struct tagBITMAPINFOHEADER
    unsigned int biClrImportant;
 }  __attribute__ ((packed)) BITMAPINFOHEADER;
 
-typedef struct tagRGBQUAD
-{
-   BYTE rgbBlue;
-   BYTE rgbGreen;
-   BYTE rgbRed;
-   BYTE rgbReserved;
-} RGBQUAD;
-
 typedef struct tagBITMAPINFO
 {
    BITMAPINFOHEADER bmiHeader;
-   RGBQUAD bmiColors[1];
+   unsigned int unused;
 } BITMAPINFO;
-
-typedef enum _IMAGE_FILEFORMAT 
-{
-   XIFF_BMP = 0,
-     XIFF_JPG = 1,
-     XIFF_TGA = 2,
-     XIFF_PNG = 3,
-     XIFF_DDS = 4,
-     XIFF_PPM = 5,
-     XIFF_DIB = 6,
-     XIFF_HDR = 7,
-     XIFF_PFM = 8,
-     XIFF_FORCE_DWORD = 0x7fffffff
-} IMAGE_FILEFORMAT;
-
-typedef struct _IMAGE_INFO
-{
-   UINT Width;
-   UINT Height;
-   UINT Depth;
-   UINT MipLevels;
-   SURFFORMAT Format;
-   IMAGE_FILEFORMAT ImageFileFormat;
-} IMAGE_INFO;
-
 
 typedef struct tagBITMAPFILEHEADER
 {
@@ -141,29 +86,9 @@ typedef struct tagBITMAPFILEHEADER
    unsigned short    bfReserved1; 
    unsigned short    bfReserved2; 
    unsigned int   bfOffBits; 
-} __attribute__ ((packed)) BITMAPFILEHEADER, *PBITMAPFILEHEADER;
+} __attribute__ ((packed)) BITMAPFILEHEADER;
 
 #define BI_RGB 0
-
-typedef enum _BLEND 
-{
-   BLEND_ZERO = 1,
-     BLEND_ONE = 2,
-     BLEND_SRCCOLOR = 3,
-     BLEND_INVSRCCOLOR = 4,
-     BLEND_SRCALPHA = 5,
-     BLEND_INVSRCALPHA = 6,
-     BLEND_DESTALPHA = 7,
-     BLEND_INVDESTALPHA = 8,
-     BLEND_DESTCOLOR = 9,
-     BLEND_INVDESTCOLOR = 10,
-     BLEND_SRCALPHASAT = 11,
-     BLEND_BOTHSRCALPHA = 12,
-     BLEND_BOTHINVSRCALPHA = 13,
-     BLEND_BLENDFACTOR = 14,
-     BLEND_INVBLENDFACTOR = 15,
-     BLEND_FORCE_DWORD = 0x7fffffff
-} BLEND;
 
 #endif // WIN32TYPES_H
 

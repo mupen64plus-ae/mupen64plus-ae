@@ -244,8 +244,8 @@ void DisplayVertexInfo(uint32 dwAddr, uint32 dwV0, uint32 dwN)
             uint8 c = pcSrc[14^0x3];
             uint8 d = pcSrc[15^0x3];
             
-            //LONG nTU = (LONG)(short)(psSrc[4^0x1]<<4);
-            //LONG nTV = (LONG)(short)(psSrc[5^0x1]<<4);
+            //int nTU = (int)(short)(psSrc[4^0x1]<<4);
+            //int nTV = (int)(short)(psSrc[5^0x1]<<4);
 
             //float tu = (float)(nTU>>4);
             //float tv = (float)(nTV>>4);
@@ -365,7 +365,7 @@ void RSP_MoveMemViewport(uint32 dwAddr)
     int nRight= nCenterX + nWidth;
     int nBottom= nCenterY + nHeight;
 
-    //LONG maxZ = scale[2];
+    //int maxZ = scale[2];
     int maxZ = 0x3FF;
 
     CRender::g_pRender->SetViewport(nLeft, nTop, nRight, nBottom, maxZ);

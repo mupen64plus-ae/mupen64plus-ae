@@ -23,16 +23,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 CTextureManager gTextureManager;
 
-DWORD g_maxTextureMemUsage = (5*1024*1024);
-DWORD g_amountToFree = (512*1024);
+unsigned int g_maxTextureMemUsage = (5*1024*1024);
+unsigned int g_amountToFree = (512*1024);
 bool g_bUseSetTextureMem = false;
 
 // Returns the first prime greater than or equal to nFirst
-inline LONG GetNextPrime(LONG nFirst)
+inline int GetNextPrime(int nFirst)
 {
-    LONG nCurrent;
+    int nCurrent;
 
-    LONG i;
+    int i;
 
     nCurrent = nFirst;
 
@@ -42,11 +42,11 @@ inline LONG GetNextPrime(LONG nFirst)
 
     for (;;)
     {
-        LONG nSqrtCurrent;
+        int nSqrtCurrent;
         BOOL bIsComposite;
 
         // nSqrtCurrent = nCurrent^0.5 + 1 (round up)
-        nSqrtCurrent = (LONG)sqrt((double)nCurrent) + 1;
+        nSqrtCurrent = (int)sqrt((double)nCurrent) + 1;
 
 
         bIsComposite = FALSE;
@@ -476,7 +476,7 @@ TxtrCacheEntry * CTextureManager::CreateNewCacheEntry(uint32 dwAddr, uint32 dwWi
     {
         uint32 widthToCreate = dwWidth;
         uint32 heightToCreate = dwHeight;
-        DWORD freeUpSize = (widthToCreate * heightToCreate * 4) + g_amountToFree;
+        unsigned int freeUpSize = (widthToCreate * heightToCreate * 4) + g_amountToFree;
 
         // make sure there is enough room for the new texture by deleting old textures
         while ((m_currentTextureMemUsage + freeUpSize) > g_maxTextureMemUsage && m_pOldestTexture != NULL)
@@ -630,7 +630,7 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
     if ( doCRCCheck && (pgti->Format == TXT_FMT_CI || (pgti->Format == TXT_FMT_RGBA && pgti->Size <= TXT_SIZE_8b )))
     {
         //maxCI = pgti->Size == TXT_SIZE_8b ? 255 : 15;
-        extern BYTE CalculateMaxCI(void *pPhysicalAddress, uint32 left, uint32 top, uint32 width, uint32 height, uint32 size, uint32 pitchInBytes );
+        extern unsigned char CalculateMaxCI(void *pPhysicalAddress, uint32 left, uint32 top, uint32 width, uint32 height, uint32 size, uint32 pitchInBytes );
 
         if( !pEntry || pEntry->dwCRC != dwAsmCRC || pEntry->maxCI < 0 )
         {

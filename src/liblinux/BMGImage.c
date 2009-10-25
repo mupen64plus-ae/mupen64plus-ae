@@ -703,8 +703,8 @@ HBITMAP CreateBitmapFromData( struct BMGImageStruct img,
     SetLastBMGError( BMG_OK );
 
     /* create the DIB section that will hold this bitmap */
-    bmi = InternalCreateBMI( (DWORD)img.width, (DWORD)img.height,
-                              (WORD)img.bits_per_pixel, BI_RGB );
+    bmi = InternalCreateBMI( (unsigned int)img.width, (unsigned int)img.height,
+                              (unsigned short)img.bits_per_pixel, BI_RGB );
     bmi.bmiHeader.biClrUsed = bmi.bmiHeader.biClrImportant =
          img.palette_size;
     hDC = GetDC( hWnd );

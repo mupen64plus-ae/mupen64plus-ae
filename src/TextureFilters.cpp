@@ -770,7 +770,7 @@ void EnhanceTexture(TxtrCacheEntry *pEntry)
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-void MirrorEmulator_DrawLine(DrawInfo& destInfo, DrawInfo& srcInfo, LPDWORD pSource, LPDWORD pDest, uint32 nWidth, BOOL bFlipLeftRight)
+void MirrorEmulator_DrawLine(DrawInfo& destInfo, DrawInfo& srcInfo, uint32 *pSource, uint32 *pDest, uint32 nWidth, BOOL bFlipLeftRight)
 {
     if(!bFlipLeftRight)
     {
@@ -778,7 +778,7 @@ void MirrorEmulator_DrawLine(DrawInfo& destInfo, DrawInfo& srcInfo, LPDWORD pSou
     }
     else
     {
-        LPDWORD pMaxDest = pDest + nWidth;
+        uint32 *pMaxDest = pDest + nWidth;
         pSource += nWidth - 1;
         for(; pDest < pMaxDest; pDest++, pSource--)
         {
@@ -790,14 +790,14 @@ void MirrorEmulator_DrawLine(DrawInfo& destInfo, DrawInfo& srcInfo, LPDWORD pSou
 
 void MirrorEmulator_Draw(DrawInfo& destInfo, DrawInfo& srcInfo, uint32 nDestX, uint32 nDestY, BOOL bFlipLeftRight, BOOL bFlipUpDown)
 {
-    LPBYTE pDest = (LPBYTE) destInfo.lpSurface + (destInfo.lPitch * nDestY) + (4 * nDestX);
-    LPBYTE pMaxDest = pDest + (destInfo.lPitch * srcInfo.dwHeight);
-    LPBYTE pSource = (LPBYTE)(srcInfo.lpSurface);
+    uint8 *pDest = (uint8 *) destInfo.lpSurface + (destInfo.lPitch * nDestY) + (4 * nDestX);
+    uint8 *pMaxDest = pDest + (destInfo.lPitch * srcInfo.dwHeight);
+    uint8 *pSource = (uint8 *)(srcInfo.lpSurface);
     if(!bFlipUpDown)
     {
         for(; pDest < pMaxDest; pDest += destInfo.lPitch, pSource += srcInfo.lPitch)
         {
-            MirrorEmulator_DrawLine(destInfo, srcInfo, (LPDWORD)pSource, (LPDWORD)pDest, srcInfo.dwWidth, bFlipLeftRight);
+            MirrorEmulator_DrawLine(destInfo, srcInfo, (uint32*)pSource, (uint32*)pDest, srcInfo.dwWidth, bFlipLeftRight);
         }
     }
     else
@@ -805,7 +805,7 @@ void MirrorEmulator_Draw(DrawInfo& destInfo, DrawInfo& srcInfo, uint32 nDestX, u
         pSource += (srcInfo.lPitch * (srcInfo.dwHeight - 1));
         for(; pDest < pMaxDest; pDest += destInfo.lPitch, pSource -= srcInfo.lPitch)
         {
-            MirrorEmulator_DrawLine(destInfo, srcInfo, (LPDWORD)pSource, (LPDWORD)pDest, srcInfo.dwWidth, bFlipLeftRight);
+            MirrorEmulator_DrawLine(destInfo, srcInfo, (uint32*)pSource, (uint32*)pDest, srcInfo.dwWidth, bFlipLeftRight);
         }
     }
 }
@@ -1001,7 +1001,7 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
 {
     if( PathIsDirectory(foldername) == FALSE )  return;
 
-    char texturefilename[_MAX_PATH];
+    char texturefilename[PATH_MAX];
     IMAGE_INFO  imgInfo;
     IMAGE_INFO  imgInfo2;
 
@@ -1490,7 +1490,7 @@ void DumpCachedTexture( TxtrCacheEntry &entry )
                     // Copy RGB to buffer
                     for( int i=entry.ti.HeightToLoad-1; i>=0; i--)
                     {
-                        BYTE *pSrc = (BYTE*)srcInfo.lpSurface+srcInfo.lPitch * i;
+                        unsigned char *pSrc = (unsigned char*)srcInfo.lpSurface+srcInfo.lPitch * i;
                         for( uint32 j=0; j<entry.ti.WidthToLoad; j++)
                         {
                             aFF &= pSrc[3];
@@ -1638,10 +1638,10 @@ bool LoadRGBABufferFromColorIndexedFile(char *filename, TxtrCacheEntry &entry, u
             }
         }
 
-        *pbuf = new BYTE[infoHeader.biWidth*infoHeader.biHeight*4];
+        *pbuf = new unsigned char[infoHeader.biWidth*infoHeader.biHeight*4];
         if( *pbuf )
         {
-            BYTE *colorIdxBuf = new BYTE[infoHeader.biSizeImage];
+            unsigned char *colorIdxBuf = new unsigned char[infoHeader.biSizeImage];
             if( colorIdxBuf )
             {
                 fread(colorIdxBuf, infoHeader.biSizeImage, 1, f);
@@ -1884,7 +1884,7 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
             // Update the texture by using the buffer
             for( int i=height-1; i>=0; i--)
             {
-                BYTE* pdst = (BYTE*)info.lpSurface + i*info.lPitch;
+                unsigned char* pdst = (unsigned char*)info.lpSurface + i*info.lPitch;
                 for( int j=0; j<width; j++)
                 {
                     *pdst++ = *pRGB++;      // R
@@ -1913,7 +1913,7 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
             uint32 *pRGB = (uint32*)buf_rgba;
             for( int i=height-1; i>=0; i--)
             {
-                uint32 *pdst = (uint32*)((BYTE*)info.lpSurface + i*info.lPitch);
+                uint32 *pdst = (uint32*)((unsigned char*)info.lpSurface + i*info.lPitch);
                 for( int j=0; j<width; j++)
                 {
                     *pdst++ = *pRGB++;      // RGBA

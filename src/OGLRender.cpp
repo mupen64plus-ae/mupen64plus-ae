@@ -628,7 +628,7 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     if( cullface ) glEnable(GL_CULL_FACE);
 }
 
-void OGLRender::DrawSimpleRect(LONG nX0, LONG nY0, LONG nX1, LONG nY1, uint32 dwColor, float depth, float rhw)
+void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor, float depth, float rhw)
 {
     StartDrawSimpleRect(nX0, nY0, nX1, nY1, dwColor, depth, rhw);
 

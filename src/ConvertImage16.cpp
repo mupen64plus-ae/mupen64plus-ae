@@ -191,7 +191,7 @@ void ConvertRGBA32_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                     uint16 *pDst = (uint16*)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
                     uint8 *pS = (uint8 *)pSrc + (y+tinfo.TopToLoad) * tinfo.Pitch + (tinfo.LeftToLoad*4);
-                    LONG n;
+                    int n;
 
                     n = 0;
                     for (uint32 x = 0; x < tinfo.WidthToLoad; x++)

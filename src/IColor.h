@@ -46,7 +46,7 @@ public:
 
     IColor(XCOLOR &rgba)
     {
-        *((COLOR*)this) = DWORD(rgba);
+        *((COLOR*)this) = (unsigned int) rgba;
     }
 
     inline IColor operator = (const IColor &sec) const
@@ -64,10 +64,10 @@ public:
     inline IColor operator + (const IColor &sec) const
     {
         IColor newc;
-        newc.r = (uint8)min(DWORD(r)+DWORD(sec.r),0xFF);
-        newc.g = (uint8)min(DWORD(g)+DWORD(sec.g),0xFF);
-        newc.b = (uint8)min(DWORD(b)+DWORD(sec.b),0xFF);
-        newc.a = (uint8)min(DWORD(a)+DWORD(sec.a),0xFF);
+        newc.r = (uint8)min((unsigned int) r + (unsigned int) sec.r, 0xFF);
+        newc.g = (uint8)min((unsigned int) g + (unsigned int) sec.g, 0xFF);
+        newc.b = (uint8)min((unsigned int) b + (unsigned int) sec.b, 0xFF);
+        newc.a = (uint8)min((unsigned int) a + (unsigned int) sec.a, 0xFF);
 
         return newc;
     }
@@ -85,19 +85,19 @@ public:
     inline IColor operator * (const IColor &sec) const
     {
         IColor newc;
-        newc.r = (uint8)min(DWORD(r)*DWORD(sec.r)/256,255);
-        newc.g = (uint8)min(DWORD(g)*DWORD(sec.g)/256,255);
-        newc.b = (uint8)min(DWORD(b)*DWORD(sec.b)/256,255);
-        newc.a = (uint8)min(DWORD(a)*DWORD(sec.a)/256,255);
+        newc.r = (uint8)min((unsigned int) r * (unsigned int) sec.r / 256,255);
+        newc.g = (uint8)min((unsigned int) g * (unsigned int) sec.g / 256,255);
+        newc.b = (uint8)min((unsigned int) b * (unsigned int) sec.b / 256,255);
+        newc.a = (uint8)min((unsigned int) a * (unsigned int) sec.a / 256,255);
         return newc;
     }
 
     inline IColor& operator += (const IColor &sec)
     {
-        r = uint8(min(DWORD(r)+DWORD(sec.r),255));
-        g = uint8(min(DWORD(g)+DWORD(sec.g),255));
-        b = uint8(min(DWORD(b)+DWORD(sec.b),255));
-        a = uint8(min(DWORD(a)+DWORD(sec.a),255));
+        r = uint8(min((unsigned int) r + (unsigned int) sec.r, 255));
+        g = uint8(min((unsigned int) g + (unsigned int) sec.g, 255));
+        b = uint8(min((unsigned int) b + (unsigned int) sec.b, 255));
+        a = uint8(min((unsigned int) a + (unsigned int) sec.a, 255));
         return *this;
     }
 
@@ -112,10 +112,10 @@ public:
 
     inline IColor& operator *= (const IColor &sec)
     {
-        r = uint8(min(DWORD(r)*DWORD(sec.r)/256,255));
-        g = uint8(min(DWORD(g)*DWORD(sec.g)/256,255));
-        b = uint8(min(DWORD(b)*DWORD(sec.b)/256,255));
-        a = uint8(min(DWORD(a)*DWORD(sec.a)/256,255));
+        r = uint8(min((unsigned int) r * (unsigned int) sec.r / 256,255));
+        g = uint8(min((unsigned int) g * (unsigned int) sec.g / 256,255));
+        b = uint8(min((unsigned int) b * (unsigned int) sec.b / 256,255));
+        a = uint8(min((unsigned int) a * (unsigned int) sec.a / 256,255));
         return *this;
     }
     

@@ -242,7 +242,7 @@ void CTexture::RestoreAlphaChannel(void)
     if ( StartUpdate(&di) )
     {
         uint32 *pSrc = (uint32 *)di.lpSurface;
-        LONG lPitch = di.lPitch;
+        int lPitch = di.lPitch;
 
         for (uint32 y = 0; y < m_dwHeight; y++)
         {

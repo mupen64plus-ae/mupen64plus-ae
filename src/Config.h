@@ -363,7 +363,7 @@ struct ROMHeader
 typedef struct 
 {
     // Other info from the rom. This is for convenience
-    TCHAR   szGameName[50+1];
+    unsigned char   szGameName[50+1];
     s8  nCountryID;
 
     // Copy of the ROM header
@@ -416,7 +416,7 @@ extern const CountryIDInfo g_CountryCodeInfo[];
 
 extern GameSetting g_curRomInfo;
 
-void ROM_GetRomNameFromHeader(TCHAR * szName, ROMHeader * pHdr);
+void ROM_GetRomNameFromHeader(unsigned char * szName, ROMHeader * pHdr);
 
 #define TV_SYSTEM_NTSC      1
 #define TV_SYSTEM_PAL       0
@@ -434,10 +434,6 @@ enum {
     PSH_DEFAULTS,
     PSH_ROM_SETTINGS,
 };
-
-void CreateOptionsDialogs(HWND hParent);
-
-void ShowConfigBox();
 
 #endif
 

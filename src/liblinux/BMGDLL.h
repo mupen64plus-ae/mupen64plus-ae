@@ -55,10 +55,10 @@ extern "C" {
   bit count, and compression scheme.  This structure DOES NOT contain any
   palette information (bmiColors = NULL) */
 extern
-BITMAPINFO  CreateBMI( DWORD dwWidth,      /* width in pixels */
-                                 DWORD dwHeight,     /* height in pixels */
-                                 WORD wBitCount,     /* 1, 4, 8, 16, 24, & 32 */
-                                 int compression );  /* biCompression value */
+BITMAPINFO  CreateBMI( unsigned int dwWidth,      /* width in pixels */
+                       unsigned int dwHeight,     /* height in pixels */
+                       unsigned short wBitCount,     /* 1, 4, 8, 16, 24, & 32 */
+                       int compression );  /* biCompression value */
 
 /* returns an array of RGBA or BGRA values for all supported graphics file 
    formats.  The RGBA pixel format is supported by all versions of OpenGL.

@@ -25,10 +25,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 typedef struct {
     float   fViWidth, fViHeight;
-    unsigned __int16        uViWidth, uViHeight;
-    unsigned __int16        uDisplayWidth, uDisplayHeight;
-    unsigned __int16        uFullScreenDisplayWidth, uFullScreenDisplayHeight;
-    unsigned __int16        uWindowDisplayWidth, uWindowDisplayHeight;
+    unsigned short        uViWidth, uViHeight;
+    unsigned short        uDisplayWidth, uDisplayHeight;
+    unsigned short        uFullScreenDisplayWidth, uFullScreenDisplayHeight;
+    unsigned short        uWindowDisplayWidth, uWindowDisplayHeight;
     
     BOOL    bDisplayFullscreen;
     int     uFullScreenRefreshRate;

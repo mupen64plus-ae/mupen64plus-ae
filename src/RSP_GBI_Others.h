@@ -234,7 +234,7 @@ void RDP_GFX_DumpVtxInfoDKR(uint32 dwAddr, uint32 dwV0, uint32 dwN)
 {
 #ifdef _DEBUG
         uint32 dwV;
-        LONG i;
+        int i;
 
         short * psSrc = (short *)(g_pRDRAMu8 + dwAddr);
 
@@ -763,7 +763,7 @@ void RDP_GFX_Force_Vertex_Z_Conker(uint32 dwAddr)
     {
         s8 * pcBase = g_pRDRAMs8 + (dwAddr&(g_dwRamSize-1));
         uint32 * pdwBase = (uint32 *)pcBase;
-        LONG i;
+        int i;
 
         for (i = 0; i < 4; i++)
         {
@@ -1474,8 +1474,8 @@ void PD_LoadMatrix_0xb4(uint32 addr)
     {
         for (j = 0; j < 4; j++) 
         {
-            int     hi = *(short *)((BYTE*)data + (((i<<3)+(j<<1)     )^0x2));
-            int  lo = *(uint16*)((BYTE*)data + (((i<<3)+(j<<1) + 32)^0x2));
+            int     hi = *(short *)((unsigned char*)data + (((i<<3)+(j<<1)     )^0x2));
+            int  lo = *(uint16*)((unsigned char*)data + (((i<<3)+(j<<1) + 32)^0x2));
             matToLoad.m[i][j] = (float)((hi<<16) | lo) * fRecip;
         }
     }

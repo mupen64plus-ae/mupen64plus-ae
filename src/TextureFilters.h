@@ -50,6 +50,31 @@ void hq2x_32(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int
 void lq2x_16(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
 void lq2x_32(uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
+#if !defined(WIN32)
+    typedef enum _IMAGE_FILEFORMAT 
+    {
+       XIFF_BMP = 0,
+         XIFF_JPG = 1,
+         XIFF_TGA = 2,
+         XIFF_PNG = 3,
+         XIFF_DDS = 4,
+         XIFF_PPM = 5,
+         XIFF_DIB = 6,
+         XIFF_HDR = 7,
+         XIFF_PFM = 8,
+         XIFF_FORCE_DWORD = 0x7fffffff
+    } IMAGE_FILEFORMAT;
+
+    typedef struct _IMAGE_INFO
+    {
+       unsigned int Width;
+       unsigned int Height;
+       unsigned int Depth;
+       unsigned int MipLevels;
+       int          Format;  /* SURFFORMAT */
+       IMAGE_FILEFORMAT ImageFileFormat;
+    } IMAGE_INFO;
+#endif
 
 
 #endif

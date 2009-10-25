@@ -97,7 +97,6 @@
 
 extern WindowSettingStruct windowSetting;
 
-void __cdecl MsgInfo (char* Message, ...);
 void __cdecl ErrorMsg (const char* Message, ...);
 
 #define MI_INTR_DP          0x00000020  
