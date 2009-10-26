@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "m64p_types.h"
 #include "m64p_plugin.h"
+#include "osal_dynamiclib.h"
 
 #include "Config.h"
 #include "Debugger.h"
@@ -39,43 +40,53 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "TextureManager.h"
 #include "Video.h"
 
-PluginStatus status;
-char generalText[256];
-void (*renderCallback)() = NULL;
-
-GFX_INFO g_GraphicsInfo;
-
-uint32 g_dwRamSize = 0x400000;
-uint32* g_pRDRAMu32 = NULL;
-signed char *g_pRDRAMs8 = NULL;
-unsigned char *g_pRDRAMu8 = NULL;
+//=======================================================
+// local variables
 
 static char g_ConfigDir[PATH_MAX] = {0};
 
-CCritSect g_CritialSection;
-
-///#define USING_THREAD
-
-#ifdef USING_THREAD
-HANDLE          videoThread;
-HANDLE          threadMsg[5];
-HANDLE          threadFinished;
-
-#define RSPMSG_CLOSE            0
-#define RSPMSG_SWAPBUFFERS      1
-#define RSPMSG_PROCESSDLIST     2
-#define RSPMSG_CHANGEWINDOW     3
-#define RSPMSG_PROCESSRDPLIST   4
-#endif
-
+static void (*l_DebugCallback)(void *, int, const char *) = NULL;
+static void *l_DebugCallContext = NULL;
+static int l_PluginInit = 0;
 
 //=======================================================
-// User Options
+// global variables
+
+PluginStatus  status;
+GFX_INFO      g_GraphicsInfo;
+CCritSect     g_CritialSection;
+
+unsigned int   g_dwRamSize = 0x400000;
+unsigned int  *g_pRDRAMu32 = NULL;
+signed char   *g_pRDRAMs8 = NULL;
+unsigned char *g_pRDRAMu8 = NULL;
+
 RECT frameWriteByCPURect;
 std::vector<RECT> frameWriteByCPURects;
 RECT frameWriteByCPURectArray[20][20];
 bool frameWriteByCPURectFlag[20][20];
 std::vector<uint32> frameWriteRecord;
+
+void (*renderCallback)() = NULL;
+
+/* definitions of pointers to Core config functions */
+ptr_ConfigOpenSection      ConfigOpenSection = NULL;
+ptr_ConfigSetParameter     ConfigSetParameter = NULL;
+ptr_ConfigGetParameter     ConfigGetParameter = NULL;
+ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
+ptr_ConfigSetDefaultInt    ConfigSetDefaultInt = NULL;
+ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat = NULL;
+ptr_ConfigSetDefaultBool   ConfigSetDefaultBool = NULL;
+ptr_ConfigSetDefaultString ConfigSetDefaultString = NULL;
+ptr_ConfigGetParamInt      ConfigGetParamInt = NULL;
+ptr_ConfigGetParamFloat    ConfigGetParamFloat = NULL;
+ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
+ptr_ConfigGetParamString   ConfigGetParamString = NULL;
+
+//---------------------------------------------------------------------------------------
+// Forward function declarations
+
+extern "C" EXPORT void CALL RomClosed(void);
 
 //---------------------------------------------------------------------------------------
 // Static (local) functions
@@ -331,55 +342,6 @@ static void StopVideo()
 
 }
 
-#ifdef USING_THREAD
-static uint32 VideoThreadProc(void *lpParameter)
-{
-    BOOL res;
-
-    StartVideo();
-    SetEvent( threadFinished );
-
-    while(true)
-    {
-        switch (WaitForMultipleObjects( 5, threadMsg, FALSE, INFINITE ))
-        {
-        case (WAIT_OBJECT_0 + RSPMSG_PROCESSDLIST):
-            ProcessDListStep2();
-            SetEvent( threadFinished );
-            break;
-        case (WAIT_OBJECT_0 + RSPMSG_SWAPBUFFERS):
-            //res = SwitchToThread();
-            //Sleep(1);
-            UpdateScreenStep2();
-            SetEvent( threadFinished );
-            break;
-        case (WAIT_OBJECT_0 + RSPMSG_CLOSE):
-            StopVideo();
-            SetEvent( threadFinished );
-            return 1;
-        case (WAIT_OBJECT_0 + RSPMSG_CHANGEWINDOW):
-            ChangeWindowStep2();
-            SetEvent( threadFinished );
-            break;
-        case (WAIT_OBJECT_0 + RSPMSG_PROCESSRDPLIST):
-            try
-            {
-                RDP_DLParser_Process();
-            }
-            catch (...)
-            {
-                ErrorMsg("Unknown Error in ProcessRDPList");
-                //TriggerDPInterrupt();
-                //TriggerSPInterrupt();
-            }
-            SetEvent( threadFinished );
-            break;
-        }
-    }
-    return 0;
-}
-#endif
-
 //---------------------------------------------------------------------------------------
 // Global functions, for use by other source files in this plugin
 
@@ -587,25 +549,126 @@ void _VIDEO_DisplayTemporaryMessage(const char *Message)
 {
 }
 
+/* fixme 
+*/
+void __cdecl ErrorMsg (const char* Message, ...)
+{
+    char Msg[400];
+    va_list ap;
+    
+    va_start( ap, Message );
+    vsprintf( Msg, Message, ap );
+    va_end( ap );
+    
+//    sprintf(generalText, "%s %s",project_name, PLUGIN_VERSION);
+//   messagebox(generalText, MB_OK|MB_ICONERROR, Msg);
+}
+
+void DebugMessage(int level, const char *message, ...)
+{
+  char msgbuf[1024];
+  va_list args;
+
+  if (l_DebugCallback == NULL)
+      return;
+
+  va_start(args, message);
+  vsprintf(msgbuf, message, args);
+
+  (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
+
+  va_end(args);
+}
+
 //---------------------------------------------------------------------------------------
 // Global functions, exported for use by the core library
 
-//-------------------------------------------------------------------------------------
-/*
-EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
-{
-#ifdef _DEBUG
-    sprintf(PluginInfo->Name, "%s %s Debug",project_name, PLUGIN_VERSION);
-#else
-    sprintf(PluginInfo->Name, "%s %s",project_name, PLUGIN_VERSION);
+// since these functions are exported, they need to have C-style names
+#ifdef __cplusplus
+extern "C" {
 #endif
-    PluginInfo->Version        = 0x0103;
-    PluginInfo->Type           = PLUGIN_TYPE_GFX;
-    PluginInfo->NormalMemory   = FALSE;
-    PluginInfo->MemoryBswaped  = TRUE;
+
+/* Mupen64Plus plugin functions */
+EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
+                                   void (*DebugCallback)(void *, int, const char *))
+{
+    if (l_PluginInit)
+        return M64ERR_ALREADY_INIT;
+
+    /* first thing is to set the callback function for debug info */
+    l_DebugCallback = DebugCallback;
+    l_DebugCallContext = Context;
+
+    /* Get the core config function pointers from the library handle */
+    ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
+    ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
+    ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
+    ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
+    ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultFloat");
+    ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultBool");
+    ConfigSetDefaultString = (ptr_ConfigSetDefaultString) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultString");
+    ConfigGetParamInt = (ptr_ConfigGetParamInt) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamInt");
+    ConfigGetParamFloat = (ptr_ConfigGetParamFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamFloat");
+    ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
+    ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
+
+    if (!ConfigOpenSection || !ConfigSetParameter || !ConfigGetParameter ||
+        !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
+        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString)
+        return M64ERR_INCOMPATIBLE;
+
+    l_PluginInit = 1;
+    return M64ERR_SUCCESS;
 }
 
-*/
+EXPORT m64p_error CALL PluginShutdown(void)
+{
+    if (!l_PluginInit)
+        return M64ERR_NOT_INIT;
+
+    if( status.bGameIsRunning )
+    {
+        RomClosed();
+    }
+    if (bIniIsChanged)
+    {
+        WriteIniFile();
+        TRACE0("Write back INI file");
+    }
+
+    /* reset some local variables */
+    l_DebugCallback = NULL;
+    l_DebugCallContext = NULL;
+
+    l_PluginInit = 0;
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
+{
+    /* set version info */
+    if (PluginType != NULL)
+        *PluginType = M64PLUGIN_GFX;
+
+    if (PluginVersion != NULL)
+        *PluginVersion = 0x20000;
+
+    if (APIVersion != NULL)
+        *APIVersion = PLUGIN_API_VERSION;
+    
+    if (PluginNamePtr != NULL)
+        *PluginNamePtr = project_name;
+
+    if (Capabilities != NULL)
+    {
+        *Capabilities = 0;
+    }
+                    
+    return M64ERR_SUCCESS;
+}
+
+//-------------------------------------------------------------------------------------
+
 
 EXPORT void CALL ChangeWindow (void)
 {
@@ -626,22 +689,7 @@ EXPORT void CALL RomClosed(void)
 {
     TRACE0("To stop video");
     Ini_StoreRomOptions(&g_curRomInfo);
-#ifdef USING_THREAD
-    if(videoThread)
-    {
-        SetEvent( threadMsg[RSPMSG_CLOSE] );
-        WaitForSingleObject( threadFinished, INFINITE );
-        for (int i = 0; i < 5; i++)
-        {
-            if (threadMsg[i])   CloseHandle( threadMsg[i] );
-        }
-        CloseHandle( threadFinished );
-        CloseHandle( videoThread );
-    }
-    videoThread = NULL;
-#else
     StopVideo();
-#endif
     TRACE0("Video is stopped");
 }
 
@@ -666,28 +714,7 @@ EXPORT void CALL RomOpen(void)
     }
 #endif
 
-#ifdef USING_THREAD
-    uint32 threadID;
-    for(int i = 0; i < 5; i++) 
-    { 
-        threadMsg[i] = CreateEvent( NULL, FALSE, FALSE, NULL );
-        if (threadMsg[i] == NULL)
-        { 
-            ErrorMsg( "Error creating thread message events");
-            return;
-        } 
-    } 
-    threadFinished = CreateEvent( NULL, FALSE, FALSE, NULL );
-    if (threadFinished == NULL)
-    { 
-        ErrorMsg( "Error creating video thread finished event");
-        return;
-    } 
-    videoThread = CreateThread( NULL, 4096, VideoThreadProc, NULL, NULL, &threadID );
-
-#else
     StartVideo();
-#endif
 }
 
 
@@ -709,15 +736,7 @@ EXPORT void CALL UpdateScreen(void)
             lastTick = nowTick;
         }
     }
-#ifdef USING_THREAD
-    if (videoThread)
-    {
-        SetEvent( threadMsg[RSPMSG_SWAPBUFFERS] );
-        WaitForSingleObject( threadFinished, INFINITE );
-    }
-#else
     UpdateScreenStep2();
-#endif  
 }
 
 //---------------------------------------------------------------------------------------
@@ -761,45 +780,10 @@ EXPORT BOOL CALL InitiateGFX(GFX_INFO Gfx_Info)
     return(TRUE);
 }
 
-/* fixme 
-void __cdecl ErrorMsg (const char* Message, ...)
-{
-    char Msg[400];
-    va_list ap;
-    
-    va_start( ap, Message );
-    vsprintf( Msg, Message, ap );
-    va_end( ap );
-    
-    sprintf(generalText, "%s %s",project_name, PLUGIN_VERSION);
-   messagebox(generalText, MB_OK|MB_ICONERROR, Msg);
-}
-EXPORT void CALL CloseDLL(void)
-{ 
-    if( status.bGameIsRunning )
-    {
-        RomClosed();
-    }
-
-    if (bIniIsChanged)
-    {
-        WriteIniFile();
-        TRACE0("Write back INI file");
-    }
-}
-*/
-
 //---------------------------------------------------------------------------------------
 
 EXPORT void CALL ProcessRDPList(void)
 {
-#ifdef USING_THREAD
-    if (videoThread)
-    {
-        SetEvent( threadMsg[RSPMSG_PROCESSRDPLIST] );
-        WaitForSingleObject( threadFinished, INFINITE );
-    }
-#else
     try
     {
         RDP_DLParser_Process();
@@ -810,20 +794,11 @@ EXPORT void CALL ProcessRDPList(void)
         TriggerDPInterrupt();
         TriggerSPInterrupt();
     }
-#endif
 }   
 
 EXPORT void CALL ProcessDList(void)
 {
-#ifdef USING_THREAD
-    if (videoThread)
-    {
-        SetEvent( threadMsg[RSPMSG_PROCESSDLIST] );
-        WaitForSingleObject( threadFinished, INFINITE );
-    }
-#else
     ProcessDListStep2();
-#endif
 }   
 
 //---------------------------------------------------------------------------------------
@@ -955,20 +930,13 @@ EXPORT void CALL ReadScreen(void **dest, int *width, int *height)
    glReadBuffer( oldMode );
 }
     
-/******************************************************************
-   NOTE: THIS HAS BEEN ADDED FOR MUPEN64PLUS AND IS NOT PART OF THE
-         ORIGINAL SPEC
-  Function: SetRenderingCallback
-  Purpose:  Allows emulator to register a callback function that will
-            be called by the graphics plugin just before the the
-            frame buffers are swapped.
-            This was added as a way for the emulator to draw emulator-
-            specific things to the screen, e.g. On-screen display.
-  input:    pointer to a callback function.
-  output:   none
-*******************************************************************/
+
 EXPORT void CALL SetRenderingCallback(void (*callback)())
 {
     renderCallback = callback;
 }
+
+#ifdef __cplusplus
+}
+#endif
 

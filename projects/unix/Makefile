@@ -65,7 +65,19 @@ endif
 CFLAGS = -Wall -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
 LDFLAGS = -ldl -lpng
 ifneq ($(OS), FREEBSD)
+endif
+
+# set CFLAGS, LIBS, and LDFLAGS according to the target OS
+ifeq ($(OS),FREEBSD)
+  LDFLAGS += -lGL
+endif
+ifeq ($(OS),LINUX)
   CFLAGS += -pipe -O3
+  LDFLAGS += -lGL
+endif
+ifeq ($(OS),OSX)
+  CFLAGS += -pipe -O3
+  LDFLAGS += -bundle -framework OpenGL
 endif
 
 # test for presence of SDL
@@ -157,6 +169,7 @@ SOURCE = \
 	$(SRCDIR)/liblinux/BMGUtils.cpp \
 	$(SRCDIR)/liblinux/bmp.c \
 	$(SRCDIR)/liblinux/pngrw.c \
+	$(SRCDIR)/osal_dynamiclib_unix.c \
 	$(SRCDIR)/Blender.cpp \
 	$(SRCDIR)/Combiner.cpp \
 	$(SRCDIR)/CombinerTable.cpp \
@@ -199,7 +212,7 @@ SOURCE = \
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
-OBJECTS := $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE)))
+OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 

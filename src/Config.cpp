@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define INI_FILE        "RiceVideoLinux.ini"
 #define CONFIG_FILE     "RiceVideo.cfg"
-const char *project_name =  "Rice's Video Plugin";
+const char *project_name =  "Rice's OpenGL Video for Mupen64Plus";
 
 void GetPluginDir(char *Directory);
 

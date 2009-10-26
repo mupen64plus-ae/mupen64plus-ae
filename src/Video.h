@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _DLLINTERFACE_H_
 
 #include "typedefs.h"
+#include "m64p_config.h"
 #include "m64p_plugin.h"
 
 typedef struct {
@@ -159,8 +160,27 @@ extern unsigned int  *g_pRDRAMu32;
 extern signed char   *g_pRDRAMs8;
 extern unsigned char *g_pRDRAMu8;
 
+/* declarations of pointers to Core config functions */
+extern ptr_ConfigListSections     ConfigListSections;
+extern ptr_ConfigOpenSection      ConfigOpenSection;
+extern ptr_ConfigListParameters   ConfigListParameters;
+extern ptr_ConfigSaveFile         ConfigSaveFile;
+extern ptr_ConfigSetParameter     ConfigSetParameter;
+extern ptr_ConfigGetParameter     ConfigGetParameter;
+extern ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
+extern ptr_ConfigSetDefaultInt    ConfigSetDefaultInt;
+extern ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat;
+extern ptr_ConfigSetDefaultBool   ConfigSetDefaultBool;
+extern ptr_ConfigSetDefaultString ConfigSetDefaultString;
+extern ptr_ConfigGetParamInt      ConfigGetParamInt;
+extern ptr_ConfigGetParamFloat    ConfigGetParamFloat;
+extern ptr_ConfigGetParamBool     ConfigGetParamBool;
+extern ptr_ConfigGetParamString   ConfigGetParamString;
+
+/* global functions provided by Video.cpp */
 extern char generalText[];
 extern void (*renderCallback)();
+void DebugMessage(int level, const char *message, ...);
 void ErrorMsg (const char* Message, ...);
 
 void SetVIScales();
