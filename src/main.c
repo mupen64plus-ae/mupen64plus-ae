@@ -399,18 +399,6 @@ int main(int argc, char *argv[])
         return 5;
     }
 
-    /* attach plugins to core */
-    for (i = 0; i < 4; i++)
-    {
-        if ((*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle) != M64ERR_SUCCESS)
-        {
-            fprintf(stderr, "UI-Console: error from core while attaching %s plugin.\n", g_PluginMap[i].name);
-            (*CoreShutdown)();
-            DetachCoreLib();
-            return 6;
-        }
-    }
-
     /* set up Frame Callback if --testshots is enabled */
     if (l_TestShotList != NULL)
     {
@@ -425,45 +413,71 @@ int main(int argc, char *argv[])
     if (fPtr == NULL)
     {
         fprintf(stderr, "Error: couldn't open ROM file '%s' for reading.\n", l_ROMFilepath);
+        (*CoreShutdown)();
+        DetachCoreLib();
+        return 6;
     }
-    else
+
+    /* get the length of the ROM, allocate memory buffer, load it from disk */
+    long romlength = 0;
+    fseek(fPtr, 0L, SEEK_END);
+    romlength = ftell(fPtr);
+    fseek(fPtr, 0L, SEEK_SET);
+    unsigned char *ROM_buffer = (unsigned char *) malloc(romlength);
+    if (ROM_buffer == NULL)
     {
-        /* get the length of the ROM, allocate memory buffer, load it from disk */
-        long romlength = 0;
-        fseek(fPtr, 0L, SEEK_END);
-        romlength = ftell(fPtr);
-        fseek(fPtr, 0L, SEEK_SET);
-        unsigned char *ROM_buffer = (unsigned char *) malloc(romlength);
-        if (ROM_buffer == NULL)
-        {
-            fprintf(stderr, "Error: couldn't allocate %li-byte buffer for ROM image file '%s'.\n", romlength, l_ROMFilepath);
-        }
-        else if (fread(ROM_buffer, 1, romlength, fPtr) != romlength)
-        {
-            fprintf(stderr, "Error: couldn't read %li bytes from ROM image file '%s'.\n", romlength, l_ROMFilepath);
-            free(ROM_buffer);
-        }
-        else
-        {
-            if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int) romlength, ROM_buffer) != M64ERR_SUCCESS)
-            {
-                fprintf(stderr, "Error: core failed to open ROM image file '%s'.\n", l_ROMFilepath);
-            }
-            else
-            {
-                /* run the game */
-                (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-                (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-            }
-            free(ROM_buffer);
-        }
+        fprintf(stderr, "Error: couldn't allocate %li-byte buffer for ROM image file '%s'.\n", romlength, l_ROMFilepath);
         fclose(fPtr);
+        (*CoreShutdown)();
+        DetachCoreLib();
+        return 7;
     }
+    else if (fread(ROM_buffer, 1, romlength, fPtr) != romlength)
+    {
+        fprintf(stderr, "Error: couldn't read %li bytes from ROM image file '%s'.\n", romlength, l_ROMFilepath);
+        free(ROM_buffer);
+        fclose(fPtr);
+        (*CoreShutdown)();
+        DetachCoreLib();
+        return 8;
+    }
+    fclose(fPtr);
+
+    /* Try to load the ROM image into the core */
+    if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int) romlength, ROM_buffer) != M64ERR_SUCCESS)
+    {
+        fprintf(stderr, "Error: core failed to open ROM image file '%s'.\n", l_ROMFilepath);
+        free(ROM_buffer);
+        (*CoreShutdown)();
+        DetachCoreLib();
+        return 9;
+    }
+    free(ROM_buffer);
+
+    /* attach plugins to core */
+    for (i = 0; i < 4; i++)
+    {
+        if ((*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle) != M64ERR_SUCCESS)
+        {
+            fprintf(stderr, "UI-Console: error from core while attaching %s plugin.\n", g_PluginMap[i].name);
+            (*CoreShutdown)();
+            DetachCoreLib();
+            return 10;
+        }
+    }
+
+    /* run the game */
+    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+    (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
 
     /* detach plugins from core and unload them */
     for (i = 0; i < 4; i++)
         (*CoreDetachPlugin)(g_PluginMap[i].type);
     PluginUnload();
+
+    /* save the configuration file again if --saveoptions was specified, to keep any updated parameters from the core/plugins */
+    if (l_SaveOptions)
+        SaveConfigurationOptions();
 
     /* Shut down and release the Core library */
     (*CoreShutdown)();
