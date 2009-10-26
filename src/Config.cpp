@@ -323,7 +323,7 @@ BOOL TestRegistry(void)
 {
    FILE *f;
    char name[PATH_MAX];
-   GetPluginDir(name);
+   strcpy(name, ConfigGetUserConfigPath());
    strcat(name, CONFIG_FILE);
    f = fopen(name, "rb");
    if (!f) return FALSE;
@@ -491,7 +491,7 @@ void WriteConfiguration(void)
 uint32 ReadRegistryDwordVal(const char *Field)
 {
    char name[PATH_MAX];
-   GetPluginDir(name);
+   strcpy(name, ConfigGetUserConfigPath());
    strcat(name, CONFIG_FILE);
    FILE *f = fopen(name, "rb");
    if(!f) return 0;
