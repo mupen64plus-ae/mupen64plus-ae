@@ -253,19 +253,8 @@ static void StartVideo(void)
 
     g_CritialSection.Lock();
 
-    /*memcpy(&g_curRomInfo.romheader, g_GraphicsInfo.HEADER, sizeof(ROMHeader));  FIXME fixme RG */
-    unsigned char *puc = (unsigned char *) &g_curRomInfo.romheader;
-    unsigned int i;
-    unsigned char temp;
-    for (i = 0; i < sizeof(ROMHeader); i += 4)
-    {
-        temp     = puc[i];
-        puc[i]   = puc[i+3];
-        puc[i+3] = temp;
-        temp     = puc[i+1];
-        puc[i+1] = puc[i+2];
-        puc[i+2] = temp;
-    }
+    memcpy(&g_curRomInfo.romheader, g_GraphicsInfo.HEADER, sizeof(ROMHeader));
+
     ROM_GetRomNameFromHeader(g_curRomInfo.szGameName, &g_curRomInfo.romheader);
     Ini_GetRomOptions(&g_curRomInfo);
     char *p = (char *) g_curRomInfo.szGameName + (strlen((char *) g_curRomInfo.szGameName) -1);     // -1 to skip null
