@@ -725,14 +725,10 @@ uint32 DLParser_CheckUcode(uint32 ucStart, uint32 ucDStart, uint32 ucSize, uint3
             {
                 char message[300];
 
-                sprintf(message, "Unable to find ucode to use for\n\n"
-                                  "%s\n"
-                                  "CRCSize: 0x%08x\n\n"
-                                  "CRC800: 0x%08x\n"
-                                  "Please mail rice1964@yahoo.com with the contents of c:\\ucodes.txt",
+                sprintf(message, "Unable to find ucode to use for '%s' CRCSize: 0x%08x CRC800: 0x%08x",
                         str, crc_size, crc_800);
                 TRACE0(message);
-                ErrorMsg(message);
+                DebugMessage(M64MSG_ERROR, message);
                 warned = true;
             }
 #endif

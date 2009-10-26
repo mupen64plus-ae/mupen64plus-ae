@@ -142,11 +142,11 @@ void CGraphicsContext::InitDeviceParameters(void)
     memset(&CGraphicsContext::m_ColorBufferDepths, 0, 4*sizeof(unsigned int));
 
    if(SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
-     printf("(EE) Error initializing SDL video subsystem: %s\n", SDL_GetError());
+     DebugMessage(M64MSG_ERROR, "SDL video subsystem init failed: %s", SDL_GetError());
    
    const SDL_VideoInfo *videoInfo;
    if(!(videoInfo = SDL_GetVideoInfo()))
-     printf("(EE) Video query failed: %s\n", SDL_GetError());
+     DebugMessage(M64MSG_ERROR, "SDL_GetVideoInfo query failed: %s", SDL_GetError());
    
    Uint32 videoFlags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE | SDL_FULLSCREEN;
    

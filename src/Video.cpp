@@ -83,6 +83,11 @@ ptr_ConfigGetParamFloat    ConfigGetParamFloat = NULL;
 ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
 ptr_ConfigGetParamString   ConfigGetParamString = NULL;
 
+ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = NULL;
+ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath = NULL;
+ptr_ConfigGetUserDataPath       ConfigGetUserDataPath = NULL;
+ptr_ConfigGetUserCachePath      ConfigGetUserCachePath = NULL;
+
 //---------------------------------------------------------------------------------------
 // Forward function declarations
 
@@ -298,7 +303,7 @@ static void StartVideo(void)
     }
     catch(...)
     {
-        ErrorMsg("Error to start video");
+        DebugMessage(M64MSG_ERROR, "Exception caught while starting video renderer");
         throw 0;
     }
    
@@ -549,21 +554,6 @@ void _VIDEO_DisplayTemporaryMessage(const char *Message)
 {
 }
 
-/* fixme 
-*/
-void __cdecl ErrorMsg (const char* Message, ...)
-{
-    char Msg[400];
-    va_list ap;
-    
-    va_start( ap, Message );
-    vsprintf( Msg, Message, ap );
-    va_end( ap );
-    
-//    sprintf(generalText, "%s %s",project_name, PLUGIN_VERSION);
-//   messagebox(generalText, MB_OK|MB_ICONERROR, Msg);
-}
-
 void DebugMessage(int level, const char *message, ...)
 {
   char msgbuf[1024];
@@ -612,9 +602,15 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
     ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
 
+    ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetSharedDataFilepath");
+    ConfigGetUserConfigPath = (ptr_ConfigGetUserConfigPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserConfigPath");
+    ConfigGetUserDataPath = (ptr_ConfigGetUserDataPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserDataPath");
+    ConfigGetUserCachePath = (ptr_ConfigGetUserCachePath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserCachePath");
+
     if (!ConfigOpenSection || !ConfigSetParameter || !ConfigGetParameter ||
         !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
-        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString)
+        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString ||
+        !ConfigGetSharedDataFilepath || !ConfigGetUserConfigPath || !ConfigGetUserDataPath || !ConfigGetUserCachePath)
         return M64ERR_INCOMPATIBLE;
 
     l_PluginInit = 1;
@@ -773,7 +769,12 @@ EXPORT BOOL CALL InitiateGFX(GFX_INFO Gfx_Info)
     status.ToToggleFullScreen = FALSE;
     status.bDisableFPS=false;
 
-    InitConfiguration();
+    if (!InitConfiguration())
+    {
+        DebugMessage(M64MSG_ERROR, "Failed to read configuration data");
+        return FALSE;
+    }
+
     CGraphicsContext::InitWindowInfo();
     CGraphicsContext::InitDeviceParameters();
 

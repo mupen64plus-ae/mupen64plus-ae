@@ -334,7 +334,7 @@ BOOL TestRegistry(void)
 void WriteConfiguration(void)
 {
    char name[PATH_MAX];
-   GetPluginDir(name);
+   strcpy(name, ConfigGetUserConfigPath());
    strcat(name, CONFIG_FILE);
    FILE *f = fopen(name, "rb");
    if (!f)
@@ -735,13 +735,13 @@ void ReadConfiguration(void)
     if( status.isSSEEnabled )
     {
         ProcessVertexData = ProcessVertexDataSSE;
-        printf("[RiceVideo] SSE processing enabled.\n");
+        DebugMessage(M64MSG_INFO, "SSE processing enabled.");
     }
     else
 #endif
     {
         ProcessVertexData = ProcessVertexDataNoSSE;
-        printf("[RiceVideo] Disabled SSE processing.\n");
+        DebugMessage(M64MSG_INFO, "Disabled SSE processing.");
     }
 
     status.isVertexShaderEnabled = status.isVertexShaderSupported && options.bEnableVertexShader;
@@ -757,11 +757,10 @@ BOOL InitConfiguration(void)
     strcpy(szIniFileName, INI_FILE);
 
     if (!ReadIniFile())
-        {
-        ErrorMsg("Unable to read ini file from disk");
-        WriteIniFile();
-            return FALSE;
-        }
+    {
+        DebugMessage(M64MSG_ERROR, "Unable to read ini file from disk");
+        return FALSE;
+    }
     ReadConfiguration();
     return TRUE;
 }
@@ -920,7 +919,7 @@ void GenerateCurrentRomOptions()
     }
 
     if (options.enableHackForGames != NO_HACK_FOR_GAME)
-        printf("[RiceVideo] Enabled hacks for game: '%s'\n", g_curRomInfo.szGameName);
+        DebugMessage(M64MSG_INFO, "Enabled hacks for game: '%s'", g_curRomInfo.szGameName);
 
     if( currentRomOptions.N64FrameBufferEmuType == 0 )      currentRomOptions.N64FrameBufferEmuType = defaultRomOptions.N64FrameBufferEmuType;
     else currentRomOptions.N64FrameBufferEmuType--;
@@ -1561,11 +1560,10 @@ BOOL ReadIniFile()
 {
     std::ifstream inifile;
     char readinfo[100];
+    const char *ini_filepath = ConfigGetSharedDataFilepath(szIniFileName);
 
-    char filename[PATH_MAX];
-    GetPluginDir(filename);
-    strcat(filename,szIniFileName);
-    inifile.open(filename);
+    DebugMessage(M64MSG_VERBOSE, "Reading .ini file: %s", ini_filepath);
+    inifile.open(ini_filepath);
 
     if (inifile.fail())
     {
@@ -1938,7 +1936,7 @@ int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName)
     {
         if (strcasecmp((char*)szCRC, IniSections[i].crccheck) == 0)
         {
-            printf("[RiceVideo] Found ROM '%s', CRC %s\n", IniSections[i].name, szCRC);
+            DebugMessage(M64MSG_INFO, "Found ROM '%s', CRC %s", IniSections[i].name, szCRC);
             return i;
         }
     }

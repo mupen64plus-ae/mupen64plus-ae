@@ -39,7 +39,7 @@ CRender * CRender::GetRender(void)
 {
     if( CRender::g_pRender == NULL )
     {
-        ErrorMsg("g_pRender is NULL");
+        DebugMessage(M64MSG_ERROR, "g_pRender is NULL");
         exit(0);
     }
     else

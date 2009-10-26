@@ -573,7 +573,7 @@ void __cdecl DebuggerAppendMsg(const char * Message, ...)
 
     if( logToScreen )
     {
-    printf("%s", Msg);
+        DebugMessage(M64MSG_INFO, "Rice Debug: %s", Msg);
     }
 
     if( logToFile )

@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #ifndef SAFE_CHECK
-# define SAFE_CHECK(a)  if( (a) == NULL ) {ErrorMsg("Creater out of memory"); throw new std::exception();}
+# define SAFE_CHECK(a)  if( (a) == NULL ) {DebugMessage(M64MSG_ERROR, "Creater out of memory"); throw new std::exception();}
 #endif
 
 #include <string.h>

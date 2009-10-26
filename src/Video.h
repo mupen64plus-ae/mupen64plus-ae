@@ -177,11 +177,15 @@ extern ptr_ConfigGetParamFloat    ConfigGetParamFloat;
 extern ptr_ConfigGetParamBool     ConfigGetParamBool;
 extern ptr_ConfigGetParamString   ConfigGetParamString;
 
+extern ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath;
+extern ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath;
+extern ptr_ConfigGetUserDataPath       ConfigGetUserDataPath;
+extern ptr_ConfigGetUserCachePath      ConfigGetUserCachePath;
+
 /* global functions provided by Video.cpp */
 extern char generalText[];
 extern void (*renderCallback)();
 void DebugMessage(int level, const char *message, ...);
-void ErrorMsg (const char* Message, ...);
 
 void SetVIScales();
 extern void _VIDEO_DisplayTemporaryMessage2(const char *msg, ...);

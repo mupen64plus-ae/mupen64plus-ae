@@ -87,7 +87,7 @@ bool COGLColorCombiner4::Initialize(void)
         }
         else
         {
-            ErrorMsg("Your video card does not support OpenGL extension combiner, you can only use the basic OpenGL combiner functions");
+            DebugMessage(M64MSG_ERROR, "Your video card does not support OpenGL extension combiner, you can only use the basic OpenGL combiner functions");
         }
         m_supportedStages = m_maxTexUnits;
         return true;

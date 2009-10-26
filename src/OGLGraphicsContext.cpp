@@ -57,7 +57,7 @@ COGLGraphicsContext::~COGLGraphicsContext()
 
 bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed )
 {
-    printf("Initializing OpenGL Device Context\n");
+    DebugMessage(M64MSG_INFO, "Initializing OpenGL Device Context");
     Lock();
 
     CGraphicsContext::Get()->m_supportTextureMirror = false;
@@ -83,21 +83,21 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
    Uint32 videoFlags = 0;
    
    /* Initialize SDL */
-   printf("(II) Initializing SDL video subsystem...\n");
+   DebugMessage(M64MSG_VERBOSE, "Initializing SDL video subsystem...");
    if(SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
-     {
-    printf("(EE) Error initializing SDL video subsystem: %s\n", SDL_GetError());
-    return false;
-     }
+   {
+      DebugMessage(M64MSG_ERROR, "SDL video subsystem init failed: %s", SDL_GetError());
+      return false;
+   }
    
    /* Video Info */
-   printf("(II) Getting video info...\n");
+   DebugMessage(M64MSG_VERBOSE, "Getting video info...");
    if(!(videoInfo = SDL_GetVideoInfo()))
-     {
-    printf("(EE) Video query failed: %s\n", SDL_GetError());
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    return false;
-     }
+   {
+      DebugMessage(M64MSG_ERROR, "SDL_GetVideoInfo query failed: %s", SDL_GetError());
+      SDL_QuitSubSystem(SDL_INIT_VIDEO);
+      return false;
+   }
    /* Setting the video mode */
    videoFlags |= SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE;
    
@@ -116,24 +116,24 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, colorBufferDepth);
    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, depthBufferDepth);
    
-   printf("(II) Setting video mode %dx%d...\n", (int)windowSetting.uDisplayWidth, (int)windowSetting.uDisplayHeight);
+   DebugMessage(M64MSG_INFO, "Setting video mode %dx%d...", (int)windowSetting.uDisplayWidth, (int)windowSetting.uDisplayHeight);
    if(!(m_pScreen = SDL_SetVideoMode(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, videoFlags)))
-     {
-    printf("(EE) Error setting video mode %dx%d: %s\n", (int)windowSetting.uDisplayWidth, (int)windowSetting.uDisplayHeight, SDL_GetError());
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    return false;
-     }
+   {
+      DebugMessage(M64MSG_ERROR, "SDL_SetVideoMode (%dx%d) failed: %s", (int)windowSetting.uDisplayWidth, (int)windowSetting.uDisplayHeight, SDL_GetError());
+      SDL_QuitSubSystem(SDL_INIT_VIDEO);
+      return false;
+   }
    
    char caption[500];
    sprintf(caption, "Mupen64plus-video-rice N64 Plugin v2.0.0");  /* fixme */
    SDL_WM_SetCaption(caption, caption);
    SetWindowMode();
 
-    InitState();
-    InitOGLExtension();
-    sprintf(m_strDeviceStats, "%s - %s : %s", m_pVendorStr, m_pRenderStr, m_pVersionStr);
-    TRACE0(m_strDeviceStats);
-    printf("%s\n", m_strDeviceStats);
+   InitState();
+   InitOGLExtension();
+   sprintf(m_strDeviceStats, "%s - %s : %s", m_pVendorStr, m_pRenderStr, m_pVersionStr);
+   TRACE0(m_strDeviceStats);
+   DebugMessage(M64MSG_INFO, "Using OpenGL: %s", m_strDeviceStats);
 
     Unlock();
 

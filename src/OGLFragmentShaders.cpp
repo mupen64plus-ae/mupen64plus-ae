@@ -292,7 +292,7 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
         {
 #ifdef _DEBUG
             if( m_lastIndex >= 0 ) COGLColorCombiner4::DisplaySimpleMuxString();
-            ErrorMsg("%s\n\n%s\n", str, oglNewFP+position);
+            DebugMessage(M64MSG_ERROR, "%s - %s", str, oglNewFP+position);
 #endif
             glDisable(GL_FRAGMENT_PROGRAM_ARB);
             return COGLColorCombiner4::ParseDecodedMux();

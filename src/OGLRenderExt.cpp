@@ -68,7 +68,7 @@ void OGLRender::DrawObjBGCopy(uObjBg &info)
 {
     if( IsUsedAsDI(g_CI.dwAddr) )
     {
-        printf("Unimplemented: write into Z buffer.  Was mostly commented out in Rice Video 6.1.0\n");
+        DebugMessage(M64MSG_WARNING, "Unimplemented: write into Z buffer.  Was mostly commented out in Rice Video 6.1.0");
         return;
     }
     else

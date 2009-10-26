@@ -49,7 +49,7 @@ bool COGLColorCombinerTNT2::Initialize(void)
         }
         else
         {
-            ErrorMsg("Your video card does not support OpenGL TNT2 extension combiner, you can only use the OpenGL Ext combiner functions");
+            DebugMessage(M64MSG_ERROR, "Your video card does not support OpenGL TNT2 extension combiner, you can only use the OpenGL Ext combiner functions");
         }
         return true;
     }

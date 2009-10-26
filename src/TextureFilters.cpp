@@ -932,7 +932,7 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
     f = fopen(pSrcFile, "rb");
     if (f == NULL)
     {
-      printf("GetImageInfoFromFile() error: couldn't open file '%s'\n", pSrcFile);
+      DebugMessage(M64MSG_ERROR, "GetImageInfoFromFile() error: couldn't open file '%s'", pSrcFile);
       return 1;
     }
     fread(sig, 8, 1, f);
@@ -957,7 +957,7 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
             FreeBMGImage(&img);
             return 0;
         }
-        printf("Error %i; couldn't read BMP file '%s'\n", code, pSrcFile);
+        DebugMessage(M64MSG_ERROR, "Couldn't read BMP file '%s'; error = %i", pSrcFile, code);
         return 1;
     }
     else if(sig[0] == 137 && sig[1] == 'P' && sig[2] == 'N' && sig[3] == 'G' && sig[4] == '\r' && sig[5] == '\n' &&
@@ -984,7 +984,7 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
     }
     else
     {
-        printf("GetImageInfoFromFile : unknown file format (%s)", pSrcFile);
+        DebugMessage(M64MSG_ERROR, "GetImageInfoFromFile : unknown file format (%s)", pSrcFile);
     }
     return 1;
 }
@@ -1335,8 +1335,7 @@ void InitHiresTextures(void)
 {
 if( options.bLoadHiResTextures )
     {
-    printf("Texture loading option is enabled\n");
-    printf("Finding all hires textures\n");
+    DebugMessage(M64MSG_INFO, "Texture loading option is enabled. Finding all hires textures");
     FindAllHiResTextures();
     }
 }
@@ -1345,17 +1344,16 @@ void InitTextureDump(void)
 {
 if( options.bDumpTexturesToFiles )
     {
-    printf("Texture dump option is enabled\n");
-    printf("Finding all dumpped textures\n");
+    DebugMessage(M64MSG_INFO, "Texture dump option is enabled. Finding all dumpped textures");
     FindAllDumpedTextures();
     }
 }
 void InitExternalTextures(void)
 {
-printf("InitExternalTextures\n");
-CloseExternalTextures();
-InitHiresTextures();
-InitTextureDump();
+    DebugMessage(M64MSG_VERBOSE, "InitExternalTextures");
+    CloseExternalTextures();
+    InitHiresTextures();
+    InitTextureDump();
 }
 
 /*
@@ -1535,7 +1533,7 @@ bool LoadRGBBufferFromPNGFile(char *filename, unsigned char **pbuf, int &width, 
     memset(&img, 0, sizeof(BMGImageStruct));
     if (!PathFileExists(filename))
     {
-        printf("Error: File at '%s' doesn't exist in LoadRGBBufferFromPNGFile!\n", filename);
+        DebugMessage(M64MSG_ERROR, "File at '%s' doesn't exist in LoadRGBBufferFromPNGFile!", filename);
         return false;
     }
 
@@ -1547,7 +1545,7 @@ bool LoadRGBBufferFromPNGFile(char *filename, unsigned char **pbuf, int &width, 
         *pbuf = new unsigned char[img.width*img.height*bits_per_pixel/8];
         if (*pbuf == NULL)
         {
-            printf("Error: new[] returned NULL for image width=%i height=%i bpp=%i\n", img.width, img.height, bits_per_pixel);
+            DebugMessage(M64MSG_ERROR, "new[] returned NULL for image width=%i height=%i bpp=%i", img.width, img.height, bits_per_pixel);
             return false;
         }
         if (img.bits_per_pixel == bits_per_pixel)
@@ -1580,7 +1578,7 @@ bool LoadRGBBufferFromPNGFile(char *filename, unsigned char **pbuf, int &width, 
         }
         else
         {
-            printf("Error: PNG file is %i bpp but texture is %i bpp.\n", img.bits_per_pixel, bits_per_pixel);
+            DebugMessage(M64MSG_ERROR, "PNG file is %i bpp but texture is %i bpp.", img.bits_per_pixel, bits_per_pixel);
             delete [] *pbuf;
             *pbuf = NULL;
         }
@@ -1593,7 +1591,7 @@ bool LoadRGBBufferFromPNGFile(char *filename, unsigned char **pbuf, int &width, 
     }
     else
     {
-        printf("Error: ReadPNG() returned error in LoadRGBBufferFromPNGFile!\n");
+        DebugMessage(M64MSG_ERROR, "ReadPNG() returned error in LoadRGBBufferFromPNGFile!");
         *pbuf = NULL;
         return false;
     }
@@ -1835,13 +1833,13 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
 
     if( !bResRGBA )
     {
-        printf("Error: RGBBuffer creation failed for file '%s'.\n", filename_rgb);
+        DebugMessage(M64MSG_ERROR, "RGBBuffer creation failed for file '%s'.", filename_rgb);
         TRACE1("Cannot open %s", filename_rgb);
         return;
     }
     else if( gHiresTxtrInfos[idx].bSeparatedAlpha && !bResA )
     {
-        printf("Error: Alpha buffer creation failed for file '%s'.\n", filename_a);
+        DebugMessage(M64MSG_ERROR, "Alpha buffer creation failed for file '%s'.", filename_a);
         TRACE1("Cannot open %s", filename_a);
         delete [] buf_rgba;
         return;
@@ -1864,7 +1862,7 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
         int scalex = width / (int)entry.ti.WidthToCreate;
         int scaley = height / (int)entry.ti.HeightToCreate;
         scale = scalex > scaley ? scalex : scaley; // set scale to maximum(scalex,scaley)
-        printf("Warning: Non-integral hi-res texture scale.  Orig = (%i,%i)  Hi-res = (%i,%i)\nTextures may look incorrect\n", 
+        DebugMessage(M64MSG_WARNING, "Non-integral hi-res texture scale.  Orig = (%i,%i)  Hi-res = (%i,%i). Textures may look incorrect.", 
                entry.ti.WidthToCreate, entry.ti.HeightToCreate, width, height);
     }
 
@@ -1881,9 +1879,9 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
             unsigned char *pA = buf_a;
 
             if (info.lPitch < width * 4)
-                printf("*** Error: texture pitch %i less than width %i times 4\n", info.lPitch, width);
+                DebugMessage(M64MSG_ERROR, "Texture pitch %i less than width %i times 4", info.lPitch, width);
             if (height > info.dwHeight)
-                printf("*** Error: texture source height %i greater than destination height %i\n", height, info.dwHeight);
+                DebugMessage(M64MSG_ERROR, "Texture source height %i greater than destination height %i", height, info.dwHeight);
 
             // Update the texture by using the buffer
             for( int i=height-1; i>=0; i--)
@@ -1951,11 +1949,11 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
         entry.pEnhancedTexture->m_bIsEnhancedTexture = true;
         entry.dwEnhancementFlag = TEXTURE_EXTERNAL;
 
-        printf("Loaded hi-res texture: %s\n", filename_rgb);
+        DebugMessage(M64MSG_INFO, "Loaded hi-res texture: %s", filename_rgb);
     }
     else
     {
-        printf("Error: New texture creation failed.\n");
+        DebugMessage(M64MSG_ERROR, "New texture creation failed.");
         TRACE0("Cannot create a new texture");
     }
 
