@@ -468,12 +468,14 @@ int main(int argc, char *argv[])
 
     /* run the game */
     (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-    (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
 
     /* detach plugins from core and unload them */
     for (i = 0; i < 4; i++)
         (*CoreDetachPlugin)(g_PluginMap[i].type);
     PluginUnload();
+
+    /* close the ROM image */
+    (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
 
     /* save the configuration file again if --saveoptions was specified, to keep any updated parameters from the core/plugins */
     if (l_SaveOptions)

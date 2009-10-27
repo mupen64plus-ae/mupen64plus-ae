@@ -39,10 +39,10 @@ const char *g_AudioPlugin = NULL;      // pointer to audio plugin specified at c
 const char *g_InputPlugin = NULL;      // pointer to input plugin specified at commandline (if any)
 const char *g_RspPlugin = NULL;        // pointer to rsp plugin specified at commandline (if any)
 
-plugin_map_node g_PluginMap[] = {{M64PLUGIN_RSP,   "RSP",   NULL, "", NULL, 0 },
-                                 {M64PLUGIN_GFX,   "Video", NULL, "", NULL, 0 },
+plugin_map_node g_PluginMap[] = {{M64PLUGIN_GFX,   "Video", NULL, "", NULL, 0 },
                                  {M64PLUGIN_AUDIO, "Audio", NULL, "", NULL, 0 },
-                                 {M64PLUGIN_INPUT, "Input", NULL, "", NULL, 0 } };
+                                 {M64PLUGIN_INPUT, "Input", NULL, "", NULL, 0 },
+                                 {M64PLUGIN_RSP,   "RSP",   NULL, "", NULL, 0 } };
 
 /* local functions */
 static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
