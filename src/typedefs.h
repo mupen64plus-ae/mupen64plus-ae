@@ -430,12 +430,12 @@ typedef union {
 typedef struct {
     uint32 dwFormat;
     uint32 dwSize;
-    bool  bSetBy;
+    BOOL  bSetBy;
 
     uint32 dwLoadAddress;
     uint32 dwTotalWords;
     uint32 dxt;
-    bool  bSwapped;
+    BOOL  bSwapped;
 
     uint32 dwWidth;
     uint32 dwLine;

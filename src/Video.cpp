@@ -254,6 +254,18 @@ static void StartVideo(void)
     g_CritialSection.Lock();
 
     memcpy(&g_curRomInfo.romheader, g_GraphicsInfo.HEADER, sizeof(ROMHeader));
+    unsigned char *puc = (unsigned char *) &g_curRomInfo.romheader;
+    unsigned int i;
+    unsigned char temp;
+    for (i = 0; i < sizeof(ROMHeader); i += 4) /* byte-swap the ROM header */
+    {
+        temp     = puc[i];
+        puc[i]   = puc[i+3];
+        puc[i+3] = temp;
+        temp     = puc[i+1];
+        puc[i+1] = puc[i+2];
+        puc[i+2] = temp;
+    }
 
     ROM_GetRomNameFromHeader(g_curRomInfo.szGameName, &g_curRomInfo.romheader);
     Ini_GetRomOptions(&g_curRomInfo);
