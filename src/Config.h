@@ -204,19 +204,13 @@ typedef struct {
     BOOL    bEnableHacks;
     BOOL    bEnableFog;
     BOOL    bWinFrameMode;
-    BOOL    bForceSoftwareTnL;
-    BOOL    bForceSoftwareClipper;
     BOOL    bOGLVertexClipper;
     BOOL    bEnableSSE;
     BOOL    bEnableVertexShader;
     BOOL    bSkipFrame;
-    BOOL    bDisplayTooltip;
-    BOOL    bHideAdvancedOptions;
     BOOL    bFullTMEM;
     BOOL    bUseFullTMEM;
 
-    uint32  bDisplayOnscreenFPS;
-    uint32  FPSColor;
     BOOL    bShowFPS;
 
     uint32  forceTextureFilter;
@@ -281,7 +275,6 @@ typedef struct {
     BOOL    bInN64Resolution;
     BOOL    bDoubleSizeForSmallTxtrBuf;
     BOOL    bSaveVRAM;
-    BOOL    bOverlapAutoWriteBack;
 } RomOptions;
 
 typedef struct IniSection

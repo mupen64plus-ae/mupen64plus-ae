@@ -130,12 +130,6 @@ std::vector<IniSection> IniSections;
 bool    bIniIsChanged = false;
 char    szIniFileName[300];
 
-RenderEngineSetting RenderEngineSettings[] =
-{
-{"DirectX", DIRECTX_DEVICE},
-{"OpenGL", OGL_DEVICE},
-};
-
 SettingInfo TextureQualitySettings[] =
 {
 {"Default", FORCE_DEFAULT_FILTER},
@@ -223,7 +217,6 @@ SettingInfo OnScreenDisplaySettings[] =
 {"Display Debug Information With Core Msgs", ONSCREEN_DISPLAY_DEBUG_INFORMATION_WITH_CORE_MSG},
 };
 
-const int numberOfRenderEngineSettings = sizeof(RenderEngineSettings)/sizeof(RenderEngineSetting);
 const int numberOfOpenGLRenderEngineSettings = sizeof(OpenGLRenderSettings)/sizeof(RenderEngineSetting);
 
 void WriteConfiguration(void);
@@ -376,9 +369,6 @@ void WriteConfiguration(void)
    fprintf(f, "ScreenUpdateSetting ");
    fprintf(f, "%d\n", defaultRomOptions.screenUpdateSetting);
    
-   fprintf(f, "FPSColor ");
-   fprintf(f, "%d\n", options.FPSColor);
-   
    fprintf(f, "OpenGLDepthBufferSetting ");
    fprintf(f, "%d\n", options.OpenglDepthBufferSetting);
    
@@ -400,12 +390,6 @@ void WriteConfiguration(void)
    fprintf(f, "FullTMEMEmulation ");
    fprintf(f, "%d\n", options.bFullTMEM);
 
-   fprintf(f, "ForceSoftwareTnL ");
-   fprintf(f, "%d\n", options.bForceSoftwareTnL);
-   
-   fprintf(f, "ForceSoftwareClipper ");
-   fprintf(f, "%d\n", options.bForceSoftwareClipper);
-   
    fprintf(f, "OpenGLVertexClipper ");
    fprintf(f, "%d\n", options.bOGLVertexClipper);
    
@@ -418,28 +402,9 @@ void WriteConfiguration(void)
    fprintf(f, "SkipFrame ");
    fprintf(f, "%d\n", options.bSkipFrame);
    
-   fprintf(f, "DisplayTooltip ");
-   fprintf(f, "%d\n", options.bDisplayTooltip);
-   
-   fprintf(f, "HideAdvancedOptions ");
-   fprintf(f, "%d\n", options.bHideAdvancedOptions);
-   
-   fprintf(f, "DisplayOnscreenFPS ");
-   fprintf(f, "%d\n", options.bDisplayOnscreenFPS);
-   
-   fprintf(f, "FrameBufferType ");
-   fprintf(f, "%d\n", options.RenderBufferSetting);
-   
-   fprintf(f, "FulScreenHeight ");
-   fprintf(f, "%d\n", windowSetting.uFullScreenDisplayHeight);
-   
    fprintf(f, "FastTextureLoading ");
    fprintf(f, "%d\n", defaultRomOptions.bFastTexCRC);
-   
-   fprintf(f, "RenderEngine ");
-   //fprintf(f, "%d\n", (uint32)CDeviceBuilder::GetDeviceType());
-   fprintf(f, "%d\n", 0);
-   
+
    fprintf(f, "ForceTextureFilter ");
    fprintf(f, "%d\n", (uint32)options.forceTextureFilter);
    
@@ -464,9 +429,6 @@ void WriteConfiguration(void)
    fprintf(f, "TextureEnhancementControl ");
    fprintf(f, "%d\n", (uint32)options.textureEnhancementControl);
    
-   fprintf(f, "FullScreenFrequency ");
-   fprintf(f, "%d\n", (uint32)windowSetting.uFullScreenRefreshRate);
-   
    fprintf(f, "AccurateTextureMapping ");
    fprintf(f, "%d\n", (uint32)defaultRomOptions.bAccurateTextureMapping);
    
@@ -475,9 +437,6 @@ void WriteConfiguration(void)
    
    fprintf(f, "SaveVRAM ");
    fprintf(f, "%d\n", (uint32)defaultRomOptions.bSaveVRAM);
-   
-   fprintf(f, "OverlapAutoWriteBack ");
-   fprintf(f, "%d\n", (uint32)defaultRomOptions.bOverlapAutoWriteBack);
    
    fprintf(f, "DoubleSizeForSmallTxtrBuf ");
    fprintf(f, "%d\n", (uint32)defaultRomOptions.bDoubleSizeForSmallTxtrBuf);
@@ -603,13 +562,10 @@ void ReadConfiguration(void)
         options.bFullTMEM = FALSE;
         options.bUseFullTMEM = FALSE;
 
-        options.bForceSoftwareTnL = TRUE;
-        options.bForceSoftwareClipper = TRUE;
         options.bEnableSSE = TRUE;
 
         options.bEnableVertexShader = FALSE;
         options.bOGLVertexClipper = FALSE;
-        options.RenderBufferSetting=1;
         options.forceTextureFilter = 0;
         options.textureQuality = TXT_QUALITY_DEFAULT;
         options.bTexRectOnly = FALSE;
@@ -623,15 +579,11 @@ void ReadConfiguration(void)
         options.textureEnhancementControl = 0;
         options.OpenglRenderSetting = OGL_DEVICE;
         options.bSkipFrame = FALSE;
-        options.bDisplayTooltip = FALSE;
-        options.bHideAdvancedOptions = TRUE;
-        options.bDisplayOnscreenFPS = FALSE;
         options.DirectXAntiAliasingValue = 0;
         options.DirectXCombiner = DX_BEST_FIT;
         options.DirectXDevice = 0;  // HAL device
         options.DirectXAnisotropyValue = 0;
         options.DirectXMaxFSAA = 16;
-        options.FPSColor = 0xFFFFFFFF;
         options.DirectXMaxAnisotropy = 16;
 
         defaultRomOptions.N64FrameBufferEmuType = FRM_BUF_NONE;
@@ -644,9 +596,7 @@ void ReadConfiguration(void)
         defaultRomOptions.bAccurateTextureMapping = TRUE;
         defaultRomOptions.bInN64Resolution = FALSE;
         defaultRomOptions.bSaveVRAM = FALSE;
-        defaultRomOptions.bOverlapAutoWriteBack = FALSE;
         defaultRomOptions.bDoubleSizeForSmallTxtrBuf = FALSE;
-        windowSetting.uFullScreenRefreshRate = 0;   // 0 is the default value, means to use Window default frequency
        
         WriteConfiguration();
         return;
@@ -693,17 +643,11 @@ void ReadConfiguration(void)
         options.bEnableFog = ReadRegistryDwordVal("EnableFog");
         options.bWinFrameMode = ReadRegistryDwordVal("WinFrameMode");
         options.bFullTMEM = ReadRegistryDwordVal("FullTMEMEmulation");
-        options.bForceSoftwareTnL = ReadRegistryDwordVal("ForceSoftwareTnL");
-        options.bForceSoftwareClipper = ReadRegistryDwordVal("ForceSoftwareClipper");
         options.bOGLVertexClipper = ReadRegistryDwordVal("OpenGLVertexClipper");
         options.bEnableSSE = ReadRegistryDwordVal("EnableSSE");
         options.bEnableVertexShader = ReadRegistryDwordVal("EnableVertexShader");
         options.bEnableVertexShader = FALSE;
         options.bSkipFrame = ReadRegistryDwordVal("SkipFrame");
-        options.bDisplayTooltip = ReadRegistryDwordVal("DisplayTooltip");
-        options.bHideAdvancedOptions = ReadRegistryDwordVal("HideAdvancedOptions");
-        options.bDisplayOnscreenFPS = ReadRegistryDwordVal("DisplayOnscreenFPS");
-        options.RenderBufferSetting = ReadRegistryDwordVal("FrameBufferType");
         options.textureEnhancement = ReadRegistryDwordVal("TextureEnhancement");
         options.textureEnhancementControl = ReadRegistryDwordVal("TextureEnhancementControl");
         options.forceTextureFilter = ReadRegistryDwordVal("ForceTextureFilter");
@@ -714,7 +658,6 @@ void ReadConfiguration(void)
         options.bDumpTexturesToFiles = ReadRegistryDwordVal("DumpTexturesToFiles");
         defaultRomOptions.bFastTexCRC = ReadRegistryDwordVal("FastTextureLoading");
         options.bShowFPS = ReadRegistryDwordVal("ShowFPS");
-        options.FPSColor = ReadRegistryDwordVal("FPSColor");;
         options.DirectXMaxAnisotropy = ReadRegistryDwordVal("DirectXMaxAnisotropy");;
         options.OpenglDepthBufferSetting = ReadRegistryDwordVal("OpenGLDepthBufferSetting");
         options.colorQuality = ReadRegistryDwordVal("ColorQuality");
@@ -723,9 +666,7 @@ void ReadConfiguration(void)
         defaultRomOptions.bAccurateTextureMapping = ReadRegistryDwordVal("AccurateTextureMapping");
         defaultRomOptions.bInN64Resolution = ReadRegistryDwordVal("InN64Resolution");
         defaultRomOptions.bSaveVRAM = ReadRegistryDwordVal("SaveVRAM");
-        defaultRomOptions.bOverlapAutoWriteBack = ReadRegistryDwordVal("OverlapAutoWriteBack");
         defaultRomOptions.bDoubleSizeForSmallTxtrBuf = ReadRegistryDwordVal("DoubleSizeForSmallTxtrBuf");
-        windowSetting.uFullScreenRefreshRate = ReadRegistryDwordVal("FullScreenFrequency");
 
         CDeviceBuilder::SelectDeviceType((SupportedDeviceType)options.OpenglRenderSetting);
     }
