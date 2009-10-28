@@ -37,12 +37,6 @@ typedef enum
     OGL_FRAGMENT_PROGRAM,
 
     DIRECTX_DEVICE,
-    DIRECTX_9_DEVICE,
-    DIRECTX_8_DEVICE,
-    DIRECTX_7_DEVICE,
-    DIRECTX_6_DEVICE,
-    DIRECTX_5_DEVICE,
-    XBOX_DIRECTX_DEVICE,
 } SupportedDeviceType;
 
 enum DirectXCombinerType
@@ -224,15 +218,6 @@ typedef struct {
 
     int     RenderBufferSetting;
 
-    int     DirectXDepthBufferSetting;
-    uint32  DirectXAntiAliasingValue;
-    uint32  DirectXAnisotropyValue;
-
-    uint32  DirectXMaxFSAA;
-    uint32  DirectXMaxAnisotropy;
-    int     DirectXCombiner;
-    int     DirectXDevice;
-
     int     OpenglDepthBufferSetting;
     int     OpenglRenderSetting;
     uint32  colorQuality;
@@ -388,15 +373,6 @@ typedef struct
     char* szName;
     uint32 nTvType;
 } CountryIDInfo;
-
-enum {
-    PSH_OPTIONS,
-    PSH_DIRECTX,
-    PSH_OPENGL,
-    PSH_TEXTURE,
-    PSH_DEFAULTS,
-    PSH_ROM_SETTINGS,
-};
 
 #define TV_SYSTEM_NTSC      1
 #define TV_SYSTEM_PAL       0

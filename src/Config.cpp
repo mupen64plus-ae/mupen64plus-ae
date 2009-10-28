@@ -192,19 +192,6 @@ RenderEngineSetting OpenGLRenderSettings[] =
 {"OpenGL Fragment Program Extension", OGL_FRAGMENT_PROGRAM},
 };
 
-BufferSettingInfo DirectXCombinerSettings[] =
-{
-{"To Fit Your Video Card", DX_BEST_FIT, DX_BEST_FIT},
-{"For Low End Video Cards", DX_LOW_END, DX_LOW_END},
-{"For High End Video Cards", DX_HIGH_END, DX_HIGH_END},
-{"For NVidia TNT/TNT2/Geforce/GF2", DX_NVIDIA_TNT, DX_NVIDIA_TNT},
-{"Limited 2 stage combiner", DX_2_STAGES, DX_2_STAGES},
-{"Limited 3 stage combiner", DX_3_STAGES, DX_3_STAGES},
-{"Limited 4 stage combiner", DX_4_STAGES, DX_4_STAGES},
-{"Pixel Shader", DX_PIXEL_SHADER, DX_PIXEL_SHADER},
-{"Semi-Pixel Shader", DX_SEMI_PIXEL_SHADER, DX_SEMI_PIXEL_SHADER},
-};
-
 SettingInfo OnScreenDisplaySettings[] =
 {
 {"Display Nothing", ONSCREEN_DISPLAY_NOTHING},
@@ -572,19 +559,12 @@ void ReadConfiguration(void)
         options.bSmallTextureOnly = FALSE;
         options.bLoadHiResTextures = FALSE;
         options.bDumpTexturesToFiles = FALSE;
-        options.DirectXDepthBufferSetting = 0;
         options.OpenglDepthBufferSetting = 16;
         options.colorQuality = TEXTURE_FMT_A8R8G8B8;
         options.textureEnhancement = 0;
         options.textureEnhancementControl = 0;
         options.OpenglRenderSetting = OGL_DEVICE;
         options.bSkipFrame = FALSE;
-        options.DirectXAntiAliasingValue = 0;
-        options.DirectXCombiner = DX_BEST_FIT;
-        options.DirectXDevice = 0;  // HAL device
-        options.DirectXAnisotropyValue = 0;
-        options.DirectXMaxFSAA = 16;
-        options.DirectXMaxAnisotropy = 16;
 
         defaultRomOptions.N64FrameBufferEmuType = FRM_BUF_NONE;
         defaultRomOptions.N64FrameBufferWriteBackControl = FRM_BUF_WRITEBACK_NORMAL;
@@ -658,7 +638,6 @@ void ReadConfiguration(void)
         options.bDumpTexturesToFiles = ReadRegistryDwordVal("DumpTexturesToFiles");
         defaultRomOptions.bFastTexCRC = ReadRegistryDwordVal("FastTextureLoading");
         options.bShowFPS = ReadRegistryDwordVal("ShowFPS");
-        options.DirectXMaxAnisotropy = ReadRegistryDwordVal("DirectXMaxAnisotropy");;
         options.OpenglDepthBufferSetting = ReadRegistryDwordVal("OpenGLDepthBufferSetting");
         options.colorQuality = ReadRegistryDwordVal("ColorQuality");
         options.OpenglRenderSetting = ReadRegistryDwordVal("OpenGLRenderSetting");
