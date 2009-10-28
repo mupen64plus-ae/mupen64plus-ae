@@ -23,7 +23,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <stdlib.h>
 #include <limits.h> // PATH_MAX
 
+#include "m64p_types.h"
 #include "m64p_plugin.h"
+#include "m64p_config.h"
+
 #include "Config.h"
 #include "Debugger.h"
 #include "DeviceBuilder.h"
@@ -32,13 +35,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Video.h"
 
 #define INI_FILE        "RiceVideoLinux.ini"
-#define CONFIG_FILE     "RiceVideo.cfg"
 const char *project_name =  "Rice's OpenGL Video for Mupen64Plus";
 
-void GetPluginDir(char *Directory);
+static m64p_handle l_ConfigVideoRice = NULL;
+static m64p_handle l_ConfigVideoGeneral = NULL;
 
-// Disable the config dialog box to allow Vtune call graph feature to work
-#define ENABLE_CONFIG_DIALOG
+void GetPluginDir(char *Directory);
 
 const char *frameBufferSettings[] =
 {
@@ -206,7 +208,6 @@ SettingInfo OnScreenDisplaySettings[] =
 
 const int numberOfOpenGLRenderEngineSettings = sizeof(OpenGLRenderSettings)/sizeof(RenderEngineSetting);
 
-void WriteConfiguration(void);
 void GenerateCurrentRomOptions();
 
 void GenerateFrameBufferOptions(void)
@@ -299,166 +300,48 @@ void GenerateFrameBufferOptions(void)
     }
 }
 
-BOOL TestRegistry(void)
+void SetConfigurationDefaults(void)
 {
-   FILE *f;
-   char name[PATH_MAX];
-   strcpy(name, ConfigGetUserConfigPath());
-   strcat(name, CONFIG_FILE);
-   f = fopen(name, "rb");
-   if (!f) return FALSE;
-   fclose(f);
-   return TRUE;
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "WindowWidth", 640, "Render width for windowed mode (not used)");
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "WindowHeight", 480, "Render height for windowed mode (not used)");
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "FullscreenWidth", 640, "Render width for fullscreen mode");
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "FullscreenHeight", 480, "Render height for fullscreen mode");
+
+    ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferSetting", FRM_BUF_NONE, "Frame Buffer Emulation (0=ROM default, 1=disable)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferWriteBackControl", FRM_BUF_WRITEBACK_NORMAL, "Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "RenderToTexture", TXT_BUF_NONE, "Render-to-texture emulation (0=none, 1=ignore, 2=normal, 3=write back, 4=write back and reload)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_VI_CHANGE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
+
+    ConfigSetDefaultBool(l_ConfigVideoRice, "NormalAlphaBlender", FALSE, "Force to use normal alpha blender");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "FastTextureLoading", FALSE, "Use a faster algorithm to speed up texture loading and CRC computation");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "AccurateTextureMapping", TRUE, "Use different texture coordinate clamping code");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "InN64Resolution", FALSE, "Force emulated frame buffers to be in N64 native resolution");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "SaveVRAM", FALSE, "Try to reduce Video RAM usage (should never be used)");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "DoubleSizeForSmallTxtrBuf", FALSE, "Enable this option to have better render-to-texture quality");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "DefaultCombinerDisable", FALSE, "Force to use normal color combiner");
+
+    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableHacks", TRUE, "Enable game-specific settings from INI file");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableFog", TRUE, "Enable or disable fog generation");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "WinFrameMode", FALSE, "If enabled, graphics will be drawn in WinFrame mode instead of solid and texture mode");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "FullTMEMEmulation", FALSE, "N64 Texture Memory Full Emulation (may fix some games, may break others)");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "OpenGLVertexClipper", FALSE, "Enable vertex clipper for fog operations");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableSSE", TRUE, "Enable/Disable SSE optimizations for capable CPUs");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableVertexShader", FALSE, "Use GPU vertex shader");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "SkipFrame", FALSE, "If this option is enabled, the plugin will skip every other frame");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "TexRectOnly", FALSE, "If enabled, texture enhancement will be done only for TxtRect ucode");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "SmallTextureOnly", FALSE, "If enabled, texture enhancement will be done only for textures width+height<=128");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "LoadHiResTextures", FALSE, "Enable hi-resolution texture file loading");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "DumpTexturesToFiles", FALSE, "Enable texture dumping");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "ShowFPS", FALSE, "Display On-screen FPS");
+
+    ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancement", 0, "Primary texture filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancementControl", 0, "Secondary texture filter (0 = none, 1-4 = filtered)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "ForceTextureFilter", 0, "Texture filter to use (0=default, 1=nearest neighbor, 2=linear, 3=bilinear)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "TextureQuality", TXT_QUALITY_DEFAULT, "Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting", 16, "Z-buffer depth (only 16 or 32)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "ColorQuality", TEXTURE_FMT_A8R8G8B8, "Color bit depth for rendering window (0=32 bits, 1=16 bits)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.2, 3=OGL_1.3, 4=OGL_1.4, 5=OGL_1.4_V2, 6=OGL_TNT2, 7=NVIDIA_OGL, 8=OGL_FRAGMENT_PROGRAM)");
 }
-
-void WriteConfiguration(void)
-{
-   char name[PATH_MAX];
-   strcpy(name, ConfigGetUserConfigPath());
-   strcat(name, CONFIG_FILE);
-   FILE *f = fopen(name, "rb");
-   if (!f)
-     {
-    windowSetting.uWindowDisplayWidth=640;
-    windowSetting.uWindowDisplayHeight=480;
-    windowSetting.uFullScreenDisplayWidth=640;
-    windowSetting.uFullScreenDisplayHeight=480;
-     }
-   else
-     fclose(f);
-   
-   f = fopen(name, "wb");
-    
-   fprintf(f, "WinModeWidth ");
-   fprintf(f, "%d\n", windowSetting.uWindowDisplayWidth);
-
-   fprintf(f, "WinModeHeight ");
-   fprintf(f, "%d\n", windowSetting.uWindowDisplayHeight);
-
-   fprintf(f, "FulScreenWidth ");
-   fprintf(f, "%d\n", windowSetting.uFullScreenDisplayWidth);
-   
-   fprintf(f, "FulScreenHeight ");
-   fprintf(f, "%d\n", windowSetting.uFullScreenDisplayHeight);
-   
-   fprintf(f, "EnableHacks ");
-   fprintf(f, "%d\n", options.bEnableHacks);
-   
-   fprintf(f, "FrameBufferSetting ");
-   fprintf(f, "%d\n", defaultRomOptions.N64FrameBufferEmuType);
-   
-   fprintf(f, "FrameBufferWriteBackControl ");
-   fprintf(f, "%d\n", defaultRomOptions.N64FrameBufferWriteBackControl);
-       
-   fprintf(f, "RenderToTexture ");
-   fprintf(f, "%d\n", defaultRomOptions.N64RenderToTextureEmuType);
-   
-   fprintf(f, "ScreenUpdateSetting ");
-   fprintf(f, "%d\n", defaultRomOptions.screenUpdateSetting);
-   
-   fprintf(f, "OpenGLDepthBufferSetting ");
-   fprintf(f, "%d\n", options.OpenglDepthBufferSetting);
-   
-   fprintf(f, "ColorQuality ");
-   fprintf(f, "%d\n", options.colorQuality);
-   
-   fprintf(f, "OpenGLRenderSetting ");
-   fprintf(f, "%d\n", options.OpenglRenderSetting);
-   
-   fprintf(f, "NormalAlphaBlender ");
-   fprintf(f, "%d\n", defaultRomOptions.bNormalBlender);
-   
-   fprintf(f, "EnableFog ");
-   fprintf(f, "%d\n", options.bEnableFog);
-   
-   fprintf(f, "WinFrameMode ");
-   fprintf(f, "%d\n", options.bWinFrameMode);
-   
-   fprintf(f, "FullTMEMEmulation ");
-   fprintf(f, "%d\n", options.bFullTMEM);
-
-   fprintf(f, "OpenGLVertexClipper ");
-   fprintf(f, "%d\n", options.bOGLVertexClipper);
-   
-   fprintf(f, "EnableSSE ");
-   fprintf(f, "%d\n", options.bEnableSSE);
-   
-   fprintf(f, "EnableVertexShader ");
-   fprintf(f, "%d\n", options.bEnableVertexShader);
-   
-   fprintf(f, "SkipFrame ");
-   fprintf(f, "%d\n", options.bSkipFrame);
-   
-   fprintf(f, "FastTextureLoading ");
-   fprintf(f, "%d\n", defaultRomOptions.bFastTexCRC);
-
-   fprintf(f, "ForceTextureFilter ");
-   fprintf(f, "%d\n", (uint32)options.forceTextureFilter);
-   
-   fprintf(f, "TextureQuality ");
-   fprintf(f, "%d\n", (uint32)options.textureQuality);
-   
-   fprintf(f, "TexRectOnly ");
-   fprintf(f, "%d\n", (uint32)options.bTexRectOnly);
-   
-   fprintf(f, "SmallTextureOnly ");
-   fprintf(f, "%d\n", (uint32)options.bSmallTextureOnly);
-   
-   fprintf(f, "LoadHiResTextures ");
-   fprintf(f, "%d\n", (uint32)options.bLoadHiResTextures);
-   
-   fprintf(f, "DumpTexturesToFiles ");
-   fprintf(f, "%d\n", (uint32)options.bDumpTexturesToFiles);
-   
-   fprintf(f, "TextureEnhancement ");
-   fprintf(f, "%d\n", (uint32)options.textureEnhancement);
-   
-   fprintf(f, "TextureEnhancementControl ");
-   fprintf(f, "%d\n", (uint32)options.textureEnhancementControl);
-   
-   fprintf(f, "AccurateTextureMapping ");
-   fprintf(f, "%d\n", (uint32)defaultRomOptions.bAccurateTextureMapping);
-   
-   fprintf(f, "InN64Resolution ");
-   fprintf(f, "%d\n", (uint32)defaultRomOptions.bInN64Resolution);
-   
-   fprintf(f, "SaveVRAM ");
-   fprintf(f, "%d\n", (uint32)defaultRomOptions.bSaveVRAM);
-   
-   fprintf(f, "DoubleSizeForSmallTxtrBuf ");
-   fprintf(f, "%d\n", (uint32)defaultRomOptions.bDoubleSizeForSmallTxtrBuf);
-   
-   fprintf(f, "ShowFPS ");
-   fprintf(f, "%d\n", (uint32)options.bShowFPS);
-   
-   fclose(f);
-}
-
-uint32 ReadRegistryDwordVal(const char *Field)
-{
-   char name[PATH_MAX];
-   strcpy(name, ConfigGetUserConfigPath());
-   strcat(name, CONFIG_FILE);
-   FILE *f = fopen(name, "rb");
-   if(!f) return 0;
-   char buf[0x1000];
-   while(fscanf(f, "%s", buf) == 1)
-     {
-    int dword;
-    int n = fscanf(f, "%d", &dword);
-    if (n==1)
-      {
-         if (!strcmp(buf, Field))
-           {
-          fclose(f);
-          return dword;
-           }
-      }
-     }
-   fclose(f);
-   return 0;
-}
-
 
 bool isMMXSupported() 
 { 
@@ -527,128 +410,53 @@ bool isSSESupported()
 
 void ReadConfiguration(void)
 {
-    options.bEnableHacks = TRUE;
-    options.bEnableSSE = TRUE;
-    options.bEnableVertexShader = FALSE;
+    windowSetting.uWindowDisplayWidth = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "WindowWidth");
+    windowSetting.uWindowDisplayHeight = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "WindowHeight");
+    windowSetting.uFullScreenDisplayWidth = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "FullscreenWidth");
+    windowSetting.uFullScreenDisplayHeight = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "FullscreenHeight");
+    windowSetting.uDisplayWidth = windowSetting.uFullScreenDisplayWidth;
+    windowSetting.uDisplayHeight = windowSetting.uFullScreenDisplayHeight;
 
-    defaultRomOptions.screenUpdateSetting = SCREEN_UPDATE_AT_VI_CHANGE;
-    //defaultRomOptions.screenUpdateSetting = SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN;
+    defaultRomOptions.N64FrameBufferEmuType = ConfigGetParamInt(l_ConfigVideoRice, "FrameBufferSetting");
+    defaultRomOptions.N64FrameBufferWriteBackControl = ConfigGetParamInt(l_ConfigVideoRice, "FrameBufferWriteBackControl");
+    defaultRomOptions.N64RenderToTextureEmuType = ConfigGetParamInt(l_ConfigVideoRice, "RenderToTexture");
+    defaultRomOptions.screenUpdateSetting = ConfigGetParamInt(l_ConfigVideoRice, "screenUpdateSetting");
+
+    defaultRomOptions.bNormalBlender = ConfigGetParamBool(l_ConfigVideoRice, "NormalAlphaBlender");
+    defaultRomOptions.bFastTexCRC = ConfigGetParamBool(l_ConfigVideoRice, "FastTextureLoading");
+    defaultRomOptions.bAccurateTextureMapping = ConfigGetParamBool(l_ConfigVideoRice, "AccurateTextureMapping");
+    defaultRomOptions.bInN64Resolution = ConfigGetParamBool(l_ConfigVideoRice, "InN64Resolution");
+    defaultRomOptions.bSaveVRAM = ConfigGetParamBool(l_ConfigVideoRice, "SaveVRAM");
+    defaultRomOptions.bDoubleSizeForSmallTxtrBuf = ConfigGetParamBool(l_ConfigVideoRice, "DoubleSizeForSmallTxtrBuf");
+    defaultRomOptions.bNormalCombiner = ConfigGetParamBool(l_ConfigVideoRice, "DefaultCombinerDisable");
+
+    options.bEnableHacks = ConfigGetParamBool(l_ConfigVideoRice, "EnableHacks");
+    options.bEnableFog = ConfigGetParamBool(l_ConfigVideoRice, "EnableFog");
+    options.bWinFrameMode = ConfigGetParamBool(l_ConfigVideoRice, "WinFrameMode");
+    options.bFullTMEM = ConfigGetParamBool(l_ConfigVideoRice, "FullTMEMEmulation");
+    options.bOGLVertexClipper = ConfigGetParamBool(l_ConfigVideoRice, "OpenGLVertexClipper");
+    options.bEnableSSE = ConfigGetParamBool(l_ConfigVideoRice, "EnableSSE");
+    options.bEnableVertexShader = ConfigGetParamBool(l_ConfigVideoRice, "EnableVertexShader");
+    options.bSkipFrame = ConfigGetParamBool(l_ConfigVideoRice, "SkipFrame");
+    options.bTexRectOnly = ConfigGetParamBool(l_ConfigVideoRice, "TexRectOnly");
+    options.bSmallTextureOnly = ConfigGetParamBool(l_ConfigVideoRice, "SmallTextureOnly");
+    options.bLoadHiResTextures = ConfigGetParamBool(l_ConfigVideoRice, "LoadHiResTextures");
+    options.bDumpTexturesToFiles = ConfigGetParamBool(l_ConfigVideoRice, "DumpTexturesToFiles");
+    options.bShowFPS = ConfigGetParamBool(l_ConfigVideoRice, "ShowFPS");
+
+    options.textureEnhancement = ConfigGetParamInt(l_ConfigVideoRice, "TextureEnhancement");
+    options.textureEnhancementControl = ConfigGetParamInt(l_ConfigVideoRice, "TextureEnhancementControl");
+    options.forceTextureFilter = ConfigGetParamInt(l_ConfigVideoRice, "ForceTextureFilter");
+    options.textureQuality = ConfigGetParamInt(l_ConfigVideoRice, "TextureQuality");
+    options.OpenglDepthBufferSetting = ConfigGetParamInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting");
+    options.colorQuality = ConfigGetParamInt(l_ConfigVideoRice, "ColorQuality");
+    options.OpenglRenderSetting = ConfigGetParamInt(l_ConfigVideoRice, "OpenGLRenderSetting");
+
+    CDeviceBuilder::SelectDeviceType((SupportedDeviceType)options.OpenglRenderSetting);
 
     status.isMMXSupported = isMMXSupported();
     status.isSSESupported = isSSESupported();
     status.isVertexShaderSupported = false;
-
-    defaultRomOptions.N64FrameBufferEmuType = FRM_BUF_NONE;
-    defaultRomOptions.N64FrameBufferWriteBackControl = FRM_BUF_WRITEBACK_NORMAL;
-    defaultRomOptions.N64RenderToTextureEmuType = TXT_BUF_NONE;
-
-    if(TestRegistry() == FALSE)
-    {
-        options.bEnableFog = TRUE;
-        options.bWinFrameMode = FALSE;
-        options.bFullTMEM = FALSE;
-        options.bUseFullTMEM = FALSE;
-
-        options.bEnableSSE = TRUE;
-
-        options.bEnableVertexShader = FALSE;
-        options.bOGLVertexClipper = FALSE;
-        options.forceTextureFilter = 0;
-        options.textureQuality = TXT_QUALITY_DEFAULT;
-        options.bTexRectOnly = FALSE;
-        options.bSmallTextureOnly = FALSE;
-        options.bLoadHiResTextures = FALSE;
-        options.bDumpTexturesToFiles = FALSE;
-        options.OpenglDepthBufferSetting = 16;
-        options.colorQuality = TEXTURE_FMT_A8R8G8B8;
-        options.textureEnhancement = 0;
-        options.textureEnhancementControl = 0;
-        options.OpenglRenderSetting = OGL_DEVICE;
-        options.bSkipFrame = FALSE;
-
-        defaultRomOptions.N64FrameBufferEmuType = FRM_BUF_NONE;
-        defaultRomOptions.N64FrameBufferWriteBackControl = FRM_BUF_WRITEBACK_NORMAL;
-        defaultRomOptions.N64RenderToTextureEmuType = TXT_BUF_NONE;
-
-        defaultRomOptions.bNormalBlender = FALSE;
-        defaultRomOptions.bFastTexCRC=FALSE;
-        defaultRomOptions.bNormalCombiner = FALSE;
-        defaultRomOptions.bAccurateTextureMapping = TRUE;
-        defaultRomOptions.bInN64Resolution = FALSE;
-        defaultRomOptions.bSaveVRAM = FALSE;
-        defaultRomOptions.bDoubleSizeForSmallTxtrBuf = FALSE;
-       
-        WriteConfiguration();
-        return;
-    }
-    else
-    {
-        windowSetting.uWindowDisplayWidth = (uint16)ReadRegistryDwordVal("WinModeWidth");
-        if( windowSetting.uWindowDisplayWidth == 0 )
-        {
-            windowSetting.uWindowDisplayWidth = 640;
-        }
-
-        windowSetting.uWindowDisplayHeight = (uint16)ReadRegistryDwordVal("WinModeHeight");
-        if( windowSetting.uWindowDisplayHeight == 0 )
-        {
-            windowSetting.uWindowDisplayHeight = 480;
-        }
-        
-        windowSetting.uDisplayWidth = windowSetting.uWindowDisplayWidth;
-        windowSetting.uDisplayHeight = windowSetting.uWindowDisplayHeight;
-
-
-        windowSetting.uFullScreenDisplayWidth = (uint16)ReadRegistryDwordVal("FulScreenWidth");
-        if( windowSetting.uFullScreenDisplayWidth == 0 )
-        {
-            windowSetting.uFullScreenDisplayWidth = 640;
-        }
-        windowSetting.uFullScreenDisplayHeight = (uint16)ReadRegistryDwordVal("FulScreenHeight");
-        if( windowSetting.uFullScreenDisplayHeight == 0 )
-        {
-            windowSetting.uFullScreenDisplayHeight = 480;
-        }
-       
-            windowSetting.uWindowDisplayWidth = windowSetting.uFullScreenDisplayWidth;
-            windowSetting.uWindowDisplayHeight = windowSetting.uFullScreenDisplayHeight;
-            windowSetting.uDisplayWidth = windowSetting.uWindowDisplayWidth;
-        windowSetting.uDisplayHeight = windowSetting.uWindowDisplayHeight;
-
-        defaultRomOptions.N64FrameBufferEmuType = ReadRegistryDwordVal("FrameBufferSetting");
-        defaultRomOptions.N64FrameBufferWriteBackControl = ReadRegistryDwordVal("FrameBufferWriteBackControl");
-        defaultRomOptions.N64RenderToTextureEmuType = ReadRegistryDwordVal("RenderToTexture");
-        defaultRomOptions.bNormalBlender = ReadRegistryDwordVal("NormalAlphaBlender");
-
-        options.bEnableFog = ReadRegistryDwordVal("EnableFog");
-        options.bWinFrameMode = ReadRegistryDwordVal("WinFrameMode");
-        options.bFullTMEM = ReadRegistryDwordVal("FullTMEMEmulation");
-        options.bOGLVertexClipper = ReadRegistryDwordVal("OpenGLVertexClipper");
-        options.bEnableSSE = ReadRegistryDwordVal("EnableSSE");
-        options.bEnableVertexShader = ReadRegistryDwordVal("EnableVertexShader");
-        options.bEnableVertexShader = FALSE;
-        options.bSkipFrame = ReadRegistryDwordVal("SkipFrame");
-        options.textureEnhancement = ReadRegistryDwordVal("TextureEnhancement");
-        options.textureEnhancementControl = ReadRegistryDwordVal("TextureEnhancementControl");
-        options.forceTextureFilter = ReadRegistryDwordVal("ForceTextureFilter");
-        options.textureQuality = ReadRegistryDwordVal("TextureQuality");
-        options.bTexRectOnly = ReadRegistryDwordVal("TexRectOnly");
-        options.bSmallTextureOnly = ReadRegistryDwordVal("SmallTextureOnly");
-        options.bLoadHiResTextures = ReadRegistryDwordVal("LoadHiResTextures");
-        options.bDumpTexturesToFiles = ReadRegistryDwordVal("DumpTexturesToFiles");
-        defaultRomOptions.bFastTexCRC = ReadRegistryDwordVal("FastTextureLoading");
-        options.bShowFPS = ReadRegistryDwordVal("ShowFPS");
-        options.OpenglDepthBufferSetting = ReadRegistryDwordVal("OpenGLDepthBufferSetting");
-        options.colorQuality = ReadRegistryDwordVal("ColorQuality");
-        options.OpenglRenderSetting = ReadRegistryDwordVal("OpenGLRenderSetting");
-        defaultRomOptions.bFastTexCRC = ReadRegistryDwordVal("FastTextureLoading");
-        defaultRomOptions.bAccurateTextureMapping = ReadRegistryDwordVal("AccurateTextureMapping");
-        defaultRomOptions.bInN64Resolution = ReadRegistryDwordVal("InN64Resolution");
-        defaultRomOptions.bSaveVRAM = ReadRegistryDwordVal("SaveVRAM");
-        defaultRomOptions.bDoubleSizeForSmallTxtrBuf = ReadRegistryDwordVal("DoubleSizeForSmallTxtrBuf");
-
-        CDeviceBuilder::SelectDeviceType((SupportedDeviceType)options.OpenglRenderSetting);
-    }
 
     status.isSSEEnabled = status.isSSESupported && options.bEnableSSE;
 #if !defined(NO_ASM)
@@ -681,7 +489,21 @@ BOOL InitConfiguration(void)
         DebugMessage(M64MSG_ERROR, "Unable to read ini file from disk");
         return FALSE;
     }
+
+    if (ConfigOpenSection("Video-General", &l_ConfigVideoGeneral) != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_ERROR, "Unable to open Video-General configuration section");
+        return FALSE;
+    }
+    if (ConfigOpenSection("Video-Rice", &l_ConfigVideoRice) != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_ERROR, "Unable to open Video-Rice configuration section");
+        return FALSE;
+    }
+
+    SetConfigurationDefaults();
     ReadConfiguration();
+
     return TRUE;
 }
 
@@ -1062,385 +884,6 @@ void Ini_StoreRomOptions(LPGAMESETTING pGameSetting)
         TRACE0("Rom option is changed and saved");
     }
 }
-
-typedef struct {
-    const char *title;
-    const char *text;
-} ToolTipMsg;
-
-ToolTipMsg ttmsg[] = {
-    { 
-            "Render Engine",
-            "Select which render engine to use, DirectX or OpenGL.\n"
-    },
-    { 
-            "Choose a color combiner to use with the render engine.\n",
-            "The default [To Fit Your Video Card] should work just fine for you, or you can change:\n\n"
-            "For DirectX, you can use low end, mid end, high end or Nvidia TNT combiner.\n"
-            "- Low-end combiner is for video cards which can only do 1 combiner cycle or has only 1 texture unit."
-            " It is for old or low-end video cards, and most onboard ones\n"
-            "- Mid-end combiner is for video cards which can do more than 1 combiner cycles and/or has more than"
-            "1 texture units, but with limited combiner modes (only supporting LERP, MULTIPLYADD). For video"
-            " cards such as Rage 128, Voodoos, etc\n"
-            "- High-end combiner is for video cards over mid-end ones, which can do LERP, MULTIPLYADD etc. "
-            "It is for Radeon, Geforce 2/3/4 ti (not GF2 MX, or GF4 MX)\n"
-            "- Nvidia TNT combiner is for TNT, TNT2, Geforce2 MX (not TI), Geforce 4 MX (not ti)\n"
-            "- Limited stage combiners: can be used in case that the maximum combiner stage number reported by the video card driver is wrong (from Nvidia drivers)\n"
-            "- Pixel shader: this is the best combiner if your video card supports it. In order to use it, your video card have "
-            "to support DirectX version 8.1 or up features."
-            "- Semi-pixel shader: this combiner only uses pixel shader if needed, and uses regular DirectX combiner "
-            "settings for simpler N64 combiner modes. For video cards with slower pixel shader implementation, this combiner "
-            "will be faster than the pure pixel shader combiner."
-
-    },
-    { 
-            "Choose a color combiner to use with the render engine.\n",
-            "The default [To Fit Your Video Card] should work just fine for you, or you can change:\n\n"
-            "For OpenGL, you can use Ogl 1.1, Ogl 1.2/1.3/1.4, Nvidia TNT, Nvidia Geforce Register combiner\n"
-            "- Ogl 1.1, most video cards support this\n"
-            "- Ogl 1.2/1.3, for OGL version without Texture Crossbar support\n"
-            "- Ogl 1.4, for OGL version with Texture Crossbar support\n"
-            "- Nvidia TNT, is good for all Nvidia video cards from TNT\n"
-            "- Nvidia Register Combiner, is for all Nvidia video cards from Geforce 256. This combiner is "
-            "better than the Nvidia TNT one\n"
-    },
-    { 
-            "DirectX Frame Buffer Swap Effect",
-            "Double buffer flip is faster for full screen\n\n"
-    },
-    { 
-            "DirectX Full Screen Mode Anti-Aliasing Setting",
-            "Please refer to your video card driver setting to determine the maximum supported FSAA value. The plugin will try to determine "
-            "the highest supported FSAA mode, but it may not work well enough since highest FSAA setting is also dependent on the full scrren "
-            "resolution. Using incorrect FSAA value will cause DirectX fail to initialize.\n\n"
-            "FSAA usage is not compatible with frame buffer effects. Frame buffer may fail to work if FSAA is used."
-    },
-    { 
-            "DirectX Anisotropy Filtering Setting",
-            "DirectX Anisotropy Filtering Setting"
-    },
-    { 
-            "Full Screen Mode Color Quality",
-            "16 bits:  should be faster.\n"
-            "32 bits:  gives better color qualify.\n"
-    },
-    { 
-            "Depth buffer setting",
-            "You don't need to modify this setting.\n"
-    },
-    { 
-            "Window mode display resolution",
-            "Window mode display resolution"
-    },
-    { 
-            "Full screen mode display resolution",
-            "Full screen mode display resolution"
-    },
-    { 
-            "Texture enhancement",
-            "Enhance texture when loading the texture.\n\n"
-            "- 2x        double the texture size\n"
-            "- 2x texture rectangle only,    double the texture size, only for textRect, not for triangle primitives\n"
-            "- 2xSai,    double the texture size and apply 2xSai algorithm\n"
-            "- 2xSai for texture rectangle only\n"
-            "- Sharpen,      apply sharpen filter (cool effects)\n"
-            "- Sharpen more, do more sharpening"
-    },
-    { 
-            "Teture enhancement control",
-            "Control the texture enhancement filters.\n\n"
-            "- Normal                without control\n"
-            "- small texture only,   to enhance the texture for small textures only\n"
-            "- Smooth                to apply a smooth filter after enhancement\n"
-            "- Less smooth           to apply a (less) smooth filter\n"
-            "- 2xSai smooth          to apply smooth filter for 2xSai artifacts effects\n"
-            "- sxSai less smooth     again, this is for 2xSai, but with less smooth"
-    },
-    { 
-            "Force texture filter",
-            "Force Nearest filter and force bilinear filter\n"
-    },
-    { 
-            "For small textures only",
-            "If enabled, texture enhancement will be done only for textures width+height<=128\n"
-    },
-    { 
-            "For TxtRect ucode only",
-            "If enabled, texture enhancement will be done only for TxtRect ucode\n"
-    },
-    { 
-            "Enable/Disable Fog",
-            "Enable or disable fog by this option\n"
-    },
-    { 
-            "Enable/Disable SSE for Intel P3/P4 CPU",
-            "SSE (Intel Streaming SMID Extension) can speed up 3D transformation, vertex and matrix processing. "
-            "It is only available with Intel P3 and P4 CPU, not with AMD CPUs. P3 is actually much faster than P4 "
-            "with SSE instructions\n"
-    },
-    { 
-            "Frame skipping",
-            "If this option is on, the plugin will skip every other frames. This could help to improve "
-            "speed for some games, and could cause flickering for other games.\n"
-    },
-    { 
-            "Vertex Shader",
-            "If this option is on, the plugin will try to use vertex shader if supported by GPU. Using "
-            "a vertex shader will transfer most CPU duty on vertex transforming and lighting to GPU, "
-            "will great decrease the CPU duty and increase the game speed.\n"
-            "The plugin uses vertex shader 1.0 which is defined by DirectX 8.0. The plugin supports vertex "
-            "in DirectX mode only at this moment."
-    },
-    { 
-            "Force to use normal alpha blender",
-            "Use this option if you have opaque/transparency problems with certain games.\n"
-            "\nWhen a game is not running, it is the default value (for all games), available values are on/off.\n"
-            "When a game is running, it is the game setting. Three available setting are on/off/as_default."
-    },
-    { 
-            "Normal color combiner",
-            "Force to use normal color combiner\n"
-            "Normal color combiner is:\n"
-            "- Texture * Shade,  if both texture and shade are used\n"
-            "- Texture only,     if texture is used and shade is not used\n"
-            "- shade only,       if texture is not used\n\n"
-            "Try to use this option if you have ingame texture color problems, transparency problems, "
-            "or black/white texture problems\n"
-            "\nWhen a game is not running, it is the default value (for all games), available values are on/off.\n"
-            "When a game is running, it is the game setting. Three available setting are on/off/as_default."
-    },
-    { 
-            "Fast texture loading",
-            "Using a faster algorithm to speed up texture loading and CRC computation.\n"
-            "\nWhen a game is not running, it is the default value (for all games), available values are on/off.\n"
-            "When a game is running, it is the game setting. Three available setting are on/off/as_default."
-    },
-    { 
-            "Force Buffer Clear",
-            "This option helps to reduce thin black lines in some games\n"
-            "\nWhen a game is not running, it is the default value (for all games), available values are on/off.\n"
-            "When a game is running, it is the game setting. Three available setting are on/off/as_default."
-    },
-    { 
-            "Force Buffer Clear",
-            "Force to clear screen before drawing any primitives.\n"
-            "This is in fact a hack, only for a few games, including KI Gold\n"
-            "\nWhen a game is not running, it is the default value (for all games), available values are on/off.\n"
-            "When a game is running, it is the game setting. Three available setting are on/off/as_default."
-    },
-    { 
-            "Enable BG primitive",
-            "Disable this option for Zelda MM, otherwise its intro will be covered by a black layer (by drawing of a black BG texture).\n"
-            "\nWhen a game is not running, it is the default value (for all games), available values are on/off.\n"
-            "When a game is running, it is the game setting. Three available setting are on/off/as_default."
-    },
-    { 
-            "Control when the screen will be updated",
-            "\n"
-            "At VI origin update (default)\n"
-            "At VI origin change\n"
-            "At CI change\n"
-            "At the 1st CI change\n"
-            "At the 1st drawing\n"
-            "\nWhen a game is not running, it is the default value (for all games).\n"
-            "When a game is running, it is the game setting."
-    },
-    { 
-            "Control when the screen will be updated",
-            "This option is to prevent or reduce flicking in certain games by controlling when the screen will be updated\n\n"
-            "At VI origin update (default)\n"
-            "At VI origin change\n"
-            "At CI change\n"
-            "At the 1st CI change\n"
-            "At the 1st drawing\n"
-            "\nWhen a game is not running, it is the default value (for all games).\n"
-            "When a game is running, it is the game setting."
-    },
-    { 
-            "N64 CPU frame buffer emulation",
-            "CPU frame buffer is referred to N64 drawing buffers in RDRAM."
-            "Games could draw into a frame buffer other than a displayed render buffer and use the result as textures for further drawing into rendering buffer. "
-            "It is very difficult to emulate N64 frame buffer through either DirectX or OpenGL\n\n"
-            "- None (default), don't do any frame buffer emulating\n"
-            "- Hide framebuffer effects,  ignore frame buffer drawing, at least such drawing won't draw to the current rendering buffer\n"
-            "- Basic framebuffer, will check texture loading address to see if the address is within the frame buffer\n"
-            "- Basic & Write back, will write the frame buffer back to RDRAM if a texture is loaded from it\n"
-            "- Write back & Reload, will load frame buffer from RDRAM at each frame\n"
-            "- Write Back Every Frame,       a complete emulation, very slow\n"
-            "- With Emulator,  new 1964 will inform the plugin about CPU frame buffer memory direct read/write, for Dr. Mario\n"
-    },
-    { 
-            "Render-to-texture emulation",
-            "- None (default), don't do any Render-to-texture emulation\n"
-            "- Hide Render-to-texture effects,  ignore Render-to-texture drawing, at least such drawing won't draw to the current rendering buffer\n"
-            "- Render-to-texture,    support self-render-texture\n"
-            "- Basic Render-to-texture, will check texture loading address to see if the address is within the frame buffer\n"
-            "- Basic & Write back, will write the Render-to-render_texture back when rendering is finished\n"
-            "- Write back & Reload, will load Render-to-render_texture from RDRAM before the buffer is rendered.\n"
-    },
-    { 
-            "Frame Buffer Write Back Control",
-            "Control the frequence of frame buffer writing back to RDRAM\n"
-    },
-    { 
-            "Default options or Rom specific settings",
-            "\nWhen a game is not running, it is the default value (for all games).\n"
-            "When a game is running, it is the game setting."
-    },
-    { 
-            "Emulate Memory Clear",
-            "\nA few games need this option to work better, including DK64."
-    },
-    { 
-            "Force Software Tranlation & Lighting",
-            "\nThis option will force to use software T&L instead of available hardware T&L."
-            "It is needed for most newer ATI Radeons."
-            "\n\nThe plugin will run slower with this option on. If you don't need it, don't leave it on."
-    },
-    { 
-            "Monitor Refresh Frequency in FullScreen Mode",
-            "Select the frequency for your full screen mode.\n\n"
-            "You should know what's the highest frequency your monitor can display for each screen resolution. If you select a higher frequency "
-            "then your monitor can display, you will get black screen or full screen just does not work. At the time, you can press [ALT-Enter] key again to go back to windowed mode."
-    },
-    { 
-            "Display tooltips",
-            "Enable/Disable tooltip display in the configuration dialog box\n\n"
-    },
-    { 
-            "Software Vertex Clipper",
-            "Enable/Disable Software Vertex Clipper.\n\n"
-            "Games graphics are rendered as triangles. Each triangle is determined by 3 vertexes. A triangle could "
-            "be completely or partially out of screen as its vertexes go out of screen in X, Y and Z direction. The "
-            "process of clipping is to chop the triangle along the boundary by converting the triangle to 1 or "
-            "more in-bound triangles.\n\n"
-            "The software clipper is needed for most new video cards, but not for most older video cards\n"
-            "If your video card works without it, then don't turn it on since it is CPU intensive, games"
-            " will become slower if you have slower CPU.\n"
-    },
-    { 
-            "Software Vertex Clipper",
-            "Enable/Disable Software Vertex Clipper.\n\n"
-            "Games graphics are rendered as triangles. Each triangle is determined by 3 vertexes. A triangle could "
-            "be completely or partially out of screen as its vertexes go out of screen in X, Y and Z direction. The "
-            "process of clipping is to chop the triangle along the boundary by converting the triangle to 1 or "
-            "more in-bound triangles.\n\n"
-            "The software clipper for OpenGL helps to resolve near plane clipping problem. For most games, you don't "
-            "have to use it since OpenGL has its own vertex clipper.\n"
-    },
-    { 
-            "Force Using Depth Bufer",
-            "Force to enable depth buffer compare and update.\n\n"
-    },
-    { 
-            "Disable Alpha Blender",
-            "Enable / Disable Alpha Blender\n\n"
-            "This option is different from the Normal Blender option. If this option is on, alpha blender "
-            "will be disabled completely. All transparency effects are disabled. "
-    },
-    { 
-            "Manually Set the N64 Screen Resolution",
-            "Manually set the N64 screen width, the value will overwrite the screen resolution auto detection"
-    },
-    { 
-            "Manually Set the N64 Screen Resolution",
-            "Manually set the N64 screen height, the value will overwrite the screen resolution auto detection"
-    },
-    { 
-            "Increase TextRect Edge by 1",
-            "This is an advanced option. Try it if you see there are horizonal or vertical thin "
-            "lines accross big texture blocks in menu or logo."
-    },
-    { 
-            "Hack the z value",
-            "This is an advanced option. If enabled, range of vertex Z values will be adjust "
-            " so that vertex before the near plane can be rendered without clipped."
-    },
-    { 
-            "Hack Texture Scale",
-            "This is an advanced option. Don't bother if you have no idea what it is. It is only "
-            "a hack for a few games."
-    },
-    { 
-            "Faster Texture Tile Loading Algorithm",
-            "This is an advanced option. It may increase texture loading if textures are loaded "
-            "by LoadTile ucodes."
-    },
-    { 
-            "Primary Depth Hack",
-            "This is an advanced option. This is a hack for a few games, don't bother with it."
-    },
-    { 
-            "Texture 1 Hack",
-            "This is an advanced option. This is a hack for a few games, don't bother with it."
-    },
-    { 
-            "Disable DL Culling",
-            "This is an advanced option. If enabled, it will disable the CullDL ucode."
-    },
-    { 
-            "Disable Texture Caching",
-            "This is an advanced option. If enabled, it will disable texture caching. Textures "
-            "will be always reloaded, game will be running slower."
-    },
-    { 
-            "Display OnScreen FPS",
-            "If enabled, current FPS (frame per second) will be displayed at the right-bottom corner of the screen "
-            "in selected color"
-    },
-    { 
-            "Onscreen FPS Display Text Color",
-            "Color must be in 32bit HEX format, as AARRGGBB, AA=alpha, RR=red, GG=green, BB=Blue\n"
-            "Data must be entered exactly in 8 hex numbers, or the entered value won't be accepted."
-    },
-    { 
-            "TMEM (N64 Texture Memory) Full Emulation",
-            "If this option is on, texture data will be loaded into the 4KB TMEM, textures are then created from data in the TMEM.\n"
-            "If this option is off, textures are then loaded directly from N64 RDRAM.\n\n"
-            "This feature is required by certain games. If it is on, Faster_Loading_Tile option will not work, and sprite ucodes may give errors.\n\n"
-            "Sorry for non-perfect implementation."
-    },
-    { 
-            "Frame buffer emulation in N64 native resolution",
-            "Back buffer resolution on PC is usually much higher than the N64 native resolution. Back buffer texture "
-            "can be saved and used in PC resolution to give the best speed and quality, but this needs large amount "
-            "of video card memory. \n\n"
-            "If your video card has 32MB or less memory, you'd better to enable this option."
-    },
-    { 
-            "Try to save video RAM for lower end video cards",
-            "If enabled, will automatically check if render-to-texture or saved back buffer texture has "
-            "been overwritten by CPU thread. If yes, will delete the render_texture to save VRAM.\n"
-            "It may be slower because extra checking need to be done at each frame."
-    },
-    { 
-            "Automatically write overlapped texture back to RDRAM",
-            "If enabled, such render-to-textures or saved back buffer textures will be written back "
-            "to RDRAM if they are to be covered partially by new textures.\n"
-    },
-    { 
-            "Texture Quality",
-            "Default - Use the same quality as color buffer quality\n"
-            "32-bit Texture - Always use 32 bit textures\n"
-            "16-bit Texture - Always use 16 bit textures\n"
-    },
-    { 
-            "Double Texture Buffer Size for Small Render-to-Textures",
-            "Enable this option to have better render-to-texture quality, of course this requires "
-            "more video RAM."
-    },
-    { 
-            "Hide Advanced Options",
-            "If enabled, all advanced options will be hidden. Per game settings, default games settings "
-            "and texture filter settings will be all hidden."
-    },
-    { 
-            "WinFrame Mode",
-            "If enabled, graphics will be drawn in WinFrame mode instead of solid and texture mode."
-    },
-};
-
-int numOfTTMsgs = sizeof(ttmsg)/sizeof(ToolTipMsg);
 
 std::ifstream& getline( std::ifstream &is, char *str );
 

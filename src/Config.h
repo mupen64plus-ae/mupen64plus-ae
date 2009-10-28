@@ -89,7 +89,7 @@ enum {
     TXT_BUF_IGNORE,
     TXT_BUF_NORMAL,
     TXT_BUF_WRITE_BACK,
-    TXT_BUF_WRITE_BACK_AND_RELOAD   ,
+    TXT_BUF_WRITE_BACK_AND_RELOAD,
 };
 
 enum {
@@ -215,8 +215,6 @@ typedef struct {
     BOOL    bSmallTextureOnly;
     BOOL    bDumpTexturesToFiles;
     BOOL    bLoadHiResTextures;
-
-    int     RenderBufferSetting;
 
     int     OpenglDepthBufferSetting;
     int     OpenglRenderSetting;
