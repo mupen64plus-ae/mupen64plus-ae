@@ -39,11 +39,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "TextureFilters.h"
 #include "TextureManager.h"
 #include "Video.h"
+#include "version.h"
 
 //=======================================================
 // local variables
-
-static char g_ConfigDir[PATH_MAX] = {0};
 
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
@@ -598,13 +597,13 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
         *PluginType = M64PLUGIN_GFX;
 
     if (PluginVersion != NULL)
-        *PluginVersion = 0x20000;
+        *PluginVersion = PLUGIN_VERSION;
 
     if (APIVersion != NULL)
         *APIVersion = PLUGIN_API_VERSION;
     
     if (PluginNamePtr != NULL)
-        *PluginNamePtr = project_name;
+        *PluginNamePtr = PLUGIN_NAME;
 
     if (Capabilities != NULL)
     {

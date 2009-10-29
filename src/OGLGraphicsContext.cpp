@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLGraphicsContext.h"
 #include "TextureManager.h"
 #include "Video.h"
+#include "version.h"
 
 #include "liblinux/BMGLibPNG.h"
 
@@ -125,7 +126,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
    }
    
    char caption[500];
-   sprintf(caption, "Mupen64plus-video-rice N64 Plugin v2.0.0");  /* fixme */
+   sprintf(caption, "%s v%i.%i.%i", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));
    SDL_WM_SetCaption(caption, caption);
    SetWindowMode();
 
@@ -326,7 +327,7 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
     if(lastTick + 5000 <= nowTick)
       {
          char caption[200];
-         sprintf(caption, "RiceVideoLinux N64 Plugin %s - %.3f VI/S", MUPEN_VERSION, frames/5.0);
+         sprintf(caption, "%s v%i.%i.%i - %.3f VI/S", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION), frames/5.0);
          SDL_WM_SetCaption(caption, caption);
          frames = 0;
          lastTick = nowTick;

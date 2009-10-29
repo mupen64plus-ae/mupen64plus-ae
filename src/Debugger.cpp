@@ -585,9 +585,6 @@ void __cdecl DebuggerAppendMsg(const char * Message, ...)
 
 void DebuggerPause()
 {
-    char temp[300];
-    sprintf(temp,"%s Debug %s:Paused ",project_name, MUPEN_VERSION) ;
-
     while( debuggerPause )
     {
         if( debuggerDrawRenderTexture )
@@ -598,7 +595,6 @@ void DebuggerPause()
         usleep(100 * 1000);
         debuggerPause = false;
     }
-    sprintf(temp,"%s Debug %s",project_name, MUPEN_VERSION) ;
 }
 
 void __cdecl LOG_UCODE(const char* szFormat, ...)

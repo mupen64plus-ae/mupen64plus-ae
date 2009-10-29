@@ -381,7 +381,6 @@ extern RomOptions          defaultRomOptions;
 extern RomOptions          currentRomOptions;
 extern const CountryIDInfo g_CountryCodeInfo[];
 extern GameSetting         g_curRomInfo;
-extern const char         *project_name;
 extern bool                bIniIsChanged;
 extern char                szIniFileName[300];
 
