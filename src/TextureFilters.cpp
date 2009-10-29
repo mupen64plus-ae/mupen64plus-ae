@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "DeviceBuilder.h"
 #include "TextureFilters.h"
 #include "Render.h"
+#include "Video.h"
 
 #include "liblinux/BMGLibPNG.h"
 #include "liblinux/BMGDLL.h"
@@ -906,7 +907,6 @@ typedef struct {
 CSortedList<uint64,ExtTxtrInfo> gTxtrDumpInfos;
 CSortedList<uint64,ExtTxtrInfo> gHiresTxtrInfos;
 
-extern void GetPluginDir( char * Directory );
 extern char * right(char * src, int nchars);
 
 BOOL PathIsDirectory(char* name)
@@ -1242,8 +1242,10 @@ const char *subfolders[] = {
 
 void FindAllDumpedTextures(void)
 {
-    char    foldername[PATH_MAX];
-    GetPluginDir(foldername);
+    char    foldername[PATH_MAX + 64];
+    strncpy(foldername, ConfigGetUserDataPath(), PATH_MAX);
+    foldername[PATH_MAX] = 0;
+
     if(foldername[strlen(foldername) - 1] != '/') strcat(foldername, "/");
     strcat(foldername,"texture_dump/");
 
@@ -1283,8 +1285,10 @@ void FindAllDumpedTextures(void)
 
 void FindAllHiResTextures(void)
 {
-    char    foldername[PATH_MAX];
-    GetPluginDir(foldername);
+    char    foldername[PATH_MAX + 64];
+    strncpy(foldername, ConfigGetUserDataPath(), PATH_MAX);
+    foldername[PATH_MAX] = 0;
+
     if(foldername[strlen(foldername) - 1] != '/') strcat(foldername, "/");
     strcat(foldername,"hires_texture/");
     CheckAndCreateFolder(foldername);
@@ -1447,11 +1451,12 @@ void DumpCachedTexture( TxtrCacheEntry &entry )
         if( CheckTextureInfos(gTxtrDumpInfos,entry,ciidx,true) >= 0 )
             return;     // This texture has been dumpped
 
-        char filename1[PATH_MAX];
-        char filename2[PATH_MAX];
-        char filename3[PATH_MAX];
-        char gamefolder[PATH_MAX];
-        GetPluginDir(gamefolder);
+        char filename1[PATH_MAX + 64];
+        char filename2[PATH_MAX + 64];
+        char filename3[PATH_MAX + 64];
+        char gamefolder[PATH_MAX + 64];
+        strncpy(gamefolder, ConfigGetUserDataPath(), PATH_MAX);
+        gamefolder[PATH_MAX] = 0;
         
         strcat(gamefolder,"texture_dump/");
         strcat(gamefolder,(const char*)g_curRomInfo.szGameName);

@@ -351,60 +351,6 @@ static void StopVideo()
 //---------------------------------------------------------------------------------------
 // Global functions, for use by other source files in this plugin
 
-void GetPluginDir( char * Directory ) 
-{
-   if(strlen(g_ConfigDir) > 0)
-   {
-      strncpy(Directory, g_ConfigDir, PATH_MAX);
-      // make sure there's a trailing '/'
-      if(Directory[strlen(Directory)-1] != '/')
-          strncat(Directory, "/", PATH_MAX - strlen(Directory));
-   }
-   else
-   {
-      char path[PATH_MAX];
-      int n = -1; /* fixme remove this function readlink("/proc/self/exe", path, PATH_MAX);*/
-      if(n == -1) strcpy(path, "./");
-      else
-        {
-           char path2[PATH_MAX];
-           int i;
-           
-           path[n] = '\0';
-           strcpy(path2, path);
-           for (i=strlen(path2)-1; i>0; i--)
-             {
-                if(path2[i] == '/') break;
-             }
-           if(i == 0) strcpy(path, "./");
-           else
-             {
-                DIR *dir;
-                struct dirent *entry;
-                int gooddir = 0;
-                
-                path2[i+1] = '\0';
-                dir = opendir(path2);
-                while((entry = readdir(dir)) != NULL)
-                  {
-              if(!strcmp(entry->d_name, "plugins"))
-                gooddir = 1;
-                  }
-                closedir(dir);
-                if(!gooddir) strcpy(path, "./");
-             }
-        }
-      int i;
-      for(i=strlen(path)-1; i>0; i--)
-        {
-           if(path[i] == '/') break;
-        }
-      path[i+1] = '\0';
-      strcat(path, "plugins/");
-      strcpy(Directory, path);
-   }
-}
-
 void SetVIScales()
 {
     if( g_curRomInfo.VIHeight>0 && g_curRomInfo.VIWidth>0 )
