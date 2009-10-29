@@ -300,8 +300,19 @@ void GenerateFrameBufferOptions(void)
     }
 }
 
-void SetConfigurationDefaults(void)
+BOOL InitConfiguration(void)
 {
+    if (ConfigOpenSection("Video-General", &l_ConfigVideoGeneral) != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_ERROR, "Unable to open Video-General configuration section");
+        return FALSE;
+    }
+    if (ConfigOpenSection("Video-Rice", &l_ConfigVideoRice) != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_ERROR, "Unable to open Video-Rice configuration section");
+        return FALSE;
+    }
+
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "WindowWidth", 640, "Render width for windowed mode (not used)");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "WindowHeight", 480, "Render height for windowed mode (not used)");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "FullscreenWidth", 640, "Render width for fullscreen mode");
@@ -341,6 +352,8 @@ void SetConfigurationDefaults(void)
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting", 16, "Z-buffer depth (only 16 or 32)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ColorQuality", TEXTURE_FMT_A8R8G8B8, "Color bit depth for rendering window (0=32 bits, 1=16 bits)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.2, 3=OGL_1.3, 4=OGL_1.4, 5=OGL_1.4_V2, 6=OGL_TNT2, 7=NVIDIA_OGL, 8=OGL_FRAGMENT_PROGRAM)");
+
+    return TRUE;
 }
 
 bool isMMXSupported() 
@@ -408,7 +421,7 @@ bool isSSESupported()
         return false; 
 } 
 
-void ReadConfiguration(void)
+static void ReadConfiguration(void)
 {
     windowSetting.uWindowDisplayWidth = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "WindowWidth");
     windowSetting.uWindowDisplayHeight = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "WindowHeight");
@@ -476,10 +489,8 @@ void ReadConfiguration(void)
     status.bUseHW_T_L = false;
 }
     
-BOOL InitConfiguration(void)
+BOOL LoadConfiguration(void)
 {
-    //Initialize this DLL
-
     IniSections.clear();
     bIniIsChanged = false;
     strcpy(szIniFileName, INI_FILE);
@@ -490,18 +501,13 @@ BOOL InitConfiguration(void)
         return FALSE;
     }
 
-    if (ConfigOpenSection("Video-General", &l_ConfigVideoGeneral) != M64ERR_SUCCESS)
+    if (l_ConfigVideoGeneral == NULL || l_ConfigVideoRice == NULL)
     {
-        DebugMessage(M64MSG_ERROR, "Unable to open Video-General configuration section");
+        DebugMessage(M64MSG_ERROR, "Rice Video configuration sections are not open!");
         return FALSE;
     }
-    if (ConfigOpenSection("Video-Rice", &l_ConfigVideoRice) != M64ERR_SUCCESS)
-    {
-        DebugMessage(M64MSG_ERROR, "Unable to open Video-Rice configuration section");
-        return FALSE;
-    }
-
-    SetConfigurationDefaults();
+    
+    // Read config parameters from core config API and set up internal variables
     ReadConfiguration();
 
     return TRUE;

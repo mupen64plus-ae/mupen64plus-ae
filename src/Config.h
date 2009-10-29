@@ -386,6 +386,7 @@ extern bool                bIniIsChanged;
 extern char                szIniFileName[300];
 
 extern BOOL InitConfiguration(void);
+extern BOOL LoadConfiguration(void);
 extern void WriteIniFile();
 extern BOOL ReadIniFile();
 extern void OutputSectionDetails(uint32 i, FILE * fh);

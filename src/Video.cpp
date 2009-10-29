@@ -614,6 +614,10 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         !ConfigGetSharedDataFilepath || !ConfigGetUserConfigPath || !ConfigGetUserDataPath || !ConfigGetUserCachePath)
         return M64ERR_INCOMPATIBLE;
 
+    /* open config section handles and set parameter default values */
+    if (!InitConfiguration())
+        return M64ERR_INTERNAL;
+
     l_PluginInit = 1;
     return M64ERR_SUCCESS;
 }
@@ -692,7 +696,8 @@ EXPORT void CALL RomClosed(void)
 
 EXPORT void CALL RomOpen(void)
 {
-   InitConfiguration();
+    /* Read RiceVideoLinux.ini file, set up internal variables by reading values from core configuration API */
+    LoadConfiguration();
 
     if( g_CritialSection.IsLocked() )
     {
