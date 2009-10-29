@@ -40,8 +40,6 @@ const char *project_name =  "Rice's OpenGL Video for Mupen64Plus";
 static m64p_handle l_ConfigVideoRice = NULL;
 static m64p_handle l_ConfigVideoGeneral = NULL;
 
-void GetPluginDir(char *Directory);
-
 const char *frameBufferSettings[] =
 {
 "None (default)",
@@ -923,8 +921,6 @@ char * tidy(char * s)
 
 }
 
-extern void GetPluginDir( char * Directory );
-
 BOOL ReadIniFile()
 {
     std::ifstream inifile;
@@ -1094,36 +1090,40 @@ std::ifstream & getline(std::ifstream & is, char *str)
 
 void WriteIniFile()
 {
-    unsigned char szFileNameOut[PATH_MAX+1];
-    unsigned char szFileNameDelete[PATH_MAX+1];
-    unsigned char filename[PATH_MAX+1];
     uint32 i;
     FILE * fhIn;
     FILE * fhOut;
-    unsigned char szBuf[1024+1];
 
-    GetPluginDir((char*)szFileNameOut);
-    GetPluginDir((char*)szFileNameDelete);
-    sprintf((char*)filename, "%s.tmp", szIniFileName);
-    strcat((char*)szFileNameOut, (char*)filename);
-    sprintf((char*)filename, "%s.del", szIniFileName);
-    strcat((char*)szFileNameDelete, (char*)filename);
-
-    GetPluginDir((char*)filename);
-    strcat((char*)filename,szIniFileName);
-    fhIn = fopen((char*)filename, "r");
-    if (fhIn == NULL)
-    {
-        // Create a new file
-        fhOut = fopen((char*)filename,"w");
-        fclose(fhOut);
+    /* get path to game-hack INI file and read it */
+    const char *ini_filepath = ConfigGetSharedDataFilepath(szIniFileName);
+    if (ini_filepath == NULL)
         return;
-    }
-
-    fhOut = fopen((char*)szFileNameOut, "w");
-    if (fhOut == NULL)
+    fhIn = fopen(ini_filepath, "r");
+    if (fhIn == NULL)
+        return;
+    fseek(fhIn, 0L, SEEK_END);
+    long filelen = ftell(fhIn);
+    fseek(fhIn, 0L, SEEK_SET);
+    char *chIniData = (char *) malloc(filelen + 1);
+    if (chIniData == NULL)
     {
         fclose(fhIn);
+        return;
+    }
+    long bytesread = fread(chIniData, 1, filelen, fhIn);
+    fclose(fhIn);
+    if (bytesread != filelen)
+    {
+        free(chIniData);
+        return;
+    }
+    chIniData[filelen] = 0;
+
+    /* now try to open the file for writing */
+    fhOut = fopen(ini_filepath, "w");
+    if (fhOut == NULL)
+    {
+        free(chIniData);
         return;
     }
 
@@ -1133,22 +1133,25 @@ void WriteIniFile()
         IniSections[i].bOutput = false;
     }
 
-
-    while (fgets((char*)szBuf, 1024, fhIn))
+    char *thisline = chIniData;
+    while ((thisline - chIniData) < filelen)
     {
-        if (szBuf[0] == '{')
+        char *nextline = strchr(thisline, '\n');
+        if (nextline == NULL)
+            nextline = thisline + strlen(thisline) + 1;
+        else
+            nextline++;
+        if (thisline[0] == '{')
         {
             BOOL bFound = FALSE;
             // Start of section
-            tidy((char*)szBuf);
-            szBuf[strlen((char*)szBuf)-1]='\0';
-
+            tidy((char*) thisline);
+            thisline[strlen(thisline) - 1] = '\0';
             for (i = 0; i < IniSections.size(); i++)
             {
                 if (IniSections[i].bOutput)
                     continue;
-
-                if (strcasecmp((char*)szBuf+1, IniSections[i].crccheck) == 0)
+                if (strcasecmp((char*) thisline + 1, IniSections[i].crccheck) == 0)
                 {
                     // Output this CRC
                     OutputSectionDetails(i, fhOut);
@@ -1163,13 +1166,12 @@ void WriteIniFile()
                 // replaces the inifile while game is running!
             }
         }
-        else if (szBuf[0] == '/')
+        else if (thisline[0] == '/')
         {
             // Comment
-            fputs((char*)szBuf, fhOut);
-            continue;
+            fputs((char*) thisline, fhOut);
         }
-
+        thisline = nextline;
     }
 
     // Input buffer done-  process any new entries!
@@ -1179,18 +1181,12 @@ void WriteIniFile()
         if (IniSections[i].bOutput)
             continue;
         // Output this CRC
-        // Removed at request of Genueix :)
-        //fprintf(fhOut, "// Automatically generated entry - may need editing\n");
         OutputSectionDetails(i, fhOut);
         IniSections[i].bOutput = true;
     }
 
     fclose(fhOut);
-    fclose(fhIn);
-
-    // Create the new file
-    remove((char*)filename);
-    rename((char*)szFileNameOut, (char*)filename);
+    free(chIniData);
 
     bIniIsChanged = false;
 }
