@@ -39,6 +39,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 static m64p_handle l_ConfigVideoRice = NULL;
 static m64p_handle l_ConfigVideoGeneral = NULL;
 
+static int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName, int PrintInfo); 
+
 const char *frameBufferSettings[] =
 {
 "None (default)",
@@ -204,8 +206,6 @@ SettingInfo OnScreenDisplaySettings[] =
 };
 
 const int numberOfOpenGLRenderEngineSettings = sizeof(OpenGLRenderSettings)/sizeof(RenderEngineSetting);
-
-void GenerateCurrentRomOptions();
 
 void GenerateFrameBufferOptions(void)
 {
@@ -695,9 +695,9 @@ void Ini_GetRomOptions(LPGAMESETTING pGameSetting)
     int i;
 
     i = FindIniEntry(pGameSetting->romheader.dwCRC1,
-                              pGameSetting->romheader.dwCRC2,
-                              pGameSetting->romheader.nCountryID,
-                              (char*)pGameSetting->szGameName);
+                     pGameSetting->romheader.dwCRC2,
+                     pGameSetting->romheader.nCountryID,
+                     (char*)pGameSetting->szGameName, 1);
 
     pGameSetting->bDisableTextureCRC    = IniSections[i].bDisableTextureCRC;
     pGameSetting->bDisableCulling       = IniSections[i].bDisableCulling;
@@ -735,9 +735,9 @@ void Ini_StoreRomOptions(LPGAMESETTING pGameSetting)
     int i;
 
     i = FindIniEntry(pGameSetting->romheader.dwCRC1,
-        pGameSetting->romheader.dwCRC2,
-        pGameSetting->romheader.nCountryID,
-        (char*)pGameSetting->szGameName);
+                     pGameSetting->romheader.dwCRC2,
+                     pGameSetting->romheader.nCountryID,
+                     (char*)pGameSetting->szGameName, 0);
 
     if( IniSections[i].bDisableTextureCRC   !=pGameSetting->bDisableTextureCRC )
     {
@@ -1288,7 +1288,8 @@ void OutputSectionDetails(uint32 i, FILE * fh)
 // If the rom is not found, a new entry is created
 // The resulting value is returned
 void __cdecl DebuggerAppendMsg (const char * Message, ...);
-int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName)
+
+static int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName, int PrintInfo)
 {
     uint32 i;
     unsigned char szCRC[50+1];
@@ -1300,13 +1301,17 @@ int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName)
     {
         if (strcasecmp((char*)szCRC, IniSections[i].crccheck) == 0)
         {
-            DebugMessage(M64MSG_INFO, "Found ROM '%s', CRC %s", IniSections[i].name, szCRC);
+            if (PrintInfo)
+                DebugMessage(M64MSG_INFO, "Found ROM '%s', CRC %s", IniSections[i].name, szCRC);
             return i;
         }
     }
 
     // Add new entry!!!
     section newsection;
+
+    if (PrintInfo)
+        DebugMessage(M64MSG_INFO, "ROM (CRC %s) not found in INI file", szCRC);
 
     strcpy(newsection.crccheck, (char*)szCRC);
 

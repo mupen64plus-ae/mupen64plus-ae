@@ -389,7 +389,6 @@ extern BOOL LoadConfiguration(void);
 extern void WriteIniFile();
 extern BOOL ReadIniFile();
 extern void OutputSectionDetails(uint32 i, FILE * fh);
-extern int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* szName); 
 extern void GenerateCurrentRomOptions();
 extern void Ini_GetRomOptions(LPGAMESETTING pGameSetting);
 extern void Ini_StoreRomOptions(LPGAMESETTING pGameSetting);
