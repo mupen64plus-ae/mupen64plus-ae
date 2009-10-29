@@ -41,27 +41,25 @@ protected:
     CRender *m_pRender;
 };
 
-#if !defined(WIN32)
-    typedef enum _BLEND 
-    {
-       BLEND_ZERO = 1,
-         BLEND_ONE = 2,
-         BLEND_SRCCOLOR = 3,
-         BLEND_INVSRCCOLOR = 4,
-         BLEND_SRCALPHA = 5,
-         BLEND_INVSRCALPHA = 6,
-         BLEND_DESTALPHA = 7,
-         BLEND_INVDESTALPHA = 8,
-         BLEND_DESTCOLOR = 9,
-         BLEND_INVDESTCOLOR = 10,
-         BLEND_SRCALPHASAT = 11,
-         BLEND_BOTHSRCALPHA = 12,
-         BLEND_BOTHINVSRCALPHA = 13,
-         BLEND_BLENDFACTOR = 14,
-         BLEND_INVBLENDFACTOR = 15,
-         BLEND_FORCE_DWORD = 0x7fffffff
-    } BLEND;
-#endif
+typedef enum _BLEND 
+{
+   BLEND_ZERO = 1,
+     BLEND_ONE = 2,
+     BLEND_SRCCOLOR = 3,
+     BLEND_INVSRCCOLOR = 4,
+     BLEND_SRCALPHA = 5,
+     BLEND_INVSRCALPHA = 6,
+     BLEND_DESTALPHA = 7,
+     BLEND_INVDESTALPHA = 8,
+     BLEND_DESTCOLOR = 9,
+     BLEND_INVDESTCOLOR = 10,
+     BLEND_SRCALPHASAT = 11,
+     BLEND_BOTHSRCALPHA = 12,
+     BLEND_BOTHINVSRCALPHA = 13,
+     BLEND_BLENDFACTOR = 14,
+     BLEND_INVBLENDFACTOR = 15,
+     BLEND_FORCE_DWORD = 0x7fffffff
+} BLEND;
 
 #endif
 

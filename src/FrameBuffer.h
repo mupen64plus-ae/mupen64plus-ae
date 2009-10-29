@@ -24,9 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "RenderTexture.h"
 #include "TextureManager.h"
 
-#if !defined(WIN32)
-  typedef int SURFFORMAT;
-#endif
+typedef int SURFFORMAT;
 
 extern void TexRectToN64FrameBuffer_16b(uint32 x0, uint32 y0, uint32 width, uint32 height, uint32 dwTile);
 extern void TexRectToFrameBuffer_8b(uint32 dwXL, uint32 dwYL, uint32 dwXH, uint32 dwYH, float t0u0, float t0v0, float t0u1, float t0v1, uint32 dwTile);
