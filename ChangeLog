@@ -1,0 +1,70 @@
+0.0.10:
+ - when the keyboard is used to control an axis left shift and left control can be 
+   pressed to change the axis movement. shift reduces the movement by 25%, control 
+   reduces it by 50%, control and shift together reduce the movement by 75%
+ - when the mouse is used left ctrl + left alt can be used to release the mouse, 
+   clicking into the window will grab the mouse again.
+
+0.0.9:
+ - import new version of SDL_tff (2.0.7)
+ - when the keyboard is used to control an axis left shift can be pressed to change 
+   the axis movement to 25% of the original value
+
+0.0.8-b:
+ - fixed bug which didn't put analog axis back into default position when a key
+   which was assigned to it was pressed and released again
+
+0.0.8:
+ - fixed a stupid bug which disabled analog axis
+
+0.0.7-b:
+ - sdl config dialog: input event queue is flushed before a 
+   button/whatever is assigned
+
+0.0.7: mouse support!
+ - mouse support (x and y axis automatically mapped to analog stick,
+   mouse buttons mapable onto n64 buttons)
+
+0.0.6:
+ - keyboard and gamepad can be used at the same time (the keyboard will work always,
+   even if you choose another device. if you want to use only the keyboard select
+   keyboard as device
+
+0.0.5:
+ - sdl about dialog
+ - fixed config routine (incorrectly read X- axis)
+ - fixed small sdl config dialog drawing bug
+ - corrected config dialog c button labels
+
+0.0.4: joystick hat support
+ - fixed a segfault when the rom was closed
+ - less axis sensibility when assigning a new mapping (changed from 10 to 50 percent)
+ - less sensibility for axis mapped to buttons (changed from 10 to 20 percent)
+ - it's possible to clear assignments and cancel an assignment
+ - joystick hat support (mapable to axis and buttons)
+ - fixed some bugs in the input reading function
+ - fixed all compiler warnings
+
+0.0.3:
+ - no more need for the SDL_image library
+ - no longer link against gtk library
+
+0.0.2-2:
+ - fixed a bug which didn't allow to assign anything to a pad button
+
+0.0.2-1:			*BROKEN*
+ - help for the SDL gui
+
+0.0.2: new SDL config dialog!	*BROKEN*
+ - fixed a bug where it wouldn't open the joystick device if you change the controller
+ - sdl config dialog
+ - some other lil' fixes
+
+0.0.1: made some small fixes
+ - now it's possible to map an axis (i.e. X Axis +) to a button (i.e.  DPAD_UP)
+ - configuration is saved and displayed for all devices
+ - changed the config dialog a bit (bigger text entries, bigger device combo)
+ - new config file format
+
+0.0.1b: initial version
+ - should work :-)

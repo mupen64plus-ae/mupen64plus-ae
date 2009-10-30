@@ -1,0 +1,89 @@
+                                                                      2003-01-30
+blight_input: N64 input plugin using SDL (for Mupen64 atm)
+================================================================================
+
+TOC:
+----
+1) About
+  1.1) What is this?
+  1.2) What is SDL?
+  1.3) What is Mupen64?
+
+2) Installation
+  2.1) How to get the latest version
+  2.2) Requirements
+  2.3) Compiling and installing
+
+3) Help
+  3.1) Configuring the plugin
+  3.2) What kind of devices are supported?
+
+================================================================================
+1) About
+--------
+
+1.1) What is this?
+  blight_input is an n64 input plugin using SDL. It should compile on any OS
+  supported by SDL.
+
+1.2) What is SDL?
+  SDL is the Simple DirectMedia Layer written by Sam Lantinga.
+  It provides a low-level API for audio, video, input, threads, ...
+  For more information go to http://www.libsdl.org/
+
+1.3) What is Mupen64?
+  Mupen64 is an open source n64 emulator written by Hacktarux. At the moment it
+  is available for Linux and Windows (some people already got it running on
+  mac os x and BSD)
+  Go to http://mupen64.emuation64.com/ for more infotmation!
+
+
+2) Installation
+---------------
+
+2.1) How to get the latest version
+  Go to http://deltaanime.ath.cx/~blight/n64 and download the latest version
+
+2.2) Requirements
+  - SDL (www.libsdl.org)
+
+2.3) Compiling and Installing
+  Unpack the source:                  tar -zxvf blight_input-X.Y.Z.tar.gz
+  Change to the source directory:     cd blight_input-X.Y.Z
+  Configure the package:              ./configure
+  Compile it:                         make
+  Install the plugin:                 make install
+
+  This will install blight_input-X.Y.Z.so in ./src/ - copy the file into
+  Mupen64's plugin directory (cp src/blight_input-X.Y.Z.so <mupen64 dir>/plugins)
+  
+  
+3) Help
+-------
+
+3.1) Configuring the plugin
+  Select "Blight's SDL input plugin vX.Y.Z" in your N64 emulator and click
+  "Configure". The config dialog will pop up. Move your mouse cursor over the
+  "Help" area - you will see instructions how to configure the plugin.
+
+3.2) What kind of devices are supported?
+  Any devices supported by SDL and the plugin which leaves the following:
+  - Keyboard
+  - Joysticks/Gamepads supported by the kernel
+  - HID devices (i.e. a N64 pad connected using an adaptoid, USB joysticks and
+    gamepads), maybe more
+
+  You can assign any of the following events to trigger button presses or axis
+  movements:
+  - Single key press
+  - joystick/gamepad button press
+  - joystick/gamepad axis movement
+  - joystick/gamepad hat position
+  
+  You can i.e assign X Axis Left to button A, Joy Hat Up to Y Axis Up, ...
+  
+================================================================================
+
+I hope this helped!
+  -- "off to bed" blig[h]t
+  
