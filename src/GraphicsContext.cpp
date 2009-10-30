@@ -19,6 +19,7 @@
 */
 
 #include "m64p_plugin.h"
+#include "m64p_vidext.h"
 
 #include "FrameBuffer.h"
 #include "OGLGraphicsContext.h"
@@ -132,52 +133,40 @@ int __cdecl SortResolutionsCallback( const void* arg1, const void* arg2 )
 // This is a static function, will be called when the plugin DLL is initialized
 void CGraphicsContext::InitDeviceParameters(void)
 {
-    // Initialize common device parameters
-
     int i=0, j;
     int numOfFrequency=0, numOfColorDepth = 0;
+    int numSizes = 64;
+    m64p_2d_size VideoModeArray[64];
+
+    // Initialize common device parameters
     CGraphicsContext::m_numOfResolutions=0;
     memset(&CGraphicsContext::m_FullScreenRefreshRates,0,40*sizeof(unsigned int));
     memset(&CGraphicsContext::m_FullScreenResolutions, 0, 40*2*sizeof(int));
     memset(&CGraphicsContext::m_ColorBufferDepths, 0, 4*sizeof(unsigned int));
 
-   if(SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
-     DebugMessage(M64MSG_ERROR, "SDL video subsystem init failed: %s", SDL_GetError());
+    if (CoreVideo_Init() != M64ERR_SUCCESS)   
+        return;
+
+    if (CoreVideo_ListFullscreenModes(VideoModeArray, &numSizes) != M64ERR_SUCCESS)
+        return;
    
-   const SDL_VideoInfo *videoInfo;
-   if(!(videoInfo = SDL_GetVideoInfo()))
-     DebugMessage(M64MSG_ERROR, "SDL_GetVideoInfo query failed: %s", SDL_GetError());
-   
-   Uint32 videoFlags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE | SDL_FULLSCREEN;
-   
-   if(videoInfo->hw_available)
-     videoFlags |= SDL_HWSURFACE;
-   else
-     videoFlags |= SDL_SWSURFACE;
-   
-   if(videoInfo->blit_hw)
-     videoFlags |= SDL_HWACCEL;
-   
-   SDL_Rect **modes;
-   modes = SDL_ListModes(NULL, videoFlags);
-   for(i=0; modes[i]; i++)
-     {
-    for (j = 0; j < CGraphicsContext::m_numOfResolutions; j++)
-      {
-         if ((modes[i]->w == CGraphicsContext::m_FullScreenResolutions[j][0]) &&
-         (modes[i]->h == CGraphicsContext::m_FullScreenResolutions[j][1]))
-           {
-          break;
-           }
-      }
-    
-    if( j == CGraphicsContext::m_numOfResolutions )
-      {
-         CGraphicsContext::m_FullScreenResolutions[CGraphicsContext::m_numOfResolutions][0] = modes[i]->w;
-         CGraphicsContext::m_FullScreenResolutions[CGraphicsContext::m_numOfResolutions][1] = modes[i]->h;
-         CGraphicsContext::m_numOfResolutions++;
-      }
-     }
+    for (i = 0; i < numSizes; i++)
+    {
+        for (j = 0; j < CGraphicsContext::m_numOfResolutions; j++)
+        {
+            if (VideoModeArray[i].uiWidth == (unsigned int) CGraphicsContext::m_FullScreenResolutions[j][0] &&
+                VideoModeArray[i].uiHeight == (unsigned int) CGraphicsContext::m_FullScreenResolutions[j][1])
+            {
+                break;
+            }
+       }
+       if (j == CGraphicsContext::m_numOfResolutions)
+       {
+           CGraphicsContext::m_FullScreenResolutions[CGraphicsContext::m_numOfResolutions][0] = VideoModeArray[i].uiWidth;
+           CGraphicsContext::m_FullScreenResolutions[CGraphicsContext::m_numOfResolutions][1] = VideoModeArray[i].uiHeight;
+           CGraphicsContext::m_numOfResolutions++;
+       }
+   }
    
    CGraphicsContext::m_ColorBufferDepths[numOfColorDepth++] = 16;
    CGraphicsContext::m_ColorBufferDepths[numOfColorDepth++] = 32;

@@ -48,8 +48,6 @@ protected:
     bool SetFullscreenMode();
     bool SetWindowMode();
 
-    SDL_Surface *m_pScreen;
-
     // Important OGL extension features
     bool    m_bSupportMultiTexture;
     bool    m_bSupportTextureEnvCombine;

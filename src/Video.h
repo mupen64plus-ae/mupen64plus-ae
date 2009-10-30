@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "typedefs.h"
 #include "m64p_config.h"
 #include "m64p_plugin.h"
+#include "m64p_vidext.h"
 
 typedef struct {
     float   fViWidth, fViHeight;
@@ -180,6 +181,17 @@ extern ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath;
 extern ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath;
 extern ptr_ConfigGetUserDataPath       ConfigGetUserDataPath;
 extern ptr_ConfigGetUserCachePath      ConfigGetUserCachePath;
+
+/* declarations of pointers to Core video extension functions */
+extern ptr_VidExt_Init                  CoreVideo_Init;
+extern ptr_VidExt_Quit                  CoreVideo_Quit;
+extern ptr_VidExt_ListFullscreenModes   CoreVideo_ListFullscreenModes;
+extern ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode;
+extern ptr_VidExt_SetCaption            CoreVideo_SetCaption;
+extern ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen;
+extern ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress;
+extern ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute;
+extern ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers;
 
 /* global functions provided by Video.cpp */
 extern char generalText[];

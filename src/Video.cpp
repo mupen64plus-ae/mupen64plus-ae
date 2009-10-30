@@ -87,6 +87,17 @@ ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath = NULL;
 ptr_ConfigGetUserDataPath       ConfigGetUserDataPath = NULL;
 ptr_ConfigGetUserCachePath      ConfigGetUserCachePath = NULL;
 
+/* definitions of pointers to Core video extension functions */
+ptr_VidExt_Init                  CoreVideo_Init = NULL;
+ptr_VidExt_Quit                  CoreVideo_Quit = NULL;
+ptr_VidExt_ListFullscreenModes   CoreVideo_ListFullscreenModes = NULL;
+ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
+ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
+ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
+ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
+ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
+ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
+
 //---------------------------------------------------------------------------------------
 // Forward function declarations
 
@@ -557,7 +568,29 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
         !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString ||
         !ConfigGetSharedDataFilepath || !ConfigGetUserConfigPath || !ConfigGetUserDataPath || !ConfigGetUserCachePath)
+    {
+        DebugMessage(M64MSG_ERROR, "Couldn't connect to Core configuration functions");
         return M64ERR_INCOMPATIBLE;
+    }
+
+    /* Get the core Video Extension function pointers from the library handle */
+    CoreVideo_Init = (ptr_VidExt_Init) osal_dynlib_getproc(CoreLibHandle, "VidExt_Init");
+    CoreVideo_Quit = (ptr_VidExt_Quit) osal_dynlib_getproc(CoreLibHandle, "VidExt_Quit");
+    CoreVideo_ListFullscreenModes = (ptr_VidExt_ListFullscreenModes) osal_dynlib_getproc(CoreLibHandle, "VidExt_ListFullscreenModes");
+    CoreVideo_SetVideoMode = (ptr_VidExt_SetVideoMode) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetVideoMode");
+    CoreVideo_SetCaption = (ptr_VidExt_SetCaption) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetCaption");
+    CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) osal_dynlib_getproc(CoreLibHandle, "VidExt_ToggleFullScreen");
+    CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetProcAddress");
+    CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SetAttribute");
+    CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
+
+    if (!CoreVideo_Init || !CoreVideo_Quit || !CoreVideo_ListFullscreenModes || !CoreVideo_SetVideoMode ||
+        !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_GL_GetProcAddress ||
+        !CoreVideo_GL_SetAttribute || !CoreVideo_GL_SwapBuffers)
+    {
+        DebugMessage(M64MSG_ERROR, "Couldn't connect to Core video extension functions");
+        return M64ERR_INCOMPATIBLE;
+    }
 
     /* open config section handles and set parameter default values */
     if (!InitConfiguration())
@@ -677,8 +710,8 @@ EXPORT void CALL UpdateScreen(void)
         if(lastTick + 5000 <= nowTick)
         {
             char caption[200];
-            sprintf(caption, "Mupen64plus-video-rice N64 Plugin - %.3f VI/S", frames/5.0);
-            SDL_WM_SetCaption(caption, caption);
+            sprintf(caption, "%s v%i.%i.%i - %.3f VI/S", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION), frames/5.0);
+            CoreVideo_SetCaption(caption);
             frames = 0;
             lastTick = nowTick;
         }

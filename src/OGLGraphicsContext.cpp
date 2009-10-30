@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "liblinux/BMGLibPNG.h"
 
 COGLGraphicsContext::COGLGraphicsContext() :
-    m_pScreen(0),
     m_bSupportMultiTexture(false),
     m_bSupportTextureEnvCombine(false),
     m_bSupportSeparateSpecularColor(false),
@@ -79,62 +78,35 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     int  colorBufferDepth = 32;
     if( options.colorQuality == TEXTURE_FMT_A4R4G4B4 ) colorBufferDepth = 16;
 
-   // init sdl & gl
-   const SDL_VideoInfo *videoInfo;
-   Uint32 videoFlags = 0;
-   
-   /* Initialize SDL */
-   DebugMessage(M64MSG_VERBOSE, "Initializing SDL video subsystem...");
-   if(SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
-   {
-      DebugMessage(M64MSG_ERROR, "SDL video subsystem init failed: %s", SDL_GetError());
-      return false;
-   }
-   
-   /* Video Info */
-   DebugMessage(M64MSG_VERBOSE, "Getting video info...");
-   if(!(videoInfo = SDL_GetVideoInfo()))
-   {
-      DebugMessage(M64MSG_ERROR, "SDL_GetVideoInfo query failed: %s", SDL_GetError());
-      SDL_QuitSubSystem(SDL_INIT_VIDEO);
-      return false;
-   }
-   /* Setting the video mode */
-   videoFlags |= SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE;
-   
-   if(videoInfo->hw_available)
-     videoFlags |= SDL_HWSURFACE;
-   else
-     videoFlags |= SDL_SWSURFACE;
-   
-   if(videoInfo->blit_hw)
-     videoFlags |= SDL_HWACCEL;
-   
-   if(!bWindowed)
-     videoFlags |= SDL_FULLSCREEN;
-   
-   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-   SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, colorBufferDepth);
-   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, depthBufferDepth);
-   
-   DebugMessage(M64MSG_INFO, "Setting video mode %dx%d...", (int)windowSetting.uDisplayWidth, (int)windowSetting.uDisplayHeight);
-   if(!(m_pScreen = SDL_SetVideoMode(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, videoFlags)))
-   {
-      DebugMessage(M64MSG_ERROR, "SDL_SetVideoMode (%dx%d) failed: %s", (int)windowSetting.uDisplayWidth, (int)windowSetting.uDisplayHeight, SDL_GetError());
-      SDL_QuitSubSystem(SDL_INIT_VIDEO);
-      return false;
-   }
-   
-   char caption[500];
-   sprintf(caption, "%s v%i.%i.%i", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));
-   SDL_WM_SetCaption(caption, caption);
-   SetWindowMode();
+    // init sdl & gl
+    DebugMessage(M64MSG_VERBOSE, "Initializing video subsystem...");
+    if (CoreVideo_Init() != M64ERR_SUCCESS)   
+        return false;
 
-   InitState();
-   InitOGLExtension();
-   sprintf(m_strDeviceStats, "%s - %s : %s", m_pVendorStr, m_pRenderStr, m_pVersionStr);
-   TRACE0(m_strDeviceStats);
-   DebugMessage(M64MSG_INFO, "Using OpenGL: %s", m_strDeviceStats);
+    /* set opengl attributes */
+    CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
+    CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, colorBufferDepth);
+    CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, depthBufferDepth);
+   
+    /* Set the video mode */
+    m64p_video_mode ScreenMode = bWindowed ? M64VIDEO_WINDOWED : M64VIDEO_FULLSCREEN;
+    if (CoreVideo_SetVideoMode(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, ScreenMode) != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_ERROR, "Failed to set %i-bit video mode: %ix%i", colorBufferDepth, (int)windowSetting.uDisplayWidth, (int)windowSetting.uDisplayHeight);
+        CoreVideo_Quit();
+        return false;
+    }
+
+    char caption[500];
+    sprintf(caption, "%s v%i.%i.%i", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));
+    CoreVideo_SetCaption(caption);
+    SetWindowMode();
+
+    InitState();
+    InitOGLExtension();
+    sprintf(m_strDeviceStats, "%s - %s : %s", m_pVendorStr, m_pRenderStr, m_pVersionStr);
+    TRACE0(m_strDeviceStats);
+    DebugMessage(M64MSG_INFO, "Using OpenGL: %s", m_strDeviceStats);
 
     Unlock();
 
@@ -238,8 +210,7 @@ bool COGLGraphicsContext::IsWglExtensionSupported(const char* pExtName)
 
 void COGLGraphicsContext::CleanUp()
 {
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    m_pScreen = NULL;
+    CoreVideo_Quit();
     m_bReady = false;
 }
 
@@ -316,7 +287,7 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
    if(renderCallback)
        (*renderCallback)();
 
-   SDL_GL_SwapBuffers();
+   CoreVideo_GL_SwapBuffers();
    
    /*if(options.bShowFPS)
      {
@@ -328,7 +299,7 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
       {
          char caption[200];
          sprintf(caption, "%s v%i.%i.%i - %.3f VI/S", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION), frames/5.0);
-         SDL_WM_SetCaption(caption, caption);
+         CoreVideo_SetCaption(caption);
          frames = 0;
          lastTick = nowTick;
       }
@@ -363,14 +334,14 @@ bool COGLGraphicsContext::SetWindowMode()
 }
 int COGLGraphicsContext::ToggleFullscreen()
 {
-   if(SDL_WM_ToggleFullScreen(m_pScreen) == 1)
-     {
-    m_bWindowed = 1 - m_bWindowed;
-    if(m_bWindowed)
-      SetWindowMode();
-    else
-      SetFullscreenMode();
-     }
+    if (CoreVideo_ToggleFullScreen() == M64ERR_SUCCESS)
+    {
+        m_bWindowed = 1 - m_bWindowed;
+        if(m_bWindowed)
+            SetWindowMode();
+        else
+            SetFullscreenMode();
+    }
 
     return m_bWindowed?0:1;
 }
