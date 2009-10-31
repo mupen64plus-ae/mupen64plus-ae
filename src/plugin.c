@@ -1,7 +1,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - plugin.c                                                *
+ *   Mupen64plus-input-sdl - plugin.c                                      *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2008 Richard42 Tillin9                                  *
+ *   Copyright (C) 2008-2009 Richard Goedeken                              *
+ *   Copyright (C) 2008 Tillin9                                            *
  *   Copyright (C) 2002 Blight                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -30,20 +31,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "SDL.h"
+#include <SDL.h>
 
-#include "../main/winlnxdefs.h"
 #include "plugin.h"
-
-#ifdef GUI_SDL
-# include "configdialog_sdl.h"
-#elif defined(GUI_GTK)
-# include "configdialog_gtk.h"
-#endif
-
-#ifdef GUI_GTK
-# include <gtk/gtk.h>
-#endif
 
 #ifdef __linux__
 #include <linux/input.h>
@@ -507,19 +497,6 @@ BYTE DataCRC( BYTE *Data, int iLenght )
 }
 
 /******************************************************************
-  Function: CloseDLL
-  Purpose:  This function is called when the emulator is closing
-            down allowing the dll to de-initialise.
-  input:    none
-  output:   none
-*******************************************************************/
-void
-CloseDLL( void )
-{
-    printf( "["PLUGIN_NAME"]: Closing...\n" );
-}
-
-/******************************************************************
   Function: ControllerCommand
   Purpose:  To process the raw data that has just been sent to a
             specific controller.
@@ -611,273 +588,6 @@ void ControllerCommand(int Control, BYTE *Command)
             /*printf( "Write eeprom\n" );*/
             break;
         }
-}
-
-/******************************************************************
-  Function: DllAbout
-  Purpose:  This function is optional function that is provided
-            to give further information about the DLL.
-  input:    a handle to the window that calls this function
-  output:   none
-*******************************************************************/
-#ifdef GUI_SDL
-# include "SDL_ttf.h"
-# include "arial.ttf.h" // arial font
-# include <stdarg.h>
-
-# define FONT_SIZEPT 15
-# define ABOUT_DIALOG_WIDTH 300
-# define ABOUT_DIALOG_HEIGHT    145
-
-// render text
-static inline SDL_Surface *
-render_text( TTF_Font *font, SDL_Color fg, SDL_Color bg, const char *fmt, ... )
-{
-    va_list ap;
-    char buf[2049];
-
-    va_start( ap, fmt );
-    vsnprintf( buf, 2048, fmt, ap );
-    va_end( ap );
-
-    if( *buf == '\0' )
-        return NULL;
-
-    return( TTF_RenderText_Shaded( font, buf, fg, bg ) );
-}
-
-// write text
-static inline void
-write_text( SDL_Surface *dst, TTF_Font *font, int x, int y, SDL_Color fg, SDL_Color bg, const char *fmt, ... )
-{
-    SDL_Surface *text;
-    SDL_Rect dstrect;
-    va_list ap;
-    char buf[2049];
-
-    va_start( ap, fmt );
-    vsnprintf( buf, 2048, fmt, ap );
-    va_end( ap );
-
-    if( *buf == '\0' )
-        return;
-
-    text = render_text( font, fg, bg, buf );
-    if( text == NULL )
-    {
-        fprintf( stderr, "["PLUGIN_NAME"]: Couldn't render text: %s\n", SDL_GetError() );
-        return;
-    }
-
-    dstrect.x = x;
-    dstrect.y = y;
-    dstrect.w = text->w;
-    dstrect.h = text->h;
-    SDL_BlitSurface( text, NULL, dst, &dstrect );
-    SDL_FreeSurface( text );
-}
-
-void
-DllAbout( HWND hParent )
-{
-    SDL_RWops *rw;
-    TTF_Font *font;
-    SDL_Surface *screen;
-    SDL_Rect rect;
-    // colors
-    Uint32 u32black, u32gray, u32dark_gray;
-    SDL_Color black      = { 0x00, 0x00, 0x00, 0 };
-    SDL_Color gray       = { 0xAA, 0xAA, 0xAA, 0 };
-    SDL_Color dark_gray  = { 0x66, 0x66, 0x66, 0 };
-
-    // init sdl
-    if( !SDL_WasInit( SDL_INIT_VIDEO ) )
-        if( SDL_InitSubSystem( SDL_INIT_VIDEO ) < 0 )
-        {
-            fprintf( stderr, "["PLUGIN_NAME"]: Couldn't init SDL video subsystem: %s\n", SDL_GetError() );
-            return;
-        }
-
-    // init sdl_ttf2
-    if( !TTF_WasInit() )
-        if( TTF_Init() < 0 )
-        {
-            fprintf( stderr, "["PLUGIN_NAME"]: Couldn't init TTF library: %s\n", SDL_GetError() );
-            SDL_QuitSubSystem( SDL_INIT_VIDEO );
-            return;
-        }
-
-    // open font
-    rw = SDL_RWFromMem( (char *)arial.data, arial.size );
-    font = TTF_OpenFontRW( rw, 0, FONT_SIZEPT );
-    if( font == NULL )
-    {
-        fprintf( stderr, "["PLUGIN_NAME"]: Couldn't load %d pt font: %s\n", FONT_SIZEPT, SDL_GetError() );
-        TTF_Quit();
-        SDL_QuitSubSystem( SDL_INIT_VIDEO );
-        return;
-    }
-    TTF_SetFontStyle( font, TTF_STYLE_NORMAL );
-
-    // display dialog (set video mode)
-    screen = SDL_SetVideoMode( ABOUT_DIALOG_WIDTH, ABOUT_DIALOG_HEIGHT, 0, SDL_SWSURFACE );
-    if( !screen )
-    {
-        fprintf( stderr, "["PLUGIN_NAME"]: Couldn't set video mode %dx%d: %s\n", ABOUT_DIALOG_WIDTH, ABOUT_DIALOG_HEIGHT, SDL_GetError() );
-        TTF_Quit();
-        SDL_QuitSubSystem( SDL_INIT_VIDEO );
-        return;
-    }
-    SDL_WM_SetCaption( PLUGIN_NAME" "PLUGIN_VERSION, NULL );
-
-    // create colors
-    u32black      = SDL_MapRGBA( screen->format, black.r, black.g, black.b, 0 );
-    u32gray       = SDL_MapRGBA( screen->format, gray.r, gray.g, gray.b, 0 );
-    u32dark_gray  = SDL_MapRGBA( screen->format, dark_gray.r, dark_gray.g, dark_gray.b, 0 );
-
-    // draw dialog
-    SDL_FillRect( screen, NULL, u32dark_gray );
-
-    rect.x = rect.y = 5; rect.w = ABOUT_DIALOG_WIDTH - 10; rect.h = ABOUT_DIALOG_HEIGHT - 40;
-    SDL_FillRect( screen, &rect, u32black );
-    rect.x += 1; rect.y += 1; rect.w -= 2; rect.h -= 2;
-    SDL_FillRect( screen, &rect, u32gray );
-
-    write_text( screen, font, 15, 15, black, gray, PLUGIN_NAME" v"PLUGIN_VERSION":" );
-    write_text( screen, font, 15, 35, black, gray, "coded by blight" );
-    write_text( screen, font, 15, 55, black, gray, "This plugin uses the SDL library for input." );
-    write_text( screen, font, 15, 75, black, gray, "Go to www.libsdl.org for more information." );
-
-    rect.x = (ABOUT_DIALOG_WIDTH - 90) / 2; rect.y = ABOUT_DIALOG_HEIGHT - 30; rect.w = 90; rect.h = 25;
-    SDL_FillRect( screen, &rect, u32black );
-    rect.x += 1; rect.y += 1; rect.w -= 2; rect.h -= 2;
-    SDL_FillRect( screen, &rect, u32gray );
-    
-    write_text( screen, font, rect.x + 33, rect.y + 2, black, gray, "Ok" );
-
-    for(;;)
-    {
-        SDL_Event event;
-        SDL_Flip( screen );
-        if( SDL_PollEvent( &event ) )
-        {
-            if( event.type == SDL_KEYDOWN )
-            {
-                if( event.key.keysym.sym == SDLK_ESCAPE )
-                    break;
-            }
-            else if( event.type == SDL_MOUSEBUTTONDOWN )
-            {
-                if( event.button.button == SDL_BUTTON_LEFT )
-                {
-                    if( event.button.x >= rect.x && event.button.x <= rect.x + rect.w &&
-                        event.button.y >= rect.y && event.button.y <= rect.y + rect.h )
-                        break;
-                }
-            }
-        }
-    }
-    TTF_Quit();
-    SDL_FreeSurface( screen );
-    SDL_QuitSubSystem( SDL_INIT_VIDEO );
-}
-
-#elif defined( GUI_GTK )
-static int about_shown = 0;
-
-static void
-about_ok_clicked(   GtkWidget *widget,
-            gpointer   data )
-{
-    gtk_widget_hide_all( GTK_WIDGET(data) );
-    gtk_widget_destroy( GTK_WIDGET(data) );
-    about_shown = 0;
-}
-
-void
-DllAbout( HWND hParent )
-{
-    GtkWidget *window;
-    GtkWidget *vbox;
-    GtkWidget *label;
-    GtkWidget *button;
-
-    if( about_shown )
-        return;
-
-    window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-    gtk_window_set_title( GTK_WINDOW(window), PLUGIN_NAME );
-    gtk_container_set_border_width( GTK_CONTAINER(window), 10 );
-    gtk_window_set_policy( GTK_WINDOW(window), FALSE, FALSE, TRUE );
-
-    vbox = gtk_vbox_new( FALSE, 10 );
-    label = gtk_label_new( PLUGIN_NAME" version "PLUGIN_VERSION"\n\n"
-                "This is a N64 input plugin using SDL.\n"
-                "(c) 2002 by blight" );
-    button = gtk_button_new_with_label( "Ok" );
-
-    gtk_container_add( GTK_CONTAINER(window), GTK_WIDGET(vbox) );
-    gtk_box_pack_start( GTK_BOX(vbox), GTK_WIDGET(label), TRUE, FALSE, 0 );
-    gtk_box_pack_start( GTK_BOX(vbox), GTK_WIDGET(button), TRUE, FALSE, 0 );
-
-    gtk_signal_connect( GTK_OBJECT(button), "clicked",
-            GTK_SIGNAL_FUNC(about_ok_clicked), (gpointer) window);
-
-    // show the window
-    about_shown = 1;
-    gtk_widget_show_all( GTK_WIDGET(window) );
-}
-#endif
-
-/******************************************************************
-  Function: DllConfig
-  Purpose:  This function is optional function that is provided
-            to allow the user to configure the dll
-  input:    a handle to the window that calls this function
-  output:   none
-*******************************************************************/
-void
-DllConfig( HWND hParent )
-{
-    if( !romopen )
-    {
-        read_configuration();
-#ifdef GUI_SDL
-        configure_sdl( controller );
-#elif defined( GUI_GTK )
-        configure_gtk( controller );
-#endif
-        /* write_configuration() should be called in the configure_ function above */
-    }
-}
-
-/******************************************************************
-  Function: DllTest
-  Purpose:  This function is optional function that is provided
-            to allow the user to test the dll
-  input:    a handle to the window that calls this function
-  output:   none
-*******************************************************************/
-void
-DllTest( HWND hParent )
-{
-}
-
-/******************************************************************
-  Function: GetDllInfo
-  Purpose:  This function allows the emulator to gather information
-            about the dll by filling in the PluginInfo structure.
-  input:    a pointer to a PLUGIN_INFO stucture that needs to be
-            filled by the function. (see def above)
-  output:   none
-*******************************************************************/
-void
-GetDllInfo( PLUGIN_INFO *PluginInfo )
-{
-    strncpy( PluginInfo->Name, PLUGIN_NAME" "PLUGIN_VERSION, 100 );
-    PluginInfo->Name[99] = '\0';
-    PluginInfo->Version = 0x0101;
-    PluginInfo->Type = PLUGIN_TYPE_CONTROLLER;
 }
 
 /* Helper function to handle the SDL keys */
@@ -1444,20 +1154,5 @@ void
 WM_KeyUp( WPARAM wParam, LPARAM lParam )
 {
     myKeyState[translateKey(wParam)] = 0;
-}
-
-/******************************************************************
-   NOTE: THIS HAS BEEN ADDED FOR MUPEN64PLUS AND IS NOT PART OF THE
-         ORIGINAL SPEC
-  Function: SetConfigDir
-  Purpose:  To pass the location where config files should be read/
-            written to.
-  input:    path to config directory
-  output:   none
-*******************************************************************/
-void
-SetConfigDir( char *configDir )
-{
-    strncpy(configdir, configDir, PATH_MAX);
 }
 
