@@ -1,84 +1,180 @@
-#***************************************************************************
-#                           blight_input Makefile
-#                            -------------------
-# Copyright (C) 2007-2008 Richard Goedeken (Richard42)
-#***************************************************************************
+#/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+# *   Mupen64plus-input-sdl - Makefile                                      *
+# *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+# *   Copyright (C) 2007-2009 Richard Goedeken                              *
+# *                                                                         *
+# *   This program is free software; you can redistribute it and/or modify  *
+# *   it under the terms of the GNU General Public License as published by  *
+# *   the Free Software Foundation; either version 2 of the License, or     *
+# *   (at your option) any later version.                                   *
+# *                                                                         *
+# *   This program is distributed in the hope that it will be useful,       *
+# *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+# *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+# *   GNU General Public License for more details.                          *
+# *                                                                         *
+# *   You should have received a copy of the GNU General Public License     *
+# *   along with this program; if not, write to the                         *
+# *   Free Software Foundation, Inc.,                                       *
+# *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+# Makefile for SDL Input plugin in Mupen64plus
 
-#***************************************************************************
-#*                                                                         *
-#*   This program is free software; you can redistribute it and/or modify  *
-#*   it under the terms of the GNU General Public License as published by  *
-#*   the Free Software Foundation; either version 2 of the License, or     *
-#*   (at your option) any later version.                                   *
-#*                                                                         *
-#***************************************************************************
-
-# include pre-make file with a bunch of definitions
-ifeq ($(WIN32),1)
-  include ../pre.mk.win32
-else
-  include ../pre.mk
+# detect operation system
+UNAME = $(shell uname -s)
+ifeq ("$(UNAME)","Linux")
+  OS = LINUX
+endif
+ifeq ("$(UNAME)","linux")
+  OS = LINUX
+endif
+ifeq ("$(UNAME)","Darwin")
+  OS = OSX
+  LDFLAGS += -liconv -lpng
+endif
+ifeq ("$(UNAME)","FreeBSD")
+  OS = FREEBSD
 endif
 
--include ../configure.gen
-
-# local CFLAGS, LIBS, and LDFLAGS
-SDLTTF_LIBS	= -lSDL_ttf
-CFLAGS += -DGUI_SDL -DPIC
-
-ifneq ($(OS), WINDOWS)
-  CFLAGS += -fpic
-else
-  SDLTTF_LIBS += -L$(SDL_TTF_DIR)\lib
+# detect system architecture
+HOST_CPU ?= $(shell uname -m)
+NO_ASM ?= 1
+ifneq ("$(filter x86_64 amd64,$(HOST_CPU))","")
+  CPU := X86
+  ifeq ("$(BITS)", "32")
+    ARCH_DETECTED := 64BITS_32
+  else
+    ARCH_DETECTED := 64BITS
+  endif
+endif
+ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
+  CPU := X86
+  ARCH_DETECTED := 32BITS
+endif
+ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 32BITS
+endif
+ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 64BITS
 endif
 
+# base CFLAGS, LIBS, and LDFLAGS
+CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
+LDFLAGS = -ldl
+ifneq ($(OS), FREEBSD)
+  CFLAGS += -pipe -O3
+endif
+
+# test for presence of SDL
+ifeq ($(shell which sdl-config 2>/dev/null),)
+  $(error No SDL development libraries found!)
+endif
+ifeq ($(OS),FREEBSD)
+    CFLAGS  += `${SDL_CONFIG} --cflags`
+    LDFLAGS += `${SDL_CONFIG} --libs`
+else
+    CFLAGS  += $(shell sdl-config --cflags)
+    LDFLAGS += $(shell sdl-config --libs)
+endif
+
+# set mupen64plus core API header path
+ifneq ("$(APIDIR)","")
+  CFLAGS += "-I$(APIDIR)"
+else
+  TRYDIR = ../../../mupen64plus-core/src/api
+  ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+    CFLAGS += -I$(TRYDIR)
+  else
+    TRYDIR = /usr/local/include/mupen64plus
+    ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+      CFLAGS += -I$(TRYDIR)
+    else
+      TRYDIR = /usr/include/mupen64plus
+      ifneq ("$(wildcard $(TRYDIR)/m64p_types.h)","")
+        CFLAGS += -I$(TRYDIR)
+      else
+        $(error Mupen64Plus API header files not found! Use makefile parameter APIDIR to force a location.)
+      endif
+    endif
+  endif
+endif
+
+# Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
+# On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
+ifeq ($(ARCH_DETECTED), 64BITS)
+  CFLAGS += -fpic -DPIC -fvisibility=hidden
+endif
+
+# set special flags per-system
+ifneq ($(OS), FREEBSD)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -march=athlon64
+    else
+      CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+    endif
+    # tweak flags for 32-bit build on 64-bit system
+    ifeq ($(ARCH_DETECTED), 64BITS_32)
+      CFLAGS += -m32
+      LDFLAGS += -m32 -m elf_i386
+    endif
+  endif
+else
+  ifeq ($(ARCH_DETECTED), 64BITS_32)
+    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
+  endif
+endif
+ifeq ($(CPU), PPC)
+  CFLAGS += -mcpu=powerpc
+endif
+
+# set shell function names
+CC      = gcc
+CXX     = g++
+LD      = g++
+ifeq ($(OS),LINUX)
+  STRIP	= strip -s
+endif
+ifeq ($(OS),OSX)
+  STRIP	= strip -x 
+endif
+
+# set special flags for given Makefile parameters
+ifeq ($(DEBUG),1)
+  CFLAGS += -g
+  STRIP = true # disable binary strip
+endif
 ifeq ($(PLUGINDBG), 1)
   CFLAGS += -D_DEBUG
 endif
-# list of object files to generate
-OBJ_BLIGHT = \
-	plugin.o \
-	arial.ttf.o \
-	configdialog_sdl.o \
-	pad.o
+
+SRCDIR = ../../src
+OBJDIR = _obj
+
+# list of source files to compile
+SOURCE = \
+	$(SRCDIR)/plugin.c \
+	$(SRCDIR)/osal_dynamiclib_unix.c
+
+# generate a list of object files build, make a temporary directory for them
+OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
+OBJDIRS = $(dir $(OBJECTS))
+$(shell mkdir -p $(OBJDIRS))
 
 # build targets
-all: blight_input.$(SO_EXTENSION)
+all: mupen64plus-input-sdl.so
 
 clean:
-	rm -f *.o *.$(SO_EXTENSION) ttftoh arial.ttf.c
+	rm -rf ./_obj mupen64plus-input-sdl.so
 
 # build rules
-.c.o:
-	$(CC) -o $@ $(CFLAGS) $(SDL_FLAGS) $(FREETYPE_FLAGS) -c $<
-
-blight_input.$(SO_EXTENSION): $(OBJ_BLIGHT)
-	$(CC) -o $@ -shared $^ $(LDFLAGS) $(PLUGIN_LDFLAGS) $(SDL_LIBS) $(SDLTTF_LIBS) $(FREETYPE_LIBS)
-ifneq ($(OS), WINDOWS)
+mupen64plus-input-sdl.so: $(OBJECTS)
+	$(LD) -shared $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
-endif
 
-configdialog_sdl.o: configdialog_sdl.c
-	$(CC) -o $@ $(CFLAGS) $(SDL_FLAGS) -c $<
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) -o $@ $(CFLAGS) -c $<
 
-plugin.o: plugin.c
-	$(CC) -o $@ $(CFLAGS) $(SDL_FLAGS) -c $<
-
-arial.ttf.c: ttftoh
-	./ttftoh ./font/arial.ttf
-ifneq ($(OS), WINDOWS)
-	$(MV) ./font/arial.ttf.h ./arial.ttf.c
-else
-# no idea why, but move fails.
-	copy font\arial.ttf.h arial.ttf.c
-endif
-
-ttftoh: ttftoh.o
-	$(CC) $^ -o $@
-ifneq ($(OS), WINDOWS)
-	$(STRIP) $@
-endif
-
-ttftoh.o: ttftoh.c
-	$(CC) -o $@ -O3 -c $<
 
