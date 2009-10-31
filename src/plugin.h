@@ -1,7 +1,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - plugin.h                                                *
+ *   Mupen64plus-input-sdl - plugin.h                                      *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2008 Richard42 Tillin9                                  *
+ *   Copyright (C) 2008-2009 Richard Goedeken                              *
+ *   Copyright (C) 2008 Tillin9                                            *
  *   Copyright (C) 2002 Blight                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -23,20 +24,9 @@
 #ifndef __PLUGIN_H__
 #define __PLUGIN_H__
 
-#define PACKAGE "blight's SDL input plugin"
-#define VERSION "0.0.10"
+#include <SDL.h>
 
-#define PLUGIN_NAME     PACKAGE
-#define PLUGIN_VERSION  VERSION
-
-#ifndef PATH_MAX
-#  define PATH_MAX 1024
-#endif
-
-#include "../main/winlnxdefs.h"
-#include "Input_1.1.h"
-
-#include "SDL.h"
+#include "m64p_plugin.h"
 
 #define DEVICE_KEYBOARD     (-1)
 #define DEVICE_NONE         (-2)

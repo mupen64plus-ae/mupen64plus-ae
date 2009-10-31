@@ -33,7 +33,10 @@
 
 #include <SDL.h>
 
+#include "m64p_types.h"
+#include "m64p_plugin.h"
 #include "plugin.h"
+#include "version.h"
 
 #ifdef __linux__
 #include <linux/input.h>
@@ -49,8 +52,6 @@
 #define LONG(x) ((x)/BITS_PER_LONG)
 #define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
 #endif //__linux__
-
-#include "winuser.h"
 
 static unsigned short button_bits[] = {
     0x0001,  // R_DPAD
@@ -75,7 +76,7 @@ static SController controller[4];   // 4 controllers
 static int romopen = 0;         // is a rom opened
 static char configdir[PATH_MAX] = {0};  // holds config dir path
 
-Uint8 myKeyState[SDLK_LAST];
+static unsigned char myKeyState[SDLK_LAST];
 
 static const char *button_names[] = {
     "DPad R",       // R_DPAD
@@ -152,7 +153,7 @@ get_hat_pos_by_name( const char *name )
     return -1;
 }
 
-void read_configuration( void )
+static void read_configuration( void )
 {
     FILE *f;
     int cont, plugged, plugin, mouse, i, b, dev;
@@ -165,8 +166,8 @@ void read_configuration( void )
     for( i = 0; i < 4; i++ )
     {
         controller[i].device = DEVICE_NONE;
-        controller[i].control.Present = FALSE;
-        controller[i].control.RawData = FALSE;
+        controller[i].control.Present = 0;
+        controller[i].control.RawData = 0;
         controller[i].control.Plugin = PLUGIN_NONE;
         for( b = 0; b < 16; b++ )
         {
@@ -349,8 +350,7 @@ void read_configuration( void )
        ((hat == SDL_HAT_RIGHT) ? "Right" :  \
          "None"))))
 
-int
-write_configuration( void )
+static int write_configuration( void )
 {
     FILE *f;
     int i, b;
@@ -463,7 +463,7 @@ write_configuration( void )
     return 0;
 }
 
-BYTE lastCommand[6];
+unsigned char lastCommand[6];
 
 #ifdef __linux__
 
@@ -472,16 +472,16 @@ struct ff_effect ffstrong[3];
 struct ff_effect ffweak[3];
 
 #endif //__linux__
-BYTE DataCRC( BYTE *Data, int iLenght )
+static unsigned char DataCRC( unsigned char *Data, int iLenght )
 {
-    register BYTE Remainder = Data[0];
+    unsigned char Remainder = Data[0];
 
     int iByte = 1;
-    BYTE bBit = 0;
+    unsigned char bBit = 0;
 
     while( iByte <= iLenght )
     {
-        BOOL HighBit = ((Remainder & 0x80) != 0);
+        int HighBit = ((Remainder & 0x80) != 0);
         Remainder = Remainder << 1;
 
         Remainder += ( iByte < iLenght && Data[iByte] & (0x80 >> bBit )) ? 1 : 0;
@@ -512,9 +512,9 @@ BYTE DataCRC( BYTE *Data, int iLenght )
             initilize controller: 01 03 00 FF FF FF
             read controller:      01 04 01 FF FF FF FF
 *******************************************************************/
-void ControllerCommand(int Control, BYTE *Command)
+EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 {
-    BYTE *Data = &Command[5];
+    unsigned char *Data = &Command[5];
 
     if (Control == -1)
         return;
@@ -531,7 +531,7 @@ void ControllerCommand(int Control, BYTE *Command)
             /*printf( "Read pak\n" );*/
             if (controller[Control].control.Plugin == PLUGIN_RAW)
             {
-                DWORD dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
+                unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
 
                 if(( dwAddress >= 0x8000 ) && ( dwAddress < 0x9000 ) )
                     memset( Data, 0x80, 32 );
@@ -545,7 +545,7 @@ void ControllerCommand(int Control, BYTE *Command)
             /*printf( "Write pak\n" );*/
             if (controller[Control].control.Plugin == PLUGIN_RAW)
             {
-                DWORD dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
+                unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
                 /*Uncomment to test rumble on systems without necessary hardware.
               if(dwAddress==PAK_IO_RUMBLE&&*Data)
                     printf("Triggering rumble pack.\n");*/
@@ -592,9 +592,9 @@ void ControllerCommand(int Control, BYTE *Command)
 
 /* Helper function to handle the SDL keys */
 static void
-doSdlKeys(Uint8* keystate)
+doSdlKeys(unsigned char* keystate)
 {
-    int c, b, axis_val, axis_max_val, axis_val_tmp;
+    int c, b, axis_val, axis_max_val;
     int grabmouse = -1;
 
     axis_max_val = 80;
@@ -657,10 +657,9 @@ doSdlKeys(Uint8* keystate)
             the controller state.
   output:   none
 *******************************************************************/
-void
-GetKeys( int Control, BUTTONS *Keys )
+EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 {
-    int b, axis_val, axis_max_val, axis_val_tmp;
+    int b, axis_val, axis_val_tmp;
     SDL_Event event;
 
     // Handle keyboard input first
@@ -783,7 +782,7 @@ GetKeys( int Control, BUTTONS *Keys )
 
     // process mouse events
     {
-        Uint8 mstate = SDL_GetMouseState( NULL, NULL );
+        unsigned char mstate = SDL_GetMouseState( NULL, NULL );
 
         for( b = 0; b < 16; b++ )
         {
@@ -978,7 +977,7 @@ static void InitiateRumble(int cntrl)
               the emulator to know how to handle each controller.
   output:   none
 *******************************************************************/
-void InitiateControllers( CONTROL_INFO ControlInfo )
+EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
 {
     int i;
 
@@ -1005,7 +1004,7 @@ void InitiateControllers( CONTROL_INFO ControlInfo )
         memcpy( ControlInfo.Controls + i, &controller[i].control, sizeof( CONTROL ) );
     }
 
-    printf( "["PLUGIN_NAME"]: version "PLUGIN_VERSION" initialized.\n" );
+//    printf( "["PLUGIN_NAME"]: version "PLUGIN_VERSION" initialized.\n" ); /* fixme */
 }
 
 /******************************************************************
@@ -1019,8 +1018,7 @@ void InitiateControllers( CONTROL_INFO ControlInfo )
   note:     This function is only needed if the DLL is allowing raw
             data.
 *******************************************************************/
-void
-ReadController( int Control, BYTE *Command )
+EXPORT void CALL ReadController(int Control, unsigned char *Command)
 {
 #if 0//def _DEBUG
     printf( "\nRaw Read (cont=%d):\n", Control );
@@ -1035,8 +1033,7 @@ ReadController( int Control, BYTE *Command )
   input:    none
   output:   none
 *******************************************************************/
-void
-RomClosed( void )
+EXPORT void CALL RomClosed(void)
 {
     int i;
 
@@ -1065,8 +1062,7 @@ RomClosed( void )
   input:    none
   output:   none
 *******************************************************************/
-void
-RomOpen( void )
+EXPORT void CALL RomOpen(void)
 {
     int i;
 
@@ -1103,56 +1099,27 @@ RomOpen( void )
     romopen = 1;
 }
 
-static SDLKey
-translateKey( WPARAM wParam )
+/******************************************************************
+  Function: SDL_KeyDown
+  Purpose:  To pass the SDL_KeyDown message from the emulator to the
+            plugin.
+  input:    keymod and keysym of the SDL_KEYDOWN message.
+  output:   none
+*******************************************************************/
+EXPORT void CALL SDL_KeyDown(int keymod, int keysym)
 {
-    SDLKey key = 0;
-
-    // for a-z and 0-9 keys windows provides no defines
-    if (wParam >= 0x41 && wParam <= 0x5a) {
-        key = wParam - 0x41 + SDLK_a;
-    } else if (wParam >= 0x30 && wParam <= 0x39) {
-        key = wParam - 0x30 + SDLK_0;
-    } else if (wParam == VK_RETURN) {
-        key = SDLK_RETURN;
-    } else if (wParam == VK_SPACE) {
-        key = SDLK_SPACE;
-    } else if (wParam == VK_LEFT) {
-        key = SDLK_LEFT;
-    } else if (wParam == VK_RIGHT) {
-        key = SDLK_RIGHT;
-    } else if (wParam == VK_UP) {
-        key = SDLK_UP;
-    } else if (wParam == VK_DOWN) {
-        key = SDLK_DOWN;
-    }
-
-    return key;
+    myKeyState[keysym] = 1; /* fixme */
 }
 
 /******************************************************************
-  Function: WM_KeyDown
-  Purpose:  To pass the WM_KeyDown message from the emulator to the
+  Function: SDL_KeyUp
+  Purpose:  To pass the SDL_KeyUp message from the emulator to the
             plugin.
-  input:    wParam and lParam of the WM_KEYDOWN message.
+  input:    keymod and keysym of the SDL_KEYUP message.
   output:   none
 *******************************************************************/
-void
-WM_KeyDown( WPARAM wParam, LPARAM lParam )
+EXPORT void CALL SDL_KeyUp(int keymod, int keysym)
 {
-    myKeyState[translateKey(wParam)] = 1;
-}
-
-/******************************************************************
-  Function: WM_KeyUp
-  Purpose:  To pass the WM_KEYUP message from the emulator to the
-            plugin.
-  input:    wParam and lParam of the WM_KEYDOWN message.
-  output:   none
-*******************************************************************/
-void
-WM_KeyUp( WPARAM wParam, LPARAM lParam )
-{
-    myKeyState[translateKey(wParam)] = 0;
+    myKeyState[keysym] = 0; /* fixme */
 }
 
