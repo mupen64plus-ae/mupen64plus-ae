@@ -35,8 +35,11 @@
 
 #include "m64p_types.h"
 #include "m64p_plugin.h"
+#include "m64p_config.h"
+
 #include "plugin.h"
 #include "version.h"
+#include "osal_dynamiclib.h"
 
 #ifdef __linux__
 #include <linux/input.h>
@@ -52,6 +55,30 @@
 #define LONG(x) ((x)/BITS_PER_LONG)
 #define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
 #endif //__linux__
+
+/* definitions of pointers to Core config functions */
+ptr_ConfigOpenSection      ConfigOpenSection = NULL;
+ptr_ConfigSetParameter     ConfigSetParameter = NULL;
+ptr_ConfigGetParameter     ConfigGetParameter = NULL;
+ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
+ptr_ConfigSetDefaultInt    ConfigSetDefaultInt = NULL;
+ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat = NULL;
+ptr_ConfigSetDefaultBool   ConfigSetDefaultBool = NULL;
+ptr_ConfigSetDefaultString ConfigSetDefaultString = NULL;
+ptr_ConfigGetParamInt      ConfigGetParamInt = NULL;
+ptr_ConfigGetParamFloat    ConfigGetParamFloat = NULL;
+ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
+ptr_ConfigGetParamString   ConfigGetParamString = NULL;
+
+ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = NULL;
+ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath = NULL;
+ptr_ConfigGetUserDataPath       ConfigGetUserDataPath = NULL;
+ptr_ConfigGetUserCachePath      ConfigGetUserCachePath = NULL;
+
+/* static data definitions */
+static void (*l_DebugCallback)(void *, int, const char *) = NULL;
+static void *l_DebugCallContext = NULL;
+static int l_PluginInit = 0;
 
 static unsigned short button_bits[] = {
     0x0001,  // R_DPAD
@@ -99,6 +126,110 @@ static const char *button_names[] = {
     "X Axis"        // X_AXIS
 };
 
+#ifdef __linux__
+static struct ff_effect ffeffect[3];
+static struct ff_effect ffstrong[3];
+static struct ff_effect ffweak[3];
+#endif //__linux__
+
+/* Global functions */
+void DebugMessage(int level, const char *message, ...)
+{
+  char msgbuf[1024];
+  va_list args;
+
+  if (l_DebugCallback == NULL)
+      return;
+
+  va_start(args, message);
+  vsprintf(msgbuf, message, args);
+
+  (*l_DebugCallback)(l_DebugCallContext, level, msgbuf);
+
+  va_end(args);
+}
+
+
+/* Mupen64Plus plugin functions */
+EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
+                                   void (*DebugCallback)(void *, int, const char *))
+{
+    if (l_PluginInit)
+        return M64ERR_ALREADY_INIT;
+
+    /* first thing is to set the callback function for debug info */
+    l_DebugCallback = DebugCallback;
+    l_DebugCallContext = Context;
+
+    /* Get the core config function pointers from the library handle */
+    ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
+    ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
+    ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
+    ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
+    ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultFloat");
+    ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultBool");
+    ConfigSetDefaultString = (ptr_ConfigSetDefaultString) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultString");
+    ConfigGetParamInt = (ptr_ConfigGetParamInt) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamInt");
+    ConfigGetParamFloat = (ptr_ConfigGetParamFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamFloat");
+    ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
+    ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
+
+    ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetSharedDataFilepath");
+    ConfigGetUserConfigPath = (ptr_ConfigGetUserConfigPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserConfigPath");
+    ConfigGetUserDataPath = (ptr_ConfigGetUserDataPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserDataPath");
+    ConfigGetUserCachePath = (ptr_ConfigGetUserCachePath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserCachePath");
+
+    if (!ConfigOpenSection || !ConfigSetParameter || !ConfigGetParameter ||
+        !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
+        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString ||
+        !ConfigGetSharedDataFilepath || !ConfigGetUserConfigPath || !ConfigGetUserDataPath || !ConfigGetUserCachePath)
+    {
+        DebugMessage(M64MSG_ERROR, "Couldn't connect to Core configuration functions");
+        return M64ERR_INCOMPATIBLE;
+    }
+
+
+    l_PluginInit = 1;
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL PluginShutdown(void)
+{
+    if (!l_PluginInit)
+        return M64ERR_NOT_INIT;
+
+    /* reset some local variables */
+    l_DebugCallback = NULL;
+    l_DebugCallContext = NULL;
+
+    l_PluginInit = 0;
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
+{
+    /* set version info */
+    if (PluginType != NULL)
+        *PluginType = M64PLUGIN_INPUT;
+
+    if (PluginVersion != NULL)
+        *PluginVersion = PLUGIN_VERSION;
+
+    if (APIVersion != NULL)
+        *APIVersion = PLUGIN_API_VERSION;
+    
+    if (PluginNamePtr != NULL)
+        *PluginNamePtr = PLUGIN_NAME;
+
+    if (Capabilities != NULL)
+    {
+        *Capabilities = 0;
+    }
+                    
+    return M64ERR_SUCCESS;
+}
+
+/* static functions */
 static int
 get_button_num_by_name( const char *name )
 {
@@ -108,37 +239,17 @@ get_button_num_by_name( const char *name )
         if( !strncasecmp( name, button_names[i], strlen( button_names[i] ) ) )
         {
 #ifdef _DEBUG
-            printf( "%s, %d: name = %s, button = %d\n", __FILE__, __LINE__, name, i );
+            DebugMessage(M64MSG_INFO, "%s, %d: name = %s, button = %d\n", __FILE__, __LINE__, name, i);
 #endif
             return i;
         }
 
 #ifdef _DEBUG
-    printf( "%s, %d: button '%s' unknown\n", __FILE__, __LINE__, name );
+    DebugMessage(M64MSG_INFO, "%s, %d: button '%s' unknown\n", __FILE__, __LINE__, name);
 #endif
     return -1;
 }
-/*
-static SDLKey
-get_key_by_name( const char *name )
-{
-    int i;
 
-    for( i = 0; i < SDLK_LAST; i++ )
-        if( !strncasecmp( name, SDL_GetKeyName( i ), strlen( SDL_GetKeyName( i ) ) ) )
-        {
-#ifdef _DEBUG
-            printf( "%s, %d: name = %s, key = %d\n", __FILE__, __LINE__, name, i );
-#endif
-            return i;
-        }
-
-#ifdef _DEBUG
-    printf( "%s, %d: key '%s' unknown\n", __FILE__, __LINE__, name );
-#endif
-    return SDLK_UNKNOWN;
-}
-*/
 static int
 get_hat_pos_by_name( const char *name )
 {
@@ -199,7 +310,7 @@ static void read_configuration( void )
     f = fopen( path, "r" );
     if( f == NULL )
     {
-        fprintf( stderr, "["PLUGIN_NAME"]: Couldn't open blight_input.conf for reading: %s\n", strerror( errno ) );
+        DebugMessage(M64MSG_ERROR, "Couldn't open blight_input.conf for reading: %s\n", strerror( errno ) );
         return;
     }
     while( !feof( f ) )
@@ -252,7 +363,7 @@ static void read_configuration( void )
                     key_a, key_b, button_a, button_b, axis_a, axis_b, hat, hat_pos_a, hat_pos_b );
 
 #ifdef _DEBUG
-                printf( "%s, %d: num = %d, key_a = %s, key_b = %s, button_a = %s, button_b = %s, axis_a = %s, axis_b = %s, hat = %s, hat_pos_a = %s, hat_pos_b = %s\n", __FILE__, __LINE__, num,
+                DebugMessage(M64MSG_INFO, "%s, %d: num = %d, key_a = %s, key_b = %s, button_a = %s, button_b = %s, axis_a = %s, axis_b = %s, hat = %s, hat_pos_a = %s, hat_pos_b = %s\n", __FILE__, __LINE__, num,
                         key_a, key_b, button_a, button_b, axis_a, axis_b, hat, hat_pos_a, hat_pos_b );
 #endif
                 if( sscanf( key_a, "%d", (int *)&controller[cont].axis[b - Y_AXIS].key_a ) != 1 )
@@ -309,7 +420,7 @@ static void read_configuration( void )
                         hat_pos_a,
                         mbutton );
 #ifdef _DEBUG
-                printf( "%s, %d: num = %d, key = %s, button = %s, axis = %s, hat = %s, hat_pos = %s, mbutton = %s\n", __FILE__, __LINE__, num, key_a, button_a, axis, hat, hat_pos_a, mbutton );
+                DebugMessage(M64MSG_INFO, "%s, %d: num = %d, key = %s, button = %s, axis = %s, hat = %s, hat_pos = %s, mbutton = %s\n", __FILE__, __LINE__, num, key_a, button_a, axis, hat, hat_pos_a, mbutton );
 #endif
                 num = sscanf( axis, "%d%c", &controller[cont].button[b].axis, &chAxisDir );
                 if( num != 2 )
@@ -338,7 +449,7 @@ static void read_configuration( void )
             }
             continue;
         }
-        fprintf( stderr, "["PLUGIN_NAME"]: Unknown config line: %s\n", line );
+        DebugMessage(M64MSG_WARNING, "Unknown config line: %s", line );
     }
     fclose( f );
 }
@@ -365,9 +476,9 @@ static int write_configuration( void )
         strncpy(path, configdir, PATH_MAX);
     strncat(path, "blight_input.conf", PATH_MAX - strlen(path));
     f = fopen( path, "w" );
-    if( f == NULL )
+    if (f == NULL)
     {
-        fprintf( stderr, "["PLUGIN_NAME"]: Couldn't open blight_input.conf for writing: %s\n", strerror( errno ) );
+        DebugMessage(M64MSG_ERROR, "Couldn't open blight_input.conf for writing: %s", strerror(errno));
         return -1;
     }
 
@@ -463,133 +574,6 @@ static int write_configuration( void )
     return 0;
 }
 
-unsigned char lastCommand[6];
-
-#ifdef __linux__
-
-struct ff_effect ffeffect[3];
-struct ff_effect ffstrong[3];
-struct ff_effect ffweak[3];
-
-#endif //__linux__
-static unsigned char DataCRC( unsigned char *Data, int iLenght )
-{
-    unsigned char Remainder = Data[0];
-
-    int iByte = 1;
-    unsigned char bBit = 0;
-
-    while( iByte <= iLenght )
-    {
-        int HighBit = ((Remainder & 0x80) != 0);
-        Remainder = Remainder << 1;
-
-        Remainder += ( iByte < iLenght && Data[iByte] & (0x80 >> bBit )) ? 1 : 0;
-
-        Remainder ^= (HighBit) ? 0x85 : 0;
-
-        bBit++;
-        iByte += bBit/8;
-        bBit %= 8;
-    }
-
-    return Remainder;
-}
-
-/******************************************************************
-  Function: ControllerCommand
-  Purpose:  To process the raw data that has just been sent to a
-            specific controller.
-  input:    - Controller Number (0 to 3) and -1 signalling end of
-              processing the pif ram.
-            - Pointer of data to be processed.
-  output:   none
-
-  note:     This function is only needed if the DLL is allowing raw
-            data, or the plugin is set to raw
-
-            the data that is being processed looks like this:
-            initilize controller: 01 03 00 FF FF FF
-            read controller:      01 04 01 FF FF FF FF
-*******************************************************************/
-EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
-{
-    unsigned char *Data = &Command[5];
-
-    if (Control == -1)
-        return;
-
-    switch (Command[2])
-    {
-        case RD_GETSTATUS:
-            /*printf( "Get status\n" );*/
-            break;
-        case RD_READKEYS:
-            /*printf( "Read keys\n" );*/
-            break;
-        case RD_READPAK:
-            /*printf( "Read pak\n" );*/
-            if (controller[Control].control.Plugin == PLUGIN_RAW)
-            {
-                unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
-
-                if(( dwAddress >= 0x8000 ) && ( dwAddress < 0x9000 ) )
-                    memset( Data, 0x80, 32 );
-                else
-                    memset( Data, 0x00, 32 );
-
-                Data[32] = DataCRC( Data, 32 );
-                break;
-                }
-        case RD_WRITEPAK:
-            /*printf( "Write pak\n" );*/
-            if (controller[Control].control.Plugin == PLUGIN_RAW)
-            {
-                unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
-                /*Uncomment to test rumble on systems without necessary hardware.
-              if(dwAddress==PAK_IO_RUMBLE&&*Data)
-                    printf("Triggering rumble pack.\n");*/
-
-#ifdef __linux__
-                struct input_event play;
-                if( dwAddress == PAK_IO_RUMBLE && controller[Control].event_joystick != 0)
-                {
-                    if( *Data )
-                    {
-                        play.type = EV_FF;
-                        play.code = ffeffect[Control].id;
-                        play.value = 1;
-
-                        if (write(controller[Control].event_joystick, (const void*) &play, sizeof(play)) == -1)
-                            perror("Error starting rumble effect");
-
-                    }
-                    else
-                    {
-                        play.type = EV_FF;
-                        play.code = ffeffect[Control].id;
-                        play.value = 0;
-
-                        if (write(controller[Control].event_joystick, (const void*) &play, sizeof(play)) == -1)
-                            perror("Error stopping rumble effect");
-                    }
-                }
-#endif //__linux__
-                Data[32] = DataCRC( Data, 32 );
-            }
-            break;
-        case RD_RESETCONTROLLER:
-            /*printf( "Reset controller\n" );*/
-            break;
-        case RD_READEEPROM:
-            /*printf( "Read eeprom\n" );*/
-            break;
-        case RD_WRITEEPROM:
-            /*printf( "Write eeprom\n" );*/
-            break;
-        }
-}
-
 /* Helper function to handle the SDL keys */
 static void
 doSdlKeys(unsigned char* keystate)
@@ -647,6 +631,136 @@ doSdlKeys(unsigned char* keystate)
             }
         }
     }
+}
+
+static unsigned char DataCRC( unsigned char *Data, int iLenght )
+{
+    unsigned char Remainder = Data[0];
+
+    int iByte = 1;
+    unsigned char bBit = 0;
+
+    while( iByte <= iLenght )
+    {
+        int HighBit = ((Remainder & 0x80) != 0);
+        Remainder = Remainder << 1;
+
+        Remainder += ( iByte < iLenght && Data[iByte] & (0x80 >> bBit )) ? 1 : 0;
+
+        Remainder ^= (HighBit) ? 0x85 : 0;
+
+        bBit++;
+        iByte += bBit/8;
+        bBit %= 8;
+    }
+
+    return Remainder;
+}
+
+/******************************************************************
+  Function: ControllerCommand
+  Purpose:  To process the raw data that has just been sent to a
+            specific controller.
+  input:    - Controller Number (0 to 3) and -1 signalling end of
+              processing the pif ram.
+            - Pointer of data to be processed.
+  output:   none
+
+  note:     This function is only needed if the DLL is allowing raw
+            data, or the plugin is set to raw
+
+            the data that is being processed looks like this:
+            initilize controller: 01 03 00 FF FF FF
+            read controller:      01 04 01 FF FF FF FF
+*******************************************************************/
+EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
+{
+    unsigned char *Data = &Command[5];
+
+    if (Control == -1)
+        return;
+
+    switch (Command[2])
+    {
+        case RD_GETSTATUS:
+#ifdef _DEBUG
+            DebugMessage(M64MSG_INFO, "Get status");
+#endif
+            break;
+        case RD_READKEYS:
+#ifdef _DEBUG
+            DebugMessage(M64MSG_INFO, "Read keys");
+#endif
+            break;
+        case RD_READPAK:
+#ifdef _DEBUG
+            DebugMessage(M64MSG_INFO, "Read pak");
+#endif
+            if (controller[Control].control.Plugin == PLUGIN_RAW)
+            {
+                unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
+
+                if(( dwAddress >= 0x8000 ) && ( dwAddress < 0x9000 ) )
+                    memset( Data, 0x80, 32 );
+                else
+                    memset( Data, 0x00, 32 );
+
+                Data[32] = DataCRC( Data, 32 );
+                break;
+                }
+        case RD_WRITEPAK:
+#ifdef _DEBUG
+            DebugMessage(M64MSG_INFO, "Write pak");
+#endif
+            if (controller[Control].control.Plugin == PLUGIN_RAW)
+            {
+                unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
+              if (dwAddress == PAK_IO_RUMBLE && *Data)
+                    DebugMessage(M64MSG_VERBOSE, "Triggering rumble pack.");
+#ifdef __linux__
+                struct input_event play;
+                if( dwAddress == PAK_IO_RUMBLE && controller[Control].event_joystick != 0)
+                {
+                    if( *Data )
+                    {
+                        play.type = EV_FF;
+                        play.code = ffeffect[Control].id;
+                        play.value = 1;
+
+                        if (write(controller[Control].event_joystick, (const void*) &play, sizeof(play)) == -1)
+                            perror("Error starting rumble effect");
+
+                    }
+                    else
+                    {
+                        play.type = EV_FF;
+                        play.code = ffeffect[Control].id;
+                        play.value = 0;
+
+                        if (write(controller[Control].event_joystick, (const void*) &play, sizeof(play)) == -1)
+                            perror("Error stopping rumble effect");
+                    }
+                }
+#endif //__linux__
+                Data[32] = DataCRC( Data, 32 );
+            }
+            break;
+        case RD_RESETCONTROLLER:
+#ifdef _DEBUG
+            DebugMessage(M64MSG_INFO, "Reset controller");
+#endif
+            break;
+        case RD_READEEPROM:
+#ifdef _DEBUG
+            DebugMessage(M64MSG_INFO, "Read eeprom");
+#endif
+            break;
+        case RD_WRITEEPROM:
+#ifdef _DEBUG
+            DebugMessage(M64MSG_INFO, "Write eeprom");
+#endif
+            break;
+        }
 }
 
 /******************************************************************
@@ -830,7 +944,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
     }
 
 #ifdef _DEBUG
-    printf( "Controller #%d value: 0x%8.8X\n", Control, *(int *)&controller[Control].buttons );
+    DebugMessage(M64MSG_INFO, "Controller #%d value: 0x%8.8X\n", Control, *(int *)&controller[Control].buttons );
 #endif
     *Keys = controller[Control].buttons;
 
@@ -911,30 +1025,30 @@ static void InitiateRumble(int cntrl)
 
     closedir(dp);
 
-    if(!iFound)
-        {
-        printf("["PLUGIN_NAME"]: Couldn't find input event for rumble support.\n");
+    if (!iFound)
+    {
+        DebugMessage(M64MSG_WARNING, "Couldn't find input event for rumble support.");
         return;
-        }
+    }
 
     controller[cntrl].event_joystick = open(temp, O_RDWR);
     if(controller[cntrl].event_joystick==-1)
         {
-        printf("["PLUGIN_NAME"]: Couldn't open device file '%s' for rumble support.\n", temp);
+        DebugMessage(M64MSG_WARNING, "Couldn't open device file '%s' for rumble support.", temp);
         controller[cntrl].event_joystick = 0;
         return;
         }
 
     if(ioctl(controller[cntrl].event_joystick, EVIOCGBIT(EV_FF, sizeof(unsigned long) * 4), features)==-1)
         {
-        printf("["PLUGIN_NAME"]: Linux kernel communication failed for force feedback (rumble).\n");
+        DebugMessage(M64MSG_WARNING, "Linux kernel communication failed for force feedback (rumble).\n");
         controller[cntrl].event_joystick = 0;
         return;
         }
 
     if(!test_bit(FF_RUMBLE, features))
         {
-        printf("["PLUGIN_NAME"]: No rumble supported on N64 joystick #%i\n", cntrl + 1);
+        DebugMessage(M64MSG_WARNING, "No rumble supported on N64 joystick #%i", cntrl + 1);
         controller[cntrl].event_joystick = 0;
         return;
         }
@@ -964,7 +1078,7 @@ static void InitiateRumble(int cntrl)
 
     ioctl(controller[cntrl].event_joystick, EVIOCSFF, &ffweak[cntrl]);
 
-    printf("["PLUGIN_NAME"]: Rumble activated on N64 joystick #%i\n", cntrl + 1);
+    DebugMessage(M64MSG_INFO, "Rumble activated on N64 joystick #%i", cntrl + 1);
 #endif /* __linux__ */
 }
 
@@ -1004,7 +1118,7 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
         memcpy( ControlInfo.Controls + i, &controller[i].control, sizeof( CONTROL ) );
     }
 
-//    printf( "["PLUGIN_NAME"]: version "PLUGIN_VERSION" initialized.\n" ); /* fixme */
+    DebugMessage(M64MSG_INFO, "%s version %i.%i.%i initialized.", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));
 }
 
 /******************************************************************
@@ -1020,10 +1134,9 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
 *******************************************************************/
 EXPORT void CALL ReadController(int Control, unsigned char *Command)
 {
-#if 0//def _DEBUG
-    printf( "\nRaw Read (cont=%d):\n", Control );
-    printf( "\t%02X %02X %02X %02X %02X %02X\n", Command[0], Command[1],
-            Command[2], Command[3], Command[4], Command[5]);//, Command[6], Command[7] );
+#ifdef _DEBUG
+    DebugMessage(M64MSG_INFO, "Raw Read (cont=%d):  %02X %02X %02X %02X %02X %02X", Control,
+                 Command[0], Command[1], Command[2], Command[3], Command[4], Command[5]);
 #endif
 }
 
@@ -1070,7 +1183,7 @@ EXPORT void CALL RomOpen(void)
     if( !SDL_WasInit( SDL_INIT_JOYSTICK ) )
         if( SDL_InitSubSystem( SDL_INIT_JOYSTICK ) == -1 )
         {
-            fprintf( stderr, "["PLUGIN_NAME"]: Couldn't init SDL joystick subsystem: %s\n", SDL_GetError() );
+            DebugMessag(M64MSG_ERROR, "Couldn't init SDL joystick subsystem: %s", SDL_GetError() );
             return;
         }
 
@@ -1080,7 +1193,7 @@ EXPORT void CALL RomOpen(void)
         {
             controller[i].joystick = SDL_JoystickOpen( controller[i].device );
             if( controller[i].joystick == NULL )
-                fprintf( stderr, "["PLUGIN_NAME"]: Couldn't open joystick for controller #%d: %s\n", i, SDL_GetError() );
+                DebugMessage(M64MSG_WARNING, "Couldn't open joystick for controller #%d: %s", i + 1, SDL_GetError() );
         }
         else
             controller[i].joystick = NULL;
@@ -1091,8 +1204,7 @@ EXPORT void CALL RomOpen(void)
         SDL_ShowCursor( 0 );
         if (SDL_WM_GrabInput( SDL_GRAB_ON ) != SDL_GRAB_ON)
         {
-            fprintf( stderr, "["PLUGIN_NAME"]: Couldn't grab input! Mouse support won't work!\n" );
-            fprintf( stderr, "["PLUGIN_NAME"]: Note: You have to set your graphics window fullscreen in order for this to work!\n" );
+            DebugMessage(M64MSG_WARNING, "Couldn't grab input! Mouse support won't work!");
         }
     }
 
