@@ -38,6 +38,7 @@
 #include "m64p_config.h"
 
 #include "plugin.h"
+#include "config.h"
 #include "version.h"
 #include "osal_dynamiclib.h"
 
@@ -58,6 +59,7 @@
 
 /* definitions of pointers to Core config functions */
 ptr_ConfigOpenSection      ConfigOpenSection = NULL;
+ptr_ConfigDeleteSection    ConfigDeleteSection = NULL;
 ptr_ConfigSetParameter     ConfigSetParameter = NULL;
 ptr_ConfigGetParameter     ConfigGetParameter = NULL;
 ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
@@ -74,6 +76,9 @@ ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = NULL;
 ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath = NULL;
 ptr_ConfigGetUserDataPath       ConfigGetUserDataPath = NULL;
 ptr_ConfigGetUserCachePath      ConfigGetUserCachePath = NULL;
+
+/* global data definitions */
+SController controller[4];   // 4 controllers
 
 /* static data definitions */
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
@@ -99,32 +104,10 @@ static unsigned short button_bits[] = {
     0x8000   // Rumblepak switch
 };
 
-static SController controller[4];   // 4 controllers
 static int romopen = 0;         // is a rom opened
 static char configdir[PATH_MAX] = {0};  // holds config dir path
 
 static unsigned char myKeyState[SDLK_LAST];
-
-static const char *button_names[] = {
-    "DPad R",       // R_DPAD
-    "DPad L",       // L_DPAD
-    "DPad D",       // D_DPAD
-    "DPad U",       // U_DPAD
-    "Start",        // START_BUTTON
-    "Z Trig",       // Z_TRIG
-    "B Button",     // B_BUTTON
-    "A Button",     // A_BUTTON
-    "C Button R",   // R_CBUTTON
-    "C Button L",   // L_CBUTTON
-    "C Button D",   // D_CBUTTON
-    "C Button U",   // U_CBUTTON
-    "R Trig",       // R_TRIG
-    "L Trig",       // L_TRIG
-    "Mempak switch",
-    "Rumblepak switch",
-    "Y Axis",       // Y_AXIS
-    "X Axis"        // X_AXIS
-};
 
 #ifdef __linux__
 static struct ff_effect ffeffect[3];
@@ -163,6 +146,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
 
     /* Get the core config function pointers from the library handle */
     ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
+    ConfigDeleteSection = (ptr_ConfigDeleteSection) osal_dynlib_getproc(CoreLibHandle, "ConfigDeleteSection");
     ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
     ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
     ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
@@ -179,7 +163,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigGetUserDataPath = (ptr_ConfigGetUserDataPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserDataPath");
     ConfigGetUserCachePath = (ptr_ConfigGetUserCachePath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserCachePath");
 
-    if (!ConfigOpenSection || !ConfigSetParameter || !ConfigGetParameter ||
+    if (!ConfigOpenSection || !ConfigDeleteSection || !ConfigSetParameter || !ConfigGetParameter ||
         !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
         !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString ||
         !ConfigGetSharedDataFilepath || !ConfigGetUserConfigPath || !ConfigGetUserDataPath || !ConfigGetUserCachePath)
@@ -188,6 +172,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         return M64ERR_INCOMPATIBLE;
     }
 
+    /* load up the configuration data and/or autodetect */
+    load_configuration();
 
     l_PluginInit = 1;
     return M64ERR_SUCCESS;
@@ -227,351 +213,6 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
     }
                     
     return M64ERR_SUCCESS;
-}
-
-/* static functions */
-static int
-get_button_num_by_name( const char *name )
-{
-    int i;
-
-    for( i = 0; i < NUM_BUTTONS; i++ )
-        if( !strncasecmp( name, button_names[i], strlen( button_names[i] ) ) )
-        {
-#ifdef _DEBUG
-            DebugMessage(M64MSG_INFO, "%s, %d: name = %s, button = %d\n", __FILE__, __LINE__, name, i);
-#endif
-            return i;
-        }
-
-#ifdef _DEBUG
-    DebugMessage(M64MSG_INFO, "%s, %d: button '%s' unknown\n", __FILE__, __LINE__, name);
-#endif
-    return -1;
-}
-
-static int
-get_hat_pos_by_name( const char *name )
-{
-    if( !strcasecmp( name, "up" ) )
-        return SDL_HAT_UP;
-    if( !strcasecmp( name, "down" ) )
-        return SDL_HAT_DOWN;
-    if( !strcasecmp( name, "left" ) )
-        return SDL_HAT_LEFT;
-    if( !strcasecmp( name, "right" ) )
-        return SDL_HAT_RIGHT;
-    return -1;
-}
-
-static void read_configuration( void )
-{
-    FILE *f;
-    int cont, plugged, plugin, mouse, i, b, dev;
-    char line[200], device[200], key_a[200], key_b[200], button_a[200], button_b[200],
-             axis[200], axis_a[200], axis_b[200], button[200], hat[200], hat_pos_a[200], hat_pos_b[200], mbutton[200];
-    char chAxisDir;
-    const char *p;
-    char path[PATH_MAX];
-
-    for( i = 0; i < 4; i++ )
-    {
-        controller[i].device = DEVICE_NONE;
-        controller[i].control.Present = 0;
-        controller[i].control.RawData = 0;
-        controller[i].control.Plugin = PLUGIN_NONE;
-        for( b = 0; b < 16; b++ )
-        {
-            controller[i].button[b].button = -1;
-            controller[i].button[b].key = SDLK_UNKNOWN;
-            controller[i].button[b].axis = -1;
-            controller[i].button[b].hat = -1;
-            controller[i].button[b].hat_pos = -1;
-            controller[i].button[b].mouse = -1;
-        }
-        for( b = 0; b < 2; b++ )
-        {
-            controller[i].axis[b].button_a = controller[i].axis[b].button_b = -1;
-            controller[i].axis[b].key_a = controller[i].axis[b].key_a = SDLK_UNKNOWN;
-            controller[i].axis[b].axis_a = -1;
-            controller[i].axis[b].axis_dir_a = 1;
-            controller[i].axis[b].axis_b = -1;
-            controller[i].axis[b].axis_dir_b = 1;
-            controller[i].axis[b].hat = -1;
-            controller[i].axis[b].hat_pos_a = -1;
-            controller[i].axis[b].hat_pos_b = -1;
-        }
-    }
-
-    path[0] = '\0';
-    if(strlen(configdir) > 0)
-        strncpy(path, configdir, PATH_MAX);
-    strncat(path, "blight_input.conf", PATH_MAX - strlen(path));
-    f = fopen( path, "r" );
-    if( f == NULL )
-    {
-        DebugMessage(M64MSG_ERROR, "Couldn't open blight_input.conf for reading: %s\n", strerror( errno ) );
-        return;
-    }
-    while( !feof( f ) )
-    {
-        if( fgets( line, 200, f ) == NULL )
-            break;
-        if( line[0] == '\n' || line[0] == '\0' )
-            continue;
-        if( sscanf( line, "[controller %d]", &cont ) == 1 )
-            continue;
-        if( sscanf( line, "plugged=%d", &plugged ) == 1 )
-        {
-            controller[cont].control.Present = plugged;
-            continue;
-        }
-        if( sscanf( line, "plugin=%d", &plugin ) == 1 )
-        {
-            controller[cont].control.Plugin = plugin;
-            continue;
-        }
-        if( sscanf( line, "mouse=%d", &mouse ) == 1 )
-        {
-            controller[cont].mouse = mouse;
-            continue;
-        }
-        if( sscanf( line, "device=%200s", device ) == 1 )
-        {
-            dev = DEVICE_NONE;
-            if( !strcasecmp( device, "keyboard" ) )
-                dev = DEVICE_KEYBOARD;
-            else if( sscanf( device, "%d", &i ) == 1 )
-                dev = i;
-            controller[cont].device = dev;
-            continue;
-        }
-        p = strchr( line, '=' );
-        if( p )
-        {
-            int len = p - line;
-            int num;
-
-            strncpy( button, line, len );
-            button[len] = '\0';
-            p++;
-
-            b = get_button_num_by_name( button );
-            if( (b == X_AXIS) || (b == Y_AXIS) )
-            {
-                num = sscanf( p, "key( %s , %s ); button( %s , %s ); axis( %s , %s ); hat( %s , %s , %s )",
-                    key_a, key_b, button_a, button_b, axis_a, axis_b, hat, hat_pos_a, hat_pos_b );
-
-#ifdef _DEBUG
-                DebugMessage(M64MSG_INFO, "%s, %d: num = %d, key_a = %s, key_b = %s, button_a = %s, button_b = %s, axis_a = %s, axis_b = %s, hat = %s, hat_pos_a = %s, hat_pos_b = %s\n", __FILE__, __LINE__, num,
-                        key_a, key_b, button_a, button_b, axis_a, axis_b, hat, hat_pos_a, hat_pos_b );
-#endif
-                if( sscanf( key_a, "%d", (int *)&controller[cont].axis[b - Y_AXIS].key_a ) != 1 )
-                    controller[cont].axis[b - Y_AXIS].key_a = -1;
-                if( sscanf( key_b, "%d", (int *)&controller[cont].axis[b - Y_AXIS].key_b ) != 1 )
-                    controller[cont].axis[b - Y_AXIS].key_b = -1;
-                if( sscanf( button_a, "%d", &controller[cont].axis[b - Y_AXIS].button_a ) != 1 )
-                    controller[cont].axis[b - Y_AXIS].button_a = -1;
-                if( sscanf( button_b, "%d", &controller[cont].axis[b - Y_AXIS].button_b ) != 1 )
-                    controller[cont].axis[b - Y_AXIS].button_b = -1;
-                num = sscanf( axis_a, "%d%c", &controller[cont].axis[b - Y_AXIS].axis_a, &chAxisDir );
-                if( num != 2 )
-                {
-                    controller[cont].axis[b - Y_AXIS].axis_a = -1;
-                    controller[cont].axis[b - Y_AXIS].axis_dir_a = 0;
-                }
-                else
-                {
-                    if( chAxisDir == '+' )
-                        controller[cont].axis[b - Y_AXIS].axis_dir_a = 1;
-                    else if( chAxisDir == '-' )
-                        controller[cont].axis[b - Y_AXIS].axis_dir_a = -1;
-                    else
-                        controller[cont].axis[b - Y_AXIS].axis_dir_a = 0;
-                }
-              
-                num = sscanf( axis_b, "%d%c", &controller[cont].axis[b - Y_AXIS].axis_b, &chAxisDir);
-                if( num != 2 )
-                {
-                    controller[cont].axis[b - Y_AXIS].axis_b = -1;
-                    controller[cont].axis[b - Y_AXIS].axis_dir_b = 0;
-                }
-                else
-                {
-                    if( chAxisDir == '+' )
-                        controller[cont].axis[b - Y_AXIS].axis_dir_b = 1;
-                    else if( chAxisDir == '-' )
-                        controller[cont].axis[b - Y_AXIS].axis_dir_b = -1;
-                    else
-                        controller[cont].axis[b - Y_AXIS].axis_dir_b = 0;
-                }
-                if( sscanf( hat, "%d", &controller[cont].axis[b - Y_AXIS].hat ) != 1 )
-                    controller[cont].axis[b - Y_AXIS].hat = -1;
-                controller[cont].axis[b - Y_AXIS].hat_pos_a = get_hat_pos_by_name( hat_pos_a );
-                controller[cont].axis[b - Y_AXIS].hat_pos_b = get_hat_pos_by_name( hat_pos_b );
-            }
-            else
-            {
-                num = sscanf( p, "key( %s ); button( %s ); axis( %s ); hat( %s , %s ); mouse( %s )",
-                        key_a,
-                        button_a,
-                        axis,
-                        hat,
-                        hat_pos_a,
-                        mbutton );
-#ifdef _DEBUG
-                DebugMessage(M64MSG_INFO, "%s, %d: num = %d, key = %s, button = %s, axis = %s, hat = %s, hat_pos = %s, mbutton = %s\n", __FILE__, __LINE__, num, key_a, button_a, axis, hat, hat_pos_a, mbutton );
-#endif
-                num = sscanf( axis, "%d%c", &controller[cont].button[b].axis, &chAxisDir );
-                if( num != 2 )
-                {
-                    controller[cont].button[b].axis = -1;
-                    controller[cont].button[b].axis_dir = 0;
-                }
-                else
-                {
-                    if( chAxisDir == '+' )
-                        controller[cont].button[b].axis_dir = 1;
-                    else if( chAxisDir == '-' )
-                        controller[cont].button[b].axis_dir = -1;
-                    else
-                        controller[cont].button[b].axis_dir = 0;
-                }
-                if( sscanf( key_a, "%d", (int *)&controller[cont].button[b].key ) != 1 )
-                    controller[cont].button[b].key = -1;
-                if( sscanf( button_a, "%d", &controller[cont].button[b].button ) != 1 )
-                    controller[cont].button[b].button = -1;
-                if( sscanf( hat, "%d", &controller[cont].button[b].hat ) != 1 )
-                    controller[cont].button[b].hat = -1;
-                controller[cont].button[b].hat_pos = get_hat_pos_by_name( hat_pos_a );
-                if( sscanf( mbutton, "%d", &controller[cont].button[b].mouse ) != 1 )
-                    controller[cont].button[b].mouse = -1;
-            }
-            continue;
-        }
-        DebugMessage(M64MSG_WARNING, "Unknown config line: %s", line );
-    }
-    fclose( f );
-}
-
-#define HAT_POS_NAME( hat )         \
-       ((hat == SDL_HAT_UP) ? "Up" :        \
-       ((hat == SDL_HAT_DOWN) ? "Down" :    \
-       ((hat == SDL_HAT_LEFT) ? "Left" :    \
-       ((hat == SDL_HAT_RIGHT) ? "Right" :  \
-         "None"))))
-
-static int write_configuration( void )
-{
-    FILE *f;
-    int i, b;
-    char cKey_a[100], cKey_b[100];
-    char cButton_a[100], cButton_b[100], cAxis[100], cAxis_a[100], cAxis_b[100];
-    char cHat[100];
-    char cMouse[100];
-    char path[PATH_MAX];
-
-    path[0] = '\0';
-    if(strlen(configdir) > 0)
-        strncpy(path, configdir, PATH_MAX);
-    strncat(path, "blight_input.conf", PATH_MAX - strlen(path));
-    f = fopen( path, "w" );
-    if (f == NULL)
-    {
-        DebugMessage(M64MSG_ERROR, "Couldn't open blight_input.conf for writing: %s", strerror(errno));
-        return -1;
-    }
-
-    for( i = 0; i < 4; i++ )
-    {
-        fprintf( f, "[controller %d]\n", i );
-        fprintf( f, "plugged=%d\n", controller[i].control.Present );
-        fprintf( f, "plugin=%d\n", controller[i].control.Plugin );
-        fprintf( f, "mouse=%d\n", controller[i].mouse );
-        if( controller[i].device == DEVICE_KEYBOARD )
-            fprintf( f, "device=Keyboard\n" );
-        else if( controller[i].device >= 0 )
-            fprintf( f, "device=%d\n", controller[i].device );
-        else
-            fprintf( f, "device=None\n" );
-
-        for( b = 0; b < 16; b++ )
-        {
-//          cKey_a = (controller[i].button[b].key == SDLK_UNKNOWN) ? "None" : SDL_GetKeyName( controller[i].button[b].key );
-            if( controller[i].button[b].key >= 0 )
-                sprintf( cKey_a, "%d", controller[i].button[b].key );
-            else
-                strcpy( cButton_a, "None" );
-
-            if( controller[i].button[b].button >= 0 )
-                sprintf( cButton_a, "%d", controller[i].button[b].button );
-            else
-                strcpy( cButton_a, "None" );
-
-            if( controller[i].button[b].axis >= 0 )
-                sprintf( cAxis, "%d%c", controller[i].button[b].axis, (controller[i].button[b].axis_dir == -1) ? '-' : '+' );
-            else
-                strcpy( cAxis, "None" );
-
-            if( controller[i].button[b].hat >= 0 )
-                sprintf( cHat, "%d", controller[i].button[b].hat );
-            else
-                strcpy( cHat, "None" );
-
-            if( controller[i].button[b].mouse >= 0 )
-                sprintf( cMouse, "%d", controller[i].button[b].mouse );
-            else
-                strcpy( cMouse, "None" );
-
-            fprintf( f, "%s=key( %s ); button( %s ); axis( %s ); hat( %s , %s ); mouse( %s )\n", button_names[b],
-                    cKey_a, cButton_a, cAxis, cHat, HAT_POS_NAME(controller[i].button[b].hat_pos), cMouse );
-        }
-        for( b = 0; b < 2; b++ )
-        {
-//          cKey_a = (controller[i].axis[b].key_a == SDLK_UNKNOWN) ? "None" : SDL_GetKeyName( controller[i].axis[b].key_a );
-//          cKey_b = (controller[i].axis[b].key_b == SDLK_UNKNOWN) ? "None" : SDL_GetKeyName( controller[i].axis[b].key_b );
-            if( controller[i].axis[b].key_a >= 0 )
-                sprintf( cKey_a, "%d", controller[i].axis[b].key_a );
-            else
-                strcpy( cKey_a, "None" );
-            if( controller[i].axis[b].key_b >= 0 )
-                sprintf( cKey_b, "%d", controller[i].axis[b].key_b );
-            else
-                strcpy( cKey_b, "None" );
-
-            if( controller[i].axis[b].button_a >= 0 )
-                sprintf( cButton_a, "%d", controller[i].axis[b].button_a );
-            else
-                strcpy( cButton_a, "None" );
-
-            if( controller[i].axis[b].button_b >= 0 )
-                sprintf( cButton_b, "%d", controller[i].axis[b].button_b );
-            else
-                strcpy( cButton_b, "None" );
-
-            if( controller[i].axis[b].axis_a >= 0 )
-                sprintf( cAxis_a, "%d%c", controller[i].axis[b].axis_a, (controller[i].axis[b].axis_dir_a <= 0) ? '-' : '+' );
-            else
-                strcpy( cAxis_a, "None" );
-                
-            if( controller[i].axis[b].axis_b >= 0 )
-                sprintf( cAxis_b, "%d%c", controller[i].axis[b].axis_b, (controller[i].axis[b].axis_dir_b <= 0) ? '-' : '+' );
-            else
-                strcpy( cAxis_b, "None" );
-           
-            if( controller[i].axis[b].hat >= 0 )
-                sprintf( cHat, "%d", controller[i].axis[b].hat );
-            else
-                strcpy( cHat, "None" );
-
-            fprintf( f, "%s=key( %s , %s ); button( %s , %s ); axis( %s , %s ); hat( %s , %s , %s )\n", button_names[b+16],
-                        cKey_a, cKey_b, cButton_a, cButton_b, cAxis_a, cAxis_b, cHat, HAT_POS_NAME(controller[i].axis[b].hat_pos_a), HAT_POS_NAME(controller[i].axis[b].hat_pos_b) );
-        }
-        fprintf( f, "\n" );
-    }
-
-    fclose( f );
-    return 0;
 }
 
 /* Helper function to handle the SDL keys */
@@ -1104,7 +745,7 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
     }
 
     // read configuration
-    read_configuration();
+    load_configuration();
 
     for( i = 0; i < 4; i++ )
     {
@@ -1183,7 +824,7 @@ EXPORT void CALL RomOpen(void)
     if( !SDL_WasInit( SDL_INIT_JOYSTICK ) )
         if( SDL_InitSubSystem( SDL_INIT_JOYSTICK ) == -1 )
         {
-            DebugMessag(M64MSG_ERROR, "Couldn't init SDL joystick subsystem: %s", SDL_GetError() );
+            DebugMessage(M64MSG_ERROR, "Couldn't init SDL joystick subsystem: %s", SDL_GetError() );
             return;
         }
 

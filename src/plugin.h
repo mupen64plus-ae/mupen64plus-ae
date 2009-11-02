@@ -29,8 +29,7 @@
 #include "m64p_plugin.h"
 #include "m64p_config.h"
 
-#define DEVICE_KEYBOARD     (-1)
-#define DEVICE_NONE         (-2)
+#define DEVICE_NONE         (-1)
 
 // Some stuff from n-rage plugin
 #define RD_GETSTATUS        0x00        // get status
@@ -90,18 +89,23 @@ typedef struct
     BUTTONS buttons;
 
     // mappings
-    SButtonMap    button[16];   // 14 buttons; in the order of EButton
-    SAxisMap      axis[2];      //  2 axis
-    int           device;       // joystick device; -1 = keyboard; -2 = none
-    int           mouse;        // mouse enabled: 0 = no; 1 = yes
-    SDL_Joystick *joystick;     // SDL joystick device
+    SButtonMap    button[16];       // 14 buttons; in the order of EButton + mempak/rumblepak switches
+    SAxisMap      axis[2];          // 2 axis
+    int           device;           // joystick device; -1 = keyboard; -2 = none
+    int           mouse;            // mouse enabled: 0 = no; 1 = yes
+    SDL_Joystick *joystick;         // SDL joystick device
     int           event_joystick;   // the /dev/input/eventX device for force feeback
-
+    int           axis_deadzone[2]; // minimum absolute value before analog movement is recognized
+    int           axis_peak[2];     // highest analog value returned by SDL, used for scaling
 } SController;
+
+/* global data definitions */
+extern SController controller[4];   // 4 controllers
 
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
 extern ptr_ConfigOpenSection      ConfigOpenSection;
+extern ptr_ConfigDeleteSection    ConfigDeleteSection;
 extern ptr_ConfigListParameters   ConfigListParameters;
 extern ptr_ConfigSaveFile         ConfigSaveFile;
 extern ptr_ConfigSetParameter     ConfigSetParameter;
