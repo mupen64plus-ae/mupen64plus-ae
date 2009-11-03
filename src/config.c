@@ -167,23 +167,49 @@ static void set_model_defaults(int iCtrlIdx, enum eJoyType type)
     pCtrl->axis_peak[0]     = pCtrl->axis_peak[1] = 32768;
 }
 
-static int auto_load_defaults(int iCtrlIdx)
+static const char * get_sdl_joystick_name(int iCtrlIdx)
 {
-    const int numJoyModels = sizeof(l_JoyConfigMap) / sizeof(sJoyConfigMap);
+    static char JoyName[256];
     int joyWasInit = SDL_WasInit(SDL_INIT_JOYSTICK);
     
-    int i;
-
     /* initialize the joystick subsystem if necessary */
     if (!joyWasInit)
         if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1)
         {
             DebugMessage(M64MSG_ERROR, "Couldn't init SDL joystick subsystem: %s", SDL_GetError() );
-            return 0;
+            return NULL;
         }
 
     /* get the name of the corresponding joystick */
     const char *joySDLName = SDL_JoystickName(iCtrlIdx);
+
+    /* copy the name to our local string */
+    if (joySDLName != NULL)
+    {
+        strncpy(JoyName, joySDLName, 255);
+        JoyName[255] = 0;
+    }
+
+    /* quit the joystick subsystem if necessary */
+    if (!joyWasInit)
+        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+
+    /* if the SDL function had an error, then return NULL, otherwise return local copy of joystick name */
+    if (joySDLName == NULL)
+        return NULL;
+    else
+        return JoyName;
+}
+
+static int auto_load_defaults(int iCtrlIdx)
+{
+    const int numJoyModels = sizeof(l_JoyConfigMap) / sizeof(sJoyConfigMap);
+    const char *joySDLName = get_sdl_joystick_name(iCtrlIdx);
+    int i;
+
+    /* if we couldn't get a name (no joystick plugged in to given port), then return with a failure */
+    if (joySDLName == NULL)
+        return 0;
 
     /* iterate through the list of all known joystick models */
     for (i = 0; i < numJoyModels; i++)
@@ -207,24 +233,20 @@ static int auto_load_defaults(int iCtrlIdx)
                 Word[length] = 0;
                 wordPtr = nextSpace + 1;
             }
-            if (joySDLName == NULL || strcasestr(joySDLName, Word) == NULL)
+            if (strcasestr(joySDLName, Word) == NULL)
                 joyFound = 0;
         }
         /* if we found the right joystick, then set the defaults and break out of this loop */
         if (joyFound)
         {
-            DebugMessage(M64MSG_INFO, "Found joystick model '%s' on port %i", joySDLName, iCtrlIdx);
+            DebugMessage(M64MSG_INFO, "N64 Controller #%i: Enabled, using auto-configuration for joystick '%s'", iCtrlIdx + 1, joySDLName);
             set_model_defaults(iCtrlIdx, l_JoyConfigMap[i].type);
-            break;
+            return 1;
         }
     }
 
-    /* quit the joystick subsystem if necessary */
-    if (!joyWasInit)
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-
-    /* if we broke out of the loop early, then the attached joystick was found.  Otherwise, it was not found */
-    return (i < numJoyModels);
+    DebugMessage(M64MSG_INFO, "N64 Controller #%i: Disabled, no configuration data for '%s'", iCtrlIdx + 1, joySDLName);
+    return 0;
 }
 
 
@@ -435,15 +457,48 @@ void load_configuration(void)
                 break;
         }
         /* if something went wrong while reading config values, set default configuration */
-        if (!readOK)
+        if (readOK)
         {
-            DebugMessage(M64MSG_INFO, "Couldn't read config parameters for controller #%i.  Using defaults.", i + 1);
+            if (controller[i].device >= 0)
+            {
+                const char *JoyName = get_sdl_joystick_name(controller[i].device);
+                if (JoyName == NULL)
+                {
+                    controller[i].device = DEVICE_NONE;
+                    controller[i].control.Present = 0;
+                    DebugMessage(M64MSG_INFO, "N64 Controller #%i: Disabled, SDL joystick is not available", i+1);
+                }
+                else
+                    DebugMessage(M64MSG_INFO, "N64 Controller #%i: Enabled, using stored configuration with joystick '%s'", i+1, JoyName);
+            }
+        }
+        else
+        {
             /* reset the controller configuration again and load the defaults */
             clear_controller(i);
             if (auto_load_defaults(i))
                 save_controller_config(i);
         }
     }
+
+    /* see how many joysticks were found */
+    int joy_found = 0, joy_plugged = 0;
+    for (i = 0; i < 4; i++)
+    {
+        if (controller[i].device >= 0)
+        {
+            joy_found++;
+            if (controller[i].control.Present)
+                joy_plugged++;
+        }
+    }
+    if (joy_found == 0)
+        DebugMessage(M64MSG_WARNING, "No SDL joysticks found");
+    else if (joy_plugged == 0)
+        DebugMessage(M64MSG_WARNING, "%i SDL joysticks found, but none are 'plugged in'", joy_found);
+    else
+        DebugMessage(M64MSG_INFO, "%i SDL joysticks found, %i plugged in and usable in the emulator", joy_found, joy_plugged);
+
 }
 
 

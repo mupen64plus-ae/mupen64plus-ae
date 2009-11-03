@@ -172,9 +172,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         return M64ERR_INCOMPATIBLE;
     }
 
-    /* load up the configuration data and/or autodetect */
-    load_configuration();
-
     l_PluginInit = 1;
     return M64ERR_SUCCESS;
 }
