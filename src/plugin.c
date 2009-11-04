@@ -443,102 +443,72 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
         }
         for( b = 0; b < 2; b++ )
         {
-            // from the N64 func ref: The 3D Stick data is of type signed char and in
-            // the range between 80 and -80. (32768 / 409 = ~80.1)
+            /* from the N64 func ref: The 3D Stick data is of type signed char and in the range between +80 and -80 */
+            int deadzone = controller[Control].axis_deadzone[b];
+            int range = controller[Control].axis_peak[b] - controller[Control].axis_deadzone[b];
             axis_val = 0;
-            axis_val_tmp = 0;
-            
-            
+
+            /* skip this axis if the deadzone/peak values are invalid */
+            if (deadzone < 0 || range < 1)
+                continue;
+
             if( controller[Control].axis[b].axis_a >= 0 )
             {
-                axis_val_tmp = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_a );
-                // if you push a positive axis... and your directions are flipped...
+                axis_val_tmp = SDL_JoystickGetAxis(controller[Control].joystick, controller[Control].axis[b].axis_a);
                 if( (controller[Control].axis[b].axis_dir_a < 0) && (axis_val_tmp <= -6000) )
                 {
-                    if (b == 0)
-                    {
-                        axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_a ) / -409;
-                    }
-                    else
-                    {
-                        axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_a ) / 409;
-                    }
+                    axis_val = axis_val_tmp / 409;
                 }
                 else if( (controller[Control].axis[b].axis_dir_a > 0) && (axis_val_tmp >= 6000) )
                 {
-                    if (b == 1)
-                    {
-                        axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_a ) / -409;
-                    }
-                    else
-                    {
-                        axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_a ) / 409;
-                    }
+                    axis_val = axis_val_tmp / -409;
                 }
             }
             // up and left
             if( controller[Control].axis[b].axis_b >= 0 )
             {
                 axis_val_tmp = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_b );
-                // if you push a positive axis... and your directions are flipped...
                 if( (controller[Control].axis[b].axis_dir_b < 0) && (axis_val_tmp <= -6000) )
                 {
-                    if (b == 1)
-                    {
-                        axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_b ) / -409;
-                    }
-                    else
-                    {
-                        axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_b ) / 409;
-                    }
+                    axis_val = axis_val_tmp / -409;
                 }
                 else if( (controller[Control].axis[b].axis_dir_b > 0) && (axis_val_tmp >= 6000) )
                 {
-                    if (b == 0)
-                    {
-                        axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_b ) / -409;
-                    }
-                    else
-                    {
-                        axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_b ) / 409;
-                    }
+                    axis_val = axis_val_tmp / 409;
                 }
             }
             if( controller[Control].axis[b].hat >= 0 )
             {
                 if( controller[Control].axis[b].hat_pos_a >= 0 )
                     if( SDL_JoystickGetHat( controller[Control].joystick, controller[Control].axis[b].hat ) & controller[Control].axis[b].hat_pos_a )
-                        axis_val = 80;
+                        axis_val = -80;
                 if( controller[Control].axis[b].hat_pos_b >= 0 )
                     if( SDL_JoystickGetHat( controller[Control].joystick, controller[Control].axis[b].hat ) & controller[Control].axis[b].hat_pos_b )
-                        axis_val = -80;
+                        axis_val = 80;
             }
 
             if( controller[Control].axis[b].button_a >= 0 )
                 if( SDL_JoystickGetButton( controller[Control].joystick, controller[Control].axis[b].button_a ) )
-                    axis_val = 80;
+                    axis_val = -80;
             if( controller[Control].axis[b].button_b >= 0 )
                 if( SDL_JoystickGetButton( controller[Control].joystick, controller[Control].axis[b].button_b ) )
-                    axis_val = -80;
+                    axis_val = 80;
 
             if( b == 0 )
                 controller[Control].buttons.X_AXIS = axis_val;
             else
-                controller[Control].buttons.Y_AXIS = axis_val;
+                controller[Control].buttons.Y_AXIS = -axis_val;
         }
     }
 
     // process mouse events
+    unsigned char mstate = SDL_GetMouseState( NULL, NULL );
+    for( b = 0; b < 16; b++ )
     {
-        unsigned char mstate = SDL_GetMouseState( NULL, NULL );
-
-        for( b = 0; b < 16; b++ )
-        {
-            if( controller[Control].button[b].mouse < 1 )
-                continue;
-            if( mstate & SDL_BUTTON(controller[Control].button[b].mouse) )
-                controller[Control].buttons.Value |= button_bits[b];
-        }
+        if( controller[Control].button[b].mouse < 1 )
+            continue;
+        if( mstate & SDL_BUTTON(controller[Control].button[b].mouse) )
+            controller[Control].buttons.Value |= button_bits[b];
     }
 
     if (controller[Control].mouse)
@@ -555,7 +525,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
                         axis_val = -80;
                     else if (axis_val > 80)
                         axis_val = 80;
-                    controller[Control].buttons.Y_AXIS = axis_val;
+                    controller[Control].buttons.X_AXIS = axis_val;
                 }
                 if (event.motion.yrel)
                 {
@@ -564,7 +534,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
                         axis_val = -80;
                     else if (axis_val > 80)
                         axis_val = 80;
-                    controller[Control].buttons.X_AXIS = -axis_val;
+                    controller[Control].buttons.Y_AXIS = -axis_val;
                 }
             }
             else if (event.type == SDL_MOUSEBUTTONUP)
@@ -609,8 +579,6 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 #endif /* __linux__ */
 
     controller[Control].buttons.Value = 0;
-    //controller[Control].buttons.stick_x = 0;
-    //controller[Control].buttons.stick_y = 0;
 }
 
 static void InitiateRumble(int cntrl)

@@ -52,8 +52,8 @@ static const char *button_names[] = {
     "L Trig",       // L_TRIG
     "Mempak switch",
     "Rumblepak switch",
-    "Y Axis",       // Y_AXIS
-    "X Axis"        // X_AXIS
+    "X Axis",       // X_AXIS
+    "Y Axis"        // Y_AXIS
 };
 
 /* definitions for joystick auto-configuration */
@@ -151,8 +151,8 @@ static void set_model_defaults(int iCtrlIdx, enum eJoyType type)
             pCtrl->button[L_TRIG].button = 4;
             pCtrl->button[MEMPAK].button = 6;
             pCtrl->button[RUMBLEPAK].button = 7;
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 1;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 0;
+            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
+            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
             pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
             pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
             break;
@@ -177,8 +177,8 @@ static void set_model_defaults(int iCtrlIdx, enum eJoyType type)
             pCtrl->button[MEMPAK].button = 9;
             pCtrl->button[RUMBLEPAK].axis = 5;
             pCtrl->button[RUMBLEPAK].axis_dir = 1;
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 1;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 0;
+            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
+            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
             pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
             pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
             break;
@@ -201,8 +201,8 @@ static void set_model_defaults(int iCtrlIdx, enum eJoyType type)
             pCtrl->button[L_TRIG].button = 7;
             pCtrl->button[MEMPAK].key = SDLK_m;
             pCtrl->button[RUMBLEPAK].key = SDLK_r;
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 1;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 0;
+            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
+            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
             pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
             pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
             break;
@@ -228,8 +228,8 @@ static void set_model_defaults(int iCtrlIdx, enum eJoyType type)
             pCtrl->button[R_TRIG].button = 7;
             pCtrl->button[L_TRIG].button = 6;
             /* no MEMPAK or RUMBLEPAK defined */
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 1;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 0;
+            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
+            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
             pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
             pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
             break;
@@ -353,12 +353,12 @@ void save_controller_config(int iCtrlIdx)
     ConfigSetDefaultInt(pConfig, "device", controller[iCtrlIdx].device, "Specifies which joystick is bound to this controller: -1=None, 0 or more= SDL Joystick number");
 
     sprintf(Param, "%i,%i", controller[iCtrlIdx].axis_deadzone[0], controller[iCtrlIdx].axis_deadzone[1]);
-    ConfigSetDefaultString(pConfig, "AnalogDeadzone", Param, "The minimum absolute value of the SDL analog joystick axis to move the N64 controller axis value from 0.  For Y, X axes.");
+    ConfigSetDefaultString(pConfig, "AnalogDeadzone", Param, "The minimum absolute value of the SDL analog joystick axis to move the N64 controller axis value from 0.  For X, Y axes.");
     sprintf(Param, "%i,%i", controller[iCtrlIdx].axis_peak[0], controller[iCtrlIdx].axis_peak[1]);
-    ConfigSetDefaultString(pConfig, "AnalogPeak", Param, "An absolute value of the SDL joystick axis >= AnalogPeak will saturate the N64 controller axis value (at 80).  For Y, X axes. For each axis, this must be greater than the corresponding AnalogDeadzone value");
+    ConfigSetDefaultString(pConfig, "AnalogPeak", Param, "An absolute value of the SDL joystick axis >= AnalogPeak will saturate the N64 controller axis value (at 80).  For X, Y axes. For each axis, this must be greater than the corresponding AnalogDeadzone value");
 
     /* save configuration for all the digital buttons */
-    for (j = 0; j < Y_AXIS; j++ )
+    for (j = 0; j < X_AXIS; j++ )
     {
         const char *Help;
         ParamString[0] = 0;
@@ -426,7 +426,7 @@ void save_controller_config(int iCtrlIdx)
             Help = "Analog axis configuration mappings";
         else
             Help = NULL;
-        ConfigSetDefaultString(pConfig, button_names[Y_AXIS + j], ParamString, Help);
+        ConfigSetDefaultString(pConfig, button_names[X_AXIS + j], ParamString, Help);
     }
 
 }
@@ -472,7 +472,7 @@ void load_configuration(void)
             if (sscanf(input_str, "%i,%i", &controller[i].axis_peak[0], &controller[i].axis_peak[1]) != 2)
                 DebugMessage(M64MSG_WARNING, "parsing error in AnalogPeak parameter for controller %i", i + 1);
             /* load configuration for all the digital buttons */
-            for (j = 0; j < Y_AXIS; j++)
+            for (j = 0; j < X_AXIS; j++)
             {
                 if (ConfigGetParameter(pConfig, button_names[j], M64TYPE_STRING, input_str, 256) != M64ERR_SUCCESS)
                     break;
@@ -500,12 +500,12 @@ void load_configuration(void)
                     if (sscanf(config_ptr, "mouse(%i)", &controller[i].button[j].mouse) != 1)
                         DebugMessage(M64MSG_WARNING, "parsing error in mouse() parameter of button '%s' for controller %i", button_names[j], i + 1);
             }
-            if (j < Y_AXIS)
+            if (j < X_AXIS)
                 break;
             /* load configuration for the 2 analog joystick axes */
-            for (j = Y_AXIS; j <= X_AXIS; j++)
+            for (j = X_AXIS; j <= Y_AXIS; j++)
             {
-                int axis_idx = j - Y_AXIS;
+                int axis_idx = j - X_AXIS;
                 if (ConfigGetParameter(pConfig, button_names[j], M64TYPE_STRING, input_str, 256) != M64ERR_SUCCESS)
                     break;
                 if ((config_ptr = strstr(input_str, "key")) != NULL)
@@ -532,7 +532,7 @@ void load_configuration(void)
                     controller[i].axis[axis_idx].hat_pos_b = get_hat_pos_by_name(value2_str);
                 }
             }
-            if (j <= X_AXIS)
+            if (j <= Y_AXIS)
                 break;
         }
         /* if something went wrong while reading config values, set default configuration */

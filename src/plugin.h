@@ -60,8 +60,8 @@ enum EButton
     L_TRIG,
     MEMPAK,
     RUMBLEPAK,
-    Y_AXIS,
     X_AXIS,
+    Y_AXIS,
     NUM_BUTTONS
 };
 
