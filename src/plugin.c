@@ -407,7 +407,7 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 *******************************************************************/
 EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 {
-    int b, axis_val, axis_val_tmp;
+    int b, axis_val;
     SDL_Event event;
 
     // Handle keyboard input first
@@ -443,7 +443,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
         }
         for( b = 0; b < 2; b++ )
         {
-            /* from the N64 func ref: The 3D Stick data is of type signed char and in the range between +80 and -80 */
+            /* from the N64 func ref: The 3D Stick data is of type signed char and in the range between -80 and +80 */
             int deadzone = controller[Control].axis_deadzone[b];
             int range = controller[Control].axis_peak[b] - controller[Control].axis_deadzone[b];
             axis_val = 0;
@@ -454,28 +454,22 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 
             if( controller[Control].axis[b].axis_a >= 0 )
             {
-                axis_val_tmp = SDL_JoystickGetAxis(controller[Control].joystick, controller[Control].axis[b].axis_a);
-                if( (controller[Control].axis[b].axis_dir_a < 0) && (axis_val_tmp <= -6000) )
-                {
-                    axis_val = axis_val_tmp / 409;
-                }
-                else if( (controller[Control].axis[b].axis_dir_a > 0) && (axis_val_tmp >= 6000) )
-                {
-                    axis_val = axis_val_tmp / -409;
-                }
+                int joy_val = SDL_JoystickGetAxis(controller[Control].joystick, controller[Control].axis[b].axis_a);
+                int axis_dir = controller[Control].axis[b].axis_dir_a;
+                if (joy_val * axis_dir > deadzone)
+                    axis_val = -((abs(joy_val) - deadzone) * 80 / range);
+                if (axis_val < -80)
+                    axis_val = -80;
             }
             // up and left
             if( controller[Control].axis[b].axis_b >= 0 )
             {
-                axis_val_tmp = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].axis[b].axis_b );
-                if( (controller[Control].axis[b].axis_dir_b < 0) && (axis_val_tmp <= -6000) )
-                {
-                    axis_val = axis_val_tmp / -409;
-                }
-                else if( (controller[Control].axis[b].axis_dir_b > 0) && (axis_val_tmp >= 6000) )
-                {
-                    axis_val = axis_val_tmp / 409;
-                }
+                int joy_val = SDL_JoystickGetAxis(controller[Control].joystick, controller[Control].axis[b].axis_b);
+                int axis_dir = controller[Control].axis[b].axis_dir_b;
+                if (joy_val * axis_dir > deadzone)
+                    axis_val = ((abs(joy_val) - deadzone) * 80 / range);
+                if (axis_val > 80)
+                    axis_val = 80;
             }
             if( controller[Control].axis[b].hat >= 0 )
             {
