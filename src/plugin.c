@@ -24,12 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <dirent.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #include <SDL.h>
 
@@ -43,6 +37,9 @@
 #include "osal_dynamiclib.h"
 
 #ifdef __linux__
+#include <dirent.h>
+#include <fcntl.h>
+#include <sys/types.h>
 #include <linux/input.h>
 #endif /* __linux__ */
 
@@ -105,7 +102,6 @@ static unsigned short button_bits[] = {
 };
 
 static int romopen = 0;         // is a rom opened
-static char configdir[PATH_MAX] = {0};  // holds config dir path
 
 static unsigned char myKeyState[SDLK_LAST];
 
