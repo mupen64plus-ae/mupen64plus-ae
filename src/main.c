@@ -286,6 +286,7 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
             /* count the number of integers in the list */
             int shots = 1;
             const char *str = argv[i+1];
+            i++;
             while ((str = strchr(str, ',')) != NULL)
             {
                 str++;
@@ -321,7 +322,7 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         }
         else
         {
-            fprintf(stderr, "Warning: unrecognived command-line parameter '%s'\n", argv[i]);
+            fprintf(stderr, "Warning: unrecognized command-line parameter '%s'\n", argv[i]);
         }
         /* continue argv loop */
     }
