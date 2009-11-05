@@ -286,7 +286,6 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
             /* count the number of integers in the list */
             int shots = 1;
             const char *str = argv[i+1];
-            i++;
             while ((str = strchr(str, ',')) != NULL)
             {
                 str++;
@@ -305,6 +304,7 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
                 }
                 l_TestShotList[idx] = 0;
             }
+            i++;
         }
         else if (strcmp(argv[i], "--saveoptions") == 0)
         {
