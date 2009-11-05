@@ -509,38 +509,28 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
             controller[Control].buttons.Value |= button_bits[b];
     }
 
-    if (controller[Control].mouse)
+    if (controller[Control].mouse && SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON)
     {
-        int grabmouse = -1;
-        while (SDL_PollEvent(&event))
+        SDL_PumpEvents();
+        while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) == 1)
         {
-            if (event.type == SDL_MOUSEMOTION && SDL_WM_GrabInput( SDL_GRAB_QUERY ) == SDL_GRAB_ON)
+            if (event.motion.xrel)
             {
-                if (event.motion.xrel)
-                {
-                    axis_val = (event.motion.xrel * 10);
-                    if (axis_val < -80)
-                        axis_val = -80;
-                    else if (axis_val > 80)
-                        axis_val = 80;
-                    controller[Control].buttons.X_AXIS = axis_val;
-                }
-                if (event.motion.yrel)
-                {
-                    axis_val = (event.motion.yrel * 10);
-                    if (axis_val < -80)
-                        axis_val = -80;
-                    else if (axis_val > 80)
-                        axis_val = 80;
-                    controller[Control].buttons.Y_AXIS = -axis_val;
-                }
+                axis_val = (event.motion.xrel * 10);
+                if (axis_val < -80)
+                    axis_val = -80;
+                else if (axis_val > 80)
+                    axis_val = 80;
+                controller[Control].buttons.X_AXIS = axis_val;
             }
-            else if (event.type == SDL_MOUSEBUTTONUP)
+            if (event.motion.yrel)
             {
-                if (event.button.button == SDL_BUTTON_LEFT)
-                {
-                    grabmouse = 1;
-                }
+                axis_val = (event.motion.yrel * 10);
+                if (axis_val < -80)
+                    axis_val = -80;
+                else if (axis_val > 80)
+                    axis_val = 80;
+                controller[Control].buttons.Y_AXIS = -axis_val;
             }
         }
     }
