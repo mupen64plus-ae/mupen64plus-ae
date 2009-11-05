@@ -241,10 +241,10 @@ doSdlKeys(unsigned char* keystate)
 
             if( controller[c].axis[b].key_a != SDLK_UNKNOWN && ((int) controller[c].axis[b].key_a) > 0)
                 if( keystate[controller[c].axis[b].key_a] )
-                    axis_val = axis_max_val;
+                    axis_val = -axis_max_val;
             if( controller[c].axis[b].key_b != SDLK_UNKNOWN && ((int) controller[c].axis[b].key_b) > 0)
                 if( keystate[controller[c].axis[b].key_b] )
-                    axis_val = -axis_max_val;
+                    axis_val = axis_max_val;
 
             if( b == 0 )
                 controller[c].buttons.X_AXIS = axis_val;
@@ -448,13 +448,16 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
             /* from the N64 func ref: The 3D Stick data is of type signed char and in the range between -80 and +80 */
             int deadzone = controller[Control].axis_deadzone[b];
             int range = controller[Control].axis_peak[b] - controller[Control].axis_deadzone[b];
-            axis_val = 0;
-
             /* skip this axis if the deadzone/peak values are invalid */
             if (deadzone < 0 || range < 1)
                 continue;
 
-            if( controller[Control].axis[b].axis_a >= 0 )
+            if( b == 0 )
+                axis_val = controller[Control].buttons.X_AXIS;
+            else
+                axis_val = -controller[Control].buttons.Y_AXIS;
+
+            if( controller[Control].axis[b].axis_a >= 0 )  /* up and left for N64 */
             {
                 int joy_val = SDL_JoystickGetAxis(controller[Control].joystick, controller[Control].axis[b].axis_a);
                 int axis_dir = controller[Control].axis[b].axis_dir_a;
@@ -463,8 +466,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
                 if (axis_val < -80)
                     axis_val = -80;
             }
-            // up and left
-            if( controller[Control].axis[b].axis_b >= 0 )
+            if( controller[Control].axis[b].axis_b >= 0 ) /* down and right for N64 */
             {
                 int joy_val = SDL_JoystickGetAxis(controller[Control].joystick, controller[Control].axis[b].axis_b);
                 int axis_dir = controller[Control].axis[b].axis_dir_b;

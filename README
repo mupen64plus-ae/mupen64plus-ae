@@ -2,6 +2,9 @@
  - If one of the enabled controllers has the "mouse" general-purpose config parameters set
    to True, the plugin will hide the mouse cursor and 'grab' the mouse pointer.  The user
    may press the Left Control and Alt keys together to toggle the mouse cursor on and off.
+ - If X/Y analog axes are mapped to keys, a plain keypress will simulate the joystick
+   being pressed all the way to the edge.  To decrease the amount of simulated joystick
+   deflection, the user may press the Left Control, Left Alt, or LeftCtrl+LeftAlt modifiers.
 
 ********Notes for supported joysticks for auto-configuration:
 
