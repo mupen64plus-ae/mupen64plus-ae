@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - main.c                                                  *
+ *   Mupen64plus-rsp-hle - main.c                                          *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
@@ -33,8 +33,8 @@ RSP_INFO rsp;
 
 /* local variables */
 static const int AudioHle = 0, GraphicsHle = 1;
-void (*l_DebugCallback)(void *, int, const char *) = NULL;
-void *l_DebugCallContext = NULL;
+static void (*l_DebugCallback)(void *, int, const char *) = NULL;
+static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
 
 /* local functions */

@@ -155,14 +155,14 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
 # build targets
-all: mupen64plus-hle-rsp.so
+all: mupen64plus-rsp-hle.so
 
 clean:
-	rm -rf ./_obj mupen64plus-hle-rsp.so
+	rm -rf ./_obj mupen64plus-rsp-hle.so
 
 # build rules
 
-mupen64plus-hle-rsp.so: $(OBJECTS)
+mupen64plus-rsp-hle.so: $(OBJECTS)
 	$(LD) -shared $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
@@ -171,6 +171,5 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) -o $@ $(CFLAGS) -c $<
-
 
 
