@@ -413,8 +413,8 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
     SDL_Event event;
 
     // Handle keyboard input first
-    doSdlKeys( SDL_GetKeyState( NULL ) );
-    doSdlKeys( myKeyState );
+    doSdlKeys(SDL_GetKeyState(NULL));
+    doSdlKeys(myKeyState);
 
     // read joystick state
     SDL_JoystickUpdate();
@@ -810,7 +810,7 @@ EXPORT void CALL RomOpen(void)
 *******************************************************************/
 EXPORT void CALL SDL_KeyDown(int keymod, int keysym)
 {
-    myKeyState[keysym] = 1; /* fixme */
+    myKeyState[keysym] = 1;
 }
 
 /******************************************************************
@@ -822,6 +822,6 @@ EXPORT void CALL SDL_KeyDown(int keymod, int keysym)
 *******************************************************************/
 EXPORT void CALL SDL_KeyUp(int keymod, int keysym)
 {
-    myKeyState[keysym] = 0; /* fixme */
+    myKeyState[keysym] = 0;
 }
 
