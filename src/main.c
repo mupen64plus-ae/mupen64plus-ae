@@ -47,7 +47,6 @@ static const char *l_ConfigDirPath = NULL;
 static const char *l_DataDirPath = NULL;
 static const char *l_ROMFilepath = NULL;       // filepath of ROM to load & run at startup
 
-static int   l_CurrentFrame = 0;         // frame counter
 static int  *l_TestShotList = NULL;      // list of screenshots to take for regression test support
 static int   l_TestShotIdx = 0;          // index of next screenshot frame in list
 static int   l_SaveOptions = 0;          // save command-line options in configuration file
@@ -69,15 +68,15 @@ void DebugCallback(void *Context, int level, const char *message)
     /* ignore the verbose info for now */
 }
 
-static void FrameCallback(unsigned char *pixels, int bitsperpixel, int width, int height)
+static void FrameCallback(unsigned int FrameIndex)
 {
     // take a screenshot if we need to
     if (l_TestShotList != NULL)
     {
         int nextshot = l_TestShotList[l_TestShotIdx];
-        if (nextshot == l_CurrentFrame)
+        if (nextshot == FrameIndex)
         {
-            // fixme: save the image buffer or re-factor this mechanism if frame callback is too slow
+            (*CoreDoCommand)(M64CMD_TAKE_NEXT_SCREENSHOT, 0, NULL);  /* tell the core take a screenshot */
             // advance list index to next screenshot frame number.  If it's 0, then quit
             l_TestShotIdx++;
         }
@@ -88,9 +87,6 @@ static void FrameCallback(unsigned char *pixels, int bitsperpixel, int width, in
             l_TestShotList = NULL;
         }
     }
-
-    // advance the current frame
-    l_CurrentFrame++;
 }
 /*********************************************************************************************************
  *  Configuration handling
