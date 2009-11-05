@@ -1,4 +1,9 @@
-Notes for supported joysticks for auto-configuration:
+********Notes about usage of SDL input plugin:
+ - If one of the enabled controllers has the "mouse" general-purpose config parameters set
+   to True, the plugin will hide the mouse cursor and 'grab' the mouse pointer.  The user
+   may press the Left Control and Alt keys together to toggle the mouse cursor on and off.
+
+********Notes for supported joysticks for auto-configuration:
 
 1. Logitech Dual Action gamepad, Logitech Cordless Rumblepad 2:
 The digital pad maps to the N64 d-pad.  The left analog stick maps to the N64 analog stick.
@@ -31,7 +36,7 @@ used for A and B and the second and third row was used for C-Buttons - except
 for the Button next to the A button which would be C-Down but got the Z 
 button.
 
-Old blight_input readme file:
+********Old blight_input readme file:
 
                                                                       2003-01-30
 blight_input: N64 input plugin using SDL (for Mupen64 atm)

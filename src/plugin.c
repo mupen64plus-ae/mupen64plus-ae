@@ -213,7 +213,7 @@ static void
 doSdlKeys(unsigned char* keystate)
 {
     int c, b, axis_val, axis_max_val;
-    int grabmouse = -1;
+    static int grabmouse = 1, grabtoggled = 0;
 
     axis_max_val = 80;
     if (keystate[SDLK_LCTRL])
@@ -255,14 +255,16 @@ doSdlKeys(unsigned char* keystate)
         {
             if (keystate[SDLK_LCTRL] && keystate[SDLK_LALT])
             {
-                grabmouse = 0;
+                if (!grabtoggled)
+                {
+                    grabtoggled = 1;
+                    grabmouse = !grabmouse;
+                    // grab/ungrab mouse
+                    SDL_WM_GrabInput( grabmouse ? SDL_GRAB_ON : SDL_GRAB_OFF );
+                    SDL_ShowCursor( grabmouse ? 0 : 1 );
+                }
             }
-            if (grabmouse >= 0)
-            {
-                // grab/ungrab mouse
-                SDL_WM_GrabInput( grabmouse ? SDL_GRAB_ON : SDL_GRAB_OFF );
-                SDL_ShowCursor( grabmouse ? 0 : 1 );
-            }
+            else grabtoggled = 0;
         }
     }
 }

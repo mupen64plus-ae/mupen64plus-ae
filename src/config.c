@@ -242,7 +242,7 @@ static void set_model_defaults(int iCtrlIdx, enum eJoyType type)
     pCtrl->control.Plugin = PLUGIN_NONE;
     pCtrl->mouse = 0;
     pCtrl->device = iCtrlIdx;
-    pCtrl->axis_deadzone[0] = pCtrl->axis_deadzone[1] = 2048;
+    pCtrl->axis_deadzone[0] = pCtrl->axis_deadzone[1] = 4096;
     pCtrl->axis_peak[0]     = pCtrl->axis_peak[1] = 32768;
 }
 
