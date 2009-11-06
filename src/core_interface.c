@@ -102,8 +102,7 @@ m64p_dynlib_handle CoreHandle = NULL;
 /* functions */
 m64p_error AttachCoreLib(const char *CoreLibFilepath)
 {
-    char DefaultLibName[] = OSAL_DEFAULT_DYNLIB_FILENAME;
-
+    const char *DefaultLibName = OSAL_DEFAULT_DYNLIB_FILENAME;
     /* check if Core DLL is already attached, and set default library filename if input is NULL */
     if (CoreLibFilepath == NULL)
         CoreLibFilepath = DefaultLibName;
@@ -114,9 +113,16 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     m64p_error rval = osal_dynlib_open(&CoreHandle, CoreLibFilepath);
     if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
     {
-        fprintf(stderr, "AttachCoreLib() Error: failed to open shared library '%s'\n", CoreLibFilepath);
-        CoreHandle = NULL;
-        return M64ERR_INPUT_NOT_FOUND;
+        /* last-ditch try loading library in current directory */
+        char LocalLibPath[64];
+        sprintf(LocalLibPath, ".%c%s", OSAL_DIR_SEPARATOR, OSAL_DEFAULT_DYNLIB_FILENAME);
+        m64p_error rval = osal_dynlib_open(&CoreHandle, LocalLibPath);
+        if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
+        {
+            fprintf(stderr, "AttachCoreLib() Error: failed to open shared library '%s'\n", CoreLibFilepath);
+            CoreHandle = NULL;
+            return M64ERR_INPUT_NOT_FOUND;
+        }
     }
 
     /* attach and call the PluginGetVersion function, check the Core and API versions for compatibility with this front-end */
