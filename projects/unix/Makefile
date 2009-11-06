@@ -159,6 +159,9 @@ ifeq ($(DEBUG),1)
   CFLAGS += -g
   STRIP = true # disable binary strip
 endif
+ifeq ($(NO_ASM), 1)
+  CFLAGS += -DNO_ASM
+endif
 
 SRCDIR = ../../src
 OBJDIR = _obj
