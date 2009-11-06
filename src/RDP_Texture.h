@@ -212,77 +212,6 @@ Done:
                );
 
 #elif !defined(NO_ASM)
-# ifndef PIC
-   g_src = src;
-   g_dest = dest;
-   g_numBytes = numBytes;
-   
-   asm volatile ("pusha                           \n"
-         "mov       $0, %%ecx         \n"
-         "mov       g_src, %%esi      \n"
-         "mov       g_dest, %%edi     \n"
-         
-         "mov       %%esi, %%ebx      \n"
-         "and       $3, %%ebx         \n"           // ebx = number of leading bytes
-         
-         "cmp       $0, %%ebx         \n"
-         "jz            2f                \n" //jz      StartDWordLoop
-         "neg       %%ebx             \n"
-         "add       $4, %%ebx         \n"
-         
-         "cmp       g_numBytes, %%ebx \n"
-         "jle           0f                \n" //jle     NotGreater
-         "mov       g_numBytes, %%ebx \n"
-         "0:                              \n" //NotGreater:
-         "mov       %%ebx, %%ecx      \n"
-         "xor       $3, %%esi         \n"
-         "1:                              \n" //LeadingLoop:                // Copies leading bytes, in reverse order (un-swaps)
-         "mov       (%%esi), %%al     \n"
-         "mov       %%al, (%%edi)     \n"
-         "sub       $1, %%esi         \n"
-         "add       $1, %%edi         \n"
-         "loop          1b                \n" //loop     LeadingLoop
-         "add       $5, %%esi         \n"
-         
-         "2:                              \n" //StartDWordLoop:
-         "mov       g_numBytes, %%ecx \n"
-         "sub       %%ebx, %%ecx      \n"       // Don't copy what's already been copied
-         
-         "mov       %%ecx, %%ebx      \n"
-         "and       $3, %%ebx         \n"
-         //     add     ecx, 3          // Round up to nearest dword
-         "shr       $2, %%ecx         \n"
-         
-         "cmp       $0, %%ecx         \n"           // If there's nothing to do, don't do it
-         "jle           4f                \n" //jle     StartTrailingLoop
-         
-         // Copies from source to destination, bswap-ing first
-         "3:                              \n" //DWordLoop:
-         "mov       (%%esi), %%eax    \n"
-         "bswap %%eax                     \n"
-         "mov       %%eax, (%%edi)    \n"
-         "add       $4, %%esi         \n"
-         "add       $4, %%edi         \n"
-         "loop          3b                \n" //loop    DWordLoop
-         "4:                              \n" //StartTrailingLoop:
-         "cmp       $0, %%ebx         \n"
-         "jz            6f                \n" //jz      Done
-         "mov       %%ebx, %%ecx      \n"
-         "xor       $3, %%esi         \n"
-         
-         "5:                              \n" //TrailingLoop:
-         "mov       (%%esi), %%al     \n"
-         "mov       %%al, (%%edi)     \n"
-         "sub       $1, %%esi         \n"
-         "add       $1, %%edi         \n"
-         "loop          5b                \n" //loop    TrailingLoop
-         "6:                              \n" //Done:
-         "popa                            \n"
-         :
-         :
-         : "memory", "cc"
-         );
-# else // PIC
    unsigned int saveEBX;
    asm volatile ("mov           %%ebx, %2         \n"
          "mov       $0, %%ecx         \n"
@@ -349,7 +278,6 @@ Done:
          : "m"(src), "m"(dest), "m"(saveEBX), "m"(numBytes)
          : "memory", "cc", "%ecx", "%esi", "%edi", "%eax"
          );
-# endif // PIC
 #endif
 }
 
@@ -384,29 +312,6 @@ DWordInterleaveLoop:
            : "memory", "cc", "%rax", "%rbx"
            );
 #elif !defined(NO_ASM)
-# ifndef PIC
-   g_mem = mem;
-   g_numDWords = numDWords;
-   
-   asm volatile ("pusha                            \n"
-         "mov       g_mem, %%esi       \n"
-         "mov       g_mem, %%edi       \n"
-         "add       $4, %%edi          \n"
-         "mov       g_numDWords, %%ecx \n"
-         "0:                               \n" //DWordInterleaveLoop:
-         "mov       (%%esi), %%eax     \n"
-         "mov       (%%edi), %%ebx     \n"
-         "mov       %%ebx, (%%esi)     \n"
-         "mov       %%eax, (%%edi)     \n"
-         "add       $8, %%esi          \n"
-         "add       $8, %%edi          \n"
-         "loop          0b                 \n" //loop   DWordInterleaveLoop
-         "popa                             \n"
-         :
-         :
-         : "memory", "cc"
-         );
-# else // PIC
    unsigned int saveEBX;
    asm volatile ("mov           %%ebx, %2          \n"
          "mov       %0, %%esi          \n"
@@ -426,7 +331,6 @@ DWordInterleaveLoop:
          : "m"(mem), "m"(numDWords), "m"(saveEBX)
          : "memory", "cc", "%esi", "%edi", "%ecx", "%eax"
          );
-# endif // PIC
 #endif
 }
 
@@ -471,36 +375,7 @@ QWordInterleaveLoop:
            : "memory", "cc", "%rax", "%rbx"
            );
 #elif !defined(NO_ASM) // GCC assumed
-# ifndef PIC
-   g_mem = mem;
-   g_numDWords = numDWords;
-   asm volatile("pusha                             \n"
-        // Interleave the line on the qword
-        "mov        g_mem, %%esi       \n"
-        "mov        g_mem, %%edi       \n"
-        "add        $8, %%edi          \n"
-        "mov        g_numDWords, %%ecx \n"
-        "shr        $1, %%ecx          \n"
-        "0:                                \n" //QWordInterleaveLoop:
-        "mov        (%%esi), %%eax     \n"
-        "mov        (%%edi), %%ebx     \n"
-        "mov        %%ebx, (%%esi)     \n"
-        "mov        %%eax, (%%edi)     \n"
-        "add        $4, %%esi          \n"
-        "add        $4, %%edi          \n"
-        "mov        (%%esi), %%eax     \n"
-        "mov        (%%edi), %%ebx     \n"
-        "mov        %%ebx, (%%esi)     \n"
-        "mov        %%eax, (%%edi)     \n"
-        "add        $12, %%esi         \n"
-        "add        $12, %%edi         \n"
-        "loop           0b                 \n" //loop   QWordInterleaveLoop
-        "popa                              \n"
-        :
-        :
-        : "memory", "cc"
-        );
-# else // PIC
+
    unsigned int saveEBX;
    asm volatile("mov            %%ebx, %2          \n"
         // Interleave the line on the qword
@@ -528,7 +403,6 @@ QWordInterleaveLoop:
         : "m"(mem), "m"(numDWords), "m"(saveEBX)
         : "memory", "cc", "%esi", "%edi", "%ecx", "%eax"
         );
-# endif // PIC
 #endif
 }
 
