@@ -39,7 +39,6 @@ endif
 
 # detect system architecture
 HOST_CPU ?= $(shell uname -m)
-NO_ASM ?= 1
 ifneq ("$(filter x86_64 amd64,$(HOST_CPU))","")
   CPU := X86
   ifeq ("$(BITS)", "32")
@@ -55,10 +54,12 @@ endif
 ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
   CPU := PPC
   ARCH_DETECTED := 32BITS
+  NO_ASM := 1
 endif
 ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
   CPU := PPC
   ARCH_DETECTED := 64BITS
+  NO_ASM := 1
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
