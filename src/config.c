@@ -416,6 +416,10 @@ void save_controller_config(int iCtrlIdx)
             Help = "Digital button configuration mappings";
         else
             Help = NULL;
+        /* if last character is a space, chop it off */
+        int len = strlen(ParamString);
+        if (len > 0 && ParamString[len-1] == ' ')
+            ParamString[len-1] = 0;
         ConfigSetDefaultString(pConfig, button_names[j], ParamString, Help);
     }
 
@@ -442,7 +446,7 @@ void save_controller_config(int iCtrlIdx)
         }
         if (controller[iCtrlIdx].axis[j].hat >= 0)
         {
-            sprintf(Param, "hat(%i,%s,%s) ", controller[iCtrlIdx].axis[j].hat,
+            sprintf(Param, "hat(%i %s %s) ", controller[iCtrlIdx].axis[j].hat,
                                              HAT_POS_NAME(controller[iCtrlIdx].axis[j].hat_pos_a),
                                              HAT_POS_NAME(controller[iCtrlIdx].axis[j].hat_pos_b));
             strcat(ParamString, Param);
@@ -451,6 +455,10 @@ void save_controller_config(int iCtrlIdx)
             Help = "Analog axis configuration mappings";
         else
             Help = NULL;
+        /* if last character is a space, chop it off */
+        int len = strlen(ParamString);
+        if (len > 0 && ParamString[len-1] == ' ')
+            ParamString[len-1] = 0;
         ConfigSetDefaultString(pConfig, button_names[X_AXIS + j], ParamString, Help);
     }
 
@@ -516,9 +524,12 @@ void load_configuration(void)
                 }
                 if ((config_ptr = strstr(input_str, "hat")) != NULL)
                 {
-                    if (sscanf(config_ptr, "hat(%i %15s)", &controller[i].button[j].hat, value1_str) != 2)
+                    if (sscanf(config_ptr, "hat(%i %15s", &controller[i].button[j].hat, value1_str) != 2)
                         DebugMessage(M64MSG_WARNING, "parsing error in hat() parameter of button '%s' for controller %i", button_names[j], i + 1);
                     value1_str[15] = 0;
+                    /* chop off the last character of value1_str if it is the closing parenthesis */
+                    char *lastchar = &value1_str[strlen(value1_str) - 1];
+                    if (lastchar > value1_str && *lastchar == ')') *lastchar = 0;
                     controller[i].button[j].hat_pos = get_hat_pos_by_name(value1_str);
                 }
                 if ((config_ptr = strstr(input_str, "mouse")) != NULL)
@@ -550,9 +561,12 @@ void load_configuration(void)
                 }
                 if ((config_ptr = strstr(input_str, "hat")) != NULL)
                 {
-                    if (sscanf(config_ptr, "hat(%i,%15s,%15s)", &controller[i].axis[axis_idx].hat, value1_str, value2_str) != 3)
+                    if (sscanf(config_ptr, "hat(%i %15s %15s", &controller[i].axis[axis_idx].hat, value1_str, value2_str) != 3)
                         DebugMessage(M64MSG_WARNING, "parsing error in hat() parameter of axis '%s' for controller %i", button_names[j], i + 1);
                     value1_str[15] = value2_str[15] = 0;
+                    /* chop off the last character of value2_str if it is the closing parenthesis */
+                    char *lastchar = &value2_str[strlen(value2_str) - 1];
+                    if (lastchar > value2_str && *lastchar == ')') *lastchar = 0;
                     controller[i].axis[axis_idx].hat_pos_a = get_hat_pos_by_name(value1_str);
                     controller[i].axis[axis_idx].hat_pos_b = get_hat_pos_by_name(value2_str);
                 }
