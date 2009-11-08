@@ -63,32 +63,12 @@ void CGraphicsContext::InitWindowInfo()
 {
 }
 
-bool CGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed )
+bool CGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed)
 {
-if(windowSetting.bDisplayFullscreen)
-    {
-    windowSetting.uDisplayWidth = windowSetting.uFullScreenDisplayWidth;
-    windowSetting.uDisplayHeight = windowSetting.uFullScreenDisplayHeight;
-    }
-else
-    {
-     /*int maxidx = CGraphicsContext::m_numOfResolutions - 1;
-    if(CGraphicsContext::m_FullScreenResolutions[maxidx][0] <=
-      windowSetting.uWindowDisplayWidth ||
-      CGraphicsContext::m_FullScreenResolutions[maxidx][1] <=
-      windowSetting.uWindowDisplayHeight)
-        {
-        windowSetting.uWindowDisplayWidth = 640;
-        windowSetting.uWindowDisplayHeight = 480;
-        }*/
+    m_bWindowed = bWindowed;
 
-    windowSetting.uDisplayWidth = windowSetting.uWindowDisplayWidth;
-    windowSetting.uDisplayHeight= windowSetting.uWindowDisplayHeight;
-    }
-
-g_pFrameBufferManager->Initialize();
-
-return true;
+    g_pFrameBufferManager->Initialize();
+    return true;
 }
 
 void CGraphicsContext::CleanUp()

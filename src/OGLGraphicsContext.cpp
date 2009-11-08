@@ -57,7 +57,7 @@ COGLGraphicsContext::~COGLGraphicsContext()
 
 bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed )
 {
-    DebugMessage(M64MSG_INFO, "Initializing OpenGL Device Context");
+    DebugMessage(M64MSG_INFO, "Initializing OpenGL Device Context.");
     Lock();
 
     CGraphicsContext::Get()->m_supportTextureMirror = false;
@@ -317,8 +317,6 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
 
 bool COGLGraphicsContext::SetFullscreenMode()
 {
-    windowSetting.uDisplayWidth = windowSetting.uFullScreenDisplayWidth;
-    windowSetting.uDisplayHeight = windowSetting.uFullScreenDisplayHeight;
     windowSetting.statusBarHeightToUse = 0;
     windowSetting.toolbarHeightToUse = 0;
     return true;
@@ -326,8 +324,6 @@ bool COGLGraphicsContext::SetFullscreenMode()
 
 bool COGLGraphicsContext::SetWindowMode()
 {
-    windowSetting.uDisplayWidth = windowSetting.uWindowDisplayWidth;
-    windowSetting.uDisplayHeight = windowSetting.uWindowDisplayHeight;
     windowSetting.statusBarHeightToUse = windowSetting.statusBarHeight;
     windowSetting.toolbarHeightToUse = windowSetting.toolbarHeight;
     return true;

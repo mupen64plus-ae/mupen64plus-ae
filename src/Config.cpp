@@ -310,6 +310,7 @@ BOOL InitConfiguration(void)
         return FALSE;
     }
 
+    ConfigSetDefaultBool(l_ConfigVideoGeneral, "Fullscreen", 0, "Use fullscreen mode if True, or windowed mode if False ");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "WindowWidth", 640, "Render width for windowed mode (not used)");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "WindowHeight", 480, "Render height for windowed mode (not used)");
     ConfigSetDefaultInt(l_ConfigVideoGeneral, "FullscreenWidth", 640, "Render width for fullscreen mode");
@@ -420,12 +421,9 @@ bool isSSESupported()
 
 static void ReadConfiguration(void)
 {
-    windowSetting.uWindowDisplayWidth = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "WindowWidth");
-    windowSetting.uWindowDisplayHeight = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "WindowHeight");
-    windowSetting.uFullScreenDisplayWidth = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "FullscreenWidth");
-    windowSetting.uFullScreenDisplayHeight = (uint16) ConfigGetParamInt(l_ConfigVideoGeneral, "FullscreenHeight");
-    windowSetting.uDisplayWidth = windowSetting.uFullScreenDisplayWidth;
-    windowSetting.uDisplayHeight = windowSetting.uFullScreenDisplayHeight;
+    windowSetting.bDisplayFullscreen = ConfigGetParamBool(l_ConfigVideoGeneral, "Fullscreen");
+    windowSetting.uDisplayWidth = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenWidth");
+    windowSetting.uDisplayHeight = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenHeight");
 
     defaultRomOptions.N64FrameBufferEmuType = ConfigGetParamInt(l_ConfigVideoRice, "FrameBufferSetting");
     defaultRomOptions.N64FrameBufferWriteBackControl = ConfigGetParamInt(l_ConfigVideoRice, "FrameBufferWriteBackControl");

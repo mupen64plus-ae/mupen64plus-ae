@@ -29,8 +29,6 @@ typedef struct {
     float   fViWidth, fViHeight;
     unsigned short        uViWidth, uViHeight;
     unsigned short        uDisplayWidth, uDisplayHeight;
-    unsigned short        uFullScreenDisplayWidth, uFullScreenDisplayHeight;
-    unsigned short        uWindowDisplayWidth, uWindowDisplayHeight;
     
     BOOL    bDisplayFullscreen;
 

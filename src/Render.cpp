@@ -1850,8 +1850,8 @@ void CRender::UpdateScissorWithClipRatio()
     w.clipping.top  = (uint32)(gRSP.real_clip_scissor_top*windowSetting.fMultY);
     w.clipping.bottom = (uint32)(gRSP.real_clip_scissor_bottom*windowSetting.fMultY);
     w.clipping.right = (uint32)(gRSP.real_clip_scissor_right*windowSetting.fMultX);
-    if( w.clipping.left > 0 || w.clipping.top > 0 || w.clipping.right < (uint32)windowSetting.uWindowDisplayWidth-1 ||
-        w.clipping.bottom < (uint32)windowSetting.uWindowDisplayHeight-1 )
+    if( w.clipping.left > 0 || w.clipping.top > 0 || w.clipping.right < (uint32)windowSetting.uDisplayWidth-1 ||
+        w.clipping.bottom < (uint32)windowSetting.uDisplayHeight-1 )
     {
         w.clipping.needToClip = true;
     }

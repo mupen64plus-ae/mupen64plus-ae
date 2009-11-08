@@ -108,7 +108,7 @@ extern "C" EXPORT void CALL RomClosed(void);
 static void ChangeWindowStep2()
 {
     status.bDisableFPS = true;
-    windowSetting.bDisplayFullscreen = 1-windowSetting.bDisplayFullscreen;
+    windowSetting.bDisplayFullscreen = !windowSetting.bDisplayFullscreen;
     g_CritialSection.Lock();
     windowSetting.bDisplayFullscreen = CGraphicsContext::Get()->ToggleFullscreen();
 
@@ -299,9 +299,8 @@ static void StartVideo(void)
     try {
         CDeviceBuilder::GetBuilder()->CreateGraphicsContext();
         CGraphicsContext::InitWindowInfo();
-        
-        windowSetting.bDisplayFullscreen = FALSE;
-        bool res = CGraphicsContext::Get()->Initialize(640, 480, TRUE);
+
+        bool res = CGraphicsContext::Get()->Initialize(640, 480, !windowSetting.bDisplayFullscreen);
         CDeviceBuilder::GetBuilder()->CreateRender();
         CRender::GetRender()->Initialize();
         
@@ -323,16 +322,8 @@ static void StartVideo(void)
 
 static void StopVideo()
 {
-    if( CGraphicsContext::Get()->IsWindowed() == false )
-    {
-        status.ToToggleFullScreen = TRUE;
-        CGraphicsContext::Get()->ToggleFullscreen();
-        status.ToToggleFullScreen = FALSE;
-    }
-
     g_CritialSection.Lock();
     status.bGameIsRunning = false;
-
 
     try {
         CloseExternalTextures();
@@ -741,7 +732,6 @@ EXPORT void CALL ViWidthChanged(void)
 EXPORT BOOL CALL InitiateGFX(GFX_INFO Gfx_Info)
 {
     memset(&status, 0, sizeof(status));
-    windowSetting.bDisplayFullscreen = FALSE;
     memcpy(&g_GraphicsInfo, &Gfx_Info, sizeof(GFX_INFO));
 
     g_pRDRAMu8          = Gfx_Info.RDRAM;
