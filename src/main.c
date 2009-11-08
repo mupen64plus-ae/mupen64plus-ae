@@ -40,6 +40,7 @@ int    g_Verbose = 0;
 
 /** static (local) variables **/
 static m64p_handle l_ConfigCore = NULL;
+static m64p_handle l_ConfigVideo = NULL;
 static m64p_handle l_ConfigUI = NULL;
 
 static const char *l_CoreLibPath = NULL;
@@ -104,6 +105,13 @@ static m64p_error OpenConfigurationHandles(void)
         return rval;
     }
 
+    rval = (*ConfigOpenSection)("Video-General", &l_ConfigVideo);
+    if (rval != M64ERR_SUCCESS)
+    {
+        fprintf(stderr, "Error: failed to open 'Video-General' configuration section\n");
+        return rval;
+    }
+
     rval = (*ConfigOpenSection)("UI-Console", &l_ConfigUI);
     if (rval != M64ERR_SUCCESS)
     {
@@ -155,6 +163,7 @@ static void printUsage(const char *progname)
            "    --osd                 : enable onscreen display\n"
            "    --fullscreen          : use fullscreen display mode\n"
            "    --windowed            : use windowed display mode\n"
+           "    --resolution (res)    : display resolution (640x480, 800x600, 1024x768, etc)\n"
            "    --corelib (filepath)  : use core library (filepath) (can be only filename or full path)\n"
            "    --configdir (dir)     : force configation directory to (dir); should contain mupen64plus.conf\n"
            "    --datadir (dir)       : search for shared data files (.ini files, languages, etc) in (dir)\n"
@@ -233,17 +242,30 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         else if (strcmp(argv[i], "--fullscreen") == 0)
         {
             int Fullscreen = 1;
-            (*ConfigSetParameter)(l_ConfigCore, "Fullscreen", M64TYPE_BOOL, &Fullscreen);
+            (*ConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &Fullscreen);
         }
         else if (strcmp(argv[i], "--windowed") == 0)
         {
             int Fullscreen = 0;
-            (*ConfigSetParameter)(l_ConfigCore, "Fullscreen", M64TYPE_BOOL, &Fullscreen);
+            (*ConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &Fullscreen);
         }
         else if ((strcmp(argv[i], "--corelib") == 0 || strcmp(argv[i], "--configdir") == 0 ||
                   strcmp(argv[i], "--datadir") == 0) && ArgsLeft >= 1)
         {   /* these are handled in ParseCommandLineInitial */
             i++;
+        }
+        else if (strcmp(argv[i], "--resolution") == 0 && ArgsLeft >= 1)
+        {
+            const char *res = argv[i+1];
+            int xres, yres;
+            i++;
+            if (sscanf(res, "%ix%i", &xres, &yres) != 2)
+                fprintf(stderr, "Warning: couldn't parse resolution '%s'\n", res);
+            else
+            {
+                (*ConfigSetParameter)(l_ConfigVideo, "ScreenWidth", M64TYPE_INT, &xres);
+                (*ConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
+            }
         }
         else if (strcmp(argv[i], "--plugindir") == 0 && ArgsLeft >= 1)
         {
