@@ -59,7 +59,8 @@ static const char *button_names[] = {
 /* definitions for joystick auto-configuration */
 enum eJoyType
 {
-    JOY_LOGITECH_CORDLESS_RUMBLEPAD_2 = 1,
+    KBD_DEFAULT = 1,
+    JOY_LOGITECH_CORDLESS_RUMBLEPAD_2,
     JOY_LOGITECH_DUAL_ACTION,
     JOY_MEGA_WORLD_USB,
     JOY_MICROSOFT_XBOX_360,
@@ -129,12 +130,34 @@ static void clear_controller(int iCtrlIdx)
     }
 }
 
-static void set_model_defaults(int iCtrlIdx, enum eJoyType type)
+static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
 {
     SController *pCtrl = &controller[iCtrlIdx];
 
     switch (type)
     {
+        case KBD_DEFAULT:
+            pCtrl->button[R_DPAD].key = SDLK_d;
+            pCtrl->button[L_DPAD].key = SDLK_a;
+            pCtrl->button[D_DPAD].key = SDLK_s;
+            pCtrl->button[U_DPAD].key = SDLK_w;
+            pCtrl->button[START_BUTTON].key = SDLK_RETURN;
+            pCtrl->button[Z_TRIG].key = SDLK_z;
+            pCtrl->button[B_BUTTON].key = SDLK_LALT;
+            pCtrl->button[A_BUTTON].key = SDLK_LMETA;
+            pCtrl->button[R_CBUTTON].key = SDLK_l;
+            pCtrl->button[L_CBUTTON].key = SDLK_j;
+            pCtrl->button[D_CBUTTON].key = SDLK_k;
+            pCtrl->button[U_CBUTTON].key = SDLK_i;
+            pCtrl->button[R_TRIG].key = SDLK_c;
+            pCtrl->button[L_TRIG].key = SDLK_x;
+            pCtrl->button[MEMPAK].key = SDLK_COMMA;
+            pCtrl->button[RUMBLEPAK].key = SDLK_PERIOD;
+            pCtrl->axis[0].key_a = SDLK_LEFT;
+            pCtrl->axis[0].key_b = SDLK_RIGHT;
+            pCtrl->axis[1].key_a = SDLK_UP;
+            pCtrl->axis[1].key_b = SDLK_DOWN;
+            break;
         case JOY_LOGITECH_CORDLESS_RUMBLEPAD_2:
         case JOY_LOGITECH_DUAL_ACTION:
             pCtrl->button[R_DPAD].axis = pCtrl->button[L_DPAD].axis = 4;
@@ -266,7 +289,7 @@ static void set_model_defaults(int iCtrlIdx, enum eJoyType type)
     pCtrl->control.Present = 1;
     pCtrl->control.Plugin = PLUGIN_NONE;
     pCtrl->mouse = 0;
-    pCtrl->device = iCtrlIdx;
+    pCtrl->device = iDeviceIdx;
     pCtrl->axis_deadzone[0] = pCtrl->axis_deadzone[1] = 4096;
     pCtrl->axis_peak[0]     = pCtrl->axis_peak[1] = 32768;
 }
@@ -344,7 +367,7 @@ static int auto_load_defaults(int iCtrlIdx)
         if (joyFound)
         {
             DebugMessage(M64MSG_INFO, "N64 Controller #%i: Enabled, using auto-configuration for joystick '%s'", iCtrlIdx + 1, joySDLName);
-            set_model_defaults(iCtrlIdx, l_JoyConfigMap[i].type);
+            set_model_defaults(iCtrlIdx, iCtrlIdx, l_JoyConfigMap[i].type);
             return 1;
         }
     }
@@ -610,12 +633,19 @@ void load_configuration(void)
                 joy_plugged++;
         }
     }
-    if (joy_found == 0)
-        DebugMessage(M64MSG_WARNING, "No SDL joysticks found");
-    else if (joy_plugged == 0)
-        DebugMessage(M64MSG_WARNING, "%i SDL joysticks found, but none are 'plugged in'", joy_found);
-    else
+    if (joy_found > 0 && joy_plugged > 0)
+    {
         DebugMessage(M64MSG_INFO, "%i SDL joysticks found, %i plugged in and usable in the emulator", joy_found, joy_plugged);
+    }
+    else
+    {
+        if (joy_found == 0)
+            DebugMessage(M64MSG_WARNING, "No SDL joysticks found");
+        else if (joy_plugged == 0)
+            DebugMessage(M64MSG_WARNING, "%i SDL joysticks found, but none are 'plugged in'", joy_found);
+        DebugMessage(M64MSG_INFO, "Forcing keyboard input for N64 controller #1");
+        set_model_defaults(0, -1, KBD_DEFAULT);
+    }
 
 }
 
