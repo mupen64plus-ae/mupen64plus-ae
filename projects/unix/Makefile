@@ -25,16 +25,23 @@
 UNAME = $(shell uname -s)
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
+  SO_EXTENSION = so
+  SHARED = -shared
 endif
 ifeq ("$(UNAME)","linux")
   OS = LINUX
+  SO_EXTENSION = so
+  SHARED = -shared
 endif
 ifeq ("$(UNAME)","Darwin")
   OS = OSX
-  LDFLAGS += -liconv -lpng
+  SO_EXTENSION = dylib
+  SHARED = -bundle
 endif
 ifeq ("$(UNAME)","FreeBSD")
   OS = FREEBSD
+  SO_EXTENSION = so
+  SHARED = -shared
 endif
 
 # detect system architecture
@@ -155,15 +162,15 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
 # build targets
-all: mupen64plus-rsp-hle.so
+all: mupen64plus-rsp-hle.$(SO_EXTENSION)
 
 clean:
-	rm -rf ./_obj mupen64plus-rsp-hle.so
+	rm -rf ./_obj mupen64plus-rsp-hle.$(SO_EXTENSION)
 
 # build rules
 
-mupen64plus-rsp-hle.so: $(OBJECTS)
-	$(LD) -shared $^ $(LDFLAGS) -o $@
+mupen64plus-rsp-hle.$(SO_EXTENSION): $(OBJECTS)
+	$(LD) $(SHARED) $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
