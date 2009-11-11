@@ -134,6 +134,14 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
 {
     SController *pCtrl = &controller[iCtrlIdx];
 
+    /* set the general parameters */
+    pCtrl->control.Present = 1;
+    pCtrl->control.Plugin = PLUGIN_MEMPAK;
+    pCtrl->mouse = 0;
+    pCtrl->device = iDeviceIdx;
+    pCtrl->axis_deadzone[0] = pCtrl->axis_deadzone[1] = 4096;
+    pCtrl->axis_peak[0]     = pCtrl->axis_peak[1] = 32768;
+
     switch (type)
     {
         case KBD_DEFAULT:
@@ -285,13 +293,6 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
             DebugMessage(M64MSG_ERROR, "set_model_defaults(): invalid eJoyType %i", (int) type);
             return;
     }
-    /* set the general parameters */
-    pCtrl->control.Present = 1;
-    pCtrl->control.Plugin = PLUGIN_NONE;
-    pCtrl->mouse = 0;
-    pCtrl->device = iDeviceIdx;
-    pCtrl->axis_deadzone[0] = pCtrl->axis_deadzone[1] = 4096;
-    pCtrl->axis_peak[0]     = pCtrl->axis_peak[1] = 32768;
 }
 
 static const char * get_sdl_joystick_name(int iCtrlIdx)
@@ -597,25 +598,22 @@ void load_configuration(void)
             if (j <= Y_AXIS)
                 break;
         }
-        /* if something went wrong while reading config values, set default configuration */
-        if (readOK)
+
+        /* if a valid joystick configuration was read, then check if the specified joystick is available through SDL */
+        if (readOK && controller[i].device >= 0)
         {
-            if (controller[i].device >= 0)
+            const char *JoyName = get_sdl_joystick_name(controller[i].device);
+            if (JoyName == NULL)
             {
-                const char *JoyName = get_sdl_joystick_name(controller[i].device);
-                if (JoyName == NULL)
-                {
-                    controller[i].device = DEVICE_NONE;
-                    controller[i].control.Present = 0;
-                    DebugMessage(M64MSG_INFO, "N64 Controller #%i: Disabled, SDL joystick is not available", i+1);
-                }
-                else
-                    DebugMessage(M64MSG_INFO, "N64 Controller #%i: Enabled, using stored configuration with joystick '%s'", i+1, JoyName);
+                controller[i].device = DEVICE_NONE;
+                controller[i].control.Present = 0;
+                DebugMessage(M64MSG_INFO, "N64 Controller #%i: Disabled, SDL joystick is not available", i+1);
             }
+            else
+                DebugMessage(M64MSG_INFO, "N64 Controller #%i: Enabled, using stored configuration with joystick '%s'", i+1, JoyName);
         }
-        else
+        else /* otherwise reset the controller configuration again and load the defaults */
         {
-            /* reset the controller configuration again and load the defaults */
             clear_controller(i);
             if (auto_load_defaults(i))
                 save_controller_config(i);
