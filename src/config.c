@@ -60,6 +60,7 @@ static const char *button_names[] = {
 enum eJoyType
 {
     KBD_DEFAULT = 1,
+    JOY_GREEN_ASIA_USB,
     JOY_LOGITECH_CORDLESS_RUMBLEPAD_2,
     JOY_LOGITECH_DUAL_ACTION,
     JOY_MEGA_WORLD_USB,
@@ -75,6 +76,7 @@ typedef struct
 } sJoyConfigMap;
 
 static sJoyConfigMap l_JoyConfigMap[] = {
+    { "GreenAsia Inc. USB Joystick",     JOY_GREEN_ASIA_USB},
     { "Logitech Cordless Rumblepad 2",   JOY_LOGITECH_CORDLESS_RUMBLEPAD_2},
     { "Logitech Dual Action",            JOY_LOGITECH_DUAL_ACTION},
     { "Mega World USB Game Controllers", JOY_MEGA_WORLD_USB},
@@ -165,6 +167,29 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
             pCtrl->axis[0].key_b = SDLK_RIGHT;
             pCtrl->axis[1].key_a = SDLK_UP;
             pCtrl->axis[1].key_b = SDLK_DOWN;
+            break;
+        case JOY_GREEN_ASIA_USB:
+            pCtrl->button[R_DPAD].hat = pCtrl->button[L_DPAD].hat = 0;
+            pCtrl->button[D_DPAD].hat = pCtrl->button[U_DPAD].hat = 0;
+            pCtrl->button[R_DPAD].hat_pos = SDL_HAT_RIGHT;
+            pCtrl->button[L_DPAD].hat_pos = SDL_HAT_LEFT;
+            pCtrl->button[D_DPAD].hat_pos = SDL_HAT_DOWN;
+            pCtrl->button[U_DPAD].hat_pos = SDL_HAT_UP;
+            pCtrl->button[START_BUTTON].button = 9;
+            pCtrl->button[Z_TRIG].button = 1;
+            pCtrl->button[B_BUTTON].button = 3;
+            pCtrl->button[A_BUTTON].button = 2;
+            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 3;
+            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 2;
+            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
+            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
+            pCtrl->button[R_TRIG].button = 7;
+            pCtrl->button[L_TRIG].button = 6;
+            /* no MEMPAK or RUMBLEPAK defined */
+            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
+            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
+            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
+            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
             break;
         case JOY_LOGITECH_CORDLESS_RUMBLEPAD_2:
         case JOY_LOGITECH_DUAL_ACTION:
