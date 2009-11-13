@@ -105,7 +105,7 @@ static void clear_controller(int iCtrlIdx)
 {
     int b;
 
-    controller[iCtrlIdx].device = DEVICE_NONE;
+    controller[iCtrlIdx].device = DEVICE_AUTO;
     controller[iCtrlIdx].control.Present = 0;
     controller[iCtrlIdx].control.RawData = 0;
     controller[iCtrlIdx].control.Plugin = PLUGIN_NONE;
@@ -424,7 +424,7 @@ void save_controller_config(int iCtrlIdx)
     ConfigSetDefaultBool(pConfig, "plugged", controller[iCtrlIdx].control.Present, "Specifies whether this controller is 'plugged in' to the simulated N64");
     ConfigSetDefaultInt(pConfig, "plugin", controller[iCtrlIdx].control.Plugin, "Specifies which type of expansion pak is in the controller: 1=None, 2=Mem pak, 5=Rumble pak");
     ConfigSetDefaultBool(pConfig, "mouse", controller[iCtrlIdx].mouse, "If True, then mouse buttons may be used with this controller");
-    ConfigSetDefaultInt(pConfig, "device", controller[iCtrlIdx].device, "Specifies which joystick is bound to this controller: -1=None, 0 or more= SDL Joystick number");
+    ConfigSetDefaultInt(pConfig, "device", controller[iCtrlIdx].device, "Specifies which joystick is bound to this controller: -2=Keyboard/mouse, -1=Auto config, 0 or more= SDL Joystick number");
 
     sprintf(Param, "%i,%i", controller[iCtrlIdx].axis_deadzone[0], controller[iCtrlIdx].axis_deadzone[1]);
     ConfigSetDefaultString(pConfig, "AnalogDeadzone", Param, "The minimum absolute value of the SDL analog joystick axis to move the N64 controller axis value from 0.  For X, Y axes.");
@@ -624,24 +624,27 @@ void load_configuration(void)
                 break;
         }
 
-        /* if a valid joystick configuration was read, then check if the specified joystick is available through SDL */
-        if (readOK && controller[i].device >= 0)
-        {
+        if (!readOK || controller[i].device == DEVICE_AUTO)
+        { /* reset the controller configuration again and load the defaults */
+            clear_controller(i);
+            if (auto_load_defaults(i))
+                save_controller_config(i);
+        }
+        else if (controller[i].device >= 0)
+        { /* valid joystick configuration was read; check if the specified joystick is available in SDL */
             const char *JoyName = get_sdl_joystick_name(controller[i].device);
             if (JoyName == NULL)
             {
-                controller[i].device = DEVICE_NONE;
+                controller[i].device = DEVICE_AUTO;
                 controller[i].control.Present = 0;
                 DebugMessage(M64MSG_INFO, "N64 Controller #%i: Disabled, SDL joystick is not available", i+1);
             }
             else
-                DebugMessage(M64MSG_INFO, "N64 Controller #%i: Enabled, using stored configuration with joystick '%s'", i+1, JoyName);
+                DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using stored configuration with joystick '%s'", i+1, JoyName);
         }
-        else /* otherwise reset the controller configuration again and load the defaults */
+        else /* controller is configured for keyboard/mouse */
         {
-            clear_controller(i);
-            if (auto_load_defaults(i))
-                save_controller_config(i);
+            DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using stored configuration for keyboard/mouse", i+1);
         }
     }
 
@@ -649,7 +652,7 @@ void load_configuration(void)
     int joy_found = 0, joy_plugged = 0;
     for (i = 0; i < 4; i++)
     {
-        if (controller[i].device >= 0)
+        if (controller[i].device >= 0 || controller[i].device == DEVICE_NOT_JOYSTICK)
         {
             joy_found++;
             if (controller[i].control.Present)
@@ -658,16 +661,16 @@ void load_configuration(void)
     }
     if (joy_found > 0 && joy_plugged > 0)
     {
-        DebugMessage(M64MSG_INFO, "%i SDL joysticks found, %i plugged in and usable in the emulator", joy_found, joy_plugged);
+        DebugMessage(M64MSG_INFO, "%i controller(s) found, %i plugged in and usable in the emulator", joy_found, joy_plugged);
     }
     else
     {
         if (joy_found == 0)
-            DebugMessage(M64MSG_WARNING, "No SDL joysticks found");
+            DebugMessage(M64MSG_WARNING, "No joysticks/controllers found");
         else if (joy_plugged == 0)
-            DebugMessage(M64MSG_WARNING, "%i SDL joysticks found, but none are 'plugged in'", joy_found);
+            DebugMessage(M64MSG_WARNING, "%i controllers found, but none are 'plugged in'", joy_found);
         DebugMessage(M64MSG_INFO, "Forcing keyboard input for N64 controller #1");
-        set_model_defaults(0, -1, KBD_DEFAULT);
+        set_model_defaults(0, DEVICE_NOT_JOYSTICK, KBD_DEFAULT);
     }
 
 }

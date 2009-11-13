@@ -29,7 +29,8 @@
 #include "m64p_plugin.h"
 #include "m64p_config.h"
 
-#define DEVICE_NONE         (-1)
+#define DEVICE_AUTO         (-1)
+#define DEVICE_NOT_JOYSTICK (-2)
 
 // Some stuff from n-rage plugin
 #define RD_GETSTATUS        0x00        // get status
