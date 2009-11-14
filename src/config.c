@@ -66,7 +66,8 @@ enum eJoyType
     JOY_MEGA_WORLD_USB,
     JOY_MICROSOFT_XBOX_360,
     JOY_N64_CONTROLLER,
-    JOY_SAITEK_P880
+    JOY_SAITEK_P880,
+    JOY_SAITEK_P990
 };
 
 typedef struct
@@ -82,7 +83,8 @@ static sJoyConfigMap l_JoyConfigMap[] = {
     { "Mega World USB Game Controllers", JOY_MEGA_WORLD_USB},
     { "Microsoft X-Box 360 pad",         JOY_MICROSOFT_XBOX_360},
     { "N64 controller",                  JOY_N64_CONTROLLER},
-    { "SAITEK P880",                     JOY_SAITEK_P880}
+    { "SAITEK P880",                     JOY_SAITEK_P880},
+    { "Saitek P990 Dual Analog Pad",     JOY_SAITEK_P990}
 };
 
 
@@ -309,6 +311,32 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
             pCtrl->button[R_TRIG].button = 7;
             pCtrl->button[L_TRIG].button = 6;
             /* no MEMPAK or RUMBLEPAK defined */
+            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
+            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
+            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
+            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
+            break;
+        case JOY_SAITEK_P990:
+            pCtrl->button[R_DPAD].axis = pCtrl->button[L_DPAD].axis = 4;
+            pCtrl->button[D_DPAD].axis = pCtrl->button[U_DPAD].axis = 5;
+            pCtrl->button[R_DPAD].axis_dir = pCtrl->button[D_DPAD].axis_dir = 1;
+            pCtrl->button[L_DPAD].axis_dir = pCtrl->button[U_DPAD].axis_dir = -1;
+            pCtrl->button[START_BUTTON].button = 5;
+            pCtrl->button[Z_TRIG].button = 4;
+            pCtrl->button[B_BUTTON].button = 0;
+            pCtrl->button[A_BUTTON].button = 1;
+            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 3;
+            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 2;
+            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
+            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
+            pCtrl->button[R_CBUTTON].button = 3;
+            pCtrl->button[L_CBUTTON].button = 8;
+            pCtrl->button[D_CBUTTON].button = 2;
+            pCtrl->button[U_CBUTTON].button = 9;
+            pCtrl->button[R_TRIG].button = 7;
+            pCtrl->button[L_TRIG].button = 6;
+            pCtrl->button[MEMPAK].button = 11;
+            pCtrl->button[RUMBLEPAK].axis = 10;
             pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
             pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
             pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
