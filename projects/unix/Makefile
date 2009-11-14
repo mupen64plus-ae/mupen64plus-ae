@@ -182,13 +182,15 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
 # build targets
-all: mupen64plus-audio-sdl.$(SO_EXTENSION)
+TARGET = mupen64plus-audio-sdl.$(SO_EXTENSION)
+
+all: $(TARGET)
 
 clean:
-	rm -rf ./_obj mupen64plus-audio-sdl.$(SO_EXTENSION)
+	rm -rf ./_obj $(TARGET)
 
 # build rules
-mupen64plus-audio-sdl.$(SO_EXTENSION): $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(LD) $(SHARED) $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
