@@ -228,6 +228,8 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
 # build targets
+TARGET = mupen64plus-video-rice.$(SO_EXTENSION)
+
 targets:
 	@echo "Mupen64plus-video-rice N64 Graphics plugin makefile. "
 	@echo "  Targets:"
@@ -239,15 +241,15 @@ targets:
 	@echo "    DEBUG=1    == add debugging symbols to binaries"
 	@echo "    DEBUGGER=1 == turn on debugging functions"
 
-all: mupen64plus-video-rice.$(SO_EXTENSION)
+all: $(TARGET)
 
 clean:
-	rm -rf ./_obj mupen64plus-video-rice.$(SO_EXTENSION)
+	rm -rf ./_obj $(TARGET)
 
 rebuild: clean all
 
 # build rules
-mupen64plus-video-rice.$(SO_EXTENSION): $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(LD) $(SHARED) $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
