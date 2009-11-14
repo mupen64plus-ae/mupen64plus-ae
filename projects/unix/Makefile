@@ -25,16 +25,23 @@
 UNAME = $(shell uname -s)
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
+  SO_EXTENSION = so
+  SHARED = -shared
 endif
 ifeq ("$(UNAME)","linux")
   OS = LINUX
+  SO_EXTENSION = so
+  SHARED = -shared
 endif
 ifeq ("$(UNAME)","Darwin")
   OS = OSX
-  LDFLAGS += -liconv -lpng
+  SO_EXTENSION = dylib
+  SHARED = -bundle
 endif
 ifeq ("$(UNAME)","FreeBSD")
   OS = FREEBSD
+  SO_EXTENSION = so
+  SHARED = -shared
 endif
 
 # detect system architecture
@@ -232,16 +239,16 @@ targets:
 	@echo "    DEBUG=1    == add debugging symbols to binaries"
 	@echo "    DEBUGGER=1 == turn on debugging functions"
 
-all: mupen64plus-video-rice.so
+all: mupen64plus-video-rice.$(SO_EXTENSION)
 
 clean:
-	rm -rf ./_obj mupen64plus-video-rice.so
+	rm -rf ./_obj mupen64plus-video-rice.$(SO_EXTENSION)
 
 rebuild: clean all
 
 # build rules
-mupen64plus-video-rice.so: $(OBJECTS)
-	$(LD) -shared $^ $(LDFLAGS) -o $@
+mupen64plus-video-rice.$(SO_EXTENSION): $(OBJECTS)
+	$(LD) $(SHARED) $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
