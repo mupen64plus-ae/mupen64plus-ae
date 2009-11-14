@@ -95,7 +95,14 @@ endif
 ifeq ($(OS),FREEBSD)
     CFLAGS  += `${SDL_CONFIG} --cflags`
     LDFLAGS += `${SDL_CONFIG} --libs`
-else
+endif
+ifeq ($(OS),OSX)
+    CFLAGS  += $(shell sdl-config --cflags)
+    # sdl-config on mac screws up when we're trying to build a library and not an executable
+    # SDL 1.3 is supposed to fix that, if it's ever released
+    LDFLAGS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
+endif
+ifeq ($(OS),LINUX)
     CFLAGS  += $(shell sdl-config --cflags)
     LDFLAGS += $(shell sdl-config --libs)
 endif
