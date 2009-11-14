@@ -51,7 +51,12 @@ osal_lib_search *osal_library_search(const char *searchpath)
     osal_lib_search *head = NULL, *curr = NULL;
     DIR *dir;
     struct dirent *entry;
+    
+#ifdef __APPLE__
+    const char* suffix = ".dylib";
+#else
     const char* suffix = ".so";
+#endif
 
     dir = opendir(searchpath);
     if (dir == NULL)

@@ -35,7 +35,15 @@
   #define OSAL_CURRENT_DIR             ".\\"
   #define OSAL_DLL_EXTENSION           ".dll"
 
-#else  /* Not WIN32 */
+#elif defined(__APPLE__)
+
+  #include <limits.h>  // for PATH_MAX
+  #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.dylib"
+  #define OSAL_DIR_SEPARATOR           '/'
+  #define OSAL_CURRENT_DIR             "./"
+  #define OSAL_DLL_EXTENSION           ".dylib"
+  
+#else  /* Linux-like UNIX */
 
   #include <limits.h>  // for PATH_MAX
   #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so"
