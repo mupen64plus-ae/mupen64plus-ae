@@ -162,14 +162,16 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
 # build targets
-all: mupen64plus-rsp-hle.$(SO_EXTENSION)
+TARGET = mupen64plus-rsp-hle.$(SO_EXTENSION)
+
+all: $(TARGET)
 
 clean:
-	rm -rf ./_obj mupen64plus-rsp-hle.$(SO_EXTENSION)
+	rm -rf ./_obj $(TARGET)
 
 # build rules
 
-mupen64plus-rsp-hle.$(SO_EXTENSION): $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(LD) $(SHARED) $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
