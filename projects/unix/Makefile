@@ -30,7 +30,9 @@ ifeq ("$(UNAME)","linux")
 endif
 ifeq ("$(UNAME)","Darwin")
   OS = OSX
-  LDFLAGS += -liconv -lpng
+  # The mac version of SDL has a stupid and ugly hack that you must include SDL_main,
+  # which itself defines main (no way around it until SDL 1.3)
+  LDFLAGS += `sdl-config --libs`
 endif
 ifeq ("$(UNAME)","FreeBSD")
   OS = FREEBSD
@@ -61,8 +63,8 @@ ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
-LDFLAGS = -ldl
+CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
+LDFLAGS += -ldl
 ifneq ($(OS), FREEBSD)
   CFLAGS += -pipe -O3
 endif

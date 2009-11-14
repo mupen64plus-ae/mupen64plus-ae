@@ -52,6 +52,12 @@ static int  *l_TestShotList = NULL;      // list of screenshots to take for regr
 static int   l_TestShotIdx = 0;          // index of next screenshot frame in list
 static int   l_SaveOptions = 0;          // save command-line options in configuration file
 
+// The mac version of SDL has a stupid and ugly hack that you must include SDL_main
+// so that it uses obscure macro-magic... no way around it until SDL 1.3
+#ifdef __APPLE__
+#include <SDL/SDL_main.h>
+#endif
+
 /*********************************************************************************************************
  *  Callback functions from the core
  */
