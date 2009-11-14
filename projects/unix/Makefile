@@ -25,16 +25,23 @@
 UNAME = $(shell uname -s)
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
+  SHARED = -shared
+  SO_EXTENSION = so
 endif
 ifeq ("$(UNAME)","linux")
   OS = LINUX
+  SHARED = -shared
+  SO_EXTENSION = so
 endif
 ifeq ("$(UNAME)","Darwin")
   OS = OSX
-  LDFLAGS += -liconv -lpng
+  SHARED = -bundle
+  SO_EXTENSION = dylib
 endif
 ifeq ("$(UNAME)","FreeBSD")
   OS = FREEBSD
+  SHARED = -shared
+  SO_EXTENSION = so
 endif
 
 # detect system architecture
@@ -175,14 +182,14 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
 # build targets
-all: mupen64plus-audio-sdl.so
+all: mupen64plus-audio-sdl.$(SO_EXTENSION)
 
 clean:
-	rm -rf ./_obj mupen64plus-audio-sdl.so
+	rm -rf ./_obj mupen64plus-audio-sdl.$(SO_EXTENSION)
 
 # build rules
-mupen64plus-audio-sdl.so: $(OBJECTS)
-	$(LD) -shared $^ $(LDFLAGS) -o $@
+mupen64plus-audio-sdl.$(SO_EXTENSION): $(OBJECTS)
+	$(LD) $(SHARED) $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
