@@ -103,6 +103,9 @@ typedef struct
 /* global data definitions */
 extern SController controller[4];   // 4 controllers
 
+/* global function definitions */
+extern void DebugMessage(int level, const char *message, ...);
+
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
 extern ptr_ConfigOpenSection      ConfigOpenSection;
