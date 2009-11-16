@@ -254,8 +254,8 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
             pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 2;
             pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
             pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
-            pCtrl->button[R_CBUTTON].button = 3;
-            pCtrl->button[L_CBUTTON].button = 8;
+            pCtrl->button[R_CBUTTON].button = 8;
+            pCtrl->button[L_CBUTTON].button = 3;
             pCtrl->button[D_CBUTTON].button = 2;
             pCtrl->button[U_CBUTTON].button = 9;
             pCtrl->button[R_TRIG].button = 7;
