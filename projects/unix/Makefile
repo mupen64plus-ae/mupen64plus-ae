@@ -156,6 +156,7 @@ OBJDIR = _obj
 # list of source files to compile
 SOURCE = \
 	$(SRCDIR)/plugin.c \
+	$(SRCDIR)/autoconfig.c \
 	$(SRCDIR)/config.c \
 	$(SRCDIR)/osal_dynamiclib_unix.c
 

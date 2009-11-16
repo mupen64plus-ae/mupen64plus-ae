@@ -56,37 +56,6 @@ static const char *button_names[] = {
     "Y Axis"        // Y_AXIS
 };
 
-/* definitions for joystick auto-configuration */
-enum eJoyType
-{
-    KBD_DEFAULT = 1,
-    JOY_GREEN_ASIA_USB,
-    JOY_LOGITECH_CORDLESS_RUMBLEPAD_2,
-    JOY_LOGITECH_DUAL_ACTION,
-    JOY_MEGA_WORLD_USB,
-    JOY_MICROSOFT_XBOX_360,
-    JOY_N64_CONTROLLER,
-    JOY_SAITEK_P880,
-    JOY_SAITEK_P990
-};
-
-typedef struct
-{
-    const char    *name;
-    enum eJoyType  type;
-} sJoyConfigMap;
-
-static sJoyConfigMap l_JoyConfigMap[] = {
-    { "GreenAsia Inc. USB Joystick",     JOY_GREEN_ASIA_USB},
-    { "Logitech Cordless Rumblepad 2",   JOY_LOGITECH_CORDLESS_RUMBLEPAD_2},
-    { "Logitech Dual Action",            JOY_LOGITECH_DUAL_ACTION},
-    { "Mega World USB Game Controllers", JOY_MEGA_WORLD_USB},
-    { "Microsoft X-Box 360 pad",         JOY_MICROSOFT_XBOX_360},
-    { "N64 controller",                  JOY_N64_CONTROLLER},
-    { "SAITEK P880",                     JOY_SAITEK_P880},
-    { "Saitek P990 Dual Analog Pad",     JOY_SAITEK_P990}
-};
-
 
 /* static functions */
 static int get_hat_pos_by_name( const char *name )
@@ -134,220 +103,6 @@ static void clear_controller(int iCtrlIdx)
     }
 }
 
-static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
-{
-    SController *pCtrl = &controller[iCtrlIdx];
-
-    /* set the general parameters */
-    pCtrl->control.Present = 1;
-    pCtrl->control.Plugin = PLUGIN_MEMPAK;
-    pCtrl->mouse = 0;
-    pCtrl->device = iDeviceIdx;
-    pCtrl->axis_deadzone[0] = pCtrl->axis_deadzone[1] = 4096;
-    pCtrl->axis_peak[0]     = pCtrl->axis_peak[1] = 32768;
-
-    switch (type)
-    {
-        case KBD_DEFAULT:
-            pCtrl->button[R_DPAD].key = SDLK_d;
-            pCtrl->button[L_DPAD].key = SDLK_a;
-            pCtrl->button[D_DPAD].key = SDLK_s;
-            pCtrl->button[U_DPAD].key = SDLK_w;
-            pCtrl->button[START_BUTTON].key = SDLK_RETURN;
-            pCtrl->button[Z_TRIG].key = SDLK_z;
-            pCtrl->button[B_BUTTON].key = SDLK_LALT;
-            pCtrl->button[A_BUTTON].key = SDLK_LMETA;
-            pCtrl->button[R_CBUTTON].key = SDLK_l;
-            pCtrl->button[L_CBUTTON].key = SDLK_j;
-            pCtrl->button[D_CBUTTON].key = SDLK_k;
-            pCtrl->button[U_CBUTTON].key = SDLK_i;
-            pCtrl->button[R_TRIG].key = SDLK_c;
-            pCtrl->button[L_TRIG].key = SDLK_x;
-            pCtrl->button[MEMPAK].key = SDLK_COMMA;
-            pCtrl->button[RUMBLEPAK].key = SDLK_PERIOD;
-            pCtrl->axis[0].key_a = SDLK_LEFT;
-            pCtrl->axis[0].key_b = SDLK_RIGHT;
-            pCtrl->axis[1].key_a = SDLK_UP;
-            pCtrl->axis[1].key_b = SDLK_DOWN;
-            break;
-        case JOY_GREEN_ASIA_USB:
-            pCtrl->button[R_DPAD].hat = pCtrl->button[L_DPAD].hat = 0;
-            pCtrl->button[D_DPAD].hat = pCtrl->button[U_DPAD].hat = 0;
-            pCtrl->button[R_DPAD].hat_pos = SDL_HAT_RIGHT;
-            pCtrl->button[L_DPAD].hat_pos = SDL_HAT_LEFT;
-            pCtrl->button[D_DPAD].hat_pos = SDL_HAT_DOWN;
-            pCtrl->button[U_DPAD].hat_pos = SDL_HAT_UP;
-            pCtrl->button[START_BUTTON].button = 9;
-            pCtrl->button[Z_TRIG].button = 1;
-            pCtrl->button[B_BUTTON].button = 3;
-            pCtrl->button[A_BUTTON].button = 2;
-            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 3;
-            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 2;
-            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
-            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
-            pCtrl->button[R_TRIG].button = 7;
-            pCtrl->button[L_TRIG].button = 6;
-            /* no MEMPAK or RUMBLEPAK defined */
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
-            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
-            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
-            break;
-        case JOY_LOGITECH_CORDLESS_RUMBLEPAD_2:
-        case JOY_LOGITECH_DUAL_ACTION:
-            pCtrl->button[R_DPAD].axis = pCtrl->button[L_DPAD].axis = 4;
-            pCtrl->button[D_DPAD].axis = pCtrl->button[U_DPAD].axis = 5;
-            pCtrl->button[R_DPAD].axis_dir = pCtrl->button[D_DPAD].axis_dir = 1;
-            pCtrl->button[L_DPAD].axis_dir = pCtrl->button[U_DPAD].axis_dir = -1;
-            pCtrl->button[START_BUTTON].button = 9;
-            pCtrl->button[Z_TRIG].button = 3;
-            pCtrl->button[B_BUTTON].button = 0;
-            pCtrl->button[A_BUTTON].button = 1;
-            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 2;
-            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 3;
-            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
-            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
-            pCtrl->button[R_TRIG].button = 5;
-            pCtrl->button[L_TRIG].button = 4;
-            pCtrl->button[MEMPAK].button = 6;
-            pCtrl->button[RUMBLEPAK].button = 7;
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
-            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
-            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
-            break;
-        case JOY_MEGA_WORLD_USB:
-            pCtrl->button[R_DPAD].hat = pCtrl->button[L_DPAD].hat = 0;
-            pCtrl->button[D_DPAD].hat = pCtrl->button[U_DPAD].hat = 0;
-            pCtrl->button[R_DPAD].hat_pos = SDL_HAT_RIGHT;
-            pCtrl->button[L_DPAD].hat_pos = SDL_HAT_LEFT;
-            pCtrl->button[D_DPAD].hat_pos = SDL_HAT_DOWN;
-            pCtrl->button[U_DPAD].hat_pos = SDL_HAT_UP;
-            pCtrl->button[START_BUTTON].button = 9;
-            pCtrl->button[Z_TRIG].button = 7;
-            pCtrl->button[B_BUTTON].button = 0;
-            pCtrl->button[A_BUTTON].button = 2;
-            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 3;
-            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 2;
-            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
-            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
-            pCtrl->button[R_TRIG].button = 6;
-            pCtrl->button[L_TRIG].button = 4;
-            /* no MEMPAK or RUMBLEPAK defined */
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
-            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
-            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
-            break;
-        case JOY_MICROSOFT_XBOX_360:
-            pCtrl->button[R_DPAD].axis = pCtrl->button[L_DPAD].axis = 6;
-            pCtrl->button[D_DPAD].axis = pCtrl->button[U_DPAD].axis = 7;
-            pCtrl->button[R_DPAD].axis_dir = pCtrl->button[D_DPAD].axis_dir = 1;
-            pCtrl->button[L_DPAD].axis_dir = pCtrl->button[U_DPAD].axis_dir = -1;
-            pCtrl->button[START_BUTTON].button = 6;
-            pCtrl->button[Z_TRIG].axis = 2;
-            pCtrl->button[Z_TRIG].axis_dir = 1;
-            pCtrl->button[B_BUTTON].button = 2;
-            pCtrl->button[A_BUTTON].button = 0;
-            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 3;
-            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 4;
-            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
-            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
-            pCtrl->button[R_CBUTTON].button = 1;
-            pCtrl->button[U_CBUTTON].button = 3;
-            pCtrl->button[R_TRIG].button = 5;
-            pCtrl->button[L_TRIG].button = 4;
-            pCtrl->button[MEMPAK].button = 9;
-            pCtrl->button[RUMBLEPAK].axis = 5;
-            pCtrl->button[RUMBLEPAK].axis_dir = 1;
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
-            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
-            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
-            break;
-        case JOY_N64_CONTROLLER:
-            pCtrl->button[R_DPAD].hat = pCtrl->button[L_DPAD].hat = 0;
-            pCtrl->button[D_DPAD].hat = pCtrl->button[U_DPAD].hat = 0;
-            pCtrl->button[R_DPAD].hat_pos = SDL_HAT_RIGHT;
-            pCtrl->button[L_DPAD].hat_pos = SDL_HAT_LEFT;
-            pCtrl->button[D_DPAD].hat_pos = SDL_HAT_DOWN;
-            pCtrl->button[U_DPAD].hat_pos = SDL_HAT_UP;
-            pCtrl->button[START_BUTTON].button = 9;
-            pCtrl->button[Z_TRIG].button = 0;
-            pCtrl->button[B_BUTTON].button = 2;
-            pCtrl->button[A_BUTTON].button = 1;
-            pCtrl->button[R_CBUTTON].button = 4;
-            pCtrl->button[L_CBUTTON].button = 5;
-            pCtrl->button[D_CBUTTON].button = 3;
-            pCtrl->button[U_CBUTTON].button = 6;
-            pCtrl->button[R_TRIG].button = 8;
-            pCtrl->button[L_TRIG].button = 7;
-            pCtrl->button[MEMPAK].key = SDLK_m;
-            pCtrl->button[RUMBLEPAK].key = SDLK_r;
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
-            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
-            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
-            break;
-        case JOY_SAITEK_P880:
-            pCtrl->button[R_DPAD].hat = pCtrl->button[L_DPAD].hat = 0;
-            pCtrl->button[D_DPAD].hat = pCtrl->button[U_DPAD].hat = 0;
-            pCtrl->button[R_DPAD].hat_pos = SDL_HAT_RIGHT;
-            pCtrl->button[L_DPAD].hat_pos = SDL_HAT_LEFT;
-            pCtrl->button[D_DPAD].hat_pos = SDL_HAT_DOWN;
-            pCtrl->button[U_DPAD].hat_pos = SDL_HAT_UP;
-            pCtrl->button[START_BUTTON].button = 10;
-            pCtrl->button[Z_TRIG].button = 3;
-            pCtrl->button[B_BUTTON].button = 0;
-            pCtrl->button[A_BUTTON].button = 2;
-            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 3;
-            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 2;
-            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
-            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
-            pCtrl->button[R_CBUTTON].button = 5;
-            pCtrl->button[L_CBUTTON].button = 1;
-            pCtrl->button[D_CBUTTON].button = 9;
-            pCtrl->button[U_CBUTTON].button = 4;
-            pCtrl->button[R_TRIG].button = 7;
-            pCtrl->button[L_TRIG].button = 6;
-            /* no MEMPAK or RUMBLEPAK defined */
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
-            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
-            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
-            break;
-        case JOY_SAITEK_P990:
-            pCtrl->button[R_DPAD].axis = pCtrl->button[L_DPAD].axis = 4;
-            pCtrl->button[D_DPAD].axis = pCtrl->button[U_DPAD].axis = 5;
-            pCtrl->button[R_DPAD].axis_dir = pCtrl->button[D_DPAD].axis_dir = 1;
-            pCtrl->button[L_DPAD].axis_dir = pCtrl->button[U_DPAD].axis_dir = -1;
-            pCtrl->button[START_BUTTON].button = 5;
-            pCtrl->button[Z_TRIG].button = 4;
-            pCtrl->button[B_BUTTON].button = 0;
-            pCtrl->button[A_BUTTON].button = 1;
-            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 3;
-            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 2;
-            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
-            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
-            pCtrl->button[R_CBUTTON].button = 3;
-            pCtrl->button[L_CBUTTON].button = 8;
-            pCtrl->button[D_CBUTTON].button = 2;
-            pCtrl->button[U_CBUTTON].button = 9;
-            pCtrl->button[R_TRIG].button = 7;
-            pCtrl->button[L_TRIG].button = 6;
-            pCtrl->button[MEMPAK].button = 11;
-            pCtrl->button[RUMBLEPAK].axis = 10;
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
-            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
-            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
-            break;
-        default:
-            DebugMessage(M64MSG_ERROR, "set_model_defaults(): invalid eJoyType %i", (int) type);
-            return;
-    }
-}
-
 static const char * get_sdl_joystick_name(int iCtrlIdx)
 {
     static char JoyName[256];
@@ -380,54 +135,6 @@ static const char * get_sdl_joystick_name(int iCtrlIdx)
         return NULL;
     else
         return JoyName;
-}
-
-static int auto_load_defaults(int iCtrlIdx)
-{
-    const int numJoyModels = sizeof(l_JoyConfigMap) / sizeof(sJoyConfigMap);
-    const char *joySDLName = get_sdl_joystick_name(iCtrlIdx);
-    int i;
-
-    /* if we couldn't get a name (no joystick plugged in to given port), then return with a failure */
-    if (joySDLName == NULL)
-        return 0;
-
-    /* iterate through the list of all known joystick models */
-    for (i = 0; i < numJoyModels; i++)
-    {
-        char Word[32];
-        const char *wordPtr = l_JoyConfigMap[i].name;
-        int  joyFound = 1;
-        /* search in the SDL name for all the words in the joystick name.  If any are missing, then this is not the right joystick model */
-        while (wordPtr != NULL && strlen(wordPtr) > 0)
-        {
-            char *nextSpace = strchr(wordPtr, ' ');
-            if (nextSpace == NULL)
-            {
-                strcpy(Word, wordPtr);
-                wordPtr = NULL;
-            }
-            else
-            {
-                int length = (int) (nextSpace - wordPtr);
-                strncpy(Word, wordPtr, length);
-                Word[length] = 0;
-                wordPtr = nextSpace + 1;
-            }
-            if (strcasestr(joySDLName, Word) == NULL)
-                joyFound = 0;
-        }
-        /* if we found the right joystick, then set the defaults and break out of this loop */
-        if (joyFound)
-        {
-            DebugMessage(M64MSG_INFO, "N64 Controller #%i: Enabled, using auto-configuration for joystick '%s'", iCtrlIdx + 1, joySDLName);
-            set_model_defaults(iCtrlIdx, iCtrlIdx, l_JoyConfigMap[i].type);
-            return 1;
-        }
-    }
-
-    DebugMessage(M64MSG_INFO, "N64 Controller #%i: Disabled, no configuration data for '%s'", iCtrlIdx + 1, joySDLName);
-    return 0;
 }
 
 
@@ -652,15 +359,17 @@ void load_configuration(void)
                 break;
         }
 
+        const char *JoyName = get_sdl_joystick_name(i);
         if (!readOK || controller[i].device == DEVICE_AUTO)
-        { /* reset the controller configuration again and load the defaults */
+        {
+            /* reset the controller configuration again and load the defaults */
             clear_controller(i);
-            if (auto_load_defaults(i))
+            if (auto_load_defaults(i, i, JoyName))
                 save_controller_config(i);
         }
         else if (controller[i].device >= 0)
-        { /* valid joystick configuration was read; check if the specified joystick is available in SDL */
-            const char *JoyName = get_sdl_joystick_name(controller[i].device);
+        {
+            /* valid joystick configuration was read; check if the specified joystick is available in SDL */
             if (JoyName == NULL)
             {
                 controller[i].device = DEVICE_AUTO;
@@ -698,7 +407,7 @@ void load_configuration(void)
         else if (joy_plugged == 0)
             DebugMessage(M64MSG_WARNING, "%i controllers found, but none are 'plugged in'", joy_found);
         DebugMessage(M64MSG_INFO, "Forcing keyboard input for N64 controller #1");
-        set_model_defaults(0, DEVICE_NOT_JOYSTICK, KBD_DEFAULT);
+        auto_load_defaults(0, DEVICE_NOT_JOYSTICK, "Keyboard");
     }
 
 }
