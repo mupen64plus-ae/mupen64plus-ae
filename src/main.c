@@ -178,7 +178,7 @@ static void printUsage(const char *progname)
            "    --audio (plugin-spec) : use audio plugin given by (plugin-spec)\n"
            "    --input (plugin-spec) : use input plugin given by (plugin-spec)\n"
            "    --rsp (plugin-spec)   : use rsp plugin given by (plugin-spec)\n"
-           "    --emumode (mode)      : set emu mode to: 0=Interpreter 1=DynaRec 2=Pure Interpreter\n"
+           "    --emumode (mode)      : set emu mode to: 0=Pure Interpreter 1=Interpreter 2=DynaRec\n"
            "    --testshots (list)    : take screenshots at frames given in comma-separated (list), then quit\n"
            "    --saveoptions         : save the given command-line options in configuration file for future\n"
            "    --verbose             : print lots of information\n"
