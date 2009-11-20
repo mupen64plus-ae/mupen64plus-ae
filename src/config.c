@@ -294,7 +294,7 @@ void load_configuration(void)
                 if (ConfigGetParameter(pConfig, button_names[j], M64TYPE_STRING, input_str, 256) != M64ERR_SUCCESS)
                     break;
                 if ((config_ptr = strstr(input_str, "key")) != NULL)
-                    if (sscanf(config_ptr, "key(%i)", &controller[i].button[j].key) != 1)
+                    if (sscanf(config_ptr, "key(%i)", (int *) &controller[i].button[j].key) != 1)
                         DebugMessage(M64MSG_WARNING, "parsing error in key() parameter of button '%s' for controller %i", button_names[j], i + 1);
                 if ((config_ptr = strstr(input_str, "button")) != NULL)
                     if (sscanf(config_ptr, "button(%i)", &controller[i].button[j].button) != 1)
@@ -329,7 +329,7 @@ void load_configuration(void)
                 if (ConfigGetParameter(pConfig, button_names[j], M64TYPE_STRING, input_str, 256) != M64ERR_SUCCESS)
                     break;
                 if ((config_ptr = strstr(input_str, "key")) != NULL)
-                    if (sscanf(config_ptr, "key(%i,%i)", &controller[i].axis[axis_idx].key_a, &controller[i].axis[axis_idx].key_b) != 2)
+                    if (sscanf(config_ptr, "key(%i,%i)", (int *) &controller[i].axis[axis_idx].key_a, (int *) &controller[i].axis[axis_idx].key_b) != 2)
                         DebugMessage(M64MSG_WARNING, "parsing error in key() parameter of axis '%s' for controller %i", button_names[j], i + 1);
                 if ((config_ptr = strstr(input_str, "button")) != NULL)
                     if (sscanf(config_ptr, "button(%i,%i)", &controller[i].axis[axis_idx].button_a, &controller[i].axis[axis_idx].button_b) != 2)
