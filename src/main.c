@@ -276,24 +276,24 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
     if (task->ucode_size <= 0x1000)
       {
          f = fopen("imem.dat", "wb");
-         if (f == NULL || fwrite(rsp.RDRAM + task->ucode, task->ucode_size, 1, f) != task->ucode_size)
+         if (f == NULL || fwrite(rsp.RDRAM + task->ucode, 1, task->ucode_size, f) != task->ucode_size)
             DebugMessage(M64MSG_WARNING, "couldn't write to RSP debugging file imem.dat");
          fclose(f);
 
          f = fopen("dmem.dat", "wb");
-         if (f == NULL || fwrite(rsp.RDRAM + task->ucode_data, task->ucode_data_size, 1, f) != task->ucode_data_size)
+         if (f == NULL || fwrite(rsp.RDRAM + task->ucode_data, 1, task->ucode_data_size, f) != task->ucode_data_size)
             DebugMessage(M64MSG_WARNING, "couldn't write to RSP debugging file dmem.dat");
          fclose(f);
       }
     else
       {
          f = fopen("imem.dat", "wb");
-         if (f == NULL || fwrite(rsp.IMEM, 0x1000, 1, f) != 0x1000)
+         if (f == NULL || fwrite(rsp.IMEM, 1, 0x1000, f) != 0x1000)
             DebugMessage(M64MSG_WARNING, "couldn't write to RSP debugging file imem.dat");
          fclose(f);
 
          f = fopen("dmem.dat", "wb");
-         if (f == NULL || fwrite(rsp.DMEM, 0x1000, 1, f) != 0x1000)
+         if (f == NULL || fwrite(rsp.DMEM, 1, 0x1000, f) != 0x1000)
             DebugMessage(M64MSG_WARNING, "couldn't write to RSP debugging file dmem.dat");
          fclose(f);
       }
