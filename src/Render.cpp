@@ -1473,10 +1473,11 @@ bool SaveCITextureToFile(TxtrCacheEntry &entry, char *filename, bool bShow, bool
     f = fopen(filename, "wb");
     if(f != NULL)
     {
-        fwrite(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f);
-        fwrite(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f);
-        fwrite(pTable, tableSize*4, 1, f);
-        fwrite(pbuf, infoHeader.biSizeImage, 1, f);
+        if (fwrite(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f) != 1 ||
+            fwrite(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f) != 1 ||
+            fwrite(pTable, tableSize*4, 1, f) != 1 ||
+            fwrite(pbuf, infoHeader.biSizeImage, 1, f) != 1)
+            printf("failed to write out texture data to image file '%s'", filename);
        
         fclose(f);
     }
@@ -2014,9 +2015,10 @@ bool SaveRGBBufferToFile(char *filename, unsigned char *buf, int width, int heig
         f = fopen(filename, "wb");
         if(f != NULL)
         {
-            fwrite(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f);
-            fwrite(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f);
-            fwrite(buf, infoHeader.biSizeImage, 1, f);
+            if (fwrite(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f) != 1 ||
+                fwrite(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f) != 1 ||
+                fwrite(buf, infoHeader.biSizeImage, 1, f) != 1)
+                printf("failed to write out texture data to image file '%s'", filename);
             
             fclose(f);
             return true;

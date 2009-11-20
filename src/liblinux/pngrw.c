@@ -157,11 +157,10 @@ BMGError ReadPNG( const char *filename,
         longjmp ( err_jmp, (int)errInvalidBMGImage );
 
     file = fopen( filename, "rb" );
-    if ( !file )
+    if ( !file || fread( signature, 1, 8, file ) != 8)
         longjmp ( err_jmp, (int)errFileOpen );
 
     /* check the signature */
-    fread( signature, 1, 8, file );
     if ( !png_check_sig( signature, 8 ) )
         longjmp( err_jmp, (int)errUnsupportedFileFormat );
 

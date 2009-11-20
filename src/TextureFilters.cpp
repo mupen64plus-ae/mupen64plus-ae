@@ -935,7 +935,11 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
       DebugMessage(M64MSG_ERROR, "GetImageInfoFromFile() error: couldn't open file '%s'", pSrcFile);
       return 1;
     }
-    fread(sig, 8, 1, f);
+    if (fread(sig, 1, 8, f) != 8)
+    {
+      DebugMessage(M64MSG_ERROR, "GetImageInfoFromFile() error: couldn't read first 8 bytes of file '%s'", pSrcFile);
+      return 1;
+    }
     fclose(f);
 
     if(sig[0] == 'B' && sig[1] == 'M') // BMP
@@ -1611,8 +1615,12 @@ bool LoadRGBABufferFromColorIndexedFile(char *filename, TxtrCacheEntry &entry, u
     f = fopen(filename, "rb");
     if(f != NULL)
     {
-        fread(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f);
-        fread(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f);
+        if (fread(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f) != 1 ||
+            fread(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f) != 1)
+        {
+            printf("Couldn't read BMP headers in file '%s'\n", filename);
+            return false;
+        }
 
         if( infoHeader.biBitCount != 4 && infoHeader.biBitCount != 8 )
         {
@@ -1624,7 +1632,12 @@ bool LoadRGBABufferFromColorIndexedFile(char *filename, TxtrCacheEntry &entry, u
 
         int tablesize = infoHeader.biBitCount == 4 ? 16 : 256;
         uint32 *pTable = new uint32[tablesize];
-        fread(pTable, tablesize*4, 1, f);
+        if (fread(pTable, tablesize*4, 1, f) != 1)
+        {
+            printf("Couldn't read BMP palette in file '%s'\n", filename);
+            delete [] pTable;
+            return false;
+        }
 
         // Create the pallette table
         uint16 * pPal = (uint16 *)entry.ti.PalAddress;
@@ -1651,7 +1664,10 @@ bool LoadRGBABufferFromColorIndexedFile(char *filename, TxtrCacheEntry &entry, u
             unsigned char *colorIdxBuf = new unsigned char[infoHeader.biSizeImage];
             if( colorIdxBuf )
             {
-                fread(colorIdxBuf, infoHeader.biSizeImage, 1, f);
+                if (fread(colorIdxBuf, infoHeader.biSizeImage, 1, f) != 1)
+                {
+                    printf("Couldn't read BMP image data in file '%s'\n", filename);
+                }
 
                 width = infoHeader.biWidth;
                 height = infoHeader.biHeight;
@@ -1729,8 +1745,12 @@ bool LoadRGBBufferFromBMPFile(char *filename, unsigned char **pbuf, int &width, 
     f = fopen(filename, "rb");
     if(f != NULL)
     {
-        fread(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f);
-        fread(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f);
+        if (fread(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f) != 1 ||
+            fread(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f) != 1)
+        {
+            printf("Couldn't read BMP headers in file '%s'\n", filename);
+            return false;
+        }
 
         if( infoHeader.biBitCount != 24 )
         {
@@ -1743,7 +1763,8 @@ bool LoadRGBBufferFromBMPFile(char *filename, unsigned char **pbuf, int &width, 
         *pbuf = new unsigned char[infoHeader.biWidth*infoHeader.biHeight*3];
         if( *pbuf )
         {
-            fread(*pbuf, infoHeader.biWidth*infoHeader.biHeight*3, 1, f);
+            if (fread(*pbuf, infoHeader.biWidth*infoHeader.biHeight*3, 1, f) != 1)
+                printf("Couldn't read RGB BMP image data in file '%s'\n", filename);
             fclose(f);
             width = infoHeader.biWidth;
             height = infoHeader.biHeight;
