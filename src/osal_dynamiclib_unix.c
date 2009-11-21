@@ -26,41 +26,12 @@
 #include "m64p_types.h"
 #include "osal_dynamiclib.h"
 
-m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath)
-{
-    if (pLibHandle == NULL || pccLibraryPath == NULL)
-        return M64ERR_INPUT_ASSERT;
-
-    *pLibHandle = dlopen(pccLibraryPath, RTLD_NOW);
-
-    if (*pLibHandle == NULL)
-    {
-        fprintf(stderr, "dlopen('%s') error: %s\n", pccLibraryPath, dlerror());
-        return M64ERR_INPUT_NOT_FOUND;
-    }
-
-    return M64ERR_SUCCESS;
-}
-
 void * osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName)
 {
     if (pccProcedureName == NULL)
         return NULL;
 
     return dlsym(LibHandle, pccProcedureName);
-}
-
-m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle)
-{
-    int rval = dlclose(LibHandle);
-
-    if (rval != 0)
-    {
-        fprintf(stderr, "dlclose() error: %s\n", dlerror());
-        return M64ERR_INTERNAL;
-    }
-
-    return M64ERR_SUCCESS;
 }
 
 
