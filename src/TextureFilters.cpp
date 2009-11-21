@@ -1618,14 +1618,14 @@ bool LoadRGBABufferFromColorIndexedFile(char *filename, TxtrCacheEntry &entry, u
         if (fread(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f) != 1 ||
             fread(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f) != 1)
         {
-            printf("Couldn't read BMP headers in file '%s'\n", filename);
+            DebugMessage(M64MSG_ERROR, "Couldn't read BMP headers in file '%s'", filename);
             return false;
         }
 
         if( infoHeader.biBitCount != 4 && infoHeader.biBitCount != 8 )
         {
             fclose(f);
-            TRACE1("Unsupported BMP file format: %s", filename);
+            DebugMessage(M64MSG_ERROR, "Unsupported BMP file format: %s", filename);
             *pbuf = NULL;
             return false;
         }
@@ -1634,7 +1634,7 @@ bool LoadRGBABufferFromColorIndexedFile(char *filename, TxtrCacheEntry &entry, u
         uint32 *pTable = new uint32[tablesize];
         if (fread(pTable, tablesize*4, 1, f) != 1)
         {
-            printf("Couldn't read BMP palette in file '%s'\n", filename);
+            DebugMessage(M64MSG_ERROR, "Couldn't read BMP palette in file '%s'", filename);
             delete [] pTable;
             return false;
         }
@@ -1666,7 +1666,7 @@ bool LoadRGBABufferFromColorIndexedFile(char *filename, TxtrCacheEntry &entry, u
             {
                 if (fread(colorIdxBuf, infoHeader.biSizeImage, 1, f) != 1)
                 {
-                    printf("Couldn't read BMP image data in file '%s'\n", filename);
+                    DebugMessage(M64MSG_ERROR, "Couldn't read BMP image data in file '%s'", filename);
                 }
 
                 width = infoHeader.biWidth;
@@ -1748,7 +1748,7 @@ bool LoadRGBBufferFromBMPFile(char *filename, unsigned char **pbuf, int &width, 
         if (fread(&fileHeader, sizeof(BITMAPFILEHEADER), 1, f) != 1 ||
             fread(&infoHeader, sizeof(BITMAPINFOHEADER), 1, f) != 1)
         {
-            printf("Couldn't read BMP headers in file '%s'\n", filename);
+            DebugMessage(M64MSG_ERROR, "Couldn't read BMP headers in file '%s'", filename);
             return false;
         }
 
@@ -1764,7 +1764,7 @@ bool LoadRGBBufferFromBMPFile(char *filename, unsigned char **pbuf, int &width, 
         if( *pbuf )
         {
             if (fread(*pbuf, infoHeader.biWidth*infoHeader.biHeight*3, 1, f) != 1)
-                printf("Couldn't read RGB BMP image data in file '%s'\n", filename);
+                DebugMessage(M64MSG_ERROR, "Couldn't read RGB BMP image data in file '%s'", filename);
             fclose(f);
             width = infoHeader.biWidth;
             height = infoHeader.biHeight;
