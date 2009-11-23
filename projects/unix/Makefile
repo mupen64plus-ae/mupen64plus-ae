@@ -34,7 +34,6 @@ ifeq ("$(UNAME)","linux")
 endif
 ifeq ("$(UNAME)","Darwin")
   OS = OSX
-  LDFLAGS += -liconv -lpng
   SO_EXTENSION = dylib
   SHARED = -bundle
 endif
@@ -74,7 +73,7 @@ LDFLAGS = -ldl
 ifneq ($(OS), FREEBSD)
   CFLAGS += -pipe -O3
 endif
-
+  
 # test for presence of SDL
 ifeq ($(shell which sdl-config 2>/dev/null),)
   $(error No SDL development libraries found!)
@@ -123,26 +122,37 @@ ifeq ($(ARCH_DETECTED), 64BITS)
 endif
 
 # set special flags per-system
-ifneq ($(OS), FREEBSD)
+ifeq ($(OS), FREEBSD)
+  ifeq ($(ARCH_DETECTED), 64BITS_32)
+    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
+  endif
+endif
+ifeq ($(OS), LINUX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -march=athlon64
     else
       CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
     endif
-    # tweak flags for 32-bit build on 64-bit system
-    ifeq ($(ARCH_DETECTED), 64BITS_32)
-      CFLAGS += -m32
-      LDFLAGS += -m32 -m elf_i386
-    endif
   endif
-else
-  ifeq ($(ARCH_DETECTED), 64BITS_32)
-    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
+endif
+ifeq ($(OS), OSX)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+    else
+      CFLAGS += -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      LDFLAGS += -arch i686
+    endif
   endif
 endif
 ifeq ($(CPU), PPC)
   CFLAGS += -mcpu=powerpc
+endif
+# tweak flags for 32-bit build on 64-bit system
+ifeq ($(ARCH_DETECTED), 64BITS_32)
+  CFLAGS += -m32
+  LDFLAGS += -m32 -m elf_i386
 endif
 
 # set shell function names
