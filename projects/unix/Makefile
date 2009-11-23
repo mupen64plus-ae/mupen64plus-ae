@@ -73,7 +73,47 @@ LDFLAGS = -ldl
 ifneq ($(OS), FREEBSD)
   CFLAGS += -pipe -O3
 endif
-  
+
+# Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
+# On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
+ifeq ($(ARCH_DETECTED), 64BITS)
+  CFLAGS += -fpic -DPIC -fvisibility=hidden
+endif
+# tweak flags for 32-bit build on 64-bit system
+ifeq ($(ARCH_DETECTED), 64BITS_32)
+  CFLAGS += -m32
+  LDFLAGS += -m32 -m elf_i386
+endif
+
+# set special flags per-system
+ifeq ($(OS), FREEBSD)
+  ifeq ($(ARCH_DETECTED), 64BITS_32)
+    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
+  endif
+endif
+ifeq ($(OS), LINUX)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -march=athlon64
+    else
+      CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+    endif
+  endif
+endif
+ifeq ($(OS), OSX)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+    else
+      CFLAGS += -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      LDFLAGS += -arch i686
+    endif
+  endif
+endif
+ifeq ($(CPU), PPC)
+  CFLAGS += -mcpu=powerpc
+endif
+
 # test for presence of SDL
 ifeq ($(shell which sdl-config 2>/dev/null),)
   $(error No SDL development libraries found!)
@@ -113,46 +153,6 @@ else
       endif
     endif
   endif
-endif
-
-# Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
-# On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
-ifeq ($(ARCH_DETECTED), 64BITS)
-  CFLAGS += -fpic -DPIC -fvisibility=hidden
-endif
-
-# set special flags per-system
-ifeq ($(OS), FREEBSD)
-  ifeq ($(ARCH_DETECTED), 64BITS_32)
-    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
-  endif
-endif
-ifeq ($(OS), LINUX)
-  ifeq ($(CPU), X86)
-    ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -march=athlon64
-    else
-      CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
-    endif
-  endif
-endif
-ifeq ($(OS), OSX)
-  ifeq ($(CPU), X86)
-    ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-    else
-      CFLAGS += -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -arch i686
-    endif
-  endif
-endif
-ifeq ($(CPU), PPC)
-  CFLAGS += -mcpu=powerpc
-endif
-# tweak flags for 32-bit build on 64-bit system
-ifeq ($(ARCH_DETECTED), 64BITS_32)
-  CFLAGS += -m32
-  LDFLAGS += -m32 -m elf_i386
 endif
 
 # set shell function names
