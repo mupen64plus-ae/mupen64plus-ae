@@ -62,12 +62,41 @@ endif
 # base CFLAGS, LIBS, and LDFLAGS
 CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
 LDFLAGS = -ldl
-ifneq ($(OS), FREEBSD)
-  CFLAGS += -pipe -O3
+
+# set special flags per-system
+ifeq ($(OS), LINUX)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -pipe -O3 -march=athlon64
+    else
+      CFLAGS += -pipe -O3 -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+    endif
+  endif
 endif
 ifeq ($(OS), OSX)
   # The mac version of SDL requires inclusion of SDL_main in the executable
   LDFLAGS += $(shell sdl-config --libs)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      LDFLAGS += `sdl-config --libs` -arch x86_64
+    else
+      CFLAGS += -pipe -O3 -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      LDFLAGS += `sdl-config --libs` -arch i686
+    endif
+  endif
+endif
+ifeq ($(CPU), PPC)
+  CFLAGS += -mcpu=powerpc
+endif
+
+# tweak flags for 32-bit build on 64-bit system
+ifeq ($(ARCH_DETECTED), 64BITS_32)
+  ifeq ($(OS), FREEBSD)
+    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
+  endif
+  CFLAGS += -m32
+  LDFLAGS += -m32 -m elf_i386
 endif
 
 # set mupen64plus core API header path
@@ -90,29 +119,6 @@ else
       endif
     endif
   endif
-endif
-
-# set special flags per-system
-ifneq ($(OS), FREEBSD)
-  ifeq ($(CPU), X86)
-    ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -march=athlon64
-    else
-      CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
-    endif
-    # tweak flags for 32-bit build on 64-bit system
-    ifeq ($(ARCH_DETECTED), 64BITS_32)
-      CFLAGS += -m32
-      LDFLAGS += -m32 -m elf_i386
-    endif
-  endif
-else
-  ifeq ($(ARCH_DETECTED), 64BITS_32)
-    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
-  endif
-endif
-ifeq ($(CPU), PPC)
-  CFLAGS += -mcpu=powerpc
 endif
 
 # set shell function names
