@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - math.cpp                                                *
+ *   Mupen64plus - VectorMath.cpp                                          *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2002 Rice1964                                           *
  *                                                                         *
@@ -21,7 +21,7 @@
 
 #include <string.h>
 
-#include "Math.h"
+#include "VectorMath.h"
 
 //---------- XMATRIX
 

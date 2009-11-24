@@ -212,7 +212,6 @@ SOURCE = \
 	$(SRCDIR)/OGLRender.cpp \
 	$(SRCDIR)/OGLRenderExt.cpp \
 	$(SRCDIR)/OGLTexture.cpp \
-	$(SRCDIR)/Math.cpp \
 	$(SRCDIR)/Render.cpp \
 	$(SRCDIR)/RenderBase.cpp \
 	$(SRCDIR)/RenderExt.cpp \
@@ -225,6 +224,7 @@ SOURCE = \
 	$(SRCDIR)/TextureFilters_hq2x.cpp \
 	$(SRCDIR)/TextureFilters_hq4x.cpp \
 	$(SRCDIR)/TextureManager.cpp \
+	$(SRCDIR)/VectorMath.cpp \
 	$(SRCDIR)/Video.cpp
 
 # generate a list of object files build, make a temporary directory for them

@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _TYPEDEFS_H_
 
 #include "osal_win32types.h"
-#include "Math.h"
+#include "VectorMath.h"
 
 #define uchar  unsigned char
 #define uint16 unsigned short

@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - math.h                                                  *
+ *   Mupen64plus - VectorMath.h                                            *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2002 Rice1964                                           *
  *                                                                         *
@@ -19,8 +19,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef RMATH_H
-#define RMATH_H
+#ifndef VECTORMATH_H
+#define VECTORMATH_H
 
 /******************************************************************************
  * 4x4 matrix
