@@ -72,20 +72,48 @@ endif
 # base CFLAGS, LIBS, and LDFLAGS
 CFLAGS = -Wall -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
 LDFLAGS = -ldl -lpng
-ifneq ($(OS), FREEBSD)
+
+# Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
+# On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
+ifeq ($(ARCH_DETECTED), 64BITS)
+  CFLAGS += -fpic -DPIC -fvisibility=hidden
+endif
+# tweak flags for 32-bit build on 64-bit system
+ifeq ($(ARCH_DETECTED), 64BITS_32)
+  ifeq ($(OS), FREEBSD)
+    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
+  endif
+  CFLAGS += -m32
+  LDFLAGS += -m32 -m elf_i386
 endif
 
-# set CFLAGS, LIBS, and LDFLAGS according to the target OS
+# set special flags per-system
 ifeq ($(OS),FREEBSD)
   LDFLAGS += -lGL
 endif
-ifeq ($(OS),LINUX)
-  CFLAGS += -pipe -O3
+ifeq ($(OS), LINUX)
   LDFLAGS += -lGL
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -pipe -O3 -march=athlon64
+    else
+      CFLAGS += -pipe -O3 -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+    endif
+  endif
 endif
-ifeq ($(OS),OSX)
-  CFLAGS += -pipe -O3
-  LDFLAGS += -bundle -framework OpenGL
+ifeq ($(OS), OSX)
+  ifeq ($(CPU), X86)
+    ifeq ($(ARCH_DETECTED), 64BITS)
+      CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      LDFLAGS += -bundle -framework OpenGL -arch x86_64
+    else
+      CFLAGS += -pipe -O3 -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      LDFLAGS += -bundle -framework OpenGL -arch i686
+    endif
+  endif
+endif
+ifeq ($(CPU), PPC)
+  CFLAGS += -mcpu=powerpc
 endif
 
 # test for presence of SDL
@@ -127,35 +155,6 @@ else
       endif
     endif
   endif
-endif
-
-# Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
-# On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
-ifeq ($(ARCH_DETECTED), 64BITS)
-  CFLAGS += -fpic -DPIC -fvisibility=hidden
-endif
-
-# set special flags per-system
-ifneq ($(OS), FREEBSD)
-  ifeq ($(CPU), X86)
-    ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -march=athlon64
-    else
-      CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
-    endif
-    # tweak flags for 32-bit build on 64-bit system
-    ifeq ($(ARCH_DETECTED), 64BITS_32)
-      CFLAGS += -m32
-      LDFLAGS += -m32 -m elf_i386
-    endif
-  endif
-else
-  ifeq ($(ARCH_DETECTED), 64BITS_32)
-    $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
-  endif
-endif
-ifeq ($(CPU), PPC)
-  CFLAGS += -mcpu=powerpc
 endif
 
 # set shell function names
