@@ -30,6 +30,7 @@
 enum eJoyType
 {
     KBD_DEFAULT = 1,
+    JOY_DRAGON_RISE,
     JOY_GREEN_ASIA_USB,
     JOY_LOGITECH_CORDLESS_RUMBLEPAD_2,
     JOY_LOGITECH_DUAL_ACTION,
@@ -47,15 +48,16 @@ typedef struct
 } sJoyConfigMap;
 
 static sJoyConfigMap l_JoyConfigMap[] = {
-    { "GreenAsia Inc. USB Joystick",     JOY_GREEN_ASIA_USB},
-    { "Logitech Cordless Rumblepad 2",   JOY_LOGITECH_CORDLESS_RUMBLEPAD_2},
-    { "Logitech Dual Action",            JOY_LOGITECH_DUAL_ACTION},
-    { "Mega World USB Game Controllers", JOY_MEGA_WORLD_USB},
-    { "Microsoft X-Box 360 pad",         JOY_MICROSOFT_XBOX_360},
-    { "N64 controller",                  JOY_N64_CONTROLLER},
-    { "SAITEK P880",                     JOY_SAITEK_P880},
-    { "Saitek P990 Dual Analog Pad",     JOY_SAITEK_P990},
-    { "Keyboard",                        KBD_DEFAULT}
+    { "DragonRise Inc. Generic USB Joystick", JOY_DRAGON_RISE},
+    { "GreenAsia Inc. USB Joystick",          JOY_GREEN_ASIA_USB},
+    { "Logitech Cordless Rumblepad 2",        JOY_LOGITECH_CORDLESS_RUMBLEPAD_2},
+    { "Logitech Dual Action",                 JOY_LOGITECH_DUAL_ACTION},
+    { "Mega World USB Game Controllers",      JOY_MEGA_WORLD_USB},
+    { "Microsoft X-Box 360 pad",              JOY_MICROSOFT_XBOX_360},
+    { "N64 controller",                       JOY_N64_CONTROLLER},
+    { "SAITEK P880",                          JOY_SAITEK_P880},
+    { "Saitek P990 Dual Analog Pad",          JOY_SAITEK_P990},
+    { "Keyboard",                             KBD_DEFAULT}
 };
 
 /* local functions */
@@ -94,6 +96,36 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
             pCtrl->axis[0].key_b = SDLK_RIGHT;
             pCtrl->axis[1].key_a = SDLK_UP;
             pCtrl->axis[1].key_b = SDLK_DOWN;
+            break;
+        case JOY_DRAGON_RISE:
+            pCtrl->button[R_DPAD].axis = pCtrl->button[L_DPAD].axis = 0;
+            pCtrl->button[D_DPAD].axis = pCtrl->button[U_DPAD].axis = 1;
+            pCtrl->button[R_DPAD].axis_dir = pCtrl->button[D_DPAD].axis_dir = 1;
+            pCtrl->button[L_DPAD].axis_dir = pCtrl->button[U_DPAD].axis_dir = -1;
+            pCtrl->button[R_DPAD].key = SDLK_RIGHT;
+            pCtrl->button[L_DPAD].key = SDLK_LEFT;
+            pCtrl->button[D_DPAD].key = SDLK_DOWN;
+            pCtrl->button[U_DPAD].key = SDLK_UP;
+            pCtrl->button[START_BUTTON].button = 9;
+            pCtrl->button[Z_TRIG].button = 8;
+            pCtrl->button[B_BUTTON].button = 3;
+            pCtrl->button[A_BUTTON].button = 2;
+            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 3;
+            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 4;
+            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
+            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = 1;
+            pCtrl->button[R_CBUTTON].button = 7;
+            pCtrl->button[L_CBUTTON].button = 6;
+            pCtrl->button[D_CBUTTON].button = 1;
+            pCtrl->button[U_CBUTTON].button = 0;
+            pCtrl->button[R_TRIG].button = 5;
+            pCtrl->button[L_TRIG].button = 4;
+            /* no MEMPAK or RUMBLEPAK defined */
+            pCtrl->axis[0].axis_a = 0;
+            pCtrl->axis[0].axis_b = 2;
+            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
+            pCtrl->axis[0].axis_dir_a = pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_a = -1;
+            pCtrl->axis[1].axis_dir_b = 1;
             break;
         case JOY_GREEN_ASIA_USB:
             pCtrl->button[R_DPAD].hat = pCtrl->button[L_DPAD].hat = 0;
