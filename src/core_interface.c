@@ -47,8 +47,7 @@ ptr_CoreDetachPlugin    CoreDetachPlugin = NULL;
 ptr_CoreDoCommand       CoreDoCommand = NULL;
 ptr_CoreOverrideVidExt  CoreOverrideVidExt = NULL;
 ptr_CoreAddCheat        CoreAddCheat = NULL;
-ptr_CoreRemoveCheat     CoreRemoveCheat = NULL;
-ptr_CoreRemoveAllCheats CoreRemoveAllCheats = NULL;
+ptr_CoreCheatEnabled    CoreCheatEnabled = NULL;
 
 /* definitions of pointers to Core config functions */
 ptr_ConfigListSections     ConfigListSections = NULL;
@@ -174,8 +173,7 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     CoreDoCommand = (ptr_CoreDoCommand) osal_dynlib_getproc(CoreHandle, "CoreDoCommand");
     CoreOverrideVidExt = (ptr_CoreOverrideVidExt) osal_dynlib_getproc(CoreHandle, "CoreOverrideVidExt");
     CoreAddCheat = (ptr_CoreAddCheat) osal_dynlib_getproc(CoreHandle, "CoreAddCheat");
-    CoreRemoveCheat = (ptr_CoreRemoveCheat) osal_dynlib_getproc(CoreHandle, "CoreRemoveCheat");
-    CoreRemoveAllCheats = (ptr_CoreRemoveAllCheats) osal_dynlib_getproc(CoreHandle, "CoreRemoveAllCheats");
+    CoreCheatEnabled = (ptr_CoreCheatEnabled) osal_dynlib_getproc(CoreHandle, "CoreCheatEnabled");
 
     /* get function pointers to the configuration functions */
     ConfigListSections = (ptr_ConfigListSections) osal_dynlib_getproc(CoreHandle, "ConfigListSections");
@@ -240,8 +238,7 @@ m64p_error DetachCoreLib(void)
     CoreDoCommand = NULL;
     CoreOverrideVidExt = NULL;
     CoreAddCheat = NULL;
-    CoreRemoveCheat = NULL;
-    CoreRemoveAllCheats = NULL;
+    CoreCheatEnabled = NULL;
 
     ConfigListSections = NULL;
     ConfigOpenSection = NULL;

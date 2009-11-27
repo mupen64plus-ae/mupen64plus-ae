@@ -146,6 +146,7 @@ OBJDIR = _obj
 
 # list of source files to compile
 SOURCE = \
+	$(SRCDIR)/cheat.c \
 	$(SRCDIR)/core_interface.c \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/plugin.c \

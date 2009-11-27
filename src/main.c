@@ -34,6 +34,7 @@
 #include <SDL/SDL_main.h>
 #endif
 
+#include "cheat.h"
 #include "main.h"
 #include "plugin.h"
 #include "version.h"
@@ -56,6 +57,10 @@ static const char *l_ROMFilepath = NULL;       // filepath of ROM to load & run 
 static int  *l_TestShotList = NULL;      // list of screenshots to take for regression test support
 static int   l_TestShotIdx = 0;          // index of next screenshot frame in list
 static int   l_SaveOptions = 0;          // save command-line options in configuration file
+
+static eCheatMode l_CheatMode = CHEAT_DISABLE;
+static int       *l_CheatNumList = NULL;
+static int        l_CheatListLength = 0;
 
 /*********************************************************************************************************
  *  Callback functions from the core
@@ -169,6 +174,7 @@ static void printUsage(const char *progname)
            "    --fullscreen          : use fullscreen display mode\n"
            "    --windowed            : use windowed display mode\n"
            "    --resolution (res)    : display resolution (640x480, 800x600, 1024x768, etc)\n"
+           "    --cheats (cheat-spec) : enable or list cheat codes for the given rom file\n"
            "    --corelib (filepath)  : use core library (filepath) (can be only filename or full path)\n"
            "    --configdir (dir)     : force configation directory to (dir); should contain mupen64plus.conf\n"
            "    --datadir (dir)       : search for shared data files (.ini files, languages, etc) in (dir)\n"
@@ -186,10 +192,47 @@ static void printUsage(const char *progname)
            "(plugin-spec):\n"
            "    (pluginname)          : filename (without path) of plugin to find in plugin directory\n"
            "    (pluginpath)          : full path and filename of plugin\n"
-           "    'dummy'               : use dummy plugin\n"
+           "    'dummy'               : use dummy plugin\n\n"
+           "(cheat-spec):\n"
+           "    'list'                : show all of the available cheat codes\n"
+           "    'all'                 : enable all of the available cheat codes\n"
+           "    (codelist)            : a comma-separated list of cheat code numbers to enable\n"
            "\n", progname);
 
     return;
+}
+
+static int *ParseNumberList(const char *InputString, int *ValuesFound)
+{
+    const char *str;
+    int *OutputList;
+
+    /* count the number of integers in the list */
+    int values = 1;
+    str = InputString;
+    while ((str = strchr(str, ',')) != NULL)
+    {
+        str++;
+        values++;
+    }
+
+    /* create a list and populate it with the frame counter values at which to take screenshots */
+    if ((OutputList = malloc(sizeof(int) * (values + 1))) != NULL)
+    {
+        int idx = 0;
+        str = InputString;
+        while (str != NULL)
+        {
+            OutputList[idx++] = atoi(str);
+            str = strchr(str, ',');
+            if (str != NULL) str++;
+        }
+        OutputList[idx] = 0;
+    }
+
+    if (ValuesFound != NULL)
+        *ValuesFound = values;
+    return OutputList;
 }
 
 static int ParseCommandLineInitial(int argc, const char **argv)
@@ -272,6 +315,19 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
                 (*ConfigSetParameter)(l_ConfigVideo, "ScreenHeight", M64TYPE_INT, &yres);
             }
         }
+        else if (strcmp(argv[i], "--cheats") == 0 && ArgsLeft >= 1)
+        {
+            if (strcmp(argv[i+1], "all") == 0)
+                l_CheatMode = CHEAT_ALL;
+            else if (strcmp(argv[i+1], "list") == 0)
+                l_CheatMode = CHEAT_SHOW_LIST;
+            else
+            {
+                l_CheatMode = CHEAT_LIST;
+                l_CheatNumList = ParseNumberList(argv[i+1], &l_CheatListLength);
+            }
+            i++;
+        }
         else if (strcmp(argv[i], "--plugindir") == 0 && ArgsLeft >= 1)
         {
             g_PluginDir = argv[i+1];
@@ -310,27 +366,7 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         }
         else if (strcmp(argv[i], "--testshots") == 0 && ArgsLeft >= 1)
         {
-            /* count the number of integers in the list */
-            int shots = 1;
-            const char *str = argv[i+1];
-            while ((str = strchr(str, ',')) != NULL)
-            {
-                str++;
-                shots++;
-            }
-            /* create a list and populate it with the frame counter values at which to take screenshots */
-            if ((l_TestShotList = malloc(sizeof(int) * (shots + 1))) != NULL)
-            {
-                int idx = 0;
-                str = argv[i+1];
-                while (str != NULL)
-                {
-                    l_TestShotList[idx++] = atoi(str);
-                    str = strchr(str, ',');
-                    if (str != NULL) str++;
-                }
-                l_TestShotList[idx] = 0;
-            }
+            l_TestShotList = ParseNumberList(argv[i+1], NULL);
             i++;
         }
         else if (strcmp(argv[i], "--saveoptions") == 0)
@@ -414,24 +450,6 @@ int main(int argc, char *argv[])
     if (l_SaveOptions)
         SaveConfigurationOptions();
 
-    /* search for and load plugins */
-    rval = PluginSearchLoad(l_ConfigUI);
-    if (rval != M64ERR_SUCCESS)
-    {
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return 5;
-    }
-
-    /* set up Frame Callback if --testshots is enabled */
-    if (l_TestShotList != NULL)
-    {
-        if ((*CoreDoCommand)(M64CMD_SET_FRAME_CALLBACK, 0, FrameCallback) != M64ERR_SUCCESS)
-        {
-            fprintf(stderr, "UI-Console: warning: couldn't set frame callback, so --testshots won't work.\n");
-        }
-    }
-
     /* load ROM image */
     FILE *fPtr = fopen(l_ROMFilepath, "rb");
     if (fPtr == NULL)
@@ -476,7 +494,27 @@ int main(int argc, char *argv[])
         DetachCoreLib();
         return 9;
     }
-    free(ROM_buffer);
+    free(ROM_buffer); /* the core copies the ROM image, so we can release this buffer immediately */
+
+    /* handle the cheat codes */
+    CheatStart(l_CheatMode, l_CheatNumList, l_CheatListLength);
+    if (l_CheatMode == CHEAT_SHOW_LIST)
+    {
+        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
+        (*CoreShutdown)();
+        DetachCoreLib();
+        return 10;
+    }
+
+    /* search for and load plugins */
+    rval = PluginSearchLoad(l_ConfigUI);
+    if (rval != M64ERR_SUCCESS)
+    {
+        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
+        (*CoreShutdown)();
+        DetachCoreLib();
+        return 11;
+    }
 
     /* attach plugins to core */
     for (i = 0; i < 4; i++)
@@ -484,9 +522,19 @@ int main(int argc, char *argv[])
         if ((*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle) != M64ERR_SUCCESS)
         {
             fprintf(stderr, "UI-Console: error from core while attaching %s plugin.\n", g_PluginMap[i].name);
+            (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
             (*CoreShutdown)();
             DetachCoreLib();
-            return 10;
+            return 12;
+        }
+    }
+
+    /* set up Frame Callback if --testshots is enabled */
+    if (l_TestShotList != NULL)
+    {
+        if ((*CoreDoCommand)(M64CMD_SET_FRAME_CALLBACK, 0, FrameCallback) != M64ERR_SUCCESS)
+        {
+            fprintf(stderr, "UI-Console: warning: couldn't set frame callback, so --testshots won't work.\n");
         }
     }
 
@@ -512,6 +560,8 @@ int main(int argc, char *argv[])
     /* free allocated memory */
     if (l_TestShotList != NULL)
         free(l_TestShotList);
+    if (l_CheatNumList != NULL)
+        free(l_CheatNumList);
 
     return 0;
 }

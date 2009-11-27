@@ -44,8 +44,7 @@ extern ptr_CoreDetachPlugin    CoreDetachPlugin;
 extern ptr_CoreDoCommand       CoreDoCommand;
 extern ptr_CoreOverrideVidExt  CoreOverrideVidExt;
 extern ptr_CoreAddCheat        CoreAddCheat;
-extern ptr_CoreRemoveCheat     CoreRemoveCheat;
-extern ptr_CoreRemoveAllCheats CoreRemoveAllCheats;
+extern ptr_CoreCheatEnabled    CoreCheatEnabled;
 
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
