@@ -36,6 +36,9 @@
 
 #include "version.h"
 
+/* global data definitions */
+int g_CoreCapabilities;
+
 /* definitions of pointers to Core common functions */
 ptr_CoreErrorMessage    CoreErrorMessage = NULL;
 
@@ -73,6 +76,7 @@ ptr_ConfigGetUserCachePath      ConfigGetUserCachePath = NULL;
 
 /* definitions of pointers to Core debugger functions */
 ptr_DebugSetCallbacks      DebugSetCallbacks = NULL;
+ptr_DebugSetCoreCompare    DebugSetCoreCompare = NULL;
 ptr_DebugSetRunState       DebugSetRunState = NULL;
 ptr_DebugGetState          DebugGetState = NULL;
 ptr_DebugStep              DebugStep = NULL;
@@ -136,9 +140,9 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     }
     m64p_plugin_type PluginType = 0;
     int Compatible = 0;
-    int CoreVersion = 0, APIVersion = 0, Capabilities = 0;
+    int CoreVersion = 0, APIVersion = 0;
     const char *CoreName = NULL;
-    (*CoreVersionFunc)(&PluginType, &CoreVersion, &APIVersion, &CoreName, &Capabilities);
+    (*CoreVersionFunc)(&PluginType, &CoreVersion, &APIVersion, &CoreName, &g_CoreCapabilities);
     if (PluginType != M64PLUGIN_CORE)
         fprintf(stderr, "AttachCoreLib() Error: Shared library '%s' invalid; wrong plugin type %i.\n", CoreLibFilepath, (int) PluginType);
     else if (CoreVersion < MINIMUM_CORE_VERSION)
@@ -159,10 +163,12 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
 
     /* print some information about the core library */
     printf("UI-console: attached to core library '%s' version %i.%i.%i\n", CoreName, VERSION_PRINTF_SPLIT(CoreVersion));
-    if (Capabilities & M64CAPS_DYNAREC)
+    if (g_CoreCapabilities & M64CAPS_DYNAREC)
         printf("            Includes support for Dynamic Recompiler.\n");
-    if (Capabilities & M64CAPS_DEBUGGER)
+    if (g_CoreCapabilities & M64CAPS_DEBUGGER)
         printf("            Includes support for MIPS r4300 Debugger.\n");
+    if (g_CoreCapabilities & M64CAPS_CORE_COMPARE)
+        printf("            Includes support for r4300 Core Comparison.\n");
 
     /* get function pointers to the common and front-end functions */
     CoreErrorMessage = (ptr_CoreErrorMessage) osal_dynlib_getproc(CoreHandle, "CoreErrorMessage");
@@ -199,6 +205,7 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
 
     /* get function pointers to the debugger functions */
     DebugSetCallbacks = (ptr_DebugSetCallbacks) osal_dynlib_getproc(CoreHandle, "DebugSetCallbacks");
+    DebugSetCoreCompare = (ptr_DebugSetCoreCompare) osal_dynlib_getproc(CoreHandle, "DebugSetCoreCompare");
     DebugSetRunState = (ptr_DebugSetRunState) osal_dynlib_getproc(CoreHandle, "DebugSetRunState");
     DebugGetState = (ptr_DebugGetState) osal_dynlib_getproc(CoreHandle, "DebugGetState");
     DebugStep = (ptr_DebugStep) osal_dynlib_getproc(CoreHandle, "DebugStep");
@@ -258,6 +265,7 @@ m64p_error DetachCoreLib(void)
     ConfigGetUserCachePath = NULL;
 
     DebugSetCallbacks = NULL;
+    DebugSetCoreCompare = NULL;
     DebugSetRunState = NULL;
     DebugGetState = NULL;
     DebugStep = NULL;

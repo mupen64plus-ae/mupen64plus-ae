@@ -32,6 +32,9 @@
 extern m64p_error AttachCoreLib(const char *CoreLibFilepath);
 extern m64p_error DetachCoreLib(void);
 
+/* global variables from core_interface.c */
+extern int g_CoreCapabilities;
+
 /* declarations of Core library handle and pointers to common functions */
 extern m64p_dynlib_handle      CoreHandle;
 extern ptr_CoreErrorMessage    CoreErrorMessage;
@@ -70,6 +73,7 @@ extern ptr_ConfigGetUserCachePath      ConfigGetUserCachePath;
 
 /* declarations of pointers to Core debugger functions */
 extern ptr_DebugSetCallbacks      DebugSetCallbacks;
+extern ptr_DebugSetCoreCompare    DebugSetCoreCompare;
 extern ptr_DebugSetRunState       DebugSetRunState;
 extern ptr_DebugGetState          DebugGetState;
 extern ptr_DebugStep              DebugStep;

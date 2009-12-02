@@ -57,6 +57,7 @@ static const char *l_ROMFilepath = NULL;       // filepath of ROM to load & run 
 static int  *l_TestShotList = NULL;      // list of screenshots to take for regression test support
 static int   l_TestShotIdx = 0;          // index of next screenshot frame in list
 static int   l_SaveOptions = 0;          // save command-line options in configuration file
+static int   l_CoreCompareMode = 0;      // 0 = disable, 1 = send, 2 = receive
 
 static eCheatMode l_CheatMode = CHEAT_DISABLE;
 static int       *l_CheatNumList = NULL;
@@ -186,6 +187,8 @@ static void printUsage(const char *progname)
            "    --rsp (plugin-spec)   : use rsp plugin given by (plugin-spec)\n"
            "    --emumode (mode)      : set emu mode to: 0=Pure Interpreter 1=Interpreter 2=DynaRec\n"
            "    --testshots (list)    : take screenshots at frames given in comma-separated (list), then quit\n"
+           "    --core-compare-send   : use the Core Comparison debugging feature, in data sending mode\n"
+           "    --core-compare-recv   : use the Core Comparison debugging feature, in data receiving mode\n"
            "    --saveoptions         : save the given command-line options in configuration file for future\n"
            "    --verbose             : print lots of information\n"
            "    --help                : see this help message\n\n"
@@ -369,6 +372,14 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
             l_TestShotList = ParseNumberList(argv[i+1], NULL);
             i++;
         }
+        else if (strcmp(argv[i], "--core-compare-send") == 0)
+        {
+            l_CoreCompareMode = 1;
+        }
+        else if (strcmp(argv[i], "--core-compare-recv") == 0)
+        {
+            l_CoreCompareMode = 2;
+        }
         else if (strcmp(argv[i], "--saveoptions") == 0)
         {
             l_SaveOptions = 1;
@@ -445,6 +456,15 @@ int main(int argc, char *argv[])
         DetachCoreLib();
         return 5;
     }
+
+    /* Handle the core comparison feature */
+    if (l_CoreCompareMode != 0 && !(g_CoreCapabilities & M64CAPS_CORE_COMPARE))
+    {
+        printf("UI-console: can't use --core-compare feature with this Mupen64Plus core library.\n");
+        DetachCoreLib();
+        return 3;
+    }
+    compare_core_init(l_CoreCompareMode);
 
     /* save the given command-line options in configuration file if requested */
     if (l_SaveOptions)
