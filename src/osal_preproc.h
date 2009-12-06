@@ -46,7 +46,7 @@
 #else  /* Linux-like UNIX */
 
   #include <limits.h>  // for PATH_MAX
-  #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so"
+  #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so.2"
   #define OSAL_DIR_SEPARATOR           '/'
   #define OSAL_CURRENT_DIR             "./"
   #define OSAL_DLL_EXTENSION           ".so"
