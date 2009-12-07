@@ -167,10 +167,25 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
 # build targets
+targets:
+	@echo "Mupen64Plus-ui-console makefile. "
+	@echo "  Targets:"
+	@echo "    all            == Build Mupen64Plus console front-end application"
+	@echo "    clean          == remove object files and build products"
+	@echo "    rebuild        == clean and re-build all"
+	@echo "  Options:"
+	@echo "    COREDIR=path   == default path to search for Mupen64Plus Core (must end with slash)"
+	@echo "    PLUGINDIR=path == default path to search for plugins"
+	@echo "    SHAREDIR=path  == default path to search for shared data files"
+	@echo "  Debugging Options:"
+	@echo "    DEBUG=1        == add debugging symbols to application binary"
+
 all: mupen64plus-cli
 
 clean:
-	rm -rf ./_obj mupen64plus-cli
+	rm -rf ./_obj/* mupen64plus-cli
+
+rebuild: clean all
 
 # build rules
 mupen64plus-cli: $(OBJECTS)
