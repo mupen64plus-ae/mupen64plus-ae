@@ -51,8 +51,13 @@ static m64p_handle l_ConfigUI = NULL;
 
 static const char *l_CoreLibPath = NULL;
 static const char *l_ConfigDirPath = NULL;
-static const char *l_DataDirPath = NULL;
 static const char *l_ROMFilepath = NULL;       // filepath of ROM to load & run at startup
+
+#if defined(SHAREDIR)
+  static const char *l_DataDirPath = SHAREDIR;
+#else
+  static const char *l_DataDirPath = NULL;
+#endif
 
 static int  *l_TestShotList = NULL;      // list of screenshots to take for regression test support
 static int   l_TestShotIdx = 0;          // index of next screenshot frame in list

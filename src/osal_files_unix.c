@@ -35,12 +35,8 @@
 
 /* definitions for system directories to search when looking for mupen64plus plugins */
 #if defined(PLUGINDIR)
-  #define XSTR(S) STR(S) /* this wacky preprocessor thing is necessary to generate a quote-enclosed */
-  #define STR(S) #S      /* copy of the PLUGINDIR macro, which is defined by the makefile via gcc -DPLUGINDIR="..." */
   const int   osal_libsearchdirs = 4;
-  const char *osal_libsearchpath[4] = { XSTR(PLUGINDIR), "/usr/local/lib/mupen64plus",  "/usr/lib/mupen64plus", "./" };
-  #undef STR
-  #undef XSTR
+  const char *osal_libsearchpath[4] = { PLUGINDIR, "/usr/local/lib/mupen64plus",  "/usr/lib/mupen64plus", "./" };
 #else
   const int   osal_libsearchdirs = 3;
   const char *osal_libsearchpath[3] = { "/usr/local/lib/mupen64plus",  "/usr/lib/mupen64plus", "./" };

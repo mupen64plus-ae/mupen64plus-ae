@@ -133,8 +133,15 @@ ifeq ($(OS),OSX)
 endif
 
 # set special flags for given Makefile parameters
+# note: COREDIR _must_ end in a slash if you want it to work; not necessary for the others
 ifneq ($(PLUGINDIR),)
-  CFLAGS += -DPLUGINDIR="$(PLUGINDIR)"
+  CFLAGS += '-DPLUGINDIR="$(PLUGINDIR)"'
+endif
+ifneq ($(COREDIR),)
+  CFLAGS += '-DCOREDIR="$(COREDIR)"'
+endif
+ifneq ($(SHAREDIR),)
+  CFLAGS += '-DSHAREDIR="$(SHAREDIR)"'
 endif
 ifeq ($(DEBUG),1)
   CFLAGS += -g

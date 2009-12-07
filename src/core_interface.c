@@ -105,27 +105,40 @@ m64p_dynlib_handle CoreHandle = NULL;
 /* functions */
 m64p_error AttachCoreLib(const char *CoreLibFilepath)
 {
-    const char *DefaultLibName = OSAL_DEFAULT_DYNLIB_FILENAME;
-    /* check if Core DLL is already attached, and set default library filename if input is NULL */
-    if (CoreLibFilepath == NULL)
-        CoreLibFilepath = DefaultLibName;
+    /* check if Core DLL is already attached */
     if (CoreHandle != NULL)
         return M64ERR_INVALID_STATE;
 
     /* load the DLL */
-    m64p_error rval = osal_dynlib_open(&CoreHandle, CoreLibFilepath);
+    m64p_error rval = M64ERR_INTERNAL;
+    /* first, try a library path+name that was given on the command-line */
+    if (CoreLibFilepath != NULL)
+    {
+        rval = osal_dynlib_open(&CoreHandle, CoreLibFilepath);
+    }
+    /* then try a library path that was given at compile time */
+#if defined(COREDIR)
     if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
     {
-        /* last-ditch try loading library in current directory */
-        char LocalLibPath[64];
-        sprintf(LocalLibPath, ".%c%s", OSAL_DIR_SEPARATOR, OSAL_DEFAULT_DYNLIB_FILENAME);
-        m64p_error rval = osal_dynlib_open(&CoreHandle, LocalLibPath);
-        if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
-        {
-            fprintf(stderr, "AttachCoreLib() Error: failed to open shared library '%s'\n", CoreLibFilepath);
-            CoreHandle = NULL;
-            return M64ERR_INPUT_NOT_FOUND;
-        }
+        rval = osal_dynlib_open(&CoreHandle, COREDIR OSAL_DEFAULT_DYNLIB_FILENAME);
+    }
+#endif
+    /* then try just the filename of the shared library, to let dlopen() look through the system lib dirs */
+    if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
+    {
+        rval = osal_dynlib_open(&CoreHandle, OSAL_DEFAULT_DYNLIB_FILENAME);
+    }
+    /* as a last-ditch effort, try loading library in current directory */
+    if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
+    {
+        rval = osal_dynlib_open(&CoreHandle, OSAL_CURRENT_DIR OSAL_DEFAULT_DYNLIB_FILENAME);
+    }
+    /* if we haven't found a good core library by now, then we're screwed */
+    if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
+    {
+        fprintf(stderr, "AttachCoreLib() Error: failed to find Mupen64Plus Core library\n");
+        CoreHandle = NULL;
+        return M64ERR_INPUT_NOT_FOUND;
     }
 
     /* attach and call the PluginGetVersion function, check the Core and API versions for compatibility with this front-end */
