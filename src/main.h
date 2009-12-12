@@ -19,6 +19,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/* version info */
+#define SDL_AUDIO_PLUGIN_VERSION 0x016301
+
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
 extern ptr_ConfigOpenSection      ConfigOpenSection;
