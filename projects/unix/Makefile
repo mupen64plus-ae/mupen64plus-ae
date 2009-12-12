@@ -167,8 +167,10 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
 # build targets
+TARGET = mupen64plus
+
 targets:
-	@echo "Mupen64Plus-ui-console makefile. "
+	@echo "Mupen64Plus-ui-console makefile."
 	@echo "  Targets:"
 	@echo "    all            == Build Mupen64Plus console front-end application"
 	@echo "    clean          == remove object files and build products"
@@ -180,15 +182,15 @@ targets:
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
 
-all: mupen64plus-cli
+all: $(TARGET)
 
 clean:
-	rm -rf ./_obj/* mupen64plus-cli
+	rm -rf ./_obj/* $(TARGET)
 
 rebuild: clean all
 
 # build rules
-mupen64plus-cli: $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(CC) $^ $(LDFLAGS) $(SRC_LIBS) -o $@
 	$(STRIP) $@
 
