@@ -153,7 +153,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
         *PluginType = M64PLUGIN_RSP;
 
     if (PluginVersion != NULL)
-        *PluginVersion = 0x20000;
+        *PluginVersion = RSP_HLE_VERSION;
 
     if (APIVersion != NULL)
         *APIVersion = PLUGIN_API_VERSION;
