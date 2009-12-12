@@ -161,6 +161,7 @@ endif
 CC      = gcc
 CXX     = g++
 LD      = g++
+INSTALL = install
 ifeq ($(OS),LINUX)
   STRIP	= strip -s
 endif
@@ -175,6 +176,17 @@ ifeq ($(DEBUG),1)
 endif
 ifeq ($(NO_ASM), 1)
   CFLAGS += -DNO_ASM
+endif
+
+# set installation options
+ifeq ($(PREFIX),)
+  PREFIX := /usr/local
+endif
+ifeq ($(SHAREDIR),)
+  SHAREDIR := $(PREFIX)/share/mupen64plus
+endif
+ifeq ($(LIBDIR),)
+  LIBDIR := $(PREFIX)/lib/mupen64plus
 endif
 
 SRCDIR = ../../src
@@ -239,18 +251,36 @@ TARGET = mupen64plus-video-rice.$(SO_EXTENSION)
 targets:
 	@echo "Mupen64plus-video-rice N64 Graphics plugin makefile. "
 	@echo "  Targets:"
-	@echo "    all        == Build Mupen64plus-video-rice plugin"
-	@echo "    clean      == remove object files"
-	@echo "    rebuild    == clean and re-build all"
+	@echo "    all           == Build Mupen64plus-video-rice plugin"
+	@echo "    clean         == remove object files"
+	@echo "    rebuild       == clean and re-build all"
+	@echo "    install       == Install Mupen64Plus-video-rice plugin"
+	@echo "    uninstall     == Uninstall Mupen64Plus-video-rice plugin"
 	@echo "  Options:"
-	@echo "    BITS=32    == build 32-bit binaries on 64-bit machine"
-	@echo "    DEBUG=1    == add debugging symbols to binaries"
-	@echo "    DEBUGGER=1 == turn on debugging functions"
+	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
+	@echo "    NO_ASM=1      == build without inline assembly code (x86 MMX/SSE)"
+	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
+	@echo "  Install Options:"
+	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
+	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
+	@echo "    LIBDIR=path   == path to install plugin libraries (default: PREFIX/lib/mupen64plus)"
+	@echo "  Debugging Options:"
+	@echo "    DEBUG=1       == add debugging symbols"
 
 all: $(TARGET)
 
+install: $(TARGET)
+	$(INSTALL) -d -v "$(LIBDIR)"
+	$(INSTALL) -m 0644 $(TARGET) "$(LIBDIR)"
+	$(INSTALL) -d -v "$(SHAREDIR)"
+	$(INSTALL) -m 0644 "../../data/RiceVideoLinux.ini" "$(SHAREDIR)"
+
+uninstall:
+	rm -f "$(LIBDIR)/$(TARGET)"
+	rm -f "$(SHAREDIR)/RiceVideoLinux.ini"
+
 clean:
-	rm -rf ./_obj $(TARGET)
+	rm -f ./_obj/*.o  ./_obj/liblinux/* $(TARGET)
 
 rebuild: clean all
 
