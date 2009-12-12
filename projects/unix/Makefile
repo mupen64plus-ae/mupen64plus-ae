@@ -159,6 +159,7 @@ endif
 CC      = gcc
 CXX     = g++
 LD      = g++
+INSTALL = install
 ifeq ($(OS),LINUX)
   STRIP	= strip -s
 endif
@@ -173,6 +174,14 @@ ifeq ($(DEBUG),1)
 endif
 ifeq ($(PLUGINDBG), 1)
   CFLAGS += -D_DEBUG
+endif
+
+# set installation options
+ifeq ($(PREFIX),)
+  PREFIX := /usr/local
+endif
+ifeq ($(LIBDIR),)
+  LIBDIR := $(PREFIX)/lib/mupen64plus
 endif
 
 SRCDIR = ../../src
@@ -193,10 +202,37 @@ $(shell mkdir -p $(OBJDIRS))
 # build targets
 TARGET = mupen64plus-input-sdl.$(SO_EXTENSION)
 
+targets:
+	@echo "Mupen64Plus-input-sdl makefile. "
+	@echo "  Targets:"
+	@echo "    all           == Build Mupen64Plus SDL input plugin"
+	@echo "    clean         == remove object files"
+	@echo "    rebuild       == clean and re-build all"
+	@echo "    install       == Install Mupen64Plus SDL input plugin"
+	@echo "    uninstall     == Uninstall Mupen64Plus SDL input plugin"
+	@echo "  Options:"
+	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
+	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
+	@echo "  Install Options:"
+	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
+	@echo "    LIBDIR=path   == path to install plugin libraries (default: PREFIX/lib/mupen64plus)"
+	@echo "  Debugging Options:"
+	@echo "    DEBUG=1       == add debugging symbols"
+	@echo "    PLUGINDBG=1   == print extra debugging information while running"
+
 all: $(TARGET)
 
+install: $(TARGET)
+	mkdir -p "$(LIBDIR)"
+	$(INSTALL) -m 0644 $(TARGET) "$(LIBDIR)"
+
+uninstall:
+	rm -f "$(LIBDIR)/$(TARGET)"
+
 clean:
-	rm -rf ./_obj $(TARGET)
+	rm -rf ./_obj/* $(TARGET)
+
+rebuild: clean all
 
 # build rules
 $(TARGET): $(OBJECTS)
