@@ -125,6 +125,7 @@ endif
 CC      = gcc
 CXX     = g++
 LD      = g++
+INSTALL = install
 ifeq ($(OS),LINUX)
   STRIP	= strip -s
 endif
@@ -146,6 +147,14 @@ endif
 ifeq ($(DEBUG),1)
   CFLAGS += -g
   STRIP = true # disable binary strip
+endif
+
+# set installation options
+ifeq ($(PREFIX),)
+  PREFIX := /usr/local
+endif
+ifeq ($(BINDIR),)
+  BINDIR := $(PREFIX)/bin
 endif
 
 SRCDIR = ../../src
@@ -175,10 +184,15 @@ targets:
 	@echo "    all            == Build Mupen64Plus console front-end application"
 	@echo "    clean          == remove object files and build products"
 	@echo "    rebuild        == clean and re-build all"
+	@echo "    install        == Install Mupen64Plus console front-end application"
+	@echo "    uninstall      == Uninstall Mupen64Plus console front-end application"
 	@echo "  Options:"
 	@echo "    COREDIR=path   == default path to search for Mupen64Plus Core (must end with slash)"
 	@echo "    PLUGINDIR=path == default path to search for plugins"
 	@echo "    SHAREDIR=path  == default path to search for shared data files"
+	@echo "  Install Options:"
+	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
+	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
 
@@ -188,6 +202,13 @@ clean:
 	rm -rf ./_obj/* $(TARGET)
 
 rebuild: clean all
+
+install: $(TARGET)
+	$(INSTALL) -d -v "$(BINDIR)"
+	$(INSTALL) -m 0755 $(TARGET) "$(BINDIR)"
+
+uninstall:
+	rm -f "$(BINDIR)/$(TARGET)"
 
 # build rules
 $(TARGET): $(OBJECTS)
