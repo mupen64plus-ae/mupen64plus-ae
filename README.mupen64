@@ -1,6 +1,0 @@
-The blight's input plugin source is included in the mupen64 source code for
-convenience of the end user who want to have it compiled and installed at
-the same time than mupen64. Blight is also distributing it separately on
-emutalk.net , if you plan to modify the plugin or want to check if a newer
-version is available, be sure to check the message board and search for
-blight plugin.

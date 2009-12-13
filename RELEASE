@@ -1,3 +1,13 @@
+Mupen64Plus-input-sdl Version 1.99.1:
+ - New feature: Joystick/Keyboard auto-configuration
+ - New feature: deadzone and peak analog joystick values are now configurable
+ - Converted to new Mupen64Plus 2.0 API
+ - Refactored build system to separate source and object files
+ - Major code cleanup: mouse movement and analog axis code was terrible, removed non-standard data types
+ - Improved debug messages
+ - bugfix: mapping the X/Y analog sticks to keypresses didnt work
+ - bugfix: LeftCtrl-LeftAlt key command when mouse is enabled to now toggles between grabbing and releasing the mouse pointer
+
 0.0.10:
  - when the keyboard is used to control an axis left shift and left control can be 
    pressed to change the axis movement. shift reduces the movement by 25%, control 
