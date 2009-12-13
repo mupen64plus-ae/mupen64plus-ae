@@ -1,0 +1,5 @@
+Mupen64Plus-RSP-HLE plugin Version 1.99.1:
+ - Converted to new Mupen64Plus 2.0 API
+ - Refactored build system to separate source and object files
+ - Refactored all code to remove win32-specific things, unnecessary functions, and clean up
+
