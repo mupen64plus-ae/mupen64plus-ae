@@ -21,6 +21,6 @@ with your desired local installation path):
 
 $ cd projects/unix
 $ make all COREDIR=<my-folder> PLUGINDIR=<my-folder>
-$ sudo make install BINDIR=<my-folder>
+$ make install BINDIR=<my-folder>
 
 
