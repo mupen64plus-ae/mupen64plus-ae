@@ -200,7 +200,7 @@ targets:
 all: $(TARGET)
 
 install: $(TARGET)
-	mkdir -p "$(LIBDIR)"
+	$(INSTALL) -d -v "$(LIBDIR)"
 	$(INSTALL) -m 0644 $(TARGET) "$(LIBDIR)"
 
 uninstall:
