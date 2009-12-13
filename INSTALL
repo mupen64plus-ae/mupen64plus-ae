@@ -21,6 +21,6 @@ home folder for a single user, you may build it like this (replacing
 
 $ cd projects/unix
 $ make all
-$ sudo make install LIBDIR=<my-folder> SHAREDIR=<my-folder>
+$ make install LIBDIR=<my-folder> SHAREDIR=<my-folder>
 
 
