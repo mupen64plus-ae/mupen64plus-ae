@@ -193,6 +193,7 @@ targets:
 	@echo "  Install Options:"
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
+	@echo "    MANDIR=path    == path to install mupen64plus manual page (default: PREFIX/man/man6/)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
 
@@ -206,9 +207,11 @@ rebuild: clean all
 install: $(TARGET)
 	$(INSTALL) -d -v "$(BINDIR)"
 	$(INSTALL) -m 0755 $(TARGET) "$(BINDIR)"
+	$(INSTALL) -d -v "$(MANDIR)"
+	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(MANDIR)"
 
 uninstall:
-	rm -f "$(BINDIR)/$(TARGET)"
+	rm -f "$(BINDIR)/$(TARGET)" "$(MANDIR)/mupen64plus.6.gz"
 
 # build rules
 $(TARGET): $(OBJECTS)
