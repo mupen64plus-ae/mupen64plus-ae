@@ -156,6 +156,9 @@ endif
 ifeq ($(BINDIR),)
   BINDIR := $(PREFIX)/bin
 endif
+ifeq ($(MANDIR),)
+  MANDIR := $(PREFIX)/man/man6
+endif
 
 SRCDIR = ../../src
 OBJDIR = _obj
