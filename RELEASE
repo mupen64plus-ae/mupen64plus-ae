@@ -1,4 +1,8 @@
-Mupen64Plus-input-sdl Version 1.99.1:
+SDL Input plugin for Mupen64Plus
+--------------------------------
+
+Mupen64Plus-input-sdl v1.99.1 - December 14, 2009
+-------------------------------------------------
  - New feature: Joystick/Keyboard auto-configuration
  - New feature: deadzone and peak analog joystick values are now configurable
  - Converted to new Mupen64Plus 2.0 API
@@ -7,6 +11,13 @@ Mupen64Plus-input-sdl Version 1.99.1:
  - Improved debug messages
  - bugfix: mapping the X/Y analog sticks to keypresses didnt work
  - bugfix: LeftCtrl-LeftAlt key command when mouse is enabled to now toggles between grabbing and releasing the mouse pointer
+
+Mupen64Plus Pre-2.0
+-------------------
+ - numerous fixes and enhancements were made to this code during the mupen64plus project before v2.0
+
+Original Blight Changelog
+-------------------------
 
 0.0.10:
  - when the keyboard is used to control an axis left shift and left control can be 
@@ -78,3 +89,4 @@ Mupen64Plus-input-sdl Version 1.99.1:
 
 0.0.1b: initial version
  - should work :-)
+
