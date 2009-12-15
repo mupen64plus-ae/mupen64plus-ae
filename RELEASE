@@ -1,7 +1,8 @@
 SDL Audio plugin for Mupen64Plus
 ---------------------------------
 
-Mupen64plus-audio-sdl version 1.99.1
+Mupen64Plus-audio-sdl v1.99.1 - December 14, 2009
+-------------------------------------------------
  - Converted to new Mupen64Plus 2.0 API
  - Code cleanup to remove non-standard data types
  - Refactored build system to separate source and object files
