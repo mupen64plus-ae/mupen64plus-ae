@@ -328,7 +328,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultBool(l_ConfigVideoRice, "DefaultCombinerDisable", FALSE, "Force to use normal color combiner");
 
     ConfigSetDefaultBool(l_ConfigVideoRice, "EnableHacks", TRUE, "Enable game-specific settings from INI file");
-    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableFog", TRUE, "Enable or disable fog generation");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableFog", FALSE, "Enable or disable fog generation");
     ConfigSetDefaultBool(l_ConfigVideoRice, "WinFrameMode", FALSE, "If enabled, graphics will be drawn in WinFrame mode instead of solid and texture mode");
     ConfigSetDefaultBool(l_ConfigVideoRice, "FullTMEMEmulation", FALSE, "N64 Texture Memory Full Emulation (may fix some games, may break others)");
     ConfigSetDefaultBool(l_ConfigVideoRice, "OpenGLVertexClipper", FALSE, "Enable vertex clipper for fog operations");
