@@ -1,13 +1,15 @@
 Mupen64Plus-Video-Rice RELEASE
 ------------------------------
 
-Mupen64Plus-Video-Rice plugin Version 1.99.1:
+Mupen64Plus-Video-Rice v1.99.1 - December 14, 2009
+--------------------------------------------------
  - Converted to new Mupen64Plus 2.0 API
  - Major code cleanup, removed all non-standard data types
  - Refactored build system to separate source and object files
  - added NO_ASM build option
  - removed some unused configuration parameters
- - bugfix: handle fullscreen video mode properly: start up in this mode instead of always starting in windowed and needing the core to switch to fullscreen
+ - bugfix: handle fullscreen video mode properly: start up in this mode instead
+   of always starting in windowed and needing the core to switch to fullscreen
  - bugfix #209: setjmp/longjmp fixes in the BMP writer and PNG reader
  - bugfix: eliminated duplicate 'Found ROM ...' messages
 
