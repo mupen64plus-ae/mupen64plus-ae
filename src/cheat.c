@@ -116,7 +116,7 @@ void CheatParseIni(const char *RomSection)
     fseek(fPtr, 0L, SEEK_END);
     long IniLength = ftell(fPtr);
     fseek(fPtr, 0L, SEEK_SET);
-    l_IniText = malloc(IniLength + 1);
+    l_IniText = (char *) malloc(IniLength + 1);
     if (l_IniText == NULL)
     {
         printf("UI-Console: Couldn't allocate %li bytes of memory to read cheat ini file.\n", IniLength);
@@ -213,7 +213,6 @@ void CheatParseIni(const char *RomSection)
             continue;
         }
         /* Handle options for cheat codes */
-        char *CheatOptions;
         if (sscanf(curline, "Cheat%i_O =%32s", &CheatNum, lineextra) == 2)
         {
             /* just skip it, options are too complicated for command-line UI */
