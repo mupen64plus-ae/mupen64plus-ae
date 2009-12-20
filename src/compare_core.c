@@ -48,8 +48,10 @@ static void stop_it(void)
     (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
 
     errors++;
+#if !defined(WIN32)
     if (errors > 7)
         asm("int $3;");
+#endif
 }
 
 static void display_error(char *txt)
@@ -119,7 +121,7 @@ static void compare_core_check(unsigned int cur_opcode)
     sprintf(errHead, "Compare #%i  old_op: %x op: %x\n", comparecnt++, old_op, cur_opcode);
 
     /* get pointer to current R4300 Program Counter address */
-    ptr_PC = DebugGetCPUDataPtr(M64P_CPU_PC); /* this changes for every instruction */
+    ptr_PC = (int *) DebugGetCPUDataPtr(M64P_CPU_PC); /* this changes for every instruction */
 
     if (l_CoreCompareMode == CORE_COMPARE_RECV)
     {
@@ -190,6 +192,10 @@ static void compare_core_check(unsigned int cur_opcode)
 /* global functions */
 void compare_core_init(int mode)
 {
+#if defined(WIN32)
+    printf("UI-console: core comparison feature not supported on Windows platform.\n");
+    return;
+#else
     /* set mode */
     l_CoreCompareMode = mode;
     /* set callback functions in core */
@@ -200,9 +206,9 @@ void compare_core_init(int mode)
         return;
     }
     /* get pointers to emulated R4300 CPU registers */
-    ptr_reg = DebugGetCPUDataPtr(M64P_CPU_REG_REG);
-    ptr_cop0 = DebugGetCPUDataPtr(M64P_CPU_REG_COP0);
-    ptr_fgr = DebugGetCPUDataPtr(M64P_CPU_REG_COP1_FGR_64);
+    ptr_reg = (long long *) DebugGetCPUDataPtr(M64P_CPU_REG_REG);
+    ptr_cop0 = (int *) DebugGetCPUDataPtr(M64P_CPU_REG_COP0);
+    ptr_fgr = (long long *) DebugGetCPUDataPtr(M64P_CPU_REG_COP1_FGR_64);
     /* open file handle to FIFO pipe */
     if (l_CoreCompareMode == CORE_COMPARE_RECV)
     {
@@ -215,5 +221,6 @@ void compare_core_init(int mode)
         printf("UI-console: Core Comparison Waiting to write pipe.\n");
         fPipe = fopen("compare_pipe", "w");
     }
+#endif
 }
 

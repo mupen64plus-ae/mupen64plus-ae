@@ -151,7 +151,7 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
         CoreHandle = NULL;
         return M64ERR_INPUT_INVALID;
     }
-    m64p_plugin_type PluginType = 0;
+    m64p_plugin_type PluginType = (m64p_plugin_type) 0;
     int Compatible = 0;
     int CoreVersion = 0, APIVersion = 0;
     const char *CoreName = NULL;

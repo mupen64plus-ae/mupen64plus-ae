@@ -39,6 +39,7 @@
 #include "plugin.h"
 #include "version.h"
 #include "core_interface.h"
+#include "compare_core.h"
 #include "osal_preproc.h"
 
 /** global variables **/
@@ -225,7 +226,7 @@ static int *ParseNumberList(const char *InputString, int *ValuesFound)
     }
 
     /* create a list and populate it with the frame counter values at which to take screenshots */
-    if ((OutputList = malloc(sizeof(int) * (values + 1))) != NULL)
+    if ((OutputList = (int *) malloc(sizeof(int) * (values + 1))) != NULL)
     {
         int idx = 0;
         str = InputString;

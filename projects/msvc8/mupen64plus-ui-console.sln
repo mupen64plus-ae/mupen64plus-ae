@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mupen64plus-ui-console", "mupen64plus-ui-console.vcproj", "{0E29D9F8-C675-4D21-AF16-AA80EDDB264E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E29D9F8-C675-4D21-AF16-AA80EDDB264E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0E29D9F8-C675-4D21-AF16-AA80EDDB264E}.Debug|Win32.Build.0 = Debug|Win32
+		{0E29D9F8-C675-4D21-AF16-AA80EDDB264E}.Release|Win32.ActiveCfg = Release|Win32
+		{0E29D9F8-C675-4D21-AF16-AA80EDDB264E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

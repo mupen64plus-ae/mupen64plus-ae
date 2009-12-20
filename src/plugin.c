@@ -61,7 +61,7 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
         osal_dynlib_close(handle);
         return M64ERR_INCOMPATIBLE;
     }
-    m64p_plugin_type PluginType = 0;
+    m64p_plugin_type PluginType = (m64p_plugin_type) 0;
     int PluginVersion = 0;
     const char *PluginName = NULL;
     (*PluginGetVersion)(&PluginType, &PluginVersion, NULL, &PluginName, NULL);
@@ -74,7 +74,7 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
     /* the front-end doesn't talk to the plugins, so we don't care about the plugin version or api version */
 
     /* call the plugin's initialization function and make sure it starts okay */
-    ptr_PluginStartup PluginStartup = osal_dynlib_getproc(handle, "PluginStartup");
+    ptr_PluginStartup PluginStartup = (ptr_PluginStartup) osal_dynlib_getproc(handle, "PluginStartup");
     if (PluginStartup == NULL)
     {
         fprintf(stderr, "Error: library '%s' broken.  No PluginStartup() function found.\n", filepath);
