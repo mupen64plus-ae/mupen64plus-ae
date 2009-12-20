@@ -22,6 +22,7 @@
 
 # detect operation system
 UNAME = $(shell uname -s)
+OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
 endif
@@ -34,10 +35,14 @@ endif
 ifeq ("$(UNAME)","FreeBSD")
   OS = FREEBSD
 endif
+ifeq ("$(OS)","NONE")
+  $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
+endif
 
 # detect system architecture
 HOST_CPU ?= $(shell uname -m)
 NO_ASM ?= 1
+CPU := NONE
 ifneq ("$(filter x86_64 amd64,$(HOST_CPU))","")
   CPU := X86
   ifeq ("$(BITS)", "32")
@@ -50,13 +55,17 @@ ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
   CPU := X86
   ARCH_DETECTED := 32BITS
 endif
-ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
-  CPU := PPC
-  ARCH_DETECTED := 32BITS
-endif
-ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
-  CPU := PPC
-  ARCH_DETECTED := 64BITS
+# PPC doesn't work yet
+#ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
+#  CPU := PPC
+#  ARCH_DETECTED := 32BITS
+#endif
+#ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
+#  CPU := PPC
+#  ARCH_DETECTED := 64BITS
+#endif
+ifeq ("$(CPU)","NONE")
+  $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
@@ -122,15 +131,14 @@ else
 endif
 
 # set shell function names
-CC      = gcc
-CXX     = g++
-LD      = g++
-INSTALL = install
-ifeq ($(OS),LINUX)
-  STRIP	= strip -s
-endif
+CC      ?= gcc
+CXX     ?= g++
+LD      ?= g++
+INSTALL ?= install
 ifeq ($(OS),OSX)
-  STRIP	= strip -x 
+  STRIP	?= strip -x 
+else
+  STRIP	?= strip -s
 endif
 
 # set special flags for given Makefile parameters
@@ -197,6 +205,7 @@ targets:
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
 	@echo "    MANDIR=path    == path to install mupen64plus manual page (default: PREFIX/man/man6/)"
+	@echo "    DESTDIR=path   == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
 
@@ -208,13 +217,13 @@ clean:
 rebuild: clean all
 
 install: $(TARGET)
-	$(INSTALL) -d -v "$(BINDIR)"
-	$(INSTALL) -m 0755 $(TARGET) "$(BINDIR)"
-	$(INSTALL) -d -v "$(MANDIR)"
-	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(MANDIR)"
+	$(INSTALL) -d -v "$(DESTDIR)$(BINDIR)"
+	$(INSTALL) -m 0755 $(TARGET) "$(DESTDIR)$(BINDIR)"
+	$(INSTALL) -d -v "$(DESTDIR)$(MANDIR)"
+	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(DESTDIR)$(MANDIR)"
 
 uninstall:
-	rm -f "$(BINDIR)/$(TARGET)" "$(MANDIR)/mupen64plus.6.gz"
+	rm -f "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/mupen64plus.6.gz"
 
 # build rules
 $(TARGET): $(OBJECTS)
