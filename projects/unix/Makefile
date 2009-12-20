@@ -20,8 +20,9 @@
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 # Makefile for SDL Input plugin in Mupen64plus
 
-# detect operation system
+# detect operating system
 UNAME = $(shell uname -s)
+OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
   SO_EXTENSION = so
@@ -42,10 +43,14 @@ ifeq ("$(UNAME)","FreeBSD")
   SO_EXTENSION = so
   SHARED = -shared
 endif
+ifeq ("$(OS)","NONE")
+  $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
+endif
 
 # detect system architecture
 HOST_CPU ?= $(shell uname -m)
 NO_ASM ?= 1
+CPU := NONE
 ifneq ("$(filter x86_64 amd64,$(HOST_CPU))","")
   CPU := X86
   ifeq ("$(BITS)", "32")
@@ -58,13 +63,17 @@ ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
   CPU := X86
   ARCH_DETECTED := 32BITS
 endif
-ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
-  CPU := PPC
-  ARCH_DETECTED := 32BITS
-endif
-ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
-  CPU := PPC
-  ARCH_DETECTED := 64BITS
+# PPC doesn't work yet
+#ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
+#  CPU := PPC
+#  ARCH_DETECTED := 32BITS
+#endif
+#ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
+#  CPU := PPC
+#  ARCH_DETECTED := 64BITS
+#endif
+ifeq ("$(CPU)","NONE")
+  $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
@@ -156,15 +165,14 @@ else
 endif
 
 # set shell function names
-CC      = gcc
-CXX     = g++
-LD      = g++
-INSTALL = install
-ifeq ($(OS),LINUX)
-  STRIP	= strip -s
-endif
+CC      ?= gcc
+CXX     ?= g++
+LD      ?= g++
+INSTALL ?= install
 ifeq ($(OS),OSX)
-  STRIP	= strip -x 
+  STRIP	?= strip -x 
+else
+  STRIP	?= strip -s
 endif
 
 # set special flags for given Makefile parameters
@@ -216,6 +224,7 @@ targets:
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == path to install plugin libraries (default: PREFIX/lib/mupen64plus)"
+	@echo "    DESTDIR=path  == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1       == add debugging symbols"
 	@echo "    PLUGINDBG=1   == print extra debugging information while running"
@@ -223,11 +232,11 @@ targets:
 all: $(TARGET)
 
 install: $(TARGET)
-	$(INSTALL) -d -v "$(LIBDIR)"
-	$(INSTALL) -m 0644 $(TARGET) "$(LIBDIR)"
+	$(INSTALL) -d -v "$(DESTDIR)$(LIBDIR)"
+	$(INSTALL) -m 0644 $(TARGET) "$(DESTDIR)$(LIBDIR)"
 
 uninstall:
-	rm -f "$(LIBDIR)/$(TARGET)"
+	rm -f "$(DESTDIR)$(LIBDIR)/$(TARGET)"
 
 clean:
 	rm -rf ./_obj/* $(TARGET)
