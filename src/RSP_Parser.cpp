@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "RenderTexture.h"
 #include "Video.h"
 #include "ucode.h"
-#include <sys/time.h>
+#include <time.h>
 
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
@@ -516,7 +516,7 @@ void RDP_SetUcodeMap(int ucode)
         break;
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( logMicrocode )
         TRACE1("Using ucode %d", ucode);
 #endif
@@ -607,7 +607,7 @@ static uint32 DLParser_IdentifyUcode( uint32 crc_size, uint32 crc_800, char* str
 {
     for ( uint32 i = 0; i < sizeof(g_UcodeData)/sizeof(UcodeData); i++ )
     {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if ( crc_800 == g_UcodeData[i].crc_800 )
         {
             if( strlen(str)==0 || strcmp((const char *) g_UcodeData[i].ucode_name, str) == 0 ) 
@@ -635,7 +635,7 @@ static uint32 DLParser_IdentifyUcode( uint32 crc_size, uint32 crc_800, char* str
 #endif
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     {
         static bool warned = false;
         if( warned == false )
@@ -670,7 +670,7 @@ uint32 DLParser_CheckUcode(uint32 ucStart, uint32 ucDStart, uint32 ucSize, uint3
         if( UsedUcodes[usedUcodeIndex].ucStart == ucStart && UsedUcodes[usedUcodeIndex].ucSize == ucSize &&
             UsedUcodes[usedUcodeIndex].ucDStart == ucDStart /*&& UsedUcodes[usedUcodeIndex].ucDSize == ucDSize*/ )
         {
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if(gRSP.ucode != (int)UsedUcodes[usedUcodeIndex].ucode && logMicrocode)
             {
                 DebuggerAppendMsg("Check, ucode = %d, crc = %08X, %s", UsedUcodes[usedUcodeIndex].ucode, 
@@ -719,7 +719,7 @@ uint32 DLParser_CheckUcode(uint32 ucStart, uint32 ucDStart, uint32 ucSize, uint3
         ucode = DLParser_IdentifyUcode( crc_size, crc_800, (char*)str );
         if ( (int)ucode == ~0 )
         {
-#ifdef _DEBUG
+#ifdef DEBUGGER
             static bool warned=false;
             //if( warned == false )
             {
@@ -741,7 +741,7 @@ uint32 DLParser_CheckUcode(uint32 ucStart, uint32 ucDStart, uint32 ucSize, uint3
 
         //DLParser_SetuCode( ucode );
         
-#ifdef _DEBUG
+#ifdef DEBUGGER
         {
             static bool warned=false;
             if( warned == false )
@@ -815,9 +815,7 @@ void DLParser_Process(OSTask * pTask)
     g_pOSTask = pTask;
     
     DebuggerPauseCountN( NEXT_DLIST );
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    status.gRDPTime = tv.tv_usec;
+    status.gRDPTime = (uint32) time(NULL);
 
     status.gDlistCount++;
 
@@ -837,8 +835,8 @@ void DLParser_Process(OSTask * pTask)
             {DebuggerAppendMsg("Start Task without DLIST: ucode=%08X, data=%08X", (uint32)pTask->t.ucode, (uint32)pTask->t.ucode_data);});
 
 
-    // Check if we need to purge
-    if (status.gRDPTime - status.lastPurgeTimeTime > 5000)
+    // Check if we need to purge (every 2 seconds)
+    if (status.gRDPTime - status.lastPurgeTimeTime > 1)
     {
         gTextureManager.PurgeOldTextures();
         status.lastPurgeTimeTime = status.gRDPTime;
@@ -867,7 +865,7 @@ void DLParser_Process(OSTask * pTask)
         // The main loop
         while( gDlistStackPointer >= 0 )
         {
-#ifdef _DEBUG
+#ifdef DEBUGGER
             DEBUGGER_PAUSE_COUNT_N(NEXT_UCODE);
             if( debuggerPause )
             {
@@ -885,7 +883,7 @@ void DLParser_Process(OSTask * pTask)
             status.gUcodeCount++;
 
             Gfx *pgfx = (Gfx*)&g_pRDRAMu32[(gDlistStack[gDlistStackPointer].pc>>2)];
-#ifdef _DEBUG
+#ifdef DEBUGGER
             LOG_UCODE("0x%08x: %08x %08x %-10s", 
                 gDlistStack[gDlistStackPointer].pc, pgfx->words.w0, pgfx->words.w1, (gRSP.ucode!=5&&gRSP.ucode!=10)?ucodeNames_GBI1[(pgfx->words.w0>>24)]:ucodeNames_GBI2[(pgfx->words.w0>>24)]);
 #endif
@@ -921,7 +919,7 @@ void DLParser_Process(OSTask * pTask)
 
 void RDP_NOIMPL_Real(const char* op, uint32 word0, uint32 word1) 
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( logWarning )
     {
         TRACE0("Stack Trace");
@@ -939,7 +937,7 @@ void RDP_NOIMPL_Real(const char* op, uint32 word0, uint32 word1)
 
 void RDP_NOIMPL_WARN(const char* op)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if(logWarning)
     {
         TRACE0(op);
@@ -1630,9 +1628,7 @@ void DLParser_SetEnvColor(Gfx *gfx)
 
 void RDP_DLParser_Process(void)
 {
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    status.gRDPTime = tv.tv_usec;
+    status.gRDPTime = (uint32) time(NULL);
 
     status.gDlistCount++;
 
@@ -1643,8 +1639,8 @@ void RDP_DLParser_Process(void)
     gDlistStack[gDlistStackPointer].pc = start;
     gDlistStack[gDlistStackPointer].countdown = MAX_DL_COUNT;
 
-    // Check if we need to purge
-    if (status.gRDPTime - status.lastPurgeTimeTime > 5000)
+    // Check if we need to purge (every 2 seconds)
+    if (status.gRDPTime - status.lastPurgeTimeTime > 1)
     {
         gTextureManager.PurgeOldTextures();
         status.lastPurgeTimeTime = status.gRDPTime;
@@ -1777,7 +1773,7 @@ void LoadMatrix(uint32 addr)
     }
 
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     LOG_UCODE(
         " %#+12.5f %#+12.5f %#+12.5f %#+12.5f\r\n"
         " %#+12.5f %#+12.5f %#+12.5f %#+12.5f\r\n"
@@ -1787,6 +1783,6 @@ void LoadMatrix(uint32 addr)
         matToLoad.m[1][0], matToLoad.m[1][1], matToLoad.m[1][2], matToLoad.m[1][3],
         matToLoad.m[2][0], matToLoad.m[2][1], matToLoad.m[2][2], matToLoad.m[2][3],
         matToLoad.m[3][0], matToLoad.m[3][1], matToLoad.m[3][2], matToLoad.m[3][3]);
-#endif // _DEBUG
+#endif // DEBUGGER
 }
 

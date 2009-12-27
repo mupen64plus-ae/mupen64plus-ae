@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - osal_win32types.h                                       *
+ *   Mupen64plus - osal_preproc.h                                          *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
@@ -20,10 +20,19 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/* this header file is for system-dependent #defines, #includes, and typedefs */
+
+#if !defined(OSAL_PREPROC_H)
+#define OSAL_PREPROC_H
+
 #if defined(WIN32)
   #include <windows.h>
-#elif !defined(WIN32TYPES_H)
-#define WIN32TYPES_H
+  #define strncasecmp _strnicmp
+  #define strcasecmp _stricmp
+  #define ALIGN(BYTES,DATA) __declspec(align(BYTES)) DATA;
+#else
+
+  #define ALIGN(BYTES,DATA) DATA __attribute__((aligned(BYTES)));
 
 typedef unsigned int BOOL;
 typedef void* HBITMAP;
@@ -36,12 +45,6 @@ typedef struct
    int left;
 } RECT;
 
-typedef struct _COORDRECT
-{
-   int x1,y1;
-   int x2,y2;
-} COORDRECT;
-
 #define __cdecl
 
 #ifndef FALSE
@@ -51,12 +54,6 @@ typedef struct _COORDRECT
 #ifndef TRUE
 #define TRUE 1
 #endif
-
-typedef unsigned int COLOR;
-
-#define SURFFMT_A8R8G8B8 21
-
-#define COLOR_RGBA(r,g,b,a) (((r&0xFF)<<16) | ((g&0xFF)<<8) | ((b&0xFF)<<0) | ((a&0xFF)<<24))
 
 typedef struct tagBITMAPINFOHEADER
 {
@@ -90,5 +87,6 @@ typedef struct tagBITMAPFILEHEADER
 
 #define BI_RGB 0
 
-#endif // WIN32TYPES_H
+#endif // WIN32
 
+#endif // OSAL_PREPROC_H

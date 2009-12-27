@@ -142,7 +142,7 @@ protected:
     uint32 m_dwLastMux0;
     uint32 m_dwLastMux1;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplaySimpleMuxString(void);
 #endif
 
@@ -197,7 +197,7 @@ class COGLColorCombiner2 : public COGLColorCombiner4, CGeneralCombiner
 public:
     bool Initialize(void);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplaySimpleMuxString(void);
 #endif
 

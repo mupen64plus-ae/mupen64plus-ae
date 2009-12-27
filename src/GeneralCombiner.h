@@ -215,7 +215,7 @@ protected:
 
     bool    IsTextureUsedInStage(GeneralCombineStage &stage);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void General_DisplayBlendingStageInfo(GeneralCombinerInfo &ci);
 #endif
 

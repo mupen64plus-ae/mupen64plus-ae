@@ -58,7 +58,7 @@ void RSP_GBI2_CullDL(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_CullDL);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( !debuggerEnableCullFace )
     {
         return; //Disable Culling
@@ -141,7 +141,7 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
             if( dwAddr > g_dwRamSize )
             {
                 gRSP.segments[dwSeg] = dwAddr;
-#ifdef _DEBUG
+#ifdef DEBUGGER
                 if( pauseAtNext )
                     DebuggerAppendMsg("warning: Segment %d addr is %8X", dwSeg, dwAddr);
 #endif
@@ -270,7 +270,7 @@ void RSP_GBI2_Tri1(Gfx *gfx)
             gfx++;
             dwPC += 8;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && gfx->words.cmd == (uint8)RSP_ZELDATRI1);
 #else
         } while( gfx->words.cmd == (uint8)RSP_ZELDATRI1);
@@ -356,7 +356,7 @@ void RSP_GBI2_Tri2(Gfx *gfx)
             gfx++;
             dwPC += 8;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && gfx->words.cmd == (uint8)RSP_ZELDATRI2);
 #else
         } while ( gfx->words.cmd == (uint8)RSP_ZELDATRI2 );//&& status.dwNumTrisRendered < 50);
@@ -443,7 +443,7 @@ void RSP_GBI2_Line3D(Gfx *gfx)
             gfx++;
             dwPC += 8;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && gfx->words.cmd == (uint8)RSP_LINE3D);
 #else
         } while ( gfx->words.cmd == (uint8)RSP_LINE3D);
@@ -548,7 +548,7 @@ void RSP_GBI2_PopMtx(Gfx *gfx)
     {
         CRender::g_pRender->PopWorldView();
     }
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( pauseAtNext && eventToPause == NEXT_MATRIX_CMD )
     {
         pauseAtNext = false;
@@ -583,7 +583,7 @@ void RSP_GBI2_GeometryMode(Gfx *gfx)
     uint32 dwAnd = ((gfx->words.w0)) & 0x00FFFFFF;
     uint32 dwOr  = ((gfx->words.w1)) & 0x00FFFFFF;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         LOG_UCODE("    0x%08x 0x%08x =(x & 0x%08x) | 0x%08x", gfx->words.w0, gfx->words.w1, dwAnd, dwOr);
 
         if ((~dwAnd) & RSP_ZELDA_ZBUFFER)                   LOG_UCODE("  Disabling ZBuffer");
@@ -609,7 +609,7 @@ void RSP_GBI2_GeometryMode(Gfx *gfx)
         if (dwOr & RSP_ZELDA_TEXTURE_GEN)                   LOG_UCODE("  Enabling Texture Gen");
         if (dwOr & RSP_ZELDA_TEXTURE_GEN_LINEAR)            LOG_UCODE("  Enabling Texture Gen Linear");
         //  if (dwOr & RSP_ZELDA_LOD)                           LOG_UCODE("  Enabling LOD (no impl)");
-#endif // _DEBUG
+#endif // DEBUGGER
 
         gRDP.geometryMode &= dwAnd;
     gRDP.geometryMode |= dwOr;
@@ -693,7 +693,7 @@ void RSP_GBI2_Mtx(Gfx *gfx)
         }
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     const char *loadstr = gfx->gbi2matrix.load?"Load":"Mul";
     const char *pushstr = gfx->gbi2matrix.nopush==0?"Push":"Nopush";
     int projlevel = CRender::g_pRender->GetProjectMatrixLevel();

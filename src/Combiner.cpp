@@ -61,7 +61,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //  "1           ", "0           ",
 //};
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 const char *constStrs[] = {
     "MUX_0",
     "MUX_1",
@@ -362,7 +362,7 @@ bool IsTxtrUsed(N64CombinerType &m)
 
 void CColorCombiner::InitCombinerMode(void)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     LOG_UCODE(cycleTypeStrs[gRDP.otherMode.cycle_type]);
 
     if( debuggerDropDecodedMux )
@@ -397,7 +397,7 @@ void CColorCombiner::InitCombinerMode(void)
 bool bConkerHideShadow=false;
 void CColorCombiner::UpdateCombiner(uint32 dwMux0, uint32 dwMux1)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerDropDecodedMux )
     {
         debuggerDropDecodedMux = false;
@@ -468,7 +468,7 @@ void CColorCombiner::UpdateCombiner(uint32 dwMux0, uint32 dwMux1)
                 m_decodedMux.SplitComplexStages();
             
             m_DecodedMuxList.add(m_decodedMux.m_u64Mux, *m_pDecodedMux);
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( logCombiners ) 
             {
                 TRACE0("Add a new mux");
@@ -487,7 +487,7 @@ void CColorCombiner::UpdateCombiner(uint32 dwMux0, uint32 dwMux1)
 }
 
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 void CColorCombiner::DisplayMuxString(void)
 {
     if( gRDP.otherMode.cycle_type == CYCLE_TYPE_COPY)

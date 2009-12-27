@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _TYPEDEFS_H_
 #define _TYPEDEFS_H_
 
-#include "osal_win32types.h"
+#include "osal_preproc.h"
 #include "VectorMath.h"
 
 #define uchar  unsigned char
@@ -35,8 +35,15 @@ typedef int                         s32;
 typedef unsigned int                u32;
 typedef unsigned char               u8;
 
+typedef unsigned int COLOR;
+typedef struct _COORDRECT
+{
+   int x1,y1;
+   int x2,y2;
+} COORDRECT;
+#define COLOR_RGBA(r,g,b,a) (((r&0xFF)<<16) | ((g&0xFF)<<8) | ((b&0xFF)<<0) | ((a&0xFF)<<24))
+#define SURFFMT_A8R8G8B8 21
 
-//Fix me, these macro should not be used anymore in DirectX 8
 #define RGBA_GETALPHA(rgb)      ((rgb) >> 24)
 #define RGBA_GETRED(rgb)        (((rgb) >> 16) & 0xff)
 #define RGBA_GETGREEN(rgb)      (((rgb) >> 8) & 0xff)

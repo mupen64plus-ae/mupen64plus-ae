@@ -104,7 +104,7 @@ void CRender::LoadFrameBuffer(bool useVIreg, uint32 left, uint32 top, uint32 wid
         return;
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( pauseAtNext )
     {
         DebuggerAppendMsg("Load Frame Buffer Imag at: %08X, (%d, %d) - (%d, %d)", gti.Address,
@@ -492,7 +492,7 @@ void CRender::DrawFrameBuffer(bool useVIreg, uint32 left, uint32 top, uint32 wid
     }
 
     TXTRBUF_OR_CI_DUMP(TRACE0("Draw Frame Buffer Img"));
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( pauseAtNext && ( eventToPause == NEXT_FRAME || eventToPause == NEXT_FLUSH_TRI ) )
     {
         TRACE0("Draw Frame Buffer Img");

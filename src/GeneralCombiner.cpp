@@ -59,7 +59,7 @@ bool isComb(uint32 val)
     return (val&MUX_MASK)==MUX_COMBINED;
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 const char* BlendFuncStr[] = {
     "Enable both",
     "Disable alpha",
@@ -935,7 +935,7 @@ int CGeneralCombiner::ParseDecodedMux()
         }
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( !resultIsGood )
     {
         DecodedMux &mux = *(*m_ppGeneralDecodedMux);
@@ -1021,7 +1021,7 @@ int CGeneralCombiner::SaveParserResult(GeneralCombinerInfo &result)
 
 int CGeneralCombiner::FindCompiledMux( )
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerDropCombiners || debuggerDropGeneralCombiners )
     {
         m_vCompiledCombinerStages.clear();

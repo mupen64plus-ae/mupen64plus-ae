@@ -237,7 +237,7 @@ void RSP_Vtx_Gemini(Gfx *gfx)
 // DKR verts are extra 4 bytes
 void RDP_GFX_DumpVtxInfoDKR(uint32 dwAddr, uint32 dwV0, uint32 dwN)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         uint32 dwV;
         int i;
 
@@ -284,7 +284,7 @@ void RDP_GFX_DumpVtxInfoDKR(uint32 dwAddr, uint32 dwV0, uint32 dwN)
             i += 5;
         }
 
-#endif // _DEBUG
+#endif // DEBUGGER
 }
 
 void DLParser_Set_Addr_Ucode6(Gfx *gfx)
@@ -419,7 +419,7 @@ void TexRectToN64FrameBuffer_YUV_16b(uint32 x0, uint32 y0, uint32 width, uint32 
 extern uObjMtxReal gObjMtxReal;
 void DLParser_OgreBatter64BG(Gfx *gfx)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
 uint32 dwAddr = RSPSegmentAddr((gfx->words.w1));
 uObjTxSprite *ptr = (uObjTxSprite*)(g_pRDRAMu8+dwAddr);
 #endif
@@ -429,7 +429,7 @@ PrepareTextures();
 CTexture *ptexture = g_textures[0].m_pCTexture;
 TexRectToN64FrameBuffer_16b( (uint32)gObjMtxReal.X, (uint32)gObjMtxReal.Y, ptexture->m_dwWidth, ptexture->m_dwHeight, gRSP.curTile);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 CRender::g_pRender->DrawSpriteR(*ptr, false);
 
 DEBUGGER_PAUSE_AT_COND_AND_DUMP_COUNT_N((pauseAtNext && 
@@ -668,7 +668,7 @@ void RSP_Tri4_PD(Gfx *gfx)
         w1          = *(uint32 *)(g_pRDRAMu8 + dwPC+4);
         dwPC += 8;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && (w0>>24) == (uint8)RSP_TRI2);
 #else
     } while ((w0>>24) == (uint8)RSP_TRI2);
@@ -746,7 +746,7 @@ void DLParser_Tri4_Conker(Gfx *gfx)
         w1          = *(uint32 *)(g_pRDRAMu8 + dwPC+4);
         dwPC += 8;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && (w0>>28) == 1 );
 #else
     } while ((w0>>28) == 1);
@@ -916,7 +916,7 @@ void DLParser_RS_Color_Buffer(Gfx *gfx)
     Rogue_Squadron_Vtx_Color_Addr = dwAddr;
 
     LOG_UCODE("Vtx_Color at PC=%08X: 0x%08x 0x%08x\n", dwPC-8, (gfx->words.w0), (gfx->words.w1));
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( pauseAtNext && (eventToPause == NEXT_VERTEX_CMD ) )
     {
         DebuggerAppendMsg("Vtx_Color at PC=%08X: 0x%08x 0x%08x\n", dwPC-8, (gfx->words.w0), (gfx->words.w1));
@@ -949,7 +949,7 @@ void DLParser_RS_Vtx_Buffer(Gfx *gfx)
     Rogue_Squadron_Vtx_XYZ_Cmd = (gfx->words.w0);
     Rogue_Squadron_Vtx_XYZ_Addr = dwAddr;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( pauseAtNext && (eventToPause == NEXT_VERTEX_CMD ) )
     {
         DebuggerAppendMsg("Vtx_XYZ at PC=%08X: 0x%08x 0x%08x\n", dwPC-8, (gfx->words.w0), (gfx->words.w1));
@@ -1021,7 +1021,7 @@ void DLParser_RS_0xbe(Gfx *gfx)
 
 void DLParser_Ucode8_EndDL(Gfx *gfx)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
 uint32 dwPC = gDlistStack[gDlistStackPointer].pc-8;
 #endif
 
@@ -1031,7 +1031,7 @@ DEBUGGER_PAUSE_AND_DUMP(NEXT_DLIST, DebuggerAppendMsg("PC=%08X: EndDL, return to
 
 void DLParser_Ucode8_DL(Gfx *gfx)   // DL Function Call
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
 uint32 dwPC = gDlistStack[gDlistStackPointer].pc-8;
 #endif
 
@@ -1087,7 +1087,7 @@ void DLParser_Ucode8_JUMP(Gfx *gfx) // DL Function Call
 {
 if( ((gfx->words.w0)&0x00FFFFFF) == 0 )
     {
-    #ifdef _DEBUG
+    #ifdef DEBUGGER
     uint32 dwPC = gDlistStack[gDlistStackPointer].pc-8;
     #endif
 
@@ -1099,7 +1099,7 @@ if( ((gfx->words.w0)&0x00FFFFFF) == 0 )
         dwAddr = (gfx->words.w1)&(g_dwRamSize-1);
         }
 
-    #ifdef _DEBUG
+    #ifdef DEBUGGER
     uint32 dwCmd2 = *(uint32 *)(g_pRDRAMu8 + dwAddr);
     uint32 dwCmd3 = *(uint32 *)(g_pRDRAMu8 + dwAddr+4);
     #endif
@@ -1214,7 +1214,7 @@ else
 
 void DLParser_Ucode8_0xb4(Gfx *gfx)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
 uint32 dwPC = gDlistStack[gDlistStackPointer].pc;
 #endif
 
@@ -1226,7 +1226,7 @@ else if(((gfx->words.w0)&0xFFF) == 0x600)
     DLParser_Unknown_Skip3(gfx);
 else
     {
-    #ifdef _DEBUG
+    #ifdef DEBUGGER
     if(pauseAtNext)
         {
         DebuggerAppendMsg("ucode 0xb4 at PC=%08X: 0x%08x 0x%08x\n", dwPC-8,
@@ -1258,7 +1258,7 @@ void DLParser_Ucode8_0xb5(Gfx *gfx)
 
     if( GSBlkAddrSaves[gDlistStackPointer][0] == 0 || GSBlkAddrSaves[gDlistStackPointer][1] == 0 )
     {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if( pauseAtNext && eventToPause == NEXT_DLIST)
         {
             DebuggerAppendMsg("PC=%08X: 0xB5 - %08X : %08X, %08X, EndDL, no next blk\n", dwPC, (gfx->words.w1), dwCmd2, dwCmd3);
@@ -1270,7 +1270,7 @@ void DLParser_Ucode8_0xb5(Gfx *gfx)
 
     if( ((dwCmd2>>24)!=0x80 && (dwCmd2>>24)!=0x00 ) || ((dwCmd3>>24)!=0x80 && (dwCmd3>>24)!=0x00 ) )
     {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if( pauseAtNext && eventToPause == NEXT_DLIST)
         {
             DebuggerAppendMsg("PC=%08X: 0xB5 - %08X : %08X, %08X, EndDL, Unknown\n", dwPC, (gfx->words.w1), dwCmd2, dwCmd3);
@@ -1282,7 +1282,7 @@ void DLParser_Ucode8_0xb5(Gfx *gfx)
 
     if( (dwCmd2>>24)!= (dwCmd3>>24) )
     {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if( pauseAtNext && eventToPause == NEXT_DLIST)
         {
             DebuggerAppendMsg("PC=%08X: 0xB5 - %08X : %08X, %08X, EndDL, Unknown\n", dwPC, (gfx->words.w1), dwCmd2, dwCmd3);
@@ -1298,7 +1298,7 @@ void DLParser_Ucode8_0xb5(Gfx *gfx)
         if( dwCmd2 < dwCmd3  )
         {
             // All right, the next block is not ucode, but data
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( pauseAtNext && eventToPause == NEXT_DLIST)
             {
                 DebuggerAppendMsg("PC=%08X: 0xB5 - %08X : %08X, %08X, EndDL, next blk is data\n", dwPC, (gfx->words.w1), dwCmd2, dwCmd3);
@@ -1315,7 +1315,7 @@ void DLParser_Ucode8_0xb5(Gfx *gfx)
         if( (dwCmd4>>24) != 0x80 || (dwCmd5>>24) != 0x80 || (dwCmd6>>24) != 0x80 || (dwCmd7>>24) != 0x80 || dwCmd4 < dwCmd5 || dwCmd6 < dwCmd7 )
         {
             // All right, the next block is not ucode, but data
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( pauseAtNext && eventToPause == NEXT_DLIST)
             {
                 DebuggerAppendMsg("PC=%08X: 0xB5 - %08X : %08X, %08X, EndDL, next blk is data\n", dwPC, (gfx->words.w1), dwCmd2, dwCmd3);
@@ -1334,7 +1334,7 @@ void DLParser_Ucode8_0xb5(Gfx *gfx)
     }
     else if( (dwCmd2>>24)==0x00 && (dwCmd3>>24)==0x00 )
     {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if( pauseAtNext && eventToPause == NEXT_DLIST)
         {
             DebuggerAppendMsg("PC=%08X: 0xB5 - %08X : %08X, %08X, EndDL, next blk is data\n", dwPC, (gfx->words.w1), dwCmd2, dwCmd3);
@@ -1350,7 +1350,7 @@ void DLParser_Ucode8_0xb5(Gfx *gfx)
         if( (dwCmd2>>24)==0x80 && (dwCmd3>>24)==0x80 && dwCmd2 < dwCmd3 )
         {
             // All right, the next block is not ucode, but data
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( pauseAtNext && eventToPause == NEXT_DLIST)
             {
                 DebuggerAppendMsg("PC=%08X: 0xB5 - %08X : %08X, %08X, EndDL, next blk is data\n", dwPC, (gfx->words.w1), dwCmd2, dwCmd3);
@@ -1369,7 +1369,7 @@ void DLParser_Ucode8_0xb5(Gfx *gfx)
         }
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 uint32 dwAddr1 = RSPSegmentAddr(dwCmd2);
 uint32 dwAddr2 = RSPSegmentAddr(dwCmd3);
 
@@ -1486,7 +1486,7 @@ void PD_LoadMatrix_0xb4(uint32 addr)
     }
 
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     LOG_UCODE(
         " %#+12.5f %#+12.5f %#+12.5f %#+12.5f\r\n"
         " %#+12.5f %#+12.5f %#+12.5f %#+12.5f\r\n"
@@ -1496,7 +1496,7 @@ void PD_LoadMatrix_0xb4(uint32 addr)
         matToLoad.m[1][0], matToLoad.m[1][1], matToLoad.m[1][2], matToLoad.m[1][3],
         matToLoad.m[2][0], matToLoad.m[2][1], matToLoad.m[2][2], matToLoad.m[2][3],
         matToLoad.m[3][0], matToLoad.m[3][1], matToLoad.m[3][2], matToLoad.m[3][3]);
-#endif // _DEBUG
+#endif // DEBUGGER
 }   
 
 void DLParser_RDPHalf_1_0xb4_GoldenEye(Gfx *gfx)        
@@ -1542,7 +1542,7 @@ void DLParser_RDPHalf_1_0xb4_GoldenEye(Gfx *gfx)
 
         gDlistStack[gDlistStackPointer].pc += 312;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if( logUcodes)
         {
             dwPC -= 8;

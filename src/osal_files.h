@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - OGLCombiner.h                                           *
+ *   Mupen64plus-ui-console - osal_files.h                                 *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2002 Rice1964                                           *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,59 +19,39 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _OGL_COMBINER_H_
-#define _OGL_COMBINER_H_
+/* This header file is for all kinds of system-dependent file handling
+ *
+ */
 
-#include "Blender.h"
-#include "Combiner.h"
+#if !defined(OSAL_FILES_H)
+#define OSAL_FILES_H
 
-class OGLRender;
-
-class COGLColorCombiner : public CColorCombiner
-{
-public:
-    bool Initialize(void);
-    void InitCombinerBlenderForSimpleTextureDraw(uint32 tile=0);
-protected:
-    friend class OGLDeviceBuilder;
-
-    void DisableCombiner(void);
-    void InitCombinerCycleCopy(void);
-    void InitCombinerCycleFill(void);
-    void InitCombinerCycle12(void);
-
-    COGLColorCombiner(CRender *pRender);
-    ~COGLColorCombiner();
-    OGLRender *m_pOGLRender;
-    
-    bool    m_bSupportAdd;
-    bool    m_bSupportSubtract;
-
-#ifdef DEBUGGER
-    void DisplaySimpleMuxString(void);
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-};
+#include "m64p_types.h"
 
-class COGLBlender : public CBlender
-{
-public:
-    void NormalAlphaBlender(void);
-    void DisableAlphaBlender(void);
-    void BlendFunc(uint32 srcFunc, uint32 desFunc);
-    void Enable();
-    void Disable();
-
-protected:
-    friend class OGLDeviceBuilder;
-    COGLBlender(CRender *pRender) : CBlender(pRender), m_pOGLRender((OGLRender*)pRender) {};
-    ~COGLBlender() {};
-
-    OGLRender *m_pOGLRender;
-};
-
-
+#if defined(WIN32)
+  #define PATH_MAX _MAX_PATH
+  #define OSAL_DIR_SEPARATOR_STR       "\\"
+  #define OSAL_DIR_SEPARATOR_CHAR      '\\'
+#else  /* Not WIN32 */
+  #include <limits.h>  // for PATH_MAX
+  #define OSAL_DIR_SEPARATOR_STR       "/"
+  #define OSAL_DIR_SEPARATOR_CHAR      '/'
 #endif
 
+int osal_is_directory(const char* name);
+int osal_mkdirp(const char *dirpath, int mode);
 
+void * osal_search_dir_open(const char *pathname);
+const char *osal_search_dir_read_next(void * dir_handle);
+void osal_search_dir_close(void * dir_handle);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* #define OSAL_FILES_H */
 

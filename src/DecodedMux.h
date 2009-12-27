@@ -140,7 +140,7 @@ public:
     int CountTexels(void);
     int Count(uint8 val, int cycle= -1, uint8 mask = MUX_MASK);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplayMuxString(const char *prompt);
     void DisplaySimpliedMuxString(const char *prompt);
     void DisplayConstantsWithShade(uint32 flag,CombineChannel channel);

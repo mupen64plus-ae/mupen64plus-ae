@@ -100,7 +100,7 @@ void COGLColorCombiner::DisableCombiner(void)
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
             m_pOGLRender->SetAllTexelRepeatFlag();
         }
-#ifdef _DEBUG
+#ifdef DEBUGGER
         else
         {
             DebuggerAppendMsg("Check me, texture is NULL but it is enabled");
@@ -124,7 +124,7 @@ void COGLColorCombiner::InitCombinerCycleCopy(void)
         m_pOGLRender->BindTexture(pTexture->m_dwTextureName, 0);
         m_pOGLRender->SetTexelRepeatFlags(gRSP.curTile);
     }
-#ifdef _DEBUG
+#ifdef DEBUGGER
     else
     {
         DebuggerAppendMsg("Check me, texture is NULL");
@@ -159,7 +159,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
         m_pOGLRender->BindTexture(pTexture->m_dwTextureName, 0);
         m_pOGLRender->SetAllTexelRepeatFlag();
     }
-#ifdef _DEBUG
+#ifdef DEBUGGER
     else
     {
         DebuggerAppendMsg("Check me, texture is NULL");
@@ -315,7 +315,7 @@ void COGLColorCombiner::InitCombinerBlenderForSimpleTextureDraw(uint32 tile)
     m_pOGLRender->SetAlphaTestEnable(FALSE);
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 extern const char *translatedCombTypes[];
 void COGLColorCombiner::DisplaySimpleMuxString(void)
 {

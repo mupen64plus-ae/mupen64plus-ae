@@ -68,7 +68,7 @@ void COGLFragmentShaderCombiner::InitCombinerBlenderForSimpleTextureDraw(uint32 
     COGLColorCombiner::InitCombinerBlenderForSimpleTextureDraw(tile);
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 void COGLFragmentShaderCombiner::DisplaySimpleMuxString(void)
 {
     COGLColorCombiner::DisplaySimpleMuxString();
@@ -284,13 +284,13 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
     if (glGetError() != 0)
     {
         GLint position;
-#ifdef _DEBUG
+#ifdef DEBUGGER
         char *str = (char*)glGetString(GL_PROGRAM_ERROR_STRING_ARB);
 #endif
         glGetIntegerv( GL_PROGRAM_ERROR_POSITION_ARB, &position);
         if( position >= 0 )
         {
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( m_lastIndex >= 0 ) COGLColorCombiner4::DisplaySimpleMuxString();
             DebugMessage(M64MSG_ERROR, "%s - %s", str, oglNewFP+position);
 #endif
@@ -340,7 +340,7 @@ void COGL_FragmentProgramCombiner::GenerateCombinerSettingConstants(int index)
 
 int COGL_FragmentProgramCombiner::FindCompiledMux()
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerDropCombiners )
     {
         m_vCompiledShaders.clear();
@@ -368,7 +368,7 @@ void COGL_FragmentProgramCombiner::InitCombinerCycle12(void)
         return;
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerDropCombiners )
     {
         UpdateCombiner(m_pDecodedMux->m_dwMux0,m_pDecodedMux->m_dwMux1);
@@ -420,7 +420,7 @@ void COGL_FragmentProgramCombiner::InitCombinerCycle12(void)
     }
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 void COGL_FragmentProgramCombiner::DisplaySimpleMuxString(void)
 {
     COGLColorCombiner::DisplaySimpleMuxString();

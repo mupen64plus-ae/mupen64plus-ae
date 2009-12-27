@@ -62,7 +62,7 @@ void COGLColorCombinerTNT2::InitCombinerCycle12(void)
 {
     if( !m_bOGLExtCombinerSupported )   { COGLColorCombiner4::InitCombinerCycle12(); return;}
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerDropCombiners )
     {
         m_vCompiledTNTSettings.clear();
@@ -119,7 +119,7 @@ const char* COGLColorCombinerTNT2::GetOpStr(GLenum op)
 }
 
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 void COGLColorCombinerTNT2::DisplaySimpleMuxString(void)
 {
     COGLColorCombiner::DisplaySimpleMuxString();

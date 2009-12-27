@@ -137,7 +137,7 @@ void RSP_GBI1_Tri2(Gfx *gfx)
         
         gfx++;
         dwPC += 8;
-#ifdef _DEBUG
+#ifdef DEBUGGER
     } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && gfx->words.cmd == (uint8)RSP_TRI2);
 #else
     } while( gfx->words.cmd == (uint8)RSP_TRI2);
@@ -164,7 +164,7 @@ void RSP_GBI1_BranchZ(Gfx *gfx)
     uint32 vtx = ((gfx->words.w0)&0xFFF)>1;
     float vtxdepth = g_vecProjected[vtx].z/g_vecProjected[vtx].w;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerEnableZBuffer==FALSE || vtxdepth <= (s32)gfx->words.w1 || g_curRomInfo.bForceDepthBuffer )
 #else
     if( vtxdepth <= (s32)(gfx->words.w1) || g_curRomInfo.bForceDepthBuffer )
@@ -182,7 +182,7 @@ void RSP_GBI1_BranchZ(Gfx *gfx)
     }
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 void DumpUcodeInfo(UcodeInfo &info)
 {
     DebuggerAppendMsg("Loading Unknown Ucode:\n%08X-%08X-%08X-%08X, Size=0x%X, CRC=0x%08X\nCode:\n",
@@ -229,7 +229,7 @@ void RSP_GFX_Force_Matrix(uint32 dwAddr)
 
 void DisplayVertexInfo(uint32 dwAddr, uint32 dwV0, uint32 dwN)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         s8 *pcSrc = (s8 *)(g_pRDRAMu8 + dwAddr);
         short *psSrc = (short *)(g_pRDRAMu8 + dwAddr);
 

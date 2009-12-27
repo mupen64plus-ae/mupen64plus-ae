@@ -502,7 +502,7 @@ void TexRectToFrameBuffer_8b(uint32 dwXL, uint32 dwYL, uint32 dwXH, uint32 dwYH,
         {
             if( (((y+dwTop)*dwDstPitch+x+dwLeft)^0x3) > maxOff )
             {
-#ifdef _DEBUG
+#ifdef DEBUGGER
                 TRACE0("Warning: Offset exceeds limit");
 #endif
                 continue;
@@ -617,7 +617,7 @@ uint32 CalculateRDRAMCRC(void *pPhysicalAddress, uint32 left, uint32 top, uint32
             dwAsmHeight = height - 1;
             dwAsmPitch = pitchInBytes;
 
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
             __asm 
             {
                 push eax
@@ -1761,7 +1761,7 @@ void FrameBufferManager::Set_CI_addr(SetImgInfo &newCI)
     default:
         if( status.bHandleN64RenderTexture )
         {
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( pauseAtNext && eventToPause == NEXT_RENDER_TEXTURE )
             {
                 pauseAtNext = TRUE;
@@ -1781,7 +1781,7 @@ void FrameBufferManager::Set_CI_addr(SetImgInfo &newCI)
         }
         else
         {
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( g_CI.dwWidth == 512 && pauseAtNext && (eventToPause==NEXT_OBJ_BG || eventToPause==NEXT_SET_CIMG) )
             {
                 DebuggerAppendMsg("Warning SetCImg: new Addr=0x%08X, fmt:%s size=%sb, Width=%d\n", 
@@ -1974,7 +1974,7 @@ void FrameBufferManager::CopyBufferToRDRAM(uint32 addr, uint32 fmt, uint32 siz, 
 }
 
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 void FrameBufferManager::DisplayRenderTexture(int infoIdx)
 {
     if( infoIdx < 0 )

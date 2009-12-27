@@ -62,7 +62,7 @@ private:
     virtual void GenerateCombinerSetting(int index);
     virtual void GenerateCombinerSettingConstants(int index);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplaySimpleMuxString(void);
 #endif
 
@@ -88,7 +88,7 @@ protected:
 
     bool m_bShaderIsSupported;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplaySimpleMuxString(void);
 #endif
 

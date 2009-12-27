@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <cmath>
 #include <vector>
 
+#include "osal_preproc.h"
 #include "float.h"
 #include "DeviceBuilder.h"
 #include "VertexShaderConstantDef.h"
@@ -108,15 +109,15 @@ inline void RSP_Vtx_Clipping(int i) {}
 /*
  *  Global variables
  */
-RSP_Options gRSP __attribute__((aligned(16)));
-RDP_Options gRDP __attribute__((aligned(16)));
+ALIGN(16,RSP_Options gRSP)
+ALIGN(16,RDP_Options gRDP)
 
-static XVECTOR4 g_normal __attribute__((aligned(16)));
+static ALIGN(16,XVECTOR4 g_normal)
 //static int norms[3];
 
-XVECTOR4    g_vtxNonTransformed[MAX_VERTS] __attribute__((aligned(16)));
-XVECTOR4    g_vecProjected[MAX_VERTS] __attribute__((aligned(16)));
-XVECTOR4    g_vtxTransformed[MAX_VERTS] __attribute__((aligned(16)));
+ALIGN(16,XVECTOR4 g_vtxNonTransformed[MAX_VERTS])
+ALIGN(16,XVECTOR4 g_vecProjected[MAX_VERTS])
+ALIGN(16,XVECTOR4 g_vtxTransformed[MAX_VERTS])
 
 float       g_vtxProjected5[1000][5];
 float       g_vtxProjected5Clipped[2000][5];
@@ -145,11 +146,12 @@ float               gRSPfFogDivider;
 
 uint32          gRSPnumLights;
 Light   gRSPlights[16];
-Matrix  gRSPworldProjectTransported __attribute__((aligned(16)));
-Matrix  gRSPworldProject __attribute__((aligned(16)));
-Matrix  gRSPmodelViewTop __attribute__((aligned(16)));
-Matrix  gRSPmodelViewTopTranspose __attribute__((aligned(16)));
-Matrix  dkrMatrixTransposed __attribute__((aligned(16)));
+
+ALIGN(16,Matrix  gRSPworldProjectTransported)
+ALIGN(16,Matrix  gRSPworldProject)
+ALIGN(16,Matrix  gRSPmodelViewTop)
+ALIGN(16,Matrix  gRSPmodelViewTopTranspose)
+ALIGN(16,Matrix  dkrMatrixTransposed)
 
 N64Light        gRSPn64lights[16];
 
@@ -251,7 +253,7 @@ __asm l3:   \
 #endif
 
 
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
 __declspec( naked ) void  __fastcall SSEVec3Transform(int i)
 {
     __asm
@@ -479,7 +481,7 @@ void SSEVec3Transform(int i)
 float real255 = 255.0f;
 float real128 = 128.0f;
 
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
 __declspec( naked ) void  __fastcall SSEVec3TransformNormal()
 {
     __asm
@@ -528,7 +530,7 @@ __declspec( naked ) void  __fastcall SSEVec3TransformNormal()
         mulss   xmm0,xmm0;
         addss   xmm7,xmm0;      // xmm7 1st uint32 is the sum of squares
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         movaps  DWORD PTR [g_normal], xmm4;
         movss  DWORD PTR [g_normal][12], xmm7;
 #endif
@@ -538,7 +540,7 @@ __declspec( naked ) void  __fastcall SSEVec3TransformNormal()
 
         rsqrtss xmm7,xmm7;
         shufps  xmm7,xmm7,0;
-#ifdef _DEBUG
+#ifdef DEBUGGER
         movss  DWORD PTR [g_normal][12], xmm7;
 #endif
         mulps   xmm4,xmm7;
@@ -589,7 +591,7 @@ void SSEVec3TransformNormal(void)
            " movlhps       %%xmm0,  %%xmm4    \n"
            " mulss         %%xmm0,  %%xmm0    \n"
            " addss         %%xmm0,  %%xmm7    \n"
-#ifdef _DEBUG
+#ifdef DEBUGGER
            " movaps        %%xmm4,    (%0)    \n"
            " movss         %%xmm7,  12(%0)    \n"
 #endif
@@ -598,7 +600,7 @@ void SSEVec3TransformNormal(void)
            " jz                0f             \n"
            " rsqrtss       %%xmm7,  %%xmm7    \n"
            " shufps $0x00, %%xmm7,  %%xmm7    \n"
-#ifdef _DEBUG
+#ifdef DEBUGGER
            " movss         %%xmm7,  12(%0)    \n"
 #endif
                " mulps         %%xmm7,  %%xmm4    \n"
@@ -1113,7 +1115,7 @@ float zero = 0.0f;
 float onef = 1.0f;
 float fcosT;
 
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
 __declspec( naked ) uint32  __fastcall SSELightVert()
 {
     __asm
@@ -1562,7 +1564,7 @@ bool IsTriangleVisible(uint32 dwV0, uint32 dwV1, uint32 dwV2)
 
     DEBUGGER_ONLY_IF( (!debuggerEnableTestTris || !debuggerEnableCullFace), {return TRUE;});
     
-#ifdef _DEBUG
+#ifdef DEBUGGER
     // Check vertices are valid!
     if (dwV0 >= MAX_VERTS || dwV1 >= MAX_VERTS || dwV2 >= MAX_VERTS)
         return false;
@@ -1651,7 +1653,7 @@ void SetPrimitiveDepth(uint32 z, uint32 dwDZ)
 
     //how to use dwDZ?
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( (pauseAtNext && (eventToPause == NEXT_VERTEX_CMD || eventToPause == NEXT_FLUSH_TRI )) )//&& logTriangles ) 
     {
         DebuggerAppendMsg("Set prim Depth: %f, (%08X, %08X)", gRDP.fPrimitiveDepth, z, dwDZ); 

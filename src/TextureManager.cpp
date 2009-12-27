@@ -791,7 +791,7 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
                 DumpCachedTexture(*pEntry);
             }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( pauseAtNext && eventToPause == NEXT_NEW_TEXTURE )
             {
                 CRender::g_pRender->SetCurrentTexture( 0, pEntry->pTexture, pEntry->ti.WidthToCreate, pEntry->ti.HeightToCreate, pEntry);
@@ -925,7 +925,7 @@ void CTextureManager::ExpandTexture(TxtrCacheEntry * pEntry, uint32 sizeToLoad, 
     uint32 maskWidth = (1<<mask);
     int size = pEntry->pTexture->GetPixelSize();
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     // Some checks
     if( sizeToLoad > sizeToCreate || sizeToCreate > sizeCreated )   
         TRACE0("Something is wrong, check me here in ExpandTextureS");
@@ -952,7 +952,7 @@ void CTextureManager::ExpandTexture(TxtrCacheEntry * pEntry, uint32 sizeToLoad, 
         return;
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( sizeToLoad > maskWidth )
     {
         TRACE0("Something is wrong, check me here in ExpandTextureS");
@@ -1003,7 +1003,7 @@ void CTextureManager::ExpandTexture(TxtrCacheEntry * pEntry, uint32 sizeToLoad, 
 
     if( sizeToLoad == sizeToCreate && sizeToCreate < maskWidth )
     {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if( maskWidth < sizeToCreate )  TRACE0("Incorrect condition, check me");
 #endif
         Clamp(di.lpSurface, sizeToLoad, sizeCreated, arrayWidth, otherSize, flag, size );
@@ -1014,7 +1014,7 @@ void CTextureManager::ExpandTexture(TxtrCacheEntry * pEntry, uint32 sizeToLoad, 
 
     if( sizeToLoad < sizeToCreate && sizeToCreate < maskWidth )
     {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if( clamp ) TRACE0("Incorrect condition, check me");
         if( maskWidth < sizeCreated )   TRACE0("Incorrect condition, check me");
 #endif
@@ -1307,7 +1307,7 @@ void CTextureManager::Mirror(void *array, uint32 width, uint32 mask, uint32 towi
 }
 
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 TxtrCacheEntry * CTextureManager::GetCachedTexture(uint32 tex)
 {
     uint32 size = 0;

@@ -19,9 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <vector>
 
-#include <dirent.h>
 #include <stdarg.h>
-#include <limits.h> // PATH_MAX
 
 #include <SDL_opengl.h>
 
@@ -677,7 +675,7 @@ EXPORT void CALL RomOpen(void)
 
    g_dwRamSize = 0x800000;
     
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerPause )
     {
         debuggerPause = FALSE;
