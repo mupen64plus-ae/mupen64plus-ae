@@ -887,7 +887,7 @@ void Ini_StoreRomOptions(LPGAMESETTING pGameSetting)
 
 std::ifstream& getline( std::ifstream &is, char *str );
 
-char * left(char * src, int nchars)
+char * left(const char * src, int nchars)
 {
     static char dst[300];           // BUGFIX (STRMNNRM)
     strncpy(dst,src,nchars);
@@ -895,7 +895,7 @@ char * left(char * src, int nchars)
     return dst;
 }
 
-char * right(char *src, int nchars)
+char * right(const char *src, int nchars)
 {
     static char dst[300];           // BUGFIX (STRMNNRM)
     strncpy(dst, src + strlen(src) - nchars, nchars);

@@ -33,7 +33,7 @@ int CRender::gRenderReferenceCount=0;
 
 XMATRIX reverseXY(-1,0,0,0,0,-1,0,0,0,0,1,0,0,0,0,1);
 XMATRIX reverseY(1,0,0,0,0,-1,0,0,0,0,1,0,0,0,0,1);
-extern char* right (char * src, int nchars);
+extern char* right (const char * src, int nchars);
 
 #if defined(WIN32)
   #define strcasecmp _stricmp

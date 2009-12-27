@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "osal_files.h"
+
 #include "m64p_plugin.h"
 #include "typedefs.h"
 #include "ConvertImage.h"
@@ -28,9 +30,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "liblinux/BMGLibPNG.h"
 #include "liblinux/BMGDLL.h"
 #include <sys/types.h>
-//#include <dirent.h>
-#include <sys/stat.h>
-#include <limits.h> // PATH_MAX
 
 /************************************************************************/
 /* 2X filters                                                           */
@@ -907,19 +906,7 @@ typedef struct {
 CSortedList<uint64,ExtTxtrInfo> gTxtrDumpInfos;
 CSortedList<uint64,ExtTxtrInfo> gHiresTxtrInfos;
 
-extern char * right(char * src, int nchars);
-
-BOOL PathIsDirectory(char* name)
-{
-    DIR* dir;
-    dir = opendir(name);
-    if(dir != NULL)
-    {
-        closedir(dir);
-        return TRUE;
-    }
-    return FALSE;
-}
+extern char * right(const char * src, int nchars);
 
 #define SURFFMT_P8 41
 #define SURFFMT_X8R8G8B8 SURFFMT_A8R8G8B8
@@ -1007,15 +994,16 @@ BOOL PathFileExists(char* pszPath)
 
 void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo> &infos, bool extraCheck, bool bRecursive)
 {
-    if( PathIsDirectory(foldername) == FALSE )  return;
+    if (!osal_is_directory(foldername))
+        return;
 
     char texturefilename[PATH_MAX];
     IMAGE_INFO  imgInfo;
     IMAGE_INFO  imgInfo2;
 
-    DIR *dir;
-    dir = opendir(foldername);
-    struct dirent *entry;
+    void *dir;
+    dir = osal_search_dir_open(foldername);
+    const char *foundfilename;
 
     int crc, palcrc32;
     unsigned int fmt, siz;
@@ -1024,31 +1012,30 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
 
     do
     {
-        entry = readdir(dir);
-        if(entry == NULL) continue;
-        if( entry->d_name[0] == '.' )
-            continue;
+        foundfilename = osal_search_dir_read_next(dir);
+        if (foundfilename == NULL) break;
+        if (foundfilename[0] == '.' ) continue;
 
         strcpy(texturefilename, foldername);
-        strcat(texturefilename, entry->d_name);
+        strcat(texturefilename, foundfilename);
 
-        if( PathIsDirectory(texturefilename) && bRecursive )
+        if (osal_is_directory(texturefilename) && bRecursive )
         {
-            strcat(texturefilename, "/");
+            strcat(texturefilename, OSAL_DIR_SEPARATOR_STR);
             FindAllTexturesFromFolder(texturefilename, infos, extraCheck, bRecursive);
         }
 
-        if( strstr(entry->d_name,(const char*)g_curRomInfo.szGameName) == 0 )
+        if( strstr(foundfilename,(const char*)g_curRomInfo.szGameName) == 0 )
             continue;
 
         TextureType type = NO_TEXTURE;
         bool bSeparatedAlpha = false;
 
-        if( strcasecmp(right(entry->d_name,7), "_ci.bmp") == 0 )
+        if( strcasecmp(right(foundfilename,7), "_ci.bmp") == 0 )
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0)
             {
-                TRACE1("Cannot get image info for file: %s", entry->d_name);
+                TRACE1("Cannot get image info for file: %s", foundfilename);
                 continue;
             }
 
@@ -1057,11 +1044,11 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
             else
                 continue;
         }
-        else if( strcasecmp(right(entry->d_name,13), "_ciByRGBA.png") == 0 )
+        else if( strcasecmp(right(foundfilename,13), "_ciByRGBA.png") == 0 )
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0 )
             {
-                TRACE1("Cannot get image info for file: %s", entry->d_name);
+                TRACE1("Cannot get image info for file: %s", foundfilename);
                 continue;
             }
 
@@ -1071,11 +1058,11 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
                 continue;
         }
 
-        else if( strcasecmp(right(entry->d_name,16), "_allciByRGBA.png") == 0 )
+        else if( strcasecmp(right(foundfilename,16), "_allciByRGBA.png") == 0 )
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0 )
             {
-                TRACE1("Cannot get image info for file: %s", entry->d_name);
+                TRACE1("Cannot get image info for file: %s", foundfilename);
                 continue;
             }
             if( imgInfo.Format == SURFFMT_A8R8G8B8 )
@@ -1083,11 +1070,11 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
             else
                 continue;
         }
-        else if( strcasecmp(right(entry->d_name,8), "_rgb.png") == 0 )
+        else if( strcasecmp(right(foundfilename,8), "_rgb.png") == 0 )
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0 )
             {
-                TRACE1("Cannot get image info for file: %s", entry->d_name);
+                TRACE1("Cannot get image info for file: %s", foundfilename);
                 continue;
             }
 
@@ -1119,11 +1106,11 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
                 }
             }
         }
-        else if( strcasecmp(right(entry->d_name,8), "_all.png") == 0 )
+        else if( strcasecmp(right(foundfilename,8), "_all.png") == 0 )
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0 )
             {
-                TRACE1("Cannot get image info for file: %s", entry->d_name);
+                TRACE1("Cannot get image info for file: %s", foundfilename);
                 continue;
             }
             
@@ -1136,7 +1123,7 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
         if( type != NO_TEXTURE )
         {
             // Try to read image information here
-            strcpy(texturefilename, entry->d_name);
+            strcpy(texturefilename, foundfilename);
 
             char *ptr = strchr(texturefilename,'#');
             *ptr++ = 0;
@@ -1208,16 +1195,16 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
                 infos.add(crc64,newinfo);
             }
         }
-    //entry = readdir(dir);
-    } while(entry != NULL);
-    closedir(dir);
+    } while(foundfilename != NULL);
+
+    osal_search_dir_close(dir);
 }
 
 bool CheckAndCreateFolder(const char* pathname)
 {
     if( !PathFileExists((char*)pathname) )
     {
-        if( mkdir(pathname, 0700) )
+        if (osal_mkdirp(pathname, 0700) != 0)
         {
             TRACE1("Can not create new folder: %s", pathname);
             return false;
@@ -1250,13 +1237,14 @@ void FindAllDumpedTextures(void)
     strncpy(foldername, ConfigGetUserDataPath(), PATH_MAX);
     foldername[PATH_MAX] = 0;
 
-    if(foldername[strlen(foldername) - 1] != '/') strcat(foldername, "/");
-    strcat(foldername,"texture_dump/");
+    if (foldername[strlen(foldername) - 1] != OSAL_DIR_SEPARATOR_CHAR)
+        strcat(foldername, OSAL_DIR_SEPARATOR_STR);
+    strcat(foldername,"texture_dump" OSAL_DIR_SEPARATOR_STR);
 
     CheckAndCreateFolder(foldername);
 
     strcat(foldername,(const char*)g_curRomInfo.szGameName);
-    strcat(foldername,"/");
+    strcat(foldername, OSAL_DIR_SEPARATOR_STR);
 
     gTxtrDumpInfos.clear();
     if( !PathFileExists(foldername) )
@@ -1293,12 +1281,13 @@ void FindAllHiResTextures(void)
     strncpy(foldername, ConfigGetUserDataPath(), PATH_MAX);
     foldername[PATH_MAX] = 0;
 
-    if(foldername[strlen(foldername) - 1] != '/') strcat(foldername, "/");
-    strcat(foldername,"hires_texture/");
+    if(foldername[strlen(foldername) - 1] != OSAL_DIR_SEPARATOR_CHAR)
+        strcat(foldername, OSAL_DIR_SEPARATOR_STR);
+    strcat(foldername,"hires_texture" OSAL_DIR_SEPARATOR_STR);
     CheckAndCreateFolder(foldername);
 
     strcat(foldername,(const char*)g_curRomInfo.szGameName);
-    strcat(foldername,"/");
+    strcat(foldername, OSAL_DIR_SEPARATOR_STR);
     gHiresTxtrInfos.clear();
     if( !PathFileExists(foldername) )
     {
@@ -1462,9 +1451,9 @@ void DumpCachedTexture( TxtrCacheEntry &entry )
         strncpy(gamefolder, ConfigGetUserDataPath(), PATH_MAX);
         gamefolder[PATH_MAX] = 0;
         
-        strcat(gamefolder,"texture_dump/");
+        strcat(gamefolder,"texture_dump" OSAL_DIR_SEPARATOR_STR);
         strcat(gamefolder,(const char*)g_curRomInfo.szGameName);
-        strcat(gamefolder,"/");
+        strcat(gamefolder, OSAL_DIR_SEPARATOR_STR);
 
         //sprintf(filename1+strlen(filename1), "%08X#%d#%d", entry.dwCRC, entry.ti.Format, entry.ti.Size);
         sprintf(filename1, "%s%s#%08X#%d#%d", gamefolder, g_curRomInfo.szGameName, entry.dwCRC, entry.ti.Format, entry.ti.Size);

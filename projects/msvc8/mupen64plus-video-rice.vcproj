@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib ..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDL.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib ..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDL.lib ..\..\..\mupen64plus-win32-deps\libpng-1.2.37\lib\libpng.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -293,6 +293,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\osal_files_win32.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\liblinux\pngrw.c"
 				>
 			</File>
@@ -496,6 +500,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\osal_dynamiclib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\osal_files.h"
 				>
 			</File>
 			<File
