@@ -207,6 +207,7 @@ SOURCE = \
 	$(SRCDIR)/liblinux/bmp.c \
 	$(SRCDIR)/liblinux/pngrw.c \
 	$(SRCDIR)/osal_dynamiclib_unix.c \
+	$(SRCDIR)/osal_files_unix.c \
 	$(SRCDIR)/Blender.cpp \
 	$(SRCDIR)/Combiner.cpp \
 	$(SRCDIR)/CombinerTable.cpp \
