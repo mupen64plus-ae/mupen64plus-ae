@@ -196,7 +196,7 @@ public:
     
     virtual void SetFillMode(FillMode mode)=0;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     virtual bool DrawTexture(int tex, TextureChannel channel = TXT_RGB );
     virtual void SaveTextureToFile(int tex, TextureChannel channel = TXT_RGB,  bool bShow = false);
 #endif

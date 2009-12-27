@@ -263,7 +263,7 @@ int CNvTNTCombiner::SaveParserResult(TNT2CombinerSaveType &result)
     m_vCompiledTNTSettings.push_back(result);
     m_lastIndexTNT = m_vCompiledTNTSettings.size()-1;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( logCombiners )
     {
         DisplaySimpleMuxString();
@@ -299,7 +299,7 @@ void CNvTNTCombiner::ParseDecodedMuxForConstants(TNT2CombinerSaveType &res)
     }
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 extern const char *translatedCombTypes[];
 void CNvTNTCombiner::DisplaySimpleMuxString()
 {

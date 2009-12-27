@@ -242,7 +242,7 @@ void ConvertIA4(CTexture *pTexture, const TxtrInfo &tinfo)
 
     uint8 * pSrc = (uint8*)(tinfo.pPhysicalAddress);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if (((long)pSrc) % 4) TRACE0("Texture src addr is not aligned to 4 bytes, check me");
 #endif
 
@@ -331,7 +331,7 @@ void ConvertIA8(CTexture *pTexture, const TxtrInfo &tinfo)
 
     uint8 * pSrc = (uint8*)(tinfo.pPhysicalAddress);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if (((long)pSrc) % 4) TRACE0("Texture src addr is not aligned to 4 bytes, check me");
 #endif
 
@@ -476,7 +476,7 @@ void ConvertI4(CTexture *pTexture, const TxtrInfo &tinfo)
 
     uint8 * pSrc = (uint8*)(tinfo.pPhysicalAddress);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if (((long) pSrc) % 4) TRACE0("Texture src addr is not aligned to 4 bytes, check me");
 #endif
 
@@ -752,7 +752,7 @@ void ConvertCI4_IA16(CTexture *pTexture, const TxtrInfo &tinfo)
 
     uint8 * pSrc = (uint8*)(tinfo.pPhysicalAddress);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if (((long) pSrc) % 4) TRACE0("Texture src addr is not aligned to 4 bytes, check me");
 #endif
 
@@ -847,7 +847,7 @@ void ConvertCI8_RGBA16(CTexture *pTexture, const TxtrInfo &tinfo)
 
     uint8 * pSrc = (uint8*)(tinfo.pPhysicalAddress);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if (((long) pSrc) % 4) TRACE0("Texture src addr is not aligned to 4 bytes, check me");
 #endif
 
@@ -927,7 +927,7 @@ void ConvertCI8_IA16(CTexture *pTexture, const TxtrInfo &tinfo)
 
     uint8 * pSrc = (uint8*)(tinfo.pPhysicalAddress);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if (((long) pSrc) % 4) TRACE0("Texture src addr is not aligned to 4 bytes, check me");
 #endif
 

@@ -268,7 +268,7 @@ void OGLRender::ApplyZBias(int bias)
 
 void OGLRender::SetZBias(int bias)
 {
-#if defined(_DEBUG)
+#if defined(DEBUGGER)
     if( pauseAtNext == true )
       DebuggerAppendMsg("Set zbias = %d", bias);
 #endif
@@ -381,7 +381,7 @@ void OGLRender::SetTexWrapS(int unitno,GLuint flag)
 {
     static GLuint mflag;
     static GLuint mtex;
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( unitno != 0 )
     {
         DebuggerAppendMsg("Check me, unitno != 0 in base ogl");
@@ -708,7 +708,7 @@ void OGLRender::RenderReset()
 
 void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( bAlphaTestEnable && debuggerEnableAlphaTest )
 #else
     if( bAlphaTestEnable )
@@ -720,7 +720,7 @@ void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
 
 void OGLRender::BindTexture(GLuint texture, int unitno)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( unitno != 0 )
     {
         DebuggerAppendMsg("Check me, base ogl bind texture, unit no != 0");
@@ -741,7 +741,7 @@ void OGLRender::DisBindTexture(GLuint texture, int unitno)
 
 void OGLRender::EnableTexUnit(int unitno, BOOL flag)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( unitno != 0 )
     {
         DebuggerAppendMsg("Check me, in the base ogl render, unitno!=0");

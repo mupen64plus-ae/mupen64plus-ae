@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "liblinux/BMGLibPNG.h"
 #include "liblinux/BMGDLL.h"
 #include <sys/types.h>
-#include <dirent.h>
+//#include <dirent.h>
 #include <sys/stat.h>
 #include <limits.h> // PATH_MAX
 

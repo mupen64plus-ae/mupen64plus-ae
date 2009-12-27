@@ -168,7 +168,7 @@ UcodeFunc(RDP_TriShadeZ);
 UcodeFunc(RDP_TriShadeTxtr);
 UcodeFunc(RDP_TriShadeTxtrZ);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 const char* ucodeNames_GBI1[256] =
 {
     "RSP_SPNOOP",    "RSP_MTX",     "Reserved0", "RSP_MOVEMEM",

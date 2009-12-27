@@ -73,7 +73,7 @@ void RSP_S2DEX_OBJ_RECTANGLE(Gfx *gfx)
     }
     CRender::g_pRender->DrawSprite(objtx, false);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( (pauseAtNext && (eventToPause == NEXT_OBJ_TXT_CMD||eventToPause == NEXT_FLUSH_TRI)) || logTextures )
     {   
         if( debuggerPauseCount > 0 ) 
@@ -120,7 +120,7 @@ void RSP_S2DEX_OBJ_SPRITE(Gfx *gfx)
     }
     */
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( (pauseAtNext && (eventToPause == NEXT_OBJ_TXT_CMD||eventToPause == NEXT_FLUSH_TRI)) || logTextures )
     {   
         eventToPause = false;
@@ -179,7 +179,7 @@ void RSP_S2DEX_OBJ_RENDERMODE_2(Gfx *gfx)
     RSP_S2DEX_OBJ_RENDERMODE(gfx);
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 void DumpBlockParameters(uObjTxtrBlock &ptr)
 {
     /*
@@ -485,7 +485,7 @@ void RSP_S2DEX_OBJ_MOVEMEM(Gfx *gfx)
         gObjMtxReal.BaseScaleX = gObjMtx->BaseScaleX/1024.0f;
         gObjMtxReal.BaseScaleY = gObjMtx->BaseScaleY/1024.0f;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         DumpObjMtx();
 #endif
     }
@@ -497,7 +497,7 @@ void RSP_S2DEX_OBJ_MOVEMEM(Gfx *gfx)
         gObjMtxReal.BaseScaleX = gSubObjMtx->BaseScaleX/1024.0f;
         gObjMtxReal.BaseScaleY = gSubObjMtx->BaseScaleY/1024.0f;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         DumpObjMtx(false);
 #endif
     }

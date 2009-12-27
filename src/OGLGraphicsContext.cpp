@@ -332,7 +332,7 @@ int COGLGraphicsContext::ToggleFullscreen()
 {
     if (CoreVideo_ToggleFullScreen() == M64ERR_SUCCESS)
     {
-        m_bWindowed = 1 - m_bWindowed;
+        m_bWindowed = !m_bWindowed;
         if(m_bWindowed)
             SetWindowMode();
         else

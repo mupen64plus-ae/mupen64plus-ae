@@ -146,7 +146,7 @@ void COGLColorCombiner4::InitCombinerCycle12(void)
         return;
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerDropCombiners )
     {
         UpdateCombiner(m_pDecodedMux->m_dwMux0,m_pDecodedMux->m_dwMux1);
@@ -167,7 +167,7 @@ void COGLColorCombiner4::InitCombinerCycle12(void)
         if( m_lastIndex < 0 )       // Can not found
         {
             m_lastIndex = ParseDecodedMux();
-#ifdef _DEBUG
+#ifdef DEBUGGER
             DisplaySimpleMuxString();
 #endif
         }
@@ -545,7 +545,7 @@ int COGLColorCombiner4::SaveParsedResult(OGLExtCombinerSaveType &result)
     m_vCompiledSettings.push_back(result);
     m_lastIndex = m_vCompiledSettings.size()-1;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( logCombiners )
     {
         DisplaySimpleMuxString();
@@ -640,7 +640,7 @@ int COGLColorCombiner4v2::SaveParsedResult(OGLExtCombinerSaveType &result)
     m_vCompiledSettings.push_back(result);
     m_lastIndex = m_vCompiledSettings.size()-1;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( logCombiners )
     {
         DisplaySimpleMuxString();
@@ -651,7 +651,7 @@ int COGLColorCombiner4v2::SaveParsedResult(OGLExtCombinerSaveType &result)
 }
 
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 extern const char *translatedCombTypes[];
 void COGLColorCombiner4::DisplaySimpleMuxString(void)
 {
@@ -696,7 +696,7 @@ void COGLColorCombiner2::DisplaySimpleMuxString(void)
 //////////////////////////////////////////////////////////////////////////
 int COGLColorCombiner4::FindCompiledMux()
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerDropCombiners )
     {
         m_vCompiledSettings.clear();

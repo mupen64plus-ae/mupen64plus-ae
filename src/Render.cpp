@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "osal_preproc.h"
 #include "m64p_plugin.h"
 
 #include "ConvertImage.h"
@@ -33,6 +34,10 @@ int CRender::gRenderReferenceCount=0;
 XMATRIX reverseXY(-1,0,0,0,0,-1,0,0,0,0,1,0,0,0,0,1);
 XMATRIX reverseY(1,0,0,0,0,-1,0,0,0,0,1,0,0,0,0,1);
 extern char* right (char * src, int nchars);
+
+#if defined(WIN32)
+  #define strcasecmp _stricmp
+#endif
 
 //========================================================================
 CRender * CRender::GetRender(void)
@@ -246,7 +251,7 @@ void CRender::PopWorldView()
     }
     else
     {
-#ifdef _DEBUG
+#ifdef DEBUGGER
         if( pauseAtNext )
             TRACE0("Popping past worldview stack limits");
 #endif
@@ -262,7 +267,7 @@ Matrix & CRender::GetWorldProjectMatrix(void)
 
 void CRender::SetWorldProjectMatrix(Matrix &mtx)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( pauseAtNext && (eventToPause == NEXT_TRIANGLE || eventToPause == NEXT_FLUSH_TRI || eventToPause == NEXT_MATRIX_CMD ) )
     {
         uint32 dwPC = gDlistStack[gDlistStackPointer].pc-8;
@@ -1568,7 +1573,7 @@ void CRender::SaveTextureToFile(CTexture &texture, char *filename, TextureChanne
 }
 
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 bool CRender::DrawTexture(int tex, TextureChannel channel)
 {
     if( g_textures[tex].m_pCTexture == NULL )

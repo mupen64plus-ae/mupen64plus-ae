@@ -65,7 +65,7 @@ void CGraphicsContext::InitWindowInfo()
 
 bool CGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWindowed)
 {
-    m_bWindowed = bWindowed;
+    m_bWindowed = (bWindowed != 0);
 
     g_pFrameBufferManager->Initialize();
     return true;

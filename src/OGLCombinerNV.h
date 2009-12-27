@@ -102,7 +102,7 @@ typedef struct {
 
     uint8                               constant0;
     uint8                               constant1;
-#ifdef _DEBUG
+#ifdef DEBUGGER
     NVRegisterCombinerParserType        parseResult;
 #endif
 } NVRegisterCombinerSettingType;
@@ -147,7 +147,7 @@ protected:
 
     bool m_bNVSupported;        // Is this NV OGL extension combiner supported by the video card driver?
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplaySimpleMuxString(void);
     void DisplayNVCombinerString(NVRegisterCombinerSettingType &record);
 #endif

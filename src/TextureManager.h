@@ -244,7 +244,7 @@ public:
     void RecheckHiresForAllTextures();
     bool CleanUp();
     
-#ifdef _DEBUG
+#ifdef DEBUGGER
     TxtrCacheEntry * GetCachedTexture(uint32 tex);
     uint32 GetNumOfCachedTexture();
 #endif

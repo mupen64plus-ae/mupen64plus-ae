@@ -263,7 +263,7 @@ Possible Blending Factors:
             Enable();
             break;
         default:
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( pauseAtNext )
             {
                 uint32 dwM1A_1 = (gRDP.otherMode.blender>>14) & 0x3;
@@ -309,7 +309,7 @@ Possible Blending Factors:
             break;
         }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
         //if( (blendmode_1>>2) != blendmode_2 )
         //{
         //  DebuggerAppendMsg("Warning: in 1 cycle mode, blend1!=blend2");
@@ -376,7 +376,7 @@ Possible Blending Factors:
             Enable();
             break;
         default:
-#ifdef _DEBUG
+#ifdef DEBUGGER
             if( pauseAtNext )
             {
                 uint32 dwM1A_1 = (gRDP.otherMode.blender>>14) & 0x3;

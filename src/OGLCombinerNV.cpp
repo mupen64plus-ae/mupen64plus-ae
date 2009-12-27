@@ -110,7 +110,7 @@ void COGLColorCombinerNvidia::InitCombinerCycle12(void)
 
     glEnable(GL_REGISTER_COMBINERS_NV);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerDropCombiners )
     {
         m_vCompiledSettings.clear();
@@ -1017,7 +1017,7 @@ int COGLColorCombinerNvidia::SaveParserResult(const NVRegisterCombinerParserType
     save.constant0 = result.constant0;
     save.constant1 = result.constant1;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     memcpy(&(save.parseResult),&result, sizeof(result));
     if( logCombiners )
     {
@@ -1073,7 +1073,7 @@ void COGLColorCombinerNvidia::ApplyFogAtFinalStage()
     }
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 extern const char *translatedCombTypes[];
 void COGLColorCombinerNvidia::DisplaySimpleMuxString(void)
 {

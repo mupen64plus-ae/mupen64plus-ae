@@ -47,7 +47,7 @@ protected:
     bool    m_bSupportAdd;
     bool    m_bSupportSubtract;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplaySimpleMuxString(void);
 #endif
 

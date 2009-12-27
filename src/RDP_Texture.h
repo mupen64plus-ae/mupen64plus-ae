@@ -94,7 +94,7 @@ inline uint32 ReverseDXT(uint32 val, uint32 lrs, uint32 width, uint32 size)
 
 inline void UnswapCopy( void *src, void *dest, uint32 numBytes )
 {
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
     __asm
     {
         mov     ecx, 0
@@ -283,7 +283,7 @@ Done:
 
 inline void DWordInterleave( void *mem, uint32 numDWords )
 {
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
     __asm {
         mov     esi, dword ptr [mem]
         mov     edi, dword ptr [mem]
@@ -336,7 +336,7 @@ DWordInterleaveLoop:
 
 inline void QWordInterleave( void *mem, uint32 numDWords )
 {
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
     __asm
     {
         // Interleave the line on the qword
@@ -658,7 +658,7 @@ bool CalculateTileSizes_method_2(int tileno, TMEMLoadMapInfo *info, TxtrInfo &gt
         tile.bMirrorT, dwTileHeight, gti.HeightToCreate, gti.HeightToLoad);
     tile.dwHeight = gti.HeightToCreate;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( gti.WidthToCreate < gti.WidthToLoad )
         TRACE2("Check me, width to create = %d, width to load = %d", gti.WidthToCreate, gti.WidthToLoad);
     if( gti.HeightToCreate < gti.HeightToLoad )
@@ -1205,7 +1205,7 @@ uint32 ult = gfx->loadtile.tl/4;
 uint32 lrs = gfx->loadtile.sh/4;
 uint32 lrt = gfx->loadtile.th/4;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 uint32 dwTLutFmt = (gRDP.otherModeH >> RSP_SETOTHERMODE_SHIFT_TEXTLUT)&0x3;
 #endif
 
@@ -1227,7 +1227,7 @@ tile.bSizeIsValid = true;
 
 tile.lastTileCmd = CMD_LOADTLUT;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 /*
 if((((gfx->words.w0)>>12)&0x3) != 0 || (((gfx->words.w0))&0x3) != 0 || (((gfx->words.w1)>>12)&0x3) != 0 || (((gfx->words.w1))&0x3) != 0)
     TRACE0("Load tlut, sl,tl,sh,th are not integers");
@@ -1697,7 +1697,7 @@ void DLParser_SetTileSize(Gfx *gfx)
             tile.bSizeIsValid = true;
             if( sl/4 > sh/4 || tl/4 > th/4 || (sh == 0 && tile.dwShiftS==0 && th == 0 && tile.dwShiftT ==0 ) )
             {
-#ifdef _DEBUG
+#ifdef DEBUGGER
                 if( sl != 0 || tl != 0 || sh != 0 || th != 0 )
                 {
                     if( tile.dwMaskS==0 || tile.dwMaskT==0 )
@@ -1761,7 +1761,7 @@ void DLParser_SetTImg(Gfx *gfx)
     g_TI.dwAddr     = RSPSegmentAddr((gfx->setimg.addr));
     g_TI.bpl        = g_TI.dwWidth << g_TI.dwSize >> 1;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( g_TI.dwAddr == 0x00ffffff)
     {
         TRACE0("Check me here in setTimg");
@@ -2187,7 +2187,7 @@ void SetTmemFlag(uint32 tmemAddr, uint32 size)
     uint32 index = tmemAddr>>5;
     uint32 bitIndex = (tmemAddr&0x1F);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( size > 0x200 )
     {
         DebuggerAppendMsg("Check me: tmemaddr=%X, size=%x", tmemAddr, size);

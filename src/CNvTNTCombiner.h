@@ -82,7 +82,7 @@ protected:
     virtual void ParseDecodedMuxForConstants(TNT2CombinerSaveType &res);
     int SaveParserResult(TNT2CombinerSaveType &result);
     
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplaySimpleMuxString();
 #endif
     std::vector<TNT2CombinerSaveType>   m_vCompiledTNTSettings;

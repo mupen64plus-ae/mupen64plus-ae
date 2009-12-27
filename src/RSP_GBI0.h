@@ -62,7 +62,7 @@ void RSP_GBI0_Mtx(Gfx *gfx)
         CRender::g_pRender->SetWorldView(matToLoad, gfx->gbi0matrix.push, gfx->gbi0matrix.load);
     }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     const char *loadstr = gfx->gbi0matrix.load == 1 ? "Load" : "Mul";
     const char *pushstr = gfx->gbi0matrix.push == 1 ? "Push" : "Nopush";
     int projlevel = CRender::g_pRender->GetProjectMatrixLevel();
@@ -314,7 +314,7 @@ void RSP_GBI1_Line3D(Gfx *gfx)
 
             gfx++;
             dwPC += 8;
-#ifdef _DEBUG
+#ifdef DEBUGGER
         } while (gfx->words.cmd == (uint8)RSP_LINE3D && !(pauseAtNext && eventToPause==NEXT_FLUSH_TRI));
 #else
         } while (gfx->words.cmd == (uint8)RSP_LINE3D);
@@ -335,7 +335,7 @@ void RSP_GBI1_ClearGeometryMode(Gfx *gfx)
     SP_Timing(RSP_GBI1_ClearGeometryMode);
     uint32 dwMask = ((gfx->words.w1));
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     LOG_UCODE("    Mask=0x%08x", dwMask);
     if (dwMask & G_ZBUFFER)                     LOG_UCODE("  Disabling ZBuffer");
     if (dwMask & G_TEXTURE_ENABLE)              LOG_UCODE("  Disabling Texture");
@@ -361,7 +361,7 @@ void RSP_GBI1_SetGeometryMode(Gfx *gfx)
     SP_Timing(RSP_GBI1_SetGeometryMode);
     uint32 dwMask = ((gfx->words.w1));
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     LOG_UCODE("    Mask=0x%08x", dwMask);
     if (dwMask & G_ZBUFFER)                     LOG_UCODE("  Enabling ZBuffer");
     if (dwMask & G_TEXTURE_ENABLE)              LOG_UCODE("  Enabling Texture");
@@ -374,7 +374,7 @@ void RSP_GBI1_SetGeometryMode(Gfx *gfx)
     if (dwMask & G_TEXTURE_GEN)                 LOG_UCODE("  Enabling Texture Gen");
     if (dwMask & G_TEXTURE_GEN_LINEAR)          LOG_UCODE("  Enabling Texture Gen Linear");
     if (dwMask & G_LOD)                         LOG_UCODE("  Enabling LOD (no impl)");
-#endif // _DEBUG
+#endif // DEBUGGER
     gRDP.geometryMode |= dwMask;
     RSP_GFX_InitGeometryMode();
 }
@@ -447,7 +447,7 @@ void RSP_GBI1_Texture(Gfx *gfx)
     {
         fTextureScaleS = 1/64.0f;
     }
-#ifdef _DEBUG
+#ifdef DEBUGGER
     else if( ((gfx->words.w1>>16)&0xFFFF) != 0 )
     {
         //DebuggerAppendMsg("Warning, texture scale = %08X is not integer", (word1>>16)&0xFFFF);
@@ -462,7 +462,7 @@ void RSP_GBI1_Texture(Gfx *gfx)
     {
         fTextureScaleT = 1/64.0f;
     }
-#ifdef _DEBUG
+#ifdef DEBUGGER
     else if( (gfx->words.w1&0xFFFF) != 0 )
     {
         //DebuggerAppendMsg("Warning, texture scale = %08X is not integer", (word1)&0xFFFF);
@@ -533,7 +533,7 @@ void RSP_GBI1_MoveWord(Gfx *gfx)
             if( dwBase > g_dwRamSize )
             {
                 gRSP.segments[dwSegment] = dwBase;
-#ifdef _DEBUG
+#ifdef DEBUGGER
                 if( pauseAtNext )
                     DebuggerAppendMsg("warning: Segment %d addr is %8X", dwSegment, dwBase);
 #endif
@@ -637,7 +637,7 @@ void RSP_GBI1_PopMtx(Gfx *gfx)
     {
         CRender::g_pRender->PopWorldView();
     }
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( pauseAtNext && eventToPause == NEXT_MATRIX_CMD )
     {
         pauseAtNext = false;
@@ -660,7 +660,7 @@ void RSP_GBI1_CullDL(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_CullDL);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( !debuggerEnableCullFace )
     {
         return; //Disable Culling
@@ -739,7 +739,7 @@ void RSP_GBI1_Tri1(Gfx *gfx)
         gfx++;
         dwPC += 8;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && gfx->words.cmd == (uint8)RSP_TRI1);
 #else
     } while (gfx->words.cmd == (uint8)RSP_TRI1);
@@ -803,7 +803,7 @@ void RSP_GBI0_Tri4(Gfx *gfx)
         w1          = *(uint32 *)(g_pRDRAMu8 + dwPC+4);
         dwPC += 8;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && (w0>>24) == (uint8)RSP_TRI2);
 #else
     } while (((w0)>>24) == (uint8)RSP_TRI2);
@@ -830,7 +830,7 @@ void RSP_RDP_Nothing(Gfx *gfx)
 {
     SP_Timing(RSP_RDP_Nothing);
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( logWarning )
     {
         TRACE0("Stack Trace");
@@ -893,7 +893,7 @@ void RSP_RDP_InsertMatrix(Gfx *gfx)
     gRSP.bMatrixIsUpdated = false;
     gRSP.bCombinedMatrixIsUpdated = true;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( pauseAtNext && eventToPause == NEXT_MATRIX_CMD )
     {
         pauseAtNext = false;

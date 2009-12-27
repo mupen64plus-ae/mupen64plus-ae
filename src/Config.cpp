@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <stdlib.h>
 #include <limits.h> // PATH_MAX
 
+#include "osal_preproc.h"
 #include "m64p_types.h"
 #include "m64p_plugin.h"
 #include "m64p_config.h"
@@ -356,7 +357,7 @@ bool isMMXSupported()
 { 
     int IsMMXSupported = 0; 
    
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
     __asm 
     { 
         mov eax,1   // CPUID level 1 
@@ -389,7 +390,7 @@ bool isSSESupported()
     int SSESupport = 0;
 
     // And finally, check the CPUID for Streaming SIMD Extensions support.
-#if defined(__INTEL_COMPILER) && !defined(NO_ASM)
+#if !defined(__GNUC__) && !defined(NO_ASM)
     _asm{
        mov      eax, 1          // Put a "1" in eax to tell CPUID to get the feature bits
          cpuid                  // Perform CPUID (puts processor feature info into EDX)

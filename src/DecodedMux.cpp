@@ -1172,7 +1172,7 @@ void DecodedMuxForOGL14V2::UseTextureForConstant(void)
     }
 }
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 extern const char *translatedCombTypes[];
 void DecodedMux::DisplayMuxString(const char *prompt)
 {

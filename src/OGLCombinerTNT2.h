@@ -49,7 +49,7 @@ protected:
 
     bool m_bTNT2Supported;      // Is this NV OGL extension combiner supported by the video card driver?
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
     void DisplaySimpleMuxString(void);
 #endif
 

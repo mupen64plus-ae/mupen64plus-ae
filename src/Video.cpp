@@ -677,7 +677,7 @@ EXPORT void CALL RomOpen(void)
 
    g_dwRamSize = 0x800000;
     
-#ifdef _DEBUG
+#ifdef DEBUGGER
     if( debuggerPause )
     {
         debuggerPause = FALSE;
