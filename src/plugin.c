@@ -57,7 +57,8 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
     ptr_PluginGetVersion PluginGetVersion = (ptr_PluginGetVersion) osal_dynlib_getproc(handle, "PluginGetVersion");
     if (PluginGetVersion == NULL)
     {
-        fprintf(stderr, "Error: library '%s' is not a Mupen64Plus library.\n", filepath);
+        if (g_Verbose)
+            fprintf(stderr, "Error: library '%s' is not a Mupen64Plus library.\n", filepath);
         osal_dynlib_close(handle);
         return M64ERR_INCOMPATIBLE;
     }

@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 
 #include "m64p_types.h"
+#include "main.h"
 #include "compare_core.h"
 #include "core_interface.h"
 
@@ -193,7 +194,8 @@ static void compare_core_check(unsigned int cur_opcode)
 void compare_core_init(int mode)
 {
 #if defined(WIN32)
-    printf("UI-console: core comparison feature not supported on Windows platform.\n");
+    if (g_Verbose)
+        printf("UI-console: core comparison feature not supported on Windows platform.\n");
     return;
 #else
     /* set mode */
