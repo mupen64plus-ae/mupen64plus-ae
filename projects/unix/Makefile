@@ -227,6 +227,7 @@ SOURCE = \
 	$(SRCDIR)/OGLCombinerTNT2.cpp \
 	$(SRCDIR)/OGLDecodedMux.cpp \
 	$(SRCDIR)/OGLExtCombiner.cpp \
+	$(SRCDIR)/OGLExtensions.cpp \
 	$(SRCDIR)/OGLExtRender.cpp \
 	$(SRCDIR)/OGLFragmentShaders.cpp \
 	$(SRCDIR)/OGLGraphicsContext.cpp \

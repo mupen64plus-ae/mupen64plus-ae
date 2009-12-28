@@ -16,8 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#define GL_GLEXT_PROTOTYPES
-#include <SDL_opengl.h>
+#include "OGLExtensions.h"
 
 #include "OGLCombinerNV.h"
 #include "OGLRender.h"
@@ -774,18 +773,18 @@ void COGLColorCombinerNvidia::GenerateNVRegisterCombinerSettingConstants(int ind
         {
         case MUX_PRIM:
             pf = GetPrimitiveColorfv();
-            glCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV+i,pf);
+            pglCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV+i,pf);
             break;
         case MUX_ENV:
             pf = GetEnvColorfv();
-            glCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV+i,pf);
+            pglCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV+i,pf);
             break;
         case MUX_LODFRAC:
         case MUX_PRIMLODFRAC:
             {
                 float frac = gRDP.primLODFrac / 255.0f;
                 float tempf[4] = {frac,frac,frac,frac};
-                glCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV+i,tempf);
+                pglCombinerParameterfvNV(GL_CONSTANT_COLOR0_NV+i,tempf);
                 break;
             }
         }
@@ -802,7 +801,7 @@ void COGLColorCombinerNvidia::GenerateNVRegisterCombinerSetting(int index)
 
     NVRegisterCombinerSettingType &info = m_vCompiledSettings[index];
 
-    glCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV,info.numOfStages);
+    pglCombinerParameteriNV(GL_NUM_GENERAL_COMBINERS_NV,info.numOfStages);
 
     uint32 i;
     
@@ -810,21 +809,21 @@ void COGLColorCombinerNvidia::GenerateNVRegisterCombinerSetting(int index)
     {
         for( i=0; i<4; i++ )
         {
-            glCombinerInputNV(GL_COMBINER0_NV, GL_RGB, info.stage1RGB[i].variable, info.stage1RGB[i].input, 
+            pglCombinerInputNV(GL_COMBINER0_NV, GL_RGB, info.stage1RGB[i].variable, info.stage1RGB[i].input, 
                 info.stage1RGB[i].mapping, info.stage1RGB[i].componentUsage );
         }
 
         for( i=0; i<4; i++ )
         {
-            glCombinerInputNV(GL_COMBINER0_NV, GL_ALPHA, info.stage1Alpha[i].variable, info.stage1Alpha[i].input, 
+            pglCombinerInputNV(GL_COMBINER0_NV, GL_ALPHA, info.stage1Alpha[i].variable, info.stage1Alpha[i].input, 
                 info.stage1Alpha[i].mapping, info.stage1Alpha[i].componentUsage );
         }
 
-        glCombinerOutputNV(GL_COMBINER0_NV, GL_RGB, info.stage1outputRGB.abOutput, info.stage1outputRGB.cdOutput,
+        pglCombinerOutputNV(GL_COMBINER0_NV, GL_RGB, info.stage1outputRGB.abOutput, info.stage1outputRGB.cdOutput,
             info.stage1outputRGB.sumOutput, info.stage1outputRGB.scale, info.stage1outputRGB.bias, info.stage1outputRGB.abDotProduct,
             info.stage1outputRGB.cdDotProduct, info.stage1outputRGB.muxSum);
 
-        glCombinerOutputNV(GL_COMBINER0_NV, GL_ALPHA, info.stage2outputAlpha.abOutput, info.stage2outputAlpha.cdOutput,
+        pglCombinerOutputNV(GL_COMBINER0_NV, GL_ALPHA, info.stage2outputAlpha.abOutput, info.stage2outputAlpha.cdOutput,
             info.stage2outputAlpha.sumOutput, info.stage2outputAlpha.scale, info.stage2outputAlpha.bias, info.stage2outputAlpha.abDotProduct,
             info.stage2outputAlpha.cdDotProduct, info.stage2outputAlpha.muxSum);
 
@@ -832,21 +831,21 @@ void COGLColorCombinerNvidia::GenerateNVRegisterCombinerSetting(int index)
         {
             for( i=0; i<4; i++ )
             {
-                glCombinerInputNV(GL_COMBINER1_NV, GL_RGB, info.stage2RGB[i].variable, 
+                pglCombinerInputNV(GL_COMBINER1_NV, GL_RGB, info.stage2RGB[i].variable, 
                     info.stage2RGB[i].input, info.stage2RGB[i].mapping, info.stage2RGB[i].componentUsage );
             }
 
             for( i=0; i<4; i++ )
             {
-                glCombinerInputNV(GL_COMBINER1_NV, GL_ALPHA, info.stage2Alpha[i].variable, info.stage2Alpha[i].input, 
+                pglCombinerInputNV(GL_COMBINER1_NV, GL_ALPHA, info.stage2Alpha[i].variable, info.stage2Alpha[i].input, 
                     info.stage2Alpha[i].mapping, info.stage2Alpha[i].componentUsage );
             }
 
-            glCombinerOutputNV(GL_COMBINER1_NV, GL_RGB, info.stage2outputRGB.abOutput, info.stage2outputRGB.cdOutput,
+            pglCombinerOutputNV(GL_COMBINER1_NV, GL_RGB, info.stage2outputRGB.abOutput, info.stage2outputRGB.cdOutput,
                 info.stage2outputRGB.sumOutput, info.stage2outputRGB.scale, info.stage2outputRGB.bias, info.stage2outputRGB.abDotProduct,
                 info.stage2outputRGB.cdDotProduct, info.stage2outputRGB.muxSum);
 
-            glCombinerOutputNV(GL_COMBINER1_NV, GL_ALPHA, info.stage2outputAlpha.abOutput, info.stage2outputAlpha.cdOutput,
+            pglCombinerOutputNV(GL_COMBINER1_NV, GL_ALPHA, info.stage2outputAlpha.abOutput, info.stage2outputAlpha.cdOutput,
                 info.stage2outputAlpha.sumOutput, info.stage2outputAlpha.scale, info.stage2outputAlpha.bias, info.stage2outputAlpha.abDotProduct,
                 info.stage2outputAlpha.cdDotProduct, info.stage2outputAlpha.muxSum);
         }
@@ -854,7 +853,7 @@ void COGLColorCombinerNvidia::GenerateNVRegisterCombinerSetting(int index)
 
     for( i=0; i<7; i++ )
     {
-        glFinalCombinerInputNV(info.finalStage[i].variable, info.finalStage[i].input, 
+        pglFinalCombinerInputNV(info.finalStage[i].variable, info.finalStage[i].input, 
             info.finalStage[i].mapping, info.finalStage[i].componentUsage );
     }
 }
@@ -1066,10 +1065,10 @@ void COGLColorCombinerNvidia::ApplyFogAtFinalStage()
     if( glIsEnabled(GL_FOG) )
     {
         // Use final stage as: cmb*fogfactor+fog*(1-fogfactor)
-        glFinalCombinerInputNV(GL_VARIABLE_A_NV, GL_FOG, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA );
-        glFinalCombinerInputNV(GL_VARIABLE_B_NV, GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB );
-        glFinalCombinerInputNV(GL_VARIABLE_C_NV, GL_FOG, GL_UNSIGNED_IDENTITY_NV, GL_RGB );
-        glFinalCombinerInputNV(GL_VARIABLE_D_NV, GL_ZERO, GL_UNSIGNED_IDENTITY_NV, GL_RGB );
+        pglFinalCombinerInputNV(GL_VARIABLE_A_NV, GL_FOG, GL_UNSIGNED_IDENTITY_NV, GL_ALPHA );
+        pglFinalCombinerInputNV(GL_VARIABLE_B_NV, GL_SPARE0_NV, GL_UNSIGNED_IDENTITY_NV, GL_RGB );
+        pglFinalCombinerInputNV(GL_VARIABLE_C_NV, GL_FOG, GL_UNSIGNED_IDENTITY_NV, GL_RGB );
+        pglFinalCombinerInputNV(GL_VARIABLE_D_NV, GL_ZERO, GL_UNSIGNED_IDENTITY_NV, GL_RGB );
     }
 }
 

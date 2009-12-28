@@ -16,8 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#define GL_GLEXT_PROTOTYPES
-#include <SDL_opengl.h>
+#include "OGLExtensions.h"
 
 #include "OGLFragmentShaders.h"
 #include "OGLRender.h"
@@ -90,7 +89,7 @@ COGL_FragmentProgramCombiner::~COGL_FragmentProgramCombiner()
     for (int i=0; i<size; i++)
     {
         GLuint ID = m_vCompiledShaders[i].programID;
-        glDeleteProgramsARB(1, &ID);
+        pglDeleteProgramsARB(1, &ID);
         m_vCompiledShaders[i].programID = 0;
     }
 
@@ -274,12 +273,12 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
 
     OGLShaderCombinerSaveType res;
 
-    glGenProgramsARB( 1, &res.programID);
-    glBindProgramARB( GL_FRAGMENT_PROGRAM_ARB, res.programID);
+    pglGenProgramsARB( 1, &res.programID);
+    pglBindProgramARB( GL_FRAGMENT_PROGRAM_ARB, res.programID);
     GenerateProgramStr();
 
-    glProgramStringARB( GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(oglNewFP), oglNewFP);
-    //glProgramStringARB(   GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(oglFPTest), oglFPTest);
+    pglProgramStringARB( GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(oglNewFP), oglNewFP);
+    //pglProgramStringARB(   GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(oglFPTest), oglFPTest);
 
     if (glGetError() != 0)
     {
@@ -313,7 +312,7 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
 void COGL_FragmentProgramCombiner::GenerateCombinerSetting(int index)
 {
     GLuint ID = m_vCompiledShaders[index].programID;
-    glBindProgramARB( GL_FRAGMENT_PROGRAM_ARB, ID );
+    pglBindProgramARB( GL_FRAGMENT_PROGRAM_ARB, ID );
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
 }
 
@@ -321,21 +320,21 @@ void COGL_FragmentProgramCombiner::GenerateCombinerSettingConstants(int index)
 {
     float *pf;
     pf = GetEnvColorfv();
-    glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 1, pf);
+    pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 1, pf);
     pf = GetPrimitiveColorfv();
-    glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 2, pf);
+    pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 2, pf);
 
     float frac = gRDP.LODFrac / 255.0f;
     float tempf[4] = {frac,frac,frac,frac};
-    glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 3, tempf);
+    pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 3, tempf);
 
     float frac2 = gRDP.primLODFrac / 255.0f;
     float tempf2[4] = {frac2,frac2,frac2,frac2};
-    glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 4, tempf2);
+    pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 4, tempf2);
 
     float tempf3[4] = {0,0,0,0};
-    glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 0, tempf3);
-    glProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 6, tempf3);
+    pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 0, tempf3);
+    pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 6, tempf3);
 }
 
 int COGL_FragmentProgramCombiner::FindCompiledMux()

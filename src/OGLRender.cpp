@@ -16,8 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#define GL_GLEXT_PROTOTYPES
-#include <SDL_opengl.h>
+#include "OGLExtensions.h"
 
 #include "OGLRender.h"
 #include "OGLGraphicsContext.h"
@@ -106,11 +105,11 @@ void OGLRender::Initialize(void)
 
     if( m_bMultiTexture )
     {
-        glClientActiveTextureARB( GL_TEXTURE0_ARB );
+        pglClientActiveTextureARB( GL_TEXTURE0_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
-        glClientActiveTextureARB( GL_TEXTURE1_ARB );
+        pglClientActiveTextureARB( GL_TEXTURE1_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
     }
@@ -122,7 +121,7 @@ void OGLRender::Initialize(void)
 
     if (m_bSupportFogCoordExt)
     {
-        glFogCoordPointerEXT( GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5[0][4]) );
+        pglFogCoordPointerEXT( GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5[0][4]) );
         glEnableClientState( GL_FOG_COORDINATE_ARRAY_EXT );
         glFogi( GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT );
         glFogi(GL_FOG_MODE, GL_LINEAR); // Fog Mode
@@ -549,22 +548,22 @@ bool OGLRender::RenderFlushTris()
         glVertexPointer( 4, GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5Clipped[0][0]) );
         glEnableClientState( GL_VERTEX_ARRAY );
 
-        glClientActiveTextureARB( GL_TEXTURE0_ARB );
+        pglClientActiveTextureARB( GL_TEXTURE0_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_clippedVtxBuffer[0].tcord[0].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
-        glClientActiveTextureARB( GL_TEXTURE1_ARB );
+        pglClientActiveTextureARB( GL_TEXTURE1_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_clippedVtxBuffer[0].tcord[1].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
         glDrawElements( GL_TRIANGLES, gRSP.numVertices, GL_UNSIGNED_INT, g_vtxIndex );
 
         // Reset the array
-        glClientActiveTextureARB( GL_TEXTURE0_ARB );
+        pglClientActiveTextureARB( GL_TEXTURE0_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
-        glClientActiveTextureARB( GL_TEXTURE1_ARB );
+        pglClientActiveTextureARB( GL_TEXTURE1_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
@@ -863,11 +862,11 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
 
 void OGLRender::DisableMultiTexture()
 {
-    glActiveTexture(GL_TEXTURE1_ARB);
+    pglActiveTexture(GL_TEXTURE1_ARB);
     EnableTexUnit(1,FALSE);
-    glActiveTexture(GL_TEXTURE0_ARB);
+    pglActiveTexture(GL_TEXTURE0_ARB);
     EnableTexUnit(0,FALSE);
-    glActiveTexture(GL_TEXTURE0_ARB);
+    pglActiveTexture(GL_TEXTURE0_ARB);
     EnableTexUnit(0,TRUE);
 }
 

@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m64p_plugin.h"
 #include "Config.h"
 #include "Debugger.h"
+#include "OGLExtensions.h"
 #include "OGLGraphicsContext.h"
 #include "TextureManager.h"
 #include "Video.h"
@@ -96,6 +97,9 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
         CoreVideo_Quit();
         return false;
     }
+
+    /* Get function pointers to OpenGL extensions (blame Microsoft Windows for this) */
+    OGLExtensions_Init();
 
     char caption[500];
     sprintf(caption, "%s v%i.%i.%i", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));
