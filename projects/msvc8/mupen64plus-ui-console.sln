@@ -6,6 +6,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mupen64plus-core", "..\..\.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mupen64plus-video-rice", "..\..\..\mupen64plus-video-rice\projects\msvc8\mupen64plus-video-rice.vcproj", "{7D4AFF6A-B7D9-4C25-975A-038B8079098E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mupen64plus-rsp-hle", "..\..\..\mupen64plus-rsp-hle\projects\msvc8\mupen64plus-rsp-hle.vcproj", "{2EC7CEE3-C7A7-4F2E-B2C8-4DF6AFEC3E9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -24,6 +26,10 @@ Global
 		{7D4AFF6A-B7D9-4C25-975A-038B8079098E}.Debug|Win32.Build.0 = Debug|Win32
 		{7D4AFF6A-B7D9-4C25-975A-038B8079098E}.Release|Win32.ActiveCfg = Release|Win32
 		{7D4AFF6A-B7D9-4C25-975A-038B8079098E}.Release|Win32.Build.0 = Release|Win32
+		{2EC7CEE3-C7A7-4F2E-B2C8-4DF6AFEC3E9A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2EC7CEE3-C7A7-4F2E-B2C8-4DF6AFEC3E9A}.Debug|Win32.Build.0 = Debug|Win32
+		{2EC7CEE3-C7A7-4F2E-B2C8-4DF6AFEC3E9A}.Release|Win32.ActiveCfg = Release|Win32
+		{2EC7CEE3-C7A7-4F2E-B2C8-4DF6AFEC3E9A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
