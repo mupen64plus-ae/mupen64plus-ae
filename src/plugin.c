@@ -411,6 +411,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 {
     int b, axis_val;
     SDL_Event event;
+    unsigned char mstate;
 
     // Handle keyboard input first
     doSdlKeys(SDL_GetKeyState(NULL));
@@ -500,7 +501,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
     }
 
     // process mouse events
-    unsigned char mstate = SDL_GetMouseState( NULL, NULL );
+    mstate = SDL_GetMouseState( NULL, NULL );
     for( b = 0; b < 16; b++ )
     {
         if( controller[Control].button[b].mouse < 1 )
@@ -536,7 +537,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
     }
 
 #ifdef _DEBUG
-    DebugMessage(M64MSG_INFO, "Controller #%d value: 0x%8.8X\n", Control, *(int *)&controller[Control].buttons );
+    DebugMessage(M64MSG_VERBOSE, "Controller #%d value: 0x%8.8X\n", Control, *(int *)&controller[Control].buttons );
 #endif
     *Keys = controller[Control].buttons;
 
@@ -725,8 +726,9 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
 EXPORT void CALL ReadController(int Control, unsigned char *Command)
 {
 #ifdef _DEBUG
-    DebugMessage(M64MSG_INFO, "Raw Read (cont=%d):  %02X %02X %02X %02X %02X %02X", Control,
-                 Command[0], Command[1], Command[2], Command[3], Command[4], Command[5]);
+    if (Command != NULL)
+        DebugMessage(M64MSG_INFO, "Raw Read (cont=%d):  %02X %02X %02X %02X %02X %02X", Control,
+                     Command[0], Command[1], Command[2], Command[3], Command[4], Command[5]);
 #endif
 }
 
