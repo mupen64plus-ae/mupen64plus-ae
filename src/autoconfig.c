@@ -22,7 +22,7 @@
 #include <string.h>
 
 #include "m64p_types.h"
-
+#include "osal_preproc.h"
 #include "autoconfig.h"
 #include "plugin.h"
 
@@ -90,8 +90,8 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
             pCtrl->button[U_DPAD].key = SDLK_w;
             pCtrl->button[START_BUTTON].key = SDLK_RETURN;
             pCtrl->button[Z_TRIG].key = SDLK_z;
-            pCtrl->button[B_BUTTON].key = SDLK_LALT;
-            pCtrl->button[A_BUTTON].key = SDLK_LMETA;
+            pCtrl->button[B_BUTTON].key = SDLK_LCTRL;
+            pCtrl->button[A_BUTTON].key = SDLK_LSHIFT;
             pCtrl->button[R_CBUTTON].key = SDLK_l;
             pCtrl->button[L_CBUTTON].key = SDLK_j;
             pCtrl->button[D_CBUTTON].key = SDLK_k;

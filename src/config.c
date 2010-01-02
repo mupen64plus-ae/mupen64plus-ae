@@ -25,6 +25,8 @@
 #include "m64p_plugin.h"
 #include "m64p_config.h"
 
+#include "osal_preproc.h"
+#include "autoconfig.h"
 #include "plugin.h"
 
 #define HAT_POS_NAME( hat )         \
@@ -106,6 +108,7 @@ static void clear_controller(int iCtrlIdx)
 static const char * get_sdl_joystick_name(int iCtrlIdx)
 {
     static char JoyName[256];
+    const char *joySDLName;
     int joyWasInit = SDL_WasInit(SDL_INIT_JOYSTICK);
     
     /* initialize the joystick subsystem if necessary */
@@ -117,7 +120,7 @@ static const char * get_sdl_joystick_name(int iCtrlIdx)
         }
 
     /* get the name of the corresponding joystick */
-    const char *joySDLName = SDL_JoystickName(iCtrlIdx);
+    joySDLName = SDL_JoystickName(iCtrlIdx);
 
     /* copy the name to our local string */
     if (joySDLName != NULL)
@@ -170,6 +173,7 @@ void save_controller_config(int iCtrlIdx)
     for (j = 0; j < X_AXIS; j++ )
     {
         const char *Help;
+        int len = 0;
         ParamString[0] = 0;
         if (controller[iCtrlIdx].button[j].key > 0)
         {
@@ -201,7 +205,7 @@ void save_controller_config(int iCtrlIdx)
         else
             Help = NULL;
         /* if last character is a space, chop it off */
-        int len = strlen(ParamString);
+        len = strlen(ParamString);
         if (len > 0 && ParamString[len-1] == ' ')
             ParamString[len-1] = 0;
         ConfigSetDefaultString(pConfig, button_names[j], ParamString, Help);
@@ -211,6 +215,7 @@ void save_controller_config(int iCtrlIdx)
     for (j = 0; j < 2; j++ )
     {
         const char *Help;
+        int len = 0;
         ParamString[0] = 0;
         if (controller[iCtrlIdx].axis[j].key_a > 0 && controller[iCtrlIdx].axis[j].key_b > 0)
         {
@@ -240,7 +245,7 @@ void save_controller_config(int iCtrlIdx)
         else
             Help = NULL;
         /* if last character is a space, chop it off */
-        int len = strlen(ParamString);
+        len = strlen(ParamString);
         if (len > 0 && ParamString[len-1] == ' ')
             ParamString[len-1] = 0;
         ConfigSetDefaultString(pConfig, button_names[X_AXIS + j], ParamString, Help);
@@ -254,6 +259,9 @@ void load_configuration(void)
     char SectionName[32];
     char input_str[256], value1_str[16], value2_str[16];
     const char *config_ptr;
+    const char *JoyName;
+    int joy_found = 0, joy_plugged = 0;
+    int readOK;
     int i, j;
 
     /* loop through all 4 simulated N64 controllers */
@@ -269,7 +277,6 @@ void load_configuration(void)
             continue;
         }
         /* try to read all of the configuration values */
-        int readOK;
         for (readOK = 0; readOK == 0; readOK = 1)
         {
             if (ConfigGetParameter(pConfig, "plugged", M64TYPE_INT, &controller[i].control.Present, sizeof(int)) != M64ERR_SUCCESS)
@@ -308,11 +315,12 @@ void load_configuration(void)
                 }
                 if ((config_ptr = strstr(input_str, "hat")) != NULL)
                 {
+                    char *lastchar = NULL;
                     if (sscanf(config_ptr, "hat(%i %15s", &controller[i].button[j].hat, value1_str) != 2)
                         DebugMessage(M64MSG_WARNING, "parsing error in hat() parameter of button '%s' for controller %i", button_names[j], i + 1);
                     value1_str[15] = 0;
                     /* chop off the last character of value1_str if it is the closing parenthesis */
-                    char *lastchar = &value1_str[strlen(value1_str) - 1];
+                    lastchar = &value1_str[strlen(value1_str) - 1];
                     if (lastchar > value1_str && *lastchar == ')') *lastchar = 0;
                     controller[i].button[j].hat_pos = get_hat_pos_by_name(value1_str);
                 }
@@ -345,11 +353,12 @@ void load_configuration(void)
                 }
                 if ((config_ptr = strstr(input_str, "hat")) != NULL)
                 {
+                    char *lastchar = NULL;
                     if (sscanf(config_ptr, "hat(%i %15s %15s", &controller[i].axis[axis_idx].hat, value1_str, value2_str) != 3)
                         DebugMessage(M64MSG_WARNING, "parsing error in hat() parameter of axis '%s' for controller %i", button_names[j], i + 1);
                     value1_str[15] = value2_str[15] = 0;
                     /* chop off the last character of value2_str if it is the closing parenthesis */
-                    char *lastchar = &value2_str[strlen(value2_str) - 1];
+                    lastchar = &value2_str[strlen(value2_str) - 1];
                     if (lastchar > value2_str && *lastchar == ')') *lastchar = 0;
                     controller[i].axis[axis_idx].hat_pos_a = get_hat_pos_by_name(value1_str);
                     controller[i].axis[axis_idx].hat_pos_b = get_hat_pos_by_name(value2_str);
@@ -359,7 +368,7 @@ void load_configuration(void)
                 break;
         }
 
-        const char *JoyName = get_sdl_joystick_name(i);
+        JoyName = get_sdl_joystick_name(i);
         if (!readOK || controller[i].device == DEVICE_AUTO)
         {
             /* reset the controller configuration again and load the defaults */
@@ -386,7 +395,7 @@ void load_configuration(void)
     }
 
     /* see how many joysticks were found */
-    int joy_found = 0, joy_plugged = 0;
+    joy_found = 0, joy_plugged = 0;
     for (i = 0; i < 4; i++)
     {
         if (controller[i].device >= 0 || controller[i].device == DEVICE_NOT_JOYSTICK)
