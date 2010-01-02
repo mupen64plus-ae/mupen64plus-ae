@@ -44,7 +44,8 @@ PFNGLCLIENTACTIVETEXTUREARBPROC    pglClientActiveTextureARB = (PFNGLCLIENTACTIV
 
 #define INIT_ENTRY_POINT(type, funcname) \
   p##funcname = (type) CoreVideo_GL_GetProcAddress(#funcname); \
-  if (p##funcname == NULL) p##funcname = (type) EmptyFunc;
+  if (p##funcname == NULL) { DebugMessage(M64MSG_WARNING, \
+  "Couldn't get address of OpenGL function: '%s'", #funcname); p##funcname = (type) EmptyFunc; }
 
 void OGLExtensions_Init(void)
 {

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "Render.h"
 #include "Timing.h"
+#include "osal_preproc.h"
 
 uint32 dwConkerVtxZAddr=0;
 
@@ -57,7 +58,7 @@ void RDP_GFX_DLInMem(Gfx *gfx)
     LOG_UCODE("#############################################");
 }
 
-extern Matrix dkrMatrixTransposed;
+extern Matrix ALIGN(16, dkrMatrixTransposed)
 void RSP_Mtx_DKR(Gfx *gfx)
 {   
     uint32 dwAddr = RSPSegmentAddr((gfx->words.w1));

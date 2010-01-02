@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _RICE_RENDER_BASE_H
 #define _RICE_RENDER_BASE_H
 
+#include "osal_preproc.h"
 #include "Debugger.h"
 #include "RSP_Parser.h"
 #include "Video.h"
@@ -44,8 +45,8 @@ void myVec3Transform(float *vecout, float *vecin, float* m);
 
 // All these arrays are moved out of the class CRender
 // to be accessed in faster speed
-extern XVECTOR4 g_vtxTransformed[MAX_VERTS];
-extern XVECTOR4 g_vecProjected[MAX_VERTS];
+extern ALIGN(16, XVECTOR4 g_vtxTransformed[MAX_VERTS])
+extern ALIGN(16, XVECTOR4 g_vecProjected[MAX_VERTS])
 extern float        g_vtxProjected5[1000][5];
 extern float        g_vtxProjected5Clipped[2000][5];
 extern VECTOR2      g_fVtxTxtCoords[MAX_VERTS];
@@ -82,11 +83,11 @@ extern EXTERNAL_VERTEX          g_vtxForExternal[MAX_VERTS];
 
 extern uint32   gRSPnumLights;
 extern Light    gRSPlights[16];
-extern Matrix   gRSPworldProjectTransported;
-extern Matrix   gRSPworldProject;
+extern ALIGN(16, Matrix   gRSPworldProjectTransported)
+extern ALIGN(16, Matrix   gRSPworldProject)
 extern N64Light gRSPn64lights[16];
-extern Matrix   gRSPmodelViewTop;
-extern Matrix   gRSPmodelViewTopTranspose;
+extern ALIGN(16, Matrix   gRSPmodelViewTop)
+extern ALIGN(16, Matrix   gRSPmodelViewTopTranspose)
 extern float    gRSPfFogMin;
 extern float    gRSPfFogMax;
 extern float    gRSPfFogDivider;
@@ -184,7 +185,7 @@ typedef struct
 
 } RSP_Options;
 
-extern RSP_Options gRSP;
+extern ALIGN(16, RSP_Options gRSP)
 
 typedef struct {
     uint32  keyR;
@@ -226,7 +227,7 @@ typedef struct {
     bool    colorsAreReloaded;
 } RDP_Options;
 
-extern RDP_Options gRDP;
+extern ALIGN(16, RDP_Options gRDP)
 
 /*
 *   Global functions
