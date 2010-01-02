@@ -39,7 +39,17 @@ used for A and B and the second and third row was used for C-Buttons - except
 for the Button next to the A button which would be C-Down but got the Z 
 button.
 
-5. Default Keyboard interface:
+5. Playstation 3 Controller:
+Left analog stick - analog stick
+Right analog stick - C-pad
+D-Pad - D-Pad
+Cross - A
+Square - B
+L1 / R1 - L / R
+L2 - Z
+Start - Start
+
+6. Default Keyboard interface:
 Analog Pad is "Arrow Keys"
 C Up/Left/Down/Right are "I", "J", "K", "L"
 DPad Up/Left/Down/Right are "W", "A", "S", "D"

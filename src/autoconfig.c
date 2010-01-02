@@ -329,6 +329,27 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
             pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
             pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
             break;
+        case JOY_PS3_CONTROLLER:
+            pCtrl->button[R_DPAD].button = 5; // D-Pad Right
+            pCtrl->button[L_DPAD].button = 7; // D-Pad Left
+            pCtrl->button[D_DPAD].button = 6; // D-Pad Down
+            pCtrl->button[U_DPAD].button = 4; // D-Pad Up
+            pCtrl->button[START_BUTTON].button = 3; // Start button
+            pCtrl->button[Z_TRIG].button = 8; // L2
+            pCtrl->button[B_BUTTON].button = 15; // Square
+            pCtrl->button[A_BUTTON].button = 14; // X
+            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 2; // Right analog stick
+            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 3;
+            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
+            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
+            pCtrl->button[R_TRIG].button = 11; // R1
+            pCtrl->button[L_TRIG].button = 10; // R2
+            /* no MEMPAK or RUMBLEPAK defined */
+            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0; // Left analog stick
+            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
+            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
+            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
+            break;
         case JOY_SAITEK_P880:
             pCtrl->button[R_DPAD].hat = pCtrl->button[L_DPAD].hat = 0;
             pCtrl->button[D_DPAD].hat = pCtrl->button[U_DPAD].hat = 0;
@@ -378,29 +399,6 @@ static void set_model_defaults(int iCtrlIdx, int iDeviceIdx, enum eJoyType type)
             pCtrl->button[MEMPAK].button = 11;
             pCtrl->button[RUMBLEPAK].axis = 10;
             pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0;
-            pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
-            pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
-            pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
-            break;
-        case JOY_PS3_CONTROLLER:
-            pCtrl->button[R_DPAD].hat = pCtrl->button[L_DPAD].hat = 0;
-            pCtrl->button[D_DPAD].hat = pCtrl->button[U_DPAD].hat = 0;
-            pCtrl->button[R_DPAD].button = 5; // D-Pad Right
-            pCtrl->button[L_DPAD].button = 7; // D-Pad Left
-            pCtrl->button[D_DPAD].button = 6; // D-Pad Down
-            pCtrl->button[U_DPAD].button = 4; // D-Pad Up
-            pCtrl->button[START_BUTTON].button = 3; // Start button
-            pCtrl->button[Z_TRIG].button = 8; // L2
-            pCtrl->button[B_BUTTON].button = 15; // Square
-            pCtrl->button[A_BUTTON].button = 14; // X
-            pCtrl->button[R_CBUTTON].axis = pCtrl->button[L_CBUTTON].axis = 2; // Right analog stick
-            pCtrl->button[D_CBUTTON].axis = pCtrl->button[U_CBUTTON].axis = 3;
-            pCtrl->button[R_CBUTTON].axis_dir = pCtrl->button[D_CBUTTON].axis_dir = 1;
-            pCtrl->button[L_CBUTTON].axis_dir = pCtrl->button[U_CBUTTON].axis_dir = -1;
-            pCtrl->button[R_TRIG].button = 11; // R1
-            pCtrl->button[L_TRIG].button = 10; // R2
-            /* no MEMPAK or RUMBLEPAK defined */
-            pCtrl->axis[0].axis_a = pCtrl->axis[0].axis_b = 0; // Left analog stick
             pCtrl->axis[1].axis_a = pCtrl->axis[1].axis_b = 1;
             pCtrl->axis[0].axis_dir_a = pCtrl->axis[1].axis_dir_a = -1;
             pCtrl->axis[0].axis_dir_b = pCtrl->axis[1].axis_dir_b = 1;
