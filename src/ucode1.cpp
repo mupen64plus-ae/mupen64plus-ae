@@ -238,8 +238,8 @@ static void ENVMIXER () {
         if (LAdderStart != LTrg) {
             LAcc = LAdderStart;
             LVol = (LAdderEnd - LAdderStart) >> 3;
-            LAdderEnd   = ((s64)LAdderEnd * (s64)LRamp) >> 16;
-            LAdderStart = ((s64)LAcc * (s64)LRamp) >> 16;
+            LAdderEnd   = (s32) (((s64)LAdderEnd * (s64)LRamp) >> 16);
+            LAdderStart = (s32) (((s64)LAcc * (s64)LRamp) >> 16);
         } else {
             LAcc = LTrg;
             LVol = 0;
@@ -248,8 +248,8 @@ static void ENVMIXER () {
         if (RAdderStart != RTrg) {
             RAcc = RAdderStart;
             RVol = (RAdderEnd - RAdderStart) >> 3;
-            RAdderEnd   = ((s64)RAdderEnd * (s64)RRamp) >> 16;
-            RAdderStart = ((s64)RAcc * (s64)RRamp) >> 16;
+            RAdderEnd   = (s32) (((s64)RAdderEnd * (s64)RRamp) >> 16);
+            RAdderStart = (s32) (((s64)RAcc * (s64)RRamp) >> 16);
         } else {
             RAcc = RTrg;
             RVol = 0;
@@ -893,7 +893,7 @@ static void MIXER () { // Fixed a sign issue... 03-14-01
 //Command: RESAMPLE - Calls:  48 - Total Time: 276354 - Avg Time:  5757.38 - Percent: 22.95%
 
 
-void (*ABI1[0x20])() = { // TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER
+extern "C" void (*ABI1[0x20])() = { // TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER
     SPNOOP , ADPCM , CLEARBUFF, ENVMIXER  , LOADBUFF, RESAMPLE  , SAVEBUFF, UNKNOWN,
     SETBUFF, SETVOL, DMEMMOVE , LOADADPCM , MIXER   , INTERLEAVE, UNKNOWN , SETLOOP,
     SPNOOP , SPNOOP, SPNOOP   , SPNOOP    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP,
