@@ -28,7 +28,9 @@ extern "C" {
   #include "hle.h"
 }
 
-static void SPNOOP () {
+extern "C" void (*ABI3[])(void);
+
+static void SPNOOP (void) {
     DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 3", (int)(inst1 >> 24));
 }
 
@@ -54,7 +56,7 @@ extern u16 adpcmtable[0x88];
 extern u8 BufferSpace[0x10000];
 
 /*
-static void SETVOL3 () { // Swapped Rate_Left and Vol
+static void SETVOL3 (void) { // Swapped Rate_Left and Vol
     u8 Flags = (u8)(inst1 >> 0x10);
     if (Flags & 0x4) { // 288
         if (Flags & 0x2) { // 290
@@ -71,7 +73,7 @@ static void SETVOL3 () { // Swapped Rate_Left and Vol
     }
 }
 */
-static void SETVOL3 () {
+static void SETVOL3 (void) {
     u8 Flags = (u8)(inst1 >> 0x10);
     if (Flags & 0x4) { // 288
         if (Flags & 0x2) { // 290
@@ -89,7 +91,7 @@ static void SETVOL3 () {
     }
 }
 
-static void ENVMIXER3 () {
+static void ENVMIXER3 (void) {
     u8 flags = (u8)((inst1 >> 16) & 0xff);
     u32 addy = (inst2 & 0xFFFFFF);
 
@@ -247,7 +249,7 @@ static void ENVMIXER3 () {
     memcpy(rsp.RDRAM+addy, (u8 *)hleMixerWorkArea,80);
 }
 //*/
-static void ENVMIXER3o () {
+static void ENVMIXER3o (void) {
     u8 flags = (u8)((inst1 >> 16) & 0xff);
     u32 addy = (inst2 & 0xFFFFFF);// + SEGMENTS[(inst2>>24)&0xf];
     //static FILE *dfile = fopen ("d:\\envmix.txt", "wt");
@@ -404,7 +406,7 @@ static void ENVMIXER3o () {
     memcpy(rsp.RDRAM+addy, (u8 *)hleMixerWorkArea,80);
 }
 /*
-static void ENVMIXER3 () { // Borrowed from RCP...
+static void ENVMIXER3 (void) { // Borrowed from RCP...
     u8  flags = (u8)((inst1 >> 16) & 0xff);
     u32 addy = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
 
@@ -483,13 +485,13 @@ static void ENVMIXER3 () { // Borrowed from RCP...
 }*/
 
 
-static void CLEARBUFF3 () {
+static void CLEARBUFF3 (void) {
     u16 addr = (u16)(inst1 & 0xffff);
     u16 count = (u16)(inst2 & 0xffff);
     memset(BufferSpace+addr+0x4f0, 0, count);
 }
 
-static void MIXER3 () { // Needs accuracy verification...
+static void MIXER3 (void) { // Needs accuracy verification...
     u16 dmemin  = (u16)(inst2 >> 0x10)  + 0x4f0;
     u16 dmemout = (u16)(inst2 & 0xFFFF) + 0x4f0;
     //u8  flags   = (u8)((inst1 >> 16) & 0xff);
@@ -509,7 +511,7 @@ static void MIXER3 () { // Needs accuracy verification...
     }
 }
 
-static void LOADBUFF3 () {
+static void LOADBUFF3 (void) {
     u32 v0;
     u32 cnt = (((inst1 >> 0xC)+3)&0xFFC);
     v0 = (inst2 & 0xfffffc);
@@ -517,7 +519,7 @@ static void LOADBUFF3 () {
     memcpy (BufferSpace+src, rsp.RDRAM+v0, cnt);
 }
 
-static void SAVEBUFF3 () {
+static void SAVEBUFF3 (void) {
     u32 v0;
     u32 cnt = (((inst1 >> 0xC)+3)&0xFFC);
     v0 = (inst2 & 0xfffffc);
@@ -525,7 +527,7 @@ static void SAVEBUFF3 () {
     memcpy (rsp.RDRAM+v0, BufferSpace+src, cnt);
 }
 
-static void LOADADPCM3 () { // Loads an ADPCM table - Works 100% Now 03-13-01
+static void LOADADPCM3 (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
     u32 v0;
     v0 = (inst2 & 0xffffff);
     //memcpy (dmem+0x3f0, rsp.RDRAM+v0, inst1&0xffff); 
@@ -547,7 +549,7 @@ static void LOADADPCM3 () { // Loads an ADPCM table - Works 100% Now 03-13-01
     }
 }
 
-static void DMEMMOVE3 () { // Needs accuracy verification...
+static void DMEMMOVE3 (void) { // Needs accuracy verification...
     u32 v0, v1;
     u32 cnt;
     v0 = (inst1 & 0xFFFF) + 0x4f0;
@@ -560,11 +562,11 @@ static void DMEMMOVE3 () { // Needs accuracy verification...
     }
 }
 
-static void SETLOOP3 () {
+static void SETLOOP3 (void) {
     loopval = (inst2 & 0xffffff);
 }
 
-static void ADPCM3 () { // Verified to be 100% Accurate...
+static void ADPCM3 (void) { // Verified to be 100% Accurate...
     unsigned char Flags=(u8)(inst2>>0x1c)&0xff;
     //unsigned short Gain=(u16)(inst1&0xffff);
     unsigned int Address=(inst1 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
@@ -820,7 +822,7 @@ static void ADPCM3 () { // Verified to be 100% Accurate...
     memcpy(&rsp.RDRAM[Address],out,32);
 }
 
-static void RESAMPLE3 () {
+static void RESAMPLE3 (void) {
     unsigned char Flags=(u8)((inst2>>0x1e));
     unsigned int Pitch=((inst2>>0xe)&0xffff)<<1;
     u32 addy = (inst1 & 0xffffff);
@@ -918,7 +920,7 @@ static void RESAMPLE3 () {
     *(u16 *)(rsp.RDRAM+addy+10) = Accum;
 }
 
-static void INTERLEAVE3 () { // Needs accuracy verification...
+static void INTERLEAVE3 (void) { // Needs accuracy verification...
     //u32 inL, inR;
     u16 *outbuff = (u16 *)(BufferSpace + 0x4f0);//(u16 *)(AudioOutBuffer+dmem);
     u16 *inSrcR;
@@ -951,7 +953,7 @@ static void INTERLEAVE3 () { // Needs accuracy verification...
     }
 }
 
-//static void UNKNOWN ();
+//static void UNKNOWN (void);
 /*
 typedef struct {
     unsigned char sync;
@@ -977,17 +979,17 @@ mp3struct mp3;
 FILE *mp3dat;
 */
 
-static void WHATISTHIS () {
+static void WHATISTHIS (void) {
 }
 
 //static FILE *fp = fopen ("d:\\mp3info.txt", "wt");
 u32 setaddr;
-static void MP3ADDY () {
+static void MP3ADDY (void) {
     setaddr = (inst2 & 0xffffff);
 }
 
 extern "C" {
-    void rsp_run();
+    void rsp_run(void);
     void mp3setup (unsigned int inst1, unsigned int inst2, unsigned int t8);
 }
 
@@ -995,7 +997,7 @@ extern u32 base, dmembase;
 extern "C" {
     extern char *pDMEM;
 }
-void MP3 ();
+void MP3 (void);
 /*
  {
 //  return;
@@ -1013,7 +1015,7 @@ void MP3 ();
     memcpy (imem+0x238, rsp.RDRAM+((u32*)BufferSpace)[0x008/4], 0x9C0);
     ((u32*)BufferSpace)[0xFF4/4] = setaddr;
     pDMEM = (char *)BufferSpace;
-    rsp_run ();
+    rsp_run (void);
     dmembase = ((u32*)BufferSpace)[0xFF8/4];
     loopval  = ((u32*)BufferSpace)[0xFFC/4];
 //0x1A98  SW       S1, 0x0FF4 (R0)
@@ -1044,29 +1046,17 @@ achieve near-CD quality, an important specification to enable dual-channel ISDN
 (integrated-services-digital-network) to be the future high-bandwidth pipe to the home. 
 
 */
-static void DISABLE () {
+static void DISABLE (void) {
     //MessageBox (NULL, "Help", "ABI 3 Command 0", MB_OK);
     //ChangeABI (5);
 }
 
 
-extern "C" void (*ABI3[0x20])() = {
+void (*ABI3[0x20])(void) = {
     DISABLE , ADPCM3 , CLEARBUFF3,  ENVMIXER3  , LOADBUFF3, RESAMPLE3  , SAVEBUFF3, MP3,
     MP3ADDY, SETVOL3, DMEMMOVE3 , LOADADPCM3 , MIXER3   , INTERLEAVE3, WHATISTHIS   , SETLOOP3,
     SPNOOP , SPNOOP, SPNOOP   , SPNOOP    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP,
     SPNOOP , SPNOOP, SPNOOP   , SPNOOP    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP
 };
-#if 0
-void (*ABI3[32])(void) =
-{
-   SPNOOP  , ADPCM3    , CLEARBUFF3, SPNOOP   ,
-   MIXER3   , RESAMPLE3  , SPNOOP   , MP3   ,
-   MP3ADDY , SETVOL3   , DMEMMOVE3 , LOADADPCM3,
-   MIXER3   , INTERLEAVE3, WHATISTHIS    , SETLOOP3  ,
-   SPNOOP  , /*MEMHALVE  , ENVSET1*/ SPNOOP, SPNOOP  , ENVMIXER3 ,
-   LOADBUFF3, SAVEBUFF3  , /*ENVSET2*/SPNOOP  , SPNOOP   ,
-   SPNOOP  , SPNOOP    , SPNOOP   , SPNOOP   ,
-   SPNOOP  , SPNOOP    , SPNOOP   , SPNOOP
-};
-#endif
+
 
