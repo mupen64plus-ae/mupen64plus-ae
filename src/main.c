@@ -40,6 +40,7 @@
 #include "main.h"
 #include "volume.h"
 #include "osal_dynamiclib.h"
+#include "osal_preproc.h"
 
 /* Size of primary buffer in bytes. This is the buffer where audio is loaded
 after it's extracted from n64's memory. */
@@ -124,6 +125,8 @@ static int VolumeControlType = VOLUME_TYPE_OSS;
 
 static int OutputFreq;
 
+// Prototype of local functions
+static void my_audio_callback(void *userdata, unsigned char *stream, int len);
 static void InitializeAudio(int freq);
 static void ReadConfig();
 static void InitializeSDL();
@@ -263,13 +266,17 @@ EXPORT void CALL AiDacrateChanged( int SystemType )
 
 EXPORT void CALL AiLenChanged( void )
 {
+    unsigned int LenReg;
+    unsigned char *p;
+    int wait_time;
+
     if (critical_failure == 1)
         return;
     if (!l_PluginInit)
         return;
 
-    unsigned int LenReg = *AudioInfo.AI_LEN_REG;
-    unsigned char *p = (unsigned char*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
+    LenReg = *AudioInfo.AI_LEN_REG;
+    p = (unsigned char*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
 
     DebugMessage(M64MSG_VERBOSE, "AiLenChanged(): New audio chunk, %i bytes", LenReg);
 
@@ -309,7 +316,7 @@ EXPORT void CALL AiLenChanged( void )
     }
 
     // Time that should be sleeped to keep game in sync.
-    int wait_time = 0;
+    wait_time = 0;
 
     // And then syncronization */
 
@@ -328,7 +335,12 @@ EXPORT void CALL AiLenChanged( void )
         /* Adjust the game frequency by the playback speed factor for the purposes of timing */
         int InputFreq = GameFreq * speed_factor / 100;
 
-        /* If for some reason game is runnin extremely fast and there is risk buffer is going to
+        /* calculate how many milliseconds should have elapsed since the last audio chunk was added */
+        unsigned int prev_samples = prev_len_reg / 4;
+        unsigned int expected_ticks = prev_samples * 1000 / InputFreq;  /* in milliseconds */
+        unsigned int cur_ticks = 0;
+
+        /* If for some reason game is running extremely fast and there is risk buffer is going to
            overflow, we slow down the game a bit to keep sound smooth. The overspeed is caused
            by inaccuracy in machines clock. */
         if (buffer_pos > HighBufferLoadLevel)
@@ -337,12 +349,8 @@ EXPORT void CALL AiLenChanged( void )
             wait_time += overflow * 1000 / InputFreq;                 /* in milliseconds */
         }
 
-        /* calculate how many milliseconds should have elapsed since the last audio chunk was added */
-        int prev_samples = prev_len_reg / 4;
-        int expected_ticks = prev_samples * 1000 / InputFreq;  /* in milliseconds */
-
         /* now determine if we are ahead of schedule, and if so, wait */
-        int cur_ticks = SDL_GetTicks();
+        cur_ticks = SDL_GetTicks();
         if (last_ticks + expected_ticks > cur_ticks)
         {
             wait_time += (last_ticks + expected_ticks) - cur_ticks;
@@ -449,23 +457,27 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
 
 static void my_audio_callback(void *userdata, unsigned char *stream, int len)
 {
+    int oldsamplerate, newsamplerate;
+
     if (!l_PluginInit)
         return;
 
-    int newsamplerate = OutputFreq * 100 / speed_factor;
-    int oldsamplerate = GameFreq;
+    newsamplerate = OutputFreq * 100 / speed_factor;
+    oldsamplerate = GameFreq;
 
-    if (buffer_pos > (len * oldsamplerate) / newsamplerate)
+    if (buffer_pos > (unsigned int) (len * oldsamplerate) / newsamplerate)
     {
         int input_used;
-        if (VolumeControlType == VOLUME_TYPE_SDL)
+#if defined(HAS_OSS_SUPPORT)
+        if (VolumeControlType == VOLUME_TYPE_OSS)
+        {
+            input_used = resample(buffer, buffer_pos, oldsamplerate, stream, len, newsamplerate);
+        }
+        else
+#endif
         {
             input_used = resample(buffer, buffer_pos, oldsamplerate, mixBuffer, len, newsamplerate);
             SDL_MixAudio(stream, mixBuffer, len, VolSDL);
-        }
-        else
-        {
-            input_used = resample(buffer, buffer_pos, oldsamplerate, stream, len, newsamplerate);
         }
         memmove(buffer, &buffer[input_used], buffer_pos - input_used);
         buffer_pos -= input_used;
@@ -508,6 +520,8 @@ static void InitializeSDL()
 
 static void InitializeAudio(int freq)
 {
+    SDL_AudioSpec *desired, *obtained;
+    
     if(SDL_WasInit(SDL_INIT_AUDIO|SDL_INIT_TIMER) == (SDL_INIT_AUDIO|SDL_INIT_TIMER) ) 
     {
         DebugMessage(M64MSG_VERBOSE, "Audio and timer already initialized.");
@@ -524,12 +538,6 @@ static void InitializeAudio(int freq)
     SDL_PauseAudio(1);
     SDL_CloseAudio();
 
-    // Prototype of our callback function
-    void my_audio_callback(void *userdata, unsigned char *stream, int len);
-
-    // Open the audio device
-    SDL_AudioSpec *desired, *obtained;
-    
     // Allocate a desired SDL_AudioSpec
     desired = malloc(sizeof(SDL_AudioSpec));
     
@@ -602,13 +610,15 @@ static void InitializeAudio(int freq)
     SDL_PauseAudio(0);
     
     /* set playback volume */
-    if (VolumeControlType == VOLUME_TYPE_SDL)
-    {
-        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-    }
-    else
+#if defined(HAS_OSS_SUPPORT)
+    if (VolumeControlType == VOLUME_TYPE_OSS)
     {
         VolPercent = volGet();
+    }
+    else
+#endif
+    {
+        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
     }
 
 }
@@ -704,14 +714,16 @@ EXPORT void CALL VolumeMute(void)
         //unmute
         VolPercent = VolMutedSave;
         VolMutedSave = -1;
-        if (VolumeControlType == VOLUME_TYPE_SDL)
-        {
-            VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-        }
-        else
+#if defined(HAS_OSS_SUPPORT)
+        if (VolumeControlType == VOLUME_TYPE_OSS)
         {
             //OSS mixer volume
             volSet(VolPercent);
+        }
+        else
+#endif
+        {
+            VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
         }
     } 
     else
@@ -719,14 +731,16 @@ EXPORT void CALL VolumeMute(void)
         //mute
         VolMutedSave = VolPercent;
         VolPercent = 0;
-        if (VolumeControlType == VOLUME_TYPE_SDL)
-        {
-            VolSDL = 0;
-        }
-        else
+#if defined(HAS_OSS_SUPPORT)
+        if (VolumeControlType == VOLUME_TYPE_OSS)
         {
             //OSS mixer volume
             volSet(0);
+        }
+        else
+#endif
+        {
+            VolSDL = 0;
         }
     }
 }
@@ -740,25 +754,29 @@ EXPORT void CALL VolumeUp(void)
     if (VolMutedSave > -1)
         VolumeMute();
 
+#if defined(HAS_OSS_SUPPORT)
     // reload volume if we're using OSS
     if (VolumeControlType == VOLUME_TYPE_OSS)
     {
         VolPercent = volGet();
     }
+#endif
 
     // adjust volume variable
     VolPercent += VolDelta;
     if (VolPercent > 100)
         VolPercent = 100;
 
-    if (VolumeControlType == VOLUME_TYPE_SDL) 
-    {
-        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-    }
-    else
+#if defined(HAS_OSS_SUPPORT)
+    if (VolumeControlType == VOLUME_TYPE_OSS)
     {
         //OSS mixer volume
         volSet(VolPercent);
+    }
+    else
+#endif
+    {
+        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
     }
 }
 
@@ -771,25 +789,29 @@ EXPORT void CALL VolumeDown(void)
     if (VolMutedSave > -1)
         VolumeMute();
 
+#if defined(HAS_OSS_SUPPORT)
     // reload volume if we're using OSS
     if (VolumeControlType == VOLUME_TYPE_OSS)
     {
         VolPercent = volGet();
     }
+#endif
 
     // adjust volume variable
     VolPercent -= VolDelta;
     if (VolPercent < 0)
         VolPercent = 0;
 
-    if (VolumeControlType == VOLUME_TYPE_SDL)
-    {
-        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-    }
-    else
+#if defined(HAS_OSS_SUPPORT)
+    if (VolumeControlType == VOLUME_TYPE_OSS)
     {
         //OSS mixer volume
         volSet(VolPercent);
+    }
+    else
+#endif
+    {
+        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
     }
 }
 
@@ -810,14 +832,16 @@ EXPORT void CALL VolumeSetLevel(int level)
     else if (VolPercent > 100)
         VolPercent = 100;
 
-    if (VolumeControlType == VOLUME_TYPE_SDL)
-    {
-        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-    }
-    else
+#if defined(HAS_OSS_SUPPORT)
+    if (VolumeControlType == VOLUME_TYPE_OSS)
     {
         //OSS mixer volume
         volSet(VolPercent);
+    }
+    else
+#endif
+    {
+        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
     }
 }
 

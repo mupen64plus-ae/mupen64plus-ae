@@ -20,10 +20,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include "osal_preproc.h"
+
+#if defined(HAS_OSS_SUPPORT)
+
 /* Sound volume functions. */
-#if defined(__linux__)
 #include <sys/soundcard.h>
-#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
@@ -54,9 +56,7 @@ void volSet(int percent)
         percent = 0;
 
     vol = (percent << 8) + percent; // set both left/right channels to same vol
-#if defined(__linux__)
     ret = ioctl(mixerfd, MIXER_WRITE(SOUND_MIXER_PCM), &vol);
-#endif
     if(ret < 0)
         perror("Setting PCM volume: ");
 
@@ -78,9 +78,7 @@ int volGet(void)
         return 0;
     }
 
-#if defined(__linux__)
     ret = ioctl(mixerfd, MIXER_READ(SOUND_MIXER_PCM), &vol);
-#endif
     if(ret < 0)
         perror("Reading PCM volume: ");
 
@@ -89,3 +87,4 @@ int volGet(void)
     return vol & 0xff; // just return the left channel
 }
 
+#endif /* defined(HAS_OSS_SUPPORT) */
