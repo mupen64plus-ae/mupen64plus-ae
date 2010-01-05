@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include <algorithm>
+#include <SDL.h>
 
 #include "ConvertImage.h"
 #include "GraphicsContext.h"
@@ -815,7 +816,7 @@ void DLParser_Process(OSTask * pTask)
     g_pOSTask = pTask;
     
     DebuggerPauseCountN( NEXT_DLIST );
-    status.gRDPTime = (uint32) time(NULL);
+    status.gRDPTime = (uint32) SDL_GetTicks();
 
     status.gDlistCount++;
 
@@ -835,8 +836,8 @@ void DLParser_Process(OSTask * pTask)
             {DebuggerAppendMsg("Start Task without DLIST: ucode=%08X, data=%08X", (uint32)pTask->t.ucode, (uint32)pTask->t.ucode_data);});
 
 
-    // Check if we need to purge (every 2 seconds)
-    if (status.gRDPTime - status.lastPurgeTimeTime > 1)
+    // Check if we need to purge (every 5 milliseconds)
+    if (status.gRDPTime - status.lastPurgeTimeTime > 5)
     {
         gTextureManager.PurgeOldTextures();
         status.lastPurgeTimeTime = status.gRDPTime;
@@ -1628,7 +1629,7 @@ void DLParser_SetEnvColor(Gfx *gfx)
 
 void RDP_DLParser_Process(void)
 {
-    status.gRDPTime = (uint32) time(NULL);
+    status.gRDPTime = (uint32) SDL_GetTicks();
 
     status.gDlistCount++;
 
@@ -1639,8 +1640,8 @@ void RDP_DLParser_Process(void)
     gDlistStack[gDlistStackPointer].pc = start;
     gDlistStack[gDlistStackPointer].countdown = MAX_DL_COUNT;
 
-    // Check if we need to purge (every 2 seconds)
-    if (status.gRDPTime - status.lastPurgeTimeTime > 1)
+    // Check if we need to purge (every 5 milliseconds)
+    if (status.gRDPTime - status.lastPurgeTimeTime > 5)
     {
         gTextureManager.PurgeOldTextures();
         status.lastPurgeTimeTime = status.gRDPTime;
