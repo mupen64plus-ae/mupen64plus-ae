@@ -1,6 +1,18 @@
 SDL Input plugin for Mupen64Plus
 --------------------------------
 
+Mupen64Plus-input-sdl v1.99.2 - January 6, 2010
+-------------------------------------------------
+ - new feature: added MSVC8 project file, minor code refactoring for VC compatibility
+ - added auto-configuration for:
+   - Xbox 360 Wireless Receiver
+   - PS3 controller
+   - Jess Tech Dual Analog Pad
+ - Makefile improvements:
+   - throw error if OS/CPU not supported
+   - use DESTDIR in install/uninstall paths
+   - Allow user-specified CC/CXX/LD paths
+
 Mupen64Plus-input-sdl v1.99.1 - December 14, 2009
 -------------------------------------------------
  - New feature: Joystick/Keyboard auto-configuration
