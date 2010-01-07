@@ -20,7 +20,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* version info */
-#define SDL_AUDIO_PLUGIN_VERSION 0x016301
+#define SDL_AUDIO_PLUGIN_VERSION 0x016302
 
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
