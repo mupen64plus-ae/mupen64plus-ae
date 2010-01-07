@@ -1,6 +1,14 @@
 Mupen64Plus-UI-Console RELEASE
 ------------------------------
 
+Mupen64Plus-UI-Console Front-End v1.99.2 - January 6, 2010
+------------------------------------------------------------
+ - new feature: added MSVC8 project/solution files, minor refactoring for VC compatibility
+ - Makefile improvements:
+   - throw error if OS/CPU not supported
+   - use DESTDIR in install/uninstall paths
+   - Allow user-specified CC/CXX/LD paths
+
 Mupen64Plus-UI-Console Front-End v1.99.1 - December 14, 2009
 ------------------------------------------------------------
  - Brand new Console-based front-end for Mupen64Plus 2.0
