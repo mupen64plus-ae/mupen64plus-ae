@@ -1,6 +1,22 @@
 Mupen64Plus-Video-Rice RELEASE
 ------------------------------
 
+Mupen64Plus-Video-Rice v1.99.2 - January 6, 2010
+--------------------------------------------------
+ - bugfix: fix fragment program combiner for Intel drivers in Win32, by ensuring that program does not allocate unused temp vars or call TEX commands for texture units that are not enabled
+ - new feature: compile-time option for opengl debugging by calling glGetError after each opengl command (except inside of glBegin/glEnd)
+ - portability: use ALIGN() for aligned data member declarations in header files as well as the definitions in CPP files
+ - portability: refactor opengl code to use VidExt_GL_GetProc() for all opengl functions newer than v1.1, so that this will work in Windows
+ - portability: Abstracted directory-handling code with new osal_files* source code
+ - portability: replaced unix gettimeofday() function calls with SDL_GetTicks()
+ - new feature: added MSVC8 project file, fixed minor incompatibilities with VC compiler
+ - Makefile improvements:
+   - throw error if OS/CPU not supported
+   - use DESTDIR in install/uninstall paths
+   - Allow user-specified CC/CXX/LD paths
+   - use C++ compiler to link instead of LD, because the compiler knows where the standard C++ libs are
+   - OSX hack for inline assembly code: mismatch between function names with-w/o preceding underscores
+
 Mupen64Plus-Video-Rice v1.99.1 - December 14, 2009
 --------------------------------------------------
  - Converted to new Mupen64Plus 2.0 API
