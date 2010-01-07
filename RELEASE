@@ -1,6 +1,15 @@
 RSP High-Level Emulation plugin for Mupen64Plus
 -----------------------------------------------
 
+Mupen64Plus-rsp-hle v1.99.2 - January 6, 2010
+-------------------------------------------------
+ - new feature: added MSVC8 project file for RSP-HLE plugin, fixed a few minor incompatibilities
+ - Makefile improvements:
+   - throw error if OS/CPU not supported
+   - use DESTDIR in install/uninstall paths
+   - Allow user-specified CC/CXX/LD paths
+   - use C++ compiler to link instead of LD, because the compiler knows where the standard C++ libs are
+
 Mupen64Plus-rsp-hle v1.99.1 - December 14, 2009
 -------------------------------------------------
  - Converted to new Mupen64Plus 2.0 API
