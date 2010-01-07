@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "FrameBuffer.h"
 #include "OGLCombinerNV.h"
 #include "OGLCombinerTNT2.h"
+#include "OGLDebug.h"
 #include "OGLFragmentShaders.h"
 #include "OGLExtRender.h"
 #include "OGLGraphicsContext.h"
@@ -239,6 +240,7 @@ CColorCombiner * OGLDeviceBuilder::CreateColorCombiner(CRender *pRender)
                 GLint maxUnit = 2;
                 COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
                 glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,&maxUnit);
+                OPENGL_CHECK_ERRORS;
 
                 if( pcontext->IsExtensionSupported("GL_ARB_fragment_program") )
                 {

@@ -254,7 +254,7 @@ static void ProcessDListStep2(void)
     g_CritialSection.Unlock();
 }   
 
-static void StartVideo(void)
+static bool StartVideo(void)
 {
     windowSetting.dps = windowSetting.fps = -1;
     windowSetting.lastSecDlistCount = windowSetting.lastSecFrameCount = 0xFFFFFFFF;
@@ -299,14 +299,14 @@ static void StartVideo(void)
         CGraphicsContext::InitWindowInfo();
 
         bool res = CGraphicsContext::Get()->Initialize(640, 480, !windowSetting.bDisplayFullscreen);
+        if (!res)
+        {
+            g_CritialSection.Unlock();
+            return false;
+        }
         CDeviceBuilder::GetBuilder()->CreateRender();
         CRender::GetRender()->Initialize();
-        
-        if( res )
-        {
-            DLParser_Init();
-        }
-        
+        DLParser_Init();
         status.bGameIsRunning = true;
     }
     catch(...)
@@ -316,6 +316,7 @@ static void StartVideo(void)
     }
    
     g_CritialSection.Unlock();
+    return true;
 }
 
 static void StopVideo()

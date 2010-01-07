@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "OGLExtensions.h"
-
+#include "OGLDebug.h"
 #include "OGLRender.h"
 #include "OGLGraphicsContext.h"
 #include "OGLTexture.h"
@@ -71,9 +71,12 @@ bool OGLRender::ClearDeviceObjects()
 void OGLRender::Initialize(void)
 {
     glMatrixMode(GL_MODELVIEW);
+    OPENGL_CHECK_ERRORS;
     glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
 
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    OPENGL_CHECK_ERRORS;
 
     COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
     if( pcontext->IsExtensionSupported("GL_IBM_texture_mirrored_repeat") )
@@ -101,44 +104,66 @@ void OGLRender::Initialize(void)
     }
 
     glVertexPointer( 4, GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5[0][0]) );
+    OPENGL_CHECK_ERRORS;
     glEnableClientState( GL_VERTEX_ARRAY );
+    OPENGL_CHECK_ERRORS;
 
     if( m_bMultiTexture )
     {
         pglClientActiveTextureARB( GL_TEXTURE0_ARB );
+        OPENGL_CHECK_ERRORS;
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
+        OPENGL_CHECK_ERRORS;
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+        OPENGL_CHECK_ERRORS;
 
         pglClientActiveTextureARB( GL_TEXTURE1_ARB );
+        OPENGL_CHECK_ERRORS;
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u) );
+        OPENGL_CHECK_ERRORS;
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
+        OPENGL_CHECK_ERRORS;
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+        OPENGL_CHECK_ERRORS;
     }
 
     if (m_bSupportFogCoordExt)
     {
         pglFogCoordPointerEXT( GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5[0][4]) );
+        OPENGL_CHECK_ERRORS;
         glEnableClientState( GL_FOG_COORDINATE_ARRAY_EXT );
+        OPENGL_CHECK_ERRORS;
         glFogi( GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT );
+        OPENGL_CHECK_ERRORS;
         glFogi(GL_FOG_MODE, GL_LINEAR); // Fog Mode
+        OPENGL_CHECK_ERRORS;
         glFogf(GL_FOG_DENSITY, 1.0f); // How Dense Will The Fog Be
+        OPENGL_CHECK_ERRORS;
         glHint(GL_FOG_HINT, GL_FASTEST); // Fog Hint Value
+        OPENGL_CHECK_ERRORS;
         glFogi( GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT );
+        OPENGL_CHECK_ERRORS;
         glFogf( GL_FOG_START, 0.0f );
+        OPENGL_CHECK_ERRORS;
         glFogf( GL_FOG_END, 1.0f );
+        OPENGL_CHECK_ERRORS;
     }
 
     //glColorPointer( 1, GL_UNSIGNED_BYTE, sizeof(TLITVERTEX), &g_vtxBuffer[0].r);
     glColorPointer( 4, GL_UNSIGNED_BYTE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
+    OPENGL_CHECK_ERRORS;
     glEnableClientState( GL_COLOR_ARRAY );
+    OPENGL_CHECK_ERRORS;
 
     if( pcontext->IsExtensionSupported("GL_NV_depth_clamp") )
     {
         glEnable(GL_DEPTH_CLAMP_NV);
+        OPENGL_CHECK_ERRORS;
     }
 
 }
@@ -162,7 +187,9 @@ void OGLRender::ApplyTextureFilter()
             minflag = m_dwMinFilter;
             magflag = m_dwMagFilter;
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, OglTexFilterMap[m_dwMinFilter].realFilter);
+            OPENGL_CHECK_ERRORS;
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, OglTexFilterMap[m_dwMagFilter].realFilter);
+            OPENGL_CHECK_ERRORS;
         }
         else
         {
@@ -170,11 +197,13 @@ void OGLRender::ApplyTextureFilter()
             {
                 minflag = m_dwMinFilter;
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, OglTexFilterMap[m_dwMinFilter].realFilter);
+                OPENGL_CHECK_ERRORS;
             }
             if( magflag != (unsigned int)m_dwMagFilter )
             {
                 magflag = m_dwMagFilter;
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, OglTexFilterMap[m_dwMagFilter].realFilter);
+                OPENGL_CHECK_ERRORS;
             }   
         }
     }
@@ -186,6 +215,7 @@ void OGLRender::SetShadeMode(RenderShadeMode mode)
         glShadeModel(GL_SMOOTH);
     else
         glShadeModel(GL_FLAT);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::ZBufferEnable(BOOL bZBuffer)
@@ -196,14 +226,18 @@ void OGLRender::ZBufferEnable(BOOL bZBuffer)
     if( bZBuffer )
     {
         glDepthMask(GL_TRUE);
+        OPENGL_CHECK_ERRORS;
         //glEnable(GL_DEPTH_TEST);
         glDepthFunc( GL_LEQUAL );
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
         glDepthMask(GL_FALSE);
+        OPENGL_CHECK_ERRORS;
         //glDisable(GL_DEPTH_TEST);
         glDepthFunc( GL_ALWAYS );
+        OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -214,14 +248,18 @@ void OGLRender::ClearBuffer(bool cbuffer, bool zbuffer)
     if( zbuffer )   flag |= GL_DEPTH_BUFFER_BIT;
     float depth = ((gRDP.originalFillColor&0xFFFF)>>2)/(float)0x3FFF;
     glClearDepth(depth);
+    OPENGL_CHECK_ERRORS;
     glClear(flag);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::ClearZBuffer(float depth)
 {
     uint32 flag=GL_DEPTH_BUFFER_BIT;
     glClearDepth(depth);
+    OPENGL_CHECK_ERRORS;
     glClear(flag);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::SetZCompare(BOOL bZCompare)
@@ -231,11 +269,17 @@ void OGLRender::SetZCompare(BOOL bZCompare)
 
     gRSP.bZBufferEnabled = bZCompare;
     if( bZCompare == TRUE )
+    {
         //glEnable(GL_DEPTH_TEST);
         glDepthFunc( GL_LEQUAL );
+        OPENGL_CHECK_ERRORS;
+    }
     else
+    {
         //glDisable(GL_DEPTH_TEST);
         glDepthFunc( GL_ALWAYS );
+        OPENGL_CHECK_ERRORS;
+    }
 }
 
 void OGLRender::SetZUpdate(BOOL bZUpdate)
@@ -247,10 +291,12 @@ void OGLRender::SetZUpdate(BOOL bZUpdate)
     {
         //glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
         glDepthMask(GL_FALSE);
+        OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -259,10 +305,17 @@ void OGLRender::ApplyZBias(int bias)
     float f1 = bias > 0 ? -3.0f : 0.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
     float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
     if (bias > 0)
+    {
         glEnable(GL_POLYGON_OFFSET_FILL);  // enable z offsets
+        OPENGL_CHECK_ERRORS;
+    }
     else
+    {
         glDisable(GL_POLYGON_OFFSET_FILL);  // disable z offsets
+        OPENGL_CHECK_ERRORS;
+    }
     glPolygonOffset(f1, f2);  // set bias functions
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::SetZBias(int bias)
@@ -282,6 +335,7 @@ void OGLRender::SetAlphaRef(uint32 dwAlpha)
     {
         m_dwAlpha = dwAlpha;
         glAlphaFunc(GL_GEQUAL, (float)dwAlpha);
+        OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -289,14 +343,21 @@ void OGLRender::ForceAlphaRef(uint32 dwAlpha)
 {
     float ref = dwAlpha/255.0f;
     glAlphaFunc(GL_GEQUAL, ref);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::SetFillMode(FillMode mode)
 {
     if( mode == RICE_FILLMODE_WINFRAME )
+    {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        OPENGL_CHECK_ERRORS;
+    }
     else
+    {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        OPENGL_CHECK_ERRORS;
+    }
 }
 
 void OGLRender::SetCullMode(bool bCullFront, bool bCullBack)
@@ -305,21 +366,28 @@ void OGLRender::SetCullMode(bool bCullFront, bool bCullBack)
     if( bCullFront && bCullBack )
     {
         glCullFace(GL_FRONT_AND_BACK);
+        OPENGL_CHECK_ERRORS;
         glEnable(GL_CULL_FACE);
+        OPENGL_CHECK_ERRORS;
     }
     else if( bCullFront )
     {
         glCullFace(GL_FRONT);
+        OPENGL_CHECK_ERRORS;
         glEnable(GL_CULL_FACE);
+        OPENGL_CHECK_ERRORS;
     }
     else if( bCullBack )
     {
         glCullFace(GL_BACK);
+        OPENGL_CHECK_ERRORS;
         glEnable(GL_CULL_FACE);
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
         glDisable(GL_CULL_FACE);
+        OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -391,6 +459,7 @@ void OGLRender::SetTexWrapS(int unitno,GLuint flag)
         mtex = m_curBoundTex[0];
         mflag = flag;
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, flag);
+        OPENGL_CHECK_ERRORS;
     }
 }
 void OGLRender::SetTexWrapT(int unitno,GLuint flag)
@@ -402,6 +471,7 @@ void OGLRender::SetTexWrapT(int unitno,GLuint flag)
         mtex = m_curBoundTex[0];
         mflag = flag;
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, flag);
+        OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -441,9 +511,11 @@ void OGLRender::SetTextureVFlag(TextureUVFlag dwFlag, uint32 dwTile)
 bool OGLRender::RenderTexRect()
 {
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    OPENGL_CHECK_ERRORS;
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
 
     glBegin(GL_TRIANGLE_FAN);
 
@@ -466,8 +538,10 @@ bool OGLRender::RenderTexRect()
     glVertex3f(g_texRectTVtx[0].x, g_texRectTVtx[0].y, depth);
 
     glEnd();
+    OPENGL_CHECK_ERRORS;
 
     if( cullface ) glEnable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
 
     return true;
 }
@@ -479,9 +553,11 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     float g = ((dwColor>>8)&0xFF)/255.0f;
     float b = (dwColor&0xFF)/255.0f;
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    OPENGL_CHECK_ERRORS;
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
 
     glBegin(GL_TRIANGLE_FAN);
     glColor4f(r,g,b,a);
@@ -490,8 +566,10 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     glVertex4f(m_fillRectVtx[1].x, m_fillRectVtx[0].y, depth, 1);
     glVertex4f(m_fillRectVtx[0].x, m_fillRectVtx[0].y, depth, 1);
     glEnd();
+    OPENGL_CHECK_ERRORS;
 
     if( cullface ) glEnable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
 
     return true;
 }
@@ -511,6 +589,7 @@ bool OGLRender::RenderLine3D()
     glVertex3f(m_line3DVector[0].x, m_line3DVector[0].y, -m_line3DVtx[0].z);
 
     glEnd();
+    OPENGL_CHECK_ERRORS;
 
     ApplyZBias(m_dwZBias);          // set Z offset back to previous value
 
@@ -530,15 +609,19 @@ bool OGLRender::RenderFlushTris()
         if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
         {
             glDisable(GL_FOG);
+            OPENGL_CHECK_ERRORS;
         }
     }
 
     ApplyZBias(m_dwZBias);                    // set the bias factors
 
     glViewportWrapper(windowSetting.vpLeftW, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.statusBarHeightToUse, windowSetting.vpWidthW, windowSetting.vpHeightW, false);
+    OPENGL_CHECK_ERRORS;
+
     //if options.bOGLVertexClipper == FALSE )
     {
         glDrawElements( GL_TRIANGLES, gRSP.numVertices, GL_UNSIGNED_INT, g_vtxIndex );
+        OPENGL_CHECK_ERRORS;
     }
 /*  else
     {
@@ -579,6 +662,7 @@ bool OGLRender::RenderFlushTris()
         if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
         {
             glEnable(GL_FOG);
+            OPENGL_CHECK_ERRORS;
         }
     }
     return true;
@@ -597,8 +681,10 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
 
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    OPENGL_CHECK_ERRORS;
 
     glBegin(GL_TRIANGLES);
     float a = (g_texRectTVtx[0].dcDiffuse >>24)/255.0f;
@@ -626,8 +712,10 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     glVertex3f(g_texRectTVtx[3].x, g_texRectTVtx[3].y, -g_texRectTVtx[3].z);
     
     glEnd();
+    OPENGL_CHECK_ERRORS;
 
     if( cullface ) glEnable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor, float depth, float rhw)
@@ -636,6 +724,7 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
 
     glBegin(GL_TRIANGLE_FAN);
 
@@ -650,16 +739,21 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     glVertex3f(m_simpleRectVtx[0].x, m_simpleRectVtx[0].y, -depth);
     
     glEnd();
+    OPENGL_CHECK_ERRORS;
 
     if( cullface ) glEnable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::InitCombinerBlenderForSimpleRectDraw(uint32 tile)
 {
     //glEnable(GL_CULL_FACE);
     EnableTexUnit(0,FALSE);
+    OPENGL_CHECK_ERRORS;
     glEnable(GL_BLEND);
+    OPENGL_CHECK_ERRORS;
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    OPENGL_CHECK_ERRORS;
     //glEnable(GL_ALPHA_TEST);
 }
 
@@ -690,6 +784,7 @@ COLOR OGLRender::PostProcessSpecularColor()
 void OGLRender::SetViewportRender()
 {
     glViewportWrapper(windowSetting.vpLeftW, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.statusBarHeightToUse, windowSetting.vpWidthW, windowSetting.vpHeightW);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::RenderReset()
@@ -697,12 +792,17 @@ void OGLRender::RenderReset()
     CRender::RenderReset();
 
     glMatrixMode(GL_PROJECTION);
+    OPENGL_CHECK_ERRORS;
     glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
     glOrtho(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
+    OPENGL_CHECK_ERRORS;
 
     // position viewer 
     glMatrixMode(GL_MODELVIEW);
+    OPENGL_CHECK_ERRORS;
     glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
@@ -715,6 +815,7 @@ void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
         glEnable(GL_ALPHA_TEST);
     else
         glDisable(GL_ALPHA_TEST);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::BindTexture(GLuint texture, int unitno)
@@ -728,6 +829,7 @@ void OGLRender::BindTexture(GLuint texture, int unitno)
     if( m_curBoundTex[0] != texture )
     {
         glBindTexture(GL_TEXTURE_2D,texture);
+        OPENGL_CHECK_ERRORS;
         m_curBoundTex[0] = texture;
     }
 }
@@ -753,17 +855,20 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
             glEnable(GL_TEXTURE_2D);
         else
             glDisable(GL_TEXTURE_2D);
+        OPENGL_CHECK_ERRORS;
     }
 }
 
 void OGLRender::TexCoord2f(float u, float v)
 {
     glTexCoord2f(u, v);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::TexCoord(TLITVERTEX &vtxInfo)
 {
     glTexCoord2f(vtxInfo.tcord[0].u, vtxInfo.tcord[0].v);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::UpdateScissor()
@@ -774,8 +879,10 @@ void OGLRender::UpdateScissor()
         uint32 width = *g_GraphicsInfo.VI_WIDTH_REG & 0xFFF;
         uint32 height = (gRDP.scissor.right*gRDP.scissor.bottom)/width;
         glEnable(GL_SCISSOR_TEST);
+        OPENGL_CHECK_ERRORS;
         glScissor(0, int(height*windowSetting.fMultY+windowSetting.statusBarHeightToUse),
             int(width*windowSetting.fMultX), int(height*windowSetting.fMultY) );
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
@@ -793,13 +900,16 @@ void OGLRender::ApplyRDPScissor(bool force)
         uint32 width = *g_GraphicsInfo.VI_WIDTH_REG & 0xFFF;
         uint32 height = (gRDP.scissor.right*gRDP.scissor.bottom)/width;
         glEnable(GL_SCISSOR_TEST);
+        OPENGL_CHECK_ERRORS;
         glScissor(0, int(height*windowSetting.fMultY+windowSetting.statusBarHeightToUse),
             int(width*windowSetting.fMultX), int(height*windowSetting.fMultY) );
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
         glScissor(int(gRDP.scissor.left*windowSetting.fMultX), int((windowSetting.uViHeight-gRDP.scissor.bottom)*windowSetting.fMultY+windowSetting.statusBarHeightToUse),
             int((gRDP.scissor.right-gRDP.scissor.left)*windowSetting.fMultX), int((gRDP.scissor.bottom-gRDP.scissor.top)*windowSetting.fMultY ));
+        OPENGL_CHECK_ERRORS;
     }
 
     status.curScissor = RDP_SCISSOR;
@@ -810,8 +920,10 @@ void OGLRender::ApplyScissorWithClipRatio(bool force)
     if( !force && status.curScissor == RSP_SCISSOR )    return;
 
     glEnable(GL_SCISSOR_TEST);
+    OPENGL_CHECK_ERRORS;
     glScissor(windowSetting.clipping.left, int((windowSetting.uViHeight-gRSP.real_clip_scissor_bottom)*windowSetting.fMultY)+windowSetting.statusBarHeightToUse,
         windowSetting.clipping.width, windowSetting.clipping.height);
+    OPENGL_CHECK_ERRORS;
 
     status.curScissor = RSP_SCISSOR;
 }
@@ -819,7 +931,9 @@ void OGLRender::ApplyScissorWithClipRatio(bool force)
 void OGLRender::SetFogMinMax(float fMin, float fMax)
 {
     glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
+    OPENGL_CHECK_ERRORS;
     glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::TurnFogOnOff(bool flag)
@@ -828,6 +942,7 @@ void OGLRender::TurnFogOnOff(bool flag)
         glEnable(GL_FOG);
     else
         glDisable(GL_FOG);
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::SetFogEnable(bool bEnable)
@@ -840,13 +955,18 @@ void OGLRender::SetFogEnable(bool bEnable)
     {
         //TRACE2("Enable fog, min=%f, max=%f",gRSPfFogMin,gRSPfFogMax );
         glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
+        OPENGL_CHECK_ERRORS;
         glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
+        OPENGL_CHECK_ERRORS;
         glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
+        OPENGL_CHECK_ERRORS;
         glEnable(GL_FOG);
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
         glDisable(GL_FOG);
+        OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -858,21 +978,26 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
     gRDP.fvFogColor[2] = b/255.0f;          //b
     gRDP.fvFogColor[3] = a/255.0f;      //a
     glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::DisableMultiTexture()
 {
     pglActiveTexture(GL_TEXTURE1_ARB);
+    OPENGL_CHECK_ERRORS;
     EnableTexUnit(1,FALSE);
     pglActiveTexture(GL_TEXTURE0_ARB);
+    OPENGL_CHECK_ERRORS;
     EnableTexUnit(0,FALSE);
     pglActiveTexture(GL_TEXTURE0_ARB);
+    OPENGL_CHECK_ERRORS;
     EnableTexUnit(0,TRUE);
 }
 
 void OGLRender::EndRendering(void)
 {
     glFlush();
+    OPENGL_CHECK_ERRORS;
     if( CRender::gRenderReferenceCount > 0 ) 
         CRender::gRenderReferenceCount--;
 }
@@ -891,9 +1016,13 @@ void OGLRender::glViewportWrapper(GLint x, GLint y, GLsizei width, GLsizei heigh
         m_height=height;
         mflag=flag;
         glMatrixMode(GL_PROJECTION);
+        OPENGL_CHECK_ERRORS;
         glLoadIdentity();
+        OPENGL_CHECK_ERRORS;
         if( flag )  glOrtho(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
+        OPENGL_CHECK_ERRORS;
         glViewport(x,y,width,height);
+        OPENGL_CHECK_ERRORS;
     }
 }
 

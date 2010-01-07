@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Config.h"
 #include "Debugger.h"
 #include "OGLExtensions.h"
+#include "OGLDebug.h"
 #include "OGLGraphicsContext.h"
 #include "TextureManager.h"
 #include "Video.h"
@@ -127,43 +128,62 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
 
 void COGLGraphicsContext::InitState(void)
 {
-    m_pRenderStr = glGetString(GL_RENDERER);;
-    m_pExtensionStr = glGetString(GL_EXTENSIONS);;
-    m_pVersionStr = glGetString(GL_VERSION);;
+    m_pRenderStr = glGetString(GL_RENDERER);
+    m_pExtensionStr = glGetString(GL_EXTENSIONS);
+    m_pVersionStr = glGetString(GL_VERSION);
     m_pVendorStr = glGetString(GL_VENDOR);
     glMatrixMode(GL_PROJECTION);
+    OPENGL_CHECK_ERRORS;
     glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    OPENGL_CHECK_ERRORS;
     glClearDepth(1.0f);
+    OPENGL_CHECK_ERRORS;
 
     glShadeModel(GL_SMOOTH);
+    OPENGL_CHECK_ERRORS;
 
     //position viewer 
     //glMatrixMode(GL_MODELVIEW);
     //glLoadIdentity();
 
     glDisable(GL_ALPHA_TEST);
+    OPENGL_CHECK_ERRORS;
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    OPENGL_CHECK_ERRORS;
     glDisable(GL_BLEND);
+    OPENGL_CHECK_ERRORS;
 
     glFrontFace(GL_CCW);
+    OPENGL_CHECK_ERRORS;
     glDisable(GL_CULL_FACE);
+    OPENGL_CHECK_ERRORS;
     glDisable(GL_NORMALIZE);
+    OPENGL_CHECK_ERRORS;
 
     glDepthFunc(GL_LEQUAL);
+    OPENGL_CHECK_ERRORS;
     glEnable(GL_DEPTH_TEST);
+    OPENGL_CHECK_ERRORS;
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    OPENGL_CHECK_ERRORS;
 
     glEnable(GL_BLEND);
+    OPENGL_CHECK_ERRORS;
     glEnable(GL_ALPHA_TEST);
+    OPENGL_CHECK_ERRORS;
 
     glMatrixMode(GL_PROJECTION);
+    OPENGL_CHECK_ERRORS;
     glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
     
     glDepthRange(-1, 1);
+    OPENGL_CHECK_ERRORS;
 }
 
 void COGLGraphicsContext::InitOGLExtension(void)
@@ -194,10 +214,16 @@ void COGLGraphicsContext::InitOGLExtension(void)
 
 bool COGLGraphicsContext::IsExtensionSupported(const char* pExtName)
 {
-    if( strstr((const char*)m_pExtensionStr, pExtName) != NULL )
+    if (strstr((const char*)m_pExtensionStr, pExtName) != NULL)
+    {
+        DebugMessage(M64MSG_VERBOSE, "OpenGL Extension '%s' is supported.", pExtName);
         return true;
+    }
     else
+    {
+        DebugMessage(M64MSG_VERBOSE, "OpenGL Extension '%s' is NOT supported.", pExtName);
         return false;
+    }
 }
 
 bool COGLGraphicsContext::IsWglExtensionSupported(const char* pExtName)
@@ -230,8 +256,11 @@ void COGLGraphicsContext::Clear(ClearFlag dwFlags, uint32 color, float depth)
     float b = ((color    )&0xFF)/255.0f;
     float a = ((color>>24)&0xFF)/255.0f;
     glClearColor(r, g, b, a);
+    OPENGL_CHECK_ERRORS;
     glClearDepth(depth);
+    OPENGL_CHECK_ERRORS;
     glClear(flag);  //Clear color buffer and depth buffer
+    OPENGL_CHECK_ERRORS;
 }
 
 void COGLGraphicsContext::UpdateFrame(bool swaponly)
@@ -239,6 +268,7 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
     status.gFrameCount++;
 
     glFlush();
+    OPENGL_CHECK_ERRORS;
     //glFinish();
     //wglSwapIntervalEXT(0);
 
@@ -310,9 +340,14 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
      }*/
 
     glDepthMask(GL_TRUE);
+    OPENGL_CHECK_ERRORS;
     glClearDepth(1.0);
+    OPENGL_CHECK_ERRORS;
     if( !g_curRomInfo.bForceScreenClear ) 
+    {
         glClear(GL_DEPTH_BUFFER_BIT);
+        OPENGL_CHECK_ERRORS;
+    }
     else
         needCleanScene = true;
 

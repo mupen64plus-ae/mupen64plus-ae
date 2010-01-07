@@ -478,6 +478,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\OGLDebug.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\OGLDecodedMux.h"
 				>
 			</File>

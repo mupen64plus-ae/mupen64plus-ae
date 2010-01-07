@@ -22,6 +22,7 @@
 #include <SDL_opengl.h>
 
 #include "OGLCombiner.h"
+#include "OGLDebug.h"
 #include "OGLRender.h"
 #include "OGLGraphicsContext.h"
 #include "OGLDecodedMux.h"
@@ -88,7 +89,9 @@ void COGLColorCombiner::DisableCombiner(void)
 {
     m_pOGLRender->DisableMultiTexture();
     glEnable(GL_BLEND);
+    OPENGL_CHECK_ERRORS;
     glBlendFunc(GL_ONE, GL_ZERO);
+    OPENGL_CHECK_ERRORS;
     
     if( m_bTexelsEnable )
     {
@@ -98,6 +101,7 @@ void COGLColorCombiner::DisableCombiner(void)
             m_pOGLRender->EnableTexUnit(0,TRUE);
             m_pOGLRender->BindTexture(pTexture->m_dwTextureName, 0);
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            OPENGL_CHECK_ERRORS;
             m_pOGLRender->SetAllTexelRepeatFlag();
         }
 #ifdef DEBUGGER
@@ -110,6 +114,7 @@ void COGLColorCombiner::DisableCombiner(void)
     else
     {
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        OPENGL_CHECK_ERRORS;
         m_pOGLRender->EnableTexUnit(0,FALSE);
     }
 }
@@ -132,6 +137,7 @@ void COGLColorCombiner::InitCombinerCycleCopy(void)
 #endif
 
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    OPENGL_CHECK_ERRORS;
 }
 
 void COGLColorCombiner::InitCombinerCycleFill(void)
@@ -147,6 +153,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
     if( !m_bTexelsEnable )
     {
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        OPENGL_CHECK_ERRORS;
         m_pOGLRender->EnableTexUnit(0,FALSE);
         return;
     }
@@ -181,6 +188,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
         case CM_FMT_TYPE_NOT_USED:
         case CM_FMT_TYPE_D:             // = A
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+            OPENGL_CHECK_ERRORS;
             break;
         case CM_FMT_TYPE_A_ADD_D:           // = A+D
             if( shadeIsUsedInColor && texIsUsedInColor )
@@ -196,6 +204,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
             }
             else
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            OPENGL_CHECK_ERRORS;
             break;
         case CM_FMT_TYPE_A_SUB_B:           // = A-B
             if( shadeIsUsedInColor && texIsUsedInColor )
@@ -211,6 +220,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
             }
             else
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            OPENGL_CHECK_ERRORS;
             break;
         case CM_FMT_TYPE_A_MOD_C:           // = A*C
         case CM_FMT_TYPE_A_MOD_C_ADD_D: // = A*C+D
@@ -228,6 +238,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
             }
             else
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            OPENGL_CHECK_ERRORS;
             break;
         case CM_FMT_TYPE_A_LERP_B_C:    // = A*C+D
             if( (comb.b&mask) == MUX_SHADE && (comb.c&mask)==MUX_TEXEL0 && ((comb.a&mask)==MUX_PRIM||(comb.a&mask)==MUX_ENV))
@@ -243,7 +254,9 @@ void COGLColorCombiner::InitCombinerCycle12(void)
                 }
 
                 glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,fv);
+                OPENGL_CHECK_ERRORS;
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
+                OPENGL_CHECK_ERRORS;
                 break;
             }
         default:        // = (A-B)*C+D
@@ -259,41 +272,50 @@ void COGLColorCombiner::InitCombinerCycle12(void)
             {
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
             }
+            OPENGL_CHECK_ERRORS;
             break;
         }
     }
     else
     {
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        OPENGL_CHECK_ERRORS;
     }
 }
 
 void COGLBlender::NormalAlphaBlender(void)
 {
     glEnable(GL_BLEND);
+    OPENGL_CHECK_ERRORS;
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    OPENGL_CHECK_ERRORS;
 }
 
 void COGLBlender::DisableAlphaBlender(void)
 {
     glEnable(GL_BLEND);
+    OPENGL_CHECK_ERRORS;
     glBlendFunc(GL_ONE, GL_ZERO);
+    OPENGL_CHECK_ERRORS;
 }
 
 
 void COGLBlender::BlendFunc(uint32 srcFunc, uint32 desFunc)
 {
     glBlendFunc(DirectX_OGL_BlendFuncMaps[srcFunc], DirectX_OGL_BlendFuncMaps[desFunc]);
+    OPENGL_CHECK_ERRORS;
 }
 
 void COGLBlender::Enable()
 {
     glEnable(GL_BLEND);
+    OPENGL_CHECK_ERRORS;
 }
 
 void COGLBlender::Disable()
 {
     glDisable(GL_BLEND);
+    OPENGL_CHECK_ERRORS;
 }
 
 void COGLColorCombiner::InitCombinerBlenderForSimpleTextureDraw(uint32 tile)
@@ -303,15 +325,21 @@ void COGLColorCombiner::InitCombinerBlenderForSimpleTextureDraw(uint32 tile)
     {
         m_pOGLRender->EnableTexUnit(0,TRUE);
         glBindTexture(GL_TEXTURE_2D, ((COGLTexture*)(g_textures[tile].m_pCTexture))->m_dwTextureName);
+        OPENGL_CHECK_ERRORS;
     }
     m_pOGLRender->SetAllTexelRepeatFlag();
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    OPENGL_CHECK_ERRORS;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    OPENGL_CHECK_ERRORS;
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); // Linear Filtering
+    OPENGL_CHECK_ERRORS;
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); // Linear Filtering
+    OPENGL_CHECK_ERRORS;
 
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    OPENGL_CHECK_ERRORS;
     m_pOGLRender->SetAlphaTestEnable(FALSE);
 }
 

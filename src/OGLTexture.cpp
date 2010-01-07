@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "Config.h"
 #include "Debugger.h"
+#include "OGLDebug.h"
 #include "OGLTexture.h"
 #include "TextureManager.h"
 
@@ -31,6 +32,7 @@ COGLTexture::COGLTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
 
     m_dwTextureFmt = TEXTURE_FMT_A8R8G8B8;  // Always use 32bit to load texture
     glGenTextures( 1, &m_dwTextureName );
+    OPENGL_CHECK_ERRORS;
 
     // Make the width and height be the power of 2
     uint32 w;
@@ -68,6 +70,7 @@ COGLTexture::~COGLTexture()
     // Fix me, if usage is AS_RENDER_TARGET, we need to destroy the pbuffer
 
     glDeleteTextures(1, &m_dwTextureName );
+    OPENGL_CHECK_ERRORS;
     free(m_pTexture);
     m_pTexture = NULL;
     m_dwWidth = 0;
@@ -92,10 +95,14 @@ bool COGLTexture::StartUpdate(DrawInfo *di)
 void COGLTexture::EndUpdate(DrawInfo *di)
 {
     glBindTexture(GL_TEXTURE_2D, m_dwTextureName);
+    OPENGL_CHECK_ERRORS;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    OPENGL_CHECK_ERRORS;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    OPENGL_CHECK_ERRORS;
     // Copy the image data from main memory to video card texture memory
     glTexImage2D(GL_TEXTURE_2D, 0, m_glFmt, m_dwCreatedTextureWidth, m_dwCreatedTextureHeight, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_pTexture);
+    OPENGL_CHECK_ERRORS;
 }
 
 

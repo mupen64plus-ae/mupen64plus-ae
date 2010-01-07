@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "OGLExtensions.h"
-
+#include "OGLDebug.h"
 #include "OGLFragmentShaders.h"
 #include "OGLRender.h"
 #include "OGLGraphicsContext.h"
@@ -90,6 +90,7 @@ COGL_FragmentProgramCombiner::~COGL_FragmentProgramCombiner()
     {
         GLuint ID = m_vCompiledShaders[i].programID;
         pglDeleteProgramsARB(1, &ID);
+        OPENGL_CHECK_ERRORS;
         m_vCompiledShaders[i].programID = 0;
     }
 
@@ -115,18 +116,21 @@ bool COGL_FragmentProgramCombiner::Initialize(void)
 void COGL_FragmentProgramCombiner::DisableCombiner(void)
 {
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
+    OPENGL_CHECK_ERRORS;
     COGLColorCombiner4::DisableCombiner();
 }
 
 void COGL_FragmentProgramCombiner::InitCombinerCycleCopy(void)
 {
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
+    OPENGL_CHECK_ERRORS;
     COGLColorCombiner4::InitCombinerCycleCopy();
 }
 
 void COGL_FragmentProgramCombiner::InitCombinerCycleFill(void)
 {
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
+    OPENGL_CHECK_ERRORS;
     COGLColorCombiner4::InitCombinerCycleFill();
 }
 
@@ -196,6 +200,15 @@ char* MuxToOA(uint8 val)
 return (char*)muxToFP_Maps[val&0x1F][0];
 }
 
+static void CheckFpVars(uint8 MuxVar, bool &bNeedT0, bool &bNeedT1)
+{
+    MuxVar &= 0x1f;
+    if (MuxVar == MUX_TEXEL0 || MuxVar == MUX_T0_ALPHA)
+        bNeedT0 = true;
+    if (MuxVar == MUX_TEXEL1 || MuxVar == MUX_T1_ALPHA)
+        bNeedT1 = true;
+}
+
 void COGL_FragmentProgramCombiner::GenerateProgramStr()
 {
     DecodedMuxForPixelShader &mux = *(DecodedMuxForPixelShader*)m_pDecodedMux;
@@ -203,26 +216,10 @@ void COGL_FragmentProgramCombiner::GenerateProgramStr()
     mux.splitType[0] = mux.splitType[1] = mux.splitType[2] = mux.splitType[3] = CM_FMT_TYPE_NOT_CHECKED;
     m_pDecodedMux->Reformat(false);
 
-    const char *leadstr = "!!ARBfp1.0\n"
-        "#Declarations\n"
-        "%s\n" //"OPTION ARB_fog_linear;\n"
-        "TEMP t0;\n"
-        "TEMP t1;\n"
-        "TEMP comb;\n"
-        "TEMP comb2;\n"
-        "\n"
-        "#Instructions\n"
-        "TEX t0, fragment.texcoord[0], texture[0], 2D;\n"
-        "TEX t1, fragment.texcoord[1], texture[1], 2D;\n"
-        "\n"
-        "# N64 cycle 1, result is in comb\n";
+    char tempstr[500], newFPBody[4092];
+    bool bNeedT0 = false, bNeedT1 = false, bNeedComb2 = false;
+    newFPBody[0] = 0;
 
-    // New solution
-    bool bFog = gRDP.bFogEnableInBlender && gRSP.bFogEnabled;
-    oglNewFP[0] = 0;
-    char tempstr[500];
-
-    sprintf(oglNewFP, leadstr, bFog?"OPTION ARB_fog_linear;":"\n");
     for( int cycle=0; cycle<2; cycle++ )
     {
         for( int channel=0; channel<2; channel++)
@@ -233,34 +230,72 @@ void COGL_FragmentProgramCombiner::GenerateProgramStr()
             switch( mux.splitType[cycle*2+channel] )
             {
             case CM_FMT_TYPE_NOT_USED:
-                sprintf(tempstr, "\n");
+                tempstr[0] = 0;
                 break;
             case CM_FMT_TYPE_D:
                 sprintf(tempstr, "MOV comb.%s, %s;\n", dst, func(m.d));
+                CheckFpVars(m.d, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_MOD_C:
                 sprintf(tempstr, "MUL comb.%s, %s, %s;\n", dst, func(m.a), func(m.c));
+                CheckFpVars(m.a, bNeedT0, bNeedT1);
+                CheckFpVars(m.c, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_ADD_D:
                 sprintf(tempstr, "ADD_SAT comb.%s, %s, %s;\n", dst, func(m.a), func(m.d));
+                CheckFpVars(m.a, bNeedT0, bNeedT1);
+                CheckFpVars(m.d, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_SUB_B:
                 sprintf(tempstr, "SUB comb.%s, %s, %s;\n", dst, func(m.a), func(m.b));
+                CheckFpVars(m.a, bNeedT0, bNeedT1);
+                CheckFpVars(m.b, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_MOD_C_ADD_D:
                 sprintf(tempstr, "MAD_SAT comb.%s, %s, %s, %s;\n", dst, func(m.a), func(m.c), func(m.d));
+                CheckFpVars(m.a, bNeedT0, bNeedT1);
+                CheckFpVars(m.c, bNeedT0, bNeedT1);
+                CheckFpVars(m.d, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_LERP_B_C:
                 sprintf(tempstr, "LRP_SAT comb.%s, %s, %s, %s;\n", dst, func(m.c), func(m.a), func(m.b));
+                CheckFpVars(m.a, bNeedT0, bNeedT1);
+                CheckFpVars(m.b, bNeedT0, bNeedT1);
+                CheckFpVars(m.c, bNeedT0, bNeedT1);
                 //sprintf(tempstr, "SUB comb.%s, %s, %s;\nMAD_SAT comb.%s, comb, %s, %s;\n", dst, func(m.a), func(m.b), dst, func(m.c), func(m.b));
                 break;
             default:
                 sprintf(tempstr, "SUB comb2.%s, %s, %s;\nMAD_SAT comb.%s, comb2, %s, %s;\n", dst, func(m.a), func(m.b), dst, func(m.c), func(m.d));
+                CheckFpVars(m.a, bNeedT0, bNeedT1);
+                CheckFpVars(m.b, bNeedT0, bNeedT1);
+                CheckFpVars(m.c, bNeedT0, bNeedT1);
+                CheckFpVars(m.d, bNeedT0, bNeedT1);
+                bNeedComb2 = true;
                 break;
             }
-            strcat(oglNewFP, tempstr);
+            strcat(newFPBody, tempstr);
         }
     }
+
+    strcpy(oglNewFP, "!!ARBfp1.0\n");
+    strcat(oglNewFP, "#Declarations\n");
+    if (gRDP.bFogEnableInBlender && gRSP.bFogEnabled)
+        strcat(oglNewFP, "OPTION ARB_fog_linear;\n");
+    if (bNeedT0)
+        strcat(oglNewFP, "TEMP t0;\n");
+    if (bNeedT1)
+        strcat(oglNewFP, "TEMP t1;\n");
+    strcat(oglNewFP, "TEMP comb;\n");
+    if (bNeedComb2)
+        strcat(oglNewFP, "TEMP comb2;\n");
+    strcat(oglNewFP, "#Instructions\n");
+    if (bNeedT0)
+        strcat(oglNewFP, "TEX t0, fragment.texcoord[0], texture[0], 2D;\n");
+    if (bNeedT1)
+        strcat(oglNewFP, "TEX t1, fragment.texcoord[1], texture[1], 2D;\n");
+    strcat(oglNewFP, "# N64 cycle 1, result is in comb\n");
+
+    strcat(oglNewFP, newFPBody);
 
     strcat(oglNewFP, "MOV result.color, comb;\n");
     strcat(oglNewFP, "END\n\n");
@@ -274,10 +309,13 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
     OGLShaderCombinerSaveType res;
 
     pglGenProgramsARB( 1, &res.programID);
+    OPENGL_CHECK_ERRORS;
     pglBindProgramARB( GL_FRAGMENT_PROGRAM_ARB, res.programID);
+    OPENGL_CHECK_ERRORS;
     GenerateProgramStr();
 
     pglProgramStringARB( GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(oglNewFP), oglNewFP);
+    OPENGL_CHECK_ERRORS;
     //pglProgramStringARB(   GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(oglFPTest), oglFPTest);
 
     if (glGetError() != 0)
@@ -299,6 +337,7 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
     }
 
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
+    OPENGL_CHECK_ERRORS;
     res.dwMux0 = m_pDecodedMux->m_dwMux0;
     res.dwMux1 = m_pDecodedMux->m_dwMux1;
     res.fogIsUsed = gRDP.bFogEnableInBlender && gRSP.bFogEnabled;
@@ -313,7 +352,9 @@ void COGL_FragmentProgramCombiner::GenerateCombinerSetting(int index)
 {
     GLuint ID = m_vCompiledShaders[index].programID;
     pglBindProgramARB( GL_FRAGMENT_PROGRAM_ARB, ID );
+    OPENGL_CHECK_ERRORS;
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
+    OPENGL_CHECK_ERRORS;
 }
 
 void COGL_FragmentProgramCombiner::GenerateCombinerSettingConstants(int index)
@@ -321,20 +362,26 @@ void COGL_FragmentProgramCombiner::GenerateCombinerSettingConstants(int index)
     float *pf;
     pf = GetEnvColorfv();
     pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 1, pf);
+    OPENGL_CHECK_ERRORS;
     pf = GetPrimitiveColorfv();
     pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 2, pf);
+    OPENGL_CHECK_ERRORS;
 
     float frac = gRDP.LODFrac / 255.0f;
     float tempf[4] = {frac,frac,frac,frac};
     pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 3, tempf);
+    OPENGL_CHECK_ERRORS;
 
     float frac2 = gRDP.primLODFrac / 255.0f;
     float tempf2[4] = {frac2,frac2,frac2,frac2};
     pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 4, tempf2);
+    OPENGL_CHECK_ERRORS;
 
     float tempf3[4] = {0,0,0,0};
     pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 0, tempf3);
+    OPENGL_CHECK_ERRORS;
     pglProgramEnvParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 6, tempf3);
+    OPENGL_CHECK_ERRORS;
 }
 
 int COGL_FragmentProgramCombiner::FindCompiledMux()
