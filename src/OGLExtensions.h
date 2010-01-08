@@ -24,25 +24,47 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <SDL_opengl.h>
 
+/* Just call this one function to load up the function pointers. */
 void OGLExtensions_Init(void);
 
-extern PFNGLCOMBINERPARAMETERFVNVPROC     pglCombinerParameterfvNV;
-extern PFNGLFINALCOMBINERINPUTNVPROC      pglFinalCombinerInputNV;
-extern PFNGLCOMBINEROUTPUTNVPROC          pglCombinerOutputNV;
-extern PFNGLCOMBINERINPUTNVPROC           pglCombinerInputNV;
-extern PFNGLCOMBINERPARAMETERINVPROC      pglCombinerParameteriNV;
+/* The function pointer types are defined here because as of 2009 some OpenGL drivers under Linux do 'incorrect' things which
+   mess up the SDL_opengl.h header, resulting in no function pointer typedefs at all, and thus compilation errors.
+*/
+typedef void (APIENTRYP PFUNCGLCOMBINERPARAMETERFVNVPROC) (GLenum pname, const GLfloat *params);
+typedef void (APIENTRYP PFUNCGLFINALCOMBINERINPUTNVPROC) (GLenum variable, GLenum input, GLenum mapping, GLenum componentUsage);
+typedef void (APIENTRYP PFUNCGLCOMBINEROUTPUTNVPROC) (GLenum stage, GLenum portion, GLenum abOutput, GLenum cdOutput, GLenum sumOutput, GLenum scale, GLenum bias, GLboolean abDotProduct, GLboolean cdDotProduct, GLboolean muxSum);
+typedef void (APIENTRYP PFUNCGLCOMBINERINPUTNVPROC) (GLenum stage, GLenum portion, GLenum variable, GLenum input, GLenum mapping, GLenum componentUsage);
+typedef void (APIENTRYP PFUNCGLCOMBINERPARAMETERINVPROC) (GLenum pname, GLint param);
 
-extern PFNGLACTIVETEXTUREPROC             pglActiveTexture;
-extern PFNGLACTIVETEXTUREARBPROC          pglActiveTextureARB;
-extern PFNGLMULTITEXCOORD2FPROC           pglMultiTexCoord2f;
-extern PFNGLMULTITEXCOORD2FVPROC          pglMultiTexCoord2fv;
-extern PFNGLDELETEPROGRAMSARBPROC         pglDeleteProgramsARB;
-extern PFNGLPROGRAMSTRINGARBPROC          pglProgramStringARB;
-extern PFNGLBINDPROGRAMARBPROC            pglBindProgramARB;
-extern PFNGLGENPROGRAMSARBPROC            pglGenProgramsARB;
-extern PFNGLPROGRAMENVPARAMETER4FVARBPROC pglProgramEnvParameter4fvARB;
-extern PFNGLFOGCOORDPOINTEREXTPROC        pglFogCoordPointerEXT;
-extern PFNGLCLIENTACTIVETEXTUREARBPROC    pglClientActiveTextureARB;
+typedef void (APIENTRYP PFUNCGLACTIVETEXTUREPROC) (GLenum texture);
+typedef void (APIENTRYP PFUNCGLACTIVETEXTUREARBPROC) (GLenum texture);
+typedef void (APIENTRYP PFUNCGLMULTITEXCOORD2FPROC) (GLenum target, GLfloat s, GLfloat t);
+typedef void (APIENTRYP PFUNCGLMULTITEXCOORD2FVPROC) (GLenum target, const GLfloat *v);
+typedef void (APIENTRYP PFUNCGLDELETEPROGRAMSARBPROC) (GLsizei n, const GLuint *programs);
+typedef void (APIENTRYP PFUNCGLPROGRAMSTRINGARBPROC) (GLenum target, GLenum format, GLsizei len, const GLvoid *string);
+typedef void (APIENTRYP PFUNCGLBINDPROGRAMARBPROC) (GLenum target, GLuint program);
+typedef void (APIENTRYP PFUNCGLGENPROGRAMSARBPROC) (GLsizei n, GLuint *programs);
+typedef void (APIENTRYP PFUNCGLPROGRAMENVPARAMETER4FVARBPROC) (GLenum target, GLuint index, const GLfloat *params);
+typedef void (APIENTRYP PFUNCGLFOGCOORDPOINTEREXTPROC) (GLenum type, GLsizei stride, const GLvoid *pointer);
+typedef void (APIENTRYP PFUNCGLCLIENTACTIVETEXTUREARBPROC) (GLenum texture);
+
+extern PFUNCGLCOMBINERPARAMETERFVNVPROC     pglCombinerParameterfvNV;
+extern PFUNCGLFINALCOMBINERINPUTNVPROC      pglFinalCombinerInputNV;
+extern PFUNCGLCOMBINEROUTPUTNVPROC          pglCombinerOutputNV;
+extern PFUNCGLCOMBINERINPUTNVPROC           pglCombinerInputNV;
+extern PFUNCGLCOMBINERPARAMETERINVPROC      pglCombinerParameteriNV;
+
+extern PFUNCGLACTIVETEXTUREPROC             pglActiveTexture;
+extern PFUNCGLACTIVETEXTUREARBPROC          pglActiveTextureARB;
+extern PFUNCGLMULTITEXCOORD2FPROC           pglMultiTexCoord2f;
+extern PFUNCGLMULTITEXCOORD2FVPROC          pglMultiTexCoord2fv;
+extern PFUNCGLDELETEPROGRAMSARBPROC         pglDeleteProgramsARB;
+extern PFUNCGLPROGRAMSTRINGARBPROC          pglProgramStringARB;
+extern PFUNCGLBINDPROGRAMARBPROC            pglBindProgramARB;
+extern PFUNCGLGENPROGRAMSARBPROC            pglGenProgramsARB;
+extern PFUNCGLPROGRAMENVPARAMETER4FVARBPROC pglProgramEnvParameter4fvARB;
+extern PFUNCGLFOGCOORDPOINTEREXTPROC        pglFogCoordPointerEXT;
+extern PFUNCGLCLIENTACTIVETEXTUREARBPROC    pglClientActiveTextureARB;
 
 #endif  // OGL_EXTENSIONS_H
 
