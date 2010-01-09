@@ -378,7 +378,6 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
                     }
                 }
 #endif //__linux__
-                Data[32] = DataCRC( Data, 32 );
             }
             break;
         case RD_RESETCONTROLLER:
