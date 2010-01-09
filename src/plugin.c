@@ -342,8 +342,8 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
                     memset( Data, 0x00, 32 );
 
                 Data[32] = DataCRC( Data, 32 );
-                break;
-                }
+            }
+            break;
         case RD_WRITEPAK:
 #ifdef _DEBUG
             DebugMessage(M64MSG_INFO, "Write pak");
@@ -378,6 +378,7 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
                     }
                 }
 #endif //__linux__
+                Data[32] = DataCRC( Data, 32 );
             }
             break;
         case RD_RESETCONTROLLER:
