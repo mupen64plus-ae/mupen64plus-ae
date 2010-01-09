@@ -245,7 +245,7 @@ rebuild: clean all
 
 # build rules
 $(TARGET): $(OBJECTS)
-	$(LD) $(SHARED) $^ $(LDFLAGS) -o $@
+	$(CC) $(SHARED) $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
