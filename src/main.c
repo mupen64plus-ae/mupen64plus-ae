@@ -248,6 +248,7 @@ static int SetConfigParameter(const char *ParamSpec)
     if (VarName == NULL || VarValue == NULL || *VarValue != '=')
     {
         fprintf(stderr, "UI-Console Error: invalid (param-spec) '%s'\n", ParamSpec);
+        free(ParsedString);
         return 3;
     }
     VarValue++;
@@ -257,6 +258,7 @@ static int SetConfigParameter(const char *ParamSpec)
     if (rval != M64ERR_SUCCESS)
     {
         fprintf(stderr, "UI-Console Error: SetConfigParameter failed to open config section '%s'\n", ParsedString);
+        free(ParsedString);
         return 4;
     }
     if ((*ConfigGetParameterType)(ConfigSection, VarName, &VarType) == M64ERR_SUCCESS)
@@ -290,6 +292,7 @@ static int SetConfigParameter(const char *ParamSpec)
         ConfigSetParameter(ConfigSection, VarName, M64TYPE_STRING, VarValue);
     }
 
+    free(ParsedString);
     return 0;
 }
 
