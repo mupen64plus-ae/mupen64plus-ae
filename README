@@ -30,6 +30,7 @@ Parameters:
     --rsp (plugin-spec)   : use rsp plugin given by (plugin-spec)
     --emumode (mode)      : set emu mode to: 0=Pure Interpreter 1=Interpreter 2=DynaRec
     --testshots (list)    : take screenshots at frames given in comma-separated (list), then quit
+    --set (param-spec)    : set a configuration variable, format: ParamSection[ParamName]=Value
     --core-compare-send   : use the Core Comparison debugging feature, in data sending mode
     --core-compare-recv   : use the Core Comparison debugging feature, in data receiving mode
     --saveoptions         : save the given command-line options in configuration file for future

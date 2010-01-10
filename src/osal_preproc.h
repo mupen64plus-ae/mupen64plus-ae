@@ -34,6 +34,7 @@
   #define OSAL_DIR_SEPARATOR           '\\'
   #define OSAL_CURRENT_DIR             ".\\"
   #define OSAL_DLL_EXTENSION           ".dll"
+  #define osal_insensitive_strcmp(x, y) _stricmp(x, y)
 
 #elif defined(__APPLE__)
 
@@ -42,7 +43,8 @@
   #define OSAL_DIR_SEPARATOR           '/'
   #define OSAL_CURRENT_DIR             "./"
   #define OSAL_DLL_EXTENSION           ".dylib"
-  
+  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
+
 #else  /* Linux-like UNIX */
 
   #include <limits.h>  // for PATH_MAX
@@ -50,6 +52,7 @@
   #define OSAL_DIR_SEPARATOR           '/'
   #define OSAL_CURRENT_DIR             "./"
   #define OSAL_DLL_EXTENSION           ".so"
+  #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
 
 #endif
 

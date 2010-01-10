@@ -193,6 +193,7 @@ static void printUsage(const char *progname)
            "    --rsp (plugin-spec)   : use rsp plugin given by (plugin-spec)\n"
            "    --emumode (mode)      : set emu mode to: 0=Pure Interpreter 1=Interpreter 2=DynaRec\n"
            "    --testshots (list)    : take screenshots at frames given in comma-separated (list), then quit\n"
+           "    --set (param-spec)    : set a configuration variable, format: ParamSection[ParamName]=Value\n"
            "    --core-compare-send   : use the Core Comparison debugging feature, in data sending mode\n"
            "    --core-compare-recv   : use the Core Comparison debugging feature, in data receiving mode\n"
            "    --saveoptions         : save the given command-line options in configuration file for future\n"
@@ -209,6 +210,87 @@ static void printUsage(const char *progname)
            "\n", progname);
 
     return;
+}
+
+static int SetConfigParameter(const char *ParamSpec)
+{
+    char *ParsedString, *VarName, *VarValue;
+    m64p_handle ConfigSection;
+    m64p_type VarType;
+    m64p_error rval;
+
+    if (ParamSpec == NULL)
+    {
+        fprintf(stderr, "UI-Console Error: ParamSpec is NULL in SetConfigParameter()\n");
+        return 1;
+    }
+
+    /* make a copy of the input string */
+    ParsedString = malloc(strlen(ParamSpec) + 1);
+    if (ParsedString == NULL)
+    {
+        fprintf(stderr, "UI-Console Error: SetConfigParameter() couldn't allocate memory for temporary string.\n");
+        return 2;
+    }
+    strcpy(ParsedString, ParamSpec);
+
+    /* parse it for the simple section[name]=value format */
+    VarName = strchr(ParsedString, '[');
+    if (VarName != NULL)
+    {
+        *VarName++ = 0;
+        VarValue = strchr(VarName, ']');
+        if (VarValue != NULL)
+        {
+            *VarValue++ = 0;
+        }
+    }
+    if (VarName == NULL || VarValue == NULL || *VarValue != '=')
+    {
+        fprintf(stderr, "UI-Console Error: invalid (param-spec) '%s'\n", ParamSpec);
+        return 3;
+    }
+    VarValue++;
+
+    /* then set the value */
+    rval = (*ConfigOpenSection)(ParsedString, &ConfigSection);
+    if (rval != M64ERR_SUCCESS)
+    {
+        fprintf(stderr, "UI-Console Error: SetConfigParameter failed to open config section '%s'\n", ParsedString);
+        return 4;
+    }
+    if ((*ConfigGetParameterType)(ConfigSection, VarName, &VarType) == M64ERR_SUCCESS)
+    {
+        switch(VarType)
+        {
+            int ValueInt;
+            float ValueFloat;
+            case M64TYPE_INT:
+                ValueInt = atoi(VarValue);
+                ConfigSetParameter(ConfigSection, VarName, M64TYPE_INT, &ValueInt);
+                break;
+            case M64TYPE_FLOAT:
+                ValueFloat = (float) atof(VarValue);
+                ConfigSetParameter(ConfigSection, VarName, M64TYPE_FLOAT, &ValueFloat);
+                break;
+            case M64TYPE_BOOL:
+                ValueInt = (int) (osal_insensitive_strcmp(VarValue, "true") == 0);
+                ConfigSetParameter(ConfigSection, VarName, M64TYPE_BOOL, &ValueInt);
+                break;
+            case M64TYPE_STRING:
+                ConfigSetParameter(ConfigSection, VarName, M64TYPE_STRING, VarValue);
+                break;
+            default:
+                fprintf(stderr, "UI-Console Error: invalid VarType in SetConfigParameter()\n");
+                return 5;
+        }
+    }
+    else
+    {
+        ConfigSetParameter(ConfigSection, VarName, M64TYPE_STRING, VarValue);
+    }
+
+    return 0;
 }
 
 static int *ParseNumberList(const char *InputString, int *ValuesFound)
@@ -378,6 +460,12 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
             l_TestShotList = ParseNumberList(argv[i+1], NULL);
             i++;
         }
+        else if (strcmp(argv[i], "--set") == 0 && ArgsLeft >= 1)
+        {
+            if (SetConfigParameter(argv[i+1]) != 0)
+                return M64ERR_INPUT_INVALID;
+            i++;
+        }
         else if (strcmp(argv[i], "--core-compare-send") == 0)
         {
             l_CoreCompareMode = 1;
@@ -409,8 +497,7 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 
     /* missing ROM filepath */
     fprintf(stderr, "Error: no ROM filepath given\n");
-    exit(2);
-    return M64ERR_INTERNAL;
+    return M64ERR_INPUT_INVALID;
 }
 
 /*********************************************************************************************************
@@ -468,7 +555,7 @@ int main(int argc, char *argv[])
     {
         printf("UI-console: can't use --core-compare feature with this Mupen64Plus core library.\n");
         DetachCoreLib();
-        return 3;
+        return 6;
     }
     compare_core_init(l_CoreCompareMode);
 
@@ -483,7 +570,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error: couldn't open ROM file '%s' for reading.\n", l_ROMFilepath);
         (*CoreShutdown)();
         DetachCoreLib();
-        return 6;
+        return 7;
     }
 
     /* get the length of the ROM, allocate memory buffer, load it from disk */
@@ -498,7 +585,7 @@ int main(int argc, char *argv[])
         fclose(fPtr);
         (*CoreShutdown)();
         DetachCoreLib();
-        return 7;
+        return 8;
     }
     else if (fread(ROM_buffer, 1, romlength, fPtr) != romlength)
     {
@@ -507,7 +594,7 @@ int main(int argc, char *argv[])
         fclose(fPtr);
         (*CoreShutdown)();
         DetachCoreLib();
-        return 8;
+        return 9;
     }
     fclose(fPtr);
 
@@ -518,7 +605,7 @@ int main(int argc, char *argv[])
         free(ROM_buffer);
         (*CoreShutdown)();
         DetachCoreLib();
-        return 9;
+        return 10;
     }
     free(ROM_buffer); /* the core copies the ROM image, so we can release this buffer immediately */
 
@@ -529,7 +616,7 @@ int main(int argc, char *argv[])
         (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
         (*CoreShutdown)();
         DetachCoreLib();
-        return 10;
+        return 11;
     }
 
     /* search for and load plugins */
@@ -539,7 +626,7 @@ int main(int argc, char *argv[])
         (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
         (*CoreShutdown)();
         DetachCoreLib();
-        return 11;
+        return 12;
     }
 
     /* attach plugins to core */
@@ -551,7 +638,7 @@ int main(int argc, char *argv[])
             (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
             (*CoreShutdown)();
             DetachCoreLib();
-            return 12;
+            return 13;
         }
     }
 

@@ -59,6 +59,7 @@ ptr_ConfigListParameters   ConfigListParameters = NULL;
 ptr_ConfigSaveFile         ConfigSaveFile = NULL;
 ptr_ConfigSetParameter     ConfigSetParameter = NULL;
 ptr_ConfigGetParameter     ConfigGetParameter = NULL;
+ptr_ConfigGetParameterType ConfigGetParameterType = NULL;
 ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
 ptr_ConfigSetDefaultInt    ConfigSetDefaultInt = NULL;
 ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat = NULL;
@@ -201,6 +202,7 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     ConfigSaveFile = (ptr_ConfigSaveFile) osal_dynlib_getproc(CoreHandle, "ConfigSaveFile");
     ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreHandle, "ConfigSetParameter");
     ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreHandle, "ConfigGetParameter");
+    ConfigGetParameterType = (ptr_ConfigGetParameterType) osal_dynlib_getproc(CoreHandle, "ConfigGetParameterType");
     ConfigGetParameterHelp = (ptr_ConfigGetParameterHelp) osal_dynlib_getproc(CoreHandle, "ConfigGetParameterHelp");
     ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreHandle, "ConfigSetDefaultInt");
     ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreHandle, "ConfigSetDefaultFloat");
@@ -265,6 +267,7 @@ m64p_error DetachCoreLib(void)
     ConfigListParameters = NULL;
     ConfigSetParameter = NULL;
     ConfigGetParameter = NULL;
+    ConfigGetParameterType = NULL;
     ConfigGetParameterHelp = NULL;
     ConfigSetDefaultInt = NULL;
     ConfigSetDefaultBool = NULL;
