@@ -662,7 +662,7 @@ EXPORT void CALL RomClosed(void)
     TRACE0("Video is stopped");
 }
 
-EXPORT void CALL RomOpen(void)
+EXPORT int CALL RomOpen(void)
 {
     /* Read RiceVideoLinux.ini file, set up internal variables by reading values from core configuration API */
     LoadConfiguration();
@@ -684,7 +684,10 @@ EXPORT void CALL RomOpen(void)
     }
 #endif
 
-    StartVideo();
+    if (!StartVideo())
+        return 0;
+
+    return 1;
 }
 
 
