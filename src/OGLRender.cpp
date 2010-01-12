@@ -862,13 +862,11 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
 void OGLRender::TexCoord2f(float u, float v)
 {
     glTexCoord2f(u, v);
-    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::TexCoord(TLITVERTEX &vtxInfo)
 {
     glTexCoord2f(vtxInfo.tcord[0].u, vtxInfo.tcord[0].v);
-    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::UpdateScissor()

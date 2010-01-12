@@ -80,7 +80,6 @@ void COGLExtRender::TexCoord2f(float u, float v)
             if( m_textureUnitMap[i] >= 0 )
             {
                 pglMultiTexCoord2f(GL_TEXTURE0_ARB+i, u, v);
-                OPENGL_CHECK_ERRORS;
             }
         }
     }
@@ -97,7 +96,6 @@ void COGLExtRender::TexCoord(TLITVERTEX &vtxInfo)
             if( m_textureUnitMap[i] >= 0 )
             {
                 pglMultiTexCoord2fv(GL_TEXTURE0_ARB+i, &(vtxInfo.tcord[m_textureUnitMap[i]].u));
-                OPENGL_CHECK_ERRORS;
             }
         }
     }
