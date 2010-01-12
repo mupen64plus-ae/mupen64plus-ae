@@ -767,7 +767,7 @@ EXPORT void CALL RomClosed(void)
   input:    none
   output:   none
 *******************************************************************/
-EXPORT void CALL RomOpen(void)
+EXPORT int CALL RomOpen(void)
 {
     int i;
 
@@ -776,7 +776,7 @@ EXPORT void CALL RomOpen(void)
         if( SDL_InitSubSystem( SDL_INIT_JOYSTICK ) == -1 )
         {
             DebugMessage(M64MSG_ERROR, "Couldn't init SDL joystick subsystem: %s", SDL_GetError() );
-            return;
+            return 0;
         }
 
     // open joysticks
@@ -801,6 +801,7 @@ EXPORT void CALL RomOpen(void)
     }
 
     romopen = 1;
+    return 1;
 }
 
 /******************************************************************
