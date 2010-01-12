@@ -226,7 +226,7 @@ static int SetConfigParameter(const char *ParamSpec)
     }
 
     /* make a copy of the input string */
-    ParsedString = malloc(strlen(ParamSpec) + 1);
+    ParsedString = (char *) malloc(strlen(ParamSpec) + 1);
     if (ParsedString == NULL)
     {
         fprintf(stderr, "UI-Console Error: SetConfigParameter() couldn't allocate memory for temporary string.\n");
