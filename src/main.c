@@ -484,13 +484,14 @@ static void my_audio_callback(void *userdata, unsigned char *stream, int len)
         memset(stream , 0, len);
     }
 }
-EXPORT void CALL RomOpen()
+EXPORT int CALL RomOpen()
 {
     if (!l_PluginInit)
-        return;
+        return 0;
 
     ReadConfig();
     InitializeAudio(GameFreq);
+    return 1;
 }
 
 static void InitializeSDL()
