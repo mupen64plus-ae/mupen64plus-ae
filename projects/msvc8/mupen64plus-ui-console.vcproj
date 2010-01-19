@@ -92,7 +92,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying shared data and libraries to build directory..."
-				CommandLine="copy ..\..\..\mupen64plus-core\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-video-rice\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\freetype-2.3.5-1\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\libpng-1.2.37\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\zlib-1.2.3\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+				CommandLine="copy ..\..\..\mupen64plus-core\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-video-rice\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-input-sdl\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\freetype-2.3.5-1\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\libpng-1.2.37\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\zlib-1.2.3\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -172,7 +172,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying shared data and libraries to build directory..."
-				CommandLine="copy ..\..\..\mupen64plus-core\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-video-rice\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\freetype-2.3.5-1\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\libpng-1.2.37\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\zlib-1.2.3\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+				CommandLine="copy ..\..\..\mupen64plus-core\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-video-rice\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-input-sdl\data\* &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\freetype-2.3.5-1\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\libpng-1.2.37\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;copy ..\..\..\mupen64plus-win32-deps\zlib-1.2.3\bin\*.dll &quot;$(OutDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
