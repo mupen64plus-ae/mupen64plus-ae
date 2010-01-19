@@ -22,7 +22,7 @@
 #ifndef __AUTOCONFIG_H__
 #define __AUTOCONFIG_H__
 
-extern int auto_load_defaults(int iCtrlIdx, int iDeviceIdx, const char *joySDLName);
+extern int auto_set_defaults(int iDeviceIdx, const char *joySDLName);
 
 #endif /* __AUTOCONFIG_H__ */
 

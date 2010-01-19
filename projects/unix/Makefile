@@ -188,6 +188,9 @@ endif
 ifeq ($(PREFIX),)
   PREFIX := /usr/local
 endif
+ifeq ($(SHAREDIR),)
+  SHAREDIR := $(PREFIX)/share/mupen64plus
+endif
 ifeq ($(LIBDIR),)
   LIBDIR := $(PREFIX)/lib/mupen64plus
 endif
@@ -223,6 +226,7 @@ targets:
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
+	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
 	@echo "    LIBDIR=path   == path to install plugin libraries (default: PREFIX/lib/mupen64plus)"
 	@echo "    DESTDIR=path  == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
@@ -234,6 +238,8 @@ all: $(TARGET)
 install: $(TARGET)
 	$(INSTALL) -d -v "$(DESTDIR)$(LIBDIR)"
 	$(INSTALL) -m 0644 $(TARGET) "$(DESTDIR)$(LIBDIR)"
+	$(INSTALL) -d -v "$(DESTDIR)$(SHAREDIR)"
+	$(INSTALL) -m 0644 "../../data/InputAutoCfg.ini" "$(DESTDIR)$(SHAREDIR)"
 
 uninstall:
 	rm -f "$(DESTDIR)$(LIBDIR)/$(TARGET)"
