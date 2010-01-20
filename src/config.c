@@ -373,7 +373,7 @@ void save_controller_config(int iCtrlIdx)
  *    - However, if the config data section (Input-SDL-Control*) was previously empty, then the auto-configured parameters *will* be written to the config file
  *      - this allows a user to run the emulator once and save the auto-configured parameters, then later tweak the settings from a GUI
  * 3. If for any reason there are no joysticks enabled after trying to set up all 4 controllers, then Controller #1 will be auto-configured for Keyboard usage
- *    - the keyboard config parameteres will never be written to the config file, even if the Input-SDL-Control1 section was previously empty
+ *    - the keyboard config parameters will never be written to the config file, even if the Input-SDL-Control1 section was previously empty
  */
   
 void load_configuration(void)
