@@ -44,6 +44,11 @@ ifeq ("$(UNAME)","FreeBSD")
   SHARED = -shared
   SO_EXTENSION = so
 endif
+ifeq ("$(UNAME)","GNU/kFreeBSD")
+  OS = FREEBSD
+  SHARED = -shared
+  SO_EXTENSION = so
+endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
