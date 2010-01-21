@@ -54,7 +54,6 @@ int auto_set_defaults(int iDeviceIdx, const char *joySDLName)
     char *pchIni, *pchNextLine, *pchCurLine;
     long iniLength;
     int ControllersFound = 0;
-    int i;
 
     /* if we couldn't get a name (no joystick plugged in to given port), then return with a failure */
     if (joySDLName == NULL)
