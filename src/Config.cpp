@@ -888,7 +888,7 @@ std::ifstream& getline( std::ifstream &is, char *str );
 
 char * left(const char * src, int nchars)
 {
-    static char dst[300];           // BUGFIX (STRMNNRM)
+    static char dst[300];
     strncpy(dst,src,nchars);
     dst[nchars]=0;
     return dst;
@@ -896,9 +896,17 @@ char * left(const char * src, int nchars)
 
 char * right(const char *src, int nchars)
 {
-    static char dst[300];           // BUGFIX (STRMNNRM)
-    strncpy(dst, src + strlen(src) - nchars, nchars);
-    dst[nchars]=0;
+    static char dst[300];
+    int srclen = strlen(src);
+    if (nchars >= srclen)
+    {
+        strcpy(dst, src);
+    }
+    else
+    {
+        strncpy(dst, src + srclen - nchars, nchars);
+        dst[nchars]=0;
+    }
     return dst;
 }
 

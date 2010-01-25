@@ -909,7 +909,6 @@ CSortedList<uint64,ExtTxtrInfo> gHiresTxtrInfos;
 extern char * right(const char * src, int nchars);
 
 #define SURFFMT_P8 41
-#define SURFFMT_X8R8G8B8 SURFFMT_A8R8G8B8
 
 int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
 {
@@ -944,7 +943,7 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
                 pSrcInfo->Format = SURFFMT_A8R8G8B8;
             else if(img.bits_per_pixel == 8)
                 pSrcInfo->Format = SURFFMT_P8;
-    // Resource and File Format ignored
+            // Resource and File Format ignored
             FreeBMGImage(&img);
             return 0;
         }
@@ -967,16 +966,15 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
                 pSrcInfo->Format = SURFFMT_A8R8G8B8;
             else if(img.bits_per_pixel == 8)
                 pSrcInfo->Format = SURFFMT_P8;
-    // Resource and File Format ignored
+            // Resource and File Format ignored
             FreeBMGImage(&img);
             return 0;
         }
+        DebugMessage(M64MSG_ERROR, "Couldn't read PNG file '%s'; error = %i", pSrcFile, code);
         return 1;
     }
-    else
-    {
-        DebugMessage(M64MSG_ERROR, "GetImageInfoFromFile : unknown file format (%s)", pSrcFile);
-    }
+
+    DebugMessage(M64MSG_ERROR, "GetImageInfoFromFile : unknown file format (%s)", pSrcFile);
     return 1;
 }
 
@@ -1007,7 +1005,6 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
 
     int crc, palcrc32;
     unsigned int fmt, siz;
-    //char name[256];
     char crcstr[16], crcstr2[16];
 
     do
@@ -1019,12 +1016,14 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
         strcpy(texturefilename, foldername);
         strcat(texturefilename, foundfilename);
 
+        /* handle recursion into sub-directories */
         if (osal_is_directory(texturefilename) && bRecursive )
         {
             strcat(texturefilename, OSAL_DIR_SEPARATOR_STR);
             FindAllTexturesFromFolder(texturefilename, infos, extraCheck, bRecursive);
         }
 
+        /* if filename doesn't match the ROM's name, skip it */
         if( strstr(foundfilename,(const char*)g_curRomInfo.szGameName) == 0 )
             continue;
 
@@ -1035,7 +1034,7 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0)
             {
-                TRACE1("Cannot get image info for file: %s", foundfilename);
+                DebugMessage(M64MSG_WARNING, "Cannot get image info for file: %s", foundfilename);
                 continue;
             }
 
@@ -1048,7 +1047,7 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0 )
             {
-                TRACE1("Cannot get image info for file: %s", foundfilename);
+                DebugMessage(M64MSG_WARNING, "Cannot get image info for file: %s", foundfilename);
                 continue;
             }
 
@@ -1057,12 +1056,11 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
             else
                 continue;
         }
-
         else if( strcasecmp(right(foundfilename,16), "_allciByRGBA.png") == 0 )
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0 )
             {
-                TRACE1("Cannot get image info for file: %s", foundfilename);
+                DebugMessage(M64MSG_WARNING, "Cannot get image info for file: %s", foundfilename);
                 continue;
             }
             if( imgInfo.Format == SURFFMT_A8R8G8B8 )
@@ -1074,12 +1072,9 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0 )
             {
-                TRACE1("Cannot get image info for file: %s", foundfilename);
+                DebugMessage(M64MSG_WARNING, "Cannot get image info for file: %s", foundfilename);
                 continue;
             }
-
-            if( imgInfo.Format != SURFFMT_X8R8G8B8 )
-                continue;
 
             type = RGB_PNG;
 
@@ -1090,39 +1085,43 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
             {
                 if( GetImageInfoFromFile(filename2, &imgInfo2) != 0 )
                 {
-                    TRACE1("Cannot get image info for file: %s", filename2);
+                    DebugMessage(M64MSG_WARNING, "Cannot get image info for file: %s", filename2);
                     continue;
                 }
                 
                 if( extraCheck && (imgInfo2.Width != imgInfo.Width || imgInfo2.Height != imgInfo.Height) )
                 {
-                    TRACE1("RGB and alpha texture size mismatch: %s", filename2);
+                    DebugMessage(M64MSG_WARNING, "RGB and alpha texture size mismatch: %s", filename2);
                     continue;
                 }
 
-                if( imgInfo.Format == SURFFMT_X8R8G8B8 )
-                {
-                    bSeparatedAlpha = true;
-                }
+                bSeparatedAlpha = true;
             }
         }
         else if( strcasecmp(right(foundfilename,8), "_all.png") == 0 )
         {
             if( GetImageInfoFromFile(texturefilename, &imgInfo) != 0 )
             {
-                TRACE1("Cannot get image info for file: %s", foundfilename);
+                DebugMessage(M64MSG_WARNING, "Cannot get image info for file: %s", foundfilename);
                 continue;
             }
-            
-            if( imgInfo.Format != SURFFMT_A8R8G8B8 )
-                continue;
-            
+
             type = RGB_WITH_ALPHA_TOGETHER_PNG;
         }
     
         if( type != NO_TEXTURE )
         {
-            // Try to read image information here
+            /* Try to read image information here.
+
+            (CASTLEVANIA2)(#58E2333F)(#2#0#)(D7A5C6D 9)_ciByRGBA.png
+            (------1-----)(----2----)(3)(4)(----5-----)_ciByRGBA.png
+ 
+            1. Internal ROM name
+            2. The DRAM CRC
+            3. The image pixel size (8b=0, 16b=1, 24b=2, 32b=3)
+            4. The texture format (RGBA=0, YUV=1, CI=2, IA=3, I=4)
+            5. The PAL CRC
+            */
             strcpy(texturefilename, foundfilename);
 
             char *ptr = strchr(texturefilename,'#');
@@ -1138,7 +1137,6 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
                 sscanf(ptr,"%8c#%d#%d", crcstr, &fmt, &siz);
                 palcrc32 = 0xFFFFFFFF;
             }
-            //sscanf(texturefilename,"%8c#%d#%d", crcstr, &fmt, &siz);
             crcstr[8]=0;
             crc = strtoul(crcstr,NULL,16);
 
@@ -1206,7 +1204,7 @@ bool CheckAndCreateFolder(const char* pathname)
     {
         if (osal_mkdirp(pathname, 0700) != 0)
         {
-            TRACE1("Can not create new folder: %s", pathname);
+            DebugMessage(M64MSG_WARNING, "Can not create new folder: %s", pathname);
             return false;
         }
     }
@@ -1744,7 +1742,7 @@ bool LoadRGBBufferFromBMPFile(char *filename, unsigned char **pbuf, int &width, 
         if( infoHeader.biBitCount != 24 )
         {
             fclose(f);
-            TRACE1("Unsupported BMP file 16 bits format: %s", filename);
+            DebugMessage(M64MSG_ERROR, "Unsupported BMP file 16 bits format: %s", filename);
             *pbuf = NULL;
             return false;
         }
@@ -1768,7 +1766,7 @@ bool LoadRGBBufferFromBMPFile(char *filename, unsigned char **pbuf, int &width, 
     else
     {
         // Do something
-        TRACE1("Fail to open file %s", filename);
+        DebugMessage(M64MSG_WARNING, "Fail to open file %s", filename);
         *pbuf = NULL;
         return false;
     }
@@ -1849,13 +1847,11 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
     if( !bResRGBA )
     {
         DebugMessage(M64MSG_ERROR, "RGBBuffer creation failed for file '%s'.", filename_rgb);
-        TRACE1("Cannot open %s", filename_rgb);
         return;
     }
     else if( gHiresTxtrInfos[idx].bSeparatedAlpha && !bResA )
     {
         DebugMessage(M64MSG_ERROR, "Alpha buffer creation failed for file '%s'.", filename_a);
-        TRACE1("Cannot open %s", filename_a);
         delete [] buf_rgba;
         return;
     }
