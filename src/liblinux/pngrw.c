@@ -75,13 +75,15 @@ void Expand2to4( char *b4, char b2, int NumBytes )
 void user_read_data(png_structp png_read, png_bytep data, png_size_t length)
 {
     FILE *fPtr = (FILE *) png_get_io_ptr(png_read);
-    fread(data, 1, length, fPtr);
+    if (fread(data, 1, length, fPtr) != length)
+        fprintf(stderr, "Failed to read %i bytes from PNG file.\n", length);
 }
 
 void user_write_data(png_structp png_write, png_bytep data, png_size_t length)
 {
     FILE *fPtr = (FILE *) png_get_io_ptr(png_write);
-    fwrite(data, 1, length, fPtr);
+    if (fwrite(data, 1, length, fPtr) != length)
+        fprintf(stderr, "Failed to write %i bytes to PNG file.\n", length);
 }
 
 void user_flush_data(png_structp png_read)
