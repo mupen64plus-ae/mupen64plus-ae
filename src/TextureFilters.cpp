@@ -900,7 +900,6 @@ typedef struct {
     char AlphaNameTail[20];
     TextureType type;
     bool        bSeparatedAlpha;
-    int scaleShift;
 } ExtTxtrInfo;
 
 CSortedList<uint64,ExtTxtrInfo> gTxtrDumpInfos;
@@ -1379,15 +1378,23 @@ int FindScaleFactor(const ExtTxtrInfo &info, TxtrCacheEntry &entry)
     {
         scaleShift = 4;
     }
+    else if (info.height == (int)entry.ti.HeightToLoad*32 && info.width == (int)entry.ti.WidthToLoad*32)
+    {
+        scaleShift = 5;
+    }
+    else if (info.height == (int)entry.ti.HeightToLoad*64 && info.width == (int)entry.ti.WidthToLoad*64)
+    {
+        scaleShift = 6;
+    }
 
     return scaleShift;
 }
 
-int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &entry, int &indexa, bool bForDump = false )
+int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &entry, int &indexa, int &scaleShift, bool bForDump = false)
 {
     if(entry.ti.WidthToCreate/entry.ti.WidthToLoad > 2 || entry.ti.HeightToCreate/entry.ti.HeightToLoad > 2 )
     {
-        //TRACE0("Hires texture does not support extreme texture replication");
+        //DebugMessage(M64MSG_WARNING, "Hires texture does not support extreme texture replication");
         return -1;
     }
 
@@ -1408,7 +1415,7 @@ int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &e
     if( indexa >= infosize )    indexa = -1;
     if( indexb >= infosize )    indexb = -1;
 
-    int scaleShift = -1;
+    scaleShift = -1;
 
     if( indexb >= 0 )
     {
@@ -1438,8 +1445,8 @@ void DumpCachedTexture( TxtrCacheEntry &entry )
     if( pSrcTexture )
     {
         // Check the vector table
-        int ciidx;
-        if( CheckTextureInfos(gTxtrDumpInfos,entry,ciidx,true) >= 0 )
+        int ciidx, scaleShift;
+        if( CheckTextureInfos(gTxtrDumpInfos,entry,ciidx,scaleShift,true) >= 0 )
             return;     // This texture has been dumpped
 
         char filename1[PATH_MAX + 64];
@@ -1782,8 +1789,8 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
         SAFE_DELETE(entry.pEnhancedTexture);
     }
 
-    int ciidx;
-    int idx = CheckTextureInfos(gHiresTxtrInfos,entry,ciidx,false);
+    int ciidx, scaleShift;
+    int idx = CheckTextureInfos(gHiresTxtrInfos,entry,ciidx,scaleShift,false);
     if( idx < 0 )
     {
         entry.bExternalTxtrChecked = true;
@@ -1857,28 +1864,13 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
     }
 
     // calculate the texture size magnification by comparing the N64 texture size and the hi-res texture size
-    int scale = 0;
-    if (width == 1 * (int)entry.ti.WidthToCreate && height == 1 * (int)entry.ti.HeightToCreate)
-        scale = 1;
-    else if (width == 2 * (int)entry.ti.WidthToCreate && height == 2 * (int)entry.ti.HeightToCreate)
-        scale = 2;
-    else if (width == 4 * (int)entry.ti.WidthToCreate && height == 4 * (int)entry.ti.HeightToCreate)
-        scale = 4;
-    else if (width == 8 * (int)entry.ti.WidthToCreate && height == 8 * (int)entry.ti.HeightToCreate)
-        scale = 8;
-    else if (width == 16 * (int)entry.ti.WidthToCreate && height == 16 * (int)entry.ti.HeightToCreate)
-        scale =16;
-    else
-    {
-        int scalex = width / (int)entry.ti.WidthToCreate;
-        int scaley = height / (int)entry.ti.HeightToCreate;
-        scale = scalex > scaley ? scalex : scaley; // set scale to maximum(scalex,scaley)
-        DebugMessage(M64MSG_WARNING, "Non-integral hi-res texture scale.  Orig = (%i,%i)  Hi-res = (%i,%i). Textures may look incorrect.", 
-               entry.ti.WidthToCreate, entry.ti.HeightToCreate, width, height);
-    }
-
-    // Create new texture
-    entry.pEnhancedTexture = CDeviceBuilder::GetBuilder()->CreateTexture(entry.ti.WidthToCreate*scale, entry.ti.HeightToCreate*scale);
+    int scalex = width / (int)entry.ti.WidthToCreate;
+    int scaley = height / (int)entry.ti.HeightToCreate;
+    int mirrorx = 1;
+    int mirrory = 1;
+    if (entry.ti.WidthToCreate/entry.ti.WidthToLoad == 2) mirrorx = 2;
+    if (entry.ti.HeightToCreate/entry.ti.HeightToLoad == 2) mirrory = 2;
+    entry.pEnhancedTexture = CDeviceBuilder::GetBuilder()->CreateTexture(entry.ti.WidthToCreate*scalex*mirrorx, entry.ti.HeightToCreate*scaley*mirrory);
     DrawInfo info;
 
     if( entry.pEnhancedTexture && entry.pEnhancedTexture->StartUpdate(&info) )
@@ -1934,22 +1926,24 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
             }
         }
 
-        if( entry.ti.WidthToCreate/entry.ti.WidthToLoad == 2 )
+        if (mirrorx == 2)
         {
-            gTextureManager.Mirror(info.lpSurface, width, entry.ti.maskS+gHiresTxtrInfos[idx].scaleShift, width*2, width*2, height, S_FLAG, 4 );
+            //printf("Mirror: ToCreate: (%d,%d) ToLoad: (%d,%d) Scale: (%i,%i) Mirror: (%i,%i) Size: (%i,%i) Mask: %i\n", entry.ti.WidthToCreate, entry.ti.HeightToCreate, entry.ti.WidthToLoad, entry.ti.HeightToLoad, scalex, scaley, mirrorx, mirrory, width, height, entry.ti.maskS+scaleShift);
+            gTextureManager.Mirror(info.lpSurface, width, entry.ti.maskS+scaleShift, width*2, width*2, height, S_FLAG, 4 );
         }
 
-        if( entry.ti.HeightToCreate/entry.ti.HeightToLoad == 2 )
+        if (mirrory == 2)
         {
-            gTextureManager.Mirror(info.lpSurface, height, entry.ti.maskT+gHiresTxtrInfos[idx].scaleShift, height*2, entry.pEnhancedTexture->m_dwCreatedTextureWidth, height, T_FLAG, 4 );
+            //printf("Mirror: ToCreate: (%d,%d) ToLoad: (%d,%d) Scale: (%i,%i) Mirror: (%i,%i) Size: (%i,%i) Mask: %i\n", entry.ti.WidthToCreate, entry.ti.HeightToCreate, entry.ti.WidthToLoad, entry.ti.HeightToLoad, scalex, scaley, mirrorx, mirrory, width, height, entry.ti.maskT+scaleShift);
+            gTextureManager.Mirror(info.lpSurface, height, entry.ti.maskT+scaleShift, height*2, entry.pEnhancedTexture->m_dwCreatedTextureWidth, height, T_FLAG, 4 );
         }
 
-        if( entry.ti.WidthToCreate*scale < entry.pEnhancedTexture->m_dwCreatedTextureWidth )
+        if( entry.ti.WidthToCreate*scalex*mirrorx < entry.pEnhancedTexture->m_dwCreatedTextureWidth )
         {
             // Clamp
             gTextureManager.Clamp(info.lpSurface, width, entry.pEnhancedTexture->m_dwCreatedTextureWidth, entry.pEnhancedTexture->m_dwCreatedTextureWidth, height, S_FLAG, 4 );
         }
-        if( entry.ti.HeightToCreate*scale < entry.pEnhancedTexture->m_dwCreatedTextureHeight )
+        if( entry.ti.HeightToCreate*scaley*mirrory < entry.pEnhancedTexture->m_dwCreatedTextureHeight )
         {
             // Clamp
             gTextureManager.Clamp(info.lpSurface, height, entry.pEnhancedTexture->m_dwCreatedTextureHeight, entry.pEnhancedTexture->m_dwCreatedTextureWidth, height, T_FLAG, 4 );
@@ -1960,7 +1954,7 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
         entry.pEnhancedTexture->m_bIsEnhancedTexture = true;
         entry.dwEnhancementFlag = TEXTURE_EXTERNAL;
 
-        DebugMessage(M64MSG_INFO, "Loaded hi-res texture: %s", filename_rgb);
+        DebugMessage(M64MSG_VERBOSE, "Loaded hi-res texture: %s", filename_rgb);
     }
     else
     {
