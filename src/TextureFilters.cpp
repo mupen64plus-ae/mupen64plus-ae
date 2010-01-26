@@ -1020,8 +1020,8 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
         {
             strcat(texturefilename, OSAL_DIR_SEPARATOR_STR);
             FindAllTexturesFromFolder(texturefilename, infos, extraCheck, bRecursive);
+            continue;
         }
-
         /* if filename doesn't match the ROM's name, skip it */
         if( strstr(foundfilename,(const char*)g_curRomInfo.szGameName) == 0 )
             continue;
@@ -1286,13 +1286,12 @@ void FindAllHiResTextures(void)
     strcat(foldername,(const char*)g_curRomInfo.szGameName);
     strcat(foldername, OSAL_DIR_SEPARATOR_STR);
     gHiresTxtrInfos.clear();
-    if( !PathFileExists(foldername) )
+    if (!osal_is_directory(foldername))
     {
         return;
     }
     else
     {
-        gHiresTxtrInfos.clear();
         FindAllTexturesFromFolder(foldername,gHiresTxtrInfos, true, true);
     }
 }

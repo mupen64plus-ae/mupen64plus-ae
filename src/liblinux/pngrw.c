@@ -71,6 +71,25 @@ void Expand2to4( char *b4, char b2, int NumBytes )
     memcpy( (void *)b4, (void *)&bit4, NumBytes );
 }
 
+/* this stuff is necessary because the normal png_init_io() method crashes in Win32 */
+void user_read_data(png_structp png_read, png_bytep data, png_size_t length)
+{
+    FILE *fPtr = (FILE *) png_get_io_ptr(png_read);
+    fread(data, 1, length, fPtr);
+}
+
+void user_write_data(png_structp png_write, png_bytep data, png_size_t length)
+{
+    FILE *fPtr = (FILE *) png_get_io_ptr(png_write);
+    fwrite(data, 1, length, fPtr);
+}
+
+void user_flush_data(png_structp png_read)
+{
+    FILE *fPtr = (FILE *) png_get_io_ptr(png_read);
+    fflush(fPtr);
+}
+
 /*
 ReadPNG - Reads the contents of a PNG file and stores the contents into
     BMGImageStruct
@@ -187,8 +206,8 @@ BMGError ReadPNG( const char *filename,
     if ( error > 0 )
         longjmp( err_jmp, error );
 
-    /* attach file buffer to the png read pointer */
-    png_init_io( png_ptr, file );
+    /* set function pointers in the PNG library, for read callbacks */
+    png_set_read_fn(png_ptr, (png_voidp) file, user_read_data);
 
     /*let the read functions know that we have already read the 1st 8 bytes */
     png_set_sig_bytes( png_ptr, 8 );
@@ -611,8 +630,8 @@ BMGError WritePNG( const char *filename, struct BMGImageStruct img )
     if ( error > 0 )
         longjmp( err_jmp, error );
 
-    /* setup the output control */
-    png_init_io( png_ptr, outfile );
+    /* set function pointers in the PNG library, for write callbacks */
+    png_set_write_fn(png_ptr, (png_voidp) outfile, user_write_data, user_flush_data);
 
     /* prepare variables needed to create PNG header */
     BitDepth = img.bits_per_pixel < 8 ? img.bits_per_pixel : 8;

@@ -37,7 +37,16 @@
 
 int osal_is_directory(const char* name)
 {
-    return (GetFileAttributes(name) & FILE_ATTRIBUTE_DIRECTORY);
+    char DirName[MAX_PATH + 1];
+    int namelen = 0;
+
+    /* we must remove any trailing backslash on the end of the pathname, or this will fail */
+    strncpy(DirName, name, MAX_PATH);
+    DirName[MAX_PATH] = 0;
+    namelen = strlen(DirName);
+    if (namelen > 0 && DirName[namelen-1] == '\\')
+        DirName[namelen-1] = 0;
+    return (GetFileAttributes(DirName) & FILE_ATTRIBUTE_DIRECTORY);
 }
 
 int osal_mkdirp(const char *dirpath, int mode)
@@ -79,39 +88,58 @@ int osal_mkdirp(const char *dirpath, int mode)
     return 0;
 }
 
-static WIN32_FIND_DATA search_dir_find_data;
+typedef struct {
+    HANDLE hFind;
+    WIN32_FIND_DATA find_data;
+} dir_search_info;
 
 void * osal_search_dir_open(const char *pathname)
 {
-   HANDLE hFind = INVALID_HANDLE_VALUE;
-   search_dir_find_data.cFileName[0] = 0;
+   char SearchString[MAX_PATH + 1];
+   dir_search_info *pInfo = malloc(sizeof(dir_search_info));
 
-   hFind = FindFirstFile(pathname, &search_dir_find_data);
-   return (void *) hFind;
+   if (pInfo == NULL)
+       return NULL;
+
+   pInfo->hFind = INVALID_HANDLE_VALUE;
+   pInfo->find_data.cFileName[0] = 0;
+
+   if (pathname[strlen(pathname)-1] == '\\')
+       _snprintf(SearchString, MAX_PATH, "%s*", pathname);
+   else
+       _snprintf(SearchString, MAX_PATH, "%s\\*", pathname);
+   SearchString[MAX_PATH] = 0;
+
+   pInfo->hFind = FindFirstFile(SearchString, &pInfo->find_data);
+   return (void *) pInfo;
 }
 
-const char *osal_search_dir_read_next(void * dir_handle)
+const char *osal_search_dir_read_next(void * search_info)
 {
     static char last_filename[_MAX_PATH];
-    HANDLE hFind = (HANDLE) dir_handle;
+    dir_search_info *pInfo = (dir_search_info *) search_info;
 
-    if (hFind == INVALID_HANDLE_VALUE || search_dir_find_data.cFileName[0] == 0)
+    if (pInfo == NULL || pInfo->hFind == INVALID_HANDLE_VALUE || pInfo->find_data.cFileName[0] == 0)
         return NULL;
 
-    strcpy(last_filename, search_dir_find_data.cFileName);
+    strcpy(last_filename, pInfo->find_data.cFileName);
 
-    if (FindNextFile(hFind, &search_dir_find_data) == 0)
+    if (FindNextFile(pInfo->hFind, &pInfo->find_data) == 0)
     {
-        search_dir_find_data.cFileName[0] = 0;
+        pInfo->find_data.cFileName[0] = 0;
     }
 
     return last_filename;
 }
 
-void osal_search_dir_close(void * dir_handle)
+void osal_search_dir_close(void * search_info)
 {
-    HANDLE hFind = (HANDLE) dir_handle;
+    dir_search_info *pInfo = (dir_search_info *) search_info;
 
-    if (hFind != INVALID_HANDLE_VALUE)
-        FindClose(hFind);
+    if (pInfo != NULL)
+    {
+        if (pInfo->hFind != INVALID_HANDLE_VALUE)
+            FindClose(pInfo->hFind);
+        free(pInfo);
+    }
 }
