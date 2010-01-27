@@ -73,7 +73,7 @@ endif
 
 # base CFLAGS, LIBS, and LDFLAGS
 CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
-LDFLAGS = -ldl
+LDFLAGS = -ldl -lpthread
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
