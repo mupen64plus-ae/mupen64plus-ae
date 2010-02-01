@@ -157,9 +157,9 @@ BMGError ReadPNG( const char *filename,
         if (end_info != NULL)
             png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, (png_infop *) &end_info);
         else if (info_ptr != NULL)
-            png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, png_infopp_NULL);
+            png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, NULL);
         else if (png_ptr != NULL)
-            png_destroy_read_struct((png_structp *) &png_ptr, png_infopp_NULL, png_infopp_NULL);
+            png_destroy_read_struct((png_structp *) &png_ptr, NULL, NULL);
         if (rows)
         {
             if (rows[0])
@@ -182,7 +182,7 @@ BMGError ReadPNG( const char *filename,
         longjmp ( err_jmp, (int)errFileOpen );
 
     /* check the signature */
-    if ( !png_check_sig( signature, 8 ) )
+    if ( png_sig_cmp( signature, 0, 8 ) != 0 )
         longjmp( err_jmp, (int)errUnsupportedFileFormat );
 
     /* create a pointer to the png read structure */
@@ -219,7 +219,7 @@ BMGError ReadPNG( const char *filename,
 
     /* extract the data we need to form the HBITMAP from the PNG header */
     png_get_IHDR( png_ptr, info_ptr, &Width, &Height, &BitDepth, &ColorType,
-        &InterlaceType, int_p_NULL, int_p_NULL);
+        &InterlaceType, NULL, NULL);
 
     img->width = (unsigned int) Width;
     img->height = (unsigned int) Height;
