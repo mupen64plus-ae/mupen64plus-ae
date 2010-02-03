@@ -79,9 +79,9 @@ static void clear_controller(int iCtrlIdx)
     int b;
 
     controller[iCtrlIdx].device = DEVICE_AUTO;
-    controller[iCtrlIdx].control.Present = 0;
-    controller[iCtrlIdx].control.RawData = 0;
-    controller[iCtrlIdx].control.Plugin = PLUGIN_NONE;
+    controller[iCtrlIdx].control->Present = 0;
+    controller[iCtrlIdx].control->RawData = 0;
+    controller[iCtrlIdx].control->Plugin = PLUGIN_NONE;
     for( b = 0; b < 16; b++ )
     {
         controller[iCtrlIdx].button[b].button = -1;
@@ -159,9 +159,9 @@ static int load_controller_config(const char *SectionName, int i)
     for (readOK = 0; readOK == 0; readOK = 1)
     {
         /* check for the required parameters */
-        if (ConfigGetParameter(pConfig, "plugged", M64TYPE_INT, &controller[i].control.Present, sizeof(int)) != M64ERR_SUCCESS)
+        if (ConfigGetParameter(pConfig, "plugged", M64TYPE_INT, &controller[i].control->Present, sizeof(int)) != M64ERR_SUCCESS)
             break;
-        if (ConfigGetParameter(pConfig, "plugin", M64TYPE_INT, &controller[i].control.Plugin, sizeof(int)) != M64ERR_SUCCESS)
+        if (ConfigGetParameter(pConfig, "plugin", M64TYPE_INT, &controller[i].control->Plugin, sizeof(int)) != M64ERR_SUCCESS)
             break;
         if (ConfigGetParameter(pConfig, "device", M64TYPE_INT, &controller[i].device, sizeof(int)) != M64ERR_SUCCESS)
             break;
@@ -267,8 +267,8 @@ void save_controller_config(int iCtrlIdx)
     }
 
     /* save the general controller parameters */
-    ConfigSetDefaultBool(pConfig, "plugged", controller[iCtrlIdx].control.Present, "Specifies whether this controller is 'plugged in' to the simulated N64");
-    ConfigSetDefaultInt(pConfig, "plugin", controller[iCtrlIdx].control.Plugin, "Specifies which type of expansion pak is in the controller: 1=None, 2=Mem pak, 5=Rumble pak");
+    ConfigSetDefaultBool(pConfig, "plugged", controller[iCtrlIdx].control->Present, "Specifies whether this controller is 'plugged in' to the simulated N64");
+    ConfigSetDefaultInt(pConfig, "plugin", controller[iCtrlIdx].control->Plugin, "Specifies which type of expansion pak is in the controller: 1=None, 2=Mem pak, 5=Rumble pak");
     ConfigSetDefaultBool(pConfig, "mouse", controller[iCtrlIdx].mouse, "If True, then mouse buttons may be used with this controller");
     ConfigSetDefaultInt(pConfig, "device", controller[iCtrlIdx].device, "Specifies which joystick is bound to this controller: -2=Keyboard/mouse, -1=Auto config, 0 or more= SDL Joystick number");
 
@@ -431,7 +431,7 @@ void load_configuration(void)
             if (JoyName == NULL)
             {
                 controller[i].device = DEVICE_AUTO;
-                controller[i].control.Present = 0;
+                controller[i].control->Present = 0;
                 DebugMessage(M64MSG_INFO, "N64 Controller #%i: Disabled, SDL joystick is not available", i+1);
             }
             else
@@ -450,7 +450,7 @@ void load_configuration(void)
         if (controller[i].device >= 0 || controller[i].device == DEVICE_NOT_JOYSTICK)
         {
             joy_found++;
-            if (controller[i].control.Present)
+            if (controller[i].control->Present)
                 joy_plugged++;
         }
     }

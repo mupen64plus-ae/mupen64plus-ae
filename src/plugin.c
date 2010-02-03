@@ -332,7 +332,7 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 #ifdef _DEBUG
             DebugMessage(M64MSG_INFO, "Read pak");
 #endif
-            if (controller[Control].control.Plugin == PLUGIN_RAW)
+            if (controller[Control].control->Plugin == PLUGIN_RAW)
             {
                 unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
 
@@ -348,7 +348,7 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 #ifdef _DEBUG
             DebugMessage(M64MSG_INFO, "Write pak");
 #endif
-            if (controller[Control].control.Plugin == PLUGIN_RAW)
+            if (controller[Control].control->Plugin == PLUGIN_RAW)
             {
                 unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
               if (dwAddress == PAK_IO_RUMBLE && *Data)
@@ -548,7 +548,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
         struct input_event play;
         if (controller[Control].buttons.Value & button_bits[14])
         {
-            controller[Control].control.Plugin = PLUGIN_MEMPAK;
+            controller[Control].control->Plugin = PLUGIN_MEMPAK;
             play.type = EV_FF;
             play.code = ffweak[Control].id;
             play.value = 1;
@@ -557,7 +557,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
         }
         if (controller[Control].buttons.Value & button_bits[15])
         {
-            controller[Control].control.Plugin = PLUGIN_RAW;
+            controller[Control].control->Plugin = PLUGIN_RAW;
             play.type = EV_FF;
             play.code = ffstrong[Control].id;
             play.value = 1;
@@ -688,11 +688,14 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
 
     // reset controllers
     memset( controller, 0, sizeof( SController ) * 4 );
-
     for ( i = 0; i < SDLK_LAST; i++)
     {
         myKeyState[i] = 0;
     }
+    // set our CONTROL struct pointers to the array that was passed in to this function from the core
+    // this small struct tells the core whether each controller is plugged in, and what type of pak is connected
+    for (i = 0; i < 4; i++)
+        controller[i].control = ControlInfo.Controls + i;
 
     // read configuration
     load_configuration();
@@ -703,10 +706,8 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
         InitiateRumble(i);
         // if rumble not supported, switch to mempack
         // Comment out if statement to test rumble on systems without necessary hardware.
-        if (controller[i].control.Plugin == PLUGIN_RAW && controller[i].event_joystick == 0)
-            controller[i].control.Plugin = PLUGIN_MEMPAK;
-        // copy control data struct to the core
-        memcpy( ControlInfo.Controls + i, &controller[i].control, sizeof( CONTROL ) );
+        if (controller[i].control->Plugin == PLUGIN_RAW && controller[i].event_joystick == 0)
+            controller[i].control->Plugin = PLUGIN_MEMPAK;
     }
 
     DebugMessage(M64MSG_INFO, "%s version %i.%i.%i initialized.", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));

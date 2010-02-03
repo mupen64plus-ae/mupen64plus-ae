@@ -86,7 +86,7 @@ typedef struct
 
 typedef struct
 {
-    CONTROL control;
+    CONTROL *control;               // pointer to CONTROL struct in Core library
     BUTTONS buttons;
 
     // mappings
