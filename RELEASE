@@ -1,6 +1,19 @@
 Mupen64Plus-Video-Rice RELEASE
 ------------------------------
 
+Mupen64Plus-Video-Rice v1.99.3 - February 13, 2010
+--------------------------------------------------
+ - sync with core<-->plugin API change for RomOpen()
+ - Changed default ScreenUpdateSetting to 1 for Linux, and 4 for Windows
+ - use custom opengl extension function pointer typedefs, to avoid compilation errors with some drivers including hosed gl.h headers
+ - merged some changes from Tillin9 commits in r1142-rice-video-gtk-refactor branch, to be more lenient in hi-res texture loading
+ - bugfix: hi-res textures did not work in Windows
+ - bugfix: #329: remove some deprecated types and a function call to prevent build errors with libpng 1.4
+ - bugfix: fixed mirroring bugs in Rice Video hi-resolution texture loading, based on Tillin9 rev 1337 in r1142-rice-video-gtk-refactor branch
+ - bugfix: in ConvertImage.cpp none of the 4-bit conversion functions could handle 1-pixel wide textures
+ - Makefile improvements:
+   - added OS type GNU/kFreeBSD
+
 Mupen64Plus-Video-Rice v1.99.2 - January 6, 2010
 --------------------------------------------------
  - bugfix: fix fragment program combiner for Intel drivers in Win32, by ensuring that program does not allocate unused temp vars or call TEX commands for texture units that are not enabled
