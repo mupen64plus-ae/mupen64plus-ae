@@ -27,7 +27,7 @@
 #define VERSION_H
 
 #define PLUGIN_NAME    "Mupen64Plus SDL Input Plugin"
-#define PLUGIN_VERSION 0x016302
+#define PLUGIN_VERSION 0x016303
 
 #define VERSION_PRINTF_SPLIT(x) (((x) >> 16) & 0xffff), (((x) >> 8) & 0xff), ((x) & 0xff)
 

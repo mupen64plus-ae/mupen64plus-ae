@@ -1,6 +1,20 @@
 SDL Input plugin for Mupen64Plus
 --------------------------------
 
+Mupen64Plus-input-sdl v1.99.3 - February 13, 2010
+-------------------------------------------------
+ - New feature: auto-configuration uses an .ini file instead of hard-coding the controllers in the source code
+ - New controller auto-configurations:
+   - Original X-Box (and compatible clones)
+   - HuiJia USB GamePad
+   - USB Human(2p) Interface Device
+ - sync with core<-->plugin API change for RomOpen()
+ - Bugfix: controller pak was fixed at startup, switching b/w mempak and rumblepak did not work
+ - Bugfix: Xbox 360 and PS3 controllers need slightly different names under OSX
+ - Makefile improvements:
+   - plugin must be linked with CC instead of LD because 'sdl-config --libs' can give "-Wl,-rpath"
+   - added OS type GNU/kFreeBSD
+
 Mupen64Plus-input-sdl v1.99.2 - January 6, 2010
 -------------------------------------------------
  - new feature: added MSVC8 project file, minor code refactoring for VC compatibility
