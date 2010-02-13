@@ -1,6 +1,14 @@
 SDL Audio plugin for Mupen64Plus
 ---------------------------------
 
+Mupen64Plus-audio-sdl v1.99.3 - February 13, 2010
+--------------------------------------------------
+ - sync with core<-->plugin API change for RomOpen()
+ - bugfix: logical error in previous audio refactoring causing slowdown/lockup on loading savestate or re-initializing audio
+ - Makefile improvements:
+   - 'sdl-config --libs' can give "-Wl,-rpath", so plugin must be linked with CC instead of LD
+   - issue #257: added to makefile OS type GNU/kFreeBSD
+
 Mupen64Plus-audio-sdl v1.99.2 - January 6, 2010
 -------------------------------------------------
  - new feature: Completely re-wrote buffering/synchronization code:
