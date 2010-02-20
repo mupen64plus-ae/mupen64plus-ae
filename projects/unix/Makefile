@@ -72,8 +72,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
-LDFLAGS = -ldl -lpthread
+CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
+LDFLAGS += -ldl
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
@@ -204,6 +204,7 @@ targets:
 	@echo "    COREDIR=path   == default path to search for Mupen64Plus Core (must end with slash)"
 	@echo "    PLUGINDIR=path == default path to search for plugins"
 	@echo "    SHAREDIR=path  == default path to search for shared data files"
+	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
@@ -216,6 +217,7 @@ all: $(TARGET)
 
 clean:
 	rm -rf ./_obj/* $(TARGET)
+	rmdir ./_obj
 
 rebuild: clean all
 
