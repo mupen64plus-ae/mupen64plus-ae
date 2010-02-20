@@ -82,8 +82,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS = -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
-LDFLAGS = -ldl
+CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
+LDFLAGS += -ldl
 ifneq ($(OS), FREEBSD)
   CFLAGS += -pipe -O3
 endif
@@ -251,6 +251,7 @@ uninstall:
 
 clean:
 	rm -rf ./_obj/* $(TARGET)
+	rmdir ./_obj
 
 rebuild: clean all
 
