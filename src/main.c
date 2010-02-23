@@ -373,7 +373,9 @@ SRC_DATA src_data;
 
 static int resample(unsigned char *input, int input_avail, int oldsamplerate, unsigned char *output, int output_needed, int newsamplerate)
 {
-
+    int *psrc = (int*)input;
+    int *pdest = (int*)output;
+    int i = 0, j = 0;
 #ifdef USE_SRC
     if(Resample == 2)
     {
@@ -422,16 +424,12 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
     // RESAMPLE == 1
     if (newsamplerate >= oldsamplerate)
     {
-        int *psrc = (int*)input;
-        int *pdest = (int*)output;
-        int i;
-        int j=0;
         int sldf = oldsamplerate;
         int const2 = 2*sldf;
         int dldf = newsamplerate;
         int const1 = const2 - 2*dldf;
         int criteria = const2 - dldf;
-        for(i = 0; i < output_needed/4; i++)
+        for (i = 0; i < output_needed/4; i++)
         {
             pdest[i] = psrc[j];
             if(criteria >= 0)
@@ -444,10 +442,7 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
         return j * 4; //number of bytes consumed
     }
     // newsamplerate < oldsamplerate, this only happens when speed_factor > 1
-    int *psrc = (int*)input;
-    int *pdest = (int*)output;
-    int i, j;
-    for(i = 0; i < output_needed/4; i++)
+    for (i = 0; i < output_needed/4; i++)
     {
         j = i * oldsamplerate / newsamplerate;
         pdest[i] = psrc[j];
