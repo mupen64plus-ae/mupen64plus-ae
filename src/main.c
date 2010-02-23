@@ -420,24 +420,37 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
     }
 #endif
     // RESAMPLE == 1
+    if (newsamplerate >= oldsamplerate)
+    {
+        int *psrc = (int*)input;
+        int *pdest = (int*)output;
+        int i;
+        int j=0;
+        int sldf = oldsamplerate;
+        int const2 = 2*sldf;
+        int dldf = newsamplerate;
+        int const1 = const2 - 2*dldf;
+        int criteria = const2 - dldf;
+        for(i = 0; i < output_needed/4; i++)
+        {
+            pdest[i] = psrc[j];
+            if(criteria >= 0)
+            {
+                ++j;
+                criteria += const1;
+            }
+            else criteria += const2;
+        }
+        return j * 4; //number of bytes consumed
+    }
+    // newsamplerate < oldsamplerate, this only happens when speed_factor > 1
     int *psrc = (int*)input;
     int *pdest = (int*)output;
-    int i;
-    int j=0;
-    int sldf = oldsamplerate;
-    int const2 = 2*sldf;
-    int dldf = newsamplerate;
-    int const1 = const2 - 2*dldf;
-    int criteria = const2 - dldf;
+    int i, j;
     for(i = 0; i < output_needed/4; i++)
     {
+        j = i * oldsamplerate / newsamplerate;
         pdest[i] = psrc[j];
-        if(criteria >= 0)
-        {
-            ++j;
-            criteria += const1;
-        }
-        else criteria += const2;
     }
     return j * 4; //number of bytes consumed
 }
