@@ -350,6 +350,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultInt(l_ConfigVideoRice, "ForceTextureFilter", 0, "Texture filter to use (0=default, 1=nearest neighbor, 2=linear, 3=bilinear)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureQuality", TXT_QUALITY_DEFAULT, "Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits");
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting", 16, "Z-buffer depth (only 16 or 32)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "MultiSampling", 0, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ColorQuality", TEXTURE_FMT_A8R8G8B8, "Color bit depth for rendering window (0=32 bits, 1=16 bits)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.2, 3=OGL_1.3, 4=OGL_1.4, 5=OGL_1.4_V2, 6=OGL_TNT2, 7=NVIDIA_OGL, 8=OGL_FRAGMENT_PROGRAM)");
     return TRUE;
@@ -458,6 +459,7 @@ static void ReadConfiguration(void)
     options.forceTextureFilter = ConfigGetParamInt(l_ConfigVideoRice, "ForceTextureFilter");
     options.textureQuality = ConfigGetParamInt(l_ConfigVideoRice, "TextureQuality");
     options.OpenglDepthBufferSetting = ConfigGetParamInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting");
+    options.multiSampling = ConfigGetParamInt(l_ConfigVideoRice, "MultiSampling");
     options.colorQuality = ConfigGetParamInt(l_ConfigVideoRice, "ColorQuality");
     options.OpenglRenderSetting = ConfigGetParamInt(l_ConfigVideoRice, "OpenGLRenderSetting");
 

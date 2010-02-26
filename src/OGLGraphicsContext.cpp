@@ -89,6 +89,26 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
     CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, colorBufferDepth);
     CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, depthBufferDepth);
+
+    if(options.multiSampling)
+    {
+        CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLEBUFFERS, 1);
+        switch(options.multiSampling)
+        {
+            case 2:
+                CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 2);
+                break;
+            case 4:
+                CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 4);
+                break;
+            case 8:
+                CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 8);
+                break;
+            case 16:
+                CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 16);
+                break;
+        }		
+    }
    
     /* Set the video mode */
     m64p_video_mode ScreenMode = bWindowed ? M64VIDEO_WINDOWED : M64VIDEO_FULLSCREEN;
