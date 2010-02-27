@@ -87,6 +87,7 @@ static void clear_controller(int iCtrlIdx)
         controller[iCtrlIdx].button[b].button = -1;
         controller[iCtrlIdx].button[b].key = SDLK_UNKNOWN;
         controller[iCtrlIdx].button[b].axis = -1;
+        controller[iCtrlIdx].button[b].axis_deadzone = -1;
         controller[iCtrlIdx].button[b].hat = -1;
         controller[iCtrlIdx].button[b].hat_pos = -1;
         controller[iCtrlIdx].button[b].mouse = -1;
@@ -191,7 +192,8 @@ static int load_controller_config(const char *SectionName, int i)
             if ((config_ptr = strstr(input_str, "axis")) != NULL)
             {
                 char chAxisDir;
-                if (sscanf(config_ptr, "axis(%i%c)", &controller[i].button[j].axis, &chAxisDir) != 2)
+                if (sscanf(config_ptr, "axis(%d%c,%d", &controller[i].button[j].axis, &chAxisDir, &controller[i].button[j].axis_deadzone) != 3 &&
+                    sscanf(config_ptr, "axis(%i%c", &controller[i].button[j].axis, &chAxisDir) != 2)
                     DebugMessage(M64MSG_WARNING, "parsing error in axis() parameter of button '%s' for controller %i", button_names[j], i + 1);
                 controller[i].button[j].axis_dir = (chAxisDir == '+' ? 1 : (chAxisDir == '-' ? -1 : 0));
             }
@@ -295,7 +297,11 @@ void save_controller_config(int iCtrlIdx)
         }
         if (controller[iCtrlIdx].button[j].axis >= 0)
         {
-            sprintf(Param, "axis(%i%c) ", controller[iCtrlIdx].button[j].axis, (controller[iCtrlIdx].button[j].axis_dir == -1) ? '-' : '+' );
+            if (controller[iCtrlIdx].button[j].axis_deadzone >= 0)
+                sprintf(Param, "axis(%i%c,%i) ", controller[iCtrlIdx].button[j].axis, (controller[iCtrlIdx].button[j].axis_dir == -1) ? '-' : '+',
+                        controller[iCtrlIdx].button[j].axis_deadzone);
+            else
+                sprintf(Param, "axis(%i%c) ", controller[iCtrlIdx].button[j].axis, (controller[iCtrlIdx].button[j].axis_dir == -1) ? '-' : '+');
             strcat(ParamString, Param);
         }
         if (controller[iCtrlIdx].button[j].hat >= 0)

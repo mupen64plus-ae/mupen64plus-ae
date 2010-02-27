@@ -430,10 +430,13 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 
             if( controller[Control].button[b].axis >= 0 )
             {
+                int deadzone = controller[Control].button[b].axis_deadzone;
                 axis_val = SDL_JoystickGetAxis( controller[Control].joystick, controller[Control].button[b].axis );
-                if( (controller[Control].button[b].axis_dir < 0) && (axis_val <= -6000) )
+                if (deadzone < 0)
+                    deadzone = 6000; /* default */
+                if( (controller[Control].button[b].axis_dir < 0) && (axis_val <= -deadzone) )
                     controller[Control].buttons.Value |= button_bits[b];
-                else if( (controller[Control].button[b].axis_dir > 0) && (axis_val >= 6000) )
+                else if( (controller[Control].button[b].axis_dir > 0) && (axis_val >= deadzone) )
                     controller[Control].buttons.Value |= button_bits[b];
             }
 

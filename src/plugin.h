@@ -71,6 +71,7 @@ typedef struct
     int button;         // button index; -1 if notassigned
     SDLKey key;         // sdl keysym; SDLK_UNKNOWN if not assigned
     int axis, axis_dir; // aixs + direction (i.e. 0, 1 = X Axis +; 0, -1 = X Axis -); -1 if notassigned
+    int axis_deadzone;  // -1 for default, or >= 0 for custom value
     int hat, hat_pos;   // hat + hat position; -1 if not assigned
     int mouse;          // mouse button
 } SButtonMap;
