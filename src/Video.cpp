@@ -888,23 +888,27 @@ EXPORT void CALL ShowCFB(void)
     status.toShowCFB = true;
 }
 
-//void ReadScreen( void **dest, int *width, int *height )
-EXPORT void CALL ReadScreen(void **dest, int *width, int *height)
+//void ReadScreen2( void *dest, int *width, int *height, int bFront )
+EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
 {
-   *width = windowSetting.uDisplayWidth;
-   *height = windowSetting.uDisplayHeight;
+    if (width == NULL || height == NULL)
+        return;
+
+    *width = windowSetting.uDisplayWidth;
+    *height = windowSetting.uDisplayHeight;
    
-   *dest = malloc( windowSetting.uDisplayHeight * windowSetting.uDisplayWidth * 3 );
-   if (*dest == 0)
-     return;
+    if (dest == NULL)
+        return;
    
-   GLint oldMode;
-   glGetIntegerv( GL_READ_BUFFER, &oldMode );
-   glReadBuffer( GL_FRONT );
-   //      glReadBuffer( GL_BACK );
-   glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
-         GL_RGB, GL_UNSIGNED_BYTE, *dest );
-   glReadBuffer( oldMode );
+    GLint oldMode;
+    glGetIntegerv( GL_READ_BUFFER, &oldMode );
+    if (bFront)
+        glReadBuffer( GL_FRONT );
+    else
+        glReadBuffer( GL_BACK );
+    glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
+                 GL_RGB, GL_UNSIGNED_BYTE, dest );
+    glReadBuffer( oldMode );
 }
     
 
