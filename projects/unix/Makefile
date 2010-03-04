@@ -230,6 +230,10 @@ install: $(TARGET)
 uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/mupen64plus.6.gz"
 
+# build dependency files
+CFLAGS += -MD
+-include $(OBJECTS:.o=.d)
+
 # build rules
 $(TARGET): $(OBJECTS)
 	$(CC) $^ $(LDFLAGS) $(SRC_LIBS) -o $@
