@@ -41,7 +41,7 @@ OGLRender::OGLRender()
     m_bSupportFogCoordExt = pcontext->m_bSupportFogCoord;
     m_bMultiTexture = pcontext->m_bSupportMultiTexture;
     m_bSupportClampToEdge = false;
-    m_bClampS[0] = m_bClampS[0] = false;
+    m_bClampS[0] = false;
     m_bClampT[0] = m_bClampT[1] = false;
     for( int i=0; i<8; i++ )
     {

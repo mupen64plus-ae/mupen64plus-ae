@@ -298,7 +298,7 @@ void DLParser_Init()
 
     status.lastPurgeTimeTime = 0;       // Time textures were last purged
 
-    status.UseLargerTile[0] = status.UseLargerTile[0] = false;
+    status.UseLargerTile[0] = false;
     status.LargerTileRealLeft[0] = status.LargerTileRealLeft[1] = 0;
     memset(&g_ZI_saves, 0, sizeof(RenderTextureInfo)*2);
 

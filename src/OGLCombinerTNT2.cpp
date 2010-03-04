@@ -80,7 +80,7 @@ void COGLColorCombinerTNT2::InitCombinerCycle12(void)
         m_lastIndex = CNvTNTCombiner::FindCompiledMux();
         if( m_lastIndex < 0 )       // Can not found
         {
-            m_lastIndex = m_lastIndex = CNvTNTCombiner::ParseDecodedMux();
+            m_lastIndex = CNvTNTCombiner::ParseDecodedMux();
         }
         m_dwLastMux0 = m_pDecodedMux->m_dwMux0;
         m_dwLastMux1 = m_pDecodedMux->m_dwMux1;
