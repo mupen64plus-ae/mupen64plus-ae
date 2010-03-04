@@ -37,6 +37,7 @@
 #include "osal_dynamiclib.h"
 
 #ifdef __linux__
+#include <unistd.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/types.h>
