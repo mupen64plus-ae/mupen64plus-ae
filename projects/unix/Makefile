@@ -296,10 +296,14 @@ uninstall:
 	rm -f "$(DESTDIR)$(SHAREDIR)/RiceVideoLinux.ini"
 
 clean:
-	rm -f ./_obj/*.o  ./_obj/liblinux/* $(TARGET)
-	rmdir ./_obj/liblinux ./_obj
+	rm -rf ./_obj/* $(TARGET)
+	rmdir ./_obj
 
 rebuild: clean all
+
+# build dependency files
+CFLAGS += -MD
+-include $(OBJECTS:.o=.d)
 
 # build rules
 $(TARGET): $(OBJECTS)
