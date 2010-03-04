@@ -225,6 +225,10 @@ clean:
 
 rebuild: clean all
 
+# build dependency files
+CFLAGS += -MD
+-include $(OBJECTS:.o=.d)
+
 # build rules
 
 $(TARGET): $(OBJECTS)
