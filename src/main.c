@@ -402,7 +402,7 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
             if(src_state == NULL)
             {
                 memset(output, 0, output_needed);
-                return;
+                return 0;
             }
         }
         src_short_to_float_array ((short *) input, _src, input_avail/2);
