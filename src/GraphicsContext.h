@@ -89,7 +89,7 @@ protected:
     bool                m_bWindowed;
     RECT                m_rcWindowBounds;
 
-    char                m_strDeviceStats[90];
+    char                m_strDeviceStats[256];
 
     virtual ~CGraphicsContext();
     CGraphicsContext();
