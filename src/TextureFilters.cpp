@@ -1356,37 +1356,23 @@ is of type TxtrInfo) are uint32.
 */
 int FindScaleFactor(const ExtTxtrInfo &info, TxtrCacheEntry &entry)
 {
-    int scaleShift = -1;
-    if( info.height == (int)entry.ti.HeightToLoad && info.width == (int)entry.ti.WidthToLoad )
+    int scaleShift = 0;
+ 
+    // find the smallest power of 2 which is greater than or equal to the ratio of the hi-res texture's
+    // dimensions to the original (N64) texture dimensions
+    while (info.height > (int) entry.ti.HeightToLoad * (1 << scaleShift) && info.width > (int) entry.ti.WidthToLoad * (1 << scaleShift))
     {
-        scaleShift = 0;
+        scaleShift++;
     }
-    else if (info.height == (int)entry.ti.HeightToLoad*2 && info.width == (int)entry.ti.WidthToLoad*2 )
+    // if the ratio of the 2 textures' dimensions is an even power of 2, then the hi-res texture is allowed
+    if (info.height == (int) entry.ti.HeightToLoad * (1 << scaleShift) && info.width == (int) entry.ti.WidthToLoad * (1 << scaleShift))
     {
-        scaleShift = 1;
-    }
-    else if (info.height == (int)entry.ti.HeightToLoad*4 && info.width == (int)entry.ti.WidthToLoad*4)
-    {
-        scaleShift = 2;
-    }
-    else if (info.height == (int)entry.ti.HeightToLoad*8 && info.width == (int)entry.ti.WidthToLoad*8)
-    {
-        scaleShift = 3;
-    }
-    else if (info.height == (int)entry.ti.HeightToLoad*16 && info.width == (int)entry.ti.WidthToLoad*16)
-    {
-        scaleShift = 4;
-    }
-    else if (info.height == (int)entry.ti.HeightToLoad*32 && info.width == (int)entry.ti.WidthToLoad*32)
-    {
-        scaleShift = 5;
-    }
-    else if (info.height == (int)entry.ti.HeightToLoad*64 && info.width == (int)entry.ti.WidthToLoad*64)
-    {
-        scaleShift = 6;
+        // found appropriate scale shift, return it
+        return scaleShift;
     }
 
-    return scaleShift;
+    // the dimensions of the hires replacement are not power of 2 of the original texture
+    return -1;
 }
 
 int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &entry, int &indexa, int &scaleShift, bool bForDump = false)
