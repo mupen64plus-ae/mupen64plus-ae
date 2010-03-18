@@ -183,6 +183,9 @@ SOURCE = \
 	$(SRCDIR)/ucode1.cpp \
 	$(SRCDIR)/ucode3mp3.cpp
 
+# only export api symbols
+LDFLAGS += -Wl,-version-script,$(SRCDIR)/rsp_api_export.ver
+
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE)))
