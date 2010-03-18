@@ -136,7 +136,6 @@ endif
 # set shell function names
 CC      ?= gcc
 CXX     ?= g++
-LD      ?= g++
 INSTALL ?= install
 ifeq ($(OS),OSX)
   STRIP	?= strip -x 
@@ -234,10 +233,18 @@ uninstall:
 CFLAGS += -MD
 -include $(OBJECTS:.o=.d)
 
+# reduced compile output when running make without V=1
+ifneq ($(findstring $(MAKEFLAGS),s),s)
+ifndef V
+	Q_CC  = @echo '    CC  '$@;
+	Q_LD  = @echo '    LD  '$@;
+endif
+endif
+
 # build rules
 $(TARGET): $(OBJECTS)
-	$(CC) $^ $(LDFLAGS) $(SRC_LIBS) -o $@
+	$(Q_LD)$(CC) $^ $(LDFLAGS) $(SRC_LIBS) -o $@
 	$(STRIP) $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) -o $@ $(CFLAGS) -c $<
+	$(Q_CC)$(CC) -o $@ $(CFLAGS) -c $<
