@@ -229,6 +229,8 @@ rebuild: clean all
 CFLAGS += -MD
 -include $(OBJECTS:.o=.d)
 
+CXXFLAGS += $(CFLAGS)
+
 # build rules
 
 $(TARGET): $(OBJECTS)
@@ -239,6 +241,4 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -o $@ $(CFLAGS) -c $<
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) -o $@ $(CFLAGS) -c $<
-
-
+	$(CXX) -o $@ $(CXXFLAGS) -c $<
