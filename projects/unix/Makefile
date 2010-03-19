@@ -44,8 +44,8 @@ ifeq ("$(UNAME)","FreeBSD")
   SHARED = -shared
   SO_EXTENSION = so
 endif
-ifeq ("$(UNAME)","GNU/kFreeBSD")
-  OS = FREEBSD
+ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
+  OS = LINUX
   SHARED = -shared
   SO_EXTENSION = so
 endif
