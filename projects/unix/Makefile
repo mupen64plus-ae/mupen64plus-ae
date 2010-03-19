@@ -83,13 +83,13 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
+CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -fvisibility=hidden -I../../src
 LDFLAGS += -ldl
 
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
 # On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(ARCH_DETECTED), 64BITS)
-  CFLAGS += -fpic -DPIC -fvisibility=hidden
+  CFLAGS += -fpic -DPIC
 endif
 # tweak flags for 32-bit build on 64-bit system
 ifeq ($(ARCH_DETECTED), 64BITS_32)
@@ -218,6 +218,18 @@ OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
 $(shell mkdir -p $(OBJDIRS))
 
+# build dependency files
+CFLAGS += -MD
+-include $(OBJECTS:.o=.d)
+
+# reduced compile output when running make without V=1
+ifneq ($(findstring $(MAKEFLAGS),s),s)
+ifndef V
+    Q_CC = @echo '    CC  '$@;
+    Q_LD = @echo '    LD  '$@;
+endif
+endif
+
 # build targets
 TARGET = mupen64plus-audio-sdl.$(SO_EXTENSION)
 
@@ -255,16 +267,12 @@ clean:
 
 rebuild: clean all
 
-# build dependency files
-CFLAGS += -MD
--include $(OBJECTS:.o=.d)
-
 # build rules
 $(TARGET): $(OBJECTS)
-	$(CC) $(SHARED) $^ $(LDFLAGS) -o $@
+	$(Q_LD)$(CC) $(SHARED) $^ $(LDFLAGS) -o $@
 	$(STRIP) $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) -o $@ $(CFLAGS) -c $<
+	$(Q_CC)$(CC) -o $@ $(CFLAGS) -c $<
 
 
