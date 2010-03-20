@@ -102,6 +102,8 @@ endif
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
+  # only export api symbols
+  LDFLAGS += -Wl,-version-script,$(SRCDIR)/rsp_api_export.ver
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -O3 -march=athlon64
@@ -182,9 +184,6 @@ SOURCE = \
 	$(SRCDIR)/ucode2.cpp \
 	$(SRCDIR)/ucode1.cpp \
 	$(SRCDIR)/ucode3mp3.cpp
-
-# only export api symbols
-LDFLAGS += -Wl,-version-script,$(SRCDIR)/rsp_api_export.ver
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
