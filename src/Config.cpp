@@ -144,7 +144,6 @@ SettingInfo ForceTextureFilterSettings[] =
 {"N64 Default Texture Filter",  FORCE_DEFAULT_FILTER},
 {"Force Nearest Filter (faster, low quality)", FORCE_POINT_FILTER},
 {"Force Linear Filter (slower, better quality)", FORCE_LINEAR_FILTER},
-//{"Force Bilinear Filter slower, best quality", FORCE_BILINEAR_FILTER}, 
 };
 
 SettingInfo TextureEnhancementSettings[] =
@@ -347,7 +346,7 @@ BOOL InitConfiguration(void)
 
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancement", 0, "Primary texture filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancementControl", 0, "Secondary texture filter (0 = none, 1-4 = filtered)");
-    ConfigSetDefaultInt(l_ConfigVideoRice, "ForceTextureFilter", 0, "Texture filter to use (0=default, 1=nearest neighbor, 2=linear, 3=bilinear)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "ForceTextureFilter", 0, "Force to use texture filtering or not (0=auto: n64 choose, 1=no filtering, 2=force filtering)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureQuality", TXT_QUALITY_DEFAULT, "Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting", 16, "Z-buffer depth (only 16 or 32)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "MultiSampling", 0, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)");

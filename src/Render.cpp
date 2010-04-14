@@ -1979,7 +1979,6 @@ void CRender::SetTextureFilter(uint32 dwFilter)
             m_dwMinFilter = m_dwMagFilter = FILTER_POINT;
             break;
         case FORCE_LINEAR_FILTER:
-        case FORCE_BILINEAR_FILTER:
             m_dwMinFilter = m_dwMagFilter = FILTER_LINEAR;
             break;
         }
