@@ -205,6 +205,7 @@ typedef struct {
     BOOL    bUseFullTMEM;
 
     BOOL    bShowFPS;
+    BOOL    bEnableMipmaping;
 
     uint32  forceTextureFilter;
     uint32  textureEnhancement;

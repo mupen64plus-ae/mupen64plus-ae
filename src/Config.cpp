@@ -343,6 +343,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultBool(l_ConfigVideoRice, "LoadHiResTextures", FALSE, "Enable hi-resolution texture file loading");
     ConfigSetDefaultBool(l_ConfigVideoRice, "DumpTexturesToFiles", FALSE, "Enable texture dumping");
     ConfigSetDefaultBool(l_ConfigVideoRice, "ShowFPS", FALSE, "Display On-screen FPS");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableMipmaping", TRUE, "Enable/Disable Mipmaping");
 
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancement", 0, "Primary texture filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancementControl", 0, "Secondary texture filter (0 = none, 1-4 = filtered)");
@@ -452,6 +453,7 @@ static void ReadConfiguration(void)
     options.bLoadHiResTextures = ConfigGetParamBool(l_ConfigVideoRice, "LoadHiResTextures");
     options.bDumpTexturesToFiles = ConfigGetParamBool(l_ConfigVideoRice, "DumpTexturesToFiles");
     options.bShowFPS = ConfigGetParamBool(l_ConfigVideoRice, "ShowFPS");
+    options.bEnableMipmaping = ConfigGetParamBool(l_ConfigVideoRice, "EnableMipmaping");
 
     options.textureEnhancement = ConfigGetParamInt(l_ConfigVideoRice, "TextureEnhancement");
     options.textureEnhancementControl = ConfigGetParamInt(l_ConfigVideoRice, "TextureEnhancementControl");
