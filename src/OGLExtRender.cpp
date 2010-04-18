@@ -241,8 +241,8 @@ void COGLExtRender::ApplyTextureFilter()
 
     for( int i=0; i<m_maxTexUnits; i++ )
     {
-        //Texture will use filtering
-        if(m_dwMinFilter == FILTER_LINEAR)
+        //Compute iMinFilter and iMagFilter
+        if(m_dwMinFilter == FILTER_LINEAR) //Texture will use filtering
         {
             iMagFilter = GL_LINEAR;
 

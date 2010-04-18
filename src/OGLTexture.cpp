@@ -97,21 +97,24 @@ void COGLTexture::EndUpdate(DrawInfo *di)
     glBindTexture(GL_TEXTURE_2D, m_dwTextureName);
     OPENGL_CHECK_ERRORS;
 
-    //Is this is really usefull? because filter is apply with ApplyTextureFilter()
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    OPENGL_CHECK_ERRORS;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     OPENGL_CHECK_ERRORS;
 
     // mipmap support
     if(options.bEnableMipmaping)
     {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        OPENGL_CHECK_ERRORS;
+
         // Copy the image data from main memory to video card texture memory with GLU method wich create mipmap
         gluBuild2DMipmaps(GL_TEXTURE_2D, m_glFmt, m_dwCreatedTextureWidth, m_dwCreatedTextureHeight, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_pTexture);
         OPENGL_CHECK_ERRORS;
     }
     else
     {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        OPENGL_CHECK_ERRORS;
+
         // Copy the image data from main memory to video card texture memory
         glTexImage2D(GL_TEXTURE_2D, 0, m_glFmt, m_dwCreatedTextureWidth, m_dwCreatedTextureHeight, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, m_pTexture);
         OPENGL_CHECK_ERRORS;
