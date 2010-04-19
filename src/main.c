@@ -314,7 +314,7 @@ EXPORT void CALL RomClosed(void)
    {
      rsp.DMEM[i] = rsp.IMEM[i] = 0;
    }
-/*   init_ucode1();
-   init_ucode2();*/
+   //init_ucode1();
+   init_ucode2();
 }
 

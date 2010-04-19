@@ -100,8 +100,8 @@ void jpg_uncompress(OSTask_t *task);
 /*void ucode1(OSTask_t *task);
 void ucode2(OSTask_t *task);
 void ucode3(OSTask_t *task);
-void init_ucode1();
-void init_ucode2();*/
+void init_ucode1();*/
+void init_ucode2();
 
 extern u32 inst1, inst2;
 extern u16 AudioInBuffer, AudioOutBuffer, AudioCount;

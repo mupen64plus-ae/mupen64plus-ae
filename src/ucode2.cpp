@@ -48,6 +48,8 @@ extern u16 ResampleLUT [0x200];
 bool isMKABI = false;
 bool isZeldaABI = false;
 
+void init_ucode2() { isMKABI = isZeldaABI = false; }
+
 static void LOADADPCM2 (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
     u32 v0;
     v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
