@@ -248,8 +248,19 @@ void COGLExtRender::ApplyTextureFilter()
 
             if(options.bEnableMipmaping)
             {
-                //Bilinear
-                iMinFilter = GL_LINEAR_MIPMAP_NEAREST;
+                //Texture filtering method user want
+                switch(options.textureFilteringMethod)
+                {
+                case TEXTURE_NO_FILTER:
+                    iMinFilter = GL_NEAREST_MIPMAP_NEAREST;
+                    break;
+                case TEXTURE_BILINEAR_FILTER:
+                    iMinFilter = GL_LINEAR_MIPMAP_NEAREST;
+                    break;
+                case TEXTURE_TRILINEAR_FILTER:
+                    iMinFilter = GL_LINEAR_MIPMAP_LINEAR;
+                    break;
+                }
             }
             else
             {
