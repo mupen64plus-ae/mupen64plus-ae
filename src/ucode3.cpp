@@ -278,7 +278,7 @@ static void ENVMIXER3o (void) {
     s16 Wet, Dry;
 
     //fprintf (dfile, "\n----------------------------------------------------\n");
-    Vol_Right = (*(s16 *)&inst1);
+    Vol_Right = inst1;
     if (flags & A_INIT) {
         LVol = (((s32)(s16)Vol_Left * VolRamp_Left) - ((s32)(s16)Vol_Left << 16)) >> 3; 
         RVol = (((s32)(s16)Vol_Right * VolRamp_Right) - ((s32)(s16)Vol_Right << 16)) >> 3;
