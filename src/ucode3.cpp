@@ -77,17 +77,17 @@ static void SETVOL3 (void) {
     u8 Flags = (u8)(inst1 >> 0x10);
     if (Flags & 0x4) { // 288
         if (Flags & 0x2) { // 290
-            Vol_Left  = *(s16*)&inst1; // 0x50
-            Env_Dry     = (s16)(*(s32*)&inst2 >> 0x10); // 0x4E
-            Env_Wet     = *(s16*)&inst2; // 0x4C
+            Vol_Left  = (s16)inst1; // 0x50
+            Env_Dry   = (s16)(inst2 >> 0x10); // 0x4E
+            Env_Wet   = (s16)inst2; // 0x4C
         } else {
-            VolTrg_Right  = *(s16*)&inst1; // 0x46
+            VolTrg_Right  = (s16)inst1; // 0x46
             //VolRamp_Right = (u16)(inst2 >> 0x10) | (s32)(s16)(inst2 << 0x10);
-            VolRamp_Right = *(s32*)&inst2; // 0x48/0x4A
+            VolRamp_Right = (s32)inst2; // 0x48/0x4A
         }
     } else {
-        VolTrg_Left  = *(s16*)&inst1; // 0x40
-        VolRamp_Left = *(s32*)&inst2; // 0x42/0x44
+        VolTrg_Left  = (s16)inst1; // 0x40
+        VolRamp_Left = (s32)inst2; // 0x42/0x44
     }
 }
 
@@ -115,7 +115,7 @@ static void ENVMIXER3 (void) {
     s16 Wet, Dry;
     s16 LTrg, RTrg;
 
-    Vol_Right = (*(s16 *)&inst1);
+    Vol_Right = (s16)inst1;
 
     if (flags & A_INIT) {
         LAdder = VolRamp_Left / 8;
@@ -191,9 +191,9 @@ static void ENVMIXER3 (void) {
         MainL = ((Dry * LVol) + 0x4000) >> 15;
         MainR = ((Dry * RVol) + 0x4000) >> 15;
 
-        o1 = out [y^1];
-        a1 = aux1[y^1];
-        i1 = inp [y^1];
+        o1 = out [y^S];
+        a1 = aux1[y^S];
+        i1 = inp [y^S];
 
         o1+=((i1*MainL)+0x4000)>>15;
         a1+=((i1*MainR)+0x4000)>>15;
@@ -208,13 +208,13 @@ static void ENVMIXER3 (void) {
 
 // ****************************************************************
 
-        out[y^1]=o1;
-        aux1[y^1]=a1;
+        out[y^S]=o1;
+        aux1[y^S]=a1;
 
 // ****************************************************************
         //if (!(flags&A_AUX)) {
-            a2 = aux2[y^1];
-            a3 = aux3[y^1];
+            a2 = aux2[y^S];
+            a3 = aux3[y^S];
 
             AuxL  = ((Wet * LVol) + 0x4000) >> 15;
             AuxR  = ((Wet * RVol) + 0x4000) >> 15;
@@ -228,8 +228,8 @@ static void ENVMIXER3 (void) {
             if(a3>32767) a3=32767;
             else if(a3<-32768) a3=-32768;
 
-            aux2[y^1]=a2;
-            aux3[y^1]=a3;
+            aux2[y^S]=a2;
+            aux3[y^S]=a3;
         }
     //}
 
@@ -310,12 +310,12 @@ static void ENVMIXER3o (void) {
     //fprintf (dfile, "LTrg = %08X, LVol = %08X\n", LTrg, LVol);
 
     for (int x=0; x<(0x170/2); x++) {
-        i1=(int)inp[x^1];
-        o1=(int)out[x^1];
-        a1=(int)aux1[x^1];
+        i1=(int)inp[x^S];
+        o1=(int)out[x^S];
+        a1=(int)aux1[x^S];
         if (AuxIncRate) {
-            a2=(int)aux2[x^1];
-            a3=(int)aux3[x^1];
+            a2=(int)aux2[x^S];
+            a3=(int)aux3[x^S];
         }
         // TODO: here...
         //LAcc = (LTrg << 16);
@@ -378,8 +378,8 @@ static void ENVMIXER3o (void) {
         if(a1>32767) a1=32767;
         else if(a1<-32768) a1=-32768;
 
-        out[x^1]=o1;
-        aux1[x^1]=a1;
+        out[x^S]=o1;
+        aux1[x^S]=a1;
         if (AuxIncRate) {
             a2+=(/*(a2*0x7fff)+*/(i1*AuxR)+0x4000)>>15;
             a3+=(/*(a3*0x7fff)+*/(i1*AuxL)+0x4000)>>15;
@@ -390,8 +390,8 @@ static void ENVMIXER3o (void) {
             if(a3>32767) a3=32767;
             else if(a3<-32768) a3=-32768;
 
-            aux2[x^1]=a2;
-            aux3[x^1]=a3;
+            aux2[x^S]=a2;
+            aux3[x^S]=a3;
         }
     }
 
@@ -495,11 +495,11 @@ static void MIXER3 (void) { // Needs accuracy verification...
     u16 dmemin  = (u16)(inst2 >> 0x10)  + 0x4f0;
     u16 dmemout = (u16)(inst2 & 0xFFFF) + 0x4f0;
     //u8  flags   = (u8)((inst1 >> 16) & 0xff);
-    s32 gain    = (s16)(inst1 & 0xFFFF)*2;
+    s32 gain    = (s16)(inst1 & 0xFFFF);
     s32 temp;
 
-    for (int x=0; x < 0x170; x+=2) { // I think I can do this a lot easier 
-        temp = (*(s16 *)(BufferSpace+dmemin+x) * gain) >> 16;
+    for (int x=0; x < 0x170; x+=2) { // I think I can do this a lot easier
+        temp = (*(s16 *)(BufferSpace+dmemin+x) * gain) >> 15;
         temp += *(s16 *)(BufferSpace+dmemout+x);
             
         if ((s32)temp > 32767) 
@@ -534,17 +534,17 @@ static void LOADADPCM3 (void) { // Loads an ADPCM table - Works 100% Now 03-13-0
     //assert ((inst1&0xffff) <= 0x80);
     u16 *table = (u16 *)(rsp.RDRAM+v0);
     for (u32 x = 0; x < ((inst1&0xffff)>>0x4); x++) {
-        adpcmtable[0x1+(x<<3)] = table[0];
-        adpcmtable[0x0+(x<<3)] = table[1];
+        adpcmtable[0x0+(x<<3)^S] = table[0];
+        adpcmtable[0x1+(x<<3)^S] = table[1];
 
-        adpcmtable[0x3+(x<<3)] = table[2];
-        adpcmtable[0x2+(x<<3)] = table[3];
+        adpcmtable[0x2+(x<<3)^S] = table[2];
+        adpcmtable[0x3+(x<<3)^S] = table[3];
 
-        adpcmtable[0x5+(x<<3)] = table[4];
-        adpcmtable[0x4+(x<<3)] = table[5];
+        adpcmtable[0x4+(x<<3)^S] = table[4];
+        adpcmtable[0x5+(x<<3)^S] = table[5];
 
-        adpcmtable[0x7+(x<<3)] = table[6];
-        adpcmtable[0x6+(x<<3)] = table[7];
+        adpcmtable[0x6+(x<<3)^S] = table[6];
+        adpcmtable[0x7+(x<<3)^S] = table[7];
         table += 8;
     }
 }
@@ -558,7 +558,7 @@ static void DMEMMOVE3 (void) { // Needs accuracy verification...
 
     //memcpy (dmem+v1, dmem+v0, count-1);
     for (cnt = 0; cnt < count; cnt++) {
-        *(u8 *)(BufferSpace+((cnt+v1)^3)) = *(u8 *)(BufferSpace+((cnt+v0)^3));
+        *(u8 *)(BufferSpace+((cnt+v1)^S8)) = *(u8 *)(BufferSpace+((cnt+v0)^S8));
     }
 }
 
@@ -605,8 +605,8 @@ static void ADPCM3 (void) { // Verified to be 100% Accurate...
         }
     }
 
-    int l1=out[15];
-    int l2=out[14];
+    int l1=out[14^S];
+    int l2=out[15^S];
     int inp1[8];
     int inp2[8];
     out+=16;
@@ -617,7 +617,7 @@ static void ADPCM3 (void) { // Verified to be 100% Accurate...
                                                     // area of memory in the case of A_LOOP or just
                                                     // the values we calculated the last time
 
-        code=BufferSpace[(0x4f0+inPtr)^3];
+        code=BufferSpace[(0x4f0+inPtr)^S8];
         index=code&0xf;
         index<<=4;                                  // index into the adpcm code table
         book1=(short *)&adpcmtable[index];
@@ -635,7 +635,7 @@ static void ADPCM3 (void) { // Verified to be 100% Accurate...
         while(j<8)                                  // loop of 8, for 8 coded nibbles from 4 bytes
                                                     // which yields 8 short pcm values
         {
-            icode=BufferSpace[(0x4f0+inPtr)^3];
+            icode=BufferSpace[(0x4f0+inPtr)^S8];
             inPtr++;
 
             inp1[j]=(s16)((icode&0xf0)<<8);         // this will in effect be signed
@@ -655,7 +655,7 @@ static void ADPCM3 (void) { // Verified to be 100% Accurate...
         j=0;
         while(j<8)
         {
-            icode=BufferSpace[(0x4f0+inPtr)^3];
+            icode=BufferSpace[(0x4f0+inPtr)^S8];
             inPtr++;
 
             inp2[j]=(short)((icode&0xf0)<<8);           // this will in effect be signed
@@ -735,11 +735,11 @@ static void ADPCM3 (void) { // Verified to be 100% Accurate...
 
         for(j=0;j<8;j++)
         {
-            a[j^1]>>=11;
-            if(a[j^1]>32767) a[j^1]=32767;
-            else if(a[j^1]<-32768) a[j^1]=-32768;
-            *(out++)=a[j^1];
-            //*(out+j)=a[j^1];
+            a[j^S]>>=11;
+            if(a[j^S]>32767) a[j^S]=32767;
+            else if(a[j^S]<-32768) a[j^S]=-32768;
+            *(out++)=a[j^S];
+            //*(out+j)=a[j^S];
         }
         //out += 0x10;
         l1=a[6];
@@ -807,11 +807,11 @@ static void ADPCM3 (void) { // Verified to be 100% Accurate...
 
         for(j=0;j<8;j++)
         {
-            a[j^1]>>=11;
-            if(a[j^1]>32767) a[j^1]=32767;
-            else if(a[j^1]<-32768) a[j^1]=-32768;
-            *(out++)=a[j^1];
-            //*(out+j+0x1f8)=a[j^1];
+            a[j^S]>>=11;
+            if(a[j^S]>32767) a[j^S]=32767;
+            else if(a[j^S]<-32768) a[j^S]=-32768;
+            *(out++)=a[j^S];
+            //*(out+j+0x1f8)=a[j^S];
         }
         l1=a[6];
         l2=a[7];
@@ -851,11 +851,11 @@ static void RESAMPLE3 (void) {
 
     if ((Flags & 0x1) == 0) {   
         for (int x=0; x < 4; x++) //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
-            src[(srcPtr+x)^1] = ((u16 *)rsp.RDRAM)[((addy/2)+x)^1];
+            src[(srcPtr+x)^S] = ((u16 *)rsp.RDRAM)[((addy/2)+x)^S];
         Accum = *(u16 *)(rsp.RDRAM+addy+10);
     } else {
         for (int x=0; x < 4; x++)
-            src[(srcPtr+x)^1] = 0;//*(u16 *)(rsp.RDRAM+((addy+x)^2));
+            src[(srcPtr+x)^S] = 0;//*(u16 *)(rsp.RDRAM+((addy+x)^2));
     }
 
     for(int i=0;i < 0x170/2;i++)    {
@@ -863,18 +863,18 @@ static void RESAMPLE3 (void) {
         //location = (Accum >> 0xa) << 0x3;
         lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-        temp =  ((s32)*(s16*)(src+((srcPtr+0)^1))*((s32)((s16)lut[0])));
+        temp =  ((s32)*(s16*)(src+((srcPtr+0)^S))*((s32)((s16)lut[0])));
         accum = (s32)(temp >> 15);
 
-        temp = ((s32)*(s16*)(src+((srcPtr+1)^1))*((s32)((s16)lut[1])));
+        temp = ((s32)*(s16*)(src+((srcPtr+1)^S))*((s32)((s16)lut[1])));
         accum += (s32)(temp >> 15);
 
-        temp = ((s32)*(s16*)(src+((srcPtr+2)^1))*((s32)((s16)lut[2])));
+        temp = ((s32)*(s16*)(src+((srcPtr+2)^S))*((s32)((s16)lut[2])));
         accum += (s32)(temp >> 15);
         
-        temp = ((s32)*(s16*)(src+((srcPtr+3)^1))*((s32)((s16)lut[3])));
+        temp = ((s32)*(s16*)(src+((srcPtr+3)^S))*((s32)((s16)lut[3])));
         accum += (s32)(temp >> 15);
-/*      temp =  ((s64)*(s16*)(src+((srcPtr+0)^1))*((s64)((s16)lut[0]<<1)));
+/*      temp =  ((s64)*(s16*)(src+((srcPtr+0)^S))*((s64)((s16)lut[0]<<1)));
         if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
         else temp = (temp^0x8000);
         temp = (s32)(temp >> 16);
@@ -882,7 +882,7 @@ static void RESAMPLE3 (void) {
         if ((s32)temp < -32768) temp = -32768;
         accum = (s32)(s16)temp;
 
-        temp = ((s64)*(s16*)(src+((srcPtr+1)^1))*((s64)((s16)lut[1]<<1)));
+        temp = ((s64)*(s16*)(src+((srcPtr+1)^S))*((s64)((s16)lut[1]<<1)));
         if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
         else temp = (temp^0x8000);
         temp = (s32)(temp >> 16);
@@ -890,7 +890,7 @@ static void RESAMPLE3 (void) {
         if ((s32)temp < -32768) temp = -32768;
         accum += (s32)(s16)temp;
 
-        temp = ((s64)*(s16*)(src+((srcPtr+2)^1))*((s64)((s16)lut[2]<<1)));
+        temp = ((s64)*(s16*)(src+((srcPtr+2)^S))*((s64)((s16)lut[2]<<1)));
         if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
         else temp = (temp^0x8000);
         temp = (s32)(temp >> 16);
@@ -898,7 +898,7 @@ static void RESAMPLE3 (void) {
         if ((s32)temp < -32768) temp = -32768;
         accum += (s32)(s16)temp;
 
-        temp = ((s64)*(s16*)(src+((srcPtr+3)^1))*((s64)((s16)lut[3]<<1)));
+        temp = ((s64)*(s16*)(src+((srcPtr+3)^S))*((s64)((s16)lut[3]<<1)));
         if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
         else temp = (temp^0x8000);
         temp = (s32)(temp >> 16);
@@ -909,14 +909,14 @@ static void RESAMPLE3 (void) {
         if (accum > 32767) accum = 32767;
         if (accum < -32768) accum = -32768;
 
-        dst[dstPtr^1] = (accum);
+        dst[dstPtr^S] = (accum);
         dstPtr++;
         Accum += Pitch;
         srcPtr += (Accum>>16);
         Accum&=0xffff;
     }
     for (int x=0; x < 4; x++)
-        ((u16 *)rsp.RDRAM)[((addy/2)+x)^1] = src[(srcPtr+x)^1];
+        ((u16 *)rsp.RDRAM)[((addy/2)+x)^S] = src[(srcPtr+x)^S];
     *(u16 *)(rsp.RDRAM+addy+10) = Accum;
 }
 
@@ -925,7 +925,7 @@ static void INTERLEAVE3 (void) { // Needs accuracy verification...
     u16 *outbuff = (u16 *)(BufferSpace + 0x4f0);//(u16 *)(AudioOutBuffer+dmem);
     u16 *inSrcR;
     u16 *inSrcL;
-    u16 Left, Right;
+    u16 Left, Right, Left2, Right2;
 
     //inR = inst2 & 0xFFFF;
     //inL = (inst2 >> 16) & 0xFFFF;
@@ -936,11 +936,20 @@ static void INTERLEAVE3 (void) { // Needs accuracy verification...
     for (int x = 0; x < (0x170/4); x++) {
         Left=*(inSrcL++);
         Right=*(inSrcR++);
+        Left2=*(inSrcL++);
+        Right2=*(inSrcR++);
 
-        *(outbuff++)=*(inSrcR++);
-        *(outbuff++)=*(inSrcL++);
-        *(outbuff++)=(u16)Right;
-        *(outbuff++)=(u16)Left;
+#ifdef _BIG_ENDIAN
+        *(outbuff++)=Right;
+        *(outbuff++)=Left;
+        *(outbuff++)=Right2;
+        *(outbuff++)=Left2;
+#else
+        *(outbuff++)=Right2;
+        *(outbuff++)=Left2;
+        *(outbuff++)=Right;
+        *(outbuff++)=Left;
+#endif
 /*
         Left=*(inSrcL++);
         Right=*(inSrcR++);

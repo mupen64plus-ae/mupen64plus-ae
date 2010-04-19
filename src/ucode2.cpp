@@ -54,17 +54,17 @@ static void LOADADPCM2 (void) { // Loads an ADPCM table - Works 100% Now 03-13-0
     u16 *table = (u16 *)(rsp.RDRAM+v0); // Zelda2 Specific...
 
     for (u32 x = 0; x < ((inst1&0xffff)>>0x4); x++) {
-        adpcmtable[0x1+(x<<3)] = table[0];
-        adpcmtable[0x0+(x<<3)] = table[1];
+        adpcmtable[0x0+(x<<3)^S] = table[0];
+        adpcmtable[0x1+(x<<3)^S] = table[1];
 
-        adpcmtable[0x3+(x<<3)] = table[2];
-        adpcmtable[0x2+(x<<3)] = table[3];
+        adpcmtable[0x2+(x<<3)^S] = table[2];
+        adpcmtable[0x3+(x<<3)^S] = table[3];
 
-        adpcmtable[0x5+(x<<3)] = table[4];
-        adpcmtable[0x4+(x<<3)] = table[5];
+        adpcmtable[0x4+(x<<3)^S] = table[4];
+        adpcmtable[0x5+(x<<3)^S] = table[5];
 
-        adpcmtable[0x7+(x<<3)] = table[6];
-        adpcmtable[0x6+(x<<3)] = table[7];
+        adpcmtable[0x6+(x<<3)^S] = table[6];
+        adpcmtable[0x7+(x<<3)^S] = table[7];
         table += 8;
     }
 }
@@ -138,13 +138,13 @@ static void ADPCM2 (void) { // Verified to be 100% Accurate...
         }
     }
 
-    int l1=out[15];
-    int l2=out[14];
+    int l1=out[14^S];
+    int l2=out[15^S];
     int inp1[8];
     int inp2[8];
     out+=16;
     while(count>0) {
-        code=BufferSpace[(AudioInBuffer+inPtr)^3];
+        code=BufferSpace[(AudioInBuffer+inPtr)^S8];
         index=code&0xf;
         index<<=4;
         book1=(short *)&adpcmtable[index];
@@ -156,7 +156,7 @@ static void ADPCM2 (void) { // Verified to be 100% Accurate...
         j=0;
 
         while(j<8) {
-            icode=BufferSpace[(AudioInBuffer+inPtr)^3];
+            icode=BufferSpace[(AudioInBuffer+inPtr)^S8];
             inPtr++;
 
             inp1[j]=(s16)((icode&mask1) << 8);          // this will in effect be signed
@@ -186,7 +186,7 @@ static void ADPCM2 (void) { // Verified to be 100% Accurate...
 
         j=0;
         while(j<8) {
-            icode=BufferSpace[(AudioInBuffer+inPtr)^3];
+            icode=BufferSpace[(AudioInBuffer+inPtr)^S8];
             inPtr++;
 
             inp2[j]=(s16)((icode&mask1) << 8);
@@ -274,10 +274,10 @@ static void ADPCM2 (void) { // Verified to be 100% Accurate...
 
         for(j=0;j<8;j++)
         {
-            a[j^1]>>=11;
-            if(a[j^1]>32767) a[j^1]=32767;
-            else if(a[j^1]<-32768) a[j^1]=-32768;
-            *(out++)=a[j^1];
+            a[j^S]>>=11;
+            if(a[j^S]>32767) a[j^S]=32767;
+            else if(a[j^S]<-32768) a[j^S]=-32768;
+            *(out++)=a[j^S];
         }
         l1=a[6];
         l2=a[7];
@@ -344,10 +344,10 @@ static void ADPCM2 (void) { // Verified to be 100% Accurate...
 
         for(j=0;j<8;j++)
         {
-            a[j^1]>>=11;
-            if(a[j^1]>32767) a[j^1]=32767;
-            else if(a[j^1]<-32768) a[j^1]=-32768;
-            *(out++)=a[j^1];
+            a[j^S]>>=11;
+            if(a[j^S]>32767) a[j^S]=32767;
+            else if(a[j^S]<-32768) a[j^S]=-32768;
+            *(out++)=a[j^S];
         }
         l1=a[6];
         l2=a[7];
@@ -384,12 +384,12 @@ static void MIXER2 (void) { // Needs accuracy verification...
     u16 dmemin  = (u16)(inst2 >> 0x10);
     u16 dmemout = (u16)(inst2 & 0xFFFF);
     u32 count   = ((inst1 >> 12) & 0xFF0);
-    s32 gain    = (s16)(inst1 & 0xFFFF)*2;
+    s32 gain    = (s16)(inst1 & 0xFFFF);
     s32 temp;
 
     for (unsigned int x=0; x < count; x+=2) { // I think I can do this a lot easier 
 
-        temp = (*(s16 *)(BufferSpace+dmemin+x) * gain) >> 16;
+        temp = (*(s16 *)(BufferSpace+dmemin+x) * gain) >> 15;
         temp += *(s16 *)(BufferSpace+dmemout+x);
             
         if ((s32)temp > 32767) 
@@ -425,11 +425,11 @@ static void RESAMPLE2 (void) {
 
     if ((Flags & 0x1) == 0) {   
         for (int x=0; x < 4; x++) //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
-            src[(srcPtr+x)^1] = ((u16 *)rsp.RDRAM)[((addy/2)+x)^1];
+            src[(srcPtr+x)^S] = ((u16 *)rsp.RDRAM)[((addy/2)+x)^S];
         Accum = *(u16 *)(rsp.RDRAM+addy+10);
     } else {
         for (int x=0; x < 4; x++)
-            src[(srcPtr+x)^1] = 0;//*(u16 *)(rsp.RDRAM+((addy+x)^2));
+            src[(srcPtr+x)^S] = 0;//*(u16 *)(rsp.RDRAM+((addy+x)^2));
     }
 
     for(int i=0;i < ((AudioCount+0xf)&0xFFF0)/2;i++)    {
@@ -437,29 +437,29 @@ static void RESAMPLE2 (void) {
         //location = (Accum >> 0xa) << 0x3;
         lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-        temp =  ((s32)*(s16*)(src+((srcPtr+0)^1))*((s32)((s16)lut[0])));
+        temp =  ((s32)*(s16*)(src+((srcPtr+0)^S))*((s32)((s16)lut[0])));
         accum = (s32)(temp >> 15);
 
-        temp = ((s32)*(s16*)(src+((srcPtr+1)^1))*((s32)((s16)lut[1])));
+        temp = ((s32)*(s16*)(src+((srcPtr+1)^S))*((s32)((s16)lut[1])));
         accum += (s32)(temp >> 15);
 
-        temp = ((s32)*(s16*)(src+((srcPtr+2)^1))*((s32)((s16)lut[2])));
+        temp = ((s32)*(s16*)(src+((srcPtr+2)^S))*((s32)((s16)lut[2])));
         accum += (s32)(temp >> 15);
         
-        temp = ((s32)*(s16*)(src+((srcPtr+3)^1))*((s32)((s16)lut[3])));
+        temp = ((s32)*(s16*)(src+((srcPtr+3)^S))*((s32)((s16)lut[3])));
         accum += (s32)(temp >> 15);
 
         if (accum > 32767) accum = 32767;
         if (accum < -32768) accum = -32768;
 
-        dst[dstPtr^1] = (s16)(accum);
+        dst[dstPtr^S] = (s16)(accum);
         dstPtr++;
         Accum += Pitch;
         srcPtr += (Accum>>16);
         Accum&=0xffff;
     }
     for (int x=0; x < 4; x++)
-        ((u16 *)rsp.RDRAM)[((addy/2)+x)^1] = src[(srcPtr+x)^1];
+        ((u16 *)rsp.RDRAM)[((addy/2)+x)^S] = src[(srcPtr+x)^S];
     *(u16 *)(rsp.RDRAM+addy+10) = (u16)Accum;
     //memcpy (RSWORK, src+srcPtr, 0x8);
 }
@@ -479,7 +479,7 @@ static void DMEMMOVE2 (void) { // Needs accuracy verification...
 
     //memcpy (dmem+v1, dmem+v0, count-1);
     for (cnt = 0; cnt < count; cnt++) {
-        *(u8 *)(BufferSpace+((cnt+v1)^3)) = *(u8 *)(BufferSpace+((cnt+v0)^3));
+        *(u8 *)(BufferSpace+((cnt+v1)^S8)) = *(u8 *)(BufferSpace+((cnt+v0)^S8));
     }
 }
 
@@ -554,59 +554,59 @@ static void ENVMIXER2 (void) {
     while (count > 0) {
         int temp, x;
         for (x=0; x < 0x8; x++) {
-            vec9  = (s16)(((s32)buffs3[x^1] * (u32)env[0]) >> 0x10) ^ v2[0];
-            vec10 = (s16)(((s32)buffs3[x^1] * (u32)env[2]) >> 0x10) ^ v2[1];
-            temp = bufft6[x^1] + vec9;
+            vec9  = (s16)(((s32)buffs3[x^S] * (u32)env[0]) >> 0x10) ^ v2[0];
+            vec10 = (s16)(((s32)buffs3[x^S] * (u32)env[2]) >> 0x10) ^ v2[1];
+            temp = bufft6[x^S] + vec9;
             if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-            bufft6[x^1] = temp;
-            temp = bufft7[x^1] + vec10;
+            bufft6[x^S] = temp;
+            temp = bufft7[x^S] + vec10;
             if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-            bufft7[x^1] = temp;
+            bufft7[x^S] = temp;
             vec9  = (s16)(((s32)vec9  * (u32)env[4]) >> 0x10) ^ v2[2];
             vec10 = (s16)(((s32)vec10 * (u32)env[4]) >> 0x10) ^ v2[3];
             if (inst1 & 0x10) {
-                temp = buffs0[x^1] + vec10;
+                temp = buffs0[x^S] + vec10;
                 if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-                buffs0[x^1] = temp;
-                temp = buffs1[x^1] + vec9;
+                buffs0[x^S] = temp;
+                temp = buffs1[x^S] + vec9;
                 if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-                buffs1[x^1] = temp;
+                buffs1[x^S] = temp;
             } else {
-                temp = buffs0[x^1] + vec9;
+                temp = buffs0[x^S] + vec9;
                 if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-                buffs0[x^1] = temp;
-                temp = buffs1[x^1] + vec10;
+                buffs0[x^S] = temp;
+                temp = buffs1[x^S] + vec10;
                 if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-                buffs1[x^1] = temp;
+                buffs1[x^S] = temp;
             }
         }
 
         if (!isMKABI)
         for (x=0x8; x < 0x10; x++) {
-            vec9  = (s16)(((s32)buffs3[x^1] * (u32)env[1]) >> 0x10) ^ v2[0];
-            vec10 = (s16)(((s32)buffs3[x^1] * (u32)env[3]) >> 0x10) ^ v2[1];
-            temp = bufft6[x^1] + vec9;
+            vec9  = (s16)(((s32)buffs3[x^S] * (u32)env[1]) >> 0x10) ^ v2[0];
+            vec10 = (s16)(((s32)buffs3[x^S] * (u32)env[3]) >> 0x10) ^ v2[1];
+            temp = bufft6[x^S] + vec9;
             if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-            bufft6[x^1] = temp;
-            temp = bufft7[x^1] + vec10;
+            bufft6[x^S] = temp;
+           temp = bufft7[x^S] + vec10;
             if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-            bufft7[x^1] = temp;
+            bufft7[x^S] = temp;
             vec9  = (s16)(((s32)vec9  * (u32)env[5]) >> 0x10) ^ v2[2];
             vec10 = (s16)(((s32)vec10 * (u32)env[5]) >> 0x10) ^ v2[3];
             if (inst1 & 0x10) {
-                temp = buffs0[x^1] + vec10;
+                temp = buffs0[x^S] + vec10;
                 if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-                buffs0[x^1] = temp;
-                temp = buffs1[x^1] + vec9;
+                buffs0[x^S] = temp;
+                temp = buffs1[x^S] + vec9;
                 if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-                buffs1[x^1] = temp;
+                buffs1[x^S] = temp;
             } else {
-                temp = buffs0[x^1] + vec9;
+                temp = buffs0[x^S] + vec9;
                 if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-                buffs0[x^1] = temp;
-                temp = buffs1[x^1] + vec10;
+                buffs0[x^S] = temp;
+                temp = buffs1[x^S] + vec10;
                 if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-                buffs1[x^1] = temp;
+                buffs1[x^S] = temp;
             }
         }
         bufft6 += adder; bufft7 += adder;
@@ -674,7 +674,7 @@ static void INTERL2 (void) {
     src=(unsigned char *)(BufferSpace);//[In];
     dst=(unsigned char *)(BufferSpace);//[Out];
     while(Count) {
-        *(short *)(dst+(Out^3)) = *(short *)(src+(In^3));
+        *(short *)(dst+(Out^S8)) = *(short *)(src+(In^S8));
         Out += 2;
         In  += 4;
         Count--;
@@ -686,7 +686,7 @@ static void INTERLEAVE2 (void) { // Needs accuracy verification...
     u16 *outbuff;
     u16 *inSrcR;
     u16 *inSrcL;
-    u16 Left, Right;
+    u16 Left, Right, Left2, Right2;
     u32 count;
     count   = ((inst1 >> 12) & 0xFF0);
     if (count == 0) {
@@ -705,11 +705,20 @@ static void INTERLEAVE2 (void) { // Needs accuracy verification...
     for (u32 x = 0; x < (count/4); x++) {
         Left=*(inSrcL++);
         Right=*(inSrcR++);
+        Left2=*(inSrcL++);
+        Right2=*(inSrcR++);
 
-        *(outbuff++)=*(inSrcR++);
-        *(outbuff++)=*(inSrcL++);
-        *(outbuff++)=(u16)Right;
-        *(outbuff++)=(u16)Left;
+#ifdef _BIG_ENDIAN
+        *(outbuff++)=Right;
+        *(outbuff++)=Left;
+        *(outbuff++)=Right2;
+        *(outbuff++)=Left2;
+#else
+        *(outbuff++)=Right2;
+        *(outbuff++)=Left2;
+        *(outbuff++)=Right;
+        *(outbuff++)=Left;
+#endif
     }
 }
 
@@ -725,7 +734,8 @@ static void ADDMIXER (void) {
     for (int cntr = 0; cntr < Count; cntr+=2) {
         temp = *outp + *inp;
         if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
-        outp++; inp++;
+        *(outp++) = temp;
+        inp++;
     }
 }
 

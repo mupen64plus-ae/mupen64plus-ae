@@ -258,12 +258,12 @@ static void ENVMIXER (void) {
         }
 
     for (int x = 0; x < 8; x++) {
-        i1=(int)inp[ptr^1];
-        o1=(int)out[ptr^1];
-        a1=(int)aux1[ptr^1];
+        i1=(int)inp[ptr^S];
+        o1=(int)out[ptr^S];
+        a1=(int)aux1[ptr^S];
         if (AuxIncRate) {
-            a2=(int)aux2[ptr^1];
-            a3=(int)aux3[ptr^1];
+            a2=(int)aux2[ptr^S];
+            a3=(int)aux3[ptr^S];
         }
         // TODO: here...
         //LAcc = LTrg;
@@ -350,8 +350,8 @@ static void ENVMIXER (void) {
         if(a1>32767) a1=32767;
         else if(a1<-32768) a1=-32768;
 
-        out[ptr^1]=o1;
-        aux1[ptr^1]=a1;
+        out[ptr^S]=o1;
+        aux1[ptr^S]=a1;
         if (AuxIncRate) {
             //a2=((s64)(((s64)a2*0xfffe)+((s64)i1*AuxR*2)+0x8000)>>16);
 
@@ -365,8 +365,8 @@ static void ENVMIXER (void) {
             if(a3>32767) a3=32767;
             else if(a3<-32768) a3=-32768;
 
-            aux2[ptr^1]=a2;
-            aux3[ptr^1]=a3;
+            aux2[ptr^S]=a2;
+            aux3[ptr^S]=a3;
         }
         ptr++;
     }
@@ -412,17 +412,18 @@ static void RESAMPLE (void) {
     if ((Flags & 0x1) == 0) {
         //memcpy (src+srcPtr, rsp.RDRAM+addy, 0x8);
         for (int x=0; x < 4; x++)
-            src[(srcPtr+x)^1] = ((u16 *)rsp.RDRAM)[((addy/2)+x)^1];
+            src[(srcPtr+x)^S] = ((u16 *)rsp.RDRAM)[((addy/2)+x)^S];
         Accum = *(u16 *)(rsp.RDRAM+addy+10);
     } else {
         for (int x=0; x < 4; x++)
-            src[(srcPtr+x)^1] = 0;//*(u16 *)(rsp.RDRAM+((addy+x)^2));
+            src[(srcPtr+x)^S] = 0;//*(u16 *)(rsp.RDRAM+((addy+x)^2));
     }
 
     for(int i=0;i < ((AudioCount+0xf)&0xFFF0)/2;i++)    {
         //location = (((Accum * 0x40) >> 0x10) * 8);
-        location = (Accum >> 0xa) << 0x3;
-        lut = (s16 *)(((u8 *)ResampleLUT) + location);
+       // location is the fractional position between two samples
+        location = (Accum >> 0xa) * 4;
+        lut = (s16*)ResampleLUT + location;
 
         // mov eax, dword ptr [src+srcPtr];
         // movsx edx, word ptr [lut];
@@ -436,29 +437,29 @@ static void RESAMPLE (void) {
         // and edx, 0f000h
 
         // imul
-        temp =  ((s32)*(s16*)(src+((srcPtr+0)^1))*((s32)((s16)lut[0])));
+        temp =  ((s32)*(s16*)(src+((srcPtr+0)^S))*((s32)((s16)lut[0])));
         accum = (s32)(temp >> 15);
 
-        temp = ((s32)*(s16*)(src+((srcPtr+1)^1))*((s32)((s16)lut[1])));
+        temp = ((s32)*(s16*)(src+((srcPtr+1)^S))*((s32)((s16)lut[1])));
         accum += (s32)(temp >> 15);
 
-        temp = ((s32)*(s16*)(src+((srcPtr+2)^1))*((s32)((s16)lut[2])));
+        temp = ((s32)*(s16*)(src+((srcPtr+2)^S))*((s32)((s16)lut[2])));
         accum += (s32)(temp >> 15);
 
-        temp = ((s32)*(s16*)(src+((srcPtr+3)^1))*((s32)((s16)lut[3])));
+        temp = ((s32)*(s16*)(src+((srcPtr+3)^S))*((s32)((s16)lut[3])));
         accum += (s32)(temp >> 15);
 
         if (accum > 32767) accum = 32767;
         if (accum < -32768) accum = -32768;
 
-        dst[dstPtr^1] = (accum);
+        dst[dstPtr^S] = (accum);
         dstPtr++;
         Accum += Pitch;
         srcPtr += (Accum>>16);
         Accum&=0xffff;
     }
     for (int x=0; x < 4; x++)
-        ((u16 *)rsp.RDRAM)[((addy/2)+x)^1] = src[(srcPtr+x)^1];
+        ((u16 *)rsp.RDRAM)[((addy/2)+x)^S] = src[(srcPtr+x)^S];
     //memcpy (RSWORK, src+srcPtr, 0x8);
     *(u16 *)(rsp.RDRAM+addy+10) = Accum;
 }
@@ -490,17 +491,17 @@ static void SETVOL (void) {
 //u16 VolRamp_Left; // 0x0012(T8)
     if(flags & A_LEFT) { // Set the Ramping values Target, Ramp
         //loopval = (((u32)vol << 0x10) | (u32)voltarg);
-        VolTrg_Left  = *(s16 *)&inst1;      // m_LeftVol
+        VolTrg_Left  = (s16)inst1;      // m_LeftVol
         //VolRamp_Left = (s32)inst2;
-        VolRamp_Left = *(s32 *)&inst2;//(u16)(inst2) | (s32)(s16)(inst2 << 0x10);
+        VolRamp_Left = (s32)inst2;//(u16)(inst2) | (s32)(s16)(inst2 << 0x10);
         //fprintf (dfile, "Ramp Left: %f\n", (float)VolRamp_Left/65536.0);
         //fprintf (dfile, "Ramp Left: %08X\n", inst2);
         //VolRamp_Left = (s16)voltarg;  // m_LeftVolTarget
         //VolRate_Left = (s16)volrate;  // m_LeftVolRate
     } else { // A_RIGHT
-        VolTrg_Right  = *(s16 *)&inst1;     // m_RightVol
+        VolTrg_Right  = (s16)inst1;     // m_RightVol
         //VolRamp_Right = (s32)inst2;
-        VolRamp_Right = *(s32 *)&inst2;//(u16)(inst2 >> 0x10) | (s32)(s16)(inst2 << 0x10);
+        VolRamp_Right = (s32)inst2;//(u16)(inst2 >> 0x10) | (s32)(s16)(inst2 << 0x10);
         //fprintf (dfile, "Ramp Right: %f\n", (float)VolRamp_Right/65536.0);
         //fprintf (dfile, "Ramp Right: %08X\n", inst2);
         //VolRamp_Right = (s16)voltarg; // m_RightVolTarget
@@ -547,8 +548,8 @@ static void ADPCM (void) { // Work in progress! :)
         }
     }
 
-    int l1=out[15];
-    int l2=out[14];
+    int l1=out[14^S];
+    int l2=out[15^S];
     int inp1[8];
     int inp2[8];
     out+=16;
@@ -559,7 +560,7 @@ static void ADPCM (void) { // Work in progress! :)
                                                     // area of memory in the case of A_LOOP or just
                                                     // the values we calculated the last time
 
-        code=BufferSpace[(AudioInBuffer+inPtr)^3];
+        code=BufferSpace[(AudioInBuffer+inPtr)^S8];
         index=code&0xf;
         index<<=4;                                  // index into the adpcm code table
         book1=(short *)&adpcmtable[index];
@@ -577,7 +578,7 @@ static void ADPCM (void) { // Work in progress! :)
         while(j<8)                                  // loop of 8, for 8 coded nibbles from 4 bytes
                                                     // which yields 8 short pcm values
         {
-            icode=BufferSpace[(AudioInBuffer+inPtr)^3];
+            icode=BufferSpace[(AudioInBuffer+inPtr)^S8];
             inPtr++;
 
             inp1[j]=(s16)((icode&0xf0)<<8);         // this will in effect be signed
@@ -597,7 +598,7 @@ static void ADPCM (void) { // Work in progress! :)
         j=0;
         while(j<8)
         {
-            icode=BufferSpace[(AudioInBuffer+inPtr)^3];
+            icode=BufferSpace[(AudioInBuffer+inPtr)^S8];
             inPtr++;
 
             inp2[j]=(short)((icode&0xf0)<<8);           // this will in effect be signed
@@ -677,10 +678,10 @@ static void ADPCM (void) { // Work in progress! :)
 
         for(j=0;j<8;j++)
         {
-            a[j^1]>>=11;
-            if(a[j^1]>32767) a[j^1]=32767;
-            else if(a[j^1]<-32768) a[j^1]=-32768;
-            *(out++)=a[j^1];
+            a[j^S]>>=11;
+            if(a[j^S]>32767) a[j^S]=32767;
+            else if(a[j^S]<-32768) a[j^S]=-32768;
+            *(out++)=a[j^S];
         }
         l1=a[6];
         l2=a[7];
@@ -747,10 +748,10 @@ static void ADPCM (void) { // Work in progress! :)
 
         for(j=0;j<8;j++)
         {
-            a[j^1]>>=11;
-            if(a[j^1]>32767) a[j^1]=32767;
-            else if(a[j^1]<-32768) a[j^1]=-32768;
-            *(out++)=a[j^1];
+            a[j^S]>>=11;
+            if(a[j^S]>32767) a[j^S]=32767;
+            else if(a[j^S]<-32768) a[j^S]=-32768;
+            *(out++)=a[j^S];
         }
         l1=a[6];
         l2=a[7];
@@ -806,7 +807,7 @@ static void DMEMMOVE (void) { // Doesn't sound just right?... will fix when HLE 
 
     //memcpy (BufferSpace+v1, BufferSpace+v0, count-1);
     for (cnt = 0; cnt < count; cnt++) {
-        *(u8 *)(BufferSpace+((cnt+v1)^3)) = *(u8 *)(BufferSpace+((cnt+v0)^3));
+        *(u8 *)(BufferSpace+((cnt+v1)^S8)) = *(u8 *)(BufferSpace+((cnt+v0)^S8));
     }
 }
 
@@ -819,17 +820,17 @@ static void LOADADPCM (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
     //assert ((inst1&0xffff) <= 0x80);
     u16 *table = (u16 *)(rsp.RDRAM+v0);
     for (u32 x = 0; x < ((inst1&0xffff)>>0x4); x++) {
-        adpcmtable[0x1+(x<<3)] = table[0];
-        adpcmtable[0x0+(x<<3)] = table[1];
+        adpcmtable[0x0+(x<<3)^S] = table[0];
+        adpcmtable[0x1+(x<<3)^S] = table[1];
 
-        adpcmtable[0x3+(x<<3)] = table[2];
-        adpcmtable[0x2+(x<<3)] = table[3];
+        adpcmtable[0x2+(x<<3)^S] = table[2];
+        adpcmtable[0x3+(x<<3)^S] = table[3];
 
-        adpcmtable[0x5+(x<<3)] = table[4];
-        adpcmtable[0x4+(x<<3)] = table[5];
+        adpcmtable[0x4+(x<<3)^S] = table[4];
+        adpcmtable[0x5+(x<<3)^S] = table[5];
 
-        adpcmtable[0x7+(x<<3)] = table[6];
-        adpcmtable[0x6+(x<<3)] = table[7];
+        adpcmtable[0x6+(x<<3)^S] = table[6];
+        adpcmtable[0x7+(x<<3)^S] = table[7];
         table += 8;
     }
 }
@@ -840,7 +841,7 @@ static void INTERLEAVE (void) { // Works... - 3-11-01
     u16 *outbuff = (u16 *)(AudioOutBuffer+BufferSpace);
     u16 *inSrcR;
     u16 *inSrcL;
-    u16 Left, Right;
+    u16 Left, Right, Left2, Right2;
 
     inL = inst2 & 0xFFFF;
     inR = (inst2 >> 16) & 0xFFFF;
@@ -851,11 +852,20 @@ static void INTERLEAVE (void) { // Works... - 3-11-01
     for (int x = 0; x < (AudioCount/4); x++) {
         Left=*(inSrcL++);
         Right=*(inSrcR++);
+        Left2=*(inSrcL++);
+        Right2=*(inSrcR++);
 
-        *(outbuff++)=*(inSrcR++);
-        *(outbuff++)=*(inSrcL++);
-        *(outbuff++)=(u16)Right;
-        *(outbuff++)=(u16)Left;
+#ifdef _BIG_ENDIAN
+        *(outbuff++)=Right;
+        *(outbuff++)=Left;
+        *(outbuff++)=Right2;
+        *(outbuff++)=Left2;
+#else
+        *(outbuff++)=Right2;
+        *(outbuff++)=Left2;
+        *(outbuff++)=Right;
+        *(outbuff++)=Left;
+#endif
     }
 }
 

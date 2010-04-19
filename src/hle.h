@@ -28,9 +28,11 @@
 
 #ifdef _BIG_ENDIAN
 #define S 0
+#define S16 0
 #define S8 0
 #else
 #define S 1
+#define S16 2
 #define S8 3
 #endif
 
