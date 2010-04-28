@@ -201,7 +201,6 @@ enum {
 
 typedef struct {
     BOOL    bEnableHacks;
-    BOOL    bEnableFog;
     BOOL    bWinFrameMode;
     BOOL    bOGLVertexClipper;
     BOOL    bEnableSSE;
@@ -213,6 +212,7 @@ typedef struct {
     BOOL    bShowFPS;
     BOOL    bEnableMipmaping;
 
+    uint32  fogMethod;
     uint32  forceTextureFilter;
     uint32  textureFilteringMethod;
     uint32  textureEnhancement;

@@ -331,7 +331,6 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultBool(l_ConfigVideoRice, "DefaultCombinerDisable", FALSE, "Force to use normal color combiner");
 
     ConfigSetDefaultBool(l_ConfigVideoRice, "EnableHacks", TRUE, "Enable game-specific settings from INI file");
-    ConfigSetDefaultBool(l_ConfigVideoRice, "EnableFog", FALSE, "Enable or disable fog generation");
     ConfigSetDefaultBool(l_ConfigVideoRice, "WinFrameMode", FALSE, "If enabled, graphics will be drawn in WinFrame mode instead of solid and texture mode");
     ConfigSetDefaultBool(l_ConfigVideoRice, "FullTMEMEmulation", FALSE, "N64 Texture Memory Full Emulation (may fix some games, may break others)");
     ConfigSetDefaultBool(l_ConfigVideoRice, "OpenGLVertexClipper", FALSE, "Enable vertex clipper for fog operations");
@@ -345,6 +344,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultBool(l_ConfigVideoRice, "ShowFPS", FALSE, "Display On-screen FPS");
     ConfigSetDefaultBool(l_ConfigVideoRice, "EnableMipmaping", TRUE, "Enable/Disable Mipmaping");
 
+    ConfigSetDefaultInt(l_ConfigVideoRice, "FogMethod", 0, "Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ForceTextureFilter", 0, "Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureFilteringMethod", 1, "Choose wich texture filtering method will be used by your graphic card(0=no filtering, 1=bilinear, 2=trilinear)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancement", 0, "Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)");
@@ -443,7 +443,6 @@ static void ReadConfiguration(void)
     defaultRomOptions.bNormalCombiner = ConfigGetParamBool(l_ConfigVideoRice, "DefaultCombinerDisable");
 
     options.bEnableHacks = ConfigGetParamBool(l_ConfigVideoRice, "EnableHacks");
-    options.bEnableFog = ConfigGetParamBool(l_ConfigVideoRice, "EnableFog");
     options.bWinFrameMode = ConfigGetParamBool(l_ConfigVideoRice, "WinFrameMode");
     options.bFullTMEM = ConfigGetParamBool(l_ConfigVideoRice, "FullTMEMEmulation");
     options.bOGLVertexClipper = ConfigGetParamBool(l_ConfigVideoRice, "OpenGLVertexClipper");
@@ -457,6 +456,7 @@ static void ReadConfiguration(void)
     options.bShowFPS = ConfigGetParamBool(l_ConfigVideoRice, "ShowFPS");
     options.bEnableMipmaping = ConfigGetParamBool(l_ConfigVideoRice, "EnableMipmaping");
 
+    options.fogMethod = ConfigGetParamInt(l_ConfigVideoRice, "FogMethod");
     options.forceTextureFilter = ConfigGetParamInt(l_ConfigVideoRice, "ForceTextureFilter");
     options.textureFilteringMethod = ConfigGetParamInt(l_ConfigVideoRice, "TextureFilteringMethod");
     options.textureEnhancement = ConfigGetParamInt(l_ConfigVideoRice, "TextureEnhancement");
