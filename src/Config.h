@@ -218,6 +218,7 @@ typedef struct {
     uint32  textureEnhancement;
     uint32  textureEnhancementControl;
     uint32  textureQuality;
+    uint32  anisotropicFiltering;
     uint32  multiSampling;
     BOOL    bTexRectOnly;
     BOOL    bSmallTextureOnly;

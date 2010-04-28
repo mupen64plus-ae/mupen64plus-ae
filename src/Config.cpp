@@ -354,6 +354,7 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultInt(l_ConfigVideoRice, "MultiSampling", 0, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ColorQuality", TEXTURE_FMT_A8R8G8B8, "Color bit depth for rendering window (0=32 bits, 1=16 bits)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLRenderSetting", OGL_DEVICE, "OpenGL level to support (0=auto, 1=OGL_1.1, 2=OGL_1.2, 3=OGL_1.3, 4=OGL_1.4, 5=OGL_1.4_V2, 6=OGL_TNT2, 7=NVIDIA_OGL, 8=OGL_FRAGMENT_PROGRAM)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "AnisotropicFiltering", 0, "Enable/Disable Anisotropic Filtering for Mipmaping (0=no filtering, 2-16=quality). This is uneffective if EnableMipmaping is false. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering");
     return TRUE;
 }
 
@@ -465,6 +466,7 @@ static void ReadConfiguration(void)
     options.multiSampling = ConfigGetParamInt(l_ConfigVideoRice, "MultiSampling");
     options.colorQuality = ConfigGetParamInt(l_ConfigVideoRice, "ColorQuality");
     options.OpenglRenderSetting = ConfigGetParamInt(l_ConfigVideoRice, "OpenGLRenderSetting");
+    options.anisotropicFiltering = ConfigGetParamInt(l_ConfigVideoRice, "AnisotropicFiltering");
 
     CDeviceBuilder::SelectDeviceType((SupportedDeviceType)options.OpenglRenderSetting);
 
