@@ -83,7 +83,6 @@ endif
 
 # base CFLAGS, LIBS, and LDFLAGS
 CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -fvisibility=hidden -I../../src
-LDFLAGS += -ldl
 ifneq ($(OS), FREEBSD)
   CFLAGS += -pipe -O3
 endif
@@ -109,8 +108,10 @@ ifeq ($(OS), LINUX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -march=athlon64
+      LDFLAGS += -ldl
     else
       CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+      LDFLAGS += -ldl
     endif
   endif
 endif
@@ -118,9 +119,10 @@ ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      LDFLAGS += -ldl
     else
       CFLAGS += -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -arch i686
+      LDFLAGS += -arch i686 -ldl
     endif
   endif
 endif
@@ -132,17 +134,12 @@ endif
 ifeq ($(shell which sdl-config 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
-ifeq ($(OS),FREEBSD)
-    CFLAGS  += `${SDL_CONFIG} --cflags`
-    LDFLAGS += `${SDL_CONFIG} --libs`
-endif
 ifeq ("$(UNAME)","Darwin")
     CFLAGS  += $(shell sdl-config --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
     LDFLAGS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
-endif
-ifeq ($(OS),LINUX)
+else
     CFLAGS  += $(shell sdl-config --cflags)
     LDFLAGS += $(shell sdl-config --libs)
 endif
