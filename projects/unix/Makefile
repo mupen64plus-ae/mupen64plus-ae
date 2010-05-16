@@ -84,7 +84,6 @@ endif
 
 # base CFLAGS, LIBS, and LDFLAGS
 CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -fvisibility=hidden -I../../src
-LDFLAGS += -ldl
 
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
 # On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
@@ -105,8 +104,10 @@ ifeq ($(OS), LINUX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -O3 -march=athlon64
+      LDFLAGS += -ldl
     else
       CFLAGS += -pipe -O3 -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+      LDFLAGS += -ldl
     endif
   endif
 endif
@@ -114,15 +115,16 @@ ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -arch x86_64
+      LDFLAGS += -arch x86_64 -ldl
     else
       CFLAGS += -pipe -O3 -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -arch i686
+      LDFLAGS += -arch i686 -ldl
     endif
   endif
 endif
 ifeq ($(CPU), PPC)
   CFLAGS += -mcpu=powerpc
+  LDFLAGS += -ldl
 endif
 
 # test for presence of SDL
@@ -130,8 +132,8 @@ ifeq ($(shell which sdl-config 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
 ifeq ($(OS),FREEBSD)
-    CFLAGS  += `${SDL_CONFIG} --cflags`
-    LDFLAGS += `${SDL_CONFIG} --libs`
+    CFLAGS  += $(shell sdl-config --cflags)
+    LDFLAGS += $(shell sdl-config --libs)
 endif
 ifeq ($(OS),OSX)
     CFLAGS  += $(shell sdl-config --cflags)
@@ -188,6 +190,9 @@ ifeq ($(OS),LINUX)
 endif
 ifeq ($(OS),OSX)
   STRIP	?= strip -x 
+endif
+ifeq ($(OS),FREEBSD)
+  STRIP	+= strip -s
 endif
 
 # set special flags for given Makefile parameters
