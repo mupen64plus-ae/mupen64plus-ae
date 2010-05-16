@@ -73,28 +73,30 @@ endif
 
 # base CFLAGS, LIBS, and LDFLAGS
 CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
-LDFLAGS += -ldl -lpthread
+LDFLAGS += -lpthread
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -O3 -march=athlon64
+      LDFLAGS += -ldl
     else
       CFLAGS += -pipe -O3 -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
+      LDFLAGS += -ldl
     endif
   endif
 endif
 ifeq ($(OS), OSX)
   # The mac version of SDL requires inclusion of SDL_main in the executable
-  LDFLAGS += $(shell sdl-config --libs)
+  LDFLAGS += -ldl $(shell sdl-config --libs)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += `sdl-config --libs` -arch x86_64
+      LDFLAGS += -arch x86_64
     else
       CFLAGS += -pipe -O3 -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += `sdl-config --libs` -arch i686
+      LDFLAGS += -arch i686
     endif
   endif
 endif
