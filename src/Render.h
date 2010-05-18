@@ -91,7 +91,7 @@ public:
     virtual void SetFogEnable(bool bEnable) 
     { 
         DEBUGGER_IF_DUMP( (gRSP.bFogEnabled != bEnable && logFog ), TRACE1("Set Fog %s", bEnable? "enable":"disable"));
-        gRSP.bFogEnabled = bEnable&&options.bEnableFog;
+        gRSP.bFogEnabled = bEnable&&(options.fogMethod > 0);
     }
     virtual void SetFogMinMax(float fMin, float fMax) = 0;
     virtual void TurnFogOnOff(bool flag)=0;

@@ -102,15 +102,12 @@ enum {
     FORCE_DEFAULT_FILTER,
     FORCE_POINT_FILTER,
     FORCE_LINEAR_FILTER,
-    FORCE_BILINEAR_FILTER,
 };
 
 enum {
-    TEXTURE_ENHANCEMENT_NORMAL,
-    TEXTURE_ENHANCEMENT_WITH_SMOOTH_FILTER_1,
-    TEXTURE_ENHANCEMENT_WITH_SMOOTH_FILTER_2,
-    TEXTURE_ENHANCEMENT_WITH_SMOOTH_FILTER_3,
-    TEXTURE_ENHANCEMENT_WITH_SMOOTH_FILTER_4,
+    TEXTURE_NO_FILTER,
+    TEXTURE_BILINEAR_FILTER,
+    TEXTURE_TRILINEAR_FILTER,
 };
 
 enum {
@@ -124,6 +121,14 @@ enum {
     TEXTURE_SHARPEN_MORE_ENHANCEMENT,
     TEXTURE_EXTERNAL,
     TEXTURE_MIRRORED,
+};
+
+enum {
+    TEXTURE_ENHANCEMENT_NORMAL,
+    TEXTURE_ENHANCEMENT_WITH_SMOOTH_FILTER_1,
+    TEXTURE_ENHANCEMENT_WITH_SMOOTH_FILTER_2,
+    TEXTURE_ENHANCEMENT_WITH_SMOOTH_FILTER_3,
+    TEXTURE_ENHANCEMENT_WITH_SMOOTH_FILTER_4,
 };
 
 enum {
@@ -196,7 +201,6 @@ enum {
 
 typedef struct {
     BOOL    bEnableHacks;
-    BOOL    bEnableFog;
     BOOL    bWinFrameMode;
     BOOL    bOGLVertexClipper;
     BOOL    bEnableSSE;
@@ -206,11 +210,15 @@ typedef struct {
     BOOL    bUseFullTMEM;
 
     BOOL    bShowFPS;
+    BOOL    bEnableMipmaping;
 
+    uint32  fogMethod;
     uint32  forceTextureFilter;
+    uint32  textureFilteringMethod;
     uint32  textureEnhancement;
     uint32  textureEnhancementControl;
     uint32  textureQuality;
+    uint32  anisotropicFiltering;
     uint32  multiSampling;
     BOOL    bTexRectOnly;
     BOOL    bSmallTextureOnly;

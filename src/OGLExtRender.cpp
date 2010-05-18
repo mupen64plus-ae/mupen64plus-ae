@@ -236,10 +236,52 @@ void COGLExtRender::ApplyTextureFilter()
 {
     static uint32 minflag[8], magflag[8];
     static uint32 mtex[8];
+
+    int iMinFilter, iMagFilter;
+
     for( int i=0; i<m_maxTexUnits; i++ )
     {
-        int iMinFilter = (m_dwMinFilter == FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
-        int iMagFilter = (m_dwMagFilter == FILTER_LINEAR ? GL_LINEAR : GL_NEAREST);
+        //Compute iMinFilter and iMagFilter
+        if(m_dwMinFilter == FILTER_LINEAR) //Texture will use filtering
+        {
+            iMagFilter = GL_LINEAR;
+
+            if(options.bEnableMipmaping)
+            {
+                //Texture filtering method user want
+                switch(options.textureFilteringMethod)
+                {
+                case TEXTURE_NO_FILTER:
+                    iMinFilter = GL_NEAREST_MIPMAP_NEAREST;
+                    break;
+                case TEXTURE_BILINEAR_FILTER:
+                    iMinFilter = GL_LINEAR_MIPMAP_NEAREST;
+                    break;
+                case TEXTURE_TRILINEAR_FILTER:
+                    iMinFilter = GL_LINEAR_MIPMAP_LINEAR;
+                    break;
+                }
+            }
+            else
+            {
+                //Bilinear without mipmap
+                iMinFilter = GL_LINEAR;
+            }
+        }
+        else    //dont use filtering, all is nearest
+        {
+            iMagFilter = GL_NEAREST;
+
+            if(options.bEnableMipmaping)
+            {
+                iMinFilter = GL_NEAREST_MIPMAP_NEAREST;
+            }
+            else
+            {
+                iMinFilter = GL_NEAREST;
+            }
+        }
+
         if( m_texUnitEnabled[i] )
         {
             if( mtex[i] != m_curBoundTex[i] )
