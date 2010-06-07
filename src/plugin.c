@@ -217,9 +217,9 @@ doSdlKeys(unsigned char* keystate)
     static int grabmouse = 1, grabtoggled = 0;
 
     axis_max_val = 80;
-    if (keystate[SDLK_LCTRL])
+    if (keystate[SDLK_RCTRL])
         axis_max_val -= 40;
-    if (keystate[SDLK_LSHIFT])
+    if (keystate[SDLK_RSHIFT])
         axis_max_val -= 20;
 
     for( c = 0; c < 4; c++ )
