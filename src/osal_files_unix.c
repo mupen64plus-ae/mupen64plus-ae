@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <limits.h> // PATH_MAX
 #include <dirent.h>
 
 #include "osal_files.h"

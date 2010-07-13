@@ -40,6 +40,11 @@ extern "C" {
   #include <limits.h>  // for PATH_MAX
   #define OSAL_DIR_SEPARATOR_STR       "/"
   #define OSAL_DIR_SEPARATOR_CHAR      '/'
+
+  /* PATH_MAX only may be defined by limits.h */
+  #ifndef PATH_MAX
+    #define PATH_MAX 4096
+  #endif
 #endif
 
 int osal_is_directory(const char* name);
