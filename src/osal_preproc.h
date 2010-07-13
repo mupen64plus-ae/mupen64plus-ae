@@ -54,6 +54,11 @@
   #define OSAL_DLL_EXTENSION           ".so"
   #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
 
+  /* PATH_MAX only may be defined by limits.h */
+  #ifndef PATH_MAX
+    #define PATH_MAX 4096
+  #endif
+
 #endif
 
 #endif /* #define OSAL_PREPROC_H */
