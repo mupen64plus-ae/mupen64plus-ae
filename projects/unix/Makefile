@@ -29,6 +29,9 @@ endif
 ifeq ("$(UNAME)","linux")
   OS = LINUX
 endif
+ifneq ("$(filter GNU hurd,$(UNAME))","")
+  OS = LINUX
+endif
 ifeq ("$(UNAME)","Darwin")
   OS = OSX
 endif
