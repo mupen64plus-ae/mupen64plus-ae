@@ -33,6 +33,11 @@ ifeq ("$(UNAME)","linux")
   SO_EXTENSION = so
   SHARED = -shared
 endif
+ifneq ("$(filter GNU hurd,$(UNAME))","")
+  OS = LINUX
+  SO_EXTENSION = so
+  SHARED = -shared
+endif
 ifeq ("$(UNAME)","Darwin")
   OS = OSX
   SO_EXTENSION = dylib
