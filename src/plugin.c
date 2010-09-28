@@ -129,11 +129,14 @@ void DebugMessage(int level, const char *message, ...)
   va_end(args);
 }
 
+static CONTROL temp_core_controlinfo[4];
 
 /* Mupen64Plus plugin functions */
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
                                    void (*DebugCallback)(void *, int, const char *))
 {
+    int i;
+
     if (l_PluginInit)
         return M64ERR_ALREADY_INIT;
 
@@ -168,6 +171,21 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         DebugMessage(M64MSG_ERROR, "Couldn't connect to Core configuration functions");
         return M64ERR_INCOMPATIBLE;
     }
+
+    /* reset controllers */
+    memset(controller, 0, sizeof(SController) * 4);
+    for (i = 0; i < SDLK_LAST; i++)
+    {
+        myKeyState[i] = 0;
+    }
+    /* set CONTROL struct pointers to the temporary static array */
+    /* this small struct is used to tell the core whether each controller is plugged in, and what type of pak is connected */
+    /* we only need it so that we can call load_configuration below, to auto-config for a GUI front-end */
+    for (i = 0; i < 4; i++)
+        controller[i].control = temp_core_controlinfo + i;
+
+    /* read plugin config from core config database, auto-config if necessary and update core database */
+    load_configuration(0);
 
     l_PluginInit = 1;
     return M64ERR_SUCCESS;
@@ -702,14 +720,13 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
         controller[i].control = ControlInfo.Controls + i;
 
     // read configuration
-    load_configuration();
+    load_configuration(1);
 
     for( i = 0; i < 4; i++ )
     {
         // test for rumble support for this joystick
         InitiateRumble(i);
         // if rumble not supported, switch to mempack
-        // Comment out if statement to test rumble on systems without necessary hardware.
         if (controller[i].control->Plugin == PLUGIN_RAW && controller[i].event_joystick == 0)
             controller[i].control->Plugin = PLUGIN_MEMPAK;
     }

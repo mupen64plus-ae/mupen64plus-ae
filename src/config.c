@@ -382,7 +382,7 @@ void save_controller_config(int iCtrlIdx)
  *    - the keyboard config parameters will never be written to the config file, even if the Input-SDL-Control1 section was previously empty
  */
   
-void load_configuration(void)
+void load_configuration(int bPrintSummary)
 {
     char SectionName[32];
     const char *JoyName;
@@ -441,11 +441,11 @@ void load_configuration(void)
                 DebugMessage(M64MSG_INFO, "N64 Controller #%i: Disabled, SDL joystick is not available", i+1);
             }
             else
-                DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using stored configuration with joystick '%s'", i+1, JoyName);
+                DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using SDL joystick %i ('%s')", i+1, controller[i].device, JoyName);
         }
         else /* controller is configured for keyboard/mouse */
         {
-            DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using stored configuration for keyboard/mouse", i+1);
+            DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using keyboard/mouse", i+1);
         }
     }
 
@@ -460,23 +460,37 @@ void load_configuration(void)
                 joy_plugged++;
         }
     }
-    if (joy_found > 0 && joy_plugged > 0)
+
+    /* fallback to keyboard if no joysticks are available and 'plugged in' */
+    if (joy_found == 0 || joy_plugged == 0)
     {
-        DebugMessage(M64MSG_INFO, "%i controller(s) found, %i plugged in and usable in the emulator", joy_found, joy_plugged);
-    }
-    else
-    {
-        if (joy_found == 0)
-            DebugMessage(M64MSG_WARNING, "No joysticks/controllers found");
-        else if (joy_plugged == 0)
-            DebugMessage(M64MSG_WARNING, "%i controllers found, but none are 'plugged in'", joy_found);
-        DebugMessage(M64MSG_INFO, "Forcing keyboard input for N64 controller #1");
+        DebugMessage(M64MSG_INFO, "N64 Controller #1: Forcing default keyboard configuration");
         auto_set_defaults(DEVICE_NOT_JOYSTICK, "Keyboard");
-        if (!load_controller_config("AutoConfig0", 0))
+        if (load_controller_config("AutoConfig0", 0))
+        {
+            /* use ConfigSetDefault*() to save this auto-config if config section was empty */
+            save_controller_config(0);
+        }
+        else
         {
             DebugMessage(M64MSG_ERROR, "Autoconfig keyboard setup invalid");
         }
         ConfigDeleteSection("AutoConfig0");
+    }
+
+    if (bPrintSummary)
+    {
+        if (joy_found > 0 && joy_plugged > 0)
+        {
+            DebugMessage(M64MSG_INFO, "%i controller(s) found, %i plugged in and usable in the emulator", joy_found, joy_plugged);
+        }
+        else
+        {
+            if (joy_found == 0)
+                DebugMessage(M64MSG_WARNING, "No joysticks/controllers found");
+            else if (joy_plugged == 0)
+                DebugMessage(M64MSG_WARNING, "%i controllers found, but none were 'plugged in'", joy_found);
+        }
     }
 
 }
