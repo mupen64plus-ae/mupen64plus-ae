@@ -1,8 +1,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - cheat.c                                                 *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard Goedeken                                   *
- *   Copyright (C) 2010 spinout                                            *
+ *   Copyright (C) 2009-2010 Richard Goedeken                              *
+ *   Copyright (C) 2010 Rhett Osborne (spinout)                            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,17 +31,12 @@
 /* local definitions */
 #define CHEAT_FILE	"mupencheat.txt"
 
-#ifndef min
- #define min(a,b) (a < b) ? a : b
-#endif
-
 typedef struct {
    int    address;
    int   *variables;
    char **variable_names;
    int    var_to_use;
    int    var_count;
-   int    _res;
 } cheat_code;
 
 typedef struct _sCheatInfo {
@@ -55,8 +50,7 @@ typedef struct _sCheatInfo {
   } sCheatInfo;
 
 /* local variables */
-static m64p_rom_settings *l_RomSettings = NULL;
-static char              *l_GoodName = NULL;
+static m64p_rom_settings  l_RomSettings;
 static char              *l_IniText = NULL;
 static char              *l_CheatGameName = NULL;
 static sCheatInfo        *l_CheatList = NULL;
@@ -74,8 +68,8 @@ static int isSpace(char ch)
 
 static void strtolower(char *str)
 {
-    for(;*str;str++)
-        *str=tolower(*str);
+    for (; *str != 0; str++)
+        *str = tolower(*str);
 }
 
 /* Find cheat code */
@@ -95,15 +89,16 @@ static sCheatInfo *CheatFindCode(int Number)
 static void CheatActivate(sCheatInfo *pCheat)
 {
     int i;
+
     /* Get a m64p_cheat_code object */
     m64p_cheat_code * code = calloc(pCheat->Count, sizeof(m64p_cheat_code));
-    if(code == NULL)
+    if (code == NULL)
     {
         printf("UI-Console Warning: could not allocate memory for code '%s'\n", pCheat->Name);
         return;
     }
     /* Fill in members */
-    for(i=0;i<pCheat->Count;i++)
+    for (i = 0; i < pCheat->Count; i++)
     {
         code[i].address = pCheat->Codes[i].address;
         code[i].value = pCheat->Codes[i].variables[pCheat->Codes[i].var_to_use];
@@ -116,6 +111,7 @@ static void CheatActivate(sCheatInfo *pCheat)
         return;
     }
 
+    free(code);
     printf("UI-Console: activated cheat code %i: %s\n", pCheat->Number, pCheat->Name);
 }
 
@@ -124,24 +120,19 @@ static void CheatFreeAll(void)
     if (l_IniText != NULL)
         free(l_IniText);
     l_IniText = NULL;
-    if (l_RomSettings !=NULL)
-        free(l_RomSettings);
-    if (l_GoodName !=NULL)
-        free(l_GoodName);
-    l_RomSettings = NULL;
 
     sCheatInfo *pCur = l_CheatList;
     while (pCur != NULL)
     {
         sCheatInfo *pNext = pCur->Next;
-        if(pCur->Codes!=NULL)
+        if (pCur->Codes != NULL)
         {
             int i;
-            for(i=0;i<pCur->Count;i++)
+            for (i=0; i < pCur->Count; i++)
             {
-                if(pCur->Codes[i].variables!=NULL)
+                if (pCur->Codes[i].variables != NULL)
                     free(pCur->Codes[i].variables);
-                if(pCur->Codes[i].variable_names!=NULL)
+                if (pCur->Codes[i].variable_names != NULL)
                     free(pCur->Codes[i].variable_names);
             }
             free(pCur->Codes);
@@ -190,20 +181,21 @@ CheatAddVariables(cheat_code * Code, char *varlist)
     Code->variables = NULL;
     Code->variable_names = NULL;
     Code->var_count = 0;
-    while (*varlist)
+    while (*varlist != 0)
     {
-        if((Code->variables = realloc(Code->variables, sizeof(int) * (Code->var_count+1)))== NULL)
+        if ((Code->variables = realloc(Code->variables, sizeof(int) * (Code->var_count + 1))) == NULL)
             return;
-        if((Code->variable_names = realloc(Code->variable_names, sizeof(char*) * (Code->var_count+1)))== NULL)
+        if ((Code->variable_names = realloc(Code->variable_names, sizeof(char*) * (Code->var_count + 1))) == NULL)
             return;
-        if(sscanf(varlist, "%04X", &Code->variables[Code->var_count])!=1)
+        if (sscanf(varlist, "%04X", &Code->variables[Code->var_count]) != 1)
             Code->variables[Code->var_count] = 0;
-        if((Code->variable_names[Code->var_count] = strchr(varlist, '"')+1) == NULL)
+        if (strchr(varlist, '"') == NULL)
             return;
-        if((varlist = strchr(Code->variable_names[Code->var_count],'"')) == NULL)
+        Code->variable_names[Code->var_count] = strchr(varlist, '"') + 1;
+        if ((varlist = strchr(Code->variable_names[Code->var_count], '"')) == NULL)
             return;
-        *varlist = 0;
-        if(*(++varlist) == ',')
+        *varlist++ = 0;
+        if (*varlist == ',')
             varlist++;
         Code->var_count++;
     }
@@ -277,39 +269,39 @@ ReadCheats(char *GoodName)
         while(isSpace(*endptr)) *endptr-- = 0;
 
         /* ignore line if comment or empty */
-        if(*curline=='#' || !strncmp(curline, "//", 2) || !*curline )
+        if (*curline == '#' || strncmp(curline, "//", 2) == 0 || *curline == 0)
             continue;
 
         /* handle beginning of new rom section */
-        if(!strncmp(curline, "gn ", 3))
+        if (strncmp(curline, "gn ", 3) == 0)
         {
-            if(l_RomFound)
+            if (l_RomFound)
                 return;
             strtolower(curline+3);
-            if(!strncmp( curline+3, GoodName, min(strlen(curline+3),strlen(GoodName)) ))
+            if (strncmp(curline+3, GoodName, sizeof(l_RomSettings.goodname)) == 0)
                 l_RomFound = 1;
             continue;
         }
 
         /* if we haven't found the specified ROM section, then continue looking */
-        if(!l_RomFound)
+        if (!l_RomFound)
             continue;
 
         /* code name */
-        if(!strncmp(curline, "cn ", 3))
+        if (strncmp(curline, "cn ", 3) == 0)
         {
-            curr_code = NewCode(curline+3,l_CheatCodesFound);
-            if(curr_code == NULL)
+            curr_code = NewCode(curline + 3, l_CheatCodesFound);
+            if (curr_code == NULL)
                 printf("UI-Console error: error getting new code (%s)\n", curline+3);
             continue;
         }
         
         /* if curr_code is NULL, don't do these checks */
-        if(curr_code == NULL)
+        if (curr_code == NULL)
             continue;
 
         /* code description */
-        if(!strncmp(curline, "cd ", 3))
+        if (strncmp(curline, "cd ", 3) == 0)
         {
             curr_code->Description = curline+3;
             continue;
@@ -317,10 +309,10 @@ ReadCheats(char *GoodName)
 
         /* code line */
         int address;
-        if(sscanf(curline, "%8X %*s", &address) == 1)
+        if (sscanf(curline, "%8X %*s", &address) == 1)
         {
-            curr_code->Codes = realloc(curr_code->Codes, sizeof(cheat_code) * (curr_code->Count+1));
-            if(!strncmp(curline+9, "????", 4))
+            curr_code->Codes = realloc(curr_code->Codes, sizeof(cheat_code) * (curr_code->Count + 1));
+            if (strncmp(curline+9, "????", 4) == 0)
             {
                 curr_code->Codes[curr_code->Count].var_count = 0;
                 CheatAddVariables(&curr_code->Codes[curr_code->Count], curline+14);
@@ -333,10 +325,10 @@ ReadCheats(char *GoodName)
                 curr_code->Codes[curr_code->Count].variables = malloc(sizeof(int));
                 if(curr_code->Codes[curr_code->Count].variables == NULL)
                 {
-                     printf("UI-Console Error: error allocating memory; ignoring line: '%s'\n", curline);
+                    printf("UI-Console Error: error allocating memory; ignoring line: '%s'\n", curline);
                     continue;
                 }
-                if(sscanf(curline+9, "%04X", &var) != 1)
+                if (sscanf(curline+9, "%04X", &var) != 1)
                     var = 0;
                 curr_code->Codes[curr_code->Count].variables[0] = var;
                 curr_code->Codes[curr_code->Count].variable_names = NULL;
@@ -356,42 +348,32 @@ ReadCheats(char *GoodName)
 void CheatStart(eCheatMode CheatMode, char *CheatNumList)
 {
     /* if cheat codes are disabled, then we don't have to do anything */
-    if (CheatMode == CHEAT_DISABLE || (CheatMode == CHEAT_LIST && !strlen(CheatNumList)))
+    if (CheatMode == CHEAT_DISABLE || (CheatMode == CHEAT_LIST && strlen(CheatNumList) == 0))
     {
         printf("UI-Console: Cheat codes disabled.\n");
         return;
     }
 
     /* get goodname */
-    l_RomSettings = malloc(sizeof(m64p_rom_settings));
-    if((*CoreDoCommand)(M64CMD_ROM_GET_SETTINGS, sizeof(m64p_rom_settings), l_RomSettings) != M64ERR_SUCCESS)
+    if ((*CoreDoCommand)(M64CMD_ROM_GET_SETTINGS, sizeof(l_RomSettings), &l_RomSettings) != M64ERR_SUCCESS)
     {
         printf("UI-Console: couldn't get ROM good name from core library for cheats\n");
         return;
     }
 
     /* parse through the cheat INI file and load up any cheat codes found for this ROM */
-    l_GoodName = malloc(strlen(l_RomSettings->goodname));
-    if (l_GoodName == NULL)
-    {
-        printf("UI-Console error: Could not allocate l_GoodName!\n");
-        CheatFreeAll();
-        return;
-    }
-    strcpy(l_GoodName, l_RomSettings->goodname);
-    ReadCheats(l_GoodName);
+    ReadCheats(l_RomSettings.goodname);
     if (!l_RomFound || l_CheatCodesFound == 0)
     {
-        printf("UI-Console: no cheat codes found for ROM image '%s'\n", l_RomSettings->goodname);
+        printf("UI-Console: no cheat codes found for ROM image '%s'\n", l_RomSettings.goodname);
         CheatFreeAll();
-        
         return;
     }
 
     /* handle the list command */
     if (CheatMode == CHEAT_SHOW_LIST)
     {
-        printf("UI-Console: %i cheat code(s) found for ROM '%s'\n", l_CheatCodesFound, l_RomSettings->goodname);
+        printf("UI-Console: %i cheat code(s) found for ROM '%s'\n", l_CheatCodesFound, l_RomSettings.goodname);
         sCheatInfo *pCur = l_CheatList;
         while (pCur != NULL)
         {
@@ -402,13 +384,12 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
             if(pCur->VariableLine != -1)
             {
                 int i;
-                for(i=0;i<pCur->Codes[pCur->VariableLine].var_count;i++)
+                for (i = 0; i < pCur->Codes[pCur->VariableLine].var_count; i++)
                     printf("      %i: %s\n", i, pCur->Codes[pCur->VariableLine].variable_names[i]);
             }
             pCur = pCur->Next;
         }
         CheatFreeAll();
-        
         return;
     }
 
@@ -429,17 +410,20 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
     if (CheatMode == CHEAT_LIST)
     {
         int option, number;
-        char *cheat_next, *option_c;
+        char *cheat_next;
         sCheatInfo *pCheat;
-        while(CheatNumList !=NULL && *CheatNumList)
+        while(CheatNumList != NULL && *CheatNumList)
         {
-            if((cheat_next = strchr(CheatNumList, ','))!=NULL)
+            if ((cheat_next = strchr(CheatNumList, ',')) != NULL)
             {
                 *cheat_next = 0;
                 cheat_next ++;
             }
 
-            if(strchr(CheatNumList, '-') != NULL && sscanf(CheatNumList, "%i-%i", &number, &option) == 2); /* option */
+            if (strchr(CheatNumList, '-') != NULL)
+            {
+                sscanf(CheatNumList, "%i-%i", &number, &option); /* option */
+            }
             else
             {
                 option=0;
@@ -451,7 +435,7 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
                 printf("UI-Console Warning: invalid cheat code number %i\n", number);
             else
             {
-                if(pCheat->VariableLine != -1 && pCheat->Count > pCheat->VariableLine && option < pCheat->Codes[pCheat->VariableLine].var_count)
+                if (pCheat->VariableLine != -1 && pCheat->Count > pCheat->VariableLine && option < pCheat->Codes[pCheat->VariableLine].var_count)
                     pCheat->Codes[pCheat->VariableLine].var_to_use = option;
                 CheatActivate(pCheat);
             }

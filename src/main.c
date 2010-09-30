@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-ui-console - main.c                                       *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2007-2009 Richard42                                     *
+ *   Copyright (C) 2007-2010 Richard42                                     *
  *   Copyright (C) 2008 Ebenblues Nmn Okaygo Tillin9                       *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
@@ -66,7 +66,7 @@ static int   l_SaveOptions = 0;          // save command-line options in configu
 static int   l_CoreCompareMode = 0;      // 0 = disable, 1 = send, 2 = receive
 
 static eCheatMode l_CheatMode = CHEAT_DISABLE;
-char             *l_CheatNumList = NULL;
+static char      *l_CheatNumList = NULL;
 
 /*********************************************************************************************************
  *  Callback functions from the core
@@ -137,10 +137,10 @@ static m64p_error OpenConfigurationHandles(void)
 
     /* Set default values for my Config parameters */
     (*ConfigSetDefaultString)(l_ConfigUI, "PluginDir", OSAL_CURRENT_DIR, "Directory in which to search for plugins");
-    (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "m64p_video_rice" OSAL_DLL_EXTENSION, "Filename of video plugin");
-    (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "m64p_audio_jttl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
-    (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "m64p_input_blight" OSAL_DLL_EXTENSION, "Filename of input plugin");
-    (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "m64p_rsp_hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "mupen64plus-video-rice" OSAL_DLL_EXTENSION, "Filename of video plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "mupen64plus-audio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "mupen64plus-input-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "mupen64plus-rsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
 
     return M64ERR_SUCCESS;
 }
@@ -206,6 +206,7 @@ static void printUsage(const char *progname)
            "    'list'                : show all of the available cheat codes\n"
            "    'all'                 : enable all of the available cheat codes\n"
            "    (codelist)            : a comma-separated list of cheat code numbers to enable\n"
+           "                          : use '<code_number>-<option>' to activate a code with multiple options\n"
            "\n", progname);
 
     return;
@@ -417,7 +418,7 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
             else
             {
                 l_CheatMode = CHEAT_LIST;
-                l_CheatNumList = (char*)argv[i+1];
+                l_CheatNumList = (char*) argv[i+1];
             }
             i++;
         }
@@ -675,8 +676,6 @@ int main(int argc, char *argv[])
     /* free allocated memory */
     if (l_TestShotList != NULL)
         free(l_TestShotList);
-/*    if (l_CheatNumList != NULL)
-        free(l_CheatNumList);*/
 
     return 0;
 }
