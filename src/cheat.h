@@ -35,7 +35,7 @@ typedef enum {
   CHEAT_SHOW_LIST
   } eCheatMode;
 
-void CheatStart(eCheatMode CheatMode, int *CheatNumList, int CheatListLength);
+void CheatStart(eCheatMode CheatMode, char *CheatNumList);
 
 #endif // #define CHEAT_H
 
