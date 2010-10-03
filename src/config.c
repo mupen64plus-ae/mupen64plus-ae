@@ -160,14 +160,14 @@ static int load_controller_config(const char *SectionName, int i)
     for (readOK = 0; readOK == 0; readOK = 1)
     {
         /* check for the required parameters */
-        if (ConfigGetParameter(pConfig, "plugged", M64TYPE_INT, &controller[i].control->Present, sizeof(int)) != M64ERR_SUCCESS)
+        if (ConfigGetParameter(pConfig, "plugged", M64TYPE_BOOL, &controller[i].control->Present, sizeof(int)) != M64ERR_SUCCESS)
             break;
         if (ConfigGetParameter(pConfig, "plugin", M64TYPE_INT, &controller[i].control->Plugin, sizeof(int)) != M64ERR_SUCCESS)
             break;
         if (ConfigGetParameter(pConfig, "device", M64TYPE_INT, &controller[i].device, sizeof(int)) != M64ERR_SUCCESS)
             break;
         /* then do the optional parameters */
-        ConfigGetParameter(pConfig, "mouse", M64TYPE_INT, &controller[i].mouse, sizeof(int));
+        ConfigGetParameter(pConfig, "mouse", M64TYPE_BOOL, &controller[i].mouse, sizeof(int));
         if (ConfigGetParameter(pConfig, "AnalogDeadzone", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
         {
             if (sscanf(input_str, "%i,%i", &controller[i].axis_deadzone[0], &controller[i].axis_deadzone[1]) != 2)
