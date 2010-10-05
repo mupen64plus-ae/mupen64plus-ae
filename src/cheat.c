@@ -50,7 +50,7 @@ typedef struct _sCheatInfo {
   } sCheatInfo;
 
 /* local variables */
-static m64p_rom_settings  l_RomSettings;
+static m64p_rom_header    l_RomHeader;
 static char              *l_IniText = NULL;
 static char              *l_CheatGameName = NULL;
 static sCheatInfo        *l_CheatList = NULL;
@@ -64,12 +64,6 @@ static int                l_RomFound = 0;
 static int isSpace(char ch)
 {
     return (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n');
-}
-
-static void strtolower(char *str)
-{
-    for (; *str != 0; str++)
-        *str = tolower(*str);
 }
 
 /* Find cheat code */
@@ -174,8 +168,7 @@ static sCheatInfo * NewCode(char *CheatName, int CheatNum)
     return pNew;
 }
 
-static void
-CheatAddVariables(cheat_code * Code, char *varlist)
+static void CheatAddVariables(cheat_code * Code, char *varlist)
 {
     /* needs to be more verbose? */
     Code->variables = NULL;
@@ -205,9 +198,7 @@ CheatAddVariables(cheat_code * Code, char *varlist)
 * global functions
 */
 
-
-void
-ReadCheats(char *GoodName)
+void ReadCheats(char *RomSection)
 {
     sCheatInfo *curr_code;
     const char *romdbpath = ConfigGetSharedDataFilepath(CHEAT_FILE);
@@ -250,8 +241,7 @@ ReadCheats(char *GoodName)
     char *curline = NULL;
     char *nextline = l_IniText;
     int NumCheats = 0;
-    /* Lowercase the goodname */
-    strtolower(GoodName);
+
     while(nextline != NULL && *nextline != 0)
     {
         curline = nextline;
@@ -273,12 +263,13 @@ ReadCheats(char *GoodName)
             continue;
 
         /* handle beginning of new rom section */
-        if (strncmp(curline, "gn ", 3) == 0)
+        if (strncmp(curline, "crc ", 4) == 0)
         {
-            if (l_RomFound)
+            /* if we have already found cheats for the given ROM file, then exit upon encountering a new ROM section */
+            if (l_RomFound && (l_CheatGameName != NULL || l_CheatList != NULL))
                 return;
-            strtolower(curline+3);
-            if (strncmp(curline+3, GoodName, sizeof(l_RomSettings.goodname)) == 0)
+            /* else see if this Rom Section matches */
+            if (strcmp(curline+4, RomSection) == 0)
                 l_RomFound = 1;
             continue;
         }
@@ -286,6 +277,13 @@ ReadCheats(char *GoodName)
         /* if we haven't found the specified ROM section, then continue looking */
         if (!l_RomFound)
             continue;
+
+        /* Game name */
+        if (strncmp(curline, "gn ", 3) == 0)
+        {
+            l_CheatGameName = curline+3;
+            continue;
+        }
 
         /* code name */
         if (strncmp(curline, "cn ", 3) == 0)
@@ -354,18 +352,22 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
         return;
     }
 
-    /* get goodname */
-    if ((*CoreDoCommand)(M64CMD_ROM_GET_SETTINGS, sizeof(l_RomSettings), &l_RomSettings) != M64ERR_SUCCESS)
+    /* get the ROM header for the currently loaded ROM image from the core */
+    if ((*CoreDoCommand)(M64CMD_ROM_GET_HEADER, sizeof(l_RomHeader), &l_RomHeader) != M64ERR_SUCCESS)
     {
-        printf("UI-Console: couldn't get ROM good name from core library for cheats\n");
+        printf("UI-Console: couldn't get ROM header information from core library\n");
         return;
     }
 
+    /* generate section name from ROM's CRC and country code */
+    char RomSection[24];
+    sprintf(RomSection, "%X-%X-C:%X", sl(l_RomHeader.CRC1), sl(l_RomHeader.CRC2), l_RomHeader.Country_code & 0xff);
+
     /* parse through the cheat INI file and load up any cheat codes found for this ROM */
-    ReadCheats(l_RomSettings.goodname);
+    ReadCheats(RomSection);
     if (!l_RomFound || l_CheatCodesFound == 0)
     {
-        printf("UI-Console: no cheat codes found for ROM image '%s'\n", l_RomSettings.goodname);
+        printf("UI-Console: no cheat codes found for ROM image '%.20s'\n", l_RomHeader.Name);
         CheatFreeAll();
         return;
     }
@@ -373,7 +375,7 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
     /* handle the list command */
     if (CheatMode == CHEAT_SHOW_LIST)
     {
-        printf("UI-Console: %i cheat code(s) found for ROM '%s'\n", l_CheatCodesFound, l_RomSettings.goodname);
+        printf("UI-Console: %i cheat code(s) found for ROM '%s'\n", l_CheatCodesFound, l_CheatGameName);
         sCheatInfo *pCur = l_CheatList;
         while (pCur != NULL)
         {

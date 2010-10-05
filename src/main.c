@@ -205,8 +205,8 @@ static void printUsage(const char *progname)
            "(cheat-spec):\n"
            "    'list'                : show all of the available cheat codes\n"
            "    'all'                 : enable all of the available cheat codes\n"
-           "    (codelist)            : a comma-separated list of cheat code numbers to enable\n"
-           "                          : use '<code_number>-<option>' to activate a code with multiple options\n"
+           "    (codelist)            : a comma-separated list of cheat code numbers to enable,\n"
+           "                            with dashes to use code variables (ex 1-2 to use cheat 1 option 2)\n"
            "\n", progname);
 
     return;
