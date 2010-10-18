@@ -85,7 +85,7 @@ static void CheatActivate(sCheatInfo *pCheat)
     int i;
 
     /* Get a m64p_cheat_code object */
-    m64p_cheat_code * code = calloc(pCheat->Count, sizeof(m64p_cheat_code));
+    m64p_cheat_code * code = (m64p_cheat_code*) calloc(pCheat->Count, sizeof(m64p_cheat_code));
     if (code == NULL)
     {
         printf("UI-Console Warning: could not allocate memory for code '%s'\n", pCheat->Name);
@@ -176,9 +176,9 @@ static void CheatAddVariables(cheat_code * Code, char *varlist)
     Code->var_count = 0;
     while (*varlist != 0)
     {
-        if ((Code->variables = realloc(Code->variables, sizeof(int) * (Code->var_count + 1))) == NULL)
+        if ((Code->variables = (int*) realloc(Code->variables, sizeof(int) * (Code->var_count + 1))) == NULL)
             return;
-        if ((Code->variable_names = realloc(Code->variable_names, sizeof(char*) * (Code->var_count + 1))) == NULL)
+        if ((Code->variable_names = (char**) realloc(Code->variable_names, sizeof(char*) * (Code->var_count + 1))) == NULL)
             return;
         if (sscanf(varlist, "%04X", &Code->variables[Code->var_count]) != 1)
             Code->variables[Code->var_count] = 0;
@@ -309,7 +309,7 @@ void ReadCheats(char *RomSection)
         int address;
         if (sscanf(curline, "%8X %*s", &address) == 1)
         {
-            curr_code->Codes = realloc(curr_code->Codes, sizeof(cheat_code) * (curr_code->Count + 1));
+            curr_code->Codes = (cheat_code*) realloc(curr_code->Codes, sizeof(cheat_code) * (curr_code->Count + 1));
             if (strncmp(curline+9, "????", 4) == 0)
             {
                 curr_code->Codes[curr_code->Count].var_count = 0;
@@ -320,7 +320,7 @@ void ReadCheats(char *RomSection)
             {
                 int var;
                 curr_code->Codes[curr_code->Count].var_count = 1;
-                curr_code->Codes[curr_code->Count].variables = malloc(sizeof(int));
+                curr_code->Codes[curr_code->Count].variables = (int*) malloc(sizeof(int));
                 if(curr_code->Codes[curr_code->Count].variables == NULL)
                 {
                     printf("UI-Console Error: error allocating memory; ignoring line: '%s'\n", curline);
