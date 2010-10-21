@@ -455,8 +455,18 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         else if (strcmp(argv[i], "--emumode") == 0 && ArgsLeft >= 1)
         {
             int emumode = atoi(argv[i+1]);
-            (*ConfigSetParameter)(l_ConfigCore, "R4300Emulator", M64TYPE_INT, &emumode);
             i++;
+            if (emumode < 0 || emumode > 2)
+            {
+                fprintf(stderr, "Warning: invalid --emumode value '%i'\n", emumode);
+                continue;
+            }
+            if (emumode == 2 && !(g_CoreCapabilities & M64CAPS_DYNAREC))
+            {
+                fprintf(stderr, "Warning: Emulator core doesn't support Dynamic Recompiler.\n");
+                emumode = 1;
+            }
+            (*ConfigSetParameter)(l_ConfigCore, "R4300Emulator", M64TYPE_INT, &emumode);
         }
         else if (strcmp(argv[i], "--testshots") == 0 && ArgsLeft >= 1)
         {
