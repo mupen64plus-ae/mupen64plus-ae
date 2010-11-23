@@ -1,6 +1,12 @@
 Mupen64Plus-UI-Console RELEASE
 ------------------------------
 
+Mupen64Plus-UI-Console Front-End v1.99.4 - November 22, 2010
+------------------------------------------------------------
+ - add some parameter checking for --emumode option
+ - new cheat file format from spinout182
+ - makefile fixes and improvements
+
 Mupen64Plus-UI-Console Front-End v1.99.3 - February 13, 2010
 ------------------------------------------------------------
  - New feature: command-line option --set for setting arbitrary configuration variables

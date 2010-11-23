@@ -41,9 +41,12 @@ Parameters:
         (pluginname)          : filename (without path) of plugin to find in plugin directory
         (pluginpath)          : full path and filename of plugin
         'dummy'               : use dummy plugin
+
     (cheat-spec):
         'list'                : show all of the available cheat codes
         'all'                 : enable all of the available cheat codes
-        (codelist)            : a comma-separated list of cheat code numbers to enable
+        (codelist)            : a comma-separated list of cheat code numbers to enable,
+                                with dashes to use code variables (ex 1-2 to use cheat 1 option 2)
+
 
 
