@@ -1,6 +1,14 @@
 SDL Input plugin for Mupen64Plus
 --------------------------------
 
+Mupen64Plus-input-sdl v1.99.4 - November 22, 2010
+-------------------------------------------------
+ - Bugfix: Do configuration during PluginStart(), so GUI will see defaults (auto-configured) the first time it is run
+ - Move axis value reducers to right shift and right ctrl, to avoid conflict with A/B buttons
+ - New feature: extra deadzone parameter in axis() config parameter clause when mapping an analog joystick axis to an N64 button
+ - many new joystick auto-configurations
+ - makefile fixes and improvements
+
 Mupen64Plus-input-sdl v1.99.3 - February 13, 2010
 -------------------------------------------------
  - New feature: auto-configuration uses an .ini file instead of hard-coding the controllers in the source code
