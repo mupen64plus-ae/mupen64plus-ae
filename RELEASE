@@ -1,6 +1,17 @@
 Mupen64Plus-Video-Rice RELEASE
 ------------------------------
 
+Mupen64Plus-Video-Rice v1.99.4 - November 22, 2010
+--------------------------------------------------
+ - new feature: anisotropic filtering
+ - new feature: trilinear filtering
+ - new feature: mipmaps
+ - cleaned up FindScaleFactor function based upon r45 of the 1964 repo
+ - bugfix: buffer overrun (and crash) when reading vendor string info on some opengl implementations
+ - API change for reading the video buffer: new interface is more flexible and avoids some potential problems
+ - support for anti-aliasing (GL_MULTISAMPLE)
+ - makefile fixes, improvements, and code cleanups
+
 Mupen64Plus-Video-Rice v1.99.3 - February 13, 2010
 --------------------------------------------------
  - sync with core<-->plugin API change for RomOpen()
