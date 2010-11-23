@@ -24,7 +24,7 @@
 
 #include "m64p_plugin.h"
 
-#define RSP_HLE_VERSION 0x016303
+#define RSP_HLE_VERSION 0x016304
 
 #ifdef _BIG_ENDIAN
 #define S 0
