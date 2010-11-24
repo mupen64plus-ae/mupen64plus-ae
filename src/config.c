@@ -399,10 +399,11 @@ void load_configuration(int bPrintSummary)
         sprintf(SectionName, "Input-SDL-Control%i", i + 1);
         readOK = load_controller_config(SectionName, i);
 
-        JoyName = get_sdl_joystick_name(i);
         if (!readOK || controller[i].device == DEVICE_AUTO)
         {
             int ControllersFound = 0;
+            /* if auto / bad config, get joystick name based on SDL order */
+            JoyName = get_sdl_joystick_name(i);
             /* reset the controller configuration again and try to auto-configure */
             ControllersFound = auto_set_defaults(i, JoyName);
             if (ControllersFound > 0)
@@ -433,6 +434,8 @@ void load_configuration(int bPrintSummary)
         }
         else if (controller[i].device >= 0)
         {
+            /* if joystick found in cfg, take its SDL number from there */
+            JoyName = get_sdl_joystick_name(controller[i].device);
             /* valid joystick configuration was read; check if the specified joystick is available in SDL */
             if (JoyName == NULL)
             {
