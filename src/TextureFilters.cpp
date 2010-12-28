@@ -1564,9 +1564,28 @@ bool LoadRGBBufferFromPNGFile(char *filename, unsigned char **pbuf, int &width, 
                 pSrc++;
             }
         }
+        else if (img.bits_per_pixel == 8 && (bits_per_pixel == 24 || bits_per_pixel == 32))
+        {
+            // do palette lookup and convert 8bpp to 24/32bpp
+            int destBytePP = bits_per_pixel / 8;
+            int paletteBytePP = img.bytes_per_palette_entry;
+            unsigned char *pSrc = img.bits;
+            unsigned char *pDst = *pbuf;
+            // clear the destination image data (just to clear alpha if bpp=32)
+            memset(*pbuf, 0, img.width*img.height*destBytePP);
+            for (int i = 0; i < (int)(img.width*img.height); i++)
+            {
+                unsigned char clridx = *pSrc++;
+                unsigned char palcolor = img.palette + clridx * paletteBytePP;
+                pDst[0] = palcolor[2]; // red
+                pDst[1] = palcolor[1]; // green
+                pDst[2] = palcolor[0]; // blue
+                pDst += destBytePP;
+            }
+        }
         else
         {
-            DebugMessage(M64MSG_ERROR, "PNG file is %i bpp but texture is %i bpp.", img.bits_per_pixel, bits_per_pixel);
+            DebugMessage(M64MSG_ERROR, "PNG file '%s' is %i bpp but texture is %i bpp.", filename, img.bits_per_pixel, bits_per_pixel);
             delete [] *pbuf;
             *pbuf = NULL;
         }
@@ -1579,7 +1598,7 @@ bool LoadRGBBufferFromPNGFile(char *filename, unsigned char **pbuf, int &width, 
     }
     else
     {
-        DebugMessage(M64MSG_ERROR, "ReadPNG() returned error in LoadRGBBufferFromPNGFile!");
+        DebugMessage(M64MSG_ERROR, "ReadPNG() returned error for '%s' in LoadRGBBufferFromPNGFile!", filename);
         *pbuf = NULL;
         return false;
     }
