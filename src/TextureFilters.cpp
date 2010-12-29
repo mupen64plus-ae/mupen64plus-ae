@@ -1576,7 +1576,7 @@ bool LoadRGBBufferFromPNGFile(char *filename, unsigned char **pbuf, int &width, 
             for (int i = 0; i < (int)(img.width*img.height); i++)
             {
                 unsigned char clridx = *pSrc++;
-                unsigned char palcolor = img.palette + clridx * paletteBytePP;
+                unsigned char *palcolor = img.palette + clridx * paletteBytePP;
                 pDst[0] = palcolor[2]; // red
                 pDst[1] = palcolor[1]; // green
                 pDst[2] = palcolor[0]; // blue
