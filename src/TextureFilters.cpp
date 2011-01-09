@@ -1377,7 +1377,8 @@ int FindScaleFactor(const ExtTxtrInfo &info, TxtrCacheEntry &entry)
 
 int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &entry, int &indexa, int &scaleShift, bool bForDump = false)
 {
-    if(entry.ti.WidthToCreate/entry.ti.WidthToLoad > 2 || entry.ti.HeightToCreate/entry.ti.HeightToLoad > 2 )
+    if ((entry.ti.WidthToLoad  != 0 && entry.ti.WidthToCreate  / entry.ti.WidthToLoad  > 2) ||
+        (entry.ti.HeightToLoad != 0 && entry.ti.HeightToCreate / entry.ti.HeightToLoad > 2 ))
     {
         //DebugMessage(M64MSG_WARNING, "Hires texture does not support extreme texture replication");
         return -1;
