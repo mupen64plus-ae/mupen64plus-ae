@@ -1288,6 +1288,7 @@ void FindAllHiResTextures(void)
     gHiresTxtrInfos.clear();
     if (!osal_is_directory(foldername))
     {
+        DebugMessage(M64MSG_WARNING, "Couldn't open hi-res texture directory: %s", foldername);
         return;
     }
     else
@@ -1869,8 +1870,8 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
     }
 
     // calculate the texture size magnification by comparing the N64 texture size and the hi-res texture size
-    int scalex = width / (int)entry.ti.WidthToCreate;
-    int scaley = height / (int)entry.ti.HeightToCreate;
+    int scalex = width / (int)entry.ti.WidthToLoad;
+    int scaley = height / (int)entry.ti.HeightToLoad;
     int mirrorx = 1;
     int mirrory = 1;
     if (entry.ti.WidthToCreate/entry.ti.WidthToLoad == 2) mirrorx = 2;
