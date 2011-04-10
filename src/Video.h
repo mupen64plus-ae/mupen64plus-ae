@@ -31,6 +31,7 @@ typedef struct {
     unsigned short        uDisplayWidth, uDisplayHeight;
     
     BOOL    bDisplayFullscreen;
+    BOOL    bVerticalSync;
 
     float   fMultX, fMultY;
     int     vpLeftW, vpTopW, vpRightW, vpBottomW, vpWidthW, vpHeightW;
@@ -189,6 +190,7 @@ extern ptr_VidExt_SetCaption            CoreVideo_SetCaption;
 extern ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen;
 extern ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress;
 extern ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute;
+extern ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute;
 extern ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers;
 
 /* global functions provided by Video.cpp */
