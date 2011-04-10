@@ -99,6 +99,7 @@ typedef struct
     int           event_joystick;   // the /dev/input/eventX device for force feeback
     int           axis_deadzone[2]; // minimum absolute value before analog movement is recognized
     int           axis_peak[2];     // highest analog value returned by SDL, used for scaling
+    float         mouse_sens[2];    // mouse sensitivity
 } SController;
 
 /* global data definitions */

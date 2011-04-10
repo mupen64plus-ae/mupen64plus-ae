@@ -428,6 +428,8 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 *******************************************************************/
 EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 {
+    static int mousex_residual = 0;
+    static int mousey_residual = 0;
     int b, axis_val;
     SDL_Event event;
     unsigned char mstate;
@@ -532,30 +534,43 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
             controller[Control].buttons.Value |= button_bits[b];
     }
 
-    if (controller[Control].mouse && SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON)
+    if (controller[Control].mouse)
     {
-        SDL_PumpEvents();
-        while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) == 1)
+        if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON)
         {
-            if (event.motion.xrel)
+            SDL_PumpEvents();
+            while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) == 1)
             {
-                axis_val = (event.motion.xrel * 10);
-                if (axis_val < -80)
-                    axis_val = -80;
-                else if (axis_val > 80)
-                    axis_val = 80;
-                controller[Control].buttons.X_AXIS = axis_val;
-            }
-            if (event.motion.yrel)
-            {
-                axis_val = (event.motion.yrel * 10);
-                if (axis_val < -80)
-                    axis_val = -80;
-                else if (axis_val > 80)
-                    axis_val = 80;
-                controller[Control].buttons.Y_AXIS = -axis_val;
+                if (event.motion.xrel)
+                {
+                    mousex_residual += (int) (event.motion.xrel * controller[Control].mouse_sens[0]);
+                }
+                if (event.motion.yrel)
+                {
+                    mousey_residual += (int) (event.motion.yrel * controller[Control].mouse_sens[1]);
+                }
             }
         }
+        else
+        {
+            mousex_residual = 0;
+            mousey_residual = 0;
+        }
+        axis_val = mousex_residual;
+        if (axis_val < -80)
+            axis_val = -80;
+        else if (axis_val > 80)
+            axis_val = 80;
+        controller[Control].buttons.X_AXIS = axis_val;
+        axis_val = mousey_residual;
+        if (axis_val < -80)
+            axis_val = -80;
+        else if (axis_val > 80)
+            axis_val = 80;
+        controller[Control].buttons.Y_AXIS = -axis_val;
+        /* the mouse x/y values decay exponentially */
+        mousex_residual = (mousex_residual * 224) / 256;
+        mousey_residual = (mousey_residual * 224) / 256;
     }
 
 #ifdef _DEBUG

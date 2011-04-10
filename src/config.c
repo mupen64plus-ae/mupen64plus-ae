@@ -94,6 +94,7 @@ static void clear_controller(int iCtrlIdx)
     }
     for( b = 0; b < 2; b++ )
     {
+        controller[iCtrlIdx].mouse_sens[b] = 2.0;
         controller[iCtrlIdx].axis_deadzone[b] = 4096;
         controller[iCtrlIdx].axis_peak[b] = 32768;
         controller[iCtrlIdx].axis[b].button_a = controller[iCtrlIdx].axis[b].button_b = -1;
@@ -168,6 +169,11 @@ static int load_controller_config(const char *SectionName, int i)
             break;
         /* then do the optional parameters */
         ConfigGetParameter(pConfig, "mouse", M64TYPE_BOOL, &controller[i].mouse, sizeof(int));
+        if (ConfigGetParameter(pConfig, "MouseSensitivity", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
+        {
+            if (sscanf(input_str, "%f,%f", &controller[i].mouse_sens[0], &controller[i].mouse_sens[1]) != 2)
+                DebugMessage(M64MSG_WARNING, "parsing error in MouseSensitivity parameter for controller %i", i + 1);
+        }
         if (ConfigGetParameter(pConfig, "AnalogDeadzone", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
         {
             if (sscanf(input_str, "%i,%i", &controller[i].axis_deadzone[0], &controller[i].axis_deadzone[1]) != 2)
@@ -274,6 +280,8 @@ void save_controller_config(int iCtrlIdx)
     ConfigSetDefaultBool(pConfig, "mouse", controller[iCtrlIdx].mouse, "If True, then mouse buttons may be used with this controller");
     ConfigSetDefaultInt(pConfig, "device", controller[iCtrlIdx].device, "Specifies which joystick is bound to this controller: -2=Keyboard/mouse, -1=Auto config, 0 or more= SDL Joystick number");
 
+    sprintf(Param, "%.2f,%.2f", controller[iCtrlIdx].mouse_sens[0], controller[iCtrlIdx].mouse_sens[1]);
+    ConfigSetDefaultString(pConfig, "MouseSensitivity", Param, "Scaling factor for mouse movements.  For X, Y axes.");
     sprintf(Param, "%i,%i", controller[iCtrlIdx].axis_deadzone[0], controller[iCtrlIdx].axis_deadzone[1]);
     ConfigSetDefaultString(pConfig, "AnalogDeadzone", Param, "The minimum absolute value of the SDL analog joystick axis to move the N64 controller axis value from 0.  For X, Y axes.");
     sprintf(Param, "%i,%i", controller[iCtrlIdx].axis_peak[0], controller[iCtrlIdx].axis_peak[1]);
