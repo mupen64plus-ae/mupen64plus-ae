@@ -21,6 +21,8 @@
 
 /* version info */
 #define SDL_AUDIO_PLUGIN_VERSION 0x016304
+#define AUDIO_PLUGIN_API_VERSION 0x020000
+#define CONFIG_API_VERSION       0x020000
 
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
