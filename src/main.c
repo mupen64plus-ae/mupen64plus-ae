@@ -156,7 +156,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
         *PluginVersion = RSP_HLE_VERSION;
 
     if (APIVersion != NULL)
-        *APIVersion = PLUGIN_API_VERSION;
+        *APIVersion = RSP_PLUGIN_API_VERSION;
     
     if (PluginNamePtr != NULL)
         *PluginNamePtr = "Hacktarux/Azimer High-Level Emulation RSP Plugin";
