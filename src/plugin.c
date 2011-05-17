@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-input-sdl - plugin.c                                      *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2008-2009 Richard Goedeken                              *
+ *   Copyright (C) 2008-2011 Richard Goedeken                              *
  *   Copyright (C) 2008 Tillin9                                            *
  *   Copyright (C) 2002 Blight                                             *
  *                                                                         *
@@ -29,6 +29,7 @@
 
 #include "m64p_types.h"
 #include "m64p_plugin.h"
+#include "m64p_common.h"
 #include "m64p_config.h"
 
 #include "plugin.h"
@@ -144,6 +145,23 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     l_DebugCallback = DebugCallback;
     l_DebugCallContext = Context;
 
+    /* attach and call the CoreGetAPIVersions function, check Config API version for compatibility */
+    ptr_CoreGetAPIVersions CoreAPIVersionFunc;
+    CoreAPIVersionFunc = (ptr_CoreGetAPIVersions) osal_dynlib_getproc(CoreLibHandle, "CoreGetAPIVersions");
+    if (CoreAPIVersionFunc == NULL)
+    {
+        DebugMessage(M64MSG_ERROR, "Core emulator broken; no CoreAPIVersionFunc() function found.");
+        return M64ERR_INCOMPATIBLE;
+    }
+    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
+    (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, NULL);
+    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000))
+    {
+        DebugMessage(M64MSG_ERROR, "Emulator core Config API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
+                VERSION_PRINTF_SPLIT(ConfigAPIVersion), VERSION_PRINTF_SPLIT(CONFIG_API_VERSION));
+        return M64ERR_INCOMPATIBLE;
+    }
+
     /* Get the core config function pointers from the library handle */
     ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
     ConfigDeleteSection = (ptr_ConfigDeleteSection) osal_dynlib_getproc(CoreLibHandle, "ConfigDeleteSection");
@@ -214,7 +232,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
         *PluginVersion = PLUGIN_VERSION;
 
     if (APIVersion != NULL)
-        *APIVersion = PLUGIN_API_VERSION;
+        *APIVersion = INPUT_PLUGIN_API_VERSION;
     
     if (PluginNamePtr != NULL)
         *PluginNamePtr = PLUGIN_NAME;
