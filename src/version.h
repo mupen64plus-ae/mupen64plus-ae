@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-video-rice - version.h                                    *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard Goedeken                                   *
+ *   Copyright (C) 2009-2011 Richard Goedeken                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -27,7 +27,10 @@
 #define VERSION_H
 
 #define PLUGIN_NAME    "Mupen64Plus OpenGL Video Plugin by Rice"
-#define PLUGIN_VERSION 0x016304
+#define PLUGIN_VERSION           0x016304
+#define VIDEO_PLUGIN_API_VERSION 0x020000
+#define CONFIG_API_VERSION       0x020000
+#define VIDEXT_API_VERSION       0x020000
 
 #define VERSION_PRINTF_SPLIT(x) (((x) >> 16) & 0xffff), (((x) >> 8) & 0xff), ((x) & 0xff)
 

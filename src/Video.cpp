@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2002 Rice1964
+Copyright (C) 2009-2011 Richard Goedeken
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <SDL_opengl.h>
 
 #include "m64p_types.h"
+#include "m64p_common.h"
 #include "m64p_plugin.h"
 #include "osal_dynamiclib.h"
 
@@ -537,6 +539,29 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     l_DebugCallback = DebugCallback;
     l_DebugCallContext = Context;
 
+    /* attach and call the CoreGetAPIVersions function, check Config and Video Extension API versions for compatibility */
+    ptr_CoreGetAPIVersions CoreAPIVersionFunc;
+    CoreAPIVersionFunc = (ptr_CoreGetAPIVersions) osal_dynlib_getproc(CoreLibHandle, "CoreGetAPIVersions");
+    if (CoreAPIVersionFunc == NULL)
+    {
+        DebugMessage(M64MSG_ERROR, "Core emulator broken; no CoreAPIVersionFunc() function found.");
+        return M64ERR_INCOMPATIBLE;
+    }
+    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
+    (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, NULL);
+    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000))
+    {
+        DebugMessage(M64MSG_ERROR, "Emulator core Config API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
+                VERSION_PRINTF_SPLIT(ConfigAPIVersion), VERSION_PRINTF_SPLIT(CONFIG_API_VERSION));
+        return M64ERR_INCOMPATIBLE;
+    }
+    if ((VidextAPIVersion & 0xffff0000) != (VIDEXT_API_VERSION & 0xffff0000))
+    {
+        DebugMessage(M64MSG_ERROR, "Emulator core Video Extension API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
+                VERSION_PRINTF_SPLIT(VidextAPIVersion), VERSION_PRINTF_SPLIT(VIDEXT_API_VERSION));
+        return M64ERR_INCOMPATIBLE;
+    }
+
     /* Get the core config function pointers from the library handle */
     ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
     ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
@@ -625,7 +650,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
         *PluginVersion = PLUGIN_VERSION;
 
     if (APIVersion != NULL)
-        *APIVersion = PLUGIN_API_VERSION;
+        *APIVersion = VIDEO_PLUGIN_API_VERSION;
     
     if (PluginNamePtr != NULL)
         *PluginNamePtr = PLUGIN_NAME;
