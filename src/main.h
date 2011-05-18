@@ -24,6 +24,8 @@
 #define AUDIO_PLUGIN_API_VERSION 0x020000
 #define CONFIG_API_VERSION       0x020000
 
+#define VERSION_PRINTF_SPLIT(x) (((x) >> 16) & 0xffff), (((x) >> 8) & 0xff), ((x) & 0xff)
+
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
 extern ptr_ConfigOpenSection      ConfigOpenSection;
