@@ -125,8 +125,8 @@ static int OutputFreq;
 // Prototype of local functions
 static void my_audio_callback(void *userdata, unsigned char *stream, int len);
 static void InitializeAudio(int freq);
-static void ReadConfig();
-static void InitializeSDL();
+static void ReadConfig(void);
+static void InitializeSDL(void);
 
 static int critical_failure = 0;
 
@@ -528,7 +528,7 @@ static void my_audio_callback(void *userdata, unsigned char *stream, int len)
         memset(stream , 0, len);
     }
 }
-EXPORT int CALL RomOpen()
+EXPORT int CALL RomOpen(void)
 {
     if (!l_PluginInit)
         return 0;
@@ -538,7 +538,7 @@ EXPORT int CALL RomOpen()
     return 1;
 }
 
-static void InitializeSDL()
+static void InitializeSDL(void)
 {
     DebugMessage(M64MSG_INFO, "Initializing SDL audio subsystem...");
 
@@ -718,7 +718,7 @@ EXPORT void CALL RomClosed( void )
     if(SDL_WasInit(SDL_INIT_TIMER) != 0) SDL_QuitSubSystem(SDL_INIT_TIMER);
 }
 
-EXPORT void CALL ProcessAList()
+EXPORT void CALL ProcessAList(void)
 {
 }
 
@@ -732,7 +732,7 @@ EXPORT void CALL SetSpeedFactor(int percentage)
     CreatePrimaryBuffer();
 }
 
-static void ReadConfig()
+static void ReadConfig(void)
 {
     /* read the configuration values into our static variables */
     GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
