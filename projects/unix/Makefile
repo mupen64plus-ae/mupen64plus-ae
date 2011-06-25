@@ -75,20 +75,12 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -pthread -I../../src
+CFLAGS += -ffast-math -fno-strict-aliasing -pthread -I../../src
 LDFLAGS += -pthread
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
-  ifeq ($(CPU), X86)
-    ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -O3 -march=athlon64
-      LDFLAGS += -ldl
-    else
-      CFLAGS += -pipe -O3 -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
-      LDFLAGS += -ldl
-    endif
-  endif
+  LDFLAGS += -ldl
 endif
 ifeq ($(OS), OSX)
   # The mac version of SDL requires inclusion of SDL_main in the executable
@@ -102,9 +94,6 @@ ifeq ($(OS), OSX)
       LDFLAGS += -arch i686
     endif
   endif
-endif
-ifeq ($(CPU), PPC)
-  CFLAGS += -mcpu=powerpc
 endif
 
 # tweak flags for 32-bit build on 64-bit system
