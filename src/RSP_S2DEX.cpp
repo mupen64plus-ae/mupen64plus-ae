@@ -137,11 +137,11 @@ void RSP_S2DEX_SELECT_DL(Gfx *gfx)
     
     
 
-    static BOOL bWarned = FALSE;
+    //static BOOL bWarned = FALSE;
     //if (!bWarned)
     {
         RSP_RDP_NOIMPL("RDP: RSP_S2DEX_SELECT_DL (0x%08x 0x%08x)", (gfx->words.w0), (gfx->words.w1));
-        bWarned = TRUE;
+        //bWarned = TRUE;
     }
 
     DEBUGGER_PAUSE_AND_DUMP_COUNT_N(NEXT_OBJ_TXT_CMD, {DebuggerAppendMsg("Paused at RSP_S2DEX_SELECT_DL");});

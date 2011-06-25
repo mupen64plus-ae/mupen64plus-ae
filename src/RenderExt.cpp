@@ -868,13 +868,6 @@ void CRender::LoadObjSprite(uObjTxSprite &sprite, bool useTIAddr)
     gti.Format  = sprite.sprite.imageFmt;
     gti.Size    = sprite.sprite.imageSiz;
 
-    uint8* img;
-    if( useTIAddr )
-    {
-        img = (uint8*)(g_pRDRAMu8+RSPSegmentAddr(g_TI.dwAddr));
-    }
-    else
-        img = (uint8*)(g_pRDRAMu8+RSPSegmentAddr(sprite.txtr.block.image));
     uchar *palAddr = (uchar *) &g_wRDPTlut[0];
 
     gti.Address = RSPSegmentAddr(sprite.txtr.block.image);

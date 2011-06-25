@@ -1502,12 +1502,6 @@ void DLParser_LoadTile(Gfx *gfx)
     uint32 size = line * height;
     SetTmemFlag(tile.dwTMem,size );
 
-    uint32 dwPitch = g_TI.dwWidth;
-    if( tile.dwSize != TXT_SIZE_4b )
-    {
-        dwPitch = g_TI.dwWidth<<(tile.dwSize-1);
-    }
-
     LOG_TEXTURE(
     {
         DebuggerAppendMsg("LoadTile:%d (%d,%d) -> (%d,%d) [%d x %d]\n",

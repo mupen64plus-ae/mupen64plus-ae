@@ -295,8 +295,6 @@ bool FrameBufferManager::IsDIaRenderTexture()
     bool foundFillRect=false;
     bool foundSetFillColor=false;
     bool foundSetCImg=false;
-    bool foundTxtRect=false;
-    int height;
     uint32 newFillColor = 0;
 
     uint32 dwPC = gDlistStack[gDlistStackPointer].pc;       // This points to the next instruction
@@ -308,14 +306,12 @@ bool FrameBufferManager::IsDIaRenderTexture()
 
         if( (w0>>24) == RDP_SETSCISSOR )
         {
-            height   = ((w1>>0 )&0xFFF)/4;
             foundSetScissor = true;
             continue;
         }
 
         if( (w0>>24) == RDP_SETFILLCOLOR )
         {
-            height   = ((w1>>0 )&0xFFF)/4;
             foundSetFillColor = true;
             newFillColor = w1;
             continue;
@@ -326,20 +322,17 @@ bool FrameBufferManager::IsDIaRenderTexture()
             uint32 x0   = ((w1>>12)&0xFFF)/4;
             uint32 y0   = ((w1>>0 )&0xFFF)/4;
             uint32 x1   = ((w0>>12)&0xFFF)/4;
-            uint32 y1   = ((w0>>0 )&0xFFF)/4;
 
             if( x0 == 0 && y0 == 0 )
             {
                 if( x1 == g_CI.dwWidth )
                 {
-                    height = y1;
                     foundFillRect = true;
                     continue;
                 }
 
                 if(x1 == (unsigned int)(g_CI.dwWidth-1))
                 {
-                    height = y1+1;
                     foundFillRect = true;
                     continue;
                 }
@@ -348,7 +341,6 @@ bool FrameBufferManager::IsDIaRenderTexture()
 
         if( (w0>>24) == RDP_TEXRECT )
         {
-            foundTxtRect = true;
             break;
         }
 
