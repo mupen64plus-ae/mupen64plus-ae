@@ -26,6 +26,7 @@
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_types.h"
+#include "m64p_common.h"
 #include "m64p_plugin.h"
 #include "hle.h"
 
@@ -61,7 +62,7 @@ extern void (*ABI1[0x20])();
 extern void (*ABI2[0x20])();
 extern void (*ABI3[0x20])();
 
-void (*ABI[0x20])();
+static void (*ABI[0x20])();
 
 u32 inst1, inst2;
 
