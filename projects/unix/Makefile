@@ -96,7 +96,7 @@ LDFLAGS += $(shell pkg-config --libs gl libpng)
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
 # On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(ARCH_DETECTED), 64BITS)
-  CFLAGS += -fpic -DPIC
+  CFLAGS += -fpic
 endif
 # tweak flags for 32-bit build on 64-bit system
 ifeq ($(ARCH_DETECTED), 64BITS_32)
@@ -130,11 +130,11 @@ ifeq ($(shell which sdl-config 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
 ifeq ($(OS),FREEBSD)
-    CFLAGS  += $(shell sdl-config --cflags) -DPIC
-    LDFLAGS += $(shell sdl-config --libs) -DPIC
+    CFLAGS  += $(shell sdl-config --cflags)
+    LDFLAGS += $(shell sdl-config --libs)
 endif
 ifeq ($(OS),OSX)
-    CFLAGS  += $(shell sdl-config --cflags) -DPIC
+    CFLAGS  += $(shell sdl-config --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
     LDFLAGS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa

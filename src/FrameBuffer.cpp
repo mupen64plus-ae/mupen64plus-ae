@@ -674,7 +674,7 @@ l1:             mov esi, [ecx+ebx]
                      : "%rbx", "%rax", "memory", "cc"
                      );
 #elif !defined(NO_ASM)
-# ifndef PIC
+# ifndef defined(__PIC__)
            asm volatile("pusha                             \n"
                 "mov    pAsmStart, %%ecx           \n"  // = pStart
                 "mov    $0, %%edx                  \n"          // The CRC
@@ -701,7 +701,7 @@ l1:             mov esi, [ecx+ebx]
                 :
                 : "memory", "cc"
                 );
-# else // PIC
+# else // defined(__PIC__)
            unsigned int saveEBX;
            unsigned int saveEAX;
            unsigned int saveECX;
@@ -747,7 +747,7 @@ l1:             mov esi, [ecx+ebx]
                 : "memory", "cc"
                 );
            dwAsmCRC = asmCRC;
-# endif // PIC
+# endif // defined(__PIC__)
 #endif
         }
         catch(...)
