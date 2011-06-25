@@ -399,9 +399,9 @@ EXPORT int CALL InitiateAudio( AUDIO_INFO Audio_Info )
 static int underrun_count = 0;
 
 #ifdef USE_SRC
-static float *_src = 0;
+static float *_src = NULL;
 static unsigned int _src_len = 0;
-static float *_dest = 0;
+static float *_dest = NULL;
 static unsigned int _dest_len = 0;
 static int error;
 static SRC_STATE *src_state;
