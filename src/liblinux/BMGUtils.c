@@ -234,7 +234,7 @@ BMGError Convert16to24( struct BMGImageStruct *img )
 
     /* allocate memory for the new pixel values */
     new_bits = (unsigned char *)calloc( new_scan_width * img->height, sizeof(unsigned char) );
-    if ( new_bits == 0 )
+    if ( new_bits == NULL )
         return errMemoryAllocation;
 
     /* convert the 16 BPP pixel values to the equivalent 24 BPP values  */
