@@ -75,8 +75,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -I../../src
-LDFLAGS += -lpthread
+CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -pthread -I../../src
+LDFLAGS += -pthread
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
