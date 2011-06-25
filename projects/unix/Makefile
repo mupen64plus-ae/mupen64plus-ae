@@ -88,7 +88,7 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -fvisibility=hidden -I../../src
+CFLAGS += -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 CXXFLAGS += -fvisibility-inlines-hidden
 
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
@@ -109,13 +109,6 @@ endif
 ifeq ($(OS), LINUX)
   # only export api symbols
   LDFLAGS += -Wl,-version-script,$(SRCDIR)/rsp_api_export.ver
-  ifeq ($(CPU), X86)
-    ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -O3 -march=athlon64
-    else
-      CFLAGS += -pipe -O3 -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
-    endif
-  endif
 endif
 ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
@@ -127,9 +120,6 @@ ifeq ($(OS), OSX)
       LDFLAGS += -arch i686
     endif
   endif
-endif
-ifeq ($(CPU), PPC)
-  CFLAGS += -mcpu=powerpc
 endif
 
 # set mupen64plus core API header path
