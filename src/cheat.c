@@ -240,7 +240,6 @@ void ReadCheats(char *RomSection)
     /* parse lines from cheat database */
     char *curline = NULL;
     char *nextline = l_IniText;
-    int NumCheats = 0;
 
     while(nextline != NULL && *nextline != 0)
     {
