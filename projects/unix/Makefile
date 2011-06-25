@@ -87,10 +87,7 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -ffast-math -funroll-loops -fexpensive-optimizations -fno-strict-aliasing -fvisibility=hidden -I../../src
-ifneq ($(OS), FREEBSD)
-  CFLAGS += -pipe -O3
-endif
+CFLAGS += -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
 # On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
@@ -110,15 +107,7 @@ ifeq ($(OS), FREEBSD)
   endif
 endif
 ifeq ($(OS), LINUX)
-  ifeq ($(CPU), X86)
-    ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -march=athlon64
-      LDFLAGS += -ldl
-    else
-      CFLAGS += -mmmx -msse -march=i686 -mtune=pentium-m -fomit-frame-pointer
-      LDFLAGS += -ldl
-    endif
-  endif
+  LDFLAGS += -ldl
 endif
 ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
@@ -130,9 +119,6 @@ ifeq ($(OS), OSX)
       LDFLAGS += -arch i686 -ldl
     endif
   endif
-endif
-ifeq ($(CPU), PPC)
-  CFLAGS += -mcpu=powerpc
 endif
 
 # test for presence of SDL
