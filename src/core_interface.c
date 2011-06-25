@@ -35,6 +35,7 @@
 #include "osal_dynamiclib.h"
 
 #include "version.h"
+#include "core_interface.h"
 
 /* global data definitions */
 int g_CoreCapabilities;
