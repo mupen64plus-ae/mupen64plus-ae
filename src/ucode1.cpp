@@ -825,17 +825,17 @@ static void LOADADPCM (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
     //assert ((inst1&0xffff) <= 0x80);
     u16 *table = (u16 *)(rsp.RDRAM+v0);
     for (u32 x = 0; x < ((inst1&0xffff)>>0x4); x++) {
-        adpcmtable[0x0+(x<<3)^S] = table[0];
-        adpcmtable[0x1+(x<<3)^S] = table[1];
+        adpcmtable[(0x0+(x<<3))^S] = table[0];
+        adpcmtable[(0x1+(x<<3))^S] = table[1];
 
-        adpcmtable[0x2+(x<<3)^S] = table[2];
-        adpcmtable[0x3+(x<<3)^S] = table[3];
+        adpcmtable[(0x2+(x<<3))^S] = table[2];
+        adpcmtable[(0x3+(x<<3))^S] = table[3];
 
-        adpcmtable[0x4+(x<<3)^S] = table[4];
-        adpcmtable[0x5+(x<<3)^S] = table[5];
+        adpcmtable[(0x4+(x<<3))^S] = table[4];
+        adpcmtable[(0x5+(x<<3))^S] = table[5];
 
-        adpcmtable[0x6+(x<<3)^S] = table[6];
-        adpcmtable[0x7+(x<<3)^S] = table[7];
+        adpcmtable[(0x6+(x<<3))^S] = table[6];
+        adpcmtable[(0x7+(x<<3))^S] = table[7];
         table += 8;
     }
 }
