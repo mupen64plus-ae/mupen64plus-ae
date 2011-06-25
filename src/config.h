@@ -23,7 +23,6 @@
 #define __CONFIG_H__
 
 extern void load_configuration(int bPrintSummary);
-extern void save_controller_config(int iCtrlIdx);
 
 #endif /* __CONFIG_H__ */
 

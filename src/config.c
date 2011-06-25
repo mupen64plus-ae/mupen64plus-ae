@@ -30,6 +30,8 @@
 #include "autoconfig.h"
 #include "plugin.h"
 
+#include "config.h"
+
 #define HAT_POS_NAME( hat )         \
        ((hat == SDL_HAT_UP) ? "Up" :        \
        ((hat == SDL_HAT_DOWN) ? "Down" :    \
@@ -259,7 +261,7 @@ static int load_controller_config(const char *SectionName, int i)
 }
 
 /* global functions */
-void save_controller_config(int iCtrlIdx)
+static void save_controller_config(int iCtrlIdx)
 {
     m64p_handle pConfig;
     char SectionName[32], Param[32], ParamString[128];
