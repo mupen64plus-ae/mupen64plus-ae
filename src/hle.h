@@ -22,6 +22,7 @@
 #ifndef HLE_H
 #define HLE_H
 
+#define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
 
 #define RSP_HLE_VERSION        0x016304

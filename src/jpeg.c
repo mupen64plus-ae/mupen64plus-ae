@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_types.h"
 #include "m64p_plugin.h"
 #include "hle.h"
