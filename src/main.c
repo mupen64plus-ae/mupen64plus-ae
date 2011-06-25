@@ -146,7 +146,7 @@ ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
 ptr_ConfigGetParamString   ConfigGetParamString = NULL;
 
 /* Global functions */
-void DebugMessage(int level, const char *message, ...)
+static void DebugMessage(int level, const char *message, ...)
 {
   char msgbuf[1024];
   va_list args;
@@ -399,13 +399,13 @@ EXPORT int CALL InitiateAudio( AUDIO_INFO Audio_Info )
 static int underrun_count = 0;
 
 #ifdef USE_SRC
-float *_src = 0;
-unsigned int _src_len = 0;
-float *_dest = 0;
-unsigned int _dest_len = 0;
-int error;
-SRC_STATE *src_state;
-SRC_DATA src_data;
+static float *_src = 0;
+static unsigned int _src_len = 0;
+static float *_dest = 0;
+static unsigned int _dest_len = 0;
+static int error;
+static SRC_STATE *src_state;
+static SRC_DATA src_data;
 #endif
 
 static int resample(unsigned char *input, int input_avail, int oldsamplerate, unsigned char *output, int output_needed, int newsamplerate)
