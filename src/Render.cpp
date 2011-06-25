@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#define M64P_PLUGIN_PROTOTYPES 1
 #include "osal_preproc.h"
 #include "m64p_plugin.h"
 

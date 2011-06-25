@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <SDL_opengl.h>
 
+#define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
 #include "Config.h"
 #include "Debugger.h"

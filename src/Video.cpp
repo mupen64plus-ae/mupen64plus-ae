@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <SDL_opengl.h>
 
+#define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_types.h"
 #include "m64p_common.h"
 #include "m64p_plugin.h"
@@ -758,7 +759,7 @@ EXPORT void CALL ViWidthChanged(void)
     g_CritialSection.Unlock();
 }
 
-EXPORT BOOL CALL InitiateGFX(GFX_INFO Gfx_Info)
+EXPORT int CALL InitiateGFX(GFX_INFO Gfx_Info)
 {
     memset(&status, 0, sizeof(status));
     memcpy(&g_GraphicsInfo, &Gfx_Info, sizeof(GFX_INFO));
