@@ -666,7 +666,7 @@ l1:             mov esi, [ecx+ebx]
                      : "%rbx", "%rax", "memory", "cc"
                      );
 #elif !defined(NO_ASM)
-# ifndef defined(__PIC__)
+# if !defined(__PIC__)
            asm volatile("pusha                             \n"
                 "mov    pAsmStart, %%ecx           \n"  // = pStart
                 "mov    $0, %%edx                  \n"          // The CRC
