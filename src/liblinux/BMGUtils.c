@@ -33,7 +33,7 @@
 #endif // _WIN32
 
 /* error strings for all BMG errors */
-char BMGErrorStrings[17][128] = {
+static char BMGErrorStrings[17][128] = {
 "No Error",
 "Corrupted file or invalid file format",
 "Invalid bits per pixel for this file format",
@@ -54,7 +54,7 @@ char BMGErrorStrings[17][128] = {
 };
 
 /* stores last BMG error */
-BMGError LastBMGError;
+static BMGError LastBMGError;
 
 /* sets the last BMG error */
 void SetLastBMGError( BMGError err )
@@ -63,7 +63,7 @@ void SetLastBMGError( BMGError err )
 }
 
 /* returns the last error state */
-BMGError GetLastBMGError()
+BMGError GetLastBMGError(void)
 {
     return LastBMGError;
 }
@@ -82,24 +82,24 @@ void GetLastBMGErrorMessage( const char **msg )
 }
 
 /* Global background color variables */
-unsigned char BackgroundColor[4];
-struct BMGImageStruct BackgroundImage;
+static unsigned char BackgroundColor[4];
+static struct BMGImageStruct BackgroundImage;
 
 /* this function simply initializes the background info.  It is called from
    the DllEntryPoint function */
-void InitBackground()
+void InitBackground(void)
 {
     memset( (void *)BackgroundColor, 0xFF, 3 ); /* white */
     BackgroundColor[3] = 0; /* ignored */
     InitBMGImage( &BackgroundImage );
 }
 
-unsigned char *GetBackgroundColor()
+unsigned char *GetBackgroundColor(void)
 {
     return &BackgroundColor[0];
 }
 
-struct BMGImageStruct *GetBackgroundImage()
+struct BMGImageStruct *GetBackgroundImage(void)
 {
     return &BackgroundImage;
 }

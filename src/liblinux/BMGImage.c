@@ -296,7 +296,7 @@ void FreeBMGMemory( unsigned char *mem )
 
 /* converts a BGR to a gray scale
 // color[0] = blue, color[1] = green, color[2] = red */
-unsigned char CreateGrayScale( unsigned char *color )
+static unsigned char CreateGrayScale( unsigned char *color )
 {
     return (unsigned char)( 0.299f * color[2] + 0.587f * color[1]
                                + 0.114f * color[0] + 0.5f );

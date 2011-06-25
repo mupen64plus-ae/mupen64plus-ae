@@ -45,7 +45,7 @@
 * this function will expand 1 byte of a 4-color bit values to 2 bytes of
 * a 16 color bit value.
 */
-void Expand2to4( char *b4, char b2, int NumBytes )
+static void Expand2to4( char *b4, char b2, int NumBytes )
 {
     struct TwoBit
     {
@@ -72,21 +72,21 @@ void Expand2to4( char *b4, char b2, int NumBytes )
 }
 
 /* this stuff is necessary because the normal png_init_io() method crashes in Win32 */
-void user_read_data(png_structp png_read, png_bytep data, png_size_t length)
+static void user_read_data(png_structp png_read, png_bytep data, png_size_t length)
 {
     FILE *fPtr = (FILE *) png_get_io_ptr(png_read);
     if (fread(data, 1, length, fPtr) != length)
         fprintf(stderr, "Failed to read %i bytes from PNG file.\n", (int) length);
 }
 
-void user_write_data(png_structp png_write, png_bytep data, png_size_t length)
+static void user_write_data(png_structp png_write, png_bytep data, png_size_t length)
 {
     FILE *fPtr = (FILE *) png_get_io_ptr(png_write);
     if (fwrite(data, 1, length, fPtr) != length)
         fprintf(stderr, "Failed to write %i bytes to PNG file.\n", (int) length);
 }
 
-void user_flush_data(png_structp png_read)
+static void user_flush_data(png_structp png_read)
 {
     FILE *fPtr = (FILE *) png_get_io_ptr(png_read);
     fflush(fPtr);

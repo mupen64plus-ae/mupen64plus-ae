@@ -35,7 +35,7 @@
 #include <string.h>
 #endif // _WIN32
 
-const unsigned short BMP_ID = 0x4D42;
+static const unsigned short BMP_ID = 0x4D42;
 
 /*
     ReadBMP - reads the image data from a BMP files and stores it in a
