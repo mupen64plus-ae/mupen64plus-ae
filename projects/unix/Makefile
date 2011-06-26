@@ -215,9 +215,9 @@ clean:
 rebuild: clean all
 
 install: $(TARGET)
-	$(INSTALL) -d -v "$(DESTDIR)$(BINDIR)"
+	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
 	$(INSTALL) -m 0755 $(TARGET) "$(DESTDIR)$(BINDIR)"
-	$(INSTALL) -d -v "$(DESTDIR)$(MANDIR)/man6"
+	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6"
 	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(DESTDIR)$(MANDIR)/man6"
 
 uninstall:
