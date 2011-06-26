@@ -22,7 +22,7 @@
 #ifndef CHEAT_H
 #define CHEAT_H
 
-#ifdef _BIG_ENDIAN
+#ifdef M64P_BIG_ENDIAN
   #define sl(mot) mot
 #else
   #define sl(mot) (((mot & 0xFF) << 24) | ((mot & 0xFF00) <<  8) | ((mot & 0xFF0000) >>  8) | ((mot & 0xFF000000) >> 24))
