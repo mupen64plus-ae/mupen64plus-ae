@@ -161,7 +161,7 @@ ifeq ($(BINDIR),)
   BINDIR := $(PREFIX)/bin
 endif
 ifeq ($(MANDIR),)
-  MANDIR := $(PREFIX)/man/man6
+  MANDIR := $(PREFIX)/man
 endif
 
 SRCDIR = ../../src
@@ -201,7 +201,7 @@ targets:
 	@echo "  Install Options:"
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
-	@echo "    MANDIR=path    == path to install mupen64plus manual page (default: PREFIX/man/man6/)"
+	@echo "    MANDIR=path    == path to install mupen64plus manual page (default: PREFIX/man)"
 	@echo "    DESTDIR=path   == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
@@ -217,8 +217,8 @@ rebuild: clean all
 install: $(TARGET)
 	$(INSTALL) -d -v "$(DESTDIR)$(BINDIR)"
 	$(INSTALL) -m 0755 $(TARGET) "$(DESTDIR)$(BINDIR)"
-	$(INSTALL) -d -v "$(DESTDIR)$(MANDIR)"
-	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(DESTDIR)$(MANDIR)"
+	$(INSTALL) -d -v "$(DESTDIR)$(MANDIR)/man6"
+	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(DESTDIR)$(MANDIR)/man6"
 
 uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/mupen64plus.6.gz"
