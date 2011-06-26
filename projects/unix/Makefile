@@ -193,7 +193,10 @@ ifeq ($(SHAREDIR),)
   SHAREDIR := $(PREFIX)/share/mupen64plus
 endif
 ifeq ($(LIBDIR),)
-  LIBDIR := $(PREFIX)/lib/mupen64plus
+  LIBDIR := $(PREFIX)/lib
+endif
+ifeq ($(PLUGINDIR),)
+  PLUGINDIR := $(LIBDIR)/mupen64plus
 endif
 
 SRCDIR = ../../src
@@ -272,7 +275,8 @@ targets:
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
-	@echo "    LIBDIR=path   == path to install plugin libraries (default: PREFIX/lib/mupen64plus)"
+	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
+	@echo "    PLUGINDIR=path == path to install plugin libraries (default: LIBDIR/mupen64plus)"
 	@echo "    DESTDIR=path  == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1       == add debugging symbols"
@@ -280,13 +284,13 @@ targets:
 all: $(TARGET)
 
 install: $(TARGET)
-	$(INSTALL) -d -v "$(DESTDIR)$(LIBDIR)"
-	$(INSTALL) -m 0644 $(TARGET) "$(DESTDIR)$(LIBDIR)"
+	$(INSTALL) -d -v "$(DESTDIR)$(PLUGINDIR)"
+	$(INSTALL) -m 0644 $(TARGET) "$(DESTDIR)$(PLUGINDIR)"
 	$(INSTALL) -d -v "$(DESTDIR)$(SHAREDIR)"
 	$(INSTALL) -m 0644 "../../data/RiceVideoLinux.ini" "$(DESTDIR)$(SHAREDIR)"
 
 uninstall:
-	rm -f "$(DESTDIR)$(LIBDIR)/$(TARGET)"
+	rm -f "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
 	rm -f "$(DESTDIR)$(SHAREDIR)/RiceVideoLinux.ini"
 
 clean:
