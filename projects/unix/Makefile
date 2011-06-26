@@ -199,7 +199,10 @@ ifeq ($(PREFIX),)
   PREFIX := /usr/local
 endif
 ifeq ($(LIBDIR),)
-  LIBDIR := $(PREFIX)/lib/mupen64plus
+  LIBDIR := $(PREFIX)/lib
+endif
+ifeq ($(PLUGINDIR),)
+  PLUGINDIR := $(LIBDIR)/mupen64plus
 endif
 
 SRCDIR = ../../src
@@ -244,7 +247,8 @@ targets:
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
-	@echo "    LIBDIR=path   == path to install plugin libraries (default: PREFIX/lib/mupen64plus)"
+	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
+	@echo "    PLUGINDIR=path == path to install plugin libraries (default: LIBDIR/mupen64plus)"
 	@echo "    DESTDIR=path  == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1       == add debugging symbols"
@@ -253,11 +257,11 @@ targets:
 all: $(TARGET)
 
 install: $(TARGET)
-	$(INSTALL) -d -v "$(DESTDIR)$(LIBDIR)"
-	$(INSTALL) -m 0644 $(TARGET) "$(DESTDIR)$(LIBDIR)"
+	$(INSTALL) -d -v "$(DESTDIR)$(PLUGINDIR)"
+	$(INSTALL) -m 0644 $(TARGET) "$(DESTDIR)$(PLUGINDIR)"
 
 uninstall:
-	rm -f "$(DESTDIR)$(LIBDIR)/$(TARGET)"
+	rm -f "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
 
 clean:
 	rm -rf ./_obj/* $(TARGET)
