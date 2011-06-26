@@ -707,7 +707,7 @@ static void INTERLEAVE2 (void) { // Needs accuracy verification...
         Left2=*(inSrcL++);
         Right2=*(inSrcR++);
 
-#ifdef _BIG_ENDIAN
+#ifdef M64P_BIG_ENDIAN
         *(outbuff++)=Right;
         *(outbuff++)=Left;
         *(outbuff++)=Right2;
