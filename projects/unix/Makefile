@@ -49,6 +49,12 @@ ifeq ("$(UNAME)","FreeBSD")
   SHARED = -shared
   SO_EXTENSION = so
 endif
+ifeq ("$(UNAME)","OpenBSD")
+  OS = FREEBSD
+  SHARED = -shared
+  SO_EXTENSION = so
+  $(warning OS type "$(UNAME)" not officially supported.')
+endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
   SHARED = -shared
