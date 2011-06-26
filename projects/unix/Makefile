@@ -257,7 +257,7 @@ targets:
 all: $(TARGET)
 
 install: $(TARGET)
-	$(INSTALL) -d -v "$(DESTDIR)$(PLUGINDIR)"
+	$(INSTALL) -d "$(DESTDIR)$(PLUGINDIR)"
 	$(INSTALL) -m 0644 $(TARGET) "$(DESTDIR)$(PLUGINDIR)"
 
 uninstall:
