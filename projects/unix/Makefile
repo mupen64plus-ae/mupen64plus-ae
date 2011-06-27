@@ -78,17 +78,17 @@ ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
 
-# base CFLAGS, LIBS, and LDFLAGS
+# base CFLAGS, LDLIBS, and LDFLAGS
 CFLAGS += -ffast-math -fno-strict-aliasing -pthread -I../../src
-LDFLAGS += -pthread
+LDLIBS += -pthread
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
-  LDFLAGS += -ldl
+  LDLIBS += -ldl
 endif
 ifeq ($(OS), OSX)
   # The mac version of SDL requires inclusion of SDL_main in the executable
-  LDFLAGS += -ldl $(shell sdl-config --libs)
+  LDLIBS += -ldl $(shell sdl-config --libs)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
@@ -131,10 +131,23 @@ else
   endif
 endif
 
-# set shell function names
-CC      ?= gcc
-CXX     ?= g++
-INSTALL ?= install
+# reduced compile output when running make without V=1
+ifneq ($(findstring $(MAKEFLAGS),s),s)
+ifndef V
+	Q_CC  = @echo '    CC  '$@;
+	Q_LD  = @echo '    LD  '$@;
+endif
+endif
+
+# set base program pointers and flags
+CC       ?= gcc
+CXX      ?= g++
+RM       ?= rm -f
+INSTALL  ?= install
+MKDIR ?= mkdir -p
+COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+LINK.o = $(Q_LD)$(CC) $(LDFLAGS) $(TARGET_ARCH)
+
 ifeq ($(OS),OSX)
   STRIP	?= strip -x 
 else
@@ -184,7 +197,7 @@ SOURCE = \
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
-$(shell mkdir -p $(OBJDIRS))
+$(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
 TARGET = mupen64plus
@@ -213,8 +226,7 @@ targets:
 all: $(TARGET)
 
 clean:
-	rm -rf ./_obj/* $(TARGET)
-	rmdir ./_obj
+	$(RM) -r ./_obj $(TARGET)
 
 rebuild: clean all
 
@@ -225,24 +237,18 @@ install: $(TARGET)
 	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(DESTDIR)$(MANDIR)/man6"
 
 uninstall:
-	rm -f "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/mupen64plus.6.gz"
+	$(RM) "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/mupen64plus.6.gz"
 
 # build dependency files
 CFLAGS += -MD
 -include $(OBJECTS:.o=.d)
 
-# reduced compile output when running make without V=1
-ifneq ($(findstring $(MAKEFLAGS),s),s)
-ifndef V
-	Q_CC  = @echo '    CC  '$@;
-	Q_LD  = @echo '    LD  '$@;
-endif
-endif
+# standard build rules
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(COMPILE.c) -o $@ $<
 
-# build rules
 $(TARGET): $(OBJECTS)
-	$(Q_LD)$(CC) $^ $(LDFLAGS) $(SRC_LIBS) -o $@
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
 	$(STRIP) $@
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(Q_CC)$(CC) -o $@ $(CFLAGS) -c $<
+.PHONY: all clean install uninstall targets
