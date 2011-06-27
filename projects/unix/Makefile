@@ -92,8 +92,9 @@ ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
 
-# base CFLAGS, LIBS, and LDFLAGS
+# base CFLAGS, LDLIBS, and LDFLAGS
 CFLAGS += -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
+LDFLAGS += $(SHARED)
 
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
 # On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
@@ -113,16 +114,17 @@ ifeq ($(OS), FREEBSD)
   endif
 endif
 ifeq ($(OS), LINUX)
-  LDFLAGS += -ldl
+  LDLIBS += -ldl
 endif
 ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -ldl
+      LDLIBS += -ldl
     else
       CFLAGS += -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -arch i686 -ldl
+      LDFLAGS += -arch i686
+      LDLIBS += -ldl
     endif
   endif
 endif
@@ -135,10 +137,10 @@ ifeq ("$(UNAME)","Darwin")
     CFLAGS  += $(shell sdl-config --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
-    LDFLAGS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
+    LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
 else
     CFLAGS  += $(shell sdl-config --cflags)
-    LDFLAGS += $(shell sdl-config --libs)
+    LDLIBS += $(shell sdl-config --libs)
 endif
 
 # set mupen64plus core API header path
@@ -163,11 +165,23 @@ else
   endif
 endif
 
-# set shell function names
-CC      ?= gcc
-CXX     ?= g++
-LD      ?= g++
-INSTALL ?= install
+# reduced compile output when running make without V=1
+ifneq ($(findstring $(MAKEFLAGS),s),s)
+ifndef V
+    Q_CC = @echo '    CC  '$@;
+    Q_LD = @echo '    LD  '$@;
+endif
+endif
+
+# set base program pointers and flags
+CC       ?= gcc
+CXX      ?= g++
+RM       ?= rm -f
+INSTALL  ?= install
+MKDIR ?= mkdir -p
+COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+LINK.o = $(Q_LD)$(CC) $(LDFLAGS) $(TARGET_ARCH)
+
 ifeq ($(OS),OSX)
   STRIP	?= strip -x 
 else
@@ -210,19 +224,11 @@ SOURCE = \
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
-$(shell mkdir -p $(OBJDIRS))
+$(shell $(MKDIR) $(OBJDIRS))
 
 # build dependency files
 CFLAGS += -MD
 -include $(OBJECTS:.o=.d)
-
-# reduced compile output when running make without V=1
-ifneq ($(findstring $(MAKEFLAGS),s),s)
-ifndef V
-    Q_CC = @echo '    CC  '$@;
-    Q_LD = @echo '    LD  '$@;
-endif
-endif
 
 # build targets
 TARGET = mupen64plus-input-sdl.$(SO_EXTENSION)
@@ -257,20 +263,19 @@ install: $(TARGET)
 	$(INSTALL) -m 0644 "../../data/InputAutoCfg.ini" "$(DESTDIR)$(SHAREDIR)"
 
 uninstall:
-	rm -f "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
+	$(RM) "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
 
 clean:
-	rm -rf ./_obj/* $(TARGET)
-	rmdir ./_obj
+	$(RM) -r ./_obj $(TARGET)
 
 rebuild: clean all
 
-# build rules
+# standard build rules
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(COMPILE.c) -o $@ $<
+
 $(TARGET): $(OBJECTS)
-	$(Q_LD)$(CC) $(SHARED) $^ $(LDFLAGS) -o $@
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
 	$(STRIP) $@
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(Q_CC)$(CC) -o $@ $(CFLAGS) -c $<
-
-
+.PHONY: all clean install uninstall targets
