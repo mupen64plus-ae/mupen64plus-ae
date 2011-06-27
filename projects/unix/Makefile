@@ -95,9 +95,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LIBS, and LDFLAGS
-CFLAGS += -Wall -msse -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src $(shell pkg-config --cflags gl libpng)
+CFLAGS += -Wall -msse -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 CXXFLAGS += -fvisibility-inlines-hidden
-LDFLAGS += $(shell pkg-config --libs gl libpng)
 
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
 # On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
@@ -130,6 +129,19 @@ ifeq ($(OS), OSX)
     endif
   endif
 endif
+
+# test for essential build dependencies
+ifeq ($(shell which pkg-config 2>/dev/null),)
+  $(error pkg-config not found)
+endif
+ifeq ($(shell pkg-config --modversion gl 2>/dev/null),)
+  $(error No OpenGL development libraries found!)
+endif
+ifeq ($(shell pkg-config --modversion libpng 2>/dev/null),)
+  $(error No libpng development libraries found!)
+endif
+CFLAGS += $(shell pkg-config --cflags gl libpng)
+LDFLAGS += $(shell pkg-config --libs gl libpng)
 
 # test for presence of SDL
 ifeq ($(shell which sdl-config 2>/dev/null),)
