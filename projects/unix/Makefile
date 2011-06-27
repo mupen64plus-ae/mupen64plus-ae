@@ -237,7 +237,7 @@ install: $(TARGET)
 	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(DESTDIR)$(MANDIR)/man6"
 
 uninstall:
-	$(RM) "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/mupen64plus.6.gz"
+	$(RM) "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/man6/mupen64plus.6.gz"
 
 # build dependency files
 CFLAGS += -MD
