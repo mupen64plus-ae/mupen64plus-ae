@@ -94,9 +94,10 @@ ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
 
-# base CFLAGS, LIBS, and LDFLAGS
+# base CFLAGS, LDLIBS, and LDFLAGS
 CFLAGS += -Wall -msse -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 CXXFLAGS += -fvisibility-inlines-hidden
+LDFLAGS += $(SHARED)
 
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
 # On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
@@ -114,7 +115,7 @@ endif
 
 # set special flags per-system
 ifeq ($(OS), LINUX)
-  LDFLAGS += -ldl
+  LDLIBS += -ldl
   # only export api symbols
   LDFLAGS += -Wl,-version-script,$(SRCDIR)/video_api_export.ver
 endif
@@ -122,10 +123,12 @@ ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -ldl -bundle -framework OpenGL -arch x86_64
+      LDFLAGS += -bundle -framework OpenGL -arch x86_64
+      LDLIBS += -ldl
     else
       CFLAGS += -pipe -O3 -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -ldl -bundle -framework OpenGL -arch i686
+      LDFLAGS += -bundle -framework OpenGL -arch i686
+      LDLIBS += -ldl
     endif
   endif
 endif
@@ -141,7 +144,7 @@ ifeq ($(shell pkg-config --modversion libpng 2>/dev/null),)
   $(error No libpng development libraries found!)
 endif
 CFLAGS += $(shell pkg-config --cflags gl libpng)
-LDFLAGS += $(shell pkg-config --libs gl libpng)
+LDLIBS += $(shell pkg-config --libs gl libpng)
 
 # test for presence of SDL
 ifeq ($(shell which sdl-config 2>/dev/null),)
@@ -149,17 +152,17 @@ ifeq ($(shell which sdl-config 2>/dev/null),)
 endif
 ifeq ($(OS),FREEBSD)
     CFLAGS  += $(shell sdl-config --cflags)
-    LDFLAGS += $(shell sdl-config --libs)
+    LDLIBS += $(shell sdl-config --libs)
 endif
 ifeq ($(OS),OSX)
     CFLAGS  += $(shell sdl-config --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
-    LDFLAGS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
+    LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
 endif
 ifeq ($(OS),LINUX)
     CFLAGS  += $(shell sdl-config --cflags)
-    LDFLAGS += $(shell sdl-config --libs)
+    LDLIBS += $(shell sdl-config --libs)
 endif
 
 # set mupen64plus core API header path
@@ -184,10 +187,25 @@ else
   endif
 endif
 
-# set shell function names
-CC      ?= gcc
-CXX     ?= g++
-INSTALL ?= install
+# reduced compile output when running make without V=1
+ifneq ($(findstring $(MAKEFLAGS),s),s)
+ifndef V
+	Q_CC  = @echo '    CC  '$@;
+	Q_CXX = @echo '    CXX '$@;
+	Q_LD  = @echo '    LD  '$@;
+endif
+endif
+
+# set base program pointers and flags
+CC       ?= gcc
+CXX      ?= g++
+RM       ?= rm -f
+INSTALL  ?= install
+MKDIR ?= mkdir -p
+COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+COMPILE.cc = $(Q_CXX)$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+LINK.o = $(Q_LD)$(CXX) $(LDFLAGS) $(TARGET_ARCH)
+
 ifeq ($(OS),OSX)
   STRIP	?= strip -x 
 else
@@ -273,7 +291,7 @@ SOURCE = \
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
-$(shell mkdir -p $(OBJDIRS))
+$(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
 TARGET = mupen64plus-video-rice.$(SO_EXTENSION)
@@ -308,12 +326,11 @@ install: $(TARGET)
 	$(INSTALL) -m 0644 "../../data/RiceVideoLinux.ini" "$(DESTDIR)$(SHAREDIR)"
 
 uninstall:
-	rm -f "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
-	rm -f "$(DESTDIR)$(SHAREDIR)/RiceVideoLinux.ini"
+	$(RM) "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
+	$(RM) "$(DESTDIR)$(SHAREDIR)/RiceVideoLinux.ini"
 
 clean:
-	rm -rf ./_obj/* $(TARGET)
-	rmdir ./_obj
+	$(RM) -r ./_obj $(TARGET)
 
 rebuild: clean all
 
@@ -323,22 +340,15 @@ CFLAGS += -MD
 
 CXXFLAGS += $(CFLAGS)
 
-# reduced compile output when running make without V=1
-ifneq ($(findstring $(MAKEFLAGS),s),s)
-ifndef V
-	Q_CC  = @echo '    CC  '$@;
-	Q_CXX = @echo '    CXX '$@;
-	Q_LD  = @echo '    LD  '$@;
-endif
-endif
-
-# build rules
-$(TARGET): $(OBJECTS)
-	$(Q_LD)$(CXX) $(SHARED) $^ $(LDFLAGS) -o $@
-	$(STRIP) $@
-
+# standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	$(Q_CC)$(CC) -o $@ $(CFLAGS) -c $<
+	$(COMPILE.c) -o $@ $<
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(Q_CXX)$(CXX) -o $@ $(CXXFLAGS) -c $<
+	$(COMPILE.cc) -o $@ $<
+
+$(TARGET): $(OBJECTS)
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
+	$(STRIP) $@
+
+.PHONY: all clean install uninstall targets
