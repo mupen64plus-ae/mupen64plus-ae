@@ -264,6 +264,7 @@ install: $(TARGET)
 
 uninstall:
 	$(RM) "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
+	$(RM) "$(DESTDIR)$(SHAREDIR)/InputAutoCfg.ini"
 
 clean:
 	$(RM) -r ./_obj $(TARGET)
