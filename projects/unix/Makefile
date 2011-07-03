@@ -79,7 +79,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
-CFLAGS += -ffast-math -fno-strict-aliasing -pthread -I../../src
+OPTFLAGS ?= -O3
+CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -pthread -I../../src
 LDLIBS += -pthread
 
 # set special flags per-system
@@ -215,6 +216,7 @@ targets:
 	@echo "    PLUGINDIR=path == default path to search for plugins"
 	@echo "    SHAREDIR=path  == default path to search for shared data files"
 	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
+	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3)"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
