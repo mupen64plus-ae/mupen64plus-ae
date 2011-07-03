@@ -234,6 +234,7 @@ targets:
 	@echo "    DESTDIR=path  == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1       == add debugging symbols"
+	@echo "    V=1           == show verbose compiler output"
 
 all: $(TARGET)
 
