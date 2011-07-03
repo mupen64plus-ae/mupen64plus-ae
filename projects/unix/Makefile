@@ -255,6 +255,7 @@ targets:
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1       == add debugging symbols"
 	@echo "    PLUGINDBG=1   == print extra debugging information while running"
+	@echo "    V=1           == show verbose compiler output"
 
 all: $(TARGET)
 
