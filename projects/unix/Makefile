@@ -95,7 +95,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
-CFLAGS += -Wall -msse -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
+OPTFLAGS ?= -O3
+CFLAGS += $(OPTFLAGS) -Wall -msse -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
 
@@ -308,6 +309,7 @@ targets:
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    NO_ASM=1      == build without inline assembly code (x86 MMX/SSE)"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
+	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
