@@ -93,7 +93,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
-CFLAGS += -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
+OPTFLAGS ?= -O3
+CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 LDFLAGS += $(SHARED)
 
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
@@ -244,6 +245,7 @@ targets:
 	@echo "  Options:"
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
+	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
