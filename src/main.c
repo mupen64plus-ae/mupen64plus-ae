@@ -166,6 +166,10 @@ static void DebugMessage(int level, const char *message, ...)
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
                                    void (*DebugCallback)(void *, int, const char *))
 {
+    ptr_CoreGetAPIVersions CoreAPIVersionFunc;
+    
+    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
+    
     if (l_PluginInit)
         return M64ERR_ALREADY_INIT;
 
@@ -174,14 +178,13 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     l_DebugCallContext = Context;
 
     /* attach and call the CoreGetAPIVersions function, check Config API version for compatibility */
-    ptr_CoreGetAPIVersions CoreAPIVersionFunc;
     CoreAPIVersionFunc = (ptr_CoreGetAPIVersions) osal_dynlib_getproc(CoreLibHandle, "CoreGetAPIVersions");
     if (CoreAPIVersionFunc == NULL)
     {
         DebugMessage(M64MSG_ERROR, "Core emulator broken; no CoreAPIVersionFunc() function found.");
         return M64ERR_INCOMPATIBLE;
     }
-    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
+    
     (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, NULL);
     if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000))
     {
