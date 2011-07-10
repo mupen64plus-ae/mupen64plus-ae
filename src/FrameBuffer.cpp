@@ -645,9 +645,9 @@ l1:             mov esi, [ecx+ebx]
             }
 #elif defined(__GNUC__) && defined(__x86_64__) && !defined(NO_ASM)
         asm volatile(" xorl          %k2,      %k2           \n"
-                     " movsxl        %k4,      %q4           \n"
+                     " movslq        %k4,      %q4           \n"
                      "0:                                     \n"
-                     " movsxl         %3,    %%rbx           \n"
+                     " movslq         %3,    %%rbx           \n"
                      " sub            $4,    %%rbx           \n"
                      "1:                                     \n"
                      " movl (%0,%%rbx,1),    %%eax           \n"

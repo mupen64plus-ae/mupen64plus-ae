@@ -384,7 +384,7 @@ __declspec( naked ) void  __fastcall SSEVec3TransformDKR(XVECTOR4 &pOut, const X
 void SSEVec3Transform(int i)
 {
   asm volatile(" shl               $4,      %0   \n"
-               " movsxl           %k0,     %q0   \n"
+               " movslq           %k0,     %q0   \n"
                " movaps      (%1,%q0),  %%xmm1   \n"
                " movaps         0(%2),  %%xmm4   \n"
                " movaps        16(%2),  %%xmm5   \n"
