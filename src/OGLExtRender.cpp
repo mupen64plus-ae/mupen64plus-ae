@@ -170,7 +170,6 @@ void COGLExtRender::SetTextureUFlag(TextureUVFlag dwFlag, uint32 dwTile)
                 BindTexture(pTexture->m_dwTextureName, textureNo);
             }
             SetTexWrapS(textureNo, OGLXUVFlagMaps[dwFlag].realFlag);
-            m_bClampS[textureNo] = dwFlag==TEXTURE_UV_FLAG_CLAMP?true:false;
         }
     }
 }
@@ -212,7 +211,6 @@ void COGLExtRender::SetTextureVFlag(TextureUVFlag dwFlag, uint32 dwTile)
                 BindTexture(pTexture->m_dwTextureName, textureNo);
             }
             SetTexWrapT(textureNo, OGLXUVFlagMaps[dwFlag].realFlag);
-            m_bClampT[textureNo] = dwFlag==TEXTURE_UV_FLAG_CLAMP?true:false;
         }
     }
 }

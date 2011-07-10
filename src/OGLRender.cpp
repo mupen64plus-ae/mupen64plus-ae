@@ -41,8 +41,6 @@ OGLRender::OGLRender()
     m_bSupportFogCoordExt = pcontext->m_bSupportFogCoord;
     m_bMultiTexture = pcontext->m_bSupportMultiTexture;
     m_bSupportClampToEdge = false;
-    m_bClampS[0] = false;
-    m_bClampT[0] = m_bClampT[1] = false;
     for( int i=0; i<8; i++ )
     {
         m_curBoundTex[i]=0;
@@ -487,7 +485,6 @@ void OGLRender::SetTextureUFlag(TextureUVFlag dwFlag, uint32 dwTile)
             BindTexture(pTexture->m_dwTextureName, 0);
         }
         SetTexWrapS(0, OGLXUVFlagMaps[dwFlag].realFlag);
-        m_bClampS[0] = dwFlag==TEXTURE_UV_FLAG_CLAMP?true:false;
     }
 }
 void OGLRender::SetTextureVFlag(TextureUVFlag dwFlag, uint32 dwTile)
@@ -502,7 +499,6 @@ void OGLRender::SetTextureVFlag(TextureUVFlag dwFlag, uint32 dwTile)
             BindTexture(pTexture->m_dwTextureName, 0);
         }
         SetTexWrapT(0, OGLXUVFlagMaps[dwFlag].realFlag);
-        m_bClampT[0] = dwFlag==TEXTURE_UV_FLAG_CLAMP?true:false;
     }
 }
 

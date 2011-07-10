@@ -104,8 +104,6 @@ protected:
     bool m_bSupportFogCoordExt;
     bool m_bMultiTexture;
     bool m_bSupportClampToEdge;
-    bool m_bClampS[2];
-    bool m_bClampT[2];
 
     GLuint  m_curBoundTex[8];
     BOOL    m_texUnitEnabled[8];
