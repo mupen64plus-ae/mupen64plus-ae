@@ -102,8 +102,13 @@ LDFLAGS += $(SHARED)
 # Since we are building a shared library, we must compile with -fPIC for x86_64 CPUs.
 # On 32-bit systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(ARCH_DETECTED), 64BITS)
-  CFLAGS += -fPIC
+  PIC ?= 1
 endif
+ifeq ($(PIC), 1)
+  CFLAGS += -fPIC
+  LDFLAGS += -fPIC
+endif
+
 # tweak flags for 32-bit build on 64-bit system
 ifeq ($(ARCH_DETECTED), 64BITS_32)
   ifeq ($(OS), FREEBSD)
@@ -227,6 +232,7 @@ targets:
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
+	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
