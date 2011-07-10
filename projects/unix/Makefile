@@ -83,6 +83,11 @@ OPTFLAGS ?= -O3
 CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -pthread -I../../src
 LDLIBS += -pthread
 
+ifeq ($(PIE), 1)
+  CFLAGS += -fPIE
+  LDFLAGS += -fPIE -pie
+endif
+
 # set special flags per-system
 ifeq ($(OS), LINUX)
   LDLIBS += -ldl
@@ -217,6 +222,7 @@ targets:
 	@echo "    SHAREDIR=path  == default path to search for shared data files"
 	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3)"
+	@echo "    PIE=(1|0)      == Force enable/disable of position independent executables"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
