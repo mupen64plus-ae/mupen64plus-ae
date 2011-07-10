@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "liblinux/BMGLibPNG.h"
 #include "liblinux/BMGDLL.h"
 #include <sys/types.h>
+#include <algorithm>
 
 /************************************************************************/
 /* 2X filters                                                           */
@@ -309,7 +310,7 @@ void SharpenFilter_32(uint32 *pdata, uint32 width, uint32 height, uint32 pitch, 
                 val[z]=t5;
                 if( (t5*mul2) > (t1+t3+t7+t9+t2+t4+t6+t8)*mul1 )
                 {
-                    val[z]= min((((t5*mul3) - (t1+t3+t7+t9+t2+t4+t6+t8)*mul1)>>shift4),0xFF);
+                    val[z]= std::min((((t5*mul3) - (t1+t3+t7+t9+t2+t4+t6+t8)*mul1)>>shift4),0xFFU);
                 }
             }
             dest[x] = val[0]|(val[1]<<8)|(val[2]<<16)|(val[3]<<24);
@@ -376,7 +377,7 @@ void SharpenFilter_16(uint16 *pdata, uint32 width, uint32 height, uint32 pitch, 
                 if( (t5*mul2) > (t1+t3+t7+t9+t2+t4+t6+t8)*mul1 )
                 {
                     val[z] = (((t5*mul3) - (t1+t3+t7+t9+t2+t4+t6+t8)*mul1)>>shift4);
-                    val[z]= min(val[z],0xF);
+                    val[z]= std::min(val[z],(unsigned short)0xFU);
                 }
             }
             dest[x] = val[0]|(val[1]<<4)|(val[2]<<8)|(val[3]<<12);

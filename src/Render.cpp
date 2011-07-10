@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "liblinux/BMGLibPNG.h"
 
+#include <algorithm>
+
 extern FiddledVtx * g_pVtxBase;
 CRender * CRender::g_pRender=NULL;
 int CRender::gRenderReferenceCount=0;
@@ -1838,15 +1840,15 @@ void CRender::UpdateClipRectangle()
 
 void CRender::UpdateScissorWithClipRatio()
 {
-    gRSP.real_clip_scissor_left = max(gRDP.scissor.left, gRSP.clip_ratio_left);
-    gRSP.real_clip_scissor_top = max(gRDP.scissor.top, gRSP.clip_ratio_top);
-    gRSP.real_clip_scissor_right = min(gRDP.scissor.right,gRSP.clip_ratio_right);
-    gRSP.real_clip_scissor_bottom = min(gRDP.scissor.bottom, gRSP.clip_ratio_bottom);
+    gRSP.real_clip_scissor_left = std::max(gRDP.scissor.left, gRSP.clip_ratio_left);
+    gRSP.real_clip_scissor_top = std::max(gRDP.scissor.top, gRSP.clip_ratio_top);
+    gRSP.real_clip_scissor_right = std::min(gRDP.scissor.right,gRSP.clip_ratio_right);
+    gRSP.real_clip_scissor_bottom = std::min(gRDP.scissor.bottom, gRSP.clip_ratio_bottom);
 
-    gRSP.real_clip_scissor_left = max(gRSP.real_clip_scissor_left, 0);
-    gRSP.real_clip_scissor_top = max(gRSP.real_clip_scissor_top, 0);
-    gRSP.real_clip_scissor_right = min(gRSP.real_clip_scissor_right,windowSetting.uViWidth-1);
-    gRSP.real_clip_scissor_bottom = min(gRSP.real_clip_scissor_bottom, windowSetting.uViHeight-1);
+    gRSP.real_clip_scissor_left = std::max(gRSP.real_clip_scissor_left, 0);
+    gRSP.real_clip_scissor_top = std::max(gRSP.real_clip_scissor_top, 0);
+    gRSP.real_clip_scissor_right = std::min(gRSP.real_clip_scissor_right,windowSetting.uViWidth-1);
+    gRSP.real_clip_scissor_bottom = std::min(gRSP.real_clip_scissor_bottom, windowSetting.uViHeight-1);
 
     WindowSettingStruct &w = windowSetting;
     w.clipping.left = (uint32)(gRSP.real_clip_scissor_left*windowSetting.fMultX);

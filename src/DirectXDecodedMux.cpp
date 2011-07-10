@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "Combiner.h"
 #include "DirectXDecodedMux.h"
+#include <algorithm>
 
 //This function is called after Reformat to handel two texels in 1 cycle, D3D can not handle
 //two texels in a single stage, the texels must be splited into multiple stages
@@ -158,7 +159,7 @@ void CDirectXDecodedMux::Reformat(bool do_complement)
 {
     DecodedMux::Reformat(do_complement);
     ReformatAgainWithTwoTexels();
-    mType = max(max(max(splitType[0], splitType[1]),splitType[2]),splitType[3]);
+    mType = std::max(std::max(std::max(splitType[0], splitType[1]),splitType[2]),splitType[3]);
 }
 
 

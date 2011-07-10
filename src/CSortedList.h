@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _SORTED_LIST_H_
 #define _SORTED_LIST_H_
 
+#include <cstring>
+
 template<class Key, class Element>
 class CSortedList
 {
@@ -72,8 +74,8 @@ public:
 
             keys = new Key[maxSize];
             elements = new Element[maxSize];
-            memcpy(keys,oldkeys,oldmaxsize*sizeof(Key));
-            memcpy(elements,oldelements,oldmaxsize*sizeof(Element));
+            std::memcpy(keys,oldkeys,oldmaxsize*sizeof(Key));
+            std::memcpy(elements,oldelements,oldmaxsize*sizeof(Element));
         }
 
         for( i=0; i<curSize; i++ )
