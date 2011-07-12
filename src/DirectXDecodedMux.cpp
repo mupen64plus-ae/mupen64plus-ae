@@ -20,6 +20,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "DirectXDecodedMux.h"
 #include <algorithm>
 
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
 //This function is called after Reformat to handel two texels in 1 cycle, D3D can not handle
 //two texels in a single stage, the texels must be splited into multiple stages
 void CDirectXDecodedMux::ReformatAgainWithTwoTexels(void)

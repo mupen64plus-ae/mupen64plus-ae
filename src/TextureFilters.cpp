@@ -33,6 +33,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <sys/types.h>
 #include <algorithm>
 
+#ifdef min
+#undef min
+#endif
+
 /************************************************************************/
 /* 2X filters                                                           */
 /************************************************************************/
