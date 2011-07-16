@@ -8,24 +8,37 @@
 
 ********Notes for supported joysticks for auto-configuration:
 
-1. Logitech Dual Action gamepad, Logitech Cordless Rumblepad 2:
+1. Jess Tech Rumble Pad (Saitek Rumble)
+The left D-pad is mapped to the D-pad; The joystick is mapped to the left joystick of the gamepad; the C buttons are mapped to the gampad's right joystick. Start button is mapped to start; the A-button is mapped to the lowest button on the gamepad's right front; the B-button to the left button (buttons marked 3 and 1 on my gamepad). The L and R buttons are mapped to the lower left and right rear triggers; the Z button is mapped to the left upper rear trigger. All other buttons are unused. 
+
+2. Logitech Dual Action gamepad, Logitech Cordless Rumblepad 2:
 The digital pad maps to the N64 d-pad.  The left analog stick maps to the N64 analog stick.
 The right analog stick maps to the C-buttons,  and the buttons 2 and 1 map to A and B.
 Button 4 is the Z trigger, and the top shoulder buttons map to the left and right N64 triggers.
 Button 10 is the start button.
 The bottom shoulder buttons select the memory pack or rumble pak.
 
-2. Microsoft X-Box 360 pad:
+3. Microsoft X-Box 360 pad:
 C button U (up) and C button R (right) are assigned to the Y and B buttons.
 All 4 C buttons are assigned to the U and V axis (including the already configured up and right C buttons).
 The Z button has been assigned to the left trigger and switching the rumble on and off can be done with the right trigger.
 Because there are no other buttons left I decided to use the button click behavior of the left joystick to switch Mempak on and off.
 
-3. N64 controller:
+4. N64 controller:
 All controls are mapped to their proper place on the N64 controller with an Adaptoid or custom hardware with Gamecon driver.
 Rumble and Memory packs can be selected with the 'r' and 'm' keys, respectively.
 
-4. SAITEK P880:
+5. Playstation 3 Controller:
+Left analog stick - analog stick
+Right analog stick - C-pad
+D-Pad - D-Pad
+Cross - A
+Square - B
+L1 / R1 - L / R
+L2 - Z
+Start - Start
+
+6. SAITEK P880:
 Notes:
 The gamepad doesnt have enough keys to real assign all buttons. The second 
 analog stick can be used as button by pushing him insight.
@@ -39,17 +52,7 @@ used for A and B and the second and third row was used for C-Buttons - except
 for the Button next to the A button which would be C-Down but got the Z 
 button.
 
-5. Playstation 3 Controller:
-Left analog stick - analog stick
-Right analog stick - C-pad
-D-Pad - D-Pad
-Cross - A
-Square - B
-L1 / R1 - L / R
-L2 - Z
-Start - Start
-
-6. Default Keyboard interface:
+7. Default Keyboard interface:
 Analog Pad is "Arrow Keys"
 C Up/Left/Down/Right are "I", "J", "K", "L"
 DPad Up/Left/Down/Right are "W", "A", "S", "D"
