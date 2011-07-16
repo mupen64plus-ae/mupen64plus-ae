@@ -34,6 +34,7 @@ extern m64p_error DetachCoreLib(void);
 
 /* global variables from core_interface.c */
 extern int g_CoreCapabilities;
+extern int g_CoreAPIVersion;
 
 /* declarations of Core library handle and pointers to common functions */
 extern m64p_dynlib_handle      CoreHandle;

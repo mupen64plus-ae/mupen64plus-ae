@@ -39,6 +39,7 @@
 
 /* global data definitions */
 int g_CoreCapabilities;
+int g_CoreAPIVersion;
 
 /* definitions of pointers to Core common functions */
 ptr_CoreErrorMessage    CoreErrorMessage = NULL;
@@ -155,17 +156,17 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     }
     m64p_plugin_type PluginType = (m64p_plugin_type) 0;
     int Compatible = 0;
-    int CoreVersion = 0, APIVersion = 0;
+    int CoreVersion = 0;
     const char *CoreName = NULL;
-    (*CoreVersionFunc)(&PluginType, &CoreVersion, &APIVersion, &CoreName, &g_CoreCapabilities);
+    (*CoreVersionFunc)(&PluginType, &CoreVersion, &g_CoreAPIVersion, &CoreName, &g_CoreCapabilities);
     if (PluginType != M64PLUGIN_CORE)
         fprintf(stderr, "AttachCoreLib() Error: Shared library '%s' invalid; this is not the emulator core.\n", CoreLibFilepath);
     else if (CoreVersion < MINIMUM_CORE_VERSION)
         fprintf(stderr, "AttachCoreLib() Error: Shared library '%s' incompatible; core version %i.%i.%i is below minimum supported %i.%i.%i\n",
                 CoreLibFilepath, VERSION_PRINTF_SPLIT(CoreVersion), VERSION_PRINTF_SPLIT(MINIMUM_CORE_VERSION));
-    else if ((APIVersion & 0xffff0000) != (CORE_API_VERSION & 0xffff0000))
+    else if ((g_CoreAPIVersion & 0xffff0000) != (CORE_API_VERSION & 0xffff0000))
         fprintf(stderr, "AttachCoreLib() Error: Shared library '%s' incompatible; core API major version %i.%i.%i doesn't match with this application (%i.%i.%i)\n",
-                CoreLibFilepath, VERSION_PRINTF_SPLIT(APIVersion), VERSION_PRINTF_SPLIT(CORE_API_VERSION));
+                CoreLibFilepath, VERSION_PRINTF_SPLIT(g_CoreAPIVersion), VERSION_PRINTF_SPLIT(CORE_API_VERSION));
     else
         Compatible = 1;
     /* exit if not compatible */

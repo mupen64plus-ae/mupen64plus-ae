@@ -28,7 +28,7 @@
 
 #define CONSOLE_UI_NAME    "Mupen64Plus Console User-Interface"
 #define CONSOLE_UI_VERSION 0x016304
-#define CORE_API_VERSION   0x20000
+#define CORE_API_VERSION   0x20001
 #define CONFIG_API_VERSION 0x20000
 
 #define MINIMUM_CORE_VERSION   0x016300

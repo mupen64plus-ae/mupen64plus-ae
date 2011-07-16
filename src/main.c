@@ -180,6 +180,7 @@ static void printUsage(const char *progname)
            "    --fullscreen          : use fullscreen display mode\n"
            "    --windowed            : use windowed display mode\n"
            "    --resolution (res)    : display resolution (640x480, 800x600, 1024x768, etc)\n"
+           "    --nospeedlimit        : disable core speed limiter (should be used with dummy audio plugin)\n"
            "    --cheats (cheat-spec) : enable or list cheat codes for the given rom file\n"
            "    --corelib (filepath)  : use core library (filepath) (can be only filename or full path)\n"
            "    --configdir (dir)     : force configation directory to (dir); should contain mupen64plus.conf\n"
@@ -390,6 +391,17 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         {
             int Fullscreen = 0;
             (*ConfigSetParameter)(l_ConfigVideo, "Fullscreen", M64TYPE_BOOL, &Fullscreen);
+        }
+        else if (strcmp(argv[i], "--nospeedlimit") == 0)
+        {
+            int EnableSpeedLimit = 0;
+            if (g_CoreAPIVersion < 0x020001)
+                fprintf(stderr, "Warning: core library doesn't support --nospeedlimit\n");
+            else
+            {
+                if ((*CoreDoCommand)(M64CMD_CORE_STATE_SET, M64CORE_SPEED_LIMITER, &EnableSpeedLimit) != M64ERR_SUCCESS)
+                    fprintf(stderr, "Error: core gave error while setting --nospeedlimit option\n");
+            }
         }
         else if ((strcmp(argv[i], "--corelib") == 0 || strcmp(argv[i], "--configdir") == 0 ||
                   strcmp(argv[i], "--datadir") == 0) && ArgsLeft >= 1)
