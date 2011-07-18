@@ -105,6 +105,7 @@ enum {
 };
 
 enum {
+    TEXTURE_NO_MIPMAP = 0,
     TEXTURE_NO_FILTER,
     TEXTURE_BILINEAR_FILTER,
     TEXTURE_TRILINEAR_FILTER,
@@ -210,11 +211,10 @@ typedef struct {
     BOOL    bUseFullTMEM;
 
     BOOL    bShowFPS;
-    BOOL    bEnableMipmaping;
 
+    uint32  mipmapping;
     uint32  fogMethod;
     uint32  forceTextureFilter;
-    uint32  textureFilteringMethod;
     uint32  textureEnhancement;
     uint32  textureEnhancementControl;
     uint32  textureQuality;
