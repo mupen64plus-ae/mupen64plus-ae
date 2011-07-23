@@ -154,12 +154,6 @@ MKDIR ?= mkdir -p
 COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 LINK.o = $(Q_LD)$(CC) $(LDFLAGS) $(TARGET_ARCH)
 
-ifeq ($(OS),OSX)
-  STRIP	?= strip -x 
-else
-  STRIP	?= strip -s
-endif
-
 # set special flags for given Makefile parameters
 # note: COREDIR _must_ end in a slash if you want it to work; not necessary for the others
 ifneq ($(PLUGINDIR),)
@@ -173,7 +167,9 @@ ifneq ($(SHAREDIR),)
 endif
 ifeq ($(DEBUG),1)
   CFLAGS += -g
-  STRIP = true # disable binary strip
+  INSTALL_STRIP_FLAG ?= 
+else
+  INSTALL_STRIP_FLAG ?= -s
 endif
 
 # set installation options
@@ -241,7 +237,7 @@ rebuild: clean all
 
 install: $(TARGET)
 	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
-	$(INSTALL) -m 0755 $(TARGET) "$(DESTDIR)$(BINDIR)"
+	$(INSTALL) -m 0755 $(INSTALL_STRIP_FLAG) $(TARGET) "$(DESTDIR)$(BINDIR)"
 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6"
 	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(DESTDIR)$(MANDIR)/man6"
 
@@ -258,6 +254,5 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 $(TARGET): $(OBJECTS)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
-	$(STRIP) $@
 
 .PHONY: all clean install uninstall targets
