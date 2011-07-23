@@ -176,16 +176,12 @@ COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 COMPILE.cc = $(Q_CXX)$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 LINK.o = $(Q_LD)$(CXX) $(LDFLAGS) $(TARGET_ARCH)
 
-ifeq ($(OS),OSX)
-  STRIP	?= strip -x 
-else
-  STRIP	?= strip -s
-endif
-
 # set special flags for given Makefile parameters
 ifeq ($(DEBUG),1)
   CFLAGS += -g
-  STRIP = true # disable binary strip
+  INSTALL_STRIP_FLAG ?= 
+else
+  INSTALL_STRIP_FLAG ?= -s
 endif
 
 # set installation options
@@ -246,7 +242,7 @@ all: $(TARGET)
 
 install: $(TARGET)
 	$(INSTALL) -d "$(DESTDIR)$(PLUGINDIR)"
-	$(INSTALL) -m 0644 $(TARGET) "$(DESTDIR)$(PLUGINDIR)"
+	$(INSTALL) -m 0644 $(INSTALL_STRIP_FLAG) $(TARGET) "$(DESTDIR)$(PLUGINDIR)"
 
 uninstall:
 	$(RM) "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
@@ -271,6 +267,5 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 $(TARGET): $(OBJECTS)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
-	$(STRIP) $@
 
 .PHONY: all clean install uninstall targets
