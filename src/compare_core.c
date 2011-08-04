@@ -51,8 +51,10 @@ static void stop_it(void)
 
     errors++;
 #if !defined(WIN32)
-    if (errors > 7)
-        asm("int $3;");
+    #if defined(__i386__) || defined(__x86_64__)
+        if (errors > 7)
+            asm("int $3;");
+    #endif
 #endif
 }
 
