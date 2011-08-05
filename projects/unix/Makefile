@@ -65,17 +65,18 @@ ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
   CPU := X86
   ARCH_DETECTED := 32BITS
 endif
-# PPC doesn't work yet
-#ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
-#  CPU := PPC
-#  ARCH_DETECTED := 32BITS
-#  BIG_ENDIAN := 1
-#endif
-#ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
-#  CPU := PPC
-#  ARCH_DETECTED := 64BITS
-#  BIG_ENDIAN := 1
-#endif
+ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 32BITS
+  BIG_ENDIAN := 1
+  $(warning Architecture "$(HOST_CPU)" not officially supported.')
+endif
+ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
+  CPU := PPC
+  ARCH_DETECTED := 64BITS
+  BIG_ENDIAN := 1
+  $(warning Architecture "$(HOST_CPU)" not officially supported.')
+endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
