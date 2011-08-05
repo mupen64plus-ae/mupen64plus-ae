@@ -84,10 +84,12 @@ endif
 #ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
 #  CPU := PPC
 #  ARCH_DETECTED := 32BITS
+#  BIG_ENDIAN := 1
 #endif
 #ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
 #  CPU := PPC
 #  ARCH_DETECTED := 64BITS
+#  BIG_ENDIAN := 1
 #endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -106,6 +108,10 @@ endif
 ifeq ($(PIC), 1)
   CFLAGS += -fPIC
   LDFLAGS += -fPIC
+endif
+
+ifeq ($(BIG_ENDIAN), 1)
+  CFLAGS += -DM64P_BIG_ENDIAN
 endif
 
 # tweak flags for 32-bit build on 64-bit system
