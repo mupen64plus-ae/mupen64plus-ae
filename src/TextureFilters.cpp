@@ -1876,15 +1876,14 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
     }
 
     // calculate the texture size magnification by comparing the N64 texture size and the hi-res texture size
-    int scalex = width / (int)entry.ti.WidthToLoad;
-    int scaley = height / (int)entry.ti.HeightToLoad;
+    int scale = 1 << scaleShift;
     int mirrorx = 1;
     int mirrory = 1;
     if (entry.ti.WidthToCreate/entry.ti.WidthToLoad == 2) mirrorx = 2;
     if (entry.ti.HeightToCreate/entry.ti.HeightToLoad == 2) mirrory = 2;
-    entry.pEnhancedTexture = CDeviceBuilder::GetBuilder()->CreateTexture(entry.ti.WidthToCreate*scalex*mirrorx, entry.ti.HeightToCreate*scaley*mirrory);
+    entry.pEnhancedTexture = CDeviceBuilder::GetBuilder()->CreateTexture(entry.ti.WidthToCreate*scale, entry.ti.HeightToCreate*scale);
     DrawInfo info;
-
+    
     if( entry.pEnhancedTexture && entry.pEnhancedTexture->StartUpdate(&info) )
     {
 
@@ -1940,22 +1939,22 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
 
         if (mirrorx == 2)
         {
-            //printf("Mirror: ToCreate: (%d,%d) ToLoad: (%d,%d) Scale: (%i,%i) Mirror: (%i,%i) Size: (%i,%i) Mask: %i\n", entry.ti.WidthToCreate, entry.ti.HeightToCreate, entry.ti.WidthToLoad, entry.ti.HeightToLoad, scalex, scaley, mirrorx, mirrory, width, height, entry.ti.maskS+scaleShift);
+            //printf("Mirror: ToCreate: (%d,%d) ToLoad: (%d,%d) Scale: (%i,%i) Mirror: (%i,%i) Size: (%i,%i) Mask: %i\n", entry.ti.WidthToCreate, entry.ti.HeightToCreate, entry.ti.WidthToLoad, entry.ti.HeightToLoad, scale, scale, mirrorx, mirrory, width, height, entry.ti.maskS+scaleShift);
             gTextureManager.Mirror(info.lpSurface, width, entry.ti.maskS+scaleShift, width*2, width*2, height, S_FLAG, 4 );
         }
 
         if (mirrory == 2)
         {
-            //printf("Mirror: ToCreate: (%d,%d) ToLoad: (%d,%d) Scale: (%i,%i) Mirror: (%i,%i) Size: (%i,%i) Mask: %i\n", entry.ti.WidthToCreate, entry.ti.HeightToCreate, entry.ti.WidthToLoad, entry.ti.HeightToLoad, scalex, scaley, mirrorx, mirrory, width, height, entry.ti.maskT+scaleShift);
+            //printf("Mirror: ToCreate: (%d,%d) ToLoad: (%d,%d) Scale: (%i,%i) Mirror: (%i,%i) Size: (%i,%i) Mask: %i\n", entry.ti.WidthToCreate, entry.ti.HeightToCreate, entry.ti.WidthToLoad, entry.ti.HeightToLoad, scale, scale, mirrorx, mirrory, width, height, entry.ti.maskT+scaleShift);
             gTextureManager.Mirror(info.lpSurface, height, entry.ti.maskT+scaleShift, height*2, entry.pEnhancedTexture->m_dwCreatedTextureWidth, height, T_FLAG, 4 );
         }
 
-        if( entry.ti.WidthToCreate*scalex*mirrorx < entry.pEnhancedTexture->m_dwCreatedTextureWidth )
+        if( entry.ti.WidthToCreate*scale < entry.pEnhancedTexture->m_dwCreatedTextureWidth )
         {
             // Clamp
             gTextureManager.Clamp(info.lpSurface, width, entry.pEnhancedTexture->m_dwCreatedTextureWidth, entry.pEnhancedTexture->m_dwCreatedTextureWidth, height, S_FLAG, 4 );
         }
-        if( entry.ti.HeightToCreate*scaley*mirrory < entry.pEnhancedTexture->m_dwCreatedTextureHeight )
+        if( entry.ti.HeightToCreate*scale < entry.pEnhancedTexture->m_dwCreatedTextureHeight )
         {
             // Clamp
             gTextureManager.Clamp(info.lpSurface, height, entry.pEnhancedTexture->m_dwCreatedTextureHeight, entry.pEnhancedTexture->m_dwCreatedTextureWidth, height, T_FLAG, 4 );
