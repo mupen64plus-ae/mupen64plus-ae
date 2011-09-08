@@ -31,13 +31,6 @@ bool CGraphicsContext::m_deviceCapsIsInitialized = false;
 bool CGraphicsContext::needCleanScene = false;
 int CGraphicsContext::m_maxFSAA = 16;
 int CGraphicsContext::m_maxAnisotropy = 16;
-unsigned int CGraphicsContext::m_FullScreenRefreshRates[40] = { 0, 50, 55, 60, 65, 70, 72, 75, 80, 85, 90, 95, 100, 110, 120};
-int CGraphicsContext::m_FullScreenResolutions[40][2] = {
-    {320,200}, {400,300}, {480,360}, {512,384}, {640,480}, 
-    {800,600}, {1024,768}, {1152,864}, {1280,960}, 
-    {1400,1050}, {1600,1200}, {1920,1440}, {2048,1536}};
-int CGraphicsContext::m_numOfResolutions = 0;
-unsigned int CGraphicsContext::m_ColorBufferDepths[4] = {16, 32, 0, 0};
 
 CGraphicsContext * CGraphicsContext::Get(void)
 {   
@@ -114,48 +107,6 @@ int __cdecl SortResolutionsCallback( const void* arg1, const void* arg2 )
 // This is a static function, will be called when the plugin DLL is initialized
 void CGraphicsContext::InitDeviceParameters(void)
 {
-    int i=0, j;
-    int numOfFrequency=0, numOfColorDepth = 0;
-    int numSizes = 64;
-    m64p_2d_size VideoModeArray[64];
-
-    // Initialize common device parameters
-    CGraphicsContext::m_numOfResolutions=0;
-    memset(&CGraphicsContext::m_FullScreenRefreshRates,0,40*sizeof(unsigned int));
-    memset(&CGraphicsContext::m_FullScreenResolutions, 0, 40*2*sizeof(int));
-    memset(&CGraphicsContext::m_ColorBufferDepths, 0, 4*sizeof(unsigned int));
-
-    if (CoreVideo_Init() != M64ERR_SUCCESS)   
-        return;
-
-    if (CoreVideo_ListFullscreenModes(VideoModeArray, &numSizes) != M64ERR_SUCCESS)
-        return;
-   
-    for (i = 0; i < numSizes; i++)
-    {
-        for (j = 0; j < CGraphicsContext::m_numOfResolutions; j++)
-        {
-            if (VideoModeArray[i].uiWidth == (unsigned int) CGraphicsContext::m_FullScreenResolutions[j][0] &&
-                VideoModeArray[i].uiHeight == (unsigned int) CGraphicsContext::m_FullScreenResolutions[j][1])
-            {
-                break;
-            }
-       }
-       if (j == CGraphicsContext::m_numOfResolutions)
-       {
-           CGraphicsContext::m_FullScreenResolutions[CGraphicsContext::m_numOfResolutions][0] = VideoModeArray[i].uiWidth;
-           CGraphicsContext::m_FullScreenResolutions[CGraphicsContext::m_numOfResolutions][1] = VideoModeArray[i].uiHeight;
-           CGraphicsContext::m_numOfResolutions++;
-       }
-   }
-   
-   CGraphicsContext::m_ColorBufferDepths[numOfColorDepth++] = 16;
-   CGraphicsContext::m_ColorBufferDepths[numOfColorDepth++] = 32;
-   CGraphicsContext::m_FullScreenRefreshRates[numOfFrequency++] = 60;
-
-    qsort( &CGraphicsContext::m_FullScreenRefreshRates, numOfFrequency, sizeof(unsigned int), SortFrequenciesCallback );
-    qsort( &CGraphicsContext::m_FullScreenResolutions, CGraphicsContext::m_numOfResolutions, sizeof(int)*2, SortResolutionsCallback );
-
     // To initialze device parameters for OpenGL
     COGLGraphicsContext::InitDeviceParameters();
 }
