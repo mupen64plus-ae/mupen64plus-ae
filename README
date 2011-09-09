@@ -39,7 +39,6 @@ L2 - Z
 Start - Start
 
 6. SAITEK P880:
-Notes:
 The gamepad doesnt have enough keys to real assign all buttons. The second 
 analog stick can be used as button by pushing him insight.
 
@@ -52,7 +51,39 @@ used for A and B and the second and third row was used for C-Buttons - except
 for the Button next to the A button which would be C-Down but got the Z 
 button.
 
-7. Default Keyboard interface:
+7. Xbox Gamepad (userspace driver)
+I created an Input Config for a Xbox 360 controller running with
+xboxdrv on a Linux system (http://pingus.seul.org/~grumbel/xboxdrv/).
+
+Z = Left shoulder button
+L = Left shoulder trigger
+A = A Button
+B = X Button
+
+everything else should be obvious.
+
+Unfortunately, you will also have to make some configuration to
+xboxdrv to make this work properly. xboxdrv has to be started with the
+following config file. The "-as-button" options make sure that the D-
+Pad and Trigger are emulated as buttons and the deadzone options make
+the C buttons work much better.
+The guide=KEY_ESC allows you to quit the emulator by pressing the
+guide key on the controller. This is obviously just nice-to-have and
+not actually neccessary for the config to work.
+
+[xboxdrv]
+silent=true
+trigger-as-button=true
+dpad-as-button=true
+
+[ui-buttonmap]
+guide=KEY_ESC
+
+[axismap]
+x2^deadzone:27000
+y2^deadzone:27000
+
+8. Default Keyboard interface:
 Analog Pad is "Arrow Keys"
 C Up/Left/Down/Right are "I", "J", "K", "L"
 DPad Up/Left/Down/Right are "W", "A", "S", "D"
