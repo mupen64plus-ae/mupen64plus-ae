@@ -360,7 +360,7 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
 
     /* generate section name from ROM's CRC and country code */
     char RomSection[24];
-    sprintf(RomSection, "%X-%X-C:%X", sl(l_RomHeader.CRC1), sl(l_RomHeader.CRC2), l_RomHeader.Country_code & 0xff);
+    sprintf(RomSection, "%08X-%08X-C:%X", sl(l_RomHeader.CRC1), sl(l_RomHeader.CRC2), l_RomHeader.Country_code & 0xff);
 
     /* parse through the cheat INI file and load up any cheat codes found for this ROM */
     ReadCheats(RomSection);
