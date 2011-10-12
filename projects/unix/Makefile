@@ -112,6 +112,9 @@ LDFLAGS += $(SHARED)
 ifeq ($(PIC), 1)
   CFLAGS += -fPIC
   LDFLAGS += -fPIC
+else
+  CFLAGS += -fno-PIC
+  LDFLAGS += -fno-PIC
 endif
 
 ifeq ($(BIG_ENDIAN), 1)
