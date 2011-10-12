@@ -89,6 +89,9 @@ LDLIBS += -pthread
 ifeq ($(PIE), 1)
   CFLAGS += -fPIE
   LDFLAGS += -fPIE -pie
+else
+  CFLAGS += -fno-PIE
+  LDFLAGS += -fno-PIE
 endif
 
 # set special flags per-system
