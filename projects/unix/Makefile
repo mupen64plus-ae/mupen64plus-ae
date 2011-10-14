@@ -140,11 +140,11 @@ endif
 ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -O3 -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
       LDFLAGS += -bundle -framework OpenGL -arch x86_64
       LDLIBS += -ldl
     else
-      CFLAGS += -pipe -O3 -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
       LDFLAGS += -bundle -framework OpenGL -arch i686
       LDLIBS += -ldl
     endif
