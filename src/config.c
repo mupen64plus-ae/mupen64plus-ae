@@ -446,46 +446,56 @@ void load_configuration(int bPrintSummary)
     const char *JoyName;
     int joy_found = 0, joy_plugged = 0;
     int readOK;
-    int i, j;
+    int n64CtrlIdx, sdlCtrlIdx, j;
 
     /* loop through all 4 simulated N64 controllers */
-    for (i = 0; i < 4; i++)
+    for (n64CtrlIdx=0,sdlCtrlIdx=0; n64CtrlIdx < 4; n64CtrlIdx++)
     {
         /* reset the controller configuration */
-        clear_controller(i);
+        clear_controller(n64CtrlIdx);
         /* try to load the config from the core's configuration api */
-        sprintf(SectionName, "Input-SDL-Control%i", i + 1);
-        readOK = load_controller_config(SectionName, i);
+        sprintf(SectionName, "Input-SDL-Control%i", n64CtrlIdx + 1);
+        readOK = load_controller_config(SectionName, n64CtrlIdx);
 
-        if (!readOK || controller[i].device == DEVICE_AUTO)
+        if (!readOK || controller[n64CtrlIdx].device == DEVICE_AUTO)
         {
             int ControllersFound = 0;
+            /* make sure that SDL device number hasn't already been used for a different N64 controller */
+            for (j = 0; j < n64CtrlIdx; j++)
+            {
+                if (controller[j].device == sdlCtrlIdx)
+                {
+                    sdlCtrlIdx++;
+                    j = -1;
+                }
+            }
             /* if auto / bad config, get joystick name based on SDL order */
-            JoyName = get_sdl_joystick_name(i);
+            JoyName = get_sdl_joystick_name(sdlCtrlIdx);
             /* reset the controller configuration again and try to auto-configure */
-            ControllersFound = auto_set_defaults(i, JoyName);
+            ControllersFound = auto_set_defaults(sdlCtrlIdx, JoyName);
+            sdlCtrlIdx++;
             if (ControllersFound == 0)
             {
-                controller[i].device = DEVICE_AUTO;
-                controller[i].control->Present = 0;
-                DebugMessage(M64MSG_WARNING, "N64 Controller #%i: Disabled, SDL joystick is not available", i+1);
+                controller[n64CtrlIdx].device = DEVICE_AUTO;
+                controller[n64CtrlIdx].control->Present = 0;
+                DebugMessage(M64MSG_WARNING, "N64 Controller #%i: Disabled, SDL joystick %i is not available", n64CtrlIdx+1, sdlCtrlIdx-1);
             }
             else
             {
                 for (j = 0; j < ControllersFound; j++) /* a USB device may have > 1 controller */
                 {
                     sprintf(SectionName, "AutoConfig%i", j);
-                    if (i + j > 3)
+                    if (n64CtrlIdx + j > 3)
                     {
                         ConfigDeleteSection(SectionName);
                         continue;
                     }
-                    clear_controller(i + j);
-                    if (load_controller_config(SectionName, i + j))
+                    clear_controller(n64CtrlIdx + j);
+                    if (load_controller_config(SectionName, n64CtrlIdx + j))
                     {
                         /* use ConfigSetDefault*() to save this auto-config if config section was empty */
-                        save_controller_config(i + j, JoyName);
-                        DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using auto-config for SDL joystick %i ('%s')", i+1, controller[i].device, JoyName);
+                        save_controller_config(n64CtrlIdx + j, JoyName);
+                        DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using auto-config for SDL joystick %i ('%s')", n64CtrlIdx+1, controller[n64CtrlIdx].device, JoyName);
                     }
                     else
                     {
@@ -493,38 +503,38 @@ void load_configuration(int bPrintSummary)
                     }
                     ConfigDeleteSection(SectionName);
                 }
-                i += ControllersFound - 1;
+                n64CtrlIdx += ControllersFound - 1;
                 continue;
             }
         }
-        else if (controller[i].device >= 0)
+        else if (controller[n64CtrlIdx].device >= 0)
         {
             /* if joystick found in cfg, take its SDL number from there */
-            JoyName = get_sdl_joystick_name(controller[i].device);
+            JoyName = get_sdl_joystick_name(controller[n64CtrlIdx].device);
             /* valid joystick configuration was read; check if the specified joystick is available in SDL */
             if (JoyName == NULL)
             {
-                controller[i].device = DEVICE_AUTO;
-                controller[i].control->Present = 0;
-                DebugMessage(M64MSG_WARNING, "N64 Controller #%i: Disabled, SDL joystick is not available", i+1);
+                controller[n64CtrlIdx].device = DEVICE_AUTO;
+                controller[n64CtrlIdx].control->Present = 0;
+                DebugMessage(M64MSG_WARNING, "N64 Controller #%i: Disabled, SDL joystick %i is not available", n64CtrlIdx+1, controller[n64CtrlIdx].device);
             }
             else
-                DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using stored config for SDL joystick %i ('%s')", i+1, controller[i].device, JoyName);
+                DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using stored config for SDL joystick %i ('%s')", n64CtrlIdx+1, controller[n64CtrlIdx].device, JoyName);
         }
         else /* controller is configured for keyboard/mouse */
         {
-            DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using keyboard/mouse", i+1);
+            DebugMessage(M64MSG_INFO, "N64 Controller #%i: Using keyboard/mouse", n64CtrlIdx+1);
         }
     }
 
     /* see how many joysticks were found */
     joy_found = 0, joy_plugged = 0;
-    for (i = 0; i < 4; i++)
+    for (j = 0; j < 4; j++)
     {
-        if (controller[i].device >= 0 || controller[i].device == DEVICE_NOT_JOYSTICK)
+        if (controller[j].device >= 0 || controller[j].device == DEVICE_NOT_JOYSTICK)
         {
             joy_found++;
-            if (controller[i].control->Present)
+            if (controller[j].control->Present)
                 joy_plugged++;
         }
     }
