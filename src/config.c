@@ -147,12 +147,20 @@ static const char * get_sdl_joystick_name(int iCtrlIdx)
         return JoyName;
 }
 
+/////////////////////////////////////
+// load_controller_config()
+// return value: 1 = OK
+//               0 = fail: couldn't open config section
+//              -1 = fail: stored configuration incomplete - missing parameters
+//              -2 = fail: AutoKeyboard stored in mupen64plus.cfg file
+//              -3 = fail: joystick name stored in mupen64plus.cfg doesn't match SDL joystick name for given SDL joystick #
+
 static int load_controller_config(const char *SectionName, int i)
 {
     m64p_handle pConfig;
     char input_str[256], value1_str[16], value2_str[16];
     const char *config_ptr;
-    int readOK, j;
+    int j;
 
     /* Open the configuration section for this controller */
     if (ConfigOpenSection(SectionName, &pConfig) != M64ERR_SUCCESS)
@@ -160,127 +168,129 @@ static int load_controller_config(const char *SectionName, int i)
         DebugMessage(M64MSG_ERROR, "Couldn't open config section '%s'", SectionName);
         return 0;
     }
-    /* try to read all of the configuration values */
-    for (readOK = 0; readOK == 0; readOK = 1)
+    /* check for the required parameters */
+    if (ConfigGetParameter(pConfig, "plugged", M64TYPE_BOOL, &controller[i].control->Present, sizeof(int)) != M64ERR_SUCCESS)
+        return -1;
+    if (ConfigGetParameter(pConfig, "plugin", M64TYPE_INT, &controller[i].control->Plugin, sizeof(int)) != M64ERR_SUCCESS)
+        return -1;
+    if (ConfigGetParameter(pConfig, "device", M64TYPE_INT, &controller[i].device, sizeof(int)) != M64ERR_SUCCESS)
+        return -1;
+    /* Name validation only applies to stored configurations (not auto-configs) */
+    if (strncmp(SectionName, "AutoConfig", 10) != 0)
     {
-        /* check for the required parameters */
-        if (ConfigGetParameter(pConfig, "plugged", M64TYPE_BOOL, &controller[i].control->Present, sizeof(int)) != M64ERR_SUCCESS)
-            break;
-        if (ConfigGetParameter(pConfig, "plugin", M64TYPE_INT, &controller[i].control->Plugin, sizeof(int)) != M64ERR_SUCCESS)
-            break;
-        if (ConfigGetParameter(pConfig, "device", M64TYPE_INT, &controller[i].device, sizeof(int)) != M64ERR_SUCCESS)
-            break;
-        /* Name validation only applies to stored configurations (not auto-configs) */
-        if (strncmp(SectionName, "AutoConfig", 10) != 0)
+        char device_name[256];
+        if (ConfigGetParameter(pConfig, "name", M64TYPE_STRING, device_name, 256) != M64ERR_SUCCESS)
+            device_name[0] = 0;
+        if (controller[i].device == DEVICE_NOT_JOYSTICK)
         {
-            char device_name[256];
-            if (ConfigGetParameter(pConfig, "name", M64TYPE_STRING, device_name, 256) != M64ERR_SUCCESS)
-                break;
-            if (controller[i].device == DEVICE_NOT_JOYSTICK)
-            {
-                /* do not load automatically generated keyboard config that was stored to disk (prefer any joysticks attached) */
-                if (strcmp(device_name, "AutoKeyboard") == 0)
-                    break;
-            }
-            else if (controller[i].device >= 0)
-            {
-                /* check that the SDL device name matches the name stored in the config section */
-                const char *sdl_name = get_sdl_joystick_name(controller[i].device);
-                if (sdl_name == NULL || strncmp(device_name, sdl_name, 255) != 0)
-                {
-                    DebugMessage(M64MSG_WARNING, "N64 Controller #%i: SDL joystick name '%s' doesn't match stored configuration name '%s'", i + 1, sdl_name, device_name);
-                    break;
-                }
-            }
+            /* do not load automatically generated keyboard config that was stored to disk (prefer any joysticks attached) */
+            if (strcmp(device_name, "AutoKeyboard") == 0)
+                return -2;
         }
-        /* then do the optional parameters */
-        ConfigGetParameter(pConfig, "mouse", M64TYPE_BOOL, &controller[i].mouse, sizeof(int));
-        if (ConfigGetParameter(pConfig, "MouseSensitivity", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
+        else if (controller[i].device >= 0 && device_name[0] != 0)
         {
-            if (sscanf(input_str, "%f,%f", &controller[i].mouse_sens[0], &controller[i].mouse_sens[1]) != 2)
-                DebugMessage(M64MSG_WARNING, "parsing error in MouseSensitivity parameter for controller %i", i + 1);
-        }
-        if (ConfigGetParameter(pConfig, "AnalogDeadzone", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
-        {
-            if (sscanf(input_str, "%i,%i", &controller[i].axis_deadzone[0], &controller[i].axis_deadzone[1]) != 2)
-                DebugMessage(M64MSG_WARNING, "parsing error in AnalogDeadzone parameter for controller %i", i + 1);
-        }
-        if (ConfigGetParameter(pConfig, "AnalogPeak", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
-        {
-            if (sscanf(input_str, "%i,%i", &controller[i].axis_peak[0], &controller[i].axis_peak[1]) != 2)
-                DebugMessage(M64MSG_WARNING, "parsing error in AnalogPeak parameter for controller %i", i + 1);
-        }
-        /* load configuration for all the digital buttons */
-        for (j = 0; j < X_AXIS; j++)
-        {
-            if (ConfigGetParameter(pConfig, button_names[j], M64TYPE_STRING, input_str, 256) != M64ERR_SUCCESS)
-                continue;
-            if ((config_ptr = strstr(input_str, "key")) != NULL)
-                if (sscanf(config_ptr, "key(%i)", (int *) &controller[i].button[j].key) != 1)
-                    DebugMessage(M64MSG_WARNING, "parsing error in key() parameter of button '%s' for controller %i", button_names[j], i + 1);
-            if ((config_ptr = strstr(input_str, "button")) != NULL)
-                if (sscanf(config_ptr, "button(%i)", &controller[i].button[j].button) != 1)
-                    DebugMessage(M64MSG_WARNING, "parsing error in button() parameter of button '%s' for controller %i", button_names[j], i + 1);
-            if ((config_ptr = strstr(input_str, "axis")) != NULL)
+            /* check that the SDL device name matches the name stored in the config section */
+            const char *sdl_name = get_sdl_joystick_name(controller[i].device);
+            if (sdl_name == NULL || strncmp(device_name, sdl_name, 255) != 0)
             {
-                char chAxisDir;
-                if (sscanf(config_ptr, "axis(%d%c,%d", &controller[i].button[j].axis, &chAxisDir, &controller[i].button[j].axis_deadzone) != 3 &&
-                    sscanf(config_ptr, "axis(%i%c", &controller[i].button[j].axis, &chAxisDir) != 2)
-                    DebugMessage(M64MSG_WARNING, "parsing error in axis() parameter of button '%s' for controller %i", button_names[j], i + 1);
-                controller[i].button[j].axis_dir = (chAxisDir == '+' ? 1 : (chAxisDir == '-' ? -1 : 0));
-            }
-            if ((config_ptr = strstr(input_str, "hat")) != NULL)
-            {
-                char *lastchar = NULL;
-                if (sscanf(config_ptr, "hat(%i %15s", &controller[i].button[j].hat, value1_str) != 2)
-                    DebugMessage(M64MSG_WARNING, "parsing error in hat() parameter of button '%s' for controller %i", button_names[j], i + 1);
-                value1_str[15] = 0;
-                /* chop off the last character of value1_str if it is the closing parenthesis */
-                lastchar = &value1_str[strlen(value1_str) - 1];
-                if (lastchar > value1_str && *lastchar == ')') *lastchar = 0;
-                controller[i].button[j].hat_pos = get_hat_pos_by_name(value1_str);
-            }
-            if ((config_ptr = strstr(input_str, "mouse")) != NULL)
-                if (sscanf(config_ptr, "mouse(%i)", &controller[i].button[j].mouse) != 1)
-                    DebugMessage(M64MSG_WARNING, "parsing error in mouse() parameter of button '%s' for controller %i", button_names[j], i + 1);
-        }
-        /* load configuration for the 2 analog joystick axes */
-        for (j = X_AXIS; j <= Y_AXIS; j++)
-        {
-            int axis_idx = j - X_AXIS;
-            if (ConfigGetParameter(pConfig, button_names[j], M64TYPE_STRING, input_str, 256) != M64ERR_SUCCESS)
-                continue;
-            if ((config_ptr = strstr(input_str, "key")) != NULL)
-                if (sscanf(config_ptr, "key(%i,%i)", (int *) &controller[i].axis[axis_idx].key_a, (int *) &controller[i].axis[axis_idx].key_b) != 2)
-                    DebugMessage(M64MSG_WARNING, "parsing error in key() parameter of axis '%s' for controller %i", button_names[j], i + 1);
-            if ((config_ptr = strstr(input_str, "button")) != NULL)
-                if (sscanf(config_ptr, "button(%i,%i)", &controller[i].axis[axis_idx].button_a, &controller[i].axis[axis_idx].button_b) != 2)
-                    DebugMessage(M64MSG_WARNING, "parsing error in button() parameter of axis '%s' for controller %i", button_names[j], i + 1);
-            if ((config_ptr = strstr(input_str, "axis")) != NULL)
-            {
-                char chAxisDir1, chAxisDir2;
-                if (sscanf(config_ptr, "axis(%i%c,%i%c)", &controller[i].axis[axis_idx].axis_a, &chAxisDir1,
-                                                          &controller[i].axis[axis_idx].axis_b, &chAxisDir2) != 4)
-                    DebugMessage(M64MSG_WARNING, "parsing error in axis() parameter of axis '%s' for controller %i", button_names[j], i + 1);
-                controller[i].axis[axis_idx].axis_dir_a = (chAxisDir1 == '+' ? 1 : (chAxisDir1 == '-' ? -1 : 0));
-                controller[i].axis[axis_idx].axis_dir_b = (chAxisDir2 == '+' ? 1 : (chAxisDir2 == '-' ? -1 : 0));
-            }
-            if ((config_ptr = strstr(input_str, "hat")) != NULL)
-            {
-                char *lastchar = NULL;
-                if (sscanf(config_ptr, "hat(%i %15s %15s", &controller[i].axis[axis_idx].hat, value1_str, value2_str) != 3)
-                    DebugMessage(M64MSG_WARNING, "parsing error in hat() parameter of axis '%s' for controller %i", button_names[j], i + 1);
-                value1_str[15] = value2_str[15] = 0;
-                /* chop off the last character of value2_str if it is the closing parenthesis */
-                lastchar = &value2_str[strlen(value2_str) - 1];
-                if (lastchar > value2_str && *lastchar == ')') *lastchar = 0;
-                controller[i].axis[axis_idx].hat_pos_a = get_hat_pos_by_name(value1_str);
-                controller[i].axis[axis_idx].hat_pos_b = get_hat_pos_by_name(value2_str);
+                DebugMessage(M64MSG_WARNING, "N64 Controller #%i: SDL joystick name '%s' doesn't match stored configuration name '%s'", i + 1, sdl_name, device_name);
+                return -3;
             }
         }
     }
+    /* then do the optional parameters */
+    ConfigGetParameter(pConfig, "mouse", M64TYPE_BOOL, &controller[i].mouse, sizeof(int));
+    if (ConfigGetParameter(pConfig, "MouseSensitivity", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
+    {
+        if (sscanf(input_str, "%f,%f", &controller[i].mouse_sens[0], &controller[i].mouse_sens[1]) != 2)
+            DebugMessage(M64MSG_WARNING, "parsing error in MouseSensitivity parameter for controller %i", i + 1);
+    }
+    if (ConfigGetParameter(pConfig, "AnalogDeadzone", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
+    {
+        if (sscanf(input_str, "%i,%i", &controller[i].axis_deadzone[0], &controller[i].axis_deadzone[1]) != 2)
+            DebugMessage(M64MSG_WARNING, "parsing error in AnalogDeadzone parameter for controller %i", i + 1);
+    }
+    if (ConfigGetParameter(pConfig, "AnalogPeak", M64TYPE_STRING, input_str, 256) == M64ERR_SUCCESS)
+    {
+        if (sscanf(input_str, "%i,%i", &controller[i].axis_peak[0], &controller[i].axis_peak[1]) != 2)
+            DebugMessage(M64MSG_WARNING, "parsing error in AnalogPeak parameter for controller %i", i + 1);
+    }
+    /* load configuration for all the digital buttons */
+    for (j = 0; j < X_AXIS; j++)
+    {
+        if (ConfigGetParameter(pConfig, button_names[j], M64TYPE_STRING, input_str, 256) != M64ERR_SUCCESS)
+        {
+            DebugMessage(M64MSG_WARNING, "missing config key '%s' for controller %i button %i", button_names[j], i+1, j);
+            continue;
+        }
+        if ((config_ptr = strstr(input_str, "key")) != NULL)
+            if (sscanf(config_ptr, "key(%i)", (int *) &controller[i].button[j].key) != 1)
+                DebugMessage(M64MSG_WARNING, "parsing error in key() parameter of button '%s' for controller %i", button_names[j], i + 1);
+        if ((config_ptr = strstr(input_str, "button")) != NULL)
+            if (sscanf(config_ptr, "button(%i)", &controller[i].button[j].button) != 1)
+                DebugMessage(M64MSG_WARNING, "parsing error in button() parameter of button '%s' for controller %i", button_names[j], i + 1);
+        if ((config_ptr = strstr(input_str, "axis")) != NULL)
+        {
+            char chAxisDir;
+            if (sscanf(config_ptr, "axis(%d%c,%d", &controller[i].button[j].axis, &chAxisDir, &controller[i].button[j].axis_deadzone) != 3 &&
+                sscanf(config_ptr, "axis(%i%c", &controller[i].button[j].axis, &chAxisDir) != 2)
+                DebugMessage(M64MSG_WARNING, "parsing error in axis() parameter of button '%s' for controller %i", button_names[j], i + 1);
+            controller[i].button[j].axis_dir = (chAxisDir == '+' ? 1 : (chAxisDir == '-' ? -1 : 0));
+        }
+        if ((config_ptr = strstr(input_str, "hat")) != NULL)
+        {
+            char *lastchar = NULL;
+            if (sscanf(config_ptr, "hat(%i %15s", &controller[i].button[j].hat, value1_str) != 2)
+                DebugMessage(M64MSG_WARNING, "parsing error in hat() parameter of button '%s' for controller %i", button_names[j], i + 1);
+            value1_str[15] = 0;
+            /* chop off the last character of value1_str if it is the closing parenthesis */
+            lastchar = &value1_str[strlen(value1_str) - 1];
+            if (lastchar > value1_str && *lastchar == ')') *lastchar = 0;
+            controller[i].button[j].hat_pos = get_hat_pos_by_name(value1_str);
+        }
+        if ((config_ptr = strstr(input_str, "mouse")) != NULL)
+            if (sscanf(config_ptr, "mouse(%i)", &controller[i].button[j].mouse) != 1)
+                DebugMessage(M64MSG_WARNING, "parsing error in mouse() parameter of button '%s' for controller %i", button_names[j], i + 1);
+    }
+    /* load configuration for the 2 analog joystick axes */
+    for (j = X_AXIS; j <= Y_AXIS; j++)
+    {
+        int axis_idx = j - X_AXIS;
+        if (ConfigGetParameter(pConfig, button_names[j], M64TYPE_STRING, input_str, 256) != M64ERR_SUCCESS)
+        {
+            DebugMessage(M64MSG_WARNING, "missing config key '%s' for controller %i axis %i", button_names[j], i+1, axis_idx);
+            continue;
+        }
+        if ((config_ptr = strstr(input_str, "key")) != NULL)
+            if (sscanf(config_ptr, "key(%i,%i)", (int *) &controller[i].axis[axis_idx].key_a, (int *) &controller[i].axis[axis_idx].key_b) != 2)
+                DebugMessage(M64MSG_WARNING, "parsing error in key() parameter of axis '%s' for controller %i", button_names[j], i + 1);
+        if ((config_ptr = strstr(input_str, "button")) != NULL)
+            if (sscanf(config_ptr, "button(%i,%i)", &controller[i].axis[axis_idx].button_a, &controller[i].axis[axis_idx].button_b) != 2)
+                DebugMessage(M64MSG_WARNING, "parsing error in button() parameter of axis '%s' for controller %i", button_names[j], i + 1);
+        if ((config_ptr = strstr(input_str, "axis")) != NULL)
+        {
+            char chAxisDir1, chAxisDir2;
+            if (sscanf(config_ptr, "axis(%i%c,%i%c)", &controller[i].axis[axis_idx].axis_a, &chAxisDir1,
+                                                      &controller[i].axis[axis_idx].axis_b, &chAxisDir2) != 4)
+                DebugMessage(M64MSG_WARNING, "parsing error in axis() parameter of axis '%s' for controller %i", button_names[j], i + 1);
+            controller[i].axis[axis_idx].axis_dir_a = (chAxisDir1 == '+' ? 1 : (chAxisDir1 == '-' ? -1 : 0));
+            controller[i].axis[axis_idx].axis_dir_b = (chAxisDir2 == '+' ? 1 : (chAxisDir2 == '-' ? -1 : 0));
+        }
+        if ((config_ptr = strstr(input_str, "hat")) != NULL)
+        {
+            char *lastchar = NULL;
+            if (sscanf(config_ptr, "hat(%i %15s %15s", &controller[i].axis[axis_idx].hat, value1_str, value2_str) != 3)
+                DebugMessage(M64MSG_WARNING, "parsing error in hat() parameter of axis '%s' for controller %i", button_names[j], i + 1);
+            value1_str[15] = value2_str[15] = 0;
+            /* chop off the last character of value2_str if it is the closing parenthesis */
+            lastchar = &value2_str[strlen(value2_str) - 1];
+            if (lastchar > value2_str && *lastchar == ')') *lastchar = 0;
+            controller[i].axis[axis_idx].hat_pos_a = get_hat_pos_by_name(value1_str);
+            controller[i].axis[axis_idx].hat_pos_b = get_hat_pos_by_name(value2_str);
+        }
+    }
 
-    return readOK;
+    return 1;
 }
 
 static void save_controller_config(int iCtrlIdx, const char *pccDeviceName)
@@ -304,7 +314,7 @@ static void save_controller_config(int iCtrlIdx, const char *pccDeviceName)
     ConfigSetDefaultInt(pConfig, "plugin", controller[iCtrlIdx].control->Plugin, "Specifies which type of expansion pak is in the controller: 1=None, 2=Mem pak, 5=Rumble pak");
     ConfigSetDefaultBool(pConfig, "mouse", controller[iCtrlIdx].mouse, "If True, then mouse buttons may be used with this controller");
     ConfigSetDefaultInt(pConfig, "device", controller[iCtrlIdx].device, "Specifies which joystick is bound to this controller: -2=Keyboard/mouse, -1=Auto config, 0 or more= SDL Joystick number");
-    ConfigSetDefaultString(pConfig, "name", pccDeviceName, "SDL joystick name (user should not change)");
+    ConfigSetDefaultString(pConfig, "name", pccDeviceName, "SDL joystick name (name check disabled if this is empty string)");
 
     sprintf(Param, "%.2f,%.2f", controller[iCtrlIdx].mouse_sens[0], controller[iCtrlIdx].mouse_sens[1]);
     ConfigSetDefaultString(pConfig, "MouseSensitivity", Param, "Scaling factor for mouse movements.  For X, Y axes.");
@@ -411,7 +421,7 @@ static void force_controller_keyboard(int n64CtrlIdx)
 
     DebugMessage(M64MSG_INFO, "N64 Controller #%i: Forcing default keyboard configuration", n64CtrlIdx+1);
     auto_set_defaults(DEVICE_NOT_JOYSTICK, "Keyboard");
-    if (load_controller_config("AutoConfig0", n64CtrlIdx))
+    if (load_controller_config("AutoConfig0", n64CtrlIdx) > 0)
     {
         /* use ConfigSetDefault*() to save this auto-config if config section was empty */
         save_controller_config(n64CtrlIdx, "AutoKeyboard");
@@ -457,7 +467,7 @@ void load_configuration(int bPrintSummary)
         sprintf(SectionName, "Input-SDL-Control%i", n64CtrlIdx + 1);
         readOK = load_controller_config(SectionName, n64CtrlIdx);
 
-        if (!readOK || controller[n64CtrlIdx].device == DEVICE_AUTO)
+        if (readOK <= 0 || controller[n64CtrlIdx].device == DEVICE_AUTO)
         {
             int ControllersFound = 0;
             /* make sure that SDL device number hasn't already been used for a different N64 controller */
@@ -491,7 +501,7 @@ void load_configuration(int bPrintSummary)
                         continue;
                     }
                     clear_controller(n64CtrlIdx + j);
-                    if (load_controller_config(SectionName, n64CtrlIdx + j))
+                    if (load_controller_config(SectionName, n64CtrlIdx + j) > 0)
                     {
                         /* use ConfigSetDefault*() to save this auto-config if config section was empty */
                         save_controller_config(n64CtrlIdx + j, JoyName);
