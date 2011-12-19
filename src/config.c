@@ -155,7 +155,7 @@ static const char * get_sdl_joystick_name(int iCtrlIdx)
 //              -2 = fail: AutoKeyboard stored in mupen64plus.cfg file
 //              -3 = fail: joystick name stored in mupen64plus.cfg doesn't match SDL joystick name for given SDL joystick #
 
-static int load_controller_config(const char *SectionName, int i)
+static int load_controller_config(const char *SectionName, int i, int bIsAutoconfig)
 {
     m64p_handle pConfig;
     char input_str[256], value1_str[16], value2_str[16];
@@ -168,6 +168,22 @@ static int load_controller_config(const char *SectionName, int i)
         DebugMessage(M64MSG_ERROR, "Couldn't open config section '%s'", SectionName);
         return 0;
     }
+    /* Check version number, and if it doesn't match: delete the config section and return with error */
+    if (!bIsAutoconfig)
+    {
+        float fVersion = 0.0f;
+        if (ConfigGetParameter(pConfig, "version", M64TYPE_FLOAT, &fVersion, sizeof(float)) != M64ERR_SUCCESS)
+        {
+            ConfigDeleteSection(SectionName);
+            return -1;
+        }
+        if (((int) fVersion) != ((int) CONFIG_VERSION))
+        {
+            DebugMessage(M64MSG_WARNING, "Invalid version %.2f in config section '%s': current is %.2f. Clearing.", fVersion, SectionName, (float) CONFIG_VERSION);
+            ConfigDeleteSection(SectionName);
+            return -1;
+        }
+    }
     /* check for the required parameters */
     if (ConfigGetParameter(pConfig, "plugged", M64TYPE_BOOL, &controller[i].control->Present, sizeof(int)) != M64ERR_SUCCESS)
         return -1;
@@ -176,7 +192,7 @@ static int load_controller_config(const char *SectionName, int i)
     if (ConfigGetParameter(pConfig, "device", M64TYPE_INT, &controller[i].device, sizeof(int)) != M64ERR_SUCCESS)
         return -1;
     /* Name validation only applies to stored configurations (not auto-configs) */
-    if (strncmp(SectionName, "AutoConfig", 10) != 0)
+    if (!bIsAutoconfig)
     {
         char device_name[256];
         if (ConfigGetParameter(pConfig, "name", M64TYPE_STRING, device_name, 256) != M64ERR_SUCCESS)
@@ -310,6 +326,7 @@ static void save_controller_config(int iCtrlIdx, const char *pccDeviceName)
     }
 
     /* save the general controller parameters */
+    ConfigSetDefaultFloat(pConfig, "version", CONFIG_VERSION, "Mupen64Plus SDL Input Plugin config parameter version number");
     ConfigSetDefaultBool(pConfig, "plugged", controller[iCtrlIdx].control->Present, "Specifies whether this controller is 'plugged in' to the simulated N64");
     ConfigSetDefaultInt(pConfig, "plugin", controller[iCtrlIdx].control->Plugin, "Specifies which type of expansion pak is in the controller: 1=None, 2=Mem pak, 5=Rumble pak");
     ConfigSetDefaultBool(pConfig, "mouse", controller[iCtrlIdx].mouse, "If True, then mouse buttons may be used with this controller");
@@ -421,7 +438,7 @@ static void force_controller_keyboard(int n64CtrlIdx)
 
     DebugMessage(M64MSG_INFO, "N64 Controller #%i: Forcing default keyboard configuration", n64CtrlIdx+1);
     auto_set_defaults(DEVICE_NOT_JOYSTICK, "Keyboard");
-    if (load_controller_config("AutoConfig0", n64CtrlIdx) > 0)
+    if (load_controller_config("AutoConfig0", n64CtrlIdx, 1) > 0)
     {
         /* use ConfigSetDefault*() to save this auto-config if config section was empty */
         save_controller_config(n64CtrlIdx, "AutoKeyboard");
@@ -465,7 +482,7 @@ void load_configuration(int bPrintSummary)
         clear_controller(n64CtrlIdx);
         /* try to load the config from the core's configuration api */
         sprintf(SectionName, "Input-SDL-Control%i", n64CtrlIdx + 1);
-        readOK = load_controller_config(SectionName, n64CtrlIdx);
+        readOK = load_controller_config(SectionName, n64CtrlIdx, 0);
 
         if (readOK <= 0 || controller[n64CtrlIdx].device == DEVICE_AUTO)
         {
@@ -501,7 +518,7 @@ void load_configuration(int bPrintSummary)
                         continue;
                     }
                     clear_controller(n64CtrlIdx + j);
-                    if (load_controller_config(SectionName, n64CtrlIdx + j) > 0)
+                    if (load_controller_config(SectionName, n64CtrlIdx + j, 1) > 0)
                     {
                         /* use ConfigSetDefault*() to save this auto-config if config section was empty */
                         save_controller_config(n64CtrlIdx + j, JoyName);

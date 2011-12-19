@@ -22,6 +22,8 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
+#define CONFIG_VERSION 1.00
+
 extern void load_configuration(int bPrintSummary);
 
 #endif /* __CONFIG_H__ */
