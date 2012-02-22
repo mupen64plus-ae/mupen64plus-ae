@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - main.h                                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2008 Tillin9                                            *
+ *   Copyright (C) 2008-2012 Tillin9, Richard42                            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,12 +23,15 @@
 #define SDL_AUDIO_PLUGIN_VERSION 0x016304
 #define AUDIO_PLUGIN_API_VERSION 0x020000
 #define CONFIG_API_VERSION       0x020000
+#define CONFIG_PARAM_VERSION     1.00
 
 #define VERSION_PRINTF_SPLIT(x) (((x) >> 16) & 0xffff), (((x) >> 8) & 0xff), ((x) & 0xff)
 
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
 extern ptr_ConfigOpenSection      ConfigOpenSection;
+extern ptr_ConfigDeleteSection    ConfigDeleteSection;
+extern ptr_ConfigSaveSection      ConfigSaveSection;
 extern ptr_ConfigListParameters   ConfigListParameters;
 extern ptr_ConfigSaveFile         ConfigSaveFile;
 extern ptr_ConfigSetParameter     ConfigSetParameter;

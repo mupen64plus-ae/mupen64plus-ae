@@ -168,7 +168,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
 {
     ptr_CoreGetAPIVersions CoreAPIVersionFunc;
     
-    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
+    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion, bSaveConfig;
+    float fConfigParamsVersion = 0.0f;
     
     if (l_PluginInit)
         return M64ERR_ALREADY_INIT;
@@ -195,6 +196,8 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
 
     /* Get the core config function pointers from the library handle */
     ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
+    ConfigDeleteSection = (ptr_ConfigDeleteSection) osal_dynlib_getproc(CoreLibHandle, "ConfigDeleteSection");
+    ConfigSaveSection = (ptr_ConfigSaveSection) osal_dynlib_getproc(CoreLibHandle, "ConfigSaveSection");
     ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
     ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
     ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
@@ -206,9 +209,13 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
     ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
 
-    if (!ConfigOpenSection || !ConfigSetParameter || !ConfigGetParameter ||
+    if (!ConfigOpenSection || !ConfigDeleteSection || !ConfigSetParameter || !ConfigGetParameter ||
         !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
         !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString)
+        return M64ERR_INCOMPATIBLE;
+
+    /* ConfigSaveSection was added in Config API v2.1.0 */
+    if (ConfigAPIVersion >= 0x020100 && !ConfigSaveSection)
         return M64ERR_INCOMPATIBLE;
 
     /* get a configuration section handle */
@@ -218,7 +225,25 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         return M64ERR_INPUT_NOT_FOUND;
     }
 
+    /* check the section version number */
+    bSaveConfig = 0;
+    if (ConfigGetParameter(l_ConfigAudio, "Version", M64TYPE_FLOAT, &fConfigParamsVersion, sizeof(float)) != M64ERR_SUCCESS)
+    {
+        DebugMessage(M64MSG_WARNING, "No version number in 'Audio-SDL' config section. Setting defaults.");
+        ConfigDeleteSection("Audio-SDL");
+        ConfigOpenSection("Audio-SDL", &l_ConfigAudio);
+        bSaveConfig = 1;
+    }
+    if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
+    {
+        DebugMessage(M64MSG_WARNING, "Invalid version %.2f in 'Audio-SDL' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
+        ConfigDeleteSection("Audio-SDL");
+        ConfigOpenSection("Audio-SDL", &l_ConfigAudio);
+        bSaveConfig = 1;
+    }
+
     /* set the default values for this plugin */
+    ConfigSetDefaultFloat(l_ConfigAudio, "Version",             CONFIG_PARAM_VERSION,  "Mupen64Plus SDL Audio Plugin config parameter version number");
     ConfigSetDefaultInt(l_ConfigAudio, "DEFAULT_FREQUENCY",     DEFAULT_FREQUENCY,     "Frequency which is used if rom doesn't want to change it");
     ConfigSetDefaultBool(l_ConfigAudio, "SWAP_CHANNELS",        0,                     "Swaps left and right channels");
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE",   PRIMARY_BUFFER_SIZE,   "Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.");
@@ -228,6 +253,9 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_CONTROL_TYPE",   VOLUME_TYPE_OSS,       "Volume control type: 1 = SDL (only affects Mupen64Plus output)  2 = OSS mixer (adjusts master PC volume)");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_ADJUST",         5,                     "Percentage change each time the volume is increased or decreased");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_DEFAULT",        80,                    "Default volume when a game is started.  Only used if VOLUME_CONTROL_TYPE is 1");
+
+    if (bSaveConfig && ConfigAPIVersion >= 0x020100)
+        ConfigSaveSection("Audio-SDL");
 
     l_PluginInit = 1;
     return M64ERR_SUCCESS;
