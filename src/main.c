@@ -241,6 +241,13 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         ConfigOpenSection("Audio-SDL", &l_ConfigAudio);
         bSaveConfig = 1;
     }
+    /* handle upgrades */
+    if (CONFIG_PARAM_VERSION > fConfigParamsVersion)
+    {
+        float fVersion = CONFIG_PARAM_VERSION;
+        ConfigSetParameter(l_ConfigAudio, "Version", M64TYPE_FLOAT, &fVersion);
+        DebugMessage(M64MSG_INFO, "Updating parameter set version in 'Audio-SDL' config section to %.2f", fVersion);
+    }
 
     /* set the default values for this plugin */
     ConfigSetDefaultFloat(l_ConfigAudio, "Version",             CONFIG_PARAM_VERSION,  "Mupen64Plus SDL Audio Plugin config parameter version number");
