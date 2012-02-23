@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Glide64">
+		<Project filename="Glitch64\CB\Glitch64.cbp" />
+		<Project filename="GlideHQ\CB\GlideHQ.cbp" />
+		<Project filename="GlideHQ\CB\BuildNo.cbp" />
+		<Project filename="Glide64\CB\Glide64.cbp" active="1" />
+	</Workspace>
+</CodeBlocks_workspace_file>

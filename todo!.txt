@@ -1,0 +1,15 @@
+ToDo!
+
+Glide64
+-	Add tlut support for 16bit textures. Remove hacks.
+-	Add trapezoid support to le_triangle. Remove hacks.
+-	Reduce "Known issues" list :)
+
+GlideHQ
+-	Add OpenGL texture format support.
+
+Glitch64
+-	Improve hardware frame buffer emulation support.
+        (FBO depth copies, MSAAed FBO based HWFBE)
+-	Add functions, necessary for interactive debugger.
+

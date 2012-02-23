@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="GlideHQ" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\GlideHQ" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DBUILD_DLL" />
+					<Add directory="..\inc" />
+				</Compiler>
+				<Linker>
+					<Add library="user32" />
+					<Add directory="..\lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\GlideHQ" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="user32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\Ext_TxFilter.cpp" />
+		<Unit filename="..\Ext_TxFilter.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="main.h" />
+		<Unit filename="..\TextureFilters.cpp" />
+		<Unit filename="..\TextureFilters.h" />
+		<Unit filename="..\TextureFilters_2xsai.cpp" />
+		<Unit filename="..\TextureFilters_2xsai.h" />
+		<Unit filename="..\TextureFilters_hq2x.cpp" />
+		<Unit filename="..\TextureFilters_hq2x.h" />
+		<Unit filename="..\TextureFilters_hq4x.cpp" />
+		<Unit filename="..\TextureFilters_hq4x.h" />
+		<Unit filename="..\TextureFilters_lq2x.h" />
+		<Unit filename="..\TxCache.cpp" />
+		<Unit filename="..\TxCache.h" />
+		<Unit filename="..\TxDbg.cpp" />
+		<Unit filename="..\TxDbg.h" />
+		<Unit filename="..\TxFilter.cpp" />
+		<Unit filename="..\TxFilter.h" />
+		<Unit filename="..\TxFilterExport.cpp" />
+		<Unit filename="..\TxHiResCache.cpp" />
+		<Unit filename="..\TxHiResCache.h" />
+		<Unit filename="..\TxImage.cpp" />
+		<Unit filename="..\TxImage.h" />
+		<Unit filename="..\TxInternal.h" />
+		<Unit filename="..\TxQuantize.cpp" />
+		<Unit filename="..\TxQuantize.h" />
+		<Unit filename="..\TxReSample.cpp" />
+		<Unit filename="..\TxReSample.h" />
+		<Unit filename="..\TxTexCache.cpp" />
+		<Unit filename="..\TxTexCache.h" />
+		<Unit filename="..\TxUtil.cpp" />
+		<Unit filename="..\TxUtil.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

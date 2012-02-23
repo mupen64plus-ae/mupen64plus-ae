@@ -1,0 +1,128 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (Australia) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DLG1 DIALOGEX 0, 0, 203, 178
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Glide3X Wrapper Compat. Tester"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_TEXCOMP,180,124,23,12,ES_UPPERCASE | ES_AUTOHSCROLL | 
+                    WS_DISABLED,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_FXT1,180,101,23,12,ES_UPPERCASE | ES_AUTOHSCROLL | 
+                    WS_DISABLED,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_TEXTURE,180,36,23,12,ES_UPPERCASE | ES_AUTOHSCROLL | 
+                    WS_DISABLED,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_S3TC,180,88,23,12,ES_UPPERCASE | ES_AUTOHSCROLL | 
+                    WS_DISABLED,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_SHADERS,180,49,23,12,ES_UPPERCASE | ES_AUTOHSCROLL | 
+                    WS_DISABLED,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_NPOT,180,75,23,12,ES_UPPERCASE | ES_AUTOHSCROLL | 
+                    WS_DISABLED,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_FBO,180,62,23,12,ES_UPPERCASE | ES_AUTOHSCROLL | 
+                    WS_DISABLED,WS_EX_TRANSPARENT
+    CONTROL         "Dump GL Info",IDC_DUMPINFO,"Button",BS_OWNERDRAW | 
+                    WS_GROUP | WS_TABSTOP,5,158,113,20
+    CONTROL         "Credits",IDC_CREDITS,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    140,157,63,21
+    CONTROL         "Button1",IDC_LOAD,"Button",BS_OWNERDRAW | WS_GROUP | 
+                    WS_TABSTOP,51,29,104,6
+    CONTROL         "Button2",IDC_PACKEDPIXELS,"Button",BS_OWNERDRAW | 
+                    WS_GROUP | WS_TABSTOP,7,126,66,9
+    CONTROL         "Button3",IDC_FXT1BUTTON,"Button",BS_OWNERDRAW | 
+                    WS_GROUP | WS_TABSTOP,5,100,141,19
+    CONTROL         "Button4",IDC_TEXTUREBUTTON,"Button",BS_OWNERDRAW | 
+                    WS_GROUP | WS_TABSTOP,6,42,72,6
+    CONTROL         "Button5",IDC_FBOBUTTON,"Button",BS_OWNERDRAW | WS_GROUP | 
+                    WS_TABSTOP,6,65,121,8
+    CONTROL         "Button6",IDC_NPOTBUTTON,"Button",BS_OWNERDRAW | 
+                    WS_GROUP | WS_TABSTOP,6,78,136,8
+    CONTROL         "Button7",IDC_S3TCBUTTON,"Button",BS_OWNERDRAW | 
+                    WS_GROUP | WS_TABSTOP,3,91,129,8
+    CONTROL         "Button8",IDC_GLSLBUTTON,"Button",BS_OWNERDRAW | 
+                    WS_GROUP | WS_TABSTOP,5,50,122,9
+    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,0,0,203,178
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP  DISCARDABLE     "mainbackground.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON    DISCARDABLE     "N64 Unit.ico"
+#endif    // English (Australia) resources
+/////////////////////////////////////////////////////////////////////////////
+BASS_DLL	10	"Sound/bass.dll"	// 10 = RCDATA
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
