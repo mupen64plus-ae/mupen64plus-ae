@@ -57,6 +57,8 @@ ptr_CoreCheatEnabled    CoreCheatEnabled = NULL;
 /* definitions of pointers to Core config functions */
 ptr_ConfigListSections     ConfigListSections = NULL;
 ptr_ConfigOpenSection      ConfigOpenSection = NULL;
+ptr_ConfigDeleteSection    ConfigDeleteSection = NULL;
+ptr_ConfigSaveSection      ConfigSaveSection = NULL;
 ptr_ConfigListParameters   ConfigListParameters = NULL;
 ptr_ConfigSaveFile         ConfigSaveFile = NULL;
 ptr_ConfigSetParameter     ConfigSetParameter = NULL;
@@ -221,6 +223,8 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     /* get function pointers to the configuration functions */
     ConfigListSections = (ptr_ConfigListSections) osal_dynlib_getproc(CoreHandle, "ConfigListSections");
     ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreHandle, "ConfigOpenSection");
+    ConfigDeleteSection = (ptr_ConfigDeleteSection) osal_dynlib_getproc(CoreHandle, "ConfigDeleteSection");
+    ConfigSaveSection = (ptr_ConfigSaveSection) osal_dynlib_getproc(CoreHandle, "ConfigSaveSection");
     ConfigListParameters = (ptr_ConfigListParameters) osal_dynlib_getproc(CoreHandle, "ConfigListParameters");
     ConfigSaveFile = (ptr_ConfigSaveFile) osal_dynlib_getproc(CoreHandle, "ConfigSaveFile");
     ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreHandle, "ConfigSetParameter");
@@ -287,6 +291,8 @@ m64p_error DetachCoreLib(void)
 
     ConfigListSections = NULL;
     ConfigOpenSection = NULL;
+    ConfigDeleteSection = NULL;
+    ConfigSaveSection = NULL;
     ConfigListParameters = NULL;
     ConfigSetParameter = NULL;
     ConfigGetParameter = NULL;

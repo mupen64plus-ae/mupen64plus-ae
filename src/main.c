@@ -42,6 +42,9 @@
 #include "compare_core.h"
 #include "osal_preproc.h"
 
+/* Version number for UI-Console config section parameters */
+#define CONFIG_PARAM_VERSION     1.00
+
 /** global variables **/
 int    g_Verbose = 0;
 
@@ -111,6 +114,8 @@ static void FrameCallback(unsigned int FrameIndex)
 
 static m64p_error OpenConfigurationHandles(void)
 {
+    float fConfigParamsVersion;
+    int bSaveConfig = 0;
     m64p_error rval;
 
     /* Open Configuration sections for core library and console User Interface */
@@ -135,12 +140,39 @@ static m64p_error OpenConfigurationHandles(void)
         return rval;
     }
 
+    if ((*ConfigGetParameter)(l_ConfigUI, "Version", M64TYPE_FLOAT, &fConfigParamsVersion, sizeof(float)) != M64ERR_SUCCESS)
+    {
+        fprintf(stderr, "Warning: No version number in 'UI-Console' config section. Setting defaults.");
+        (*ConfigDeleteSection)("UI-Console");
+        (*ConfigOpenSection)("UI-Console", &l_ConfigUI);
+        bSaveConfig = 1;
+    }
+    else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
+    {
+        fprintf(stderr, "Warning: Incompatible version %.2f in 'UI-Console' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
+        (*ConfigDeleteSection)("UI-Console");
+        (*ConfigOpenSection)("UI-Console", &l_ConfigUI);
+        bSaveConfig = 1;
+    }
+    else if (CONFIG_PARAM_VERSION > fConfigParamsVersion)
+    {
+        /* handle upgrades */
+        float fVersion = CONFIG_PARAM_VERSION;
+        ConfigSetParameter(l_ConfigUI, "Version", M64TYPE_FLOAT, &fVersion);
+        fprintf(stderr, "Info: Updating parameter set version in 'UI-Console' config section to %.2f", fVersion);
+        bSaveConfig = 1;
+    }
+
     /* Set default values for my Config parameters */
+    (*ConfigSetDefaultFloat)(l_ConfigUI, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus UI-Console config parameter set version number.  Please don't change");
     (*ConfigSetDefaultString)(l_ConfigUI, "PluginDir", OSAL_CURRENT_DIR, "Directory in which to search for plugins");
     (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "mupen64plus-video-rice" OSAL_DLL_EXTENSION, "Filename of video plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "mupen64plus-audio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "mupen64plus-input-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "mupen64plus-rsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
+
+    if (bSaveConfig && ConfigSaveSection != NULL) /* ConfigSaveSection was added in Config API v2.1.0 */
+        (*ConfigSaveSection)("UI-Console");
 
     return M64ERR_SUCCESS;
 }

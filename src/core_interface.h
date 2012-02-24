@@ -53,6 +53,8 @@ extern ptr_CoreCheatEnabled    CoreCheatEnabled;
 /* declarations of pointers to Core config functions */
 extern ptr_ConfigListSections     ConfigListSections;
 extern ptr_ConfigOpenSection      ConfigOpenSection;
+extern ptr_ConfigDeleteSection    ConfigDeleteSection;
+extern ptr_ConfigSaveSection      ConfigSaveSection;
 extern ptr_ConfigListParameters   ConfigListParameters;
 extern ptr_ConfigSaveFile         ConfigSaveFile;
 extern ptr_ConfigSetParameter     ConfigSetParameter;
