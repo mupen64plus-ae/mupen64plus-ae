@@ -234,19 +234,20 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         ConfigOpenSection("Audio-SDL", &l_ConfigAudio);
         bSaveConfig = 1;
     }
-    if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
+    else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
     {
-        DebugMessage(M64MSG_WARNING, "Invalid version %.2f in 'Audio-SDL' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
+        DebugMessage(M64MSG_WARNING, "Incompatible version %.2f in 'Audio-SDL' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
         ConfigDeleteSection("Audio-SDL");
         ConfigOpenSection("Audio-SDL", &l_ConfigAudio);
         bSaveConfig = 1;
     }
-    /* handle upgrades */
-    if (CONFIG_PARAM_VERSION > fConfigParamsVersion)
+    else if (CONFIG_PARAM_VERSION > fConfigParamsVersion)
     {
+        /* handle upgrades */
         float fVersion = CONFIG_PARAM_VERSION;
         ConfigSetParameter(l_ConfigAudio, "Version", M64TYPE_FLOAT, &fVersion);
         DebugMessage(M64MSG_INFO, "Updating parameter set version in 'Audio-SDL' config section to %.2f", fVersion);
+        bSaveConfig = 1;
     }
 
     /* set the default values for this plugin */
