@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-rsp-hle - main.c                                          *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2012 Bobby Smiles                                       *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
@@ -262,6 +263,11 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
           jpg_uncompress(task);
           return Cycles;
           break;
+				case 0x130de: // used by ogre battle for background decompression
+					ob_jpg_uncompress(task);
+					*rsp.SP_STATUS_REG = 0x4000;
+					return Cycles;
+					break;
         default:
             {
                DebugMessage(M64MSG_WARNING, "unknown jpeg task:  sum:%x", sum);

@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-rsp-hle - jpeg.c                                          *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2012 Bobby Smiles                                       *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
@@ -453,5 +454,221 @@ void jpg_uncompress(OSTask_t *task)
    pic -= len1 * jpg_data.w / 2;
    free(temp2);
    free(temp1);
+}
+
+
+// transposed JPEG QTable
+static unsigned QTable_T[64] = {
+	16, 12, 14, 14,  18,  24,  49,  72,
+	11, 12, 13, 17,  22,  35,  64,  92,
+	10, 14, 16, 22,  37,  55,  78,  95,
+	16, 19, 24, 29,  56,  64,  87,  98,
+	24, 26, 40, 51,  68,  81, 103, 112,
+	40, 58, 57, 87, 109, 104, 121, 100,
+	51, 60, 69, 80, 103, 113, 120, 103,
+	61, 55, 56, 62,  77,  92, 101,  99
+};
+
+// ZigZag indices
+static unsigned ZigZag[64] = {
+	 0,  1,  5,  6, 14, 15, 27, 28,
+	 2,  4,  7, 13, 16, 26, 29, 42,
+	 3,  8, 12, 17, 25, 30, 41, 43,
+	 9, 11, 18, 24, 31, 40, 44, 53,
+	10, 19, 23, 32, 39, 45, 52, 54,
+	20, 22, 33, 38, 46, 51, 55, 60,
+	21, 34, 37, 47, 50, 56, 59, 61,
+	35, 36, 48, 49, 57, 58, 62, 63
+};
+
+// Lazy way of transposing a block
+static unsigned Transpose[64] = {
+	0,  8, 16, 24, 32, 40, 48, 56,
+	1,  9, 17, 25, 33, 41, 49, 57,
+	2, 10, 18, 26, 34, 42, 50, 58,
+	3, 11, 19, 27, 35, 43, 51, 59,
+	4, 12, 20, 28, 36, 44, 52, 60,
+	5, 13, 21, 29, 37, 45, 53, 61,
+	6, 14, 22, 30, 38, 46, 54, 62,
+	7, 15, 23, 31, 39, 47, 55, 63
+};
+
+static inline const unsigned char clamp(short x) {
+		return (x & (0xff00)) ? ((-x) >> 15) & 0xff : x;
+}
+
+void ob_jpg_uncompress(OSTask_t *task)
+{
+	// Fetch arguments
+	unsigned pBuffer = task->data_ptr;
+	unsigned nMacroBlocks = task->data_size;
+	signed QScale = task->yield_data_size;
+
+	DebugMessage(M64MSG_INFO,
+		"OB Task: *buffer=%x, #MB=%d, Qscale=%d\n",
+		pBuffer, nMacroBlocks, QScale);
+
+	// Rescale QTable if needed
+	unsigned i;
+	unsigned qtable[64];
+
+	if (QScale != 0) {
+		if (QScale > 0) {
+			for(i = 0; i < 64; i++) {
+				unsigned q  = QTable_T[i] * QScale;
+				if (q > 32767) q = 32767;
+				qtable[i] = q;
+			}
+		}
+		else {
+			unsigned Shift = -QScale;
+			for(i = 0; i < 64; i++) {
+				qtable[i] = QTable_T[i] >> Shift;
+			}
+		}
+	}
+
+	unsigned mb;
+
+	int y_dc = 0;
+	int u_dc = 0;
+	int v_dc = 0;
+
+
+	// foreach MB
+	for(mb=0; mb < nMacroBlocks; mb++) {
+		unsigned sb;
+		short macroblock[2][0x300/2];
+
+		// load MB into short_buffer
+		unsigned offset = pBuffer + 0x300*mb;
+		for(i = 0; i < 0x300/2; i++) {
+			unsigned short s = rsp.RDRAM[(offset+0)^S8];
+			s <<= 8;
+			s += rsp.RDRAM[(offset+1)^S8];
+			macroblock[0][i] = s;
+			offset += 2;
+		}
+
+		// foreach SB
+		for(sb = 0; sb < 6; sb++) {
+
+			// apply delta to DC
+			int dc = (signed)macroblock[0][sb*0x40];
+			switch(sb) {
+			case 0: case 1: case 2: case 3: y_dc += dc; macroblock[1][sb*0x40] = y_dc & 0xffff; break;
+			case 4: u_dc += dc; macroblock[1][sb*0x40] = u_dc & 0xffff; break;
+			case 5: v_dc += dc; macroblock[1][sb*0x40] = v_dc & 0xffff; break;
+			}
+
+			// zigzag reordering
+			for(i = 1; i < 64; i++) {
+				macroblock[1][sb*0x40+i] = macroblock[0][sb*0x40+ZigZag[i]];
+			}
+
+			// Apply Dequantization
+			if (QScale != 0) {
+				for(i = 0; i < 64; i++) {
+					int v = macroblock[1][sb*0x40+i] * qtable[i];
+					if (v > 32767) { v = 32767; }
+					if (v < -32768) { v = -32768; }
+					macroblock[1][sb*0x40+i] = (short)v;
+				}
+			}
+
+			// Transpose
+			for(i = 0; i < 64; i++) {
+					macroblock[0][sb*0x40+i] = macroblock[1][sb*0x40+Transpose[i]];
+			}
+
+			// Apply Invert Discrete Cosinus Transform
+			idct(&macroblock[0][sb*0x40], &macroblock[1][sb*0x40]);
+
+			// Clamp values between [0..255]
+			for(i = 0; i < 64; i++) {
+				macroblock[0][sb*0x40+i] = clamp(macroblock[1][sb*0x40+i]);
+			}
+		}
+
+		// Texel Formatting
+		unsigned y_offset = 0;
+		offset = pBuffer + 0x300*mb;
+		for(i = 0; i < 8; i++) {
+			// U
+			rsp.RDRAM[(offset+0x00)^S8] = (unsigned char)macroblock[0][(0x200 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x04)^S8] = (unsigned char)macroblock[0][(0x202 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x08)^S8] = (unsigned char)macroblock[0][(0x204 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x0c)^S8] = (unsigned char)macroblock[0][(0x206 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x10)^S8] = (unsigned char)macroblock[0][(0x208 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x14)^S8] = (unsigned char)macroblock[0][(0x20a + i*0x10)/2];
+			rsp.RDRAM[(offset+0x18)^S8] = (unsigned char)macroblock[0][(0x20c + i*0x10)/2];
+			rsp.RDRAM[(offset+0x1c)^S8] = (unsigned char)macroblock[0][(0x20e + i*0x10)/2];
+			rsp.RDRAM[(offset+0x20)^S8] = (unsigned char)macroblock[0][(0x200 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x24)^S8] = (unsigned char)macroblock[0][(0x202 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x28)^S8] = (unsigned char)macroblock[0][(0x204 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x2c)^S8] = (unsigned char)macroblock[0][(0x206 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x30)^S8] = (unsigned char)macroblock[0][(0x208 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x34)^S8] = (unsigned char)macroblock[0][(0x20a + i*0x10)/2];
+			rsp.RDRAM[(offset+0x38)^S8] = (unsigned char)macroblock[0][(0x20c + i*0x10)/2];
+			rsp.RDRAM[(offset+0x3c)^S8] = (unsigned char)macroblock[0][(0x20e + i*0x10)/2];
+
+			// V
+			rsp.RDRAM[(offset+0x02)^S8] = (unsigned char)macroblock[0][(0x280 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x06)^S8] = (unsigned char)macroblock[0][(0x282 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x0a)^S8] = (unsigned char)macroblock[0][(0x284 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x0e)^S8] = (unsigned char)macroblock[0][(0x286 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x12)^S8] = (unsigned char)macroblock[0][(0x288 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x16)^S8] = (unsigned char)macroblock[0][(0x28a + i*0x10)/2];
+			rsp.RDRAM[(offset+0x1a)^S8] = (unsigned char)macroblock[0][(0x28c + i*0x10)/2];
+			rsp.RDRAM[(offset+0x1e)^S8] = (unsigned char)macroblock[0][(0x28e + i*0x10)/2];
+			rsp.RDRAM[(offset+0x22)^S8] = (unsigned char)macroblock[0][(0x280 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x26)^S8] = (unsigned char)macroblock[0][(0x282 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x2a)^S8] = (unsigned char)macroblock[0][(0x284 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x2e)^S8] = (unsigned char)macroblock[0][(0x286 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x32)^S8] = (unsigned char)macroblock[0][(0x288 + i*0x10)/2];
+			rsp.RDRAM[(offset+0x36)^S8] = (unsigned char)macroblock[0][(0x28a + i*0x10)/2];
+			rsp.RDRAM[(offset+0x3a)^S8] = (unsigned char)macroblock[0][(0x28c + i*0x10)/2];
+			rsp.RDRAM[(offset+0x3e)^S8] = (unsigned char)macroblock[0][(0x28e + i*0x10)/2];
+
+			// Ya/Yb
+			rsp.RDRAM[(offset+0x01)^S8] = (unsigned char)macroblock[0][(y_offset + 0x00)/2];
+			rsp.RDRAM[(offset+0x03)^S8] = (unsigned char)macroblock[0][(y_offset + 0x02)/2];
+			rsp.RDRAM[(offset+0x05)^S8] = (unsigned char)macroblock[0][(y_offset + 0x04)/2];
+			rsp.RDRAM[(offset+0x07)^S8] = (unsigned char)macroblock[0][(y_offset + 0x06)/2];
+			rsp.RDRAM[(offset+0x09)^S8] = (unsigned char)macroblock[0][(y_offset + 0x08)/2];
+			rsp.RDRAM[(offset+0x0b)^S8] = (unsigned char)macroblock[0][(y_offset + 0x0a)/2];
+			rsp.RDRAM[(offset+0x0d)^S8] = (unsigned char)macroblock[0][(y_offset + 0x0c)/2];
+			rsp.RDRAM[(offset+0x0f)^S8] = (unsigned char)macroblock[0][(y_offset + 0x0e)/2];
+			rsp.RDRAM[(offset+0x21)^S8] = (unsigned char)macroblock[0][(y_offset + 0x10)/2];
+			rsp.RDRAM[(offset+0x23)^S8] = (unsigned char)macroblock[0][(y_offset + 0x12)/2];
+			rsp.RDRAM[(offset+0x25)^S8] = (unsigned char)macroblock[0][(y_offset + 0x14)/2];
+			rsp.RDRAM[(offset+0x27)^S8] = (unsigned char)macroblock[0][(y_offset + 0x16)/2];
+			rsp.RDRAM[(offset+0x29)^S8] = (unsigned char)macroblock[0][(y_offset + 0x18)/2];
+			rsp.RDRAM[(offset+0x2b)^S8] = (unsigned char)macroblock[0][(y_offset + 0x1a)/2];
+			rsp.RDRAM[(offset+0x2d)^S8] = (unsigned char)macroblock[0][(y_offset + 0x1c)/2];
+			rsp.RDRAM[(offset+0x2f)^S8] = (unsigned char)macroblock[0][(y_offset + 0x1e)/2];
+
+			// Ya+1/Yb+1
+			rsp.RDRAM[(offset+0x11)^S8] = (unsigned char)macroblock[0][(y_offset + 0x80)/2];
+			rsp.RDRAM[(offset+0x13)^S8] = (unsigned char)macroblock[0][(y_offset + 0x82)/2];
+			rsp.RDRAM[(offset+0x15)^S8] = (unsigned char)macroblock[0][(y_offset + 0x84)/2];
+			rsp.RDRAM[(offset+0x17)^S8] = (unsigned char)macroblock[0][(y_offset + 0x86)/2];
+			rsp.RDRAM[(offset+0x19)^S8] = (unsigned char)macroblock[0][(y_offset + 0x88)/2];
+			rsp.RDRAM[(offset+0x1b)^S8] = (unsigned char)macroblock[0][(y_offset + 0x8a)/2];
+			rsp.RDRAM[(offset+0x1d)^S8] = (unsigned char)macroblock[0][(y_offset + 0x8c)/2];
+			rsp.RDRAM[(offset+0x1f)^S8] = (unsigned char)macroblock[0][(y_offset + 0x8e)/2];
+			rsp.RDRAM[(offset+0x31)^S8] = (unsigned char)macroblock[0][(y_offset + 0x90)/2];
+			rsp.RDRAM[(offset+0x33)^S8] = (unsigned char)macroblock[0][(y_offset + 0x92)/2];
+			rsp.RDRAM[(offset+0x35)^S8] = (unsigned char)macroblock[0][(y_offset + 0x94)/2];
+			rsp.RDRAM[(offset+0x37)^S8] = (unsigned char)macroblock[0][(y_offset + 0x96)/2];
+			rsp.RDRAM[(offset+0x39)^S8] = (unsigned char)macroblock[0][(y_offset + 0x98)/2];
+			rsp.RDRAM[(offset+0x3b)^S8] = (unsigned char)macroblock[0][(y_offset + 0x9a)/2];
+			rsp.RDRAM[(offset+0x3d)^S8] = (unsigned char)macroblock[0][(y_offset + 0x9c)/2];
+			rsp.RDRAM[(offset+0x3f)^S8] = (unsigned char)macroblock[0][(y_offset + 0x9e)/2];
+
+			offset += 0x40;
+			y_offset += (i == 3) ? 0xa0 : 0x20;
+		}
+	}
 }
 

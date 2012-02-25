@@ -98,7 +98,10 @@ typedef struct
 
 void DebugMessage(int level, const char *message, ...);
 
+void idct(short *iblock, short *oblock);
+
 void jpg_uncompress(OSTask_t *task);
+void ob_jpg_uncompress(OSTask_t *task);
 /*void ucode1(OSTask_t *task);
 void ucode2(OSTask_t *task);
 void ucode3(OSTask_t *task);

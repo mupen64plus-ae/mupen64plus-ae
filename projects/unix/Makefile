@@ -214,6 +214,7 @@ OBJDIR = _obj
 SOURCE = \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/jpeg.c \
+	$(SRCDIR)/idct.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \
 	$(SRCDIR)/ucode1.cpp \
