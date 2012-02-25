@@ -133,6 +133,8 @@ static int critical_failure = 0;
 
 /* definitions of pointers to Core config functions */
 ptr_ConfigOpenSection      ConfigOpenSection = NULL;
+ptr_ConfigDeleteSection    ConfigDeleteSection = NULL;
+ptr_ConfigSaveSection      ConfigSaveSection = NULL;
 ptr_ConfigSetParameter     ConfigSetParameter = NULL;
 ptr_ConfigGetParameter     ConfigGetParameter = NULL;
 ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
