@@ -504,9 +504,7 @@ void ob_jpg_uncompress(OSTask_t *task)
 	unsigned nMacroBlocks = task->data_size;
 	signed QScale = task->yield_data_size;
 
-	DebugMessage(M64MSG_INFO,
-		"OB Task: *buffer=%x, #MB=%d, Qscale=%d\n",
-		pBuffer, nMacroBlocks, QScale);
+	DebugMessage(M64MSG_VERBOSE, "OB Task: *buffer=%x, #MB=%d, Qscale=%d\n", pBuffer, nMacroBlocks, QScale);
 
 	// Rescale QTable if needed
 	unsigned i;
