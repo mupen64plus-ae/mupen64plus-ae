@@ -2,8 +2,6 @@
  *   Mupen64plus-rsp-hle - idct.c                                          *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2012 Bobby Smiles                                       *
- *   Copyright (C) 2009 Richard Goedeken                                   *
- *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
