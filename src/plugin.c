@@ -594,7 +594,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
     }
 
 #ifdef _DEBUG
-    DebugMessage(M64MSG_VERBOSE, "Controller #%d value: 0x%8.8X\n", Control, *(int *)&controller[Control].buttons );
+    DebugMessage(M64MSG_VERBOSE, "Controller #%d value: 0x%8.8X", Control, *(int *)&controller[Control].buttons );
 #endif
     *Keys = controller[Control].buttons;
 
@@ -603,9 +603,13 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
     if (controller[Control].event_joystick != 0)
     {
         struct input_event play;
+        static unsigned int SwitchPackTime[4] = {0, 0, 0, 0}, SwitchPackType[4] = {0, 0, 0, 0};
+        // when the user switches packs, we should mimick the act of removing 1 pack, and then inserting another 1 second later
         if (controller[Control].buttons.Value & button_bits[14])
         {
-            controller[Control].control->Plugin = PLUGIN_MEMPAK;
+            SwitchPackTime[Control] = SDL_GetTicks();         // time at which the 'switch pack' command was given
+            SwitchPackType[Control] = PLUGIN_MEMPAK;          // type of new pack to insert
+            controller[Control].control->Plugin = PLUGIN_NONE;// remove old pack
             play.type = EV_FF;
             play.code = ffweak[Control].id;
             play.value = 1;
@@ -614,12 +618,20 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
         }
         if (controller[Control].buttons.Value & button_bits[15])
         {
-            controller[Control].control->Plugin = PLUGIN_RAW;
+            SwitchPackTime[Control] = SDL_GetTicks();         // time at which the 'switch pack' command was given
+            SwitchPackType[Control] = PLUGIN_RAW;             // type of new pack to insert
+            controller[Control].control->Plugin = PLUGIN_NONE;// remove old pack
             play.type = EV_FF;
             play.code = ffstrong[Control].id;
             play.value = 1;
             if (write(controller[Control].event_joystick, (const void*) &play, sizeof(play)) == -1)
                 perror("Error starting rumble effect");
+        }
+        // handle inserting new pack if the time has arrived
+        if (SwitchPackTime[Control] != 0 && (SDL_GetTicks() - SwitchPackTime[Control]) >= 1000)
+        {
+            controller[Control].control->Plugin = SwitchPackType[Control];
+            SwitchPackTime[Control] = 0;
         }
     }
 #endif /* __linux__ */
