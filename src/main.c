@@ -154,7 +154,7 @@ static m64p_error OpenConfigurationHandles(void)
         (*ConfigOpenSection)("UI-Console", &l_ConfigUI);
         bSaveConfig = 1;
     }
-    else if (CONFIG_PARAM_VERSION > fConfigParamsVersion)
+    else if ((CONFIG_PARAM_VERSION - fConfigParamsVersion) >= 0.0001f)
     {
         /* handle upgrades */
         float fVersion = CONFIG_PARAM_VERSION;
