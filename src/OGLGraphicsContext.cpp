@@ -379,7 +379,7 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
    
    // if emulator defined a render callback function, call it before buffer swap
    if(renderCallback)
-       (*renderCallback)();
+       (*renderCallback)(status.bScreenIsDrawn);
 
    CoreVideo_GL_SwapBuffers();
    

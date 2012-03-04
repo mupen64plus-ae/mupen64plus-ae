@@ -196,7 +196,7 @@ extern ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers;
 
 /* global functions provided by Video.cpp */
 extern char generalText[];
-extern void (*renderCallback)();
+extern void (*renderCallback)(int);
 void DebugMessage(int level, const char *message, ...);
 
 void SetVIScales();

@@ -67,7 +67,7 @@ RECT frameWriteByCPURectArray[20][20];
 bool frameWriteByCPURectFlag[20][20];
 std::vector<uint32> frameWriteRecord;
 
-void (*renderCallback)() = NULL;
+void (*renderCallback)(int) = NULL;
 
 /* definitions of pointers to Core config functions */
 ptr_ConfigOpenSection      ConfigOpenSection = NULL;
@@ -940,7 +940,7 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
 }
     
 
-EXPORT void CALL SetRenderingCallback(void (*callback)())
+EXPORT void CALL SetRenderingCallback(void (*callback)(int))
 {
     renderCallback = callback;
 }
