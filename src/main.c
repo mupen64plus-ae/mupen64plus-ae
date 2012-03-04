@@ -41,6 +41,25 @@ static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
 
 /* local functions */
+
+/**
+ * Simulate the effect of setting the TASKDONE bit (aliased to SIG2)
+ * and executing a break instruction (setting HALT and BROKE bits).
+ **/
+static inline void taskdone()
+{
+    // On hardware writing to SP_STATUS_REG is an indirect way of changing its content.
+    // For instance, in order to set the TASKDONE bit (bit 9), one should write 0x4000
+    // to the SP_STATUS_REG : Read Access & Write Access don't have the same semantic.
+    //
+    // Here, this indirect way of changing the status register is bypassed :
+    // we modify the bits directly.
+    //
+    // 0x203 = TASKDONE | BROKE | HALT
+    *rsp.SP_STATUS_REG |= 0x203;
+}
+
+
 static int audio_ucode_detect(OSTask_t *task)
 {
     if (*(unsigned int*)(rsp.RDRAM + task->ucode_data + 0) != 0x1)
@@ -183,7 +202,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
         {
             rsp.ProcessDlistList();
         }
-        *rsp.SP_STATUS_REG |= 0x0203;
+        taskdone();
         if ((*rsp.SP_STATUS_REG & 0x40) != 0 )
         {
             *rsp.MI_INTR_REG |= 0x1;
@@ -199,7 +218,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
         {
             rsp.ProcessAlistList();
         }
-        *rsp.SP_STATUS_REG |= 0x0203;
+        taskdone();
         if ((*rsp.SP_STATUS_REG & 0x40) != 0 )
         {
             *rsp.MI_INTR_REG |= 0x1;
@@ -212,7 +231,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
         rsp.ShowCFB();
     }
 
-    *rsp.SP_STATUS_REG |= 0x203;
+    taskdone();
     if ((*rsp.SP_STATUS_REG & 0x40) != 0 )
     {
         *rsp.MI_INTR_REG |= 0x1;
@@ -263,15 +282,15 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
             switch(sum)
             {
             case 0x278: // used by zelda during boot
-                *rsp.SP_STATUS_REG |= 0x200;
+                taskdone();
                 return Cycles;
             case 0x2e4fc: // used by pokemon stadium {1,2} for jpg decompression
                 ps_jpg_uncompress(task);
-                *rsp.SP_STATUS_REG = 0x4000;
+                taskdone();
                 return Cycles;
             case 0x130de: // used by ogre battle for background decompression
                 ob_jpg_uncompress(task);
-                *rsp.SP_STATUS_REG = 0x4000;
+                taskdone();
                 return Cycles;
             default:
                 DebugMessage(M64MSG_WARNING, "unknown jpeg task:  sum:%x", sum);
