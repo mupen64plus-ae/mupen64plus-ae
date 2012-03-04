@@ -243,7 +243,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         ConfigOpenSection("Audio-SDL", &l_ConfigAudio);
         bSaveConfig = 1;
     }
-    else if (CONFIG_PARAM_VERSION > fConfigParamsVersion)
+    else if ((CONFIG_PARAM_VERSION - fConfigParamsVersion) >= 0.0001f)
     {
         /* handle upgrades */
         float fVersion = CONFIG_PARAM_VERSION;
