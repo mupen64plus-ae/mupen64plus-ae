@@ -71,36 +71,36 @@ extern RSP_INFO rsp;
 
 typedef struct
 {
-   unsigned int type;
-   unsigned int flags;
-   
-   unsigned int ucode_boot;
-   unsigned int ucode_boot_size;
+    unsigned int type;
+    unsigned int flags;
 
-   unsigned int ucode;
-   unsigned int ucode_size;
-   
-   unsigned int ucode_data;
-   unsigned int ucode_data_size;
-   
-   unsigned int dram_stack;
-   unsigned int dram_stack_size;
-   
-   unsigned int output_buff;
-   unsigned int output_buff_size;
-   
-   unsigned int data_ptr;
-   unsigned int data_size;
-   
-   unsigned int yield_data_ptr;
-   unsigned int yield_data_size;
+    unsigned int ucode_boot;
+    unsigned int ucode_boot_size;
+
+    unsigned int ucode;
+    unsigned int ucode_size;
+
+    unsigned int ucode_data;
+    unsigned int ucode_data_size;
+
+    unsigned int dram_stack;
+    unsigned int dram_stack_size;
+
+    unsigned int output_buff;
+    unsigned int output_buff_size;
+
+    unsigned int data_ptr;
+    unsigned int data_size;
+
+    unsigned int yield_data_ptr;
+    unsigned int yield_data_size;
 } OSTask_t;
 
 void DebugMessage(int level, const char *message, ...);
 
 void idct(short *iblock, short *oblock);
 
-void jpg_uncompress(OSTask_t *task);
+void ps_jpg_uncompress(OSTask_t *task);
 void ob_jpg_uncompress(OSTask_t *task);
 /*void ucode1(OSTask_t *task);
 void ucode2(OSTask_t *task);

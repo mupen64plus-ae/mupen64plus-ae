@@ -30,435 +30,9 @@
 #include "m64p_plugin.h"
 #include "hle.h"
 
-static struct 
-{
-   unsigned int pic;
-   int w;
-   int h;
-   unsigned int m1;
-   unsigned int m2;
-   unsigned int m3;
-} jpg_data;
-
-static short* q[3];
-
-static short *pic;
-
-static unsigned int len1, len2;
-
-void jpg_uncompress(OSTask_t *task)
-{
-   int i, w;
-   short *temp1,*temp2;
-   short* data = (short*)(rsp.RDRAM + task->ucode_data);
-   short m[8*32];
-   
-   if (!(task->flags & 1))
-   {
-    int copysize = task->data_size;
-    if (copysize > sizeof(jpg_data))
-        copysize = sizeof(jpg_data);
-    memcpy(&jpg_data, rsp.RDRAM+task->data_ptr, copysize);
-    q[0] = (short*)(rsp.RDRAM + jpg_data.m1);
-    q[1] = (short*)(rsp.RDRAM + jpg_data.m2);
-    q[2] = (short*)(rsp.RDRAM + jpg_data.m3);
-    
-    if (jpg_data.h == 0)
-      {
-         len1 = 512;
-         len2 = 255;
-      }
-    else
-      {
-         len1 = 768;
-         len2 = 511;
-      }
-     }
-   else
-   {
-     DebugMessage(M64MSG_WARNING, "jpg_uncompress(): unexpected flags\n");
-   }
-   pic = (short*)(rsp.RDRAM + jpg_data.pic);
-
-   temp1 = (short*)malloc((jpg_data.h+4)*64*2);
-   temp2 = (short*)malloc((jpg_data.h+4)*64*2);
-   w = jpg_data.w;
-   
-   do
-     {
-    // quantification
-    for (i=0; i<(jpg_data.h+2)*64; i++)
-      temp1[i] = (short)((unsigned short)(pic[i^S]*q[0][(i&0x3F)^S])*(int)data[0^S]);
-    for (;i<(jpg_data.h+3)*64; i++)
-      temp1[i] = (short)((unsigned short)(pic[i^S]*q[1][(i&0x3F)^S])*(int)data[0^S]);
-    for (;i<(jpg_data.h+4)*64; i++)
-      temp1[i] = (short)((unsigned short)(pic[i^S]*q[2][(i&0x3F)^S])*(int)data[0^S]);
-    
-    // zigzag
-    for (i=0; i<(jpg_data.h+4); i++)
-      {
-         temp2[i*64+0 ] = temp1[i*64+0 ];
-         temp2[i*64+8 ] = temp1[i*64+1 ];
-         temp2[i*64+1 ] = temp1[i*64+2 ];
-         temp2[i*64+2 ] = temp1[i*64+3 ];
-         temp2[i*64+9 ] = temp1[i*64+4 ];
-         temp2[i*64+16] = temp1[i*64+5 ];
-         temp2[i*64+24] = temp1[i*64+6 ];
-         temp2[i*64+17] = temp1[i*64+7 ];
-         temp2[i*64+10] = temp1[i*64+8 ];
-         temp2[i*64+3 ] = temp1[i*64+9 ];
-         temp2[i*64+4 ] = temp1[i*64+10];
-         temp2[i*64+11] = temp1[i*64+11];
-         temp2[i*64+18] = temp1[i*64+12];
-         temp2[i*64+25] = temp1[i*64+13];
-         temp2[i*64+32] = temp1[i*64+14];
-         temp2[i*64+40] = temp1[i*64+15];
-         temp2[i*64+33] = temp1[i*64+16];
-         temp2[i*64+26] = temp1[i*64+17];
-         temp2[i*64+19] = temp1[i*64+18];
-         temp2[i*64+12] = temp1[i*64+19];
-         temp2[i*64+5 ] = temp1[i*64+20];
-         temp2[i*64+6 ] = temp1[i*64+21];
-         temp2[i*64+13] = temp1[i*64+22];
-         temp2[i*64+20] = temp1[i*64+23];
-         temp2[i*64+27] = temp1[i*64+24];
-         temp2[i*64+34] = temp1[i*64+25];
-         temp2[i*64+41] = temp1[i*64+26];
-         temp2[i*64+48] = temp1[i*64+27];
-         temp2[i*64+56] = temp1[i*64+28];
-         temp2[i*64+49] = temp1[i*64+29];
-         temp2[i*64+42] = temp1[i*64+30];
-         temp2[i*64+35] = temp1[i*64+31];
-         temp2[i*64+28] = temp1[i*64+32];
-         temp2[i*64+21] = temp1[i*64+33];
-         temp2[i*64+14] = temp1[i*64+34];
-         temp2[i*64+7 ] = temp1[i*64+35];
-         temp2[i*64+15] = temp1[i*64+36];
-         temp2[i*64+22] = temp1[i*64+37];
-         temp2[i*64+29] = temp1[i*64+38];
-         temp2[i*64+36] = temp1[i*64+39];
-         temp2[i*64+43] = temp1[i*64+40];
-         temp2[i*64+50] = temp1[i*64+41];
-         temp2[i*64+57] = temp1[i*64+42];
-         temp2[i*64+58] = temp1[i*64+43];
-         temp2[i*64+51] = temp1[i*64+44];
-         temp2[i*64+44] = temp1[i*64+45];
-         temp2[i*64+37] = temp1[i*64+46];
-         temp2[i*64+30] = temp1[i*64+47];
-         temp2[i*64+23] = temp1[i*64+48];
-         temp2[i*64+31] = temp1[i*64+49];
-         temp2[i*64+38] = temp1[i*64+50];
-         temp2[i*64+45] = temp1[i*64+51];
-         temp2[i*64+52] = temp1[i*64+52];
-         temp2[i*64+59] = temp1[i*64+53];
-         temp2[i*64+60] = temp1[i*64+54];
-         temp2[i*64+53] = temp1[i*64+55];
-         temp2[i*64+46] = temp1[i*64+56];
-         temp2[i*64+39] = temp1[i*64+57];
-         temp2[i*64+47] = temp1[i*64+58];
-         temp2[i*64+54] = temp1[i*64+59];
-         temp2[i*64+61] = temp1[i*64+60];
-         temp2[i*64+62] = temp1[i*64+61];
-         temp2[i*64+55] = temp1[i*64+62];
-         temp2[i*64+63] = temp1[i*64+63];
-      }
-    
-    // idct
-    for (i=0; i<(jpg_data.h+4); i++)
-      {
-         int j,k;
-         int accum;
-         
-         for (j=0; j<8; j++)
-           {
-          m[8 *8+j] = (((int)temp2[i*64+1*8+j] * (int)data[(2*8+0)^S]*2)+0x8000
-                   +((int)temp2[i*64+7*8+j] * (int)data[(2*8+1)^S]*2))>>16;
-          m[9 *8+j] = (((int)temp2[i*64+5*8+j] * (int)data[(2*8+2)^S]*2)+0x8000
-                   +((int)temp2[i*64+3*8+j] * (int)data[(2*8+3)^S]*2))>>16;
-          m[10*8+j] = (((int)temp2[i*64+3*8+j] * (int)data[(2*8+2)^S]*2)+0x8000
-                   +((int)temp2[i*64+5*8+j] * (int)data[(2*8+4)^S]*2))>>16;
-          m[11*8+j] = (((int)temp2[i*64+7*8+j] * (int)data[(2*8+0)^S]*2)+0x8000
-                   +((int)temp2[i*64+1*8+j] * (int)data[(2*8+5)^S]*2))>>16;
-          
-          m[6 *8+j] = (((int)temp2[i*64+0*8+j] * (int)data[(3*8+0)^S]*2)+0x8000
-                   +  ((int)temp2[i*64+4*8+j] * (int)data[(3*8+1)^S]*2))>>16;
-          
-          m[5 *8+j] = m[11*8+j]-m[10*8+j];
-          m[4 *8+j] = m[8 *8+j]-m[9 *8+j];
-          m[12*8+j] = m[8 *8+j]+m[9 *8+j];
-          m[15*8+j] = m[11*8+j]+m[10*8+j];
-          
-          m[13*8+j] = (((int)m[5*8+j] * (int)data[(3*8+0)^S]*2)+0x8000
-                   +((int)m[4*8+j] * (int)data[(3*8+1)^S]*2))>>16;
-          m[14*8+j] = (((int)m[5*8+j] * (int)data[(3*8+0)^S]*2)+0x8000
-                   +((int)m[4*8+j] * (int)data[(3*8+0)^S]*2))>>16;
-          
-          m[4 *8+j] = (((int)temp2[i*64+0*8+j] * (int)data[(3*8+0)^S]*2)+0x8000
-                   +((int)temp2[i*64+4*8+j] * (int)data[(3*8+0)^S]*2))>>16;
-          m[5 *8+j] = (((int)temp2[i*64+6*8+j] * (int)data[(3*8+2)^S]*2)+0x8000
-                   +((int)temp2[i*64+2*8+j] * (int)data[(3*8+4)^S]*2))>>16;
-          m[7 *8+j] = (((int)temp2[i*64+2*8+j] * (int)data[(3*8+2)^S]*2)+0x8000
-                   +((int)temp2[i*64+6*8+j] * (int)data[(3*8+3)^S]*2))>>16;
-          
-          m[8 *8+j] = m[4 *8+j]+m[5 *8+j];
-          m[9 *8+j] = m[6 *8+j]+m[7 *8+j];
-          m[10*8+j] = m[6 *8+j]-m[7 *8+j];
-          m[11*8+j] = m[4 *8+j]-m[5 *8+j];
-          
-          m[16*8+j] = m[8 *8+j]+m[15*8+j];
-          m[17*8+j] = m[9 *8+j]+m[14*8+j];
-          m[18*8+j] = m[10*8+j]+m[13*8+j];
-          m[19*8+j] = m[11*8+j]+m[12*8+j];
-          m[20*8+j] = m[11*8+j]-m[12*8+j];
-          m[21*8+j] = m[10*8+j]-m[13*8+j];
-          m[22*8+j] = m[9 *8+j]-m[14*8+j];
-          m[23*8+j] = m[8 *8+j]-m[15*8+j];
-           }
-         // transpose
-         for (j=0; j<8; j++)
-           for (k=j; k<8; k++)
-         {
-            m[24*8+j*8+k] = m[16*8+k*8+j];
-            m[24*8+k*8+j] = m[16*8+j*8+k];
-         }
-         
-         for (j=0; j<8; j++)
-           {
-          m[8 *8+j] = (((int)m[25*8+j] * (int)data[(2*8+0)^S]*2)+0x8000
-                   +((int)m[31*8+j] * (int)data[(2*8+1)^S]*2))>>16;
-          m[9 *8+j] = (((int)m[29*8+j] * (int)data[(2*8+2)^S]*2)+0x8000
-                   +((int)m[27*8+j] * (int)data[(2*8+3)^S]*2))>>16;
-          m[10*8+j] = (((int)m[27*8+j] * (int)data[(2*8+2)^S]*2)+0x8000
-                   +((int)m[29*8+j] * (int)data[(2*8+4)^S]*2))>>16;
-          m[11*8+j] = (((int)m[31*8+j] * (int)data[(2*8+0)^S]*2)+0x8000
-                   +((int)m[25*8+j] * (int)data[(2*8+5)^S]*2))>>16;
-          
-          m[6 *8+j] = (((int)m[24*8+j] * (int)data[(3*8+0)^S]*2)+0x8000
-                   +((int)m[28*8+j] * (int)data[(3*8+1)^S]*2))>>16;
-          
-          m[5 *8+j] = m[11*8+j]-m[10*8+j];
-          m[4 *8+j] = m[8 *8+j]-m[9 *8+j];
-          m[12*8+j] = m[8 *8+j]+m[9 *8+j];
-          m[15*8+j] = m[11*8+j]+m[10*8+j];
-          
-          m[13*8+j] = (((int)m[5*8+j] * (int)data[(3*8+0)^S]*2)+0x8000
-                   +((int)m[4*8+j] * (int)data[(3*8+1)^S]*2))>>16;
-          m[14*8+j] = (((int)m[5*8+j] * (int)data[(3*8+0)^S]*2)+0x8000
-                   +((int)m[4*8+j] * (int)data[(3*8+0)^S]*2))>>16;
-          
-          m[4 *8+j] = (((int)m[24*8+j] * (int)data[(3*8+0)^S]*2)+0x8000
-                   +((int)m[28*8+j] * (int)data[(3*8+0)^S]*2))>>16;
-          m[5 *8+j] = (((int)m[30*8+j] * (int)data[(3*8+2)^S]*2)+0x8000
-                   +((int)m[26*8+j] * (int)data[(3*8+4)^S]*2))>>16;
-          m[7 *8+j] = (((int)m[26*8+j] * (int)data[(3*8+2)^S]*2)+0x8000
-                   +((int)m[30*8+j] * (int)data[(3*8+3)^S]*2))>>16;
-          
-          m[8 *8+j] = m[4 *8+j]+m[5 *8+j];
-          m[9 *8+j] = m[6 *8+j]+m[7 *8+j];
-          m[10*8+j] = m[6 *8+j]-m[7 *8+j];
-          m[11*8+j] = m[4 *8+j]-m[5 *8+j];
-          
-          accum = ((int)m[8 *8+j] * (int)data[1^S]*2)+0x8000
-            + ((int)m[15*8+j] * (int)data[1^S]*2);
-          temp1[i*64+0*8+j] = (short)(accum>>16);
-          temp1[i*64+7*8+j] = (accum+((int)m[15*8+j]*(int)data[2^S]*2))>>16;
-          accum = ((int)m[9 *8+j] * (int)data[1^S]*2)+0x8000
-            + ((int)m[14*8+j] * (int)data[1^S]*2);
-          temp1[i*64+1*8+j] = (short)(accum>>16);
-          temp1[i*64+6*8+j] = (accum+((int)m[14*8+j]*(int)data[2^S]*2))>>16;
-          accum = ((int)m[10*8+j] * (int)data[1^S]*2)+0x8000
-            + ((int)m[13*8+j] * (int)data[1^S]*2);
-          temp1[i*64+2*8+j] = (short)(accum>>16);
-          temp1[i*64+5*8+j] = (accum+((int)m[13*8+j]*(int)data[2^S]*2))>>16;
-          accum = ((int)m[11*8+j] * (int)data[1^S]*2)+0x8000
-            + ((int)m[12*8+j] * (int)data[1^S]*2);
-          temp1[i*64+3*8+j] = (short)(accum>>16);
-          temp1[i*64+4*8+j] = (accum+((int)m[12*8+j]*(int)data[2^S]*2))>>16;
-           }
-      }
-    
-    if (jpg_data.h == 0)
-      {
-         DebugMessage(M64MSG_WARNING, "jpg_uncompress: jpg_data.h==0\n");
-      }
-    else
-      {
-         for (i=0; i<8; i++)
-           m[9 *8+i] = m[10*8+i] = m[11*8+i] = m[12*8+i] = 0;
-         m[9 *8+0] = m[10*8+2] = m[11*8+4] = m[12*8+6] = data[6^S];
-         m[9 *8+1] = m[10*8+3] = m[11*8+5] = m[12*8+7] = data[7^S];
-         for (i=0; i<8; i++)
-           {
-          m[1 *8+i] = data[(0*8+i)^S];
-          m[4 *8+i] = data[(1*8+i)^S];
-           }
-         for (i=0; i<2; i++)
-           {
-          int j;
-          for (j=0; j<4; j++)
-            {
-               int k;
-               for (k=0; k<8; k++)
-             {
-                m[16*8+k]=(short)((int)m[9 *8+k]*(int)temp1[256+i*32+j*8+64+0]
-                          +(int)m[10*8+k]*(int)temp1[256+i*32+j*8+64+1]
-                          +(int)m[11*8+k]*(int)temp1[256+i*32+j*8+64+2]
-                          +(int)m[12*8+k]*(int)temp1[256+i*32+j*8+64+3]);
-                
-                m[15*8+k] =(short)((int)m[9 *8+k]*(int)temp1[256+i*32+j*8+64+4]
-                           +(int)m[10*8+k]*(int)temp1[256+i*32+j*8+64+5]
-                           +(int)m[11*8+k]*(int)temp1[256+i*32+j*8+64+6]
-                           +(int)m[12*8+k]*(int)temp1[256+i*32+j*8+64+7]);
-                
-                m[18*8+k] = temp1[i*128+j*16+k]+m[4*8+7];
-                m[17*8+k] = temp1[i*128+j*16+64+k]+m[4*8+7];
-                
-                m[14*8+k] =(short)((int)m[9 *8+k]*(int)temp1[256+i*32+j*8+0]
-                           +(int)m[10*8+k]*(int)temp1[256+i*32+j*8+1]
-                           +(int)m[11*8+k]*(int)temp1[256+i*32+j*8+2]
-                           +(int)m[12*8+k]*(int)temp1[256+i*32+j*8+3]);
-                
-                m[13*8+k] =(short)((int)m[9 *8+k]*(int)temp1[256+i*32+j*8+4]
-                           +(int)m[10*8+k]*(int)temp1[256+i*32+j*8+5]
-                           +(int)m[11*8+k]*(int)temp1[256+i*32+j*8+6]
-                           +(int)m[12*8+k]*(int)temp1[256+i*32+j*8+7]);
-                
-                m[24*8+k] = (short)(((int)m[16*8+k]*(unsigned short)m[4*8+0])>>16);
-                m[23*8+k] = (short)(((int)m[15*8+k]*(unsigned short)m[4*8+0])>>16);
-                m[26*8+k] = (short)(((int)m[14*8+k]*(unsigned short)m[4*8+1])>>16);
-                m[25*8+k] = (short)(((int)m[13*8+k]*(unsigned short)m[4*8+1])>>16);
-                m[21*8+k] = (short)(((int)m[16*8+k]*(unsigned short)m[4*8+2])>>16);
-                m[22*8+k] = (short)(((int)m[15*8+k]*(unsigned short)m[4*8+2])>>16);
-                m[28*8+k] = (short)(((int)m[14*8+k]*(unsigned short)m[4*8+3])>>16);
-                m[27*8+k] = (short)(((int)m[13*8+k]*(unsigned short)m[4*8+3])>>16);
-                
-                m[24*8+k] += m[16*8+k];
-                m[23*8+k] += m[15*8+k];
-                m[26*8+k] += m[21*8+k];
-                m[25*8+k] += m[22*8+k];
-                m[28*8+k] += m[14*8+k];
-                m[27*8+k] += m[13*8+k];
-                m[24*8+k] += m[18*8+k];
-                m[23*8+k] += m[17*8+k];
-                m[26*8+k] = m[18*8+k] - m[26*8+k];
-                m[25*8+k] = m[17*8+k] - m[25*8+k];
-                m[28*8+k] += m[18*8+k];
-                m[27*8+k] += m[17*8+k];
-                
-                m[23*8+k] = m[23*8+k] >= 0 ? m[23*8+k] : 0;
-                m[24*8+k] = m[24*8+k] >= 0 ? m[24*8+k] : 0;
-                m[25*8+k] = m[25*8+k] >= 0 ? m[25*8+k] : 0;
-                m[26*8+k] = m[26*8+k] >= 0 ? m[26*8+k] : 0;
-                m[27*8+k] = m[27*8+k] >= 0 ? m[27*8+k] : 0;
-                m[28*8+k] = m[28*8+k] >= 0 ? m[28*8+k] : 0;
-                
-                m[23*8+k] = m[23*8+k] < m[4*8+4] ? m[23*8+k] : m[4*8+4];
-                m[24*8+k] = m[24*8+k] < m[4*8+4] ? m[24*8+k] : m[4*8+4];
-                m[25*8+k] = m[25*8+k] < m[4*8+4] ? m[25*8+k] : m[4*8+4];
-                m[26*8+k] = m[26*8+k] < m[4*8+4] ? m[26*8+k] : m[4*8+4];
-                m[27*8+k] = m[27*8+k] < m[4*8+4] ? m[27*8+k] : m[4*8+4];
-                m[28*8+k] = m[28*8+k] < m[4*8+4] ? m[28*8+k] : m[4*8+4];
-                
-                m[23*8+k] = (short)(((int)m[23*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[24*8+k] = (short)(((int)m[24*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[25*8+k] = (short)(((int)m[25*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[26*8+k] = (short)(((int)m[26*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[27*8+k] = (short)(((int)m[27*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[28*8+k] = (short)(((int)m[28*8+k] * (unsigned short)m[4*8+6])>>16);
-                
-                m[23*8+k] = (short)((unsigned short)m[23*8+k] * (int)m[1*8+3]);
-                m[24*8+k] = (short)((unsigned short)m[24*8+k] * (int)m[1*8+3]);
-                m[25*8+k] = (short)((int)m[25*8+k] * (int)m[1*8+4]);
-                m[26*8+k] = (short)((int)m[26*8+k] * (int)m[1*8+4]);
-                m[27*8+k] = (short)((int)m[27*8+k] * (int)m[1*8+5]);
-                m[28*8+k] = (short)((int)m[28*8+k] * (int)m[1*8+5]);
-                
-                m[18*8+k] = temp1[i*128+j*16+8+k] + m[4*8+7];
-                m[17*8+k] = temp1[i*128+j*16+8+64+k] + m[4*8+7];
-                
-                m[24*8+k] |= m[26*8+k];
-                m[23*8+k] |= m[25*8+k];
-                
-                m[20*8+k] = (short)(((int)m[16*8+k] * (unsigned short)m[4*8+0])>>16);
-                m[19*8+k] = (short)(((int)m[15*8+k] * (unsigned short)m[4*8+0])>>16);
-                
-                m[30*8+k] = m[24*8+k] | m[28*8+k];
-                m[29*8+k] = m[23*8+k] | m[27*8+k];
-                
-                m[26*8+k] = (short)(((int)m[14*8+k] * (unsigned short)m[4*8+1])>>16);
-                m[25*8+k] = (short)(((int)m[13*8+k] * (unsigned short)m[4*8+1])>>16);
-                m[21*8+k] = (short)(((int)m[16*8+k] * (unsigned short)m[4*8+2])>>16);
-                m[22*8+k] = (short)(((int)m[15*8+k] * (unsigned short)m[4*8+2])>>16);
-                m[28*8+k] = (short)(((int)m[14*8+k] * (unsigned short)m[4*8+3])>>16);
-                m[27*8+k] = (short)(((int)m[13*8+k] * (unsigned short)m[4*8+3])>>16);
-                
-                m[30*8+k] |= m[1*8+6];
-                m[29*8+k] |= m[1*8+6];
-                
-                pic[(i*128+j*32+0+k)^S] = m[30*8+k];
-                pic[(i*128+j*32+8+k)^S] = m[29*8+k];
-                
-                m[24*8+k] = m[20*8+k] + m[16*8+k];
-                m[23*8+k] = m[19*8+k] + m[15*8+k];
-                
-                m[26*8+k] += m[21*8+k];
-                m[25*8+k] += m[22*8+k];
-                m[28*8+k] += m[14*8+k];
-                m[27*8+k] += m[13*8+k];
-                m[24*8+k] += m[18*8+k];
-                m[23*8+k] += m[17*8+k];
-                
-                m[26*8+k] = m[18*8+k] - m[26*8+k];
-                m[25*8+k] = m[17*8+k] - m[25*8+k];
-                
-                m[28*8+k] += m[18*8+k];
-                m[27*8+k] += m[17*8+k];
-                
-                m[23*8+k] = m[23*8+k] >= 0 ? m[23*8+k] : 0;
-                m[24*8+k] = m[24*8+k] >= 0 ? m[24*8+k] : 0;
-                m[25*8+k] = m[25*8+k] >= 0 ? m[25*8+k] : 0;
-                m[26*8+k] = m[26*8+k] >= 0 ? m[26*8+k] : 0;
-                m[27*8+k] = m[27*8+k] >= 0 ? m[27*8+k] : 0;
-                m[28*8+k] = m[28*8+k] >= 0 ? m[28*8+k] : 0;
-                
-                m[23*8+k] = m[23*8+k] < m[4*8+4] ? m[23*8+k] : m[4*8+4];
-                m[24*8+k] = m[24*8+k] < m[4*8+4] ? m[24*8+k] : m[4*8+4];
-                m[25*8+k] = m[25*8+k] < m[4*8+4] ? m[25*8+k] : m[4*8+4];
-                m[26*8+k] = m[26*8+k] < m[4*8+4] ? m[26*8+k] : m[4*8+4];
-                m[27*8+k] = m[27*8+k] < m[4*8+4] ? m[27*8+k] : m[4*8+4];
-                m[28*8+k] = m[28*8+k] < m[4*8+4] ? m[28*8+k] : m[4*8+4];
-                
-                m[23*8+k] = (short)(((int)m[23*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[24*8+k] = (short)(((int)m[24*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[25*8+k] = (short)(((int)m[25*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[26*8+k] = (short)(((int)m[26*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[27*8+k] = (short)(((int)m[27*8+k] * (unsigned short)m[4*8+6])>>16);
-                m[28*8+k] = (short)(((int)m[28*8+k] * (unsigned short)m[4*8+6])>>16);
-                
-                m[23*8+k] = (short)((unsigned short)m[23*8+k] * (int)m[1*8+3]);
-                m[24*8+k] = (short)((unsigned short)m[24*8+k] * (int)m[1*8+3]);
-                m[25*8+k] = (short)((int)m[25*8+k] * (int)m[1*8+4]);
-                m[26*8+k] = (short)((int)m[26*8+k] * (int)m[1*8+4]);
-                m[27*8+k] = (short)((int)m[27*8+k] * (int)m[1*8+5]);
-                m[28*8+k] = (short)((int)m[28*8+k] * (int)m[1*8+5]);
-                
-                pic[(i*128+j*32+16+k)^S] = m[24*8+k] | m[26*8+k] | m[28*8+k] | m[1*8+6];
-                pic[(i*128+j*32+24+k)^S] = m[23*8+k] | m[25*8+k] | m[27*8+k] | m[1*8+6];
-             }
-            }
-           }
-      }
-    pic += len1/2;
-     } while (w-- != 1 && !(*rsp.SP_STATUS_REG & 0x80));
-   
-   pic -= len1 * jpg_data.w / 2;
-   free(temp2);
-   free(temp1);
-}
-
-
 // transposed JPEG QTable
-static unsigned QTable_T[64] = {
+static unsigned QTable_T[64] =
+{
     16, 12, 14, 14,  18,  24,  49,  72,
     11, 12, 13, 17,  22,  35,  64,  92,
     10, 14, 16, 22,  37,  55,  78,  95,
@@ -470,7 +44,8 @@ static unsigned QTable_T[64] = {
 };
 
 // ZigZag indices
-static unsigned ZigZag[64] = {
+static unsigned ZigZag[64] =
+{
      0,  1,  5,  6, 14, 15, 27, 28,
      2,  4,  7, 13, 16, 26, 29, 42,
      3,  8, 12, 17, 25, 30, 41, 43,
@@ -482,7 +57,8 @@ static unsigned ZigZag[64] = {
 };
 
 // Lazy way of transposing a block
-static unsigned Transpose[64] = {
+static unsigned Transpose[64] =
+{
     0,  8, 16, 24, 32, 40, 48, 56,
     1,  9, 17, 25, 33, 41, 49, 57,
     2, 10, 18, 26, 34, 42, 50, 58,
@@ -493,9 +69,17 @@ static unsigned Transpose[64] = {
     7, 15, 23, 31, 39, 47, 55, 63
 };
 
-static inline const unsigned char clamp(short x) {
-        return (x & (0xff00)) ? ((-x) >> 15) & 0xff : x;
+static inline const unsigned char clamp(short x)
+{
+    return (x & (0xff00)) ? ((-x) >> 15) & 0xff : x;
 }
+
+static inline short saturate(int x)
+{
+    if (x > 32767) { x = 32767; } else if (x < -32768) { x = -32768; }
+    return x;
+}
+
 
 void ob_jpg_uncompress(OSTask_t *task)
 {
@@ -568,15 +152,13 @@ void ob_jpg_uncompress(OSTask_t *task)
             if (QScale != 0) {
                 for(i = 0; i < 64; i++) {
                     int v = macroblock[1][sb*0x40+i] * qtable[i];
-                    if (v > 32767) { v = 32767; }
-                    if (v < -32768) { v = -32768; }
-                    macroblock[1][sb*0x40+i] = (short)v;
+                    macroblock[1][sb*0x40+i] = saturate(v);
                 }
             }
 
             // Transpose
             for(i = 0; i < 64; i++) {
-                    macroblock[0][sb*0x40+i] = macroblock[1][sb*0x40+Transpose[i]];
+                macroblock[0][sb*0x40+i] = macroblock[1][sb*0x40+Transpose[i]];
             }
 
             // Apply Invert Discrete Cosinus Transform
@@ -666,6 +248,194 @@ void ob_jpg_uncompress(OSTask_t *task)
 
             offset += 0x40;
             y_offset += (i == 3) ? 0xa0 : 0x20;
+        }
+    }
+}
+
+
+
+static inline short yuv2rgba16_clamp(short x)
+{
+    if (x > 0xff0) { x = 0xff0; } else if (x < 0) { x = 0; }
+    return (x & 0xf80);
+}
+
+
+static unsigned short yuv2rgba16(float y, float u, float v)
+{
+    unsigned short r, g, b;
+
+    r = yuv2rgba16_clamp((short)(y            + 1.4025*v));
+    g = yuv2rgba16_clamp((short)(y - 0.3443*u - 0.7144*v));
+    b = yuv2rgba16_clamp((short)(y + 1.7729*u           ));
+
+    return (r << 4) | (g >> 1) | (b >> 6) | 1;
+}
+
+
+void ps_jpg_uncompress(OSTask_t *task)
+{
+    
+    // arguments for pokemon stadium jpg decompression
+    static struct 
+    {
+         unsigned pMacroBlocks; // address of Macroblocks
+         unsigned nMacroBlocks; // # of Macroblocks
+         unsigned mode;         // specify subsampling mode (as far as I understand)
+         unsigned pQTables[3];  // address of QTable for Y,U,V channel
+    } ps_jpg_data;
+
+    short QTables[3][64];
+
+    unsigned i,j;
+
+    // We don't support task yielding
+    if (task->flags & 0x1) {
+        DebugMessage(M64MSG_VERBOSE, "ps_jpg_uncompress doesn't support task yielding");
+        return;
+    }
+
+    // Fetch arguments
+    memcpy(&ps_jpg_data, rsp.RDRAM+task->data_ptr, sizeof(ps_jpg_data));
+
+    DebugMessage(M64MSG_VERBOSE, "SB Task: *MB=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, Qv=%x",
+        ps_jpg_data.pMacroBlocks,
+        ps_jpg_data.nMacroBlocks,
+        ps_jpg_data.mode,
+        ps_jpg_data.pQTables[0],
+        ps_jpg_data.pQTables[1],
+        ps_jpg_data.pQTables[2]);
+
+    // Setup input & output MB size, and #of subblocks
+    unsigned iMBsize = (ps_jpg_data.mode == 0) ? 0x200 : 0x300;
+    unsigned oMBsize = (ps_jpg_data.mode == 0) ? 0x100 : 0x200;
+    unsigned nSubBlocks = ps_jpg_data.mode + 4;
+
+    // Load QTables
+    for(j = 0; j < 3; j++) {
+        for(i = 0; i < 64; i++) {
+            unsigned short s = rsp.RDRAM[(ps_jpg_data.pQTables[j] + 2*i)^S8];
+            s <<= 8;
+            s |= rsp.RDRAM[(ps_jpg_data.pQTables[j] + 2*i+1)^S8];
+            QTables[j][i] = s;
+        }
+    }
+
+    unsigned mb;
+
+    // foreach MB
+    for(mb=0; mb < ps_jpg_data.nMacroBlocks; mb++) {
+        unsigned sb;
+        short macroblock[2][0x300/2];
+
+        // load MB into short_buffer
+        unsigned offset = ps_jpg_data.pMacroBlocks + iMBsize*mb;
+        for(i = 0; i < iMBsize/2; i++) {
+            unsigned short s = rsp.RDRAM[(offset+0)^S8];
+            s <<= 8;
+            s |= rsp.RDRAM[(offset+1)^S8];
+            macroblock[0][i] = s;
+            offset += 2;
+        }
+
+        // Apply Dequantization (Y subblocks)
+        for(sb = 0; sb < nSubBlocks-2; sb++) {
+            for(i = 0; i < 64; i++) {
+                int v = macroblock[0][sb*0x40+i]*QTables[0][i];
+                macroblock[0][sb*0x40+i] = saturate(v) << 4;
+            }
+        }
+
+        // Apply Dequantization (U,V subblocks)
+        for(j = 1; sb < nSubBlocks; sb++, j++) {
+            for(i = 0; i < 64; i++) {
+                int v = macroblock[0][sb*0x40+i]*QTables[j][i];
+                macroblock[0][sb*0x40+i] = saturate(v) << 4;
+            }
+        }
+
+        // foreach SubBlocks
+        for(sb = 0; sb < nSubBlocks; sb++) {
+            // ZigZag (transposed)
+            for(i = 0; i < 64; i++) {
+                macroblock[1][sb*0x40+i] = macroblock[0][sb*0x40+ZigZag[i]];
+            }
+
+            // Apply Invert Discrete Cosinus Transform
+            idct(&macroblock[1][sb*0x40], &macroblock[0][sb*0x40]);
+        }
+
+        // Texel Formatting (RGBA16)
+        offset = ps_jpg_data.pMacroBlocks + oMBsize*mb;
+        unsigned y_offset = 0;
+        unsigned u_offset = oMBsize/2;
+
+        if (ps_jpg_data.mode == 0)
+        {
+            // I have not encountered this case in Pokemon stadium (but ucode disassembly say so...)
+
+            unsigned short rgba[16];
+            for(i = 0; i < 8; i++) {
+                rgba[0]  = yuv2rgba16((float)macroblock[0][y_offset+0]+2048.0f, (float)macroblock[0][u_offset+0], (float)macroblock[0][u_offset+64+0]);
+                rgba[1]  = yuv2rgba16((float)macroblock[0][y_offset+1]+2048.0f, (float)macroblock[0][u_offset+0], (float)macroblock[0][u_offset+64+0]);
+                rgba[2]  = yuv2rgba16((float)macroblock[0][y_offset+2]+2048.0f, (float)macroblock[0][u_offset+1], (float)macroblock[0][u_offset+64+1]);
+                rgba[3]  = yuv2rgba16((float)macroblock[0][y_offset+3]+2048.0f, (float)macroblock[0][u_offset+1], (float)macroblock[0][u_offset+64+1]);
+                rgba[4]  = yuv2rgba16((float)macroblock[0][y_offset+4]+2048.0f, (float)macroblock[0][u_offset+2], (float)macroblock[0][u_offset+64+2]);
+                rgba[5]  = yuv2rgba16((float)macroblock[0][y_offset+5]+2048.0f, (float)macroblock[0][u_offset+2], (float)macroblock[0][u_offset+64+2]);
+                rgba[6]  = yuv2rgba16((float)macroblock[0][y_offset+6]+2048.0f, (float)macroblock[0][u_offset+3], (float)macroblock[0][u_offset+64+3]);
+                rgba[7]  = yuv2rgba16((float)macroblock[0][y_offset+7]+2048.0f, (float)macroblock[0][u_offset+3], (float)macroblock[0][u_offset+64+3]);
+
+                rgba[8]  = yuv2rgba16((float)macroblock[0][y_offset+64+0]+2048.0f, (float)macroblock[0][u_offset+4], (float)macroblock[0][u_offset+64+4]);
+                rgba[9]  = yuv2rgba16((float)macroblock[0][y_offset+64+1]+2048.0f, (float)macroblock[0][u_offset+4], (float)macroblock[0][u_offset+64+4]);
+                rgba[10] = yuv2rgba16((float)macroblock[0][y_offset+64+2]+2048.0f, (float)macroblock[0][u_offset+5], (float)macroblock[0][u_offset+64+5]);
+                rgba[11] = yuv2rgba16((float)macroblock[0][y_offset+64+3]+2048.0f, (float)macroblock[0][u_offset+5], (float)macroblock[0][u_offset+64+5]);
+                rgba[12] = yuv2rgba16((float)macroblock[0][y_offset+64+4]+2048.0f, (float)macroblock[0][u_offset+6], (float)macroblock[0][u_offset+64+6]);
+                rgba[13] = yuv2rgba16((float)macroblock[0][y_offset+64+5]+2048.0f, (float)macroblock[0][u_offset+6], (float)macroblock[0][u_offset+64+6]);
+                rgba[14] = yuv2rgba16((float)macroblock[0][y_offset+64+6]+2048.0f, (float)macroblock[0][u_offset+7], (float)macroblock[0][u_offset+64+7]);
+                rgba[15] = yuv2rgba16((float)macroblock[0][y_offset+64+7]+2048.0f, (float)macroblock[0][u_offset+7], (float)macroblock[0][u_offset+64+7]);
+
+                for(j = 0; j < 16; j++) {
+                    rsp.RDRAM[(offset++)^S8] = (unsigned char)(rgba[j] >> 8);
+                    rsp.RDRAM[(offset++)^S8] = (unsigned char)(rgba[j] & 0xff);
+                }
+
+                y_offset += 8;
+                u_offset += 8;
+            }
+        }
+        else
+        {
+            unsigned short rgba[32];
+            for(i = 0; i < 8; i++) {
+                for(j = 0; j < 2; j++) {
+                    rgba[j*16+0]  = yuv2rgba16((float)macroblock[0][y_offset+0]+2048.0f, (float)macroblock[0][u_offset+0], (float)macroblock[0][u_offset+64+0]);
+                    rgba[j*16+1]  = yuv2rgba16((float)macroblock[0][y_offset+1]+2048.0f, (float)macroblock[0][u_offset+0], (float)macroblock[0][u_offset+64+0]);
+                    rgba[j*16+2]  = yuv2rgba16((float)macroblock[0][y_offset+2]+2048.0f, (float)macroblock[0][u_offset+1], (float)macroblock[0][u_offset+64+1]);
+                    rgba[j*16+3]  = yuv2rgba16((float)macroblock[0][y_offset+3]+2048.0f, (float)macroblock[0][u_offset+1], (float)macroblock[0][u_offset+64+1]);
+                    rgba[j*16+4]  = yuv2rgba16((float)macroblock[0][y_offset+4]+2048.0f, (float)macroblock[0][u_offset+2], (float)macroblock[0][u_offset+64+2]);
+                    rgba[j*16+5]  = yuv2rgba16((float)macroblock[0][y_offset+5]+2048.0f, (float)macroblock[0][u_offset+2], (float)macroblock[0][u_offset+64+2]);
+                    rgba[j*16+6]  = yuv2rgba16((float)macroblock[0][y_offset+6]+2048.0f, (float)macroblock[0][u_offset+3], (float)macroblock[0][u_offset+64+3]);
+                    rgba[j*16+7]  = yuv2rgba16((float)macroblock[0][y_offset+7]+2048.0f, (float)macroblock[0][u_offset+3], (float)macroblock[0][u_offset+64+3]);
+
+                    rgba[j*16+8]  = yuv2rgba16((float)macroblock[0][y_offset+64+0]+2048.0f, (float)macroblock[0][u_offset+4], (float)macroblock[0][u_offset+64+4]);
+                    rgba[j*16+9]  = yuv2rgba16((float)macroblock[0][y_offset+64+1]+2048.0f, (float)macroblock[0][u_offset+4], (float)macroblock[0][u_offset+64+4]);
+                    rgba[j*16+10] = yuv2rgba16((float)macroblock[0][y_offset+64+2]+2048.0f, (float)macroblock[0][u_offset+5], (float)macroblock[0][u_offset+64+5]);
+                    rgba[j*16+11] = yuv2rgba16((float)macroblock[0][y_offset+64+3]+2048.0f, (float)macroblock[0][u_offset+5], (float)macroblock[0][u_offset+64+5]);
+                    rgba[j*16+12] = yuv2rgba16((float)macroblock[0][y_offset+64+4]+2048.0f, (float)macroblock[0][u_offset+6], (float)macroblock[0][u_offset+64+6]);
+                    rgba[j*16+13] = yuv2rgba16((float)macroblock[0][y_offset+64+5]+2048.0f, (float)macroblock[0][u_offset+6], (float)macroblock[0][u_offset+64+6]);
+                    rgba[j*16+14] = yuv2rgba16((float)macroblock[0][y_offset+64+6]+2048.0f, (float)macroblock[0][u_offset+7], (float)macroblock[0][u_offset+64+7]);
+                    rgba[j*16+15] = yuv2rgba16((float)macroblock[0][y_offset+64+7]+2048.0f, (float)macroblock[0][u_offset+7], (float)macroblock[0][u_offset+64+7]);
+                    y_offset += 8;
+                }
+
+                for(j = 0; j < 32; j++) {
+                    rsp.RDRAM[(offset++)^S8] = (unsigned char)(rgba[j] >> 8);
+                    rsp.RDRAM[(offset++)^S8] = (unsigned char)(rgba[j] & 0xff);
+                }
+
+                if (i == 3) y_offset += 64;
+                u_offset += 8;
+            }
         }
     }
 }
