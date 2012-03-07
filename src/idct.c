@@ -42,7 +42,7 @@
 #define K10 -2.562915448f   // -C1-C3
 
 
-static inline void idct_1d(float *x, float *dst, unsigned every)
+static void idct_1d(float *x, float *dst, unsigned every)
 {
     float e[4];
     float f[4];
@@ -83,7 +83,6 @@ void idct(short *iblock, short *oblock)
 
     unsigned i = 0;
     unsigned j = 0;
-
 
     // idct 1d on rows (+transposition)
     for(i=0; i<8; i++) {

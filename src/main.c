@@ -46,7 +46,7 @@ static int l_PluginInit = 0;
  * Simulate the effect of setting the TASKDONE bit (aliased to SIG2)
  * and executing a break instruction (setting HALT and BROKE bits).
  **/
-static inline void taskdone()
+static void taskdone()
 {
     // On hardware writing to SP_STATUS_REG is an indirect way of changing its content.
     // For instance, in order to set the TASKDONE bit (bit 9), one should write 0x4000

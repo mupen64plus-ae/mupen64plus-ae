@@ -69,12 +69,12 @@ static unsigned Transpose[64] =
     7, 15, 23, 31, 39, 47, 55, 63
 };
 
-static inline const unsigned char clamp(short x)
+static const unsigned char clamp(short x)
 {
     return (x & (0xff00)) ? ((-x) >> 15) & 0xff : x;
 }
 
-static inline short saturate(int x)
+static short saturate(int x)
 {
     if (x > 32767) { x = 32767; } else if (x < -32768) { x = -32768; }
     return x;
@@ -88,11 +88,16 @@ void ob_jpg_uncompress(OSTask_t *task)
     unsigned nMacroBlocks = task->data_size;
     signed QScale = task->yield_data_size;
 
-    DebugMessage(M64MSG_VERBOSE, "OB Task: *buffer=%x, #MB=%d, Qscale=%d\n", pBuffer, nMacroBlocks, QScale);
-
     // Rescale QTable if needed
     unsigned i;
     unsigned qtable[64];
+    unsigned mb;
+
+    int y_dc = 0;
+    int u_dc = 0;
+    int v_dc = 0;
+
+    DebugMessage(M64MSG_VERBOSE, "OB Task: *buffer=%x, #MB=%d, Qscale=%d\n", pBuffer, nMacroBlocks, QScale);
 
     if (QScale != 0) {
         if (QScale > 0) {
@@ -110,17 +115,11 @@ void ob_jpg_uncompress(OSTask_t *task)
         }
     }
 
-    unsigned mb;
-
-    int y_dc = 0;
-    int u_dc = 0;
-    int v_dc = 0;
-
-
     // foreach MB
     for(mb=0; mb < nMacroBlocks; mb++) {
         unsigned sb;
         short macroblock[2][0x300/2];
+        unsigned y_offset = 0;
 
         // load MB into short_buffer
         unsigned offset = pBuffer + 0x300*mb;
@@ -171,7 +170,6 @@ void ob_jpg_uncompress(OSTask_t *task)
         }
 
         // Texel Formatting
-        unsigned y_offset = 0;
         offset = pBuffer + 0x300*mb;
         for(i = 0; i < 8; i++) {
             // U
@@ -254,7 +252,7 @@ void ob_jpg_uncompress(OSTask_t *task)
 
 
 
-static inline short yuv2rgba16_clamp(short x)
+static short yuv2rgba16_clamp(short x)
 {
     if (x > 0xff0) { x = 0xff0; } else if (x < 0) { x = 0; }
     return (x & 0xf80);
@@ -275,7 +273,8 @@ static unsigned short yuv2rgba16(float y, float u, float v)
 
 void ps_jpg_uncompress(OSTask_t *task)
 {
-    
+    unsigned int iMBsize, oMBsize, nSubBlocks, mb;
+
     // arguments for pokemon stadium jpg decompression
     static struct 
     {
@@ -307,9 +306,9 @@ void ps_jpg_uncompress(OSTask_t *task)
         ps_jpg_data.pQTables[2]);
 
     // Setup input & output MB size, and #of subblocks
-    unsigned iMBsize = (ps_jpg_data.mode == 0) ? 0x200 : 0x300;
-    unsigned oMBsize = (ps_jpg_data.mode == 0) ? 0x100 : 0x200;
-    unsigned nSubBlocks = ps_jpg_data.mode + 4;
+    iMBsize = (ps_jpg_data.mode == 0) ? 0x200 : 0x300;
+    oMBsize = (ps_jpg_data.mode == 0) ? 0x100 : 0x200;
+    nSubBlocks = ps_jpg_data.mode + 4;
 
     // Load QTables
     for(j = 0; j < 3; j++) {
@@ -321,12 +320,11 @@ void ps_jpg_uncompress(OSTask_t *task)
         }
     }
 
-    unsigned mb;
-
     // foreach MB
     for(mb=0; mb < ps_jpg_data.nMacroBlocks; mb++) {
         unsigned sb;
         short macroblock[2][0x300/2];
+        unsigned int y_offset, u_offset;
 
         // load MB into short_buffer
         unsigned offset = ps_jpg_data.pMacroBlocks + iMBsize*mb;
@@ -367,8 +365,8 @@ void ps_jpg_uncompress(OSTask_t *task)
 
         // Texel Formatting (RGBA16)
         offset = ps_jpg_data.pMacroBlocks + oMBsize*mb;
-        unsigned y_offset = 0;
-        unsigned u_offset = oMBsize/2;
+        y_offset = 0;
+        u_offset = oMBsize/2;
 
         if (ps_jpg_data.mode == 0)
         {
