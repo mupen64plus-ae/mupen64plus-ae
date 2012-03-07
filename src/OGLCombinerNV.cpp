@@ -90,13 +90,14 @@ bool COGLColorCombinerNvidia::Initialize(void)
         {
             m_bNVSupported = true;
             glEnable(GL_REGISTER_COMBINERS_NV);
+            return true;
         }
         else
         {
             DebugMessage(M64MSG_ERROR, "Your video card does not support Nvidia OpenGL extension combiner");
             glDisable(GL_REGISTER_COMBINERS_NV);
+            return false;
         }
-        return true;
     }
 
     glDisable(GL_REGISTER_COMBINERS_NV);

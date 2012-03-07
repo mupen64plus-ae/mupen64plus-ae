@@ -48,6 +48,7 @@ typedef void (APIENTRYP PFUNCGLPROGRAMENVPARAMETER4FVARBPROC) (GLenum target, GL
 typedef void (APIENTRYP PFUNCGLFOGCOORDPOINTEREXTPROC) (GLenum type, GLsizei stride, const GLvoid *pointer);
 typedef void (APIENTRYP PFUNCGLCLIENTACTIVETEXTUREARBPROC) (GLenum texture);
 
+extern bool                                 bNvidiaExtensionsSupported;
 extern PFUNCGLCOMBINERPARAMETERFVNVPROC     pglCombinerParameterfvNV;
 extern PFUNCGLFINALCOMBINERINPUTNVPROC      pglFinalCombinerInputNV;
 extern PFUNCGLCOMBINEROUTPUTNVPROC          pglCombinerOutputNV;

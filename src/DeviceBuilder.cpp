@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLDebug.h"
 #include "OGLFragmentShaders.h"
 #include "OGLExtRender.h"
+#include "OGLExtensions.h"
 #include "OGLGraphicsContext.h"
 #include "OGLTexture.h"
 
@@ -235,6 +236,11 @@ CColorCombiner * OGLDeviceBuilder::CreateColorCombiner(CRender *pRender)
         else
         {
             m_deviceType = (SupportedDeviceType)options.OpenglRenderSetting;
+            if (m_deviceType == NVIDIA_OGL_DEVICE && !bNvidiaExtensionsSupported)
+            {
+                DebugMessage(M64MSG_WARNING, "Your video card does not support Nvidia OpenGL extensions.  Falling back to auto device.");
+                m_deviceType = OGL_DEVICE;
+            }
             if( m_deviceType == OGL_DEVICE )    // Best fit
             {
                 GLint maxUnit = 2;
