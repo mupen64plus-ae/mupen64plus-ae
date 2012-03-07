@@ -142,14 +142,14 @@ static m64p_error OpenConfigurationHandles(void)
 
     if ((*ConfigGetParameter)(l_ConfigUI, "Version", M64TYPE_FLOAT, &fConfigParamsVersion, sizeof(float)) != M64ERR_SUCCESS)
     {
-        fprintf(stderr, "Warning: No version number in 'UI-Console' config section. Setting defaults.");
+        fprintf(stderr, "Warning: No version number in 'UI-Console' config section. Setting defaults.\n");
         (*ConfigDeleteSection)("UI-Console");
         (*ConfigOpenSection)("UI-Console", &l_ConfigUI);
         bSaveConfig = 1;
     }
     else if (((int) fConfigParamsVersion) != ((int) CONFIG_PARAM_VERSION))
     {
-        fprintf(stderr, "Warning: Incompatible version %.2f in 'UI-Console' config section: current is %.2f. Setting defaults.", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
+        fprintf(stderr, "Warning: Incompatible version %.2f in 'UI-Console' config section: current is %.2f. Setting defaults.\n", fConfigParamsVersion, (float) CONFIG_PARAM_VERSION);
         (*ConfigDeleteSection)("UI-Console");
         (*ConfigOpenSection)("UI-Console", &l_ConfigUI);
         bSaveConfig = 1;
@@ -159,7 +159,7 @@ static m64p_error OpenConfigurationHandles(void)
         /* handle upgrades */
         float fVersion = CONFIG_PARAM_VERSION;
         ConfigSetParameter(l_ConfigUI, "Version", M64TYPE_FLOAT, &fVersion);
-        fprintf(stderr, "Info: Updating parameter set version in 'UI-Console' config section to %.2f", fVersion);
+        fprintf(stderr, "Info: Updating parameter set version in 'UI-Console' config section to %.2f\n", fVersion);
         bSaveConfig = 1;
     }
 
