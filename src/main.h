@@ -20,9 +20,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* version info */
-#define SDL_AUDIO_PLUGIN_VERSION 0x016304
+#define SDL_AUDIO_PLUGIN_VERSION 0x016305
 #define AUDIO_PLUGIN_API_VERSION 0x020000
-#define CONFIG_API_VERSION       0x020000
+#define CONFIG_API_VERSION       0x020100
 #define CONFIG_PARAM_VERSION     1.00
 
 #define VERSION_PRINTF_SPLIT(x) (((x) >> 16) & 0xffff), (((x) >> 8) & 0xff), ((x) & 0xff)
