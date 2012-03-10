@@ -1,6 +1,26 @@
 SDL Input plugin for Mupen64Plus
 --------------------------------
 
+Mupen64Plus-input-sdl v1.99.5 - March 10, 2012
+-------------------------------------------------
+ - Improved input setup behavior (auto-config) to make some use cases more friendly
+ - Updated input plugin for new Mupen64plus 2.0 API versioning scheme
+ - Added version number to SDL Input plugin parameters
+ - Add new parameter for mouse sensitivity, handle mouse movement differently so mouse is easier to use as controller
+ - New auto-configuration for controllers:
+   - raphnet technologies GC/N64 usb converter
+   - Logitech Chillstream Controller
+   - Jess Tech Colour Rumble
+   - Xbox 360 linux userspace driver
+   - Generic X-Box pad
+   - Saitek P2900 Wireless Pad
+   - Jess Tech USB 4-Axis 12-Button Gamepad
+ - bugfix: #392 - when switching between rumble pak and memory pak, simulate removing the pack, waiting 1 second, then inserting the new one
+ - bugfix: #424 - problem with USB devices supporting multiple controllers per device
+ - bugfix: #409 - PS3 controller not auto-detected in Gentoo when connected via bluetooth
+ - bugfix: correctly handle USB devices with multiple game pads, from Peter Helbing
+ - makefile fixes and improvements
+
 Mupen64Plus-input-sdl v1.99.4 - November 22, 2010
 -------------------------------------------------
  - Bugfix: Do configuration during PluginStart(), so GUI will see defaults (auto-configured) the first time it is run
