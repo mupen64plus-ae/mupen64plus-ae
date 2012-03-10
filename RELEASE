@@ -1,6 +1,13 @@
 RSP High-Level Emulation plugin for Mupen64Plus
 -----------------------------------------------
 
+Mupen64Plus-rsp-hle v1.99.5 - March 10, 2012
+-------------------------------------------------
+ - Handle JPEG decompression, used in Ogre Battle 64 and Pokemon Stadium
+ - updated RSP plugin for new Mupen64plus 2.0 API versioning scheme
+ - bugfix: #102 - Missing backgrounds in Ogre Battle 64
+ - many makefile fixes and improvements
+
 Mupen64Plus-rsp-hle v1.99.4 - November 22, 2010
 -------------------------------------------------
  - merged all big-endian fixes from mupen64gc project
