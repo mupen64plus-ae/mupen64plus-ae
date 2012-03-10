@@ -1,6 +1,21 @@
 Mupen64Plus-Video-Rice RELEASE
 ------------------------------
 
+Mupen64Plus-Video-Rice v1.99.5 - March 10, 2012
+-----------------------------------------------
+ - Hires texture loading: support for 8-bit PNG images
+ - New config option for forcing vertical sync
+ - Check OpenGL attributes after creating video window and report any that failed to set
+ - Updated video plugin for new Mupen64plus 2.0 API versioning scheme
+ - Update to Video API version 2.1.0.
+ - Bugfix: hi-res textures: Scale highres textures by precalculated scaleShift exponent
+ - Bugfix: dont call CoreVideo_Init() inside of the InitializeGFX() function. This will fix some front-end use cases
+ - Bugfix: Fix z coordinate in 3d line rendering
+ - Bugfix: double infinite loop in GetValidTmemInfoIndex
+ - Bugfix: Perfect Dark randomly crashes due to divide-by-zero error
+ - Bugfix: crash in loading Celda 2009 hi-res texture pack for Zelda Ocarina of Time
+ - makefile fixes, improvements, and code cleanups
+
 Mupen64Plus-Video-Rice v1.99.4 - November 22, 2010
 --------------------------------------------------
  - new feature: anisotropic filtering
