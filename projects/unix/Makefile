@@ -142,7 +142,7 @@ ifeq ($(OS), OSX)
       LDFLAGS += -arch x86_64
     else
       CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -arch i686
+      LDFLAGS += -arch i686 -read_only_relocs suppress
     endif
   endif
 endif
