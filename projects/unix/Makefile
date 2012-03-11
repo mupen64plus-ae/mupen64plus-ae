@@ -43,6 +43,7 @@ ifeq ("$(UNAME)","Darwin")
   OS = OSX
   SO_EXTENSION = dylib
   SHARED = -bundle
+  PIC = 1  # force PIC under OSX
 endif
 ifeq ("$(UNAME)","FreeBSD")
   OS = FREEBSD
