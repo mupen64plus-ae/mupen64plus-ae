@@ -43,7 +43,7 @@ static int l_PluginInit = 0;
 /* local functions */
 
 
-static void dump_binray(char *filename, unsigned char *bytes, unsigned size)
+static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
 {
     FILE *f;
 
@@ -163,8 +163,6 @@ static int audio_ucode(OSTask_t *task)
         }
     }
 
-//  data = (short*)(rsp.RDRAM + task->ucode_data);
-
     for (i = 0; i < (task->data_size/4); i += 2)
     {
         inst1 = p_alist[i];
@@ -256,7 +254,11 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 
     if (run_through_task)
     {
-        for (i=0; i<0xf80/2; i++)
+        // most ucode_boot procedure copy 0xf80 bytes of ucode whatever the ucode_size is.
+        // For practical purpose we use a ucode_size = min(0xf80, task->ucode_size)
+        unsigned int ucode_size = (task->ucode_size > 0xf80) ? 0xf80 : task->ucode_size;
+
+        for (i=0; i<ucode_size/2; i++)
             sum += *(rsp.RDRAM + task->ucode + i);
 
         switch(task->type)
@@ -304,7 +306,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
                     ps_jpg_uncompress(task);
                     taskdone();
                     return Cycles;
-                case 0x278b0: // Ogre Battle background decompression
+                case 0x130de: // Ogre Battle background decompression
                     ob_jpg_uncompress(task);
                     taskdone();
                     return Cycles;
@@ -359,27 +361,27 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 
         // dump ucode_boot
         sprintf(&filename[0], "ucode_boot_%x.bin", sum);
-        dump_binray(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
+        dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
 
         // dump ucode
         if (task->ucode != 0)
         {
             sprintf(&filename[0], "ucode_%x.bin", sum);
-            dump_binray(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
+            dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), ucode_size);
         }
 
         // dump ucode_data
         if (task->ucode_data != 0)
         {
             sprintf(&filename[0], "ucode_data_%x.bin", sum);
-            dump_binray(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
+            dump_binary(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
         }
 
         // dump data
         if (task->data_ptr != 0)
         {
             sprintf(&filename[0], "data_%x.bin", sum);
-            dump_binray(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
+            dump_binary(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
         }
     }
     else
@@ -412,10 +414,10 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 
         // dump IMEM & DMEM for further analysis
         sprintf(&filename[0], "imem_%x.bin", sum);
-        dump_binray(filename, rsp.IMEM, 0x1000);
+        dump_binary(filename, rsp.IMEM, 0x1000);
 
         sprintf(&filename[0], "dmem_%x.bin", sum);
-        dump_binray(filename, rsp.DMEM, 0x1000);
+        dump_binary(filename, rsp.DMEM, 0x1000);
     }
 
     return Cycles;
