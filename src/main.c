@@ -302,7 +302,10 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
             {
                 switch(sum)
                 {
-                case 0x2caa6: // Pokemon Stadium {1,2} jpg decompression
+                case 0x278: // Zelda OOT during boot
+                  taskdone();
+                  return Cycles;
+                case 0x2caa6: // Zelda OOT, Pokemon Stadium {1,2} jpg decompression
                     ps_jpg_uncompress(task);
                     taskdone();
                     return Cycles;
