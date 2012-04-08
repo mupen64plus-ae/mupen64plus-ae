@@ -505,7 +505,7 @@ void load_configuration(int bPrintSummary)
             {
                 controller[n64CtrlIdx].device = DEVICE_AUTO;
                 controller[n64CtrlIdx].control->Present = 0;
-                DebugMessage(M64MSG_WARNING, "N64 Controller #%i: Disabled, SDL joystick %i is not available", n64CtrlIdx+1, sdlCtrlIdx-1);
+                DebugMessage(M64MSG_VERBOSE, "N64 Controller #%i: Disabled, SDL joystick %i is not available", n64CtrlIdx+1, sdlCtrlIdx-1);
             }
             else
             {
