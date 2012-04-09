@@ -391,7 +391,7 @@ static m64p_error OpenConfigurationHandles(void)
     }
 
     /* Set default values for my Config parameters */
-    (*ConfigSetDefaultFloat)(l_ConfigUI, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus UI-Console config parameter set version number.  Please don't change");
+    (*ConfigSetDefaultFloat)(l_ConfigUI, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.");
     (*ConfigSetDefaultString)(l_ConfigUI, "PluginDir", OSAL_CURRENT_DIR, "Directory in which to search for plugins");
     (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "libgles2n64" OSAL_DLL_EXTENSION, "Filename of video plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "libaudio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
