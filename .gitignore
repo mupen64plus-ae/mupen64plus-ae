@@ -8,15 +8,15 @@
 # Java class files
 *.class
 
+# Built libraries
+*.[aod]
+*.so
+*~
+!libSDL.so
+
 # generated files
 bin/
 gen/
-*.[ao]
-*.so
-!obj/local/armeabi/libSDL.so
-!obj/local/armeabi-v7a/libSDL.so
-!libs/armeabi/libSDL.so
-!libs/armeabi-v7a/libSDL.so
 
 # Local configuration file (sdk path, etc)
 local.properties
