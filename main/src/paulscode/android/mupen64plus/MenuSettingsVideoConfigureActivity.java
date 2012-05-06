@@ -123,9 +123,6 @@ public class MenuSettingsVideoConfigureActivity extends ListActivity implements 
         optionList.add( new MenuOption( getString( R.string.video_enable_fog ), 
                 getString( R.string.video_need_work ), "menuSettingsVideoConfigureFog", enableFog ) );
         
-        optionList.add( new MenuOption( getString( R.string.video_enable_tribuffer_opt ), 
-                getString( R.string.video_disble_if_zlda_crshes ), "menuSettingsVideoConfigureTribuffer", enableTribuffer ) );
-        
         optionList.add( new MenuOption( getString( R.string.video_force_screen_clear ), 
                 getString( R.string.video_clrs_junk_grfx ), "menuSettingsVideoConfigureScreenClear", forceScreenClear ) );
         
@@ -216,18 +213,6 @@ public class MenuSettingsVideoConfigureActivity extends ListActivity implements 
             optionArrayAdapter.insert( new MenuOption( getString( R.string.video_enable_fog ), getString( R.string.video_need_work ),
                                         "menuSettingsVideoConfigureFog", enableFog ), position );
             gles2n64_conf.put( "[<sectionless!>]", "enable fog", (enableFog ? "1" : "0") );
-            gles2n64_conf.save();
-        }
-        else if( menuOption.info.equals( "menuSettingsVideoConfigureTribuffer" ) ) 
-        {
-            enableTribuffer = !enableTribuffer;
-
-            optionArrayAdapter.remove( menuOption );
-            optionArrayAdapter.insert( new MenuOption( getString( R.string.video_enable_tribuffer_opt ),
-                                                       getString( R.string.video_disble_if_zlda_crshes ),
-                                                       "menuSettingsVideoConfigureTribuffer",
-                                                       enableTribuffer ), position );
-            gles2n64_conf.put( "[<sectionless!>]", "tribuffer opt", (enableTribuffer ? "1" : "0") );
             gles2n64_conf.save();
         }
         else if( menuOption.info.equals( "menuSettingsVideoConfigureScreenClear" ) ) 
