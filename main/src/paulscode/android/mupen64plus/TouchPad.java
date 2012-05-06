@@ -370,7 +370,7 @@ public class TouchPad
             {   // Loop through the param=val pairs
                 param = iter.next();
                 val = section.get( param );
-                valI = toInt( val, -1 ); // -1 (undefined) in case of number format problem
+                valI = Utility.toInt( val, -1 ); // -1 (undefined) in case of number format problem
                 param = param.toLowerCase();  // lets not make this part case-sensitive
                 if( param.equals( "cup" ) )
                     maskColors[CUp] = valI;
@@ -442,15 +442,15 @@ public class TouchPad
                             analogMask = new Image( resources, Globals.DataDir + "/skins/touchpads/" +
                                                      skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
-                            analogXpercent = toInt( section.get( "x" ), 0 );
-                            analogYpercent = toInt( section.get( "y" ), 0 );
+                            analogXpercent = Utility.toInt( section.get( "x" ), 0 );
+                            analogYpercent = Utility.toInt( section.get( "y" ), 0 );
                             // Sensitivity (percentages of the radius, i.e. half the image width):
                             analogDeadzone = (int) ( (float) analogMask.hWidth * 
-                                                             ( toFloat( section.get( "min" ), 1 ) / 100.0f ) );
+                                                             ( Utility.toFloat( section.get( "min" ), 1 ) / 100.0f ) );
                             analogMaximum = (int) ( (float) analogMask.hWidth *
-                                                            ( toFloat( section.get( "max" ), 55 ) / 100.0f ) );
+                                                            ( Utility.toFloat( section.get( "max" ), 55 ) / 100.0f ) );
                             analogPadding = (int) ( (float) analogMask.hWidth *
-                                                            ( toFloat( section.get( "buff" ), 55 ) / 100.0f ) );
+                                                            ( Utility.toFloat( section.get( "buff" ), 55 ) / 100.0f ) );
                             analogMask.fitCenter( (int) ( (float) PAD_WIDTH * ((float) analogXpercent / 100.0f) ),
                                                   (int) ( (float) PAD_HEIGHT * ((float) analogYpercent / 100.0f) ),
                                                   PAD_WIDTH, PAD_HEIGHT );
@@ -461,8 +461,8 @@ public class TouchPad
                             masks[buttonCount] = new Image( resources, Globals.DataDir + "/skins/touchpads/" +
                                                             skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
-                            xpercents[buttonCount] = toInt( section.get( "x" ), 0 );
-                            ypercents[buttonCount] = toInt( section.get( "y" ), 0 );
+                            xpercents[buttonCount] = Utility.toInt( section.get( "x" ), 0 );
+                            ypercents[buttonCount] = Utility.toInt( section.get( "y" ), 0 );
                             masks[buttonCount].fitCenter( (int) ( (float) PAD_WIDTH * ((float) xpercents[buttonCount] / 100.0f) ),
                                                           (int) ( (float) PAD_HEIGHT * ((float) ypercents[buttonCount] / 100.0f) ),
                                                           PAD_WIDTH, PAD_HEIGHT );
@@ -523,44 +523,6 @@ Log.v( "TouchPad", "Converted max coordinates: (" + masks[buttonCount].x + ", " 
         }
         
         return false;  // Segments don't cross
-    }
-    /*
-     * Converts a string into an integer.
-     * @param val String containing the number to convert.
-     * @param fail Value to use if unable to convert val to an integer.
-     * @return The converted integer, or the specified value if unsucessful.
-     */
-    private static int toInt( String val, int fail )
-    {
-        if( val == null || val.length() < 1 )
-            return fail;  // not a number
-        try
-        {
-            return Integer.valueOf( val ).intValue();  // convert to integer
-        }
-        catch( NumberFormatException nfe )
-        {}
-
-        return fail;  // conversion failed
-    }
-    /*
-     * Converts a string into a float.
-     * @param val String containing the number to convert.
-     * @param fail Value to use if unable to convert val to an float.
-     * @return The converted float, or the specified value if unsucessful.
-     */
-    private static float toFloat( String val, float fail )
-    {
-        if( val == null || val.length() < 1 )
-            return fail;  // not a number
-        try
-        {
-            return Float.valueOf( val ).floatValue();  // convert to float
-        }
-        catch( NumberFormatException nfe )
-        {}
-
-        return fail;  // conversion failed
     }
 
     /**

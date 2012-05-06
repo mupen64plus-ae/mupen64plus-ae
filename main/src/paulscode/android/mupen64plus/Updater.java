@@ -1,17 +1,11 @@
 package paulscode.android.mupen64plus;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import java.io.File; 
 
 class Updater
 {
@@ -22,7 +16,7 @@ class Updater
         if( upgraded == null || !upgraded.equals( "1" ) )
         { // Version 1.9 requires app data to be restored.  Back up saves, then delete the old app data.
             File appData = new File( Globals.DataDir );
-            Updater.copyFile( new File( Globals.DataDir + "/data/save" ),
+            Utility.copyFile( new File( Globals.DataDir + "/data/save" ),
                               new File( Globals.StorageDir + "/mp64p_tmp_asdf1234lkjh0987/data/save" )  );
             Utility.deleteFolder( appData );
             Intent intent = new Intent( mInstance, MainActivity.class );
@@ -36,37 +30,12 @@ class Updater
     public static boolean checkFirstRun( Activity mInstance )
     {
         String first_run = MenuActivity.gui_cfg.get( "GENERAL", "first_run" );
-        int width, height;
-        float inches;
 
         if( first_run != null && first_run.equals( "1" ) )
         { // This gets run the first time the app runs only!
             MenuActivity.gui_cfg.put( "GENERAL", "first_run", "0" );
-            DisplayMetrics metrics = new DisplayMetrics();
-            mInstance.getWindowManager().getDefaultDisplay().getMetrics( metrics );
-            if( metrics.widthPixels > metrics.heightPixels )
-            {
-                width = metrics.widthPixels;
-                inches = (float) width / metrics.xdpi;
-                height = metrics.heightPixels;
-            }
-            else
-            {
-                width = metrics.heightPixels;
-                inches = (float) width / metrics.ydpi;
-                height = metrics.widthPixels;
-            }
- 
-            // Pick a virtual gamepad layout based on screen resolution:
-            if( inches > 5.5f )
-                MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Touch-Tablet" );
-            else if( width <= 320 )
-                MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Touch-Tiny" );
-            else if( width < 800 )
-                MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Touch-Small" );
-            else
-                MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Touch" );
             MenuActivity.gui_cfg.put( "TOUCH_PAD", "which_pad", "Mupen64Plus-AE-Xperia-Play" );
+            selectGamepad( mInstance );
 
             String romFolder;
             if( (new File( Globals.StorageDir + "/roms/n64" )).isDirectory() )
@@ -74,7 +43,7 @@ class Updater
             else
                 romFolder = Globals.StorageDir;
             MenuActivity.gui_cfg.put( "LAST_SESSION", "rom_folder", romFolder );
-            MenuActivity.gui_cfg.put( "GENERAL", "auto_save", "1" );
+            MenuActivity.gui_cfg.put( "GENERAL", "auto_save", "0" );
             File f = new File( Globals.StorageDir );
             if( !f.exists() )
             {
@@ -97,12 +66,6 @@ class Updater
         MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control4", "Version", "1.00" );
         MenuActivity.mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
         MenuActivity.mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
-
-        Log.v( "CfgVer Check", "PluginDir = '" + MenuActivity.mupen64plus_cfg.get( "UI_Console", "PluginDir" ) + "'" );
-        Log.v( "CfgVer Check", "VideoPlugin = '" + MenuActivity.mupen64plus_cfg.get( "UI_Console", "VideoPlugin" ) + "'" );
-        Log.v( "CfgVer Check", "AudioPlugin = '" + MenuActivity.mupen64plus_cfg.get( "UI_Console", "AudioPlugin" ) + "'" );
-        Log.v( "CfgVer Check", "InputPlugin = '" + MenuActivity.mupen64plus_cfg.get( "UI_Console", "InputPlugin" ) + "'" );
-        Log.v( "CfgVer Check", "RspPlugin = '" + MenuActivity.mupen64plus_cfg.get( "UI_Console", "RspPlugin" ) + "'" );
 
         // TODO: Test to see what else could be messed up in this case, correct it, & return meaningful value
         return true;
@@ -208,7 +171,8 @@ class Updater
 
         MenuActivity.gui_cfg.clear();
         MenuActivity.gui_cfg.put( "GENERAL", "first_run", "1" );
-        MenuActivity.gui_cfg.put( "GAME_PAD", "redraw_all", "0" );
+        MenuActivity.gui_cfg.put( "GENERAL", "upgraded_1.9", "1" );
+        MenuActivity.gui_cfg.put( "GAME_PAD", "redraw_all", "1" );
         MenuActivity.gui_cfg.put( "GAME_PAD", "analog_octagon", "1" );
         MenuActivity.gui_cfg.put( "GAME_PAD", "show_fps", "0" );
         MenuActivity.gui_cfg.put( "GAME_PAD", "enabled", "1" );
@@ -220,7 +184,6 @@ class Updater
         Config gles2n64_conf = new Config( Globals.DataDir + "/data/gles2n64.conf" );
         gles2n64_conf.put( "[<sectionless!>]", "enable fog", "0" );
         gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", "1" );
-//        gles2n64_conf.put( "[<sectionless!>]", "tribuffer opt", "1" );
         gles2n64_conf.put( "[<sectionless!>]", "force screen clear", "0" );
         gles2n64_conf.put( "[<sectionless!>]", "hack z", "0" );
 
@@ -235,69 +198,37 @@ class Updater
         gles2n64_conf.save();
         return checkFirstRun( mInstance );
     }
-    public static boolean copyFile( File src, File dest )
+
+    private static boolean selectGamepad( Activity mInstance )
     {
-        if( src == null )
-            return true;
+        int width, height;
+        float inches;
 
-        if( dest == null )
+        DisplayMetrics metrics = new DisplayMetrics();
+        mInstance.getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        if( metrics.widthPixels > metrics.heightPixels )
         {
-            Log.e( "Updater", "dest null in method 'copyFile'" );
-            return false;
-        }
-
-        if( src.isDirectory() )
-        {
-            boolean success = true;
-            if( !dest.exists() )
-                dest.mkdirs();
-            String files[] = src.list();
-            for( String file : files )
-            {
-                success = success && copyFile( new File( src, file ), new File( dest, file ) );
-            }
-            return success;
+            width = metrics.widthPixels;
+            inches = (float) width / metrics.xdpi;
+            height = metrics.heightPixels;
         }
         else
         {
-            File f = dest.getParentFile();
-            if( f == null )
-            {
-                Log.e( "Updater", "dest parent folder null in method 'copyFile'" );
-                return false;
-            }
-            if( !f.exists() )
-                f.mkdirs();
-
-            InputStream in = null;
-            OutputStream out = null;
-            try
-            {
-                in = new FileInputStream( src );
-                out = new FileOutputStream( dest );
-
-                byte[] buf = new byte[1024];
-                int len;
-                while( ( len = in.read( buf ) ) > 0 )
-                {
-                    out.write( buf, 0, len );
-                }
-            }
-            catch( IOException ioe )
-            {
-                Log.e( "Updater", "IOException in method 'copyFile': " + ioe.getMessage() );
-                return false;
-            }
-            try
-            {
-                in.close();
-                out.close();
-            }
-            catch( IOException ioe )
-            {}
-            catch( NullPointerException npe )
-            {}
-            return true;
+            width = metrics.heightPixels;
+            inches = (float) width / metrics.ydpi;
+            height = metrics.widthPixels;
         }
+        // Pick a virtual gamepad layout based on screen size/ resolution:
+        if( inches > 5.5f )
+            MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog-Tablet" );
+        else if( width <= 320 )
+            MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog-Tiny" );
+        else if( width < 800 )
+            MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog-Small" );
+        else
+            MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog" );
+
+        return true;
     }
+
 }

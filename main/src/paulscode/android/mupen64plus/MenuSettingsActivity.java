@@ -200,7 +200,7 @@ public class MenuSettingsActivity extends ListActivity
                         public void onClick( DialogInterface dialog, int which )
                         {
                             File appData = new File( Globals.DataDir );
-                            Updater.copyFile( new File( Globals.DataDir + "/data/save" ),
+                            Utility.copyFile( new File( Globals.DataDir + "/data/save" ),
                                               new File( Globals.StorageDir + "/mp64p_tmp_asdf1234lkjh0987/data/save" )  );
                             Utility.deleteFolder( appData );
                             Intent intent = new Intent( mInstance, MainActivity.class );

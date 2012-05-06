@@ -69,7 +69,7 @@ public class MenuSettingsCoreChangeActivity extends ListActivity implements IOpt
         String targetPath = Globals.LibsDir + "/" + archive.getName();
 
         File target = new File( targetPath );
-        boolean success = Updater.copyFile( archive, target );
+        boolean success = Utility.copyFile( archive, target );
         if( success )
         {
             Config cfg = new Config( Globals.DataDir + "/plug-ins/core_list.ini" );

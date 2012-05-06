@@ -584,7 +584,7 @@ public class GamePad extends View
             {   // Loop through the param=val pairs
                 param = iter.next();
                 val = section.get( param );
-                valI = toInt( val, -1 ); // -1 (undefined) in case of number format problem
+                valI = Utility.toInt( val, -1 ); // -1 (undefined) in case of number format problem
                 param = param.toLowerCase();  // Lets not make this part case-sensitive
                 if( param.equals( "cup" ) )
                     maskColors[CUp] = valI;
@@ -671,15 +671,15 @@ public class GamePad extends View
                                 {}  // Problem.. the "stick" is not going to redraw
                             }
                             // Position (percentages of the screen dimensions):
-                            analogXpercent = toInt( section.get( "x" ), 0 );
-                            analogYpercent = toInt( section.get( "y" ), 0 );
+                            analogXpercent = Utility.toInt( section.get( "x" ), 0 );
+                            analogYpercent = Utility.toInt( section.get( "y" ), 0 );
                             // Sensitivity (percentages of the radius, i.e. half the image width):
                             analogDeadzone = (int) ( (float) analogImage.hWidth * 
-                                                             ( toFloat( section.get( "min" ), 1 ) / 100.0f ) );
+                                                             ( Utility.toFloat( section.get( "min" ), 1 ) / 100.0f ) );
                             analogMaximum = (int) ( (float) analogImage.hWidth *
-                                                            ( toFloat( section.get( "max" ), 55 ) / 100.0f ) );
+                                                            ( Utility.toFloat( section.get( "max" ), 55 ) / 100.0f ) );
                             analogPadding = (int) ( (float) analogImage.hWidth *
-                                                            ( toFloat( section.get( "buff" ), 55 ) / 100.0f ) );
+                                                            ( Utility.toFloat( section.get( "buff" ), 55 ) / 100.0f ) );
                         }
                         else if( val.contains( "fps" ) )
                         {  // FPS indicator (PNG image format)
@@ -688,13 +688,13 @@ public class GamePad extends View
                                 fpsImage = new Image( resources, Globals.DataDir + "/skins/gamepads/" +
                                                       skin + "/" + filename + ".png" );
                                 // Position (percentages of the screen dimensions):
-                                fpsXpercent = toInt( section.get( "x" ), 0 );
-                                fpsYpercent = toInt( section.get( "y" ), 0 );
+                                fpsXpercent = Utility.toInt( section.get( "x" ), 0 );
+                                fpsYpercent = Utility.toInt( section.get( "y" ), 0 );
                                 // Number position (percentages of the FPS indicator dimensions):
-                                fpsNumXpercent = toInt( section.get( "numx" ), 50 );
-                                fpsNumYpercent = toInt( section.get( "numy" ), 50 );
+                                fpsNumXpercent = Utility.toInt( section.get( "numx" ), 50 );
+                                fpsNumYpercent = Utility.toInt( section.get( "numy" ), 50 );
                                 // Refresh rate (in frames.. integer greater than 1):
-                                fpsRate = toInt( section.get( "rate" ), 15 );
+                                fpsRate = Utility.toInt( section.get( "rate" ), 15 );
                                 // Need at least 2 frames to calculate FPS (duh!):
                                 if( fpsRate < 2 )
                                     fpsRate = 2;
@@ -735,8 +735,8 @@ public class GamePad extends View
                             masks[buttonCount] = new Image( resources, Globals.DataDir + "/skins/gamepads/" +
                                                             skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
-                            xpercents[buttonCount] = toInt( section.get( "x" ), 0 );
-                            ypercents[buttonCount] = toInt( section.get( "y" ), 0 );
+                            xpercents[buttonCount] = Utility.toInt( section.get( "x" ), 0 );
+                            ypercents[buttonCount] = Utility.toInt( section.get( "y" ), 0 );
                             buttonCount++;
                         }
                     }
@@ -793,46 +793,6 @@ public class GamePad extends View
         return false;  // Segments don't cross
     }
     
-    /**
-     * Converts a string into an integer.
-     * @param val String containing the number to convert.
-     * @param fail Value to use if unable to convert val to an integer.
-     * @return The converted integer, or the specified value if unsuccessful.
-     */
-    private static int toInt( String val, int fail )
-    {
-        if( val == null || val.length() < 1 )
-            return fail;  // Not a number
-        try
-        {
-            return Integer.valueOf( val );  // Convert to integer
-        }
-        catch( NumberFormatException nfe )
-        {}
-
-        return fail;  // Conversion failed
-    }
-    
-    /**
-     * Converts a string into a float.
-     * @param val String containing the number to convert.
-     * @param fail Value to use if unable to convert val to an float.
-     * @return The converted float, or the specified value if unsuccessful.
-     */
-    private static float toFloat( String val, float fail )
-    {
-        if( val == null || val.length() < 1 )
-            return fail;  // Not a number
-        try
-        {
-            return Float.valueOf( val );  // Convert to float
-        }
-        catch( NumberFormatException nfe )
-        {}
-
-        return fail;  // Conversion failed
-    }
-
     /**
      * The Point class is a basic interface for storing 2D float coordinates.
      */
@@ -1104,7 +1064,7 @@ public class GamePad extends View
                 }
                 redrawFPS = false;  // So it doesn't keep redrawing every time
                 // Sleep for a while, to save the CPU:
-                try{ Thread.sleep( 100 ); } catch( InterruptedException ie ) {}
+                try{ Thread.sleep( 200 ); } catch( InterruptedException ie ) {}
             }
         }
     }

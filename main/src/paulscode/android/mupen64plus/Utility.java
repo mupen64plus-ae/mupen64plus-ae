@@ -6,11 +6,12 @@ import javax.microedition.khronos.egl.*;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.File; 
 import java.io.FileInputStream; 
 import java.io.FileOutputStream; 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.Integer;
 import java.lang.NumberFormatException;
 import java.util.Enumeration;
@@ -264,6 +265,72 @@ public class Utility
         return folder.delete();
     }
 
+    public static boolean copyFile( File src, File dest )
+    {
+        if( src == null )
+            return true;
+
+        if( dest == null )
+        {
+            Log.e( "Updater", "dest null in method 'copyFile'" );
+            return false;
+        }
+
+        if( src.isDirectory() )
+        {
+            boolean success = true;
+            if( !dest.exists() )
+                dest.mkdirs();
+            String files[] = src.list();
+            for( String file : files )
+            {
+                success = success && copyFile( new File( src, file ), new File( dest, file ) );
+            }
+            return success;
+        }
+        else
+        {
+            File f = dest.getParentFile();
+            if( f == null )
+            {
+                Log.e( "Updater", "dest parent folder null in method 'copyFile'" );
+                return false;
+            }
+            if( !f.exists() )
+                f.mkdirs();
+
+            InputStream in = null;
+            OutputStream out = null;
+            try
+            {
+                in = new FileInputStream( src );
+                out = new FileOutputStream( dest );
+
+                byte[] buf = new byte[1024];
+                int len;
+                while( ( len = in.read( buf ) ) > 0 )
+                {
+                    out.write( buf, 0, len );
+                }
+            }
+            catch( IOException ioe )
+            {
+                Log.e( "Updater", "IOException in method 'copyFile': " + ioe.getMessage() );
+                return false;
+            }
+            try
+            {
+                in.close();
+                out.close();
+            }
+            catch( IOException ioe )
+            {}
+            catch( NullPointerException npe )
+            {}
+            return true;
+        }
+    }
+
     public static String unzipFirstROM( File archive, String outputDir )
     {
         String romName, romExt;
@@ -407,13 +474,39 @@ public class Utility
         return newFile;
     }
 
+    /**
+     * Converts a string into an integer.
+     * @param val String containing the number to convert.
+     * @param fail Value to use if unable to convert val to an integer.
+     * @return The converted integer, or the specified value if unsuccessful.
+     */
     public static int toInt( String val, int fail )
     {
         if( val == null || val.length() < 1 )
             return fail;  // Not a number
         try
         {
-            return Integer.valueOf( val ).intValue();  // Convert to integer
+            return Integer.valueOf( val );  // Convert to integer
+        }
+        catch( NumberFormatException nfe )
+        {}
+
+        return fail;  // Conversion failed
+    }
+    
+    /**
+     * Converts a string into a float.
+     * @param val String containing the number to convert.
+     * @param fail Value to use if unable to convert val to an float.
+     * @return The converted float, or the specified value if unsuccessful.
+     */
+    public static float toFloat( String val, float fail )
+    {
+        if( val == null || val.length() < 1 )
+            return fail;  // Not a number
+        try
+        {
+            return Float.valueOf( val );  // Convert to float
         }
         catch( NumberFormatException nfe )
         {}

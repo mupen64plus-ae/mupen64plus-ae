@@ -188,7 +188,7 @@ public class MainActivity extends Activity
         File savesBak = new File( Globals.StorageDir + "/mp64p_tmp_asdf1234lkjh0987/data/save" );
         if( savesBak.exists() )
         {
-            Updater.copyFile( savesBak, new File( Globals.DataDir + "/data/save" ) );
+            Utility.copyFile( savesBak, new File( Globals.DataDir + "/data/save" ) );
             Utility.deleteFolder( new File( Globals.StorageDir + "/mp64p_tmp_asdf1234lkjh0987" ) );
         }
 
