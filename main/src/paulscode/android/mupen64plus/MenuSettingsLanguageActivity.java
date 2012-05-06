@@ -3,14 +3,12 @@ package paulscode.android.mupen64plus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 
 // TODO: Comment thoroughly
 public class MenuSettingsLanguageActivity extends ListActivity

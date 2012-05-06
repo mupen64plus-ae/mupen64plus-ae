@@ -1,6 +1,5 @@
 package paulscode.android.mupen64plus;
 
-import android.util.Log;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -14,6 +13,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Set;
+
+import android.util.Log;
 
 /**
  * The Config class is used to load the parameters from a config file.

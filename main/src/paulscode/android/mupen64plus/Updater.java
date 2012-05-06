@@ -1,11 +1,11 @@
 package paulscode.android.mupen64plus;
 
+import java.io.File; 
+
 import android.app.Activity;
 import android.content.Intent;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
-import java.io.File; 
 
 class Updater
 {

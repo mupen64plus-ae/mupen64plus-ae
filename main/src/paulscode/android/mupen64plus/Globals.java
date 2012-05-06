@@ -26,9 +26,9 @@ freely, subject to the following restrictions:
 package paulscode.android.mupen64plus;
 
 import java.util.Locale;
+
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.view.KeyEvent;
 
 class Globals
 {

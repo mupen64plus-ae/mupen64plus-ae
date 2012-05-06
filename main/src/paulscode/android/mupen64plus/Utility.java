@@ -1,9 +1,5 @@
 package paulscode.android.mupen64plus;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.egl.*;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File; 
@@ -18,29 +14,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream; 
 
-import android.content.res.Configuration;
-
-import android.app.*;
-import android.content.*;
-import android.view.*;
-import android.os.*;
 import android.util.Log;
-import android.graphics.*;
-import android.text.method.*;
-import android.text.*;
-import android.util.AttributeSet;
-import android.media.*;
-import android.hardware.*;
-import android.content.*;
-import android.graphics.drawable.Drawable;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.view.ViewGroup.LayoutParams;
 
 public class Utility
 {

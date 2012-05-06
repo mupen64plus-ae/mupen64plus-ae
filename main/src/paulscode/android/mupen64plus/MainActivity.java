@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plus;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -12,7 +14,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import java.io.File;
 
 // TODO: Comment thoroughly
 public class MainActivity extends Activity

@@ -9,12 +9,12 @@ import java.lang.Math;
 import java.lang.NumberFormatException;
 import java.util.Iterator;
 import java.util.Set;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
