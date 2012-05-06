@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connecting_to">Подключение к %s</string>
+    <string name="dl_finished">Завершенный</string>
+    <string name="dl_from">Загрузка данных с %s</string>
+    <string name="dl_progress">%1$.0f%% готово: файл %2$s</string>
+    <string name="download_unneeded">Нет необходимости скачивать</string>
+    <string name="error_dl_from">Ошибка при загрузке данных с %s</string>
+    <string name="error_write">Ошибка записи в %s</string>
+    <string name="failed_connecting_to">Ошибка подключения к %s</string>
+    <string name="init">Инициализация</string>
+</resources>

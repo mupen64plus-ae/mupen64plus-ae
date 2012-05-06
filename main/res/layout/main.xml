@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <paulscode.android.mupen64plus.SDLSurface
+        android:id="@+id/my_surface"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+    <paulscode.android.mupen64plus.GamePad
+        android:id="@+id/my_gamepad"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+</FrameLayout>
+

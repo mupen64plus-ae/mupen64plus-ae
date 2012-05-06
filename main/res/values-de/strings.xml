@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mupen64 Plus, AE</string>
+    <string name="connecting_to">Verbinde mit %s</string>
+    <string name="dl_finished">Abgeschlossen</string>
+    <string name="dl_from">Lade Daten von %s</string>
+    <string name="dl_progress">Zu %1$.0f%% abgeschlossen: Datei %2$s</string>
+    <string name="download_unneeded">Download nicht nötig</string>
+    <string name="error_dl_from">Fehler beim Download von %s</string>
+    <string name="error_write">Fehler beim schreiben auf %s</string>
+    <string name="failed_connecting_to">Verbindung mit %s fehlgeschlagen</string>
+    <string name="init">Initialisiere</string>
+    <!-- Manifest Strings -->
+    <string name="manifest_settings">Einstellungen</string>
+    <string name="manifest_video_settings">Video Einstellungen</string>
+    <string name="manifest_choose_video_plugin">wähle Video Plugin</string>
+    <string name="manifest_configure_video_plugin">konfiguriere Video Plugin</string>
+    <string name="manifest_audio_settings">Audio Einstellungen</string>
+    <string name="manifest_choose_audio_plugin">wähle Audio Plugin</string>
+    <string name="manifest_input_settings">Eingabe-Einstellungen</string>
+    <string name="manifest_choose_input_plugin">wähle Eingabe-Plugin</string>
+    <string name="manifest_configure_controllers">konfiguriere Controllers</string>
+    <string name="manifest_map_buttons">belege Knöpfe</string>
+    <string name="manifest_rsp_settings">RSP Einstellungen</string>
+    <string name="manifest_choose_rsp_plugin">wähle RSP Plugin</string>
+    <string name="manifest_core_settings">Core Einstellungen</string>
+    <string name="manifest_choose_core">wähle Core</string>
+    <string name="manifest_configure_core">konfiguriere Core</string>
+    <string name="manifest_language">wähle eine Sprache</string>
+    <string name="manifest_skins">Skins(Aussehen)</string>
+    <string name="manifest_virtual_gamepad_settings">Virtuelles-Gamepad Einstellungen</string>
+    <string name="manifest_select_layout">wähle ein Layout</string>
+    <string name="manifest_cheats">Cheats (zum Mogeln)</string>
+
+    <!-- Language Menu Strings -->
+    <string name="language_default">Standard</string>
+    <string name="language_use_system_locale">benutze die Systemsprache-Einstellung</string>
+
+    <!-- Language Strings -->
+    <string name="language_arabic">Arabisch</string>
+    <string name="language_chinese">Chinesisch</string>
+    <string name="language_croatian">Croatisch</string>
+    <string name="language_dutch">Niederländisch</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_french">Französisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_italian">Italienisch</string>
+    <string name="language_japanese">Japanisch</string>
+    <string name="language_korean">Koreanisch</string>
+    <string name="language_norwegian">Norwegisch</string>
+    <string name="language_portuguese">Portugiesisch</string>
+    <string name="language_spanish">Spanisch</string>
+    <!-- Native Language Strings -->
+    <string name="native_arabic">العربية</string>
+    <string name="native_chinese">中國的</string>
+    <string name="native_croatian">hrvatski</string>
+    <string name="native_dutch">Nederlands</string>
+    <string name="native_english">English</string>
+    <string name="native_french">français</string>
+    <string name="native_german">Deutsch</string>
+    <string name="native_italian">italiano</string>
+    <string name="native_japanese">日本の</string>
+    <string name="native_korean">한국의</string>
+    <string name="native_norwegian">norske</string>
+    <string name="native_portuguese">português</string>
+    <string name="native_spanish">español</string>
+
+    <!-- In-Game Message Strings -->
+    <string name="mupen64plus_started">Mupen64Plus Started</string>
+    <string name="savegame_slot">Spielstand Slot</string>
+    <string name="saving_game">Spielstand speichern</string>
+    <string name="illegal_audio_state">Audio Spur illegaler Status.  Bitte berichte davon auf paulscode.com</string>
+    <string name="app_data_inaccessible">Zugriff auf Programmdateien nicht möglich (ist das Gerät im Massenspeicher-Modus ?)</string>
+    <!-- In-Game Menu Strings -->
+    <string name="ingame_menu">Menü</string>
+    <string name="ingame_inc_slot">Slot++</string>
+    <string name="ingame_save">Speichern</string>
+    <string name="ingame_load">Laden</string>
+    <string name="ingame_close">Schliessen</string>
+    
+    <!-- Main Screen Strings -->
+    <string name="main_choose_game">Spielauswahl</string>
+    <string name="main_select_a_game_to_play">wähle ein Spiel</string>
+    <string name="main_resume">Fortsetzen</string>
+    <string name="main_continue_your_last_game">setze das letzte Spiel fort</string>
+    <string name="main_settings">Einstellungen</string>
+    <string name="main_configure_plug_ins">konfiguriere Plugins, Skins, usw.</string>
+    <string name="main_help">Hilfe!</string>
+    <string name="main_rept_bugs">paulscode.com für Unterstützung, Fehlerberichte</string>
+    <string name="main_credits">Credits</string>
+    <string name="main_devs_contribs_tstrs">Entwickler, Tester, Unterstützer</string>
+    <string name="main_cheat">Cheat! / Mogeln!</string>
+    <string name="main_choose_game_to_hack">wähle ein Spiel das Du hacken willst</string>
+    <string name="main_close">Schliessen</string>
+    <string name="main_exit_the_app">beendet das Programm</string>
+    
+    <!-- File Browser Strings -->
+    <string name="file_size">Dateigrösse</string>
+    <string name="file_folder">Ordner</string>
+    <string name="file_current_folder">aktueller Ordner</string>
+    <string name="file_parent_folder">übergeordneter Ordner</string>
+    
+    <!-- Cheats Strings -->
+    <string name="cheats_for">"Cheats für "</string>
+    <string name="cheats_disable">Ausschalten</string>
+    <string name="cheats_dont_use">benutze nicht diesen Cheat</string>
+    <string name="cheats_long_full_text">(lange drücken für den ganzen Text)</string>
+    <string name="cheats_full_text">Volltext</string>
+    <string name="cheats_no_description">(keine Beschreibung verfügbar)</string>
+    <string name="cheats_default_name">Cheat</string>
+    <string name="cheats_long_notes">(lange drücken für Bemerkungen)</string>
+    <string name="cheats_notes">Bemerkungen</string>
+    <string name="cheats_no_notes">(keine Bemerkungen verfügbar für diesen Cheat)</string>
+    <string name="cheats_close">Schliessen</string>
+    <string name="cheats_start">Starte das Spiel!</string>
+    <string name="cheats_launch_selected">starte mit ausgewählten Cheats</string>
+        
+    <!-- Plugin Option Strings -->
+    
+    <!-- General Settings Menu -->
+    <string name="settings_video">Video</string>
+    <string name="settings_config_graphics">konfiguriere die Grafik</string>
+    <string name="settings_audio">Audio</string>
+    <string name="settings_audio_settings">wähle Audio-Einstellungen</string>
+    <string name="settings_input">Eingabe</string>
+    <string name="settings_map_controller_buttons">belege Controller Knöpfe</string>
+    <string name="settings_virtual_gamepad">Virtuelles Gamepad</string>
+    <string name="settings_config_virtual_gamepad">konfiguriere das virtuelle Gamepad</string>
+    <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
+    <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
+    <string name="settings_touchpad">Touchpad</string>
+    <string name="settings_config_touchpad">configure the touchpad</string>
+    <string name="settings_rsp">RSP</string>
+    <string name="settings_reality_signal_processor">Reality Signal Processor</string>
+    <string name="settings_core">Core</string>
+    <string name="settings_emu_core_settings">Emulator Core Einstellungen</string>
+    <string name="settings_reset_defaults">zurücksetzen auf Standard-Einstellungen</string>
+    <string name="settings_reset_to_deflt_vals">setz alles auf Standard-Werte zurück</string>
+    <string name="settings_restore_app_data">Wiederherstellung: App Data</string>
+    <string name="settings_imports_will_be_lost">importierte Plugins und Texturen werden verloren gehen!</string>
+    <string name="settings_problem_resetting">Problem auf Standardwerte zurück zu setzen (siehe logcat)</string>
+    <string name="settings_enable_auto_save">Einschalten: automatisches Speichern</string>
+    <string name="settings_auto_save_game_on_exit">Das Spiel wird automatisch beim Verlassen gespeichert </string>
+    <string name="settings_language">Sprache</string>
+    <string name="settings_manually_change_language">manuelles Wechseln der Sprache</string>
+    
+    
+    <!-- Audio Plugin -->
+    <string name="audio_change">Wechsel</string>
+    <string name="audio_enable">Einschalten</string>
+    <string name="audio_use_plgin">benutze dieses Plugin </string>
+    <string name="audio_change_plug_in">wechsel das Plugin</string>
+    <string name="audio_import">Importiere…</string>
+    <string name="audio_new_plgin">füge ein neues Audio-Plugin hinzu</string>
+    
+    <!-- Core Library -->
+    <string name="core_change_core">wechsel den Core</string>
+    <string name="core_choose_another_core">wähle einen anderen Core</string>
+    <string name="core_import">Importiere…</string>
+    <string name="core_new_plgin">füge einen neuen Core hinzu</string>
+    <string name="core_stop">Stop</string>
+    <string name="core_save_state">Speicher Status</string>
+    <string name="core_load_state">Lade Status</string>
+    <string name="core_increment_slot">Increment Slot</string>
+    <string name="core_reset">Reset</string>
+    <string name="core_speed_down">Geschwindigkeit runter</string>
+    <string name="core_speed_up">Geschwindigkeit hoch</string>
+    <string name="core_pause">Pause</string>
+    <string name="core_fast_forward">schneller Vorlauf</string>
+    <string name="core_frame_advance">Frame Advance</string>
+    <string name="core_gameshark">Gameshark</string>
+    <string name="core_disable_volume_keys">Ausschalten: Lautstärke Tasten</string>
+    <string name="core_use_as_core_functions">verwenden als Core Function</string>
+    
+    <!-- Input Plugin -->
+    <string name="input_controller_1">Controller 1</string>
+    <string name="input_map_ctrl_1_buttons">belege controller 1 Knöpfe</string>
+    <string name="input_controller_2">Controller 2</string>
+    <string name="input_map_ctrl_2_buttons">belege controller 2 Knöpfe</string>
+    <string name="input_controller_3">Controller 3</string>
+    <string name="input_map_ctrl_3_buttons">belege controller 3 Knöpfe</string>
+    <string name="input_controller_4">Controller 4</string>
+    <string name="input_map_ctrl_4_buttons">belege controller 4 Knöpfe</string>
+    <string name="input_special_buttons">Spezial-Knöpfe</string>
+    <string name="input_map_core_funcs_buttons">belege Core Funktionen auf Knöpfe</string>
+    <string name="input_import">Importiere…</string>
+    <string name="input_new_plgin">füge ein neues Eingabe Plugin hinzu</string>
+    <string name="input_change_plug_in">wechsel das Plugin</string>
+    <string name="input_map_buttons">belege Knöpfe</string>
+    <string name="input_map_ctrl_btns">belege Controller Knöpfe</string>
+    <string name="input_enable">Einschalten</string>
+    <string name="input_use_this_plug_in">benutze dieses Plugin</string>
+
+    <!-- Controller -->
+    <string name="plugged_in">Eingesteckt</string>
+    <string name="connect_controller">verbinde Controller</string>
+    <string name="expansion">Erweiterung</string>
+    <string name="expansion_none">Keine</string>
+    <string name="expansion_rumblepak">Rumble pak</string>
+    <string name="expansion_mempak">Mem pak</string>
+    <string name="button_keycode">Key Code</string>
+    <string name="button_not_mapped">(nicht belegt)</string>
+    <string name="button_dpad_right">D-pad Rechts</string>
+    <string name="button_dpad_left">D-pad Links</string>
+    <string name="button_dpad_down">D-pad Runter</string>
+    <string name="button_dpad_up">D-pad Hoch</string>
+    <string name="button_start">Start</string>
+    <string name="button_z">Z</string>
+    <string name="button_b">B</string>
+    <string name="button_a">A</string>
+    <string name="button_cpad_right">C-pad Rechts</string>
+    <string name="button_cpad_left">C-pad Links</string>
+    <string name="button_cpad_down">C-pad Runter</string>
+    <string name="button_cpad_up">C-pad Hoch</string>
+    <string name="button_r">R</string>
+    <string name="button_l">L</string>
+    <string name="mempak_switch">Mempak Schalter</string>
+    <string name="rumblepak_switch">Rumblepak Schalter</string>
+    <string name="button_analog_right">Analog Rechts</string>
+    <string name="button_analog_left">Analog Links</string>
+    <string name="button_analog_down">Analog Runter</string>
+    <string name="button_analog_up">Analog Hoch</string>
+    
+    <!-- RSP Plugin -->
+    <string name="rsp_change_plug_in">wechsel das Plugin</string>
+    <string name="rsp_plugin_enable">Einschalten</string>
+    <string name="rsp_use_this_plug_in">benutze dieses Plugin</string>
+    <string name="rsp_change">wechsel</string>
+    <string name="rsp_import">Importiere…</string>
+    <string name="rsp_new_plgin">füge ein neues RSP Plugin hinzu</string>
+    
+    <!-- Video Plugin -->
+    <string name="video_change_plug_in">wechsel das Plugin</string>
+    <string name="video_configure">Konfigurieren</string>
+    <string name="video_change_the_settings">ändere die Einstellungen</string>
+    <string name="video_rgba_8888_mode">RGBA_8888 Mode</string>
+    <string name="video_improve_gfx_devices">verbessert die Grafik bei einigen Geräten</string>
+    <string name="video_enable">Einschalten</string>
+    <string name="video_use_this_plug_in">nutze dieses Plugin</string>
+    <string name="video_change">Wechsel</string>
+    <string name="video_import">Importiere…</string>
+    <string name="video_add_new_video_plug_in">füge ein neues Video-Plugin hinzu</string>
+    <string name="video_enable_skip_frame">Einschalten: Skip Frame</string>
+    <string name="video_improve_speed_at_cst_fps">(verbessert die Geschwindigkeit auf Kosten der FPS)</string>
+    <string name="video_enable_fast_texture_crc">Einschalten: Fast Texture CRC</string>
+    <string name="video_disble_imprv_2d">(ausschalten verbessert 2D Elemente)</string>
+    <string name="video_enable_fast_texture_loading">Einschalten: Fast Texture Loading</string>
+    <string name="video_fixes_crcl_trnstions">(behebt Fehler bei Kreis-Übergängen)</string>
+    <string name="video_enable_hires_textures">Einschalten: hochauflösende Texturen</string>
+    <string name="video_use_imprtd_txtr_pcks">(benutze importierte Textur Pakete)</string>
+    <string name="video_imprt_txtr_pck_zip_fmt">Importiere Textur Pakete, im ZIP Format</string>
+    <string name="video_apply_cust_txtr">(wende selbstgemachte Texturen in einem Spiel an)</string>
+    <string name="video_stretch_screen">strecke Bildschirm</string>
+    <string name="video_may_skew">(wird das Seitenverhältnis verzerren)</string>
+    <string name="video_auto_frameskip">Auto Frameskip</string>
+    <string name="video_auto_adjust">(automatische Justierung der Geschwindigkeit)</string>
+    <string name="video_max_frameskip">Max Frameskip</string>
+    <string name="video_disable_auto_fskip">" (schalte Auto-Frameskip aus für eine manuelle Einstellung)"</string>
+    <string name="video_enable_fog">Einschalten: Fog (Nebel)</string>
+    <string name="video_need_work">(muss noch überarbeitet werden)</string>
+    <string name="video_enable_tribuffer_opt">Einschalten: Tribuffer-Optimierung</string>
+    <string name="video_disble_if_zlda_crshes">(auschalten wenn Zelda beim Start abstürzt)</string>
+    <string name="video_force_screen_clear">erzwinge Bildschirm löschen</string>
+    <string name="video_clrs_junk_grfx">(behebt einige Grafikfehler)</string>
+    <string name="video_enable_alpha_test">Einschalten: Alpha Test</string>
+    <string name="video_disble_fr_spdhck">(auschalten zur Geschwindigkeitsverbesserung, bei schwarzen Texturen)</string>
+    <string name="video_hack_z">Hack Z</string>
+    <string name="video_enble_fx_flshng_bckgrnd">(einschalten um einen flackernden Hintergrund zu beheben)</string>
+    
+    <!-- Virtual Gamepad -->
+    <string name="gamepad_virtual_gamepad">Virtuelles Gamepad</string>
+    <string name="gamepad_cnfig_virt_gamepad">konfiguriere das virtuelle Gamepad</string>
+    <string name="gamepad_change_layout">wechsel das Layout</string>
+    <string name="gamepad_redraw_all">alles Neuzeichnen</string>
+    <string name="gamepad_misbut_bug">langsamer, behebt den Fehlende-Knöpfe-Fehler</string>
+    <string name="gamepad_accurate_n64_stick">Genauer N64 Stick</string>
+    <string name="gamepad_analg_as_octgon">emuliert analog Eingaben als Achteck</string>
+    <string name="gamepad_display_fps">Anzeige: FPS</string>
+    <string name="gamepad_shw_frm_sec">zeigt die Frames-Pro-Sekunde</string>
+    <string name="gamepad_enable">Einschalten</string>
+    <string name="gamepad_use_virt_gpad">benutze das virtuelle Gamepad</string>
+    <string name="gamepad_import">Importiere…</string>
+    <string name="gamepad_new_skin">füge einen neuen Gamepad Skin hinzu</string>
+
+    <!-- Xperia Play Touchpad -->
+    <string name="touchpad_change">Wechsel</string>
+    <string name="touchpad_enable">Einschalten</string>
+    <string name="touchpad_use_touchpad">use the touchpad</string>
+    <string name="touchpad_import">Importiere…</string>
+    <string name="touchpad_add_new">add new touchpad skin</string>
+
+    <!-- Dialog Strings -->
+    <string name="are_you_sure">Bist Du sicher?</string>
+    <string name="dialog_yes">Ja</string>
+    <string name="dialog_no">Nein</string>
+    <string name="restore_info">"Alle Einstellungen und jedes importierte Plugin, Gamepad Layouts, oder Textur Pakete werden verloren gehen!\n\n "
+                              "Gespeicherte Spiele und Speicherstände werden gesichert und wieder hergestellt werden.  Wenn nicht genug Platz "
+                              "im Speicher ist um sie zu sichern, werden sie auch verloren gehen."</string>
+    <string name="app_credits">"Entwickler:\n\n"
+                              "- Paul Lamb (paulscode) (Portierung auf Android, entwickelte die Bedienoberfläche, Wartung, Fehlerbeseitigung)\n"
+                              "- Ari64 (Erschuf den Core ARM Dynarec, stand bei der Portierung und Fehlerbeseitigung zur Seite.. an assembly savant!)\n"
+                              "- Kris (Metricity) (portierte das Rice Video Plugin nach GLES2, hilft bei der Fehlerbeseitigung)\n"
+                              "- Pelya (portierte Teile der SDL für Android, entwickelte den Data downloader/ unpacker)\n"
+                              "- Epic_bubble (half beim Xperia Play optimierten Inhalt, durchsuchte nützliche Open-Source Resourcen)\n"
+                              "- xperia64 (half bei der EEPROM Clock Emulation, durchsuchte ebenfalls nützliche Open-Source Resourcen)\n"
+                              "- cpasjuste (stand bei der Portierung des Dynarec von 1.5 nach 1.99.4 zur Seite)\n"
+                              "- GTan64 (bot einen alternativen Mupen64Plus Core port zum Vergleichen an, half bei der SDL1.3 portierung)\n"
+                              "- Yongzh (verbesserte Komponenten von gles2n64, bot einen alternativen Mupen64Plus Core port zum Vergleichen an)\n"
+                              "- ZodTTD (bot ein alternative gles2n64 Port zum Vergleichen an, half einen schwierigen Fehler zu finden)\n"
+                              "- Lioncash (Multi-Sprach Unterstützung, Wartung des Programmcodes)\n"
+                              "- CZero (half einen genauen Achteck Analog Control Algorithmus zu entwickeln)\n"
+                              "- BuckM (entdeckte die besten Analog Control Radius Einstellungen)\n"
+                              "- Orkin, Adventus (GLN64/gles2n64 Video Plugin entwicklung, portierung nach GLES2)\n"
+                              "- Rice (entwickelte das bekannte Rice Video Plugin)\n"
+                              "- Hactarux, JttL, Ebenblues, Richard Goedeken (richard42) (Mupen64/Mupen64Plus Entwickler.. die wahren Genies!)\n"
+                              "- (viele Andere)\n\n"
+                              "\"Extrem\" Tester:\n\n"
+                              "- Epic_bubble\n"
+                              "- xperia64\n"
+                              "- scorpio16v\n"
+                              "- (viel zu viele um Sie hier alle zu erwähnen!)\n\n"
+                              "Grafiken:\n\n"
+                              "- roymustang16 (Virtuelle-Gamepad Layouts)\n"
+                              "- shuy3n (Icons, Werbegrafiken)\n\n"
+                              "Übersetzer:\n\n"
+                              "- Tom.K (Kroatisch)\n"
+                              "- muis24 (Niederländisch)\n"
+                              "- scorpio16v (Deutsch)\n"
+                              "- Lioncash (Japanisch)\n"
+                              "- ToVine (Norwegisch)\n"
+                              "- TheMacyp7500 (Portugiesisch)\n"
+                              "- tofi1106 (Spanisch)\n\n"
+                              "Verschiedenes:\n\n"
+                              "- Epic_bubble (Werbevideo)\n"
+                              "- Potticus (kompatibilitäts Wiki)"</string>
+</resources>

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mupen64 Plus, AE</string>
+    <string name="connecting_to">Kobler til %s</string>
+    <string name="dl_finished">Fullført</string>
+    <string name="dl_from">Laster ned data fra %s</string>
+    <string name="dl_progress">%1$.0f%% fullført: fil %2$s</string>
+    <string name="download_unneeded">Ikke nødvendig å laste ned</string>
+    <string name="error_dl_from">Nedlasting fra %s feilet</string>
+    <string name="error_write">Skriving feilet (sjekk at enheten er koblet til i modus for USB-masselagring) %s</string>
+    <string name="failed_connecting_to">Tilkobling til %s feilet</string>
+    <string name="init">Initialiserer</string>
+    <!-- Manifest Strings -->
+    <string name="manifest_settings">Innstillinger</string>
+    <string name="manifest_video_settings">Grafikkinnstillinger</string>
+    <string name="manifest_choose_video_plugin">Velg tilleggsmodul for video</string>
+    <string name="manifest_configure_video_plugin">Konfigurer tilleggsmodul for video</string>
+    <string name="manifest_audio_settings">Lydinnstillinger</string>
+    <string name="manifest_choose_audio_plugin">Velg tilleggsmodul for lyd</string>
+    <string name="manifest_input_settings">Innstillinger for inndata</string>
+    <string name="manifest_choose_input_plugin">Velg tilleggsmodul for inndata</string>
+    <string name="manifest_configure_controllers">Konfigurer kontrollere</string>
+    <string name="manifest_map_buttons">Knappetilkoblinger</string>
+    <string name="manifest_rsp_settings">Innstillinger for RSP</string>
+    <string name="manifest_choose_rsp_plugin">Velg RSP-tilleggsmodul</string>
+    <string name="manifest_core_settings">Innstillinger for kjerne</string>
+    <string name="manifest_choose_core">Velg kjerne</string>
+    <string name="manifest_configure_core">Konfigurer kjerne</string>
+    <string name="manifest_language">Velg språk</string>
+    <string name="manifest_skins">Tema(utseende og stil)</string>
+    <string name="manifest_virtual_gamepad_settings">Innstillinger for virtuell styreenhet</string>
+    <string name="manifest_select_layout">Velg oppsett</string>
+    <string name="manifest_cheats">Juksekoder</string>
+
+    <!-- Language Menu Strings -->
+    <string name="language_default">Standard</string>
+    <string name="language_use_system_locale">Bruk systeminnstilling for visningsspråk</string>
+
+    <!-- Language Strings -->
+    <string name="language_arabic">Arabic</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_croatian">Croatian</string>
+    <string name="language_dutch">Dutch</string>
+    <string name="language_english">English</string>
+    <string name="language_french">French</string>
+    <string name="language_german">German</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_japanese">Japanese</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_norwegian">Norwegian</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_spanish">Spanish</string>
+    <!-- Native Language Strings -->
+    <string name="native_arabic">العربية</string>
+    <string name="native_chinese">中國的</string>
+    <string name="native_croatian">hrvatski</string>
+    <string name="native_dutch">Nederlands</string>
+    <string name="native_english">English</string>
+    <string name="native_french">français</string>
+    <string name="native_german">Deutsch</string>
+    <string name="native_italian">italiano</string>
+    <string name="native_japanese">日本の</string>
+    <string name="native_korean">한국의</string>
+    <string name="native_norwegian">norske</string>
+    <string name="native_portuguese">português</string>
+    <string name="native_spanish">español</string>
+
+    <!-- In-Game Message Strings -->
+    <string name="mupen64plus_started">Mupen64Plus startet</string>
+    <string name="savegame_slot">Lagringssted</string>
+    <string name="saving_game">Lagrer spill</string>
+    <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com</string>
+    <string name="app_data_inaccessible">Får ikke tilgang til applikasjonsdata (er enheten plugget inn i USB-masselagringsmodus?)</string>
+    <!-- In-Game Menu Strings -->
+    <string name="ingame_menu">Meny</string>
+    <string name="ingame_inc_slot">Lagringssted++</string>
+    <string name="ingame_save">Lagre</string>
+    <string name="ingame_load">Last inn</string>
+    <string name="ingame_close">Lukk</string>
+    
+    <!-- Main Screen Strings -->
+    <string name="main_choose_game">Velg spill</string>
+    <string name="main_select_a_game_to_play">Velg et spill du vil starte</string>
+    <string name="main_resume">Gjenoppta</string>
+    <string name="main_continue_your_last_game">Fortsett det forrige spillet</string>
+    <string name="main_settings">Innstillinger</string>
+    <string name="main_configure_plug_ins">Konfigurer tilleggsmoduler, tema o.l.</string>
+    <string name="main_help">Hjelp!</string>
+    <string name="main_rept_bugs">Paulscode.com, støtte og problemrapportering (på engelsk)</string>
+    <string name="main_credits">Takk til</string>
+    <string name="main_devs_contribs_tstrs">Utviklere, testere og bidragsytere</string>
+    <string name="main_cheat">Juks!</string>
+    <string name="main_choose_game_to_hack">velg et spill å forandre på</string>
+    <string name="main_close">Lukk</string>
+    <string name="main_exit_the_app">Avslutt applikasjonen</string>
+    
+    <!-- File Browser Strings -->
+    <string name="file_size">Filstørrelse</string>
+    <string name="file_folder">Mappe</string>
+    <string name="file_current_folder">Gjeldende mappe</string>
+    <string name="file_parent_folder">Ett nivå opp</string>
+    
+    <!-- Cheats Strings -->
+    <string name="cheats_for">"Juksekoder for "</string>
+    <string name="cheats_disable">Deaktivert</string>
+    <string name="cheats_dont_use">ikke bruk denne juksekoden</string>
+    <string name="cheats_long_full_text">(trykk og hold for full text)</string>
+    <string name="cheats_full_text">Full text</string>
+    <string name="cheats_no_description">(ingen beskrivelse tilgjengelig)</string>
+    <string name="cheats_default_name">Juksekode</string>
+    <string name="cheats_long_notes">(trykk og hold for notater)</string>
+    <string name="cheats_notes">Notater</string>
+    <string name="cheats_no_notes">(ingen notater tilgjengelig for denne juksekoden)</string>
+    <string name="cheats_close">Lukk</string>
+    <string name="cheats_start">Start spil!</string>
+    <string name="cheats_launch_selected">start spillet med de valgte kodene aktivert</string>
+
+    <!-- Plugin Option Strings -->
+    
+    <!-- General Settings Menu -->
+    <string name="settings_video">Grafikk</string>
+    <string name="settings_config_graphics">Konfigurer grafikkinnstillingene</string>
+    <string name="settings_audio">Lyd</string>
+    <string name="settings_audio_settings">Velg lydinnstillinger</string>
+    <string name="settings_input">Inndata</string>
+    <string name="settings_map_controller_buttons">Sett opp knappetilordninger</string>
+    <string name="settings_virtual_gamepad">Virtuell styreenhet</string>
+    <string name="settings_config_virtual_gamepad">Konfigurer den virtuelle styreenheten</string>
+    <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
+    <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
+    <string name="settings_touchpad">Touchpad</string>
+    <string name="settings_config_touchpad">configure the touchpad</string>
+    <string name="settings_rsp">RSP</string>
+    <string name="settings_reality_signal_processor">Reality Signal Processor</string>
+    <string name="settings_core">Kjerne</string>
+    <string name="settings_emu_core_settings">Innstillinger for emulatorkjernen</string>
+    <string name="settings_reset_defaults">Gjenopprett standardinnstillinger</string>
+    <string name="settings_reset_to_deflt_vals">Gjenopprett alle innstillinger til standardverdier</string>
+    <string name="settings_problem_resetting">Problem med å gjenopprette standardinnstillinger (se logcat)</string>
+    <string name="settings_restore_app_data">Tilbakestill applikasjons-data</string>
+    <string name="settings_imports_will_be_lost">Importerte tilleggsmoduler og teksturer vil gå tapt!</string>
+    <string name="settings_enable_auto_save">Aktiver auto-lagring</string>
+    <string name="settings_auto_save_game_on_exit">Lagre spillet automatisk ved avslutning</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_manually_change_language">manually change the language</string>
+    
+    
+    <!-- Audio Plugin -->
+    <string name="audio_change">Velg tilleggsmodul</string>
+    <string name="audio_enable">Aktiver</string>
+    <string name="audio_use_plgin">Bruk denne tilleggsmodulen</string>
+    <string name="audio_change_plug_in">Velg tilleggsmodul (for lyd)</string>
+    <string name="audio_import">Importer...</string>
+    <string name="audio_new_plgin">Legg til ny tilleggsmodul for lyd</string>
+    
+    <!-- Core Library -->
+    <string name="core_change_core">Bytt kjerne</string>
+    <string name="core_choose_another_core">Velg en annen kjerne</string>
+    <string name="core_import">Importer...</string>
+    <string name="core_new_plgin">Legg til ny kjerne</string>
+    <string name="core_stop">Stopp</string>
+    <string name="core_save_state">Lagre tilstand</string>
+    <string name="core_load_state">Last inn tilstand</string>
+    <string name="core_increment_slot">Neste lagringssted</string>
+    <string name="core_reset">Nullstill</string>
+    <string name="core_speed_down">Senk hastighet</string>
+    <string name="core_speed_up">Øk hastighet</string>
+    <string name="core_pause">Pause</string>
+    <string name="core_fast_forward">Spol frem</string>
+    <string name="core_frame_advance">Ett bilde frem</string>
+    <string name="core_gameshark">Gameshark</string>
+    <string name="core_disable_volume_keys">Deaktiver volumknapper</string>
+    <string name="core_use_as_core_functions">Bruk som kjernefunksjoner</string>
+    
+    <!-- Input Plugin -->
+    <string name="input_controller_1">Kontroller 1</string>
+    <string name="input_map_ctrl_1_buttons">Tilordne knapper på kontroller 1</string>
+    <string name="input_controller_2">Kontroller 2</string>
+    <string name="input_map_ctrl_2_buttons">Tilordne knapper på kontroller 2</string>
+    <string name="input_controller_3">Kontroller 3</string>
+    <string name="input_map_ctrl_3_buttons">Tilordne knapper på kontroller 3</string>
+    <string name="input_controller_4">Kontroller 4</string>
+    <string name="input_map_ctrl_4_buttons">Tilordne knapper på kontroller 4</string>
+    <string name="input_special_buttons">Spesialknapper</string>
+    <string name="input_map_core_funcs_buttons">Tilordne kjernefunksjoner til knapper</string>
+    <string name="input_import">Importer...</string>
+    <string name="input_new_plgin">Legg til ny tilleggsmodul for inndata</string>
+    <string name="input_change_plug_in">Velg tilleggsmodul (for inndata)</string>
+    <string name="input_map_buttons">Knappetilordninger</string>
+    <string name="input_map_ctrl_btns">Sett opp knappetilordninger</string>
+    <string name="input_enable">Aktiver</string>
+    <string name="input_use_this_plug_in">Bruk denne tilleggsmodulen</string>
+
+    <!-- Controller -->
+    <string name="plugged_in">Plugget inn</string>
+    <string name="connect_controller">Koble til kontroller</string>
+    <string name="expansion">Utivdelse</string>
+    <string name="expansion_none">Ingen</string>
+    <string name="expansion_rumblepak">Vibrasjons-tillegg</string>
+    <string name="expansion_mempak">Minne-tillegg</string>
+    <string name="button_keycode">Knappekode</string>
+    <string name="button_not_mapped">(Ikke tilordnet)</string>
+    <string name="button_dpad_right">D-pad høyre</string>
+    <string name="button_dpad_left">D-pad venstre</string>
+    <string name="button_dpad_down">D-pad ned</string>
+    <string name="button_dpad_up">D-pad opp</string>
+    <string name="button_start">Start</string>
+    <string name="button_z">Z</string>
+    <string name="button_b">B</string>
+    <string name="button_a">A</string>
+    <string name="button_cpad_right">Høyre C-knapp</string>
+    <string name="button_cpad_left">Venstre C-knapp</string>
+    <string name="button_cpad_down">Nedre C-knapp</string>
+    <string name="button_cpad_up">Øvre C-knapp</string>
+    <string name="button_r">R</string>
+    <string name="button_l">L</string>
+    <string name="mempak_switch">Mempak bryter</string>
+    <string name="rumblepak_switch">Rumblepak bryter</string>
+    <string name="button_analog_right">Analogspake høyre</string>
+    <string name="button_analog_left">Analogspake venstre</string>
+    <string name="button_analog_down">Analogspake ned</string>
+    <string name="button_analog_up">Analogspake opp</string>
+    
+    <!-- RSP Plugin -->
+    <string name="rsp_change_plug_in">Velg tilleggsmodul (for RSP)</string>
+    <string name="rsp_plugin_enable">Aktiver</string>
+    <string name="rsp_use_this_plug_in">Bruk denne tilleggsmodulen</string>
+    <string name="rsp_change">Velg tilleggsmodul</string>
+    <string name="rsp_import">Importer...</string>
+    <string name="rsp_new_plgin">Legg til ny tilleggsmodul for RSP</string>
+    
+    <!-- Video Plugin -->
+    <string name="video_change_plug_in">Velg tilleggsmodul (for video)</string>
+    <string name="video_configure">Konfigurer</string>
+    <string name="video_change_the_settings">Endre innstillinger</string>
+    <string name="video_rgba_8888_mode">RGBA_8888-modus</string>
+    <string name="video_improve_gfx_devices">Forbedrer grafikken på enkelte enheter</string>
+    <string name="video_enable">Aktiver</string>
+    <string name="video_use_this_plug_in">Bruk denne tilleggsmodulen</string>
+    <string name="video_change">Velg tilleggsmodul</string>
+    <string name="video_import">Importer...</string>
+    <string name="video_add_new_video_plug_in">Legg til ny tilleggsmodul for grafikk</string>
+    <string name="video_enable_skip_frame">Tillat å hoppe over bilder</string>
+    <string name="video_improve_speed_at_cst_fps">(Forbedrer hastighet på bekostning av FPS)</string>
+    <string name="video_enable_fast_texture_crc">Aktiver hurtig CRC-sjekk på teksturer</string>
+    <string name="video_disble_imprv_2d">(Å deaktivere dette forbedrer 2D-elementer)</string>
+    <string name="video_enable_fast_texture_loading">Aktiver hurtig innlasting av teksturer</string>
+    <string name="video_fixes_crcl_trnstions">(fikser sirkeloverganger)</string>
+    <string name="video_enable_hires_textures">Aktiver høyoppløste teksturer</string>
+    <string name="video_use_imprtd_txtr_pcks">(Bruk importerte teksturpakker)</string>
+    <string name="video_imprt_txtr_pck_zip_fmt">Importer teksturpakke, ZIP-format</string>
+    <string name="video_apply_cust_txtr">(Bruk egendefinerte teksturer i et spill)</string>
+    <string name="video_stretch_screen">Strekk skjermbildet</string>
+    <string name="video_may_skew">(Kan forstyrre breddeforholdet)</string>
+    <string name="video_auto_frameskip">Hopp over bilder automatisk</string>
+    <string name="video_auto_adjust">(Justeres automatisk basert på hastighet)</string>
+    <string name="video_max_frameskip">Maksimalt antall bilder som utelates</string>
+    <string name="video_disable_auto_fskip">" (effektiv kun når bilder ikke utelates automatisk)"</string>
+    <string name="video_enable_fog">Aktiver tåke</string>
+    <string name="video_need_work">(funksjonen er ikke helt ferdig)</string>
+    <string name="video_enable_tribuffer_opt">Enable Tribuffer Opt</string>
+    <string name="video_disble_if_zlda_crshes">(Deaktiver hvis Zelda krasjer under oppstart)</string>
+    <string name="video_force_screen_clear">Tving tømming av skjermen</string>
+    <string name="video_clrs_junk_grfx">(Fikser enkelte tilfeller av grafiske småfeil)</string>
+    <string name="video_enable_alpha_test">Aktiver gjennomsiktighetstest</string>
+    <string name="video_disble_fr_spdhck">(Må deaktiveres for spilling ved høyere hastighet, sorte teksturer)</string>
+    <string name="video_hack_z">Hack Z</string>
+    <string name="video_enble_fx_flshng_bckgrnd">(aktiver for å fikse blinkende bakgrunn)</string>
+    
+    <!-- Virtual Gamepad -->
+    <string name="gamepad_virtual_gamepad">Virtuell styreenhet</string>
+    <string name="gamepad_cnfig_virt_gamepad">Konfigurer den virtuelle styreenheten</string>
+    <string name="gamepad_change_layout">Endre oppsett</string>
+    <string name="gamepad_redraw_all">Tegn alt på nytt</string>
+    <string name="gamepad_misbut_bug">Tregere, fikser problem med knapper som forsvinner</string>
+    <string name="gamepad_accurate_n64_stick">Presist gjengitt N64-styrespak</string>
+    <string name="gamepad_analg_as_octgon">Emuler analogstikken som en åttekant</string>
+    <string name="gamepad_display_fps">Vis FPS</string>
+    <string name="gamepad_shw_frm_sec">Vis antall bilder per sekund</string>
+    <string name="gamepad_enable">Aktiver</string>
+    <string name="gamepad_use_virt_gpad">Bruk den virtuelle styreenheten</string>
+    <string name="gamepad_import">Importer...</string>
+    <string name="gamepad_new_skin">Legg til ny tilleggsmodul for virtuell styreenhet</string>
+
+    <!-- Xperia Play Touchpad -->
+    <string name="touchpad_change">Change</string>
+    <string name="touchpad_enable">Aktiver</string>
+    <string name="touchpad_use_touchpad">use the touchpad</string>
+    <string name="touchpad_import">Importer...</string>
+    <string name="touchpad_add_new">add new touchpad skin</string>
+
+    <!-- Dialog Strings -->
+    <string name="are_you_sure">Er du sikker?</string>
+    <string name="dialog_yes">Ja</string>
+    <string name="dialog_no">Nei</string>
+    <string name="restore_info">"Alle innstillinger og importerte tilleggsmoduler, oppsett for spillkontrollere og teksturpakker vil gå tapt!\n\n "
+                              "Lagrede spill og lagringstilstander vil bli sikkerhetskopiert og gjenopprettet. Hvis det ikke er nok ledig kapasitet "
+                              "på lagringsmediet til å sikkerhetskopiere dem vil de også gå tapt."</string>
+    <string name="app_credits">"Utviklere:\n\n"
+                              "- Paul Lamb (paulscode) (porterte prosjektet til Android, utviklet front-end, vedlikehold og debugging)\n"
+                              "- Ari64 (lagde core ARM dynarec, bidro med hjelp til portering og debugging.. En reddende engel med assembly!)\n"
+                              "- Kris (Metracity) (porterte Rice Video plug-in til GLES2, bidro med debugging)\n"
+                              "- Pelya (porterte komponenter av SDL til Android, utviklet data-nedlaster og -utpakker)\n"
+                              "- Epic_bubble (hjalp til med optimisert innhold til Xperia Play, utforsket nyttige åpen kildekode-ressurser)\n"
+                              "- xperia64 (hjalp til med emulering av EEPROM-klokke, also utforsket også nyttige åpen kildekode-resources)\n"
+                              "- cpasjuste (hjalp til med å porte dynarec fra 1.5 til 1.99.4)\n"
+                              "- GTan64 (bidro med en alternativ portering av Mupen64Plus-kjernen for sammenligning, hjalp til med portering av SDL1.3)\n"
+                              "- Yongzh (forbedret komponenter av gles2n64, bidro med en alternativ portering av Mupen64Plus-kjernen for sammenligning)\n"
+                              "- ZodTTD (bidro med en alternativ portering av gles2n64 for sammenligning, hjalp til med å spore opp en kritisk feil)\n"
+                              "- Lioncash (flerspråklig støtte, vedlikehold av kode)\n"
+                              "- CZero (hjalp til med å utvikle logaritmen for presis åttekantet analog styrespak)\n"
+                              "- BuckM (oppdaget de beste innstillingene for radien til den analoge kontrollen)\n"
+                              "- Orkin, Adventus (utvikling av GLN64/gles2n64 tilleggsmodul for video, portering til GLES2)\n"
+                              "- Rice (utviklet den berømte Rice Video plug-in)\n"
+                              "- Hactarux, JttL, Ebenblues, Richard Goedeken (richard42) (Mupen64/Mupen64Plus-utviklere.. De sanne geniene!)\n"
+                              "- (mange flere)\n\n"
+                              "\"Ekstreme\" testere:\n\n"
+                              "- Epic_bubble\n"
+                              "- xperia64\n"
+                              "- scorpio16v\n"
+                              "- (alt for mange flere til å nevne!)\n\n"
+                              "Grafisk arbeid:\n\n"
+                              "- roymustang16 (oppsett for virtuell styreenhet)\n"
+                              "- shuy3n (ikoner, promoteringsgrafikk)\n\n"
+                              "Oversettere:\n\n"
+                              "- Tom.K (kroatisk)\n"
+                              "- muis24 (nederlandsk)\n"
+                              "- scorpio16v (tysk)\n"
+                              "- Lioncash (japansk)\n"
+                              "- ToVine (norsk)\n"
+                              "- TheMacyp7500 (portugisisk)\n"
+                              "- tofi1106 (spansk)\n\n"
+                              "Diverse:\n\n"
+                              "- Epic_bubble (promoteringsvideo)\n"
+                              "- Potticus (wiki for kompatibilitet)"</string>
+</resources>

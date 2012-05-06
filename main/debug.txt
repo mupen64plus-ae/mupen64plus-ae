@@ -1,0 +1,7 @@
+Install        : libSDL.so => libs/armeabi-v7a/libSDL.so
+Install        : libaudio-sdl.so => libs/armeabi-v7a/libaudio-sdl.so
+Install        : libcore.so => libs/armeabi-v7a/libcore.so
+Install        : libinput-sdl.so => libs/armeabi-v7a/libinput-sdl.so
+Install        : libmain.so => libs/armeabi-v7a/libmain.so
+Install        : librsp-hle.so => libs/armeabi-v7a/librsp-hle.so
+Compile arm    : video-rice <= dummy.c

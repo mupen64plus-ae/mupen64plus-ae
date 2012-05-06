@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mupen64 Plus, AE</string>
+    <string name="connecting_to">%sへの接続</string>
+    <string name="dl_finished">完成した</string>
+    <string name="dl_from">%sからデータをダウンロードします</string>
+    <string name="dl_progress">%1$.0f%% が行わ: ファイル %2$s</string>
+    <string name="download_unneeded">ダウンロードする必要はありません</string>
+    <string name="error_dl_from">%sからデータをダウンロード中にエラー</string>
+    <string name="error_write">書き込みエラー (USBストレージ·モードのデバイスですか？) %s</string>
+    <string name="failed_connecting_to">%sに接続できません</string>
+    <string name="init">初期化</string>
+    
+    <!-- マニフェストの文字列 -->
+    <string name="manifest_settings">設定</string>
+    <string name="manifest_video_settings">ビデオ設定</string>
+    <string name="manifest_choose_video_plugin">ビデオプラグインを選択</string>
+    <string name="manifest_configure_video_plugin">ビデオプラグインを設定</string>
+    <string name="manifest_audio_settings">オーディオ設定</string>
+    <string name="manifest_choose_audio_plugin">オーディオプラグインを選択</string>
+    <string name="manifest_input_settings">入力設定</string>
+    <string name="manifest_choose_input_plugin">入力プラグインを選択</string>
+    <string name="manifest_configure_controllers">コントローラを設定</string>
+    <string name="manifest_map_buttons">マップボタン</string>
+    <string name="manifest_rsp_settings">RSP設定</string>
+    <string name="manifest_choose_rsp_plugin">RSPプラグインを選択</string>
+    <string name="manifest_core_settings">コア設定</string>
+    <string name="manifest_choose_core">コアを選択</string>
+    <string name="manifest_configure_core">コアを設定</string>
+    <string name="manifest_skins">スキン（ルックアンドフィール）</string>
+    <string name="manifest_virtual_gamepad_settings">仮想ゲームパッド設定</string>
+    <string name="manifest_select_layout">レイアウトを選択</string>
+ 
+    <!-- Language Menu Strings -->
+    <string name="language_default">デフォルト</string>
+    <string name="language_use_system_locale">システム言語を使用</string>
+
+    <!-- Language Strings -->
+    <string name="language_arabic">Arabic</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_croatian">Croatian</string>
+    <string name="language_dutch">Dutch</string>
+    <string name="language_english">English</string>
+    <string name="language_french">French</string>
+    <string name="language_german">German</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_japanese">Japanese</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_norwegian">Norwegian</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_spanish">Spanish</string>
+    
+    <!-- Native Language Strings -->
+    <string name="native_arabic">العربية</string>
+    <string name="native_chinese">中國的</string>
+    <string name="native_croatian">hrvatski</string>
+    <string name="native_dutch">Nederlands</string>
+    <string name="native_english">English</string>
+    <string name="native_french">français</string>
+    <string name="native_german">Deutsch</string>
+    <string name="native_italian">italiano</string>
+    <string name="native_japanese">日本設</string>
+    <string name="native_korean">한국의</string>
+    <string name="native_norwegian">norske</string>
+    <string name="native_portuguese">português</string>
+    <string name="native_spanish">español</string>
+
+    <!-- In-Game Message Strings -->
+    <string name="mupen64plus_started">Mupen64Plus Started</string>
+    <string name="savegame_slot">セーブデータスロット</string>
+    <string name="saving_game">ゲームを保存</string>
+    <string name="illegal_audio_state">オーディオトラックが不正な状態。  paulscode.comに問題を報告してください</string>
+    <string name="app_data_inaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
+    
+    <!-- In-Game Menu Strings -->
+    <string name="ingame_menu">メニュー</string>
+    <string name="ingame_inc_slot">スロット++</string>
+    <string name="ingame_save">保存</string>
+    <string name="ingame_load">ロード</string>
+    <string name="ingame_close">閉じる</string>
+   
+    <!-- 主な文字列 -->
+    <string name="main_choose_game">ゲームを選択</string>
+    <string name="main_select_a_game_to_play">プレイするゲームを選択</string>
+    <string name="main_resume">再開</string>
+    <string name="main_continue_your_last_game">最後にプレイしたゲームを続行</string>
+    <string name="main_settings">設定</string>
+    <string name="main_configure_plug_ins">プラグインを設定</string>
+    <string name="main_help">ヘルプ</string>
+    <string name="main_rept_bugs">paulscode.comサポート, バグ報告</string>
+    <string name="main_credits">クレジット</string>
+    <string name="main_devs_contribs_tstrs">開発者、貢献者、テスター</string>
+    <string name="main_close">終了</string>
+    <string name="main_exit_the_app">アプリを終了</string>
+
+    <!-- File Browser Strings -->
+    <string name="file_size">ファイルサイズ</string>
+    <string name="file_folder">フォルダ</string>
+    <string name="file_current_folder">現在のフォルダ</string>
+    <string name="file_parent_folder">親フォルダー</string>
+    
+    <!-- Cheats Strings -->
+    <string name="cheats_for">"Cheats for "</string>
+    <string name="cheats_disable">無効</string>
+    <string name="cheats_dont_use">このチートを使用しない</string>
+    <string name="cheats_long_full_text">(全文を表示するには長押し)</string>
+    <string name="cheats_full_text">全文</string>
+    <string name="cheats_no_description">(記述はなしです利用できる)</string>
+    <string name="cheats_default_name">チート</string>
+    <string name="cheats_long_notes">(ノートを見て長押し)</string>
+    <string name="cheats_notes">注釈</string>
+    <string name="cheats_no_notes">(利用可能なノートはありませ)</string>
+    <string name="cheats_close">閉じる</string>
+    <string name="cheats_start">ゲームをスタート</string>
+    <string name="cheats_launch_selected">選択したチートで起動</string>
+
+    <!-- プラグインのオプション文字列 -->
+
+    <!-- 設定メニュー -->
+    <string name="settings_video">ビデオ</string>
+    <string name="settings_config_graphics">ビデオ設定</string>
+    <string name="settings_audio">オーディオ</string>
+    <string name="settings_audio_settings">オーディオ設定</string>
+    <string name="settings_input">インプット</string>
+    <string name="settings_map_controller_buttons">マップコントローラのボタン</string>
+    <string name="settings_virtual_gamepad">仮想コントローラ</string>
+    <string name="settings_config_virtual_gamepad">仮想コントローラ設定</string>
+    <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
+    <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
+    <string name="settings_touchpad">Touchpad</string>
+    <string name="settings_config_touchpad">configure the touchpad</string>
+    <string name="settings_rsp">RSP</string>
+    <string name="settings_reality_signal_processor">現実·シグナル·プロセッサ</string>
+    <string name="settings_core">コア</string>
+    <string name="settings_emu_core_settings">エミュレータコア設定</string>
+    <string name="settings_reset_defaults">既定値にリセット</string>
+    <string name="settings_reset_to_deflt_vals">デフォルト値に設定をリセット</string>
+    <string name="settings_problem_resetting">デフォルトのリセット中にエラーが発生しました。（logcatを参照してください）</string>
+    <string name="settings_restore_app_data">アプリデータを復元</string>
+    <string name="settings_imports_will_be_lost">インポートされたプラグインやテクスチャが失われます！</string>
+    <string name="settings_enable_auto_save">自動保存を有効</string>
+    <string name="settings_auto_save_game_on_exit">アプリを終了すると自動的にゲームを保存</string>
+    <string name="settings_language">言語</string>
+    <string name="settings_manually_change_language">手動で言語を変更</string>
+   
+    <!-- オーディオプラグイン -->
+    <string name="audio_change">変更</string>
+    <string name="audio_enable">有効</string>
+    <string name="audio_use_plgin">プラグインを有効</string>
+    <string name="audio_change_plug_in">プラグインを変更</string>
+    <string name="audio_import">インポート…</string>
+    <string name="audio_new_plgin">新しいオーディオプラグインを追加</string>
+    
+    <!-- コアプラグイン -->
+    <string name="core_change_core">コアを変更</string>
+    <string name="core_choose_another_core">使用する別のコアを選択</string>
+    <string name="core_import">インポート…</string>
+    <string name="core_new_plgin">新しいコアを追加</string>
+    <string name="core_stop">ストップ</string>
+    <string name="core_save_state">セーブステート</string>
+    <string name="core_load_state">ロードステート</string>
+    <string name="core_increment_slot">インクリメントスロット</string>
+    <string name="core_reset">リセット</string>
+    <string name="core_speed_down">スピードダウン</string>
+    <string name="core_speed_up">スピードアップ</string>
+    <string name="core_pause">一時停止</string>
+    <string name="core_fast_forward">早送り</string>
+    <string name="core_frame_advance">フレームーアドバンス</string>
+    <string name="core_gameshark">Gameshark</string>
+    <string name="core_disable_volume_keys">ボリュームキーを無効</string>
+    <string name="core_use_as_core_functions">コア機能として使用</string>
+    
+    <!-- Input Plugin -->
+    <string name="input_controller_1">コントローラ1</string>
+    <string name="input_map_ctrl_1_buttons">マップコントローラ1のボタン</string>
+    <string name="input_controller_2">コントローラ2</string>
+    <string name="input_map_ctrl_2_buttons">マップコントローラ2のボタン</string>
+    <string name="input_controller_3">コントローラ3</string>
+    <string name="input_map_ctrl_3_buttons">マップコントローラ3のボタン</string>
+    <string name="input_controller_4">コントローラ4</string>
+    <string name="input_map_ctrl_4_buttons">マップコントローラ4のボタン</string>
+    <string name="input_special_buttons">特殊ボタン</string>
+    <string name="input_map_core_funcs_buttons">ボタンにマップのコア機能</string>
+    <string name="input_import">インポート…</string>
+    <string name="input_new_plgin">入力プラグインを追加</string>
+    <string name="input_change_plug_in">プラグインを変更</string>
+    <string name="input_map_buttons">マップボタン</string>
+    <string name="input_map_ctrl_btns">コントローラのボタンを設定</string>
+    <string name="input_enable">有効</string>
+    <string name="input_use_this_plug_in">プラグインを有効</string>
+    
+    <!-- RSPプラグイン  -->
+    <string name="rsp_change_plug_in">プラグインを変更</string>
+    <string name="rsp_plugin_enable">有効</string>
+    <string name="rsp_use_this_plug_in">プラグインを有効</string>
+    <string name="rsp_change">変更</string>
+    <string name="rsp_import">インポート…</string>
+    <string name="rsp_new_plgin">RSPプラグインを追加</string>
+    
+    <!-- ビデオプラグイン -->
+    <string name="video_change_plug_in">プラグインを変更</string>
+    <string name="video_configure">設定</string>
+    <string name="video_change_the_settings">設定を変更</string>
+    <string name="video_rgba_8888_mode">RGBA_8888 モード</string>
+    <string name="video_improve_gfx_devices">いくつかのデバイス上でグラフィックスを向上させる</string>
+    <string name="video_enable">有効</string>
+    <string name="video_use_this_plug_in">プラグインを有効</string>
+    <string name="video_change">変更</string>
+    <string name="video_import">インポート…</string>
+    <string name="video_add_new_video_plug_in">ビデオプラグインを追加</string>
+    <string name="video_enable_skip_frame">レームスキップを有効</string>
+    <string name="video_improve_speed_at_cst_fps">(FPSのコストで速度が向上します)</string>
+    <string name="video_enable_fast_texture_crc">高速テクスチャCRCを有効</string>
+    <string name="video_disble_imprv_2d">(設定が無効になっている場合、2D要素が改善され)</string>
+    <string name="video_enable_fast_texture_loading">高速テクスチャの読み込みを有効</string>
+    <string name="video_fixes_crcl_trnstions">(サークルの遷移を修正)</string>
+    <string name="video_enable_hires_textures">高解像度のテクスチャを有効</string>
+    <string name="video_use_imprtd_txtr_pcks">(インポートしたテクスチャパックを使用)</string>
+    <string name="video_imprt_txtr_pck_zip_fmt">インポートテクスチャパック, ZIP形式</string>
+    <string name="video_apply_cust_txtr">(ゲームにカスタムテクスチャを適用します)</string>
+    <string name="video_stretch_screen">ストレッチ画面</string>
+    <string name="video_may_skew">(それはスキューアスペクト比かもしれない)</string>
+    <string name="video_auto_frameskip">オートフレームスキップ</string>
+    <string name="video_auto_adjust">(自動的に速度に基づいて調整します)</string>
+    <string name="video_max_frameskip">最大フレームスキップ</string>
+    <string name="video_disable_auto_fskip">(それを手動で設定するオートフレームスキップを無効にします)</string>
+    <string name="video_enable_fog">霧を有効</string>
+    <string name="video_need_work">(WIP)</string>
+    <string name="video_enable_tribuffer_opt">Tribuffer Optを有効</string>
+    <string name="video_disble_if_zlda_crshes">(Zeldaをクラッシュした場合無効にします)</string>
+    <string name="video_force_screen_clear">力画面のリフレッシュ</string>
+    <string name="video_clrs_junk_grfx">(いくつかのグラフィカル·アーティファクトをクリアします)</string>
+    <string name="video_enable_alpha_test">アルファテストを有効</string>
+    <string name="video_disble_fr_spdhck">(スピードハックを取得する設定を無効)</string>
+    <string name="video_hack_z">ハックZ</string>
+    <string name="video_enble_fx_flshng_bckgrnd">(点滅している背景を修正するには、この設定を有効にします)</string>
+    
+    <!-- 仮想ゲームパッド -->
+    <string name="gamepad_virtual_gamepad">仮想ゲームパッド</string>
+    <string name="gamepad_cnfig_virt_gamepad">仮想ゲームパッドを設定</string>
+    <string name="gamepad_change_layout">レイアウトを変更</string>
+    <string name="gamepad_redraw_all">すべてを再描画</string>
+    <string name="gamepad_misbut_bug">修正はボタンのバグを欠落しています</string>
+    <string name="gamepad_accurate_n64_stick">正確なN64アナログスティック</string>
+    <string name="gamepad_analg_as_octgon">八角形のようにアナログスティックをエミュレートします</string>
+    <string name="gamepad_display_fps">FPSを表示</string>
+    <string name="gamepad_shw_frm_sec">秒あたりのフレーム数を示しています</string>
+    <string name="gamepad_enable">有効</string>
+    <string name="gamepad_use_virt_gpad">仮想ゲームパッドを使用</string>
+    <string name="gamepad_import">インポート…</string>
+    <string name="gamepad_new_skin">新しいゲームパッドのスキンを追加</string>
+
+    <!-- Xperia Play Touchpad -->
+    <string name="touchpad_change">変更</string>
+    <string name="touchpad_enable">有効</string>
+    <string name="touchpad_use_touchpad">use the touchpad</string>
+    <string name="touchpad_import">インポート…</string>
+    <string name="touchpad_add_new">add new touchpad skin</string>
+
+    <!-- Dialog Strings -->
+    <string name="are_you_sure">本当に？</string>
+    <string name="dialog_yes">はい</string>
+    <string name="dialog_no">いいえ</string>
+    <string name="restore_info">"All settings and any imported plug-ins, gamepad layouts, or texture packs will be lost!\n\n "
+                              "Saved games and save-states will be backed up and restored.  If there is not enough room "
+                              "in storage to back them up, they will also be lost."</string>
+    <string name="app_credits">"Developers:\n\n"
+                              "- Paul Lamb (paulscode) (ported everything to Android, developed front-end, maintenace, debugging)\n"
+                              "- Ari64 (created core ARM dynarec, provided porting/ debugging assistance.. an assembly savant!)\n"
+                              "- Kris (Metracity) (ported Rice Video plug-in to GLES2, assisted with debugging)\n"
+                              "- Pelya (ported components of SDL to Android, developed data downloader/ unpacker)\n"
+                              "- Epic_bubble (assisted with Xperia Play optimized content, researched useful open-source resources)\n"
+                              "- xperia64 (assisted with EEPROM clock emulation, also researched useful open-source resources)\n"
+                              "- cpasjuste (assisted with dynarec porting from 1.5 to 1.99.4)\n"
+                              "- GTan64 (provided alternate Mupen64Plus core port for comparison, assisted with SDL1.3 porting)\n"
+                              "- Yongzh (improved components of gles2n64, provided alternate Mupen64Plus core port for comparison)\n"
+                              "- ZodTTD (provided alternate gles2n64 port for comparison, helped track down a critical bug)\n"
+                              "- Lioncash (multi-language support, code maintenance)\n"
+                              "- CZero (helped develop accurate octagon analog control algorithm)\n"
+                              "- BuckM (discovered the best analog control radius settings)\n"
+                              "- Orkin, Adventus (GLN64/gles2n64 video plug-in development, port to GLES2)\n"
+                              "- Rice (developed the famous Rice Video plug-in)\n"
+                              "- Hactarux, JttL, Ebenblues, Richard Goedeken (richard42) (Mupen64/Mupen64Plus devs.. the real geniuses!)\n"
+                              "- (many more)\n\n"
+                              "\"Extreme\" Testers:\n\n"
+                              "- Epic_bubble\n"
+                              "- xperia64\n"
+                              "- scorpio16v\n"
+                              "- (way too many more to mention!)\n\n"
+                              "Artwork:\n\n"
+                              "- roymustang16 (virtual gamepad layouts)\n"
+                              "- shuy3n (icons, promotional graphics)\n\n"
+                              "Translators:\n\n"
+                              "- Tom.K (Croatian)\n"
+                              "- muis24 (Dutch)\n"
+                              "- scorpio16v (German)\n"
+                              "- Lioncash (Japanese)\n"
+                              "- ToVine (Norwegian)\n"
+                              "- TheMacyp7500 (Portuguese)\n"
+                              "- tofi1106 (Spanish)\n\n"
+                              "Miscellaneous:\n\n"
+                              "- Epic_bubble (promotional video)\n"
+                              "- Potticus (compatibility wiki)"</string>
+</resources>
