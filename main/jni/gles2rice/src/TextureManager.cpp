@@ -160,7 +160,7 @@ bool CTextureManager::TCacheEntryIsLoaded(TxtrCacheEntry *pEntry)
 // Check here
 void CTextureManager::PurgeOldTextures()
 {
-	if (m_pCacheTxtrList == NULL || g_bUseSetTextureMem)
+    if (m_pCacheTxtrList == NULL || g_bUseSetTextureMem)
         return;
 
     static const uint32 dwFramesToKill = 5*30;          // 5 secs at 30 fps
@@ -201,8 +201,10 @@ void CTextureManager::PurgeOldTextures()
         
         if ( status.gDlistCount - pCurr->FrameLastUsed > dwFramesToDelete && !TCacheEntryIsLoaded(pCurr) )
         {
-            if (pPrev != NULL) pPrev->pNext        = pCurr->pNext;
-            else               m_pHead = pCurr->pNext;
+            if (pPrev != NULL)
+                pPrev->pNext = pCurr->pNext;
+            else
+                m_pHead = pCurr->pNext;
             
             delete pCurr;
             pCurr = pNext;  
@@ -235,10 +237,11 @@ void CTextureManager::RecycleAllTextures()
             
             dwTotalUses += pTVictim->dwUses;
             dwCount++;
+            
             if (g_bUseSetTextureMem)
                 delete pTVictim;
             else
-            RecycleTexture(pTVictim);
+                RecycleTexture(pTVictim);
         }
     }
 }
@@ -302,10 +305,10 @@ TxtrCacheEntry * CTextureManager::ReviveTexture( uint32 width, uint32 height )
             pCurr->ti.HeightToCreate == height)
         {
             // Remove from list
-			if (pPrev != NULL)
-				pPrev->pNext = pCurr->pNext;
-			else			   
-				m_pHead = pCurr->pNext;
+            if (pPrev != NULL)
+                pPrev->pNext = pCurr->pNext;
+            else			   
+                m_pHead = pCurr->pNext;
             
             return pCurr;
         }
@@ -327,7 +330,7 @@ uint32 CTextureManager::Hash(uint32 dwValue)
 
 void CTextureManager::MakeTextureYoungest(TxtrCacheEntry *pEntry)
 {
-	if (!g_bUseSetTextureMem || pEntry == m_pYoungestTexture)
+    if (!g_bUseSetTextureMem || pEntry == m_pYoungestTexture)
         return;
 
     // if its the oldest, then change the oldest pointer
@@ -665,30 +668,30 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
         dwPalCRC = CalculateRDRAMCRC(pStart, 0, 0, maxCI+1, 1, TXT_SIZE_16b, dwPalSize*2);
         dwAsmCRC = dwAsmCRCSave;
     }
-	// Fix for textures where ti is identical. In this case just the first texture has been added to the Cache.
-	// for further instances this texture has just been replaced instead of adding the additional texture to the same index
-	// in the cachelist. This was causing the slowdowns. Thus we have to iterate through the bucket of the cache list and see
-	// which of the textures that have been placed to it is the one we are looking for
-	if(pEntry && doCRCCheck && pEntry->dwCRC == dwAsmCRC && pEntry->dwPalCRC != dwPalCRC &&
-			(!loadFromTextureBuffer || gRenderTextureInfos[txtBufIdxToLoadFrom].updateAtFrame < pEntry->FrameLastUsed )){
-		bool bChecksumDoMatch=false;
-		// iterate through all textures located in the same bucket
-		while(pEntry->pNext){
-			// check the next texture in the same bucket
-			pEntry = pEntry->pNext;
-				// let's see if this one is the one we are actually looking for
-				if(pEntry->dwCRC == dwAsmCRC && pEntry->dwPalCRC == dwPalCRC && (!loadFromTextureBuffer || gRenderTextureInfos[txtBufIdxToLoadFrom].updateAtFrame < pEntry->FrameLastUsed )){
-					// found it in the neighbourhood
-					bChecksumDoMatch = true;
-					break;
-				}
-		}
-		// cannot find it 
-		if(!bChecksumDoMatch){
-			// try to load it
-			pEntry = NULL;
-		}
-	} 
+    // Fix for textures where ti is identical. In this case just the first texture has been added to the Cache.
+    // for further instances this texture has just been replaced instead of adding the additional texture to the same index
+    // in the cachelist. This was causing the slowdowns. Thus we have to iterate through the bucket of the cache list and see
+    // which of the textures that have been placed to it is the one we are looking for
+    if(pEntry && doCRCCheck && pEntry->dwCRC == dwAsmCRC && pEntry->dwPalCRC != dwPalCRC &&
+            (!loadFromTextureBuffer || gRenderTextureInfos[txtBufIdxToLoadFrom].updateAtFrame < pEntry->FrameLastUsed )){
+        bool bChecksumDoMatch=false;
+        // iterate through all textures located in the same bucket
+        while(pEntry->pNext){
+            // check the next texture in the same bucket
+            pEntry = pEntry->pNext;
+                // let's see if this one is the one we are actually looking for
+                if(pEntry->dwCRC == dwAsmCRC && pEntry->dwPalCRC == dwPalCRC && (!loadFromTextureBuffer || gRenderTextureInfos[txtBufIdxToLoadFrom].updateAtFrame < pEntry->FrameLastUsed )){
+                    // found it in the neighbourhood
+                    bChecksumDoMatch = true;
+                    break;
+                }
+        }
+        // cannot find it 
+        if(!bChecksumDoMatch){
+            // try to load it
+            pEntry = NULL;
+        }
+    } 
 
     if (pEntry && doCRCCheck )
     {

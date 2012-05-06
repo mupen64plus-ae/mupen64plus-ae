@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // Probably shouldn't need more than 4096 * 4096
 
 CTexture::CTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
-	m_pTexture(NULL),
-	m_dwTextureFmt(TEXTURE_FMT_A8R8G8B8),
+    m_pTexture(NULL),
+    m_dwTextureFmt(TEXTURE_FMT_A8R8G8B8),
     m_dwWidth(dwWidth),
     m_dwHeight(dwHeight),
     m_dwCreatedTextureWidth(dwWidth),
@@ -39,7 +39,7 @@ CTexture::CTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
     m_bClampedS(false),
     m_bClampedT(false),
     m_bIsEnhancedTexture(false),
-	m_Usage(usage)
+    m_Usage(usage)
 {
     // fix me, do something here
 }
