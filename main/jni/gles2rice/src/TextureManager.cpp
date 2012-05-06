@@ -157,12 +157,10 @@ bool CTextureManager::TCacheEntryIsLoaded(TxtrCacheEntry *pEntry)
 }
 
 // Purge any textures whos last usage was over 5 seconds ago
+// Check here
 void CTextureManager::PurgeOldTextures()
 {
-    if (m_pCacheTxtrList == NULL)
-        return;
-    
-    if (g_bUseSetTextureMem)
+	if (m_pCacheTxtrList == NULL || g_bUseSetTextureMem)
         return;
 
     static const uint32 dwFramesToKill = 5*30;          // 5 secs at 30 fps
@@ -269,13 +267,6 @@ void CTextureManager::RecycleTexture(TxtrCacheEntry *pEntry)
     if (g_bUseSetTextureMem)
         return;
 
-    if( CDeviceBuilder::GetGeneralDeviceType() == OGL_DEVICE )
-    {
-        // Fix me, why I can not reuse the texture in OpenGL,
-        // how can I unload texture from video card memory for OpenGL
-        delete pEntry;
-        return;
-    }
 
     if (pEntry->pTexture == NULL)
     {
@@ -286,6 +277,8 @@ void CTextureManager::RecycleTexture(TxtrCacheEntry *pEntry)
     {
         // Add to the list
         pEntry->pNext = m_pHead;
+		// microdev: reset the texture enhancement flag
+		pEntry->dwEnhancementFlag = TEXTURE_NO_ENHANCEMENT;
         SAFE_DELETE(pEntry->pEnhancedTexture);
         m_pHead = pEntry;
     }
@@ -309,8 +302,10 @@ TxtrCacheEntry * CTextureManager::ReviveTexture( uint32 width, uint32 height )
             pCurr->ti.HeightToCreate == height)
         {
             // Remove from list
-            if (pPrev != NULL) pPrev->pNext        = pCurr->pNext;
-            else               m_pHead = pCurr->pNext;
+			if (pPrev != NULL)
+				pPrev->pNext = pCurr->pNext;
+			else			   
+				m_pHead = pCurr->pNext;
             
             return pCurr;
         }
@@ -332,10 +327,7 @@ uint32 CTextureManager::Hash(uint32 dwValue)
 
 void CTextureManager::MakeTextureYoungest(TxtrCacheEntry *pEntry)
 {
-    if (!g_bUseSetTextureMem)
-        return;
-
-    if (pEntry == m_pYoungestTexture)
+	if (!g_bUseSetTextureMem || pEntry == m_pYoungestTexture)
         return;
 
     // if its the oldest, then change the oldest pointer
@@ -435,7 +427,7 @@ void CTextureManager::RemoveTexture(TxtrCacheEntry * pEntry)
     while (pCurr)
     {
         // Check that the attributes match
-        if ( pCurr->ti == pEntry->ti )
+		if ( pCurr == pEntry )
         {
             if (pPrev != NULL) 
                 pPrev->pNext = pCurr->pNext;
@@ -590,12 +582,14 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
             }
         }
     }
+	bool loadFromBackBuffer=false;
 
     if( frameBufferOptions.bCheckBackBufs && g_pFrameBufferManager->CheckAddrInBackBuffers(pgti->Address, pgti->HeightToLoad*pgti->Pitch) >= 0 )
     {
         if( !frameBufferOptions.bWriteBackBufToRDRAM )
         {
             // Load the texture from recent back buffer
+			loadFromBackBuffer = true;
             txtBufIdxToLoadFrom = g_pFrameBufferManager->CheckAddrInRenderTextures(pgti->Address);
             if( txtBufIdxToLoadFrom >= 0 )
             {
@@ -671,6 +665,30 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
         dwPalCRC = CalculateRDRAMCRC(pStart, 0, 0, maxCI+1, 1, TXT_SIZE_16b, dwPalSize*2);
         dwAsmCRC = dwAsmCRCSave;
     }
+	// Fix for textures where ti is identical. In this case just the first texture has been added to the Cache.
+	// for further instances this texture has just been replaced instead of adding the additional texture to the same index
+	// in the cachelist. This was causing the slowdowns. Thus we have to iterate through the bucket of the cache list and see
+	// which of the textures that have been placed to it is the one we are looking for
+	if(pEntry && doCRCCheck && pEntry->dwCRC == dwAsmCRC && pEntry->dwPalCRC != dwPalCRC &&
+			(!loadFromTextureBuffer || gRenderTextureInfos[txtBufIdxToLoadFrom].updateAtFrame < pEntry->FrameLastUsed )){
+		bool bChecksumDoMatch=false;
+		// iterate through all textures located in the same bucket
+		while(pEntry->pNext){
+			// check the next texture in the same bucket
+			pEntry = pEntry->pNext;
+				// let's see if this one is the one we are actually looking for
+				if(pEntry->dwCRC == dwAsmCRC && pEntry->dwPalCRC == dwPalCRC && (!loadFromTextureBuffer || gRenderTextureInfos[txtBufIdxToLoadFrom].updateAtFrame < pEntry->FrameLastUsed )){
+					// found it in the neighbourhood
+					bChecksumDoMatch = true;
+					break;
+				}
+		}
+		// cannot find it 
+		if(!bChecksumDoMatch){
+			// try to load it
+			pEntry = NULL;
+		}
+	} 
 
     if (pEntry && doCRCCheck )
     {
@@ -1115,8 +1133,12 @@ void CTextureManager::MirrorS32(uint32 *array, uint32 width, uint32 mask, uint32
     for( uint32 y = 0; y<rows; y++ )
     {
         uint32* line = array+y*arrayWidth;
+		// mirror the current row to the destination width
         for( uint32 x=width; x<towidth; x++ )
         {
+		//	DebuggerAppendMsg("(%d)line[%d] = %d<=%d ? line[%d] : line[%d-%d](%d);",y,x,x&maskval2,maskval1,x&maskval1,maskval2,x&maskval2,maskval2-(x&maskval2));
+			// mirrors the content of one line and appends it to its right 
+			// value at position x of current line = ()
             line[x] = (x&maskval2)<=maskval1 ? line[x&maskval1] : line[maskval2-(x&maskval2)];
         }
     }
