@@ -615,10 +615,10 @@ void EnhanceTexture(TxtrCacheEntry *pEntry)
     }
     else if( options.textureEnhancement == TEXTURE_NO_ENHANCEMENT )
     {
-		//Texture enhancement has being turned off
-		//Delete any allocated memory for the enhanced texture
+        //Texture enhancement has being turned off
+        //Delete any allocated memory for the enhanced texture
         SAFE_DELETE(pEntry->pEnhancedTexture);
-		//Set the enhancement flag so the texture wont be processed again
+        //Set the enhancement flag so the texture wont be processed again
         pEntry->dwEnhancementFlag = TEXTURE_NO_ENHANCEMENT;
         return;
     }
@@ -629,11 +629,11 @@ void EnhanceTexture(TxtrCacheEntry *pEntry)
     }
 
     DrawInfo srcInfo;   
-	//Start the draw update
+    //Start the draw update
     if( pEntry->pTexture->StartUpdate(&srcInfo) == false )
     {
-		//If we get here we were unable to start the draw update
-		//Delete any allocated memory for the enhanced texture
+        //If we get here we were unable to start the draw update
+        //Delete any allocated memory for the enhanced texture
         SAFE_DELETE(pEntry->pEnhancedTexture);
         return;
     }
@@ -651,9 +651,9 @@ void EnhanceTexture(TxtrCacheEntry *pEntry)
         else
             SharpenFilter_16((uint16*)srcInfo.lpSurface, nWidth, nHeight, nWidth, options.textureEnhancement);
         pEntry->dwEnhancementFlag = options.textureEnhancement;
-		//End the draw update
+        //End the draw update
         pEntry->pTexture->EndUpdate(&srcInfo);
-		//Delete any allocated memory for the enhanced texture
+        //Delete any allocated memory for the enhanced texture
         SAFE_DELETE(pEntry->pEnhancedTexture);
         return;
     }
@@ -663,11 +663,11 @@ void EnhanceTexture(TxtrCacheEntry *pEntry)
     {
         if( nWidth + nHeight > 256 )
         {
-		//End the draw update
+            //End the draw update
             pEntry->pTexture->EndUpdate(&srcInfo);
-		//Delete any data allocated for the enhanced texture
+            //Delete any data allocated for the enhanced texture
             SAFE_DELETE(pEntry->pEnhancedTexture);
-		//Set the enhancement flag so the texture wont be processed again
+            //Set the enhancement flag so the texture wont be processed again
             pEntry->dwEnhancementFlag = TEXTURE_NO_ENHANCEMENT;
             return;
         }
@@ -881,7 +881,7 @@ void MirrorTexture(uint32 dwTile, TxtrCacheEntry *pEntry)
                         pSurfaceHandler->EndUpdate(&destInfo);
                     }
                 
-                    // fix me, there should be a flag to tell that it is a mirrored texture handler
+                    // FIXME: There should be a flag to tell that it is a mirrored texture handler
                     // not the original texture handlers, so all texture coordinate should be divided by 2
                     pSurfaceHandler->SetOthersVariables();
                 }
@@ -1029,15 +1029,15 @@ BOOL PathFileExists(char* pszPath)
  ********************************************************************************************************************/
 void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo> &infos, bool extraCheck, bool bRecursive)
 {
-	// check if folder actually exists
+    // check if folder actually exists
     if (!osal_is_directory(foldername))
         return;
 
-	// the path of the texture
+    // the path of the texture
     char texturefilename[PATH_MAX];
-	//
+    //
     IMAGE_INFO  imgInfo;
-	//
+    //
     IMAGE_INFO  imgInfo2;
 
     void *dir;
@@ -1193,59 +1193,59 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
         /* 
             Try to read image information here.
 
-			(CASTLEVANIA2)#(58E2333F)#(2)#(0)#(D7A5C6D9)_ciByRGBA.png
-			(------1-----)#(---2----)#(3)#(4)#(---5----)_ciByRGBA.png
+            (CASTLEVANIA2)#(58E2333F)#(2)#(0)#(D7A5C6D9)_ciByRGBA.png
+            (------1-----)#(---2----)#(3)#(4)#(---5----)_ciByRGBA.png
  
             1. Internal ROM name
             2. The DRAM CRC
             3. The image pixel size (8b=0, 16b=1, 24b=2, 32b=3)
             4. The texture format (RGBA=0, YUV=1, CI=2, IA=3, I=4)
-			5. The palette CRC
+            5. The palette CRC
 
-			<internal Rom name>#<DRAM CRC>#<24bit>#<RGBA>#<PAL CRC>_ciByRGBA.png
+            <internal Rom name>#<DRAM CRC>#<24bit>#<RGBA>#<PAL CRC>_ciByRGBA.png
             */
             
             // Get the actual file name
             strcpy(texturefilename, foundfilename);
             // Place the pointer before the DRAM-CRC (first occurrence of '#')
             char *ptr = strchr(texturefilename,'#');
-			// Terminate the string ('0' means end of string - or in this case begin of string)
+            // Terminate the string ('0' means end of string - or in this case begin of string)
             *ptr++ = 0;
             if( type == RGBA_PNG_FOR_CI )
             {
-				// Extract the information from the file name; information is:
-				// <DRAM(or texture)-CRC><texture type><texture format><PAL(or palette)-CRC>
+                // Extract the information from the file name; information is:
+                // <DRAM(or texture)-CRC><texture type><texture format><PAL(or palette)-CRC>
                 sscanf(ptr,"%8c#%d#%d#%8c", crcstr, &fmt, &siz,crcstr2);
-				// Terminate the ascii represntation of the palette crc
+                // Terminate the ascii represntation of the palette crc
                 crcstr2[8] = 0;
-				// Transform the ascii presentation of the hex value to an unsigned integer
+                // Transform the ascii presentation of the hex value to an unsigned integer
                 palcrc32 = strtoul(crcstr2,NULL,16);
             }
             else
             {
-				// Extract the information from the file name - this file does not have a palette crc; information is:
-				// <DRAM(or texture)-CRC><texture type><texture format>
-				// o gosh, commenting source code is really boring - but necessary!! Thus do it! (and don't use drugs ;-))
+                // Extract the information from the file name - this file does not have a palette crc; information is:
+                // <DRAM(or texture)-CRC><texture type><texture format>
+                // o gosh, commenting source code is really boring - but necessary!! Thus do it! (and don't use drugs ;-))
                 sscanf(ptr,"%8c#%d#%d", crcstr, &fmt, &siz);
-				// Use dummy for palette crc - that way each texture can be handled in a heterogeneous way
+                // Use dummy for palette crc - that way each texture can be handled in a heterogeneous way
                 palcrc32 = 0xFFFFFFFF;
             }
-			// Terminate the ascii represntation of the texture crc
+            // Terminate the ascii represntation of the texture crc
             crcstr[8]=0;
-			// Transform the ascii presentation of the hex value to an unsigned integer
+            // Transform the ascii presentation of the hex value to an unsigned integer
             crc = strtoul(crcstr,NULL,16);
-			// For the detection of an existing item
+            // For the detection of an existing item
 
             int foundIdx = -1;
             for( int k=0; k<infos.size(); k++)
             {
-				// Check if texture already exists in the list
-				// microdev: that's why I somehow love documenting code: that makes the implementation of a WIP folder check
-				// fucking easy :-)
+                // Check if texture already exists in the list
+                // microdev: that's why I somehow love documenting code: that makes the implementation of a WIP folder check
+                // fucking easy :-)
                 if( infos[k].crc32 == crc && infos[k].pal_crc32 == palcrc32 )
                 {
-					// Indeeed, the texture already exists
-					// microdev: MAYBE ADD CODE TO MOVE IT TO A 'DUBLICATE' FOLDER TO EASE WORK OF RETEXTURERS
+                    // Indeeed, the texture already exists
+                    // microdev: MAYBE ADD CODE TO MOVE IT TO A 'DUBLICATE' FOLDER TO EASE WORK OF RETEXTURERS
                     foundIdx = k;
                     break;
                 }
@@ -1276,12 +1276,12 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
                 //Indicate if there is a separate alpha file that has to be loaded
                 newinfo.bSeparatedAlpha = bSeparatedAlpha;
                 // Determine the begin of the string indicating the texture and corresponding the apha type (if any)
-				// That assures that if there would be a non-supported type, RGBNameTail & AlphaNameTail would at 
-				// least be NULL
+                // That assures that if there would be a non-supported type, RGBNameTail & AlphaNameTail would at 
+                // least be NULL
                 newinfo.RGBNameTail[0] = newinfo.AlphaNameTail[0] = 0;
 
                 // Store the extention of the texture and also the extention of the alpha channel (if existing)
-				// (I won't comment the following lines as they should be really obvious. If not, contact microdev @ emutalk)
+                // (I won't comment the following lines as they should be really obvious. If not, contact microdev @ emutalk)
                 switch ( type )
                 {
                     case RGB_PNG:
@@ -1304,8 +1304,8 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
                 }
 
                 // Generate the key for the record describing the hires texture.
-				// This key is used to find it back in the list
-				// The key format is: <DRAM(texture)-CRC-8byte><PAL(palette)-CRC-6byte(2bytes have been truncated to have space for format and size)><format-1byte><size-1byte>
+                // This key is used to find it back in the list
+                // The key format is: <DRAM(texture)-CRC-8byte><PAL(palette)-CRC-6byte(2bytes have been truncated to have space for format and size)><format-1byte><size-1byte>
                 uint64 crc64 = newinfo.crc32;
                 crc64 <<= 32;
                 crc64 |= (newinfo.pal_crc32&0xFFFFFF00)|(newinfo.fmt<<4)|newinfo.siz;
@@ -1339,7 +1339,7 @@ bool CheckAndCreateFolder(const char* pathname)
             return false;
         }
     }
-	// success
+    // success
 
     return true;
 }
@@ -1428,7 +1428,7 @@ void FindAllHiResTextures(void)
     CheckAndCreateFolder(foldername);
 
     // Add the path to a sub-folder corresponding to the rom name 
-	// HOOK IN: PACK SELECT
+    // HOOK IN: PACK SELECT
     strcat(foldername,(const char*)g_curRomInfo.szGameName);
     strcat(foldername, OSAL_DIR_SEPARATOR_STR);
     // Truncate the current list with the hires texture info
@@ -1512,12 +1512,12 @@ if( options.bDumpTexturesToFiles )
  ********************************************************************************************************************/
 void InitExternalTextures(void)
 {
-	// remove all hires & dump textures from cache
+    // remove all hires & dump textures from cache
     CloseExternalTextures();
-		// reload and recache hires textures
+    // reload and recache hires textures
     InitHiresTextures();
-		// prepare list of already dumped textures (for avoiding to redump them). Available hires textures will
-		// also be excluded from dumping
+    // prepare list of already dumped textures (for avoiding to redump them). Available hires textures will
+    // also be excluded from dumping
     InitTextureDump();
 }
 
@@ -1553,8 +1553,8 @@ int FindScaleFactor(const ExtTxtrInfo &info, TxtrCacheEntry &entry)
     }
 
     // original texture dimensions (x or y or both) scaled with the last scale shift have become larger than the dimensions
-	// of the hires texture. That means the dimensions of the hires replacement are not power of 2 of the original texture.
-	// Therefore indicate invalid scale shift
+    // of the hires texture. That means the dimensions of the hires replacement are not power of 2 of the original texture.
+    // Therefore indicate invalid scale shift
     return -1;
 }
 
@@ -1577,64 +1577,64 @@ int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &e
         //DebugMessage(M64MSG_WARNING, "Hires texture does not support extreme texture replication");
         return -1;
     }
-	// determine if texture is a color-indexed (CI) texture
+    // determine if texture is a color-indexed (CI) texture
 
     bool bCI = (gRDP.otherMode.text_tlut>=2 || entry.ti.Format == TXT_FMT_CI || entry.ti.Format == TXT_FMT_RGBA) && entry.ti.Size <= TXT_SIZE_8b;
-	// generate two alternative ids
+    // generate two alternative ids
 
     uint64 crc64a = entry.dwCRC;
     crc64a <<= 32;
     uint64 crc64b = crc64a;
-	// crc64a = <DRAM-CRC-8bytes><FFFFFF><format-1byte><size-1byte>
+    // crc64a = <DRAM-CRC-8bytes><FFFFFF><format-1byte><size-1byte>
     crc64a |= (0xFFFFFF00|(entry.ti.Format<<4)|entry.ti.Size);
-	// crc64b = <DRAM-CRC-8bytes><palette-crc-6bytes (lowest 2 bytes are removed)><format-1byte><size-1byte>
+    // crc64b = <DRAM-CRC-8bytes><palette-crc-6bytes (lowest 2 bytes are removed)><format-1byte><size-1byte>
     crc64b |= ((entry.dwPalCRC&0xFFFFFF00)|(entry.ti.Format<<4)|entry.ti.Size);
-	// infos is the list containing the references to the detected external textures
-	// get the number of items contained in this list
+    // infos is the list containing the references to the detected external textures
+    // get the number of items contained in this list
 
     int infosize = infos.size();
     int indexb=-1;
-	// try to identify the external texture that
-	// corresponds to the original texture
+    // try to identify the external texture that
+    // corresponds to the original texture
     indexa = infos.find(crc64a);        // For CI without pal CRC, and for RGBA_PNG_FOR_ALL_CI
     if( bCI )   
-		// and also for textures with separate alpha channel
+        // and also for textures with separate alpha channel
         indexb = infos.find(crc64b);    // For CI or PNG with pal CRC
 
-	// did not found the ext. text.
+    // did not found the ext. text.
 	if( indexa >= infosize )	
 		indexa = -1;
-	// did not found the ext. text. w/ sep. alpha channel
+    // did not found the ext. text. w/ sep. alpha channel
 	if( indexb >= infosize )	
 		indexb = -1;
 
 	scaleShift = -1;
 
-	// found texture with sep. alpha channel
+    // found texture with sep. alpha channel
 
     if( indexb >= 0 )
     {
-		// determine the factor for scaling
+        // determine the factor for scaling
         scaleShift = FindScaleFactor(infos[indexb], entry);
-		// ok. the scale factor is supported. A valid replacement has been found
+        // ok. the scale factor is supported. A valid replacement has been found
         if( scaleShift >= 0 )
             return indexb;
     }
-	// if texture is 4bit, should be dumped and there is no match in the list of external textures
+    // if texture is 4bit, should be dumped and there is no match in the list of external textures
 
     if( bForDump && bCI && indexb < 0)
-		// than return that there is no replacement & therefore texture can be dumped (microdev: not sure about that...)
+        // than return that there is no replacement & therefore texture can be dumped (microdev: not sure about that...)
         return -1;
 
-	// texture has no separate alpha channel, try to find it in the ext. text. list
+    // texture has no separate alpha channel, try to find it in the ext. text. list
 	if( indexa >= 0 )	
 		scaleShift = FindScaleFactor(infos[indexa], entry);
-	// ok. the scale factor is supported. A valid replacement has been found
-	// this is a texture without ext. alpha channel
+    // ok. the scale factor is supported. A valid replacement has been found
+    // this is a texture without ext. alpha channel
 
     if( scaleShift >= 0 )
         return indexa;
-	// no luck at all. there is no valid replacement
+    // no luck at all. there is no valid replacement
     else
         return -1;
 }
@@ -1771,23 +1771,23 @@ bool LoadRGBBufferFromPNGFile(char *filename, unsigned char **pbuf, int &width, 
                 *pDst++ = 0;
             }
         }
-		// loaded image has alpha, needed image has to be without alpha channel
+        // loaded image has alpha, needed image has to be without alpha channel
         else if (img.bits_per_pixel == 32 && bits_per_pixel == 24)
         {
-			// pointer to source image data
+            // pointer to source image data
             unsigned char *pSrc = img.bits;
-			// buffer for destination image
+            // buffer for destination image
             unsigned char *pDst = *pbuf;
-			// copy data of the loaded image to the buffer by skipping the alpha byte
+            // copy data of the loaded image to the buffer by skipping the alpha byte
             for (int i = 0; i < (int)(img.width*img.height); i++)
             {
-				// copy R
+                // copy R
                 *pDst++ = *pSrc++;
-				// copy G
+                // copy G
                 *pDst++ = *pSrc++;
-				// copy B
+                // copy B
                 *pDst++ = *pSrc++;
-				// skip the alpha byte of the loaded image
+                // skip the alpha byte of the loaded image
                 pSrc++;
             }
         }
@@ -2019,25 +2019,25 @@ bool LoadRGBBufferFromBMPFile(char *filename, unsigned char **pbuf, int &width, 
  *******************************************************/
 void LoadHiresTexture( TxtrCacheEntry &entry )
 {
-	// check if the external texture has already been loaded
+    // check if the external texture has already been loaded
     if( entry.bExternalTxtrChecked )
         return;
-	// there is already an enhanced texture (e.g. a filtered one)
+    // there is already an enhanced texture (e.g. a filtered one)
 
     if( entry.pEnhancedTexture )
     {
-		// delete it from memory before loading the external one
+        // delete it from memory before loading the external one
         SAFE_DELETE(entry.pEnhancedTexture);
     }
 
     int ciidx, scaleShift;
-	// search the index of the appropriate hires replacement texture
-	// in the list containing the infos of the external textures
-	// ciidx is not needed here (just needed for dumping)
+    // search the index of the appropriate hires replacement texture
+    // in the list containing the infos of the external textures
+    // ciidx is not needed here (just needed for dumping)
     int idx = CheckTextureInfos(gHiresTxtrInfos,entry,ciidx,scaleShift,false);
     if( idx < 0 )
     {
-		// there is no hires replacement => indicate that
+        // there is no hires replacement => indicate that
         entry.bExternalTxtrChecked = true;
         return;
     }
