@@ -53,17 +53,17 @@
     <!-- Native Language Strings -->
     <string name="native_arabic">العربية</string>
     <string name="native_chinese">中國的</string>
-    <string name="native_croatian">hrvatski</string>
+    <string name="native_croatian">Hrvatski</string>
     <string name="native_dutch">Nederlands</string>
     <string name="native_english">English</string>
     <string name="native_french">français</string>
     <string name="native_german">Deutsch</string>
-    <string name="native_italian">italiano</string>
+    <string name="native_italian">Italiano</string>
     <string name="native_japanese">日本設</string>
     <string name="native_korean">한국의</string>
-    <string name="native_norwegian">norske</string>
-    <string name="native_portuguese">português</string>
-    <string name="native_spanish">español</string>
+    <string name="native_norwegian">Norske</string>
+    <string name="native_portuguese">Português</string>
+    <string name="native_spanish">Español</string>
 
     <!-- In-Game Message Strings -->
     <string name="mupen64plus_started">Mupen64Plus Started</string>
@@ -125,10 +125,10 @@
     <string name="settings_map_controller_buttons">マップコントローラのボタン</string>
     <string name="settings_virtual_gamepad">仮想コントローラ</string>
     <string name="settings_config_virtual_gamepad">仮想コントローラ設定</string>
-    <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
-    <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
-    <string name="settings_touchpad">Touchpad</string>
-    <string name="settings_config_touchpad">configure the touchpad</string>
+    <string name="settings_xperia_play_optimized">Xperia PLAY用に最適化</string>
+    <string name="settings_xperia_play_only">ソニー·エリクソンXperia PLAYのみ!</string>
+    <string name="settings_touchpad">タッチパッド</string>
+    <string name="settings_config_touchpad">タッチパッド設定</string>
     <string name="settings_rsp">RSP</string>
     <string name="settings_reality_signal_processor">現実·シグナル·プロセッサ</string>
     <string name="settings_core">コア</string>
@@ -253,9 +253,9 @@
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">変更</string>
     <string name="touchpad_enable">有効</string>
-    <string name="touchpad_use_touchpad">use the touchpad</string>
+    <string name="touchpad_use_touchpad">タッチパッドを使用</string>
     <string name="touchpad_import">インポート…</string>
-    <string name="touchpad_add_new">add new touchpad skin</string>
+    <string name="touchpad_add_new">新しいタッチパッドのスキンを追加</string>
 
     <!-- Dialog Strings -->
     <string name="are_you_sure">本当に？</string>
