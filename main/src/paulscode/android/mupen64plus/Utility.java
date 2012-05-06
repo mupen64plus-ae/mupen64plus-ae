@@ -61,9 +61,9 @@ public class Utility
             tmpFolder.mkdir();
             // Clear the folder if anything is in there:
             String[] children = tmpFolder.list();
-            for( int i=0; i < children.length; i++ )
+            for( String child : children )
             {
-                deleteFolder( new File( tmpFolder, children[i] ) );
+                deleteFolder( new File( tmpFolder, child ) );
             }
             Globals.errorMessage = null;
             String uzFile = unzipFirstROM( new File( filename ), Globals.DataDir + "/tmp" );
@@ -119,9 +119,9 @@ public class Utility
             tmpFolder.mkdir();
             // clear the folder if anything is in there:
             String[] children = tmpFolder.list();
-            for( int i=0; i < children.length; i++ )
+            for( String child : children )
             {
-                deleteFolder( new File( tmpFolder, children[i] ) );
+                deleteFolder( new File( tmpFolder, child ) );
             }
             Globals.errorMessage = null;
             String uzFile = unzipFirstROM( new File( filename ), Globals.DataDir + "/tmp" );
@@ -254,9 +254,9 @@ public class Utility
         if( folder.isDirectory() )
         {
             String[] children = folder.list();
-            for( int i=0; i < children.length; i++ )
+            for( String child : children )
             {
-                boolean success = deleteFolder( new File( folder, children[i] ) );
+                boolean success = deleteFolder( new File( folder, child ) );
                 if( !success )
                     return false;
             }

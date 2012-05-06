@@ -165,14 +165,14 @@ public class TouchPad
                 {
                     dX = (float)( x - (analogMask.x + analogMask.hWidth) );  // distance from center along x-axis
                     dY = (float)( (analogMask.y + analogMask.hHeight) - y );  // distance from center along y-axis
-                    d = (float) FloatMath.sqrt( (dX * dX) + (dY * dY) );  // distance from center
+                    d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // distance from center
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
                     {  // inside the analog control
                         if( MenuSkinsTouchpadActivity.analogAsOctagon )
                         {  // emulate the analog control as an octagon (like the real N64 controller)
                             Point crossPt = new Point();
                             float dC = analogMask.hWidth;
-                            float dA = (float) FloatMath.sqrt( (dC * dC) / 2.0f );
+                            float dA = FloatMath.sqrt( (dC * dC) / 2.0f );
                         
                             if( dX > 0 && dY > 0 )  // Quadrant I
                             {
@@ -210,7 +210,7 @@ public class TouchPad
                                     dY = crossPt.y;
                                 }
                             }
-                            d = (float) FloatMath.sqrt( (dX * dX) + (dY * dY) );  // distance from center
+                            d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // distance from center
                         }
                         analogPid = i;  // "Capture" the analog control
                         touchedAnalog = true;

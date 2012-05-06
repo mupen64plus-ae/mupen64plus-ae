@@ -240,7 +240,7 @@ public class GameActivityCommon
     
     public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
     {
-        int channelConfig = isStereo ? AudioFormat.CHANNEL_CONFIGURATION_STEREO : AudioFormat.CHANNEL_CONFIGURATION_MONO;
+        int channelConfig = isStereo ? AudioFormat.CHANNEL_OUT_STEREO : AudioFormat.CHANNEL_OUT_MONO;
         int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
         int frameSize = (isStereo ? 2 : 1) * (is16Bit ? 2 : 1);
         
@@ -410,9 +410,9 @@ public class GameActivityCommon
             tmpFolder.mkdir();
             // Clear the folder if anything is in there:
             String[] children = tmpFolder.list();
-            for( int i=0; i < children.length; i++ )
+            for( String child : children )
             {
-                Utility.deleteFolder( new File( tmpFolder, children[i] ) );
+                Utility.deleteFolder( new File( tmpFolder, child ) );
             }
             tmpFile = Utility.unzipFirstROM( new File( Globals.chosenROM ), Globals.DataDir + "/tmp" );
             if( tmpFile == null )

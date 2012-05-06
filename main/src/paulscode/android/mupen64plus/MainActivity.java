@@ -45,11 +45,11 @@ public class MainActivity extends Activity
 
         _layout = new LinearLayout( this );
         _layout.setOrientation( LinearLayout.VERTICAL );
-        _layout.setLayoutParams( new LinearLayout.LayoutParams( ViewGroup.LayoutParams.FILL_PARENT,
-                                                                ViewGroup.LayoutParams.FILL_PARENT ) );
+        _layout.setLayoutParams( new LinearLayout.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                ViewGroup.LayoutParams.MATCH_PARENT ) );
 
         _layout2 = new LinearLayout( this );
-        _layout2.setLayoutParams( new LinearLayout.LayoutParams( ViewGroup.LayoutParams.FILL_PARENT,
+        _layout2.setLayoutParams( new LinearLayout.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,
                                                                  ViewGroup.LayoutParams.WRAP_CONTENT ) );
         _layout.addView( _layout2 );
         _img = new ImageView( this );
@@ -62,8 +62,8 @@ public class MainActivity extends Activity
         {
             _img.setImageResource( R.drawable.publisherlogo );
         }
-        _img.setLayoutParams( new ViewGroup.LayoutParams( ViewGroup.LayoutParams.FILL_PARENT,
-                                                          ViewGroup.LayoutParams.FILL_PARENT ) );
+        _img.setLayoutParams( new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,
+                                                          ViewGroup.LayoutParams.MATCH_PARENT ) );
         _layout.addView( _img );
         _videoLayout = new FrameLayout( this );
         _videoLayout.addView( _layout );

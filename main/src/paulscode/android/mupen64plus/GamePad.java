@@ -331,14 +331,14 @@ public class GamePad extends View
                 {
                     dX = (float)( x - (analogImage.x + analogImage.hWidth) );   // Distance from center along x-axis
                     dY = (float)( (analogImage.y + analogImage.hHeight) - y );  // Distance from center along y-axis
-                    d = (float) FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
+                    d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
                     {  // Inside the analog control
                         if( MenuSkinsGamepadActivity.analogAsOctagon )
                         {  // Emulate the analog control as an octagon (like the real N64 controller)
                             Point crossPt = new Point();
                             float dC = analogImage.hWidth;
-                            float dA = (float) FloatMath.sqrt( (dC * dC) / 2.0f );
+                            float dA = FloatMath.sqrt( (dC * dC) / 2.0f );
                         
                             if( dX > 0 && dY > 0 )  // Quadrant I
                             {
@@ -376,7 +376,7 @@ public class GamePad extends View
                                     dY = crossPt.y;
                                 }
                             }
-                            d = (float) FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
+                            d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
                         }
                         analogPid = i;  // "Capture" the analog control
                         touchedAnalog = true;
@@ -636,17 +636,18 @@ public class GamePad extends View
             }
         }
         Set<String> mKeys = pad_ini.keySet();
-        Iterator<String> mIter = mKeys.iterator();
-        while( mIter.hasNext() )
-        {   // Loop through all the sections
-            filename = mIter.next();  // the rest of the sections are filenames
+        for( String mKey : mKeys )  // Loop through all the sections
+        {  
+            filename = mKey;  // the rest of the sections are filenames
             if( filename != null && filename.length() > 0 &&
-                !filename.equals( "INFO" ) && !filename.equals( "MASK_COLOR" ) &&
-                !filename.equals( "[<sectionless!>]" ) )
-            {  // Yep, its definitely a filename
-                section = pad_ini.get( filename );
+                    !filename.equals( "INFO" ) && !filename.equals( "MASK_COLOR" ) &&
+                    !filename.equals( "[<sectionless!>]" ) )
+            {  
+                // Yep, its definitely a filename
+                section = pad_ini.get(filename);
                 if( section != null )
-                {  // Process the parameters for this section
+                {  
+                    // Process the parameters for this section
                     val = section.get( "info" );  // What type of control
                     if( val != null )
                     {

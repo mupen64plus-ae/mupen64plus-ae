@@ -148,7 +148,7 @@ public class MenuCheatsActivity extends ListActivity implements IOptionChooser
         }
         else
         {
-            Cheat_O_choice.put( menuOption.info, "" + MenuCheatsOptionChooserActivity.optionIndex );
+            Cheat_O_choice.put( menuOption.info, String.valueOf( MenuCheatsOptionChooserActivity.optionIndex ) );
             optionArrayAdapter.remove( menuOption );
             optionArrayAdapter.insert( new MenuOption( menuOption.name, option, menuOption.info,
                                                        true ), cheatIndex );

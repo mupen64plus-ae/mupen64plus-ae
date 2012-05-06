@@ -200,12 +200,12 @@ class Config
     {
         if( filename == null || filename.length() < 1 )
         {   // No filename was specified.
-            Log.e( "Config", "filename not specified in method save()" );
+            Log.e( "Config", "Filename not specified in method save()" );
             return false;   // quit
         }
         if( configList == null )
         {  // No config data to save.
-            Log.e( "Config", "no config data to save in method save()" );
+            Log.e( "Config", "No config data to save in method save()" );
             return false;   // quit
         }
         File f = new File( filename );
