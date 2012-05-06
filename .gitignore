@@ -8,8 +8,10 @@
 # Java class files
 *.class
 
-# Built libraries
-*.[aod]
+# Temporary, preliminary, built
+*.a
+*.o
+*.d
 *.so
 *~
 !libSDL.so
