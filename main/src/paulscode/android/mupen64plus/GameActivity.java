@@ -41,9 +41,6 @@ public class GameActivity extends Activity
         GameActivityCommon.notificationManager.notify( Globals.NOTIFICATION_ID, notification );
 
         // paulscode, load the native libraries:
-//        GameActivityCommon.loadNativeLibName( "SDL" );
-//        GameActivityCommon.loadNativeLibName( "core" );  // TODO: let the user choose which core to load
-//        GameActivityCommon.loadNativeLibName( "front-end" );
         GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "VideoPlugin" ) );
         GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "AudioPlugin" ) );
         GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "InputPlugin" ) );
@@ -91,61 +88,15 @@ public class GameActivity extends Activity
         setContentView( R.layout.main );
         GameActivityCommon.mSurface = (SDLSurface) findViewById( R.id.my_surface );
 
-// Attempt #3 to enter "lights out mode":
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
         {  // SDK version at least HONEYCOMB, so there should be software buttons on this device:
-//            int whichHiddenStatusToUse = android.view.View.STATUS_BAR_HIDDEN;
-//            try
-//            { // If this line doesn't thrown an exception, then the device is running ICE CREAM SANDWICH (different API)
-//                whichHiddenStatusToUse = View.class.getDeclaredField( "SYSTEM_UI_FLAG_HIDE_NAVIGATION" ).getInt( mSurface );
-//            }
-//            catch ( Exception ex )
-//            {}
             View mView = GameActivityCommon.mSurface.getRootView();
             if( mView == null )
-                Log.e( "SDLActivity", "getRootView() returned null in method onCreate" );
+                Log.e( "GameActivity", "getRootView() returned null in method onCreate" );
             else
-//                mView.setSystemUiVisibility( whichHiddenStatusToUse );
                 mView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
             getActionBar().hide();
         }
-/*
-// TODO: Change this to disable the soft menu, rather than just "low profile" mode:
-        try
-        {  // Put the software navigation buttons into "low profile" mode
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-            {  // SDK version at least HONEYCOMB, so there should be software buttons on this device:
-                View mView = findViewById( R.layout.main );
-                if( mView == null )
-                    Log.e( "SDLActivity", "findViewByID( R.layout.main ) returned null in method onCreate" );
-                else
-                    mView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
-            }
-        }
-        catch( Exception e )
-        {  // Just to be safe.  We'll log this, for future debugging purposes.
-            Log.e( "SDLActivity", "Error putting software navigation buttons into 'low profile' mode: " + e.getMessage() );
-        }
-*/
-/*  How to completely disable the soft menu instead (TODO: Must be re-enabled manually!):
-        try
-        {  // Hide the software navigation buttons (different for HONEYCOMB vs. ICS)
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-            {  // At least HONEYCOMB, so there should be some software navigation buttons
-                View mView = findViewById( R.layout.main );
-                if( mView == null )
-                    Log.e( "SDLActivity", "findViewByID( R.layout.main ) returned null in method onCreate" );
-                else if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH )
-                    mView.setSystemUiVisibility( View.class.getDeclaredField( "SYSTEM_UI_FLAG_HIDE_NAVIGATION" ).getInt( mSurface ) );
-                else
-                    mView.setSystemUiVisibility( View.STATUS_BAR_HIDDEN );
-            }
-        }
-        catch( Exception e )
-        {  // Just to be safe.  We'll log this, for future debugging purposes.
-            Log.e( "SDLActivity", "Error hiding software navigation buttons: " + e.getMessage() );
-        }
-*/
         GameActivityCommon.mGamePad = (GamePad) findViewById( R.id.my_gamepad );
         GameActivityCommon.mGamePad.setResources( getResources() );
         GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Globals.DataDir + "/skins/gamepads/gamepad_list.ini" );
@@ -180,7 +131,7 @@ public class GameActivity extends Activity
                     }
                     else
                     {
-                        Log.e( "SDLActivity", "No access to storage, probably in USB Mass Storage mode" );
+                        Log.e( "GameActivity", "No access to storage, probably in USB Mass Storage mode" );
                         GameActivityCommon.showToast( getString( R.string.app_data_inaccessible ) );
                     }
                 }
@@ -228,7 +179,7 @@ public class GameActivity extends Activity
         else
         {
             GameActivityCommon.mGamePad.loadPad( null );
-            Log.v( "SDLActivity", "No gamepad skins found" );
+            Log.v( "GameActivity", "No gamepad skins found" );
         }
             
         GameActivityCommon.showToast( getString( R.string.mupen64plus_started ) );
