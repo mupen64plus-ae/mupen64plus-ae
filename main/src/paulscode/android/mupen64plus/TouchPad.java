@@ -420,22 +420,21 @@ public class TouchPad
             }
         }
         Set<String> mKeys = pad_ini.keySet();
-        Iterator<String> mIter = mKeys.iterator();
-        while( mIter.hasNext() )
+        for ( String mKey : mKeys )
         {   // Loop through all the sections
-            filename = mIter.next();  // the rest of the sections are filenames
-            if( filename != null && filename.length() > 0 &&
-                !filename.equals( "INFO" ) && !filename.equals( "MASK_COLOR" ) &&
-                !filename.equals( "[<sectionless!>]" ) )
+            filename = mKey;  // the rest of the sections are filenames
+            if ( filename != null && filename.length() > 0 &&
+                    !filename.equals( "INFO" ) && !filename.equals( "MASK_COLOR" ) &&
+                    !filename.equals( "[<sectionless!>]" ) )
             {  // yep, its definitely a filename
                 section = pad_ini.get( filename );
-                if( section != null )
+                if ( section != null )
                 {  // process the parameters for this section
-                    val = section.get( "info" );  // what type of control
-                    if( val != null )
+                    val = section.get("info");  // what type of control
+                    if ( val != null )
                     {
                         val = val.toLowerCase();  // lets not make this part case-sensitive
-                        if( val.contains( "analog" ) )
+                        if (val.contains( "analog" ) )
                         {  // Analog color mask image in BMP image format (doesn't actually get drawn)
                             analogMask = new Image( resources, Globals.DataDir + "/skins/touchpads/" +
                                                      skin + "/" + filename + ".bmp" );
@@ -443,7 +442,7 @@ public class TouchPad
                             analogXpercent = Utility.toInt( section.get( "x" ), 0 );
                             analogYpercent = Utility.toInt( section.get( "y" ), 0 );
                             // Sensitivity (percentages of the radius, i.e. half the image width):
-                            analogDeadzone = (int) ( (float) analogMask.hWidth * 
+                            analogDeadzone = (int) ( (float) analogMask.hWidth *
                                                              ( Utility.toFloat( section.get( "min" ), 1 ) / 100.0f ) );
                             analogMaximum = (int) ( (float) analogMask.hWidth *
                                                             ( Utility.toFloat( section.get( "max" ), 55 ) / 100.0f ) );
@@ -454,7 +453,7 @@ public class TouchPad
                                                   PAD_WIDTH, PAD_HEIGHT );
                         }
                         else
-                        {  // A button control (may contain one or more N64 buttons and/or SDL buttons)
+                        {   // A button control (may contain one or more N64 buttons and/or SDL buttons)
                             // Button color mask image in BMP image format (doesn't actually get drawn)
                             masks[buttonCount] = new Image( resources, Globals.DataDir + "/skins/touchpads/" +
                                                             skin + "/" + filename + ".bmp" );
@@ -465,10 +464,10 @@ public class TouchPad
                                                           (int) ( (float) PAD_HEIGHT * ((float) ypercents[buttonCount] / 100.0f) ),
                                                           PAD_WIDTH, PAD_HEIGHT );
 
-Log.v( "TouchPad", "Adding button grouping " + buttonCount + ", (" + xpercents[buttonCount] + ", " + ypercents[buttonCount] + ")" );
-Log.v( "TouchPad", "Fit x center to " + (int) ( (float) PAD_WIDTH * ((float) xpercents[buttonCount] / 100.0f) ) );
-Log.v( "TouchPad", "Fit y center to " + (int) ( (float) PAD_HEIGHT * ((float) ypercents[buttonCount] / 100.0f) ) );
-Log.v( "TouchPad", "Converted max coordinates: (" + masks[buttonCount].x + ", " + masks[buttonCount].y + ")" );
+                            Log.v( "TouchPad", "Adding button grouping " + buttonCount + ", (" + xpercents[buttonCount] + ", " + ypercents[buttonCount] + ")" );
+                            Log.v( "TouchPad", "Fit x center to " + (int) ( (float) PAD_WIDTH * ((float) xpercents[buttonCount] / 100.0f) ) );
+                            Log.v( "TouchPad", "Fit y center to " + (int) ( (float) PAD_HEIGHT * ((float) ypercents[buttonCount] / 100.0f) ) );
+                            Log.v( "TouchPad", "Converted max coordinates: (" + masks[buttonCount].x + ", " + masks[buttonCount].y + ")" );
 
                             buttonCount++;
                         }
