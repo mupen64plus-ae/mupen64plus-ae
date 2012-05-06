@@ -20,7 +20,7 @@ public class MenuSkinsGamepadActivity extends ListActivity
 {
     public static MenuSkinsGamepadActivity mInstance = null;
     public static String chosenGamepad = "";
-    public static boolean redrawAll = false;
+    public static boolean redrawAll = true;
     public static boolean analogAsOctagon = true;
     public static boolean showFPS = false;
     public static boolean enabled = true;
