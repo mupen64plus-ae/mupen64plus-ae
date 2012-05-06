@@ -29,6 +29,7 @@
     <string name="manifest_language">wähle eine Sprache</string>
     <string name="manifest_skins">Skins(Aussehen)</string>
     <string name="manifest_virtual_gamepad_settings">Virtuelles-Gamepad Einstellungen</string>
+    <string name="manifest_touchpad_settings">Xperia Play Touchpad Einstellungen</string>
     <string name="manifest_select_layout">wähle ein Layout</string>
     <string name="manifest_cheats">Cheats (zum Mogeln)</string>
 
@@ -126,10 +127,10 @@
     <string name="settings_map_controller_buttons">belege Controller Knöpfe</string>
     <string name="settings_virtual_gamepad">Virtuelles Gamepad</string>
     <string name="settings_config_virtual_gamepad">konfiguriere das virtuelle Gamepad</string>
-    <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
-    <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
+    <string name="settings_xperia_play_optimized">Xperia Play Optimiert</string>
+    <string name="settings_xperia_play_only">NUR für Sony Ericsson Xperia Play!</string>
     <string name="settings_touchpad">Touchpad</string>
-    <string name="settings_config_touchpad">configure the touchpad</string>
+    <string name="settings_config_touchpad">konfiguriere das Touchpad</string>
     <string name="settings_rsp">RSP</string>
     <string name="settings_reality_signal_processor">Reality Signal Processor</string>
     <string name="settings_core">Core</string>
@@ -161,8 +162,8 @@
     <string name="core_stop">Stop</string>
     <string name="core_save_state">Speicher Status</string>
     <string name="core_load_state">Lade Status</string>
-    <string name="core_increment_slot">Increment Slot</string>
-    <string name="core_reset">Reset</string>
+    <string name="core_increment_slot">geh einen Slot höher</string>
+    <string name="core_reset">Zurücksetzen</string>
     <string name="core_speed_down">Geschwindigkeit runter</string>
     <string name="core_speed_up">Geschwindigkeit hoch</string>
     <string name="core_pause">Pause</string>
@@ -250,7 +251,7 @@
     <string name="video_use_imprtd_txtr_pcks">(benutze importierte Textur Pakete)</string>
     <string name="video_imprt_txtr_pck_zip_fmt">Importiere Textur Pakete, im ZIP Format</string>
     <string name="video_apply_cust_txtr">(wende selbstgemachte Texturen in einem Spiel an)</string>
-    <string name="video_stretch_screen">strecke Bildschirm</string>
+    <string name="video_stretch_screen">Bildschirm strecken</string>
     <string name="video_may_skew">(wird das Seitenverhältnis verzerren)</string>
     <string name="video_auto_frameskip">Auto Frameskip</string>
     <string name="video_auto_adjust">(automatische Justierung der Geschwindigkeit)</string>
@@ -285,9 +286,9 @@
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">Wechsel</string>
     <string name="touchpad_enable">Einschalten</string>
-    <string name="touchpad_use_touchpad">use the touchpad</string>
+    <string name="touchpad_use_touchpad">benutze das Touchpad</string>
     <string name="touchpad_import">Importiere…</string>
-    <string name="touchpad_add_new">add new touchpad skin</string>
+    <string name="touchpad_add_new">füge einen neuen Touchpad Skin hinzu</string>
 
     <!-- Dialog Strings -->
     <string name="are_you_sure">Bist Du sicher?</string>

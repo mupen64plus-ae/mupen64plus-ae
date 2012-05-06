@@ -29,6 +29,7 @@
     <string name="manifest_language">Select a language</string>
     <string name="manifest_skins">Skins(look and feel)</string>
     <string name="manifest_virtual_gamepad_settings">Virtual Gamepad Settings</string>
+    <string name="manifest_touchpad_settings">Xperia Play Touchpad Settings</string>
     <string name="manifest_select_layout">Select a layout</string>
     <string name="manifest_cheats">Cheats</string>
 
@@ -156,7 +157,7 @@
     <!-- Core Library -->
     <string name="core_change_core">Cambiar Núcleo</string>
     <string name="core_choose_another_core">Elegir Núcleo</string>
-    <string name="core_import">Buscar en carpeta...</string>
+    <string name="core_import">Buscar en carpeta…</string>
     <string name="core_new_plgin">Agregar nuevo núcleo</string>
     <string name="core_stop">Parar emulación</string>
     <string name="core_save_state">Guardar estado</string>
@@ -208,10 +209,10 @@
     <string name="button_z">Z</string>
     <string name="button_b">B</string>
     <string name="button_a">A</string>
-    <string name="button_cpad_right">Derecha ©</string>
-    <string name="button_cpad_left">Izquierda ©</string>
-    <string name="button_cpad_down">Abajo ©</string>
-    <string name="button_cpad_up">Arriba ©</string>
+    <string name="button_cpad_right">Derecha (C)</string>
+    <string name="button_cpad_left">Izquierda (C)</string>
+    <string name="button_cpad_down">Abajo (C)</string>
+    <string name="button_cpad_up">Arriba (C)</string>
     <string name="button_r">R</string>
     <string name="button_l">L</string>
     <string name="mempak_switch">Insertar memorypak</string>
@@ -279,14 +280,14 @@
     <string name="gamepad_shw_frm_sec">Muestra los FPS en pantalla</string>
     <string name="gamepad_enable">Habilitar</string>
     <string name="gamepad_use_virt_gpad">Usar el control virtual</string>
-    <string name="gamepad_import">Buscar en carpeta...</string>
+    <string name="gamepad_import">Buscar en carpeta…</string>
     <string name="gamepad_new_skin">Agregar nuevo estilo de control</string>
 
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">Change</string>
     <string name="touchpad_enable">Habilitar</string>
     <string name="touchpad_use_touchpad">use the touchpad</string>
-    <string name="touchpad_import">Import...</string>
+    <string name="touchpad_import">Import…</string>
     <string name="touchpad_add_new">add new touchpad skin</string>
 
     <!-- Dialog Strings -->

@@ -20,15 +20,16 @@
     <string name="manifest_input_settings">Definições de Controlador</string>
     <string name="manifest_choose_input_plugin">Escolher Plugin de Controlador</string>
     <string name="manifest_configure_controllers">Configurar Controladores</string>
-    <string name="manifest_map_buttons">Mapear Botões</string>
-    <string name="manifest_rsp_settings">Definições de PRS</string>
-    <string name="manifest_choose_rsp_plugin">Escolher Plugin PRS</string>
+    <string name="manifest_map_buttons">Configurar Botões</string>
+    <string name="manifest_rsp_settings">Definições de RSP</string>
+    <string name="manifest_choose_rsp_plugin">Escolher Plugin RSP</string>
     <string name="manifest_core_settings">Definições do Núcleo</string>
     <string name="manifest_choose_core">Escolher Núcleo</string>
     <string name="manifest_configure_core">Configurar Núcleo</string>
     <string name="manifest_language">Escolher Idioma</string>
     <string name="manifest_skins">Skins(aparência e aspeto)</string>
-    <string name="manifest_virtual_gamepad_settings">Definições de Joystick Virtual</string>
+    <string name="manifest_virtual_gamepad_settings">Definições do Joystick Virtual</string>
+    <string name="manifest_touchpad_settings">Definições do Touchpad para o Xperia Play</string>
     <string name="manifest_select_layout">Escolha um Layout</string>
     <string name="manifest_cheats">Cheats</string>
 
@@ -48,7 +49,7 @@
     <string name="language_japanese">Japonês</string>
     <string name="language_korean">Coreano</string>
     <string name="language_norwegian">Norueguês</string>
-    <string name="language_portuguese">Português</string>
+    <string name="language_portuguese">Português(Portugal)</string>
     <string name="language_spanish">Espanhol</string>
     <!-- Native Language Strings -->
     <string name="native_arabic">العربية</string>
@@ -62,7 +63,7 @@
     <string name="native_japanese">日本の</string>
     <string name="native_korean">한국의</string>
     <string name="native_norwegian">Norske</string>
-    <string name="native_portuguese">Português</string>
+    <string name="native_portuguese">Português(Portugal)</string>
     <string name="native_spanish">Español</string>
 
     <!-- In-Game Message Strings -->
@@ -120,12 +121,12 @@
     <string name="settings_map_controller_buttons">definir os botões do controlador</string>
     <string name="settings_virtual_gamepad">Joystick Virtual</string>
     <string name="settings_config_virtual_gamepad">configurar o joystick virtual</string>
-    <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
-    <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
+    <string name="settings_xperia_play_optimized">Optimizado para o Xperia Play</string>
+    <string name="settings_xperia_play_only">Apenas para o Sony Ericsson Xperia Play!</string>
     <string name="settings_touchpad">Touchpad</string>
-    <string name="settings_config_touchpad">configure the touchpad</string>
+    <string name="settings_config_touchpad">configurar o touchpad</string>
     <string name="settings_rsp">RSP</string>
-    <string name="settings_reality_signal_processor">processador de sinal de realidade</string>
+    <string name="settings_reality_signal_processor">reality signal processor</string>
     <string name="settings_core">Núcleo</string>
     <string name="settings_emu_core_settings">definições do núcleo do emulador</string>
     <string name="settings_reset_defaults">Repor para Pré-Definições</string>
@@ -134,7 +135,7 @@
     <string name="settings_restore_app_data">Restaurar Dados da Aplicação</string>
     <string name="settings_imports_will_be_lost">texturas e plugins importados serão perdidos!</string>
     <string name="settings_enable_auto_save">Ativar Salvamento Automático de Jogos</string>
-    <string name="settings_auto_save_game_on_exit">guardar o jogo automaticamente ao fechar</string>
+    <string name="settings_auto_save_game_on_exit">guardar o jogo automaticamente ao sair</string>
     <string name="settings_language">Idioma</string>
     <string name="settings_manually_change_language">alterar o idioma manualmente</string>
     
@@ -279,9 +280,9 @@
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">Mudar</string>
     <string name="touchpad_enable">Ativar</string>
-    <string name="touchpad_use_touchpad">use the touchpad</string>
+    <string name="touchpad_use_touchpad">utilizar o touchpad</string>
     <string name="touchpad_import">Importar...</string>
-    <string name="touchpad_add_new">add new touchpad skin</string>
+    <string name="touchpad_add_new">adicionar nova skin para o touchpad</string>
 
     <!-- Dialog Strings -->
     <string name="restore_info">"Todas as definições e quaisquer plugins importados, layouts de joystick, ou pacotes de textura serão perdidos!\n\n "

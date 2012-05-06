@@ -29,6 +29,7 @@
     <string name="manifest_language">Velg språk</string>
     <string name="manifest_skins">Tema(utseende og stil)</string>
     <string name="manifest_virtual_gamepad_settings">Innstillinger for virtuell styreenhet</string>
+    <string name="manifest_touchpad_settings">Xperia Play Touchpad Settings</string>
     <string name="manifest_select_layout">Velg oppsett</string>
     <string name="manifest_cheats">Juksekoder</string>
 
@@ -130,8 +131,8 @@
     <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
     <string name="settings_touchpad">Touchpad</string>
     <string name="settings_config_touchpad">configure the touchpad</string>
-    <string name="settings_rsp">RSP</string>
-    <string name="settings_reality_signal_processor">Reality Signal Processor</string>
+    <string name="settings_rsp">(RSP)</string>
+    <string name="settings_reality_signal_processor">Reality Signal Processor (virkelighets-prosessor)</string>
     <string name="settings_core">Kjerne</string>
     <string name="settings_emu_core_settings">Innstillinger for emulatorkjernen</string>
     <string name="settings_reset_defaults">Gjenopprett standardinnstillinger</string>
@@ -192,7 +193,7 @@
     <string name="input_use_this_plug_in">Bruk denne tilleggsmodulen</string>
 
     <!-- Controller -->
-    <string name="plugged_in">Plugget inn</string>
+    <string name="plugged_in">Tilkoblet</string>
     <string name="connect_controller">Koble til kontroller</string>
     <string name="expansion">Utivdelse</string>
     <string name="expansion_none">Ingen</string>
@@ -214,15 +215,15 @@
     <string name="button_cpad_up">Øvre C-knapp</string>
     <string name="button_r">R</string>
     <string name="button_l">L</string>
-    <string name="mempak_switch">Mempak bryter</string>
-    <string name="rumblepak_switch">Rumblepak bryter</string>
+    <string name="mempak_switch">Bryter for minne-tillegg</string>
+    <string name="rumblepak_switch">Bryter for vibrasjons-tillegg</string>
     <string name="button_analog_right">Analogspake høyre</string>
     <string name="button_analog_left">Analogspake venstre</string>
     <string name="button_analog_down">Analogspake ned</string>
     <string name="button_analog_up">Analogspake opp</string>
     
     <!-- RSP Plugin -->
-    <string name="rsp_change_plug_in">Velg tilleggsmodul (for RSP)</string>
+    <string name="rsp_change_plug_in">Velg tilleggsmodul for "virkelighets-prosessor" (RSP)</string>
     <string name="rsp_plugin_enable">Aktiver</string>
     <string name="rsp_use_this_plug_in">Bruk denne tilleggsmodulen</string>
     <string name="rsp_change">Velg tilleggsmodul</string>

@@ -29,6 +29,7 @@
     <string name="manifest_language">Select a language</string>
     <string name="manifest_skins">Skins(look and feel)</string>
     <string name="manifest_virtual_gamepad_settings">Virtual Gamepad Settings</string>
+    <string name="manifest_touchpad_settings">Xperia Play Touchpad Settings</string>
     <string name="manifest_select_layout">Odabir Izgleda</string>
     <string name="manifest_cheats">Varanje</string>
 
