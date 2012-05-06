@@ -1,35 +1,15 @@
 package paulscode.android.mupen64plus;
 
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.egl.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import android.content.res.Configuration;
-
-import android.app.*;
 import android.content.*;
 import android.view.*;
 import android.os.*;
 import android.util.Log;
 import android.graphics.*;
-import android.text.method.*;
-import android.text.*;
 import android.util.AttributeSet;
-import android.media.*;
 import android.hardware.*;
-import android.content.*;
-import android.graphics.drawable.Drawable;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.view.ViewGroup.LayoutParams;
-
-import java.lang.*;
 
 /**
  * SDLSurface. This is what we draw on, so we need to know when it's created
