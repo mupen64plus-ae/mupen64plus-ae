@@ -171,10 +171,10 @@ public class GameActivityCommon
         if( mSingleton == null )
             return;  // Activity hasn't been created yet
         if( toast != null )
-            toast.setText( new String( message ) );  // Toast exists, just change the text
+            toast.setText( message );  // Toast exists, just change the text
         else
         { // Message short in duration, and at the bottom of the screen:
-            toast = Toast.makeText( mSingleton, new String( message ), Toast.LENGTH_SHORT );
+            toast = Toast.makeText( mSingleton, message, Toast.LENGTH_SHORT );
             toast.setGravity( Gravity.BOTTOM, 0, 0 );
         }
         // Toast messages must be run on the UiThread, which looks ugly as hell, but works:
