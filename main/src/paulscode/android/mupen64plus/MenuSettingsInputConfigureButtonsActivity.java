@@ -112,7 +112,7 @@ public class MenuSettingsInputConfigureButtonsActivity extends ListActivity impl
         {
             try
             {  // Make sure a valid integer was entered
-                scancode = Integer.valueOf( val ).intValue();
+                scancode = Integer.valueOf( val );
             }
             catch( NumberFormatException nfe )
             {}  // Skip it if this happens
@@ -137,7 +137,7 @@ public class MenuSettingsInputConfigureButtonsActivity extends ListActivity impl
             {
                 try
                 {  // Make sure a valid integer was entered
-                    scancode = Integer.valueOf( val ).intValue();
+                    scancode = Integer.valueOf( val );
                 }
                 catch( NumberFormatException nfe )
                 {}  // Skip it if this happens
@@ -172,11 +172,11 @@ public class MenuSettingsInputConfigureButtonsActivity extends ListActivity impl
                 {  // Make sure a valid integer was entered
                     if( info.contains( "Axis1" ) )
                     {
-                        scancode = Integer.valueOf( val.substring( 0, x ) ).intValue();
+                        scancode = Integer.valueOf( val.substring( 0, x ) );
                     }
                     else
                     {
-                        scancode = Integer.valueOf( val.substring( x + 1, val.length() ) ).intValue();
+                        scancode = Integer.valueOf( val.substring( x + 1, val.length() ) );
                     }
                 }
                 catch( NumberFormatException nfe )

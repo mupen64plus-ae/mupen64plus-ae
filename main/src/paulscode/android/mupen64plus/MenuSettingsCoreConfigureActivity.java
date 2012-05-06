@@ -52,7 +52,7 @@ public class MenuSettingsCoreConfigureActivity extends ListActivity implements I
         {
             try
             {  // Make sure a valid integer was entered
-                scancode = Integer.valueOf( val ).intValue();
+                scancode = Integer.valueOf( val );
             }
             catch( NumberFormatException nfe )
             {}  // Skip it if this happens

@@ -410,7 +410,7 @@ public class TouchPad
                 {
                     try
                     {  // make sure a valid integer was used for the scancode
-                        SDLButtonCodes[SDLButtonCount] = Integer.valueOf( param.substring( 9, param.length() ) ).intValue();
+                        SDLButtonCodes[SDLButtonCount] = Integer.valueOf( param.substring( 9, param.length() ) );
                         SDLButtonMaskColors[SDLButtonCount] = valI;
                         SDLButtonCount++;
                     }
