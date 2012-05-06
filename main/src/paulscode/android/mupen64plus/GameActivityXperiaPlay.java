@@ -148,8 +148,6 @@ public class GameActivityXperiaPlay extends NativeActivity
         RegisterThis();
 
         GameActivityCommon.mSurface = (SDLSurface) findViewById( R.id.my_surface );
-        SurfaceHolder holder = GameActivityCommon.mSurface.getHolder();
-        holder.setType( SurfaceHolder.SURFACE_TYPE_GPU );
 
 // Attempt #3 to enter "lights out mode":
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
@@ -434,8 +432,6 @@ public class GameActivityXperiaPlay extends NativeActivity
             getWindow().setContentView( R.layout.main );
 
             GameActivityCommon.mSurface = (SDLSurface) findViewById( R.id.my_surface );
-            SurfaceHolder holder = GameActivityCommon.mSurface.getHolder();
-            holder.setType( SurfaceHolder.SURFACE_TYPE_GPU );
 
             GameActivityCommon.mGamePad = (GamePad) findViewById( R.id.my_gamepad );
             GameActivityCommon.mGamePad.setResources( getResources() );

@@ -208,7 +208,7 @@ public class MenuSettingsVideoConfigureActivity extends ListActivity implements 
             optionArrayAdapter.insert( new MenuOption( getString( R.string.video_max_frameskip ), "=" + 
                                                     Globals.max_frameskip + getString( R.string.video_disable_auto_fskip ),
                                                     "menuSettingsVideoConfigureMaxFrameskip" ), position );
-            MenuActivity.gui_cfg.put( "VIDEO_PLUGIN", "max_frameskip", "" + Globals.max_frameskip );
+            MenuActivity.gui_cfg.put( "VIDEO_PLUGIN", "max_frameskip", String.valueOf( Globals.max_frameskip ) );
         }
         else if( menuOption.info.equals( "menuSettingsVideoConfigureFog" ) ) 
         {

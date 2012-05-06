@@ -66,7 +66,7 @@ public class MenuSettingsCoreConfigureActivity extends ListActivity implements I
 
     public void returnCode( int scancode, int codeType )
     {
-        MenuActivity.mupen64plus_cfg.put( "CoreEvents", ScancodeDialog.menuItemInfo, "" + scancode );
+        MenuActivity.mupen64plus_cfg.put( "CoreEvents", ScancodeDialog.menuItemInfo, String.valueOf( scancode ) );
         optionArrayAdapter.remove( optionArrayAdapter.getOption( ScancodeDialog.menuItemPosition ) );
         optionArrayAdapter.insert( new MenuOption( ScancodeDialog.menuItemName, getString( R.string.button_keycode ) + " " + scancode,
                                    ScancodeDialog.menuItemInfo ), ScancodeDialog.menuItemPosition );

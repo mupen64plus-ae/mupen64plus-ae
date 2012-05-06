@@ -41,9 +41,9 @@ public class MenuCheatsOptionChooserActivity extends ListActivity
             String[] options = optionsString.split( "," );
             int x;
             String opt;
-            for( int i = 0; i < options.length; i++ )
+            for( String option : options )
             {
-                opt = options[i];
+                opt = option;
                 if( opt != null )
                     opt = opt.trim();
                 if( opt != null && opt.length() > 0 )

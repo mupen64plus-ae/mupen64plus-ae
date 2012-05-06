@@ -277,7 +277,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             EGLConfig config = configs[0];
             // paulscode, GLES2 fix:
                 int EGL_CONTEXT_CLIENT_VERSION=0x3098;
-                int contextAttrs[] = new int[]
+                int[] contextAttrs = new int[]
                 {
                     EGL_CONTEXT_CLIENT_VERSION, majorVersion,
                     EGL10.EGL_NONE
@@ -312,7 +312,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         }
         catch( Exception e )
         {
-            Log.v("SDLSurface", e + "");
+            Log.v( "SDLSurface", e.toString() );
             for( StackTraceElement s : e.getStackTrace() )
             {
                 Log.v( "SDLSurface", s.toString() );
@@ -383,7 +383,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         float str = 0;
         if( keyCode > 255 && Globals.analog_100_64 )
         {
-            key = (int) ( keyCode / 100 );
+            key = ( keyCode / 100 );
             if( action == KeyEvent.ACTION_DOWN )
                 str = ( (float) keyCode - ( (float) key * 100.0f ) );
         }
@@ -485,14 +485,14 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         
         if( actionCode == MotionEvent.ACTION_POINTER_DOWN )
         {
-            pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_ID_SHIFT );
+            pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
             if( pid > maxPid )
                 maxPid = pid;
             pointers[pid] = true;
         }
         else if( actionCode == MotionEvent.ACTION_POINTER_UP )
         {
-            pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_ID_SHIFT );
+            pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
             if( pid > maxPid )
                 maxPid = pid;
             pointers[pid] = false;
