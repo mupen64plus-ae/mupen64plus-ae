@@ -84,7 +84,7 @@
     <string name="main_resume">Reiniciar</string>
     <string name="main_continue_your_last_game">Inicia donde terminaste la última vez</string>
     <string name="main_settings">Opciones</string>
-    <string name="main_configure_plug_ins">Configura opciones gráficas, de sonido, mando, etc...</string>
+    <string name="main_configure_plug_ins">Configura opciones gráficas, de sonido, mando, etc…</string>
     <string name="main_help">Ayuda</string>
     <string name="main_rept_bugs">Soporte y reportar bugs en www.paulscode.com</string>
     <string name="main_credits">Créditos</string>
@@ -208,10 +208,10 @@
     <string name="button_z">Z</string>
     <string name="button_b">B</string>
     <string name="button_a">A</string>
-    <string name="button_cpad_right">Derecha (C)</string>
-    <string name="button_cpad_left">Izquierda (C)</string>
-    <string name="button_cpad_down">Abajo (C)</string>
-    <string name="button_cpad_up">Arriba (C)</string>
+    <string name="button_cpad_right">Derecha ©</string>
+    <string name="button_cpad_left">Izquierda ©</string>
+    <string name="button_cpad_down">Abajo ©</string>
+    <string name="button_cpad_up">Arriba ©</string>
     <string name="button_r">R</string>
     <string name="button_l">L</string>
     <string name="mempak_switch">Insertar memorypak</string>
