@@ -20,7 +20,6 @@ public class MenuSettingsVideoConfigureActivity extends ListActivity implements 
     private OptionArrayAdapter optionArrayAdapter;  // Array of menu options
     private Config gles2n64_conf;
     private boolean enableFog = false;
-    private boolean enableTribuffer = false;
     private boolean forceScreenClear = true;
     private boolean alphaTest = true;
 
@@ -71,9 +70,6 @@ public class MenuSettingsVideoConfigureActivity extends ListActivity implements 
         if( val != null )
             alphaTest = ( val.equals( "1" ) ? true : false );
 
-        val = gles2n64_conf.get( "[<sectionless!>]", "tribuffer opt" );
-        if( val != null )
-            enableTribuffer = ( val.equals( "1" ) ? true : false );
         val = gles2n64_conf.get( "[<sectionless!>]", "hack z" );
         if( val != null )
             hackZ = ( val.equals( "1" ) ? true : false );

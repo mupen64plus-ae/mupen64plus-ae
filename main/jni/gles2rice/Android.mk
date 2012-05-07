@@ -52,6 +52,10 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/TextureFilters_2xsai.cpp \
 	$(SRCDIR)/TextureFilters_hq2x.cpp \
 	$(SRCDIR)/TextureFilters_hq4x.cpp \
+	$(SRCDIR)/TextureFilters_lq2x.cpp \
+	$(SRCDIR)/TextureFilters_sharpen.cpp \
+	$(SRCDIR)/TextureFilters_smooth.cpp \
+	$(SRCDIR)/TextureFilters_texture2x.cpp \
 	$(SRCDIR)/TextureManager.cpp \
 	$(SRCDIR)/VectorMath.cpp \
 	$(SRCDIR)/Video.cpp \
