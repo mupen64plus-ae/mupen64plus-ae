@@ -4,11 +4,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <paulscode.android.mupen64plus.SDLSurface
+    <paulscode.android.mupen64plusae.SDLSurface
         android:id="@+id/my_surface"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
-    <paulscode.android.mupen64plus.GamePad
+    <paulscode.android.mupen64plusae.GamePad
         android:id="@+id/my_gamepad"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>

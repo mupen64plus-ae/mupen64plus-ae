@@ -36,10 +36,10 @@
 /* definitions for system directories to search when looking for mupen64plus plugins */
 #if defined(PLUGINDIR)
   const int   osal_libsearchdirs = 3;
-  const char *osal_libsearchpath[3] = { PLUGINDIR, "/data/data/paulscode.android.mupen64plus/lib/", "./" };
+  const char *osal_libsearchpath[3] = { PLUGINDIR, "/data/data/paulscode.android.mupen64plusae/lib/", "./" };
 #else
   const int   osal_libsearchdirs = 2;
-  const char *osal_libsearchpath[2] = { "/data/data/paulscode.android.mupen64plus/lib/",  "./" };
+  const char *osal_libsearchpath[2] = { "/data/data/paulscode.android.mupen64plusae/lib/",  "./" };
 #endif
 
 osal_lib_search *osal_library_search(const char *searchpath)

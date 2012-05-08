@@ -807,7 +807,7 @@ JNI_OnLoad( JavaVM * vm, void * reserved )
 		return -1;
 	}
 
-	const char* interface_path = "paulscode/android/mupen64plus/GameActivityXperiaPlay";
+	const char* interface_path = "paulscode/android/mupen64plusae/GameActivityXperiaPlay";
 	jclass java_activity_class = (*env)->FindClass( env, interface_path );
 
 	if( !java_activity_class )
