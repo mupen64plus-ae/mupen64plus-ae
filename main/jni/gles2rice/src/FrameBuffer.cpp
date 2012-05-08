@@ -693,30 +693,30 @@ l1:             mov esi, [ecx+ebx]
                      );
 #elif !defined(NO_ASM)
 # if !defined(__PIC__)
-           asm volatile("pusha                             \n"
-                "mov    pAsmStart, %%ecx           \n"  // = pStart
-                "mov    $0, %%edx                  \n"          // The CRC
-                "mov    dwAsmHeight, %%eax         \n"  // = y
-                "0:                                \n" //l2:
-                "mov    dwAsmdwBytesPerLine, %%ebx \n"  // = x
-                "sub    $4, %%ebx                  \n"
-                "1:                                \n" //l1:
-                "mov    (%%ecx,%%ebx), %%esi       \n"
-                "xor %%ebx, %%esi                  \n"
-                "rol $4, %%edx                     \n"
-                "add %%esi, %%edx                  \n"
-                "sub    $4, %%ebx                  \n"
-                "jge 1b                            \n" //jge l1
-                "xor %%eax, %%esi                  \n"
-                "add %%esi, %%edx                  \n"
-                "add dwAsmPitch, %%ecx             \n"
-                "dec %%eax                         \n"
-                "jge 0b                            \n" //jge l2
+           asm volatile("pusha                        \n"
+                "mov    %[pAsmStart], %%ecx           \n"  // = pStart
+                "mov    $0, %%edx                     \n"          // The CRC
+                "mov    %[dwAsmHeight], %%eax         \n"  // = y
+                "0:                                   \n" //l2:
+                "mov    %[dwAsmdwBytesPerLine], %%ebx \n"  // = x
+                "sub    $4, %%ebx                     \n"
+                "1:                                   \n" //l1:
+                "mov    (%%ecx,%%ebx), %%esi          \n"
+                "xor %%ebx, %%esi                     \n"
+                "rol $4, %%edx                        \n"
+                "add %%esi, %%edx                     \n"
+                "sub    $4, %%ebx                     \n"
+                "jge 1b                               \n" //jge l1
+                "xor %%eax, %%esi                     \n"
+                "add %%esi, %%edx                     \n"
+                "add %[dwAsmPitch], %%ecx             \n"
+                "dec %%eax                            \n"
+                "jge 0b                               \n" //jge l2
                 
-                "mov    %%edx, dwAsmCRC            \n"
-                "popa                              \n"
-                :
-                :
+                "mov    %%edx, %[dwAsmCRC]            \n"
+                "popa                                 \n"
+                : [pAsmStart]"+m"(pAsmStart), [dwAsmHeight]"+m"(dwAsmHeight), [dwAsmCRC]"=m"(dwAsmCRC)
+                : [dwAsmdwBytesPerLine]"m"(dwAsmdwBytesPerLine), [dwAsmPitch]"m"(dwAsmPitch)
                 : "memory", "cc"
                 );
 # else // defined(__PIC__)
