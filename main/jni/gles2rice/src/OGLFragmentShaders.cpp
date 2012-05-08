@@ -29,19 +29,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 GLuint vertexProgram = 9999;
 const char *vertexShader =
 "#version " GLSL_VERSION "\n"
-"attribute mediump vec4 	aPosition;						\n"\
-"attribute lowp vec4 	aColor;								\n"\
-"attribute lowp vec2   aTexCoord0;							\n"\
-"attribute lowp vec2   aTexCoord1;							\n"\
-"attribute lowp vec2   aAtlasTransform;						\n"\
-"															\n"\
+"attribute mediump vec4 aPosition;                          \n"\
+"attribute lowp vec4    aColor;                             \n"\
+"attribute lowp vec2    aTexCoord0;                         \n"\
+"attribute lowp vec2    aTexCoord1;                         \n"\
+"attribute lowp vec2    aAtlasTransform;                    \n"\
+"                                                           \n"\
 "uniform lowp vec2 FogMinMax;                               \n"\
 "                                                           \n"\
-"varying lowp float vFactor;								\n"\
-"varying lowp vec4  vShadeColor;							\n"\
+"varying lowp float vFactor;                                \n"\
+"varying lowp vec4  vShadeColor;                            \n"\
 "varying lowp vec2 	vTexCoord0;                        		\n"\
 "varying lowp vec2 	vTexCoord1;                         	\n"\
-"varying lowp float	vFog;						         	\n"\
+"varying lowp float	vFog;                                	\n"\
 "                                                           \n"\
 "void main()                                                \n"\
 "{                                                          \n"\
@@ -55,28 +55,28 @@ const char *vertexShader =
 "                                                           \n";
 
 const char *fragmentHeader =
-"#define saturate(x) clamp( x, 0.0, 1.0 )					\n"\
+"#define saturate(x) clamp( x, 0.0, 1.0 )                   \n"\
 "precision lowp float;                                      \n"\
-"#ifdef NEED_TEX0                                  			\n"\
+"#ifdef NEED_TEX0                                           \n"\
 "uniform sampler2D uTex0;                                   \n"\
-"#endif                                  					\n"\
+"#endif                                                     \n"\
 "                                                           \n"\
-"#ifdef NEED_TEX1                                  			\n"\
+"#ifdef NEED_TEX1                                           \n"\
 "uniform sampler2D uTex1;                                   \n"\
-"#endif                                  					\n"\
+"#endif                                                     \n"\
 "                                                           \n"\
 "uniform vec4 EnvColor;                                     \n"\
 "uniform vec4 PrimColor;                                    \n"\
 "uniform vec4 EnvFrac;                                      \n"\
 "uniform vec4 PrimFrac;                                     \n"\
 "uniform float AlphaRef;                                    \n"\
-"uniform vec4 FogColor;								        \n"\
+"uniform vec4 FogColor;                                     \n"\
 "                                                           \n"\
-"varying lowp float     vFactor;                            \n"\
-"varying lowp vec4 		vShadeColor;                        \n"\
-"varying lowp vec2 	vTexCoord0;                        		\n"\
-"varying lowp vec2 	vTexCoord1;                         	\n"\
-"varying lowp float	vFog;						         	\n"\
+"varying lowp float vFactor;                                \n"\
+"varying lowp vec4  vShadeColor;                            \n"\
+"varying lowp vec2  vTexCoord0;                             \n"\
+"varying lowp vec2  vTexCoord1;                             \n"\
+"varying lowp float vFog;                                   \n"\
 "                                                           \n"\
 "void main()                                                \n"\
 "{                                                          \n"\
@@ -84,11 +84,11 @@ const char *fragmentHeader =
 "                                                           \n"\
 "#ifdef NEED_TEX0                                  			\n"\
 "vec4 t0 = texture2D(uTex0,vTexCoord0);                     \n"\
-"#endif                                  					\n"\
+"#endif                                                     \n"\
 "                                                           \n"\
-"#ifdef NEED_TEX1                                  			\n"\
+"#ifdef NEED_TEX1                                           \n"\
 "vec4 t1 = texture2D(uTex1,vTexCoord1);                     \n"\
-"#endif                                  					\n";
+"#endif                                                     \n";
 
 const char *fragmentFooter = 
 "                                                           \n"\
@@ -106,18 +106,18 @@ ALPHA_TEST
 "                                                           \n"\
 "                                                           \n"\
 "                                                           \n"\
-"}							                                \n";
+"}                                                          \n";
 
 //Fragment shader for InitCycleCopy
 const char *fragmentCopy = 
 "#version " GLSL_VERSION "\n"\
-"precision lowp float;                                         \n"\
-"uniform sampler2D uTex0;									   \n"\
+"precision lowp float;                                      \n"\
+"uniform sampler2D uTex0;                                   \n"\
 "uniform float AlphaRef;                                    \n"\
-"varying lowp vec2 	vTexCoord0;                        		\n"\
-"void main()												   \n"\
-"{															   \n"\
-"	gl_FragColor = texture2D(uTex0,vTexCoord0).bgra;				   \n"\
+"varying lowp vec2 vTexCoord0;                              \n"\
+"void main()                                                \n"\
+"{                                                          \n"\
+"   gl_FragColor = texture2D(uTex0,vTexCoord0).bgra;        \n"\
 ALPHA_TEST
 "}";
 
@@ -126,11 +126,11 @@ GLuint copyProgram,copyAlphaLocation;
 //Fragment shader for InitCycleFill
 const char *fragmentFill = 
 "#version " GLSL_VERSION "\n"\
-"precision lowp float;							                \n"
-"uniform vec4 uColor;											\n"
-"void main()													\n"
-"{																\n"
-"	gl_FragColor = uColor;				  						\n"
+"precision lowp float;                                      \n"
+"uniform vec4 uColor;                                       \n"
+"void main()                                                \n"
+"{                                                          \n"
+"   gl_FragColor = uColor;                                  \n"
 "}";
 
 GLuint fillProgram,fillColorLocation;
