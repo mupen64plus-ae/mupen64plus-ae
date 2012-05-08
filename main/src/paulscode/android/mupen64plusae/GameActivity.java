@@ -35,10 +35,17 @@ public class GameActivity extends Activity
         Intent intent = new Intent( this, MenuActivity.class );
         intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
         PendingIntent contentIntent = PendingIntent.getActivity( this, 0, intent, 0 );
-        Notification notification = new Notification( statusIcon, text, when );
-        notification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-        notification.setLatestEventInfo( context, contentTitle, contentText, contentIntent );
-        GameActivityCommon.notificationManager.notify( Globals.NOTIFICATION_ID, notification );
+       
+        Notification.Builder notification = new Notification.Builder( context )
+        .setSmallIcon( statusIcon )
+        .setAutoCancel( true )
+        .setTicker( text )
+        .setWhen( when )
+        .setContentTitle( contentTitle )
+        .setContentText( contentText )
+        .setContentIntent( contentIntent );
+
+        GameActivityCommon.notificationManager.notify( Globals.NOTIFICATION_ID, notification.getNotification() );
 
         // paulscode, load the native libraries:
         GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "VideoPlugin" ) );
