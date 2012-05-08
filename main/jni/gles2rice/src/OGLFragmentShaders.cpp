@@ -389,7 +389,7 @@ const char *muxToFP_Maps[][2] = {
 #endif
 
 
-char oglNewFP[4096];
+char oglNewFP[4092];
 
 char* MuxToOC(uint8 val)
 {
@@ -422,7 +422,7 @@ void COGL_FragmentProgramCombiner::GenerateProgramStr()
     mux.splitType[0] = mux.splitType[1] = mux.splitType[2] = mux.splitType[3] = CM_FMT_TYPE_NOT_CHECKED;
     m_pDecodedMux->Reformat(false);
 
-    char tempstr[2048], newFPBody[4096];
+    char tempstr[500], newFPBody[4092];
     bool bNeedT0 = false, bNeedT1 = false, bNeedComb2 = false;
     newFPBody[0] = 0;
 
@@ -784,8 +784,8 @@ void COGL_FragmentProgramCombiner::InitCombinerCycle12(void)
     {
         if( m_bCycleChanged || combinerIsChanged )
         {
-            GenerateCombinerSetting(m_lastIndex);
             GenerateCombinerSettingConstants(m_lastIndex);
+            GenerateCombinerSetting(m_lastIndex);
         }
         else if( gRDP.colorsAreReloaded )
         {
