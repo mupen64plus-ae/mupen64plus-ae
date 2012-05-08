@@ -56,7 +56,7 @@ extern uint32       g_dwVtxDifColor[MAX_VERTS];
 extern RenderTexture g_textures[MAX_TEXTURES];
 
 extern TLITVERTEX           g_vtxBuffer[1000];
-extern unsigned short         g_vtxIndex[1000];
+extern unsigned short       g_vtxIndex[1000];
 
 extern TLITVERTEX           g_clippedVtxBuffer[2000];
 extern int                  g_clippedVtxCount;
@@ -237,6 +237,7 @@ void SetFogMinMax(float fMin, float fMax, float fMul, float fOffset);
 void InitVertex(uint32 dwV, uint32 vtxIndex, bool bTexture, bool openGL = true );
 void InitVertexTextureConstants();
 bool PrepareTriangle(uint32 dwV0, uint32 dwV1, uint32 dwV2);
+bool AddTri(u32 v0, u32 v1, u32 v2);
 bool IsTriangleVisible(uint32 dwV0, uint32 dwV1, uint32 dwV2);
 extern void (*ProcessVertexData)(uint32 dwAddr, uint32 dwV0, uint32 dwNum);
 #if !defined(NO_ASM)

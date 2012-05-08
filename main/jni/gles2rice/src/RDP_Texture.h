@@ -1213,7 +1213,7 @@ uint32 dwCount;
 // starting location in the palettes
 uint32 dwTMEMOffset = gRDP.tiles[tileno].dwTMem - 256;  
 // number to copy
-dwCount = ((uint16)((gfx->words.w1) >> 14) & 0x03FF) + 1;
+dwCount = ((uint16)((gfx->words.cmd1) >> 14) & 0x03FF) + 1;
 uint32 dwRDRAMOffset = 0;
 
 Tile &tile = gRDP.tiles[tileno];
@@ -1229,7 +1229,7 @@ tile.lastTileCmd = CMD_LOADTLUT;
 
 #ifdef DEBUGGER
 /*
-if((((gfx->words.w0)>>12)&0x3) != 0 || (((gfx->words.w0))&0x3) != 0 || (((gfx->words.w1)>>12)&0x3) != 0 || (((gfx->words.w1))&0x3) != 0)
+if((((gfx->words.w0)>>12)&0x3) != 0 || (((gfx->words.w0))&0x3) != 0 || (((gfx->words.cmd1)>>12)&0x3) != 0 || (((gfx->words.cmd1))&0x3) != 0)
     TRACE0("Load tlut, sl,tl,sh,th are not integers");
 */
 #endif
@@ -1394,7 +1394,7 @@ void DLParser_LoadBlock(Gfx *gfx)
     LOG_TEXTURE(
     {
         DebuggerAppendMsg("LoadBlock:%d (%d,%d,%d) DXT:0x%04x(%X)\n",
-            tileno, uls, ult, (((gfx->words.w1)>>12)&0x0FFF), dxt, ((gfx->words.w1)&0x0FFF));
+            tileno, uls, ult, (((gfx->words.cmd1)>>12)&0x0FFF), dxt, ((gfx->words.cmd1)&0x0FFF));
     });
 
     DEBUGGER_PAUSE_COUNT_N(NEXT_TEXTURE_CMD);
@@ -1749,10 +1749,10 @@ void DLParser_SetTImg(Gfx *gfx)
 {
     gRDP.textureIsChanged = true;
 
-    g_TI.dwFormat   = gfx->setimg.fmt;
-    g_TI.dwSize     = gfx->setimg.siz;
-    g_TI.dwWidth    = gfx->setimg.width + 1;
-    g_TI.dwAddr     = RSPSegmentAddr((gfx->setimg.addr));
+    g_TI.dwFormat   = gfx->img.fmt;
+    g_TI.dwSize     = gfx->img.siz;
+    g_TI.dwWidth    = gfx->img.width + 1;
+    g_TI.dwAddr     = RSPSegmentAddr((gfx->img.addr));
     g_TI.bpl        = g_TI.dwWidth << g_TI.dwSize >> 1;
 
 #ifdef DEBUGGER
@@ -1823,11 +1823,11 @@ void DLParser_TexRect(Gfx *gfx)
     LOG_UCODE("0x%08x: %08x %08x", dwPC, *(uint32 *)(g_pRDRAMu8 + dwPC+0), *(uint32 *)(g_pRDRAMu8 + dwPC+4));
     LOG_UCODE("0x%08x: %08x %08x", dwPC+8, *(uint32 *)(g_pRDRAMu8 + dwPC+8), *(uint32 *)(g_pRDRAMu8 + dwPC+8+4));
 
-    uint32 dwXH     = (((gfx->words.w0)>>12)&0x0FFF)/4;
-    uint32 dwYH     = (((gfx->words.w0)    )&0x0FFF)/4;
-    uint32 tileno   = ((gfx->words.w1)>>24)&0x07;
-    uint32 dwXL     = (((gfx->words.w1)>>12)&0x0FFF)/4;
-    uint32 dwYL     = (((gfx->words.w1)    )&0x0FFF)/4;
+    uint32 dwXH     = (((gfx->words.cmd0)>>12)&0x0FFF)/4;
+    uint32 dwYH     = (((gfx->words.cmd0)    )&0x0FFF)/4;
+    uint32 tileno   = ((gfx->words.cmd1)>>24)&0x07;
+    uint32 dwXL     = (((gfx->words.cmd1)>>12)&0x0FFF)/4;
+    uint32 dwYL     = (((gfx->words.cmd1)    )&0x0FFF)/4;
     uint16 uS       = (uint16)(  dwCmd2>>16)&0xFFFF;
     uint16 uT       = (uint16)(  dwCmd2    )&0xFFFF;
     uint16  uDSDX   = (uint16)((  dwCmd3>>16)&0xFFFF);
@@ -1954,11 +1954,11 @@ void DLParser_TexRectFlip(Gfx *gfx)
     // Increment PC so that it points to the right place
     gDlistStack[gDlistStackPointer].pc += 16;
 
-    uint32 dwXH     = (((gfx->words.w0)>>12)&0x0FFF)/4;
-    uint32 dwYH     = (((gfx->words.w0)    )&0x0FFF)/4;
-    uint32 tileno   = ((gfx->words.w1)>>24)&0x07;
-    uint32 dwXL     = (((gfx->words.w1)>>12)&0x0FFF)/4;
-    uint32 dwYL     = (((gfx->words.w1)    )&0x0FFF)/4;
+    uint32 dwXH     = (((gfx->words.cmd0)>>12)&0x0FFF)/4;
+    uint32 dwYH     = (((gfx->words.cmd0)    )&0x0FFF)/4;
+    uint32 tileno   = ((gfx->words.cmd1)>>24)&0x07;
+    uint32 dwXL     = (((gfx->words.cmd1)>>12)&0x0FFF)/4;
+    uint32 dwYL     = (((gfx->words.cmd1)    )&0x0FFF)/4;
     uint32 dwS      = (  dwCmd2>>16)&0xFFFF;
     uint32 dwT      = (  dwCmd2    )&0xFFFF;
     int  nDSDX     = (int)(short)((  dwCmd3>>16)&0xFFFF);
