@@ -7,6 +7,7 @@ import android.app.*;
 import android.content.*;
 import android.view.*;
 import android.os.*;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 
@@ -48,7 +49,7 @@ public class GameActivityXperiaPlay extends NativeActivity
         intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
         PendingIntent contentIntent = PendingIntent.getActivity( this, 0, intent, 0 );
         
-        Notification.Builder notification = new Notification.Builder( context )
+        NotificationCompat.Builder notification = new NotificationCompat.Builder( context )
         .setSmallIcon( statusIcon )
         .setAutoCancel( true )
         .setTicker( text )
