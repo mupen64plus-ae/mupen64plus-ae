@@ -86,11 +86,6 @@ void RSP_GBI0_Mtx(Gfx *gfx)
 #endif
 }
 
-
-
-
-
-
 void RSP_GBI0_Vtx(Gfx *gfx)
 {
     SP_Timing(RSP_GBI0_Vtx);
@@ -120,7 +115,6 @@ void RSP_GBI0_Vtx(Gfx *gfx)
     }
 }
 
-
 void RSP_GBI0_DL(Gfx *gfx)
 {   
     SP_Timing(RSP_GBI0_DL);
@@ -144,9 +138,6 @@ void RSP_GBI0_DL(Gfx *gfx)
         LOG_UCODE("Level=%d", gDlistStackPointer+1);
         LOG_UCODE("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 }
-
-
-
 
 void RSP_GBI0_Tri4(Gfx *gfx)
 {
@@ -196,14 +187,12 @@ void RSP_GBI0_Tri4(Gfx *gfx)
         dwPC += 8;
 
 #ifdef DEBUGGER
-    } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && (w0>>24) == (uint8)RSP_TRI2);
+    } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && (cmd0>>24) == (uint8)RSP_TRI2);
 #else
-    } while (((w0)>>24) == (uint8)RSP_TRI2);
+    } while (((cmd0)>>24) == (uint8)RSP_TRI2);
 #endif
 
-
     gDlistStack[gDlistStackPointer].pc = dwPC-8;
-
 
     if (bTrisAdded) 
     {

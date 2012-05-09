@@ -39,9 +39,6 @@ uint32 g_TxtLoadBy = CMD_LOAD_OBJ_TXTR;
 // YoshiStory uses this - 0x02
 void RSP_S2DEX_BG_COPY(Gfx *gfx)
 {
-    
-    
-
     SP_Timing(DP_Minimal16);
     DP_Timing(DP_Minimal16);
 
@@ -54,9 +51,6 @@ void RSP_S2DEX_BG_COPY(Gfx *gfx)
 // YoshiStory uses this - 0x03
 void RSP_S2DEX_OBJ_RECTANGLE(Gfx *gfx)
 {
-    
-    
-
     uint32 dwAddr = RSPSegmentAddr((gfx->words.cmd1));
     uObjSprite *ptr = (uObjSprite*)(g_pRDRAMu8+dwAddr);
 
@@ -94,9 +88,6 @@ void RSP_S2DEX_OBJ_RECTANGLE(Gfx *gfx)
 // YoshiStory uses this - 0x04
 void RSP_S2DEX_OBJ_SPRITE(Gfx *gfx)
 {
-    
-    
-
     uint32 dwAddr = RSPSegmentAddr((gfx->words.cmd1));
     uObjSprite *info = (uObjSprite*)(g_pRDRAMu8+dwAddr);
 
@@ -135,9 +126,6 @@ void RSP_S2DEX_OBJ_SPRITE(Gfx *gfx)
 // YoshiStory uses this - 0xb0
 void RSP_S2DEX_SELECT_DL(Gfx *gfx)
 {
-    
-    
-
     //static BOOL bWarned = FALSE;
     //if (!bWarned)
     {
@@ -150,9 +138,6 @@ void RSP_S2DEX_SELECT_DL(Gfx *gfx)
 
 void RSP_S2DEX_OBJ_RENDERMODE(Gfx *gfx)
 {
-    
-    
-
     /*
     static BOOL bWarned = FALSE;
     //if (!bWarned)
@@ -167,9 +152,6 @@ void RSP_S2DEX_OBJ_RENDERMODE(Gfx *gfx)
 void RSP_GBI1_Tri2(Gfx *gfx);
 void RSP_S2DEX_OBJ_RENDERMODE_2(Gfx *gfx)
 {
-    
-    
-
     if( ((gfx->words.cmd0)&0xFFFFFF) != 0 || ((gfx->words.cmd1)&0xFFFFFF00) != 0 )
     {
         // This is a TRI2 cmd
@@ -317,9 +299,6 @@ void ObjMtxTranslate(float &x, float &y)
 
 void RSP_S2DEX_SPObjLoadTxtr(Gfx *gfx)
 {
-    
-    
-
     gObjTxtr = (uObjTxtr*)(g_pRDRAMu8+(RSPSegmentAddr((gfx->words.cmd1))&(g_dwRamSize-1)));
     if( gObjTxtr->block.type == S2DEX_OBJLT_TLUT )
     {
@@ -364,9 +343,6 @@ void RSP_S2DEX_SPObjLoadTxtr(Gfx *gfx)
 // YoshiStory uses this - 0xc2
 void RSP_S2DEX_SPObjLoadTxSprite(Gfx *gfx)
 {
-    
-    
-
     uObjTxSprite* ptr = (uObjTxSprite*)(g_pRDRAMu8+(RSPSegmentAddr((gfx->words.cmd1))&(g_dwRamSize-1)));
     gObjTxtr = (uObjTxtr*)ptr;
     
@@ -387,9 +363,6 @@ void RSP_S2DEX_SPObjLoadTxSprite(Gfx *gfx)
 // YoshiStory uses this - 0xc3
 void RSP_S2DEX_SPObjLoadTxRect(Gfx *gfx)
 {
-    
-    
-
     uObjTxSprite* ptr = (uObjTxSprite*)(g_pRDRAMu8+(RSPSegmentAddr((gfx->words.cmd1))&(g_dwRamSize-1)));
     gObjTxtr = (uObjTxtr*)ptr;
     
@@ -409,9 +382,6 @@ void RSP_S2DEX_SPObjLoadTxRect(Gfx *gfx)
 // YoshiStory uses this - 0xc4
 void RSP_S2DEX_SPObjLoadTxRectR(Gfx *gfx)
 {
-    
-    
-
     uObjTxSprite* ptr = (uObjTxSprite*)(g_pRDRAMu8+(RSPSegmentAddr((gfx->words.cmd1))&(g_dwRamSize-1)));
     gObjTxtr = (uObjTxtr*)ptr;
     
@@ -462,9 +432,6 @@ void RSP_S2DEX_RDPHALF_0(Gfx *gfx)
 // YoshiStory uses this - 0x05
 void RSP_S2DEX_OBJ_MOVEMEM(Gfx *gfx)
 {
-    
-    
-
     uint32 dwCommand = ((gfx->words.cmd0)>>16)&0xFF;
     uint32 dwLength  = ((gfx->words.cmd0))    &0xFFFF;
     uint32 dwAddr = RSPSegmentAddr((gfx->words.cmd1));
@@ -531,9 +498,6 @@ extern void RSP_GBI0_Mtx(Gfx *gfx);
 
 void RSP_S2DEX_BG_1CYC(Gfx *gfx)
 {
-    
-    
-
     SP_Timing(DP_Minimal16);
     DP_Timing(DP_Minimal16);
 
@@ -552,9 +516,6 @@ void RSP_S2DEX_BG_1CYC(Gfx *gfx)
 
 void RSP_S2DEX_BG_1CYC_2(Gfx *gfx)
 {
-    
-    
-
     if( ((gfx->words.cmd0)&0x00FFFFFF) != 0 )
     {
         RSP_GBI0_Mtx(gfx);
@@ -568,9 +529,6 @@ void RSP_S2DEX_BG_1CYC_2(Gfx *gfx)
 // YoshiStory uses this - 0xb2
 void RSP_S2DEX_OBJ_RECTANGLE_R(Gfx *gfx)
 {
-    
-    
-
     uint32 dwAddr = RSPSegmentAddr((gfx->words.cmd1));
     uObjSprite *ptr = (uObjSprite*)(g_pRDRAMu8+dwAddr);
 
@@ -603,4 +561,3 @@ void RSP_S2DEX_OBJ_RECTANGLE_R(Gfx *gfx)
         }
     );
 }
-

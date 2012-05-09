@@ -234,7 +234,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define RDP_TXT_NOLOD       0
 
 
-
 //
 // MOVEMEM indices
 //
@@ -275,7 +274,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # define RSP_GBI2_MV_MEM_O_L6       (8*24)
 # define RSP_GBI2_MV_MEM_O_L7       (9*24)
 
-
 //
 // MOVEWORD indices
 //
@@ -308,7 +306,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define RSP_MV_WORD_OFFSET_POINT_ZSCREEN        0x1c
 
 
-
 // flags to inhibit pushing of the display list (on branch)
 #define RSP_DLIST_PUSH      0x00
 #define RSP_DLIST_NOPUSH        0x01
@@ -325,7 +322,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define RSP_MATRIX_NOPUSH       0x00
 #define RSP_MATRIX_PUSH         0x04
-
 
 
 typedef struct 
@@ -355,7 +351,8 @@ typedef struct
     uint32  yield_data_size;
 } OSTask_t;
 
-typedef union {
+typedef union
+{
     OSTask_t        t;
     uint64  force_structure_alignment;
 } OSTask;
@@ -363,7 +360,8 @@ typedef union {
 #define MAX_DL_STACK_SIZE   32
 #define MAX_DL_COUNT        1000000
 
-typedef struct {
+typedef struct
+{
     bool    used;
     uint32  crc_size;
     uint32  crc_800;
@@ -455,7 +453,8 @@ typedef struct {    // This is in Intel format
   char  dummy[4]; 
 } SpriteStruct;         //Converted Sprint struct in Intel format
 
-typedef struct{
+typedef struct
+{
     short px;
     short py;
     float scaleX;
