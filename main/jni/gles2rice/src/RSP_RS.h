@@ -40,7 +40,7 @@ void DLParser_RS_Color_Buffer(Gfx *gfx)
 	Rogue_Squadron_Vtx_Color_Addr = dwAddr;
 
 	LOG_UCODE("Vtx_Color at PC=%08X: 0x%08x 0x%08x\n", dwPC-8, (gfx->words.cmd0), (gfx->words.cmd1));
-#ifdef _DEBUG
+#ifdef DEBUGGER
 	if( pauseAtNext && (eventToPause == NEXT_VERTEX_CMD ) )
 	{
 		DebuggerAppendMsg("Vtx_Color at PC=%08X: 0x%08x 0x%08x\n", dwPC-8, (gfx->words.cmd0), (gfx->words.cmd1));
@@ -69,7 +69,7 @@ void DLParser_RS_Vtx_Buffer(Gfx *gfx)
 	Rogue_Squadron_Vtx_XYZ_Cmd = (gfx->words.cmd0);
 	Rogue_Squadron_Vtx_XYZ_Addr = dwAddr;
 
-#ifdef _DEBUG
+#ifdef DEBUGGER
 	if( pauseAtNext && (eventToPause == NEXT_VERTEX_CMD ) )
 	{
 		DebuggerAppendMsg("Vtx_XYZ at PC=%08X: 0x%08x 0x%08x\n", dwPC-8, (gfx->words.cmd0), (gfx->words.cmd1));
