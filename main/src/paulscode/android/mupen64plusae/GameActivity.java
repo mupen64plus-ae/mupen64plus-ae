@@ -7,7 +7,7 @@ import android.app.*;
 import android.content.*;
 import android.view.*;
 import android.os.*;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.*;
 import android.util.Log;
 
 
