@@ -54,21 +54,21 @@ UcodeMap *ucodeMaps[] =
 {
     &ucodeMap0,             // ucode 0 - Mario
     &ucodeMap1,             // ucode 1 - GBI1
-    NULL,                   // ucode 2 - Golden Eye
+    &ucodeMap2,             // ucode 2 - Golden Eye
     &ucodeMap3,             // ucode 3 - S2DEX GBI2
-    NULL,                   // ucode 4 - Wave Racer
+    &ucodeMap4,             // ucode 4 - Wave Racer
     &ucodeMap5,             // ucode 5 - BGI2
-    NULL,                   // ucode 6 - DKR
+    &ucodeMap6,             // ucode 6 - DKR
     &ucodeMap7,             // ucode 7 - S2DEX
     NULL,                   // ucode 8 - ucode 0 with sprite2D, for Demo Puzzle Master 64
-    NULL,                   // ucode 9 - Perfect Dark
+    &ucodeMap9,             // ucode 9 - Perfect Dark
     NULL,                   // ucode 10 - Conker
-    NULL,                   // ucode 11 - Gemini
+    &ucodeMap11,            // ucode 11 - Gemini
     NULL,                   // ucode 12 - Silicon Valley, Spacestation
     NULL,                   // ucode 13 - modified ucode S2DEX
     NULL,                   // ucode 14 - OgreBattle Background
     NULL,                   // ucode 15 - ucode 0 with sprite2D
-    NULL,                   // ucode 16 - Star War, Shadow of Empire
+    &ucodeMap16,            // ucode 16 - Star War, Shadow of Empire
     NULL,                   // ucode 17 - Star Wars - Rogue Squadron, 
     NULL,                   // ucode 18 - World Driver Championship
     NULL,                   // ucode 19 - Last Legion UX
@@ -266,13 +266,13 @@ uint32  g_dwRDPPalCrc[16];
 #include "RSP_GBI_Sprite2D.h"
 #include "RDP_Texture.h"
 //Custom ucodes
-//#include "RSP_WRUS.h" //Wave Race 64
+#include "RSP_WRUS.h" //Wave Race 64
 #include "RSP_LL.h" //Last Legion
-//#include "RSP_DKR.h" //Diddy Kong Racing
-//#include "RSP_SOTE.h" //Shadow Of The Empire
+#include "RSP_DKR.h" //Diddy Kong Racing
+#include "RSP_SOTE.h" //Shadow Of The Empire
 #include "RSP_Conker.h" //Conkers Bad Fur Day
-//#include "RSP_GE.h" //Golden Eye
-//#include "RSP_PD.h" //Perfect Dark
+#include "RSP_GE.h" //Golden Eye
+#include "RSP_PD.h" //Perfect Dark
 #include "RSP_RS.h" //Rouge Squadron
 
 //////////////////////////////////////////////////////////
@@ -375,14 +375,14 @@ void RDP_SetUcodeMap(int ucode)
         //LoadedUcodeMap[9]=RSP_GBI1_Sprite2DBase;
         //LoadedUcodeMap[0xaf]=RSP_GBI1_LoadUCode;
         //LoadedUcodeMap[0xb0]=RSP_GBI1_BranchZ;
-        //LoadedUcodeMap[0xb4]=DLParser_RDPHalf1_GoldenEye;
+        LoadedUcodeMap[0xb4]=DLParser_RDPHalf1_GoldenEye;
         status.bUseModifiedUcodeMap = true;
         break;
     case 3: // S2DEX GBI2
         break;
     case 4:
         memcpy( &LoadedUcodeMap, &ucodeMap0, sizeof(UcodeMap));
-        //LoadedUcodeMap[4]=RSP_Vtx_WRUS;
+        LoadedUcodeMap[4]=RSP_Vtx_WRUS;
         LoadedUcodeMap[0xb1]=RSP_GBI1_Tri2;
         //LoadedUcodeMap[9]=RSP_GBI1_Sprite2DBase;
         //LoadedUcodeMap[0xaf]=RSP_GBI1_LoadUCode;
