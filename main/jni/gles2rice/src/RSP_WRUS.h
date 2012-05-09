@@ -23,7 +23,7 @@ void RSP_Vtx_WRUS(Gfx *gfx)
 {
     uint32 dwAddr    = RSPSegmentAddr(gfx->words.cmd1);
     uint32 dwV0      = ((gfx->words.cmd0 >>16 ) & 0xff) / 5;
-    uint32 dwN		 =  (gfx->words.cmd0 >>9  ) & 0x7f;
+    uint32 dwN       =  (gfx->words.cmd0 >>9  ) & 0x7f;
     uint32 dwLength  =  (gfx->words.cmd0      ) & 0x1ff;
 
     LOG_UCODE("    Address [0x%08x], v0: [%d], Num: [%d], Length: [0x%04x]", dwAddr, dwV0, dwN, dwLength);
