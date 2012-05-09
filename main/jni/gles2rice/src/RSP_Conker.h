@@ -80,9 +80,9 @@ void RSP_Tri4_Conker(Gfx *gfx)
 		dwPC += 8;
 
 #ifdef DEBUGGER
-	} while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && (cmd0>>28) == 1 );
+	} while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && (w0>>28) == 1 );
 #else
-	} while ((cmd0>>28) == 1);
+	} while ((w0>>28) == 1);
 #endif
 
 	gDlistStack[gDlistStackPointer].pc = dwPC-8;
