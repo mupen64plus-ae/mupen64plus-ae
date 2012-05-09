@@ -32,7 +32,7 @@ extern Matrix dkrMatrixTransposed;
 //*****************************************************************************
 void RDP_GFX_DumpVtxInfoDKR(uint32 dwAddr, uint32 dwV0, uint32 dwN)
 {
-#ifdef _DEBUG
+#ifdef DEBUGGER
 		uint32 dwV;
 		LONG i;
 
@@ -79,7 +79,7 @@ void RDP_GFX_DumpVtxInfoDKR(uint32 dwAddr, uint32 dwV0, uint32 dwN)
 			i += 5;
 		}
 
-#endif // _DEBUG
+#endif // DEBUGGER
 }
 
 //*****************************************************************************
