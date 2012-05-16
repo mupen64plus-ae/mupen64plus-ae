@@ -54,17 +54,17 @@
     <!-- Native Language Strings -->
     <string name="native_arabic">العربية</string>
     <string name="native_chinese">中國的</string>
-    <string name="native_croatian">hrvatski</string>
+    <string name="native_croatian">Hrvatski</string>
     <string name="native_dutch">Nederlands</string>
     <string name="native_english">English</string>
-    <string name="native_french">français</string>
+    <string name="native_french">Français</string>
     <string name="native_german">Deutsch</string>
-    <string name="native_italian">italiano</string>
+    <string name="native_italian">Italiano</string>
     <string name="native_japanese">日本の</string>
     <string name="native_korean">한국의</string>
-    <string name="native_norwegian">norske</string>
-    <string name="native_portuguese">português</string>
-    <string name="native_spanish">español</string>
+    <string name="native_norwegian">Norske</string>
+    <string name="native_portuguese">Português</string>
+    <string name="native_spanish">Español</string>
 
     <!-- In-Game Message Strings -->
     <string name="mupen64plus_started">Mupen64Plus Started</string>
@@ -81,19 +81,19 @@
    
     <!-- Main Screen Strings -->
     <string name="main_choose_game">Choose Game</string>
-    <string name="main_select_a_game_to_play">select a game to play</string>
+    <string name="main_select_a_game_to_play">Select a game to play</string>
     <string name="main_resume">Resume</string>
-    <string name="main_continue_your_last_game">continue your last game</string>
+    <string name="main_continue_your_last_game">Continue your last game</string>
     <string name="main_settings">Settings</string>
-    <string name="main_configure_plug_ins">configure plug-ins, skins, etc.</string>
+    <string name="main_configure_plug_ins">Configure plug-ins, skins, etc.</string>
     <string name="main_help">Help!</string>
     <string name="main_rept_bugs">paulscode.com support, report bugs</string>
     <string name="main_credits">Credits</string>
-    <string name="main_devs_contribs_tstrs">developers, testers, contributers</string>
+    <string name="main_devs_contribs_tstrs">Developers, testers, contributers</string>
     <string name="main_cheat">Cheat!</string>
-    <string name="main_choose_game_to_hack">choose a game to hack</string>
+    <string name="main_choose_game_to_hack">Choose a game to hack</string>
     <string name="main_close">Close</string>
-    <string name="main_exit_the_app">exit the app</string>
+    <string name="main_exit_the_app">Exit the app</string>
     
     <!-- File Browser Strings -->
     <string name="file_size">File Size</string>
@@ -104,7 +104,7 @@
     <!-- Cheats Strings -->
     <string name="cheats_for">"Cheats for "</string>
     <string name="cheats_disable">Disable</string>
-    <string name="cheats_dont_use">dont use this cheat</string>
+    <string name="cheats_dont_use">Don\'t use this cheat</string>
     <string name="cheats_long_full_text">(long-press for full text)</string>
     <string name="cheats_full_text">Full Text</string>
     <string name="cheats_no_description">(no description available)</string>
@@ -114,51 +114,51 @@
     <string name="cheats_no_notes">(no notes available for this cheat)</string>
     <string name="cheats_close">Close</string>
     <string name="cheats_start">Start Game!</string>
-    <string name="cheats_launch_selected">launch with selected cheats</string>
+    <string name="cheats_launch_selected">Launch with selected cheats</string>
         
     <!-- Plugin Option Strings -->
     
     <!-- General Settings Menu -->
     <string name="settings_video">Video</string>
-    <string name="settings_config_graphics">configure the graphics</string>
+    <string name="settings_config_graphics">Configure graphics settings</string>
     <string name="settings_audio">Audio</string>
-    <string name="settings_audio_settings">choose audio settings</string>
+    <string name="settings_audio_settings">Configure audio settings</string>
     <string name="settings_input">Input</string>
-    <string name="settings_map_controller_buttons">map controller buttons</string>
+    <string name="settings_map_controller_buttons">Map controller buttons</string>
     <string name="settings_virtual_gamepad">Virtual Gamepad</string>
-    <string name="settings_config_virtual_gamepad">configure the virtual gamepad</string>
+    <string name="settings_config_virtual_gamepad">Configure the virtual gamepad</string>
     <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
     <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
     <string name="settings_touchpad">Touchpad</string>
-    <string name="settings_config_touchpad">configure the touchpad</string>
+    <string name="settings_config_touchpad">Configure the touchpad</string>
     <string name="settings_rsp">RSP</string>
     <string name="settings_reality_signal_processor">Reality Signal Processor</string>
     <string name="settings_core">Core</string>
-    <string name="settings_emu_core_settings">emulator core settings</string>
+    <string name="settings_emu_core_settings">Emulator core settings</string>
     <string name="settings_reset_defaults">Reset Default Settings</string>
-    <string name="settings_reset_to_deflt_vals">reset all to default values</string>
+    <string name="settings_reset_to_deflt_vals">Reset all to default values</string>
     <string name="settings_problem_resetting">Problem resetting defaults (see logcat)</string>
     <string name="settings_restore_app_data">Restore App Data</string>
-    <string name="settings_imports_will_be_lost">imported plugins and textures will be lost!</string>
+    <string name="settings_imports_will_be_lost">Imported plugins and textures will be lost!</string>
     <string name="settings_enable_auto_save">Enable Auto-Save</string>
-    <string name="settings_auto_save_game_on_exit">automatically save game on exit</string>
+    <string name="settings_auto_save_game_on_exit">Automatically save game on exit</string>
     <string name="settings_language">Language</string>
-    <string name="settings_manually_change_language">manually change the language</string>
+    <string name="settings_manually_change_language">Manually change the language</string>
     
     
     <!-- Audio Plugin -->
     <string name="audio_change">Change</string>
     <string name="audio_enable">Enable</string>
-    <string name="audio_use_plgin">use this plug-in</string>
+    <string name="audio_use_plgin">Use this plug-in</string>
     <string name="audio_change_plug_in">Change Plug-in</string>
     <string name="audio_import">Import…</string>
-    <string name="audio_new_plgin">add new audio plug-in</string>
+    <string name="audio_new_plgin">Add new audio plug-in</string>
     
     <!-- Core Library -->
     <string name="core_change_core">Change Core</string>
-    <string name="core_choose_another_core">choose another core</string>
+    <string name="core_choose_another_core">Choose another core</string>
     <string name="core_import">Import…</string>
-    <string name="core_new_plgin">add new core</string>
+    <string name="core_new_plgin">Add new core</string>
     <string name="core_stop">Stop</string>
     <string name="core_save_state">Save State</string>
     <string name="core_load_state">Load State</string>
@@ -171,26 +171,26 @@
     <string name="core_frame_advance">Frame Advance</string>
     <string name="core_gameshark">Gameshark</string>
     <string name="core_disable_volume_keys">Disable Volume Keys</string>
-    <string name="core_use_as_core_functions">use as core functions</string>
+    <string name="core_use_as_core_functions">Use as core functions</string>
     
     <!-- Input Plugin -->
     <string name="input_controller_1">Controller 1</string>
-    <string name="input_map_ctrl_1_buttons">map controller 1 buttons</string>
+    <string name="input_map_ctrl_1_buttons">Map controller 1 buttons</string>
     <string name="input_controller_2">Controller 2</string>
-    <string name="input_map_ctrl_2_buttons">map controller 2 buttons</string>
+    <string name="input_map_ctrl_2_buttons">Map controller 2 buttons</string>
     <string name="input_controller_3">Controller 3</string>
-    <string name="input_map_ctrl_3_buttons">map controller 3 buttons</string>
+    <string name="input_map_ctrl_3_buttons">Map controller 3 buttons</string>
     <string name="input_controller_4">Controller 4</string>
-    <string name="input_map_ctrl_4_buttons">map controller 4 buttons</string>
+    <string name="input_map_ctrl_4_buttons">Map controller 4 buttons</string>
     <string name="input_special_buttons">Special Buttons</string>
-    <string name="input_map_core_funcs_buttons">map core functions to buttons</string>
+    <string name="input_map_core_funcs_buttons">Map core functions to buttons</string>
     <string name="input_import">Import…</string>
-    <string name="input_new_plgin">add new input plug-in</string>
+    <string name="input_new_plgin">Add new input plug-in</string>
     <string name="input_change_plug_in">Change Plug-in</string>
     <string name="input_map_buttons">Map Buttons</string>
-    <string name="input_map_ctrl_btns">map controller buttons</string>
+    <string name="input_map_ctrl_btns">Map controller buttons</string>
     <string name="input_enable">Enable</string>
-    <string name="input_use_this_plug_in">use this plug-in</string>
+    <string name="input_use_this_plug_in">Use this plug-in</string>
 
     <!-- Controller -->
     <string name="plugged_in">Plugged In</string>
@@ -225,22 +225,22 @@
     <!-- RSP Plugin -->
     <string name="rsp_change_plug_in">Change Plug-in</string>
     <string name="rsp_plugin_enable">Enable</string>
-    <string name="rsp_use_this_plug_in">use this plug-in</string>
+    <string name="rsp_use_this_plug_in">Use this plug-in</string>
     <string name="rsp_change">Change</string>
     <string name="rsp_import">Import…</string>
-    <string name="rsp_new_plgin">add new RSP plug-in</string>
+    <string name="rsp_new_plgin">Add new RSP plug-in</string>
     
     <!-- Video Plugin -->
     <string name="video_change_plug_in">Change Plug-in</string>
     <string name="video_configure">Configure</string>
-    <string name="video_change_the_settings">change the settings</string>
+    <string name="video_change_the_settings">Change the settings</string>
     <string name="video_rgba_8888_mode">RGBA_8888 Mode</string>
-    <string name="video_improve_gfx_devices">improves graphics on some devices</string>
+    <string name="video_improve_gfx_devices">Improves graphics on some devices</string>
     <string name="video_enable">Enable</string>
-    <string name="video_use_this_plug_in">use this plug-in</string>
+    <string name="video_use_this_plug_in">Use this plug-in</string>
     <string name="video_change">Change</string>
     <string name="video_import">Import…</string>
-    <string name="video_add_new_video_plug_in">add new video plug-in</string>
+    <string name="video_add_new_video_plug_in">Add new video plug-in</string>
     <string name="video_enable_skip_frame">Enable Skip Frame</string>
     <string name="video_improve_speed_at_cst_fps">(improves speed at cost of FPS)</string>
     <string name="video_enable_fast_texture_crc">Enable Fast Texture CRC</string>
@@ -259,8 +259,6 @@
     <string name="video_disable_auto_fskip">" (disable auto frameskip to set manually)"</string>
     <string name="video_enable_fog">Enable Fog</string>
     <string name="video_need_work">(needs work)</string>
-    <string name="video_enable_tribuffer_opt">Enable Tribuffer Opt</string>
-    <string name="video_disble_if_zlda_crshes">(disable if Zelda crashes on startup)</string>
     <string name="video_force_screen_clear">Force Screen Clear</string>
     <string name="video_clrs_junk_grfx">(clears some junk graphics)</string>
     <string name="video_enable_alpha_test">Enable Alpha Test</string>
@@ -270,25 +268,25 @@
     
     <!-- Virtual Gamepad -->
     <string name="gamepad_virtual_gamepad">Virtual Gamepad</string>
-    <string name="gamepad_cnfig_virt_gamepad">configure the virtual gamepad</string>
+    <string name="gamepad_cnfig_virt_gamepad">Configure the virtual gamepad</string>
     <string name="gamepad_change_layout">Change Layout</string>
     <string name="gamepad_redraw_all">Redraw All</string>
-    <string name="gamepad_misbut_bug">slower, fixes missing buttons bug</string>
+    <string name="gamepad_misbut_bug">Slower, fixes missing buttons bug</string>
     <string name="gamepad_accurate_n64_stick">Accurate N64 Stick</string>
-    <string name="gamepad_analg_as_octgon">emulate analog as octagon</string>
+    <string name="gamepad_analg_as_octgon">Emulate analog as octagon</string>
     <string name="gamepad_display_fps">Display FPS</string>
-    <string name="gamepad_shw_frm_sec">show the frames-per-second</string>
+    <string name="gamepad_shw_frm_sec">Show the frames-per-second</string>
     <string name="gamepad_enable">Enable</string>
-    <string name="gamepad_use_virt_gpad">use the virtual gamepad</string>
+    <string name="gamepad_use_virt_gpad">Use the virtual gamepad</string>
     <string name="gamepad_import">Import…</string>
-    <string name="gamepad_new_skin">add new gamepad skin</string>
+    <string name="gamepad_new_skin">Add new gamepad skin</string>
 
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">Change</string>
     <string name="touchpad_enable">Enable</string>
-    <string name="touchpad_use_touchpad">use the touchpad</string>
+    <string name="touchpad_use_touchpad">Use the touchpad</string>
     <string name="touchpad_import">Import...</string>
-    <string name="touchpad_add_new">add new touchpad skin</string>
+    <string name="touchpad_add_new">Add new touchpad skin</string>
 
     <!-- Dialog Strings -->
     <string name="are_you_sure">Are you sure?</string>
