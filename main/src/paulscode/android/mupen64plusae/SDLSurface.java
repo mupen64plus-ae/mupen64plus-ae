@@ -138,7 +138,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                 sdlFormat = 0x86161804; // SDL_PIXELFORMAT_RGB888
                 break;
             case PixelFormat.OPAQUE:
-                /* Not sure this is right, Android API says, "Sytem chooses an
+                /* Not sure this is right, Android API says, "System chooses an
                    opaque format", but how do we know which one?? */
                 break;
             default:
@@ -230,11 +230,11 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             if( GameActivityCommon.rgba8888 )
                 configSpec = new int[]
                 {
-                    EGL10.EGL_RED_SIZE,   8,  // paulscode: get a config with red 8
+                    EGL10.EGL_RED_SIZE,     8,  // paulscode: get a config with red 8
                     EGL10.EGL_GREEN_SIZE,   8,  // paulscode: get a config with green 8
-                    EGL10.EGL_BLUE_SIZE,   8,  // paulscode: get a config with blue 8
+                    EGL10.EGL_BLUE_SIZE,    8,  // paulscode: get a config with blue 8
                     EGL10.EGL_ALPHA_SIZE,   8,  // paulscode: get a config with alpha 8
-                    EGL10.EGL_DEPTH_SIZE,   16,  // paulscode: get a config with depth 16
+                    EGL10.EGL_DEPTH_SIZE,   16, // paulscode: get a config with depth 16
                     EGL10.EGL_RENDERABLE_TYPE, renderableType,
                     EGL10.EGL_NONE
                 };
@@ -520,7 +520,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         return true;
     }
 
-    // paulscode, Xperia Play native touch input linkage:
+    // paulscode: Xperia Play native touch input linkage:
     public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
         if( !Globals.isXperiaPlay || GameActivityCommon.noInputPlugin )
