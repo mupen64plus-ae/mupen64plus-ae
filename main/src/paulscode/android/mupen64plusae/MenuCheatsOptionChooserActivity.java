@@ -3,8 +3,8 @@ package paulscode.android.mupen64plusae;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Dialog;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;

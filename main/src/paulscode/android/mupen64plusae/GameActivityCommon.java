@@ -1,15 +1,15 @@
 package paulscode.android.mupen64plusae;
 
+import java.io.File; 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.File; 
 
 import android.app.*;
 import android.content.*;
-import android.view.*;
+import android.media.*;
 import android.os.*;
 import android.util.Log;
-import android.media.*;
+import android.view.*;
 import android.widget.Toast;
 
 /**

@@ -2,13 +2,13 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File; 
 
-import android.content.res.Configuration;
 import android.app.*;
 import android.content.*;
-import android.view.*;
+import android.content.res.Configuration;
 import android.os.*;
 import android.support.v4.app.*;
 import android.util.Log;
+import android.view.*;
 
 
 /**

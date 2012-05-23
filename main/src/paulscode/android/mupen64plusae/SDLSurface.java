@@ -1,15 +1,15 @@
 package paulscode.android.mupen64plusae;
 
-import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.*;
+import javax.microedition.khronos.egl.EGLConfig;
 
 import android.content.*;
-import android.view.*;
-import android.os.*;
-import android.util.Log;
 import android.graphics.*;
-import android.util.AttributeSet;
 import android.hardware.*;
+import android.os.*;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.*;
 
 /**
  * SDLSurface. This is what we draw on, so we need to know when it's created
@@ -159,29 +159,27 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                 {
                     int c = 0;
 
-                    while( !GameActivityCommon.finishedReading )
+                    for( c = 0; !GameActivityCommon.finishedReading; c++ )
                     {
                         try{Thread.sleep( 40 );}catch(InterruptedException e){}
-                        c++;
                     }
-                    try{Thread.sleep( 40 );}catch(InterruptedException e){}
-                    c = 0;
+                    
+                    try{Thread.sleep( 40 ); }catch(InterruptedException e){}
                     int state = GameActivityCommon.stateEmulator();
-                    while( state != GameActivityCommon.EMULATOR_STATE_RUNNING )
+                    
+                    for( c = 0; state != GameActivityCommon.EMULATOR_STATE_RUNNING; c++ )
                     {
                         try{Thread.sleep( 40 );}catch(InterruptedException e){}
                         state = GameActivityCommon.stateEmulator();
-                        c++;
                     }
                     buffFlipped = false;
 
-                    c = 0;
-                    while( !buffFlipped )
+                    for( c = 0; !buffFlipped; c++ )
                     { // Wait for the game to have started, as indicated
                       // by a call to flip the EGL buffers.
                         try{Thread.sleep( 20 );}catch(InterruptedException e){}
-                        c++;
                     }
+                    
                     try{Thread.sleep( 40 );}catch(InterruptedException e){}  // Just to be sure..
                     Log.v( "SDLSurface", "Resuming last session" );
                     GameActivityCommon.showToast( "Resuming game" );
