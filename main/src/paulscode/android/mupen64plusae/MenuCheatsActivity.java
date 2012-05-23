@@ -163,7 +163,7 @@ public class MenuCheatsActivity extends ListActivity implements IOptionChooser
         }
     }
 
-    /*
+    /**
      * Determines what to do, based on what option the user chose 
      * @param listView Used by Android.
      * @param view Used by Android.
