@@ -92,13 +92,13 @@ public class TouchPad
     private int[] xpercents = new int[MAX_BUTTONS];
     private int[] ypercents = new int[MAX_BUTTONS];
 
-    private int buttonCount = 0;  // total number of buttons
-    private int SDLButtonCount = 0;  // number of SDL buttons
+    private int buttonCount = 0;  // Total number of buttons
+    private int SDLButtonCount = 0;  // Number of SDL buttons
 
     public Resources resources = null;
     boolean initialized = false;
 
-    /*
+    /**
      * Constructor: Instantiates the touch pad layout
      * @param context Handle to the app context.
      * @param attribs Handle to the app resources.
@@ -108,7 +108,7 @@ public class TouchPad
         resources = res;
     }
 
-    /*
+    /**
      * Determines which controls are pressed based on where the pad is being touched.
      * @param pointers Array indicating which pointers are touching the pad.
      * @param pointerX Array containing the X-coordinate of each pointer.
@@ -137,37 +137,37 @@ public class TouchPad
             mp64pButtons[i] = false;
 
         for( i = 0; i <= maxPid; i++ )
-        {  // process each pointer in sequence
+        {  // Process each pointer in sequence
             if( i == analogPid && !pointers[i] )
-                analogPid = -1;  // release analog if it's pointer is not touching the pad
+                analogPid = -1;  // Release analog if it's pointer is not touching the pad
             if( pointers[i] )
-            {  // pointer is touching the pad
+            {  // Pointer is touching the pad
                 x = pointerX[i];
                 y = pointerY[i];
                 
                 if( i != analogPid )
-                {  // not the analog control, check the buttons
+                {  // Not the analog control, check the buttons
                     for( m = 0; m < buttonCount; m++ )
-                    {  // check each one in sequence
+                    {  // Check each one in sequence
                         if( x >= masks[m].x && x < masks[m].x + masks[m].width &&
                             y >= masks[m].y && y < masks[m].y + masks[m].height )
-                        {  // it is inside this button, check the color mask
+                        {  // It is inside this button, check the color mask
                             c = masks[m].image.getPixel( x - masks[m].x, y - masks[m].y );
-                            rgb = (int)(c & 0x00ffffff);  // ignore the alpha component if any
-                            if( rgb > 0 )  // ignore black
-                                pressColor( rgb );  // determine what was pressed
+                            rgb = (int)(c & 0x00ffffff);  // Ignore the alpha component if any
+                            if( rgb > 0 )  // Ignore black
+                                pressColor( rgb );  // Determine what was pressed
                         }
                     }
                 }
                 if( analogMask != null )
                 {
-                    dX = (float)( x - (analogMask.x + analogMask.hWidth) );  // distance from center along x-axis
-                    dY = (float)( (analogMask.y + analogMask.hHeight) - y );  // distance from center along y-axis
-                    d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // distance from center
+                    dX = (float)( x - (analogMask.x + analogMask.hWidth) );   // Distance from center along x-axis
+                    dY = (float)( (analogMask.y + analogMask.hHeight) - y );  // Distance from center along y-axis
+                    d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
-                    {  // inside the analog control
+                    {  // Inside the analog control
                         if( MenuSkinsTouchpadActivity.analogAsOctagon )
-                        {  // emulate the analog control as an octagon (like the real N64 controller)
+                        {  // Emulate the analog control as an octagon (like the real N64 controller)
                             Point crossPt = new Point();
                             float dC = analogMask.hWidth;
                             float dA = FloatMath.sqrt( (dC * dC) / 2.0f );
@@ -220,7 +220,7 @@ public class TouchPad
                             p = 0;
                         if( p > 1 )
                             p = 1;
-                        // from the N64 func ref: The 3D Stick data is of type signed char and in
+                        // From the N64 func ref: The 3D Stick data is of type signed char and in
                         // the range between 80 and -80. (32768 / 409 = ~80.1)
                         axisX = (int) ( (dX / d) * p * 80.0f );
                         axisY = (int) ( (dY / d) * p * 80.0f );
@@ -240,48 +240,48 @@ public class TouchPad
         GameActivityCommon.updateSDLButtonStates( SDLButtonPressed, SDLButtonCodes, SDLButtonCount );
     }
 
-    /*
+    /**
      * Determines which button was pressed based on the closest mask color.
      * TODO: Android is not precise: the color is different than it should be!)
      * @param color Color of the pixel that the user pressed.
      */
     protected void pressColor( int color )
     {
-        int closestMatch = 0;  // start with the first N64 button
-        int closestSDLButtonMatch = -1;  // disable this to start with
+        int closestMatch = 0;  // Start with the first N64 button
+        int closestSDLButtonMatch = -1;  // Disable this to start with
         int matchDif = Math.abs( maskColors[0] - color );
         int x, dif;
         for( x = 1; x < 18; x++ )
-        {  // go through the N64 button mask colors first
+        {  // Go through the N64 button mask colors first
             dif = Math.abs( maskColors[x] - color );
             if( dif < matchDif )
-            {  // this is a closer match
+            {  // This is a closer match
                 closestMatch = x;
                 matchDif = dif;
             }
         }
         for( x = 0; x < SDLButtonCount; x++ )
-        {  // now see if any of the SDL button mask colors are closer
+        {  // Now see if any of the SDL button mask colors are closer
             dif = Math.abs( SDLButtonMaskColors[x] - color );
             if( dif < matchDif )
-            {  // this is a closer match
+            {  // This is a closer match
                 closestSDLButtonMatch = x;
                 matchDif = dif;
             }
         }
 
         if( closestSDLButtonMatch > -1 )
-        {  // found an SDL button that matches the color
+        {  // Found an SDL button that matches the color
             SDLButtonPressed[closestSDLButtonMatch] = true;
         }
         else
-        {  // one of the N64 buttons matched the color
+        {  // One of the N64 buttons matched the color
             buttonPressed[closestMatch] = true;
             if( closestMatch < 14 )
-            {  // only 14 buttons in Mupen64Plus API
+            {  // Only 14 buttons in Mupen64Plus API
                 mp64pButtons[closestMatch] = true;
             }
-            // simulate the remaining buttons:
+            // Simulate the remaining buttons:
             else if( closestMatch == UpRight )
             {
                 mp64pButtons[Up] = true;
@@ -305,13 +305,13 @@ public class TouchPad
         }
     }
 
-    /*
+    /**
      * Loads the specifed touchpad skin
      * @param skin Name of the layout skin to load.
      */
     protected void loadPad( String skin )
     {
-        initialized = false;  // stop anything accessing settings while loading
+        initialized = false;  // Stop anything accessing settings while loading
         // Clear everything out to be re-populated with the new settings:
         name = "";
         version = "";
@@ -344,7 +344,7 @@ public class TouchPad
             mp64pButtons[i] = false;
 
         if( skin == null )
-            return;  // no skin was specified, so we are done.. quit
+            return;  // No skin was specified, so we are done.. quit
         // Load the configuration file (pad.ini):
         Config pad_ini = new Config( Globals.DataDir + "/skins/touchpads/" + skin + "/pad.ini" );
 
@@ -409,31 +409,31 @@ public class TouchPad
                 else if( param.contains( "scancode_" ) )
                 {
                     try
-                    {  // make sure a valid integer was used for the scancode
+                    {  // Make sure a valid integer was used for the scancode
                         SDLButtonCodes[SDLButtonCount] = Integer.valueOf( param.substring( 9, param.length() ) );
                         SDLButtonMaskColors[SDLButtonCount] = valI;
                         SDLButtonCount++;
                     }
                     catch( NumberFormatException nfe )
-                    {}  // skip it if this happens
+                    {}  // Skip it if this happens
                 }
             }
         }
         Set<String> mKeys = pad_ini.keySet();
         for ( String mKey : mKeys )
         {   // Loop through all the sections
-            filename = mKey;  // the rest of the sections are filenames
+            filename = mKey;  // The rest of the sections are filenames
             if ( filename != null && filename.length() > 0 &&
                     !filename.equals( "INFO" ) && !filename.equals( "MASK_COLOR" ) &&
                     !filename.equals( "[<sectionless!>]" ) )
-            {  // yep, its definitely a filename
+            {  // Yep, its definitely a filename
                 section = pad_ini.get( filename );
                 if ( section != null )
-                {  // process the parameters for this section
+                {  // Process the parameters for this section
                     val = section.get("info");  // what type of control
                     if ( val != null )
                     {
-                        val = val.toLowerCase();  // lets not make this part case-sensitive
+                        val = val.toLowerCase();  // Lets not make this part case-sensitive
                         if (val.contains( "analog" ) )
                         {  // Analog color mask image in BMP image format (doesn't actually get drawn)
                             analogMask = new Image( resources, Globals.DataDir + "/skins/touchpads/" +
@@ -481,7 +481,8 @@ public class TouchPad
         
         initialized = true;  // everything is loaded now
     }
-    /*
+    
+    /**
      * Determines if the two speciied line segments intersect with each other, and calculates
      * where the intersection occurs if they do.
      * @param seg1pt1_x X-coordinate for the first end of the first line segment.
@@ -529,7 +530,7 @@ public class TouchPad
     {
         public float x;
         public float y;
-        /*
+        /**
          * Constructor: Creates a new point at the origin
          */
         public Point()
@@ -547,7 +548,7 @@ public class TouchPad
         public int numPads = 0;
         public String[] padNames = new String[256];
 
-        /*
+        /**
          * Constructor: Reads in the list of touchpads
          * @param filename File containing the list of touchpads (typicaly touchpad_list.ini).
          */
@@ -593,7 +594,7 @@ public class TouchPad
         public int hWidth = 0;
         public int hHeight = 0;
 
-        /*
+        /**
          * Constructor: Loads an image file and sets the initial properties.
          * @param res Handle to the app resources.
          * @param filename Path to the image file.
@@ -610,7 +611,8 @@ public class TouchPad
             hHeight = (int) ((float)height / 2.0f);
             drawRect = new Rect();
         }
-        /*
+        
+        /**
          * Constructor: Creates a clone copy of another Image.
          * @param res Handle to the app resources.
          * @param clone Image to copy.
@@ -625,7 +627,8 @@ public class TouchPad
             hHeight = clone.hHeight;
             drawRect = new Rect();
         }
-        /*
+        
+        /**
          * Sets the screen position of the image (in pixels).
          * @param x X-coordinate.
          * @param y Y-coordinate.
@@ -637,7 +640,8 @@ public class TouchPad
             drawRect.set( x, y, x + width, y + height );
             drawable.setBounds( drawRect );
         }
-        /*
+        
+        /**
          * Centers the image at the specified coordinates, without going beyond the
          * specifed screen dimensions.
          * @param centerX X-coordinate to center the image at.
@@ -662,7 +666,8 @@ public class TouchPad
             drawRect.set( x, y, x + width, y + height );
             drawable.setBounds( drawRect );
         }
-        /*
+        
+        /**
          * Centers the image at the specified coordinates, without going beyond the
          * edges of the specifed rectangle.
          * @param centerX X-coordinate to center the image at.
@@ -689,7 +694,8 @@ public class TouchPad
             drawRect.set( x, y, x + width, y + height );
             drawable.setBounds( drawRect );
         }
-        /*
+        
+        /**
          * Draws the image.
          * @param canvas Canvas to draw the image on.
          */
