@@ -97,7 +97,7 @@ public class MenuSkinsTouchpadChangeActivity extends ListActivity implements IOp
         }
     }
 
-    /*
+    /**
      * Determines what to do, based on what option the user chose 
      * @param listView Used by Android.
      * @param view Used by Android.
@@ -110,7 +110,7 @@ public class MenuSkinsTouchpadChangeActivity extends ListActivity implements IOp
         super.onListItemClick( listView, view, position, id );
         MenuOption menuOption = optionArrayAdapter.getOption( position );
         if( menuOption.info.equals( "MenuSkinsTouchpadChangeImport" ) )
-        {  // open the file menu to choose a skin
+        {  // Open the file menu to choose a skin
             FileChooserActivity.startPath = Globals.StorageDir;
             FileChooserActivity.extensions = ".zip";
             FileChooserActivity.parentMenu = mInstance;

@@ -90,7 +90,8 @@ public class MenuSkinsGamepadActivity extends ListActivity
         optionArrayAdapter.insert( new MenuOption( "Change", chosenGamepad, "menuSkinsGamepadChange" ), 0 );
         MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", chosenGamepad );
     }
-    /*
+    
+    /**
      * Determines what to do, based on what option the user chose 
      * @param listView Used by Android.
      * @param view Used by Android.

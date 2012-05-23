@@ -142,7 +142,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                    opaque format", but how do we know which one?? */
                 break;
             default:
-                Log.v( "SDLSurface", "pixel format unknown " + format );
+                Log.v( "SDLSurface", "Pixel format unknown " + format );
                 break;
         }
         GameActivityCommon.onNativeResize( width, height, sdlFormat );

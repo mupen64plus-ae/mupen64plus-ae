@@ -303,7 +303,7 @@ public class TouchPad
     }
 
     /**
-     * Loads the specifed touchpad skin
+     * Loads the specified touchpad skin
      * @param skin Name of the layout skin to load.
      */
     protected void loadPad( String skin )
@@ -480,7 +480,7 @@ public class TouchPad
     }
     
     /**
-     * Determines if the two speciied line segments intersect with each other, and calculates
+     * Determines if the two specified line segments intersect with each other, and calculates
      * where the intersection occurs if they do.
      * @param seg1pt1_x X-coordinate for the first end of the first line segment.
      * @param seg1pt1_y Y-coordinate for the first end of the first line segment.
@@ -547,7 +547,7 @@ public class TouchPad
 
         /**
          * Constructor: Reads in the list of touchpads
-         * @param filename File containing the list of touchpads (typicaly touchpad_list.ini).
+         * @param filename File containing the list of touchpads (typically touchpad_list.ini).
          */
         public TouchPadListing( String filename )
         {
@@ -640,7 +640,7 @@ public class TouchPad
         
         /**
          * Centers the image at the specified coordinates, without going beyond the
-         * specifed screen dimensions.
+         * specified screen dimensions.
          * @param centerX X-coordinate to center the image at.
          * @param centerY Y-coordinate to center the image at.
          * @param screenW Horizontal screen dimension (in pixels).
@@ -666,7 +666,7 @@ public class TouchPad
         
         /**
          * Centers the image at the specified coordinates, without going beyond the
-         * edges of the specifed rectangle.
+         * edges of the specified rectangle.
          * @param centerX X-coordinate to center the image at.
          * @param centerY Y-coordinate to center the image at.
          * @param rectX X-coordinate of the bounding rectangle.
