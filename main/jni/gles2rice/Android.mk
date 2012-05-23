@@ -85,6 +85,7 @@ LOCAL_CFLAGS += -O3
 
 LOCAL_CFLAGS += -fvisibility=hidden
 LOCAL_CFLAGS += -fsigned-char
+LOCAL_CFLAGS += -fexceptions
 
 LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ver
 

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2002 Rice1964
+Copyright (C) 2002-2009 Rice1964
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -225,7 +225,8 @@ if( dwAddr > g_dwRamSize )
     }
 
 // Detect looping
-/*if(gDlistStackPointer>0 )
+    /*
+   if(gDlistStackPointer>0 )
    {
    for( int i=0; i<gDlistStackPointer; i++ )
        {
@@ -236,7 +237,8 @@ if( dwAddr > g_dwRamSize )
            return;
            }
        }
-    }*/
+    }
+    */
 
 if( gDlistStackPointer < MAX_DL_STACK_SIZE-1 )
     {
@@ -258,8 +260,8 @@ if( (dwCmd2>>24) == 0x80 )
     }
 
 DEBUGGER_PAUSE_AND_DUMP(NEXT_DLIST, 
-DebuggerAppendMsg("\nPC=%08X: Call DL at Address %08X - %08X, %08X\n\n", 
-dwPC, dwAddr, dwCmd2, dwCmd3));
+        DebuggerAppendMsg("\nPC=%08X: Call DL at Address %08X - %08X, %08X\n\n", dwPC, dwAddr, dwCmd2, dwCmd3)
+    );
 }
 
 void DLParser_Ucode8_JUMP(Gfx *gfx) // DL Function Call
@@ -411,10 +413,7 @@ else
     {
     #ifdef DEBUGGER
     if(pauseAtNext)
-        {
-        DebuggerAppendMsg("ucode 0xb4 at PC=%08X: 0x%08x 0x%08x\n", dwPC-8,
-        (gfx->words.w0), (gfx->words.w1));
-        }
+            DebuggerAppendMsg("ucode 0xb4 at PC=%08X: 0x%08x 0x%08x\n", dwPC-8, (gfx->words.cmd0), (gfx->words.cmd1));
     #endif
     DLParser_Unknown_Skip3(gfx);
     }
