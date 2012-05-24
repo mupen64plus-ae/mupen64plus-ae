@@ -144,8 +144,10 @@ void BLTZL(void)
     if(!skip_jump)
       PC += (PC-2)->f.i.immediate-1;
      }
-   else
+   else {
      PC+=2;
+     update_count();
+  }
    last_addr = PC->addr;
    if (next_interupt <= Count) gen_interupt();
 }
@@ -166,8 +168,10 @@ void BLTZL_OUT(void)
     if (!skip_jump)
       jump_to(PC->addr + ((jump_target-1)<<2));
      }
-   else
+   else {
      PC+=2;
+     update_count();
+  }
    last_addr = PC->addr;
    if (next_interupt <= Count) gen_interupt();
 }
@@ -200,8 +204,10 @@ void BGEZL(void)
     if(!skip_jump)
       PC += (PC-2)->f.i.immediate-1;
      }
-   else
+   else {
      PC+=2;
+     update_count();
+  }
    last_addr = PC->addr;
    if (next_interupt <= Count) gen_interupt();
 }
@@ -222,8 +228,10 @@ void BGEZL_OUT(void)
     if (!skip_jump)
       jump_to(PC->addr + ((jump_target-1)<<2));
      }
-   else
+   else {
      PC+=2;
+     update_count();
+  }
    last_addr = PC->addr;
    if (next_interupt <= Count) gen_interupt();
 }

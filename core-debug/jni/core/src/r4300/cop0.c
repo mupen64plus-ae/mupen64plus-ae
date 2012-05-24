@@ -34,6 +34,8 @@ void MFC0(void)
       case 1:
         DebugMessage(M64MSG_ERROR, "MFC0 instruction reading un-implemented Random register");
         stop=1;
+      case 9:    // Count
+    update_count();
       default:
         rrt32 = reg_cop0[PC->f.r.nrd];
         sign_extended(rrt);
@@ -100,9 +102,9 @@ void MTC0(void)
           set_fpr_pointers((unsigned int) rrt);
       }
       Status = (unsigned int) rrt;
+      update_count();
       PC++;
       check_interupt();
-      update_count();
       if (next_interupt <= Count) gen_interupt();
       PC--;
       break;

@@ -144,8 +144,31 @@ static int firstFrameBufferSetting;
 	int writerdram_count = 1;
 #endif
 
+/*
+void readmemorymaps()
+{
+  FILE *file;
+  file=fopen("/proc/self/maps","r");
+  if(file) {
+    char buffer[65536];
+    int size;
+    size=fread(buffer,1,65536,file);
+    fclose(file);
+    if(size>0)
+    {
+      file=fopen("./DEBUG_PluginTestA_memoryMaps.txt","w");
+      fwrite(buffer,1,size,file);
+      fclose(file);
+    }
+  }
+  else printf( "Error opening /proc/self/maps" );
+}
+*/
+
 int init_memory(int DoByteSwap)
 {
+//    readmemorymaps();
+
     int i;
 
     if (DoByteSwap != 0)
@@ -169,7 +192,22 @@ int init_memory(int DoByteSwap)
     }
 
     //init RDRAM
-    for (i=0; i<(0x800000/4); i++) rdram[i]=0;
+   if((int)rdram!=0x80000000)
+   {
+	   for (i=0; i<(0x800000/4); i++)
+	   {
+		   rdram[i]=0;
+	   }
+   }
+   else
+   {
+     munmap ((void*)0x80000000, 0x800000);
+     if(mmap ((void*)0x80000000, 0x800000,
+            PROT_READ | PROT_WRITE,
+            MAP_FIXED | MAP_PRIVATE | MAP_ANONYMOUS,
+            -1, 0) <= 0) {DebugMessage(M64MSG_ERROR, "mmap(0x80000000) failed\n");}
+   }
+
     for (i=0; i</*0x40*/0x80; i++)
     {
         readmem[(0x8000+i)] = read_rdram;
