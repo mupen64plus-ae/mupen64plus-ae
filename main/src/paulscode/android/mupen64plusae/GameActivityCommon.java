@@ -567,13 +567,13 @@ public class GameActivityCommon
     public static void loadNativeLibName( String libname )
     {
         Log.v( "GameActivityCommon", "Loading native library '" + libname + "'" );
-    	try
-    	{
-    	    System.loadLibrary( libname );
-    	}
-    	catch( UnsatisfiedLinkError e )
-    	{
-    	    Log.e( "GameActivityCommon", "Unable to load native library '" + libname + "'" );
-    	}
+        try
+        {
+            System.loadLibrary( libname );
+        }
+        catch( UnsatisfiedLinkError e )
+        {
+            Log.e( "GameActivityCommon", "Unable to load native library '" + libname + "'" );
+        }
     }
 }
