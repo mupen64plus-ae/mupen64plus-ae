@@ -10,6 +10,7 @@
     <string name="error_write">Write error (plugged in USB Mass Storage Device mode?) %s</string>
     <string name="failed_connecting_to">Failed connecting to %s</string>
     <string name="init">Initializing</string>
+    
     <!-- Manifest Strings -->
     <string name="manifest_settings">Settings</string>
     <string name="manifest_video_settings">Video Settings</string>
@@ -51,6 +52,7 @@
     <string name="language_norwegian">Norwegian</string>
     <string name="language_portuguese">Portuguese</string>
     <string name="language_spanish">Spanish</string>
+    
     <!-- Native Language Strings -->
     <string name="native_arabic">العربية</string>
     <string name="native_chinese">中國的</string>
@@ -72,7 +74,8 @@
     <string name="saving_game">Saving Game</string>
     <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com</string>
     <string name="app_data_inaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
-     <!-- In-Game Menu Strings -->
+     
+    <!-- In-Game Menu Strings -->
     <string name="ingame_menu">Menu</string>
     <string name="ingame_inc_slot">Slot++</string>
     <string name="ingame_save">Save</string>
@@ -128,7 +131,7 @@
     <string name="settings_virtual_gamepad">Virtual Gamepad</string>
     <string name="settings_config_virtual_gamepad">Configure the virtual gamepad</string>
     <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
-    <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
+    <string name="settings_xperia_play_only">ONLY enable this if your device is a Sony Ericsson Xperia Play</string>
     <string name="settings_touchpad">Touchpad</string>
     <string name="settings_config_touchpad">Configure the touchpad</string>
     <string name="settings_rsp">RSP</string>
