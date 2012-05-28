@@ -31,6 +31,7 @@ public class MenuSettingsLanguageActivity extends ListActivity
         optionList.add( new MenuOption( getString( R.string.native_croatian ), getString( R.string.language_croatian ), "hr" ) );
         optionList.add( new MenuOption( getString( R.string.native_dutch ), getString( R.string.language_dutch ), "nl" ) );
         optionList.add( new MenuOption( getString( R.string.native_english ), getString( R.string.language_english ), "en" ) );
+        optionList.add( new MenuOption( getString( R.string.native_french ), getString( R.string.language_french ), "fr") );
         optionList.add( new MenuOption( getString( R.string.native_german ), getString( R.string.language_german ), "de" ) );
         optionList.add( new MenuOption( getString( R.string.native_japanese ), getString( R.string.language_japanese ), "ja" ) );
         optionList.add( new MenuOption( getString( R.string.native_norwegian ), getString( R.string.language_norwegian ), "no" ) );
