@@ -141,7 +141,7 @@
     <string name="settings_restore_app_data">Restore App Data</string>
     <string name="settings_imports_will_be_lost">Imported plugins and textures will be lost!</string>
     <string name="settings_enable_auto_save">Enable Auto-Save</string>
-    <string name="settings_auto_save_game_on_exit">Automatically save game on exit</string>
+    <string name="settings_auto_save_game_on_exit">Automatically save games upon exit</string>
     <string name="settings_language">Language</string>
     <string name="settings_manually_change_language">Manually change the language</string>
     
