@@ -307,7 +307,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         {
             EGL10 egl = (EGL10) EGLContext.getEGL();
 
-            egl.eglWaitNative( EGL10.EGL_NATIVE_RENDERABLE, null );
+            egl.eglWaitNative( EGL10.EGL_CORE_NATIVE_ENGINE, null );
 
             // Drawing here
 
