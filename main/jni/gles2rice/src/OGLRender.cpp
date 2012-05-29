@@ -29,6 +29,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <ostream>
 #include <fstream>
 
+// JNI linkage:
+#include <jni.h>
+//// paulscode, added for logcat output:
+#include <android/log.h>
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "gles2rice (OGLRenderer)", __VA_ARGS__)
+////
+
+//// paulscode, added for different configurations based on hardware
+// (part of the missing shadows and stars bug fix)
+extern "C" int Android_JNI_GetHardwareType();
+// Must match the static final int's in Globals.java!
+#define HARDWARE_TYPE_UNKNOWN       0
+#define HARDWARE_TYPE_OMAP          1
+#define HARDWARE_TYPE_QUALCOMM      2
+#define HARDWARE_TYPE_IMAP          3
+#define HARDWARE_TYPE_TEGRA2        4
+///
+
 //#include "liblinux/BMGLibPNG.h"
 
 // Fix me, use OGL internal L/T and matrix stack
@@ -90,6 +108,10 @@ bool OGLRender::ClearDeviceObjects()
     return true;
 }
 
+//// paulscode, added for different configurations based on hardware
+// (part of the missing shadows and stars bug fix)
+static int hardwareType = HARDWARE_TYPE_UNKNOWN;
+////
 void OGLRender::Initialize(void)
 {
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
@@ -119,7 +141,7 @@ void OGLRender::Initialize(void)
 //        m_bSupportClampToEdge = false;
 //        OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
 //    }
-
+    hardwareType = Android_JNI_GetHardwareType();
 }
 //===================================================================
 TextureFilterMap OglTexFilterMap[2]=
@@ -256,8 +278,43 @@ void OGLRender::SetZUpdate(BOOL bZUpdate)
 
 void OGLRender::ApplyZBias(int bias)
 {
-    float f1 = bias > 0 ? -3.0f : 0.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
-    float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
+//    float f1 = bias > 0 ? -3.0f : 0.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
+//    float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
+    float f1, f2;
+    //// paulscode, added for different configurations based on hardware
+    // (part of the missing shadows and stars bug fix)
+    if( hardwareType == HARDWARE_TYPE_OMAP )
+    {
+        printf( "Using settings for hardware profile OMAP (0.2f, 0.2f)" );
+        f1 = bias > 0 ? 0.2f : 0.0f;
+        f2 = bias > 0 ? 0.2f : 0.0f;
+    }
+    else if( hardwareType == HARDWARE_TYPE_QUALCOMM )
+    {
+        printf( "Using settings for hardware profile QUALCOMM (-0.2f, -0.2f)" );
+        f1 = bias > 0 ? -0.2f : 0.0f;
+        f2 = bias > 0 ? -0.2f : 0.0f;
+    }
+    else if( hardwareType == HARDWARE_TYPE_IMAP )
+    {
+        printf( "Using settings for hardware profile IMAP (-0.001f, -0.001f)" );
+        f1 = bias > 0 ? -0.001f : 0.0f;
+        f2 = bias > 0 ? -0.001f : 0.0f;
+    }
+    else if( hardwareType == HARDWARE_TYPE_TEGRA2 )
+    {
+        printf( "Using settings for hardware profile TEGRA2 (-2.0f, -2.0f)" );
+        f1 = bias > 0 ? -2.0f : 0.0f;
+        f2 = bias > 0 ? -2.0f : 0.0f;
+    }
+    else  // HARDWARE_TYPE_UNKNOWN
+    {
+        printf( "Hardware profile not recognized, using default settings (-0.2f, -0.2f)" );
+        f1 = bias > 0 ? -0.2f : 0.0f;
+        f2 = bias > 0 ? -0.2f : 0.0f;
+    }
+    ////
+
     if (bias > 0)
     {
         glEnable(GL_POLYGON_OFFSET_FILL);  // enable z offsets
