@@ -412,7 +412,9 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
     unsigned char *Data = &Command[5];
 
     if (Control == -1)
+    {
         return;
+    }
 
     switch (Command[2])
     {
@@ -448,6 +450,9 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 #endif
             if (controller[Control].control->Plugin == PLUGIN_RAW)
             {
+
+printf( "RD_WRITEPAK, and control->Plugin is PLUGIN_RAW!" );
+
                 unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
               if (dwAddress == PAK_IO_RUMBLE && *Data)
                     DebugMessage(M64MSG_VERBOSE, "Triggering rumble pack.");
@@ -455,17 +460,24 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 //#ifdef ANDROID
                 if( dwAddress == PAK_IO_RUMBLE )
                 {
+printf( "dwAddress is PAK_IO_RUMBLE!" );
                     if( *Data )
                     {
+printf( "*Data exists! Vibrating..." );
                         DebugMessage( M64MSG_INFO, "Android, activating device vibrator" );
                         Android_JNI_Vibrate( 1 );
                     }
                     else
                     {
+printf( "*Data doesn't exist! Stopping Vibration..." );
                         DebugMessage( M64MSG_INFO, "Android, deactivating device vibrator" );
                         Android_JNI_Vibrate( 0 );
                     }
                 }
+else
+{
+printf( "dwAddress is not PAK_IO_RUMBLE" );
+}
 //#endif 
 
 #ifdef __linux__
@@ -496,6 +508,12 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
 #endif //__linux__
                 Data[32] = DataCRC( Data, 32 );
             }
+
+else
+{
+printf( "RD_WRITEPAK, but control->Plugin not PLUGIN_RAW" );
+}
+
             break;
         case RD_RESETCONTROLLER:
 #ifdef _DEBUG
