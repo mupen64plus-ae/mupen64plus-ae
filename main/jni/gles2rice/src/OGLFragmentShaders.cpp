@@ -39,7 +39,7 @@ const char *vertexShader =
 "                                                           \n"\
 "varying lowp float vFactor;                                \n"\
 "varying lowp vec4  vShadeColor;                            \n"\
-"varying lowp vec2 	vTexCoord0;                        		\n"\
+"varying mediump vec2 	vTexCoord0;                        		\n"\
 "varying lowp vec2 	vTexCoord1;                         	\n"\
 "varying lowp float	vFog;                                	\n"\
 "                                                           \n"\
@@ -74,7 +74,7 @@ const char *fragmentHeader =
 "                                                           \n"\
 "varying lowp float vFactor;                                \n"\
 "varying lowp vec4  vShadeColor;                            \n"\
-"varying lowp vec2  vTexCoord0;                             \n"\
+"varying mediump vec2  vTexCoord0;                             \n"\
 "varying lowp vec2  vTexCoord1;                             \n"\
 "varying lowp float vFog;                                   \n"\
 "                                                           \n"\
