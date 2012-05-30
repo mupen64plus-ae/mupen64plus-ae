@@ -14,7 +14,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
 
 // TODO: Comment thoroughly
-public class MenuSkinsGamepadActivity extends PreferenceActivity
+public class MenuSkinsGamepadActivity extends PreferenceActivity implements IOptionChooser
 {
     public static MenuSkinsGamepadActivity mInstance = null;
     public static String chosenGamepad = "";
@@ -128,8 +128,9 @@ public class MenuSkinsGamepadActivity extends PreferenceActivity
         });
     }
     
-    public void updateGamepadString()
+    public void optionChosen( String option )
     {
+        chosenGamepad = option;
         MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", chosenGamepad );
         
         // Update the summary description for the Change Layout setting when a different layout is chosen

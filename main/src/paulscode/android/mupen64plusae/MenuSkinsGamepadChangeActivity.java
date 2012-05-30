@@ -128,9 +128,8 @@ public class MenuSkinsGamepadChangeActivity extends ListActivity implements IOpt
         }
         else
         {
-            MenuSkinsGamepadActivity.chosenGamepad = menuOption.name;
             if( MenuSkinsGamepadActivity.mInstance != null )
-                MenuSkinsGamepadActivity.mInstance.updateGamepadString();
+                MenuSkinsGamepadActivity.mInstance.optionChosen( menuOption.name );
             mInstance.finish();
         }
     }

@@ -14,7 +14,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
 
 // TODO: Comment thoroughly
-public class MenuSkinsTouchpadActivity extends PreferenceActivity
+public class MenuSkinsTouchpadActivity extends PreferenceActivity implements IOptionChooser
 {
     public static MenuSkinsTouchpadActivity mInstance = null;
     public static String chosenTouchpad = "";
@@ -99,8 +99,9 @@ public class MenuSkinsTouchpadActivity extends PreferenceActivity
     }
     
     
-    public void updateTouchpadString()
+    public void optionChosen( String option )
     {
+        chosenTouchpad = option;
         MenuActivity.gui_cfg.put( "TOUCH_PAD", "which_pad", chosenTouchpad );
         
         // Update the summary description for the Change setting when a different layout is chosen

@@ -120,9 +120,8 @@ public class MenuSkinsTouchpadChangeActivity extends ListActivity implements IOp
         }
         else
         {
-            MenuSkinsTouchpadActivity.chosenTouchpad = menuOption.name;
             if( MenuSkinsTouchpadActivity.mInstance != null )
-                MenuSkinsTouchpadActivity.mInstance.updateTouchpadString();
+                MenuSkinsTouchpadActivity.mInstance.optionChosen( menuOption.name );
             mInstance.finish();
         }
     }
