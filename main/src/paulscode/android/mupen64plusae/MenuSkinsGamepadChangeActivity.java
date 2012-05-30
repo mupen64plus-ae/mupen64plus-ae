@@ -40,7 +40,6 @@ public class MenuSkinsGamepadChangeActivity extends ListActivity implements IOpt
             in = new DataInputStream( fstream );
             BufferedReader br = new BufferedReader( new InputStreamReader( in ) );
             String strLine;
-            int c = 0;
             while( ( strLine = br.readLine() ) != null )
             {
                 if( strLine.length() > 0 )
