@@ -10,7 +10,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -45,7 +44,7 @@ public class MenuSettingsVideoConfigureActivity extends PreferenceActivity imple
         //////// RICE PLUGIN SETTINGS ////////
         
         
-        // Enable Skip Frame Setting
+        // Enable Frameskip Setting
         final CheckBoxPreference settingsRiceSkipFrame = (CheckBoxPreference) findPreference( "menuSettingsVideoConfigureSkipFrame" );
         settingsRiceSkipFrame.setOnPreferenceClickListener( new OnPreferenceClickListener() {
             
