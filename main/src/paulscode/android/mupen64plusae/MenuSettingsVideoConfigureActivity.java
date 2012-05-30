@@ -195,6 +195,18 @@ public class MenuSettingsVideoConfigureActivity extends PreferenceActivity imple
                 return true;
             }
         });
+        
+        // 2xSai Texture Filter Setting
+        final CheckBoxPreference settingsVideo2xSai = (CheckBoxPreference) findPreference( "menuSettingsVideo2xSai" );
+        settingsVideo2xSai.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+                gles2n64_conf.put( "[<sectionless!>]", "texture 2xSAI", (settingsVideo2xSai.isChecked() ? "1" : "0") );
+                gles2n64_conf.save();
+                return true;
+            }
+        });
     }
  
     public void optionChosen( String option )

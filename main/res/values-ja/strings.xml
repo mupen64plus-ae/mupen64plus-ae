@@ -234,6 +234,8 @@
     <string name="video_disble_fr_spdhck">(スピードハックを取得する設定を無効)</string>
     <string name="video_hack_z">ハックZ</string>
     <string name="video_enble_fx_flshng_bckgrnd">(点滅している背景を修正するには、この設定を有効にします)</string>
+    <string name="video_2xsai_texture_filter">2xSaiテクスチャフィルタ</string>
+    <string name="video_2xsai_texture_filter_summary">2xSaiテクスチャフィルタの使用を有効/無効</string>
     
     <!-- 仮想ゲームパッド -->
     <string name="gamepad_virtual_gamepad">仮想ゲームパッド</string>
