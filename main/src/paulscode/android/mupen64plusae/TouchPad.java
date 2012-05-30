@@ -19,9 +19,9 @@ import android.util.Log;
 
 /**
  * The TouchPad class provides a customizable interface with the
- * Xperia Play touch pad.
+ * Xperia Play touchpad.
  *
- * Author: Paul Lamb
+ * @author: Paul Lamb
  * 
  * http://www.paulscode.com
  * 
