@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <Preference
+        android:key="menuSettingsRSPChange"
+        android:summary=""
+        android:title="@string/rsp_change_plug_in" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="menuSettingsRSPEnabled"
+        android:summary="@string/rsp_change_plug_in"
+        android:title="@string/rsp_plugin_enable" />
+
+</PreferenceScreen>

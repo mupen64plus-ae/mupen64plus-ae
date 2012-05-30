@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <Preference
+        android:key="menuSkinsGamepadChange"
+        android:summary=""
+        android:title="@string/gamepad_change_layout" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="menuSkinsGamepadRedraw"
+        android:summary="@string/gamepad_misbut_bug"
+        android:title="@string/gamepad_redraw_all" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="menuSkinsGamepadOctagon"
+        android:summary="@string/gamepad_analg_as_octgon"
+        android:title="@string/gamepad_accurate_n64_stick" />
+    
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="menuSkinsGamepadFPS"
+        android:summary="@string/gamepad_shw_frm_sec"
+        android:title="@string/gamepad_display_fps" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="menuSkinsGamepadEnabled"
+        android:summary="@string/gamepad_use_virt_gpad"
+        android:title="@string/gamepad_enable" />
+    
+</PreferenceScreen>

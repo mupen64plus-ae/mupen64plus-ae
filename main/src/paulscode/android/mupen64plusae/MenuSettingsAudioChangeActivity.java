@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
 // TODO: Comment thoroughly
-public class MenuSettingsAudioChangeActivity extends ListActivity implements IOptionChooser
+public class MenuSettingsAudioChangeActivity extends PreferenceActivity implements IOptionChooser
 {
     public static MenuSettingsAudioChangeActivity mInstance = null;
     private OptionArrayAdapter optionArrayAdapter;  // Array of menu options

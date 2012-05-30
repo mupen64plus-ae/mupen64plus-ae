@@ -244,7 +244,7 @@
     <string name="video_change">Change</string>
     <string name="video_import">Import…</string>
     <string name="video_add_new_video_plug_in">Add new video plug-in</string>
-    <string name="video_enable_skip_frame">Enable Skip Frame</string>
+    <string name="video_enable_skip_frame">Enable Frameskip</string>
     <string name="video_improve_speed_at_cst_fps">(improves speed at cost of FPS)</string>
     <string name="video_enable_fast_texture_crc">Enable Fast Texture CRC</string>
     <string name="video_disble_imprv_2d">(disabling improves 2D elements)</string>
@@ -268,6 +268,24 @@
     <string name="video_disble_fr_spdhck">(disable for speed hack, black textures)</string>
     <string name="video_hack_z">Hack Z</string>
     <string name="video_enble_fx_flshng_bckgrnd">(enable to fix flashing background)</string>
+    
+    <string-array name="video_gles2n64_frameskip_numbers">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    
+    <string-array name="video_gles2n64_frameskip_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
     
     <!-- Virtual Gamepad -->
     <string name="gamepad_virtual_gamepad">Virtual Gamepad</string>

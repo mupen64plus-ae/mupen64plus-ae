@@ -1,21 +1,17 @@
 package paulscode.android.mupen64plusae;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ListView;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.Preference.OnPreferenceClickListener;
 
 // TODO: Comment thoroughly
-public class MenuSettingsVideoActivity extends ListActivity implements IOptionChooser
+public class MenuSettingsVideoActivity extends PreferenceActivity implements IOptionChooser
 {
     public static MenuSettingsVideoActivity mInstance = null;
-    private OptionArrayAdapter optionArrayAdapter;  // Array of menu options
     public static String currentPlugin = "(none)";
-    public static boolean enabled = true;
     public static boolean rgba8888 = false;
 
     @Override
@@ -43,21 +39,63 @@ public class MenuSettingsVideoActivity extends ListActivity implements IOptionCh
                     currentPlugin = "(none)";
             }
         }
-        String en = MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "enabled" );
-        if( en != null )
-            enabled = en.equals( "1" ) ? true : false;
-        en = MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "rgba8888" );
-        if( en != null )
-            rgba8888 = en.equals( "1" ) ? true : false;
-
-        List<MenuOption>optionList = new ArrayList<MenuOption>();
-        optionList.add( new MenuOption( getString( R.string.video_change_plug_in ), currentPlugin, "menuSettingsVideoChange" ) );
-        optionList.add( new MenuOption( getString( R.string.video_configure ), getString( R.string.video_change_the_settings ), "menuSettingsVideoConfigure" ) );
-        optionList.add( new MenuOption( getString( R.string.video_rgba_8888_mode ), getString( R.string.video_improve_gfx_devices ), "menuSettingsVideoRGBA8888", rgba8888 ) );
-        optionList.add( new MenuOption( getString( R.string.video_enable ), getString( R.string.video_use_this_plug_in ), "menuSettingsVideoEnabled", enabled ) );
-
-        optionArrayAdapter = new OptionArrayAdapter( this, R.layout.menu_option, optionList );
-        setListAdapter( optionArrayAdapter );
+        
+        // Load preferences from XML
+        addPreferencesFromResource( R.layout.preferences_video );
+        
+        // Change Video Plugin Setting
+        final Preference settingsChangeVideo = findPreference( "menuSettingsVideoChange" );
+        settingsChangeVideo.setSummary( currentPlugin );
+        settingsChangeVideo.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+             // Open the menu to choose a plug-in
+                Intent intent = new Intent( mInstance, MenuSettingsVideoChangeActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
+        
+        // Configure Video Plugin Setting
+        final Preference settingsConfigureVideo = findPreference( "menuSettingsVideoConfigure" );
+        settingsConfigureVideo.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+                // Open the menu to configure video plug-ins
+                Intent intent = new Intent( mInstance, MenuSettingsVideoConfigureActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
+        
+        // RGBA-8888 Mode Setting
+        final CheckBoxPreference settingsVideoRGBA8888 = (CheckBoxPreference) findPreference( "menuSettingsVideoRGBA8888" );
+        settingsVideoRGBA8888.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+                rgba8888 = !rgba8888;
+                MenuActivity.gui_cfg.put( "VIDEO_PLUGIN", "rgba8888", (settingsVideoRGBA8888.isChecked() ? "1" : "0") );
+                return true;
+            }
+        });
+        
+        // Enable Plugin Setting
+        final CheckBoxPreference settingsVideoEnabled = (CheckBoxPreference) findPreference( "menuSettingsVideoEnabled" );
+        settingsVideoEnabled.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+                MenuActivity.gui_cfg.put( "VIDEO_PLUGIN", "enabled", (settingsVideoEnabled.isChecked() ? "1" : "0") );
+                MenuActivity.mupen64plus_cfg.put( "UI-Console", "VideoPlugin",
+                    (settingsVideoEnabled.isChecked() ? MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "last_choice" ) : "\"dummy\"") );
+                return true;
+            }
+        });
     }
 
     public void optionChosen( String option )
@@ -77,54 +115,10 @@ public class MenuSettingsVideoActivity extends ListActivity implements IOptionCh
             }
             else
                 currentPlugin = option;
-        }
-
-        optionArrayAdapter.remove( optionArrayAdapter.getItem( 0 ) );
-        optionArrayAdapter.insert( new MenuOption( getString( R.string.video_change ), currentPlugin, "menuSettingsVideoChange" ), 0 );
-    }
-
-    /**
-     * Determines what to do, based on what option the user chose 
-     * @param listView Used by Android.
-     * @param view Used by Android.
-     * @param position Which item the user chose.
-     * @param id Used by Android.
-     */
-    @Override
-    protected void onListItemClick( ListView listView, View view, int position, long id )
-    {
-        super.onListItemClick( listView, view, position, id );
-        MenuOption menuOption = optionArrayAdapter.getOption( position );
-        if( menuOption.info.equals( "menuSettingsVideoChange" ) )
-        {  // Open the menu to choose a plug-in
-            Intent intent = new Intent( mInstance, MenuSettingsVideoChangeActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuSettingsVideoConfigure" ) ) 
-        {
-            Intent intent = new Intent( mInstance, MenuSettingsVideoConfigureActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuSettingsVideoRGBA8888" ) ) 
-        {
-            rgba8888 = !rgba8888;
-            optionArrayAdapter.remove( menuOption );
-            optionArrayAdapter.insert( new MenuOption( getString( R.string.video_rgba_8888_mode ), 
-                    getString( R.string.video_improve_gfx_devices ), "menuSettingsVideoRGBA8888", rgba8888 ), position );
-            MenuActivity.gui_cfg.put( "VIDEO_PLUGIN", "rgba8888", (rgba8888 ? "1" : "0") );
-        }
-        else if( menuOption.info.equals( "menuSettingsVideoEnabled" ) ) 
-        {
-            enabled = !enabled;
-            optionArrayAdapter.remove( menuOption );
-            optionArrayAdapter.add( new MenuOption( getString( R.string.video_enable ), getString( R.string.video_use_this_plug_in )
-                    , "menuSettingsVideoEnabled", enabled ) );
-            MenuActivity.gui_cfg.put( "VIDEO_PLUGIN", "enabled", (enabled ? "1" : "0") );
-            MenuActivity.mupen64plus_cfg.put( "UI-Console", "VideoPlugin",
-                (enabled ? MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "last_choice" ) : "\"dummy\"") );
+            
+            // Remember to update the summary description if the .so plugin is changed
+            final Preference settingsChangeVideo = findPreference( "menuSettingsVideoChange" );
+            settingsChangeVideo.setSummary( currentPlugin );
         }
     }
 }
-

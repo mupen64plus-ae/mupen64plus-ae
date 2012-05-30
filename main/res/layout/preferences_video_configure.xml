@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <PreferenceCategory android:title="Rice Plugin">
+    
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="menuSettingsVideoConfigureSkipFrame"
+            android:summary="@string/video_improve_speed_at_cst_fps"
+            android:title="@string/video_enable_skip_frame" />
+        
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuSettingsVideoConfigureFastTextureCRC"
+            android:summary="@string/video_disble_imprv_2d"
+            android:title="@string/video_enable_fast_texture_crc" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="menuSettingsVideoConfigureFastTexture"
+            android:summary="@string/video_fixes_crcl_trnstions"
+            android:title="@string/video_enable_fast_texture_loading" />
+        
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuSettingsVideoConfigureUseHiResTextures"
+            android:summary="@string/video_use_imprtd_txtr_pcks"
+            android:title="@string/video_enable_hires_textures" />
+        
+        <Preference
+            android:dependency="menuSettingsVideoConfigureUseHiResTextures"
+            android:key="menuSettingsVideoConfigureImportHiResTextures"
+            android:summary="@string/video_apply_cust_txtr"
+            android:title="@string/video_imprt_txtr_pck_zip_fmt" />
+    
+    </PreferenceCategory>
+    
+    
+    <PreferenceCategory android:title="gles2N64 Plugin">
+        
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuSettingsVideoConfigureStretch"
+            android:summary="@string/video_may_skew"
+            android:title="@string/video_stretch_screen" />
+        
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuSettingsVideoConfigureAutoFrameskip"
+            android:summary="@string/video_auto_adjust"
+            android:title="@string/video_auto_frameskip" />
+        
+        
+        <ListPreference
+            android:defaultValue="3"
+            android:entries="@array/video_gles2n64_frameskip_numbers"
+            android:entryValues="@array/video_gles2n64_frameskip_values"
+            android:key="menuSettingsVideoConfigureMaxFrameskip"
+            android:summary="@string/video_disable_auto_fskip"
+            android:title="@string/video_max_frameskip" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="menuSettingsVideoConfigureFog"
+            android:summary="@string/video_need_work"
+            android:title="@string/video_enable_fog" />
+        
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuSettingsVideoConfigureScreenClear"
+            android:summary="@string/video_clrs_junk_grfx"
+            android:title="@string/video_force_screen_clear" />
+        
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuSettingsVideoConfigureAlpha"
+            android:summary="@string/video_disble_fr_spdhck"
+            android:title="@string/video_enable_alpha_test" />
+        
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuSettingsVideoConfigureHackZ"
+            android:summary="@string/video_enble_fx_flshng_bckgrnd"
+            android:title="@string/video_hack_z" />
+        
+    </PreferenceCategory>
+    
+</PreferenceScreen>

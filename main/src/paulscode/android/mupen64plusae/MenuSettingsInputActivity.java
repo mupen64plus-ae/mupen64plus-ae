@@ -1,21 +1,17 @@
 package paulscode.android.mupen64plusae;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ListView;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.Preference.OnPreferenceClickListener;
 
 // TODO: Comment thoroughly
-public class MenuSettingsInputActivity extends ListActivity implements IOptionChooser
+public class MenuSettingsInputActivity extends PreferenceActivity implements IOptionChooser
 {
     public static MenuSettingsInputActivity mInstance = null;
-    private OptionArrayAdapter optionArrayAdapter;  // Array of menu options
     public static String currentPlugin = "(none)";
-    public static boolean enabled = true;
 
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -24,11 +20,12 @@ public class MenuSettingsInputActivity extends ListActivity implements IOptionCh
         mInstance = this;
 
         Globals.checkLocale( this );
-
         currentPlugin = "(none)";
+        
         String filename = MenuActivity.mupen64plus_cfg.get( "UI-Console", "InputPlugin" );
         if( filename == null || filename.length() < 1 || filename.equals( "\"\"" ) || filename.equals( "\"dummy\"" ) )
             filename = MenuActivity.gui_cfg.get( "INPUT_PLUGIN", "last_choice" );
+        
         if( filename != null )
         {
             MenuActivity.gui_cfg.put( "INPUT_PLUGIN", "last_choice", filename );
@@ -41,17 +38,51 @@ public class MenuSettingsInputActivity extends ListActivity implements IOptionCh
                     currentPlugin = "(none)";
             }
         }
-        String en = MenuActivity.gui_cfg.get( "INPUT_PLUGIN", "enabled" );
-        if( en != null )
-            enabled = en.equals( "1" ) ? true : false;
-
-        List<MenuOption>optionList = new ArrayList<MenuOption>();
-        optionList.add( new MenuOption( getString( R.string.input_change_plug_in ), currentPlugin, "menuSettingsInputChange" ) );
-        optionList.add( new MenuOption( getString( R.string.input_map_buttons ), getString( R.string.input_map_ctrl_btns ), "menuSettingsInputConfigure" ) );
-        optionList.add( new MenuOption( getString( R.string.input_enable ), getString( R.string.input_use_this_plug_in ), "menuSettingsInputEnabled", enabled ) );
-
-        optionArrayAdapter = new OptionArrayAdapter( this, R.layout.menu_option, optionList );
-        setListAdapter( optionArrayAdapter );
+        
+        // Load preferences from XML
+        addPreferencesFromResource( R.layout.preferences_input );
+        
+        // Change Input Plugin Setting
+        final Preference settingsChangeInput = findPreference( "menuSettingsInputChange" );
+        settingsChangeInput.setSummary( currentPlugin );
+        settingsChangeInput.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+             // Open the menu to choose a plugin
+                Intent intent = new Intent( mInstance, MenuSettingsInputChangeActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
+        
+        // Map Buttons Setting
+        final Preference settingsInputConfigure = findPreference( "menuSettingsInputConfigure" );
+        settingsInputConfigure.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+             // Open the menu to choose a plugin
+                Intent intent = new Intent( mInstance, MenuSettingsInputConfigureActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
+        
+        // Enable Plugin Setting
+        final CheckBoxPreference settingsInputEnable = (CheckBoxPreference) findPreference( "menuSettingsInputEnabled" );
+        settingsInputEnable.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+                MenuActivity.gui_cfg.put( "INPUT_PLUGIN", "enabled", (settingsInputEnable.isChecked() ? "1" : "0") );
+                MenuActivity.mupen64plus_cfg.put( "UI-Console", "InputPlugin", (settingsInputEnable.isChecked() 
+                        ? MenuActivity.gui_cfg.get( "INPUT_PLUGIN", "last_choice" ) : "\"dummy\"") );
+                return true;
+            }
+        });
     }
 
     public void optionChosen( String option )
@@ -71,49 +102,10 @@ public class MenuSettingsInputActivity extends ListActivity implements IOptionCh
             }
             else
                 currentPlugin = option;
-        }
-
-        optionArrayAdapter.remove( optionArrayAdapter.getItem( 0 ) );
-        optionArrayAdapter.insert( new MenuOption( "Change", currentPlugin, "menuSettingsInputChange" ), 0 );
-    }
-    
-    /**
-     * Determines what to do, based on what option the user chose 
-     * @param listView Used by Android.
-     * @param view Used by Android.
-     * @param position Which item the user chose.
-     * @param id Used by Android.
-     */
-    @Override
-    protected void onListItemClick( ListView listView, View view, int position, long id )
-    {
-        super.onListItemClick( listView, view, position, id );
-        MenuOption menuOption = optionArrayAdapter.getOption( position );
-        if( menuOption.info.equals( "menuSettingsInputChange" ) )
-        {  // Open the menu to choose a plug-in
-            Intent intent = new Intent( mInstance, MenuSettingsInputChangeActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuSettingsInputConfigure" ) ) 
-        {
-            Intent intent = new Intent( mInstance, MenuSettingsInputConfigureActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuSettingsInputAdvanced" ) ) 
-        {
-            //TODO: implement
-        }
-        else if( menuOption.info.equals( "menuSettingsInputEnabled" ) ) 
-        {
-            enabled = !enabled;
-            optionArrayAdapter.remove( menuOption );
-            optionArrayAdapter.add( new MenuOption( getString( R.string.input_enable ), getString( R.string.input_use_this_plug_in ),
-                    "menuSettingsInputEnabled", enabled ) );
-            MenuActivity.gui_cfg.put( "INPUT_PLUGIN", "enabled", (enabled ? "1" : "0") );
-            MenuActivity.mupen64plus_cfg.put( "UI-Console", "InputPlugin",
-                (enabled ? MenuActivity.gui_cfg.get( "INPUT_PLUGIN", "last_choice" ) : "\"dummy\"") );
+            
+            // Make sure to update the summary description if the .so plugin is changed.
+            final Preference settingsChangeInput = findPreference( "menuSettingsInputChange" );
+            settingsChangeInput.setSummary( currentPlugin );
         }
     }
 }

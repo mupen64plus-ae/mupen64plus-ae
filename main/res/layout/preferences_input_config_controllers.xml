@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <Preference
+        android:key="menuSettingsInputConfigureController1"
+        android:summary="@string/input_map_ctrl_btns"
+        android:title="@string/input_map_ctrl_1_buttons" />
+    
+    <Preference
+        android:key="menuSettingsInputConfigureController2"
+        android:summary="@string/input_map_ctrl_btns"
+        android:title="@string/input_map_ctrl_2_buttons" />
+    
+    <Preference
+        android:key="menuSettingsInputConfigureController3"
+        android:summary="@string/input_map_ctrl_btns"
+        android:title="@string/input_map_ctrl_3_buttons" />
+    
+    <Preference
+        android:key="menuSettingsInputConfigureController4"
+        android:summary="@string/input_map_ctrl_btns"
+        android:title="@string/input_map_ctrl_4_buttons" />
+    
+    <Preference
+        android:key="menuSettingsInputConfigureCoreFunctions"
+        android:summary="@string/input_map_core_funcs_buttons"
+        android:title="@string/input_special_buttons" />
+
+</PreferenceScreen>

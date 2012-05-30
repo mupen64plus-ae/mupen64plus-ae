@@ -1,33 +1,39 @@
 package paulscode.android.mupen64plusae;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ListView;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
 
 // TODO: Comment thoroughly
-public class MenuSettingsCoreActivity extends ListActivity implements IOptionChooser
+public class MenuSettingsCoreActivity extends PreferenceActivity implements IOptionChooser
 {
     public static MenuSettingsCoreActivity mInstance = null;
-    private OptionArrayAdapter optionArrayAdapter;  // Array of menu options
 
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
         mInstance = this;
-
         Globals.checkLocale( this );
-
-        List<MenuOption>optionList = new ArrayList<MenuOption>();
-        optionList.add( new MenuOption( getString( R.string.core_change_core ), getString( R.string.core_choose_another_core ), "menuSettingsCoreChange" ) );
-
-        optionArrayAdapter = new OptionArrayAdapter( this, R.layout.menu_option, optionList );
-        setListAdapter( optionArrayAdapter );
+        
+        // Load preferences from XML
+        addPreferencesFromResource( R.layout.preferences_core );
+        
+        // Change Core setting
+        final Preference settingsChangeCore = findPreference( "menuSettingsCoreChanged" );
+        settingsChangeCore.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+             // Open the menu to choose a core
+                Intent intent = new Intent( mInstance, MenuSettingsCoreChangeActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
     }
 
     public void optionChosen( String option )
@@ -50,29 +56,6 @@ public class MenuSettingsCoreActivity extends ListActivity implements IOptionCho
             else
                 currentPlugin = option;
         }
-
-        optionArrayAdapter.remove( optionArrayAdapter.getItem( 0 ) );
-        optionArrayAdapter.insert( new MenuOption( "Change", currentPlugin, "menuSettingsVideoChange" ), 0 );
 */
-    }
-
-    /**
-     * Determines what to do, based on what option the user chose 
-     * @param listView Used by Android.
-     * @param view Used by Android.
-     * @param position Which item the user chose.
-     * @param id Used by Android.
-     */
-    @Override
-    protected void onListItemClick( ListView listView, View view, int position, long id )
-    {
-        super.onListItemClick( listView, view, position, id );
-        MenuOption menuOption = optionArrayAdapter.getOption( position );
-        if( menuOption.info.equals( "menuSettingsCoreChange" ) )
-        {  // Open the menu to choose a core
-            Intent intent = new Intent( mInstance, MenuSettingsCoreChangeActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
     }
 }

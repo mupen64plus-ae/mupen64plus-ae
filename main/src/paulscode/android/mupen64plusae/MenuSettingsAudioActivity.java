@@ -1,21 +1,20 @@
 package paulscode.android.mupen64plusae;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ListView;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceActivity;
+import android.preference.Preference.OnPreferenceClickListener;
 
 // TODO: Comment thoroughly
-public class MenuSettingsAudioActivity extends ListActivity implements IOptionChooser
+public class MenuSettingsAudioActivity extends PreferenceActivity implements IOptionChooser
 {
     public static MenuSettingsAudioActivity mInstance = null;
-    private OptionArrayAdapter optionArrayAdapter;  // Array of menu options
     public static String currentPlugin = "(none)";
-    public static boolean enabled = true;
 
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -42,20 +41,37 @@ public class MenuSettingsAudioActivity extends ListActivity implements IOptionCh
                     currentPlugin = "(none)";
             }
         }
-        String en = MenuActivity.gui_cfg.get( "AUDIO_PLUGIN", "enabled" );
-        if( en != null )
-            enabled = en.equals( "1" ) ? true : false;
-
-        List<MenuOption>optionList = new ArrayList<MenuOption>();
-        optionList.add( new MenuOption( getString( R.string.audio_change_plug_in ), currentPlugin, "menuSettingsAudioChange" ) );
         
-        optionList.add( new MenuOption( getString( R.string.audio_enable ), 
-                getString( R.string.audio_use_plgin ), "menuSettingsAudioEnabled", enabled ) );
-
-        optionArrayAdapter = new OptionArrayAdapter( this, R.layout.menu_option, optionList );
-        setListAdapter( optionArrayAdapter );
+        // Load preferences from XML
+        addPreferencesFromResource( R.layout.preferences_audio );
+        
+        final Preference settingsAudioChange = findPreference( "menuSettingsAudioChange" );
+        settingsAudioChange.setSummary( currentPlugin );
+        settingsAudioChange.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+                Intent intent = new Intent( mInstance, MenuSettingsAudioChangeActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
+        
+        
+        // Enable Plugin setting
+        final CheckBoxPreference settingsEnableAudio = (CheckBoxPreference) findPreference( "menuSettingsAudioEnabled" );
+        settingsEnableAudio.setOnPreferenceClickListener( new OnPreferenceClickListener() {
+            
+            public boolean onPreferenceClick( Preference preference )
+            {
+                MenuActivity.gui_cfg.put( "AUDIO_PLUGIN", "enabled", (settingsEnableAudio.isChecked() ? "1" : "0") );
+                MenuActivity.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", (settingsEnableAudio.isChecked() ? MenuActivity.gui_cfg.get( "AUDIO_PLUGIN", "last_choice" ) : "\"dummy\"") );
+                return true;
+            }
+        });
     }
-
+    
     public void optionChosen( String option )
     {
         currentPlugin = "(none)";
@@ -73,39 +89,10 @@ public class MenuSettingsAudioActivity extends ListActivity implements IOptionCh
             }
             else
                 currentPlugin = option;
-        }
-
-        optionArrayAdapter.remove( optionArrayAdapter.getItem( 0 ) );
-        optionArrayAdapter.insert( new MenuOption( getString( R.string.audio_change ), currentPlugin, "menuSettingsAudioChange" ), 0 );
-    }
-    
-    /**
-     * Determines what to do, based on what option the user chose 
-     * @param listView Used by Android.
-     * @param view Used by Android.
-     * @param position Which item the user chose.
-     * @param id Used by Android.
-     */
-    @Override
-    protected void onListItemClick( ListView listView, View view, int position, long id )
-    {
-        super.onListItemClick( listView, view, position, id );
-        MenuOption menuOption = optionArrayAdapter.getOption( position );
-        if( menuOption.info.equals( "menuSettingsAudioChange" ) )
-        {  // Open the menu to choose a plug-in
-            Intent intent = new Intent( mInstance, MenuSettingsAudioChangeActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuSettingsAudioEnabled" ) ) 
-        {
-            enabled = !enabled;
-            optionArrayAdapter.remove( menuOption );
-            optionArrayAdapter.add( new MenuOption( getString( R.string.audio_enable ), getString( R.string.audio_use_plgin ), "menuSettingsAudioEnabled",
-                                                    enabled ) );
-            MenuActivity.gui_cfg.put( "AUDIO_PLUGIN", "enabled", (enabled ? "1" : "0") );
-            MenuActivity.mupen64plus_cfg.put( "UI-Console", "AudioPlugin",
-                (enabled ? MenuActivity.gui_cfg.get( "AUDIO_PLUGIN", "last_choice" ) : "\"dummy\"") );
+            
+            // Make sure to update the summary description if the .so plugin is changed
+            final Preference settingsAudioChange = findPreference( "menuSettingsAudioChange" );
+            settingsAudioChange.setSummary( currentPlugin );
         }
     }
 }

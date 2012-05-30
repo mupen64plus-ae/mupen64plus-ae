@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <Preference
+        android:key="menuSettingsVideoChange"
+        android:summary=""
+        android:title="@string/video_change_plug_in" />
+    
+    <Preference
+        android:key="menuSettingsVideoConfigure"
+        android:summary="@string/video_change_the_settings"
+        android:title="@string/video_configure" />
+    
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="menuSettingsVideoRGBA8888"
+        android:summary="@string/video_improve_gfx_devices"
+        android:title="@string/video_rgba_8888_mode" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="menuSettingsVideoEnabled"
+        android:summary="@string/video_use_this_plug_in"
+        android:title="@string/video_enable" />
+
+</PreferenceScreen>
