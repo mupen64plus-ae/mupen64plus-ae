@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mupen64 Plus, AE</string>
+    <string name="app_name">Mupen64 Plus</string>
     <string name="connecting_to">Connecting to %s</string>
     <string name="dl_finished">Finished</string>
     <string name="dl_from">Downloading data from %s</string>

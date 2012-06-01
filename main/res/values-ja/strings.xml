@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mupen64 Plus, AE</string>
     <string name="connecting_to">%sへの接続</string>
     <string name="dl_finished">完成した</string>
     <string name="dl_from">%sからデータをダウンロードします</string>
