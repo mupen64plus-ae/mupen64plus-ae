@@ -223,7 +223,7 @@ class Config
             FileWriter fw = new FileWriter( filename );  // For writing to the config file
             ListIterator<ConfigSection> iter = configList.listIterator( 0 );
             ConfigSection section;
-            String title;
+
             while( iter.hasNext() )
             {   // Loop through the sections
                 section = iter.next();

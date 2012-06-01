@@ -150,13 +150,13 @@
     <string name="audio_enable">Aktiver</string>
     <string name="audio_use_plgin">Bruk denne tilleggsmodulen</string>
     <string name="audio_change_plug_in">Velg tilleggsmodul (for lyd)</string>
-    <string name="audio_import">Importer...</string>
+    <string name="audio_import">Importer…</string>
     <string name="audio_new_plgin">Legg til ny tilleggsmodul for lyd</string>
     
     <!-- Core Library -->
     <string name="core_change_core">Bytt kjerne</string>
     <string name="core_choose_another_core">Velg en annen kjerne</string>
-    <string name="core_import">Importer...</string>
+    <string name="core_import">Importer…</string>
     <string name="core_new_plgin">Legg til ny kjerne</string>
     <string name="core_stop">Stopp</string>
     <string name="core_save_state">Lagre tilstand</string>
@@ -183,7 +183,7 @@
     <string name="input_map_ctrl_4_buttons">Tilordne knapper på kontroller 4</string>
     <string name="input_special_buttons">Spesialknapper</string>
     <string name="input_map_core_funcs_buttons">Tilordne kjernefunksjoner til knapper</string>
-    <string name="input_import">Importer...</string>
+    <string name="input_import">Importer…</string>
     <string name="input_new_plgin">Legg til ny tilleggsmodul for inndata</string>
     <string name="input_change_plug_in">Velg tilleggsmodul (for inndata)</string>
     <string name="input_map_buttons">Knappetilordninger</string>
@@ -226,7 +226,7 @@
     <string name="rsp_plugin_enable">Aktiver</string>
     <string name="rsp_use_this_plug_in">Bruk denne tilleggsmodulen</string>
     <string name="rsp_change">Velg tilleggsmodul</string>
-    <string name="rsp_import">Importer...</string>
+    <string name="rsp_import">Importer…</string>
     <string name="rsp_new_plgin">Legg til ny tilleggsmodul for RSP</string>
     
     <!-- Video Plugin -->
@@ -238,7 +238,7 @@
     <string name="video_enable">Aktiver</string>
     <string name="video_use_this_plug_in">Bruk denne tilleggsmodulen</string>
     <string name="video_change">Velg tilleggsmodul</string>
-    <string name="video_import">Importer...</string>
+    <string name="video_import">Importer…</string>
     <string name="video_add_new_video_plug_in">Legg til ny tilleggsmodul for grafikk</string>
     <string name="video_enable_skip_frame">Tillat å hoppe over bilder</string>
     <string name="video_improve_speed_at_cst_fps">(Forbedrer hastighet på bekostning av FPS)</string>
@@ -279,14 +279,14 @@
     <string name="gamepad_shw_frm_sec">Vis antall bilder per sekund</string>
     <string name="gamepad_enable">Aktiver</string>
     <string name="gamepad_use_virt_gpad">Bruk den virtuelle styreenheten</string>
-    <string name="gamepad_import">Importer...</string>
+    <string name="gamepad_import">Importer…</string>
     <string name="gamepad_new_skin">Legg til ny tilleggsmodul for virtuell styreenhet</string>
 
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">Change</string>
     <string name="touchpad_enable">Aktiver</string>
     <string name="touchpad_use_touchpad">use the touchpad</string>
-    <string name="touchpad_import">Importer...</string>
+    <string name="touchpad_import">Importer…</string>
     <string name="touchpad_add_new">add new touchpad skin</string>
 
     <!-- Dialog Strings -->

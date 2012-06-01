@@ -308,7 +308,7 @@
     <string name="touchpad_change">Change</string>
     <string name="touchpad_enable">Enable</string>
     <string name="touchpad_use_touchpad">Use the touchpad</string>
-    <string name="touchpad_import">Import...</string>
+    <string name="touchpad_import">Import…</string>
     <string name="touchpad_add_new">Add new touchpad skin</string>
 
     <!-- Dialog Strings -->

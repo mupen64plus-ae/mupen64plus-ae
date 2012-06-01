@@ -265,7 +265,7 @@
     <string name="touchpad_change">Changer</string>
     <string name="touchpad_enable">Activer</string>
     <string name="touchpad_use_touchpad">Utiliser le touchpad</string>
-    <string name="touchpad_import">Importer...</string>
+    <string name="touchpad_import">Importer…</string>
     <string name="touchpad_add_new">Ajouter une nouvelle apparence pour la manette virtuelle</string>
 
     <!-- Dialog Strings -->

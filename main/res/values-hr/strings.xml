@@ -150,13 +150,13 @@
     <string name="audio_enable">Ukljuèi</string>
     <string name="audio_use_plgin">koristi ovaj dodatak</string>
     <string name="audio_change_plug_in">Promjeni Dodatak</string>
-    <string name="audio_import">Uvoz...</string>
+    <string name="audio_import">Uvoz…</string>
     <string name="audio_new_plgin">dodaj novi zvuèni dodatak</string>
     
     <!-- Core Library -->
     <string name="core_change_core">Promjeni Jezgru</string>
     <string name="core_choose_another_core">odaberi drugu jezgru</string>
-    <string name="core_import">Uvoz...</string>
+    <string name="core_import">Uvoz…</string>
     <string name="core_new_plgin">add new core</string>
     <string name="core_stop">Zaustavi</string>
     <string name="core_save_state">Spremi Trenutno Stanje</string>
@@ -183,7 +183,7 @@
     <string name="input_map_ctrl_4_buttons">podesi tipke joysticka 4</string>
     <string name="input_special_buttons">Specijalne Tipke</string>
     <string name="input_map_core_funcs_buttons">podesi glavne funkcije na tipke</string>
-    <string name="input_import">Uvoz...</string>
+    <string name="input_import">Uvoz…</string>
     <string name="input_new_plgin">dodaj novi joystick dodatak</string>
     <string name="input_change_plug_in">Promjeni Dodatak</string>
     <string name="input_map_buttons">Podeavanje Hardverskih Tipki</string>
@@ -226,7 +226,7 @@
     <string name="rsp_plugin_enable">Ukljuèi</string>
     <string name="rsp_use_this_plug_in">koristi ovaj dodatak</string>
     <string name="rsp_change">Change</string>
-    <string name="rsp_import">Uvoz...</string>
+    <string name="rsp_import">Uvoz…</string>
     <string name="rsp_new_plgin">dodaj novi RSP dodatak</string>
     
     <!-- Video Plugin -->
@@ -238,7 +238,7 @@
     <string name="video_enable">Ukljuèi</string>
     <string name="video_use_this_plug_in">koristi ovaj dodatak</string>
     <string name="video_change">Change</string>
-    <string name="video_import">Uvoz...</string>
+    <string name="video_import">Uvoz…</string>
     <string name="video_add_new_video_plug_in">dodaj novi grafièki dodatak</string>
     <string name="video_enable_skip_frame">Ukljuèi Preskakanje Slièica (FPS)</string>
     <string name="video_improve_speed_at_cst_fps">(poveæava brzinu, ali smanjuje FPS)</string>
@@ -279,14 +279,14 @@
     <string name="gamepad_shw_frm_sec">prikai broj slièica u sekundi</string>
     <string name="gamepad_enable">Ukljuèi</string>
     <string name="gamepad_use_virt_gpad">koristi virtualni joystick</string>
-    <string name="gamepad_import">Uvoz...</string>
+    <string name="gamepad_import">Uvoz…</string>
     <string name="gamepad_new_skin">dodaj novi izgled za joystick</string>
 
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">Change</string>
     <string name="touchpad_enable">Ukljuèi</string>
     <string name="touchpad_use_touchpad">use the touchpad</string>
-    <string name="touchpad_import">Uvoz...</string>
+    <string name="touchpad_import">Uvoz…</string>
     <string name="touchpad_add_new">add new touchpad skin</string>
 
     <!-- Dialog Strings -->

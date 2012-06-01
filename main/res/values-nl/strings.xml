@@ -150,13 +150,13 @@
     <string name="audio_enable">Inschakelen</string>
     <string name="audio_use_plgin">Gebruik deze plug-in</string>
     <string name="audio_change_plug_in">Verander plug-in</string>
-    <string name="audio_import">Importeren...</string>
+    <string name="audio_import">Importeren…</string>
     <string name="audio_new_plgin">Nieuwe geluidsplug-in toevoegen</string>
     
     <!-- Core Library -->
     <string name="core_change_core">Kern veranderen</string>
     <string name="core_choose_another_core">Andere kern kiezen</string>
-    <string name="core_import">Importeren...</string>
+    <string name="core_import">Importeren…</string>
     <string name="core_new_plgin">add new core</string>
     <string name="core_stop">Stop</string>
     <string name="core_save_state">Spel opslaan</string>
@@ -183,7 +183,7 @@
     <string name="input_map_ctrl_4_buttons">Controller 4 knoppen toewijzen</string>
     <string name="input_special_buttons">Speciale knoppen</string>
     <string name="input_map_core_funcs_buttons">Kernfuncties toewijzen aan knoppen</string>
-    <string name="input_import">Importeren...</string>
+    <string name="input_import">Importeren…</string>
     <string name="input_new_plgin">add new input plug-in</string>
     <string name="input_change_plug_in">Verander plug-in</string>
     <string name="input_map_buttons">Map Buttons</string>
@@ -226,7 +226,7 @@
     <string name="rsp_plugin_enable">Inschakelen</string>
     <string name="rsp_use_this_plug_in">Gebruik deze plug-in</string>
     <string name="rsp_change">Change</string>
-    <string name="rsp_import">Importeren...</string>
+    <string name="rsp_import">Importeren…</string>
     <string name="rsp_new_plgin">add new RSP plug-in</string>
     
     <!-- Video Plugin -->
@@ -238,7 +238,7 @@
     <string name="video_enable">Inschakelen</string>
     <string name="video_use_this_plug_in">Gebruik deze plug-in</string>
     <string name="video_change">Change</string>
-    <string name="video_import">Importeren...</string>
+    <string name="video_import">Importeren…</string>
     <string name="video_add_new_video_plug_in">Nieuwe video-plug-in toevoegen</string>
     <string name="video_enable_skip_frame">Enable Skip Frame</string>
     <string name="video_improve_speed_at_cst_fps">(improves speed at cost of FPS)</string>
@@ -279,14 +279,14 @@
     <string name="gamepad_shw_frm_sec">show the frames-per-second</string>
     <string name="gamepad_enable">Inschakelen</string>
     <string name="gamepad_use_virt_gpad">Virtuele controller gebruiken</string>
-    <string name="gamepad_import">Importeren...</string>
+    <string name="gamepad_import">Importeren…</string>
     <string name="gamepad_new_skin">Nieuwe skin toevoegen</string>
 
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">Change</string>
     <string name="touchpad_enable">Inschakelen</string>
     <string name="touchpad_use_touchpad">use the touchpad</string>
-    <string name="touchpad_import">Importeren...</string>
+    <string name="touchpad_import">Importeren…</string>
     <string name="touchpad_add_new">add new touchpad skin</string>
 
     <!-- Dialog Strings -->

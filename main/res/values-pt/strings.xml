@@ -144,13 +144,13 @@
     <string name="audio_enable">Ativar</string>
     <string name="audio_use_plgin">utilizar este plugin</string>
     <string name="audio_change_plug_in">Mudar Plugin</string>
-    <string name="audio_import">Importar...</string>
+    <string name="audio_import">Importar…</string>
     <string name="audio_new_plgin">adicionar novo plugin de áudio</string>
     
     <!-- Core Library -->
     <string name="core_change_core">Alterar Núcleo</string>
     <string name="core_choose_another_core">escolher outro núcleo</string>
-    <string name="core_import">Importar...</string>
+    <string name="core_import">Importar…</string>
     <string name="core_new_plgin">adicionar novo núcleo</string>
     <string name="core_stop">Parar</string>
     <string name="core_save_state">Guardar Jogo</string>
@@ -177,7 +177,7 @@
     <string name="input_map_ctrl_4_buttons">configurar os botões do controlador 4</string>
     <string name="input_special_buttons">Botões Especiais</string>
     <string name="input_map_core_funcs_buttons">atribuir funções do núcleo a botões</string>
-    <string name="input_import">Importar...</string>
+    <string name="input_import">Importar…</string>
     <string name="input_new_plgin">adicionar novo plugin de controlador</string>
     <string name="input_change_plug_in">Mudar Plugin</string>
     <string name="input_map_buttons">Configurar Botões</string>
@@ -220,7 +220,7 @@
     <string name="rsp_plugin_enable">Ativar</string>
     <string name="rsp_use_this_plug_in">Utilizar este plugin</string>
     <string name="rsp_change">Mudar</string>
-    <string name="rsp_import">Importar...</string>
+    <string name="rsp_import">Importar…</string>
     <string name="rsp_new_plgin">Adicionar novo plugin RSP</string>
     
     <!-- Video Plugin -->
@@ -232,7 +232,7 @@
     <string name="video_enable">Ativar</string>
     <string name="video_use_this_plug_in">Utilizar este plugin</string>
     <string name="video_change">Mudar</string>
-    <string name="video_import">Importar...</string>
+    <string name="video_import">Importar…</string>
     <string name="video_add_new_video_plug_in">Adicionar novo plugin de vídeo</string>
     <string name="video_enable_skip_frame">Ativar FrameSkip</string>
     <string name="video_improve_speed_at_cst_fps">(melhora a velocidade à custa de FPS)</string>
@@ -273,14 +273,14 @@
     <string name="gamepad_shw_frm_sec">mostrar as frames-por-segundo</string>
     <string name="gamepad_enable">Ativar</string>
     <string name="gamepad_use_virt_gpad">utilizar o joystick virtual</string>
-    <string name="gamepad_import">Importar...</string>
+    <string name="gamepad_import">Importar…</string>
     <string name="gamepad_new_skin">adicionar nova skin para o joystick</string>
 
     <!-- Xperia Play Touchpad -->
     <string name="touchpad_change">Mudar</string>
     <string name="touchpad_enable">Ativar</string>
     <string name="touchpad_use_touchpad">utilizar o touchpad</string>
-    <string name="touchpad_import">Importar...</string>
+    <string name="touchpad_import">Importar…</string>
     <string name="touchpad_add_new">adicionar nova skin para o touchpad</string>
 
     <!-- Dialog Strings -->
