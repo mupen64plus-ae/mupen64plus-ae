@@ -269,6 +269,7 @@ targets:
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1       == add debugging symbols"
 	@echo "    PLUGINDBG=1   == print extra debugging information while running"
+	@echo "    LTO=1         == enable experimental build with link-time optimization"
 	@echo "    V=1           == show verbose compiler output"
 
 all: $(TARGET)
@@ -287,6 +288,11 @@ clean:
 	$(RM) -r ./_obj $(TARGET)
 
 rebuild: clean all
+
+ifeq ($(LTO), 1)
+  CFLAGS += -flto
+  LDFLAGS += -fuse-linker-plugin $(CFLAGS)
+endif
 
 # standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
