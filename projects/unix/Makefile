@@ -249,6 +249,7 @@ targets:
 	@echo "    DESTDIR=path  == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1       == add debugging symbols"
+	@echo "    LTO=1         == enable experimental build with link-time optimization"
 	@echo "    V=1           == show verbose compiler output"
 
 all: $(TARGET)
@@ -270,6 +271,11 @@ CFLAGS += -MD
 -include $(OBJECTS:.o=.d)
 
 CXXFLAGS += $(CFLAGS)
+ifeq ($(LTO), 1)
+  CFLAGS += -flto
+  CXXFLAGS += -flto
+  LDFLAGS += -fuse-linker-plugin $(CXXFLAGS)
+endif
 
 # standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
