@@ -83,7 +83,10 @@ guide=KEY_ESC
 x2^deadzone:27000
 y2^deadzone:27000
 
-8. Default Keyboard interface:
+8. Saitek Cyborg V.3 Rumble Pad (aka Saitek PS2700)
+Honestly, it's one of the best pads that I've used in a long time, so thought I'd contribute this quick config. Basically, Dpad and Analog sticks are unchanged, C-buttons are mapped to the right analog stick, L-R triggers are L1 and R1, Z is mapped to R2, A + B are mapped to X and Square, respectively, start is mapped to the Home button, and Triangle, Square, L2, Start, Select, and the Analog triggers are unused, since it's not intuitive to use them for what's left.
+
+9. Default Keyboard interface:
 Analog Pad is "Arrow Keys"
 C Up/Left/Down/Right are "I", "J", "K", "L"
 DPad Up/Left/Down/Right are "W", "A", "S", "D"
