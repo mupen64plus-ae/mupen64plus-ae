@@ -54,7 +54,7 @@ long long int reg[32], hi, lo;
 unsigned int reg_cop0[32];
 #endif
 long long int local_rs, local_rt;
-int local_rs32, local_rt32;
+int local_rs32;
 unsigned int jump_target;
 #if defined(NO_ASM) || !defined(__arm__)
 float *reg_cop1_simple[32];

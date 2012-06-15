@@ -20,7 +20,6 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/main/adler32.c \
 	$(SRCDIR)/main/md5.c \
 	$(SRCDIR)/main/rom.c \
-	$(SRCDIR)/main/ini_reader.c \
 	$(SRCDIR)/main/savestates.c \
 	$(SRCDIR)/main/zip-1.99.4/ioapi.c \
 	$(SRCDIR)/main/zip-1.99.4/zip.c \

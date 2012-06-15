@@ -591,8 +591,6 @@ void TLBP(void)
    PC++;
 }
 
-int jump_marker = 0;
-
 void ERET(void)
 {
    update_count();
