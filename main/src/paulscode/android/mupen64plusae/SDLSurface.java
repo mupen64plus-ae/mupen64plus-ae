@@ -400,17 +400,24 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             {  // There is no Menu button in HC/ ICS, so show/ hide ActionBar when "Back" is pressed
                 if( GameActivityCommon.mSingleton != null )
                 {  // Show/ hide the Action Bar
-                    if( GameActivityCommon.mSingleton.getActionBar().isShowing() )
-                    {
-                        View mView = getRootView();
-                        if( mView == null )
-                            Log.e( "SDLSurface", "getRootView() returned null in method onKey" );
-                        else
-                            mView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
-                        GameActivityCommon.mSingleton.getActionBar().hide();
-                    }
-                    else
-                        GameActivityCommon.mSingleton.getActionBar().show();
+                    GameActivityCommon.mSingleton.runOnUiThread(
+                        new Runnable()
+                        {
+                            public void run()
+                            {
+                                if( GameActivityCommon.mSingleton.getActionBar().isShowing() )
+                                {
+                                    View mView = getRootView();
+                                    if( mView == null )
+                                        Log.e( "SDLSurface", "getRootView() returned null in method onKey" );
+                                    else
+                                        mView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+                                    GameActivityCommon.mSingleton.getActionBar().hide();
+                                }
+                                else
+                                    GameActivityCommon.mSingleton.getActionBar().show();
+                            }
+                        } );
                 }
                 return true;
             }
