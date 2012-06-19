@@ -56,11 +56,15 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/r4300/empty_dynarec.c \
 	$(SRCDIR)/r4300/new_dynarec/new_dynarec.c \
 	$(SRCDIR)/r4300/new_dynarec/fpu.c \
-	$(SRCDIR)/r4300/new_dynarec/linkage_arm.S \
-	$(SRCDIR)/debugger/debugger.c \
-	$(SRCDIR)/debugger/dbg_decoder.c \
-	$(SRCDIR)/debugger/dbg_memory.c \
-	$(SRCDIR)/debugger/dbg_breakpoints.c
+	$(SRCDIR)/r4300/new_dynarec/linkage_arm.S
+
+# Removing these doesn't fix the "RAM full of zeros" bug, but they aren't needed anyway:
+
+#LOCAL_SRC_FILES += \
+#	$(SRCDIR)/debugger/debugger.c \
+#	$(SRCDIR)/debugger/dbg_decoder.c \
+#	$(SRCDIR)/debugger/dbg_memory.c \
+#	$(SRCDIR)/debugger/dbg_breakpoints.c
 
 LOCAL_CFLAGS := -I$(LOCAL_PATH)/$(SRCDIR)
 LOCAL_CFLAGS += -DANDROID
