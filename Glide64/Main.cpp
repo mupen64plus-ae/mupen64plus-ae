@@ -54,7 +54,7 @@
 int  ghq_dmptex_toggle_key = 0;
 #endif
 
-#define G64_VERSION "'Napalm WX' WIP "
+#define G64_VERSION "G64 Mk2"
 #define RELTIME "Date: " __DATE__// " Time: " __TIME__
 
 #ifdef EXT_LOGGING
@@ -462,7 +462,7 @@ void ReadSpecialSettings (const char * name)
     settings.hacks |= hack_ASB;
   else if (strstr(name, (const char *)"Beetle") || strstr(name, (const char *)"BEETLE") || strstr(name, (const char *)"HSV"))
     settings.hacks |= hack_BAR;
-  else if (strstr(name, (const char *)"I S S 64") || strstr(name, (const char *)"J WORLD SOCCER3") || strstr(name, (const char *)"PERFECT STRIKER"))
+  else if (strstr(name, (const char *)"I S S 64") || strstr(name, (const char *)"J WORLD SOCCER3") || strstr(name, (const char *)"PERFECT STRIKER") || strstr(name, (const char *)"RONALDINHO SOCCER"))
     settings.hacks |= hack_ISS64;
   else if (strstr(name, (const char *)"MARIOKART64"))
     settings.hacks |= hack_MK64;

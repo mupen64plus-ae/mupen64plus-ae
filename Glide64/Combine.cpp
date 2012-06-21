@@ -9881,6 +9881,17 @@ static void ac_t0_mul_primlod_add_prim ()
   A_USE_T0 ();
 }
 
+static void ac_t0_mul_primlod_add_env ()
+{
+  ACMB (GR_COMBINE_FUNCTION_SCALE_OTHER_ADD_LOCAL,
+    GR_COMBINE_FACTOR_TEXTURE_ALPHA,
+    GR_COMBINE_LOCAL_ITERATED,
+    GR_COMBINE_OTHER_CONSTANT);
+  CA_PRIMLOD ();
+  SETSHADE_A_ENV ();
+  A_USE_T0 ();
+}
+
 //Aded by Gonetz
 static void ac__t0_add_t1__mul_primlod_add_prim ()
 {
@@ -14960,6 +14971,9 @@ static COMBINER alpha_cmb_list[] = {
   // Torches, Paper Mario. Added by Gonetz
   // (t0-t1)*env+env, (0-0)*0+1
   {0x0b510dff, ac_t0_sub_t1_mul_env_add_env},
+  // Mini Racers
+  // (t0-0)*primlod+env
+  {0x0bb90bb9, ac_t0_mul_primlod_add_env},
   // International Track and Field 2000. Added by Gonetz
   // (t0-0)*0+env
   {0x0bf90bf9, ac_env},
