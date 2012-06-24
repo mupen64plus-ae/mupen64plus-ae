@@ -247,10 +247,9 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 {
     OSTask_t *task = (OSTask_t*)(rsp.DMEM + 0xfc0);
     int run_through_task = is_run_through_task(task);
-
     unsigned int i, sum=0;
-
     char filename[256];
+    FILE *f = NULL;
 
     if (run_through_task)
     {
@@ -330,9 +329,8 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 
         sprintf(&filename[0], "task_%x.log", sum);
 
-
         // dump task
-        FILE *f = fopen(filename, "r");
+        f = fopen(filename, "r");
         if (f == NULL)
         {
             f = fopen(filename, "w");
