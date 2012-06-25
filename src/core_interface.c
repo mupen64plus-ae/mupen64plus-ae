@@ -34,6 +34,7 @@
 #include "osal_preproc.h"
 #include "osal_dynamiclib.h"
 
+#include "main.h"
 #include "version.h"
 #include "core_interface.h"
 

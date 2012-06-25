@@ -25,6 +25,8 @@
 #include <stdio.h>
 
 #include "m64p_types.h"
+
+#include "main.h"
 #include "cheat.h"
 #include "core_interface.h"
 
