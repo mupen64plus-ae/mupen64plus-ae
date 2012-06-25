@@ -78,11 +78,11 @@ static char      *l_CheatNumList = NULL;
 
 void DebugMessage(int level, const char *message, ...)
 {
-  char msgbuf[256];
+  char msgbuf[1024];
   va_list args;
 
   va_start(args, message);
-  vsprintf(msgbuf, message, args);
+  vsnprintf(msgbuf, 1024, message, args);
 
   DebugCallback("UI-Console", level, msgbuf);
 
