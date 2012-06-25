@@ -22,6 +22,7 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+extern void DebugMessage(int level, const char *message, ...);
 extern void DebugCallback(void *Context, int level, const char *message);
 
 extern int  g_Verbose;
