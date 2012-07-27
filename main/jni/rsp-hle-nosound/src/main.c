@@ -175,6 +175,69 @@ static int audio_ucode(OSTask_t *task)
     return 0;
 }
 
+static int DoGFXTask(OSTask_t *task, int sum)
+{
+    if (GraphicsHle && rsp.ProcessDlistList != NULL)
+    {
+        rsp.ProcessDlistList();
+        taskdone();
+        *rsp.DPC_STATUS_REG &= ~0x0002;
+        return 1;
+    }
+    else
+    {
+        DebugMessage(M64MSG_WARNING, "GFX ucode through rsp plugin is not implemented");
+        return 0;
+    }
+}
+
+static int DoAudioTask(OSTask_t *task, int sum)
+{
+    if (AudioHle && rsp.ProcessAlistList != NULL)
+    {
+        rsp.ProcessAlistList();
+        taskdone();
+        return 1;
+    }
+    else
+    {
+        if (audio_ucode(task) == 0)
+        {
+            taskdone();
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int DoJPEGTask(OSTask_t *task, int sum)
+{
+    switch(sum)
+    {
+    case 0x278: // Zelda OOT during boot
+      taskdone();
+      return 1;
+    case 0x2caa6: // Zelda OOT, Pokemon Stadium {1,2} jpg decompression
+        ps_jpg_uncompress(task);
+        taskdone();
+        return 1;
+    case 0x130de: // Ogre Battle background decompression
+        ob_jpg_uncompress(task);
+        taskdone();
+        return 1;
+    }
+
+    return 0;
+}
+
+static int DoCFBTask(OSTask_t *task, int sum)
+{
+    rsp.ShowCFB();
+    taskdone();
+    return 1;
+}
+
 /* Global functions */
 void DebugMessage(int level, const char *message, ...)
 {
@@ -253,7 +316,8 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
     unsigned int i, sum=0;
 
     char filename[256];
-
+    FILE *f = NULL;
+    
     if (run_through_task)
     {
         // most ucode_boot procedure copy 0xf80 bytes of ucode whatever the ucode_size is.
@@ -265,65 +329,38 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 
         switch(task->type)
         {
+        case 0: // Not specified
+            {
+                switch(sum)
+                {
+                case 0x212ee: // Twintris (task type is in fact GFX)
+                    {
+                        if (DoGFXTask(task, sum)) return Cycles;
+                        break;
+                    }
+                }
+                break;
+            }
         case 1: // GFX
             {
-                if (GraphicsHle && rsp.ProcessDlistList != NULL)
-                {
-                    rsp.ProcessDlistList();
-                    taskdone();
-                    *rsp.DPC_STATUS_REG &= ~0x0002;
-                    return Cycles;
-                }
-                else
-                {
-                    DebugMessage(M64MSG_WARNING, "GFX ucode through rsp plugin is not implemented");
-                }
+                if (DoGFXTask(task, sum)) return Cycles;
                 break;
             }
 
         case 2: // AUDIO
             {
-                if (AudioHle && rsp.ProcessAlistList != NULL)
-                {
-                    rsp.ProcessAlistList();
-                    taskdone();
-                    return Cycles;
-                }
-                else
-                {
-                    if (audio_ucode(task) == 0)
-                    {
-                        taskdone();
-                        return Cycles;
-                    }
-                }
-                break;
+                if (DoAudioTask(task, sum)) return Cycles;
             }
 
         case 4: // JPEG
             {
-                switch(sum)
-                {
-                case 0x278: // Zelda OOT during boot
-                  taskdone();
-                  return Cycles;
-                case 0x2caa6: // Zelda OOT, Pokemon Stadium {1,2} jpg decompression
-                    ps_jpg_uncompress(task);
-                    taskdone();
-                    return Cycles;
-                case 0x130de: // Ogre Battle background decompression
-                    ob_jpg_uncompress(task);
-                    taskdone();
-                    return Cycles;
-                }
+                if (DoJPEGTask(task, sum)) return Cycles;
                 break;
             }
 
         case 7: // CFB
             {
-                rsp.ShowCFB();
-                taskdone();
-                return Cycles;
+                if (DoCFBTask(task, sum)) return Cycles;
                 break;
             }
         }
@@ -334,7 +371,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 
 
         // dump task
-        FILE *f = fopen(filename, "r");
+        f = fopen(filename, "r");
         if (f == NULL)
         {
             f = fopen(filename, "w");
@@ -403,8 +440,8 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
         // We only emulate the part that modify RDRAM
         //
         // It is used for instance in Banjo Tooie, Zelda, Perfect Dark...
-        case 0x9E2: // banjo tooie (U)
-        case 0x9F2: // banjo tooie (E)
+        case 0x9e2: // banjo tooie (U)
+        case 0x9f2: // banjo tooie (E)
             {
             int i,j;
             memcpy(rsp.IMEM + 0x120, rsp.RDRAM + 0x1e8, 0x1f0);
