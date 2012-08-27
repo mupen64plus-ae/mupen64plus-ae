@@ -42,7 +42,6 @@
 #include "main.h"
 #include "volume.h"
 #include "osal_dynamiclib.h"
-#include "osal_preproc.h"
 
 /* Default start-time size of primary buffer (in equivalent output samples).
    This is the buffer where audio is loaded after it's extracted from n64's memory.
@@ -111,15 +110,16 @@ static unsigned int SecondaryBufferSize = SECONDARY_BUFFER_SIZE;
 // Resample or not
 static unsigned char Resample = 1;
 // volume to scale the audio by, range of 0..100
+// if muted, this holds the volume when not muted
 static int VolPercent = 80;
 // how much percent to increment/decrement volume by
 static int VolDelta = 5;
 // the actual volume passed into SDL, range of 0..SDL_MIX_MAXVOLUME
 static int VolSDL = SDL_MIX_MAXVOLUME;
-// stores the previous volume when it is muted
-static int VolMutedSave = -1;
+// Muted or not
+static int VolIsMuted = 0;
 //which type of volume control to use
-static int VolumeControlType = VOLUME_TYPE_OSS;
+static int VolumeControlType = VOLUME_TYPE_SDL;
 
 static int OutputFreq;
 
@@ -260,7 +260,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_TARGET", PRIMARY_BUFFER_TARGET, "Fullness level target for Primary audio buffer, in equivalent output samples");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is SDL's hardware buffer.");
     ConfigSetDefaultInt(l_ConfigAudio, "RESAMPLE",              1,                     "Audio resampling algorithm.  1 = unfiltered, 2 = SINC resampling (Best Quality, requires libsamplerate)");
-    ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_CONTROL_TYPE",   VOLUME_TYPE_OSS,       "Volume control type: 1 = SDL (only affects Mupen64Plus output)  2 = OSS mixer (adjusts master PC volume)");
+    ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_CONTROL_TYPE",   VOLUME_TYPE_SDL,       "Volume control type: 1 = SDL (only affects Mupen64Plus output)  2 = OSS mixer (adjusts master PC volume)");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_ADJUST",         5,                     "Percentage change each time the volume is increased or decreased");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_DEFAULT",        80,                    "Default volume when a game is started.  Only used if VOLUME_CONTROL_TYPE is 1");
 
@@ -350,7 +350,7 @@ EXPORT void CALL AiLenChanged( void )
         return;
 
     LenReg = *AudioInfo.AI_LEN_REG;
-    p = (unsigned char*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
+    p = AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF);
 
     if (buffer_pos + LenReg < primaryBufferBytes)
     {
@@ -788,45 +788,50 @@ static void ReadConfig(void)
     VolPercent = ConfigGetParamInt(l_ConfigAudio, "VOLUME_DEFAULT");
 }
 
+// Returns the most recent ummuted volume level.
+static int VolumeGetUnmutedLevel(void)
+{
+#if defined(HAS_OSS_SUPPORT)
+    // reload volume if we're using OSS
+    if (!VolIsMuted && VolumeControlType == VOLUME_TYPE_OSS)
+    {
+        return volGet();
+    }
+#endif
+
+    return VolPercent;
+}
+
+// Sets the volume level based on the contents of VolPercent and VolIsMuted
+static void VolumeCommit(void)
+{
+    int levelToCommit = VolIsMuted ? 0 : VolPercent;
+
+#if defined(HAS_OSS_SUPPORT)
+    if (VolumeControlType == VOLUME_TYPE_OSS)
+    {
+        //OSS mixer volume
+        volSet(levelToCommit);
+    }
+    else
+#endif
+    {
+        VolSDL = SDL_MIX_MAXVOLUME * levelToCommit / 100;
+    }
+}
+
 EXPORT void CALL VolumeMute(void)
 {
     if (!l_PluginInit)
         return;
 
-    if (VolMutedSave > -1)
-    {
-        //unmute
-        VolPercent = VolMutedSave;
-        VolMutedSave = -1;
-#if defined(HAS_OSS_SUPPORT)
-        if (VolumeControlType == VOLUME_TYPE_OSS)
-        {
-            //OSS mixer volume
-            volSet(VolPercent);
-        }
-        else
-#endif
-        {
-            VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-        }
-    } 
-    else
-    {
-        //mute
-        VolMutedSave = VolPercent;
-        VolPercent = 0;
-#if defined(HAS_OSS_SUPPORT)
-        if (VolumeControlType == VOLUME_TYPE_OSS)
-        {
-            //OSS mixer volume
-            volSet(0);
-        }
-        else
-#endif
-        {
-            VolSDL = 0;
-        }
-    }
+    // Store the volume level in order to restore it later
+    if (!VolIsMuted)
+        VolPercent = VolumeGetUnmutedLevel();
+
+    // Toogle mute
+    VolIsMuted = !VolIsMuted;
+    VolumeCommit();
 }
 
 EXPORT void CALL VolumeUp(void)
@@ -834,34 +839,7 @@ EXPORT void CALL VolumeUp(void)
     if (!l_PluginInit)
         return;
 
-    //if muted, unmute first
-    if (VolMutedSave > -1)
-        VolumeMute();
-
-#if defined(HAS_OSS_SUPPORT)
-    // reload volume if we're using OSS
-    if (VolumeControlType == VOLUME_TYPE_OSS)
-    {
-        VolPercent = volGet();
-    }
-#endif
-
-    // adjust volume variable
-    VolPercent += VolDelta;
-    if (VolPercent > 100)
-        VolPercent = 100;
-
-#if defined(HAS_OSS_SUPPORT)
-    if (VolumeControlType == VOLUME_TYPE_OSS)
-    {
-        //OSS mixer volume
-        volSet(VolPercent);
-    }
-    else
-#endif
-    {
-        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-    }
+    VolumeSetLevel(VolumeGetUnmutedLevel() + VolDelta);
 }
 
 EXPORT void CALL VolumeDown(void)
@@ -869,45 +847,21 @@ EXPORT void CALL VolumeDown(void)
     if (!l_PluginInit)
         return;
 
-    //if muted, unmute first
-    if (VolMutedSave > -1)
-        VolumeMute();
-
-#if defined(HAS_OSS_SUPPORT)
-    // reload volume if we're using OSS
-    if (VolumeControlType == VOLUME_TYPE_OSS)
-    {
-        VolPercent = volGet();
-    }
-#endif
-
-    // adjust volume variable
-    VolPercent -= VolDelta;
-    if (VolPercent < 0)
-        VolPercent = 0;
-
-#if defined(HAS_OSS_SUPPORT)
-    if (VolumeControlType == VOLUME_TYPE_OSS)
-    {
-        //OSS mixer volume
-        volSet(VolPercent);
-    }
-    else
-#endif
-    {
-        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-    }
+    VolumeSetLevel(VolumeGetUnmutedLevel() - VolDelta);
 }
 
 EXPORT int CALL VolumeGetLevel(void)
 {
-    return VolPercent;
+    return VolIsMuted ? 0 : VolumeGetUnmutedLevel();
 }
 
 EXPORT void CALL VolumeSetLevel(int level)
 {
     if (!l_PluginInit)
         return;
+
+    //if muted, unmute first
+    VolIsMuted = 0;
 
     // adjust volume 
     VolPercent = level;
@@ -916,24 +870,14 @@ EXPORT void CALL VolumeSetLevel(int level)
     else if (VolPercent > 100)
         VolPercent = 100;
 
-#if defined(HAS_OSS_SUPPORT)
-    if (VolumeControlType == VOLUME_TYPE_OSS)
-    {
-        //OSS mixer volume
-        volSet(VolPercent);
-    }
-    else
-#endif
-    {
-        VolSDL = SDL_MIX_MAXVOLUME * VolPercent / 100;
-    }
+    VolumeCommit();
 }
-
-static char VolumeString[32];
 
 EXPORT const char * CALL VolumeGetString(void)
 {
-    if (VolMutedSave > -1)
+    static char VolumeString[32];
+
+    if (VolIsMuted)
     {
         strcpy(VolumeString, "Mute");
     }

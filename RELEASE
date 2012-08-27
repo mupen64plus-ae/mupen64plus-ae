@@ -1,6 +1,13 @@
 SDL Audio plugin for Mupen64Plus
 ---------------------------------
 
+Mupen64Plus-audio-sdl - LATEST REVISION
+---------------------------------------
+ - Bugfix: Don't assume OSS is installed in all linux systems.
+ - Bugfix: Some combinations of VolumeSetLevel and VolumeMute caused VolumeGetString to return "Mute" when not muted
+ - Make SDL volume handling the default, since OSS is no longer included in the kernel.
+ - Minor refactoring of volume handling code.
+
 Mupen64Plus-audio-sdl v1.99.5 - March 10, 2012
 --------------------------------------------------
  - added version number to SDL-audio plugin config parameters, to support future changes

@@ -178,6 +178,11 @@ else
   $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without Best Quality SINC resampler.)
 endif
 
+# test for the presence of OSS
+ifneq ($(wildcard /dev/mixer),)
+  CFLAGS += -DHAS_OSS_SUPPORT
+endif
+
 # set mupen64plus core API header path
 ifneq ("$(APIDIR)","")
   CFLAGS += "-I$(APIDIR)"

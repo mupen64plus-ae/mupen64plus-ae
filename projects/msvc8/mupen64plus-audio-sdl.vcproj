@@ -202,10 +202,6 @@
 				RelativePath="..\..\src\osal_dynamiclib.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\osal_preproc.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
