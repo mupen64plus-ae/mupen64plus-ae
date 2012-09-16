@@ -18,17 +18,41 @@ Button 4 is the Z trigger, and the top shoulder buttons map to the left and righ
 Button 10 is the start button.
 The bottom shoulder buttons select the memory pack or rumble pak.
 
-3. Microsoft X-Box 360 pad:
+3. Logitech Logitech(R) Precision(TM) Gamepad, Gravis GamePad Pro USB
+I came up with what I see as one of the few decent configurations (SSB aside) since it allows access to everything but the dpad.
+A is L1, B is R1, Z is L2, R is R2, L is select. C buttons are the four buttons, and the dpad acts as the joystick. Not the most orthodox, but it works well.
+
+4. Microsoft X-Box 360 pad:
 C button U (up) and C button R (right) are assigned to the Y and B buttons.
 All 4 C buttons are assigned to the U and V axis (including the already configured up and right C buttons).
 The Z button has been assigned to the left trigger and switching the rumble on and off can be done with the right trigger.
 Because there are no other buttons left I decided to use the button click behavior of the left joystick to switch Mempak on and off.
 
-4. N64 controller:
+5. MP-8866 Dual USB Joypad:
+This is a USB adapter for PlayStation controllers (2).
+
+D-Pad:    hat(0)
+L-Stick:  x:0, y:1
+R-Stick:  x:2, y:3
+Triangle: button(0)
+Circle:   button(1)
+Cross:    button(2)
+Square:   button(3)
+L2:       button(4)
+R2:       button(5)
+L1:       button(6)
+R1:       button(7)
+Start:    button(8)
+Select:   button(9)
+L3:       button(10)
+R3:       button(11)
+Note:  This is when analog mode is selected. If analog is off then D-Pad becomes axes 0/1 and both sticks are disabled (including L3/R3).
+
+6. N64 controller:
 All controls are mapped to their proper place on the N64 controller with an Adaptoid or custom hardware with Gamecon driver.
 Rumble and Memory packs can be selected with the 'r' and 'm' keys, respectively.
 
-5. Playstation 3 Controller:
+7. Playstation 3 Controller:
 Left analog stick - analog stick
 Right analog stick - C-pad
 D-Pad - D-Pad
@@ -38,7 +62,7 @@ L1 / R1 - L / R
 L2 - Z
 Start - Start
 
-6. SAITEK P880:
+8. SAITEK P880:
 The gamepad doesnt have enough keys to real assign all buttons. The second 
 analog stick can be used as button by pushing him insight.
 
@@ -51,7 +75,7 @@ used for A and B and the second and third row was used for C-Buttons - except
 for the Button next to the A button which would be C-Down but got the Z 
 button.
 
-7. Xbox Gamepad (userspace driver)
+9. Xbox Gamepad (userspace driver)
 I created an Input Config for a Xbox 360 controller running with
 xboxdrv on a Linux system (http://pingus.seul.org/~grumbel/xboxdrv/).
 
@@ -83,10 +107,10 @@ guide=KEY_ESC
 x2^deadzone:27000
 y2^deadzone:27000
 
-8. Saitek Cyborg V.3 Rumble Pad (aka Saitek PS2700)
+10. Saitek Cyborg V.3 Rumble Pad (aka Saitek PS2700)
 Honestly, it's one of the best pads that I've used in a long time, so thought I'd contribute this quick config. Basically, Dpad and Analog sticks are unchanged, C-buttons are mapped to the right analog stick, L-R triggers are L1 and R1, Z is mapped to R2, A + B are mapped to X and Square, respectively, start is mapped to the Home button, and Triangle, Square, L2, Start, Select, and the Analog triggers are unused, since it's not intuitive to use them for what's left.
 
-9. Default Keyboard interface:
+11. Default Keyboard interface:
 Analog Pad is "Arrow Keys"
 C Up/Left/Down/Right are "I", "J", "K", "L"
 DPad Up/Left/Down/Right are "W", "A", "S", "D"
