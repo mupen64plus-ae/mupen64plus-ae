@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <Preference
+        android:key="menuSkinsTouchpadChange"
+        android:summary=""
+        android:title="@string/touchpad_change" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="menuSkinsTouchpadOctagon"
+        android:summary="@string/gamepad_analg_as_octgon"
+        android:title="@string/gamepad_accurate_n64_stick" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="menuSkinsTouchpadEnabled"
+        android:summary="@string/touchpad_use_touchpad"
+        android:title="@string/touchpad_enable" />
+
+</PreferenceScreen>

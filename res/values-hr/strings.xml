@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connecting_to">Connecting to %s</string>
+    <string name="dl_finished">Finished</string>
+    <string name="dl_from">Downloading data from %s</string>
+    <string name="dl_progress">%1$.0f%% done: file %2$s</string>
+    <string name="download_unneeded">No need to download</string>
+    <string name="error_dl_from">Error downloading data from %s</string>
+    <string name="error_write">Write error (plugged in USB Mass Storage Device mode?) %s</string>
+    <string name="failed_connecting_to">Failed connecting to %s</string>
+    <string name="init">Initializing</string>
+    <!-- Manifest Strings -->
+    <string name="manifest_settings">Definições</string>
+    <string name="manifest_video_settings">Grafièke Postavke</string>
+    <string name="manifest_choose_video_plugin">Odaberi Grafièki Dodatak</string>
+    <string name="manifest_configure_video_plugin">Configure Video Plugin</string>
+    <string name="manifest_audio_settings">Zvuène Postavke</string>
+    <string name="manifest_choose_audio_plugin">Odaberi Zvuèni Dodatak</string>
+    <string name="manifest_input_settings">Joystick Postavke</string>
+    <string name="manifest_choose_input_plugin">Odaberi Joystick Dodatak</string>
+    <string name="manifest_configure_controllers">Configure Controllers</string>
+    <string name="manifest_map_buttons">Podeavanje Hardverskih Tipki</string>
+    <string name="manifest_rsp_settings">RSP Postavke</string>
+    <string name="manifest_choose_rsp_plugin">Odaberi RP Dodatak</string>
+    <string name="manifest_core_settings">Postavke Jezgre</string>
+    <string name="manifest_choose_core">Odaberi Jezgru</string>
+    <string name="manifest_configure_core">Configure Core</string>
+    <string name="manifest_language">Select a language</string>
+    <string name="manifest_skins">Skins(look and feel)</string>
+    <string name="manifest_virtual_gamepad_settings">Virtual Gamepad Settings</string>
+    <string name="manifest_touchpad_settings">Xperia Play Touchpad Settings</string>
+    <string name="manifest_select_layout">Odabir Izgleda</string>
+    <string name="manifest_cheats">Varanje</string>
+
+    <!-- Language Menu Strings -->
+    <string name="language_default">Default</string>
+    <string name="language_use_system_locale">Use System Language Setting</string>
+
+    <!-- Language Strings -->
+    <string name="language_arabic">Arabic</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_croatian">Croatian</string>
+    <string name="language_dutch">Dutch</string>
+    <string name="language_english">English</string>
+    <string name="language_french">French</string>
+    <string name="language_german">German</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_japanese">Japanese</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_norwegian">Norwegian</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_spanish">Spanish</string>
+    <!-- Native Language Strings -->
+    <string name="native_arabic">العربية</string>
+    <string name="native_chinese">中國的</string>
+    <string name="native_croatian">hrvatski</string>
+    <string name="native_dutch">Nederlands</string>
+    <string name="native_english">English</string>
+    <string name="native_french">français</string>
+    <string name="native_german">Deutsch</string>
+    <string name="native_italian">italiano</string>
+    <string name="native_japanese">日本の</string>
+    <string name="native_korean">한국의</string>
+    <string name="native_norwegian">norske</string>
+    <string name="native_portuguese">português</string>
+    <string name="native_spanish">español</string>
+
+    <!-- In-Game Message Strings -->
+    <string name="mupen64plus_started">Mupen64Plus Started</string>
+    <string name="savegame_slot">Savegame Slot</string>
+    <string name="saving_game">Saving Game</string>
+    <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com</string>
+    <string name="app_data_inaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
+    <!-- In-Game Menu Strings -->
+    <string name="ingame_menu">Menu</string>
+    <string name="ingame_inc_slot">Slot++</string>
+    <string name="ingame_save">Save</string>
+    <string name="ingame_load">Load</string>
+    <string name="ingame_close">Close</string>
+    
+    <!-- Main Screen Strings -->
+    <string name="main_choose_game">Odaberi Igru</string>
+    <string name="main_select_a_game_to_play">odaberi igru za igranje</string>
+    <string name="main_resume">Resume</string>
+    <string name="main_continue_your_last_game">continue your last game</string>
+    <string name="main_settings">Definições</string>
+    <string name="main_configure_plug_ins">podeavanje dodataka, izgleda, itd.</string>
+    <string name="main_help">Pomoæ</string>
+    <string name="main_rept_bugs">podrka i prijave greaka na paulscode.com</string>
+    <string name="main_credits">Impressum</string>
+    <string name="main_devs_contribs_tstrs">svi koji su suraðivali za ovaj rad</string>
+    <string name="main_cheat">Cheat!</string>
+    <string name="main_choose_game_to_hack">choose a game to hack</string>
+    <string name="main_close">Izlaz</string>
+    <string name="main_exit_the_app">izlaz iz programa</string>
+    
+    <!-- File Browser Strings -->
+    <string name="file_size">Velièina Datoteke</string>
+    <string name="file_folder">Mapa</string>
+    <string name="file_current_folder">Trenutna Mapa</string>
+    <string name="file_parent_folder">Nadreðena Mapa</string>
+    
+    <!-- Cheats Strings -->
+    <string name="cheats_for">"Cheats for "</string>
+    <string name="cheats_disable">iskljuèeno</string>
+    <string name="cheats_dont_use">dont use this cheat</string>
+    <string name="cheats_long_full_text">(long-press for full text)</string>
+    <string name="cheats_full_text">Full Text</string>
+    <string name="cheats_no_description">(no description available)</string>
+    <string name="cheats_default_name">Varanje</string>
+    <string name="cheats_long_notes">(long-press for notes)</string>
+    <string name="cheats_notes">Notes</string>
+    <string name="cheats_no_notes">(no notes available for this cheat)</string>
+    <string name="cheats_close">Izlaz</string>
+    <string name="cheats_start">Start Game!</string>
+    <string name="cheats_launch_selected">launch with selected cheats</string>
+        
+    <!-- Plugin Option Strings -->
+    
+    <!-- General Settings Menu -->
+    <string name="settings_video">Grafika</string>
+    <string name="settings_config_graphics">podeavanje grafike</string>
+    <string name="settings_audio">Zvuk</string>
+    <string name="settings_audio_settings">odabir zvuènih postavki</string>
+    <string name="settings_input">Joystick</string>
+    <string name="settings_map_controller_buttons">podesi joystick</string>
+    <string name="settings_virtual_gamepad">Virtualni Joystick</string>
+    <string name="settings_config_virtual_gamepad">Podeavanje virtualnog Joysticka</string>
+    <string name="settings_xperia_play_optimized">Xperia Play Optimized</string>
+    <string name="settings_xperia_play_only">Sony Ericsson Xperia Play ONLY!</string>
+    <string name="settings_touchpad">Touchpad</string>
+    <string name="settings_config_touchpad">configure the touchpad</string>
+    <string name="settings_rsp">RSP</string>
+    <string name="settings_reality_signal_processor">Reality Signal Processor</string>
+    <string name="settings_core">Jezgra</string>
+    <string name="settings_emu_core_settings">postavke jezgre emulatora</string>
+    <string name="settings_reset_defaults">Resetiraj Zadane Postavke</string>
+    <string name="settings_reset_to_deflt_vals">resetira sve na zadane vrijednosti</string>
+    <string name="settings_problem_resetting">Problem resetting defaults (see logcat)</string>
+    <string name="settings_restore_app_data">Resetiraj sadraj programa</string>
+    <string name="settings_imports_will_be_lost">imported plugins and textures will be lost!</string>
+    <string name="settings_enable_auto_save">Ukljuèi Automatsko Spremanje</string>
+    <string name="settings_auto_save_game_on_exit">automatski sprema stanje igre tijekom izlaza</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_manually_change_language">manually change the language</string>
+    
+    
+    <!-- Audio Plugin -->
+    <string name="audio_change">Change</string>
+    <string name="audio_enable">Ukljuèi</string>
+    <string name="audio_use_plgin">koristi ovaj dodatak</string>
+    <string name="audio_change_plug_in">Promjeni Dodatak</string>
+    <string name="audio_import">Uvoz…</string>
+    <string name="audio_new_plgin">dodaj novi zvuèni dodatak</string>
+    
+    <!-- Core Library -->
+    <string name="core_change_core">Promjeni Jezgru</string>
+    <string name="core_choose_another_core">odaberi drugu jezgru</string>
+    <string name="core_import">Uvoz…</string>
+    <string name="core_new_plgin">add new core</string>
+    <string name="core_stop">Zaustavi</string>
+    <string name="core_save_state">Spremi Trenutno Stanje</string>
+    <string name="core_load_state">Uèitati Spremljeno Stanje</string>
+    <string name="core_increment_slot">Poveæaj Slot</string>
+    <string name="core_reset">Reset</string>
+    <string name="core_speed_down">Usporavanje</string>
+    <string name="core_speed_up">Ubrzavanje</string>
+    <string name="core_pause">Pauza</string>
+    <string name="core_fast_forward">Brzo Naprijed</string>
+    <string name="core_frame_advance">Frame Advance</string>
+    <string name="core_gameshark">Gameshark</string>
+    <string name="core_disable_volume_keys">Iskljuèi tipke za zvuk</string>
+    <string name="core_use_as_core_functions">use as core functions</string>
+    
+    <!-- Input Plugin -->
+    <string name="input_controller_1">Joystick 1</string>
+    <string name="input_map_ctrl_1_buttons">podesi tipke joysticka 1</string>
+    <string name="input_controller_2">Joystick 2</string>
+    <string name="input_map_ctrl_2_buttons">podesi tipke joysticka 2</string>
+    <string name="input_controller_3">Joystick 3</string>
+    <string name="input_map_ctrl_3_buttons">podesi tipke joysticka 3</string>
+    <string name="input_controller_4">Joystick 4</string>
+    <string name="input_map_ctrl_4_buttons">podesi tipke joysticka 4</string>
+    <string name="input_special_buttons">Specijalne Tipke</string>
+    <string name="input_map_core_funcs_buttons">podesi glavne funkcije na tipke</string>
+    <string name="input_import">Uvoz…</string>
+    <string name="input_new_plgin">dodaj novi joystick dodatak</string>
+    <string name="input_change_plug_in">Promjeni Dodatak</string>
+    <string name="input_map_buttons">Podeavanje Hardverskih Tipki</string>
+    <string name="input_map_ctrl_btns">map controller buttons</string>
+    <string name="input_enable">Ukljuèi</string>
+    <string name="input_use_this_plug_in">koristi ovaj dodatak</string>
+
+    <!-- Controller -->
+    <string name="plugged_in">Spojen</string>
+    <string name="connect_controller">Spoji Joystick</string>
+    <string name="expansion">Expansion</string>
+    <string name="expansion_none">Nita</string>
+    <string name="expansion_rumblepak">Rumble pak</string>
+    <string name="expansion_mempak">Mem pak</string>
+    <string name="button_keycode">Key Code</string>
+    <string name="button_not_mapped">(not mapped)</string>
+    <string name="button_dpad_right">D-pad - Desno</string>
+    <string name="button_dpad_left">D-pad - Lijevo</string>
+    <string name="button_dpad_down">D-pad - Dolje</string>
+    <string name="button_dpad_up">D-pad - Gore</string>
+    <string name="button_start">Start</string>
+    <string name="button_z">Z</string>
+    <string name="button_b">B</string>
+    <string name="button_a">A</string>
+    <string name="button_cpad_right">C-pad - Desno</string>
+    <string name="button_cpad_left">C-pad - Lijevo</string>
+    <string name="button_cpad_down">C-pad - Dolje</string>
+    <string name="button_cpad_up">C-pad - Gore</string>
+    <string name="button_r">R</string>
+    <string name="button_l">L</string>
+    <string name="mempak_switch">Mempak Switch</string>
+    <string name="rumblepak_switch">Rumblepak Switch</string>
+    <string name="button_analog_right">Analogni Stick - Desno</string>
+    <string name="button_analog_left">Analogni Stick - Lijevo</string>
+    <string name="button_analog_down">Analogni Stick - Gore</string>
+    <string name="button_analog_up">Analogni Stick - Dolje</string>
+    
+    <!-- RSP Plugin -->
+    <string name="rsp_change_plug_in">Promjeni Dodatak</string>
+    <string name="rsp_plugin_enable">Ukljuèi</string>
+    <string name="rsp_use_this_plug_in">koristi ovaj dodatak</string>
+    <string name="rsp_change">Change</string>
+    <string name="rsp_import">Uvoz…</string>
+    <string name="rsp_new_plgin">dodaj novi RSP dodatak</string>
+    
+    <!-- Video Plugin -->
+    <string name="video_change_plug_in">Promjeni Dodatak</string>
+    <string name="video_configure">Podeavanje</string>
+    <string name="video_change_the_settings">promjeni postavke</string>
+    <string name="video_rgba_8888_mode">RGBA_8888</string>
+    <string name="video_improve_gfx_devices">poboljava grafiku na nekim ureðajima</string>
+    <string name="video_enable">Ukljuèi</string>
+    <string name="video_use_this_plug_in">koristi ovaj dodatak</string>
+    <string name="video_change">Change</string>
+    <string name="video_import">Uvoz…</string>
+    <string name="video_add_new_video_plug_in">dodaj novi grafièki dodatak</string>
+    <string name="video_enable_skip_frame">Ukljuèi Preskakanje Slièica (FPS)</string>
+    <string name="video_improve_speed_at_cst_fps">(poveæava brzinu, ali smanjuje FPS)</string>
+    <string name="video_enable_fast_texture_crc">Ukljuèi Bre Teksture (CRC)</string>
+    <string name="video_disble_imprv_2d">(iskljuèivanjem se poboljavaju 2D elementi)</string>
+    <string name="video_enable_fast_texture_loading">Ukljuèi Bre Uèitavanje Tekstura</string>
+    <string name="video_fixes_crcl_trnstions">(ispravlja krune prijelaze)</string>
+    <string name="video_enable_hires_textures">Ukljuèi Teksture Visoke Kvalitete</string>
+    <string name="video_use_imprtd_txtr_pcks">(koristi uvezene teksture)</string>
+    <string name="video_imprt_txtr_pck_zip_fmt">Uvoz tekstura, ZIP format</string>
+    <string name="video_apply_cust_txtr">(primjeni korisnièku teksturu u igru)</string>
+    <string name="video_stretch_screen">Rairi Ekran</string>
+    <string name="video_may_skew">(moe iskriviti proporcije)</string>
+    <string name="video_auto_frameskip">Automatski Frameskip</string>
+    <string name="video_auto_adjust">(automatsko FPS podeavanje, ovisi o brzini)</string>
+    <string name="video_max_frameskip">Maksimalni Frameskip</string>
+    <string name="video_disable_auto_fskip">" (iskljuèi automatski frameskip za ruèno podeavanje)"</string>
+    <string name="video_enable_fog">Ukljuèi Maglu</string>
+    <string name="video_need_work">(eksperimentalno)</string>
+    <string name="video_enable_tribuffer_opt">Ukljuèi Tribuffer Optimizaciju</string>
+    <string name="video_disble_if_zlda_crshes">(iskljuèi u sluèaju ruenja tijekom pokretanja "Legend of Zelda")</string>
+    <string name="video_force_screen_clear">Prisilno Èiæenje Ekrana</string>
+    <string name="video_clrs_junk_grfx">(brie grafièke neispravnosti)</string>
+    <string name="video_enable_alpha_test">Ukljuèi Prozirnost Tekstura</string>
+    <string name="video_disble_fr_spdhck">(iskljuèi za bolje performanse, ali bez prozirnosti)</string>
+    <string name="video_hack_z">Hack Z</string>
+    <string name="video_enble_fx_flshng_bckgrnd">(ukljuèi za ispravljanje bljeskanja pozadine)</string>
+    
+    <!-- Virtual Gamepad -->
+    <string name="gamepad_virtual_gamepad">Virtualni Joystick</string>
+    <string name="gamepad_cnfig_virt_gamepad">Podeavanje virtualnog Joysticka</string>
+    <string name="gamepad_change_layout">Promjena Izgleda</string>
+    <string name="gamepad_redraw_all">Ispravi Prikaz Virtualnog Joysticka</string>
+    <string name="gamepad_misbut_bug">sporo, ispravlja greku nevidljvih tipki</string>
+    <string name="gamepad_accurate_n64_stick">Precizni N64 Stick</string>
+    <string name="gamepad_analg_as_octgon">oktagonalna emulacija analognog sticka</string>
+    <string name="gamepad_display_fps">Prikai FPS</string>
+    <string name="gamepad_shw_frm_sec">prikai broj slièica u sekundi</string>
+    <string name="gamepad_enable">Ukljuèi</string>
+    <string name="gamepad_use_virt_gpad">koristi virtualni joystick</string>
+    <string name="gamepad_import">Uvoz…</string>
+    <string name="gamepad_new_skin">dodaj novi izgled za joystick</string>
+
+    <!-- Xperia Play Touchpad -->
+    <string name="touchpad_change">Change</string>
+    <string name="touchpad_enable">Ukljuèi</string>
+    <string name="touchpad_use_touchpad">use the touchpad</string>
+    <string name="touchpad_import">Uvoz…</string>
+    <string name="touchpad_add_new">add new touchpad skin</string>
+
+    <!-- Dialog Strings -->
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    <string name="restore_info">"All settings and any imported plug-ins, gamepad layouts, or texture packs will be lost!\n\n "
+                              "Saved games and save-states will be backed up and restored.  If there is not enough room "
+                              "in storage to back them up, they will also be lost."</string>
+    <string name="app_credits">"Developers:\n\n"
+                              "- Paul Lamb (paulscode) (ported everything to Android, developed front-end, maintenace, debugging)\n"
+                              "- Ari64 (created core ARM dynarec, provided porting/ debugging assistance.. an assembly savant!)\n"
+                              "- Kris (Metracity) (ported Rice Video plug-in to GLES2, assisted with debugging)\n"
+                              "- Pelya (ported components of SDL to Android, developed data downloader/ unpacker)\n"
+                              "- Epic_bubble (assisted with Xperia Play optimized content, researched useful open-source resources)\n"
+                              "- xperia64 (assisted with EEPROM clock emulation, also researched useful open-source resources)\n"
+                              "- cpasjuste (assisted with dynarec porting from 1.5 to 1.99.4)\n"
+                              "- GTan64 (provided alternate Mupen64Plus core port for comparison, assisted with SDL1.3 porting)\n"
+                              "- Yongzh (improved components of gles2n64, provided alternate Mupen64Plus core port for comparison)\n"
+                              "- ZodTTD (provided alternate gles2n64 port for comparison, helped track down a critical bug)\n"
+                              "- Lioncash (multi-language support, code maintenance)\n"
+                              "- CZero (helped develop accurate octagon analog control algorithm)\n"
+                              "- BuckM (discovered the best analog control radius settings)\n"
+                              "- Orkin, Adventus (GLN64/gles2n64 video plug-in development, port to GLES2)\n"
+                              "- Rice (developed the famous Rice Video plug-in)\n"
+                              "- Hactarux, JttL, Ebenblues, Richard Goedeken (richard42) (Mupen64/Mupen64Plus devs.. the real geniuses!)\n"
+                              "- (many more)\n\n"
+                              "\"Extreme\" Testers:\n\n"
+                              "- Epic_bubble\n"
+                              "- xperia64\n"
+                              "- scorpio16v\n"
+                              "- (way too many more to mention!)\n\n"
+                              "Artwork:\n\n"
+                              "- roymustang16 (virtual gamepad layouts)\n"
+                              "- shuy3n (icons, promotional graphics)\n\n"
+                              "Translators:\n\n"
+                              "- Tom.K (Croatian)\n"
+                              "- muis24 (Dutch)\n"
+                              "- scorpio16v (German)\n"
+                              "- Lioncash (Japanese)\n"
+                              "- ToVine (Norwegian)\n"
+                              "- TheMacyp7500 (Portuguese)\n"
+                              "- tofi1106 (Spanish)\n\n"
+                              "Miscellaneous:\n\n"
+                              "- Epic_bubble (promotional video)\n"
+                              "- Potticus (compatibility wiki)"</string>
+</resources>

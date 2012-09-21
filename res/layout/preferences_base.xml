@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <PreferenceCategory android:key="plugins_category" android:title="Plugins">
+
+        <Preference 
+            android:key="menuSettingsVideo"
+            android:summary="@string/settings_config_graphics"
+            android:title="@string/settings_video" />
+
+        <Preference 
+            android:key="menuSettingsAudio"
+            android:summary="@string/settings_audio_settings"
+            android:title="@string/settings_audio" />
+
+        <Preference 
+            android:key="menuSettingsInput"
+            android:summary="@string/settings_map_controller_buttons"
+            android:title="@string/settings_input" />
+
+        <Preference 
+            android:key="menuSkinsGamepad"
+            android:summary="@string/settings_config_virtual_gamepad"
+            android:title="@string/settings_virtual_gamepad" />
+
+        <Preference 
+            android:key="menuSettingsRSP"
+            android:summary="@string/settings_reality_signal_processor"
+            android:title="@string/settings_rsp" />
+
+        <Preference 
+            android:key="menuSettingsCore"
+            android:summary="@string/settings_emu_core_settings"
+            android:title="@string/settings_core" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:key="xperia_play_settings" android:title="Xperia Play Settings">
+        
+        <CheckBoxPreference 
+            android:defaultValue="false"
+            android:key="menuSettingsXperiaPlayOptimized"
+            android:summary="@string/settings_xperia_play_only"
+            android:title="@string/settings_xperia_play_optimized" />
+
+        <Preference 
+            android:dependency="menuSettingsXperiaPlayOptimized"
+            android:key="menuSkinsTouchpad"
+            android:summary="@string/settings_config_touchpad"
+            android:title="@string/settings_touchpad" />
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:key="general_settings" android:title="General">
+
+        <Preference 
+            android:key="menuSettingsResetDefaults"
+            android:summary="@string/settings_reset_to_deflt_vals"
+            android:title="@string/settings_reset_defaults" />
+
+        <Preference 
+            android:key="menuSettingsRestoreAppData"
+            android:summary="@string/settings_imports_will_be_lost"
+            android:title="@string/settings_restore_app_data" />
+
+        <CheckBoxPreference 
+            android:defaultValue="true"
+            android:key="menuSettingsAutoSave"
+            android:summary="@string/settings_auto_save_game_on_exit"
+            android:title="@string/settings_enable_auto_save" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
