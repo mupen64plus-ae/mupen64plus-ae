@@ -47,7 +47,7 @@
 #define SECTION_MAGIC 0xDBDC0580
 
 typedef struct _config_var {
-  char                  name[64];
+  char                 *name;
   m64p_type             type;
   union {
     int integer;
@@ -60,7 +60,7 @@ typedef struct _config_var {
 
 typedef struct _config_section {
   int                     magic;
-  char                    name[64];
+  char                   *name;
   struct _config_var     *first_var;
   struct _config_section *next;
   } config_section;
@@ -99,10 +99,28 @@ static int is_numeric(const char *string)
  */
 static config_section **find_section_link(config_list *list, const char *ParamName)
 {
-    config_section **curr_sec_link = list;
+    config_section **curr_sec_link;
     for (curr_sec_link = list; *curr_sec_link != NULL; curr_sec_link = &(*curr_sec_link)->next)
     {
         if (osal_insensitive_strcmp(ParamName, (*curr_sec_link)->name) == 0)
+            break;
+    }
+
+    return curr_sec_link;
+}
+
+/* This function is similar to the previous function, but instead it returns a
+ * pointer to the pointer to the next section whose name is alphabetically
+ * greater than or equal to 'ParamName'.
+ *
+ * Useful for inserting a section in its alphabetical position.
+ */
+static config_section **find_alpha_section_link(config_list *list, const char *ParamName)
+{
+    config_section **curr_sec_link;
+    for (curr_sec_link = list; *curr_sec_link != NULL; curr_sec_link = &(*curr_sec_link)->next)
+    {
+        if (osal_insensitive_strcmp((*curr_sec_link)->name, ParamName) >= 0)
             break;
     }
 
@@ -116,12 +134,16 @@ static config_section *find_section(config_list list, const char *ParamName)
 
 static config_var *config_var_create(const char *ParamName, const char *ParamHelp)
 {
-    config_var *var = malloc(sizeof(config_var));
-    if (var == NULL)
+    config_var *var = (config_var *) malloc(sizeof(config_var));
+    if (var == NULL || ParamName == NULL)
         return NULL;
 
-    strncpy(var->name, ParamName, 63);
-    var->name[63] = 0;
+    var->name = strdup(ParamName);
+    if (var->name == NULL)
+    {
+        free(var);
+        return NULL;
+    }
 
     var->type = M64TYPE_INT;
     var->val.integer = 0;
@@ -131,6 +153,7 @@ static config_var *config_var_create(const char *ParamName, const char *ParamHel
         var->comment = strdup(ParamHelp);
         if (var->comment == NULL)
         {
+            free(var->name);
             free(var);
             return NULL;
         }
@@ -180,6 +203,7 @@ static void delete_var(config_var *var)
 {
     if (var->type == M64TYPE_STRING)
         free(var->val.string);
+    free(var->name);
     free(var->comment);
     free(var);
 }
@@ -191,9 +215,15 @@ static void delete_section(config_section *pSection)
     if (pSection == NULL)
         return;
     
-    for (curr_var = pSection->first_var; curr_var != NULL; curr_var = curr_var->next)
+    curr_var = pSection->first_var;
+    while (curr_var != NULL)
+    {
+        config_var *next_var = curr_var->next;
         delete_var(curr_var);
+        curr_var = next_var;
+    }
     
+    free(pSection->name);
     free(pSection);
 }
 
@@ -211,6 +241,29 @@ static void delete_list(config_list *pConfigList)
     *pConfigList = NULL;
 }
 
+static config_section *config_section_create(const char *ParamName)
+{
+    config_section *sec;
+
+    if (ParamName == NULL)
+        return NULL;
+
+    sec = (config_section *) malloc(sizeof(config_section));
+    if (sec == NULL)
+        return NULL;
+
+    sec->magic = SECTION_MAGIC;
+    sec->name = strdup(ParamName);
+    if (sec->name == NULL)
+    {
+        free(sec);
+        return NULL;
+    }
+    sec->first_var = NULL;
+    sec->next = NULL;
+    return sec;
+}
+
 static config_section * section_deepcopy(config_section *orig_section)
 {
     config_section *new_section;
@@ -221,14 +274,9 @@ static config_section * section_deepcopy(config_section *orig_section)
         return NULL;
 
     /* create and copy section struct */
-    new_section = (config_section *) malloc(sizeof(config_section));
+    new_section = config_section_create(orig_section->name);
     if (new_section == NULL)
         return NULL;
-    new_section->magic = SECTION_MAGIC;
-    memcpy(new_section->name, orig_section->name, 64);
-    new_section->name[63] = 0;
-    new_section->first_var = NULL;
-    new_section->next = NULL;
 
     /* create and copy all section variables */
     orig_var = orig_section->first_var;
@@ -457,7 +505,7 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
             nextline = end;
         *nextline++ = 0;
         /* strip the whitespace and handle comment */
-        line = trim(line);
+        trim(line);
         if (strlen(line) < 1)
         {
             line = nextline;
@@ -466,7 +514,7 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
         if (line[0] == '#')
         {
             line++;
-            line = trim(line);
+            trim(line);
             lastcomment = line;
             line = nextline;
             continue;
@@ -496,8 +544,8 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
         varname = line;
         varvalue = pivot + 1;
         *pivot = 0;
-        line = trim(varname);
-        line = trim(varvalue);
+        trim(varname);
+        trim(varvalue);
         if (varvalue[0] == '"' && varvalue[strlen(varvalue)-1] == '"')
         {
             varvalue++;
@@ -595,7 +643,8 @@ EXPORT m64p_error CALL ConfigListSections(void *context, void (*SectionListCallb
 
 EXPORT m64p_error CALL ConfigOpenSection(const char *SectionName, m64p_handle *ConfigSectionHandle)
 {
-    config_section *curr_section, *new_section;
+    config_section **curr_section;
+    config_section *new_section;
 
     if (!l_ConfigInit)
         return M64ERR_NOT_INIT;
@@ -603,37 +652,21 @@ EXPORT m64p_error CALL ConfigOpenSection(const char *SectionName, m64p_handle *C
         return M64ERR_INPUT_ASSERT;
 
     /* walk through the section list, looking for a case-insensitive name match */
-    curr_section = find_section(l_ConfigListActive, SectionName);
-    if (curr_section != NULL)
+    curr_section = find_alpha_section_link(&l_ConfigListActive, SectionName);
+    if (*curr_section != NULL && osal_insensitive_strcmp(SectionName, (*curr_section)->name) == 0)
     {
-        *ConfigSectionHandle = curr_section;
+        *ConfigSectionHandle = *curr_section;
         return M64ERR_SUCCESS;
     }
 
     /* didn't find the section, so create new one */
-    new_section = (config_section *) malloc(sizeof(config_section));
+    new_section = config_section_create(SectionName);
     if (new_section == NULL)
         return M64ERR_NO_MEMORY;
-    new_section->magic = SECTION_MAGIC;
-    strncpy(new_section->name, SectionName, 63);
-    new_section->name[63] = 0;
-    new_section->first_var = NULL;
-    new_section->next = NULL;
 
     /* add section to list in alphabetical order */
-    if (l_ConfigListActive == NULL || osal_insensitive_strcmp(SectionName, l_ConfigListActive->name) < 0)
-    {
-        new_section->next = l_ConfigListActive;
-        l_ConfigListActive = new_section;
-    }
-    else
-    {
-        curr_section = l_ConfigListActive;
-        while (curr_section->next != NULL && osal_insensitive_strcmp(SectionName, curr_section->next->name) >= 0)
-            curr_section = curr_section->next;
-        new_section->next = curr_section->next;
-        curr_section->next = new_section;
-    }
+    new_section->next = *curr_section;
+    *curr_section = new_section;
 
     *ConfigSectionHandle = new_section;
     return M64ERR_SUCCESS;
@@ -723,7 +756,7 @@ EXPORT int CALL ConfigHasUnsavedChanges(const char *SectionName)
     saved_var = curr_section->first_var;
     while (active_var != NULL && saved_var != NULL)
     {
-        if (strncmp(active_var->name, saved_var->name, 64) != 0)
+        if (strcmp(active_var->name, saved_var->name) != 0)
             return 1;
         if (active_var->type != saved_var->type)
             return 1;
@@ -836,38 +869,19 @@ EXPORT m64p_error CALL ConfigSaveSection(const char *SectionName)
         return M64ERR_NO_MEMORY;
 
     /* update config section that's in the Saved list with the new one */
-    if (l_ConfigListSaved == NULL || osal_insensitive_strcmp(SectionName, l_ConfigListSaved->name) < 0)
+    config_section **insertion_point = find_alpha_section_link(&l_ConfigListSaved, SectionName);
+    if (*insertion_point != NULL && osal_insensitive_strcmp((*insertion_point)->name, SectionName) == 0)
     {
-        /* the saved section is new and goes at the beginning of the list */
-        new_section->next = l_ConfigListSaved;
-        l_ConfigListSaved = new_section;
-    }
-    else if (osal_insensitive_strcmp(SectionName, l_ConfigListSaved->name) == 0)
-    {
-        /* the saved section replaces the first section in the list */
-        new_section->next = l_ConfigListSaved->next;
-        delete_section(l_ConfigListSaved);
-        l_ConfigListSaved = new_section;
+        /* the section exists in the saved list and will be replaced */
+        new_section->next = (*insertion_point)->next;
+        delete_section(*insertion_point);
+        *insertion_point = new_section;
     }
     else
     {
-        curr_section = l_ConfigListSaved;
-        while (curr_section->next != NULL && osal_insensitive_strcmp(SectionName, curr_section->next->name) > 0)
-            curr_section = curr_section->next;
-        if (curr_section->next == NULL || osal_insensitive_strcmp(SectionName, curr_section->next->name) < 0)
-        {
-            /* the saved section is new and goes after the curr_section */
-            new_section->next = curr_section->next;
-            curr_section->next = new_section;
-        }
-        else
-        {
-            /* the saved section replaces curr_section->next */
-            config_section *old_section = curr_section->next;
-            new_section->next = old_section->next;
-            delete_section(old_section);
-            curr_section->next = new_section;
-        }
+        /* the section didn't exist in the saved list and has to be inserted */
+        new_section->next = *insertion_point;
+        *insertion_point = new_section;
     }
 
     /* write the saved config list out to a file */

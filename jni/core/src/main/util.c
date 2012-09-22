@@ -32,7 +32,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdarg.h>
-#include <sys/stat.h>
 
 #include "rom.h"
 #include "util.h"
@@ -376,25 +375,16 @@ char* combinepath(const char* first, const char *second)
  **********************/
 char *trim(char *str)
 {
-    unsigned int i;
-    char *p = str;
+    char *start = str, *end = str + strlen(str);
 
-    while (isspace(*p))
-        p++;
+    while (start < end && isspace(*start))
+        start++;
 
-    if (str != p)
-        {
-        for (i = 0; i <= strlen(p); ++i)
-            str[i]=p[i];
-        }
+    while (end > start && isspace(*(end-1)))
+        end--;
 
-    p = str + strlen(str) - 1;
-    if (p > str)
-    {
-        while (isspace(*p))
-            p--;
-        p[1] = '\0';
-    }
+    memmove(str, start, end - start);
+    str[end - start] = '\0';
 
     return str;
 }
