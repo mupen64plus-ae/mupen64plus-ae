@@ -49,9 +49,11 @@
 typedef struct _config_var {
   char                  name[64];
   m64p_type             type;
-  int                   val_int;
-  float                 val_float;
-  char                 *val_string;
+  union {
+    int integer;
+    float number;
+    char *string;
+  } val;
   char                 *comment;
   struct _config_var   *next;
   } config_var;
@@ -87,18 +89,57 @@ static int is_numeric(const char *string)
     return (rval == 1);
 }
 
-static config_section *find_section(config_list list, const char *ParamName)
+/* This function returns a pointer to the pointer of the requested section
+ * (i.e. a pointer the next field of the previous element, or to the first node).
+ *
+ * If there's no section named 'ParamName', returns the pointer to the next
+ * field of the last element in the list (such that derefencing it is NULL).
+ *
+ * Useful for operations that need to modify the links, e.g. deleting a section.
+ */
+static config_section **find_section_link(config_list *list, const char *ParamName)
 {
-    /* walk through the linked list of sections in the list */
-    config_section *curr_sec;
-    for (curr_sec = list; curr_sec != NULL; curr_sec = curr_sec->next)
+    config_section **curr_sec_link = list;
+    for (curr_sec_link = list; *curr_sec_link != NULL; curr_sec_link = &(*curr_sec_link)->next)
     {
-        if (osal_insensitive_strcmp(ParamName, curr_sec->name) == 0)
-            return curr_sec;
+        if (osal_insensitive_strcmp(ParamName, (*curr_sec_link)->name) == 0)
+            break;
     }
 
-    /* couldn't find this section parameter */
-    return NULL;
+    return curr_sec_link;
+}
+
+static config_section *find_section(config_list list, const char *ParamName)
+{
+    return *find_section_link(&list, ParamName);
+}
+
+static config_var *config_var_create(const char *ParamName, const char *ParamHelp)
+{
+    config_var *var = malloc(sizeof(config_var));
+    if (var == NULL)
+        return NULL;
+
+    strncpy(var->name, ParamName, 63);
+    var->name[63] = 0;
+
+    var->type = M64TYPE_INT;
+    var->val.integer = 0;
+
+    if (ParamHelp != NULL)
+    {
+        var->comment = strdup(ParamHelp);
+        if (var->comment == NULL)
+        {
+            free(var);
+            return NULL;
+        }
+    }
+    else
+        var->comment = NULL;
+
+    var->next = NULL;
+    return var;
 }
 
 static config_var *find_section_var(config_section *section, const char *ParamName)
@@ -135,24 +176,25 @@ static void append_var_to_section(config_section *section, config_var *var)
     last_var->next = var;
 }
 
-static void delete_section_vars(config_section *pSection)
+static void delete_var(config_var *var)
+{
+    if (var->type == M64TYPE_STRING)
+        free(var->val.string);
+    free(var->comment);
+    free(var);
+}
+
+static void delete_section(config_section *pSection)
 {
     config_var *curr_var;
 
     if (pSection == NULL)
         return;
-
-    curr_var = pSection->first_var;
-    while (curr_var != NULL)
-    {
-        config_var *next_var = curr_var->next;
-        if (curr_var->val_string != NULL)
-            free(curr_var->val_string);
-        if (curr_var->comment != NULL)
-            free(curr_var->comment);
-        free(curr_var);
-        curr_var = next_var;
-    }
+    
+    for (curr_var = pSection->first_var; curr_var != NULL; curr_var = curr_var->next)
+        delete_var(curr_var);
+    
+    free(pSection);
 }
 
 static void delete_list(config_list *pConfigList)
@@ -161,18 +203,17 @@ static void delete_list(config_list *pConfigList)
     while (curr_section != NULL)
     {
         config_section *next_section = curr_section->next;
-        /* delete all the variables in this section */
-        delete_section_vars(curr_section);
         /* delete the section itself */
-        free(curr_section);
+        delete_section(curr_section);
         curr_section = next_section;
     }
 
     *pConfigList = NULL;
 }
 
-static config_section * section_deepcopy(config_section *orig_section, config_section *new_section)
+static config_section * section_deepcopy(config_section *orig_section)
 {
+    config_section *new_section;
     config_var *orig_var, *last_new_var;
 
     /* Input validation */
@@ -180,8 +221,7 @@ static config_section * section_deepcopy(config_section *orig_section, config_se
         return NULL;
 
     /* create and copy section struct */
-    if (new_section == NULL)
-        new_section = (config_section *) malloc(sizeof(config_section));
+    new_section = (config_section *) malloc(sizeof(config_section));
     if (new_section == NULL)
         return NULL;
     new_section->magic = SECTION_MAGIC;
@@ -195,42 +235,42 @@ static config_section * section_deepcopy(config_section *orig_section, config_se
     last_new_var = NULL;
     while (orig_var != NULL)
     {
-        config_var *new_var = (config_var *) malloc(sizeof(config_var));
+        config_var *new_var = config_var_create(orig_var->name, orig_var->comment);
         if (new_var == NULL)
         {
-            delete_section_vars(new_section);
-            free(new_section);
+            delete_section(new_section);
             return NULL;
         }
-        memcpy(new_var->name, orig_var->name, 64);
-        new_var->name[63] = 0;
+
         new_var->type = orig_var->type;
-        new_var->val_int = orig_var->val_int;
-        new_var->val_float = orig_var->val_float;
-        new_var->val_string = NULL;
-        new_var->comment = NULL;
-        new_var->next = NULL;
-        /* allocate memory and copy string values */
-        if (orig_var->val_string != NULL)
+        
+        switch (orig_var->type)
         {
-            new_var->val_string = strdup(orig_var->val_string);
-            if (new_var->val_string == NULL)
-            {
-                delete_section_vars(new_section);
-                free(new_section);
-                return NULL;
-            }
+            case M64TYPE_INT:
+            case M64TYPE_BOOL:
+                new_var->val.integer = orig_var->val.integer;
+                break;
+                
+            case M64TYPE_FLOAT:
+                new_var->val.number = orig_var->val.number;
+                break;
+
+            case M64TYPE_STRING:
+                if (orig_var->val.string != NULL)
+                {
+                    new_var->val.string = strdup(orig_var->val.string);
+                    if (new_var->val.string == NULL)
+                    {
+                        delete_section(new_section);
+                        return NULL;
+                    }
+                }
+                else
+                    new_var->val.string = NULL;
+
+                break;
         }
-        if (orig_var->comment != NULL)
-        {
-            new_var->comment = strdup(orig_var->comment);
-            if (new_var->comment == NULL)
-            {
-                delete_section_vars(new_section);
-                free(new_section);
-                return NULL;
-            }
-        }
+        
         /* add the new variable to the new section */
         if (last_new_var == NULL)
             new_section->first_var = new_var;
@@ -255,7 +295,7 @@ static void copy_configlist_active_to_saved(void)
     /* duplicate all of the config sections in the Active list, adding them to the Saved list */
     while (curr_section != NULL)
     {
-        config_section *new_section = section_deepcopy(curr_section, NULL);
+        config_section *new_section = section_deepcopy(curr_section);
         if (new_section == NULL) break;
         if (last_section == NULL)
             l_ConfigListSaved = new_section;
@@ -308,15 +348,15 @@ static m64p_error write_configlist_file(void)
             if (curr_var->comment != NULL && strlen(curr_var->comment) > 0)
                 fprintf(fPtr, "# %s\n", curr_var->comment);
             if (curr_var->type == M64TYPE_INT)
-                fprintf(fPtr, "%s = %i\n", curr_var->name, curr_var->val_int);
+                fprintf(fPtr, "%s = %i\n", curr_var->name, curr_var->val.integer);
             else if (curr_var->type == M64TYPE_FLOAT)
-                fprintf(fPtr, "%s = %f\n", curr_var->name, curr_var->val_float);
-            else if (curr_var->type == M64TYPE_BOOL && curr_var->val_int)
+                fprintf(fPtr, "%s = %f\n", curr_var->name, curr_var->val.number);
+            else if (curr_var->type == M64TYPE_BOOL && curr_var->val.integer)
                 fprintf(fPtr, "%s = True\n", curr_var->name);
-            else if (curr_var->type == M64TYPE_BOOL && !curr_var->val_int)
+            else if (curr_var->type == M64TYPE_BOOL && !curr_var->val.integer)
                 fprintf(fPtr, "%s = False\n", curr_var->name);
-            else if (curr_var->type == M64TYPE_STRING && curr_var->val_string != NULL)
-                fprintf(fPtr, "%s = \"%s\"\n", curr_var->name, curr_var->val_string);
+            else if (curr_var->type == M64TYPE_STRING && curr_var->val.string != NULL)
+                fprintf(fPtr, "%s = \"%s\"\n", curr_var->name, curr_var->val.string);
             curr_var = curr_var->next;
         }
         fprintf(fPtr, "\n");
@@ -690,29 +730,29 @@ EXPORT int CALL ConfigHasUnsavedChanges(const char *SectionName)
         switch(active_var->type)
         {
             case M64TYPE_INT:
-                if (active_var->val_int != saved_var->val_int)
+                if (active_var->val.integer != saved_var->val.integer)
                     return 1;
                 break;
             case M64TYPE_FLOAT:
-                if (active_var->val_float != saved_var->val_float)
+                if (active_var->val.number != saved_var->val.number)
                     return 1;
                 break;
             case M64TYPE_BOOL:
-                if ((active_var->val_int != 0) != (saved_var->val_int != 0))
+                if ((active_var->val.integer != 0) != (saved_var->val.integer != 0))
                     return 1;
                 break;
             case M64TYPE_STRING:
-                if (active_var->val_string == NULL)
+                if (active_var->val.string == NULL)
                 {
                     DebugMessage(M64MSG_ERROR, "ConfigHasUnsavedChanges(): Variable '%s' NULL Active string pointer!", active_var->name);
                     return 1;
                 }
-                if (saved_var->val_string == NULL)
+                if (saved_var->val.string == NULL)
                 {
                     DebugMessage(M64MSG_ERROR, "ConfigHasUnsavedChanges(): Variable '%s' NULL Saved string pointer!", active_var->name);
                     return 1;
                 }
-                if (strcmp(active_var->val_string, saved_var->val_string) != 0)
+                if (strcmp(active_var->val.string, saved_var->val.string) != 0)
                     return 1;
                 break;
             default:
@@ -739,8 +779,8 @@ EXPORT int CALL ConfigHasUnsavedChanges(const char *SectionName)
 
 EXPORT m64p_error CALL ConfigDeleteSection(const char *SectionName)
 {
-    config_section *curr_section;
-    config_var *curr_var;
+    config_section **curr_section_link;
+    config_section *next_section;
 
     if (!l_ConfigInit)
         return M64ERR_NOT_INIT;
@@ -748,42 +788,18 @@ EXPORT m64p_error CALL ConfigDeleteSection(const char *SectionName)
         return M64ERR_INPUT_NOT_FOUND;
 
     /* find the named section and pull it out of the list */
-    curr_section = l_ConfigListActive;
-    if (osal_insensitive_strcmp(l_ConfigListActive->name, SectionName) == 0)
-    {
-        l_ConfigListActive = l_ConfigListActive->next;
-    }
-    else
-    {
-        while (curr_section != NULL)
-        {
-            config_section *next_section = curr_section->next;
-            if (next_section == NULL)
-                return M64ERR_INPUT_NOT_FOUND;
-            if (osal_insensitive_strcmp(next_section->name, SectionName) == 0)
-            {
-                curr_section->next = next_section->next;
-                curr_section = next_section;
-                break;
-            }
-            curr_section = next_section;
-        }
-    }
+    curr_section_link = find_section_link(&l_ConfigListActive, SectionName);
+    if (*curr_section_link == NULL)
+        return M64ERR_INPUT_NOT_FOUND;
 
     /* delete all the variables in this section */
-    curr_var = curr_section->first_var;
-    while (curr_var != NULL)
-    {
-        config_var *next_var = curr_var->next;
-        if (curr_var->val_string != NULL)
-            free(curr_var->val_string);
-        if (curr_var->comment != NULL)
-            free(curr_var->comment);
-        free(curr_var);
-        curr_var = next_var;
-    }
-    /* delete the section itself */
-    free(curr_section);
+    next_section = (*curr_section_link)->next;
+    
+    /* delete the named section */
+    delete_section(*curr_section_link);
+    
+    /* fix the pointer to point to the next section after the deleted one */
+    *curr_section_link = next_section;
 
     return M64ERR_SUCCESS;
 }
@@ -815,7 +831,7 @@ EXPORT m64p_error CALL ConfigSaveSection(const char *SectionName)
         return M64ERR_INPUT_NOT_FOUND;
 
     /* duplicate this section */
-    new_section = section_deepcopy(curr_section, NULL);
+    new_section = section_deepcopy(curr_section);
     if (new_section == NULL)
         return M64ERR_NO_MEMORY;
 
@@ -830,8 +846,7 @@ EXPORT m64p_error CALL ConfigSaveSection(const char *SectionName)
     {
         /* the saved section replaces the first section in the list */
         new_section->next = l_ConfigListSaved->next;
-        delete_section_vars(l_ConfigListSaved);
-        free(l_ConfigListSaved);
+        delete_section(l_ConfigListSaved);
         l_ConfigListSaved = new_section;
     }
     else
@@ -850,8 +865,7 @@ EXPORT m64p_error CALL ConfigSaveSection(const char *SectionName)
             /* the saved section replaces curr_section->next */
             config_section *old_section = curr_section->next;
             new_section->next = old_section->next;
-            delete_section_vars(old_section);
-            free(old_section);
+            delete_section(old_section);
             curr_section->next = new_section;
         }
     }
@@ -862,7 +876,7 @@ EXPORT m64p_error CALL ConfigSaveSection(const char *SectionName)
 
 EXPORT m64p_error CALL ConfigRevertChanges(const char *SectionName)
 {
-    config_section *input_section, *curr_section, *new_section, *temp_next_ptr;
+    config_section **active_section_link, *active_section, *saved_section, *new_section;
 
     /* check input conditions */
     if (!l_ConfigInit)
@@ -871,31 +885,31 @@ EXPORT m64p_error CALL ConfigRevertChanges(const char *SectionName)
         return M64ERR_INPUT_ASSERT;
 
     /* walk through the Active section list, looking for a case-insensitive name match with input string */
-    input_section = find_section(l_ConfigListActive, SectionName);
-    if (input_section == NULL)
+    active_section_link = find_section_link(&l_ConfigListActive, SectionName);
+    active_section = *active_section_link;
+    if (active_section == NULL)
         return M64ERR_INPUT_NOT_FOUND;
 
     /* walk through the Saved section list, looking for a case-insensitive name match */
-    curr_section = find_section(l_ConfigListSaved, SectionName);
-    if (curr_section == NULL)
+    saved_section = find_section(l_ConfigListSaved, SectionName);
+    if (saved_section == NULL)
     {
         /* if this section isn't present in saved list, then it has been newly created */
         return M64ERR_INPUT_NOT_FOUND;
     }
 
-    /* we need to save the "next" pointer in the active section, because this will get blown away by the deepcopy */
-    temp_next_ptr = input_section->next;
-    /* delete the variables from the Active section */
-    delete_section_vars(input_section);
-    /* copy all of the section data from the Saved section to the Active one */
-    new_section = section_deepcopy(curr_section, input_section);
+    /* copy the section as it is on the disk */
+    new_section = section_deepcopy(saved_section);
+    
     if (new_section == NULL)
-        return M64ERR_NO_MEMORY;  /* it's very bad if this happens, because original data from Active section has been deleted */
-    /* new_section should be == to input_section.  now put the "next" pointer back */
-    input_section->next = temp_next_ptr;
+        return M64ERR_NO_MEMORY;
 
-    /* should be good to go */
-    return M64ERR_SUCCESS;
+    /* replace active_section with saved_section in the linked list */
+    *active_section_link = new_section;
+    new_section->next = active_section->next;
+
+    /* release memory associated with active_section */
+    delete_section(active_section);
 }
 
 
@@ -922,16 +936,9 @@ EXPORT m64p_error CALL ConfigSetParameter(m64p_handle ConfigSectionHandle, const
     var = find_section_var(section, ParamName);
     if (var == NULL)
     {
-        var = (config_var *) malloc(sizeof(config_var));
+        var = config_var_create(ParamName, NULL);
         if (var == NULL)
             return M64ERR_NO_MEMORY;
-        strncpy(var->name, ParamName, 63);
-        var->name[63] = 0;
-        var->type = M64TYPE_INT;
-        var->val_int = 0;
-        var->val_string = NULL;
-        var->comment = NULL;
-        var->next = NULL;
         append_var_to_section(section, var);
     }
 
@@ -940,19 +947,18 @@ EXPORT m64p_error CALL ConfigSetParameter(m64p_handle ConfigSectionHandle, const
     switch(ParamType)
     {
         case M64TYPE_INT:
-            var->val_int = *((int *) ParamValue);
+            var->val.integer = *((int *) ParamValue);
             break;
         case M64TYPE_FLOAT:
-            var->val_float = *((float *) ParamValue);
+            var->val.number = *((float *) ParamValue);
             break;
         case M64TYPE_BOOL:
-            var->val_int = (*((int *) ParamValue) != 0);
+            var->val.integer = (*((int *) ParamValue) != 0);
             break;
         case M64TYPE_STRING:
-            if (var->val_string != NULL)
-                free(var->val_string);
-            var->val_string = strdup((char *)ParamValue);
-            if (var->val_string == NULL)
+            free(var->val.string);
+            var->val.string = strdup((char *)ParamValue);
+            if (var->val.string == NULL)
                 return M64ERR_NO_MEMORY;
             break;
         default:
@@ -1090,23 +1096,11 @@ EXPORT m64p_error CALL ConfigSetDefaultInt(m64p_handle ConfigSectionHandle, cons
         return M64ERR_SUCCESS;
 
     /* otherwise create a new config_var object and add it to this section */
-    var = (config_var *) malloc(sizeof(config_var));
+    var = config_var_create(ParamName, ParamHelp);
     if (var == NULL)
         return M64ERR_NO_MEMORY;
-    strncpy(var->name, ParamName, 63);
-    var->name[63] = 0;
     var->type = M64TYPE_INT;
-    var->val_int = ParamValue;
-    var->val_string = NULL;
-    if (ParamHelp == NULL)
-        var->comment = NULL;
-    else
-    {
-        var->comment = strdup(ParamHelp);
-        if (var->comment == NULL)
-            return M64ERR_NO_MEMORY;
-    }
-    var->next = NULL;
+    var->val.integer = ParamValue;
     append_var_to_section(section, var);
 
     return M64ERR_SUCCESS;
@@ -1133,23 +1127,11 @@ EXPORT m64p_error CALL ConfigSetDefaultFloat(m64p_handle ConfigSectionHandle, co
         return M64ERR_SUCCESS;
 
     /* otherwise create a new config_var object and add it to this section */
-    var = (config_var *) malloc(sizeof(config_var));
+    var = config_var_create(ParamName, ParamHelp);
     if (var == NULL)
         return M64ERR_NO_MEMORY;
-    strncpy(var->name, ParamName, 63);
-    var->name[63] = 0;
     var->type = M64TYPE_FLOAT;
-    var->val_float = ParamValue;
-    var->val_string = NULL; 
-    if (ParamHelp == NULL)  
-        var->comment = NULL;
-    else
-    {
-        var->comment = strdup(ParamHelp);
-        if (var->comment == NULL)   
-            return M64ERR_NO_MEMORY;
-    }
-    var->next = NULL;
+    var->val.number = ParamValue;
     append_var_to_section(section, var);
 
     return M64ERR_SUCCESS;
@@ -1176,23 +1158,11 @@ EXPORT m64p_error CALL ConfigSetDefaultBool(m64p_handle ConfigSectionHandle, con
         return M64ERR_SUCCESS;
 
     /* otherwise create a new config_var object and add it to this section */
-    var = (config_var *) malloc(sizeof(config_var));
+    var = config_var_create(ParamName, ParamHelp);
     if (var == NULL)
         return M64ERR_NO_MEMORY;
-    strncpy(var->name, ParamName, 63);
-    var->name[63] = 0;
     var->type = M64TYPE_BOOL;
-    var->val_int = ParamValue ? 1 : 0;
-    var->val_string = NULL; 
-    if (ParamHelp == NULL)  
-        var->comment = NULL;
-    else
-    {
-        var->comment = strdup(ParamHelp);
-        if (var->comment == NULL)   
-            return M64ERR_NO_MEMORY;
-    }
-    var->next = NULL;
+    var->val.integer = ParamValue ? 1 : 0;
     append_var_to_section(section, var);
 
     return M64ERR_SUCCESS;
@@ -1219,24 +1189,16 @@ EXPORT m64p_error CALL ConfigSetDefaultString(m64p_handle ConfigSectionHandle, c
         return M64ERR_SUCCESS;
 
     /* otherwise create a new config_var object and add it to this section */
-    var = (config_var *) malloc(sizeof(config_var));
+    var = config_var_create(ParamName, ParamHelp);
     if (var == NULL)
         return M64ERR_NO_MEMORY;
-    strncpy(var->name, ParamName, 63);
-    var->name[63] = 0;
     var->type = M64TYPE_STRING;
-    var->val_string = strdup(ParamValue);
-    if (var->val_string == NULL)
-        return M64ERR_NO_MEMORY;
-    if (ParamHelp == NULL)  
-        var->comment = NULL;
-    else
+    var->val.string = strdup(ParamValue);
+    if (var->val.string == NULL)
     {
-        var->comment = strdup(ParamHelp);
-        if (var->comment == NULL)   
-            return M64ERR_NO_MEMORY;
+        delete_var(var);
+        return M64ERR_NO_MEMORY;
     }
-    var->next = NULL;
     append_var_to_section(section, var);
 
     return M64ERR_SUCCESS;
@@ -1273,13 +1235,13 @@ EXPORT int CALL ConfigGetParamInt(m64p_handle ConfigSectionHandle, const char *P
     switch(var->type)
     {
         case M64TYPE_INT:
-            return var->val_int;
+            return var->val.integer;
         case M64TYPE_FLOAT:
-            return (int) var->val_float;
+            return (int) var->val.number;
         case M64TYPE_BOOL:
-            return (var->val_int != 0);
+            return (var->val.integer != 0);
         case M64TYPE_STRING:
-            return atoi(var->val_string);
+            return atoi(var->val.string);
         default:
             DebugMessage(M64MSG_ERROR, "ConfigGetParamInt(): invalid internal parameter type for '%s'", ParamName);
             return 0;
@@ -1319,13 +1281,13 @@ EXPORT float CALL ConfigGetParamFloat(m64p_handle ConfigSectionHandle, const cha
     switch(var->type)
     {
         case M64TYPE_INT:
-            return (float) var->val_int;
+            return (float) var->val.integer;
         case M64TYPE_FLOAT:
-            return var->val_float;
+            return var->val.number;
         case M64TYPE_BOOL:
-            return (var->val_int != 0) ? 1.0f : 0.0f;
+            return (var->val.integer != 0) ? 1.0f : 0.0f;
         case M64TYPE_STRING:
-            return (float) atof(var->val_string);
+            return (float) atof(var->val.string);
         default:
             DebugMessage(M64MSG_ERROR, "ConfigGetParamFloat(): invalid internal parameter type for '%s'", ParamName);
             return 0.0;
@@ -1365,13 +1327,13 @@ EXPORT int CALL ConfigGetParamBool(m64p_handle ConfigSectionHandle, const char *
     switch(var->type)
     {
         case M64TYPE_INT:
-            return (var->val_int != 0);
+            return (var->val.integer != 0);
         case M64TYPE_FLOAT:
-            return (var->val_float != 0.0);
+            return (var->val.number != 0.0);
         case M64TYPE_BOOL:
-            return var->val_int;
+            return var->val.integer;
         case M64TYPE_STRING:
-            return (osal_insensitive_strcmp(var->val_string, "true") == 0);
+            return (osal_insensitive_strcmp(var->val.string, "true") == 0);
         default:
             DebugMessage(M64MSG_ERROR, "ConfigGetParamBool(): invalid internal parameter type for '%s'", ParamName);
             return 0;
@@ -1412,17 +1374,17 @@ EXPORT const char * CALL ConfigGetParamString(m64p_handle ConfigSectionHandle, c
     switch(var->type)
     {
         case M64TYPE_INT:
-            snprintf(outstr, 63, "%i", var->val_int);
+            snprintf(outstr, 63, "%i", var->val.integer);
             outstr[63] = 0;
             return outstr;
         case M64TYPE_FLOAT:
-            snprintf(outstr, 63, "%f", var->val_float);
+            snprintf(outstr, 63, "%f", var->val.number);
             outstr[63] = 0;
             return outstr;
         case M64TYPE_BOOL:
-            return (var->val_int ? "True" : "False");
+            return (var->val.integer ? "True" : "False");
         case M64TYPE_STRING:
-            return var->val_string;
+            return var->val.string;
         default:
             DebugMessage(M64MSG_ERROR, "ConfigGetParamString(): invalid internal parameter type for '%s'", ParamName);
             return "";
