@@ -23,15 +23,17 @@
  * outside of the core library.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #define M64P_CORE_PROTOTYPES 1
 #include "m64p_types.h"
 #include "m64p_config.h"
 #include "config.h"
 #include "callbacks.h"
+
+#include "main/util.h"
 
 #include "osal/files.h"
 #include "osal/preproc.h"
@@ -74,31 +76,6 @@ static config_list l_ConfigListSaved = NULL;
 /* --------------- */
 /* local functions */
 /* --------------- */
-static void strip_whitespace(char *string)
-{
-    char *start = string;
-    char *end = string + strlen(string) - 1;
-    int newlen;
-
-    while (*start == ' ' || *start == '\t' || *start == '\r' || *start == '\n')
-        start++;
-
-    while (end > string && (*end == ' ' || *end == '\t' || *end == '\r' || *end == '\n'))
-        end--;
-
-    if (start > end)
-    {
-        string[0] = 0;
-        return;
-    }
-
-    newlen = end - start + 1;
-    memmove(string, start, newlen);
-    string[newlen] = 0;
-
-    return;
-}
-
 static int is_numeric(const char *string)
 {
     char chTemp[16];
@@ -110,17 +87,28 @@ static int is_numeric(const char *string)
     return (rval == 1);
 }
 
+static config_section *find_section(config_list list, const char *ParamName)
+{
+    /* walk through the linked list of sections in the list */
+    config_section *curr_sec;
+    for (curr_sec = list; curr_sec != NULL; curr_sec = curr_sec->next)
+    {
+        if (osal_insensitive_strcmp(ParamName, curr_sec->name) == 0)
+            return curr_sec;
+    }
+
+    /* couldn't find this section parameter */
+    return NULL;
+}
+
 static config_var *find_section_var(config_section *section, const char *ParamName)
 {
     /* walk through the linked list of variables in the section */
-    config_var *curr_var = section->first_var;
-    while (curr_var != NULL)
+    config_var *curr_var;
+    for (curr_var = section->first_var; curr_var != NULL; curr_var = curr_var->next)
     {
         if (osal_insensitive_strcmp(ParamName, curr_var->name) == 0)
-        {
             return curr_var;
-        }
-        curr_var = curr_var->next;
     }
 
     /* couldn't find this configuration parameter */
@@ -225,8 +213,7 @@ static config_section * section_deepcopy(config_section *orig_section, config_se
         /* allocate memory and copy string values */
         if (orig_var->val_string != NULL)
         {
-            int len = strlen(orig_var->val_string);
-            new_var->val_string = (char *) malloc(len + 1);
+            new_var->val_string = strdup(orig_var->val_string);
             if (new_var->val_string == NULL)
             {
                 delete_section_vars(new_section);
@@ -237,15 +224,13 @@ static config_section * section_deepcopy(config_section *orig_section, config_se
         }
         if (orig_var->comment != NULL)
         {
-            int len = strlen(orig_var->comment);
-            new_var->comment = (char *) malloc(len + 1);
+            new_var->comment = strdup(orig_var->comment);
             if (new_var->comment == NULL)
             {
                 delete_section_vars(new_section);
                 free(new_section);
                 return NULL;
             }
-            memcpy(new_var->comment, orig_var->comment, len + 1);
         }
         /* add the new variable to the new section */
         if (last_new_var == NULL)
@@ -294,7 +279,7 @@ static m64p_error write_configlist_file(void)
     if (configpath == NULL)
         return M64ERR_FILES;
 
-    filepath = (char *) malloc(strlen(configpath) + 32);
+    filepath = combinepath(configpath, MUPEN64PLUS_CFG_NAME);
     if (filepath == NULL)
         return M64ERR_NO_MEMORY;
 
@@ -352,7 +337,7 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
     m64p_error rval;
     const char *configpath = NULL;
     char *filepath;
-    long filelen, pathlen;
+    long filelen;
     FILE *fPtr;
     char *configtext;
 
@@ -366,7 +351,7 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
     /* if a data directory was specified, make a copy of it */
     if (DataDirOverride != NULL)
     {
-        l_DataDirOverride = (char *) malloc(strlen(DataDirOverride) + 1);
+        l_DataDirOverride = strdup(DataDirOverride);
         if (l_DataDirOverride == NULL)
             return M64ERR_NO_MEMORY;
         strcpy(l_DataDirOverride, DataDirOverride);
@@ -375,30 +360,20 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
     /* if a config directory was specified, make a copy of it */
     if (ConfigDirOverride != NULL)
     {
-        l_ConfigDirOverride = (char *) malloc(strlen(ConfigDirOverride) + 1);
+        l_ConfigDirOverride = strdup(ConfigDirOverride);
         if (l_ConfigDirOverride == NULL)
             return M64ERR_NO_MEMORY;
-        strcpy(l_ConfigDirOverride, ConfigDirOverride);
     }
-
 
     /* get the full pathname to the config file and try to open it */
     configpath = ConfigGetUserConfigPath();
     if (configpath == NULL)
         return M64ERR_FILES;
 
-    filepath = (char *) malloc(strlen(configpath) + 32);
+    filepath = combinepath(configpath, MUPEN64PLUS_CFG_NAME);
     if (filepath == NULL)
         return M64ERR_NO_MEMORY;
 
-    strcpy(filepath, configpath);
-    pathlen = strlen(filepath);
-     if (!strchr(OSAL_DIR_SEPARATORS, filepath[pathlen - 1]))
-    {
-        filepath[pathlen] = OSAL_DIR_SEPARATORS[0];
-        filepath[pathlen + 1] = 0;
-    }
-    strcat(filepath, MUPEN64PLUS_CFG_NAME);
     fPtr = fopen(filepath, "rb");
     if (fPtr == NULL)
     {
@@ -414,7 +389,7 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
     filelen = ftell(fPtr);
     fseek(fPtr, 0L, SEEK_SET);
 
-    configtext = (char *) malloc(filelen + 16);
+    configtext = (char *) malloc(filelen + 1);
     if (configtext == NULL)
     {
         fclose(fPtr);
@@ -443,7 +418,7 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
             nextline = end;
         *nextline++ = 0;
         /* strip the whitespace and handle comment */
-        strip_whitespace(line);
+        line = trim(line);
         if (strlen(line) < 1)
         {
             line = nextline;
@@ -452,7 +427,7 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
         if (line[0] == '#')
         {
             line++;
-            strip_whitespace(line);
+            line = trim(line);
             lastcomment = line;
             line = nextline;
             continue;
@@ -482,8 +457,8 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
         varname = line;
         varvalue = pivot + 1;
         *pivot = 0;
-        strip_whitespace(varname);
-        strip_whitespace(varvalue);
+        line = trim(varname);
+        line = trim(varvalue);
         if (varvalue[0] == '"' && varvalue[strlen(varvalue)-1] == '"')
         {
             varvalue++;
@@ -589,15 +564,11 @@ EXPORT m64p_error CALL ConfigOpenSection(const char *SectionName, m64p_handle *C
         return M64ERR_INPUT_ASSERT;
 
     /* walk through the section list, looking for a case-insensitive name match */
-    curr_section = l_ConfigListActive;
-    while (curr_section != NULL)
+    curr_section = find_section(l_ConfigListActive, SectionName);
+    if (curr_section != NULL)
     {
-        if (osal_insensitive_strcmp(SectionName, curr_section->name) == 0)
-        {
-            *ConfigSectionHandle = curr_section;
-            return M64ERR_SUCCESS;
-        }
-        curr_section = curr_section->next;
+        *ConfigSectionHandle = curr_section;
+        return M64ERR_SUCCESS;
     }
 
     /* didn't find the section, so create new one */
@@ -693,13 +664,7 @@ EXPORT int CALL ConfigHasUnsavedChanges(const char *SectionName)
     }
 
     /* walk through the Active section list, looking for a case-insensitive name match with input string */
-    input_section = l_ConfigListActive;
-    while (input_section != NULL)
-    {
-        if (osal_insensitive_strcmp(SectionName, input_section->name) == 0)
-            break;
-        input_section = input_section->next;
-    }
+    input_section = find_section(l_ConfigListActive, SectionName);
     if (input_section == NULL)
     {
         DebugMessage(M64MSG_ERROR, "ConfigHasUnsavedChanges(): section name '%s' not found!", SectionName);
@@ -707,16 +672,12 @@ EXPORT int CALL ConfigHasUnsavedChanges(const char *SectionName)
     }
 
     /* walk through the Saved section list, looking for a case-insensitive name match */
-    curr_section = l_ConfigListSaved;
-    while (curr_section != NULL)
-    {
-        if (osal_insensitive_strcmp(input_section->name, curr_section->name) == 0)
-            break;
-        curr_section = curr_section->next;
-    }
-    /* if this section isn't present in saved list, then it has been newly created */
+    curr_section = find_section(l_ConfigListSaved, SectionName);
     if (curr_section == NULL)
+    {
+        /* if this section isn't present in saved list, then it has been newly created */
         return 1;
+    }
 
     /* compare all of the variables in the two sections. They are expected to be in the same order */
     active_var = input_section->first_var;
@@ -850,13 +811,7 @@ EXPORT m64p_error CALL ConfigSaveSection(const char *SectionName)
         return M64ERR_INPUT_ASSERT;
 
     /* walk through the Active section list, looking for a case-insensitive name match */
-    curr_section = l_ConfigListActive;
-    while (curr_section != NULL)
-    {
-        if (osal_insensitive_strcmp(SectionName, curr_section->name) == 0)
-            break;
-        curr_section = curr_section->next;
-    }
+    curr_section = find_section(l_ConfigListActive, SectionName);
     if (curr_section == NULL)
         return M64ERR_INPUT_NOT_FOUND;
 
@@ -917,27 +872,17 @@ EXPORT m64p_error CALL ConfigRevertChanges(const char *SectionName)
         return M64ERR_INPUT_ASSERT;
 
     /* walk through the Active section list, looking for a case-insensitive name match with input string */
-    input_section = l_ConfigListActive;
-    while (input_section != NULL)
-    {
-        if (osal_insensitive_strcmp(SectionName, input_section->name) == 0)
-            break;
-        input_section = input_section->next;
-    }
+    input_section = find_section(l_ConfigListActive, SectionName);
     if (input_section == NULL)
         return M64ERR_INPUT_NOT_FOUND;
 
     /* walk through the Saved section list, looking for a case-insensitive name match */
-    curr_section = l_ConfigListSaved;
-    while (curr_section != NULL)
-    {
-        if (osal_insensitive_strcmp(SectionName, curr_section->name) == 0)
-            break;
-        curr_section = curr_section->next;
-    }
-    /* if this section isn't present in saved list, then it has been newly created */
+    curr_section = find_section(l_ConfigListSaved, SectionName);
     if (curr_section == NULL)
+    {
+        /* if this section isn't present in saved list, then it has been newly created */
         return M64ERR_INPUT_NOT_FOUND;
+    }
 
     /* we need to save the "next" pointer in the active section, because this will get blown away by the deepcopy */
     temp_next_ptr = input_section->next;
@@ -1007,10 +952,9 @@ EXPORT m64p_error CALL ConfigSetParameter(m64p_handle ConfigSectionHandle, const
         case M64TYPE_STRING:
             if (var->val_string != NULL)
                 free(var->val_string);
-            var->val_string = (char *) malloc(strlen((char *) ParamValue) + 1);
+            var->val_string = strdup((char *)ParamValue);
             if (var->val_string == NULL)
                 return M64ERR_NO_MEMORY;
-            memcpy(var->val_string, ParamValue, strlen((char *) ParamValue) + 1);
             break;
         default:
             /* this is logically impossible because of the ParamType check at the top of this function */
@@ -1159,10 +1103,9 @@ EXPORT m64p_error CALL ConfigSetDefaultInt(m64p_handle ConfigSectionHandle, cons
         var->comment = NULL;
     else
     {
-        var->comment = (char *) malloc(strlen(ParamHelp) + 1);
+        var->comment = strdup(ParamHelp);
         if (var->comment == NULL)
             return M64ERR_NO_MEMORY;
-        strcpy(var->comment, ParamHelp);
     }
     var->next = NULL;
     append_var_to_section(section, var);
@@ -1203,10 +1146,9 @@ EXPORT m64p_error CALL ConfigSetDefaultFloat(m64p_handle ConfigSectionHandle, co
         var->comment = NULL;
     else
     {
-        var->comment = (char *) malloc(strlen(ParamHelp) + 1);
+        var->comment = strdup(ParamHelp);
         if (var->comment == NULL)   
             return M64ERR_NO_MEMORY;
-        strcpy(var->comment, ParamHelp);
     }
     var->next = NULL;
     append_var_to_section(section, var);
@@ -1247,10 +1189,9 @@ EXPORT m64p_error CALL ConfigSetDefaultBool(m64p_handle ConfigSectionHandle, con
         var->comment = NULL;
     else
     {
-        var->comment = (char *) malloc(strlen(ParamHelp) + 1);
+        var->comment = strdup(ParamHelp);
         if (var->comment == NULL)   
             return M64ERR_NO_MEMORY;
-        strcpy(var->comment, ParamHelp);
     }
     var->next = NULL;
     append_var_to_section(section, var);
@@ -1285,18 +1226,16 @@ EXPORT m64p_error CALL ConfigSetDefaultString(m64p_handle ConfigSectionHandle, c
     strncpy(var->name, ParamName, 63);
     var->name[63] = 0;
     var->type = M64TYPE_STRING;
-    var->val_string = (char *) malloc(strlen(ParamValue) + 1);
+    var->val_string = strdup(ParamValue);
     if (var->val_string == NULL)
         return M64ERR_NO_MEMORY;
-    strcpy(var->val_string, ParamValue);
     if (ParamHelp == NULL)  
         var->comment = NULL;
     else
     {
-        var->comment = (char *) malloc(strlen(ParamHelp) + 1);
+        var->comment = strdup(ParamHelp);
         if (var->comment == NULL)   
             return M64ERR_NO_MEMORY;
-        strcpy(var->comment, ParamHelp);
     }
     var->next = NULL;
     append_var_to_section(section, var);

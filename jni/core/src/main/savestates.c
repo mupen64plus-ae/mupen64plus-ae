@@ -68,7 +68,7 @@ int savestates_job = 0;
 
 static unsigned int slot = 0;
 static int autoinc_save_slot = 0;
-static char fname[1024] = {0};
+static char *fname = NULL;
 
 /* Returns path information of the currently selected savestate.
  *   filepath: Will recieve the full path of the savestate. Can be NULL.
@@ -77,7 +77,7 @@ static char fname[1024] = {0};
  */
 static void savestates_get_path(char **filepath, char **filename, int is_pj64)
 {
-    if(fname[0] != 0) /* A specific path was given. */
+    if(fname != NULL) /* A specific path was given. */
     {
         if (filepath != NULL)
             *filepath = strdup(fname);
@@ -148,9 +148,14 @@ void savestates_inc_slot(void)
 
 void savestates_select_filename(const char* fn)
 {
-   if(strlen(fn) >= sizeof(fname))
-       return;
-   strcpy(fname, fn);
+   if (fname != NULL)
+    {
+        free(fname);
+        fname = NULL;
+    }
+
+    if (fn != NULL)
+        fname = strdup(fn);
 }
 
 void savestates_save(void)
@@ -164,12 +169,12 @@ void savestates_save(void)
         savestates_inc_slot();
 
     savestates_get_path(&file, &filename, 0);
-    fname[0] = 0; // Forget given savestate path (if any)
+    savestates_select_filename(NULL); // Forget given savefile path (if any)
 
     f = gzopen(file, "wb");
     free(file);
 
-    if (f==NULL)
+    if (f == NULL)
     {
         main_message(M64MSG_STATUS, OSD_BOTTOM_LEFT, "Could not open state file: %s", filename);
         free(filename);
@@ -273,15 +278,15 @@ void savestates_load(void)
     /* Read and check Mupen64Plus magic number. */
     gzread(f, buffer, 8);
     if(strncmp(buffer, savestate_magic, 8)!=0)
-        {
+    {
         main_message(M64MSG_STATUS, OSD_BOTTOM_LEFT, "State file: %s is not a valid Mupen64plus savestate. Checking if in Project64 format...", filename);
         free(filename);
         gzclose(f);
         savestates_load_pj64();
         return;
-        }
+    }
 
-    fname[0] = 0; // Forget given savestate path (if any)
+    savestates_select_filename(NULL); // Forget given savefile path (if any)
     /* Read savestate file version in big-endian order. */
     gzread(f, inbuf, 4);
     version =                  inbuf[0];
@@ -289,21 +294,21 @@ void savestates_load(void)
     version = (version << 8) | inbuf[2];
     version = (version << 8) | inbuf[3];
     if(version != 0x00010000)
-        {
+    {
         main_message(M64MSG_STATUS, OSD_BOTTOM_LEFT, "State version (%08x) isn't compatible. Please update Mupen64Plus.", version);
         free(filename);
         gzclose(f);
         return;
-        }
+    }
 
     gzread(f, buffer, 32);
     if(memcmp(buffer, ROM_SETTINGS.MD5, 32))
-        {
+    {
         main_message(M64MSG_STATUS, OSD_BOTTOM_LEFT, "State ROM MD5 does not match current ROM.");
         free(filename);
         gzclose(f);
         return;
-        }
+    }
 
     gzread(f, &rdram_register, sizeof(RDRAM_register));
     gzread(f, &MI_register, sizeof(mips_register));
@@ -345,7 +350,7 @@ void savestates_load(void)
     if(r4300emu == CORE_PURE_INTERPRETER)
         gzread(f, &interp_addr, 4);
     else
-        {
+    {
 #ifdef NEW_DYNAREC
         gzread(f, &pcaddr, 4);
         pending_exception = 1;
@@ -357,7 +362,7 @@ void savestates_load(void)
             invalid_code[i] = 1;
         jump_to(queuelength);
 #endif
-        }
+    }
 
     gzread(f, &next_interupt, 4);
     gzread(f, &next_vi, 4);
@@ -365,13 +370,13 @@ void savestates_load(void)
 
     queuelength = 0;
     while(1)
-        {
+    {
         gzread(f, buffer+queuelength, 4);
         if(*((unsigned int*)&buffer[queuelength])==0xFFFFFFFF)
             break;
         gzread(f, buffer+queuelength+4, 4);
         queuelength += 8;
-        }
+    }
     load_eventqueue_infos(buffer);
 
     gzclose(f);
@@ -408,7 +413,7 @@ int savestates_save_pj64(void)
     }
 
     savestates_get_path(&file, &filename, 1);
-    fname[0] = 0; // Forget given savestate path (if any)
+    savestates_select_filename(NULL); // Forget given savefile path (if any)
 
     zipfile = zipOpen(file, APPEND_STATUS_CREATE);
 
@@ -531,7 +536,7 @@ static void savestates_load_pj64(void)
     TLB_pj64 tlb_pj64;
 
     savestates_get_path(&file, &filename, 1);
-    fname[0] = 0; // Forget given savestate path (if any)
+    savestates_select_filename(NULL); // Forget given savefile path (if any)
 
     /* Open the .zip file. */
     zipstatefile = unzOpen(file);
@@ -842,7 +847,6 @@ static void savestates_load_pj64(void)
         last_addr = PC->addr;
 		#endif
     main_message(M64MSG_STATUS, OSD_BOTTOM_LEFT, "State loaded from: %s", filename);
-    fname[0] = 0;
     
     clean_and_exit:
         if (file != NULL)
