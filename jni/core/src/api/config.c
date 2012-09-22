@@ -220,7 +220,6 @@ static config_section * section_deepcopy(config_section *orig_section, config_se
                 free(new_section);
                 return NULL;
             }
-            memcpy(new_var->val_string, orig_var->val_string, len + 1);
         }
         if (orig_var->comment != NULL)
         {
