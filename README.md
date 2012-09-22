@@ -5,11 +5,13 @@ Mupen64Plus, Android Edition (AE) is a port of Mupen64Plus to Android. (Not offi
 
 
 Mupen64Plus, AE Build Instructions
-----------------------------------
+==================================
 
 Author: Paul Lamb
 
 (for assistance, visit http://www.paulscode.com)
+
+
 
 
 
@@ -22,6 +24,8 @@ Downloading the source:
 
 2) Clone the git repository
    (example: "git clone https://github.com/paulscode/mupen64plus-ae.git")
+
+
 
 
 
@@ -39,6 +43,8 @@ Setting up the project:
 
 
 
+
+
 Eclipse users:
 --------------
 
@@ -49,6 +55,8 @@ Eclipse users:
 3) Right-click on the mupen64plus-ae project and choose "Android->Add native support"
 
 4) Update the path to the NDK
+
+
 
 
 
