@@ -11,8 +11,40 @@ Author: Paul Lamb
 (for assistance, visit http://www.paulscode.com)
 
 
-To build from source (follow steps in this order):
+Downloading the source:
 
-1) Run ndk-build
+1) From the terminal, go to the where folder you want to put mupen64plus-ae
+   (for Eclipse users, this should be ~/workspace/)
 
-2) Run "ant debug" (or "ant release") to generate the .apk file(s)
+2) Clone the git repository
+   (example: "git clone https://github.com/paulscode/mupen64plus-ae.git")
+
+
+Setting up the project:
+
+1) From the terminal, enter the mupen64plus-ae folder
+
+2) Run "android list targets" to find the index ## for API level 14 or higher
+
+3) Update the Android project
+   (example: "android update project --target ## --name Mupen64Plus --path .")
+
+
+Eclipse users:
+
+1) Install or update to the latest the ADT and Sequoyah Android Native Support plug-ins
+
+2) Import existing project into the workspace, and choose the mupen64plus-ae folder
+
+3) Right-click on the mupen64plus-ae project and choose "Android->Add native support"
+
+4) Update the path to the NDK
+
+
+Building from the command line:
+
+1) Navigate to the mupen64plus-ae folder
+
+2) Run "ndk-build" to generate the native libraries
+
+3) Run "ant debug" (or "ant release") to generate the .apk file(s)
