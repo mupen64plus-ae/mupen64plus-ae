@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - util.c                                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2012 CasualJames                                        *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -25,16 +26,62 @@
  *  -Doubly-linked list
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdarg.h>
 #include <sys/stat.h>
 
 #include "rom.h"
 #include "util.h"
 #include "osal/files.h"
 #include "osal/preproc.h"
+
+/** read_from_file
+ *    opens a file and reads the specified number of bytes.
+ *    returns zero on success, nonzero on failure
+ */
+file_status_t read_from_file(const char *filename, void *data, size_t size)
+{
+    FILE *f = fopen(filename, "rb");
+    if (f == NULL)
+    {
+        return file_open_error;
+    }
+
+    if (fread(data, 1, size, f) != size)
+    {
+        fclose(f);
+        return file_read_error;
+    }
+
+    fclose(f);
+    return file_ok;
+}
+
+/** write_to_file
+ *    opens a file and writes the specified number of bytes.
+ *    returns zero on sucess, nonzero on failure
+ */ 
+file_status_t write_to_file(const char *filename, const void *data, size_t size)
+{
+    FILE *f = fopen(filename, "wb");
+    if (f == NULL)
+    {
+        return file_open_error;
+    }
+
+    if (fwrite(data, 1, size, f) != size)
+    {
+        fclose(f);
+        return file_read_error;
+    }
+
+    fclose(f);
+    return file_ok;
+}
 
 /** trim
  *    Removes leading and trailing whitespace from str. Function modifies str
@@ -202,7 +249,7 @@ list_node_t *list_find_node(list_t list, void *data)
     return node;
 }
 
-void countrycodestring(unsigned short countrycode, char *string)
+void countrycodestring(char countrycode, char *string)
 {
     switch (countrycode)
     {
@@ -243,7 +290,7 @@ void countrycodestring(unsigned short countrycode, char *string)
         break;
 
     case 0x55: case 0x59:  /* Australia */
-        sprintf(string, "Australia (0x%2.2X)", countrycode);
+        sprintf(string, "Australia (0x%02X)", countrycode);
         break;
 
     case 0x50: case 0x58: case 0x20:
@@ -275,22 +322,96 @@ void imagestring(unsigned char imagetype, char *string)
     }
 }
 
-char* dirfrompath(const char* string)
+/* Looks for an instance of ANY of the characters in 'needles' in 'haystack',
+ * starting from the end of 'haystack'. Returns a pointer to the last position
+ * of some character on 'needles' on 'haystack'. If not found, returns NULL.
+ */
+static const char* strpbrk_reverse(const char* needles, const char* haystack)
 {
-    int stringlength, counter;
-    char* buffer;
+    size_t stringlength = strlen(haystack), counter;
 
-    stringlength = strlen(string);
-
-    for(counter = stringlength; counter > 0; --counter)
-        {
-        if (string[counter-1] == '/')
+    for (counter = stringlength; counter > 0; --counter)
+    {
+        if (strchr(needles, haystack[counter-1]))
             break;
+    }
+
+    if (counter == 0)
+        return NULL;
+
+    return haystack + counter - 1;
+}
+
+/* Extracts the directory string (part before the file name) from a path string.
+ * Returns a malloc'd string with the directory string.
+ * If there's no directory string in the path, returns a malloc'd empty string.
+ * (This is done so that path = dirfrompath(path) + namefrompath(path)). */
+char* dirfrompath(const char* path)
+{
+    const char* last_separator_ptr = strpbrk_reverse(OSAL_DIR_SEPARATORS, path);
+    if (last_separator_ptr != NULL)
+    {
+        size_t dirlen = last_separator_ptr + 1 - path; // Not including terminator
+
+        char* buffer = malloc(dirlen + 1);
+        if (buffer != NULL)
+        {
+            strncpy(buffer, path, dirlen);
+            buffer[dirlen] = 0;
         }
 
-    buffer = (char*)malloc((counter+1)*sizeof(char));
-    snprintf(buffer, counter+1, "%s", string);
-    buffer[counter] = '\0';
+        return buffer;
+    }
+    else
+        return calloc(1, sizeof(char)); // Empty string
+}
 
-    return buffer;
+/* Extracts the full file name (with extension) from a path string.
+ * Returns a malloc'd string with the file name. */
+char* namefrompath(const char* path)
+{
+    const char* last_separator_ptr = strpbrk_reverse(OSAL_DIR_SEPARATORS, path);
+    
+    if (last_separator_ptr != NULL)
+        return strdup(last_separator_ptr + 1);
+    else
+        return strdup(path);
+}
+
+char *formatstr(const char *fmt, ...)
+{
+	int size = 128, ret;
+	char *str = malloc(size), *newstr;
+	va_list args;
+
+	/* There are two implementations of vsnprintf we have to deal with:
+	 * C99 version: Returns the number of characters which would have been written
+	 *              if the buffer had been large enough, and -1 on failure.
+	 * Windows version: Returns the number of characters actually written,
+	 *                  and -1 on failure or truncation.
+	 * NOTE: An implementation equivalent to the Windows one appears in glibc <2.1.
+	 */
+	while (str != NULL)
+	{
+		va_start(args, fmt);
+		ret = vsnprintf(str, size, fmt, args);
+		va_end(args);
+
+		// Successful result?
+		if (ret >= 0 && ret < size)
+			return str;
+
+		// Increment the capacity of the buffer
+		if (ret >= size)
+			size = ret + 1; // C99 version: We got the needed buffer size
+		else
+			size *= 2; // Windows version: Keep guessing
+
+		newstr = realloc(str, size);
+		if (newstr == NULL)
+			free(str);
+		str = newstr;
+	}
+
+	return NULL;
 }

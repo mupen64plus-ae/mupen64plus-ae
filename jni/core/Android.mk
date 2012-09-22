@@ -50,6 +50,7 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/r4300/profile.c \
 	$(SRCDIR)/r4300/pure_interp.c \
 	$(SRCDIR)/r4300/recomp.c \
+    $(SRCDIR)/r4300/reset.c \
 	$(SRCDIR)/r4300/special.c \
 	$(SRCDIR)/r4300/regimm.c \
 	$(SRCDIR)/r4300/tlb.c \

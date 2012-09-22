@@ -533,8 +533,7 @@ public class GamePad extends View
         fpsNumYpercent = 50;
         fpsRate = 15;
         fpsFont = "Mupen64Plus-AE-Contrast-Blue";
-        int xpercent = 0;
-        int ypercent = 0;
+
         String filename;
         canvasW = 0;
         canvasH = 0;

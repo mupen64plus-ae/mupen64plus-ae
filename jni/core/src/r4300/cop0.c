@@ -77,9 +77,11 @@ void MTC0(void)
       break;
     case 9:    // Count
       update_count();
+      interupt_unsafe_state = 1;
 #if !defined(NEW_DYNAREC)
       if (next_interupt <= Count) gen_interupt();
 #endif
+      interupt_unsafe_state = 0;
       debug_count += Count;
       translate_event_queue((unsigned int) rrt & 0xFFFFFFFF);
       Count = (unsigned int) rrt & 0xFFFFFFFF;
@@ -105,7 +107,9 @@ void MTC0(void)
       update_count();
       PC++;
       check_interupt();
+      interupt_unsafe_state = 1;
       if (next_interupt <= Count) gen_interupt();
+      interupt_unsafe_state = 0;
       PC--;
       break;
     case 13:   // Cause

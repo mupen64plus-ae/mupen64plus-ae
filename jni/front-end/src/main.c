@@ -237,8 +237,8 @@ jstring Java_paulscode_android_mupen64plusae_GameActivityCommon_nativeGetHeaderN
 
     swap_rom( (unsigned char *) hdr, sizeof( rom_header ) );
 
-    trim( (char*) hdr->nom );
-    strcpy( strBuff, hdr->nom );
+    trim( hdr->Name );
+    strcpy( strBuff, hdr->Name );
     free( hdr );
 
     return (*env)->NewStringUTF( env, strBuff );

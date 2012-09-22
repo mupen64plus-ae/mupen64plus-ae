@@ -117,14 +117,13 @@ public class TouchPad
         if( !initialized )
             return;
 
-        int i, x, y, m, c, rgb, hatX, hatY;
+        int i, x, y, m, c, rgb;
         float d, p, dX, dY;
+        
         // Clear any previous pointer data:
         int axisX = 0;
         int axisY = 0;
-        hatX = -1;
-        hatY = -1;
-        boolean touchedAnalog = false;
+        
         // Clear any data about which buttons were pressed:
         for( i = 0; i < 18; i++ )
             buttonPressed[i] = false;
@@ -133,17 +132,21 @@ public class TouchPad
         for( i = 0; i < 14; i++ )
             mp64pButtons[i] = false;
 
+        // Process each pointer in sequence
         for( i = 0; i <= maxPid; i++ )
-        {  // Process each pointer in sequence
+        {  
             if( i == analogPid && !pointers[i] )
                 analogPid = -1;  // Release analog if it's pointer is not touching the pad
+            
+            // Pointer is touching the pad
             if( pointers[i] )
-            {  // Pointer is touching the pad
+            {  
                 x = pointerX[i];
                 y = pointerY[i];
                 
+                // Not the analog control, check the buttons
                 if( i != analogPid )
-                {  // Not the analog control, check the buttons
+                {  
                     for( m = 0; m < buttonCount; m++ )
                     {  // Check each one in sequence
                         if( x >= masks[m].x && x < masks[m].x + masks[m].width &&
@@ -156,15 +159,19 @@ public class TouchPad
                         }
                     }
                 }
+               
                 if( analogMask != null )
                 {
                     dX = (float)( x - (analogMask.x + analogMask.hWidth) );   // Distance from center along x-axis
                     dY = (float)( (analogMask.y + analogMask.hHeight) - y );  // Distance from center along y-axis
                     d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
+                    
+                    // Inside the analog control
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
-                    {  // Inside the analog control
+                    {  
+                        // Emulate the analog control as an octagon (like the real N64 controller)
                         if( MenuSkinsTouchpadActivity.analogAsOctagon )
-                        {  // Emulate the analog control as an octagon (like the real N64 controller)
+                        {  
                             Point crossPt = new Point();
                             float dC = analogMask.hWidth;
                             float dA = FloatMath.sqrt( (dC * dC) / 2.0f );
@@ -208,15 +215,12 @@ public class TouchPad
                             d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // distance from center
                         }
                         analogPid = i;  // "Capture" the analog control
-                        touchedAnalog = true;
-                        hatX = x - analogMask.x;
-                        hatY = y - analogMask.y;
-
                         p = (d - (float)analogDeadzone) / (float)(analogMaximum - analogDeadzone);  // percentage of full-throttle
                         if( p < 0 )
                             p = 0;
                         if( p > 1 )
                             p = 1;
+                        
                         // From the N64 func ref: The 3D Stick data is of type signed char and in
                         // the range between 80 and -80. (32768 / 409 = ~80.1)
                         axisX = (int) ( (dX / d) * p * 80.0f );
@@ -268,14 +272,18 @@ public class TouchPad
         }
 
         if( closestSDLButtonMatch > -1 )
-        {  // Found an SDL button that matches the color
+        {  
+            // Found an SDL button that matches the color
             SDLButtonPressed[closestSDLButtonMatch] = true;
         }
         else
-        {  // One of the N64 buttons matched the color
+        {  
+            // One of the N64 buttons matched the color
             buttonPressed[closestMatch] = true;
+           
+            // Only 14 buttons in Mupen64Plus API
             if( closestMatch < 14 )
-            {  // Only 14 buttons in Mupen64Plus API
+            {
                 mp64pButtons[closestMatch] = true;
             }
             // Simulate the remaining buttons:
@@ -322,8 +330,6 @@ public class TouchPad
         ypercents = new int[MAX_BUTTONS];
         buttonCount = 0;
         SDLButtonCount = 0;
-        int xpercent = 0;
-        int ypercent = 0;
         String filename;
         int i;
         for( i = 0; i < 18; i++ )
@@ -416,9 +422,11 @@ public class TouchPad
                 }
             }
         }
+       
         Set<String> mKeys = pad_ini.keySet();
+        // Loop through all the sections
         for ( String mKey : mKeys )
-        {   // Loop through all the sections
+        {
             filename = mKey;  // The rest of the sections are filenames
             if ( filename != null && filename.length() > 0 &&
                     !filename.equals( "INFO" ) && !filename.equals( "MASK_COLOR" ) &&

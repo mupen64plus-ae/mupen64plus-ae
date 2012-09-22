@@ -1624,6 +1624,20 @@ void update_count(void)
 */
 }
 
+void free_blocks(void)
+{
+   int i;
+   for (i=0; i<0x100000; i++)
+   {
+        if (blocks[i])
+        {
+            free_block(blocks[i]);
+            free(blocks[i]);
+            blocks[i] = NULL;
+        }
+    }
+}
+
 void init_blocks(void)
 {
    int i;
@@ -1754,16 +1768,9 @@ void r4300_reset_soft(void)
       CIC_Chip = 2;
    }
 
-   switch(ROM_HEADER->Country_code&0xFF)
+   switch(ROM_SETTINGS.systemtype)
      {
-      case 0x44:
-      case 0x46:
-      case 0x49:
-      case 0x50:
-      case 0x53:
-      case 0x55:
-      case 0x58:
-      case 0x59:
+      case SYSTEM_PAL:
     switch (CIC_Chip) {
      case 2:
        reg[5] = 0xFFFFFFFFC0F1D859LL;
@@ -1788,10 +1795,7 @@ void r4300_reset_soft(void)
     reg[23]= 0x0000000000000006LL;
     reg[31]= 0xFFFFFFFFA4001554LL;
     break;
-      case 0x37:
-      case 0x41:
-      case 0x45:
-      case 0x4A:
+      case SYSTEM_NTSC:
       default:
     switch (CIC_Chip) {
      case 2:
@@ -1965,15 +1969,7 @@ r4300emu = 2;
 
     debug_count+= Count;
     DebugMessage(M64MSG_INFO, "R4300 emulator finished.");
-    for (i=0; i<0x100000; i++)
-    {
-        if (blocks[i])
-        {
-            free_block(blocks[i]);
-            free(blocks[i]);
-            blocks[i] = NULL;
-        }
-    }
+    free_blocks();
     if (r4300emu == CORE_PURE_INTERPRETER) free(PC);
 
     /* print instruction counts */

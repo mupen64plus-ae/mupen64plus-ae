@@ -13,8 +13,9 @@ class Updater
     {
         String upgraded = MenuActivity.gui_cfg.get( "GENERAL", "upgraded_1.9" );
 
+        // Version 1.9 requires app data to be restored.  Back up saves, then delete the old app data.
         if( upgraded == null || !upgraded.equals( "1" ) )
-        { // Version 1.9 requires app data to be restored.  Back up saves, then delete the old app data.
+        {
             File appData = new File( Globals.DataDir );
             Utility.copyFile( new File( Globals.DataDir + "/data/save" ),
                               new File( Globals.StorageDir + "/mp64p_tmp_asdf1234lkjh0987/data/save" )  );
@@ -27,12 +28,14 @@ class Updater
         }
         return true;
     }
+    
     public static boolean checkFirstRun( Activity mInstance )
     {
         String first_run = MenuActivity.gui_cfg.get( "GENERAL", "first_run" );
 
+        // This gets run the first time the app runs only!
         if( first_run != null && first_run.equals( "1" ) )
-        { // This gets run the first time the app runs only!
+        {
             MenuActivity.gui_cfg.put( "GENERAL", "first_run", "0" );
             MenuActivity.gui_cfg.put( "TOUCH_PAD", "which_pad", "Mupen64Plus-AE-Xperia-Play" );
             selectGamepad( mInstance );
@@ -49,8 +52,10 @@ class Updater
                 romFolder = Globals.StorageDir + "/roms/n64";
             else
                 romFolder = Globals.StorageDir;
+            
             MenuActivity.gui_cfg.put( "LAST_SESSION", "rom_folder", romFolder );
             MenuActivity.gui_cfg.put( "GENERAL", "auto_save", "0" );
+            
             File f = new File( Globals.StorageDir );
             if( !f.exists() )
             {
@@ -61,8 +66,10 @@ class Updater
         }
         return true;
     }
+    
+    // Correct the config file if another app (*caugh* N64 4 Droid) corrupted it with an older version
     public static boolean checkCfgVer( Activity mInstance )
-    {  // Correct the config file if another app (*caugh* N64 4 Droid) corrupted it with an older version
+    {
         boolean everythingOk = true;
         String val;
 
@@ -218,6 +225,7 @@ class Updater
            Log.e( "Updater", "SD Card not accessable in method restoreDefaults" );
            return false;
         }
+        
         MenuActivity.mupen64plus_cfg.save();
         MenuActivity.gui_cfg.save();
         gles2n64_conf.save();
@@ -243,6 +251,7 @@ class Updater
             inches = (float) width / metrics.ydpi;
             height = metrics.widthPixels;
         }
+        
         // Pick a virtual gamepad layout based on screen size/ resolution:
         if( inches > 5.5f )
             MenuActivity.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog-Tablet" );

@@ -26,11 +26,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
     // This is what SDL runs in. It invokes SDL_main(), eventually
     private static Thread mSDLThread;
-    private static int glMajorVersion;
-    private static int glMinorVersion;
-    
+   
     // EGL private objects
-    private EGLContext  mEGLContext;
     private EGLSurface  mEGLSurface;
     private EGLDisplay  mEGLDisplay;
 
@@ -195,9 +192,6 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     public boolean initEGL( int majorVersion, int minorVersion )
     {
         Log.v( "SDLSurface", "Starting up OpenGL ES " + majorVersion + "." + minorVersion );
-        glMajorVersion = majorVersion;
-        glMinorVersion = minorVersion;
-
         try
         {
             EGL10 egl = (EGL10)EGLContext.getEGL();
@@ -281,7 +275,6 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                 return false;
             }
 
-            mEGLContext = ctx;
             mEGLDisplay = dpy;
             mEGLSurface = surface;
         }

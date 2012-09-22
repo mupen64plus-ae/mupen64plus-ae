@@ -308,7 +308,7 @@ void nullf() {}
 void tlb_hacks()
 {
   // Goldeneye hack
-  if (strncmp((char *) ROM_HEADER->nom, "GOLDENEYE",9) == 0)
+  if (strncmp(ROM_HEADER->Name, "GOLDENEYE",9) == 0)
   {
     u_int addr;
     int n;

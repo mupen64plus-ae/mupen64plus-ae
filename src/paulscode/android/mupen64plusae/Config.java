@@ -59,13 +59,12 @@ class Config
      */
     public ConfigSection match( String regex )
     {
+        String sectionTitle;
+        Set<String> keys = configMap.keySet();
+        Iterator<String> iter = keys.iterator();
+        
         if( configMap == null )
             return null;  // No configuration to look up.. quit
-        
-
-        Set<String> keys = configMap.keySet();
-        Iterator<String> iter = keys.iterator();        
-        String sectionTitle;
         
         while( iter.hasNext() )
         {
@@ -99,12 +98,15 @@ class Config
     {
         if( configMap == null )
             return null;  // No configuration to look up.. quit
+        
         ConfigSection section = configMap.get( sectionTitle );
         if( section == null || section.parameters == null )
             return null;  // The specified section doesn't exist or is empty.. quit
+        
         ConfigParameter confParam = section.parameters.get( parameter );
         if( confParam == null )
             return null;  // The specified parameter doesn't exist.. quit
+        
         return confParam.value;  // got it
     }
 
@@ -137,6 +139,7 @@ class Config
     {
         if( configMap != null )
             configMap.clear();
+        
         if( configList != null )
             configList.clear();  // Ready to start fresh
     }
@@ -148,14 +151,17 @@ class Config
      */
     @SuppressWarnings("unused")
 	public boolean load( String filename )
-    {
+    {   
         clear();  // Free any previously loaded data
         if( configMap == null )  // Create the configMap if it hasn't been already
             configMap = new HashMap<String, ConfigSection>();
+        
         if( configList == null )  // Create the configList if it hasn't been already
             configList = new LinkedList<ConfigSection>();
+        
         if( filename == null || filename.length() < 1 )
             return false;   // Make sure a file was actually specified
+
         FileInputStream fstream = null;
         try
         {
@@ -165,8 +171,10 @@ class Config
         {
             return false;  // File not found.. we can't continue
         }
+        
         if( fstream == null )
             return false;  // Some problem, just quit
+        
         DataInputStream in = new DataInputStream( fstream );
         BufferedReader br = new BufferedReader( new InputStreamReader( in ) );
 
@@ -205,11 +213,13 @@ class Config
             Log.e( "Config", "Filename not specified in method save()" );
             return false;   // quit
         }
+        
         if( configList == null )
         {  // No config data to save.
             Log.e( "Config", "No config data to save in method save()" );
             return false;   // quit
         }
+        
         File f = new File( filename );
         if( f.exists() )
         {   // Delete it if it already exists.
@@ -219,6 +229,7 @@ class Config
                 return false;   // quit
             }
         }
+        
         try
         {
             FileWriter fw = new FileWriter( filename );  // For writing to the config file
@@ -321,7 +332,9 @@ class Config
                     fw.write( strLine.substring( 0, x + 1 ) + confParam.value + "\n" );
             }
             else
+            {
                 fw.write( strLine );
+            }
         }
     }
 
@@ -408,7 +421,7 @@ class Config
                                     parameters.put( p, confParam );  // Save the pair.
                                 }
                             }
-                        }  // Its ok to have an empty assignment (such as "param=")
+                        }  // It's ok to have an empty assignment (such as "param=")
                     }
                     else if( strLine.contains( "[" ) )
                     {   // This should be the beginning of the next section
@@ -478,7 +491,10 @@ class Config
                 }
             }
             else
-                confParam.value = value;  // Change the parameter's value
+            {
+                // Change the parameter's value
+                confParam.value = value;
+            }
         }
 
         /**
