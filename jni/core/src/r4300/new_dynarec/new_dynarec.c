@@ -308,11 +308,11 @@ void nullf() {}
 void tlb_hacks()
 {
   // Goldeneye hack
-  if (strncmp(ROM_HEADER->Name, "GOLDENEYE",9) == 0)
+  if (strncmp(ROM_SETTINGS.headername, "GOLDENEYE",9) == 0)
   {
     u_int addr;
     int n;
-    switch (ROM_HEADER->Country_code&0xFF) 
+    switch ((((m64p_rom_header *)rom)->Country_code) & 0xFF) // NOTE: Not sure if the '& 0xFF' is needed considering core changes 
     {
       case 0x45: // U
         addr=0x34b30;

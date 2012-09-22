@@ -216,26 +216,26 @@ jstring Java_paulscode_android_mupen64plusae_GameActivityCommon_nativeGetHeaderN
         return NULL;
     }
 
-    rom_header *hdr = (rom_header *) malloc( sizeof( rom_header ) );
+    m64p_rom_header *hdr = (m64p_rom_header *) malloc( sizeof( m64p_rom_header ) );
 
     if( hdr == NULL )
     {
         printf( "Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
-                sizeof( rom_header ), strBuff );
+                sizeof( m64p_rom_header ), strBuff );
         fclose(fPtr);
         return NULL;
     }
-    else if( fread( hdr, 1, sizeof( rom_header ), fPtr ) != sizeof( rom_header ) )
+    else if( fread( hdr, 1, sizeof( m64p_rom_header ), fPtr ) != sizeof( m64p_rom_header ) )
     {
         printf( "Error: couldn't read %li bytes from ROM image file '%s'.\n",
-                sizeof( rom_header ), strBuff );
+                sizeof( m64p_rom_header ), strBuff );
         free( hdr );
         fclose( fPtr );
         return NULL;
     }
     fclose( fPtr );
 
-    swap_rom( (unsigned char *) hdr, sizeof( rom_header ) );
+    swap_rom( (unsigned char *) hdr, sizeof( m64p_rom_header ) );
 
     trim( hdr->Name );
     strcpy( strBuff, hdr->Name );
@@ -257,26 +257,26 @@ jstring Java_paulscode_android_mupen64plusae_GameActivityCommon_nativeGetHeaderC
         return NULL;
     }
 
-    rom_header *hdr = (rom_header *) malloc( sizeof( rom_header ) );
+    m64p_rom_header *hdr = (m64p_rom_header *) malloc( sizeof( m64p_rom_header ) );
 
     if( hdr == NULL )
     {
         printf( "Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
-                sizeof( rom_header ), strBuff );
+                sizeof( m64p_rom_header ), strBuff );
         fclose(fPtr);
         return NULL;
     }
-    else if( fread( hdr, 1, sizeof( rom_header ), fPtr ) != sizeof( rom_header ) )
+    else if( fread( hdr, 1, sizeof( m64p_rom_header ), fPtr ) != sizeof( m64p_rom_header ) )
     {
         printf( "Error: couldn't read %li bytes from ROM image file '%s'.\n",
-                sizeof( rom_header ), strBuff );
+                sizeof( m64p_rom_header ), strBuff );
         free( hdr );
         fclose( fPtr );
         return NULL;
     }
     fclose( fPtr );
 
-    swap_rom( (unsigned char *) hdr, sizeof( rom_header ) );
+    swap_rom( (unsigned char *) hdr, sizeof( m64p_rom_header ) );
 
     sprintf( strBuff, "%x %x", sl((unsigned int)hdr->CRC1), sl((unsigned int)hdr->CRC2) );
 
