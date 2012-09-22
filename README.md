@@ -19,7 +19,7 @@ Author: Paul Lamb
 Downloading the source:
 -----------------------
 
-1) From the terminal, go to the where folder you want to put mupen64plus-ae
+1) From the terminal, go to the folder where you want to put mupen64plus-ae
    (for Eclipse users, this should be ~/workspace/)
 
 2) Clone the git repository
