@@ -595,20 +595,20 @@ static int savestates_load_pj64_unc(char *filepath)
     return 1;
 }
 
-savestates_type savestates_detect_type(void)
+savestates_type savestates_detect_type(char *filepath)
 {
-    char magic[4];
-    FILE *f = fopen(fname, "rb");
+    unsigned char magic[4];
+    FILE *f = fopen(filepath, "rb");
     if (f == NULL)
     {
-        DebugMessage(M64MSG_STATUS, "Could not open state file %s\n", fname);
+        DebugMessage(M64MSG_STATUS, "Could not open state file %s\n", filepath);
         return savestates_type_unknown;
     }
 
     if (fread(magic, 1, 4, f) != 4)
     {
         fclose(f);
-        DebugMessage(M64MSG_STATUS, "Could not read from state file %s\n", fname);
+        DebugMessage(M64MSG_STATUS, "Could not read from state file %s\n", filepath);
         return savestates_type_unknown;
     }
 
@@ -616,13 +616,13 @@ savestates_type savestates_detect_type(void)
 
     if (magic[0] == 0x1f && magic[1] == 0x8b) // GZIP header
         return savestates_type_m64p;
-    else if (strncmp(magic, "PK\x03\x04", 4) == 0) // ZIP header
+    else if (memcmp(magic, "PK\x03\x04", 4) == 0) // ZIP header
         return savestates_type_pj64_zip;
     else if (*((int *)magic) == pj64_magic) // PJ64 header
         return savestates_type_pj64_unc;
     else
     {
-        DebugMessage(M64MSG_STATUS, "Unknown state file type %s\n", fname);
+        DebugMessage(M64MSG_STATUS, "Unknown state file type %s\n", filepath);
         return savestates_type_unknown;
     }
 }
@@ -633,7 +633,7 @@ int savestates_load(void)
     int ret = 0;
 
     if (fname != NULL && type == savestates_type_unknown)
-        type = savestates_detect_type();
+        type = savestates_detect_type(fname);
     else if (fname == NULL) // Always load slots in M64P format
         type = savestates_type_m64p;
 
@@ -750,6 +750,7 @@ static void savestates_save_m64p(char *filepath)
 static int savestates_save_pj64(char *filepath, void *handle,
                                 int (*write_func)(void *, const void *, size_t))
 {
+    // TODO fpr shuffle
     unsigned int i, vi_timer, addr;
     TLB_pj64 tlb_pj64[32];
     unsigned int dummy = 0;
@@ -782,6 +783,9 @@ static int savestates_save_pj64(char *filepath, void *handle,
         tlb_pj64[i].BreakDownEntryLo1.D      = (unsigned int) tlb_e[i].d_odd;
         tlb_pj64[i].BreakDownEntryLo1.V      = (unsigned int) tlb_e[i].v_odd;
     }
+    
+    if ((Status & 0x04000000) == 0) // TODO not sure how pj64 handles this
+        shuffle_fpr_data(0x04000000, 0);
 
     if (!write_func(handle, &pj64_magic,                     4) ||
         !write_func(handle, &SaveRDRAMSize,                  4) ||
@@ -834,6 +838,9 @@ static int savestates_save_pj64(char *filepath, void *handle,
     {
         return 0;
     }
+    
+    if ((Status & 0x04000000) == 0) // TODO not sure how pj64 handles this
+        shuffle_fpr_data(0x04000000, 0);
 
     return 1;
 }

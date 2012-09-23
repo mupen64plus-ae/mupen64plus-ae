@@ -32,6 +32,8 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdarg.h>
+#include <errno.h>
+#include <limits.h>
 
 #include "rom.h"
 #include "util.h"
@@ -319,26 +321,6 @@ static const char* strpbrk_reverse(const char* needles, const char* haystack)
     return haystack + counter - 1;
 }
 
-char* dirfrompath(const char* path)
-{
-    const char* last_separator_ptr = strpbrk_reverse(OSAL_DIR_SEPARATORS, path);
-    if (last_separator_ptr != NULL)
-    {
-        size_t dirlen = last_separator_ptr + 1 - path; // Not including terminator
-
-        char* buffer = (char*) malloc(dirlen + 1);
-        if (buffer != NULL)
-        {
-            strncpy(buffer, path, dirlen);
-            buffer[dirlen] = 0;
-        }
-
-        return buffer;
-    }
-    else
-        return (char*) calloc(1, sizeof(char)); // Empty string
-}
-
 const char* namefrompath(const char* path)
 {
     const char* last_separator_ptr = strpbrk_reverse(OSAL_DIR_SEPARATORS, path);
@@ -387,6 +369,53 @@ char *trim(char *str)
     str[end - start] = '\0';
 
     return str;
+}
+
+int string_to_int(const char *str, int *result)
+{
+    char *endptr;
+    long int n;
+    if (*str == '\0' || isspace(*str))
+        return 0;
+    errno = 0;
+    n = strtol(str, &endptr, 10);
+    if (*endptr != '\0' || errno != 0 || n < INT_MIN || n > INT_MAX)
+        return 0;
+    *result = (int)n;
+    return 1;
+}
+
+static unsigned char char2hex(char c)
+{
+    c = tolower(c);
+    if(c >= '0' && c <= '9')
+        return c - '0';
+    else if(c >= 'a' && c <= 'f')
+        return c - 'a' + 10;
+    else
+        return 0xFF;
+}
+
+int parse_hex(const char *str, unsigned char *output, size_t output_size)
+{
+    size_t i, j;
+    for (i = 0; i < output_size; i++)
+    {
+        output[i] = 0;
+        for (j = 0; j < 2; j++)
+        {
+            unsigned char h = char2hex(*str++);
+            if (h == 0xFF)
+                return 0;
+
+            output[i] = (output[i] << 4) | h;
+        }
+    }
+
+    if (*str != '\0')
+        return 0;
+
+    return 1;
 }
 
 char *formatstr(const char *fmt, ...)

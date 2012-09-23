@@ -59,6 +59,7 @@
 #include "plugin/plugin.h"
 #include "r4300/r4300.h"
 #include "r4300/interupt.h"
+#include "r4300/reset.h"
 
 #ifdef DBG
 #include "debugger/dbg_types.h"
@@ -78,9 +79,6 @@
 m64p_handle g_CoreConfig = NULL;
 
 m64p_frame_callback g_FrameCallback = NULL;
-m64p_input_callback g_InputCallback = NULL;
-m64p_audio_callback g_AudioCallback = NULL;
-m64p_vi_callback    g_ViCallback = NULL;
 
 int         g_MemHasBeenBSwapped = 0;   // store byte-swapped flag so we don't swap twice when re-playing game
 int         g_EmulatorRunning = 0;      // need separate boolean to tell if emulator is running, since --nogui doesn't use a thread
@@ -414,12 +412,18 @@ void main_state_load(const char *filename)
     controllerCommand(2, StopRumble);
     controllerCommand(3, StopRumble);
 
-    savestates_set_job(savestates_job_load, savestates_type_unknown, NULL);
+    if (filename == NULL) // Save to slot
+        savestates_set_job(savestates_job_load, savestates_type_m64p, NULL);
+    else
+        savestates_set_job(savestates_job_load, savestates_type_unknown, filename);
 }
 
 void main_state_save(int format, const char *filename)
 {
-    savestates_set_job(savestates_job_save, (savestates_type)format, filename);
+    if (filename == NULL) // Save to slot
+        savestates_set_job(savestates_job_save, savestates_type_m64p, NULL);
+    else // Save to file
+        savestates_set_job(savestates_job_save, (savestates_type)format, filename);
 }
 
 m64p_error main_core_state_query(m64p_core_param param, int *rval)
@@ -556,7 +560,6 @@ m64p_error main_volume_down(void)
 m64p_error main_volume_get_level(int *level)
 {
     *level = volumeGetLevel();
-    main_draw_volume_osd();
     return M64ERR_SUCCESS;
 }
 
@@ -571,6 +574,15 @@ m64p_error main_volume_mute(void)
 {
     volumeMute();
     main_draw_volume_osd();
+    return M64ERR_SUCCESS;
+}
+
+m64p_error main_reset(int do_hard_reset)
+{
+    if (do_hard_reset)
+        reset_hard_job |= 1;
+    else
+        reset_soft();
     return M64ERR_SUCCESS;
 }
 
@@ -631,9 +643,6 @@ void new_vi(void)
     double AdjustedLimit = VILimitMilliseconds * 100.0 / l_SpeedFactor;  // adjust for selected emulator speed
     int time;
     
-    if (g_ViCallback != NULL)
-        g_ViCallback();
-
     start_section(IDLE_SECTION);
     VI_Counter++;
 

@@ -83,12 +83,6 @@ void imagestring(unsigned char imagetype, char *string);
      Path utilities
  **********************/
 
-/* Extracts the directory string (part before the file name) from a path string.
- * Returns a malloc'd string with the directory string.
- * If there's no directory string in the path, returns a malloc'd empty string.
- * (This is done so that path = dirfrompath(path) + namefrompath(path)). */
-char* dirfrompath(const char* path);
-
 /* Extracts the full file name (with extension) from a path string.
  * Returns the same string, advanced until the file name. */
 const char* namefrompath(const char* path);
@@ -107,6 +101,22 @@ char* combinepath(const char* first, const char *second);
  *    and also returns modified string.
  */
 char *trim(char *str);
+
+/* Converts an string to an integer.
+ * Returns 1 on success, 0 on failure. 'result' is undefined on failure.
+ *
+ * The following conditions cause this function to fail:
+ * - Empty string
+ * - Leading characters (including whitespace)
+ * - Trailing characters (including whitespace)
+ * - Overflow or underflow.
+ */
+int string_to_int(const char *str, int *result);
+
+/* Converts an string of hexadecimal characters to a byte array.
+ * 'output_size' is the number of bytes (hex digraphs) to convert.
+ * Returns 1 on success, 0 on failure. 'output' is undefined on failure. */
+int parse_hex(const char *str, unsigned char *output, size_t output_size);
 
 /* Formats an string, using the same syntax as printf.
  * Returns the result in a malloc'd string. */

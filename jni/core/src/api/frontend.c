@@ -51,7 +51,6 @@
 #endif
 
 #include "plugin/plugin.h"
-#include "r4300/reset.h"
 
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "frontend", __VA_ARGS__)
 
@@ -112,7 +111,7 @@ EXPORT m64p_error CALL CoreShutdown(void)
     /* close down some core sub-systems */
     romdatabase_close();
     ConfigShutdown();
-    savestates_set_job(savestates_job_nothing, savestates_type_unknown, NULL);
+    savestates_clear_job();
 
     /* tell SDL to shut down */
     SDL_Quit();
@@ -247,7 +246,7 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
         case M64CMD_STATE_SAVE:
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;
-            if (ParamInt < 1 || ParamInt > 3)
+            if (ParamPtr != NULL && (ParamInt < 1 || ParamInt > 3))
                 return M64ERR_INPUT_INVALID;
             main_state_save(ParamInt, (char *) ParamPtr);
             return M64ERR_SUCCESS;
@@ -316,25 +315,17 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
         case M64CMD_VOLUME_SET_LEVEL:
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;
+            if (ParamInt < 0 || ParamInt > 100)
+                return M64ERR_INPUT_INVALID;
             return main_volume_set_level(ParamInt);
         case M64CMD_VOLUME_MUTE:
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;
             return main_volume_mute();
-        case M64CMD_SET_AUDIO_CALLBACK:
-            g_AudioCallback = (m64p_audio_callback) ParamPtr;
-            return M64ERR_SUCCESS;
-        case M64CMD_SET_INPUT_CALLBACK:
-            g_InputCallback = (m64p_input_callback) ParamPtr;
-            return M64ERR_SUCCESS;
-        case M64CMD_SET_VI_CALLBACK:
-            g_ViCallback = (m64p_vi_callback) ParamPtr;
-            return M64ERR_SUCCESS;
-        case M64CMD_SOFT_RESET:
-            if (!g_EmulatorRunning)
-                return M64ERR_INVALID_STATE;
-            reset_soft();
-            return M64ERR_SUCCESS;
+        case M64CMD_RESET:
+            if (ParamInt < 0 || ParamInt > 1)
+                return M64ERR_INPUT_INVALID;
+            return main_reset(ParamInt);
         case M64CMD_ADVANCE_FRAME:
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;

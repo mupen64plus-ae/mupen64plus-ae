@@ -393,8 +393,6 @@ void gen_interupt(void)
             lircCheckInput();
 #endif
             SDL_PumpEvents();
-            if (g_InputCallback != NULL)
-                g_InputCallback();
                 
             refresh_stat();
 
@@ -412,8 +410,6 @@ void gen_interupt(void)
 #ifdef WITH_LIRC
                     lircCheckInput();
 #endif //WITH_LIRC
-                    if (g_InputCallback != NULL)
-                        g_InputCallback();
                 }
             }
 
@@ -456,8 +452,6 @@ void gen_interupt(void)
             lircCheckInput();
 #endif //WITH_LIRC
             SDL_PumpEvents();
-            if (g_InputCallback != NULL)
-                g_InputCallback();
             PIF_RAMb[0x3F] = 0x0;
             remove_interupt_event();
             MI_register.mi_intr_reg |= 0x02;

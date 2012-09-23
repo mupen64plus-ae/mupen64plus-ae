@@ -2957,8 +2957,6 @@ void write_ai(void)
     case 0x4:
         ai_register.ai_len = word;
         aiLenChanged();
-        if (g_AudioCallback != NULL)
-            g_AudioCallback();
         
         freq = ROM_PARAMS.aidacrate / (ai_register.ai_dacrate+1);
         if (freq)
@@ -3017,8 +3015,6 @@ void write_aib(void)
           + ((*address_low&3)^S8) ) = cpu_byte;
         ai_register.ai_len = temp;
         aiLenChanged();
-        if (g_AudioCallback != NULL)
-            g_AudioCallback();
         
         delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
                                     vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);                  
@@ -3079,8 +3075,6 @@ void write_aih(void)
                             + ((*address_low&3)^S16) )) = hword;
         ai_register.ai_len = temp;
         aiLenChanged();
-        if (g_AudioCallback != NULL)
-            g_AudioCallback();
         
         delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
                                     vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);
@@ -3132,8 +3126,6 @@ void write_aid(void)
         ai_register.ai_dram_addr = (unsigned int) (dword >> 32);
         ai_register.ai_len = (unsigned int) (dword & 0xFFFFFFFF);
         aiLenChanged();
-        if (g_AudioCallback != NULL)
-            g_AudioCallback();
         
         delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
                                     vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);
