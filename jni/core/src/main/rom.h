@@ -36,6 +36,17 @@ extern int rom_size;
 
 extern unsigned char isGoldeneyeRom;
 
+typedef struct _rom_params
+{
+   m64p_system_type systemtype;
+   int vilimit;
+   int aidacrate;
+   char headername[21];  /* ROM Name as in the header, removing trailing whitespace */
+} rom_params;
+
+extern m64p_rom_header  *ROM_HEADER;
+extern rom_params        ROM_PARAMS;
+
 extern m64p_rom_settings ROM_SETTINGS;
 
 /* Supported rom compressiontypes. */
@@ -81,7 +92,8 @@ enum
 /* ROM utility functions */
 
 m64p_system_type rom_country_code_to_system_type(char country_code);
-int rom_country_code_to_vi_limit(char country_code);
+int rom_system_type_to_vi_limit(m64p_system_type system_type);
+int rom_system_type_to_ai_dac_rate(m64p_system_type system_type);
 
 /* Rom INI database structures and functions */
 
@@ -118,7 +130,7 @@ typedef struct _romdatabase_search
 
 typedef struct
 {
-    char* comment;
+    int have_database;
     romdatabase_search* crc_lists[256];
     romdatabase_search* md5_lists[256];
     romdatabase_search* list;

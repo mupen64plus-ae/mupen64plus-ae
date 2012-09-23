@@ -308,31 +308,32 @@ void nullf() {}
 void tlb_hacks()
 {
   // Goldeneye hack
-  if (strncmp(ROM_SETTINGS.headername, "GOLDENEYE",9) == 0)
+  if (strcmp(ROM_PARAMS.headername, "GOLDENEYE") == 0)
   {
     u_int addr;
     int n;
-    switch ((((m64p_rom_header *)rom)->Country_code) & 0xFF) // NOTE: Not sure if the '& 0xFF' is needed considering core changes 
+    switch (ROM_HEADER->Country_code & 0xFF) // NOTE: Not sure if the '& 0xFF' is needed considering core changes 
     {
       case 0x45: // U
-        addr=0x34b30;
+        addr = 0x34b30;
         break;                   
       case 0x4A: // J 
-        addr=0x34b70;    
+        addr = 0x34b70;    
         break;    
       case 0x50: // E 
-        addr=0x329f0;
+        addr = 0x329f0;
         break;                        
       default: 
         // Unknown country code
-        addr=0;
+        addr = 0;
         break;
     }
-    u_int rom_addr=(u_int)rom;
+    u_int rom_addr = (u_int)rom;
     #ifdef ROM_COPY
     // Since memory_map is 32-bit, on 64-bit systems the rom needs to be
     // in the lower 4G of memory to use this hack.  Copy it if necessary.
-    if((void *)rom>(void *)0xffffffff) {
+    if((void *)rom > (void *)0xffffffff)
+    {
       munmap(ROM_COPY, 67108864);
       if(mmap(ROM_COPY, 12582912,
               PROT_READ | PROT_WRITE,
@@ -342,9 +343,11 @@ void tlb_hacks()
       rom_addr=(u_int)ROM_COPY;
     }
     #endif
-    if(addr) {
-      for(n=0x7F000;n<0x80000;n++) {
-        memory_map[n]=(((u_int)(rom_addr+addr-0x7F000000))>>2)|0x40000000;
+    if(addr)
+    {
+      for(n = 0x7F000; n < 0x80000; n++)
+      {
+        memory_map[n] = (((u_int)(rom_addr + addr - 0x7F000000)) >> 2) | 0x40000000;
       }
     }
   }

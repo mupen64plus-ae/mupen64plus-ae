@@ -2784,7 +2784,7 @@ void read_aid(void)
 
 void write_ai(void)
 {
-    unsigned int delay=0;
+    unsigned int freq, delay=0;
     switch (*address_low)
     {
     case 0x4:
@@ -2792,23 +2792,11 @@ void write_ai(void)
         aiLenChanged();
         if (g_AudioCallback != NULL)
             g_AudioCallback();
-        switch (ROM_SETTINGS.systemtype)
-        {
-        case SYSTEM_PAL:
-        {
-            unsigned int f = 49656530/(ai_register.ai_dacrate+1);
-            if (f)
-                delay = (unsigned int) (((unsigned long long)ai_register.ai_len * vi_register.vi_delay*50)/(f*4));
-        }
-        break;
-        case SYSTEM_NTSC:
-        {
-            unsigned int f = 48681812/(ai_register.ai_dacrate+1);
-            if (f)
-                delay = (unsigned int) (((unsigned long long)ai_register.ai_len*vi_register.vi_delay*60)/(f*4));
-        }
-        break;
-        }
+        
+        freq = ROM_PARAMS.aidacrate / (ai_register.ai_dacrate+1);
+        if (freq)
+            delay = (unsigned int) (((unsigned long long)ai_register.ai_len*vi_register.vi_delay*ROM_PARAMS.vilimit)/(freq*4));
+            
         if (ai_register.ai_status & 0x40000000) // busy
         {
             ai_register.next_delay = delay;
@@ -2844,7 +2832,7 @@ void write_ai(void)
 void update_ai_dacrate(unsigned int word)
 {
     ai_register.ai_dacrate = word;
-    aiDacrateChanged(ROM_SETTINGS.systemtype);
+    aiDacrateChanged(ROM_PARAMS.systemtype);
 }
 
 void write_aib(void)
@@ -2864,17 +2852,11 @@ void write_aib(void)
         aiLenChanged();
         if (g_AudioCallback != NULL)
             g_AudioCallback();
-        switch (ROM_SETTINGS.systemtype)
-        {
-        case SYSTEM_PAL:
-            delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*vi_register.vi_delay*50)/49656530);
-            break;
-        case SYSTEM_NTSC:
-            delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
-                                     vi_register.vi_delay*60)/48681812);
-            break;
-        }
+        
+        delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
+                                    vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);                  
         //delay = 0;
+        
         if (ai_register.ai_status & 0x40000000) // busy
         {
             ai_register.next_delay = delay;
@@ -2932,17 +2914,10 @@ void write_aih(void)
         aiLenChanged();
         if (g_AudioCallback != NULL)
             g_AudioCallback();
-        switch (ROM_SETTINGS.systemtype)
-        {
-        case SYSTEM_PAL:
-            delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
-                                     vi_register.vi_delay*50)/49656530);
-            break;
-        case SYSTEM_NTSC:
-            delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
-                                     vi_register.vi_delay*60)/48681812);
-            break;
-        }
+        
+        delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
+                                    vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);
+                                    
         if (ai_register.ai_status & 0x40000000) // busy
         {
             ai_register.next_delay = delay;
@@ -2992,17 +2967,10 @@ void write_aid(void)
         aiLenChanged();
         if (g_AudioCallback != NULL)
             g_AudioCallback();
-        switch (ROM_SETTINGS.systemtype)
-        {
-        case SYSTEM_PAL:
-            delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
-                                     vi_register.vi_delay*50)/49656530);
-            break;
-        case SYSTEM_NTSC:
-            delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
-                                     vi_register.vi_delay*60)/48681812);
-            break;
-        }
+        
+        delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
+                                    vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);
+                                    
         if (ai_register.ai_status & 0x40000000) // busy
         {
             ai_register.next_delay = delay;
