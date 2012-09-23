@@ -1914,7 +1914,7 @@ r4300emu = 2;
         if (!actual->block || !actual->code)
             return;
 
-        code = (void *)(actual->code+(actual->block[0x40/4].local_addr));
+        code =  (void(*)(void)) (actual->code+(actual->block[0x40/4].local_addr));
 #ifdef NEW_DYNAREC
         new_dynarec_init();
         new_dyna_start();

@@ -208,7 +208,7 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
                 return M64ERR_INPUT_ASSERT;
             if (sizeof(m64p_rom_settings) < ParamInt)
                 ParamInt = sizeof(m64p_rom_settings);
-            memcpy(ParamPtr, &ROM_SETTINGS, ParamInt);
+            memcpy(ParamPtr, &ROM_HEADER, ParamInt);
             return M64ERR_SUCCESS;
         case M64CMD_EXECUTE:
             if (g_EmulatorRunning || !l_ROMOpen)

@@ -326,7 +326,7 @@ char* dirfrompath(const char* path)
     {
         size_t dirlen = last_separator_ptr + 1 - path; // Not including terminator
 
-        char* buffer = malloc(dirlen + 1);
+        char* buffer = (char*) malloc(dirlen + 1);
         if (buffer != NULL)
         {
             strncpy(buffer, path, dirlen);
@@ -336,7 +336,7 @@ char* dirfrompath(const char* path)
         return buffer;
     }
     else
-        return calloc(1, sizeof(char)); // Empty string
+        return (char*) calloc(1, sizeof(char)); // Empty string
 }
 
 char* namefrompath(const char* path)
@@ -392,7 +392,7 @@ char *trim(char *str)
 char *formatstr(const char *fmt, ...)
 {
 	int size = 128, ret;
-	char *str = malloc(size), *newstr;
+	char *str = (char*) malloc(size), *newstr;
 	va_list args;
 
 	/* There are two implementations of vsnprintf we have to deal with:
@@ -418,7 +418,7 @@ char *formatstr(const char *fmt, ...)
 		else
 			size *= 2; // Windows version: Keep guessing
 
-		newstr = realloc(str, size);
+		newstr = (char *) realloc(str, size);
 		if (newstr == NULL)
 			free(str);
 		str = newstr;
@@ -442,6 +442,8 @@ ini_line ini_parse_line(char **lineptr)
 
     if (line[0] == '#' || line[0] == ';')
     {
+        line++;
+    
         l.type = INI_COMMENT;
         l.name = NULL;
         l.value = line;
@@ -460,12 +462,9 @@ ini_line ini_parse_line(char **lineptr)
         char *name = line, *value = equal + 1;
         *equal = '\0';
 
-        trim(name);
-        trim(value);
-
         l.type = INI_PROPERTY;
-        l.name = name;
-        l.value = value;
+        l.name = trim(name);
+        l.value = trim(value);
     }
     else
     {

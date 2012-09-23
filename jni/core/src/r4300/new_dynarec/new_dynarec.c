@@ -312,7 +312,7 @@ void tlb_hacks()
   {
     u_int addr;
     int n;
-    switch (ROM_HEADER->Country_code & 0xFF) // NOTE: Not sure if the '& 0xFF' is needed considering core changes 
+    switch (ROM_HEADER.Country_code & 0xFF) // NOTE: Not sure if the '& 0xFF' is needed considering core changes 
     {
       case 0x45: // U
         addr = 0x34b30;

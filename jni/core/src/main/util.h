@@ -112,16 +112,18 @@ char *trim(char *str);
  * Returns the result in a malloc'd string. */
 char* formatstr(const char* fmt, ...);
 
+typedef enum _ini_line_type
+{
+    INI_BLANK,
+    INI_COMMENT,
+    INI_SECTION,
+    INI_PROPERTY,
+    INI_TRASH
+} ini_line_type;
+
 typedef struct _ini_line
 {
-    enum ini_line_type
-    {
-        INI_BLANK,
-        INI_COMMENT,
-        INI_SECTION,
-        INI_PROPERTY,
-        INI_TRASH
-    } type;
+    ini_line_type type;
     char *name;
     char *value;
 } ini_line;
@@ -131,12 +133,13 @@ typedef struct _ini_line
  * 'lineptr' will point to the next line after this function runs.
  *
  * Returns a ini_line structure with information about the line.
- * For INI_COMMENT, the value field contains the entire comment line.
+ * For INI_COMMENT, the value field contains the comment.
  * For INI_SECTION, the name field contains the section name.
  * For INI_PROPERTY, the name and value fields contain the property parameters.
  * The line type is INI_BLANK if the line is blank or invalid.
  *
- * The name and value fields (if any) of ini_line refer to 'lineptr'.
+ * The name and value fields (if any) of ini_line point to 'lineptr'
+ * (so their lifetime is associated to that of 'lineptr').
  */
 ini_line ini_parse_line(char **lineptr);
 
