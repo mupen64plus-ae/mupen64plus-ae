@@ -67,15 +67,17 @@ LOCAL_SRC_FILES := \
 #	$(SRCDIR)/debugger/dbg_memory.c \
 #	$(SRCDIR)/debugger/dbg_breakpoints.c
 
-LOCAL_CFLAGS := -I$(LOCAL_PATH)/$(SRCDIR)
-LOCAL_CFLAGS += -DANDROID
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SRCDIR)
+LOCAL_CFLAGS := -DANDROID
 #LOCAL_CFLAGS += -DSDL_NO_COMPAT
 
 LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver
 LOCAL_LDLIBS := -llog -lz
 
 SDL_PATH := ../SDL
-LOCAL_CFLAGS += -I$(LOCAL_PATH)/$(SDL_PATH)/include
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(SDL_PATH)/include
+#Workaround for some reason 4.6 gcc doesnt include the usr/include directory
+LOCAL_C_INCLUDES += $(SYSROOT)/usr/include/
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 # Use for ARM7a:

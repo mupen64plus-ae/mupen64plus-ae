@@ -1,5 +1,3 @@
-# Workaround for fpu.h fenv.h problems in 4.6
-NDK_TOOLCHAIN_VERSION=4.4.3
 APP_STL := gnustl_static
 APP_ABI := armeabi armeabi-v7a
 APP_PLATFORM := android-9
