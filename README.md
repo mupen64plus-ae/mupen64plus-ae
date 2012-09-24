@@ -48,7 +48,7 @@ Setting up the project:
 Eclipse users:
 --------------
 
-1) Install or update to the latest the ADT and Sequoyah Android Native Support plug-ins
+1) Install or update to the latest ADT and Sequoyah Android Native Support plug-ins
 
 2) Import existing project into the workspace, and choose the mupen64plus-ae folder
 
