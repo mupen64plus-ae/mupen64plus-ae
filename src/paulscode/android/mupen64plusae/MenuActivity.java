@@ -1,32 +1,31 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 // TODO: Comment thoroughly
-public class MenuActivity extends ListActivity implements IOptionChooser
+public class MenuActivity extends PreferenceActivity implements IOptionChooser
 {
     public static MenuActivity mInstance = null;
-    private OptionArrayAdapter optionArrayAdapter;  // Array of menu options
+//    private OptionArrayAdapter optionArrayAdapter;  // Array of menu options
     private static NotificationManager notificationManager = null;
 
     public static Config mupen64plus_cfg = new Config( Globals.DataDir + "/mupen64plus.cfg" );
@@ -62,9 +61,6 @@ public class MenuActivity extends ListActivity implements IOptionChooser
             gui_cfg = new Config( Globals.DataDir + "/data/gui.cfg" );
             error_log = new Config( Globals.DataDir + "/error.log" );
         }
-
-        //String first_run = gui_cfg.get( "GENERAL", "first_run" );
-        //int width, height;
 
         Updater.checkFirstRun( this );
         if( !Updater.checkv1_9( this ) )
@@ -104,25 +100,169 @@ public class MenuActivity extends ListActivity implements IOptionChooser
         if( val != null )
             Globals.isXperiaPlay = ( val.equals( "1" ) ? true : false );
 
+        // Load preferences from XML
+        addPreferencesFromResource( R.layout.preferences_menu );
+        
+        final Preference menuOpenROM = findPreference( "menuOpenROM" );
+        menuOpenROM.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference preference )
+            {   // Open the file chooser to pick a ROM
+                String path = gui_cfg.get( "LAST_SESSION", "rom_folder" );
 
-        List<MenuOption>optionList = new ArrayList<MenuOption>();
-        optionList.add( new MenuOption( getString( R.string.main_choose_game ), getString( R.string.main_select_a_game_to_play ), "menuOpenROM" ) );
+                if( path == null || path.length() < 1 )
+                    FileChooserActivity.startPath = Globals.DataDir;
+                else
+                    FileChooserActivity.startPath = path;
+                FileChooserActivity.extensions = ".z64.v64.n64.zip";
+                FileChooserActivity.parentMenu = null;
+                FileChooserActivity.function = FileChooserActivity.FUNCTION_ROM;
+                Intent intent = new Intent( mInstance, FileChooserActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
+        
+        final Preference menuResume = findPreference( "menuResume" );
+        menuResume.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference preference )
+            {   // Resume the last game
+                File f = new File( Globals.StorageDir );
+                if( !f.exists() )
+                {
+                    Log.e( "MenuActivity", "SD Card not accessable in method onListItemClick (menuResume)" );
+                    Runnable toastMessager = new Runnable()
+                    {
+                        public void run()
+                        {
+                            Toast toast = Toast.makeText( MenuActivity.mInstance, "App data not accessible (cable plugged in \"USB Mass Storage Device\" mode?)", Toast.LENGTH_LONG );
+                            toast.setGravity( Gravity.BOTTOM, 0, 0 );
+                            toast.show();
+                        }
+                    };
+                    runOnUiThread( toastMessager );
+                    return true;
+                }
+                mupen64plus_cfg.save();
+                gui_cfg.save();
+                Globals.chosenROM = gui_cfg.get( "LAST_SESSION", "rom" );
+                GameActivityCommon.resumeLastSession = true;
 
-        val = gui_cfg.get( "LAST_SESSION", "rom" );
-        if( val != null && val.length() > 0 )
-            optionList.add( new MenuOption( getString( R.string.main_resume ), getString( R.string.main_continue_your_last_game ), "menuResume" ) );
+                Intent intent;
+                if( Globals.isXperiaPlay )
+                    intent = new Intent( mInstance, GameActivityXperiaPlay.class );
+                else
+                    intent = new Intent( mInstance, GameActivity.class );
 
-        optionList.add( new MenuOption( getString( R.string.main_settings ), getString( R.string.main_configure_plug_ins ), "menuSettings" ) );
-        optionList.add( new MenuOption( getString( R.string.main_help ), getString( R.string.main_rept_bugs ), "menuHelp" ) );
-        optionList.add( new MenuOption( getString( R.string.main_credits ), getString( R.string.main_devs_contribs_tstrs ), "menuCredits" ) );
-        optionList.add( new MenuOption( getString( R.string.main_cheat ), getString( R.string.main_choose_game_to_hack ), "menuCheats" ) );
-        optionList.add( new MenuOption( getString( R.string.settings_language ), getString( R.string.settings_manually_change_language ),
-                                        "menuSettingsLanguage" ) );
-        optionList.add( new MenuOption( getString( R.string.main_close ), getString( R.string.main_exit_the_app ), "menuClose" ) );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                mInstance.finish();
+                mInstance = null;
+                return true;
+            }
+        });
 
-        optionArrayAdapter = new OptionArrayAdapter( this, R.layout.menu_option, optionList );
-        setListAdapter( optionArrayAdapter );
+        final Preference menuSettings = findPreference( "menuSettings" );
+        menuSettings.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference preference )
+            {   // Configure the plug-ins
+                Intent intent = new Intent( mInstance, MenuSettingsActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
 
+        final Preference menuHelp = findPreference( "menuHelp" );
+        menuHelp.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference preference )
+            {   // Visit the FAQ page (opens browser)
+                try
+                {
+                    Intent browserIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( "http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018" ) );
+                    startActivity( browserIntent );
+                }
+                catch( Exception e )
+                {
+                    Log.e( "MenuActivity", "Unable to open the FAQ page", e );
+                    Runnable toastMessager = new Runnable()
+                    {
+                        public void run()
+                        {
+                            Toast toast = Toast.makeText( MenuActivity.mInstance, "Problem opening the browser, please report at paulscode.com", Toast.LENGTH_LONG );
+                            toast.setGravity( Gravity.BOTTOM, 0, 0 );
+                            toast.show();
+                        }
+                    };
+                    runOnUiThread( toastMessager );
+                }
+                return true;
+            }
+        });
+
+        final Preference menuCredits = findPreference( "menuCredits" );
+        menuCredits.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference preference )
+            {  // Show the credits
+                showDialog( Globals.ABOUT_ID );
+                return true;
+            }
+        });
+
+        final Preference menuCheats = findPreference( "menuCheats" );
+        menuCheats.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference preference )
+            {   // Open the file chooser to pick a ROM
+                String path = gui_cfg.get( "LAST_SESSION", "rom_folder" );
+
+                if( path == null || path.length() < 1 )
+                    FileChooserActivity.startPath = Globals.DataDir;
+                else
+                    FileChooserActivity.startPath = path;
+                FileChooserActivity.extensions = ".z64.v64.n64.zip";
+                FileChooserActivity.parentMenu = MenuActivity.this;
+                FileChooserActivity.function = FileChooserActivity.FUNCTION_ROM;
+                Intent intent = new Intent( mInstance, FileChooserActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
+
+        final Preference menuSettingsLanguage = findPreference( "menuSettingsLanguage" );
+        menuSettingsLanguage.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference preference )
+            {
+                Intent intent = new Intent( mInstance, MenuSettingsLanguageActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                return true;
+            }
+        });
+
+        final Preference menuClose = findPreference( "menuClose" );
+        menuClose.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick( Preference preference )
+            {   // Shut down the app
+                File f = new File( Globals.StorageDir );
+                if( f.exists() )
+                {
+                    mupen64plus_cfg.save();
+                    gui_cfg.save();
+                }
+                mInstance.finish();
+                return true;
+            }
+        });
+        
         Globals.errorMessage = error_log.get( "OPEN_ROM", "fail_crash" );
         if( Globals.errorMessage != null && Globals.errorMessage.length() > 0 )
         {
@@ -176,133 +316,6 @@ public class MenuActivity extends ListActivity implements IOptionChooser
         startActivity( intent );
     }
 
-    /**
-     * Determines what to do, based on what option the user chose 
-     * @param listView Used by Android.
-     * @param view Used by Android.
-     * @param position Which item the user chose.
-     * @param id Used by Android.
-     */
-    @Override
-    protected void onListItemClick( ListView listView, View view, int position, long id )
-    {
-        super.onListItemClick( listView, view, position, id );
-        MenuOption menuOption = optionArrayAdapter.getOption( position );
-        if( menuOption.info.equals( "menuOpenROM" ) )
-        {  // Open the file chooser to pick a ROM
-            String path = gui_cfg.get( "LAST_SESSION", "rom_folder" );
-
-            if( path == null || path.length() < 1 )
-                FileChooserActivity.startPath = Globals.DataDir;
-            else
-                FileChooserActivity.startPath = path;
-            FileChooserActivity.extensions = ".z64.v64.n64.zip";
-            FileChooserActivity.parentMenu = null;
-            FileChooserActivity.function = FileChooserActivity.FUNCTION_ROM;
-            Intent intent = new Intent( mInstance, FileChooserActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuResume" ) ) 
-        {  // Resume the last game
-            File f = new File( Globals.StorageDir );
-            if( !f.exists() )
-            {
-                Log.e( "MenuActivity", "SD Card not accessable in method onListItemClick (menuResume)" );
-                Runnable toastMessager = new Runnable()
-                {
-                    public void run()
-                    {
-                        Toast toast = Toast.makeText( MenuActivity.mInstance, "App data not accessible (cable plugged in \"USB Mass Storage Device\" mode?)", Toast.LENGTH_LONG );
-                        toast.setGravity( Gravity.BOTTOM, 0, 0 );
-                        toast.show();
-                    }
-                };
-                runOnUiThread( toastMessager );
-                return;
-            }
-            mupen64plus_cfg.save();
-            //InputAutoCfg_ini.save();
-            gui_cfg.save();
-            Globals.chosenROM = gui_cfg.get( "LAST_SESSION", "rom" );
-            GameActivityCommon.resumeLastSession = true;
-
-            Intent intent;
-            if( Globals.isXperiaPlay )
-                intent = new Intent( mInstance, GameActivityXperiaPlay.class );
-            else
-                intent = new Intent( mInstance, GameActivity.class );
-
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-            mInstance.finish();
-            mInstance = null;
-        }
-        else if( menuOption.info.equals( "menuSettings" ) ) 
-        {  // Configure the plug-ins
-            Intent intent = new Intent( mInstance, MenuSettingsActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuHelp" ) ) 
-        {  // Visit the FAQ page (opens browser)
-            try
-            {
-                Intent browserIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( "http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018" ) );
-                startActivity( browserIntent );
-            }
-            catch( Exception e )
-            {
-                Log.e( "MenuActivity", "Unable to open the FAQ page", e );
-                Runnable toastMessager = new Runnable()
-                {
-                    public void run()
-                    {
-                        Toast toast = Toast.makeText( MenuActivity.mInstance, "Problem opening the browser, please report at paulscode.com", Toast.LENGTH_LONG );
-                        toast.setGravity( Gravity.BOTTOM, 0, 0 );
-                        toast.show();
-                    }
-                };
-                runOnUiThread( toastMessager );
-            }
-        }
-        else if( menuOption.info.equals( "menuCheats" ) ) 
-        {  // Open the file chooser to pick a ROM
-            String path = gui_cfg.get( "LAST_SESSION", "rom_folder" );
-
-            if( path == null || path.length() < 1 )
-                FileChooserActivity.startPath = Globals.DataDir;
-            else
-                FileChooserActivity.startPath = path;
-            FileChooserActivity.extensions = ".z64.v64.n64.zip";
-            FileChooserActivity.parentMenu = this;
-            FileChooserActivity.function = FileChooserActivity.FUNCTION_ROM;
-            Intent intent = new Intent( mInstance, FileChooserActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuCredits" ) ) 
-        {  // Show the credits
-            showDialog( Globals.ABOUT_ID );
-        }
-        else if( menuOption.info.equals( "menuSettingsLanguage" ) ) 
-        {
-            Intent intent = new Intent( mInstance, MenuSettingsLanguageActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-            startActivity( intent );
-        }
-        else if( menuOption.info.equals( "menuClose" ) ) 
-        {  // Shut down the app
-            File f = new File( Globals.StorageDir );
-            if( f.exists() )
-            {
-                mupen64plus_cfg.save();
-                //InputAutoCfg_ini.save();
-                gui_cfg.save();
-            }
-            mInstance.finish();
-        }
-    }
     @Override
     protected Dialog onCreateDialog( int id )
     {
