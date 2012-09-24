@@ -78,17 +78,18 @@ public class MenuSettingsRSPActivity extends PreferenceActivity implements IOpti
 
         if( option != null )
         {
-            MenuActivity.gui_cfg.put( "RSP_PLUGIN", "last_choice", "\"" + option + "\"" );
-            MenuActivity.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + option + "\"" );
-            int x = option.lastIndexOf( "/" );
-            if( x > -1 && x < ( option.length() - 1 ) )
+        	String plugin = option.replace( "$libsDir", Globals.LibsDir + "/lib" );
+            MenuActivity.gui_cfg.put( "RSP_PLUGIN", "last_choice", "\"" + plugin + "\"" );
+            MenuActivity.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + plugin + "\"" );
+            int x = plugin.lastIndexOf( "/" );
+            if( x > -1 && x < ( plugin.length() - 1 ) )
             {
-                currentPlugin = option.substring( x + 1, option.length() );
+                currentPlugin = plugin.substring( x + 1, plugin.length() );
                 if( currentPlugin == null || currentPlugin.length() < 1 )
                     currentPlugin = "(none)";
             }
             else
-                currentPlugin = option;
+                currentPlugin = plugin;
             
             // Make sure we update the summary description if the .so plugin is changed
             final Preference settingsChangeRSP = findPreference( "menuSettingsRSPChange" );

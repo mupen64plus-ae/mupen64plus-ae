@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="paulscode.android.mupen64plusae"
-      android:versionCode="14"
-      android:versionName="1.9.2"
+      android:versionCode="15"
+      android:versionName="1.10"
       android:installLocation="auto">
       
     <uses-feature android:glEsVersion="0x00020000"/>
-    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="15"/>
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="16"/>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
