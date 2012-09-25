@@ -57,8 +57,7 @@ extern "C" int Android_JNI_UseRGBA8888();
 //// paulscode, added for callback to flip the EGL buffer
 // (part of the black-screen bug fix)
 extern "C" void Android_JNI_SwapWindow();
-////
-// TODO: get rid of this, it should be handled from the config file:
+//// paulscode, maintain aspect ratio, or stretch to fill the screen:
 extern "C" int Android_JNI_GetScreenStretch();
 //// paulscode, function prototype missing from Yongzh's code
 void OGL_UpdateDepthUpdate();
@@ -306,6 +305,7 @@ bool OGL_SDL_Start()
 
     /* Set the video mode */
     LOG(LOG_MINIMAL, "Setting video mode %dx%d...\n", videoInfo->current_w, videoInfo->current_h );
+
 // TODO: I should actually check what the pixelformat is, rather than assuming 16 bpp (RGB_565) or 32 bpp (RGBA_8888):
 //// paulscode, added for switching between modes RGBA8888 and RGB565
 // (part of the color banding fix)
@@ -314,7 +314,8 @@ if( Android_JNI_UseRGBA8888() )
     bitsPP = 32;
 else
     bitsPP = 16;
-//    if (!(OGL.hScreen = SDL_SetVideoMode( videoInfo->current_w, videoInfo->current_h, 16, SDL_HWSURFACE )))
+////
+
     if (!(OGL.hScreen = SDL_SetVideoMode( videoInfo->current_w, videoInfo->current_h, bitsPP, SDL_HWSURFACE )))
     {
         LOG(LOG_ERROR, "Problem setting videomode %dx%d: %s\n", videoInfo->current_w, videoInfo->current_h, SDL_GetError() );
@@ -322,18 +323,12 @@ else
         return FALSE;
     }
 
-//LOG(LOG_VERBOSE,"**Finished seting video mode**\n" );
-
 //// paulscode, fixes the screen-size problem
     const float ratio = ( config.romPAL ? 9.0f/11.0f : 0.75f );
     int videoWidth = videoInfo->current_w;
     int videoHeight = videoInfo->current_h;
 
-//LOG(LOG_VERBOSE,"**Calling Android_JNI_GetScreenStretch()**\n" );
-    // TODO: get rid of this, it should be handled through the config file:
     config.stretchVideo = (bool) Android_JNI_GetScreenStretch();
-//LOG(LOG_VERBOSE,"**Finished calling Android_JNI_GetScreenStretch()**\n" );
-    //
     if( !config.stretchVideo )
     {
         videoWidth = (int) ( videoInfo->current_h / ratio );
@@ -354,7 +349,6 @@ else
     config.framebuffer.width = videoWidth;
     config.framebuffer.height = videoHeight;
 ////
-//LOG(LOG_VERBOSE,"**Returning**\n" );
     return true;
 }
 #endif

@@ -1794,6 +1794,7 @@ void CRender::UpdateClipRectangle()
     if( status.bHandleN64RenderTexture )
     {
         //windowSetting.fMultX = windowSetting.fMultY = 1;
+
         windowSetting.vpLeftW = 0;
         windowSetting.vpTopW = 0;
         windowSetting.vpRightW = newRenderTextureInfo.bufferWidth;

@@ -53,6 +53,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ////
 // paulscode, moved screen dimension configuration here
 extern m64p_handle l_ConfigVideoGeneral;
+//// paulscode, maintain aspect ratio, or stretch to fill the screen:
+extern "C" int Android_JNI_GetScreenStretch();
+////
 
 //=======================================================
 // local variables
@@ -338,11 +341,85 @@ static bool StartVideo(void)
             DebugMessage( M64MSG_ERROR, "Unable to open Video-General configuration section" );
             return false;
         }
-        ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenWidth", videoInfo->current_w, "Width of output window or fullscreen width" );
-        ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenHeight", videoInfo->current_h, "Height of output window or fullscreen height" );
-        windowSetting.uDisplayWidth = videoInfo->current_w;
-        windowSetting.uDisplayHeight = videoInfo->current_h;        
+
+        //// paulscode, screen stretch and aspect ratio
+          bool romPAL, stretchVideo;
+          // determine if this is a PAL or NTSC type ROM
+          switch( g_GraphicsInfo.HEADER[0x3e] )
+          {
+              // PAL codes
+              case 0x44:
+              case 0x46:
+              case 0x49:
+              case 0x50:
+              case 0x53:
+              case 0x55:
+              case 0x58:
+              case 0x59:
+                  romPAL = true;
+                  break;
+              // NTSC codes
+              case 0x37:
+              case 0x41:
+              case 0x45:
+              case 0x4a:
+                  romPAL = false;
+                  break;
+              // Fallback for unknown codes
+              default:
+                  romPAL = false;
+          }
+          // Calculate aspect ratio
+          const float ratio = ( romPAL ? 9.0f/11.0f : 0.75f );
+          int videoWidth = videoInfo->current_w;
+          int videoHeight = videoInfo->current_h;
+
+          stretchVideo = (bool) Android_JNI_GetScreenStretch();
+          if( stretchVideo )
+          {
+              videoWidth = (int) ( videoInfo->current_h / ratio );
+              if( videoWidth > videoInfo->current_w )
+              {
+                  videoWidth = videoInfo->current_w;
+                  videoHeight = (int) ( videoInfo->current_w * ratio );
+              }
+          }
+          int x = ( videoInfo->current_w - videoWidth ) / 2;
+          int y = ( videoInfo->current_h - videoHeight ) / 2;
+
+          // TODO: Where do we save x and y values, so the frame isn't at top-left corner??
+          // We have the following in windowSetting struct.
+          //float   fViWidth, fViHeight;
+          //unsigned short        uViWidth, uViHeight;
+          //unsigned short        uDisplayWidth, uDisplayHeight;
+          //BOOL    bDisplayFullscreen;
+          //BOOL    bVerticalSync;
+          //float   fMultX, fMultY;
+          //int     vpLeftW, vpTopW, vpRightW, vpBottomW, vpWidthW, vpHeightW;
+          //int     statusBarHeight, statusBarHeightToUse, toolbarHeight, toolbarHeightToUse;
+          //BOOL    screenSaverStatus;
+          //struct {
+              //uint32      left;
+              //uint32      top;
+              //uint32      right;
+              //uint32      bottom;
+              //uint32      width;
+              //uint32      height;
+              //bool        needToClip;
+          //} clipping;
+          //int     timer;
+          //float   fps;    // frame per second
+          //float   dps;    // dlist per second
+          //uint32  lastSecFrameCount;
+          //uint32  lastSecDlistCount;
+        ////
+
+        ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenWidth", videoWidth, "Width of output window or fullscreen width" );
+        ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenHeight", videoHeight, "Height of output window or fullscreen height" );
+        windowSetting.uDisplayWidth = videoWidth;
+        windowSetting.uDisplayHeight = videoHeight;
         printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );
+
 #endif
 
         bool res = CGraphicsContext::Get()->Initialize( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,

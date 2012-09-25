@@ -3,7 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <PreferenceCategory android:title="Rice Plugin">
+    <PreferenceCategory android:title="General">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="menuSettingsVideoConfigureStretch"
+            android:summary="@string/video_may_skew"
+            android:title="@string/video_stretch_screen" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="GLES2 Rice">
     
         <CheckBoxPreference
             android:defaultValue="false"
@@ -38,14 +46,8 @@
     </PreferenceCategory>
     
     
-    <PreferenceCategory android:title="gles2N64 Plugin">
-        
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="menuSettingsVideoConfigureStretch"
-            android:summary="@string/video_may_skew"
-            android:title="@string/video_stretch_screen" />
-        
+    <PreferenceCategory android:title="GLES2N64">
+            
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="menuSettingsVideoConfigureAutoFrameskip"
@@ -93,4 +95,5 @@
         
     </PreferenceCategory>
     
+
 </PreferenceScreen>
