@@ -924,7 +924,7 @@ void gDPTextureRectangleFlip( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 
 
     gDPTextureRectangle( ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangleFlip( %f, %f, %f, %f, %i, %i, %f, %f, %f, %f );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangleFlip( %f, %f, %f, %f, %i, %i, %f, %f, %f);\n",
         ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
 #endif
 }
