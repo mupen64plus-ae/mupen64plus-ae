@@ -1,8 +1,8 @@
-# built application files
+# Built application files
 *.apk
 *.ap_
 
-# files for the dex VM
+# Files for the Dalvik VM
 *.dex
 
 # Java class files
@@ -15,7 +15,7 @@
 *.so
 *~
 
-# generated files
+# Generated files
 bin/
 gen/
 obj/

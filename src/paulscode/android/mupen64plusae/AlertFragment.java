@@ -1,5 +1,5 @@
 // TODO: Is there a way this class can be made to handle the Android
-// resources (ints) AND user-inputted Strings without requiring
+// resources (ints) AND Strings without requiring
 // getString to be called outside of the class.
 //
 // It would be much more dev-friendly if this was the case.
@@ -8,9 +8,9 @@ package paulscode.android.mupen64plusae;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.app.DialogFragment;
 
 /**
  * Class that constructs DialogFragments. </p>
