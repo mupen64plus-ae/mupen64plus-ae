@@ -247,7 +247,7 @@ void Config_LoadRomConfig(unsigned char* header)
         }
     }
 	
-	fclose(f);
+    fclose(f);
 }
 
 void Config_LoadConfig()
