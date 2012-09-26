@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="preference_screen_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <Preference
+        android:key="menuOpenROM"
+        android:summary="@string/main_select_a_game_to_play"
+        android:title="@string/main_choose_game" />
+
+    <Preference
+        android:key="menuResume"
+        android:summary="@string/main_continue_your_last_game"
+        android:title="@string/main_resume" />
+ 
+    <Preference
+        android:key="menuSettings"
+        android:summary="@string/main_configure_plug_ins"
+        android:title="@string/main_settings" />
+
+    <Preference
+        android:key="menuHelp"
+        android:summary="@string/main_rept_bugs"
+        android:title="@string/main_help" />
+ 
+    <Preference
+        android:key="menuCredits"
+        android:summary="@string/main_devs_contribs_tstrs"
+        android:title="@string/main_credits" />
+    
+    <Preference
+        android:key="menuCheats"
+        android:summary="@string/main_choose_game_to_hack"
+        android:title="@string/main_cheat" />
+    
+    <Preference
+        android:key="menuSettingsLanguage"
+        android:summary="@string/settings_manually_change_language"
+        android:title="@string/settings_language" />
+    
+    <Preference
+        android:key="menuClose"
+        android:summary="@string/main_exit_the_app"
+        android:title="@string/main_close" />
+    
+</PreferenceScreen>
