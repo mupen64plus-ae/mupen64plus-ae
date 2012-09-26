@@ -1,6 +1,7 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,7 +11,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.util.Log;
@@ -235,14 +238,29 @@ public class MenuActivity extends PreferenceActivity implements IOptionChooser
             }
         });
 
-        final Preference menuSettingsLanguage = findPreference( "menuSettingsLanguage" );
-        menuSettingsLanguage.setOnPreferenceClickListener( new OnPreferenceClickListener()
+        final ListPreference menuSettingsLanguage = (ListPreference) findPreference( "menuSettingsLanguage" );
+        menuSettingsLanguage.setOnPreferenceChangeListener( new OnPreferenceChangeListener()
         {
-            public boolean onPreferenceClick( Preference preference )
+            public boolean onPreferenceChange( Preference preference, Object newValue )
             {
-                Intent intent = new Intent( mInstance, MenuSettingsLanguageActivity.class );
+                String code = String.valueOf( newValue );
+
+                if( Globals.locale_default == null )
+                    Globals.locale_default = getBaseContext().getResources().getConfiguration().locale;
+
+                if( code == null || code.equals( "00" ) || code.length() != 2 )
+                    Globals.locale = Globals.locale_default;
+                else
+                    Globals.locale = new Locale( code );
+                
+                Intent intent = getIntent();
+                overridePendingTransition( 0, 0 );
                 intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-                startActivity( intent );
+                intent.addFlags( Intent.FLAG_ACTIVITY_NO_ANIMATION );
+                finish();
+                overridePendingTransition( 0, 0 );
+                startActivity(intent);
+                
                 return true;
             }
         });

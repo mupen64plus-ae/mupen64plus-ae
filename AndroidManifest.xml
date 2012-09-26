@@ -72,9 +72,6 @@
         <activity android:name="paulscode.android.mupen64plusae.MenuSettingsCoreConfigureActivity"
                   android:label="@string/manifest_configure_core">
         </activity>
-        <activity android:name="paulscode.android.mupen64plusae.MenuSettingsLanguageActivity"
-                  android:label="@string/manifest_language">
-        </activity>
         <activity android:name="paulscode.android.mupen64plusae.MenuSkinsActivity"
                   android:label="@string/manifest_skins">
         </activity>
