@@ -3,16 +3,13 @@ package paulscode.android.mupen64plusae;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 // TODO: Comment thoroughly
 public class MenuCheatsOptionChooserActivity extends ListActivity
@@ -86,9 +83,21 @@ public class MenuCheatsOptionChooserActivity extends ListActivity
         MenuOption menuOption = optionArrayAdapter.getOption( position );
         if( menuOption.info != null && !menuOption.info.equals( "menuCheatsOptionChooserDisable" ) )
         {
+            String title;   // Title of the dialog
+            String message; // Dialog message
+            
             pickedDescription = menuOption.info.trim();
-            removeDialog( Globals.CHEAT_N_ID );
-            showDialog( Globals.CHEAT_N_ID );                        
+            
+            title = getString(R.string.cheats_full_text);
+            
+            if( pickedDescription == null )
+                message = getString(R.string.cheats_no_description);
+            else
+                message = pickedDescription;
+            
+            // Create and show the dialog
+            DialogFragment dialogFrag = AlertFragment.newInstance(title, message);
+            dialogFrag.show(getFragmentManager(), "cheatOptionChooser");
         }
     }
 
@@ -108,33 +117,5 @@ public class MenuCheatsOptionChooserActivity extends ListActivity
         if( parent != null )
             parent.optionChosen( menuOption.info );
         finish();
-    }
-
-    @Override
-    protected Dialog onCreateDialog( int id )
-    {
-        switch( id )
-        {
-            case Globals.CHEAT_N_ID:
-            {
-                AlertDialog.Builder d = new AlertDialog.Builder( this );
-
-                d.setTitle( getString( R.string.cheats_full_text ) );
-
-                d.setIcon( R.drawable.icon );
-                d.setNegativeButton( getString( R.string.cheats_close ), null );
-                View v = LayoutInflater.from( this ).inflate( R.layout.about_dialog, null );
-                TextView text = (TextView) v.findViewById( R.id.about_text );
-
-                if( pickedDescription == null )
-                    text.setText( getString( R.string.cheats_no_description ) );
-                else
-                    text.setText( pickedDescription );
-
-                d.setView( v );
-                return d.create();
-            }
-        }
-        return( super.onCreateDialog( id ) );
     }
 }
