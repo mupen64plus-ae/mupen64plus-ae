@@ -209,7 +209,7 @@ public class MenuActivity extends PreferenceActivity implements IOptionChooser
             public boolean onPreferenceClick( Preference preference )
             {  
                 // Keep things neat
-                String title = getString(R.string.app_credits_title);
+                String title = getString(R.string.main_credits);
                 String message = getString(R.string.app_credits);
                 
                 // Show credits dialog
