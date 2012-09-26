@@ -5179,7 +5179,7 @@ void rjump_assemble(int i,struct regstat *i_regs)
   emit_addimm(ESP,4,ESP);
   emit_jmpreg(EAX);*/
   #ifdef CORTEX_A8_BRANCH_PREDICTION_HACK
-  if(rt1[i]!=31&&i<slen-2&&(((u_int)out)&7)) emit_mov(13,13);
+  if(i<slen-2 && rt1[i]!=31 && (((u_int)out)&7)) emit_mov(13,13);
   #endif
 }
 
@@ -6465,7 +6465,7 @@ void unneeded_registers(int istart,int iend,int r)
     if(itype[i]==RJUMP||itype[i]==UJUMP||itype[i]==CJUMP||itype[i]==SJUMP||itype[i]==FJUMP)
     {
       // If subroutine call, flag return address as a possible branch target
-      if(rt1[i]==31 && i<slen-2) bt[i+2]=1;
+      if(i<slen-2 && rt1[i]==31) bt[i+2]=1;
       
       if(ba[i]<start || ba[i]>=(start+slen*4))
       {
@@ -9451,7 +9451,7 @@ int new_recompile_block(int addr)
               branch_regs[i].regmap_entry[hr]=-1;
               if(itype[i]!=RJUMP&&itype[i]!=UJUMP&&(source[i]>>16)!=0x1000)
               {
-                if(!likely[i]&&i<slen-2) {
+                if(i<slen-2 && !likely[i]) {
                   regmap_pre[i+2][hr]=-1;
                   regs[i+2].wasconst&=~(1<<hr);
                 }
