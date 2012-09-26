@@ -124,7 +124,8 @@ class Config
         
         ConfigSection section = configMap.get( sectionTitle );
         if( section == null )
-        {  // Add a new section
+        {  
+            // Add a new section
             section = new ConfigSection( sectionTitle );
             configMap.put( sectionTitle, section );
             configList.add( section );

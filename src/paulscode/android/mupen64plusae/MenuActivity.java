@@ -3,8 +3,7 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 import java.util.Locale;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,9 +18,6 @@ import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 // TODO: Comment thoroughly
@@ -211,8 +207,15 @@ public class MenuActivity extends PreferenceActivity implements IOptionChooser
         menuCredits.setOnPreferenceClickListener( new OnPreferenceClickListener()
         {
             public boolean onPreferenceClick( Preference preference )
-            {  // Show the credits
-                showDialog( Globals.ABOUT_ID );
+            {  
+                // Keep things neat
+                String title = getString(R.string.app_credits_title);
+                String message = getString(R.string.app_credits);
+                
+                // Show credits dialog
+                DialogFragment credits = AlertFragment.newInstance(title, message);
+                credits.show(getFragmentManager(), "creditsDialog");
+                
                 return true;
             }
         });
@@ -333,26 +336,4 @@ public class MenuActivity extends PreferenceActivity implements IOptionChooser
         intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
         startActivity( intent );
     }
-
-    @Override
-    protected Dialog onCreateDialog( int id )
-    {
-        switch( id )
-        {
-            case Globals.ABOUT_ID:
-            {
-                AlertDialog.Builder d = new AlertDialog.Builder( this );
-                d.setTitle( R.string.main_credits );
-                d.setIcon( R.drawable.icon );
-                d.setNegativeButton( R.string.main_close, null );
-                View v = LayoutInflater.from( this ).inflate( R.layout.about_dialog, null );
-                TextView text = (TextView) v.findViewById( R.id.about_text );
-                text.setText( getString( R.string.app_credits ) );
-                d.setView( v );
-                return d.create();
-            }
-        }
-        return( super.onCreateDialog( id ) );
-    }
 }
-

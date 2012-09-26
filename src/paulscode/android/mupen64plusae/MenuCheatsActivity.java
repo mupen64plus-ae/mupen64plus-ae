@@ -5,18 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 // TODO: Comment thoroughly
@@ -154,11 +151,39 @@ public class MenuCheatsActivity extends ListActivity implements IOptionChooser
     protected void onLongListItemClick( View view, int position, long id )
     {
         MenuOption menuOption = optionArrayAdapter.getOption( position );
-        if( menuOption.info != null && !menuOption.info.equals( "menuCheatsActivityLaunch" ) )
+        if( menuOption.info != null && !menuOption.info.equals( "menuCheatsActivityLaunch" ))
         {
+            String title;   // Title of the dialog
+            String message; // Dialog text
+            
             whichCheat = menuOption.info;
-            removeDialog( Globals.CHEAT_N_ID );
-            showDialog( Globals.CHEAT_N_ID );                        
+            
+            // Determine dialog title
+            if (Cheat_title == null)
+                title = getString(R.string.cheats_notes);
+            else
+            {
+                title = Cheat_title.get(whichCheat);
+                if(title == null || title.length() < 1)
+                {
+                    title = getString(R.string.cheats_notes);
+                }
+            }
+            
+            // Determine dialog message
+            if (Cheat_N == null)
+                message = getString(R.string.cheats_no_notes);
+            else
+            {
+                message = Cheat_N.get(whichCheat);
+                if(message == null || message.length() < 1)
+                {
+                    message = getString(R.string.cheats_no_notes);
+                }
+            }
+            
+            DialogFragment cheatFrag = AlertFragment.newInstance(title, message);
+            cheatFrag.show(getFragmentManager(), "cheatFrag");               
         }
     }
 
@@ -266,48 +291,6 @@ public class MenuCheatsActivity extends ListActivity implements IOptionChooser
                 }
             }
         }
-    }
-    @Override
-    protected Dialog onCreateDialog( int id )
-    {
-        switch( id )
-        {
-            case Globals.CHEAT_N_ID:
-            {
-                AlertDialog.Builder d = new AlertDialog.Builder( this );
-
-                if( Cheat_title == null )
-                    d.setTitle( getString( R.string.cheats_notes ) );
-                else
-                {
-                    String title = Cheat_title.get( whichCheat );
-                    if( title == null || title.length() < 1 )
-                        d.setTitle( getString( R.string.cheats_notes ) );
-                    else
-                        d.setTitle( title );
-                }
-
-                d.setIcon( R.drawable.icon );
-                d.setNegativeButton( "Close", null );
-                View v = LayoutInflater.from( this ).inflate( R.layout.about_dialog, null );
-                TextView text = (TextView) v.findViewById( R.id.about_text );
-
-                if( Cheat_N == null )
-                    text.setText( getString( R.string.cheats_no_notes ) );
-                else
-                {
-                    String notes = Cheat_N.get( whichCheat );
-                    if( notes == null || notes.length() < 1 )
-                        text.setText( getString( R.string.cheats_no_notes ) );
-                    else
-                        text.setText( notes );
-                }
-
-                d.setView( v );
-                return d.create();
-            }
-        }
-        return( super.onCreateDialog( id ) );
     }
 }
 
