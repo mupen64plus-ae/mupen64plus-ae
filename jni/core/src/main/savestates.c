@@ -174,7 +174,7 @@ static void block_endian_swap(void *buffer, size_t length, size_t count)
     {
         unsigned short *pun = (unsigned short *)buffer;
         for (i = 0; i < count; i++)
-            pun[i] = (pun[i] >> 8) || (pun[i] << 8);
+            pun[i] = __builtin_bswap16(pun[i]);
     }
     else if (length == 4)
     {
@@ -1311,7 +1311,7 @@ static int savestates_save_pj64(char *filepath, void *handle,
     {
         // From TLBR
         unsigned int EntryDefined, MyPageMask, MyEntryHi, MyEntryLo0, MyEntryLo1;
-        EntryDefined = 1;
+        EntryDefined = tlb_e[i].v_even || tlb_e[i].v_odd;
         MyPageMask = tlb_e[i].mask << 13;
         MyEntryHi = ((tlb_e[i].vpn2 << 13) | tlb_e[i].asid);
         MyEntryLo0 = (tlb_e[i].pfn_even << 6) | (tlb_e[i].c_even << 3)
