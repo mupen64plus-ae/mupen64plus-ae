@@ -4238,7 +4238,7 @@ void multdiv_assemble_arm(int i,struct regstat *i_regs)
     {
       if(opcode2[i]==0x1C) // DMULT
       {
-        assert(opcode2[i]!=0x1C);
+        assert(opcode2[i]!=0x1C); // TODO: Fix faulty logic.. assert will always fail!
         signed char m1h=get_reg(i_regs->regmap,rs1[i]|64);
         signed char m1l=get_reg(i_regs->regmap,rs1[i]);
         signed char m2h=get_reg(i_regs->regmap,rs2[i]|64);

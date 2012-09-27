@@ -271,7 +271,7 @@ int tracedebug=0;
 // Uncomment this line to output the number of NOTCOMPILED blocks as they occur:
 //#define COUNT_NOTCOMPILEDS 1
 
-#define DEBUG_output_file "./DEBUG_PluginTestA_dynarec.txt"
+#define DEBUG_output_file "./DEBUG_dynarec.txt"
 
 FILE* file = NULL;
 #if defined (COUNT_NOTCOMPILEDS )
@@ -288,20 +288,17 @@ void log_to_file( char* format, ... )
 void nullf() {}
 
 #if defined( ASSEM_DEBUG )
-    //#define assem_debug(...) __android_log_print(ANDROID_LOG_DEBUG, "assem_debug", __VA_ARGS__)
     #define assem_debug(...) log_to_file(__VA_ARGS__)
+    #define printf(...) log_to_file(__VA_ARGS__)
 #else
+    #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "new_dynarec", __VA_ARGS__)
     #define assem_debug nullf
 #endif
 #if defined( INV_DEBUG )
-    //#define inv_debug(...) __android_log_print(ANDROID_LOG_DEBUG, "inv_debug", __VA_ARGS__)
     #define inv_debug(...) log_to_file(__VA_ARGS__)
 #else
     #define inv_debug nullf
 #endif
-
-//#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "new_dynarec", __VA_ARGS__)
-#define printf(...) log_to_file(__VA_ARGS__)
 
 #define log_message(...) __android_log_print(ANDROID_LOG_VERBOSE, "new_dynarec", __VA_ARGS__)
 
