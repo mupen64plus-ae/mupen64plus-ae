@@ -243,7 +243,7 @@ int SDLCALL event_sdl_filter(void *userdata, SDL_Event *event)
                 if (action == 1) /* command was just activated (button down, etc) */
                 {
                     if (cmd == joyFullscreen)
-                        changeWindow();
+                        gfx.changeWindow();
                     else if (cmd == joyStop)
                         main_stop();
                     else if (cmd == joyPause)
@@ -413,14 +413,14 @@ void event_sdl_keydown(int keysym, int keymod)
 {
     /* check for the only 2 hard-coded key commands: Alt-enter for fullscreen and 0-9 for save state slot */
     if (keysym == SDLK_RETURN && keymod & (KMOD_LALT | KMOD_RALT))
-        changeWindow();
+        gfx.changeWindow();
     else if (keysym >= SDLK_0 && keysym <= SDLK_9)
         main_state_set_slot(keysym - SDLK_0);
     /* check all of the configurable commands */
     else if (keysym == ConfigGetParamInt(l_CoreEventsConfig, kbdStop))
         main_stop();
     else if (keysym == ConfigGetParamInt(l_CoreEventsConfig, kbdFullscreen))
-        changeWindow();
+        gfx.changeWindow();
     else if (keysym == ConfigGetParamInt(l_CoreEventsConfig, kbdSave))
         main_state_save(0, NULL); /* save in mupen64plus format using current slot */
     else if (keysym == ConfigGetParamInt(l_CoreEventsConfig, kbdLoad))
@@ -452,7 +452,7 @@ void event_sdl_keydown(int keysym, int keymod)
     else
     {
         /* pass all other keypresses to the input plugin */
-        keyDown(keymod, keysym);
+        input.keyDown(keymod, keysym);
     }
 
 }
@@ -471,7 +471,7 @@ void event_sdl_keyup(int keysym, int keymod)
     {
         KbdGamesharkPressed = 0;
     }
-    else keyUp(keymod, keysym);
+    else input.keyUp(keymod, keysym);
 
 }
 

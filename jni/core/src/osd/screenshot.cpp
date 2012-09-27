@@ -212,7 +212,7 @@ extern "C" void TakeScreenshot(int iFrameNumber)
     // get the width and height
     int width = 640;
     int height = 480;
-    readScreen(NULL, &width, &height, 0);
+    gfx.readScreen(NULL, &width, &height, 0);
 
     // allocate memory for the image
     unsigned char *pucFrame = (unsigned char *) malloc(width * height * 3);
@@ -223,7 +223,7 @@ extern "C" void TakeScreenshot(int iFrameNumber)
     }
 
     // grab the back image from OpenGL by calling the video plugin
-    readScreen(pucFrame, &width, &height, 0);
+    gfx.readScreen(pucFrame, &width, &height, 0);
 
     // write the image to a PNG
     SaveRGBBufferToFile(filename, pucFrame, width, height, width * 3);

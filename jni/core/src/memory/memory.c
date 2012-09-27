@@ -1348,7 +1348,7 @@ void update_SP(void)
         if (SP_DMEM[0xFC0/4] == 1)
         {
             // unprotecting old frame buffers
-            if (fBGetFrameBufferInfo && fBRead && fBWrite &&
+            if (gfx.fBGetFrameBufferInfo && gfx.fBRead && gfx.fBWrite &&
                     frameBufferInfos[0].addr)
             {
                 int i;
@@ -1441,10 +1441,10 @@ void update_SP(void)
                 }
             }
 
-            //processDList();
+            //gfx.processDList();
             rsp_register.rsp_pc &= 0xFFF;
             start_section(GFX_SECTION);
-            doRspCycles(100);
+            rsp.doRspCycles(100);
             end_section(GFX_SECTION);
             rsp_register.rsp_pc |= save_pc;
             new_frame();
@@ -1456,9 +1456,9 @@ void update_SP(void)
             add_interupt_event(DP_INT, 1000);
 
             // protecting new frame buffers
-            if (fBGetFrameBufferInfo && fBRead && fBWrite)
-                fBGetFrameBufferInfo(frameBufferInfos);
-            if (fBGetFrameBufferInfo && fBRead && fBWrite
+            if (gfx.fBGetFrameBufferInfo && gfx.fBRead && gfx.fBWrite)
+                gfx.fBGetFrameBufferInfo(frameBufferInfos);
+            if (gfx.fBGetFrameBufferInfo && gfx.fBRead && gfx.fBWrite
                     && frameBufferInfos[0].addr)
             {
                 int i;
@@ -1569,10 +1569,10 @@ void update_SP(void)
         }
         else if (SP_DMEM[0xFC0/4] == 2)
         {
-            //processAList();
+            //audio.processAList();
             rsp_register.rsp_pc &= 0xFFF;
             start_section(AUDIO_SECTION);
-            doRspCycles(100);
+            rsp.doRspCycles(100);
             end_section(AUDIO_SECTION);
             rsp_register.rsp_pc |= save_pc;
 
@@ -1585,7 +1585,7 @@ void update_SP(void)
         else
         {
             rsp_register.rsp_pc &= 0xFFF;
-            doRspCycles(100);
+            rsp.doRspCycles(100);
             rsp_register.rsp_pc |= save_pc;
 
             MI_register.mi_intr_reg &= ~0x1;
@@ -1791,7 +1791,7 @@ void read_rdramFB(void)
             if ((address & 0x7FFFFF) >= start && (address & 0x7FFFFF) <= end &&
                     framebufferRead[(address & 0x7FFFFF)>>12])
             {
-                fBRead(address);
+                gfx.fBRead(address);
                 framebufferRead[(address & 0x7FFFFF)>>12] = 0;
             }
         }
@@ -1813,7 +1813,7 @@ void read_rdramFBb(void)
             if ((address & 0x7FFFFF) >= start && (address & 0x7FFFFF) <= end &&
                     framebufferRead[(address & 0x7FFFFF)>>12])
             {
-                fBRead(address);
+                gfx.fBRead(address);
                 framebufferRead[(address & 0x7FFFFF)>>12] = 0;
             }
         }
@@ -1835,7 +1835,7 @@ void read_rdramFBh(void)
             if ((address & 0x7FFFFF) >= start && (address & 0x7FFFFF) <= end &&
                     framebufferRead[(address & 0x7FFFFF)>>12])
             {
-                fBRead(address);
+                gfx.fBRead(address);
                 framebufferRead[(address & 0x7FFFFF)>>12] = 0;
             }
         }
@@ -1857,7 +1857,7 @@ void read_rdramFBd(void)
             if ((address & 0x7FFFFF) >= start && (address & 0x7FFFFF) <= end &&
                     framebufferRead[(address & 0x7FFFFF)>>12])
             {
-                fBRead(address);
+                gfx.fBRead(address);
                 framebufferRead[(address & 0x7FFFFF)>>12] = 0;
             }
         }
@@ -1902,7 +1902,7 @@ void write_rdramFB(void)
                                frameBufferInfos[i].height*
                                frameBufferInfos[i].size - 1;
             if ((address & 0x7FFFFF) >= start && (address & 0x7FFFFF) <= end)
-                fBWrite(address, 4);
+                gfx.fBWrite(address, 4);
         }
     }
     write_rdram();
@@ -1920,7 +1920,7 @@ void write_rdramFBb(void)
                                frameBufferInfos[i].height*
                                frameBufferInfos[i].size - 1;
             if ((address & 0x7FFFFF) >= start && (address & 0x7FFFFF) <= end)
-                fBWrite(address^S8, 1);
+                gfx.fBWrite(address^S8, 1);
         }
     }
     write_rdramb();
@@ -1938,7 +1938,7 @@ void write_rdramFBh(void)
                                frameBufferInfos[i].height*
                                frameBufferInfos[i].size - 1;
             if ((address & 0x7FFFFF) >= start && (address & 0x7FFFFF) <= end)
-                fBWrite(address^S16, 2);
+                gfx.fBWrite(address^S16, 2);
         }
     }
     write_rdramh();
@@ -1956,7 +1956,7 @@ void write_rdramFBd(void)
                                frameBufferInfos[i].height*
                                frameBufferInfos[i].size - 1;
             if ((address & 0x7FFFFF) >= start && (address & 0x7FFFFF) <= end)
-                fBWrite(address, 8);
+                gfx.fBWrite(address, 8);
         }
     }
     write_rdramd();
@@ -2374,7 +2374,7 @@ void write_dp(void)
         dpc_register.dpc_current = dpc_register.dpc_start;
         break;
     case 0x4:
-        processRDPList();
+        gfx.processRDPList();
         MI_register.mi_intr_reg |= 0x20;
         check_interupt();
         break;
@@ -2429,7 +2429,7 @@ void write_dpb(void)
     case 0x5:
     case 0x6:
     case 0x7:
-        processRDPList();
+        gfx.processRDPList();
         MI_register.mi_intr_reg |= 0x20;
         check_interupt();
         break;
@@ -2468,7 +2468,7 @@ void write_dph(void)
         break;
     case 0x4:
     case 0x6:
-        processRDPList();
+        gfx.processRDPList();
         MI_register.mi_intr_reg |= 0x20;
         check_interupt();
         break;
@@ -2495,7 +2495,7 @@ void write_dpd(void)
     {
     case 0x0:
         dpc_register.dpc_current = dpc_register.dpc_start;
-        processRDPList();
+        gfx.processRDPList();
         MI_register.mi_intr_reg |= 0x20;
         check_interupt();
         break;
@@ -2748,13 +2748,13 @@ void write_vi(void)
 void update_vi_status(unsigned int word)
 {
     vi_register.vi_status = word;
-    viStatusChanged();
+    gfx.viStatusChanged();
 }
 
 void update_vi_width(unsigned int word)
 {
     vi_register.vi_width = word;
-    viWidthChanged();
+    gfx.viWidthChanged();
 }
 
 void write_vib(void)
@@ -2956,7 +2956,7 @@ void write_ai(void)
     {
     case 0x4:
         ai_register.ai_len = word;
-        aiLenChanged();
+        audio.aiLenChanged();
         
         freq = ROM_PARAMS.aidacrate / (ai_register.ai_dacrate+1);
         if (freq)
@@ -2997,7 +2997,7 @@ void write_ai(void)
 void update_ai_dacrate(unsigned int word)
 {
     ai_register.ai_dacrate = word;
-    aiDacrateChanged(ROM_PARAMS.systemtype);
+    audio.aiDacrateChanged(ROM_PARAMS.systemtype);
 }
 
 void write_aib(void)
@@ -3014,7 +3014,7 @@ void write_aib(void)
         *((unsigned char*)&temp
           + ((*address_low&3)^S8) ) = cpu_byte;
         ai_register.ai_len = temp;
-        aiLenChanged();
+        audio.aiLenChanged();
         
         delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
                                     vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);                  
@@ -3074,7 +3074,7 @@ void write_aih(void)
         *((unsigned short*)((unsigned char*)&temp
                             + ((*address_low&3)^S16) )) = hword;
         ai_register.ai_len = temp;
-        aiLenChanged();
+        audio.aiLenChanged();
         
         delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
                                     vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);
@@ -3125,7 +3125,7 @@ void write_aid(void)
     case 0x0:
         ai_register.ai_dram_addr = (unsigned int) (dword >> 32);
         ai_register.ai_len = (unsigned int) (dword & 0xFFFFFFFF);
-        aiLenChanged();
+        audio.aiLenChanged();
         
         delay = (unsigned int) (((unsigned long long)ai_register.ai_len*(ai_register.ai_dacrate+1)*
                                     vi_register.vi_delay*ROM_PARAMS.vilimit)/ROM_PARAMS.aidacrate);
