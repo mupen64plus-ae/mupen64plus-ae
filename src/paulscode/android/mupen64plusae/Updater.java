@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -155,25 +156,59 @@ class Updater
         MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "plugin", "2" );
         MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "device", "-2" );
         MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "mouse", "False" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad R", "key(22)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad L", "key(21)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad D", "key(20)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad U", "key(19)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Start", "key(108)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Z Trig", "key(102)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "B Button", "key(99)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "A Button", "key(23)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button R", "key(109)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button L", "key(106)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button D", "key(107)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button U", "key(105)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "R Trig", "key(103)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "L Trig", "key(120)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Mempak switch", "key(44)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Rumblepak switch", "key(46)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "X Axis", "key(276,275)" );
-        MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Y Axis", "key(273,274)" );
-
+        
+        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
+        {
+            // Legacy defaults
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad R", "key(22)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad L", "key(21)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad D", "key(20)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad U", "key(19)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Start", "key(108)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Z Trig", "key(102)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "B Button", "key(99)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "A Button", "key(23)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button R", "key(109)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button L", "key(106)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button D", "key(107)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button U", "key(105)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "R Trig", "key(103)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "L Trig", "key(120)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Mempak switch", "key(44)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Rumblepak switch", "key(46)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "X Axis", "key(276,275)" );
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Y Axis", "key(273,274)" );	
+        }
+        else // New defaults if we have Android 3.1+ native gamepad support
+        {
+            // These inputs are mapped to the Xbox controller's analog inputs, so disable their key mappings
+            // These inputs will be collected from MotionEvent objects
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Z Trig", "key(0)" );               // AXIS_Z:  Xbox left analog trigger
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button R", "key(0)" );           // AXIS RX: Xbox right stick X
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button L", "key(0)" );           // AXIS_RX: Xbox right stick X
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button D", "key(0)" );           // AXIS_RY: Xbox right stick Y
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "C Button U", "key(0)" );           // AXIS_RY: Xbox right stick Y
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "X Axis", "key(0,0)" );             // AXIS_X:  Xbox left stick X
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Y Axis", "key(0,0)" );             // AXIS_Y:  Xbox left stick Y
+            
+            // These inputs are mapped to the Xbox controller's digital buttons, so map accordingly
+            // These inputs will be collected from KeyEvent objects
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "A Button", "key(96)" );            // KEYCODE_BUTTON_A:  Xbox A button
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "B Button", "key(99)" );            // KEYCODE_BUTTON_X:  Xbox X button (more natural position than Xbox B button)
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "L Trig", "key(102)" );             // KEYCODE_BUTTON_L1: Xbox left shoulder bumper
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "R Trig", "key(103)" );             // KEYCODE_BUTTON_L2: Xbox right shoulder bumper
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Start", "key(108)" );              // KEYCODE_BUTTON_START:  Xbox start button
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Mempak switch", "key(106)" );      // KEYCODE_BUTTON_THUMBL: Xbox left stick button
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Rumblepak switch", "key(107)" );   // KEYCODE_BUTTON_THUMBR: Xbox right stick button
+            
+            // D-pad inputs will be collected from KeyEvent objects
+            // They could also be collected from MotionEvent objects
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad R", "key(22)" );              // KEYCODE_DPAD_RIGHT or AXIS_HAT_X
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad L", "key(21)" );              // KEYCODE_DPAD_LEFT  or AXIS_HAT_X
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad D", "key(20)" );              // KEYCODE_DPAD_DOWN  or AXIS_HAT_Y
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "DPad U", "key(19)" );              // KEYCODE_DPAD_UP    or AXIS_HAT_Y
+        }
+        
         for( int x = 2; x < 5; x++ )
         {
             MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control" + x, "Version", "1.00" );

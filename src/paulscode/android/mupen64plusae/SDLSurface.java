@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae;
 
 import javax.microedition.khronos.egl.*;
 
+import android.annotation.TargetApi;
 import android.content.*;
 import android.graphics.*;
 import android.hardware.*;
@@ -16,8 +17,9 @@ import android.view.*;
  *
  * Because of this, that's where we set up the SDL thread
  */
+@TargetApi(12)
 class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, 
-    View.OnKeyListener, View.OnTouchListener, SensorEventListener
+    View.OnKeyListener, View.OnTouchListener, SensorEventListener, View.OnGenericMotionListener
 {
     // Controlled by IME special keys used for analog input:
     private boolean[] mp64pButtons = new boolean[14];
@@ -63,6 +65,10 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         requestFocus();
         setOnKeyListener( this ); 
         setOnTouchListener( this );   
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1)
+        {
+            setOnGenericMotionListener( this );
+        }
 
         mSensorManager = (SensorManager) context.getSystemService( "sensor" );
         requestFocus();
@@ -448,7 +454,33 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         return false;
     }
 
+    public boolean onGenericMotion(View v, MotionEvent event)
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1)
+        {
+            final int Z = 5;
+            final int CRight = 8;
+            final int CLeft = 9;
+            final int CDown = 10;
+            final int CUp = 11;
 
+            // Z-button and C-pad, interpret the left analog trigger and right
+            // analog stick
+            mp64pButtons[Z] = (event.getAxisValue(MotionEvent.AXIS_Z) > 0);
+            mp64pButtons[CLeft] = (event.getAxisValue(MotionEvent.AXIS_RX) < -0.5);
+            mp64pButtons[CRight] = (event.getAxisValue(MotionEvent.AXIS_RX) > 0.5);
+            mp64pButtons[CUp] = (event.getAxisValue(MotionEvent.AXIS_RY) < -0.5);
+            mp64pButtons[CDown] = (event.getAxisValue(MotionEvent.AXIS_RY) > 0.5);
+
+            // Analog X-Y, interpret the left analog stick
+            axisX = (int) (80.0f * event.getAxisValue(MotionEvent.AXIS_X));
+            axisY = (int) (-80.0f * event.getAxisValue(MotionEvent.AXIS_Y));
+
+            GameActivityCommon.updateVirtualGamePadStates(0, mp64pButtons, axisX, axisY);
+            return true;
+        }
+        return false;
+    }
 
     public boolean onTouch( View v, MotionEvent event )
     {
