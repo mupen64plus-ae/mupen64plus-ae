@@ -3,7 +3,6 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 import java.util.Locale;
 
-import android.app.DialogFragment;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +14,8 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -213,7 +214,7 @@ public class MenuActivity extends PreferenceActivity implements IOptionChooser
                 String message = getString(R.string.app_credits);
                 
                 // Show credits dialog
-                DialogFragment credits = AlertFragment.newInstance(title, message);
+                AlertFragment credits = AlertFragment.newInstance(title, message);
                 credits.show(getFragmentManager(), "creditsDialog");
                 
                 return true;
@@ -242,6 +243,48 @@ public class MenuActivity extends PreferenceActivity implements IOptionChooser
         });
 
         final ListPreference menuSettingsLanguage = (ListPreference) findPreference( "menuSettingsLanguage" );
+        
+        // We can't concatenate strings in the XML, so the entries have to be added here
+        // (this allows the entries to change based on the selected locale)
+        final Spanned[] languageEntries =
+        {
+            Html.fromHtml( "<b>"+ getString( R.string.language_default ) + "</b> &nbsp; <i>" + getString( R.string.language_use_system_locale ) + "</i>" ),
+            //Html.fromHtml( "<b>"+ getString( R.string.language_arabic ) + "</b> &nbsp; <i>" + getString( R.string.native_arabic ) + "</i>" ),
+            //Html.fromHtml( "<b>"+ getString( R.string.language_chinese ) + "</b> &nbsp; <i>" + getString( R.string.native_chinese ) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_croatian ) + "</b> &nbsp; <i>" + getString( R.string.native_croatian ) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_dutch ) + "</b> &nbsp; <i>" + getString( R.string.native_dutch ) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_english ) + "</b> &nbsp; <i>" + getString( R.string.native_english ) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_french ) + "</b> &nbsp; <i>" + getString( R.string.native_french ) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_german ) + "</b> &nbsp; <i>" + getString( R.string.native_german ) + "</i>" ),
+            //Html.fromHtml( "<b>"+ getString( R.string.language_italian ) + "</b> &nbsp; <i>" + getString( R.string.native_italian ) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_japanese ) + "</b> &nbsp; <i>" + getString( R.string.native_japanese ) + "</i>" ),
+            //Html.fromHtml( "<b>"+ getString( R.string.language_korean ) + "</b> &nbsp; <i>" + getString( R.string.native_korean) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_norwegian ) + "</b> &nbsp; <i>" + getString( R.string.native_norwegian ) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_portuguese ) + "</b> &nbsp; <i>" + getString( R.string.native_portuguese ) + "</i>" ),
+            Html.fromHtml( "<b>"+ getString( R.string.language_spanish ) + "</b> &nbsp; <i>" + getString( R.string.native_spanish ) + "</i>" )
+        };
+        // 2-letter locale codes for the above languages:
+        final String[] languageValues =
+        {
+            "00",
+            //"ar",
+            //"zh",
+            "hr",
+            "nl",
+            "en",
+            "fr",
+            "de",
+            //"it",
+            "ja",
+            //"ko",
+            "no",
+            "pt",
+            "es"
+        };
+        // Populate the ListPreference:
+        menuSettingsLanguage.setEntries( languageEntries );
+        menuSettingsLanguage.setEntryValues( languageValues );
+        
         menuSettingsLanguage.setOnPreferenceChangeListener( new OnPreferenceChangeListener()
         {
             public boolean onPreferenceChange( Preference preference, Object newValue )

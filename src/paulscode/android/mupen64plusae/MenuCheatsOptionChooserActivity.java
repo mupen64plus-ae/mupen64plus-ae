@@ -3,7 +3,6 @@ package paulscode.android.mupen64plusae;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -96,7 +95,7 @@ public class MenuCheatsOptionChooserActivity extends ListActivity
                 message = pickedDescription;
             
             // Create and show the dialog
-            DialogFragment dialogFrag = AlertFragment.newInstance(title, message);
+            AlertFragment dialogFrag = AlertFragment.newInstance(title, message);
             dialogFrag.show(getFragmentManager(), "cheatOptionChooser");
         }
     }

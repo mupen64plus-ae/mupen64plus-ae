@@ -36,8 +36,6 @@
     
     <ListPreference
         android:defaultValue="00"
-        android:entries="@array/language_strings"
-        android:entryValues="@array/language_values"
         android:key="menuSettingsLanguage"
         android:summary="@string/settings_manually_change_language"
         android:title="@string/settings_language" />

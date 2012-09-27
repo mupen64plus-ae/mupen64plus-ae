@@ -36,7 +36,7 @@
 
     <!-- Language Menu Strings -->
     <string name="language_default">Default</string>
-    <string name="language_use_system_locale">Use System Language Setting</string>
+    <string name="language_use_system_locale">System Language</string>
 
     <!-- Language Strings -->
     <string name="language_arabic">Arabic</string>
@@ -67,45 +67,6 @@
     <string name="native_norwegian">Norske</string>
     <string name="native_portuguese">Português</string>
     <string name="native_spanish">Español</string>
-
-    <!-- Array to fill the language ListPreference (do not translate this section) -->
-    <!--  TODO: Figure out a way to concatenate the native strings into these too -->
-    <!--        (may require populating the ListPreference programmatically) -->
-    <string-array name="language_strings">
-        <item>@string/language_default</item>
-        <!-- Arabic -->
-        <!-- Chinese -->
-        <item>@string/language_croatian</item>
-        <item>@string/language_dutch</item>
-        <item>@string/language_english</item>
-        <item>@string/language_french</item>
-        <item>@string/language_german</item>
-        <!-- Italian -->
-        <item>@string/language_japanese</item>
-        <!-- Korean -->
-        <item>@string/language_norwegian</item>
-        <item>@string/language_portuguese</item>
-        <item>@string/language_spanish</item>
-    </string-array>
-
-    <!-- Array to hold the values for the language ListPreference (do not translate this section) -->
-    <string-array name="language_values">
-        <item>00</item>
-        <!-- ar -->
-        <!-- zh -->
-        <item>hr</item>
-        <item>nl</item>
-        <item>en</item>
-        <item>fr</item>
-        <item>de</item>
-        <!-- it -->
-        <item>ja</item>
-        <!-- ko -->
-        <item>no</item>
-        <item>pt</item>
-        <item>es</item>
-    </string-array>
-    
 
     <!-- In-Game Message Strings -->
     <string name="mupen64plus_started">Mupen64Plus Started</string>

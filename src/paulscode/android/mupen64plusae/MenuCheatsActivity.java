@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -182,7 +181,7 @@ public class MenuCheatsActivity extends ListActivity implements IOptionChooser
                 }
             }
             
-            DialogFragment cheatFrag = AlertFragment.newInstance(title, message);
+            AlertFragment cheatFrag = AlertFragment.newInstance(title, message);
             cheatFrag.show(getFragmentManager(), "cheatFrag");               
         }
     }

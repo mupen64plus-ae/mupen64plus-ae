@@ -8,7 +8,17 @@ package paulscode.android.mupen64plusae;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+
+import android.app.DialogFragment;  // <-- Requires Honeycomb or higher
+
+/**
+ *  import android.support.v4.app.*;
+ *  
+ *  This would be the solution, except it requires everything to extend FragmentActivity,
+ *  in order to be able to call getSupportFragmentManager().  But we are using
+ *  PreferenceActivity everywhere, so something will have to be changed.
+ */
+
 import android.content.DialogInterface;
 import android.os.Bundle;
 
