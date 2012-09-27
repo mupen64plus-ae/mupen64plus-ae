@@ -325,7 +325,6 @@ void check_interupt(void)
 
 void gen_interupt(void)
 {
-
     if (stop == 1)
     {
         vi_counter = 0; // debug
@@ -512,13 +511,10 @@ void gen_interupt(void)
 
         case SP_INT:
             remove_interupt_event();
-            sp_register.sp_status_reg |= 0x303;
-            //sp_register.signal1 = 1;
-            sp_register.signal2 = 1;
-            sp_register.broke = 1;
-            sp_register.halt = 1;
+            sp_register.sp_status_reg |= 0x203;
+            // sp_register.sp_status_reg |= 0x303;
     
-            if (!sp_register.intr_break) return;
+            if (!(sp_register.sp_status_reg & 0x40)) return; // !intr_on_break
             MI_register.mi_intr_reg |= 0x01;
             if (MI_register.mi_intr_reg & MI_register.mi_intr_mask_reg)
                 Cause = (Cause | 0x400) & 0xFFFFFF83;
