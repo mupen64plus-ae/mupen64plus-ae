@@ -102,7 +102,7 @@ void dma_pi_read(void)
     if (pi_register.pi_cart_addr_reg >= 0x08000000
             && pi_register.pi_cart_addr_reg < 0x08010000)
     {
-        if (use_flashram != 1)
+        if (flashram_info.use_flashram != 1)
         {
             sram_read_file();
             
@@ -114,7 +114,7 @@ void dma_pi_read(void)
             
             sram_write_file();
             
-            use_flashram = -1;
+            flashram_info.use_flashram = -1;
         }
         else
         {
@@ -141,7 +141,7 @@ void dma_pi_write(void)
         if (pi_register.pi_cart_addr_reg >= 0x08000000
                 && pi_register.pi_cart_addr_reg < 0x08010000)
         {
-            if (use_flashram != 1)
+            if (flashram_info.use_flashram != 1)
             {
                 int i;
 
@@ -153,7 +153,7 @@ void dma_pi_write(void)
                         sram[(((pi_register.pi_cart_addr_reg-0x08000000)&0xFFFF)+i)^S8];
                 }
 
-                use_flashram = -1;
+                flashram_info.use_flashram = -1;
             }
             else
             {
