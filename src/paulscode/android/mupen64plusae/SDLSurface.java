@@ -44,7 +44,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
     // Startup    
     //public SDLSurface( Context context )
-	public SDLSurface( Context context, AttributeSet attribs )
+    public SDLSurface( Context context, AttributeSet attribs )
     {
         //super( context );
         super( context, attribs );
