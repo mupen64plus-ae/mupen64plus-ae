@@ -2,7 +2,6 @@ package paulscode.android.mupen64plusae;
 
 import javax.microedition.khronos.egl.*;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.*;
 import android.graphics.*;
@@ -18,7 +17,6 @@ import android.view.*;
  *
  * Because of this, that's where we set up the SDL thread
  */
-@SuppressLint("NewApi")
 class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, 
     View.OnKeyListener, View.OnTouchListener, SensorEventListener, View.OnGenericMotionListener
 {
@@ -44,6 +42,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
     // Startup    
     //public SDLSurface( Context context )
+    @TargetApi(12)
     public SDLSurface( Context context, AttributeSet attribs )
     {
         //super( context );
@@ -400,7 +399,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                     GameActivityCommon.mSingleton.runOnUiThread(
                         new Runnable()
                         {
-                            public void run()
+                            @TargetApi(11)
+							public void run()
                             {
                                 if( GameActivityCommon.mSingleton.getActionBar().isShowing() )
                                 {
