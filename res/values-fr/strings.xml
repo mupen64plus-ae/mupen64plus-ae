@@ -9,6 +9,7 @@
     <string name="error_write">Erreur d\'écriture dans %s</string>
     <string name="failed_connecting_to">Échec à la connexion à %s</string>
     <string name="init">Démarrage</string>
+    
     <!-- Manifest Strings -->
     <string name="manifest_settings">Paramètres</string>
     <string name="manifest_video_settings">Paramètres vidéo</string>
@@ -57,7 +58,8 @@
     <string name="saving_game">Sauvegarde du jeu</string>
     <string name="illegal_audio_state">Audio track illegal state. Please report at paulscode.com</string> <!-- not translated -->
     <string name="app_data_inaccessible">Donéees de l\'application non accessible (pluggé en mode USB Mass Storage ?)</string>
-     <!-- In-Game Menu Strings -->
+    
+    <!-- In-Game Menu Strings -->
     <string name="ingame_menu">Menu</string>
     <string name="ingame_inc_slot">Slot++</string>
     <string name="ingame_save">Sauvegarder</string>
