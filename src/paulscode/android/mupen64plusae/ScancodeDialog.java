@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.view.KeyEvent;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 // TODO: Comment thoroughly
@@ -23,13 +22,10 @@ public class ScancodeDialog extends Dialog implements OnKeyListener
         setContentView( R.layout.scancode_dialog );
         setTitle( "Key Listener" );
         TextView text = (TextView) findViewById( R.id.scancode_text );
-        text.setText( "Please press a button.." );
+        text.setText( "Please press a button." );
 
         setOnKeyListener( this );
-        text.requestFocus();  // Brings dialog into focus (required for detecting input frem IMEs)
-
-        ImageView image = (ImageView) findViewById( R.id.scancode_image );
-        image.setImageResource( R.drawable.icon );
+        text.requestFocus();  // Brings dialog into focus (required for detecting input from IMEs)
     }
 
     public boolean onKey( DialogInterface dialog, int keyCode, KeyEvent event )
