@@ -9,6 +9,7 @@
     <string name="error_write">Fehler beim schreiben auf %s</string>
     <string name="failed_connecting_to">Verbindung mit %s fehlgeschlagen</string>
     <string name="init">Initialisiere</string>
+    
     <!-- Manifest Strings -->
     <string name="manifest_settings">Einstellungen</string>
     <string name="manifest_video_settings">Video Einstellungen</string>
@@ -50,20 +51,21 @@
     <string name="language_norwegian">Norwegisch</string>
     <string name="language_portuguese">Portugiesisch</string>
     <string name="language_spanish">Spanisch</string>
+    
     <!-- Native Language Strings -->
     <string name="native_arabic">العربية</string>
     <string name="native_chinese">中國的</string>
-    <string name="native_croatian">hrvatski</string>
+    <string name="native_croatian">Hrvatski</string>
     <string name="native_dutch">Nederlands</string>
     <string name="native_english">English</string>
-    <string name="native_french">français</string>
+    <string name="native_french">Français</string>
     <string name="native_german">Deutsch</string>
-    <string name="native_italian">italiano</string>
-    <string name="native_japanese">日本の</string>
+    <string name="native_italian">Italiano</string>
+    <string name="native_japanese">日本語</string>
     <string name="native_korean">한국의</string>
-    <string name="native_norwegian">norske</string>
-    <string name="native_portuguese">português</string>
-    <string name="native_spanish">español</string>
+    <string name="native_norwegian">Norske</string>
+    <string name="native_portuguese">Português</string>
+    <string name="native_spanish">Español</string>
 
     <!-- In-Game Message Strings -->
     <string name="mupen64plus_started">Mupen64Plus Started</string>
@@ -71,6 +73,7 @@
     <string name="saving_game">Spielstand speichern</string>
     <string name="illegal_audio_state">Audio Spur illegaler Status.  Bitte berichte davon auf paulscode.com</string>
     <string name="app_data_inaccessible">Zugriff auf Programmdateien nicht möglich (ist das Gerät im Massenspeicher-Modus ?)</string>
+    
     <!-- In-Game Menu Strings -->
     <string name="ingame_menu">Menü</string>
     <string name="ingame_inc_slot">Slot++</string>

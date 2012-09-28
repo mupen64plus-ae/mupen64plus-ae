@@ -9,6 +9,7 @@
     <string name="error_write">Skriving feilet (sjekk at enheten er koblet til i modus for USB-masselagring) %s</string>
     <string name="failed_connecting_to">Tilkobling til %s feilet</string>
     <string name="init">Initialiserer</string>
+    
     <!-- Manifest Strings -->
     <string name="manifest_settings">Innstillinger</string>
     <string name="manifest_video_settings">Grafikkinnstillinger</string>
@@ -50,20 +51,21 @@
     <string name="language_norwegian">Norwegian</string>
     <string name="language_portuguese">Portuguese</string>
     <string name="language_spanish">Spanish</string>
+    
     <!-- Native Language Strings -->
     <string name="native_arabic">العربية</string>
     <string name="native_chinese">中國的</string>
-    <string name="native_croatian">hrvatski</string>
+    <string name="native_croatian">Hrvatski</string>
     <string name="native_dutch">Nederlands</string>
     <string name="native_english">English</string>
-    <string name="native_french">français</string>
+    <string name="native_french">Français</string>
     <string name="native_german">Deutsch</string>
     <string name="native_italian">italiano</string>
-    <string name="native_japanese">日本の</string>
+    <string name="native_japanese">日本語</string>
     <string name="native_korean">한국의</string>
-    <string name="native_norwegian">norske</string>
-    <string name="native_portuguese">português</string>
-    <string name="native_spanish">español</string>
+    <string name="native_norwegian">Norske</string>
+    <string name="native_portuguese">Português</string>
+    <string name="native_spanish">Español</string>
 
     <!-- In-Game Message Strings -->
     <string name="mupen64plus_started">Mupen64Plus startet</string>
@@ -71,6 +73,7 @@
     <string name="saving_game">Lagrer spill</string>
     <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com</string>
     <string name="app_data_inaccessible">Får ikke tilgang til applikasjonsdata (er enheten plugget inn i USB-masselagringsmodus?)</string>
+    
     <!-- In-Game Menu Strings -->
     <string name="ingame_menu">Meny</string>
     <string name="ingame_inc_slot">Lagringssted++</string>
