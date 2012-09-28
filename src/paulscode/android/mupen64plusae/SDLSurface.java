@@ -400,7 +400,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                         new Runnable()
                         {
                             @TargetApi(11)
-							public void run()
+                            public void run()
                             {
                                 if( GameActivityCommon.mSingleton.getActionBar().isShowing() )
                                 {
