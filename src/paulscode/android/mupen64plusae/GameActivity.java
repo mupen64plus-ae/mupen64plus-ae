@@ -46,7 +46,7 @@ public class GameActivity extends Activity
         .setContentText( contentText )
         .setContentIntent( contentIntent );
 
-        GameActivityCommon.notificationManager.notify( Globals.NOTIFICATION_ID, notification.getNotification() );
+        GameActivityCommon.notificationManager.notify( Globals.NOTIFICATION_ID, notification.build() );
 
         // paulscode, load the native libraries:
         GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "VideoPlugin" ) );

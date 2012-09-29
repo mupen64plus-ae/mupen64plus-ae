@@ -58,7 +58,7 @@ public class GameActivityXperiaPlay extends NativeActivity
         .setContentText( contentText )
         .setContentIntent( contentIntent );
 
-        GameActivityCommon.notificationManager.notify( Globals.NOTIFICATION_ID, notification.getNotification() );
+        GameActivityCommon.notificationManager.notify( Globals.NOTIFICATION_ID, notification.build() );
 
         // paulscode, load the native libraries:
         GameActivityCommon.loadNativeLibName( "xperia-touchpad" );
