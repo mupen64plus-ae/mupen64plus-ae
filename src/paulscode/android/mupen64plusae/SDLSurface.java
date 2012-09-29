@@ -48,14 +48,14 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         //super( context );
         super( context, attribs );
 
-        int x;
-        for( x = 0; x < 256; x++ )
+        for( int x = 0; x < 256; x++ )
         {
             pointers[x] = false;
             pointerX[x] = -1;
             pointerY[x] = -1;
         }
-        for( x = 0; x < 14; x++ )
+        
+        for( int x = 0; x < 14; x++ )
             mp64pButtons[x] = false;
 
         getHolder().addCallback( this ); 

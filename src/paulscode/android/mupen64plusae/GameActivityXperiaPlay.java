@@ -18,13 +18,13 @@ public class GameActivityXperiaPlay extends NativeActivity
 {
     public static int saveSlot = 0;
 
-    private static boolean touchPadPointers[] = new boolean[256];
-    private static int touchPadPointerX[] = new int[256];
-    private static int touchPadPointerY[] = new int[256];
+    private static boolean[] touchPadPointers = new boolean[256];
+    private static int[] touchPadPointerX = new int[256];
+    private static int[] touchPadPointerY = new int[256];
 
-    private static boolean touchScreenPointers[] = new boolean[256];
-    private static int touchScreenPointerX[] = new int[256];
-    private static int touchScreenPointerY[] = new int[256];
+    private static boolean[] touchScreenPointers = new boolean[256];
+    private static int[] touchScreenPointerX = new int[256];
+    private static int[] touchScreenPointerY = new int[256];
 
     public static TouchPad mTouchPad = null;
     public static TouchPad.TouchPadListing mTouchPadListing = null;
@@ -79,9 +79,9 @@ public class GameActivityXperiaPlay extends NativeActivity
 
         // paulscode, gather's information about the device, and chooses a hardware profile (used to customize settings)
         GameActivityCommon.readCpuInfo();
-        int x;
+
         // paulscode, Xperia Play native input linkage
-        for( x = 0; x < 256; x++ )
+        for( int x = 0; x < 256; x++ )
         {
             touchPadPointers[x] = false;
             touchPadPointerX[x] = -1;
@@ -90,8 +90,9 @@ public class GameActivityXperiaPlay extends NativeActivity
             touchScreenPointerX[x] = -1;
             touchScreenPointerY[x] = -1;
         }
+        
         // paulscode, clears the virtual gamepad key states
-        for( x = 0; x < 30; x++ )
+        for( int x = 0; x < 30; x++ )
         {
             GameActivityCommon.previousKeyStates[x] = false;
         }
@@ -169,12 +170,13 @@ public class GameActivityXperiaPlay extends NativeActivity
                         GameActivityCommon.showToast( getString( R.string.app_data_inaccessible ) );
                     }
                 }
+                
                 if( val != null && val.equals( "True" ) )
                 {
                     val = MenuActivity.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "X Axis" );
                     if( val != null )
                     {
-                        x = val.indexOf( "(" );
+                        int x = val.indexOf( "(" );
                         int y = val.indexOf( ")" );
                         if( x >= 0 && y >= 0 && y > x )
                         {

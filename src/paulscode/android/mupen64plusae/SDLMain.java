@@ -1,6 +1,5 @@
 package paulscode.android.mupen64plusae;
 
-
 /**
  * Simple nativeInit() runnable
  */
