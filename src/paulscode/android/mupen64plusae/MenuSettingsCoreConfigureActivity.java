@@ -59,7 +59,7 @@ public class MenuSettingsCoreConfigureActivity extends ListActivity implements I
         }
         optionList.add( new MenuOption( name,
                                         ((scancode > 0) ? (getString( R.string.button_keycode ) + " " + scancode) :
-							   getString( R.string.button_not_mapped )), info ) );
+                               getString( R.string.button_not_mapped )), info ) );
     }
 
     public void returnCode( int scancode, int codeType )

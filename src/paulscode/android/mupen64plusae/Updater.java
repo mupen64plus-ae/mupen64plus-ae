@@ -177,7 +177,7 @@ class Updater
             MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Mempak switch", "key(44)" );
             MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Rumblepak switch", "key(46)" );
             MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "X Axis", "key(276,275)" );
-            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Y Axis", "key(273,274)" );	
+            MenuActivity.mupen64plus_cfg.put( "Input-SDL-Control1", "Y Axis", "key(273,274)" );
         }
         else // New defaults if we have Android 3.1+ native gamepad support
         {

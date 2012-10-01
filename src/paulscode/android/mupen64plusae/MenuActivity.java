@@ -48,10 +48,10 @@ public class MenuActivity extends PreferenceActivity implements IOptionChooser
         {
             Globals.PackageName = getPackageName();
             Globals.LibsDir = "/data/data/" + Globals.PackageName;
-	        Globals.StorageDir = Globals.DownloadToSdcard ?
+            Globals.StorageDir = Globals.DownloadToSdcard ?
                     Environment.getExternalStorageDirectory().getAbsolutePath() : getFilesDir().getAbsolutePath();
 
-	        Globals.DataDir = Globals.DownloadToSdcard ?
+            Globals.DataDir = Globals.DownloadToSdcard ?
                     Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/" +
             Globals.PackageName : getFilesDir().getAbsolutePath();
          

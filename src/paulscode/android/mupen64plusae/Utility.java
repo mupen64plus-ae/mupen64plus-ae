@@ -150,7 +150,7 @@ public class Utility
     }
 
     @SuppressWarnings("unused")
-	public static String getTexturePackName( String filename )
+    public static String getTexturePackName( String filename )
     {
         int x;
         String textureName, textureExt;

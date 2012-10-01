@@ -151,7 +151,7 @@ class Config
      * @return True if successful.
      */
     @SuppressWarnings("unused")
-	public boolean load( String filename )
+    public boolean load( String filename )
     {   
         clear();  // Free any previously loaded data
         if( configMap == null )  // Create the configMap if it hasn't been already

@@ -54,25 +54,25 @@ public class GamePad extends View
 
     private boolean[] mp64pButtons = new boolean[14];
     // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in) 
-    private static final int Right	=  0;
-    private static final int Left	=  1;
-    private static final int Down	=  2;
-    private static final int Up		=  3;
-    private static final int Start	=  4;
-    private static final int Z		=  5;
-    private static final int B		=  6;
-    private static final int A		=  7;
-    private static final int CRight	=  8;
-    private static final int CLeft	=  9;
-    private static final int CDown	= 10;
-    private static final int CUp	= 11;
-    private static final int R		= 12;
-    private static final int L		= 13;
+    private static final int Right  =  0;
+    private static final int Left   =  1;
+    private static final int Down   =  2;
+    private static final int Up     =  3;
+    private static final int Start  =  4;
+    private static final int Z      =  5;
+    private static final int B      =  6;
+    private static final int A      =  7;
+    private static final int CRight =  8;
+    private static final int CLeft  =  9;
+    private static final int CDown  = 10;
+    private static final int CUp    = 11;
+    private static final int R      = 12;
+    private static final int L      = 13;
     // Not standard mp64p buttons, but simulated here for better control of virtual gamepad:
-    private static final int UpRight	= 14;
-    private static final int RightDown	= 15;
-    private static final int LeftDown	= 16;
-    private static final int LeftUp	= 17;
+    private static final int UpRight    = 14;
+    private static final int RightDown  = 15;
+    private static final int LeftDown   = 16;
+    private static final int LeftUp     = 17;
 
     private Image analogImage = null;
     private int analogXpercent = 0;
@@ -194,7 +194,6 @@ public class GamePad extends View
             drawEverything = true;
         if( drawEverything )
         {  // Redraw the entire gamepad
-            int x;
             if( canvas.getWidth() != canvasW || canvas.getHeight() != canvasH )
             {  // Canvas changed its dimensions, recalculate the control positions
                 canvasW = canvas.getWidth();
@@ -204,7 +203,7 @@ public class GamePad extends View
                     analogImage.fitCenter( (int)((float) canvasW * ((float) analogXpercent / 100.0f)),
                                            (int)((float) canvasH * ((float) analogYpercent / 100.0f)), canvasW, canvasH );
                 }
-                for( x = 0; x < buttonCount; x++ )
+                for( int x = 0; x < buttonCount; x++ )
                 {  // Position the buttons
                     buttons[x].fitCenter( (int)((float) canvasW * ((float) xpercents[x] / 100.0f)),
                                           (int)((float) canvasH * ((float) ypercents[x] / 100.0f)), canvasW, canvasH );
@@ -212,7 +211,7 @@ public class GamePad extends View
                                         (int)((float) canvasH * ((float) ypercents[x] / 100.0f)), canvasW, canvasH );
                 }
             }
-            for( x = 0; x < buttonCount; x++ )
+            for( int x = 0; x < buttonCount; x++ )
             {  // Draw the buttons onto the canvas
                 buttons[x].draw( canvas );
             }
@@ -248,13 +247,17 @@ public class GamePad extends View
             }
             
             int totalWidth = 0;
-            int c;
+
             // Calculate the width and postion of the FPS number:
-            for( c = 0; c < 4; c++ )
+            for( int c = 0; c < 4; c++ )
+            {
                 if( fpsDigits[c] != null )
                     totalWidth += fpsDigits[c].width;
+            }
+            
             x = x - (int) ((float) totalWidth / 2.0f);
-            for( c = 0; c < 4; c++ )
+            
+            for( int c = 0; c < 4; c++ )
             {  // draw each digit of the FPS number
                 if( fpsDigits[c] != null )
                 {
@@ -281,7 +284,7 @@ public class GamePad extends View
         if( !initialized )
             return;
 
-        int i, x, y, m, c, rgb;
+        int x, y, m, c, rgb;
         float d, p, dX, dY;
         // Clear any previous pointer data:
         int axisX = 0;
@@ -292,14 +295,14 @@ public class GamePad extends View
         hatY = -1;
         boolean touchedAnalog = false;
         // Clear any data about which buttons were pressed:
-        for( i = 0; i < 18; i++ )
+        for( int i = 0; i < 18; i++ )
             buttonPressed[i] = false;
-        for( i = 0; i < SDLButtonCount; i++ )
+        for( int i = 0; i < SDLButtonCount; i++ )
             SDLButtonPressed[i] = false;
-        for( i = 0; i < 14; i++ )
+        for( int i = 0; i < 14; i++ )
             mp64pButtons[i] = false;
 
-        for( i = 0; i <= maxPid; i++ )
+        for( int i = 0; i <= maxPid; i++ )
         {  // Process each pointer in sequence
             if( i == analogPid && !pointers[i] )
                 analogPid = -1;  // Release analog if it's pointer is not touching the screen
@@ -429,9 +432,9 @@ public class GamePad extends View
         int closestMatch = 0;  // start with the first N64 button
         int closestSDLButtonMatch = -1;  // disable this to start with
         int matchDif = Math.abs( maskColors[0] - color );
-        int x, dif;
+        int dif;
         
-        for( x = 1; x < 18; x++ )
+        for( int x = 1; x < 18; x++ )
         {  // Go through the N64 button mask colors first
             dif = Math.abs( maskColors[x] - color );
             if( dif < matchDif )
@@ -441,7 +444,7 @@ public class GamePad extends View
             }
         }
         
-        for( x = 0; x < SDLButtonCount; x++ )
+        for( int x = 0; x < SDLButtonCount; x++ )
         {  // Now see if any of the SDL button mask colors are closer
             dif = Math.abs( SDLButtonMaskColors[x] - color );
             if( dif < matchDif )
@@ -537,22 +540,21 @@ public class GamePad extends View
         String filename;
         canvasW = 0;
         canvasH = 0;
-        int i;
         
-        for( i = 0; i < 18; i++ )
+        for( int i = 0; i < 18; i++ )
         {
             maskColors[i] = -1;
             buttonPressed[i] = false;
         }
         
-        for( i = 0; i < MAX_BUTTONS; i++ )
+        for( int i = 0; i < MAX_BUTTONS; i++ )
         {
             SDLButtonMaskColors[i] = -1;
             SDLButtonCodes[i] = -1;
             SDLButtonPressed[i] = false;
         }
         
-        for( i = 0; i < 14; i++ )
+        for( int i = 0; i < 14; i++ )
             mp64pButtons[i] = false;
         
         if( skin == null )

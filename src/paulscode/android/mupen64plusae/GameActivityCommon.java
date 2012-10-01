@@ -487,7 +487,7 @@ public class GameActivityCommon
             String processor = null;
             String features = null;
             String hardware = null;
-            int x;
+
             if( in.read( re ) != -1 )
             {
                 line = new String( re );
@@ -495,7 +495,7 @@ public class GameActivityCommon
                 lines = line.split( "\\r\\n|\\n|\\r" );
                 if( lines != null )
                 {
-                    for( x = 0; x < lines.length; x++ )
+                    for( int x = 0; x < lines.length; x++ )
                     {
                         splitLine = lines[x].split( ":" );
                         if( splitLine != null && splitLine.length == 2 )

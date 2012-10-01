@@ -66,9 +66,9 @@ public class GameActivity extends Activity
 
         // paulscode, gather's information about the device, and chooses a hardware profile (used to customize settings)
         GameActivityCommon.readCpuInfo();
-        int x;
+
         // paulscode, clears the virtual gamepad key states
-        for( x = 0; x < 30; x++ )
+        for( int x = 0; x < 30; x++ )
         {
             GameActivityCommon.previousKeyStates[x] = false;
         }
@@ -143,12 +143,13 @@ public class GameActivity extends Activity
                         GameActivityCommon.showToast( getString( R.string.app_data_inaccessible ) );
                     }
                 }
+                
                 if( val != null && val.equals( "True" ) )
                 {
                     val = MenuActivity.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "X Axis" );
                     if( val != null )
                     {
-                        x = val.indexOf( "(" );
+                        int x = val.indexOf( "(" );
                         int y = val.indexOf( ")" );
                         if( x >= 0 && y >= 0 && y > x )
                         {

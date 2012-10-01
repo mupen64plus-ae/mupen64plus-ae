@@ -91,7 +91,7 @@ public class MenuSettingsInputActivity extends PreferenceActivity implements IOp
 
         if( option != null )
         {
-        	String plugin = option.replace( "$libsDir", Globals.LibsDir + "/lib" );
+            String plugin = option.replace( "$libsDir", Globals.LibsDir + "/lib" );
             MenuActivity.gui_cfg.put( "INPUT_PLUGIN", "last_choice", "\"" + plugin + "\"" );
             MenuActivity.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + plugin + "\"" );
             int x = plugin.lastIndexOf( "/" );

@@ -55,12 +55,12 @@ public class MenuSkinsGamepadChangeActivity extends ListActivity implements IOpt
         }
         try
         {
-        	if(br != null)
-        		br.close();
+            if(br != null)
+               br.close();
         }
         catch( Exception e )
         {
-        	Log.e( "MenuSkinsGamepadChangeActivity", "Problem closing gamepad list reader, error message: " + e.getMessage() );
+            Log.e( "MenuSkinsGamepadChangeActivity", "Problem closing gamepad list reader, error message: " + e.getMessage() );
         }
         try
         {

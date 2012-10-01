@@ -47,7 +47,7 @@ public class MenuSkinsTouchpadActivity extends PreferenceActivity implements IOp
             try
             {
                 if( br != null )
-                	br.close();
+                    br.close();
             }
             catch( Exception e )
             {

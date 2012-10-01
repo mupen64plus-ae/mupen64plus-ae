@@ -30,8 +30,8 @@ public class MenuSettingsInputConfigureButtonsActivity extends ListActivity impl
 
         // TODO: remove (function in the background)
         optionList.add( new MenuOption( getString( R.string.core_disable_volume_keys ), 
-                				getString( R.string.core_use_as_core_functions ), "menuSettingsInputConfigureVolume",
-                                        	Globals.volumeKeysDisabled ) );
+                                getString( R.string.core_use_as_core_functions ), "menuSettingsInputConfigureVolume",
+                                            Globals.volumeKeysDisabled ) );
 
         if( controllerNum > 0 && controllerNum < 5 )
         {
@@ -119,7 +119,7 @@ public class MenuSettingsInputConfigureButtonsActivity extends ListActivity impl
         }
         optionList.add( new MenuOption( name,
                                         ((scancode > 0) ? (getString( R.string.button_keycode ) + " " + scancode) :
-							  getString( R.string.button_not_mapped )), info ) );
+                               getString( R.string.button_not_mapped )), info ) );
     }
 
     public void addOption( List<MenuOption> optionList, String name, String info )
@@ -235,7 +235,7 @@ public class MenuSettingsInputConfigureButtonsActivity extends ListActivity impl
         optionArrayAdapter.remove( optionArrayAdapter.getOption( ScancodeDialog.menuItemPosition ) );
         optionArrayAdapter.insert( new MenuOption( ScancodeDialog.menuItemName,
                                                    ((scancode > 0) ? (getString( R.string.button_keycode ) + " " + scancode) :
-								      getString( R.string.button_not_mapped )), param ),
+                                         getString( R.string.button_not_mapped )), param ),
                                    ScancodeDialog.menuItemPosition );
     }
 
@@ -260,7 +260,7 @@ public class MenuSettingsInputConfigureButtonsActivity extends ListActivity impl
             MenuActivity.gui_cfg.put( "KEYS", "disable_volume_keys", Globals.volumeKeysDisabled ? "1" : "0" );
             optionArrayAdapter.remove( menuOption );
             optionArrayAdapter.insert( new MenuOption( getString( R.string.core_disable_volume_keys ), 
-                		           getString( R.string.core_use_as_core_functions ),
+                                    getString( R.string.core_use_as_core_functions ),
                                            "menuSettingsInputConfigureVolume", Globals.volumeKeysDisabled ), position );
         }
         else if( menuOption.info.equals( "plugged" ) ) 

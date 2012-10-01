@@ -104,7 +104,7 @@ public class MenuSettingsVideoActivity extends PreferenceActivity implements IOp
 
         if( option != null )
         {
-        	String plugin = option.replace( "$libsDir", Globals.LibsDir + "/lib" );
+            String plugin = option.replace( "$libsDir", Globals.LibsDir + "/lib" );
             MenuActivity.gui_cfg.put( "VIDEO_PLUGIN", "last_choice", "\"" + plugin + "\"" );
             MenuActivity.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + plugin + "\"" );
             int x = plugin.lastIndexOf( "/" );

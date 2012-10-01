@@ -159,7 +159,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                 @Override
                 public void run()
                 {
-					while(!GameActivityCommon.finishedReading)
+                    while(!GameActivityCommon.finishedReading)
                     {
                         try{Thread.sleep( 40 );}catch(InterruptedException e){}
                     }

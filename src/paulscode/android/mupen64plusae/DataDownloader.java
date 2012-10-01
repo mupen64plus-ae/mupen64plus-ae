@@ -155,7 +155,7 @@ class DataDownloader extends Thread
                 if( Parent != null && Status != null )
                     Parent.runOnUiThread( cb );
             }
-        }	
+        }
     }
     
     public DataDownloader( MainActivity _Parent, TextView _Status )
@@ -167,10 +167,10 @@ class DataDownloader extends Thread
         {
             Globals.PackageName = _Parent.getPackageName();
             Globals.LibsDir = "/data/data/" + Globals.PackageName;
-	        Globals.StorageDir = Globals.DownloadToSdcard ?
+            Globals.StorageDir = Globals.DownloadToSdcard ?
                     Environment.getExternalStorageDirectory().getAbsolutePath() : _Parent.getFilesDir().getAbsolutePath();
 
-	        Globals.DataDir = Globals.DownloadToSdcard ?
+            Globals.DataDir = Globals.DownloadToSdcard ?
                     Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/" +
                     Globals.PackageName : _Parent.getFilesDir().getAbsolutePath();
          
@@ -249,7 +249,7 @@ class DataDownloader extends Thread
         }
         try
         {
-        	checkFile.close();
+            checkFile.close();
         }
         catch( Exception e ){}
         checkFile = null;

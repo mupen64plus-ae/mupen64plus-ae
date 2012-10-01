@@ -51,29 +51,29 @@ public class TouchPad
     private int[] SDLButtonCodes = new int[MAX_BUTTONS];
     // SDL button-states associates with the mask colors:
     private boolean[] SDLButtonPressed = new boolean[MAX_BUTTONS];
-  //
+    //
 
     private boolean[] mp64pButtons = new boolean[14];
     // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in) 
-    private static final int Right	=  0;
-    private static final int Left	=  1;
-    private static final int Down	=  2;
-    private static final int Up		=  3;
-    private static final int Start	=  4;
-    private static final int Z		=  5;
-    private static final int B		=  6;
-    private static final int A		=  7;
-    private static final int CRight	=  8;
-    private static final int CLeft	=  9;
-    private static final int CDown	= 10;
-    private static final int CUp	= 11;
-    private static final int R		= 12;
-    private static final int L		= 13;
+    private static final int Right  =  0;
+    private static final int Left   =  1;
+    private static final int Down   =  2;
+    private static final int Up     =  3;
+    private static final int Start  =  4;
+    private static final int Z      =  5;
+    private static final int B      =  6;
+    private static final int A      =  7;
+    private static final int CRight =  8;
+    private static final int CLeft  =  9;
+    private static final int CDown  = 10;
+    private static final int CUp    = 11;
+    private static final int R      = 12;
+    private static final int L      = 13;
     // Not standard mp64p buttons, but simulated here for better control:
-    private static final int UpRight	= 14;
-    private static final int RightDown	= 15;
-    private static final int LeftDown	= 16;
-    private static final int LeftUp	= 17;
+    private static final int UpRight    = 14;
+    private static final int RightDown  = 15;
+    private static final int LeftDown   = 16;
+    private static final int LeftUp     = 17;
 
     private Image analogMask = null;
     private int analogXpercent = 0;
@@ -117,7 +117,7 @@ public class TouchPad
         if( !initialized )
             return;
 
-        int i, x, y, m, c, rgb;
+        int x, y, c, rgb;
         float d, p, dX, dY;
         
         // Clear any previous pointer data:
@@ -125,15 +125,15 @@ public class TouchPad
         int axisY = 0;
         
         // Clear any data about which buttons were pressed:
-        for( i = 0; i < 18; i++ )
+        for( int i = 0; i < 18; i++ )
             buttonPressed[i] = false;
-        for( i = 0; i < SDLButtonCount; i++ )
+        for( int i = 0; i < SDLButtonCount; i++ )
             SDLButtonPressed[i] = false;
-        for( i = 0; i < 14; i++ )
+        for( int i = 0; i < 14; i++ )
             mp64pButtons[i] = false;
 
         // Process each pointer in sequence
-        for( i = 0; i <= maxPid; i++ )
+        for( int i = 0; i <= maxPid; i++ )
         {  
             if( i == analogPid && !pointers[i] )
                 analogPid = -1;  // Release analog if it's pointer is not touching the pad
@@ -147,7 +147,7 @@ public class TouchPad
                 // Not the analog control, check the buttons
                 if( i != analogPid )
                 {  
-                    for( m = 0; m < buttonCount; m++ )
+                    for( int m = 0; m < buttonCount; m++ )
                     {  // Check each one in sequence
                         if( x >= masks[m].x && x < masks[m].x + masks[m].width &&
                             y >= masks[m].y && y < masks[m].y + masks[m].height )
@@ -251,8 +251,9 @@ public class TouchPad
         int closestMatch = 0;  // Start with the first N64 button
         int closestSDLButtonMatch = -1;  // Disable this to start with
         int matchDif = Math.abs( maskColors[0] - color );
-        int x, dif;
-        for( x = 1; x < 18; x++ )
+        int dif;
+        
+        for( int x = 1; x < 18; x++ )
         {  // Go through the N64 button mask colors first
             dif = Math.abs( maskColors[x] - color );
             if( dif < matchDif )
@@ -261,7 +262,8 @@ public class TouchPad
                 matchDif = dif;
             }
         }
-        for( x = 0; x < SDLButtonCount; x++ )
+        
+        for( int x = 0; x < SDLButtonCount; x++ )
         {  // Now see if any of the SDL button mask colors are closer
             dif = Math.abs( SDLButtonMaskColors[x] - color );
             if( dif < matchDif )
@@ -331,19 +333,19 @@ public class TouchPad
         buttonCount = 0;
         SDLButtonCount = 0;
         String filename;
-        int i;
-        for( i = 0; i < 18; i++ )
+
+        for( int i = 0; i < 18; i++ )
         {
             maskColors[i] = -1;
             buttonPressed[i] = false;
         }
-        for( i = 0; i < MAX_BUTTONS; i++ )
+        for( int i = 0; i < MAX_BUTTONS; i++ )
         {
             SDLButtonMaskColors[i] = -1;
             SDLButtonCodes[i] = -1;
             SDLButtonPressed[i] = false;
         }
-        for( i = 0; i < 14; i++ )
+        for( int i = 0; i < 14; i++ )
             mp64pButtons[i] = false;
 
         if( skin == null )
