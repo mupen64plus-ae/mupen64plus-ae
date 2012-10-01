@@ -17,7 +17,6 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/main/util.c \
 	$(SRCDIR)/main/cheat.c \
 	$(SRCDIR)/main/eventloop.c \
-	$(SRCDIR)/main/adler32.c \
 	$(SRCDIR)/main/md5.c \
 	$(SRCDIR)/main/rom.c \
 	$(SRCDIR)/main/savestates.c \
