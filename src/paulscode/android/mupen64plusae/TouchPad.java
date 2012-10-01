@@ -221,7 +221,7 @@ public class TouchPad
                         if( p > 1 )
                             p = 1;
                         
-                        // From the N64 func ref: The 3D Stick data is of type signed char and in
+                        // From the N64 function ref: The 3D Stick data is of type signed char and in
                         // the range between 80 and -80. (32768 / 409 = ~80.1)
                         axisX = (int) ( (dX / d) * p * 80.0f );
                         axisY = (int) ( (dY / d) * p * 80.0f );

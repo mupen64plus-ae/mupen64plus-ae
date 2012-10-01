@@ -284,7 +284,7 @@ public class GamePad extends View
         if( !initialized )
             return;
 
-        int x, y, m, c, rgb;
+        int x, y, c, rgb;
         float d, p, dX, dY;
         // Clear any previous pointer data:
         int axisX = 0;
@@ -314,7 +314,7 @@ public class GamePad extends View
 //Log.v( "GamePad.java", "pointer " + i + "(" + x + "," + y + ")  [analogPid=" + analogPid + "]" );
                 if( i != analogPid )
                 {  // Not the analog control, check the buttons
-                    for( m = 0; m < buttonCount; m++ )
+                    for( int m = 0; m < buttonCount; m++ )
                     {  // Check each one in sequence
                         if( x >= masks[m].x && x < masks[m].x + masks[m].width &&
                             y >= masks[m].y && y < masks[m].y + masks[m].height )
@@ -388,7 +388,7 @@ public class GamePad extends View
                             p = 0;
                         if( p > 1 )
                             p = 1;
-                        // From the N64 func ref: The 3D Stick data is of type signed char and in
+                        // From the N64 function ref: The 3D Stick data is of type signed char and in
                         // the range between 80 and -80. (32768 / 409 = ~80.1)
                         axisX = (int) ( (dX / d) * p * 80.0f );
                         axisY = (int) ( (dY / d) * p * 80.0f );
