@@ -38,22 +38,12 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/plugin/dummy_input.c \
 	$(SRCDIR)/plugin/dummy_rsp.c \
 	$(SRCDIR)/r4300/r4300.c \
-	$(SRCDIR)/r4300/bc.c \
-	$(SRCDIR)/r4300/cop0.c \
-	$(SRCDIR)/r4300/cop1.c \
-	$(SRCDIR)/r4300/cop1_d.c \
-	$(SRCDIR)/r4300/cop1_l.c \
-	$(SRCDIR)/r4300/cop1_s.c \
-	$(SRCDIR)/r4300/cop1_w.c \
 	$(SRCDIR)/r4300/exception.c \
 	$(SRCDIR)/r4300/interupt.c \
 	$(SRCDIR)/r4300/profile.c \
 	$(SRCDIR)/r4300/pure_interp.c \
 	$(SRCDIR)/r4300/recomp.c \
     $(SRCDIR)/r4300/reset.c \
-	$(SRCDIR)/r4300/special.c \
-	$(SRCDIR)/r4300/regimm.c \
-	$(SRCDIR)/r4300/tlb.c \
 	$(SRCDIR)/r4300/empty_dynarec.c \
 	$(SRCDIR)/r4300/new_dynarec/new_dynarec.c \
 	$(SRCDIR)/r4300/new_dynarec/fpu.c \
