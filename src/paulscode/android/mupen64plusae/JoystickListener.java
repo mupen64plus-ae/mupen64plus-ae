@@ -1,13 +1,9 @@
 package paulscode.android.mupen64plusae;
 
 import android.annotation.TargetApi;
-import android.content.*;
-import android.graphics.*;
-import android.hardware.*;
-import android.os.*;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.*;
+import android.os.Build;
+import android.view.MotionEvent;
+import android.view.View;
 
 class JoystickListener implements View.OnGenericMotionListener
 {
