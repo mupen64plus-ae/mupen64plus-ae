@@ -168,14 +168,14 @@ endif
 
 # test for presence of libsamplerate
 ifneq ($(strip $(shell pkg-config samplerate --modversion 2> /dev/null)),)
-  ifneq ($(NO_RESAMP), 1)
+  ifneq ($(NO_SRC), 1)
     # set libsamplerate flags and libraries
     CFLAGS	+= $(shell pkg-config samplerate --cflags) -DUSE_SRC
     LDLIBS += $(shell pkg-config samplerate --libs)
   endif
 else
   # warn user
-  $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without Best Quality SINC resampler.)
+  $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without src-* resampler.)
 endif
 
 # test for the presence of OSS
@@ -274,7 +274,7 @@ targets:
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
-	@echo "    NO_RESAMP=1   == build without libsamplerate; disables high-quality audio resampling"
+	@echo "    NO_SRC=1      == build without libsamplerate; disables src-* high-quality audio resampling"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
