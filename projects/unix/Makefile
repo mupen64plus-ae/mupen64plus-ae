@@ -166,6 +166,18 @@ ifeq ($(OS),LINUX)
     LDLIBS += $(shell sdl-config --libs)
 endif
 
+# test for presence of speexdsp
+ifneq ($(strip $(shell pkg-config speexdsp --modversion 2> /dev/null)),)
+  ifneq ($(NO_SPEEX), 1)
+    # set speexdsp flags and libraries
+    CFLAGS += $(shell pkg-config speexdsp --cflags) -DUSE_SPEEX
+    LDLIBS += $(shell pkg-config speexdsp --libs)
+  endif
+else
+  # warn user
+  $(warning No libspeexdsp development libraries found.  Mupen64plus-sdl-audio will be built without speex-* resampler.)
+endif
+
 # test for presence of libsamplerate
 ifneq ($(strip $(shell pkg-config samplerate --modversion 2> /dev/null)),)
   ifneq ($(NO_SRC), 1)
@@ -275,6 +287,7 @@ targets:
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    NO_SRC=1      == build without libsamplerate; disables src-* high-quality audio resampling"
+	@echo "    NO_SPEEX=1    == build without libspeexdsp; disables speex-* high-quality audio resampling"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
