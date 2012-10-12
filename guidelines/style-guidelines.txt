@@ -1,0 +1,34 @@
+******************************************
+RECOMMENDED LOOK-FEEL AND CODING PRACTICES
+******************************************
+Wherever possible, provide design guidance and recommendations directly in the
+source code header comments, rather than in a central file like this, which may
+be overlooked by new contributors.  In this file, add new sections that simply
+point to the source file where guidance is provided.  Do not duplicate guidance
+documentation here, as this would create a maintenance chore.  Any references
+or web links that inspire or justify the design choices should be noted in the
+header comments.  Such links and references may be copied to the bottom of this
+file as a convenience to the reader.
+
+
+*******************************
+Strings, Text, and Localization
+*******************************
+See header comments in res/values/strings.xml.
+
+
+****************
+User Preferences
+****************
+See header comments in res/xml/preferences.xml.     
+
+
+*******************
+Recommended Reading
+*******************
+http://source.android.com/source/code-style.html
+http://developer.android.com/design/style/writing.html
+http://developer.android.com/design/patterns/settings.html#writing
+http://developer.android.com/guide/topics/resources/localization.html
+http://developer.android.com/guide/topics/ui/settings.html
+http://developer.android.com/design/patterns/settings.html

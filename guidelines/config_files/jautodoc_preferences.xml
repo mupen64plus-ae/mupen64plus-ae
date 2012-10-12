@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jautodoc-preferences>
+    <options>
+        <completeExistingJavadoc>true</completeExistingJavadoc>
+        <keepExistingJavadoc>false</keepExistingJavadoc>
+        <replaceExistingJavadoc>false</replaceExistingJavadoc>
+        <includePublic>true</includePublic>
+        <includeProtected>true</includeProtected>
+        <includePackage>true</includePackage>
+        <includePrivate>true</includePrivate>
+        <includeTypes>true</includeTypes>
+        <includeFields>true</includeFields>
+        <includeMethods>true</includeMethods>
+        <getterSetterOnly>false</getterSetterOnly>
+        <excludeGetterSetter>false</excludeGetterSetter>
+        <addTodoForAutodoc>true</addTodoForAutodoc>
+        <createDummyComment>true</createDummyComment>
+        <singleLineComment>true</singleLineComment>
+        <useEclipseFormatter>false</useEclipseFormatter>
+        <getterSetterFromField>false</getterSetterFromField>
+        <includeSubPackages>false</includeSubPackages>
+        <addHeader>true</addHeader>
+        <replaceHeader>false</replaceHeader>
+        <multiCommentHeader>false</multiCommentHeader>
+        <usePackageInfo>false</usePackageInfo>
+    </options>
+    <properties/>
+    <replacements>
+        <replacement shortcut="get" scope="1" mode="0">Gets the</replacement>
+        <replacement shortcut="set" scope="1" mode="0">Sets the</replacement>
+        <replacement shortcut="add" scope="1" mode="0">Adds the</replacement>
+        <replacement shortcut="edit" scope="1" mode="0">Edits the</replacement>
+        <replacement shortcut="remove" scope="1" mode="0">Removes the</replacement>
+        <replacement shortcut="init" scope="1" mode="0">Inits the</replacement>
+        <replacement shortcut="parse" scope="1" mode="0">Parses the</replacement>
+        <replacement shortcut="create" scope="1" mode="0">Creates the</replacement>
+        <replacement shortcut="build" scope="1" mode="0">Builds the</replacement>
+        <replacement shortcut="is" scope="1" mode="0">Checks if is</replacement>
+        <replacement shortcut="print" scope="1" mode="0">Prints the</replacement>
+        <replacement shortcut="has" scope="1" mode="0">Checks for</replacement>
+    </replacements>
+    <headerText>/**
+ * Mupen64PlusAE, an N64 emulator for the Android platform
+ * 
+ * Copyright (C) 2012 Paul Lamb
+ * 
+ * This file is part of Mupen64PlusAE.
+ * 
+ * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with Mupen64PlusAE. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ * 
+ * Authors: TODO
+ */</headerText>
+    <packageDocText>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;/head&gt;
+&lt;body&gt;
+  Provides...
+&lt;/body&gt;
+&lt;/html&gt;</packageDocText>
+    <packageInfoText>/**
+ * Provides...
+ */
+package ${package_name};</packageInfoText>
+</jautodoc-preferences>
