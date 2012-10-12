@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    Please follow the recommended practices described in:
+        res/values/strings.xml
+        res/xml/preferences.xml
+    ***********************************************************************************
+-->
+<resources>
+
+    <!-- Language List -->
+    <string-array name="language_entries">
+        <item>Deutsch</item>
+        <item>English</item>
+        <item>Español</item>
+        <item>Français</item>
+        <item>Hrvatski</item>
+        <item>Italiano</item>
+        <item>Nederlands</item>
+        <item>Norske</item>
+        <item>Português</item>
+        <item>العربية</item>
+        <item>한국의</item>
+        <item>日本語</item>
+        <item>中國的</item>
+    </string-array>
+    <string-array name="language_values">
+        <item>de</item>
+        <item>en</item>
+        <item>es</item>
+        <item>fr</item>
+        <item>hr</item>
+        <item>it</item>
+        <item>nl</item>
+        <item>no</item>
+        <item>pt</item>
+        <item>ar</item>
+        <item>ko</item>
+        <item>zh</item>
+        <item>ja</item>
+    </string-array>
+    <string name="language_default">en</string>
+
+    <!-- GLES2N64 Frameskip List -->
+    <string-array name="gles2N64Frameskip_entries">
+        <item>@string/auto</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="gles2N64Frameskip_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string name="gles2N64Frameskip_default">-1</string>
+
+</resources>

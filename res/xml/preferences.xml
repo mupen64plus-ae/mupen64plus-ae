@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    Wherever possible, use Android's built-in Preference framework for defining global
+    user settings and the menu interface that supports them:
+        http://developer.android.com/guide/topics/ui/settings.html
+        http://developer.android.com/design/patterns/settings.html
+    
+    Please follow our naming convention (casing and underscores) for all Preferences:
+        <CheckBoxPreference
+            android:key="myKey"
+            android:title="@string/myKey_title"
+            android:summary="@string/myKey_summary"
+            ...
+            />
+        <ListPreference
+            ...
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:defaultValue="@string/myKey_default"
+            ...
+            />
+        <paulscode.android.mupen64plusae.MyCustomPreference
+            ...
+            mupen64:myAttribute="@string/myKey_myAttribute"
+            ...
+            />
+    
+    Strings should never be hard-coded into this file, with the exception perhaps of
+    boolean default values.  Instead, define all strings as resources in:
+        res/values/strings.xml
+    
+    To keep things clean, define all arrays as resources in:
+        res/values/arrays.xml
+    Define default array values alongside the arrays themselves in arrays.xml, rather
+    than in strings.xml.  This helps to ensure that arrays and their defaults are
+    maintained correctly.
+    
+    To minimize app size, use Android's built-in resources whenever possible.  For
+    example, favor icon resources in "@android:drawable/..." over custom resources in
+    "@drawable/...".       
+    ***********************************************************************************
+-->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="paulscode.android.mupen64plusae" >
+    <Preference
+        android:icon="@android:drawable/ic_media_play"
+        android:key="menuResume"
+        android:title="@string/resume" >
+    </Preference>
+    <Preference
+        android:icon="@android:drawable/ic_menu_more"
+        android:key="menuSelectGame"
+        android:title="@string/selectGame" >
+    </Preference>
+    <PreferenceScreen
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:key="menuSettings"
+        android:title="@string/settings" >
+        <!-- Start temporary section -->
+        <PreferenceCategory
+            android:title="Development Concepts" />
+        <paulscode.android.mupen64plusae.InputMapPreference
+            android:key="menuController1"
+            android:summary="Configure buttons and sticks"
+            android:title="Controller 1"
+            android:dialogTitle="Touch an icon while pushing the desired stick or button" />
+        <!-- End temporary section --> 
+        <PreferenceCategory
+            android:key="categoryPlugins"
+            android:title="@string/categoryPlugins_title" />
+        <PreferenceScreen
+            android:icon="@android:drawable/ic_menu_more"
+            android:key="menuVideo"
+            android:summary="@string/video_summary"
+            android:title="@string/video_title" >
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="videoEnabled"
+                android:title="@string/videoEnabled_title" />
+            <ListPreference
+                android:dependency="videoEnabled"
+                android:key="videoPlugin"
+                android:title="@string/videoPlugin_title" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="videoEnabled"
+                android:key="videoStretch"
+                android:summary="@string/videoStretch_summary"
+                android:title="@string/videoStretch_title" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="videoEnabled"
+                android:key="videoRGBA8888"
+                android:summary="@string/videoRGBA8888_summary"
+                android:title="@string/videoRGBA8888_title" />
+            <PreferenceScreen
+                android:icon="@android:drawable/ic_menu_more"
+                android:dependency="videoEnabled"
+                android:key="menuGles2Rice"
+                android:title="@string/gles2Rice_title" >
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="gles2RiceAutoFrameskip"
+                    android:summary="@string/gles2RiceAutoFrameskip_summary"
+                    android:title="@string/gles2RiceAutoFrameskip_title" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="gles2RiceFastTextureCRC"
+                    android:summary="@string/gles2RiceFastTextureCRC_summary"
+                    android:title="@string/gles2RiceFastTextureCRC_title" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="gles2RiceFastTexture"
+                    android:summary="@string/gles2RiceFastTexture_summary"
+                    android:title="@string/gles2RiceFastTexture_title" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="gles2RiceHiResTextures"
+                    android:summary="@string/gles2RiceHiResTextures_summary"
+                    android:title="@string/gles2RiceHiResTextures_title" />
+                <Preference
+                    android:dependency="gles2RiceHiResTextures"
+                    android:key="gles2RiceImportHiResTextures"
+                    android:summary="@string/gles2RiceImportHiResTextures_summary"
+                    android:title="@string/gles2RiceImportHiResTextures_title" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:icon="@android:drawable/ic_menu_more"
+                android:dependency="videoEnabled"
+                android:key="menuGles2N64"
+                android:title="@string/gles2N64_title" >
+                <ListPreference
+                    android:defaultValue="@string/gles2N64Frameskip_default"
+                    android:entries="@array/gles2N64Frameskip_entries"
+                    android:entryValues="@array/gles2N64Frameskip_values"
+                    android:key="gles2N64Frameskip"
+                    android:summary="@string/gles2N64Frameskip_summary"
+                    android:title="@string/gles2N64Frameskip_title" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="gles2N64Fog"
+                    android:summary="@string/gles2N64Fog_summary"
+                    android:title="@string/gles2N64Fog_title" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="gles2N64Sai"
+                    android:summary="@string/gles2N64Sai_summary"
+                    android:title="@string/gles2N64Sai_title" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="gles2N64ScreenClear"
+                    android:summary="@string/gles2N64ScreenClear_summary"
+                    android:title="@string/gles2N64ScreenClear_title" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="gles2N64Alpha"
+                    android:summary="@string/gles2N64Alpha_summary"
+                    android:title="@string/gles2N64Alpha_title" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="gles2N64HackZ"
+                    android:summary="@string/gles2N64HackZ_summary"
+                    android:title="@string/gles2N64HackZ_title" />
+            </PreferenceScreen>
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:icon="@android:drawable/ic_menu_more"
+            android:key="menuTouchscreen"
+            android:summary="@string/touchscreen_summary"
+            android:title="@string/touchscreen_title" >
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="touchscreenEnabled"
+                android:title="@string/touchscreenEnabled_title" />
+            <ListPreference
+                android:dependency="touchscreenEnabled"
+                android:key="touchscreenLayout"
+                android:title="@string/touchscreenLayout_title" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:dependency="touchscreenEnabled"
+                android:key="touchscreenOctagonJoystick"
+                android:title="@string/touchscreenOctagonJoystick_title" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:dependency="touchscreenEnabled"
+                android:key="touchscreenRedrawAll"
+                android:summary="@string/touchscreenRedrawAll_summary"
+                android:title="@string/touchscreenRedrawAll_title" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:icon="@android:drawable/ic_menu_more"
+            android:key="menuGamepad"
+            android:summary="@string/gamepad_summary"
+            android:title="@string/gamepad_title" >
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="gamepadEnabled"
+                android:title="@string/gamepadEnabled_title" />
+            <ListPreference
+                android:dependency="gamepadEnabled"
+                android:key="gamepadPlugin"
+                android:title="@string/gamepadPlugin_title" />
+            <Preference
+                android:dependency="gamepadEnabled"
+                android:key="gamepadMap1"
+                android:title="@string/gamepadMap1_title" />
+            <Preference
+                android:dependency="gamepadEnabled"
+                android:key="gamepadMap2"
+                android:title="@string/gamepadMap2_title" />
+            <Preference
+                android:dependency="gamepadEnabled"
+                android:key="gamepadMap3"
+                android:title="@string/gamepadMap3_title" />
+            <Preference
+                android:dependency="gamepadEnabled"
+                android:key="gamepadMap4"
+                android:title="@string/gamepadMap4_title" />
+            <Preference
+                android:dependency="gamepadEnabled"
+                android:key="gamepadMapSpecial"
+                android:title="@string/gamepadMapSpecial_title" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:icon="@android:drawable/ic_menu_more"
+            android:key="menuXperia"
+            android:summary="@string/xperia_summary"
+            android:title="@string/xperia_title" >
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="xperiaEnabled"
+                android:summary="@string/xperiaEnabled_summary"
+                android:title="@string/xperiaEnabled_title" />
+            <Preference
+                android:dependency="xperiaEnabled"
+                android:key="xperiaTouchpad"
+                android:summary="@string/xperiaTouchpad_summary"
+                android:title="@string/xperiaTouchpad_title" />
+        </PreferenceScreen>
+        <Preference
+            android:icon="@android:drawable/ic_menu_more"
+            android:key="menuCheats"
+            android:summary="@string/cheats_summary"
+            android:title="@string/cheats_title" >
+        </Preference>
+        <PreferenceScreen
+            android:icon="@android:drawable/ic_menu_more"
+            android:key="menuOther"
+            android:summary="@string/other_summary"
+            android:title="@string/other_title" >
+            <ListPreference
+                android:key="audioPlugin"
+                android:title="@string/audioPlugin_title" />
+            <ListPreference
+                android:key="rspPlugin"
+                android:title="@string/rspPlugin_title" />
+            <ListPreference
+                android:key="corePlugin"
+                android:title="@string/corePlugin_title" />
+            <Preference
+                android:key="menuResetAppData"
+                android:summary="@string/resetAppData_summary"
+                android:title="@string/resetAppData_title" />
+        </PreferenceScreen>
+        <PreferenceCategory
+            android:key="categoryGeneral"
+            android:title="@string/categoryGeneral_title" />
+        <ListPreference
+            android:defaultValue="@string/language_default"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:key="language"
+            android:summary="@string/language_summary"
+            android:title="@string/language_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="autoSaveEnabled"
+            android:summary="@string/autoSaveEnabled_summary"
+            android:title="@string/autoSaveEnabled_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="touchscreenFrameRate"
+            android:title="@string/touchscreenFrameRate_title" />
+        <Preference
+            android:key="menuReset"
+            android:summary="@string/reset_summary"
+            android:title="@string/reset_title" />
+    </PreferenceScreen>
+    <Preference
+        android:icon="@android:drawable/ic_menu_help"
+        android:key="menuHelp"
+        android:title="@string/help" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018" />
+    </Preference>
+    <Preference
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:key="menuAbout"
+        android:title="@string/about" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://www.paulscode.com" />
+    </Preference>
+    <Preference
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:key="menuExit"
+        android:title="@string/exit" >
+    </Preference>
+</PreferenceScreen>
