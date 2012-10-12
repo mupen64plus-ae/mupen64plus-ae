@@ -5,6 +5,7 @@
 
     <RelativeLayout
         android:id="@+id/bPad"
+        android:focusable="false"
         android:layout_width="250dp"
         android:layout_height="120dp"
         android:layout_alignParentBottom="false"
@@ -13,6 +14,7 @@
 
         <Button
             android:id="@+id/buttonZ"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
@@ -22,6 +24,7 @@
 
         <Button
             android:id="@+id/buttonR"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
@@ -31,6 +34,7 @@
 
         <Button
             android:id="@+id/buttonL"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
@@ -40,6 +44,7 @@
 
         <Button
             android:id="@+id/buttonS"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
@@ -49,166 +54,189 @@
 
         <TextView
             android:id="@+id/textFeedback"
+            android:focusable="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="(feedback)"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+        </TextView>
+        
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/aPad"
+        android:focusable="false"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/analog_ring" >
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonAU"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
             android:contentDescription="AU"
-            android:src="@drawable/ic_arrow_u" />
+            android:drawableTop="@drawable/ic_arrow_u" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonAD"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
             android:contentDescription="AD"
-            android:src="@drawable/ic_arrow_d" />
+            android:drawableBottom="@drawable/ic_arrow_d" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonAL"
+            android:focusable="false"
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
             android:contentDescription="AL"
-            android:src="@drawable/ic_arrow_l" />
+            android:drawableLeft="@drawable/ic_arrow_l" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonAR"
+            android:focusable="false"
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
             android:contentDescription="AR"
-            android:src="@drawable/ic_arrow_r" />
+            android:drawableRight="@drawable/ic_arrow_r" />
+        
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/dPad"
+        android:focusable="false"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true" >
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonDU"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_dpad"
             android:contentDescription="DU"
-            android:src="@drawable/ic_arrow_u" />
+            android:drawableTop="@drawable/ic_arrow_u" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonDD"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_dpad"
             android:contentDescription="DD"
-            android:src="@drawable/ic_arrow_d" />
+            android:drawableBottom="@drawable/ic_arrow_d" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonDL"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_dpad"
             android:contentDescription="DL"
-            android:src="@drawable/ic_arrow_l" />
+            android:drawableLeft="@drawable/ic_arrow_l" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonDR"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_dpad"
             android:contentDescription="DR"
-            android:src="@drawable/ic_arrow_r" />
+            android:drawableRight="@drawable/ic_arrow_r" />
 
         <Button
             android:id="@+id/buttonDC"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerInParent="true"
             android:background="@drawable/button_dpad"
             android:enabled="false" />
-        </RelativeLayout>
+        
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/cPad"
+        android:focusable="false"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true" >
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonCU"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_above="@+id/buttonCR"
             android:layout_toLeftOf="@+id/buttonCR"
             android:background="@drawable/button_cpad"
             android:contentDescription="CU"
-            android:src="@drawable/ic_arrow_u" />
+            android:drawableTop="@drawable/ic_arrow_u" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonCD"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/buttonCR"
             android:layout_toLeftOf="@+id/buttonCR"
             android:background="@drawable/button_cpad"
             android:contentDescription="CD"
-            android:src="@drawable/ic_arrow_d" />
+            android:drawableBottom="@drawable/ic_arrow_d" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonCL"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/buttonCU"
             android:layout_toLeftOf="@+id/buttonCU"
             android:background="@drawable/button_cpad"
             android:contentDescription="CL"
-            android:src="@drawable/ic_arrow_l" />
+            android:drawableLeft="@drawable/ic_arrow_l" />
 
-        <ImageButton
+        <Button
             android:id="@+id/buttonCR"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_cpad"
             android:contentDescription="CR"
-            android:src="@drawable/ic_arrow_r" />
+            android:drawableRight="@drawable/ic_arrow_r" />
+
         <Button
             android:id="@+id/buttonCC"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
@@ -218,9 +246,10 @@
             android:text="C"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
-        
+
         <Button
             android:id="@+id/buttonB"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/buttonCL"
@@ -230,12 +259,14 @@
 
         <Button
             android:id="@+id/buttonA"
+            android:focusable="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/buttonCD"
             android:layout_toLeftOf="@+id/buttonCD"
             android:background="@drawable/button_a"
             android:text="A" />
+        
     </RelativeLayout>
 
 </RelativeLayout>

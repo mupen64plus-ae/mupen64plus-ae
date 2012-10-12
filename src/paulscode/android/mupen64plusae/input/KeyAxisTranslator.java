@@ -17,31 +17,37 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.input;
 
 import android.annotation.TargetApi;
 import android.view.MotionEvent;
 import android.view.View;
 
 @TargetApi( 12 )
-public class KeyAxisFunnel extends KeyFunnel implements View.OnGenericMotionListener
+public class KeyAxisTranslator extends KeyTranslator implements View.OnGenericMotionListener
 {
     private int[] mInputCodes;
+    private static final int DEFAULT_NUM_INPUTS = 128;
     
-    public KeyAxisFunnel()
+    public KeyAxisTranslator()
     {
+        // By default, listen to all possible gamepad axes
+        mInputCodes = new int[DEFAULT_NUM_INPUTS];
+        for( int i = 0; i < mInputCodes.length; i++ )
+        {
+            mInputCodes[i] = -( i + 1 );
+        }      
     }
     
-    public void setInputCodes( int[] inputCodes )
+    public void setInputCodes( int[] inputCodeFilter )
     {
-        mInputCodes = inputCodes.clone();
+        mInputCodes = inputCodeFilter.clone();
     }
     
     public boolean onGenericMotion( View v, MotionEvent event )
     {
-        float[] strengths = new float[mInputCodes.length];
-        
         // Read all the requested axes
+        float[] strengths = new float[mInputCodes.length];
         for( int i = 0; i < mInputCodes.length; i++ )
         {
             int inputCode = mInputCodes[i];
@@ -49,7 +55,7 @@ public class KeyAxisFunnel extends KeyFunnel implements View.OnGenericMotionList
             // Compute the axis code from the input code
             int axisCode = inputToAxisCode( inputCode );
             
-            // Get the analog value provided using the native Android API
+            // Get the analog value using the native Android API
             float strength = event.getAxisValue( axisCode );
             
             // If the strength points in the correct direction, record it

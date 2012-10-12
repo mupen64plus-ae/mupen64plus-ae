@@ -17,12 +17,12 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.input;
 
 import android.view.KeyEvent;
 import android.view.View;
 
-public class KeyFunnel extends InputFunnel implements View.OnKeyListener
+public class KeyTranslator extends InputTranslator implements View.OnKeyListener
 {
     public enum ImeFormula
     {
@@ -31,7 +31,7 @@ public class KeyFunnel extends InputFunnel implements View.OnKeyListener
     
     private ImeFormula mImeFormula;
     
-    public KeyFunnel()
+    public KeyTranslator()
     {
         mImeFormula = ImeFormula.DEFAULT;
     }
@@ -47,8 +47,7 @@ public class KeyFunnel extends InputFunnel implements View.OnKeyListener
         if( keyCode == KeyEvent.KEYCODE_BACK )
             return false;
         
-        // Translate the input code and analog strength (ranges between 0.0 and
-        // 1.0)
+        // Translate input code and analog strength (ranges between 0.0 and 1.0)
         int inputCode;
         float strength;
         if( keyCode < 0xFF )
@@ -59,8 +58,7 @@ public class KeyFunnel extends InputFunnel implements View.OnKeyListener
         }
         else
         {
-            // Analog axis changed state, decode using a formula specific to the
-            // IME
+            // Analog axis changed state, decode using IME-specific formula
             switch( mImeFormula )
             {
                 case DEFAULT:
@@ -72,9 +70,9 @@ public class KeyFunnel extends InputFunnel implements View.OnKeyListener
                     strength = ( (float) keyCode % 100 ) / 64f;
                     break;
                 case EXAMPLE_IME:
-                    // High byte stores input code, low byte stores strength
-                    inputCode = keyCode >> 8;
-                    strength = ( keyCode & 0xFF ) / 0xFF;
+                    // Low byte stores input code, high byte stores strength
+                    inputCode = keyCode & 0xFF;
+                    strength = ( (float) ( keyCode >> 8 ) ) / 0xFF;
                     break;
             }
         }

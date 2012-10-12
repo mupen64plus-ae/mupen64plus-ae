@@ -7,6 +7,10 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.preference.Config;
+import paulscode.android.mupen64plusae.preference.Settings;
+
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -138,7 +142,7 @@ public class GamePad extends View
     {
         this.resources = resources;
         for( int x = 0; x < 10; x++ )
-            numberImages[x] = new Image( resources, Globals.DataDir + "/skins/fonts/" +
+            numberImages[x] = new Image( resources, Settings.paths.dataDir + "/skins/fonts/" +
                                          fpsFont + "/" + x + ".png" );
     }
     
@@ -155,7 +159,7 @@ public class GamePad extends View
             fpsValue = 0;  // Can't have a negative FPS (what is this, time travel?)
         if( fpsValue > 9999 )
             fpsValue = 9999;  // No more than 4 digits
-        if( !Globals.settings.touchscreenFrameRate )
+        if( !Settings.user.touchscreenFrameRate )
             return;
         String fpsString = Integer.toString( fpsValue );
         for( int x = 0; x < 4; x++ )
@@ -190,7 +194,7 @@ public class GamePad extends View
     {
         if( !initialized )
             return;
-        if( Globals.settings.touchscreenRedrawAll )
+        if( Settings.user.touchscreenRedrawAll )
             drawEverything = true;
         if( drawEverything )
         {  // Redraw the entire gamepad
@@ -233,7 +237,7 @@ public class GamePad extends View
                 hatImage.draw( canvas );
             }
         }
-        if( Globals.settings.touchscreenFrameRate && (drawEverything || drawFPS) )
+        if( Settings.user.touchscreenFrameRate && (drawEverything || drawFPS) )
         {  // Redraw the FPS indicator
             int x = 0;
             int y = 0;
@@ -334,7 +338,7 @@ public class GamePad extends View
                     d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
                     {  // Inside the analog control
-                        if( Globals.settings.touchscreenOctagonJoystick )
+                        if( Settings.user.touchscreenOctagonJoystick )
                         {  // Emulate the analog control as an octagon (like the real N64 controller)
                             Point crossPt = new Point();
                             float dC = analogImage.hWidth;
@@ -560,7 +564,7 @@ public class GamePad extends View
         if( skin == null )
             return;  // No skin was specified, so we are done.. quit
         // Load the configuration file (pad.ini):
-        Config pad_ini = new Config( Globals.DataDir + "/skins/gamepads/" + skin + "/pad.ini" );
+        Config pad_ini = new Config( Settings.paths.dataDir + "/skins/gamepads/" + skin + "/pad.ini" );
 
         // Look up the game-pad layout credits:
         name = pad_ini.get( "INFO", "name" );
@@ -652,11 +656,11 @@ public class GamePad extends View
                         val = val.toLowerCase();  // Lets not make this part case-sensitive
                         if( val.contains( "analog" ) )
                         {  // Analog control (PNG image format)
-                            analogImage = new Image( resources, Globals.DataDir + "/skins/gamepads/" +
+                            analogImage = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
                                                      skin + "/" + filename + ".png" );
                             if( val.contains( "hat" ) )
                             {  // There's a "stick" image.. same name, with "_2" appended:
-                                hatImage = new Image( resources, Globals.DataDir + "/skins/gamepads/" +
+                                hatImage = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
                                                       skin + "/" + filename + "_2.png" );
                                 // Create the thread for redrawing the "stick" when it moves:
                                 redrawThread.redraw = false;
@@ -681,9 +685,9 @@ public class GamePad extends View
                         }
                         else if( val.contains( "fps" ) )
                         {  // FPS indicator (PNG image format)
-                            if( Globals.settings.touchscreenFrameRate )
+                            if( Settings.user.touchscreenFrameRate )
                             {
-                                fpsImage = new Image( resources, Globals.DataDir + "/skins/gamepads/" +
+                                fpsImage = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
                                                       skin + "/" + filename + ".png" );
                                 // Position (percentages of the screen dimensions):
                                 fpsXpercent = Utility.toInt( section.get( "x" ), 0 );
@@ -704,12 +708,12 @@ public class GamePad extends View
                                     try
                                     {  // Make sure we can actually load them (they might not even exist)
                                         for( x = 0; x < 10; x++ )
-                                            numberImages[x] = new Image( resources, Globals.DataDir + "/skins/fonts/" +
+                                            numberImages[x] = new Image( resources, Settings.paths.dataDir + "/skins/fonts/" +
                                                                          fpsFont + "/" + x + ".png" );
                                     }
                                     catch( Exception e )
                                     {  // Problem, let the user know
-                                        Log.e( "GamePad", "Problem loading font '" + Globals.DataDir + "/skins/fonts/" +
+                                        Log.e( "GamePad", "Problem loading font '" + Settings.paths.dataDir + "/skins/fonts/" +
                                                fpsFont + "/" + x + ".png', error message: " + e.getMessage() );
                                     }
                                 }
@@ -728,9 +732,9 @@ public class GamePad extends View
                         {  // A button control (may contain one or more N64 buttons and/or SDL buttons)
                             // The drawable image is in PNG image format
                             // The color mask image is in BMP image format (doesn't actually get drawn)
-                            buttons[buttonCount] = new Image( resources, Globals.DataDir + "/skins/gamepads/" +
+                            buttons[buttonCount] = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
                                                               skin + "/" + filename + ".png" );
-                            masks[buttonCount] = new Image( resources, Globals.DataDir + "/skins/gamepads/" +
+                            masks[buttonCount] = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
                                                             skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
                             xpercents[buttonCount] = Utility.toInt( section.get( "x" ), 0 );
@@ -1002,7 +1006,7 @@ public class GamePad extends View
                                         int x1, y1, x2, y2;
                                         public void run()
                                         {
-                                            if( Globals.settings.touchscreenRedrawAll )
+                                            if( Settings.user.touchscreenRedrawAll )
                                             {
                                                 invalidate();  // Redraw everything
                                             }
@@ -1030,7 +1034,7 @@ public class GamePad extends View
                                         int x1, y1, x2, y2;
                                         public void run()
                                         {
-                                            if( Globals.settings.touchscreenRedrawAll )
+                                            if( Settings.user.touchscreenRedrawAll )
                                             {
                                                 invalidate();  // Redraw everything
                                             }
@@ -1050,7 +1054,7 @@ public class GamePad extends View
         public void run()
         {
             int millis = 100;
-            if( Globals.settings.touchscreenRedrawAll )
+            if( Settings.user.touchscreenRedrawAll )
                 millis = 150;
 
             while( alive )

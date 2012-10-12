@@ -2,6 +2,10 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File; 
 
+import paulscode.android.mupen64plusae.preference.Config;
+import paulscode.android.mupen64plusae.preference.Settings;
+
+
 import android.annotation.TargetApi;
 import android.app.*;
 import android.content.*;
@@ -61,17 +65,17 @@ public class GameActivityXperiaPlay extends NativeActivity
         .setContentText( contentText )
         .setContentIntent( contentIntent );
 
-        GameActivityCommon.notificationManager.notify( Globals.NOTIFICATION_ID, notification.build() );
+        GameActivityCommon.notificationManager.notify( Settings.NOTIFICATION_ID, notification.build() );
 
         // paulscode, load the native libraries:
         GameActivityCommon.loadNativeLibName( "xperia-touchpad" );
-        GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "VideoPlugin" ) );
-        GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "AudioPlugin" ) );
-        GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "InputPlugin" ) );
-        GameActivityCommon.loadNativeLib( MenuActivity.mupen64plus_cfg.get( "UI-Console", "RspPlugin" ) );
+        GameActivityCommon.loadNativeLib( Settings.mupen64plus_cfg.get( "UI-Console", "VideoPlugin" ) );
+        GameActivityCommon.loadNativeLib( Settings.mupen64plus_cfg.get( "UI-Console", "AudioPlugin" ) );
+        GameActivityCommon.loadNativeLib( Settings.mupen64plus_cfg.get( "UI-Console", "InputPlugin" ) );
+        GameActivityCommon.loadNativeLib( Settings.mupen64plus_cfg.get( "UI-Console", "RspPlugin" ) );
 
         /// paulscode, fix potential crash when input plug-in is disabled
-        String inp = MenuActivity.mupen64plus_cfg.get( "UI-Console", "InputPlugin" );
+        String inp = Settings.mupen64plus_cfg.get( "UI-Console", "InputPlugin" );
         if( inp != null )
         {
             inp = inp.replace( "\"", "" );
@@ -100,8 +104,6 @@ public class GameActivityXperiaPlay extends NativeActivity
             GameActivityCommon.previousKeyStates[x] = false;
         }
 
-        Globals.checkLocale( this );
-
         // Fullscreen mode
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
             getWindow().requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
@@ -110,7 +112,7 @@ public class GameActivityXperiaPlay extends NativeActivity
 
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
                               WindowManager.LayoutParams.FLAG_FULLSCREEN );
-        if( Globals.InhibitSuspend )
+        if( Settings.inhibitSuspend )
             getWindow().setFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                                   WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
 
@@ -137,36 +139,22 @@ public class GameActivityXperiaPlay extends NativeActivity
         }
         GameActivityCommon.mGamePad = (GamePad) findViewById( R.id.my_gamepad );
         GameActivityCommon.mGamePad.setResources( getResources() );
-        GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Globals.DataDir + "/skins/gamepads/gamepad_list.ini" );
+        GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Settings.paths.dataDir + "/skins/gamepads/gamepad_list.ini" );
 
-        // Make sure the gamepad preferences are loaded;
         String val;
-//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "analog_octagon" );
-//        if( val != null )
-//            MenuSkinsGamepadActivity.analogAsOctagon = ( val.equals( "1" ) ? true : false );
-//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "show_fps" );
-//        if( val != null )
-//            MenuSkinsGamepadActivity.showFPS = ( val.equals( "1" ) ? true : false );
-//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "enabled" );
-//        if( val != null )
-//            MenuSkinsGamepadActivity.enabled = ( val.equals( "1" ) ? true : false );
-//        MenuSkinsGamepadActivity.chosenGamepad = MenuActivity.gui_cfg.get( "GAME_PAD", "which_pad" );
-//        val = MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "rgba8888" );
-//        if( val != null )
-//            GameActivityCommon.rgba8888 = ( val.equals( "1" ) ? true : false );
          
         // Look up any special codes for the analog controls
-        if( Globals.analog_100_64 )
+        if( Settings.analog_100_64 )
         {
             for( int p = 0; p < 4; p++ )
             {
-                val = MenuActivity.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "plugged" );
+                val = Settings.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "plugged" );
                 if( val == null )
                 {
-                    if( new File( Globals.StorageDir ).exists() )
+                    if( new File( Settings.paths.storageDir ).exists() )
                     {
-                        MenuActivity.mupen64plus_cfg = new Config( Globals.DataDir + "/mupen64plus.cfg" );
-                        val = MenuActivity.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "plugged" );
+                        Settings.mupen64plus_cfg = new Config( Settings.paths.mupen64plus_cfg );
+                        val = Settings.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "plugged" );
                     }
                     else
                     {
@@ -177,7 +165,7 @@ public class GameActivityXperiaPlay extends NativeActivity
                 
                 if( val != null && val.equals( "True" ) )
                 {
-                    val = MenuActivity.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "X Axis" );
+                    val = Settings.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "X Axis" );
                     if( val != null )
                     {
                         int x = val.indexOf( "(" );
@@ -188,11 +176,11 @@ public class GameActivityXperiaPlay extends NativeActivity
                             x = val.indexOf( "," );
                             if( x >= 0 )
                             {
-                                Globals.ctrlr[p][0] = Utility.toInt( val.substring( x + 1, val.length() ), 0 );
-                                Globals.ctrlr[p][1] = Utility.toInt( val.substring( 0, x ), 0 );
+                                Settings.ctrlr[p][0] = Utility.toInt( val.substring( x + 1, val.length() ), 0 );
+                                Settings.ctrlr[p][1] = Utility.toInt( val.substring( 0, x ), 0 );
                             }
                         }
-                        val = MenuActivity.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "Y Axis" );
+                        val = Settings.mupen64plus_cfg.get( "Input-SDL-Control" + (p+1), "Y Axis" );
                         x = val.indexOf( "(" );
                         y = val.indexOf( ")" );
                         if( x >= 0 && y >= 0 && y > x )
@@ -201,8 +189,8 @@ public class GameActivityXperiaPlay extends NativeActivity
                             x = val.indexOf( "," );
                             if( x >= 0 )
                             {
-                                Globals.ctrlr[p][2] = Utility.toInt( val.substring( x + 1, val.length() ), 0 );
-                                Globals.ctrlr[p][3] = Utility.toInt( val.substring( 0, x ), 0 );
+                                Settings.ctrlr[p][2] = Utility.toInt( val.substring( x + 1, val.length() ), 0 );
+                                Settings.ctrlr[p][3] = Utility.toInt( val.substring( 0, x ), 0 );
                             }
                         }
                     }
@@ -210,10 +198,10 @@ public class GameActivityXperiaPlay extends NativeActivity
             }
         }
 
-        if( !Globals.settings.touchscreenEnabled )
+        if( !Settings.user.touchscreenEnabled )
             GameActivityCommon.mGamePad.loadPad( null );
-        else if( !Globals.settings.touchscreenLayout.isEmpty() )
-            GameActivityCommon.mGamePad.loadPad( Globals.settings.touchscreenLayout );
+        else if( !Settings.user.touchscreenLayout.isEmpty() )
+            GameActivityCommon.mGamePad.loadPad( Settings.user.touchscreenLayout );
         else if( GameActivityCommon.mGamePadListing.numPads > 0 )
             GameActivityCommon.mGamePad.loadPad( GameActivityCommon.mGamePadListing.padNames[0] );
         else
@@ -224,7 +212,7 @@ public class GameActivityXperiaPlay extends NativeActivity
 
         // paulscode, Xperia Play touchpad skins/layouts
         mTouchPad = new TouchPad( this, getResources() );
-        mTouchPadListing = new TouchPad.TouchPadListing( Globals.DataDir + "/skins/touchpads/touchpad_list.ini" );
+        mTouchPadListing = new TouchPad.TouchPadListing( Settings.paths.dataDir + "/skins/touchpads/touchpad_list.ini" );
 
         // Make sure the touchpad preferences are loaded;
 //        val = MenuActivity.gui_cfg.get( "TOUCH_PAD", "analog_octagon" );
@@ -235,10 +223,10 @@ public class GameActivityXperiaPlay extends NativeActivity
 //            MenuSkinsTouchpadActivity.enabled = ( val.equals( "1" ) ? true : false );
 //        MenuSkinsTouchpadActivity.chosenTouchpad = MenuActivity.gui_cfg.get( "TOUCH_PAD", "which_pad" );
 
-        if( !Globals.settings.touchscreenEnabled )
+        if( !Settings.user.touchscreenEnabled )
             mTouchPad.loadPad( null );
-        else if( !Globals.settings.touchscreenLayout.isEmpty() )
-            mTouchPad.loadPad( Globals.settings.touchscreenLayout );
+        else if( !Settings.user.touchscreenLayout.isEmpty() )
+            mTouchPad.loadPad( Settings.user.touchscreenLayout );
         else if( mTouchPadListing.numPads > 0 )
             mTouchPad.loadPad( mTouchPadListing.padNames[0] );
         else
@@ -260,7 +248,6 @@ public class GameActivityXperiaPlay extends NativeActivity
         menu.add( 0, GameActivityCommon.SLOT_MENU_ITEM, 0, getString( R.string.ingame_inc_slot ) + " (0)" );
         menu.add( 0, GameActivityCommon.SAVE_MENU_ITEM, 0, getString( R.string.ingame_save ) );
         menu.add( 0, GameActivityCommon.LOAD_MENU_ITEM, 0, getString( R.string.ingame_load ) );
-        menu.add( 0, GameActivityCommon.CLOSE_MENU_ITEM, 0, getString( R.string.ingame_close ) );
         return super.onCreateOptionsMenu( menu );
     }
 
@@ -273,7 +260,6 @@ public class GameActivityXperiaPlay extends NativeActivity
         menu.add( 0, GameActivityCommon.SLOT_MENU_ITEM, 0, getString( R.string.ingame_inc_slot ) + " (" + saveSlot + ")" );
         menu.add( 0, GameActivityCommon.SAVE_MENU_ITEM, 0, getString( R.string.ingame_save ) );
         menu.add( 0, GameActivityCommon.LOAD_MENU_ITEM, 0, getString( R.string.ingame_load ) );
-        menu.add( 0, GameActivityCommon.CLOSE_MENU_ITEM, 0, getString( R.string.ingame_close ) );
         return super.onCreateOptionsMenu( menu );
     }
 
@@ -286,7 +272,7 @@ public class GameActivityXperiaPlay extends NativeActivity
             case GameActivityCommon.MAIN_MENU_ITEM:
                 GameActivityCommon.saveSession();  // Workaround, allows us to force-close later
 //
-                GameActivityCommon.notificationManager.cancel( Globals.NOTIFICATION_ID );
+                GameActivityCommon.notificationManager.cancel( Settings.NOTIFICATION_ID );
                 Intent intent = new Intent( this, MenuActivity.class );
                 intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                 startActivity( intent );
@@ -313,7 +299,7 @@ public class GameActivityXperiaPlay extends NativeActivity
 //                notificationManager.cancel( Globals.NOTIFICATION_ID );
 //                this.finish();  // This doesn't save; closes to quickly maybe?
                 GameActivityCommon.saveSession();  // Workaround, wait for fileSaveEmulator to finish first
-                GameActivityCommon.notificationManager.cancel( Globals.NOTIFICATION_ID );
+                GameActivityCommon.notificationManager.cancel( Settings.NOTIFICATION_ID );
                 GameActivityCommon.mSingleton = null;
                 GameActivityCommon.gameActivityXperiaPlay = null;
 //                this.finish();  // Gles2rice doesn't stop, why??
@@ -368,11 +354,11 @@ public class GameActivityXperiaPlay extends NativeActivity
 
             GameActivityCommon.mGamePad = (GamePad) findViewById( R.id.my_gamepad );
             GameActivityCommon.mGamePad.setResources( getResources() );
-            GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Globals.DataDir + "/skins/gamepads/gamepad_list.ini" );
-            if( !Globals.settings.touchscreenEnabled )
+            GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Settings.paths.dataDir + "/skins/gamepads/gamepad_list.ini" );
+            if( !Settings.user.touchscreenEnabled )
                 GameActivityCommon.mGamePad.loadPad( null );
-            else if( !Globals.settings.touchscreenLayout.isEmpty() )
-                GameActivityCommon.mGamePad.loadPad( Globals.settings.touchscreenLayout );
+            else if( !Settings.user.touchscreenLayout.isEmpty() )
+                GameActivityCommon.mGamePad.loadPad( Settings.user.touchscreenLayout );
             else if( GameActivityCommon.mGamePadListing.numPads > 0 )
                 GameActivityCommon.mGamePad.loadPad( GameActivityCommon.mGamePadListing.padNames[0] );
 

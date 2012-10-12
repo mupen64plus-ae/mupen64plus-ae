@@ -7,6 +7,10 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.preference.Config;
+import paulscode.android.mupen64plusae.preference.Settings;
+
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -170,7 +174,7 @@ public class TouchPad
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
                     {  
                         // Emulate the analog control as an octagon (like the real N64 controller)
-                        if( Globals.settings.touchscreenOctagonJoystick )
+                        if( Settings.user.touchscreenOctagonJoystick )
                         {  
                             Point crossPt = new Point();
                             float dC = analogMask.hWidth;
@@ -351,7 +355,7 @@ public class TouchPad
         if( skin == null )
             return;  // No skin was specified, so we are done.. quit
         // Load the configuration file (pad.ini):
-        Config pad_ini = new Config( Globals.DataDir + "/skins/touchpads/" + skin + "/pad.ini" );
+        Config pad_ini = new Config( Settings.paths.dataDir + "/skins/touchpads/" + skin + "/pad.ini" );
 
         // Look up the touch-pad layout credits:
         name = pad_ini.get( "INFO", "name" );
@@ -443,7 +447,7 @@ public class TouchPad
                         val = val.toLowerCase();  // Lets not make this part case-sensitive
                         if (val.contains( "analog" ) )
                         {  // Analog color mask image in BMP image format (doesn't actually get drawn)
-                            analogMask = new Image( resources, Globals.DataDir + "/skins/touchpads/" +
+                            analogMask = new Image( resources, Settings.paths.dataDir + "/skins/touchpads/" +
                                                      skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
                             analogXpercent = Utility.toInt( section.get( "x" ), 0 );
@@ -462,7 +466,7 @@ public class TouchPad
                         else
                         {   // A button control (may contain one or more N64 buttons and/or SDL buttons)
                             // Button color mask image in BMP image format (doesn't actually get drawn)
-                            masks[buttonCount] = new Image( resources, Globals.DataDir + "/skins/touchpads/" +
+                            masks[buttonCount] = new Image( resources, Settings.paths.dataDir + "/skins/touchpads/" +
                                                             skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
                             xpercents[buttonCount] = Utility.toInt( section.get( "x" ), 0 );

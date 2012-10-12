@@ -13,25 +13,28 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import paulscode.android.mupen64plusae.preference.Settings;
+
+
 import android.util.Log;
 
 public class Utility
 {
     public static String getHeaderName( String filename )
     {
-        MenuActivity.error_log.put( "READ_HEADER", "fail", "" );
-        MenuActivity.error_log.save();
+        Settings.error_log.put( "READ_HEADER", "fail", "" );
+        Settings.error_log.save();
         if( filename == null || filename.length() < 1 )
         {
-            MenuActivity.error_log.put( "READ_HEADER", "fail", "filename not specified" );
-            MenuActivity.error_log.save();
+            Settings.error_log.put( "READ_HEADER", "fail", "filename not specified" );
+            Settings.error_log.save();
             Log.e( "Utility", "filename not specified in method 'getHeaderName'" ); 
             return null;
         }
         else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase( "zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
-            File tmpFolder = new File( Globals.DataDir + "/tmp" );
+            File tmpFolder = new File( Settings.paths.dataDir + "/tmp" );
             tmpFolder.mkdir();
             // Clear the folder if anything is in there:
             String[] children = tmpFolder.list();
@@ -39,21 +42,21 @@ public class Utility
             {
                 deleteFolder( new File( tmpFolder, child ) );
             }
-            Globals.errorMessage = null;
-            String uzFile = unzipFirstROM( new File( filename ), Globals.DataDir + "/tmp" );
+            Settings.errorMessage = null;
+            String uzFile = unzipFirstROM( new File( filename ), Settings.paths.dataDir + "/tmp" );
             if( uzFile == null || uzFile.length() < 1 )
             {
                 Log.e( "Utility", "Unable to unzip ROM: '" + filename + "'" ); 
-                if( Globals.errorMessage != null )
+                if( Settings.errorMessage != null )
                 {
-                    MenuActivity.error_log.put( "READ_HEADER", "fail", Globals.errorMessage );
-                    MenuActivity.error_log.save();
-                    Globals.errorMessage = null;
+                    Settings.error_log.put( "READ_HEADER", "fail", Settings.errorMessage );
+                    Settings.error_log.save();
+                    Settings.errorMessage = null;
                 }
                 else
                 {
-                    MenuActivity.error_log.put( "READ_HEADER", "fail", "Unable to unzip ROM: '" + filename + "'" );
-                    MenuActivity.error_log.save();
+                    Settings.error_log.put( "READ_HEADER", "fail", "Unable to unzip ROM: '" + filename + "'" );
+                    Settings.error_log.save();
                 }
                 return null;
             }
@@ -77,19 +80,19 @@ public class Utility
 
     public static String getHeaderCRC( String filename )
     {
-        MenuActivity.error_log.put( "READ_HEADER", "fail", "" );
-        MenuActivity.error_log.save();
+        Settings.error_log.put( "READ_HEADER", "fail", "" );
+        Settings.error_log.save();
         if( filename == null || filename.length() < 1 )
         {
-            MenuActivity.error_log.put( "READ_HEADER", "fail", "filename not specified" );
-            MenuActivity.error_log.save();
+            Settings.error_log.put( "READ_HEADER", "fail", "filename not specified" );
+            Settings.error_log.save();
             Log.e( "Utility", "filename not specified in method 'getHeaderCRC'" ); 
             return null;
         }
         else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase( "zip" ) )
         {
             // create the tmp folder if it doesn't exist:
-            File tmpFolder = new File( Globals.DataDir + "/tmp" );
+            File tmpFolder = new File( Settings.paths.dataDir + "/tmp" );
             tmpFolder.mkdir();
             // clear the folder if anything is in there:
             String[] children = tmpFolder.list();
@@ -97,21 +100,21 @@ public class Utility
             {
                 deleteFolder( new File( tmpFolder, child ) );
             }
-            Globals.errorMessage = null;
-            String uzFile = unzipFirstROM( new File( filename ), Globals.DataDir + "/tmp" );
+            Settings.errorMessage = null;
+            String uzFile = unzipFirstROM( new File( filename ), Settings.paths.dataDir + "/tmp" );
             if( uzFile == null || uzFile.length() < 1 )
             {
                 Log.e( "Utility", "Unable to unzip ROM: '" + filename + "'" ); 
-                if( Globals.errorMessage != null )
+                if( Settings.errorMessage != null )
                 {
-                    MenuActivity.error_log.put( "READ_HEADER", "fail", Globals.errorMessage );
-                    MenuActivity.error_log.save();
-                    Globals.errorMessage = null;
+                    Settings.error_log.put( "READ_HEADER", "fail", Settings.errorMessage );
+                    Settings.error_log.save();
+                    Settings.errorMessage = null;
                 }
                 else
                 {
-                    MenuActivity.error_log.put( "READ_HEADER", "fail", "Unable to unzip ROM: '" + filename + "'" );
-                    MenuActivity.error_log.save();
+                    Settings.error_log.put( "READ_HEADER", "fail", "Unable to unzip ROM: '" + filename + "'" );
+                    Settings.error_log.save();
                 }
                 return null;
             }
@@ -158,15 +161,15 @@ public class Utility
         File archive = new File( filename );
 
         if( archive == null )
-            Globals.errorMessage = "Zip file null in method getTexturePackName";
+            Settings.errorMessage = "Zip file null in method getTexturePackName";
         else if( !archive.exists() )
-            Globals.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' does not exist";
+            Settings.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' does not exist";
         else if( !archive.isFile() )
-            Globals.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' is not a file (method unzipFirstROM)";
+            Settings.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' is not a file (method unzipFirstROM)";
 
-        if( Globals.errorMessage != null )
+        if( Settings.errorMessage != null )
         {
-            Log.e( "Utility", Globals.errorMessage );
+            Log.e( "Utility", Settings.errorMessage );
             return null;
         }
         try
@@ -203,24 +206,24 @@ public class Utility
         }
         catch( ZipException ze )
         {
-            Globals.errorMessage = "Zip Error!  Ensure file is a valid .zip archive and is not corrupt";
+            Settings.errorMessage = "Zip Error!  Ensure file is a valid .zip archive and is not corrupt";
             Log.e( "Utility", "ZipException in method getTexturePackName", ze );
             return null;
         }
         catch( IOException ioe )
         {
-            Globals.errorMessage = "IO Error!  Please report, so problem can be fixed in future update";
+            Settings.errorMessage = "IO Error!  Please report, so problem can be fixed in future update";
             Log.e( "Utility", "IOException in method getTexturePackName", ioe );
             return null;
         }
         catch( Exception e )
         {
-            Globals.errorMessage = "Error! Please report, so problem can be fixed in future update";
+            Settings.errorMessage = "Error! Please report, so problem can be fixed in future update";
             Log.e( "Utility", "Unzip error", e );
             return null;
         }
-        Globals.errorMessage = "No compatible textures found in .zip archive";
-        Log.e( "Utility", Globals.errorMessage );
+        Settings.errorMessage = "No compatible textures found in .zip archive";
+        Log.e( "Utility", Settings.errorMessage );
         return null;
     }
 
@@ -311,15 +314,15 @@ public class Utility
         String supportedExt = ".z64.v64.n64";
 
         if( archive == null )
-            Globals.errorMessage = "Zip file null in method unzipFirstROM";
+            Settings.errorMessage = "Zip file null in method unzipFirstROM";
         else if( !archive.exists() )
-            Globals.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' does not exist";
+            Settings.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' does not exist";
         else if( !archive.isFile() )
-            Globals.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' is not a file (method unzipFirstROM)";
+            Settings.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' is not a file (method unzipFirstROM)";
 
-        if( Globals.errorMessage != null )
+        if( Settings.errorMessage != null )
         {
-            Log.e( "Utility", Globals.errorMessage );
+            Log.e( "Utility", Settings.errorMessage );
             return null;
         }
         try
@@ -344,39 +347,39 @@ public class Utility
         }
         catch( ZipException ze )
         {
-            Globals.errorMessage = "Zip Error!  Ensure file is a valid .zip archive and is not corrupt";
+            Settings.errorMessage = "Zip Error!  Ensure file is a valid .zip archive and is not corrupt";
             Log.e( "Utility", "ZipException in method unzipFirstROM", ze );
             return null;
         }
         catch( IOException ioe )
         {
-            Globals.errorMessage = "IO Error!  Please report, so problem can be fixed in future update";
+            Settings.errorMessage = "IO Error!  Please report, so problem can be fixed in future update";
             Log.e( "Utility", "IOException in method unzipFirstROM", ioe );
             return null;
         }
         catch( Exception e )
         {
-            Globals.errorMessage = "Error! Please report, so problem can be fixed in future update";
+            Settings.errorMessage = "Error! Please report, so problem can be fixed in future update";
             Log.e( "Utility", "Unzip error", e );
             return null;
         }
-        Globals.errorMessage = "No compatible ROMs found in .zip archive";
-        Log.e( "Utility", Globals.errorMessage );
+        Settings.errorMessage = "No compatible ROMs found in .zip archive";
+        Log.e( "Utility", Settings.errorMessage );
         return null;
     }
  
     public static boolean unzipAll( File archive, String outputDir )
     {
         if( archive == null )
-            Globals.errorMessage = "Zip file null in method unzipAll";
+            Settings.errorMessage = "Zip file null in method unzipAll";
         else if( !archive.exists() )
-            Globals.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' does not exist";
+            Settings.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' does not exist";
         else if( !archive.isFile() )
-            Globals.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' is not a file (method unzipFirstROM)";
+            Settings.errorMessage = "Zip file '" + archive.getAbsolutePath() + "' is not a file (method unzipFirstROM)";
 
-        if( Globals.errorMessage != null )
+        if( Settings.errorMessage != null )
         {
-            Log.e( "Utility", Globals.errorMessage );
+            Log.e( "Utility", Settings.errorMessage );
             return false;
         }
         try
@@ -401,19 +404,19 @@ public class Utility
         }
         catch( ZipException ze )
         {
-            Globals.errorMessage = "Zip Error!  Ensure file is a valid .zip archive and is not corrupt";
+            Settings.errorMessage = "Zip Error!  Ensure file is a valid .zip archive and is not corrupt";
             Log.e( "Utility", "ZipException in method unzipAll", ze );
             return false;
         }
         catch( IOException ioe )
         {
-            Globals.errorMessage = "IO Error!  Please report, so problem can be fixed in future update";
+            Settings.errorMessage = "IO Error!  Please report, so problem can be fixed in future update";
             Log.e( "Utility", "IOException in method unzipAll", ioe );
             return false;
         }
         catch( Exception e )
         {
-            Globals.errorMessage = "Error! Please report, so problem can be fixed in future update";
+            Settings.errorMessage = "Error! Please report, so problem can be fixed in future update";
             Log.e( "Utility", "Unzip error", e );
             return false;
         }
@@ -424,8 +427,8 @@ public class Utility
     {
         if( entry.isDirectory() )
         {
-            Globals.errorMessage = "Error! .zip entry '" + entry.getName() + "' is a directory, not a file";
-            Log.e( "Utility", Globals.errorMessage );
+            Settings.errorMessage = "Error! .zip entry '" + entry.getName() + "' is a directory, not a file";
+            Log.e( "Utility", Settings.errorMessage );
             return null;
         }
 

@@ -42,8 +42,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import paulscode.android.mupen64plusae.preference.Settings;
 import android.content.res.Resources;
-import android.os.Environment;
 import android.text.SpannedString;
 import android.util.Log;
 import android.widget.TextView;
@@ -111,7 +111,7 @@ class CountingInputStream extends BufferedInputStream
     }
 }
 
-class DataDownloader extends Thread
+public class DataDownloader extends Thread
 {
     class StatusWriter
     {
@@ -162,27 +162,7 @@ class DataDownloader extends Thread
     {
         Parent = _Parent;
         Status = new StatusWriter( _Status, _Parent );
-        
-        if( Globals.DataDir == null || Globals.DataDir.length() == 0 || !Globals.DataDirChecked )  //NOTE: isEmpty() not supported on some devices
-        {
-            Globals.PackageName = _Parent.getPackageName();
-            Globals.LibsDir = "/data/data/" + Globals.PackageName;
-            Globals.StorageDir = Globals.DownloadToSdcard ?
-                    Environment.getExternalStorageDirectory().getAbsolutePath() : _Parent.getFilesDir().getAbsolutePath();
-
-            Globals.DataDir = Globals.DownloadToSdcard ?
-                    Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/" +
-                    Globals.PackageName : _Parent.getFilesDir().getAbsolutePath();
-         
-            Log.v( "DataDir Check", "Globals.PackageName set to '" + Globals.PackageName + "'" );
-            Log.v( "DataDir Check", "Globals.LibsDir set to '" + Globals.LibsDir + "'" );
-            Log.v( "DataDir Check", "Globals.StorageDir set to '" + Globals.StorageDir + "'" );
-            Log.v( "DataDir Check", "Globals.DataDir set to '" + Globals.DataDir + "'" );
-
-            Globals.DataDirChecked = true;
-        }
-
-        outFilesDir = Globals.DataDir;
+        outFilesDir = Settings.paths.dataDir;
         DownloadComplete = false;
         start();
     }
@@ -198,7 +178,7 @@ class DataDownloader extends Thread
     @Override
     public void run()
     {
-        String [] downloadFiles = Globals.DataDownloadUrl.split( "\\^" );
+        String [] downloadFiles = Settings.dataDownloadUrl.split( "\\^" );
         for( int i = 0; i < downloadFiles.length; i++ )
         {
             if( downloadFiles[i].length() > 0 )
@@ -231,7 +211,7 @@ class DataDownloader extends Thread
         {
             try
             {
-                byte b[] = new byte[ Globals.DataDownloadUrl.getBytes( "UTF-8" ).length + 1 ];
+                byte b[] = new byte[ Settings.dataDownloadUrl.getBytes( "UTF-8" ).length + 1 ];
                 int readed = checkFile.read( b );
                 String compare = new String( b, 0, readed, "UTF-8" );
                 boolean matched = false;

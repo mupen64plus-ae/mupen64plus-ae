@@ -2,6 +2,9 @@ package paulscode.android.mupen64plusae;
 
 import javax.microedition.khronos.egl.*;
 
+import paulscode.android.mupen64plusae.preference.Settings;
+
+
 import android.annotation.TargetApi;
 import android.content.*;
 import android.graphics.*;
@@ -356,7 +359,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
         int key = keyCode;
         float str = 0;
-        if( keyCode > 255 && Globals.analog_100_64 )
+        if( keyCode > 255 && Settings.analog_100_64 )
         {
             key = ( keyCode / 100 );
             if( action == KeyEvent.ACTION_DOWN )
@@ -372,16 +375,16 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         
         for( int p = 0; p < 4; p++ )
         {
-            if( Globals.analog_100_64 && ( scancode == Globals.ctrlr[p][0] || scancode == Globals.ctrlr[p][1] ||
-                                           scancode == Globals.ctrlr[p][2] || scancode == Globals.ctrlr[p][3] ) )
+            if( Settings.analog_100_64 && ( scancode == Settings.ctrlr[p][0] || scancode == Settings.ctrlr[p][1] ||
+                                           scancode == Settings.ctrlr[p][2] || scancode == Settings.ctrlr[p][3] ) )
             {
-                if( scancode == Globals.ctrlr[p][0] )
+                if( scancode == Settings.ctrlr[p][0] )
                     axisX = (int) (80.0f * (str / 64.0f));
-                else if( scancode == Globals.ctrlr[p][1] )
+                else if( scancode == Settings.ctrlr[p][1] )
                     axisX = (int) (-80.0f * (str / 64.0f));
-                else if( scancode == Globals.ctrlr[p][2] )
+                else if( scancode == Settings.ctrlr[p][2] )
                     axisY = (int) (-80.0f * (str / 64.0f));
-                else if( scancode == Globals.ctrlr[p][3] )
+                else if( scancode == Settings.ctrlr[p][3] )
                     axisY = (int) (80.0f * (str / 64.0f));
                 GameActivityCommon.updateVirtualGamePadStates( p, mp64pButtons, axisX, axisY );
                 return true;
@@ -423,7 +426,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             if( key == KeyEvent.KEYCODE_VOLUME_UP ||
                 key == KeyEvent.KEYCODE_VOLUME_DOWN )
             {
-                if( Globals.volumeKeysDisabled )
+                if( Settings.volumeKeysDisabled )
                 {
                     GameActivityCommon.onNativeKeyDown( key );
                     return true;
@@ -443,7 +446,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             if( key == KeyEvent.KEYCODE_VOLUME_UP ||
                 key == KeyEvent.KEYCODE_VOLUME_DOWN )
             {
-                if( Globals.volumeKeysDisabled )
+                if( Settings.volumeKeysDisabled )
                 {
                     GameActivityCommon.onNativeKeyUp( key );
                     return true;
@@ -525,14 +528,14 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     // paulscode: Xperia Play native touch input linkage:
     public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
-        if( !Globals.isXperiaPlay || GameActivityCommon.noInputPlugin )
+        if( !Settings.user.xperiaEnabled || !Settings.user.gamepadEnabled )
             return;
 
         GameActivityCommon.mGamePad.updatePointers( pointers, pointerX, pointerY, maxPid );
     }
     public void onTouchPad( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
-        if( !Globals.isXperiaPlay || GameActivityCommon.noInputPlugin )
+        if( !Settings.user.xperiaEnabled || !Settings.user.gamepadEnabled )
             return;
 
         GameActivityXperiaPlay.mTouchPad.updatePointers( pointers, pointerX, pointerY, maxPid );
@@ -567,6 +570,45 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             GameActivityCommon.onNativeAccel( event.values[0],
                                        event.values[1],
                                        event.values[2] );
+        }
+    }
+    
+    private class JoystickListener implements View.OnGenericMotionListener
+    {
+        private SDLSurface parent;
+
+        public JoystickListener( SDLSurface parent )
+        {
+            this.parent = parent;
+        }
+
+        @TargetApi(12)
+        public boolean onGenericMotion( View v, MotionEvent event )
+        {
+            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 )
+            {
+                // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in)
+                final int Z      =  5;
+                final int CRight =  8;
+                final int CLeft  =  9;
+                final int CDown  = 10;
+                final int CUp    = 11;
+
+                // Z-button and C-pad, interpret left analog trigger and right analog stick
+                parent.mp64pButtons[Z]      = ( event.getAxisValue( MotionEvent.AXIS_Z  ) >  0   );
+                parent.mp64pButtons[CLeft]  = ( event.getAxisValue( MotionEvent.AXIS_RX ) < -0.5 );
+                parent.mp64pButtons[CRight] = ( event.getAxisValue( MotionEvent.AXIS_RX ) >  0.5 );
+                parent.mp64pButtons[CUp]    = ( event.getAxisValue( MotionEvent.AXIS_RY ) < -0.5 );
+                parent.mp64pButtons[CDown]  = ( event.getAxisValue( MotionEvent.AXIS_RY ) >  0.5 );
+
+                // Analog X-Y, interpret the left analog stick
+                parent.axisX = (int) (  80.0f * event.getAxisValue( MotionEvent.AXIS_X ) );
+                parent.axisY = (int) ( -80.0f * event.getAxisValue( MotionEvent.AXIS_Y ) );
+
+                GameActivityCommon.updateVirtualGamePadStates( 0, parent.mp64pButtons, parent.axisX, parent.axisY );
+                return true;
+            }
+            return false;
         }
     }
 }

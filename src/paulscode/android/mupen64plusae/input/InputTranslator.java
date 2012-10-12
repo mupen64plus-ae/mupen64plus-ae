@@ -17,7 +17,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import android.os.Build;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-public abstract class InputFunnel
+public abstract class InputTranslator
 {
     public interface Listener
     {
@@ -36,20 +36,20 @@ public abstract class InputFunnel
         public void onInput( int[] inputCodes, float[] strengths );
     }
     
-    private List<InputFunnel.Listener> mListeners;
+    private List<InputTranslator.Listener> mListeners;
     
-    public InputFunnel()
+    public InputTranslator()
     {
-        mListeners = new ArrayList<InputFunnel.Listener>();
+        mListeners = new ArrayList<InputTranslator.Listener>();
     }
     
-    public void registerListener( InputFunnel.Listener listener )
+    public void registerListener( InputTranslator.Listener listener )
     {
         if( ( listener != null ) && !mListeners.contains( listener ) )
             mListeners.add( listener );
     }
     
-    public void unregisterListener( InputFunnel.Listener listener )
+    public void unregisterListener( InputTranslator.Listener listener )
     {
         if( listener != null )
             while( mListeners.remove( listener ) )
@@ -57,7 +57,7 @@ public abstract class InputFunnel
     }
     
     @TargetApi( 12 )
-    public String getInputName( int inputCode )
+    public static String getInputName( int inputCode )
     {
         // TODO: Localize strings.
         if( inputCode > 0 )
@@ -80,6 +80,11 @@ public abstract class InputFunnel
             return "NULL";
     }
     
+    public static String getInputName( int inputCode, float strength )
+    {
+        return getInputName( inputCode ) + String.format( " %.3f", strength );
+    }
+    
     protected void notifyListeners( int inputCode, float strength )
     {
         for( Listener listener : mListeners )
@@ -92,20 +97,20 @@ public abstract class InputFunnel
             listener.onInput( inputCodes.clone(), strengths.clone() );
     }
     
-    protected int axisToInputCode( int axisCode, boolean positiveDirection )
+    protected static int axisToInputCode( int axisCode, boolean positiveDirection )
     {
         // Axis codes are encoded to negative values (versus buttons which are
         // positive). Axis codes are bit shifted by one so that the lowest bit
         // can encode axis direction.
-        return -( axisCode * 2 + ( positiveDirection ? 1 : 0 ) );
+        return -( ( axisCode ) * 2 + ( positiveDirection ? 1 : 2 ) );
     }
     
-    protected int inputToAxisCode( int inputCode )
+    protected static int inputToAxisCode( int inputCode )
     {
-        return ( -inputCode ) / 2;
+        return ( -inputCode - 1 ) / 2;
     }
     
-    protected boolean inputToAxisDirection( int inputCode )
+    protected static boolean inputToAxisDirection( int inputCode )
     {
         return ( ( -inputCode ) % 2 ) == 1;
     }

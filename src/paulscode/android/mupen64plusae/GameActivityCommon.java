@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import paulscode.android.mupen64plusae.preference.Settings;
+
+
 import android.app.*;
 import android.content.*;
 import android.media.*;
@@ -192,17 +195,17 @@ public class GameActivityCommon
 
     public static boolean getScreenStretch()
     {
-        return Globals.screen_stretch;
+        return Settings.user.videoStretch;
     }
     
     public static boolean getAutoFrameSkip()
     {
-        return Globals.auto_frameskip;
+        return Settings.auto_frameskip;
     }
     
     public static int getMaxFrameSkip()
     {
-        return Globals.max_frameskip;
+        return Settings.max_frameskip;
     }
     
 
@@ -359,7 +362,7 @@ public class GameActivityCommon
     public static void setActivityTitle( String title )
     {
         // Called from SDLMain() thread and can't directly affect the view
-        if( Globals.isXperiaPlay )
+        if( Settings.user.xperiaEnabled )
             gameActivityXperiaPlay.sendCommand( COMMAND_CHANGE_TITLE, title );
         else
             gameActivity.sendCommand( COMMAND_CHANGE_TITLE, title );
@@ -368,16 +371,16 @@ public class GameActivityCommon
     public static Object getROMPath()
     {
         finishedReading = false;
-        if( Globals.chosenROM == null || Globals.chosenROM.length() < 1 )
+        if( Settings.chosenROM == null || Settings.chosenROM.length() < 1 )
         {
             finishedReading = true;
             //return (Object) (Globals.DataDir + "/roms/mupen64plus.v64");
             System.exit( 0 );
         }
-        else if( Globals.chosenROM.substring( Globals.chosenROM.length() - 3, Globals.chosenROM.length() ).equalsIgnoreCase( "zip" ) )
+        else if( Settings.chosenROM.substring( Settings.chosenROM.length() - 3, Settings.chosenROM.length() ).equalsIgnoreCase( "zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
-            File tmpFolder = new File( Globals.DataDir + "/tmp" );
+            File tmpFolder = new File( Settings.paths.dataDir + "/tmp" );
             tmpFolder.mkdir();
             // Clear the folder if anything is in there:
             String[] children = tmpFolder.list();
@@ -385,17 +388,17 @@ public class GameActivityCommon
             {
                 Utility.deleteFolder( new File( tmpFolder, child ) );
             }
-            tmpFile = Utility.unzipFirstROM( new File( Globals.chosenROM ), Globals.DataDir + "/tmp" );
+            tmpFile = Utility.unzipFirstROM( new File( Settings.chosenROM ), Settings.paths.dataDir + "/tmp" );
             if( tmpFile == null )
             {
-                Log.v( "GameActivityCommon", "Unable to play zipped ROM: '" + Globals.chosenROM + "'" );
+                Log.v( "GameActivityCommon", "Unable to play zipped ROM: '" + Settings.chosenROM + "'" );
 
-                notificationManager.cancel( Globals.NOTIFICATION_ID );
+                notificationManager.cancel( Settings.NOTIFICATION_ID );
 
-                if( Globals.errorMessage != null )
+                if( Settings.errorMessage != null )
                 {
-                    MenuActivity.error_log.put( "OPEN_ROM", "fail_crash", Globals.errorMessage );
-                    MenuActivity.error_log.save();
+                    Settings.error_log.put( "OPEN_ROM", "fail_crash", Settings.errorMessage );
+                    Settings.error_log.save();
                 }
                 Intent intent = new Intent( mSingleton, MenuActivity.class );
                 intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
@@ -412,27 +415,27 @@ public class GameActivityCommon
         else
         {
             finishedReading = true;
-            return (Object) Globals.chosenROM;
+            return (Object) Settings.chosenROM;
         }
         finishedReading = true;
-        return (Object) Globals.chosenROM;
+        return (Object) Settings.chosenROM;
     }
 
     public static Object getDataDir()
     {
-        return (Object) Globals.DataDir;
+        return (Object) Settings.paths.dataDir;
     }
     
     public static int getHardwareType()
     {
-        return Globals.hardwareType;
+        return Settings.hardwareType;
     }
 
     public static Object getExtraArgs()
     {
-        if( Globals.extraArgs == null )
+        if( Settings.extraArgs == null )
             return (Object) ".";
-        return (Object) Globals.extraArgs;
+        return (Object) Settings.extraArgs;
     }
 
     public static void saveSession()
@@ -446,7 +449,7 @@ public class GameActivityCommon
             catch( Exception e )
             {}
         }
-        if( !Globals.auto_save )
+        if( !Settings.user.autoSaveEnabled )
             return;
         showToast( mSingleton.getString( R.string.saving_game ) );
         fileSaveEmulator( "Mupen64PlusAE_LastSession.sav" );
@@ -515,19 +518,19 @@ public class GameActivityCommon
                                      hardware.contains( "smdkv" )    ||
                                      hardware.contains( "herring" )  ||
                                      hardware.contains( "aries" )) )
-                Globals.hardwareType = Globals.HARDWARE_TYPE_OMAP;
+                Settings.hardwareType = Settings.HARDWARE_TYPE_OMAP;
             else if( hardware != null && (hardware.contains( "liberty" )  ||
                                           hardware.contains( "gt-s5830" ) ||
                                           hardware.contains( "zeus" )) )
-                Globals.hardwareType = Globals.HARDWARE_TYPE_QUALCOMM;
+                Settings.hardwareType = Settings.HARDWARE_TYPE_QUALCOMM;
             else if( hardware != null && hardware.contains( "imap" ))
-                Globals.hardwareType = Globals.HARDWARE_TYPE_IMAP;
+                Settings.hardwareType = Settings.HARDWARE_TYPE_IMAP;
             else if( ( hardware != null && (hardware.contains( "tegra 2" )  ||
                                             hardware.contains( "grouper" )  ||
                                             hardware.contains( "meson-m1" ) ||
                                             hardware.contains( "smdkc" )) ) ||
                      ( features != null && features.contains( "vfpv3d16" )) )
-                Globals.hardwareType = Globals.HARDWARE_TYPE_TEGRA2;
+                Settings.hardwareType = Settings.HARDWARE_TYPE_TEGRA2;
             in.close();
         }
         catch( IOException ioe )
