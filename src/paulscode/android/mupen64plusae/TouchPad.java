@@ -170,7 +170,7 @@ public class TouchPad
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
                     {  
                         // Emulate the analog control as an octagon (like the real N64 controller)
-                        if( MenuSkinsTouchpadActivity.analogAsOctagon )
+                        if( Globals.settings.touchscreenOctagonJoystick )
                         {  
                             Point crossPt = new Point();
                             float dC = analogMask.hWidth;

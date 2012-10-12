@@ -29,9 +29,11 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.os.Build;
 
 class Globals
 {
+    public static Settings settings = null;
     public static String PackageName = "paulscode.android.mupen64plusae";
     public static String StorageDir = "/mnt/sdcard";
     public static String DataDir = StorageDir + "/Android/data/" + PackageName;
@@ -60,6 +62,9 @@ class Globals
     // Global analog input settings:
     public static boolean analog_100_64 = true; // IMEs where keycode * 100 + (0 --> 64)
     public static int[][] ctrlr = new int[4][4];
+    
+    // Input collection objects:
+    public static InputFunnel inputFunnel;
 
     public static String chosenROM = null;
     public static String extraArgs = null;
@@ -73,7 +78,7 @@ class Globals
     // paulscode, added for the cheat notice dialog:
     public static final int CHEAT_N_ID = 40004;
 
-    //// pauscode, added for different configurations based on hardware
+    //// paulscode, added for different configurations based on hardware
     // (part of the missing shadows and stars bug fix)
     // Must match the #define's in OpenGL.cpp!
     public static final int HARDWARE_TYPE_UNKNOWN     = 0;

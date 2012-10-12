@@ -103,6 +103,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     // Called when the surface is resized
+    @SuppressWarnings( "deprecation" )
     public void surfaceChanged( SurfaceHolder holder,
                                 int format, int width, int height )
     {

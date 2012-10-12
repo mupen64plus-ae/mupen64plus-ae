@@ -110,19 +110,20 @@ public class GameActivity extends Activity
         GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Globals.DataDir + "/skins/gamepads/gamepad_list.ini" );
 
         // Make sure the gamepad preferences are loaded;
-        String val = MenuActivity.gui_cfg.get( "GAME_PAD", "analog_octagon" );
-        if( val != null )
-            MenuSkinsGamepadActivity.analogAsOctagon = ( val.equals( "1" ) ? true : false );
-        val = MenuActivity.gui_cfg.get( "GAME_PAD", "show_fps" );
-        if( val != null )
-            MenuSkinsGamepadActivity.showFPS = ( val.equals( "1" ) ? true : false );
-        val = MenuActivity.gui_cfg.get( "GAME_PAD", "enabled" );
-        if( val != null )
-            MenuSkinsGamepadActivity.enabled = ( val.equals( "1" ) ? true : false );
-        MenuSkinsGamepadActivity.chosenGamepad = MenuActivity.gui_cfg.get( "GAME_PAD", "which_pad" );
-        val = MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "rgba8888" );
-        if( val != null )
-            GameActivityCommon.rgba8888 = ( val.equals( "1" ) ? true : false );
+        String val;
+//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "analog_octagon" );
+//        if( val != null )
+//            MenuSkinsGamepadActivity.analogAsOctagon = ( val.equals( "1" ) ? true : false );
+//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "show_fps" );
+//        if( val != null )
+//            MenuSkinsGamepadActivity.showFPS = ( val.equals( "1" ) ? true : false );
+//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "enabled" );
+//        if( val != null )
+//            MenuSkinsGamepadActivity.enabled = ( val.equals( "1" ) ? true : false );
+//        MenuSkinsGamepadActivity.chosenGamepad = MenuActivity.gui_cfg.get( "GAME_PAD", "which_pad" );
+//        val = MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "rgba8888" );
+//        if( val != null )
+//            GameActivityCommon.rgba8888 = ( val.equals( "1" ) ? true : false );
          
         // Look up any special codes for the analog controls
         if( Globals.analog_100_64 )
@@ -179,10 +180,10 @@ public class GameActivity extends Activity
             }
         }
 
-        if( !MenuSkinsGamepadActivity.enabled )
+        if ( !Globals.settings.touchscreenEnabled)
             GameActivityCommon.mGamePad.loadPad( null );
-        else if( MenuSkinsGamepadActivity.chosenGamepad != null && MenuSkinsGamepadActivity.chosenGamepad.length() > 0 )
-            GameActivityCommon.mGamePad.loadPad( MenuSkinsGamepadActivity.chosenGamepad );
+        else if( !Globals.settings.touchscreenLayout.isEmpty() )
+            GameActivityCommon.mGamePad.loadPad( Globals.settings.touchscreenLayout );
         else if( GameActivityCommon.mGamePadListing.numPads > 0 )
             GameActivityCommon.mGamePad.loadPad( GameActivityCommon.mGamePadListing.padNames[0] );
         else
@@ -313,13 +314,12 @@ public class GameActivity extends Activity
             GameActivityCommon.mGamePad = (GamePad) findViewById( R.id.my_gamepad );
             GameActivityCommon.mGamePad.setResources( getResources() );
             GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Globals.DataDir + "/skins/gamepads/gamepad_list.ini" );
-            if( !MenuSkinsGamepadActivity.enabled )
+            if( !Globals.settings.touchscreenEnabled )
                 GameActivityCommon.mGamePad.loadPad( null );
-            else if( MenuSkinsGamepadActivity.chosenGamepad != null && MenuSkinsGamepadActivity.chosenGamepad.length() > 0 )
-                GameActivityCommon.mGamePad.loadPad( MenuSkinsGamepadActivity.chosenGamepad );
+            else if( !Globals.settings.touchscreenLayout.isEmpty() )
+                GameActivityCommon.mGamePad.loadPad( Globals.settings.touchscreenLayout );
             else if( GameActivityCommon.mGamePadListing.numPads > 0 )
                 GameActivityCommon.mGamePad.loadPad( GameActivityCommon.mGamePadListing.padNames[0] );
-
         }
     }
     

@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File; 
 
+import android.annotation.TargetApi;
 import android.app.*;
 import android.content.*;
 import android.content.res.Configuration;
@@ -14,6 +15,7 @@ import android.view.*;
 /**
  * GameActivity
  */
+@TargetApi(9)
 public class GameActivityXperiaPlay extends NativeActivity
 {
     public static int saveSlot = 0;
@@ -31,6 +33,7 @@ public class GameActivityXperiaPlay extends NativeActivity
     public static int whichTouchPad = 0;
 
     // Setup
+    @TargetApi(11)
     protected void onCreate( Bundle savedInstanceState )
     {
         // paulscode, place an icon into the status bar:
@@ -137,19 +140,20 @@ public class GameActivityXperiaPlay extends NativeActivity
         GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Globals.DataDir + "/skins/gamepads/gamepad_list.ini" );
 
         // Make sure the gamepad preferences are loaded;
-        String val = MenuActivity.gui_cfg.get( "GAME_PAD", "analog_octagon" );
-        if( val != null )
-            MenuSkinsGamepadActivity.analogAsOctagon = ( val.equals( "1" ) ? true : false );
-        val = MenuActivity.gui_cfg.get( "GAME_PAD", "show_fps" );
-        if( val != null )
-            MenuSkinsGamepadActivity.showFPS = ( val.equals( "1" ) ? true : false );
-        val = MenuActivity.gui_cfg.get( "GAME_PAD", "enabled" );
-        if( val != null )
-            MenuSkinsGamepadActivity.enabled = ( val.equals( "1" ) ? true : false );
-        MenuSkinsGamepadActivity.chosenGamepad = MenuActivity.gui_cfg.get( "GAME_PAD", "which_pad" );
-        val = MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "rgba8888" );
-        if( val != null )
-            GameActivityCommon.rgba8888 = ( val.equals( "1" ) ? true : false );
+        String val;
+//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "analog_octagon" );
+//        if( val != null )
+//            MenuSkinsGamepadActivity.analogAsOctagon = ( val.equals( "1" ) ? true : false );
+//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "show_fps" );
+//        if( val != null )
+//            MenuSkinsGamepadActivity.showFPS = ( val.equals( "1" ) ? true : false );
+//        val = MenuActivity.gui_cfg.get( "GAME_PAD", "enabled" );
+//        if( val != null )
+//            MenuSkinsGamepadActivity.enabled = ( val.equals( "1" ) ? true : false );
+//        MenuSkinsGamepadActivity.chosenGamepad = MenuActivity.gui_cfg.get( "GAME_PAD", "which_pad" );
+//        val = MenuActivity.gui_cfg.get( "VIDEO_PLUGIN", "rgba8888" );
+//        if( val != null )
+//            GameActivityCommon.rgba8888 = ( val.equals( "1" ) ? true : false );
          
         // Look up any special codes for the analog controls
         if( Globals.analog_100_64 )
@@ -206,10 +210,10 @@ public class GameActivityXperiaPlay extends NativeActivity
             }
         }
 
-        if( !MenuSkinsGamepadActivity.enabled )
+        if( !Globals.settings.touchscreenEnabled )
             GameActivityCommon.mGamePad.loadPad( null );
-        else if( MenuSkinsGamepadActivity.chosenGamepad != null && MenuSkinsGamepadActivity.chosenGamepad.length() > 0 )
-            GameActivityCommon.mGamePad.loadPad( MenuSkinsGamepadActivity.chosenGamepad );
+        else if( !Globals.settings.touchscreenLayout.isEmpty() )
+            GameActivityCommon.mGamePad.loadPad( Globals.settings.touchscreenLayout );
         else if( GameActivityCommon.mGamePadListing.numPads > 0 )
             GameActivityCommon.mGamePad.loadPad( GameActivityCommon.mGamePadListing.padNames[0] );
         else
@@ -223,18 +227,18 @@ public class GameActivityXperiaPlay extends NativeActivity
         mTouchPadListing = new TouchPad.TouchPadListing( Globals.DataDir + "/skins/touchpads/touchpad_list.ini" );
 
         // Make sure the touchpad preferences are loaded;
-        val = MenuActivity.gui_cfg.get( "TOUCH_PAD", "analog_octagon" );
-        if( val != null )
-            MenuSkinsTouchpadActivity.analogAsOctagon = ( val.equals( "1" ) ? true : false );
-        val = MenuActivity.gui_cfg.get( "TOUCH_PAD", "enabled" );
-        if( val != null )
-            MenuSkinsTouchpadActivity.enabled = ( val.equals( "1" ) ? true : false );
-        MenuSkinsTouchpadActivity.chosenTouchpad = MenuActivity.gui_cfg.get( "TOUCH_PAD", "which_pad" );
+//        val = MenuActivity.gui_cfg.get( "TOUCH_PAD", "analog_octagon" );
+//        if( val != null )
+//            MenuSkinsTouchpadActivity.analogAsOctagon = ( val.equals( "1" ) ? true : false );
+//        val = MenuActivity.gui_cfg.get( "TOUCH_PAD", "enabled" );
+//        if( val != null )
+//            MenuSkinsTouchpadActivity.enabled = ( val.equals( "1" ) ? true : false );
+//        MenuSkinsTouchpadActivity.chosenTouchpad = MenuActivity.gui_cfg.get( "TOUCH_PAD", "which_pad" );
 
-        if( !MenuSkinsTouchpadActivity.enabled )
+        if( !Globals.settings.touchscreenEnabled )
             mTouchPad.loadPad( null );
-        else if( MenuSkinsTouchpadActivity.chosenTouchpad != null && MenuSkinsTouchpadActivity.chosenTouchpad.length() > 0 )
-            mTouchPad.loadPad( MenuSkinsTouchpadActivity.chosenTouchpad );
+        else if( !Globals.settings.touchscreenLayout.isEmpty() )
+            mTouchPad.loadPad( Globals.settings.touchscreenLayout );
         else if( mTouchPadListing.numPads > 0 )
             mTouchPad.loadPad( mTouchPadListing.padNames[0] );
         else
@@ -365,10 +369,10 @@ public class GameActivityXperiaPlay extends NativeActivity
             GameActivityCommon.mGamePad = (GamePad) findViewById( R.id.my_gamepad );
             GameActivityCommon.mGamePad.setResources( getResources() );
             GameActivityCommon.mGamePadListing = new GamePad.GamePadListing( Globals.DataDir + "/skins/gamepads/gamepad_list.ini" );
-            if( !MenuSkinsGamepadActivity.enabled )
+            if( !Globals.settings.touchscreenEnabled )
                 GameActivityCommon.mGamePad.loadPad( null );
-            else if( MenuSkinsGamepadActivity.chosenGamepad != null && MenuSkinsGamepadActivity.chosenGamepad.length() > 0 )
-                GameActivityCommon.mGamePad.loadPad( MenuSkinsGamepadActivity.chosenGamepad );
+            else if( !Globals.settings.touchscreenLayout.isEmpty() )
+                GameActivityCommon.mGamePad.loadPad( Globals.settings.touchscreenLayout );
             else if( GameActivityCommon.mGamePadListing.numPads > 0 )
                 GameActivityCommon.mGamePad.loadPad( GameActivityCommon.mGamePadListing.padNames[0] );
 

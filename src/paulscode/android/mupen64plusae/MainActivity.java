@@ -5,6 +5,7 @@ import java.io.File;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -154,7 +155,7 @@ public class MainActivity extends Activity
         {
             Parent._tv = new TextView( Parent );
             Parent._tv.setMaxLines( 1 );
-            Parent._tv.setText( R.string.init );
+            Parent._tv.setText( R.string.initializing );
             Parent._layout2.addView( Parent._tv );
         }
     }

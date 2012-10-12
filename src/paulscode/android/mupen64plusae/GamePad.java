@@ -155,7 +155,7 @@ public class GamePad extends View
             fpsValue = 0;  // Can't have a negative FPS (what is this, time travel?)
         if( fpsValue > 9999 )
             fpsValue = 9999;  // No more than 4 digits
-        if( !MenuSkinsGamepadActivity.showFPS )
+        if( !Globals.settings.touchscreenFrameRate )
             return;
         String fpsString = Integer.toString( fpsValue );
         for( int x = 0; x < 4; x++ )
@@ -190,7 +190,7 @@ public class GamePad extends View
     {
         if( !initialized )
             return;
-        if( MenuSkinsGamepadActivity.redrawAll )
+        if( Globals.settings.touchscreenRedrawAll )
             drawEverything = true;
         if( drawEverything )
         {  // Redraw the entire gamepad
@@ -233,7 +233,7 @@ public class GamePad extends View
                 hatImage.draw( canvas );
             }
         }
-        if( MenuSkinsGamepadActivity.showFPS && (drawEverything || drawFPS) )
+        if( Globals.settings.touchscreenFrameRate && (drawEverything || drawFPS) )
         {  // Redraw the FPS indicator
             int x = 0;
             int y = 0;
@@ -248,7 +248,7 @@ public class GamePad extends View
             
             int totalWidth = 0;
 
-            // Calculate the width and postion of the FPS number:
+            // Calculate the width and position of the FPS number:
             for( int c = 0; c < 4; c++ )
             {
                 if( fpsDigits[c] != null )
@@ -334,7 +334,7 @@ public class GamePad extends View
                     d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
                     {  // Inside the analog control
-                        if( MenuSkinsGamepadActivity.analogAsOctagon )
+                        if( Globals.settings.touchscreenOctagonJoystick )
                         {  // Emulate the analog control as an octagon (like the real N64 controller)
                             Point crossPt = new Point();
                             float dC = analogImage.hWidth;
@@ -681,7 +681,7 @@ public class GamePad extends View
                         }
                         else if( val.contains( "fps" ) )
                         {  // FPS indicator (PNG image format)
-                            if( MenuSkinsGamepadActivity.showFPS )
+                            if( Globals.settings.touchscreenFrameRate )
                             {
                                 fpsImage = new Image( resources, Globals.DataDir + "/skins/gamepads/" +
                                                       skin + "/" + filename + ".png" );
@@ -1002,7 +1002,7 @@ public class GamePad extends View
                                         int x1, y1, x2, y2;
                                         public void run()
                                         {
-                                            if( MenuSkinsGamepadActivity.redrawAll )
+                                            if( Globals.settings.touchscreenRedrawAll )
                                             {
                                                 invalidate();  // Redraw everything
                                             }
@@ -1030,7 +1030,7 @@ public class GamePad extends View
                                         int x1, y1, x2, y2;
                                         public void run()
                                         {
-                                            if( MenuSkinsGamepadActivity.redrawAll )
+                                            if( Globals.settings.touchscreenRedrawAll )
                                             {
                                                 invalidate();  // Redraw everything
                                             }
@@ -1050,7 +1050,7 @@ public class GamePad extends View
         public void run()
         {
             int millis = 100;
-            if( MenuSkinsGamepadActivity.redrawAll )
+            if( Globals.settings.touchscreenRedrawAll )
                 millis = 150;
 
             while( alive )
