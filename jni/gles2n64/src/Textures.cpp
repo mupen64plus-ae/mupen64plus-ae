@@ -857,7 +857,7 @@ void TextureCache_Load( CachedTexture *texInfo )
     if (!config.texture.sai2x || (texFormat.format == FORMAT_I8) || (texFormat.format == FORMAT_IA88))
     {
 #ifdef PRINT_TEXTUREFORMAT
-        printf("j=%i DEST=0x%x SIZE=%i F=0x%x, W=%i, H=%i, T=0x%x\n", j, dest, texInfo->textureBytes,glFormat, glWidth, glHeight, glType); fflush(stdout);
+        printf("j=%u DEST=0x%x SIZE=%i F=0x%x, W=%i, H=%i, T=0x%x\n", j, dest, texInfo->textureBytes,glFormat, glWidth, glHeight, glType); fflush(stdout);
 #endif
         glTexImage2D( GL_TEXTURE_2D, 0, glFormat, glWidth, glHeight, 0, glFormat, glType, dest);
     }

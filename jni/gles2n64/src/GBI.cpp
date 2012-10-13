@@ -391,7 +391,7 @@ GBI_ProfilePrint(FILE *file)
             unsigned int t = GBI_GetFuncTime(uc, cmd);
             if (t != 0)
             {
-                fprintf(file, "%s x %i = %i ms (%.2f%%)\n", GBI_GetFuncName(uc,cmd), GBI_GetFuncNum(uc, cmd), t, 100.0f * (float)t / total);
+                fprintf(file, "%s x %i = %u ms (%.2f%%)\n", GBI_GetFuncName(uc,cmd), GBI_GetFuncNum(uc, cmd), t, 100.0f * (float)t / total);
             }
         }
     }
