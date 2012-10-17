@@ -1,30 +1,24 @@
 package paulscode.android.mupen64plusae;
 
-import java.io.File; 
+import java.io.File;
 
-import paulscode.android.mupen64plusae.preference.Config;
-import paulscode.android.mupen64plusae.preference.Settings;
-
-
+import paulscode.android.mupen64plusae.persistent.Config;
+import paulscode.android.mupen64plusae.persistent.Settings;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 class Updater
 {
     public static boolean checkv1_9( Activity instance )
     {
-        String upgraded = Settings.gui_cfg.get( "GENERAL", "upgraded_1.9" );
-    
         // Version 1.9 requires app data to be restored.  Back up saves, then delete the old app data.
-        if( upgraded == null || !upgraded.equals( "1" ) )
+        if( Settings.device.getUpgraded19() )
         {
-            File appData = new File( Settings.paths.dataDir );
-            Utility.copyFile( new File( Settings.paths.dataDir + "/data/save" ),
-                              new File( Settings.paths.storageDir + "/mp64p_tmp_asdf1234lkjh0987/data/save" )  );
-            Utility.deleteFolder( appData );
+            Utility.copyFile( new File( Settings.path.savesDir ),
+                              new File( Settings.path.savesBackupDir )  );
+            Utility.deleteFolder( new File( Settings.path.dataDir ) );
             Intent intent = new Intent( instance, MainActivity.class );
             intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
             MenuActivity.mInstance.startActivity( intent );
@@ -36,35 +30,22 @@ class Updater
 
     public static boolean checkFirstRun( Activity instance )
     {
-        String first_run = Settings.gui_cfg.get( "GENERAL", "first_run" );
-
         // This gets run the first time the app runs only!
-        if( first_run != null && first_run.equals( "1" ) )
+        if( Settings.device.getFirstRun() )
         {
-            Settings.gui_cfg.put( "GENERAL", "first_run", "0" );
-            Settings.gui_cfg.put( "TOUCH_PAD", "which_pad", "Mupen64Plus-AE-Xperia-Play" );
+            Settings.device.setFirstRun( false );
             selectGamepad( instance );
 
             String oldPackage = "paulscode.android.mupen64plus";
-            File oldVer = new File( Settings.paths.storageDir + "/Android/data/" + oldPackage );
+            File oldVer = new File( Settings.path.storageDir + "/Android/data/" + oldPackage );
             if( !oldVer.exists() )
                 oldPackage = "paulscode.android.mupen64plus.xperiaplay";
-            Utility.copyFile( new File( Settings.paths.storageDir + "/Android/data/" + oldPackage + "/data/save" ),
-                              new File( Settings.paths.dataDir + "/data/save" )  );
-
-            String romFolder;
-            if( (new File( Settings.paths.storageDir + "/roms/n64" )).isDirectory() )
-                romFolder = Settings.paths.storageDir + "/roms/n64";
-            else
-                romFolder = Settings.paths.storageDir;
+            Utility.copyFile( new File( Settings.path.storageDir + "/Android/data/" + oldPackage + "/data/save" ),
+                              new File( Settings.path.savesDir )  );
             
-            Settings.gui_cfg.put( "LAST_SESSION", "rom_folder", romFolder );
-            Settings.gui_cfg.put( "GENERAL", "auto_save", "0" );
-            
-            File f = new File( Settings.paths.storageDir );
-            if( !f.exists() )
+            if( !Settings.path.isSdCardAccessible() )
             {
-               Log.e( "Updater", "SD Card not accessable in method restoreDefaults" );
+               Log.e( "Updater", "SD Card not accessable in method checkFirstRun" );
                return false;
             }
             return true;
@@ -73,7 +54,7 @@ class Updater
     }
     
     // Correct the config file if another app (*caugh* N64 4 Droid) corrupted it with an older version
-    public static boolean checkCfgVer( Activity instance )
+    public static boolean checkConfigFiles( Activity instance )
     {
         boolean everythingOk = true;
         String val;
@@ -94,13 +75,13 @@ class Updater
         Settings.mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
 
         val = Settings.mupen64plus_cfg.get( "UI-Console", "PluginDir" );
-        if( val == null || !val.equals( "\"" + Settings.paths.libsDir + "/lib/\"" ) )
+        if( val == null || !val.equals( "\"" + Settings.path.libsDir + "/lib/\"" ) )
         {
-            Settings.mupen64plus_cfg.put( "UI-Console", "PluginDir", "\"" + Settings.paths.libsDir + "/lib/\"" );
-            Settings.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + Settings.paths.libsDir + "/lib/libgles2n64.so\"" );
-            Settings.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", "\"" + Settings.paths.libsDir + "/lib/libaudio-sdl.so\"" );
-            Settings.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + Settings.paths.libsDir + "/lib/libinput-sdl.so\"" );
-            Settings.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + Settings.paths.libsDir + "/lib/librsp-hle.so\"" );
+            Settings.mupen64plus_cfg.put( "UI-Console", "PluginDir", "\"" + Settings.path.libsDir + "/lib/\"" );
+            Settings.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + Settings.path.libsDir + "/lib/libgles2n64.so\"" );
+            Settings.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", "\"" + Settings.path.libsDir + "/lib/libaudio-sdl.so\"" );
+            Settings.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + Settings.path.libsDir + "/lib/libinput-sdl.so\"" );
+            Settings.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + Settings.path.libsDir + "/lib/librsp-hle.so\"" );
             everythingOk = false;
         }
 
@@ -142,11 +123,11 @@ class Updater
 
         Settings.mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
         Settings.mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
-        Settings.mupen64plus_cfg.put( "UI-Console", "PluginDir", "\"" + Settings.paths.libsDir + "/lib/\"" );
-        Settings.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + Settings.paths.libsDir + "/lib/libgles2n64.so\"" );
-        Settings.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", "\"" + Settings.paths.libsDir + "/lib/libaudio-sdl.so\"" );
-        Settings.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + Settings.paths.libsDir + "/lib/libinput-sdl.so\"" );
-        Settings.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + Settings.paths.libsDir + "/lib/librsp-hle.so\"" );
+        Settings.mupen64plus_cfg.put( "UI-Console", "PluginDir", "\"" + Settings.path.libsDir + "/lib/\"" );
+        Settings.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + Settings.path.libsDir + "/lib/libgles2n64.so\"" );
+        Settings.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", "\"" + Settings.path.libsDir + "/lib/libaudio-sdl.so\"" );
+        Settings.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + Settings.path.libsDir + "/lib/libinput-sdl.so\"" );
+        Settings.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + Settings.path.libsDir + "/lib/librsp-hle.so\"" );
 
         Settings.mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
         Settings.mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
@@ -239,68 +220,30 @@ class Updater
             Settings.mupen64plus_cfg.put( "Input-SDL-Control" + x, "X Axis", "key(0,0)" );
             Settings.mupen64plus_cfg.put( "Input-SDL-Control" + x, "Y Axis", "key(0,0)" );
         }
+        
+        Settings.gles2n64_conf = new Config( Settings.path.gles2n64_conf );
+        Settings.gles2n64_conf.put( "[<sectionless!>]", "enable fog", "0" );
+        Settings.gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", "1" );
+        Settings.gles2n64_conf.put( "[<sectionless!>]", "force screen clear", "0" );
+        Settings.gles2n64_conf.put( "[<sectionless!>]", "hack z", "0" );
 
-        Settings.gui_cfg.clear();
-        Settings.gui_cfg.put( "GENERAL", "first_run", "1" );
-        Settings.gui_cfg.put( "GENERAL", "upgraded_1.9", "1" );
-        Settings.gui_cfg.put( "GAME_PAD", "redraw_all", "1" );
-        Settings.gui_cfg.put( "GAME_PAD", "analog_octagon", "1" );
-        Settings.gui_cfg.put( "GAME_PAD", "show_fps", "0" );
-        Settings.gui_cfg.put( "GAME_PAD", "enabled", "1" );
-        Settings.gui_cfg.put( "VIDEO_PLUGIN", "enabled", "1" );
-        Settings.gui_cfg.put( "VIDEO_PLUGIN", "rgba8888", "0" );
-        Settings.gui_cfg.put( "KEYS", "disable_volume_keys", "0" );
-        Settings.volumeKeysDisabled = false;
-
-        Config gles2n64_conf = new Config( Settings.paths.dataDir + "/data/gles2n64.conf" );
-        gles2n64_conf.put( "[<sectionless!>]", "enable fog", "0" );
-        gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", "1" );
-        gles2n64_conf.put( "[<sectionless!>]", "force screen clear", "0" );
-        gles2n64_conf.put( "[<sectionless!>]", "hack z", "0" );
-
-        File f = new File( Settings.paths.storageDir );
-        if( !f.exists() )
+        if( !Settings.path.isSdCardAccessible() )
         {
            Log.e( "Updater", "SD Card not accessable in method restoreDefaults" );
            return false;
         }
         
         Settings.mupen64plus_cfg.save();
-        Settings.gui_cfg.save();
-        gles2n64_conf.save();
+        Settings.gles2n64_conf.save();
+
+        // TODO: Reset preferences to default values (firstRun,updatedV19,redrawAll,octagon,fps,gamepadenabled,rgba8888,volkeys).
+
         return checkFirstRun( instance );
     }
 
     private static boolean selectGamepad( Activity instance )
     {
-        int width, height;
-        float inches;
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        instance.getWindowManager().getDefaultDisplay().getMetrics( metrics );
-        if( metrics.widthPixels > metrics.heightPixels )
-        {
-            width = metrics.widthPixels;
-            inches = (float) width / metrics.xdpi;
-            height = metrics.heightPixels;
-        }
-        else
-        {
-            width = metrics.heightPixels;
-            inches = (float) width / metrics.ydpi;
-            height = metrics.widthPixels;
-        }
-        
-        // Pick a virtual gamepad layout based on screen size/ resolution:
-        if( inches > 5.5f )
-            Settings.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog-Tablet" );
-        else if( width <= 320 )
-            Settings.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog-Tiny" );
-        else if( width < 800 )
-            Settings.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog-Small" );
-        else
-            Settings.gui_cfg.put( "GAME_PAD", "which_pad", "Mupen64Plus-AE-Analog" );
-
+        // TODO: Select appropriate touchscreen layout based on device size.
         return true;
     }
 }

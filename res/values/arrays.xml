@@ -27,24 +27,15 @@
 
     <!-- Gamepad Plugins -->
     <string-array name="gamepadPlugin_entries">
+        <item>@string/disabled</item>
         <item>input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</item>
     </string-array>
     <string-array name="gamepadPlugin_values">
+        <item>-1</item>
         <item>0</item>
     </string-array>
     <string name="gamepadPlugin_default">0</string>
     
-    <!-- Xperia Touchpads -->
-    <string-array name="xperiaTouchpad_entries">
-        <item>Left pad: Analog control; Right pad: C buttons</item>
-        <item>Left pad: C buttons;  Right pad: Analog control</item>
-    </string-array>
-    <string-array name="xperiaTouchpad_values">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-    <string name="xperiaTouchpad_default">0</string>
-
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries">
         <item>gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</item>
@@ -58,19 +49,36 @@
 
     <!-- Audio Plugins -->
     <string-array name="audioPlugin_entries">
+        <item>None (audio disabled)</item>
         <item>audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</item>
     </string-array>
     <string-array name="audioPlugin_values">
+        <item>-1</item>
         <item>0</item>
     </string-array>
     <string name="audioPlugin_default">0</string>
     
+    <!-- Xperia Play Touchpads -->
+    <string-array name="xperiaPlugin_entries">
+        <item>None (this device is not a Sony Ericsson Xperia Play)</item>
+        <item>Left pad: Analog control; Right pad: C buttons</item>
+        <item>Left pad: C buttons;  Right pad: Analog control</item>
+    </string-array>
+    <string-array name="xperiaPlugin_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string name="xperiaPlugin_default">-1</string>
+
     <!-- RSP Plugins -->
     <string-array name="rspPlugin_entries">
+        <item>None (RSP disabled)</item>
         <item>rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</item>
         <item>rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</item>
     </string-array>
     <string-array name="rspPlugin_values">
+        <item>-1</item>
         <item>0</item>
         <item>1</item>
     </string-array>

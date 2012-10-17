@@ -10,15 +10,12 @@
         http://developer.android.com/design/style/writing.html
         http://developer.android.com/design/patterns/settings.html#writing
     
-    Please follow the official Android guidelines for internationalization:
+    Please follow the official Android guidelines for localization:
         http://developer.android.com/guide/topics/resources/localization.html
     Note that localization is easiest when the number of strings is minimized and the
     strings themselves are concise.  Avoid strings wherever universally-recognized
-    icons will suffice.
-    
-    To minimize code maintenance, use Android's built-in resources whenever possible.
-    For example, favor string resources in "@android:string/..." over custom resources
-    in "@string/...".
+    icons will suffice.  Use Android's built-in string resources (@android:string/...)
+    wherever possible to eliminate translation requirements.
     ***********************************************************************************
 -->
 <resources>
@@ -26,6 +23,9 @@
     <!-- Common Short Strings -->
     <string name="app_name">Mupen64 Plus</string>
     <string name="enable">Enable</string>
+    <string name="enabled">Enabled</string>
+    <string name="disable">Disable</string>
+    <string name="disabled">Disabled</string>
     <string name="plugin">Plug-in</string>
     <string name="layout">Layout</string>
     <string name="auto">Auto</string>
@@ -39,12 +39,6 @@
     <string name="ingame_save">Save</string>
     <string name="ingame_load">Load</string>
     <string name="ingame_menu">Main menu</string>
-    
-    <!-- File Browser (FileChooserActivity.java) -->
-    <string name="file_size">File Size</string>
-    <string name="file_folder">Folder</string>
-    <string name="file_current_folder">Current Folder</string>
-    <string name="file_parent_folder">Parent Folder</string>
     
     <!-- Download Messages (DataDownloader.java) -->
     <string name="connecting_to">Connecting to %s</string>
@@ -72,29 +66,36 @@
     
     <!-- Main Menu -->
     <string name="menuResume_title">Play</string>
-    <string name="menuGame_title">Game</string>
+    <string name="lastGame_title">Game</string>
     <string name="menuSettings_title">Settings</string>
     <string name="menuHelp_title">Help</string>
     <string name="menuAbout_title">About</string>
-        
+    <string name="menuDonate_title">Donate</string>
+    <string name="menuDonate_summary">Keep Mupen64Plus free and open-source!</string>
+    
+    <!-- Categories -->
+    <string name="categoryPlugins_title">Hardware settings</string>
+    <string name="categoryStorage_title">Storage options</string>
+    <string name="categoryOther_title">@string/other</string>
+    
     <!-- Settings Menu -->
-    <string name="categoryPlugins_title">Plug-ins</string>
     <string name="video_title">Video</string>
     <string name="video_summary">Graphics settings</string>
     <string name="touchscreen_title">Touchscreen</string>
     <string name="touchscreen_summary">On-screen controller settings</string>
-    <string name="gamepad_title">Gamepad</string>
-    <string name="gamepad_summary">Physical controller settings</string>
-    <string name="xperia_title">Xperia</string>
-    <string name="xperia_summary">Xperia-specific settings</string>
-    <string name="cheats_title">Cheats</string>
-    <string name="cheats_summary">Choose a game to hack</string>
+    <string name="gamepad_title">Controllers</string>
+    <string name="gamepad_summary">Peripheral gamepad/joystick settings</string>
+    <string name="xperia_title">Xperia Play</string>
+    <string name="xperia_summary">Xperia Play-specific settings</string>
     <string name="other_title">@string/other</string>
     <string name="other_summary">Audio, processor, core, etc.</string>
-    <string name="categoryGeneral_title">@string/general</string>
+    <string name="gameRomDir_title">ROM folder</string>
+    <string name="gameSaveDir_title">Save-file folder</string>
     <string name="autoSaveEnabled_title">Auto-save</string>
     <string name="autoSaveEnabled_summary">Save game on exit</string>
     <string name="touchscreenFrameRate_title">Show framerate</string>
+    <string name="cheats_title">Cheats</string>
+    <string name="cheats_summary">Choose a game to hack</string>
     <string name="reset_title">Reset</string>
     <string name="reset_summary">Restore default settings</string>
     
@@ -116,12 +117,8 @@
     <string name="gamepadMapSpecial_title">Special functions</string>
     <string name="gamepadMapSpecial_summary">Save, load, and more from the controller</string>
     <string name="gamepadMap_dialogTitle">Touch an icon while pushing the desired stick or button</string>
-    
-    <!-- Xperia Menu -->
-    <string name="xperiaEnabled_title">Optimize for Xperia Play</string>
-    <string name="xperiaEnabled_summary">ONLY enable this if your device is a Sony Ericsson Xperia Play</string>
-    <string name="xperiaTouchpad_title">Touchpad</string>
-    <string name="xperiaTouchpad_summary">Configure the touchpad</string>    
+    <string name="volumeKeysEnabled_title">Enable volume keys</string>
+    <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
     
     <!-- Video Menu -->
     <string name="videoEnabled_title">@string/enable</string>
@@ -163,11 +160,9 @@
     
     <!-- Other Menu -->
     <string name="audioPlugin_title">Audio</string>
-    <string name="audioPlugin_summary"></string>
+    <string name="xperiaPlugin_title">Xperia Play configuration</string>
     <string name="rspPlugin_title">Reality signal processor</string>
-    <string name="rspPlugin_summary"></string>
     <string name="corePlugin_title">Emulation core</string>
-    <string name="corePlugin_summary"></string>
     <string name="resetAppData_title">Restore app data</string>
     <string name="resetAppData_summary">Imported plugins and textures will be lost!</string>
 

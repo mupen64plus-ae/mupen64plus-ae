@@ -19,7 +19,8 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import paulscode.android.mupen64plusae.GameActivityCommon;
+import paulscode.android.mupen64plusae.GameActivity;
+import paulscode.android.mupen64plusae.NativeMethods;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.MotionEvent;
@@ -34,7 +35,7 @@ public class TouchscreenTranslator extends InputTranslator implements View.OnTou
     @TargetApi( 5 )
     public boolean onTouch( View v, MotionEvent event )
     {
-        if( GameActivityCommon.noInputPlugin || Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR)
+        if( GameActivity.GameState.noInputPlugin || Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR)
             return false;
         
         int action = event.getAction();
@@ -43,7 +44,7 @@ public class TouchscreenTranslator extends InputTranslator implements View.OnTou
         float y = event.getY();
         float p = event.getPressure();
         
-        GameActivityCommon.onNativeTouch( action, x, y, p );
+        NativeMethods.onTouch( action, x, y, p );
         
         int maxPid = 0;
         int pid, i;

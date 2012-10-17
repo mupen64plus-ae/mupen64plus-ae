@@ -124,7 +124,7 @@ extern void Android_JNI_Vibrate( int active );
 //// paulscode, for the virtual gamepad:
 unsigned char virtualGamePadButtonState[4][14];
 signed char virtualGamePadAxisState[4][2];
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_updateVirtualGamePadStates(
+void Java_paulscode_android_mupen64plusae_NativeMethods_updateVirtualGamePadStates(
                                     JNIEnv* env, jclass jcls, jint controllerNum,
                                     jbooleanArray mp64pButtons, jint mp64pXAxis, jint mp64pYAxis )
 {

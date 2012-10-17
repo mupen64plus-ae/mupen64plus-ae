@@ -137,7 +137,7 @@ extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls)
 }
 
 // Resize
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNativeResize(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onResize(
                                     JNIEnv* env, jclass jcls,
                                     jint width, jint height, jint format)
 {
@@ -145,34 +145,34 @@ extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNative
 }
 
 // Keydown
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNativeKeyDown(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onKeyDown(
                                     JNIEnv* env, jclass jcls, jint keycode)
 {
     Android_OnKeyDown(keycode);
 }
 
 // Keyup
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNativeKeyUp(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onKeyUp(
                                     JNIEnv* env, jclass jcls, jint keycode)
 {
     Android_OnKeyUp(keycode);
 }
 // Keydown
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNativeSDLKeyDown(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onSDLKeyDown(
                                     JNIEnv* env, jclass jcls, jint keycode)
 {
     Android_OnSDLKeyDown(keycode);
 }
 
 // Keyup
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNativeSDLKeyUp(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onSDLKeyUp(
                                     JNIEnv* env, jclass jcls, jint keycode)
 {
     Android_OnSDLKeyUp(keycode);
 }
 
 // Touch
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNativeTouch(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onTouch(
                                     JNIEnv* env, jclass jcls,
                                     jint action, jfloat x, jfloat y, jfloat p)
 {
@@ -180,7 +180,7 @@ extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNative
 }
 
 // Accelerometer
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNativeAccel(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onAccel(
                                     JNIEnv* env, jclass jcls,
                                     jfloat x, jfloat y, jfloat z)
 {
@@ -190,14 +190,14 @@ extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_onNative
 }
 
 // Quit
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_nativeQuit(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_quit(
                                     JNIEnv* env, jclass cls)
 {    
     // Inject a SDL_QUIT event
     SDL_SendQuit();
 }
 
-extern "C" void Java_paulscode_android_mupen64plusae_GameActivityCommon_nativeRunAudioThread(
+extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_runAudioThread(
                                     JNIEnv* env, jclass cls)
 {
     /* This is the audio thread, with a different environment */

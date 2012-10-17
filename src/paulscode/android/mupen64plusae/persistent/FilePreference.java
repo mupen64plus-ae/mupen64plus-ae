@@ -1,4 +1,23 @@
-package paulscode.android.mupen64plusae.preference;
+/**
+ * Mupen64PlusAE, an N64 emulator for the Android platform
+ * 
+ * Copyright (C) 2012 Paul Lamb
+ * 
+ * This file is part of Mupen64PlusAE.
+ * 
+ * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Authors: littleguy77
+ */
+package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,15 +25,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
-
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.preference.ListPreference;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.AttributeSet;
+import android.view.View;
 
+// TODO: Consolidate this with FolderPreference implementation
 public class FilePreference extends ListPreference
 {
     String mPath;
@@ -25,10 +43,10 @@ public class FilePreference extends ListPreference
     }
     
     @Override
-    protected void onPrepareDialogBuilder( Builder builder )
+    protected View onCreateDialogView()
     {
         refreshItems();
-        super.onPrepareDialogBuilder( builder );
+        return super.onCreateDialogView();
     }
     
     @Override
@@ -43,7 +61,7 @@ public class FilePreference extends ListPreference
     public void refreshItems()
     {
         // Restore the persisted state
-        mPath = getPersistedString( Settings.paths.storageDir );
+        mPath = getPersistedString( Settings.path.storageDir );
         populate( new File( mPath ) );        
     }
     
@@ -53,7 +71,7 @@ public class FilePreference extends ListPreference
             startPath = startPath.getParentFile();
         
         // Get all files in this folder
-        // TODO: add filter
+        // TODO: Add file filter?
         File[] fileList = startPath.listFiles();
         List<File> files = new ArrayList<File>();
         for( File file : fileList )

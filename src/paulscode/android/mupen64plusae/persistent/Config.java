@@ -1,4 +1,4 @@
-package paulscode.android.mupen64plusae.preference;
+package paulscode.android.mupen64plusae.persistent;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;

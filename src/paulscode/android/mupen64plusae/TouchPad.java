@@ -7,10 +7,8 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Set;
 
-import paulscode.android.mupen64plusae.preference.Config;
-import paulscode.android.mupen64plusae.preference.Settings;
-
-
+import paulscode.android.mupen64plusae.persistent.Config;
+import paulscode.android.mupen64plusae.persistent.Settings;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -241,8 +239,8 @@ public class TouchPad
                 }
             }
         }
-        GameActivityCommon.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY );
-        GameActivityCommon.updateSDLButtonStates( SDLButtonPressed, SDLButtonCodes, SDLButtonCount );
+        NativeMethods.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY );
+        GameActivity.updateSDLButtonStates( SDLButtonPressed, SDLButtonCodes, SDLButtonCount );
     }
 
     /**
@@ -315,6 +313,22 @@ public class TouchPad
             }
         }
     }
+    
+    protected void loadPad()
+    {
+        // TODO: Encapsulate call to overloaded method
+//        if( !Settings.user.touchscreenEnabled )
+//            loadPad( null );
+//        else if( !Settings.user.touchscreenLayoutIndex.isEmpty() )
+//            loadPad( Settings.user.touchscreenLayoutIndex );
+//        else if( Settings.Game.mTouchPadListing.numPads > 0 )
+//            loadPad( mTouchPadListing.padNames[0] );
+//        else
+//        {
+//            loadPad( null );
+//            Log.v( "GameActivityXperiaPlay", "No touchpad skins found" );
+//        }
+    }
 
     /**
      * Loads the specified touchpad skin
@@ -355,7 +369,7 @@ public class TouchPad
         if( skin == null )
             return;  // No skin was specified, so we are done.. quit
         // Load the configuration file (pad.ini):
-        Config pad_ini = new Config( Settings.paths.dataDir + "/skins/touchpads/" + skin + "/pad.ini" );
+        Config pad_ini = new Config( Settings.path.dataDir + "/skins/touchpads/" + skin + "/pad.ini" );
 
         // Look up the touch-pad layout credits:
         name = pad_ini.get( "INFO", "name" );
@@ -447,7 +461,7 @@ public class TouchPad
                         val = val.toLowerCase();  // Lets not make this part case-sensitive
                         if (val.contains( "analog" ) )
                         {  // Analog color mask image in BMP image format (doesn't actually get drawn)
-                            analogMask = new Image( resources, Settings.paths.dataDir + "/skins/touchpads/" +
+                            analogMask = new Image( resources, Settings.path.dataDir + "/skins/touchpads/" +
                                                      skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
                             analogXpercent = Utility.toInt( section.get( "x" ), 0 );
@@ -466,7 +480,7 @@ public class TouchPad
                         else
                         {   // A button control (may contain one or more N64 buttons and/or SDL buttons)
                             // Button color mask image in BMP image format (doesn't actually get drawn)
-                            masks[buttonCount] = new Image( resources, Settings.paths.dataDir + "/skins/touchpads/" +
+                            masks[buttonCount] = new Image( resources, Settings.path.dataDir + "/skins/touchpads/" +
                                                             skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
                             xpercents[buttonCount] = Utility.toInt( section.get( "x" ), 0 );

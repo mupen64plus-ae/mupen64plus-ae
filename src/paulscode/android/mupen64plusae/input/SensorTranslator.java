@@ -19,7 +19,7 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import paulscode.android.mupen64plusae.GameActivityCommon;
+import paulscode.android.mupen64plusae.NativeMethods;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -36,7 +36,7 @@ public class SensorTranslator extends InputTranslator implements SensorEventList
     {
         if( event.sensor.getType() == Sensor.TYPE_ACCELEROMETER )
         {
-            GameActivityCommon.onNativeAccel( event.values[0], event.values[1], event.values[2] );
+            NativeMethods.onAccel( event.values[0], event.values[1], event.values[2] );
         }
     }
 }

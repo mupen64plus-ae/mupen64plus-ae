@@ -42,7 +42,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import paulscode.android.mupen64plusae.preference.Settings;
+import paulscode.android.mupen64plusae.persistent.Settings;
+import paulscode.android.mupen64plusae.persistent.Settings._Path;
 import android.content.res.Resources;
 import android.text.SpannedString;
 import android.util.Log;
@@ -162,7 +163,7 @@ public class DataDownloader extends Thread
     {
         Parent = _Parent;
         Status = new StatusWriter( _Status, _Parent );
-        outFilesDir = Settings.paths.dataDir;
+        outFilesDir = Settings.path.dataDir;
         DownloadComplete = false;
         start();
     }
@@ -178,7 +179,7 @@ public class DataDownloader extends Thread
     @Override
     public void run()
     {
-        String [] downloadFiles = Settings.dataDownloadUrl.split( "\\^" );
+        String [] downloadFiles = _Path.dataDownloadUrl.split( "\\^" );
         for( int i = 0; i < downloadFiles.length; i++ )
         {
             if( downloadFiles[i].length() > 0 )
@@ -211,7 +212,7 @@ public class DataDownloader extends Thread
         {
             try
             {
-                byte b[] = new byte[ Settings.dataDownloadUrl.getBytes( "UTF-8" ).length + 1 ];
+                byte b[] = new byte[ _Path.dataDownloadUrl.getBytes( "UTF-8" ).length + 1 ];
                 int readed = checkFile.read( b );
                 String compare = new String( b, 0, readed, "UTF-8" );
                 boolean matched = false;

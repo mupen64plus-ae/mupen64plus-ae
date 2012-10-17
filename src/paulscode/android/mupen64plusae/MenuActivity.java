@@ -2,10 +2,8 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.preference.Config;
-import paulscode.android.mupen64plusae.preference.FilePreference;
-import paulscode.android.mupen64plusae.preference.Settings;
-
+import paulscode.android.mupen64plusae.persistent.FilePreference;
+import paulscode.android.mupen64plusae.persistent.Settings;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -35,17 +33,14 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         
         // Load preferences from XML and update view
         addPreferencesFromResource( R.xml.preferences );
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        Settings.refreshUser( sharedPreferences );
-        refreshPreferenceSummaries( sharedPreferences );
+        
+        // Get user preferences
+        SharedPreferences userPrefs = PreferenceManager.getDefaultSharedPreferences( this );
+        Settings.refreshUser( userPrefs );
+        refreshPreferenceSummaries( userPrefs );
         
         NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-        notificationManager.cancel( Settings.NOTIFICATION_ID );
-        
-        // Load the legacy configuration files
-        Settings.mupen64plus_cfg = new Config( Settings.paths.mupen64plus_cfg );
-        Settings.gui_cfg = new Config( Settings.paths.gui_cfg );
-        Settings.error_log = new Config( Settings.paths.error_log );
+        notificationManager.cancel( GameActivity.GameState.NOTIFICATION_ID );
         
         Updater.checkFirstRun( this );
         if( !Updater.checkv1_9( this ) )
@@ -53,7 +48,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
             finish();
             return;
         }
-        Updater.checkCfgVer( this );
+        Updater.checkConfigFiles( this );
         
         findPreference( "menuResume" ).setOnPreferenceClickListener(
                 new OnPreferenceClickListener()
@@ -61,7 +56,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
                     public boolean onPreferenceClick( Preference preference )
                     {
                         // Resume the last game
-                        File f = new File( Settings.paths.storageDir );
+                        File f = new File( Settings.path.storageDir );
                         if( !f.exists() )
                         {
                             Log.e( "MenuActivity",
@@ -83,15 +78,9 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
                             return true;
                         }
                         Settings.mupen64plus_cfg.save();
-                        Settings.gui_cfg.save();
-                        Settings.chosenROM = Settings.gui_cfg.get( "LAST_SESSION", "rom" );
-                        GameActivityCommon.resumeLastSession = true;
+                        GameActivity.GameState.resumeLastSession = true;
                         
-                        Intent intent;
-                        if( Settings.user.xperiaEnabled )
-                            intent = new Intent( mInstance, GameActivityXperiaPlay.class );
-                        else
-                            intent = new Intent( mInstance, GameActivity.class );
+                        Intent intent = new Intent( mInstance, GameActivity.class );
                         
                         intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP
                                 | Intent.FLAG_ACTIVITY_SINGLE_TOP );

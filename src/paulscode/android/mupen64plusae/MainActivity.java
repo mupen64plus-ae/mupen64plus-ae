@@ -2,11 +2,10 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.preference.Config;
-import paulscode.android.mupen64plusae.preference.Settings;
-
-
+import paulscode.android.mupen64plusae.persistent.Config;
+import paulscode.android.mupen64plusae.persistent.Settings;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,24 +21,29 @@ import android.widget.TextView;
 // TODO: Comment thoroughly
 public class MainActivity extends Activity
 {
+    // TODO: Which fields need to be public? static?
     public ImageView _img = null;
     public TextView _tv = null;
     public LinearLayout _layout = null;
     public LinearLayout _layout2 = null;
     public FrameLayout _videoLayout = null;
+    public static DataDownloader downloader = null;
     
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
         
-        Settings.refreshPaths( this );
+        Settings.refreshPath( this );
+        ErrorLogger.initialize( Settings.path.error_log );
+        Settings.refreshDevice( this.getSharedPreferences( Settings.path.devicePrefName, Context.MODE_PRIVATE ) );
+        Settings.mupen64plus_cfg = new Config( Settings.path.mupen64plus_cfg );
         
         // fullscreen mode
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN );
-        if( Settings.inhibitSuspend )
+        if( GameActivity.GameState.inhibitSuspend )
             getWindow().setFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
         
@@ -94,11 +98,11 @@ public class MainActivity extends Activity
     @Override
     protected void onPause()
     {
-        if( Settings.downloader != null )
+        if( MainActivity.downloader != null )
         {
-            synchronized( Settings.downloader )
+            synchronized( MainActivity.downloader )
             {
-                Settings.downloader.setStatusField( null );
+                MainActivity.downloader.setStatusField( null );
             }
         }
         super.onPause();
@@ -108,16 +112,16 @@ public class MainActivity extends Activity
     protected void onResume()
     {
         super.onResume();
-        if( Settings.downloader != null )
+        if( MainActivity.downloader != null )
         {
-            synchronized( Settings.downloader )
+            synchronized( MainActivity.downloader )
             {
-                Settings.downloader.setStatusField( _tv );
-                if( Settings.downloader.DownloadComplete )
+                MainActivity.downloader.setStatusField( _tv );
+                if( MainActivity.downloader.DownloadComplete )
                     downloaderFinished();
-                else if( Settings.downloader.DownloadFailed )
+                else if( MainActivity.downloader.DownloadFailed )
                 {
-                    Settings.downloader.DownloadFailed = false;
+                    MainActivity.downloader.DownloadFailed = false;
                     class Callback implements Runnable
                     {
                         MainActivity p;
@@ -145,11 +149,11 @@ public class MainActivity extends Activity
     @Override
     protected void onDestroy()
     {
-        if( Settings.downloader != null )
+        if( MainActivity.downloader != null )
         {
-            synchronized( Settings.downloader )
+            synchronized( MainActivity.downloader )
             {
-                Settings.downloader.setStatusField( null );
+                MainActivity.downloader.setStatusField( null );
             }
         }
         super.onDestroy();
@@ -178,7 +182,7 @@ public class MainActivity extends Activity
             {
                 setUpStatusLabel();
                 Log.i( "MainActivity", "libSDL: Starting downloader" );
-                Settings.downloader = new DataDownloader( Parent, Parent._tv );
+                MainActivity.downloader = new DataDownloader( Parent, Parent._tv );
             }
         }
         Callback cb = new Callback();
@@ -188,19 +192,17 @@ public class MainActivity extends Activity
     
     public void downloaderFinished()
     {
-        Settings.downloader = null;
-        Settings.mupen64plus_cfg = new Config( Settings.paths.mupen64plus_cfg );
-        Settings.gui_cfg = new Config( Settings.paths.gui_cfg );
-        Settings.error_log = new Config( Settings.paths.error_log );
-        Settings.gui_cfg.put( "GENERAL", "upgraded_1.9", "1" );
-        Settings.gui_cfg.save();
+        MainActivity.downloader = null;
+
+        // Record that the update completed
+        Settings.device.setUpgraded19( true );
         
         // Restore saves if they were backed up:
-        File savesBak = new File( Settings.paths.restoreDir + "/data/save" );
+        File savesBak = new File( Settings.path.savesBackupDir );
         if( savesBak.exists() )
         {
-            Utility.copyFile( savesBak, new File( Settings.paths.dataDir + "/data/save" ) );
-            Utility.deleteFolder( new File( Settings.paths.restoreDir ) );
+            Utility.copyFile( savesBak, new File( Settings.path.savesDir ) );
+            Utility.deleteFolder( new File( Settings.path.restoreDir ) );
         }
         
         Intent intent = new Intent( this, MenuActivity.class );

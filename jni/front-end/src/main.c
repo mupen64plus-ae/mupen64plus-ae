@@ -137,48 +137,48 @@ char *trim(char *str)
     return str;
 }
 
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_pauseEmulator(
+void Java_paulscode_android_mupen64plusae_NativeMethods_pauseEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_PAUSE, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_resumeEmulator(
+void Java_paulscode_android_mupen64plusae_NativeMethods_resumeEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_RESUME, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_stopEmulator(
+void Java_paulscode_android_mupen64plusae_NativeMethods_stopEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STOP, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_stateSetSlotEmulator(
+void Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSlotEmulator(
                                     JNIEnv* env, jclass cls, jint slotID )
 {
     (*CoreDoCommand) ( M64CMD_STATE_SET_SLOT, (int) slotID, NULL );
 }
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_stateSaveEmulator(
+void Java_paulscode_android_mupen64plusae_NativeMethods_stateSaveEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STATE_SAVE, 1, NULL );
 }
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_stateLoadEmulator(
+void Java_paulscode_android_mupen64plusae_NativeMethods_stateLoadEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STATE_LOAD, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_fileSaveEmulator(
+void Java_paulscode_android_mupen64plusae_NativeMethods_fileSaveEmulator(
                                     JNIEnv* env, jclass cls, jstring filename )
 {
     const char *nativeString = (*env)->GetStringUTFChars( env, filename, 0 );
     (*CoreDoCommand) ( M64CMD_STATE_SAVE, 1, (void *) nativeString );
     (*env)->ReleaseStringUTFChars( env, filename, nativeString );
 }
-void Java_paulscode_android_mupen64plusae_GameActivityCommon_fileLoadEmulator(
+void Java_paulscode_android_mupen64plusae_NativeMethods_fileLoadEmulator(
                                     JNIEnv* env, jclass cls, jstring filename )
 {
     const char *nativeString = (*env)->GetStringUTFChars( env, filename, 0 );
@@ -186,7 +186,7 @@ void Java_paulscode_android_mupen64plusae_GameActivityCommon_fileLoadEmulator(
     (*env)->ReleaseStringUTFChars( env, filename, nativeString );
 }
 
-jint Java_paulscode_android_mupen64plusae_GameActivityCommon_stateEmulator(
+jint Java_paulscode_android_mupen64plusae_NativeMethods_stateEmulator(
                                     JNIEnv* env, jclass cls)
 {
     int state = 0;
@@ -202,7 +202,7 @@ jint Java_paulscode_android_mupen64plusae_GameActivityCommon_stateEmulator(
 }
 
 static char strBuff[1024];
-jstring Java_paulscode_android_mupen64plusae_GameActivityCommon_nativeGetHeaderName(
+jstring Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderName(
                                        JNIEnv* env, jclass cls, jstring jFilename )
 {
     const char *nativeS = (*env)->GetStringUTFChars( env, jFilename, 0 );
@@ -243,7 +243,7 @@ jstring Java_paulscode_android_mupen64plusae_GameActivityCommon_nativeGetHeaderN
 
     return (*env)->NewStringUTF( env, strBuff );
 }
-jstring Java_paulscode_android_mupen64plusae_GameActivityCommon_nativeGetHeaderCRC(
+jstring Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderCRC(
                                        JNIEnv* env, jclass cls, jstring jFilename )
 {
     const char *nativeS = (*env)->GetStringUTFChars( env, jFilename, 0 );

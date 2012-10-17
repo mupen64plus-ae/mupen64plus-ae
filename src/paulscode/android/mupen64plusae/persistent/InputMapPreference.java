@@ -20,12 +20,10 @@
  * Override implementations inspired by
  *   http://stackoverflow.com/questions/4505845/concise-way-of-writing-new-dialogpreference-classes
  */
-package paulscode.android.mupen64plusae.preference;
+package paulscode.android.mupen64plusae.persistent;
 
-import paulscode.android.mupen64plusae.InputMap;
 import paulscode.android.mupen64plusae.R;
-import paulscode.android.mupen64plusae.R.id;
-import paulscode.android.mupen64plusae.R.layout;
+import paulscode.android.mupen64plusae.input.InputMap;
 import paulscode.android.mupen64plusae.input.InputTranslator;
 import paulscode.android.mupen64plusae.input.KeyAxisTranslator;
 import paulscode.android.mupen64plusae.input.KeyTranslator;
@@ -52,7 +50,7 @@ public class InputMapPreference extends DialogPreference implements InputTransla
     private float[] mInitialStrengths;
     private Button[] mN64ToButton = new Button[InputMap.NUM_INPUTS];
     private TextView mFeedbackText;
-    private InputTranslator mFunnel;
+    private InputTranslator mTranslator;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -98,31 +96,31 @@ public class InputMapPreference extends DialogPreference implements InputTransla
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
             // For Android 3.0 and below, we can only listen to keyboards
-            KeyTranslator funnel = new KeyTranslator();
+            KeyTranslator translator = new KeyTranslator();
             
             // Set the formula for decoding special analog IMEs
-            funnel.setImeFormula( ImeFormula.DEFAULT );
+            translator.setImeFormula( ImeFormula.DEFAULT );
             
             // Connect the upstream end of the funnel
-            view.setOnKeyListener( funnel );
-            mFunnel = funnel;
+            view.setOnKeyListener( translator );
+            mTranslator = translator;
         }
         else
         {
             // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            KeyAxisTranslator funnel = new KeyAxisTranslator();
+            KeyAxisTranslator translator = new KeyAxisTranslator();
             
             // Set the formula for decoding special analog IMEs
-            funnel.setImeFormula( ImeFormula.DEFAULT );
+            translator.setImeFormula( ImeFormula.DEFAULT );
             
             // Connect the upstream end of the funnel
-            view.setOnKeyListener( funnel );
-            view.setOnGenericMotionListener( funnel );
-            mFunnel = funnel;
+            view.setOnKeyListener( translator );
+            view.setOnGenericMotionListener( translator );
+            mTranslator = translator;
         }
         
         // Connect the downstream end of the funnel
-        mFunnel.registerListener( this );
+        mTranslator.registerListener( this );
     }
 
     @Override

@@ -63,7 +63,7 @@ public abstract class InputTranslator
         if( inputCode > 0 )
         {
             if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
-                return "KEY " + inputCode;
+                return "KEYCODE_" + inputCode;
             else
                 return KeyEvent.keyCodeToString( inputCode );
         }
@@ -72,7 +72,7 @@ public abstract class InputTranslator
             int axis = inputToAxisCode( inputCode );
             String direction = inputToAxisDirection( inputCode ) ? " (+)" : " (-)";
             if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
-                return "AXIS " + axis + direction;
+                return "AXIS_" + axis + direction;
             else
                 return MotionEvent.axisToString( axis ) + direction;
         }

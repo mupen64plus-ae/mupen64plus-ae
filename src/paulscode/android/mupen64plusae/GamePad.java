@@ -7,10 +7,8 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Set;
 
-import paulscode.android.mupen64plusae.preference.Config;
-import paulscode.android.mupen64plusae.preference.Settings;
-
-
+import paulscode.android.mupen64plusae.persistent.Config;
+import paulscode.android.mupen64plusae.persistent.Settings;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -142,7 +140,7 @@ public class GamePad extends View
     {
         this.resources = resources;
         for( int x = 0; x < 10; x++ )
-            numberImages[x] = new Image( resources, Settings.paths.dataDir + "/skins/fonts/" +
+            numberImages[x] = new Image( resources, Settings.path.dataDir + "/skins/fonts/" +
                                          fpsFont + "/" + x + ".png" );
     }
     
@@ -421,8 +419,8 @@ public class GamePad extends View
             if( redrawThread != null )
                 redrawThread.redraw = true;
         }
-        GameActivityCommon.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY );  // TODO: implement multi-controller
-        GameActivityCommon.updateSDLButtonStates( SDLButtonPressed, SDLButtonCodes, SDLButtonCount );
+        NativeMethods.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY );  // TODO: Implement multi-controller
+        GameActivity.updateSDLButtonStates( SDLButtonPressed, SDLButtonCodes, SDLButtonCount );
     }
 
     /**
@@ -495,6 +493,23 @@ public class GamePad extends View
         }
     }
 
+    protected void loadPad()
+    {
+        // TODO: Encapsulate call to overloaded method
+//        if ( !Settings.user.touchscreenEnabled)
+//            Game.mGamePad.loadPad( null );
+//        else if( !Settings.user.touchscreenLayoutIndex.isEmpty() )
+//            Game.mGamePad.loadPad( Settings.user.touchscreenLayoutIndex );
+//        else if( Game.mGamePadListing.numPads > 0 )
+//            Game.mGamePad.loadPad( Game.mGamePadListing.padNames[0] );
+//        else
+//        {
+//            Game.mGamePad.loadPad( null );
+//            Log.v( "GameActivity", "No gamepad skins found" );
+//            Log.v( "GameActivityXperiaPlay", "No gamepad skins found" );
+//        }
+    }
+    
     /**
      * Loads the specified gamepad skin
      * @param skin Name of the layout skin to load.
@@ -564,7 +579,7 @@ public class GamePad extends View
         if( skin == null )
             return;  // No skin was specified, so we are done.. quit
         // Load the configuration file (pad.ini):
-        Config pad_ini = new Config( Settings.paths.dataDir + "/skins/gamepads/" + skin + "/pad.ini" );
+        Config pad_ini = new Config( Settings.path.dataDir + "/skins/gamepads/" + skin + "/pad.ini" );
 
         // Look up the game-pad layout credits:
         name = pad_ini.get( "INFO", "name" );
@@ -656,11 +671,11 @@ public class GamePad extends View
                         val = val.toLowerCase();  // Lets not make this part case-sensitive
                         if( val.contains( "analog" ) )
                         {  // Analog control (PNG image format)
-                            analogImage = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
+                            analogImage = new Image( resources, Settings.path.dataDir + "/skins/gamepads/" +
                                                      skin + "/" + filename + ".png" );
                             if( val.contains( "hat" ) )
                             {  // There's a "stick" image.. same name, with "_2" appended:
-                                hatImage = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
+                                hatImage = new Image( resources, Settings.path.dataDir + "/skins/gamepads/" +
                                                       skin + "/" + filename + "_2.png" );
                                 // Create the thread for redrawing the "stick" when it moves:
                                 redrawThread.redraw = false;
@@ -687,7 +702,7 @@ public class GamePad extends View
                         {  // FPS indicator (PNG image format)
                             if( Settings.user.touchscreenFrameRate )
                             {
-                                fpsImage = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
+                                fpsImage = new Image( resources, Settings.path.dataDir + "/skins/gamepads/" +
                                                       skin + "/" + filename + ".png" );
                                 // Position (percentages of the screen dimensions):
                                 fpsXpercent = Utility.toInt( section.get( "x" ), 0 );
@@ -708,12 +723,12 @@ public class GamePad extends View
                                     try
                                     {  // Make sure we can actually load them (they might not even exist)
                                         for( x = 0; x < 10; x++ )
-                                            numberImages[x] = new Image( resources, Settings.paths.dataDir + "/skins/fonts/" +
+                                            numberImages[x] = new Image( resources, Settings.path.dataDir + "/skins/fonts/" +
                                                                          fpsFont + "/" + x + ".png" );
                                     }
                                     catch( Exception e )
                                     {  // Problem, let the user know
-                                        Log.e( "GamePad", "Problem loading font '" + Settings.paths.dataDir + "/skins/fonts/" +
+                                        Log.e( "GamePad", "Problem loading font '" + Settings.path.dataDir + "/skins/fonts/" +
                                                fpsFont + "/" + x + ".png', error message: " + e.getMessage() );
                                     }
                                 }
@@ -732,9 +747,9 @@ public class GamePad extends View
                         {  // A button control (may contain one or more N64 buttons and/or SDL buttons)
                             // The drawable image is in PNG image format
                             // The color mask image is in BMP image format (doesn't actually get drawn)
-                            buttons[buttonCount] = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
+                            buttons[buttonCount] = new Image( resources, Settings.path.dataDir + "/skins/gamepads/" +
                                                               skin + "/" + filename + ".png" );
-                            masks[buttonCount] = new Image( resources, Settings.paths.dataDir + "/skins/gamepads/" +
+                            masks[buttonCount] = new Image( resources, Settings.path.dataDir + "/skins/gamepads/" +
                                                             skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
                             xpercents[buttonCount] = Utility.toInt( section.get( "x" ), 0 );
@@ -1061,12 +1076,12 @@ public class GamePad extends View
             {  // Shut down by setting alive=false from another thread
                 if( redraw )
                 {  // Need to redraw the analog stick
-                    GameActivityCommon.mSingleton.runOnUiThread( redrawer );
+                    GameActivity.GameState.mSingleton.runOnUiThread( redrawer );
                 }
                 redraw = false;  // So it doesn't keep on redrawing every time
                 if( redrawFPS )
                 {  // Need to redraw the FPS indicator
-                    GameActivityCommon.mSingleton.runOnUiThread( redrawerFPS );
+                    GameActivity.GameState.mSingleton.runOnUiThread( redrawerFPS );
                 }
                 redrawFPS = false;  // So it doesn't keep redrawing every time
                 // Sleep for a while, to save the CPU:
