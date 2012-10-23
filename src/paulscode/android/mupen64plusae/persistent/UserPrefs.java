@@ -19,6 +19,8 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import java.io.File;
+
 import paulscode.android.mupen64plusae.input.InputMap;
 import android.content.SharedPreferences;
 
@@ -187,7 +189,7 @@ public class UserPrefs
         // Derived values
         isAudioEnabled = audioPlugin != null && audioPlugin != "";
         isXperiaEnabled = xperiaLayout != null && xperiaLayout != "";
-        isLastGameNull = lastGame == null || lastGame.length() > 0;
+        isLastGameNull = lastGame == null || !( new File(lastGame) ).exists();
         isLastGameZipped = lastGame != null && lastGame.length() > 3
                 && lastGame.substring( lastGame.length() - 3, lastGame.length() ).equalsIgnoreCase(
                         "zip" );
