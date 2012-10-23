@@ -15,15 +15,28 @@
         <item>Analog (by roymustang16)</item>
         <item>Digital (by roymustang16)</item>
         <item>Touch (by roymustang16)</item>
-        <item>FPS only (by Paul Lamb)</item>
     </string-array>
     <string-array name="touchscreenLayout_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
+        <item>Mupen64Plus-AE-Analog</item>
+        <item>Mupen64Plus-AE-Digital</item>
+        <item>Mupen64Plus-AE-Touch</item>
     </string-array>
-    <string name="touchscreenLayout_default">0</string>
+    <string name="touchscreenLayout_default">Mupen64Plus-AE-Analog</string>
+
+    <!-- Touchscreen Sizes -->
+    <string-array name="touchscreenSize_entries">
+        <item>Tiny</item>
+        <item>Small</item>
+        <item>Default</item>
+        <item>Tablet</item>
+    </string-array>
+    <string-array name="touchscreenSize_values">
+        <item>-Tiny</item>
+        <item>-Small</item>
+        <item></item>
+        <item>-Tablet</item>
+    </string-array>
+    <string name="touchscreenSize_default"></string>
 
     <!-- Gamepad Plugins -->
     <string-array name="gamepadPlugin_entries">
@@ -31,10 +44,10 @@
         <item>input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</item>
     </string-array>
     <string-array name="gamepadPlugin_values">
-        <item>-1</item>
-        <item>0</item>
+        <item></item>
+        <item>libinput-sdl.so</item>
     </string-array>
-    <string name="gamepadPlugin_default">0</string>
+    <string name="gamepadPlugin_default">libinput-sdl.so</string>
     
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries">
@@ -42,10 +55,10 @@
         <item>gles2rice, v0.1.0(b) (GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</item>
     </string-array>
     <string-array name="videoPlugin_values">
-        <item>0</item>
-        <item>1</item>
+        <item>libgles2n64.so</item>
+        <item>libgles2rice.so</item>
     </string-array>
-    <string name="videoPlugin_default">0</string>
+    <string name="videoPlugin_default">libgles2n64.so</string>
 
     <!-- Audio Plugins -->
     <string-array name="audioPlugin_entries">
@@ -53,10 +66,10 @@
         <item>audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</item>
     </string-array>
     <string-array name="audioPlugin_values">
-        <item>-1</item>
-        <item>0</item>
+        <item></item>
+        <item>libaudio-sdl.so</item>
     </string-array>
-    <string name="audioPlugin_default">0</string>
+    <string name="audioPlugin_default">libaudio-sdl.so</string>
     
     <!-- Xperia Play Touchpads -->
     <string-array name="xperiaPlugin_entries">
@@ -65,11 +78,11 @@
         <item>Left pad: C buttons;  Right pad: Analog control</item>
     </string-array>
     <string-array name="xperiaPlugin_values">
-        <item>-1</item>
-        <item>0</item>
-        <item>1</item>
+        <item></item>
+        <item>Mupen64Plus-AE-Xperia-Play</item>
+        <item>Mupen64Plus-AE-Analog-Right</item>
     </string-array>
-    <string name="xperiaPlugin_default">-1</string>
+    <string name="xperiaPlugin_default"></string>
 
     <!-- RSP Plugins -->
     <string-array name="rspPlugin_entries">
@@ -78,20 +91,20 @@
         <item>rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</item>
     </string-array>
     <string-array name="rspPlugin_values">
-        <item>-1</item>
-        <item>0</item>
-        <item>1</item>
+        <item></item>
+        <item>librsp-hle.so</item>
+        <item>librsp-hle-nosound.so</item>
     </string-array>
-    <string name="rspPlugin_default">0</string>
+    <string name="rspPlugin_default">librsp-hle.so</string>
     
     <!-- Core Plugins -->
     <string-array name="corePlugin_entries">
         <item>core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</item>
     </string-array>
     <string-array name="corePlugin_values">
-        <item>0</item>
+        <item>libcore.so</item>
     </string-array>
-    <string name="corePlugin_default">0</string>
+    <string name="corePlugin_default">libcore.so</string>
     
     <!-- GLES2N64 Frameskip List -->
     <string-array name="gles2N64Frameskip_entries">

@@ -2,212 +2,150 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.persistent.Config;
-import paulscode.android.mupen64plusae.persistent.Settings;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
+import paulscode.android.mupen64plusae.persistent.Path;
+import paulscode.android.mupen64plusae.util.DataDownloader;
+import paulscode.android.mupen64plusae.util.ErrorLogger;
+import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.Updater;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
 // TODO: Comment thoroughly
 public class MainActivity extends Activity
-{
-    // TODO: Which fields need to be public? static?
-    public ImageView _img = null;
-    public TextView _tv = null;
-    public LinearLayout _layout = null;
-    public LinearLayout _layout2 = null;
-    public FrameLayout _videoLayout = null;
-    public static DataDownloader downloader = null;
+{    
+    private TextView mTextView = null;
     
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
         
-        Settings.refreshPath( this );
-        ErrorLogger.initialize( Settings.path.error_log );
-        Settings.refreshDevice( this.getSharedPreferences( Settings.path.devicePrefName, Context.MODE_PRIVATE ) );
-        Settings.mupen64plus_cfg = new Config( Settings.path.mupen64plus_cfg );
+        // Get persisted system settings
+        Globals.path = new Path( this );
+        Globals.appData = new AppData( this, Globals.path.appSettingsFilename );
+        Globals.mupen64plus_cfg = new ConfigFile( Globals.path.mupen64plus_cfg );
+
+        // Initialize the error logger
+        ErrorLogger.initialize( Globals.path.error_log );
         
-        // fullscreen mode
+        // Initialize the status bar notifier
+        Notifier.initialize( this );
+        
+        // Make sure the app is up to date
+        //Globals.app.resetToDefaults(); // TODO: Comment out before release
+        Updater.checkFirstRun( this );
+        Updater.checkConfigFiles( this );
+        Updater.checkLatestVersion( this );        
+
+        // Configure full-screen mode
         requestWindowFeature( Window.FEATURE_NO_TITLE );
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN );
-        if( GameActivity.GameState.inhibitSuspend )
-            getWindow().setFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
+        getWindow().setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
         
-        _layout = new LinearLayout( this );
-        _layout.setOrientation( LinearLayout.VERTICAL );
-        _layout.setLayoutParams( new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT ) );
+        // Keep screen on under certain conditions
+        if( Globals.INHIBIT_SUSPEND )
+            getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
-        _layout2 = new LinearLayout( this );
-        _layout2.setLayoutParams( new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT ) );
-        _layout.addView( _layout2 );
-        _img = new ImageView( this );
-        _img.setScaleType( ImageView.ScaleType.FIT_CENTER ); // FIT_XY
-        try
+        // Lay out the content
+        setContentView( R.layout.main );
+        mTextView = (TextView) findViewById( R.id.mainText );
+        
+        // Run the downloader on a separate thread
+        // TODO: Understand the processes here
+        runOnUiThread( new DownloaderThread( this ) );
+        //(new Thread(new DownloaderThread(this))).start();
+        //downloader = new DataDownloader(this, mTextView);
+        //downloader.start();
+    }
+
+    private class DownloaderThread implements Runnable
+    {
+        MainActivity mParent;
+        
+        public DownloaderThread( MainActivity parent )
         {
-            _img.setImageDrawable( Drawable.createFromStream( getAssets().open( "logo.png" ),
-                    "logo.png" ) );
+            mParent = parent;
         }
-        catch( Exception e )
-        {
-            _img.setImageResource( R.drawable.publisherlogo );
-        }
-        _img.setLayoutParams( new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT ) );
-        _layout.addView( _img );
-        _videoLayout = new FrameLayout( this );
-        _videoLayout.addView( _layout );
-        setContentView( _videoLayout );
         
-        class Callback implements Runnable
-        {
-            MainActivity p;
-            
-            Callback( MainActivity _p )
-            {
-                p = _p;
-            }
-            
-            public void run()
-            {
-                p.startDownloader();
-            }
+        public void run()
+        {            
+            Log.i( "MainActivity", "libSDL: Starting downloader" );
+            Globals.downloader = new DataDownloader( mParent, mParent.mTextView );
         }
-        ;
-        
-        Thread downloaderThread = null;
-        downloaderThread = new Thread( new Callback( this ) );
-        downloaderThread.start();
     }
     
-    @Override
-    protected void onPause()
+    public void onDownloaderFinished()
     {
-        if( MainActivity.downloader != null )
+        Globals.downloader = null;
+
+        // Record that the update completed
+        Globals.appData.setUpgradedVer19( true );
+        
+        // Restore saves if they were backed up:
+        File savesBak = new File( Globals.path.savesBackupDir );
+        if( savesBak.exists() )
         {
-            synchronized( MainActivity.downloader )
-            {
-                MainActivity.downloader.setStatusField( null );
-            }
+            Utility.copyFile( savesBak, new File( Globals.path.defaultSavesDir ) );
+            Utility.deleteFolder( new File( Globals.path.dataBackupDir ) );
         }
-        super.onPause();
+        
+        // Launch the menu in a new activity
+        Intent intent = new Intent( this, MenuActivity.class );
+        intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+        startActivity( intent );
+        finish();
     }
     
     @Override
     protected void onResume()
     {
         super.onResume();
-        if( MainActivity.downloader != null )
+        if( Globals.downloader != null )
         {
-            synchronized( MainActivity.downloader )
+            synchronized( Globals.downloader )
             {
-                MainActivity.downloader.setStatusField( _tv );
-                if( MainActivity.downloader.DownloadComplete )
-                    downloaderFinished();
-                else if( MainActivity.downloader.DownloadFailed )
+                Globals.downloader.setStatusField( mTextView );
+                if( Globals.downloader.DownloadComplete )
+                    onDownloaderFinished();
+                else if( Globals.downloader.DownloadFailed )
                 {
-                    MainActivity.downloader.DownloadFailed = false;
-                    class Callback implements Runnable
-                    {
-                        MainActivity p;
-                        
-                        Callback( MainActivity _p )
-                        {
-                            p = _p;
-                        }
-                        
-                        public void run()
-                        {
-                            p.startDownloader();
-                        }
-                    }
-                    ;
-                    
-                    Thread downloaderThread = null;
-                    downloaderThread = new Thread( new Callback( this ) );
-                    downloaderThread.start();
+                    Globals.downloader.DownloadFailed = false;
+                    runOnUiThread( new DownloaderThread( this ) );
                 }
             }
         }
     }
     
     @Override
+    protected void onPause()
+    {
+        if( Globals.downloader != null )
+        {
+            synchronized( Globals.downloader )
+            {
+                Globals.downloader.setStatusField( null );
+            }
+        }
+        super.onPause();
+    }
+    
+    @Override
     protected void onDestroy()
     {
-        if( MainActivity.downloader != null )
+        if( Globals.downloader != null )
         {
-            synchronized( MainActivity.downloader )
+            synchronized( Globals.downloader )
             {
-                MainActivity.downloader.setStatusField( null );
+                Globals.downloader.setStatusField( null );
             }
         }
         super.onDestroy();
-    }
-    
-    public void setUpStatusLabel()
-    {
-        MainActivity Parent = this;
-        if( Parent._tv == null )
-        {
-            Parent._tv = new TextView( Parent );
-            Parent._tv.setMaxLines( 1 );
-            Parent._tv.setText( R.string.initializing );
-            Parent._layout2.addView( Parent._tv );
-        }
-    }
-    
-    public void startDownloader()
-    {
-        Log.i( "MainActivity", "libSDL: Starting data downloader" );
-        class Callback implements Runnable
-        {
-            public MainActivity Parent;
-            
-            public void run()
-            {
-                setUpStatusLabel();
-                Log.i( "MainActivity", "libSDL: Starting downloader" );
-                MainActivity.downloader = new DataDownloader( Parent, Parent._tv );
-            }
-        }
-        Callback cb = new Callback();
-        cb.Parent = this;
-        this.runOnUiThread( cb );
-    }
-    
-    public void downloaderFinished()
-    {
-        MainActivity.downloader = null;
-
-        // Record that the update completed
-        Settings.device.setUpgraded19( true );
-        
-        // Restore saves if they were backed up:
-        File savesBak = new File( Settings.path.savesBackupDir );
-        if( savesBak.exists() )
-        {
-            Utility.copyFile( savesBak, new File( Settings.path.savesDir ) );
-            Utility.deleteFolder( new File( Settings.path.restoreDir ) );
-        }
-        
-        Intent intent = new Intent( this, MenuActivity.class );
-        intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-        startActivity( intent );
-        finish();
     }
 }

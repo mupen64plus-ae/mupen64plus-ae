@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/ingameSlot"
+        android:title="@string/ingameSlot">
+        <menu>
+            <item
+                android:id="@+id/slot0"
+                android:title="Slot 0"/>
+            <item
+                android:id="@+id/slot1"
+                android:title="Slot 1"/>
+            <item
+                android:id="@+id/slot2"
+                android:title="Slot 2"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/ingameSave"
+        android:title="@string/ingameSave"/>
+    <item
+        android:id="@+id/ingameLoad"
+        android:title="@string/ingameLoad"/>
+    <item
+        android:id="@+id/ingameMenu"
+        android:title="@string/ingameMenu"/>
+
+</menu>

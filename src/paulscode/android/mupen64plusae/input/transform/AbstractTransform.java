@@ -17,17 +17,15 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.input;
+package paulscode.android.mupen64plusae.input.transform;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-public abstract class InputTranslator
+public abstract class AbstractTransform
 {
     public interface Listener
     {
@@ -36,24 +34,21 @@ public abstract class InputTranslator
         public void onInput( int[] inputCodes, float[] strengths );
     }
     
-    private List<InputTranslator.Listener> mListeners;
+    private SubscriptionManager<AbstractTransform.Listener> mPublisher;
     
-    public InputTranslator()
+    protected AbstractTransform()
     {
-        mListeners = new ArrayList<InputTranslator.Listener>();
+        mPublisher = new SubscriptionManager<AbstractTransform.Listener>();
     }
     
-    public void registerListener( InputTranslator.Listener listener )
+    public void registerListener( AbstractTransform.Listener listener )
     {
-        if( ( listener != null ) && !mListeners.contains( listener ) )
-            mListeners.add( listener );
+        mPublisher.subscribe( listener );
     }
     
-    public void unregisterListener( InputTranslator.Listener listener )
+    public void unregisterListener( AbstractTransform.Listener listener )
     {
-        if( listener != null )
-            while( mListeners.remove( listener ) )
-                ;
+        mPublisher.unsubscribe( listener );
     }
     
     @TargetApi( 12 )
@@ -87,13 +82,13 @@ public abstract class InputTranslator
     
     protected void notifyListeners( int inputCode, float strength )
     {
-        for( Listener listener : mListeners )
+        for( Listener listener : mPublisher.getSubscribers() )
             listener.onInput( inputCode, strength );
     }
     
     protected void notifyListeners( int[] inputCodes, float[] strengths )
     {
-        for( Listener listener : mListeners )
+        for( Listener listener : mPublisher.getSubscribers() )
             listener.onInput( inputCodes.clone(), strengths.clone() );
     }
     

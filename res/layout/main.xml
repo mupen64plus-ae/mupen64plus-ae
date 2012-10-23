@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-    <paulscode.android.mupen64plusae.SDLSurface
-        android:id="@+id/my_surface"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
-    <paulscode.android.mupen64plusae.GamePad
-        android:id="@+id/my_gamepad"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
-</merge>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <TextView
+        android:id="@+id/mainText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:maxLines="1"
+        android:text="@string/initializing" />
+    <ImageView
+        android:id="@+id/mainImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/publisherlogo" />
 
+</LinearLayout>

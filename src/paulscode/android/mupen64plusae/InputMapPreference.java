@@ -20,14 +20,14 @@
  * Override implementations inspired by
  *   http://stackoverflow.com/questions/4505845/concise-way-of-writing-new-dialogpreference-classes
  */
-package paulscode.android.mupen64plusae.persistent;
+package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.InputMap;
-import paulscode.android.mupen64plusae.input.InputTranslator;
-import paulscode.android.mupen64plusae.input.KeyAxisTranslator;
-import paulscode.android.mupen64plusae.input.KeyTranslator;
-import paulscode.android.mupen64plusae.input.KeyTranslator.ImeFormula;
+import paulscode.android.mupen64plusae.input.transform.AbstractTransform;
+import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
+import paulscode.android.mupen64plusae.input.transform.KeyTransform;
+import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -38,7 +38,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class InputMapPreference extends DialogPreference implements InputTranslator.Listener,
+public class InputMapPreference extends DialogPreference implements AbstractTransform.Listener,
         OnClickListener
 {
     private static final float STRENGTH_THRESHOLD = 0.1f;
@@ -50,7 +50,7 @@ public class InputMapPreference extends DialogPreference implements InputTransla
     private float[] mInitialStrengths;
     private Button[] mN64ToButton = new Button[InputMap.NUM_INPUTS];
     private TextView mFeedbackText;
-    private InputTranslator mTranslator;
+    private AbstractTransform mTranslator;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -96,7 +96,7 @@ public class InputMapPreference extends DialogPreference implements InputTransla
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
             // For Android 3.0 and below, we can only listen to keyboards
-            KeyTranslator translator = new KeyTranslator();
+            KeyTransform translator = new KeyTransform();
             
             // Set the formula for decoding special analog IMEs
             translator.setImeFormula( ImeFormula.DEFAULT );
@@ -108,7 +108,7 @@ public class InputMapPreference extends DialogPreference implements InputTransla
         else
         {
             // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            KeyAxisTranslator translator = new KeyAxisTranslator();
+            KeyAxisTransform translator = new KeyAxisTransform();
             
             // Set the formula for decoding special analog IMEs
             translator.setImeFormula( ImeFormula.DEFAULT );
@@ -147,7 +147,7 @@ public class InputMapPreference extends DialogPreference implements InputTransla
         mLastInputCode = inputCode;
         mLastStrength = strength;
         highlightButton( mLastInputCode, mLastStrength, true );
-        mFeedbackText.setText( InputTranslator.getInputName( mLastInputCode ) );
+        mFeedbackText.setText( AbstractTransform.getInputName( mLastInputCode ) );
     }
     
     public void onInput( int[] inputCodes, float[] strengths )
@@ -185,7 +185,7 @@ public class InputMapPreference extends DialogPreference implements InputTransla
             }
         }
         highlightButton( mLastInputCode, mLastStrength, true );
-        mFeedbackText.setText( InputTranslator.getInputName( mLastInputCode ) );
+        mFeedbackText.setText( AbstractTransform.getInputName( mLastInputCode ) );
     }
     
     private void highlightButton( int inputCode, float strength, boolean isActive )

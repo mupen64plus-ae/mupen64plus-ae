@@ -17,14 +17,14 @@
  * 
  * Authors: paulscode, littleguy77
  */
-package paulscode.android.mupen64plusae.input;
+package paulscode.android.mupen64plusae.input.transform;
 
 import paulscode.android.mupen64plusae.NativeMethods;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
-public class SensorTranslator extends InputTranslator implements SensorEventListener
+public class SensorTransform extends AbstractTransform implements SensorEventListener
 {
     public void onAccuracyChanged( Sensor sensor, int accuracy )
     {

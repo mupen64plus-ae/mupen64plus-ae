@@ -17,12 +17,12 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.input;
+package paulscode.android.mupen64plusae.input.transform;
 
 import android.view.KeyEvent;
 import android.view.View;
 
-public class KeyTranslator extends InputTranslator implements View.OnKeyListener
+public class KeyTransform extends AbstractTransform implements View.OnKeyListener
 {
     public enum ImeFormula
     {
@@ -31,14 +31,19 @@ public class KeyTranslator extends InputTranslator implements View.OnKeyListener
     
     private ImeFormula mImeFormula;
     
-    public KeyTranslator()
+    public KeyTransform()
     {
-        mImeFormula = ImeFormula.DEFAULT;
+        setImeFormula( ImeFormula.DEFAULT );
     }
     
-    public void setImeFormula( ImeFormula formula )
+    public ImeFormula getImeFormula()
     {
-        mImeFormula = formula;
+        return mImeFormula;
+    }
+    
+    public void setImeFormula( ImeFormula imeFormula )
+    {
+        mImeFormula = imeFormula;
     }
     
     public boolean onKey( View v, int keyCode, KeyEvent event )
@@ -59,7 +64,7 @@ public class KeyTranslator extends InputTranslator implements View.OnKeyListener
         else
         {
             // Analog axis changed state, decode using IME-specific formula
-            switch( mImeFormula )
+            switch( getImeFormula() )
             {
                 case DEFAULT:
                 case USB_BT_JOYSTICK_CENTER:

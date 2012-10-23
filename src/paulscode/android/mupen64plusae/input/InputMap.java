@@ -19,10 +19,16 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.util.SparseIntArray;
 
 public class InputMap
 {
+    public interface Listener
+    {
+        public void onMapChanged( InputMap newValue );
+    }
+    
     // Indices into N64 inputs array
     public static final int UNMAPPED = -1;
     public static final int DPD_R = 0;
@@ -47,11 +53,13 @@ public class InputMap
     
     private int[] mN64ToCode;
     private SparseIntArray mCodeToN64;
+    private SubscriptionManager<InputMap.Listener> mPublisher;
     
     public InputMap()
     {
         mN64ToCode = new int[NUM_INPUTS];
         mCodeToN64 = new SparseIntArray( NUM_INPUTS );
+        mPublisher = new SubscriptionManager<InputMap.Listener>();
     }
     
     public InputMap( String serializedMap )
@@ -60,13 +68,73 @@ public class InputMap
         deserialize( serializedMap );
     }
     
-    public int get( int inputCode )
+    public void apply( int inputCode, float strength, AbstractController controller )
     {
-        return mCodeToN64.get( inputCode, UNMAPPED );
+        boolean state = strength > 0.5;
+        switch( get( inputCode ) )
+        {
+            case DPD_R:
+                controller.mDpadR = state;
+                break;
+            case DPD_L:
+                controller.mDpadL = state;
+                break;
+            case DPD_D:
+                controller.mDpadD = state;
+                break;
+            case DPD_U:
+                controller.mDpadU = state;
+                break;
+            case START:
+                controller.mBtnStart = state;
+                break;
+            case BTN_Z:
+                controller.mBtnZ = state;
+                break;
+            case BTN_B:
+                controller.mBtnB = state;
+                break;
+            case BTN_A:
+                controller.mBtnA = state;
+                break;
+            case CPD_R:
+                controller.mBtnCR = state;
+                break;
+            case CPD_L:
+                controller.mBtnCL = state;
+                break;
+            case CPD_D:
+                controller.mBtnCD = state;
+                break;
+            case CPD_U:
+                controller.mBtnCU = state;
+                break;
+            case BTN_R:
+                controller.mBtnR = state;
+                break;
+            case BTN_L:
+                controller.mBtnL = state;
+                break;
+            case AXIS_R:
+                controller.mAxisFractionX = strength;
+                break;
+            case AXIS_L:
+                controller.mAxisFractionX = -strength;
+                break;
+            case AXIS_D:
+                controller.mAxisFractionY = -strength;
+                break;
+            case AXIS_U:
+                controller.mAxisFractionY = strength;
+                break;
+            default:
+                break;
+        }
     }
     
-    public void mapInput( int inputCode, int n64Index )
+    private void mapInput( int inputCode, int n64Index, boolean notify )
     {
+        // Map the input if a valid index was given
         if( n64Index >= 0 && n64Index < NUM_INPUTS )
         {
             // Get the last code mapped to this index
@@ -80,10 +148,46 @@ public class InputMap
             if( inputCode != 0 )
                 mCodeToN64.put( inputCode, n64Index );
         }
+        
+        // Notify listeners that the map has changed
+        if( notify )
+            notifyListeners();
+    }
+    
+    public int get( int inputCode )
+    {
+        return mCodeToN64.get( inputCode, UNMAPPED );
+    }
+    
+    public int[] getMappedInputCodes()
+    {
+        return mN64ToCode.clone();
+    }
+    
+    public void mapInput( int inputCode, int n64Index )
+    {
+        mapInput( inputCode, n64Index, true );
+    }
+    
+    public void registerListener( InputMap.Listener listener )
+    {
+        mPublisher.subscribe( listener );
+    }
+    
+    public void unregisterListener( InputMap.Listener listener )
+    {
+        mPublisher.unsubscribe( listener );
+    }
+    
+    public void notifyListeners()
+    {
+        for( Listener listener : mPublisher.getSubscribers() )
+            listener.onMapChanged( this );
     }
     
     public String serialize()
     {
+        // Serialize the map values to a comma-delimited string
         String result = "";
         for( int i = 0; i < mN64ToCode.length; i++ )
         {
@@ -96,18 +200,21 @@ public class InputMap
     {
         // Reset the map
         for( int i = 0; i < mN64ToCode.length; i++ )
-            mapInput( 0, i );
+            mapInput( 0, i, false );
         
-        // Read the new map values from the string
+        // Parse the new map values from the comma-delimited string
         if( s != null )
         {
             String[] strings = s.split( "," );
             for( int i = 0; i < Math.min( NUM_INPUTS, strings.length ); i++ )
-                mapInput( tryParse(strings[i], 0), i);            
+                mapInput( safeParse( strings[i], 0 ), i, false );
         }
+        
+        // Notify the change listeners
+        notifyListeners();
     }
     
-    private int tryParse( String s, int defaultValue )
+    private int safeParse( String s, int defaultValue )
     {
         try
         {

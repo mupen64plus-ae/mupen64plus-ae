@@ -1,11 +1,26 @@
+/**
+ * Mupen64PlusAE, an N64 emulator for the Android platform
+ * 
+ * Copyright (C) 2012 Paul Lamb
+ * 
+ * This file is part of Mupen64PlusAE.
+ * 
+ * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Authors: paulscode, littleguy77
+ */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-
-import paulscode.android.mupen64plusae.persistent.FilePreference;
-import paulscode.android.mupen64plusae.persistent.Settings;
-import android.app.NotificationManager;
-import android.content.Context;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.util.Notifier;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -16,88 +31,42 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
 
-// Use some deprecated functions to simplify backwards-compatibility
-@SuppressWarnings( "deprecation" )
-public class MenuActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
+public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
+        OnSharedPreferenceChangeListener
 {
-    public static MenuActivity mInstance = null;
+    Preference mMenuResume;
+    Preference mMenuResetPrefs;
+    Preference mMenuResetAppData;
     
+    @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        mInstance = this;
         
-        // Load preferences from XML and update view
+        // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
         
-        // Get user preferences
-        SharedPreferences userPrefs = PreferenceManager.getDefaultSharedPreferences( this );
-        Settings.refreshUser( userPrefs );
-        refreshPreferenceSummaries( userPrefs );
+        // Update the global convenience class
+        Globals.userPrefs = new UserPrefs( PreferenceManager.getDefaultSharedPreferences( this ) );
         
-        NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
-        notificationManager.cancel( GameActivity.GameState.NOTIFICATION_ID );
-        
-        Updater.checkFirstRun( this );
-        if( !Updater.checkv1_9( this ) )
-        {
-            finish();
-            return;
-        }
-        Updater.checkConfigFiles( this );
-        
-        findPreference( "menuResume" ).setOnPreferenceClickListener(
-                new OnPreferenceClickListener()
-                {
-                    public boolean onPreferenceClick( Preference preference )
-                    {
-                        // Resume the last game
-                        File f = new File( Settings.path.storageDir );
-                        if( !f.exists() )
-                        {
-                            Log.e( "MenuActivity",
-                                    "SD Card not accessable in method onListItemClick (menuResume)" );
-                            Runnable toastMessager = new Runnable()
-                            {
-                                public void run()
-                                {
-                                    Toast toast = Toast
-                                            .makeText(
-                                                    MenuActivity.mInstance,
-                                                    "App data not accessible (cable plugged in \"USB Mass Storage Device\" mode?)",
-                                                    Toast.LENGTH_LONG );
-                                    toast.setGravity( Gravity.BOTTOM, 0, 0 );
-                                    toast.show();
-                                }
-                            };
-                            runOnUiThread( toastMessager );
-                            return true;
-                        }
-                        Settings.mupen64plus_cfg.save();
-                        GameActivity.GameState.resumeLastSession = true;
-                        
-                        Intent intent = new Intent( mInstance, GameActivity.class );
-                        
-                        intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-                        startActivity( intent );
-                        mInstance.finish();
-                        mInstance = null;
-                        return true;
-                    }
-                } );
+        // Define the callback when the user presses certain menu items
+        mMenuResume = findPreference( "menuResume" );
+        mMenuResetPrefs = findPreference( "menuReset" );
+        mMenuResetAppData = findPreference( "menuResetAppData" );
+        mMenuResume.setOnPreferenceClickListener( this );
+        mMenuResetPrefs.setOnPreferenceClickListener( this );
+        mMenuResetAppData.setOnPreferenceClickListener( this );
     }
     
     @Override
     protected void onResume()
     {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        refreshSummaries( sharedPreferences );
+        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
         super.onResume();
-        PreferenceManager.getDefaultSharedPreferences( this )
-                .registerOnSharedPreferenceChangeListener( this );
     }
     
     @Override
@@ -111,25 +80,67 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         // Update the global convenience class
-        Settings.refreshUser( sharedPreferences );
-        refreshPreferenceSummaries( sharedPreferences );
+        Globals.userPrefs = new UserPrefs( sharedPreferences );
+        refreshSummaries( sharedPreferences );
     }
     
-    private void refreshPreferenceSummaries( SharedPreferences sharedPreferences )
+    @SuppressWarnings( "deprecation" )
+    private void refreshSummaries( SharedPreferences sharedPreferences )
     {
+        // Update the summary text in the menu for all ListPreferences
+        // Inspired by http://stackoverflow.com/a/531927/254218
+        // TODO: This still doesn't smell very good... has to be a better way
         for( String key : sharedPreferences.getAll().keySet() )
         {
-            // Update the summary text in the menu for list preferences
-            // Inspired by http://stackoverflow.com/a/531927/254218
             Preference preference = findPreference( key );
-            if( preference instanceof FilePreference )
-            {
-                ( (FilePreference) preference ).refreshItems();
-            }
             if( preference instanceof ListPreference )
             {
                 preference.setSummary( ( (ListPreference) preference ).getEntry() );
             }
         }
+    }
+    
+    public boolean onPreferenceClick( Preference preference )
+    {
+        if( preference == mMenuResume )
+        {
+            // Launch the last game in a new activity
+            if( !Globals.path.isSdCardAccessible() )
+            {
+                Log.e( "MenuActivity", "SD Card not accessable in method onPreferenceClick (menuResume)" );
+                Notifier.showToast(
+                        "App data not accessible (cable plugged in \"USB Mass Storage Device\" mode?)",
+                        this );
+                return true;
+            }
+            Globals.mupen64plus_cfg.save();
+            Globals.resumeLastSession = true;
+            
+            Intent intent = new Intent( this, GameActivity.class );
+            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+            startActivity( intent );
+            finish();
+            return true;
+        }
+        else if( preference == mMenuResetPrefs )
+        {
+            // Reset the user preferences
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( this );
+            preferences.edit().clear().commit();
+            PreferenceManager.setDefaultValues( this, R.xml.preferences, true );
+            
+            // Refresh the entire menu by restarting the activity
+            finish();
+            startActivity( getIntent() );
+            return true;
+        }
+        else if( preference == mMenuResetAppData )
+        {
+            // Reset the application data
+            Globals.appData.resetToDefaults();
+            return true;
+        }
+        // (To add handlers for other preferences, repeat this pattern and return true)
+        return false;
     }
 }

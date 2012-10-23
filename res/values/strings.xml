@@ -34,12 +34,6 @@
     <string name="other">Other</string>
     <string name="initializing">Initializing</string>
     
-    <!-- In-Game Menu (GameActivity*.java) -->
-    <string name="ingame_inc_slot">Slot++</string>
-    <string name="ingame_save">Save</string>
-    <string name="ingame_load">Load</string>
-    <string name="ingame_menu">Main menu</string>
-    
     <!-- Download Messages (DataDownloader.java) -->
     <string name="connecting_to">Connecting to %s</string>
     <string name="dl_finished">Finished</string>
@@ -50,13 +44,18 @@
     <string name="error_write">Write error (plugged in USB Mass Storage Device mode?) %s</string>
     <string name="failed_connecting_to">Failed connecting to %s</string>
     
-    <!-- In-Game Messages (GameActivity*.java, FileChooserActivity.java) -->
-    <string name="mupen64plus_started">Mupen64Plus Started</string>
-    <string name="savegame_slot">Savegame Slot</string>
-    <string name="saving_game">Saving Game</string>
-    <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com</string>
+    <!-- In-Game Messages (GameActivity.java) -->
+    <string name="mupen64plus_started">Mupen64Plus started</string>
+    <string name="savegame_slot">Savegame slot</string>
+    <string name="saving_game">Saving game</string>
+    <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com.</string>
     <string name="app_data_inaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
-     
+    
+    <!-- In-Game Menu (GameActivity.java) -->
+    <string name="ingameSlot">Slot</string>
+    <string name="ingameSave">Save</string>
+    <string name="ingameLoad">Load</string>
+    <string name="ingameMenu">Menu</string>
     
     <!-- ******************************************** -->
     <!-- Preference Menu Strings                      -->
@@ -67,11 +66,9 @@
     <!-- Main Menu -->
     <string name="menuResume_title">Play</string>
     <string name="lastGame_title">Game</string>
-    <string name="menuSettings_title">Settings</string>
+    <string name="mainSettings_title">Settings</string>
     <string name="menuHelp_title">Help</string>
     <string name="menuAbout_title">About</string>
-    <string name="menuDonate_title">Donate</string>
-    <string name="menuDonate_summary">Keep Mupen64Plus free and open-source!</string>
     
     <!-- Categories -->
     <string name="categoryPlugins_title">Hardware settings</string>
@@ -102,6 +99,7 @@
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/enable</string>
     <string name="touchscreenLayout_title">@string/layout</string>
+    <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenOctagonJoystick_title">Octagonal analog joystick</string>
     <string name="touchscreenRedrawAll_title">Redraw all</string>
     <string name="touchscreenRedrawAll_summary">Slower, fixes missing buttons bug</string>

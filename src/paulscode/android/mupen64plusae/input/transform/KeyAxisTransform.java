@@ -17,19 +17,19 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.input;
+package paulscode.android.mupen64plusae.input.transform;
 
 import android.annotation.TargetApi;
 import android.view.MotionEvent;
 import android.view.View;
 
 @TargetApi( 12 )
-public class KeyAxisTranslator extends KeyTranslator implements View.OnGenericMotionListener
+public class KeyAxisTransform extends KeyTransform implements View.OnGenericMotionListener
 {
     private int[] mInputCodes;
     private static final int DEFAULT_NUM_INPUTS = 128;
     
-    public KeyAxisTranslator()
+    public KeyAxisTransform()
     {
         // By default, listen to all possible gamepad axes
         mInputCodes = new int[DEFAULT_NUM_INPUTS];
@@ -39,7 +39,7 @@ public class KeyAxisTranslator extends KeyTranslator implements View.OnGenericMo
         }      
     }
     
-    public void setInputCodes( int[] inputCodeFilter )
+    public void setInputCodeFilter( int[] inputCodeFilter )
     {
         mInputCodes = inputCodeFilter.clone();
     }

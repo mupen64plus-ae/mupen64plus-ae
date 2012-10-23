@@ -34,9 +34,9 @@ import android.util.Log;
  * http://www.paulscode.com
  * 
  */
-public class Config
+public class ConfigFile
 {
-    public static Config gui_cfg = null;
+    public static ConfigFile gui_cfg = null;
 
     public String filename;  // Name of the config file.
     private HashMap<String, ConfigSection> configMap;  // Sections mapped by title for easy lookup
@@ -46,7 +46,7 @@ public class Config
      * Constructor: Reads the entire config file, and saves the data in 'configMap'
      * @param filename The config file to read from.
      */
-    public Config( String filename )  // Reads the entire config file and saves it in configMap
+    public ConfigFile( String filename )  // Reads the entire config file and saves it in configMap
     {
         this.filename = filename;
         load( filename );

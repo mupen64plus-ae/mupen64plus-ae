@@ -41,10 +41,9 @@
     To minimize app size, consider using Android's built-in resources when possible.
     For example, consider icon resources in "@android:drawable/..." instead of custom
     resources in "@drawable/...".       
-    ***********************************************************************************
--->
+    ***********************************************************************************-->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:mupen64="paulscode.android.mupen64plusae" >
+    xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae" >
 
     <Preference
         android:icon="@drawable/ic_play"
@@ -52,15 +51,16 @@
         android:title="@string/menuResume_title" >
     </Preference>
 
-    <paulscode.android.mupen64plusae.persistent.FilePreference
+    <paulscode.android.mupen64plusae.PathPreference
+        mupen64:selectionMode="1"
         android:icon="@drawable/ic_folder"
         android:key="lastGame"
         android:title="@string/lastGame_title" />
 
     <PreferenceScreen
         android:icon="@drawable/ic_settings"
-        android:key="menuSettings"
-        android:title="@string/menuSettings_title" >
+        android:key="mainSettings"
+        android:title="@string/mainSettings_title" >
         <PreferenceCategory
             android:key="categoryPlugins"
             android:title="@string/categoryPlugins_title" />
@@ -82,6 +82,14 @@
                 android:entryValues="@array/touchscreenLayout_values"
                 android:key="touchscreenLayout"
                 android:title="@string/touchscreenLayout_title" />
+
+            <ListPreference
+                android:defaultValue="@string/touchscreenSize_default"
+                android:dependency="touchscreenEnabled"
+                android:entries="@array/touchscreenSize_entries"
+                android:entryValues="@array/touchscreenSize_values"
+                android:key="touchscreenSize"
+                android:title="@string/touchscreenSize_title" />
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -113,25 +121,25 @@
                 android:key="gamepadPlugin"
                 android:title="@string/gamepadPlugin_title" />
 
-            <paulscode.android.mupen64plusae.persistent.InputMapPreference
+            <paulscode.android.mupen64plusae.InputMapPreference
                 android:dependency="gamepadEnabled"
                 android:dialogTitle="@string/gamepadMap_dialogTitle"
                 android:key="gamepadMap1"
                 android:summary="@string/gamepadMap_summary"
                 android:title="@string/gamepadMap1_title" />
-            <paulscode.android.mupen64plusae.persistent.InputMapPreference
+            <paulscode.android.mupen64plusae.InputMapPreference
                 android:dependency="gamepadEnabled"
                 android:dialogTitle="@string/gamepadMap_dialogTitle"
                 android:key="gamepadMap2"
                 android:summary="@string/gamepadMap_summary"
                 android:title="@string/gamepadMap2_title" />
-            <paulscode.android.mupen64plusae.persistent.InputMapPreference
+            <paulscode.android.mupen64plusae.InputMapPreference
                 android:dependency="gamepadEnabled"
                 android:dialogTitle="@string/gamepadMap_dialogTitle"
                 android:key="gamepadMap3"
                 android:summary="@string/gamepadMap_summary"
                 android:title="@string/gamepadMap3_title" />
-            <paulscode.android.mupen64plusae.persistent.InputMapPreference
+            <paulscode.android.mupen64plusae.InputMapPreference
                 android:dependency="gamepadEnabled"
                 android:dialogTitle="@string/gamepadMap_dialogTitle"
                 android:key="gamepadMap4"
@@ -164,7 +172,7 @@
             <ListPreference
                 android:defaultValue="@string/videoPlugin_default"
                 android:dependency="videoEnabled"
-                 android:entries="@array/videoPlugin_entries"
+                android:entries="@array/videoPlugin_entries"
                 android:entryValues="@array/videoPlugin_values"
                 android:key="videoPlugin"
                 android:title="@string/videoPlugin_title" />
@@ -262,17 +270,17 @@
             android:summary="@string/other_summary"
             android:title="@string/other_title" >
             <ListPreference
-                android:icon="@drawable/ic_speaker"
                 android:defaultValue="@string/audioPlugin_default"
                 android:entries="@array/audioPlugin_entries"
                 android:entryValues="@array/audioPlugin_values"
+                android:icon="@drawable/ic_speaker"
                 android:key="audioPlugin"
                 android:title="@string/audioPlugin_title" />
             <ListPreference
-                android:icon="@drawable/ic_xperia"
                 android:defaultValue="@string/xperiaPlugin_default"
                 android:entries="@array/xperiaPlugin_entries"
                 android:entryValues="@array/xperiaPlugin_values"
+                android:icon="@drawable/ic_xperia"
                 android:key="xperiaPlugin"
                 android:title="@string/xperiaPlugin_title" />
             <ListPreference
@@ -287,6 +295,7 @@
                 android:entryValues="@array/corePlugin_values"
                 android:key="corePlugin"
                 android:title="@string/corePlugin_title" />
+
             <Preference
                 android:key="menuResetAppData"
                 android:summary="@string/resetAppData_summary"
@@ -296,15 +305,10 @@
         <PreferenceCategory
             android:key="categoryStorage"
             android:title="@string/categoryStorage_title" />
-        
-        
-        <paulscode.android.mupen64plusae.persistent.FolderPreference
-            android:icon="@drawable/ic_storage"
-            android:key="gameRomDir"
-            android:title="@string/gameRomDir_title" />
 
-        <paulscode.android.mupen64plusae.persistent.FolderPreference
-            android:icon="@drawable/ic_storage"
+        <paulscode.android.mupen64plusae.PathPreference
+            mupen64:selectionMode="0"
+            android:icon="@drawable/ic_folder"
             android:key="gameSaveDir"
             android:title="@string/gameSaveDir_title" />
 
@@ -359,14 +363,5 @@
             android:action="android.intent.action.VIEW"
             android:data="http://www.paulscode.com" />
     </Preference>
-    <Preference
-        android:icon="@drawable/ic_thumbup"
-        android:key="menuDonate"
-        android:summary="@string/menuDonate_summary"
-        android:title="@string/menuDonate_title" >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="http://www.paulscode.com/forum/index.php?topic=303.msg3865#msg3865" />
-    </Preference>
-    
+
 </PreferenceScreen>

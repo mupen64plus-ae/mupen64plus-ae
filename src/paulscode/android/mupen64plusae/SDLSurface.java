@@ -6,7 +6,8 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import paulscode.android.mupen64plusae.persistent.Settings;
+import paulscode.android.mupen64plusae.util.Notifier;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -33,13 +34,23 @@ import android.view.View;
 public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, View.OnKeyListener,
         View.OnTouchListener, SensorEventListener
 {
-    // Controlled by IME special keys used for analog input:
-    protected boolean[] mp64pButtons = new boolean[14];
-    protected int axisX = 0;
-    protected int axisY = 0;
+    public boolean buffFlipped = false;
     
     // This is what SDL runs in. It invokes SDL_main(), eventually
     private static Thread mSDLThread;
+    
+    // Framerate calculations
+    private static long lastFPSCheck = 0;
+    private static int fpsRate = 15;
+    private static int frameCount = -1;
+    
+    // Controlled by IME special keys used for analog input:
+    private boolean[] mp64pButtons = new boolean[14];
+    private int axisX = 0;
+    private int axisY = 0;
+    private boolean[] pointers = new boolean[256];
+    private int[] pointerX = new int[256];
+    private int[] pointerY = new int[256];
     
     // EGL private objects
     private EGLSurface mEGLSurface;
@@ -48,17 +59,10 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
     // Sensors
     private static SensorManager mSensorManager;
     
-    public boolean[] pointers = new boolean[256];
-    public int[] pointerX = new int[256];
-    public int[] pointerY = new int[256];
-    public boolean buffFlipped = false;
-    
     // Startup
-    // public SDLSurface( Context context )
     @TargetApi( 12 )
     public SDLSurface( Context context, AttributeSet attribs )
     {
-        // super( context );
         super( context, attribs );
         
         for( int x = 0; x < 256; x++ )
@@ -164,17 +168,22 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         }
         NativeMethods.onResize( width, height, sdlFormat );
         
-        mSDLThread = new Thread( new SDLMain(), "SDLThread" );
+        mSDLThread = new Thread( new Runnable() {
+            public void run()
+            {
+                NativeMethods.init();
+            }
+        }, "SDLThread" );
         mSDLThread.start();
         
-        if( GameActivity.GameState.resumeLastSession )
+        if( Globals.resumeLastSession )
         {
             new Thread( "ResumeSessionThread" )
             {
                 @Override
                 public void run()
                 {
-                    while( !GameActivity.GameState.finishedReading )
+                    while( !GameActivity.finishedReading )
                     {
                         try
                         {
@@ -194,7 +203,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                     }
                     int state = NativeMethods.stateEmulator();
                     
-                    while( state != GameActivity.GameState.EMULATOR_STATE_RUNNING )
+                    while( state != GameActivity.EMULATOR_STATE_RUNNING )
                     {
                         try
                         {
@@ -227,16 +236,16 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                     {
                     } // Just to be sure..
                     Log.v( "SDLSurface", "Resuming last session" );
-                    GameActivity.showToast( "Resuming game" );
+                    Notifier.showToast( "Resuming game", Globals.gameInstance );
                     NativeMethods.fileLoadEmulator( "Mupen64PlusAE_LastSession.sav" );
                 }
             }.start();
         }
     }
     
-    // Unused
     public void onDraw( Canvas canvas )
     {
+        // TODO: Confirm that we are intentionally disabling the call to super.onDraw( canvas )
     }
     
     // EGL functions
@@ -265,7 +274,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             }
             
             int[] configSpec;
-            if( Settings.user.videoRGBA8888 )
+            if( Globals.userPrefs.videoRGBA8888 )
                 configSpec = new int[] { EGL10.EGL_RED_SIZE, 8, // paulscode: get a config with red
                                                                 // 8
                         EGL10.EGL_GREEN_SIZE, 8, // paulscode: get a config with green 8
@@ -360,7 +369,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
     
     public boolean onSDLKey( int keyCode, int action )
     {
-        if( GameActivity.GameState.noInputPlugin )
+        if( !Globals.userPrefs.isInputEnabled )
             return false;
         
         if( action == KeyEvent.ACTION_DOWN )
@@ -377,52 +386,20 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         return false;
     }
     
-    // Key events
+
+
     public boolean onKey( View v, int keyCode, KeyEvent event )
-    { // Call the other method, so we don't have the same code in two places:
+    {
+        // Call the other method, so we don't have the same code in two places:
         return onKey( keyCode, event.getAction() );
     }
     
-    public boolean onKey( int keyCode, int action )
-    { // This method is used by the Xperia-Play native activity:
-        if( GameActivity.GameState.noInputPlugin )
+    public boolean onKey( int key, int action )
+    {
+        // This method is used by the Xperia-Play native activity:
+        if( Globals.userPrefs.isInputEnabled )
             return false;
         
-        int key = keyCode;
-        float str = 0;
-        if( keyCode > 255 )
-        {
-            key = ( keyCode / 100 );
-            if( action == KeyEvent.ACTION_DOWN )
-                str = ( (float) keyCode - ( (float) key * 100.0f ) );
-        }
-        else if( action == KeyEvent.ACTION_DOWN )
-            str = 64.0f;
-        int scancode;
-        if( key < 0 || key > 255 )
-            scancode = 0;
-        else
-            scancode = key;
-        
-        for( int p = 0; p < 4; p++ )
-        {
-            if( scancode == Settings.ctrlr[p][0] || scancode == Settings.ctrlr[p][1]
-                    || scancode == Settings.ctrlr[p][2] || scancode == Settings.ctrlr[p][3] )
-            {
-                if( scancode == Settings.ctrlr[p][0] )
-                    axisX = (int) ( 80.0f * ( str / 64.0f ) );
-                else if( scancode == Settings.ctrlr[p][1] )
-                    axisX = (int) ( -80.0f * ( str / 64.0f ) );
-                else if( scancode == Settings.ctrlr[p][2] )
-                    axisY = (int) ( -80.0f * ( str / 64.0f ) );
-                else if( scancode == Settings.ctrlr[p][3] )
-                    axisY = (int) ( 80.0f * ( str / 64.0f ) );
-                NativeMethods.updateVirtualGamePadStates( p, mp64pButtons, axisX, axisY );
-                return true;
-            }
-        }
-        
-        // TODO: implement controllers 2 - 4
         if( action == KeyEvent.ACTION_DOWN )
         {
             if( key == KeyEvent.KEYCODE_MENU )
@@ -430,14 +407,14 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             else if( key == KeyEvent.KEYCODE_BACK
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
             { // There is no Menu button in HC/ ICS, so show/ hide ActionBar when "Back" is pressed
-                if( GameActivity.GameState.mSingleton != null )
+                if( Globals.gameInstance != null )
                 { // Show/ hide the Action Bar
-                    GameActivity.GameState.mSingleton.runOnUiThread( new Runnable()
+                    Globals.gameInstance.runOnUiThread( new Runnable()
                     {
                         @TargetApi( 11 )
                         public void run()
                         {
-                            if( GameActivity.GameState.mSingleton.getActionBar().isShowing() )
+                            if( Globals.gameInstance.getActionBar().isShowing() )
                             {
                                 View mView = getRootView();
                                 if( mView == null )
@@ -445,10 +422,10 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                                             "getRootView() returned null in method onKey" );
                                 else
                                     mView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
-                                GameActivity.GameState.mSingleton.getActionBar().hide();
+                                Globals.gameInstance.getActionBar().hide();
                             }
                             else
-                                GameActivity.GameState.mSingleton.getActionBar().show();
+                                Globals.gameInstance.getActionBar().show();
                         }
                     } );
                 }
@@ -457,7 +434,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             
             if( key == KeyEvent.KEYCODE_VOLUME_UP || key == KeyEvent.KEYCODE_VOLUME_DOWN )
             {
-                if( !Settings.user.volumeKeysEnabled )
+                if( !Globals.userPrefs.isVolKeysEnabled )
                 {
                     NativeMethods.onKeyDown( key );
                     return true;
@@ -477,7 +454,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                 
             if( key == KeyEvent.KEYCODE_VOLUME_UP || key == KeyEvent.KEYCODE_VOLUME_DOWN )
             {
-                if( !Settings.user.volumeKeysEnabled )
+                if( !Globals.userPrefs.isVolKeysEnabled )
                 {
                     NativeMethods.onKeyUp( key );
                     return true;
@@ -493,7 +470,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
     @TargetApi( 5 )
     public boolean onTouch( View v, MotionEvent event )
     {
-        if( GameActivity.GameState.noInputPlugin )
+        if( !Globals.userPrefs.isInputEnabled )
             return false;
         int action = event.getAction();
         int actionCode = action & MotionEvent.ACTION_MASK;
@@ -551,22 +528,22 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                 pointerY[pid] = (int) event.getY( i );
             }
         }
-        GameActivity.GameState.mGamePad.updatePointers( pointers, pointerX, pointerY, maxPid );
+        Globals.touchscreenInstance.updatePointers( pointers, pointerX, pointerY, maxPid );
         return true;
     }
     
     // paulscode: Xperia Play native touch input linkage:
     public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
-        if( !Settings.user.xperiaEnabled || !Settings.user.gamepadEnabled )
+        if( !Globals.userPrefs.isXperiaEnabled || !Globals.userPrefs.isInputEnabled )
             return;
         
-        GameActivity.GameState.mGamePad.updatePointers( pointers, pointerX, pointerY, maxPid );
+        Globals.touchscreenInstance.updatePointers( pointers, pointerX, pointerY, maxPid );
     }
     
     public void onTouchPad( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
-        if( !Settings.user.xperiaEnabled || !Settings.user.gamepadEnabled )
+        if( !Globals.userPrefs.isXperiaEnabled || !Globals.userPrefs.isInputEnabled )
             return;
         
         GameActivity.mTouchPad.updatePointers( pointers, pointerX, pointerY, maxPid );
@@ -600,6 +577,38 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         }
     }
     
+    public static void setActivityTitle( String title )
+    {
+        // Called from SDLMain() thread and can't directly affect the view
+        Globals.gameInstance.sendCommand( GameActivity.COMMAND_CHANGE_TITLE, title );
+    }
+
+    public static boolean createGLContext( int majorVersion, int minorVersion )
+    {
+        return Globals.surfaceInstance.initEGL( majorVersion, minorVersion );
+    }
+
+    public static void flipBuffers()
+    {
+        Globals.surfaceInstance.flipEGL();
+        if( SDLSurface.frameCount < 0 )
+        {
+            SDLSurface.frameCount = 0;
+            SDLSurface.lastFPSCheck = System.currentTimeMillis();
+        }
+        SDLSurface.frameCount++;
+        if( ( Globals.touchscreenInstance != null && SDLSurface.frameCount >= Globals.touchscreenInstance.fpsRate )
+                || ( Globals.touchscreenInstance == null && SDLSurface.frameCount >= SDLSurface.fpsRate ) )
+        {
+            long currentTime = System.currentTimeMillis();
+            float fFPS = ( (float) SDLSurface.frameCount / (float) ( currentTime - SDLSurface.lastFPSCheck ) ) * 1000.0f;
+            if( Globals.touchscreenInstance != null )
+                Globals.touchscreenInstance.updateFPS( (int) fFPS );
+            SDLSurface.frameCount = 0;
+            SDLSurface.lastFPSCheck = currentTime;
+        }
+    }
+
     private class JoystickListener implements View.OnGenericMotionListener
     {
         private SDLSurface parent;
