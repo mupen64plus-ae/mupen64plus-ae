@@ -86,10 +86,14 @@ public class PathPreference extends DialogPreference
         if( mDoRefresh )
         {
             mDoRefresh = false;
-            populate( new File( getPersistedString( Globals.path.storageDir ) ) );
-            setSummary( mSelectionMode == SELECTION_MODE_FILE
-                    ? mEntry
-                    : mValue );
+            String filename = getPersistedString( Globals.path.storageDir );
+            if( filename != null )
+            {
+                populate( new File( filename ) );
+                setSummary( mSelectionMode == SELECTION_MODE_FILE
+                        ? mEntry
+                        : mValue );
+            }
         }
         return super.onCreateView( parent );
     }

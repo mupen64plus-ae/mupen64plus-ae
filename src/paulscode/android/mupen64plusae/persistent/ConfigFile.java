@@ -36,11 +36,9 @@ import android.util.Log;
  */
 public class ConfigFile
 {
-    public static ConfigFile gui_cfg = null;
-
-    public String filename;  // Name of the config file.
-    private HashMap<String, ConfigSection> configMap;  // Sections mapped by title for easy lookup
-    private LinkedList<ConfigSection> configList;      // Sections in the proper order for easy saving
+    private String mFilename;  // Name of the config file.
+    private HashMap<String, ConfigSection> mConfigMap;  // Sections mapped by title for easy lookup
+    private LinkedList<ConfigSection> mConfigList;      // Sections in the proper order for easy saving
 
     /**
      * Constructor: Reads the entire config file, and saves the data in 'configMap'
@@ -48,7 +46,7 @@ public class ConfigFile
      */
     public ConfigFile( String filename )  // Reads the entire config file and saves it in configMap
     {
-        this.filename = filename;
+        this.mFilename = filename;
         load( filename );
     }
 
@@ -60,17 +58,17 @@ public class ConfigFile
     public ConfigSection match( String regex )
     {
         String sectionTitle;
-        Set<String> keys = configMap.keySet();
+        Set<String> keys = mConfigMap.keySet();
         Iterator<String> iter = keys.iterator();
         
-        if( configMap == null )
+        if( mConfigMap == null )
             return null;  // No configuration to look up.. quit
         
         while( iter.hasNext() )
         {
             sectionTitle = iter.next();
             if( sectionTitle.matches( regex ) )
-                return configMap.get( sectionTitle );
+                return mConfigMap.get( sectionTitle );
         }
         return null;
     }
@@ -82,10 +80,10 @@ public class ConfigFile
      */
     public ConfigSection get( String sectionTitle )
     {
-        if( configMap == null )
+        if( mConfigMap == null )
             return null;  // No configuration to look up.. quit
         
-        return configMap.get( sectionTitle );
+        return mConfigMap.get( sectionTitle );
     }
 
     /**
@@ -96,10 +94,10 @@ public class ConfigFile
      */
     public String get( String sectionTitle, String parameter )
     {
-        if( configMap == null )
+        if( mConfigMap == null )
             return null;  // No configuration to look up.. quit
         
-        ConfigSection section = configMap.get( sectionTitle );
+        ConfigSection section = mConfigMap.get( sectionTitle );
         if( section == null || section.parameters == null )
             return null;  // The specified section doesn't exist or is empty.. quit
         
@@ -119,16 +117,16 @@ public class ConfigFile
      */
     public void put( String sectionTitle, String parameter, String value )
     {
-        if( configMap == null )
+        if( mConfigMap == null )
             return;  // No configuration to look up.. quit
         
-        ConfigSection section = configMap.get( sectionTitle );
+        ConfigSection section = mConfigMap.get( sectionTitle );
         if( section == null )
         {  
             // Add a new section
             section = new ConfigSection( sectionTitle );
-            configMap.put( sectionTitle, section );
-            configList.add( section );
+            mConfigMap.put( sectionTitle, section );
+            mConfigList.add( section );
         }
         section.put( parameter, value );
     }
@@ -138,11 +136,11 @@ public class ConfigFile
      */
     public void clear()
     {
-        if( configMap != null )
-            configMap.clear();
+        if( mConfigMap != null )
+            mConfigMap.clear();
         
-        if( configList != null )
-            configList.clear();  // Ready to start fresh
+        if( mConfigList != null )
+            mConfigList.clear();  // Ready to start fresh
     }
 
     /**
@@ -154,11 +152,11 @@ public class ConfigFile
     public boolean load( String filename )
     {   
         clear();  // Free any previously loaded data
-        if( configMap == null )  // Create the configMap if it hasn't been already
-            configMap = new HashMap<String, ConfigSection>();
+        if( mConfigMap == null )  // Create the configMap if it hasn't been already
+            mConfigMap = new HashMap<String, ConfigSection>();
         
-        if( configList == null )  // Create the configList if it hasn't been already
-            configList = new LinkedList<ConfigSection>();
+        if( mConfigList == null )  // Create the configList if it hasn't been already
+            mConfigList = new LinkedList<ConfigSection>();
         
         if( filename == null || filename.length() < 1 )
             return false;   // Make sure a file was actually specified
@@ -181,8 +179,8 @@ public class ConfigFile
 
         String sectionName = "[<sectionless!>]";
         ConfigSection section = new ConfigSection( sectionName, br ); // Read the 'sectionless' section
-        configMap.put( sectionName, section );   // Save the data to 'configMap'
-        configList.add( section );  // add it to the list as well
+        mConfigMap.put( sectionName, section );   // Save the data to 'configMap'
+        mConfigList.add( section );  // add it to the list as well
         
         while( section.nextName != null && section.nextName.length() > 0 )
         {   // Loop through reading the remaining sections
@@ -190,8 +188,8 @@ public class ConfigFile
             if( sectionName != null && sectionName.length() > 0 )
             {   // load the next section
                 section = new ConfigSection( sectionName, br );
-                configMap.put( sectionName, section );  // save the data to 'configMap'
-                configList.add( section );  // add it to the list as well
+                mConfigMap.put( sectionName, section );  // save the data to 'configMap'
+                mConfigList.add( section );  // add it to the list as well
             }
         }
         try
@@ -209,32 +207,32 @@ public class ConfigFile
      */
     public boolean save()
     {
-        if( filename == null || filename.length() < 1 )
+        if( mFilename == null || mFilename.length() < 1 )
         {   // No filename was specified.
             Log.e( "Config", "Filename not specified in method save()" );
             return false;   // quit
         }
         
-        if( configList == null )
+        if( mConfigList == null )
         {  // No config data to save.
             Log.e( "Config", "No config data to save in method save()" );
             return false;   // quit
         }
         
-        File f = new File( filename );
+        File f = new File( mFilename );
         if( f.exists() )
         {   // Delete it if it already exists.
             if( !f.delete() )
             {   // Some problem deleting the file.
-                Log.e( "Config", "Error deleting file " + filename );
+                Log.e( "Config", "Error deleting file " + mFilename );
                 return false;   // quit
             }
         }
         
         try
         {
-            FileWriter fw = new FileWriter( filename );  // For writing to the config file
-            ListIterator<ConfigSection> iter = configList.listIterator( 0 );
+            FileWriter fw = new FileWriter( mFilename );  // For writing to the config file
+            ListIterator<ConfigSection> iter = mConfigList.listIterator( 0 );
             ConfigSection section;
 
             while( iter.hasNext() )
@@ -249,7 +247,7 @@ public class ConfigFile
         }
         catch( IOException ioe )
         {
-            Log.e( "Config", "IOException creating file " + filename + ", error message: " + ioe.getMessage() );
+            Log.e( "Config", "IOException creating file " + mFilename + ", error message: " + ioe.getMessage() );
             return false;  // Some problem creating the file.. quit
         }
         return true;  // Success
@@ -261,7 +259,7 @@ public class ConfigFile
      */
     public ListIterator<ConfigSection> listIterator()
     {
-        return configList.listIterator();
+        return mConfigList.listIterator();
     }
     
     /**
@@ -270,7 +268,7 @@ public class ConfigFile
      */
     public Set<String> keySet()
     {
-         return configMap.keySet();
+         return mConfigMap.keySet();
     }
     
     /**

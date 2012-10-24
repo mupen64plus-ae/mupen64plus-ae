@@ -191,7 +191,7 @@ public class XperiaPlayController extends AbstractController
                     if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
                     {  
                         // Emulate the analog control as an octagon (like the real N64 controller)
-                        if( Globals.userPrefs.touchscreenOctagonJoystick )
+                        if( Globals.userPrefs.isOctagonalJoystick )
                         {  
                             Point crossPt = new Point();
                             float dC = analogMask.hWidth;

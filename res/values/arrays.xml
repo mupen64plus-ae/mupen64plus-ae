@@ -22,6 +22,7 @@
         <item>Mupen64Plus-AE-Touch</item>
     </string-array>
     <string name="touchscreenLayout_default">Mupen64Plus-AE-Analog</string>
+    <string name="touchscreenLayout_fpsOnly">Mupen64Plus-AE-Just-FPS</string>
 
     <!-- Touchscreen Sizes -->
     <string-array name="touchscreenSize_entries">

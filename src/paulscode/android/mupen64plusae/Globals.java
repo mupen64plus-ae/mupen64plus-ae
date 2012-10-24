@@ -47,4 +47,5 @@ public class Globals
     // Internal implementation options, might change later or expose to user
     public static final boolean INHIBIT_SUSPEND = true;
     public static final boolean DOWNLOAD_TO_SDCARD = true;
+    public static final int SPLASH_DELAY = 1000; // Such a nice picture... shame not to see it :)
 }

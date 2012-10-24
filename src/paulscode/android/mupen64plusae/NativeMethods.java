@@ -183,7 +183,7 @@ public class NativeMethods
     
     public static boolean getAutoFrameSkip()
     {
-        return Globals.userPrefs.isAutoFrameskipEnabled;
+        return Globals.userPrefs.isAutoFrameskip;
     }
     
     public static Object getDataDir()
@@ -215,7 +215,7 @@ public class NativeMethods
     
     public static boolean getScreenStretch()
     {
-        return Globals.userPrefs.videoStretch;
+        return Globals.userPrefs.isStretched;
     }
     
     public static void setActivityTitle( String title )
@@ -231,7 +231,7 @@ public class NativeMethods
     
     public static boolean useRGBA8888()
     {
-        return Globals.userPrefs.videoRGBA8888;
+        return Globals.userPrefs.isRgba8888;
     }
     
     public static void vibrate( boolean active )

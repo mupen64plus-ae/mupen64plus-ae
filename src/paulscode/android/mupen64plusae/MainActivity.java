@@ -13,6 +13,7 @@ import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
@@ -20,7 +21,7 @@ import android.widget.TextView;
 
 // TODO: Comment thoroughly
 public class MainActivity extends Activity
-{    
+{
     private TextView mTextView = null;
     
     @Override
@@ -32,39 +33,44 @@ public class MainActivity extends Activity
         Globals.path = new Path( this );
         Globals.appData = new AppData( this, Globals.path.appSettingsFilename );
         Globals.mupen64plus_cfg = new ConfigFile( Globals.path.mupen64plus_cfg );
-
+        
         // Initialize the error logger
         ErrorLogger.initialize( Globals.path.error_log );
         
-        // Initialize the status bar notifier
+        // Initialize the toast/status bar notifier
         Notifier.initialize( this );
         
         // Make sure the app is up to date
-        //Globals.app.resetToDefaults(); // TODO: Comment out before release
+        // Globals.app.resetToDefaults(); // TODO: Comment out before release
         Updater.checkFirstRun( this );
         Updater.checkConfigFiles( this );
-        Updater.checkLatestVersion( this );        
-
+        Updater.checkLatestVersion( this );
+        
         // Configure full-screen mode
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         getWindow().setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
         
         // Keep screen on under certain conditions
         if( Globals.INHIBIT_SUSPEND )
-            getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
+            getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON,
+                    LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Lay out the content
         setContentView( R.layout.main );
         mTextView = (TextView) findViewById( R.id.mainText );
         
-        // Run the downloader on a separate thread
-        // TODO: Understand the processes here
-        runOnUiThread( new DownloaderThread( this ) );
-        //(new Thread(new DownloaderThread(this))).start();
-        //downloader = new DataDownloader(this, mTextView);
-        //downloader.start();
+        final Handler handler = new Handler();
+        handler.postDelayed( new Runnable()
+        {
+            public void run()
+            {
+                // Run the downloader on a separate thread
+                // It will launch MenuActivity when it's finished
+                runOnUiThread( new DownloaderThread( MainActivity.this ) );
+            }
+        }, Globals.SPLASH_DELAY );
     }
-
+    
     private class DownloaderThread implements Runnable
     {
         MainActivity mParent;
@@ -75,7 +81,7 @@ public class MainActivity extends Activity
         }
         
         public void run()
-        {            
+        {
             Log.i( "MainActivity", "libSDL: Starting downloader" );
             Globals.downloader = new DataDownloader( mParent, mParent.mTextView );
         }
@@ -84,7 +90,7 @@ public class MainActivity extends Activity
     public void onDownloaderFinished()
     {
         Globals.downloader = null;
-
+        
         // Record that the update completed
         Globals.appData.setUpgradedVer19( true );
         
@@ -100,6 +106,8 @@ public class MainActivity extends Activity
         Intent intent = new Intent( this, MenuActivity.class );
         intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
         startActivity( intent );
+        
+        // We never want to come back to this screen, so finish it
         finish();
     }
     

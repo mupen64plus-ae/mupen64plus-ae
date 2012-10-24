@@ -83,7 +83,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
                 pointerY[pid] = (int) event.getY( i );
             }
         }
-        // TODO: GameActivity.mGamePad.updatePointers( pointers, pointerX, pointerY, maxPid );
+        // TODO ? Globals.touchscreenInstance.updatePointers( pointers, pointerX, pointerY, maxPid );
         return true;
     }
 

@@ -27,7 +27,6 @@ import paulscode.android.mupen64plusae.MenuActivity;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Environment;
@@ -82,7 +81,7 @@ public class Path
     
     /** The name of the user preferences file. */
     public final String userPreferencesFilename;
-
+    
     public static String tmpFile;
     
     // TODO: Should we move this to strings.xml?
@@ -143,14 +142,14 @@ public class Path
     {
         return ( new File( storageDir ) ).exists();
     }
-
+    
     public Object getROMPath()
     {
         GameActivity.finishedReading = false;
         if( Globals.userPrefs.isLastGameNull )
         {
             GameActivity.finishedReading = true;
-            System.exit( 0 );
+            Utility.systemExitFriendly( "Invalid ROM", Globals.gameInstance, 2000 );
         }
         else if( Globals.userPrefs.isLastGameZipped )
         {
@@ -167,7 +166,8 @@ public class Path
             }
             
             // Unzip the ROM
-            Path.tmpFile = Utility.unzipFirstROM( new File( Globals.userPrefs.lastGame ), tmpFolderName );
+            Path.tmpFile = Utility.unzipFirstROM( new File( Globals.userPrefs.lastGame ),
+                    tmpFolderName );
             if( Path.tmpFile == null )
             {
                 Log.v( "GameActivity", "Unable to play zipped ROM: '" + Globals.userPrefs.lastGame
@@ -182,7 +182,7 @@ public class Path
                 intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                 Globals.gameInstance.startActivity( intent );
                 GameActivity.finishedReading = true;
-                System.exit( 0 );
+                Utility.systemExitFriendly( "ROM could not be unzipped", Globals.gameInstance, 2000 );
             }
             else
             {

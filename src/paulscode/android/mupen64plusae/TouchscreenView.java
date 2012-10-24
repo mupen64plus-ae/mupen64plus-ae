@@ -20,22 +20,22 @@ import android.view.View;
 
 /**
  * The GamePad class handles the virtual game pad.
- *
+ * 
  * @author: Paul Lamb
  * 
- * http://www.paulscode.com
+ *          http://www.paulscode.com
  * 
  */
-public class TouchscreenView extends View 
+public class TouchscreenView extends View
 {
     // Maximum number of buttons that a gamepad layout can have:
     public static final int MAX_BUTTONS = 30;
-
+    
     // Mask colors for normal N64 buttons:
     private int[] maskColors = new int[18];
     // Normal N64 button-states associated with the mask colors:
     private boolean[] buttonPressed = new boolean[18];
-
+    
     // --Special buttons that behave like hardware buttons--
     // Mask colors for the SDL buttons:
     private int[] SDLButtonMaskColors = new int[MAX_BUTTONS];
@@ -45,30 +45,30 @@ public class TouchscreenView extends View
     private boolean[] SDLButtonPressed = new boolean[MAX_BUTTONS];
     //
     private RedrawThread redrawThread = null;
-
+    
     private boolean[] mp64pButtons = new boolean[14];
-
-    // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in) 
-    private static final int Right  =  0;
-    private static final int Left   =  1;
-    private static final int Down   =  2;
-    private static final int Up     =  3;
-    private static final int Start  =  4;
-    private static final int Z      =  5;
-    private static final int B      =  6;
-    private static final int A      =  7;
-    private static final int CRight =  8;
-    private static final int CLeft  =  9;
-    private static final int CDown  = 10;
-    private static final int CUp    = 11;
-    private static final int R      = 12;
-    private static final int L      = 13;
+    
+    // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in)
+    private static final int Right = 0;
+    private static final int Left = 1;
+    private static final int Down = 2;
+    private static final int Up = 3;
+    private static final int Start = 4;
+    private static final int Z = 5;
+    private static final int B = 6;
+    private static final int A = 7;
+    private static final int CRight = 8;
+    private static final int CLeft = 9;
+    private static final int CDown = 10;
+    private static final int CUp = 11;
+    private static final int R = 12;
+    private static final int L = 13;
     // Not standard mp64p buttons, but simulated here for better control of virtual gamepad:
-    private static final int UpRight    = 14;
-    private static final int RightDown  = 15;
-    private static final int LeftDown   = 16;
-    private static final int LeftUp     = 17;
-
+    private static final int UpRight = 14;
+    private static final int RightDown = 15;
+    private static final int LeftDown = 16;
+    private static final int LeftUp = 17;
+    
     // Variables for drawing the analog stick
     private Image analogImage = null;
     private int analogXpercent = 0;
@@ -80,17 +80,17 @@ public class TouchscreenView extends View
     private int analogDeadzone = 2;
     private int analogMaximum = 360;
     private int analogPid = -1;
-
-    // All button images and associated mask images, including both 
+    
+    // All button images and associated mask images, including both
     // normal N64 buttons and SDL buttons:
     private Image[] buttons = new Image[MAX_BUTTONS];
     private Image[] masks = new Image[MAX_BUTTONS];
     private int[] xpercents = new int[MAX_BUTTONS];
     private int[] ypercents = new int[MAX_BUTTONS];
-
-    private int buttonCount = 0;  // total number of buttons
-    private int SDLButtonCount = 0;  // number of SDL buttons
-
+    
+    private int buttonCount = 0; // total number of buttons
+    private int SDLButtonCount = 0; // number of SDL buttons
+    
     private Image fpsImage = null;
     private int fpsXpercent = 0;
     private int fpsYpercent = 0;
@@ -100,150 +100,176 @@ public class TouchscreenView extends View
     private String fpsFont = "Mupen64Plus-AE-Contrast-Blue";
     private int fpsValue = 0;
     private Image[] fpsDigits = new Image[4];
-
+    
     private boolean drawEverything = true;
     private boolean drawHat = true;
     private boolean drawFPS = true;
     private Image[] numberImages = new Image[10];
-
+    
     private Resources resources = null;
     boolean initialized = false;
     int canvasW = 0;
     int canvasH = 0;
-
+    
     /**
      * Constructor: Instantiates the game pad
-     * @param context Handle to the app context.
-     * @param attribs Handle to the app attribute set.
+     * 
+     * @param context
+     *            Handle to the app context.
+     * @param attribs
+     *            Handle to the app attribute set.
      */
     public TouchscreenView( Context context, AttributeSet attribs )
     {
         super( context, attribs );
-        if( ConfigFile.gui_cfg == null )
-            return;
-/*        String oct = Config.gui_cfg.get( "GAME_PAD", "analogAsOctagon" );
-        if( oct != null && oct.equals( "1" ) )
-            analogAsOctagon = true;*/
     }
     
     /**
      * Provides a handle to the resources used to access Images
-     * @param resources Handle to the app resources.
+     * 
+     * @param resources
+     *            Handle to the app resources.
      */
     public void setResources( Resources resources )
     {
         this.resources = resources;
         for( int x = 0; x < 10; x++ )
-            numberImages[x] = new Image( resources, Globals.path.dataDir + "/skins/fonts/" +
-                                         fpsFont + "/" + x + ".png" );
+            numberImages[x] = new Image( resources, Globals.path.dataDir + "/skins/fonts/"
+                    + fpsFont + "/" + x + ".png" );
     }
     
     /**
      * Updates the FPS indicator with a new value.
-     * @param fps current FPS
+     * 
+     * @param fps
+     *            current FPS
      */
     public void updateFPS( int fps )
     {
         if( fpsValue == fps )
-            return;  // No need to redraw if it hasn't changed
+            return; // No need to redraw if it hasn't changed
         fpsValue = fps;
         if( fpsValue < 0 )
-            fpsValue = 0;  // Can't have a negative FPS (what is this, time travel?)
+            fpsValue = 0; // Can't have a negative FPS (what is this, time travel?)
         if( fpsValue > 9999 )
-            fpsValue = 9999;  // No more than 4 digits
-        if( !Globals.userPrefs.touchscreenFrameRate )
+            fpsValue = 9999; // No more than 4 digits
+        if( !Globals.userPrefs.isFrameRateEnabled )
             return;
         String fpsString = Integer.toString( fpsValue );
         for( int x = 0; x < 4; x++ )
-        {  // Create a new sequence of number digit images
+        {
+            // Create a new sequence of number digit images
             if( x < fpsString.length() )
             {
                 try
-                {  // Clone the digit from the font images
-                    fpsDigits[x] = new Image( resources, numberImages[Integer.valueOf( fpsString.substring( x, x+1 ) )] );
+                {
+                    // Clone the digit from the font images
+                    fpsDigits[x] = new Image( resources, numberImages[Integer.valueOf( fpsString
+                            .substring( x, x + 1 ) )] );
                 }
                 catch( NumberFormatException nfe )
-                {  // Skip this digit, there was a problem
+                {
+                    // Skip this digit, there was a problem
                     fpsDigits[x] = null;
                 }
             }
             else
-            {  // Skip this digit
+            {
+                // Skip this digit
                 fpsDigits[x] = null;
             }
         }
         drawFPS = true;
         if( redrawThread != null )
-            redrawThread.redrawFPS = true;  // Tell thread it's time to redraw the FPS image
+            redrawThread.redrawFPS = true; // Tell thread it's time to redraw the FPS image
     }
-
+    
     /**
      * Draws only what needs to be redrawn.
-     * @param canvas Canvas to draw the gamepad on
+     * 
+     * @param canvas
+     *            Canvas to draw the gamepad on
      */
     @Override
     protected void onDraw( Canvas canvas )
     {
         if( !initialized )
             return;
-        if( Globals.userPrefs.touchscreenRedrawAll )
+        if( Globals.userPrefs.isTouchscreenRedrawAll )
             drawEverything = true;
         if( drawEverything )
-        {  // Redraw the entire gamepad
+        {
+            // Redraw the entire gamepad
             if( canvas.getWidth() != canvasW || canvas.getHeight() != canvasH )
-            {  // Canvas changed its dimensions, recalculate the control positions
+            {
+                // Canvas changed its dimensions, recalculate the control positions
                 canvasW = canvas.getWidth();
                 canvasH = canvas.getHeight();
                 if( analogImage != null )
-                {  // Position the analog control
-                    analogImage.fitCenter( (int)((float) canvasW * ((float) analogXpercent / 100.0f)),
-                                           (int)((float) canvasH * ((float) analogYpercent / 100.0f)), canvasW, canvasH );
+                {
+                    // Position the analog control
+                    analogImage.fitCenter(
+                            (int) ( (float) canvasW * ( (float) analogXpercent / 100.0f ) ),
+                            (int) ( (float) canvasH * ( (float) analogYpercent / 100.0f ) ),
+                            canvasW, canvasH );
                 }
                 for( int x = 0; x < buttonCount; x++ )
-                {  // Position the buttons
-                    buttons[x].fitCenter( (int)((float) canvasW * ((float) xpercents[x] / 100.0f)),
-                                          (int)((float) canvasH * ((float) ypercents[x] / 100.0f)), canvasW, canvasH );
-                    masks[x].fitCenter( (int)((float) canvasW * ((float) xpercents[x] / 100.0f)),
-                                        (int)((float) canvasH * ((float) ypercents[x] / 100.0f)), canvasW, canvasH );
+                {
+                    // Position the buttons
+                    buttons[x].fitCenter(
+                            (int) ( (float) canvasW * ( (float) xpercents[x] / 100.0f ) ),
+                            (int) ( (float) canvasH * ( (float) ypercents[x] / 100.0f ) ), canvasW,
+                            canvasH );
+                    masks[x].fitCenter(
+                            (int) ( (float) canvasW * ( (float) xpercents[x] / 100.0f ) ),
+                            (int) ( (float) canvasH * ( (float) ypercents[x] / 100.0f ) ), canvasW,
+                            canvasH );
                 }
             }
             for( int x = 0; x < buttonCount; x++ )
-            {  // Draw the buttons onto the canvas
+            {
+                // Draw the buttons onto the canvas
                 buttons[x].draw( canvas );
             }
         }
         if( drawEverything || drawHat )
-        {  // Redraw the analog stick
+        {
+            // Redraw the analog stick
             if( analogImage != null )
-                analogImage.draw( canvas );  // Draw the background image first
+                analogImage.draw( canvas ); // Draw the background image first
             if( hatImage != null && analogImage != null )
-            {  // Reposition the image and draw it
+            {
+                // Reposition the image and draw it
                 int hX = hatX;
                 int hY = hatY;
                 if( hX == -1 )
                     hX = analogImage.hWidth;
                 if( hY == -1 )
                     hY = analogImage.hHeight;
-                hatImage.fitCenter( analogImage.x + hX, analogImage.y + hY, analogImage.x, analogImage.y,
-                                    analogImage.width, analogImage.height );
+                hatImage.fitCenter( analogImage.x + hX, analogImage.y + hY, analogImage.x,
+                        analogImage.y, analogImage.width, analogImage.height );
                 hatImage.draw( canvas );
             }
         }
-        if( Globals.userPrefs.touchscreenFrameRate && (drawEverything || drawFPS) )
-        {  // Redraw the FPS indicator
+        if( Globals.userPrefs.isFrameRateEnabled && ( drawEverything || drawFPS ) )
+        {
+            // Redraw the FPS indicator
             int x = 0;
             int y = 0;
             if( fpsImage != null )
-            {  // Position the backtround image and draw it
-                fpsImage.fitCenter( (int)((float) canvasW * ((float) fpsXpercent / 100.0f)),
-                                    (int)((float) canvasH * ((float) fpsYpercent / 100.0f)), canvasW, canvasH );
-                x = fpsImage.x + (int) ((float) fpsImage.width * ((float) fpsNumXpercent / 100.0f));
-                y = fpsImage.y + (int) ((float) fpsImage.height * ((float) fpsNumYpercent / 100.0f));
+            { // Position the backtround image and draw it
+                fpsImage.fitCenter( (int) ( (float) canvasW * ( (float) fpsXpercent / 100.0f ) ),
+                        (int) ( (float) canvasH * ( (float) fpsYpercent / 100.0f ) ), canvasW,
+                        canvasH );
+                x = fpsImage.x
+                        + (int) ( (float) fpsImage.width * ( (float) fpsNumXpercent / 100.0f ) );
+                y = fpsImage.y
+                        + (int) ( (float) fpsImage.height * ( (float) fpsNumYpercent / 100.0f ) );
                 fpsImage.draw( canvas );
             }
             
             int totalWidth = 0;
-
+            
             // Calculate the width and position of the FPS number:
             for( int c = 0; c < 4; c++ )
             {
@@ -251,10 +277,11 @@ public class TouchscreenView extends View
                     totalWidth += fpsDigits[c].width;
             }
             
-            x = x - (int) ((float) totalWidth / 2.0f);
+            x = x - (int) ( (float) totalWidth / 2.0f );
             
             for( int c = 0; c < 4; c++ )
-            {  // draw each digit of the FPS number
+            {
+                // draw each digit of the FPS number
                 if( fpsDigits[c] != null )
                 {
                     fpsDigits[c].setPos( x, y - fpsDigits[c].hHeight );
@@ -267,19 +294,24 @@ public class TouchscreenView extends View
         drawHat = false;
         drawFPS = false;
     }
-
+    
     /**
      * Determines which controls are pressed based on where the screen is being touched.
-     * @param pointers Array indicating which pointers are touching the screen.
-     * @param pointerX Array containing the X-coordinate of each pointer.
-     * @param pointerY Array containing the Y-coordinate of each pointer.
-     * @param maxPid Maximum ID of the pointers that have changed (speed optimization)
+     * 
+     * @param pointers
+     *            Array indicating which pointers are touching the screen.
+     * @param pointerX
+     *            Array containing the X-coordinate of each pointer.
+     * @param pointerY
+     *            Array containing the Y-coordinate of each pointer.
+     * @param maxPid
+     *            Maximum ID of the pointers that have changed (speed optimization)
      */
     public void updatePointers( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
         if( !initialized )
             return;
-
+        
         int x, y, c, rgb;
         float d, p, dX, dY;
         // Clear any previous pointer data:
@@ -297,97 +329,115 @@ public class TouchscreenView extends View
             SDLButtonPressed[i] = false;
         for( int i = 0; i < 14; i++ )
             mp64pButtons[i] = false;
-
+        
         for( int i = 0; i <= maxPid; i++ )
-        {  // Process each pointer in sequence
+        {
+            // Process each pointer in sequence
             if( i == analogPid && !pointers[i] )
-                analogPid = -1;  // Release analog if it's pointer is not touching the screen
+                analogPid = -1; // Release analog if it's pointer is not touching the screen
             if( pointers[i] )
-            {  // Pointer is touching the screen
+            {
+                // Pointer is touching the screen
                 x = pointerX[i];
                 y = pointerY[i];
                 
-//Log.v( "GamePad.java", "pointer " + i + "(" + x + "," + y + ")  [analogPid=" + analogPid + "]" );
+                // Log.v( "GamePad.java", "pointer " + i + "(" + x + "," + y + ")  [analogPid=" +
+                // analogPid + "]" );
                 if( i != analogPid )
-                {  // Not the analog control, check the buttons
+                {
+                    // Not the analog control, check the buttons
                     for( int m = 0; m < buttonCount; m++ )
-                    {  // Check each one in sequence
-                        if( x >= masks[m].x && x < masks[m].x + masks[m].width &&
-                            y >= masks[m].y && y < masks[m].y + masks[m].height )
-                        {  // it is inside this button, check the color mask
+                    {
+                        // Check each one in sequence
+                        if( x >= masks[m].x && x < masks[m].x + masks[m].width && y >= masks[m].y
+                                && y < masks[m].y + masks[m].height )
+                        {
+                            // it is inside this button, check the color mask
                             c = masks[m].image.getPixel( x - masks[m].x, y - masks[m].y );
-//Log.v( "GamePad.java", "    pointer is inside a mask image, c=" + c );
-                            rgb = (int)(c & 0x00ffffff);  // Ignore the alpha component if any
-                            if( rgb > 0 )  // Ignore black
-                                pressColor( rgb );  // Determine what was pressed
+                            // Log.v( "GamePad.java", "    pointer is inside a mask image, c=" + c
+                            // );
+                            rgb = (int) ( c & 0x00ffffff ); // Ignore the alpha component if any
+                            if( rgb > 0 ) // Ignore black
+                                pressColor( rgb ); // Determine what was pressed
                         }
                     }
                 }
                 if( analogImage != null )
                 {
-                    dX = (float)( x - (analogImage.x + analogImage.hWidth) );   // Distance from center along x-axis
-                    dY = (float)( (analogImage.y + analogImage.hHeight) - y );  // Distance from center along y-axis
-                    d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
-                    if( (i == analogPid) || (d >= analogDeadzone && d < analogMaximum + analogPadding) )
-                    {  // Inside the analog control
-                        if( Globals.userPrefs.touchscreenOctagonJoystick )
-                        {  // Emulate the analog control as an octagon (like the real N64 controller)
+                    dX = (float) ( x - ( analogImage.x + analogImage.hWidth ) ); // Distance from
+                                                                                 // center along
+                                                                                 // x-axis
+                    dY = (float) ( ( analogImage.y + analogImage.hHeight ) - y ); // Distance from
+                                                                                  // center along
+                                                                                  // y-axis
+                    d = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) ); // Distance from center
+                    if( ( i == analogPid )
+                            || ( d >= analogDeadzone && d < analogMaximum + analogPadding ) )
+                    {
+                        // Inside the analog control
+                        if( Globals.userPrefs.isOctagonalJoystick )
+                        {
+                            // Emulate the analog control as an octagon (like the real N64
+                            // controller)
                             Point crossPt = new Point();
                             float dC = analogImage.hWidth;
-                            float dA = FloatMath.sqrt( (dC * dC) / 2.0f );
-                        
-                            if( dX > 0 && dY > 0 )  // Quadrant I
+                            float dA = FloatMath.sqrt( ( dC * dC ) / 2.0f );
+                            
+                            if( dX > 0 && dY > 0 ) // Quadrant I
                             {
-                                if( segsCross( 0, 0, dX, dY, 0, dC, dA, dA, crossPt ) ||
-                                    segsCross( 0, 0, dX, dY, dA, dA, 80, 0, crossPt ) )
+                                if( segsCross( 0, 0, dX, dY, 0, dC, dA, dA, crossPt )
+                                        || segsCross( 0, 0, dX, dY, dA, dA, 80, 0, crossPt ) )
                                 {
                                     dX = crossPt.x;
                                     dY = crossPt.y;
                                 }
                             }
-                            else if( dX < 0 && dY > 0 )  // Quadrant II
+                            else if( dX < 0 && dY > 0 ) // Quadrant II
                             {
-                                if( segsCross( 0, 0, dX, dY, 0, dC, -dA, dA, crossPt ) ||
-                                    segsCross( 0, 0, dX, dY, -dA, dA, -dC, 0, crossPt ) )
+                                if( segsCross( 0, 0, dX, dY, 0, dC, -dA, dA, crossPt )
+                                        || segsCross( 0, 0, dX, dY, -dA, dA, -dC, 0, crossPt ) )
                                 {
                                     dX = crossPt.x;
                                     dY = crossPt.y;
                                 }
                             }
-                            else if( dX < 0 && dY < 0 )  // Quadrant III
+                            else if( dX < 0 && dY < 0 ) // Quadrant III
                             {
-                                if( segsCross( 0, 0, dX, dY, -dC, 0, -dA, -dA, crossPt ) ||
-                                    segsCross( 0, 0, dX, dY, -dA, -dA, 0, -dC, crossPt ) )
+                                if( segsCross( 0, 0, dX, dY, -dC, 0, -dA, -dA, crossPt )
+                                        || segsCross( 0, 0, dX, dY, -dA, -dA, 0, -dC, crossPt ) )
                                 {
                                     dX = crossPt.x;
                                     dY = crossPt.y;
                                 }
                             }
-                            else if( dX > 0 && dY < 0 )  // Quadrant IV
+                            else if( dX > 0 && dY < 0 ) // Quadrant IV
                             {
-                                if( segsCross( 0, 0, dX, dY, 0, -dC, dA, -dA, crossPt ) ||
-                                    segsCross( 0, 0, dX, dY, dA, -dA, dC, 0, crossPt ) )
+                                if( segsCross( 0, 0, dX, dY, 0, -dC, dA, -dA, crossPt )
+                                        || segsCross( 0, 0, dX, dY, dA, -dA, dC, 0, crossPt ) )
                                 {
                                     dX = crossPt.x;
                                     dY = crossPt.y;
                                 }
                             }
-                            d = FloatMath.sqrt( (dX * dX) + (dY * dY) );  // Distance from center
+                            d = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) ); // Distance from center
                         }
-                        analogPid = i;  // "Capture" the analog control
+                        analogPid = i; // "Capture" the analog control
                         touchedAnalog = true;
                         hatX = x - analogImage.x;
                         hatY = y - analogImage.y;
-
-                        p = (d - (float)analogDeadzone) / (float)(analogMaximum - analogDeadzone);  // Percentage of full-throttle
+                        
+                        p = ( d - (float) analogDeadzone )
+                                / (float) ( analogMaximum - analogDeadzone ); // Percentage of
+                                                                              // full-throttle
                         if( p < 0 )
                             p = 0;
                         if( p > 1 )
                             p = 1;
-                        // From the N64 function ref: The 3D Stick data is of type signed char and in
+                        // From the N64 function ref: The 3D Stick data is of type signed char and
+                        // in
                         // the range between 80 and -80. (32768 / 409 = ~80.1)
-                        axisX = (int) ( (dX / d) * p * 80.0f );
-                        axisY = (int) ( (dY / d) * p * 80.0f );
+                        axisX = (int) ( ( dX / d ) * p * 80.0f );
+                        axisY = (int) ( ( dY / d ) * p * 80.0f );
                         if( axisX > 80 )
                             axisX = 80;
                         if( axisX < -80 )
@@ -396,12 +446,14 @@ public class TouchscreenView extends View
                             axisY = 80;
                         if( axisY < -80 )
                             axisY = -80;
-//Log.v( "GamePad.java", "    pointer " + analogPid + " is attached to analog, converted axis: (" + axisX + "," + axisY + ")" );
+                        // Log.v( "GamePad.java", "    pointer " + analogPid +
+                        // " is attached to analog, converted axis: (" + axisX + "," + axisY + ")"
+                        // );
                     }
                 }
             }
         }
-        if( (!touchedAnalog || maxPid == 0) && (prevHatX != -1 || prevHatY != -1) )
+        if( ( !touchedAnalog || maxPid == 0 ) && ( prevHatX != -1 || prevHatY != -1 ) )
         {
             drawHat = true;
             if( redrawThread != null )
@@ -413,54 +465,59 @@ public class TouchscreenView extends View
             if( redrawThread != null )
                 redrawThread.redraw = true;
         }
-        NativeMethods.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY );  // TODO: Implement multi-controller
-        TouchscreenController.updateSDLButtonStates( SDLButtonPressed, SDLButtonCodes, SDLButtonCount );
+        NativeMethods.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY ); // TODO:
+                                                                                   // Implement
+                                                                                   // multi-controller
+        TouchscreenController.updateSDLButtonStates( SDLButtonPressed, SDLButtonCodes,
+                SDLButtonCount );
     }
-
+    
     /**
-     * Determines which button was pressed based on the closest mask color.
-     * TODO: Android is not precise: the color is different than it should be!)
-     * @param color Color of the pixel that the user pressed.
+     * Determines which button was pressed based on the closest mask color. TODO: Android is not
+     * precise: the color is different than it should be!)
+     * 
+     * @param color
+     *            Color of the pixel that the user pressed.
      */
     protected void pressColor( int color )
     {
-//Log.v( "GamePad.java", "    pressColor called, color=" + color );
-        int closestMatch = 0;  // start with the first N64 button
-        int closestSDLButtonMatch = -1;  // disable this to start with
+        // Log.v( "GamePad.java", "    pressColor called, color=" + color );
+        int closestMatch = 0; // start with the first N64 button
+        int closestSDLButtonMatch = -1; // disable this to start with
         int matchDif = Math.abs( maskColors[0] - color );
         int dif;
         
         for( int x = 1; x < 18; x++ )
-        {  // Go through the N64 button mask colors first
+        { // Go through the N64 button mask colors first
             dif = Math.abs( maskColors[x] - color );
             if( dif < matchDif )
-            {  // This is a closer match
+            { // This is a closer match
                 closestMatch = x;
                 matchDif = dif;
             }
         }
         
         for( int x = 0; x < SDLButtonCount; x++ )
-        {  // Now see if any of the SDL button mask colors are closer
+        { // Now see if any of the SDL button mask colors are closer
             dif = Math.abs( SDLButtonMaskColors[x] - color );
             if( dif < matchDif )
-            {  // This is a closer match
+            { // This is a closer match
                 closestSDLButtonMatch = x;
                 matchDif = dif;
             }
         }
-
+        
         if( closestSDLButtonMatch > -1 )
-        {  // found an SDL button that matches the color
+        { // found an SDL button that matches the color
             SDLButtonPressed[closestSDLButtonMatch] = true;
-            //Log.v( "GamePad.java", "    SDL button pressed, index=" + closestSDLButtonMatch );
+            // Log.v( "GamePad.java", "    SDL button pressed, index=" + closestSDLButtonMatch );
         }
         else
-        {  // one of the N64 buttons matched the color
-            //Log.v( "GamePad.java", "    N64 button pressed, index=" + closestMatch );
+        { // one of the N64 buttons matched the color
+          // Log.v( "GamePad.java", "    N64 button pressed, index=" + closestMatch );
             buttonPressed[closestMatch] = true;
             if( closestMatch < 14 )
-            {  // only 14 buttons in Mupen64Plus API
+            { // only 14 buttons in Mupen64Plus API
                 mp64pButtons[closestMatch] = true;
             }
             // simulate the remaining buttons:
@@ -486,31 +543,13 @@ public class TouchscreenView extends View
             }
         }
     }
-
-    protected void loadPad()
-    {
-        // TODO: Encapsulate call to overloaded method
-//        if ( !Globals.user.touchscreenEnabled)
-//            Game.mGamePad.loadPad( null );
-//        else if( !Globals.user.touchscreenLayoutIndex.isEmpty() )
-//            Game.mGamePad.loadPad( Globals.user.touchscreenLayoutIndex );
-//        else if( Game.mGamePadListing.numPads > 0 )
-//            Game.mGamePad.loadPad( Game.mGamePadListing.padNames[0] );
-//        else
-//        {
-//            Game.mGamePad.loadPad( null );
-//            Log.v( "GameActivity", "No gamepad skins found" );
-//            Log.v( "GameActivityXperiaPlay", "No gamepad skins found" );
-//        }
-    }
     
     /**
      * Loads the specified gamepad skin
-     * @param skin Name of the layout skin to load.
      */
-    protected void loadPad( String skin )
+    protected void loadPad()
     {
-        initialized = false;  // Stop anything accessing settings while loading
+        initialized = false; // Stop anything accessing settings while loading
         // Kill the FPS image redrawer and create a new one
         if( redrawThread != null )
         {
@@ -522,9 +561,10 @@ public class TouchscreenView extends View
                 redrawThread.join( 500 );
             }
             catch( InterruptedException ie )
-            {}
+            {
+            }
         }
-        redrawThread = new RedrawThread();  // There is no "restart", so start fresh
+        redrawThread = new RedrawThread(); // There is no "restart", so start fresh
         // Clear everything out to be re-populated with the new settings:
         analogImage = null;
         analogXpercent = 0;
@@ -545,7 +585,7 @@ public class TouchscreenView extends View
         fpsNumYpercent = 50;
         fpsRate = 15;
         fpsFont = "Mupen64Plus-AE-Contrast-Blue";
-
+        
         String filename;
         canvasW = 0;
         canvasH = 0;
@@ -566,11 +606,14 @@ public class TouchscreenView extends View
         for( int i = 0; i < 14; i++ )
             mp64pButtons[i] = false;
         
-        if( skin == null )
-            return;  // No skin was specified, so we are done.. quit
+        if( !Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isFrameRateEnabled )
+            return; // No skin to display, so we are done.. quit
+            
         // Load the configuration file (pad.ini):
-        ConfigFile pad_ini = new ConfigFile( Globals.path.dataDir + "/skins/gamepads/" + skin + "/pad.ini" );
-
+        final String skin = Globals.userPrefs.touchscreenLayout;
+        ConfigFile pad_ini = new ConfigFile( Globals.path.dataDir + "/skins/gamepads/" + skin
+                + "/pad.ini" );
+        
         Set<String> keys;
         Iterator<String> iter;
         String param, val;
@@ -582,11 +625,12 @@ public class TouchscreenView extends View
             keys = section.keySet();
             iter = keys.iterator();
             while( iter.hasNext() )
-            {   // Loop through the param=val pairs
+            {
+                // Loop through the param=val pairs
                 param = iter.next();
                 val = section.get( param );
                 valI = Utility.toInt( val, -1 ); // -1 (undefined) in case of number format problem
-                param = param.toLowerCase();  // Lets not make this part case-sensitive
+                param = param.toLowerCase(); // Lets not make this part case-sensitive
                 if( param.equals( "cup" ) )
                     maskColors[CUp] = valI;
                 else if( param.equals( "cright" ) )
@@ -626,68 +670,70 @@ public class TouchscreenView extends View
                 else if( param.contains( "scancode_" ) )
                 {
                     try
-                    {  // Make sure a valid integer was used for the scancode
-                        SDLButtonCodes[SDLButtonCount] = Integer.valueOf( param.substring( 9, param.length() ) );
+                    { // Make sure a valid integer was used for the scancode
+                        SDLButtonCodes[SDLButtonCount] = Integer.valueOf( param.substring( 9,
+                                param.length() ) );
                         SDLButtonMaskColors[SDLButtonCount] = valI;
                         SDLButtonCount++;
                     }
                     catch( NumberFormatException nfe )
-                    {}  // Skip it if this happens
+                    {
+                    } // Skip it if this happens
                 }
             }
         }
         Set<String> mKeys = pad_ini.keySet();
-        for( String mKey : mKeys )  // Loop through all the sections
-        {  
-            filename = mKey;  // the rest of the sections are filenames
-            if( filename != null && filename.length() > 0 &&
-                    !filename.equals( "INFO" ) && !filename.equals( "MASK_COLOR" ) &&
-                    !filename.equals( "[<sectionless!>]" ) )
-            {  
+        for( String mKey : mKeys ) // Loop through all the sections
+        {
+            filename = mKey; // the rest of the sections are filenames
+            if( filename != null && filename.length() > 0 && !filename.equals( "INFO" )
+                    && !filename.equals( "MASK_COLOR" ) && !filename.equals( "[<sectionless!>]" ) )
+            {
                 // Yep, its definitely a filename
-                section = pad_ini.get(filename);
+                section = pad_ini.get( filename );
                 if( section != null )
-                {  
+                {
                     // Process the parameters for this section
-                    val = section.get( "info" );  // What type of control
+                    val = section.get( "info" ); // What type of control
                     if( val != null )
                     {
-                        val = val.toLowerCase();  // Lets not make this part case-sensitive
+                        val = val.toLowerCase(); // Lets not make this part case-sensitive
                         if( val.contains( "analog" ) )
-                        {  // Analog control (PNG image format)
-                            analogImage = new Image( resources, Globals.path.dataDir + "/skins/gamepads/" +
-                                                     skin + "/" + filename + ".png" );
+                        { // Analog control (PNG image format)
+                            analogImage = new Image( resources, Globals.path.dataDir
+                                    + "/skins/gamepads/" + skin + "/" + filename + ".png" );
                             if( val.contains( "hat" ) )
-                            {  // There's a "stick" image.. same name, with "_2" appended:
-                                hatImage = new Image( resources, Globals.path.dataDir + "/skins/gamepads/" +
-                                                      skin + "/" + filename + "_2.png" );
+                            { // There's a "stick" image.. same name, with "_2" appended:
+                                hatImage = new Image( resources, Globals.path.dataDir
+                                        + "/skins/gamepads/" + skin + "/" + filename + "_2.png" );
                                 // Create the thread for redrawing the "stick" when it moves:
                                 redrawThread.redraw = false;
                                 redrawThread.alive = true;
                                 try
                                 {
-                                    redrawThread.start();  // Fire that thread up!
+                                    redrawThread.start(); // Fire that thread up!
                                 }
                                 catch( IllegalThreadStateException itse )
-                                {}  // Problem.. the "stick" is not going to redraw
+                                {
+                                } // Problem.. the "stick" is not going to redraw
                             }
                             // Position (percentages of the screen dimensions):
                             analogXpercent = Utility.toInt( section.get( "x" ), 0 );
                             analogYpercent = Utility.toInt( section.get( "y" ), 0 );
                             // Sensitivity (percentages of the radius, i.e. half the image width):
-                            analogDeadzone = (int) ( (float) analogImage.hWidth * 
-                                                             ( Utility.toFloat( section.get( "min" ), 1 ) / 100.0f ) );
-                            analogMaximum = (int) ( (float) analogImage.hWidth *
-                                                            ( Utility.toFloat( section.get( "max" ), 55 ) / 100.0f ) );
-                            analogPadding = (int) ( (float) analogImage.hWidth *
-                                                            ( Utility.toFloat( section.get( "buff" ), 55 ) / 100.0f ) );
+                            analogDeadzone = (int) ( (float) analogImage.hWidth * ( Utility
+                                    .toFloat( section.get( "min" ), 1 ) / 100.0f ) );
+                            analogMaximum = (int) ( (float) analogImage.hWidth * ( Utility.toFloat(
+                                    section.get( "max" ), 55 ) / 100.0f ) );
+                            analogPadding = (int) ( (float) analogImage.hWidth * ( Utility.toFloat(
+                                    section.get( "buff" ), 55 ) / 100.0f ) );
                         }
                         else if( val.contains( "fps" ) )
-                        {  // FPS indicator (PNG image format)
-                            if( Globals.userPrefs.touchscreenFrameRate )
+                        { // FPS indicator (PNG image format)
+                            if( Globals.userPrefs.isFrameRateEnabled )
                             {
-                                fpsImage = new Image( resources, Globals.path.dataDir + "/skins/gamepads/" +
-                                                      skin + "/" + filename + ".png" );
+                                fpsImage = new Image( resources, Globals.path.dataDir
+                                        + "/skins/gamepads/" + skin + "/" + filename + ".png" );
                                 // Position (percentages of the screen dimensions):
                                 fpsXpercent = Utility.toInt( section.get( "x" ), 0 );
                                 fpsYpercent = Utility.toInt( section.get( "y" ), 0 );
@@ -702,18 +748,22 @@ public class TouchscreenView extends View
                                 // Number font:
                                 fpsFont = section.get( "font" );
                                 if( fpsFont != null && fpsFont.length() > 0 )
-                                {  // Load the font images
+                                { // Load the font images
                                     int x = 0;
                                     try
-                                    {  // Make sure we can actually load them (they might not even exist)
+                                    { // Make sure we can actually load them (they might not even
+                                      // exist)
                                         for( x = 0; x < 10; x++ )
-                                            numberImages[x] = new Image( resources, Globals.path.dataDir + "/skins/fonts/" +
-                                                                         fpsFont + "/" + x + ".png" );
+                                            numberImages[x] = new Image( resources,
+                                                    Globals.path.dataDir + "/skins/fonts/"
+                                                            + fpsFont + "/" + x + ".png" );
                                     }
                                     catch( Exception e )
-                                    {  // Problem, let the user know
-                                        Log.e( "GamePad", "Problem loading font '" + Globals.path.dataDir + "/skins/fonts/" +
-                                               fpsFont + "/" + x + ".png', error message: " + e.getMessage() );
+                                    { // Problem, let the user know
+                                        Log.e( "GamePad",
+                                                "Problem loading font '" + Globals.path.dataDir
+                                                        + "/skins/fonts/" + fpsFont + "/" + x
+                                                        + ".png', error message: " + e.getMessage() );
                                     }
                                 }
                                 // Create the thread for redrawing the FPS when it changes:
@@ -721,20 +771,23 @@ public class TouchscreenView extends View
                                 redrawThread.alive = true;
                                 try
                                 {
-                                    redrawThread.start();   // go!
+                                    redrawThread.start(); // go!
                                 }
                                 catch( IllegalThreadStateException itse )
-                                {}  // problem.. the FPS is not going to refresh
+                                {
+                                } // problem.. the FPS is not going to refresh
                             }
                         }
                         else
-                        {  // A button control (may contain one or more N64 buttons and/or SDL buttons)
-                            // The drawable image is in PNG image format
-                            // The color mask image is in BMP image format (doesn't actually get drawn)
-                            buttons[buttonCount] = new Image( resources, Globals.path.dataDir + "/skins/gamepads/" +
-                                                              skin + "/" + filename + ".png" );
-                            masks[buttonCount] = new Image( resources, Globals.path.dataDir + "/skins/gamepads/" +
-                                                            skin + "/" + filename + ".bmp" );
+                        { // A button control (may contain one or more N64 buttons and/or SDL
+                          // buttons)
+                          // The drawable image is in PNG image format
+                          // The color mask image is in BMP image format (doesn't actually get
+                          // drawn)
+                            buttons[buttonCount] = new Image( resources, Globals.path.dataDir
+                                    + "/skins/gamepads/" + skin + "/" + filename + ".png" );
+                            masks[buttonCount] = new Image( resources, Globals.path.dataDir
+                                    + "/skins/gamepads/" + skin + "/" + filename + ".bmp" );
                             // Position (percentages of the screen dimensions):
                             xpercents[buttonCount] = Utility.toInt( section.get( "x" ), 0 );
                             ypercents[buttonCount] = Utility.toInt( section.get( "y" ), 0 );
@@ -748,28 +801,38 @@ public class TouchscreenView extends View
         pad_ini.clear();
         pad_ini = null;
         
-        initialized = true;     // Everything is loaded now
-        drawEverything = true;  // Need to redraw everything, since it all changed
-        invalidate();           // Let Android know it needs to redraw
+        initialized = true; // Everything is loaded now
+        drawEverything = true; // Need to redraw everything, since it all changed
+        invalidate(); // Let Android know it needs to redraw
     }
     
     /**
-     * Determines if the two specified line segments intersect with each other, and calculates
-     * where the intersection occurs if they do.
-     * @param seg1pt1_x X-coordinate for the first end of the first line segment.
-     * @param seg1pt1_y Y-coordinate for the first end of the first line segment.
-     * @param seg1pt2_x X-coordinate for the second end of the first line segment.
-     * @param seg1pt2_y Y-coordinate for the second end of the first line segment.
-     * @param seg2pt1_x X-coordinate for the first end of the second line segment.
-     * @param seg2pt1_y Y-coordinate for the first end of the second line segment.
-     * @param seg2pt2_x X-coordinate for the second end of the second line segment.
-     * @param seg2pt2_y Y-coordinate for the second end of the second line segment.
-     * @param crossPt Changed to the point of intersection if there is one, otherwise unchanged.
+     * Determines if the two specified line segments intersect with each other, and calculates where
+     * the intersection occurs if they do.
+     * 
+     * @param seg1pt1_x
+     *            X-coordinate for the first end of the first line segment.
+     * @param seg1pt1_y
+     *            Y-coordinate for the first end of the first line segment.
+     * @param seg1pt2_x
+     *            X-coordinate for the second end of the first line segment.
+     * @param seg1pt2_y
+     *            Y-coordinate for the second end of the first line segment.
+     * @param seg2pt1_x
+     *            X-coordinate for the first end of the second line segment.
+     * @param seg2pt1_y
+     *            Y-coordinate for the first end of the second line segment.
+     * @param seg2pt2_x
+     *            X-coordinate for the second end of the second line segment.
+     * @param seg2pt2_y
+     *            Y-coordinate for the second end of the second line segment.
+     * @param crossPt
+     *            Changed to the point of intersection if there is one, otherwise unchanged.
      * @return True if the two line segments intersect.
      */
-    public static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x, float seg1pt2_y,
-                                     float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
-                                     Point crossPt )
+    public static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
+            float seg1pt2_y, float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
+            Point crossPt )
     {
         float vec1_x = seg1pt2_x - seg1pt1_x;
         float vec1_y = seg1pt2_y - seg1pt1_y;
@@ -777,21 +840,22 @@ public class TouchscreenView extends View
         float vec2_x = seg2pt2_x - seg2pt1_x;
         float vec2_y = seg2pt2_y - seg2pt1_y;
         
-        float div = (-vec2_x * vec1_y + vec1_x * vec2_y );
+        float div = ( -vec2_x * vec1_y + vec1_x * vec2_y );
         if( div == 0 )
-            return false;  // Segments don't cross
-        
-        float s = (-vec1_y * (seg1pt1_x - seg2pt1_x) + vec1_x * (seg1pt1_y - seg2pt1_y) ) / div;
-        float t = ( vec2_x * (seg1pt1_y - seg2pt1_y) - vec2_y * (seg1pt1_x - seg2pt1_x) ) / div;
+            return false; // Segments don't cross
+            
+        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) )
+                / div;
+        float t = ( vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
         
         if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
         {
-            crossPt.x = seg1pt1_x + (t * vec1_x);
-            crossPt.y = seg1pt1_y + (t * vec1_y);
-            return true;  // Segments cross, point of intersection stored in 'crossPt'
+            crossPt.x = seg1pt1_x + ( t * vec1_x );
+            crossPt.y = seg1pt1_y + ( t * vec1_y );
+            return true; // Segments cross, point of intersection stored in 'crossPt'
         }
         
-        return false;  // Segments don't cross
+        return false; // Segments don't cross
     }
     
     /**
@@ -811,7 +875,7 @@ public class TouchscreenView extends View
             y = 0;
         }
     }
-
+    
     /**
      * The Image class provides a simple interface to common image manipulation methods.
      */
@@ -820,18 +884,21 @@ public class TouchscreenView extends View
         public BitmapDrawable drawable = null;
         public Bitmap image = null;
         public Rect drawRect = null;
-
+        
         public int x = 0;
         public int y = 0;
         public int width = 0;
         public int height = 0;
         public int hWidth = 0;
         public int hHeight = 0;
-
+        
         /**
          * Constructor: Loads an image file and sets the initial properties.
-         * @param res Handle to the app resources.
-         * @param filename Path to the image file.
+         * 
+         * @param res
+         *            Handle to the app resources.
+         * @param filename
+         *            Path to the image file.
          */
         public Image( Resources res, String filename )
         {
@@ -839,17 +906,20 @@ public class TouchscreenView extends View
             drawable = new BitmapDrawable( res, image );
             if( image != null )
                 width = image.getWidth();
-            hWidth = (int) ((float)width / 2.0f);
+            hWidth = (int) ( (float) width / 2.0f );
             if( image != null )
                 height = image.getHeight();
-            hHeight = (int) ((float)height / 2.0f);
+            hHeight = (int) ( (float) height / 2.0f );
             drawRect = new Rect();
         }
         
         /**
          * Constructor: Creates a clone copy of another Image.
-         * @param res Handle to the app resources.
-         * @param clone Image to copy.
+         * 
+         * @param res
+         *            Handle to the app resources.
+         * @param clone
+         *            Image to copy.
          */
         public Image( Resources res, Image clone )
         {
@@ -867,8 +937,11 @@ public class TouchscreenView extends View
         
         /**
          * Sets the screen position of the image (in pixels).
-         * @param x X-coordinate.
-         * @param y Y-coordinate.
+         * 
+         * @param x
+         *            X-coordinate.
+         * @param y
+         *            Y-coordinate.
          */
         public void setPos( int x, int y )
         {
@@ -881,12 +954,17 @@ public class TouchscreenView extends View
         }
         
         /**
-         * Centers the image at the specified coordinates, without going beyond the
-         * specified screen dimensions.
-         * @param centerX X-coordinate to center the image at.
-         * @param centerY Y-coordinate to center the image at.
-         * @param screenW Horizontal screen dimension (in pixels).
-         * @param screenH Vertical screen dimension (in pixels).
+         * Centers the image at the specified coordinates, without going beyond the specified screen
+         * dimensions.
+         * 
+         * @param centerX
+         *            X-coordinate to center the image at.
+         * @param centerY
+         *            Y-coordinate to center the image at.
+         * @param screenW
+         *            Horizontal screen dimension (in pixels).
+         * @param screenH
+         *            Vertical screen dimension (in pixels).
          */
         public void fitCenter( int centerX, int centerY, int screenW, int screenH )
         {
@@ -911,14 +989,21 @@ public class TouchscreenView extends View
         }
         
         /**
-         * Centers the image at the specified coordinates, without going beyond the
-         * edges of the specified rectangle.
-         * @param centerX X-coordinate to center the image at.
-         * @param centerY Y-coordinate to center the image at.
-         * @param rectX X-coordinate of the bounding rectangle.
-         * @param rectY Y-coordinate of the bounding rectangle.
-         * @param rectW Horizontal bounding rectangle dimension (in pixels).
-         * @param rectH Vertical bounding rectangle dimension (in pixels).
+         * Centers the image at the specified coordinates, without going beyond the edges of the
+         * specified rectangle.
+         * 
+         * @param centerX
+         *            X-coordinate to center the image at.
+         * @param centerY
+         *            Y-coordinate to center the image at.
+         * @param rectX
+         *            X-coordinate of the bounding rectangle.
+         * @param rectY
+         *            Y-coordinate of the bounding rectangle.
+         * @param rectW
+         *            Horizontal bounding rectangle dimension (in pixels).
+         * @param rectH
+         *            Vertical bounding rectangle dimension (in pixels).
          */
         public void fitCenter( int centerX, int centerY, int rectX, int rectY, int rectW, int rectH )
         {
@@ -944,7 +1029,9 @@ public class TouchscreenView extends View
         
         /**
          * Draws the image.
-         * @param canvas Canvas to draw the image on.
+         * 
+         * @param canvas
+         *            Canvas to draw the image on.
          */
         public void draw( Canvas canvas )
         {
@@ -963,75 +1050,84 @@ public class TouchscreenView extends View
         public boolean redrawFPS = false;
         // Runnable for the analog stick:
         private Runnable redrawer = new Runnable()
-                                    {
-                                        int x1, y1, x2, y2;
-                                        public void run()
-                                        {
-                                            if( Globals.userPrefs.touchscreenRedrawAll )
-                                            {
-                                                invalidate();  // Redraw everything
-                                            }
-                                            else
-                                            {
-                                                x1 = analogImage.x;
-                                                if( hatImage != null && hatImage.x < x1 )
-                                                    x1 = hatImage.x;
-                                                y1 = analogImage.y;
-                                                if( hatImage != null && hatImage.y < y1 )
-                                                    y1 = hatImage.y;
-                                                x2 = analogImage.x + analogImage.width;
-                                                if( hatImage != null && hatImage.x + hatImage.width > x2 )
-                                                    x2 = hatImage.x + hatImage.width;
-                                                y2 = analogImage.y + analogImage.height;
-                                                if( hatImage != null && hatImage.y + hatImage.height > y2 )
-                                                    y2 = hatImage.y + hatImage.height;
-                                                invalidate( x1, y1, x2, y2 );  // Only redraw what has changed
-                                            }
-                                         }
-                                     };
+        {
+            int x1, y1, x2, y2;
+            
+            public void run()
+            {
+                if( Globals.userPrefs.isTouchscreenRedrawAll )
+                {
+                    invalidate(); // Redraw everything
+                }
+                else
+                {
+                    x1 = analogImage.x;
+                    if( hatImage != null && hatImage.x < x1 )
+                        x1 = hatImage.x;
+                    y1 = analogImage.y;
+                    if( hatImage != null && hatImage.y < y1 )
+                        y1 = hatImage.y;
+                    x2 = analogImage.x + analogImage.width;
+                    if( hatImage != null && hatImage.x + hatImage.width > x2 )
+                        x2 = hatImage.x + hatImage.width;
+                    y2 = analogImage.y + analogImage.height;
+                    if( hatImage != null && hatImage.y + hatImage.height > y2 )
+                        y2 = hatImage.y + hatImage.height;
+                    invalidate( x1, y1, x2, y2 ); // Only redraw what has changed
+                }
+            }
+        };
         // Runnable for the FPS indicator:
         private Runnable redrawerFPS = new Runnable()
-                                    {
-                                        int x1, y1, x2, y2;
-                                        public void run()
-                                        {
-                                            if( Globals.userPrefs.touchscreenRedrawAll )
-                                            {
-                                                invalidate();  // Redraw everything
-                                            }
-                                            else
-                                            {
-                                                x1 = fpsImage.x;
-                                                y1 = fpsImage.y;
-                                                x2 = fpsImage.x + fpsImage.width;
-                                                y2 = fpsImage.y + fpsImage.height;
-                                                invalidate( x1, y1, x2, y2 );  // Only redraw what has changed
-                                            }
-                                         }
-                                     };
+        {
+            int x1, y1, x2, y2;
+            
+            public void run()
+            {
+                if( Globals.userPrefs.isTouchscreenRedrawAll )
+                {
+                    invalidate(); // Redraw everything
+                }
+                else
+                {
+                    x1 = fpsImage.x;
+                    y1 = fpsImage.y;
+                    x2 = fpsImage.x + fpsImage.width;
+                    y2 = fpsImage.y + fpsImage.height;
+                    invalidate( x1, y1, x2, y2 ); // Only redraw what has changed
+                }
+            }
+        };
+        
         /**
-         * Main loop.  Periodically checks if redrawing is necessary.
+         * Main loop. Periodically checks if redrawing is necessary.
          */
         public void run()
         {
             int millis = 100;
-            if( Globals.userPrefs.touchscreenRedrawAll )
+            if( Globals.userPrefs.isTouchscreenRedrawAll )
                 millis = 150;
-
+            
             while( alive )
-            {  // Shut down by setting alive=false from another thread
+            { // Shut down by setting alive=false from another thread
                 if( redraw )
-                {  // Need to redraw the analog stick
+                { // Need to redraw the analog stick
                     Globals.gameInstance.runOnUiThread( redrawer );
                 }
-                redraw = false;  // So it doesn't keep on redrawing every time
+                redraw = false; // So it doesn't keep on redrawing every time
                 if( redrawFPS )
-                {  // Need to redraw the FPS indicator
+                { // Need to redraw the FPS indicator
                     Globals.gameInstance.runOnUiThread( redrawerFPS );
                 }
-                redrawFPS = false;  // So it doesn't keep redrawing every time
+                redrawFPS = false; // So it doesn't keep redrawing every time
                 // Sleep for a while, to save the CPU:
-                try{ Thread.sleep( millis ); } catch( InterruptedException ie ) {}
+                try
+                {
+                    Thread.sleep( millis );
+                }
+                catch( InterruptedException ie )
+                {
+                }
             }
         }
     }

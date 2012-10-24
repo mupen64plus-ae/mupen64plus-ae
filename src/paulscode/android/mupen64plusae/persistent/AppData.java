@@ -214,6 +214,6 @@ public class AppData
         }
         
         // Persist the value to storage so that we don't have to do this every time
-        mPreferences.edit().putInt( "hardwareType", type );
+        mPreferences.edit().putInt( "hardwareType", type ).commit();
     }
 }

@@ -15,6 +15,8 @@ import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
+import android.app.Activity;
+import android.os.Handler;
 import android.util.Log;
 
 public class Utility
@@ -491,5 +493,18 @@ public class Utility
         catch( InterruptedException e )
         {
         }
+    }
+
+    public static void systemExitFriendly( String message, Activity activity, int milliseconds )
+    {
+        Notifier.showToast( message, activity );
+        final Handler handler = new Handler();
+        handler.postDelayed( new Runnable()
+        {
+            public void run()
+            {
+                System.exit( 0 );
+            }
+        }, milliseconds );
     }
 }

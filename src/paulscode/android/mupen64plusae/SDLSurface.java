@@ -76,20 +76,22 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             mp64pButtons[x] = false;
         
         getHolder().addCallback( this );
-        
-        setFocusable( true );
-        setFocusableInTouchMode( true );
-        requestFocus();
+
         setOnKeyListener( this );
         setOnTouchListener( this );
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
             setOnGenericMotionListener( new JoystickListener( this ) );
         }
-        
-        mSensorManager = (SensorManager) context.getSystemService( "sensor" );
-        requestFocus();
+        if( !isInEditMode() )
+        {
+            // Do not run this code when drawing this in Eclipse's graphical editor
+            mSensorManager = (SensorManager) context.getSystemService( "sensor" );
+        }
+
+        setFocusable( true );
         setFocusableInTouchMode( true );
+        requestFocus();
     }
     
     // Called when we have a valid drawing surface
@@ -178,6 +180,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         
         if( Globals.resumeLastSession )
         {
+            // TODO: This block seems to cause a force-close
             new Thread( "ResumeSessionThread" )
             {
                 @Override
@@ -274,7 +277,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             }
             
             int[] configSpec;
-            if( Globals.userPrefs.videoRGBA8888 )
+            if( Globals.userPrefs.isRgba8888 )
                 configSpec = new int[] { EGL10.EGL_RED_SIZE, 8, // paulscode: get a config with red
                                                                 // 8
                         EGL10.EGL_GREEN_SIZE, 8, // paulscode: get a config with green 8
@@ -394,10 +397,11 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         return onKey( keyCode, event.getAction() );
     }
     
+    @TargetApi( 12 )
     public boolean onKey( int key, int action )
     {
         // This method is used by the Xperia-Play native activity:
-        if( Globals.userPrefs.isInputEnabled )
+        if( !Globals.userPrefs.isInputEnabled )
             return false;
         
         if( action == KeyEvent.ACTION_DOWN )
@@ -406,9 +410,11 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                 return false;
             else if( key == KeyEvent.KEYCODE_BACK
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-            { // There is no Menu button in HC/ ICS, so show/ hide ActionBar when "Back" is pressed
+            {
+                // There is no Menu button in HC/ ICS, so show/ hide ActionBar when "Back" is pressed
                 if( Globals.gameInstance != null )
-                { // Show/ hide the Action Bar
+                {
+                    // Show/ hide the Action Bar
                     Globals.gameInstance.runOnUiThread( new Runnable()
                     {
                         @TargetApi( 11 )
@@ -416,16 +422,18 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                         {
                             if( Globals.gameInstance.getActionBar().isShowing() )
                             {
-                                View mView = getRootView();
-                                if( mView == null )
+                                View view = getRootView();
+                                if( view == null )
                                     Log.e( "SDLSurface",
                                             "getRootView() returned null in method onKey" );
                                 else
-                                    mView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+                                    view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
                                 Globals.gameInstance.getActionBar().hide();
                             }
                             else
+                            {
                                 Globals.gameInstance.getActionBar().show();
+                            }
                         }
                     } );
                 }
@@ -434,7 +442,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             
             if( key == KeyEvent.KEYCODE_VOLUME_UP || key == KeyEvent.KEYCODE_VOLUME_DOWN )
             {
-                if( !Globals.userPrefs.isVolKeysEnabled )
+                if( Globals.userPrefs.isVolKeysEnabled )
                 {
                     NativeMethods.onKeyDown( key );
                     return true;

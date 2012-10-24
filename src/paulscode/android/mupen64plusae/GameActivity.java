@@ -46,6 +46,7 @@ public class GameActivity extends Activity
     private static long[] vibratePattern = { 0, 500, 0 };
     private int mSlot = 0;
     private static final int NUM_SLOTS = 10;
+    private MenuItem mSlotMenuItem;
     
     static
     {
@@ -54,9 +55,21 @@ public class GameActivity extends Activity
         Helpers.loadNativeLibName( "front-end" );
     }
     
+    private void loadNativeLibraries()
+    {
+        if( Globals.userPrefs.isXperiaEnabled )
+        {
+            Helpers.loadNativeLibName( "xperia-touchpad" );
+        }
+        Helpers.loadNativeLib( Globals.userPrefs.videoPlugin );
+        Helpers.loadNativeLib( Globals.userPrefs.audioPlugin );
+        Helpers.loadNativeLib( Globals.userPrefs.inputPlugin );
+        Helpers.loadNativeLib( Globals.userPrefs.rspPlugin );
+    }
+
     private static void saveSession( GameActivity activity )
     {
-        if( !Globals.userPrefs.autoSaveEnabled )
+        if( !Globals.userPrefs.isAutoSaveEnabled )
             return;
         
         // Pop up a toast message
@@ -97,6 +110,8 @@ public class GameActivity extends Activity
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.ingame, menu );
+        mSlotMenuItem = menu.findItem( R.id.ingameSlot );
+        setSlot( 0 );
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -105,8 +120,11 @@ public class GameActivity extends Activity
     {
         switch( item.getItemId() )
         {
-            case R.id.ingameSlot:
-                // incrementSlot();
+            case R.id.ingameSave:
+                NativeMethods.stateSaveEmulator();
+                break;
+            case R.id.ingameLoad:
+                NativeMethods.stateLoadEmulator();
                 break;
             case R.id.slot0:
                 setSlot( 0 );
@@ -117,22 +135,32 @@ public class GameActivity extends Activity
             case R.id.slot2:
                 setSlot( 2 );
                 break;
-            case R.id.ingameSave:
-                NativeMethods.stateSaveEmulator();
+            case R.id.slot3:
+                setSlot( 3 );
                 break;
-            case R.id.ingameLoad:
-                NativeMethods.stateLoadEmulator();
+            case R.id.slot4:
+                setSlot( 4 );
+                break;
+            case R.id.slot5:
+                setSlot( 5 );
+                break;
+            case R.id.slot6:
+                setSlot( 6 );
+                break;
+            case R.id.slot7:
+                setSlot( 7 );
+                break;
+            case R.id.slot8:
+                setSlot( 8 );
+                break;
+            case R.id.slot9:
+                setSlot( 9 );
                 break;
             case R.id.ingameMenu:
-                saveSession( this ); // Workaround, allows us to force-close later
+                saveSession( this );
                 Notifier.clear();
-                Intent intent = new Intent( this, MenuActivity.class );
-                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-                startActivity( intent );
                 Globals.gameInstance = null;
-                
-                // this.finish(); // This causes menu to crash, why??
-                System.exit( 0 ); // Workaround, force-close (what about SDL thread?)
+                finish(); // This will kick us back out to the MenuActivity
                 break;
             default:
                 break;
@@ -140,18 +168,27 @@ public class GameActivity extends Activity
         return super.onOptionsItemSelected( item );
     }
     
+    private void setSlot( int value )
+    {
+        mSlot = value % NUM_SLOTS;
+        NativeMethods.stateSetSlotEmulator( mSlot );
+        Notifier.showToast( getString( R.string.savegame_slot ) + " " + mSlot, this );
+        if (mSlotMenuItem != null)
+            mSlotMenuItem.setTitle( getString( R.string.ingameSlot_title) + " " + value );
+    }
+
     @Override
     public void onUserLeaveHint()
     {
         // This executes when Home is pressed (can't detect it in onKey).
         //
         // fileSaveEmulator( "Mupen64PlusAE_LastSession.sav" ); // immediate resume causes problems!
+        
         saveSession( this ); // Workaround, allows us to force-close later
-        //
         super.onUserLeaveHint(); // weird bug if choosing "Close" from menu. Force-close here?
         
         Globals.gameInstance = null;
-        System.exit( 0 ); // Workaround, force-close (what about SDL thread?)
+//        System.exit( 0 ); // Workaround, force-close (what about SDL thread?)
         
         /*
          * How to go home using an intent: Intent intent = new Intent( Intent.ACTION_MAIN );
@@ -216,18 +253,6 @@ public class GameActivity extends Activity
         mVibrator = (Vibrator) getSystemService( Context.VIBRATOR_SERVICE );
     }
 
-    private void loadNativeLibraries()
-    {
-        if( Globals.userPrefs.isXperiaEnabled )
-        {
-            Helpers.loadNativeLibName( "xperia-touchpad" );
-        }
-        Helpers.loadNativeLib( Globals.mupen64plus_cfg.get( "UI-Console", "VideoPlugin" ) );
-        Helpers.loadNativeLib( Globals.mupen64plus_cfg.get( "UI-Console", "AudioPlugin" ) );
-        Helpers.loadNativeLib( Globals.mupen64plus_cfg.get( "UI-Console", "InputPlugin" ) );
-        Helpers.loadNativeLib( Globals.mupen64plus_cfg.get( "UI-Console", "RspPlugin" ) );
-    }
-    
     @TargetApi( 11 )
     private void configureLayout()
     {
@@ -269,43 +294,31 @@ public class GameActivity extends Activity
         }
     }
     
-    private void setSlot( int value )
-    {
-        mSlot = value % NUM_SLOTS;
-        NativeMethods.stateSetSlotEmulator( mSlot );
-        Notifier.showToast( getString( R.string.savegame_slot ) + " " + mSlot, this );
-    }
-    
-    @SuppressWarnings( "unused" )
-    private void incrementSlot()
-    {
-        setSlot( mSlot + 1 );
-    }
-    
-    @SuppressWarnings( "unused" )
-    private void decrementSlot()
-    {
-        setSlot( mSlot + NUM_SLOTS - 1 );
-    }
-    
-    // Handler for the messages
-    Handler commandHandler = new Handler()
-    {
-        public void handleMessage( Message msg )
-        {
-            if( msg.arg1 == COMMAND_CHANGE_TITLE )
-            {
-                setTitle( (String) msg.obj );
-            }
-        }
-    };
-    
     // Send a message from the SDLMain thread
     void sendCommand( int command, Object data )
     {
+        CommandHandler commandHandler = new CommandHandler( this );
         Message msg = commandHandler.obtainMessage();
         msg.arg1 = command;
         msg.obj = data;
         commandHandler.sendMessage( msg );
     }
+    
+    // Handler for the messages
+    static class CommandHandler extends Handler
+    {
+        GameActivity mActivity;
+        public CommandHandler(GameActivity activity)
+        {
+            mActivity = activity;
+        }
+        
+        public void handleMessage( Message msg )
+        {
+            if( msg.arg1 == COMMAND_CHANGE_TITLE )
+            {
+                mActivity.setTitle( (String) msg.obj );
+            }
+        }
+    };
 }

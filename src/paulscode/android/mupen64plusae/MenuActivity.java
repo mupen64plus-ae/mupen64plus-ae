@@ -49,7 +49,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         addPreferencesFromResource( R.xml.preferences );
         
         // Update the global convenience class
-        Globals.userPrefs = new UserPrefs( PreferenceManager.getDefaultSharedPreferences( this ) );
+        Globals.userPrefs = new UserPrefs( this );
         
         // Define the callback when the user presses certain menu items
         mMenuResume = findPreference( "menuResume" );
@@ -80,7 +80,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         // Update the global convenience class
-        Globals.userPrefs = new UserPrefs( sharedPreferences );
+        Globals.userPrefs = new UserPrefs( this );
         refreshSummaries( sharedPreferences );
     }
     
@@ -88,8 +88,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private void refreshSummaries( SharedPreferences sharedPreferences )
     {
         // Update the summary text in the menu for all ListPreferences
-        // Inspired by http://stackoverflow.com/a/531927/254218
-        // TODO: This still doesn't smell very good... has to be a better way
         for( String key : sharedPreferences.getAll().keySet() )
         {
             Preference preference = findPreference( key );
@@ -114,12 +112,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 return true;
             }
             Globals.mupen64plus_cfg.save();
-            Globals.resumeLastSession = true;
+            Globals.resumeLastSession = false; //TODO: something screwy when this is true
             
             Intent intent = new Intent( this, GameActivity.class );
             intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
             startActivity( intent );
-            finish();
+            //finish(); // TODO: Don't finish MenuActivity... user may come back later
             return true;
         }
         else if( preference == mMenuResetPrefs )

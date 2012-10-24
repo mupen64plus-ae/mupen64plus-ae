@@ -52,10 +52,10 @@
     <string name="app_data_inaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
     
     <!-- In-Game Menu (GameActivity.java) -->
-    <string name="ingameSlot">Slot</string>
-    <string name="ingameSave">Save</string>
-    <string name="ingameLoad">Load</string>
-    <string name="ingameMenu">Menu</string>
+    <string name="ingameSlot_title">Slot</string>
+    <string name="ingameSave_title">Save</string>
+    <string name="ingameLoad_title">Load</string>
+    <string name="ingameMenu_title">Menu</string>
     
     <!-- ******************************************** -->
     <!-- Preference Menu Strings                      -->
@@ -87,7 +87,7 @@
     <string name="other_title">@string/other</string>
     <string name="other_summary">Audio, processor, core, etc.</string>
     <string name="gameRomDir_title">ROM folder</string>
-    <string name="gameSaveDir_title">Save-file folder</string>
+    <string name="gameSaveDir_title">Savegame folder</string>
     <string name="autoSaveEnabled_title">Auto-save</string>
     <string name="autoSaveEnabled_summary">Save game on exit</string>
     <string name="touchscreenFrameRate_title">Show framerate</string>
