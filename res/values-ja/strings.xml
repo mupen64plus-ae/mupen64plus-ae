@@ -48,7 +48,7 @@
     <string name="mupen64plus_started">Mupen64Plusが起動した</string>
     <string name="savegame_slot">セーブデータスロット</string>
     <string name="saving_game">ゲームを保存</string>
-    <string name="illegal_audio_state">オーディオトラックが不正な状態。  paulscode.comに問題を報告してください</string>
+    <string name="illegal_audio_state">オーディオトラックが不正な状態。 paulscode.comに問題を報告してください</string>
     <string name="app_data_inaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
     
     <!-- In-Game Menu (GameActivity.java) -->
@@ -146,7 +146,7 @@
     
     <!-- GLES2Rice Menu -->
     <string name="gles2RiceAutoFrameskip_title">オートフレームスキップ</string>
-    <string name="gles2RiceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
+    <string name="gles2RiceAutoFrameskip_summary">FPSの費用で速度を向上させる。</string>
     <string name="gles2RiceFastTextureCRC_title">高速テクスチャCRC</string>
     <string name="gles2RiceFastTextureCRC_summary">設定が無効になっている場合、2D要素が改善され</string>
     <string name="gles2RiceFastTexture_title">高速テクスチャの読み込み</string>
