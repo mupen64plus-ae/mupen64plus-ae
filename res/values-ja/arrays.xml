@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    Please follow the recommended practices described in:
+        res/values/strings.xml
+        res/xml/preferences.xml
+    ***********************************************************************************
+-->
+<resources>
+
+    <!-- Touchscreen Layouts -->
+    <string-array name="touchscreenLayout_entries">
+        <item>アナログ (roymustang16によって)</item>
+        <item>デジタル (roymustang16によって)</item>
+        <item>タッチ (roymustang16によって)</item>
+    </string-array>
+    <string-array name="touchscreenLayout_values">
+        <item>Mupen64Plus-AE-Analog</item>
+        <item>Mupen64Plus-AE-Digital</item>
+        <item>Mupen64Plus-AE-Touch</item>
+    </string-array>
+    <string name="touchscreenLayout_default">Mupen64Plus-AE-Analog</string>
+    <string name="touchscreenLayout_fpsOnly">Mupen64Plus-AE-Just-FPS</string>
+
+    <!-- Touchscreen Sizes -->
+    <string-array name="touchscreenSize_entries">
+        <item>小さな</item>
+        <item>小</item>
+        <item>デフォルト</item>
+        <item>タブレット</item>
+    </string-array>
+    <string-array name="touchscreenSize_values">
+        <item>-Tiny</item>
+        <item>-Small</item>
+        <item></item>
+        <item>-Tablet</item>
+    </string-array>
+    <string name="touchscreenSize_default"></string>
+
+    <!-- Gamepad Plugins -->
+    <string-array name="gamepadPlugin_entries">
+        <item>@string/disabled</item>
+        <item>input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</item>
+    </string-array>
+    <string-array name="gamepadPlugin_values">
+        <item></item>
+        <item>libinput-sdl.so</item>
+    </string-array>
+    <string name="gamepadPlugin_default">libinput-sdl.so</string>
+    
+    <!-- Video Plugins -->
+    <string-array name="videoPlugin_entries">
+        <item>gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</item>
+        <item>gles2rice, v0.1.0(b) (GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</item>
+    </string-array>
+    <string-array name="videoPlugin_values">
+        <item>libgles2n64.so</item>
+        <item>libgles2rice.so</item>
+    </string-array>
+    <string name="videoPlugin_default">libgles2n64.so</string>
+
+    <!-- Audio Plugins -->
+    <string-array name="audioPlugin_entries">
+        <item>なし（オーディオは無効）</item>
+        <item>audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</item>
+    </string-array>
+    <string-array name="audioPlugin_values">
+        <item></item>
+        <item>libaudio-sdl.so</item>
+    </string-array>
+    <string name="audioPlugin_default">libaudio-sdl.so</string>
+    
+    <!-- Xperia Play Touchpads -->
+    <string-array name="xperiaPlugin_entries">
+        <item>なし（デバイスがXperiaPlayではありません）</item>
+        <item>左パッド： アナログ制御; 右パッド： Cボタン</item>
+        <item>左パッド： Cボタ; 右パッド: アナログ制御</item>
+    </string-array>
+    <string-array name="xperiaPlugin_values">
+        <item></item>
+        <item>Mupen64Plus-AE-Xperia-Play</item>
+        <item>Mupen64Plus-AE-Analog-Right</item>
+    </string-array>
+    <string name="xperiaPlugin_default"></string>
+
+    <!-- RSP Plugins -->
+    <string-array name="rspPlugin_entries">
+        <item>なし（RSPは無効）</item>
+        <item>rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</item>
+        <item>rsp-hle-nosound, v1.10 (いいえオーディオ処理, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</item>
+    </string-array>
+    <string-array name="rspPlugin_values">
+        <item></item>
+        <item>librsp-hle.so</item>
+        <item>librsp-hle-nosound.so</item>
+    </string-array>
+    <string name="rspPlugin_default">librsp-hle.so</string>
+    
+    <!-- Core Plugins -->
+    <string-array name="corePlugin_entries">
+        <item>core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</item>
+    </string-array>
+    <string-array name="corePlugin_values">
+        <item>libcore.so</item>
+    </string-array>
+    <string name="corePlugin_default">libcore.so</string>
+    
+    <!-- GLES2N64 Frameskip List -->
+    <string-array name="gles2N64Frameskip_entries">
+        <item>@string/auto</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="gles2N64Frameskip_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string name="gles2N64Frameskip_default">-1</string>
+    
+</resources>

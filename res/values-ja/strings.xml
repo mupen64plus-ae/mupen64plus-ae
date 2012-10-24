@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    All strings visible to the user should be defined in this resource file.  Avoid
+    explicitly defining locale-dependent string values in the java code.
+    
+    Please follow the official Android guidelines for writing style:
+        http://developer.android.com/design/style/writing.html
+        http://developer.android.com/design/patterns/settings.html#writing
+    
+    Please follow the official Android guidelines for localization:
+        http://developer.android.com/guide/topics/resources/localization.html
+    Note that localization is easiest when the number of strings is minimized and the
+    strings themselves are concise.  Avoid strings wherever universally-recognized
+    icons will suffice.  Use Android's built-in string resources (@android:string/...)
+    wherever possible to eliminate translation requirements.
+    ***********************************************************************************
+-->
+<resources>
+    
+    <!-- Common Short Strings -->
+    <string name="app_name">Mupen64Plus</string>
+    <string name="enable">エネーブル</string>
+    <string name="enabled">エネーブル</string>
+    <string name="disable">無効にする</string>
+    <string name="disabled">使用禁止</string>
+    <string name="plugin">プラグイン</string>
+    <string name="layout">レイアウト</string>
+    <string name="auto">オート</string>
+    <string name="general">一般</string>
+    <string name="advanced">アドバンスド</string>
+    <string name="other">その他</string>
+    <string name="initializing">初期化</string>
+    
+    <!-- Download Messages (DataDownloader.java) -->
+    <string name="connecting_to">%sへの接続</string>
+    <string name="dl_finished">完成した</string>
+    <string name="dl_from">%sからデータをダウンロードします</string>
+    <string name="dl_progress">%1$.0f%% が行わ: ファイル %2$s</string>
+    <string name="download_unneeded">ダウンロードする必要はありません</string>
+    <string name="error_dl_from">%sからデータをダウンロード中にエラー</string>
+    <string name="error_write">書き込みエラー (USBストレージ·モードのデバイスですか？) %s</string>
+    <string name="failed_connecting_to">%sに接続できません</string>
+    
+    <!-- In-Game Messages (GameActivity.java) -->
+    <string name="mupen64plus_started">Mupen64Plusが起動した</string>
+    <string name="savegame_slot">セーブデータスロット</string>
+    <string name="saving_game">ゲームを保存</string>
+    <string name="illegal_audio_state">オーディオトラックが不正な状態。  paulscode.comに問題を報告してください</string>
+    <string name="app_data_inaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
+    
+    <!-- In-Game Menu (GameActivity.java) -->
+    <string name="ingameSlot_title">スロット</string>
+    <string name="ingameSave_title">保存</string>
+    <string name="ingameLoad_title">ロード</string>
+    <string name="ingameMenu_title">メニュー</string>
+    
+    <!-- ******************************************** -->
+    <!-- Preference Menu Strings                      -->
+    <!-- Developers: Please follow naming conventions -->
+    <!-- as described in res/xml/preferences.xml      -->
+    <!-- ******************************************** -->
+    
+    <!-- Main Menu -->
+    <string name="menuResume_title">プレー</string>
+    <string name="lastGame_title">ゲーム</string>
+    <string name="mainSettings_title">設定</string>
+    <string name="menuHelp_title">ヘルプ</string>
+    <string name="menuAbout_title">ついて</string>
+    
+    <!-- Categories -->
+    <string name="categoryPlugins_title">ハードウェア設定</string>
+    <string name="categoryStorage_title">ストレージ設定</string>
+    <string name="categoryOther_title">その他設定</string>
+    
+    <!-- Settings Menu -->
+    <string name="video_title">ビデオ</string>
+    <string name="video_summary">グラフィック設定</string>
+    <string name="touchscreen_title">タッチスクリーン</string>
+    <string name="touchscreen_summary">オンスクリーン·コントローラ設定</string>
+    <string name="gamepad_title">コントローラ</string>
+    <string name="gamepad_summary">ゲームパッド/ジョイスティック設定</string>
+    <string name="xperia_title">Xperia PLAY</string>
+    <string name="xperia_summary">Xperia PLAY設定</string>
+    <string name="other_title">その他設定</string>
+    <string name="other_summary">オーディオ、プロセッサ、コア、など。</string>
+    <string name="gameRomDir_title">ROMフォルダ</string>
+    <string name="gameSaveDir_title">セーブデータのフォルダ</string>
+    <string name="autoSaveEnabled_title">自動保存</string>
+    <string name="autoSaveEnabled_summary">アプリを終了すると自動的にゲームを保存。</string>
+    <string name="touchscreenFrameRate_title">フレームレート表示</string>
+    <string name="cheats_title">チート</string>
+    <string name="cheats_summary">でチートを使用するゲームを選択して。</string>
+    <string name="reset_title">リセット</string>
+    <string name="reset_summary">既定値にリセット</string>
+    
+    <!-- Touchscreen Menu -->
+    <string name="touchscreenEnabled_title">@string/enable</string>
+    <string name="touchscreenLayout_title">@string/layout</string>
+    <string name="touchscreenSize_title">画面サイズ</string>
+    <string name="touchscreenOctagonJoystick_title">八角形のようにアナログスティックをエミュレート</string>
+    <string name="touchscreenRedrawAll_title">すべてを再描画</string>
+    <string name="touchscreenRedrawAll_summary">行方不明のボタンのバグを修正</string>
+    
+    <!-- Gamepad Menu -->
+    <string name="gamepadEnabled_title">@string/enable</string>
+    <string name="gamepadPlugin_title">@string/plugin</string>
+    <string name="gamepadMap1_title">プレイヤー1</string>
+    <string name="gamepadMap2_title">プレイヤー2</string>
+    <string name="gamepadMap3_title">プレイヤー3</string>
+    <string name="gamepadMap4_title">プレイヤー4</string>
+    <string name="gamepadMap_summary">ボタンとアナログスティック設定</string>
+    <string name="gamepadMapSpecial_title">特別な機能</string>
+    <string name="gamepadMapSpecial_summary">コントローラからの保存、ロード、など。</string>
+    <string name="gamepadMap_dialogTitle">ジョイスティックまたはボタンを押しながらアイコンを押して。</string>
+    <string name="volumeKeysEnabled_title">ボリュームキーを有効</string>
+    <string name="volumeKeysEnabled_summary">コントローラのボタンとしてボリュームキーを使用</string>
+    
+    <!-- Video Menu -->
+    <string name="videoEnabled_title">@string/enable</string>
+    <string name="videoPlugin_title">@string/plugin</string>
+    <string name="videoStretch_title">ストレッチ画面</string>
+    <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
+    <string name="videoRGBA8888_title">RGBA_8888 モード</string>
+    <string name="videoRGBA8888_summary">いくつかのデバイス上でグラフィックスをかもしれない向上させる。</string>
+    <string name="gles2N64_title">GLES2N64設定</string>
+    <string name="gles2N64_summary"></string>
+    <string name="gles2Rice_title">GLES2Rice設定</string>
+    <string name="gles2Rice_summary"></string>
+    
+    <!-- GLES2N64 Menu -->
+    <string name="gles2N64Frameskip_title">フレームスキップ</string>
+    <string name="gles2N64Frameskip_summary">FPSのコストで速度が向上します</string>
+    <string name="gles2N64Fog_title">霧</string>
+    <string name="gles2N64Fog_summary">(WIP)</string>
+    <string name="gles2N64Sai_title">2xSaiテクスチャフィルタ</string>
+    <string name="gles2N64Sai_summary"></string>
+    <string name="gles2N64ScreenClear_title">力画面のリフレッシュ</string>
+    <string name="gles2N64ScreenClear_summary">いくつかのグラフィカル·アーティファクトをクリアします。</string>
+    <string name="gles2N64Alpha_title">アルファテスト</string>
+    <string name="gles2N64Alpha_summary">スピードハックを取得する設定を無効</string>
+    <string name="gles2N64HackZ_title">ハックZ</string>
+    <string name="gles2N64HackZ_summary">点滅している背景を修正するには、この設定を有効にします。</string>
+    
+    <!-- GLES2Rice Menu -->
+    <string name="gles2RiceAutoFrameskip_title">オートフレームスキップ</string>
+    <string name="gles2RiceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
+    <string name="gles2RiceFastTextureCRC_title">高速テクスチャCRC</string>
+    <string name="gles2RiceFastTextureCRC_summary">設定が無効になっている場合、2D要素が改善され</string>
+    <string name="gles2RiceFastTexture_title">高速テクスチャの読み込み</string>
+    <string name="gles2RiceFastTexture_summary">サークルの遷移を修正</string>
+    <string name="gles2RiceHiResTextures_title">高解像度のテクスチャ</string>
+    <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
+    <string name="gles2RiceImportHiResTextures_title">インポートテクスチャパック</string>
+    <string name="gles2RiceImportHiResTextures_summary">ゲームにカスタムテクスチャを適用します</string>
+    
+    <!-- Other Menu -->
+    <string name="audioPlugin_title">オーディオ設定</string>
+    <string name="xperiaPlugin_title">XperiaPLAY設定</string>
+    <string name="rspPlugin_title">RSP</string>
+    <string name="corePlugin_title">コア</string>
+    <string name="resetAppData_title">アプリデータを復元</string>
+    <string name="resetAppData_summary">インポートされたプラグインやテクスチャが失われます！</string>
+
+</resources>
