@@ -19,6 +19,8 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
+
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.content.Intent;
@@ -35,9 +37,12 @@ import android.util.Log;
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
-    Preference mMenuResume;
-    Preference mMenuResetPrefs;
-    Preference mMenuResetAppData;
+    // These constants must match the keys used in res/xml/preferences.xml
+    private static final String MENU_RESUME = "menuResume";
+    private static final String MENU_RESET_USER_PREFS = "menuResetUserPrefs";
+    private static final String MENU_RESET_APP_DATA = "menuResetAppData";
+    private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
+    private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -49,22 +54,19 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         addPreferencesFromResource( R.xml.preferences );
         
         // Update the global convenience class
-        Globals.userPrefs = new UserPrefs( this );
+        Globals.userPrefs = new UserPrefs( this, Globals.paths );
         
-        // Define the callback when the user presses certain menu items
-        mMenuResume = findPreference( "menuResume" );
-        mMenuResetPrefs = findPreference( "menuReset" );
-        mMenuResetAppData = findPreference( "menuResetAppData" );
-        mMenuResume.setOnPreferenceClickListener( this );
-        mMenuResetPrefs.setOnPreferenceClickListener( this );
-        mMenuResetAppData.setOnPreferenceClickListener( this );
+        // Define the click callback for certain menu items that aren't actually preferences
+        findPreference( MENU_RESUME ).setOnPreferenceClickListener( this );
+        findPreference( MENU_RESET_USER_PREFS ).setOnPreferenceClickListener( this );
+        findPreference( MENU_RESET_APP_DATA ).setOnPreferenceClickListener( this );
     }
     
     @Override
     protected void onResume()
     {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        refreshSummaries( sharedPreferences );
+        refreshViews( sharedPreferences );
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
         super.onResume();
     }
@@ -80,13 +82,23 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         // Update the global convenience class
-        Globals.userPrefs = new UserPrefs( this );
-        refreshSummaries( sharedPreferences );
+        Globals.userPrefs = new UserPrefs( this, Globals.paths );
+        refreshViews( sharedPreferences );
     }
     
     @SuppressWarnings( "deprecation" )
-    private void refreshSummaries( SharedPreferences sharedPreferences )
+    private void refreshViews( SharedPreferences sharedPreferences )
     {
+        // Enable the play button only if the selected game actually exists
+        findPreference( MENU_RESUME ).setEnabled(
+                ( new File( Globals.userPrefs.lastGame ).exists() ) );
+        
+        // Enable the custom touchscreen prefs under certain conditions
+        findPreference( TOUCHSCREEN_CUSTOM ).setEnabled(
+                Globals.userPrefs.isTouchscreenEnabled && Globals.userPrefs.isTouchscreenCustom );
+        findPreference( TOUCHSCREEN_SIZE ).setEnabled(
+                Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isTouchscreenCustom );
+        
         // Update the summary text in the menu for all ListPreferences
         for( String key : sharedPreferences.getAll().keySet() )
         {
@@ -100,45 +112,56 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     public boolean onPreferenceClick( Preference preference )
     {
-        if( preference == mMenuResume )
+        String key = preference.getKey();
+        if( key.equals( MENU_RESUME ) )
         {
             // Launch the last game in a new activity
-            if( !Globals.path.isSdCardAccessible() )
+            if( !Globals.paths.isSdCardAccessible() )
             {
-                Log.e( "MenuActivity", "SD Card not accessable in method onPreferenceClick (menuResume)" );
+                Log.e( "MenuActivity",
+                        "SD Card not accessable in method onPreferenceClick (menuResume)" );
                 Notifier.showToast(
                         "App data not accessible (cable plugged in \"USB Mass Storage Device\" mode?)",
                         this );
                 return true;
             }
             Globals.mupen64plus_cfg.save();
-            Globals.resumeLastSession = false; //TODO: something screwy when this is true
+            Globals.resumeLastSession = false; // TODO: something screwy when this is true
             
             Intent intent = new Intent( this, GameActivity.class );
             intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
             startActivity( intent );
-            //finish(); // TODO: Don't finish MenuActivity... user may come back later
+            finish();
             return true;
         }
-        else if( preference == mMenuResetPrefs )
+        else if( key.equals( MENU_RESET_USER_PREFS ) )
         {
             // Reset the user preferences
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( this );
             preferences.edit().clear().commit();
             PreferenceManager.setDefaultValues( this, R.xml.preferences, true );
             
-            // Refresh the entire menu by restarting the activity
+            // Restart the activity so that the entire menu system is rebuilt
+            // (OnSharedPreferenceChangedListener is not sufficient for this)
             finish();
             startActivity( getIntent() );
             return true;
         }
-        else if( preference == mMenuResetAppData )
+        else if( key.equals( MENU_RESET_APP_DATA ) )
         {
             // Reset the application data
             Globals.appData.resetToDefaults();
             return true;
         }
-        // (To add handlers for other preferences, repeat this pattern and return true)
+        // (To add handlers for other menu items, continue this pattern and return true)
+        // else if( key.equals( MENU_LANGUAGE ) )
+        // {
+        // // Send the user to the system language selection page
+        // Intent intent = new Intent( Intent.ACTION_MAIN );
+        // intent.setClassName( "com.android.settings", "com.android.settings.LanguageSettings" );
+        // startActivity( intent );
+        // return true;
+        // }
         return false;
     }
 }

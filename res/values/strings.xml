@@ -81,25 +81,23 @@
     <string name="touchscreen_title">Touchscreen</string>
     <string name="touchscreen_summary">On-screen controller settings</string>
     <string name="gamepad_title">Controllers</string>
-    <string name="gamepad_summary">Peripheral gamepad/joystick settings</string>
-    <string name="xperia_title">Xperia Play</string>
-    <string name="xperia_summary">Xperia Play-specific settings</string>
+    <string name="gamepad_summary">Gamepad/joystick settings</string>
     <string name="other_title">@string/other</string>
     <string name="other_summary">Audio, processor, core, etc.</string>
-    <string name="gameRomDir_title">ROM folder</string>
     <string name="gameSaveDir_title">Savegame folder</string>
     <string name="autoSaveEnabled_title">Auto-save</string>
     <string name="autoSaveEnabled_summary">Save game on exit</string>
-    <string name="touchscreenFrameRate_title">Show framerate</string>
+    <string name="frameRateEnabled_title">Show framerate</string>
     <string name="cheats_title">Cheats</string>
     <string name="cheats_summary">Choose a game to hack</string>
-    <string name="reset_title">Reset</string>
-    <string name="reset_summary">Restore default settings</string>
+    <string name="resetUserPrefs_title">Reset</string>
+    <string name="resetUserPrefs_summary">Restore default settings</string>
     
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/enable</string>
     <string name="touchscreenLayout_title">@string/layout</string>
     <string name="touchscreenSize_title">Screen size</string>
+    <string name="touchscreenCustom_title">Custom layout folder</string>
     <string name="touchscreenOctagonJoystick_title">Octagonal analog joystick</string>
     <string name="touchscreenRedrawAll_title">Redraw all</string>
     <string name="touchscreenRedrawAll_summary">Slower, fixes missing buttons bug</string>
@@ -158,10 +156,62 @@
     
     <!-- Other Menu -->
     <string name="audioPlugin_title">Audio</string>
-    <string name="xperiaPlugin_title">Xperia Play configuration</string>
+    <string name="xperiaPlugin_title">Xperia PLAY configuration</string>
     <string name="rspPlugin_title">Reality signal processor</string>
     <string name="corePlugin_title">Emulation core</string>
     <string name="resetAppData_title">Restore app data</string>
     <string name="resetAppData_summary">Imported plugins and textures will be lost!</string>
+    
+    <!-- ******************************************** -->
+    <!-- ListPreference Strings                       -->
+    <!-- Developers: Please follow naming conventions -->
+    <!-- as described in res/xml/preferences.xml      -->
+    <!-- ******************************************** -->
+    
+    <!-- Touchscreen Layout Entries -->
+    <string name="touchscreenLayout_entry0">Analog (by roymustang16)</string>
+    <string name="touchscreenLayout_entry1">Digital (by roymustang16)</string>
+    <string name="touchscreenLayout_entry2">Touch (by roymustang16)</string>
+    <string name="touchscreenLayout_entry3">Custom (see http://tinyurl.com/984ofyo)</string>
 
+    <!-- Touchscreen Size Entries -->
+    <string name="touchscreenSize_entry0">Tiny</string>
+    <string name="touchscreenSize_entry1">Small</string>
+    <string name="touchscreenSize_entry2">Default</string>
+    <string name="touchscreenSize_entry3">Tablet</string>
+    
+    <!-- Input Plugin Entries -->
+    <string name="gamepadPlugin_entry0">@string/disabled</string>
+    <string name="gamepadPlugin_entry1">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    
+    <!-- Video Plugin Entries -->
+    <string name="videoPlugin_entry0">gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</string>
+    <string name="videoPlugin_entry1">gles2rice, v0.1.0(b) (GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</string>
+    
+    <!-- Audio Plugin Entries -->
+    <string name="audioPlugin_entry0">None (audio disabled)</string>
+    <string name="audioPlugin_entry1">audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+    
+    <!-- Xperia PLAY Layout Entries -->
+    <string name="xperiaPlugin_entry0">None (this device is not a Sony Ericsson Xperia PLAY)</string>
+    <string name="xperiaPlugin_entry1">Left pad: Analog control; Right pad: C buttons</string>
+    <string name="xperiaPlugin_entry2">Left pad: C buttons;  Right pad: Analog control</string>
+    
+    <!-- RSP Plugin Entries -->
+    <string name="rspPlugin_entry0">None (RSP disabled)</string>
+    <string name="rspPlugin_entry1">rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+    <string name="rspPlugin_entry2">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    
+    <!-- Core Plugin Entries -->
+    <string name="corePlugin_entry0">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+
+    
+    <!-- ******************************************** -->
+    <!-- Other Strings                                -->
+    <!-- ******************************************** -->
+    
+    <string name="pathPreference_dialogTitle">Selected folder: %s</string>
+    
+    <string name="gameActivity_ticker">%s is running</string>
+    
 </resources>

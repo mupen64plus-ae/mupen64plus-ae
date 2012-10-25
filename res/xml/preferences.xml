@@ -90,6 +90,12 @@
                 android:entryValues="@array/touchscreenSize_values"
                 android:key="touchscreenSize"
                 android:title="@string/touchscreenSize_title" />
+            
+            <paulscode.android.mupen64plusae.PathPreference
+                android:dependency="touchscreenEnabled"
+                mupen64:selectionMode="0"
+                android:key="touchscreenCustom"
+                android:title="@string/touchscreenCustom_title" />
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -326,8 +332,8 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:icon="@drawable/ic_videocamera"
-            android:key="touchscreenFrameRate"
-            android:title="@string/touchscreenFrameRate_title" />
+            android:key="frameRateEnabled"
+            android:title="@string/frameRateEnabled_title" />
 
         <Preference
             android:dependency="developerEnabled"
@@ -337,9 +343,9 @@
             android:title="@string/cheats_title" />
         <Preference
             android:icon="@drawable/ic_undo"
-            android:key="menuReset"
-            android:summary="@string/reset_summary"
-            android:title="@string/reset_title" />
+            android:key="menuResetUserPrefs"
+            android:summary="@string/resetUserPrefs_summary"
+            android:title="@string/resetUserPrefs_title" />
 
         <CheckBoxPreference
             android:key="developerEnabled"

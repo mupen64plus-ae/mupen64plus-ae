@@ -64,6 +64,9 @@ public class AppData
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
     
+    /** The hardware type, refreshed at the beginning of every session. */
+    private int mHardwareType = HARDWARE_TYPE_UNIDENTIFIED;
+    
     /**
      * Instantiates a new AppData object to retrieve and persist app data.
      *
@@ -132,15 +135,15 @@ public class AppData
      */
     public int getHardwareType()
     {
-        if( mPreferences.getInt( "hardwareType", HARDWARE_TYPE_UNIDENTIFIED ) == HARDWARE_TYPE_UNIDENTIFIED )
-            identifyHardwareType();
-        return mPreferences.getInt( "hardwareType", DEFAULT_HARDWARE_TYPE );
+        if( mHardwareType == HARDWARE_TYPE_UNIDENTIFIED )
+            mHardwareType = identifyHardwareType();
+        return mHardwareType;
     }
     
     /**
      * Identifies the hardware type using information provided by /proc/cpuinfo.
      */
-    private void identifyHardwareType()
+    private int identifyHardwareType()
     {
         // Parse a long string of information from the operating system
         Log.v( "Application", "CPU info available from file /proc/cpuinfo:" );
@@ -213,7 +216,6 @@ public class AppData
                 type = HARDWARE_TYPE_TEGRA;
         }
         
-        // Persist the value to storage so that we don't have to do this every time
-        mPreferences.edit().putInt( "hardwareType", type ).commit();
+        return type;
     }
 }

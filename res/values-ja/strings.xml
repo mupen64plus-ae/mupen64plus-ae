@@ -82,19 +82,16 @@
     <string name="touchscreen_summary">オンスクリーン·コントローラ設定</string>
     <string name="gamepad_title">コントローラ</string>
     <string name="gamepad_summary">ゲームパッド/ジョイスティック設定</string>
-    <string name="xperia_title">Xperia PLAY</string>
-    <string name="xperia_summary">Xperia PLAY設定</string>
     <string name="other_title">その他設定</string>
     <string name="other_summary">オーディオ、プロセッサ、コア、など。</string>
-    <string name="gameRomDir_title">ROMフォルダ</string>
     <string name="gameSaveDir_title">セーブデータのフォルダ</string>
     <string name="autoSaveEnabled_title">自動保存</string>
     <string name="autoSaveEnabled_summary">アプリを終了すると自動的にゲームを保存。</string>
-    <string name="touchscreenFrameRate_title">フレームレート表示</string>
+    <string name="frameRateEnabled_title">フレームレート表示</string>
     <string name="cheats_title">チート</string>
     <string name="cheats_summary">でチートを使用するゲームを選択して。</string>
-    <string name="reset_title">リセット</string>
-    <string name="reset_summary">既定値にリセット</string>
+    <string name="resetUserPrefs_title">リセット</string>
+    <string name="resetUserPrefs_summary">既定値にリセット</string>
     
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/enable</string>
@@ -163,5 +160,40 @@
     <string name="corePlugin_title">コア</string>
     <string name="resetAppData_title">アプリデータを復元</string>
     <string name="resetAppData_summary">インポートされたプラグインやテクスチャが失われます！</string>
+    
+    <!-- ******************************************** -->
+    <!-- ListPreference Strings                       -->
+    <!-- Developers: Please follow naming conventions -->
+    <!-- as described in res/xml/preferences.xml      -->
+    <!-- ******************************************** -->
+    
+    <!-- Touchscreen Layout Entries -->
+    <string name="touchscreenLayout_entry0">アナログ (roymustang16によって)</string>
+    <string name="touchscreenLayout_entry1">デジタル (roymustang16によって)</string>
+    <string name="touchscreenLayout_entry2">タッチ (roymustang16によって)</string>
 
+    <!-- Touchscreen Size Entries -->
+    <string name="touchscreenSize_entry0">小さな</string>
+    <string name="touchscreenSize_entry1">小</string>
+    <string name="touchscreenSize_entry2">デフォル</string>
+    <string name="touchscreenSize_entry3">タブレット</string>
+    
+    <!-- Input Plugin Entries -->
+    
+    <!-- Video Plugin Entries -->
+    
+    <!-- Audio Plugin Entries -->
+    <string name="audioPlugin_entry0">なし（オーディオは無効）</string>
+    
+    <!-- Xperia PLAY Layout Entries -->
+    <string name="xperiaPlugin_entry0">なし（デバイスがXperiaPlayではありません）</string>
+    <string name="xperiaPlugin_entry1">左パッド： アナログ制御; 右パッド： Cボタン</string>
+    <string name="xperiaPlugin_entry2">左パッド： Cボタ; 右パッド: アナログ制御</string>
+    
+    <!-- RSP Plugin Entries -->
+    <string name="rspPlugin_entry0">なし（RSPは無効）</string>
+    <string name="rspPlugin_entry2">rsp-hle-nosound, v1.10 (いいえオーディオ処理, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    
+    <!-- Core Plugin Entries -->
+    
 </resources>

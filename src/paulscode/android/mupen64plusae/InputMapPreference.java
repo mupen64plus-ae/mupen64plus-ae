@@ -55,7 +55,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     public InputMapPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
-        setDialogLayoutResource( R.layout.preferences_inputmap );
+        setDialogLayoutResource( R.layout.input_map_preference );
     }
     
     @TargetApi( 12 )

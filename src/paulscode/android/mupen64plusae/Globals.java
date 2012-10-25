@@ -21,30 +21,27 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.Path;
+import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.DataDownloader;
 
 public class Globals
 {
-    // Global app/user data
+    // Global preferences/settings
     public static UserPrefs userPrefs;
     public static AppData appData;
-    public static Path path;
+    public static Paths paths;
     public static ConfigFile mupen64plus_cfg;
     public static ConfigFile gles2n64_conf;    
 
     // Frequently-used global objects
-    // TODO: Eliminate some or all of these if possible
+    // TODO: Eliminate as many of these as possible
     public static TouchscreenView touchscreenInstance = null;
     public static SDLSurface surfaceInstance = null;
     public static GameActivity gameInstance = null;
-    public static DataDownloader downloader = null;
-
-    public static String extraArgs = null;
+    public static String extraArgs = ".";
     public static boolean resumeLastSession = false;
     
-    // Internal implementation options, might change later or expose to user
+    // Internal development options, might change later or expose to user
     public static final boolean INHIBIT_SUSPEND = true;
     public static final boolean DOWNLOAD_TO_SDCARD = true;
     public static final int SPLASH_DELAY = 1000; // Such a nice picture... shame not to see it :)

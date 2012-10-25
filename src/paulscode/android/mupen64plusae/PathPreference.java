@@ -38,8 +38,6 @@ import android.view.ViewGroup;
 
 public class PathPreference extends DialogPreference
 {
-    // TODO: Remove dependency on Globals.path
-    
     /** The user must select a directory. No files will be shown in the list. */
     public static final int SELECTION_MODE_DIRECTORY = 0;
     
@@ -86,7 +84,7 @@ public class PathPreference extends DialogPreference
         if( mDoRefresh )
         {
             mDoRefresh = false;
-            String filename = getPersistedString( Globals.path.storageDir );
+            String filename = getPersistedString( Globals.paths.storageDir ); // TODO: Remove dependency on Globals.paths
             if( filename != null )
             {
                 populate( new File( filename ) );
@@ -181,7 +179,17 @@ public class PathPreference extends DialogPreference
         if( startPath.isFile() )
             startPath = startPath.getParentFile();
         
-        setDialogTitle( startPath.getPath() );
+        switch( mSelectionMode )
+        {
+            case SELECTION_MODE_FILE:
+                setDialogTitle( startPath.getPath() );
+                break;
+            case SELECTION_MODE_DIRECTORY:
+            case SELECTION_MODE_ANY:
+                String dialogTitle = getContext().getString( R.string.pathPreference_dialogTitle );
+                setDialogTitle( String.format( dialogTitle, startPath.getPath() ) );
+                break;
+        }
         
         // Construct the key-value pairs for the list entries
         boolean hasParent = startPath.getParentFile() != null;

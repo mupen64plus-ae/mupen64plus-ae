@@ -1,7 +1,27 @@
+/**
+ * Mupen64PlusAE, an N64 emulator for the Android platform
+ * 
+ * Copyright (C) 2012 Paul Lamb
+ * 
+ * This file is part of Mupen64PlusAE.
+ * 
+ * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Authors: TODO
+ */
 package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.SDLSurface;
 import paulscode.android.mupen64plusae.TouchscreenView;
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -12,7 +32,7 @@ import android.view.View.OnTouchListener;
 
 public class TouchscreenController extends AbstractController implements OnTouchListener
 {
-
+    
     public boolean[] pointers = new boolean[256];
     public int[] pointerX = new int[256];
     public int[] pointerY = new int[256];
@@ -24,7 +44,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
     @TargetApi( 5 )
     public boolean onTouch( View v, MotionEvent event )
     {
-        if( !Globals.userPrefs.isInputEnabled || Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR)
+        if( !Globals.userPrefs.isInputEnabled || Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR )
             return false;
         
         int action = event.getAction();
@@ -83,13 +103,16 @@ public class TouchscreenController extends AbstractController implements OnTouch
                 pointerY[pid] = (int) event.getY( i );
             }
         }
-        // TODO ? Globals.touchscreenInstance.updatePointers( pointers, pointerX, pointerY, maxPid );
+        // TODO ? Globals.touchscreenInstance.updatePointers( pointers, pointerX, pointerY, maxPid
+        // );
         return true;
     }
-
+    
     /**
      * Simulates key events for the SDLButtons on the touchscreen controller.
      * 
+     * @param surface
+     *            the surface to invoke with
      * @param sdlButtonPressed
      *            true to indicate that a button is pressed
      * @param sdlButtonCodes
@@ -97,10 +120,10 @@ public class TouchscreenController extends AbstractController implements OnTouch
      * @param sdlButtonCount
      *            number of buttons
      */
-    public static void updateSDLButtonStates( boolean[] sdlButtonPressed, int[] sdlButtonCodes,
-            int sdlButtonCount )
+    public static void updateSDLButtonStates( SDLSurface surface, boolean[] sdlButtonPressed,
+            int[] sdlButtonCodes, int sdlButtonCount )
     {
-        if( Globals.surfaceInstance == null )
+        if( surface == null )
             return;
         
         for( int x = 0; x < sdlButtonCount; x++ )
@@ -109,9 +132,9 @@ public class TouchscreenController extends AbstractController implements OnTouch
             {
                 previousKeyStates[x] = sdlButtonPressed[x];
                 if( sdlButtonPressed[x] )
-                    Globals.surfaceInstance.onSDLKey( sdlButtonCodes[x], KeyEvent.ACTION_DOWN );
+                    surface.onSDLKey( sdlButtonCodes[x], KeyEvent.ACTION_DOWN );
                 else
-                    Globals.surfaceInstance.onSDLKey( sdlButtonCodes[x], KeyEvent.ACTION_UP );
+                    surface.onSDLKey( sdlButtonCodes[x], KeyEvent.ACTION_UP );
             }
         }
     }

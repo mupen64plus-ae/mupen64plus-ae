@@ -16,11 +16,199 @@ import java.util.zip.ZipFile;
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
 import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.Log;
 
 public class Utility
 {
+    /**
+     * The Image class provides a simple interface to common image manipulation methods.
+     */
+    public static class Image
+    {
+        public BitmapDrawable drawable = null;
+        public Bitmap image = null;
+        public Rect drawRect = null;
+        
+        public int x = 0;
+        public int y = 0;
+        public int width = 0;
+        public int height = 0;
+        public int hWidth = 0;
+        public int hHeight = 0;
+        
+        /**
+         * Constructor: Loads an image file and sets the initial properties.
+         * 
+         * @param res
+         *            Handle to the app resources.
+         * @param filename
+         *            Path to the image file.
+         */
+        public Image( Resources res, String filename )
+        {
+            image = BitmapFactory.decodeFile( filename );
+            drawable = new BitmapDrawable( res, image );
+            if( image != null )
+                width = image.getWidth();
+            hWidth = (int) ( (float) width / 2.0f );
+            if( image != null )
+                height = image.getHeight();
+            hHeight = (int) ( (float) height / 2.0f );
+            drawRect = new Rect();
+        }
+        
+        /**
+         * Constructor: Creates a clone copy of another Image.
+         * 
+         * @param res
+         *            Handle to the app resources.
+         * @param clone
+         *            Image to copy.
+         */
+        public Image( Resources res, Image clone )
+        {
+            if( clone != null )
+            {
+                image = clone.image;
+                drawable = new BitmapDrawable( res, image );
+                width = clone.width;
+                hWidth = clone.hWidth;
+                height = clone.height;
+                hHeight = clone.hHeight;
+            }
+            drawRect = new Rect();
+        }
+        
+        /**
+         * Sets the screen position of the image (in pixels).
+         * 
+         * @param x
+         *            X-coordinate.
+         * @param y
+         *            Y-coordinate.
+         */
+        public void setPos( int x, int y )
+        {
+            this.x = x;
+            this.y = y;
+            if( drawRect != null )
+                drawRect.set( x, y, x + width, y + height );
+            if( drawable != null )
+                drawable.setBounds( drawRect );
+        }
+        
+        /**
+         * Centers the image at the specified coordinates, without going beyond the specified screen
+         * dimensions.
+         * 
+         * @param centerX
+         *            X-coordinate to center the image at.
+         * @param centerY
+         *            Y-coordinate to center the image at.
+         * @param screenW
+         *            Horizontal screen dimension (in pixels).
+         * @param screenH
+         *            Vertical screen dimension (in pixels).
+         */
+        public void fitCenter( int centerX, int centerY, int screenW, int screenH )
+        {
+            int cx = centerX;
+            int cy = centerY;
+            if( cx < hWidth )
+                cx = hWidth;
+            if( cy < hHeight )
+                cy = hHeight;
+            if( cx + hWidth > screenW )
+                cx = screenW - hWidth;
+            if( cy + hHeight > screenH )
+                cy = screenH - hHeight;
+            x = cx - hWidth;
+            y = cy - hHeight;
+            if( drawRect != null )
+            {
+                drawRect.set( x, y, x + width, y + height );
+                if( drawable != null )
+                    drawable.setBounds( drawRect );
+            }
+        }
+        
+        /**
+         * Centers the image at the specified coordinates, without going beyond the edges of the
+         * specified rectangle.
+         * 
+         * @param centerX
+         *            X-coordinate to center the image at.
+         * @param centerY
+         *            Y-coordinate to center the image at.
+         * @param rectX
+         *            X-coordinate of the bounding rectangle.
+         * @param rectY
+         *            Y-coordinate of the bounding rectangle.
+         * @param rectW
+         *            Horizontal bounding rectangle dimension (in pixels).
+         * @param rectH
+         *            Vertical bounding rectangle dimension (in pixels).
+         */
+        public void fitCenter( int centerX, int centerY, int rectX, int rectY, int rectW, int rectH )
+        {
+            int cx = centerX;
+            int cy = centerY;
+            if( cx < rectX + hWidth )
+                cx = rectX + hWidth;
+            if( cy < rectY + hHeight )
+                cy = rectY + hHeight;
+            if( cx + hWidth > rectX + rectW )
+                cx = rectX + rectW - hWidth;
+            if( cy + hHeight > rectY + rectH )
+                cy = rectY + rectH - hHeight;
+            x = cx - hWidth;
+            y = cy - hHeight;
+            if( drawRect != null )
+            {
+                drawRect.set( x, y, x + width, y + height );
+                if( drawable != null )
+                    drawable.setBounds( drawRect );
+            }
+        }
+        
+        /**
+         * Draws the image.
+         * 
+         * @param canvas
+         *            Canvas to draw the image on.
+         */
+        public void draw( Canvas canvas )
+        {
+            if( drawable != null )
+                drawable.draw( canvas );
+        }
+    }
+
+    /**
+     * The Point class is a basic interface for storing 2D float coordinates.
+     */
+    public static class Point
+    {
+        public float x;
+        public float y;
+        
+        /**
+         * Constructor: Creates a new point at the origin
+         */
+        public Point()
+        {
+            x = 0;
+            y = 0;
+        }
+    }
+
     public static String getHeaderName( String filename )
     {
         ErrorLogger.put( "READ_HEADER", "fail", "" );
@@ -33,7 +221,7 @@ public class Utility
         else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase( "zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
-            File tmpFolder = new File( Globals.path.dataDir + "/tmp" );
+            File tmpFolder = new File( Globals.paths.dataDir + "/tmp" );
             tmpFolder.mkdir();
             // Clear the folder if anything is in there:
             String[] children = tmpFolder.list();
@@ -42,7 +230,7 @@ public class Utility
                 deleteFolder( new File( tmpFolder, child ) );
             }
             ErrorLogger.clearLastError();
-            String uzFile = unzipFirstROM( new File( filename ), Globals.path.dataDir + "/tmp" );
+            String uzFile = unzipFirstROM( new File( filename ), Globals.paths.dataDir + "/tmp" );
             if( uzFile == null || uzFile.length() < 1 )
             {
                 Log.e( "Utility", "Unable to unzip ROM: '" + filename + "'" ); 
@@ -87,7 +275,7 @@ public class Utility
         else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase( "zip" ) )
         {
             // create the tmp folder if it doesn't exist:
-            File tmpFolder = new File( Globals.path.dataDir + "/tmp" );
+            File tmpFolder = new File( Globals.paths.dataDir + "/tmp" );
             tmpFolder.mkdir();
             // clear the folder if anything is in there:
             String[] children = tmpFolder.list();
@@ -96,7 +284,7 @@ public class Utility
                 deleteFolder( new File( tmpFolder, child ) );
             }
             ErrorLogger.clearLastError();
-            String uzFile = unzipFirstROM( new File( filename ), Globals.path.dataDir + "/tmp" );
+            String uzFile = unzipFirstROM( new File( filename ), Globals.paths.dataDir + "/tmp" );
             if( uzFile == null || uzFile.length() < 1 )
             {
                 Log.e( "Utility", "Unable to unzip ROM: '" + filename + "'" ); 
@@ -484,7 +672,7 @@ public class Utility
         return fail;  // Conversion failed
     }
 
-    public static void safeWait( int milliseconds )
+    public static void safeSleep( int milliseconds )
     {
         try
         {
@@ -506,5 +694,51 @@ public class Utility
                 System.exit( 0 );
             }
         }, milliseconds );
+    }
+
+    /**
+     * Loads the specified native library name (without "lib" and ".so")
+     * 
+     * @param filepath
+     *            Full path to a native .so file (may optionally be in quotes).
+     */
+    public static void loadNativeLibName( String libname )
+    {
+        Log.v( "GameActivity", "Loading native library '" + libname + "'" );
+        try
+        {
+            System.loadLibrary( libname );
+        }
+        catch( UnsatisfiedLinkError e )
+        {
+            Log.e( "GameActivity", "Unable to load native library '" + libname + "'" );
+        }
+    }
+
+    /**
+     * Loads the native .so file specified
+     * 
+     * @param filepath
+     *            Full path to a native .so file (may optionally be in quotes).
+     */
+    public static void loadNativeLib( String filepath )
+    {
+        String filename = null;
+        if( filepath != null && filepath.length() > 0 )
+        {
+            filename = filepath.replace( "\"", "" );
+            if( filename.equalsIgnoreCase( "dummy" ) )
+                return;
+            
+            Log.v( "GameActivity", "Loading native library '" + filename + "'" );
+            try
+            {
+                System.load( filename );
+            }
+            catch( UnsatisfiedLinkError e )
+            {
+                Log.e( "GameActivity", "Unable to load native library '" + filename + "'" );
+            }
+        }
     }
 }

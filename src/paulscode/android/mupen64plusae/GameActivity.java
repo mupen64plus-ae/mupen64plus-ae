@@ -1,6 +1,5 @@
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.NativeMethods.Helpers;
 import paulscode.android.mupen64plusae.input.XperiaPlayController;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -40,7 +39,7 @@ public class GameActivity extends Activity
     
     // App state
     public static boolean finishedReading = false;
-
+    
     // Internals
     private Vibrator mVibrator = null;
     private static long[] vibratePattern = { 0, 500, 0 };
@@ -50,23 +49,23 @@ public class GameActivity extends Activity
     
     static
     {
-        Helpers.loadNativeLibName( "SDL" );
-        Helpers.loadNativeLibName( "core" ); // TODO: Let the user choose which core to load
-        Helpers.loadNativeLibName( "front-end" );
+        Utility.loadNativeLibName( "SDL" );
+        Utility.loadNativeLibName( "core" ); // TODO: Let the user choose which core to load
+        Utility.loadNativeLibName( "front-end" );
     }
     
     private void loadNativeLibraries()
     {
         if( Globals.userPrefs.isXperiaEnabled )
         {
-            Helpers.loadNativeLibName( "xperia-touchpad" );
+            Utility.loadNativeLibName( "xperia-touchpad" );
         }
-        Helpers.loadNativeLib( Globals.userPrefs.videoPlugin );
-        Helpers.loadNativeLib( Globals.userPrefs.audioPlugin );
-        Helpers.loadNativeLib( Globals.userPrefs.inputPlugin );
-        Helpers.loadNativeLib( Globals.userPrefs.rspPlugin );
+        Utility.loadNativeLib( Globals.userPrefs.videoPlugin );
+        Utility.loadNativeLib( Globals.userPrefs.audioPlugin );
+        Utility.loadNativeLib( Globals.userPrefs.inputPlugin );
+        Utility.loadNativeLib( Globals.userPrefs.rspPlugin );
     }
-
+    
     private static void saveSession( GameActivity activity )
     {
         if( !Globals.userPrefs.isAutoSaveEnabled )
@@ -83,9 +82,10 @@ public class GameActivity extends Activity
         // Wait for the game to resume by monitoring emulator state and the EGL buffer flip
         do
         {
-            Utility.safeWait( 500 );
+            Utility.safeSleep( 500 );
         }
-        while( !Globals.surfaceInstance.buffFlipped && NativeMethods.stateEmulator() == EMULATOR_STATE_PAUSED );
+        while( !Globals.surfaceInstance.buffFlipped
+                && NativeMethods.stateEmulator() == EMULATOR_STATE_PAUSED );
     }
     
     @TargetApi( 9 )
@@ -109,7 +109,7 @@ public class GameActivity extends Activity
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
     {
-        getMenuInflater().inflate( R.menu.ingame, menu );
+        getMenuInflater().inflate( R.menu.game_activity, menu );
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
         setSlot( 0 );
         return super.onCreateOptionsMenu( menu );
@@ -157,10 +157,14 @@ public class GameActivity extends Activity
                 setSlot( 9 );
                 break;
             case R.id.ingameMenu:
+                // Save game state and launch MenuActivity
                 saveSession( this );
                 Notifier.clear();
                 Globals.gameInstance = null;
-                finish(); // This will kick us back out to the MenuActivity
+                Intent intent = new Intent( this, MenuActivity.class );
+                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                startActivity( intent );
+                finish();
                 break;
             default:
                 break;
@@ -173,27 +177,17 @@ public class GameActivity extends Activity
         mSlot = value % NUM_SLOTS;
         NativeMethods.stateSetSlotEmulator( mSlot );
         Notifier.showToast( getString( R.string.savegame_slot ) + " " + mSlot, this );
-        if (mSlotMenuItem != null)
-            mSlotMenuItem.setTitle( getString( R.string.ingameSlot_title) + " " + value );
+        if( mSlotMenuItem != null )
+            mSlotMenuItem.setTitle( getString( R.string.ingameSlot_title ) + " " + value );
     }
-
+    
     @Override
     public void onUserLeaveHint()
     {
         // This executes when Home is pressed (can't detect it in onKey).
-        //
-        // fileSaveEmulator( "Mupen64PlusAE_LastSession.sav" ); // immediate resume causes problems!
-        
         saveSession( this ); // Workaround, allows us to force-close later
         super.onUserLeaveHint(); // weird bug if choosing "Close" from menu. Force-close here?
-        
-        Globals.gameInstance = null;
-//        System.exit( 0 ); // Workaround, force-close (what about SDL thread?)
-        
-        /*
-         * How to go home using an intent: Intent intent = new Intent( Intent.ACTION_MAIN );
-         * intent.addCategory( Intent.CATEGORY_HOME ); startActivity( intent );
-         */
+        // Globals.gameInstance = null;
     }
     
     @Override
@@ -227,7 +221,7 @@ public class GameActivity extends Activity
         PendingIntent contentIntent = PendingIntent.getActivity( this, 0, intent, 0 );
         
         String appName = getString( R.string.app_name );
-        CharSequence text = appName + " is running"; // TODO: localize text
+        CharSequence text = String.format( getString( R.string.gameActivity_ticker ), appName );
         CharSequence contentTitle = appName;
         CharSequence contentText = appName;
         long when = System.currentTimeMillis();
@@ -245,14 +239,14 @@ public class GameActivity extends Activity
     {
         if( Globals.userPrefs.isXperiaEnabled )
         {
-            mTouchPadListing = new XperiaPlayController.TouchPadListing( Globals.path.touchpad_ini );
+            mTouchPadListing = new XperiaPlayController.TouchPadListing( Globals.paths.xperiaPlayLayouts_ini );
             mTouchPad = new XperiaPlayController( this, getResources() );
             mTouchPad.loadPad();
         }
         
         mVibrator = (Vibrator) getSystemService( Context.VIBRATOR_SERVICE );
     }
-
+    
     @TargetApi( 11 )
     private void configureLayout()
     {
@@ -275,7 +269,7 @@ public class GameActivity extends Activity
             NativeMethods.RegisterThis();
         }
         
-        setContentView( R.layout.game );
+        setContentView( R.layout.game_activity );
         Globals.surfaceInstance = (SDLSurface) findViewById( R.id.sdlSurface );
         Globals.touchscreenInstance = (TouchscreenView) findViewById( R.id.touchscreenController );
         Globals.touchscreenInstance.setResources( getResources() );
@@ -308,7 +302,8 @@ public class GameActivity extends Activity
     static class CommandHandler extends Handler
     {
         GameActivity mActivity;
-        public CommandHandler(GameActivity activity)
+        
+        public CommandHandler( GameActivity activity )
         {
             mActivity = activity;
         }

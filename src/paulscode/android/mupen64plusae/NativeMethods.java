@@ -21,67 +21,9 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.util.Audio;
 import paulscode.android.mupen64plusae.util.Notifier;
-import android.util.Log;
 
 public class NativeMethods
 {
-    
-    public static class Helpers
-    {
-        static
-        {
-            loadNativeLibName( "SDL" );
-            loadNativeLibName( "core" ); // TODO: let the user choose which core to load
-            loadNativeLibName( "front-end" );
-        }
-        
-        /**
-         * Loads the specified native library name (without "lib" and ".so")
-         * 
-         * @param filepath
-         *            Full path to a native .so file (may optionally be in quotes).
-         */
-        public static void loadNativeLibName( String libname )
-        {
-            Log.v( "GameActivity", "Loading native library '" + libname + "'" );
-            try
-            {
-                System.loadLibrary( libname );
-            }
-            catch( UnsatisfiedLinkError e )
-            {
-                Log.e( "GameActivity", "Unable to load native library '" + libname + "'" );
-            }
-        }
-        
-        /**
-         * Loads the native .so file specified
-         * 
-         * @param filepath
-         *            Full path to a native .so file (may optionally be in quotes).
-         */
-        public static void loadNativeLib( String filepath )
-        {
-            String filename = null;
-            if( filepath != null && filepath.length() > 0 )
-            {
-                filename = filepath.replace( "\"", "" );
-                if( filename.equalsIgnoreCase( "dummy" ) )
-                    return;
-                
-                Log.v( "GameActivity", "Loading native library '" + filename + "'" );
-                try
-                {
-                    System.load( filename );
-                }
-                catch( UnsatisfiedLinkError e )
-                {
-                    Log.e( "GameActivity", "Unable to load native library '" + filename + "'" );
-                }
-            }
-        }
-    }
-    
     // *************************************************
     // *************************************************
     // *************************************************
@@ -188,13 +130,11 @@ public class NativeMethods
     
     public static Object getDataDir()
     {
-        return (Object) Globals.path.dataDir;
+        return (Object) Globals.paths.dataDir;
     }
     
     public static Object getExtraArgs()
     {
-        if( Globals.extraArgs == null )
-            return (Object) ".";
         return (Object) Globals.extraArgs;
     }
     
@@ -210,7 +150,7 @@ public class NativeMethods
     
     public static Object getROMPath()
     {
-        return Globals.path.getROMPath();
+        return Globals.paths.getROMPath( Globals.userPrefs, Globals.gameInstance );
     }
     
     public static boolean getScreenStretch()
@@ -225,8 +165,7 @@ public class NativeMethods
     
     public static void showToast( String message )
     {
-        if( Globals.gameInstance != null )
-            Notifier.showToast( message, Globals.gameInstance );
+        Notifier.showToast( message, Globals.gameInstance );
     }
     
     public static boolean useRGBA8888()
@@ -236,7 +175,6 @@ public class NativeMethods
     
     public static void vibrate( boolean active )
     {
-        if( Globals.gameInstance != null )
-            Globals.gameInstance.vibrate( active );
+        Globals.gameInstance.vibrate( active );
     }
 }

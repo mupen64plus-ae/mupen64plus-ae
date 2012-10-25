@@ -21,7 +21,6 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.InputMap;
 import android.content.Context;
@@ -62,8 +61,11 @@ public class UserPrefs
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
     
+    /** True if a custom touchscreen is provided. */
+    public final boolean isTouchscreenCustom;
+    
     /** The filename of the selected touchscreen layout. */
-    public final String touchscreenLayout;
+    public final String touchscreenLayoutFolder;
     
     /** True if the touchscreen joystick is represented as an octagon. */
     public final boolean isOctagonalJoystick;
@@ -152,17 +154,16 @@ public class UserPrefs
     /**
      * Instantiates a new UserPrefs object to retrieve user preferences.
      * 
-     * @param userSharedPreferences
-     *            the shared preferences object holding user preferences
+     * @param context
+     *            the context of the app
+     * @param paths
+     *            the app's path definitions
      */
-    public UserPrefs( Context context )
+    public UserPrefs( Context context, Paths paths )
     {
-        final String pluginPrefix = Globals.path.libsDir + "/lib/";
-        
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         isInputEnabled = mPreferences.getBoolean( "gamepadEnabled", true );
-        inputPlugin = pluginPrefix + mPreferences.getString( "gamepadPlugin", "" );
         gamepadMap1 = new InputMap( mPreferences.getString( "gamepadMap1", "" ) );
         gamepadMap2 = new InputMap( mPreferences.getString( "gamepadMap2", "" ) );
         gamepadMap3 = new InputMap( mPreferences.getString( "gamepadMap3", "" ) );
@@ -174,43 +175,56 @@ public class UserPrefs
         isTouchscreenRedrawAll = mPreferences.getBoolean( "touchscreenRedrawAll", false );
         
         isVideoEnabled = mPreferences.getBoolean( "videoEnabled", true );
-        videoPlugin = pluginPrefix + mPreferences.getString( "videoPlugin", "" );
         isStretched = mPreferences.getBoolean( "videoStretch", false );
         isRgba8888 = mPreferences.getBoolean( "videoRGBA8888", false );
         videoMaxFrameskip = getSafeInt( mPreferences, "gles2N64Frameskip", -1 );
-        isAutoFrameskip = videoMaxFrameskip < 0;
-        
-        xperiaLayout = mPreferences.getString( "xperiaPlugin", "" );
-        audioPlugin = pluginPrefix + mPreferences.getString( "audioPlugin", "" );
-        rspPlugin = pluginPrefix + mPreferences.getString( "rspPlugin", "" );
-        corePlugin = pluginPrefix + mPreferences.getString( "corePlugin", "" );
         
         lastGame = mPreferences.getString( "lastGame", "" );
-        gameSaveDir = mPreferences.getString( "gameSaveDir", "" );
+        gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
         isAutoSaveEnabled = mPreferences.getBoolean( "autoSaveEnabled", false );
         isFrameRateEnabled = mPreferences.getBoolean( "touchscreenFrameRate", false );
         
-        // Derived values
-        isAudioEnabled = audioPlugin != null && audioPlugin != "";
-        isXperiaEnabled = xperiaLayout != null && xperiaLayout != "";
-        isLastGameNull = lastGame == null || !( new File(lastGame) ).exists();
-        isLastGameZipped = lastGame != null && lastGame.length() > 3
-                && lastGame.substring( lastGame.length() - 3, lastGame.length() ).equalsIgnoreCase(
-                        "zip" );
+        // Plug-ins and layouts
+        corePlugin = paths.libsDir + mPreferences.getString( "corePlugin", "" );
+        videoPlugin = paths.libsDir + mPreferences.getString( "videoPlugin", "" );
+        audioPlugin = paths.libsDir + mPreferences.getString( "audioPlugin", "" );
+        inputPlugin = paths.libsDir + mPreferences.getString( "gamepadPlugin", "" );
+        rspPlugin = paths.libsDir + mPreferences.getString( "rspPlugin", "" );
+        xperiaLayout = mPreferences.getString( "xperiaPlugin", "" );
         
+        boolean isCustom = false;
+        String folder = "";
         if( isTouchscreenEnabled )
         {
-            touchscreenLayout = mPreferences.getString( "touchscreenLayout", "" )
-                    + mPreferences.getString( "touchscreenSize", "" );
+            String layout = mPreferences.getString( "touchscreenLayout", "" );
+            if( layout.equals( "Custom" ) )
+            {
+                isCustom = true;
+                folder = mPreferences.getString( "touchscreenCustom", "" );
+            }
+            else
+            {
+                folder = paths.touchscreenLayoutsDir + layout
+                        + mPreferences.getString( "touchscreenSize", "" );
+            }
         }
-        else if ( isFrameRateEnabled )
+        else if( isFrameRateEnabled )
         {
-            touchscreenLayout = context.getString( R.string.touchscreenLayout_fpsOnly );
+            folder = paths.touchscreenLayoutsDir
+                    + context.getString( R.string.touchscreenLayout_fpsOnly );
         }
-        else
-        {
-            touchscreenLayout = "";
-        }
+        isTouchscreenCustom = isCustom;
+        touchscreenLayoutFolder = folder;
+        
+        // Derived values
+        isAutoFrameskip = videoMaxFrameskip < 0;
+        isAudioEnabled = audioPlugin != null && audioPlugin != "";
+        isXperiaEnabled = xperiaLayout != null && xperiaLayout != "";
+        isLastGameNull = lastGame == null || !( new File( lastGame ) ).exists();
+        isLastGameZipped = lastGame != null
+                && lastGame.length() > 3
+                && lastGame.substring( lastGame.length() - 3, lastGame.length() ).equalsIgnoreCase(
+                        "zip" );
     }
     
     /**

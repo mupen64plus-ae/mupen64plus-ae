@@ -21,13 +21,13 @@ public class Updater
             setTouchscreenLayout( instance );
 
             String oldPackage = "paulscode.android.mupen64plus";
-            File oldVer = new File( Globals.path.storageDir + "/Android/data/" + oldPackage );
+            File oldVer = new File( Globals.paths.storageDir + "/Android/data/" + oldPackage );
             if( !oldVer.exists() )
                 oldPackage = "paulscode.android.mupen64plus.xperiaplay";
-            Utility.copyFile( new File( Globals.path.storageDir + "/Android/data/" + oldPackage + "/data/save" ),
-                              new File( Globals.path.defaultSavesDir )  );
+            Utility.copyFile( new File( Globals.paths.storageDir + "/Android/data/" + oldPackage + "/data/save" ),
+                              new File( Globals.paths.defaultSavesDir )  );
             
-            if( !Globals.path.isSdCardAccessible() )
+            if( !Globals.paths.isSdCardAccessible() )
             {
                Log.e( "Updater", "SD Card not accessable in method checkFirstRun" );
                return false;
@@ -43,9 +43,9 @@ public class Updater
         if( !Globals.appData.isUpgradedVer19() )
         {
             Globals.appData.setUpgradedVer19( true );
-            Utility.copyFile( new File( Globals.path.defaultSavesDir ), new File(
-                    Globals.path.savesBackupDir ) );
-            Utility.deleteFolder( new File( Globals.path.dataDir ) );
+            Utility.copyFile( new File( Globals.paths.defaultSavesDir ), new File(
+                    Globals.paths.savesBackupDir ) );
+            Utility.deleteFolder( new File( Globals.paths.dataDir ) );
             Intent intent = new Intent( instance, MainActivity.class );
             intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
             instance.startActivity( intent );
@@ -75,14 +75,14 @@ public class Updater
         Globals.mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
 
         val = Globals.mupen64plus_cfg.get( "UI-Console", "PluginDir" );
-        if( val == null || !val.equals( "\"" + Globals.path.libsDir + "/lib/\"" ) )
+        if( val == null || !val.equals( "\"" + Globals.paths.libsDir + "\"" ) )
         {
             everythingOk = false;
-            Globals.mupen64plus_cfg.put( "UI-Console", "PluginDir", "\"" + Globals.path.libsDir + "/lib/\"" );
-            Globals.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + Globals.path.libsDir + "/lib/libgles2n64.so\"" );
-            Globals.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", "\"" + Globals.path.libsDir + "/lib/libaudio-sdl.so\"" );
-            Globals.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + Globals.path.libsDir + "/lib/libinput-sdl.so\"" );
-            Globals.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + Globals.path.libsDir + "/lib/librsp-hle.so\"" );
+            Globals.mupen64plus_cfg.put( "UI-Console", "PluginDir", "\"" + Globals.paths.libsDir + "\"" );
+            Globals.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + Globals.paths.libsDir + "libgles2n64.so\"" );
+            Globals.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", "\"" + Globals.paths.libsDir + "libaudio-sdl.so\"" );
+            Globals.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + Globals.paths.libsDir + "libinput-sdl.so\"" );
+            Globals.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + Globals.paths.libsDir + "librsp-hle.so\"" );
         }
 
         // TODO: Test to see what else could be messed up in this case, and correct it
@@ -123,11 +123,11 @@ public class Updater
 
         Globals.mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
         Globals.mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
-        Globals.mupen64plus_cfg.put( "UI-Console", "PluginDir", "\"" + Globals.path.libsDir + "/lib/\"" );
-        Globals.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + Globals.path.libsDir + "/lib/libgles2n64.so\"" );
-        Globals.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", "\"" + Globals.path.libsDir + "/lib/libaudio-sdl.so\"" );
-        Globals.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + Globals.path.libsDir + "/lib/libinput-sdl.so\"" );
-        Globals.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + Globals.path.libsDir + "/lib/librsp-hle.so\"" );
+        Globals.mupen64plus_cfg.put( "UI-Console", "PluginDir", "\"" + Globals.paths.libsDir + "\"" );
+        Globals.mupen64plus_cfg.put( "UI-Console", "VideoPlugin", "\"" + Globals.paths.libsDir + "libgles2n64.so\"" );
+        Globals.mupen64plus_cfg.put( "UI-Console", "AudioPlugin", "\"" + Globals.paths.libsDir + "libaudio-sdl.so\"" );
+        Globals.mupen64plus_cfg.put( "UI-Console", "InputPlugin", "\"" + Globals.paths.libsDir + "libinput-sdl.so\"" );
+        Globals.mupen64plus_cfg.put( "UI-Console", "RspPlugin", "\"" + Globals.paths.libsDir + "librsp-hle.so\"" );
 
         Globals.mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
         Globals.mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
@@ -221,13 +221,13 @@ public class Updater
             Globals.mupen64plus_cfg.put( "Input-SDL-Control" + x, "Y Axis", "key(0,0)" );
         }
         
-        Globals.gles2n64_conf = new ConfigFile( Globals.path.gles2n64_conf );
+        Globals.gles2n64_conf = new ConfigFile( Globals.paths.gles2n64_conf );
         Globals.gles2n64_conf.put( "[<sectionless!>]", "enable fog", "0" );
         Globals.gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", "1" );
         Globals.gles2n64_conf.put( "[<sectionless!>]", "force screen clear", "0" );
         Globals.gles2n64_conf.put( "[<sectionless!>]", "hack z", "0" );
 
-        if( !Globals.path.isSdCardAccessible() )
+        if( !Globals.paths.isSdCardAccessible() )
         {
            Log.e( "Updater", "SD Card not accessable in method restoreDefaults" );
            return false;
