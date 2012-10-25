@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 import java.util.Iterator;
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.input.Controls;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -60,29 +61,8 @@ public class TouchscreenView extends View
     private boolean[] SDLButtonPressed = new boolean[MAX_BUTTONS];
     //
     private RedrawThread redrawThread = null;
-    
+    //
     private boolean[] mp64pButtons = new boolean[14];
-    
-    // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in)
-    private static final int Right = 0;
-    private static final int Left = 1;
-    private static final int Down = 2;
-    private static final int Up = 3;
-    private static final int Start = 4;
-    private static final int Z = 5;
-    private static final int B = 6;
-    private static final int A = 7;
-    private static final int CRight = 8;
-    private static final int CLeft = 9;
-    private static final int CDown = 10;
-    private static final int CUp = 11;
-    private static final int R = 12;
-    private static final int L = 13;
-    // Not standard mp64p buttons, but simulated here for better control of virtual gamepad:
-    private static final int UpRight = 14;
-    private static final int RightDown = 15;
-    private static final int LeftDown = 16;
-    private static final int LeftUp = 17;
     
     // Variables for drawing the analog stick
     private Utility.Image analogImage = null;
@@ -103,8 +83,8 @@ public class TouchscreenView extends View
     private int[] xpercents = new int[MAX_BUTTONS];
     private int[] ypercents = new int[MAX_BUTTONS];
     
-    private int buttonCount = 0; // total number of buttons
-    private int SDLButtonCount = 0; // number of SDL buttons
+    private int buttonCount = 0;    // Total number of buttons.
+    private int SDLButtonCount = 0; // Number of SDL buttons.
     
     private Utility.Image fpsImage = null;
     private int fpsXpercent = 0;
@@ -226,6 +206,7 @@ public class TouchscreenView extends View
                             (int) ( (float) canvasH * ( (float) analogYpercent / 100.0f ) ),
                             canvasW, canvasH );
                 }
+                
                 for( int x = 0; x < buttonCount; x++ )
                 {
                     // Position the buttons
@@ -239,17 +220,20 @@ public class TouchscreenView extends View
                             canvasH );
                 }
             }
+            
             for( int x = 0; x < buttonCount; x++ )
             {
                 // Draw the buttons onto the canvas
                 buttons[x].draw( canvas );
             }
         }
+        
         if( drawEverything || drawHat )
         {
             // Redraw the analog stick
             if( analogImage != null )
                 analogImage.draw( canvas ); // Draw the background image first
+            
             if( hatImage != null && analogImage != null )
             {
                 // Reposition the image and draw it
@@ -264,11 +248,13 @@ public class TouchscreenView extends View
                 hatImage.draw( canvas );
             }
         }
+        
         if( Globals.userPrefs.isFrameRateEnabled && ( drawEverything || drawFPS ) )
         {
             // Redraw the FPS indicator
             int x = 0;
             int y = 0;
+            
             if( fpsImage != null )
             { // Position the backtround image and draw it
                 fpsImage.fitCenter( (int) ( (float) canvasW * ( (float) fpsXpercent / 100.0f ) ),
@@ -534,25 +520,25 @@ public class TouchscreenView extends View
                 mp64pButtons[closestMatch] = true;
             }
             // simulate the remaining buttons:
-            else if( closestMatch == UpRight )
+            else if( closestMatch == Controls.UpRight )
             {
-                mp64pButtons[Up] = true;
-                mp64pButtons[Right] = true;
+                mp64pButtons[Controls.Up] = true;
+                mp64pButtons[Controls.Right] = true;
             }
-            else if( closestMatch == RightDown )
+            else if( closestMatch == Controls.RightDown )
             {
-                mp64pButtons[Right] = true;
-                mp64pButtons[Down] = true;
+                mp64pButtons[Controls.Right] = true;
+                mp64pButtons[Controls.Down] = true;
             }
-            else if( closestMatch == LeftDown )
+            else if( closestMatch == Controls.LeftDown )
             {
-                mp64pButtons[Left] = true;
-                mp64pButtons[Down] = true;
+                mp64pButtons[Controls.Left] = true;
+                mp64pButtons[Controls.Down] = true;
             }
-            else if( closestMatch == LeftUp )
+            else if( closestMatch == Controls.LeftUp )
             {
-                mp64pButtons[Left] = true;
-                mp64pButtons[Up] = true;
+                mp64pButtons[Controls.Left] = true;
+                mp64pButtons[Controls.Up] = true;
             }
         }
     }
@@ -651,41 +637,41 @@ public class TouchscreenView extends View
                 valI = Utility.toInt( val, -1 ); // -1 (undefined) in case of number format problem
                 param = param.toLowerCase(); // Lets not make this part case-sensitive
                 if( param.equals( "cup" ) )
-                    maskColors[CUp] = valI;
+                    maskColors[Controls.CUp] = valI;
                 else if( param.equals( "cright" ) )
-                    maskColors[CRight] = valI;
+                    maskColors[Controls.CRight] = valI;
                 else if( param.equals( "cdown" ) )
-                    maskColors[CDown] = valI;
+                    maskColors[Controls.CDown] = valI;
                 else if( param.equals( "cleft" ) )
-                    maskColors[CLeft] = valI;
+                    maskColors[Controls.CLeft] = valI;
                 else if( param.equals( "a" ) )
-                    maskColors[A] = valI;
+                    maskColors[Controls.A] = valI;
                 else if( param.equals( "b" ) )
-                    maskColors[B] = valI;
+                    maskColors[Controls.B] = valI;
                 else if( param.equals( "l" ) )
-                    maskColors[L] = valI;
+                    maskColors[Controls.L] = valI;
                 else if( param.equals( "r" ) )
-                    maskColors[R] = valI;
+                    maskColors[Controls.R] = valI;
                 else if( param.equals( "z" ) )
-                    maskColors[Z] = valI;
+                    maskColors[Controls.Z] = valI;
                 else if( param.equals( "start" ) )
-                    maskColors[Start] = valI;
+                    maskColors[Controls.Start] = valI;
                 else if( param.equals( "leftup" ) )
-                    maskColors[LeftUp] = valI;
+                    maskColors[Controls.LeftUp] = valI;
                 else if( param.equals( "up" ) )
-                    maskColors[Up] = valI;
+                    maskColors[Controls.Up] = valI;
                 else if( param.equals( "upright" ) )
-                    maskColors[UpRight] = valI;
+                    maskColors[Controls.UpRight] = valI;
                 else if( param.equals( "right" ) )
-                    maskColors[Right] = valI;
+                    maskColors[Controls.Right] = valI;
                 else if( param.equals( "rightdown" ) )
-                    maskColors[RightDown] = valI;
+                    maskColors[Controls.RightDown] = valI;
                 else if( param.equals( "leftdown" ) )
-                    maskColors[LeftDown] = valI;
+                    maskColors[Controls.LeftDown] = valI;
                 else if( param.equals( "down" ) )
-                    maskColors[Down] = valI;
+                    maskColors[Controls.Down] = valI;
                 else if( param.equals( "left" ) )
-                    maskColors[Left] = valI;
+                    maskColors[Controls.Left] = valI;
                 else if( param.contains( "scancode_" ) )
                 {
                     try

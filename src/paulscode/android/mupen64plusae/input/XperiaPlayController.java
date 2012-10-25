@@ -55,36 +55,16 @@ public class XperiaPlayController extends AbstractController
     // SDL button-states associates with the mask colors:
     private boolean[] SDLButtonPressed = new boolean[MAX_BUTTONS];
     //
-    
     private boolean[] mp64pButtons = new boolean[14];
-    // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in)
-    private static final int Right = 0;
-    private static final int Left = 1;
-    private static final int Down = 2;
-    private static final int Up = 3;
-    private static final int Start = 4;
-    private static final int Z = 5;
-    private static final int B = 6;
-    private static final int A = 7;
-    private static final int CRight = 8;
-    private static final int CLeft = 9;
-    private static final int CDown = 10;
-    private static final int CUp = 11;
-    private static final int R = 12;
-    private static final int L = 13;
-    // Not standard mp64p buttons, but simulated here for better control:
-    private static final int UpRight = 14;
-    private static final int RightDown = 15;
-    private static final int LeftDown = 16;
-    private static final int LeftUp = 17;
+
     
-    private Image analogMask = null;
+    private Image analogMask   = null;
     private int analogXpercent = 0;
     private int analogYpercent = 0;
-    private int analogPadding = 32;
+    private int analogPadding  = 32;
     private int analogDeadzone = 2;
-    private int analogMaximum = 360;
-    private int analogPid = -1;
+    private int analogMaximum  = 360;
+    private int analogPid      = -1;
     
     // All button images and associated mask images, including both
     // normal N64 buttons and SDL buttons:
@@ -164,7 +144,10 @@ public class XperiaPlayController extends AbstractController
         for( int i = 0; i <= maxPid; i++ )
         {
             if( i == analogPid && !pointers[i] )
-                analogPid = -1; // Release analog if it's pointer is not touching the pad
+            {
+                // Release analog if it's pointer is not touching the pad
+                analogPid = -1;
+            }
                 
             // Pointer is touching the pad
             if( pointers[i] )
@@ -175,28 +158,38 @@ public class XperiaPlayController extends AbstractController
                 // Not the analog control, check the buttons
                 if( i != analogPid )
                 {
+                    // Check each one in sequence
                     for( int m = 0; m < buttonCount; m++ )
-                    { // Check each one in sequence
+                    {
+                        // If it is inside this button, check the color mask
                         if( x >= masks[m].x && x < masks[m].x + masks[m].width && y >= masks[m].y
                                 && y < masks[m].y + masks[m].height )
-                        { // It is inside this button, check the color mask
+                        {
                             c = masks[m].image.getPixel( x - masks[m].x, y - masks[m].y );
-                            rgb = (int) ( c & 0x00ffffff ); // Ignore the alpha component if any
-                            if( rgb > 0 ) // Ignore black
-                                pressColor( rgb ); // Determine what was pressed
+                            
+                            // Ignore the alpha component if any
+                            rgb = (int) ( c & 0x00ffffff );
+                            
+                            // Ignore black
+                            if( rgb > 0 )
+                            {
+                                // Determine what was pressed
+                                pressColor( rgb );
+                            }
                         }
                     }
                 }
                 
                 if( analogMask != null )
                 {
-                    dX = (float) ( x - ( analogMask.x + analogMask.hWidth ) ); // Distance from
-                                                                               // center along
-                                                                               // x-axis
-                    dY = (float) ( ( analogMask.y + analogMask.hHeight ) - y ); // Distance from
-                                                                                // center along
-                                                                                // y-axis
-                    d = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) ); // Distance from center
+                    // Distance from center along x-axis
+                    dX = (float) ( x - ( analogMask.x + analogMask.hWidth ) ); 
+                    
+                    // Distance from center along y-axis
+                    dY = (float) ( ( analogMask.y + analogMask.hHeight ) - y );
+                    
+                    // Distance from center
+                    d = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) ); 
                     
                     // Inside the analog control
                     if( ( i == analogPid )
@@ -205,7 +198,7 @@ public class XperiaPlayController extends AbstractController
                         // Emulate the analog control as an octagon (like the real N64 controller)
                         if( Globals.userPrefs.isOctagonalJoystick )
                         {
-                            Point crossPt = new Point();
+                            Utility.Point crossPt = new Utility.Point();
                             float dC = analogMask.hWidth;
                             float dA = FloatMath.sqrt( ( dC * dC ) / 2.0f );
                             
@@ -247,41 +240,37 @@ public class XperiaPlayController extends AbstractController
                             }
                             d = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) ); // distance from center
                         }
-                        analogPid = i; // "Capture" the analog control
-                        p = ( d - (float) analogDeadzone )
-                                / (float) ( analogMaximum - analogDeadzone ); // percentage of
-                                                                              // full-throttle
-                        if( p < 0 )
-                            p = 0;
-                        if( p > 1 )
-                            p = 1;
                         
-                        // From the N64 function ref: The 3D Stick data is of type signed char and
-                        // in
-                        // the range between 80 and -80. (32768 / 409 = ~80.1)
+                        // "Capture" the analog control
+                        analogPid = i;
+                        
+                        // Percentage of full-throttle, clamped to range [0-1]
+                        p = ( d - (float) analogDeadzone )
+                                / (float) ( analogMaximum - analogDeadzone );
+
+                        p = Math.max( Math.min( p, 1 ), 0 );
+                        
+                        // From the N64 function reference: The 3D Stick data is of type signed char and
+                        // in the range between 80 and -80. (32768 / 409 = ~80.1)
                         axisX = (int) ( ( dX / d ) * p * 80.0f );
                         axisY = (int) ( ( dY / d ) * p * 80.0f );
-                        if( axisX > 80 )
-                            axisX = 80;
-                        if( axisX < -80 )
-                            axisX = -80;
-                        if( axisY > 80 )
-                            axisY = 80;
-                        if( axisY < -80 )
-                            axisY = -80;
+                        axisX = Math.max( Math.min( axisX, 80 ), -80 );
+                        axisY = Math.max( Math.min( axisY, 80 ), -80 );
                     }
                 }
             }
         }
+        
         NativeMethods.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY );
         TouchscreenController.updateSDLButtonStates( Globals.surfaceInstance, SDLButtonPressed,
                 SDLButtonCodes, SDLButtonCount );
     }
     
     /**
-     * Determines which button was pressed based on the closest mask color. TODO: Android is not
-     * precise: the color is different than it should be!)
-     * 
+     * Determines which button was pressed based on the closest mask color. 
+     * </p>
+     * TODO: Android is not precise: the color is different than it should be!)
+     * </p>
      * @param color
      *            Color of the pixel that the user pressed.
      */
@@ -293,20 +282,24 @@ public class XperiaPlayController extends AbstractController
         int dif;
         
         for( int x = 1; x < 18; x++ )
-        { // Go through the N64 button mask colors first
+        { 
+            // Go through the N64 button mask colors first
             dif = Math.abs( maskColors[x] - color );
             if( dif < matchDif )
-            { // This is a closer match
+            { 
+                // This is a closer match
                 closestMatch = x;
                 matchDif = dif;
             }
         }
         
         for( int x = 0; x < SDLButtonCount; x++ )
-        { // Now see if any of the SDL button mask colors are closer
+        { 
+            // Now see if any of the SDL button mask colors are closer
             dif = Math.abs( SDLButtonMaskColors[x] - color );
             if( dif < matchDif )
-            { // This is a closer match
+            { 
+                // This is a closer match
                 closestSDLButtonMatch = x;
                 matchDif = dif;
             }
@@ -328,25 +321,25 @@ public class XperiaPlayController extends AbstractController
                 mp64pButtons[closestMatch] = true;
             }
             // Simulate the remaining buttons:
-            else if( closestMatch == UpRight )
+            else if( closestMatch == Controls.UpRight )
             {
-                mp64pButtons[Up] = true;
-                mp64pButtons[Right] = true;
+                mp64pButtons[Controls.Up] = true;
+                mp64pButtons[Controls.Right] = true;
             }
-            else if( closestMatch == RightDown )
+            else if( closestMatch == Controls.RightDown )
             {
-                mp64pButtons[Right] = true;
-                mp64pButtons[Down] = true;
+                mp64pButtons[Controls.Right] = true;
+                mp64pButtons[Controls.Down] = true;
             }
-            else if( closestMatch == LeftDown )
+            else if( closestMatch == Controls.LeftDown )
             {
-                mp64pButtons[Left] = true;
-                mp64pButtons[Down] = true;
+                mp64pButtons[Controls.Left] = true;
+                mp64pButtons[Controls.Down] = true;
             }
-            else if( closestMatch == LeftUp )
+            else if( closestMatch == Controls.LeftUp )
             {
-                mp64pButtons[Left] = true;
-                mp64pButtons[Up] = true;
+                mp64pButtons[Controls.Left] = true;
+                mp64pButtons[Controls.Up] = true;
             }
         }
     }
@@ -375,7 +368,9 @@ public class XperiaPlayController extends AbstractController
      */
     protected void loadPad( String skin )
     {
-        initialized = false; // Stop anything accessing settings while loading
+        // Stop anything accessing settings while loading
+        initialized = false;
+        
         // Clear everything out to be re-populated with the new settings:
         name = "";
         version = "";
@@ -396,14 +391,18 @@ public class XperiaPlayController extends AbstractController
             maskColors[i] = -1;
             buttonPressed[i] = false;
         }
+       
         for( int i = 0; i < MAX_BUTTONS; i++ )
         {
             SDLButtonMaskColors[i] = -1;
             SDLButtonCodes[i] = -1;
             SDLButtonPressed[i] = false;
         }
+        
         for( int i = 0; i < 14; i++ )
+        {
             mp64pButtons[i] = false;
+        }
         
         if( skin == null )
             return; // No skin was specified, so we are done.. quit
@@ -427,52 +426,55 @@ public class XperiaPlayController extends AbstractController
         {
             keys = section.keySet();
             iter = keys.iterator();
+            
+            // Loop through the param=val pairs
             while( iter.hasNext() )
-            { // Loop through the param=val pairs
+            {
                 param = iter.next();
                 val = section.get( param );
                 valI = Utility.toInt( val, -1 ); // -1 (undefined) in case of number format problem
                 param = param.toLowerCase(); // lets not make this part case-sensitive
                 if( param.equals( "cup" ) )
-                    maskColors[CUp] = valI;
+                    maskColors[Controls.CUp] = valI;
                 else if( param.equals( "cright" ) )
-                    maskColors[CRight] = valI;
+                    maskColors[Controls.CRight] = valI;
                 else if( param.equals( "cdown" ) )
-                    maskColors[CDown] = valI;
+                    maskColors[Controls.CDown] = valI;
                 else if( param.equals( "cleft" ) )
-                    maskColors[CLeft] = valI;
+                    maskColors[Controls.CLeft] = valI;
                 else if( param.equals( "a" ) )
-                    maskColors[A] = valI;
+                    maskColors[Controls.A] = valI;
                 else if( param.equals( "b" ) )
-                    maskColors[B] = valI;
+                    maskColors[Controls.B] = valI;
                 else if( param.equals( "l" ) )
-                    maskColors[L] = valI;
+                    maskColors[Controls.L] = valI;
                 else if( param.equals( "r" ) )
-                    maskColors[R] = valI;
+                    maskColors[Controls.R] = valI;
                 else if( param.equals( "z" ) )
-                    maskColors[Z] = valI;
+                    maskColors[Controls.Z] = valI;
                 else if( param.equals( "start" ) )
-                    maskColors[Start] = valI;
+                    maskColors[Controls.Start] = valI;
                 else if( param.equals( "leftup" ) )
-                    maskColors[LeftUp] = valI;
+                    maskColors[Controls.LeftUp] = valI;
                 else if( param.equals( "up" ) )
-                    maskColors[Up] = valI;
+                    maskColors[Controls.Up] = valI;
                 else if( param.equals( "upright" ) )
-                    maskColors[UpRight] = valI;
+                    maskColors[Controls.UpRight] = valI;
                 else if( param.equals( "right" ) )
-                    maskColors[Right] = valI;
+                    maskColors[Controls.Right] = valI;
                 else if( param.equals( "rightdown" ) )
-                    maskColors[RightDown] = valI;
+                    maskColors[Controls.RightDown] = valI;
                 else if( param.equals( "leftdown" ) )
-                    maskColors[LeftDown] = valI;
+                    maskColors[Controls.LeftDown] = valI;
                 else if( param.equals( "down" ) )
-                    maskColors[Down] = valI;
+                    maskColors[Controls.Down] = valI;
                 else if( param.equals( "left" ) )
-                    maskColors[Left] = valI;
+                    maskColors[Controls.Left] = valI;
                 else if( param.contains( "scancode_" ) )
                 {
                     try
-                    { // Make sure a valid integer was used for the scancode
+                    { 
+                        // Make sure a valid integer was used for the scancode
                         SDLButtonCodes[SDLButtonCount] = Integer.valueOf( param.substring( 9,
                                 param.length() ) );
                         SDLButtonMaskColors[SDLButtonCount] = valI;
@@ -480,34 +482,44 @@ public class XperiaPlayController extends AbstractController
                     }
                     catch( NumberFormatException nfe )
                     {
-                    } // Skip it if this happens
+                        // Skip it if this happens
+                    }
                 }
             }
         }
         
         Set<String> mKeys = pad_ini.keySet();
+        
         // Loop through all the sections
         for( String mKey : mKeys )
         {
-            filename = mKey; // The rest of the sections are filenames
+            // The rest of the sections are filenames
+            filename = mKey;
+            
             if( filename != null && filename.length() > 0 && !filename.equals( "INFO" )
                     && !filename.equals( "MASK_COLOR" ) && !filename.equals( "[<sectionless!>]" ) )
-            { // Yep, its definitely a filename
+            { 
+                // Yep, its definitely a filename
                 section = pad_ini.get( filename );
                 if( section != null )
-                { // Process the parameters for this section
+                { 
+                    // Process the parameters for this section
                     val = section.get( "info" ); // what type of control
                     if( val != null )
                     {
-                        val = val.toLowerCase(); // Lets not make this part case-sensitive
+                        // Lets not make this part case-sensitive
+                        val = val.toLowerCase();
+                        
                         if( val.contains( "analog" ) )
-                        { // Analog color mask image in BMP image format (doesn't actually get
-                          // drawn)
+                        { 
+                            // Analog color mask image in BMP image format (doesn't actually get drawn)
                             analogMask = new Image( resources, Globals.paths.dataDir
                                     + "/skins/touchpads/" + skin + "/" + filename + ".bmp" );
+                            
                             // Position (percentages of the screen dimensions):
                             analogXpercent = Utility.toInt( section.get( "x" ), 0 );
                             analogYpercent = Utility.toInt( section.get( "y" ), 0 );
+                            
                             // Sensitivity (percentages of the radius, i.e. half the image width):
                             analogDeadzone = (int) ( (float) analogMask.hWidth * ( Utility.toFloat(
                                     section.get( "min" ), 1 ) / 100.0f ) );
@@ -522,12 +534,12 @@ public class XperiaPlayController extends AbstractController
                                             PAD_WIDTH, PAD_HEIGHT );
                         }
                         else
-                        { // A button control (may contain one or more N64 buttons and/or SDL
-                          // buttons)
-                          // Button color mask image in BMP image format (doesn't actually get
-                          // drawn)
+                        { 
+                            // A button control (may contain one or more N64 buttons and/or SDL buttons)
+                            // Button color mask image in BMP image format (doesn't actually get drawn)
                             masks[buttonCount] = new Image( resources, Globals.paths.dataDir
                                     + "/skins/touchpads/" + skin + "/" + filename + ".bmp" );
+                           
                             // Position (percentages of the screen dimensions):
                             xpercents[buttonCount] = Utility.toInt( section.get( "x" ), 0 );
                             ypercents[buttonCount] = Utility.toInt( section.get( "y" ), 0 );
@@ -539,11 +551,9 @@ public class XperiaPlayController extends AbstractController
                             
                             Log.v( "TouchPad", "Adding button grouping " + buttonCount + ", ("
                                     + xpercents[buttonCount] + ", " + ypercents[buttonCount] + ")" );
-                            Log.v( "TouchPad",
-                                    "Fit x center to "
+                            Log.v( "TouchPad", "Fit x center to "
                                             + (int) ( (float) PAD_WIDTH * ( (float) xpercents[buttonCount] / 100.0f ) ) );
-                            Log.v( "TouchPad",
-                                    "Fit y center to "
+                            Log.v( "TouchPad", "Fit y center to "
                                             + (int) ( (float) PAD_HEIGHT * ( (float) ypercents[buttonCount] / 100.0f ) ) );
                             Log.v( "TouchPad", "Converted max coordinates: ("
                                     + masks[buttonCount].x + ", " + masks[buttonCount].y + ")" );
@@ -558,7 +568,8 @@ public class XperiaPlayController extends AbstractController
         pad_ini.clear();
         pad_ini = null;
         
-        initialized = true; // everything is loaded now
+        // Everything is loaded now
+        initialized = true;
     }
     
     public void touchPadBeginEvent()
@@ -660,7 +671,7 @@ public class XperiaPlayController extends AbstractController
      */
     public static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
             float seg1pt2_y, float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
-            Point crossPt )
+            Utility.Point crossPt )
     {
         float vec1_x = seg1pt2_x - seg1pt1_x;
         float vec1_y = seg1pt2_y - seg1pt1_y;
@@ -669,39 +680,24 @@ public class XperiaPlayController extends AbstractController
         float vec2_y = seg2pt2_y - seg2pt1_y;
         
         float div = ( -vec2_x * vec1_y + vec1_x * vec2_y );
+        
+        // Segments don't cross
         if( div == 0 )
-            return false; // Segments don't cross
+            return false;
             
-        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) )
-                / div;
+        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) ) / div;
         float t = ( vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
         
         if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
         {
+            // Segments cross, point of intersection stored in 'crossPt'
             crossPt.x = seg1pt1_x + ( t * vec1_x );
             crossPt.y = seg1pt1_y + ( t * vec1_y );
-            return true; // Segments cross, point of intersection stored in 'crossPt'
+            return true;
         }
         
-        return false; // Segments don't cross
-    }
-    
-    /**
-     * The Point class is a basic interface for storing 2D float coordinates.
-     */
-    private static class Point
-    {
-        public float x;
-        public float y;
-        
-        /**
-         * Constructor: Creates a new point at the origin
-         */
-        public Point()
-        {
-            x = 0;
-            y = 0;
-        }
+        // Segments don't cross
+        return false;
     }
     
     /**
@@ -781,41 +777,6 @@ public class XperiaPlayController extends AbstractController
         }
         
         /**
-         * Constructor: Creates a clone copy of another Image.
-         * 
-         * @param res
-         *            Handle to the app resources.
-         * @param clone
-         *            Image to copy.
-         */
-        public Image( Resources res, Image clone )
-        {
-            image = clone.image;
-            drawable = new BitmapDrawable( res, image );
-            width = clone.width;
-            hWidth = clone.hWidth;
-            height = clone.height;
-            hHeight = clone.hHeight;
-            drawRect = new Rect();
-        }
-        
-        /**
-         * Sets the screen position of the image (in pixels).
-         * 
-         * @param x
-         *            X-coordinate.
-         * @param y
-         *            Y-coordinate.
-         */
-        public void setPos( int x, int y )
-        {
-            this.x = x;
-            this.y = y;
-            drawRect.set( x, y, x + width, y + height );
-            drawable.setBounds( drawRect );
-        }
-        
-        /**
          * Centers the image at the specified coordinates, without going beyond the specified screen
          * dimensions.
          * 
@@ -840,41 +801,6 @@ public class XperiaPlayController extends AbstractController
                 cx = screenW - hWidth;
             if( cy + hHeight > screenH )
                 cy = screenH - hHeight;
-            x = cx - hWidth;
-            y = cy - hHeight;
-            drawRect.set( x, y, x + width, y + height );
-            drawable.setBounds( drawRect );
-        }
-        
-        /**
-         * Centers the image at the specified coordinates, without going beyond the edges of the
-         * specified rectangle.
-         * 
-         * @param centerX
-         *            X-coordinate to center the image at.
-         * @param centerY
-         *            Y-coordinate to center the image at.
-         * @param rectX
-         *            X-coordinate of the bounding rectangle.
-         * @param rectY
-         *            Y-coordinate of the bounding rectangle.
-         * @param rectW
-         *            Horizontal bounding rectangle dimension (in pixels).
-         * @param rectH
-         *            Vertical bounding rectangle dimension (in pixels).
-         */
-        public void fitCenter( int centerX, int centerY, int rectX, int rectY, int rectW, int rectH )
-        {
-            int cx = centerX;
-            int cy = centerY;
-            if( cx < rectX + hWidth )
-                cx = rectX + hWidth;
-            if( cy < rectY + hHeight )
-                cy = rectY + hHeight;
-            if( cx + hWidth > rectX + rectW )
-                cx = rectX + rectW - hWidth;
-            if( cy + hHeight > rectY + rectH )
-                cy = rectY + rectH - hHeight;
             x = cx - hWidth;
             y = cy - hHeight;
             drawRect.set( x, y, x + width, y + height );
