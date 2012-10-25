@@ -549,7 +549,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
     }
     
     // paulscode: Xperia Play native touch input linkage:
-    public static void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
+    public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
         if( !Globals.userPrefs.isXperiaEnabled || !Globals.userPrefs.isInputEnabled )
             return;
