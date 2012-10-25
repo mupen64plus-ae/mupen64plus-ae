@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:maxLines="1"
-        android:text="@string/initializing" />
+        android:text="@string/_initializing" />
     <ImageView
         android:id="@+id/mainImage"
         android:layout_width="match_parent"

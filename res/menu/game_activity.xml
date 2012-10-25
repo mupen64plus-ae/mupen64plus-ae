@@ -2,14 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:icon="@drawable/ic_save"
+        android:id="@+id/ingameQuicksave"
+        android:title="@string/ingameQuicksave_title"
+        android:showAsAction="ifRoom|withText" />
+    <item
+        android:icon="@drawable/ic_folder"
+        android:id="@+id/ingameQuickLoad"
+        android:title="@string/ingameQuickload_title"
+        android:showAsAction="ifRoom|withText" />
+    <item
         android:id="@+id/ingameSave"
-        android:title="@string/ingameSave_title"/>
+        android:title="@string/ingameSave_title" />
     <item
         android:id="@+id/ingameLoad"
-        android:title="@string/ingameLoad_title"/>
+        android:title="@string/ingameLoad_title" />
     <item
+        android:icon="@drawable/ic_storage"
         android:id="@+id/ingameSlot"
-        android:title="@string/ingameSlot_title">
+        android:title="@string/ingameSlot_title" >
         <menu>
             <item
                 android:id="@+id/slot0"
@@ -44,7 +55,8 @@
         </menu>
     </item>
     <item
+        android:icon="@drawable/ic_settings"
         android:id="@+id/ingameMenu"
-        android:title="@string/ingameMenu_title"/>
+        android:title="@string/ingameMenu_title" />
 
 </menu>

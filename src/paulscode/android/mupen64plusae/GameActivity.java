@@ -176,9 +176,9 @@ public class GameActivity extends Activity
     {
         mSlot = value % NUM_SLOTS;
         NativeMethods.stateSetSlotEmulator( mSlot );
-        Notifier.showToast( getString( R.string.savegame_slot ) + " " + mSlot, this );
+        Notifier.showToast( getString( R.string.savegame_slot, mSlot ), this );
         if( mSlotMenuItem != null )
-            mSlotMenuItem.setTitle( getString( R.string.ingameSlot_title ) + " " + value );
+            mSlotMenuItem.setTitle( getString( R.string.ingameSlot_title, mSlot ) );
     }
     
     @Override
@@ -221,7 +221,7 @@ public class GameActivity extends Activity
         PendingIntent contentIntent = PendingIntent.getActivity( this, 0, intent, 0 );
         
         String appName = getString( R.string.app_name );
-        CharSequence text = String.format( getString( R.string.gameActivity_ticker ), appName );
+        CharSequence text = getString( R.string.gameActivity_ticker, appName );
         CharSequence contentTitle = appName;
         CharSequence contentText = appName;
         long when = System.currentTimeMillis();

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="HardcodedText">
-        <ignore path="res\layout\preferences_inputmap.xml" />
+        <ignore path="res\layout\input_map_preference.xml" />
     </issue>
 </lint>

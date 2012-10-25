@@ -21,6 +21,27 @@ package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.NativeMethods;
 
+/**
+ * The abstract base class for implementing all N64 controllers.
+ * <p/>
+ * Subclasses should implement the following pattern:
+ * <ul>
+ * <li>Register a listener to the upstream input (e.g. touch, keyboard, mouse, joystick, etc.)</li>
+ * <li>Translate the input data into N64 controller button & axis states</li>
+ * <li>Set the values of the protected members mDpad*, mBtn*, mAxis*</li>
+ * <li>Call the protected method notifyChanged()</li>
+ * </ul>
+ * This abstract class will call the emulator's native libraries to update game state whenever
+ * notifyChanged() is called. Subclasses should not call any native methods themselves. (If they do,
+ * then this abstract class should be expanded to cover those needs.)
+ * <p/>
+ * Note that this class is stateful, in that it remembers controller button/axis state between calls
+ * from the subclass. For best performance, subclasses should only call notifyChanged() when the
+ * input state has actually changed, and should bundle the protected field modifications before
+ * calling notifyChanged() once. For example,
+ * Inefficient: mDpadR = true; notifyChanges(); mDpadL = false; notifyChanges();
+ * Better: mDpadR = true; mDpadL = false; notifyChanges();
+ */
 public abstract class AbstractController
 {
     protected boolean mDpadR;
@@ -37,7 +58,7 @@ public abstract class AbstractController
     protected boolean mBtnCU;
     protected boolean mBtnR;
     protected boolean mBtnL;
-    // protected boolean mBtnRumble;
+    // protected boolean mBtnRumble; // TODO: Are these needed?
     // protected boolean mBtnMempak;
     protected float mAxisFractionX;
     protected float mAxisFractionY;

@@ -22,39 +22,27 @@
     
     <!-- Common Short Strings -->
     <string name="app_name">Mupen64Plus</string>
-    <string name="enable">エネーブル</string>
-    <string name="enabled">エネーブル</string>
-    <string name="disable">無効にする</string>
-    <string name="disabled">使用禁止</string>
-    <string name="plugin">プラグイン</string>
-    <string name="layout">レイアウト</string>
-    <string name="auto">オート</string>
-    <string name="general">一般</string>
-    <string name="advanced">アドバンスド</string>
-    <string name="other">その他</string>
-    <string name="initializing">初期化</string>
+    <string name="_enable">エネーブル</string>
+    <string name="_enabled">エネーブル</string>
+    <string name="_disable">無効にする</string>
+    <string name="_disabled">使用禁止</string>
+    <string name="_plugin">プラグイン</string>
+    <string name="_layout">レイアウト</string>
+    <string name="_auto">オート</string>
+    <string name="_default">デフォル</string>
+    <string name="_general">一般</string>
+    <string name="_advanced">アドバンスド</string>
+    <string name="_other">その他</string>
+    <string name="_initializing">初期化</string>
     
-    <!-- Download Messages (DataDownloader.java) -->
-    <string name="connecting_to">%sへの接続</string>
-    <string name="dl_finished">完成した</string>
-    <string name="dl_from">%sからデータをダウンロードします</string>
-    <string name="dl_progress">%1$.0f%% が行わ: ファイル %2$s</string>
-    <string name="download_unneeded">ダウンロードする必要はありません</string>
-    <string name="error_dl_from">%sからデータをダウンロード中にエラー</string>
-    <string name="error_write">書き込みエラー (USBストレージ·モードのデバイスですか？) %s</string>
-    <string name="failed_connecting_to">%sに接続できません</string>
-    
-    <!-- In-Game Messages (GameActivity.java) -->
-    <string name="mupen64plus_started">Mupen64Plusが起動した</string>
-    <string name="savegame_slot">セーブデータスロット</string>
-    <string name="saving_game">ゲームを保存</string>
-    <string name="illegal_audio_state">オーディオトラックが不正な状態。 paulscode.comに問題を報告してください</string>
-    <string name="app_data_inaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
+    <!-- ******************************************** -->
+    <!-- Menu Strings                                 -->
+    <!-- ******************************************** -->
     
     <!-- In-Game Menu (GameActivity.java) -->
-    <string name="ingameSlot_title">スロット</string>
     <string name="ingameSave_title">保存</string>
     <string name="ingameLoad_title">ロード</string>
+    <string name="ingameSlot_title">%1$dスロット</string>
     <string name="ingameMenu_title">メニュー</string>
     
     <!-- ******************************************** -->
@@ -94,16 +82,16 @@
     <string name="resetUserPrefs_summary">既定値にリセット</string>
     
     <!-- Touchscreen Menu -->
-    <string name="touchscreenEnabled_title">@string/enable</string>
-    <string name="touchscreenLayout_title">@string/layout</string>
+    <string name="touchscreenEnabled_title">@string/_enable</string>
+    <string name="touchscreenLayout_title">@string/_layout</string>
     <string name="touchscreenSize_title">画面サイズ</string>
     <string name="touchscreenOctagonJoystick_title">八角形のようにアナログスティックをエミュレート</string>
     <string name="touchscreenRedrawAll_title">すべてを再描画</string>
     <string name="touchscreenRedrawAll_summary">行方不明のボタンのバグを修正</string>
     
     <!-- Gamepad Menu -->
-    <string name="gamepadEnabled_title">@string/enable</string>
-    <string name="gamepadPlugin_title">@string/plugin</string>
+    <string name="gamepadEnabled_title">@string/_enable</string>
+    <string name="gamepadPlugin_title">@string/_plugin</string>
     <string name="gamepadMap1_title">プレイヤー1</string>
     <string name="gamepadMap2_title">プレイヤー2</string>
     <string name="gamepadMap3_title">プレイヤー3</string>
@@ -116,8 +104,8 @@
     <string name="volumeKeysEnabled_summary">コントローラのボタンとしてボリュームキーを使用</string>
     
     <!-- Video Menu -->
-    <string name="videoEnabled_title">@string/enable</string>
-    <string name="videoPlugin_title">@string/plugin</string>
+    <string name="videoEnabled_title">@string/_enable</string>
+    <string name="videoPlugin_title">@string/_plugin</string>
     <string name="videoStretch_title">ストレッチ画面</string>
     <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
     <string name="videoRGBA8888_title">RGBA_8888 モード</string>
@@ -175,7 +163,7 @@
     <!-- Touchscreen Size Entries -->
     <string name="touchscreenSize_entry0">小さな</string>
     <string name="touchscreenSize_entry1">小</string>
-    <string name="touchscreenSize_entry2">デフォル</string>
+    <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">タブレット</string>
     
     <!-- Input Plugin Entries -->
@@ -195,5 +183,26 @@
     <string name="rspPlugin_entry2">rsp-hle-nosound, v1.10 (いいえオーディオ処理, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
     <!-- Core Plugin Entries -->
+    
+    <!-- ******************************************** -->
+    <!-- Other Strings                                -->
+    <!-- ******************************************** -->
+    
+    <!-- Download Messages (DataDownloader.java) -->
+    <string name="connecting_to">%1$sへの接続</string>
+    <string name="dl_finished">完成した</string>
+    <string name="dl_from">%1$sからデータをダウンロードします</string>
+    <string name="dl_progress">%1$.0f%% が行わ: ファイル %2$s</string>
+    <string name="download_unneeded">ダウンロードする必要はありません</string>
+    <string name="error_dl_from">%1$sからデータをダウンロード中にエラー</string>
+    <string name="error_write">書き込みエラー (USBストレージ·モードのデバイスですか？) %1$s</string>
+    <string name="failed_connecting_to">%1$sに接続できません</string>
+    
+    <!-- In-Game Messages (GameActivity.java) -->
+    <string name="mupen64plus_started">Mupen64Plusが起動した</string>
+    <string name="savegame_slot">%1$dセーブデータスロット</string>
+    <string name="saving_game">ゲームを保存</string>
+    <string name="illegal_audio_state">オーディオトラックが不正な状態。 paulscode.comに問題を報告してください</string>
+    <string name="app_data_inaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
     
 </resources>

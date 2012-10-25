@@ -84,7 +84,9 @@ public class PathPreference extends DialogPreference
         if( mDoRefresh )
         {
             mDoRefresh = false;
-            String filename = getPersistedString( Globals.paths.storageDir ); // TODO: Remove dependency on Globals.paths
+            String filename = getPersistedString( Globals.paths.storageDir ); // TODO: Remove
+                                                                              // dependency on
+                                                                              // Globals.paths
             if( filename != null )
             {
                 populate( new File( filename ) );
@@ -186,8 +188,8 @@ public class PathPreference extends DialogPreference
                 break;
             case SELECTION_MODE_DIRECTORY:
             case SELECTION_MODE_ANY:
-                String dialogTitle = getContext().getString( R.string.pathPreference_dialogTitle );
-                setDialogTitle( String.format( dialogTitle, startPath.getPath() ) );
+                setDialogTitle( getContext().getString( R.string.pathPreference_dialogTitle,
+                        startPath.getPath() ) );
                 break;
         }
         

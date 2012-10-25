@@ -113,7 +113,7 @@
     
     <!-- GLES2N64 Frameskip List -->
     <string-array name="gles2N64Frameskip_entries">
-        <item>@string/auto</item>
+        <item>@string/_auto</item>
         <item>0</item>
         <item>1</item>
         <item>2</item>

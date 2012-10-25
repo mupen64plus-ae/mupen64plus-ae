@@ -22,40 +22,30 @@
     
     <!-- Common Short Strings -->
     <string name="app_name">Mupen64 Plus</string>
-    <string name="enable">Enable</string>
-    <string name="enabled">Enabled</string>
-    <string name="disable">Disable</string>
-    <string name="disabled">Disabled</string>
-    <string name="plugin">Plug-in</string>
-    <string name="layout">Layout</string>
-    <string name="auto">Auto</string>
-    <string name="general">General</string>
-    <string name="advanced">Advanced</string>
-    <string name="other">Other</string>
-    <string name="initializing">Initializing</string>
+    <string name="_enable">Enable</string>
+    <string name="_enabled">Enabled</string>
+    <string name="_disable">Disable</string>
+    <string name="_disabled">Disabled</string>
+    <string name="_plugin">Plug-in</string>
+    <string name="_layout">Layout</string>
+    <string name="_auto">Auto</string>
+    <string name="_default">Default</string>
+    <string name="_general">General</string>
+    <string name="_advanced">Advanced</string>
+    <string name="_other">Other</string>
+    <string name="_initializing">Initializing</string>
     
-    <!-- Download Messages (DataDownloader.java) -->
-    <string name="connecting_to">Connecting to %s</string>
-    <string name="dl_finished">Finished</string>
-    <string name="dl_from">Downloading data from %s</string>
-    <string name="dl_progress">%1$.0f%% done: file %2$s</string>
-    <string name="download_unneeded">No need to download</string>
-    <string name="error_dl_from">Error downloading data from %s</string>
-    <string name="error_write">Write error (plugged in USB Mass Storage Device mode?) %s</string>
-    <string name="failed_connecting_to">Failed connecting to %s</string>
-    
-    <!-- In-Game Messages (GameActivity.java) -->
-    <string name="mupen64plus_started">Mupen64Plus started</string>
-    <string name="savegame_slot">Savegame slot</string>
-    <string name="saving_game">Saving game</string>
-    <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com.</string>
-    <string name="app_data_inaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
+    <!-- ******************************************** -->
+    <!-- Menu Strings                                 -->
+    <!-- ******************************************** -->
     
     <!-- In-Game Menu (GameActivity.java) -->
-    <string name="ingameSlot_title">Slot</string>
-    <string name="ingameSave_title">Save</string>
-    <string name="ingameLoad_title">Load</string>
-    <string name="ingameMenu_title">Menu</string>
+    <string name="ingameQuicksave_title">Quick save</string>
+    <string name="ingameQuickload_title">Quick load</string>
+    <string name="ingameSave_title">Save as…</string>
+    <string name="ingameLoad_title">Load…</string>
+    <string name="ingameSlot_title">Slot %1$d</string>
+    <string name="ingameMenu_title">Main menu</string>
     
     <!-- ******************************************** -->
     <!-- Preference Menu Strings                      -->
@@ -73,7 +63,7 @@
     <!-- Categories -->
     <string name="categoryPlugins_title">Hardware settings</string>
     <string name="categoryStorage_title">Storage options</string>
-    <string name="categoryOther_title">@string/other</string>
+    <string name="categoryOther_title">@string/_other</string>
     
     <!-- Settings Menu -->
     <string name="video_title">Video</string>
@@ -82,7 +72,7 @@
     <string name="touchscreen_summary">On-screen controller settings</string>
     <string name="gamepad_title">Controllers</string>
     <string name="gamepad_summary">Gamepad/joystick settings</string>
-    <string name="other_title">@string/other</string>
+    <string name="other_title">@string/_other</string>
     <string name="other_summary">Audio, processor, core, etc.</string>
     <string name="gameSaveDir_title">Savegame folder</string>
     <string name="autoSaveEnabled_title">Auto-save</string>
@@ -94,8 +84,8 @@
     <string name="resetUserPrefs_summary">Restore default settings</string>
     
     <!-- Touchscreen Menu -->
-    <string name="touchscreenEnabled_title">@string/enable</string>
-    <string name="touchscreenLayout_title">@string/layout</string>
+    <string name="touchscreenEnabled_title">@string/_enable</string>
+    <string name="touchscreenLayout_title">@string/_layout</string>
     <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenCustom_title">Custom layout folder</string>
     <string name="touchscreenOctagonJoystick_title">Octagonal analog joystick</string>
@@ -103,8 +93,8 @@
     <string name="touchscreenRedrawAll_summary">Slower, fixes missing buttons bug</string>
     
     <!-- Gamepad Menu -->
-    <string name="gamepadEnabled_title">@string/enable</string>
-    <string name="gamepadPlugin_title">@string/plugin</string>
+    <string name="gamepadEnabled_title">@string/_enable</string>
+    <string name="gamepadPlugin_title">@string/_plugin</string>
     <string name="gamepadMap1_title">Player 1</string>
     <string name="gamepadMap2_title">Player 2</string>
     <string name="gamepadMap3_title">Player 3</string>
@@ -117,11 +107,11 @@
     <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
     
     <!-- Video Menu -->
-    <string name="videoEnabled_title">@string/enable</string>
-    <string name="videoPlugin_title">@string/plugin</string>
+    <string name="videoEnabled_title">@string/_enable</string>
+    <string name="videoPlugin_title">@string/_plugin</string>
     <string name="videoStretch_title">Stretch screen</string>
     <string name="videoStretch_summary">May skew aspect ratio</string>
-    <string name="videoRGBA8888_title">RGBA_8888 Mode</string>
+    <string name="videoRGBA8888_title">RGBA_8888 mode</string>
     <string name="videoRGBA8888_summary">Improves graphics on some devices</string>
     <string name="gles2N64_title">GLES2N64 settings</string>
     <string name="gles2N64_summary"></string>
@@ -177,11 +167,11 @@
     <!-- Touchscreen Size Entries -->
     <string name="touchscreenSize_entry0">Tiny</string>
     <string name="touchscreenSize_entry1">Small</string>
-    <string name="touchscreenSize_entry2">Default</string>
+    <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">Tablet</string>
     
     <!-- Input Plugin Entries -->
-    <string name="gamepadPlugin_entry0">@string/disabled</string>
+    <string name="gamepadPlugin_entry0">@string/_disabled</string>
     <string name="gamepadPlugin_entry1">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
     <!-- Video Plugin Entries -->
@@ -204,14 +194,30 @@
     
     <!-- Core Plugin Entries -->
     <string name="corePlugin_entry0">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
-
     
     <!-- ******************************************** -->
     <!-- Other Strings                                -->
     <!-- ******************************************** -->
     
-    <string name="pathPreference_dialogTitle">Selected folder: %s</string>
+    <!-- Download Messages (DataDownloader.java) -->
+    <string name="connecting_to">Connecting to %1$s</string>
+    <string name="dl_finished">Finished</string>
+    <string name="dl_from">Downloading data from %1$s</string>
+    <string name="dl_progress">%1$.0f%% done: file %2$s</string>
+    <string name="download_unneeded">No need to download</string>
+    <string name="error_dl_from">Error downloading data from %1$s</string>
+    <string name="error_write">Write error (plugged in USB Mass Storage Device mode?) %1$s</string>
+    <string name="failed_connecting_to">Failed connecting to %1$s</string>
     
-    <string name="gameActivity_ticker">%s is running</string>
+    <!-- In-Game Messages (GameActivity.java) -->
+    <string name="mupen64plus_started">Mupen64Plus started</string>
+    <string name="savegame_slot">Savegame slot %1$d</string>
+    <string name="saving_game">Saving game</string>
+    <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com.</string>
+    <string name="app_data_inaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
+    
+    <!-- Other Strings -->
+    <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>    
+    <string name="gameActivity_ticker">%1$s is running</string>
     
 </resources>

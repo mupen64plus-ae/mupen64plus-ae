@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: TODO
+ * Authors: paulscode, lioncash
  */
 package paulscode.android.mupen64plusae;
 
@@ -34,14 +34,9 @@ import android.util.FloatMath;
 import android.util.Log;
 import android.view.View;
 
-/**
- * The GamePad class handles the virtual game pad.
- * 
- * @author: Paul Lamb
- * 
- *          http://www.paulscode.com
- * 
- */
+// TODO: Any way to get the methods down to less than 100 lines each? Preferably less than 40 (fit
+// on one screen)? It's incredibly difficult to read the code... breaking into sub-functions would
+// work wonders. (littleguy)
 public class TouchscreenView extends View
 {
     // Maximum number of buttons that a gamepad layout can have:
@@ -315,6 +310,7 @@ public class TouchscreenView extends View
         
         int x, y, c, rgb;
         float d, p, dX, dY;
+        
         // Clear any previous pointer data:
         int axisX = 0;
         int axisY = 0;
@@ -323,6 +319,7 @@ public class TouchscreenView extends View
         hatX = -1;
         hatY = -1;
         boolean touchedAnalog = false;
+        
         // Clear any data about which buttons were pressed:
         for( int i = 0; i < 18; i++ )
             buttonPressed[i] = false;
@@ -336,6 +333,7 @@ public class TouchscreenView extends View
             // Process each pointer in sequence
             if( i == analogPid && !pointers[i] )
                 analogPid = -1; // Release analog if its pointer is not touching the screen
+            
             if( pointers[i] )
             {
                 // Pointer is touching the screen
@@ -505,13 +503,13 @@ public class TouchscreenView extends View
         
         if( closestSDLButtonMatch > -1 )
         {
-            // found an SDL button that matches the color
+            // Found an SDL button that matches the color
             SDLButtonPressed[closestSDLButtonMatch] = true;
             // Log.v( "GamePad.java", "    SDL button pressed, index=" + closestSDLButtonMatch );
         }
         else
         {
-            // one of the N64 buttons matched the color
+            // One of the N64 buttons matched the color
             // Log.v( "GamePad.java", "    N64 button pressed, index=" + closestMatch );
             buttonPressed[closestMatch] = true;
             if( closestMatch < 14 )
@@ -519,7 +517,7 @@ public class TouchscreenView extends View
                 // only 14 buttons in Mupen64Plus API
                 mp64pButtons[closestMatch] = true;
             }
-            // simulate the remaining buttons:
+            // Simulate the remaining buttons
             else if( closestMatch == Controls.UpRight )
             {
                 mp64pButtons[Controls.Up] = true;

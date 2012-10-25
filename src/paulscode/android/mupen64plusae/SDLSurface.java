@@ -76,7 +76,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             mp64pButtons[x] = false;
         
         getHolder().addCallback( this );
-
+        
         setOnKeyListener( this );
         setOnTouchListener( this );
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 )
@@ -88,7 +88,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             // Do not run this code when drawing this in Eclipse's graphical editor
             mSensorManager = (SensorManager) context.getSystemService( "sensor" );
         }
-
+        
         setFocusable( true );
         setFocusableInTouchMode( true );
         requestFocus();
@@ -170,7 +170,8 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         }
         NativeMethods.onResize( width, height, sdlFormat );
         
-        mSDLThread = new Thread( new Runnable() {
+        mSDLThread = new Thread( new Runnable()
+        {
             public void run()
             {
                 NativeMethods.init();
@@ -276,6 +277,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                 renderableType = EGL_OPENGL_ES_BIT;
             }
             
+            // @formatter:off
             int[] configSpec;
             if( Globals.userPrefs.isRgba8888 )
             {
@@ -297,6 +299,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                             EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
                         };
             }
+            // @formatter:on
             
             EGLConfig[] configs = new EGLConfig[1];
             int[] num_config = new int[1];
@@ -310,8 +313,10 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             EGLConfig config = configs[0];
             // paulscode, GLES2 fix:
             int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-            int[] contextAttrs = new int[] { EGL_CONTEXT_CLIENT_VERSION, majorVersion,
-                    EGL10.EGL_NONE };
+            int[] contextAttrs = new int[] {
+                EGL_CONTEXT_CLIENT_VERSION,
+                majorVersion,
+                EGL10.EGL_NONE };
             
             EGLContext ctx = egl.eglCreateContext( dpy, config, EGL10.EGL_NO_CONTEXT, contextAttrs );
             // end GLES2 fix
@@ -397,8 +402,6 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         return false;
     }
     
-
-
     public boolean onKey( View v, int keyCode, KeyEvent event )
     {
         // Call the other method, so we don't have the same code in two places:
@@ -419,7 +422,8 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             else if( key == KeyEvent.KEYCODE_BACK
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
             {
-                // There is no Menu button in HC/ ICS, so show/ hide ActionBar when "Back" is pressed
+                // There is no Menu button in HC/ ICS, so show/ hide ActionBar when "Back" is
+                // pressed
                 if( Globals.gameInstance != null )
                 {
                     // Show/ hide the Action Bar
@@ -598,12 +602,12 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         // Called from SDLMain() thread and can't directly affect the view
         Globals.gameInstance.sendCommand( GameActivity.COMMAND_CHANGE_TITLE, title );
     }
-
+    
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
         return Globals.surfaceInstance.initEGL( majorVersion, minorVersion );
     }
-
+    
     public static void flipBuffers()
     {
         Globals.surfaceInstance.flipEGL();
@@ -624,7 +628,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             SDLSurface.lastFPSCheck = currentTime;
         }
     }
-
+    
     private class JoystickListener implements View.OnGenericMotionListener
     {
         private SDLSurface parent;

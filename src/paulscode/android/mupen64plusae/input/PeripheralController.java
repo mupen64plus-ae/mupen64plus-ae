@@ -26,50 +26,52 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.View;
 
-public class GamepadController extends AbstractController implements AbstractTransform.Listener,
+public class PeripheralController extends AbstractController implements AbstractTransform.Listener,
         InputMap.Listener
 {
-    private KeyTransform mTranslator;
+    private KeyTransform mTransform;
     private InputMap mInputMap;
     
     @TargetApi( 12 )
-    public GamepadController( View view )
+    public PeripheralController( View view )
     {
         // Set up input listening
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
             // For Android 3.0 and below, we can only listen to keyboards
-            KeyTransform translator = new KeyTransform();
+            KeyTransform transform = new KeyTransform();
             
-            // Connect the upstream end of the translator
-            view.setOnKeyListener( translator );
-            mTranslator = translator;
+            // Connect the upstream end of the transformer
+            view.setOnKeyListener( transform );
+            mTransform = transform;
         }
         else
         {
             // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            KeyAxisTransform translator = new KeyAxisTransform();
+            KeyAxisTransform transform = new KeyAxisTransform();
             
-            // Connect the upstream end of the translator
-            view.setOnKeyListener( translator );
-            view.setOnGenericMotionListener( translator );
-            mTranslator = translator;
+            // Connect the upstream end of the transformer
+            view.setOnKeyListener( transform );
+            view.setOnGenericMotionListener( transform );
+            mTransform = transform;
         }
         
-        // Connect the downstream end of the translator
-        mTranslator.registerListener( this );
+        // Connect the downstream end of the transformer
+        mTransform.registerListener( this );
         
         // Set the formula for decoding special analog IMEs
-        mTranslator.setImeFormula( KeyTransform.ImeFormula.DEFAULT );
+        mTransform.setImeFormula( KeyTransform.ImeFormula.DEFAULT );
     }
     
     public InputMap getInputMap()
     {
+        // Get the button/axis mappings
         return mInputMap;
     }
     
     public void setInputMap( InputMap inputMap )
     {
+        // Replace the button/axis mappings
         if( mInputMap != null )
             mInputMap.unregisterListener( this );
         mInputMap = inputMap;
@@ -79,20 +81,23 @@ public class GamepadController extends AbstractController implements AbstractTra
     
     public KeyTransform.ImeFormula getImeFormula()
     {
-        if( mTranslator != null )
-            return mTranslator.getImeFormula();
+        // Get the IME keycode->analog formula
+        if( mTransform != null )
+            return mTransform.getImeFormula();
         else
             return KeyTransform.ImeFormula.DEFAULT;
     }
     
     public void setImeFormula( KeyTransform.ImeFormula imeFormula )
     {
-        if( mTranslator != null )
-            mTranslator.setImeFormula( imeFormula );
+        // Set the IME keycode->analog formula
+        if( mTransform != null )
+            mTransform.setImeFormula( imeFormula );
     }
     
     public void onInput( int inputCode, float strength )
     {
+        // Process user inputs from keyboard, gamepad, etc.
         if( mInputMap != null )
         {
             mInputMap.apply( inputCode, strength, this );
@@ -102,6 +107,7 @@ public class GamepadController extends AbstractController implements AbstractTra
     
     public void onInput( int[] inputCodes, float[] strengths )
     {
+        // Process batch user inputs from keyboard, gamepad, etc.
         if( mInputMap != null )
         {
             for( int i = 0; i < inputCodes.length; i++ )
@@ -112,9 +118,10 @@ public class GamepadController extends AbstractController implements AbstractTra
     
     public void onMapChanged( InputMap newValue )
     {
-        if( mTranslator != null && mTranslator instanceof KeyAxisTransform )
+        // If the button/axis mappings change, update the transform's listening filter
+        if( mTransform != null && mTransform instanceof KeyAxisTransform )
         {
-            ( (KeyAxisTransform) mTranslator ).setInputCodeFilter( newValue.getMappedInputCodes() );
+            ( (KeyAxisTransform) mTransform ).setInputCodeFilter( newValue.getMappedInputCodes() );
         }
     }
 }
