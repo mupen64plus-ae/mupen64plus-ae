@@ -278,17 +278,25 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             
             int[] configSpec;
             if( Globals.userPrefs.isRgba8888 )
-                configSpec = new int[] { EGL10.EGL_RED_SIZE, 8, // paulscode: get a config with red
-                                                                // 8
-                        EGL10.EGL_GREEN_SIZE, 8, // paulscode: get a config with green 8
-                        EGL10.EGL_BLUE_SIZE, 8, // paulscode: get a config with blue 8
-                        EGL10.EGL_ALPHA_SIZE, 8, // paulscode: get a config with alpha 8
-                        EGL10.EGL_DEPTH_SIZE, 16, // paulscode: get a config with depth 16
-                        EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE };
+            {
+                configSpec = new int[]
+                        { 
+                            EGL10.EGL_RED_SIZE,    8, // paulscode: get a config with red 8
+                            EGL10.EGL_GREEN_SIZE,  8, // paulscode: get a config with green 8
+                            EGL10.EGL_BLUE_SIZE,   8, // paulscode: get a config with blue 8
+                            EGL10.EGL_ALPHA_SIZE,  8, // paulscode: get a config with alpha 8
+                            EGL10.EGL_DEPTH_SIZE, 16, // paulscode: get a config with depth 16
+                            EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
+                        };
+            }
             else
-                configSpec = new int[] { EGL10.EGL_DEPTH_SIZE, 16, // paulscode: get a config with
-                                                                   // depth 16
-                        EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE };
+            {
+                configSpec = new int[] 
+                        { 
+                            EGL10.EGL_DEPTH_SIZE, 16, // paulscode: get a config with depth 16
+                            EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
+                        };
+            }
             
             EGLConfig[] configs = new EGLConfig[1];
             int[] num_config = new int[1];
@@ -541,7 +549,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
     }
     
     // paulscode: Xperia Play native touch input linkage:
-    public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
+    public static void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
         if( !Globals.userPrefs.isXperiaEnabled || !Globals.userPrefs.isInputEnabled )
             return;

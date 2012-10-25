@@ -107,7 +107,7 @@ public class XperiaPlayController extends AbstractController
      * 
      * @param context
      *            Handle to the app context.
-     * @param attribs
+     * @param res
      *            Handle to the app resources.
      */
     public XperiaPlayController( Context context, Resources res )
@@ -825,7 +825,7 @@ public class XperiaPlayController extends AbstractController
          *            Y-coordinate to center the image at.
          * @param screenW
          *            Horizontal screen dimension (in pixels).
-         * @param centerY
+         * @param screenH
          *            Vertical screen dimension (in pixels).
          */
         public void fitCenter( int centerX, int centerY, int screenW, int screenH )

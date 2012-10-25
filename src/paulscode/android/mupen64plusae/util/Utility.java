@@ -699,7 +699,7 @@ public class Utility
     /**
      * Loads the specified native library name (without "lib" and ".so")
      * 
-     * @param filepath
+     * @param libname
      *            Full path to a native .so file (may optionally be in quotes).
      */
     public static void loadNativeLibName( String libname )
