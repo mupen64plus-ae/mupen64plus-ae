@@ -58,7 +58,7 @@ public class XperiaPlayController extends AbstractController
     private boolean[] mp64pButtons = new boolean[14];
 
     
-    private Image analogMask   = null;
+    private Utility.Image analogMask = null;
     private int analogXpercent = 0;
     private int analogYpercent = 0;
     private int analogPadding  = 32;
@@ -68,7 +68,7 @@ public class XperiaPlayController extends AbstractController
     
     // All button images and associated mask images, including both
     // normal N64 buttons and SDL buttons:
-    private Image[] masks = new Image[MAX_BUTTONS];
+    private Utility.Image[] masks = new Utility.Image[MAX_BUTTONS];
     private int[] xpercents = new int[MAX_BUTTONS];
     private int[] ypercents = new int[MAX_BUTTONS];
     
@@ -379,7 +379,7 @@ public class XperiaPlayController extends AbstractController
         analogMask = null;
         analogXpercent = 0;
         analogYpercent = 0;
-        masks = new Image[MAX_BUTTONS];
+        masks = new Utility.Image[MAX_BUTTONS];
         xpercents = new int[MAX_BUTTONS];
         ypercents = new int[MAX_BUTTONS];
         buttonCount = 0;
@@ -513,7 +513,7 @@ public class XperiaPlayController extends AbstractController
                         if( val.contains( "analog" ) )
                         { 
                             // Analog color mask image in BMP image format (doesn't actually get drawn)
-                            analogMask = new Image( resources, Globals.paths.dataDir
+                            analogMask = new Utility.Image( resources, Globals.paths.dataDir
                                     + "/skins/touchpads/" + skin + "/" + filename + ".bmp" );
                             
                             // Position (percentages of the screen dimensions):
@@ -537,7 +537,7 @@ public class XperiaPlayController extends AbstractController
                         { 
                             // A button control (may contain one or more N64 buttons and/or SDL buttons)
                             // Button color mask image in BMP image format (doesn't actually get drawn)
-                            masks[buttonCount] = new Image( resources, Globals.paths.dataDir
+                            masks[buttonCount] = new Utility.Image( resources, Globals.paths.dataDir
                                     + "/skins/touchpads/" + skin + "/" + filename + ".bmp" );
                            
                             // Position (percentages of the screen dimensions):
@@ -736,86 +736,6 @@ public class XperiaPlayController extends AbstractController
             {
                 Log.e( "TouchPad.TouchPadListing", "Exception, error message: " + e.getMessage() );
             }
-        }
-    }
-    
-    /**
-     * The Image class provides a simple interface to common image manipulation methods.
-     */
-    private class Image
-    {
-        public BitmapDrawable drawable = null;
-        public Bitmap image = null;
-        public Rect drawRect = null;
-        
-        public int x = 0;
-        public int y = 0;
-        public int width = 0;
-        public int height = 0;
-        public int hWidth = 0;
-        public int hHeight = 0;
-        
-        /**
-         * Constructor: Loads an image file and sets the initial properties.
-         * 
-         * @param res
-         *            Handle to the app resources.
-         * @param filename
-         *            Path to the image file.
-         */
-        public Image( Resources res, String filename )
-        {
-            image = BitmapFactory.decodeFile( filename );
-            drawable = new BitmapDrawable( res, image );
-            if( image != null )
-                width = image.getWidth();
-            hWidth = (int) ( (float) width / 2.0f );
-            if( image != null )
-                height = image.getHeight();
-            hHeight = (int) ( (float) height / 2.0f );
-            drawRect = new Rect();
-        }
-        
-        /**
-         * Centers the image at the specified coordinates, without going beyond the specified screen
-         * dimensions.
-         * 
-         * @param centerX
-         *            X-coordinate to center the image at.
-         * @param centerY
-         *            Y-coordinate to center the image at.
-         * @param screenW
-         *            Horizontal screen dimension (in pixels).
-         * @param screenH
-         *            Vertical screen dimension (in pixels).
-         */
-        public void fitCenter( int centerX, int centerY, int screenW, int screenH )
-        {
-            int cx = centerX;
-            int cy = centerY;
-            if( cx < hWidth )
-                cx = hWidth;
-            if( cy < hHeight )
-                cy = hHeight;
-            if( cx + hWidth > screenW )
-                cx = screenW - hWidth;
-            if( cy + hHeight > screenH )
-                cy = screenH - hHeight;
-            x = cx - hWidth;
-            y = cy - hHeight;
-            drawRect.set( x, y, x + width, y + height );
-            drawable.setBounds( drawRect );
-        }
-        
-        /**
-         * Draws the image.
-         * 
-         * @param canvas
-         *            Canvas to draw the image on.
-         */
-        public void draw( Canvas canvas )
-        {
-            drawable.draw( canvas );
         }
     }
 }
