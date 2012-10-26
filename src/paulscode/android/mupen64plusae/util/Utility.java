@@ -55,12 +55,16 @@ public class Utility
         {
             image = BitmapFactory.decodeFile( filename );
             drawable = new BitmapDrawable( res, image );
+            
             if( image != null )
+            {
                 width = image.getWidth();
-            hWidth = (int) ( (float) width / 2.0f );
-            if( image != null )
                 height = image.getHeight();
+            }
+            
+            hWidth  = (int) ( (float) width  / 2.0f ); 
             hHeight = (int) ( (float) height / 2.0f );
+            
             drawRect = new Rect();
         }
         
@@ -121,6 +125,7 @@ public class Utility
         {
             int cx = centerX;
             int cy = centerY;
+            
             if( cx < hWidth )
                 cx = hWidth;
             if( cy < hHeight )
@@ -129,8 +134,10 @@ public class Utility
                 cx = screenW - hWidth;
             if( cy + hHeight > screenH )
                 cy = screenH - hHeight;
+            
             x = cx - hWidth;
             y = cy - hHeight;
+            
             if( drawRect != null )
             {
                 drawRect.set( x, y, x + width, y + height );
@@ -160,6 +167,7 @@ public class Utility
         {
             int cx = centerX;
             int cy = centerY;
+            
             if( cx < rectX + hWidth )
                 cx = rectX + hWidth;
             if( cy < rectY + hHeight )
@@ -168,8 +176,10 @@ public class Utility
                 cx = rectX + rectW - hWidth;
             if( cy + hHeight > rectY + rectH )
                 cy = rectY + rectH - hHeight;
+            
             x = cx - hWidth;
             y = cy - hHeight;
+            
             if( drawRect != null )
             {
                 drawRect.set( x, y, x + width, y + height );
@@ -223,12 +233,14 @@ public class Utility
             // Create the tmp folder if it doesn't exist:
             File tmpFolder = new File( Globals.paths.dataDir + "/tmp" );
             tmpFolder.mkdir();
+            
             // Clear the folder if anything is in there:
             String[] children = tmpFolder.list();
             for( String child : children )
             {
                 deleteFolder( new File( tmpFolder, child ) );
             }
+            
             ErrorLogger.clearLastError();
             String uzFile = unzipFirstROM( new File( filename ), Globals.paths.dataDir + "/tmp" );
             if( uzFile == null || uzFile.length() < 1 )
@@ -274,15 +286,17 @@ public class Utility
         }
         else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase( "zip" ) )
         {
-            // create the tmp folder if it doesn't exist:
+            // Create the tmp folder if it doesn't exist:
             File tmpFolder = new File( Globals.paths.dataDir + "/tmp" );
             tmpFolder.mkdir();
-            // clear the folder if anything is in there:
+            
+            // Clear the folder if anything is in there:
             String[] children = tmpFolder.list();
             for( String child : children )
             {
                 deleteFolder( new File( tmpFolder, child ) );
             }
+            
             ErrorLogger.clearLastError();
             String uzFile = unzipFirstROM( new File( filename ), Globals.paths.dataDir + "/tmp" );
             if( uzFile == null || uzFile.length() < 1 )
@@ -319,15 +333,17 @@ public class Utility
 
     public static String checkCRC( String CRC )
     {
-        if( CRC == null )
+        // The smallest possible CRCs are "0 0", "1 a", etc.
+        if( CRC == null || CRC.length() < 3)
             return null;
-        if( CRC.length() < 3 )
-            return null;  // the smallest possible CRCs are "0 0", "1 a", etc.
+        
         int x = CRC.indexOf( " " );
         if( x < 1 || x >= CRC.length() - 1 )
-            return null;  // the CRC should always contain a space, and it shouldn't be the last character
+            return null;  // The CRC should always contain a space, and it shouldn't be the last character
+        
         if( CRC.length() == 17 )
-            return CRC.toUpperCase();  // we probably have the full CRC, just upper-case it.
+            return CRC.toUpperCase();  // We probably have the full CRC, just upper-case it.
+        
         String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase().trim();
         String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase().trim();
         return CRC_1.substring( CRC_1.length() - 8, CRC_1.length() ) + " " + CRC_2.substring( CRC_2.length() - 8, CRC_2.length() );

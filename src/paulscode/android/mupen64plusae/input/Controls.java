@@ -6,7 +6,7 @@ package paulscode.android.mupen64plusae.input;
  * These values are directly equal to what is found
  * in the plugin.h file within the input-sdl JNI project.
  */
-public final class Controls
+public interface Controls
 {
     // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in)
     public static final int Right     = 0;

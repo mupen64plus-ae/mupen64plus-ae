@@ -83,7 +83,7 @@ public class Audio
                                 Globals.gameInstance );
                 }
             }
-        } );
+        }, "Audio Thread" );
         
         // I'd take REALTIME if I could get it!
         Audio.mAudioThread.setPriority( Thread.MAX_PRIORITY );
@@ -140,7 +140,7 @@ public class Audio
             }
             else
             {
-                Log.w( "GameActivity", "SDL audio: error return from write(short)" );
+                Log.w( "GameActivity", "SDL audio: error return from write(byte)" );
                 return;
             }
         }

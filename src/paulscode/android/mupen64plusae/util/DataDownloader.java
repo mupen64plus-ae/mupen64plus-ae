@@ -276,7 +276,7 @@ public class DataDownloader extends Thread
         {
             try
             {
-                byte b[] = new byte[Paths.dataDownloadUrl.getBytes( "UTF-8" ).length + 1];
+                byte[] b = new byte[Paths.dataDownloadUrl.getBytes( "UTF-8" ).length + 1];
                 int readed = checkFile.read( b );
                 String compare = new String( b, 0, readed, "UTF-8" );
                 for( int i = 1; i < downloadUrls.length; i++ )

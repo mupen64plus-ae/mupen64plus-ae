@@ -37,14 +37,14 @@ import android.util.Log;
 public class ConfigFile
 {
     private String mFilename;  // Name of the config file.
-    private HashMap<String, ConfigSection> mConfigMap;  // Sections mapped by title for easy lookup
-    private LinkedList<ConfigSection> mConfigList;      // Sections in the proper order for easy saving
+    private HashMap<String, ConfigSection> mConfigMap; // Sections mapped by title for easy lookup
+    private LinkedList<ConfigSection> mConfigList;     // Sections in the proper order for easy saving
 
     /**
      * Constructor: Reads the entire config file, and saves the data in 'configMap'
      * @param filename The config file to read from.
      */
-    public ConfigFile( String filename )  // Reads the entire config file and saves it in configMap
+    public ConfigFile( String filename )
     {
         this.mFilename = filename;
         load( filename );
@@ -61,8 +61,9 @@ public class ConfigFile
         Set<String> keys = mConfigMap.keySet();
         Iterator<String> iter = keys.iterator();
         
+        // No configuration to look up.. quit
         if( mConfigMap == null )
-            return null;  // No configuration to look up.. quit
+            return null;
         
         while( iter.hasNext() )
         {
@@ -94,18 +95,24 @@ public class ConfigFile
      */
     public String get( String sectionTitle, String parameter )
     {
+        // No configuration to look up.. quit
         if( mConfigMap == null )
-            return null;  // No configuration to look up.. quit
+            return null;
         
         ConfigSection section = mConfigMap.get( sectionTitle );
+        
+        // The specified section doesn't exist or is empty.. quit
         if( section == null || section.parameters == null )
-            return null;  // The specified section doesn't exist or is empty.. quit
+            return null;
         
         ConfigParameter confParam = section.parameters.get( parameter );
-        if( confParam == null )
-            return null;  // The specified parameter doesn't exist.. quit
         
-        return confParam.value;  // got it
+        // The specified parameter doesn't exist.. quit
+        if( confParam == null )
+            return null;
+        
+        // Got it
+        return confParam.value;
     }
 
     /**
@@ -117,8 +124,9 @@ public class ConfigFile
      */
     public void put( String sectionTitle, String parameter, String value )
     {
+        // No configuration to look up.. quit
         if( mConfigMap == null )
-            return;  // No configuration to look up.. quit
+            return;
         
         ConfigSection section = mConfigMap.get( sectionTitle );
         if( section == null )
@@ -151,15 +159,20 @@ public class ConfigFile
     @SuppressWarnings("unused")
     public boolean load( String filename )
     {   
-        clear();  // Free any previously loaded data
-        if( mConfigMap == null )  // Create the configMap if it hasn't been already
+        // Free any previously loaded data
+        clear();
+        
+        // Create the configMap if it hasn't been already
+        if( mConfigMap == null )
             mConfigMap = new HashMap<String, ConfigSection>();
         
-        if( mConfigList == null )  // Create the configList if it hasn't been already
+        // Create the configList if it hasn't been already
+        if( mConfigList == null )
             mConfigList = new LinkedList<ConfigSection>();
         
+        // Make sure a file was actually specified
         if( filename == null || filename.length() < 1 )
-            return false;   // Make sure a file was actually specified
+            return false;
 
         FileInputStream fstream = null;
         try
@@ -168,37 +181,44 @@ public class ConfigFile
         }
         catch( FileNotFoundException fnfe )
         {
-            return false;  // File not found.. we can't continue
+            // File not found... we can't continue
+            return false;
         }
-        
-        if( fstream == null )
-            return false;  // Some problem, just quit
         
         DataInputStream in = new DataInputStream( fstream );
         BufferedReader br = new BufferedReader( new InputStreamReader( in ) );
 
         String sectionName = "[<sectionless!>]";
         ConfigSection section = new ConfigSection( sectionName, br ); // Read the 'sectionless' section
-        mConfigMap.put( sectionName, section );   // Save the data to 'configMap'
-        mConfigList.add( section );  // add it to the list as well
+        mConfigMap.put( sectionName, section ); // Save the data to 'configMap'
+        mConfigList.add( section ); // Add it to the list as well
         
+        // Loop through reading the remaining sections
         while( section.nextName != null && section.nextName.length() > 0 )
-        {   // Loop through reading the remaining sections
-            sectionName = section.nextName;  // get the next section name
+        {
+            // Get the next section name
+            sectionName = section.nextName;
+            
             if( sectionName != null && sectionName.length() > 0 )
-            {   // load the next section
+            {   
+                // Load the next section
                 section = new ConfigSection( sectionName, br );
-                mConfigMap.put( sectionName, section );  // save the data to 'configMap'
-                mConfigList.add( section );  // add it to the list as well
+                mConfigMap.put( sectionName, section );  // Save the data to 'configMap'
+                mConfigList.add( section );  // Add it to the list as well
             }
         }
         try
         {
-            in.close();  // Finished.  Close the file.
+            // Finished. Close the file.
+            in.close();
         }
         catch( IOException ioe )
-        {}  // (don't care)
-        return true;  // Success
+        {
+            // (Don't care)
+        }
+        
+        // Success
+        return true;
     }
     
     /**
@@ -207,25 +227,30 @@ public class ConfigFile
      */
     public boolean save()
     {
+        // No filename was specified.
         if( mFilename == null || mFilename.length() < 1 )
-        {   // No filename was specified.
+        {
             Log.e( "Config", "Filename not specified in method save()" );
-            return false;   // quit
+            return false;   // Quit
         }
         
+        // No config data to save.
         if( mConfigList == null )
-        {  // No config data to save.
+        {
             Log.e( "Config", "No config data to save in method save()" );
-            return false;   // quit
+            return false;   // Quit
         }
         
         File f = new File( mFilename );
+        
+        // Delete it if it already exists.
         if( f.exists() )
-        {   // Delete it if it already exists.
+        {
+            // Some problem deleting the file.
             if( !f.delete() )
-            {   // Some problem deleting the file.
+            {
                 Log.e( "Config", "Error deleting file " + mFilename );
-                return false;   // quit
+                return false;   // Quit
             }
         }
         
@@ -235,8 +260,9 @@ public class ConfigFile
             ListIterator<ConfigSection> iter = mConfigList.listIterator( 0 );
             ConfigSection section;
 
+            // Loop through the sections
             while( iter.hasNext() )
-            {   // Loop through the sections
+            {
                 section = iter.next();
                 if( section != null )
                     section.save( fw );
@@ -250,7 +276,9 @@ public class ConfigFile
             Log.e( "Config", "IOException creating file " + mFilename + ", error message: " + ioe.getMessage() );
             return false;  // Some problem creating the file.. quit
         }
-        return true;  // Success
+        
+        // Success
+        return true;
     }
 
     /**
@@ -300,9 +328,9 @@ public class ConfigFile
         public static final int LINE_SECTION = 1;  // Section title
         public static final int LINE_PARAM = 2;    // Parameter=value pair
 
-        public int lineType = 0;     // LINE_GARBAGE, LINE_SECTION, or LINE_PARAM
-        public String strLine = "";  // Actual line from the config file
-        public ConfigParameter confParam = null;  // Null unless this line has a parameter
+        public int lineType = 0;                 // LINE_GARBAGE, LINE_SECTION, or LINE_PARAM.
+        public String strLine = "";              // Actual line from the config file.
+        public ConfigParameter confParam = null; // Null unless this line has a parameter.
         
         /**
          * Constructor: Saves the relevant information about the line.
@@ -324,9 +352,12 @@ public class ConfigFile
             {
                 if( !strLine.contains( "=" ) || confParam == null )
                     return;  // This shouldn't happen
+                
                 x = strLine.indexOf( "=" );
+                
                 if( x < 1 )
                     return;  // This shouldn't happen either
+                
                 if( x < strLine.length() )
                     fw.write( strLine.substring( 0, x + 1 ) + confParam.value + "\n" );
             }
@@ -371,6 +402,10 @@ public class ConfigFile
          */
         public ConfigSection( String sectionName, BufferedReader br )
         {
+            String fullLine, strLine, p, v;
+            ConfigParameter confParam;
+            int x, y;
+            
             parameters = new HashMap<String, ConfigParameter>();
             lines = new LinkedList<ConfigLine>();
 
@@ -378,11 +413,11 @@ public class ConfigFile
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
 
             name = sectionName;
+            
+            // No file to read from. Quit.
             if( br == null )
-                return;   // No file to read from.  Quit.
-            String fullLine, strLine, p, v;
-            ConfigParameter confParam;
-            int x, y;
+                return;
+
             try
             {
                 while( ( fullLine = br.readLine() ) != null )
@@ -391,28 +426,35 @@ public class ConfigFile
                     if( (strLine.length() < 1) ||
                         (strLine.substring( 0, 1 ).equals( "#" )) ||
                         (strLine.substring( 0, 1 ).equals( ";" )) ||
-                        ( (strLine.length() > 1) && (strLine.substring( 0, 2 ).equals( "//" )) ) )  //NOTE: isEmpty() not supported on some devices
+                        ( (strLine.length() > 1) && (strLine.substring( 0, 2 ).equals( "//" )) ) )  // NOTE: isEmpty() not supported on some devices
                     {  // A comment or blank line.
                         lines.add( new ConfigLine( ConfigLine.LINE_GARBAGE, fullLine + "\n", null ) );
                     }
                     else if( strLine.contains( "=" ) )
-                    {   // This should be a "parameter=value" pair:
+                    {   
+                        // This should be a "parameter=value" pair:
                         x = strLine.indexOf( "=" );
+                        
                         if( x < 1 )
-                            return;  // This shouldn't happen (bad syntax).  Quit.
+                            return;  // This shouldn't happen (bad syntax). Quit.
+                        
                         if( x < (strLine.length() - 1) )
                         {
                             p = strLine.substring( 0, x ).trim();
                             if( p.length() < 1 )
-                                return;  // This shouldn't happen (bad syntax).  Quit.
+                                return;  // This shouldn't happen (bad syntax). Quit.
+                            
                             v = strLine.substring( x + 1, strLine.length() ).trim();
                             //v = v.replace( "\"", "" );  // I'm doing this later, so I can save back without losing them
                             
                             if( v.length() > 0 )
-                            {  // Save the parameter=value pair
+                            {  
+                                // Save the parameter=value pair
                                 confParam = parameters.get( p );
                                 if( confParam != null )
+                                {
                                     confParam.value = v;
+                                }
                                 else
                                 {
                                     confParam = new ConfigParameter( p, v );
@@ -423,28 +465,41 @@ public class ConfigFile
                         }  // It's ok to have an empty assignment (such as "param=")
                     }
                     else if( strLine.contains( "[" ) )
-                    {   // This should be the beginning of the next section
+                    {   
+                        // This should be the beginning of the next section
                         if( (strLine.length() < 3) || (!strLine.contains( "]" )) )
                             return;   // This shouldn't happen (bad syntax).  Quit.
+                        
                         x = strLine.indexOf( "[" );
                         y = strLine.indexOf( "]" );
+                        
                         if( (y <= x + 1) || (x == -1) || (y == -1) )
                             return;  // This shouldn't happen (bad syntax).  Quit.
+                        
                         p = strLine.substring( x + 1, y ).trim();
                         if( p == null || p.length() < 1 )
                             return;  // This shouldn't happen (bad syntax).  Quit.
-                        nextName = p;  // Save the name of the next section.
-                        return;  // Done reading parameters.  Return.
+                        
+                        // Save the name of the next section.
+                        nextName = p;
+                        
+                        // Done reading parameters. Return.
+                        return;
                     }
                     else
-                    {   // This shouldn't happen (bad syntax).  Quit.
+                    {   
+                        // This shouldn't happen (bad syntax). Quit.
                         return;
                     }
                 }
             }
             catch( IOException ioe )
-            {}
-            return;  // Reached end of file or error.. either way, just quit
+            {
+                // (Don't care)
+            }
+            
+            // Reached end of file or error.. either way, just quit
+            return;
         }
         
         /**
@@ -463,12 +518,18 @@ public class ConfigFile
          */
         public String get( String parameter )
         {
+            // Error: no parameters, or parameter was null
             if( parameters == null || parameter == null || parameter.length() < 1 )
-                return null;  // Error: no parameters, or parameter was null
+                return null;
+            
             ConfigParameter confParam = parameters.get( parameter );
+            
+            // Parameter not found
             if( confParam == null )
-                return null;  // Parameter not found
-            return confParam.value;  // Got it
+                return null;
+            
+            // Got it
+            return confParam.value;
         }
         
         /**

@@ -99,6 +99,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         }
     }
 
+    @Override
     public void onDownloadComplete()
     {
         mDownloader = null;
@@ -133,7 +134,9 @@ public class MainActivity extends Activity implements DataDownloader.Listener
             {
                 mDownloader.setStatusField( mTextView );
                 if( mDownloader.mDownloadComplete )
+                {
                     onDownloadComplete(); // TODO: is this necessary?
+                }
                 else if( mDownloader.mDownloadFailed )
                 {
                     // Try again

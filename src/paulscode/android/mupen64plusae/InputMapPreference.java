@@ -143,6 +143,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         mStrengthBiases = null;
     }
     
+    @Override
     public void onClick( View v )
     {
         // Find the Button that was clicked and map it
@@ -154,6 +155,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         provideFeedback( mLastInputCode, mLastStrength );
     }
     
+    @Override
     public void onInput( int inputCode, float strength )
     {
         // Cache the input code and strength
@@ -164,6 +166,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         provideFeedback( mLastInputCode, mLastStrength );
     }
     
+    @Override
     public void onInput( int[] inputCodes, float[] strengths )
     {
         // Get strength biases first time through

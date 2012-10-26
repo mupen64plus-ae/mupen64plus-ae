@@ -88,6 +88,7 @@ public class GameActivity extends Activity
                 && NativeMethods.stateEmulator() == EMULATOR_STATE_PAUSED );
     }
     
+    @Override
     @TargetApi( 9 )
     protected void onCreate( Bundle savedInstanceState )
     {
