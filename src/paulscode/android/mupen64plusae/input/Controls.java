@@ -1,8 +1,10 @@
 package paulscode.android.mupen64plusae.input;
 
 /**
- * Class which centralizes 
- * the control values.
+ * Class which centralizes the control values.
+ * </p>
+ * These values are directly equal to what is found
+ * in the plugin.h file within the input-sdl JNI project.
  */
 public final class Controls
 {
