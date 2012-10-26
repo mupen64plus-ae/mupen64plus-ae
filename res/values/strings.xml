@@ -71,8 +71,8 @@
     <string name="video_summary">Graphics settings</string>
     <string name="touchscreen_title">Touchscreen</string>
     <string name="touchscreen_summary">On-screen controller settings</string>
-    <string name="gamepad_title">Controllers</string>
-    <string name="gamepad_summary">Gamepad/joystick settings</string>
+    <string name="gamepad_title">Peripheral controllers</string>
+    <string name="gamepad_summary">Gamepads, joysticks, keyboards, etc.</string>
     <string name="other_title">@string/_other</string>
     <string name="other_summary">Audio, processor, core, etc.</string>
     <string name="gameSaveDir_title">Savegame folder</string>

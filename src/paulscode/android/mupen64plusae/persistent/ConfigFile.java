@@ -156,7 +156,6 @@ public class ConfigFile
      * @param filename The config file to read from.
      * @return True if successful.
      */
-    @SuppressWarnings("unused")
     public boolean load( String filename )
     {   
         // Free any previously loaded data

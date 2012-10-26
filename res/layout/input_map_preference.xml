@@ -14,10 +14,14 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/inputMapPreference"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp" >
 
     <RelativeLayout
         android:id="@+id/bPad"
@@ -96,6 +100,16 @@
         android:background="@drawable/analog_ring" >
 
         <Button
+            android:id="@+id/buttonAC"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/analog_ring"
+            android:enabled="false" />
+        
+        <Button
             android:id="@+id/buttonAU"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -104,8 +118,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
-            android:contentDescription="AU"
-            android:drawableTop="@drawable/ic_arrow_u" />
+            android:drawableBottom="@drawable/ic_arrow_u" />
 
         <Button
             android:id="@+id/buttonAD"
@@ -117,7 +130,7 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
             android:contentDescription="AD"
-            android:drawableBottom="@drawable/ic_arrow_d" />
+            android:drawableTop="@drawable/ic_arrow_d" />
 
         <Button
             android:id="@+id/buttonAL"
@@ -129,7 +142,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
             android:contentDescription="AL"
-            android:drawableLeft="@drawable/ic_arrow_l" />
+            android:drawableRight="@drawable/ic_arrow_l" />
 
         <Button
             android:id="@+id/buttonAR"
@@ -141,7 +154,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
             android:contentDescription="AR"
-            android:drawableRight="@drawable/ic_arrow_r" />
+            android:drawableLeft="@drawable/ic_arrow_r" />
         
     </RelativeLayout>
 

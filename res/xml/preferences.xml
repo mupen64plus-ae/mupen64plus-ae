@@ -303,6 +303,7 @@
                 android:title="@string/corePlugin_title" />
 
             <Preference
+                android:dependency="developerEnabled"
                 android:key="menuResetAppData"
                 android:summary="@string/resetAppData_summary"
                 android:title="@string/resetAppData_title" />

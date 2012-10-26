@@ -233,12 +233,11 @@ public class DataDownloader extends Thread
             }
         }
         
-        // TODO: Does url2==url ? Does path2==path ?
+        // TODO: Does url2==url ?
         String url2 = downloadUrls[downloadUrlIndex];
-        String path2 = mOutFilesDir + "/" + url.substring( 1, url2.indexOf( ":", 1 ) );
 
         if( doNotUnzip )
-            if( !saveRegularFiles( res, path2, totalLen, stream, buf, url2 ) )
+            if( !saveRegularFiles( res, totalLen, stream, buf, url2 ) )
                 return false;
             else if( !saveZippedFiles( res, path, totalLen, stream, buf, url ) )
                 return false;
@@ -326,9 +325,10 @@ public class DataDownloader extends Thread
         }
     }
     
-    private boolean saveRegularFiles( Resources res, String path, long totalLen, CountingInputStream stream,
+    private boolean saveRegularFiles( Resources res, long totalLen, CountingInputStream stream,
             byte[] buf, String url )
     {
+        String path = mOutFilesDir + "/" + url.substring( 1, url.indexOf( ":", 1 ) );
         Log.i( "DataDownloader", "Saving file '" + path + "'" );
         OutputStream out = null;
         try
@@ -407,7 +407,7 @@ public class DataDownloader extends Thread
                 continue;
             }
             OutputStream out = null;
-            path = mOutFilesDir + "/" + entry.getName();
+            path = getOutFilePath( entry.getName() );
             Log.i( "DataDownloader", "Saving file '" + path + "'" );
             try
             {
@@ -537,10 +537,11 @@ public class DataDownloader extends Thread
     
     private void createDirectory( ZipEntry entry )
     {
-        Log.i( "DataDownloader", "Creating dir '" + mOutFilesDir + "/" + entry.getName() + "'" );
+        String path = mOutFilesDir + "/" + entry.getName();
+        Log.i( "DataDownloader", "Creating dir '" + path + "'" );
         try
         {
-            File outDir = new File( mOutFilesDir + "/" + entry.getName() );
+            File outDir = new File( path );
             if( !( outDir.exists() && outDir.isDirectory() ) )
                 outDir.mkdirs();
         }
@@ -573,6 +574,11 @@ public class DataDownloader extends Thread
             return false;
         }
         return true;
+    }
+    
+    private String getOutFilePath( final String filename )
+    {
+        return mOutFilesDir + "/" + filename;
     }
     
     private static DefaultHttpClient HttpWithDisabledSslCertCheck()
