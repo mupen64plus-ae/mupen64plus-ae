@@ -40,8 +40,8 @@
     <!-- ******************************************** -->
     
     <!-- In-Game Menu (GameActivity.java) -->
-    <string name="ingameQuicksave_title">Quick save</string>
-    <string name="ingameQuickload_title">Quick load</string>
+    <string name="ingameQuicksave_title">Save</string>
+    <string name="ingameQuickload_title">Load</string>
     <string name="ingameSave_title">Save as…</string>
     <string name="ingameLoad_title">Load…</string>
     <string name="ingameSlot_title">Slot %1$d</string>
@@ -57,6 +57,7 @@
     <string name="menuResume_title">Play</string>
     <string name="lastGame_title">Game</string>
     <string name="mainSettings_title">Settings</string>
+    <string name="menuLocale_title">Language</string>
     <string name="menuHelp_title">Help</string>
     <string name="menuAbout_title">About</string>
     
@@ -102,7 +103,7 @@
     <string name="gamepadMap_summary">Configure buttons and sticks</string>
     <string name="gamepadMapSpecial_title">Special functions</string>
     <string name="gamepadMapSpecial_summary">Save, load, and more from the controller</string>
-    <string name="gamepadMap_dialogTitle">Touch an icon while pushing the desired stick or button</string>
+    <string name="gamepadMap_dialogTitle">While pushing the desired stick or button, touch an icon</string>
     <string name="volumeKeysEnabled_title">Enable volume keys</string>
     <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
     

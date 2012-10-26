@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    IMPORTANT:
+    
+    Except for the root view, all views in this file MUST set these flags to FALSE:
+    
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+    
+    This allows focus to stay in the root view at all times.  This is critical because
+    the root view is the only view that listens to input from gamepads, keyboards, etc.
+    ***********************************************************************************
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/inputMapPreference"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
     <RelativeLayout
         android:id="@+id/bPad"
         android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_width="250dp"
         android:layout_height="120dp"
         android:layout_alignParentBottom="false"
@@ -15,6 +32,7 @@
         <Button
             android:id="@+id/buttonZ"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
@@ -25,6 +43,7 @@
         <Button
             android:id="@+id/buttonR"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
@@ -35,6 +54,7 @@
         <Button
             android:id="@+id/buttonL"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
@@ -45,6 +65,7 @@
         <Button
             android:id="@+id/buttonS"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
@@ -54,11 +75,11 @@
 
         <TextView
             android:id="@+id/textFeedback"
-            android:focusable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="(feedback)"
             android:textAppearance="?android:attr/textAppearanceMedium" >
         </TextView>
         
@@ -67,6 +88,7 @@
     <RelativeLayout
         android:id="@+id/aPad"
         android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_alignParentBottom="true"
@@ -76,6 +98,7 @@
         <Button
             android:id="@+id/buttonAU"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_alignParentTop="true"
@@ -87,6 +110,7 @@
         <Button
             android:id="@+id/buttonAD"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
@@ -98,6 +122,7 @@
         <Button
             android:id="@+id/buttonAL"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
@@ -109,6 +134,7 @@
         <Button
             android:id="@+id/buttonAR"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
@@ -122,6 +148,7 @@
     <RelativeLayout
         android:id="@+id/dPad"
         android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_alignParentLeft="true"
@@ -130,6 +157,7 @@
         <Button
             android:id="@+id/buttonDU"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
@@ -141,6 +169,7 @@
         <Button
             android:id="@+id/buttonDD"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
@@ -152,6 +181,7 @@
         <Button
             android:id="@+id/buttonDL"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
@@ -163,6 +193,7 @@
         <Button
             android:id="@+id/buttonDR"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
@@ -174,6 +205,7 @@
         <Button
             android:id="@+id/buttonDC"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerInParent="true"
@@ -185,6 +217,7 @@
     <RelativeLayout
         android:id="@+id/cPad"
         android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
         android:layout_alignParentRight="true"
@@ -193,6 +226,7 @@
         <Button
             android:id="@+id/buttonCU"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_above="@+id/buttonCR"
@@ -204,6 +238,7 @@
         <Button
             android:id="@+id/buttonCD"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/buttonCR"
@@ -215,6 +250,7 @@
         <Button
             android:id="@+id/buttonCL"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/buttonCU"
@@ -226,6 +262,7 @@
         <Button
             android:id="@+id/buttonCR"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
@@ -237,6 +274,7 @@
         <Button
             android:id="@+id/buttonCC"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
@@ -250,6 +288,7 @@
         <Button
             android:id="@+id/buttonB"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/buttonCL"
@@ -260,6 +299,7 @@
         <Button
             android:id="@+id/buttonA"
             android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/buttonCD"

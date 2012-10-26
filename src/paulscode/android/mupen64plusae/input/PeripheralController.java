@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.input;
 import paulscode.android.mupen64plusae.input.transform.AbstractTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform;
+import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.View;
@@ -41,7 +42,7 @@ public class PeripheralController extends AbstractController implements Abstract
             // For Android 3.0 and below, we can only listen to keyboards
             KeyTransform transform = new KeyTransform();
             
-            // Connect the upstream end of the transformer
+            // Connect the upstream end of the transform
             view.setOnKeyListener( transform );
             mTransform = transform;
         }
@@ -50,17 +51,20 @@ public class PeripheralController extends AbstractController implements Abstract
             // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
             KeyAxisTransform transform = new KeyAxisTransform();
             
-            // Connect the upstream end of the transformer
+            // Connect the upstream end of the transform
             view.setOnKeyListener( transform );
             view.setOnGenericMotionListener( transform );
             mTransform = transform;
         }
         
-        // Connect the downstream end of the transformer
+        // Set the formula for decoding special analog IMEs
+        mTransform.setImeFormula( ImeFormula.DEFAULT );
+        
+        // Connect the downstream end of the transform
         mTransform.registerListener( this );
         
-        // Set the formula for decoding special analog IMEs
-        mTransform.setImeFormula( KeyTransform.ImeFormula.DEFAULT );
+        // Request focus for proper listening
+        view.requestFocus();
     }
     
     public InputMap getInputMap()
@@ -75,6 +79,7 @@ public class PeripheralController extends AbstractController implements Abstract
         if( mInputMap != null )
             mInputMap.unregisterListener( this );
         mInputMap = inputMap;
+        onMapChanged( mInputMap );
         if( mInputMap != null )
             mInputMap.registerListener( this );
     }
@@ -95,6 +100,9 @@ public class PeripheralController extends AbstractController implements Abstract
             mTransform.setImeFormula( imeFormula );
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void onInput( int inputCode, float strength )
     {
         // Process user inputs from keyboard, gamepad, etc.
@@ -105,6 +113,9 @@ public class PeripheralController extends AbstractController implements Abstract
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void onInput( int[] inputCodes, float[] strengths )
     {
         // Process batch user inputs from keyboard, gamepad, etc.
@@ -116,6 +127,9 @@ public class PeripheralController extends AbstractController implements Abstract
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void onMapChanged( InputMap newValue )
     {
         // If the button/axis mappings change, update the transform's listening filter

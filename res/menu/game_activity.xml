@@ -2,61 +2,65 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:icon="@drawable/ic_save"
         android:id="@+id/ingameQuicksave"
-        android:title="@string/ingameQuicksave_title"
-        android:showAsAction="ifRoom|withText" />
+        android:icon="@drawable/ic_save"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/ingameQuicksave_title"/>
     <item
+        android:id="@+id/ingameQuickload"
         android:icon="@drawable/ic_folder"
-        android:id="@+id/ingameQuickLoad"
-        android:title="@string/ingameQuickload_title"
-        android:showAsAction="ifRoom|withText" />
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/ingameQuickload_title"/>
     <item
-        android:id="@+id/ingameSave"
-        android:title="@string/ingameSave_title" />
-    <item
-        android:id="@+id/ingameLoad"
-        android:title="@string/ingameLoad_title" />
-    <item
-        android:icon="@drawable/ic_storage"
         android:id="@+id/ingameSlot"
-        android:title="@string/ingameSlot_title" >
+        android:icon="@drawable/ic_storage"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/ingameSlot_title">
         <menu>
-            <item
-                android:id="@+id/slot0"
-                android:title="0"/>
-            <item
-                android:id="@+id/slot1"
-                android:title="1"/>
-            <item
-                android:id="@+id/slot2"
-                android:title="2"/>
-            <item
-                android:id="@+id/slot3"
-                android:title="3"/>
-            <item
-                android:id="@+id/slot4"
-                android:title="4"/>
-            <item
-                android:id="@+id/slot5"
-                android:title="5"/>
-            <item
-                android:id="@+id/slot6"
-                android:title="6"/>
-            <item
-                android:id="@+id/slot7"
-                android:title="7"/>
-            <item
-                android:id="@+id/slot8"
-                android:title="8"/>
-            <item
-                android:id="@+id/slot9"
-                android:title="9"/>
+            <group android:checkableBehavior="single" >
+                <item
+                    android:id="@+id/slot0"
+                    android:checked="true"
+                    android:title="0"/>
+                <item
+                    android:id="@+id/slot1"
+                    android:title="1"/>
+                <item
+                    android:id="@+id/slot2"
+                    android:title="2"/>
+                <item
+                    android:id="@+id/slot3"
+                    android:title="3"/>
+                <item
+                    android:id="@+id/slot4"
+                    android:title="4"/>
+                <item
+                    android:id="@+id/slot5"
+                    android:title="5"/>
+                <item
+                    android:id="@+id/slot6"
+                    android:title="6"/>
+                <item
+                    android:id="@+id/slot7"
+                    android:title="7"/>
+                <item
+                    android:id="@+id/slot8"
+                    android:title="8"/>
+                <item
+                    android:id="@+id/slot9"
+                    android:title="9"/>
+            </group>
         </menu>
     </item>
     <item
-        android:icon="@drawable/ic_settings"
+        android:id="@+id/ingameSave"
+        android:title="@string/ingameSave_title"/>
+    <item
+        android:id="@+id/ingameLoad"
+        android:title="@string/ingameLoad_title"/>
+    <item
         android:id="@+id/ingameMenu"
-        android:title="@string/ingameMenu_title" />
+        android:icon="@drawable/ic_settings"
+        android:title="@string/ingameMenu_title"/>
 
 </menu>

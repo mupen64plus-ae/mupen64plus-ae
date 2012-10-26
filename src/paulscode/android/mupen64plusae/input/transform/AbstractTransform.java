@@ -77,9 +77,11 @@ public abstract class AbstractTransform
     
     public static String getInputName( int inputCode, float strength )
     {
-        return getInputName( inputCode ) + String.format( " %.3f", strength );
+        return getInputName( inputCode ) + ( inputCode == 0
+                ? ""
+                : String.format( " %4.2f", strength ) );
     }
-    
+
     protected void notifyListeners( int inputCode, float strength )
     {
         for( Listener listener : mPublisher.getSubscribers() )

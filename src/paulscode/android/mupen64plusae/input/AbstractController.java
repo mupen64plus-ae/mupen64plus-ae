@@ -26,10 +26,10 @@ import paulscode.android.mupen64plusae.NativeMethods;
  * <p/>
  * Subclasses should implement the following pattern:
  * <ul>
- * <li>Register a listener to the upstream input (e.g. touch, keyboard, mouse, joystick, etc.)</li>
- * <li>Translate the input data into N64 controller button & axis states</li>
- * <li>Set the values of the protected members mDpad*, mBtn*, mAxis*</li>
- * <li>Call the protected method notifyChanged()</li>
+ * <li>Register a listener to the upstream input (e.g. touch, keyboard, mouse, joystick, etc.).</li>
+ * <li>Translate the input data into N64 controller button/axis states, and set the values of the
+ * protected fields mDpad*, mBtn*, mAxis* accordingly.</li>
+ * <li>Call the protected method notifyChanged().</li>
  * </ul>
  * This abstract class will call the emulator's native libraries to update game state whenever
  * notifyChanged() is called. Subclasses should not call any native methods themselves. (If they do,
@@ -38,9 +38,12 @@ import paulscode.android.mupen64plusae.NativeMethods;
  * Note that this class is stateful, in that it remembers controller button/axis state between calls
  * from the subclass. For best performance, subclasses should only call notifyChanged() when the
  * input state has actually changed, and should bundle the protected field modifications before
- * calling notifyChanged() once. For example,
- * Inefficient: mDpadR = true; notifyChanges(); mDpadL = false; notifyChanges();
- * Better: mDpadR = true; mDpadL = false; notifyChanges();
+ * calling notifyChanged(). For example,
+ * <pre>
+ * {@code
+ * mDpadR = true; notifyChanges(); mDpadL = false; notifyChanges(); // Inefficient
+ * mDpadR = true; mDpadL = false; notifyChanges(); // Better
+ * }</pre>
  */
 public abstract class AbstractController
 {

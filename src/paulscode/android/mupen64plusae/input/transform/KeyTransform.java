@@ -19,14 +19,19 @@
  */
 package paulscode.android.mupen64plusae.input.transform;
 
+import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
 
-public class KeyTransform extends AbstractTransform implements View.OnKeyListener
+public class KeyTransform extends AbstractTransform implements View.OnKeyListener,
+        DialogInterface.OnKeyListener
 {
     public enum ImeFormula
     {
-        DEFAULT, USB_BT_JOYSTICK_CENTER, BT_CONTROLLER, EXAMPLE_IME
+        DEFAULT,
+        USB_BT_JOYSTICK_CENTER,
+        BT_CONTROLLER,
+        EXAMPLE_IME
     }
     
     private ImeFormula mImeFormula;
@@ -48,6 +53,16 @@ public class KeyTransform extends AbstractTransform implements View.OnKeyListene
     
     public boolean onKey( View v, int keyCode, KeyEvent event )
     {
+        return onKey( keyCode, event );
+    }
+    
+    public boolean onKey( DialogInterface dialog, int keyCode, KeyEvent event )
+    {
+        return onKey( keyCode, event );
+    }
+    
+    private boolean onKey( int keyCode, KeyEvent event )
+    {
         // Ignore cancellations via back key
         if( keyCode == KeyEvent.KEYCODE_BACK )
             return false;
@@ -55,7 +70,7 @@ public class KeyTransform extends AbstractTransform implements View.OnKeyListene
         // Translate input code and analog strength (ranges between 0.0 and 1.0)
         int inputCode;
         float strength;
-        if( keyCode < 0xFF )
+        if( keyCode <= 0xFF )
         {
             // Ordinary key/button changed state
             inputCode = keyCode;

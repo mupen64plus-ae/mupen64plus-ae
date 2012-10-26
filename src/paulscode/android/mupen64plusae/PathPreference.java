@@ -84,9 +84,8 @@ public class PathPreference extends DialogPreference
         if( mDoRefresh )
         {
             mDoRefresh = false;
-            String filename = getPersistedString( Globals.paths.storageDir ); // TODO: Remove
-                                                                              // dependency on
-                                                                              // Globals.paths
+            // TODO: Remove dependency on Globals.paths
+            String filename = getPersistedString( Globals.paths.storageDir );
             if( filename != null )
             {
                 populate( new File( filename ) );

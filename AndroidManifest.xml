@@ -24,6 +24,7 @@
             android:name="paulscode.android.mupen64plusae.MainActivity"
             android:configChanges="orientation|keyboardHidden|uiMode"
             android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo" >
             android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

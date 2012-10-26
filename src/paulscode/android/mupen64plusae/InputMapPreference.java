@@ -18,17 +18,17 @@
  * Authors: littleguy77
  * 
  * Override implementations inspired by
- *   http://stackoverflow.com/questions/4505845/concise-way-of-writing-new-dialogpreference-classes
+ * http://stackoverflow.com/questions/4505845/concise-way-of-writing-new-dialogpreference-classes
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.InputMap;
 import paulscode.android.mupen64plusae.input.transform.AbstractTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import android.annotation.TargetApi;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.os.Build;
 import android.preference.DialogPreference;
@@ -41,16 +41,16 @@ import android.widget.TextView;
 public class InputMapPreference extends DialogPreference implements AbstractTransform.Listener,
         OnClickListener
 {
-    private static final float STRENGTH_THRESHOLD = 0.1f;
-    private static final float INITIAL_THRESHOLD = 0.9f;
+    private static final float STRENGTH_ACTIVE_THRESHOLD = 0.1f;
+    private static final float STRENGTH_BIAS_THRESHOLD = 0.9f;
     
     private InputMap mMap = new InputMap();
     private int mLastInputCode = 0;
     private float mLastStrength = 0;
-    private float[] mInitialStrengths;
+    private float[] mStrengthBiases;
     private Button[] mN64ToButton = new Button[InputMap.NUM_INPUTS];
     private TextView mFeedbackText;
-    private AbstractTransform mTranslator;
+    private KeyTransform mTransform;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -62,12 +62,13 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     @Override
     protected void onBindDialogView( View view )
     {
+        // Our first guaranteed opportunity to access a non-null View
         super.onBindDialogView( view );
         
         // Restore existing state
         mMap.deserialize( getPersistedString( "" ) );
-
-        // Create a widget map to simplify button highlighting
+        
+        // Create a button map to simplify highlighting
         mN64ToButton[InputMap.DPD_R] = (Button) view.findViewById( R.id.buttonDR );
         mN64ToButton[InputMap.DPD_L] = (Button) view.findViewById( R.id.buttonDL );
         mN64ToButton[InputMap.DPD_D] = (Button) view.findViewById( R.id.buttonDD );
@@ -89,6 +90,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
         mFeedbackText.requestFocus();
         
+        // Define the button click callbacks
         for( Button b : mN64ToButton )
             b.setOnClickListener( this );
         
@@ -96,49 +98,60 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
             // For Android 3.0 and below, we can only listen to keyboards
-            KeyTransform translator = new KeyTransform();
-            
-            // Set the formula for decoding special analog IMEs
-            translator.setImeFormula( ImeFormula.DEFAULT );
-            
-            // Connect the upstream end of the funnel
-            view.setOnKeyListener( translator );
-            mTranslator = translator;
+            mTransform = new KeyTransform();
         }
         else
         {
             // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            KeyAxisTransform translator = new KeyAxisTransform();
+            KeyAxisTransform transform = new KeyAxisTransform();
             
-            // Set the formula for decoding special analog IMEs
-            translator.setImeFormula( ImeFormula.DEFAULT );
-            
-            // Connect the upstream end of the funnel
-            view.setOnKeyListener( translator );
-            view.setOnGenericMotionListener( translator );
-            mTranslator = translator;
+            // Connect the extra upstream end of the transform
+            view.setOnGenericMotionListener( transform );
+            mTransform = transform;
         }
         
-        // Connect the downstream end of the funnel
-        mTranslator.registerListener( this );
+        // Set the formula for decoding special analog IMEs
+        mTransform.setImeFormula( ImeFormula.DEFAULT );
+        
+        // Request focus for proper listening
+        view.requestFocus();
+        
+        // Initialize the feedback elements
+        provideFeedback( 0, 0 );
     }
-
+    
+    @Override
+    protected void onPrepareDialogBuilder( Builder builder )
+    {
+        super.onPrepareDialogBuilder( builder );
+        
+        // Connect the upstream end of the transform
+        builder.setOnKeyListener( mTransform );
+        
+        // Connect the downstream end of the transform
+        mTransform.registerListener( this );
+    }
+    
     @Override
     protected void onDialogClosed( boolean positiveResult )
     {
+        // Persist the result if user pressed Ok
         if( positiveResult )
             persistString( mMap.serialize() );
+        
+        // Refresh the biases next time the dialog opens
+        mStrengthBiases = null;
     }
     
     public void onClick( View v )
     {
-        // Cache the current code (in case another thread overwrites it)
-        int lastInputCode = mLastInputCode;
-        
-        // Find the button that was pressed and map it
+        // Find the Button that was clicked and map it
         for( int i = 0; i < mN64ToButton.length; i++ )
             if( mN64ToButton[i] == v )
-                mMap.mapInput( lastInputCode, i );
+                mMap.mapInput( mLastInputCode, i );
+        
+        // Provide visual feedback to user
+        provideFeedback( mLastInputCode, mLastStrength );
     }
     
     public void onInput( int inputCode, float strength )
@@ -146,36 +159,33 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Cache the input code and strength
         mLastInputCode = inputCode;
         mLastStrength = strength;
-        highlightButton( mLastInputCode, mLastStrength, true );
-        mFeedbackText.setText( AbstractTransform.getInputName( mLastInputCode ) );
+        
+        // Provide visual feedback to user
+        provideFeedback( mLastInputCode, mLastStrength );
     }
     
     public void onInput( int[] inputCodes, float[] strengths )
     {
-        // Get initial strengths first time through
-        boolean initialize = false;
-        if( mInitialStrengths == null )
+        // Get strength biases first time through
+        boolean refreshBiases = false;
+        if( mStrengthBiases == null )
         {
-            mInitialStrengths = new float[strengths.length];
-            initialize = true;
+            mStrengthBiases = new float[strengths.length];
+            refreshBiases = true;
         }
         
         // Cache the strongest input code and strength
-        mLastStrength = STRENGTH_THRESHOLD;
+        mLastStrength = STRENGTH_ACTIVE_THRESHOLD;
         mLastInputCode = 0;
         for( int i = 0; i < inputCodes.length; i++ )
         {
             int inputCode = inputCodes[i];
             float strength = strengths[i];
             
-            // Record the initial strength and remove its effect
-            if( initialize )
-                mInitialStrengths[i] = strength > INITIAL_THRESHOLD ? 1
-                        : strength < -INITIAL_THRESHOLD ? -1 : 0;
-            strength -= mInitialStrengths[i];
-            
-            // Highlight the corresponding button if mapped
-            highlightButton( inputCode, strength, false );
+            // Record the strength bias and remove its effect
+            if( refreshBiases )
+                mStrengthBiases[i] = strength > STRENGTH_BIAS_THRESHOLD ? 1 : 0;
+            strength -= mStrengthBiases[i];
             
             // Find strongest input and cache it
             if( strength > mLastStrength )
@@ -184,17 +194,34 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
                 mLastInputCode = inputCode;
             }
         }
-        highlightButton( mLastInputCode, mLastStrength, true );
-        mFeedbackText.setText( AbstractTransform.getInputName( mLastInputCode ) );
+        
+        // Provide visual feedback to user
+        provideFeedback( mLastInputCode, mLastStrength );
     }
     
-    private void highlightButton( int inputCode, float strength, boolean isActive )
+    @TargetApi( 11 )
+    private void provideFeedback( int inputCode, float strength )
     {
-        int n64Index = mMap.get( inputCode );
-        if( n64Index != InputMap.UNMAPPED )
+        // Modify the button appearance to signify things
+        int selectedIndex = mMap.get( inputCode );
+        for( int i = 0; i < mN64ToButton.length; i++ )
         {
-            Button button = mN64ToButton[n64Index];
-            button.setPressed( isActive && strength > STRENGTH_THRESHOLD );
+            Button button = mN64ToButton[i];
+            
+            // Highlight the currently active button
+            button.setPressed( i == selectedIndex && strength > STRENGTH_ACTIVE_THRESHOLD );
+            
+            // Fade any buttons that aren't mapped
+            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
+            {
+                if( mMap.getMappedInputCodes()[i] == 0 )
+                    button.setAlpha( 0.2f );
+                else
+                    button.setAlpha( 1 );
+            }
         }
+        
+        // Update the feedback text
+        mFeedbackText.setText( AbstractTransform.getInputName( inputCode ) );
     }
 }

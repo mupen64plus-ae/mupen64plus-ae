@@ -25,8 +25,9 @@ import android.view.View;
 
 @TargetApi( 12 )
 public class KeyAxisTransform extends KeyTransform implements View.OnGenericMotionListener
-{
+{    
     private int[] mInputCodes;
+    
     private static final int DEFAULT_NUM_INPUTS = 128;
     
     public KeyAxisTransform()
@@ -36,7 +37,7 @@ public class KeyAxisTransform extends KeyTransform implements View.OnGenericMoti
         for( int i = 0; i < mInputCodes.length; i++ )
         {
             mInputCodes[i] = -( i + 1 );
-        }      
+        }
     }
     
     public void setInputCodeFilter( int[] inputCodeFilter )

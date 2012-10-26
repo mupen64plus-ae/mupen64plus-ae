@@ -41,7 +41,8 @@
     To minimize app size, consider using Android's built-in resources when possible.
     For example, consider icon resources in "@android:drawable/..." instead of custom
     resources in "@drawable/...".       
-    ***********************************************************************************-->
+    ***********************************************************************************
+-->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae" >
 
@@ -52,10 +53,10 @@
     </Preference>
 
     <paulscode.android.mupen64plusae.PathPreference
-        mupen64:selectionMode="1"
         android:icon="@drawable/ic_folder"
         android:key="lastGame"
-        android:title="@string/lastGame_title" />
+        android:title="@string/lastGame_title"
+        mupen64:selectionMode="1" />
 
     <PreferenceScreen
         android:icon="@drawable/ic_settings"
@@ -82,7 +83,6 @@
                 android:entryValues="@array/touchscreenLayout_values"
                 android:key="touchscreenLayout"
                 android:title="@string/touchscreenLayout_title" />
-
             <ListPreference
                 android:defaultValue="@string/touchscreenSize_default"
                 android:dependency="touchscreenEnabled"
@@ -90,12 +90,12 @@
                 android:entryValues="@array/touchscreenSize_values"
                 android:key="touchscreenSize"
                 android:title="@string/touchscreenSize_title" />
-            
+
             <paulscode.android.mupen64plusae.PathPreference
                 android:dependency="touchscreenEnabled"
-                mupen64:selectionMode="0"
                 android:key="touchscreenCustom"
-                android:title="@string/touchscreenCustom_title" />
+                android:title="@string/touchscreenCustom_title"
+                mupen64:selectionMode="0" />
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -313,10 +313,10 @@
             android:title="@string/categoryStorage_title" />
 
         <paulscode.android.mupen64plusae.PathPreference
-            mupen64:selectionMode="0"
             android:icon="@drawable/ic_folder"
             android:key="gameSaveDir"
-            android:title="@string/gameSaveDir_title" />
+            android:title="@string/gameSaveDir_title"
+            mupen64:selectionMode="0" />
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -353,6 +353,12 @@
             android:title="Unstable preferences" />
     </PreferenceScreen>
 
+    <Preference
+        android:icon="@drawable/ic_location"
+        android:key="menuLocale"
+        android:title="@string/menuLocale_title" >
+        <intent android:action="android.settings.LOCALE_SETTINGS" />
+    </Preference>
     <Preference
         android:icon="@drawable/ic_help"
         android:key="menuHelp"

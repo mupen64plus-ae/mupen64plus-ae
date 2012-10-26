@@ -120,41 +120,49 @@ public class GameActivity extends Activity
     {
         switch( item.getItemId() )
         {
-            case R.id.ingameSave:
-                NativeMethods.stateSaveEmulator();
-                break;
-            case R.id.ingameLoad:
-                NativeMethods.stateLoadEmulator();
-                break;
             case R.id.slot0:
-                setSlot( 0 );
+                setSlot( 0, item );
                 break;
             case R.id.slot1:
-                setSlot( 1 );
+                setSlot( 1, item );
                 break;
             case R.id.slot2:
-                setSlot( 2 );
+                setSlot( 2, item );
                 break;
             case R.id.slot3:
-                setSlot( 3 );
+                setSlot( 3, item );
                 break;
             case R.id.slot4:
-                setSlot( 4 );
+                setSlot( 4, item );
                 break;
             case R.id.slot5:
-                setSlot( 5 );
+                setSlot( 5, item );
                 break;
             case R.id.slot6:
-                setSlot( 6 );
+                setSlot( 6, item );
                 break;
             case R.id.slot7:
-                setSlot( 7 );
+                setSlot( 7, item );
                 break;
             case R.id.slot8:
-                setSlot( 8 );
+                setSlot( 8, item );
                 break;
             case R.id.slot9:
-                setSlot( 9 );
+                setSlot( 9, item );
+                break;
+            case R.id.ingameQuicksave:
+                NativeMethods.stateSaveEmulator();
+                break;
+            case R.id.ingameQuickload:
+                NativeMethods.stateLoadEmulator();
+                break;
+            case R.id.ingameSave:
+                // TODO: Implement dialog for save filename
+                // NativeMethods.fileSaveEmulator( filename );
+                break;
+            case R.id.ingameLoad:
+                // TODO: Implement dialog for load filename
+                // NativeMethods.fileLoadEmulator( filename );
                 break;
             case R.id.ingameMenu:
                 // Save game state and launch MenuActivity
@@ -170,6 +178,12 @@ public class GameActivity extends Activity
                 break;
         }
         return super.onOptionsItemSelected( item );
+    }
+
+    private void setSlot( int value, MenuItem item )
+    {
+        setSlot( value );
+        item.setChecked( true );
     }
     
     private void setSlot( int value )
