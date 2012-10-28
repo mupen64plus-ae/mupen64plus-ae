@@ -35,16 +35,18 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class InputMapPreference extends DialogPreference implements AbstractTransform.Listener,
-        OnClickListener
+        OnClickListener, OnLongClickListener
 {
-    private static final float STRENGTH_ACTIVE_THRESHOLD = 0.1f;
-    private static final float STRENGTH_BIAS_THRESHOLD = 0.9f;
+    private static final float STRENGTH_THRESHOLD = 0.5f;
+    private static final float STRENGTH_HYSTERESIS = 0.25f;
     
     private InputMap mMap = new InputMap();
+    private int mInputCodeToBeMapped = 0;
     private int mLastInputCode = 0;
     private float mLastStrength = 0;
     private float[] mStrengthBiases;
@@ -92,7 +94,10 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         
         // Define the button click callbacks
         for( Button b : mN64ToButton )
+        {
             b.setOnClickListener( this );
+            b.setOnLongClickListener( this );
+        }
         
         // Set up input listening
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
@@ -116,8 +121,8 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Request focus for proper listening
         view.requestFocus();
         
-        // Initialize the feedback elements
-        provideFeedback( 0, 0 );
+        // Refresh the dialog view
+        updateViews();
     }
     
     @Override
@@ -144,29 +149,6 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     }
     
     @Override
-    public void onClick( View v )
-    {
-        // Find the Button that was clicked and map it
-        for( int i = 0; i < mN64ToButton.length; i++ )
-            if( mN64ToButton[i] == v )
-                mMap.mapInput( mLastInputCode, i );
-        
-        // Provide visual feedback to user
-        provideFeedback( mLastInputCode, mLastStrength );
-    }
-    
-    @Override
-    public void onInput( int inputCode, float strength )
-    {
-        // Cache the input code and strength
-        mLastInputCode = inputCode;
-        mLastStrength = strength;
-        
-        // Provide visual feedback to user
-        provideFeedback( mLastInputCode, mLastStrength );
-    }
-    
-    @Override
     public void onInput( int[] inputCodes, float[] strengths )
     {
         // Get strength biases first time through
@@ -177,9 +159,9 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
             refreshBiases = true;
         }
         
-        // Cache the strongest input code and strength
-        mLastStrength = STRENGTH_ACTIVE_THRESHOLD;
-        mLastInputCode = 0;
+        // Find the strongest input
+        float maxStrength = STRENGTH_THRESHOLD;
+        int strongestInputCode = 0;
         for( int i = 0; i < inputCodes.length; i++ )
         {
             int inputCode = inputCodes[i];
@@ -187,32 +169,77 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
             
             // Record the strength bias and remove its effect
             if( refreshBiases )
-                mStrengthBiases[i] = strength > STRENGTH_BIAS_THRESHOLD ? 1 : 0;
+                mStrengthBiases[i] = strength;
             strength -= mStrengthBiases[i];
             
-            // Find strongest input and cache it
-            if( strength > mLastStrength )
+            // Cache the strongest input
+            if( strength > maxStrength )
             {
-                mLastStrength = strength;
-                mLastInputCode = inputCode;
+                maxStrength = strength;
+                strongestInputCode = inputCode;
             }
         }
         
-        // Provide visual feedback to user
-        provideFeedback( mLastInputCode, mLastStrength );
+        // Call the overloaded method with the strongest found
+        onInput( strongestInputCode, maxStrength );
+    }
+    
+    @Override
+    public void onInput( int inputCode, float strength )
+    {
+        // Determine the input conditions
+        boolean isActive = strength > STRENGTH_THRESHOLD;
+        boolean inputChanged = inputCode != mLastInputCode;
+        boolean strengthChanged = Math.abs(strength - mLastStrength) > STRENGTH_HYSTERESIS;
+        
+        // Cache the input code to be mapped
+        if( isActive )
+        {
+            mInputCodeToBeMapped = inputCode;
+        }
+        
+        // Update the user feedback views
+        // To keep the touchscreen responsive, ignore small strength changes
+        if( strengthChanged || inputChanged )
+        {
+            mLastInputCode = inputCode;
+            mLastStrength = strength;
+            updateViews();
+        }
+    }
+    
+    @Override
+    public void onClick( View v )
+    {
+        // Find the Button view that was touched and map it
+        for( int i = 0; i < mN64ToButton.length; i++ )
+            if( mN64ToButton[i] == v )
+                mMap.mapInput( mInputCodeToBeMapped, i );
+        updateViews();
+    }
+    
+    @Override
+    public boolean onLongClick( View v )
+    {
+        // Find the Button view that was long-touched and unmap it
+        for( int i = 0; i < mN64ToButton.length; i++ )
+            if( mN64ToButton[i] == v )
+                mMap.unmapInput( i );
+        updateViews();
+        return true;
     }
     
     @TargetApi( 11 )
-    private void provideFeedback( int inputCode, float strength )
+    private void updateViews()
     {
-        // Modify the button appearance to signify things
-        int selectedIndex = mMap.get( inputCode );
+        // Modify the button appearance to provide feedback to user
+        int selectedIndex = mMap.get( mLastInputCode );
         for( int i = 0; i < mN64ToButton.length; i++ )
         {
             Button button = mN64ToButton[i];
             
             // Highlight the currently active button
-            button.setPressed( i == selectedIndex && strength > STRENGTH_ACTIVE_THRESHOLD );
+            button.setPressed( i == selectedIndex && mLastStrength > STRENGTH_THRESHOLD );
             
             // Fade any buttons that aren't mapped
             if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
@@ -225,6 +252,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         }
         
         // Update the feedback text
-        mFeedbackText.setText( AbstractTransform.getInputName( inputCode ) );
+        //mFeedbackText.setText( AbstractTransform.getInputName( mInputCodeToBeMapped ) );
+        mFeedbackText.setText( AbstractTransform.getInputName( mInputCodeToBeMapped ) + "\n" + mMap.serialize() );
     }
 }

@@ -137,14 +137,23 @@ public class InputMap
         // Map the input if a valid index was given
         if( n64Index >= 0 && n64Index < NUM_INPUTS )
         {
-            // Get the last code mapped to this index
+            // Get the old code that was mapped to the new index
             int oldInputCode = mN64ToCode[n64Index];
+
+            // Get the old index that was mapped to the new code
+            int oldN64Index = get( inputCode ); 
+
+            // Unmap the new code from the old index
+            if( oldN64Index != UNMAPPED )
+                mN64ToCode[oldN64Index] = 0;
             
-            // Map the new code to this index
+            // Unmap the old code from the new index
+            mCodeToN64.delete( oldInputCode );
+
+            // Map the new code to the new index
             mN64ToCode[n64Index] = inputCode;
             
-            // Refresh the reverse map
-            mCodeToN64.delete( oldInputCode );
+            // Map the new index to the new code
             if( inputCode != 0 )
                 mCodeToN64.put( inputCode, n64Index );
         }
@@ -167,6 +176,11 @@ public class InputMap
     public void mapInput( int inputCode, int n64Index )
     {
         mapInput( inputCode, n64Index, true );
+    }
+    
+    public void unmapInput( int n64Index )
+    {
+        mapInput( 0, n64Index, true );
     }
     
     public void registerListener( InputMap.Listener listener )

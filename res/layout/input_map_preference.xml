@@ -129,7 +129,6 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
-            android:contentDescription="AD"
             android:drawableTop="@drawable/ic_arrow_d" />
 
         <Button
@@ -141,7 +140,6 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
-            android:contentDescription="AL"
             android:drawableRight="@drawable/ic_arrow_l" />
 
         <Button
@@ -153,7 +151,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
-            android:contentDescription="AR"
             android:drawableLeft="@drawable/ic_arrow_r" />
         
     </RelativeLayout>
@@ -176,7 +173,6 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_dpad"
-            android:contentDescription="DU"
             android:drawableTop="@drawable/ic_arrow_u" />
 
         <Button
@@ -188,7 +184,6 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_dpad"
-            android:contentDescription="DD"
             android:drawableBottom="@drawable/ic_arrow_d" />
 
         <Button
@@ -200,7 +195,6 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_dpad"
-            android:contentDescription="DL"
             android:drawableLeft="@drawable/ic_arrow_l" />
 
         <Button
@@ -212,7 +206,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_dpad"
-            android:contentDescription="DR"
             android:drawableRight="@drawable/ic_arrow_r" />
 
         <Button
@@ -245,7 +238,6 @@
             android:layout_above="@+id/buttonCR"
             android:layout_toLeftOf="@+id/buttonCR"
             android:background="@drawable/button_cpad"
-            android:contentDescription="CU"
             android:drawableTop="@drawable/ic_arrow_u" />
 
         <Button
@@ -257,7 +249,6 @@
             android:layout_below="@+id/buttonCR"
             android:layout_toLeftOf="@+id/buttonCR"
             android:background="@drawable/button_cpad"
-            android:contentDescription="CD"
             android:drawableBottom="@drawable/ic_arrow_d" />
 
         <Button
@@ -269,7 +260,6 @@
             android:layout_below="@+id/buttonCU"
             android:layout_toLeftOf="@+id/buttonCU"
             android:background="@drawable/button_cpad"
-            android:contentDescription="CL"
             android:drawableLeft="@drawable/ic_arrow_l" />
 
         <Button
@@ -281,7 +271,6 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_cpad"
-            android:contentDescription="CR"
             android:drawableRight="@drawable/ic_arrow_r" />
 
         <Button

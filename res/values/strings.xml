@@ -103,7 +103,7 @@
     <string name="gamepadMap_summary">Configure buttons and sticks</string>
     <string name="gamepadMapSpecial_title">Special functions</string>
     <string name="gamepadMapSpecial_summary">Save, load, and more from the controller</string>
-    <string name="gamepadMap_dialogTitle">While pushing the desired stick or button, touch an icon</string>
+    <string name="gamepadMap_dialogTitle">While holding a stick or key, press an icon\nLong press an icon to unmap</string>
     <string name="volumeKeysEnabled_title">Enable volume keys</string>
     <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
     

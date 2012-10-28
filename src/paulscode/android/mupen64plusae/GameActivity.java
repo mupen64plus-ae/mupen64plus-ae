@@ -1,6 +1,10 @@
 package paulscode.android.mupen64plusae;
 
+import paulscode.android.mupen64plusae.input.AbstractController;
+import paulscode.android.mupen64plusae.input.PeripheralController;
+import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.input.XperiaPlayController;
+import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
@@ -14,6 +18,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -104,6 +109,11 @@ public class GameActivity extends Activity
         loadNativeLibraries();
         initializeControllers();
         
+        // New controller system
+        SDLSurface surface = (SDLSurface) findViewById( R.id.sdlSurface );
+        PeripheralController controller1 = new PeripheralController( surface,
+                Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
+        
         Notifier.showToast( getString( R.string.mupen64plus_started ), this );
     }
     
@@ -180,7 +190,7 @@ public class GameActivity extends Activity
         }
         return super.onOptionsItemSelected( item );
     }
-
+    
     private void setSlot( int value, MenuItem item )
     {
         setSlot( value );
@@ -254,7 +264,8 @@ public class GameActivity extends Activity
     {
         if( Globals.userPrefs.isXperiaEnabled )
         {
-            mTouchPadListing = new XperiaPlayController.TouchPadListing( Globals.paths.xperiaPlayLayouts_ini );
+            mTouchPadListing = new XperiaPlayController.TouchPadListing(
+                    Globals.paths.xperiaPlayLayouts_ini );
             mTouchPad = new XperiaPlayController( this, getResources() );
             mTouchPad.loadPad();
         }

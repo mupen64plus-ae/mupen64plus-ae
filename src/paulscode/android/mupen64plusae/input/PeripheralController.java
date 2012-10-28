@@ -30,12 +30,20 @@ import android.view.View;
 public class PeripheralController extends AbstractController implements AbstractTransform.Listener,
         InputMap.Listener
 {
-    private KeyTransform mTransform;
     private InputMap mInputMap;
+    private KeyTransform mTransform;
     
     @TargetApi( 12 )
-    public PeripheralController( View view )
+    public PeripheralController( View view, InputMap inputMap, ImeFormula formula )
     {
+        // Assign the map and listen for changes
+        mInputMap = inputMap;
+        if( mInputMap != null )
+        {
+            onMapChanged( mInputMap );
+            mInputMap.registerListener( this );
+        }
+        
         // Set up input listening
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
@@ -58,7 +66,7 @@ public class PeripheralController extends AbstractController implements Abstract
         }
         
         // Set the formula for decoding special analog IMEs
-        mTransform.setImeFormula( ImeFormula.DEFAULT );
+        mTransform.setImeFormula( formula );
         
         // Connect the downstream end of the transform
         mTransform.registerListener( this );
@@ -67,42 +75,7 @@ public class PeripheralController extends AbstractController implements Abstract
         view.requestFocus();
     }
     
-    public InputMap getInputMap()
-    {
-        // Get the button/axis mappings
-        return mInputMap;
-    }
-    
-    public void setInputMap( InputMap inputMap )
-    {
-        // Replace the button/axis mappings
-        if( mInputMap != null )
-            mInputMap.unregisterListener( this );
-        mInputMap = inputMap;
-        onMapChanged( mInputMap );
-        if( mInputMap != null )
-            mInputMap.registerListener( this );
-    }
-    
-    public KeyTransform.ImeFormula getImeFormula()
-    {
-        // Get the IME keycode->analog formula
-        if( mTransform != null )
-            return mTransform.getImeFormula();
-        else
-            return KeyTransform.ImeFormula.DEFAULT;
-    }
-    
-    public void setImeFormula( KeyTransform.ImeFormula imeFormula )
-    {
-        // Set the IME keycode->analog formula
-        if( mTransform != null )
-            mTransform.setImeFormula( imeFormula );
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void onInput( int inputCode, float strength )
     {
         // Process user inputs from keyboard, gamepad, etc.
@@ -113,12 +86,10 @@ public class PeripheralController extends AbstractController implements Abstract
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void onInput( int[] inputCodes, float[] strengths )
     {
-        // Process batch user inputs from keyboard, gamepad, etc.
+        // Process batch user inputs from gamepad, keyboard, etc.
         if( mInputMap != null )
         {
             for( int i = 0; i < inputCodes.length; i++ )
@@ -127,9 +98,7 @@ public class PeripheralController extends AbstractController implements Abstract
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void onMapChanged( InputMap newValue )
     {
         // If the button/axis mappings change, update the transform's listening filter
