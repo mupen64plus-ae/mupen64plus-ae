@@ -53,7 +53,9 @@ public class InputMap
     
     private int[] mN64ToCode;
     private SparseIntArray mCodeToN64;
-    private SubscriptionManager<InputMap.Listener> mPublisher;
+    private SubscriptionManager<Listener> mPublisher;
+    
+    private final float STRENGTH_THRESHOLD = 0.5f;
     
     public InputMap()
     {
@@ -70,7 +72,7 @@ public class InputMap
     
     public void apply( int inputCode, float strength, AbstractController controller )
     {
-        boolean state = strength > 0.5;
+        boolean state = strength > STRENGTH_THRESHOLD;
         switch( get( inputCode ) )
         {
             case DPD_R:
@@ -132,37 +134,6 @@ public class InputMap
         }
     }
     
-    private void mapInput( int inputCode, int n64Index, boolean notify )
-    {
-        // Map the input if a valid index was given
-        if( n64Index >= 0 && n64Index < NUM_INPUTS )
-        {
-            // Get the old code that was mapped to the new index
-            int oldInputCode = mN64ToCode[n64Index];
-
-            // Get the old index that was mapped to the new code
-            int oldN64Index = get( inputCode ); 
-
-            // Unmap the new code from the old index
-            if( oldN64Index != UNMAPPED )
-                mN64ToCode[oldN64Index] = 0;
-            
-            // Unmap the old code from the new index
-            mCodeToN64.delete( oldInputCode );
-
-            // Map the new code to the new index
-            mN64ToCode[n64Index] = inputCode;
-            
-            // Map the new index to the new code
-            if( inputCode != 0 )
-                mCodeToN64.put( inputCode, n64Index );
-        }
-        
-        // Notify listeners that the map has changed
-        if( notify )
-            notifyListeners();
-    }
-    
     public int get( int inputCode )
     {
         return mCodeToN64.get( inputCode, UNMAPPED );
@@ -173,7 +144,7 @@ public class InputMap
         return mN64ToCode.clone();
     }
     
-    public void mapInput( int inputCode, int n64Index )
+    public void mapInput( int n64Index, int inputCode )
     {
         mapInput( inputCode, n64Index, true );
     }
@@ -183,20 +154,14 @@ public class InputMap
         mapInput( 0, n64Index, true );
     }
     
-    public void registerListener( InputMap.Listener listener )
+    public void registerListener( Listener listener )
     {
         mPublisher.subscribe( listener );
     }
     
-    public void unregisterListener( InputMap.Listener listener )
+    public void unregisterListener( Listener listener )
     {
         mPublisher.unsubscribe( listener );
-    }
-    
-    public void notifyListeners()
-    {
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onMapChanged( this );
     }
     
     public String serialize()
@@ -224,7 +189,7 @@ public class InputMap
                 mapInput( safeParse( strings[i], 0 ), i, false );
         }
         
-        // Notify the change listeners
+        // Notify the listeners that the map has changed
         notifyListeners();
     }
     
@@ -238,5 +203,42 @@ public class InputMap
         {
             return defaultValue;
         }
+    }
+
+    private void mapInput( int inputCode, int n64Index, boolean notify )
+    {
+        // Map the input if a valid index was given
+        if( n64Index >= 0 && n64Index < NUM_INPUTS )
+        {
+            // Get the old code that was mapped to the new index
+            int oldInputCode = mN64ToCode[n64Index];
+    
+            // Get the old index that was mapped to the new code
+            int oldN64Index = get( inputCode ); 
+    
+            // Unmap the new code from the old index
+            if( oldN64Index != UNMAPPED )
+                mN64ToCode[oldN64Index] = 0;
+            
+            // Unmap the old code from the new index
+            mCodeToN64.delete( oldInputCode );
+    
+            // Map the new code to the new index
+            mN64ToCode[n64Index] = inputCode;
+            
+            // Map the new index to the new code
+            if( inputCode != 0 )
+                mCodeToN64.put( inputCode, n64Index );
+        }
+        
+        // Notify listeners that the map has changed
+        if( notify )
+            notifyListeners();
+    }
+
+    protected void notifyListeners()
+    {
+        for( Listener listener : mPublisher.getSubscribers() )
+            listener.onMapChanged( this );
     }
 }

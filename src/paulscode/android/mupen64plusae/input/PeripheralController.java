@@ -48,25 +48,20 @@ public class PeripheralController extends AbstractController implements Abstract
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
             // For Android 3.0 and below, we can only listen to keyboards
-            KeyTransform transform = new KeyTransform();
-            
-            // Connect the upstream end of the transform
-            view.setOnKeyListener( transform );
-            mTransform = transform;
+            mTransform = new KeyTransform();
         }
         else
         {
             // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
             KeyAxisTransform transform = new KeyAxisTransform();
             
-            // Connect the upstream end of the transform
-            view.setOnKeyListener( transform );
+            // Connect the extra upstream end of the transform
             view.setOnGenericMotionListener( transform );
             mTransform = transform;
         }
         
         // Set the formula for decoding special analog IMEs
-        mTransform.setImeFormula( formula );
+        mTransform.setImeFormula( ImeFormula.DEFAULT );
         
         // Connect the downstream end of the transform
         mTransform.registerListener( this );
