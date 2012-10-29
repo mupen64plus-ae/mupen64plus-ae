@@ -63,11 +63,16 @@ public class PeripheralController extends AbstractController implements Abstract
         // Set the formula for decoding special analog IMEs
         mTransform.setImeFormula( ImeFormula.DEFAULT );
         
+        // Connect the upstream end of the transform
+        view.setOnKeyListener( mTransform );
+        
         // Connect the downstream end of the transform
         mTransform.registerListener( this );
-        
-        // Request focus for proper listening
-        view.requestFocus();
+    }
+    
+    public KeyTransform getTransform()
+    {
+        return mTransform;
     }
     
     @Override

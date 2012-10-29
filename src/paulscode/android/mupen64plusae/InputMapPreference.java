@@ -17,7 +17,7 @@
  * 
  * Authors: littleguy77
  * 
- * Override implementations inspired by
+ * Concise implementation inspired by
  * http://stackoverflow.com/questions/4505845/concise-way-of-writing-new-dialogpreference-classes
  */
 package paulscode.android.mupen64plusae;
@@ -83,8 +83,8 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         mN64ToButton[InputMap.CPD_L] = (Button) view.findViewById( R.id.buttonCL );
         mN64ToButton[InputMap.CPD_D] = (Button) view.findViewById( R.id.buttonCD );
         mN64ToButton[InputMap.CPD_U] = (Button) view.findViewById( R.id.buttonCU );
-        mN64ToButton[InputMap.BTN_R] = (Button) view.findViewById( R.id.buttonL );
-        mN64ToButton[InputMap.BTN_L] = (Button) view.findViewById( R.id.buttonR );
+        mN64ToButton[InputMap.BTN_R] = (Button) view.findViewById( R.id.buttonR );
+        mN64ToButton[InputMap.BTN_L] = (Button) view.findViewById( R.id.buttonL );
         mN64ToButton[InputMap.AXIS_R] = (Button) view.findViewById( R.id.buttonAR );
         mN64ToButton[InputMap.AXIS_L] = (Button) view.findViewById( R.id.buttonAL );
         mN64ToButton[InputMap.AXIS_D] = (Button) view.findViewById( R.id.buttonAD );

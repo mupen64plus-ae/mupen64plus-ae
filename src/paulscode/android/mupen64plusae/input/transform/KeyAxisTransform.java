@@ -45,6 +45,7 @@ public class KeyAxisTransform extends KeyTransform implements View.OnGenericMoti
         mInputCodes = inputCodeFilter.clone();
     }
     
+    @Override
     public boolean onGenericMotion( View v, MotionEvent event )
     {
         // Read all the requested axes

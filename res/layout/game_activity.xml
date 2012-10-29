@@ -10,7 +10,7 @@
         android:layout_height="fill_parent" />
 
     <paulscode.android.mupen64plusae.TouchscreenView
-        android:id="@+id/touchscreenController"
+        android:id="@+id/touchscreenView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 

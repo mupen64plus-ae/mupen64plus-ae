@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import paulscode.android.mupen64plusae.input.Controls;
-import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
@@ -455,10 +454,8 @@ public class TouchscreenView extends View
                 redrawThread.redraw = true;
         }
         
-        // TODO: Implement multi-controller
+        // TODO: This should be in the controller, not the view
         NativeMethods.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY );
-        TouchscreenController.updateSDLButtonStates( Globals.surfaceInstance, SDLButtonPressed,
-                SDLButtonCodes, SDLButtonCount );
     }
     
     /**
@@ -962,14 +959,14 @@ public class TouchscreenView extends View
                 {
                     // Need to redraw the analog stick
                     redraw = false;
-                    Globals.gameInstance.runOnUiThread( redrawer );
+                    Globals.gameActivity.runOnUiThread( redrawer );
                 }
                 
                 if( redrawFPS )
                 {
                     // Need to redraw the FPS indicator
                     redrawFPS = false;
-                    Globals.gameInstance.runOnUiThread( redrawerFPS );
+                    Globals.gameActivity.runOnUiThread( redrawerFPS );
                 }
                 
                 // Sleep for a while, to save the CPU:

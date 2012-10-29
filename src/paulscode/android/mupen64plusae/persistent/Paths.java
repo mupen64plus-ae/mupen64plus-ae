@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.GameActivity;
+import paulscode.android.mupen64plusae.GameImplementation;
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -151,10 +152,10 @@ public class Paths
     
     public Object getROMPath( UserPrefs prefs, GameActivity activity )
     {
-        GameActivity.finishedReading = false;
+        GameImplementation.finishedReading = false;
         if( prefs.isLastGameNull )
         {
-            GameActivity.finishedReading = true;
+            GameImplementation.finishedReading = true;
             Utility.systemExitFriendly( "Invalid ROM", activity, 2000 );
         }
         else if( prefs.isLastGameZipped )
@@ -184,18 +185,18 @@ public class Paths
                 if( ErrorLogger.hasError() )
                     ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
                 
-                GameActivity.finishedReading = true;
+                GameImplementation.finishedReading = true;
                 
                 // Kick back out to the main menu
                 activity.finish();
             }
             else
             {
-                GameActivity.finishedReading = true;
+                GameImplementation.finishedReading = true;
                 return (Object) Paths.tmpFile;
             }
         }
-        GameActivity.finishedReading = true;
+        GameImplementation.finishedReading = true;
         return (Object) prefs.lastGame;
     }
 }

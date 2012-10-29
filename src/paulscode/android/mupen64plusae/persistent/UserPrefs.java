@@ -91,9 +91,6 @@ public class UserPrefs
     /** The button map for player 4. */
     public final InputMap gamepadMap4;
     
-    /** True if the volume keys can be used as controller buttons. */
-    public final boolean isVolKeysEnabled;
-    
     /** True if video is enabled. */
     public final boolean isVideoEnabled;
     
@@ -123,6 +120,9 @@ public class UserPrefs
     
     /** The filename of the selected audio plug-in. */
     public final String audioPlugin;
+    
+    /** True if the Reality Signal Processor is enabled. */
+    public final boolean isRspEnabled;
     
     /** The filename of the selected Reality Signal Processor. */
     public final String rspPlugin;
@@ -168,7 +168,6 @@ public class UserPrefs
         gamepadMap2 = new InputMap( mPreferences.getString( "gamepadMap2", "" ) );
         gamepadMap3 = new InputMap( mPreferences.getString( "gamepadMap3", "" ) );
         gamepadMap4 = new InputMap( mPreferences.getString( "gamepadMap4", "" ) );
-        isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", true );
         
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
         isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
@@ -218,8 +217,9 @@ public class UserPrefs
         
         // Derived values
         isAutoFrameskip = videoMaxFrameskip < 0;
-        isAudioEnabled = audioPlugin != null && audioPlugin != "";
-        isXperiaEnabled = xperiaLayout != null && xperiaLayout != "";
+        isAudioEnabled = audioPlugin != null && !audioPlugin.equals( "" );
+        isXperiaEnabled = xperiaLayout != null && !xperiaLayout.equals( "" );
+        isRspEnabled = rspPlugin != null && rspPlugin.equals( "" );
         isLastGameNull = lastGame == null || !( new File( lastGame ) ).exists();
         isLastGameZipped = lastGame != null
                 && lastGame.length() > 3

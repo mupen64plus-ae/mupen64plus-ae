@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: paulscode, littleguy77
+ * Authors: paulscode, lioncash, littleguy77
  */
 package paulscode.android.mupen64plusae;
 

@@ -28,10 +28,7 @@ public class KeyTransform extends AbstractTransform implements View.OnKeyListene
 {
     public enum ImeFormula
     {
-        DEFAULT,
-        USB_BT_JOYSTICK_CENTER,
-        BT_CONTROLLER,
-        EXAMPLE_IME
+        DEFAULT, USB_BT_JOYSTICK_CENTER, BT_CONTROLLER, EXAMPLE_IME
     }
     
     private ImeFormula mImeFormula;
@@ -51,11 +48,13 @@ public class KeyTransform extends AbstractTransform implements View.OnKeyListene
         mImeFormula = imeFormula;
     }
     
+    @Override
     public boolean onKey( View v, int keyCode, KeyEvent event )
     {
         return onKey( keyCode, event );
     }
     
+    @Override
     public boolean onKey( DialogInterface dialog, int keyCode, KeyEvent event )
     {
         return onKey( keyCode, event );

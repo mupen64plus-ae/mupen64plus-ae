@@ -133,6 +133,7 @@
                 android:key="gamepadMap1"
                 android:summary="@string/gamepadMap_summary"
                 android:title="@string/gamepadMap1_title" />
+            <!--
             <paulscode.android.mupen64plusae.InputMapPreference
                 android:dependency="gamepadEnabled"
                 android:dialogTitle="@string/gamepadMap_dialogTitle"
@@ -151,19 +152,13 @@
                 android:key="gamepadMap4"
                 android:summary="@string/gamepadMap_summary"
                 android:title="@string/gamepadMap4_title" />
-
+            -->
             <Preference
                 android:dependency="gamepadEnabled"
                 android:key="gamepadMapSpecial"
                 android:summary="@string/gamepadMapSpecial_summary"
                 android:title="@string/gamepadMapSpecial_title" />
 
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:dependency="gamepadEnabled"
-                android:key="volumeKeysEnabled"
-                android:summary="@string/volumeKeysEnabled_summary"
-                android:title="@string/volumeKeysEnabled_title" />
         </PreferenceScreen>
         <PreferenceScreen
             android:icon="@drawable/ic_picture"

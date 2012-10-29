@@ -1,3 +1,22 @@
+/**
+ * Mupen64PlusAE, an N64 emulator for the Android platform
+ * 
+ * Copyright (C) 2012 Paul Lamb
+ * 
+ * This file is part of Mupen64PlusAE.
+ * 
+ * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Authors: paulscode, lioncash
+ */
 package paulscode.android.mupen64plusae;
 
 import javax.microedition.khronos.egl.EGL10;
@@ -7,23 +26,14 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import paulscode.android.mupen64plusae.util.Notifier;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 /**
  * SDLSurface. This is what we draw on, so we need to know when it's created in order to do anything
@@ -31,8 +41,7 @@ import android.view.View;
  * 
  * Because of this, that's where we set up the SDL thread
  */
-public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, View.OnKeyListener,
-        View.OnTouchListener, SensorEventListener
+public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
 {
     public boolean buffFlipped = false;
     
@@ -44,20 +53,9 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
     private static int fpsRate = 15;
     private static int frameCount = -1;
     
-    // Controlled by IME special keys used for analog input:
-    private boolean[] mp64pButtons = new boolean[14];
-    private int axisX = 0;
-    private int axisY = 0;
-    private boolean[] pointers = new boolean[256];
-    private int[] pointerX = new int[256];
-    private int[] pointerY = new int[256];
-    
     // EGL private objects
     private EGLSurface mEGLSurface;
     private EGLDisplay mEGLDisplay;
-    
-    // Sensors
-    private static SensorManager mSensorManager;
     
     // Startup
     @TargetApi( 12 )
@@ -65,29 +63,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
     {
         super( context, attribs );
         
-        for( int x = 0; x < 256; x++ )
-        {
-            pointers[x] = false;
-            pointerX[x] = -1;
-            pointerY[x] = -1;
-        }
-        
-        for( int x = 0; x < 14; x++ )
-            mp64pButtons[x] = false;
-        
         getHolder().addCallback( this );
-        
-        setOnKeyListener( this );
-        setOnTouchListener( this );
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 )
-        {
-            setOnGenericMotionListener( new JoystickListener( this ) );
-        }
-        if( !isInEditMode() )
-        {
-            // Do not run this code when drawing this in Eclipse's graphical editor
-            mSensorManager = (SensorManager) context.getSystemService( "sensor" );
-        }
         
         setFocusable( true );
         setFocusableInTouchMode( true );
@@ -95,12 +71,13 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
     }
     
     // Called when we have a valid drawing surface
+    @Override
     public void surfaceCreated( SurfaceHolder holder )
     {
-        enableSensor( Sensor.TYPE_ACCELEROMETER, true );
     }
     
     // Called when we lose the surface
+    @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
         // Send a quit message to the application
@@ -118,11 +95,11 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             }
             mSDLThread = null;
         }
-        enableSensor( Sensor.TYPE_ACCELEROMETER, false );
     }
     
     // Called when the surface is resized
     @SuppressWarnings( "deprecation" )
+    @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
         Log.v( "SDLSurface", "SDLSurface changed" );
@@ -187,7 +164,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                 @Override
                 public void run()
                 {
-                    while( !GameActivity.finishedReading )
+                    while( !GameImplementation.finishedReading )
                     {
                         try
                         {
@@ -207,7 +184,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                     }
                     int state = NativeMethods.stateEmulator();
                     
-                    while( state != GameActivity.EMULATOR_STATE_RUNNING )
+                    while( state != GameImplementation.EMULATOR_STATE_RUNNING )
                     {
                         try
                         {
@@ -240,16 +217,22 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
                     {
                     } // Just to be sure..
                     Log.v( "SDLSurface", "Resuming last session" );
-                    Notifier.showToast( "Resuming game", Globals.gameInstance );
+                    Notifier.showToast( "Resuming game", Globals.gameActivity );
                     NativeMethods.fileLoadEmulator( "Mupen64PlusAE_LastSession.sav" );
                 }
             }.start();
         }
     }
     
+    @Override
     public void onDraw( Canvas canvas )
     {
         // TODO: Confirm that we are intentionally disabling the call to super.onDraw( canvas )
+    }
+    
+    public static boolean createGLContext( int majorVersion, int minorVersion )
+    {
+        return Globals.sdlSurface.initEGL( majorVersion, minorVersion );
     }
     
     // EGL functions
@@ -356,6 +339,27 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
         return true;
     }
     
+    public static void flipBuffers()
+    {
+        Globals.sdlSurface.flipEGL();
+        if( SDLSurface.frameCount < 0 )
+        {
+            SDLSurface.frameCount = 0;
+            SDLSurface.lastFPSCheck = System.currentTimeMillis();
+        }
+        SDLSurface.frameCount++;
+        if( ( Globals.touchscreenView != null && SDLSurface.frameCount >= Globals.touchscreenView.fpsRate )
+                || ( Globals.touchscreenView == null && SDLSurface.frameCount >= SDLSurface.fpsRate ) )
+        {
+            long currentTime = System.currentTimeMillis();
+            float fFPS = ( (float) SDLSurface.frameCount / (float) ( currentTime - SDLSurface.lastFPSCheck ) ) * 1000.0f;
+            if( Globals.touchscreenView != null )
+                Globals.touchscreenView.updateFPS( (int) fFPS );
+            SDLSurface.frameCount = 0;
+            SDLSurface.lastFPSCheck = currentTime;
+        }
+    }
+    
     // EGL buffer flip
     public void flipEGL()
     {
@@ -381,291 +385,5 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback, V
             }
         }
         buffFlipped = true;
-    }
-    
-    public boolean onSDLKey( int keyCode, int action )
-    {
-        if( !Globals.userPrefs.isInputEnabled )
-            return false;
-        
-        if( action == KeyEvent.ACTION_DOWN )
-        {
-            NativeMethods.onSDLKeyDown( keyCode );
-            return true;
-        }
-        else if( action == KeyEvent.ACTION_UP )
-        {
-            NativeMethods.onSDLKeyUp( keyCode );
-            return true;
-        }
-        
-        return false;
-    }
-    
-    public boolean onKey( View v, int keyCode, KeyEvent event )
-    {
-        // Call the other method, so we don't have the same code in two places:
-        return onKey( keyCode, event.getAction() );
-    }
-    
-    @TargetApi( 12 )
-    public boolean onKey( int key, int action )
-    {
-        // This method is used by the Xperia-Play native activity:
-        if( !Globals.userPrefs.isInputEnabled )
-            return false;
-        
-        if( action == KeyEvent.ACTION_DOWN )
-        {
-            if( key == KeyEvent.KEYCODE_MENU )
-                return false;
-            else if( key == KeyEvent.KEYCODE_BACK
-                    && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-            {
-                // There is no Menu button in HC/ ICS, so show/ hide ActionBar when "Back" is
-                // pressed
-                if( Globals.gameInstance != null )
-                {
-                    // Show/ hide the Action Bar
-                    Globals.gameInstance.runOnUiThread( new Runnable()
-                    {
-                        @TargetApi( 11 )
-                        public void run()
-                        {
-                            if( Globals.gameInstance.getActionBar().isShowing() )
-                            {
-                                View view = getRootView();
-                                if( view == null )
-                                    Log.e( "SDLSurface",
-                                            "getRootView() returned null in method onKey" );
-                                else
-                                    view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
-                                Globals.gameInstance.getActionBar().hide();
-                            }
-                            else
-                            {
-                                Globals.gameInstance.getActionBar().show();
-                            }
-                        }
-                    } );
-                }
-                return true;
-            }
-            
-            if( key == KeyEvent.KEYCODE_VOLUME_UP || key == KeyEvent.KEYCODE_VOLUME_DOWN )
-            {
-                if( Globals.userPrefs.isVolKeysEnabled )
-                {
-                    NativeMethods.onKeyDown( key );
-                    return true;
-                }
-                return false;
-            }
-            NativeMethods.onKeyDown( key );
-            return true;
-        }
-        else if( action == KeyEvent.ACTION_UP )
-        {
-            if( key == KeyEvent.KEYCODE_MENU )
-                return false;
-            else if( key == KeyEvent.KEYCODE_BACK
-                    && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-                return true; // We handled ACTION_DOWN in HC/ ICS, so we must also handle ACTION_UP
-                
-            if( key == KeyEvent.KEYCODE_VOLUME_UP || key == KeyEvent.KEYCODE_VOLUME_DOWN )
-            {
-                if( !Globals.userPrefs.isVolKeysEnabled )
-                {
-                    NativeMethods.onKeyUp( key );
-                    return true;
-                }
-                return false;
-            }
-            NativeMethods.onKeyUp( key );
-            return true;
-        }
-        return false;
-    }
-    
-    @TargetApi( 5 )
-    public boolean onTouch( View v, MotionEvent event )
-    {
-        if( !Globals.userPrefs.isInputEnabled )
-            return false;
-        int action = event.getAction();
-        int actionCode = action & MotionEvent.ACTION_MASK;
-        float x = event.getX();
-        float y = event.getY();
-        float p = event.getPressure();
-        
-        NativeMethods.onTouch( action, x, y, p );
-        
-        int maxPid = 0;
-        int pid, i;
-        
-        if( actionCode == MotionEvent.ACTION_POINTER_DOWN )
-        {
-            pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
-            if( pid > maxPid )
-                maxPid = pid;
-            pointers[pid] = true;
-        }
-        else if( actionCode == MotionEvent.ACTION_POINTER_UP )
-        {
-            pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
-            if( pid > maxPid )
-                maxPid = pid;
-            pointers[pid] = false;
-        }
-        else if( actionCode == MotionEvent.ACTION_DOWN )
-        {
-            for( i = 0; i < event.getPointerCount(); i++ )
-            {
-                pid = event.getPointerId( i );
-                if( pid > maxPid )
-                    maxPid = pid;
-                pointers[pid] = true;
-            }
-        }
-        else if( actionCode == MotionEvent.ACTION_UP || actionCode == MotionEvent.ACTION_CANCEL )
-        {
-            for( i = 0; i < 256; i++ )
-            {
-                pointers[i] = false;
-                pointerX[i] = -1;
-                pointerY[i] = -1;
-            }
-        }
-        
-        for( i = 0; i < event.getPointerCount(); i++ )
-        {
-            pid = event.getPointerId( i );
-            if( pointers[pid] )
-            {
-                if( pid > maxPid )
-                    maxPid = pid;
-                pointerX[pid] = (int) event.getX( i );
-                pointerY[pid] = (int) event.getY( i );
-            }
-        }
-        Globals.touchscreenInstance.updatePointers( pointers, pointerX, pointerY, maxPid );
-        return true;
-    }
-    
-    // paulscode: Xperia Play native touch input linkage:
-    public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
-    {
-        if( !Globals.userPrefs.isXperiaEnabled || !Globals.userPrefs.isInputEnabled )
-            return;
-        
-        Globals.touchscreenInstance.updatePointers( pointers, pointerX, pointerY, maxPid );
-    }
-    
-    public void onTouchPad( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
-    {
-        if( !Globals.userPrefs.isXperiaEnabled || !Globals.userPrefs.isInputEnabled )
-            return;
-        
-        GameActivity.mTouchPad.updatePointers( pointers, pointerX, pointerY, maxPid );
-    }
-    
-    // Sensor events
-    public void enableSensor( int sensortype, boolean enabled )
-    {
-        // TODO: This uses getDefaultSensor - what if we have >1 accels?
-        if( enabled )
-        {
-            mSensorManager.registerListener( this, mSensorManager.getDefaultSensor( sensortype ),
-                    SensorManager.SENSOR_DELAY_GAME, null );
-        }
-        else
-        {
-            mSensorManager.unregisterListener( this, mSensorManager.getDefaultSensor( sensortype ) );
-        }
-    }
-    
-    public void onAccuracyChanged( Sensor sensor, int accuracy )
-    {
-        // TODO: Do we need to implement anything here? This is simply to implement interface
-    }
-    
-    public void onSensorChanged( SensorEvent event )
-    {
-        if( event.sensor.getType() == Sensor.TYPE_ACCELEROMETER )
-        {
-            NativeMethods.onAccel( event.values[0], event.values[1], event.values[2] );
-        }
-    }
-    
-    public static void setActivityTitle( String title )
-    {
-        // Called from SDLMain() thread and can't directly affect the view
-        Globals.gameInstance.sendCommand( GameActivity.COMMAND_CHANGE_TITLE, title );
-    }
-    
-    public static boolean createGLContext( int majorVersion, int minorVersion )
-    {
-        return Globals.surfaceInstance.initEGL( majorVersion, minorVersion );
-    }
-    
-    public static void flipBuffers()
-    {
-        Globals.surfaceInstance.flipEGL();
-        if( SDLSurface.frameCount < 0 )
-        {
-            SDLSurface.frameCount = 0;
-            SDLSurface.lastFPSCheck = System.currentTimeMillis();
-        }
-        SDLSurface.frameCount++;
-        if( ( Globals.touchscreenInstance != null && SDLSurface.frameCount >= Globals.touchscreenInstance.fpsRate )
-                || ( Globals.touchscreenInstance == null && SDLSurface.frameCount >= SDLSurface.fpsRate ) )
-        {
-            long currentTime = System.currentTimeMillis();
-            float fFPS = ( (float) SDLSurface.frameCount / (float) ( currentTime - SDLSurface.lastFPSCheck ) ) * 1000.0f;
-            if( Globals.touchscreenInstance != null )
-                Globals.touchscreenInstance.updateFPS( (int) fFPS );
-            SDLSurface.frameCount = 0;
-            SDLSurface.lastFPSCheck = currentTime;
-        }
-    }
-    
-    private class JoystickListener implements View.OnGenericMotionListener
-    {
-        private SDLSurface parent;
-        
-        public JoystickListener( SDLSurface parent )
-        {
-            this.parent = parent;
-        }
-        
-        @TargetApi( 12 )
-        public boolean onGenericMotion( View v, MotionEvent event )
-        {
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 )
-            {
-                // Must be the same order as EButton listing in plugin.h! (input-sdl plug-in)
-                final int Z = 5;
-                final int CRight = 8;
-                final int CLeft = 9;
-                final int CDown = 10;
-                final int CUp = 11;
-                
-                // Z-button and C-pad, interpret left analog trigger and right analog stick
-                parent.mp64pButtons[Z] = ( event.getAxisValue( MotionEvent.AXIS_Z ) > 0 );
-                parent.mp64pButtons[CLeft] = ( event.getAxisValue( MotionEvent.AXIS_RX ) < -0.5 );
-                parent.mp64pButtons[CRight] = ( event.getAxisValue( MotionEvent.AXIS_RX ) > 0.5 );
-                parent.mp64pButtons[CUp] = ( event.getAxisValue( MotionEvent.AXIS_RY ) < -0.5 );
-                parent.mp64pButtons[CDown] = ( event.getAxisValue( MotionEvent.AXIS_RY ) > 0.5 );
-                
-                // Analog X-Y, interpret the left analog stick
-                parent.axisX = (int) ( 80.0f * event.getAxisValue( MotionEvent.AXIS_X ) );
-                parent.axisY = (int) ( -80.0f * event.getAxisValue( MotionEvent.AXIS_Y ) );
-                
-                NativeMethods.updateVirtualGamePadStates( 0, parent.mp64pButtons, parent.axisX,
-                        parent.axisY );
-                return true;
-            }
-            return false;
-        }
     }
 }

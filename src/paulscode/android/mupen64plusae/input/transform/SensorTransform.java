@@ -26,12 +26,14 @@ import android.hardware.SensorEventListener;
 
 public class SensorTransform extends AbstractTransform implements SensorEventListener
 {
+    @Override
     public void onAccuracyChanged( Sensor sensor, int accuracy )
     {
         // TODO Auto-generated method stub
         
     }
     
+    @Override
     public void onSensorChanged( SensorEvent event )
     {
         if( event.sensor.getType() == Sensor.TYPE_ACCELEROMETER )

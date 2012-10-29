@@ -1,3 +1,22 @@
+/**
+ * Mupen64PlusAE, an N64 emulator for the Android platform
+ * 
+ * Copyright (C) 2012 Paul Lamb
+ * 
+ * This file is part of Mupen64PlusAE.
+ * 
+ * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Authors: paulscode, lioncash
+ */
 package paulscode.android.mupen64plusae.input;
 
 import java.io.BufferedReader;
@@ -16,14 +35,6 @@ import android.content.res.Resources;
 import android.util.FloatMath;
 import android.util.Log;
 
-/**
- * The XperiaPlayController class provides a customizable interface with the Xperia Play touchpad.
- * 
- * @author: Paul Lamb
- * 
- *          http://www.paulscode.com
- * 
- */
 public class XperiaPlayController extends AbstractController
 {
     // Maximum number of buttons that a touchpad layout can have:
@@ -92,13 +103,13 @@ public class XperiaPlayController extends AbstractController
             XperiaPlayController.touchPadPointers[x] = false;
             XperiaPlayController.touchPadPointerX[x] = -1;
             XperiaPlayController.touchPadPointerY[x] = -1;
-            TouchscreenController.touchScreenPointers[x] = false;
-            TouchscreenController.touchScreenPointerX[x] = -1;
-            TouchscreenController.touchScreenPointerY[x] = -1;
+//            TouchscreenController.touchScreenPointers[x] = false;
+//            TouchscreenController.touchScreenPointerX[x] = -1;
+//            TouchscreenController.touchScreenPointerY[x] = -1;
         }
         for( int x = 0; x < 30; x++ )
         {
-            TouchscreenController.previousKeyStates[x] = false;
+//            TouchscreenController.previousKeyStates[x] = false;
         }
         resources = res;
     }
@@ -256,9 +267,8 @@ public class XperiaPlayController extends AbstractController
             }
         }
         
+        // TODO: use AbstractController to do this
         NativeMethods.updateVirtualGamePadStates( 0, mp64pButtons, axisX, axisY );
-        TouchscreenController.updateSDLButtonStates( Globals.surfaceInstance, SDLButtonPressed,
-                SDLButtonCodes, SDLButtonCount );
     }
     
     /**
@@ -588,17 +598,16 @@ public class XperiaPlayController extends AbstractController
         XperiaPlayController.touchPadPointers[pointer_id] = true;
         XperiaPlayController.touchPadPointerX[pointer_id] = x;
         XperiaPlayController.touchPadPointerY[pointer_id] = XperiaPlayController.PAD_HEIGHT - y;
-        
         // the Xperia Play's touchpad y-axis is flipped for some reason
     }
     
     public void touchPadEndEvent()
     {
-        if( Globals.surfaceInstance != null )
+        if( Globals.sdlSurface != null )
         {
-            Globals.surfaceInstance.onTouchPad( XperiaPlayController.touchPadPointers,
-                    XperiaPlayController.touchPadPointerX, XperiaPlayController.touchPadPointerY,
-                    64 );
+//            Globals.sdlSurface.onTouchPad( XperiaPlayController.touchPadPointers,
+//                    XperiaPlayController.touchPadPointerX, XperiaPlayController.touchPadPointerY,
+//                    64 );
         }
     }
     
@@ -608,37 +617,48 @@ public class XperiaPlayController extends AbstractController
     
     public void touchScreenPointerDown( int pointer_id )
     {
-        TouchscreenController.touchScreenPointers[pointer_id] = true;
+//        TouchscreenController.touchScreenPointers[pointer_id] = true;
     }
     
     public void touchScreenPointerUp( int pointer_id )
     {
-        TouchscreenController.touchScreenPointers[pointer_id] = false;
-        TouchscreenController.touchScreenPointerX[pointer_id] = -1;
-        TouchscreenController.touchScreenPointerY[pointer_id] = -1;
+//        TouchscreenController.touchScreenPointers[pointer_id] = false;
+//        TouchscreenController.touchScreenPointerX[pointer_id] = -1;
+//        TouchscreenController.touchScreenPointerY[pointer_id] = -1;
     }
     
     public void touchScreenPointerPosition( int pointer_id, int x, int y )
     {
-        TouchscreenController.touchScreenPointers[pointer_id] = true;
-        TouchscreenController.touchScreenPointerX[pointer_id] = x;
-        TouchscreenController.touchScreenPointerY[pointer_id] = y;
+//        TouchscreenController.touchScreenPointers[pointer_id] = true;
+//        TouchscreenController.touchScreenPointerX[pointer_id] = x;
+//        TouchscreenController.touchScreenPointerY[pointer_id] = y;
     }
     
     public void touchScreenEndEvent()
     {
-        if( Globals.surfaceInstance != null )
-            Globals.surfaceInstance.onTouchScreen( TouchscreenController.touchScreenPointers,
-                    TouchscreenController.touchScreenPointerX,
-                    TouchscreenController.touchScreenPointerY, 64 );
+//        if( Globals.sdlSurface != null )
+//            Globals.sdlSurface.onTouchScreen( TouchscreenController.touchScreenPointers,
+//                    TouchscreenController.touchScreenPointerX,
+//                    TouchscreenController.touchScreenPointerY, 64 );
     }
     
+    // paulscode: Xperia Play native touch input linkage:
+    public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
+    {
+        if( !Globals.userPrefs.isXperiaEnabled || !Globals.userPrefs.isInputEnabled )
+            return;
+        
+        Globals.touchscreenView.updatePointers( pointers, pointerX, pointerY, maxPid );
+    }
+
     public boolean onNativeKey( int action, int keycode )
     {
-        if( Globals.surfaceInstance == null )
-            return false;
-        return Globals.surfaceInstance.onKey( keycode, action );
+        return true;
+//        if( Globals.sdlSurface == null )
+//            return false;
+//        return Globals.sdlSurface.onKey( keycode, action );
     }
+    
     
     /**
      * Determines if the two specified line segments intersect with each other, and calculates where

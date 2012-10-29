@@ -48,17 +48,17 @@ public class NativeMethods
     
     public static native void onAccel( float x, float y, float z );
     
-    public static native void onKeyDown( int keycode );
+    //public static native void onKeyDown( int keycode );
     
-    public static native void onKeyUp( int keycode );
+    //public static native void onKeyUp( int keycode );
     
     public static native void onResize( int x, int y, int format );
     
-    public static native void onSDLKeyDown( int keycode );
+    //public static native void onSDLKeyDown( int keycode );
     
-    public static native void onSDLKeyUp( int keycode );
+    //public static native void onSDLKeyUp( int keycode );
     
-    public static native void onTouch( int action, float x, float y, float p );
+    //public static native void onTouch( int action, float x, float y, float p );
     
     public static native void pauseEmulator();
     
@@ -150,7 +150,7 @@ public class NativeMethods
     
     public static Object getROMPath()
     {
-        return Globals.paths.getROMPath( Globals.userPrefs, Globals.gameInstance );
+        return Globals.paths.getROMPath( Globals.userPrefs, Globals.gameActivity );
     }
     
     public static boolean getScreenStretch()
@@ -160,12 +160,12 @@ public class NativeMethods
     
     public static void setActivityTitle( String title )
     {
-        SDLSurface.setActivityTitle( title );
+        //SDLSurface.setActivityTitle( title );
     }
     
     public static void showToast( String message )
     {
-        Notifier.showToast( message, Globals.gameInstance );
+        Notifier.showToast( message, Globals.gameActivity );
     }
     
     public static boolean useRGBA8888()
@@ -175,6 +175,6 @@ public class NativeMethods
     
     public static void vibrate( boolean active )
     {
-        Globals.gameInstance.vibrate( active );
+        Globals.gameImpl.vibrate( active );
     }
 }

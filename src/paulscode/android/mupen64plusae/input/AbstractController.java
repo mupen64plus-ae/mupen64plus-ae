@@ -61,10 +61,10 @@ public abstract class AbstractController
     protected boolean mBtnCU;
     protected boolean mBtnR;
     protected boolean mBtnL;
-    // protected boolean mBtnRumble; // TODO: Are these needed?
-    // protected boolean mBtnMempak;
-    protected float mAxisFractionX;
-    protected float mAxisFractionY;
+    protected float mAxisFractionXpos;
+    protected float mAxisFractionXneg;
+    protected float mAxisFractionYpos;
+    protected float mAxisFractionYneg;
     
     private int mPlayerNumber = 1;
     private static final float AXIS_SCALE = 80;
@@ -87,18 +87,15 @@ public abstract class AbstractController
             mBtnCU,
             mBtnR,
             mBtnL };
-        int axisX = (int) ( mAxisFractionX * AXIS_SCALE );
-        int axisY = (int) ( mAxisFractionY * AXIS_SCALE );
-        NativeMethods.updateVirtualGamePadStates( mPlayerNumber, buttons, axisX, axisY );
+        int axisX = (int) ( (mAxisFractionXpos - mAxisFractionXneg) * AXIS_SCALE );
+        int axisY = (int) ( (mAxisFractionYpos - mAxisFractionYneg) * AXIS_SCALE );
+        NativeMethods.updateVirtualGamePadStates( mPlayerNumber - 1, buttons, axisX, axisY );
     }
     
     public void clearState()
     {
-        mDpadR = mDpadL = mDpadD = mDpadU
-                = mBtnStart = mBtnZ = mBtnB = mBtnA
-                = mBtnCR = mBtnCL = mBtnCD = mBtnCU
-                = mBtnR = mBtnL = false;
-        mAxisFractionX = mAxisFractionY = 0;
+        mDpadR = mDpadL = mDpadD = mDpadU = mBtnStart = mBtnZ = mBtnB = mBtnA = mBtnCR = mBtnCL = mBtnCD = mBtnCU = mBtnR = mBtnL = false;
+        mAxisFractionXpos = mAxisFractionXneg = mAxisFractionYpos = mAxisFractionYneg = 0;
         notifyChanged();
     }
     

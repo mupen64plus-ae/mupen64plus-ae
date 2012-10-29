@@ -118,16 +118,16 @@ public class InputMap
                 controller.mBtnL = state;
                 break;
             case AXIS_R:
-                controller.mAxisFractionX = strength;
+                controller.mAxisFractionXpos = strength;
                 break;
             case AXIS_L:
-                controller.mAxisFractionX = -strength;
+                controller.mAxisFractionXneg = strength;
                 break;
             case AXIS_D:
-                controller.mAxisFractionY = -strength;
+                controller.mAxisFractionYneg = strength;
                 break;
             case AXIS_U:
-                controller.mAxisFractionY = strength;
+                controller.mAxisFractionYpos = strength;
                 break;
             default:
                 break;
