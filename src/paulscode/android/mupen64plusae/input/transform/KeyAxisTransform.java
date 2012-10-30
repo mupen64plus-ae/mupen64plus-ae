@@ -35,9 +35,7 @@ public class KeyAxisTransform extends KeyTransform implements View.OnGenericMoti
         // By default, listen to all possible gamepad axes
         mInputCodes = new int[DEFAULT_NUM_INPUTS];
         for( int i = 0; i < mInputCodes.length; i++ )
-        {
             mInputCodes[i] = -( i + 1 );
-        }
     }
     
     public void setInputCodeFilter( int[] inputCodeFilter )

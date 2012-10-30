@@ -34,7 +34,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,21 +55,66 @@ public class GameImplementation implements View.OnKeyListener
     // App state
     public static boolean finishedReading = false;
     
+    // Private static objects used by public static methods
+    private static GameActivity sGameActivity = null;
+    private static GameActivityXperiaPlay sGameActivityXperiaPlay = null;
+    private static Vibrator sVibrator = null;
+    private static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
+    
     // Internals
+    private Activity mActivity;
     @SuppressWarnings( "unused" )
     private TouchscreenController mTouchscreenController;
     private PeripheralController mPeripheralController;
-    private Vibrator mVibrator = null;
-    private static long[] vibratePattern = { 0, 500, 0 };
+    private MenuItem mSlotMenuItem;
     private int mSlot = 0;
     private static final int NUM_SLOTS = 10;
-    private MenuItem mSlotMenuItem;
-    private Activity mActivity;
     
-    public GameImplementation( Activity gameActivity )
+    public GameImplementation( Activity activity )
     {
-        mActivity = gameActivity;
-        Globals.gameImpl = this;
+        mActivity = activity;
+        if( activity instanceof GameActivity )
+            sGameActivity = ( GameActivity ) activity;
+        if( activity instanceof GameActivityXperiaPlay )
+            sGameActivityXperiaPlay = ( GameActivityXperiaPlay ) activity;
+        sVibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+    }
+    
+    public static Object getRomPath()
+    {
+        if( sGameActivity != null )
+            return Globals.paths.getROMPath( Globals.userPrefs, sGameActivity );
+        else if( sGameActivityXperiaPlay != null )
+            return Globals.paths.getROMPath( Globals.userPrefs, sGameActivityXperiaPlay );
+        else
+            return null;
+    }
+    
+    public static void runOnUiThread( Runnable action )
+    {
+        
+        if( sGameActivity != null )
+            sGameActivity.runOnUiThread( action );
+        else if( sGameActivityXperiaPlay != null )
+            sGameActivityXperiaPlay.runOnUiThread( action );
+    }
+    
+    public static void showToast( String message )
+    {
+        if( sGameActivity != null )
+            Notifier.showToast( message, sGameActivity );
+        else if( sGameActivityXperiaPlay != null )
+            Notifier.showToast( message, sGameActivityXperiaPlay );
+    }    
+
+    public static void vibrate( boolean active )
+    {
+        if( sVibrator == null )
+            return;
+        if( active )
+            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
+        else
+            sVibrator.cancel();
     }
     
     public void onCreate( Bundle savedInstanceState )
@@ -85,7 +129,6 @@ public class GameImplementation implements View.OnKeyListener
         mTouchscreenController = new TouchscreenController( surface );
         mPeripheralController = new PeripheralController( surface,
                 Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
-        mVibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controller key listener, to add some functionality
         surface.setOnKeyListener( this );
@@ -153,7 +196,8 @@ public class GameImplementation implements View.OnKeyListener
                 // Save game state and launch MenuActivity
                 saveSession();
                 Notifier.clear();
-                Globals.gameActivity = null;
+                sGameActivity = null;
+                sGameActivityXperiaPlay = null;
                 Intent intent = new Intent( mActivity, MenuActivity.class );
                 intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                 mActivity.startActivity( intent );
@@ -182,16 +226,6 @@ public class GameImplementation implements View.OnKeyListener
             Globals.touchscreenView.setResources( mActivity.getResources() );
             Globals.touchscreenView.loadPad();
         }
-    }
-
-    public void vibrate( boolean active )
-    {
-        if( mVibrator == null )
-            return;
-        if( active )
-            mVibrator.vibrate( vibratePattern, 0 );
-        else
-            mVibrator.cancel();
     }
 
     @Override
@@ -252,9 +286,7 @@ public class GameImplementation implements View.OnKeyListener
         {
             // SDK version at least HONEYCOMB, so there should be software buttons on this device:
             View view = Globals.sdlSurface.getRootView();
-            if( view == null )
-                Log.e( "GameActivity", "getRootView() returned null in method onCreate" );
-            else
+            if( view != null )
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
             mActivity.getActionBar().hide();
         }
@@ -340,6 +372,7 @@ public class GameImplementation implements View.OnKeyListener
         {
             mRootView = rootView;
         }
+        
         @Override
         @TargetApi( 11 )
         public void run()

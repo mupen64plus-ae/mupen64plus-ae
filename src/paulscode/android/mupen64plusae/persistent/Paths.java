@@ -21,7 +21,6 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.GameActivity;
 import paulscode.android.mupen64plusae.GameImplementation;
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
@@ -150,7 +149,7 @@ public class Paths
         return ( new File( storageDir ) ).exists();
     }
     
-    public Object getROMPath( UserPrefs prefs, GameActivity activity )
+    public Object getROMPath( UserPrefs prefs, Activity activity )
     {
         GameImplementation.finishedReading = false;
         if( prefs.isLastGameNull )

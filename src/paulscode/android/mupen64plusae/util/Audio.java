@@ -71,16 +71,6 @@ public class Audio
                 catch( IllegalStateException ise )
                 {
                     Log.e( "GameActivity", "audioStartThread IllegalStateException", ise );
-                    if( Globals.gameActivity != null )
-                        Notifier.showToast(
-                                Globals.gameActivity.getString( R.string.illegal_audio_state ),
-                                Globals.gameActivity );
-                    else
-                        // Static context, can't get the string in the correct locale, so just use
-                        // English:
-                        Notifier.showToast(
-                                "Audio track illegal state.  Please report at paulscode.com",
-                                Globals.gameActivity );
                 }
             }
         }, "Audio Thread" );

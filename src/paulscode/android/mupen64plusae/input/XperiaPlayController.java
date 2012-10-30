@@ -35,6 +35,7 @@ import android.content.res.Resources;
 import android.util.FloatMath;
 import android.util.Log;
 
+// TODO: Straighten out this class (I left it a mess (littleguy))
 public class XperiaPlayController extends AbstractController
 {
     // Maximum number of buttons that a touchpad layout can have:

@@ -99,12 +99,12 @@ public class PeripheralController extends AbstractController implements Abstract
     }
     
     @Override
-    public void onMapChanged( InputMap newValue )
+    public void onMapChanged( InputMap map )
     {
         // If the button/axis mappings change, update the transform's listening filter
         if( mTransform != null && mTransform instanceof KeyAxisTransform )
         {
-            ( (KeyAxisTransform) mTransform ).setInputCodeFilter( newValue.getMappedInputCodes() );
+            ( (KeyAxisTransform) mTransform ).setInputCodeFilter( map.getMappedInputCodes() );
         }
     }
 }

@@ -24,6 +24,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
+// TODO: Implement this class, if desired (just a stub right now)
 public class SensorTransform extends AbstractTransform implements SensorEventListener
 {
     @Override

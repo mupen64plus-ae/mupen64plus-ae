@@ -28,7 +28,7 @@ import android.util.Log;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
- * 
+ * <p/>
  * Hardware types are used to apply device-specific fixes for missing shadows and decals, and must
  * match the #defines in OpenGL.cpp.
  */

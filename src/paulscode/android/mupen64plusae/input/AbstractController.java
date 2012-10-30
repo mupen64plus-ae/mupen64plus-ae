@@ -41,8 +41,8 @@ import paulscode.android.mupen64plusae.NativeMethods;
  * calling notifyChanged(). For example,
  * <pre>
  * {@code
- * mDpadR = true; notifyChanges(); mDpadL = false; notifyChanges(); // Inefficient
- * mDpadR = true; mDpadL = false; notifyChanges(); // Better
+ * mDpadR = true; notifyChanges(); mDpadL = false; notifyChanged(); // Inefficient
+ * mDpadR = true; mDpadL = false; notifyChanged(); // Better
  * }</pre>
  */
 public abstract class AbstractController

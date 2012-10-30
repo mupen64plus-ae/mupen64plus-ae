@@ -26,7 +26,7 @@ public class InputMap
 {
     public interface Listener
     {
-        public void onMapChanged( InputMap newValue );
+        public void onMapChanged( InputMap map );
     }
     
     // Indices into N64 inputs array

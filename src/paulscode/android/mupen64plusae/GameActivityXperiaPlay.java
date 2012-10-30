@@ -38,7 +38,6 @@ public class GameActivityXperiaPlay extends NativeActivity
     public GameActivityXperiaPlay()
     {
         mImplementation = new GameImplementation( this );
-        Globals.gameActivityXperiaPlay = this;
     }
     
     @Override

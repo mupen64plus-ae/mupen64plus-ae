@@ -44,8 +44,8 @@ import android.preference.PreferenceManager;
  * --> mPreferences.getString( "myNewKey", "myFallbackValue" );
  * <p/>
  * If you didn't use this class, you would need to search through the entire codebase for every call
- * to getString( "myOldKey", ... ) and update each one. Another advantage of this class is that the
- * same fallback value will be used everywhere. A third advantage is that you can easily provide
+ * to getString( "myOldKey", ... ) and update each one. This class also ensures that the same
+ * fallback value will be used everywhere. A third advantage is that you can easily provide
  * frequently-used "derived" preferences, as in
  * <p/>
  * isMyPreferenceValid = ( myPreference != null ) && ( myPreference.field != someBadValue );

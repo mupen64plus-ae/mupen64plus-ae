@@ -217,7 +217,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                     {
                     } // Just to be sure..
                     Log.v( "SDLSurface", "Resuming last session" );
-                    Notifier.showToast( "Resuming game", Globals.gameActivity );
+                    GameImplementation.showToast( "Resuming game" );
                     NativeMethods.fileLoadEmulator( "Mupen64PlusAE_LastSession.sav" );
                 }
             }.start();

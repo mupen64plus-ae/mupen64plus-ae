@@ -26,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+// TODO: Straighten out this class (I left it a mess (littleguy))
 public class TouchscreenController extends AbstractController implements OnTouchListener
 {
     // Controlled by IME special keys used for analog input:

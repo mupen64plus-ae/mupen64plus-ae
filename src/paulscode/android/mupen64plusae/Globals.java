@@ -37,9 +37,6 @@ public class Globals
     // TODO: Eliminate as many of these as possible
     public static TouchscreenView touchscreenView = null;
     public static SDLSurface sdlSurface = null;
-    public static GameActivity gameActivity = null;
-    public static GameActivityXperiaPlay gameActivityXperiaPlay = null;
-    public static GameImplementation gameImpl = null;
     public static String extraArgs = ".";
     public static boolean resumeLastSession = false;
     

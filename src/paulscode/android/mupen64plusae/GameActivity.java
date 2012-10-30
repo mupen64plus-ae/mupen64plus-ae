@@ -31,7 +31,6 @@ public class GameActivity extends Activity
     public GameActivity()
     {
         mImplementation = new GameImplementation( this );
-        Globals.gameActivity = this;
     }
     
     @Override

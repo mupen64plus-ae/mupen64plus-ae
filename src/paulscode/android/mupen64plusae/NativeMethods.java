@@ -150,7 +150,7 @@ public class NativeMethods
     
     public static Object getROMPath()
     {
-        return Globals.paths.getROMPath( Globals.userPrefs, Globals.gameActivity );
+        return GameImplementation.getRomPath();
     }
     
     public static boolean getScreenStretch()
@@ -165,7 +165,7 @@ public class NativeMethods
     
     public static void showToast( String message )
     {
-        Notifier.showToast( message, Globals.gameActivity );
+        GameImplementation.showToast( message );
     }
     
     public static boolean useRGBA8888()
@@ -175,6 +175,6 @@ public class NativeMethods
     
     public static void vibrate( boolean active )
     {
-        Globals.gameImpl.vibrate( active );
+        GameImplementation.vibrate( active );
     }
 }

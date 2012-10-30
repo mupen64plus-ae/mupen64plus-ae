@@ -25,6 +25,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.Log;
 
+// TODO: Cleanup, refactor, subdivide this class (I turned it into a dumping ground during
+// refactoring (littleguy))
 public class Utility
 {
     /**
@@ -756,5 +758,61 @@ public class Utility
                 Log.e( "GameActivity", "Unable to load native library '" + filename + "'" );
             }
         }
+    }
+
+    /**
+     * Determines if the two specified line segments intersect with each other, and calculates where
+     * the intersection occurs if they do.
+     * 
+     * @param seg1pt1_x
+     *            X-coordinate for the first end of the first line segment.
+     * @param seg1pt1_y
+     *            Y-coordinate for the first end of the first line segment.
+     * @param seg1pt2_x
+     *            X-coordinate for the second end of the first line segment.
+     * @param seg1pt2_y
+     *            Y-coordinate for the second end of the first line segment.
+     * @param seg2pt1_x
+     *            X-coordinate for the first end of the second line segment.
+     * @param seg2pt1_y
+     *            Y-coordinate for the first end of the second line segment.
+     * @param seg2pt2_x
+     *            X-coordinate for the second end of the second line segment.
+     * @param seg2pt2_y
+     *            Y-coordinate for the second end of the second line segment.
+     * @param crossPt
+     *            Changed to the point of intersection if there is one, otherwise unchanged.
+     * @return True if the two line segments intersect.
+     */
+    public static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
+            float seg1pt2_y, float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
+            Point crossPt )
+    {
+        float vec1_x = seg1pt2_x - seg1pt1_x;
+        float vec1_y = seg1pt2_y - seg1pt1_y;
+        
+        float vec2_x = seg2pt2_x - seg2pt1_x;
+        float vec2_y = seg2pt2_y - seg2pt1_y;
+        
+        float div = ( -vec2_x * vec1_y + vec1_x * vec2_y );
+        
+        // Segments don't cross
+        if( div == 0 )
+            return false;
+            
+        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) )
+                / div;
+        float t = ( vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
+        
+        if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
+        {
+            // Segments cross, point of intersection stored in 'crossPt'
+            crossPt.x = seg1pt1_x + ( t * vec1_x );
+            crossPt.y = seg1pt1_y + ( t * vec1_y );
+            return true;
+        }
+        
+        // Segments don't cross
+        return false;
     }
 }
