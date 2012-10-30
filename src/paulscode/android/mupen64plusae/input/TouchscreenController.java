@@ -59,7 +59,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
         float p = event.getPressure();
         
         int maxPid = 0;
-        int pid, i;
+        int pid;
         
         if( actionCode == MotionEvent.ACTION_POINTER_DOWN )
         {
@@ -77,7 +77,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
         }
         else if( actionCode == MotionEvent.ACTION_DOWN )
         {
-            for( i = 0; i < event.getPointerCount(); i++ )
+            for( int i = 0; i < event.getPointerCount(); i++ )
             {
                 pid = event.getPointerId( i );
                 if( pid > maxPid )
@@ -87,7 +87,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
         }
         else if( actionCode == MotionEvent.ACTION_UP || actionCode == MotionEvent.ACTION_CANCEL )
         {
-            for( i = 0; i < 256; i++ )
+            for( int i = 0; i < 256; i++ )
             {
                 pointers[i] = false;
                 pointerX[i] = -1;
@@ -95,7 +95,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
             }
         }
         
-        for( i = 0; i < event.getPointerCount(); i++ )
+        for( int i = 0; i < event.getPointerCount(); i++ )
         {
             pid = event.getPointerId( i );
             if( pointers[pid] )
