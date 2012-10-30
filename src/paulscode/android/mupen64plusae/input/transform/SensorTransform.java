@@ -30,8 +30,7 @@ public class SensorTransform extends AbstractTransform implements SensorEventLis
     @Override
     public void onAccuracyChanged( Sensor sensor, int accuracy )
     {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub 
     }
     
     @Override

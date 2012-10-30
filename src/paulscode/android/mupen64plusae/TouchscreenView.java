@@ -725,7 +725,8 @@ public class TouchscreenView extends View
                                 }
                                 catch( IllegalThreadStateException itse )
                                 {
-                                } // Problem.. the "stick" is not going to redraw
+                                    // Problem... the "stick" is not going to redraw
+                                }
                             }
                             
                             // Position (percentages of the screen dimensions):
@@ -795,7 +796,8 @@ public class TouchscreenView extends View
                                 }
                                 catch( IllegalThreadStateException itse )
                                 {
-                                } // problem.. the FPS is not going to refresh
+                                    // Problem.., the FPS is not going to refresh
+                                }
                             }
                         }
                         else

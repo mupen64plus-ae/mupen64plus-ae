@@ -145,6 +145,10 @@ public class AppData
      */
     private int identifyHardwareType()
     {
+        // TODO: Simplify this. I hardly believe you need to use 'cat' on cpuinfo
+        // to get this information.
+        // Already know how to simplify it. Will do it when I have the time. (Lioncash)
+        
         // Parse a long string of information from the operating system
         Log.v( "Application", "CPU info available from file /proc/cpuinfo:" );
         ProcessBuilder cmd;
