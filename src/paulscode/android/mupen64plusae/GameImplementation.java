@@ -77,7 +77,6 @@ public class GameImplementation implements View.OnKeyListener
             sGameActivity = ( GameActivity ) activity;
         if( activity instanceof GameActivityXperiaPlay )
             sGameActivityXperiaPlay = ( GameActivityXperiaPlay ) activity;
-        sVibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
     }
     
     public static Object getRomPath()
@@ -129,6 +128,7 @@ public class GameImplementation implements View.OnKeyListener
         mTouchscreenController = new TouchscreenController( surface );
         mPeripheralController = new PeripheralController( surface,
                 Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
+        sVibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controller key listener, to add some functionality
         surface.setOnKeyListener( this );
@@ -139,6 +139,7 @@ public class GameImplementation implements View.OnKeyListener
     
     public void onCreateOptionsMenu( Menu menu )
     {
+        // Inflate the in-game menu, get the 'Slot X' menu item
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
         setSlot( 0 );
