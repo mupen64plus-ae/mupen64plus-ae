@@ -213,8 +213,11 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     {
         // Find the Button view that was touched and map it
         for( int i = 0; i < mN64ToButton.length; i++ )
+        {
             if( mN64ToButton[i] == v )
                 mMap.mapInput( i, mInputCodeToBeMapped );
+        }
+        
         updateViews();
     }
     
@@ -223,8 +226,11 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     {
         // Find the Button view that was long-touched and unmap it
         for( int i = 0; i < mN64ToButton.length; i++ )
+        {
             if( mN64ToButton[i] == v )
                 mMap.unmapInput( i );
+        }
+        
         updateViews();
         return true;
     }
