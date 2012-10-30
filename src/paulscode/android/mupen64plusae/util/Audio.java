@@ -1,8 +1,6 @@
 package paulscode.android.mupen64plusae.util;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
-import paulscode.android.mupen64plusae.R;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;

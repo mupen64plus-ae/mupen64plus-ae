@@ -25,7 +25,6 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import paulscode.android.mupen64plusae.util.Notifier;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;

@@ -20,7 +20,6 @@
 package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.util.Audio;
-import paulscode.android.mupen64plusae.util.Notifier;
 
 public class NativeMethods
 {
