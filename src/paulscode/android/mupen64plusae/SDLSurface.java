@@ -226,7 +226,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void onDraw( Canvas canvas )
     {
-        // TODO: Confirm that we are intentionally disabling the call to super.onDraw( canvas )
+        // Unused
     }
     
     public static boolean createGLContext( int majorVersion, int minorVersion )
