@@ -217,7 +217,7 @@ public class ConfigFile
             // Get the next section name
             sectionName = section.nextName;
             
-            if( sectionName != null && sectionName.length() > 0 )
+            if( sectionName.length() > 0 )
             {   
                 // Load the next section
                 section = new ConfigSection( sectionName, br );
