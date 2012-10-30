@@ -222,12 +222,12 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     }
     
     @Override
-    public boolean onLongClick( View v )
+    public boolean onLongClick( View view )
     {
         // Find the Button view that was long-touched and unmap it
         for( int i = 0; i < mN64ToButton.length; i++ )
         {
-            if( mN64ToButton[i] == v )
+            if( mN64ToButton[i] == view )
                 mMap.unmapInput( i );
         }
         

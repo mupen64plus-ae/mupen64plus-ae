@@ -29,31 +29,31 @@ import android.preference.PreferenceManager;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
- * <p/>
+ * </p>
  * An instance of this class should be re-constructed every time a preference value changes, from a
  * android.content.SharedPreferences.OnSharedPreferenceChangeListener. A good place to implement the
  * listener is in your PreferenceActivity subclass.
- * <p/>
- * Developers: After creating a preference in /res/xml/preferences.xml, you are encouraged to
+ * </p>
+ * <b>Developers:</b> After creating a preference in /res/xml/preferences.xml, you are encouraged to
  * provide convenient access to it by expanding this class. Although this adds an extra step to
  * development, it simplifies code maintenance later since all maintenance can be consolidated to a
  * single file. For example, if you change the name of a key, you only need to update one line in
  * this class:
- * <p/>
- * myPreference = mPreferences.getString( "myOldKey", "myFallbackValue" ); <br/>
+ * </p>
+ * myPreference = mPreferences.getString( "myOldKey", "myFallbackValue" ); </br>
  * --> mPreferences.getString( "myNewKey", "myFallbackValue" );
- * <p/>
+ * </p>
  * If you didn't use this class, you would need to search through the entire codebase for every call
  * to getString( "myOldKey", ... ) and update each one. This class also ensures that the same
  * fallback value will be used everywhere. A third advantage is that you can easily provide
  * frequently-used "derived" preferences, as in
- * <p/>
+ * </p>
  * isMyPreferenceValid = ( myPreference != null ) && ( myPreference.field != someBadValue );
- * <p/>
+ * </p>
  * Finally, the cost of looking up a preference value is made up front in this class's constructor,
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.
- * <p/>
+ * </p>
  * TODO: Seriously? ADK can't auto-generate a class like this?
  */
 public class UserPrefs
