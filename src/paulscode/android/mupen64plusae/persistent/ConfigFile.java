@@ -227,10 +227,12 @@ public class ConfigFile
                 mConfigList.add( section );  // Add it to the list as well
             }
         }
+        
         try
         {
             // Finished. Close the file.
             in.close();
+            br.close();
         }
         catch( IOException ioe )
         {
