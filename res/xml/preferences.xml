@@ -158,7 +158,14 @@
                 android:key="gamepadMapSpecial"
                 android:summary="@string/gamepadMapSpecial_summary"
                 android:title="@string/gamepadMapSpecial_title" />
-
+            
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="gamepadEnabled"
+                android:key="volumeKeysEnabled"
+                android:summary="@string/volumeKeysEnabled_summary"
+                android:title="@string/volumeKeysEnabled_title" />
+            
         </PreferenceScreen>
         <PreferenceScreen
             android:icon="@drawable/ic_picture"
@@ -222,14 +229,14 @@
                     android:title="@string/gles2N64ScreenClear_title" />
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="gles2N64Alpha"
-                    android:summary="@string/gles2N64Alpha_summary"
-                    android:title="@string/gles2N64Alpha_title" />
+                    android:key="gles2N64AlphaTest"
+                    android:summary="@string/gles2N64AlphaTest_summary"
+                    android:title="@string/gles2N64AlphaTest_title" />
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="gles2N64HackZ"
-                    android:summary="@string/gles2N64HackZ_summary"
-                    android:title="@string/gles2N64HackZ_title" />
+                    android:key="gles2N64DepthTest"
+                    android:summary="@string/gles2N64DepthTest_summary"
+                    android:title="@string/gles2N64DepthTest_title" />
             </PreferenceScreen>
             <PreferenceScreen
                 android:dependency="videoEnabled"

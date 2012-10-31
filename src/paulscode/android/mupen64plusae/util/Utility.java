@@ -457,7 +457,7 @@ public class Utility
             boolean success = true;
             if( !dest.exists() )
                 dest.mkdirs();
-            String files[] = src.list();
+            String[] files = src.list();
             for( String file : files )
             {
                 success = success && copyFile( new File( src, file ), new File( dest, file ) );

@@ -416,12 +416,6 @@ public class XperiaPlayController extends AbstractController
         ConfigFile pad_ini = new ConfigFile( Globals.paths.dataDir + "/skins/touchpads/" + skin
                 + "/pad.ini" );
         
-        // Look up the touch-pad layout credits:
-        name = pad_ini.get( "INFO", "name" );
-        version = pad_ini.get( "INFO", "version" );
-        about = pad_ini.get( "INFO", "about" );
-        author = pad_ini.get( "INFO", "author" );
-        
         Set<String> keys;
         Iterator<String> iter;
         String param, val;

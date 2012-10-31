@@ -70,8 +70,9 @@ public class InputMap
         deserialize( serializedMap );
     }
     
-    public void apply( int inputCode, float strength, AbstractController controller )
+    public boolean apply( int inputCode, float strength, AbstractController controller )
     {
+        boolean wasApplied = true;
         boolean state = strength > STRENGTH_THRESHOLD;
         switch( get( inputCode ) )
         {
@@ -130,8 +131,10 @@ public class InputMap
                 controller.mAxisFractionYpos = strength;
                 break;
             default:
+                wasApplied = false;
                 break;
         }
+        return wasApplied;
     }
     
     public int get( int inputCode )

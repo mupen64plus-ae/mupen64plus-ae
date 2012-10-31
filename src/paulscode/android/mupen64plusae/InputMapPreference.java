@@ -70,6 +70,9 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Restore existing state
         mMap.deserialize( getPersistedString( "" ) );
         
+        // Get the textview object
+        mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
+        
         // Create a button map to simplify highlighting
         mN64ToButton[InputMap.DPD_R] = (Button) view.findViewById( R.id.buttonDR );
         mN64ToButton[InputMap.DPD_L] = (Button) view.findViewById( R.id.buttonDL );
@@ -89,9 +92,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         mN64ToButton[InputMap.AXIS_L] = (Button) view.findViewById( R.id.buttonAL );
         mN64ToButton[InputMap.AXIS_D] = (Button) view.findViewById( R.id.buttonAD );
         mN64ToButton[InputMap.AXIS_U] = (Button) view.findViewById( R.id.buttonAU );
-        mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
-        mFeedbackText.requestFocus();
-        
+
         // Define the button click callbacks
         for( Button b : mN64ToButton )
         {
@@ -194,9 +195,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         
         // Cache the input code to be mapped
         if( isActive )
-        {
             mInputCodeToBeMapped = inputCode;
-        }
         
         // Update the user feedback views
         // To keep the touchscreen responsive, ignore small strength changes
@@ -218,19 +217,21 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
                 mMap.mapInput( i, mInputCodeToBeMapped );
         }
         
+        // Refresh the dialog
         updateViews();
     }
     
     @Override
-    public boolean onLongClick( View v )
+    public boolean onLongClick( View view )
     {
         // Find the Button view that was long-touched and unmap it
         for( int i = 0; i < mN64ToButton.length; i++ )
         {
-            if( mN64ToButton[i] == v )
+            if( mN64ToButton[i] == view )
                 mMap.unmapInput( i );
         }
         
+        // Refresh the dialog
         updateViews();
         return true;
     }

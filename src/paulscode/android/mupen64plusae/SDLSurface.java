@@ -35,9 +35,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
- * SDLSurface. This is what we draw on, so we need to know when it's created in order to do anything
+ * Represents a graphical area of memory that can be drawn to.
+ * </p>
+ * This is what we draw on, so we need to know when it's created in order to do anything
  * useful.
- * 
+ * </p>
  * Because of this, that's where we set up the SDL thread
  */
 public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
@@ -154,7 +156,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
             }
         }, "SDLThread" );
         mSDLThread.start();
-        
+            
         if( Globals.resumeLastSession )
         {
             // TODO: This block seems to cause a force-close

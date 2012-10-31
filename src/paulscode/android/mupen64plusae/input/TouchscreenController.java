@@ -46,9 +46,9 @@ public class TouchscreenController extends AbstractController implements OnTouch
         view.setOnTouchListener( this );
     }
 
-    @TargetApi( 5 )
     @Override
-    public boolean onTouch( View v, MotionEvent event )
+    @TargetApi( 5 )
+    public boolean onTouch( View view, MotionEvent event )
     {
         if( !Globals.userPrefs.isInputEnabled  || Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR)
             return false;

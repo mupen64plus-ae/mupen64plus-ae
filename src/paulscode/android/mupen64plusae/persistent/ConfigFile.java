@@ -37,18 +37,20 @@ import android.util.Log;
 
 /**
  * The Config class is used to load the parameters from a config file.
+ * </p>
  * The file must follow a specific syntax:
- * Parameters are assigned to values with the equal sign (ex: param=value  ).
- * Parameters are allowed to have empty assignments (ex: param=  ).
- * Each parameter=value pair must be on a single line.
- * Values may be enclosed in double-quotes (optional)  (ex:  param="value"  ).
- * All parameters must be after a section title.
- * Section titles are enclosed in brackets (ex. "[SECTION]")
- * Comments consist of single lines, and begin with # or ; or // (ex:  ;comment  ).
- * Leading and trailing whitespace in lines, param names, and values is discarded.
- * Whitespace inside brackets or double-quotes is not discarded.
+ * </p>
+ * <li>Parameters are assigned to values with the equal sign (ex: param=value  ).
+ * <li>Parameters are allowed to have empty assignments (ex: param=  ).
+ * <li>Each parameter=value pair must be on a single line.
+ * <li>Values may be enclosed in double-quotes (optional)  (ex:  param="value"  ).
+ * <li>All parameters must be after a section title.
+ * <li>Section titles are enclosed in brackets (ex. "[SECTION]")
+ * <li>Comments consist of single lines, and begin with # or ; or // (ex:  ;comment  ).
+ * <li>Leading and trailing whitespace in lines, param names, and values is discarded.
+ * <li>Whitespace inside brackets or double-quotes is not discarded.
  *
- * @author: Paul Lamb
+ * @author Paul Lamb
  * 
  * http://www.paulscode.com
  * 
@@ -322,6 +324,7 @@ public class ConfigFile
      */
     private static class ConfigParameter
     {
+        @SuppressWarnings( "unused" )
         public String parameter;
         public String value;
         
@@ -371,7 +374,7 @@ public class ConfigFile
                 if( !strLine.contains( "=" ) || confParam == null )
                     return;  // This shouldn't happen
                 
-                x = strLine.indexOf( "=" );
+                x = strLine.indexOf( '=' );
                 
                 if( x < 1 )
                     return;  // This shouldn't happen either
@@ -451,7 +454,7 @@ public class ConfigFile
                     else if( strLine.contains( "=" ) )
                     {   
                         // This should be a "parameter=value" pair:
-                        x = strLine.indexOf( "=" );
+                        x = strLine.indexOf( '=' );
                         
                         if( x < 1 )
                             return;  // This shouldn't happen (bad syntax). Quit.
@@ -488,8 +491,8 @@ public class ConfigFile
                         if( (strLine.length() < 3) || (!strLine.contains( "]" )) )
                             return;   // This shouldn't happen (bad syntax).  Quit.
                         
-                        x = strLine.indexOf( "[" );
-                        y = strLine.indexOf( "]" );
+                        x = strLine.indexOf( '[' );
+                        y = strLine.indexOf( ']' );
                         
                         if( (y <= x + 1) || (x == -1) || (y == -1) )
                             return;  // This shouldn't happen (bad syntax).  Quit.

@@ -104,6 +104,8 @@
     <string name="gamepadMapSpecial_title">Special functions</string>
     <string name="gamepadMapSpecial_summary">Save, load, and more from the controller</string>
     <string name="gamepadMap_dialogTitle">To map: press key/stick, then touch icon\nTo unmap: long-touch icon</string>
+    <string name="volumeKeysEnabled_title">Enable volume keys</string>
+    <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
     
     <!-- Video Menu -->
     <string name="videoEnabled_title">@string/_enable</string>
@@ -125,11 +127,11 @@
     <string name="gles2N64Sai_title">2xSai texture filter</string>
     <string name="gles2N64Sai_summary"></string>
     <string name="gles2N64ScreenClear_title">Force screen clear</string>
-    <string name="gles2N64ScreenClear_summary">Clears some junk graphics</string>
-    <string name="gles2N64Alpha_title">Alpha test</string>
-    <string name="gles2N64Alpha_summary">Disable for speed hack, black textures</string>
-    <string name="gles2N64HackZ_title">Hack Z</string>
-    <string name="gles2N64HackZ_summary">Fixes flashing background</string>
+    <string name="gles2N64ScreenClear_summary">Disable for speed (might cause video glitches)</string>
+    <string name="gles2N64AlphaTest_title">Alpha test</string>
+    <string name="gles2N64AlphaTest_summary">Disable for speed (causes black textures)</string>
+    <string name="gles2N64DepthTest_title">Depth test</string>
+    <string name="gles2N64DepthTest_summary">Disable for speed (causes flashing background)</string>
     
     <!-- GLES2Rice Menu -->
     <string name="gles2RiceAutoFrameskip_title">Auto frameskip</string>

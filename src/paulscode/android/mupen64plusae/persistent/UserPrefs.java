@@ -29,31 +29,31 @@ import android.preference.PreferenceManager;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
- * <p/>
+ * </p>
  * An instance of this class should be re-constructed every time a preference value changes, from a
  * android.content.SharedPreferences.OnSharedPreferenceChangeListener. A good place to implement the
  * listener is in your PreferenceActivity subclass.
- * <p/>
- * Developers: After creating a preference in /res/xml/preferences.xml, you are encouraged to
+ * </p>
+ * <b>Developers:</b> After creating a preference in /res/xml/preferences.xml, you are encouraged to
  * provide convenient access to it by expanding this class. Although this adds an extra step to
  * development, it simplifies code maintenance later since all maintenance can be consolidated to a
  * single file. For example, if you change the name of a key, you only need to update one line in
  * this class:
- * <p/>
- * myPreference = mPreferences.getString( "myOldKey", "myFallbackValue" ); <br/>
+ * </p>
+ * myPreference = mPreferences.getString( "myOldKey", "myFallbackValue" ); </br>
  * --> mPreferences.getString( "myNewKey", "myFallbackValue" );
- * <p/>
+ * </p>
  * If you didn't use this class, you would need to search through the entire codebase for every call
  * to getString( "myOldKey", ... ) and update each one. This class also ensures that the same
  * fallback value will be used everywhere. A third advantage is that you can easily provide
  * frequently-used "derived" preferences, as in
- * <p/>
+ * </p>
  * isMyPreferenceValid = ( myPreference != null ) && ( myPreference.field != someBadValue );
- * <p/>
+ * </p>
  * Finally, the cost of looking up a preference value is made up front in this class's constructor,
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.
- * <p/>
+ * </p>
  * TODO: Seriously? ADK can't auto-generate a class like this?
  */
 public class UserPrefs
@@ -91,6 +91,9 @@ public class UserPrefs
     /** The button map for player 4. */
     public final InputMap gamepadMap4;
     
+    /** True if volume keys can be used as controls. */
+    public final boolean isVolKeysEnabled;    
+    
     /** True if video is enabled. */
     public final boolean isVideoEnabled;
     
@@ -104,10 +107,21 @@ public class UserPrefs
     public final boolean isRgba8888;
     
     /** The maximum frameskip in the gles2n64 library. */
-    public final int videoMaxFrameskip;
+    public final int gles2N64MaxFrameskip;
     
     /** True if auto-frameskip is enabled in the gles2n64 library. */
-    public final boolean isAutoFrameskip;
+    public final boolean isGles2N64AutoFrameskipEnabled;
+    
+    public final boolean isGles2N64FogEnabled;
+    public final boolean isGles2N64SaiEnabled;
+    public final boolean isGles2N64ScreenClearEnabled;
+    public final boolean isGles2N64AlphaTestEnabled;
+    public final boolean isGles2N64DepthTestEnabled;
+    
+    public final boolean isGles2RiceAutoFrameskipEnabled;
+    public final boolean isGles2RiceFastTextureCrcEnabled;
+    public final boolean isGles2RiceFastTextureLoadingEnabled;
+    public final boolean isGles2RiceHiResTexturesEnabled;
     
     /** True if Xperia Play-specific features are enabled. */
     public final boolean isXperiaEnabled;
@@ -163,32 +177,50 @@ public class UserPrefs
     {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
+        // Touchscreen prefs
+        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
+        isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
+        isTouchscreenRedrawAll = mPreferences.getBoolean( "touchscreenRedrawAll", false );
+        
+        // Peripherals prefs
         isInputEnabled = mPreferences.getBoolean( "gamepadEnabled", true );
         gamepadMap1 = new InputMap( mPreferences.getString( "gamepadMap1", "" ) );
         gamepadMap2 = new InputMap( mPreferences.getString( "gamepadMap2", "" ) );
         gamepadMap3 = new InputMap( mPreferences.getString( "gamepadMap3", "" ) );
         gamepadMap4 = new InputMap( mPreferences.getString( "gamepadMap4", "" ) );
+        isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", false );
         
-        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
-        isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
-        isTouchscreenRedrawAll = mPreferences.getBoolean( "touchscreenRedrawAll", false );
-        
+        // Video prefs
         isVideoEnabled = mPreferences.getBoolean( "videoEnabled", true );
         isStretched = mPreferences.getBoolean( "videoStretch", false );
         isRgba8888 = mPreferences.getBoolean( "videoRGBA8888", false );
-        videoMaxFrameskip = getSafeInt( mPreferences, "gles2N64Frameskip", -1 );
         
+        // Video prefs - gles2n64
+        gles2N64MaxFrameskip = getSafeInt( mPreferences, "gles2N64Frameskip", -1 );
+        isGles2N64FogEnabled = mPreferences.getBoolean( "gles2N64Fog", false );
+        isGles2N64SaiEnabled = mPreferences.getBoolean( "gles2N64Sai", false );
+        isGles2N64ScreenClearEnabled = mPreferences.getBoolean( "gles2N64ScreenClear", true );
+        isGles2N64AlphaTestEnabled = mPreferences.getBoolean( "gles2N64AlphaTest", true );
+        isGles2N64DepthTestEnabled = mPreferences.getBoolean( "gles2N64DepthTest", true );
+
+        // Video prefs - gles2rice
+        isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
+        isGles2RiceFastTextureCrcEnabled = mPreferences.getBoolean( "gles2RiceFastTextureCRC", true );
+        isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
+        isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
+        
+        // Other prefs
         lastGame = mPreferences.getString( "lastGame", "" );
         gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
         isAutoSaveEnabled = mPreferences.getBoolean( "autoSaveEnabled", false );
         isFrameRateEnabled = mPreferences.getBoolean( "touchscreenFrameRate", false );
         
         // Plug-ins and layouts
-        corePlugin = paths.libsDir + mPreferences.getString( "corePlugin", "" );
-        videoPlugin = paths.libsDir + mPreferences.getString( "videoPlugin", "" );
+        inputPlugin = paths.libsDir + ( isInputEnabled ? mPreferences.getString( "gamepadPlugin", "" ) : "" );
+        videoPlugin = paths.libsDir + ( isVideoEnabled ? mPreferences.getString( "videoPlugin", "" ) : "" );
         audioPlugin = paths.libsDir + mPreferences.getString( "audioPlugin", "" );
-        inputPlugin = paths.libsDir + mPreferences.getString( "gamepadPlugin", "" );
         rspPlugin = paths.libsDir + mPreferences.getString( "rspPlugin", "" );
+        corePlugin = paths.libsDir + mPreferences.getString( "corePlugin", "" );
         xperiaLayout = mPreferences.getString( "xperiaPlugin", "" );
         
         boolean isCustom = false;
@@ -216,7 +248,7 @@ public class UserPrefs
         touchscreenLayoutFolder = folder;
         
         // Derived values
-        isAutoFrameskip = videoMaxFrameskip < 0;
+        isGles2N64AutoFrameskipEnabled = gles2N64MaxFrameskip < 0;
         isAudioEnabled = audioPlugin != null && !audioPlugin.equals( "" );
         isXperiaEnabled = xperiaLayout != null && !xperiaLayout.equals( "" );
         isRspEnabled = rspPlugin != null && rspPlugin.equals( "" );

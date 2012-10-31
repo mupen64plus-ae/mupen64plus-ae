@@ -22,12 +22,10 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.util.DataDownloader;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.Updater;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Intent;
@@ -51,7 +49,6 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         // Get persisted system settings
         Globals.paths = new Paths( this );
         Globals.appData = new AppData( this, Globals.paths.appSettingsFilename );
-        Globals.mupen64plus_cfg = new ConfigFile( Globals.paths.mupen64plus_cfg );
         
         // Initialize the error logger
         ErrorLogger.initialize( Globals.paths.error_log );
@@ -59,11 +56,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
         
-        // Make sure the app is up to date
-        // Globals.app.resetToDefaults(); // TODO: Comment out before release
-        Updater.checkFirstRun( this );
-        Updater.checkConfigFiles( this );
-        Updater.checkLatestVersion( this );
+        // TODO: Make sure the app is up to date (Updater class)
         
         // Configure full-screen mode
         requestWindowFeature( Window.FEATURE_NO_TITLE );

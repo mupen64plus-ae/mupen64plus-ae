@@ -124,7 +124,7 @@ public class NativeMethods
     
     public static boolean getAutoFrameSkip()
     {
-        return Globals.userPrefs.isAutoFrameskip;
+        return Globals.userPrefs.isGles2N64AutoFrameskipEnabled;
     }
     
     public static Object getDataDir()
@@ -144,7 +144,7 @@ public class NativeMethods
     
     public static int getMaxFrameSkip()
     {
-        return Globals.userPrefs.videoMaxFrameskip;
+        return Globals.userPrefs.gles2N64MaxFrameskip;
     }
     
     public static Object getROMPath()

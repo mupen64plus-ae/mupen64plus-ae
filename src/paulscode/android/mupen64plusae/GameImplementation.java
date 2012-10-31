@@ -219,14 +219,14 @@ public class GameImplementation implements View.OnKeyListener
 
     public void onResume()
     {
-        if( Globals.sdlSurface != null || Globals.touchscreenView != null )
-        {
-            // Replace the surface and touchscreen objects
-            Globals.sdlSurface = (SDLSurface) mActivity.findViewById( R.id.sdlSurface );
-            Globals.touchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
-            Globals.touchscreenView.setResources( mActivity.getResources() );
-            Globals.touchscreenView.loadPad();
-        }
+//        if( Globals.sdlSurface != null || Globals.touchscreenView != null )
+//        {
+//            // Replace the surface and touchscreen objects
+//            Globals.sdlSurface = (SDLSurface) mActivity.findViewById( R.id.sdlSurface );
+//            Globals.touchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
+//            Globals.touchscreenView.setResources( mActivity.getResources() );
+//            Globals.touchscreenView.loadPad();
+//        }
     }
 
     @Override
@@ -251,6 +251,15 @@ public class GameImplementation implements View.OnKeyListener
             if( event.getAction() == KeyEvent.ACTION_DOWN )
                 mActivity.runOnUiThread( new ToggleActionBar( v.getRootView() ) );
             return true;
+        }
+        
+        // Let Android handle the volume keys if not used for control
+        else if( !Globals.userPrefs.isVolKeysEnabled
+                && ( keyCode == KeyEvent.KEYCODE_VOLUME_UP
+                || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+                || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
+        {
+            return false;
         }
         
         // Send everything else to the peripheral controller

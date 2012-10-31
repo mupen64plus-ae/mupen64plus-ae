@@ -105,9 +105,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             Preference preference = findPreference( key );
             if( preference instanceof ListPreference )
-            {
                 preference.setSummary( ( (ListPreference) preference ).getEntry() );
-            }
         }
     }
     
@@ -118,6 +116,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( key.equals( MENU_RESUME ) )
         {
             // Launch the last game in a new activity
+            
+            // TODO: Localize toast string
             if( !Globals.paths.isSdCardAccessible() )
             {
                 Log.e( "MenuActivity",
@@ -127,10 +127,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                         this );
                 return true;
             }
-            Globals.mupen64plus_cfg.save();
+            
+            // Synchronize the core config files with the current user prefs
+            Globals.syncConfigFiles();
             Globals.resumeLastSession = false; // TODO: something screwy when this is true
             
-            Intent intent = new Intent( this, GameActivity.class );
+            // Launch the appropriate game activity
+            Intent intent = Globals.userPrefs.isXperiaEnabled
+                    ? new Intent( this, GameActivityXperiaPlay.class )
+                    : new Intent( this, GameActivity.class );
             intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
             startActivity( intent );
             finish();
@@ -153,17 +158,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             // Reset the application data
             Globals.appData.resetToDefaults();
+            // Restart the activity simply to provide visual feedback that data was reset
+            finish();
+            startActivity( getIntent() );
             return true;
         }
-        // (To add handlers for other menu items, continue this pattern and return true)
-        // else if( key.equals( MENU_LANGUAGE ) )
-        // {
-        // // Send the user to the system language selection page
-        // Intent intent = new Intent( Intent.ACTION_MAIN );
-        // intent.setClassName( "com.android.settings", "com.android.settings.LanguageSettings" );
-        // startActivity( intent );
-        // return true;
-        // }
         return false;
     }
 }
