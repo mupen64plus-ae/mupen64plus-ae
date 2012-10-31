@@ -29,31 +29,39 @@ import android.preference.PreferenceManager;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
- * </p>
+ * <p>
  * An instance of this class should be re-constructed every time a preference value changes, from a
  * android.content.SharedPreferences.OnSharedPreferenceChangeListener. A good place to implement the
  * listener is in your PreferenceActivity subclass.
- * </p>
+ * <p>
  * <b>Developers:</b> After creating a preference in /res/xml/preferences.xml, you are encouraged to
  * provide convenient access to it by expanding this class. Although this adds an extra step to
  * development, it simplifies code maintenance later since all maintenance can be consolidated to a
  * single file. For example, if you change the name of a key, you only need to update one line in
  * this class:
- * </p>
- * myPreference = mPreferences.getString( "myOldKey", "myFallbackValue" ); </br>
- * --> mPreferences.getString( "myNewKey", "myFallbackValue" );
- * </p>
+ * 
+ * <pre>
+ * {@code
+ * myPreference = mPreferences.getString( "myOldKey", "myFallbackValue" );
+ *            --> mPreferences.getString( "myNewKey", "myFallbackValue" );
+ * }
+ * </pre>
+ * 
  * If you didn't use this class, you would need to search through the entire codebase for every call
  * to getString( "myOldKey", ... ) and update each one. This class also ensures that the same
  * fallback value will be used everywhere. A third advantage is that you can easily provide
  * frequently-used "derived" preferences, as in
- * </p>
+ * 
+ * <pre>
+ * {@code
  * isMyPreferenceValid = ( myPreference != null ) && ( myPreference.field != someBadValue );
- * </p>
+ * }
+ * </pre>
+ *  
  * Finally, the cost of looking up a preference value is made up front in this class's constructor,
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.
- * </p>
+ * <p>
  * TODO: Seriously? ADK can't auto-generate a class like this?
  */
 public class UserPrefs
@@ -92,7 +100,7 @@ public class UserPrefs
     public final InputMap gamepadMap4;
     
     /** True if volume keys can be used as controls. */
-    public final boolean isVolKeysEnabled;    
+    public final boolean isVolKeysEnabled;
     
     /** True if video is enabled. */
     public final boolean isVideoEnabled;
@@ -168,10 +176,8 @@ public class UserPrefs
     /**
      * Instantiates a new UserPrefs object to retrieve user preferences.
      * 
-     * @param context
-     *            the context of the app
-     * @param paths
-     *            the app's path definitions
+     * @param context the context of the app
+     * @param paths the app's path definitions
      */
     public UserPrefs( Context context, Paths paths )
     {
@@ -202,11 +208,13 @@ public class UserPrefs
         isGles2N64ScreenClearEnabled = mPreferences.getBoolean( "gles2N64ScreenClear", true );
         isGles2N64AlphaTestEnabled = mPreferences.getBoolean( "gles2N64AlphaTest", true );
         isGles2N64DepthTestEnabled = mPreferences.getBoolean( "gles2N64DepthTest", true );
-
+        
         // Video prefs - gles2rice
         isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
-        isGles2RiceFastTextureCrcEnabled = mPreferences.getBoolean( "gles2RiceFastTextureCRC", true );
-        isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
+        isGles2RiceFastTextureCrcEnabled = mPreferences
+                .getBoolean( "gles2RiceFastTextureCRC", true );
+        isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture",
+                false );
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
         
         // Other prefs
@@ -216,8 +224,12 @@ public class UserPrefs
         isFrameRateEnabled = mPreferences.getBoolean( "touchscreenFrameRate", false );
         
         // Plug-ins and layouts
-        inputPlugin = paths.libsDir + ( isInputEnabled ? mPreferences.getString( "gamepadPlugin", "" ) : "" );
-        videoPlugin = paths.libsDir + ( isVideoEnabled ? mPreferences.getString( "videoPlugin", "" ) : "" );
+        inputPlugin = paths.libsDir + ( isInputEnabled
+                ? mPreferences.getString( "gamepadPlugin", "" )
+                : "" );
+        videoPlugin = paths.libsDir + ( isVideoEnabled
+                ? mPreferences.getString( "videoPlugin", "" )
+                : "" );
         audioPlugin = paths.libsDir + mPreferences.getString( "audioPlugin", "" );
         rspPlugin = paths.libsDir + mPreferences.getString( "rspPlugin", "" );
         corePlugin = paths.libsDir + mPreferences.getString( "corePlugin", "" );
@@ -262,12 +274,9 @@ public class UserPrefs
     /**
      * Gets the selected value of a ListPreference, as an integer.
      * 
-     * @param preferences
-     *            the object containing the ListPreference
-     * @param key
-     *            the key of the ListPreference
-     * @param defaultValue
-     *            the value to use if parsing fails
+     * @param preferences the object containing the ListPreference
+     * @param key the key of the ListPreference
+     * @param defaultValue the value to use if parsing fails
      * @return the value of the selected entry, as an integer
      */
     private static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )

@@ -158,7 +158,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             // Reset the application data
             Globals.appData.resetToDefaults();
-            // Restart the activity simply to provide visual feedback that data was reset
+            // Restart the activity simply to provide a sense that stuff was reset
+            // TODO: Add a confirmation dialog
             finish();
             startActivity( getIntent() );
             return true;

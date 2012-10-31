@@ -34,7 +34,7 @@ import paulscode.android.mupen64plusae.NativeMethods;
  * This abstract class will call the emulator's native libraries to update game state whenever
  * notifyChanged() is called. Subclasses should not call any native methods themselves. (If they do,
  * then this abstract class should be expanded to cover those needs.)
- * <p/>
+ * <p>
  * Note that this class is stateful, in that it remembers controller button/axis state between calls
  * from the subclass. For best performance, subclasses should only call notifyChanged() when the
  * input state has actually changed, and should bundle the protected field modifications before
