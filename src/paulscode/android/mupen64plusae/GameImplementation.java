@@ -212,9 +212,7 @@ public class GameImplementation implements View.OnKeyListener
     public void onUserLeaveHint()
     {
         // This executes when Home is pressed (can't detect it in onKey).
-        saveSession(); // Workaround, allows us to force-close later
-        //super.onUserLeaveHint(); // weird bug if choosing "Close" from menu. Force-close here?
-        // Globals.gameActivity = null;
+        saveSession();
     }
 
     @Override

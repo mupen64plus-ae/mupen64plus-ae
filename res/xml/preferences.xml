@@ -209,7 +209,6 @@
                     android:entries="@array/gles2N64Frameskip_entries"
                     android:entryValues="@array/gles2N64Frameskip_values"
                     android:key="gles2N64Frameskip"
-                    android:summary="@string/gles2N64Frameskip_summary"
                     android:title="@string/gles2N64Frameskip_title" />
 
                 <CheckBoxPreference

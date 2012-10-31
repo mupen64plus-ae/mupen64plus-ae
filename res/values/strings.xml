@@ -121,11 +121,10 @@
     
     <!-- GLES2N64 Menu -->
     <string name="gles2N64Frameskip_title">Frameskip</string>
-    <string name="gles2N64Frameskip_summary">Improves game speed at cost of framerate</string>
     <string name="gles2N64Fog_title">Fog</string>
     <string name="gles2N64Fog_summary">(needs work)</string>
-    <string name="gles2N64Sai_title">2xSai texture filter</string>
-    <string name="gles2N64Sai_summary"></string>
+    <string name="gles2N64Sai_title">2xSaI texture filter</string>
+    <string name="gles2N64Sai_summary">Reduces texture pixellation</string>
     <string name="gles2N64ScreenClear_title">Force screen clear</string>
     <string name="gles2N64ScreenClear_summary">Disable for speed (might cause video glitches)</string>
     <string name="gles2N64AlphaTest_title">Alpha test</string>
