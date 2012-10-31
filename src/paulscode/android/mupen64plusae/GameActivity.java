@@ -60,11 +60,4 @@ public class GameActivity extends Activity
         mImplementation.onUserLeaveHint();
         super.onUserLeaveHint();
     }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        mImplementation.onResume();
-    }
 }

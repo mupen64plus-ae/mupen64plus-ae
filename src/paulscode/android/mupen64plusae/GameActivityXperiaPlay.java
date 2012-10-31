@@ -77,11 +77,4 @@ public class GameActivityXperiaPlay extends NativeActivity
         mImplementation.onUserLeaveHint();
         super.onUserLeaveHint();
     }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        mImplementation.onResume();
-    }
 }

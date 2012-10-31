@@ -217,18 +217,6 @@ public class GameImplementation implements View.OnKeyListener
         // Globals.gameActivity = null;
     }
 
-    public void onResume()
-    {
-//        if( Globals.sdlSurface != null || Globals.touchscreenView != null )
-//        {
-//            // Replace the surface and touchscreen objects
-//            Globals.sdlSurface = (SDLSurface) mActivity.findViewById( R.id.sdlSurface );
-//            Globals.touchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
-//            Globals.touchscreenView.setResources( mActivity.getResources() );
-//            Globals.touchscreenView.loadPad();
-//        }
-    }
-
     @Override
     public boolean onKey( View v, int keyCode, KeyEvent event )
     {
