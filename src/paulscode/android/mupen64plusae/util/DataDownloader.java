@@ -56,25 +56,25 @@ public class DataDownloader extends Thread
     public StatusWriter mStatus;
     public boolean mDownloadComplete = false;
     public boolean mDownloadFailed = false;
-    private Activity mParent;
+    private Activity mActivity;
     private Listener mListener;
-    private String mOutFilesDir = null;
+    private String outFilesDir = null;
     
     public DataDownloader( Activity parent, Listener listener, TextView status )
     {
-        mParent = parent;
+        mActivity = parent;
         mListener = listener;
         mStatus = new StatusWriter( status, parent );
-        mOutFilesDir = Globals.paths.dataDir;
+        outFilesDir = Globals.paths.dataDir;
         mDownloadComplete = false;
         start();
     }
     
-    public void setStatusField( TextView status )
+    public void setStatusField( TextView view )
     {
         synchronized( this )
         {
-            mStatus.setParent( status, mParent );
+            mStatus.setParent( view, mActivity );
         }
     }
     
@@ -85,21 +85,19 @@ public class DataDownloader extends Thread
         for( int i = 0; i < downloadFiles.length; i++ )
         {
             if( downloadFiles[i].length() > 0 )
-            {
                 if( !downloadDataFile( downloadFiles[i],
                         "libsdl-DownloadFinished-" + String.valueOf( i ) + ".flag" ) )
                 {
                     mDownloadFailed = true;
                     return;
                 }
-            }
         }
         mDownloadComplete = true;
         synchronized( this )
         {
-            if( mParent != null )
+            if( mActivity != null )
             {
-                mParent.runOnUiThread( new Runnable()
+                mActivity.runOnUiThread( new Runnable()
                 {
                     public void run()
                     {
@@ -111,53 +109,106 @@ public class DataDownloader extends Thread
         }
     }
     
-    public boolean downloadDataFile( final String dataDownloadUrl, final String downloadFlagFileName )
+    public boolean downloadDataFile( final String DataDownloadUrl, final String DownloadFlagFileName )
     {
-        Resources res = mParent.getResources();
+        Resources res = mActivity.getResources();
 
         // Get the download URLs, must be at least two
-        String[] downloadUrls = dataDownloadUrl.split( "[|]" );
+        String[] downloadUrls = DataDownloadUrl.split( "[|]" );
         if( downloadUrls.length < 2 )
             return false;
         
         // See if the download is even necessary
-        String path = mOutFilesDir + "/" + downloadFlagFileName;
-        if( !isDownloadRequired( downloadUrls, path ) )
+        String path = getOutFilePath( DownloadFlagFileName );
+        InputStream checkFile = null;
+        try
         {
-            mStatus.setText( res.getString( R.string.download_unneeded ) );
-            return true;
+            checkFile = new FileInputStream( path );
+        }
+        catch( FileNotFoundException e )
+        {
+        }
+        catch( SecurityException e )
+        {
         }
         
+        if( checkFile != null )
+        {
+            try
+            {
+                byte b[] = new byte[Paths.dataDownloadUrl.getBytes( "UTF-8" ).length + 1];
+                int readed = checkFile.read( b );
+                String compare = new String( b, 0, readed, "UTF-8" );
+                boolean matched = false;
+                for( int i = 1; i < downloadUrls.length; i++ )
+                {
+                    if( compare.compareTo( downloadUrls[i] ) == 0 )
+                        matched = true;
+                }
+                if( !matched )
+                    throw new IOException();
+                mStatus.setText( res.getString( R.string.download_unneeded ) );
+                return true;
+            }
+            catch( IOException e )
+            {
+            }
+        }
+        try
+        {
+            checkFile.close();
+        }
+        catch( Exception e )
+        {
+        }
+        checkFile = null;
+        
         // Create output directory (not necessary for phone storage)
-        createOutputDirectory();
+        Log.i( "DataDownloader", "Downloading data to: '" + outFilesDir + "'" );
+        try
+        {
+            File outDir = new File( outFilesDir );
+            if( !( outDir.exists() && outDir.isDirectory() ) )
+                outDir.mkdirs();
+            OutputStream out = new FileOutputStream( getOutFilePath( ".nomedia" ) );
+            out.flush();
+            out.close();
+        }
+        catch( SecurityException e )
+        {
+        }
+        catch( FileNotFoundException e )
+        {
+        }
+        catch( IOException e )
+        {
+        }
         
         HttpResponse response = null;
         HttpGet request;
         long totalLen = 0;
         CountingInputStream stream;
         byte[] buf = new byte[16384];
-        
+        boolean DoNotUnzip = false;
+        boolean FileInAssets = false;
         String url = "";
-        boolean doNotUnzip = false;
-        boolean fileInAssets = false;
-        
         int downloadUrlIndex = 1;
+        
         while( downloadUrlIndex < downloadUrls.length )
         {
             Log.i( "DataDownloader", "Processing download " + downloadUrls[downloadUrlIndex] );
             url = downloadUrls[downloadUrlIndex];
-            doNotUnzip = false;
+            DoNotUnzip = false;
             if( url.indexOf( ":" ) == 0 )
             {
                 url = url.substring( url.indexOf( ":", 1 ) + 1 );
-                doNotUnzip = true;
+                DoNotUnzip = true;
             }
             mStatus.setText( res.getString( R.string.connecting_to, url ) );
-            if( !url.contains( "http://" ) && !url.contains( "https://" ) )
+            if( !url.contains( "http://" ) && !url.contains( "https://" ) ) // File inside assets
             {
-                // File inside assets
                 Log.i( "DataDownloader", "Fetching file from assets: " + url );
-                fileInAssets = true;
+                FileInAssets = true;
                 break;
             }
             else
@@ -190,19 +241,18 @@ public class DataDownloader extends Thread
                 }
             }
         }
-        
-        if( fileInAssets )
+        if( FileInAssets )
         {
             try
             {
-                stream = new CountingInputStream( mParent.getAssets().open( url ), 8192 );
+                stream = new CountingInputStream( mActivity.getAssets().open( url ), 8192 );
                 while( stream.skip( 65536 ) > 0 )
                 {
                 }
                 ;
                 totalLen = stream.getBytesRead();
                 stream.close();
-                stream = new CountingInputStream( mParent.getAssets().open( url ), 8192 );
+                stream = new CountingInputStream( mActivity.getAssets().open( url ), 8192 );
             }
             catch( IOException e )
             {
@@ -232,18 +282,238 @@ public class DataDownloader extends Thread
                 return false;
             }
         }
-        
-        // TODO: Does url2==url ?
-        String url2 = downloadUrls[downloadUrlIndex];
-
-        if( doNotUnzip )
-            if( !saveRegularFiles( res, totalLen, stream, buf, url2 ) )
+        if( DoNotUnzip )
+        {
+            path = getOutFilePath( downloadUrls[downloadUrlIndex].substring( 1,
+                    downloadUrls[downloadUrlIndex].indexOf( ":", 1 ) ) );
+            Log.i( "DataDownloader", "Saving file '" + path + "'" );
+            OutputStream out = null;
+            try
+            {
+                try
+                {
+                    File outDir = new File( path.substring( 0, path.lastIndexOf( "/" ) ) );
+                    if( !( outDir.exists() && outDir.isDirectory() ) )
+                        outDir.mkdirs();
+                }
+                catch( SecurityException e )
+                {
+                }
+                out = new FileOutputStream( path );
+            }
+            catch( FileNotFoundException e )
+            {
+                Log.e( "DataDownloader", "Saving file '" + path
+                        + "' - error creating output file: " + e.toString() );
+            }
+            catch( SecurityException e )
+            {
+                Log.e( "DataDownloader", "Saving file '" + path
+                        + "' - error creating output file: " + e.toString() );
+            }
+            
+            if( out == null )
+            {
+                mStatus.setText( res.getString( R.string.error_write, path ) );
+                Log.e( "DataDownloader", "Saving file '" + path + "' - error creating output file" );
                 return false;
-            else if( !saveZippedFiles( res, path, totalLen, stream, buf, url ) )
+            }
+            try
+            {
+                int len = stream.read( buf );
+                while( len >= 0 )
+                {
+                    if( len > 0 )
+                        out.write( buf, 0, len );
+                    len = stream.read( buf );
+                    float percent = 0.0f;
+                    if( totalLen > 0 )
+                        percent = stream.getBytesRead() * 100.0f / totalLen;
+                    mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
+                }
+                out.flush();
+                out.close();
+                out = null;
+            }
+            catch( IOException e )
+            {
+                mStatus.setText( res.getString( R.string.error_write, path ) );
+                Log.e( "DataDownloader",
+                        "Saving file '" + path + "' - error writing: " + e.toString() );
                 return false;
+            }
+            Log.i( "DataDownloader", "Saving file '" + path + "' done" );
+        }
+        else
+        {
+            Log.i( "DataDownloader", "Reading from zip file '" + url + "'" );
+            ZipInputStream zip = new ZipInputStream( stream );
+            while( true )
+            {
+                ZipEntry entry = null;
+                try
+                {
+                    entry = zip.getNextEntry();
+                    if( entry != null )
+                        Log.i( "DataDownloader", "Reading from zip file '" + url + "' entry '"
+                                + entry.getName() + "'" );
+                }
+                catch( IOException e )
+                {
+                    mStatus.setText( res.getString( R.string.error_dl_from, url ) );
+                    Log.e( "DataDownloader",
+                            "Error reading from zip file '" + url + "': " + e.toString() );
+                    return false;
+                }
+                if( entry == null )
+                {
+                    Log.i( "DataDownloader", "Reading from zip file '" + url + "' finished" );
+                    break;
+                }
+                if( entry.isDirectory() )
+                {
+                    Log.i( "DataDownloader", "Creating dir '" + getOutFilePath( entry.getName() )
+                            + "'" );
+                    try
+                    {
+                        File outDir = new File( getOutFilePath( entry.getName() ) );
+                        if( !( outDir.exists() && outDir.isDirectory() ) )
+                            outDir.mkdirs();
+                    }
+                    catch( SecurityException e )
+                    {
+                    }
+                    continue;
+                }
+                OutputStream out = null;
+                path = getOutFilePath( entry.getName() );
+                Log.i( "DataDownloader", "Saving file '" + path + "'" );
+                try
+                {
+                    File outDir = new File( path.substring( 0, path.lastIndexOf( "/" ) ) );
+                    if( !( outDir.exists() && outDir.isDirectory() ) )
+                        outDir.mkdirs();
+                }
+                catch( SecurityException e )
+                {
+                }
+                try
+                {
+                    CheckedInputStream check = new CheckedInputStream( new FileInputStream( path ),
+                            new CRC32() );
+                    while( check.read( buf, 0, buf.length ) > 0 )
+                    {
+                    }
+                    ;
+                    check.close();
+                    if( check.getChecksum().getValue() != entry.getCrc() )
+                    {
+                        File ff = new File( path );
+                        ff.delete();
+                        throw new Exception();
+                    }
+                    Log.i( "DataDownloader", "File '" + path
+                            + "' exists and passed CRC check - not overwriting it" );
+                    continue;
+                }
+                catch( Exception e )
+                {
+                }
+                try
+                {
+                    out = new FileOutputStream( path );
+                }
+                catch( FileNotFoundException e )
+                {
+                    Log.e( "DataDownloader", "Saving file '" + path + "' - cannot create file: "
+                            + e.toString() );
+                }
+                catch( SecurityException e )
+                {
+                    Log.e( "DataDownloader", "Saving file '" + path + "' - cannot create file: "
+                            + e.toString() );
+                }
+                
+                if( out == null )
+                {
+                    mStatus.setText( res.getString( R.string.error_write, path ) );
+                    Log.e( "DataDownloader", "Saving file '" + path + "' - cannot create file" );
+                    return false;
+                }
+                float percent = 0.0f;
+                if( totalLen > 0 )
+                    percent = stream.getBytesRead() * 100.0f / totalLen;
+                mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
+                try
+                {
+                    int len = zip.read( buf );
+                    while( len >= 0 )
+                    {
+                        if( len > 0 )
+                            out.write( buf, 0, len );
+                        len = zip.read( buf );
+                        percent = 0.0f;
+                        if( totalLen > 0 )
+                            percent = stream.getBytesRead() * 100.0f / totalLen;
+                        mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
+                    }
+                    out.flush();
+                    out.close();
+                    out = null;
+                }
+                catch( IOException e )
+                {
+                    mStatus.setText( res.getString( R.string.error_write, path ) );
+                    Log.e( "DataDownloader", "Saving file '" + path
+                            + "' - error writing or downloading: " + e.toString() );
+                    return false;
+                }
+                try
+                {
+                    CheckedInputStream check = new CheckedInputStream( new FileInputStream( path ),
+                            new CRC32() );
+                    while( check.read( buf, 0, buf.length ) > 0 )
+                    {
+                    }
+                    ;
+                    check.close();
+                    if( check.getChecksum().getValue() != entry.getCrc() )
+                    {
+                        File ff = new File( path );
+                        ff.delete();
+                        throw new Exception();
+                    }
+                }
+                catch( Exception e )
+                {
+                    mStatus.setText( res.getString( R.string.error_write, path ) );
+                    Log.e( "DataDownloader", "Saving file '" + path + "' - CRC check failed" );
+                    return false;
+                }
+                Log.i( "DataDownloader", "Saving file '" + path + "' done" );
+            }
+        }
         
-        if( !writeOutput( downloadFlagFileName, res, url2 ) )
+        OutputStream out = null;
+        path = getOutFilePath( DownloadFlagFileName );
+        try
+        {
+            out = new FileOutputStream( path );
+            out.write( downloadUrls[downloadUrlIndex].getBytes( "UTF-8" ) );
+            out.flush();
+            out.close();
+        }
+        catch( FileNotFoundException e )
+        {
+        }
+        catch( SecurityException e )
+        {
+        }
+        catch( IOException e )
+        {
+            mStatus.setText( res.getString( R.string.error_write, path ) );
             return false;
+        }
         
         mStatus.setText( res.getString( R.string.dl_finished ) );
         try
@@ -256,372 +526,46 @@ public class DataDownloader extends Thread
         return true;
     }
     
-    private boolean isDownloadRequired( String[] downloadUrls, String path )
-    {
-        boolean isRequired = true;
-        InputStream checkFile = null;
-        try
-        {
-            checkFile = new FileInputStream( path );
-        }
-        catch( FileNotFoundException e )
-        {
-        }
-        catch( SecurityException e )
-        {
-        }
-        
-        if( checkFile != null )
-        {
-            try
-            {
-                byte[] b = new byte[Paths.dataDownloadUrl.getBytes( "UTF-8" ).length + 1];
-                int readed = checkFile.read( b );
-                String compare = new String( b, 0, readed, "UTF-8" );
-                for( int i = 1; i < downloadUrls.length; i++ )
-                {
-                    if( compare.compareTo( downloadUrls[i] ) == 0 )
-                    {
-                        isRequired = false;
-                        break;
-                    }
-                }
-            }
-            catch( IOException e )
-            {
-            }
-        }
-        try
-        {
-            checkFile.close();
-        }
-        catch( Exception e )
-        {
-        }
-        
-        return isRequired;
-    }
-    
-    private void createOutputDirectory()
-    {
-        Log.i( "DataDownloader", "Downloading data to: '" + mOutFilesDir + "'" );
-        try
-        {
-            File outDir = new File( mOutFilesDir );
-            if( !( outDir.exists() && outDir.isDirectory() ) )
-                outDir.mkdirs();
-            OutputStream out = new FileOutputStream( mOutFilesDir + "/" + ".nomedia" );
-            out.flush();
-            out.close();
-        }
-        catch( SecurityException e )
-        {
-        }
-        catch( FileNotFoundException e )
-        {
-        }
-        catch( IOException e )
-        {
-        }
-    }
-    
-    private boolean saveRegularFiles( Resources res, long totalLen, CountingInputStream stream,
-            byte[] buf, String url )
-    {
-        String path = mOutFilesDir + "/" + url.substring( 1, url.indexOf( ":", 1 ) );
-        Log.i( "DataDownloader", "Saving file '" + path + "'" );
-        OutputStream out = null;
-        try
-        {
-            try
-            {
-                File outDir = new File( path.substring( 0, path.lastIndexOf( "/" ) ) );
-                if( !( outDir.exists() && outDir.isDirectory() ) )
-                    outDir.mkdirs();
-            }
-            catch( SecurityException e )
-            {
-            }
-            out = new FileOutputStream( path );
-        }
-        catch( FileNotFoundException e )
-        {
-            Log.e( "DataDownloader", "Saving file '" + path + "' - error creating output file: "
-                    + e.toString() );
-        }
-        catch( SecurityException e )
-        {
-            Log.e( "DataDownloader", "Saving file '" + path + "' - error creating output file: "
-                    + e.toString() );
-        }
-        
-        if( out == null )
-        {
-            mStatus.setText( res.getString( R.string.error_write, path ) );
-            Log.e( "DataDownloader", "Saving file '" + path + "' - error creating output file" );
-            return false;
-        }
-        try
-        {
-            int len = stream.read( buf );
-            while( len >= 0 )
-            {
-                if( len > 0 )
-                    out.write( buf, 0, len );
-                len = stream.read( buf );
-                float percent = 0.0f;
-                if( totalLen > 0 )
-                    percent = stream.getBytesRead() * 100.0f / totalLen;
-                mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
-            }
-            out.flush();
-            out.close();
-            out = null;
-        }
-        catch( IOException e )
-        {
-            mStatus.setText( res.getString( R.string.error_write, path ) );
-            Log.e( "DataDownloader", "Saving file '" + path + "' - error writing: " + e.toString() );
-            return false;
-        }
-        Log.i( "DataDownloader", "Saving file '" + path + "' done" );
-        return true;
-    }
-    
-    private boolean saveZippedFiles( Resources res, String path, long totalLen,
-            CountingInputStream stream, byte[] buf, String url )
-    {
-        Log.i( "DataDownloader", "Reading from zip file '" + url + "'" );
-        ZipInputStream zip = new ZipInputStream( stream );
-        while( true )
-        {
-            ZipEntry entry = getZipEntry( res, url, zip );
-            if( entry == null )
-            {
-                Log.i( "DataDownloader", "Reading from zip file '" + url + "' finished" );
-                break;
-            }
-            if( entry.isDirectory() )
-            {
-                createDirectory( entry );
-                continue;
-            }
-            OutputStream out = null;
-            path = getOutFilePath( entry.getName() );
-            Log.i( "DataDownloader", "Saving file '" + path + "'" );
-            try
-            {
-                File outDir = new File( path.substring( 0, path.lastIndexOf( "/" ) ) );
-                if( !( outDir.exists() && outDir.isDirectory() ) )
-                    outDir.mkdirs();
-            }
-            catch( SecurityException e )
-            {
-            }
-            try
-            {
-                CheckedInputStream check = new CheckedInputStream( new FileInputStream( path ),
-                        new CRC32() );
-                while( check.read( buf, 0, buf.length ) > 0 )
-                {
-                }
-                ;
-                check.close();
-                if( check.getChecksum().getValue() != entry.getCrc() )
-                {
-                    File ff = new File( path );
-                    ff.delete();
-                    throw new Exception();
-                }
-                Log.i( "DataDownloader", "File '" + path
-                        + "' exists and passed CRC check - not overwriting it" );
-                continue;
-            }
-            catch( Exception e )
-            {
-            }
-            try
-            {
-                out = new FileOutputStream( path );
-            }
-            catch( FileNotFoundException e )
-            {
-                Log.e( "DataDownloader",
-                        "Saving file '" + path + "' - cannot create file: " + e.toString() );
-            }
-            catch( SecurityException e )
-            {
-                Log.e( "DataDownloader",
-                        "Saving file '" + path + "' - cannot create file: " + e.toString() );
-            }
-            
-            if( out == null )
-            {
-                mStatus.setText( res.getString( R.string.error_write, path ) );
-                Log.e( "DataDownloader", "Saving file '" + path + "' - cannot create file" );
-                return false;
-            }
-            float percent = 0.0f;
-            if( totalLen > 0 )
-                percent = stream.getBytesRead() * 100.0f / totalLen;
-            mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
-            try
-            {
-                int len = zip.read( buf );
-                while( len >= 0 )
-                {
-                    if( len > 0 )
-                        out.write( buf, 0, len );
-                    len = zip.read( buf );
-                    percent = 0.0f;
-                    if( totalLen > 0 )
-                        percent = stream.getBytesRead() * 100.0f / totalLen;
-                    mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
-                }
-                out.flush();
-                out.close();
-                out = null;
-            }
-            catch( IOException e )
-            {
-                mStatus.setText( res.getString( R.string.error_write, path ) );
-                Log.e( "DataDownloader", "Saving file '" + path
-                        + "' - error writing or downloading: " + e.toString() );
-                return false;
-            }
-            try
-            {
-                CheckedInputStream check = new CheckedInputStream( new FileInputStream( path ),
-                        new CRC32() );
-                while( check.read( buf, 0, buf.length ) > 0 )
-                {
-                }
-                ;
-                check.close();
-                if( check.getChecksum().getValue() != entry.getCrc() )
-                {
-                    File ff = new File( path );
-                    ff.delete();
-                    throw new Exception();
-                }
-            }
-            catch( Exception e )
-            {
-                mStatus.setText( res.getString( R.string.error_write, path ) );
-                Log.e( "DataDownloader", "Saving file '" + path + "' - CRC check failed" );
-                return false;
-            }
-            Log.i( "DataDownloader", "Saving file '" + path + "' done" );
-        }
-        return true;
-    }
-    
-    private ZipEntry getZipEntry( Resources res, String url, ZipInputStream zip )
-    {
-        ZipEntry entry;
-        try
-        {
-            entry = zip.getNextEntry();
-            if( entry != null )
-                Log.i( "DataDownloader",
-                        "Reading from zip file '" + url + "' entry '" + entry.getName() + "'" );
-        }
-        catch( IOException e )
-        {
-            mStatus.setText( res.getString( R.string.error_dl_from, url ) );
-            Log.e( "DataDownloader", "Error reading from zip file '" + url + "': " + e.toString() );
-            entry = null;
-        }
-        return entry;
-    }
-    
-    private void createDirectory( ZipEntry entry )
-    {
-        String path = mOutFilesDir + "/" + entry.getName();
-        Log.i( "DataDownloader", "Creating dir '" + path + "'" );
-        try
-        {
-            File outDir = new File( path );
-            if( !( outDir.exists() && outDir.isDirectory() ) )
-                outDir.mkdirs();
-        }
-        catch( SecurityException e )
-        {
-        }
-    }
-    
-    private boolean writeOutput( final String downloadFlagFileName, Resources res, String url )
-    {
-        String path;
-        OutputStream out = null;
-        path = mOutFilesDir + "/" + downloadFlagFileName;
-        try
-        {
-            out = new FileOutputStream( path );
-            out.write( url.getBytes( "UTF-8" ) );
-            out.flush();
-            out.close();
-        }
-        catch( FileNotFoundException e )
-        {
-        }
-        catch( SecurityException e )
-        {
-        }
-        catch( IOException e )
-        {
-            mStatus.setText( res.getString( R.string.error_write, path ) );
-            return false;
-        }
-        return true;
-    }
-    
     private String getOutFilePath( final String filename )
     {
-        return mOutFilesDir + "/" + filename;
+        return outFilesDir + "/" + filename;
     }
     
     private static DefaultHttpClient HttpWithDisabledSslCertCheck()
     {
-        // javax.net.ssl.HostnameVerifier hostnameVerifier
-        // = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
-        // DefaultHttpClient client = new DefaultHttpClient();
-        // org.apache.http.conn.scheme.SchemeRegistry registry
-        // = new org.apache.http.conn.scheme.SchemeRegistry();
-        // org.apache.http.conn.ssl.SSLSocketFactory socketFactory
-        // = org.apache.http.conn.ssl.SSLSocketFactory.getSocketFactory();
-        // socketFactory.setHostnameVerifier(
-        // (org.apache.http.conn.ssl.X509HostnameVerifier) hostnameVerifier );
-        // registry.register( new org.apache.http.conn.scheme.Scheme(
-        // "https", socketFactory, 443 ) );
-        // org.apache.http.impl.conn.SingleClientConnManager mgr
-        // = new org.apache.http.impl.conn.SingleClientConnManager( client.getParams(), registry );
-        // DefaultHttpClient http = new DefaultHttpClient( mgr, client.getParams() );
-        // javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier( hostnameVerifier );
-        // return http;
-        
+        /*
+         * HostnameVerifier hostnameVerifier =
+         * org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER; DefaultHttpClient
+         * client = new DefaultHttpClient(); SchemeRegistry registry = new SchemeRegistry();
+         * SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
+         * socketFactory.setHostnameVerifier((X509HostnameVerifier) hostnameVerifier);
+         * registry.register(new Scheme("https", socketFactory, 443)); SingleClientConnManager mgr =
+         * new SingleClientConnManager(client.getParams(), registry); DefaultHttpClient http = new
+         * DefaultHttpClient(mgr, client.getParams());
+         * HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier); return http;
+         */
         return new DefaultHttpClient();
     }
     
-    private class StatusWriter
+    class StatusWriter
     {
-        private TextView Status;
-        private Activity Parent;
-        private SpannedString oldText = new SpannedString( "" );
+        private TextView pView;
+        private Activity pActivity;
+        private SpannedString mOldText = new SpannedString( "" );
         
-        public StatusWriter( TextView status, Activity parent )
+        public StatusWriter( TextView view, Activity activity )
         {
-            Status = status;
-            Parent = parent;
+            pView = view;
+            pActivity = activity;
         }
         
-        public void setParent( TextView status, Activity parent )
+        public void setParent( TextView view, Activity activity )
         {
             synchronized( DataDownloader.this )
             {
-                Status = status;
-                Parent = parent;
-                setText( oldText.toString() );
+                pView = view;
+                pActivity = activity;
+                setText( mOldText.toString() );
             }
         }
         
@@ -640,19 +584,19 @@ public class DataDownloader extends Thread
             synchronized( DataDownloader.this )
             {
                 Callback cb = new Callback();
-                oldText = new SpannedString( str );
+                mOldText = new SpannedString( str );
                 cb.text = new SpannedString( str );
-                cb.Status = Status;
-                if( Parent != null && Status != null )
-                    Parent.runOnUiThread( cb );
+                cb.Status = pView;
+                if( pActivity != null && pView != null )
+                    pActivity.runOnUiThread( cb );
             }
         }
     }
     
-    private class CountingInputStream extends BufferedInputStream
+    class CountingInputStream extends BufferedInputStream
     {
-        private long bytesReadMark = 0;
-        private long bytesRead = 0;
+        private long mBytesReadMark = 0;
+        private long mBytesRead = 0;
         
         public CountingInputStream( InputStream in, int size )
         {
@@ -666,7 +610,7 @@ public class DataDownloader extends Thread
         
         public long getBytesRead()
         {
-            return bytesRead;
+            return mBytesRead;
         }
         
         public synchronized int read() throws IOException
@@ -674,7 +618,7 @@ public class DataDownloader extends Thread
             int read = super.read();
             if( read >= 0 )
             {
-                bytesRead++;
+                mBytesRead++;
             }
             return read;
         }
@@ -684,7 +628,7 @@ public class DataDownloader extends Thread
             int read = super.read( b, off, len );
             if( read >= 0 )
             {
-                bytesRead += read;
+                mBytesRead += read;
             }
             return read;
         }
@@ -694,7 +638,7 @@ public class DataDownloader extends Thread
             long skipped = super.skip( n );
             if( skipped >= 0 )
             {
-                bytesRead += skipped;
+                mBytesRead += skipped;
             }
             return skipped;
         }
@@ -702,14 +646,13 @@ public class DataDownloader extends Thread
         public synchronized void mark( int readlimit )
         {
             super.mark( readlimit );
-            bytesReadMark = bytesRead;
+            mBytesReadMark = mBytesRead;
         }
         
         public synchronized void reset() throws IOException
         {
             super.reset();
-            bytesRead = bytesReadMark;
+            mBytesRead = mBytesReadMark;
         }
-    }
-    
+    }    
 }
