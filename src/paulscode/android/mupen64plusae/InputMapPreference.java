@@ -22,8 +22,8 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.input.InputMap;
 import paulscode.android.mupen64plusae.input.transform.AbstractTransform;
+import paulscode.android.mupen64plusae.input.transform.InputMap;
 import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;

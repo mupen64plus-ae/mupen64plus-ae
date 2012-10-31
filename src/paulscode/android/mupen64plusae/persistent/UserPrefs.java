@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.R;
-import paulscode.android.mupen64plusae.input.InputMap;
+import paulscode.android.mupen64plusae.input.transform.InputMap;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;

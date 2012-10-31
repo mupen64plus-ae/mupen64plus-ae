@@ -17,7 +17,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.input;
+package paulscode.android.mupen64plusae.input.transform;
 
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.util.SparseIntArray;
@@ -51,11 +51,13 @@ public class InputMap
     public static final int AXIS_U = 17;
     public static final int NUM_INPUTS = 18;
     
+    // Strength above which button/axis is considered pressed
+    public static final float STRENGTH_THRESHOLD = 0.5f;
+    
+    // Bidirectional map implementation and listener management
     private int[] mN64ToCode;
     private SparseIntArray mCodeToN64;
     private SubscriptionManager<Listener> mPublisher;
-    
-    private final float STRENGTH_THRESHOLD = 0.5f;
     
     public InputMap()
     {
@@ -68,73 +70,6 @@ public class InputMap
     {
         this();
         deserialize( serializedMap );
-    }
-    
-    public boolean apply( int inputCode, float strength, AbstractController controller )
-    {
-        boolean wasApplied = true;
-        boolean state = strength > STRENGTH_THRESHOLD;
-        switch( get( inputCode ) )
-        {
-            case DPD_R:
-                controller.mDpadR = state;
-                break;
-            case DPD_L:
-                controller.mDpadL = state;
-                break;
-            case DPD_D:
-                controller.mDpadD = state;
-                break;
-            case DPD_U:
-                controller.mDpadU = state;
-                break;
-            case START:
-                controller.mBtnStart = state;
-                break;
-            case BTN_Z:
-                controller.mBtnZ = state;
-                break;
-            case BTN_B:
-                controller.mBtnB = state;
-                break;
-            case BTN_A:
-                controller.mBtnA = state;
-                break;
-            case CPD_R:
-                controller.mBtnCR = state;
-                break;
-            case CPD_L:
-                controller.mBtnCL = state;
-                break;
-            case CPD_D:
-                controller.mBtnCD = state;
-                break;
-            case CPD_U:
-                controller.mBtnCU = state;
-                break;
-            case BTN_R:
-                controller.mBtnR = state;
-                break;
-            case BTN_L:
-                controller.mBtnL = state;
-                break;
-            case AXIS_R:
-                controller.mAxisFractionXpos = strength;
-                break;
-            case AXIS_L:
-                controller.mAxisFractionXneg = strength;
-                break;
-            case AXIS_D:
-                controller.mAxisFractionYneg = strength;
-                break;
-            case AXIS_U:
-                controller.mAxisFractionYpos = strength;
-                break;
-            default:
-                wasApplied = false;
-                break;
-        }
-        return wasApplied;
     }
     
     public int get( int inputCode )

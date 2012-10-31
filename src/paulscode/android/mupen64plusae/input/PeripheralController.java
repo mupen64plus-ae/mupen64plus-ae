@@ -20,6 +20,7 @@
 package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.input.transform.AbstractTransform;
+import paulscode.android.mupen64plusae.input.transform.InputMap;
 import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
@@ -81,7 +82,7 @@ public class PeripheralController extends AbstractController implements Abstract
         // Process user inputs from keyboard, gamepad, etc.
         if( mInputMap != null )
         {
-            mInputMap.apply( inputCode, strength, this );
+            apply( inputCode, strength );
             notifyChanged();
         }
     }
@@ -93,7 +94,7 @@ public class PeripheralController extends AbstractController implements Abstract
         if( mInputMap != null )
         {
             for( int i = 0; i < inputCodes.length; i++ )
-                mInputMap.apply( inputCodes[i], strengths[i], this );
+                apply( inputCodes[i], strengths[i] );
             notifyChanged();
         }
     }
@@ -106,5 +107,70 @@ public class PeripheralController extends AbstractController implements Abstract
         {
             ( (KeyAxisTransform) mTransform ).setInputCodeFilter( map.getMappedInputCodes() );
         }
+    }
+    
+    public boolean apply( int inputCode, float strength )
+    {
+        boolean state = strength > InputMap.STRENGTH_THRESHOLD;
+        switch( mInputMap.get( inputCode ) )
+        {
+            case InputMap.DPD_R:
+                mDpadR = state;
+                break;
+            case InputMap.DPD_L:
+                mDpadL = state;
+                break;
+            case InputMap.DPD_D:
+                mDpadD = state;
+                break;
+            case InputMap.DPD_U:
+                mDpadU = state;
+                break;
+            case InputMap.START:
+                mBtnStart = state;
+                break;
+            case InputMap.BTN_Z:
+                mBtnZ = state;
+                break;
+            case InputMap.BTN_B:
+                mBtnB = state;
+                break;
+            case InputMap.BTN_A:
+                mBtnA = state;
+                break;
+            case InputMap.CPD_R:
+                mBtnCR = state;
+                break;
+            case InputMap.CPD_L:
+                mBtnCL = state;
+                break;
+            case InputMap.CPD_D:
+                mBtnCD = state;
+                break;
+            case InputMap.CPD_U:
+                mBtnCU = state;
+                break;
+            case InputMap.BTN_R:
+                mBtnR = state;
+                break;
+            case InputMap.BTN_L:
+                mBtnL = state;
+                break;
+            case InputMap.AXIS_R:
+                mAxisFractionXpos = strength;
+                break;
+            case InputMap.AXIS_L:
+                mAxisFractionXneg = strength;
+                break;
+            case InputMap.AXIS_D:
+                mAxisFractionYneg = strength;
+                break;
+            case InputMap.AXIS_U:
+                mAxisFractionYpos = strength;
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 }
