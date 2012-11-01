@@ -349,13 +349,13 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
             SDLSurface.lastFPSCheck = System.currentTimeMillis();
         }
         SDLSurface.frameCount++;
-        if( ( Globals.touchscreenView != null && SDLSurface.frameCount >= Globals.touchscreenView.fpsRate )
-                || ( Globals.touchscreenView == null && SDLSurface.frameCount >= SDLSurface.fpsRate ) )
+        if( ( Globals.touchSkin != null && SDLSurface.frameCount >= Globals.touchSkin.fpsRate )
+                || ( Globals.touchSkin == null && SDLSurface.frameCount >= SDLSurface.fpsRate ) )
         {
             long currentTime = System.currentTimeMillis();
             float fFPS = ( (float) SDLSurface.frameCount / (float) ( currentTime - SDLSurface.lastFPSCheck ) ) * 1000.0f;
-            if( Globals.touchscreenView != null )
-                Globals.touchscreenView.updateFPS( (int) fFPS );
+            if( Globals.touchSkin != null )
+                Globals.touchSkin.updateFps( (int) fFPS );
             SDLSurface.frameCount = 0;
             SDLSurface.lastFPSCheck = currentTime;
         }

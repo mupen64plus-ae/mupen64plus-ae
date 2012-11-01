@@ -25,7 +25,7 @@ public class Controls
     public static final int L         = 13;
     
     // Non-standard mupen64plus buttons, but simulated here for better control:
-    public static final int UpRight   = 14;
+    public static final int RightUp   = 14;
     public static final int RightDown = 15;
     public static final int LeftDown  = 16;
     public static final int LeftUp    = 17;

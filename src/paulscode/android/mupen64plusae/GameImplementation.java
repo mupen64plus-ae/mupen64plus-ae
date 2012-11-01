@@ -79,43 +79,6 @@ public class GameImplementation implements View.OnKeyListener
             sGameActivityXperiaPlay = ( GameActivityXperiaPlay ) activity;
     }
     
-    public static Object getRomPath()
-    {
-        if( sGameActivity != null )
-            return Globals.paths.getROMPath( Globals.userPrefs, sGameActivity );
-        else if( sGameActivityXperiaPlay != null )
-            return Globals.paths.getROMPath( Globals.userPrefs, sGameActivityXperiaPlay );
-        else
-            return null;
-    }
-    
-    public static void runOnUiThread( Runnable action )
-    {
-        
-        if( sGameActivity != null )
-            sGameActivity.runOnUiThread( action );
-        else if( sGameActivityXperiaPlay != null )
-            sGameActivityXperiaPlay.runOnUiThread( action );
-    }
-    
-    public static void showToast( String message )
-    {
-        if( sGameActivity != null )
-            Notifier.showToast( message, sGameActivity );
-        else if( sGameActivityXperiaPlay != null )
-            Notifier.showToast( message, sGameActivityXperiaPlay );
-    }    
-
-    public static void vibrate( boolean active )
-    {
-        if( sVibrator == null )
-            return;
-        if( active )
-            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
-        else
-            sVibrator.cancel();
-    }
-    
     public void onCreate( Bundle savedInstanceState )
     {
         // Lay out content and initialize stuff
@@ -132,6 +95,14 @@ public class GameImplementation implements View.OnKeyListener
         
         // Override the peripheral controller key listener, to add some functionality
         surface.setOnKeyListener( this );
+        
+        // Set up touchscreen skin
+        Globals.touchSkin = new TouchscreenSkin();
+        Globals.touchSkin.setResources( mActivity.getResources() );
+        Globals.touchSkin.loadPad();
+        Globals.touchscreenView.mSkin = Globals.touchSkin;
+        mTouchscreenController.mSkin = Globals.touchSkin;
+        Globals.touchscreenView.initialize();
         
         // Notify that game activity has started
         Notifier.showToast( mActivity.getString( R.string.mupen64plus_started ), mActivity );
@@ -274,8 +245,6 @@ public class GameImplementation implements View.OnKeyListener
         mActivity.setContentView( R.layout.game_activity );
         Globals.sdlSurface = (SDLSurface) mActivity.findViewById( R.id.sdlSurface );
         Globals.touchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
-        Globals.touchscreenView.setResources( mActivity.getResources() );
-        Globals.touchscreenView.loadPad();
         
         // Hide the action bar introduced in higher Android versions
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
@@ -385,5 +354,42 @@ public class GameImplementation implements View.OnKeyListener
                 actionBar.show();
             }
         }        
+    }
+
+    public static Object getRomPath()
+    {
+        if( sGameActivity != null )
+            return Globals.paths.getROMPath( Globals.userPrefs, sGameActivity );
+        else if( sGameActivityXperiaPlay != null )
+            return Globals.paths.getROMPath( Globals.userPrefs, sGameActivityXperiaPlay );
+        else
+            return null;
+    }
+
+    public static void runOnUiThread( Runnable action )
+    {
+        
+        if( sGameActivity != null )
+            sGameActivity.runOnUiThread( action );
+        else if( sGameActivityXperiaPlay != null )
+            sGameActivityXperiaPlay.runOnUiThread( action );
+    }
+
+    public static void showToast( String message )
+    {
+        if( sGameActivity != null )
+            Notifier.showToast( message, sGameActivity );
+        else if( sGameActivityXperiaPlay != null )
+            Notifier.showToast( message, sGameActivityXperiaPlay );
+    }
+
+    public static void vibrate( boolean active )
+    {
+        if( sVibrator == null )
+            return;
+        if( active )
+            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
+        else
+            sVibrator.cancel();
     }    
 }

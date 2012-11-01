@@ -23,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
+import android.util.FloatMath;
 import android.util.Log;
 
 // TODO: Cleanup, refactor, subdivide this class (I turned it into a dumping ground during
@@ -800,9 +801,8 @@ public class Utility
         if( div == 0 )
             return false;
             
-        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) )
-                / div;
-        float t = ( vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
+        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) ) / div;
+        float t = (  vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
         
         if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
         {
@@ -814,5 +814,24 @@ public class Utility
         
         // Segments don't cross
         return false;
+    }
+
+    public static Point intersectOctagon( float dX, float dY, float halfWidth )
+    {
+        final float dC = halfWidth;
+        final float dA = dC * FloatMath.sqrt( 0.5f );
+        final float signX = dX < 0 ? -1 : 1;
+        final float signY = dY < 0 ? -1 : 1;
+        
+        Point crossPt = new Point();
+        crossPt.x = dX;
+        crossPt.y = dY;
+        
+        if( ( signX * dX ) > ( signY * dY ) )
+            segsCross( 0, 0, dX, dY, signX * dC, 0, signX * dA, signY * dA, crossPt );
+        else
+            segsCross( 0, 0, dX, dY, 0, signY * dC, signX * dA, signY * dA, crossPt );
+        
+        return crossPt;
     }
 }

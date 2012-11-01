@@ -33,6 +33,7 @@ public class Globals
     
     // Frequently-used global objects
     // TODO: Eliminate as many of these as possible
+    public static TouchscreenSkin touchSkin = null;
     public static TouchscreenView touchscreenView = null;
     public static SDLSurface sdlSurface = null;
     public static String extraArgs = ".";

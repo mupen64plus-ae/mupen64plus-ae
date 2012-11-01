@@ -327,7 +327,7 @@ public class XperiaPlayController extends AbstractController
                 mp64pButtons[closestMatch] = true;
             }
             // Simulate the remaining buttons:
-            else if( closestMatch == Controls.UpRight )
+            else if( closestMatch == Controls.RightUp )
             {
                 mp64pButtons[Controls.Up] = true;
                 mp64pButtons[Controls.Right] = true;
@@ -459,7 +459,7 @@ public class XperiaPlayController extends AbstractController
                 else if( param.equals( "up" ) )
                     maskColors[Controls.Up] = valI;
                 else if( param.equals( "upright" ) )
-                    maskColors[Controls.UpRight] = valI;
+                    maskColors[Controls.RightUp] = valI;
                 else if( param.equals( "right" ) )
                     maskColors[Controls.Right] = valI;
                 else if( param.equals( "rightdown" ) )
@@ -643,7 +643,7 @@ public class XperiaPlayController extends AbstractController
         if( !Globals.userPrefs.isXperiaEnabled || !Globals.userPrefs.isInputEnabled )
             return;
         
-        Globals.touchscreenView.updatePointers( pointers, pointerX, pointerY, maxPid );
+        //Globals.touchscreenView.updatePointers( pointers, pointerX, pointerY, maxPid );
     }
 
     public boolean onNativeKey( int action, int keycode )
