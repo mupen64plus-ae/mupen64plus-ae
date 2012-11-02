@@ -20,6 +20,7 @@
 package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.XperiaPlayController;
+import paulscode.android.mupen64plusae.input.transform.TouchMap;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
@@ -30,6 +31,7 @@ import android.view.MenuItem;
 @TargetApi( 9 )
 public class GameActivityXperiaPlay extends NativeActivity
 {
+    private TouchMap mXperiaPlayMap;
     @SuppressWarnings( "unused" )
     private XperiaPlayController mXperiaPlayController;
     private GameImplementation mImplementation;
@@ -45,13 +47,17 @@ public class GameActivityXperiaPlay extends NativeActivity
         super.onCreate( savedInstanceState );
         mImplementation.onCreate( savedInstanceState );
         
+        // We should only be here if enabled
+        assert( Globals.userPrefs.isXperiaEnabled );
+
         // Additional Xperia Play configuration
         getWindow().takeSurface( null );
         NativeMethods.RegisterThis();
         Utility.loadNativeLibName( "xperia-touchpad" );
-
-        if( Globals.userPrefs.isXperiaEnabled )
-            mXperiaPlayController = new XperiaPlayController();
+        mXperiaPlayMap = new TouchMap();
+        mXperiaPlayMap.setResources( getResources() );
+        mXperiaPlayMap.load( Globals.userPrefs.xperiaLayout );
+        mXperiaPlayController = new XperiaPlayController( mXperiaPlayMap );
     }
     
     @Override

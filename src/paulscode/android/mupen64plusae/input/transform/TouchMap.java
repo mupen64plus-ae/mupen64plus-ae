@@ -7,7 +7,6 @@ import java.util.Set;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.AbstractController;
-import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
@@ -15,10 +14,10 @@ import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.util.Utility.Image;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 
-// TODO: Move some functionality into TouchscreenView if TouchMap also used for XperiaPlayController
 public class TouchMap
 {
     public interface Listener
@@ -30,35 +29,41 @@ public class TouchMap
         public void onFpsChanged( TouchMap touchMap, int fps );
     }
     
+    // Pseudo-button indices, indicating simultaneous press of two d-pad buttons
+    public static final int DPD_RU = AbstractController.NUM_BUTTONS;
+    public static final int DPD_RD = DPD_RU + 1;
+    public static final int DPD_LD = DPD_RU + 2;
+    public static final int DPD_LU = DPD_RU + 3;
+    
     // Mask colors
-    public int[] maskColors;
+    private int[] maskColors;
     
     // Buttons
-    public ArrayList<Utility.Image> masks;
+    private ArrayList<Utility.Image> masks;
     private ArrayList<Utility.Image> buttons;
     private ArrayList<Integer> xpercents;
     private ArrayList<Integer> ypercents;
     
     // Analog background
-    public Utility.Image analogImage;
+    private Utility.Image analogImage;
     private int analogXpercent;
     private int analogYpercent;
-    public float analogPadding;
-    public float analogDeadzone;
-    public float analogMaximum;
-
+    private int analogPadding;
+    private int analogDeadzone;
+    private int analogMaximum;
+    
     // Analog stick
     private Utility.Image hatImage;
     private int hatX;
     private int hatY;
     
-    // Frame rate display
+    // Frame rate indicator
     private Utility.Image fpsImage;
     private int fpsXpercent;
     private int fpsYpercent;
     private int fpsNumXpercent;
     private int fpsNumYpercent;
-    public int fpsRate;
+    private int fpsRecalcRate;
     private int fpsValue;
     private String fpsFont;
     private Utility.Image[] numeralImages;
@@ -85,10 +90,10 @@ public class TouchMap
         BUTTON_HASHMAP.put( "cup", AbstractController.CPD_U );
         BUTTON_HASHMAP.put( "r", AbstractController.BTN_R );
         BUTTON_HASHMAP.put( "l", AbstractController.BTN_L );
-        BUTTON_HASHMAP.put( "upright", TouchscreenController.DPD_RU );
-        BUTTON_HASHMAP.put( "rightdown", TouchscreenController.DPD_RD );
-        BUTTON_HASHMAP.put( "leftdown", TouchscreenController.DPD_LD );
-        BUTTON_HASHMAP.put( "leftup", TouchscreenController.DPD_LU );
+        BUTTON_HASHMAP.put( "upright", DPD_RU );
+        BUTTON_HASHMAP.put( "rightdown", DPD_RD );
+        BUTTON_HASHMAP.put( "leftdown", DPD_LD );
+        BUTTON_HASHMAP.put( "leftup", DPD_LU );
     }
     
     public TouchMap()
@@ -96,7 +101,7 @@ public class TouchMap
         mPublisher = new SubscriptionManager<TouchMap.Listener>();
         numeralImages = new Utility.Image[10];
         fpsDigits = new Utility.Image[4];
-        maskColors = new int[TouchscreenController.NUM_PSEUDO_BUTTONS];
+        maskColors = new int[BUTTON_HASHMAP.size()];
         clear();
     }
     
@@ -116,12 +121,12 @@ public class TouchMap
         fpsImage = null;
         fpsXpercent = fpsYpercent = 0;
         fpsNumXpercent = fpsNumYpercent = 50;
-        fpsRate = 15;
+        fpsRecalcRate = 15;
         fpsValue = 0;
         fpsFont = "Mupen64Plus-AE-Contrast-Blue";
-        for( int i = 0; i < numeralImages.length; i++)
+        for( int i = 0; i < numeralImages.length; i++ )
             numeralImages[i] = null;
-        for( int i = 0; i < fpsDigits.length; i++)
+        for( int i = 0; i < fpsDigits.length; i++ )
             fpsDigits[i] = null;
         for( int i = 0; i < maskColors.length; i++ )
             maskColors[i] = -1;
@@ -145,48 +150,46 @@ public class TouchMap
                     + i + ".png" );
     }
     
-    public void resize( int canvasW, int canvasH )
+    public void resize( int w, int h )
     {
         // Position the buttons
-        for( int i = 0; i < xpercents.size(); i++ )
+        for( int i = 0; i < buttons.size(); i++ )
         {
             buttons.get( i ).fitCenter(
-                    (int) ( (float) canvasW * ( (float) xpercents.get( i ) / 100.0f ) ),
-                    (int) ( (float) canvasH * ( (float) ypercents.get( i ) / 100.0f ) ), canvasW,
-                    canvasH );
+                    (int) ( (float) w * ( (float) xpercents.get( i ) / 100.0f ) ),
+                    (int) ( (float) h * ( (float) ypercents.get( i ) / 100.0f ) ), w, h );
             masks.get( i ).fitCenter(
-                    (int) ( (float) canvasW * ( (float) xpercents.get( i ) / 100.0f ) ),
-                    (int) ( (float) canvasH * ( (float) ypercents.get( i ) / 100.0f ) ), canvasW,
-                    canvasH );
+                    (int) ( (float) w * ( (float) xpercents.get( i ) / 100.0f ) ),
+                    (int) ( (float) h * ( (float) ypercents.get( i ) / 100.0f ) ), w, h );
         }
         
         // Position the analog control
         if( analogImage != null )
         {
-            analogImage.fitCenter( (int) ( (float) canvasW * ( (float) analogXpercent / 100.0f ) ),
-                    (int) ( (float) canvasH * ( (float) analogYpercent / 100.0f ) ), canvasW,
-                    canvasH );
+            analogImage.fitCenter( (int) ( (float) w * ( (float) analogXpercent / 100.0f ) ),
+                    (int) ( (float) h * ( (float) analogYpercent / 100.0f ) ), w, h );
         }
         
         // Position the FPS box
         if( fpsImage != null )
         {
             // Position the background image and draw it
-            fpsImage.fitCenter( (int) ( (float) canvasW * ( (float) fpsXpercent / 100.0f ) ),
-                    (int) ( (float) canvasH * ( (float) fpsYpercent / 100.0f ) ), canvasW, canvasH );
+            fpsImage.fitCenter( (int) ( (float) w * ( (float) fpsXpercent / 100.0f ) ),
+                    (int) ( (float) h * ( (float) fpsYpercent / 100.0f ) ), w, h );
         }
         
-        // Notify listeners that it has changed
+        // Notify listeners that everything has changed
         for( Listener listener : mPublisher.getSubscribers() )
             listener.onAllChanged( this );
     }
     
-    public void updateAnalog( float axisFractionX, float axisFractionY )
+    public void updateHat( float axisFractionX, float axisFractionY )
     {
         // Move the analog hat based on analog state
-        hatX = analogImage.hWidth + (int) ( axisFractionX * (float) analogMaximum);
-        hatY = analogImage.hHeight - (int) ( axisFractionY * (float) analogMaximum);
+        hatX = analogImage.hWidth + (int) ( axisFractionX * (float) analogMaximum );
+        hatY = analogImage.hHeight - (int) ( axisFractionY * (float) analogMaximum );
         
+        // Notify listeners that analog hat changed
         for( Listener listener : mPublisher.getSubscribers() )
             listener.onHatChanged( this, axisFractionX, axisFractionY );
     }
@@ -199,6 +202,9 @@ public class TouchMap
         // Quick return if user has disabled FPS or it hasn't changed
         if( !Globals.userPrefs.isFrameRateEnabled || fpsValue == fps )
             return;
+        
+        // Store the new value
+        fpsValue = fps;
         
         // Assemble a sprite for the FPS value
         String fpsString = Integer.toString( fpsValue );
@@ -226,6 +232,7 @@ public class TouchMap
             }
         }
         
+        // Notify listeners that FPS sprite changed
         for( Listener listener : mPublisher.getSubscribers() )
             listener.onFpsChanged( this, fpsValue );
     }
@@ -238,6 +245,73 @@ public class TouchMap
     public Rect getFpsBounds()
     {
         return fpsImage.drawRect;
+    }
+    
+    public int getFpsRecalcRate()
+    {
+        return fpsRecalcRate;
+    }
+    
+    public int getButtonPress( int xLocation, int yLocation )
+    {
+        for( Image mask : masks )
+        {
+            if( mask != null )
+            {
+                int left = mask.x;
+                int right = left + mask.width;
+                int bottom = mask.y;
+                int top = bottom + mask.height;
+                
+                // Check each one in sequence
+                if( xLocation >= left && xLocation < right && yLocation >= bottom
+                        && yLocation < top )
+                {
+                    // It is inside this button, check the color mask
+                    int c = mask.image.getPixel( xLocation - mask.x, yLocation - mask.y );
+                    
+                    // Ignore the alpha component if any
+                    int rgb = (int) ( c & 0x00ffffff );
+                    
+                    // Ignore black and modify the button states
+                    if( rgb > 0 )
+                        return getButtonFromColor( rgb );
+                }
+            }
+        }
+        return -1;
+    }
+    
+    public Point getAnalogDisplacement( int xLocation, int yLocation )
+    {
+        if( analogImage == null )
+            return new Point( 0, 0 );
+        
+        // Distance from center along x-axis
+        int dX = xLocation - ( analogImage.x + analogImage.hWidth );
+        
+        // Distance from center along y-axis
+        int dY = yLocation - ( analogImage.y + analogImage.hHeight );
+        
+        return new Point( dX, dY );
+    }
+    
+    public Point getConstrainedDisplacement( int dX, int dY )
+    {
+        return Utility.constrainToOctagon( dX, dY, analogMaximum );
+    }
+    
+    public float getAnalogStrength( float displacement )
+    {
+        // Fraction of full-throttle, clamped to range [0-1]
+        float p = ( displacement - analogDeadzone ) / (float) ( analogMaximum - analogDeadzone );
+        return Math.max( Math.min( p, 1 ), 0 );
+    }
+    
+    public boolean isAnalogCaptured( float displacement )
+    {
+        return ( displacement >= analogDeadzone )
+                && ( displacement < analogMaximum + analogPadding );
     }
     
     public void drawStatic( Canvas canvas )
@@ -294,7 +368,7 @@ public class TouchMap
         }
         
         // Calculate the starting position of the FPS text
-        x = x - (int) ( (float) totalWidth / 2.0f );
+        x = x - (int) ( (float) totalWidth / 2f );
         
         // Draw each digit of the FPS number
         for( int i = 0; i < fpsDigits.length; i++ )
@@ -308,7 +382,7 @@ public class TouchMap
         }
     }
     
-    public void loadPad()
+    public void load( String directory )
     {
         // Always clear the skin
         clear();
@@ -318,13 +392,13 @@ public class TouchMap
             return;
         
         // Load the configuration file (pad.ini)
-        ConfigFile pad_ini = new ConfigFile( Globals.userPrefs.touchscreenLayoutFolder + "/pad.ini" );
+        ConfigFile pad_ini = new ConfigFile( directory + "/pad.ini" );
         
         // Look up the mask colors
         readMaskColors( pad_ini );
         
         // Loop through all the sections
-        readFiles( pad_ini, Globals.userPrefs.touchscreenLayoutFolder );
+        readFiles( pad_ini, directory );
         
         // Free the data that was loaded from the config file:
         pad_ini.clear();
@@ -434,11 +508,11 @@ public class TouchMap
         fpsNumYpercent = Utility.toInt( section.get( "numy" ), 50 );
         
         // Refresh rate (in frames.. integer greater than 1)
-        fpsRate = Utility.toInt( section.get( "rate" ), 15 );
+        fpsRecalcRate = Utility.toInt( section.get( "rate" ), 15 );
         
         // Need at least 2 frames to calculate FPS
-        if( fpsRate < 2 )
-            fpsRate = 2;
+        if( fpsRecalcRate < 2 )
+            fpsRecalcRate = 2;
         
         // Numeral font
         fpsFont = section.get( "font" );
@@ -460,5 +534,23 @@ public class TouchMap
                         + i + ".png', error message: " + e.getMessage() );
             }
         }
+    }
+    
+    private int getButtonFromColor( int color )
+    {
+        // TODO: Android is not precise: the color is different than it should be!
+        // Find the closest match among the N64 buttons
+        int closestMatch = -1;
+        int matchDif = Integer.MAX_VALUE;
+        for( int i = 0; i < maskColors.length; i++ )
+        {
+            int dif = Math.abs( maskColors[i] - color );
+            if( dif < matchDif )
+            {
+                closestMatch = i;
+                matchDif = dif;
+            }
+        }
+        return closestMatch;
     }
 }

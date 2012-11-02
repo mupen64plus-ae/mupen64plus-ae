@@ -21,8 +21,8 @@ package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
+import android.graphics.Point;
 import android.os.Build;
 import android.util.FloatMath;
 import android.view.MotionEvent;
@@ -31,13 +31,6 @@ import android.view.View.OnTouchListener;
 
 public class TouchscreenController extends AbstractController implements OnTouchListener
 {
-    // Pseudo-buttons, indicating simultaneous press of two d-pad buttons
-    public static final int DPD_RU = NUM_BUTTONS;
-    public static final int DPD_RD = NUM_BUTTONS + 1;
-    public static final int DPD_LD = NUM_BUTTONS + 2;
-    public static final int DPD_LU = NUM_BUTTONS + 3;
-    public static final int NUM_PSEUDO_BUTTONS = NUM_BUTTONS + 4;
-
     private static final int MAX_POINTER_IDS = 256;
     private boolean[] mPointerTouch = new boolean[MAX_POINTER_IDS];
     private int[] mPointerX = new int[MAX_POINTER_IDS];
@@ -45,13 +38,13 @@ public class TouchscreenController extends AbstractController implements OnTouch
     
     private TouchMap mTouchMap;
     private int analogPid = -1;
-
-    public TouchscreenController( View view, TouchMap touchMap )
+    
+    public TouchscreenController( TouchMap touchMap, View view )
     {
-        view.setOnTouchListener( this );
         mTouchMap = touchMap;
+        view.setOnTouchListener( this );
     }
-
+    
     @Override
     @TargetApi( 5 )
     public boolean onTouch( View view, MotionEvent event )
@@ -62,7 +55,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
         int action = event.getAction();
         int actionCode = action & MotionEvent.ACTION_MASK;
         
-        int pid = -1;        
+        int pid = -1;
         switch( actionCode )
         {
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -120,8 +113,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
      * @param pointerY Array containing the Y-coordinate of each pointer.
      * @param maxPid Maximum ID of the pointers that have changed (speed optimization).
      */
-    private void refreshState( boolean[] pointerTouching, int[] pointerX, int[] pointerY,
-            int maxPid )
+    private void refreshState( boolean[] pointerTouching, int[] pointerX, int[] pointerY, int maxPid )
     {
         // Clear button/axis state using super method
         clearState();
@@ -150,87 +142,45 @@ public class TouchscreenController extends AbstractController implements OnTouch
             }
         }
         
-        // Call the super method to push the input into the core
+        // Call the super method to send the input to the core
         notifyChanged();
         
         // Update the skin if the virtual analog stick moved
         if( analogMoved )
-            mTouchMap.updateAnalog( mAxisFractionX, mAxisFractionY );
+            mTouchMap.updateHat( mAxisFractionX, mAxisFractionY );
     }
     
     private void processButtonTouch( int xLocation, int yLocation )
     {
-        for( Utility.Image mask : mTouchMap.masks )
-        {
-            if( mask != null )
-            {
-                int left = mask.x;
-                int right = left + mask.width;
-                int bottom = mask.y;
-                int top = bottom + mask.height;
+        // Determine the index of the button that was pressed
+        int index = mTouchMap.getButtonPress( xLocation, yLocation );
                 
-                // Check each one in sequence
-                if( xLocation >= left && xLocation < right && yLocation >= bottom && yLocation < top )
-                {
-                    // It is inside this button, check the color mask
-                    int c = mask.image.getPixel( xLocation - mask.x, yLocation - mask.y );
-                    
-                    // Ignore the alpha component if any
-                    int rgb = (int) ( c & 0x00ffffff );
-                    
-                    // Ignore black and modify the button states
-                    if( rgb > 0 )
-                        pressColor( rgb );
-                }
-            }
-        }
-    }
-
-    private void pressColor( int color )
-    {
-        // TODO: Android is not precise: the color is different than it should be!
-        
-        // Find the closest match among the N64 buttons
-        int closestMatch = -1;
-        int matchDif = Integer.MAX_VALUE;
-        for( int i = 0; i < mTouchMap.maskColors.length; i++ )
+        // Set the button state if a button was actually touched
+        if( index > -1 )
         {
-            int dif = Math.abs( mTouchMap.maskColors[i] - color );
-            if( dif < matchDif )
-            {
-                // This is a closer match
-                closestMatch = i;
-                matchDif = dif;
-            }
-        }
-        
-        // Now set the button flags based on best match
-        if( closestMatch > -1 )
-        {
-            // Ordinary N64 button(s) pressed, update the AbstractController fields
-            if( closestMatch < AbstractController.NUM_BUTTONS )
+            if( index < AbstractController.NUM_BUTTONS )
             {
                 // A single button was pressed
-                mButtons[closestMatch] = true;
+                mButtons[index] = true;
             }
             else
             {
                 // Two d-pad buttons pressed simultaneously
-                switch( closestMatch )
+                switch( index )
                 {
-                    case TouchscreenController.DPD_RU:
+                    case TouchMap.DPD_RU:
                         mButtons[DPD_R] = true;
                         mButtons[DPD_U] = true;
                         break;
-                    case TouchscreenController.DPD_RD:
+                    case TouchMap.DPD_RD:
                         mButtons[DPD_R] = true;
                         mButtons[DPD_D] = true;
                         break;
-                    case TouchscreenController.DPD_LD:
+                    case TouchMap.DPD_LD:
                         mButtons[DPD_L] = true;
                         mButtons[DPD_D] = true;
                         break;
-                    case TouchscreenController.DPD_LU:
+                    case TouchMap.DPD_LU:
                         mButtons[DPD_L] = true;
                         mButtons[DPD_U] = true;
                         break;
@@ -243,46 +193,42 @@ public class TouchscreenController extends AbstractController implements OnTouch
     
     private boolean processAnalogTouch( int pointerId, int xLocation, int yLocation )
     {
-        Utility.Image image = mTouchMap.analogImage;
+        // Get the cartesian displacement of the analog stick
+        Point point = mTouchMap.getAnalogDisplacement( xLocation, yLocation );
         
-        if( image != null )
-        {        
-            // Distance from center along x-axis
-            float dX = (float) ( xLocation - ( image.x + image.hWidth ) );
-            
-            // Distance from center along y-axis
-            float dY = (float) ( yLocation - ( image.y + image.hHeight ) );
-            
-            // Distance from center
-            float d = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
-            
-            // "Capture" the analog control
-            if( d >= mTouchMap.analogDeadzone && d < ( mTouchMap.analogMaximum + mTouchMap.analogPadding ) )
-                analogPid = pointerId;
-            
-            if( pointerId == analogPid )
+        // Compute the pythagorean displacement of the stick
+        int dX = point.x;
+        int dY = point.y;
+        float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
+        
+        // "Capture" the analog control
+        if( mTouchMap.isAnalogCaptured( displacement ) )
+            analogPid = pointerId;
+        
+        if( pointerId == analogPid )
+        {
+            // User is controlling the analog stick
+            if( Globals.userPrefs.isOctagonalJoystick )
             {
-                // User is controlling the analog stick
-                if( Globals.userPrefs.isOctagonalJoystick )
-                {
-                    // Limit range of motion to an octagon (like the real N64 controller)
-                    Utility.Point point = Utility.constrainToOctagon( dX, dY, mTouchMap.analogMaximum );
-                    dX = point.x;
-                    dY = point.y;
-                    d = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
-                }
-                
-                // Percentage of full-throttle, clamped to range [0-1]
-                float p = ( d - mTouchMap.analogDeadzone ) / ( mTouchMap.analogMaximum - mTouchMap.analogDeadzone );
-                p = Math.max( Math.min( p, 1 ), 0 );
-                
-                // Store the axis values in the super fields
-                mAxisFractionX = p * dX / d;
-                mAxisFractionY = -p * dY / d; // Screen coordinates are inverted
-                
-                return true;
+                // Limit range of motion to an octagon (like the real N64 controller)
+                point = mTouchMap.getConstrainedDisplacement( dX, dY );
+                dX = point.x;
+                dY = point.y;
+                displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
             }
+            
+            // Fraction of full-throttle, clamped to range [0-1]
+            float p = mTouchMap.getAnalogStrength( displacement );
+            
+            // Store the axis values in the super fields (screen y is inverted)
+            mAxisFractionX = p * (float) dX / displacement;
+            mAxisFractionY = -p * (float) dY / displacement;
+            
+            // Analog state changed
+            return true;
         }
+        
+        // Analog state did not change
         return false;
     }
 }

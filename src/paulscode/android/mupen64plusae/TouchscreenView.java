@@ -25,13 +25,9 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-// TODO: Doesn't work as expected when Globals.userPrefs.isTouchscreenRedrawAll == false
 public class TouchscreenView extends View implements TouchMap.Listener
 {
     private boolean mInitialized;
-    private boolean mRefreshAll;
-    private boolean mRefreshHat;
-    private boolean mRefreshFps;
     private TouchMap mTouchMap;
     
     public TouchscreenView( Context context, AttributeSet attribs )
@@ -42,53 +38,43 @@ public class TouchscreenView extends View implements TouchMap.Listener
     
     public void initialize( TouchMap touchMap )
     {
+        // Suspend drawing
+        mInitialized = false;
+
         // Stop listening
         if( mTouchMap != null )
             mTouchMap.unregisterListener( this );
         
-        // Suspend drawing
-        mInitialized = false;
+        // Set the new TouchMap
         mTouchMap = touchMap;
-        
-        // There is no "restart", so start fresh
-        mRefreshAll = true;
         
         // Start listening
         if( mTouchMap != null )
             mTouchMap.registerListener( this );
         
         // Resume drawing
-        mInitialized = true;
+        mInitialized = true;        
     }
     
     @Override
     public void onAllChanged( TouchMap touchMap )
     {
-        // Refresh everything
-        mRefreshAll = true;
-        invalidate();
+        // Tell Android to redraw on the UI thread
+        postInvalidate();
     }
 
     @Override
     public void onHatChanged( TouchMap touchMap, float x, float y )
     {
-        // Refresh analog stick
-        mRefreshHat = true;
-        if( Globals.userPrefs.isTouchscreenRedrawAll )
-            invalidate();
-        else
-            invalidate( mTouchMap.getAnalogBounds() );
+        // Tell Android to redraw on the UI thread
+        postInvalidate();
     }
 
     @Override
     public void onFpsChanged( TouchMap touchMap, int fps )
     {
-        // Refresh FPS text
-        mRefreshFps = true;
-        if( Globals.userPrefs.isTouchscreenRedrawAll )
-            invalidate();
-        else
-            invalidate( mTouchMap.getFpsBounds() );
+        // Tell Android to redraw on the UI thread
+        postInvalidate();
     }
     
     @Override
@@ -105,24 +91,14 @@ public class TouchscreenView extends View implements TouchMap.Listener
         if( !mInitialized )
             return;
         
-        // Refresh everything if the user preference is set
-        mRefreshAll |= Globals.userPrefs.isTouchscreenRedrawAll;
-        
         // Redraw the static elements of the gamepad
-        if( mRefreshAll )
-            mTouchMap.drawStatic( canvas );
+        mTouchMap.drawStatic( canvas );
         
         // Redraw the dynamic analog stick
-        if( mRefreshAll || mRefreshHat )
-            mTouchMap.drawAnalog( canvas );
+        mTouchMap.drawAnalog( canvas );
         
         // Redraw the dynamic frame rate info
-        if( ( mRefreshAll || mRefreshFps ) && Globals.userPrefs.isFrameRateEnabled )
+        if( Globals.userPrefs.isFrameRateEnabled )
             mTouchMap.drawFps( canvas );
-        
-        // Reset the lazy refresh flags
-        mRefreshAll = false;
-        mRefreshHat = false;
-        mRefreshFps = false;
     }
 }

@@ -19,6 +19,7 @@
  */
 package paulscode.android.mupen64plusae.input.transform;
 
+import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.util.SparseIntArray;
 
@@ -29,27 +30,13 @@ public class InputMap
         public void onMapChanged( InputMap map );
     }
     
-    // Indices into N64 inputs array
+    // Extra indices into the N64 inputs array
     public static final int UNMAPPED = -1;
-    public static final int DPD_R = 0;
-    public static final int DPD_L = 1;
-    public static final int DPD_D = 2;
-    public static final int DPD_U = 3;
-    public static final int START = 4;
-    public static final int BTN_Z = 5;
-    public static final int BTN_B = 6;
-    public static final int BTN_A = 7;
-    public static final int CPD_R = 8;
-    public static final int CPD_L = 9;
-    public static final int CPD_D = 10;
-    public static final int CPD_U = 11;
-    public static final int BTN_R = 12;
-    public static final int BTN_L = 13;
-    public static final int AXIS_R = 14;
-    public static final int AXIS_L = 15;
-    public static final int AXIS_D = 16;
-    public static final int AXIS_U = 17;
-    public static final int NUM_INPUTS = 18;
+    public static final int AXIS_R = AbstractController.NUM_BUTTONS;
+    public static final int AXIS_L = AXIS_R + 1;
+    public static final int AXIS_D = AXIS_R + 2;
+    public static final int AXIS_U = AXIS_R + 3;
+    public static final int NUM_INPUTS = AXIS_R + 4;
     
     // Strength above which button/axis is considered pressed
     public static final float STRENGTH_THRESHOLD = 0.5f;

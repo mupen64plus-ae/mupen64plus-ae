@@ -20,6 +20,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
@@ -201,24 +202,6 @@ public class Utility
         {
             if( drawable != null )
                 drawable.draw( canvas );
-        }
-    }
-
-    /**
-     * The Point class is a basic interface for storing 2D float coordinates.
-     */
-    public static class Point
-    {
-        public float x;
-        public float y;
-        
-        /**
-         * Constructor: Creates a new point at the origin
-         */
-        public Point()
-        {
-            x = 0;
-            y = 0;
         }
     }
 
@@ -807,8 +790,8 @@ public class Utility
         if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
         {
             // Segments cross, point of intersection stored in 'crossPt'
-            crossPt.x = seg1pt1_x + ( t * vec1_x );
-            crossPt.y = seg1pt1_y + ( t * vec1_y );
+            crossPt.x = (int) ( seg1pt1_x + ( t * vec1_x ) );
+            crossPt.y = (int) ( seg1pt1_y + ( t * vec1_y ) );
             return true;
         }
         
@@ -816,7 +799,7 @@ public class Utility
         return false;
     }
 
-    public static Point constrainToOctagon( float dX, float dY, float halfWidth )
+    public static Point constrainToOctagon( int dX, int dY, int halfWidth )
     {
         final float dC = halfWidth;
         final float dA = dC * FloatMath.sqrt( 0.5f );

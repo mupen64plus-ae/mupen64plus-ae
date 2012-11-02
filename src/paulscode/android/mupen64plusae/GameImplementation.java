@@ -21,11 +21,10 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
-import paulscode.android.mupen64plusae.input.transform.TouchMap;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
+import paulscode.android.mupen64plusae.input.transform.TouchMap;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -52,11 +51,11 @@ public class GameImplementation implements View.OnKeyListener
     // Internals
     private Activity mActivity;
     private SDLSurface mSdlSurface;
-    private TouchMap mTouchMap;
+    private TouchMap mTouchscreenMap;
     private TouchscreenView mTouchscreenView;
     @SuppressWarnings( "unused" )
     private TouchscreenController mTouchscreenController;
-    private PeripheralController mPeripheralController;
+    private PeripheralController mPeripheralController1;
     private MenuItem mSlotMenuItem;
     private int mSlot = 0;
     private static final int NUM_SLOTS = 10;
@@ -64,6 +63,9 @@ public class GameImplementation implements View.OnKeyListener
     public GameImplementation( Activity activity )
     {
         mActivity = activity;
+        
+        // Record the activity as a singleton for the static methods below
+        // TODO: This a kludge, I'd like to make a CoreInterface class to handle this stuff neatly (littleguy)
         if( activity instanceof GameActivity )
             sGameActivity = ( GameActivity ) activity;
         if( activity instanceof GameActivityXperiaPlay )
@@ -105,8 +107,9 @@ public class GameImplementation implements View.OnKeyListener
         // TODO: I removed the status notification... Do we really need it?
         
         // Load native libraries
+        // TODO: Let the user choose which core to load
         Utility.loadNativeLibName( "SDL" );
-        Utility.loadNativeLibName( "core" ); // TODO: Let the user choose which core to load
+        Utility.loadNativeLibName( "core" );
         Utility.loadNativeLibName( "front-end" );
         if( Globals.userPrefs.isVideoEnabled )
             Utility.loadNativeLib( Globals.userPrefs.videoPlugin );
@@ -117,30 +120,40 @@ public class GameImplementation implements View.OnKeyListener
         if( Globals.userPrefs.isRspEnabled )
             Utility.loadNativeLib( Globals.userPrefs.rspPlugin );
         
-        // Set up touchscreen skin
-        mTouchMap = new TouchMap();
-        mTouchMap.setResources( mActivity.getResources() );
-        mTouchMap.loadPad();
-        mSdlSurface.initialize( mTouchMap );
-        mTouchscreenView.initialize( mTouchMap );
-        
         // Initialize user interface devices
-        if( Globals.userPrefs.isTouchscreenEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR )
-            mTouchscreenController = new TouchscreenController( mSdlSurface, mTouchMap );
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR
+                && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
+        {
+            // The touch map and view are needed to display frame rate and/or controls
+            mTouchscreenMap = new TouchMap();
+            mTouchscreenMap.setResources( mActivity.getResources() );
+            mTouchscreenMap.load( Globals.userPrefs.touchscreenLayoutFolder );
+            mTouchscreenView.initialize( mTouchscreenMap );
+            
+            // The touch controller is needed to handle touch events
+            if( Globals.userPrefs.isTouchscreenEnabled )
+            {
+                mSdlSurface.initialize( mTouchscreenMap );
+                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSdlSurface );
+            }
+        }
         if( Globals.userPrefs.isInputEnabled )
-            mPeripheralController = new PeripheralController( mSdlSurface, Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
+        {
+            // Create the peripheral controllers
+            mPeripheralController1 = new PeripheralController( mSdlSurface, Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
+        }
         sVibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
-        // Override the peripheral controller key listener, to add some functionality
+        // Override the peripheral controller key listener, to add some extra functionality
         mSdlSurface.setOnKeyListener( this );
         
-        // Notify that game activity has started
+        // Notify user that the game activity has started
         Notifier.showToast( mActivity.getString( R.string.mupen64plus_started ), mActivity );
     }
     
     public void onCreateOptionsMenu( Menu menu )
     {
-        // Inflate the in-game menu, get the 'Slot X' menu item
+        // Inflate the in-game menu, record the 'Slot X' menu object for later
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
         setSlot( 0 );
@@ -241,8 +254,8 @@ public class GameImplementation implements View.OnKeyListener
             return false;
         
         // Send everything else to the peripheral controller if it exists
-        else if( mPeripheralController != null )
-            return mPeripheralController.onKeyUnderride( view, keyCode, event );
+        else if( mPeripheralController1 != null )
+            return mPeripheralController1.onKeyUnderride( view, keyCode, event );
         
         // Let Android handle whatever remains
         else
@@ -278,18 +291,21 @@ public class GameImplementation implements View.OnKeyListener
         mSdlSurface.waitForResume();
     }
     
-    @SuppressLint( "NewApi" )
+    @TargetApi( 11 )
     private void toggleActionBar( View rootView )
     {
+        // Only applies to Honeycomb devices
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB )
             return;
-            
+        
+        // Toggle the action bar
         ActionBar actionBar = mActivity.getActionBar();
         if( actionBar.isShowing() )
         {
+            actionBar.hide();
+            // Make the home buttons almost invisible
             if( rootView != null )
                 rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
-            actionBar.hide();
         }
         else
         {
@@ -297,7 +313,7 @@ public class GameImplementation implements View.OnKeyListener
         }        
     }
     
-    // TODO: These static methods are a kludge, need to make a CoreInterface class to handle this stuff neatly
+    // TODO: These static methods are a kludge, I'd like to make a CoreInterface class to handle this stuff neatly (littleguy)
     public static Object getRomPath()
     {
         if( sGameActivity != null )
@@ -309,8 +325,7 @@ public class GameImplementation implements View.OnKeyListener
     }
 
     public static void runOnUiThread( Runnable action )
-    {
-        
+    {        
         if( sGameActivity != null )
             sGameActivity.runOnUiThread( action );
         else if( sGameActivityXperiaPlay != null )

@@ -19,16 +19,25 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import paulscode.android.mupen64plusae.input.transform.TouchMap;
+
 // TODO: Implement this class, following TouchscreenController as a guide
 public class XperiaPlayController extends AbstractController
 {
     // "Pixel" dimensions of the pad (assuming they're constant):
     public static final int PAD_WIDTH = 966;
     public static final int PAD_HEIGHT = 360;
-    public static int whichTouchPad = 0;
-    public static int[] touchPadPointerY = new int[256];
-    public static int[] touchPadPointerX = new int[256];
-    public static boolean[] touchPadPointers = new boolean[256];
+    
+    private static int[] touchPadPointerY = new int[256];
+    private static int[] touchPadPointerX = new int[256];
+    private static boolean[] touchPadPointers = new boolean[256];
+    @SuppressWarnings( "unused" )
+    private TouchMap mTouchMap;
+    
+    public XperiaPlayController( TouchMap touchMap )
+    {
+        mTouchMap = touchMap;
+    }
 
     public void touchPadBeginEvent()
     {
