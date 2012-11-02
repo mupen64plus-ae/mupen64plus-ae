@@ -93,7 +93,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         mN64ToButton[InputMap.AXIS_L] = (Button) view.findViewById( R.id.buttonAL );
         mN64ToButton[InputMap.AXIS_D] = (Button) view.findViewById( R.id.buttonAD );
         mN64ToButton[InputMap.AXIS_U] = (Button) view.findViewById( R.id.buttonAU );
-
+        
         // Define the button click callbacks
         for( Button b : mN64ToButton )
         {
@@ -192,7 +192,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Determine the input conditions
         boolean isActive = strength > STRENGTH_THRESHOLD;
         boolean inputChanged = inputCode != mLastInputCode;
-        boolean strengthChanged = Math.abs(strength - mLastStrength) > STRENGTH_HYSTERESIS;
+        boolean strengthChanged = Math.abs( strength - mLastStrength ) > STRENGTH_HYSTERESIS;
         
         // Cache the input code to be mapped
         if( isActive )
@@ -212,7 +212,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     public void onClick( View v )
     {
         // Never unmap via regular click (would be confusing)
-        if ( mInputCodeToBeMapped == 0 )
+        if( mInputCodeToBeMapped == 0 )
             return;
         
         // Find the Button view that was touched and map it

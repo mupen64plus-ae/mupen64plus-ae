@@ -224,7 +224,7 @@ public class PathPreference extends DialogPreference
         File[] files = startPath.listFiles( fileFilter );
         if( files != null )
         {
-            Collections.addAll(results, files);
+            Collections.addAll( results, files );
             Collections.sort( results, new FileComparer() );
         }
         return results;

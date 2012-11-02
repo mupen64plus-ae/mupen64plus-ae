@@ -25,7 +25,7 @@ import android.view.View;
 
 @TargetApi( 12 )
 public class KeyAxisTransform extends KeyTransform implements View.OnGenericMotionListener
-{    
+{
     private int[] mInputCodes;
     
     private static final int DEFAULT_NUM_INPUTS = 128;

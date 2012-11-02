@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: paulscode, littleguy77
+ * Authors: littleguy77
  */
 package paulscode.android.mupen64plusae;
 
@@ -40,7 +40,7 @@ public class TouchscreenView extends View implements TouchMap.Listener
     {
         // Suspend drawing
         mInitialized = false;
-
+        
         // Stop listening
         if( mTouchMap != null )
             mTouchMap.unregisterListener( this );
@@ -53,7 +53,7 @@ public class TouchscreenView extends View implements TouchMap.Listener
             mTouchMap.registerListener( this );
         
         // Resume drawing
-        mInitialized = true;        
+        mInitialized = true;
     }
     
     @Override
@@ -62,14 +62,14 @@ public class TouchscreenView extends View implements TouchMap.Listener
         // Tell Android to redraw on the UI thread
         postInvalidate();
     }
-
+    
     @Override
     public void onHatChanged( TouchMap touchMap, float x, float y )
     {
         // Tell Android to redraw on the UI thread
         postInvalidate();
     }
-
+    
     @Override
     public void onFpsChanged( TouchMap touchMap, int fps )
     {
@@ -84,7 +84,7 @@ public class TouchscreenView extends View implements TouchMap.Listener
         mTouchMap.resize( w, h );
         super.onSizeChanged( w, h, oldw, oldh );
     }
-
+    
     @Override
     protected void onDraw( Canvas canvas )
     {

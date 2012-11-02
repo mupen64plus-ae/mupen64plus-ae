@@ -57,7 +57,7 @@ import android.preference.PreferenceManager;
  * isMyPreferenceValid = ( myPreference != null ) && ( myPreference.field != someBadValue );
  * }
  * </pre>
- *  
+ * 
  * Finally, the cost of looking up a preference value is made up front in this class's constructor,
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.

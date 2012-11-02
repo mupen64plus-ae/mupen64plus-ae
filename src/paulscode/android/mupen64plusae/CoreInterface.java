@@ -41,6 +41,7 @@ import android.util.Log;
  * It uses a simple startup/shutdown semantic to ensure all objects are properly synchronized before
  * the core launches. This is much cleaner and safer than using public static fields (i.e. globals),
  * since client code need not know how and when to update each global object.
+ * 
  * @see NativeMethods
  */
 public class CoreInterface
@@ -105,7 +106,7 @@ public class CoreInterface
     {
         if( sActivity == null )
             return null;
-
+        
         finishedReading = false;
         if( Globals.userPrefs.isLastGameNull )
         {
@@ -127,10 +128,12 @@ public class CoreInterface
             }
             
             // Unzip the ROM
-            Paths.tmpFile = Utility.unzipFirstROM( new File( Globals.userPrefs.lastGame ), tmpFolderName );
+            Paths.tmpFile = Utility.unzipFirstROM( new File( Globals.userPrefs.lastGame ),
+                    tmpFolderName );
             if( Paths.tmpFile == null )
             {
-                Log.v( "GameActivity", "Unable to play zipped ROM: '" + Globals.userPrefs.lastGame + "'" );
+                Log.v( "GameActivity", "Unable to play zipped ROM: '" + Globals.userPrefs.lastGame
+                        + "'" );
                 
                 Notifier.clear();
                 
@@ -151,7 +154,7 @@ public class CoreInterface
         finishedReading = true;
         return (Object) Globals.userPrefs.lastGame;
     }
-
+    
     public static void runOnUiThread( Runnable action )
     {
         if( sActivity != null )
@@ -179,7 +182,8 @@ public class CoreInterface
             sVibrator.cancel();
     }
     
-    public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
+    public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo,
+            int desiredFrames )
     {
         int channelConfig = isStereo
                 ? AudioFormat.CHANNEL_OUT_STEREO
@@ -324,7 +328,7 @@ public class CoreInterface
         sAudioThread.setPriority( Thread.MAX_PRIORITY );
         sAudioThread.start();
     }
-
+    
     /**
      * Populates the core config files with the user preferences.
      */

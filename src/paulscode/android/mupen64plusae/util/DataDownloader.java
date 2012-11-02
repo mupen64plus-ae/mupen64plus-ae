@@ -254,7 +254,7 @@ public class DataDownloader extends Thread
         }
         return true;
     }
-
+    
     private String getOutFilePath( final String filename )
     {
         return outFilesDir + "/" + filename;
@@ -392,7 +392,7 @@ public class DataDownloader extends Thread
         Log.i( "DataDownloader", "Saving file '" + path + "' done" );
         return true;
     }
-
+    
     private boolean saveZippedFiles( Resources res, String path, long totalLen,
             CountingInputStream stream, byte[] buf, String url )
     {
@@ -543,7 +543,7 @@ public class DataDownloader extends Thread
         }
         return true;
     }
-
+    
     private boolean writeOutput( final String downloadFlagFileName, Resources res,
             String[] downloadUrls, int downloadUrlIndex )
     {
@@ -570,7 +570,7 @@ public class DataDownloader extends Thread
         }
         return true;
     }
-
+    
     private static DefaultHttpClient getHttpWithDisabledSslCertCheck()
     {
         /*

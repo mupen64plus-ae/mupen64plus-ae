@@ -26,6 +26,7 @@ import android.util.SparseIntArray;
 
 /**
  * A class for mapping arbitrary user inputs to N64 buttons/axes.
+ * 
  * @see AbstractTransform
  * @see PeripheralController
  * @see InputMapPreference
@@ -136,7 +137,7 @@ public class InputMap
             return defaultValue;
         }
     }
-
+    
     private void mapInput( int inputCode, int n64Index, boolean notify )
     {
         // Map the input if a valid index was given
@@ -144,17 +145,17 @@ public class InputMap
         {
             // Get the old code that was mapped to the new index
             int oldInputCode = mN64ToCode[n64Index];
-    
+            
             // Get the old index that was mapped to the new code
-            int oldN64Index = get( inputCode ); 
-    
+            int oldN64Index = get( inputCode );
+            
             // Unmap the new code from the old index
             if( oldN64Index != UNMAPPED )
                 mN64ToCode[oldN64Index] = 0;
             
             // Unmap the old code from the new index
             mCodeToN64.delete( oldInputCode );
-    
+            
             // Map the new code to the new index
             mN64ToCode[n64Index] = inputCode;
             
@@ -167,7 +168,7 @@ public class InputMap
         if( notify )
             notifyListeners();
     }
-
+    
     protected void notifyListeners()
     {
         for( Listener listener : mPublisher.getSubscribers() )

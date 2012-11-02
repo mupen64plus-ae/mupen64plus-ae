@@ -25,10 +25,7 @@ import java.util.List;
 /**
  * A small class to encapsulate the management of subscriptions.
  * 
- * TODO: Surely there is a standard class for this? No sense reinventing the wheel...
- * 
- * @param <Subscriber>
- *            the type of object to subscribe
+ * @param <Subscriber> the type of object to subscribe
  */
 public class SubscriptionManager<Subscriber>
 {

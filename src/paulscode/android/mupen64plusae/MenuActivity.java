@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: paulscode, lioncash, littleguy77
+ * Authors: littleguy77
  */
 package paulscode.android.mupen64plusae;
 
@@ -138,11 +138,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             Builder builder = new Builder( this );
             builder.setTitle( this.getString( R.string.menuDeviceInfo_title ) );
             builder.setMessage( Utility.getCpuInfo() );
-            builder.create().show();            
+            builder.create().show();
         }
         return false;
     }
-
+    
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
@@ -150,7 +150,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         Globals.userPrefs = new UserPrefs( this, Globals.paths );
         refreshViews( sharedPreferences );
     }
-
+    
     @SuppressWarnings( "deprecation" )
     private void refreshViews( SharedPreferences sharedPreferences )
     {

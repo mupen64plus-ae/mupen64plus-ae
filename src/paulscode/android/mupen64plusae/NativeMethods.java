@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae;
 
 /**
  * A class containing all bridging methods between Java and JNI, and nothing else.
+ * 
  * @see CoreInterface
  */
 public class NativeMethods

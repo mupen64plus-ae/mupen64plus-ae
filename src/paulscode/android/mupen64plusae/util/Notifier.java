@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: littleguy77
+ * Authors: paulscode, lioncash, littleguy77
  */
 package paulscode.android.mupen64plusae.util;
 
@@ -36,16 +36,17 @@ public class Notifier
     private static NotificationManager mManager = null;
     private static Toast sToast = null;
     private static Runnable sToastMessager = null;
-   
+    
     /**
      * Initialize service and clear any notifications from a previous session.
-     *
+     * 
      * @param activity the main activity of the app
      */
     public static void initialize( Activity activity )
     {
         if( mManager == null )
-            mManager = (NotificationManager) activity.getSystemService( Context.NOTIFICATION_SERVICE );
+            mManager = (NotificationManager) activity
+                    .getSystemService( Context.NOTIFICATION_SERVICE );
         clear();
     }
     
@@ -54,7 +55,8 @@ public class Notifier
      */
     public static void clear()
     {
-        if( mManager != null ) mManager.cancel( NOTIFICATION_ID );
+        if( mManager != null )
+            mManager.cancel( NOTIFICATION_ID );
     }
     
     /**
@@ -64,9 +66,10 @@ public class Notifier
      */
     public static void notify( Notification notification )
     {
-        if( mManager != null ) mManager.notify( NOTIFICATION_ID, notification );
+        if( mManager != null )
+            mManager.notify( NOTIFICATION_ID, notification );
     }
-
+    
     /**
      * Pop up a temporary message on the device.
      * 
@@ -77,7 +80,7 @@ public class Notifier
     {
         if( activity == null )
             return;
-
+        
         if( sToast != null )
         {
             // Toast exists, just change the text
@@ -103,7 +106,7 @@ public class Notifier
                 }
             };
         }
-
+        
         // Toast messages must be run on the UiThread, which looks ugly as hell, but works
         activity.runOnUiThread( sToastMessager );
     }

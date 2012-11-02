@@ -39,11 +39,14 @@ import paulscode.android.mupen64plusae.NativeMethods;
  * from the subclass. For best performance, subclasses should only call notifyChanged() when the
  * input state has actually changed, and should bundle the protected field modifications before
  * calling notifyChanged(). For example,
+ * 
  * <pre>
  * {@code
  * mDpadR = true; notifyChanges(); mDpadL = false; notifyChanged(); // Inefficient
  * mDpadR = true; mDpadL = false; notifyChanged(); // Better
- * }</pre>
+ * }
+ * </pre>
+ * 
  * @see PeripheralController
  * @see TouchscreenController
  * @see XperiaPlayController
@@ -77,13 +80,14 @@ public abstract class AbstractController
     
     protected void notifyChanged()
     {
-        // TODO: Consider updating only if state has actually changed - may be necessary to keep touchscreen responsive
+        // TODO: Consider updating only if state has actually changed - may be necessary to keep
+        // touchscreen responsive
         
         int axisX = (int) ( AXIS_SCALE * Math.min( 1, Math.max( -1, mAxisFractionX ) ) );
         int axisY = (int) ( AXIS_SCALE * Math.min( 1, Math.max( -1, mAxisFractionY ) ) );
         NativeMethods.updateVirtualGamePadStates( mPlayerNumber - 1, mButtons, axisX, axisY );
     }
-
+    
     public void clearState()
     {
         for( int i = 0; i < NUM_BUTTONS; i++ )

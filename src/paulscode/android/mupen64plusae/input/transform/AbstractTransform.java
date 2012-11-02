@@ -27,6 +27,7 @@ import android.view.MotionEvent;
 
 /**
  * The base class for transforming arbitrary input data into a common format.
+ * 
  * @see KeyTransform
  * @see KeyAxisTransform
  * @see SensorTransform
@@ -72,7 +73,9 @@ public abstract class AbstractTransform
         else if( inputCode < 0 )
         {
             int axis = inputToAxisCode( inputCode );
-            String direction = inputToAxisDirection( inputCode ) ? " (+)" : " (-)";
+            String direction = inputToAxisDirection( inputCode )
+                    ? " (+)"
+                    : " (-)";
             if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
                 return "AXIS_" + axis + direction;
             else
@@ -88,7 +91,7 @@ public abstract class AbstractTransform
                 ? ""
                 : String.format( " %4.2f", strength ) );
     }
-
+    
     protected void notifyListeners( int inputCode, float strength )
     {
         for( Listener listener : mPublisher.getSubscribers() )
@@ -106,7 +109,9 @@ public abstract class AbstractTransform
         // Axis codes are encoded to negative values (versus buttons which are
         // positive). Axis codes are bit shifted by one so that the lowest bit
         // can encode axis direction.
-        return -( ( axisCode ) * 2 + ( positiveDirection ? 1 : 2 ) );
+        return -( ( axisCode ) * 2 + ( positiveDirection
+                ? 1
+                : 2 ) );
     }
     
     protected static int inputToAxisCode( int inputCode )

@@ -48,8 +48,8 @@ public class GameActivityXperiaPlay extends NativeActivity
         mImplementation.onCreate( savedInstanceState );
         
         // We should only be here if enabled
-        assert( Globals.userPrefs.isXperiaEnabled );
-
+        assert ( Globals.userPrefs.isXperiaEnabled );
+        
         // Additional Xperia Play configuration
         getWindow().takeSurface( null );
         NativeMethods.RegisterThis();

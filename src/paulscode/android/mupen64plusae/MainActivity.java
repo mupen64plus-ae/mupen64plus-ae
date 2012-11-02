@@ -91,7 +91,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
             mDownloader = new DataDownloader( MainActivity.this, MainActivity.this, mTextView );
         }
     }
-
+    
     @Override
     public void onDownloadComplete()
     {

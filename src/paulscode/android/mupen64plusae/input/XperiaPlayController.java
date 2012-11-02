@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: paulscode, lioncash
+ * Authors: TODO
  */
 package paulscode.android.mupen64plusae.input;
 
@@ -38,7 +38,7 @@ public class XperiaPlayController extends AbstractController
     {
         mTouchMap = touchMap;
     }
-
+    
     public void touchPadBeginEvent()
     {
     }
@@ -89,7 +89,7 @@ public class XperiaPlayController extends AbstractController
     public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
     {
     }
-
+    
     public boolean onNativeKey( int action, int keycode )
     {
         return true;
