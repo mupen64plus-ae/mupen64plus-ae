@@ -817,4 +817,34 @@ public class Utility
         
         return crossPt;
     }
+
+    /**
+     * Gets the hardware information from /proc/cpuinfo.
+     * 
+     * @return the hardware string
+     */
+    public static String getCpuInfo()
+    {
+        // TODO: Simplify this. I hardly believe you need to use 'cat' on cpuinfo
+        // to get this information.
+        // Already know how to simplify it. Will do it when I have the time. (Lioncash)
+        
+        // From http://android-er.blogspot.com/2009/09/read-android-cpu-info.html
+        String result = "";
+        try
+        {
+            String[] args = { "/system/bin/cat", "/proc/cpuinfo" };
+            Process process = new ProcessBuilder( args ).start();
+            InputStream in = process.getInputStream();
+            byte[] re = new byte[1024];
+            while( in.read( re ) != -1 )
+                result = result + new String( re );
+            in.close();
+        }
+        catch( IOException ex )
+        {
+            ex.printStackTrace();
+        }
+        return result;
+    }
 }

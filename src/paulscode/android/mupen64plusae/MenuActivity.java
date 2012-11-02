@@ -23,6 +23,8 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.Utility;
+import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -41,6 +43,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String MENU_RESUME = "menuResume";
     private static final String MENU_RESET_USER_PREFS = "menuResetUserPrefs";
     private static final String MENU_RESET_APP_DATA = "menuResetAppData";
+    private static final String MENU_DEVICE_INFO = "menuDeviceInfo";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     
@@ -60,6 +63,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         findPreference( MENU_RESUME ).setOnPreferenceClickListener( this );
         findPreference( MENU_RESET_USER_PREFS ).setOnPreferenceClickListener( this );
         findPreference( MENU_RESET_APP_DATA ).setOnPreferenceClickListener( this );
+        findPreference( MENU_DEVICE_INFO ).setOnPreferenceClickListener( this );
     }
     
     @Override
@@ -77,36 +81,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         super.onPause();
         PreferenceManager.getDefaultSharedPreferences( this )
                 .unregisterOnSharedPreferenceChangeListener( this );
-    }
-    
-    @Override
-    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
-    {
-        // Update the global convenience class
-        Globals.userPrefs = new UserPrefs( this, Globals.paths );
-        refreshViews( sharedPreferences );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void refreshViews( SharedPreferences sharedPreferences )
-    {
-        // Enable the play button only if the selected game actually exists
-        findPreference( MENU_RESUME ).setEnabled(
-                ( new File( Globals.userPrefs.lastGame ).exists() ) );
-        
-        // Enable the custom touchscreen prefs under certain conditions
-        findPreference( TOUCHSCREEN_CUSTOM ).setEnabled(
-                Globals.userPrefs.isTouchscreenEnabled && Globals.userPrefs.isTouchscreenCustom );
-        findPreference( TOUCHSCREEN_SIZE ).setEnabled(
-                Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isTouchscreenCustom );
-        
-        // Update the summary text in the menu for all ListPreferences
-        for( String key : sharedPreferences.getAll().keySet() )
-        {
-            Preference preference = findPreference( key );
-            if( preference instanceof ListPreference )
-                preference.setSummary( ( (ListPreference) preference ).getEntry() );
-        }
     }
     
     @Override
@@ -152,14 +126,50 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
         else if( key.equals( MENU_RESET_APP_DATA ) )
         {
+            // TODO: Add a confirmation dialog
             // Reset the application data
             Globals.appData.resetToDefaults();
-            // Restart the activity simply to provide a sense that stuff was reset
-            // TODO: Add a confirmation dialog
+            // Force user to restart app so stuff gets refreshed
             finish();
-            startActivity( getIntent() );
             return true;
         }
+        else if( key.equals( MENU_DEVICE_INFO ) )
+        {
+            Builder builder = new Builder( this );
+            builder.setTitle( this.getString( R.string.menuDeviceInfo_title ) );
+            builder.setMessage( Utility.getCpuInfo() );
+            builder.create().show();            
+        }
         return false;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
+    {
+        // Update the global convenience class
+        Globals.userPrefs = new UserPrefs( this, Globals.paths );
+        refreshViews( sharedPreferences );
+    }
+
+    @SuppressWarnings( "deprecation" )
+    private void refreshViews( SharedPreferences sharedPreferences )
+    {
+        // Enable the play button only if the selected game actually exists
+        findPreference( MENU_RESUME ).setEnabled(
+                ( new File( Globals.userPrefs.lastGame ).exists() ) );
+        
+        // Enable the custom touchscreen prefs under certain conditions
+        findPreference( TOUCHSCREEN_CUSTOM ).setEnabled(
+                Globals.userPrefs.isTouchscreenEnabled && Globals.userPrefs.isTouchscreenCustom );
+        findPreference( TOUCHSCREEN_SIZE ).setEnabled(
+                Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isTouchscreenCustom );
+        
+        // Update the summary text in the menu for all ListPreferences
+        for( String key : sharedPreferences.getAll().keySet() )
+        {
+            Preference preference = findPreference( key );
+            if( preference instanceof ListPreference )
+                preference.setSummary( ( (ListPreference) preference ).getEntry() );
+        }
     }
 }

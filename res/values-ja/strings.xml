@@ -78,16 +78,14 @@
     <string name="frameRateEnabled_title">フレームレート表示</string>
     <string name="cheats_title">チート</string>
     <string name="cheats_summary">でチートを使用するゲームを選択して。</string>
-    <string name="resetUserPrefs_title">リセット</string>
-    <string name="resetUserPrefs_summary">既定値にリセット</string>
+    <string name="menuResetUserPrefs_title">リセット</string>
+    <string name="menuResetUserPrefs_summary">既定値にリセット</string>
     
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/_enable</string>
     <string name="touchscreenLayout_title">@string/_layout</string>
     <string name="touchscreenSize_title">画面サイズ</string>
     <string name="touchscreenOctagonJoystick_title">八角形のようにアナログスティックをエミュレート</string>
-    <string name="touchscreenRedrawAll_title">すべてを再描画</string>
-    <string name="touchscreenRedrawAll_summary">行方不明のボタンのバグを修正</string>
     
     <!-- Gamepad Menu -->
     <string name="gamepadEnabled_title">@string/_enable</string>
@@ -124,10 +122,10 @@
     <string name="gles2N64Sai_summary"></string>
     <string name="gles2N64ScreenClear_title">力画面のリフレッシュ</string>
     <string name="gles2N64ScreenClear_summary">いくつかのグラフィカル·アーティファクトをクリアします。</string>
-    <string name="gles2N64Alpha_title">アルファテスト</string>
-    <string name="gles2N64Alpha_summary">スピードハックを取得する設定を無効</string>
-    <string name="gles2N64HackZ_title">ハックZ</string>
-    <string name="gles2N64HackZ_summary">点滅している背景を修正するには、この設定を有効にします。</string>
+    <string name="gles2N64AlphaTest_title">アルファテスト</string>
+    <string name="gles2N64AlphaTest_summary">スピードハックを取得する設定を無効</string>
+    <string name="gles2N64DepthTest_title">ハックZ</string>
+    <string name="gles2N64DepthTest_summary">点滅している背景を修正するには、この設定を有効にします。</string>
     
     <!-- GLES2Rice Menu -->
     <string name="gles2RiceAutoFrameskip_title">オートフレームスキップ</string>
@@ -146,8 +144,8 @@
     <string name="xperiaPlugin_title">XperiaPLAY設定</string>
     <string name="rspPlugin_title">RSP</string>
     <string name="corePlugin_title">コア</string>
-    <string name="resetAppData_title">アプリデータを復元</string>
-    <string name="resetAppData_summary">インポートされたプラグインやテクスチャが失われます！</string>
+    <string name="menuResetAppData_title">アプリデータを復元</string>
+    <string name="menuResetAppData_summary">インポートされたプラグインやテクスチャが失われます！</string>
     
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->

@@ -19,8 +19,7 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import java.io.IOException;
-import java.io.InputStream;
+import paulscode.android.mupen64plusae.util.Utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -69,7 +68,7 @@ public class AppData
     
     /**
      * Instantiates a new AppData object to retrieve and persist app data.
-     *
+     * 
      * @param context the context of the app data
      * @param filename the filename where the app data is persisted
      */
@@ -99,8 +98,7 @@ public class AppData
     /**
      * Sets the flag indicating whether the app has run at least once.
      * 
-     * @param value
-     *            true, to indicate the app has never been run
+     * @param value true, to indicate the app has never been run
      */
     public void setFirstRun( boolean value )
     {
@@ -120,8 +118,7 @@ public class AppData
     /**
      * Sets the flag indicating whether the app has been upgraded to Version 1.9
      * 
-     * @param value
-     *            true, to indicate the app has been upgraded
+     * @param value true, to indicate the app has been upgraded
      */
     public void setUpgradedVer19( boolean value )
     {
@@ -143,59 +140,33 @@ public class AppData
     /**
      * Identifies the hardware type using information provided by /proc/cpuinfo.
      */
-    private int identifyHardwareType()
+    private static int identifyHardwareType()
     {
-        // TODO: Simplify this. I hardly believe you need to use 'cat' on cpuinfo
-        // to get this information.
-        // Already know how to simplify it. Will do it when I have the time. (Lioncash)
-        
         // Parse a long string of information from the operating system
-        Log.v( "Application", "CPU info available from file /proc/cpuinfo:" );
-        ProcessBuilder cmd;
+        Log.v( "AppData", "CPU info available from file /proc/cpuinfo:" );
         String hardware = null;
         String features = null;
-        try
+        String processor = null;
+        
+        String hwString = Utility.getCpuInfo().toLowerCase();
+        Log.v( "AppData", hwString );
+
+        String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
+        if( lines != null )
         {
-            String[] args = { "/system/bin/cat", "/proc/cpuinfo" };
-            cmd = new ProcessBuilder( args );
-            java.lang.Process process = cmd.start();
-            InputStream in = process.getInputStream();
-            byte[] re = new byte[1024];
-            String line;
-            String[] lines;
-            String[] splitLine;
-            String processor = null;
-            
-            if( in.read( re ) != -1 )
+            for( int i = 0; i < lines.length; i++ )
             {
-                line = new String( re );
-                Log.v( "Application", line );
-                lines = line.split( "\\r\\n|\\n|\\r" );
-                if( lines != null )
+                String[] splitLine = lines[i].split( ":" );
+                if( splitLine != null && splitLine.length == 2 )
                 {
-                    for( int x = 0; x < lines.length; x++ )
-                    {
-                        splitLine = lines[x].split( ":" );
-                        if( splitLine != null && splitLine.length == 2 )
-                        {
-                            if( processor == null
-                                    && splitLine[0].trim().toLowerCase().equals( "processor" ) )
-                                processor = splitLine[1].trim().toLowerCase();
-                            else if( features == null
-                                    && splitLine[0].trim().toLowerCase().equals( "features" ) )
-                                features = splitLine[1].trim().toLowerCase();
-                            else if( hardware == null
-                                    && splitLine[0].trim().toLowerCase().equals( "hardware" ) )
-                                hardware = splitLine[1].trim().toLowerCase();
-                        }
-                    }
+                    if( processor == null && splitLine[0].trim().equals( "processor" ) )
+                        processor = splitLine[1].trim();
+                    else if( features == null && splitLine[0].trim().equals( "features" ) )
+                        features = splitLine[1].trim();
+                    else if( hardware == null && splitLine[0].trim().equals( "hardware" ) )
+                        hardware = splitLine[1].trim();
                 }
             }
-            in.close();
-        }
-        catch( IOException ioe )
-        {
-            ioe.printStackTrace();
         }
         
         // Identify the hardware type from the substrings

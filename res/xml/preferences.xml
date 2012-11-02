@@ -302,8 +302,14 @@
             <Preference
                 android:dependency="developerEnabled"
                 android:key="menuResetAppData"
-                android:summary="@string/resetAppData_summary"
-                android:title="@string/resetAppData_title" />
+                android:summary="@string/menuResetAppData_summary"
+                android:title="@string/menuResetAppData_title" />
+            
+            <Preference
+                android:key="menuDeviceInfo"
+                android:summary="@string/menuDeviceInfo_summary"
+                android:title="@string/menuDeviceInfo_title" />
+            
         </PreferenceScreen>
 
         <PreferenceCategory
@@ -342,8 +348,8 @@
         <Preference
             android:icon="@drawable/ic_undo"
             android:key="menuResetUserPrefs"
-            android:summary="@string/resetUserPrefs_summary"
-            android:title="@string/resetUserPrefs_title" />
+            android:summary="@string/menuResetUserPrefs_summary"
+            android:title="@string/menuResetUserPrefs_title" />
 
         <CheckBoxPreference
             android:key="developerEnabled"

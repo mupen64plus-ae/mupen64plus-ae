@@ -81,8 +81,8 @@
     <string name="frameRateEnabled_title">Show framerate</string>
     <string name="cheats_title">Cheats</string>
     <string name="cheats_summary">Choose a game to hack</string>
-    <string name="resetUserPrefs_title">Reset</string>
-    <string name="resetUserPrefs_summary">Restore default settings</string>
+    <string name="menuResetUserPrefs_title">Reset</string>
+    <string name="menuResetUserPrefs_summary">Restore default settings</string>
     
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/_enable</string>
@@ -148,8 +148,10 @@
     <string name="xperiaPlugin_title">Xperia PLAY configuration</string>
     <string name="rspPlugin_title">Reality signal processor</string>
     <string name="corePlugin_title">Emulation core</string>
-    <string name="resetAppData_title">Restore app data</string>
-    <string name="resetAppData_summary">Imported plugins and textures will be lost!</string>
+    <string name="menuResetAppData_title">Restore app data</string>
+    <string name="menuResetAppData_summary">Imported plugins and textures will be lost!</string>
+    <string name="menuDeviceInfo_title">Device info</string>
+    <string name="menuDeviceInfo_summary">Device hardware and model information</string>
     
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->
