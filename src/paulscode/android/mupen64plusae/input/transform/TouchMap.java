@@ -1,12 +1,16 @@
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.input.transform;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.AbstractController;
+import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import paulscode.android.mupen64plusae.util.Utility;
 import paulscode.android.mupen64plusae.util.Utility.Image;
 import android.content.res.Resources;
@@ -14,69 +18,99 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.Log;
 
-public class TouchscreenSkin
+// TODO: Move some functionality into TouchscreenView if TouchMap also used for XperiaPlayController
+public class TouchMap
 {
     public interface Listener
     {
-        public void onAllChanged( TouchscreenSkin skin );
+        public void onAllChanged( TouchMap touchMap );
         
-        public void onHatChanged( TouchscreenSkin skin, int x, int y );
+        public void onHatChanged( TouchMap touchMap, float x, float y );
         
-        public void onFpsChanged( TouchscreenSkin skin, int fps );
+        public void onFpsChanged( TouchMap touchMap, int fps );
     }
     
-    // Pseudo-buttons, indicating simultaneous press of two d-pad buttons
-    public static final int DPD_RU = AbstractController.NUM_BUTTONS;
-    public static final int DPD_RD = AbstractController.NUM_BUTTONS + 1;
-    public static final int DPD_LD = AbstractController.NUM_BUTTONS + 2;
-    public static final int DPD_LU = AbstractController.NUM_BUTTONS + 3;
-    public static final int NUM_PSEUDO_BUTTONS = AbstractController.NUM_BUTTONS + 4;
-    
     // Mask colors
-    public int[] maskColors = new int[TouchscreenSkin.NUM_PSEUDO_BUTTONS];
+    public int[] maskColors;
     
-    // Analog stick geometry
-    public Utility.Image analogImage = null;
-    public float analogPadding = 32;
-    public float analogDeadzone = 2;
-    public float analogMaximum = 360;
-    
-    // Variables for drawing the analog stick
-    public int analogXpercent = 0;
-    public int analogYpercent = 0;
-    public Utility.Image hatImage = null;
-    public int hatX = -1;
-    public int hatY = -1;
-    
-    // All button images and associated mask images
-    public ArrayList<Utility.Image> buttons;
+    // Buttons
     public ArrayList<Utility.Image> masks;
-    public ArrayList<Integer> xpercents;
-    public ArrayList<Integer> ypercents;
+    private ArrayList<Utility.Image> buttons;
+    private ArrayList<Integer> xpercents;
+    private ArrayList<Integer> ypercents;
     
-    public Utility.Image fpsImage = null;
-    public int fpsXpercent = 0;
-    public int fpsYpercent = 0;
-    public int fpsNumXpercent = 50;
-    public int fpsNumYpercent = 50;
-    public int fpsRate = 15;
-    public String fpsFont = "Mupen64Plus-AE-Contrast-Blue";
-    public Utility.Image[] numberImages = new Utility.Image[10];
-    private int fpsValue = 0;
-    private Utility.Image[] fpsDigits = new Utility.Image[4];
+    // Analog background
+    public Utility.Image analogImage;
+    private int analogXpercent;
+    private int analogYpercent;
+    public float analogPadding;
+    public float analogDeadzone;
+    public float analogMaximum;
+
+    // Analog stick
+    private Utility.Image hatImage;
+    private int hatX;
+    private int hatY;
     
-    public Resources mResources = null;
-    public boolean initialized = false;
+    // Frame rate display
+    private Utility.Image fpsImage;
+    private int fpsXpercent;
+    private int fpsYpercent;
+    private int fpsNumXpercent;
+    private int fpsNumYpercent;
+    public int fpsRate;
+    private int fpsValue;
+    private String fpsFont;
+    private Utility.Image[] numeralImages;
+    private Utility.Image[] fpsDigits;
+    
+    private Resources mResources;
+    private SubscriptionManager<Listener> mPublisher;
+    private static final HashMap<String, Integer> BUTTON_HASHMAP;
+    
+    static
+    {
+        BUTTON_HASHMAP = new HashMap<String, Integer>();
+        BUTTON_HASHMAP.put( "right", AbstractController.DPD_R );
+        BUTTON_HASHMAP.put( "left", AbstractController.DPD_L );
+        BUTTON_HASHMAP.put( "down", AbstractController.DPD_D );
+        BUTTON_HASHMAP.put( "up", AbstractController.DPD_U );
+        BUTTON_HASHMAP.put( "start", AbstractController.START );
+        BUTTON_HASHMAP.put( "z", AbstractController.BTN_Z );
+        BUTTON_HASHMAP.put( "b", AbstractController.BTN_B );
+        BUTTON_HASHMAP.put( "a", AbstractController.BTN_A );
+        BUTTON_HASHMAP.put( "cright", AbstractController.CPD_R );
+        BUTTON_HASHMAP.put( "cleft", AbstractController.CPD_L );
+        BUTTON_HASHMAP.put( "cdown", AbstractController.CPD_D );
+        BUTTON_HASHMAP.put( "cup", AbstractController.CPD_U );
+        BUTTON_HASHMAP.put( "r", AbstractController.BTN_R );
+        BUTTON_HASHMAP.put( "l", AbstractController.BTN_L );
+        BUTTON_HASHMAP.put( "upright", TouchscreenController.DPD_RU );
+        BUTTON_HASHMAP.put( "rightdown", TouchscreenController.DPD_RD );
+        BUTTON_HASHMAP.put( "leftdown", TouchscreenController.DPD_LD );
+        BUTTON_HASHMAP.put( "leftup", TouchscreenController.DPD_LU );
+    }
+    
+    public TouchMap()
+    {
+        mPublisher = new SubscriptionManager<TouchMap.Listener>();
+        numeralImages = new Utility.Image[10];
+        fpsDigits = new Utility.Image[4];
+        maskColors = new int[TouchscreenController.NUM_PSEUDO_BUTTONS];
+        clear();
+    }
     
     public void clear()
     {
-        // Clear everything out to be re-populated with the new settings
         buttons = new ArrayList<Utility.Image>();
         masks = new ArrayList<Utility.Image>();
         xpercents = new ArrayList<Integer>();
         ypercents = new ArrayList<Integer>();
         analogImage = null;
         analogXpercent = analogYpercent = 0;
+        analogPadding = 32;
+        analogDeadzone = 2;
+        analogMaximum = 360;
         hatImage = null;
         hatX = hatY = -1;
         fpsImage = null;
@@ -85,15 +119,29 @@ public class TouchscreenSkin
         fpsRate = 15;
         fpsValue = 0;
         fpsFont = "Mupen64Plus-AE-Contrast-Blue";
+        for( int i = 0; i < numeralImages.length; i++)
+            numeralImages[i] = null;
+        for( int i = 0; i < fpsDigits.length; i++)
+            fpsDigits[i] = null;
         for( int i = 0; i < maskColors.length; i++ )
             maskColors[i] = -1;
+    }
+    
+    public void registerListener( Listener listener )
+    {
+        mPublisher.subscribe( listener );
+    }
+    
+    public void unregisterListener( Listener listener )
+    {
+        mPublisher.unsubscribe( listener );
     }
     
     public void setResources( Resources resources )
     {
         mResources = resources;
-        for( int i = 0; i < 10; i++ )
-            numberImages[i] = new Utility.Image( resources, Globals.paths.fontsDir + fpsFont + "/"
+        for( int i = 0; i < numeralImages.length; i++ )
+            numeralImages[i] = new Utility.Image( resources, Globals.paths.fontsDir + fpsFont + "/"
                     + i + ".png" );
     }
     
@@ -127,34 +175,43 @@ public class TouchscreenSkin
             fpsImage.fitCenter( (int) ( (float) canvasW * ( (float) fpsXpercent / 100.0f ) ),
                     (int) ( (float) canvasH * ( (float) fpsYpercent / 100.0f ) ), canvasW, canvasH );
         }
+        
+        // Notify listeners that it has changed
+        for( Listener listener : mPublisher.getSubscribers() )
+            listener.onAllChanged( this );
     }
     
     public void updateAnalog( float axisFractionX, float axisFractionY )
     {
-        // TODO: update the member fields
-        // TODO: call listeners
+        // Move the analog hat based on analog state
+        hatX = analogImage.hWidth + (int) ( axisFractionX * (float) analogMaximum);
+        hatY = analogImage.hHeight - (int) ( axisFractionY * (float) analogMaximum);
+        
+        for( Listener listener : mPublisher.getSubscribers() )
+            listener.onHatChanged( this, axisFractionX, axisFractionY );
     }
     
     public void updateFps( int fps )
     {
+        // Clamp to positive, four digits max
+        fps = Math.max( Math.min( fps, 9999 ), 0 );
+        
         // Quick return if user has disabled FPS or it hasn't changed
         if( !Globals.userPrefs.isFrameRateEnabled || fpsValue == fps )
             return;
         
-        // Clamp to positive, four digits max
-        fpsValue = Math.max( Math.min( fps, 9999 ), 0 );
-        
+        // Assemble a sprite for the FPS value
         String fpsString = Integer.toString( fpsValue );
         for( int i = 0; i < 4; i++ )
         {
-            // Create a new sequence of number digit images
+            // Create a new sequence of numeral images
             if( i < fpsString.length() )
             {
                 try
                 {
-                    // Clone the digit from the font images
+                    // Clone the numeral from the font images
                     fpsDigits[i] = new Utility.Image( mResources,
-                            numberImages[Integer.valueOf( fpsString.substring( i, i + 1 ) )] );
+                            numeralImages[Integer.valueOf( fpsString.substring( i, i + 1 ) )] );
                 }
                 catch( NumberFormatException nfe )
                 {
@@ -169,65 +226,48 @@ public class TouchscreenSkin
             }
         }
         
-        // TODO: call listeners
+        for( Listener listener : mPublisher.getSubscribers() )
+            listener.onFpsChanged( this, fpsValue );
     }
     
     public Rect getAnalogBounds()
     {
-        // TODO what if analog is null?
-        int x1 = analogImage.x;
-        int y1 = analogImage.y;
-        int x2 = analogImage.x + analogImage.width;
-        int y2 = analogImage.y + analogImage.height;
-        
-        if( hatImage != null )
-        {
-            // Expand invalidation box if necessary
-            x1 = Math.min( x1, hatImage.x );
-            y1 = Math.min( y1, hatImage.y );
-            x2 = Math.max( x2, hatImage.x + hatImage.width );
-            y2 = Math.max( y2, hatImage.y + hatImage.height );
-        }
-        
-        return new Rect( x1, y1, x2, y2 );
+        return analogImage.drawRect;
     }
-
+    
     public Rect getFpsBounds()
     {
-        return new Rect( fpsImage.x, fpsImage.y, fpsImage.x + fpsImage.width, fpsImage.y
-                + fpsImage.height );
+        return fpsImage.drawRect;
     }
-
+    
     public void drawStatic( Canvas canvas )
     {
+        // Draw the buttons onto the canvas
         for( Image button : buttons )
-        {
-            // Draw the buttons onto the canvas
             button.draw( canvas );
-        }
     }
     
     public void drawAnalog( Canvas canvas )
     {
-        if( analogImage != null )
+        if( analogImage == null )
+            return;
+        
+        // Draw the background image first
+        analogImage.draw( canvas );
+        
+        // Then draw the movable part of the stick
+        if( hatImage != null )
         {
-            // Draw the background image first
-            analogImage.draw( canvas );
-            
-            // Then draw the moveable part of the stick
-            if( hatImage != null )
-            {
-                // Reposition the image and draw it
-                int hX = hatX;
-                int hY = hatY;
-                if( hX == -1 )
-                    hX = analogImage.hWidth;
-                if( hY == -1 )
-                    hY = analogImage.hHeight;
-                hatImage.fitCenter( analogImage.x + hX, analogImage.y + hY, analogImage.x,
-                        analogImage.y, analogImage.width, analogImage.height );
-                hatImage.draw( canvas );
-            }
+            // Reposition the image and draw it
+            int hX = hatX;
+            int hY = hatY;
+            if( hX == -1 )
+                hX = analogImage.hWidth;
+            if( hY == -1 )
+                hY = analogImage.hHeight;
+            hatImage.fitCenter( analogImage.x + hX, analogImage.y + hY, analogImage.x,
+                    analogImage.y, analogImage.width, analogImage.height );
+            hatImage.draw( canvas );
         }
     }
     
@@ -277,9 +317,6 @@ public class TouchscreenSkin
         if( !Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isFrameRateEnabled )
             return;
         
-        // Stop anything accessing settings while loading
-        initialized = false;
-        
         // Load the configuration file (pad.ini)
         ConfigFile pad_ini = new ConfigFile( Globals.userPrefs.touchscreenLayoutFolder + "/pad.ini" );
         
@@ -292,11 +329,6 @@ public class TouchscreenSkin
         // Free the data that was loaded from the config file:
         pad_ini.clear();
         pad_ini = null;
-        
-        // Everything is loaded now
-        initialized = true;
-        
-        // TODO: notify listeners
     }
     
     private void readMaskColors( ConfigFile pad_ini )
@@ -311,63 +343,9 @@ public class TouchscreenSkin
                 // Loop through the param=val pairs
                 String param = iter.next();
                 String val = section.get( param );
-                int intVal = Utility.toInt( val, -1 );
-                param = param.toLowerCase(); // Lets not make this part case-sensitive
                 
-                if( param.equals( "right" ) )
-                    maskColors[AbstractController.DPD_R] = intVal;
-                
-                else if( param.equals( "left" ) )
-                    maskColors[AbstractController.DPD_L] = intVal;
-                
-                else if( param.equals( "down" ) )
-                    maskColors[AbstractController.DPD_D] = intVal;
-                
-                else if( param.equals( "up" ) )
-                    maskColors[AbstractController.DPD_U] = intVal;
-                
-                else if( param.equals( "start" ) )
-                    maskColors[AbstractController.START] = intVal;
-                
-                else if( param.equals( "z" ) )
-                    maskColors[AbstractController.BTN_Z] = intVal;
-                
-                else if( param.equals( "b" ) )
-                    maskColors[AbstractController.BTN_B] = intVal;
-                
-                else if( param.equals( "a" ) )
-                    maskColors[AbstractController.BTN_A] = intVal;
-                
-                else if( param.equals( "cright" ) )
-                    maskColors[AbstractController.CPD_R] = intVal;
-                
-                else if( param.equals( "cleft" ) )
-                    maskColors[AbstractController.CPD_L] = intVal;
-                
-                else if( param.equals( "cdown" ) )
-                    maskColors[AbstractController.CPD_D] = intVal;
-                
-                else if( param.equals( "cup" ) )
-                    maskColors[AbstractController.CPD_U] = intVal;
-                
-                else if( param.equals( "r" ) )
-                    maskColors[AbstractController.BTN_R] = intVal;
-                
-                else if( param.equals( "l" ) )
-                    maskColors[AbstractController.BTN_L] = intVal;
-                
-                else if( param.equals( "upright" ) )
-                    maskColors[DPD_RU] = intVal;
-                
-                else if( param.equals( "rightdown" ) )
-                    maskColors[DPD_RD] = intVal;
-                
-                else if( param.equals( "leftdown" ) )
-                    maskColors[DPD_LD] = intVal;
-                
-                else if( param.equals( "leftup" ) )
-                    maskColors[DPD_LU] = intVal;
-                
+                // Assign the map colors to the appropriate N64 button
+                maskColors[BUTTON_HASHMAP.get( param.toLowerCase() )] = Utility.toInt( val, -1 );
             }
         }
     }
@@ -472,7 +450,7 @@ public class TouchscreenSkin
             {
                 // Make sure we can load them (they might not even exist)
                 for( i = 0; i < 10; i++ )
-                    numberImages[i] = new Utility.Image( mResources, Globals.paths.fontsDir
+                    numeralImages[i] = new Utility.Image( mResources, Globals.paths.fontsDir
                             + fpsFont + "/" + i + ".png" );
             }
             catch( Exception e )

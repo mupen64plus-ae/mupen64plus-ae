@@ -816,7 +816,7 @@ public class Utility
         return false;
     }
 
-    public static Point intersectOctagon( float dX, float dY, float halfWidth )
+    public static Point constrainToOctagon( float dX, float dY, float halfWidth )
     {
         final float dC = halfWidth;
         final float dA = dC * FloatMath.sqrt( 0.5f );

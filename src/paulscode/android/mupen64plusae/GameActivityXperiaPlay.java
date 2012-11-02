@@ -31,7 +31,6 @@ import android.view.MenuItem;
 public class GameActivityXperiaPlay extends NativeActivity
 {
     @SuppressWarnings( "unused" )
-    private XperiaPlayController.TouchPadListing mTouchPadListing;
     private XperiaPlayController mXperiaPlayController;
     private GameImplementation mImplementation;
     
@@ -51,10 +50,8 @@ public class GameActivityXperiaPlay extends NativeActivity
         NativeMethods.RegisterThis();
         Utility.loadNativeLibName( "xperia-touchpad" );
 
-        mTouchPadListing = new XperiaPlayController.TouchPadListing(
-                Globals.paths.xperiaPlayLayouts_ini );
-        mXperiaPlayController = new XperiaPlayController( this, getResources() );
-        mXperiaPlayController.loadPad();
+        if( Globals.userPrefs.isXperiaEnabled )
+            mXperiaPlayController = new XperiaPlayController();
     }
     
     @Override

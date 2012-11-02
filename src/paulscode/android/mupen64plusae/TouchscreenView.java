@@ -15,195 +15,114 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: paulscode, lioncash
+ * Authors: paulscode, littleguy77
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.input.transform.TouchMap;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
-public class TouchscreenView extends View implements TouchscreenSkin.Listener
+// TODO: Doesn't work as expected when Globals.userPrefs.isTouchscreenRedrawAll == false
+public class TouchscreenView extends View implements TouchMap.Listener
 {
-    public TouchscreenSkin mSkin;
-    
-    private RedrawThread redrawThread = null;
-    private boolean mRefreshAll = true;
-    private boolean mRefreshHat = true;
-    private boolean mRefreshFps = true;
-    private int canvasW = 0;
-    private int canvasH = 0;
+    private boolean mInitialized;
+    private boolean mRefreshAll;
+    private boolean mRefreshHat;
+    private boolean mRefreshFps;
+    private TouchMap mTouchMap;
     
     public TouchscreenView( Context context, AttributeSet attribs )
     {
         super( context, attribs );
+        mInitialized = false;
     }
     
-    public void initialize()
+    public void initialize( TouchMap touchMap )
     {
-        // Kill the FPS image redraw thread and create a new one
-        if( redrawThread != null )
-        {
-            redrawThread.alive = false;
-            redrawThread.redrawHat = false;
-            redrawThread.redrawFps = false;
-            try
-            {
-                redrawThread.join( 500 );
-            }
-            catch( InterruptedException ie )
-            {
-            }
-        }        
+        // Stop listening
+        if( mTouchMap != null )
+            mTouchMap.unregisterListener( this );
+        
+        // Suspend drawing
+        mInitialized = false;
+        mTouchMap = touchMap;
         
         // There is no "restart", so start fresh
         mRefreshAll = true;
-        canvasW = 0;
-        canvasH = 0;
-        redrawThread = new RedrawThread();
         
-        // Start the thread
-        try
-        {
-            redrawThread.start();
-        }
-        catch( IllegalThreadStateException itse )
-        {
-            // Problem... dynamic elements will not draw
-            Log.w("TouchscreenView", "Could not start redraw thread.");
-        }
+        // Start listening
+        if( mTouchMap != null )
+            mTouchMap.registerListener( this );
+        
+        // Resume drawing
+        mInitialized = true;
     }
     
     @Override
-    protected void onDraw( Canvas canvas )
+    public void onAllChanged( TouchMap touchMap )
     {
-        // Recompute image locations if necessary
-        if( canvas.getWidth() != canvasW || canvas.getHeight() != canvasH )
-        {
-            // Canvas changed its dimensions, recalculate the control positions
-            canvasW = canvas.getWidth();
-            canvasH = canvas.getHeight();
-            mSkin.resize( canvasW, canvasH );
-        }
-        
-        // Redraw the static elements of the gamepad
-        if( Globals.userPrefs.isTouchscreenRedrawAll || mRefreshAll )
-            mSkin.drawStatic( canvas );
-        
-        // Redraw the dynamic analog stick
-        if( mRefreshAll || mRefreshHat )
-            mSkin.drawAnalog( canvas );
-        
-        // Redraw the dynamic framerate info
-        if( Globals.userPrefs.isFrameRateEnabled && ( mRefreshAll || mRefreshFps ) )
-            mSkin.drawFps( canvas );
-        
-        // Reset the lazy refresh flags
-        mRefreshAll = false;
-        mRefreshHat = false;
-        mRefreshFps = false;
-    }
-    
-    @Override
-    public void onAllChanged( TouchscreenSkin skin )
-    {
+        // Refresh everything
         mRefreshAll = true;
         invalidate();
     }
 
     @Override
-    public void onHatChanged( TouchscreenSkin skin, int x, int y )
+    public void onHatChanged( TouchMap touchMap, float x, float y )
     {
+        // Refresh analog stick
         mRefreshHat = true;
-        if( redrawThread != null )
-            redrawThread.redrawHat = true;        
+        if( Globals.userPrefs.isTouchscreenRedrawAll )
+            invalidate();
+        else
+            invalidate( mTouchMap.getAnalogBounds() );
     }
 
     @Override
-    public void onFpsChanged( TouchscreenSkin skin, int fps )
+    public void onFpsChanged( TouchMap touchMap, int fps )
     {
+        // Refresh FPS text
         mRefreshFps = true;
-        if( redrawThread != null )
-            redrawThread.redrawFps = true;        
+        if( Globals.userPrefs.isTouchscreenRedrawAll )
+            invalidate();
+        else
+            invalidate( mTouchMap.getFpsBounds() );
+    }
+    
+    @Override
+    protected void onSizeChanged( int w, int h, int oldw, int oldh )
+    {
+        // Recompute skin layout geometry
+        mTouchMap.resize( w, h );
+        super.onSizeChanged( w, h, oldw, oldh );
     }
 
-    /**
-     * The RedrawThread class handles periodic redraws of the analog stick and FPS indicator.
-     */
-    private class RedrawThread extends Thread
+    @Override
+    protected void onDraw( Canvas canvas )
     {
-        public boolean alive = true;
-        public boolean redrawHat = false;
-        public boolean redrawFps = false;
+        if( !mInitialized )
+            return;
         
-        // Runnable for the analog stick
-        private Runnable redrawer = new Runnable()
-        {
-            public void run()
-            {
-                if( Globals.userPrefs.isTouchscreenRedrawAll )
-                {
-                    // Redraw everything
-                    invalidate();
-                }
-                else
-                {
-                    // Define invalidation box to redraw only what has changed
-                    invalidate( mSkin.getAnalogBounds() );
-                }
-            }
-        };
+        // Refresh everything if the user preference is set
+        mRefreshAll |= Globals.userPrefs.isTouchscreenRedrawAll;
         
-        // Runnable for the FPS indicator
-        private Runnable redrawerFps = new Runnable()
-        {
-            public void run()
-            {
-                if( Globals.userPrefs.isTouchscreenRedrawAll )
-                {
-                    // Redraw everything
-                    TouchscreenView.this.invalidate();
-                }
-                else
-                {
-                    // Define invalidation box to redraw only what has changed
-                    invalidate( mSkin.getFpsBounds() );
-                }
-            }
-        };
+        // Redraw the static elements of the gamepad
+        if( mRefreshAll )
+            mTouchMap.drawStatic( canvas );
         
-        /**
-         * Main loop. Periodically checks if redrawing is necessary.
-         */
-        public void run()
-        {
-            final int millis = Globals.userPrefs.isTouchscreenRedrawAll
-                    ? 150
-                    : 100;
-            
-            while( alive )
-            {
-                // Shut down by setting alive=false from another thread
-                if( redrawHat )
-                {
-                    // Need to redraw the analog stick
-                    redrawHat = false;
-                    GameImplementation.runOnUiThread( redrawer );
-                }
-                
-                if( redrawFps )
-                {
-                    // Need to redraw the FPS indicator
-                    redrawFps = false;
-                    GameImplementation.runOnUiThread( redrawerFps );
-                }
-                
-                // Sleep for a while, to save the CPU:
-                Utility.safeSleep( millis );
-            }
-        }
+        // Redraw the dynamic analog stick
+        if( mRefreshAll || mRefreshHat )
+            mTouchMap.drawAnalog( canvas );
+        
+        // Redraw the dynamic frame rate info
+        if( ( mRefreshAll || mRefreshFps ) && Globals.userPrefs.isFrameRateEnabled )
+            mTouchMap.drawFps( canvas );
+        
+        // Reset the lazy refresh flags
+        mRefreshAll = false;
+        mRefreshHat = false;
+        mRefreshFps = false;
     }
 }

@@ -21,19 +21,19 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
+import paulscode.android.mupen64plusae.input.transform.TouchMap;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v4.app.NotificationCompat;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,18 +43,6 @@ import android.view.WindowManager.LayoutParams;
 
 public class GameImplementation implements View.OnKeyListener
 {
-    // Used by Main thread to call back a title change:
-    public static final int COMMAND_CHANGE_TITLE = 1;
-    
-    // Emulator states
-    public static final int EMULATOR_STATE_UNKNOWN = 0;
-    public static final int EMULATOR_STATE_STOPPED = 1;
-    public static final int EMULATOR_STATE_RUNNING = 2;
-    public static final int EMULATOR_STATE_PAUSED = 3;
-    
-    // App state
-    public static boolean finishedReading = false;
-    
     // Private static objects used by public static methods
     private static GameActivity sGameActivity = null;
     private static GameActivityXperiaPlay sGameActivityXperiaPlay = null;
@@ -63,6 +51,9 @@ public class GameImplementation implements View.OnKeyListener
     
     // Internals
     private Activity mActivity;
+    private SDLSurface mSdlSurface;
+    private TouchMap mTouchMap;
+    private TouchscreenView mTouchscreenView;
     @SuppressWarnings( "unused" )
     private TouchscreenController mTouchscreenController;
     private PeripheralController mPeripheralController;
@@ -79,30 +70,69 @@ public class GameImplementation implements View.OnKeyListener
             sGameActivityXperiaPlay = ( GameActivityXperiaPlay ) activity;
     }
     
+    @TargetApi( 11 )
     public void onCreate( Bundle savedInstanceState )
     {
         // Lay out content and initialize stuff
-        configureLayout();
-        notifyPendingIntent();
-        loadNativeLibraries();
+        Window window = mActivity.getWindow();
         
-        // Initialize controllers
-        SDLSurface surface = (SDLSurface) mActivity.findViewById( R.id.sdlSurface );
-        mTouchscreenController = new TouchscreenController( surface );
-        mPeripheralController = new PeripheralController( surface,
-                Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
+        // Configure full-screen mode
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
+            window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
+        else
+            mActivity.requestWindowFeature( Window.FEATURE_NO_TITLE );
+        window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
+        
+        // Keep screen on under certain conditions
+        if( Globals.INHIBIT_SUSPEND )
+            window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
+        
+        // Get the view objects
+        mActivity.setContentView( R.layout.game_activity );
+        mSdlSurface = (SDLSurface) mActivity.findViewById( R.id.sdlSurface );
+        mTouchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
+        
+        // Hide the action bar introduced in higher Android versions
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
+        {
+            // SDK version at least HONEYCOMB, so there should be software buttons on this device:
+            View view = mSdlSurface.getRootView();
+            if( view != null )
+                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+            mActivity.getActionBar().hide();
+        }
+        
+        // TODO: I removed the status notification... Do we really need it?
+        
+        // Load native libraries
+        Utility.loadNativeLibName( "SDL" );
+        Utility.loadNativeLibName( "core" ); // TODO: Let the user choose which core to load
+        Utility.loadNativeLibName( "front-end" );
+        if( Globals.userPrefs.isVideoEnabled )
+            Utility.loadNativeLib( Globals.userPrefs.videoPlugin );
+        if( Globals.userPrefs.isAudioEnabled )
+            Utility.loadNativeLib( Globals.userPrefs.audioPlugin );
+        if( Globals.userPrefs.isInputEnabled )
+            Utility.loadNativeLib( Globals.userPrefs.inputPlugin );
+        if( Globals.userPrefs.isRspEnabled )
+            Utility.loadNativeLib( Globals.userPrefs.rspPlugin );
+        
+        // Set up touchscreen skin
+        mTouchMap = new TouchMap();
+        mTouchMap.setResources( mActivity.getResources() );
+        mTouchMap.loadPad();
+        mSdlSurface.initialize( mTouchMap );
+        mTouchscreenView.initialize( mTouchMap );
+        
+        // Initialize user interface devices
+        if( Globals.userPrefs.isTouchscreenEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR )
+            mTouchscreenController = new TouchscreenController( mSdlSurface, mTouchMap );
+        if( Globals.userPrefs.isInputEnabled )
+            mPeripheralController = new PeripheralController( mSdlSurface, Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
         sVibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controller key listener, to add some functionality
-        surface.setOnKeyListener( this );
-        
-        // Set up touchscreen skin
-        Globals.touchSkin = new TouchscreenSkin();
-        Globals.touchSkin.setResources( mActivity.getResources() );
-        Globals.touchSkin.loadPad();
-        Globals.touchscreenView.mSkin = Globals.touchSkin;
-        mTouchscreenController.mSkin = Globals.touchSkin;
-        Globals.touchscreenView.initialize();
+        mSdlSurface.setOnKeyListener( this );
         
         // Notify that game activity has started
         Notifier.showToast( mActivity.getString( R.string.mupen64plus_started ), mActivity );
@@ -186,111 +216,37 @@ public class GameImplementation implements View.OnKeyListener
         saveSession();
     }
 
+    @TargetApi( 11 )
     @Override
-    public boolean onKey( View v, int keyCode, KeyEvent event )
+    public boolean onKey( View view, int keyCode, KeyEvent event )
     {
-        // Let Android handle all keys if user disables input plugin
-        if( !Globals.userPrefs.isInputEnabled )
+        // Toggle the ActionBar for HoneyComb+ when back is pressed
+        if( keyCode == KeyEvent.KEYCODE_BACK
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
         {
-            return false;
+            if( event.getAction() == KeyEvent.ACTION_DOWN )
+                toggleActionBar( view.getRootView() );
+            return true;
         }
         
         // Let Android handle the menu key
         else if( keyCode == KeyEvent.KEYCODE_MENU )
-        {
             return false;
-        }
-        
-        // Toggle the ActionBar for HoneyComb+ when back is pressed
-        else if( keyCode == KeyEvent.KEYCODE_BACK
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-        {
-            if( event.getAction() == KeyEvent.ACTION_DOWN )
-                mActivity.runOnUiThread( new ToggleActionBar( v.getRootView() ) );
-            return true;
-        }
         
         // Let Android handle the volume keys if not used for control
         else if( !Globals.userPrefs.isVolKeysEnabled
                 && ( keyCode == KeyEvent.KEYCODE_VOLUME_UP
                 || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
                 || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
-        {
             return false;
-        }
         
-        // Send everything else to the peripheral controller
+        // Send everything else to the peripheral controller if it exists
+        else if( mPeripheralController != null )
+            return mPeripheralController.onKeyUnderride( view, keyCode, event );
+        
+        // Let Android handle whatever remains
         else
-        {
-            return mPeripheralController.getTransform().onKey( v, keyCode, event );
-        }
-    }
-
-    @TargetApi( 11 )
-    private void configureLayout()
-    {
-        Window window = mActivity.getWindow();
-        
-        // Configure full-screen mode
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-            window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
-        else
-            mActivity.requestWindowFeature( Window.FEATURE_NO_TITLE );
-        window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
-        
-        // Keep screen on under certain conditions
-        if( Globals.INHIBIT_SUSPEND )
-            window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
-                
-        mActivity.setContentView( R.layout.game_activity );
-        Globals.sdlSurface = (SDLSurface) mActivity.findViewById( R.id.sdlSurface );
-        Globals.touchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
-        
-        // Hide the action bar introduced in higher Android versions
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
-        {
-            // SDK version at least HONEYCOMB, so there should be software buttons on this device:
-            View view = Globals.sdlSurface.getRootView();
-            if( view != null )
-                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
-            mActivity.getActionBar().hide();
-        }
-    }
-
-    private void notifyPendingIntent()
-    {
-        Intent intent = new Intent( mActivity, MenuActivity.class );
-        intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-        PendingIntent contentIntent = PendingIntent.getActivity( mActivity, 0, intent, 0 );
-        
-        String appName = mActivity.getString( R.string.app_name );
-        CharSequence text = mActivity.getString( R.string.gameActivity_ticker, appName );
-        CharSequence contentTitle = appName;
-        CharSequence contentText = appName;
-        long when = System.currentTimeMillis();
-        Context context = mActivity.getApplicationContext();
-        
-        NotificationCompat.Builder notification = new NotificationCompat.Builder( context )
-                .setSmallIcon( R.drawable.status ).setAutoCancel( true ).setTicker( text )
-                .setWhen( when ).setContentTitle( contentTitle ).setContentText( contentText )
-                .setContentIntent( contentIntent );
-        
-        Notifier.notify( notification.build() );
-    }
-
-    private void loadNativeLibraries()
-    {
-        Utility.loadNativeLibName( "SDL" );
-        Utility.loadNativeLibName( "core" ); // TODO: Let the user choose which core to load
-        Utility.loadNativeLibName( "front-end" );
-        if( Globals.userPrefs.isVideoEnabled )
-            Utility.loadNativeLib( Globals.userPrefs.videoPlugin );
-        if( Globals.userPrefs.isAudioEnabled )
-            Utility.loadNativeLib( Globals.userPrefs.audioPlugin );
-        if( Globals.userPrefs.isInputEnabled )
-            Utility.loadNativeLib( Globals.userPrefs.inputPlugin );
-        if( Globals.userPrefs.isRspEnabled )
-            Utility.loadNativeLib( Globals.userPrefs.rspPlugin );
+            return false;
     }
 
     private void setSlot( int value, MenuItem item )
@@ -319,43 +275,29 @@ public class GameImplementation implements View.OnKeyListener
         
         // Call the native method to save the emulator state
         NativeMethods.fileSaveEmulator( "Mupen64PlusAE_LastSession.sav" );
-        Globals.sdlSurface.buffFlipped = false;
-        
-        // Wait for the game to resume by monitoring emulator state and the EGL buffer flip
-        do
-        {
-            Utility.safeSleep( 500 );
-        }
-        while( !Globals.sdlSurface.buffFlipped
-                && NativeMethods.stateEmulator() == EMULATOR_STATE_PAUSED );
+        mSdlSurface.waitForResume();
     }
-
-    private class ToggleActionBar implements Runnable
+    
+    @SuppressLint( "NewApi" )
+    private void toggleActionBar( View rootView )
     {
-        View mRootView;
-        public ToggleActionBar( View rootView )
+        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB )
+            return;
+            
+        ActionBar actionBar = mActivity.getActionBar();
+        if( actionBar.isShowing() )
         {
-            mRootView = rootView;
+            if( rootView != null )
+                rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+            actionBar.hide();
         }
-        
-        @Override
-        @TargetApi( 11 )
-        public void run()
+        else
         {
-            ActionBar actionBar = mActivity.getActionBar();
-            if( mActivity.getActionBar().isShowing() )
-            {
-                if( mRootView != null )
-                    mRootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
-                actionBar.hide();
-            }
-            else
-            {
-                actionBar.show();
-            }
+            actionBar.show();
         }        
     }
-
+    
+    // TODO: These static methods are a kludge, need to make a CoreInterface class to handle this stuff neatly
     public static Object getRomPath()
     {
         if( sGameActivity != null )

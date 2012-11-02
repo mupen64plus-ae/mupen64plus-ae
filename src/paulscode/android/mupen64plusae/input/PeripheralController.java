@@ -26,6 +26,7 @@ import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.view.KeyEvent;
 import android.view.View;
 
 public class PeripheralController extends AbstractController implements AbstractTransform.Listener,
@@ -73,11 +74,6 @@ public class PeripheralController extends AbstractController implements Abstract
         
         // Connect the downstream end of the transform
         mTransform.registerListener( this );
-    }
-    
-    public KeyTransform getTransform()
-    {
-        return mTransform;
     }
     
     @Override
@@ -145,5 +141,10 @@ public class PeripheralController extends AbstractController implements Abstract
                     return false;
             }
         return true;
+    }
+    
+    public boolean onKeyUnderride( View view, int keyCode, KeyEvent event )
+    {
+        return mTransform.onKey( view, keyCode, event );
     }
 }
