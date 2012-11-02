@@ -25,6 +25,9 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
+import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.util.Utility;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -35,24 +38,31 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
- * Represents a graphical area of memory that can be drawn to.
- * </p>
- * This is what we draw on, so we need to know when it's created in order to do anything
- * useful.
- * </p>
- * Because of this, that's where we set up the SDL thread
+ * Represents a graphical area of memory that can be drawn to. </p> This is what we draw on, so we
+ * need to know when it's created in order to do anything useful. </p> Because of this, that's where
+ * we set up the SDL thread
  */
 public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
 {
-    public boolean buffFlipped = false;
+    // Emulator states
+    public static final int EMULATOR_STATE_UNKNOWN = 0;
+    public static final int EMULATOR_STATE_STOPPED = 1;
+    public static final int EMULATOR_STATE_RUNNING = 2;
+    public static final int EMULATOR_STATE_PAUSED = 3;
+    
+    // Singleton instance
+    private static SDLSurface sInstance = null;
     
     // This is what SDL runs in. It invokes SDL_main(), eventually
     private static Thread mSDLThread;
     
-    // Framerate calculations
-    private static long lastFPSCheck = 0;
-    private static int fpsRate = 15;
-    private static int frameCount = -1;
+    // Frame rate calculations
+    private long mLastFPSCheck = 0;
+    private int mFrameCount = -1;
+    private TouchMap mTouchMap;
+    
+    // Internal flags
+    private boolean mBuffFlipped = false;
     
     // EGL private objects
     private EGLSurface mEGLSurface;
@@ -64,11 +74,28 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         super( context, attribs );
         
+        sInstance = this;
         getHolder().addCallback( this );
-        
         setFocusable( true );
         setFocusableInTouchMode( true );
         requestFocus();
+    }
+    
+    public void initialize( TouchMap touchMap )
+    {
+        mTouchMap = touchMap;
+    }
+    
+    public void waitForResume()
+    {
+        mBuffFlipped = false;
+        
+        // Wait for the game to resume by monitoring emulator state and the EGL buffer flip
+        do
+        {
+            Utility.safeSleep( 500 );
+        }
+        while( !mBuffFlipped && NativeMethods.stateEmulator() == EMULATOR_STATE_PAUSED );
     }
     
     // Called when we have a valid drawing surface
@@ -156,7 +183,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
             }
         }, "SDLThread" );
         mSDLThread.start();
-            
+        
         if( Globals.resumeLastSession )
         {
             // TODO: This block seems to cause a force-close
@@ -165,7 +192,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                 @Override
                 public void run()
                 {
-                    while( !GameImplementation.finishedReading )
+                    while( !Globals.finishedReading )
                     {
                         try
                         {
@@ -185,7 +212,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                     }
                     int state = NativeMethods.stateEmulator();
                     
-                    while( state != GameImplementation.EMULATOR_STATE_RUNNING )
+                    while( state != EMULATOR_STATE_RUNNING )
                     {
                         try
                         {
@@ -196,11 +223,11 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                         }
                         state = NativeMethods.stateEmulator();
                     }
-                    buffFlipped = false;
+                    mBuffFlipped = false;
                     
-                    while( !buffFlipped )
-                    { // Wait for the game to have started, as indicated
-                      // by a call to flip the EGL buffers.
+                    while( !mBuffFlipped )
+                    {
+                        // Wait for the game to start, as indicated by a call to flip the buffer
                         try
                         {
                             Thread.sleep( 20 );
@@ -228,12 +255,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void onDraw( Canvas canvas )
     {
-        // Unused
-    }
-    
-    public static boolean createGLContext( int majorVersion, int minorVersion )
-    {
-        return Globals.sdlSurface.initEGL( majorVersion, minorVersion );
+        // Unused, suppress the super method
     }
     
     // EGL functions
@@ -340,27 +362,6 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         return true;
     }
     
-    public static void flipBuffers()
-    {
-        Globals.sdlSurface.flipEGL();
-        if( SDLSurface.frameCount < 0 )
-        {
-            SDLSurface.frameCount = 0;
-            SDLSurface.lastFPSCheck = System.currentTimeMillis();
-        }
-        SDLSurface.frameCount++;
-        if( ( Globals.touchscreenView != null && SDLSurface.frameCount >= Globals.touchscreenView.fpsRate )
-                || ( Globals.touchscreenView == null && SDLSurface.frameCount >= SDLSurface.fpsRate ) )
-        {
-            long currentTime = System.currentTimeMillis();
-            float fFPS = ( (float) SDLSurface.frameCount / (float) ( currentTime - SDLSurface.lastFPSCheck ) ) * 1000.0f;
-            if( Globals.touchscreenView != null )
-                Globals.touchscreenView.updateFPS( (int) fFPS );
-            SDLSurface.frameCount = 0;
-            SDLSurface.lastFPSCheck = currentTime;
-        }
-    }
-    
     // EGL buffer flip
     public void flipEGL()
     {
@@ -385,6 +386,27 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                 Log.v( "SDLSurface", s.toString() );
             }
         }
-        buffFlipped = true;
+        mBuffFlipped = true;
+        
+        // Update frame rate info
+        mFrameCount++;
+        if( ( mTouchMap != null && mFrameCount >= mTouchMap.getFpsRecalcRate() ) )
+        {
+            long currentTime = System.currentTimeMillis();
+            float fFPS = ( (float) mFrameCount / (float) ( currentTime - mLastFPSCheck ) ) * 1000.0f;
+            mTouchMap.updateFps( Math.round( fFPS ) );
+            mFrameCount = 0;
+            mLastFPSCheck = currentTime;
+        }
+    }
+    
+    public static boolean sInitEGL( int majorVersion, int minorVersion )
+    {
+        return sInstance.initEGL( majorVersion, minorVersion );
+    }
+    
+    public static void sFlipEGL()
+    {
+        sInstance.flipEGL();
     }
 }

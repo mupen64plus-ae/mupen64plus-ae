@@ -22,6 +22,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.transform.AbstractTransform;
 import paulscode.android.mupen64plusae.input.transform.InputMap;
 import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
@@ -74,20 +75,20 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
         
         // Create a button map to simplify highlighting
-        mN64ToButton[InputMap.DPD_R] = (Button) view.findViewById( R.id.buttonDR );
-        mN64ToButton[InputMap.DPD_L] = (Button) view.findViewById( R.id.buttonDL );
-        mN64ToButton[InputMap.DPD_D] = (Button) view.findViewById( R.id.buttonDD );
-        mN64ToButton[InputMap.DPD_U] = (Button) view.findViewById( R.id.buttonDU );
-        mN64ToButton[InputMap.START] = (Button) view.findViewById( R.id.buttonS );
-        mN64ToButton[InputMap.BTN_Z] = (Button) view.findViewById( R.id.buttonZ );
-        mN64ToButton[InputMap.BTN_B] = (Button) view.findViewById( R.id.buttonB );
-        mN64ToButton[InputMap.BTN_A] = (Button) view.findViewById( R.id.buttonA );
-        mN64ToButton[InputMap.CPD_R] = (Button) view.findViewById( R.id.buttonCR );
-        mN64ToButton[InputMap.CPD_L] = (Button) view.findViewById( R.id.buttonCL );
-        mN64ToButton[InputMap.CPD_D] = (Button) view.findViewById( R.id.buttonCD );
-        mN64ToButton[InputMap.CPD_U] = (Button) view.findViewById( R.id.buttonCU );
-        mN64ToButton[InputMap.BTN_R] = (Button) view.findViewById( R.id.buttonR );
-        mN64ToButton[InputMap.BTN_L] = (Button) view.findViewById( R.id.buttonL );
+        mN64ToButton[AbstractController.DPD_R] = (Button) view.findViewById( R.id.buttonDR );
+        mN64ToButton[AbstractController.DPD_L] = (Button) view.findViewById( R.id.buttonDL );
+        mN64ToButton[AbstractController.DPD_D] = (Button) view.findViewById( R.id.buttonDD );
+        mN64ToButton[AbstractController.DPD_U] = (Button) view.findViewById( R.id.buttonDU );
+        mN64ToButton[AbstractController.START] = (Button) view.findViewById( R.id.buttonS );
+        mN64ToButton[AbstractController.BTN_Z] = (Button) view.findViewById( R.id.buttonZ );
+        mN64ToButton[AbstractController.BTN_B] = (Button) view.findViewById( R.id.buttonB );
+        mN64ToButton[AbstractController.BTN_A] = (Button) view.findViewById( R.id.buttonA );
+        mN64ToButton[AbstractController.CPD_R] = (Button) view.findViewById( R.id.buttonCR );
+        mN64ToButton[AbstractController.CPD_L] = (Button) view.findViewById( R.id.buttonCL );
+        mN64ToButton[AbstractController.CPD_D] = (Button) view.findViewById( R.id.buttonCD );
+        mN64ToButton[AbstractController.CPD_U] = (Button) view.findViewById( R.id.buttonCU );
+        mN64ToButton[AbstractController.BTN_R] = (Button) view.findViewById( R.id.buttonR );
+        mN64ToButton[AbstractController.BTN_L] = (Button) view.findViewById( R.id.buttonL );
         mN64ToButton[InputMap.AXIS_R] = (Button) view.findViewById( R.id.buttonAR );
         mN64ToButton[InputMap.AXIS_L] = (Button) view.findViewById( R.id.buttonAL );
         mN64ToButton[InputMap.AXIS_D] = (Button) view.findViewById( R.id.buttonAD );

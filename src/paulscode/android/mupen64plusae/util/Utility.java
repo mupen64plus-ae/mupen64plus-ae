@@ -20,9 +20,11 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
+import android.util.FloatMath;
 import android.util.Log;
 
 // TODO: Cleanup, refactor, subdivide this class (I turned it into a dumping ground during
@@ -200,24 +202,6 @@ public class Utility
         {
             if( drawable != null )
                 drawable.draw( canvas );
-        }
-    }
-
-    /**
-     * The Point class is a basic interface for storing 2D float coordinates.
-     */
-    public static class Point
-    {
-        public float x;
-        public float y;
-        
-        /**
-         * Constructor: Creates a new point at the origin
-         */
-        public Point()
-        {
-            x = 0;
-            y = 0;
         }
     }
 
@@ -800,19 +784,37 @@ public class Utility
         if( div == 0 )
             return false;
             
-        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) )
-                / div;
-        float t = ( vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
+        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) ) / div;
+        float t = (  vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
         
         if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
         {
             // Segments cross, point of intersection stored in 'crossPt'
-            crossPt.x = seg1pt1_x + ( t * vec1_x );
-            crossPt.y = seg1pt1_y + ( t * vec1_y );
+            crossPt.x = (int) ( seg1pt1_x + ( t * vec1_x ) );
+            crossPt.y = (int) ( seg1pt1_y + ( t * vec1_y ) );
             return true;
         }
         
         // Segments don't cross
         return false;
+    }
+
+    public static Point constrainToOctagon( int dX, int dY, int halfWidth )
+    {
+        final float dC = halfWidth;
+        final float dA = dC * FloatMath.sqrt( 0.5f );
+        final float signX = dX < 0 ? -1 : 1;
+        final float signY = dY < 0 ? -1 : 1;
+        
+        Point crossPt = new Point();
+        crossPt.x = dX;
+        crossPt.y = dY;
+        
+        if( ( signX * dX ) > ( signY * dY ) )
+            segsCross( 0, 0, dX, dY, signX * dC, 0, signX * dA, signY * dA, crossPt );
+        else
+            segsCross( 0, 0, dX, dY, 0, signY * dC, signX * dA, signY * dA, crossPt );
+        
+        return crossPt;
     }
 }

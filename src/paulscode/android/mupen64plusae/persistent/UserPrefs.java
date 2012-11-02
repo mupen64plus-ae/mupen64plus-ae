@@ -221,7 +221,7 @@ public class UserPrefs
         lastGame = mPreferences.getString( "lastGame", "" );
         gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
         isAutoSaveEnabled = mPreferences.getBoolean( "autoSaveEnabled", false );
-        isFrameRateEnabled = mPreferences.getBoolean( "touchscreenFrameRate", false );
+        isFrameRateEnabled = mPreferences.getBoolean( "frameRateEnabled", false );
         
         // Plug-ins and layouts
         inputPlugin = paths.libsDir + ( isInputEnabled

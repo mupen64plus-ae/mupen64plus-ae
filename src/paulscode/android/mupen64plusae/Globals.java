@@ -33,9 +33,8 @@ public class Globals
     
     // Frequently-used global objects
     // TODO: Eliminate as many of these as possible
-    public static TouchscreenView touchscreenView = null;
-    public static SDLSurface sdlSurface = null;
     public static String extraArgs = ".";
+    public static boolean finishedReading = false;
     public static boolean resumeLastSession = false;
     
     // Internal development options, might change later or expose to user

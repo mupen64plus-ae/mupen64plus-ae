@@ -114,12 +114,12 @@ public class NativeMethods
     
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
-        return SDLSurface.createGLContext( majorVersion, minorVersion );
+        return SDLSurface.sInitEGL( majorVersion, minorVersion );
     }
     
     public static void flipBuffers()
     {
-        SDLSurface.flipBuffers();
+        SDLSurface.sFlipEGL();
     }
     
     public static boolean getAutoFrameSkip()

@@ -26,6 +26,7 @@ import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.view.KeyEvent;
 import android.view.View;
 
 public class PeripheralController extends AbstractController implements AbstractTransform.Listener,
@@ -33,6 +34,10 @@ public class PeripheralController extends AbstractController implements Abstract
 {
     private InputMap mInputMap;
     private KeyTransform mTransform;
+    protected float mAxisFractionXpos;
+    protected float mAxisFractionXneg;
+    protected float mAxisFractionYpos;
+    protected float mAxisFractionYneg;
     
     @TargetApi( 12 )
     public PeripheralController( View view, InputMap inputMap, ImeFormula formula )
@@ -71,18 +76,16 @@ public class PeripheralController extends AbstractController implements Abstract
         mTransform.registerListener( this );
     }
     
-    public KeyTransform getTransform()
-    {
-        return mTransform;
-    }
-    
     @Override
     public void onInput( int inputCode, float strength )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mInputMap != null )
         {
+            mAxisFractionXneg = mAxisFractionXpos = mAxisFractionYneg = mAxisFractionYpos = 0;
             apply( inputCode, strength );
+            mAxisFractionX = mAxisFractionXpos - mAxisFractionXneg;
+            mAxisFractionY = mAxisFractionYpos - mAxisFractionYneg;
             notifyChanged();
         }
     }
@@ -93,8 +96,11 @@ public class PeripheralController extends AbstractController implements Abstract
         // Process batch user inputs from gamepad, keyboard, etc.
         if( mInputMap != null )
         {
+            mAxisFractionXneg = mAxisFractionXpos = mAxisFractionYneg = mAxisFractionYpos = 0;
             for( int i = 0; i < inputCodes.length; i++ )
                 apply( inputCodes[i], strengths[i] );
+            mAxisFractionX = mAxisFractionXpos - mAxisFractionXneg;
+            mAxisFractionY = mAxisFractionYpos - mAxisFractionYneg;
             notifyChanged();
         }
     }
@@ -112,65 +118,33 @@ public class PeripheralController extends AbstractController implements Abstract
     public boolean apply( int inputCode, float strength )
     {
         boolean state = strength > InputMap.STRENGTH_THRESHOLD;
-        switch( mInputMap.get( inputCode ) )
-        {
-            case InputMap.DPD_R:
-                mDpadR = state;
-                break;
-            case InputMap.DPD_L:
-                mDpadL = state;
-                break;
-            case InputMap.DPD_D:
-                mDpadD = state;
-                break;
-            case InputMap.DPD_U:
-                mDpadU = state;
-                break;
-            case InputMap.START:
-                mBtnStart = state;
-                break;
-            case InputMap.BTN_Z:
-                mBtnZ = state;
-                break;
-            case InputMap.BTN_B:
-                mBtnB = state;
-                break;
-            case InputMap.BTN_A:
-                mBtnA = state;
-                break;
-            case InputMap.CPD_R:
-                mBtnCR = state;
-                break;
-            case InputMap.CPD_L:
-                mBtnCL = state;
-                break;
-            case InputMap.CPD_D:
-                mBtnCD = state;
-                break;
-            case InputMap.CPD_U:
-                mBtnCU = state;
-                break;
-            case InputMap.BTN_R:
-                mBtnR = state;
-                break;
-            case InputMap.BTN_L:
-                mBtnL = state;
-                break;
-            case InputMap.AXIS_R:
-                mAxisFractionXpos = strength;
-                break;
-            case InputMap.AXIS_L:
-                mAxisFractionXneg = strength;
-                break;
-            case InputMap.AXIS_D:
-                mAxisFractionYneg = strength;
-                break;
-            case InputMap.AXIS_U:
-                mAxisFractionYpos = strength;
-                break;
-            default:
-                return false;
-        }
+        int n64Index = mInputMap.get( inputCode );
+        
+        if( n64Index >= 0 && n64Index < NUM_BUTTONS )
+            mButtons[n64Index] = state;
+        else
+            switch( n64Index )
+            {
+                case InputMap.AXIS_R:
+                    mAxisFractionXpos = strength;
+                    break;
+                case InputMap.AXIS_L:
+                    mAxisFractionXneg = strength;
+                    break;
+                case InputMap.AXIS_D:
+                    mAxisFractionYneg = strength;
+                    break;
+                case InputMap.AXIS_U:
+                    mAxisFractionYpos = strength;
+                    break;
+                default:
+                    return false;
+            }
         return true;
+    }
+    
+    public boolean onKeyUnderride( View view, int keyCode, KeyEvent event )
+    {
+        return mTransform.onKey( view, keyCode, event );
     }
 }
