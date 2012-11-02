@@ -129,8 +129,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             }
             
             // Synchronize the core config files with the current user prefs
-            Globals.syncConfigFiles();
-            Globals.resumeLastSession = false; // TODO: something screwy when this is true
+            CoreInterface.syncConfigFiles();
+            CoreInterface.resumeLastSession = false; // TODO: something screwy when this is true
             
             // Launch the appropriate game activity
             Intent intent = Globals.userPrefs.isXperiaEnabled

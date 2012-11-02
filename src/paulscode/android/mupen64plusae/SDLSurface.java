@@ -50,9 +50,6 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
     public static final int EMULATOR_STATE_RUNNING = 2;
     public static final int EMULATOR_STATE_PAUSED = 3;
     
-    // Singleton instance
-    private static SDLSurface sInstance = null;
-    
     // This is what SDL runs in. It invokes SDL_main(), eventually
     private static Thread mSDLThread;
     
@@ -74,7 +71,6 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         super( context, attribs );
         
-        sInstance = this;
         getHolder().addCallback( this );
         setFocusable( true );
         setFocusableInTouchMode( true );
@@ -184,7 +180,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         }, "SDLThread" );
         mSDLThread.start();
         
-        if( Globals.resumeLastSession )
+        if( CoreInterface.resumeLastSession )
         {
             // TODO: This block seems to cause a force-close
             new Thread( "ResumeSessionThread" )
@@ -192,7 +188,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                 @Override
                 public void run()
                 {
-                    while( !Globals.finishedReading )
+                    while( !CoreInterface.finishedReading )
                     {
                         try
                         {
@@ -245,7 +241,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                     {
                     } // Just to be sure..
                     Log.v( "SDLSurface", "Resuming last session" );
-                    GameImplementation.showToast( "Resuming game" );
+                    CoreInterface.showToast( "Resuming game" );
                     NativeMethods.fileLoadEmulator( "Mupen64PlusAE_LastSession.sav" );
                 }
             }.start();
@@ -398,15 +394,5 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
             mFrameCount = 0;
             mLastFPSCheck = currentTime;
         }
-    }
-    
-    public static boolean sInitEGL( int majorVersion, int minorVersion )
-    {
-        return sInstance.initEGL( majorVersion, minorVersion );
-    }
-    
-    public static void sFlipEGL()
-    {
-        sInstance.flipEGL();
     }
 }

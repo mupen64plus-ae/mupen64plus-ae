@@ -44,6 +44,9 @@ import paulscode.android.mupen64plusae.NativeMethods;
  * mDpadR = true; notifyChanges(); mDpadL = false; notifyChanged(); // Inefficient
  * mDpadR = true; mDpadL = false; notifyChanged(); // Better
  * }</pre>
+ * @see PeripheralController
+ * @see TouchscreenController
+ * @see XperiaPlayController
  */
 public abstract class AbstractController
 {

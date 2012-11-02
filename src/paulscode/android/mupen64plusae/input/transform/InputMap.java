@@ -19,10 +19,17 @@
  */
 package paulscode.android.mupen64plusae.input.transform;
 
+import paulscode.android.mupen64plusae.InputMapPreference;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.util.SparseIntArray;
 
+/**
+ * A class for mapping arbitrary user inputs to N64 buttons/axes.
+ * @see AbstractTransform
+ * @see PeripheralController
+ * @see InputMapPreference
+ */
 public class InputMap
 {
     public interface Listener

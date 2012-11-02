@@ -25,6 +25,13 @@ import android.os.Build;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+/**
+ * The base class for transforming arbitrary input data into a common format.
+ * @see KeyTransform
+ * @see KeyAxisTransform
+ * @see SensorTransform
+ * @see InputMap
+ */
 public abstract class AbstractTransform
 {
     public interface Listener

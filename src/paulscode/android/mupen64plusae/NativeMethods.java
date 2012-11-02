@@ -19,8 +19,10 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.util.Audio;
-
+/**
+ * A class containing all bridging methods between Java and JNI, and nothing else.
+ * @see CoreInterface
+ */
 public class NativeMethods
 {
     // *************************************************
@@ -35,6 +37,13 @@ public class NativeMethods
     // *************************************************
     // *************************************************
     
+    // TODO: Remove these functions on JNI side?
+    // public static native void onKeyDown( int keycode );
+    // public static native void onKeyUp( int keycode );
+    // public static native void onSDLKeyDown( int keycode );
+    // public static native void onSDLKeyUp( int keycode );
+    // public static native void onTouch( int action, float x, float y, float p );
+    
     public static native void fileLoadEmulator( String filename );
     
     public static native void fileSaveEmulator( String filename );
@@ -47,17 +56,7 @@ public class NativeMethods
     
     public static native void onAccel( float x, float y, float z );
     
-    //public static native void onKeyDown( int keycode );
-    
-    //public static native void onKeyUp( int keycode );
-    
     public static native void onResize( int x, int y, int format );
-    
-    //public static native void onSDLKeyDown( int keycode );
-    
-    //public static native void onSDLKeyUp( int keycode );
-    
-    //public static native void onTouch( int action, float x, float y, float p );
     
     public static native void pauseEmulator();
     
@@ -94,32 +93,32 @@ public class NativeMethods
     public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo,
             int desiredFrames )
     {
-        return Audio.init( sampleRate, is16Bit, isStereo, desiredFrames );
+        return CoreInterface.init( sampleRate, is16Bit, isStereo, desiredFrames );
     }
     
     public static void audioQuit()
     {
-        Audio.quit();
+        CoreInterface.quit();
     }
     
     public static void audioWriteByteBuffer( byte[] buffer )
     {
-        Audio.writeByteBuffer( buffer );
+        CoreInterface.writeByteBuffer( buffer );
     }
     
     public static void audioWriteShortBuffer( short[] buffer )
     {
-        Audio.writeShortBuffer( buffer );
+        CoreInterface.writeShortBuffer( buffer );
     }
     
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
-        return SDLSurface.sInitEGL( majorVersion, minorVersion );
+        return CoreInterface.initEGL( majorVersion, minorVersion );
     }
     
     public static void flipBuffers()
     {
-        SDLSurface.sFlipEGL();
+        CoreInterface.flipEGL();
     }
     
     public static boolean getAutoFrameSkip()
@@ -134,7 +133,7 @@ public class NativeMethods
     
     public static Object getExtraArgs()
     {
-        return (Object) Globals.extraArgs;
+        return (Object) CoreInterface.getExtraArgs();
     }
     
     public static int getHardwareType()
@@ -149,7 +148,7 @@ public class NativeMethods
     
     public static Object getROMPath()
     {
-        return GameImplementation.getRomPath();
+        return CoreInterface.getRomPath();
     }
     
     public static boolean getScreenStretch()
@@ -159,12 +158,12 @@ public class NativeMethods
     
     public static void setActivityTitle( String title )
     {
-        //SDLSurface.setActivityTitle( title );
+        CoreInterface.setActivityTitle( title );
     }
     
     public static void showToast( String message )
     {
-        GameImplementation.showToast( message );
+        CoreInterface.showToast( message );
     }
     
     public static boolean useRGBA8888()
@@ -174,6 +173,6 @@ public class NativeMethods
     
     public static void vibrate( boolean active )
     {
-        GameImplementation.vibrate( active );
+        CoreInterface.vibrate( active );
     }
 }

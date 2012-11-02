@@ -101,6 +101,7 @@
                 android:defaultValue="true"
                 android:dependency="touchscreenEnabled"
                 android:key="touchscreenOctagonJoystick"
+                android:summary="@string/touchscreenOctagonJoystick_summary"
                 android:title="@string/touchscreenOctagonJoystick_title" />
             
         </PreferenceScreen>

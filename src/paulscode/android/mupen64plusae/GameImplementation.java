@@ -42,12 +42,6 @@ import android.view.WindowManager.LayoutParams;
 
 public class GameImplementation implements View.OnKeyListener
 {
-    // Private static objects used by public static methods
-    private static GameActivity sGameActivity = null;
-    private static GameActivityXperiaPlay sGameActivityXperiaPlay = null;
-    private static Vibrator sVibrator = null;
-    private static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
-    
     // Internals
     private Activity mActivity;
     private SDLSurface mSdlSurface;
@@ -63,13 +57,6 @@ public class GameImplementation implements View.OnKeyListener
     public GameImplementation( Activity activity )
     {
         mActivity = activity;
-        
-        // Record the activity as a singleton for the static methods below
-        // TODO: This a kludge, I'd like to make a CoreInterface class to handle this stuff neatly (littleguy)
-        if( activity instanceof GameActivity )
-            sGameActivity = ( GameActivity ) activity;
-        if( activity instanceof GameActivityXperiaPlay )
-            sGameActivityXperiaPlay = ( GameActivityXperiaPlay ) activity;
     }
     
     @TargetApi( 11 )
@@ -142,10 +129,13 @@ public class GameImplementation implements View.OnKeyListener
             // Create the peripheral controllers
             mPeripheralController1 = new PeripheralController( mSdlSurface, Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
         }
-        sVibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controller key listener, to add some extra functionality
         mSdlSurface.setOnKeyListener( this );
+        
+        // Synchronize the interface to the emulator core
+        CoreInterface.startup( mActivity, mSdlSurface, vibrator );
         
         // Notify user that the game activity has started
         Notifier.showToast( mActivity.getString( R.string.mupen64plus_started ), mActivity );
@@ -211,8 +201,7 @@ public class GameImplementation implements View.OnKeyListener
                 // Save game state and launch MenuActivity
                 saveSession();
                 Notifier.clear();
-                sGameActivity = null;
-                sGameActivityXperiaPlay = null;
+                CoreInterface.shutdown();
                 Intent intent = new Intent( mActivity, MenuActivity.class );
                 intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                 mActivity.startActivity( intent );
@@ -226,6 +215,7 @@ public class GameImplementation implements View.OnKeyListener
     public void onUserLeaveHint()
     {
         // This executes when Home is pressed (can't detect it in onKey).
+        // TODO Why does this cause app exit?
         saveSession();
     }
 
@@ -312,41 +302,4 @@ public class GameImplementation implements View.OnKeyListener
             actionBar.show();
         }        
     }
-    
-    // TODO: These static methods are a kludge, I'd like to make a CoreInterface class to handle this stuff neatly (littleguy)
-    public static Object getRomPath()
-    {
-        if( sGameActivity != null )
-            return Globals.paths.getROMPath( Globals.userPrefs, sGameActivity );
-        else if( sGameActivityXperiaPlay != null )
-            return Globals.paths.getROMPath( Globals.userPrefs, sGameActivityXperiaPlay );
-        else
-            return null;
-    }
-
-    public static void runOnUiThread( Runnable action )
-    {        
-        if( sGameActivity != null )
-            sGameActivity.runOnUiThread( action );
-        else if( sGameActivityXperiaPlay != null )
-            sGameActivityXperiaPlay.runOnUiThread( action );
-    }
-
-    public static void showToast( String message )
-    {
-        if( sGameActivity != null )
-            Notifier.showToast( message, sGameActivity );
-        else if( sGameActivityXperiaPlay != null )
-            Notifier.showToast( message, sGameActivityXperiaPlay );
-    }
-
-    public static void vibrate( boolean active )
-    {
-        if( sVibrator == null )
-            return;
-        if( active )
-            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
-        else
-            sVibrator.cancel();
-    }    
 }

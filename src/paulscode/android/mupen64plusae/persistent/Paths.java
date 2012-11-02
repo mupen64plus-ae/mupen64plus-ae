@@ -22,9 +22,6 @@ package paulscode.android.mupen64plusae.persistent;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.Globals;
-import paulscode.android.mupen64plusae.util.ErrorLogger;
-import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.os.Environment;
 import android.util.Log;
@@ -94,17 +91,16 @@ public class Paths
     /**
      * Instantiates a new Path object to retrieve path locations and perform related checks.
      * 
-     * @param mainActivity
-     *            the main activity
+     * @param activity the main activity
      */
-    public Paths( Activity mainActivity )
+    public Paths( Activity activity )
     {
-        packageName = mainActivity.getPackageName();
+        packageName = activity.getPackageName();
         
         // Directories
         storageDir = Globals.DOWNLOAD_TO_SDCARD
                 ? Environment.getExternalStorageDirectory().getAbsolutePath()
-                : mainActivity.getFilesDir().getAbsolutePath();
+                : activity.getFilesDir().getAbsolutePath();
         dataDir = storageDir + ( Globals.DOWNLOAD_TO_SDCARD
                 ? "/Android/data/" + packageName
                 : "" );
@@ -146,55 +142,5 @@ public class Paths
     public boolean isSdCardAccessible()
     {
         return ( new File( storageDir ) ).exists();
-    }
-    
-    public Object getROMPath( UserPrefs prefs, Activity activity )
-    {
-        Globals.finishedReading = false;
-        if( prefs.isLastGameNull )
-        {
-            Globals.finishedReading = true;
-            Utility.systemExitFriendly( "Invalid ROM", activity, 2000 );
-        }
-        else if( prefs.isLastGameZipped )
-        {
-            // Create the temp folder if it doesn't exist:
-            String tmpFolderName = dataDir + "/tmp";
-            File tmpFolder = new File( tmpFolderName );
-            tmpFolder.mkdir();
-            
-            // Clear the folder if anything is in there:
-            String[] children = tmpFolder.list();
-            for( String child : children )
-            {
-                Utility.deleteFolder( new File( tmpFolder, child ) );
-            }
-            
-            // Unzip the ROM
-            Paths.tmpFile = Utility.unzipFirstROM( new File( prefs.lastGame ),
-                    tmpFolderName );
-            if( Paths.tmpFile == null )
-            {
-                Log.v( "GameActivity", "Unable to play zipped ROM: '" + prefs.lastGame
-                        + "'" );
-                
-                Notifier.clear();
-                
-                if( ErrorLogger.hasError() )
-                    ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
-                
-                Globals.finishedReading = true;
-                
-                // Kick back out to the main menu
-                activity.finish();
-            }
-            else
-            {
-                Globals.finishedReading = true;
-                return (Object) Paths.tmpFile;
-            }
-        }
-        Globals.finishedReading = true;
-        return (Object) prefs.lastGame;
     }
 }
