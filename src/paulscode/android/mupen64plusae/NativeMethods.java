@@ -93,22 +93,22 @@ public class NativeMethods
     public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo,
             int desiredFrames )
     {
-        return CoreInterface.init( sampleRate, is16Bit, isStereo, desiredFrames );
+        return CoreInterface.audioInit( sampleRate, is16Bit, isStereo, desiredFrames );
     }
     
     public static void audioQuit()
     {
-        CoreInterface.quit();
+        CoreInterface.audioQuit();
     }
     
     public static void audioWriteByteBuffer( byte[] buffer )
     {
-        CoreInterface.writeByteBuffer( buffer );
+        CoreInterface.audioWriteByteBuffer( buffer );
     }
     
     public static void audioWriteShortBuffer( short[] buffer )
     {
-        CoreInterface.writeShortBuffer( buffer );
+        CoreInterface.audioWriteShortBuffer( buffer );
     }
     
     public static boolean createGLContext( int majorVersion, int minorVersion )

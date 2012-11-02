@@ -23,7 +23,6 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.Paths;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -106,10 +105,53 @@ public class CoreInterface
     {
         if( sActivity == null )
             return null;
-        else
-            return getROMPath( Globals.paths, Globals.userPrefs, sActivity );
+
+        finishedReading = false;
+        if( Globals.userPrefs.isLastGameNull )
+        {
+            finishedReading = true;
+            Utility.systemExitFriendly( "Invalid ROM", sActivity, 2000 );
+        }
+        else if( Globals.userPrefs.isLastGameZipped )
+        {
+            // Create the temp folder if it doesn't exist:
+            String tmpFolderName = Globals.paths.dataDir + "/tmp";
+            File tmpFolder = new File( tmpFolderName );
+            tmpFolder.mkdir();
+            
+            // Clear the folder if anything is in there:
+            String[] children = tmpFolder.list();
+            for( String child : children )
+            {
+                Utility.deleteFolder( new File( tmpFolder, child ) );
+            }
+            
+            // Unzip the ROM
+            Paths.tmpFile = Utility.unzipFirstROM( new File( Globals.userPrefs.lastGame ), tmpFolderName );
+            if( Paths.tmpFile == null )
+            {
+                Log.v( "GameActivity", "Unable to play zipped ROM: '" + Globals.userPrefs.lastGame + "'" );
+                
+                Notifier.clear();
+                
+                if( ErrorLogger.hasError() )
+                    ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
+                
+                finishedReading = true;
+                
+                // Kick back out to the main menu
+                sActivity.finish();
+            }
+            else
+            {
+                finishedReading = true;
+                return (Object) Paths.tmpFile;
+            }
+        }
+        finishedReading = true;
+        return (Object) Globals.userPrefs.lastGame;
     }
-    
+
     public static void runOnUiThread( Runnable action )
     {
         if( sActivity != null )
@@ -137,7 +179,7 @@ public class CoreInterface
             sVibrator.cancel();
     }
     
-    public static Object init( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
+    public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
     {
         int channelConfig = isStereo
                 ? AudioFormat.CHANNEL_OUT_STEREO
@@ -163,7 +205,7 @@ public class CoreInterface
         sAudioTrack = new AudioTrack( AudioManager.STREAM_MUSIC, sampleRate, channelConfig,
                 audioFormat, desiredFrames * frameSize, AudioTrack.MODE_STREAM );
         
-        startThread();
+        audioStartThread();
         
         if( is16Bit )
         {
@@ -180,30 +222,7 @@ public class CoreInterface
         return sAudioBuffer;
     }
     
-    public static void startThread()
-    {
-        sAudioThread = new Thread( new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
-                    sAudioTrack.play();
-                    NativeMethods.runAudioThread();
-                }
-                catch( IllegalStateException ise )
-                {
-                    Log.e( "GameActivity", "audioStartThread IllegalStateException", ise );
-                }
-            }
-        }, "Audio Thread" );
-        
-        // I'd take REALTIME if I could get it!
-        sAudioThread.setPriority( Thread.MAX_PRIORITY );
-        sAudioThread.start();
-    }
-    
-    public static void writeShortBuffer( short[] buffer )
+    public static void audioWriteShortBuffer( short[] buffer )
     {
         for( int i = 0; i < buffer.length; )
         {
@@ -231,7 +250,7 @@ public class CoreInterface
         }
     }
     
-    public static void writeByteBuffer( byte[] buffer )
+    public static void audioWriteByteBuffer( byte[] buffer )
     {
         for( int i = 0; i < buffer.length; )
         {
@@ -259,7 +278,7 @@ public class CoreInterface
         }
     }
     
-    public static void quit()
+    public static void audioQuit()
     {
         if( sAudioThread != null )
         {
@@ -283,10 +302,33 @@ public class CoreInterface
         }
     }
     
+    private static void audioStartThread()
+    {
+        sAudioThread = new Thread( new Runnable()
+        {
+            public void run()
+            {
+                try
+                {
+                    sAudioTrack.play();
+                    NativeMethods.runAudioThread();
+                }
+                catch( IllegalStateException ise )
+                {
+                    Log.e( "GameActivity", "audioStartThread IllegalStateException", ise );
+                }
+            }
+        }, "Audio Thread" );
+        
+        // I'd take REALTIME if I could get it!
+        sAudioThread.setPriority( Thread.MAX_PRIORITY );
+        sAudioThread.start();
+    }
+
     /**
      * Populates the core config files with the user preferences.
      */
-    public static void syncConfigFiles()
+    private static void syncConfigFiles()
     {
         // TODO: Confirm all booleans (some might need to be negated)
         
@@ -334,7 +376,7 @@ public class CoreInterface
         mupen64plus_cfg.save();
     }
     
-    static String booleanToString( boolean b )
+    private static String booleanToString( boolean b )
     {
         return b
                 ? "1"
@@ -358,53 +400,5 @@ public class CoreInterface
         msg.arg1 = command;
         msg.obj = data;
         commandHandler.sendMessage( msg );
-    }
-    
-    public static Object getROMPath( Paths paths, UserPrefs prefs, Activity activity )
-    {
-        finishedReading = false;
-        if( prefs.isLastGameNull )
-        {
-            finishedReading = true;
-            Utility.systemExitFriendly( "Invalid ROM", activity, 2000 );
-        }
-        else if( prefs.isLastGameZipped )
-        {
-            // Create the temp folder if it doesn't exist:
-            String tmpFolderName = paths.dataDir + "/tmp";
-            File tmpFolder = new File( tmpFolderName );
-            tmpFolder.mkdir();
-            
-            // Clear the folder if anything is in there:
-            String[] children = tmpFolder.list();
-            for( String child : children )
-            {
-                Utility.deleteFolder( new File( tmpFolder, child ) );
-            }
-            
-            // Unzip the ROM
-            Paths.tmpFile = Utility.unzipFirstROM( new File( prefs.lastGame ), tmpFolderName );
-            if( Paths.tmpFile == null )
-            {
-                Log.v( "GameActivity", "Unable to play zipped ROM: '" + prefs.lastGame + "'" );
-                
-                Notifier.clear();
-                
-                if( ErrorLogger.hasError() )
-                    ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
-                
-                finishedReading = true;
-                
-                // Kick back out to the main menu
-                activity.finish();
-            }
-            else
-            {
-                finishedReading = true;
-                return (Object) Paths.tmpFile;
-            }
-        }
-        finishedReading = true;
-        return (Object) prefs.lastGame;
     }
 }
