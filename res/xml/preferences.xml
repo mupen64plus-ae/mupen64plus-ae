@@ -102,12 +102,7 @@
                 android:dependency="touchscreenEnabled"
                 android:key="touchscreenOctagonJoystick"
                 android:title="@string/touchscreenOctagonJoystick_title" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:dependency="touchscreenEnabled"
-                android:key="touchscreenRedrawAll"
-                android:summary="@string/touchscreenRedrawAll_summary"
-                android:title="@string/touchscreenRedrawAll_title" />
+            
         </PreferenceScreen>
         <PreferenceScreen
             android:icon="@drawable/ic_joystick"

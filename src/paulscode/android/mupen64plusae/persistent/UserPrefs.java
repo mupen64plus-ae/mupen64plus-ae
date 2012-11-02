@@ -78,9 +78,6 @@ public class UserPrefs
     /** True if the touchscreen joystick is represented as an octagon. */
     public final boolean isOctagonalJoystick;
     
-    /** True if everything should be redrawn on the touchscreen. */
-    public final boolean isTouchscreenRedrawAll;
-    
     /** True if external gamepads/joysticks are enabled. */
     public final boolean isInputEnabled;
     
@@ -186,7 +183,6 @@ public class UserPrefs
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
         isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
-        isTouchscreenRedrawAll = mPreferences.getBoolean( "touchscreenRedrawAll", false );
         
         // Peripherals prefs
         isInputEnabled = mPreferences.getBoolean( "gamepadEnabled", true );
