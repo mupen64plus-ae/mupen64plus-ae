@@ -25,8 +25,8 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.util.DataDownloader;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -104,8 +104,8 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         File savesBak = new File( Globals.paths.savesBackupDir );
         if( savesBak.exists() )
         {
-            Utility.copyFile( savesBak, new File( Globals.paths.defaultSavesDir ) );
-            Utility.deleteFolder( new File( Globals.paths.dataBackupDir ) );
+            FileUtil.copyFile( savesBak, new File( Globals.paths.defaultSavesDir ) );
+            FileUtil.deleteFolder( new File( Globals.paths.dataBackupDir ) );
         }
         
         // Launch the MenuActivity

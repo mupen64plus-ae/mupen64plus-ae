@@ -25,11 +25,11 @@ import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -103,17 +103,17 @@ public class GameImplementation implements View.OnKeyListener
         
         // Load native libraries
         // TODO: Let the user choose which core to load
-        Utility.loadNativeLibName( "SDL" );
-        Utility.loadNativeLibName( "core" );
-        Utility.loadNativeLibName( "front-end" );
+        FileUtil.loadNativeLibName( "SDL" );
+        FileUtil.loadNativeLibName( "core" );
+        FileUtil.loadNativeLibName( "front-end" );
         if( Globals.userPrefs.isVideoEnabled )
-            Utility.loadNativeLib( Globals.userPrefs.videoPlugin );
+            FileUtil.loadNativeLib( Globals.userPrefs.videoPlugin );
         if( Globals.userPrefs.isAudioEnabled )
-            Utility.loadNativeLib( Globals.userPrefs.audioPlugin );
+            FileUtil.loadNativeLib( Globals.userPrefs.audioPlugin );
         if( Globals.userPrefs.isInputEnabled )
-            Utility.loadNativeLib( Globals.userPrefs.inputPlugin );
+            FileUtil.loadNativeLib( Globals.userPrefs.inputPlugin );
         if( Globals.userPrefs.isRspEnabled )
-            Utility.loadNativeLib( Globals.userPrefs.rspPlugin );
+            FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin );
         
         // Initialize user interface devices
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR

@@ -3,11 +3,9 @@ package paulscode.android.mupen64plusae.util;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -15,16 +13,112 @@ import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
-import android.app.Activity;
 import android.graphics.Point;
-import android.os.Handler;
 import android.util.FloatMath;
 import android.util.Log;
 
-// TODO: Cleanup, refactor, subdivide this class (I turned it into a dumping ground during
-// refactoring (littleguy))
 public class Utility
 {
+    public static Point constrainToOctagon( int dX, int dY, int halfWidth )
+    {
+        final float dC = halfWidth;
+        final float dA = dC * FloatMath.sqrt( 0.5f );
+        final float signX = dX < 0
+                ? -1
+                : 1;
+        final float signY = dY < 0
+                ? -1
+                : 1;
+        
+        Point crossPt = new Point();
+        crossPt.x = dX;
+        crossPt.y = dY;
+        
+        if( ( signX * dX ) > ( signY * dY ) )
+            segsCross( 0, 0, dX, dY, signX * dC, 0, signX * dA, signY * dA, crossPt );
+        else
+            segsCross( 0, 0, dX, dY, 0, signY * dC, signX * dA, signY * dA, crossPt );
+        
+        return crossPt;
+    }
+
+    /**
+     * Determines if the two specified line segments intersect with each other, and calculates where
+     * the intersection occurs if they do.
+     * 
+     * @param seg1pt1_x X-coordinate for the first end of the first line segment.
+     * @param seg1pt1_y Y-coordinate for the first end of the first line segment.
+     * @param seg1pt2_x X-coordinate for the second end of the first line segment.
+     * @param seg1pt2_y Y-coordinate for the second end of the first line segment.
+     * @param seg2pt1_x X-coordinate for the first end of the second line segment.
+     * @param seg2pt1_y Y-coordinate for the first end of the second line segment.
+     * @param seg2pt2_x X-coordinate for the second end of the second line segment.
+     * @param seg2pt2_y Y-coordinate for the second end of the second line segment.
+     * @param crossPt Changed to the point of intersection if there is one, otherwise unchanged.
+     * @return True if the two line segments intersect.
+     */
+    private static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
+            float seg1pt2_y, float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
+            Point crossPt )
+    {
+        float vec1_x = seg1pt2_x - seg1pt1_x;
+        float vec1_y = seg1pt2_y - seg1pt1_y;
+        
+        float vec2_x = seg2pt2_x - seg2pt1_x;
+        float vec2_y = seg2pt2_y - seg2pt1_y;
+        
+        float div = ( -vec2_x * vec1_y + vec1_x * vec2_y );
+        
+        // Segments don't cross
+        if( div == 0 )
+            return false;
+        
+        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) )
+                / div;
+        float t = ( vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
+        
+        if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
+        {
+            // Segments cross, point of intersection stored in 'crossPt'
+            crossPt.x = (int) ( seg1pt1_x + ( t * vec1_x ) );
+            crossPt.y = (int) ( seg1pt1_y + ( t * vec1_y ) );
+            return true;
+        }
+        
+        // Segments don't cross
+        return false;
+    }
+
+    /**
+     * Gets the hardware information from /proc/cpuinfo.
+     * 
+     * @return the hardware string
+     */
+    public static String getCpuInfo()
+    {
+        // TODO: Simplify this. I hardly believe you need to use 'cat' on cpuinfo
+        // to get this information.
+        // Already know how to simplify it. Will do it when I have the time. (Lioncash)
+        
+        // From http://android-er.blogspot.com/2009/09/read-android-cpu-info.html
+        String result = "";
+        try
+        {
+            String[] args = { "/system/bin/cat", "/proc/cpuinfo" };
+            Process process = new ProcessBuilder( args ).start();
+            InputStream in = process.getInputStream();
+            byte[] re = new byte[1024];
+            while( in.read( re ) != -1 )
+                result = result + new String( re );
+            in.close();
+        }
+        catch( IOException ex )
+        {
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
     public static String getHeaderName( String filename )
     {
         ErrorLogger.put( "READ_HEADER", "fail", "" );
@@ -45,7 +139,7 @@ public class Utility
             String[] children = tmpFolder.list();
             for( String child : children )
             {
-                deleteFolder( new File( tmpFolder, child ) );
+                FileUtil.deleteFolder( new File( tmpFolder, child ) );
             }
             
             ErrorLogger.clearLastError();
@@ -104,7 +198,7 @@ public class Utility
             String[] children = tmpFolder.list();
             for( String child : children )
             {
-                deleteFolder( new File( tmpFolder, child ) );
+                FileUtil.deleteFolder( new File( tmpFolder, child ) );
             }
             
             ErrorLogger.clearLastError();
@@ -163,7 +257,6 @@ public class Utility
                 + CRC_2.substring( CRC_2.length() - 8, CRC_2.length() );
     }
     
-    @SuppressWarnings( "unused" )
     public static String getTexturePackName( String filename )
     {
         int x;
@@ -171,9 +264,7 @@ public class Utility
         String supportedExt = ".png";
         File archive = new File( filename );
         
-        if( archive == null )
-            ErrorLogger.setLastError( "Zip file null in method getTexturePackName" );
-        else if( !archive.exists() )
+        if( !archive.exists() )
             ErrorLogger
                     .setLastError( "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
         else if( !archive.isFile() )
@@ -241,89 +332,6 @@ public class Utility
         ErrorLogger.setLastError( "No compatible textures found in .zip archive" );
         Log.e( "Utility", ErrorLogger.getLastError() );
         return null;
-    }
-    
-    public static boolean deleteFolder( File folder )
-    {
-        if( folder.isDirectory() )
-        {
-            String[] children = folder.list();
-            for( String child : children )
-            {
-                boolean success = deleteFolder( new File( folder, child ) );
-                if( !success )
-                    return false;
-            }
-        }
-        return folder.delete();
-    }
-    
-    public static boolean copyFile( File src, File dest )
-    {
-        if( src == null )
-            return true;
-        
-        if( dest == null )
-        {
-            Log.e( "Updater", "dest null in method 'copyFile'" );
-            return false;
-        }
-        
-        if( src.isDirectory() )
-        {
-            boolean success = true;
-            if( !dest.exists() )
-                dest.mkdirs();
-            String[] files = src.list();
-            for( String file : files )
-            {
-                success = success && copyFile( new File( src, file ), new File( dest, file ) );
-            }
-            return success;
-        }
-        else
-        {
-            File f = dest.getParentFile();
-            if( f == null )
-            {
-                Log.e( "Updater", "dest parent folder null in method 'copyFile'" );
-                return false;
-            }
-            if( !f.exists() )
-                f.mkdirs();
-            
-            InputStream in = null;
-            OutputStream out = null;
-            try
-            {
-                in = new FileInputStream( src );
-                out = new FileOutputStream( dest );
-                
-                byte[] buf = new byte[1024];
-                int len;
-                while( ( len = in.read( buf ) ) > 0 )
-                {
-                    out.write( buf, 0, len );
-                }
-            }
-            catch( IOException ioe )
-            {
-                Log.e( "Updater", "IOException in method 'copyFile': " + ioe.getMessage() );
-                return false;
-            }
-            try
-            {
-                in.close();
-                out.close();
-            }
-            catch( IOException ioe )
-            {
-            }
-            catch( NullPointerException npe )
-            {
-            }
-            return true;
-        }
     }
     
     public static String unzipFirstROM( File archive, String outputDir )
@@ -481,217 +489,5 @@ public class Utility
         inputStream.close();
         
         return newFile;
-    }
-    
-    /**
-     * Converts a string into an integer.
-     * 
-     * @param val String containing the number to convert.
-     * @param fail Value to use if unable to convert val to an integer.
-     * @return The converted integer, or the specified value if unsuccessful.
-     */
-    public static int toInt( String val, int fail )
-    {
-        if( val == null || val.length() < 1 )
-            return fail; // Not a number
-        try
-        {
-            return Integer.valueOf( val ); // Convert to integer
-        }
-        catch( NumberFormatException nfe )
-        {
-        }
-        
-        return fail; // Conversion failed
-    }
-    
-    /**
-     * Converts a string into a float.
-     * 
-     * @param val String containing the number to convert.
-     * @param fail Value to use if unable to convert val to an float.
-     * @return The converted float, or the specified value if unsuccessful.
-     */
-    public static float toFloat( String val, float fail )
-    {
-        if( val == null || val.length() < 1 )
-            return fail; // Not a number
-        try
-        {
-            return Float.valueOf( val ); // Convert to float
-        }
-        catch( NumberFormatException nfe )
-        {
-        }
-        
-        return fail; // Conversion failed
-    }
-    
-    public static void safeSleep( int milliseconds )
-    {
-        try
-        {
-            Thread.sleep( milliseconds );
-        }
-        catch( InterruptedException e )
-        {
-        }
-    }
-    
-    public static void systemExitFriendly( String message, Activity activity, int milliseconds )
-    {
-        Notifier.showToast( message, activity );
-        final Handler handler = new Handler();
-        handler.postDelayed( new Runnable()
-        {
-            public void run()
-            {
-                System.exit( 0 );
-            }
-        }, milliseconds );
-    }
-    
-    /**
-     * Loads the specified native library name (without "lib" and ".so")
-     * 
-     * @param libname Full path to a native .so file (may optionally be in quotes).
-     */
-    public static void loadNativeLibName( String libname )
-    {
-        Log.v( "GameActivity", "Loading native library '" + libname + "'" );
-        try
-        {
-            System.loadLibrary( libname );
-        }
-        catch( UnsatisfiedLinkError e )
-        {
-            Log.e( "GameActivity", "Unable to load native library '" + libname + "'" );
-        }
-    }
-    
-    /**
-     * Loads the native .so file specified
-     * 
-     * @param filepath Full path to a native .so file (may optionally be in quotes).
-     */
-    public static void loadNativeLib( String filepath )
-    {
-        String filename = null;
-        if( filepath != null && filepath.length() > 0 )
-        {
-            filename = filepath.replace( "\"", "" );
-            if( filename.equalsIgnoreCase( "dummy" ) )
-                return;
-            
-            Log.v( "GameActivity", "Loading native library '" + filename + "'" );
-            try
-            {
-                System.load( filename );
-            }
-            catch( UnsatisfiedLinkError e )
-            {
-                Log.e( "GameActivity", "Unable to load native library '" + filename + "'" );
-            }
-        }
-    }
-    
-    /**
-     * Determines if the two specified line segments intersect with each other, and calculates where
-     * the intersection occurs if they do.
-     * 
-     * @param seg1pt1_x X-coordinate for the first end of the first line segment.
-     * @param seg1pt1_y Y-coordinate for the first end of the first line segment.
-     * @param seg1pt2_x X-coordinate for the second end of the first line segment.
-     * @param seg1pt2_y Y-coordinate for the second end of the first line segment.
-     * @param seg2pt1_x X-coordinate for the first end of the second line segment.
-     * @param seg2pt1_y Y-coordinate for the first end of the second line segment.
-     * @param seg2pt2_x X-coordinate for the second end of the second line segment.
-     * @param seg2pt2_y Y-coordinate for the second end of the second line segment.
-     * @param crossPt Changed to the point of intersection if there is one, otherwise unchanged.
-     * @return True if the two line segments intersect.
-     */
-    public static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
-            float seg1pt2_y, float seg2pt1_x, float seg2pt1_y, float seg2pt2_x, float seg2pt2_y,
-            Point crossPt )
-    {
-        float vec1_x = seg1pt2_x - seg1pt1_x;
-        float vec1_y = seg1pt2_y - seg1pt1_y;
-        
-        float vec2_x = seg2pt2_x - seg2pt1_x;
-        float vec2_y = seg2pt2_y - seg2pt1_y;
-        
-        float div = ( -vec2_x * vec1_y + vec1_x * vec2_y );
-        
-        // Segments don't cross
-        if( div == 0 )
-            return false;
-        
-        float s = ( -vec1_y * ( seg1pt1_x - seg2pt1_x ) + vec1_x * ( seg1pt1_y - seg2pt1_y ) )
-                / div;
-        float t = ( vec2_x * ( seg1pt1_y - seg2pt1_y ) - vec2_y * ( seg1pt1_x - seg2pt1_x ) ) / div;
-        
-        if( s >= 0 && s < 1 && t >= 0 && t <= 1 )
-        {
-            // Segments cross, point of intersection stored in 'crossPt'
-            crossPt.x = (int) ( seg1pt1_x + ( t * vec1_x ) );
-            crossPt.y = (int) ( seg1pt1_y + ( t * vec1_y ) );
-            return true;
-        }
-        
-        // Segments don't cross
-        return false;
-    }
-    
-    public static Point constrainToOctagon( int dX, int dY, int halfWidth )
-    {
-        final float dC = halfWidth;
-        final float dA = dC * FloatMath.sqrt( 0.5f );
-        final float signX = dX < 0
-                ? -1
-                : 1;
-        final float signY = dY < 0
-                ? -1
-                : 1;
-        
-        Point crossPt = new Point();
-        crossPt.x = dX;
-        crossPt.y = dY;
-        
-        if( ( signX * dX ) > ( signY * dY ) )
-            segsCross( 0, 0, dX, dY, signX * dC, 0, signX * dA, signY * dA, crossPt );
-        else
-            segsCross( 0, 0, dX, dY, 0, signY * dC, signX * dA, signY * dA, crossPt );
-        
-        return crossPt;
-    }
-    
-    /**
-     * Gets the hardware information from /proc/cpuinfo.
-     * 
-     * @return the hardware string
-     */
-    public static String getCpuInfo()
-    {
-        // TODO: Simplify this. I hardly believe you need to use 'cat' on cpuinfo
-        // to get this information.
-        // Already know how to simplify it. Will do it when I have the time. (Lioncash)
-        
-        // From http://android-er.blogspot.com/2009/09/read-android-cpu-info.html
-        String result = "";
-        try
-        {
-            String[] args = { "/system/bin/cat", "/proc/cpuinfo" };
-            Process process = new ProcessBuilder( args ).start();
-            InputStream in = process.getInputStream();
-            byte[] re = new byte[1024];
-            while( in.read( re ) != -1 )
-                result = result + new String( re );
-            in.close();
-        }
-        catch( IOException ex )
-        {
-            ex.printStackTrace();
-        }
-        return result;
     }
 }

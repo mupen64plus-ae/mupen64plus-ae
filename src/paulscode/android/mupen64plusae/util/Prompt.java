@@ -1,3 +1,22 @@
+/**
+ * Mupen64PlusAE, an N64 emulator for the Android platform
+ * 
+ * Copyright (C) 2012 Paul Lamb
+ * 
+ * This file is part of Mupen64PlusAE.
+ * 
+ * Mupen64PlusAE is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * Mupen64PlusAE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Authors: littleguy77
+ */
 package paulscode.android.mupen64plusae.util;
 
 import java.io.File;
@@ -10,18 +29,49 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.widget.EditText;
 
+/**
+ * A utility class that generates dialogs to prompt the user for information.
+ */
 public class Prompt
 {
+    /**
+     * The listener interface for receiving a file selected by the user.
+     * 
+     * @see promptFile
+     */
     public interface OnFileListener
     {
+        /**
+         * Process the file selected by the user.
+         * 
+         * @param file the file selected by the user.
+         */
         public void onFile( File file );
     }
     
+    /**
+     * The listener interface for receiving text provided by the user.
+     * 
+     * @see promptText
+     */
     public interface OnTextListener
     {
+        /**
+         * Process the text provided by the user.
+         * 
+         * @param text the text provided by the user
+         */
         public void onText( CharSequence text );
     }
     
+    /**
+     * Open a dialog to prompt the user for a confirmation (Ok/Cancel).
+     * 
+     * @param context the context
+     * @param title the title of the dialog
+     * @param message the message to be shown inside the dialog
+     * @param listener the listener to process the confirmation
+     */
     public static void promptConfirm( Context context, CharSequence title, CharSequence message,
             OnClickListener listener )
     {
@@ -29,6 +79,15 @@ public class Prompt
         prefillBuilder( context, title, message, listener ).create().show();
     }
     
+    /**
+     * Open a dialog to prompt the user for a file.
+     * 
+     * @param context the context
+     * @param title the title of the dialog
+     * @param message the message to be shown inside the dialog
+     * @param startPath the parent directory holding the files to select from
+     * @param listener the listener to process the file, when selected
+     */
     public static void promptFile( Context context, CharSequence title, CharSequence message,
             File startPath, final OnFileListener listener )
     {
@@ -59,6 +118,15 @@ public class Prompt
                         internalListener ).create().show();
     }
     
+    /**
+     * Open a dialog to prompt the user for text.
+     * 
+     * @param context the context
+     * @param title the title of the dialog
+     * @param message the message to be shown inside the dialog
+     * @param hint the hint to be shown inside the text edit widget
+     * @param listener the listener to process the text, when provided
+     */
     public static void promptText( Context context, CharSequence title, CharSequence message,
             CharSequence hint, final OnTextListener listener )
     {
@@ -82,10 +150,18 @@ public class Prompt
                 .show();
     }
     
+    /**
+     * A convenience method for consistently initializing dialogs across the various methods.
+     * 
+     * @param context the context
+     * @param title the title of the dialog
+     * @param message the message to be shown inside the dialog
+     * @param listener the listener to process user clicks
+     * @return the builder for the dialog
+     */
     private static Builder prefillBuilder( Context context, CharSequence title,
             CharSequence message, OnClickListener listener )
     {
-        // Convenience method for consistently initializing dialogs across the various methods
         return new Builder( context ).setTitle( title ).setMessage( message )
                 .setNegativeButton( context.getString( android.R.string.cancel ), listener )
                 .setPositiveButton( context.getString( android.R.string.ok ), listener );

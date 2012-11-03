@@ -21,7 +21,7 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.XperiaPlayController;
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
-import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
 import android.os.Bundle;
@@ -53,7 +53,7 @@ public class GameActivityXperiaPlay extends NativeActivity
         // Additional Xperia Play configuration
         getWindow().takeSurface( null );
         NativeMethods.RegisterThis();
-        Utility.loadNativeLibName( "xperia-touchpad" );
+        FileUtil.loadNativeLibName( "xperia-touchpad" );
         mXperiaPlayMap = new TouchMap();
         mXperiaPlayMap.setResources( getResources() );
         mXperiaPlayMap.load( Globals.userPrefs.xperiaLayout );

@@ -29,6 +29,7 @@ import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Image;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
@@ -438,7 +439,7 @@ public class TouchMap
                 String val = section.get( param );
                 
                 // Assign the map colors to the appropriate N64 button
-                maskColors[BUTTON_HASHMAP.get( param.toLowerCase() )] = Utility.toInt( val, -1 );
+                maskColors[BUTTON_HASHMAP.get( param.toLowerCase() )] = SafeMethods.toInt( val, -1 );
             }
         }
     }
@@ -487,8 +488,8 @@ public class TouchMap
         masks.add( new Image( mResources, layoutFolder + "/" + filename + ".bmp" ) );
         
         // Position (percentages of the screen dimensions)
-        xpercents.add( Utility.toInt( section.get( "x" ), 0 ) );
-        ypercents.add( Utility.toInt( section.get( "y" ), 0 ) );
+        xpercents.add( SafeMethods.toInt( section.get( "x" ), 0 ) );
+        ypercents.add( SafeMethods.toInt( section.get( "y" ), 0 ) );
     }
     
     private void readAnalogLayout( final String layoutFolder, String filename,
@@ -502,15 +503,15 @@ public class TouchMap
         }
         
         // Position (percentages of the screen dimensions)
-        analogXpercent = Utility.toInt( section.get( "x" ), 0 );
-        analogYpercent = Utility.toInt( section.get( "y" ), 0 );
+        analogXpercent = SafeMethods.toInt( section.get( "x" ), 0 );
+        analogYpercent = SafeMethods.toInt( section.get( "y" ), 0 );
         
         // Sensitivity (percentages of the radius, i.e. half the image width)
-        analogDeadzone = (int) ( (float) analogImage.hWidth * ( Utility.toFloat(
+        analogDeadzone = (int) ( (float) analogImage.hWidth * ( SafeMethods.toFloat(
                 section.get( "min" ), 1 ) / 100.0f ) );
-        analogMaximum = (int) ( (float) analogImage.hWidth * ( Utility.toFloat(
+        analogMaximum = (int) ( (float) analogImage.hWidth * ( SafeMethods.toFloat(
                 section.get( "max" ), 55 ) / 100.0f ) );
-        analogPadding = (int) ( (float) analogImage.hWidth * ( Utility.toFloat(
+        analogPadding = (int) ( (float) analogImage.hWidth * ( SafeMethods.toFloat(
                 section.get( "buff" ), 55 ) / 100.0f ) );
     }
     
@@ -519,15 +520,15 @@ public class TouchMap
         fpsImage = new Image( mResources, layoutFolder + "/" + filename + ".png" );
         
         // Position (percentages of the screen dimensions)
-        fpsXpercent = Utility.toInt( section.get( "x" ), 0 );
-        fpsYpercent = Utility.toInt( section.get( "y" ), 0 );
+        fpsXpercent = SafeMethods.toInt( section.get( "x" ), 0 );
+        fpsYpercent = SafeMethods.toInt( section.get( "y" ), 0 );
         
         // Number position (percentages of the FPS indicator dimensions)
-        fpsNumXpercent = Utility.toInt( section.get( "numx" ), 50 );
-        fpsNumYpercent = Utility.toInt( section.get( "numy" ), 50 );
+        fpsNumXpercent = SafeMethods.toInt( section.get( "numx" ), 50 );
+        fpsNumYpercent = SafeMethods.toInt( section.get( "numy" ), 50 );
         
         // Refresh rate (in frames.. integer greater than 1)
-        fpsRecalcRate = Utility.toInt( section.get( "rate" ), 15 );
+        fpsRecalcRate = SafeMethods.toInt( section.get( "rate" ), 15 );
         
         // Need at least 2 frames to calculate FPS
         if( fpsRecalcRate < 2 )

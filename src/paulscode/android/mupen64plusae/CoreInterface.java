@@ -24,7 +24,9 @@ import java.io.File;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.media.AudioFormat;
@@ -117,7 +119,7 @@ public class CoreInterface
         if( Globals.userPrefs.isSelectedGameNull )
         {
             finishedReading = true;
-            Utility.systemExitFriendly( "Invalid ROM", sActivity, 2000 );
+            SafeMethods.exit( "Invalid ROM", sActivity, 2000 );
         }
         else if( Globals.userPrefs.isSelectedGameZipped )
         {
@@ -130,7 +132,7 @@ public class CoreInterface
             String[] children = tmpFolder.list();
             for( String child : children )
             {
-                Utility.deleteFolder( new File( tmpFolder, child ) );
+                FileUtil.deleteFolder( new File( tmpFolder, child ) );
             }
             
             // Unzip the ROM

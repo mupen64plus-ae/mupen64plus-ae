@@ -28,7 +28,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
-import paulscode.android.mupen64plusae.util.Utility;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -84,7 +84,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         // Wait for the game to resume by monitoring emulator state and the EGL buffer flip
         do
         {
-            Utility.safeSleep( 500 );
+            SafeMethods.sleep( 500 );
         }
         while( !mBuffFlipped && NativeMethods.stateEmulator() == CoreInterface.EMULATOR_STATE_PAUSED );
     }
@@ -166,14 +166,14 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                 public void run()
                 {
                     while( !CoreInterface.finishedReading )
-                        Utility.safeSleep( 40 );
+                        SafeMethods.sleep( 40 );
                    
                     while( NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_RUNNING )
-                        Utility.safeSleep( 40 );
+                        SafeMethods.sleep( 40 );
                     
                     mBuffFlipped = false;
                     while( !mBuffFlipped )
-                        Utility.safeSleep( 40 );
+                        SafeMethods.sleep( 40 );
                     
                     Log.v( "SDLSurface", "Resuming last session" );
                     
