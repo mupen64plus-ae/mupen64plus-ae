@@ -28,6 +28,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -46,12 +47,24 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String MENU_DEVICE_INFO = "menuDeviceInfo";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
+    private static final String XPERIA_PLUGIN = "xperiaPlugin";
     
     @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        
+        // TODO: Also test the hardware info string for more aggressive removal
+        boolean isXperiaPlay = Build.VERSION.SDK_INT == Build.VERSION_CODES.GINGERBREAD
+                || Build.VERSION.SDK_INT == Build.VERSION_CODES.GINGERBREAD_MR1;
+        
+        // Disable the Xperia PLAY plugin if appropriate
+        if( !isXperiaPlay )
+        {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
+            prefs.edit().putString( XPERIA_PLUGIN, "" ).commit();
+        }
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
@@ -64,6 +77,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         findPreference( MENU_RESET_USER_PREFS ).setOnPreferenceClickListener( this );
         findPreference( MENU_RESET_APP_DATA ).setOnPreferenceClickListener( this );
         findPreference( MENU_DEVICE_INFO ).setOnPreferenceClickListener( this );
+        
+        // Disable the Xperia PLAY menu item if appropriate
+        if( !isXperiaPlay )
+            findPreference( XPERIA_PLUGIN ).setEnabled( false );
     }
     
     @Override
@@ -90,15 +107,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( key.equals( MENU_RESUME ) )
         {
             // Launch the last game in a new activity
-            
-            // TODO: Localize toast string
             if( !Globals.paths.isSdCardAccessible() )
             {
                 Log.e( "MenuActivity",
                         "SD Card not accessable in method onPreferenceClick (menuResume)" );
-                Notifier.showToast(
-                        "App data not accessible (cable plugged in \"USB Mass Storage Device\" mode?)",
-                        this );
+                Notifier.showToast( getString( R.string.app_data_inaccessible ), this );
                 return true;
             }
             
@@ -135,10 +148,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
         else if( key.equals( MENU_DEVICE_INFO ) )
         {
-            Builder builder = new Builder( this );
-            builder.setTitle( this.getString( R.string.menuDeviceInfo_title ) );
-            builder.setMessage( Utility.getCpuInfo() );
-            builder.create().show();
+            new Builder( this ).setTitle( this.getString( R.string.menuDeviceInfo_title ) )
+                    .setMessage( Utility.getCpuInfo() ).create().show();
         }
         return false;
     }
