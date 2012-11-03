@@ -27,6 +27,7 @@ import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
@@ -292,6 +293,20 @@ public class GameImplementation implements View.OnKeyListener
         mSdlSurface.waitForResume();
     }
     
+    private void loadStateFromFile()
+    {
+        Prompt.promptFile( mActivity, mActivity.getText( R.string.ingameLoad_title ), null,
+                new File( Globals.userPrefs.gameSaveDir ), new OnFileListener()
+                {
+                    @Override
+                    public void onFile( File file )
+                    {
+                        // TODO: uncomment
+                        // NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
+                    }
+                } );
+    }
+    
     private void saveStateToFile()
     {
         // TODO: localize strings
@@ -331,12 +346,6 @@ public class GameImplementation implements View.OnKeyListener
             Log.i( "GameImplementation", "Saving file " + filename );
             NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
         }
-    }
-    
-    private void loadStateFromFile()
-    {
-        // TODO: Implement dialog for load filename
-        // NativeMethods.fileLoadEmulator( filename );
     }
     
     @TargetApi( 11 )

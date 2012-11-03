@@ -20,18 +20,15 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
+import paulscode.android.mupen64plusae.util.FileUtil;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
-import android.text.Html;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,9 +46,9 @@ public class PathPreference extends DialogPreference
     
     private int mSelectionMode = SELECTION_MODE_ANY;
     private boolean mDoRefresh = true;
-    private boolean mDoReclick = true;
-    private ArrayList<CharSequence> mEntries;
-    private ArrayList<String> mValues;
+    private boolean mDoReclick = false;
+    private List<CharSequence> mEntries = new ArrayList<CharSequence>();
+    private List<String> mValues = new ArrayList<String>();
     private CharSequence mEntry;
     private String mValue;
     
@@ -106,8 +103,7 @@ public class PathPreference extends DialogPreference
         populate( new File( mValue ) );
         
         // Add the list entries
-        if( mEntries != null )
-            builder.setItems( mEntries.toArray( new CharSequence[mEntries.size()] ), this );
+        builder.setItems( mEntries.toArray( new CharSequence[mEntries.size()] ), this );
         
         // Remove the Ok button when user must choose a file
         if( mSelectionMode == SELECTION_MODE_FILE )
@@ -176,88 +172,27 @@ public class PathPreference extends DialogPreference
         mEntry = startPath.getName();
         mValue = startPath.getPath();
         
-        // If start path is a file, list it and its siblings in the parent folder
+        // If start path is a file, list it and its siblings in the parent directory
         if( startPath.isFile() )
             startPath = startPath.getParentFile();
         
+        // Set the dialog title based on the selection mode
         switch( mSelectionMode )
         {
             case SELECTION_MODE_FILE:
+                // If selecting only files, set title to parent directory name
                 setDialogTitle( startPath.getPath() );
                 break;
             case SELECTION_MODE_DIRECTORY:
             case SELECTION_MODE_ANY:
+                // Otherwise clarify the directory that will be selected if user clicks Ok
                 setDialogTitle( getContext().getString( R.string.pathPreference_dialogTitle,
                         startPath.getPath() ) );
                 break;
         }
         
-        // Construct the key-value pairs for the list entries
-        boolean hasParent = startPath.getParentFile() != null;
-        mEntries = new ArrayList<CharSequence>();
-        mValues = new ArrayList<String>();
-        if( hasParent )
-        {
-            mEntries.add( Html.fromHtml( "<b>..</b>" ) );
-            mValues.add( startPath.getParentFile().getPath() );
-        }
-        for( File folder : getContents( startPath, new VisibleFolderFilter() ) )
-        {
-            mEntries.add( Html.fromHtml( "<b>" + folder.getName() + "</b>" ) );
-            mValues.add( folder.getPath() );
-        }
-        if( mSelectionMode != SELECTION_MODE_DIRECTORY )
-        {
-            // Add files to the list if the user can or should select a file
-            for( File file : getContents( startPath, new VisibleFileFilter() ) )
-            {
-                mEntries.add( Html.fromHtml( file.getName() ) );
-                mValues.add( file.getPath() );
-            }
-        }
-    }
-    
-    private List<File> getContents( File startPath, FileFilter fileFilter )
-    {
-        // Get a filtered, sorted list of files
-        List<File> results = new ArrayList<File>();
-        File[] files = startPath.listFiles( fileFilter );
-        if( files != null )
-        {
-            Collections.addAll( results, files );
-            Collections.sort( results, new FileComparer() );
-        }
-        return results;
-    }
-    
-    private class VisibleFolderFilter implements FileFilter
-    {
-        public boolean accept( File pathname )
-        {
-            return ( pathname != null ) && ( pathname.isDirectory() ) && ( !pathname.isHidden() )
-                    && ( !pathname.getName().startsWith( "." ) );
-        }
-    }
-    
-    private class VisibleFileFilter implements FileFilter
-    {
-        public boolean accept( File pathname )
-        {
-            return ( pathname != null ) && ( pathname.isFile() ) && ( !pathname.isHidden() )
-                    && ( !pathname.getName().startsWith( "." ) );
-        }
-    }
-    
-    private class FileComparer implements Comparator<File>
-    {
-        public int compare( File lhs, File rhs )
-        {
-            if( lhs.isDirectory() && rhs.isFile() )
-                return -1;
-            else if( lhs.isFile() && rhs.isDirectory() )
-                return 1;
-            else
-                return lhs.getName().toLowerCase().compareTo( rhs.getName().toLowerCase() );
-        }
+        // Populate the key-value pairs for the list entries
+        boolean isFilesIncluded = mSelectionMode != SELECTION_MODE_DIRECTORY;
+        FileUtil.populate( startPath, true, true, isFilesIncluded, mEntries, mValues );
     }
 }
