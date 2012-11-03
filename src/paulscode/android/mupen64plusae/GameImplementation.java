@@ -19,20 +19,27 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
+
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -127,7 +134,8 @@ public class GameImplementation implements View.OnKeyListener
         if( Globals.userPrefs.isInputEnabled )
         {
             // Create the peripheral controllers
-            mPeripheralController1 = new PeripheralController( mSdlSurface, Globals.userPrefs.inputMap1, ImeFormula.DEFAULT );
+            mPeripheralController1 = new PeripheralController( mSdlSurface,
+                    Globals.userPrefs.inputMap1, ImeFormula.DEFAULT );
         }
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
@@ -190,12 +198,10 @@ public class GameImplementation implements View.OnKeyListener
                 NativeMethods.stateLoadEmulator();
                 break;
             case R.id.ingameSave:
-                // TODO: Implement dialog for save filename
-                // NativeMethods.fileSaveEmulator( filename );
+                saveStateToFile();
                 break;
             case R.id.ingameLoad:
-                // TODO: Implement dialog for load filename
-                // NativeMethods.fileLoadEmulator( filename );
+                loadStateFromFile();
                 break;
             case R.id.ingameMenu:
                 // Save game state and launch MenuActivity
@@ -205,7 +211,7 @@ public class GameImplementation implements View.OnKeyListener
                 Intent intent = new Intent( mActivity, MenuActivity.class );
                 intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                 mActivity.startActivity( intent );
-                //mActivity.finish();
+                // mActivity.finish();
                 break;
             default:
                 break;
@@ -218,7 +224,7 @@ public class GameImplementation implements View.OnKeyListener
         // TODO Why does this cause app crash?
         saveSession();
     }
-
+    
     @TargetApi( 11 )
     @Override
     public boolean onKey( View view, int keyCode, KeyEvent event )
@@ -239,8 +245,7 @@ public class GameImplementation implements View.OnKeyListener
         // Let Android handle the volume keys if not used for control
         else if( !Globals.userPrefs.isVolKeysEnabled
                 && ( keyCode == KeyEvent.KEYCODE_VOLUME_UP
-                || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
-                || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
+                        || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
             return false;
         
         // Send everything else to the peripheral controller if it exists
@@ -251,7 +256,7 @@ public class GameImplementation implements View.OnKeyListener
         else
             return false;
     }
-
+    
     private void setSlot( int value, MenuItem item )
     {
         setSlot( value );
@@ -287,6 +292,53 @@ public class GameImplementation implements View.OnKeyListener
         mSdlSurface.waitForResume();
     }
     
+    private void saveStateToFile()
+    {
+        // TODO: localize strings
+        Prompt.promptText( mActivity, mActivity.getText( R.string.ingameSave_title ), null,
+                "filename", new OnTextListener()
+                {
+                    @Override
+                    public void onText( CharSequence text )
+                    {
+                        saveStateToFile( text.toString() );
+                    }
+                } );
+    }
+    
+    private void saveStateToFile( final String filename )
+    {
+        // TODO: localize strings
+        final File file = new File( Globals.userPrefs.gameSaveDir + "/" + filename );
+        if( file.exists() )
+        {
+            Prompt.promptConfirm( mActivity, "Confirmation", "Overwrite " + filename + "?",
+                    new OnClickListener()
+                    {
+                        @Override
+                        public void onClick( DialogInterface dialog, int which )
+                        {
+                            if( which == DialogInterface.BUTTON_POSITIVE )
+                            {
+                                Log.i( "GameImplementation", "Overwriting file " + filename );
+                                NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+                            }
+                        }
+                    } );
+        }
+        else
+        {
+            Log.i( "GameImplementation", "Saving file " + filename );
+            NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+        }
+    }
+    
+    private void loadStateFromFile()
+    {
+        // TODO: Implement dialog for load filename
+        // NativeMethods.fileLoadEmulator( filename );
+    }
+    
     @TargetApi( 11 )
     private void toggleActionBar( View rootView )
     {
@@ -306,6 +358,6 @@ public class GameImplementation implements View.OnKeyListener
         else
         {
             actionBar.show();
-        }        
+        }
     }
 }

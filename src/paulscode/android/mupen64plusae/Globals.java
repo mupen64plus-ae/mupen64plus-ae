@@ -47,6 +47,6 @@ public class Globals
  * TODO: Make sure state saves/loads to the right place according to preference
  * TODO: Implement SensorController if desired
  * TODO: Do we need an updater class again?
- * TODO: Figure out force-close when resumeLastSession is true (might just relate to broken statesaves)
+ * TODO: Figure out force-close when loading last session autosavefile
  * TODO: Figure out failure to return to main menu
  */
