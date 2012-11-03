@@ -28,9 +28,9 @@ import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import paulscode.android.mupen64plusae.util.Utility;
-import paulscode.android.mupen64plusae.util.Utility.Image;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -58,13 +58,13 @@ public class TouchMap
     private int[] maskColors;
     
     // Buttons
-    private ArrayList<Utility.Image> masks;
-    private ArrayList<Utility.Image> buttons;
+    private ArrayList<Image> masks;
+    private ArrayList<Image> buttons;
     private ArrayList<Integer> xpercents;
     private ArrayList<Integer> ypercents;
     
     // Analog background
-    private Utility.Image analogImage;
+    private Image analogImage;
     private int analogXpercent;
     private int analogYpercent;
     private int analogPadding;
@@ -72,12 +72,12 @@ public class TouchMap
     private int analogMaximum;
     
     // Analog stick
-    private Utility.Image hatImage;
+    private Image hatImage;
     private int hatX;
     private int hatY;
     
     // Frame rate indicator
-    private Utility.Image fpsImage;
+    private Image fpsImage;
     private int fpsXpercent;
     private int fpsYpercent;
     private int fpsNumXpercent;
@@ -85,8 +85,8 @@ public class TouchMap
     private int fpsRecalcRate;
     private int fpsValue;
     private String fpsFont;
-    private Utility.Image[] numeralImages;
-    private Utility.Image[] fpsDigits;
+    private Image[] numeralImages;
+    private Image[] fpsDigits;
     
     private Resources mResources;
     private SubscriptionManager<Listener> mPublisher;
@@ -118,16 +118,16 @@ public class TouchMap
     public TouchMap()
     {
         mPublisher = new SubscriptionManager<TouchMap.Listener>();
-        numeralImages = new Utility.Image[10];
-        fpsDigits = new Utility.Image[4];
+        numeralImages = new Image[10];
+        fpsDigits = new Image[4];
         maskColors = new int[BUTTON_HASHMAP.size()];
         clear();
     }
     
     public void clear()
     {
-        buttons = new ArrayList<Utility.Image>();
-        masks = new ArrayList<Utility.Image>();
+        buttons = new ArrayList<Image>();
+        masks = new ArrayList<Image>();
         xpercents = new ArrayList<Integer>();
         ypercents = new ArrayList<Integer>();
         analogImage = null;
@@ -165,7 +165,7 @@ public class TouchMap
     {
         mResources = resources;
         for( int i = 0; i < numeralImages.length; i++ )
-            numeralImages[i] = new Utility.Image( resources, Globals.paths.fontsDir + fpsFont + "/"
+            numeralImages[i] = new Image( resources, Globals.paths.fontsDir + fpsFont + "/"
                     + i + ".png" );
     }
     
@@ -235,7 +235,7 @@ public class TouchMap
                 try
                 {
                     // Clone the numeral from the font images
-                    fpsDigits[i] = new Utility.Image( mResources,
+                    fpsDigits[i] = new Image( mResources,
                             numeralImages[Integer.valueOf( fpsString.substring( i, i + 1 ) )] );
                 }
                 catch( NumberFormatException nfe )
@@ -483,8 +483,8 @@ public class TouchMap
     {
         // A button control. The drawable image is in PNG image format. The
         // color mask image is in BMP image format (doesn't actually get drawn).
-        buttons.add( new Utility.Image( mResources, layoutFolder + "/" + filename + ".png" ) );
-        masks.add( new Utility.Image( mResources, layoutFolder + "/" + filename + ".bmp" ) );
+        buttons.add( new Image( mResources, layoutFolder + "/" + filename + ".png" ) );
+        masks.add( new Image( mResources, layoutFolder + "/" + filename + ".bmp" ) );
         
         // Position (percentages of the screen dimensions)
         xpercents.add( Utility.toInt( section.get( "x" ), 0 ) );
@@ -494,11 +494,11 @@ public class TouchMap
     private void readAnalogLayout( final String layoutFolder, String filename,
             ConfigSection section, boolean hasHat )
     {
-        analogImage = new Utility.Image( mResources, layoutFolder + "/" + filename + ".png" );
+        analogImage = new Image( mResources, layoutFolder + "/" + filename + ".png" );
         if( hasHat )
         {
             // There's a "stick" image.. same name, with "_2" appended
-            hatImage = new Utility.Image( mResources, layoutFolder + "/" + filename + "_2.png" );
+            hatImage = new Image( mResources, layoutFolder + "/" + filename + "_2.png" );
         }
         
         // Position (percentages of the screen dimensions)
@@ -516,7 +516,7 @@ public class TouchMap
     
     private void readFpsLayout( final String layoutFolder, String filename, ConfigSection section )
     {
-        fpsImage = new Utility.Image( mResources, layoutFolder + "/" + filename + ".png" );
+        fpsImage = new Image( mResources, layoutFolder + "/" + filename + ".png" );
         
         // Position (percentages of the screen dimensions)
         fpsXpercent = Utility.toInt( section.get( "x" ), 0 );
@@ -543,7 +543,7 @@ public class TouchMap
             {
                 // Make sure we can load them (they might not even exist)
                 for( i = 0; i < 10; i++ )
-                    numeralImages[i] = new Utility.Image( mResources, Globals.paths.fontsDir
+                    numeralImages[i] = new Image( mResources, Globals.paths.fontsDir
                             + fpsFont + "/" + i + ".png" );
             }
             catch( Exception e )

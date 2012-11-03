@@ -43,8 +43,6 @@ public class Globals
  * TODO: Cleanup Utility.java
  * TODO: Cleanup DataDownloader.java
  * TODO: Any way to eliminate DataDownloader? (e.g. use AssetManager class)
- * TODO: Implement save/load state dialogs
- * TODO: Make sure state saves/loads to the right place according to preference
  * TODO: Implement SensorController if desired
  * TODO: Do we need an updater class again?
  * TODO: Figure out force-close when loading last session autosavefile
