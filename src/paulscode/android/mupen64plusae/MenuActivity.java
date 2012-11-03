@@ -156,7 +156,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         // Enable the play button only if the selected game actually exists
         findPreference( MENU_RESUME ).setEnabled(
-                ( new File( Globals.userPrefs.lastGame ).exists() ) );
+                ( new File( Globals.userPrefs.selectedGame ).exists() ) );
         
         // Enable the custom touchscreen prefs under certain conditions
         findPreference( TOUCHSCREEN_CUSTOM ).setEnabled(

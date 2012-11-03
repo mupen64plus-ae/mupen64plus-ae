@@ -127,7 +127,7 @@ public class GameImplementation implements View.OnKeyListener
         if( Globals.userPrefs.isInputEnabled )
         {
             // Create the peripheral controllers
-            mPeripheralController1 = new PeripheralController( mSdlSurface, Globals.userPrefs.gamepadMap1, ImeFormula.DEFAULT );
+            mPeripheralController1 = new PeripheralController( mSdlSurface, Globals.userPrefs.inputMap1, ImeFormula.DEFAULT );
         }
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
@@ -146,7 +146,7 @@ public class GameImplementation implements View.OnKeyListener
         // Inflate the in-game menu, record the 'Slot X' menu object for later
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
-        setSlot( 0 );
+        setSlot( 0, false );
     }
     
     public void onOptionsItemSelected( MenuItem item )
@@ -205,7 +205,7 @@ public class GameImplementation implements View.OnKeyListener
                 Intent intent = new Intent( mActivity, MenuActivity.class );
                 intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                 mActivity.startActivity( intent );
-                mActivity.finish();
+                //mActivity.finish();
                 break;
             default:
                 break;
@@ -215,7 +215,7 @@ public class GameImplementation implements View.OnKeyListener
     public void onUserLeaveHint()
     {
         // This executes when Home is pressed (can't detect it in onKey).
-        // TODO Why does this cause app exit?
+        // TODO Why does this cause app crash?
         saveSession();
     }
 
@@ -260,9 +260,15 @@ public class GameImplementation implements View.OnKeyListener
     
     private void setSlot( int value )
     {
+        setSlot( value, true );
+    }
+    
+    private void setSlot( int value, boolean notify )
+    {
         mSlot = value % NUM_SLOTS;
         NativeMethods.stateSetSlotEmulator( mSlot );
-        Notifier.showToast( mActivity.getString( R.string.savegame_slot, mSlot ), mActivity );
+        if( notify )
+            Notifier.showToast( mActivity.getString( R.string.savegame_slot, mSlot ), mActivity );
         if( mSlotMenuItem != null )
             mSlotMenuItem.setTitle( mActivity.getString( R.string.ingameSlot_title, mSlot ) );
     }
@@ -277,7 +283,7 @@ public class GameImplementation implements View.OnKeyListener
             Notifier.showToast( mActivity.getString( R.string.saving_game ), mActivity );
         
         // Call the native method to save the emulator state
-        NativeMethods.fileSaveEmulator( "Mupen64PlusAE_LastSession.sav" );
+        NativeMethods.fileSaveEmulator( Globals.userPrefs.selectedGameAutoSavefile );
         mSdlSurface.waitForResume();
     }
     

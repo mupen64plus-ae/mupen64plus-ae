@@ -85,16 +85,16 @@ public class UserPrefs
     public final String inputPlugin;
     
     /** The button map for player 1. */
-    public final InputMap gamepadMap1;
+    public final InputMap inputMap1;
     
     /** The button map for player 2. */
-    public final InputMap gamepadMap2;
+    public final InputMap inputMap2;
     
     /** The button map for player 3. */
-    public final InputMap gamepadMap3;
+    public final InputMap inputMap3;
     
     /** The button map for player 4. */
-    public final InputMap gamepadMap4;
+    public final InputMap inputMap4;
     
     /** True if volume keys can be used as controls. */
     public final boolean isVolKeysEnabled;
@@ -117,15 +117,31 @@ public class UserPrefs
     /** True if auto-frameskip is enabled in the gles2n64 library. */
     public final boolean isGles2N64AutoFrameskipEnabled;
     
+    /** True if fog is enabled in the gles2n64 library. */
     public final boolean isGles2N64FogEnabled;
+    
+    /** True if SaI texture filtering is enabled in the gles2n64 library. */
     public final boolean isGles2N64SaiEnabled;
+    
+    /** True if force screen clear is enabled in the gles2n64 library. */
     public final boolean isGles2N64ScreenClearEnabled;
+    
+    /** True if alpha test is enabled in the gles2n64 library. */
     public final boolean isGles2N64AlphaTestEnabled;
+    
+    /** True if depth test is enabled in the gles2n64 library. */
     public final boolean isGles2N64DepthTestEnabled;
     
+    /** True if auto-frameskip is enabled in the gles2rice library. */
     public final boolean isGles2RiceAutoFrameskipEnabled;
+    
+    /** True if fast texture CRC is enabled in the gles2rice library. */
     public final boolean isGles2RiceFastTextureCrcEnabled;
+    
+    /** True if fast texture loading is enabled in the gles2rice library. */
     public final boolean isGles2RiceFastTextureLoadingEnabled;
+    
+    /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
     /** True if Xperia Play-specific features are enabled. */
@@ -158,14 +174,17 @@ public class UserPrefs
     /** True if the frame rate is displayed. */
     public final boolean isFrameRateEnabled;
     
-    /** The filename of the last game played by the user. */
-    public final String lastGame;
+    /** The filename of the ROM selected by the user. */
+    public final String selectedGame;
+    
+    /** The filename of the auto-saved session of the ROM selected by the user. */
+    public final String selectedGameAutoSavefile;
     
     /** True if the chosen game is a ZIP archive. */
-    public final boolean isLastGameZipped;
+    public final boolean isSelectedGameZipped;
     
     /** True if no game has been chosen. */
-    public final boolean isLastGameNull;
+    public final boolean isSelectedGameNull;
     
     /** The object used to retrieve the settings. */
     private final SharedPreferences mPreferences;
@@ -186,10 +205,10 @@ public class UserPrefs
         
         // Peripherals prefs
         isInputEnabled = mPreferences.getBoolean( "gamepadEnabled", true );
-        gamepadMap1 = new InputMap( mPreferences.getString( "gamepadMap1", "" ) );
-        gamepadMap2 = new InputMap( mPreferences.getString( "gamepadMap2", "" ) );
-        gamepadMap3 = new InputMap( mPreferences.getString( "gamepadMap3", "" ) );
-        gamepadMap4 = new InputMap( mPreferences.getString( "gamepadMap4", "" ) );
+        inputMap1 = new InputMap( mPreferences.getString( "inputMap1", "" ) );
+        inputMap2 = new InputMap( mPreferences.getString( "inputMap2", "" ) );
+        inputMap3 = new InputMap( mPreferences.getString( "inputMap3", "" ) );
+        inputMap4 = new InputMap( mPreferences.getString( "inputMap4", "" ) );
         isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", false );
         
         // Video prefs
@@ -214,7 +233,7 @@ public class UserPrefs
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
         
         // Other prefs
-        lastGame = mPreferences.getString( "lastGame", "" );
+        selectedGame = mPreferences.getString( "selectedGame", "" );
         gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
         isAutoSaveEnabled = mPreferences.getBoolean( "autoSaveEnabled", false );
         isFrameRateEnabled = mPreferences.getBoolean( "frameRateEnabled", false );
@@ -260,10 +279,11 @@ public class UserPrefs
         isAudioEnabled = audioPlugin != null && !audioPlugin.equals( "" );
         isXperiaEnabled = xperiaLayout != null && !xperiaLayout.equals( "" );
         isRspEnabled = rspPlugin != null && rspPlugin.equals( "" );
-        isLastGameNull = lastGame == null || !( new File( lastGame ) ).exists();
-        isLastGameZipped = lastGame != null
-                && lastGame.length() > 3
-                && lastGame.substring( lastGame.length() - 3, lastGame.length() ).equalsIgnoreCase(
+        selectedGameAutoSavefile = paths.dataDir + "/autosave_" + Math.abs( selectedGame.hashCode() ) + ".sav";
+        isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
+        isSelectedGameZipped = selectedGame != null
+                && selectedGame.length() > 3
+                && selectedGame.substring( selectedGame.length() - 3, selectedGame.length() ).equalsIgnoreCase(
                         "zip" );
     }
     

@@ -46,11 +46,17 @@ import android.util.Log;
  */
 public class CoreInterface
 {
-    // TODO: Eliminate or privatize
+    // TODO: Eliminate or encapsulate
+    // This is used by getRomPath() and queried in class SDLSurface
     public static boolean finishedReading = false;
-    public static boolean resumeLastSession = false;
     
-    // Constants
+    // Public constants
+    public static final int EMULATOR_STATE_UNKNOWN = 0;
+    public static final int EMULATOR_STATE_STOPPED = 1;
+    public static final int EMULATOR_STATE_RUNNING = 2;
+    public static final int EMULATOR_STATE_PAUSED = 3;
+    
+    // Private constants
     private static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
     private static int COMMAND_CHANGE_TITLE = 1;
     
@@ -108,12 +114,12 @@ public class CoreInterface
             return null;
         
         finishedReading = false;
-        if( Globals.userPrefs.isLastGameNull )
+        if( Globals.userPrefs.isSelectedGameNull )
         {
             finishedReading = true;
             Utility.systemExitFriendly( "Invalid ROM", sActivity, 2000 );
         }
-        else if( Globals.userPrefs.isLastGameZipped )
+        else if( Globals.userPrefs.isSelectedGameZipped )
         {
             // Create the temp folder if it doesn't exist:
             String tmpFolderName = Globals.paths.dataDir + "/tmp";
@@ -128,11 +134,11 @@ public class CoreInterface
             }
             
             // Unzip the ROM
-            Paths.tmpFile = Utility.unzipFirstROM( new File( Globals.userPrefs.lastGame ),
+            Paths.tmpFile = Utility.unzipFirstROM( new File( Globals.userPrefs.selectedGame ),
                     tmpFolderName );
             if( Paths.tmpFile == null )
             {
-                Log.v( "GameActivity", "Unable to play zipped ROM: '" + Globals.userPrefs.lastGame
+                Log.v( "GameActivity", "Unable to play zipped ROM: '" + Globals.userPrefs.selectedGame
                         + "'" );
                 
                 Notifier.clear();
@@ -152,7 +158,7 @@ public class CoreInterface
             }
         }
         finishedReading = true;
-        return (Object) Globals.userPrefs.lastGame;
+        return (Object) Globals.userPrefs.selectedGame;
     }
     
     public static void runOnUiThread( Runnable action )

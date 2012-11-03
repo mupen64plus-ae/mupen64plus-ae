@@ -55,7 +55,7 @@
     
     <!-- Main Menu -->
     <string name="menuResume_title">Play</string>
-    <string name="lastGame_title">Game</string>
+    <string name="selectedGame_title">Game</string>
     <string name="mainSettings_title">Settings</string>
     <string name="menuLocale_title">Language</string>
     <string name="menuHelp_title">Help</string>

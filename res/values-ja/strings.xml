@@ -53,7 +53,7 @@
     
     <!-- Main Menu -->
     <string name="menuResume_title">プレー</string>
-    <string name="lastGame_title">ゲーム</string>
+    <string name="selectedGame_title">ゲーム</string>
     <string name="mainSettings_title">設定</string>
     <string name="menuHelp_title">ヘルプ</string>
     <string name="menuAbout_title">ついて</string>

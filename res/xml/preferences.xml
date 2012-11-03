@@ -54,8 +54,8 @@
 
     <paulscode.android.mupen64plusae.PathPreference
         android:icon="@drawable/ic_folder"
-        android:key="lastGame"
-        android:title="@string/lastGame_title"
+        android:key="selectedGame"
+        android:title="@string/selectedGame_title"
         mupen64:selectionMode="1" />
 
     <PreferenceScreen

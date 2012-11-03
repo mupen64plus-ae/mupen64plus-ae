@@ -19,6 +19,8 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -27,7 +29,6 @@ import javax.microedition.khronos.egl.EGLSurface;
 
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
 import paulscode.android.mupen64plusae.util.Utility;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -44,12 +45,6 @@ import android.view.SurfaceView;
  */
 public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
 {
-    // Emulator states
-    public static final int EMULATOR_STATE_UNKNOWN = 0;
-    public static final int EMULATOR_STATE_STOPPED = 1;
-    public static final int EMULATOR_STATE_RUNNING = 2;
-    public static final int EMULATOR_STATE_PAUSED = 3;
-    
     // This is what SDL runs in. It invokes SDL_main(), eventually
     private static Thread mSDLThread;
     
@@ -91,34 +86,13 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         {
             Utility.safeSleep( 500 );
         }
-        while( !mBuffFlipped && NativeMethods.stateEmulator() == EMULATOR_STATE_PAUSED );
+        while( !mBuffFlipped && NativeMethods.stateEmulator() == CoreInterface.EMULATOR_STATE_PAUSED );
     }
-    
+
     // Called when we have a valid drawing surface
     @Override
     public void surfaceCreated( SurfaceHolder holder )
     {
-    }
-    
-    // Called when we lose the surface
-    @Override
-    public void surfaceDestroyed( SurfaceHolder holder )
-    {
-        // Send a quit message to the application
-        NativeMethods.quit();
-        // Now wait for the SDL thread to quit
-        if( mSDLThread != null )
-        {
-            try
-            {
-                mSDLThread.join();
-            }
-            catch( Exception e )
-            {
-                Log.v( "SDLSurface", "Problem stopping SDL thread: " + e );
-            }
-            mSDLThread = null;
-        }
     }
     
     // Called when the surface is resized
@@ -180,74 +154,60 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         }, "SDLThread" );
         mSDLThread.start();
         
-        if( CoreInterface.resumeLastSession )
+        // Resume last game if user is auto-saving and the auto-savefile exists
+        if( Globals.userPrefs.isAutoSaveEnabled &&
+                new File( Globals.userPrefs.selectedGameAutoSavefile ).exists() )
         {
-            // TODO: This block seems to cause a force-close
+            Log.i("littleguy", "Found savefile " + Globals.userPrefs.selectedGameAutoSavefile );
+            
             new Thread( "ResumeSessionThread" )
             {
                 @Override
                 public void run()
                 {
                     while( !CoreInterface.finishedReading )
-                    {
-                        try
-                        {
-                            Thread.sleep( 40 );
-                        }
-                        catch( InterruptedException e )
-                        {
-                        }
-                    }
+                        Utility.safeSleep( 40 );
+                   
+                    while( NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_RUNNING )
+                        Utility.safeSleep( 40 );
                     
-                    try
-                    {
-                        Thread.sleep( 40 );
-                    }
-                    catch( InterruptedException e )
-                    {
-                    }
-                    int state = NativeMethods.stateEmulator();
-                    
-                    while( state != EMULATOR_STATE_RUNNING )
-                    {
-                        try
-                        {
-                            Thread.sleep( 40 );
-                        }
-                        catch( InterruptedException e )
-                        {
-                        }
-                        state = NativeMethods.stateEmulator();
-                    }
                     mBuffFlipped = false;
-                    
                     while( !mBuffFlipped )
-                    {
-                        // Wait for the game to start, as indicated by a call to flip the buffer
-                        try
-                        {
-                            Thread.sleep( 20 );
-                        }
-                        catch( InterruptedException e )
-                        {
-                        }
-                    }
+                        Utility.safeSleep( 40 );
                     
-                    try
-                    {
-                        Thread.sleep( 40 );
-                    }
-                    catch( InterruptedException e )
-                    {
-                    } // Just to be sure..
                     Log.v( "SDLSurface", "Resuming last session" );
-                    CoreInterface.showToast( "Resuming game" );
-                    NativeMethods.fileLoadEmulator( "Mupen64PlusAE_LastSession.sav" );
+                    
+                    // TODO: localize toast string
+                    CoreInterface.showToast( "Resuming last session" );
+                    
+                    // TODO: This line crashes the app (maybe due to broken save/load issues)
+                    //NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
                 }
             }.start();
         }
     }
     
+    // Called when we lose the surface
+    @Override
+    public void surfaceDestroyed( SurfaceHolder holder )
+    {
+        // Send a quit message to the application
+        NativeMethods.quit();
+        // Now wait for the SDL thread to quit
+        if( mSDLThread != null )
+        {
+            try
+            {
+                mSDLThread.join();
+            }
+            catch( Exception e )
+            {
+                Log.v( "SDLSurface", "Problem stopping SDL thread: " + e );
+            }
+            mSDLThread = null;
+        }
+    }
+
     @Override
     public void onDraw( Canvas canvas )
     {

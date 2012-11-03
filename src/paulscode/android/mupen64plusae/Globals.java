@@ -39,7 +39,6 @@ public class Globals
 /**
  * Bugs and feature requests not listed elsewhere
  * 
- * TODO: Fix FPS refresh when touchscreen disabled
  * TODO: Implement multi-player peripheral controls
  * TODO: Cleanup Utility.java
  * TODO: Cleanup DataDownloader.java
