@@ -116,11 +116,11 @@ public class GameImplementation implements View.OnKeyListener
             mTouchscreenMap.setResources( mActivity.getResources() );
             mTouchscreenMap.load( Globals.userPrefs.touchscreenLayoutFolder );
             mTouchscreenView.initialize( mTouchscreenMap );
+            mSdlSurface.initialize( mTouchscreenMap );
             
             // The touch controller is needed to handle touch events
             if( Globals.userPrefs.isTouchscreenEnabled )
             {
-                mSdlSurface.initialize( mTouchscreenMap );
                 mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSdlSurface );
             }
         }

@@ -33,5 +33,21 @@ public class Globals
     // Internal development options, might change later or expose to user
     public static final boolean INHIBIT_SUSPEND = true;
     public static final boolean DOWNLOAD_TO_SDCARD = true;
-    public static final int SPLASH_DELAY = 1000; // Such a nice picture... shame not to see it :)
+    public static final int SPLASH_DELAY = 1000;
 }
+
+/**
+ * Bugs and feature requests not listed elsewhere
+ * 
+ * TODO: Fix FPS refresh when touchscreen disabled
+ * TODO: Implement multi-player peripheral controls
+ * TODO: Cleanup Utility.java
+ * TODO: Cleanup DataDownloader.java
+ * TODO: Any way to eliminate DataDownloader? (e.g. use AssetManager class)
+ * TODO: Implement save/load state dialogs
+ * TODO: Make sure state saves/loads to the right place according to preference
+ * TODO: Implement SensorController if desired
+ * TODO: Do we need an updater class again?
+ * TODO: Figure out force-close when resumeLastSession is true (might just relate to broken statesaves)
+ * TODO: Figure out failure to return to main menu
+ */
