@@ -127,7 +127,7 @@ public class GameImplementation implements View.OnKeyListener
             mSdlSurface.initialize( mTouchscreenMap );
             
             // The touch controller is needed to handle touch events
-            if( Globals.userPrefs.isTouchscreenEnabled )
+            if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isTouchscreenEnabled )
             {
                 mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSdlSurface );
             }

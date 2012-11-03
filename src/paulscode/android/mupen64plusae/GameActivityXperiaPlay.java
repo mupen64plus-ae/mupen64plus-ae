@@ -19,8 +19,10 @@
  */
 package paulscode.android.mupen64plusae;
 
+import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.XperiaPlayController;
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
@@ -57,7 +59,8 @@ public class GameActivityXperiaPlay extends NativeActivity
         mXperiaPlayMap = new TouchMap();
         mXperiaPlayMap.setResources( getResources() );
         mXperiaPlayMap.load( Globals.userPrefs.xperiaLayout );
-        mXperiaPlayController = new XperiaPlayController( mXperiaPlayMap );
+        if( Globals.userPrefs.isInputEnabled )
+            mXperiaPlayController = new XperiaPlayController( mXperiaPlayMap );
     }
     
     @Override
