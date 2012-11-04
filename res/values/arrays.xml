@@ -43,16 +43,16 @@
     </string-array>
     <string name="touchscreenSize_default"></string>
 
-    <!-- Gamepad Plugins -->
-    <string-array name="gamepadPlugin_entries">
-        <item>@string/gamepadPlugin_entry0</item>
-        <item>@string/gamepadPlugin_entry1</item>
+    <!-- Input Plugins -->
+    <string-array name="inputPlugin_entries">
+        <item>@string/inputPlugin_entry0</item>
+        <item>@string/inputPlugin_entry1</item>
     </string-array>
-    <string-array name="gamepadPlugin_values">
+    <string-array name="inputPlugin_values">
         <item></item>
         <item>libinput-sdl.so</item>
     </string-array>
-    <string name="gamepadPlugin_default">libinput-sdl.so</string>
+    <string name="inputPlugin_default">libinput-sdl.so</string>
     
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries">

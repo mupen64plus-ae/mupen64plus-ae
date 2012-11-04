@@ -204,7 +204,7 @@ public class UserPrefs
         isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
         
         // Peripherals prefs
-        isInputEnabled = mPreferences.getBoolean( "gamepadEnabled", true );
+        isInputEnabled = mPreferences.getBoolean( "inputEnabled", true );
         inputMap1 = new InputMap( mPreferences.getString( "inputMap1", "" ) );
         inputMap2 = new InputMap( mPreferences.getString( "inputMap2", "" ) );
         inputMap3 = new InputMap( mPreferences.getString( "inputMap3", "" ) );
@@ -240,7 +240,7 @@ public class UserPrefs
         
         // Plug-ins and layouts
         inputPlugin = paths.libsDir + ( isInputEnabled
-                ? mPreferences.getString( "gamepadPlugin", "" )
+                ? mPreferences.getString( "inputPlugin", "" )
                 : "" );
         videoPlugin = paths.libsDir + ( isVideoEnabled
                 ? mPreferences.getString( "videoPlugin", "" )

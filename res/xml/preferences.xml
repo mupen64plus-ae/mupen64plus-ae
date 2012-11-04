@@ -107,57 +107,57 @@
         </PreferenceScreen>
         <PreferenceScreen
             android:icon="@drawable/ic_joystick"
-            android:key="gamepad"
-            android:summary="@string/gamepad_summary"
-            android:title="@string/gamepad_title" >
+            android:key="input"
+            android:summary="@string/input_summary"
+            android:title="@string/input_title" >
             <CheckBoxPreference
                 android:defaultValue="true"
-                android:key="gamepadEnabled"
-                android:title="@string/gamepadEnabled_title" />
+                android:key="inputEnabled"
+                android:title="@string/inputEnabled_title" />
 
             <ListPreference
-                android:defaultValue="@string/gamepadPlugin_default"
-                android:dependency="gamepadEnabled"
-                android:entries="@array/gamepadPlugin_entries"
-                android:entryValues="@array/gamepadPlugin_values"
-                android:key="gamepadPlugin"
-                android:title="@string/gamepadPlugin_title" />
+                android:defaultValue="@string/inputPlugin_default"
+                android:dependency="inputEnabled"
+                android:entries="@array/inputPlugin_entries"
+                android:entryValues="@array/inputPlugin_values"
+                android:key="inputPlugin"
+                android:title="@string/inputPlugin_title" />
 
             <paulscode.android.mupen64plusae.InputMapPreference
-                android:dependency="gamepadEnabled"
-                android:dialogTitle="@string/gamepadMap_dialogTitle"
-                android:key="gamepadMap1"
-                android:summary="@string/gamepadMap_summary"
-                android:title="@string/gamepadMap1_title" />
+                android:dependency="inputEnabled"
+                android:dialogTitle="@string/inputMap_dialogTitle"
+                android:key="inputMap1"
+                android:summary="@string/inputMap_summary"
+                android:title="@string/inputMap1_title" />
             <!--
             <paulscode.android.mupen64plusae.InputMapPreference
-                android:dependency="gamepadEnabled"
-                android:dialogTitle="@string/gamepadMap_dialogTitle"
-                android:key="gamepadMap2"
-                android:summary="@string/gamepadMap_summary"
-                android:title="@string/gamepadMap2_title" />
+                android:dependency="inputEnabled"
+                android:dialogTitle="@string/inputMap_dialogTitle"
+                android:key="inputMap2"
+                android:summary="@string/inputMap_summary"
+                android:title="@string/inputMap2_title" />
             <paulscode.android.mupen64plusae.InputMapPreference
-                android:dependency="gamepadEnabled"
-                android:dialogTitle="@string/gamepadMap_dialogTitle"
-                android:key="gamepadMap3"
-                android:summary="@string/gamepadMap_summary"
-                android:title="@string/gamepadMap3_title" />
+                android:dependency="inputEnabled"
+                android:dialogTitle="@string/inputMap_dialogTitle"
+                android:key="inputMap3"
+                android:summary="@string/inputMap_summary"
+                android:title="@string/inputMap3_title" />
             <paulscode.android.mupen64plusae.InputMapPreference
-                android:dependency="gamepadEnabled"
-                android:dialogTitle="@string/gamepadMap_dialogTitle"
-                android:key="gamepadMap4"
-                android:summary="@string/gamepadMap_summary"
-                android:title="@string/gamepadMap4_title" />
+                android:dependency="inputEnabled"
+                android:dialogTitle="@string/inputMap_dialogTitle"
+                android:key="inputMap4"
+                android:summary="@string/inputMap_summary"
+                android:title="@string/inputMap4_title" />
             -->
             <Preference
-                android:dependency="gamepadEnabled"
-                android:key="gamepadMapSpecial"
-                android:summary="@string/gamepadMapSpecial_summary"
-                android:title="@string/gamepadMapSpecial_title" />
+                android:dependency="inputEnabled"
+                android:key="inputMapSpecial"
+                android:summary="@string/inputMapSpecial_summary"
+                android:title="@string/inputMapSpecial_title" />
             
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:dependency="gamepadEnabled"
+                android:dependency="inputEnabled"
                 android:key="volumeKeysEnabled"
                 android:summary="@string/volumeKeysEnabled_summary"
                 android:title="@string/volumeKeysEnabled_title" />

@@ -71,8 +71,8 @@
     <string name="video_summary">Graphics settings</string>
     <string name="touchscreen_title">Touchscreen</string>
     <string name="touchscreen_summary">On-screen controller settings</string>
-    <string name="gamepad_title">Peripheral controllers</string>
-    <string name="gamepad_summary">Gamepads, joysticks, keyboards, etc.</string>
+    <string name="input_title">Peripheral controllers</string>
+    <string name="input_summary">Gamepads, joysticks, keyboards, etc.</string>
     <string name="other_title">@string/_other</string>
     <string name="other_summary">Audio, processor, core, etc.</string>
     <string name="gameSaveDir_title">Savegame folder</string>
@@ -93,16 +93,16 @@
     <string name="touchscreenOctagonJoystick_summary">Constrain analog motion to an octagon, like the original N64 controller</string>
     
     <!-- Peripherals Menu -->
-    <string name="gamepadEnabled_title">@string/_enable</string>
-    <string name="gamepadPlugin_title">@string/_plugin</string>
-    <string name="gamepadMap1_title">Player 1</string>
-    <string name="gamepadMap2_title">Player 2</string>
-    <string name="gamepadMap3_title">Player 3</string>
-    <string name="gamepadMap4_title">Player 4</string>
-    <string name="gamepadMap_summary">Configure buttons and sticks</string>
-    <string name="gamepadMapSpecial_title">Special functions</string>
-    <string name="gamepadMapSpecial_summary">Save, load, and more from the controller</string>
-    <string name="gamepadMap_dialogTitle">To map: press key/stick, then touch icon\nTo unmap: long-touch icon</string>
+    <string name="inputEnabled_title">@string/_enable</string>
+    <string name="inputPlugin_title">@string/_plugin</string>
+    <string name="inputMap1_title">Player 1</string>
+    <string name="inputMap2_title">Player 2</string>
+    <string name="inputMap3_title">Player 3</string>
+    <string name="inputMap4_title">Player 4</string>
+    <string name="inputMap_summary">Configure buttons and sticks</string>
+    <string name="inputMapSpecial_title">Special functions</string>
+    <string name="inputMapSpecial_summary">Save, load, and more from the controller</string>
+    <string name="inputMap_dialogTitle">To map: press key/stick, then touch icon\nTo unmap: long-touch icon</string>
     <string name="volumeKeysEnabled_title">Volume key controls</string>
     <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
     
@@ -172,8 +172,8 @@
     <string name="touchscreenSize_entry3">Tablet</string>
     
     <!-- Input Plugin Entries -->
-    <string name="gamepadPlugin_entry0">@string/_disabled</string>
-    <string name="gamepadPlugin_entry1">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    <string name="inputPlugin_entry0">@string/_disabled</string>
+    <string name="inputPlugin_entry1">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
     <!-- Video Plugin Entries -->
     <string name="videoPlugin_entry0">gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</string>

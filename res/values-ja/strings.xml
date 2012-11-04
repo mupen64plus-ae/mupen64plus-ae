@@ -68,8 +68,8 @@
     <string name="video_summary">グラフィック設定</string>
     <string name="touchscreen_title">タッチスクリーン</string>
     <string name="touchscreen_summary">オンスクリーン·コントローラ設定</string>
-    <string name="gamepad_title">コントローラ</string>
-    <string name="gamepad_summary">ゲームパッド/ジョイスティック設定</string>
+    <string name="input_title">コントローラ</string>
+    <string name="input_summary">ゲームパッド/ジョイスティック設定</string>
     <string name="other_title">その他設定</string>
     <string name="other_summary">オーディオ、プロセッサ、コア、など。</string>
     <string name="gameSaveDir_title">セーブデータのフォルダ</string>
@@ -87,17 +87,17 @@
     <string name="touchscreenSize_title">画面サイズ</string>
     <string name="touchscreenOctagonJoystick_title">八角形のようにアナログスティックをエミュレート</string>
     
-    <!-- Gamepad Menu -->
-    <string name="gamepadEnabled_title">@string/_enable</string>
-    <string name="gamepadPlugin_title">@string/_plugin</string>
-    <string name="gamepadMap1_title">プレイヤー1</string>
-    <string name="gamepadMap2_title">プレイヤー2</string>
-    <string name="gamepadMap3_title">プレイヤー3</string>
-    <string name="gamepadMap4_title">プレイヤー4</string>
-    <string name="gamepadMap_summary">ボタンとアナログスティック設定</string>
-    <string name="gamepadMapSpecial_title">特別な機能</string>
-    <string name="gamepadMapSpecial_summary">コントローラからの保存、ロード、など。</string>
-    <string name="gamepadMap_dialogTitle">ジョイスティックまたはボタンを押しながらアイコンを押して。</string>
+    <!-- Peripherals Menu -->
+    <string name="inputEnabled_title">@string/_enable</string>
+    <string name="inputPlugin_title">@string/_plugin</string>
+    <string name="inputMap1_title">プレイヤー1</string>
+    <string name="inputMap2_title">プレイヤー2</string>
+    <string name="inputMap3_title">プレイヤー3</string>
+    <string name="inputMap4_title">プレイヤー4</string>
+    <string name="inputMap_summary">ボタンとアナログスティック設定</string>
+    <string name="inputMapSpecial_title">特別な機能</string>
+    <string name="inputMapSpecial_summary">コントローラからの保存、ロード、など。</string>
+    <string name="inputMap_dialogTitle">ジョイスティックまたはボタンを押しながらアイコンを押して。</string>
     <string name="volumeKeysEnabled_title">ボリュームキーを有効</string>
     <string name="volumeKeysEnabled_summary">コントローラのボタンとしてボリュームキーを使用</string>
     
