@@ -99,15 +99,28 @@ ifneq ("$(filter ppc64 powerpc64,$(HOST_CPU))","")
   NO_ASM := 1
   $(warning Architecture "$(HOST_CPU)" not officially supported.')
 endif
+ifneq ("$(filter arm%,$(HOST_CPU))","")
+  ifeq ("$(filter arm%b,$(HOST_CPU))","")
+    CPU := ARM
+    ARCH_DETECTED := 32BITS
+    PIC ?= 1
+    NO_ASM := 1
+    $(warning Architecture "$(HOST_CPU)" not officially supported.')
+  endif
+endif
 ifeq ("$(CPU)","NONE")
   $(error CPU type "$(HOST_CPU)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
-CFLAGS += $(OPTFLAGS) -Wall -msse -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
+CFLAGS += $(OPTFLAGS) -Wall -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
+
+ifeq ($(CPU), "X86")
+  CFLAGS += -msse
+endif
 
 # Since we are building a shared library, we must compile with -fPIC on some architectures
 # On 32-bit x86 systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
