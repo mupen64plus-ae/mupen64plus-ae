@@ -19,16 +19,16 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class TouchscreenView extends View implements TouchMap.Listener
+public class TouchscreenView extends View implements VisibleTouchMap.Listener
 {
     private boolean mInitialized;
-    private TouchMap mTouchMap;
+    private VisibleTouchMap mTouchMap;
     
     public TouchscreenView( Context context, AttributeSet attribs )
     {
@@ -36,7 +36,7 @@ public class TouchscreenView extends View implements TouchMap.Listener
         mInitialized = false;
     }
     
-    public void initialize( TouchMap touchMap )
+    public void initialize( VisibleTouchMap touchMap )
     {
         // Suspend drawing
         mInitialized = false;
@@ -57,21 +57,21 @@ public class TouchscreenView extends View implements TouchMap.Listener
     }
     
     @Override
-    public void onAllChanged( TouchMap touchMap )
+    public void onAllChanged( VisibleTouchMap touchMap )
     {
         // Tell Android to redraw on the UI thread
         postInvalidate();
     }
     
     @Override
-    public void onHatChanged( TouchMap touchMap, float x, float y )
+    public void onHatChanged( VisibleTouchMap touchMap, float x, float y )
     {
         // Tell Android to redraw on the UI thread
         postInvalidate();
     }
     
     @Override
-    public void onFpsChanged( TouchMap touchMap, int fps )
+    public void onFpsChanged( VisibleTouchMap touchMap, int fps )
     {
         // Tell Android to redraw on the UI thread
         postInvalidate();
@@ -92,7 +92,7 @@ public class TouchscreenView extends View implements TouchMap.Listener
             return;
         
         // Redraw the static elements of the gamepad
-        mTouchMap.drawStatic( canvas );
+        mTouchMap.drawButtons( canvas );
         
         // Redraw the dynamic analog stick
         mTouchMap.drawAnalog( canvas );

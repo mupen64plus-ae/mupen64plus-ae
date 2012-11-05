@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.os.Build;
@@ -36,10 +37,10 @@ public class TouchscreenController extends AbstractController implements OnTouch
     private int[] mPointerX = new int[MAX_POINTER_IDS];
     private int[] mPointerY = new int[MAX_POINTER_IDS];
     
-    private TouchMap mTouchMap;
+    private VisibleTouchMap mTouchMap;
     private int analogPid = -1;
     
-    public TouchscreenController( TouchMap touchMap, View view )
+    public TouchscreenController( VisibleTouchMap touchMap, View view )
     {
         mTouchMap = touchMap;
         view.setOnTouchListener( this );
@@ -147,7 +148,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
         
         // Update the skin if the virtual analog stick moved
         if( analogMoved )
-            mTouchMap.updateHat( mAxisFractionX, mAxisFractionY );
+            mTouchMap.updateAnalog( mAxisFractionX, mAxisFractionY );
     }
     
     private void processButtonTouch( int xLocation, int yLocation )

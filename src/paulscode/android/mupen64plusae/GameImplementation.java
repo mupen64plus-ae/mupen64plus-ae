@@ -24,7 +24,7 @@ import java.io.File;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
-import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -53,7 +53,7 @@ public class GameImplementation implements View.OnKeyListener
     // Internals
     private Activity mActivity;
     private SDLSurface mSdlSurface;
-    private TouchMap mTouchscreenMap;
+    private VisibleTouchMap mTouchscreenMap;
     private TouchscreenView mTouchscreenView;
     @SuppressWarnings( "unused" )
     private TouchscreenController mTouchscreenController;
@@ -120,7 +120,7 @@ public class GameImplementation implements View.OnKeyListener
                 && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
         {
             // The touch map and view are needed to display frame rate and/or controls
-            mTouchscreenMap = new TouchMap();
+            mTouchscreenMap = new VisibleTouchMap();
             mTouchscreenMap.setResources( mActivity.getResources() );
             mTouchscreenMap.load( Globals.userPrefs.touchscreenLayoutFolder );
             mTouchscreenView.initialize( mTouchscreenMap );

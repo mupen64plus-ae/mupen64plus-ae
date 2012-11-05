@@ -21,8 +21,6 @@ package paulscode.android.mupen64plusae.input.transform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.AbstractController;
@@ -30,26 +28,12 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
-import android.graphics.Canvas;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.Log;
 
 public class TouchMap
 {
-    public interface Listener
-    {
-        public void onAllChanged( TouchMap touchMap );
-        
-        public void onHatChanged( TouchMap touchMap, float x, float y );
-        
-        public void onFpsChanged( TouchMap touchMap, int fps );
-    }
-    
-    // Pseudo-button indices, indicating simultaneous press of two d-pad buttons
     public static final int DPD_RU = AbstractController.NUM_BUTTONS;
     public static final int DPD_RD = DPD_RU + 1;
     public static final int DPD_LD = DPD_RU + 2;
@@ -59,39 +43,29 @@ public class TouchMap
     private int[] maskColors;
     
     // Buttons
+    protected ArrayList<Image> buttons;
     private ArrayList<Image> masks;
-    private ArrayList<Image> buttons;
     private ArrayList<Integer> xpercents;
     private ArrayList<Integer> ypercents;
     
     // Analog background
-    private Image analogImage;
+    protected Image analogImage;
     private int analogXpercent;
     private int analogYpercent;
     private int analogPadding;
     private int analogDeadzone;
-    private int analogMaximum;
+    protected int analogMaximum;
     
     // Analog stick
-    private Image hatImage;
-    private int hatX;
-    private int hatY;
+    protected Image hatImage;
+    protected int hatX;
+    protected int hatY;
     
-    // Frame rate indicator
-    private Image fpsImage;
-    private int fpsXpercent;
-    private int fpsYpercent;
-    private int fpsNumXpercent;
-    private int fpsNumYpercent;
-    private int fpsRecalcRate;
-    private int fpsValue;
-    private String fpsFont;
-    private Image[] numeralImages;
-    private Image[] fpsDigits;
+    // App resources
+    protected Resources mResources;
     
-    private Resources mResources;
-    private SubscriptionManager<Listener> mPublisher;
-    private static final HashMap<String, Integer> BUTTON_HASHMAP;
+    // Lookup table for mapping strings in file to N64 indices
+    protected static final HashMap<String, Integer> BUTTON_HASHMAP;
     
     static
     {
@@ -118,11 +92,13 @@ public class TouchMap
     
     public TouchMap()
     {
-        mPublisher = new SubscriptionManager<TouchMap.Listener>();
-        numeralImages = new Image[10];
-        fpsDigits = new Image[4];
         maskColors = new int[BUTTON_HASHMAP.size()];
         clear();
+    }
+    
+    public void setResources( Resources resources )
+    {
+        mResources = resources;
     }
     
     public void clear()
@@ -138,36 +114,8 @@ public class TouchMap
         analogMaximum = 360;
         hatImage = null;
         hatX = hatY = -1;
-        fpsImage = null;
-        fpsXpercent = fpsYpercent = 0;
-        fpsNumXpercent = fpsNumYpercent = 50;
-        fpsRecalcRate = 15;
-        fpsValue = 0;
-        fpsFont = "Mupen64Plus-AE-Contrast-Blue";
-        for( int i = 0; i < numeralImages.length; i++ )
-            numeralImages[i] = null;
-        for( int i = 0; i < fpsDigits.length; i++ )
-            fpsDigits[i] = null;
         for( int i = 0; i < maskColors.length; i++ )
             maskColors[i] = -1;
-    }
-    
-    public void registerListener( Listener listener )
-    {
-        mPublisher.subscribe( listener );
-    }
-    
-    public void unregisterListener( Listener listener )
-    {
-        mPublisher.unsubscribe( listener );
-    }
-    
-    public void setResources( Resources resources )
-    {
-        mResources = resources;
-        for( int i = 0; i < numeralImages.length; i++ )
-            numeralImages[i] = new Image( resources, Globals.paths.fontsDir + fpsFont + "/"
-                    + i + ".png" );
     }
     
     public void resize( int w, int h )
@@ -189,87 +137,6 @@ public class TouchMap
             analogImage.fitCenter( (int) ( (float) w * ( (float) analogXpercent / 100.0f ) ),
                     (int) ( (float) h * ( (float) analogYpercent / 100.0f ) ), w, h );
         }
-        
-        // Position the FPS box
-        if( fpsImage != null )
-        {
-            // Position the background image and draw it
-            fpsImage.fitCenter( (int) ( (float) w * ( (float) fpsXpercent / 100.0f ) ),
-                    (int) ( (float) h * ( (float) fpsYpercent / 100.0f ) ), w, h );
-        }
-        
-        // Notify listeners that everything has changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onAllChanged( this );
-    }
-    
-    public void updateHat( float axisFractionX, float axisFractionY )
-    {
-        // Move the analog hat based on analog state
-        hatX = analogImage.hWidth + (int) ( axisFractionX * (float) analogMaximum );
-        hatY = analogImage.hHeight - (int) ( axisFractionY * (float) analogMaximum );
-        
-        // Notify listeners that analog hat changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onHatChanged( this, axisFractionX, axisFractionY );
-    }
-    
-    public void updateFps( int fps )
-    {
-        // Clamp to positive, four digits max
-        fps = Math.max( Math.min( fps, 9999 ), 0 );
-        
-        // Quick return if user has disabled FPS or it hasn't changed
-        if( !Globals.userPrefs.isFrameRateEnabled || fpsValue == fps )
-            return;
-        
-        // Store the new value
-        fpsValue = fps;
-        
-        // Assemble a sprite for the FPS value
-        String fpsString = Integer.toString( fpsValue );
-        for( int i = 0; i < 4; i++ )
-        {
-            // Create a new sequence of numeral images
-            if( i < fpsString.length() )
-            {
-                try
-                {
-                    // Clone the numeral from the font images
-                    fpsDigits[i] = new Image( mResources,
-                            numeralImages[Integer.valueOf( fpsString.substring( i, i + 1 ) )] );
-                }
-                catch( NumberFormatException nfe )
-                {
-                    // Skip this digit, there was a problem
-                    fpsDigits[i] = null;
-                }
-            }
-            else
-            {
-                // Skip this digit
-                fpsDigits[i] = null;
-            }
-        }
-        
-        // Notify listeners that FPS sprite changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onFpsChanged( this, fpsValue );
-    }
-    
-    public Rect getAnalogBounds()
-    {
-        return analogImage.drawRect;
-    }
-    
-    public Rect getFpsBounds()
-    {
-        return fpsImage.drawRect;
-    }
-    
-    public int getFpsRecalcRate()
-    {
-        return fpsRecalcRate;
     }
     
     public int getButtonPress( int xLocation, int yLocation )
@@ -334,74 +201,6 @@ public class TouchMap
                 && ( displacement < analogMaximum + analogPadding );
     }
     
-    public void drawStatic( Canvas canvas )
-    {
-        // Draw the buttons onto the canvas
-        for( Image button : buttons )
-            button.draw( canvas );
-    }
-    
-    public void drawAnalog( Canvas canvas )
-    {
-        if( analogImage == null )
-            return;
-        
-        // Draw the background image first
-        analogImage.draw( canvas );
-        
-        // Then draw the movable part of the stick
-        if( hatImage != null )
-        {
-            // Reposition the image and draw it
-            int hX = hatX;
-            int hY = hatY;
-            if( hX == -1 )
-                hX = analogImage.hWidth;
-            if( hY == -1 )
-                hY = analogImage.hHeight;
-            hatImage.fitCenter( analogImage.x + hX, analogImage.y + hY, analogImage.x,
-                    analogImage.y, analogImage.width, analogImage.height );
-            hatImage.draw( canvas );
-        }
-    }
-    
-    public void drawFps( Canvas canvas )
-    {
-        // Redraw the FPS indicator
-        int x = 0;
-        int y = 0;
-        
-        if( fpsImage != null )
-        {
-            x = fpsImage.x + (int) ( (float) fpsImage.width * ( (float) fpsNumXpercent / 100.0f ) );
-            y = fpsImage.y + (int) ( (float) fpsImage.height * ( (float) fpsNumYpercent / 100.0f ) );
-            fpsImage.draw( canvas );
-        }
-        
-        int totalWidth = 0;
-        
-        // Calculate the width of the FPS text
-        for( int i = 0; i < fpsDigits.length; i++ )
-        {
-            if( fpsDigits[i] != null )
-                totalWidth += fpsDigits[i].width;
-        }
-        
-        // Calculate the starting position of the FPS text
-        x = x - (int) ( (float) totalWidth / 2f );
-        
-        // Draw each digit of the FPS number
-        for( int i = 0; i < fpsDigits.length; i++ )
-        {
-            if( fpsDigits[i] != null )
-            {
-                fpsDigits[i].setPos( x, y - fpsDigits[i].hHeight );
-                fpsDigits[i].draw( canvas );
-                x += fpsDigits[i].width;
-            }
-        }
-    }
-    
     public void load( String directory )
     {
         // Always clear the skin
@@ -430,17 +229,15 @@ public class TouchMap
         ConfigSection section = pad_ini.get( "MASK_COLOR" );
         if( section != null )
         {
-            Set<String> keys = section.keySet();
-            Iterator<String> iter = keys.iterator();
-            while( iter.hasNext() )
+            // Loop through the key-value pairs
+            for( String key : section.keySet() )
             {
-                // Loop through the param=val pairs
-                String param = iter.next();
-                String val = section.get( param );
-                
                 // Assign the map colors to the appropriate N64 button
-                maskColors[BUTTON_HASHMAP.get( param.toLowerCase() )] = SafeMethods.toInt( val, -1 );
+                String val = section.get( key );
+                int index = BUTTON_HASHMAP.get( key.toLowerCase() );
+                maskColors[index] = SafeMethods.toInt( val, -1 );
             }
+
         }
     }
     
@@ -459,15 +256,7 @@ public class TouchMap
                     if( value != null )
                     {
                         // Let's not make this part case-sensitive
-                        value = value.toLowerCase();
-                        
-                        if( value.contains( "analog" ) )
-                            readAnalogLayout( layoutFolder, filename, section,
-                                    value.contains( "hat" ) );
-                        else if( value.contains( "fps" ) )
-                            readFpsLayout( layoutFolder, filename, section );
-                        else
-                            readStaticLayout( layoutFolder, filename, section );
+                        readFileSection( layoutFolder, filename, section, value.toLowerCase() );
                     }
                 }
             }
@@ -480,16 +269,13 @@ public class TouchMap
                 && !key.equals( "MASK_COLOR" ) && !key.equals( "[<sectionless!>]" );
     }
     
-    private void readStaticLayout( final String layoutFolder, String filename, ConfigSection section )
+    protected void readFileSection( final String layoutFolder, String filename,
+            ConfigSection section, String value )
     {
-        // A button control. The drawable image is in PNG image format. The
-        // color mask image is in BMP image format (doesn't actually get drawn).
-        buttons.add( new Image( mResources, layoutFolder + "/" + filename + ".png" ) );
-        masks.add( new Image( mResources, layoutFolder + "/" + filename + ".bmp" ) );
-        
-        // Position (percentages of the screen dimensions)
-        xpercents.add( SafeMethods.toInt( section.get( "x" ), 0 ) );
-        ypercents.add( SafeMethods.toInt( section.get( "y" ), 0 ) );
+        if( value.contains( "analog" ) )
+            readAnalogLayout( layoutFolder, filename, section, value.contains( "hat" ) );
+        else
+            readButtonLayout( layoutFolder, filename, section );
     }
     
     private void readAnalogLayout( final String layoutFolder, String filename,
@@ -515,45 +301,16 @@ public class TouchMap
                 section.get( "buff" ), 55 ) / 100.0f ) );
     }
     
-    private void readFpsLayout( final String layoutFolder, String filename, ConfigSection section )
+    private void readButtonLayout( final String layoutFolder, String filename, ConfigSection section )
     {
-        fpsImage = new Image( mResources, layoutFolder + "/" + filename + ".png" );
+        // A button control. The drawable image is in PNG image format. The
+        // color mask image is in BMP image format (doesn't actually get drawn).
+        buttons.add( new Image( mResources, layoutFolder + "/" + filename + ".png" ) );
+        masks.add( new Image( mResources, layoutFolder + "/" + filename + ".bmp" ) );
         
         // Position (percentages of the screen dimensions)
-        fpsXpercent = SafeMethods.toInt( section.get( "x" ), 0 );
-        fpsYpercent = SafeMethods.toInt( section.get( "y" ), 0 );
-        
-        // Number position (percentages of the FPS indicator dimensions)
-        fpsNumXpercent = SafeMethods.toInt( section.get( "numx" ), 50 );
-        fpsNumYpercent = SafeMethods.toInt( section.get( "numy" ), 50 );
-        
-        // Refresh rate (in frames.. integer greater than 1)
-        fpsRecalcRate = SafeMethods.toInt( section.get( "rate" ), 15 );
-        
-        // Need at least 2 frames to calculate FPS
-        if( fpsRecalcRate < 2 )
-            fpsRecalcRate = 2;
-        
-        // Numeral font
-        fpsFont = section.get( "font" );
-        if( fpsFont != null && fpsFont.length() > 0 )
-        {
-            // Load the font images
-            int i = 0;
-            try
-            {
-                // Make sure we can load them (they might not even exist)
-                for( i = 0; i < 10; i++ )
-                    numeralImages[i] = new Image( mResources, Globals.paths.fontsDir
-                            + fpsFont + "/" + i + ".png" );
-            }
-            catch( Exception e )
-            {
-                // Problem, let the user know
-                Log.e( "TouchMap", "Problem loading font '" + Globals.paths.fontsDir + fpsFont + "/"
-                        + i + ".png', error message: " + e.getMessage() );
-            }
-        }
+        xpercents.add( SafeMethods.toInt( section.get( "x" ), 0 ) );
+        ypercents.add( SafeMethods.toInt( section.get( "y" ), 0 ) );
     }
     
     private int getButtonFromColor( int color )

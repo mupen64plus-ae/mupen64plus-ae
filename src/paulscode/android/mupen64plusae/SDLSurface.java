@@ -27,7 +27,7 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -51,7 +51,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
     // Frame rate calculations
     private long mLastFPSCheck = 0;
     private int mFrameCount = -1;
-    private TouchMap mTouchMap;
+    private VisibleTouchMap mTouchMap;
     
     // Internal flags
     private boolean mBuffFlipped = false;
@@ -72,7 +72,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         requestFocus();
     }
     
-    public void initialize( TouchMap touchMap )
+    public void initialize( VisibleTouchMap touchMap )
     {
         mTouchMap = touchMap;
     }
@@ -158,8 +158,6 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         if( Globals.userPrefs.isAutoSaveEnabled &&
                 new File( Globals.userPrefs.selectedGameAutoSavefile ).exists() )
         {
-            Log.i("littleguy", "Found savefile " + Globals.userPrefs.selectedGameAutoSavefile );
-            
             new Thread( "ResumeSessionThread" )
             {
                 @Override
@@ -346,7 +344,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         
         // Update frame rate info
         mFrameCount++;
-        if( ( mTouchMap != null && mFrameCount >= mTouchMap.getFpsRecalcRate() ) )
+        if( ( mTouchMap != null && mFrameCount >= mTouchMap.getFpsRecalcPeriod() ) )
         {
             long currentTime = System.currentTimeMillis();
             float fFPS = ( (float) mFrameCount / (float) ( currentTime - mLastFPSCheck ) ) * 1000.0f;
