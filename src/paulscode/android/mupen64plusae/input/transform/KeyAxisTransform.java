@@ -20,6 +20,8 @@
 package paulscode.android.mupen64plusae.input.transform;
 
 import android.annotation.TargetApi;
+import android.view.InputDevice;
+import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -46,6 +48,8 @@ public class KeyAxisTransform extends KeyTransform implements View.OnGenericMoti
     @Override
     public boolean onGenericMotion( View v, MotionEvent event )
     {
+        InputDevice device = event.getDevice();
+        
         // Read all the requested axes
         float[] strengths = new float[mInputCodes.length];
         for( int i = 0; i < mInputCodes.length; i++ )
@@ -57,6 +61,9 @@ public class KeyAxisTransform extends KeyTransform implements View.OnGenericMoti
             
             // Get the analog value using the native Android API
             float strength = event.getAxisValue( axisCode );
+            MotionRange motionRange = device.getMotionRange( axisCode );
+            if( motionRange != null )
+                strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
             
             // If the strength points in the correct direction, record it
             boolean direction1 = inputToAxisDirection( inputCode );
