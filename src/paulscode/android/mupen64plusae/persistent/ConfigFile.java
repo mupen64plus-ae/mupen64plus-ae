@@ -36,7 +36,7 @@ import java.util.Set;
 import android.util.Log;
 
 /**
- * The Config class is used to load the parameters from a config file.
+ * The ConfigFile class is used to load the parameters from a config file.
  * </p>
  * The file must follow a specific syntax:
  * </p>
@@ -252,14 +252,14 @@ public class ConfigFile
         // No filename was specified.
         if( mFilename == null || mFilename.length() < 1 )
         {
-            Log.e( "Config", "Filename not specified in method save()" );
+            Log.e( "ConfigFile", "Filename not specified in method save()" );
             return false;   // Quit
         }
         
         // No config data to save.
         if( mConfigList == null )
         {
-            Log.e( "Config", "No config data to save in method save()" );
+            Log.e( "ConfigFile", "No config data to save in method save()" );
             return false;   // Quit
         }
         
@@ -271,7 +271,7 @@ public class ConfigFile
             // Some problem deleting the file.
             if( !f.delete() )
             {
-                Log.e( "Config", "Error deleting file " + mFilename );
+                Log.e( "ConfigFile", "Error deleting file " + mFilename );
                 return false;   // Quit
             }
         }
@@ -295,7 +295,7 @@ public class ConfigFile
         }
         catch( IOException ioe )
         {
-            Log.e( "Config", "IOException creating file " + mFilename + ", error message: " + ioe.getMessage() );
+            Log.e( "ConfigFile", "IOException creating file " + mFilename + ", error message: " + ioe.getMessage() );
             return false;  // Some problem creating the file.. quit
         }
         

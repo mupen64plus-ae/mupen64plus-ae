@@ -128,10 +128,10 @@ public class Paths
         // Preference file names
         appSettingsFilename = packageName + "_preferences_device";
         
-        Log.v( "DataDir Check", "PackageName set to '" + packageName + "'" );
-        Log.v( "DataDir Check", "LibsDir set to '" + libsDir + "'" );
-        Log.v( "DataDir Check", "StorageDir set to '" + storageDir + "'" );
-        Log.v( "DataDir Check", "DataDir set to '" + dataDir + "'" );
+        Log.v( "Paths - DataDir Check", "PackageName set to '" + packageName + "'" );
+        Log.v( "Paths - DataDir Check", "LibsDir set to '" + libsDir + "'" );
+        Log.v( "Paths - DataDir Check", "StorageDir set to '" + storageDir + "'" );
+        Log.v( "Paths - DataDir Check", "DataDir set to '" + dataDir + "'" );
     }
     
     /**

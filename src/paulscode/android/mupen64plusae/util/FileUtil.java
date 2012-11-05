@@ -123,7 +123,7 @@ public class FileUtil
         
         if( dest == null )
         {
-            Log.e( "Updater", "dest null in method 'copyFile'" );
+            Log.e( "FileUtil", "dest null in method 'copyFile'" );
             return false;
         }
         
@@ -144,7 +144,7 @@ public class FileUtil
             File f = dest.getParentFile();
             if( f == null )
             {
-                Log.e( "Updater", "dest parent folder null in method 'copyFile'" );
+                Log.e( "FileUtil", "dest parent folder null in method 'copyFile'" );
                 return false;
             }
             if( !f.exists() )
@@ -166,7 +166,7 @@ public class FileUtil
             }
             catch( IOException ioe )
             {
-                Log.e( "Updater", "IOException in method 'copyFile': " + ioe.getMessage() );
+                Log.e( "FileUtil", "IOException in method 'copyFile': " + ioe.getMessage() );
                 return false;
             }
             try
@@ -191,14 +191,14 @@ public class FileUtil
      */
     public static void loadNativeLibName( String libname )
     {
-        Log.v( "GameActivity", "Loading native library '" + libname + "'" );
+        Log.v( "FileUtil", "Loading native library '" + libname + "'" );
         try
         {
             System.loadLibrary( libname );
         }
         catch( UnsatisfiedLinkError e )
         {
-            Log.e( "GameActivity", "Unable to load native library '" + libname + "'" );
+            Log.e( "FileUtil", "Unable to load native library '" + libname + "'" );
         }
     }
 
@@ -216,14 +216,14 @@ public class FileUtil
             if( filename.equalsIgnoreCase( "dummy" ) )
                 return;
             
-            Log.v( "GameActivity", "Loading native library '" + filename + "'" );
+            Log.v( "FileUtil", "Loading native library '" + filename + "'" );
             try
             {
                 System.load( filename );
             }
             catch( UnsatisfiedLinkError e )
             {
-                Log.e( "GameActivity", "Unable to load native library '" + filename + "'" );
+                Log.e( "FileUtil", "Unable to load native library '" + filename + "'" );
             }
         }
     }

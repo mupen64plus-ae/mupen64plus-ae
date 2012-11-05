@@ -38,6 +38,7 @@ public class SafeMethods
     {
         if( val == null || val.length() < 1 )
             return fail; // Not a number
+        
         try
         {
             return Integer.valueOf( val ); // Convert to integer
@@ -60,6 +61,7 @@ public class SafeMethods
     {
         if( val == null || val.length() < 1 )
             return fail; // Not a number
+        
         try
         {
             return Float.valueOf( val ); // Convert to float
@@ -106,5 +108,4 @@ public class SafeMethods
             }
         }, milliseconds );
     }
-    
 }

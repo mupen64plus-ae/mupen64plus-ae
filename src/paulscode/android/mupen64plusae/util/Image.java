@@ -57,7 +57,8 @@ public class Image
         
         if( image == null )
         {
-            width = height = 0;
+            width  = 0;
+            height = 0;
         }
         else
         {
@@ -114,6 +115,7 @@ public class Image
     {
         this.x = x;
         this.y = y;
+        
         if( drawRect != null )
             drawRect.set( x, y, x + width, y + height );
         if( drawable != null )
