@@ -140,7 +140,7 @@ public class CoreInterface
                     tmpFolderName );
             if( Paths.tmpFile == null )
             {
-                Log.v( "GameActivity", "Unable to play zipped ROM: '" + Globals.userPrefs.selectedGame
+                Log.v( "CoreInterface", "Unable to play zipped ROM: '" + Globals.userPrefs.selectedGame
                         + "'" );
                 
                 Notifier.clear();
@@ -256,7 +256,7 @@ public class CoreInterface
             }
             else
             {
-                Log.w( "GameActivity", "SDL audio: error return from write(short)" );
+                Log.w( "CoreInterface", "SDL Audio: Error returned from write(short)" );
                 return;
             }
         }
@@ -284,7 +284,7 @@ public class CoreInterface
             }
             else
             {
-                Log.w( "GameActivity", "SDL audio: error return from write(byte)" );
+                Log.w( "CoreInterface", "SDL Audio: Error returned from write(byte)" );
                 return;
             }
         }
@@ -300,11 +300,11 @@ public class CoreInterface
             }
             catch( Exception e )
             {
-                Log.v( "GameActivity", "Problem stopping audio thread: " + e );
+                Log.v( "CoreInterface", "Problem stopping audio thread: " + e );
             }
             sAudioThread = null;
             
-            // Log.v("SDL", "Finished waiting for audio thread");
+            // Log.v("CoreInterface", "Finished waiting for audio thread");
         }
         
         if( sAudioTrack != null )
@@ -327,7 +327,7 @@ public class CoreInterface
                 }
                 catch( IllegalStateException ise )
                 {
-                    Log.e( "GameActivity", "audioStartThread IllegalStateException", ise );
+                    Log.e( "CoreInterface", "audioStartThread IllegalStateException", ise );
                 }
             }
         }, "Audio Thread" );

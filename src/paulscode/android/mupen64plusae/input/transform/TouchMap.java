@@ -550,7 +550,7 @@ public class TouchMap
             catch( Exception e )
             {
                 // Problem, let the user know
-                Log.e( "GamePad", "Problem loading font '" + Globals.paths.fontsDir + fpsFont + "/"
+                Log.e( "TouchMap", "Problem loading font '" + Globals.paths.fontsDir + fpsFont + "/"
                         + i + ".png', error message: " + e.getMessage() );
             }
         }

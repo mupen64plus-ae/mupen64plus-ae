@@ -121,8 +121,11 @@ public class PeripheralController extends AbstractController implements Abstract
         int n64Index = mInputMap.get( inputCode );
         
         if( n64Index >= 0 && n64Index < NUM_BUTTONS )
+        {
             mButtons[n64Index] = state;
+        }
         else
+        {
             switch( n64Index )
             {
                 case InputMap.AXIS_R:
@@ -140,6 +143,7 @@ public class PeripheralController extends AbstractController implements Abstract
                 default:
                     return false;
             }
+        }
         return true;
     }
     
