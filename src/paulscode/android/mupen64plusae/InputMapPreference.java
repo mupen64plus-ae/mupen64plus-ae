@@ -209,7 +209,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     }
     
     @Override
-    public void onClick( View v )
+    public void onClick( View view )
     {
         // Never unmap via regular click (would be confusing)
         if( mInputCodeToBeMapped == 0 )
@@ -218,7 +218,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Find the Button view that was touched and map it
         for( int i = 0; i < mN64ToButton.length; i++ )
         {
-            if( mN64ToButton[i] == v )
+            if( mN64ToButton[i] == view )
                 mMap.mapInput( i, mInputCodeToBeMapped );
         }
         

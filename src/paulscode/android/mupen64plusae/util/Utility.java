@@ -17,18 +17,18 @@ import android.graphics.Point;
 import android.util.FloatMath;
 import android.util.Log;
 
+/**
+ * Utility class which collects a bunch
+ * of commonly used methods into one class.
+ */
 public class Utility
 {
     public static Point constrainToOctagon( int dX, int dY, int halfWidth )
     {
         final float dC = halfWidth;
         final float dA = dC * FloatMath.sqrt( 0.5f );
-        final float signX = dX < 0
-                ? -1
-                : 1;
-        final float signY = dY < 0
-                ? -1
-                : 1;
+        final float signX = (dX < 0) ? -1 : 1;
+        final float signY = (dY < 0) ? -1 : 1;
         
         Point crossPt = new Point();
         crossPt.x = dX;
@@ -243,13 +243,15 @@ public class Utility
         if( CRC == null || CRC.length() < 3 )
             return null;
         
-        int x = CRC.indexOf( " " );
+        // The CRC should always contain a space, and it 
+        // shouldn't be the last character
+        int x = CRC.indexOf( ' ' );
         if( x < 1 || x >= CRC.length() - 1 )
-            return null; // The CRC should always contain a space, and it shouldn't be the last
-                         // character
-            
+            return null;
+
+        // We probably have the full CRC, just upper-case it.
         if( CRC.length() == 17 )
-            return CRC.toUpperCase(); // We probably have the full CRC, just upper-case it.
+            return CRC.toUpperCase();
             
         String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase().trim();
         String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase().trim();
@@ -292,13 +294,13 @@ public class Utility
                                 textureName.length() ).toLowerCase();
                         if( supportedExt.contains( textureExt ) )
                         {
-                            x = textureName.indexOf( "#" );
+                            x = textureName.indexOf( '#' );
                             if( x > 0 && x < textureName.length() )
                             {
                                 textureName = textureName.substring( 0, x );
                                 if( textureName != null && textureName.length() > 0 )
                                 {
-                                    x = textureName.lastIndexOf( "/" );
+                                    x = textureName.lastIndexOf( '/' );
                                     if( x >= 0 && x < textureName.length() )
                                         return textureName.substring( x + 1, textureName.length() );
                                 }

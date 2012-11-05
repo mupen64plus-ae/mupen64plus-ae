@@ -144,41 +144,6 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onResize(
     Android_SetScreenResolution(width, height, format);
 }
 
-// Keydown
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onKeyDown(
-                                    JNIEnv* env, jclass jcls, jint keycode)
-{
-    Android_OnKeyDown(keycode);
-}
-
-// Keyup
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onKeyUp(
-                                    JNIEnv* env, jclass jcls, jint keycode)
-{
-    Android_OnKeyUp(keycode);
-}
-// Keydown
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onSDLKeyDown(
-                                    JNIEnv* env, jclass jcls, jint keycode)
-{
-    Android_OnSDLKeyDown(keycode);
-}
-
-// Keyup
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onSDLKeyUp(
-                                    JNIEnv* env, jclass jcls, jint keycode)
-{
-    Android_OnSDLKeyUp(keycode);
-}
-
-// Touch
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onTouch(
-                                    JNIEnv* env, jclass jcls,
-                                    jint action, jfloat x, jfloat y, jfloat p)
-{
-    Android_OnTouch(action, x, y, p);
-}
-
 // Accelerometer
 extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onAccel(
                                     JNIEnv* env, jclass jcls,

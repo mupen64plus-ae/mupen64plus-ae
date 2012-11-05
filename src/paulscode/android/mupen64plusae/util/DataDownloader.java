@@ -145,9 +145,9 @@ public class DataDownloader extends Thread
             Log.i( "DataDownloader", "Processing download " + downloadUrls[downloadUrlIndex] );
             url = downloadUrls[downloadUrlIndex];
             doNotUnzip = false;
-            if( url.indexOf( ":" ) == 0 )
+            if( url.indexOf( ':' ) == 0 )
             {
-                url = url.substring( url.indexOf( ":", 1 ) + 1 );
+                url = url.substring( url.indexOf( ':', 1 ) + 1 );
                 doNotUnzip = true;
             }
             mStatus.setText( res.getString( R.string.connecting_to, url ) );
@@ -333,14 +333,14 @@ public class DataDownloader extends Thread
     {
         String path;
         path = getOutFilePath( downloadUrls[downloadUrlIndex].substring( 1,
-                downloadUrls[downloadUrlIndex].indexOf( ":", 1 ) ) );
+                downloadUrls[downloadUrlIndex].indexOf( ':', 1 ) ) );
         Log.i( "DataDownloader", "Saving file '" + path + "'" );
         OutputStream out = null;
         try
         {
             try
             {
-                File outDir = new File( path.substring( 0, path.lastIndexOf( "/" ) ) );
+                File outDir = new File( path.substring( 0, path.lastIndexOf( '/' ) ) );
                 if( !( outDir.exists() && outDir.isDirectory() ) )
                     outDir.mkdirs();
             }
@@ -439,7 +439,7 @@ public class DataDownloader extends Thread
             Log.i( "DataDownloader", "Saving file '" + path + "'" );
             try
             {
-                File outDir = new File( path.substring( 0, path.lastIndexOf( "/" ) ) );
+                File outDir = new File( path.substring( 0, path.lastIndexOf( '/' ) ) );
                 if( !( outDir.exists() && outDir.isDirectory() ) )
                     outDir.mkdirs();
             }

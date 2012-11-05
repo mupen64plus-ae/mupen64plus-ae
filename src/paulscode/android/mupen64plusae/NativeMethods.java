@@ -38,13 +38,6 @@ public class NativeMethods
     // *************************************************
     // *************************************************
     
-    // TODO: Remove these functions on JNI side?
-    // public static native void onKeyDown( int keycode );
-    // public static native void onKeyUp( int keycode );
-    // public static native void onSDLKeyDown( int keycode );
-    // public static native void onSDLKeyUp( int keycode );
-    // public static native void onTouch( int action, float x, float y, float p );
-    
     public static native void fileLoadEmulator( String filename );
     
     public static native void fileSaveEmulator( String filename );
