@@ -192,7 +192,7 @@ public class TouchMap
     {
         // Fraction of full-throttle, clamped to range [0-1]
         float p = ( displacement - analogDeadzone ) / (float) ( analogMaximum - analogDeadzone );
-        return Math.max( Math.min( p, 1 ), 0 );
+        return Utility.clamp(p, 0, 1);
     }
     
     public boolean isAnalogCaptured( float displacement )

@@ -24,6 +24,7 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.util.Log;
@@ -123,8 +124,8 @@ public class VisibleTouchMap extends TouchMap
     
     public void updateFps( int fps )
     {
-        // Clamp to positive, four digits max
-        fps = Math.max( Math.min( fps, 9999 ), 0 );
+        // Clamp to positive, four digits max [0 - 9999]
+        fps = Utility.clamp(fps, 0, 9999);
         
         // Quick return if user has disabled FPS or it hasn't changed
         if( !Globals.userPrefs.isFrameRateEnabled || fpsValue == fps )
