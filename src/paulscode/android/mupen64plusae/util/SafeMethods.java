@@ -28,6 +28,30 @@ import android.os.Handler;
 public class SafeMethods
 {
     /**
+     * Safely converts a string into a boolean.
+     * 
+     * @param val String containing the boolean to convert.
+     * @param fail Value to use if unable to convert val to a boolean.
+     * @return The converted boolean, or the specified value if unsuccessful.
+     */
+    public static boolean toBoolean( String val, boolean fail )
+    {
+        if( val == null || val.length() < 1 )
+            return fail; // Not a boolean
+        
+        try
+        {
+            // Convert to boolean
+            return Boolean.valueOf( val );
+        }
+        catch( NumberFormatException nfe )
+        {
+        }
+        // Conversion failed
+        return fail;
+    }
+
+    /**
      * Safely converts a string into an integer.
      * 
      * @param val String containing the number to convert.
@@ -41,20 +65,21 @@ public class SafeMethods
         
         try
         {
-            return Integer.valueOf( val ); // Convert to integer
+            // Convert to integer
+            return Integer.valueOf( val );
         }
         catch( NumberFormatException nfe )
         {
         }
-        
-        return fail; // Conversion failed
+        // Conversion failed
+        return fail;
     }
 
     /**
      * Safely converts a string into a float.
      * 
      * @param val String containing the number to convert.
-     * @param fail Value to use if unable to convert val to an float.
+     * @param fail Value to use if unable to convert val to a float.
      * @return The converted float, or the specified value if unsuccessful.
      */
     public static float toFloat( String val, float fail )
@@ -64,13 +89,14 @@ public class SafeMethods
         
         try
         {
-            return Float.valueOf( val ); // Convert to float
+            // Convert to float
+            return Float.valueOf( val );
         }
         catch( NumberFormatException nfe )
         {
         }
-        
-        return fail; // Conversion failed
+        // Conversion failed
+        return fail;
     }
     
     /**

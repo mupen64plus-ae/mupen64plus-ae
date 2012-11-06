@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae.input.transform;
 
 import paulscode.android.mupen64plusae.InputMapPreference;
 import paulscode.android.mupen64plusae.input.AbstractController;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.util.SparseIntArray;
 
@@ -52,6 +53,11 @@ public class InputMap
     // Bidirectional map implementation and listener management
     private int[] mN64ToCode;
     private SparseIntArray mCodeToN64;
+    
+    // Enabled/disabled state
+    private boolean mEnabled;
+    
+    // Listener management
     private SubscriptionManager<Listener> mPublisher;
     
     public InputMap()
@@ -75,6 +81,16 @@ public class InputMap
     public int[] getMappedInputCodes()
     {
         return mN64ToCode.clone();
+    }
+    
+    public boolean isEnabled()
+    {
+        return mEnabled;
+    }
+    
+    public void setEnabled( boolean value )
+    {
+        mEnabled = value;
     }
     
     public void mapInput( int n64Index, int inputCode )
@@ -105,6 +121,7 @@ public class InputMap
         {
             result += mN64ToCode[i] + ",";
         }
+        result += mEnabled;
         return result;
     }
     
@@ -118,24 +135,18 @@ public class InputMap
         if( s != null )
         {
             String[] strings = s.split( "," );
+            
+            // Read the button mappings
             for( int i = 0; i < Math.min( NUM_INPUTS, strings.length ); i++ )
-                mapInput( safeParse( strings[i], 0 ), i, false );
+                mapInput( SafeMethods.toInt( strings[i], 0 ), i, false );
+            
+            // Read the enabled state
+            if( strings.length > mN64ToCode.length )
+                mEnabled = SafeMethods.toBoolean( strings[mN64ToCode.length], false );
         }
         
         // Notify the listeners that the map has changed
         notifyListeners();
-    }
-    
-    private int safeParse( String s, int defaultValue )
-    {
-        try
-        {
-            return Integer.parseInt( s );
-        }
-        catch( NumberFormatException ex )
-        {
-            return defaultValue;
-        }
     }
     
     private void mapInput( int inputCode, int n64Index, boolean notify )

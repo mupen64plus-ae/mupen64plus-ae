@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
+import android.widget.Checkable;
 import android.widget.TextView;
 
 public class InputMapPreference extends DialogPreference implements AbstractTransform.Listener,
@@ -52,6 +53,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     private float mLastStrength = 0;
     private float[] mStrengthBiases;
     private Button[] mN64ToButton = new Button[InputMap.NUM_INPUTS];
+    private View mToggleWidget;
     private TextView mFeedbackText;
     private KeyTransform mTransform;
     
@@ -59,19 +61,35 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     {
         super( context, attrs );
         setDialogLayoutResource( R.layout.input_map_preference );
+        setWidgetLayoutResource( R.layout.widget_toggle );
+    }
+    
+    @Override
+    protected void onBindView( View view )
+    {
+        // This is where we set up the view seen in the preference menu
+        super.onBindView( view );
+        
+        // Restore existing state
+        mMap.deserialize( getPersistedString( "" ) );
+        
+        // Get the toggle widget and set its state
+        mToggleWidget = view.findViewById( R.id.widgetToggle );
+        mToggleWidget.setOnClickListener( this );
+        ( (Checkable) mToggleWidget ).setChecked( mMap.isEnabled() );
     }
     
     @TargetApi( 12 )
     @Override
     protected void onBindDialogView( View view )
     {
-        // Our first guaranteed opportunity to access a non-null View
+        // This is where we set up the dialog view seen when the pref menu item is clicked
         super.onBindDialogView( view );
         
-        // Restore existing state
+        // Restore existing state (might have canceled last dialog)
         mMap.deserialize( getPersistedString( "" ) );
         
-        // Get the textview object
+        // Get the text view object
         mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
         
         // Create a button map to simplify highlighting
@@ -211,11 +229,21 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     @Override
     public void onClick( View view )
     {
+        // Handle the toggle button in the preferences menu
+        if( view.equals( mToggleWidget ) )
+        {
+            boolean isEnabled = ( (Checkable) mToggleWidget ).isChecked();
+            mMap.setEnabled( isEnabled );
+            persistString( mMap.serialize() );
+            return;
+        }
+        
+        // Else, handle the mapping buttons in the dialog
         // Never unmap via regular click (would be confusing)
         if( mInputCodeToBeMapped == 0 )
             return;
         
-        // Find the Button view that was touched and map it
+        // Find the button that was touched and map it
         for( int i = 0; i < mN64ToButton.length; i++ )
         {
             if( mN64ToButton[i] == view )
