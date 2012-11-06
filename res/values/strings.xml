@@ -34,6 +34,7 @@
     <string name="_advanced">Advanced</string>
     <string name="_other">Other</string>
     <string name="_initializing">Initializing</string>
+    <string name="_confirmation">Confirmation</string>
     
     <!-- ******************************************** -->
     <!-- Menu Strings                                 -->
@@ -202,25 +203,25 @@
     <!-- Other Strings                                -->
     <!-- ******************************************** -->
     
-    <!-- Download Messages (DataDownloader.java) -->
-    <string name="connecting_to">Connecting to %1$s</string>
-    <string name="dl_finished">Finished</string>
-    <string name="dl_from">Downloading data from %1$s</string>
-    <string name="dl_progress">%1$.0f%% done: file %2$s</string>
-    <string name="download_unneeded">No need to download</string>
-    <string name="error_dl_from">Error downloading data from %1$s</string>
-    <string name="error_write">Write error (plugged in USB Mass Storage Device mode?) %1$s</string>
-    <string name="failed_connecting_to">Failed connecting to %1$s</string>
-    
-    <!-- In-Game Messages (GameActivity.java) -->
-    <string name="mupen64plus_started">Mupen64Plus started</string>
-    <string name="savegame_slot">Savegame slot %1$d</string>
-    <string name="saving_game">Saving game</string>
-    <string name="illegal_audio_state">Audio track illegal state.  Please report at paulscode.com.</string>
-    <string name="app_data_inaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
+    <!-- In-Game Toast Messages (GameImplementation.java, SDLSurface.java) -->
+    <string name="toast_appStarted">Mupen64Plus started</string>
+    <string name="toast_resumingSession">Resuming session</string>
+    <string name="toast_savegameSlot">Savegame slot %1$d</string>
+    <string name="toast_savingGame">Saving game</string>
+    <string name="toast_savingSession">Saving session</string>    
+    <string name="toast_sdInaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
     
     <!-- Other Strings -->
+    <string name="dataDownloader_connectingTo">Connecting to %1$s</string>
+    <string name="dataDownloader_downloadingFrom">Downloading data from %1$s</string>
+    <string name="dataDownloader_downloadUnneeded">No need to download</string>
+    <string name="dataDownloader_errorDownloadingFrom">Error downloading data from %1$s</string>
+    <string name="dataDownloader_errorWrite">Write error (plugged in USB Mass Storage Device mode?) %1$s</string>
+    <string name="dataDownloader_failedConnectingTo">Failed connecting to %1$s</string>
+    <string name="dataDownloader_finished">Finished</string>
+    <string name="dataDownloader_progress">%1$.0f%% done: file %2$s</string>
+    <string name="gameImplementation_confirmFile">Overwrite %1$s?</string>
+    <string name="gameImplementation_saveHint">filename</string>
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>    
-    <string name="gameActivity_ticker">%1$s is running</string>
     
 </resources>

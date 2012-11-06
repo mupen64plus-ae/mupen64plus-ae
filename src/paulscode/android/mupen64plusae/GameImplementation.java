@@ -132,7 +132,7 @@ public class GameImplementation implements View.OnKeyListener
         CoreInterface.startup( mActivity, mSdlSurface, vibrator );
         
         // Notify user that the game activity has started
-        Notifier.showToast( mActivity.getString( R.string.mupen64plus_started ), mActivity );
+        Notifier.showToast( mActivity, R.string.toast_appStarted );
     }
     
     public void onCreateOptionsMenu( Menu menu )
@@ -314,7 +314,7 @@ public class GameImplementation implements View.OnKeyListener
         mSlot = value % NUM_SLOTS;
         NativeMethods.stateSetSlotEmulator( mSlot );
         if( notify )
-            Notifier.showToast( mActivity.getString( R.string.savegame_slot, mSlot ), mActivity );
+            Notifier.showToast( mActivity, R.string.toast_savegameSlot, mSlot );
         if( mSlotMenuItem != null )
             mSlotMenuItem.setTitle( mActivity.getString( R.string.ingameSlot_title, mSlot ) );
     }
@@ -326,7 +326,7 @@ public class GameImplementation implements View.OnKeyListener
         
         // Pop up a toast message
         if( mActivity != null )
-            Notifier.showToast( mActivity.getString( R.string.saving_game ), mActivity );
+            Notifier.showToast( mActivity, R.string.toast_savingGame );
         
         // Call the native method to save the emulator state
         NativeMethods.fileSaveEmulator( Globals.userPrefs.selectedGameAutoSavefile );
@@ -349,9 +349,9 @@ public class GameImplementation implements View.OnKeyListener
     
     private void saveStateToFile()
     {
-        // TODO: localize strings
-        Prompt.promptText( mActivity, mActivity.getText( R.string.ingameSave_title ), null,
-                "filename", new OnTextListener()
+        CharSequence title = mActivity.getText( R.string.ingameSave_title );
+        CharSequence hint = mActivity.getText( R.string.gameImplementation_saveHint );
+        Prompt.promptText( mActivity, title, null, hint, new OnTextListener()
                 {
                     @Override
                     public void onText( CharSequence text )
@@ -363,11 +363,12 @@ public class GameImplementation implements View.OnKeyListener
     
     private void saveStateToFile( final String filename )
     {
-        // TODO: localize strings
         final File file = new File( Globals.userPrefs.gameSaveDir + "/" + filename );
         if( file.exists() )
         {
-            Prompt.promptConfirm( mActivity, "Confirmation", "Overwrite " + filename + "?",
+            String title = mActivity.getString( R.string._confirmation );
+            String message = mActivity.getString( R.string.gameImplementation_confirmFile, filename );
+            Prompt.promptConfirm( mActivity, title, message,
                     new OnClickListener()
                     {
                         @Override

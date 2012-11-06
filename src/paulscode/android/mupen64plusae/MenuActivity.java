@@ -111,9 +111,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             // Launch the last game in a new activity
             if( !Globals.paths.isSdCardAccessible() )
             {
-                Log.e( "MenuActivity",
-                        "SD Card not accessable in method onPreferenceClick (menuResume)" );
-                Notifier.showToast( getString( R.string.app_data_inaccessible ), this );
+                Log.e( "MenuActivity", "SD Card not accessable in MenuResume.onPreferenceClick" );
+                Notifier.showToast( this, R.string.toast_sdInaccessible );
                 return true;
             }
             

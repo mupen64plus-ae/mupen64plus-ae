@@ -122,7 +122,7 @@ public class DataDownloader extends Thread
         String path = getOutFilePath( downloadFlagFileName );
         if( !isDownloadRequired( downloadUrls, path ) )
         {
-            mStatus.setText( res.getString( R.string.download_unneeded ) );
+            mStatus.setText( res.getString( R.string.dataDownloader_downloadUnneeded ) );
             return true;
         }
         
@@ -150,7 +150,7 @@ public class DataDownloader extends Thread
                 url = url.substring( url.indexOf( ':', 1 ) + 1 );
                 doNotUnzip = true;
             }
-            mStatus.setText( res.getString( R.string.connecting_to, url ) );
+            mStatus.setText( res.getString( R.string.dataDownloader_connectingTo, url ) );
             if( !url.contains( "http://" ) && !url.contains( "https://" ) ) // File inside assets
             {
                 Log.i( "DataDownloader", "Fetching file from assets: " + url );
@@ -205,7 +205,7 @@ public class DataDownloader extends Thread
             {
                 Log.e( "DataDownloader",
                         "Unpacking from assets '" + url + "' - error: " + e.toString() );
-                mStatus.setText( res.getString( R.string.error_dl_from, url ) );
+                mStatus.setText( res.getString( R.string.dataDownloader_errorDownloadingFrom, url ) );
                 return false;
             }
         }
@@ -214,10 +214,10 @@ public class DataDownloader extends Thread
             if( response == null )
             {
                 Log.e( "DataDownloader", "Error connecting to " + url );
-                mStatus.setText( res.getString( R.string.failed_connecting_to, url ) );
+                mStatus.setText( res.getString( R.string.dataDownloader_failedConnectingTo, url ) );
                 return false;
             }
-            mStatus.setText( res.getString( R.string.dl_from, url ) );
+            mStatus.setText( res.getString( R.string.dataDownloader_downloadingFrom, url ) );
             totalLen = response.getEntity().getContentLength();
             try
             {
@@ -225,7 +225,7 @@ public class DataDownloader extends Thread
             }
             catch( IOException e )
             {
-                mStatus.setText( res.getString( R.string.error_dl_from, url ) );
+                mStatus.setText( res.getString( R.string.dataDownloader_errorDownloadingFrom, url ) );
                 return false;
             }
         }
@@ -244,7 +244,7 @@ public class DataDownloader extends Thread
         if( !writeOutput( downloadFlagFileName, res, downloadUrls, downloadUrlIndex ) )
             return false;
         
-        mStatus.setText( res.getString( R.string.dl_finished ) );
+        mStatus.setText( res.getString( R.string.dataDownloader_finished ) );
         try
         {
             stream.close();
@@ -362,7 +362,7 @@ public class DataDownloader extends Thread
         
         if( out == null )
         {
-            mStatus.setText( res.getString( R.string.error_write, path ) );
+            mStatus.setText( res.getString( R.string.dataDownloader_errorWrite, path ) );
             Log.e( "DataDownloader", "Saving file '" + path + "' - error creating output file" );
             return false;
         }
@@ -377,7 +377,7 @@ public class DataDownloader extends Thread
                 float percent = 0.0f;
                 if( totalLen > 0 )
                     percent = stream.getBytesRead() * 100.0f / totalLen;
-                mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
+                mStatus.setText( res.getString( R.string.dataDownloader_progress, percent, path ) );
             }
             out.flush();
             out.close();
@@ -385,7 +385,7 @@ public class DataDownloader extends Thread
         }
         catch( IOException e )
         {
-            mStatus.setText( res.getString( R.string.error_write, path ) );
+            mStatus.setText( res.getString( R.string.dataDownloader_errorWrite, path ) );
             Log.e( "DataDownloader", "Saving file '" + path + "' - error writing: " + e.toString() );
             return false;
         }
@@ -410,7 +410,7 @@ public class DataDownloader extends Thread
             }
             catch( IOException e )
             {
-                mStatus.setText( res.getString( R.string.error_dl_from, url ) );
+                mStatus.setText( res.getString( R.string.dataDownloader_errorDownloadingFrom, url ) );
                 Log.e( "DataDownloader",
                         "Error reading from zip file '" + url + "': " + e.toString() );
                 return false;
@@ -485,14 +485,14 @@ public class DataDownloader extends Thread
             
             if( out == null )
             {
-                mStatus.setText( res.getString( R.string.error_write, path ) );
+                mStatus.setText( res.getString( R.string.dataDownloader_errorWrite, path ) );
                 Log.e( "DataDownloader", "Saving file '" + path + "' - cannot create file" );
                 return false;
             }
             float percent = 0.0f;
             if( totalLen > 0 )
                 percent = stream.getBytesRead() * 100.0f / totalLen;
-            mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
+            mStatus.setText( res.getString( R.string.dataDownloader_progress, percent, path ) );
             try
             {
                 int len = zip.read( buf );
@@ -504,7 +504,7 @@ public class DataDownloader extends Thread
                     percent = 0.0f;
                     if( totalLen > 0 )
                         percent = stream.getBytesRead() * 100.0f / totalLen;
-                    mStatus.setText( res.getString( R.string.dl_progress, percent, path ) );
+                    mStatus.setText( res.getString( R.string.dataDownloader_progress, percent, path ) );
                 }
                 out.flush();
                 out.close();
@@ -512,7 +512,7 @@ public class DataDownloader extends Thread
             }
             catch( IOException e )
             {
-                mStatus.setText( res.getString( R.string.error_write, path ) );
+                mStatus.setText( res.getString( R.string.dataDownloader_errorWrite, path ) );
                 Log.e( "DataDownloader", "Saving file '" + path
                         + "' - error writing or downloading: " + e.toString() );
                 return false;
@@ -535,7 +535,7 @@ public class DataDownloader extends Thread
             }
             catch( Exception e )
             {
-                mStatus.setText( res.getString( R.string.error_write, path ) );
+                mStatus.setText( res.getString( R.string.dataDownloader_errorWrite, path ) );
                 Log.e( "DataDownloader", "Saving file '" + path + "' - CRC check failed" );
                 return false;
             }
@@ -565,7 +565,7 @@ public class DataDownloader extends Thread
         }
         catch( IOException e )
         {
-            mStatus.setText( res.getString( R.string.error_write, path ) );
+            mStatus.setText( res.getString( R.string.dataDownloader_errorWrite, path ) );
             return false;
         }
         return true;

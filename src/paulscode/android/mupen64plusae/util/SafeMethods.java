@@ -124,7 +124,7 @@ public class SafeMethods
      */
     public static void exit( String message, Activity activity, int milliseconds )
     {
-        Notifier.showToast( message, activity );
+        Notifier.showToast( activity, message );
         final Handler handler = new Handler();
         handler.postDelayed( new Runnable()
         {

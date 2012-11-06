@@ -177,7 +177,7 @@ public class CoreInterface
     public static void showToast( String message )
     {
         if( sActivity != null )
-            Notifier.showToast( message, sActivity );
+            Notifier.showToast( sActivity, message );
     }
     
     public static void vibrate( boolean active )

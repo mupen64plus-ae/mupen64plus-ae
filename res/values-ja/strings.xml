@@ -40,8 +40,8 @@
     <!-- ******************************************** -->
     
     <!-- In-Game Menu (GameActivity.java) -->
-    <string name="ingameSave_title">保存</string>
-    <string name="ingameLoad_title">ロード</string>
+    <string name="ingameQuicksave_title">保存</string>
+    <string name="ingameQuickload_title">ロード</string>
     <string name="ingameSlot_title">%1$dスロット</string>
     <string name="ingameMenu_title">メニュー</string>
     
@@ -115,7 +115,6 @@
     
     <!-- GLES2N64 Menu -->
     <string name="gles2N64Frameskip_title">フレームスキップ</string>
-    <string name="gles2N64Frameskip_summary">FPSのコストで速度が向上します</string>
     <string name="gles2N64Fog_title">霧</string>
     <string name="gles2N64Fog_summary">(WIP)</string>
     <string name="gles2N64Sai_title">2xSaiテクスチャフィルタ</string>
@@ -186,21 +185,20 @@
     <!-- Other Strings                                -->
     <!-- ******************************************** -->
     
-    <!-- Download Messages (DataDownloader.java) -->
-    <string name="connecting_to">%1$sへの接続</string>
-    <string name="dl_finished">完成した</string>
-    <string name="dl_from">%1$sからデータをダウンロードします</string>
-    <string name="dl_progress">%1$.0f%% が行わ: ファイル %2$s</string>
-    <string name="download_unneeded">ダウンロードする必要はありません</string>
-    <string name="error_dl_from">%1$sからデータをダウンロード中にエラー</string>
-    <string name="error_write">書き込みエラー (USBストレージ·モードのデバイスですか？) %1$s</string>
-    <string name="failed_connecting_to">%1$sに接続できません</string>
+    <!-- In-Game Toast Messages (GameImplementation.java, SDLSurface.java) -->
+    <string name="toast_appStarted">Mupen64Plusが起動した</string>
+    <string name="toast_savegameSlot">%1$dセーブデータスロット</string>
+    <string name="toast_savingGame">ゲームを保存</string>
+    <string name="toast_sdInaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
     
-    <!-- In-Game Messages (GameActivity.java) -->
-    <string name="mupen64plus_started">Mupen64Plusが起動した</string>
-    <string name="savegame_slot">%1$dセーブデータスロット</string>
-    <string name="saving_game">ゲームを保存</string>
-    <string name="illegal_audio_state">オーディオトラックが不正な状態。 paulscode.comに問題を報告してください</string>
-    <string name="app_data_inaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
+    <!-- Other Strings -->
+    <string name="dataDownloader_connectingTo">%1$sへの接続</string>
+    <string name="dataDownloader_finished">完成した</string>
+    <string name="dataDownloader_downloadingFrom">%1$sからデータをダウンロードします</string>
+    <string name="dataDownloader_progress">%1$.0f%% が行わ: ファイル %2$s</string>
+    <string name="dataDownloader_downloadUnneeded">ダウンロードする必要はありません</string>
+    <string name="dataDownloader_errorDownloadingFrom">%1$sからデータをダウンロード中にエラー</string>
+    <string name="dataDownloader_errorWrite">書き込みエラー (USBストレージ·モードのデバイスですか？) %1$s</string>
+    <string name="dataDownloader_failedConnectingTo">%1$sに接続できません</string>
     
 </resources>

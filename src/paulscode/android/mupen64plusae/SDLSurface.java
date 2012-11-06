@@ -28,8 +28,10 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
+import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
@@ -41,7 +43,7 @@ import android.view.SurfaceView;
 /**
  * Represents a graphical area of memory that can be drawn to. </p> This is what we draw on, so we
  * need to know when it's created in order to do anything useful. </p> Because of this, that's where
- * we set up the SDL thread
+ * we set up the SDL thread.
  */
 public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -88,7 +90,26 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         }
         while( !mBuffFlipped && NativeMethods.stateEmulator() == CoreInterface.EMULATOR_STATE_PAUSED );
     }
-
+    
+    private void resumeLastSession()
+    {
+        while( !CoreInterface.finishedReading )
+            SafeMethods.sleep( 40 );
+        
+        while( NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_RUNNING )
+            SafeMethods.sleep( 40 );
+        
+        mBuffFlipped = false;
+        while( !mBuffFlipped )
+            SafeMethods.sleep( 40 );
+        
+        Log.v( "SDLSurface", "Resuming last session" );
+        Notifier.showToast( (Activity) getContext(), R.string.toast_resumingSession );
+        
+        // TODO: This line crashes the app (maybe due to broken save/load issues)
+        // NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+    }
+    
     // Called when we have a valid drawing surface
     @Override
     public void surfaceCreated( SurfaceHolder holder )
@@ -155,31 +176,15 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         mSDLThread.start();
         
         // Resume last game if user is auto-saving and the auto-savefile exists
-        if( Globals.userPrefs.isAutoSaveEnabled &&
-                new File( Globals.userPrefs.selectedGameAutoSavefile ).exists() )
+        if( Globals.userPrefs.isAutoSaveEnabled
+                && new File( Globals.userPrefs.selectedGameAutoSavefile ).exists() )
         {
             new Thread( "ResumeSessionThread" )
             {
                 @Override
                 public void run()
                 {
-                    while( !CoreInterface.finishedReading )
-                        SafeMethods.sleep( 40 );
-                   
-                    while( NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_RUNNING )
-                        SafeMethods.sleep( 40 );
-                    
-                    mBuffFlipped = false;
-                    while( !mBuffFlipped )
-                        SafeMethods.sleep( 40 );
-                    
-                    Log.v( "SDLSurface", "Resuming last session" );
-                    
-                    // TODO: localize toast string
-                    CoreInterface.showToast( "Resuming last session" );
-                    
-                    // TODO: This line crashes the app (maybe due to broken save/load issues)
-                    //NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+                    resumeLastSession();
                 }
             }.start();
         }
@@ -205,7 +210,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
             mSDLThread = null;
         }
     }
-
+    
     @Override
     public void onDraw( Canvas canvas )
     {
