@@ -45,6 +45,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String MENU_RESET_USER_PREFS = "menuResetUserPrefs";
     private static final String MENU_RESET_APP_DATA = "menuResetAppData";
     private static final String MENU_DEVICE_INFO = "menuDeviceInfo";
+    private static final String MENU_PERIPHERAL_INFO = "menuPeripheralInfo";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     private static final String XPERIA_PLUGIN = "xperiaPlugin";
@@ -77,6 +78,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         findPreference( MENU_RESET_USER_PREFS ).setOnPreferenceClickListener( this );
         findPreference( MENU_RESET_APP_DATA ).setOnPreferenceClickListener( this );
         findPreference( MENU_DEVICE_INFO ).setOnPreferenceClickListener( this );
+        findPreference( MENU_PERIPHERAL_INFO ).setOnPreferenceClickListener( this );
         
         // Disable the Xperia PLAY menu item if appropriate
         if( !isXperiaPlay )
@@ -150,6 +152,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             new Builder( this ).setTitle( this.getString( R.string.menuDeviceInfo_title ) )
                     .setMessage( Utility.getCpuInfo() ).create().show();
+        }
+        else if( key.equals( MENU_PERIPHERAL_INFO ) )
+        {
+            new Builder( this ).setTitle( this.getString( R.string.menuPeripheralInfo_title ) )
+                    .setMessage( Utility.getPeripheralInfo( this ) ).create().show();
         }
         return false;
     }

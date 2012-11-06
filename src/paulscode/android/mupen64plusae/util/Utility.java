@@ -6,20 +6,27 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.InputDevice;
+import android.view.InputDevice.MotionRange;
+import android.view.MotionEvent;
 
 /**
- * Utility class which collects a bunch
- * of commonly used methods into one class.
+ * Utility class which collects a bunch of commonly used methods into one class.
  */
 public class Utility
 {
@@ -33,9 +40,9 @@ public class Utility
      * @return If the number is lower than min, min is returned. </p>
      *         If the number is higher than max, max is returned.
      */
-    public static int clamp(int val, int min, int max)
+    public static int clamp( int val, int min, int max )
     {
-        return Math.max(Math.min(val, max), min);
+        return Math.max( Math.min( val, max ), min );
     }
     
     /**
@@ -48,9 +55,9 @@ public class Utility
      * @return If the number is lower than min, min is returned. </p>
      *         If the number is larger than max, max is returned.
      */
-    public static float clamp(float val, float min, float max)
+    public static float clamp( float val, float min, float max )
     {
-        return Math.max(Math.min(val, max), min);
+        return Math.max( Math.min( val, max ), min );
     }
     
     public static Point constrainToOctagon( int dX, int dY, int halfWidth )
@@ -71,7 +78,7 @@ public class Utility
         
         return crossPt;
     }
-
+    
     /**
      * Determines if the two specified line segments intersect with each other, and calculates where
      * the intersection occurs if they do.
@@ -117,7 +124,7 @@ public class Utility
         // Segments don't cross
         return false;
     }
-
+    
     /**
      * Gets the hardware information from /proc/cpuinfo.
      * 
@@ -147,7 +154,84 @@ public class Utility
         }
         return result;
     }
-
+    
+    /**
+     * Gets the peripheral information from the appropriate Android API.
+     * 
+     * @return the peripheral info string
+     */
+    @TargetApi( 16 )
+    public static String getPeripheralInfo( Activity activity )
+    {
+        boolean isGingerbread = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
+        boolean isHoneycombMR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
+        boolean isJellyBean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+        
+        StringBuilder builder = new StringBuilder();
+        
+        if( isGingerbread )
+        {
+            int[] ids = InputDevice.getDeviceIds();
+            for( int i = 0; i < ids.length; i++ )
+            {
+                InputDevice device = InputDevice.getDevice( ids[i] );
+                
+                if( !isJellyBean || !device.isVirtual() )
+                {
+                    // HoneycombMR1 can use getMotionRanges(), but this simplifies back-compat
+                    List<MotionRange> ranges = new ArrayList<MotionRange>();
+                    for( int j = 0; j < 256; j++ )
+                    {
+                        if( device.getMotionRange( j ) != null )
+                            ranges.add( device.getMotionRange( j ) );
+                    }
+                    
+                    if( ranges.size() > 0 )
+                    {
+                        builder.append( "Device: " + device.getName() + "\r\n" );
+                        builder.append( "Id: " + device.getId() + "\r\n" );
+                        if( isJellyBean && device.getVibrator().hasVibrator() )
+                        {
+                            builder.append( "Vibrator: true\r\n" );
+                        }
+                        builder.append( "Axes: " + ranges.size() + "\r\n" );
+                        for( int j = 0; j < ranges.size(); j++ )
+                        {
+                            MotionRange range = ranges.get( j );
+                            String axisName = isHoneycombMR1
+                                    ? MotionEvent.axisToString( range.getAxis() )
+                                    : ( "Axis " + range.getAxis() );
+                            builder.append( "  " + axisName + ": ( " + range.getMin() + " , "
+                                    + range.getMax() + " )\r\n" );
+                        }
+                        builder.append( "\r\n" );
+                    }
+                }
+            }
+        }
+        
+        // if( isHoneycombMR1 )
+        // {
+        // builder.append( "USB Devices:\r\n\r\n" );
+        // UsbManager manager = (UsbManager) activity.getSystemService( Context.USB_SERVICE );
+        // HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+        // for( String key : deviceList.keySet() )
+        // {
+        // UsbDevice device = deviceList.get( key );
+        // builder.append( "DeviceName: " + device.getDeviceName() + "\r\n" );
+        // builder.append( "DeviceId: " + device.getDeviceId() + "\r\n" );
+        // builder.append( "DeviceClass: " + device.getDeviceClass() + "\r\n" );
+        // builder.append( "DeviceSubclass: " + device.getDeviceSubclass() + "\r\n" );
+        // builder.append( "DeviceProtocol: " + device.getDeviceProtocol() + "\r\n" );
+        // builder.append( "VendorId: " + device.getVendorId() + "\r\n" );
+        // builder.append( "ProductId: " + device.getProductId() + "\r\n" );
+        // builder.append( "\r\n" );
+        // }
+        // }
+        
+        return builder.toString();
+    }
+    
     public static String getHeaderName( String filename )
     {
         ErrorLogger.put( "READ_HEADER", "fail", "" );
@@ -272,16 +356,16 @@ public class Utility
         if( CRC == null || CRC.length() < 3 )
             return null;
         
-        // The CRC should always contain a space, and it 
+        // The CRC should always contain a space, and it
         // shouldn't be the last character
         int x = CRC.indexOf( ' ' );
         if( x < 1 || x >= CRC.length() - 1 )
             return null;
-
+        
         // We probably have the full CRC, just upper-case it.
         if( CRC.length() == 17 )
             return CRC.toUpperCase();
-            
+        
         String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase().trim();
         String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase().trim();
         return CRC_1.substring( CRC_1.length() - 8, CRC_1.length() ) + " "

@@ -41,7 +41,7 @@
     To minimize app size, consider using Android's built-in resources when possible.
     For example, consider icon resources in "@android:drawable/..." instead of custom
     resources in "@drawable/...".       
-    ***********************************************************************************
+    ***********************************************************************************
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae" >
@@ -148,7 +148,7 @@
                 android:title="@string/inputMap4_title" />
 
             <Preference
-                android:dependency="inputEnabled"
+                android:dependency="developerEnabled"
                 android:key="inputMapSpecial"
                 android:summary="@string/inputMapSpecial_summary"
                 android:title="@string/inputMapSpecial_title" />
@@ -159,6 +159,11 @@
                 android:key="volumeKeysEnabled"
                 android:summary="@string/volumeKeysEnabled_summary"
                 android:title="@string/volumeKeysEnabled_title" />
+
+            <Preference
+                android:key="menuPeripheralInfo"
+                android:summary="@string/menuPeripheralInfo_summary"
+                android:title="@string/menuPeripheralInfo_title" />
         </PreferenceScreen>
         <PreferenceScreen
             android:icon="@drawable/ic_picture"
