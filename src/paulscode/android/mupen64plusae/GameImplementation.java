@@ -23,6 +23,7 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
+import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -57,7 +58,11 @@ public class GameImplementation implements View.OnKeyListener
     private TouchscreenView mTouchscreenView;
     @SuppressWarnings( "unused" )
     private TouchscreenController mTouchscreenController;
+    private KeyTransform mKeyTransform;
     private PeripheralController mPeripheralController1;
+    private PeripheralController mPeripheralController2;
+    private PeripheralController mPeripheralController3;
+    private PeripheralController mPeripheralController4;
     private MenuItem mSlotMenuItem;
     private int mSlot = 0;
     private static final int NUM_SLOTS = 10;
@@ -116,28 +121,8 @@ public class GameImplementation implements View.OnKeyListener
             FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin );
         
         // Initialize user interface devices
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR
-                && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
-        {
-            // The touch map and view are needed to display frame rate and/or controls
-            mTouchscreenMap = new VisibleTouchMap();
-            mTouchscreenMap.setResources( mActivity.getResources() );
-            mTouchscreenMap.load( Globals.userPrefs.touchscreenLayoutFolder );
-            mTouchscreenView.initialize( mTouchscreenMap );
-            mSdlSurface.initialize( mTouchscreenMap );
-            
-            // The touch controller is needed to handle touch events
-            if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isTouchscreenEnabled )
-            {
-                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSdlSurface );
-            }
-        }
-        if( Globals.userPrefs.isInputEnabled )
-        {
-            // Create the peripheral controllers
-            mPeripheralController1 = new PeripheralController( mSdlSurface,
-                    Globals.userPrefs.inputMap1, ImeFormula.DEFAULT );
-        }
+        initTouchscreen();
+        initPeripherals();
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controller key listener, to add some extra functionality
@@ -249,13 +234,68 @@ public class GameImplementation implements View.OnKeyListener
                         || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
             return false;
         
-        // Send everything else to the peripheral controller if it exists
-        else if( mPeripheralController1 != null )
-            return mPeripheralController1.onKeyUnderride( view, keyCode, event );
+        // Send everything else to the peripheral controllers via the transform
+        else if( mKeyTransform != null )
+            return mKeyTransform.onKey( view, keyCode, event );
         
         // Let Android handle whatever remains
         else
             return false;
+    }
+    
+    private void initTouchscreen()
+    {
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR
+                && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
+        {
+            // The touch map and view are needed to display frame rate and/or controls
+            mTouchscreenMap = new VisibleTouchMap();
+            mTouchscreenMap.setResources( mActivity.getResources() );
+            mTouchscreenMap.load( Globals.userPrefs.touchscreenLayoutFolder );
+            mTouchscreenView.initialize( mTouchscreenMap );
+            mSdlSurface.initialize( mTouchscreenMap );
+            
+            // The touch controller is needed to handle touch events
+            if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isTouchscreenEnabled )
+            {
+                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSdlSurface );
+            }
+        }
+    }
+    
+    private void initPeripherals()
+    {
+        if( Globals.userPrefs.isInputEnabled )
+        {
+            // Create the common transform used for all peripheral controllers
+            mKeyTransform = PeripheralController.buildTransform( mSdlSurface, ImeFormula.DEFAULT );
+            
+            // Create the peripheral controllers for players 1-4
+            if( Globals.userPrefs.inputMap1.isEnabled() )
+            {
+                mPeripheralController1 = new PeripheralController( Globals.userPrefs.inputMap1,
+                        mKeyTransform );
+                mPeripheralController1.setPlayerNumber( 1 );
+            }
+            if( Globals.userPrefs.inputMap2.isEnabled() )
+            {
+                mPeripheralController2 = new PeripheralController( Globals.userPrefs.inputMap2,
+                        mKeyTransform );
+                mPeripheralController2.setPlayerNumber( 2 );
+            }
+            if( Globals.userPrefs.inputMap3.isEnabled() )
+            {
+                mPeripheralController3 = new PeripheralController( Globals.userPrefs.inputMap3,
+                        mKeyTransform );
+                mPeripheralController3.setPlayerNumber( 3 );
+            }
+            if( Globals.userPrefs.inputMap4.isEnabled() )
+            {
+                mPeripheralController4 = new PeripheralController( Globals.userPrefs.inputMap4,
+                        mKeyTransform );
+                mPeripheralController4.setPlayerNumber( 4 );
+            }
+        }
     }
     
     private void setSlot( int value, MenuItem item )

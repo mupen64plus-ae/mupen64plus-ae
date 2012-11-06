@@ -103,7 +103,6 @@
                 android:key="touchscreenOctagonJoystick"
                 android:summary="@string/touchscreenOctagonJoystick_summary"
                 android:title="@string/touchscreenOctagonJoystick_title" />
-            
         </PreferenceScreen>
         <PreferenceScreen
             android:icon="@drawable/ic_joystick"
@@ -129,7 +128,6 @@
                 android:key="inputMap1"
                 android:summary="@string/inputMap_summary"
                 android:title="@string/inputMap1_title" />
-            <!--
             <paulscode.android.mupen64plusae.InputMapPreference
                 android:dependency="inputEnabled"
                 android:dialogTitle="@string/inputMap_dialogTitle"
@@ -148,20 +146,19 @@
                 android:key="inputMap4"
                 android:summary="@string/inputMap_summary"
                 android:title="@string/inputMap4_title" />
-            -->
+
             <Preference
                 android:dependency="inputEnabled"
                 android:key="inputMapSpecial"
                 android:summary="@string/inputMapSpecial_summary"
                 android:title="@string/inputMapSpecial_title" />
-            
+
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:dependency="inputEnabled"
                 android:key="volumeKeysEnabled"
                 android:summary="@string/volumeKeysEnabled_summary"
                 android:title="@string/volumeKeysEnabled_title" />
-            
         </PreferenceScreen>
         <PreferenceScreen
             android:icon="@drawable/ic_picture"
@@ -304,12 +301,10 @@
                 android:key="menuResetAppData"
                 android:summary="@string/menuResetAppData_summary"
                 android:title="@string/menuResetAppData_title" />
-            
             <Preference
                 android:key="menuDeviceInfo"
                 android:summary="@string/menuDeviceInfo_summary"
                 android:title="@string/menuDeviceInfo_title" />
-            
         </PreferenceScreen>
 
         <PreferenceCategory

@@ -26,7 +26,6 @@ import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
 import android.annotation.TargetApi;
 import android.os.Build;
-import android.view.KeyEvent;
 import android.view.View;
 
 public class PeripheralController extends AbstractController implements AbstractTransform.Listener,
@@ -40,7 +39,36 @@ public class PeripheralController extends AbstractController implements Abstract
     protected float mAxisFractionYneg;
     
     @TargetApi( 12 )
-    public PeripheralController( View view, InputMap inputMap, ImeFormula formula )
+    public static KeyTransform buildTransform( View view, ImeFormula formula )
+    {
+        KeyTransform transform;
+        
+        // Set up input listening
+        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
+        {
+            // For Android 3.0 and below, we can only listen to keyboards
+            transform = new KeyTransform();
+        }
+        else
+        {
+            // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
+            KeyAxisTransform kaTransform = new KeyAxisTransform();
+            
+            // Connect the extra upstream end of the transform
+            view.setOnGenericMotionListener( kaTransform );
+            transform = kaTransform;
+        }
+        
+        // Set the formula for decoding special analog IMEs
+        transform.setImeFormula( ImeFormula.DEFAULT );
+        
+        // Connect the upstream end of the transform
+        view.setOnKeyListener( transform );
+        
+        return transform;
+    }
+    
+    public PeripheralController( InputMap inputMap, KeyTransform transform )
     {
         // Assign the map and listen for changes
         mInputMap = inputMap;
@@ -50,27 +78,8 @@ public class PeripheralController extends AbstractController implements Abstract
             mInputMap.registerListener( this );
         }
         
-        // Set up input listening
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
-        {
-            // For Android 3.0 and below, we can only listen to keyboards
-            mTransform = new KeyTransform();
-        }
-        else
-        {
-            // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            KeyAxisTransform transform = new KeyAxisTransform();
-            
-            // Connect the extra upstream end of the transform
-            view.setOnGenericMotionListener( transform );
-            mTransform = transform;
-        }
-        
-        // Set the formula for decoding special analog IMEs
-        mTransform.setImeFormula( ImeFormula.DEFAULT );
-        
-        // Connect the upstream end of the transform
-        view.setOnKeyListener( mTransform );
+        // Assign the transform
+        mTransform = transform;
         
         // Connect the downstream end of the transform
         mTransform.registerListener( this );
@@ -145,10 +154,5 @@ public class PeripheralController extends AbstractController implements Abstract
             }
         }
         return true;
-    }
-    
-    public boolean onKeyUnderride( View view, int keyCode, KeyEvent event )
-    {
-        return mTransform.onKey( view, keyCode, event );
     }
 }
