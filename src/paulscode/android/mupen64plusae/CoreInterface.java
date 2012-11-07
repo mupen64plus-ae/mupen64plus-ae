@@ -21,8 +21,10 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import paulscode.android.mupen64plusae.input.transform.InputMap;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.Paths;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -71,6 +73,14 @@ public class CoreInterface
     private static Object sAudioBuffer;
     private static String sExtraArgs = ".";
     
+    public static void startup( Activity activity, SDLSurface surface, Vibrator vibrator )
+    {
+        sActivity = activity;
+        sSurface = surface;
+        sVibrator = vibrator;
+        syncConfigFiles( Globals.userPrefs, Globals.paths );
+    }
+    
     public static void shutdown()
     {
         // Actually, this might be a bad idea if other threads are still using these
@@ -80,14 +90,6 @@ public class CoreInterface
         // sAudioThread = null;
         // sAudioTrack = null;
         // sAudioBuffer = null;
-    }
-    
-    public static void startup( Activity activity, SDLSurface surface, Vibrator vibrator )
-    {
-        sActivity = activity;
-        sSurface = surface;
-        sVibrator = vibrator;
-        syncConfigFiles();
     }
     
     public static String getExtraArgs()
@@ -112,16 +114,23 @@ public class CoreInterface
     
     public static Object getRomPath()
     {
+        String selectedGame = Globals.userPrefs.selectedGame;
+        boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
+        boolean isSelectedGameZipped = !isSelectedGameNull
+                && selectedGame.length() > 3
+                && selectedGame.substring( selectedGame.length() - 3, selectedGame.length() )
+                        .equalsIgnoreCase( "zip" );
+        
         if( sActivity == null )
             return null;
         
         finishedReading = false;
-        if( Globals.userPrefs.isSelectedGameNull )
+        if( isSelectedGameNull )
         {
             finishedReading = true;
             SafeMethods.exit( "Invalid ROM", sActivity, 2000 );
         }
-        else if( Globals.userPrefs.isSelectedGameZipped )
+        else if( isSelectedGameZipped )
         {
             // Create the temp folder if it doesn't exist:
             String tmpFolderName = Globals.paths.dataDir + "/tmp";
@@ -136,12 +145,10 @@ public class CoreInterface
             }
             
             // Unzip the ROM
-            Paths.tmpFile = Utility.unzipFirstROM( new File( Globals.userPrefs.selectedGame ),
-                    tmpFolderName );
+            Paths.tmpFile = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
             if( Paths.tmpFile == null )
             {
-                Log.v( "CoreInterface", "Unable to play zipped ROM: '" + Globals.userPrefs.selectedGame
-                        + "'" );
+                Log.v( "CoreInterface", "Cannot play zipped ROM: '" + selectedGame + "'" );
                 
                 Notifier.clear();
                 
@@ -160,7 +167,7 @@ public class CoreInterface
             }
         }
         finishedReading = true;
-        return (Object) Globals.userPrefs.selectedGame;
+        return (Object) selectedGame;
     }
     
     public static void runOnUiThread( Runnable action )
@@ -338,61 +345,109 @@ public class CoreInterface
     }
     
     /**
-     * Populates the core config files with the user preferences.
+     * Populates the core configuration files with the user preferences.
      */
-    private static void syncConfigFiles()
+    private static void syncConfigFiles( UserPrefs user, Paths paths )
     {
-        // TODO: Confirm all booleans (some might need to be negated)
-        
-        // GLES2N64 config file
-        ConfigFile gles2n64_conf = new ConfigFile( Globals.paths.gles2n64_conf );
-        gles2n64_conf.put( "[<sectionless!>]", "enable fog",
-                CoreInterface.booleanToString( Globals.userPrefs.isGles2N64FogEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "enable alpha test",
-                CoreInterface.booleanToString( Globals.userPrefs.isGles2N64AlphaTestEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "force screen clear",
-                CoreInterface.booleanToString( Globals.userPrefs.isGles2N64ScreenClearEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "hack z",
-                CoreInterface.booleanToString( !Globals.userPrefs.isGles2N64DepthTestEnabled ) );
-        gles2n64_conf.save();
+        //@formatter:off
         
         // Core and GLES2RICE config file
-        ConfigFile mupen64plus_cfg = new ConfigFile( Globals.paths.mupen64plus_cfg );
+        ConfigFile mupen64plus_cfg = new ConfigFile( paths.mupen64plus_cfg );
         mupen64plus_cfg.put( "Core", "Version", "1.00" );
+        mupen64plus_cfg.put( "Core", "OnScreenDisplay", "True" ); // TODO: Should this be false?
+        mupen64plus_cfg.put( "Core", "R4300Emulator", "2" );
+        mupen64plus_cfg.put( "Core", "NoCompiledJump", "False" );
+        mupen64plus_cfg.put( "Core", "DisableExtraMem", "False" );
+        mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );
+        mupen64plus_cfg.put( "Core", "EnableDebugger", "False" );
+        mupen64plus_cfg.put( "Core", "CurrentStateSlot", "0" );
+        mupen64plus_cfg.put( "Core", "ScreenshotPath", "\"\"" );
+        mupen64plus_cfg.put( "Core", "SaveStatePath", "\"\"" ); // TODO: Consider using user preference
+        mupen64plus_cfg.put( "Core", "SharedDataPath", "\"\"" );
+
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.00" );
-        mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
-        mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
-        mupen64plus_cfg.put( "Video-Rice", "SkipFrame",
-                CoreInterface.booleanToString( Globals.userPrefs.isGles2RiceAutoFrameskipEnabled ) );
-        mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", CoreInterface
-                .booleanToString( Globals.userPrefs.isGles2RiceFastTextureLoadingEnabled ) );
-        mupen64plus_cfg
-                .put( "Video-Rice", "FastTextureCRC", CoreInterface
-                        .booleanToString( Globals.userPrefs.isGles2RiceFastTextureCrcEnabled ) );
-        mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures",
-                CoreInterface.booleanToString( Globals.userPrefs.isGles2RiceHiResTexturesEnabled ) );
-        mupen64plus_cfg.put( "Input-SDL-Control1", "Version", "1.00" );
-        mupen64plus_cfg.put( "Input-SDL-Control2", "Version", "1.00" );
-        mupen64plus_cfg.put( "Input-SDL-Control3", "Version", "1.00" );
-        mupen64plus_cfg.put( "Input-SDL-Control4", "Version", "1.00" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Fullscreen", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Save State", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Load State", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Increment Slot", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Reset", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Speed Down", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Speed Up", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Screenshot", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Pause", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Mute", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Increase Volume", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Decrease Volume", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Fast Forward", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Frame Advance", "0" );
+        mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Gameshark", "0" );
+
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
         mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
-        mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + Globals.paths.libsDir + '"' );
-        mupen64plus_cfg
-                .put( "UI-Console", "VideoPlugin", '"' + Globals.userPrefs.videoPlugin + '"' );
-        mupen64plus_cfg
-                .put( "UI-Console", "AudioPlugin", '"' + Globals.userPrefs.audioPlugin + '"' );
-        mupen64plus_cfg
-                .put( "UI-Console", "InputPlugin", '"' + Globals.userPrefs.inputPlugin + '"' );
-        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + Globals.userPrefs.rspPlugin + '"' );
+        mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + paths.libsDir + '"' );
+        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + user.videoPlugin + '"' );
+        mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + user.audioPlugin + '"' );
+        mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + user.inputPlugin + '"' );
+        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin + '"' );
+
+        mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
+        mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
+        mupen64plus_cfg.put( "Video-Rice", "SkipFrame", booleanToString( user.isGles2RiceAutoFrameskipEnabled ) );
+        mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", booleanToString( user.isGles2RiceFastTextureLoadingEnabled ) );
+        mupen64plus_cfg.put( "Video-Rice", "FastTextureCRC", booleanToString( user.isGles2RiceFastTextureCrcEnabled ) );
+        mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", booleanToString( user.isGles2RiceHiResTexturesEnabled ) );
+        
+        syncConfigFileInputs( mupen64plus_cfg, user.inputMap1, 1);
+        syncConfigFileInputs( mupen64plus_cfg, user.inputMap2, 2);
+        syncConfigFileInputs( mupen64plus_cfg, user.inputMap3, 3);
+        syncConfigFileInputs( mupen64plus_cfg, user.inputMap4, 4);
+
         mupen64plus_cfg.save();
+        
+        // GLES2N64 config file
+        ConfigFile gles2n64_conf = new ConfigFile( paths.gles2n64_conf );
+        gles2n64_conf.put( "[<sectionless!>]", "enable fog", booleanToString( user.isGles2N64FogEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", booleanToString( user.isGles2N64AlphaTestEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "force screen clear", booleanToString( user.isGles2N64ScreenClearEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "hack z", booleanToString( !user.isGles2N64DepthTestEnabled ) );
+        gles2n64_conf.save();        
+        //@formatter:on
+    }
+    
+    private static void syncConfigFileInputs( ConfigFile mupen64plus_cfg, InputMap map,
+            int playerNumber )
+    {
+        String sectionTitle = "Input-SDL-Control" + playerNumber;
+        
+        mupen64plus_cfg.put( sectionTitle, "Version", "1.00" );
+        mupen64plus_cfg.put( sectionTitle, "plugged", map.isEnabled() ? "True" : "False" );
+        mupen64plus_cfg.put( sectionTitle, "plugin", "2" );
+        mupen64plus_cfg.put( sectionTitle, "device", "-2" );
+        mupen64plus_cfg.put( sectionTitle, "mouse", "False" );
+        mupen64plus_cfg.put( sectionTitle, "DPad R", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "DPad L", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "DPad D", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "DPad U", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "Start", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "Z Trig", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "B Button", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "A Button", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "C Button R", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "C Button L", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "C Button D", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "C Button U", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "R Trig", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "L Trig", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "Mempak switch", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "Rumblepak switch", "key(0)" );
+        mupen64plus_cfg.put( sectionTitle, "X Axis", "key(0,0)" );
+        mupen64plus_cfg.put( sectionTitle, "Y Axis", "key(0,0)" );
     }
     
     private static String booleanToString( boolean b )
     {
-        return b
-                ? "1"
-                : "0";
+        return b ? "1" : "0";
     }
     
     private static Handler commandHandler = new Handler()

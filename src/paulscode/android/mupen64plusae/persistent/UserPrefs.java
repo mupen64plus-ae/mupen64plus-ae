@@ -19,8 +19,6 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import java.io.File;
-
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.transform.InputMap;
 import android.content.Context;
@@ -180,12 +178,6 @@ public class UserPrefs
     /** The filename of the auto-saved session of the ROM selected by the user. */
     public final String selectedGameAutoSavefile;
     
-    /** True if the chosen game is a ZIP archive. */
-    public final boolean isSelectedGameZipped;
-    
-    /** True if no game has been chosen. */
-    public final boolean isSelectedGameNull;
-    
     /** The object used to retrieve the settings. */
     private final SharedPreferences mPreferences;
     
@@ -280,11 +272,6 @@ public class UserPrefs
         isXperiaEnabled = xperiaLayout != null && !xperiaLayout.equals( "" );
         isRspEnabled = rspPlugin != null && rspPlugin.equals( "" );
         selectedGameAutoSavefile = paths.dataDir + "/autosave_" + Math.abs( selectedGame.hashCode() ) + ".sav";
-        isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
-        isSelectedGameZipped = selectedGame != null
-                && selectedGame.length() > 3
-                && selectedGame.substring( selectedGame.length() - 3, selectedGame.length() ).equalsIgnoreCase(
-                        "zip" );
     }
     
     /**
