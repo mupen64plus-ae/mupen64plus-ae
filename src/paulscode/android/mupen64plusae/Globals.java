@@ -45,6 +45,6 @@ public class Globals
  * TODO: Any way to eliminate DataDownloader? (e.g. use AssetManager class)
  * TODO: Implement SensorController if desired
  * TODO: Do we need an updater class again?
- * TODO: Figure out force-close when loading last session autosavefile
- * TODO: Figure out failure to return to main menu
+ * TODO: *Figure out force-close when loading last session autosavefile
+ * TODO: *Figure out failure to return to main menu
  */

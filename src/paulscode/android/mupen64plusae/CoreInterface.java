@@ -362,7 +362,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "Core", "EnableDebugger", "False" );
         mupen64plus_cfg.put( "Core", "CurrentStateSlot", "0" );
         mupen64plus_cfg.put( "Core", "ScreenshotPath", "\"\"" );
-        mupen64plus_cfg.put( "Core", "SaveStatePath", "\"\"" ); // TODO: Consider using user preference
+        mupen64plus_cfg.put( "Core", "SaveStatePath", "\"" + user.gameSaveDir + "/SlotSaves\"" );
         mupen64plus_cfg.put( "Core", "SharedDataPath", "\"\"" );
 
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.00" );

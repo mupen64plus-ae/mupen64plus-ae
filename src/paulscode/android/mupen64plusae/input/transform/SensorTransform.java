@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: TODO
+ * Authors: TODO: Implement sensor controller, if desired
  */
 package paulscode.android.mupen64plusae.input.transform;
 
@@ -24,13 +24,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
-// TODO: Implement this class, if desired (just a stub right now)
 public class SensorTransform extends AbstractTransform implements SensorEventListener
 {
     @Override
     public void onAccuracyChanged( Sensor sensor, int accuracy )
     {
-        // TODO Auto-generated method stub
     }
     
     @Override

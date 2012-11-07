@@ -106,7 +106,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         Log.v( "SDLSurface", "Resuming last session" );
         Notifier.showToast( (Activity) getContext(), R.string.toast_resumingSession );
         
-        // TODO: This line crashes the app (maybe due to broken save/load issues)
+        // TODO: *Uncomment NativeMethods.fileLoadEmulator
         // NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
     }
     

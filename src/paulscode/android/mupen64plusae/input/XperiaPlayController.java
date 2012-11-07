@@ -15,16 +15,15 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: TODO
+ * Authors: TODO: *Implement XperiaPlayController, merging commonalities with TouchscreenController
  */
 package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.input.transform.TouchMap;
 
-// TODO: Implement this class, following TouchscreenController as a guide
 public class XperiaPlayController extends AbstractController
 {
-    // "Pixel" dimensions of the pad (assuming they're constant):
+    // Pixel dimensions of the pad (assuming they're constant)
     public static final int PAD_WIDTH = 966;
     public static final int PAD_HEIGHT = 360;
     

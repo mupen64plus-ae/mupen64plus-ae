@@ -246,6 +246,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         
         if( view.equals( mSpecialButton ) )
         {
+            // TODO: *Implement special functions dialog
             Prompt.promptConfirm( getContext(), "Foo", "Hello world!", this );
             return;
         }
@@ -258,7 +259,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Find the button that was touched and map it
         for( int i = 0; i < mN64Button.length; i++ )
         {
-            if( mN64Button[i] == view )
+            if( view.equals( mN64Button[i] ) )
                 mMap.mapInput( i, mInputCodeToBeMapped );
         }
         
@@ -272,7 +273,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Find the Button view that was long-touched and unmap it
         for( int i = 0; i < mN64Button.length; i++ )
         {
-            if( mN64Button[i] == view )
+            if( view.equals( mN64Button[i]) )
                 mMap.unmapInput( i );
         }
         

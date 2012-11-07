@@ -341,7 +341,7 @@ public class GameImplementation implements View.OnKeyListener
                     @Override
                     public void onFile( File file )
                     {
-                        // TODO: uncomment
+                        // TODO: *Uncomment NativeMethods.fileLoadEmulator
                         // NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
                     }
                 } );

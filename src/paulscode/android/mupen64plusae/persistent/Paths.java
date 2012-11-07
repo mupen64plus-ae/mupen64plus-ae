@@ -73,12 +73,6 @@ public class Paths
     /** The name of the error log file. */
     public final String error_log;
     
-    /** The name of the touchscreen layouts file. */
-    public final String touchscreenLayouts_ini;
-    
-    /** The name of the Xperia Play touchpad layouts file. */
-    public final String xperiaPlayLayouts_ini;
-    
     /** The name of the application settings file. */
     public final String appSettingsFilename;
     
@@ -116,14 +110,12 @@ public class Paths
             defaultRomDir = romFolder;
         else
             defaultRomDir = storageDir;
-        defaultSavesDir = dataDir + "/data/save";
+        defaultSavesDir = storageDir + "/GameSaves";
         
         // Files
         mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
         gles2n64_conf = dataDir + "/data/gles2n64.conf";
         error_log = dataDir + "/error.log";
-        touchscreenLayouts_ini = touchscreenLayoutsDir + "gamepad_list.ini";
-        xperiaPlayLayouts_ini = xperiaPlayLayoutsDir + "touchpad_list.ini";
         
         // Preference file names
         appSettingsFilename = packageName + "_preferences_device";
