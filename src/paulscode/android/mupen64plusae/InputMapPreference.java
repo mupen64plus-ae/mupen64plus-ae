@@ -28,6 +28,7 @@ import paulscode.android.mupen64plusae.input.transform.InputMap;
 import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
+import paulscode.android.mupen64plusae.util.Prompt;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -52,9 +53,10 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     private int mLastInputCode = 0;
     private float mLastStrength = 0;
     private float[] mStrengthBiases;
-    private Button[] mN64ToButton = new Button[InputMap.NUM_INPUTS];
     private View mToggleWidget;
     private TextView mFeedbackText;
+    private Button mSpecialButton;
+    private Button[] mN64Button = new Button[InputMap.NUM_INPUTS];
     private KeyTransform mTransform;
     
     public InputMapPreference( Context context, AttributeSet attrs )
@@ -67,7 +69,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     @Override
     protected void onBindView( View view )
     {
-        // This is where we set up the view seen in the preference menu
+        // Set up the menu item seen in the preferences menu
         super.onBindView( view );
         
         // Restore existing state
@@ -83,7 +85,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     @Override
     protected void onBindDialogView( View view )
     {
-        // This is where we set up the dialog view seen when the pref menu item is clicked
+        // Set up the dialog view seen when the preference menu item is clicked
         super.onBindDialogView( view );
         
         // Restore existing state (might have canceled last dialog)
@@ -92,28 +94,32 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Get the text view object
         mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
         
+        // Get the special functions button
+        mSpecialButton = (Button) view.findViewById( R.id.buttonSpecial );
+        
         // Create a button map to simplify highlighting
-        mN64ToButton[AbstractController.DPD_R] = (Button) view.findViewById( R.id.buttonDR );
-        mN64ToButton[AbstractController.DPD_L] = (Button) view.findViewById( R.id.buttonDL );
-        mN64ToButton[AbstractController.DPD_D] = (Button) view.findViewById( R.id.buttonDD );
-        mN64ToButton[AbstractController.DPD_U] = (Button) view.findViewById( R.id.buttonDU );
-        mN64ToButton[AbstractController.START] = (Button) view.findViewById( R.id.buttonS );
-        mN64ToButton[AbstractController.BTN_Z] = (Button) view.findViewById( R.id.buttonZ );
-        mN64ToButton[AbstractController.BTN_B] = (Button) view.findViewById( R.id.buttonB );
-        mN64ToButton[AbstractController.BTN_A] = (Button) view.findViewById( R.id.buttonA );
-        mN64ToButton[AbstractController.CPD_R] = (Button) view.findViewById( R.id.buttonCR );
-        mN64ToButton[AbstractController.CPD_L] = (Button) view.findViewById( R.id.buttonCL );
-        mN64ToButton[AbstractController.CPD_D] = (Button) view.findViewById( R.id.buttonCD );
-        mN64ToButton[AbstractController.CPD_U] = (Button) view.findViewById( R.id.buttonCU );
-        mN64ToButton[AbstractController.BTN_R] = (Button) view.findViewById( R.id.buttonR );
-        mN64ToButton[AbstractController.BTN_L] = (Button) view.findViewById( R.id.buttonL );
-        mN64ToButton[InputMap.AXIS_R] = (Button) view.findViewById( R.id.buttonAR );
-        mN64ToButton[InputMap.AXIS_L] = (Button) view.findViewById( R.id.buttonAL );
-        mN64ToButton[InputMap.AXIS_D] = (Button) view.findViewById( R.id.buttonAD );
-        mN64ToButton[InputMap.AXIS_U] = (Button) view.findViewById( R.id.buttonAU );
+        mN64Button[AbstractController.DPD_R] = (Button) view.findViewById( R.id.buttonDR );
+        mN64Button[AbstractController.DPD_L] = (Button) view.findViewById( R.id.buttonDL );
+        mN64Button[AbstractController.DPD_D] = (Button) view.findViewById( R.id.buttonDD );
+        mN64Button[AbstractController.DPD_U] = (Button) view.findViewById( R.id.buttonDU );
+        mN64Button[AbstractController.START] = (Button) view.findViewById( R.id.buttonS );
+        mN64Button[AbstractController.BTN_Z] = (Button) view.findViewById( R.id.buttonZ );
+        mN64Button[AbstractController.BTN_B] = (Button) view.findViewById( R.id.buttonB );
+        mN64Button[AbstractController.BTN_A] = (Button) view.findViewById( R.id.buttonA );
+        mN64Button[AbstractController.CPD_R] = (Button) view.findViewById( R.id.buttonCR );
+        mN64Button[AbstractController.CPD_L] = (Button) view.findViewById( R.id.buttonCL );
+        mN64Button[AbstractController.CPD_D] = (Button) view.findViewById( R.id.buttonCD );
+        mN64Button[AbstractController.CPD_U] = (Button) view.findViewById( R.id.buttonCU );
+        mN64Button[AbstractController.BTN_R] = (Button) view.findViewById( R.id.buttonR );
+        mN64Button[AbstractController.BTN_L] = (Button) view.findViewById( R.id.buttonL );
+        mN64Button[InputMap.AXIS_R] = (Button) view.findViewById( R.id.buttonAR );
+        mN64Button[InputMap.AXIS_L] = (Button) view.findViewById( R.id.buttonAL );
+        mN64Button[InputMap.AXIS_D] = (Button) view.findViewById( R.id.buttonAD );
+        mN64Button[InputMap.AXIS_U] = (Button) view.findViewById( R.id.buttonAU );
         
         // Define the button click callbacks
-        for( Button b : mN64ToButton )
+        mSpecialButton.setOnClickListener( this );
+        for( Button b : mN64Button )
         {
             b.setOnClickListener( this );
             b.setOnLongClickListener( this );
@@ -238,15 +244,21 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
             return;
         }
         
+        if( view.equals( mSpecialButton ) )
+        {
+            Prompt.promptConfirm( getContext(), "Foo", "Hello world!", this );
+            return;
+        }
+        
         // Else, handle the mapping buttons in the dialog
         // Never unmap via regular click (would be confusing)
         if( mInputCodeToBeMapped == 0 )
             return;
         
         // Find the button that was touched and map it
-        for( int i = 0; i < mN64ToButton.length; i++ )
+        for( int i = 0; i < mN64Button.length; i++ )
         {
-            if( mN64ToButton[i] == view )
+            if( mN64Button[i] == view )
                 mMap.mapInput( i, mInputCodeToBeMapped );
         }
         
@@ -258,9 +270,9 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     public boolean onLongClick( View view )
     {
         // Find the Button view that was long-touched and unmap it
-        for( int i = 0; i < mN64ToButton.length; i++ )
+        for( int i = 0; i < mN64Button.length; i++ )
         {
-            if( mN64ToButton[i] == view )
+            if( mN64Button[i] == view )
                 mMap.unmapInput( i );
         }
         
@@ -274,9 +286,9 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     {
         // Modify the button appearance to provide feedback to user
         int selectedIndex = mMap.get( mLastInputCode );
-        for( int i = 0; i < mN64ToButton.length; i++ )
+        for( int i = 0; i < mN64Button.length; i++ )
         {
-            Button button = mN64ToButton[i];
+            Button button = mN64Button[i];
             
             // Highlight the currently active button
             button.setPressed( i == selectedIndex && mLastStrength > STRENGTH_THRESHOLD );

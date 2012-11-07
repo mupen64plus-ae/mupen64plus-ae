@@ -95,8 +95,6 @@
     <string name="inputMap3_title">プレイヤー3</string>
     <string name="inputMap4_title">プレイヤー4</string>
     <string name="inputMap_summary">ボタンとアナログスティック設定</string>
-    <string name="inputMapSpecial_title">特別な機能</string>
-    <string name="inputMapSpecial_summary">コントローラからの保存、ロード、など。</string>
     <string name="inputMap_dialogTitle">ジョイスティックまたはボタンを押しながらアイコンを押して。</string>
     <string name="volumeKeysEnabled_title">ボリュームキーを有効</string>
     <string name="volumeKeysEnabled_summary">コントローラのボタンとしてボリュームキーを使用</string>

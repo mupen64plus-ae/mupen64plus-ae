@@ -147,12 +147,6 @@
                 android:summary="@string/inputMap_summary"
                 android:title="@string/inputMap4_title" />
 
-            <Preference
-                android:dependency="developerEnabled"
-                android:key="inputMapSpecial"
-                android:summary="@string/inputMapSpecial_summary"
-                android:title="@string/inputMapSpecial_title" />
-
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:dependency="inputEnabled"

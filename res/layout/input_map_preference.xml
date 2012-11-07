@@ -317,4 +317,20 @@
         
     </RelativeLayout>
 
+    <Button
+        android:id="@+id/buttonSpecial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/button_gray"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/inputMapPreference_special"
+        android:textColor="@android:color/primary_text_dark_nodisable" />
+
 </RelativeLayout>

@@ -41,8 +41,8 @@
     <!-- ******************************************** -->
     
     <!-- In-Game Menu (GameActivity.java) -->
-    <string name="ingameQuicksave_title">Quick save</string>
-    <string name="ingameQuickload_title">Quick load</string>
+    <string name="ingameQuicksave_title">Slot save</string>
+    <string name="ingameQuickload_title">Slot load</string>
     <string name="ingameSlot_title">Slot %1$d</string>
     <string name="ingameSave_title">Save to file…</string>
     <string name="ingameLoad_title">Load from file…</string>
@@ -72,7 +72,7 @@
     <string name="video_summary">Graphics settings</string>
     <string name="touchscreen_title">Touchscreen</string>
     <string name="touchscreen_summary">On-screen controller settings</string>
-    <string name="input_title">Peripheral controllers</string>
+    <string name="input_title">Controllers</string>
     <string name="input_summary">Gamepads, joysticks, keyboards, etc.</string>
     <string name="other_title">@string/_other</string>
     <string name="other_summary">Audio, processor, core, etc.</string>
@@ -101,12 +101,10 @@
     <string name="inputMap3_title">Player 3</string>
     <string name="inputMap4_title">Player 4</string>
     <string name="inputMap_summary">Configure buttons and sticks</string>
-    <string name="inputMapSpecial_title">Special functions</string>
-    <string name="inputMapSpecial_summary">Save, load, and more from the controller</string>
     <string name="inputMap_dialogTitle">To map: press key/stick, then touch icon\nTo unmap: long-touch icon</string>
     <string name="volumeKeysEnabled_title">Volume key controls</string>
     <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
-    <string name="menuPeripheralInfo_title">Peripheral info</string>
+    <string name="menuPeripheralInfo_title">Controller info</string>
     <string name="menuPeripheralInfo_summary">Peripheral hardware and model information</string>
     
     <!-- Video Menu -->
@@ -209,7 +207,7 @@
     <string name="toast_savegameSlot">Savegame slot %1$d</string>
     <string name="toast_savingGame">Saving game</string>
     <string name="toast_savingSession">Saving session</string>    
-    <string name="toast_sdInaccessible">App data not accessible (plugged in USB Mass Storage Device mode?)</string>
+    <string name="toast_sdInaccessible">SD card not accessible (plugged in USB Mass Storage Device mode?)</string>
     
     <!-- Other Strings -->
     <string name="dataDownloader_connectingTo">Connecting to %1$s</string>
@@ -222,6 +220,7 @@
     <string name="dataDownloader_progress">%1$.0f%% done: file %2$s</string>
     <string name="gameImplementation_confirmFile">Overwrite %1$s?</string>
     <string name="gameImplementation_saveHint">filename</string>
+    <string name="inputMapPreference_special">Special\nfunctions</string>
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>    
     
 </resources>
