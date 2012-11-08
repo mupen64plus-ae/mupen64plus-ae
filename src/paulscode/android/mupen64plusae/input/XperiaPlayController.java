@@ -19,7 +19,7 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 
 public class XperiaPlayController extends AbstractController
 {

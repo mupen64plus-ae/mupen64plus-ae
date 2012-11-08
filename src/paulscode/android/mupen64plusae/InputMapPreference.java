@@ -23,11 +23,11 @@
 package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.AbstractController;
-import paulscode.android.mupen64plusae.input.transform.AbstractTransform;
-import paulscode.android.mupen64plusae.input.transform.InputMap;
-import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
-import paulscode.android.mupen64plusae.input.transform.KeyTransform;
-import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
+import paulscode.android.mupen64plusae.input.map.InputMap;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.input.provider.AxisProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -41,7 +41,7 @@ import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.TextView;
 
-public class InputMapPreference extends DialogPreference implements AbstractTransform.Listener,
+public class InputMapPreference extends DialogPreference implements AbstractProvider.Listener,
         OnClickListener, OnLongClickListener
 {
     private static final float STRENGTH_THRESHOLD = 0.5f;
@@ -55,7 +55,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     private View mToggleWidget;
     private TextView mFeedbackText;
     private Button[] mN64Button = new Button[InputMap.NUM_N64INPUTS];
-    private KeyTransform mTransform;
+    private KeyProvider mTransform;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -125,12 +125,12 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
             // For Android 3.0 and below, we can only listen to keyboards
-            mTransform = new KeyTransform();
+            mTransform = new KeyProvider();
         }
         else
         {
             // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            KeyAxisTransform transform = new KeyAxisTransform();
+            AxisProvider transform = new AxisProvider();
             
             // Connect the extra upstream end of the transform
             view.setOnGenericMotionListener( transform );
@@ -291,6 +291,6 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         }
         
         // Update the feedback text
-        mFeedbackText.setText( AbstractTransform.getInputName( mInputCodeToBeMapped ) );
+        mFeedbackText.setText( AbstractProvider.getInputName( mInputCodeToBeMapped ) );
     }
 }

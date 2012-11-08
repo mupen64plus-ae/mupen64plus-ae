@@ -19,7 +19,7 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
+import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;

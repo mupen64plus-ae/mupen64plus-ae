@@ -17,13 +17,13 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.input.transform;
+package paulscode.android.mupen64plusae.input.provider;
 
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
 
-public class KeyTransform extends AbstractTransform implements View.OnKeyListener,
+public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
         DialogInterface.OnKeyListener
 {
     public enum ImeFormula
@@ -33,7 +33,7 @@ public class KeyTransform extends AbstractTransform implements View.OnKeyListene
     
     private ImeFormula mImeFormula;
     
-    public KeyTransform()
+    public KeyProvider()
     {
         setImeFormula( ImeFormula.DEFAULT );
     }

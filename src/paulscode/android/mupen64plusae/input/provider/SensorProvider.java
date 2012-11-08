@@ -17,14 +17,14 @@
  * 
  * Authors: TODO: Implement sensor controller, if desired
  */
-package paulscode.android.mupen64plusae.input.transform;
+package paulscode.android.mupen64plusae.input.provider;
 
 import paulscode.android.mupen64plusae.NativeMethods;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 
-public class SensorTransform extends AbstractTransform implements SensorEventListener
+public class SensorProvider extends AbstractProvider implements SensorEventListener
 {
     @Override
     public void onAccuracyChanged( Sensor sensor, int accuracy )

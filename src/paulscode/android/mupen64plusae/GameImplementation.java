@@ -23,9 +23,9 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
-import paulscode.android.mupen64plusae.input.transform.KeyTransform;
-import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
-import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
+import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -58,7 +58,7 @@ public class GameImplementation implements View.OnKeyListener
     private TouchscreenView mTouchscreenView;
     @SuppressWarnings( "unused" )
     private TouchscreenController mTouchscreenController;
-    private KeyTransform mKeyTransform;
+    private KeyProvider mKeyTransform;
     private PeripheralController mPeripheralController1;
     private PeripheralController mPeripheralController2;
     private PeripheralController mPeripheralController3;

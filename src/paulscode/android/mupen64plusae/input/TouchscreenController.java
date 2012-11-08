@@ -20,8 +20,8 @@
 package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.Globals;
-import paulscode.android.mupen64plusae.input.transform.TouchMap;
-import paulscode.android.mupen64plusae.input.transform.VisibleTouchMap;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
+import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.os.Build;

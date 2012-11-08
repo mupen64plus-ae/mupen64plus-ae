@@ -17,7 +17,7 @@
  * 
  * Authors: paulscode, lioncash, littleguy77
  */
-package paulscode.android.mupen64plusae.input.transform;
+package paulscode.android.mupen64plusae.input.map;
 
 import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;

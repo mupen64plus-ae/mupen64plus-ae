@@ -20,7 +20,7 @@
 package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.XperiaPlayController;
-import paulscode.android.mupen64plusae.input.transform.TouchMap;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;

@@ -17,7 +17,7 @@
  * 
  * Authors: paulscode, lioncash, littleguy77
  */
-package paulscode.android.mupen64plusae.input.transform;
+package paulscode.android.mupen64plusae.input.map;
 
 import java.util.ArrayList;
 import java.util.HashMap;

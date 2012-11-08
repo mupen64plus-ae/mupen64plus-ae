@@ -19,40 +19,40 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import paulscode.android.mupen64plusae.input.transform.AbstractTransform;
-import paulscode.android.mupen64plusae.input.transform.InputMap;
-import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
-import paulscode.android.mupen64plusae.input.transform.KeyTransform;
-import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
+import paulscode.android.mupen64plusae.input.map.InputMap;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.input.provider.AxisProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.view.View;
 
-public class PeripheralController extends AbstractController implements AbstractTransform.Listener,
+public class PeripheralController extends AbstractController implements AbstractProvider.Listener,
         InputMap.Listener
 {
     private InputMap mInputMap;
-    private KeyTransform mTransform;
+    private KeyProvider mTransform;
     protected float mAxisFractionXpos;
     protected float mAxisFractionXneg;
     protected float mAxisFractionYpos;
     protected float mAxisFractionYneg;
     
     @TargetApi( 12 )
-    public static KeyTransform buildTransform( View view, ImeFormula formula )
+    public static KeyProvider buildTransform( View view, ImeFormula formula )
     {
-        KeyTransform transform;
+        KeyProvider transform;
         
         // Set up input listening
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
         {
             // For Android 3.0 and below, we can only listen to keyboards
-            transform = new KeyTransform();
+            transform = new KeyProvider();
         }
         else
         {
             // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            KeyAxisTransform kaTransform = new KeyAxisTransform();
+            AxisProvider kaTransform = new AxisProvider();
             
             // Connect the extra upstream end of the transform
             view.setOnGenericMotionListener( kaTransform );
@@ -68,7 +68,7 @@ public class PeripheralController extends AbstractController implements Abstract
         return transform;
     }
     
-    public PeripheralController( InputMap inputMap, KeyTransform transform )
+    public PeripheralController( InputMap inputMap, KeyProvider transform )
     {
         // Assign the map and listen for changes
         mInputMap = inputMap;
@@ -118,9 +118,9 @@ public class PeripheralController extends AbstractController implements Abstract
     public void onMapChanged( InputMap map )
     {
         // If the button/axis mappings change, update the transform's listening filter
-        if( mTransform != null && mTransform instanceof KeyAxisTransform )
+        if( mTransform != null && mTransform instanceof AxisProvider )
         {
-            ( (KeyAxisTransform) mTransform ).setInputCodeFilter( map.getMappedInputCodes() );
+            ( (AxisProvider) mTransform ).setInputCodeFilter( map.getMappedInputCodes() );
         }
     }
     

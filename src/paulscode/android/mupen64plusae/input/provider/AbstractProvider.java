@@ -17,8 +17,9 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.input.transform;
+package paulscode.android.mupen64plusae.input.provider;
 
+import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -28,12 +29,12 @@ import android.view.MotionEvent;
 /**
  * The base class for transforming arbitrary input data into a common format.
  * 
- * @see KeyTransform
- * @see KeyAxisTransform
- * @see SensorTransform
+ * @see KeyProvider
+ * @see AxisProvider
+ * @see SensorProvider
  * @see InputMap
  */
-public abstract class AbstractTransform
+public abstract class AbstractProvider
 {
     public interface Listener
     {
@@ -42,19 +43,19 @@ public abstract class AbstractTransform
         public void onInput( int[] inputCodes, float[] strengths );
     }
     
-    private SubscriptionManager<AbstractTransform.Listener> mPublisher;
+    private SubscriptionManager<AbstractProvider.Listener> mPublisher;
     
-    protected AbstractTransform()
+    protected AbstractProvider()
     {
-        mPublisher = new SubscriptionManager<AbstractTransform.Listener>();
+        mPublisher = new SubscriptionManager<AbstractProvider.Listener>();
     }
     
-    public void registerListener( AbstractTransform.Listener listener )
+    public void registerListener( AbstractProvider.Listener listener )
     {
         mPublisher.subscribe( listener );
     }
     
-    public void unregisterListener( AbstractTransform.Listener listener )
+    public void unregisterListener( AbstractProvider.Listener listener )
     {
         mPublisher.unsubscribe( listener );
     }
