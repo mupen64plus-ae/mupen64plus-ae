@@ -28,7 +28,6 @@ import paulscode.android.mupen64plusae.input.transform.InputMap;
 import paulscode.android.mupen64plusae.input.transform.KeyAxisTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform;
 import paulscode.android.mupen64plusae.input.transform.KeyTransform.ImeFormula;
-import paulscode.android.mupen64plusae.util.Prompt;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -55,8 +54,7 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
     private float[] mStrengthBiases;
     private View mToggleWidget;
     private TextView mFeedbackText;
-    private Button mSpecialButton;
-    private Button[] mN64Button = new Button[InputMap.NUM_INPUTS];
+    private Button[] mN64Button = new Button[InputMap.NUM_N64INPUTS];
     private KeyTransform mTransform;
     
     public InputMapPreference( Context context, AttributeSet attrs )
@@ -94,9 +92,6 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         // Get the text view object
         mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
         
-        // Get the special functions button
-        mSpecialButton = (Button) view.findViewById( R.id.buttonSpecial );
-        
         // Create a button map to simplify highlighting
         mN64Button[AbstractController.DPD_R] = (Button) view.findViewById( R.id.buttonDR );
         mN64Button[AbstractController.DPD_L] = (Button) view.findViewById( R.id.buttonDL );
@@ -116,9 +111,10 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
         mN64Button[InputMap.AXIS_L] = (Button) view.findViewById( R.id.buttonAL );
         mN64Button[InputMap.AXIS_D] = (Button) view.findViewById( R.id.buttonAD );
         mN64Button[InputMap.AXIS_U] = (Button) view.findViewById( R.id.buttonAU );
+        mN64Button[InputMap.BTN_RUMBLE] = (Button) view.findViewById( R.id.buttonRumble );
+        mN64Button[InputMap.BTN_MEMPAK] = (Button) view.findViewById( R.id.buttonMempak );
         
         // Define the button click callbacks
-        mSpecialButton.setOnClickListener( this );
         for( Button b : mN64Button )
         {
             b.setOnClickListener( this );
@@ -241,30 +237,20 @@ public class InputMapPreference extends DialogPreference implements AbstractTran
             boolean isEnabled = ( (Checkable) mToggleWidget ).isChecked();
             mMap.setEnabled( isEnabled );
             persistString( mMap.serialize() );
-            return;
         }
-        
-        if( view.equals( mSpecialButton ) )
-        {
-            // TODO: *Implement special functions dialog
-            Prompt.promptConfirm( getContext(), "Foo", "Hello world!", this );
-            return;
+        // Else, handle the mapping buttons in the dialog (never unmap, would confuse user)
+        else if( mInputCodeToBeMapped != 0 )
+        {            
+            // Find the button that was touched and map it
+            for( int i = 0; i < mN64Button.length; i++ )
+            {
+                if( view.equals( mN64Button[i] ) )
+                    mMap.mapInput( i, mInputCodeToBeMapped );
+            }
+            
+            // Refresh the dialog
+            updateViews();
         }
-        
-        // Else, handle the mapping buttons in the dialog
-        // Never unmap via regular click (would be confusing)
-        if( mInputCodeToBeMapped == 0 )
-            return;
-        
-        // Find the button that was touched and map it
-        for( int i = 0; i < mN64Button.length; i++ )
-        {
-            if( view.equals( mN64Button[i] ) )
-                mMap.mapInput( i, mInputCodeToBeMapped );
-        }
-        
-        // Refresh the dialog
-        updateViews();
     }
     
     @Override

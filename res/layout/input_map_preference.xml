@@ -14,8 +14,8 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/inputMapPreference"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:paddingBottom="5dp"
@@ -318,7 +318,24 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/buttonSpecial"
+        android:id="@+id/buttonRumble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/button_gray"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:minLines="2"
+        android:minWidth="40dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/inputMapPreference_rumble"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/primary_text_dark_nodisable" />
+
+    <Button
+        android:id="@+id/buttonMempak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -326,11 +343,12 @@
         android:background="@drawable/button_gray"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:paddingBottom="5dp"
+        android:minLines="2"
+        android:minWidth="40dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:paddingTop="5dp"
-        android:text="@string/inputMapPreference_special"
+        android:text="@string/inputMapPreference_mempak"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/primary_text_dark_nodisable" />
 
 </RelativeLayout>

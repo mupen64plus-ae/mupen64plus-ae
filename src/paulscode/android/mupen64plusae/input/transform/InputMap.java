@@ -39,18 +39,43 @@ public class InputMap
         public void onMapChanged( InputMap map );
     }
     
-    // Extra indices into the N64 inputs array
-    public static final int UNMAPPED = -1;
-    public static final int AXIS_R = AbstractController.NUM_BUTTONS;
-    public static final int AXIS_L = AXIS_R + 1;
-    public static final int AXIS_D = AXIS_R + 2;
-    public static final int AXIS_U = AXIS_R + 3;
-    public static final int NUM_INPUTS = AXIS_R + 4;
+    // Array indices for extra N64 controls
+    // @formatter:off
+    public static final int UNMAPPED        = -1;
+    public static final int OFFSET_EXTRAS   = AbstractController.NUM_BUTTONS;
+    public static final int AXIS_R          = OFFSET_EXTRAS;
+    public static final int AXIS_L          = OFFSET_EXTRAS + 1;
+    public static final int AXIS_D          = OFFSET_EXTRAS + 2;
+    public static final int AXIS_U          = OFFSET_EXTRAS + 3;
+    public static final int BTN_RUMBLE      = OFFSET_EXTRAS + 4;
+    public static final int BTN_MEMPAK      = OFFSET_EXTRAS + 5;
+    public static final int NUM_N64INPUTS   = OFFSET_EXTRAS + 6;
+    
+    // Array indices for special functions
+    public static final int OFFSET_FUNCS    = NUM_N64INPUTS;
+    public static final int FUNC_STOP       = OFFSET_FUNCS;
+    public static final int FUNC_FULLSCREEN = OFFSET_FUNCS + 1;
+    public static final int FUNC_SAVESTATE  = OFFSET_FUNCS + 2;
+    public static final int FUNC_LOADSTATE  = OFFSET_FUNCS + 3;
+    public static final int FUNC_INCSLOT    = OFFSET_FUNCS + 4;
+    public static final int FUNC_RESET      = OFFSET_FUNCS + 5;
+    public static final int FUNC_SPEEDUP    = OFFSET_FUNCS + 6;
+    public static final int FUNC_SPEEDDOWN  = OFFSET_FUNCS + 7;
+    public static final int FUNC_SCREENSHOT = OFFSET_FUNCS + 8;
+    public static final int FUNC_PAUSE      = OFFSET_FUNCS + 9;
+    public static final int FUNC_MUTE       = OFFSET_FUNCS + 10;
+    public static final int FUNC_VOLUP      = OFFSET_FUNCS + 11;
+    public static final int FUNC_VOLDOWN    = OFFSET_FUNCS + 12;
+    public static final int FUNC_FFWD       = OFFSET_FUNCS + 13;
+    public static final int FUNC_FRAMEADV   = OFFSET_FUNCS + 14;
+    public static final int FUNC_GAMESHARK  = OFFSET_FUNCS + 15;
+    public static final int NUM_MAPPABLES   = OFFSET_FUNCS + 16;
+    // @formatter:on
     
     // Strength above which button/axis is considered pressed
     public static final float STRENGTH_THRESHOLD = 0.5f;
     
-    // Bidirectional map implementation and listener management
+    // Bidirectional map implementation
     private int[] mN64ToCode;
     private SparseIntArray mCodeToN64;
     
@@ -62,8 +87,8 @@ public class InputMap
     
     public InputMap()
     {
-        mN64ToCode = new int[NUM_INPUTS];
-        mCodeToN64 = new SparseIntArray( NUM_INPUTS );
+        mN64ToCode = new int[NUM_MAPPABLES];
+        mCodeToN64 = new SparseIntArray( NUM_MAPPABLES );
         mPublisher = new SubscriptionManager<InputMap.Listener>();
     }
     
@@ -116,12 +141,11 @@ public class InputMap
     public String serialize()
     {
         // Serialize the map values to a comma-delimited string
-        String result = "";
+        String result = mEnabled + ":";
         for( int i = 0; i < mN64ToCode.length; i++ )
         {
             result += mN64ToCode[i] + ",";
         }
-        result += mEnabled;
         return result;
     }
     
@@ -134,15 +158,23 @@ public class InputMap
         // Parse the new map values from the comma-delimited string
         if( s != null )
         {
-            String[] strings = s.split( "," );
+            String[] groups = s.split( ":" );
+            if( groups.length > 1 )
+            {
+                // Read the enabled state
+                mEnabled = SafeMethods.toBoolean( groups[0], false );
+                s = groups[1];
+            }
+            else
+            {
+                // Safety valve in case format changes
+                mEnabled = false;
+            }
             
-            // Read the button mappings
-            for( int i = 0; i < Math.min( NUM_INPUTS, strings.length ); i++ )
-                mapInput( SafeMethods.toInt( strings[i], 0 ), i, false );
-            
-            // Read the enabled state
-            if( strings.length > mN64ToCode.length )
-                mEnabled = SafeMethods.toBoolean( strings[mN64ToCode.length], false );
+            // Read the input mappings
+            String[] inputs = s.split( "," );
+            for( int i = 0; i < Math.min( NUM_MAPPABLES, inputs.length ); i++ )
+                mapInput( SafeMethods.toInt( inputs[i], 0 ), i, false );
         }
         
         // Notify the listeners that the map has changed
@@ -152,7 +184,7 @@ public class InputMap
     private void mapInput( int inputCode, int n64Index, boolean notify )
     {
         // Map the input if a valid index was given
-        if( n64Index >= 0 && n64Index < NUM_INPUTS )
+        if( n64Index >= 0 && n64Index < NUM_MAPPABLES )
         {
             // Get the old code that was mapped to the new index
             int oldInputCode = mN64ToCode[n64Index];
