@@ -23,52 +23,19 @@ import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
-import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
-import android.annotation.TargetApi;
-import android.os.Build;
-import android.view.View;
 
 public class PeripheralController extends AbstractController implements AbstractProvider.Listener,
         InputMap.Listener
 {
     private InputMap mInputMap;
-    private KeyProvider mTransform;
+    private KeyProvider mKeyProvider;
+    private AxisProvider mAxisProvider;
     protected float mAxisFractionXpos;
     protected float mAxisFractionXneg;
     protected float mAxisFractionYpos;
     protected float mAxisFractionYneg;
     
-    @TargetApi( 12 )
-    public static KeyProvider buildTransform( View view, ImeFormula formula )
-    {
-        KeyProvider transform;
-        
-        // Set up input listening
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
-        {
-            // For Android 3.0 and below, we can only listen to keyboards
-            transform = new KeyProvider();
-        }
-        else
-        {
-            // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            AxisProvider kaTransform = new AxisProvider();
-            
-            // Connect the extra upstream end of the transform
-            view.setOnGenericMotionListener( kaTransform );
-            transform = kaTransform;
-        }
-        
-        // Set the formula for decoding special analog IMEs
-        transform.setImeFormula( ImeFormula.DEFAULT );
-        
-        // Connect the upstream end of the transform
-        view.setOnKeyListener( transform );
-        
-        return transform;
-    }
-    
-    public PeripheralController( InputMap inputMap, KeyProvider transform )
+    public PeripheralController( InputMap inputMap, KeyProvider keyProvider, AxisProvider axisProvider )
     {
         // Assign the map and listen for changes
         mInputMap = inputMap;
@@ -78,11 +45,15 @@ public class PeripheralController extends AbstractController implements Abstract
             mInputMap.registerListener( this );
         }
         
-        // Assign the transform
-        mTransform = transform;
+        // Assign the providers
+        mKeyProvider = keyProvider;
+        mAxisProvider = axisProvider;
         
-        // Connect the downstream end of the transform
-        mTransform.registerListener( this );
+        // Connect the providers' destination
+        if( mKeyProvider != null )
+            mKeyProvider.registerListener( this );
+        if( mAxisProvider != null )
+            mAxisProvider.registerListener( this );
     }
     
     @Override
@@ -118,10 +89,8 @@ public class PeripheralController extends AbstractController implements Abstract
     public void onMapChanged( InputMap map )
     {
         // If the button/axis mappings change, update the transform's listening filter
-        if( mTransform != null && mTransform instanceof AxisProvider )
-        {
-            ( (AxisProvider) mTransform ).setInputCodeFilter( map.getMappedInputCodes() );
-        }
+        if( mAxisProvider != null )
+            mAxisProvider.setInputCodeFilter( map.getMappedInputCodes() );
     }
     
     public boolean apply( int inputCode, float strength )

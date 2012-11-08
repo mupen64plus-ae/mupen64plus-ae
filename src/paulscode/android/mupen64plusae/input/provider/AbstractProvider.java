@@ -64,9 +64,11 @@ public abstract class AbstractProvider
     public static String getInputName( int inputCode )
     {
         // TODO: Localize strings.
+        boolean isHoneycombMR1 = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1;
+
         if( inputCode > 0 )
         {
-            if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
+            if( isHoneycombMR1 )
                 return "KEYCODE_" + inputCode;
             else
                 return KeyEvent.keyCodeToString( inputCode );
@@ -77,7 +79,7 @@ public abstract class AbstractProvider
             String direction = inputToAxisDirection( inputCode )
                     ? " (+)"
                     : " (-)";
-            if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
+            if( isHoneycombMR1 )
                 return "AXIS_" + axis + direction;
             else
                 return MotionEvent.axisToString( axis ) + direction;

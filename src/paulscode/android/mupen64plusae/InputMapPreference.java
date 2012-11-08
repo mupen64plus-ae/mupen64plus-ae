@@ -55,7 +55,8 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
     private View mToggleWidget;
     private TextView mFeedbackText;
     private Button[] mN64Button = new Button[InputMap.NUM_N64INPUTS];
-    private KeyProvider mTransform;
+    private KeyProvider mKeyProvider = null;
+    private AxisProvider mAxisProvider = null;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -79,7 +80,6 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         ( (Checkable) mToggleWidget ).setChecked( mMap.isEnabled() );
     }
     
-    @TargetApi( 12 )
     @Override
     protected void onBindDialogView( View view )
     {
@@ -121,27 +121,10 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
             b.setOnLongClickListener( this );
         }
         
-        // Set up input listening
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1 )
-        {
-            // For Android 3.0 and below, we can only listen to keyboards
-            mTransform = new KeyProvider();
-        }
-        else
-        {
-            // For Android 3.1 and above, we can also listen to gamepads, mice, etc.
-            AxisProvider transform = new AxisProvider();
-            
-            // Connect the extra upstream end of the transform
-            view.setOnGenericMotionListener( transform );
-            mTransform = transform;
-        }
-        
-        // Set the formula for decoding special analog IMEs
-        mTransform.setImeFormula( ImeFormula.DEFAULT );
-        
-        // Request focus for proper listening
-        view.requestFocus();
+        // Setup axis listening
+        mAxisProvider = AxisProvider.create( view );
+        if( mAxisProvider != null )
+            mAxisProvider.registerListener( this );
         
         // Refresh the dialog view
         updateViews();
@@ -152,11 +135,9 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
     {
         super.onPrepareDialogBuilder( builder );
         
-        // Connect the upstream end of the transform
-        builder.setOnKeyListener( mTransform );
-        
-        // Connect the downstream end of the transform
-        mTransform.registerListener( this );
+        // Setup key listening
+        mKeyProvider = new KeyProvider( builder, ImeFormula.DEFAULT );
+        mKeyProvider.registerListener( this );
     }
     
     @Override
@@ -168,6 +149,12 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         
         // Refresh the biases next time the dialog opens
         mStrengthBiases = null;
+        
+        // Disconnect the listeners
+        if( mAxisProvider != null )
+            mAxisProvider.unregisterListener( this );
+        if( mKeyProvider != null )
+            mKeyProvider.unregisterListener( this );
     }
     
     @Override
@@ -240,7 +227,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         }
         // Else, handle the mapping buttons in the dialog (never unmap, would confuse user)
         else if( mInputCodeToBeMapped != 0 )
-        {            
+        {
             // Find the button that was touched and map it
             for( int i = 0; i < mN64Button.length; i++ )
             {
@@ -259,7 +246,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         // Find the Button view that was long-touched and unmap it
         for( int i = 0; i < mN64Button.length; i++ )
         {
-            if( view.equals( mN64Button[i]) )
+            if( view.equals( mN64Button[i] ) )
                 mMap.unmapInput( i );
         }
         

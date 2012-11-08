@@ -20,24 +20,40 @@
 package paulscode.android.mupen64plusae.input.provider;
 
 import android.annotation.TargetApi;
+import android.os.Build;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 import android.view.View;
 
 @TargetApi( 12 )
-public class AxisProvider extends KeyProvider implements View.OnGenericMotionListener
+public class AxisProvider extends AbstractProvider implements View.OnGenericMotionListener
 {
     private int[] mInputCodes;
     
     private static final int DEFAULT_NUM_INPUTS = 128;
     
-    public AxisProvider()
+    public static AxisProvider create( View view )
     {
-        // By default, listen to all possible gamepad axes
+        // Use a factory method for API safety
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 )
+            return new AxisProvider( view );
+        else
+            return null;
+    }
+    
+    private AxisProvider( View view )
+    {
+        // By default, provide data from all possible axes
         mInputCodes = new int[DEFAULT_NUM_INPUTS];
         for( int i = 0; i < mInputCodes.length; i++ )
             mInputCodes[i] = -( i + 1 );
+        
+        // Connect the input source
+        view.setOnGenericMotionListener( this );
+        
+        // Request focus for proper listening
+        view.requestFocus();
     }
     
     public void setInputCodeFilter( int[] inputCodeFilter )

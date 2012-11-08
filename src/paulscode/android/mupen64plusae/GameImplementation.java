@@ -24,6 +24,7 @@ import java.io.File;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
+import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -58,7 +59,8 @@ public class GameImplementation implements View.OnKeyListener
     private TouchscreenView mTouchscreenView;
     @SuppressWarnings( "unused" )
     private TouchscreenController mTouchscreenController;
-    private KeyProvider mKeyTransform;
+    private KeyProvider mKeyProvider;
+    private AxisProvider mAxisProvider;
     private PeripheralController mPeripheralController1;
     private PeripheralController mPeripheralController2;
     private PeripheralController mPeripheralController3;
@@ -125,7 +127,7 @@ public class GameImplementation implements View.OnKeyListener
         initPeripherals();
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
-        // Override the peripheral controller key listener, to add some extra functionality
+        // Override the key provider, to add some extra functionality
         mSdlSurface.setOnKeyListener( this );
         
         // Synchronize the interface to the emulator core
@@ -234,9 +236,9 @@ public class GameImplementation implements View.OnKeyListener
                         || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
             return false;
         
-        // Send everything else to the peripheral controllers via the transform
-        else if( mKeyTransform != null )
-            return mKeyTransform.onKey( view, keyCode, event );
+        // Send everything else to the key provider
+        else if( mKeyProvider != null )
+            return mKeyProvider.onKey( view, keyCode, event );
         
         // Let Android handle whatever remains
         else
@@ -267,32 +269,33 @@ public class GameImplementation implements View.OnKeyListener
     {
         if( Globals.userPrefs.isInputEnabled )
         {
-            // Create the common transform used for all peripheral controllers
-            mKeyTransform = PeripheralController.buildTransform( mSdlSurface, ImeFormula.DEFAULT );
+            // Create the input providers shared among all peripheral controllers
+            mKeyProvider = new KeyProvider( mSdlSurface, ImeFormula.DEFAULT );
+            mAxisProvider = AxisProvider.create( mSdlSurface );
             
             // Create the peripheral controllers for players 1-4
             if( Globals.userPrefs.inputMap1.isEnabled() )
             {
                 mPeripheralController1 = new PeripheralController( Globals.userPrefs.inputMap1,
-                        mKeyTransform );
+                        mKeyProvider, mAxisProvider );
                 mPeripheralController1.setPlayerNumber( 1 );
             }
             if( Globals.userPrefs.inputMap2.isEnabled() )
             {
                 mPeripheralController2 = new PeripheralController( Globals.userPrefs.inputMap2,
-                        mKeyTransform );
+                        mKeyProvider, mAxisProvider );
                 mPeripheralController2.setPlayerNumber( 2 );
             }
             if( Globals.userPrefs.inputMap3.isEnabled() )
             {
                 mPeripheralController3 = new PeripheralController( Globals.userPrefs.inputMap3,
-                        mKeyTransform );
+                        mKeyProvider, mAxisProvider );
                 mPeripheralController3.setPlayerNumber( 3 );
             }
             if( Globals.userPrefs.inputMap4.isEnabled() )
             {
                 mPeripheralController4 = new PeripheralController( Globals.userPrefs.inputMap4,
-                        mKeyTransform );
+                        mKeyProvider, mAxisProvider );
                 mPeripheralController4.setPlayerNumber( 4 );
             }
         }
@@ -352,13 +355,13 @@ public class GameImplementation implements View.OnKeyListener
         CharSequence title = mActivity.getText( R.string.ingameSave_title );
         CharSequence hint = mActivity.getText( R.string.gameImplementation_saveHint );
         Prompt.promptText( mActivity, title, null, hint, new OnTextListener()
-                {
-                    @Override
-                    public void onText( CharSequence text )
-                    {
-                        saveStateToFile( text.toString() );
-                    }
-                } );
+        {
+            @Override
+            public void onText( CharSequence text )
+            {
+                saveStateToFile( text.toString() );
+            }
+        } );
     }
     
     private void saveStateToFile( final String filename )
@@ -367,20 +370,20 @@ public class GameImplementation implements View.OnKeyListener
         if( file.exists() )
         {
             String title = mActivity.getString( R.string._confirmation );
-            String message = mActivity.getString( R.string.gameImplementation_confirmFile, filename );
-            Prompt.promptConfirm( mActivity, title, message,
-                    new OnClickListener()
+            String message = mActivity
+                    .getString( R.string.gameImplementation_confirmFile, filename );
+            Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
+            {
+                @Override
+                public void onClick( DialogInterface dialog, int which )
+                {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        @Override
-                        public void onClick( DialogInterface dialog, int which )
-                        {
-                            if( which == DialogInterface.BUTTON_POSITIVE )
-                            {
-                                Log.i( "GameImplementation", "Overwriting file " + filename );
-                                NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
-                            }
-                        }
-                    } );
+                        Log.i( "GameImplementation", "Overwriting file " + filename );
+                        NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+                    }
+                }
+            } );
         }
         else
         {

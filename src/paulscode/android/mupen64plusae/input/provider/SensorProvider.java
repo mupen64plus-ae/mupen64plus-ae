@@ -15,11 +15,10 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: TODO: Implement sensor controller, if desired
+ * Authors: TODO: Implement sensor provider, if desired
  */
 package paulscode.android.mupen64plusae.input.provider;
 
-import paulscode.android.mupen64plusae.NativeMethods;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -34,9 +33,5 @@ public class SensorProvider extends AbstractProvider implements SensorEventListe
     @Override
     public void onSensorChanged( SensorEvent event )
     {
-        if( event.sensor.getType() == Sensor.TYPE_ACCELEROMETER )
-        {
-            NativeMethods.onAccel( event.values[0], event.values[1], event.values[2] );
-        }
     }
 }

@@ -19,6 +19,7 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,19 +34,25 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
     
     private ImeFormula mImeFormula;
     
-    public KeyProvider()
+    public KeyProvider( View view, ImeFormula formula )
     {
-        setImeFormula( ImeFormula.DEFAULT );
+        // Assign the IME decoding formula
+        mImeFormula = formula;
+        
+        // Connect the input source
+        view.setOnKeyListener( this );
+        
+        // Request focus for proper listening
+        view.requestFocus();
     }
     
-    public ImeFormula getImeFormula()
+    public KeyProvider( Builder builder, ImeFormula formula )
     {
-        return mImeFormula;
-    }
-    
-    public void setImeFormula( ImeFormula imeFormula )
-    {
-        mImeFormula = imeFormula;
+        // Assign the IME decoding formula
+        mImeFormula = formula;
+        
+        // Connect the input source
+        builder.setOnKeyListener( this );
     }
     
     @Override
@@ -78,7 +85,7 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
         else
         {
             // Analog axis changed state, decode using IME-specific formula
-            switch( getImeFormula() )
+            switch( mImeFormula )
             {
                 case DEFAULT:
                 case USB_BT_JOYSTICK_CENTER:

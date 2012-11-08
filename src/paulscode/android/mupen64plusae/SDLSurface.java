@@ -30,7 +30,6 @@ import javax.microedition.khronos.egl.EGLSurface;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -63,7 +62,6 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
     private EGLDisplay mEGLDisplay;
     
     // Startup
-    @TargetApi( 12 )
     public SDLSurface( Context context, AttributeSet attribs )
     {
         super( context, attribs );
