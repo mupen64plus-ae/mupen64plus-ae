@@ -32,45 +32,84 @@ import android.view.MotionEvent;
  * @see KeyProvider
  * @see AxisProvider
  * @see SensorProvider
+ * @see LazyProvider
  * @see InputMap
  */
 public abstract class AbstractProvider
 {
+    /**
+     * The interface for listening to a provider.
+     */
     public interface Listener
     {
+        /**
+         * Called when a single input has been dispatched.
+         * 
+         * @param inputCode The standardized input code that was dispatched.
+         * @param strength The input strength, between 0 and 1, inclusive.
+         */
         public void onInput( int inputCode, float strength );
         
+        /**
+         * Called when multiple inputs have been dispatched simultaneously.
+         * 
+         * @param inputCodes The standardized input codes that were dispatched.
+         * @param strengths The input strengths, between 0 and 1, inclusive.
+         */
         public void onInput( int[] inputCodes, float[] strengths );
     }
     
+    /** Listener management. */
     private SubscriptionManager<AbstractProvider.Listener> mPublisher;
     
+    /**
+     * Instantiates a new abstract provider.
+     */
     protected AbstractProvider()
     {
         mPublisher = new SubscriptionManager<AbstractProvider.Listener>();
     }
     
+    /**
+     * Registers a listener to start receiving input notifications.
+     * 
+     * @param listener The listener to register.
+     */
     public void registerListener( AbstractProvider.Listener listener )
     {
         mPublisher.subscribe( listener );
     }
     
+    /**
+     * Unregisters a listener to stop receiving input notifications.
+     * 
+     * @param listener The listener to unregister.
+     */
     public void unregisterListener( AbstractProvider.Listener listener )
     {
         mPublisher.unsubscribe( listener );
     }
     
+    /**
+     * Unregisters all listeners.
+     */
     public void unregisterAllListeners()
     {
         mPublisher.unsubscribeAll();
     }
     
+    /**
+     * Gets the human-readable name of the input.
+     * 
+     * @param inputCode The standardized input code.
+     * @return The name of the input.
+     */
     @TargetApi( 12 )
     public static String getInputName( int inputCode )
     {
         // TODO: Localize strings.
         boolean isHoneycombMR1 = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1;
-
+        
         if( inputCode > 0 )
         {
             if( isHoneycombMR1 )
@@ -80,8 +119,8 @@ public abstract class AbstractProvider
         }
         else if( inputCode < 0 )
         {
-            int axis = inputToAxisCode( inputCode );
-            String direction = inputToAxisDirection( inputCode )
+            int axis = AxisProvider.inputToAxisCode( inputCode );
+            String direction = AxisProvider.inputToAxisDirection( inputCode )
                     ? " (+)"
                     : " (-)";
             if( isHoneycombMR1 )
@@ -93,6 +132,13 @@ public abstract class AbstractProvider
             return "NULL";
     }
     
+    /**
+     * Gets the human-readable name of the input, appended with strength information.
+     * 
+     * @param inputCode The standardized input code.
+     * @param strength The input strength, ranging from 0 to 1, inclusive.
+     * @return The name of the input.
+     */
     public static String getInputName( int inputCode, float strength )
     {
         return getInputName( inputCode ) + ( inputCode == 0
@@ -100,35 +146,29 @@ public abstract class AbstractProvider
                 : String.format( " %4.2f", strength ) );
     }
     
+    /**
+     * Notifies listeners about a single input. Subclasses should invoke this method to publish
+     * their input data.
+     * 
+     * @param inputCode The standardized input code.
+     * @param strength The input strength, ranging from 0 to 1, inclusive.
+     */
     protected void notifyListeners( int inputCode, float strength )
     {
         for( Listener listener : mPublisher.getSubscribers() )
             listener.onInput( inputCode, strength );
     }
     
+    /**
+     * Notifies listeners about a batch of inputs. Subclasses should invoke this method to publish
+     * their input data.
+     * 
+     * @param inputCodes The standardized input codes.
+     * @param strengths The input strengths, ranging from 0 to 1, inclusive.
+     */
     protected void notifyListeners( int[] inputCodes, float[] strengths )
     {
         for( Listener listener : mPublisher.getSubscribers() )
             listener.onInput( inputCodes.clone(), strengths.clone() );
-    }
-    
-    protected static int axisToInputCode( int axisCode, boolean positiveDirection )
-    {
-        // Axis codes are encoded to negative values (versus buttons which are
-        // positive). Axis codes are bit shifted by one so that the lowest bit
-        // can encode axis direction.
-        return -( ( axisCode ) * 2 + ( positiveDirection
-                ? 1
-                : 2 ) );
-    }
-    
-    protected static int inputToAxisCode( int inputCode )
-    {
-        return ( -inputCode - 1 ) / 2;
-    }
-    
-    protected static boolean inputToAxisDirection( int inputCode )
-    {
-        return ( ( -inputCode ) % 2 ) == 1;
     }
 }

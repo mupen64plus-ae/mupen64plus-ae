@@ -24,16 +24,36 @@ import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
 
+/**
+ * A class for transforming Android KeyEvent inputs into a common format.
+ */
 public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
         DialogInterface.OnKeyListener
 {
+    /**
+     * The formula for decoding KeyEvent data for specific Android IMEs.
+     */
     public enum ImeFormula
     {
-        DEFAULT, USB_BT_JOYSTICK_CENTER, BT_CONTROLLER, EXAMPLE_IME
+        /** The default decoding formula. */
+        DEFAULT,
+        /** The formula for <i>USB/BT Joystick Center</i>, by Poke64738. */
+        USB_BT_JOYSTICK_CENTER,
+        /** The formula for <i>BT Controller</i>, by droidbean. */
+        BT_CONTROLLER,
+        /** An example decoding formula. */
+        EXAMPLE_IME
     }
     
+    /** The IME formula for decoding KeyEvent data. */
     private ImeFormula mImeFormula;
     
+    /**
+     * Instantiates a new key provider.
+     * 
+     * @param view The view receiving KeyEvent data.
+     * @param formula The decoding formula to be used.
+     */
     public KeyProvider( View view, ImeFormula formula )
     {
         // Assign the IME decoding formula
@@ -46,6 +66,12 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
         view.requestFocus();
     }
     
+    /**
+     * Instantiates a new key provider.
+     * 
+     * @param builder The builder for the dialog receiving KeyEvent data.
+     * @param formula The decoding formula to be used.
+     */
     public KeyProvider( Builder builder, ImeFormula formula )
     {
         // Assign the IME decoding formula
@@ -55,18 +81,36 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
         builder.setOnKeyListener( this );
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View.OnKeyListener#onKey(android.view.View, int, android.view.KeyEvent)
+     */
     @Override
     public boolean onKey( View v, int keyCode, KeyEvent event )
     {
         return onKey( keyCode, event );
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.content.DialogInterface.OnKeyListener#onKey(android.content.DialogInterface,
+     * int, android.view.KeyEvent)
+     */
     @Override
     public boolean onKey( DialogInterface dialog, int keyCode, KeyEvent event )
     {
         return onKey( keyCode, event );
     }
     
+    /**
+     * Called when a key is dispatched to a dialog or view.
+     * 
+     * @param keyCode The Android key code.
+     * @param event the event
+     * @return True if the listener has consumed the event, false otherwise.
+     */
     private boolean onKey( int keyCode, KeyEvent event )
     {
         // Ignore cancellations via back key
@@ -107,7 +151,7 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
         if( event.getAction() == KeyEvent.ACTION_UP )
             strength = 0;
         
-        // Notify listeners of input data
+        // Notify listeners about new input data
         notifyListeners( inputCode, strength );
         
         return true;

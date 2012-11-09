@@ -26,13 +26,24 @@ import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 import android.view.View;
 
+/**
+ * A class for transforming Android MotionEvent inputs into a common format.
+ */
 @TargetApi( 12 )
 public class AxisProvider extends AbstractProvider implements View.OnGenericMotionListener
 {
+    /** The input codes to listen for. */
     private int[] mInputCodes;
     
+    /** The default number of input codes to listen for. */
     private static final int DEFAULT_NUM_INPUTS = 128;
     
+    /**
+     * Instantiates a new axis provider if the API allows, or null.
+     * 
+     * @param view The view receiving MotionEvent data.
+     * @return An AxisProvider instance, or null.
+     */
     public static AxisProvider create( View view )
     {
         // Use a factory method for API safety
@@ -42,6 +53,11 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
             return null;
     }
     
+    /**
+     * Instantiates a new axis provider.
+     * 
+     * @param view The view receiving MotionEvent data.
+     */
     private AxisProvider( View view )
     {
         // By default, provide data from all possible axes
@@ -56,11 +72,22 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         view.requestFocus();
     }
     
+    /**
+     * Restricts listening to a set of standardized input codes.
+     * 
+     * @param inputCodeFilter The new input codes to listen for.
+     */
     public void setInputCodeFilter( int[] inputCodeFilter )
     {
         mInputCodes = inputCodeFilter.clone();
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View.OnGenericMotionListener#onGenericMotion(android.view.View,
+     * android.view.MotionEvent)
+     */
     @Override
     public boolean onGenericMotion( View v, MotionEvent event )
     {
@@ -73,16 +100,16 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
             int inputCode = mInputCodes[i];
             
             // Compute the axis code from the input code
-            int axisCode = inputToAxisCode( inputCode );
+            int axisCode = AxisProvider.inputToAxisCode( inputCode );
             
-            // Get the analog value using the native Android API
+            // Get the analog value using the Android API
             float strength = event.getAxisValue( axisCode );
             MotionRange motionRange = device.getMotionRange( axisCode );
             if( motionRange != null )
                 strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
             
             // If the strength points in the correct direction, record it
-            boolean direction1 = inputToAxisDirection( inputCode );
+            boolean direction1 = AxisProvider.inputToAxisDirection( inputCode );
             boolean direction2 = strength > 0;
             if( direction1 == direction2 )
                 strengths[i] = Math.abs( strength );
@@ -90,9 +117,48 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
                 strengths[i] = 0;
         }
         
-        // Notify listeners of input data
+        // Notify listeners about new input data
         notifyListeners( mInputCodes, strengths );
         
         return true;
+    }
+    
+    /**
+     * Convert an Android axis code to a standardized input code.
+     * 
+     * @param axisCode The Android axis code.
+     * @param positiveDirection Set true for positive Android axis, false for negative Android axis.
+     * @return The corresponding standardized input code.
+     */
+    protected static int axisToInputCode( int axisCode, boolean positiveDirection )
+    {
+        // Axis codes are encoded to negative values (versus buttons which are
+        // positive). Axis codes are bit shifted by one so that the lowest bit
+        // can encode axis direction.
+        return -( ( axisCode ) * 2 + ( positiveDirection
+                ? 1
+                : 2 ) );
+    }
+    
+    /**
+     * Convert a standardized input code to an Android axis code.
+     * 
+     * @param inputCode The standardized input code.
+     * @return The corresponding Android axis code.
+     */
+    protected static int inputToAxisCode( int inputCode )
+    {
+        return ( -inputCode - 1 ) / 2;
+    }
+    
+    /**
+     * Convert a standardized input code to an Android axis direction.
+     * 
+     * @param inputCode The standardized input code.
+     * @return true, if the input code represents positive Android axis direction.
+     */
+    protected static boolean inputToAxisDirection( int inputCode )
+    {
+        return ( ( -inputCode ) % 2 ) == 1;
     }
 }
