@@ -132,9 +132,7 @@ public class Utility
      */
     public static String getCpuInfo()
     {
-        // TODO: Simplify this. I hardly believe you need to use 'cat' on cpuinfo
-        // to get this information.
-        // Already know how to simplify it. Will do it when I have the time. (Lioncash)
+        // TODO: Simplify this... somehow.
         
         // From http://android-er.blogspot.com/2009/09/read-android-cpu-info.html
         String result = "";
