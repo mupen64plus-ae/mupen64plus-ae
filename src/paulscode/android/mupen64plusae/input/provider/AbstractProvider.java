@@ -60,6 +60,11 @@ public abstract class AbstractProvider
         mPublisher.unsubscribe( listener );
     }
     
+    public void unregisterAllListeners()
+    {
+        mPublisher.unsubscribeAll();
+    }
+    
     @TargetApi( 12 )
     public static String getInputName( int inputCode )
     {

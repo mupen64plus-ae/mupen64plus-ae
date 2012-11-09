@@ -28,6 +28,7 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import paulscode.android.mupen64plusae.input.provider.LazyProvider;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -44,23 +45,23 @@ import android.widget.TextView;
 public class InputMapPreference extends DialogPreference implements AbstractProvider.Listener,
         OnClickListener, OnLongClickListener
 {
-    private static final float STRENGTH_THRESHOLD = 0.5f;
-    private static final float STRENGTH_HYSTERESIS = 0.25f;
+    private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
     
-    private InputMap mMap = new InputMap();
+    private final InputMap mMap;
+    private final LazyProvider mProvider;
     private int mInputCodeToBeMapped = 0;
-    private int mLastInputCode = 0;
-    private float mLastStrength = 0;
-    private float[] mStrengthBiases;
     private View mToggleWidget;
     private TextView mFeedbackText;
     private Button[] mN64Button = new Button[InputMap.NUM_N64INPUTS];
-    private KeyProvider mKeyProvider = null;
-    private AxisProvider mAxisProvider = null;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
+        
+        mMap = new InputMap();
+        mProvider = new LazyProvider();
+        mProvider.registerListener( this );
+        
         setDialogLayoutResource( R.layout.input_map_preference );
         setWidgetLayoutResource( R.layout.widget_toggle );
     }
@@ -71,7 +72,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         // Set up the menu item seen in the preferences menu
         super.onBindView( view );
         
-        // Restore existing state
+        // Restore the persisted map
         mMap.deserialize( getPersistedString( "" ) );
         
         // Get the toggle widget and set its state
@@ -85,9 +86,6 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
     {
         // Set up the dialog view seen when the preference menu item is clicked
         super.onBindDialogView( view );
-        
-        // Restore existing state (might have canceled last dialog)
-        mMap.deserialize( getPersistedString( "" ) );
         
         // Get the text view object
         mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
@@ -121,10 +119,8 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
             b.setOnLongClickListener( this );
         }
         
-        // Setup axis listening
-        mAxisProvider = AxisProvider.create( view );
-        if( mAxisProvider != null )
-            mAxisProvider.registerListener( this );
+        // Setup analog axis listening
+        mProvider.addProvider( AxisProvider.create( view ) );
         
         // Refresh the dialog view
         updateViews();
@@ -136,83 +132,21 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         super.onPrepareDialogBuilder( builder );
         
         // Setup key listening
-        mKeyProvider = new KeyProvider( builder, ImeFormula.DEFAULT );
-        mKeyProvider.registerListener( this );
+        mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT ) );
     }
     
     @Override
     protected void onDialogClosed( boolean positiveResult )
     {
-        // Persist the result if user pressed Ok
+        // Return to a clean state so that the toggle doesn't persist unwanted changes
+        // Either save the new value or reset to the original value
         if( positiveResult )
             persistString( mMap.serialize() );
+        else
+            mMap.deserialize( getPersistedString( "" ) );
         
-        // Refresh the biases next time the dialog opens
-        mStrengthBiases = null;
-        
-        // Disconnect the listeners
-        if( mAxisProvider != null )
-            mAxisProvider.unregisterListener( this );
-        if( mKeyProvider != null )
-            mKeyProvider.unregisterListener( this );
-    }
-    
-    @Override
-    public void onInput( int[] inputCodes, float[] strengths )
-    {
-        // Get strength biases first time through
-        boolean refreshBiases = false;
-        if( mStrengthBiases == null )
-        {
-            mStrengthBiases = new float[strengths.length];
-            refreshBiases = true;
-        }
-        
-        // Find the strongest input
-        float maxStrength = STRENGTH_THRESHOLD;
-        int strongestInputCode = 0;
-        for( int i = 0; i < inputCodes.length; i++ )
-        {
-            int inputCode = inputCodes[i];
-            float strength = strengths[i];
-            
-            // Record the strength bias and remove its effect
-            if( refreshBiases )
-                mStrengthBiases[i] = strength;
-            strength -= mStrengthBiases[i];
-            
-            // Cache the strongest input
-            if( strength > maxStrength )
-            {
-                maxStrength = strength;
-                strongestInputCode = inputCode;
-            }
-        }
-        
-        // Call the overloaded method with the strongest found
-        onInput( strongestInputCode, maxStrength );
-    }
-    
-    @Override
-    public void onInput( int inputCode, float strength )
-    {
-        // Determine the input conditions
-        boolean isActive = strength > STRENGTH_THRESHOLD;
-        boolean inputChanged = inputCode != mLastInputCode;
-        boolean strengthChanged = Math.abs( strength - mLastStrength ) > STRENGTH_HYSTERESIS;
-        
-        // Cache the input code to be mapped
-        if( isActive )
-            mInputCodeToBeMapped = inputCode;
-        
-        // Update the user feedback views
-        // To keep the touchscreen responsive, ignore small strength changes
-        if( strengthChanged || inputChanged )
-        {
-            mLastInputCode = inputCode;
-            mLastStrength = strength;
-            updateViews();
-        }
+        // Unregister parent providers, save some resources
+        mProvider.removeAllProviders();
     }
     
     @Override
@@ -225,7 +159,9 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
             mMap.setEnabled( isEnabled );
             persistString( mMap.serialize() );
         }
-        // Else, handle the mapping buttons in the dialog (never unmap, would confuse user)
+        
+        // Else, find the button that was clicked and map it
+        // (never unmap, would confuse user)
         else if( mInputCodeToBeMapped != 0 )
         {
             // Find the button that was touched and map it
@@ -243,7 +179,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
     @Override
     public boolean onLongClick( View view )
     {
-        // Find the Button view that was long-touched and unmap it
+        // Find the button that was long-touched and unmap it
         for( int i = 0; i < mN64Button.length; i++ )
         {
             if( view.equals( mN64Button[i] ) )
@@ -255,23 +191,36 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         return true;
     }
     
+    @Override
+    public void onInput( int inputCode, float strength )
+    {
+        mInputCodeToBeMapped = mProvider.getActiveCode();
+        updateViews( inputCode, strength );
+    }
+    
+    @Override
+    public void onInput( int[] inputCodes, float[] strengths )
+    {
+        // Nothing to do here, just implement the interface
+    }
+    
     @TargetApi( 11 )
-    private void updateViews()
+    private void updateViews( int inputCode, float strength )
     {
         // Modify the button appearance to provide feedback to user
-        int selectedIndex = mMap.get( mLastInputCode );
+        int selectedIndex = mMap.get( inputCode );
         for( int i = 0; i < mN64Button.length; i++ )
         {
-            Button button = mN64Button[i];
-            
             // Highlight the currently active button
-            button.setPressed( i == selectedIndex && mLastStrength > STRENGTH_THRESHOLD );
+            Button button = mN64Button[i];
+            button.setPressed( i == selectedIndex
+                    && strength > LazyProvider.STRENGTH_THRESHOLD );
             
             // Fade any buttons that aren't mapped
             if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
             {
                 if( mMap.getMappedInputCodes()[i] == 0 )
-                    button.setAlpha( 0.2f );
+                    button.setAlpha( UNMAPPED_BUTTON_ALPHA );
                 else
                     button.setAlpha( 1 );
             }
@@ -279,5 +228,11 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         
         // Update the feedback text
         mFeedbackText.setText( AbstractProvider.getInputName( mInputCodeToBeMapped ) );
+    }
+
+    private void updateViews()
+    {
+        // Default update, don't highlight anything
+        updateViews( 0, 0 );
     }
 }

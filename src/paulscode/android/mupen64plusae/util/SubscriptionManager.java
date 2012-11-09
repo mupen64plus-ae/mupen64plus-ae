@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class SubscriptionManager<Subscriber>
 {
-    private List<Subscriber> mSubscribers;
+    private ArrayList<Subscriber> mSubscribers;
     
     public SubscriptionManager()
     {
@@ -47,6 +47,11 @@ public class SubscriptionManager<Subscriber>
         if( subscriber != null )
             while( mSubscribers.remove( subscriber ) )
                 ;
+    }
+    
+    public void unsubscribeAll()
+    {
+        mSubscribers.removeAll( mSubscribers );            
     }
     
     public List<Subscriber> getSubscribers()

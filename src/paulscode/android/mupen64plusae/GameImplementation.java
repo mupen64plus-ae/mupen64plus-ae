@@ -236,7 +236,7 @@ public class GameImplementation implements View.OnKeyListener
                         || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
             return false;
         
-        // Send everything else to the key provider
+        // Let the PeripheralControllers' provider handle everything else
         else if( mKeyProvider != null )
             return mKeyProvider.onKey( view, keyCode, event );
         
