@@ -76,11 +76,17 @@ public class PeripheralController extends AbstractController implements Abstract
         // Process batch user inputs from gamepad, keyboard, etc.
         if( mInputMap != null )
         {
-            mAxisFractionXneg = mAxisFractionXpos = mAxisFractionYneg = mAxisFractionYpos = 0;
+            mAxisFractionXneg = 0;
+            mAxisFractionXpos = 0;
+            mAxisFractionYneg = 0;
+            mAxisFractionYpos = 0;
+            
             for( int i = 0; i < inputCodes.length; i++ )
                 apply( inputCodes[i], strengths[i] );
+            
             mAxisFractionX = mAxisFractionXpos - mAxisFractionXneg;
             mAxisFractionY = mAxisFractionYpos - mAxisFractionYneg;
+            
             notifyChanged();
         }
     }

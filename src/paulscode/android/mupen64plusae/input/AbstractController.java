@@ -92,7 +92,10 @@ public abstract class AbstractController
     {
         for( int i = 0; i < NUM_BUTTONS; i++ )
             mButtons[i] = false;
-        mAxisFractionX = mAxisFractionY = 0;
+        
+        mAxisFractionX = 0;
+        mAxisFractionY = 0;
+        
         notifyChanged();
     }
     
