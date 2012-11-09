@@ -251,8 +251,7 @@ public class GameImplementation implements View.OnKeyListener
                 && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
         {
             // The touch map and view are needed to display frame rate and/or controls
-            mTouchscreenMap = new VisibleTouchMap();
-            mTouchscreenMap.setResources( mActivity.getResources() );
+            mTouchscreenMap = new VisibleTouchMap( mActivity.getResources() );
             mTouchscreenMap.load( Globals.userPrefs.touchscreenLayoutFolder );
             mTouchscreenView.initialize( mTouchscreenMap );
             mSdlSurface.initialize( mTouchscreenMap );

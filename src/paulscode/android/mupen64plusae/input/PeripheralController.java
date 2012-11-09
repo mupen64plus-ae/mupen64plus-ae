@@ -24,18 +24,43 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 
+/**
+ * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
+ * keyboards, mice, etc.).
+ */
 public class PeripheralController extends AbstractController implements AbstractProvider.Listener,
         InputMap.Listener
 {
-    private InputMap mInputMap;
-    private KeyProvider mKeyProvider;
-    private AxisProvider mAxisProvider;
-    protected float mAxisFractionXpos;
-    protected float mAxisFractionXneg;
-    protected float mAxisFractionYpos;
-    protected float mAxisFractionYneg;
+    /** The map from hardware codes to N64 commands. */
+    private final InputMap mInputMap;
     
-    public PeripheralController( InputMap inputMap, KeyProvider keyProvider, AxisProvider axisProvider )
+    /** The provider for button/key inputs. */
+    private final KeyProvider mKeyProvider;
+    
+    /** The provider for analog inputs (may be null depending on API level). */
+    private final AxisProvider mAxisProvider;
+    
+    /** The positive analog-x strength, between 0 and 1, inclusive. */
+    private float mStrengthXpos;
+    
+    /** The negative analog-x strength, between 0 and 1, inclusive. */
+    private float mStrengthXneg;
+    
+    /** The positive analog-y strength, between 0 and 1, inclusive. */
+    private float mStrengthYpos;
+    
+    /** The negative analogy-y strength, between 0 and 1, inclusive. */
+    private float mStrengthYneg;
+    
+    /**
+     * Instantiates a new peripheral controller.
+     * 
+     * @param inputMap The map from hardware codes to N64 commands.
+     * @param keyProvider The key provider. Null values are safe.
+     * @param axisProvider The axis provider. Null values are safe.
+     */
+    public PeripheralController( InputMap inputMap, KeyProvider keyProvider,
+            AxisProvider axisProvider )
     {
         // Assign the map and listen for changes
         mInputMap = inputMap;
@@ -49,84 +74,108 @@ public class PeripheralController extends AbstractController implements Abstract
         mKeyProvider = keyProvider;
         mAxisProvider = axisProvider;
         
-        // Connect the providers' destination
+        // Start listening to the providers
         if( mKeyProvider != null )
             mKeyProvider.registerListener( this );
         if( mAxisProvider != null )
             mAxisProvider.registerListener( this );
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int,
+     * float)
+     */
     @Override
     public void onInput( int inputCode, float strength )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mInputMap != null )
         {
-            mAxisFractionXneg = mAxisFractionXpos = mAxisFractionYneg = mAxisFractionYpos = 0;
+            // Apply user changes to the controller state
             apply( inputCode, strength );
-            mAxisFractionX = mAxisFractionXpos - mAxisFractionXneg;
-            mAxisFractionY = mAxisFractionYpos - mAxisFractionYneg;
+            
+            // Notify the core that controller state has changed
             notifyChanged();
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int[],
+     * float[])
+     */
     @Override
     public void onInput( int[] inputCodes, float[] strengths )
     {
-        // Process batch user inputs from gamepad, keyboard, etc.
+        // Process multiple simultaneous user inputs from gamepad, keyboard, etc.
         if( mInputMap != null )
         {
-            mAxisFractionXneg = 0;
-            mAxisFractionXpos = 0;
-            mAxisFractionYneg = 0;
-            mAxisFractionYpos = 0;
-            
+            // Apply user changes to the controller state
             for( int i = 0; i < inputCodes.length; i++ )
                 apply( inputCodes[i], strengths[i] );
             
-            mAxisFractionX = mAxisFractionXpos - mAxisFractionXneg;
-            mAxisFractionY = mAxisFractionYpos - mAxisFractionYneg;
-            
+            // Notify the core that controller state has changed
             notifyChanged();
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * paulscode.android.mupen64plusae.input.map.InputMap.Listener#onMapChanged(paulscode.android
+     * .mupen64plusae.input.map.InputMap)
+     */
     @Override
     public void onMapChanged( InputMap map )
     {
-        // If the button/axis mappings change, update the transform's listening filter
+        // Update the axis provider's notification filter
         if( mAxisProvider != null )
             mAxisProvider.setInputCodeFilter( map.getMappedInputCodes() );
     }
     
-    public boolean apply( int inputCode, float strength )
+    /**
+     * Apply user input to the N64 controller state.
+     * 
+     * @param inputCode The standardized input code that was dispatched.
+     * @param strength The input strength, between 0 and 1, inclusive.
+     * @return True, if controller state changed.
+     */
+    private boolean apply( int inputCode, float strength )
     {
-        boolean state = strength > InputMap.STRENGTH_THRESHOLD;
+        boolean state = strength > AbstractProvider.STRENGTH_THRESHOLD;
         int n64Index = mInputMap.get( inputCode );
         
-        if( n64Index >= 0 && n64Index < NUM_BUTTONS )
+        if( n64Index >= 0 && n64Index < NUM_N64_BUTTONS )
         {
-            mButtons[n64Index] = state;
+            mButtonState[n64Index] = state;
         }
         else
         {
             switch( n64Index )
             {
                 case InputMap.AXIS_R:
-                    mAxisFractionXpos = strength;
+                    mStrengthXpos = strength;
                     break;
                 case InputMap.AXIS_L:
-                    mAxisFractionXneg = strength;
+                    mStrengthXneg = strength;
                     break;
                 case InputMap.AXIS_D:
-                    mAxisFractionYneg = strength;
+                    mStrengthYneg = strength;
                     break;
                 case InputMap.AXIS_U:
-                    mAxisFractionYpos = strength;
+                    mStrengthYpos = strength;
                     break;
                 default:
                     return false;
             }
+            
+            // Update the net position of the analog stick
+            mAxisFractionX = mStrengthXpos - mStrengthXneg;
+            mAxisFractionY = mStrengthYpos - mStrengthYneg;           
         }
         return true;
     }

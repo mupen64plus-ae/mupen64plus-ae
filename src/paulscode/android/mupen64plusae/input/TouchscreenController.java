@@ -30,26 +30,54 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+/**
+ * A class for generating N64 controller commands from a touchscreen.
+ */
 public class TouchscreenController extends AbstractController implements OnTouchListener
 {
+    /** The maximum number of pointers to query. */
     private static final int MAX_POINTER_IDS = 256;
-    private boolean[] mPointerTouch = new boolean[MAX_POINTER_IDS];
-    private int[] mPointerX = new int[MAX_POINTER_IDS];
-    private int[] mPointerY = new int[MAX_POINTER_IDS];
     
-    private VisibleTouchMap mTouchMap;
+    /** The map from screen coordinates to N64 controls. */
+    private final VisibleTouchMap mTouchMap;
+    
+    /** The touch state of each pointer. True indicates down, false indicates up. */
+    private final boolean[] mTouchState = new boolean[MAX_POINTER_IDS];
+    
+    /** The x-coordinate of each pointer, between 0 and (screenwidth-1), inclusive. */
+    private final int[] mPointerX = new int[MAX_POINTER_IDS];
+    
+    /** The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive. */
+    private final int[] mPointerY = new int[MAX_POINTER_IDS];
+    
+    /**
+     * The identifier of the pointer associated with the analog stick. -1 indicates the stick has
+     * been released.
+     */
     private int analogPid = -1;
     
+    /**
+     * Instantiates a new touchscreen controller.
+     * 
+     * @param touchMap The map from screen coordinates to N64 controls.
+     * @param view The view receiving touch event data.
+     */
     public TouchscreenController( VisibleTouchMap touchMap, View view )
     {
         mTouchMap = touchMap;
         view.setOnTouchListener( this );
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
+     */
     @Override
     @TargetApi( 5 )
     public boolean onTouch( View view, MotionEvent event )
     {
+        // Eclair is needed for multi-touch tracking (getPointerId, getPointerCount)
         if( Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR )
             return false;
         
@@ -60,61 +88,70 @@ public class TouchscreenController extends AbstractController implements OnTouch
         switch( actionCode )
         {
             case MotionEvent.ACTION_POINTER_DOWN:
+                // A non-primary touch has been made
                 pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
-                mPointerTouch[pid] = true;
+                mTouchState[pid] = true;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
+                // A non-primary touch has been released
                 pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
-                mPointerTouch[pid] = false;
+                mTouchState[pid] = false;
+                mPointerX[pid] = -1;
+                mPointerY[pid] = -1;
                 break;
             case MotionEvent.ACTION_DOWN:
+                // A touch gesture has started (e.g. analog stick movement)
                 for( int i = 0; i < event.getPointerCount(); i++ )
                 {
                     pid = event.getPointerId( i );
-                    mPointerTouch[pid] = true;
+                    mTouchState[pid] = true;
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                for( int i = 0; i < MAX_POINTER_IDS; i++ )
+                // A touch gesture has ended or canceled (e.g. analog stick movement)
+                for( int i = 0; i < event.getPointerCount(); i++ )
                 {
-                    mPointerTouch[i] = false;
-                    mPointerX[i] = -1;
-                    mPointerY[i] = -1;
+                    pid = event.getPointerId( i );
+                    mTouchState[pid] = false;
+                    mPointerX[pid] = -1;
+                    mPointerY[pid] = -1;
                 }
                 break;
             default:
                 break;
         }
         
-        // Record the pointer locations
-        int maxPid = 0;
+        // Update the coordinates of down pointers and record max PID for speed
+        int maxPid = -1;
         for( int i = 0; i < event.getPointerCount(); i++ )
         {
             pid = event.getPointerId( i );
             if( pid > maxPid )
                 maxPid = pid;
-            if( mPointerTouch[pid] )
+            if( mTouchState[pid] )
             {
                 mPointerX[pid] = (int) event.getX( i );
                 mPointerY[pid] = (int) event.getY( i );
             }
         }
         
-        refreshState( mPointerTouch, mPointerX, mPointerY, maxPid );
+        // Process each touch
+        processTouches( mTouchState, mPointerX, mPointerY, maxPid );
         
         return true;
     }
     
     /**
-     * Determines which controls are pressed based on where the screen is being touched.
+     * Sets the N64 controller state based on where the screen is (multi-) touched. Values outside
+     * the ranges listed below are safe.
      * 
-     * @param pointerTouching Array indicating which pointers are touching the screen.
-     * @param pointerX Array containing the X-coordinate of each pointer.
-     * @param pointerY Array containing the Y-coordinate of each pointer.
+     * @param touchstate The touch state of each pointer. True indicates down, false indicates up.
+     * @param pointerX The x-coordinate of each pointer, between 0 and (screenwidth-1), inclusive.
+     * @param pointerY The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive.
      * @param maxPid Maximum ID of the pointers that have changed (speed optimization).
      */
-    private void refreshState( boolean[] pointerTouching, int[] pointerX, int[] pointerY, int maxPid )
+    private void processTouches( boolean[] touchstate, int[] pointerX, int[] pointerY, int maxPid )
     {
         // Clear button/axis state using super method
         clearState();
@@ -124,14 +161,14 @@ public class TouchscreenController extends AbstractController implements OnTouch
         for( int pid = 0; pid <= maxPid; pid++ )
         {
             // Release analog if its pointer is not touching the screen
-            if( pid == analogPid && !pointerTouching[pid] )
+            if( pid == analogPid && !touchstate[pid] )
             {
                 analogMoved = true;
                 analogPid = -1;
             }
             
             // Process touches
-            if( pointerTouching[pid] )
+            if( touchstate[pid] )
             {
                 if( pid != analogPid )
                 {
@@ -151,18 +188,24 @@ public class TouchscreenController extends AbstractController implements OnTouch
             mTouchMap.updateAnalog( mAxisFractionX, mAxisFractionY );
     }
     
+    /**
+     * Process a touch as if intended for a button. Values outside the ranges listed below are safe.
+     * 
+     * @param xLocation The x-coordinate of the touch, between 0 and (screenwidth-1), inclusive.
+     * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
+     */
     private void processButtonTouch( int xLocation, int yLocation )
     {
         // Determine the index of the button that was pressed
         int index = mTouchMap.getButtonPress( xLocation, yLocation );
         
         // Set the button state if a button was actually touched
-        if( index > -1 )
+        if( index != TouchMap.UNMAPPED )
         {
-            if( index < AbstractController.NUM_BUTTONS )
+            if( index < AbstractController.NUM_N64_BUTTONS )
             {
                 // A single button was pressed
-                mButtons[index] = true;
+                mButtonState[index] = true;
             }
             else
             {
@@ -170,20 +213,20 @@ public class TouchscreenController extends AbstractController implements OnTouch
                 switch( index )
                 {
                     case TouchMap.DPD_RU:
-                        mButtons[DPD_R] = true;
-                        mButtons[DPD_U] = true;
+                        mButtonState[DPD_R] = true;
+                        mButtonState[DPD_U] = true;
                         break;
                     case TouchMap.DPD_RD:
-                        mButtons[DPD_R] = true;
-                        mButtons[DPD_D] = true;
+                        mButtonState[DPD_R] = true;
+                        mButtonState[DPD_D] = true;
                         break;
                     case TouchMap.DPD_LD:
-                        mButtons[DPD_L] = true;
-                        mButtons[DPD_D] = true;
+                        mButtonState[DPD_L] = true;
+                        mButtonState[DPD_D] = true;
                         break;
                     case TouchMap.DPD_LU:
-                        mButtons[DPD_L] = true;
-                        mButtons[DPD_U] = true;
+                        mButtonState[DPD_L] = true;
+                        mButtonState[DPD_U] = true;
                         break;
                     default:
                         break;
@@ -192,6 +235,15 @@ public class TouchscreenController extends AbstractController implements OnTouch
         }
     }
     
+    /**
+     * Process a touch as if intended for the analog stick. Values outside the ranges listed below
+     * are safe.
+     * 
+     * @param pointerId The pointer identifier.
+     * @param xLocation The x-coordinate of the touch, between 0 and (screenwidth-1), inclusive.
+     * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
+     * @return True, if the analog state changed.
+     */
     private boolean processAnalogTouch( int pointerId, int xLocation, int yLocation )
     {
         // Get the cartesian displacement of the analog stick
@@ -203,7 +255,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
         float displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
         
         // "Capture" the analog control
-        if( mTouchMap.isAnalogCaptured( displacement ) )
+        if( mTouchMap.isInCaptureRange( displacement ) )
             analogPid = pointerId;
         
         if( pointerId == analogPid )
@@ -218,7 +270,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
                 displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
             }
             
-            // Fraction of full-throttle, clamped to range [0-1]
+            // Fraction of full-throttle, between 0 and 1, inclusive
             float p = mTouchMap.getAnalogStrength( displacement );
             
             // Store the axis values in the super fields (screen y is inverted)

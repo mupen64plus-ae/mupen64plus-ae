@@ -55,8 +55,14 @@ public class VisibleTouchMap extends TouchMap
     private Image[] numeralImages;
     private Image[] fpsDigits;
     
-    public VisibleTouchMap()
+    public VisibleTouchMap( Resources resources )
     {
+        super( resources );
+        
+        for( int i = 0; i < numeralImages.length; i++ )
+            numeralImages[i] = new Image( resources, Globals.paths.fontsDir + fpsFont + "/" + i
+                    + ".png" );
+        
         mPublisher = new SubscriptionManager<VisibleTouchMap.Listener>();
     }
     
@@ -68,15 +74,6 @@ public class VisibleTouchMap extends TouchMap
     public void unregisterListener( Listener listener )
     {
         mPublisher.unsubscribe( listener );
-    }
-    
-    @Override
-    public void setResources( Resources resources )
-    {
-        super.setResources( resources );
-        for( int i = 0; i < numeralImages.length; i++ )
-            numeralImages[i] = new Image( resources, Globals.paths.fontsDir + fpsFont + "/" + i
-                    + ".png" );
     }
     
     @Override
@@ -114,8 +111,8 @@ public class VisibleTouchMap extends TouchMap
     public void updateAnalog( float axisFractionX, float axisFractionY )
     {
         // Move the analog hat based on analog state
-        hatX = analogImage.hWidth + (int) ( axisFractionX * (float) analogMaximum );
-        hatY = analogImage.hHeight - (int) ( axisFractionY * (float) analogMaximum );
+        analogForeX = analogBackImage.hWidth + (int) ( axisFractionX * (float) analogMaximum );
+        analogForeY = analogBackImage.hHeight - (int) ( axisFractionY * (float) analogMaximum );
         
         // Notify listeners that analog hat changed
         for( Listener listener : mPublisher.getSubscribers() )
@@ -173,31 +170,31 @@ public class VisibleTouchMap extends TouchMap
     public void drawButtons( Canvas canvas )
     {
         // Draw the buttons onto the canvas
-        for( Image button : buttons )
+        for( Image button : buttonImages )
             button.draw( canvas );
     }
     
     public void drawAnalog( Canvas canvas )
     {
-        if( analogImage == null )
+        if( analogBackImage == null )
             return;
         
         // Draw the background image first
-        analogImage.draw( canvas );
+        analogBackImage.draw( canvas );
         
         // Then draw the movable part of the stick
-        if( hatImage != null )
+        if( analogForeImage != null )
         {
             // Reposition the image and draw it
-            int hX = hatX;
-            int hY = hatY;
+            int hX = analogForeX;
+            int hY = analogForeY;
             if( hX == -1 )
-                hX = analogImage.hWidth;
+                hX = analogBackImage.hWidth;
             if( hY == -1 )
-                hY = analogImage.hHeight;
-            hatImage.fitCenter( analogImage.x + hX, analogImage.y + hY, analogImage.x,
-                    analogImage.y, analogImage.width, analogImage.height );
-            hatImage.draw( canvas );
+                hY = analogBackImage.hHeight;
+            analogForeImage.fitCenter( analogBackImage.x + hX, analogBackImage.y + hY, analogBackImage.x,
+                    analogBackImage.y, analogBackImage.width, analogBackImage.height );
+            analogForeImage.draw( canvas );
         }
     }
     
@@ -239,16 +236,16 @@ public class VisibleTouchMap extends TouchMap
     }
     
     @Override
-    protected void readFileSection( String layoutFolder, String filename, ConfigSection section,
-            String value )
+    protected void loadAssetSection( String directory, String filename, ConfigSection section,
+            String assetType )
     {
-        if( value.contains( "fps" ) )
-            readFpsLayout( layoutFolder, filename, section );
+        if( assetType.contains( "fps" ) )
+            loadFpsIndicator( directory, filename, section );
         else
-            super.readFileSection( layoutFolder, filename, section, value );            
+            super.loadAssetSection( directory, filename, section, assetType );            
     }
     
-    private void readFpsLayout( final String layoutFolder, String filename, ConfigSection section )
+    private void loadFpsIndicator( final String layoutFolder, String filename, ConfigSection section )
     {
         fpsImage = new Image( mResources, layoutFolder + "/" + filename + ".png" );
         

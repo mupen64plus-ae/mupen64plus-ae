@@ -27,16 +27,13 @@ import java.util.ArrayList;
  */
 public class LazyProvider extends AbstractProvider implements AbstractProvider.Listener
 {
-    /** The strength threshold above which an input is said to be active. */
-    public static final float STRENGTH_THRESHOLD = 0.5f;
-    
     /** The delta-strength threshold above which an input is considered "changed". */
-    public static final float STRENGTH_HYSTERESIS = 0.05f;
+    private static final float STRENGTH_HYSTERESIS = 0.05f;
     
-    /** The standardized input code for the last active input. */
+    /** The code of the last active input. */
     private int mActiveCode = 0;
     
-    /** The standardized input code for the most recent input (not necessarily active). */
+    /** The code of the most recent input (not necessarily active). */
     private int mCurrentCode = 0;
     
     /** The strength of the most recent input, ranging from 0 to 1, inclusive. */
@@ -77,7 +74,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.L
     }
     
     /**
-     * Removes the all upstream providers from the aggregate.
+     * Removes all upstream providers from the aggregate.
      */
     public void removeAllProviders()
     {
@@ -123,7 +120,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.L
         }
         
         // Find the strongest input
-        float maxStrength = STRENGTH_THRESHOLD;
+        float maxStrength = AbstractProvider.STRENGTH_THRESHOLD;
         int strongestInputCode = 0;
         for( int i = 0; i < inputCodes.length; i++ )
         {
@@ -159,7 +156,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.L
         // Filter the input before passing on to listeners
         
         // Determine the input conditions
-        boolean isActive = strength > STRENGTH_THRESHOLD;
+        boolean isActive = strength > AbstractProvider.STRENGTH_THRESHOLD;
         boolean inputChanged = inputCode != mCurrentCode;
         boolean strengthChanged = Math.abs( strength - mCurrentStrength ) > STRENGTH_HYSTERESIS;
         

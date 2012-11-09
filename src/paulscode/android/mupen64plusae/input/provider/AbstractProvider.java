@@ -59,6 +59,9 @@ public abstract class AbstractProvider
         public void onInput( int[] inputCodes, float[] strengths );
     }
     
+    /** The strength threshold above which an input is said to be "on". */
+    public static final float STRENGTH_THRESHOLD = 0.5f;
+    
     /** Listener management. */
     private SubscriptionManager<AbstractProvider.Listener> mPublisher;
     
@@ -73,7 +76,7 @@ public abstract class AbstractProvider
     /**
      * Registers a listener to start receiving input notifications.
      * 
-     * @param listener The listener to register.
+     * @param listener The listener to register. Null values are safe.
      */
     public void registerListener( AbstractProvider.Listener listener )
     {
@@ -83,7 +86,7 @@ public abstract class AbstractProvider
     /**
      * Unregisters a listener to stop receiving input notifications.
      * 
-     * @param listener The listener to unregister.
+     * @param listener The listener to unregister. Null values are safe.
      */
     public void unregisterListener( AbstractProvider.Listener listener )
     {
@@ -136,7 +139,7 @@ public abstract class AbstractProvider
      * Gets the human-readable name of the input, appended with strength information.
      * 
      * @param inputCode The standardized input code.
-     * @param strength The input strength, ranging from 0 to 1, inclusive.
+     * @param strength The input strength, between 0 and 1, inclusive.
      * @return The name of the input.
      */
     public static String getInputName( int inputCode, float strength )
@@ -147,11 +150,11 @@ public abstract class AbstractProvider
     }
     
     /**
-     * Notifies listeners about a single input. Subclasses should invoke this method to publish
-     * their input data.
+     * Notifies listeners that a single input was dispatched. Subclasses should invoke this method
+     * to publish their input data.
      * 
-     * @param inputCode The standardized input code.
-     * @param strength The input strength, ranging from 0 to 1, inclusive.
+     * @param inputCode The standardized input code that was dispatched.
+     * @param strength The input strength, between 0 and 1, inclusive.
      */
     protected void notifyListeners( int inputCode, float strength )
     {
@@ -160,11 +163,11 @@ public abstract class AbstractProvider
     }
     
     /**
-     * Notifies listeners about a batch of inputs. Subclasses should invoke this method to publish
-     * their input data.
+     * Notifies listeners that multiple inputs were dispatched simultaneously. Subclasses should
+     * invoke this method to publish their input data.
      * 
-     * @param inputCodes The standardized input codes.
-     * @param strengths The input strengths, ranging from 0 to 1, inclusive.
+     * @param inputCodes The standardized input codes that were dispatched.
+     * @param strengths The input strengths, between 0 and 1, inclusive.
      */
     protected void notifyListeners( int[] inputCodes, float[] strengths )
     {

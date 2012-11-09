@@ -52,7 +52,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
     private int mInputCodeToBeMapped = 0;
     private View mToggleWidget;
     private TextView mFeedbackText;
-    private Button[] mN64Button = new Button[InputMap.NUM_N64INPUTS];
+    private Button[] mN64Button = new Button[InputMap.NUM_N64_CONTROLS];
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -214,7 +214,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
             // Highlight the currently active button
             Button button = mN64Button[i];
             button.setPressed( i == selectedIndex
-                    && strength > LazyProvider.STRENGTH_THRESHOLD );
+                    && strength > AbstractProvider.STRENGTH_THRESHOLD );
             
             // Fade any buttons that aren't mapped
             if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )

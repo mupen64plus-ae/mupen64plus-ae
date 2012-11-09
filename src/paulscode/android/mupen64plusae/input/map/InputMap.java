@@ -36,57 +36,94 @@ import android.util.SparseIntArray;
  */
 public class InputMap
 {
+    /**
+     * The interface for listening to map changes.
+     */
     public interface Listener
     {
+        /**
+         * Called when the map data has changed.
+         * 
+         * @param map The new value of the map.
+         */
         public void onMapChanged( InputMap map );
     }
     
-    // Array indices for extra N64 controls
     // @formatter:off
-    public static final int UNMAPPED        = -1;
-    public static final int OFFSET_EXTRAS   = AbstractController.NUM_BUTTONS;
-    public static final int AXIS_R          = OFFSET_EXTRAS;
-    public static final int AXIS_L          = OFFSET_EXTRAS + 1;
-    public static final int AXIS_D          = OFFSET_EXTRAS + 2;
-    public static final int AXIS_U          = OFFSET_EXTRAS + 3;
-    public static final int BTN_RUMBLE      = OFFSET_EXTRAS + 4;
-    public static final int BTN_MEMPAK      = OFFSET_EXTRAS + 5;
-    public static final int NUM_N64INPUTS   = OFFSET_EXTRAS + 6;
+    /** Map flag: Input code is not mapped. */
+    public static final int UNMAPPED                    = -1;
+
+    /** Map offset: N64 non-button controls. */
+    public static final int OFFSET_EXTRAS               = AbstractController.NUM_N64_BUTTONS;
+    /** N64 control: analog-right. */
+    public static final int AXIS_R                      = OFFSET_EXTRAS;
+    /** N64 control: analog-left. */
+    public static final int AXIS_L                      = OFFSET_EXTRAS + 1;
+    /** N64 control: analog-down. */
+    public static final int AXIS_D                      = OFFSET_EXTRAS + 2;
+    /** N64 control: analog-up. */
+    public static final int AXIS_U                      = OFFSET_EXTRAS + 3;
+    /** N64 control: Rumble Pak. */
+    public static final int BTN_RUMBLE                  = OFFSET_EXTRAS + 4;
+    /** N64 control: Expansion Pak. */
+    public static final int BTN_MEMPAK                  = OFFSET_EXTRAS + 5;
+    /** Total number of N64 controls. */
+    public static final int NUM_N64_CONTROLS            = OFFSET_EXTRAS + 6;
     
-    // Array indices for special functions
-    public static final int OFFSET_FUNCS    = NUM_N64INPUTS;
-    public static final int FUNC_STOP       = OFFSET_FUNCS;
-    public static final int FUNC_FULLSCREEN = OFFSET_FUNCS + 1;
-    public static final int FUNC_SAVESTATE  = OFFSET_FUNCS + 2;
-    public static final int FUNC_LOADSTATE  = OFFSET_FUNCS + 3;
-    public static final int FUNC_INCSLOT    = OFFSET_FUNCS + 4;
-    public static final int FUNC_RESET      = OFFSET_FUNCS + 5;
-    public static final int FUNC_SPEEDUP    = OFFSET_FUNCS + 6;
-    public static final int FUNC_SPEEDDOWN  = OFFSET_FUNCS + 7;
-    public static final int FUNC_SCREENSHOT = OFFSET_FUNCS + 8;
-    public static final int FUNC_PAUSE      = OFFSET_FUNCS + 9;
-    public static final int FUNC_MUTE       = OFFSET_FUNCS + 10;
-    public static final int FUNC_VOLUP      = OFFSET_FUNCS + 11;
-    public static final int FUNC_VOLDOWN    = OFFSET_FUNCS + 12;
-    public static final int FUNC_FFWD       = OFFSET_FUNCS + 13;
-    public static final int FUNC_FRAMEADV   = OFFSET_FUNCS + 14;
-    public static final int FUNC_GAMESHARK  = OFFSET_FUNCS + 15;
-    public static final int NUM_MAPPABLES   = OFFSET_FUNCS + 16;
+    /** Map offset: Mupen64Plus functions. */
+    public static final int OFFSET_FUNCS                = NUM_N64_CONTROLS;    
+    /** Mupen64Plus function: stop. */
+    public static final int FUNC_STOP                   = OFFSET_FUNCS;
+    /** Mupen64Plus function: full-screen. */
+    public static final int FUNC_FULLSCREEN             = OFFSET_FUNCS + 1;
+    /** Mupen64Plus function: save state. */
+    public static final int FUNC_SAVESTATE              = OFFSET_FUNCS + 2;
+    /** Mupen64Plus function: load state. */
+    public static final int FUNC_LOADSTATE              = OFFSET_FUNCS + 3;
+    /** Mupen64Plus function: increment slot. */
+    public static final int FUNC_INCSLOT                = OFFSET_FUNCS + 4;
+    /** Mupen64Plus function: reset. */
+    public static final int FUNC_RESET                  = OFFSET_FUNCS + 5;
+    /** Mupen64Plus function: increase speed. */
+    public static final int FUNC_SPEEDUP                = OFFSET_FUNCS + 6;
+    /** Mupen64Plus function: decrease speed. */
+    public static final int FUNC_SPEEDDOWN              = OFFSET_FUNCS + 7;
+    /** Mupen64Plus function: capture screenshot. */
+    public static final int FUNC_SCREENSHOT             = OFFSET_FUNCS + 8;
+    /** Mupen64Plus function: pause. */
+    public static final int FUNC_PAUSE                  = OFFSET_FUNCS + 9;
+    /** Mupen64Plus function: mute. */
+    public static final int FUNC_MUTE                   = OFFSET_FUNCS + 10;
+    /** Mupen64Plus function: volume up. */
+    public static final int FUNC_VOLUP                  = OFFSET_FUNCS + 11;
+    /** Mupen64Plus function: volume down. */
+    public static final int FUNC_VOLDOWN                = OFFSET_FUNCS + 12;
+    /** Mupen64Plus function: fast-forward. */
+    public static final int FUNC_FFWD                   = OFFSET_FUNCS + 13;
+    /** Mupen64Plus function: advance frame. */
+    public static final int FUNC_FRAMEADV               = OFFSET_FUNCS + 14;
+    /** Mupen64Plus function: Gameshark. */
+    public static final int FUNC_GAMESHARK              = OFFSET_FUNCS + 15;
+    
+    /** Total number of mappable controls/functions. */
+    public static final int NUM_MAPPABLES               = OFFSET_FUNCS + 16;
     // @formatter:on
     
-    // Strength above which button/axis is considered pressed
-    public static final float STRENGTH_THRESHOLD = 0.5f;
-    
-    // Bidirectional map implementation
+    /** Map from N64/Mupen function to standardized input code. */
     private int[] mN64ToCode;
+    
+    /** Map from standardized input code to N64/Mupen function. */
     private SparseIntArray mCodeToN64;
     
-    // Enabled/disabled state
+    /** Flag indicating whether the map is enabled. */
     private boolean mEnabled;
     
-    // Listener management
+    /** Listener management. */
     private SubscriptionManager<Listener> mPublisher;
     
+    /**
+     * Instantiates a new input map.
+     */
     public InputMap()
     {
         mN64ToCode = new int[NUM_MAPPABLES];
@@ -94,52 +131,110 @@ public class InputMap
         mPublisher = new SubscriptionManager<InputMap.Listener>();
     }
     
+    /**
+     * Instantiates a new input map from a serialization.
+     * 
+     * @param serializedMap The serialization of the map.
+     */
     public InputMap( String serializedMap )
     {
         this();
         deserialize( serializedMap );
     }
     
+    /**
+     * Gets the N64/Mupen function mapped to a given input code.
+     * 
+     * @param inputCode The standardized input code.
+     * @return The N64/Mupen function the code is mapped to, or UNMAPPED.
+     * @see AbstractProvider
+     * @see InputMap.UNMAPPED
+     */
     public int get( int inputCode )
     {
         return mCodeToN64.get( inputCode, UNMAPPED );
     }
     
+    /**
+     * Gets a <b>copy</b> of the map from N64/Mupen functions to standardized input codes. Note that
+     * changing the values in the returned map does not change the information stored in the
+     * InputMap instance.
+     * 
+     * @return A copy of the map.
+     */
     public int[] getMappedInputCodes()
     {
         return mN64ToCode.clone();
     }
     
+    /**
+     * Checks if the map is enabled.
+     * 
+     * @return True, if the map is enabled.
+     */
     public boolean isEnabled()
     {
         return mEnabled;
     }
     
+    /**
+     * Enables or disables the map. Note that this does <b>not</b> change the map data itself, but
+     * rather indicates whether client code should or should not use the map.
+     * 
+     * @param value True to enable the map; false to disable.
+     */
     public void setEnabled( boolean value )
     {
         mEnabled = value;
     }
     
+    /**
+     * Maps an N64 control or Mupen64Plus function to an input code.
+     * 
+     * @param n64Index The index to the N64 control or Mupen64Plus function.
+     * @param inputCode The standardized input code to be mapped.
+     */
     public void mapInput( int n64Index, int inputCode )
     {
+        // Call the private method, notifying listeners of the change.
         mapInput( inputCode, n64Index, true );
     }
     
+    /**
+     * Unmaps an N64 control or Mupen64Plus function.
+     * 
+     * @param n64Index The index to the N64 control or Mupen64Plus function.
+     */
     public void unmapInput( int n64Index )
     {
         mapInput( 0, n64Index, true );
     }
     
+    /**
+     * Registers a listener to start receiving map change notifications.
+     * 
+     * @param listener The listener to register. Null values are safe.
+     */
     public void registerListener( Listener listener )
     {
         mPublisher.subscribe( listener );
     }
     
+    /**
+     * Unregisters a listener to stop receiving map change notifications.
+     * 
+     * @param listener The listener to unregister. Null values are safe.
+     */
     public void unregisterListener( Listener listener )
     {
         mPublisher.unsubscribe( listener );
     }
     
+    /**
+     * Serializes the map data to a string.
+     * 
+     * @return The string representation of the map data.
+     */
     public String serialize()
     {
         // Serialize the map values to a comma-delimited string
@@ -151,6 +246,11 @@ public class InputMap
         return result;
     }
     
+    /**
+     * Deserializes the map data from a string.
+     * 
+     * @param s The string representation of the map data.
+     */
     public void deserialize( String s )
     {
         // Reset the map
@@ -183,6 +283,14 @@ public class InputMap
         notifyListeners();
     }
     
+    /**
+     * Maps an N64 control or Mupen64Plus function to an input code.
+     * 
+     * @param n64Index The index to the N64 control or Mupen64Plus function.
+     * @param inputCode The standardized input code to be mapped.
+     * @param notify Whether to notify listeners of the change. False provides an optimization when
+     *            mapping in batches, but be sure to call notifyListeners() when finished.
+     */
     private void mapInput( int inputCode, int n64Index, boolean notify )
     {
         // Map the input if a valid index was given
@@ -214,6 +322,9 @@ public class InputMap
             notifyListeners();
     }
     
+    /**
+     * Notifies all listeners that the map data has changed.
+     */
     protected void notifyListeners()
     {
         for( Listener listener : mPublisher.getSubscribers() )

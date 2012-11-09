@@ -25,6 +25,8 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
+//TODO: Minor glitch: hold analog, then hold button, then release analog -> analog doesn't redraw
+
 public class TouchscreenView extends View implements VisibleTouchMap.Listener
 {
     private boolean mInitialized;
@@ -91,7 +93,7 @@ public class TouchscreenView extends View implements VisibleTouchMap.Listener
         if( !mInitialized )
             return;
         
-        // Redraw the static elements of the gamepad
+        // Redraw the static buttons
         mTouchMap.drawButtons( canvas );
         
         // Redraw the dynamic analog stick

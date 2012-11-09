@@ -20,6 +20,7 @@
 package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.util.Utility;
 
 /**
  * The abstract base class for implementing all N64 controllers.
@@ -53,45 +54,73 @@ import paulscode.android.mupen64plusae.NativeMethods;
  */
 public abstract class AbstractController
 {
-    // Indices into N64 buttons array
-    // Array must be the same order as EButton listing in plugin.h! (input-sdl plug-in)
-    public static final int DPD_R = 0;
-    public static final int DPD_L = 1;
-    public static final int DPD_D = 2;
-    public static final int DPD_U = 3;
-    public static final int START = 4;
-    public static final int BTN_Z = 5;
-    public static final int BTN_B = 6;
-    public static final int BTN_A = 7;
-    public static final int CPD_R = 8;
-    public static final int CPD_L = 9;
-    public static final int CPD_D = 10;
-    public static final int CPD_U = 11;
-    public static final int BTN_R = 12;
-    public static final int BTN_L = 13;
-    public static final int NUM_BUTTONS = 14;
+    // Constants must match EButton listing in plugin.h! (input-sdl plug-in)
     
-    protected boolean[] mButtons = new boolean[NUM_BUTTONS];
+    /** N64 button: dpad-right. */
+    public static final int DPD_R = 0;
+    /** N64 button: dpad-left. */
+    public static final int DPD_L = 1;
+    /** N64 button: dpad-down. */
+    public static final int DPD_D = 2;
+    /** N64 button: dpad-up. */
+    public static final int DPD_U = 3;
+    /** N64 button: start. */
+    public static final int START = 4;
+    /** N64 button: trigger-z. */
+    public static final int BTN_Z = 5;
+    /** N64 button: b. */
+    public static final int BTN_B = 6;
+    /** N64 button: a. */
+    public static final int BTN_A = 7;
+    /** N64 button: cpad-right. */
+    public static final int CPD_R = 8;
+    /** N64 button: cpad-left. */
+    public static final int CPD_L = 9;
+    /** N64 button: cpad-down. */
+    public static final int CPD_D = 10;
+    /** N64 button: cpad-up. */
+    public static final int CPD_U = 11;
+    /** N64 button: shoulder-r. */
+    public static final int BTN_R = 12;
+    /** N64 button: shoulder-l. */
+    public static final int BTN_L = 13;
+    
+    /** Total number of N64 buttons. */
+    public static final int NUM_N64_BUTTONS = 14;
+    
+    /** The pressed state of each controller button. */
+    protected boolean[] mButtonState = new boolean[NUM_N64_BUTTONS];
+    
+    /** The fractional value of the analog-x axis, between -1 and 1, inclusive. */
     protected float mAxisFractionX;
+    
+    /** The fractional value of the analog-y axis, between -1 and 1, inclusive. */
     protected float mAxisFractionY;
     
+    /** The player number, between 1 and 4, inclusive. */
     private int mPlayerNumber = 1;
+    
+    /** The factor by which the axis fractions are scaled before going to the core. */
     private static final float AXIS_SCALE = 80;
     
+    /**
+     * Notifies the core that the N64 controller state has changed.
+     */
     protected void notifyChanged()
     {
-        // TODO: Consider updating only if state has actually changed - may be necessary to keep
-        // touchscreen responsive
-        
-        int axisX = (int) ( AXIS_SCALE * Math.min( 1, Math.max( -1, mAxisFractionX ) ) );
-        int axisY = (int) ( AXIS_SCALE * Math.min( 1, Math.max( -1, mAxisFractionY ) ) );
-        NativeMethods.updateVirtualGamePadStates( mPlayerNumber - 1, mButtons, axisX, axisY );
+        int axisX = Math.round( AXIS_SCALE * Utility.clamp( mAxisFractionX, -1, 1 ) );
+        int axisY = Math.round( AXIS_SCALE * Utility.clamp( mAxisFractionY, -1, 1 ) );
+        NativeMethods.updateVirtualGamePadStates( mPlayerNumber - 1, mButtonState, axisX, axisY );
     }
     
+    /**
+     * Clears the N64 controller state, i.e. resets all button states to false and all axis
+     * fractions to 0.
+     */
     public void clearState()
     {
-        for( int i = 0; i < NUM_BUTTONS; i++ )
-            mButtons[i] = false;
+        for( int i = 0; i < NUM_N64_BUTTONS; i++ )
+            mButtonState[i] = false;
         
         mAxisFractionX = 0;
         mAxisFractionY = 0;
@@ -99,13 +128,23 @@ public abstract class AbstractController
         notifyChanged();
     }
     
+    /**
+     * Gets the player number.
+     * 
+     * @return The player number, between 1 and 4, inclusive.
+     */
     public int getPlayerNumber()
     {
         return mPlayerNumber;
     }
     
-    public void setPlayerNumber( int playerNumber )
+    /**
+     * Sets the player number.
+     * 
+     * @param player The new player number, between 1 and 4, inclusive.
+     */
+    public void setPlayerNumber( int player )
     {
-        mPlayerNumber = playerNumber;
+        mPlayerNumber = player;
     }
 }

@@ -100,7 +100,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
             int inputCode = mInputCodes[i];
             
             // Compute the axis code from the input code
-            int axisCode = AxisProvider.inputToAxisCode( inputCode );
+            int axisCode = inputToAxisCode( inputCode );
             
             // Get the analog value using the Android API
             float strength = event.getAxisValue( axisCode );
@@ -109,7 +109,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
                 strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
             
             // If the strength points in the correct direction, record it
-            boolean direction1 = AxisProvider.inputToAxisDirection( inputCode );
+            boolean direction1 = inputToAxisDirection( inputCode );
             boolean direction2 = strength > 0;
             if( direction1 == direction2 )
                 strengths[i] = Math.abs( strength );
@@ -132,9 +132,8 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
      */
     protected static int axisToInputCode( int axisCode, boolean positiveDirection )
     {
-        // Axis codes are encoded to negative values (versus buttons which are
-        // positive). Axis codes are bit shifted by one so that the lowest bit
-        // can encode axis direction.
+        // Axis codes are encoded to negative values (versus buttons which are positive). Axis codes
+        // are bit shifted by one so that the lowest bit can encode axis direction.
         return -( ( axisCode ) * 2 + ( positiveDirection
                 ? 1
                 : 2 ) );
@@ -155,7 +154,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
      * Convert a standardized input code to an Android axis direction.
      * 
      * @param inputCode The standardized input code.
-     * @return true, if the input code represents positive Android axis direction.
+     * @return True if the input code represents positive Android axis direction, false otherwise.
      */
     protected static boolean inputToAxisDirection( int inputCode )
     {
