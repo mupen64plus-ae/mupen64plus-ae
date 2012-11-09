@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae.input.map;
 
 import paulscode.android.mupen64plusae.InputMapPreference;
 import paulscode.android.mupen64plusae.input.AbstractController;
+import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
