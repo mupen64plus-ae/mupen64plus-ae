@@ -20,9 +20,9 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/main/md5.c \
 	$(SRCDIR)/main/rom.c \
 	$(SRCDIR)/main/savestates.c \
-	$(SRCDIR)/main/zip-1.99.4/ioapi.c \
-	$(SRCDIR)/main/zip-1.99.4/zip.c \
-	$(SRCDIR)/main/zip-1.99.4/unzip.c \
+	$(SRCDIR)/main/zip/ioapi.c \
+	$(SRCDIR)/main/zip/zip.c \
+	$(SRCDIR)/main/zip/unzip.c \
 	$(SRCDIR)/memory/dma.c \
 	$(SRCDIR)/memory/flashram.c \
 	$(SRCDIR)/memory/memory.c \
@@ -56,7 +56,7 @@ LOCAL_SRC_FILES := \
 #	$(SRCDIR)/debugger/dbg_breakpoints.c
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SRCDIR)
-LOCAL_CFLAGS := -DANDROID
+LOCAL_CFLAGS := -DANDROID -DNOCRYPT -DNOUNCRYPT -DIOAPI_NO_64
 #LOCAL_CFLAGS += -DSDL_NO_COMPAT
 
 LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver
