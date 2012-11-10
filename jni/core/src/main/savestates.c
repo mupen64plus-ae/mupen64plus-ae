@@ -43,11 +43,7 @@
 #include "r4300/r4300.h"
 #include "r4300/interupt.h"
 #include "osal/preproc.h"
-#ifdef WITH_OSD
 #include "osd/osd.h"
-#else
-#define OSD_BOTTOM_LEFT 0
-#endif
 #include "../r4300/new_dynarec/new_dynarec.h"
 
 #ifdef LIBMINIZIP

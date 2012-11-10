@@ -44,11 +44,7 @@
 #include "main/savestates.h"
 #include "main/version.h"
 #include "main/util.h"
-
-#ifdef WITH_OSD
 #include "osd/screenshot.h"
-#endif
-
 #include "plugin/plugin.h"
 
 /* some local state variables */
@@ -168,9 +164,7 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
             if (rval == M64ERR_SUCCESS)
             {
                 l_ROMOpen = 1;
-#ifdef WITH_OSD
                 ScreenshotRomOpen();
-#endif
                 cheat_init();
             }
             return rval;
@@ -271,9 +265,7 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
         case M64CMD_TAKE_NEXT_SCREENSHOT:
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;
-#ifdef WITH_OSD
             main_take_next_screenshot();
-#endif
             return M64ERR_SUCCESS;
         case M64CMD_GET_SCREEN_WIDTH:
             if (!g_EmulatorRunning)

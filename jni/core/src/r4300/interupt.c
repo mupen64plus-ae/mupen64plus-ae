@@ -33,9 +33,7 @@
 #include "main/main.h"
 #include "main/savestates.h"
 #include "main/cheat.h"
-#ifdef WITH_OSD
 #include "osd/osd.h"
-#endif
 #include "plugin/plugin.h"
 
 #include "interupt.h"
@@ -398,10 +396,8 @@ void gen_interupt(void)
             // if paused, poll for input events
             if(rompause)
             {
-#ifdef WITH_OSD
                 osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
                 VidExt_GL_SwapBuffers();
-#endif
                 while(rompause)
                 {
                     SDL_Delay(10);
