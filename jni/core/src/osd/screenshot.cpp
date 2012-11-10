@@ -148,7 +148,6 @@ static char *GetNextScreenshotPath(void)
     
     // add the base path to the screenshot file name
     const char *SshotDir = ConfigGetParamString(g_CoreConfig, "ScreenshotPath");
-
     if (SshotDir == NULL || *SshotDir == '\0')
     {
         // note the trick to avoid an allocation. we add a NUL character
@@ -177,14 +176,13 @@ static char *GetNextScreenshotPath(void)
         fclose(pFile);
     }
 
-    /* make sure there is a slash on the end of the pathname */
     if (CurrentShotIndex >= 1000)
     {
         DebugMessage(M64MSG_ERROR, "Can't save screenshot; folder already contains 1000 screenshots for this ROM");
         return NULL;
     }
     CurrentShotIndex++;
-    
+
     return ScreenshotPath;
 }
 
@@ -225,8 +223,8 @@ extern "C" void TakeScreenshot(int iFrameNumber)
     // write the image to a PNG
     SaveRGBBufferToFile(filename, pucFrame, width, height, width * 3);
     // free the memory
-    free(filename);
     free(pucFrame);
+    free(filename);
     // print message -- this allows developers to capture frames and use them in the regression test
     main_message(M64MSG_INFO, OSD_BOTTOM_LEFT, "Captured screenshot for frame %i.", iFrameNumber);
 }
