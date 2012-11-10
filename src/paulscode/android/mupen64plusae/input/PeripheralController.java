@@ -19,10 +19,11 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import java.util.ArrayList;
+
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
-import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
@@ -34,11 +35,8 @@ public class PeripheralController extends AbstractController implements Abstract
     /** The map from hardware codes to N64 commands. */
     private final InputMap mInputMap;
     
-    /** The provider for button/key inputs. */
-    private final KeyProvider mKeyProvider;
-    
-    /** The provider for analog inputs (may be null depending on API level). */
-    private final AxisProvider mAxisProvider;
+    /** The user input providers. */
+    private final ArrayList<AbstractProvider> mProviders;
     
     /** The positive analog-x strength, between 0 and 1, inclusive. */
     private float mStrengthXpos;
@@ -56,29 +54,26 @@ public class PeripheralController extends AbstractController implements Abstract
      * Instantiates a new peripheral controller.
      * 
      * @param inputMap The map from hardware codes to N64 commands.
-     * @param keyProvider The key provider. Null values are safe.
-     * @param axisProvider The axis provider. Null values are safe.
+     * @param providers The user input providers. Null elements are safe.
      */
-    public PeripheralController( InputMap inputMap, KeyProvider keyProvider,
-            AxisProvider axisProvider )
+    public PeripheralController( InputMap inputMap, AbstractProvider... providers )
     {
         // Assign the map and listen for changes
         mInputMap = inputMap;
         if( mInputMap != null )
-        {
-            onMapChanged( mInputMap );
             mInputMap.registerListener( this );
-        }
         
-        // Assign the providers
-        mKeyProvider = keyProvider;
-        mAxisProvider = axisProvider;
+        // Assign the non-null input providers
+        mProviders = new ArrayList<AbstractProvider>();
+        for( AbstractProvider provider : providers )
+            if( provider != null )
+            {
+                mProviders.add( provider );
+                provider.registerListener( this );
+            }
         
-        // Start listening to the providers
-        if( mKeyProvider != null )
-            mKeyProvider.registerListener( this );
-        if( mAxisProvider != null )
-            mAxisProvider.registerListener( this );
+        // Make listening optimizations based on the input map
+        onMapChanged( mInputMap );        
     }
     
     /*
@@ -132,9 +127,11 @@ public class PeripheralController extends AbstractController implements Abstract
     @Override
     public void onMapChanged( InputMap map )
     {
-        // Update the axis provider's notification filter
-        if( mAxisProvider != null )
-            mAxisProvider.setInputCodeFilter( map.getMappedInputCodes() );
+        // TODO: This optimization seems to have negative side-effects... buttons can't be held for long.
+        // Update any axis providers' notification filters
+        // for( AbstractProvider provider : mProviders )
+        //     if( provider instanceof AxisProvider )
+        //         ( (AxisProvider) provider ).setInputCodeFilter( map.getMappedInputCodes() );
     }
     
     /**
