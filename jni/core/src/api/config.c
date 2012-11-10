@@ -75,6 +75,7 @@ static config_list l_ConfigListSaved = NULL;
 /* --------------- */
 /* local functions */
 /* --------------- */
+
 static int is_numeric(const char *string)
 {
     char chTemp[16];
@@ -132,8 +133,11 @@ static config_section *find_section(config_list list, const char *ParamName)
 static config_var *config_var_create(const char *ParamName, const char *ParamHelp)
 {
     config_var *var = (config_var *) malloc(sizeof(config_var));
+
     if (var == NULL || ParamName == NULL)
         return NULL;
+
+    memset(var, 0, sizeof(config_var));
 
     var->name = strdup(ParamName);
     if (var->name == NULL)
@@ -211,7 +215,7 @@ static void delete_section(config_section *pSection)
 
     if (pSection == NULL)
         return;
-    
+
     curr_var = pSection->first_var;
     while (curr_var != NULL)
     {
@@ -219,7 +223,7 @@ static void delete_section(config_section *pSection)
         delete_var(curr_var);
         curr_var = next_var;
     }
-    
+
     free(pSection->name);
     free(pSection);
 }
@@ -232,6 +236,7 @@ static void delete_list(config_list *pConfigList)
         config_section *next_section = curr_section->next;
         /* delete the section itself */
         delete_section(curr_section);
+
         curr_section = next_section;
     }
 
@@ -288,7 +293,6 @@ static config_section * section_deepcopy(config_section *orig_section)
         }
 
         new_var->type = orig_var->type;
-        
         switch (orig_var->type)
         {
             case M64TYPE_INT:
@@ -315,7 +319,7 @@ static config_section * section_deepcopy(config_section *orig_section)
 
                 break;
         }
-        
+
         /* add the new variable to the new section */
         if (last_new_var == NULL)
             new_section->first_var = new_var;
@@ -796,12 +800,11 @@ EXPORT m64p_error CALL ConfigDeleteSection(const char *SectionName)
     if (*curr_section_link == NULL)
         return M64ERR_INPUT_NOT_FOUND;
 
-    /* delete all the variables in this section */
     next_section = (*curr_section_link)->next;
-    
+
     /* delete the named section */
     delete_section(*curr_section_link);
-    
+
     /* fix the pointer to point to the next section after the deleted one */
     *curr_section_link = next_section;
 
@@ -886,7 +889,6 @@ EXPORT m64p_error CALL ConfigRevertChanges(const char *SectionName)
 
     /* copy the section as it is on the disk */
     new_section = section_deepcopy(saved_section);
-    
     if (new_section == NULL)
         return M64ERR_NO_MEMORY;
 
@@ -896,6 +898,8 @@ EXPORT m64p_error CALL ConfigRevertChanges(const char *SectionName)
 
     /* release memory associated with active_section */
     delete_section(active_section);
+
+    return M64ERR_SUCCESS;
 }
 
 
@@ -928,6 +932,16 @@ EXPORT m64p_error CALL ConfigSetParameter(m64p_handle ConfigSectionHandle, const
         append_var_to_section(section, var);
     }
 
+    /* cleanup old values */
+    switch (var->type)
+    {
+        case M64TYPE_STRING:
+            free(var->val.string);
+	    break;
+        default:
+            break;
+    }
+
     /* set this parameter's value */
     var->type = ParamType;
     switch(ParamType)
@@ -942,7 +956,6 @@ EXPORT m64p_error CALL ConfigSetParameter(m64p_handle ConfigSectionHandle, const
             var->val.integer = (*((int *) ParamValue) != 0);
             break;
         case M64TYPE_STRING:
-            free(var->val.string);
             var->val.string = strdup((char *)ParamValue);
             if (var->val.string == NULL)
                 return M64ERR_NO_MEMORY;
