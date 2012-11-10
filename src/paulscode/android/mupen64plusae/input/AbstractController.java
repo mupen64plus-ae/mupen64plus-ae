@@ -58,30 +58,43 @@ public abstract class AbstractController
     
     /** N64 button: dpad-right. */
     public static final int DPD_R = 0;
+    
     /** N64 button: dpad-left. */
     public static final int DPD_L = 1;
+    
     /** N64 button: dpad-down. */
     public static final int DPD_D = 2;
+    
     /** N64 button: dpad-up. */
     public static final int DPD_U = 3;
+    
     /** N64 button: start. */
     public static final int START = 4;
+    
     /** N64 button: trigger-z. */
     public static final int BTN_Z = 5;
+    
     /** N64 button: b. */
     public static final int BTN_B = 6;
+    
     /** N64 button: a. */
     public static final int BTN_A = 7;
+    
     /** N64 button: cpad-right. */
     public static final int CPD_R = 8;
+    
     /** N64 button: cpad-left. */
     public static final int CPD_L = 9;
+    
     /** N64 button: cpad-down. */
     public static final int CPD_D = 10;
+    
     /** N64 button: cpad-up. */
     public static final int CPD_U = 11;
+    
     /** N64 button: shoulder-r. */
     public static final int BTN_R = 12;
+    
     /** N64 button: shoulder-l. */
     public static final int BTN_L = 13;
     

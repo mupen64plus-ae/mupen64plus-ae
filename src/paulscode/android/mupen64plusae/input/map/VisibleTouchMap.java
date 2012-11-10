@@ -19,7 +19,9 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
-import paulscode.android.mupen64plusae.Globals;
+import java.util.ArrayList;
+
+import paulscode.android.mupen64plusae.TouchscreenView;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -29,144 +31,153 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.util.Log;
 
+/**
+ * A kind of touch map that can be drawn on a canvas.
+ * 
+ * @see TouchMap
+ * @see TouchscreenView
+ */
 public class VisibleTouchMap extends TouchMap
 {
+    /**
+     * The interface for listening to map changes.
+     */
     public interface Listener
     {
+        /**
+         * Called when all visible elements have changed.
+         * 
+         * @param touchMap The new value of the map.
+         */
         public void onAllChanged( VisibleTouchMap touchMap );
         
-        public void onHatChanged( VisibleTouchMap touchMap, float x, float y );
+        /**
+         * Called when just the analog stick has changed.
+         * 
+         * @param touchMap The new value of the map.
+         * @param x The x-axis fraction, between -1 and 1, inclusive.
+         * @param y The y-axis fraction, between -1 and 1, inclusive.
+         */
+        public void onStickChanged( VisibleTouchMap touchMap, float x, float y );
         
+        /**
+         * Called when just the FPS indicator has changed.
+         * 
+         * @param touchMap The new value of the map.
+         * @param fps The new FPS value.
+         */
         public void onFpsChanged( VisibleTouchMap touchMap, int fps );
     }
     
-    // Listener management
-    SubscriptionManager<Listener> mPublisher;
+    /** FPS frame image. */
+    private Image mFpsFrame;
     
-    // Frame rate indicator
-    private Image fpsImage;
-    private int fpsXpercent;
-    private int fpsYpercent;
-    private int fpsNumXpercent;
-    private int fpsNumYpercent;
-    private int fpsRecalcPeriod;
-    private int fpsValue;
-    private String fpsFont;
-    private Image[] numeralImages;
-    private Image[] fpsDigits;
+    /** X-coordinate of the FPS frame, in percent. */
+    private int mFpsFrameX;
     
-    public VisibleTouchMap( Resources resources )
+    /** Y-coordinate of the FPS frame, in percent. */
+    private int mFpsFrameY;
+    
+    /** X-coordinate of the FPS text centroid, in percent. */
+    private int mFpsTextX;
+    
+    /** Y-coordinate of the FPS text centroid, in percent. */
+    private int mFpsTextY;
+    
+    /** The number of frames over which to compute FPS. */
+    private int mFpsRecalcPeriod;
+    
+    /** The current FPS value. */
+    private int mFpsValue;
+    
+    /** True if the FPS indicator should be drawn. */
+    private final boolean mFpsEnabled;
+    
+    /** The file directory containing the FPS font resources. */
+    private final String mFontsDir;
+    
+    /** The set of images representing the FPS string. */
+    private final ArrayList<Image> mFpsDigits;
+    
+    /** The set of images representing the numerals 0, 1, 2, ..., 9. */
+    private final Image[] mNumerals;
+    
+    /** Listener manager. */
+    private final SubscriptionManager<Listener> mPublisher = new SubscriptionManager<VisibleTouchMap.Listener>();
+    
+    /**
+     * Instantiates a new visible touch map.
+     * 
+     * @param resources The resources of the activity associated with this touch map.
+     * @param fpsEnabled True to display the FPS indicator.
+     * @param fontsDirectory The directory containing the FPS font resources.
+     */
+    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDirectory )
     {
         super( resources );
-        
-        for( int i = 0; i < numeralImages.length; i++ )
-            numeralImages[i] = new Image( resources, Globals.paths.fontsDir + fpsFont + "/" + i
-                    + ".png" );
-        
-        mPublisher = new SubscriptionManager<VisibleTouchMap.Listener>();
+        mFpsEnabled = fpsEnabled;
+        mFontsDir = fontsDirectory;
+        mFpsDigits = new ArrayList<Image>();
+        mNumerals = new Image[10];
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see paulscode.android.mupen64plusae.input.map.TouchMap#clear()
+     */
+    @Override
+    public void clear()
+    {
+        super.clear();
+        mFpsFrame = null;
+        mFpsFrameX = mFpsFrameY = 0;
+        mFpsTextX = mFpsTextY = 50;
+        mFpsRecalcPeriod = 15;
+        mFpsValue = 0;
+        mFpsDigits.clear();
+        for( int i = 0; i < mNumerals.length; i++ )
+            mNumerals[i] = null;
+    }
+    
+    /**
+     * Registers a listener to start receiving map change notifications.
+     * 
+     * @param listener The listener to register. Null values are safe.
+     */
     public void registerListener( Listener listener )
     {
         mPublisher.subscribe( listener );
     }
     
+    /**
+     * Unregisters a listener to stop receiving map change notifications.
+     * 
+     * @param listener The listener to unregister. Null values are safe.
+     */
     public void unregisterListener( Listener listener )
     {
         mPublisher.unsubscribe( listener );
     }
     
-    @Override
-    public void clear()
-    {
-        super.clear();
-        fpsImage = null;
-        fpsXpercent = fpsYpercent = 0;
-        fpsNumXpercent = fpsNumYpercent = 50;
-        fpsRecalcPeriod = 15;
-        fpsValue = 0;
-        fpsFont = "Mupen64Plus-AE-Contrast-Blue";
-        numeralImages = new Image[10];
-        fpsDigits = new Image[4];
-    }
-    
-    @Override
-    public void resize( int w, int h )
-    {
-        super.resize( w, h );
-        
-        // Position the FPS box
-        if( fpsImage != null )
-        {
-            // Position the background image and draw it
-            fpsImage.fitCenter( (int) ( (float) w * ( (float) fpsXpercent / 100.0f ) ),
-                    (int) ( (float) h * ( (float) fpsYpercent / 100.0f ) ), w, h );
-        }
-        
-        // Notify listeners that everything has changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onAllChanged( this );
-    }
-    
-    public void updateAnalog( float axisFractionX, float axisFractionY )
-    {
-        // Move the analog hat based on analog state
-        analogForeX = analogBackImage.hWidth + (int) ( axisFractionX * (float) analogMaximum );
-        analogForeY = analogBackImage.hHeight - (int) ( axisFractionY * (float) analogMaximum );
-        
-        // Notify listeners that analog hat changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onHatChanged( this, axisFractionX, axisFractionY );
-    }
-    
-    public void updateFps( int fps )
-    {
-        // Clamp to positive, four digits max [0 - 9999]
-        fps = Utility.clamp(fps, 0, 9999);
-        
-        // Quick return if user has disabled FPS or it hasn't changed
-        if( !Globals.userPrefs.isFrameRateEnabled || fpsValue == fps )
-            return;
-        
-        // Store the new value
-        fpsValue = fps;
-        
-        // Assemble a sprite for the FPS value
-        String fpsString = Integer.toString( fpsValue );
-        for( int i = 0; i < 4; i++ )
-        {
-            // Create a new sequence of numeral images
-            if( i < fpsString.length() )
-            {
-                try
-                {
-                    // Clone the numeral from the font images
-                    fpsDigits[i] = new Image( mResources, numeralImages[Integer.valueOf( fpsString
-                            .substring( i, i + 1 ) )] );
-                }
-                catch( NumberFormatException nfe )
-                {
-                    // Skip this digit, there was a problem
-                    fpsDigits[i] = null;
-                }
-            }
-            else
-            {
-                // Skip this digit
-                fpsDigits[i] = null;
-            }
-        }
-        
-        // Notify listeners that FPS sprite changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onFpsChanged( this, fpsValue );
-    }
-    
+    /**
+     * Gets the number of frames over which the FPS should be computed.
+     * 
+     * TODO: Ideally this would be in a different class. It's here because the number is stored with
+     * the map assets.
+     * 
+     * @return The number of frames.
+     */
     public int getFpsRecalcPeriod()
     {
-        return fpsRecalcPeriod;
+        return mFpsRecalcPeriod;
     }
     
+    /**
+     * Draws the buttons.
+     * 
+     * @param canvas The canvas on which to draw.
+     */
     public void drawButtons( Canvas canvas )
     {
         // Draw the buttons onto the canvas
@@ -174,67 +185,191 @@ public class VisibleTouchMap extends TouchMap
             button.draw( canvas );
     }
     
+    /**
+     * Draws the analog stick.
+     * 
+     * @param canvas The canvas on which to draw.
+     */
     public void drawAnalog( Canvas canvas )
     {
-        if( analogBackImage == null )
-            return;
+        // Draw the background image
+        if( analogBackImage != null )
+            analogBackImage.draw( canvas );
         
-        // Draw the background image first
-        analogBackImage.draw( canvas );
-        
-        // Then draw the movable part of the stick
+        // Draw the movable foreground (the stick)
         if( analogForeImage != null )
-        {
-            // Reposition the image and draw it
-            int hX = analogForeX;
-            int hY = analogForeY;
-            if( hX == -1 )
-                hX = analogBackImage.hWidth;
-            if( hY == -1 )
-                hY = analogBackImage.hHeight;
-            analogForeImage.fitCenter( analogBackImage.x + hX, analogBackImage.y + hY, analogBackImage.x,
-                    analogBackImage.y, analogBackImage.width, analogBackImage.height );
             analogForeImage.draw( canvas );
-        }
     }
     
+    /**
+     * Draws the FPS indicator.
+     * 
+     * @param canvas The canvas on which to draw.
+     */
     public void drawFps( Canvas canvas )
     {
         // Redraw the FPS indicator
-        int x = 0;
-        int y = 0;
-        
-        if( fpsImage != null )
-        {
-            x = fpsImage.x + (int) ( (float) fpsImage.width * ( (float) fpsNumXpercent / 100.0f ) );
-            y = fpsImage.y + (int) ( (float) fpsImage.height * ( (float) fpsNumYpercent / 100.0f ) );
-            fpsImage.draw( canvas );
-        }
-        
-        int totalWidth = 0;
-        
-        // Calculate the width of the FPS text
-        for( int i = 0; i < fpsDigits.length; i++ )
-        {
-            if( fpsDigits[i] != null )
-                totalWidth += fpsDigits[i].width;
-        }
-        
-        // Calculate the starting position of the FPS text
-        x = x - (int) ( (float) totalWidth / 2f );
+        if( mFpsFrame != null )
+            mFpsFrame.draw( canvas );
         
         // Draw each digit of the FPS number
-        for( int i = 0; i < fpsDigits.length; i++ )
+        for( Image digit : mFpsDigits )
+            digit.draw( canvas );
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see paulscode.android.mupen64plusae.input.map.TouchMap#resize(int, int)
+     */
+    @Override
+    public void resize( int w, int h )
+    {
+        super.resize( w, h );
+        
+        // Compute analog foreground location (centered)
+        if( analogBackImage != null )
         {
-            if( fpsDigits[i] != null )
+            int cX = analogBackImage.x + analogBackImage.hWidth;
+            int cY = analogBackImage.y + analogBackImage.hHeight;
+            analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
+                    analogBackImage.width, analogBackImage.height );
+        }
+        
+        // Compute FPS frame location
+        if( mFpsFrame != null )
+        {
+            int cX = (int) ( (float) w * ( (float) mFpsFrameX / 100f ) );
+            int cY = (int) ( (float) h * ( (float) mFpsFrameY / 100f ) );
+            mFpsFrame.fitCenter( cX, cY, w, h );
+        }
+        
+        // Compute the FPS digit locations
+        refreshFpsPositions();
+        
+        // Notify listeners that everything has changed
+        for( Listener listener : mPublisher.getSubscribers() )
+            listener.onAllChanged( this );
+    }
+    
+    /**
+     * Updates the analog stick assets to reflect a new position.
+     * 
+     * @param axisFractionX The x-axis fraction, between -1 and 1, inclusive.
+     * @param axisFractionY The y-axis fraction, between -1 and 1, inclusive.
+     */
+    public void updateAnalog( float axisFractionX, float axisFractionY )
+    {
+        if( analogForeImage != null && analogBackImage != null )
+        {
+            // Get the location of stick center
+            int hX = analogBackImage.hWidth + (int) ( axisFractionX * (float) analogMaximum );
+            int hY = analogBackImage.hHeight - (int) ( axisFractionY * (float) analogMaximum );
+            
+            // Use other values if invalid
+            if( hX < 0 )
+                hX = analogBackImage.hWidth;
+            if( hY < 0 )
+                hY = analogBackImage.hHeight;
+            
+            // Update the position of the stick
+            int cX = analogBackImage.x + hX;
+            int cY = analogBackImage.y + hY;
+            analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
+                    analogBackImage.width, analogBackImage.height );
+        }
+        
+        // Notify listeners that analog stick has changed
+        for( Listener listener : mPublisher.getSubscribers() )
+            listener.onStickChanged( this, axisFractionX, axisFractionY );
+    }
+    
+    /**
+     * Updates the FPS indicator assets to reflect a new FPS value.
+     * 
+     * @param fps The new FPS value.
+     */
+    public void updateFps( int fps )
+    {
+        // Clamp to positive, four digits max [0 - 9999]
+        fps = Utility.clamp( fps, 0, 9999 );
+        
+        // Quick return if user has disabled FPS or it hasn't changed
+        if( !mFpsEnabled || mFpsValue == fps )
+            return;
+        
+        // Store the new value
+        mFpsValue = fps;
+        
+        // Refresh the FPS digits
+        refreshFpsImages();
+        refreshFpsPositions();
+        
+        // Notify listeners that FPS sprite changed
+        for( Listener listener : mPublisher.getSubscribers() )
+            listener.onFpsChanged( this, mFpsValue );
+    }
+    
+    /**
+     * Refreshes the images used to draw the FPS string.
+     */
+    private void refreshFpsImages()
+    {
+        // Refresh the list of FPS digits
+        String fpsString = Integer.toString( mFpsValue );
+        mFpsDigits.clear();
+        for( int i = 0; i < 4; i++ )
+        {
+            // Create a new sequence of numeral images
+            if( i < fpsString.length() )
             {
-                fpsDigits[i].setPos( x, y - fpsDigits[i].hHeight );
-                fpsDigits[i].draw( canvas );
-                x += fpsDigits[i].width;
+                int numeral = SafeMethods.toInt( fpsString.substring( i, i + 1 ), -1 );
+                if( numeral > -1 && numeral < 10 )
+                {
+                    // Clone the numeral from the font images and move to next digit
+                    mFpsDigits.add( new Image( mResources, mNumerals[numeral] ) );
+                }
             }
         }
     }
     
+    /**
+     * Refreshes the positions of the FPS images.
+     */
+    private void refreshFpsPositions()
+    {
+        // Compute the centroid of the FPS text
+        int x = 0;
+        int y = 0;
+        if( mFpsFrame != null )
+        {
+            x = mFpsFrame.x + (int) ( (float) mFpsFrame.width * ( (float) mFpsTextX / 100f ) );
+            y = mFpsFrame.y + (int) ( (float) mFpsFrame.height * ( (float) mFpsTextY / 100f ) );
+        }
+        
+        // Compute the width of the FPS text
+        int totalWidth = 0;
+        for( Image digit : mFpsDigits )
+            totalWidth += digit.width;
+        
+        // Compute the starting position of the FPS text
+        x = x - (int) ( (float) totalWidth / 2f );
+        
+        // Compute the position of each digit
+        for( Image digit : mFpsDigits )
+        {
+            digit.setPos( x, y - digit.hHeight );
+            x += digit.width;
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see paulscode.android.mupen64plusae.input.map.TouchMap#loadAssetSection(java.lang.String,
+     * java.lang.String, paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection,
+     * java.lang.String)
+     */
     @Override
     protected void loadAssetSection( String directory, String filename, ConfigSection section,
             String assetType )
@@ -242,30 +377,37 @@ public class VisibleTouchMap extends TouchMap
         if( assetType.contains( "fps" ) )
             loadFpsIndicator( directory, filename, section );
         else
-            super.loadAssetSection( directory, filename, section, assetType );            
+            super.loadAssetSection( directory, filename, section, assetType );
     }
     
-    private void loadFpsIndicator( final String layoutFolder, String filename, ConfigSection section )
+    /**
+     * Loads FPS indicator assets and properties from the filesystem.
+     * 
+     * @param directory The directory containing the FPS indicator assets.
+     * @param filename The filename of the FPS indicator assets, without extension.
+     * @param section The configuration section containing the FPS indicator properties.
+     */
+    private void loadFpsIndicator( final String directory, String filename, ConfigSection section )
     {
-        fpsImage = new Image( mResources, layoutFolder + "/" + filename + ".png" );
+        mFpsFrame = new Image( mResources, directory + "/" + filename + ".png" );
         
         // Position (percentages of the screen dimensions)
-        fpsXpercent = SafeMethods.toInt( section.get( "x" ), 0 );
-        fpsYpercent = SafeMethods.toInt( section.get( "y" ), 0 );
+        mFpsFrameX = SafeMethods.toInt( section.get( "x" ), 0 );
+        mFpsFrameY = SafeMethods.toInt( section.get( "y" ), 0 );
         
         // Number position (percentages of the FPS indicator dimensions)
-        fpsNumXpercent = SafeMethods.toInt( section.get( "numx" ), 50 );
-        fpsNumYpercent = SafeMethods.toInt( section.get( "numy" ), 50 );
+        mFpsTextX = SafeMethods.toInt( section.get( "numx" ), 50 );
+        mFpsTextY = SafeMethods.toInt( section.get( "numy" ), 50 );
         
         // Refresh rate (in frames.. integer greater than 1)
-        fpsRecalcPeriod = SafeMethods.toInt( section.get( "rate" ), 15 );
+        mFpsRecalcPeriod = SafeMethods.toInt( section.get( "rate" ), 15 );
         
         // Need at least 2 frames to calculate FPS
-        if( fpsRecalcPeriod < 2 )
-            fpsRecalcPeriod = 2;
+        if( mFpsRecalcPeriod < 2 )
+            mFpsRecalcPeriod = 2;
         
         // Numeral font
-        fpsFont = section.get( "font" );
+        String fpsFont = section.get( "font" );
         if( fpsFont != null && fpsFont.length() > 0 )
         {
             // Load the font images
@@ -273,15 +415,14 @@ public class VisibleTouchMap extends TouchMap
             try
             {
                 // Make sure we can load them (they might not even exist)
-                for( i = 0; i < 10; i++ )
-                    numeralImages[i] = new Image( mResources, Globals.paths.fontsDir + fpsFont
-                            + "/" + i + ".png" );
+                for( i = 0; i < mNumerals.length; i++ )
+                    mNumerals[i] = new Image( mResources, mFontsDir + fpsFont + "/" + i + ".png" );
             }
             catch( Exception e )
             {
                 // Problem, let the user know
-                Log.e( "GamePad", "Problem loading font '" + Globals.paths.fontsDir + fpsFont + "/"
-                        + i + ".png', error message: " + e.getMessage() );
+                Log.e( "GamePad", "Problem loading font '" + mFontsDir + fpsFont + "/" + i
+                        + ".png', error message: " + e.getMessage() );
             }
         }
     }

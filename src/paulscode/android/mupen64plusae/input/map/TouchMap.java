@@ -47,14 +47,19 @@ public class TouchMap
     
     /** Map offset: N64 pseudo-buttons. */
     public static final int OFFSET_EXTRAS = AbstractController.NUM_N64_BUTTONS;
+    
     /** N64 pseudo-button: dpad-right-up. */
     public static final int DPD_RU = OFFSET_EXTRAS;
+    
     /** N64 pseudo-button: dpad-right-down. */
     public static final int DPD_RD = OFFSET_EXTRAS + 1;
+    
     /** N64 pseudo-button: dpad-left-down. */
     public static final int DPD_LD = OFFSET_EXTRAS + 2;
+    
     /** N64 pseudo-button: dpad-left-up. */
     public static final int DPD_LU = OFFSET_EXTRAS + 3;
+    
     /** Total number of N64 (pseudo-)buttons. */
     public static final int NUM_N64_PSEUDOBUTTONS = OFFSET_EXTRAS + 4;
     
@@ -81,12 +86,6 @@ public class TouchMap
     
     /** Y-coordinate of the analog background, in percent. */
     private int analogBackY;
-    
-    /** Relative x-coordinate of the analog foreground with respect to background, in pixels. */
-    protected int analogForeX;
-    
-    /** Relative y-coordinate of the analog foreground with respect to background, in pixels. */
-    protected int analogForeY;
     
     /** Deadzone of the analog stick, in pixels. */
     private int analogDeadzone;
@@ -139,7 +138,10 @@ public class TouchMap
     {
         mResources = resources;
         mN64ToColor = new int[BUTTON_STRING_MAP.size()];
-        clear();
+        buttonImages = new ArrayList<Image>();
+        buttonMasks = new ArrayList<Image>();
+        buttonX = new ArrayList<Integer>();
+        buttonY = new ArrayList<Integer>();
     }
     
     /**
@@ -147,17 +149,16 @@ public class TouchMap
      */
     public void clear()
     {
-        buttonImages = new ArrayList<Image>();
-        buttonMasks = new ArrayList<Image>();
-        buttonX = new ArrayList<Integer>();
-        buttonY = new ArrayList<Integer>();
+        buttonImages.clear();
+        buttonMasks.clear();
+        buttonX.clear();
+        buttonY.clear();
         analogBackImage = null;
+        analogForeImage = null;
         analogBackX = analogBackY = 0;
         analogPadding = 32;
         analogDeadzone = 2;
         analogMaximum = 360;
-        analogForeImage = null;
-        analogForeX = analogForeY = -1;
         for( int i = 0; i < mN64ToColor.length; i++ )
             mN64ToColor[i] = -1;
     }
@@ -170,22 +171,21 @@ public class TouchMap
      */
     public void resize( int w, int h )
     {
-        // Position the buttons
+        // Recompute button locations
         for( int i = 0; i < buttonImages.size(); i++ )
         {
-            buttonImages.get( i ).fitCenter(
-                    (int) ( (float) w * ( (float) buttonX.get( i ) / 100f ) ),
-                    (int) ( (float) h * ( (float) buttonY.get( i ) / 100f ) ), w, h );
-            buttonMasks.get( i ).fitCenter(
-                    (int) ( (float) w * ( (float) buttonX.get( i ) / 100f ) ),
-                    (int) ( (float) h * ( (float) buttonY.get( i ) / 100f ) ), w, h );
+            int cX = (int) ( (float) w * ( (float) buttonX.get( i ) / 100f ) );
+            int cY = (int) ( (float) h * ( (float) buttonY.get( i ) / 100f ) );
+            buttonImages.get( i ).fitCenter( cX, cY, w, h );
+            buttonMasks.get( i ).fitCenter( cX, cY, w, h );
         }
         
-        // Position the analog control
+        // Recompute analog background location
         if( analogBackImage != null )
         {
-            analogBackImage.fitCenter( (int) ( (float) w * ( (float) analogBackX / 100f ) ),
-                    (int) ( (float) h * ( (float) analogBackY / 100f ) ), w, h );
+            int cX = (int) ( (float) w * ( (float) analogBackX / 100f ) );
+            int cY = (int) ( (float) h * ( (float) analogBackY / 100f ) );
+            analogBackImage.fitCenter( cX, cY, w, h );
         }
     }
     

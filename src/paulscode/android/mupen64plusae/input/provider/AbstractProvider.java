@@ -42,7 +42,6 @@ public abstract class AbstractProvider
      */
     public interface Listener
     {
-        
         /**
          * Called when a single input has been dispatched.
          * 

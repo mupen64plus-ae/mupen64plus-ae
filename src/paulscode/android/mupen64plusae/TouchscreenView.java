@@ -66,7 +66,7 @@ public class TouchscreenView extends View implements VisibleTouchMap.Listener
     }
     
     @Override
-    public void onHatChanged( VisibleTouchMap touchMap, float x, float y )
+    public void onStickChanged( VisibleTouchMap touchMap, float x, float y )
     {
         // Tell Android to redraw on the UI thread
         postInvalidate();

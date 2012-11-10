@@ -55,53 +55,76 @@ public class InputMap
 
     /** Map offset: N64 non-button controls. */
     public static final int OFFSET_EXTRAS               = AbstractController.NUM_N64_BUTTONS;
+    
     /** N64 control: analog-right. */
     public static final int AXIS_R                      = OFFSET_EXTRAS;
+    
     /** N64 control: analog-left. */
     public static final int AXIS_L                      = OFFSET_EXTRAS + 1;
+    
     /** N64 control: analog-down. */
     public static final int AXIS_D                      = OFFSET_EXTRAS + 2;
+    
     /** N64 control: analog-up. */
     public static final int AXIS_U                      = OFFSET_EXTRAS + 3;
+    
     /** N64 control: Rumble Pak. */
     public static final int BTN_RUMBLE                  = OFFSET_EXTRAS + 4;
+    
     /** N64 control: Expansion Pak. */
     public static final int BTN_MEMPAK                  = OFFSET_EXTRAS + 5;
+    
     /** Total number of N64 controls. */
     public static final int NUM_N64_CONTROLS            = OFFSET_EXTRAS + 6;
     
     /** Map offset: Mupen64Plus functions. */
-    public static final int OFFSET_FUNCS                = NUM_N64_CONTROLS;    
+    public static final int OFFSET_FUNCS                = NUM_N64_CONTROLS;
+
     /** Mupen64Plus function: stop. */
     public static final int FUNC_STOP                   = OFFSET_FUNCS;
+    
     /** Mupen64Plus function: full-screen. */
     public static final int FUNC_FULLSCREEN             = OFFSET_FUNCS + 1;
+    
     /** Mupen64Plus function: save state. */
     public static final int FUNC_SAVESTATE              = OFFSET_FUNCS + 2;
+    
     /** Mupen64Plus function: load state. */
     public static final int FUNC_LOADSTATE              = OFFSET_FUNCS + 3;
+    
     /** Mupen64Plus function: increment slot. */
     public static final int FUNC_INCSLOT                = OFFSET_FUNCS + 4;
+    
     /** Mupen64Plus function: reset. */
     public static final int FUNC_RESET                  = OFFSET_FUNCS + 5;
+    
     /** Mupen64Plus function: increase speed. */
     public static final int FUNC_SPEEDUP                = OFFSET_FUNCS + 6;
+    
     /** Mupen64Plus function: decrease speed. */
     public static final int FUNC_SPEEDDOWN              = OFFSET_FUNCS + 7;
+    
     /** Mupen64Plus function: capture screenshot. */
     public static final int FUNC_SCREENSHOT             = OFFSET_FUNCS + 8;
+    
     /** Mupen64Plus function: pause. */
     public static final int FUNC_PAUSE                  = OFFSET_FUNCS + 9;
+    
     /** Mupen64Plus function: mute. */
     public static final int FUNC_MUTE                   = OFFSET_FUNCS + 10;
+    
     /** Mupen64Plus function: volume up. */
     public static final int FUNC_VOLUP                  = OFFSET_FUNCS + 11;
+    
     /** Mupen64Plus function: volume down. */
     public static final int FUNC_VOLDOWN                = OFFSET_FUNCS + 12;
+    
     /** Mupen64Plus function: fast-forward. */
     public static final int FUNC_FFWD                   = OFFSET_FUNCS + 13;
+    
     /** Mupen64Plus function: advance frame. */
     public static final int FUNC_FRAMEADV               = OFFSET_FUNCS + 14;
+    
     /** Mupen64Plus function: Gameshark. */
     public static final int FUNC_GAMESHARK              = OFFSET_FUNCS + 15;
     
