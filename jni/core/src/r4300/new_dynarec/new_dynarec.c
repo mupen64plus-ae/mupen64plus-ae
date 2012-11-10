@@ -40,9 +40,6 @@
 #ifdef __i386__
 #include "assem_x86.h"
 #endif
-#ifdef __x86_64__
-#include "assem_x64.h"
-#endif
 #ifdef __arm__
 #include "assem_arm.h"
 #endif
@@ -965,9 +962,6 @@ uint64_t ldr_merge(uint64_t original,uint64_t loaded,u_int bits)
 
 #ifdef __i386__
 #include "assem_x86.c"
-#endif
-#ifdef __x86_64__
-#include "assem_x64.c"
 #endif
 #ifdef __arm__
 #include "assem_arm.c"
@@ -10390,7 +10384,7 @@ int new_recompile_block(int addr)
       }
     }
     printf("\n");
-    #if defined(__i386__) || defined(__x86_64__)
+    #if defined(__i386__)
     printf("pre: eax=%d ecx=%d edx=%d ebx=%d ebp=%d esi=%d edi=%d\n",regmap_pre[i][0],regmap_pre[i][1],regmap_pre[i][2],regmap_pre[i][3],regmap_pre[i][5],regmap_pre[i][6],regmap_pre[i][7]);
     #endif
     #ifdef __arm__
@@ -10427,7 +10421,7 @@ int new_recompile_block(int addr)
     }
     if(pr32[i]!=requires_32bit[i]) printf(" OOPS");
     printf("\n");*/
-    #if defined(__i386__) || defined(__x86_64__)
+    #if defined(__i386__)
     printf("entry: eax=%d ecx=%d edx=%d ebx=%d ebp=%d esi=%d edi=%d\n",regs[i].regmap_entry[0],regs[i].regmap_entry[1],regs[i].regmap_entry[2],regs[i].regmap_entry[3],regs[i].regmap_entry[5],regs[i].regmap_entry[6],regs[i].regmap_entry[7]);
     printf("dirty: ");
     if(regs[i].wasdirty&1) printf("eax ");
@@ -10457,7 +10451,7 @@ int new_recompile_block(int addr)
     printf("\n");
     disassemble_inst(i);
     //printf ("ccadj[%d] = %d\n",i,ccadj[i]);
-    #if defined(__i386__) || defined(__x86_64__)
+    #if defined(__i386__)
     printf("eax=%d ecx=%d edx=%d ebx=%d ebp=%d esi=%d edi=%d dirty: ",regs[i].regmap[0],regs[i].regmap[1],regs[i].regmap[2],regs[i].regmap[3],regs[i].regmap[5],regs[i].regmap[6],regs[i].regmap[7]);
     if(regs[i].dirty&1) printf("eax ");
     if((regs[i].dirty>>1)&1) printf("ecx ");
@@ -10485,7 +10479,7 @@ int new_recompile_block(int addr)
     printf("\n");
     if(regs[i].isconst) {
       printf("constants: ");
-      #if defined(__i386__) || defined(__x86_64__)
+      #if defined(__i386__)
       if(regs[i].isconst&1) printf("eax=%x ",(int)constmap[i][0]);
       if((regs[i].isconst>>1)&1) printf("ecx=%x ",(int)constmap[i][1]);
       if((regs[i].isconst>>2)&1) printf("edx=%x ",(int)constmap[i][2]);
@@ -10532,7 +10526,7 @@ int new_recompile_block(int addr)
     if(p32[i]!=regs[i].is32) printf(" NO MATCH\n");
     else printf("\n");*/
     if(itype[i]==RJUMP||itype[i]==UJUMP||itype[i]==CJUMP||itype[i]==SJUMP||itype[i]==FJUMP) {
-      #if defined(__i386__) || defined(__x86_64__)
+      #if defined(__i386__)
       printf("branch(%d): eax=%d ecx=%d edx=%d ebx=%d ebp=%d esi=%d edi=%d dirty: ",i,branch_regs[i].regmap[0],branch_regs[i].regmap[1],branch_regs[i].regmap[2],branch_regs[i].regmap[3],branch_regs[i].regmap[5],branch_regs[i].regmap[6],branch_regs[i].regmap[7]);
       if(branch_regs[i].dirty&1) printf("eax ");
       if((branch_regs[i].dirty>>1)&1) printf("ecx ");
