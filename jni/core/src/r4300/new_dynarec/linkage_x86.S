@@ -692,7 +692,7 @@ write_rdram_new:
 write_rdramb_new:
 	mov	address, %edi
 	xor	$3, %edi
-	movb	byte, %cl
+	movb	cpu_byte, %cl
 	movb	%cl, rdram-0x80000000(%edi)
 	jmp	.E12
 	.size	write_rdramb_new, .-write_rdramb_new
@@ -823,7 +823,7 @@ write_nomem_new:
 write_nomemb_new:
 	call	do_invalidate
 	mov	memory_map(,%edi,4),%edi
-	movb	byte, %cl
+	movb	cpu_byte, %cl
 	mov	$0xc, %eax
 	shl	$2, %edi
 	jc	tlb_exception

@@ -2846,7 +2846,7 @@ do_writestub(int n)
   emit_shrimm(rs,16,addr);
   emit_movmem_indexedx4(ftable,addr,addr);
   if(type==STOREB_STUB)
-    emit_writebyte(rt,(int)&byte);
+    emit_writebyte(rt,(int)&cpu_byte);
   if(type==STOREH_STUB)
     emit_writehword(rt,(int)&hword);
   if(type==STOREW_STUB)
@@ -2920,7 +2920,7 @@ inline_writestub(int type, int i, u_int addr, signed char regmap[], int target, 
     ftable=(int)writememd;
   emit_writeword(rs,(int)&address);
   if(type==STOREB_STUB)
-    emit_writebyte(rt,(int)&byte);
+    emit_writebyte(rt,(int)&cpu_byte);
   if(type==STOREH_STUB)
     emit_writehword(rt,(int)&hword);
   if(type==STOREW_STUB)
