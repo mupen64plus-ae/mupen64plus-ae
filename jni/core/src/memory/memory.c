@@ -27,7 +27,6 @@
 #include <errno.h>
 
 #include <sys/mman.h>
-#include <android/log.h>
 
 #include "api/m64p_types.h"
 
@@ -53,8 +52,6 @@
 #include "debugger/dbg_memory.h"
 #include "debugger/dbg_breakpoints.h"
 #endif
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "core", __VA_ARGS__)
 
 /* definitions of the rcp's structures and memory area */
 RDRAM_register rdram_register;

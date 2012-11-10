@@ -38,9 +38,6 @@
 #include "osal/files.h"
 #include "osal/preproc.h"
 
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "core (config.c)", __VA_ARGS__)
-
 /* local types */
 #define MUPEN64PLUS_CFG_NAME "mupen64plus.cfg"
 

@@ -34,9 +34,6 @@
 #include "r4300/interupt.h"
 #include "r4300/reset.h"
 
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "core (eventloop.c)", __VA_ARGS__)
-
 /* version number for CoreEvents config section */
 #define CONFIG_PARAM_VERSION 1.00
 

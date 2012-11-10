@@ -34,9 +34,6 @@
 #include "api/m64p_types.h"
 #include "api/callbacks.h"
 
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "core", __VA_ARGS__)
-
 #ifdef __APPLE__
 /* OS X code for app bundle handling */
 #include <CoreFoundation/CoreFoundation.h>

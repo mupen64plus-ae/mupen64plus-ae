@@ -40,9 +40,6 @@
 #include "dummy_input.h"
 #include "dummy_rsp.h"
 
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "core", __VA_ARGS__)
-
 CONTROL Controls[4];
 
 /* global function pointers - initialized on core startup */

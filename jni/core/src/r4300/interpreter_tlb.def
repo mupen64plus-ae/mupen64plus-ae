@@ -19,10 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <android/log.h>
 #include <zlib.h> // For adler32()
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "tlb", __VA_ARGS__)
 
 DECLARE_INSTRUCTION(TLBR)
 {

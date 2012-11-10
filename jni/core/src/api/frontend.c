@@ -28,7 +28,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <SDL.h>
-#include <android/log.h>
 
 #define M64P_CORE_PROTOTYPES 1
 #include "m64p_types.h"
@@ -51,8 +50,6 @@
 #endif
 
 #include "plugin/plugin.h"
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "frontend", __VA_ARGS__)
 
 /* some local state variables */
 static int l_CoreInit = 0;

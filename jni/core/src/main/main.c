@@ -70,8 +70,6 @@
 #include "lirc.h"
 #endif //WITH_LIRC
 
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "core", __VA_ARGS__)
 /* version number for Core config section */
 #define CONFIG_PARAM_VERSION 1.01
 
