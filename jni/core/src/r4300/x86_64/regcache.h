@@ -29,8 +29,6 @@ void init_cache(precomp_instr* start);
 void free_registers_move_start(void);
 void free_all_registers(void);
 void free_register(int reg);
-void stack_save_registers(void);
-void stack_load_registers(void);
 int is64(unsigned int *addr);
 int lru_register(void);
 int lru_base_register(void);
@@ -46,3 +44,4 @@ void allocate_register_32_manually_w(int reg, unsigned int *addr);
 void build_wrappers(precomp_instr*, int, int, precomp_block*);
 
 #endif /* __REGCACHE_H__ */
+

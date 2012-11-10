@@ -1363,6 +1363,8 @@ void genlb(void)
 #ifdef INTERPRET_LB
    gencallinterp((unsigned long long)LB, 0);
 #else
+   free_registers_move_start();
+
    ld_register_alloc(&gpr1, &gpr2, &base1, &base2);
 
    mov_reg64_imm64(base1, (unsigned long long) readmemb);
@@ -1388,9 +1390,7 @@ void genlb(void)
    mov_m64rel_xreg64((unsigned long long *)(&rdword), gpr1);
    shr_reg32_imm8(gpr2, 16);
    mov_reg64_preg64x8preg64(gpr2, gpr2, base1);
-   stack_save_registers();
    call_reg64(gpr2);
-   stack_load_registers();
    movsx_xreg32_m8rel(gpr1, (unsigned char *)dst->f.i.rt);
    jmp_imm_short(24);
 
@@ -1413,6 +1413,8 @@ void genlh(void)
 #ifdef INTERPRET_LH
    gencallinterp((unsigned long long)LH, 0);
 #else
+   free_registers_move_start();
+
    ld_register_alloc(&gpr1, &gpr2, &base1, &base2);
 
    mov_reg64_imm64(base1, (unsigned long long) readmemh);
@@ -1438,9 +1440,7 @@ void genlh(void)
    mov_m64rel_xreg64((unsigned long long *)(&rdword), gpr1);
    shr_reg32_imm8(gpr2, 16);
    mov_reg64_preg64x8preg64(gpr2, gpr2, base1);
-   stack_save_registers();
    call_reg64(gpr2);
-   stack_load_registers();
    movsx_xreg32_m16rel(gpr1, (unsigned short *)dst->f.i.rt);
    jmp_imm_short(24);
 
@@ -1471,6 +1471,8 @@ void genlw(void)
 #ifdef INTERPRET_LW
    gencallinterp((unsigned long long)LW, 0);
 #else
+   free_registers_move_start();
+
    ld_register_alloc(&gpr1, &gpr2, &base1, &base2);
 
    mov_reg64_imm64(base1, (unsigned long long) readmem);
@@ -1501,9 +1503,7 @@ void genlw(void)
    mov_m64rel_xreg64((unsigned long long *)(&rdword), gpr1);
    shr_reg32_imm8(gpr2, 16);
    mov_reg64_preg64x8preg64(gpr1, gpr2, base1);
-   stack_save_registers();
    call_reg64(gpr1);
-   stack_load_registers();
    mov_xreg32_m32rel(gpr1, (unsigned int *)(dst->f.i.rt));
 
    jump_end_rel8();
@@ -1521,6 +1521,8 @@ void genlbu(void)
 #ifdef INTERPRET_LBU
    gencallinterp((unsigned long long)LBU, 0);
 #else
+   free_registers_move_start();
+
    ld_register_alloc(&gpr1, &gpr2, &base1, &base2);
 
    mov_reg64_imm64(base1, (unsigned long long) readmemb);
@@ -1546,9 +1548,7 @@ void genlbu(void)
    mov_m64rel_xreg64((unsigned long long *)(&rdword), gpr1);
    shr_reg32_imm8(gpr2, 16);
    mov_reg64_preg64x8preg64(gpr2, gpr2, base1);
-   stack_save_registers();
    call_reg64(gpr2);
-   stack_load_registers();
    mov_xreg32_m32rel(gpr1, (unsigned int *)dst->f.i.rt);
    jmp_imm_short(23);
 
@@ -1572,6 +1572,8 @@ void genlhu(void)
 #ifdef INTERPRET_LHU
    gencallinterp((unsigned long long)LHU, 0);
 #else
+   free_registers_move_start();
+
    ld_register_alloc(&gpr1, &gpr2, &base1, &base2);
 
    mov_reg64_imm64(base1, (unsigned long long) readmemh);
@@ -1597,9 +1599,7 @@ void genlhu(void)
    mov_m64rel_xreg64((unsigned long long *)(&rdword), gpr1);
    shr_reg32_imm8(gpr2, 16);
    mov_reg64_preg64x8preg64(gpr2, gpr2, base1);
-   stack_save_registers();
    call_reg64(gpr2);
-   stack_load_registers();
    mov_xreg32_m32rel(gpr1, (unsigned int *)dst->f.i.rt);
    jmp_imm_short(23);
 
@@ -1631,6 +1631,8 @@ void genlwu(void)
 #ifdef INTERPRET_LWU
    gencallinterp((unsigned long long)LWU, 0);
 #else
+   free_registers_move_start();
+
    ld_register_alloc(&gpr1, &gpr2, &base1, &base2);
 
    mov_reg64_imm64(base1, (unsigned long long) readmem);
@@ -1656,9 +1658,7 @@ void genlwu(void)
    mov_m64rel_xreg64((unsigned long long *)(&rdword), gpr1);
    shr_reg32_imm8(gpr2, 16);
    mov_reg64_preg64x8preg64(gpr2, gpr2, base1);
-   stack_save_registers();
    call_reg64(gpr2);
-   stack_load_registers();
    mov_xreg32_m32rel(gpr1, (unsigned int *)dst->f.i.rt);
    jmp_imm_short(19);
 
