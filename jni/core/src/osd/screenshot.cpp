@@ -201,9 +201,6 @@ extern "C" void TakeScreenshot(int iFrameNumber)
 {
     char *filename;
 
-    // get screenshot directory and base filename (based on ROM header)
-    GetBaseFilepath(filepath, PATH_MAX - 10);
-
     // look for an unused screenshot filename
     filename = GetNextScreenshotPath();
     if (filename == NULL)
