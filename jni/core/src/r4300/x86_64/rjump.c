@@ -30,7 +30,8 @@
 #include "r4300/ops.h"
 #include "r4300/recomph.h"
 
-extern int dynarec_stack_initialized;  /* in gr4300.c */
+// that's where the dynarec will restart when going back from a C function
+static unsigned long *return_address;
 
 void dyna_jump(void)
 {
@@ -72,6 +73,13 @@ void dyna_start(void (*code)(void))
      "1:                       \n"
      " pop  %%rax              \n"
      " mov  %%rax, %[save_rip] \n"
+
+     " sub $0x10, %%rsp        \n"
+     " and $-16, %%rsp         \n" /* ensure that stack is 16-byte aligned */
+     " mov %%rsp, %%rax        \n"
+     " sub $8, %%rax           \n"
+     " mov %%rax, %[return_address]\n"
+
      " call *%%rbx             \n"
      "2:                       \n"
      " mov  %[save_rsp], %%rsp \n"
@@ -81,14 +89,11 @@ void dyna_start(void (*code)(void))
      " pop  %%r13              \n"
      " pop  %%r12              \n"
      " pop  %%rbx              \n"
-     : [save_rsp]"=m"(save_rsp), [save_rip]"=m"(save_rip)
+     : [save_rsp]"=m"(save_rsp), [save_rip]"=m"(save_rip), [return_address]"=m"(return_address)
      : "b" (code), [reg]"m"(*reg)
      : "%rax", "memory"
      );
 #endif
-
-    /* clear flag; stack is back to normal */
-    dynarec_stack_initialized = 0;
 
     /* clear the registers so we don't return here a second time; that would be a bug */
     save_rsp=0;

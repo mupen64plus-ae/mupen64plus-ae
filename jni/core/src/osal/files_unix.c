@@ -183,7 +183,6 @@ int osal_mkdirp(const char *dirpath, int mode)
     return 0;
 }
 
-
 const char * osal_get_shared_filepath(const char *filename, const char *firstsearch, const char *secondsearch)
 {
     static char retpath[PATH_MAX];

@@ -20,13 +20,7 @@
 	.file	"linkage_x86.s"
 	.bss
 	.align 4
-.globl rdram
-rdram = 0x80000000
-/*rdram:
-	.space	8388608
-	.type	rdram, %object
-	.size	rdram, 8388608
-*/
+
 	.section	.rodata
 	.text
 .globl dyna_linker
@@ -592,7 +586,7 @@ new_dyna_start:
 	movl	reg_cop0+36, %esi
 	movl	%edi, last_count
 	subl	%edi, %esi
-	jmp	0x70000000
+	jmp	*base_addr
 	.size	new_dyna_start, .-new_dyna_start
 
 /* Note: Assumes %ebx, %ebp, %esi, %edi are callee-saved */

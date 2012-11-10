@@ -38,10 +38,6 @@
 extern char *invc_ptr;
 extern char extra_memory[33554432];
 
-//#define BASE_ADDR 0x6000000 // Code generator target address
 #define BASE_ADDR ((int)(&extra_memory))
 //#define TARGET_SIZE_2 24 // 2^24 = 16 megabytes
 #define TARGET_SIZE_2 25 // 2^25 = 32 megabytes
-
-// This is defined in linkage_arm.s, but gcc -O3 likes this better
-//#define rdram ((unsigned int *)0x80000000)

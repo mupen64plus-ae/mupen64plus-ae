@@ -43,33 +43,25 @@
 #include "debugger/debugger.h"
 #endif
 
-//unsigned int r4300emu = 0;
-unsigned int r4300emu = CORE_DYNAREC;
-
+unsigned int r4300emu = 0;
 int no_compiled_jump = 0;
 int llbit, rompause;
-#if defined(NO_ASM) || !defined(__arm__)
+#if NEW_DYNAREC != NEW_DYNAREC_ARM
 int stop;
 long long int reg[32], hi, lo;
 unsigned int reg_cop0[32];
-#endif
-long long int local_rs, local_rt;
-int local_rs32;
-unsigned int jump_target;
-#if defined(NO_ASM) || !defined(__arm__)
 float *reg_cop1_simple[32];
 double *reg_cop1_double[32];
 int FCR0, FCR31;
+unsigned int next_interupt;
+precomp_instr *PC;
 #endif
+long long int local_rs;
 long long int reg_cop1_fgr_64[32];
 tlb tlb_e[32];
 unsigned int delay_slot, skip_jump = 0, dyna_interp = 0, last_addr;
 unsigned long long int debug_count = 0;
 unsigned int CIC_Chip;
-#if defined(NO_ASM) || !defined(__arm__)
-unsigned int next_interupt;
-precomp_instr *PC;
-#endif
 char invalid_code[0x100000];
 
 precomp_block *blocks[0x100000], *actual;
@@ -87,32 +79,14 @@ int rounding_mode = 0x33F, trunc_mode = 0xF3F, round_mode = 0x33F,
 
 #define PCADDR PC->addr
 #define ADD_TO_PC(x) PC += x;
-#define DECLARE_INSTRUCTION(name) void name(void)
+#define DECLARE_INSTRUCTION(name) static void name(void)
 
-#define PCADDR PC->addr
-#define ADD_TO_PC(x) PC += x;
-#define DECLARE_INSTRUCTION(name) void name(void)
-
-/* In cached interpreter, for each jump, we generate 3 functions:
- * - A JUMPNAME() function for jumps within the same block.
- * - A JUMPNAME_OUT() function for jumps on a different block.
- * - A JUMPNAME_IDLE() function for busy wait optimization.
- *
- * Busy wait optimization applies when the program
- * is waiting for an interrupt to happen.
- * This is usually done with a jump pointing to itself, with a NOP delay slot.
- * There we increase Count until the next interrupt is going to happen.
- *
- * Special note: For the JR and JALR instructions, due to their target
- *               not being determined until the instruction runs,
- *               we're only going to use the FUNCNAME_OUT() version.
- */
 #define DECLARE_JUMP(name, destination, condition, link, likely, cop1) \
-   void name(void) \
+   static void name(void) \
    { \
       const int take_jump = (condition); \
       const unsigned int jump_target = (destination); \
-	  long long int *link_register = (link); \
+      long long int *link_register = (link); \
       if (cop1 && check_cop1_unusable()) return; \
       if (!likely || take_jump) \
       { \
@@ -124,7 +98,7 @@ int rounding_mode = 0x33F, trunc_mode = 0xF3F, round_mode = 0x33F,
          delay_slot=0; \
          if (take_jump && !skip_jump) \
          { \
-           if (link_register != &reg[0]) \
+            if (link_register != &reg[0]) \
             { \
                *link_register=PC->addr; \
                sign_extended(*link_register); \
@@ -140,15 +114,15 @@ int rounding_mode = 0x33F, trunc_mode = 0xF3F, round_mode = 0x33F,
       last_addr = PC->addr; \
       if (next_interupt <= Count) gen_interupt(); \
    } \
-   void name##_OUT(void) \
+   static void name##_OUT(void) \
    { \
       const int take_jump = (condition); \
       const unsigned int jump_target = (destination); \
-	  long long int *link_register = (link); \
+      long long int *link_register = (link); \
       if (cop1 && check_cop1_unusable()) return; \
       if (!likely || take_jump) \
       { \
-        PC++; \
+         PC++; \
          delay_slot=1; \
          UPDATE_DEBUGGER(); \
          PC->ops(); \
@@ -172,11 +146,11 @@ int rounding_mode = 0x33F, trunc_mode = 0xF3F, round_mode = 0x33F,
       last_addr = PC->addr; \
       if (next_interupt <= Count) gen_interupt(); \
    } \
-   void name##_IDLE(void) \
+   static void name##_IDLE(void) \
    { \
       const int take_jump = (condition); \
       int skip; \
-	  if (cop1 && check_cop1_unusable()) return; \
+      if (cop1 && check_cop1_unusable()) return; \
       if (take_jump) \
       { \
          update_count(); \
@@ -186,70 +160,74 @@ int rounding_mode = 0x33F, trunc_mode = 0xF3F, round_mode = 0x33F,
       } \
       else name(); \
    }
-   
+
 #define CHECK_MEMORY() \
    if (!invalid_code[address>>12]) \
-      if (blocks[address>>12]->block[(address&0xFFF)/4].ops != NOTCOMPILED) \
+      if (blocks[address>>12]->block[(address&0xFFF)/4].ops != \
+          current_instruction_table.NOTCOMPILED) \
          invalid_code[address>>12] = 1;
 
-//#define CHECK_R0_WRITE(r) { if (r == &reg[0]) { PC++; return } }
-#define CHECK_R0_WRITE(r)
-   
 #include "interpreter.def"
+
+// two functions are defined from the macros above but never used
+// these prototype declarations will prevent a warning
+#if defined(__GNUC__)
+  void JR_IDLE(void) __attribute__((used));
+  void JALR_IDLE(void) __attribute__((used));
+#endif
 
 // -----------------------------------------------------------
 // Flow control 'fake' instructions
 // -----------------------------------------------------------
-void FIN_BLOCK(void)
+static void FIN_BLOCK(void)
 {
-    if (!delay_slot)
-    {
-       jump_to((PC-1)->addr+4);
+   if (!delay_slot)
+     {
+    jump_to((PC-1)->addr+4);
 /*#ifdef DBG
             if (g_DebuggerActive) update_debugger(PC->addr);
 #endif
 Used by dynarec only, check should be unnecessary
 */
-       PC->ops();
-       if (r4300emu == CORE_DYNAREC) dyna_jump();
-       }
-       else
-       {
-           precomp_block *blk = actual;
-           precomp_instr *inst = PC;
-           jump_to((PC-1)->addr+4);
+    PC->ops();
+    if (r4300emu == CORE_DYNAREC) dyna_jump();
+     }
+   else
+     {
+    precomp_block *blk = actual;
+    precomp_instr *inst = PC;
+    jump_to((PC-1)->addr+4);
     
 /*#ifdef DBG
             if (g_DebuggerActive) update_debugger(PC->addr);
 #endif
 Used by dynarec only, check should be unnecessary
 */
-      if (!skip_jump)
+    if (!skip_jump)
       {
          PC->ops();
          actual = blk;
          PC = inst+1;
       }
-      else
-         PC->ops();
+    else
+      PC->ops();
     
-      if (r4300emu == CORE_DYNAREC) dyna_jump();
-    }
+    if (r4300emu == CORE_DYNAREC) dyna_jump();
+     }
 }
 
-void NOTCOMPILED(void)
+static void NOTCOMPILED(void)
 {
-    unsigned int *mem = fast_mem_access(blocks[PC->addr>>12]->start);
-
+   unsigned int *mem = fast_mem_access(blocks[PC->addr>>12]->start);
 #ifdef CORE_DBG
    DebugMessage(M64MSG_INFO, "NOTCOMPILED: addr = %x ops = %lx", PC->addr, (long) PC->ops);
 #endif
 
    if (mem != NULL)
       recompile_block((int *)mem, blocks[PC->addr >> 12], PC->addr);
-   else 
+   else
       DebugMessage(M64MSG_ERROR, "not compiled exception");
-   
+
 /*#ifdef DBG
             if (g_DebuggerActive) update_debugger(PC->addr);
 #endif
@@ -261,10 +239,294 @@ called before NOTCOMPILED would have been executed
      dyna_jump();
 }
 
-void NOTCOMPILED2(void)
+static void NOTCOMPILED2(void)
 {
    NOTCOMPILED();
 }
+
+// -----------------------------------------------------------
+// Cached interpreter instruction table
+// -----------------------------------------------------------
+const cpu_instruction_table cached_interpreter_table = {
+   LB,
+   LBU,
+   LH,
+   LHU,
+   LW,
+   LWL,
+   LWR,
+   SB,
+   SH,
+   SW,
+   SWL,
+   SWR,
+
+   LD,
+   LDL,
+   LDR,
+   LL,
+   LWU,
+   SC,
+   SD,
+   SDL,
+   SDR,
+   SYNC,
+
+   ADDI,
+   ADDIU,
+   SLTI,
+   SLTIU,
+   ANDI,
+   ORI,
+   XORI,
+   LUI,
+
+   DADDI,
+   DADDIU,
+
+   ADD,
+   ADDU,
+   SUB,
+   SUBU,
+   SLT,
+   SLTU,
+   AND,
+   OR,
+   XOR,
+   NOR,
+
+   DADD,
+   DADDU,
+   DSUB,
+   DSUBU,
+
+   MULT,
+   MULTU,
+   DIV,
+   DIVU,
+   MFHI,
+   MTHI,
+   MFLO,
+   MTLO,
+
+   DMULT,
+   DMULTU,
+   DDIV,
+   DDIVU,
+
+   J,
+   J_OUT,
+   J_IDLE,
+   JAL,
+   JAL_OUT,
+   JAL_IDLE,
+   // Use the _OUT versions of JR and JALR, since we don't know
+   // until runtime if they're going to jump inside or outside the block
+   JR_OUT,
+   JALR_OUT,
+   BEQ,
+   BEQ_OUT,
+   BEQ_IDLE,
+   BNE,
+   BNE_OUT,
+   BNE_IDLE,
+   BLEZ,
+   BLEZ_OUT,
+   BLEZ_IDLE,
+   BGTZ,
+   BGTZ_OUT,
+   BGTZ_IDLE,
+   BLTZ,
+   BLTZ_OUT,
+   BLTZ_IDLE,
+   BGEZ,
+   BGEZ_OUT,
+   BGEZ_IDLE,
+   BLTZAL,
+   BLTZAL_OUT,
+   BLTZAL_IDLE,
+   BGEZAL,
+   BGEZAL_OUT,
+   BGEZAL_IDLE,
+
+   BEQL,
+   BEQL_OUT,
+   BEQL_IDLE,
+   BNEL,
+   BNEL_OUT,
+   BNEL_IDLE,
+   BLEZL,
+   BLEZL_OUT,
+   BLEZL_IDLE,
+   BGTZL,
+   BGTZL_OUT,
+   BGTZL_IDLE,
+   BLTZL,
+   BLTZL_OUT,
+   BLTZL_IDLE,
+   BGEZL,
+   BGEZL_OUT,
+   BGEZL_IDLE,
+   BLTZALL,
+   BLTZALL_OUT,
+   BLTZALL_IDLE,
+   BGEZALL,
+   BGEZALL_OUT,
+   BGEZALL_IDLE,
+   BC1TL,
+   BC1TL_OUT,
+   BC1TL_IDLE,
+   BC1FL,
+   BC1FL_OUT,
+   BC1FL_IDLE,
+
+   SLL,
+   SRL,
+   SRA,
+   SLLV,
+   SRLV,
+   SRAV,
+
+   DSLL,
+   DSRL,
+   DSRA,
+   DSLLV,
+   DSRLV,
+   DSRAV,
+   DSLL32,
+   DSRL32,
+   DSRA32,
+
+   MTC0,
+   MFC0,
+
+   TLBR,
+   TLBWI,
+   TLBWR,
+   TLBP,
+   CACHE,
+   ERET,
+
+   LWC1,
+   SWC1,
+   MTC1,
+   MFC1,
+   CTC1,
+   CFC1,
+   BC1T,
+   BC1T_OUT,
+   BC1T_IDLE,
+   BC1F,
+   BC1F_OUT,
+   BC1F_IDLE,
+
+   DMFC1,
+   DMTC1,
+   LDC1,
+   SDC1,
+
+   CVT_S_D,
+   CVT_S_W,
+   CVT_S_L,
+   CVT_D_S,
+   CVT_D_W,
+   CVT_D_L,
+   CVT_W_S,
+   CVT_W_D,
+   CVT_L_S,
+   CVT_L_D,
+
+   ROUND_W_S,
+   ROUND_W_D,
+   ROUND_L_S,
+   ROUND_L_D,
+
+   TRUNC_W_S,
+   TRUNC_W_D,
+   TRUNC_L_S,
+   TRUNC_L_D,
+
+   CEIL_W_S,
+   CEIL_W_D,
+   CEIL_L_S,
+   CEIL_L_D,
+
+   FLOOR_W_S,
+   FLOOR_W_D,
+   FLOOR_L_S,
+   FLOOR_L_D,
+
+   ADD_S,
+   ADD_D,
+
+   SUB_S,
+   SUB_D,
+
+   MUL_S,
+   MUL_D,
+
+   DIV_S,
+   DIV_D,
+   
+   ABS_S,
+   ABS_D,
+
+   MOV_S,
+   MOV_D,
+
+   NEG_S,
+   NEG_D,
+
+   SQRT_S,
+   SQRT_D,
+
+   C_F_S,
+   C_F_D,
+   C_UN_S,
+   C_UN_D,
+   C_EQ_S,
+   C_EQ_D,
+   C_UEQ_S,
+   C_UEQ_D,
+   C_OLT_S,
+   C_OLT_D,
+   C_ULT_S,
+   C_ULT_D,
+   C_OLE_S,
+   C_OLE_D,
+   C_ULE_S,
+   C_ULE_D,
+   C_SF_S,
+   C_SF_D,
+   C_NGLE_S,
+   C_NGLE_D,
+   C_SEQ_S,
+   C_SEQ_D,
+   C_NGL_S,
+   C_NGL_D,
+   C_LT_S,
+   C_LT_D,
+   C_NGE_S,
+   C_NGE_D,
+   C_LE_S,
+   C_LE_D,
+   C_NGT_S,
+   C_NGT_D,
+
+   SYSCALL,
+
+   TEQ,
+
+   NOP,
+   RESERVED,
+   NI,
+
+   FIN_BLOCK,
+   NOTCOMPILED,
+   NOTCOMPILED2
+};
+
+cpu_instruction_table current_instruction_table;
 
 static unsigned int update_invalid_addr(unsigned int addr)
 {
@@ -325,6 +587,18 @@ void jump_to_func(void)
    if (r4300emu == CORE_DYNAREC) dyna_jump();
 }
 #undef addr
+
+void generic_jump_to(unsigned int address)
+{
+   if (r4300emu == CORE_PURE_INTERPRETER)
+      PC->addr = address;
+   else
+#ifdef NEW_DYNAREC
+      last_addr = pcaddr;
+#else
+      jump_to(address);
+#endif
+}
 
 /* Refer to Figure 6-2 on page 155 and explanation on page B-11
    of MIPS R4000 Microprocessor User's Manual (Second Edition)
@@ -423,22 +697,16 @@ int check_cop1_unusable(void)
 
 void update_count(void)
 {
-   if (r4300emu == CORE_PURE_INTERPRETER)
-     {
-    Count = Count + (interp_addr - last_addr)/2;
-    last_addr = interp_addr;
-     }
-   else
-     {
-#if !defined(NEW_DYNAREC)
-    if (PC->addr < last_addr)
-      {
-         DebugMessage(M64MSG_ERROR, "PC->addr < last_addr");
-      }
-    Count = Count + (PC->addr - last_addr)/2;
-    last_addr = PC->addr;
+#ifdef NEW_DYNAREC
+    if (r4300emu != CORE_DYNAREC)
+    {
 #endif
-     }
+        Count = Count + (PC->addr - last_addr)/2;
+        last_addr = PC->addr;
+#ifdef NEW_DYNAREC
+    }
+#endif
+
 #ifdef COMPARE_CORE
    if (delay_slot)
      CoreCompareCallback();
@@ -447,6 +715,16 @@ void update_count(void)
    if (g_DebuggerActive && !delay_slot) update_debugger(PC->addr);
 #endif
 */
+}
+
+void init_blocks(void)
+{
+   int i;
+   for (i=0; i<0x100000; i++)
+   {
+      invalid_code[i] = 1;
+      blocks[i] = NULL;
+   }
 }
 
 void free_blocks(void)
@@ -461,31 +739,6 @@ void free_blocks(void)
             blocks[i] = NULL;
         }
     }
-}
-
-void init_blocks(void)
-{
-   int i;
-   for (i=0; i<0x100000; i++)
-     {
-    invalid_code[i] = 1;
-    blocks[i] = NULL;
-     }
-   blocks[0xa4000000>>12] = (precomp_block *) malloc(sizeof(precomp_block));
-   invalid_code[0xa4000000>>12] = 1;
-   blocks[0xa4000000>>12]->code = NULL;
-   blocks[0xa4000000>>12]->block = NULL;
-   blocks[0xa4000000>>12]->jumps_table = NULL;
-   blocks[0xa4000000>>12]->riprel_table = NULL;
-   blocks[0xa4000000>>12]->start = 0xa4000000;
-   blocks[0xa4000000>>12]->end = 0xa4001000;
-   actual=blocks[0xa4000000>>12];
-   init_block(blocks[0xa4000000>>12]);
-   PC=actual->block+(0x40/4);
-/*#ifdef DBG //should only be needed by dynamic recompiler
-   if (g_DebuggerActive) // debugger shows initial state (before 1st instruction).
-     update_debugger(PC->addr);
-#endif*/
 }
 
 /* this hard reset function simulates the boot-up state of the R4300 CPU */
@@ -550,7 +803,9 @@ void r4300_reset_hard(void)
     rounding_mode = 0x33F;
 }
 
-/* this soft reset function simulates the actions of the PIF ROM, which may vary by region */
+/* this soft reset function simulates the actions of the PIF ROM, which may vary by region
+ * TODO: accurately simulate the effects of the PIF ROM in the case of a soft reset
+ *       (e.g. Goldeneye crashes) */
 void r4300_reset_soft(void)
 {
     long long CRC = 0;
@@ -702,9 +957,26 @@ void r4300_reset_soft(void)
 
 }
 
+#if !defined(NO_ASM)
+static void dynarec_setup_code(void)
+{
+   // The dynarec jumps here after we call dyna_start and it prepares
+   // Here we need to prepare the initial code block and jump to it
+   jump_to(0xa4000040);
+
+   // Prevent segfault on failed jump_to
+   if (!actual->block || !actual->code)
+      dyna_stop();
+}
+#endif
+
 void r4300_execute(void)
 {
+#if defined(COUNT_INSTR) || (defined(DYNAREC) && defined(PROFILE_R4300))
     unsigned int i;
+#endif
+
+    current_instruction_table = cached_interpreter_table;
 
     debug_count = 0;
     delay_slot=0;
@@ -728,25 +1000,19 @@ r4300emu = 2;
         r4300emu = CORE_PURE_INTERPRETER;
         pure_interpreter();
     }
-#if defined(DYNAREC) || defined(__arm__)
+#if defined(DYNAREC)
     else if (r4300emu >= 2)
     {
-        void (*code)(void);
         DebugMessage(M64MSG_INFO, "Starting R4300 emulator: Dynamic Recompiler");
         r4300emu = CORE_DYNAREC;
         init_blocks();
 
-        /* Prevent segfault on failed init_blocks */
-        if (!actual->block || !actual->code)
-            return;
-
-        code =  (void(*)(void)) (actual->code+(actual->block[0x40/4].local_addr));
 #ifdef NEW_DYNAREC
         new_dynarec_init();
         new_dyna_start();
         new_dynarec_cleanup();
 #else
-        dyna_start(code);
+        dyna_start(dynarec_setup_code);
         PC++;
 #endif
 #if defined(PROFILE_R4300)
@@ -766,6 +1032,7 @@ r4300emu = 2;
         fclose(pfProfile);
         pfProfile = NULL;
 #endif
+        free_blocks();
     }
 #endif
     else /* if (r4300emu == CORE_INTERPRETER) */
@@ -773,8 +1040,9 @@ r4300emu = 2;
         DebugMessage(M64MSG_INFO, "Starting R4300 emulator: Cached Interpreter");
         r4300emu = CORE_INTERPRETER;
         init_blocks();
+        jump_to(0xa4000040);
 
-        /* Prevent segfault on failed init_blocks */
+        /* Prevent segfault on failed jump_to */
         if (!actual->block)
             return;
 
@@ -791,12 +1059,12 @@ r4300emu = 2;
 #endif
             PC->ops();
         }
+
+        free_blocks();
     }
 
     debug_count+= Count;
     DebugMessage(M64MSG_INFO, "R4300 emulator finished.");
-    free_blocks();
-    if (r4300emu == CORE_PURE_INTERPRETER) free(PC);
 
     /* print instruction counts */
 #if defined(COUNT_INSTR)
@@ -827,4 +1095,3 @@ r4300emu = 2;
     }
 #endif
 }
-

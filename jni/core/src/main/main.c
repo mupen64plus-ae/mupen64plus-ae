@@ -144,6 +144,7 @@ void main_message(m64p_msg_level level, unsigned int corner, const char *format,
     DebugMessage(level, "%s", buffer);
 }
 
+
 /*********************************************************************************************************
 * global functions, for adjusting the core emulator behavior
 */
@@ -234,7 +235,7 @@ void main_speedup(int percent)
     }
 }
 
-void main_speedset(int percent)
+static void main_speedset(int percent)
 {
     if (percent < 1 || percent > 1000)
     {
@@ -280,12 +281,12 @@ void main_set_fastforward(int enable)
 
 }
 
-void main_set_speedlimiter(int enable)
+static void main_set_speedlimiter(int enable)
 {
     l_MainSpeedLimit = enable ? 1 : 0;
 }
 
-int main_is_paused(void)
+static int main_is_paused(void)
 {
     return (g_EmulatorRunning && rompause);
 }
@@ -313,7 +314,7 @@ void main_toggle_pause(void)
         DebugMessage(M64MSG_STATUS, "Emulation paused.");
         l_msgPause = osd_new_message(OSD_MIDDLE_CENTER, "Paused");
         osd_message_set_static(l_msgPause);
-	osd_message_set_user_managed(l_msgPause);
+        osd_message_set_user_managed(l_msgPause);
         StateChanged(M64CORE_EMU_STATE, M64EMU_PAUSED);
     }
 
@@ -328,13 +329,13 @@ void main_advance_one(void)
     StateChanged(M64CORE_EMU_STATE, M64EMU_RUNNING);
 }
 
-void main_draw_volume_osd(void)
+static void main_draw_volume_osd(void)
 {
     char msgString[64];
     const char *volString;
 
     // this calls into the audio plugin
-    volString = volumeGetString();
+    volString = audio.volumeGetString();
     if (volString == NULL)
     {
         strcpy(msgString, "Volume Not Supported.");
@@ -349,7 +350,7 @@ void main_draw_volume_osd(void)
         osd_update_message(l_msgVol, "%s", msgString);
     else {
         l_msgVol = osd_new_message(OSD_MIDDLE_CENTER, "%s", msgString);
-	osd_message_set_user_managed(l_msgVol);
+        osd_message_set_user_managed(l_msgVol);
     }
 }
 
@@ -618,7 +619,7 @@ void new_vi(void)
     double VILimitMilliseconds = 1000.0 / ROM_PARAMS.vilimit;
     double AdjustedLimit = VILimitMilliseconds * 100.0 / l_SpeedFactor;  // adjust for selected emulator speed
     int time;
-    
+
     start_section(IDLE_SECTION);
     VI_Counter++;
 
