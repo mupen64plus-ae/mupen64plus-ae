@@ -70,14 +70,14 @@ LOCAL_C_INCLUDES += $(SYSROOT)/usr/include/
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 # Use for ARM7a:
 	LOCAL_CFLAGS += -D__arm__
-	LOCAL_CFLAGS += -DNEW_DYNAREC
+	LOCAL_CFLAGS += -DNEW_DYNAREC=3
 	LOCAL_CFLAGS += -DDYNAREC
 	LOCAL_CFLAGS += -mfpu=vfp -mfloat-abi=softfp
 	LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(SDL_PATH)/obj/local/armeabi-v7a
 else ifeq ($(TARGET_ARCH_ABI), armeabi)
 # Use for pre-ARM7a:
 	LOCAL_CFLAGS += -D__arm__
-	LOCAL_CFLAGS += -DNEW_DYNAREC
+	LOCAL_CFLAGS += -DNEW_DYNAREC=3
 	LOCAL_CFLAGS += -DDYNAREC
 	LOCAL_CFLAGS += -DARMv5_ONLY
 	LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(SDL_PATH)/obj/local/armeabi

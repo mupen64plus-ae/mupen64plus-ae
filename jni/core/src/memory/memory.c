@@ -46,6 +46,7 @@
 #include "main/rom.h"
 #include "osal/preproc.h"
 #include "plugin/plugin.h"
+#include "r4300/new_dynarec/new_dynarec.h"
 
 #ifdef DBG
 #include "debugger/dbg_types.h"

@@ -19,6 +19,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdint.h> //include for uint64_t
@@ -31,6 +32,7 @@
 #include "../r4300.h"
 #include "../ops.h"
 #include "../interupt.h"
+#include "new_dynarec.h"
 
 #include "../../memory/memory.h"
 #include "../../main/rom.h"

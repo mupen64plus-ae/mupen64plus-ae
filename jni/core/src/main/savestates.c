@@ -44,7 +44,7 @@
 #include "r4300/interupt.h"
 #include "osal/preproc.h"
 #include "osd/osd.h"
-#include "../r4300/new_dynarec/new_dynarec.h"
+#include "r4300/new_dynarec/new_dynarec.h"
 
 #ifdef LIBMINIZIP
     #include <unzip.h>
