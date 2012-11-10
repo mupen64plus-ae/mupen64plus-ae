@@ -274,7 +274,7 @@ typedef struct _breakpoint {
     unsigned int endaddr;
     unsigned int flags;
     //unsigned int condition;  //Placeholder for breakpoint condition
-} breakpoint;
+    } breakpoint;
 
 /* ------------------------------------------------- */
 /* Structures and Types for Core Video Extension API */

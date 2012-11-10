@@ -20,9 +20,9 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/main/md5.c \
 	$(SRCDIR)/main/rom.c \
 	$(SRCDIR)/main/savestates.c \
-	$(SRCDIR)/main/zip-1.99.4/ioapi.c \
-	$(SRCDIR)/main/zip-1.99.4/zip.c \
-	$(SRCDIR)/main/zip-1.99.4/unzip.c \
+	$(SRCDIR)/main/zip/ioapi.c \
+	$(SRCDIR)/main/zip/zip.c \
+	$(SRCDIR)/main/zip/unzip.c \
 	$(SRCDIR)/memory/dma.c \
 	$(SRCDIR)/memory/flashram.c \
 	$(SRCDIR)/memory/memory.c \
@@ -45,7 +45,6 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/r4300/reset.c \
 	$(SRCDIR)/r4300/empty_dynarec.c \
 	$(SRCDIR)/r4300/new_dynarec/new_dynarec.c \
-	$(SRCDIR)/r4300/new_dynarec/fpu.c \
 	$(SRCDIR)/r4300/new_dynarec/linkage_arm.S
 
 # Removing these doesn't fix the "RAM full of zeros" bug, but they aren't needed anyway:
@@ -57,7 +56,7 @@ LOCAL_SRC_FILES := \
 #	$(SRCDIR)/debugger/dbg_breakpoints.c
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SRCDIR)
-LOCAL_CFLAGS := -DANDROID
+LOCAL_CFLAGS := -DANDROID -DNOCRYPT -DNOUNCRYPT -DIOAPI_NO_64
 #LOCAL_CFLAGS += -DSDL_NO_COMPAT
 
 LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver
@@ -71,14 +70,14 @@ LOCAL_C_INCLUDES += $(SYSROOT)/usr/include/
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 # Use for ARM7a:
 	LOCAL_CFLAGS += -D__arm__
-	LOCAL_CFLAGS += -DNEW_DYNAREC
+	LOCAL_CFLAGS += -DNEW_DYNAREC=3
 	LOCAL_CFLAGS += -DDYNAREC
 	LOCAL_CFLAGS += -mfpu=vfp -mfloat-abi=softfp
 	LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(SDL_PATH)/obj/local/armeabi-v7a
 else ifeq ($(TARGET_ARCH_ABI), armeabi)
 # Use for pre-ARM7a:
 	LOCAL_CFLAGS += -D__arm__
-	LOCAL_CFLAGS += -DNEW_DYNAREC
+	LOCAL_CFLAGS += -DNEW_DYNAREC=3
 	LOCAL_CFLAGS += -DDYNAREC
 	LOCAL_CFLAGS += -DARMv5_ONLY
 	LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(SDL_PATH)/obj/local/armeabi

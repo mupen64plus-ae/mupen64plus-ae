@@ -26,7 +26,6 @@
 #include "api/callbacks.h"
 #include "dynamiclib.h"
 
-
 void * osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName)
 {
     if (pccProcedureName == NULL)

@@ -38,6 +38,7 @@ extern CONTROL Controls[4];
 #define AUDIO_API_VERSION 0x20000
 #define INPUT_API_VERSION 0x20000
 
+/* video plugin function pointers */
 typedef struct _gfx_plugin_functions
 {
 	ptr_PluginGetVersion getVersion;

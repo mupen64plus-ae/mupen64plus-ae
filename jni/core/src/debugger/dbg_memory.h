@@ -135,3 +135,4 @@ void write_rdramFBh_break(void);
 void write_rdramFBd_break(void);
 
 #endif /* __DEBUGGER_MEMORY_H__ */
+

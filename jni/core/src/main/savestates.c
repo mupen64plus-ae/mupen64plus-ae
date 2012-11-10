@@ -43,12 +43,8 @@
 #include "r4300/r4300.h"
 #include "r4300/interupt.h"
 #include "osal/preproc.h"
-#ifdef WITH_OSD
 #include "osd/osd.h"
-#else
-#define OSD_BOTTOM_LEFT 0
-#endif
-#include "../r4300/new_dynarec/new_dynarec.h"
+#include "r4300/new_dynarec/new_dynarec.h"
 
 #ifdef LIBMINIZIP
     #include <unzip.h>
@@ -167,38 +163,8 @@ void savestates_clear_job(void)
     savestates_set_job(savestates_job_nothing, savestates_type_unknown, NULL);
 }
 
-static void block_endian_swap(void *buffer, size_t length, size_t count)
-{
-    size_t i;
-    if (length == 2)
-    {
-        unsigned short *pun = (unsigned short *)buffer;
-        for (i = 0; i < count; i++)
-            pun[i] = __builtin_bswap16(pun[i]);
-    }
-    else if (length == 4)
-    {
-        unsigned int *pun = (unsigned int *)buffer;
-        for (i = 0; i < count; i++)
-            pun[i] = __builtin_bswap32(pun[i]);
-    }
-    else if (length == 8)
-    {
-        unsigned long long *pun = (unsigned long long *)buffer;
-        for (i = 0; i < count; i++)
-            pun[i] = __builtin_bswap64(pun[i]);
-    }
-}
-
-static void to_little_endian(void *buffer, size_t length, size_t count)
-{
-    #ifdef M64P_BIG_ENDIAN
-    block_endian_swap(buffer, length, count);
-    #endif
-}
-
 #define GETARRAY(buff, type, count) \
-    (to_little_endian(buff, sizeof(type),count), \
+    (to_little_endian_buffer(buff, sizeof(type),count), \
      buff += count*sizeof(type), \
      (type *)(buff-count*sizeof(type)))
 #define COPYARRAY(dst, buff, type, count) \
@@ -207,7 +173,7 @@ static void to_little_endian(void *buffer, size_t length, size_t count)
 
 #define PUTARRAY(src, buff, type, count) \
     memcpy(buff, src, sizeof(type)*count); \
-    to_little_endian(buff, sizeof(type), count); \
+    to_little_endian_buffer(buff, sizeof(type), count); \
     buff += count*sizeof(type);
 
 #define PUTDATA(buff, type, value) \
@@ -239,15 +205,15 @@ static int savestates_load_m64p(char *filepath)
         return 0;
     }
     curr = header;
-    
+
     if(strncmp((char *)curr, savestate_magic, 8)!=0)
     {
         main_message(M64MSG_STATUS, OSD_BOTTOM_LEFT, "State file: %s is not a valid Mupen64plus savestate.", filepath);
         gzclose(f);
         return 0;
     }
-
     curr += 8;
+
     version = *curr++;
     version = (version << 8) | *curr++;
     version = (version << 8) | *curr++;
@@ -421,7 +387,7 @@ static int savestates_load_m64p(char *filepath)
         shuffle_fpr_data(0x04000000, 0);
     FCR0 = GETDATA(curr, int);
     FCR31 = GETDATA(curr, int);
-    
+
     for (i = 0; i < 32; i++)
     {
         tlb_e[i].mask = GETDATA(curr, short);
@@ -448,40 +414,35 @@ static int savestates_load_m64p(char *filepath)
         tlb_e[i].end_odd = GETDATA(curr, unsigned int);
         tlb_e[i].phys_odd = GETDATA(curr, unsigned int);
     }
-    
-    if(r4300emu == CORE_PURE_INTERPRETER)
-        interp_addr = GETDATA(curr, unsigned int);
-    else
-    #ifdef NEW_DYNAREC
-        gzread(f, &pcaddr, 4);
-        pending_exception = 1;
-        invalidate_all_pages();
-    #else
+
+#ifdef NEW_DYNAREC
+    pcaddr = GETDATA(curr, unsigned int);
+    pending_exception = 1;
+    invalidate_all_pages();
+#else
+    if(r4300emu != CORE_PURE_INTERPRETER)
     {
         for (i = 0; i < 0x100000; i++)
             invalid_code[i] = 1;
-        jump_to(GETDATA(curr, unsigned int));
     }
-    #endif
+    generic_jump_to(GETDATA(curr, unsigned int)); // PC
+#endif
 
     next_interupt = GETDATA(curr, unsigned int);
     next_vi = GETDATA(curr, unsigned int);
     vi_field = GETDATA(curr, unsigned int);
 
     // assert(savestateData+savestateSize == curr)
-    
-    to_little_endian(queue, 4, 256);
+
+    to_little_endian_buffer(queue, 4, 256);
     load_eventqueue_infos(queue);
-    
-    if(r4300emu == CORE_PURE_INTERPRETER)
-        last_addr = interp_addr;
-    else
-        #ifdef NEW_DYNAREC
-        last_addr = pcaddr;
-        #else
-        last_addr = PC->addr;
-        #endif
-        
+
+#ifdef NEW_DYNAREC
+    last_addr = pcaddr;
+#else
+    last_addr = PC->addr;
+#endif
+
     free(savestateData);
     main_message(M64MSG_STATUS, OSD_BOTTOM_LEFT, "State loaded from: %s", namefrompath(filepath));
     return 1;
@@ -493,7 +454,7 @@ static int savestates_load_pj64(char *filepath, void *handle,
     char buffer[1024];
     unsigned int vi_timer, SaveRDRAMSize;
     int i;
-    
+
     unsigned char header[8];
     unsigned char RomHeader[0x40];
 
@@ -506,7 +467,7 @@ static int savestates_load_pj64(char *filepath, void *handle,
         main_message(M64MSG_STATUS, OSD_BOTTOM_LEFT, "Could not read header from Project64 savestate %s", filepath);
         return 0;
     }
-    
+
     curr = header;
     if (memcmp(curr, pj64_magic, 4) != 0)
     {
@@ -696,7 +657,7 @@ static int savestates_load_pj64(char *filepath, void *handle,
     memset(tlb_LUT_w, 0, 0x400000);
     for (i=0; i < 32; i++)
     {
-        unsigned int MyEntryDefined = GETDATA(curr, unsigned int);
+        (void)GETDATA(curr, unsigned int); // Dummy read - EntryDefined
         unsigned int MyPageMask = GETDATA(curr, unsigned int);
         unsigned int MyEntryHi = GETDATA(curr, unsigned int);
         unsigned int MyEntryLo0 = GETDATA(curr, unsigned int);
@@ -754,19 +715,18 @@ static int savestates_load_pj64(char *filepath, void *handle,
     // No flashram info in pj64 savestate.
     init_flashram();
 
-    if(r4300emu == CORE_PURE_INTERPRETER)
-        interp_addr = last_addr;
-    else
+#ifdef NEW_DYNAREC
+    pcaddr = GETDATA(curr, unsigned int);
+    pending_exception = 1;
+    invalidate_all_pages();
+#else
+    if(r4300emu != CORE_PURE_INTERPRETER)
     {
-        #ifdef NEW_DYNAREC
-        last_addr = pcaddr;
-        #else
-
         for (i = 0; i < 0x100000; i++)
             invalid_code[i] = 1;
-        jump_to(last_addr);
-        #endif
     }
+    generic_jump_to(last_addr);
+#endif
 
     // assert(savestateData+savestateSize == curr)
 
@@ -837,7 +797,7 @@ static int savestates_load_pj64_unc(char *filepath)
     return 1;
 }
 
-savestates_type savestates_detect_type(char *filepath)
+static savestates_type savestates_detect_type(char *filepath)
 {
     unsigned char magic[4];
     FILE *f = fopen(filepath, "rb");
@@ -905,7 +865,7 @@ static int savestates_save_m64p(char *filepath)
 
     char queue[1024];
     int queuelength;
-    
+
     size_t savestateSize;
     char *savestateData, *curr;
 
@@ -1128,21 +1088,17 @@ static int savestates_save_m64p(char *filepath)
         PUTDATA(curr, unsigned int, tlb_e[i].end_odd);
         PUTDATA(curr, unsigned int, tlb_e[i].phys_odd);
     }
-    if(r4300emu == CORE_PURE_INTERPRETER)
-        PUTDATA(curr, unsigned int, interp_addr);
-    else
-        #ifdef NEW_DYNAREC
-        //gzwrite(f, &pcaddr, 4);
-        //PUTDATA(curr, unsigned int, &pcaddr); // TODO: Correct alternative ?
-        #else
-        PUTDATA(curr, unsigned int, PC->addr);
-        #endif
+#ifdef NEW_DYNAREC
+    PUTDATA(curr, unsigned int, pcaddr);
+#else
+    PUTDATA(curr, unsigned int, PC->addr);
+#endif
 
     PUTDATA(curr, unsigned int, next_interupt);
     PUTDATA(curr, unsigned int, next_vi);
     PUTDATA(curr, unsigned int, vi_field);
 
-    to_little_endian(queue, 4, queuelength/4);
+    to_little_endian_buffer(queue, 4, queuelength/4);
     PUTARRAY(queue, curr, char, queuelength);
 
     // assert(curr == savestateData + savestateSize)
@@ -1174,21 +1130,12 @@ static int savestates_save_m64p(char *filepath)
 static int savestates_save_pj64(char *filepath, void *handle,
                                 int (*write_func)(void *, const void *, size_t))
 {
-    unsigned int i, addr;
+    unsigned int i;
     unsigned int SaveRDRAMSize = 0x800000;
-    
+
     size_t savestateSize;
     unsigned char *savestateData, *curr;
 
-    if(r4300emu == CORE_PURE_INTERPRETER)
-        addr = interp_addr;
-    else
-        #ifdef NEW_DYNAREC
-        addr = pcaddr;
-        #else
-        addr = PC->addr;
-        #endif
-    
     // Allocate memory for the save state data
     savestateSize = 8 + SaveRDRAMSize + 0x2754;
     savestateData = curr = (unsigned char *)malloc(savestateSize);
@@ -1203,7 +1150,11 @@ static int savestates_save_pj64(char *filepath, void *handle,
     PUTDATA(curr, unsigned int, SaveRDRAMSize);
     PUTARRAY(rom, curr, unsigned int, 0x40/4);
     PUTDATA(curr, unsigned int, get_event(VI_INT) - reg_cop0[9]); // vi_timer
-    PUTDATA(curr, unsigned int, addr);
+#ifdef NEW_DYNAREC
+    PUTDATA(curr, unsigned int, pcaddr);
+#else
+    PUTDATA(curr, unsigned int, PC->addr);
+#endif
     PUTARRAY(reg, curr, long long int, 32);
     if ((Status & 0x04000000) == 0) // TODO not sure how pj64 handles this
         shuffle_fpr_data(0x04000000, 0);
@@ -1306,7 +1257,7 @@ static int savestates_save_pj64(char *filepath, void *handle,
     PUTDATA(curr, unsigned int, si_register.si_pif_addr_rd64b);
     PUTDATA(curr, unsigned int, si_register.si_pif_addr_wr64b);
     PUTDATA(curr, unsigned int, si_register.si_stat);
-    
+
     for (i=0; i < 32;i++)
     {
         // From TLBR
@@ -1327,7 +1278,7 @@ static int savestates_save_pj64(char *filepath, void *handle,
         PUTDATA(curr, unsigned int, MyEntryLo0);
         PUTDATA(curr, unsigned int, MyEntryLo1);
     }
-    
+
     PUTARRAY(PIF_RAM, curr, unsigned char, 0x40);
 
     PUTARRAY(rdram, curr, unsigned int, SaveRDRAMSize/4);

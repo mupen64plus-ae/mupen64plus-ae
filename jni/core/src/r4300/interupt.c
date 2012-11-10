@@ -33,9 +33,7 @@
 #include "main/main.h"
 #include "main/savestates.h"
 #include "main/cheat.h"
-#ifdef WITH_OSD
 #include "osd/osd.h"
-#endif
 #include "plugin/plugin.h"
 
 #include "interupt.h"
@@ -330,7 +328,8 @@ void gen_interupt(void)
         vi_counter = 0; // debug
         dyna_stop();
     }
-    if (!interupt_unsafe_state) 
+
+    if (!interupt_unsafe_state)
     {
         if (savestates_get_job() == savestates_job_load)
         {
@@ -348,23 +347,15 @@ void gen_interupt(void)
    
     if (skip_jump)
     {
+        unsigned int dest = skip_jump;
+        skip_jump = 0;
+
         if (q->count > Count || (Count - q->count) < 0x80000000)
             next_interupt = q->count;
         else
             next_interupt = 0;
-        if (r4300emu == CORE_PURE_INTERPRETER)
-        {
-             interp_addr = skip_jump;
-             last_addr = interp_addr;
-        }
-        else
-        {
-            unsigned int dest = skip_jump;
-            skip_jump=0;
-            jump_to(dest);
-            last_addr = PC->addr;
-        }
-        skip_jump=0;
+        
+        generic_jump_to(dest);
         return;
     } 
 
@@ -392,16 +383,14 @@ void gen_interupt(void)
             lircCheckInput();
 #endif
             SDL_PumpEvents();
-                
+
             refresh_stat();
 
             // if paused, poll for input events
             if(rompause)
             {
-#ifdef WITH_OSD
                 osd_render();  // draw Paused message in case gfx.updateScreen didn't do it
                 VidExt_GL_SwapBuffers();
-#endif
                 while(rompause)
                 {
                     SDL_Delay(10);
@@ -455,6 +444,7 @@ void gen_interupt(void)
             remove_interupt_event();
             MI_register.mi_intr_reg |= 0x02;
             si_register.si_stat |= 0x1000;
+            si_register.si_stat &= ~0x1;
             if (MI_register.mi_intr_reg & MI_register.mi_intr_mask_reg)
                 Cause = (Cause | 0x400) & 0xFFFFFF83;
             else
@@ -562,35 +552,18 @@ void gen_interupt(void)
             init_interupt();
             // clear the audio status register so that subsequent write_ai() calls will work properly
             ai_register.ai_status = 0;
+            // set ErrorEPC with the last instruction address
+            ErrorEPC = PC->addr;
             // reset the r4300 internal state
-            if (r4300emu == CORE_PURE_INTERPRETER) /* pure interpreter only */
+            if (r4300emu != CORE_PURE_INTERPRETER)
             {
-                // set ErrorEPC with last instruction address and set next instruction address to reset vector
-                ErrorEPC = interp_addr;
-                interp_addr = 0xa4000040;
-                last_addr = interp_addr;
-            }
-            else  /* decode-cached interpreter or dynamic recompiler */
-            {
-                int i;
-                // clear all the compiled instruction blocks
-                for (i=0; i<0x100000; i++)
-                {
-                    if (blocks[i])
-                    {
-                        free_block(blocks[i]);
-                        free(blocks[i]);
-                        blocks[i] = NULL;
-                    }
-                }
                 // clear all the compiled instruction blocks and re-initialize
                 free_blocks();
                 init_blocks();
-                // jump to the start
-                ErrorEPC = PC->addr;
-                jump_to(0xa4000040);
-                last_addr = PC->addr;
             }
+            // set next instruction address to reset vector
+            generic_jump_to(0xa4000040);
+            last_addr = PC->addr;
             // adjust ErrorEPC if we were in a delay slot, and clear the delay_slot and dyna_interp flags
             if(delay_slot==1 || delay_slot==3)
             {

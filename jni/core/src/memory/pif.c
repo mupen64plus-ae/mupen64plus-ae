@@ -91,7 +91,7 @@ static void eeprom_write_file(void)
 
 static char *get_mempack_path(void)
 {
-    return formatstr("%s%s.mpk", get_savesrampath(), ROM_SETTINGS.goodname);  
+    return formatstr("%s%s.mpk", get_savesrampath(), ROM_SETTINGS.goodname);
 }
 
 static void mempack_format(void)
@@ -335,7 +335,7 @@ static void internal_ReadController(int Control, unsigned char *Command)
         if (Controls[Control].Present)
         {
             if (Controls[Control].Plugin == PLUGIN_RAW)
-                if (input.controllerCommand) 
+                if (input.controllerCommand)
                     input.readController(Control, Command);
         }
         break;

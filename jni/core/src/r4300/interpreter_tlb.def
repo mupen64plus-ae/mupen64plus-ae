@@ -19,10 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <android/log.h>
 #include <zlib.h> // For adler32()
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "tlb", __VA_ARGS__)
 
 DECLARE_INSTRUCTION(TLBR)
 {
@@ -206,163 +203,12 @@ DECLARE_INSTRUCTION(TLBWI)
    ADD_TO_PC(1);
 }
 
-//#ifdef NEW_DYNAREC
-extern unsigned int memory_map[1048576];
-extern unsigned int using_tlb;
-#include <assert.h>
-DECLARE_INSTRUCTION(TLBWI_new) // TODO: FIXME: Kill this in the future. New dynarec should be modified to use the regular TLBWI
-{
-  unsigned int i;
-  /* Remove old entries */
-  unsigned int old_start_even=tlb_e[Index&0x3F].start_even;
-  unsigned int old_end_even=tlb_e[Index&0x3F].end_even;
-  unsigned int old_start_odd=tlb_e[Index&0x3F].start_odd;
-  unsigned int old_end_odd=tlb_e[Index&0x3F].end_odd;
-  for (i=old_start_even>>12; i<=old_end_even>>12; i++)
-  {
-    if(i<0x80000||i>0xBFFFF)
-    {
-      invalidate_block(i);
-      memory_map[i]=-1;
-    }
-  }
-  for (i=old_start_odd>>12; i<=old_end_odd>>12; i++)
-  {
-    if(i<0x80000||i>0xBFFFF)
-    {
-      invalidate_block(i);
-      memory_map[i]=-1;
-    }
-  }
-  TLBWI();
-  //printf("TLBWI: index=%d\n",Index);
-  //printf("TLBWI: start_even=%x end_even=%x phys_even=%x v=%d d=%d\n",tlb_e[Index&0x3F].start_even,tlb_e[Index&0x3F].end_even,tlb_e[Index&0x3F].phys_even,tlb_e[Index&0x3F].v_even,tlb_e[Index&0x3F].d_even);
-  //printf("TLBWI: start_odd=%x end_odd=%x phys_odd=%x v=%d d=%d\n",tlb_e[Index&0x3F].start_odd,tlb_e[Index&0x3F].end_odd,tlb_e[Index&0x3F].phys_odd,tlb_e[Index&0x3F].v_odd,tlb_e[Index&0x3F].d_odd);
-  /* Combine tlb_LUT_r, tlb_LUT_w, and invalid_code into a single table
-     for fast look up. */
-  for (i=tlb_e[Index&0x3F].start_even>>12; i<=tlb_e[Index&0x3F].end_even>>12; i++)
-  {
-    //printf("%x: r:%8x w:%8x\n",i,tlb_LUT_r[i],tlb_LUT_w[i]);
-    if(i<0x80000||i>0xBFFFF)
-    {
-      if(tlb_LUT_r[i]) {
-        memory_map[i]=((tlb_LUT_r[i]&0xFFFFF000)-(i<<12)+(unsigned int)rdram-0x80000000)>>2;
-        // FIXME: should make sure the physical page is invalid too
-        if(!tlb_LUT_w[i]||!invalid_code[i]) {
-          memory_map[i]|=0x40000000; // Write protect
-        }else{
-          assert(tlb_LUT_r[i]==tlb_LUT_w[i]);
-        }
-        if(!using_tlb) printf("Enabled TLB");
-        // Tell the dynamic recompiler to generate tlb lookup code
-        using_tlb=1;
-      }
-      else memory_map[i]=-1;
-    }
-    //printf("memory_map[%x]: %8x (+%8x)\n",i,memory_map[i],memory_map[i]<<2);
-  }
-  for (i=tlb_e[Index&0x3F].start_odd>>12; i<=tlb_e[Index&0x3F].end_odd>>12; i++)
-  {
-    //printf("%x: r:%8x w:%8x\n",i,tlb_LUT_r[i],tlb_LUT_w[i]);
-    if(i<0x80000||i>0xBFFFF)
-    {
-      if(tlb_LUT_r[i]) {
-        memory_map[i]=((tlb_LUT_r[i]&0xFFFFF000)-(i<<12)+(unsigned int)rdram-0x80000000)>>2;
-        // FIXME: should make sure the physical page is invalid too
-        if(!tlb_LUT_w[i]||!invalid_code[i]) {
-          memory_map[i]|=0x40000000; // Write protect
-        }else{
-          assert(tlb_LUT_r[i]==tlb_LUT_w[i]);
-        }
-        if(!using_tlb) printf("Enabled TLB");
-        // Tell the dynamic recompiler to generate tlb lookup code
-        using_tlb=1;
-      }
-      else memory_map[i]=-1;
-    }
-    //printf("memory_map[%x]: %8x (+%8x)\n",i,memory_map[i],memory_map[i]<<2);
-  }
-}
-
 DECLARE_INSTRUCTION(TLBWR)
 {
    update_count();
    Random = (Count/2 % (32 - Wired)) + Wired;
    TLBWrite(Random);
    ADD_TO_PC(1);
-}
-
-//#ifdef NEW_DYNAREC
-DECLARE_INSTRUCTION(TLBWR_new) // TODO: FIXME: Kill this in the future. New dynarec should be modified to use the normal TLBWR
-{
-  unsigned int i;
-  Random = (Count/2 % (32 - Wired)) + Wired;
-  /* Remove old entries */
-  unsigned int old_start_even=tlb_e[Random&0x3F].start_even;
-  unsigned int old_end_even=tlb_e[Random&0x3F].end_even;
-  unsigned int old_start_odd=tlb_e[Random&0x3F].start_odd;
-  unsigned int old_end_odd=tlb_e[Random&0x3F].end_odd;
-  for (i=old_start_even>>12; i<=old_end_even>>12; i++)
-  {
-    if(i<0x80000||i>0xBFFFF)
-    {
-      invalidate_block(i);
-      memory_map[i]=-1;
-    }
-  }
-  for (i=old_start_odd>>12; i<=old_end_odd>>12; i++)
-  {
-    if(i<0x80000||i>0xBFFFF)
-    {
-      invalidate_block(i);
-      memory_map[i]=-1;
-    }
-  }
-  TLBWR();
-  /* Combine tlb_LUT_r, tlb_LUT_w, and invalid_code into a single table
-     for fast look up. */
-  for (i=tlb_e[Random&0x3F].start_even>>12; i<=tlb_e[Random&0x3F].end_even>>12; i++)
-  {
-    //printf("%x: r:%8x w:%8x\n",i,tlb_LUT_r[i],tlb_LUT_w[i]);
-    if(i<0x80000||i>0xBFFFF)
-    {
-      if(tlb_LUT_r[i]) {
-        memory_map[i]=((tlb_LUT_r[i]&0xFFFFF000)-(i<<12)+(unsigned int)rdram-0x80000000)>>2;
-        // FIXME: should make sure the physical page is invalid too
-        if(!tlb_LUT_w[i]||!invalid_code[i]) {
-          memory_map[i]|=0x40000000; // Write protect
-        }else{
-          assert(tlb_LUT_r[i]==tlb_LUT_w[i]);
-        }
-        if(!using_tlb) printf("Enabled TLB");
-        // Tell the dynamic recompiler to generate tlb lookup code
-        using_tlb=1;
-      }
-      else memory_map[i]=-1;
-    }
-    //printf("memory_map[%x]: %8x (+%8x)\n",i,memory_map[i],memory_map[i]<<2);
-  }
-  for (i=tlb_e[Random&0x3F].start_odd>>12; i<=tlb_e[Random&0x3F].end_odd>>12; i++)
-  {
-    //printf("%x: r:%8x w:%8x\n",i,tlb_LUT_r[i],tlb_LUT_w[i]);
-    if(i<0x80000||i>0xBFFFF)
-    {
-      if(tlb_LUT_r[i]) {
-        memory_map[i]=((tlb_LUT_r[i]&0xFFFFF000)-(i<<12)+(unsigned int)rdram-0x80000000)>>2;
-        // FIXME: should make sure the physical page is invalid too
-        if(!tlb_LUT_w[i]||!invalid_code[i]) {
-          memory_map[i]|=0x40000000; // Write protect
-        }else{
-          assert(tlb_LUT_r[i]==tlb_LUT_w[i]);
-        }
-        if(!using_tlb) printf("Enabled TLB");
-        // Tell the dynamic recompiler to generate tlb lookup code
-        using_tlb=1;
-      }
-      else memory_map[i]=-1;
-    }
-    //printf("memory_map[%x]: %8x (+%8x)\n",i,memory_map[i],memory_map[i]<<2);
-  }
 }
 
 DECLARE_INSTRUCTION(TLBP)
@@ -393,9 +239,8 @@ DECLARE_INSTRUCTION(ERET)
    }
    else
    {
-     Status &= 0xFFFFFFFD;
-     if (r4300emu == CORE_PURE_INTERPRETER) interp_addr = EPC;
-     else jump_to(EPC);
+     Status &= ~0x2;
+     generic_jump_to(EPC);
    }
    llbit = 0;
    check_interupt();

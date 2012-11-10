@@ -38,9 +38,7 @@
 
 #include "memory/memory.h"
 #include "osal/preproc.h"
-#ifdef WITH_OSD
 #include "osd/osd.h"
-#endif
 
 #define DEFAULT 16
 
@@ -59,8 +57,11 @@ unsigned char isGoldeneyeRom = 0;
 
 m64p_rom_header   ROM_HEADER;
 rom_params        ROM_PARAMS;
-
 m64p_rom_settings ROM_SETTINGS;
+
+static m64p_system_type rom_country_code_to_system_type(char country_code);
+static int rom_system_type_to_ai_dac_rate(m64p_system_type system_type);
+static int rom_system_type_to_vi_limit(m64p_system_type system_type);
 
 /* Tests if a file is a valid N64 rom by checking the first 4 bytes. */
 static int is_valid_rom(const unsigned char *buffer)
@@ -146,7 +147,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
         return M64ERR_NO_MEMORY;
     memcpy(rom, romimage, size);
     swap_rom(rom, &imagetype, rom_size);
-    
+
     memcpy(&ROM_HEADER, rom, sizeof(m64p_rom_header));
 
     /* Calculate MD5 hash  */
@@ -168,7 +169,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
     trim(ROM_PARAMS.headername); /* Remove trailing whitespace from ROM name. */
 
     /* Look up this ROM in the .ini file and fill in goodname, etc */
-    if ((entry=ini_search_by_md5(digest)) != NULL||
+    if ((entry=ini_search_by_md5(digest)) != NULL ||
         (entry=ini_search_by_crc(sl(ROM_HEADER.CRC1),sl(ROM_HEADER.CRC2))) != NULL)
     {
         strncpy(ROM_SETTINGS.goodname, entry->goodname, 255);
@@ -205,7 +206,7 @@ m64p_error open_rom(const unsigned char* romimage, unsigned int size)
     DebugMessage(M64MSG_VERBOSE, "Cartridge_ID: %x", ROM_HEADER.Cartridge_ID);
     countrycodestring(ROM_HEADER.Country_code, buffer);
     DebugMessage(M64MSG_INFO, "Country: %s", buffer);
-    DebugMessage(M64MSG_VERBOSE, "PC = %x", sl(ROM_HEADER.PC));
+    DebugMessage(M64MSG_VERBOSE, "PC = %x", sl((unsigned int)ROM_HEADER.PC));
     DebugMessage(M64MSG_VERBOSE, "Save type: %d", ROM_SETTINGS.savetype);
 
     //Prepare Hack for GOLDENEYE
@@ -235,7 +236,7 @@ m64p_error close_rom(void)
 /* ROM utility functions */
 
 // Get the system type associated to a ROM country code.
-m64p_system_type rom_country_code_to_system_type(char country_code)
+static m64p_system_type rom_country_code_to_system_type(char country_code)
 {
     switch (country_code)
     {
@@ -261,7 +262,7 @@ m64p_system_type rom_country_code_to_system_type(char country_code)
 }
 
 // Get the VI (vertical interrupt) limit associated to a ROM system type.
-int rom_system_type_to_vi_limit(m64p_system_type system_type)
+static int rom_system_type_to_vi_limit(m64p_system_type system_type)
 {
     switch (system_type)
     {
@@ -275,7 +276,7 @@ int rom_system_type_to_vi_limit(m64p_system_type system_type)
     }
 }
 
-int rom_system_type_to_ai_dac_rate(m64p_system_type system_type)
+static int rom_system_type_to_ai_dac_rate(m64p_system_type system_type)
 {
     switch (system_type)
     {
@@ -321,7 +322,7 @@ void romdatabase_open(void)
     for(counter = 0; counter < 255; ++counter)
         g_romdatabase.md5_lists[counter] = NULL;
     g_romdatabase.list = NULL;
-    
+
     next_search = &g_romdatabase.list;
 
     /* Parse ROM database file */
@@ -395,9 +396,6 @@ void romdatabase_open(void)
             }
             else if(!strcmp(l.name, "RefMD5"))
             {
-                /* Lookup reference MD5 and replace non-default entries. */
-                romdatabase_entry *ref;
-
                 md5_byte_t md5[16];
                 if (parse_hex(l.value, md5, 16))
                 {
@@ -458,8 +456,8 @@ void romdatabase_open(void)
     }
 
     fclose(fPtr);
-    
-     /* Resolve RefMD5 references */
+
+    /* Resolve RefMD5 references */
     for (search = g_romdatabase.list; search != NULL; search = search->next_entry)
     {
         if (search->entry.refmd5 != NULL)
@@ -513,7 +511,7 @@ static romdatabase_entry* ini_search_by_md5(md5_byte_t* md5)
 
     if(search==NULL)
         return NULL;
-    
+
     return &(search->entry);
 }
 
@@ -521,7 +519,7 @@ romdatabase_entry* ini_search_by_crc(unsigned int crc1, unsigned int crc2)
 {
     romdatabase_search* search;
 
-    if(!g_romdatabase.have_database)
+    if(!g_romdatabase.have_database) 
         return NULL;
 
     search = g_romdatabase.crc_lists[((crc1 >> 24) & 0xff)];
@@ -531,7 +529,7 @@ romdatabase_entry* ini_search_by_crc(unsigned int crc1, unsigned int crc2)
 
     if(search == NULL) 
         return NULL;
-    
+
     return &(search->entry);
 }
 

@@ -34,9 +34,6 @@
 #include "r4300/interupt.h"
 #include "r4300/reset.h"
 
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "core (eventloop.c)", __VA_ARGS__)
-
 /* version number for CoreEvents config section */
 #define CONFIG_PARAM_VERSION 1.00
 
@@ -211,6 +208,7 @@ static int MatchJoyCommand(const SDL_Event *event, eJoyCommand cmd)
 /*********************************************************************************************************
 * sdl event filter
 */
+ /* TODO mupen64plus-ae specific hack */
 //static int event_sdl_filter(const SDL_Event *event)
 int SDLCALL event_sdl_filter(void *userdata, SDL_Event *event)
 {
@@ -224,10 +222,12 @@ int SDLCALL event_sdl_filter(void *userdata, SDL_Event *event)
             break;
 
         case SDL_KEYDOWN:
+             /* TODO mupen64plus-ae specific hack */
             //event_sdl_keydown(event->key.keysym.sym, event->key.keysym.mod);
             event_sdl_keydown(event->key.keysym.scancode, event->key.keysym.mod);
             return 0;
         case SDL_KEYUP:
+             /* TODO mupen64plus-ae specific hack */
             //event_sdl_keyup(event->key.keysym.sym, event->key.keysym.mod);
             event_sdl_keyup(event->key.keysym.scancode, event->key.keysym.mod);
             return 0;
@@ -308,6 +308,7 @@ void event_initialize(void)
 
     /* set up SDL event filter and disable key repeat */
     SDL_EnableKeyRepeat(0, 0);
+     /* TODO mupen64plus-ae specific hack */
     //SDL_SetEventFilter(event_sdl_filter);
     SDL_SetEventFilter( event_sdl_filter, NULL );
 }
@@ -348,6 +349,7 @@ int event_set_core_defaults(void)
 
     ConfigSetDefaultFloat(l_CoreEventsConfig, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus CoreEvents config parameter set version number.  Please don't change this version number.");
     /* Keyboard presses mapped to core functions */
+     /* TODO mupen64plus-ae specific hack */
 /*
     ConfigSetDefaultInt(l_CoreEventsConfig, kbdStop, SDLK_ESCAPE,          "SDL keysym for stopping the emulator");
     ConfigSetDefaultInt(l_CoreEventsConfig, kbdFullscreen, SDLK_LAST,      "SDL keysym for switching between fullscreen/windowed modes");
