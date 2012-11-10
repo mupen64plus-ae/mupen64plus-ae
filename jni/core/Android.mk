@@ -45,7 +45,6 @@ LOCAL_SRC_FILES := \
     $(SRCDIR)/r4300/reset.c \
 	$(SRCDIR)/r4300/empty_dynarec.c \
 	$(SRCDIR)/r4300/new_dynarec/new_dynarec.c \
-	$(SRCDIR)/r4300/new_dynarec/fpu.c \
 	$(SRCDIR)/r4300/new_dynarec/linkage_arm.S
 
 # Removing these doesn't fix the "RAM full of zeros" bug, but they aren't needed anyway:

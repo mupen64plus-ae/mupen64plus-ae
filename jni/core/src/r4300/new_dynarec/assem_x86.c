@@ -71,7 +71,7 @@ const u_short rounding_modes[4] = {
   0xB3F, // ceil
   0x73F};// floor
 
-#include "fpu.h"
+#include "../fpu.h"
 
 // We need these for cmovcc instructions on x86
 u_int const_zero=0;

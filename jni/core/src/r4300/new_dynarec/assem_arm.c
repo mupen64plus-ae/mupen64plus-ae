@@ -96,7 +96,7 @@ const u_int invalidate_addr_reg[16] = {
   0,
   0};
 
-#include "fpu.h"
+#include "../fpu.h"
 
 const u_int jump_table_symbols[] = {
   (int)invalidate_addr,
