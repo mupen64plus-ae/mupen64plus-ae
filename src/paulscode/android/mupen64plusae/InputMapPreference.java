@@ -192,14 +192,14 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
     }
     
     @Override
-    public void onInput( int inputCode, float strength )
+    public void onInput( int inputCode, float strength, int hardwareId )
     {
         mInputCodeToBeMapped = mProvider.getActiveCode();
         updateViews( inputCode, strength );
     }
     
     @Override
-    public void onInput( int[] inputCodes, float[] strengths )
+    public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
         // Nothing to do here, just implement the interface
     }

@@ -85,10 +85,10 @@ public class PeripheralController extends AbstractController implements Abstract
      * (non-Javadoc)
      * 
      * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int,
-     * float)
+     * float, int)
      */
     @Override
-    public void onInput( int inputCode, float strength )
+    public void onInput( int inputCode, float strength, int hardwareId )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mInputMap != null )
@@ -105,10 +105,10 @@ public class PeripheralController extends AbstractController implements Abstract
      * (non-Javadoc)
      * 
      * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int[],
-     * float[])
+     * float[], int)
      */
     @Override
-    public void onInput( int[] inputCodes, float[] strengths )
+    public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
         // Process multiple simultaneous user inputs from gamepad, keyboard, etc.
         if( mInputMap != null )
@@ -140,7 +140,7 @@ public class PeripheralController extends AbstractController implements Abstract
     /**
      * Apply user input to the N64 controller state.
      * 
-     * @param inputCode The standardized input code that was dispatched.
+     * @param inputCode The universal input code that was dispatched.
      * @param strength The input strength, between 0 and 1, inclusive.
      * @return True, if controller state changed.
      */
@@ -175,7 +175,7 @@ public class PeripheralController extends AbstractController implements Abstract
             
             // Update the net position of the analog stick
             mAxisFractionX = mStrengthXpos - mStrengthXneg;
-            mAxisFractionY = mStrengthYpos - mStrengthYneg;           
+            mAxisFractionY = mStrengthYpos - mStrengthYneg;
         }
         return true;
     }

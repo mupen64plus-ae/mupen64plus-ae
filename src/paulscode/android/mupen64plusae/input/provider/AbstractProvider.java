@@ -42,21 +42,24 @@ public abstract class AbstractProvider
      */
     public interface Listener
     {
+        
         /**
          * Called when a single input has been dispatched.
          * 
-         * @param inputCode The standardized input code that was dispatched.
+         * @param inputCode The universal input code that was dispatched.
          * @param strength The input strength, between 0 and 1, inclusive.
+         * @param hardwareId The identifier of the source device.
          */
-        public void onInput( int inputCode, float strength );
+        public void onInput( int inputCode, float strength, int hardwareId );
         
         /**
          * Called when multiple inputs have been dispatched simultaneously.
          * 
-         * @param inputCodes The standardized input codes that were dispatched.
+         * @param inputCodes The universal input codes that were dispatched.
          * @param strengths The input strengths, between 0 and 1, inclusive.
+         * @param hardwareId The identifier of the source device.
          */
-        public void onInput( int[] inputCodes, float[] strengths );
+        public void onInput( int[] inputCodes, float[] strengths, int hardwareId );
     }
     
     /** The strength threshold above which an input is said to be "on". */
@@ -104,7 +107,7 @@ public abstract class AbstractProvider
     /**
      * Gets the human-readable name of the input.
      * 
-     * @param inputCode The standardized input code.
+     * @param inputCode The universal input code.
      * @return The name of the input.
      */
     @TargetApi( 12 )
@@ -138,7 +141,7 @@ public abstract class AbstractProvider
     /**
      * Gets the human-readable name of the input, appended with strength information.
      * 
-     * @param inputCode The standardized input code.
+     * @param inputCode The universal input code.
      * @param strength The input strength, between 0 and 1, inclusive.
      * @return The name of the input.
      */
@@ -153,25 +156,27 @@ public abstract class AbstractProvider
      * Notifies listeners that a single input was dispatched. Subclasses should invoke this method
      * to publish their input data.
      * 
-     * @param inputCode The standardized input code that was dispatched.
+     * @param inputCode The universal input code that was dispatched.
      * @param strength The input strength, between 0 and 1, inclusive.
+     * @param hardwareId The identifier of the source device.
      */
-    protected void notifyListeners( int inputCode, float strength )
+    protected void notifyListeners( int inputCode, float strength, int hardwareId )
     {
         for( Listener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCode, strength );
+            listener.onInput( inputCode, strength, hardwareId );
     }
     
     /**
      * Notifies listeners that multiple inputs were dispatched simultaneously. Subclasses should
      * invoke this method to publish their input data.
      * 
-     * @param inputCodes The standardized input codes that were dispatched.
+     * @param inputCodes The universal input codes that were dispatched.
      * @param strengths The input strengths, between 0 and 1, inclusive.
+     * @param hardwareId The identifier of the source device.
      */
-    protected void notifyListeners( int[] inputCodes, float[] strengths )
+    protected void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId )
     {
         for( Listener listener : mPublisher.getSubscribers() )
-            listener.onInput( inputCodes.clone(), strengths.clone() );
+            listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId );
     }
 }

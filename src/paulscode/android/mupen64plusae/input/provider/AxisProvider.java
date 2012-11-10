@@ -73,7 +73,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     }
     
     /**
-     * Restricts listening to a set of standardized input codes.
+     * Restricts listening to a set of universal input codes.
      * 
      * @param inputCodeFilter The new input codes to listen for.
      */
@@ -118,17 +118,17 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         }
         
         // Notify listeners about new input data
-        notifyListeners( mInputCodes, strengths );
+        notifyListeners( mInputCodes, strengths, 0 );
         
         return true;
     }
     
     /**
-     * Convert an Android axis code to a standardized input code.
+     * Convert an Android axis code to a universal input code.
      * 
      * @param axisCode The Android axis code.
      * @param positiveDirection Set true for positive Android axis, false for negative Android axis.
-     * @return The corresponding standardized input code.
+     * @return The corresponding universal input code.
      */
     protected static int axisToInputCode( int axisCode, boolean positiveDirection )
     {
@@ -140,9 +140,9 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     }
     
     /**
-     * Convert a standardized input code to an Android axis code.
+     * Convert a universal input code to an Android axis code.
      * 
-     * @param inputCode The standardized input code.
+     * @param inputCode The universal input code.
      * @return The corresponding Android axis code.
      */
     protected static int inputToAxisCode( int inputCode )
@@ -151,9 +151,9 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     }
     
     /**
-     * Convert a standardized input code to an Android axis direction.
+     * Convert a universal input code to an Android axis direction.
      * 
-     * @param inputCode The standardized input code.
+     * @param inputCode The universal input code.
      * @return True if the input code represents positive Android axis direction, false otherwise.
      */
     protected static boolean inputToAxisDirection( int inputCode )

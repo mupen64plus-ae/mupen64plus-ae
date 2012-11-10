@@ -93,7 +93,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.L
     }
     
     /**
-     * Gets the standardized input code for the last active input.
+     * Gets the universal input code for the last active input.
      * 
      * @return The code for the last active input.
      */
@@ -106,10 +106,10 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.L
      * (non-Javadoc)
      * 
      * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int[],
-     * float[])
+     * float[], int)
      */
     @Override
-    public void onInput( int[] inputCodes, float[] strengths )
+    public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
         // Get strength biases first time through
         boolean refreshBiases = false;
@@ -141,17 +141,17 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.L
         }
         
         // Call the overloaded method with the strongest found
-        onInput( strongestInputCode, maxStrength );
+        onInput( strongestInputCode, maxStrength, hardwareId );
     }
     
     /*
      * (non-Javadoc)
      * 
      * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int,
-     * float)
+     * float, int)
      */
     @Override
-    public void onInput( int inputCode, float strength )
+    public void onInput( int inputCode, float strength, int hardwareId )
     {
         // Filter the input before passing on to listeners
         
@@ -169,7 +169,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.L
         {
             mCurrentCode = inputCode;
             mCurrentStrength = strength;
-            notifyListeners( mCurrentCode, mCurrentStrength );
+            notifyListeners( mCurrentCode, mCurrentStrength, hardwareId );
         }
     }
 }
