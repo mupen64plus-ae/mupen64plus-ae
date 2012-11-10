@@ -30,6 +30,7 @@ rdram = 0x80000000
 	.section	.rodata
 	.text
 .globl dyna_linker
+	.hidden dyna_linker
 	.type	dyna_linker, @function
 dyna_linker:
 	/* eax = virtual target address */
@@ -127,7 +128,6 @@ dyna_linker:
 	mov	$0x08, %ecx
 	.size	dyna_linker, .-dyna_linker
 
-.globl exec_pagefault
 	.type	exec_pagefault, @function
 exec_pagefault:
 	/* eax = instruction pointer */
@@ -158,6 +158,7 @@ exec_pagefault:
 /* Special dynamic linker for the case where a page fault
    may occur in a branch delay slot */
 .globl dyna_linker_ds
+	.hidden dyna_linker_ds
 	.type	dyna_linker_ds, @function
 dyna_linker_ds:
 	mov	%eax, %edi
@@ -259,41 +260,46 @@ dyna_linker_ds:
 	.size	dyna_linker_ds, .-dyna_linker_ds
 
 .globl jump_vaddr_eax
+	.hidden jump_vaddr_eax
 	.type	jump_vaddr_eax, @function
 jump_vaddr_eax:
 	mov	%eax, %edi
 	jmp	jump_vaddr_edi
 	.size	jump_vaddr_eax, .-jump_vaddr_eax
 .globl jump_vaddr_ecx
+	.hidden jump_vaddr_ecx
 	.type	jump_vaddr_ecx, @function
 jump_vaddr_ecx:
 	mov	%ecx, %edi
 	jmp	jump_vaddr_edi
 	.size	jump_vaddr_ecx, .-jump_vaddr_ecx
 .globl jump_vaddr_edx
+	.hidden jump_vaddr_edx
 	.type	jump_vaddr_edx, @function
 jump_vaddr_edx:
 	mov	%edx, %edi
 	jmp	jump_vaddr_edi
 	.size	jump_vaddr_edx, .-jump_vaddr_edx
 .globl jump_vaddr_ebx
+	.hidden jump_vaddr_ebx
 	.type	jump_vaddr_ebx, @function
 jump_vaddr_ebx:
 	mov	%ebx, %edi
 	jmp	jump_vaddr_edi
 	.size	jump_vaddr_ebx, .-jump_vaddr_ebx
 .globl jump_vaddr_ebp
+	.hidden jump_vaddr_ebp
 	.type	jump_vaddr_ebp, @function
 jump_vaddr_ebp:
 	mov	%ebp, %edi
 	.size	jump_vaddr_ebp, .-jump_vaddr_ebp
 .globl jump_vaddr_edi
+	.hidden jump_vaddr_edi
 	.type	jump_vaddr_edi, @function
 jump_vaddr_edi:
 	mov	%edi, %eax
 	.size	jump_vaddr_edi, .-jump_vaddr_edi
 
-.globl jump_vaddr
 	.type	jump_vaddr, @function
 jump_vaddr:
   /* Check hash table */
@@ -321,12 +327,14 @@ jump_vaddr:
 	.size	jump_vaddr, .-jump_vaddr
 
 .globl verify_code_ds
+	.hidden verify_code_ds
 	.type	verify_code_ds, @function
 verify_code_ds:
 	mov	%ebp, branch_target
 	.size	verify_code_ds, .-verify_code_ds
 
 .globl verify_code_vm
+	.hidden verify_code_vm
 	.type	verify_code_vm, @function
 verify_code_vm:
 	/* eax = source (virtual address) */
@@ -353,6 +361,7 @@ verify_code_vm:
 	.size	verify_code_vm, .-verify_code_vm
 
 .globl verify_code
+	.hidden verify_code
 	.type	verify_code, @function
 verify_code:
 	/* eax = source */
@@ -394,6 +403,7 @@ verify_code:
 	.size	verify_code, .-verify_code
 
 .globl cc_interrupt
+	.hidden cc_interrupt
 	.type	cc_interrupt, @function
 cc_interrupt:
 	add	last_count, %esi
@@ -453,6 +463,7 @@ cc_interrupt:
 	.size	cc_interrupt, .-cc_interrupt
 
 .globl do_interrupt
+	.hidden do_interrupt
 	.type	do_interrupt, @function
 do_interrupt:
 	mov	pcaddr, %edi
@@ -469,6 +480,7 @@ do_interrupt:
 	.size	do_interrupt, .-do_interrupt
 
 .globl fp_exception
+	.hidden fp_exception
 	.type	fp_exception, @function
 fp_exception:
 	mov	$0x1000002c, %edx
@@ -486,6 +498,7 @@ fp_exception:
 	.size	fp_exception, .-fp_exception
 
 .globl fp_exception_ds
+	.hidden fp_exception_ds
 	.type	fp_exception_ds, @function
 fp_exception_ds:
 	mov	$0x9000002c, %edx /* Set high bit if delay slot */
@@ -493,6 +506,7 @@ fp_exception_ds:
 	.size	fp_exception_ds, .-fp_exception_ds
 
 .globl jump_syscall
+	.hidden jump_syscall
 	.type	jump_syscall, @function
 jump_syscall:
 	mov	$0x20, %edx
@@ -509,6 +523,7 @@ jump_syscall:
 	.size	jump_syscall, .-jump_syscall
 
 .globl jump_eret
+	.hidden jump_eret
 	.type	jump_eret, @function
 jump_eret:
 	mov	reg_cop0+48, %ebx /* Status */
@@ -563,6 +578,7 @@ jump_eret:
 	.size	jump_eret, .-jump_eret
 
 .globl new_dyna_start
+	.hidden new_dyna_start
 	.type	new_dyna_start, @function
 new_dyna_start:
 	push	%ebp
@@ -581,6 +597,7 @@ new_dyna_start:
 
 /* Note: Assumes %ebx, %ebp, %esi, %edi are callee-saved */
 .globl invalidate_block_eax
+	.hidden invalidate_block_eax
 	.type	invalidate_block_eax, @function
 invalidate_block_eax:
 	push	%eax
@@ -590,6 +607,7 @@ invalidate_block_eax:
 	jmp	invalidate_block_call
 	.size	invalidate_block_eax, .-invalidate_block_eax
 .globl invalidate_block_ecx
+	.hidden invalidate_block_ecx
 	.type	invalidate_block_ecx, @function
 invalidate_block_ecx:
 	push	%eax
@@ -599,6 +617,7 @@ invalidate_block_ecx:
 	jmp	invalidate_block_call
 	.size	invalidate_block_ecx, .-invalidate_block_ecx
 .globl invalidate_block_edx
+	.hidden invalidate_block_edx
 	.type	invalidate_block_edx, @function
 invalidate_block_edx:
 	push	%eax
@@ -608,6 +627,7 @@ invalidate_block_edx:
 	jmp	invalidate_block_call
 	.size	invalidate_block_edx, .-invalidate_block_edx
 .globl invalidate_block_ebx
+	.hidden invalidate_block_ebx
 	.type	invalidate_block_ebx, @function
 invalidate_block_ebx:
 	push	%eax
@@ -617,6 +637,7 @@ invalidate_block_ebx:
 	jmp	invalidate_block_call
 	.size	invalidate_block_ebx, .-invalidate_block_ebx
 .globl invalidate_block_ebp
+	.hidden invalidate_block_ebp
 	.type	invalidate_block_ebp, @function
 invalidate_block_ebp:
 	push	%eax
@@ -626,6 +647,7 @@ invalidate_block_ebp:
 	jmp	invalidate_block_call
 	.size	invalidate_block_ebp, .-invalidate_block_ebp
 .globl invalidate_block_esi
+	.hidden invalidate_block_esi
 	.type	invalidate_block_esi, @function
 invalidate_block_esi:
 	push	%eax
@@ -635,6 +657,7 @@ invalidate_block_esi:
 	jmp	invalidate_block_call
 	.size	invalidate_block_esi, .-invalidate_block_esi
 .globl invalidate_block_edi
+	.hidden invalidate_block_edi
 	.type	invalidate_block_edi, @function
 invalidate_block_edi:
 	push	%eax
@@ -642,7 +665,7 @@ invalidate_block_edi:
 	push	%edx
 	push	%edi
 	.size	invalidate_block_edi, .-invalidate_block_edi
-.globl invalidate_block_call
+
 	.type	invalidate_block_call, @function
 invalidate_block_call:
 	call	invalidate_block
@@ -654,6 +677,7 @@ invalidate_block_call:
 	.size	invalidate_block_call, .-invalidate_block_call
 
 .globl write_rdram_new
+	.hidden write_rdram_new
 	.type	write_rdram_new, @function
 write_rdram_new:
 	mov	address, %edi
@@ -663,6 +687,7 @@ write_rdram_new:
 	.size	write_rdram_new, .-write_rdram_new
 
 .globl write_rdramb_new
+	.hidden write_rdramb_new
 	.type	write_rdramb_new, @function
 write_rdramb_new:
 	mov	address, %edi
@@ -673,6 +698,7 @@ write_rdramb_new:
 	.size	write_rdramb_new, .-write_rdramb_new
 
 .globl write_rdramh_new
+	.hidden write_rdramh_new
 	.type	write_rdramh_new, @function
 write_rdramh_new:
 	mov	address, %edi
@@ -683,6 +709,7 @@ write_rdramh_new:
 	.size	write_rdramh_new, .-write_rdramh_new
 
 .globl write_rdramd_new
+	.hidden write_rdramd_new
 	.type	write_rdramd_new, @function
 write_rdramd_new:
 	mov	address, %edi
@@ -693,7 +720,6 @@ write_rdramd_new:
 	jmp	.E12
 	.size	write_rdramd_new, .-write_rdramd_new
 
-.globl do_invalidate
 	.type	do_invalidate, @function
 do_invalidate:
 	mov	address, %edi
@@ -710,6 +736,7 @@ do_invalidate:
 	.size	do_invalidate, .-do_invalidate
 
 .globl read_nomem_new
+	.hidden read_nomem_new
 	.type	read_nomem_new, @function
 read_nomem_new:
 	mov	address, %edi
@@ -725,6 +752,7 @@ read_nomem_new:
 	.size	read_nomem_new, .-read_nomem_new
 
 .globl read_nomemb_new
+	.hidden read_nomemb_new
 	.type	read_nomemb_new, @function
 read_nomemb_new:
 	mov	address, %edi
@@ -741,6 +769,7 @@ read_nomemb_new:
 	.size	read_nomemb_new, .-read_nomemb_new
 
 .globl read_nomemh_new
+	.hidden read_nomemh_new
 	.type	read_nomemh_new, @function
 read_nomemh_new:
 	mov	address, %edi
@@ -757,6 +786,7 @@ read_nomemh_new:
 	.size	read_nomemh_new, .-read_nomemh_new
 
 .globl read_nomemd_new
+	.hidden read_nomemd_new
 	.type	read_nomemd_new, @function
 read_nomemd_new:
 	mov	address, %edi
@@ -774,6 +804,7 @@ read_nomemd_new:
 	.size	read_nomemd_new, .-read_nomemd_new
 
 .globl write_nomem_new
+	.hidden write_nomem_new
 	.type	write_nomem_new, @function
 write_nomem_new:
 	call	do_invalidate
@@ -787,6 +818,7 @@ write_nomem_new:
 	.size	write_nomem_new, .-write_nomem_new
 
 .globl write_nomemb_new
+	.hidden write_nomemb_new
 	.type	write_nomemb_new, @function
 write_nomemb_new:
 	call	do_invalidate
@@ -801,6 +833,7 @@ write_nomemb_new:
 	.size	write_nomemb_new, .-write_nomemb_new
 
 .globl write_nomemh_new
+	.hidden write_nomemh_new
 	.type	write_nomemh_new, @function
 write_nomemh_new:
 	call	do_invalidate
@@ -815,6 +848,7 @@ write_nomemh_new:
 	.size	write_nomemh_new, .-write_nomemh_new
 
 .globl write_nomemd_new
+	.hidden write_nomemd_new
 	.type	write_nomemd_new, @function
 write_nomemd_new:
 	call	do_invalidate
@@ -829,7 +863,6 @@ write_nomemd_new:
 	ret
 	.size	write_nomemd_new, .-write_nomemd_new
 
-.globl tlb_exception
 	.type	tlb_exception, @function
 tlb_exception:
 	/* eax = cause */
@@ -896,6 +929,7 @@ tlb_exception:
 	.size	tlb_exception, .-tlb_exception
 
 .globl breakpoint
+	.hidden breakpoint
 	.type	breakpoint, @function
 breakpoint:
 	.size	breakpoint, .-breakpoint
