@@ -39,12 +39,15 @@ public class Globals
 /**
  * Bugs and feature requests not listed elsewhere
  * 
- * TODO: Implement multi-player peripheral controls
+ * TODO: *Figure out force-close when loading last session autosavefile
+ * TODO: *Figure out failure to return to main menu
+ * TODO: *Implement multi-player peripheral controls
+ * TODO: *Implement special func mapping
+ * TODO: Add menu item for quick access to IME (like Language menu)
+ * TODO: Look into BlueZ and Zeemote protocols
  * TODO: Cleanup Utility.java
  * TODO: Cleanup DataDownloader.java
  * TODO: Any way to eliminate DataDownloader? (e.g. use AssetManager class)
  * TODO: Implement SensorController if desired
  * TODO: Do we need an updater class again?
- * TODO: *Figure out force-close when loading last session autosavefile
- * TODO: *Figure out failure to return to main menu
  */

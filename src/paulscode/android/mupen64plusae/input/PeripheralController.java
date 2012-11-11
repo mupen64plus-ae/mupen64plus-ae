@@ -23,7 +23,6 @@ import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,

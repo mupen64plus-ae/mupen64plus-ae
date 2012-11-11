@@ -197,6 +197,24 @@
     <!-- Core Plugin Entries -->
     <string name="corePlugin_entry0">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
+    <!-- Special Functions -->
+    <string name="specialFunction_entry0">Stop</string>
+    <string name="specialFunction_entry1">Fullscreen</string>
+    <string name="specialFunction_entry2">Save state</string>
+    <string name="specialFunction_entry3">Load state</string>
+    <string name="specialFunction_entry4">Increment slot</string>
+    <string name="specialFunction_entry5">Reset</string>
+    <string name="specialFunction_entry6">Speed down</string>
+    <string name="specialFunction_entry7">Speed up</string>
+    <string name="specialFunction_entry8">Screenshot</string>
+    <string name="specialFunction_entry9">Pause</string>
+    <string name="specialFunction_entry10">Mute</string>
+    <string name="specialFunction_entry11">Volume up</string>
+    <string name="specialFunction_entry12">Volume down</string>
+    <string name="specialFunction_entry13">Fast forward</string>
+    <string name="specialFunction_entry14">Frame advance</string>
+    <string name="specialFunction_entry15">Gameshark</string>
+    
     <!-- ******************************************** -->
     <!-- Other Strings                                -->
     <!-- ******************************************** -->
@@ -222,6 +240,8 @@
     <string name="gameImplementation_saveHint">filename</string>
     <string name="inputMapPreference_rumble">Rumble\nPak</string>
     <string name="inputMapPreference_mempak">Expansion\nPak</string>
+    <string name="inputMapPreference_special">Special functions</string>
+    <string name="inputMapPreference_controls">N64 controls</string>
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>    
     
 </resources>

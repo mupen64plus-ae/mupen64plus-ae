@@ -131,5 +131,31 @@
         <item>5</item>
     </string-array>
     <string name="gles2N64Frameskip_default">-1</string>
-    
+
+    <!-- Special Function Mapping -->
+    <string-array name="specialFunction_entries">
+        <item>@string/specialFunction_entry0</item>
+        <item>@string/specialFunction_entry1</item>
+        <item>@string/specialFunction_entry2</item>
+        <item>@string/specialFunction_entry3</item>
+        <item>@string/specialFunction_entry4</item>
+        <item>@string/specialFunction_entry5</item>
+        <item>@string/specialFunction_entry6</item>
+        <item>@string/specialFunction_entry7</item>
+        <item>@string/specialFunction_entry8</item>
+        <item>@string/specialFunction_entry9</item>
+        <item>@string/specialFunction_entry10</item>
+        <item>@string/specialFunction_entry11</item>
+        <item>@string/specialFunction_entry12</item>
+        <item>@string/specialFunction_entry13</item>
+        <item>@string/specialFunction_entry14</item>
+        <item>@string/specialFunction_entry15</item>
+    </string-array>
+        
+<!--
+    ***********************************************************************************
+    DO NOT TRANSLATE ANY STRINGS IN THIS FILE!
+    ***********************************************************************************
+-->
+
 </resources>

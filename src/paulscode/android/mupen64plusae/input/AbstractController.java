@@ -29,7 +29,7 @@ import paulscode.android.mupen64plusae.util.Utility;
  * <ul>
  * <li>Register a listener to the upstream input (e.g. touch, keyboard, mouse, joystick, etc.).</li>
  * <li>Translate the input data into N64 controller button/axis states, and set the values of the
- * protected fields mDpad*, mBtn*, mAxis* accordingly.</li>
+ * protected fields mButtonState and mAxisFraction* accordingly.</li>
  * <li>Call the protected method notifyChanged().</li>
  * </ul>
  * This abstract class will call the emulator's native libraries to update game state whenever
