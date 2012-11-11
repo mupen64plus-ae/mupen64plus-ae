@@ -19,10 +19,10 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.annotation.TargetApi;
-import android.os.Build;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -111,13 +111,10 @@ public abstract class AbstractProvider
      */
     @TargetApi( 12 )
     public static String getInputName( int inputCode )
-    {
-        // TODO: Localize strings.
-        boolean isHoneycombMR1 = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1;
-        
+    {   
         if( inputCode > 0 )
         {
-            if( isHoneycombMR1 )
+            if( Globals.isHoneycombMR1 )
                 return "KEYCODE_" + inputCode;
             else
                 return KeyEvent.keyCodeToString( inputCode );
@@ -128,7 +125,7 @@ public abstract class AbstractProvider
             String direction = AxisProvider.inputToAxisDirection( inputCode )
                     ? " (+)"
                     : " (-)";
-            if( isHoneycombMR1 )
+            if( Globals.isHoneycombMR1 )
                 return "AXIS_" + axis + direction;
             else
                 return MotionEvent.axisToString( axis ) + direction;

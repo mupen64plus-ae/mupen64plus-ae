@@ -33,7 +33,6 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -275,7 +274,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
             
             // Fade any buttons that aren't mapped
             // TODO: provide alternative for lower APIs
-            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
+            if( Globals.isHoneycomb )
             {
                 if( mMap.getMappedInputCodes()[i] == 0 )
                     button.setAlpha( UNMAPPED_BUTTON_ALPHA );

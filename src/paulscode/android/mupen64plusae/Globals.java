@@ -19,6 +19,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import android.os.Build;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -29,6 +30,19 @@ public class Globals
     public static UserPrefs userPrefs;
     public static AppData appData;
     public static Paths paths;
+    
+    //-- Device specific booleans --//
+    
+    /** True if device is runnning Eclair or later (Android 2.0.x) */
+    public static boolean isEclair = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
+    /** True if device is running Gingerbread or later (Android 2.3.x) */
+    public static boolean isGingerbread = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
+    /** True if device is running Honeycomb or later (Android 3.0.x)*/
+    public static boolean isHoneycomb = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    /** True if device is running Honeycomb MR1 or later (Android 3.1.x)*/
+    public static boolean isHoneycombMR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
+    /** True if device is running Jellybean or later (Android 4.2.x)*/
+    public static boolean isJellyBean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
     // Internal development options, might change later or expose to user
     public static final boolean INHIBIT_SUSPEND = true;

@@ -19,8 +19,8 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import paulscode.android.mupen64plusae.Globals;
 import android.annotation.TargetApi;
-import android.os.Build;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
@@ -47,7 +47,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     public static AxisProvider create( View view )
     {
         // Use a factory method for API safety
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 )
+        if( Globals.isHoneycombMR1 )
             return new AxisProvider( view );
         else
             return null;

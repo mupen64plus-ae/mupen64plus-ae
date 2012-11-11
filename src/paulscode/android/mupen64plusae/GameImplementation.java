@@ -39,7 +39,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -81,7 +80,7 @@ public class GameImplementation implements View.OnKeyListener
         Window window = mActivity.getWindow();
         
         // Configure full-screen mode
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
+        if( Globals.isHoneycomb )
             window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
         else
             mActivity.requestWindowFeature( Window.FEATURE_NO_TITLE );
@@ -97,7 +96,7 @@ public class GameImplementation implements View.OnKeyListener
         mTouchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
         
         // Hide the action bar introduced in higher Android versions
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
+        if( Globals.isHoneycomb)
         {
             // SDK version at least HONEYCOMB, so there should be software buttons on this device:
             View view = mSdlSurface.getRootView();
@@ -218,8 +217,7 @@ public class GameImplementation implements View.OnKeyListener
     public boolean onKey( View view, int keyCode, KeyEvent event )
     {
         // Toggle the ActionBar for HoneyComb+ when back is pressed
-        if( keyCode == KeyEvent.KEYCODE_BACK
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB )
+        if( keyCode == KeyEvent.KEYCODE_BACK && Globals.isHoneycomb )
         {
             if( event.getAction() == KeyEvent.ACTION_DOWN )
                 toggleActionBar( view.getRootView() );
@@ -247,7 +245,7 @@ public class GameImplementation implements View.OnKeyListener
     
     private void initTouchscreen()
     {
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR
+        if( Globals.isEclair
                 && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
         {
             // The touch map and view are needed to display frame rate and/or controls
@@ -396,7 +394,7 @@ public class GameImplementation implements View.OnKeyListener
     private void toggleActionBar( View rootView )
     {
         // Only applies to Honeycomb devices
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB )
+        if( !Globals.isHoneycomb )
             return;
         
         // Toggle the action bar
