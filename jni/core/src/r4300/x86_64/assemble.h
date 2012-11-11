@@ -67,7 +67,6 @@ extern long long int reg[32];
 #define BH 7
 
 extern int branch_taken;
-extern int dynarec_stack_initialized;
 
 void jump_start_rel8(void);
 void jump_end_rel8(void);
@@ -325,16 +324,6 @@ static inline void setb_reg8(unsigned int reg8)
    put8(0x0F);
    put8(0x92);
    put8(0xC0 | reg8);
-}
-
-static inline void push_reg64(unsigned int reg64)
-{
-   put8(0x50 + reg64);
-}
-
-static inline void pop_reg64(unsigned int reg64)
-{
-   put8(0x58 + reg64);
 }
 
 static inline void test_m32rel_imm32(unsigned int *m32, unsigned int imm32)
@@ -1190,3 +1179,4 @@ static inline void ffree_fpreg(int fpreg)
 }
 
 #endif /* __ASSEMBLE_H__ */
+

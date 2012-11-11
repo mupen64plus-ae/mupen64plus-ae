@@ -20,9 +20,9 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/main/md5.c \
 	$(SRCDIR)/main/rom.c \
 	$(SRCDIR)/main/savestates.c \
-	$(SRCDIR)/main/zip-1.99.4/ioapi.c \
-	$(SRCDIR)/main/zip-1.99.4/zip.c \
-	$(SRCDIR)/main/zip-1.99.4/unzip.c \
+	$(SRCDIR)/main/zip/ioapi.c \
+	$(SRCDIR)/main/zip/zip.c \
+	$(SRCDIR)/main/zip/unzip.c \
 	$(SRCDIR)/memory/dma.c \
 	$(SRCDIR)/memory/flashram.c \
 	$(SRCDIR)/memory/memory.c \
@@ -42,13 +42,9 @@ LOCAL_SRC_FILES := \
 	$(SRCDIR)/r4300/profile.c \
 	$(SRCDIR)/r4300/pure_interp.c \
 	$(SRCDIR)/r4300/recomp.c \
-    $(SRCDIR)/r4300/reset.c \
+	$(SRCDIR)/r4300/reset.c \
 	$(SRCDIR)/r4300/empty_dynarec.c \
-	$(SRCDIR)/r4300/new_dynarec/new_dynarec.c \
-	$(SRCDIR)/r4300/new_dynarec/fpu.c \
-	$(SRCDIR)/r4300/new_dynarec/linkage_arm.S
-
-# Removing these doesn't fix the "RAM full of zeros" bug, but they aren't needed anyway:
+	$(SRCDIR)/r4300/new_dynarec/new_dynarec.c
 
 #LOCAL_SRC_FILES += \
 #	$(SRCDIR)/debugger/debugger.c \
@@ -57,7 +53,7 @@ LOCAL_SRC_FILES := \
 #	$(SRCDIR)/debugger/dbg_breakpoints.c
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SRCDIR)
-LOCAL_CFLAGS := -DANDROID
+LOCAL_CFLAGS := -DANDROID -DNOCRYPT -DNOUNCRYPT -DIOAPI_NO_64
 #LOCAL_CFLAGS += -DSDL_NO_COMPAT
 
 LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver
@@ -70,20 +66,24 @@ LOCAL_C_INCLUDES += $(SYSROOT)/usr/include/
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
 # Use for ARM7a:
-	LOCAL_CFLAGS += -D__arm__
-	LOCAL_CFLAGS += -DNEW_DYNAREC
+	LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/linkage_arm.S
+	LOCAL_CFLAGS += -DNEW_DYNAREC=3
 	LOCAL_CFLAGS += -DDYNAREC
 	LOCAL_CFLAGS += -mfpu=vfp -mfloat-abi=softfp
-	LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(SDL_PATH)/obj/local/armeabi-v7a
 else ifeq ($(TARGET_ARCH_ABI), armeabi)
 # Use for pre-ARM7a:
-	LOCAL_CFLAGS += -D__arm__
-	LOCAL_CFLAGS += -DNEW_DYNAREC
+	LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/linkage_arm.S
+	LOCAL_CFLAGS += -DNEW_DYNAREC=3
 	LOCAL_CFLAGS += -DDYNAREC
 	LOCAL_CFLAGS += -DARMv5_ONLY
-	LOCAL_LDFLAGS += -L$(LOCAL_PATH)/$(SDL_PATH)/obj/local/armeabi
 else ifeq ($(TARGET_ARCH_ABI), x86)
-	# TODO: set the proper flags here
+# Use for x86:
+	LOCAL_SRC_FILES += $(SRCDIR)/r4300/new_dynarec/linkage_x86.S
+	LOCAL_CFLAGS += -DNEW_DYNAREC=1
+	LOCAL_CFLAGS += -DDYNAREC
+else ifeq ($(TARGET_ARCH_ABI), mips)
+# Use for MIPS:
+#	TODO: Possible to port dynarec from Daedalus? 
 else
 	# Any other architectures that Android could be running on?
 endif

@@ -43,7 +43,7 @@
 /**********************
      File utilities
  **********************/
- 
+
 file_status_t read_from_file(const char *filename, void *data, size_t size)
 {
     FILE *f = fopen(filename, "rb");
@@ -78,6 +78,46 @@ file_status_t write_to_file(const char *filename, const void *data, size_t size)
 
     fclose(f);
     return file_ok;
+}
+
+/**********************
+   Byte swap utilities
+ **********************/
+void swap_buffer(void *buffer, size_t length, size_t count)
+{
+    size_t i;
+    if (length == 2)
+    {
+        unsigned short *pun = (unsigned short *)buffer;
+        for (i = 0; i < count; i++)
+            pun[i] = m64p_swap16(pun[i]);
+    }
+    else if (length == 4)
+    {
+        unsigned int *pun = (unsigned int *)buffer;
+        for (i = 0; i < count; i++)
+            pun[i] = m64p_swap32(pun[i]);
+    }
+    else if (length == 8)
+    {
+        unsigned long long *pun = (unsigned long long *)buffer;
+        for (i = 0; i < count; i++)
+            pun[i] = m64p_swap64(pun[i]);
+    }
+}
+
+void to_little_endian_buffer(void *buffer, size_t length, size_t count)
+{
+    #ifdef M64P_BIG_ENDIAN
+    swap_buffer(buffer, length, count);
+    #endif
+}
+
+void to_big_endian_buffer(void *buffer, size_t length, size_t count)
+{
+    #ifndef M64P_BIG_ENDIAN
+    swap_buffer(buffer, length, count);
+    #endif
 }
 
 /**********************
@@ -300,7 +340,7 @@ void imagestring(unsigned char imagetype, char *string)
 /**********************
      Path utilities
  **********************/
- 
+
 /* Looks for an instance of ANY of the characters in 'needles' in 'haystack',
  * starting from the end of 'haystack'. Returns a pointer to the last position
  * of some character on 'needles' on 'haystack'. If not found, returns NULL.
@@ -340,8 +380,8 @@ char* combinepath(const char* first, const char *second)
 {
     size_t len_first = strlen(first), off_second = 0;
 
-	if (first == NULL || second == NULL)
-		return NULL;
+    if (first == NULL || second == NULL)
+        return NULL;
 
     while (is_path_separator(first[len_first-1]))
         len_first--;
@@ -421,7 +461,7 @@ int parse_hex(const char *str, unsigned char *output, size_t output_size)
 char *formatstr(const char *fmt, ...)
 {
 	int size = 128, ret;
-	char *str = (char*) malloc(size), *newstr;
+	char *str = (char *)malloc(size), *newstr;
 	va_list args;
 
 	/* There are two implementations of vsnprintf we have to deal with:
@@ -447,7 +487,7 @@ char *formatstr(const char *fmt, ...)
 		else
 			size *= 2; // Windows version: Keep guessing
 
-		newstr = (char *) realloc(str, size);
+		newstr = (char *)realloc(str, size);
 		if (newstr == NULL)
 			free(str);
 		str = newstr;
@@ -472,7 +512,7 @@ ini_line ini_parse_line(char **lineptr)
     if (line[0] == '#' || line[0] == ';')
     {
         line++;
-    
+
         l.type = INI_COMMENT;
         l.name = NULL;
         l.value = trim(line);

@@ -26,7 +26,6 @@
 
 extern m64p_error dummyaudio_PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion,
                                               int *APIVersion, const char **PluginNamePtr, int *Capabilities);
-
 extern void dummyaudio_AiDacrateChanged(int SystemType);
 extern void dummyaudio_AiLenChanged(void);
 extern int  dummyaudio_InitiateAudio(AUDIO_INFO Audio_Info);

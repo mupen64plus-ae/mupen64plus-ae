@@ -139,6 +139,7 @@ static const char * const r4k_str_cop1_name[64] =
 
 static const char * const r4k_str_fmt_name[16] = 
 {
+    
 	"s",	"d",	"e",	"fmt3",
 	"w",	"l",    "fmt6", "fmt7",
 	"fmt8", "fmt9", "fmta", "fmtb",

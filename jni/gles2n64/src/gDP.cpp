@@ -482,7 +482,7 @@ void gDPSetEnvColor( u32 r, u32 g, u32 b, u32 a )
     gDP.changed |= CHANGED_ENV_COLOR;
 
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_COMBINE, "gDPSetEnvColor( %i, %i, %i, %i );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_COMBINE, "gDPSetEnvColor( %u, %u, %u, %u );\n",
         r, g, b, a );
 #endif
 }
@@ -496,7 +496,7 @@ void gDPSetBlendColor( u32 r, u32 g, u32 b, u32 a )
     gDP.changed |= CHANGED_BLENDCOLOR;
 
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPSetBlendColor( %i, %i, %i, %i );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPSetBlendColor( %u, %u, %u, %u );\n",
         r, g, b, a );
 #endif
 }
@@ -511,7 +511,7 @@ void gDPSetFogColor( u32 r, u32 g, u32 b, u32 a )
     gDP.changed |= CHANGED_FOGCOLOR;
 
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPSetFogColor( %i, %i, %i, %i );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPSetFogColor( %u, %u, %u, %u );\n",
         r, g, b, a );
 #endif
 }
@@ -545,7 +545,7 @@ void gDPSetPrimColor( u32 m, u32 l, u32 r, u32 g, u32 b, u32 a )
     gDP.changed |= CHANGED_PRIM_COLOR;
 
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_COMBINE, "gDPSetPrimColor( %i, %i, %i, %i, %i, %i );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_COMBINE, "gDPSetPrimColor( %u, %u, %u, %u, %u, %u );\n",
         m, l, r, g, b, a );
 #endif
 }
@@ -586,7 +586,7 @@ void gDPSetTileSize( u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt )
     gDP.changed |= CHANGED_TILE;
 
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPSetTileSize( %i, %.2f, %.2f, %.2f, %.2f );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPSetTileSize( %u, %.2f, %.2f, %.2f, %.2f );\n",
         tile,
         gDP.tiles[tile].fuls,
         gDP.tiles[tile].fult,
@@ -620,7 +620,7 @@ void gDPLoadTile( u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt )
     {
 #ifdef DEBUG
         DebugMsg( DEBUG_HIGH | DEBUG_ERROR | DEBUG_TEXTURE, "// Attempting to load texture tile out of range\n" );
-        DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadTile( %i, %i, %i, %i, %i );\n",
+        DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadTile( %u, %i, %i, %i, %i );\n",
             tile, gDP.loadTile->uls, gDP.loadTile->ult, gDP.loadTile->lrs, gDP.loadTile->lrt );
 #endif
         return;
@@ -653,7 +653,7 @@ void gDPLoadTile( u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt )
     gDP.changed |= CHANGED_TMEM;
 
 #ifdef DEBUG
-        DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadTile( %i, %i, %i, %i, %i );\n",
+        DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadTile( %u, %i, %i, %i, %i );\n",
             tile, gDP.loadTile->uls, gDP.loadTile->ult, gDP.loadTile->lrs, gDP.loadTile->lrt );
 #endif
 }
@@ -672,7 +672,7 @@ void gDPLoadBlock( u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt )
     {
 #ifdef DEBUG
         DebugMsg( DEBUG_HIGH | DEBUG_ERROR | DEBUG_TEXTURE, "// Attempting to load texture block out of range\n" );
-        DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadBlock( %i, %i, %i, %i, %i );\n",
+        DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadBlock( %u, %u, %u, %u, %u );\n",
             tile, uls, ult, lrs, dxt );
 #endif
 //      bytes = min( bytes, min( RDRAMSize - gDP.textureImage.address, 4096 - (gDP.loadTile->tmem << 3) ) );
@@ -719,7 +719,7 @@ void gDPLoadBlock( u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt )
     gDP.changed |= CHANGED_TMEM;
 
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadBlock( %i, %i, %i, %i, %i );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadBlock( %u, %u, %u, %u, %u );\n",
         tile, uls, ult, lrs, dxt );
 #endif
 }
@@ -760,7 +760,7 @@ void gDPLoadTLUT( u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt )
     gDP.changed |= CHANGED_TMEM;
 
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadTLUT( %i, %i, %i, %i, %i );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED | DEBUG_TEXTURE, "gDPLoadTLUT( %u, %i, %i, %i, %i );\n",
         tile, gDP.tiles[tile].uls, gDP.tiles[tile].ult, gDP.tiles[tile].lrs, gDP.tiles[tile].lrt );
 #endif
 }
@@ -913,7 +913,7 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
     gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
 
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangle( %f, %f, %f, %f, %i, %i, %f, %f, %f, %f );\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangle( %f, %f, %f, %f, %i, %f, %f, %f, %f );\n",
         ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
 #endif
 }
@@ -924,7 +924,7 @@ void gDPTextureRectangleFlip( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 
 
     gDPTextureRectangle( ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
 #ifdef DEBUG
-    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangleFlip( %f, %f, %f, %f, %i, %i, %f, %f, %f);\n",
+    DebugMsg( DEBUG_HIGH | DEBUG_HANDLED, "gDPTextureRectangleFlip( %f, %f, %f, %f, %i, %f, %f, %f, %f);\n",
         ulx, uly, lrx, lry, tile, s, t, dsdx, dtdy );
 #endif
 }

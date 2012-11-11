@@ -28,14 +28,15 @@
 
 /* some file-related preprocessor definitions */
 #if defined(WIN32)
-  #include <io.h>
-  #define OSAL_DIR_SEPARATORS           "\\/"
+  #include <io.h> // For _unlink()
   #define unlink _unlink
+
+  #define OSAL_DIR_SEPARATORS           "\\/"
   #define PATH_MAX _MAX_PATH
 #else  /* Not WIN32 */
   #include <limits.h>  // for PATH_MAX
   #include <unistd.h>  // for unlink()
-  
+
   #define OSAL_DIR_SEPARATORS           "/"
 
   /* PATH_MAX only may be defined by limits.h */

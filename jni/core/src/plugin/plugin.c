@@ -40,9 +40,6 @@
 #include "dummy_input.h"
 #include "dummy_rsp.h"
 
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "core", __VA_ARGS__)
-
 CONTROL Controls[4];
 
 /* global function pointers - initialized on core startup */
@@ -205,7 +202,7 @@ static m64p_error plugin_connect_gfx(m64p_dynlib_handle plugin_handle)
             l_old1SetRenderingCallback = gfx.setRenderingCallback; // save this just for future use
             gfx.setRenderingCallback = (ptr_SetRenderingCallback) backcompat_setRenderCallbackIntercept;
         }
-        
+
         l_GfxAttached = 1;
     }
     else
@@ -535,3 +532,4 @@ m64p_error plugin_check(void)
 
     return M64ERR_SUCCESS;
 }
+

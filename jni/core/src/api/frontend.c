@@ -28,7 +28,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <SDL.h>
-#include <android/log.h>
 
 #define M64P_CORE_PROTOTYPES 1
 #include "m64p_types.h"
@@ -45,14 +44,8 @@
 #include "main/savestates.h"
 #include "main/version.h"
 #include "main/util.h"
-
-#ifdef WITH_OSD
 #include "osd/screenshot.h"
-#endif
-
 #include "plugin/plugin.h"
-
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "frontend", __VA_ARGS__)
 
 /* some local state variables */
 static int l_CoreInit = 0;
@@ -77,13 +70,12 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
                      VERSION_PRINTF_SPLIT(APIVersion), VERSION_PRINTF_SPLIT(FRONTEND_API_VERSION));
         return M64ERR_INCOMPATIBLE;
     }
-	
-	/* set up the default (dummy) plugins */
+
+    /* set up the default (dummy) plugins */
     plugin_connect(M64PLUGIN_GFX, NULL);
     plugin_connect(M64PLUGIN_AUDIO, NULL);
     plugin_connect(M64PLUGIN_INPUT, NULL);
     plugin_connect(M64PLUGIN_CORE, NULL);
-
 
     /* next, start up the configuration handling code by loading and parsing the config file */
     if (ConfigInit(ConfigPath, DataPath) != M64ERR_SUCCESS)
@@ -171,9 +163,7 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
             if (rval == M64ERR_SUCCESS)
             {
                 l_ROMOpen = 1;
-#ifdef WITH_OSD
                 ScreenshotRomOpen();
-#endif
                 cheat_init();
             }
             return rval;
@@ -191,7 +181,7 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
                 return M64ERR_INPUT_ASSERT;
             if (sizeof(m64p_rom_header) < ParamInt)
                 ParamInt = sizeof(m64p_rom_header);
-            memcpy(ParamPtr, rom, ParamInt);
+            memcpy(ParamPtr, &ROM_HEADER, ParamInt);
             // Mupen64Plus used to keep a m64p_rom_header with a clean ROM name
             // Keep returning a clean ROM name for backwards compatibility
             if (ParamInt >= 0x20)
@@ -207,7 +197,7 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
                 return M64ERR_INPUT_ASSERT;
             if (sizeof(m64p_rom_settings) < ParamInt)
                 ParamInt = sizeof(m64p_rom_settings);
-            memcpy(ParamPtr, &ROM_HEADER, ParamInt);
+            memcpy(ParamPtr, &ROM_SETTINGS, ParamInt);
             return M64ERR_SUCCESS;
         case M64CMD_EXECUTE:
             if (g_EmulatorRunning || !l_ROMOpen)
@@ -274,9 +264,7 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
         case M64CMD_TAKE_NEXT_SCREENSHOT:
             if (!g_EmulatorRunning)
                 return M64ERR_INVALID_STATE;
-#ifdef WITH_OSD
             main_take_next_screenshot();
-#endif
             return M64ERR_SUCCESS;
         case M64CMD_GET_SCREEN_WIDTH:
             if (!g_EmulatorRunning)
@@ -323,6 +311,8 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
                 return M64ERR_INVALID_STATE;
             return main_volume_mute();
         case M64CMD_RESET:
+            if (!g_EmulatorRunning)
+                return M64ERR_INVALID_STATE;
             if (ParamInt < 0 || ParamInt > 1)
                 return M64ERR_INPUT_INVALID;
             return main_reset(ParamInt);
