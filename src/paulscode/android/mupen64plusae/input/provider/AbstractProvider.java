@@ -114,7 +114,7 @@ public abstract class AbstractProvider
     {   
         if( inputCode > 0 )
         {
-            if( Globals.isHoneycombMR1 )
+            if( Globals.IS_HONEYCOMB_MR1 )
                 return "KEYCODE_" + inputCode;
             else
                 return KeyEvent.keyCodeToString( inputCode );
@@ -125,7 +125,7 @@ public abstract class AbstractProvider
             String direction = AxisProvider.inputToAxisDirection( inputCode )
                     ? " (+)"
                     : " (-)";
-            if( Globals.isHoneycombMR1 )
+            if( Globals.IS_HONEYCOMB_MR1 )
                 return "AXIS_" + axis + direction;
             else
                 return MotionEvent.axisToString( axis ) + direction;

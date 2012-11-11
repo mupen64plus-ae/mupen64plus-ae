@@ -47,7 +47,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     public static AxisProvider create( View view )
     {
         // Use a factory method for API safety
-        if( Globals.isHoneycombMR1 )
+        if( Globals.IS_HONEYCOMB_MR1 )
             return new AxisProvider( view );
         else
             return null;

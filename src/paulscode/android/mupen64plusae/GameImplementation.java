@@ -80,7 +80,7 @@ public class GameImplementation implements View.OnKeyListener
         Window window = mActivity.getWindow();
         
         // Configure full-screen mode
-        if( Globals.isHoneycomb )
+        if( Globals.IS_HONEYCOMB )
             window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
         else
             mActivity.requestWindowFeature( Window.FEATURE_NO_TITLE );
@@ -96,7 +96,7 @@ public class GameImplementation implements View.OnKeyListener
         mTouchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
         
         // Hide the action bar introduced in higher Android versions
-        if( Globals.isHoneycomb)
+        if( Globals.IS_HONEYCOMB)
         {
             // SDK version at least HONEYCOMB, so there should be software buttons on this device:
             View view = mSdlSurface.getRootView();
@@ -217,7 +217,7 @@ public class GameImplementation implements View.OnKeyListener
     public boolean onKey( View view, int keyCode, KeyEvent event )
     {
         // Toggle the ActionBar for HoneyComb+ when back is pressed
-        if( keyCode == KeyEvent.KEYCODE_BACK && Globals.isHoneycomb )
+        if( keyCode == KeyEvent.KEYCODE_BACK && Globals.IS_HONEYCOMB )
         {
             if( event.getAction() == KeyEvent.ACTION_DOWN )
                 toggleActionBar( view.getRootView() );
@@ -245,7 +245,7 @@ public class GameImplementation implements View.OnKeyListener
     
     private void initTouchscreen()
     {
-        if( Globals.isEclair
+        if( Globals.IS_ECLAIR
                 && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
         {
             // The touch map and view are needed to display frame rate and/or controls
@@ -342,8 +342,7 @@ public class GameImplementation implements View.OnKeyListener
                     @Override
                     public void onFile( File file )
                     {
-                        // TODO: *Uncomment NativeMethods.fileLoadEmulator
-                        // NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
+                        NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
                     }
                 } );
     }
@@ -394,7 +393,7 @@ public class GameImplementation implements View.OnKeyListener
     private void toggleActionBar( View rootView )
     {
         // Only applies to Honeycomb devices
-        if( !Globals.isHoneycomb )
+        if( !Globals.IS_HONEYCOMB )
             return;
         
         // Toggle the action bar

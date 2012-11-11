@@ -274,7 +274,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
             
             // Fade any buttons that aren't mapped
             // TODO: provide alternative for lower APIs
-            if( Globals.isHoneycomb )
+            if( Globals.IS_HONEYCOMB )
             {
                 if( mMap.getMappedInputCodes()[i] == 0 )
                     button.setAlpha( UNMAPPED_BUTTON_ALPHA );

@@ -24,39 +24,51 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Globals.
+ */
 public class Globals
 {
-    // Global preferences/settings
+    /** Read-only accessor for user preferences. */
     public static UserPrefs userPrefs;
+    
+    /** Persistent application state and data. */
     public static AppData appData;
+    
+    /** Read-only accessor for file system paths. */
     public static Paths paths;
     
-    //-- Device specific booleans --//
+    /** True if device is running Eclair or later (Android 2.0.x) */
+    public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
     
-    /** True if device is runnning Eclair or later (Android 2.0.x) */
-    public static boolean isEclair = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
-    /** True if device is running Gingerbread or later (Android 2.3.x) */
-    public static boolean isGingerbread = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
+    /** True if device is running Gingerbread or later (Android 2.3.x) */    
+    public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
+    
     /** True if device is running Honeycomb or later (Android 3.0.x)*/
-    public static boolean isHoneycomb = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    /** True if device is running Honeycomb MR1 or later (Android 3.1.x)*/
-    public static boolean isHoneycombMR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
-    /** True if device is running Jellybean or later (Android 4.2.x)*/
-    public static boolean isJellyBean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    public static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     
-    // Internal development options, might change later or expose to user
+    /** True if device is running Honeycomb MR1 or later (Android 3.1.x)*/
+    public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
+    
+    /** True if device is running Jellybean or later (Android 4.1.x)*/
+    public static final boolean IS_JELLYBEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    
+    /** Debug option: inhibit suspend (sleep) when game is running (default true). */
     public static final boolean INHIBIT_SUSPEND = true;
+    
+    /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;
-    public static final int SPLASH_DELAY = 1000;
 }
 
 /**
- * Bugs and feature requests not listed elsewhere
+ * Bugs and feature requests not listed elsewhere, in order of priority.
  * 
- * TODO: *Figure out force-close when loading last session autosavefile
- * TODO: *Figure out failure to return to main menu
+ * TODO: *Fix bug when loading zipped ROMS
  * TODO: *Implement multi-player peripheral controls
  * TODO: *Implement special func mapping
+ * TODO: *Figure out force-close when loading last session autosavefile
+ * TODO: *Figure out failure to return to main menu
  * TODO: Add menu item for quick access to IME (like Language menu)
  * TODO: Look into BlueZ and Zeemote protocols
  * TODO: Cleanup Utility.java

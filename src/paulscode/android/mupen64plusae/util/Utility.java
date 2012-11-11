@@ -208,7 +208,7 @@ public class Utility
             }
         }
         
-        // if( isHoneycombMR1 )
+        // if( IS_HONEYCOMB_MR1 )
         // {
         // builder.append( "USB Devices:\r\n\r\n" );
         // UsbManager manager = (UsbManager) activity.getSystemService( Context.USB_SERVICE );

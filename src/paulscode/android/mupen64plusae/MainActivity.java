@@ -38,6 +38,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements DataDownloader.Listener
 {
+    /** The minimum duration that the splash screen is shown, in milliseconds. */
+    public static final int SPLASH_DELAY = 1000;
+
     private TextView mTextView = null;
     private DataDownloader mDownloader = null;
     
@@ -80,7 +83,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
                 // It will launch MenuActivity when it's done
                 runOnUiThread( new DownloaderThread() );
             }
-        }, Globals.SPLASH_DELAY );
+        }, MainActivity.SPLASH_DELAY );
     }
     
     private class DownloaderThread implements Runnable
