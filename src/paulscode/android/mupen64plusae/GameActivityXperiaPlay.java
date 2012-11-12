@@ -34,18 +34,34 @@ public class GameActivityXperiaPlay extends NativeActivity
     private TouchMap mXperiaPlayMap;
     @SuppressWarnings( "unused" )
     private XperiaPlayController mXperiaPlayController;
-    private GameImplementation mImplementation;
+    private final GameLifecycleHandler mLifecycleHandler;
+    private final GameMenuHandler mMenuHandler;
     
     public GameActivityXperiaPlay()
     {
-        mImplementation = new GameImplementation( this );
+        mLifecycleHandler = new GameLifecycleHandler( this );
+        mMenuHandler = new GameMenuHandler( this );
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu )
+    {
+        mMenuHandler.onCreateOptionsMenu( menu );
+        return super.onCreateOptionsMenu( menu );
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected( MenuItem item )
+    {
+        mMenuHandler.onOptionsItemSelected( item );
+        return super.onOptionsItemSelected( item );
     }
     
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        mImplementation.onCreate( savedInstanceState );
+        mLifecycleHandler.onCreate( savedInstanceState );
         
         // We should only be here if enabled
         assert ( Globals.userPrefs.isXperiaEnabled );
@@ -59,25 +75,11 @@ public class GameActivityXperiaPlay extends NativeActivity
         if( Globals.userPrefs.isInputEnabled )
             mXperiaPlayController = new XperiaPlayController( mXperiaPlayMap );
     }
-    
-    @Override
-    public boolean onCreateOptionsMenu( Menu menu )
-    {
-        mImplementation.onCreateOptionsMenu( menu );
-        return super.onCreateOptionsMenu( menu );
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected( MenuItem item )
-    {
-        mImplementation.onOptionsItemSelected( item );
-        return super.onOptionsItemSelected( item );
-    }
-    
+
     @Override
     public void onUserLeaveHint()
     {
-        mImplementation.onUserLeaveHint();
+        mLifecycleHandler.onUserLeaveHint();
         super.onUserLeaveHint();
     }
 }

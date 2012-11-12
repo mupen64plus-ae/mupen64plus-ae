@@ -77,36 +77,6 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         mTouchMap = touchMap;
     }
     
-    public void waitForResume()
-    {
-        mBuffFlipped = false;
-        
-        // Wait for the game to resume by monitoring emulator state and the EGL buffer flip
-        do
-        {
-            SafeMethods.sleep( 500 );
-        }
-        while( !mBuffFlipped && NativeMethods.stateEmulator() == CoreInterface.EMULATOR_STATE_PAUSED );
-    }
-    
-    private void resumeLastSession()
-    {
-        while( !CoreInterface.finishedReading )
-            SafeMethods.sleep( 40 );
-        
-        while( NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_RUNNING )
-            SafeMethods.sleep( 40 );
-        
-        mBuffFlipped = false;
-        while( !mBuffFlipped )
-            SafeMethods.sleep( 40 );
-        
-        Log.v( "SDLSurface", "Resuming last session" );
-        Notifier.showToast( (Activity) getContext(), R.string.toast_resumingSession );
-        
-        NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
-    }
-    
     // Called when we have a valid drawing surface
     @Override
     public void surfaceCreated( SurfaceHolder holder )
@@ -163,6 +133,25 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
         }
         NativeMethods.onResize( width, height, sdlFormat );
         
+        startGameThread();
+        
+        resumeSession();
+    }
+
+    public void waitForResume()
+    {
+        mBuffFlipped = false;
+        
+        // Wait for the game to resume by monitoring emulator state and the EGL buffer flip
+        do
+        {
+            SafeMethods.sleep( 500 );
+        }
+        while( !mBuffFlipped && NativeMethods.stateEmulator() == CoreInterface.EMULATOR_STATE_PAUSED );
+    }
+
+    private void startGameThread()
+    {
         mSDLThread = new Thread( new Runnable()
         {
             public void run()
@@ -171,7 +160,10 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
             }
         }, "SDLThread" );
         mSDLThread.start();
-        
+    }
+
+    private void resumeSession()
+    {
         // Resume last game if user is auto-saving and the auto-savefile exists
         if( Globals.userPrefs.isAutoSaveEnabled
                 && new File( Globals.userPrefs.selectedGameAutoSavefile ).exists() )
@@ -181,18 +173,32 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
                 @Override
                 public void run()
                 {
-                    resumeLastSession();
+                    while( !CoreInterface.finishedReading )
+                        SafeMethods.sleep( 40 );
+                    
+                    while( NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_RUNNING )
+                        SafeMethods.sleep( 40 );
+                    
+                    mBuffFlipped = false;
+                    while( !mBuffFlipped )
+                        SafeMethods.sleep( 40 );
+                    
+                    Log.v( "SDLSurface", "Resuming last session" );
+                    Notifier.showToast( (Activity) getContext(), R.string.toast_loadingSession );
+                    
+                    NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
                 }
             }.start();
         }
     }
-    
+
     // Called when we lose the surface
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
-        // Send a quit message to the application
+        // Send a quit message to the core
         NativeMethods.quit();
+        
         // Now wait for the SDL thread to quit
         if( mSDLThread != null )
         {
@@ -245,11 +251,11 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
             {
                 configSpec = new int[]
                         { 
-                            EGL10.EGL_RED_SIZE,    8, // paulscode: get a config with red 8
-                            EGL10.EGL_GREEN_SIZE,  8, // paulscode: get a config with green 8
-                            EGL10.EGL_BLUE_SIZE,   8, // paulscode: get a config with blue 8
-                            EGL10.EGL_ALPHA_SIZE,  8, // paulscode: get a config with alpha 8
-                            EGL10.EGL_DEPTH_SIZE, 16, // paulscode: get a config with depth 16
+                            EGL10.EGL_RED_SIZE,    8, // get a config with red 8
+                            EGL10.EGL_GREEN_SIZE,  8, // get a config with green 8
+                            EGL10.EGL_BLUE_SIZE,   8, // get a config with blue 8
+                            EGL10.EGL_ALPHA_SIZE,  8, // get a config with alpha 8
+                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with depth 16
                             EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
                         };
             }
@@ -257,7 +263,7 @@ public class SDLSurface extends SurfaceView implements SurfaceHolder.Callback
             {
                 configSpec = new int[] 
                         { 
-                            EGL10.EGL_DEPTH_SIZE, 16, // paulscode: get a config with depth 16
+                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with depth 16
                             EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
                         };
             }

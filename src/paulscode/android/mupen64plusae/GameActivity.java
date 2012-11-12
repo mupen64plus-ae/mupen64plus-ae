@@ -26,38 +26,40 @@ import android.view.MenuItem;
 
 public class GameActivity extends Activity
 {
-    private GameImplementation mImplementation;
+    private final GameLifecycleHandler mLifecycleHandler;
+    private final GameMenuHandler mMenuHandler;
     
     public GameActivity()
     {
-        mImplementation = new GameImplementation( this );
-    }
-    
-    @Override
-    protected void onCreate( Bundle savedInstanceState )
-    {
-        super.onCreate( savedInstanceState );
-        mImplementation.onCreate( savedInstanceState );
+        mLifecycleHandler = new GameLifecycleHandler( this );
+        mMenuHandler = new GameMenuHandler( this );
     }
     
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
     {
-        mImplementation.onCreateOptionsMenu( menu );
+        mMenuHandler.onCreateOptionsMenu( menu );
         return super.onCreateOptionsMenu( menu );
     }
-    
+
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
-        mImplementation.onOptionsItemSelected( item );
+        mMenuHandler.onOptionsItemSelected( item );
         return super.onOptionsItemSelected( item );
+    }
+
+    @Override
+    protected void onCreate( Bundle savedInstanceState )
+    {
+        super.onCreate( savedInstanceState );
+        mLifecycleHandler.onCreate( savedInstanceState );
     }
     
     @Override
     public void onUserLeaveHint()
     {
-        mImplementation.onUserLeaveHint();
+        mLifecycleHandler.onUserLeaveHint();
         super.onUserLeaveHint();
     }
 }
