@@ -144,6 +144,7 @@ static int audio_ucode(OSTask_t *task)
 {
     unsigned int *p_alist = (unsigned int*)(rsp.RDRAM + task->data_ptr);
     unsigned int i;
+    u32 inst1_idx;
 
     switch(audio_ucode_detect(task))
     {
@@ -167,7 +168,11 @@ static int audio_ucode(OSTask_t *task)
     {
         inst1 = p_alist[i];
         inst2 = p_alist[i+1];
-        ABI[inst1 >> 24]();
+        inst1_idx = inst1 >> 24;
+        if (inst1_idx < 0x20)
+            ABI[inst1_idx]();
+        else
+            DebugMessage(M64MSG_WARNING, "Invalid audio ABI index %u", inst1_idx);
     }
 
     return 0;
