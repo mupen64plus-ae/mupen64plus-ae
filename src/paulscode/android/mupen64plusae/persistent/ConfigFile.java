@@ -78,13 +78,13 @@ public class ConfigFile
      */
     public ConfigSection match( String regex )
     {
-        String sectionTitle;
-        Set<String> keys = mConfigMap.keySet();
-        Iterator<String> iter = keys.iterator();
-        
         // No configuration to look up.. quit
         if( mConfigMap == null )
             return null;
+        
+        String sectionTitle;
+        Set<String> keys = mConfigMap.keySet();
+        Iterator<String> iter = keys.iterator();
         
         while( iter.hasNext() )
         {
@@ -92,6 +92,7 @@ public class ConfigFile
             if( sectionTitle.matches( regex ) )
                 return mConfigMap.get( sectionTitle );
         }
+        
         return null;
     }
 
