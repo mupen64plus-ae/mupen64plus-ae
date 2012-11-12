@@ -32,6 +32,9 @@
 #ifdef USE_SRC
 #include <samplerate.h>
 #endif
+#ifdef USE_SPEEX
+#include <speex/speex_resampler.h>
+#endif
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_types.h"
@@ -86,6 +89,9 @@ enum resampler_type {
 	RESAMPLER_TRIVIAL,
 #ifdef USE_SRC
 	RESAMPLER_SRC,
+#endif
+#ifdef USE_SPEEX
+	RESAMPLER_SPEEX,
 #endif
 };
 
@@ -268,7 +274,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE",   PRIMARY_BUFFER_SIZE,   "Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.");
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_TARGET", PRIMARY_BUFFER_TARGET, "Fullness level target for Primary audio buffer, in equivalent output samples");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is SDL's hardware buffer.");
-    ConfigSetDefaultString(l_ConfigAudio, "RESAMPLE",              "trivial",                     "Audio resampling algorithm. src-sinc-best-quality, src-sinc-medium-quality, src-sinc-fastest, src-zero-order-hold, src-linear, trivial");
+    ConfigSetDefaultString(l_ConfigAudio, "RESAMPLE",              "trivial",                     "Audio resampling algorithm. src-sinc-best-quality, src-sinc-medium-quality, src-sinc-fastest, src-zero-order-hold, src-linear, speex-fixed-{10-0}, trivial");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_CONTROL_TYPE",   VOLUME_TYPE_SDL,       "Volume control type: 1 = SDL (only affects Mupen64Plus output)  2 = OSS mixer (adjusts master PC volume)");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_ADJUST",         5,                     "Percentage change each time the volume is increased or decreased");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_DEFAULT",        80,                    "Default volume when a game is started.  Only used if VOLUME_CONTROL_TYPE is 1");
@@ -457,12 +463,42 @@ static int error;
 static SRC_STATE *src_state;
 static SRC_DATA src_data;
 #endif
+#ifdef USE_SPEEX
+SpeexResamplerState* spx_state = NULL;
+static int error;
+#endif
 
 static int resample(unsigned char *input, int input_avail, int oldsamplerate, unsigned char *output, int output_needed, int newsamplerate)
 {
     int *psrc = (int*)input;
     int *pdest = (int*)output;
     int i = 0, j = 0;
+
+#ifdef USE_SPEEX
+    spx_uint32_t in_len, out_len;
+    if(Resample == RESAMPLER_SPEEX)
+    {
+        if(spx_state == NULL)
+        {
+            spx_state = speex_resampler_init(2, oldsamplerate, newsamplerate, ResampleQuality,  &error);
+            if(spx_state == NULL)
+            {
+                memset(output, 0, output_needed);
+                return 0;
+            }
+        }
+        speex_resampler_set_rate(spx_state, oldsamplerate, newsamplerate);
+        in_len = input_avail / 4;
+        out_len = output_needed / 4;
+
+        if ((error = speex_resampler_process_interleaved_int(spx_state, (const spx_int16_t *)input, &in_len, (spx_int16_t *)output, &out_len)))
+        {
+            memset(output, 0, output_needed);
+            return input_avail;  // number of bytes consumed
+        }
+        return in_len * 4;
+    }
+#endif
 #ifdef USE_SRC
     if(Resample == RESAMPLER_SRC)
     {
@@ -809,6 +845,34 @@ static void ReadConfig(void)
         Resample = RESAMPLER_TRIVIAL;
         return;
     }
+#ifdef USE_SPEEX
+    if (strncmp(resampler_id, "speex-fixed-", strlen("speex-fixed-")) == 0) {
+        int i;
+        static const char *speex_quality[] = {
+            "speex-fixed-0",
+            "speex-fixed-1",
+            "speex-fixed-2",
+            "speex-fixed-3",
+            "speex-fixed-4",
+            "speex-fixed-5",
+            "speex-fixed-6",
+            "speex-fixed-7",
+            "speex-fixed-8",
+            "speex-fixed-9",
+            "speex-fixed-10",
+        };
+        Resample = RESAMPLER_SPEEX;
+        for (i = 0; i < sizeof(speex_quality) / sizeof(*speex_quality); i++) {
+            if (strcmp(speex_quality[i], resampler_id) == 0) {
+                ResampleQuality = i;
+                return;
+            }
+        }
+        DebugMessage(M64MSG_WARNING, "Unknown RESAMPLE configuration %s; use speex-fixed-4 resampler", resampler_id);
+        ResampleQuality = 4;
+        return;
+    }
+#endif
 #ifdef USE_SRC
     if (strncmp(resampler_id, "src-", strlen("src-")) == 0) {
         Resample = RESAMPLER_SRC;
