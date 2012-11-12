@@ -258,7 +258,7 @@ public class GameImplementation implements View.OnKeyListener
             // The touch controller is needed to handle touch events
             if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isTouchscreenEnabled )
             {
-                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSdlSurface );
+                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSdlSurface, Globals.userPrefs.isOctagonalJoystick );
             }
         }
     }
@@ -269,7 +269,10 @@ public class GameImplementation implements View.OnKeyListener
         {
             // Create the input providers shared among all peripheral controllers
             mKeyProvider = new KeyProvider( mSdlSurface, ImeFormula.DEFAULT );
-            mAxisProvider = AxisProvider.create( mSdlSurface );
+            if( Globals.IS_HONEYCOMB_MR1 )
+                mAxisProvider = new AxisProvider( mSdlSurface );
+            else
+                mAxisProvider = null;
             
             // Create the peripheral controllers for players 1-4
             if( Globals.userPrefs.inputMap1.isEnabled() )

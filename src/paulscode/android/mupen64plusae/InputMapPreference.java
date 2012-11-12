@@ -126,7 +126,8 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         }
         
         // Setup analog axis listening
-        mProvider.addProvider( AxisProvider.create( view ) );
+        if( Globals.IS_HONEYCOMB_MR1 )
+            mProvider.addProvider( new AxisProvider( view ) );
         
         // Refresh the dialog view
         updateViews();

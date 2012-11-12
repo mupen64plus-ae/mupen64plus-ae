@@ -19,7 +19,6 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
-import paulscode.android.mupen64plusae.Globals;
 import android.annotation.TargetApi;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
@@ -39,26 +38,11 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
     private static final int DEFAULT_NUM_INPUTS = 128;
     
     /**
-     * Instantiates a new axis provider if the API allows, or null.
-     * 
-     * @param view The view receiving MotionEvent data.
-     * @return An AxisProvider instance, or null.
-     */
-    public static AxisProvider create( View view )
-    {
-        // Use a factory method for API safety
-        if( Globals.IS_HONEYCOMB_MR1 )
-            return new AxisProvider( view );
-        else
-            return null;
-    }
-    
-    /**
      * Instantiates a new axis provider.
      * 
      * @param view The view receiving MotionEvent data.
      */
-    private AxisProvider( View view )
+    public AxisProvider( View view )
     {
         // By default, provide data from all possible axes
         mInputCodes = new int[DEFAULT_NUM_INPUTS];
