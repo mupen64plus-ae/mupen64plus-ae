@@ -82,6 +82,13 @@ static int l_PluginInit = 0;
 static int l_PausedForSync = 1; /* Audio is started in paused state after SDL initialization */
 static m64p_handle l_ConfigAudio;
 
+enum resampler_type {
+	RESAMPLER_TRIVIAL,
+#ifdef USE_SRC
+	RESAMPLER_SRC,
+#endif
+};
+
 /* Read header for type definition */
 static AUDIO_INFO AudioInfo;
 /* The hardware specifications we are using */
@@ -107,8 +114,10 @@ static unsigned int PrimaryBufferSize = PRIMARY_BUFFER_SIZE;
 static unsigned int PrimaryBufferTarget = PRIMARY_BUFFER_TARGET;
 // Size of Secondary audio buffer in output samples
 static unsigned int SecondaryBufferSize = SECONDARY_BUFFER_SIZE;
-// Resample or not
-static unsigned char Resample = 1;
+// Resample type
+static enum resampler_type Resample = RESAMPLER_TRIVIAL;
+// Resampler specific quality
+static int ResampleQuality = 3;
 // volume to scale the audio by, range of 0..100
 // if muted, this holds the volume when not muted
 static int VolPercent = 80;
@@ -259,7 +268,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE",   PRIMARY_BUFFER_SIZE,   "Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.");
     ConfigSetDefaultInt(l_ConfigAudio, "PRIMARY_BUFFER_TARGET", PRIMARY_BUFFER_TARGET, "Fullness level target for Primary audio buffer, in equivalent output samples");
     ConfigSetDefaultInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE", SECONDARY_BUFFER_SIZE, "Size of secondary buffer in output samples. This is SDL's hardware buffer.");
-    ConfigSetDefaultInt(l_ConfigAudio, "RESAMPLE",              1,                     "Audio resampling algorithm.  1 = unfiltered, 2 = SINC resampling (Best Quality, requires libsamplerate)");
+    ConfigSetDefaultString(l_ConfigAudio, "RESAMPLE",              "trivial",                     "Audio resampling algorithm. src-sinc-best-quality, src-sinc-medium-quality, src-sinc-fastest, src-zero-order-hold, src-linear, trivial");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_CONTROL_TYPE",   VOLUME_TYPE_SDL,       "Volume control type: 1 = SDL (only affects Mupen64Plus output)  2 = OSS mixer (adjusts master PC volume)");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_ADJUST",         5,                     "Percentage change each time the volume is increased or decreased");
     ConfigSetDefaultInt(l_ConfigAudio, "VOLUME_DEFAULT",        80,                    "Default volume when a game is started.  Only used if VOLUME_CONTROL_TYPE is 1");
@@ -455,7 +464,7 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
     int *pdest = (int*)output;
     int i = 0, j = 0;
 #ifdef USE_SRC
-    if(Resample == 2)
+    if(Resample == RESAMPLER_SRC)
     {
         // the high quality resampler needs more input than the samplerate ratio would indicate to work properly
         if (input_avail > output_needed * 3 / 2)
@@ -476,7 +485,7 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
         memset(_dest,0,_dest_len);
         if(src_state == NULL)
         {
-            src_state = src_new (SRC_SINC_BEST_QUALITY, 2, &error);
+            src_state = src_new (ResampleQuality, 2, &error);
             if(src_state == NULL)
             {
                 memset(output, 0, output_needed);
@@ -499,7 +508,7 @@ static int resample(unsigned char *input, int input_avail, int oldsamplerate, un
         return src_data.input_frames_used * 4;
     }
 #endif
-    // RESAMPLE == 1
+    // RESAMPLE == TRIVIAL
     if (newsamplerate >= oldsamplerate)
     {
         int sldf = oldsamplerate;
@@ -778,16 +787,58 @@ EXPORT void CALL SetSpeedFactor(int percentage)
 
 static void ReadConfig(void)
 {
+    const char *resampler_id;
+
     /* read the configuration values into our static variables */
     GameFreq = ConfigGetParamInt(l_ConfigAudio, "DEFAULT_FREQUENCY");
     SwapChannels = ConfigGetParamBool(l_ConfigAudio, "SWAP_CHANNELS");
     PrimaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_SIZE");
     PrimaryBufferTarget = ConfigGetParamInt(l_ConfigAudio, "PRIMARY_BUFFER_TARGET");
     SecondaryBufferSize = ConfigGetParamInt(l_ConfigAudio, "SECONDARY_BUFFER_SIZE");
-    Resample = ConfigGetParamInt(l_ConfigAudio, "RESAMPLE");
+    resampler_id = ConfigGetParamString(l_ConfigAudio, "RESAMPLE");
     VolumeControlType = ConfigGetParamInt(l_ConfigAudio, "VOLUME_CONTROL_TYPE");
     VolDelta = ConfigGetParamInt(l_ConfigAudio, "VOLUME_ADJUST");
     VolPercent = ConfigGetParamInt(l_ConfigAudio, "VOLUME_DEFAULT");
+
+    if (!resampler_id) {
+        Resample = RESAMPLER_TRIVIAL;
+	DebugMessage(M64MSG_WARNING, "Could not find RESAMPLE configuration; use trivial resampler");
+	return;
+    }
+    if (strcmp(resampler_id, "trivial") == 0) {
+        Resample = RESAMPLER_TRIVIAL;
+        return;
+    }
+#ifdef USE_SRC
+    if (strncmp(resampler_id, "src-", strlen("src-")) == 0) {
+        Resample = RESAMPLER_SRC;
+        if (strcmp(resampler_id, "src-sinc-best-quality") == 0) {
+            ResampleQuality = SRC_SINC_BEST_QUALITY;
+            return;
+        }
+        if (strcmp(resampler_id, "src-sinc-medium-quality") == 0) {
+            ResampleQuality = SRC_SINC_MEDIUM_QUALITY;
+            return;
+        }
+        if (strcmp(resampler_id, "src-sinc-fastest") == 0) {
+            ResampleQuality = SRC_SINC_FASTEST;
+            return;
+        }
+        if (strcmp(resampler_id, "src-zero-order-hold") == 0) {
+            ResampleQuality = SRC_ZERO_ORDER_HOLD;
+            return;
+        }
+        if (strcmp(resampler_id, "src-linear") == 0) {
+            ResampleQuality = SRC_LINEAR;
+            return;
+        }
+        DebugMessage(M64MSG_WARNING, "Unknown RESAMPLE configuration %s; use src-sinc-medium-quality resampler", resampler_id);
+        ResampleQuality = SRC_SINC_MEDIUM_QUALITY;
+        return;
+    }
+#endif
+    DebugMessage(M64MSG_WARNING, "Unknown RESAMPLE configuration %s; use trivial resampler", resampler_id);
+    Resample = RESAMPLER_TRIVIAL;
 }
 
 // Returns the most recent ummuted volume level.
