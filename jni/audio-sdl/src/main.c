@@ -552,8 +552,10 @@ static void my_audio_callback(void *userdata, unsigned char *stream, int len)
         else
 #endif
         {
-            input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, mixBuffer, len, newsamplerate);
-            SDL_MixAudio(stream, mixBuffer, len, VolSDL);
+            /* TODO mupen64plus-ae specific hack */
+            input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, stream, len, newsamplerate);
+            /*input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, mixBuffer, len, newsamplerate);
+            SDL_MixAudio(stream, mixBuffer, len, VolSDL);*/
         }
         memmove(primaryBuffer, &primaryBuffer[input_used], buffer_pos - input_used);
         buffer_pos -= input_used;
