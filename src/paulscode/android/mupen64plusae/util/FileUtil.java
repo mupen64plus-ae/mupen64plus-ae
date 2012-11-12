@@ -15,6 +15,10 @@ import java.util.List;
 import android.text.Html;
 import android.util.Log;
 
+/**
+ * Utility class that provides methods
+ * which simplify file I/O tasks.
+ */
 public class FileUtil
 {
     public static void populate( File startPath, boolean includeParent, boolean includeDirectories,
