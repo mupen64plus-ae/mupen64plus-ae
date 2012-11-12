@@ -13,7 +13,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -230,7 +229,7 @@ public class Utility
         return builder.toString();
     }
     
-    public static String getHeaderName( String filename )
+    public static String getHeaderName( String filename, String tempDir )
     {
         ErrorLogger.put( "READ_HEADER", "fail", "" );
         if( filename == null || filename.length() < 1 )
@@ -243,7 +242,7 @@ public class Utility
                 "zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
-            File tmpFolder = new File( Globals.paths.dataDir + "/tmp" );
+            File tmpFolder = new File( tempDir );
             tmpFolder.mkdir();
             
             // Clear the folder if anything is in there:
@@ -254,7 +253,7 @@ public class Utility
             }
             
             ErrorLogger.clearLastError();
-            String uzFile = unzipFirstROM( new File( filename ), Globals.paths.dataDir + "/tmp" );
+            String uzFile = unzipFirstROM( new File( filename ), tempDir );
             if( uzFile == null || uzFile.length() < 1 )
             {
                 Log.e( "Utility", "Unable to unzip ROM: '" + filename + "'" );
@@ -289,7 +288,7 @@ public class Utility
         }
     }
     
-    public static String getHeaderCRC( String filename )
+    public static String getHeaderCRC( String filename, String tempDir )
     {
         ErrorLogger.put( "READ_HEADER", "fail", "" );
         if( filename == null || filename.length() < 1 )
@@ -302,7 +301,7 @@ public class Utility
                 "zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
-            File tmpFolder = new File( Globals.paths.dataDir + "/tmp" );
+            File tmpFolder = new File( tempDir );
             tmpFolder.mkdir();
             
             // Clear the folder if anything is in there:
@@ -313,7 +312,7 @@ public class Utility
             }
             
             ErrorLogger.clearLastError();
-            String uzFile = unzipFirstROM( new File( filename ), Globals.paths.dataDir + "/tmp" );
+            String uzFile = unzipFirstROM( new File( filename ), tempDir );
             if( uzFile == null || uzFile.length() < 1 )
             {
                 Log.e( "Utility", "Unable to unzip ROM: '" + filename + "'" );

@@ -24,9 +24,9 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Globals.
+ * Global settings and meta info. Generally just read-only convenience functions and debug options
+ * for developers.
  */
 public class Globals
 {
@@ -36,22 +36,22 @@ public class Globals
     /** Persistent application state and data. */
     public static AppData appData;
     
-    /** Read-only accessor for file system paths. */
+    /** Read-only accessor for file system path strings. */
     public static Paths paths;
     
     /** True if device is running Eclair or later (Android 2.0.x) */
     public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
     
-    /** True if device is running Gingerbread or later (Android 2.3.x) */    
+    /** True if device is running Gingerbread or later (Android 2.3.x) */
     public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
     
-    /** True if device is running Honeycomb or later (Android 3.0.x)*/
+    /** True if device is running Honeycomb or later (Android 3.0.x) */
     public static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     
-    /** True if device is running Honeycomb MR1 or later (Android 3.1.x)*/
+    /** True if device is running Honeycomb MR1 or later (Android 3.1.x) */
     public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
     
-    /** True if device is running Jellybean or later (Android 4.1.x)*/
+    /** True if device is running Jellybean or later (Android 4.1.x) */
     public static final boolean IS_JELLYBEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
     /** Debug option: inhibit suspend (sleep) when game is running (default true). */

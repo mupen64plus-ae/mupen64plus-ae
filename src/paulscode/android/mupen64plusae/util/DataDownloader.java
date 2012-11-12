@@ -37,7 +37,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.persistent.Paths;
 import android.app.Activity;
@@ -60,12 +59,12 @@ public class DataDownloader extends Thread
     private Listener mListener;
     private String outFilesDir = null;
     
-    public DataDownloader( Activity parent, Listener listener, TextView status )
+    public DataDownloader( Activity parent, Listener listener, TextView status, String dataDir )
     {
         mActivity = parent;
         mListener = listener;
         mStatus = new StatusWriter( status, parent );
-        outFilesDir = Globals.paths.dataDir;
+        outFilesDir = dataDir;
         mDownloadComplete = false;
         start();
     }

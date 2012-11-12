@@ -19,7 +19,6 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import android.annotation.TargetApi;
@@ -40,6 +39,8 @@ public class TouchscreenController extends AbstractController implements OnTouch
     
     /** The map from screen coordinates to N64 controls. */
     private final VisibleTouchMap mTouchMap;
+    
+    private final boolean mIsOctagonal;
     
     /** The touch state of each pointer. True indicates down, false indicates up. */
     private final boolean[] mTouchState = new boolean[MAX_POINTER_IDS];
@@ -62,9 +63,10 @@ public class TouchscreenController extends AbstractController implements OnTouch
      * @param touchMap The map from screen coordinates to N64 controls.
      * @param view The view receiving touch event data.
      */
-    public TouchscreenController( VisibleTouchMap touchMap, View view )
+    public TouchscreenController( VisibleTouchMap touchMap, View view, boolean isOctagonal )
     {
         mTouchMap = touchMap;
+        mIsOctagonal = isOctagonal;
         view.setOnTouchListener( this );
     }
     
@@ -261,7 +263,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
         if( pointerId == analogPid )
         {
             // User is controlling the analog stick
-            if( Globals.userPrefs.isOctagonalJoystick )
+            if( mIsOctagonal )
             {
                 // Limit range of motion to an octagon (like the real N64 controller)
                 point = mTouchMap.getConstrainedDisplacement( dX, dY );
