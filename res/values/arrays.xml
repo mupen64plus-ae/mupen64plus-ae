@@ -12,6 +12,76 @@
 -->
 <resources>
 
+    <!-- Video Plugins -->
+    <string-array name="videoPlugin_entries">
+        <item>@string/videoPlugin_entry0</item>
+        <item>@string/videoPlugin_entry1</item>
+        <item>@string/videoPlugin_entry2</item>
+        </string-array>
+    <string-array name="videoPlugin_values">
+        <item>dummy</item>
+        <item>libgles2n64.so</item>
+        <item>libgles2rice.so</item>
+    </string-array>
+    <string name="videoPlugin_default">libgles2n64.so</string>
+
+    <!-- Audio Plugins -->
+    <string-array name="audioPlugin_entries">
+        <item>@string/audioPlugin_entry0</item>
+        <item>@string/audioPlugin_entry1</item>
+    </string-array>
+    <string-array name="audioPlugin_values">
+        <item>dummy</item>
+        <item>libaudio-sdl.so</item>
+    </string-array>
+    <string name="audioPlugin_default">libaudio-sdl.so</string>
+    
+    <!-- Input Plugins -->
+    <string-array name="inputPlugin_entries">
+        <item>@string/inputPlugin_entry0</item>
+        <item>@string/inputPlugin_entry1</item>
+    </string-array>
+    <string-array name="inputPlugin_values">
+        <item>dummy</item>
+        <item>libinput-sdl.so</item>
+    </string-array>
+    <string name="inputPlugin_default">libinput-sdl.so</string>
+    
+    <!-- RSP Plugins -->
+    <string-array name="rspPlugin_entries">
+        <item>@string/rspPlugin_entry0</item>
+        <item>@string/rspPlugin_entry1</item>
+        <item>@string/rspPlugin_entry2</item>
+    </string-array>
+    <string-array name="rspPlugin_values">
+        <item>dummy</item>
+        <item>librsp-hle.so</item>
+        <item>librsp-hle-nosound.so</item>
+    </string-array>
+    <string name="rspPlugin_default">librsp-hle.so</string>
+    
+    <!-- Core Plugins -->
+    <string-array name="corePlugin_entries">
+        <item>@string/corePlugin_entry0</item>
+    </string-array>
+    <string-array name="corePlugin_values">
+        <item>libcore.so</item>
+    </string-array>
+    <string name="corePlugin_default">libcore.so</string>
+    
+    <!-- Xperia Play Touchpads -->
+    <string-array name="xperiaLayout_entries">
+        <item>@string/xperiaLayout_entry0</item>
+        <item>@string/xperiaLayout_entry1</item>
+        <item>@string/xperiaLayout_entry2</item>
+    </string-array>
+    <string-array name="xperiaLayout_values">
+        <item></item>
+        <item>Mupen64Plus-AE-Xperia-Play</item>
+        <item>Mupen64Plus-AE-Analog-Right</item>
+    </string-array>
+    <string name="xperiaLayout_default"></string>
+
     <!-- Touchscreen Layouts -->
     <string-array name="touchscreenLayout_entries">
         <item>@string/touchscreenLayout_entry0</item>
@@ -43,74 +113,6 @@
     </string-array>
     <string name="touchscreenSize_default"></string>
 
-    <!-- Input Plugins -->
-    <string-array name="inputPlugin_entries">
-        <item>@string/inputPlugin_entry0</item>
-        <item>@string/inputPlugin_entry1</item>
-    </string-array>
-    <string-array name="inputPlugin_values">
-        <item></item>
-        <item>libinput-sdl.so</item>
-    </string-array>
-    <string name="inputPlugin_default">libinput-sdl.so</string>
-    
-    <!-- Video Plugins -->
-    <string-array name="videoPlugin_entries">
-        <item>@string/videoPlugin_entry0</item>
-        <item>@string/videoPlugin_entry1</item>
-    </string-array>
-    <string-array name="videoPlugin_values">
-        <item>libgles2n64.so</item>
-        <item>libgles2rice.so</item>
-    </string-array>
-    <string name="videoPlugin_default">libgles2n64.so</string>
-
-    <!-- Audio Plugins -->
-    <string-array name="audioPlugin_entries">
-        <item>@string/audioPlugin_entry0</item>
-        <item>@string/audioPlugin_entry1</item>
-    </string-array>
-    <string-array name="audioPlugin_values">
-        <item></item>
-        <item>libaudio-sdl.so</item>
-    </string-array>
-    <string name="audioPlugin_default">libaudio-sdl.so</string>
-    
-    <!-- Xperia Play Touchpads -->
-    <string-array name="xperiaPlugin_entries">
-        <item>@string/xperiaPlugin_entry0</item>
-        <item>@string/xperiaPlugin_entry1</item>
-        <item>@string/xperiaPlugin_entry2</item>
-    </string-array>
-    <string-array name="xperiaPlugin_values">
-        <item></item>
-        <item>Mupen64Plus-AE-Xperia-Play</item>
-        <item>Mupen64Plus-AE-Analog-Right</item>
-    </string-array>
-    <string name="xperiaPlugin_default"></string>
-
-    <!-- RSP Plugins -->
-    <string-array name="rspPlugin_entries">
-        <item>@string/rspPlugin_entry0</item>
-        <item>@string/rspPlugin_entry1</item>
-        <item>@string/rspPlugin_entry2</item>
-    </string-array>
-    <string-array name="rspPlugin_values">
-        <item></item>
-        <item>librsp-hle.so</item>
-        <item>librsp-hle-nosound.so</item>
-    </string-array>
-    <string name="rspPlugin_default">librsp-hle.so</string>
-    
-    <!-- Core Plugins -->
-    <string-array name="corePlugin_entries">
-        <item>@string/corePlugin_entry0</item>
-    </string-array>
-    <string-array name="corePlugin_values">
-        <item>libcore.so</item>
-    </string-array>
-    <string name="corePlugin_default">libcore.so</string>
-    
     <!-- GLES2N64 Frameskip List -->
     <string-array name="gles2N64Frameskip_entries">
         <item>@string/_auto</item>

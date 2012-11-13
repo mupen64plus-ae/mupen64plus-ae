@@ -64,23 +64,53 @@ import android.preference.PreferenceManager;
  */
 public class UserPrefs
 {
+    /** The filename of the selected video plug-in. */
+    public final String videoPlugin;
+    
+    /** The filename of the selected audio plug-in. */
+    public final String audioPlugin;
+    
+    /** The filename of the selected input plug-in. */
+    public final String inputPlugin;
+    
+    /** The filename of the selected Reality Signal Processor. */
+    public final String rspPlugin;
+    
+    /** The filename of the selected emulator core. */
+    public final String corePlugin;
+    
+    /** The filename of the selected touchscreen layout. */
+    public final String touchscreenLayout;
+
+    /** The filename of the selected Xperia Play layout. */
+    public final String xperiaLayout;
+    
+    /** True if video is enabled. */
+    public final boolean isVideoEnabled;
+    
+    /** True if audio is enabled. */
+    public final boolean isAudioEnabled;
+    
+    /** True if input is enabled. */
+    public final boolean isInputEnabled;
+    
+    /** True if the Reality Signal Processor is enabled. */
+    public final boolean isRspEnabled;
+    
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
+
+    /** True if Xperia Play-specific features are enabled. */
+    public final boolean isXperiaEnabled;
+    
+    /** True if external gamepads/joysticks are enabled. */
+    public final boolean isPeripheralEnabled;
     
     /** True if a custom touchscreen is provided. */
     public final boolean isTouchscreenCustom;
     
-    /** The filename of the selected touchscreen layout. */
-    public final String touchscreenLayoutFolder;
-    
     /** True if the touchscreen joystick is represented as an octagon. */
     public final boolean isOctagonalJoystick;
-    
-    /** True if external gamepads/joysticks are enabled. */
-    public final boolean isInputEnabled;
-    
-    /** The filename of the selected input plug-in. */
-    public final String inputPlugin;
     
     /** The button map for player 1. */
     public final InputMap inputMap1;
@@ -96,12 +126,6 @@ public class UserPrefs
     
     /** True if volume keys can be used as controls. */
     public final boolean isVolKeysEnabled;
-    
-    /** True if video is enabled. */
-    public final boolean isVideoEnabled;
-    
-    /** The filename of the selected video plug-in. */
-    public final String videoPlugin;
     
     /** True if the video should be stretched. */
     public final boolean isStretched;
@@ -142,32 +166,8 @@ public class UserPrefs
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
-    /** True if Xperia Play-specific features are enabled. */
-    public final boolean isXperiaEnabled;
-    
-    /** The filename of the selected Xperia Play layout. */
-    public final String xperiaLayout;
-    
-    /** True if audio is enabled. */
-    public final boolean isAudioEnabled;
-    
-    /** The filename of the selected audio plug-in. */
-    public final String audioPlugin;
-    
-    /** True if the Reality Signal Processor is enabled. */
-    public final boolean isRspEnabled;
-    
-    /** The filename of the selected Reality Signal Processor. */
-    public final String rspPlugin;
-    
-    /** The filename of the selected emulator core. */
-    public final String corePlugin;
-    
     /** The directory containing game save files. */
     public final String gameSaveDir;
-    
-    /** True if game state should be saved before the game exits. */
-    public final boolean isAutoSaveEnabled;
     
     /** True if the frame rate is displayed. */
     public final boolean isFrameRateEnabled;
@@ -195,16 +195,15 @@ public class UserPrefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
         isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
         
-        // Peripherals prefs
-        isInputEnabled = mPreferences.getBoolean( "inputEnabled", true );
-        inputMap1 = new InputMap( mPreferences.getString( "inputMap1", "" ) );
-        inputMap2 = new InputMap( mPreferences.getString( "inputMap2", "" ) );
-        inputMap3 = new InputMap( mPreferences.getString( "inputMap3", "" ) );
-        inputMap4 = new InputMap( mPreferences.getString( "inputMap4", "" ) );
+        // Peripheral prefs
+        isPeripheralEnabled = mPreferences.getBoolean( "peripheralEnabled", true );
+        inputMap1 = new InputMap( mPreferences.getString( "peripheralMap1", "" ) );
+        inputMap2 = new InputMap( mPreferences.getString( "peripheralMap2", "" ) );
+        inputMap3 = new InputMap( mPreferences.getString( "peripheralMap3", "" ) );
+        inputMap4 = new InputMap( mPreferences.getString( "peripheralMap4", "" ) );
         isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", false );
         
         // Video prefs
-        isVideoEnabled = mPreferences.getBoolean( "videoEnabled", true );
         isStretched = mPreferences.getBoolean( "videoStretch", false );
         isRgba8888 = mPreferences.getBoolean( "videoRGBA8888", false );
         
@@ -227,20 +226,15 @@ public class UserPrefs
         // Other prefs
         selectedGame = mPreferences.getString( "selectedGame", "" );
         gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
-        isAutoSaveEnabled = mPreferences.getBoolean( "autoSaveEnabled", false );
         isFrameRateEnabled = mPreferences.getBoolean( "frameRateEnabled", false );
         
         // Plug-ins and layouts
-        inputPlugin = paths.libsDir + ( isInputEnabled
-                ? mPreferences.getString( "inputPlugin", "" )
-                : "" );
-        videoPlugin = paths.libsDir + ( isVideoEnabled
-                ? mPreferences.getString( "videoPlugin", "" )
-                : "" );
+        inputPlugin = paths.libsDir + mPreferences.getString( "inputPlugin", "" );
+        videoPlugin = paths.libsDir + mPreferences.getString( "videoPlugin", "" );
         audioPlugin = paths.libsDir + mPreferences.getString( "audioPlugin", "" );
         rspPlugin = paths.libsDir + mPreferences.getString( "rspPlugin", "" );
         corePlugin = paths.libsDir + mPreferences.getString( "corePlugin", "" );
-        xperiaLayout = mPreferences.getString( "xperiaPlugin", "" );
+        xperiaLayout = mPreferences.getString( "xperiaLayout", "" );
         
         boolean isCustom = false;
         String folder = "";
@@ -264,14 +258,17 @@ public class UserPrefs
                     + context.getString( R.string.touchscreenLayout_fpsOnly );
         }
         isTouchscreenCustom = isCustom;
-        touchscreenLayoutFolder = folder;
+        touchscreenLayout = folder;
         
         // Derived values
-        isGles2N64AutoFrameskipEnabled = (gles2N64MaxFrameskip < 0);
-        isAudioEnabled  = (audioPlugin  != null) && !audioPlugin.equals( "" );
-        isXperiaEnabled = (xperiaLayout != null) && !xperiaLayout.equals( "" );
-        isRspEnabled    = (rspPlugin    != null) && !rspPlugin.equals( "" );
-        selectedGameAutoSavefile = paths.dataDir + "/autosave_" + Math.abs( selectedGame.hashCode() ) + ".sav";
+        isGles2N64AutoFrameskipEnabled = ( gles2N64MaxFrameskip < 0 );
+        isVideoEnabled  = ( videoPlugin != null )  && !videoPlugin.equals( "dummy" );
+        isAudioEnabled  = ( audioPlugin != null )  && !audioPlugin.equals( "dummy" );
+        isInputEnabled  = ( inputPlugin != null )  && !inputPlugin.equals( "dummy" );
+        isRspEnabled    = ( rspPlugin != null )    && !rspPlugin.equals( "dummy" );
+        isXperiaEnabled = ( xperiaLayout != null ) && !xperiaLayout.equals( "" );
+        selectedGameAutoSavefile = paths.dataDir + "/autosave_"
+                + Math.abs( selectedGame.hashCode() ) + ".sav";
     }
     
     /**

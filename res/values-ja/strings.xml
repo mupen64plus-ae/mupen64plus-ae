@@ -59,22 +59,20 @@
     <string name="menuAbout_title">ついて</string>
     
     <!-- Categories -->
-    <string name="categoryPlugins_title">ハードウェア設定</string>
-    <string name="categoryStorage_title">ストレージ設定</string>
+    <string name="categoryHardware_title">ハードウェア設定</string>
     <string name="categoryOther_title">その他設定</string>
     
     <!-- Settings Menu -->
-    <string name="video_title">ビデオ</string>
-    <string name="video_summary">グラフィック設定</string>
     <string name="touchscreen_title">タッチスクリーン</string>
     <string name="touchscreen_summary">オンスクリーン·コントローラ設定</string>
-    <string name="input_title">コントローラ</string>
-    <string name="input_summary">ゲームパッド/ジョイスティック設定</string>
-    <string name="other_title">その他設定</string>
-    <string name="other_summary">オーディオ、プロセッサ、コア、など。</string>
+    <string name="xperiaLayout_title">XperiaPLAY設定</string>
+    <string name="peripheral_title">コントローラ</string>
+    <string name="peripheral_summary">ゲームパッド/ジョイスティック設定</string>
+    <string name="video_title">ビデオ</string>
+    <string name="video_summary">グラフィック設定</string>
+    <string name="plugins_title">その他設定</string>
+    <string name="plugins_summary">オーディオ、プロセッサ、コア、など。</string>
     <string name="gameSaveDir_title">セーブデータのフォルダ</string>
-    <string name="autoSaveEnabled_title">自動保存</string>
-    <string name="autoSaveEnabled_summary">アプリを終了すると自動的にゲームを保存。</string>
     <string name="frameRateEnabled_title">フレームレート表示</string>
     <string name="cheats_title">チート</string>
     <string name="cheats_summary">でチートを使用するゲームを選択して。</string>
@@ -88,20 +86,16 @@
     <string name="touchscreenOctagonJoystick_title">八角形のようにアナログスティックをエミュレート</string>
     
     <!-- Peripherals Menu -->
-    <string name="inputEnabled_title">@string/_enable</string>
-    <string name="inputPlugin_title">@string/_plugin</string>
-    <string name="inputMap1_title">プレイヤー1</string>
-    <string name="inputMap2_title">プレイヤー2</string>
-    <string name="inputMap3_title">プレイヤー3</string>
-    <string name="inputMap4_title">プレイヤー4</string>
-    <string name="inputMap_summary">ボタンとアナログスティック設定</string>
-    <string name="inputMap_dialogTitle">ジョイスティックまたはボタンを押しながらアイコンを押して。</string>
+    <string name="peripheralEnabled_title">@string/_enable</string>
+    <string name="peripheralMap1_title">プレイヤー1</string>
+    <string name="peripheralMap2_title">プレイヤー2</string>
+    <string name="peripheralMap3_title">プレイヤー3</string>
+    <string name="peripheralMap4_title">プレイヤー4</string>
+    <string name="peripheralMap_summary">ボタンとアナログスティック設定</string>
     <string name="volumeKeysEnabled_title">ボリュームキーを有効</string>
     <string name="volumeKeysEnabled_summary">コントローラのボタンとしてボリュームキーを使用</string>
     
     <!-- Video Menu -->
-    <string name="videoEnabled_title">@string/_enable</string>
-    <string name="videoPlugin_title">@string/_plugin</string>
     <string name="videoStretch_title">ストレッチ画面</string>
     <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
     <string name="videoRGBA8888_title">RGBA_8888 モード</string>
@@ -110,6 +104,13 @@
     <string name="gles2N64_summary"></string>
     <string name="gles2Rice_title">GLES2Rice設定</string>
     <string name="gles2Rice_summary"></string>
+    
+    <!-- Plugins Menu -->
+    <string name="audioPlugin_title">オーディオ設定</string>
+    <string name="rspPlugin_title">RSP</string>
+    <string name="corePlugin_title">コア</string>
+    <string name="menuResetAppData_title">アプリデータを復元</string>
+    <string name="menuResetAppData_summary">インポートされたプラグインやテクスチャが失われます！</string>
     
     <!-- GLES2N64 Menu -->
     <string name="gles2N64Frameskip_title">フレームスキップ</string>
@@ -136,19 +137,21 @@
     <string name="gles2RiceImportHiResTextures_title">インポートテクスチャパック</string>
     <string name="gles2RiceImportHiResTextures_summary">ゲームにカスタムテクスチャを適用します</string>
     
-    <!-- Other Menu -->
-    <string name="audioPlugin_title">オーディオ設定</string>
-    <string name="xperiaPlugin_title">XperiaPLAY設定</string>
-    <string name="rspPlugin_title">RSP</string>
-    <string name="corePlugin_title">コア</string>
-    <string name="menuResetAppData_title">アプリデータを復元</string>
-    <string name="menuResetAppData_summary">インポートされたプラグインやテクスチャが失われます！</string>
-    
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->
     <!-- Developers: Please follow naming conventions -->
     <!-- as described in res/xml/preferences.xml      -->
     <!-- ******************************************** -->
+    
+    <!-- Video Plugin Entries -->
+    
+    <!-- Audio Plugin Entries -->
+    
+    <!-- Input Plugin Entries -->
+    
+    <!-- RSP Plugin Entries -->
+    
+    <!-- Core Plugin Entries -->
     
     <!-- Touchscreen Layout Entries -->
     <string name="touchscreenLayout_entry0">アナログ (roymustang16によって)</string>
@@ -161,29 +164,16 @@
     <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">タブレット</string>
     
-    <!-- Input Plugin Entries -->
-    
-    <!-- Video Plugin Entries -->
-    
-    <!-- Audio Plugin Entries -->
-    <string name="audioPlugin_entry0">なし（オーディオは無効）</string>
-    
     <!-- Xperia PLAY Layout Entries -->
-    <string name="xperiaPlugin_entry0">なし（デバイスがXperiaPlayではありません）</string>
-    <string name="xperiaPlugin_entry1">左パッド： アナログ制御; 右パッド： Cボタン</string>
-    <string name="xperiaPlugin_entry2">左パッド： Cボタ; 右パッド: アナログ制御</string>
-    
-    <!-- RSP Plugin Entries -->
-    <string name="rspPlugin_entry0">なし（RSPは無効）</string>
-    <string name="rspPlugin_entry2">rsp-hle-nosound, v1.10 (いいえオーディオ処理, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
-    
-    <!-- Core Plugin Entries -->
+    <string name="xperiaLayout_entry0">なし（デバイスがXperiaPlayではありません）</string>
+    <string name="xperiaLayout_entry1">左パッド： アナログ制御; 右パッド： Cボタン</string>
+    <string name="xperiaLayout_entry2">左パッド： Cボタ; 右パッド: アナログ制御</string>
     
     <!-- ******************************************** -->
     <!-- Other Strings                                -->
     <!-- ******************************************** -->
     
-    <!-- In-Game Toast Messages (GameImplementation.java, SDLSurface.java) -->
+    <!-- In-Game Toast Messages (Game*.java) -->
     <string name="toast_appStarted">Mupen64Plusが起動した</string>
     <string name="toast_savegameSlot">%1$dセーブデータスロット</string>
     <string name="toast_savingGame">ゲームを保存</string>
@@ -198,5 +188,6 @@
     <string name="dataDownloader_errorDownloadingFrom">%1$sからデータをダウンロード中にエラー</string>
     <string name="dataDownloader_errorWrite">書き込みエラー (USBストレージ·モードのデバイスですか？) %1$s</string>
     <string name="dataDownloader_failedConnectingTo">%1$sに接続できません</string>
+    <string name="inputMapPreference_dialogTitle">ジョイスティックまたはボタンを押しながらアイコンを押して。</string>
     
 </resources>

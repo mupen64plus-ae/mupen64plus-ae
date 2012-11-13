@@ -36,20 +36,21 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.util.Log;
 
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
+    private static final String MAIN_SETTINGS = "mainSettings";
     private static final String MENU_RESUME = "menuResume";
     private static final String MENU_RESET_USER_PREFS = "menuResetUserPrefs";
-    private static final String MENU_RESET_APP_DATA = "menuResetAppData";
     private static final String MENU_DEVICE_INFO = "menuDeviceInfo";
     private static final String MENU_PERIPHERAL_INFO = "menuPeripheralInfo";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
-    private static final String XPERIA_PLUGIN = "xperiaPlugin";
+    private static final String XPERIA_LAYOUT = "xperiaLayout";
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -61,11 +62,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         boolean isXperiaPlay = Build.VERSION.SDK_INT == Build.VERSION_CODES.GINGERBREAD
                 || Build.VERSION.SDK_INT == Build.VERSION_CODES.GINGERBREAD_MR1;
         
-        // Disable the Xperia PLAY plugin if appropriate
+        // Disable the Xperia PLAY plugin as necessary
         if( !isXperiaPlay )
         {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-            prefs.edit().putString( XPERIA_PLUGIN, "" ).commit();
+            prefs.edit().putString( XPERIA_LAYOUT, "" ).commit();
         }
         
         // Load user preference menu structure from XML and update view
@@ -78,13 +79,17 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Define the click callback for certain menu items that aren't actually preferences
         findPreference( MENU_RESUME ).setOnPreferenceClickListener( this );
         findPreference( MENU_RESET_USER_PREFS ).setOnPreferenceClickListener( this );
-        findPreference( MENU_RESET_APP_DATA ).setOnPreferenceClickListener( this );
         findPreference( MENU_DEVICE_INFO ).setOnPreferenceClickListener( this );
         findPreference( MENU_PERIPHERAL_INFO ).setOnPreferenceClickListener( this );
         
-        // Disable the Xperia PLAY menu item if appropriate
+        // Hide the Xperia PLAY menu item as necessary
         if( !isXperiaPlay )
-            findPreference( XPERIA_PLUGIN ).setEnabled( false );
+        {
+            PreferenceScreen screen = (PreferenceScreen) findPreference( MAIN_SETTINGS );
+            Preference xperia = findPreference( XPERIA_LAYOUT );
+            xperia.setEnabled( false ); // just for good measure
+            screen.removePreference( xperia );
+        }
     }
     
     @Override
@@ -136,15 +141,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             // (OnSharedPreferenceChangedListener is not sufficient for this)
             finish();
             startActivity( getIntent() );
-            return true;
-        }
-        else if( key.equals( MENU_RESET_APP_DATA ) )
-        {
-            // TODO: Add a confirmation dialog
-            // Reset the application data
-            Globals.appData.resetToDefaults();
-            // Force user to restart app so stuff gets refreshed
-            finish();
             return true;
         }
         else if( key.equals( MENU_DEVICE_INFO ) )

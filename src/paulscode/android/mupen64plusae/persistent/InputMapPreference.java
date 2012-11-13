@@ -154,7 +154,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         else
         {
             // Setup dialog for N64 control mapping
-            builder.setTitle( R.string.inputMap_dialogTitle );
+            builder.setTitle( R.string.inputMapPreference_dialogTitle );
             builder.setNeutralButton( R.string.inputMapPreference_special, this );
         }
     }

@@ -141,14 +141,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
-        if( Globals.userPrefs.isVideoEnabled )
-            FileUtil.loadNativeLib( Globals.userPrefs.videoPlugin );
-        if( Globals.userPrefs.isAudioEnabled )
-            FileUtil.loadNativeLib( Globals.userPrefs.audioPlugin );
-        if( Globals.userPrefs.isInputEnabled )
-            FileUtil.loadNativeLib( Globals.userPrefs.inputPlugin );
-        if( Globals.userPrefs.isRspEnabled )
-            FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin );
+        FileUtil.loadNativeLib( Globals.userPrefs.videoPlugin );
+        FileUtil.loadNativeLib( Globals.userPrefs.audioPlugin );
+        FileUtil.loadNativeLib( Globals.userPrefs.inputPlugin );
+        FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin );
         
         // Initialize user interface devices
         initTouchscreen();
@@ -205,17 +201,21 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         Log.i( "GameLifecycleHandler", "onKey " + keyCode + ": " );
         
+        boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
+        
         if( keyCode == KeyEvent.KEYCODE_BACK )
         {
             // Absorb all back key presses, and toggle the ActionBar if applicable
-            if( event.getAction() == KeyEvent.ACTION_DOWN )
+            if( keyDown )
                 toggleActionBar( view.getRootView() );
             return true;
         }
         
         // Let Android handle the menu key if available
         else if( keyCode == KeyEvent.KEYCODE_MENU )
+        {
             return false;
+        }
         
         // Let Android handle the volume keys if not used for control
         else if( !Globals.userPrefs.isVolKeysEnabled
@@ -240,7 +240,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
                     Globals.userPrefs.isFrameRateEnabled, Globals.paths.fontsDir );
-            mTouchscreenMap.load( Globals.userPrefs.touchscreenLayoutFolder );
+            mTouchscreenMap.load( Globals.userPrefs.touchscreenLayout );
             mOverlay.initialize( mTouchscreenMap );
             
             // The touch controller is needed to handle touch events
@@ -254,7 +254,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     
     private void initPeripherals()
     {
-        if( Globals.userPrefs.isInputEnabled )
+        if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isPeripheralEnabled )
         {
             // Create the input providers shared among all peripheral controllers
             mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );
@@ -307,14 +307,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             // Make the home buttons almost invisible again
             if( rootView != null )
                 rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
-            
-            if( mCoreRunning )
-                NativeMethods.resumeEmulator();
         }
         else
         {
-            if( mCoreRunning )
-                NativeMethods.pauseEmulator();
             actionBar.show();
         }
     }

@@ -46,6 +46,7 @@
     <string name="ingameSlot_title">Slot %1$d</string>
     <string name="ingameSave_title">Save to file…</string>
     <string name="ingameLoad_title">Load from file…</string>
+    <string name="ingameReset_title">Reset game</string>
     <string name="ingameMenu_title">Main menu</string>
     
     <!-- ******************************************** -->
@@ -63,22 +64,20 @@
     <string name="menuAbout_title">About</string>
     
     <!-- Categories -->
-    <string name="categoryPlugins_title">Hardware settings</string>
-    <string name="categoryStorage_title">Storage options</string>
+    <string name="categoryHardware_title">Hardware settings</string>
     <string name="categoryOther_title">@string/_other</string>
     
     <!-- Settings Menu -->
-    <string name="video_title">Video</string>
-    <string name="video_summary">Graphics settings</string>
     <string name="touchscreen_title">Touchscreen</string>
     <string name="touchscreen_summary">On-screen controller settings</string>
-    <string name="input_title">Controllers</string>
-    <string name="input_summary">Gamepads, joysticks, keyboards, etc.</string>
-    <string name="other_title">@string/_other</string>
-    <string name="other_summary">Audio, processor, core, etc.</string>
+    <string name="xperiaLayout_title">Xperia PLAY touchpad</string>
+    <string name="peripheral_title">Controllers</string>
+    <string name="peripheral_summary">Gamepads, joysticks, keyboards, etc.</string>
+    <string name="video_title">Video</string>
+    <string name="video_summary">Graphics settings</string>
+    <string name="plugins_title">Plugins</string>
+    <string name="plugins_summary">Advanced features</string>    
     <string name="gameSaveDir_title">Savegame folder</string>
-    <string name="autoSaveEnabled_title">Auto-save</string>
-    <string name="autoSaveEnabled_summary">Save game on exit</string>
     <string name="frameRateEnabled_title">Show framerate</string>
     <string name="cheats_title">Cheats</string>
     <string name="cheats_summary">Choose a game to hack</string>
@@ -94,22 +93,18 @@
     <string name="touchscreenOctagonJoystick_summary">Constrain analog motion to an octagon, like the original N64 controller</string>
     
     <!-- Peripherals Menu -->
-    <string name="inputEnabled_title">@string/_enable</string>
-    <string name="inputPlugin_title">@string/_plugin</string>
-    <string name="inputMap1_title">Player 1</string>
-    <string name="inputMap2_title">Player 2</string>
-    <string name="inputMap3_title">Player 3</string>
-    <string name="inputMap4_title">Player 4</string>
-    <string name="inputMap_summary">Configure buttons and sticks</string>
-    <string name="inputMap_dialogTitle">To map: press key/stick, then touch icon\nTo unmap: long-touch icon</string>
+    <string name="peripheralEnabled_title">@string/_enable</string>
+    <string name="peripheralMap1_title">Player 1</string>
+    <string name="peripheralMap2_title">Player 2</string>
+    <string name="peripheralMap3_title">Player 3</string>
+    <string name="peripheralMap4_title">Player 4</string>
+    <string name="peripheralMap_summary">Configure buttons and sticks</string>
     <string name="volumeKeysEnabled_title">Volume key controls</string>
     <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
     <string name="menuPeripheralInfo_title">Controller info</string>
     <string name="menuPeripheralInfo_summary">Peripheral hardware and model information</string>
     
     <!-- Video Menu -->
-    <string name="videoEnabled_title">@string/_enable</string>
-    <string name="videoPlugin_title">@string/_plugin</string>
     <string name="videoStretch_title">Stretch screen</string>
     <string name="videoStretch_summary">May skew aspect ratio</string>
     <string name="videoRGBA8888_title">RGBA_8888 mode</string>
@@ -118,6 +113,15 @@
     <string name="gles2N64_summary"></string>
     <string name="gles2Rice_title">GLES2Rice settings</string>
     <string name="gles2Rice_summary"></string>
+    
+    <!-- Plugins Menu -->
+    <string name="videoPlugin_title">Video</string>
+    <string name="audioPlugin_title">Audio</string>
+    <string name="inputPlugin_title">Input</string>    
+    <string name="rspPlugin_title">Reality signal processor (RSP)</string>
+    <string name="corePlugin_title">Emulation core</string>
+    <string name="menuDeviceInfo_title">Device info</string>
+    <string name="menuDeviceInfo_summary">Device hardware and model information</string>
     
     <!-- GLES2N64 Menu -->
     <string name="gles2N64Frameskip_title">Frameskip</string>
@@ -144,21 +148,32 @@
     <string name="gles2RiceImportHiResTextures_title">Import texture pack</string>
     <string name="gles2RiceImportHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
     
-    <!-- Other Menu -->
-    <string name="audioPlugin_title">Audio</string>
-    <string name="xperiaPlugin_title">Xperia PLAY configuration</string>
-    <string name="rspPlugin_title">Reality signal processor</string>
-    <string name="corePlugin_title">Emulation core</string>
-    <string name="menuResetAppData_title">Restore app data</string>
-    <string name="menuResetAppData_summary">Imported plugins and textures will be lost!</string>
-    <string name="menuDeviceInfo_title">Device info</string>
-    <string name="menuDeviceInfo_summary">Device hardware and model information</string>
-    
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->
     <!-- Developers: Please follow naming conventions -->
     <!-- as described in res/xml/preferences.xml      -->
     <!-- ******************************************** -->
+    
+    <!-- Video Plugin Entries -->
+    <string name="videoPlugin_entry0">None (video disabled)</string>
+    <string name="videoPlugin_entry1">gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</string>
+    <string name="videoPlugin_entry2">gles2rice, v0.1.0(b) (GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</string>
+    
+    <!-- Audio Plugin Entries -->
+    <string name="audioPlugin_entry0">None (audio disabled)</string>
+    <string name="audioPlugin_entry1">audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+    
+    <!-- Input Plugin Entries -->
+    <string name="inputPlugin_entry0">None (input disabled)</string>
+    <string name="inputPlugin_entry1">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    
+    <!-- RSP Plugin Entries -->
+    <string name="rspPlugin_entry0">None (RSP disabled)</string>
+    <string name="rspPlugin_entry1">rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+    <string name="rspPlugin_entry2">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    
+    <!-- Core Plugin Entries -->
+    <string name="corePlugin_entry0">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
     <!-- Touchscreen Layout Entries -->
     <string name="touchscreenLayout_entry0">Analog (by roymustang16)</string>
@@ -172,30 +187,10 @@
     <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">Tablet</string>
     
-    <!-- Input Plugin Entries -->
-    <string name="inputPlugin_entry0">@string/_disabled</string>
-    <string name="inputPlugin_entry1">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
-    
-    <!-- Video Plugin Entries -->
-    <string name="videoPlugin_entry0">gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</string>
-    <string name="videoPlugin_entry1">gles2rice, v0.1.0(b) (GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</string>
-    
-    <!-- Audio Plugin Entries -->
-    <string name="audioPlugin_entry0">None (audio disabled)</string>
-    <string name="audioPlugin_entry1">audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
-    
     <!-- Xperia PLAY Layout Entries -->
-    <string name="xperiaPlugin_entry0">None (this device is not a Sony Ericsson Xperia PLAY)</string>
-    <string name="xperiaPlugin_entry1">Left pad: Analog control; Right pad: C buttons</string>
-    <string name="xperiaPlugin_entry2">Left pad: C buttons;  Right pad: Analog control</string>
-    
-    <!-- RSP Plugin Entries -->
-    <string name="rspPlugin_entry0">None (RSP disabled)</string>
-    <string name="rspPlugin_entry1">rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
-    <string name="rspPlugin_entry2">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
-    
-    <!-- Core Plugin Entries -->
-    <string name="corePlugin_entry0">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    <string name="xperiaLayout_entry0">None (this device is not a Sony Ericsson Xperia PLAY)</string>
+    <string name="xperiaLayout_entry1">Left pad: Analog control; Right pad: C buttons</string>
+    <string name="xperiaLayout_entry2">Left pad: C buttons;  Right pad: Analog control</string>
     
     <!-- Special Functions -->
     <string name="specialFunction_entry0">Stop</string>
@@ -219,7 +214,7 @@
     <!-- Other Strings                                -->
     <!-- ******************************************** -->
     
-    <!-- In-Game Toast Messages (GameImplementation.java, SDLSurface.java) -->
+    <!-- In-Game Toast Messages (Game*.java) -->
     <string name="toast_appStarted">Mupen64Plus started</string>
     <string name="toast_sdInaccessible">SD card not accessible (plugged in USB Mass Storage Device mode?)</string>
     <string name="toast_savegameSlot">Savegame slot %1$d</string>
@@ -242,6 +237,7 @@
     <string name="dataDownloader_progress">%1$.0f%% done: file %2$s</string>
     <string name="gameMenu_confirmFile">Overwrite %1$s?</string>
     <string name="gameMenu_saveHint">filename</string>
+    <string name="inputMapPreference_dialogTitle">To map: press key/stick, then touch icon\nTo unmap: long-touch icon</string>
     <string name="inputMapPreference_rumble">Rumble\nPak</string>
     <string name="inputMapPreference_mempak">Expansion\nPak</string>
     <string name="inputMapPreference_special">Special functions</string>
