@@ -84,7 +84,7 @@ public class GameMenuHandler
             case R.id.ingameMenu:
                 // Return to previous activity (MenuActivity)
                 // It's easier just to finish so that everything will be reloaded next time
-                mActivity.finish(); 
+                mActivity.finish();
                 break;
             default:
                 break;
@@ -105,7 +105,7 @@ public class GameMenuHandler
     private void setSlot( int value, boolean notify )
     {
         mSlot = value % NUM_SLOTS;
-//TODO        NativeMethods.stateSetSlotEmulator( mSlot );
+        NativeMethods.stateSetSlotEmulator( mSlot );
         if( notify )
             Notifier.showToast( mActivity, R.string.toast_savegameSlot, mSlot );
         if( mSlotMenuItem != null )
@@ -115,13 +115,13 @@ public class GameMenuHandler
     private void saveSlot()
     {
         Notifier.showToast( mActivity, R.string.toast_savingSlot, mSlot );
-//TODO        NativeMethods.stateSaveEmulator();
+        NativeMethods.stateSaveEmulator();
     }
     
     private void loadSlot()
     {
         Notifier.showToast( mActivity, R.string.toast_loadingSlot, mSlot );
-//TODO        NativeMethods.stateLoadEmulator();
+        NativeMethods.stateLoadEmulator();
     }
     
     private void saveStateFromPrompt()
@@ -168,7 +168,7 @@ public class GameMenuHandler
                     {
                         Notifier.showToast( mActivity, R.string.toast_overwritingGame,
                                 file.getName() );
-//TODO                        NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+                        NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
                     }
                 }
             } );
@@ -176,14 +176,13 @@ public class GameMenuHandler
         else
         {
             Notifier.showToast( mActivity, R.string.toast_savingGame, file.getName() );
-//TODO            NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+            NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
         }
     }
     
     private void loadState( File file )
     {
         Notifier.showToast( mActivity, R.string.toast_loadingGame, file.getName() );
-//TODO        NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
-    }
-    
+        NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
+    }    
 }
