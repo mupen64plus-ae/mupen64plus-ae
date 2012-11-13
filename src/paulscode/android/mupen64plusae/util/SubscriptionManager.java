@@ -51,7 +51,7 @@ public class SubscriptionManager<Subscriber>
     
     public void unsubscribeAll()
     {
-        mSubscribers.removeAll( mSubscribers );            
+        mSubscribers.clear();            
     }
     
     public List<Subscriber> getSubscribers()

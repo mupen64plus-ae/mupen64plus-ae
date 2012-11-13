@@ -81,7 +81,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.L
         for( AbstractProvider provider : providers )
             provider.unregisterListener( this );
         
-        providers.removeAll( providers );
+        providers.clear();
     }
     
     /**

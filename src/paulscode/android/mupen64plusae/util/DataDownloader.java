@@ -632,7 +632,7 @@ public class DataDownloader extends Thread
         }
     }
     
-    class CountingInputStream extends BufferedInputStream
+    static class CountingInputStream extends BufferedInputStream
     {
         private long mBytesReadMark = 0;
         private long mBytesRead = 0;

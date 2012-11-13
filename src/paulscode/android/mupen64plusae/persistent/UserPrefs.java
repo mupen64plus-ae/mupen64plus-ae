@@ -267,10 +267,10 @@ public class UserPrefs
         touchscreenLayoutFolder = folder;
         
         // Derived values
-        isGles2N64AutoFrameskipEnabled = gles2N64MaxFrameskip < 0;
-        isAudioEnabled = audioPlugin != null && !audioPlugin.equals( "" );
-        isXperiaEnabled = xperiaLayout != null && !xperiaLayout.equals( "" );
-        isRspEnabled = rspPlugin != null && rspPlugin.equals( "" );
+        isGles2N64AutoFrameskipEnabled = (gles2N64MaxFrameskip < 0);
+        isAudioEnabled  = (audioPlugin  != null) && !audioPlugin.equals( "" );
+        isXperiaEnabled = (xperiaLayout != null) && !xperiaLayout.equals( "" );
+        isRspEnabled    = (rspPlugin    != null) && !rspPlugin.equals( "" );
         selectedGameAutoSavefile = paths.dataDir + "/autosave_" + Math.abs( selectedGame.hashCode() ) + ".sav";
     }
     
