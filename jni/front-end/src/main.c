@@ -28,13 +28,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
-
-#include <SDL.h>
+#include <stdarg.h>
 
 // The mac version of SDL requires inclusion of SDL_main in the executable
 #ifdef __APPLE__
 #include <SDL/SDL_main.h>
+#elif defined (ANDROID)
+#include <SDL.h>
 #endif
 
 #include "cheat.h"
@@ -44,10 +44,7 @@
 #include "core_interface.h"
 #include "compare_core.h"
 #include "osal_preproc.h"
-#include "rom.h"
-#include "memory.h"
 
-#include <unistd.h>
 #include <jni.h>
 #include <android/log.h>
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "front_end", __VA_ARGS__)
