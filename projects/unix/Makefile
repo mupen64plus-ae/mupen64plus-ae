@@ -65,7 +65,7 @@ ifneq ("$(filter pentium i%86,$(HOST_CPU))","")
   CPU := X86
   ARCH_DETECTED := 32BITS
 endif
-ifneq ("$(filter ppc powerpc,$(HOST_CPU))","")
+ifneq ("$(filter ppc macppc socppc powerpc,$(HOST_CPU))","")
   CPU := PPC
   ARCH_DETECTED := 32BITS
   BIG_ENDIAN := 1
