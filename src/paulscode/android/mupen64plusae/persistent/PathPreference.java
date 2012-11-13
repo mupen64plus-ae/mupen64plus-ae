@@ -17,12 +17,14 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import paulscode.android.mupen64plusae.Globals;
+import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import android.app.AlertDialog.Builder;
 import android.content.Context;

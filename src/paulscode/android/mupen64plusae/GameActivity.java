@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -41,25 +42,77 @@ public class GameActivity extends Activity
         mMenuHandler.onCreateOptionsMenu( menu );
         return super.onCreateOptionsMenu( menu );
     }
-
+    
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
         mMenuHandler.onOptionsItemSelected( item );
         return super.onOptionsItemSelected( item );
     }
-
+    
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
+        Log.i( "GameActivity", "onCreate: ");
         super.onCreate( savedInstanceState );
         mLifecycleHandler.onCreate( savedInstanceState );
     }
     
     @Override
-    public void onUserLeaveHint()
+    protected void onStart()
     {
-        mLifecycleHandler.onUserLeaveHint();
-        super.onUserLeaveHint();
+        Log.i( "GameActivity", "onStart: ");
+        super.onStart();
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        Log.i( "GameActivity", "onResume: ");
+        super.onResume();
+        mLifecycleHandler.onResume();
+    }
+    
+    @Override
+    protected void onRestoreInstanceState( Bundle savedInstanceState )
+    {
+        Log.i( "GameActivity", "onRestoreInstanceState: ");
+        super.onRestoreInstanceState( savedInstanceState );
+    }
+    
+    @Override
+    protected void onSaveInstanceState( Bundle outState )
+    {
+        Log.i( "GameActivity", "onSaveInstanceState: " );
+        super.onSaveInstanceState( outState );
+    }
+    
+    @Override
+    protected void onPause()
+    {
+        Log.i( "GameActivity", "onPause: " );
+        super.onPause();
+        mLifecycleHandler.onPause();
+    }
+    
+    @Override
+    protected void onStop()
+    {
+        Log.i( "GameActivity", "onStop: " );
+        super.onStop();
+    }
+    
+    @Override
+    protected void onDestroy()
+    {
+        Log.i( "GameActivity", "onDestroy: " );
+        super.onDestroy();
+    }
+    
+    @Override
+    protected void onRestart()
+    {
+        Log.i( "GameActivity", "onRestart: " );
+        super.onRestart();
     }
 }

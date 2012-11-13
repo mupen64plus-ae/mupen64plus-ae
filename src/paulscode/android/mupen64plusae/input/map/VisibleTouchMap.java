@@ -21,7 +21,8 @@ package paulscode.android.mupen64plusae.input.map;
 
 import java.util.ArrayList;
 
-import paulscode.android.mupen64plusae.TouchscreenView;
+import paulscode.android.mupen64plusae.GameSurface;
+import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -35,9 +36,9 @@ import android.util.Log;
  * A kind of touch map that can be drawn on a canvas.
  * 
  * @see TouchMap
- * @see TouchscreenView
+ * @see GameOverlay
  */
-public class VisibleTouchMap extends TouchMap
+public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateListener
 {
     /**
      * The interface for listening to map changes.
@@ -161,10 +162,9 @@ public class VisibleTouchMap extends TouchMap
     }
     
     /**
-     * Gets the number of frames over which the FPS should be computed.
-     * 
-     * TODO: Ideally this would be in a different class. It's here because the number is stored with
-     * the map assets.
+     * Gets the number of frames over which the FPS should be computed. Historically this value has
+     * been loaded with the map assets, which is why this method is provided here rather than in
+     * user preferences or app settings.
      * 
      * @return The number of frames.
      */
@@ -258,7 +258,7 @@ public class VisibleTouchMap extends TouchMap
      * @param axisFractionX The x-axis fraction, between -1 and 1, inclusive.
      * @param axisFractionY The y-axis fraction, between -1 and 1, inclusive.
      */
-    public void updateAnalog( float axisFractionX, float axisFractionY )
+    public void onUpdateAnalog( float axisFractionX, float axisFractionY )
     {
         if( analogForeImage != null && analogBackImage != null )
         {
@@ -284,12 +284,13 @@ public class VisibleTouchMap extends TouchMap
             listener.onStickChanged( this, axisFractionX, axisFractionY );
     }
     
-    /**
-     * Updates the FPS indicator assets to reflect a new FPS value.
+    /*
+     * (non-Javadoc)
      * 
-     * @param fps The new FPS value.
+     * @see paulscode.android.mupen64plusae.SDLSurface.FrameRateListener#updateFps(int)
      */
-    public void updateFps( int fps )
+    @Override
+    public void onUpdateFps( int fps )
     {
         // Clamp to positive, four digits max [0 - 9999]
         fps = Utility.clamp( fps, 0, 9999 );

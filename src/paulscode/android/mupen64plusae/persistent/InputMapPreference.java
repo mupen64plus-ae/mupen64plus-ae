@@ -20,8 +20,10 @@
  * Concise implementation inspired by
  * http://stackoverflow.com/questions/4505845/concise-way-of-writing-new-dialogpreference-classes
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.persistent;
 
+import paulscode.android.mupen64plusae.Globals;
+import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;

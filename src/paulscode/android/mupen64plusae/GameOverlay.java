@@ -27,12 +27,12 @@ import android.view.View;
 
 //TODO: Minor glitch: hold analog, then hold button, then release analog -> analog doesn't redraw
 
-public class TouchscreenView extends View implements VisibleTouchMap.Listener
+public class GameOverlay extends View implements VisibleTouchMap.Listener
 {
     private boolean mInitialized;
     private VisibleTouchMap mTouchMap;
     
-    public TouchscreenView( Context context, AttributeSet attribs )
+    public GameOverlay( Context context, AttributeSet attribs )
     {
         super( context, attribs );
         mInitialized = false;

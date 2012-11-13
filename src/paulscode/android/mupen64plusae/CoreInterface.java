@@ -66,30 +66,19 @@ public class CoreInterface
     
     // Internals
     private static Activity sActivity = null;
-    private static SDLSurface sSurface;
+    private static GameSurface sSurface;
     private static Vibrator sVibrator = null;
     private static Thread sAudioThread = null;
     private static AudioTrack sAudioTrack = null;
     private static Object sAudioBuffer;
     private static String sExtraArgs = ".";
     
-    public static void startup( Activity activity, SDLSurface surface, Vibrator vibrator )
+    public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
         sActivity = activity;
         sSurface = surface;
         sVibrator = vibrator;
         syncConfigFiles( Globals.userPrefs, Globals.paths );
-    }
-    
-    public static void shutdown()
-    {
-        // Actually, this might be a bad idea if other threads are still using these
-        // sActivity = null;
-        // sSurface = null;
-        // sVibrator = null;
-        // sAudioThread = null;
-        // sAudioTrack = null;
-        // sAudioBuffer = null;
     }
     
     public static String getExtraArgs()
@@ -145,8 +134,8 @@ public class CoreInterface
             }
             
             // Unzip the ROM
-            Paths.tmpFile = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
-            if( Paths.tmpFile == null )
+            String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
+            if( selectedGameUnzipped == null )
             {
                 Log.v( "CoreInterface", "Cannot play zipped ROM: '" + selectedGame + "'" );
                 
@@ -163,7 +152,7 @@ public class CoreInterface
             else
             {
                 finishedReading = true;
-                return (Object) Paths.tmpFile;
+                return (Object) selectedGameUnzipped;
             }
         }
         finishedReading = true;

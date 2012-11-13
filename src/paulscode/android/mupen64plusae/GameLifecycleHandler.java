@@ -33,41 +33,63 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 
+//@formatter:off
 /**
- *  (start)
- *     |
- * onCreate <--- (killed) <-----\
- *     |                        |
- *  onStart <-- onRestart <--\  |
- *     |                     |  |
- * onResume <----\           |  |
- *     |         |           |  |
- * (running)     |           |  |   
- *     |         |           |  |
- *  onPause -----/           |  |
- *     |                     |  |
- *  onStop ------------------/--/
- *     |
+ * (start)
+ *    |
+ * onCreate <-- (killed) <-----\
+ *    |                        |
+ * onStart <-- onRestart <--\  |
+ *    |                     |  |
+ * onResume <------------\  |  |
+ *    |                  |  |  |
+ * [*onSurfaceCreated*]  |  |  |
+ *    |                  |  |  |
+ * [*onSurfaceChanged*]  |  |  |
+ *    |                  |  |  |
+ * (running)             |  |  |   
+ *    |                  |  |  |
+ * onPause --------------/  |  |
+ *    |                     |  |
+ * [*onSurfaceDestroyed*]   |  |
+ *    |                     |  |
+ * onStop ------------------/--/
+ *    |
  * onDestroy
- *     |
- *   (end)
+ *    |
+ * (end)
+ * 
+ * 
+ * [*doesn't always occur*]
+ * 
+ * 
  */
-public class GameLifecycleHandler implements View.OnKeyListener
+//@formatter:on
+
+public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.CoreLifecycleListener
 {
-    // Internals
+    // Activity and views
     private Activity mActivity;
-    private SDLSurface mSdlSurface;
+    private GameSurface mSurface;
+    private GameOverlay mOverlay;
+    
+    // Internal flags
+    boolean mCoreRunning = false;
+    
+    // Input helpers
     private VisibleTouchMap mTouchscreenMap;
-    private TouchscreenView mTouchscreenView;
-    @SuppressWarnings( "unused" )
-    private TouchscreenController mTouchscreenController;
     private KeyProvider mKeyProvider;
     private AxisProvider mAxisProvider;
+    
+    // Controllers
+    @SuppressWarnings( "unused" )
+    private TouchscreenController mTouchscreenController;
     private PeripheralController mPeripheralController1;
     private PeripheralController mPeripheralController2;
     private PeripheralController mPeripheralController3;
@@ -82,38 +104,37 @@ public class GameLifecycleHandler implements View.OnKeyListener
     public void onCreate( Bundle savedInstanceState )
     {
         // Lay out content and initialize stuff
-        Window window = mActivity.getWindow();
         
-        // Configure full-screen mode
+        // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
+        // For earlier APIs, remove the title bar to yield more space
+        Window window = mActivity.getWindow();
         if( Globals.IS_HONEYCOMB )
             window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
         else
-            mActivity.requestWindowFeature( Window.FEATURE_NO_TITLE );
+            window.requestFeature( Window.FEATURE_NO_TITLE );
+        
+        // Enable full-screen mode
         window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
         
         // Keep screen on under certain conditions
-        if( Globals.INHIBIT_SUSPEND )
-            window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
+        window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
-        // Get the view objects
+        // Get the views
         mActivity.setContentView( R.layout.game_activity );
-        mSdlSurface = (SDLSurface) mActivity.findViewById( R.id.sdlSurface );
-        mTouchscreenView = (TouchscreenView) mActivity.findViewById( R.id.touchscreenView );
+        mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
+        mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
         // Hide the action bar introduced in higher Android versions
-        if( Globals.IS_HONEYCOMB)
+        if( Globals.IS_HONEYCOMB )
         {
             // SDK version at least HONEYCOMB, so there should be software buttons on this device:
-            View view = mSdlSurface.getRootView();
+            View view = mSurface.getRootView();
             if( view != null )
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
             mActivity.getActionBar().hide();
         }
         
-        // TODO: I removed the status notification... Do we really need it?
-        
         // Load native libraries
-        // TODO: Let the user choose which core to load
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
@@ -131,36 +152,68 @@ public class GameLifecycleHandler implements View.OnKeyListener
         initPeripherals();
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
-        // Override the key provider, to add some extra functionality
-        mSdlSurface.setOnKeyListener( this );
+        // Override the peripheral controllers' key provider, to add some extra functionality
+        mSurface.setOnKeyListener( this );
         
-        // Synchronize the interface to the emulator core
-        CoreInterface.startup( mActivity, mSdlSurface, vibrator );
+        // Start listening to game surface events
+        mSurface.setListeners( this, mTouchscreenMap, mTouchscreenMap.getFpsRecalcPeriod() );
+        
+        // Refresh the objects and data files interfacing to the emulator core
+        CoreInterface.refresh( mActivity, mSurface, vibrator );
         
         // Notify user that the game activity has started
         Notifier.showToast( mActivity, R.string.toast_appStarted );
     }
     
-    public void onUserLeaveHint()
+    public void onResume()
     {
-        // This executes when Home is pressed (can't detect it in onKey).
-        // TODO Why does this cause app crash?
-        saveSession();
+        if( mCoreRunning )
+        {
+            Notifier.showToast( mActivity, R.string.toast_loadingSession );
+            NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+            NativeMethods.resumeEmulator();
+        }
     }
     
-    @TargetApi( 11 )
+    public void onPause()
+    {
+        if( mCoreRunning )
+        {
+            NativeMethods.pauseEmulator();
+            Notifier.showToast( mActivity, R.string.toast_savingSession );
+            NativeMethods.fileSaveEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+        }
+    }
+    
+    @Override
+    public void onCoreStartup()
+    {
+        mCoreRunning = true;
+        Notifier.showToast( mActivity, R.string.toast_loadingSession );
+        NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+        NativeMethods.resumeEmulator();
+    }
+
+    @Override
+    public void onCoreShutdown()
+    {
+        mCoreRunning = false;
+    }
+
     @Override
     public boolean onKey( View view, int keyCode, KeyEvent event )
     {
-        // Toggle the ActionBar for HoneyComb+ when back is pressed
-        if( keyCode == KeyEvent.KEYCODE_BACK && Globals.IS_HONEYCOMB )
+        Log.i( "GameLifecycleHandler", "onKey " + keyCode + ": " );
+        
+        if( keyCode == KeyEvent.KEYCODE_BACK )
         {
+            // Absorb all back key presses, and toggle the ActionBar if applicable
             if( event.getAction() == KeyEvent.ACTION_DOWN )
                 toggleActionBar( view.getRootView() );
             return true;
         }
         
-        // Let Android handle the menu key
+        // Let Android handle the menu key if available
         else if( keyCode == KeyEvent.KEYCODE_MENU )
             return false;
         
@@ -170,11 +223,11 @@ public class GameLifecycleHandler implements View.OnKeyListener
                         || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
             return false;
         
-        // Let the PeripheralControllers' provider handle everything else
+        // Let the PeripheralControllers handle everything else
         else if( mKeyProvider != null )
             return mKeyProvider.onKey( view, keyCode, event );
         
-        // Let Android handle whatever remains
+        // Let Android handle everything else if no PeripheralControllers
         else
             return false;
     }
@@ -184,17 +237,17 @@ public class GameLifecycleHandler implements View.OnKeyListener
         if( Globals.IS_ECLAIR
                 && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
         {
-            // The touch map and view are needed to display frame rate and/or controls
+            // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
                     Globals.userPrefs.isFrameRateEnabled, Globals.paths.fontsDir );
             mTouchscreenMap.load( Globals.userPrefs.touchscreenLayoutFolder );
-            mTouchscreenView.initialize( mTouchscreenMap );
-            mSdlSurface.initialize( mTouchscreenMap );
+            mOverlay.initialize( mTouchscreenMap );
             
             // The touch controller is needed to handle touch events
             if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isTouchscreenEnabled )
             {
-                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSdlSurface, Globals.userPrefs.isOctagonalJoystick );
+                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSurface,
+                        Globals.userPrefs.isOctagonalJoystick );
             }
         }
     }
@@ -204,9 +257,9 @@ public class GameLifecycleHandler implements View.OnKeyListener
         if( Globals.userPrefs.isInputEnabled )
         {
             // Create the input providers shared among all peripheral controllers
-            mKeyProvider = new KeyProvider( mSdlSurface, ImeFormula.DEFAULT );
+            mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );
             if( Globals.IS_HONEYCOMB_MR1 )
-                mAxisProvider = new AxisProvider( mSdlSurface );
+                mAxisProvider = new AxisProvider( mSurface );
             else
                 mAxisProvider = null;
             
@@ -238,20 +291,6 @@ public class GameLifecycleHandler implements View.OnKeyListener
         }
     }
     
-    private void saveSession()
-    {
-        if( !Globals.userPrefs.isAutoSaveEnabled )
-            return;
-        
-        // Pop up a toast message
-        if( mActivity != null )
-            Notifier.showToast( mActivity, R.string.toast_savingGame );
-        
-        // Call the native method to save the emulator state
-        NativeMethods.fileSaveEmulator( Globals.userPrefs.selectedGameAutoSavefile );
-        mSdlSurface.waitForResume();
-    }
-
     @TargetApi( 11 )
     private void toggleActionBar( View rootView )
     {
@@ -264,12 +303,18 @@ public class GameLifecycleHandler implements View.OnKeyListener
         if( actionBar.isShowing() )
         {
             actionBar.hide();
-            // Make the home buttons almost invisible
+            
+            // Make the home buttons almost invisible again
             if( rootView != null )
                 rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+            
+            if( mCoreRunning )
+                NativeMethods.resumeEmulator();
         }
         else
         {
+            if( mCoreRunning )
+                NativeMethods.pauseEmulator();
             actionBar.show();
         }
     }

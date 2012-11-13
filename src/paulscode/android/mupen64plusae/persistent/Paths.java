@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.Globals;
-import android.app.Activity;
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -74,27 +74,24 @@ public class Paths
     public final String error_log;
     
     /** The name of the application settings file. */
-    public final String appSettingsFilename;
+    public final String appDataFilename;
     
-    public static String tmpFile;
-    
-    // TODO: Should we move this to strings.xml?
     /** The data download URL. */
-    public static String dataDownloadUrl = "Data size is 1.0 Mb|mupen64plus_data.zip";
+    public static final String DATA_DOWNLOAD_URL = "Data size is 1.0 Mb|mupen64plus_data.zip";
     
     /**
      * Instantiates a new Path object to retrieve path locations and perform related checks.
      * 
-     * @param activity the main activity
+     * @param context The application context.
      */
-    public Paths( Activity activity )
+    public Paths( Context context )
     {
-        packageName = activity.getPackageName();
+        packageName = context.getPackageName();
         
         // Directories
         storageDir = Globals.DOWNLOAD_TO_SDCARD
                 ? Environment.getExternalStorageDirectory().getAbsolutePath()
-                : activity.getFilesDir().getAbsolutePath();
+                : context.getFilesDir().getAbsolutePath();
         dataDir = storageDir + ( Globals.DOWNLOAD_TO_SDCARD
                 ? "/Android/data/" + packageName
                 : "" );
@@ -118,7 +115,7 @@ public class Paths
         error_log = dataDir + "/error.log";
         
         // Preference file names
-        appSettingsFilename = packageName + "_preferences_device";
+        appDataFilename = packageName + "_preferences_device";
         
         Log.v( "Paths - DataDir Check", "PackageName set to '" + packageName + "'" );
         Log.v( "Paths - DataDir Check", "LibsDir set to '" + libsDir + "'" );
@@ -129,7 +126,7 @@ public class Paths
     /**
      * Checks if the storage directory is accessible.
      * 
-     * @return true, if the storage directory is accessible
+     * @return True, if the storage directory is accessible.
      */
     public boolean isSdCardAccessible()
     {

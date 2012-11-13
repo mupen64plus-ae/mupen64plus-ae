@@ -3,4 +3,7 @@
     <issue id="HardcodedText">
         <ignore path="res\layout\input_map_preference.xml" />
     </issue>
+    <issue id="UseCompoundDrawables">
+        <ignore path="res\layout\main_activity.xml" />
+    </issue>
 </lint>

@@ -52,7 +52,7 @@
         android:title="@string/menuResume_title" >
     </Preference>
 
-    <paulscode.android.mupen64plusae.PathPreference
+    <paulscode.android.mupen64plusae.persistent.PathPreference
         android:icon="@drawable/ic_folder"
         android:key="selectedGame"
         android:title="@string/selectedGame_title"
@@ -91,7 +91,7 @@
                 android:key="touchscreenSize"
                 android:title="@string/touchscreenSize_title" />
 
-            <paulscode.android.mupen64plusae.PathPreference
+            <paulscode.android.mupen64plusae.persistent.PathPreference
                 android:dependency="touchscreenEnabled"
                 android:key="touchscreenCustom"
                 android:title="@string/touchscreenCustom_title"
@@ -122,25 +122,25 @@
                 android:key="inputPlugin"
                 android:title="@string/inputPlugin_title" />
 
-            <paulscode.android.mupen64plusae.InputMapPreference
+            <paulscode.android.mupen64plusae.persistent.InputMapPreference
                 android:dependency="inputEnabled"
                 android:dialogTitle="@string/inputMap_dialogTitle"
                 android:key="inputMap1"
                 android:summary="@string/inputMap_summary"
                 android:title="@string/inputMap1_title" />
-            <paulscode.android.mupen64plusae.InputMapPreference
+            <paulscode.android.mupen64plusae.persistent.InputMapPreference
                 android:dependency="inputEnabled"
                 android:dialogTitle="@string/inputMap_dialogTitle"
                 android:key="inputMap2"
                 android:summary="@string/inputMap_summary"
                 android:title="@string/inputMap2_title" />
-            <paulscode.android.mupen64plusae.InputMapPreference
+            <paulscode.android.mupen64plusae.persistent.InputMapPreference
                 android:dependency="inputEnabled"
                 android:dialogTitle="@string/inputMap_dialogTitle"
                 android:key="inputMap3"
                 android:summary="@string/inputMap_summary"
                 android:title="@string/inputMap3_title" />
-            <paulscode.android.mupen64plusae.InputMapPreference
+            <paulscode.android.mupen64plusae.persistent.InputMapPreference
                 android:dependency="inputEnabled"
                 android:dialogTitle="@string/inputMap_dialogTitle"
                 android:key="inputMap4"
@@ -310,7 +310,7 @@
             android:key="categoryStorage"
             android:title="@string/categoryStorage_title" />
 
-        <paulscode.android.mupen64plusae.PathPreference
+        <paulscode.android.mupen64plusae.persistent.PathPreference
             android:icon="@drawable/ic_folder"
             android:key="gameSaveDir"
             android:title="@string/gameSaveDir_title"

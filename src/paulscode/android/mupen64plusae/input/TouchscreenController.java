@@ -187,7 +187,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
         
         // Update the skin if the virtual analog stick moved
         if( analogMoved )
-            mTouchMap.updateAnalog( mAxisFractionX, mAxisFractionY );
+            mTouchMap.onUpdateAnalog( mAxisFractionX, mAxisFractionY );
     }
     
     /**

@@ -32,7 +32,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
@@ -51,7 +50,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         
         // Get persisted system settings
         Globals.paths = new Paths( this );
-        Globals.appData = new AppData( this, Globals.paths.appSettingsFilename );
+        Globals.appData = new AppData( this, Globals.paths.appDataFilename );
         
         // Initialize the error logger
         ErrorLogger.initialize( Globals.paths.error_log );
@@ -59,16 +58,8 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
         
-        // TODO: Make sure the app is up to date (Updater class)
-        
-        // Configure full-screen mode
-        requestWindowFeature( Window.FEATURE_NO_TITLE );
-        getWindow().setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
-        
-        // Keep screen on under certain conditions
-        if( Globals.INHIBIT_SUSPEND )
-            getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON,
-                    LayoutParams.FLAG_KEEP_SCREEN_ON );
+        // TODO: Is this necessary?
+        getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Lay out the content
         setContentView( R.layout.main_activity );
@@ -113,9 +104,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         }
         
         // Launch the MenuActivity
-        Intent intent = new Intent( this, MenuActivity.class );
-        intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-        startActivity( intent );
+        startActivity( new Intent( this, MenuActivity.class ) );
         
         // We never want to come back to this screen, so finish it
         finish();

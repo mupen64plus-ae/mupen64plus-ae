@@ -54,9 +54,6 @@ public class Globals
     /** True if device is running Jellybean or later (Android 4.1.x) */
     public static final boolean IS_JELLYBEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
-    /** Debug option: inhibit suspend (sleep) when game is running (default true). */
-    public static final boolean INHIBIT_SUSPEND = true;
-    
     /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;
 }
@@ -75,5 +72,6 @@ public class Globals
  * TODO: Cleanup DataDownloader.java
  * TODO: Any way to eliminate DataDownloader? (e.g. use AssetManager class)
  * TODO: Implement SensorController if desired
- * TODO: Do we need an updater class again?
+ * TODO: Do we need an updater class?
+ * TODO: Do we need status notification?
  */

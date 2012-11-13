@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -70,7 +71,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
         
-        // Update the global convenience class
+        // Update the global convenience classes
+        Globals.paths = new Paths( this );
         Globals.userPrefs = new UserPrefs( this, Globals.paths );
         
         // Define the click callback for certain menu items that aren't actually preferences
@@ -120,9 +122,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             Intent intent = Globals.userPrefs.isXperiaEnabled
                     ? new Intent( this, GameActivityXperiaPlay.class )
                     : new Intent( this, GameActivity.class );
-            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
             startActivity( intent );
-            finish();
             return true;
         }
         else if( key.equals( MENU_RESET_USER_PREFS ) )

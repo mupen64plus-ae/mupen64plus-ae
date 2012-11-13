@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <paulscode.android.mupen64plusae.SDLSurface
-        android:id="@+id/sdlSurface"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+    <paulscode.android.mupen64plusae.GameSurface
+        android:id="@+id/gameSurface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-    <paulscode.android.mupen64plusae.TouchscreenView
-        android:id="@+id/touchscreenView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+    <paulscode.android.mupen64plusae.GameOverlay
+        android:id="@+id/gameOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </merge>

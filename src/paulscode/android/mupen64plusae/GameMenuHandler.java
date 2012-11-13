@@ -8,22 +8,20 @@ import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class GameMenuHandler
 {
     private static final int NUM_SLOTS = 10;
-
+    
     private final Activity mActivity;
     
     private MenuItem mSlotMenuItem;
     
     private int mSlot = 0;
-
+    
     public GameMenuHandler( Activity activity )
     {
         mActivity = activity;
@@ -36,7 +34,7 @@ public class GameMenuHandler
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
         setSlot( 0, false );
     }
-
+    
     public void onOptionsItemSelected( MenuItem item )
     {
         switch( item.getItemId() )
@@ -72,88 +70,95 @@ public class GameMenuHandler
                 setSlot( 9, item );
                 break;
             case R.id.ingameQuicksave:
-                NativeMethods.stateSaveEmulator();
+                saveSlot();
                 break;
             case R.id.ingameQuickload:
-                NativeMethods.stateLoadEmulator();
+                loadSlot();
                 break;
             case R.id.ingameSave:
-                saveStateToFile();
+                saveStateFromPrompt();
                 break;
             case R.id.ingameLoad:
-                loadStateFromFile();
+                loadStateFromPrompt();
                 break;
             case R.id.ingameMenu:
-                // Save game state and launch MenuActivity
-//                saveSession();
-                Notifier.clear();
-                CoreInterface.shutdown();
-                Intent intent = new Intent( mActivity, MenuActivity.class );
-                intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-                mActivity.startActivity( intent );
-                // mActivity.finish();
+                // Return to previous activity (MenuActivity)
+                // It's easier just to finish so that everything will be reloaded next time
+                mActivity.finish(); 
                 break;
             default:
                 break;
         }
     }
-
+    
     private void setSlot( int value, MenuItem item )
     {
         setSlot( value );
         item.setChecked( true );
     }
-
+    
     private void setSlot( int value )
     {
         setSlot( value, true );
     }
-
+    
     private void setSlot( int value, boolean notify )
     {
         mSlot = value % NUM_SLOTS;
-        NativeMethods.stateSetSlotEmulator( mSlot );
+//TODO        NativeMethods.stateSetSlotEmulator( mSlot );
         if( notify )
             Notifier.showToast( mActivity, R.string.toast_savegameSlot, mSlot );
         if( mSlotMenuItem != null )
             mSlotMenuItem.setTitle( mActivity.getString( R.string.ingameSlot_title, mSlot ) );
     }
-
-    private void loadStateFromFile()
+    
+    private void saveSlot()
     {
-        Prompt.promptFile( mActivity, mActivity.getText( R.string.ingameLoad_title ), null,
-                new File( Globals.userPrefs.gameSaveDir ), new OnFileListener()
-                {
-                    @Override
-                    public void onFile( File file )
-                    {
-                        NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
-                    }
-                } );
+        Notifier.showToast( mActivity, R.string.toast_savingSlot, mSlot );
+//TODO        NativeMethods.stateSaveEmulator();
     }
-
-    private void saveStateToFile()
+    
+    private void loadSlot()
+    {
+        Notifier.showToast( mActivity, R.string.toast_loadingSlot, mSlot );
+//TODO        NativeMethods.stateLoadEmulator();
+    }
+    
+    private void saveStateFromPrompt()
     {
         CharSequence title = mActivity.getText( R.string.ingameSave_title );
-        CharSequence hint = mActivity.getText( R.string.gameImplementation_saveHint );
+        CharSequence hint = mActivity.getText( R.string.gameMenu_saveHint );
         Prompt.promptText( mActivity, title, null, hint, new OnTextListener()
         {
             @Override
             public void onText( CharSequence text )
             {
-                saveStateToFile( text.toString() );
+                saveState( text.toString() );
             }
         } );
     }
-
-    private void saveStateToFile( final String filename )
+    
+    private void loadStateFromPrompt()
+    {
+        CharSequence title = mActivity.getText( R.string.ingameLoad_title );
+        File startPath = new File( Globals.userPrefs.gameSaveDir );
+        Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
+        {
+            @Override
+            public void onFile( File file )
+            {
+                loadState( file );
+            }
+        } );
+    }
+    
+    private void saveState( final String filename )
     {
         final File file = new File( Globals.userPrefs.gameSaveDir + "/" + filename );
         if( file.exists() )
         {
             String title = mActivity.getString( R.string._confirmation );
-            String message = mActivity
-                    .getString( R.string.gameImplementation_confirmFile, filename );
+            String message = mActivity.getString( R.string.gameMenu_confirmFile, filename );
             Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
             {
                 @Override
@@ -161,18 +166,24 @@ public class GameMenuHandler
                 {
                     if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        Log.i( "GameLifecycleHandler", "Overwriting file " + filename );
-                        NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+                        Notifier.showToast( mActivity, R.string.toast_overwritingGame,
+                                file.getName() );
+//TODO                        NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
                     }
                 }
             } );
         }
         else
         {
-            Log.i( "GameLifecycleHandler", "Saving file " + filename );
-            NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+            Notifier.showToast( mActivity, R.string.toast_savingGame, file.getName() );
+//TODO            NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
         }
     }
-
-
+    
+    private void loadState( File file )
+    {
+        Notifier.showToast( mActivity, R.string.toast_loadingGame, file.getName() );
+//TODO        NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
+    }
+    
 }
