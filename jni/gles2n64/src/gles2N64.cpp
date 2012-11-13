@@ -168,6 +168,12 @@ EXPORT void CALL ProcessDList(void)
                 OGL.frameSkipped++;
                 RSP.busy = FALSE;
                 RSP.DList++;
+
+                /* avoid hang on frameskip */
+                *REG.MI_INTR |= MI_INTR_DP;
+                CheckInterrupts();
+                *REG.MI_INTR |= MI_INTR_SP;
+                CheckInterrupts();
                 return;
             }
         }
@@ -177,6 +183,12 @@ EXPORT void CALL ProcessDList(void)
         OGL.frameSkipped++;
         RSP.busy = FALSE;
         RSP.DList++;
+
+        /* avoid hang on frameskip */
+        *REG.MI_INTR |= MI_INTR_DP;
+        CheckInterrupts();
+        *REG.MI_INTR |= MI_INTR_SP;
+        CheckInterrupts();
         return;
     }
 

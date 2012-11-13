@@ -3,6 +3,7 @@
 
 #include "Types.h"
 
+#define MI_INTR_SP      0x1        // Bit 1: SP intr
 #define MI_INTR_DP      0x20        // Bit 5: DP intr 
 
 struct N64Regs
