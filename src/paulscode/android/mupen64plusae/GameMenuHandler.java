@@ -126,28 +126,34 @@ public class GameMenuHandler
     
     private void saveStateFromPrompt()
     {
+        NativeMethods.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.ingameSave_title );
         CharSequence hint = mActivity.getText( R.string.gameMenu_saveHint );
         Prompt.promptText( mActivity, title, null, hint, new OnTextListener()
         {
             @Override
-            public void onText( CharSequence text )
+            public void onText( CharSequence text, int which )
             {
-                saveState( text.toString() );
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                    saveState( text.toString() );
+                NativeMethods.resumeEmulator();
             }
         } );
     }
     
     private void loadStateFromPrompt()
     {
+        NativeMethods.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.ingameLoad_title );
         File startPath = new File( Globals.userPrefs.gameSaveDir );
         Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
         {
             @Override
-            public void onFile( File file )
+            public void onFile( File file, int which )
             {
-                loadState( file );
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                    loadState( file );
+                NativeMethods.resumeEmulator();
             }
         } );
     }

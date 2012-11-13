@@ -44,9 +44,10 @@ public class Prompt
         /**
          * Process the file selected by the user.
          * 
-         * @param file the file selected by the user.
+         * @param file The file selected by the user, or null.
+         * @param which The DialogInterface button pressed by the user.
          */
-        public void onFile( File file );
+        public void onFile( File file, int which );
     }
     
     /**
@@ -59,9 +60,10 @@ public class Prompt
         /**
          * Process the text provided by the user.
          * 
-         * @param text the text provided by the user
+         * @param text The text provided by the user, or null.
+         * @param which The DialogInterface button pressed by the user.
          */
-        public void onText( CharSequence text );
+        public void onText( CharSequence text, int which );
     }
     
     /**
@@ -107,7 +109,9 @@ public class Prompt
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which >= 0 && which < filenames.size() )
-                    listener.onFile( new File( absolutePaths.get( which ) ) );
+                    listener.onFile( new File( absolutePaths.get( which ) ), DialogInterface.BUTTON_POSITIVE );
+                else
+                    listener.onFile( null, which );
             }
         };
         
@@ -141,7 +145,9 @@ public class Prompt
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
-                    listener.onText( editText.getText().toString() );
+                    listener.onText( editText.getText().toString(), which );
+                else
+                    listener.onText( null, which );
             }
         };
         

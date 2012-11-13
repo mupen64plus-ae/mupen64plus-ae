@@ -56,6 +56,8 @@ public class NativeMethods
     
     public static native void quit();
     
+    public static native void resetEmulator();
+    
     public static native void resumeEmulator();
     
     public static native void runAudioThread();
