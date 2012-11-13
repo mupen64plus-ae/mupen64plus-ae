@@ -64,8 +64,11 @@ public class Globals
  * TODO: *Fix bug when loading zipped ROMS
  * TODO: *Implement multi-player peripheral controls
  * TODO: *Implement special func mapping
- * TODO: *Figure out force-close when loading last session autosavefile
- * TODO: *Figure out failure to return to main menu
+ * TODO: *Figure out crash on NativeMethods.quit
+ * TODO: *Add cheats menu
+ * TODO: *Add reset to ingame menu
+ * TODO: *Hide action bar on menu click
+ * TODO: Keep surface rendering onPause (don't blackout)
  * TODO: Add menu item for quick access to IME (like Language menu)
  * TODO: Look into BlueZ and Zeemote protocols
  * TODO: Cleanup Utility.java

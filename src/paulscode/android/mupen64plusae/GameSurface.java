@@ -45,14 +45,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         public void onCoreShutdown();
     }
     
-    public interface FrameRateListener
+    public interface OnFpsChangedListener
     {
         /**
          * Called when the frame rate value has changed.
          * 
          * @param fps The new FPS value.
          */
-        public void onUpdateFps( int fps );
+        public void onFpsChanged( int fps );
     }
     
     // Thread that the emulator core runs on
@@ -62,7 +62,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     private CoreLifecycleListener mClListener;
     
     // Frame rate listener
-    private FrameRateListener mFpsListener;
+    private OnFpsChangedListener mFpsListener;
     private int mFpsRecalcPeriod = Integer.MAX_VALUE; // By default, don't be a burden
     private long mLastFpsTime = 0;
     private int mFrameCount = -1;
@@ -85,7 +85,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         requestFocus();
     }
     
-    public void setListeners( CoreLifecycleListener clListener, FrameRateListener fpsListener, int fpsRecalcPeriod )
+    public void setListeners( CoreLifecycleListener clListener, OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
     {
         mClListener = clListener;
         mFpsListener = fpsListener;
@@ -345,7 +345,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         {
             long currentTime = System.currentTimeMillis();
             float fFPS = ( (float) mFrameCount / (float) ( currentTime - mLastFpsTime ) ) * 1000.0f;
-            mFpsListener.onUpdateFps( Math.round( fFPS ) );
+            mFpsListener.onFpsChanged( Math.round( fFPS ) );
             mFrameCount = 0;
             mLastFpsTime = currentTime;
         }

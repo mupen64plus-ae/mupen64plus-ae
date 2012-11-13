@@ -103,6 +103,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     @TargetApi( 11 )
     public void onCreate( Bundle savedInstanceState )
     {
+        // Notify user that the game activity has started
+        Notifier.showToast( mActivity, R.string.toast_appStarted );
+
         // Lay out content and initialize stuff
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
@@ -156,13 +159,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         mSurface.setOnKeyListener( this );
         
         // Start listening to game surface events
-        mSurface.setListeners( this, mTouchscreenMap, mTouchscreenMap.getFpsRecalcPeriod() );
+        mSurface.setListeners( this, mOverlay, mTouchscreenMap.getFpsRecalcPeriod() );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
-        
-        // Notify user that the game activity has started
-        Notifier.showToast( mActivity, R.string.toast_appStarted );
     }
     
     public void onResume()
@@ -246,7 +246,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             // The touch controller is needed to handle touch events
             if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isTouchscreenEnabled )
             {
-                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSurface,
+                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSurface, mOverlay,
                         Globals.userPrefs.isOctagonalJoystick );
             }
         }

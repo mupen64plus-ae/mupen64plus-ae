@@ -19,78 +19,60 @@
  */
 package paulscode.android.mupen64plusae;
 
+import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-//TODO: Minor glitch: hold analog, then hold button, then release analog -> analog doesn't redraw
+// TODO: Minor glitch: hold analog, then hold button, then release analog -> analog doesn't redraw
 
-public class GameOverlay extends View implements VisibleTouchMap.Listener
+public class GameOverlay extends View implements TouchscreenController.OnStateChangedListener,
+        GameSurface.OnFpsChangedListener
 {
-    private boolean mInitialized;
     private VisibleTouchMap mTouchMap;
     
     public GameOverlay( Context context, AttributeSet attribs )
     {
         super( context, attribs );
-        mInitialized = false;
     }
     
     public void initialize( VisibleTouchMap touchMap )
     {
-        // Suspend drawing
-        mInitialized = false;
-        
-        // Stop listening
-        if( mTouchMap != null )
-            mTouchMap.unregisterListener( this );
-        
         // Set the new TouchMap
         mTouchMap = touchMap;
-        
-        // Start listening
-        if( mTouchMap != null )
-            mTouchMap.registerListener( this );
-        
-        // Resume drawing
-        mInitialized = true;
     }
     
     @Override
-    public void onAllChanged( VisibleTouchMap touchMap )
+    public void onAnalogChanged( float axisFractionX, float axisFractionY )
     {
-        // Tell Android to redraw on the UI thread
-        postInvalidate();
+        // Update the analog stick assets, and redraw if required
+        if( mTouchMap != null && mTouchMap.updateAnalog( axisFractionX, axisFractionY ) )
+            postInvalidate();
     }
     
     @Override
-    public void onStickChanged( VisibleTouchMap touchMap, float x, float y )
+    public void onFpsChanged( int fps )
     {
-        // Tell Android to redraw on the UI thread
-        postInvalidate();
-    }
-    
-    @Override
-    public void onFpsChanged( VisibleTouchMap touchMap, int fps )
-    {
-        // Tell Android to redraw on the UI thread
-        postInvalidate();
+        // Update the FPS indicator assets, and redraw if required
+        if( mTouchMap != null && mTouchMap.updateFps( fps ) )
+            postInvalidate();
     }
     
     @Override
     protected void onSizeChanged( int w, int h, int oldw, int oldh )
     {
         // Recompute skin layout geometry
-        mTouchMap.resize( w, h );
+        if( mTouchMap != null )
+            mTouchMap.resize( w, h );
         super.onSizeChanged( w, h, oldw, oldh );
     }
     
     @Override
     protected void onDraw( Canvas canvas )
     {
-        if( !mInitialized )
+        if( mTouchMap == null )
             return;
         
         // Redraw the static buttons

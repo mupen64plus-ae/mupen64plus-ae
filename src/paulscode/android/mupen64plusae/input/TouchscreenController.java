@@ -20,7 +20,6 @@
 package paulscode.android.mupen64plusae.input;
 
 import paulscode.android.mupen64plusae.input.map.TouchMap;
-import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.os.Build;
@@ -34,12 +33,27 @@ import android.view.View.OnTouchListener;
  */
 public class TouchscreenController extends AbstractController implements OnTouchListener
 {
+    public interface OnStateChangedListener
+    {
+        /**
+         * Called after the analog stick values have changed.
+         * 
+         * @param axisFractionX The x-axis fraction, between -1 and 1, inclusive.
+         * @param axisFractionY The y-axis fraction, between -1 and 1, inclusive.
+         */
+        public void onAnalogChanged( float axisFractionX, float axisFractionY );
+    }
+    
     /** The maximum number of pointers to query. */
     private static final int MAX_POINTER_IDS = 256;
     
-    /** The map from screen coordinates to N64 controls. */
-    private final VisibleTouchMap mTouchMap;
+    /** The state change listener. */
+    private final OnStateChangedListener mListener;
     
+    /** The map from screen coordinates to N64 controls. */
+    private final TouchMap mTouchMap;
+    
+    /** Whether the analog stick should be constrained to an octagon. */
     private final boolean mIsOctagonal;
     
     /** The touch state of each pointer. True indicates down, false indicates up. */
@@ -63,8 +77,10 @@ public class TouchscreenController extends AbstractController implements OnTouch
      * @param touchMap The map from screen coordinates to N64 controls.
      * @param view The view receiving touch event data.
      */
-    public TouchscreenController( VisibleTouchMap touchMap, View view, boolean isOctagonal )
+    public TouchscreenController( TouchMap touchMap, View view, OnStateChangedListener listener,
+            boolean isOctagonal )
     {
+        mListener = listener;
         mTouchMap = touchMap;
         mIsOctagonal = isOctagonal;
         view.setOnTouchListener( this );
@@ -186,8 +202,8 @@ public class TouchscreenController extends AbstractController implements OnTouch
         notifyChanged();
         
         // Update the skin if the virtual analog stick moved
-        if( analogMoved )
-            mTouchMap.onUpdateAnalog( mAxisFractionX, mAxisFractionY );
+        if( analogMoved && mListener != null )
+            mListener.onAnalogChanged( mAxisFractionX, mAxisFractionY );
     }
     
     /**

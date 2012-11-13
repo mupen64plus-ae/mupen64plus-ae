@@ -21,12 +21,10 @@ package paulscode.android.mupen64plusae.input.map;
 
 import java.util.ArrayList;
 
-import paulscode.android.mupen64plusae.GameSurface;
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -38,38 +36,8 @@ import android.util.Log;
  * @see TouchMap
  * @see GameOverlay
  */
-public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateListener
+public class VisibleTouchMap extends TouchMap
 {
-    /**
-     * The interface for listening to map changes.
-     */
-    public interface Listener
-    {
-        /**
-         * Called when all visible elements have changed.
-         * 
-         * @param touchMap The new value of the map.
-         */
-        public void onAllChanged( VisibleTouchMap touchMap );
-        
-        /**
-         * Called when just the analog stick has changed.
-         * 
-         * @param touchMap The new value of the map.
-         * @param x The x-axis fraction, between -1 and 1, inclusive.
-         * @param y The y-axis fraction, between -1 and 1, inclusive.
-         */
-        public void onStickChanged( VisibleTouchMap touchMap, float x, float y );
-        
-        /**
-         * Called when just the FPS indicator has changed.
-         * 
-         * @param touchMap The new value of the map.
-         * @param fps The new FPS value.
-         */
-        public void onFpsChanged( VisibleTouchMap touchMap, int fps );
-    }
-    
     /** FPS frame image. */
     private Image mFpsFrame;
     
@@ -102,9 +70,6 @@ public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateLi
     
     /** The set of images representing the numerals 0, 1, 2, ..., 9. */
     private final Image[] mNumerals;
-    
-    /** Listener manager. */
-    private final SubscriptionManager<Listener> mPublisher = new SubscriptionManager<VisibleTouchMap.Listener>();
     
     /**
      * Instantiates a new visible touch map.
@@ -141,26 +106,37 @@ public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateLi
             mNumerals[i] = null;
     }
     
-    /**
-     * Registers a listener to start receiving map change notifications.
+    /*
+     * (non-Javadoc)
      * 
-     * @param listener The listener to register. Null values are safe.
+     * @see paulscode.android.mupen64plusae.input.map.TouchMap#resize(int, int)
      */
-    public void registerListener( Listener listener )
+    @Override
+    public void resize( int w, int h )
     {
-        mPublisher.subscribe( listener );
+        super.resize( w, h );
+        
+        // Compute analog foreground location (centered)
+        if( analogBackImage != null )
+        {
+            int cX = analogBackImage.x + analogBackImage.hWidth;
+            int cY = analogBackImage.y + analogBackImage.hHeight;
+            analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
+                    analogBackImage.width, analogBackImage.height );
+        }
+        
+        // Compute FPS frame location
+        if( mFpsFrame != null )
+        {
+            int cX = (int) ( (float) w * ( (float) mFpsFrameX / 100f ) );
+            int cY = (int) ( (float) h * ( (float) mFpsFrameY / 100f ) );
+            mFpsFrame.fitCenter( cX, cY, w, h );
+        }
+        
+        // Compute the FPS digit locations
+        refreshFpsPositions();
     }
-    
-    /**
-     * Unregisters a listener to stop receiving map change notifications.
-     * 
-     * @param listener The listener to unregister. Null values are safe.
-     */
-    public void unregisterListener( Listener listener )
-    {
-        mPublisher.unsubscribe( listener );
-    }
-    
+
     /**
      * Gets the number of frames over which the FPS should be computed. Historically this value has
      * been loaded with the map assets, which is why this method is provided here rather than in
@@ -172,7 +148,7 @@ public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateLi
     {
         return mFpsRecalcPeriod;
     }
-    
+
     /**
      * Draws the buttons.
      * 
@@ -217,48 +193,14 @@ public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateLi
             digit.draw( canvas );
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see paulscode.android.mupen64plusae.input.map.TouchMap#resize(int, int)
-     */
-    @Override
-    public void resize( int w, int h )
-    {
-        super.resize( w, h );
-        
-        // Compute analog foreground location (centered)
-        if( analogBackImage != null )
-        {
-            int cX = analogBackImage.x + analogBackImage.hWidth;
-            int cY = analogBackImage.y + analogBackImage.hHeight;
-            analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
-                    analogBackImage.width, analogBackImage.height );
-        }
-        
-        // Compute FPS frame location
-        if( mFpsFrame != null )
-        {
-            int cX = (int) ( (float) w * ( (float) mFpsFrameX / 100f ) );
-            int cY = (int) ( (float) h * ( (float) mFpsFrameY / 100f ) );
-            mFpsFrame.fitCenter( cX, cY, w, h );
-        }
-        
-        // Compute the FPS digit locations
-        refreshFpsPositions();
-        
-        // Notify listeners that everything has changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onAllChanged( this );
-    }
-    
     /**
      * Updates the analog stick assets to reflect a new position.
      * 
      * @param axisFractionX The x-axis fraction, between -1 and 1, inclusive.
      * @param axisFractionY The y-axis fraction, between -1 and 1, inclusive.
+     * @return True if the analog assets changed.
      */
-    public void onUpdateAnalog( float axisFractionX, float axisFractionY )
+    public boolean updateAnalog( float axisFractionX, float axisFractionY )
     {
         if( analogForeImage != null && analogBackImage != null )
         {
@@ -277,27 +219,25 @@ public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateLi
             int cY = analogBackImage.y + hY;
             analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
                     analogBackImage.width, analogBackImage.height );
+            return true;
         }
-        
-        // Notify listeners that analog stick has changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onStickChanged( this, axisFractionX, axisFractionY );
-    }
-    
-    /*
-     * (non-Javadoc)
+        return false;
+    }    
+
+    /**
+     * Updates the FPS indicator assets to reflect a new value.
      * 
-     * @see paulscode.android.mupen64plusae.SDLSurface.FrameRateListener#updateFps(int)
+     * @param fps The new FPS value.
+     * @return True if the FPS assets changed.
      */
-    @Override
-    public void onUpdateFps( int fps )
+    public boolean updateFps( int fps )
     {
         // Clamp to positive, four digits max [0 - 9999]
         fps = Utility.clamp( fps, 0, 9999 );
         
         // Quick return if user has disabled FPS or it hasn't changed
         if( !mFpsEnabled || mFpsValue == fps )
-            return;
+            return false;
         
         // Store the new value
         mFpsValue = fps;
@@ -306,9 +246,7 @@ public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateLi
         refreshFpsImages();
         refreshFpsPositions();
         
-        // Notify listeners that FPS sprite changed
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onFpsChanged( this, mFpsValue );
+        return true;
     }
     
     /**
@@ -380,7 +318,7 @@ public class VisibleTouchMap extends TouchMap implements GameSurface.FrameRateLi
         else
             super.loadAssetSection( directory, filename, section, assetType );
     }
-    
+
     /**
      * Loads FPS indicator assets and properties from the filesystem.
      * 
