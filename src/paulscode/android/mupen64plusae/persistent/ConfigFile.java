@@ -501,8 +501,6 @@ public class ConfigFile
                             return;  // This shouldn't happen (bad syntax).  Quit.
                         
                         p = strLine.substring( x + 1, y ).trim();
-                        if( p == null || p.length() < 1 )
-                            return;  // This shouldn't happen (bad syntax).  Quit.
                         
                         // Save the name of the next section.
                         nextName = p;
