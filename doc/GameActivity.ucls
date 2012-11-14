@@ -1,145 +1,178 @@
 <class-diagram version="1.0.11" icons="true" automaticImage="PNG" always-add-relationships="false" 
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameActivity" 
-    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameActivity.java" binary="false">    
-    <position height="260" width="228" x="277" y="37"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="true" private="false"/>    
-    </display>  
-  </class>  
-  <class id="2" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameLifecycleHandler" 
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameLifecycleHandler" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameLifecycleHandler.java" 
     binary="false">    
-    <position height="175" width="192" x="402" y="337"/>    
+    <position height="-1" width="-1" x="498" y="458"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameMenuHandler" 
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameMenuHandler" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameMenuHandler.java" binary="false">    
-    <position height="107" width="210" x="152" y="337"/>    
+    <position height="-1" width="-1" x="257" y="424"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="4" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameOverlay" 
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameOverlay" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameOverlay.java" binary="false">    
-    <position height="158" width="195" x="41" y="552"/>    
+    <position height="-1" width="-1" x="138" y="665"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
   </class>  
-  <class id="5" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameSurface" 
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameSurface" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameSurface.java" binary="false">    
-    <position height="-1" width="-1" x="451" y="648"/>    
+    <position height="-1" width="-1" x="451" y="682"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
   </class>  
-  <interface id="6" corner="BOTTOM_RIGHT" language="java" 
+  <interface id="5" corner="BOTTOM_RIGHT" language="java" 
     name="paulscode.android.mupen64plusae.GameSurface.OnFpsChangedListener" project="mupen64plus" 
     file="/mupen64plus/src/paulscode/android/mupen64plusae/GameSurface.java" binary="false">    
-    <position height="73" width="157" x="276" y="784"/>    
+    <position height="-1" width="-1" x="354" y="854"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
   </interface>  
-  <interface id="7" corner="BOTTOM_RIGHT" language="java" 
+  <interface id="6" corner="BOTTOM_RIGHT" language="java" 
     name="paulscode.android.mupen64plusae.GameSurface.CoreLifecycleListener" project="mupen64plus" 
     file="/mupen64plus/src/paulscode/android/mupen64plusae/GameSurface.java" binary="false">    
-    <position height="90" width="151" x="473" y="784"/>    
+    <position height="-1" width="-1" x="548" y="863"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
   </interface>  
-  <class id="8" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.AbstractController" 
+  <class id="7" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.AbstractController" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/AbstractController.java" 
     binary="false">    
-    <position height="-1" width="-1" x="763" y="622"/>    
+    <position height="-1" width="-1" x="763" y="656"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="true" private="false"/>    
     </display>  
   </class>  
-  <association id="9">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="10" name="mFpsListener"/>      
-      <multiplicity id="11" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="6" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="12">    
-    <bendpoint x="718" y="498"/>    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="13" name="mControllers"/>      
-      <multiplicity id="14" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="15">    
-    <bendpoint x="238" y="497"/>    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="16" name="mOverlay"/>      
-      <multiplicity id="17" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="18">    
-    <end type="SOURCE" refId="4"/>    
+  <class id="8" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameActivityXperiaPlay" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameActivityXperiaPlay.java" 
+    binary="false">    
+    <position height="-1" width="-1" x="406" y="156"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="true" private="false"/>    
+    </display>  
+  </class>  
+  <class id="9" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.GameActivity" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/GameActivity.java" binary="false">    
+    <position height="-1" width="-1" x="427" y="190"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="true" private="false"/>    
+    </display>  
+  </class>  
+  <class id="10" corner="BOTTOM_RIGHT" language="java" name="android.app.Activity" project="mupen64plus" 
+    file="C:/Program Files (x86)/Android/android-sdk/platforms/android-16/android.jar" binary="true">    
+    <position height="-1" width="-1" x="618" y="85"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="11" corner="BOTTOM_RIGHT" language="java" name="android.app.NativeActivity" project="mupen64plus" 
+    file="C:/Program Files (x86)/Android/android-sdk/platforms/android-16/android.jar" binary="true">    
+    <position height="-1" width="-1" x="207" y="51"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <realization id="12">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <realization id="13">    
+    <bendpoint x="653" y="585"/>    
+    <bendpoint x="653" y="785"/>    
+    <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="6"/>  
   </realization>  
-  <association id="19">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="20" name="mSurface"/>      
-      <multiplicity id="21" minimum="0" maximum="1"/>    
+  <association id="14">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="15" name="mFpsListener"/>      
+      <multiplicity id="16" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="22">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="23" name="mClListener"/>      
-      <multiplicity id="24" minimum="0" maximum="1"/>    
+  <association id="17">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="18" name="mClListener"/>      
+      <multiplicity id="19" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="25">    
-    <bendpoint x="653" y="551"/>    
-    <bendpoint x="653" y="751"/>    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="7"/>  
-  </realization>  
-  <association id="26">    
+  <association id="20">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="27" name="mMenuHandler"/>      
-      <multiplicity id="28" minimum="0" maximum="1"/>    
+      <attribute id="21" name="mSurface"/>      
+      <multiplicity id="22" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="23">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
+  <association id="24">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="25" name="mLifecycleHandler"/>      
+      <multiplicity id="26" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="27">    
+    <bendpoint x="238" y="531"/>    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="28" name="mOverlay"/>      
+      <multiplicity id="29" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="29">    
-    <end type="SOURCE" refId="5"/>    
+  <association id="30">    
+    <bendpoint x="718" y="532"/>    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="31" name="mControllers"/>      
+      <multiplicity id="32" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="11"/>  
+  </generalization>  
+  <nesting id="34">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </nesting>  
+  <nesting id="35">    
+    <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="6"/>  
   </nesting>  
-  <nesting id="30">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="7"/>  
-  </nesting>  
-  <association id="31">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="32" name="mLifecycleHandler"/>      
-      <multiplicity id="33" minimum="0" maximum="1"/>    
+  <association id="36">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="37" name="mMenuHandler"/>      
+      <multiplicity id="38" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
