@@ -375,10 +375,10 @@ public class CoreInterface
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
         mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + paths.libsDir + '"' );
-        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + user.videoPlugin + '"' );
-        mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + user.audioPlugin + '"' );
-        mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + user.inputPlugin + '"' );
-        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin + '"' );
+        mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + user.videoPlugin.path + '"' );
+        mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + user.audioPlugin.path + '"' );
+        mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + user.inputPlugin.path + '"' );
+        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin.path + '"' );
 
         mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
         mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );

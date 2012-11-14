@@ -134,10 +134,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
-        FileUtil.loadNativeLib( Globals.userPrefs.videoPlugin );
-        FileUtil.loadNativeLib( Globals.userPrefs.audioPlugin );
-        FileUtil.loadNativeLib( Globals.userPrefs.inputPlugin );
-        FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin );
+        FileUtil.loadNativeLib( Globals.userPrefs.videoPlugin.path );
+        FileUtil.loadNativeLib( Globals.userPrefs.audioPlugin.path );
+        FileUtil.loadNativeLib( Globals.userPrefs.inputPlugin.path );
+        FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin.path );
         
         // Initialize user interface devices
         initControllers();
@@ -229,9 +229,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     
     private void initControllers()
     {
-        if( !Globals.userPrefs.isInputEnabled )
-            return;
-        
         if( Globals.IS_ECLAIR
                 && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
         {
@@ -242,14 +239,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             mOverlay.initialize( mTouchscreenMap );
             
             // The touch controller is needed to handle touch events
-            if( Globals.userPrefs.isTouchscreenEnabled )
+            if( Globals.userPrefs.inputPlugin.enabled && Globals.userPrefs.isTouchscreenEnabled )
             {
                 mControllers.add( new TouchscreenController( mTouchscreenMap, mSurface, mOverlay,
                         Globals.userPrefs.isOctagonalJoystick ) );
             }
         }
         
-        if( Globals.userPrefs.isPeripheralEnabled )
+        if( Globals.userPrefs.inputPlugin.enabled && Globals.userPrefs.isPeripheralEnabled )
         {
             // Create the input providers shared among all peripheral controllers
             mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );

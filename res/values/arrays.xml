@@ -19,7 +19,7 @@
         <item>@string/videoPlugin_entry2</item>
         </string-array>
     <string-array name="videoPlugin_values">
-        <item>dummy</item>
+        <item></item>
         <item>libgles2n64.so</item>
         <item>libgles2rice.so</item>
     </string-array>
@@ -31,7 +31,7 @@
         <item>@string/audioPlugin_entry1</item>
     </string-array>
     <string-array name="audioPlugin_values">
-        <item>dummy</item>
+        <item></item>
         <item>libaudio-sdl.so</item>
     </string-array>
     <string name="audioPlugin_default">libaudio-sdl.so</string>
@@ -42,7 +42,7 @@
         <item>@string/inputPlugin_entry1</item>
     </string-array>
     <string-array name="inputPlugin_values">
-        <item>dummy</item>
+        <item></item>
         <item>libinput-sdl.so</item>
     </string-array>
     <string name="inputPlugin_default">libinput-sdl.so</string>
@@ -54,7 +54,7 @@
         <item>@string/rspPlugin_entry2</item>
     </string-array>
     <string-array name="rspPlugin_values">
-        <item>dummy</item>
+        <item></item>
         <item>librsp-hle.so</item>
         <item>librsp-hle-nosound.so</item>
     </string-array>

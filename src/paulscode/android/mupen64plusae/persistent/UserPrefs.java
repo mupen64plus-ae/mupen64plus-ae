@@ -64,38 +64,26 @@ import android.preference.PreferenceManager;
  */
 public class UserPrefs
 {
-    /** The filename of the selected video plug-in. */
-    public final String videoPlugin;
+    /** The selected video plug-in. */
+    public final Plugin videoPlugin;
     
-    /** The filename of the selected audio plug-in. */
-    public final String audioPlugin;
+    /** The selected audio plug-in. */
+    public final Plugin audioPlugin;
     
-    /** The filename of the selected input plug-in. */
-    public final String inputPlugin;
+    /** The selected input plug-in. */
+    public final Plugin inputPlugin;
     
-    /** The filename of the selected Reality Signal Processor. */
-    public final String rspPlugin;
+    /** The selected Reality Signal Processor. */
+    public final Plugin rspPlugin;
     
-    /** The filename of the selected emulator core. */
-    public final String corePlugin;
+    /** The selected emulator core. */
+    public final Plugin corePlugin;    
     
     /** The filename of the selected touchscreen layout. */
     public final String touchscreenLayout;
 
     /** The filename of the selected Xperia Play layout. */
     public final String xperiaLayout;
-    
-    /** True if video is enabled. */
-    public final boolean isVideoEnabled;
-    
-    /** True if audio is enabled. */
-    public final boolean isAudioEnabled;
-    
-    /** True if input is enabled. */
-    public final boolean isInputEnabled;
-    
-    /** True if the Reality Signal Processor is enabled. */
-    public final boolean isRspEnabled;
     
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
@@ -191,6 +179,13 @@ public class UserPrefs
     {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
+        // Plug-ins
+        videoPlugin = new Plugin(mPreferences, paths.libsDir, "videoPlugin" );
+        audioPlugin = new Plugin(mPreferences, paths.libsDir, "audioPlugin" );
+        inputPlugin = new Plugin(mPreferences, paths.libsDir, "inputPlugin" );
+        rspPlugin   = new Plugin(mPreferences, paths.libsDir, "rspPlugin" );
+        corePlugin  = new Plugin(mPreferences, paths.libsDir, "corePlugin" );
+        
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
         isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
@@ -228,17 +223,10 @@ public class UserPrefs
         gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
         isFrameRateEnabled = mPreferences.getBoolean( "frameRateEnabled", false );
         
-        // Plug-ins and layouts
-        inputPlugin = paths.libsDir + mPreferences.getString( "inputPlugin", "" );
-        videoPlugin = paths.libsDir + mPreferences.getString( "videoPlugin", "" );
-        audioPlugin = paths.libsDir + mPreferences.getString( "audioPlugin", "" );
-        rspPlugin = paths.libsDir + mPreferences.getString( "rspPlugin", "" );
-        corePlugin = paths.libsDir + mPreferences.getString( "corePlugin", "" );
-        xperiaLayout = mPreferences.getString( "xperiaLayout", "" );
-        
+        // Touch map layouts
         boolean isCustom = false;
         String folder = "";
-        if( isTouchscreenEnabled )
+        if( inputPlugin.enabled && isTouchscreenEnabled )
         {
             String layout = mPreferences.getString( "touchscreenLayout", "" );
             if( layout.equals( "Custom" ) )
@@ -259,16 +247,42 @@ public class UserPrefs
         }
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
+        xperiaLayout = mPreferences.getString( "xperiaLayout", "" );
+        isXperiaEnabled = ( xperiaLayout != null ) && !xperiaLayout.equals( "" );
         
         // Derived values
         isGles2N64AutoFrameskipEnabled = ( gles2N64MaxFrameskip < 0 );
-        isVideoEnabled  = ( videoPlugin != null )  && !videoPlugin.equals( "dummy" );
-        isAudioEnabled  = ( audioPlugin != null )  && !audioPlugin.equals( "dummy" );
-        isInputEnabled  = ( inputPlugin != null )  && !inputPlugin.equals( "dummy" );
-        isRspEnabled    = ( rspPlugin != null )    && !rspPlugin.equals( "dummy" );
-        isXperiaEnabled = ( xperiaLayout != null ) && !xperiaLayout.equals( "" );
         selectedGameAutoSavefile = paths.dataDir + "/autosave_"
                 + Math.abs( selectedGame.hashCode() ) + ".sav";
+    }
+
+    /**
+     * A tiny class containing inter-dependent plug-in information.
+     */
+    public static class Plugin
+    {
+        /** The name of the plug-in, with extension, without parent directory. */
+        public final String name;
+        
+        /** The full absolute path name of the plug-in. */
+        public final String path;
+        
+        /** True if the plug-in is enabled. */
+        public final boolean enabled;
+        
+        /**
+         * Instantiates a new plug-in meta-info object.
+         * 
+         * @param prefs The shared preferences containing plug-in information.
+         * @param libsDir The directory containing the plug-in file. 
+         * @param key The shared preference key for the plugin.
+         */
+        public Plugin( SharedPreferences prefs, String libsDir, String key )
+        {
+            name = prefs.getString( key, "" );
+            enabled = ( name != null && !name.equals( "" ) );
+            path = enabled ? libsDir + name : "dummy";
+        }
     }
     
     /**

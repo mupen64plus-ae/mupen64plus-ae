@@ -74,7 +74,7 @@ public class GameActivityXperiaPlay extends NativeActivity
         FileUtil.loadNativeLibName( "xperia-touchpad" );
         mXperiaPlayMap = new TouchMap( getResources() );
         mXperiaPlayMap.load( Globals.userPrefs.xperiaLayout );
-        if( Globals.userPrefs.isInputEnabled )
+        if( Globals.userPrefs.inputPlugin.enabled )
             mXperiaPlayController = new XperiaPlayController( mXperiaPlayMap );
     }    
     
