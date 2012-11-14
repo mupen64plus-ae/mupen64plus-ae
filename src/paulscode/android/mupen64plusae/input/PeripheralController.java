@@ -28,7 +28,7 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
  * keyboards, mice, etc.).
  */
-public class PeripheralController extends AbstractController implements AbstractProvider.Listener,
+public class PeripheralController extends AbstractController implements AbstractProvider.OnInputListener,
         InputMap.Listener
 {
     /** The map from hardware codes to N64 commands. */
@@ -52,11 +52,14 @@ public class PeripheralController extends AbstractController implements Abstract
     /**
      * Instantiates a new peripheral controller.
      * 
+     * @param player The player number, between 1 and 4, inclusive.
      * @param inputMap The map from hardware codes to N64 commands.
      * @param providers The user input providers. Null elements are safe.
      */
-    public PeripheralController( InputMap inputMap, AbstractProvider... providers )
+    public PeripheralController( int player, InputMap inputMap, AbstractProvider... providers )
     {
+        setPlayerNumber( player );
+        
         // Assign the map and listen for changes
         mInputMap = inputMap;
         if( mInputMap != null )

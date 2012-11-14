@@ -40,7 +40,7 @@ public abstract class AbstractProvider
     /**
      * The interface for listening to a provider.
      */
-    public interface Listener
+    public interface OnInputListener
     {
         /**
          * Called when a single input has been dispatched.
@@ -65,14 +65,14 @@ public abstract class AbstractProvider
     public static final float STRENGTH_THRESHOLD = 0.5f;
     
     /** Listener management. */
-    private SubscriptionManager<AbstractProvider.Listener> mPublisher;
+    private SubscriptionManager<AbstractProvider.OnInputListener> mPublisher;
     
     /**
      * Instantiates a new abstract provider.
      */
     protected AbstractProvider()
     {
-        mPublisher = new SubscriptionManager<AbstractProvider.Listener>();
+        mPublisher = new SubscriptionManager<AbstractProvider.OnInputListener>();
     }
     
     /**
@@ -80,7 +80,7 @@ public abstract class AbstractProvider
      * 
      * @param listener The listener to register. Null values are safe.
      */
-    public void registerListener( AbstractProvider.Listener listener )
+    public void registerListener( AbstractProvider.OnInputListener listener )
     {
         mPublisher.subscribe( listener );
     }
@@ -90,7 +90,7 @@ public abstract class AbstractProvider
      * 
      * @param listener The listener to unregister. Null values are safe.
      */
-    public void unregisterListener( AbstractProvider.Listener listener )
+    public void unregisterListener( AbstractProvider.OnInputListener listener )
     {
         mPublisher.unsubscribe( listener );
     }
@@ -158,7 +158,7 @@ public abstract class AbstractProvider
      */
     protected void notifyListeners( int inputCode, float strength, int hardwareId )
     {
-        for( Listener listener : mPublisher.getSubscribers() )
+        for( OnInputListener listener : mPublisher.getSubscribers() )
             listener.onInput( inputCode, strength, hardwareId );
     }
     
@@ -172,7 +172,7 @@ public abstract class AbstractProvider
      */
     protected void notifyListeners( int[] inputCodes, float[] strengths, int hardwareId )
     {
-        for( Listener listener : mPublisher.getSubscribers() )
+        for( OnInputListener listener : mPublisher.getSubscribers() )
             listener.onInput( inputCodes.clone(), strengths.clone(), hardwareId );
     }
 }

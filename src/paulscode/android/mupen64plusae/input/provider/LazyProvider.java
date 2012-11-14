@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * A provider class that aggregates inputs from other providers, and lazily notifies listeners only
  * when the aggregate input has changed significantly.
  */
-public class LazyProvider extends AbstractProvider implements AbstractProvider.Listener
+public class LazyProvider extends AbstractProvider implements AbstractProvider.OnInputListener
 {
     /** The delta-strength threshold above which an input is considered "changed". */
     private static final float STRENGTH_HYSTERESIS = 0.05f;

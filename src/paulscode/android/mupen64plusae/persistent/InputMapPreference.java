@@ -44,7 +44,7 @@ import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.TextView;
 
-public class InputMapPreference extends DialogPreference implements AbstractProvider.Listener,
+public class InputMapPreference extends DialogPreference implements AbstractProvider.OnInputListener,
         OnClickListener, OnLongClickListener
 {
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;

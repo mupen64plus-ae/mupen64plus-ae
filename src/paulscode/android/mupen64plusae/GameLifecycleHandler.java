@@ -19,6 +19,9 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.util.ArrayList;
+
+import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
@@ -79,33 +82,23 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private GameSurface mSurface;
     private GameOverlay mOverlay;
     
-    // Internal flags
-    boolean mCoreRunning = false;
-    
-    // Input helpers
+    // Input resources
+    private final ArrayList<AbstractController> mControllers;
     private VisibleTouchMap mTouchscreenMap;
     private KeyProvider mKeyProvider;
-    private AxisProvider mAxisProvider;
     
-    // Controllers
-    @SuppressWarnings( "unused" )
-    private TouchscreenController mTouchscreenController;
-    private PeripheralController mPeripheralController1;
-    private PeripheralController mPeripheralController2;
-    private PeripheralController mPeripheralController3;
-    private PeripheralController mPeripheralController4;
+    // Internal flags
+    boolean mCoreRunning = false;
     
     public GameLifecycleHandler( Activity activity )
     {
         mActivity = activity;
+        mControllers = new ArrayList<AbstractController>();
     }
     
     @TargetApi( 11 )
     public void onCreate( Bundle savedInstanceState )
     {
-        // Notify user that the game activity has started
-        Notifier.showToast( mActivity, R.string.toast_appStarted );
-
         // Lay out content and initialize stuff
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
@@ -147,8 +140,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin );
         
         // Initialize user interface devices
-        initTouchscreen();
-        initPeripherals();
+        initControllers();
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controllers' key provider, to add some extra functionality
@@ -159,6 +151,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
+        
+        // Notify user that the game activity has started
+        Notifier.showToast( mActivity, R.string.toast_appStarted );
     }
     
     public void onResume()
@@ -232,8 +227,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             return false;
     }
     
-    private void initTouchscreen()
+    private void initControllers()
     {
+        if( !Globals.userPrefs.isInputEnabled )
+            return;
+        
         if( Globals.IS_ECLAIR
                 && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
         {
@@ -244,49 +242,39 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             mOverlay.initialize( mTouchscreenMap );
             
             // The touch controller is needed to handle touch events
-            if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isTouchscreenEnabled )
+            if( Globals.userPrefs.isTouchscreenEnabled )
             {
-                mTouchscreenController = new TouchscreenController( mTouchscreenMap, mSurface, mOverlay,
-                        Globals.userPrefs.isOctagonalJoystick );
+                mControllers.add( new TouchscreenController( mTouchscreenMap, mSurface, mOverlay,
+                        Globals.userPrefs.isOctagonalJoystick ) );
             }
         }
-    }
-    
-    private void initPeripherals()
-    {
-        if( Globals.userPrefs.isInputEnabled && Globals.userPrefs.isPeripheralEnabled )
+        
+        if( Globals.userPrefs.isPeripheralEnabled )
         {
             // Create the input providers shared among all peripheral controllers
             mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );
-            if( Globals.IS_HONEYCOMB_MR1 )
-                mAxisProvider = new AxisProvider( mSurface );
-            else
-                mAxisProvider = null;
+            AxisProvider axisProvider = Globals.IS_HONEYCOMB_MR1 ? new AxisProvider( mSurface ) : null;
             
             // Create the peripheral controllers for players 1-4
             if( Globals.userPrefs.inputMap1.isEnabled() )
             {
-                mPeripheralController1 = new PeripheralController( Globals.userPrefs.inputMap1,
-                        mKeyProvider, mAxisProvider );
-                mPeripheralController1.setPlayerNumber( 1 );
+                mControllers.add( new PeripheralController( 1, Globals.userPrefs.inputMap1,
+                        mKeyProvider, axisProvider ) );
             }
             if( Globals.userPrefs.inputMap2.isEnabled() )
             {
-                mPeripheralController2 = new PeripheralController( Globals.userPrefs.inputMap2,
-                        mKeyProvider, mAxisProvider );
-                mPeripheralController2.setPlayerNumber( 2 );
+                mControllers.add( new PeripheralController( 2, Globals.userPrefs.inputMap2,
+                        mKeyProvider, axisProvider ) );
             }
             if( Globals.userPrefs.inputMap3.isEnabled() )
             {
-                mPeripheralController3 = new PeripheralController( Globals.userPrefs.inputMap3,
-                        mKeyProvider, mAxisProvider );
-                mPeripheralController3.setPlayerNumber( 3 );
+                mControllers.add( new PeripheralController( 3, Globals.userPrefs.inputMap3,
+                        mKeyProvider, axisProvider ) );
             }
             if( Globals.userPrefs.inputMap4.isEnabled() )
             {
-                mPeripheralController4 = new PeripheralController( Globals.userPrefs.inputMap4,
-                        mKeyProvider, mAxisProvider );
-                mPeripheralController4.setPlayerNumber( 4 );
+                mControllers.add( new PeripheralController( 4, Globals.userPrefs.inputMap4,
+                        mKeyProvider, axisProvider ) );
             }
         }
     }
