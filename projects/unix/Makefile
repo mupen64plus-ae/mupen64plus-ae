@@ -200,7 +200,9 @@ endif
 
 # test for the presence of OSS
 ifneq ($(wildcard /dev/mixer),)
-  CFLAGS += -DHAS_OSS_SUPPORT
+  ifneq ($(NO_OSS), 1)
+    CFLAGS += -DHAS_OSS_SUPPORT
+  endif
 endif
 
 # set mupen64plus core API header path
@@ -296,6 +298,7 @@ targets:
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    NO_SRC=1      == build without libsamplerate; disables src-* high-quality audio resampling"
 	@echo "    NO_SPEEX=1    == build without libspeexdsp; disables speex-* high-quality audio resampling"
+	@echo "    NO_OSS=1      == build without OSS; disables Open Sound System support"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
