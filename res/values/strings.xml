@@ -22,19 +22,19 @@
     
     <!-- Common Short Strings -->
     <string name="app_name">Mupen64 Plus</string>
-    <string name="_enable">Enable</string>
-    <string name="_enabled">Enabled</string>
+    <string name="_advanced">Advanced</string>
+    <string name="_auto">Auto</string>
+    <string name="_confirmation">Confirmation</string>
+    <string name="_default">Default</string>
     <string name="_disable">Disable</string>
     <string name="_disabled">Disabled</string>
-    <string name="_plugin">Plug-in</string>
-    <string name="_layout">Layout</string>
-    <string name="_auto">Auto</string>
-    <string name="_default">Default</string>
+    <string name="_enable">Enable</string>
+    <string name="_enabled">Enabled</string>
     <string name="_general">General</string>
-    <string name="_advanced">Advanced</string>
-    <string name="_other">Other</string>
     <string name="_initializing">Initializing</string>
-    <string name="_confirmation">Confirmation</string>
+    <string name="_layout">Layout</string>
+    <string name="_other">Other</string>
+    <string name="_plugin">Plug-in</string>
     
     <!-- ******************************************** -->
     <!-- Menu Strings                                 -->
@@ -68,15 +68,15 @@
     <string name="categoryOther_title">@string/_other</string>
     
     <!-- Settings Menu -->
-    <string name="touchscreen_title">Touchscreen</string>
-    <string name="touchscreen_summary">On-screen controller settings</string>
     <string name="xperia_title">Touchpad</string>
     <string name="xperia_summary">Sony Ericsson Xperia PLAY settings</string>
+    <string name="touchscreen_title">Touchscreen</string>
+    <string name="touchscreen_summary">On-screen controller settings</string>
     <string name="peripheral_title">Controllers</string>
     <string name="peripheral_summary">Gamepads, joysticks, keyboards, etc.</string>
     <string name="video_title">Video</string>
     <string name="video_summary">Graphics settings</string>
-    <string name="plugins_title">Advanced</string>
+    <string name="plugins_title">@string/_advanced</string>
     <string name="plugins_summary">Plug-ins and debug settings</string>    
     <string name="gameSaveDir_title">Savegame folder</string>
     <string name="frameRateEnabled_title">Show framerate</string>

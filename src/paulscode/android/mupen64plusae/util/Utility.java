@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -377,10 +378,10 @@ public class Utility
         
         // We probably have the full CRC, just upper-case it.
         if( CRC.length() == 17 )
-            return CRC.toUpperCase( );
+            return CRC.toUpperCase( Locale.ENGLISH );
         
-        String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase().trim();
-        String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase().trim();
+        String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase( Locale.ENGLISH ).trim();
+        String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase( Locale.ENGLISH ).trim();
         return CRC_1.substring( CRC_1.length() - 8, CRC_1.length() ) + " "
                 + CRC_2.substring( CRC_2.length() - 8, CRC_2.length() );
     }
@@ -417,7 +418,7 @@ public class Utility
                     if( textureName != null && textureName.length() > 3 )
                     {
                         textureExt = textureName.substring( textureName.length() - 4,
-                                textureName.length() ).toLowerCase();
+                                textureName.length() ).toLowerCase( Locale.ENGLISH );
                         if( supportedExt.contains( textureExt ) )
                         {
                             x = textureName.indexOf( '#' );
@@ -495,7 +496,7 @@ public class Utility
                     if( romName != null && romName.length() > 3 )
                     {
                         romExt = romName.substring( romName.length() - 4, romName.length() )
-                                .toLowerCase();
+                                .toLowerCase( Locale.ENGLISH );
                         if( supportedExt.contains( romExt ) )
                             return unzipEntry( zipfile, entry, outputDir );
                     }

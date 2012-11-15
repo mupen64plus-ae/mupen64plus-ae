@@ -19,6 +19,8 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import java.util.Locale;
+
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -141,7 +143,7 @@ public class AppData
             String _features = null;
             String _processor = null;
             
-            String hwString = Utility.getCpuInfo();
+            String hwString = Utility.getCpuInfo().toLowerCase( Locale.ENGLISH );
             Log.v( "AppData", hwString );
 
             String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
@@ -153,12 +155,12 @@ public class AppData
                     if( splitLine != null && splitLine.length == 2 )
                     {
                         String heading = splitLine[0].trim();
-                        if( _processor == null && heading.equalsIgnoreCase( "processor" ) )
+                        if( _processor == null && heading.equals( "processor" ) )
                             _processor = splitLine[1].trim();
-                        else if( _features == null && heading.equalsIgnoreCase( "features" ) )
+                        else if( _features == null && heading.equals( "features" ) )
                             _features = splitLine[1].trim();
-                        else if( _hardware == null && heading.equalsIgnoreCase( "hardware" ) )
-                            _hardware = splitLine[1].trim().toLowerCase();
+                        else if( _hardware == null && heading.equals( "hardware" ) )
+                            _hardware = splitLine[1].trim();
                     }
                 }
             }

@@ -22,18 +22,18 @@
     
     <!-- Common Short Strings -->
     <string name="app_name">Mupen64Plus</string>
-    <string name="_enable">エネーブル</string>
-    <string name="_enabled">エネーブル</string>
-    <string name="_disable">無効にする</string>
-    <string name="_disabled">使用禁止</string>
-    <string name="_plugin">プラグイン</string>
-    <string name="_layout">レイアウト</string>
+    <string name="_advanced">アドバンスド</string>
     <string name="_auto">オート</string>
     <string name="_default">デフォル</string>
+    <string name="_disable">無効にする</string>
+    <string name="_disabled">使用禁止</string>
+    <string name="_enable">エネーブル</string>
+    <string name="_enabled">エネーブル</string>
     <string name="_general">一般</string>
-    <string name="_advanced">アドバンスド</string>
-    <string name="_other">その他</string>
     <string name="_initializing">初期化</string>
+    <string name="_layout">レイアウト</string>
+    <string name="_other">その他</string>
+    <string name="_plugin">プラグイン</string>
     
     <!-- ******************************************** -->
     <!-- Menu Strings                                 -->
@@ -63,15 +63,15 @@
     <string name="categoryOther_title">その他設定</string>
     
     <!-- Settings Menu -->
-    <string name="touchscreen_title">タッチスクリーン</string>
-    <string name="touchscreen_summary">オンスクリーン·コントローラ設定</string>
     <string name="xperia_title">XperiaPLAY設定</string>
     <string name="xperia_summary"></string>
+    <string name="touchscreen_title">タッチスクリーン</string>
+    <string name="touchscreen_summary">オンスクリーン·コントローラ設定</string>
     <string name="peripheral_title">コントローラ</string>
     <string name="peripheral_summary">ゲームパッド/ジョイスティック設定</string>
     <string name="video_title">ビデオ</string>
     <string name="video_summary">グラフィック設定</string>
-    <string name="plugins_title">その他設定</string>
+    <string name="plugins_title">@string/_advanced</string>
     <string name="plugins_summary">オーディオ、プロセッサ、コア、など。</string>
     <string name="gameSaveDir_title">セーブデータのフォルダ</string>
     <string name="frameRateEnabled_title">フレームレート表示</string>
@@ -113,8 +113,6 @@
     <string name="audioPlugin_title">オーディオ設定</string>
     <string name="rspPlugin_title">RSP</string>
     <string name="corePlugin_title">コア</string>
-    <string name="menuResetAppData_title">アプリデータを復元</string>
-    <string name="menuResetAppData_summary">インポートされたプラグインやテクスチャが失われます！</string>
     
     <!-- GLES2N64 Menu -->
     <string name="gles2N64Frameskip_title">フレームスキップ</string>

@@ -333,7 +333,7 @@
         android:text="@string/inputMapPreference_rumble"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/primary_text_dark_nodisable" />
-
+
     <Button
         android:id="@+id/buttonMempak"
         android:layout_width="wrap_content"

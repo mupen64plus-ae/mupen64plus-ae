@@ -81,7 +81,7 @@ public class FileUtil
             else if( lhs.isFile() && rhs.isDirectory() )
                 return 1;
             else
-                return lhs.getName().toLowerCase().compareTo( rhs.getName().toLowerCase() );
+                return lhs.getName().compareToIgnoreCase( rhs.getName() );
         }
     }
     

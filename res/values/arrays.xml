@@ -18,34 +18,34 @@
         <item>@string/videoPlugin_entry1</item>
         <item>@string/videoPlugin_entry2</item>
         </string-array>
-    <string-array name="videoPlugin_values">
+    <string-array name="videoPlugin_values" translatable="false">
         <item></item>
         <item>libgles2n64.so</item>
         <item>libgles2rice.so</item>
     </string-array>
-    <string name="videoPlugin_default">libgles2n64.so</string>
+    <string name="videoPlugin_default" translatable="false">libgles2n64.so</string>
 
     <!-- Audio Plugins -->
     <string-array name="audioPlugin_entries">
         <item>@string/audioPlugin_entry0</item>
         <item>@string/audioPlugin_entry1</item>
     </string-array>
-    <string-array name="audioPlugin_values">
+    <string-array name="audioPlugin_values" translatable="false">
         <item></item>
         <item>libaudio-sdl.so</item>
     </string-array>
-    <string name="audioPlugin_default">libaudio-sdl.so</string>
+    <string name="audioPlugin_default" translatable="false">libaudio-sdl.so</string>
     
     <!-- Input Plugins -->
     <string-array name="inputPlugin_entries">
         <item>@string/inputPlugin_entry0</item>
         <item>@string/inputPlugin_entry1</item>
     </string-array>
-    <string-array name="inputPlugin_values">
+    <string-array name="inputPlugin_values" translatable="false">
         <item></item>
         <item>libinput-sdl.so</item>
     </string-array>
-    <string name="inputPlugin_default">libinput-sdl.so</string>
+    <string name="inputPlugin_default" translatable="false">libinput-sdl.so</string>
     
     <!-- RSP Plugins -->
     <string-array name="rspPlugin_entries">
@@ -53,32 +53,32 @@
         <item>@string/rspPlugin_entry1</item>
         <item>@string/rspPlugin_entry2</item>
     </string-array>
-    <string-array name="rspPlugin_values">
+    <string-array name="rspPlugin_values" translatable="false">
         <item></item>
         <item>librsp-hle.so</item>
         <item>librsp-hle-nosound.so</item>
     </string-array>
-    <string name="rspPlugin_default">librsp-hle.so</string>
+    <string name="rspPlugin_default" translatable="false">librsp-hle.so</string>
     
     <!-- Core Plugins -->
     <string-array name="corePlugin_entries">
         <item>@string/corePlugin_entry0</item>
     </string-array>
-    <string-array name="corePlugin_values">
+    <string-array name="corePlugin_values" translatable="false">
         <item>libcore.so</item>
     </string-array>
-    <string name="corePlugin_default">libcore.so</string>
+    <string name="corePlugin_default" translatable="false">libcore.so</string>
     
     <!-- Xperia Play Touchpad Layouts -->
     <string-array name="xperiaLayout_entries">
         <item>@string/xperiaLayout_entry0</item>
         <item>@string/xperiaLayout_entry1</item>
     </string-array>
-    <string-array name="xperiaLayout_values">
+    <string-array name="xperiaLayout_values" translatable="false">
         <item>Mupen64Plus-AE-Xperia-Play</item>
         <item>Mupen64Plus-AE-Analog-Right</item>
     </string-array>
-    <string name="xperiaLayout_default">Mupen64Plus-AE-Xperia-Play</string>
+    <string name="xperiaLayout_default" translatable="false">Mupen64Plus-AE-Xperia-Play</string>
 
     <!-- Touchscreen Layouts -->
     <string-array name="touchscreenLayout_entries">
@@ -87,14 +87,14 @@
         <item>@string/touchscreenLayout_entry2</item>
         <item>@string/touchscreenLayout_entry3</item>
     </string-array>
-    <string-array name="touchscreenLayout_values">
+    <string-array name="touchscreenLayout_values" translatable="false">
         <item>Mupen64Plus-AE-Analog</item>
         <item>Mupen64Plus-AE-Digital</item>
         <item>Mupen64Plus-AE-Touch</item>
         <item>Custom</item>
     </string-array>
-    <string name="touchscreenLayout_default">Mupen64Plus-AE-Analog</string>
-    <string name="touchscreenLayout_fpsOnly">Mupen64Plus-AE-Just-FPS</string>
+    <string name="touchscreenLayout_default" translatable="false">Mupen64Plus-AE-Analog</string>
+    <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
 
     <!-- Touchscreen Sizes -->
     <string-array name="touchscreenSize_entries">
@@ -103,16 +103,16 @@
         <item>@string/touchscreenSize_entry2</item>
         <item>@string/touchscreenSize_entry3</item>
     </string-array>
-    <string-array name="touchscreenSize_values">
+    <string-array name="touchscreenSize_values" translatable="false">
         <item>-Tiny</item>
         <item>-Small</item>
         <item></item>
         <item>-Tablet</item>
     </string-array>
-    <string name="touchscreenSize_default"></string>
+    <string name="touchscreenSize_default" translatable="false"></string>
 
     <!-- GLES2N64 Frameskip List -->
-    <string-array name="gles2N64Frameskip_entries">
+    <string-array name="gles2N64Frameskip_entries" translatable="false">
         <item>@string/_auto</item>
         <item>0</item>
         <item>1</item>
@@ -121,7 +121,7 @@
         <item>4</item>
         <item>5</item>
     </string-array>
-    <string-array name="gles2N64Frameskip_values">
+    <string-array name="gles2N64Frameskip_values" translatable="false">
         <item>-1</item>
         <item>0</item>
         <item>1</item>
@@ -130,7 +130,7 @@
         <item>4</item>
         <item>5</item>
     </string-array>
-    <string name="gles2N64Frameskip_default">-1</string>
+    <string name="gles2N64Frameskip_default" translatable="false">-1</string>
 
     <!-- Special Function Mapping -->
     <string-array name="specialFunction_entries">

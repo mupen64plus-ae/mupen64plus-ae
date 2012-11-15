@@ -72,8 +72,6 @@ public class Globals
  * TODO: Minor - Keep surface rendering onPause (don't blackout)
  * 
  * Bugs/features related to older APIs (e.g. Gingerbread)
- * TODO: API - Use SuppressLint instead of TargetAPI?
- * TODO: API - Blurry letters in dialog boxes
  * TODO: API - Mapping crash
  * TODO: API - Alternative to setAlpha for button-mapping
  * 

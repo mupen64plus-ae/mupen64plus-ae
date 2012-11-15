@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae.input.map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
@@ -348,7 +349,7 @@ public class TouchMap
             {
                 // Assign the map colors to the appropriate N64 button
                 String val = section.get( key );
-                int index = BUTTON_STRING_MAP.get( key.toLowerCase() );
+                int index = BUTTON_STRING_MAP.get( key.toLowerCase( Locale.ENGLISH ) );
                 mN64ToColor[index] = SafeMethods.toInt( val, -1 );
             }
         }
@@ -375,7 +376,7 @@ public class TouchMap
                     if( info != null )
                     {
                         // Let's not make this part case-sensitive
-                        loadAssetSection( directory, filename, section, info.toLowerCase() );
+                        loadAssetSection( directory, filename, section, info.toLowerCase( Locale.ENGLISH ) );
                     }
                 }
             }
