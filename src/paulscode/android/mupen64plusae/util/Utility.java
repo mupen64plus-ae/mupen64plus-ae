@@ -37,7 +37,7 @@ public class Utility
      * @param min The lowest number val can be equal to.
      * @param max The largest number val can be equal to.
      * 
-     * @return If the number is lower than min, min is returned. </p>
+     * @return If the number is lower than min, min is returned. <br/>
      *         If the number is higher than max, max is returned.
      */
     public static int clamp( int val, int min, int max )
@@ -52,7 +52,7 @@ public class Utility
      * @param min The lowest number val can be equal to.
      * @param max The largest number val can be equal to.
      * 
-     * @return If the number is lower than min, min is returned. </p>
+     * @return If the number is lower than min, min is returned. <br/>
      *         If the number is larger than max, max is returned.
      */
     public static float clamp( float val, float min, float max )
