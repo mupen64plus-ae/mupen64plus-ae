@@ -29,7 +29,6 @@ import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -62,12 +61,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         super.onCreate( savedInstanceState );
         
-        // TODO: Also test the hardware info string for more aggressive removal
-        boolean isXperiaPlay = Build.VERSION.SDK_INT == Build.VERSION_CODES.GINGERBREAD
-                || Build.VERSION.SDK_INT == Build.VERSION_CODES.GINGERBREAD_MR1;
-        
         // Disable the Xperia PLAY plugin as necessary
-        if( !isXperiaPlay )
+        if( !Globals.appData.hardwareInfo.isXperiaPlay )
         {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
             prefs.edit().putBoolean( XPERIA_ENABLED, false );
@@ -87,7 +82,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         findPreference( MENU_PERIPHERAL_INFO ).setOnPreferenceClickListener( this );
         
         // Hide the Xperia PLAY menu item as necessary
-        if( !isXperiaPlay )
+        if( !Globals.appData.hardwareInfo.isXperiaPlay )
         {
             PreferenceScreen screen = (PreferenceScreen) findPreference( MAIN_SETTINGS );
             Preference xperia = findPreference( XPERIA );
@@ -184,8 +179,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Enable the various input menus only if the input plug-in is not a dummy
         findPreference( TOUCHSCREEN ).setEnabled( enableInput );
-        findPreference( XPERIA ).setEnabled( enableInput );
         findPreference( PERIPHERAL ).setEnabled( enableInput );
+        if( Globals.appData.hardwareInfo.isXperiaPlay )
+            findPreference( XPERIA ).setEnabled( enableInput );
         
         // Enable the video menu only if the video plug-in is not a dummy
         findPreference( VIDEO ).setEnabled( enableVideo );
