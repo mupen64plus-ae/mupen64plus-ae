@@ -115,20 +115,20 @@ public abstract class AbstractProvider
         if( inputCode > 0 )
         {
             if( Globals.IS_HONEYCOMB_MR1 )
-                return "KEYCODE_" + inputCode;
-            else
                 return KeyEvent.keyCodeToString( inputCode );
+            else
+                return "KEYCODE_" + inputCode;
         }
         else if( inputCode < 0 )
         {
-            int axis = AxisProvider.inputToAxisCode( inputCode );
-            String direction = AxisProvider.inputToAxisDirection( inputCode )
+            int axis = inputToAxisCode( inputCode );
+            String direction = inputToAxisDirection( inputCode )
                     ? " (+)"
                     : " (-)";
             if( Globals.IS_HONEYCOMB_MR1 )
-                return "AXIS_" + axis + direction;
-            else
                 return MotionEvent.axisToString( axis ) + direction;
+            else
+                return "AXIS_" + axis + direction;
         }
         else
             return "NULL";
@@ -146,6 +146,44 @@ public abstract class AbstractProvider
         return getInputName( inputCode ) + ( inputCode == 0
                 ? ""
                 : String.format( " %4.2f", strength ) );
+    }    
+    
+    /**
+     * Convert an Android axis code to a universal input code.
+     * 
+     * @param axisCode The Android axis code.
+     * @param positiveDirection Set true for positive Android axis, false for negative Android axis.
+     * @return The corresponding universal input code.
+     */
+    protected static int axisToInputCode( int axisCode, boolean positiveDirection )
+    {
+        // Axis codes are encoded to negative values (versus buttons which are positive). Axis codes
+        // are bit shifted by one so that the lowest bit can encode axis direction.
+        return -( ( axisCode ) * 2 + ( positiveDirection
+                ? 1
+                : 2 ) );
+    }
+    
+    /**
+     * Convert a universal input code to an Android axis code.
+     * 
+     * @param inputCode The universal input code.
+     * @return The corresponding Android axis code.
+     */
+    protected static int inputToAxisCode( int inputCode )
+    {
+        return ( -inputCode - 1 ) / 2;
+    }
+    
+    /**
+     * Convert a universal input code to an Android axis direction.
+     * 
+     * @param inputCode The universal input code.
+     * @return True if the input code represents positive Android axis direction, false otherwise.
+     */
+    protected static boolean inputToAxisDirection( int inputCode )
+    {
+        return ( ( -inputCode ) % 2 ) == 1;
     }
     
     /**

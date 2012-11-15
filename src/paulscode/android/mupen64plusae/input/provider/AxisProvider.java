@@ -28,7 +28,6 @@ import android.view.View;
 /**
  * A class for transforming Android MotionEvent inputs into a common format.
  */
-@TargetApi( 12 )
 public class AxisProvider extends AbstractProvider implements View.OnGenericMotionListener
 {
     /** The input codes to listen for. */
@@ -42,6 +41,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
      * 
      * @param view The view receiving MotionEvent data.
      */
+    @TargetApi( 12 )
     public AxisProvider( View view )
     {
         // By default, provide data from all possible axes
@@ -72,6 +72,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
      * @see android.view.View.OnGenericMotionListener#onGenericMotion(android.view.View,
      * android.view.MotionEvent)
      */
+    @TargetApi( 12 )
     @Override
     public boolean onGenericMotion( View v, MotionEvent event )
     {
@@ -105,43 +106,5 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         notifyListeners( mInputCodes, strengths, 0 );
         
         return true;
-    }
-    
-    /**
-     * Convert an Android axis code to a universal input code.
-     * 
-     * @param axisCode The Android axis code.
-     * @param positiveDirection Set true for positive Android axis, false for negative Android axis.
-     * @return The corresponding universal input code.
-     */
-    protected static int axisToInputCode( int axisCode, boolean positiveDirection )
-    {
-        // Axis codes are encoded to negative values (versus buttons which are positive). Axis codes
-        // are bit shifted by one so that the lowest bit can encode axis direction.
-        return -( ( axisCode ) * 2 + ( positiveDirection
-                ? 1
-                : 2 ) );
-    }
-    
-    /**
-     * Convert a universal input code to an Android axis code.
-     * 
-     * @param inputCode The universal input code.
-     * @return The corresponding Android axis code.
-     */
-    protected static int inputToAxisCode( int inputCode )
-    {
-        return ( -inputCode - 1 ) / 2;
-    }
-    
-    /**
-     * Convert a universal input code to an Android axis direction.
-     * 
-     * @param inputCode The universal input code.
-     * @return True if the input code represents positive Android axis direction, false otherwise.
-     */
-    protected static boolean inputToAxisDirection( int inputCode )
-    {
-        return ( ( -inputCode ) % 2 ) == 1;
     }
 }
