@@ -48,9 +48,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String MENU_RESET_USER_PREFS = "menuResetUserPrefs";
     private static final String MENU_DEVICE_INFO = "menuDeviceInfo";
     private static final String MENU_PERIPHERAL_INFO = "menuPeripheralInfo";
+    private static final String TOUCHSCREEN = "touchscreen";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
-    private static final String XPERIA_LAYOUT = "xperiaLayout";
+    private static final String XPERIA = "xperia";
+    private static final String XPERIA_ENABLED = "xperiaEnabled";
+    private static final String PERIPHERAL = "peripheral";
+    private static final String VIDEO = "video";
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -66,7 +70,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !isXperiaPlay )
         {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-            prefs.edit().putString( XPERIA_LAYOUT, "" ).commit();
+            prefs.edit().putBoolean( XPERIA_ENABLED, false );
         }
         
         // Load user preference menu structure from XML and update view
@@ -86,7 +90,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !isXperiaPlay )
         {
             PreferenceScreen screen = (PreferenceScreen) findPreference( MAIN_SETTINGS );
-            Preference xperia = findPreference( XPERIA_LAYOUT );
+            Preference xperia = findPreference( XPERIA );
             xperia.setEnabled( false ); // just for good measure
             screen.removePreference( xperia );
         }
@@ -147,6 +151,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             new Builder( this ).setTitle( this.getString( R.string.menuDeviceInfo_title ) )
                     .setMessage( Utility.getCpuInfo() ).create().show();
+            Log.i( "MenuActivity", Utility.getCpuInfo() );
         }
         else if( key.equals( MENU_PERIPHERAL_INFO ) )
         {
@@ -167,17 +172,29 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     @SuppressWarnings( "deprecation" )
     private void refreshViews( SharedPreferences sharedPreferences )
     {
-        // Enable the play button only if the selected game actually exists
-        findPreference( MENU_RESUME ).setEnabled(
-                ( new File( Globals.userPrefs.selectedGame ).exists() ) );
+        // Determine which menu items should be enabled
+        boolean enableResume = new File( Globals.userPrefs.selectedGame ).exists();
+        boolean enableInput = Globals.userPrefs.inputPlugin.enabled;
+        boolean enableVideo = Globals.userPrefs.videoPlugin.enabled;
+        boolean enableCustom = Globals.userPrefs.isTouchscreenEnabled && Globals.userPrefs.isTouchscreenCustom;
+        boolean enableSize = Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isTouchscreenCustom;
+        
+        // Enable the play menu only if the selected game actually exists
+        findPreference( MENU_RESUME ).setEnabled( enableResume );
+        
+        // Enable the various input menus only if the input plug-in is not a dummy
+        findPreference( TOUCHSCREEN ).setEnabled( enableInput );
+        findPreference( XPERIA ).setEnabled( enableInput );
+        findPreference( PERIPHERAL ).setEnabled( enableInput );
+        
+        // Enable the video menu only if the video plug-in is not a dummy
+        findPreference( VIDEO ).setEnabled( enableVideo );
         
         // Enable the custom touchscreen prefs under certain conditions
-        findPreference( TOUCHSCREEN_CUSTOM ).setEnabled(
-                Globals.userPrefs.isTouchscreenEnabled && Globals.userPrefs.isTouchscreenCustom );
-        findPreference( TOUCHSCREEN_SIZE ).setEnabled(
-                Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isTouchscreenCustom );
+        findPreference( TOUCHSCREEN_CUSTOM ).setEnabled( enableCustom );
+        findPreference( TOUCHSCREEN_SIZE ).setEnabled( enableSize );
         
-        // Update the summary text in the menu for all ListPreferences
+        // Update the summary text for all ListPreferences
         for( String key : sharedPreferences.getAll().keySet() )
         {
             Preference preference = findPreference( key );

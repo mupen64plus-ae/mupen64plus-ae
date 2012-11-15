@@ -42,16 +42,16 @@ public class Globals
     /** True if device is running Eclair or later (Android 2.0.x) */
     public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
     
-    /** True if device is running Gingerbread or later (Android 2.3.x) */
+    /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
     public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
     
-    /** True if device is running Honeycomb or later (Android 3.0.x) */
+    /** True if device is running Honeycomb or later (11 - Android 3.0.x) */
     public static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     
-    /** True if device is running Honeycomb MR1 or later (Android 3.1.x) */
+    /** True if device is running Honeycomb MR1 or later (12 - Android 3.1.x) */
     public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
     
-    /** True if device is running Jellybean or later (Android 4.1.x) */
+    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLYBEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
     /** Debug option: download data to SD card (default true). */
@@ -61,20 +61,35 @@ public class Globals
 /**
  * Bugs and feature requests not listed elsewhere, in order of priority.
  * 
- * TODO: *Fix bug when loading zipped ROMS
- * TODO: *Implement multi-player peripheral controls
- * TODO: *Implement special func mapping
- * TODO: *Figure out crash on NativeMethods.quit
- * TODO: *Add cheats menu
- * TODO: *Add reset to ingame menu
- * TODO: *Hide action bar on menu click
- * TODO: Keep surface rendering onPause (don't blackout)
- * TODO: Add menu item for quick access to IME (like Language menu)
- * TODO: Look into BlueZ and Zeemote protocols
- * TODO: Cleanup Utility.java
- * TODO: Cleanup DataDownloader.java
- * TODO: Any way to eliminate DataDownloader? (e.g. use AssetManager class)
- * TODO: Implement SensorController if desired
- * TODO: Do we need an updater class?
- * TODO: Do we need status notification?
+ * Major bugs or missing features
+ * TODO: Major - Add cheats menu
+ * TODO: Major - Add reset to ingame menu
+ * TODO: Major - Implement multi-player peripheral controls
+ * TODO: Major - Implement special func mapping
+ * 
+ * Minor bugs or missing features
+ * TODO: Minor - Figure out crash on NativeMethods.quit (or implement workaround)
+ * TODO: Minor - Keep surface rendering onPause (don't blackout)
+ * 
+ * Bugs/features related to older APIs (e.g. Gingerbread)
+ * TODO: API - Use SuppressLint instead of TargetAPI?
+ * TODO: API - Blurry letters in dialog boxes
+ * TODO: API - Mapping crash
+ * TODO: API - Alternative to setAlpha for button-mapping
+ * 
+ * Bugs related to device parameters (e.g. screensize)
+ * TODO: Device - Button mapping layout
+ * 
+ * Features, nice-to-haves, anti-features
+ * TODO: Feature - Hide action bar on menu click
+ * TODO: Feature - Add menu item for quick access to IME (like Language menu)
+ * TODO: Feature - Look into BlueZ and Zeemote protocols
+ * TODO: Feature - Implement SensorController if desired
+ * TODO: Feature - Do we need an updater class?
+ * TODO: Feature - Do we need status notification? 
+ * 
+ * Code polishing (doesn't directly affect end user)
+ * TODO: Polish - Cleanup Utility.java
+ * TODO: Polish - Cleanup DataDownloader.java
+ * TODO: Polish - Look into AssetManager class vs DataDownloader
  */

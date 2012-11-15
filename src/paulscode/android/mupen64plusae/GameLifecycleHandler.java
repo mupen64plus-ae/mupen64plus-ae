@@ -147,7 +147,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         mSurface.setOnKeyListener( this );
         
         // Start listening to game surface events
-        mSurface.setListeners( this, mOverlay, mTouchscreenMap.getFpsRecalcPeriod() );
+        int recalcPeriod = mTouchscreenMap == null ? Integer.MAX_VALUE : mTouchscreenMap.getFpsRecalcPeriod();
+        mSurface.setListeners( this, mOverlay, recalcPeriod );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
@@ -246,7 +247,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             }
         }
         
-        if( Globals.userPrefs.inputPlugin.enabled && Globals.userPrefs.isPeripheralEnabled )
+        if( Globals.userPrefs.inputPlugin.enabled )
         {
             // Create the input providers shared among all peripheral controllers
             mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );

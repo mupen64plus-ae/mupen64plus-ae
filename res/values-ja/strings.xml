@@ -65,7 +65,8 @@
     <!-- Settings Menu -->
     <string name="touchscreen_title">タッチスクリーン</string>
     <string name="touchscreen_summary">オンスクリーン·コントローラ設定</string>
-    <string name="xperiaLayout_title">XperiaPLAY設定</string>
+    <string name="xperia_title">XperiaPLAY設定</string>
+    <string name="xperia_summary"></string>
     <string name="peripheral_title">コントローラ</string>
     <string name="peripheral_summary">ゲームパッド/ジョイスティック設定</string>
     <string name="video_title">ビデオ</string>
@@ -79,6 +80,10 @@
     <string name="menuResetUserPrefs_title">リセット</string>
     <string name="menuResetUserPrefs_summary">既定値にリセット</string>
     
+    <!-- Xperia PLAY Menu -->
+    <string name="xperiaEnabled_title">@string/_enable</string>
+    <string name="xperiaLayout_title">@string/_layout</string>
+    
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/_enable</string>
     <string name="touchscreenLayout_title">@string/_layout</string>
@@ -86,7 +91,6 @@
     <string name="touchscreenOctagonJoystick_title">八角形のようにアナログスティックをエミュレート</string>
     
     <!-- Peripherals Menu -->
-    <string name="peripheralEnabled_title">@string/_enable</string>
     <string name="peripheralMap1_title">プレイヤー1</string>
     <string name="peripheralMap2_title">プレイヤー2</string>
     <string name="peripheralMap3_title">プレイヤー3</string>
@@ -153,6 +157,10 @@
     
     <!-- Core Plugin Entries -->
     
+    <!-- Xperia PLAY Layout Entries -->
+    <string name="xperiaLayout_entry0">左パッド： アナログ制御; 右パッド： Cボタン</string>
+    <string name="xperiaLayout_entry1">左パッド： Cボタ; 右パッド: アナログ制御</string>
+    
     <!-- Touchscreen Layout Entries -->
     <string name="touchscreenLayout_entry0">アナログ (roymustang16によって)</string>
     <string name="touchscreenLayout_entry1">デジタル (roymustang16によって)</string>
@@ -163,11 +171,6 @@
     <string name="touchscreenSize_entry1">小</string>
     <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">タブレット</string>
-    
-    <!-- Xperia PLAY Layout Entries -->
-    <string name="xperiaLayout_entry0">なし（デバイスがXperiaPlayではありません）</string>
-    <string name="xperiaLayout_entry1">左パッド： アナログ制御; 右パッド： Cボタン</string>
-    <string name="xperiaLayout_entry2">左パッド： Cボタ; 右パッド: アナログ制御</string>
     
     <!-- ******************************************** -->
     <!-- Other Strings                                -->

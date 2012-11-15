@@ -77,25 +77,22 @@ public class UserPrefs
     public final Plugin rspPlugin;
     
     /** The selected emulator core. */
-    public final Plugin corePlugin;    
+    public final Plugin corePlugin;
     
-    /** The filename of the selected touchscreen layout. */
-    public final String touchscreenLayout;
-
+    /** True if Xperia Play-specific features are enabled. */
+    public final boolean isXperiaEnabled;
+    
     /** The filename of the selected Xperia Play layout. */
     public final String xperiaLayout;
     
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
-
-    /** True if Xperia Play-specific features are enabled. */
-    public final boolean isXperiaEnabled;
-    
-    /** True if external gamepads/joysticks are enabled. */
-    public final boolean isPeripheralEnabled;
     
     /** True if a custom touchscreen is provided. */
     public final boolean isTouchscreenCustom;
+    
+    /** The filename of the selected touchscreen layout. */
+    public final String touchscreenLayout;
     
     /** True if the touchscreen joystick is represented as an octagon. */
     public final boolean isOctagonalJoystick;
@@ -180,18 +177,22 @@ public class UserPrefs
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Plug-ins
-        videoPlugin = new Plugin(mPreferences, paths.libsDir, "videoPlugin" );
-        audioPlugin = new Plugin(mPreferences, paths.libsDir, "audioPlugin" );
-        inputPlugin = new Plugin(mPreferences, paths.libsDir, "inputPlugin" );
-        rspPlugin   = new Plugin(mPreferences, paths.libsDir, "rspPlugin" );
-        corePlugin  = new Plugin(mPreferences, paths.libsDir, "corePlugin" );
+        videoPlugin = new Plugin( mPreferences, paths.libsDir, "videoPlugin" );
+        audioPlugin = new Plugin( mPreferences, paths.libsDir, "audioPlugin" );
+        inputPlugin = new Plugin( mPreferences, paths.libsDir, "inputPlugin" );
+        rspPlugin   = new Plugin( mPreferences, paths.libsDir, "rspPlugin" );
+        corePlugin  = new Plugin( mPreferences, paths.libsDir, "corePlugin" );
+        
+        // Xperia PLAY prefs
+        isXperiaEnabled = mPreferences.getBoolean( "xperiaEnabled", false );
+        xperiaLayout = mPreferences.getString( "xperiaLayout", "" );
         
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
+        // isTouchscreenCustom, touchscreenLayout: see below
         isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
         
         // Peripheral prefs
-        isPeripheralEnabled = mPreferences.getBoolean( "peripheralEnabled", true );
         inputMap1 = new InputMap( mPreferences.getString( "peripheralMap1", "" ) );
         inputMap2 = new InputMap( mPreferences.getString( "peripheralMap2", "" ) );
         inputMap3 = new InputMap( mPreferences.getString( "peripheralMap3", "" ) );
@@ -219,11 +220,11 @@ public class UserPrefs
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
         
         // Other prefs
-        selectedGame = mPreferences.getString( "selectedGame", "" );
         gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
         isFrameRateEnabled = mPreferences.getBoolean( "frameRateEnabled", false );
+        selectedGame = mPreferences.getString( "selectedGame", "" );
         
-        // Touch map layouts
+        // Touchscreen layouts
         boolean isCustom = false;
         String folder = "";
         if( inputPlugin.enabled && isTouchscreenEnabled )
@@ -247,15 +248,13 @@ public class UserPrefs
         }
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
-        xperiaLayout = mPreferences.getString( "xperiaLayout", "" );
-        isXperiaEnabled = ( xperiaLayout != null ) && !xperiaLayout.equals( "" );
         
         // Derived values
         isGles2N64AutoFrameskipEnabled = ( gles2N64MaxFrameskip < 0 );
         selectedGameAutoSavefile = paths.dataDir + "/autosave_"
                 + Math.abs( selectedGame.hashCode() ) + ".sav";
     }
-
+    
     /**
      * A tiny class containing inter-dependent plug-in information.
      */
@@ -274,7 +273,7 @@ public class UserPrefs
          * Instantiates a new plug-in meta-info object.
          * 
          * @param prefs The shared preferences containing plug-in information.
-         * @param libsDir The directory containing the plug-in file. 
+         * @param libsDir The directory containing the plug-in file.
          * @param key The shared preference key for the plugin.
          */
         public Plugin( SharedPreferences prefs, String libsDir, String key )

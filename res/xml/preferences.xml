@@ -67,6 +67,27 @@
             android:title="@string/categoryHardware_title" />
 
         <PreferenceScreen
+            android:icon="@drawable/ic_xperia"
+            android:key="xperia"
+            android:summary="@string/xperia_summary"
+            android:title="@string/xperia_title" >
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="xperiaEnabled"
+                android:title="@string/xperiaEnabled_title" />
+
+            <ListPreference
+                android:defaultValue="@string/xperiaLayout_default"
+                android:dependency="xperiaEnabled"
+                android:entries="@array/xperiaLayout_entries"
+                android:entryValues="@array/xperiaLayout_values"
+                android:key="xperiaLayout"
+                android:title="@string/xperiaLayout_title" />
+
+        </PreferenceScreen>
+        
+        <PreferenceScreen
             android:icon="@drawable/ic_phone"
             android:key="touchscreen"
             android:summary="@string/touchscreen_summary"
@@ -108,48 +129,31 @@
 
         </PreferenceScreen>
 
-        <ListPreference
-            android:defaultValue="@string/xperiaLayout_default"
-            android:entries="@array/xperiaLayout_entries"
-            android:entryValues="@array/xperiaLayout_values"
-            android:icon="@drawable/ic_xperia"
-            android:key="xperiaLayout"
-            android:title="@string/xperiaLayout_title" />
-
         <PreferenceScreen
             android:icon="@drawable/ic_joystick"
             android:key="peripheral"
             android:summary="@string/peripheral_summary"
             android:title="@string/peripheral_title" >
 
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="peripheralEnabled"
-                android:title="@string/peripheralEnabled_title" />
-
             <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                android:dependency="peripheralEnabled"
                 android:dialogTitle="@string/inputMapPreference_dialogTitle"
                 android:key="peripheralMap1"
                 android:summary="@string/peripheralMap_summary"
                 android:title="@string/peripheralMap1_title" />
 
             <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                android:dependency="peripheralEnabled"
                 android:dialogTitle="@string/inputMapPreference_dialogTitle"
                 android:key="peripheralMap2"
                 android:summary="@string/peripheralMap_summary"
                 android:title="@string/peripheralMap2_title" />
 
             <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                android:dependency="peripheralEnabled"
                 android:dialogTitle="@string/inputMapPreference_dialogTitle"
                 android:key="peripheralMap3"
                 android:summary="@string/peripheralMap_summary"
                 android:title="@string/peripheralMap3_title" />
 
             <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                android:dependency="peripheralEnabled"
                 android:dialogTitle="@string/inputMapPreference_dialogTitle"
                 android:key="peripheralMap4"
                 android:summary="@string/peripheralMap_summary"
@@ -157,7 +161,6 @@
 
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:dependency="peripheralEnabled"
                 android:key="volumeKeysEnabled"
                 android:summary="@string/volumeKeysEnabled_summary"
                 android:title="@string/volumeKeysEnabled_title" />

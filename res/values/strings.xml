@@ -70,19 +70,24 @@
     <!-- Settings Menu -->
     <string name="touchscreen_title">Touchscreen</string>
     <string name="touchscreen_summary">On-screen controller settings</string>
-    <string name="xperiaLayout_title">Xperia PLAY touchpad</string>
+    <string name="xperia_title">Touchpad</string>
+    <string name="xperia_summary">Sony Ericsson Xperia PLAY settings</string>
     <string name="peripheral_title">Controllers</string>
     <string name="peripheral_summary">Gamepads, joysticks, keyboards, etc.</string>
     <string name="video_title">Video</string>
     <string name="video_summary">Graphics settings</string>
-    <string name="plugins_title">Plugins</string>
-    <string name="plugins_summary">Advanced features</string>    
+    <string name="plugins_title">Advanced</string>
+    <string name="plugins_summary">Plug-ins and debug settings</string>    
     <string name="gameSaveDir_title">Savegame folder</string>
     <string name="frameRateEnabled_title">Show framerate</string>
     <string name="cheats_title">Cheats</string>
     <string name="cheats_summary">Choose a game to hack</string>
     <string name="menuResetUserPrefs_title">Reset</string>
     <string name="menuResetUserPrefs_summary">Restore default settings</string>
+    
+    <!-- Xperia PLAY Menu -->
+    <string name="xperiaEnabled_title">@string/_enable</string>
+    <string name="xperiaLayout_title">@string/_layout</string>
     
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/_enable</string>
@@ -93,7 +98,6 @@
     <string name="touchscreenOctagonJoystick_summary">Constrain analog motion to an octagon, like the original N64 controller</string>
     
     <!-- Peripherals Menu -->
-    <string name="peripheralEnabled_title">@string/_enable</string>
     <string name="peripheralMap1_title">Player 1</string>
     <string name="peripheralMap2_title">Player 2</string>
     <string name="peripheralMap3_title">Player 3</string>
@@ -175,6 +179,10 @@
     <!-- Core Plugin Entries -->
     <string name="corePlugin_entry0">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
+    <!-- Xperia PLAY Layout Entries -->
+    <string name="xperiaLayout_entry0">Left pad: Analog control; Right pad: C buttons</string>
+    <string name="xperiaLayout_entry1">Left pad: C buttons;  Right pad: Analog control</string>
+    
     <!-- Touchscreen Layout Entries -->
     <string name="touchscreenLayout_entry0">Analog (by roymustang16)</string>
     <string name="touchscreenLayout_entry1">Digital (by roymustang16)</string>
@@ -186,11 +194,6 @@
     <string name="touchscreenSize_entry1">Small</string>
     <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">Tablet</string>
-    
-    <!-- Xperia PLAY Layout Entries -->
-    <string name="xperiaLayout_entry0">None (this device is not a Sony Ericsson Xperia PLAY)</string>
-    <string name="xperiaLayout_entry1">Left pad: Analog control; Right pad: C buttons</string>
-    <string name="xperiaLayout_entry2">Left pad: C buttons;  Right pad: Analog control</string>
     
     <!-- Special Functions -->
     <string name="specialFunction_entry0">Stop</string>

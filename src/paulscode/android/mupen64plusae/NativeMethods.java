@@ -134,7 +134,7 @@ public class NativeMethods
     
     public static int getHardwareType()
     {
-        return Globals.appData.getHardwareType();
+        return Globals.appData.hardwareInfo.hardwareType;
     }
     
     public static int getMaxFrameSkip()

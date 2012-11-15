@@ -69,18 +69,16 @@
     </string-array>
     <string name="corePlugin_default">libcore.so</string>
     
-    <!-- Xperia Play Touchpads -->
+    <!-- Xperia Play Touchpad Layouts -->
     <string-array name="xperiaLayout_entries">
         <item>@string/xperiaLayout_entry0</item>
         <item>@string/xperiaLayout_entry1</item>
-        <item>@string/xperiaLayout_entry2</item>
     </string-array>
     <string-array name="xperiaLayout_values">
-        <item></item>
         <item>Mupen64Plus-AE-Xperia-Play</item>
         <item>Mupen64Plus-AE-Analog-Right</item>
     </string-array>
-    <string name="xperiaLayout_default"></string>
+    <string name="xperiaLayout_default">Mupen64Plus-AE-Xperia-Play</string>
 
     <!-- Touchscreen Layouts -->
     <string-array name="touchscreenLayout_entries">

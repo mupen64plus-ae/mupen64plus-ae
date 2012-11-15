@@ -20,7 +20,6 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import paulscode.android.mupen64plusae.util.Utility;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -33,6 +32,9 @@ import android.util.Log;
  */
 public class AppData
 {
+    /** The hardware info, refreshed at the beginning of every session. */
+    public final HardwareInfo hardwareInfo;
+    
     /** Unknown hardware configuration. */
     public static final int HARDWARE_TYPE_UNKNOWN = 0;
     
@@ -48,9 +50,6 @@ public class AppData
     /** Tegra-based hardware. */
     public static final int HARDWARE_TYPE_TEGRA = 4;
     
-    /** Unidentified hardware configuration (only used internally). */
-    private static final int HARDWARE_TYPE_UNIDENTIFIED = -1;
-    
     /** Default value for getHardwareType(). */
     public static final int DEFAULT_HARDWARE_TYPE = HARDWARE_TYPE_UNKNOWN;
     
@@ -63,9 +62,6 @@ public class AppData
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
     
-    /** The hardware type, refreshed at the beginning of every session. */
-    private int mHardwareType = HARDWARE_TYPE_UNIDENTIFIED;
-    
     /**
      * Instantiates a new AppData object to retrieve and persist app data.
      * 
@@ -75,6 +71,7 @@ public class AppData
     public AppData( Context context, String filename )
     {
         mPreferences = context.getSharedPreferences( filename, Context.MODE_PRIVATE );
+        hardwareInfo = new HardwareInfo();
     }
     
     /**
@@ -126,71 +123,73 @@ public class AppData
     }
     
     /**
-     * Gets the hardware type.
-     * 
-     * @return the hardware type
+     * Small class containing hardware info provided by /proc/cpuinfo.
      */
-    public int getHardwareType()
+    public class HardwareInfo
     {
-        if( mHardwareType == HARDWARE_TYPE_UNIDENTIFIED )
-            mHardwareType = identifyHardwareType();
-        return mHardwareType;
-    }
-    
-    /**
-     * Identifies the hardware type using information provided by /proc/cpuinfo.
-     */
-    private static int identifyHardwareType()
-    {
-        // Parse a long string of information from the operating system
-        Log.v( "AppData", "CPU info available from file /proc/cpuinfo:" );
-        String hardware = null;
-        String features = null;
-        String processor = null;
+        public final int hardwareType;
+        public final boolean isXperiaPlay;
+        public final String hardware;
+        public final String processor;
+        public final String features;
         
-        String hwString = Utility.getCpuInfo().toLowerCase();
-        Log.v( "AppData", hwString );
-
-        String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
-        if( lines != null )
+        public HardwareInfo()
         {
-            for( int i = 0; i < lines.length; i++ )
+            // Parse a long string of information from the operating system
+            Log.v( "AppData", "CPU info available from file /proc/cpuinfo:" );
+            String _hardware = null;
+            String _features = null;
+            String _processor = null;
+            
+            String hwString = Utility.getCpuInfo();
+            Log.v( "AppData", hwString );
+
+            String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
+            if( lines != null )
             {
-                String[] splitLine = lines[i].split( ":" );
-                if( splitLine != null && splitLine.length == 2 )
+                for( int i = 0; i < lines.length; i++ )
                 {
-                    if( processor == null && splitLine[0].trim().equals( "processor" ) )
-                        processor = splitLine[1].trim();
-                    else if( features == null && splitLine[0].trim().equals( "features" ) )
-                        features = splitLine[1].trim();
-                    else if( hardware == null && splitLine[0].trim().equals( "hardware" ) )
-                        hardware = splitLine[1].trim();
+                    String[] splitLine = lines[i].split( ":" );
+                    if( splitLine != null && splitLine.length == 2 )
+                    {
+                        String heading = splitLine[0].trim();
+                        if( _processor == null && heading.equalsIgnoreCase( "processor" ) )
+                            _processor = splitLine[1].trim();
+                        else if( _features == null && heading.equalsIgnoreCase( "features" ) )
+                            _features = splitLine[1].trim();
+                        else if( _hardware == null && heading.equalsIgnoreCase( "hardware" ) )
+                            _hardware = splitLine[1].trim().toLowerCase();
+                    }
                 }
             }
+            
+            // Identify the hardware type from the substrings
+            int type = DEFAULT_HARDWARE_TYPE;
+            if( _hardware != null )
+            {
+                if( _hardware.contains( "mapphone" ) || _hardware.contains( "tuna" )
+                        || _hardware.contains( "smdkv" ) || _hardware.contains( "herring" )
+                        || _hardware.contains( "aries" ) )
+                    type = HARDWARE_TYPE_OMAP;
+                
+                else if( _hardware.contains( "liberty" ) || _hardware.contains( "gt-s5830" )
+                        || _hardware.contains( "zeus" ) )
+                    type = HARDWARE_TYPE_QUALCOMM;
+                
+                else if( _hardware.contains( "imap" ) )
+                    type = HARDWARE_TYPE_IMAP;
+                
+                else if( _hardware.contains( "tegra 2" ) || _hardware.contains( "grouper" )
+                        || _hardware.contains( "meson-m1" ) || _hardware.contains( "smdkc" )
+                        || ( _features != null && _features.contains( "vfpv3d16" ) ) )
+                    type = HARDWARE_TYPE_TEGRA;
+            }
+            
+            hardwareType = type;
+            hardware = _hardware;
+            processor = _processor;
+            features = _features;
+            isXperiaPlay = hardware.contains( "zeus" );            
         }
-        
-        // Identify the hardware type from the substrings
-        int type = DEFAULT_HARDWARE_TYPE;
-        if( hardware != null )
-        {
-            if( hardware.contains( "mapphone" ) || hardware.contains( "tuna" )
-                    || hardware.contains( "smdkv" ) || hardware.contains( "herring" )
-                    || hardware.contains( "aries" ) )
-                type = HARDWARE_TYPE_OMAP;
-            
-            else if( hardware.contains( "liberty" ) || hardware.contains( "gt-s5830" )
-                    || hardware.contains( "zeus" ) )
-                type = HARDWARE_TYPE_QUALCOMM;
-            
-            else if( hardware.contains( "imap" ) )
-                type = HARDWARE_TYPE_IMAP;
-            
-            else if( hardware.contains( "tegra 2" ) || hardware.contains( "grouper" )
-                    || hardware.contains( "meson-m1" ) || hardware.contains( "smdkc" )
-                    || ( features != null && features.contains( "vfpv3d16" ) ) )
-                type = HARDWARE_TYPE_TEGRA;
-        }
-        
-        return type;
     }
 }
