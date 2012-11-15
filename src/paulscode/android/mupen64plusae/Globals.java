@@ -62,6 +62,7 @@ public class Globals
  * Bugs and feature requests not listed elsewhere, in order of priority.
  * 
  * Major bugs or missing features
+ * TODO: Major - Get Xperia PLAY NativeActivity working again
  * TODO: Major - Add cheats menu
  * TODO: Major - Add reset to ingame menu
  * TODO: Major - Implement multi-player peripheral controls
@@ -72,10 +73,9 @@ public class Globals
  * TODO: Minor - Keep surface rendering onPause (don't blackout)
  * 
  * Bugs/features related to older APIs (e.g. Gingerbread)
- * TODO: API - Mapping crash
  * TODO: API - Alternative to setAlpha for button-mapping
  * 
- * Bugs related to device parameters (e.g. screensize)
+ * Bugs/features related to device parameters (e.g. screensize)
  * TODO: Device - Button mapping layout
  * 
  * Features, nice-to-haves, anti-features

@@ -28,7 +28,7 @@ import android.view.View;
 /**
  * A class for transforming Android MotionEvent inputs into a common format.
  */
-public class AxisProvider extends AbstractProvider implements View.OnGenericMotionListener
+public class AxisProvider extends AbstractProvider
 {
     /** The input codes to listen for. */
     private int[] mInputCodes;
@@ -50,7 +50,7 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
             mInputCodes[i] = -( i + 1 );
         
         // Connect the input source
-        view.setOnGenericMotionListener( this );
+        view.setOnGenericMotionListener( new GenericMotionListener() );
         
         // Request focus for proper listening
         view.requestFocus();
@@ -66,45 +66,57 @@ public class AxisProvider extends AbstractProvider implements View.OnGenericMoti
         mInputCodes = inputCodeFilter.clone();
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.view.View.OnGenericMotionListener#onGenericMotion(android.view.View,
-     * android.view.MotionEvent)
+    /**
+     * Just an indirection class that eliminates some logcat chatter about benign errors. If we make
+     * the parent class implement View.OnGenericMotionListener, then we get logcat error messages
+     * <i>even if</i> we conditionally exclude calls to the class based on API. These errors are not
+     * actually harmful, so the logcat messages are simply a nuisance during debugging.
+     * <p/>
+     * For a detailed explanation, see <a href=http://stackoverflow.com/questions/13103902/
+     * android-recommended-way-of-safely-supporting-newer-apis-has-error-if-the-class-i>here</a>.
      */
-    @TargetApi( 12 )
-    @Override
-    public boolean onGenericMotion( View v, MotionEvent event )
+    public class GenericMotionListener implements View.OnGenericMotionListener
     {
-        InputDevice device = event.getDevice();
-        
-        // Read all the requested axes
-        float[] strengths = new float[mInputCodes.length];
-        for( int i = 0; i < mInputCodes.length; i++ )
+        /*
+         * (non-Javadoc)
+         * 
+         * @see android.view.View.OnGenericMotionListener#onGenericMotion(android.view.View,
+         * android.view.MotionEvent)
+         */
+        @TargetApi( 12 )
+        @Override
+        public boolean onGenericMotion( View v, MotionEvent event )
         {
-            int inputCode = mInputCodes[i];
+            InputDevice device = event.getDevice();
             
-            // Compute the axis code from the input code
-            int axisCode = inputToAxisCode( inputCode );
+            // Read all the requested axes
+            float[] strengths = new float[mInputCodes.length];
+            for( int i = 0; i < mInputCodes.length; i++ )
+            {
+                int inputCode = mInputCodes[i];
+                
+                // Compute the axis code from the input code
+                int axisCode = inputToAxisCode( inputCode );
+                
+                // Get the analog value using the Android API
+                float strength = event.getAxisValue( axisCode );
+                MotionRange motionRange = device.getMotionRange( axisCode );
+                if( motionRange != null )
+                    strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
+                
+                // If the strength points in the correct direction, record it
+                boolean direction1 = inputToAxisDirection( inputCode );
+                boolean direction2 = strength > 0;
+                if( direction1 == direction2 )
+                    strengths[i] = Math.abs( strength );
+                else
+                    strengths[i] = 0;
+            }
             
-            // Get the analog value using the Android API
-            float strength = event.getAxisValue( axisCode );
-            MotionRange motionRange = device.getMotionRange( axisCode );
-            if( motionRange != null )
-                strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
+            // Notify listeners about new input data
+            notifyListeners( mInputCodes, strengths, 0 );
             
-            // If the strength points in the correct direction, record it
-            boolean direction1 = inputToAxisDirection( inputCode );
-            boolean direction2 = strength > 0;
-            if( direction1 == direction2 )
-                strengths[i] = Math.abs( strength );
-            else
-                strengths[i] = 0;
+            return true;
         }
-        
-        // Notify listeners about new input data
-        notifyListeners( mInputCodes, strengths, 0 );
-        
-        return true;
     }
 }
