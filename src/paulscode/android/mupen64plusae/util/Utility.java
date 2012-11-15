@@ -13,11 +13,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Point;
-import android.os.Build;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.InputDevice;
@@ -127,7 +127,7 @@ public class Utility
     /**
      * Gets the hardware information from /proc/cpuinfo.
      * 
-     * @return the hardware string
+     * @return The hardware string.
      */
     public static String getCpuInfo()
     {
@@ -155,39 +155,55 @@ public class Utility
     /**
      * Gets the peripheral information from the appropriate Android API.
      * 
-     * @return the peripheral info string
+     * @return The peripheral info string.
      */
     @TargetApi( 16 )
     public static String getPeripheralInfo( Activity activity )
     {
-        boolean isGingerbread = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
-        boolean isHoneycombMR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
-        boolean isJellyBean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-        
         StringBuilder builder = new StringBuilder();
         
-        if( isGingerbread )
+        if( Globals.IS_GINGERBREAD )
         {
             int[] ids = InputDevice.getDeviceIds();
             for( int i = 0; i < ids.length; i++ )
             {
                 InputDevice device = InputDevice.getDevice( ids[i] );
                 
-                if( !isJellyBean || !device.isVirtual() )
+                if( !Globals.IS_JELLYBEAN || !device.isVirtual() )
                 {
-                    // HoneycombMR1 can use getMotionRanges(), but this simplifies back-compat
-                    List<MotionRange> ranges = new ArrayList<MotionRange>();
-                    for( int j = 0; j < 256; j++ )
+                    List<MotionRange> ranges;
+                    if( Globals.IS_HONEYCOMB_MR1 )
                     {
-                        if( device.getMotionRange( j ) != null )
-                            ranges.add( device.getMotionRange( j ) );
+                        ranges = device.getMotionRanges();
+                    }
+                    else
+                    {
+                        // Earlier APIs we have to do it the hard way
+                        // TODO: Smelly... must be a better way
+                        ranges = new ArrayList<MotionRange>();
+                        boolean finished = false;
+                        for( int j = 0; j < 256 && !finished; j++ )
+                        {
+                            try
+                            {
+                                if( device.getMotionRange( j ) != null )
+                                    ranges.add( device.getMotionRange( j ) );
+                            }
+                            catch( Exception e )
+                            {
+                                finished = true;
+                                Log.i( "Utility", "Number of axes = " + j );
+                                // In Xperia PLAY (API 9) I found this to be 9
+                                // Not sure if this is device or API specific
+                            }
+                        }
                     }
                     
                     if( ranges.size() > 0 )
                     {
                         builder.append( "Device: " + device.getName() + "\r\n" );
                         builder.append( "Id: " + device.getId() + "\r\n" );
-                        if( isJellyBean && device.getVibrator().hasVibrator() )
+                        if( Globals.IS_JELLYBEAN && device.getVibrator().hasVibrator() )
                         {
                             builder.append( "Vibrator: true\r\n" );
                         }
@@ -195,9 +211,9 @@ public class Utility
                         for( int j = 0; j < ranges.size(); j++ )
                         {
                             MotionRange range = ranges.get( j );
-                            String axisName = isHoneycombMR1
+                            String axisName = Globals.IS_HONEYCOMB_MR1
                                     ? MotionEvent.axisToString( range.getAxis() )
-                                    : ( "Axis " + range.getAxis() );
+                                    : "Axis " + j;
                             builder.append( "  " + axisName + ": ( " + range.getMin() + " , "
                                     + range.getMax() + " )\r\n" );
                         }
@@ -207,7 +223,7 @@ public class Utility
             }
         }
         
-        // if( IS_HONEYCOMB_MR1 )
+        // if( Globals.IS_HONEYCOMB_MR1 )
         // {
         // builder.append( "USB Devices:\r\n\r\n" );
         // UsbManager manager = (UsbManager) activity.getSystemService( Context.USB_SERVICE );
@@ -361,7 +377,7 @@ public class Utility
         
         // We probably have the full CRC, just upper-case it.
         if( CRC.length() == 17 )
-            return CRC.toUpperCase();
+            return CRC.toUpperCase( );
         
         String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase().trim();
         String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase().trim();
