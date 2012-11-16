@@ -279,14 +279,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             // end GLES2 fix
             // EGLContext ctx = egl.eglCreateContext( dpy, config, EGL10.EGL_NO_CONTEXT, null );
             
-            if( ctx == EGL10.EGL_NO_CONTEXT )
+            if( ctx.equals( EGL10.EGL_NO_CONTEXT ) )
             {
                 Log.e( "GameSurface", "Couldn't create context" );
                 return false;
             }
             
             EGLSurface surface = egl.eglCreateWindowSurface( dpy, config, this, null );
-            if( surface == EGL10.EGL_NO_SURFACE )
+            if( surface.equals( EGL10.EGL_NO_SURFACE ) )
             {
                 Log.e( "GameSurface", "Couldn't create surface" );
                 return false;
