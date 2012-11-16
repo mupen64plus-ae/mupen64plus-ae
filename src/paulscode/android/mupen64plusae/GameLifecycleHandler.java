@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
+import paulscode.android.mupen64plusae.input.XperiaPlayController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
@@ -89,18 +91,29 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private KeyProvider mKeyProvider;
     
     // Internal flags
-    boolean mCoreRunning = false;
+    private boolean mCoreRunning = false;
+    private final boolean mIsXperiaPlay;
     
     public GameLifecycleHandler( Activity activity )
     {
         mActivity = activity;
         mControllers = new ArrayList<AbstractController>();
+        mIsXperiaPlay = ( mActivity instanceof GameActivityXperiaPlay );
     }
     
     @TargetApi( 11 )
-    public void onCreate( Bundle savedInstanceState )
+    public void onCreateBegin( Bundle savedInstanceState )
     {
-        // Lay out content and initialize stuff
+        // Load native libraries
+        if( mIsXperiaPlay )
+            FileUtil.loadNativeLibName( "xperia-touchpad" );
+        FileUtil.loadNativeLibName( "SDL" );
+        FileUtil.loadNativeLibName( "core" );
+        FileUtil.loadNativeLibName( "front-end" );
+        FileUtil.loadNativeLib( Globals.userPrefs.videoPlugin.path );
+        FileUtil.loadNativeLib( Globals.userPrefs.audioPlugin.path );
+        FileUtil.loadNativeLib( Globals.userPrefs.inputPlugin.path );
+        FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin.path );
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
@@ -113,10 +126,18 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         // Enable full-screen mode
         window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
         
-        // Keep screen on under certain conditions
-        window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
-        
-        // Get the views
+        // Keep screen from going to sleep
+        window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );        
+    }
+    
+    @TargetApi( 11 )
+    public void onCreateEnd( Bundle savedInstanceState )
+    {        
+        // Take control of the GameSurface if necessary
+        if( mIsXperiaPlay )
+            mActivity.getWindow().takeSurface( null );
+
+        // Lay out content and get the views        
         mActivity.setContentView( R.layout.game_activity );
         mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
@@ -130,15 +151,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
             mActivity.getActionBar().hide();
         }
-        
-        // Load native libraries
-        FileUtil.loadNativeLibName( "SDL" );
-        FileUtil.loadNativeLibName( "core" );
-        FileUtil.loadNativeLibName( "front-end" );
-        FileUtil.loadNativeLib( Globals.userPrefs.videoPlugin.path );
-        FileUtil.loadNativeLib( Globals.userPrefs.audioPlugin.path );
-        FileUtil.loadNativeLib( Globals.userPrefs.inputPlugin.path );
-        FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin.path );
         
         // Initialize user interface devices
         initControllers();
@@ -157,6 +169,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         // Notify user that the game activity has started
         Notifier.showToast( mActivity, R.string.toast_appStarted );
     }
+    
     
     public void onResume()
     {
@@ -250,6 +263,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         
         if( Globals.userPrefs.inputPlugin.enabled )
         {
+            // Create the Xperia PLAY touchpad controller
+            if( mIsXperiaPlay )
+            {
+                TouchMap map = new TouchMap( mActivity.getResources() );
+                map.load( Globals.userPrefs.xperiaLayout );
+                mControllers.add( new XperiaPlayController( map ) );
+            }
+            
             // Create the input providers shared among all peripheral controllers
             mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );
             AbstractProvider axisProvider = Globals.IS_HONEYCOMB_MR1 ? new AxisProvider( mSurface ) : null;

@@ -21,7 +21,6 @@ package paulscode.android.mupen64plusae;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -53,66 +52,22 @@ public class GameActivity extends Activity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        Log.i( "GameActivity", "onCreate: ");
+        mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
-        mLifecycleHandler.onCreate( savedInstanceState );
-    }
-    
-    @Override
-    protected void onStart()
-    {
-        Log.i( "GameActivity", "onStart: ");
-        super.onStart();
+        mLifecycleHandler.onCreateEnd( savedInstanceState );
     }
     
     @Override
     protected void onResume()
     {
-        Log.i( "GameActivity", "onResume: ");
         super.onResume();
         mLifecycleHandler.onResume();
     }
     
     @Override
-    protected void onRestoreInstanceState( Bundle savedInstanceState )
-    {
-        Log.i( "GameActivity", "onRestoreInstanceState: ");
-        super.onRestoreInstanceState( savedInstanceState );
-    }
-    
-    @Override
-    protected void onSaveInstanceState( Bundle outState )
-    {
-        Log.i( "GameActivity", "onSaveInstanceState: " );
-        super.onSaveInstanceState( outState );
-    }
-    
-    @Override
     protected void onPause()
     {
-        Log.i( "GameActivity", "onPause: " );
         super.onPause();
         mLifecycleHandler.onPause();
-    }
-    
-    @Override
-    protected void onStop()
-    {
-        Log.i( "GameActivity", "onStop: " );
-        super.onStop();
-    }
-    
-    @Override
-    protected void onDestroy()
-    {
-        Log.i( "GameActivity", "onDestroy: " );
-        super.onDestroy();
-    }
-    
-    @Override
-    protected void onRestart()
-    {
-        Log.i( "GameActivity", "onRestart: " );
-        super.onRestart();
     }
 }

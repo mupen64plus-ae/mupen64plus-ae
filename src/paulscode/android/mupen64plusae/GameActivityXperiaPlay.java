@@ -19,25 +19,18 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.input.XperiaPlayController;
-import paulscode.android.mupen64plusae.input.map.TouchMap;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 @TargetApi( 9 )
 public class GameActivityXperiaPlay extends NativeActivity
 {
-    private TouchMap mXperiaPlayMap;
-    @SuppressWarnings( "unused" )
-    private XperiaPlayController mXperiaPlayController;
     private final GameLifecycleHandler mLifecycleHandler;
     private final GameMenuHandler mMenuHandler;
-    
+
     public GameActivityXperiaPlay()
     {
         mLifecycleHandler = new GameLifecycleHandler( this );
@@ -61,78 +54,94 @@ public class GameActivityXperiaPlay extends NativeActivity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        Log.i( "GameActivity", "onCreate: " );       
+        mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
-        mLifecycleHandler.onCreate( savedInstanceState );
-        
-        // We should only be here if enabled
-        assert ( Globals.userPrefs.isXperiaEnabled );
-        
-        // Additional Xperia Play configuration
-        getWindow().takeSurface( null );
-        NativeMethods.RegisterThis();
-        FileUtil.loadNativeLibName( "xperia-touchpad" );
-        mXperiaPlayMap = new TouchMap( getResources() );
-        mXperiaPlayMap.load( Globals.userPrefs.xperiaLayout );
-        if( Globals.userPrefs.inputPlugin.enabled )
-            mXperiaPlayController = new XperiaPlayController( mXperiaPlayMap );
+        mLifecycleHandler.onCreateEnd( savedInstanceState );
+
+        // Register the call-ins that the JNI code will call
+        RegisterThis();
     }    
-    
-    @Override
-    protected void onStart()
-    {
-        Log.i( "GameActivity", "onStart: ");
-        super.onStart();
-    }
     
     @Override
     protected void onResume()
     {
-        Log.i( "GameActivity", "onResume: ");
         super.onResume();
         mLifecycleHandler.onResume();
     }
     
     @Override
-    protected void onRestoreInstanceState( Bundle savedInstanceState )
-    {
-        Log.i( "GameActivity", "onRestoreInstanceState: ");
-        super.onRestoreInstanceState( savedInstanceState );
-    }
-    
-    @Override
-    protected void onSaveInstanceState( Bundle outState )
-    {
-        Log.i( "GameActivity", "onSaveInstanceState: " );
-        super.onSaveInstanceState( outState );
-    }
-    
-    @Override
     protected void onPause()
     {
-        Log.i( "GameActivity", "onPause: " );
         super.onPause();
         mLifecycleHandler.onPause();
     }
+
     
-    @Override
-    protected void onStop()
+    
+    
+    
+    
+    private static int[] touchPadPointerY = new int[256];
+    private static int[] touchPadPointerX = new int[256];
+    private static boolean[] touchPadPointers = new boolean[256];
+    private static final int PAD_WIDTH = 966;
+    private static final int PAD_HEIGHT = 360;
+    
+    public static native int RegisterThis();
+
+    public void touchPadBeginEvent()
     {
-        Log.i( "GameActivity", "onStop: " );
-        super.onStop();
     }
     
-    @Override
-    protected void onDestroy()
+    public void touchPadPointerDown( int pointer_id )
     {
-        Log.i( "GameActivity", "onDestroy: " );
-        super.onDestroy();
+        touchPadPointers[pointer_id] = true;
     }
     
-    @Override
-    protected void onRestart()
+    public void touchPadPointerUp( int pointer_id )
     {
-        Log.i( "GameActivity", "onRestart: " );
-        super.onRestart();
+        touchPadPointers[pointer_id] = false;
+        touchPadPointerX[pointer_id] = -1;
+        touchPadPointerY[pointer_id] = -1;
+    }
+    
+    public void touchPadPointerPosition( int pointer_id, int x, int y )
+    {
+        touchPadPointers[pointer_id] = true;
+        touchPadPointerX[pointer_id] = x;
+        touchPadPointerY[pointer_id] = PAD_HEIGHT - y;
+    }
+    
+    public void touchPadEndEvent()
+    {
+    }
+    
+    public void touchScreenBeginEvent()
+    {
+    }
+    
+    public void touchScreenPointerDown( int pointer_id )
+    {
+    }
+    
+    public void touchScreenPointerUp( int pointer_id )
+    {
+    }
+    
+    public void touchScreenPointerPosition( int pointer_id, int x, int y )
+    {
+    }
+    
+    public void touchScreenEndEvent()
+    {
+    }
+    
+    public void onTouchScreen( boolean[] pointers, int[] pointerX, int[] pointerY, int maxPid )
+    {
+    }
+    
+    public boolean onNativeKey( int action, int keycode )
+    {
+        return true;
     }
 }
