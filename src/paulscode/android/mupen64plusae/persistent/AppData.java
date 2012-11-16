@@ -147,23 +147,22 @@ public class AppData
             Log.v( "AppData", hwString );
 
             String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
-            if( lines != null )
+
+            for( int i = 0; i < lines.length; i++ )
             {
-                for( int i = 0; i < lines.length; i++ )
+                String[] splitLine = lines[i].split( ":" );
+                if( splitLine.length == 2 )
                 {
-                    String[] splitLine = lines[i].split( ":" );
-                    if( splitLine != null && splitLine.length == 2 )
-                    {
-                        String heading = splitLine[0].trim();
-                        if( _processor == null && heading.equals( "processor" ) )
-                            _processor = splitLine[1].trim();
-                        else if( _features == null && heading.equals( "features" ) )
-                            _features = splitLine[1].trim();
-                        else if( _hardware == null && heading.equals( "hardware" ) )
-                            _hardware = splitLine[1].trim();
-                    }
+                    String heading = splitLine[0].trim();
+                    if( _processor == null && heading.equals( "processor" ) )
+                        _processor = splitLine[1].trim();
+                    else if( _features == null && heading.equals( "features" ) )
+                        _features = splitLine[1].trim();
+                    else if( _hardware == null && heading.equals( "hardware" ) )
+                        _hardware = splitLine[1].trim();
                 }
             }
+            
             
             // Identify the hardware type from the substrings
             int type = DEFAULT_HARDWARE_TYPE;

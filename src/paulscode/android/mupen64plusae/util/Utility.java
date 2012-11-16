@@ -425,7 +425,7 @@ public class Utility
                             if( x > 0 && x < textureName.length() )
                             {
                                 textureName = textureName.substring( 0, x );
-                                if( textureName != null && textureName.length() > 0 )
+                                if( textureName.length() > 0 )
                                 {
                                     x = textureName.lastIndexOf( '/' );
                                     if( x >= 0 && x < textureName.length() )
