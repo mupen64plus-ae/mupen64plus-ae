@@ -121,6 +121,13 @@
                 mupen64:selectionMode="0" />
 
             <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="touchscreenEnabled"
+                android:key="touchscreenRedrawJoystick"
+                android:summary="@string/touchscreenRedrawJoystick_summary"
+                android:title="@string/touchscreenRedrawJoystick_title" />
+
+            <CheckBoxPreference
                 android:defaultValue="true"
                 android:dependency="touchscreenEnabled"
                 android:key="touchscreenOctagonJoystick"

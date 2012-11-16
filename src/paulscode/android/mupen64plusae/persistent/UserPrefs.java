@@ -94,6 +94,9 @@ public class UserPrefs
     /** The filename of the selected touchscreen layout. */
     public final String touchscreenLayout;
     
+    /** True if the touchscreen joystick is redrawn whenever its value changes. */
+    public final boolean isRedrawJoystick;
+    
     /** True if the touchscreen joystick is represented as an octagon. */
     public final boolean isOctagonalJoystick;
     
@@ -190,6 +193,7 @@ public class UserPrefs
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
         // isTouchscreenCustom, touchscreenLayout: see below
+        isRedrawJoystick = mPreferences.getBoolean( "touchscreenRedrawJoystick", false );
         isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
         
         // Peripheral prefs
