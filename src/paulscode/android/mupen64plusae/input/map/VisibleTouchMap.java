@@ -117,7 +117,7 @@ public class VisibleTouchMap extends TouchMap
         super.resize( w, h );
         
         // Compute analog foreground location (centered)
-        if( analogBackImage != null )
+        if( analogBackImage != null && analogForeImage != null )
         {
             int cX = analogBackImage.x + analogBackImage.hWidth;
             int cY = analogBackImage.y + analogBackImage.hHeight;
