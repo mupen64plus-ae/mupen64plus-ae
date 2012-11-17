@@ -63,7 +63,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     
     // Frame rate listener
     private OnFpsChangedListener mFpsListener;
-    private int mFpsRecalcPeriod = Integer.MAX_VALUE; // By default, don't be a burden
+    private int mFpsRecalcPeriod = 0;
+    private boolean mIsFpsEnabled = false;
     private long mLastFpsTime = 0;
     private int mFrameCount = -1;
     
@@ -90,6 +91,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         mClListener = clListener;
         mFpsListener = fpsListener;
         mFpsRecalcPeriod = fpsRecalcPeriod;
+        mIsFpsEnabled = mFpsRecalcPeriod > 0;
     }
 
     @Override
@@ -340,14 +342,17 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         mBuffFlipped = true;
         
         // Update frame rate info
-        mFrameCount++;
-        if( mFrameCount >= mFpsRecalcPeriod && mFpsListener != null )
+        if( mIsFpsEnabled )
         {
-            long currentTime = System.currentTimeMillis();
-            float fFPS = ( (float) mFrameCount / (float) ( currentTime - mLastFpsTime ) ) * 1000.0f;
-            mFpsListener.onFpsChanged( Math.round( fFPS ) );
-            mFrameCount = 0;
-            mLastFpsTime = currentTime;
+            mFrameCount++;
+            if( mFrameCount >= mFpsRecalcPeriod && mFpsListener != null )
+            {
+                long currentTime = System.currentTimeMillis();
+                float fFPS = ( (float) mFrameCount / (float) ( currentTime - mLastFpsTime ) ) * 1000.0f;
+                mFpsListener.onFpsChanged( Math.round( fFPS ) );
+                mFrameCount = 0;
+                mLastFpsTime = currentTime;
+            }
         }
     }
 }

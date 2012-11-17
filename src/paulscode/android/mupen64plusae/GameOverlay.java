@@ -85,7 +85,7 @@ public class GameOverlay extends View implements TouchscreenController.OnStateCh
         mTouchMap.drawAnalog( canvas );
         
         // Redraw the dynamic frame rate info
-        if( Globals.userPrefs.isFrameRateEnabled )
+        if( Globals.userPrefs.isFpsEnabled )
             mTouchMap.drawFps( canvas );
     }
 }

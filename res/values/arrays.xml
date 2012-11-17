@@ -111,6 +111,19 @@
     </string-array>
     <string name="touchscreenSize_default" translatable="false"></string>
 
+    <!-- Framerate Refresh List -->
+    <string-array name="fpsRefresh_entries">
+        <item>@string/fpsRefresh_entry0</item>
+        <item>@string/fpsRefresh_entry1</item>
+        <item>@string/fpsRefresh_entry2</item>
+    </string-array>
+    <string-array name="fpsRefresh_values" translatable="false">
+        <item>0</item>
+        <item>60</item>
+        <item>15</item>
+    </string-array>
+    <string name="fpsRefresh_default" translatable="false">0</string>
+
     <!-- GLES2N64 Frameskip List -->
     <string-array name="gles2N64Frameskip_entries" translatable="false">
         <item>@string/_auto</item>

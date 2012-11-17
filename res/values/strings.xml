@@ -64,7 +64,7 @@
     <string name="menuAbout_title">About</string>
     
     <!-- Categories -->
-    <string name="categoryHardware_title">Hardware settings</string>
+    <string name="categoryHardware_title">Hardware</string>
     <string name="categoryOther_title">@string/_other</string>
     
     <!-- Settings Menu -->
@@ -79,7 +79,6 @@
     <string name="plugins_title">@string/_advanced</string>
     <string name="plugins_summary">Plug-ins and debug settings</string>    
     <string name="gameSaveDir_title">Savegame folder</string>
-    <string name="frameRateEnabled_title">Show framerate</string>
     <string name="cheats_title">Cheats</string>
     <string name="cheats_summary">Choose a game to hack</string>
     <string name="menuResetUserPrefs_title">Reset</string>
@@ -111,6 +110,7 @@
     <string name="menuPeripheralInfo_summary">Peripheral hardware and model information</string>
     
     <!-- Video Menu -->
+    <string name="fpsRefresh_title">Display framerate</string>
     <string name="videoStretch_title">Stretch screen</string>
     <string name="videoStretch_summary">May skew aspect ratio</string>
     <string name="videoRGBA8888_title">RGBA_8888 mode</string>
@@ -196,6 +196,11 @@
     <string name="touchscreenSize_entry1">Small</string>
     <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">Tablet</string>
+    
+    <!-- Framerate Entries -->
+    <string name="fpsRefresh_entry0">Never</string>
+    <string name="fpsRefresh_entry1">Occasionally</string>
+    <string name="fpsRefresh_entry2">Frequently</string>
     
     <!-- Special Functions -->
     <string name="specialFunction_entry0">Stop</string>

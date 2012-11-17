@@ -138,18 +138,6 @@ public class VisibleTouchMap extends TouchMap
     }
 
     /**
-     * Gets the number of frames over which the FPS should be computed. Historically this value has
-     * been loaded with the map assets, which is why this method is provided here rather than in
-     * user preferences or app settings.
-     * 
-     * @return The number of frames.
-     */
-    public int getFpsRecalcPeriod()
-    {
-        return mFpsRecalcPeriod;
-    }
-
-    /**
      * Draws the buttons.
      * 
      * @param canvas The canvas on which to draw.

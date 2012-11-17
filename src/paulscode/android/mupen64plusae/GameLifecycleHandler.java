@@ -160,8 +160,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         mSurface.setOnKeyListener( this );
         
         // Start listening to game surface events
-        int recalcPeriod = mTouchscreenMap == null ? Integer.MAX_VALUE : mTouchscreenMap.getFpsRecalcPeriod();
-        mSurface.setListeners( this, mOverlay, recalcPeriod );
+        mSurface.setListeners( this, mOverlay, Globals.userPrefs.fpsRefresh );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
@@ -245,11 +244,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private void initControllers()
     {
         if( Globals.IS_ECLAIR
-                && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFrameRateEnabled ) )
+                && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFpsEnabled ) )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    Globals.userPrefs.isFrameRateEnabled, Globals.paths.fontsDir );
+                    Globals.userPrefs.isFpsEnabled, Globals.paths.fontsDir );
             mTouchscreenMap.load( Globals.userPrefs.touchscreenLayout );
             mOverlay.initialize( mTouchscreenMap );
             

@@ -59,11 +59,18 @@ import android.preference.PreferenceManager;
  * Finally, the cost of looking up a preference value is made up front in this class's constructor,
  * rather than at the point of use. This could improve application performance if the value is used
  * often, such as the frame refresh loop of a game.
- * <p>
- * TODO: Seriously? ADK can't auto-generate a class like this?
  */
 public class UserPrefs
 {
+    /** The filename of the ROM selected by the user. */
+    public final String selectedGame;
+    
+    /** The directory containing game save files. */
+    public final String gameSaveDir;
+    
+    /** The filename of the auto-saved session of the ROM selected by the user. */
+    public final String selectedGameAutoSavefile;
+    
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
     
@@ -115,6 +122,12 @@ public class UserPrefs
     /** True if volume keys can be used as controls. */
     public final boolean isVolKeysEnabled;
     
+    /** The number of frames over which FPS is calculated (0 = disabled) */
+    public final int fpsRefresh;
+    
+    /** True if the frame rate is displayed. */
+    public final boolean isFpsEnabled;
+    
     /** True if the video should be stretched. */
     public final boolean isStretched;
     
@@ -154,18 +167,6 @@ public class UserPrefs
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
-    /** The directory containing game save files. */
-    public final String gameSaveDir;
-    
-    /** True if the frame rate is displayed. */
-    public final boolean isFrameRateEnabled;
-    
-    /** The filename of the ROM selected by the user. */
-    public final String selectedGame;
-    
-    /** The filename of the auto-saved session of the ROM selected by the user. */
-    public final String selectedGameAutoSavefile;
-    
     /** The object used to retrieve the settings. */
     private final SharedPreferences mPreferences;
     
@@ -178,7 +179,13 @@ public class UserPrefs
     public UserPrefs( Context context, Paths paths )
     {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
-        
+
+        // Files
+        selectedGame = mPreferences.getString( "selectedGame", "" );
+        gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
+        selectedGameAutoSavefile = paths.dataDir + "/autosave_"
+                + Math.abs( selectedGame.hashCode() ) + ".sav";
+
         // Plug-ins
         videoPlugin = new Plugin( mPreferences, paths.libsDir, "videoPlugin" );
         audioPlugin = new Plugin( mPreferences, paths.libsDir, "audioPlugin" );
@@ -204,11 +211,14 @@ public class UserPrefs
         isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", false );
         
         // Video prefs
+        fpsRefresh = getSafeInt( mPreferences, "fpsRefresh", -1 );
+        isFpsEnabled = fpsRefresh > 0;
         isStretched = mPreferences.getBoolean( "videoStretch", false );
         isRgba8888 = mPreferences.getBoolean( "videoRGBA8888", false );
         
         // Video prefs - gles2n64
         gles2N64MaxFrameskip = getSafeInt( mPreferences, "gles2N64Frameskip", -1 );
+        isGles2N64AutoFrameskipEnabled = ( gles2N64MaxFrameskip < 0 );
         isGles2N64FogEnabled = mPreferences.getBoolean( "gles2N64Fog", false );
         isGles2N64SaiEnabled = mPreferences.getBoolean( "gles2N64Sai", false );
         isGles2N64ScreenClearEnabled = mPreferences.getBoolean( "gles2N64ScreenClear", true );
@@ -222,11 +232,6 @@ public class UserPrefs
         isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture",
                 false );
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
-        
-        // Other prefs
-        gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
-        isFrameRateEnabled = mPreferences.getBoolean( "frameRateEnabled", false );
-        selectedGame = mPreferences.getString( "selectedGame", "" );
         
         // Touchscreen layouts
         boolean isCustom = false;
@@ -245,18 +250,13 @@ public class UserPrefs
                         + mPreferences.getString( "touchscreenSize", "" );
             }
         }
-        else if( isFrameRateEnabled )
+        else if( isFpsEnabled )
         {
             folder = paths.touchscreenLayoutsDir
                     + context.getString( R.string.touchscreenLayout_fpsOnly );
         }
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
-        
-        // Derived values
-        isGles2N64AutoFrameskipEnabled = ( gles2N64MaxFrameskip < 0 );
-        selectedGameAutoSavefile = paths.dataDir + "/autosave_"
-                + Math.abs( selectedGame.hashCode() ) + ".sav";
     }
     
     /**
@@ -300,8 +300,7 @@ public class UserPrefs
     {
         try
         {
-            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ),
-                    defaultValue );
+            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue )));
         }
         catch( NumberFormatException ex )
         {

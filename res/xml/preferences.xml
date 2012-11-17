@@ -172,18 +172,20 @@
                 android:summary="@string/volumeKeysEnabled_summary"
                 android:title="@string/volumeKeysEnabled_title" />
 
-            <Preference
-                android:key="menuPeripheralInfo"
-                android:summary="@string/menuPeripheralInfo_summary"
-                android:title="@string/menuPeripheralInfo_title" />
-
         </PreferenceScreen>
 
         <PreferenceScreen
-            android:icon="@drawable/ic_picture"
+            android:icon="@drawable/ic_videocamera"
             android:key="video"
             android:summary="@string/video_summary"
             android:title="@string/video_title" >
+
+            <ListPreference
+                android:defaultValue="@string/fpsRefresh_default"
+                android:entries="@array/fpsRefresh_entries"
+                android:entryValues="@array/fpsRefresh_values"
+                android:key="fpsRefresh"
+                android:title="@string/fpsRefresh_title" />
 
             <CheckBoxPreference
                 android:defaultValue="false"
@@ -282,6 +284,23 @@
 
         </PreferenceScreen>
 
+        <PreferenceCategory
+            android:key="categoryOther"
+            android:title="@string/categoryOther_title" />
+
+        <paulscode.android.mupen64plusae.persistent.PathPreference
+            android:icon="@drawable/ic_folder"
+            android:key="gameSaveDir"
+            android:title="@string/gameSaveDir_title"
+            mupen64:selectionMode="0" />
+
+        <Preference
+            android:dependency="developerEnabled"
+            android:icon="@drawable/ic_key"
+            android:key="cheats"
+            android:summary="@string/cheats_summary"
+            android:title="@string/cheats_title" />
+
         <PreferenceScreen
             android:icon="@drawable/ic_arrow_d"
             android:key="plugins"
@@ -331,30 +350,12 @@
                 android:summary="@string/menuDeviceInfo_summary"
                 android:title="@string/menuDeviceInfo_title" />
 
+            <Preference
+                android:key="menuPeripheralInfo"
+                android:summary="@string/menuPeripheralInfo_summary"
+                android:title="@string/menuPeripheralInfo_title" />
+
         </PreferenceScreen>
-
-        <PreferenceCategory
-            android:key="categoryOther"
-            android:title="@string/categoryOther_title" />
-
-        <paulscode.android.mupen64plusae.persistent.PathPreference
-            android:icon="@drawable/ic_folder"
-            android:key="gameSaveDir"
-            android:title="@string/gameSaveDir_title"
-            mupen64:selectionMode="0" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:icon="@drawable/ic_videocamera"
-            android:key="frameRateEnabled"
-            android:title="@string/frameRateEnabled_title" />
-
-        <Preference
-            android:dependency="developerEnabled"
-            android:icon="@drawable/ic_key"
-            android:key="cheats"
-            android:summary="@string/cheats_summary"
-            android:title="@string/cheats_title" />
 
         <Preference
             android:icon="@drawable/ic_undo"
