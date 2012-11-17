@@ -21,7 +21,6 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -65,14 +64,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !Globals.appData.hardwareInfo.isXperiaPlay )
         {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-            prefs.edit().putBoolean( XPERIA_ENABLED, false );
+            prefs.edit().putBoolean( XPERIA_ENABLED, false ).commit();
         }
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
         
-        // Update the global convenience classes
-        Globals.paths = new Paths( this );
         Globals.userPrefs = new UserPrefs( this, Globals.paths );
         
         // Define the click callback for certain menu items that aren't actually preferences
@@ -86,7 +83,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             PreferenceScreen screen = (PreferenceScreen) findPreference( MAIN_SETTINGS );
             Preference xperia = findPreference( XPERIA );
-            xperia.setEnabled( false ); // just for good measure
             screen.removePreference( xperia );
         }
     }

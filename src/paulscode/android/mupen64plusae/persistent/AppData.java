@@ -144,8 +144,6 @@ public class AppData
             String _processor = null;
             
             String hwString = Utility.getCpuInfo().toLowerCase( Locale.ENGLISH );
-            Log.v( "AppData", hwString );
-
             String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
 
             for( int i = 0; i < lines.length; i++ )
@@ -162,7 +160,6 @@ public class AppData
                         _hardware = splitLine[1].trim();
                 }
             }
-            
             
             // Identify the hardware type from the substrings
             int type = DEFAULT_HARDWARE_TYPE;
