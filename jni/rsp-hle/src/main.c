@@ -42,6 +42,7 @@ static int l_PluginInit = 0;
 
 /* local functions */
 
+
 static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
 {
     FILE *f;
@@ -87,6 +88,7 @@ static int is_run_through_task(OSTask_t* task)
         && task->ucode_boot_size >= 0);
 }
 
+
 /**
  * Simulate the effect of setting the TASKDONE bit (aliased to SIG2)
  * and executing a break instruction (setting HALT and BROKE bits).
@@ -102,7 +104,7 @@ static void taskdone()
     //
     // 0x203 = TASKDONE | BROKE | HALT
     *rsp.SP_STATUS_REG |= 0x203;
-    
+
     // if INTERRUPT_ON_BREAK we generate the interrupt
     if ((*rsp.SP_STATUS_REG & 0x40) != 0 )
     {
@@ -142,6 +144,7 @@ static int audio_ucode(OSTask_t *task)
 {
     unsigned int *p_alist = (unsigned int*)(rsp.RDRAM + task->data_ptr);
     unsigned int i;
+    u32 inst1_idx;
 
     switch(audio_ucode_detect(task))
     {
@@ -161,13 +164,15 @@ static int audio_ucode(OSTask_t *task)
         }
     }
 
-//  data = (short*)(rsp.RDRAM + task->ucode_data);
-
     for (i = 0; i < (task->data_size/4); i += 2)
     {
         inst1 = p_alist[i];
         inst2 = p_alist[i+1];
-        ABI[inst1 >> 24]();
+        inst1_idx = inst1 >> 24;
+        if (inst1_idx < 0x20)
+            ABI[inst1_idx]();
+        else
+            DebugMessage(M64MSG_WARNING, "Invalid audio ABI index %u", inst1_idx);
     }
 
     return 0;
@@ -235,6 +240,7 @@ static int DoCFBTask(OSTask_t *task, int sum)
     taskdone();
     return 1;
 }
+
 
 /* Global functions */
 void DebugMessage(int level, const char *message, ...)
@@ -310,9 +316,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 {
     OSTask_t *task = (OSTask_t*)(rsp.DMEM + 0xfc0);
     int run_through_task = is_run_through_task(task);
-
     unsigned int i, sum=0;
-
     char filename[256];
     FILE *f = NULL;
 
@@ -367,7 +371,6 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
         DebugMessage(M64MSG_WARNING, "unknown OSTask: sum %x PC:%x", sum, *rsp.SP_PC_REG);
 
         sprintf(&filename[0], "task_%x.log", sum);
-
 
         // dump task
         f = fopen(filename, "r");
@@ -478,3 +481,4 @@ EXPORT void CALL RomClosed(void)
     //init_ucode1();
     init_ucode2();
 }
+

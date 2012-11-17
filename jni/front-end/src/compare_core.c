@@ -202,8 +202,7 @@ static void compare_core_check(unsigned int cur_opcode)
 void compare_core_init(int mode)
 {
 #if defined(WIN32)
-    if (g_Verbose)
-        printf("UI-console: core comparison feature not supported on Windows platform.\n");
+    DebugMessage(M64MSG_VERBOSE, "core comparison feature not supported on Windows platform.");
     return;
 #else
     /* set mode */
@@ -212,7 +211,7 @@ void compare_core_init(int mode)
     if (DebugSetCoreCompare(compare_core_check, compare_core_sync_data) != M64ERR_SUCCESS)
     {
         l_CoreCompareMode = CORE_COMPARE_DISABLE;
-        printf("UI-console: DebugSetCoreCompare() failed, core comparison disabled.\n");
+        DebugMessage(M64MSG_WARNING, "DebugSetCoreCompare() failed, core comparison disabled.");
         return;
     }
     /* get pointers to emulated R4300 CPU registers */
@@ -223,12 +222,12 @@ void compare_core_init(int mode)
     if (l_CoreCompareMode == CORE_COMPARE_RECV)
     {
         mkfifo("compare_pipe", 0600);
-        printf("UI-console: Core Comparison Waiting to read pipe.\n");
+        DebugMessage(M64MSG_INFO, "Core Comparison Waiting to read pipe.");
         fPipe = fopen("compare_pipe", "r");
     }
     else if (l_CoreCompareMode == CORE_COMPARE_SEND)
     {
-        printf("UI-console: Core Comparison Waiting to write pipe.\n");
+        DebugMessage(M64MSG_INFO, "Core Comparison Waiting to write pipe.");
         fPipe = fopen("compare_pipe", "w");
     }
 #endif

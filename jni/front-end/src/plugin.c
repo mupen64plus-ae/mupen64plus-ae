@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <android/log.h>
 
 #include "m64p_types.h"
 #include "m64p_common.h"
@@ -59,10 +58,7 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
     if (PluginGetVersion == NULL)
     {
         if (g_Verbose)
-        {
-            fprintf(stderr, "Error: library '%s' is not a Mupen64Plus library.\n", filepath);
-            __android_log_print(ANDROID_LOG_ERROR, "front-end", "Error: library '%s' is not a Mupen64Plus library.\n", filepath);
-        }
+            DebugMessage(M64MSG_ERROR, "library '%s' is not a Mupen64Plus library.", filepath);
         osal_dynlib_close(handle);
         return M64ERR_INCOMPATIBLE;
     }
@@ -82,16 +78,14 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
     ptr_PluginStartup PluginStartup = (ptr_PluginStartup) osal_dynlib_getproc(handle, "PluginStartup");
     if (PluginStartup == NULL)
     {
-        fprintf(stderr, "Error: library '%s' broken.  No PluginStartup() function found.\n", filepath);
-        __android_log_print(ANDROID_LOG_ERROR, "front-end", "Error: library '%s' broken.  No PluginStartup() function found.\n", filepath);
+        DebugMessage(M64MSG_ERROR, "library '%s' broken.  No PluginStartup() function found.", filepath);
         osal_dynlib_close(handle);
         return M64ERR_INCOMPATIBLE;
     }
     rval = (*PluginStartup)(CoreHandle, g_PluginMap[MapIndex].name, DebugCallback);  /* DebugCallback is in main.c */
     if (rval != M64ERR_SUCCESS)
     {
-        fprintf(stderr, "Error: %s plugin library '%s' failed to start.\n", g_PluginMap[MapIndex].name, filepath);
-        __android_log_print(ANDROID_LOG_ERROR, "front-end", "Error: %s plugin library '%s' failed to start.\n", g_PluginMap[MapIndex].name, filepath);
+        DebugMessage(M64MSG_ERROR, "Error: %s plugin library '%s' failed to start.", g_PluginMap[MapIndex].name, filepath);
         osal_dynlib_close(handle);
         return rval;
     }
@@ -117,8 +111,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
         lib_filelist = osal_library_search(g_PluginDir);
         if (lib_filelist == NULL)
         {
-            fprintf(stderr, "Error: No plugins found in --plugindir path: %s\n", g_PluginDir);
-            __android_log_print(ANDROID_LOG_ERROR, "front-end", "Error: No plugins found in --plugindir path: %s\n", g_PluginDir);
+            DebugMessage(M64MSG_ERROR, "No plugins found in --plugindir path: %s", g_PluginDir);
             return M64ERR_INPUT_NOT_FOUND;
         }
     }
@@ -181,8 +174,7 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
             /* exit with error if we couldn't find the specified plugin */
             if (!use_dummy && g_PluginMap[i].handle == NULL)
             {
-                fprintf(stderr, "Error: Specified %s plugin not found: %s\n", g_PluginMap[i].name, cmdline_path);
-                __android_log_print(ANDROID_LOG_ERROR, "front-end", "Error: Specified %s plugin not found: %s\n", g_PluginMap[i].name, cmdline_path);
+                DebugMessage(M64MSG_ERROR, "Specified %s plugin not found: %s", g_PluginMap[i].name, cmdline_path);
                 osal_free_lib_list(lib_filelist);
                 return M64ERR_INPUT_NOT_FOUND;
             }
@@ -190,7 +182,6 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
         else /* otherwise search for a plugin specified in the config file */
         {
             const char *config_path = (*ConfigGetParamString)(ConfigUI, config_var);
-
             if (config_path != NULL && strlen(config_path) > 0)
             {
                 /* if full path was given, try loading exactly this file */
@@ -227,20 +218,13 @@ m64p_error PluginSearchLoad(m64p_handle ConfigUI)
         /* print out the particular plugin used */
         if (g_PluginMap[i].handle == NULL)
         {
-            printf("UI-console: using %s plugin: <dummy>\n", g_PluginMap[i].name);
-            __android_log_print(ANDROID_LOG_VERBOSE, "front-end", "UI-console: using %s plugin: <dummy>\n", g_PluginMap[i].name);
+            DebugMessage(M64MSG_INFO, "using %s plugin: <dummy>", g_PluginMap[i].name);
         }
         else
         {
-            printf("UI-console: using %s plugin: '%s' v%i.%i.%i\n", g_PluginMap[i].name,
+            DebugMessage(M64MSG_INFO, "using %s plugin: '%s' v%i.%i.%i", g_PluginMap[i].name,
                    g_PluginMap[i].libname, VERSION_PRINTF_SPLIT(g_PluginMap[i].libversion));
-            __android_log_print(ANDROID_LOG_VERBOSE, "front-end", "UI-console: using %s plugin: '%s' v%i.%i.%i\n", g_PluginMap[i].name,
-                    g_PluginMap[i].libname, VERSION_PRINTF_SPLIT(g_PluginMap[i].libversion));
-            if (g_Verbose)
-            {
-                printf("UI-console: %s plugin library: %s\n", g_PluginMap[i].name, g_PluginMap[i].filename);
-                __android_log_print(ANDROID_LOG_VERBOSE, "front-end", "UI-console: %s plugin library: %s\n", g_PluginMap[i].name, g_PluginMap[i].filename);
-            }
+            DebugMessage(M64MSG_VERBOSE, "%s plugin library: %s", g_PluginMap[i].name, g_PluginMap[i].filename);
         }
     }
 

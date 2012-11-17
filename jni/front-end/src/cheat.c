@@ -23,7 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <android/log.h>
 
 #include "m64p_types.h"
 
@@ -33,7 +32,6 @@
 
 /* local definitions */
 #define CHEAT_FILE	"mupencheat.txt"
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "cheat", __VA_ARGS__)
 
 typedef struct {
    int    address;
@@ -92,7 +90,7 @@ static void CheatActivate(sCheatInfo *pCheat)
     m64p_cheat_code * code = (m64p_cheat_code*) calloc(pCheat->Count, sizeof(m64p_cheat_code));
     if (code == NULL)
     {
-        printf("UI-Console Warning: could not allocate memory for code '%s'\n", pCheat->Name);
+        DebugMessage(M64MSG_WARNING, "could not allocate memory for code '%s'", pCheat->Name);
         return;
     }
     /* Fill in members */
@@ -104,13 +102,13 @@ static void CheatActivate(sCheatInfo *pCheat)
     /* Enable cheat */
     if (CoreAddCheat(pCheat->Name, code, pCheat->Count) != M64ERR_SUCCESS)
     {
-        printf("UI-Console Warning: CoreAddCheat() failed for cheat code %i (%s)\n", pCheat->Number, pCheat->Name);
+        DebugMessage(M64MSG_WARNING, "CoreAddCheat() failed for cheat code %i (%s)", pCheat->Number, pCheat->Name);
         free(code);
         return;
     }
 
     free(code);
-    printf("UI-Console: activated cheat code %i: %s\n", pCheat->Number, pCheat->Name);
+    DebugMessage(M64MSG_STATUS, "activated cheat code %i: %s", pCheat->Number, pCheat->Name);
 }
 
 static void CheatFreeAll(void)
@@ -208,7 +206,7 @@ static void ReadCheats(char *RomSection)
     const char *romdbpath = ConfigGetSharedDataFilepath(CHEAT_FILE);
     if (romdbpath == NULL)
     {
-        printf("UI-Console: cheat code database file '%s' not found.\n", CHEAT_FILE);
+        DebugMessage(M64MSG_WARNING, "cheat code database file '%s' not found.", CHEAT_FILE);
         return;
     }
 
@@ -217,7 +215,7 @@ static void ReadCheats(char *RomSection)
     fPtr = fopen(romdbpath, "rb");
     if (fPtr == NULL)
     {   
-        printf("UI-Console: Couldn't open cheat code database file '%s'.\n", romdbpath);
+        DebugMessage(M64MSG_WARNING, "Couldn't open cheat code database file '%s'.", romdbpath);
         return;
     }
     fseek(fPtr, 0L, SEEK_END);
@@ -226,13 +224,13 @@ static void ReadCheats(char *RomSection)
     l_IniText = (char *) malloc(IniLength + 1);
     if (l_IniText == NULL)
     {
-        printf("UI-Console: Couldn't allocate %li bytes of memory to read cheat file.\n", IniLength);
+        DebugMessage(M64MSG_WARNING, "Couldn't allocate %li bytes of memory to read cheat file.", IniLength);
         fclose(fPtr);
         return;
     }
     if (fread(l_IniText, 1, IniLength, fPtr) != IniLength)
     {
-        printf("UI-Console: Couldn't read %li bytes from cheat file.\n", IniLength);
+        DebugMessage(M64MSG_WARNING, "Couldn't read %li bytes from cheat file.", IniLength);
         free(l_IniText);
         l_IniText = NULL;
         fclose(fPtr);
@@ -293,7 +291,7 @@ static void ReadCheats(char *RomSection)
         {
             curr_code = NewCode(curline + 3, l_CheatCodesFound);
             if (curr_code == NULL)
-                printf("UI-Console error: error getting new code (%s)\n", curline+3);
+                DebugMessage(M64MSG_WARNING, "error getting new code (%s)", curline+3);
             continue;
         }
         
@@ -326,7 +324,7 @@ static void ReadCheats(char *RomSection)
                 curr_code->Codes[curr_code->Count].variables = (int*) malloc(sizeof(int));
                 if(curr_code->Codes[curr_code->Count].variables == NULL)
                 {
-                    printf("UI-Console Error: error allocating memory; ignoring line: '%s'\n", curline);
+                    DebugMessage(M64MSG_WARNING, "couldn't allocate memory; ignoring line: '%s'", curline);
                     continue;
                 }
                 if (sscanf(curline+9, "%04X", &var) != 1)
@@ -341,7 +339,7 @@ static void ReadCheats(char *RomSection)
         }
 
         /* otherwise we don't know what this line is */
-        printf("UI-Console Warning: unrecognized line in cheat file: '%s'\n", curline);
+        DebugMessage(M64MSG_WARNING, "unrecognized line in cheat file: '%s'", curline);
     }
 
 }
@@ -351,14 +349,14 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
     /* if cheat codes are disabled, then we don't have to do anything */
     if (CheatMode == CHEAT_DISABLE || (CheatMode == CHEAT_LIST && strlen(CheatNumList) == 0))
     {
-        printf("UI-Console: Cheat codes disabled.\n");
+        DebugMessage(M64MSG_STATUS, "Cheat codes disabled.");
         return;
     }
 
     /* get the ROM header for the currently loaded ROM image from the core */
     if ((*CoreDoCommand)(M64CMD_ROM_GET_HEADER, sizeof(l_RomHeader), &l_RomHeader) != M64ERR_SUCCESS)
     {
-        printf("UI-Console: couldn't get ROM header information from core library\n");
+        DebugMessage(M64MSG_WARNING, "couldn't get ROM header information from core library");
         return;
     }
 
@@ -370,7 +368,7 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
     ReadCheats(RomSection);
     if (!l_RomFound || l_CheatCodesFound == 0)
     {
-        printf("UI-Console: no cheat codes found for ROM image '%.20s'\n", l_RomHeader.Name);
+        DebugMessage(M64MSG_WARNING, "no cheat codes found for ROM image '%.20s'", l_RomHeader.Name);
         CheatFreeAll();
         return;
     }
@@ -378,19 +376,19 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
     /* handle the list command */
     if (CheatMode == CHEAT_SHOW_LIST)
     {
-        printf("UI-Console: %i cheat code(s) found for ROM '%s'\n", l_CheatCodesFound, l_CheatGameName);
+        DebugMessage(M64MSG_INFO, "%i cheat code(s) found for ROM '%s'", l_CheatCodesFound, l_CheatGameName);
         sCheatInfo *pCur = l_CheatList;
         while (pCur != NULL)
         {
             if (pCur->Description == NULL)
-                printf("   %i: %s\n", pCur->Number, pCur->Name);
+                DebugMessage(M64MSG_INFO, "   %i: %s", pCur->Number, pCur->Name);
             else
-                printf("   %i: %s (%s)\n", pCur->Number, pCur->Name, pCur->Description);
+                DebugMessage(M64MSG_INFO, "   %i: %s (%s)", pCur->Number, pCur->Name, pCur->Description);
             if(pCur->VariableLine != -1)
             {
                 int i;
                 for (i = 0; i < pCur->Codes[pCur->VariableLine].var_count; i++)
-                    printf("      %i: %s\n", i, pCur->Codes[pCur->VariableLine].variable_names[i]);
+                    DebugMessage(M64MSG_INFO, "      %i: %s", i, pCur->Codes[pCur->VariableLine].variable_names[i]);
             }
             pCur = pCur->Next;
         }
@@ -437,7 +435,7 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
 
             pCheat = CheatFindCode(number);
             if (pCheat == NULL)
-                printf("UI-Console Warning: invalid cheat code number %i\n", number);
+                DebugMessage(M64MSG_WARNING, "invalid cheat code number %i", number);
             else
             {
                 if (pCheat->VariableLine != -1 && pCheat->Count > pCheat->VariableLine && option < pCheat->Codes[pCheat->VariableLine].var_count)
@@ -453,7 +451,7 @@ void CheatStart(eCheatMode CheatMode, char *CheatNumList)
     }
 
     /* otherwise the mode is invalid */
-    printf("UI-Console: internal error; invalid CheatMode in CheatStart()\n");
+    DebugMessage(M64MSG_WARNING, "internal error; invalid CheatMode in CheatStart()");
     
     return;
 }
