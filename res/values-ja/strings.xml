@@ -24,6 +24,7 @@
     <string name="app_name">Mupen64Plus</string>
     <string name="_advanced">アドバンスド</string>
     <string name="_auto">オート</string>
+    <string name="_confirmation">確認</string>
     <string name="_default">デフォル</string>
     <string name="_disable">無効にする</string>
     <string name="_disabled">使用禁止</string>
@@ -43,6 +44,9 @@
     <string name="ingameQuicksave_title">保存</string>
     <string name="ingameQuickload_title">ロード</string>
     <string name="ingameSlot_title">%1$dスロット</string>
+    <string name="ingameSave_title">ファイルに保存…</string>
+    <string name="ingameLoad_title">ファイルからのロード…</string>
+    <string name="ingameReset_title">ゲームをリセット</string>
     <string name="ingameMenu_title">メニュー</string>
     
     <!-- ******************************************** -->
@@ -55,6 +59,7 @@
     <string name="menuResume_title">プレー</string>
     <string name="selectedGame_title">ゲーム</string>
     <string name="mainSettings_title">設定</string>
+    <string name="menuLocale_title">言語</string>
     <string name="menuHelp_title">ヘルプ</string>
     <string name="menuAbout_title">ついて</string>
     
@@ -85,9 +90,12 @@
     
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/_enable</string>
+    <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
     <string name="touchscreenLayout_title">@string/_layout</string>
     <string name="touchscreenSize_title">画面サイズ</string>
+    <string name="touchscreenCustom_title">カスタムレイアウトフォルダ</string>
     <string name="touchscreenOctagonJoystick_title">八角形のようにアナログスティックをエミュレート</string>
+    <string name="touchscreenOctagonJoystick_summary">八角形のパスにアナログ動きを拘束。 これは、元のN64のコントローラのようなものだ。</string>
     
     <!-- Peripherals Menu -->
     <string name="peripheralMap1_title">プレイヤー1</string>
@@ -97,6 +105,8 @@
     <string name="peripheralMap_summary">ボタンとアナログスティック設定</string>
     <string name="volumeKeysEnabled_title">ボリュームキーを有効</string>
     <string name="volumeKeysEnabled_summary">コントローラのボタンとしてボリュームキーを使用</string>
+    <string name="menuPeripheralInfo_title">コントローラ情報</string>
+    <string name="menuPeripheralInfo_summary">周辺ハードウエアとモデル情報</string>
     
     <!-- Video Menu -->
     <string name="fpsRefresh_title">フレームレート表示</string>
@@ -110,9 +120,13 @@
     <string name="gles2Rice_summary"></string>
     
     <!-- Plugins Menu -->
+    <string name="videoPlugin_title">ビデオ</string>
     <string name="audioPlugin_title">オーディオ設定</string>
+    <string name="inputPlugin_title">入力デバイス</string> 
     <string name="rspPlugin_title">RSP</string>
     <string name="corePlugin_title">コア</string>
+    <string name="menuDeviceInfo_title">デバイス情報</string>
+    <string name="menuDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
     
     <!-- GLES2N64 Menu -->
     <string name="gles2N64Frameskip_title">フレームスキップ</string>
@@ -146,14 +160,25 @@
     <!-- ******************************************** -->
     
     <!-- Video Plugin Entries -->
+    <string name="videoPlugin_entry0">なし（ビデオ無効）</string>
+    <string name="videoPlugin_entry1">gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</string>
+    <string name="videoPlugin_entry2">gles2rice, v0.1.0(b) (GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</string>
     
     <!-- Audio Plugin Entries -->
+    <string name="audioPlugin_entry0">なし（オーディオ無効）</string>
+    <string name="audioPlugin_entry1">audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
     
     <!-- Input Plugin Entries -->
+    <string name="inputPlugin_entry0">なし（入力無効）</string>
+    <string name="inputPlugin_entry1">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
     <!-- RSP Plugin Entries -->
+    <string name="rspPlugin_entry0">なし（RSP無効）</string>
+    <string name="rspPlugin_entry1">rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+    <string name="rspPlugin_entry2">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
     <!-- Core Plugin Entries -->
+    <string name="corePlugin_entry0">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     
     <!-- Xperia PLAY Layout Entries -->
     <string name="xperiaLayout_entry0">左パッド： アナログ制御; 右パッド： Cボタン</string>
@@ -163,6 +188,7 @@
     <string name="touchscreenLayout_entry0">アナログ (roymustang16によって)</string>
     <string name="touchscreenLayout_entry1">デジタル (roymustang16によって)</string>
     <string name="touchscreenLayout_entry2">タッチ (roymustang16によって)</string>
+    <string name="touchscreenLayout_entry3">カスタム (ご覧ください http://tinyurl.com/984ofyo)</string>
     
     <!-- Touchscreen Size Entries -->
     <string name="touchscreenSize_entry0">小さな</string>
@@ -171,8 +197,32 @@
     <string name="touchscreenSize_entry3">タブレット</string>
     
     <!-- Touchscreen Refresh Entries -->
+    <string name="touchscreenRefresh_entry0">決して</string>
+    <string name="touchscreenRefresh_entry1">時折</string>
+    <string name="touchscreenRefresh_entry2">頻繁</string>
     
     <!-- Framerate Refresh Entries -->
+    <string name="fpsRefresh_entry0">決して</string>
+    <string name="fpsRefresh_entry1">時折</string>
+    <string name="fpsRefresh_entry2">頻繁</string>
+    
+    <!-- Special Functions -->
+    <string name="specialFunction_entry0">ストップ</string>
+    <string name="specialFunction_entry1">フルスクリーン</string>
+    <string name="specialFunction_entry2">ステートセーブ</string>
+    <string name="specialFunction_entry3">ステートロード</string>
+    <string name="specialFunction_entry4">インクリメントスロット</string>
+    <string name="specialFunction_entry5">リセット</string>
+    <string name="specialFunction_entry6">スピードダウン</string>
+    <string name="specialFunction_entry7">スピードアップ</string>
+    <string name="specialFunction_entry8">スクリーンショット</string>
+    <string name="specialFunction_entry9">一時停止</string>
+    <string name="specialFunction_entry10">ミュート</string>
+    <string name="specialFunction_entry11">音量を上げる</string>
+    <string name="specialFunction_entry12">音量を下げる</string>
+    <string name="specialFunction_entry13">早送り</string>
+    <string name="specialFunction_entry14">アドバンスフレーム</string>
+    <string name="specialFunction_entry15">Gameshark</string>
     
     <!-- ******************************************** -->
     <!-- Other Strings                                -->
@@ -181,8 +231,14 @@
     <!-- In-Game Toast Messages (Game*.java) -->
     <string name="toast_appStarted">Mupen64Plusが起動した</string>
     <string name="toast_savegameSlot">%1$dセーブデータスロット</string>
+    <string name="toast_loadingSession">自動再開ゲーム</string>
+    <string name="toast_savingSession">自動保存ゲーム</string>
+    <string name="toast_loadingSlot">スロット%1$dの再開</string>
+    <string name="toast_savingSlot">スロット%1$dの保存</string>
+    <string name="toast_loadingGame">%1$s再開</string>
     <string name="toast_savingGame">ゲームを保存</string>
     <string name="toast_sdInaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
+    <string name="toast_overwritingGame">%1$s上書き</string>
     
     <!-- Other Strings -->
     <string name="dataDownloader_connectingTo">%1$sへの接続</string>
@@ -193,6 +249,13 @@
     <string name="dataDownloader_errorDownloadingFrom">%1$sからデータをダウンロード中にエラー</string>
     <string name="dataDownloader_errorWrite">書き込みエラー (USBストレージ·モードのデバイスですか？) %1$s</string>
     <string name="dataDownloader_failedConnectingTo">%1$sに接続できません</string>
+    <string name="gameMenu_confirmFile">%1$s上書き?</string>
+    <string name="gameMenu_saveHint">ファイル名</string>
     <string name="inputMapPreference_dialogTitle">ジョイスティックまたはボタンを押しながらアイコンを押して。</string>
+    <string name="inputMapPreference_rumble">振動\nパック</string>
+    <string name="inputMapPreference_mempak">拡張\nパック</string>
+    <string name="inputMapPreference_special">特別な機能</string>
+    <string name="inputMapPreference_controls">N64コントロール</string>
+    <string name="pathPreference_dialogTitle">選択したフォルダ： %1$s</string> 
     
 </resources>
