@@ -89,12 +89,16 @@ public class Paths
         packageName = context.getPackageName();
         
         // Directories
-        storageDir = Globals.DOWNLOAD_TO_SDCARD
-                ? Environment.getExternalStorageDirectory().getAbsolutePath()
-                : context.getFilesDir().getAbsolutePath();
-        dataDir = storageDir + ( Globals.DOWNLOAD_TO_SDCARD
-                ? "/Android/data/" + packageName
-                : "" );
+        if( Globals.DOWNLOAD_TO_SDCARD )
+        {
+            storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+            dataDir = storageDir + "/Android/data/" + packageName;
+        }
+        else
+        {
+            storageDir = context.getFilesDir().getAbsolutePath();
+            dataDir = storageDir;
+        }
         libsDir = "/data/data/" + packageName + "/lib/";
         touchscreenLayoutsDir = dataDir + "/skins/gamepads/";
         xperiaPlayLayoutsDir = dataDir + "/skins/touchpads/";

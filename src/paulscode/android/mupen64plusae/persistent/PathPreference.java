@@ -30,6 +30,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
+import android.os.Environment;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -83,15 +84,15 @@ public class PathPreference extends DialogPreference
         if( mDoRefresh )
         {
             mDoRefresh = false;
-            // TODO: Remove dependency on Globals.paths
-            String filename = getPersistedString( Globals.paths.storageDir );
-            if( filename != null )
-            {
-                populate( new File( filename ) );
-                setSummary( mSelectionMode == SELECTION_MODE_FILE
-                        ? mEntry
-                        : mValue );
-            }
+            String defaultFilename = Environment.getExternalStorageDirectory().getAbsolutePath();
+            File file = new File( getPersistedString( defaultFilename ) );
+            
+            // Make sure the file still exists (file may have been moved to another directory)
+            if( !file.exists() )
+                file = new File( defaultFilename );
+            
+            populate( file );
+            setSummary( mSelectionMode == SELECTION_MODE_FILE ? mEntry : mValue );
         }
         return super.onCreateView( parent );
     }
