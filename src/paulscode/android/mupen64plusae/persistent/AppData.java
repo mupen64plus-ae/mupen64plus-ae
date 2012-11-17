@@ -24,7 +24,6 @@ import java.util.Locale;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
@@ -138,7 +137,6 @@ public class AppData
         public HardwareInfo()
         {
             // Parse a long string of information from the operating system
-            Log.v( "AppData", "CPU info available from file /proc/cpuinfo:" );
             String _hardware = null;
             String _features = null;
             String _processor = null;

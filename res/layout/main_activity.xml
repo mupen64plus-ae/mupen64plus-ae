@@ -19,6 +19,7 @@
         android:id="@+id/mainImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:contentDescription="@string/app_name"
         android:src="@drawable/publisherlogo" />
     
