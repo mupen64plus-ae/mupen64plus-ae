@@ -123,7 +123,10 @@ public class FileUtil
     public static boolean copyFile( File src, File dest )
     {
         if( src == null )
-            return true;
+        {
+            Log.e("FileUtil", "src null in method 'copyFile'");
+            return false;
+        }
         
         if( dest == null )
         {
