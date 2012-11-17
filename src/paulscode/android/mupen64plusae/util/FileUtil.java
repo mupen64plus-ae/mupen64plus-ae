@@ -137,13 +137,16 @@ public class FileUtil
         if( src.isDirectory() )
         {
             boolean success = true;
+            String[] files = src.list();
+            
             if( !dest.exists() )
                 dest.mkdirs();
-            String[] files = src.list();
+            
             for( String file : files )
             {
                 success = success && copyFile( new File( src, file ), new File( dest, file ) );
             }
+            
             return success;
         }
         else
@@ -154,15 +157,14 @@ public class FileUtil
                 Log.e( "FileUtil", "dest parent folder null in method 'copyFile'" );
                 return false;
             }
+            
             if( !f.exists() )
                 f.mkdirs();
             
-            InputStream in = null;
-            OutputStream out = null;
             try
             {
-                in = new FileInputStream( src );
-                out = new FileOutputStream( dest );
+                final InputStream in = new FileInputStream( src );
+                final OutputStream out = new FileOutputStream( dest );
                 
                 byte[] buf = new byte[1024];
                 int len;
@@ -170,23 +172,16 @@ public class FileUtil
                 {
                     out.write( buf, 0, len );
                 }
+                
+                in.close();
+                out.close();
             }
             catch( IOException ioe )
             {
                 Log.e( "FileUtil", "IOException in method 'copyFile': " + ioe.getMessage() );
                 return false;
             }
-            try
-            {
-                in.close();
-                out.close();
-            }
-            catch( IOException ioe )
-            {
-            }
-            catch( NullPointerException npe )
-            {
-            }
+
             return true;
         }
     }
