@@ -98,11 +98,14 @@ public class UserPrefs
     /** True if a custom touchscreen is provided. */
     public final boolean isTouchscreenCustom;
     
+    /** The number of frames over which touchscreen is redrawn (0 = disabled) */
+    public final int touchscreenRefresh;
+    
+    /** True if the touchscreen is redrawn periodically. */
+    public final boolean isTouchscreenRefreshEnabled;
+    
     /** The filename of the selected touchscreen layout. */
     public final String touchscreenLayout;
-    
-    /** True if the touchscreen joystick is redrawn whenever its value changes. */
-    public final boolean isRedrawJoystick;
     
     /** True if the touchscreen joystick is represented as an octagon. */
     public final boolean isOctagonalJoystick;
@@ -125,7 +128,7 @@ public class UserPrefs
     /** The number of frames over which FPS is calculated (0 = disabled) */
     public final int fpsRefresh;
     
-    /** True if the frame rate is displayed. */
+    /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
     
     /** True if the video should be stretched. */
@@ -200,7 +203,8 @@ public class UserPrefs
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
         // isTouchscreenCustom, touchscreenLayout: see below
-        isRedrawJoystick = mPreferences.getBoolean( "touchscreenRedrawJoystick", false );
+        touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
+        isTouchscreenRefreshEnabled = touchscreenRefresh > 0;
         isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
         
         // Peripheral prefs
@@ -300,7 +304,7 @@ public class UserPrefs
     {
         try
         {
-            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue )));
+            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
         }
         catch( NumberFormatException ex )
         {

@@ -90,11 +90,10 @@
     
     <!-- Touchscreen Menu -->
     <string name="touchscreenEnabled_title">@string/_enable</string>
+    <string name="touchscreenRefresh_title">Redraw joystick</string>
     <string name="touchscreenLayout_title">@string/_layout</string>
     <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenCustom_title">Custom layout folder</string>
-    <string name="touchscreenRedrawJoystick_title">Redraw joystick</string>
-    <string name="touchscreenRedrawJoystick_summary">Refresh screen whenever stick moves (disable for speed)</string>
     <string name="touchscreenOctagonJoystick_title">Octagonal joystick limits</string>
     <string name="touchscreenOctagonJoystick_summary">Constrain analog motion to an octagon, like the original N64 controller</string>
     
@@ -197,7 +196,12 @@
     <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">Tablet</string>
     
-    <!-- Framerate Entries -->
+    <!-- Touchscreen Refresh Entries -->
+    <string name="touchscreenRefresh_entry0">Never</string>
+    <string name="touchscreenRefresh_entry1">Occasionally</string>
+    <string name="touchscreenRefresh_entry2">Frequently</string>
+    
+    <!-- Framerate Refresh Entries -->
     <string name="fpsRefresh_entry0">Never</string>
     <string name="fpsRefresh_entry1">Occasionally</string>
     <string name="fpsRefresh_entry2">Frequently</string>

@@ -32,6 +32,9 @@ public class GameOverlay extends View implements TouchscreenController.OnStateCh
         GameSurface.OnFpsChangedListener
 {
     private VisibleTouchMap mTouchMap;
+    private int mRefreshPeriod = 0;
+    private boolean mRefreshEnabled = false;
+    private int mRefreshCount = 0;
     
     public GameOverlay( Context context, AttributeSet attribs )
     {
@@ -42,22 +45,34 @@ public class GameOverlay extends View implements TouchscreenController.OnStateCh
     {
         // Set the new TouchMap
         mTouchMap = touchMap;
+        mRefreshPeriod = Globals.userPrefs.touchscreenRefresh;
+        mRefreshEnabled = mRefreshPeriod > 0;
     }
     
     @Override
     public void onAnalogChanged( float axisFractionX, float axisFractionY )
     {
-        // TODO: Add a preference to redraw at reduced rate like 1.9.2
-        // Update the analog stick assets, and redraw if required
-        if( mTouchMap != null && Globals.userPrefs.isRedrawJoystick
-                && mTouchMap.updateAnalog( axisFractionX, axisFractionY ) )
-            postInvalidate();
+        if( mRefreshEnabled )
+        {
+            // Increment the count since last refresh
+            mRefreshCount++;
+            
+            // If stick re-centered, always refresh
+            if( axisFractionX == 0 && axisFractionY == 0 )
+                mRefreshCount = 0;
+            
+            // Update the analog stick assets and redraw if required
+            if( mRefreshCount % mRefreshPeriod == 0 && mTouchMap != null
+                    && mTouchMap.updateAnalog( axisFractionX, axisFractionY ) )
+            {
+                postInvalidate();
+            }
+        }
     }
     
     @Override
     public void onFpsChanged( int fps )
     {
-        // TODO: Add a user setting to specify FPS refresh rate
         // Update the FPS indicator assets, and redraw if required
         if( mTouchMap != null && mTouchMap.updateFps( fps ) )
             postInvalidate();

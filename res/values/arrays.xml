@@ -35,7 +35,7 @@
         <item>libaudio-sdl.so</item>
     </string-array>
     <string name="audioPlugin_default" translatable="false">libaudio-sdl.so</string>
-    
+
     <!-- Input Plugins -->
     <string-array name="inputPlugin_entries">
         <item>@string/inputPlugin_entry0</item>
@@ -46,7 +46,7 @@
         <item>libinput-sdl.so</item>
     </string-array>
     <string name="inputPlugin_default" translatable="false">libinput-sdl.so</string>
-    
+
     <!-- RSP Plugins -->
     <string-array name="rspPlugin_entries">
         <item>@string/rspPlugin_entry0</item>
@@ -59,7 +59,7 @@
         <item>librsp-hle-nosound.so</item>
     </string-array>
     <string name="rspPlugin_default" translatable="false">librsp-hle.so</string>
-    
+
     <!-- Core Plugins -->
     <string-array name="corePlugin_entries">
         <item>@string/corePlugin_entry0</item>
@@ -68,7 +68,7 @@
         <item>libcore.so</item>
     </string-array>
     <string name="corePlugin_default" translatable="false">libcore.so</string>
-    
+
     <!-- Xperia Play Touchpad Layouts -->
     <string-array name="xperiaLayout_entries">
         <item>@string/xperiaLayout_entry0</item>
@@ -79,6 +79,19 @@
         <item>Mupen64Plus-AE-Analog-Right</item>
     </string-array>
     <string name="xperiaLayout_default" translatable="false">Mupen64Plus-AE-Xperia-Play</string>
+
+    <!-- Touchscreen Refresh List -->
+    <string-array name="touchscreenRefresh_entries">
+        <item>@string/touchscreenRefresh_entry0</item>
+        <item>@string/touchscreenRefresh_entry1</item>
+        <item>@string/touchscreenRefresh_entry2</item>
+    </string-array>
+    <string-array name="touchscreenRefresh_values" translatable="false">
+        <item>0</item>
+        <item>10</item>
+        <item>3</item>
+    </string-array>
+    <string name="touchscreenRefresh_default" translatable="false">0</string>
 
     <!-- Touchscreen Layouts -->
     <string-array name="touchscreenLayout_entries">
@@ -164,11 +177,10 @@
         <item>@string/specialFunction_entry14</item>
         <item>@string/specialFunction_entry15</item>
     </string-array>
-        
+
+</resources>
 <!--
     ***********************************************************************************
     DO NOT TRANSLATE ANY STRINGS IN THIS FILE!
     ***********************************************************************************
 -->
-
-</resources>

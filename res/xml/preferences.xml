@@ -99,6 +99,14 @@
                 android:title="@string/touchscreenEnabled_title" />
 
             <ListPreference
+                android:defaultValue="@string/touchscreenRefresh_default"
+                android:dependency="touchscreenEnabled"
+                android:entries="@array/touchscreenRefresh_entries"
+                android:entryValues="@array/touchscreenRefresh_values"
+                android:key="touchscreenRefresh"
+                android:title="@string/touchscreenRefresh_title" />
+
+            <ListPreference
                 android:defaultValue="@string/touchscreenLayout_default"
                 android:dependency="touchscreenEnabled"
                 android:entries="@array/touchscreenLayout_entries"
@@ -119,13 +127,6 @@
                 android:key="touchscreenCustom"
                 android:title="@string/touchscreenCustom_title"
                 mupen64:selectionMode="0" />
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:dependency="touchscreenEnabled"
-                android:key="touchscreenRedrawJoystick"
-                android:summary="@string/touchscreenRedrawJoystick_summary"
-                android:title="@string/touchscreenRedrawJoystick_title" />
 
             <CheckBoxPreference
                 android:defaultValue="true"

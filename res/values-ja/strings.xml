@@ -163,14 +163,16 @@
     <string name="touchscreenLayout_entry0">アナログ (roymustang16によって)</string>
     <string name="touchscreenLayout_entry1">デジタル (roymustang16によって)</string>
     <string name="touchscreenLayout_entry2">タッチ (roymustang16によって)</string>
-
+    
     <!-- Touchscreen Size Entries -->
     <string name="touchscreenSize_entry0">小さな</string>
     <string name="touchscreenSize_entry1">小</string>
     <string name="touchscreenSize_entry2">@string/_default</string>
     <string name="touchscreenSize_entry3">タブレット</string>
     
-    <!-- Framerate Entries -->
+    <!-- Touchscreen Refresh Entries -->
+    
+    <!-- Framerate Refresh Entries -->
     
     <!-- ******************************************** -->
     <!-- Other Strings                                -->
