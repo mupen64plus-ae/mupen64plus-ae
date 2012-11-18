@@ -25,296 +25,300 @@
 
     <RelativeLayout
         android:id="@+id/bPad"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_width="250dp"
-        android:layout_height="120dp"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX5"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
         android:layout_alignParentBottom="false"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
 
         <Button
             android:id="@+id/buttonZ"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_gray"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:text="Z"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 
         <Button
             android:id="@+id/buttonR"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/button_gray"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:text="R"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 
         <Button
             android:id="@+id/buttonL"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:background="@drawable/button_gray"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:text="L"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 
         <Button
             android:id="@+id/buttonS"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_start"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:text="S"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 
         <TextView
             android:id="@+id/textFeedback"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:text="feedback"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
-        
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/dPad"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX3"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true" >
+        android:layout_centerVertical="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
 
         <Button
             android:id="@+id/buttonDU"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_dpad"
-            android:drawableTop="@drawable/ic_arrow_u" />
+            android:drawableTop="@drawable/ic_arrow_u"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:id="@+id/buttonDD"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_dpad"
-            android:drawableBottom="@drawable/ic_arrow_d" />
+            android:drawableBottom="@drawable/ic_arrow_d"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:id="@+id/buttonDL"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_dpad"
-            android:drawableLeft="@drawable/ic_arrow_l" />
+            android:drawableLeft="@drawable/ic_arrow_l"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:id="@+id/buttonDR"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_dpad"
-            android:drawableRight="@drawable/ic_arrow_r" />
+            android:drawableRight="@drawable/ic_arrow_r"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:id="@+id/buttonDC"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_centerInParent="true"
             android:background="@drawable/button_dpad"
-            android:enabled="false" />
-        
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/cPad"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_width="wrap_content"
-        android:layout_height="250dp"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX3"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX5"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" >
+        android:layout_centerVertical="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
 
-        <Button
-            android:id="@+id/buttonCU"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_above="@+id/buttonCR"
-            android:layout_toLeftOf="@+id/buttonCR"
-            android:background="@drawable/button_cpad"
-            android:drawableTop="@drawable/ic_arrow_u" />
-
-        <Button
-            android:id="@+id/buttonCD"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/buttonCR"
-            android:layout_toLeftOf="@+id/buttonCR"
-            android:background="@drawable/button_cpad"
-            android:drawableBottom="@drawable/ic_arrow_d" />
-
-        <Button
-            android:id="@+id/buttonCL"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/buttonCU"
-            android:layout_toLeftOf="@+id/buttonCU"
-            android:background="@drawable/button_cpad"
-            android:drawableLeft="@drawable/ic_arrow_l" />
-
-        <Button
-            android:id="@+id/buttonCR"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <RelativeLayout
+            android:id="@+id/cPad2"
+            android:layout_width="@dimen/inputMapPreferenceButtonSizeX3"
+            android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/button_cpad"
-            android:drawableRight="@drawable/ic_arrow_r" />
-
-        <Button
-            android:id="@+id/buttonCC"
             android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/buttonCR"
-            android:background="@android:color/transparent"
-            android:enabled="false"
-            android:text="C"
-            android:textColor="@android:color/primary_text_dark_nodisable" />
+            android:focusableInTouchMode="false" >
+
+            <Button
+                android:id="@+id/buttonCU"
+                android:layout_width="@dimen/inputMapPreferenceButtonSize"
+                android:layout_height="@dimen/inputMapPreferenceButtonSize"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_cpad"
+                android:drawableTop="@drawable/ic_arrow_u"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <Button
+                android:id="@+id/buttonCD"
+                android:layout_width="@dimen/inputMapPreferenceButtonSize"
+                android:layout_height="@dimen/inputMapPreferenceButtonSize"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_cpad"
+                android:drawableBottom="@drawable/ic_arrow_d"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <Button
+                android:id="@+id/buttonCL"
+                android:layout_width="@dimen/inputMapPreferenceButtonSize"
+                android:layout_height="@dimen/inputMapPreferenceButtonSize"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/button_cpad"
+                android:drawableLeft="@drawable/ic_arrow_l"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <Button
+                android:id="@+id/buttonCR"
+                android:layout_width="@dimen/inputMapPreferenceButtonSize"
+                android:layout_height="@dimen/inputMapPreferenceButtonSize"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/button_cpad"
+                android:drawableRight="@drawable/ic_arrow_r"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <Button
+                android:id="@+id/buttonCC"
+                android:layout_width="@dimen/inputMapPreferenceButtonSize"
+                android:layout_height="@dimen/inputMapPreferenceButtonSize"
+                android:layout_centerInParent="true"
+                android:background="@android:color/transparent"
+                android:enabled="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:text="C"
+                android:textColor="@android:color/primary_text_dark_nodisable" />
+        </RelativeLayout>
 
         <Button
             android:id="@+id/buttonB"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
+            android:layout_alignLeft="@+id/cPad2"
+            android:layout_below="@+id/cPad2"
+            android:background="@drawable/button_b"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/buttonCL"
-            android:layout_toLeftOf="@+id/buttonCL"
-            android:background="@drawable/button_b"
             android:text="B"
             android:textColor="@android:color/primary_text_dark_nodisable" />
-        
+
         <Button
             android:id="@+id/buttonA"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
+            android:layout_below="@+id/buttonB"
+            android:layout_toRightOf="@+id/buttonB"
+            android:background="@drawable/button_a"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/buttonCD"
-            android:layout_toLeftOf="@+id/buttonCD"
-            android:background="@drawable/button_a"
             android:text="A"
             android:textColor="@android:color/primary_text_dark_nodisable" />
-        
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/aPad"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX3"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/analog_ring" >
+        android:background="@drawable/analog_ring"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
 
         <Button
             android:id="@+id/buttonAC"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
+            android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
             android:layout_centerInParent="true"
             android:background="@drawable/analog_ring"
-            android:enabled="false" />
-        
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
         <Button
             android:id="@+id/buttonAU"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
-            android:drawableBottom="@drawable/ic_arrow_u" />
+            android:drawableBottom="@drawable/ic_arrow_u"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:id="@+id/buttonAD"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="40dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSize"
+            android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
-            android:drawableTop="@drawable/ic_arrow_d" />
+            android:drawableTop="@drawable/ic_arrow_d"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:id="@+id/buttonAL"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
-            android:drawableRight="@drawable/ic_arrow_l" />
+            android:drawableRight="@drawable/ic_arrow_l"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:id="@+id/buttonAR"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
+            android:layout_height="@dimen/inputMapPreferenceButtonSize"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
-            android:drawableLeft="@drawable/ic_arrow_r" />
-        
+            android:drawableLeft="@drawable/ic_arrow_r"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
     </RelativeLayout>
 
     <Button
@@ -327,7 +331,7 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:minLines="2"
-        android:minWidth="40dp"
+        android:minWidth="@dimen/inputMapPreferenceButtonSize"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:text="@string/inputMapPreference_rumble"
@@ -344,7 +348,7 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:minLines="2"
-        android:minWidth="40dp"
+        android:minWidth="@dimen/inputMapPreferenceButtonSize"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:text="@string/inputMapPreference_mempak"

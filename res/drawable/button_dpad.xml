@@ -13,7 +13,7 @@
                 android:width="3dp"
                 android:color="@color/holo_blue2" />
             <corners
-                android:radius="10dp" />
+                android:radius="3dp" />
         </shape>
     </item>
 
@@ -28,7 +28,7 @@
                 android:width="3dp"
                 android:color="@color/gray4" />
             <corners
-                android:radius="10dp" />
+                android:radius="3dp" />
         </shape>
     </item>
 </selector>
