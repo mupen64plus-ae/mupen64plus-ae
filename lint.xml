@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="HardcodedText">
+        <ignore path="res\layout-port\c_pad.xml" />
+        <ignore path="res\layout\c_pad.xml" />
         <ignore path="res\layout\input_map_preference.xml" />
     </issue>
     <issue id="UseCompoundDrawables">

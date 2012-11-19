@@ -4,5 +4,6 @@
     <dimen name="inputMapPreferenceButtonSize">40dp</dimen>
     <dimen name="inputMapPreferenceButtonSizeX15">60dp</dimen>
     <dimen name="inputMapPreferenceButtonSizeX3">120dp</dimen>
+    <dimen name="inputMapPreferenceButtonSizeX4">160dp</dimen>
     <dimen name="inputMapPreferenceButtonSizeX5">200dp</dimen>
 </resources>

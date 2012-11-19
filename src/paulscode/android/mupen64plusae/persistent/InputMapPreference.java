@@ -143,19 +143,21 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         // Setup key listening
         mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT ) );
         
+        builder.setTitle( null );
+        
         // Add neutral button
         if( mSpecialMode )
         {
             // Setup dialog for special function mapping
-            builder.setTitle( R.string.inputMapPreference_special );
-            builder.setNeutralButton( R.string.inputMapPreference_controls, this );
+            // builder.setTitle( R.string.inputMapPreference_special );
+            // builder.setNeutralButton( R.string.inputMapPreference_controls, this );
             builder.setItems( R.array.specialFunction_entries, this );
         }
         else
         {
             // Setup dialog for N64 control mapping
-            builder.setTitle( R.string.inputMapPreference_dialogTitle );
-            builder.setNeutralButton( R.string.inputMapPreference_special, this );
+            // builder.setTitle( R.string.inputMapPreference_dialogTitle );
+            // builder.setNeutralButton( R.string.inputMapPreference_special, this );
         }
     }
     
