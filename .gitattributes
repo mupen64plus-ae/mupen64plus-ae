@@ -21,6 +21,7 @@
 *.rc text
 *.S text
 *.txt text
+*.ucls text
 *.ver text
 *.xml text
 
@@ -30,5 +31,6 @@
 *.gif binary
 *.jar binary
 *.jpg binary
+*.pdf binary
 *.png binary
 *.zip binary
