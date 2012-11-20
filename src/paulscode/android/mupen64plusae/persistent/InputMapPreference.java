@@ -34,7 +34,6 @@ import paulscode.android.mupen64plusae.input.provider.LazyProvider;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -52,11 +51,9 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
     private final InputMap mMap;
     private final LazyProvider mProvider;
     private int mInputCodeToBeMapped;
-    private int mWhich;
     private View mToggleWidget;
     private TextView mFeedbackText;
     private Button[] mN64Button;
-    private boolean mSpecialMode;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -66,9 +63,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         mProvider = new LazyProvider();
         mProvider.registerListener( this );
         mInputCodeToBeMapped = 0;
-        mWhich = DialogInterface.BUTTON_NEGATIVE;
         mN64Button = new Button[InputMap.NUM_N64_CONTROLS];
-        mSpecialMode = false;
         
         setDialogLayoutResource( R.layout.input_map_preference );
         setWidgetLayoutResource( R.layout.widget_toggle );
@@ -143,72 +138,25 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         // Setup key listening
         mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT ) );
         
+        // TODO: Fix this temporary solution to provide more screen space
         builder.setTitle( null );
-        
-        // Add neutral button
-        if( mSpecialMode )
-        {
-            // Setup dialog for special function mapping
-            // builder.setTitle( R.string.inputMapPreference_special );
-            // builder.setNeutralButton( R.string.inputMapPreference_controls, this );
-            builder.setItems( R.array.specialFunction_entries, this );
-        }
-        else
-        {
-            // Setup dialog for N64 control mapping
-            // builder.setTitle( R.string.inputMapPreference_dialogTitle );
-            // builder.setNeutralButton( R.string.inputMapPreference_special, this );
-        }
     }
     
     @Override
     protected void onDialogClosed( boolean positiveResult )
     {
-        // We need to know a lot more than simply positiveResult. Clicking Cancel or Ok returns us
-        // to the parent preference menu. For those cases, return to a clean state so that the
-        // toggle doesn't persist unwanted changes. That means either save the new value or reset to
-        // the original value. Clicking Neutral or a list item reopens the dialog, and maintains the
-        // dirty state.
+        // Clicking Cancel or Ok returns us to the parent preference menu. We must return to a clean
+        // state so that the toggle doesn't persist unwanted changes.
         
-        switch( mWhich )
-        {
-            case DialogInterface.BUTTON_NEGATIVE:
-                // User pressed Cancel/Back: clean the state by restoring map
-                mMap.deserialize( getPersistedString( "" ) );
-                break;
-            
-            case DialogInterface.BUTTON_POSITIVE:
-                // User pressed Ok: clean the state by persisting map
-                persistString( mMap.serialize() );
-                break;
-            
-            case DialogInterface.BUTTON_NEUTRAL:
-                // User pressed Neutral: reopen alternate dialog, stay dirty
-                mSpecialMode = !mSpecialMode;
-                if( mSpecialMode )
-                    setDialogLayoutResource( 0 );
-                else
-                    setDialogLayoutResource( R.layout.input_map_preference );
-                onClick();
-                break;
-            
-            default:
-                // User pressed a list item: map the special function, reopen dialog, stay dirty
-                mMap.mapInput( mWhich + InputMap.OFFSET_FUNCS, mInputCodeToBeMapped );
-                onClick();
-                break;
-        }
+        if( positiveResult )
+            // User pressed Ok: clean the state by persisting map
+            persistString( mMap.serialize() );
+        else
+            // User pressed Cancel/Back: clean the state by restoring map
+            mMap.deserialize( getPersistedString( "" ) );
         
         // Unregister parent providers, new ones added on next click
         mProvider.removeAllProviders();
-    }
-    
-    @Override
-    public void onClick( DialogInterface dialog, int which )
-    {
-        // Stash which button was clicked, for onDialogClosed
-        mWhich = which;
-        super.onClick( dialog, which );
     }
     
     @Override
@@ -230,7 +178,11 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
             for( int i = 0; i < mN64Button.length; i++ )
             {
                 if( view.equals( mN64Button[i] ) )
+                {
                     mMap.mapInput( i, mInputCodeToBeMapped );
+                    mInputCodeToBeMapped = InputMap.UNMAPPED;
+                    break;
+                }
             }
             
             // Refresh the dialog
