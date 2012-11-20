@@ -70,14 +70,14 @@
         android:layout_width="@dimen/inputMapPreferenceButtonSizeX3"
         android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
         layout="@layout/d_pad" />
 
     <include
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
         layout="@layout/c_pad" />
 
     <include

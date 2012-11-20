@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/aPad"
+    android:layout_width="@dimen/inputMapPreferenceButtonSizeX3"
+    android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:background="@drawable/analog_ring"
+    android:focusable="false"
+    android:focusableInTouchMode="false" >
+
+    <Button
+        android:id="@+id/buttonAC"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_centerInParent="true"
+        android:background="@drawable/analog_ring"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
+    <Button
+        android:id="@+id/buttonAU"
+        android:layout_width="@dimen/inputMapPreferenceButtonSize"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_apad"
+        android:drawableBottom="@drawable/ic_arrow_u"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
+    <Button
+        android:id="@+id/buttonAD"
+        android:layout_width="@dimen/inputMapPreferenceButtonSize"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_apad"
+        android:drawableTop="@drawable/ic_arrow_d"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
+    <Button
+        android:id="@+id/buttonAL"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_height="@dimen/inputMapPreferenceButtonSize"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/button_apad"
+        android:drawableRight="@drawable/ic_arrow_l"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
+    <Button
+        android:id="@+id/buttonAR"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_height="@dimen/inputMapPreferenceButtonSize"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/button_apad"
+        android:drawableLeft="@drawable/ic_arrow_r"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+
+</RelativeLayout>

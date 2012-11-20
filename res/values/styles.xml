@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="appTheme" parent="@android:style/Theme" />
-    <dimen name="inputMapPreferenceButtonSize">40dp</dimen>
-    <dimen name="inputMapPreferenceButtonSizeX15">60dp</dimen>
-    <dimen name="inputMapPreferenceButtonSizeX3">120dp</dimen>
-    <dimen name="inputMapPreferenceButtonSizeX4">160dp</dimen>
-    <dimen name="inputMapPreferenceButtonSizeX5">200dp</dimen>
 </resources>

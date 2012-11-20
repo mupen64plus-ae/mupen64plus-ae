@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="inputMapPreferenceButtonSize">50dp</dimen>
+    <dimen name="inputMapPreferenceButtonSizeX15">75dp</dimen>
+    <dimen name="inputMapPreferenceButtonSizeX3">150dp</dimen>
+    <dimen name="inputMapPreferenceButtonSizeX4">200dp</dimen>
+    <dimen name="inputMapPreferenceButtonSizeX5">250dp</dimen>
+</resources>
