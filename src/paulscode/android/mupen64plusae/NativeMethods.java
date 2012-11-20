@@ -38,6 +38,9 @@ public class NativeMethods
     // *************************************************
     // *************************************************
     
+    // TODO: These should all have javadoc comments. 
+    // It would better document calls going in/out of native code.
+    
     public static native void fileLoadEmulator( String filename );
     
     public static native void fileSaveEmulator( String filename );

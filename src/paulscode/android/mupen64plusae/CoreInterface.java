@@ -51,8 +51,8 @@ import android.util.Log;
 public class CoreInterface
 {
     // TODO: Eliminate or encapsulate
-    // This is used by getRomPath() and queried in class SDLSurface
-    public static boolean finishedReading = false;
+    // This is used by getRomPath() and queried in class GameSurface
+    protected static boolean finishedReading = false;
     
     // Public constants
     public static final int EMULATOR_STATE_UNKNOWN = 0;
@@ -252,7 +252,7 @@ public class CoreInterface
             }
             else
             {
-                Log.w( "CoreInterface", "SDL Audio: Error returned from write(short)" );
+                Log.w( "CoreInterface", "SDL Audio: Error returned from write(short[])" );
                 return;
             }
         }
@@ -280,7 +280,7 @@ public class CoreInterface
             }
             else
             {
-                Log.w( "CoreInterface", "SDL Audio: Error returned from write(byte)" );
+                Log.w( "CoreInterface", "SDL Audio: Error returned from write(byte[])" );
                 return;
             }
         }

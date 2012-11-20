@@ -348,7 +348,7 @@ public class VisibleTouchMap extends TouchMap
             catch( Exception e )
             {
                 // Problem, let the user know
-                Log.e( "GamePad", "Problem loading font '" + mFontsDir + fpsFont + "/" + i
+                Log.e( "VisibleTouchMap", "Problem loading font '" + mFontsDir + fpsFont + "/" + i
                         + ".png', error message: " + e.getMessage() );
             }
         }

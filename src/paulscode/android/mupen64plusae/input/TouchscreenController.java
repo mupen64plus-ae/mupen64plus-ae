@@ -19,10 +19,10 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import android.annotation.TargetApi;
 import android.graphics.Point;
-import android.os.Build;
 import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.View;
@@ -96,7 +96,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
     public boolean onTouch( View view, MotionEvent event )
     {
         // Eclair is needed for multi-touch tracking (getPointerId, getPointerCount)
-        if( Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR )
+        if( !Globals.IS_ECLAIR )
             return false;
         
         int action = event.getAction();
