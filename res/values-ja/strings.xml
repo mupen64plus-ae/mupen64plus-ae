@@ -109,6 +109,7 @@
     <string name="menuPeripheralInfo_summary">周辺ハードウエアとモデル情報</string>
     
     <!-- Video Menu -->
+    <string name="screenOrientation_title">画面の向き</string>
     <string name="fpsRefresh_title">フレームレート表示</string>
     <string name="videoStretch_title">ストレッチ画面</string>
     <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
@@ -200,6 +201,12 @@
     <string name="touchscreenRefresh_entry0">決して</string>
     <string name="touchscreenRefresh_entry1">時折</string>
     <string name="touchscreenRefresh_entry2">頻繁</string>
+
+    <!-- Screen Orientation Entries -->
+    <string name="screenOrientation_entry0">横方向</string>
+    <string name="screenOrientation_entry1">反転横方向</string>
+    <string name="screenOrientation_entry2">縦方向</string>
+    <string name="screenOrientation_entry3">反転縦方向</string>
     
     <!-- Framerate Refresh Entries -->
     <string name="fpsRefresh_entry0">決して</string>
