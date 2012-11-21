@@ -169,6 +169,7 @@ public class AppData
                 
                 else if( _hardware.contains( "tegra 2" ) || _hardware.contains( "grouper" )
                         || _hardware.contains( "meson-m1" ) || _hardware.contains( "smdkc" )
+                        || _hardware.contains( "smdk4x12" )
                         || ( _features != null && _features.contains( "vfpv3d16" ) ) )
                     type = HARDWARE_TYPE_TEGRA;
             }
