@@ -182,6 +182,13 @@
             android:title="@string/video_title" >
 
             <ListPreference
+                android:defaultValue="@string/screenOrientation_default"
+                android:entries="@array/screenOrientation_entries"
+                android:entryValues="@array/screenOrientation_values"
+                android:key="screenOrientation"
+                android:title="@string/screenOrientation_title" />
+
+            <ListPreference
                 android:defaultValue="@string/fpsRefresh_default"
                 android:entries="@array/fpsRefresh_entries"
                 android:entryValues="@array/fpsRefresh_values"

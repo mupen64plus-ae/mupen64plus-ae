@@ -125,6 +125,9 @@ public class UserPrefs
     /** True if volume keys can be used as controls. */
     public final boolean isVolKeysEnabled;
     
+    /** The screen orientation for the game activity. */
+    public final int screenOrientation;
+    
     /** The number of frames over which FPS is calculated (0 = disabled) */
     public final int fpsRefresh;
     
@@ -215,7 +218,8 @@ public class UserPrefs
         isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", false );
         
         // Video prefs
-        fpsRefresh = getSafeInt( mPreferences, "fpsRefresh", -1 );
+        screenOrientation = getSafeInt( mPreferences, "screenOrientation", 0 );
+        fpsRefresh = getSafeInt( mPreferences, "fpsRefresh", 0 );
         isFpsEnabled = fpsRefresh > 0;
         isStretched = mPreferences.getBoolean( "videoStretch", false );
         isRgba8888 = mPreferences.getBoolean( "videoRGBA8888", false );

@@ -124,6 +124,21 @@
     </string-array>
     <string name="touchscreenSize_default" translatable="false"></string>
 
+    <!-- Screen Orientation List -->
+    <string-array name="screenOrientation_entries">
+        <item>@string/screenOrientation_entry0</item>
+        <item>@string/screenOrientation_entry1</item>
+        <item>@string/screenOrientation_entry2</item>
+        <item>@string/screenOrientation_entry3</item>
+        </string-array>
+    <string-array name="screenOrientation_values" translatable="false">
+        <item>0</item> <!-- ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -->
+        <item>8</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -->
+        <item>1</item> <!-- ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -->
+        <item>9</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -->
+        </string-array>
+    <string name="screenOrientation_default" translatable="false">0</string>
+
     <!-- Framerate Refresh List -->
     <string-array name="fpsRefresh_entries">
         <item>@string/fpsRefresh_entry0</item>

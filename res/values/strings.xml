@@ -109,6 +109,7 @@
     <string name="menuPeripheralInfo_summary">Peripheral hardware and model information</string>
     
     <!-- Video Menu -->
+    <string name="screenOrientation_title">Screen orientation</string>
     <string name="fpsRefresh_title">Display framerate</string>
     <string name="videoStretch_title">Stretch screen</string>
     <string name="videoStretch_summary">May skew aspect ratio</string>
@@ -200,6 +201,12 @@
     <string name="touchscreenRefresh_entry0">Never</string>
     <string name="touchscreenRefresh_entry1">Occasionally</string>
     <string name="touchscreenRefresh_entry2">Frequently</string>
+    
+    <!-- Screen Orientation Entries -->
+    <string name="screenOrientation_entry0">Landscape</string>
+    <string name="screenOrientation_entry1">Reverse landscape</string>
+    <string name="screenOrientation_entry2">Portrait</string>
+    <string name="screenOrientation_entry3">Reverse portrait</string>
     
     <!-- Framerate Refresh Entries -->
     <string name="fpsRefresh_entry0">Never</string>

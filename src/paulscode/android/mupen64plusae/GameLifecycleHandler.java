@@ -25,8 +25,8 @@ import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
 import paulscode.android.mupen64plusae.input.XperiaPlayController;
-import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
+import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
@@ -151,6 +151,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
             mActivity.getActionBar().hide();
         }
+        
+        // Set the screen orientation
+        mActivity.setRequestedOrientation( Globals.userPrefs.screenOrientation );
         
         // Initialize user interface devices
         initControllers();
