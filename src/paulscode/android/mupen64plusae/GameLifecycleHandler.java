@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchscreenController;
-import paulscode.android.mupen64plusae.input.XperiaPlayController;
-import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
@@ -92,21 +90,17 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     
     // Internal flags
     private boolean mCoreRunning = false;
-    private final boolean mIsXperiaPlay;
     
     public GameLifecycleHandler( Activity activity )
     {
         mActivity = activity;
         mControllers = new ArrayList<AbstractController>();
-        mIsXperiaPlay = ( mActivity instanceof GameActivityXperiaPlay );
     }
     
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
         // Load native libraries
-        if( mIsXperiaPlay )
-            FileUtil.loadNativeLibName( "xperia-touchpad" );
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
@@ -127,17 +121,13 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         window.setFlags( LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN );
         
         // Keep screen from going to sleep
-        window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );        
+        window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
     }
     
     @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
-    {        
-        // Take control of the GameSurface if necessary
-        if( mIsXperiaPlay )
-            mActivity.getWindow().takeSurface( null );
-
-        // Lay out content and get the views        
+    {
+        // Lay out content and get the views
         mActivity.setContentView( R.layout.game_activity );
         mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
@@ -172,7 +162,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         Notifier.showToast( mActivity, R.string.toast_appStarted );
     }
     
-    
     public void onResume()
     {
         if( mCoreRunning )
@@ -201,13 +190,13 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
         NativeMethods.resumeEmulator();
     }
-
+    
     @Override
     public void onCoreShutdown()
     {
         mCoreRunning = false;
     }
-
+    
     @Override
     public boolean onKey( View view, int keyCode, KeyEvent event )
     {
@@ -265,14 +254,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         
         if( Globals.userPrefs.inputPlugin.enabled )
         {
-            // Create the Xperia PLAY touchpad controller
-            if( mIsXperiaPlay )
-            {
-                TouchMap map = new TouchMap( mActivity.getResources() );
-                map.load( Globals.userPrefs.xperiaLayout );
-                mControllers.add( new XperiaPlayController( map ) );
-            }
-            
             // Create the input providers shared among all peripheral controllers
             mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );
             AbstractProvider axisProvider = Globals.IS_HONEYCOMB_MR1 ? new AxisProvider( mSurface ) : null;
