@@ -87,7 +87,7 @@ public class GameActivityXperiaPlay extends NativeActivity
     private static final int PAD_WIDTH = 966;
     private static final int PAD_HEIGHT = 360;
     
-    public static native int RegisterThis();
+    public native int RegisterThis();
 
     public void touchPadBeginEvent()
     {
