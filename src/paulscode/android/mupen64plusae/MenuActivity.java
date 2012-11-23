@@ -181,7 +181,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( Globals.appData.hardwareInfo.isXperiaPlay )
             findPreference( XPERIA ).setEnabled( enableInput );
         
-        // Enable the audio menu only if the video plug-in is not a dummy
+        // Enable the audio menu only if the audio plug-in is not a dummy
         findPreference( AUDIO ).setEnabled( enableAudio );
         
         // Enable the video menu only if the video plug-in is not a dummy
