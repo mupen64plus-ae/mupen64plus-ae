@@ -74,6 +74,8 @@
     <string name="touchscreen_summary">On-screen controller settings</string>
     <string name="peripheral_title">Controllers</string>
     <string name="peripheral_summary">Gamepads, joysticks, keyboards, etc.</string>
+    <string name="audio_title">Audio</string>
+    <string name="audio_summary">Audio settings</string>
     <string name="video_title">Video</string>
     <string name="video_summary">Graphics settings</string>
     <string name="plugins_title">@string/_advanced</string>
@@ -107,6 +109,18 @@
     <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
     <string name="menuPeripheralInfo_title">Controller info</string>
     <string name="menuPeripheralInfo_summary">Peripheral hardware and model information</string>
+    
+    <!-- Audio Menu -->
+    <string name="swapAudioChannels_title">Swap audio channels</string>
+    <string name="swapAudioChannels_summary">Swap the left and right audio channels</string>
+    <string name="resamplingAlgs_title">Resampling algorithm</string>
+    <string name="resamplingAlgs_summary">Algorithm to use when resampling audio</string>
+    <string name="resamplingAlg_trivial">Trivial</string>
+    <string name="resamplingAlg_linear">Linear interpolation</string>
+    <string name="resamplingAlg_zoh">Zero order hold</string>
+    <string name="resamplingAlg_sinc_fastest">Sinc (fastest)</string>
+    <string name="resamplingAlg_sinc_medium">Sinc (medium)</string>
+    <string name="resamplingAlg_sinc_best">Sinc (best)</string>
     
     <!-- Video Menu -->
     <string name="screenOrientation_title">Screen orientation</string>

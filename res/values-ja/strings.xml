@@ -108,6 +108,18 @@
     <string name="menuPeripheralInfo_title">コントローラ情報</string>
     <string name="menuPeripheralInfo_summary">周辺ハードウエアとモデル情報</string>
     
+    <!-- Audio Menu -->
+    <string name="swapAudioChannels_title">オーディオチャンネルを交換</string>
+    <string name="swapAudioChannels_summary">スワップ左右のオーディオチャンネル</string>
+    <string name="resamplingAlgs_title">再サンプリングアルゴリズム</string>
+    <string name="resamplingAlgs_summary">オーディオを再サンプリングするときに使用されるアルゴリズム</string>
+    <string name="resamplingAlg_trivial">些細</string>
+    <string name="resamplingAlg_linear">線形補間</string>
+    <string name="resamplingAlg_zoh">ゼロ次ホールド</string>
+    <string name="resamplingAlg_sinc_fastest">Sinc (最速)</string>
+    <string name="resamplingAlg_sinc_medium">Sinc (中通り)</string>
+    <string name="resamplingAlg_sinc_best">Sinc (最高)</string>
+    
     <!-- Video Menu -->
     <string name="screenOrientation_title">画面の向き</string>
     <string name="fpsRefresh_title">フレームレート表示</string>

@@ -134,6 +134,12 @@ public class UserPrefs
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
     
+    /** True if the left and right audio channels are swapped */
+    public final boolean swapChannels;
+    
+    /** The audio resampling algorithm to use */
+    public final String audioResamplingAlg;
+    
     /** True if the video should be stretched. */
     public final boolean isStretched;
     
@@ -216,6 +222,10 @@ public class UserPrefs
         inputMap3 = new InputMap( mPreferences.getString( "peripheralMap3", "" ) );
         inputMap4 = new InputMap( mPreferences.getString( "peripheralMap4", "" ) );
         isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", false );
+        
+        // Audio prefs
+        swapChannels = mPreferences.getBoolean("swapAudioChannels", false);
+        audioResamplingAlg = mPreferences.getString("resamplingAlgs", "trivial");
         
         // Video prefs
         screenOrientation = getSafeInt( mPreferences, "screenOrientation", 0 );

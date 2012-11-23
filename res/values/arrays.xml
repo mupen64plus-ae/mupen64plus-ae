@@ -123,14 +123,33 @@
         <item>-Tablet</item>
     </string-array>
     <string name="touchscreenSize_default" translatable="false"></string>
-
+    
+    <!-- Audio Resampling Algorithm List -->
+	<string-array name="resamplingAlgs_entries">
+	    <item>@string/resamplingAlg_trivial</item>
+	    <item>@string/resamplingAlg_linear</item>
+	    <item>@string/resamplingAlg_zoh</item>
+	    <item>@string/resamplingAlg_sinc_fastest</item>
+	    <item>@string/resamplingAlg_sinc_medium</item>
+	    <item>@string/resamplingAlg_sinc_best</item>
+	</string-array>
+	<string-array name="resamplingAlgs_values" translatable="false">
+	    <item>trivial</item>
+	    <item>src-linear</item>
+	    <item>src-zero-order-hold</item>
+	    <item>src-sinc-fastest</item>
+	    <item>src-sinc-medium-quality</item>
+	    <item>src-sinc-best-quality</item>
+	</string-array>
+	<string name="resamplingAlg_default">trivial</string>
+	
     <!-- Screen Orientation List -->
     <string-array name="screenOrientation_entries">
         <item>@string/screenOrientation_entry0</item>
         <item>@string/screenOrientation_entry1</item>
         <item>@string/screenOrientation_entry2</item>
         <item>@string/screenOrientation_entry3</item>
-        </string-array>
+    </string-array>
     <string-array name="screenOrientation_values" translatable="false">
         <item>0</item> <!-- ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -->
         <item>8</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -->

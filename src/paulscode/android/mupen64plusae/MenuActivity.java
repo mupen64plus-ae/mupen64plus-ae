@@ -52,6 +52,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String XPERIA = "xperia";
     private static final String XPERIA_ENABLED = "xperiaEnabled";
     private static final String PERIPHERAL = "peripheral";
+    private static final String AUDIO = "audio";
     private static final String VIDEO = "video";
     
     @SuppressWarnings( "deprecation" )
@@ -166,6 +167,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Determine which menu items should be enabled
         boolean enableResume = new File( Globals.userPrefs.selectedGame ).exists();
         boolean enableInput = Globals.userPrefs.inputPlugin.enabled;
+        boolean enableAudio = Globals.userPrefs.audioPlugin.enabled;
         boolean enableVideo = Globals.userPrefs.videoPlugin.enabled;
         boolean enableCustom = Globals.userPrefs.isTouchscreenEnabled && Globals.userPrefs.isTouchscreenCustom;
         boolean enableSize = Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isTouchscreenCustom;
@@ -178,6 +180,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         findPreference( PERIPHERAL ).setEnabled( enableInput );
         if( Globals.appData.hardwareInfo.isXperiaPlay )
             findPreference( XPERIA ).setEnabled( enableInput );
+        
+        // Enable the audio menu only if the video plug-in is not a dummy
+        findPreference( AUDIO ).setEnabled( enableAudio );
         
         // Enable the video menu only if the video plug-in is not a dummy
         findPreference( VIDEO ).setEnabled( enableVideo );
