@@ -135,7 +135,6 @@ struct APP_INSTANCE
     // State flags.
     int running;
     int destroyed;
-    int redrawNeeded;
 };
 
 /**
@@ -154,15 +153,6 @@ struct TOUCHSTATE
 struct ENGINE
 {
     struct APP_INSTANCE* app;
-
-    int render;
-    EGLDisplay display;
-    EGLSurface surface;
-    EGLContext context;
-    int width;
-    int height;
-
-    // Ugly way to track touch states
     struct TOUCHSTATE touchstate_screen[64];
     struct TOUCHSTATE touchstate_pad[64];
 };
@@ -332,7 +322,6 @@ void instance_app_main( struct APP_INSTANCE* app_instance )
                 run = 0;
                 break;
             case MSG_WINDOW_FOCUSCHANGED:
-                // engine.render = app_instance->msgQueue[msg_index].arg1;
                 break;
             case MSG_WINDOW_CREATED:
                 app_instance->window = app_instance->pendingWindow;
@@ -350,12 +339,8 @@ void instance_app_main( struct APP_INSTANCE* app_instance )
                     nHexFormat = 0x0565;
 
                 LOGI( "Window Created : Width(%d) Height(%d) Format(%04x)", nWidth, nHeight, nHexFormat );
-
-                engine.render = 1;
                 break;
             case MSG_WINDOW_DESTROYED:
-                engine.render = 0;
-
                 app_instance->window = NULL;
                 break;
             case MSG_INPUTQUEUE_CREATED:
