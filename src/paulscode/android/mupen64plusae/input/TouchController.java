@@ -31,7 +31,7 @@ import android.view.View.OnTouchListener;
 /**
  * A class for generating N64 controller commands from a touchscreen.
  */
-public class TouchscreenController extends AbstractController implements OnTouchListener
+public class TouchController extends AbstractController implements OnTouchListener
 {
     public interface OnStateChangedListener
     {
@@ -77,7 +77,7 @@ public class TouchscreenController extends AbstractController implements OnTouch
      * @param touchMap The map from screen coordinates to N64 controls.
      * @param view The view receiving touch event data.
      */
-    public TouchscreenController( TouchMap touchMap, View view, OnStateChangedListener listener,
+    public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
             boolean isOctagonal )
     {
         mListener = listener;

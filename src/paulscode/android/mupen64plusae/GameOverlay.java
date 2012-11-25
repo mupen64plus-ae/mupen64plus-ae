@@ -19,7 +19,7 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.input.TouchscreenController;
+import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -28,7 +28,7 @@ import android.view.View;
 
 // TODO: Minor glitch: hold analog, then hold button, then release analog -> analog doesn't redraw
 
-public class GameOverlay extends View implements TouchscreenController.OnStateChangedListener,
+public class GameOverlay extends View implements TouchController.OnStateChangedListener,
         GameSurface.OnFpsChangedListener
 {
     private VisibleTouchMap mTouchMap;

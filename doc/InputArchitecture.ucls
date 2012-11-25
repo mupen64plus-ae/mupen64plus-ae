@@ -18,7 +18,7 @@
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
-  <class id="3" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.TouchscreenController" 
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.TouchController" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/TouchscreenController.java" 
     binary="false">    
     <position height="-1" width="-1" x="1019" y="246"/>    

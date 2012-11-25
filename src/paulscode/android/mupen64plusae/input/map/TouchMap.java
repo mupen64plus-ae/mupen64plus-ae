@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.input.AbstractController;
-import paulscode.android.mupen64plusae.input.TouchscreenController;
+import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.XperiaPlayController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -38,7 +38,7 @@ import android.graphics.Point;
  * A class for mapping digitizer coordinates to N64 buttons/axes.
  * 
  * @see VisibleTouchMap
- * @see TouchscreenController
+ * @see TouchController
  * @see XperiaPlayController
  */
 public class TouchMap

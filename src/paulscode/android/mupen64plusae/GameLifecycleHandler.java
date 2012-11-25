@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
-import paulscode.android.mupen64plusae.input.TouchscreenController;
+import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
@@ -259,7 +259,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         // Create the touchscreen controls
         if( Globals.userPrefs.isTouchscreenEnabled )
         {
-            mControllers.add( new TouchscreenController( mTouchscreenMap, mSurface, mOverlay,
+            mControllers.add( new TouchController( mTouchscreenMap, mSurface, mOverlay,
                     Globals.userPrefs.isOctagonalJoystick ) );
         }
         
