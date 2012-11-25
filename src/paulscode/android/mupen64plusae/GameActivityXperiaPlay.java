@@ -19,9 +19,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.input.map.TouchMap;
-import paulscode.android.mupen64plusae.input.provider.XperiaPlayProvider;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
 import android.os.Bundle;
@@ -33,7 +30,7 @@ public class GameActivityXperiaPlay extends NativeActivity
 {
     private final GameLifecycleHandler mLifecycleHandler;
     private final GameMenuHandler mMenuHandler;
-
+    
     public GameActivityXperiaPlay()
     {
         mLifecycleHandler = new GameLifecycleHandler( this );
@@ -57,26 +54,10 @@ public class GameActivityXperiaPlay extends NativeActivity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        FileUtil.loadNativeLibName( "xperia-touchpad" );
-        
         mLifecycleHandler.onCreateBegin( savedInstanceState );
-        
         super.onCreate( savedInstanceState );
-        
-        // Take control of the GameSurface
-        getWindow().takeSurface( null );
-        
         mLifecycleHandler.onCreateEnd( savedInstanceState );
-        
-        // Create the Xperia PLAY touchpad controller
-        XperiaPlayProvider xperiaProvider = new XperiaPlayProvider();
-        if( Globals.userPrefs.inputPlugin.enabled )
-        {
-            TouchMap map = new TouchMap( getResources() );
-            map.load( Globals.userPrefs.xperiaLayout );
-            //mControllers.add( new XperiaPlayController( map ) );
-        }
-    }    
+    }
     
     @Override
     protected void onResume()

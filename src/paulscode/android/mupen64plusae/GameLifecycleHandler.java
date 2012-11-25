@@ -90,17 +90,21 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     
     // Internal flags
     private boolean mCoreRunning = false;
+    private final boolean mIsXperiaPlay;
     
     public GameLifecycleHandler( Activity activity )
     {
         mActivity = activity;
         mControllers = new ArrayList<AbstractController>();
+        mIsXperiaPlay = activity instanceof GameActivityXperiaPlay;
     }
     
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
         // Load native libraries
+        if( mIsXperiaPlay )
+            FileUtil.loadNativeLibName( "xperia-touchpad" );            
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
@@ -127,6 +131,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
     {
+        // Take control of the GameSurface if necessary
+        if( mIsXperiaPlay )
+            mActivity.getWindow().takeSurface( null );
+        
         // Lay out content and get the views
         mActivity.setContentView( R.layout.game_activity );
         mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
@@ -145,12 +153,25 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         // Set the screen orientation
         mActivity.setRequestedOrientation( Globals.userPrefs.screenOrientation );
         
-        // Initialize user interface devices
-        initControllers();
-        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        // Initialize the screen elements
+        if( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFpsEnabled )
+        {
+            // The touch map and overlay are needed to display frame rate and/or controls
+            mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
+                    Globals.userPrefs.isFpsEnabled, Globals.paths.fontsDir );
+            mTouchscreenMap.load( Globals.userPrefs.touchscreenLayout );
+            mOverlay.initialize( mTouchscreenMap );
+        }
         
-        // Override the peripheral controllers' key provider, to add some extra functionality
-        mSurface.setOnKeyListener( this );
+        // Initialize user interface devices
+        if( Globals.userPrefs.inputPlugin.enabled )
+        {
+            if( mIsXperiaPlay )
+                initControllersXperiaPlay();
+            else
+                initControllers();
+        }
+        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Start listening to game surface events
         mSurface.setListeners( this, mOverlay, Globals.userPrefs.fpsRefresh );
@@ -235,53 +256,53 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     
     private void initControllers()
     {
-        if( Globals.IS_ECLAIR
-                && ( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFpsEnabled ) )
+        // Create the touchscreen controls
+        if( Globals.userPrefs.isTouchscreenEnabled )
         {
-            // The touch map and overlay are needed to display frame rate and/or controls
-            mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    Globals.userPrefs.isFpsEnabled, Globals.paths.fontsDir );
-            mTouchscreenMap.load( Globals.userPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap );
-            
-            // The touch controller is needed to handle touch events
-            if( Globals.userPrefs.inputPlugin.enabled && Globals.userPrefs.isTouchscreenEnabled )
-            {
-                mControllers.add( new TouchscreenController( mTouchscreenMap, mSurface, mOverlay,
-                        Globals.userPrefs.isOctagonalJoystick ) );
-            }
+            mControllers.add( new TouchscreenController( mTouchscreenMap, mSurface, mOverlay,
+                    Globals.userPrefs.isOctagonalJoystick ) );
         }
         
-        if( Globals.userPrefs.inputPlugin.enabled )
+        // Create the input providers shared among all peripheral controllers
+        mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );
+        AbstractProvider axisProvider = Globals.IS_HONEYCOMB_MR1 ? new AxisProvider( mSurface ) : null;
+        
+        // Override the peripheral controllers' key provider, to add some extra functionality
+        mSurface.setOnKeyListener( this );
+        
+        // Create the peripheral controls to handle key/stick presses
+        if( Globals.userPrefs.inputMap1.isEnabled() )
         {
-            // Create the input providers shared among all peripheral controllers
-            mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );
-            AbstractProvider axisProvider = Globals.IS_HONEYCOMB_MR1 ? new AxisProvider( mSurface ) : null;
-            
-            // Create the peripheral controllers for players 1-4
-            if( Globals.userPrefs.inputMap1.isEnabled() )
-            {
-                mControllers.add( new PeripheralController( 1, Globals.userPrefs.inputMap1,
-                        mKeyProvider, axisProvider ) );
-            }
-            if( Globals.userPrefs.inputMap2.isEnabled() )
-            {
-                mControllers.add( new PeripheralController( 2, Globals.userPrefs.inputMap2,
-                        mKeyProvider, axisProvider ) );
-            }
-            if( Globals.userPrefs.inputMap3.isEnabled() )
-            {
-                mControllers.add( new PeripheralController( 3, Globals.userPrefs.inputMap3,
-                        mKeyProvider, axisProvider ) );
-            }
-            if( Globals.userPrefs.inputMap4.isEnabled() )
-            {
-                mControllers.add( new PeripheralController( 4, Globals.userPrefs.inputMap4,
-                        mKeyProvider, axisProvider ) );
-            }
+            mControllers.add( new PeripheralController( 1, Globals.userPrefs.inputMap1,
+                    mKeyProvider, axisProvider ) );
+        }
+        if( Globals.userPrefs.inputMap2.isEnabled() )
+        {
+            mControllers.add( new PeripheralController( 2, Globals.userPrefs.inputMap2,
+                    mKeyProvider, axisProvider ) );
+        }
+        if( Globals.userPrefs.inputMap3.isEnabled() )
+        {
+            mControllers.add( new PeripheralController( 3, Globals.userPrefs.inputMap3,
+                    mKeyProvider, axisProvider ) );
+        }
+        if( Globals.userPrefs.inputMap4.isEnabled() )
+        {
+            mControllers.add( new PeripheralController( 4, Globals.userPrefs.inputMap4,
+                    mKeyProvider, axisProvider ) );
         }
     }
     
+    private void initControllersXperiaPlay()
+    {
+        mSurface.setFocusable( false );
+        mSurface.setFocusableInTouchMode( false );
+        
+        // mTouchpadMap = new TouchMap( mActivity.getResources() );
+        // mTouchpadMap.load( Globals.userPrefs.xperiaLayout );
+        // TODO: setup xperia play controls
+    }
+
     @TargetApi( 11 )
     private void toggleActionBar( View rootView )
     {
