@@ -71,11 +71,16 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     private int analogPid = -1;
     
+    /** The touch event source to listen to, or 0 to listen to all sources. */
+    private int mSourceFilter = 0;
+    
     /**
-     * Instantiates a new touchscreen controller.
-     * 
-     * @param touchMap The map from screen coordinates to N64 controls.
+     * Instantiates a new touch controller.
+     *
+     * @param touchMap The map from touch coordinates to N64 controls.
      * @param view The view receiving touch event data.
+     * @param listener The listener for controller state changes.
+     * @param isOctagonal True if the analog stick should be constrained to an octagon.
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
             boolean isOctagonal )
@@ -86,17 +91,32 @@ public class TouchController extends AbstractController implements OnTouchListen
         view.setOnTouchListener( this );
     }
     
+    /**
+     * Sets the touch event source filter.
+     * 
+     * @param source The source to listen to, or 0 to listen to all sources.
+     */
+    public void setSourceFilter( int source )
+    {
+        mSourceFilter = source;
+    }
+    
     /*
      * (non-Javadoc)
      * 
      * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
      */
     @Override
-    @TargetApi( 5 )
+    @TargetApi( 9 )
     public boolean onTouch( View view, MotionEvent event )
     {
         // Eclair is needed for multi-touch tracking (getPointerId, getPointerCount)
         if( !Globals.IS_ECLAIR )
+            return false;
+        
+        // Filter by source, if applicable
+        int source = Globals.IS_GINGERBREAD ? event.getSource() : 0;
+        if( mSourceFilter != 0 && mSourceFilter != source )
             return false;
         
         int action = event.getAction();
