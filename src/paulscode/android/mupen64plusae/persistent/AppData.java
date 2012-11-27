@@ -76,14 +76,6 @@ public class AppData
     }
     
     /**
-     * Reset all app settings to their defaults.
-     */
-    public void resetToDefaults()
-    {
-        mPreferences.edit().clear().commit();
-    }
-    
-    /**
      * Checks if this is the first time the app has been run.
      * 
      * @return true, if the app has never been run
