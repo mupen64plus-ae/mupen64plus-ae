@@ -68,10 +68,10 @@
     <string name="categoryOther_title">その他設定</string>
     
     <!-- Settings Menu -->
-    <string name="touchscreen_title">Touch</string>
-    <string name="touchscreen_summary">Touchscreen/touchpad settings</string>
-    <string name="peripheral_title">Input</string>
-    <string name="peripheral_summary">Button/joystick settings</string>
+    <string name="touchscreen_title">タッチ</string>
+    <string name="touchscreen_summary">タッチパネル/タッチパッドの設定</string>
+    <string name="peripheral_title">入力</string>
+    <string name="peripheral_summary">ボタン/ジョイスティックの設定</string>
     <string name="video_title">ビデオ</string>
     <string name="video_summary">グラフィック設定</string>
     <string name="plugins_title">@string/_advanced</string>
@@ -83,10 +83,10 @@
     <string name="menuResetUserPrefs_summary">既定値にリセット</string>
     
     <!-- Touchscreen Menu -->
-    <string name="xperiaEnabled_title">Enable touchpad</string>
-    <string name="xperiaLayout_title">Touchpad layout</string>
-    <string name="touchscreenEnabled_title">Enable touchscreen</string>
-    <string name="touchscreenLayout_title">Touchscreen layout</string>
+    <string name="xperiaEnabled_title">タッチパッドを有効</string>
+    <string name="xperiaLayout_title">タッチパッド·レイアウト</string>
+    <string name="touchscreenEnabled_title">タッチスクリーンを有効</string>
+    <string name="touchscreenLayout_title">タッチスクリーン·レイアウト</string>
     <string name="touchscreenSize_title">画面サイズ</string>
     <string name="touchscreenCustom_title">カスタムレイアウトフォルダ</string>
     <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
