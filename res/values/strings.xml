@@ -85,9 +85,9 @@
     <string name="menuResetUserPrefs_summary">Restore default settings</string>
     
     <!-- Touchscreen Menu -->
-    <string name="xperiaEnabled_title">Enable Touchpad</string>
+    <string name="xperiaEnabled_title">Enable touchpad</string>
     <string name="xperiaLayout_title">Touchpad layout</string>
-    <string name="touchscreenEnabled_title">Enable Touchscreen</string>
+    <string name="touchscreenEnabled_title">Enable touchscreen</string>
     <string name="touchscreenLayout_title">Touchscreen layout</string>
     <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenCustom_title">Custom layout folder</string>
