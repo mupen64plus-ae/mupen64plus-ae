@@ -25,7 +25,6 @@ import java.util.Locale;
 
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.TouchController;
-import paulscode.android.mupen64plusae.input.XperiaPlayController;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Image;
@@ -39,7 +38,6 @@ import android.graphics.Point;
  * 
  * @see VisibleTouchMap
  * @see TouchController
- * @see XperiaPlayController
  */
 public class TouchMap
 {

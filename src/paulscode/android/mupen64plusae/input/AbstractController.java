@@ -50,7 +50,6 @@ import paulscode.android.mupen64plusae.util.Utility;
  * 
  * @see PeripheralController
  * @see TouchController
- * @see XperiaPlayController
  */
 public abstract class AbstractController
 {
