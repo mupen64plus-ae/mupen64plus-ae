@@ -43,7 +43,7 @@
 
 #include <android/log.h>
 
-#define TAG "Touchpad"
+#define TAG "xperia-touchpad"
 #define LOGV(...) ((void)__android_log_print( ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__ ))
 #define LOGI(...) ((void)__android_log_print( ANDROID_LOG_INFO, TAG, __VA_ARGS__ ))
 #define LOGW(...) ((void)__android_log_print( ANDROID_LOG_WARN, TAG, __VA_ARGS__ ))
@@ -74,20 +74,17 @@
 #define MSG_INPUTQUEUE_CREATED		12
 #define MSG_INPUTQUEUE_DESTROYED	13
 
-static jobject   g_pActivity                    = 0;
-static jmethodID javaTouchScreenBeginEvent      = 0;
-static jmethodID javaTouchScreenPointerDown     = 0;
-static jmethodID javaTouchScreenPointerUp       = 0;
-static jmethodID javaTouchScreenPointerPosition = 0;
-static jmethodID javaTouchScreenEndEvent        = 0;
-static jmethodID javaTouchPadBeginEvent         = 0;
-static jmethodID javaTouchPadPointerDown        = 0;
-static jmethodID javaTouchPadPointerUp          = 0;
-static jmethodID javaTouchPadPointerPosition    = 0;
-static jmethodID javaTouchPadEndEvent           = 0;
-static jmethodID javaOnNativeKey                = 0;
-static JNIEnv    *g_pEnv                        = 0;
-static JavaVM    *g_pVM                         = 0;
+#define MAX_POINTERS                64
+#define PAD_HEIGHT                  360
+#define PAD_WIDTH                   966
+#define SOURCE_TOUCHSCREEN          4098
+#define SOURCE_TOUCHPAD             1048584
+
+static jobject   g_pActivity        = 0;
+static jmethodID javaOnNativeKey    = 0;
+static jmethodID javaOnNativeTouch  = 0;
+static JNIEnv    *g_pEnv            = 0;
+static JavaVM    *g_pVM             = 0;
 
 struct APP_MSG
 {
@@ -153,110 +150,65 @@ struct TOUCHSTATE
 struct ENGINE
 {
     struct APP_INSTANCE* app;
-    struct TOUCHSTATE touchstate_screen[64];
-    struct TOUCHSTATE touchstate_pad[64];
+    struct TOUCHSTATE touchstate_screen[MAX_POINTERS];
+    struct TOUCHSTATE touchstate_pad[MAX_POINTERS];
 };
 
 static int32_t engine_handle_input( struct APP_INSTANCE* app, AInputEvent* event )
 {
     struct ENGINE* engine = ( struct ENGINE* ) app->userData;
-    if( AInputEvent_getType( event ) == AINPUT_EVENT_TYPE_MOTION )
+
+    if( AInputEvent_getType( event ) == AINPUT_EVENT_TYPE_KEY )
     {
-        int nPointerCount = AMotionEvent_getPointerCount( event );
-        int nSourceId = AInputEvent_getSource( event );
-        int n;
-        int maxPointerID = 0;
-
-        if( g_pEnv && g_pActivity )
-        {
-            if( nSourceId == AINPUT_SOURCE_TOUCHPAD )
-                ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity, javaTouchPadBeginEvent );
-            else
-                ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity, javaTouchScreenBeginEvent );
-        }
-
-        for( n = 0; n < nPointerCount; ++n )
-        {
-            int nPointerId = AMotionEvent_getPointerId( event, n );
-            int nAction = AMOTION_EVENT_ACTION_MASK & AMotionEvent_getAction( event );
-            int nRawAction = AMotionEvent_getAction( event );
-            struct TOUCHSTATE *touchstate = 0;
-
-            if( nSourceId == AINPUT_SOURCE_TOUCHPAD )
-                touchstate = engine->touchstate_pad;
-            else
-                touchstate = engine->touchstate_screen;
-
-            if( nAction == AMOTION_EVENT_ACTION_POINTER_DOWN
-                    || nAction == AMOTION_EVENT_ACTION_POINTER_UP )
-            {
-                int nPointerIndex = ( AMotionEvent_getAction( event )
-                        & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK )
-                        >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-                nPointerId = AMotionEvent_getPointerId( event, nPointerIndex );
-            }
-
-            if( nAction == AMOTION_EVENT_ACTION_DOWN
-                    || nAction == AMOTION_EVENT_ACTION_POINTER_DOWN )
-            {
-                touchstate[nPointerId].down = 1;
-                if( g_pEnv && g_pActivity )
-                {
-                    if( nSourceId == AINPUT_SOURCE_TOUCHPAD )
-                        ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity, javaTouchPadPointerDown, nPointerId );
-                    else
-                        ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity, javaTouchScreenPointerDown, nPointerId );
-                }
-            }
-            else if( nAction == AMOTION_EVENT_ACTION_UP
-                    || nAction == AMOTION_EVENT_ACTION_POINTER_UP
-                    || nAction == AMOTION_EVENT_ACTION_CANCEL )
-            {
-                touchstate[nPointerId].down = 0;
-                if( g_pEnv && g_pActivity )
-                {
-                    if( nSourceId == AINPUT_SOURCE_TOUCHPAD )
-                        ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity, javaTouchPadPointerUp, nPointerId );
-                    else
-                        ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity, javaTouchScreenPointerUp, nPointerId );
-                }
-            }
-
-            if( touchstate[nPointerId].down == 1 )
-            {
-                touchstate[nPointerId].x = AMotionEvent_getX( event, n );
-                touchstate[nPointerId].y = AMotionEvent_getY( event, n );
-                if( g_pEnv && g_pActivity )
-                {
-                    if( nSourceId == AINPUT_SOURCE_TOUCHPAD )
-                        ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity,
-                                javaTouchPadPointerPosition, nPointerId,
-                                touchstate[nPointerId].x,
-                                touchstate[nPointerId].y );
-                    else
-                        ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity,
-                                javaTouchScreenPointerPosition, nPointerId,
-                                touchstate[nPointerId].x,
-                                touchstate[nPointerId].y );
-                }
-            }
-        }
-        if( g_pEnv && g_pActivity )
-        {
-            if( nSourceId == AINPUT_SOURCE_TOUCHPAD )
-                ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity, javaTouchPadEndEvent );
-            else
-                ( *g_pEnv )->CallVoidMethod( g_pEnv, g_pActivity, javaTouchScreenEndEvent );
-        }
-        return 1;
-    }
-    else if( AInputEvent_getType( event ) == AINPUT_EVENT_TYPE_KEY )
-    {
-        int nAction = AKeyEvent_getAction( event );
         int nKeyCode = AKeyEvent_getKeyCode( event );
+        int nAction = AKeyEvent_getAction( event );
         int handled = 0;
         if( g_pEnv && g_pActivity )
             handled = ( *g_pEnv )->CallIntMethod( g_pEnv, g_pActivity, javaOnNativeKey, nAction, nKeyCode );
+        return handled;
+    }
+
+    else if( AInputEvent_getType( event ) == AINPUT_EVENT_TYPE_MOTION
+            && g_pEnv )
+    {
+        // TODO: This is probably inefficient; move some work to startup/shutdown methods
+
+        int action = AMotionEvent_getAction( event );
+        int source = AInputEvent_getSource( event );
+        int pointerCount = AMotionEvent_getPointerCount( event );
+
+        jintArray pointerIds = ( *g_pEnv )->NewIntArray( g_pEnv, MAX_POINTERS );
+        jfloatArray pointerX = ( *g_pEnv )->NewFloatArray( g_pEnv, MAX_POINTERS );
+        jfloatArray pointerY = ( *g_pEnv )->NewFloatArray( g_pEnv, MAX_POINTERS );
+
+        jint * tempIds = ( *g_pEnv )->GetIntArrayElements( g_pEnv, pointerIds, 0 );
+        jfloat * tempX = ( *g_pEnv )->GetFloatArrayElements( g_pEnv, pointerX, 0 );
+        jfloat * tempY = ( *g_pEnv )->GetFloatArrayElements( g_pEnv, pointerY, 0 );
+
+        int i;
+        for( i = 0; i < pointerCount; i++ )
+        {
+            tempIds[i] = AMotionEvent_getPointerId( event, i );
+            tempX[i] = AMotionEvent_getX( event, i );
+            if( source == SOURCE_TOUCHPAD )
+                tempY[i] = PAD_HEIGHT - AMotionEvent_getY( event, i );
+            else
+                tempY[i] = AMotionEvent_getY( event, i );
+        }
+
+        ( *g_pEnv )->ReleaseIntArrayElements( g_pEnv, pointerIds, tempIds, 0 );
+        ( *g_pEnv )->ReleaseFloatArrayElements( g_pEnv, pointerX, tempX, 0 );
+        ( *g_pEnv )->ReleaseFloatArrayElements( g_pEnv, pointerY, tempY, 0 );
+
+        int handled = 0;
+        if( g_pEnv && g_pActivity )
+            handled = ( *g_pEnv )->CallIntMethod( g_pEnv, g_pActivity, javaOnNativeTouch,
+                    source, action, pointerCount, pointerIds, pointerX, pointerY );
+
+        ( *g_pEnv )->DeleteLocalRef( g_pEnv, pointerIds );
+        ( *g_pEnv )->DeleteLocalRef( g_pEnv, pointerX );
+        ( *g_pEnv )->DeleteLocalRef( g_pEnv, pointerY );
+
         return handled;
     }
     return 0;
@@ -766,7 +718,7 @@ JNI_OnLoad( JavaVM * vm, void * reserved )
         return -1;
     }
 
-    const char* interface_path = "paulscode/android/mupen64plusae/input/provider/XperiaPlayProvider";
+    const char* interface_path = "paulscode/android/mupen64plusae/input/provider/NativeInputSource";
     jclass java_activity_class = ( *env )->FindClass( env, interface_path );
 
     if( !java_activity_class )
@@ -781,112 +733,22 @@ JNI_OnLoad( JavaVM * vm, void * reserved )
         return -1;
     }
 
-    javaTouchScreenBeginEvent = ( *env )->GetMethodID( env, java_activity_class, "touchScreenBeginEvent", "()V" );
-    if( !javaTouchScreenBeginEvent )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchScreenBeginEvent' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchScreenPointerDown = ( *env )->GetMethodID( env, java_activity_class, "touchScreenPointerDown", "(I)V" );
-    if( !javaTouchScreenPointerDown )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchScreenPointerDown' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchScreenPointerUp = ( *env )->GetMethodID( env, java_activity_class, "touchScreenPointerUp", "(I)V" );
-    if( !javaTouchScreenPointerUp )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchScreenPointerUp' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchScreenPointerPosition = ( *env )->GetMethodID( env, java_activity_class, "touchScreenPointerPosition", "(III)V" );
-    if( !javaTouchScreenPointerPosition )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchScreenPointerPosition' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchScreenEndEvent = ( *env )->GetMethodID( env, java_activity_class, "touchScreenEndEvent", "()V" );
-    if( !javaTouchScreenEndEvent )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchScreenEndEvent' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchPadBeginEvent = ( *env )->GetMethodID( env, java_activity_class, "touchPadBeginEvent", "()V" );
-    if( !javaTouchPadBeginEvent )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchPadBeginEvent' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchPadPointerDown = ( *env )->GetMethodID( env, java_activity_class, "touchPadPointerDown", "(I)V" );
-    if( !javaTouchPadPointerDown )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchPadPointerDown' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchPadPointerUp = ( *env )->GetMethodID( env, java_activity_class, "touchPadPointerUp", "(I)V" );
-    if( !javaTouchPadPointerUp )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchPadPointerUp' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchPadPointerPosition = ( *env )->GetMethodID( env, java_activity_class, "touchPadPointerPosition", "(III)V" );
-    if( !javaTouchPadPointerPosition )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchPadPointerPosition' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
-    javaTouchPadEndEvent = ( *env )->GetMethodID( env, java_activity_class, "touchPadEndEvent", "()V" );
-    if( !javaTouchPadEndEvent )
-    {
-        if( ( *env )->ExceptionCheck( env ) )
-        {
-            LOGE( "%s - GetMethodID( 'touchPadEndEvent' ) threw exception!", __FUNCTION__ );
-            ( *env )->ExceptionClear( env );
-        }
-        return JNI_FALSE;
-    }
     javaOnNativeKey = ( *env )->GetMethodID( env, java_activity_class, "onNativeKey", "(II)Z" );
     if( !javaOnNativeKey )
     {
         if( ( *env )->ExceptionCheck( env ) )
         {
             LOGE( "%s - GetMethodID( 'onNativeKey' ) threw exception!", __FUNCTION__ );
+            ( *env )->ExceptionClear( env );
+        }
+        return JNI_FALSE;
+    }
+    javaOnNativeTouch = ( *env )->GetMethodID( env, java_activity_class, "onNativeTouch", "(III[I[F[F)Z" );
+    if( !javaOnNativeTouch )
+    {
+        if( ( *env )->ExceptionCheck( env ) )
+        {
+            LOGE( "%s - GetMethodID( 'onNativeTouch' ) threw exception!", __FUNCTION__ );
             ( *env )->ExceptionClear( env );
         }
         return JNI_FALSE;

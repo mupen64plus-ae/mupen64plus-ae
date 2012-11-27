@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchController;
+import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.annotation.TargetApi;
@@ -37,7 +39,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -104,7 +105,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         // Load native libraries
         if( mIsXperiaPlay )
-            FileUtil.loadNativeLibName( "xperia-touchpad" );            
+            FileUtil.loadNativeLibName( "xperia-touchpad" );
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
@@ -166,10 +167,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         // Initialize user interface devices
         if( Globals.userPrefs.inputPlugin.enabled )
         {
-            if( mIsXperiaPlay )
-                initControllersXperiaPlay();
-            else
-                initControllers();
+            View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
+            initControllers( inputSource );
         }
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
@@ -221,8 +220,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     @Override
     public boolean onKey( View view, int keyCode, KeyEvent event )
     {
-        Log.i( "GameLifecycleHandler", "onKey " + keyCode + ": " );
-        
         boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
         
         if( keyCode == KeyEvent.KEYCODE_BACK )
@@ -254,21 +251,44 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             return false;
     }
     
-    private void initControllers()
+    private void initControllers( View inputSource )
     {
+        // Create the touchpad controls, if applicable
+        if( mIsXperiaPlay )
+        {
+            // Create the map for the touchpad
+            TouchMap touchpadMap = new TouchMap( mActivity.getResources() );
+            touchpadMap.load( Globals.userPrefs.xperiaLayout );
+            touchpadMap.resize( NativeInputSource.PAD_WIDTH, NativeInputSource.PAD_HEIGHT );
+            
+            // Create the touchpad controller
+            TouchController touchpadController = new TouchController( touchpadMap, inputSource,
+                    null, Globals.userPrefs.isOctagonalJoystick );
+            
+            touchpadController.setSourceFilter( NativeInputSource.SOURCE_TOUCHPAD );
+            mControllers.add( touchpadController );
+        }
+        
         // Create the touchscreen controls
         if( Globals.userPrefs.isTouchscreenEnabled )
         {
-            mControllers.add( new TouchController( mTouchscreenMap, mSurface, mOverlay,
-                    Globals.userPrefs.isOctagonalJoystick ) );
+            // Create the touchscreen controller
+            TouchController touchscreenController = new TouchController( mTouchscreenMap,
+                    inputSource, mOverlay, Globals.userPrefs.isOctagonalJoystick );
+            
+            // Filter by source if both touchpad and touchscreen are enabled
+            if( mIsXperiaPlay )
+                touchscreenController.setSourceFilter( NativeInputSource.SOURCE_TOUCHSCREEN );
+            
+            mControllers.add( touchscreenController );
         }
-        
+
         // Create the input providers shared among all peripheral controllers
-        mKeyProvider = new KeyProvider( mSurface, ImeFormula.DEFAULT );
-        AbstractProvider axisProvider = Globals.IS_HONEYCOMB_MR1 ? new AxisProvider( mSurface ) : null;
+        mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT );
+        AbstractProvider axisProvider = Globals.IS_HONEYCOMB_MR1 ? new AxisProvider( inputSource ) : null;
         
         // Override the peripheral controllers' key provider, to add some extra functionality
-        mSurface.setOnKeyListener( this );
+        inputSource.setOnKeyListener( this );
         
         // Create the peripheral controls to handle key/stick presses
         if( Globals.userPrefs.inputMap1.isEnabled() )
@@ -293,16 +313,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
     }
     
-    private void initControllersXperiaPlay()
-    {
-        mSurface.setFocusable( false );
-        mSurface.setFocusableInTouchMode( false );
-        
-        // mTouchpadMap = new TouchMap( mActivity.getResources() );
-        // mTouchpadMap.load( Globals.userPrefs.xperiaLayout );
-        // TODO: setup xperia play controls
-    }
-
     @TargetApi( 11 )
     private void toggleActionBar( View rootView )
     {
