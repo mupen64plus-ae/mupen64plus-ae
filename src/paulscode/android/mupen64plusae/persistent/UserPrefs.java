@@ -207,7 +207,7 @@ public class UserPrefs
         
         // Xperia PLAY prefs
         isXperiaEnabled = mPreferences.getBoolean( "xperiaEnabled", false );
-        xperiaLayout = mPreferences.getString( "xperiaLayout", "" );
+        xperiaLayout = paths.xperiaPlayLayoutsDir + mPreferences.getString( "xperiaLayout", "" );
         
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );

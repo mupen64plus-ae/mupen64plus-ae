@@ -412,13 +412,17 @@ public class TouchMap
     private void loadAnalog( final String directory, String filename, ConfigSection section,
             boolean loadForeground )
     {
-        // The images are in PNG image format.
+        // The images (used by touchscreens) are in PNG image format.
         analogBackImage = new Image( mResources, directory + "/" + filename + ".png" );
         if( loadForeground )
         {
             // There's a "stick" image.. same name, with "_2" appended
             analogForeImage = new Image( mResources, directory + "/" + filename + "_2.png" );
         }
+        
+        // Load the image in BMP format if not available in PNG format (applies to touchpads).
+        if( analogBackImage.width == 0 && analogBackImage.height == 0 )
+            analogBackImage = new Image( mResources, directory + "/" + filename + ".bmp" );
         
         // Position (percentages of the digitizer dimensions)
         analogBackX = SafeMethods.toInt( section.get( "x" ), 0 );
