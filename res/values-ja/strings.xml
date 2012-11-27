@@ -68,12 +68,10 @@
     <string name="categoryOther_title">その他設定</string>
     
     <!-- Settings Menu -->
-    <string name="xperia_title">XperiaPLAY設定</string>
-    <string name="xperia_summary"></string>
-    <string name="touchscreen_title">タッチスクリーン</string>
-    <string name="touchscreen_summary">オンスクリーン·コントローラ設定</string>
-    <string name="peripheral_title">コントローラ</string>
-    <string name="peripheral_summary">ゲームパッド/ジョイスティック設定</string>
+    <string name="touchscreen_title">Touch</string>
+    <string name="touchscreen_summary">Touchscreen/touchpad settings</string>
+    <string name="peripheral_title">Input</string>
+    <string name="peripheral_summary">Button/joystick settings</string>
     <string name="video_title">ビデオ</string>
     <string name="video_summary">グラフィック設定</string>
     <string name="plugins_title">@string/_advanced</string>
@@ -84,16 +82,14 @@
     <string name="menuResetUserPrefs_title">リセット</string>
     <string name="menuResetUserPrefs_summary">既定値にリセット</string>
     
-    <!-- Xperia PLAY Menu -->
-    <string name="xperiaEnabled_title">@string/_enable</string>
-    <string name="xperiaLayout_title">@string/_layout</string>
-    
     <!-- Touchscreen Menu -->
-    <string name="touchscreenEnabled_title">@string/_enable</string>
-    <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
-    <string name="touchscreenLayout_title">@string/_layout</string>
+    <string name="xperiaEnabled_title">Enable Touchpad</string>
+    <string name="xperiaLayout_title">Touchpad layout</string>
+    <string name="touchscreenEnabled_title">Enable Touchscreen</string>
+    <string name="touchscreenLayout_title">Touchscreen layout</string>
     <string name="touchscreenSize_title">画面サイズ</string>
     <string name="touchscreenCustom_title">カスタムレイアウトフォルダ</string>
+    <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
     <string name="touchscreenOctagonJoystick_title">八角形のようにアナログスティックをエミュレート</string>
     <string name="touchscreenOctagonJoystick_summary">八角形のパスにアナログ動きを拘束。 これは、元のN64のコントローラのようなものだ。</string>
     

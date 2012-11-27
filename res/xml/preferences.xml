@@ -41,7 +41,8 @@
     To minimize app size, consider using Android's built-in resources when possible.
     For example, consider icon resources in "@android:drawable/..." instead of custom
     resources in "@drawable/...".       
-    ***********************************************************************************-->
+    ***********************************************************************************
+-->
 <PreferenceScreen xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
@@ -65,15 +66,15 @@
         <PreferenceCategory
             android:key="categoryHardware"
             android:title="@string/categoryHardware_title" />
-
+        
         <PreferenceScreen
-            android:icon="@drawable/ic_xperia"
-            android:key="xperia"
-            android:summary="@string/xperia_summary"
-            android:title="@string/xperia_title" >
+            android:icon="@drawable/ic_phone"
+            android:key="touchscreen"
+            android:summary="@string/touchscreen_summary"
+            android:title="@string/touchscreen_title" >
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="xperiaEnabled"
                 android:title="@string/xperiaEnabled_title" />
 
@@ -85,26 +86,10 @@
                 android:key="xperiaLayout"
                 android:title="@string/xperiaLayout_title" />
 
-        </PreferenceScreen>
-        
-        <PreferenceScreen
-            android:icon="@drawable/ic_phone"
-            android:key="touchscreen"
-            android:summary="@string/touchscreen_summary"
-            android:title="@string/touchscreen_title" >
-
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="touchscreenEnabled"
                 android:title="@string/touchscreenEnabled_title" />
-
-            <ListPreference
-                android:defaultValue="@string/touchscreenRefresh_default"
-                android:dependency="touchscreenEnabled"
-                android:entries="@array/touchscreenRefresh_entries"
-                android:entryValues="@array/touchscreenRefresh_values"
-                android:key="touchscreenRefresh"
-                android:title="@string/touchscreenRefresh_title" />
 
             <ListPreference
                 android:defaultValue="@string/touchscreenLayout_default"
@@ -128,9 +113,16 @@
                 android:title="@string/touchscreenCustom_title"
                 mupen64:selectionMode="0" />
 
+            <ListPreference
+                android:defaultValue="@string/touchscreenRefresh_default"
+                android:dependency="touchscreenEnabled"
+                android:entries="@array/touchscreenRefresh_entries"
+                android:entryValues="@array/touchscreenRefresh_values"
+                android:key="touchscreenRefresh"
+                android:title="@string/touchscreenRefresh_title" />
+
             <CheckBoxPreference
                 android:defaultValue="true"
-                android:dependency="touchscreenEnabled"
                 android:key="touchscreenOctagonJoystick"
                 android:summary="@string/touchscreenOctagonJoystick_summary"
                 android:title="@string/touchscreenOctagonJoystick_title" />

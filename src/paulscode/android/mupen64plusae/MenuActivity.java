@@ -41,7 +41,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
-    private static final String MAIN_SETTINGS = "mainSettings";
     private static final String MENU_RESUME = "menuResume";
     private static final String MENU_RESET_USER_PREFS = "menuResetUserPrefs";
     private static final String MENU_DEVICE_INFO = "menuDeviceInfo";
@@ -49,8 +48,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHSCREEN = "touchscreen";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
-    private static final String XPERIA = "xperia";
     private static final String XPERIA_ENABLED = "xperiaEnabled";
+    private static final String XPERIA_LAYOUT = "xperiaLayout";
     private static final String PERIPHERAL = "peripheral";
     private static final String AUDIO = "audio";
     private static final String VIDEO = "video";
@@ -79,12 +78,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         findPreference( MENU_DEVICE_INFO ).setOnPreferenceClickListener( this );
         findPreference( MENU_PERIPHERAL_INFO ).setOnPreferenceClickListener( this );
         
-        // Hide the Xperia PLAY menu item as necessary
+        // Hide the Xperia PLAY menu items as necessary
         if( !Globals.appData.hardwareInfo.isXperiaPlay )
         {
-            PreferenceScreen screen = (PreferenceScreen) findPreference( MAIN_SETTINGS );
-            Preference xperia = findPreference( XPERIA );
-            screen.removePreference( xperia );
+            PreferenceScreen screen = (PreferenceScreen) findPreference( TOUCHSCREEN );
+            screen.removePreference( findPreference( XPERIA_ENABLED) );
+            screen.removePreference( findPreference( XPERIA_LAYOUT) );
         }
     }
     
@@ -143,7 +142,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             new Builder( this ).setTitle( this.getString( R.string.menuDeviceInfo_title ) )
                     .setMessage( Utility.getCpuInfo() ).create().show();
-            Log.i( "MenuActivity", Utility.getCpuInfo() );
         }
         else if( key.equals( MENU_PERIPHERAL_INFO ) )
         {
@@ -178,8 +176,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Enable the various input menus only if the input plug-in is not a dummy
         findPreference( TOUCHSCREEN ).setEnabled( enableInput );
         findPreference( PERIPHERAL ).setEnabled( enableInput );
-        if( Globals.appData.hardwareInfo.isXperiaPlay )
-            findPreference( XPERIA ).setEnabled( enableInput );
         
         // Enable the audio menu only if the audio plug-in is not a dummy
         findPreference( AUDIO ).setEnabled( enableAudio );

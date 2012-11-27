@@ -68,12 +68,10 @@
     <string name="categoryOther_title">@string/_other</string>
     
     <!-- Settings Menu -->
-    <string name="xperia_title">Touchpad</string>
-    <string name="xperia_summary">Sony Ericsson Xperia PLAY settings</string>
-    <string name="touchscreen_title">Touchscreen</string>
-    <string name="touchscreen_summary">On-screen controller settings</string>
-    <string name="peripheral_title">Controllers</string>
-    <string name="peripheral_summary">Gamepads, joysticks, keyboards, etc.</string>
+    <string name="touchscreen_title">Touch</string>
+    <string name="touchscreen_summary">Touchscreen/touchpad settings</string>
+    <string name="peripheral_title">Input</string>
+    <string name="peripheral_summary">Button/joystick settings</string>
     <string name="audio_title">Audio</string>
     <string name="audio_summary">Audio settings</string>
     <string name="video_title">Video</string>
@@ -86,16 +84,14 @@
     <string name="menuResetUserPrefs_title">Reset</string>
     <string name="menuResetUserPrefs_summary">Restore default settings</string>
     
-    <!-- Xperia PLAY Menu -->
-    <string name="xperiaEnabled_title">@string/_enable</string>
-    <string name="xperiaLayout_title">@string/_layout</string>
-    
     <!-- Touchscreen Menu -->
-    <string name="touchscreenEnabled_title">@string/_enable</string>
-    <string name="touchscreenRefresh_title">Redraw joystick</string>
-    <string name="touchscreenLayout_title">@string/_layout</string>
+    <string name="xperiaEnabled_title">Enable Touchpad</string>
+    <string name="xperiaLayout_title">Touchpad layout</string>
+    <string name="touchscreenEnabled_title">Enable Touchscreen</string>
+    <string name="touchscreenLayout_title">Touchscreen layout</string>
     <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenCustom_title">Custom layout folder</string>
+    <string name="touchscreenRefresh_title">Redraw joystick</string>
     <string name="touchscreenOctagonJoystick_title">Octagonal joystick limits</string>
     <string name="touchscreenOctagonJoystick_summary">Constrain analog motion to an octagon, like the original N64 controller</string>
     
