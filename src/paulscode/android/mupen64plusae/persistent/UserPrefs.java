@@ -19,6 +19,8 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import java.io.File;
+
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import android.content.Context;
@@ -67,6 +69,12 @@ public class UserPrefs
     
     /** The directory containing game save files. */
     public final String gameSaveDir;
+    
+    /** The directory containing slot save files. */
+    public final String slotSaveDir;
+    
+    /** The directory containing auto save files. */
+    public final String autoSaveDir;
     
     /** The filename of the auto-saved session of the ROM selected by the user. */
     public final String selectedGameAutoSavefile;
@@ -195,8 +203,14 @@ public class UserPrefs
         // Files
         selectedGame = mPreferences.getString( "selectedGame", "" );
         gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
-        selectedGameAutoSavefile = paths.dataDir + "/autosave_"
-                + Math.abs( selectedGame.hashCode() ) + ".sav";
+        slotSaveDir = gameSaveDir + "/SlotSaves";
+        autoSaveDir = gameSaveDir + "/AutoSaves";
+        File game = new File( selectedGame );
+        selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
+        
+        // Create directories, if necessary
+        ( new File( slotSaveDir ) ).mkdirs();
+        ( new File( autoSaveDir ) ).mkdirs();
 
         // Plug-ins
         videoPlugin = new Plugin( mPreferences, paths.libsDir, "videoPlugin" );
