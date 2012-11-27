@@ -19,6 +19,8 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import java.util.ArrayList;
+
 import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 
@@ -29,7 +31,7 @@ import paulscode.android.mupen64plusae.util.Utility;
  * <ul>
  * <li>Register a listener to the upstream input (e.g. touch, keyboard, mouse, joystick, etc.).</li>
  * <li>Translate the input data into N64 controller button/axis states, and set the values of the
- * protected fields mButtonState and mAxisFraction* accordingly.</li>
+ * protected fields mState.buttons and mState.axisFraction* accordingly.</li>
  * <li>Call the protected method notifyChanged().</li>
  * </ul>
  * This abstract class will call the emulator's native libraries to update game state whenever
@@ -53,6 +55,21 @@ import paulscode.android.mupen64plusae.util.Utility;
  */
 public abstract class AbstractController
 {
+    /**
+     * A small class that encapsulates controller state.
+     */
+    protected static class State
+    {
+        /** The pressed state of each controller button. */
+        public boolean[] buttons = new boolean[NUM_N64_BUTTONS];
+        
+        /** The fractional value of the analog-x axis, between -1 and 1, inclusive. */
+        public float axisFractionX = 0;
+        
+        /** The fractional value of the analog-y axis, between -1 and 1, inclusive. */
+        public float axisFractionY = 0;
+    }
+    
     // Constants must match EButton listing in plugin.h! (input-sdl plug-in)
     
     /** N64 button: dpad-right. */
@@ -100,14 +117,11 @@ public abstract class AbstractController
     /** Total number of N64 buttons. */
     public static final int NUM_N64_BUTTONS = 14;
     
-    /** The pressed state of each controller button. */
-    protected boolean[] mButtonState = new boolean[NUM_N64_BUTTONS];
+    /** The state of all four player controllers. */
+    private static final ArrayList<State> sStates = new ArrayList<AbstractController.State>();
     
-    /** The fractional value of the analog-x axis, between -1 and 1, inclusive. */
-    protected float mAxisFractionX;
-    
-    /** The fractional value of the analog-y axis, between -1 and 1, inclusive. */
-    protected float mAxisFractionY;
+    /** The state of this controller. */
+    protected State mState;
     
     /** The player number, between 1 and 4, inclusive. */
     private int mPlayerNumber = 1;
@@ -115,29 +129,30 @@ public abstract class AbstractController
     /** The factor by which the axis fractions are scaled before going to the core. */
     private static final float AXIS_SCALE = 80;
     
+    static
+    {
+        sStates.add( new State() );
+        sStates.add( new State() );
+        sStates.add( new State() );
+        sStates.add( new State() );
+    }
+    
+    /**
+     * Instantiates a new abstract controller.
+     */
+    protected AbstractController()
+    {
+        mState = sStates.get( 0 );
+    }
+    
     /**
      * Notifies the core that the N64 controller state has changed.
      */
     protected void notifyChanged()
     {
-        int axisX = Math.round( AXIS_SCALE * Utility.clamp( mAxisFractionX, -1, 1 ) );
-        int axisY = Math.round( AXIS_SCALE * Utility.clamp( mAxisFractionY, -1, 1 ) );
-        NativeMethods.updateVirtualGamePadStates( mPlayerNumber - 1, mButtonState, axisX, axisY );
-    }
-    
-    /**
-     * Clears the N64 controller state, i.e. resets all button states to false and all axis
-     * fractions to 0.
-     */
-    public void clearState()
-    {
-        for( int i = 0; i < NUM_N64_BUTTONS; i++ )
-            mButtonState[i] = false;
-        
-        mAxisFractionX = 0;
-        mAxisFractionY = 0;
-        
-        notifyChanged();
+        int axisX = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionX, -1, 1 ) );
+        int axisY = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionY, -1, 1 ) );
+        NativeMethods.updateVirtualGamePadStates( mPlayerNumber - 1, mState.buttons, axisX, axisY );
     }
     
     /**
@@ -158,5 +173,6 @@ public abstract class AbstractController
     public void setPlayerNumber( int player )
     {
         mPlayerNumber = player;
+        mState = sStates.get( mPlayerNumber - 1 );
     }
 }

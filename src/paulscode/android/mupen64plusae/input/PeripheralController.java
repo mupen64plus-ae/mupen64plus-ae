@@ -150,7 +150,7 @@ public class PeripheralController extends AbstractController implements Abstract
         
         if( n64Index >= 0 && n64Index < NUM_N64_BUTTONS )
         {
-            mButtonState[n64Index] = state;
+            mState.buttons[n64Index] = state;
         }
         else
         {
@@ -173,8 +173,8 @@ public class PeripheralController extends AbstractController implements Abstract
             }
             
             // Update the net position of the analog stick
-            mAxisFractionX = mStrengthXpos - mStrengthXneg;
-            mAxisFractionY = mStrengthYpos - mStrengthYneg;
+            mState.axisFractionX = mStrengthXpos - mStrengthXneg;
+            mState.axisFractionY = mStrengthYpos - mStrengthYneg;
         }
         return true;
     }

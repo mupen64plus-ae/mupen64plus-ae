@@ -62,7 +62,6 @@ public class Globals
  * Bugs and feature requests not listed elsewhere, in order of priority.
  * 
  * Major bugs or missing features
- * TODO: Major - Get Xperia PLAY NativeActivity working again
  * TODO: Major - Add cheats menu
  * TODO: Major - Add reset to ingame menu
  * TODO: Major - Implement multi-player peripheral controls

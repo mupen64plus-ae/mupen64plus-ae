@@ -134,8 +134,6 @@ public class TouchController extends AbstractController implements OnTouchListen
                 // A non-primary touch has been released
                 pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
                 mTouchState[pid] = false;
-                mPointerX[pid] = -1;
-                mPointerY[pid] = -1;
                 break;
             case MotionEvent.ACTION_DOWN:
                 // A touch gesture has started (e.g. analog stick movement)
@@ -152,8 +150,6 @@ public class TouchController extends AbstractController implements OnTouchListen
                 {
                     pid = event.getPointerId( i );
                     mTouchState[pid] = false;
-                    mPointerX[pid] = -1;
-                    mPointerY[pid] = -1;
                 }
                 break;
             default:
@@ -191,8 +187,6 @@ public class TouchController extends AbstractController implements OnTouchListen
      */
     private void processTouches( boolean[] touchstate, int[] pointerX, int[] pointerY, int maxPid )
     {
-        // Clear button/axis state using super method
-        clearState();
         boolean analogMoved = false;
         
         // Process each pointer in sequence
@@ -203,19 +197,17 @@ public class TouchController extends AbstractController implements OnTouchListen
             {
                 analogMoved = true;
                 analogPid = -1;
+                mState.axisFractionX = 0;
+                mState.axisFractionY = 0;
             }
             
-            // Process touches
+            // Process button inputs
+            if( pid != analogPid )
+                processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid] );
+            
+            // Process analog inputs
             if( touchstate[pid] )
-            {
-                if( pid != analogPid )
-                {
-                    // Process button inputs
-                    processButtonTouch( pointerX[pid], pointerY[pid] );
-                }
-                // Process analog inputs
                 analogMoved = processAnalogTouch( pid, pointerX[pid], pointerY[pid] );
-            }
         }
         
         // Call the super method to send the input to the core
@@ -223,16 +215,17 @@ public class TouchController extends AbstractController implements OnTouchListen
         
         // Update the skin if the virtual analog stick moved
         if( analogMoved && mListener != null )
-            mListener.onAnalogChanged( mAxisFractionX, mAxisFractionY );
+            mListener.onAnalogChanged( mState.axisFractionX, mState.axisFractionY );
     }
     
     /**
      * Process a touch as if intended for a button. Values outside the ranges listed below are safe.
      * 
+     * @param touched Whether the button is pressed.
      * @param xLocation The x-coordinate of the touch, between 0 and (screenwidth-1), inclusive.
      * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
      */
-    private void processButtonTouch( int xLocation, int yLocation )
+    private void processButtonTouch( boolean touched, int xLocation, int yLocation )
     {
         // Determine the index of the button that was pressed
         int index = mTouchMap.getButtonPress( xLocation, yLocation );
@@ -243,7 +236,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             if( index < AbstractController.NUM_N64_BUTTONS )
             {
                 // A single button was pressed
-                mButtonState[index] = true;
+                mState.buttons[index] = touched;
             }
             else
             {
@@ -251,20 +244,20 @@ public class TouchController extends AbstractController implements OnTouchListen
                 switch( index )
                 {
                     case TouchMap.DPD_RU:
-                        mButtonState[DPD_R] = true;
-                        mButtonState[DPD_U] = true;
+                        mState.buttons[DPD_R] = touched;
+                        mState.buttons[DPD_U] = touched;
                         break;
                     case TouchMap.DPD_RD:
-                        mButtonState[DPD_R] = true;
-                        mButtonState[DPD_D] = true;
+                        mState.buttons[DPD_R] = touched;
+                        mState.buttons[DPD_D] = touched;
                         break;
                     case TouchMap.DPD_LD:
-                        mButtonState[DPD_L] = true;
-                        mButtonState[DPD_D] = true;
+                        mState.buttons[DPD_L] = touched;
+                        mState.buttons[DPD_D] = touched;
                         break;
                     case TouchMap.DPD_LU:
-                        mButtonState[DPD_L] = true;
-                        mButtonState[DPD_U] = true;
+                        mState.buttons[DPD_L] = touched;
+                        mState.buttons[DPD_U] = touched;
                         break;
                     default:
                         break;
@@ -312,8 +305,8 @@ public class TouchController extends AbstractController implements OnTouchListen
             float p = mTouchMap.getAnalogStrength( displacement );
             
             // Store the axis values in the super fields (screen y is inverted)
-            mAxisFractionX = p * (float) dX / displacement;
-            mAxisFractionY = -p * (float) dY / displacement;
+            mState.axisFractionX = p * (float) dX / displacement;
+            mState.axisFractionY = -p * (float) dY / displacement;
             
             // Analog state changed
             return true;
