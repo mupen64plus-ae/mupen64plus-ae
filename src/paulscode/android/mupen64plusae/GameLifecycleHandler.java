@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
+import paulscode.android.mupen64plusae.util.Demultiplexer;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.annotation.TargetApi;
@@ -165,12 +166,13 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
         
         // Initialize user interface devices
+        View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
         if( Globals.userPrefs.inputPlugin.enabled )
-        {
-            View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
             initControllers( inputSource );
-        }
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+
+        // Override the peripheral controllers' key provider, to add some extra functionality
+        inputSource.setOnKeyListener( this );
         
         // Start listening to game surface events
         mSurface.setListeners( this, mOverlay, Globals.userPrefs.fpsRefresh );
@@ -254,6 +256,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private void initControllers( View inputSource )
     {
         // Create the touchpad controls, if applicable
+        TouchController touchpadController = null;
         if( mIsXperiaPlay )
         {
             // Create the map for the touchpad
@@ -262,10 +265,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             touchpadMap.resize( NativeInputSource.PAD_WIDTH, NativeInputSource.PAD_HEIGHT );
             
             // Create the touchpad controller
-            TouchController touchpadController = new TouchController( touchpadMap, inputSource,
-                    null, Globals.userPrefs.isOctagonalJoystick );
-            
-            touchpadController.setSourceFilter( NativeInputSource.SOURCE_TOUCHPAD );
+            touchpadController = new TouchController( touchpadMap, inputSource,
+                    null, Globals.userPrefs.isOctagonalJoystick );            
             mControllers.add( touchpadController );
         }
         
@@ -275,20 +276,26 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
                     inputSource, mOverlay, Globals.userPrefs.isOctagonalJoystick );
-            
-            // Filter by source if both touchpad and touchscreen are enabled
-            if( mIsXperiaPlay )
-                touchscreenController.setSourceFilter( NativeInputSource.SOURCE_TOUCHSCREEN );
-            
             mControllers.add( touchscreenController );
+            
+            // If using touchpad & touchscreen together...
+            if( touchpadController != null )
+            {
+                // filter by source identifier...
+                touchpadController.setSourceFilter( NativeInputSource.SOURCE_TOUCHPAD );
+                touchscreenController.setSourceFilter( NativeInputSource.SOURCE_TOUCHSCREEN );
+                
+                // and demux the input source to both touch listeners
+                Demultiplexer.OnTouchListener demux = new Demultiplexer.OnTouchListener();
+                demux.addListener( touchpadController );
+                demux.addListener( touchscreenController );
+                inputSource.setOnTouchListener( demux );
+            }            
         }
 
         // Create the input providers shared among all peripheral controllers
         mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT );
         AbstractProvider axisProvider = Globals.IS_HONEYCOMB_MR1 ? new AxisProvider( inputSource ) : null;
-        
-        // Override the peripheral controllers' key provider, to add some extra functionality
-        inputSource.setOnKeyListener( this );
         
         // Create the peripheral controls to handle key/stick presses
         if( Globals.userPrefs.inputMap1.isEnabled() )
