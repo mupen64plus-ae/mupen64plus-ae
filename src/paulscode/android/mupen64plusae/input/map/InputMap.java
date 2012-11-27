@@ -171,7 +171,7 @@ public class InputMap
      * @param inputCode The standardized input code.
      * @return The N64/Mupen function the code is mapped to, or UNMAPPED.
      * @see AbstractProvider
-     * @see InputMap.UNMAPPED
+     * @see InputMap#UNMAPPED
      */
     public int get( int inputCode )
     {
@@ -309,8 +309,8 @@ public class InputMap
     /**
      * Maps an N64 control or Mupen64Plus function to an input code.
      * 
-     * @param n64Index The index to the N64 control or Mupen64Plus function.
      * @param inputCode The standardized input code to be mapped.
+     * @param n64Index The index to the N64 control or Mupen64Plus function.
      * @param notify Whether to notify listeners of the change. False provides an optimization when
      *            mapping in batches, but be sure to call notifyListeners() when finished.
      */
@@ -320,10 +320,10 @@ public class InputMap
         if( n64Index >= 0 && n64Index < NUM_MAPPABLES )
         {
             // Get the old code that was mapped to the new index
-            int oldInputCode = mN64ToCode[n64Index];
+            final int oldInputCode = mN64ToCode[n64Index];
             
             // Get the old index that was mapped to the new code
-            int oldN64Index = get( inputCode );
+            final int oldN64Index = get( inputCode );
             
             // Unmap the new code from the old index
             if( oldN64Index != UNMAPPED )

@@ -131,9 +131,7 @@ public class Utility
      * @return The hardware string.
      */
     public static String getCpuInfo()
-    {
-        // TODO: Simplify this... somehow.
-        
+    {   
         // From http://android-er.blogspot.com/2009/09/read-android-cpu-info.html
         String result = "";
         try

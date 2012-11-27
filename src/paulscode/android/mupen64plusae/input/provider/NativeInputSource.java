@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae.input.provider;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
@@ -56,7 +57,7 @@ public class NativeInputSource extends View
     /**
      * Called by the native activity when a key event occurs.
      * 
-     * @param action The kind of action being performed, such as {@link #ACTION_DOWN}.
+     * @param action The kind of action being performed, such as {@link MotionEvent#ACTION_DOWN}.
      * @param keyCode The key code.
      * @return True if the event was handled, false otherwise.
      */
@@ -69,7 +70,7 @@ public class NativeInputSource extends View
      * Called by the native activity when a touch event occurs.
      * 
      * @param source The source of this event.
-     * @param action The kind of action being performed, such as {@link #ACTION_DOWN}.
+     * @param action The kind of action being performed, such as {@link MotionEvent#ACTION_DOWN}.
      * @param pointerCount The number of pointers that will be in this event.
      * @param pointerIds An array of <em>pointerCount</em> values providing an identifier for each
      *            pointer.
@@ -101,7 +102,7 @@ public class NativeInputSource extends View
      *            position events. This must be obtained from {@link SystemClock#uptimeMillis()}.
      * @param eventTime The the time (in ms) when this specific event was generated. This must be
      *            obtained from {@link SystemClock#uptimeMillis()}.
-     * @param action The kind of action being performed, such as {@link #ACTION_DOWN}.
+     * @param action The kind of action being performed, such as {@link MotionEvent#ACTION_DOWN}.
      * @param pointerCount The number of pointers that will be in this event.
      * @param pointerIds An array of <em>pointerCount</em> values providing an identifier for each
      *            pointer.

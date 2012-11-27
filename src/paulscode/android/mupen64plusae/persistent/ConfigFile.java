@@ -28,7 +28,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Set;
@@ -84,13 +83,12 @@ public class ConfigFile
         
         String sectionTitle;
         Set<String> keys = mConfigMap.keySet();
-        Iterator<String> iter = keys.iterator();
-        
-        while( iter.hasNext() )
+
+        for (String key : keys)
         {
-            sectionTitle = iter.next();
-            if( sectionTitle.matches( regex ) )
-                return mConfigMap.get( sectionTitle );
+            sectionTitle = key;
+            if (sectionTitle.matches(regex))
+                return mConfigMap.get(sectionTitle);
         }
         
         return null;
@@ -280,13 +278,10 @@ public class ConfigFile
         try
         {
             FileWriter fw = new FileWriter( mFilename );  // For writing to the config file
-            ListIterator<ConfigSection> iter = mConfigList.listIterator( 0 );
-            ConfigSection section;
 
             // Loop through the sections
-            while( iter.hasNext() )
+            for ( ConfigSection section : mConfigList )
             {
-                section = iter.next();
                 if( section != null )
                     section.save( fw );
             }
@@ -586,11 +581,8 @@ public class ConfigFile
          */
         public void save( FileWriter fw ) throws IOException
         {
-            ConfigLine line;
-            ListIterator<ConfigLine> iter = lines.listIterator( 0 );
-            while( iter.hasNext() )
+            for (ConfigLine line : lines)
             {
-                line = iter.next();
                 if( line != null )
                     line.save( fw );
             }

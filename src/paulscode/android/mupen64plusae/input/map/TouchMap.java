@@ -194,7 +194,7 @@ public class TouchMap
      * @param xLocation The x-coordinate of the touch, in pixels.
      * @param yLocation The y-coordinate of the touch, in pixels.
      * @return The N64 button the location is mapped to, or UNMAPPED.
-     * @see TouchMap.UNMAPPED
+     * @see TouchMap#UNMAPPED
      */
     public int getButtonPress( int xLocation, int yLocation )
     {
