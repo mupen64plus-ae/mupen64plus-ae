@@ -333,7 +333,6 @@
                 android:defaultValue="@string/videoPlugin_default"
                 android:entries="@array/videoPlugin_entries"
                 android:entryValues="@array/videoPlugin_values"
-                android:icon="@drawable/ic_picture"
                 android:key="videoPlugin"
                 android:title="@string/videoPlugin_title" />
 
@@ -341,7 +340,6 @@
                 android:defaultValue="@string/audioPlugin_default"
                 android:entries="@array/audioPlugin_entries"
                 android:entryValues="@array/audioPlugin_values"
-                android:icon="@drawable/ic_speaker"
                 android:key="audioPlugin"
                 android:title="@string/audioPlugin_title" />
 
@@ -349,7 +347,6 @@
                 android:defaultValue="@string/inputPlugin_default"
                 android:entries="@array/inputPlugin_entries"
                 android:entryValues="@array/inputPlugin_values"
-                android:icon="@drawable/ic_joystick"
                 android:key="inputPlugin"
                 android:title="@string/inputPlugin_title" />
 
