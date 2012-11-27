@@ -180,7 +180,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
                 if( view.equals( mN64Button[i] ) )
                 {
                     mMap.mapInput( i, mInputCodeToBeMapped );
-                    mInputCodeToBeMapped = InputMap.UNMAPPED;
+                    mInputCodeToBeMapped = 0;
                     break;
                 }
             }
