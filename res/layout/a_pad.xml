@@ -11,8 +11,8 @@
 
     <Button
         android:id="@+id/buttonAC"
-        android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
-        android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX1_5"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX1_5"
         android:layout_centerInParent="true"
         android:background="@drawable/analog_ring"
         android:enabled="false"
@@ -22,7 +22,7 @@
     <Button
         android:id="@+id/buttonAU"
         android:layout_width="@dimen/inputMapPreferenceButtonSize"
-        android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX1_5"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/button_apad"
@@ -33,7 +33,7 @@
     <Button
         android:id="@+id/buttonAD"
         android:layout_width="@dimen/inputMapPreferenceButtonSize"
-        android:layout_height="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_height="@dimen/inputMapPreferenceButtonSizeX1_5"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/button_apad"
@@ -43,7 +43,7 @@
 
     <Button
         android:id="@+id/buttonAL"
-        android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX1_5"
         android:layout_height="@dimen/inputMapPreferenceButtonSize"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
@@ -54,7 +54,7 @@
 
     <Button
         android:id="@+id/buttonAR"
-        android:layout_width="@dimen/inputMapPreferenceButtonSizeX15"
+        android:layout_width="@dimen/inputMapPreferenceButtonSizeX1_5"
         android:layout_height="@dimen/inputMapPreferenceButtonSize"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"

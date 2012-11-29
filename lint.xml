@@ -2,6 +2,7 @@
 <lint>
     <issue id="HardcodedText">
         <ignore path="res\layout-port\c_pad.xml" />
+        <ignore path="res\layout-port\input_map_preference.xml" />
         <ignore path="res\layout\c_pad.xml" />
         <ignore path="res\layout\input_map_preference.xml" />
     </issue>
