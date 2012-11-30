@@ -179,9 +179,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
-        
-        // Notify user that the game activity has started
-        Notifier.showToast( mActivity, R.string.toast_appStarted );
     }
     
     public void onResume()

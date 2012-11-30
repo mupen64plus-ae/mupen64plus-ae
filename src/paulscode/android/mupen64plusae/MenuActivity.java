@@ -118,6 +118,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 return true;
             }
             
+            // Notify user that the game activity is starting
+            Notifier.showToast( this, R.string.toast_appStarted );
+            
             // Launch the appropriate game activity
             Intent intent = Globals.userPrefs.isXperiaEnabled
                     ? new Intent( this, GameActivityXperiaPlay.class )
