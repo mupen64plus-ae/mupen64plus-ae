@@ -114,7 +114,7 @@ public class AxisProvider extends AbstractProvider
             }
             
             // Notify listeners about new input data
-            notifyListeners( mInputCodes, strengths, 0 );
+            notifyListeners( mInputCodes, strengths, getHardwareId( event ) );
             
             return true;
         }
