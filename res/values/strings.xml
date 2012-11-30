@@ -246,16 +246,16 @@
     <!-- ******************************************** -->
     
     <!-- In-Game Toast Messages (Game*.java) -->
-    <string name="toast_appStarted">Mupen64Plus started</string>
+    <string name="toast_appStarted">Launching emulator…</string>
     <string name="toast_sdInaccessible">SD card not accessible (plugged in USB Mass Storage Device mode?)</string>
-    <string name="toast_savegameSlot">Savegame slot %1$d</string>
-    <string name="toast_loadingSession">Auto-resuming game</string>
-    <string name="toast_savingSession">Auto-saving game</string>    
-    <string name="toast_loadingSlot">Resuming slot %1$d</string>
-    <string name="toast_savingSlot">Saving slot %1$d</string>    
-    <string name="toast_loadingGame">Resuming %1$s</string>
-    <string name="toast_savingGame">Saving %1$s</string>
-    <string name="toast_overwritingGame">Overwriting %1$s</string>
+    <string name="toast_savegameSlot">Now using slot %1$d.</string>
+    <string name="toast_loadingSession">Auto-resuming game…</string>
+    <string name="toast_savingSession">Auto-saving game…</string>    
+    <string name="toast_loadingSlot">Resuming slot %1$d…</string>
+    <string name="toast_savingSlot">Saving slot %1$d…</string>    
+    <string name="toast_loadingGame">Resuming %1$s…</string>
+    <string name="toast_savingGame">Saving %1$s…</string>
+    <string name="toast_overwritingGame">Overwriting %1$s…</string>
     
     <!-- Other Strings -->
     <string name="dataDownloader_connectingTo">Connecting to %1$s</string>
