@@ -77,7 +77,7 @@ public class Demultiplexer
         {
             boolean result = false;
             for( View.OnKeyListener listener : mManager.getSubscribers() )
-                result &= listener.onKey( view, keyCode, event );
+                result |= listener.onKey( view, keyCode, event );
             return result;
         }
     }
@@ -132,7 +132,7 @@ public class Demultiplexer
         {
             boolean result = false;
             for( View.OnTouchListener listener : mManager.getSubscribers() )
-                result &= listener.onTouch( view, event );
+                result |= listener.onTouch( view, event );
             return result;
         }
     }
