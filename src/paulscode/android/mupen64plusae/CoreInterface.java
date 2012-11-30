@@ -241,14 +241,7 @@ public class CoreInterface
             }
             else if( result == 0 )
             {
-                try
-                {
-                    Thread.sleep( 1 );
-                }
-                catch( InterruptedException e )
-                {
-                    // Nom nom
-                }
+                SafeMethods.sleep( 1 );
             }
             else
             {
@@ -269,14 +262,7 @@ public class CoreInterface
             }
             else if( result == 0 )
             {
-                try
-                {
-                    Thread.sleep( 1 );
-                }
-                catch( InterruptedException e )
-                {
-                    // Nom nom
-                }
+                SafeMethods.sleep( 1 );
             }
             else
             {
