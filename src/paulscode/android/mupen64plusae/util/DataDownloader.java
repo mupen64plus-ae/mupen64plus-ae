@@ -652,6 +652,7 @@ public class DataDownloader extends Thread
             return mBytesRead;
         }
         
+        @Override
         public synchronized int read() throws IOException
         {
             int read = super.read();
@@ -662,6 +663,7 @@ public class DataDownloader extends Thread
             return read;
         }
         
+        @Override
         public synchronized int read( byte[] b, int off, int len ) throws IOException
         {
             int read = super.read( b, off, len );
@@ -672,6 +674,7 @@ public class DataDownloader extends Thread
             return read;
         }
         
+        @Override
         public synchronized long skip( long n ) throws IOException
         {
             long skipped = super.skip( n );
@@ -682,12 +685,14 @@ public class DataDownloader extends Thread
             return skipped;
         }
         
+        @Override
         public synchronized void mark( int readlimit )
         {
             super.mark( readlimit );
             mBytesReadMark = mBytesRead;
         }
         
+        @Override
         public synchronized void reset() throws IOException
         {
             super.reset();
