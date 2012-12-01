@@ -125,12 +125,12 @@ public class NativeMethods
     
     public static Object getDataDir()
     {
-        return (Object) Globals.paths.dataDir;
+        return Globals.paths.dataDir;
     }
     
     public static Object getExtraArgs()
     {
-        return (Object) CoreInterface.getExtraArgs();
+        return CoreInterface.getExtraArgs();
     }
     
     public static int getHardwareType()

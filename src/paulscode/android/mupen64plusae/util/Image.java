@@ -66,8 +66,8 @@ public class Image
             height = image.getHeight();
         }
         
-        hWidth  = (int) ( (float) width  / 2.0f ); 
-        hHeight = (int) ( (float) height / 2.0f );
+        hWidth  = (int) ( width  / 2.0f ); 
+        hHeight = (int) ( height / 2.0f );
         
         drawRect = new Rect();
     }

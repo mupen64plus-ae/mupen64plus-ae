@@ -152,11 +152,11 @@ public class CoreInterface
             else
             {
                 finishedReading = true;
-                return (Object) selectedGameUnzipped;
+                return selectedGameUnzipped;
             }
         }
         finishedReading = true;
-        return (Object) selectedGame;
+        return selectedGame;
     }
     
     public static void runOnUiThread( Runnable action )
@@ -429,7 +429,8 @@ public class CoreInterface
     
     private static Handler commandHandler = new Handler()
     {
-        public void handleMessage( Message msg )
+        @Override
+		public void handleMessage( Message msg )
         {
             if( msg.arg1 == COMMAND_CHANGE_TITLE )
             {

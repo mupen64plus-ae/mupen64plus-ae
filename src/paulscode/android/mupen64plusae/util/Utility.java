@@ -409,7 +409,7 @@ public class Utility
             Enumeration<? extends ZipEntry> e = zipfile.entries();
             while( e.hasMoreElements() )
             {
-                ZipEntry entry = (ZipEntry) e.nextElement();
+                ZipEntry entry = e.nextElement();
                 if( entry != null && !entry.isDirectory() )
                 {
                     textureName = entry.getName();
@@ -487,7 +487,7 @@ public class Utility
             
             while( e.hasMoreElements() )
             {
-                ZipEntry entry = (ZipEntry) e.nextElement();
+                ZipEntry entry = e.nextElement();
                 if( entry != null && !entry.isDirectory() )
                 {
                     romName = entry.getName();
@@ -550,7 +550,7 @@ public class Utility
             Enumeration<? extends ZipEntry> e = zipfile.entries();
             while( e.hasMoreElements() )
             {
-                ZipEntry entry = (ZipEntry) e.nextElement();
+                ZipEntry entry = e.nextElement();
                 if( entry != null && !entry.isDirectory() )
                 {
                     f = new File( outputDir + "/" + entry.toString() );

@@ -128,8 +128,8 @@ public class VisibleTouchMap extends TouchMap
         // Compute FPS frame location
         if( mFpsFrame != null )
         {
-            int cX = (int) ( (float) w * ( (float) mFpsFrameX / 100f ) );
-            int cY = (int) ( (float) h * ( (float) mFpsFrameY / 100f ) );
+            int cX = (int) ( w * ( mFpsFrameX / 100f ) );
+            int cY = (int) ( h * ( mFpsFrameY / 100f ) );
             mFpsFrame.fitCenter( cX, cY, w, h );
         }
         
@@ -193,8 +193,8 @@ public class VisibleTouchMap extends TouchMap
         if( analogForeImage != null && analogBackImage != null )
         {
             // Get the location of stick center
-            int hX = analogBackImage.hWidth + (int) ( axisFractionX * (float) analogMaximum );
-            int hY = analogBackImage.hHeight - (int) ( axisFractionY * (float) analogMaximum );
+            int hX = analogBackImage.hWidth + (int) ( axisFractionX * analogMaximum );
+            int hY = analogBackImage.hHeight - (int) ( axisFractionY * analogMaximum );
             
             // Use other values if invalid
             if( hX < 0 )
@@ -270,8 +270,8 @@ public class VisibleTouchMap extends TouchMap
         int y = 0;
         if( mFpsFrame != null )
         {
-            x = mFpsFrame.x + (int) ( (float) mFpsFrame.width * ( (float) mFpsTextX / 100f ) );
-            y = mFpsFrame.y + (int) ( (float) mFpsFrame.height * ( (float) mFpsTextY / 100f ) );
+            x = mFpsFrame.x + (int) ( mFpsFrame.width * ( mFpsTextX / 100f ) );
+            y = mFpsFrame.y + (int) ( mFpsFrame.height * ( mFpsTextY / 100f ) );
         }
         
         // Compute the width of the FPS text
@@ -280,7 +280,7 @@ public class VisibleTouchMap extends TouchMap
             totalWidth += digit.width;
         
         // Compute the starting position of the FPS text
-        x = x - (int) ( (float) totalWidth / 2f );
+        x = x - (int) ( totalWidth / 2f );
         
         // Compute the position of each digit
         for( Image digit : mFpsDigits )

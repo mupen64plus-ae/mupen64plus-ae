@@ -173,8 +173,8 @@ public class TouchMap
         // Recompute button locations
         for( int i = 0; i < buttonImages.size(); i++ )
         {
-            int cX = (int) ( (float) w * ( (float) buttonX.get( i ) / 100f ) );
-            int cY = (int) ( (float) h * ( (float) buttonY.get( i ) / 100f ) );
+            int cX = (int) ( w * ( (float) buttonX.get( i ) / 100f ) );
+            int cY = (int) ( h * ( (float) buttonY.get( i ) / 100f ) );
             buttonImages.get( i ).fitCenter( cX, cY, w, h );
             buttonMasks.get( i ).fitCenter( cX, cY, w, h );
         }
@@ -182,8 +182,8 @@ public class TouchMap
         // Recompute analog background location
         if( analogBackImage != null )
         {
-            int cX = (int) ( (float) w * ( (float) analogBackX / 100f ) );
-            int cY = (int) ( (float) h * ( (float) analogBackY / 100f ) );
+            int cX = (int) ( w * ( analogBackX / 100f ) );
+            int cY = (int) ( h * ( analogBackY / 100f ) );
             analogBackImage.fitCenter( cX, cY, w, h );
         }
     }
@@ -216,7 +216,7 @@ public class TouchMap
                     int c = mask.image.getPixel( xLocation - mask.x, yLocation - mask.y );
                     
                     // Ignore the alpha component if any
-                    int rgb = (int) ( c & 0x00ffffff );
+                    int rgb = c & 0x00ffffff;
                     
                     // Ignore black and get the N64 button associated with this color
                     if( rgb > 0 )
@@ -292,7 +292,7 @@ public class TouchMap
      */
     public float getAnalogStrength( float displacement )
     {
-        float p = ( displacement - analogDeadzone ) / (float) ( analogMaximum - analogDeadzone );
+        float p = ( displacement - analogDeadzone ) / ( analogMaximum - analogDeadzone );
         return Utility.clamp( p, 0, 1 );
     }
     
@@ -427,11 +427,11 @@ public class TouchMap
         analogBackY = SafeMethods.toInt( section.get( "y" ), 0 );
         
         // Sensitivity (percentages of the radius, i.e. half the image width)
-        analogDeadzone = (int) ( (float) analogBackImage.hWidth * ( SafeMethods.toFloat(
+        analogDeadzone = (int) ( analogBackImage.hWidth * ( SafeMethods.toFloat(
                 section.get( "min" ), 1 ) / 100.0f ) );
-        analogMaximum = (int) ( (float) analogBackImage.hWidth * ( SafeMethods.toFloat(
+        analogMaximum = (int) ( analogBackImage.hWidth * ( SafeMethods.toFloat(
                 section.get( "max" ), 55 ) / 100.0f ) );
-        analogPadding = (int) ( (float) analogBackImage.hWidth * ( SafeMethods.toFloat(
+        analogPadding = (int) ( analogBackImage.hWidth * ( SafeMethods.toFloat(
                 section.get( "buff" ), 55 ) / 100.0f ) );
     }
     

@@ -305,8 +305,8 @@ public class TouchController extends AbstractController implements OnTouchListen
             float p = mTouchMap.getAnalogStrength( displacement );
             
             // Store the axis values in the super fields (screen y is inverted)
-            mState.axisFractionX = p * (float) dX / displacement;
-            mState.axisFractionY = -p * (float) dY / displacement;
+            mState.axisFractionX = p * dX / displacement;
+            mState.axisFractionY = -p * dY / displacement;
             
             // Analog state changed
             return true;
