@@ -74,6 +74,7 @@ public class FileUtil
     private static class FileComparer implements Comparator<File>
     {
         // Compare files first by directory/file then alphabetically (case-insensitive)
+        @Override
         public int compare( File lhs, File rhs )
         {
             if( lhs.isDirectory() && rhs.isFile() )
@@ -88,6 +89,7 @@ public class FileUtil
     private static class VisibleFileFilter implements FileFilter
     {
         // Include only non-hidden files not starting with '.'
+        @Override
         public boolean accept( File pathname )
         {
             return ( pathname != null ) && ( pathname.isFile() ) && ( !pathname.isHidden() )
@@ -98,6 +100,7 @@ public class FileUtil
     private static class VisibleDirectoryFilter implements FileFilter
     {
         // Include only non-hidden directories not starting with '.'
+        @Override
         public boolean accept( File pathname )
         {
             return ( pathname != null ) && ( pathname.isDirectory() ) && ( !pathname.isHidden() )

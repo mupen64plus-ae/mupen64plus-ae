@@ -98,6 +98,7 @@ public class DataDownloader extends Thread
             {
                 mActivity.runOnUiThread( new Runnable()
                 {
+                    @Override
                     public void run()
                     {
                         if( mListener != null )
@@ -615,6 +616,7 @@ public class DataDownloader extends Thread
                 public TextView Status;
                 public SpannedString text;
                 
+                @Override
                 public void run()
                 {
                     Status.setText( text );

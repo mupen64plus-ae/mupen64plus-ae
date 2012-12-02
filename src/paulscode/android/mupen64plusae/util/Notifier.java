@@ -109,6 +109,7 @@ public class Notifier
         {
             sToastMessager = new Runnable()
             {
+                @Override
                 public void run()
                 {
                     // Just show the toast message

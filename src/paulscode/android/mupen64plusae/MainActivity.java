@@ -68,6 +68,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         final Handler handler = new Handler();
         handler.postDelayed( new Runnable()
         {
+            @Override
             public void run()
             {
                 // Run the downloader on a separate thread
@@ -79,6 +80,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
     
     private class DownloaderThread implements Runnable
     {
+        @Override
         public void run()
         {
             Log.i( "MainActivity", "libSDL: Starting downloader" );

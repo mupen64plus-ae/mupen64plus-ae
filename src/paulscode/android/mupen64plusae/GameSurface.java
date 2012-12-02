@@ -153,6 +153,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         
         mCoreThread = new Thread( new Runnable()
         {
+            @Override
             public void run()
             {
                 NativeMethods.init();

@@ -128,6 +128,7 @@ public class SafeMethods
         final Handler handler = new Handler();
         handler.postDelayed( new Runnable()
         {
+            @Override
             public void run()
             {
                 System.exit( 0 );
