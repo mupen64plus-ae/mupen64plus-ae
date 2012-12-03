@@ -118,7 +118,7 @@ CFLAGS += $(OPTFLAGS) -Wall -ffast-math -fno-strict-aliasing -fvisibility=hidden
 CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
 
-ifeq ($(CPU), "X86")
+ifeq ($(CPU), X86)
   CFLAGS += -msse
 endif
 
