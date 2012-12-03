@@ -388,7 +388,7 @@ public class CoreInterface
         gles2n64_conf.put( "[<sectionless!>]", "enable fog", booleanToString( user.isGles2N64FogEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", booleanToString( user.isGles2N64AlphaTestEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "force screen clear", booleanToString( user.isGles2N64ScreenClearEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "hack z", booleanToString( !user.isGles2N64DepthTestEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "hack z", booleanToString( user.isGles2N64DepthTestEnabled ) );
         gles2n64_conf.save();        
         //@formatter:on
     }

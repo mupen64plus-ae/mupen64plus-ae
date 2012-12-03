@@ -375,7 +375,7 @@ static bool StartVideo(void)
           int videoHeight = videoInfo->current_h;
 
           stretchVideo = (bool) Android_JNI_GetScreenStretch();
-          if( stretchVideo )
+          if( !stretchVideo )
           {
               videoWidth = (int) ( videoInfo->current_h / ratio );
               if( videoWidth > videoInfo->current_w )
