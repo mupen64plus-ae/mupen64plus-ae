@@ -128,6 +128,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         
         // Keep screen from going to sleep
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
+        
+        // Set the screen orientation
+        mActivity.setRequestedOrientation( Globals.userPrefs.screenOrientation );        
     }
     
     @TargetApi( 11 )
@@ -151,9 +154,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
             mActivity.getActionBar().hide();
         }
-        
-        // Set the screen orientation
-        mActivity.setRequestedOrientation( Globals.userPrefs.screenOrientation );
         
         // Initialize the screen elements
         if( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFpsEnabled )
