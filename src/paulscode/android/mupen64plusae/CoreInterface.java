@@ -71,7 +71,7 @@ public class CoreInterface
     private static Thread sAudioThread = null;
     private static AudioTrack sAudioTrack = null;
     private static Object sAudioBuffer;
-    private static String sExtraArgs = ".";
+    private static String sExtraArgs = "";
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
