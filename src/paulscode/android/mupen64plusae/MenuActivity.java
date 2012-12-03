@@ -48,11 +48,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHSCREEN = "touchscreen";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
+    private static final String TOUCHSCREEN_OCTAGON_JOYSTICK = "touchscreenOctagonJoystick";
     private static final String XPERIA_ENABLED = "xperiaEnabled";
     private static final String XPERIA_LAYOUT = "xperiaLayout";
     private static final String PERIPHERAL = "peripheral";
     private static final String AUDIO = "audio";
     private static final String VIDEO = "video";
+    private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
+    private static final String CATEGORY_GLES2N64 = "categoryGles2N64";
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -91,7 +94,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     protected void onResume()
     {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        refreshViews( sharedPreferences );
+        refreshViews( sharedPreferences, Globals.userPrefs );
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
         super.onResume();
     }
@@ -159,32 +162,32 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         // Update the global convenience class
         Globals.userPrefs = new UserPrefs( this, Globals.paths );
-        refreshViews( sharedPreferences );
+        refreshViews( sharedPreferences, Globals.userPrefs );
     }
     
     @SuppressWarnings( "deprecation" )
-    private void refreshViews( SharedPreferences sharedPreferences )
+    private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
     {
         // Determine which menu items should be enabled
         boolean enableResume = new File( Globals.userPrefs.selectedGame ).exists();
-        boolean enableInput = Globals.userPrefs.inputPlugin.enabled;
-        boolean enableAudio = Globals.userPrefs.audioPlugin.enabled;
-        boolean enableVideo = Globals.userPrefs.videoPlugin.enabled;
-        boolean enableCustom = Globals.userPrefs.isTouchscreenEnabled && Globals.userPrefs.isTouchscreenCustom;
-        boolean enableSize = Globals.userPrefs.isTouchscreenEnabled && !Globals.userPrefs.isTouchscreenCustom;
+        boolean enableCustom = user.isTouchscreenEnabled && user.isTouchscreenCustom;
+        boolean enableSize = user.isTouchscreenEnabled && !user.isTouchscreenCustom;
         
         // Enable the play menu only if the selected game actually exists
         findPreference( MENU_RESUME ).setEnabled( enableResume );
         
         // Enable the various input menus only if the input plug-in is not a dummy
-        findPreference( TOUCHSCREEN ).setEnabled( enableInput );
-        findPreference( PERIPHERAL ).setEnabled( enableInput );
+        findPreference( TOUCHSCREEN ).setEnabled( user.inputPlugin.enabled );
+        findPreference( PERIPHERAL ).setEnabled( user.inputPlugin.enabled );
+        findPreference( TOUCHSCREEN_OCTAGON_JOYSTICK ).setEnabled( user.isTouchscreenEnabled || user.isXperiaEnabled );
         
         // Enable the audio menu only if the audio plug-in is not a dummy
-        findPreference( AUDIO ).setEnabled( enableAudio );
+        findPreference( AUDIO ).setEnabled( user.audioPlugin.enabled );
         
         // Enable the video menu only if the video plug-in is not a dummy
-        findPreference( VIDEO ).setEnabled( enableVideo );
+        findPreference( VIDEO ).setEnabled( user.videoPlugin.enabled );
+        findPreference( CATEGORY_GLES2N64 ).setEnabled( user.isGles2N64Enabled );
+        findPreference( CATEGORY_GLES2_RICE ).setEnabled( user.isGles2RiceEnabled );        
         
         // Enable the custom touchscreen prefs under certain conditions
         findPreference( TOUCHSCREEN_CUSTOM ).setEnabled( enableCustom );

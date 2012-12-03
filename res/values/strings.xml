@@ -125,21 +125,8 @@
     <string name="videoStretch_summary">May skew aspect ratio</string>
     <string name="videoRGBA8888_title">RGBA_8888 mode</string>
     <string name="videoRGBA8888_summary">Improves graphics on some devices</string>
-    <string name="gles2N64_title">GLES2N64 settings</string>
-    <string name="gles2N64_summary"></string>
-    <string name="gles2Rice_title">GLES2Rice settings</string>
-    <string name="gles2Rice_summary"></string>
-    
-    <!-- Plugins Menu -->
-    <string name="videoPlugin_title">Video</string>
-    <string name="audioPlugin_title">Audio</string>
-    <string name="inputPlugin_title">Input</string>    
-    <string name="rspPlugin_title">Reality signal processor (RSP)</string>
-    <string name="corePlugin_title">Emulation core</string>
-    <string name="menuDeviceInfo_title">Device info</string>
-    <string name="menuDeviceInfo_summary">Device hardware and model information</string>
-    
-    <!-- GLES2N64 Menu -->
+    <!-- GLES2N64 -->
+    <string name="categoryGles2N64_title">GLES2N64 settings</string>
     <string name="gles2N64Frameskip_title">Frameskip</string>
     <string name="gles2N64Fog_title">Fog</string>
     <string name="gles2N64Fog_summary">(needs work)</string>
@@ -151,8 +138,8 @@
     <string name="gles2N64AlphaTest_summary">Disable for speed (causes black textures)</string>
     <string name="gles2N64DepthTest_title">Depth test</string>
     <string name="gles2N64DepthTest_summary">Disable for speed (causes flashing background)</string>
-    
-    <!-- GLES2Rice Menu -->
+    <!-- GLES2Rice -->
+    <string name="categoryGles2Rice_title">GLES2Rice settings</string>
     <string name="gles2RiceAutoFrameskip_title">Auto frameskip</string>
     <string name="gles2RiceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
     <string name="gles2RiceFastTextureCRC_title">Fast texture CRC</string>
@@ -163,6 +150,15 @@
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
     <string name="gles2RiceImportHiResTextures_title">Import texture pack</string>
     <string name="gles2RiceImportHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
+    
+    <!-- Plugins Menu -->
+    <string name="videoPlugin_title">Video</string>
+    <string name="audioPlugin_title">Audio</string>
+    <string name="inputPlugin_title">Input</string>    
+    <string name="rspPlugin_title">Reality signal processor (RSP)</string>
+    <string name="corePlugin_title">Emulation core</string>
+    <string name="menuDeviceInfo_title">Device info</string>
+    <string name="menuDeviceInfo_summary">Device hardware and model information</string>
     
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->

@@ -154,6 +154,9 @@ public class UserPrefs
     /** True if RGBA8888 mode should be used for video. */
     public final boolean isRgba8888;
     
+    /** True if Gles2N64 video plug-in is enabled. */
+    public final boolean isGles2N64Enabled;
+    
     /** The maximum frameskip in the gles2n64 library. */
     public final int gles2N64MaxFrameskip;
     
@@ -174,6 +177,9 @@ public class UserPrefs
     
     /** True if depth test is enabled in the gles2n64 library. */
     public final boolean isGles2N64DepthTestEnabled;
+    
+    /** True if Gles2Rice video plug-in is enabled. */
+    public final boolean isGles2RiceEnabled;
     
     /** True if auto-frameskip is enabled in the gles2rice library. */
     public final boolean isGles2RiceAutoFrameskipEnabled;
@@ -249,6 +255,7 @@ public class UserPrefs
         isRgba8888 = mPreferences.getBoolean( "videoRGBA8888", false );
         
         // Video prefs - gles2n64
+        isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
         gles2N64MaxFrameskip = getSafeInt( mPreferences, "gles2N64Frameskip", -1 );
         isGles2N64AutoFrameskipEnabled = ( gles2N64MaxFrameskip < 0 );
         isGles2N64FogEnabled = mPreferences.getBoolean( "gles2N64Fog", false );
@@ -258,6 +265,7 @@ public class UserPrefs
         isGles2N64DepthTestEnabled = mPreferences.getBoolean( "gles2N64DepthTest", true );
         
         // Video prefs - gles2rice
+        isGles2RiceEnabled = videoPlugin.name.equals( "libgles2rice.so" );
         isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
         isGles2RiceFastTextureCrcEnabled = mPreferences
                 .getBoolean( "gles2RiceFastTextureCRC", true );

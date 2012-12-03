@@ -123,21 +123,8 @@
     <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
     <string name="videoRGBA8888_title">RGBA_8888 モード</string>
     <string name="videoRGBA8888_summary">いくつかのデバイス上でグラフィックスをかもしれない向上させる。</string>
-    <string name="gles2N64_title">GLES2N64設定</string>
-    <string name="gles2N64_summary"></string>
-    <string name="gles2Rice_title">GLES2Rice設定</string>
-    <string name="gles2Rice_summary"></string>
-    
-    <!-- Plugins Menu -->
-    <string name="videoPlugin_title">ビデオ</string>
-    <string name="audioPlugin_title">オーディオ設定</string>
-    <string name="inputPlugin_title">入力デバイス</string> 
-    <string name="rspPlugin_title">RSP</string>
-    <string name="corePlugin_title">コア</string>
-    <string name="menuDeviceInfo_title">デバイス情報</string>
-    <string name="menuDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
-    
-    <!-- GLES2N64 Menu -->
+    <!-- GLES2N64 -->
+    <string name="categoryGles2N64_title">GLES2N64設定</string>
     <string name="gles2N64Frameskip_title">フレームスキップ</string>
     <string name="gles2N64Fog_title">霧</string>
     <string name="gles2N64Fog_summary">(WIP)</string>
@@ -149,8 +136,8 @@
     <string name="gles2N64AlphaTest_summary">スピードハックを取得する設定を無効</string>
     <string name="gles2N64DepthTest_title">ハックZ</string>
     <string name="gles2N64DepthTest_summary">点滅している背景を修正するには、この設定を有効にします。</string>
-    
-    <!-- GLES2Rice Menu -->
+    <!-- GLES2Rice -->
+    <string name="categoryGles2Rice_title">GLES2Rice設定</string>
     <string name="gles2RiceAutoFrameskip_title">オートフレームスキップ</string>
     <string name="gles2RiceAutoFrameskip_summary">FPSの費用で速度を向上させる。</string>
     <string name="gles2RiceFastTextureCRC_title">高速テクスチャCRC</string>
@@ -161,6 +148,15 @@
     <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
     <string name="gles2RiceImportHiResTextures_title">インポートテクスチャパック</string>
     <string name="gles2RiceImportHiResTextures_summary">ゲームにカスタムテクスチャを適用します</string>
+    
+    <!-- Plugins Menu -->
+    <string name="videoPlugin_title">ビデオ</string>
+    <string name="audioPlugin_title">オーディオ設定</string>
+    <string name="inputPlugin_title">入力デバイス</string> 
+    <string name="rspPlugin_title">RSP</string>
+    <string name="corePlugin_title">コア</string>
+    <string name="menuDeviceInfo_title">デバイス情報</string>
+    <string name="menuDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
     
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->
