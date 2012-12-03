@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/ingameQuicksave"
-        android:icon="@drawable/ic_save"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameQuicksave_title"/>
-    <item
         android:id="@+id/ingameQuickload"
         android:icon="@drawable/ic_folder"
         android:showAsAction="ifRoom|withText"
         android:title="@string/ingameQuickload_title"/>
+    <item
+        android:id="@+id/ingameQuicksave"
+        android:icon="@drawable/ic_save"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/ingameQuicksave_title"/>
     <item
         android:id="@+id/ingameSlot"
         android:icon="@drawable/ic_storage"
@@ -53,11 +53,11 @@
         </menu>
     </item>
     <item
-        android:id="@+id/ingameSave"
-        android:title="@string/ingameSave_title"/>
-    <item
         android:id="@+id/ingameLoad"
         android:title="@string/ingameLoad_title"/>
+    <item
+        android:id="@+id/ingameSave"
+        android:title="@string/ingameSave_title"/>
     <item
         android:id="@+id/ingameReset"
         android:title="@string/ingameReset_title"/>
