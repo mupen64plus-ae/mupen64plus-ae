@@ -146,6 +146,12 @@ void Java_paulscode_android_mupen64plusae_NativeMethods_resumeEmulator(
     (*CoreDoCommand) ( M64CMD_RESUME, 0, NULL );
 }
 
+void Java_paulscode_android_mupen64plusae_NativeMethods_resetEmulator(
+                                    JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand) ( M64CMD_RESET, 0, NULL );
+}
+
 void Java_paulscode_android_mupen64plusae_NativeMethods_stopEmulator(
                                     JNIEnv* env, jclass cls)
 {

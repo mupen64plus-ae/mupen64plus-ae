@@ -81,6 +81,9 @@ public class GameMenuHandler
             case R.id.ingameLoad:
                 loadStateFromPrompt();
                 break;
+            case R.id.ingameReset:
+                resetState();
+                break;
             case R.id.ingameMenu:
                 // Return to previous activity (MenuActivity)
                 // It's easier just to finish so that everything will be reloaded next time
@@ -190,5 +193,25 @@ public class GameMenuHandler
     {
         Notifier.showToast( mActivity, R.string.toast_loadingGame, file.getName() );
         NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
-    }    
+    }
+    
+    private void resetState()
+    {
+        NativeMethods.pauseEmulator();
+        String title = mActivity.getString( R.string._confirmation );
+        String message = mActivity.getString( R.string.gameMenu_confirmReset );
+        Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    Notifier.showToast( mActivity, R.string.toast_resettingGame );
+                    NativeMethods.resetEmulator();
+                }
+                NativeMethods.resumeEmulator();
+            }
+        } );
+    }
 }

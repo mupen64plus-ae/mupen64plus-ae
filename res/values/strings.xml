@@ -255,6 +255,7 @@
     <string name="toast_savingSlot">Saving slot %1$d…</string>    
     <string name="toast_loadingGame">Resuming %1$s…</string>
     <string name="toast_savingGame">Saving %1$s…</string>
+    <string name="toast_resettingGame">Resetting…</string>
     <string name="toast_overwritingGame">Overwriting %1$s…</string>
     
     <!-- Other Strings -->
@@ -267,6 +268,7 @@
     <string name="dataDownloader_finished">Finished</string>
     <string name="dataDownloader_progress">%1$.0f%% done: file %2$s</string>
     <string name="gameMenu_confirmFile">Overwrite %1$s?</string>
+    <string name="gameMenu_confirmReset">Reset game? All progress will be lost since your last save.</string>
     <string name="gameMenu_saveHint">filename</string>
     <string name="inputMapPreference_dialogTitle">To map: press key/stick, then touch icon\nTo unmap: long-touch icon</string>
     <string name="inputMapPreference_rumble">Rumble\nPak</string>

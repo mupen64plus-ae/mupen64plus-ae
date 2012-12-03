@@ -59,6 +59,9 @@
         android:id="@+id/ingameLoad"
         android:title="@string/ingameLoad_title"/>
     <item
+        android:id="@+id/ingameReset"
+        android:title="@string/ingameReset_title"/>
+    <item
         android:id="@+id/ingameMenu"
         android:icon="@drawable/ic_settings"
         android:title="@string/ingameMenu_title"/>
