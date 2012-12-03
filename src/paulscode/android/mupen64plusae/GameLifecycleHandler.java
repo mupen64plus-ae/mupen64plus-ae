@@ -265,6 +265,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             touchpadController = new TouchController( touchpadMap, inputSource,
                     null, Globals.userPrefs.isOctagonalJoystick );            
             mControllers.add( touchpadController );
+
+            // Filter by source identifier
+            touchpadController.setSourceFilter( NativeInputSource.SOURCE_TOUCHPAD );
         }
         
         // Create the touchscreen controls
@@ -279,7 +282,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             if( touchpadController != null )
             {
                 // filter by source identifier...
-                touchpadController.setSourceFilter( NativeInputSource.SOURCE_TOUCHPAD );
                 touchscreenController.setSourceFilter( NativeInputSource.SOURCE_TOUCHSCREEN );
                 
                 // and demux the input source to both touch listeners
