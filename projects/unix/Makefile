@@ -60,6 +60,13 @@ ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   SHARED = -shared
   SO_EXTENSION = so
 endif
+ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
+  OS = MINGW
+  SHARED = -shared
+  SO_EXTENSION = dll
+  CC = gcc
+  MKDIR = mkdir -p
+endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
@@ -173,6 +180,10 @@ ifeq ($(OS),LINUX)
     CFLAGS  += $(shell sdl-config --cflags)
     LDLIBS += $(shell sdl-config --libs)
 endif
+ifeq ($(OS),MINGW)
+    CFLAGS += $(shell sdl-config --cflags)
+    LDLIBS += $(shell sdl-config --libs)
+endif
 
 # test for presence of speexdsp
 ifneq ($(strip $(shell pkg-config speexdsp --modversion 2> /dev/null)),)
@@ -268,8 +279,13 @@ OBJDIR = _obj
 # list of source files to compile
 SOURCE = \
 	$(SRCDIR)/main.c \
-	$(SRCDIR)/volume.c \
-	$(SRCDIR)/osal_dynamiclib_unix.c
+	$(SRCDIR)/volume.c
+
+ifeq ($(OS),MINGW)
+SOURCE += $(SRCDIR)/osal_dynamiclib_win32.c
+else
+SOURCE += $(SRCDIR)/osal_dynamiclib_unix.c
+endif
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
