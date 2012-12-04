@@ -21,6 +21,8 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -62,6 +64,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+
+        //////
+        //  paulscode: temporary workaround to allow instantiation from activities other than MainActivity
+          if( Globals.paths == null )
+              Globals.paths = new Paths( this );
+          if( Globals.appData == null )
+              Globals.appData = new AppData( this, Globals.paths.appDataFilename );
+        //////
         
         // Disable the Xperia PLAY plugin as necessary
         if( !Globals.appData.hardwareInfo.isXperiaPlay )

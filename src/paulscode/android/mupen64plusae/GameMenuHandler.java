@@ -9,6 +9,7 @@ import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -87,7 +88,31 @@ public class GameMenuHandler
             case R.id.ingameMenu:
                 // Return to previous activity (MenuActivity)
                 // It's easier just to finish so that everything will be reloaded next time
-                mActivity.finish();
+
+                //////
+                //  paulscode: temporary workaround for ASDP bug after emulator shuts down
+                  Notifier.showToast( mActivity, R.string.toast_savingSession );
+                  NativeMethods.fileSaveEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+                  try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  for( int c = 0; NativeMethods.stateEmulator() == 3 && c < 120;  c++ )
+                  {
+                      try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  }
+                  try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  NativeMethods.pauseEmulator();
+                  try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  for( int c = 0; NativeMethods.stateEmulator() != 3 && c < 120;  c++ )
+                  {
+                      try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  }
+                  try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  Intent intent = new Intent( mActivity, MenuActivity.class );
+                  intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                  mActivity.startActivity( intent );
+                  System.exit( 0 );  // Bad, bad..
+                //////
+
+//                mActivity.finish();
                 break;
             default:
                 break;
