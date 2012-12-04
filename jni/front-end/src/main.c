@@ -78,6 +78,8 @@ static int   l_CoreCompareMode = 0;      // 0 = disable, 1 = send, 2 = receive
 static eCheatMode l_CheatMode = CHEAT_DISABLE;
 static char      *l_CheatNumList = NULL;
 
+static int do_Start = 1;
+
 // paulscode, added for Android
 static void swap_rom(unsigned char* localrom, int loadlength)
 {
@@ -149,7 +151,9 @@ void Java_paulscode_android_mupen64plusae_NativeMethods_resumeEmulator(
 void Java_paulscode_android_mupen64plusae_NativeMethods_resetEmulator(
                                     JNIEnv* env, jclass cls)
 {
-    (*CoreDoCommand) ( M64CMD_RESET, 0, NULL );
+    // (*CoreDoCommand) ( M64CMD_RESET, 0, NULL );
+    do_Start = 1;
+    (*CoreDoCommand) ( M64CMD_STOP, 0, NULL );
 }
 
 void Java_paulscode_android_mupen64plusae_NativeMethods_stopEmulator(
@@ -971,8 +975,13 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* run the game */
-    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+    // paulscode: workaround for broken M64CMD_RESET.  Set do_Start = 1 before M64CMD_STOP to reset the emulator.
+    while( do_Start )
+    {
+        do_Start = 0;
+        /* run the game */
+        (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+    }
 
     /* detach plugins from core and unload them */
     for (i = 0; i < 4; i++)
