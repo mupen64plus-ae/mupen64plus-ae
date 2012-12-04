@@ -65,13 +65,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         super.onCreate( savedInstanceState );
 
-        //////
-        //  paulscode: temporary workaround to allow instantiation from activities other than MainActivity
-          if( Globals.paths == null )
-              Globals.paths = new Paths( this );
-          if( Globals.appData == null )
-              Globals.appData = new AppData( this, Globals.paths.appDataFilename );
-        //////
+        // Refresh path and app data objects if not already loaded
+        Globals.paths = new Paths( this );
+        Globals.appData = new AppData( this, Globals.paths.appDataFilename );
         
         // Disable the Xperia PLAY plugin as necessary
         if( !Globals.appData.hardwareInfo.isXperiaPlay )
