@@ -73,14 +73,14 @@ EXT_LIB = ./lib
 
 CC = g++ 
 STRIP = strip
-CFLAGS = -DBUILDING_DLL=1  -fexceptions
+CFLAGS = -DBUILDING_DLL=1 -fexceptions -fPIC -DPIC -I$(MPAPI_PATH)
 
 ifeq ($(OS), Linux)
 LDFLAGS = -shared -lstdc++ 
 CFLAGS += -D__unix__
 endif
 ifeq ($(OS), MACOSX)
-LDFLAGS = -dynamiclib -lstdc++ 
+LDFLAGS = -dynamiclib -lstdc++ -undefined dynamic_lookup -install_name @executable_path/../lib/glide3x.dylib
 CFLAGS += -D__unix__ -Dmacintosh
 endif
 ifeq ($(OS), WINDOWS)
@@ -101,6 +101,12 @@ LDFLAGS2 = --out-implib=libglide3x.a
 LDLIBS = -L"." -L"lib" `sdl-config --libs`
 ifeq ($(OS), MACOSX)
 LDLIBS += -framework OpenGL -framework GLUT
+else
+LDLIBS += -lGL
+endif
+ifeq ($(OSX_ARCH), i386)
+CFLAGS += -arch i386
+LDFLAGS += -arch i386
 endif
 
 RM = rm

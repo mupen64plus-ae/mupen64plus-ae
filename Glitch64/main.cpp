@@ -17,197 +17,14 @@
 #include "glide.h"
 #include "g3ext.h"
 #include "main.h"
+#include "m64p.h"
 
 #ifdef VPDEBUG
 #include <IL/il.h>
 #endif
 
-struct ResolutionInfo
-{
-  unsigned int dwW, dwH, dwF;
+extern void (*renderCallback)();
 
-  ResolutionInfo() : dwW(0), dwH(0), dwF(0) {}
-
-  ResolutionInfo(unsigned int _w, unsigned int _h, unsigned int _f) : dwW(_w), dwH(_h), dwF(_f) {}
-
-  bool operator == (const ResolutionInfo & _other) const
-  {
-    if (dwW != _other.dwW)
-      return false;
-    if (dwH != _other.dwH)
-      return false;
-    if (dwF != _other.dwF)
-      return false;
-    return true;
-  }
-
-  bool operator != (const ResolutionInfo & _other) const
-  {
-    return !(operator==(_other));
-  }
-
-  void toString(char * _str) const
-  {
-    if (dwF > 0)
-      sprintf(_str, "%ix%i 32bpp %iHz", dwW, dwH, dwF);
-    else
-      sprintf(_str, "%ix%i 32bpp", dwW, dwH);
-  }
-};
-
-class FullScreenResolutions
-{
-public:
-  FullScreenResolutions() : dwNumResolutions(0), aResolutions(0), aResolutionsStr(0) {}
-  ~FullScreenResolutions();
-
-  void getResolution(FxU32 _idx, FxU32 * _width, FxU32 * _height, FxU32 * _frequency = 0)
-  {
-    LOG("getResolution(%d)\r\n", _idx);
-    if (dwNumResolutions == 0)
-      init();
-    if (_idx >= dwNumResolutions) {
-      LOG("getResolution error! NumResolutions=%d\r\n", dwNumResolutions);
-      _idx = 0;
-    }
-    *_width = (FxU32)aResolutions[_idx].dwW;
-    *_height = (FxU32)aResolutions[_idx].dwH;
-    if (_frequency != 0)
-      *_frequency = (FxU32)aResolutions[_idx].dwF;
-  }
-
-  char ** getResolutionsList(FxI32 * Size)
-  {
-    if (dwNumResolutions == 0)
-      init();
-    *Size = (FxI32)dwNumResolutions;
-    return aResolutionsStr;
-  }
-
-  bool changeDisplaySettings(FxU32 _resolution);
-
-private:
-  void init();
-  unsigned int dwNumResolutions;
-  ResolutionInfo * aResolutions;
-  char ** aResolutionsStr;
-};
-
-FullScreenResolutions::~FullScreenResolutions()
-{
-  for (unsigned int i = 0; i < dwNumResolutions; i++)
-    delete[] aResolutionsStr[i];
-  delete[] aResolutionsStr;
-  delete[] aResolutions;
-}
-
-void FullScreenResolutions::init()
-{
-LOG("FullScreenResolutions::init()\r\n");
-#ifdef _WIN32
-  DEVMODE enumMode;
-  int iModeNum = 0;
-  memset(&enumMode, 0, sizeof(DEVMODE));
-  ResolutionInfo prevInfo;
-  while (EnumDisplaySettings(NULL, iModeNum++, &enumMode) != 0)
-  {
-    ResolutionInfo curInfo(enumMode.dmPelsWidth, enumMode.dmPelsHeight, enumMode.dmDisplayFrequency);
-    if (enumMode.dmBitsPerPel == 32 && curInfo != prevInfo)
-    {
-      dwNumResolutions++;
-      prevInfo = curInfo;
-    }
-  }
-
-  aResolutions = new ResolutionInfo[dwNumResolutions];
-  aResolutionsStr = new char*[dwNumResolutions];
-  iModeNum = 0;
-  int current = 0;
-  char smode[256];
-  memset(&enumMode, 0, sizeof(DEVMODE));
-  memset(&prevInfo, 0, sizeof(ResolutionInfo));
-  while (EnumDisplaySettings(NULL, iModeNum++, &enumMode) != 0)
-  {
-    ResolutionInfo curInfo(enumMode.dmPelsWidth, enumMode.dmPelsHeight, enumMode.dmDisplayFrequency);
-    if (enumMode.dmBitsPerPel == 32 && curInfo != prevInfo)
-    {
-      aResolutions[current] = curInfo;
-      curInfo.toString(smode);
-      aResolutionsStr[current] = new char[strlen(smode)+1];
-      strcpy(aResolutionsStr[current], smode);
-      prevInfo = curInfo;
-      current++;
-    }
-  }
-#else // _WIN32
-  SDL_Rect** modes;
-  SDL_Surface *check_surface;
-  SDL_PixelFormat *fmt;
-  int iModeNum;
-
-  SDL_InitSubSystem(SDL_INIT_VIDEO);
-  check_surface = SDL_CreateRGBSurface(NULL, 0, 0, 32, 0, 0, 0, 0);
-  if (!check_surface || check_surface->format->BitsPerPixel != 32) {
-    return; //failtrain!
-  }
-
-  fmt = check_surface->format;
-  modes = SDL_ListModes(fmt, SDL_FULLSCREEN|SDL_HWSURFACE);
-
-  ResolutionInfo prevInfo;
-  for (iModeNum = 0; modes[iModeNum]; ++iModeNum) {
-    ResolutionInfo curInfo(modes[iModeNum]->w, modes[iModeNum]->h, 0);
-    if (curInfo != prevInfo) {
-      dwNumResolutions++;
-      prevInfo = curInfo;
-    }
-  }
-
-  aResolutions = new ResolutionInfo[dwNumResolutions];
-  aResolutionsStr = new char*[dwNumResolutions];
-  int current = 0;
-  char smode[256];
-  memset(&prevInfo, 0, sizeof(ResolutionInfo));
-  for (iModeNum = 0; modes[iModeNum]; ++iModeNum) {
-    ResolutionInfo curInfo(modes[iModeNum]->w, modes[iModeNum]->h, 0);
-    if (curInfo != prevInfo) {
-      aResolutions[current] = curInfo;
-      curInfo.toString(smode);
-      aResolutionsStr[current] = new char[strlen(smode)+1];
-      strcpy(aResolutionsStr[current], smode);
-      prevInfo = curInfo;
-      current++;
-    }
-  }
-  SDL_FreeSurface(check_surface);
-#endif // _WIN32
-}
-
-bool FullScreenResolutions::changeDisplaySettings(FxU32 _resolution)
-{
-#ifdef _WIN32
-  FxU32 width, height, frequency;
-  getResolution(_resolution, &width, &height, &frequency);
-  ResolutionInfo info(width, height, frequency);
-  DEVMODE enumMode;
-  int iModeNum = 0;
-  memset(&enumMode, 0, sizeof(DEVMODE));
-  while (EnumDisplaySettings(NULL, iModeNum++, &enumMode) != 0)
-  {
-    ResolutionInfo curInfo(enumMode.dmPelsWidth, enumMode.dmPelsHeight, enumMode.dmDisplayFrequency);
-    if (enumMode.dmBitsPerPel == 32 && curInfo == info) {
-      bool bRes = ChangeDisplaySettings(&enumMode, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
-      LOG("changeDisplaySettings width=%d, height=%d, freq=%d %s\r\n", enumMode.dmPelsWidth, enumMode.dmPelsHeight, enumMode.dmDisplayFrequency, bRes?"Success":"Failed");
-      return bRes;
-    }
-  }
-  return false;
-#else // _WIN32
-  return false;
-#endif // _WIN32
-}
-
-FullScreenResolutions g_FullScreenResolutions;
 wrapper_config config = {0, 0, 0, 0};
 int screen_width, screen_height;
 
@@ -362,9 +179,6 @@ struct texbuf_t {
 static texbuf_t texbufs[NB_TEXBUFS];
 static int texbuf_i;
 
-#ifndef _WIN32
-static SDL_Surface *m_pScreen;
-#endif // _WIN32
 unsigned short frameBuffer[2048*2048];
 unsigned short depthBuffer[2048*2048];
 
@@ -467,7 +281,7 @@ LogManager logManager;
 #else // LOGGING
 #define OPEN_LOG()
 #define CLOSE_LOG()
-#define LOG
+//#define LOG
 #endif // LOGGING
 
 FX_ENTRY void FX_CALL
@@ -640,22 +454,6 @@ grSstWinOpen(
   color_texture = free_texture++;
   depth_texture = free_texture++;
 
-#ifdef _WIN32
-
-  PIXELFORMATDESCRIPTOR pfd;
-  memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
-  pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR);
-  pfd.nVersion   = 1;
-  pfd.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_GENERIC_ACCELERATED  | PFD_DOUBLEBUFFER;
-  pfd.iPixelType = PFD_TYPE_RGBA;
-  pfd.iLayerType = PFD_MAIN_PLANE;
-  pfd.cColorBits = 32;
-  pfd.cDepthBits = 24;
-  pfd.cAuxBuffers = 1;
-
-  int pfm;
-#endif // _WIN32
-
   LOG("grSstWinOpen(%08lx, %d, %d, %d, %d, %d %d)\r\n", hWnd, screen_resolution&~0x80000000, refresh_rate, color_format, origin_location, nColBuffers, nAuxBuffers);
 
 #ifdef _WIN32
@@ -663,283 +461,36 @@ grSstWinOpen(
   hwnd_win = (HWND)hWnd;
 #endif // _WIN32
   width = height = 0;
-  if (screen_resolution & 0x80000000)
+
+  m64p_handle video_general_section;
+  printf("&ConfigOpenSection is %p\n", &ConfigOpenSection);
+  if (ConfigOpenSection("Video-General", &video_general_section) != M64ERR_SUCCESS)
   {
-    switch (screen_resolution & ~0x80000000)
-    {
-    case GR_RESOLUTION_320x200:
-      width = 320;
-      height = 200;
-      break;
-    case GR_RESOLUTION_320x240:
-      width = 320;
-      height = 240;
-      break;
-    case GR_RESOLUTION_400x256:
-      width = 400;
-      height = 256;
-      break;
-    case GR_RESOLUTION_512x384:
-      width = 512;
-      height = 384;
-      break;
-    case GR_RESOLUTION_640x200:
-      width = 640;
-      height = 200;
-      break;
-    case GR_RESOLUTION_640x350:
-      width = 640;
-      height = 350;
-      break;
-    case GR_RESOLUTION_640x400:
-      width = 640;
-      height = 400;
-      break;
-    case GR_RESOLUTION_640x480:
-      width = 640;
-      height = 480;
-      break;
-    case GR_RESOLUTION_800x600:
-      width = 800;
-      height = 600;
-      break;
-    case GR_RESOLUTION_960x720:
-      width = 960;
-      height = 720;
-      break;
-    case GR_RESOLUTION_856x480:
-      width = 856;
-      height = 480;
-      break;
-    case GR_RESOLUTION_512x256:
-      width = 512;
-      height = 256;
-      break;
-    case GR_RESOLUTION_1024x768:
-      width = 1024;
-      height = 768;
-      break;
-    case GR_RESOLUTION_1280x1024:
-      width = 1280;
-      height = 1024;
-      break;
-    case GR_RESOLUTION_1600x1200:
-      width = 1600;
-      height = 1200;
-      break;
-    case GR_RESOLUTION_400x300:
-      width = 400;
-      height = 300;
-      break;
-    case GR_RESOLUTION_1152x864:
-      width = 1152;
-      height = 864;
-      break;
-    case GR_RESOLUTION_1280x960:
-      width = 1280;
-      height = 960;
-      break;
-    case GR_RESOLUTION_1600x1024:
-      width = 1600;
-      height = 1024;
-      break;
-    case GR_RESOLUTION_1792x1344:
-      width = 1792;
-      height = 1344;
-      break;
-    case GR_RESOLUTION_1856x1392:
-      width = 1856;
-      height = 1392;
-      break;
-    case GR_RESOLUTION_1920x1440:
-      width = 1920;
-      height = 1440;
-      break;
-    case GR_RESOLUTION_2048x1536:
-      width = 2048;
-      height = 1536;
-      break;
-    case GR_RESOLUTION_2048x2048:
-      width = 2048;
-      height = 2048;
-      break;
-    default:
-      display_warning("unknown SstWinOpen resolution : %x", screen_resolution);
-    }
-  }
-
-#ifdef _WIN32
-  if (screen_resolution & 0x80000000)
-  {
-    RECT clientRect, toolbarRect, statusbarRect;
-    ZeroMemory(&windowedRect, sizeof(RECT));
-    ZeroMemory(&clientRect, sizeof(RECT));
-    ZeroMemory(&toolbarRect, sizeof(RECT));
-    ZeroMemory(&statusbarRect, sizeof(RECT));
-    HWND hToolBar = FindWindowEx(hwnd_win, NULL, REBARCLASSNAME, NULL);
-    HWND hStatusBar = FindWindowEx(hwnd_win, NULL, STATUSCLASSNAME, NULL);
-    if (hStatusBar == NULL) hStatusBar = FindWindowEx(hwnd_win, NULL, "msctls_statusbar32", NULL); // 1964
-    if (hToolBar != NULL) GetWindowRect(hToolBar, &toolbarRect);
-    if (hStatusBar != NULL) GetWindowRect(hStatusBar, &statusbarRect);
-    viewport_offset = statusbarRect.bottom - statusbarRect.top;
-    GetWindowRect(hwnd_win, &windowedRect);
-    GetClientRect(hwnd_win, &clientRect);
-    windowedRect.right += (width - (clientRect.right - clientRect.left));
-    windowedRect.bottom += (height + (toolbarRect.bottom - toolbarRect.top) + (statusbarRect.bottom - statusbarRect.top) - (clientRect.bottom - clientRect.top));
-    SetWindowPos(hwnd_win, NULL, 0, 0, windowedRect.right - windowedRect.left,
-      windowedRect.bottom - windowedRect.top, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
-
-    TMU_SIZE = (config.vram_size - width * height * 4 * 3) / 2; // XXX - what about windows desktop usage?
-
-    fullscreen = 0;
-  }
-  else
-  {
-    {
-      FxU32 _width, _height;
-      g_FullScreenResolutions.getResolution(screen_resolution, &_width, &_height);
-      width = _width;
-      height = _height;
-    }
-    ZeroMemory(&windowedRect, sizeof(RECT));
-    GetWindowRect(hwnd_win, &windowedRect);
-
-    windowedExStyle = GetWindowLong(hwnd_win, GWL_EXSTYLE);
-    windowedStyle = GetWindowLong(hwnd_win, GWL_STYLE);
-
-    // primary monitor only
-    if (!g_FullScreenResolutions.changeDisplaySettings(screen_resolution))
-    {
-      display_warning("can't change to fullscreen mode");
-    }
-
-    windowedMenu = GetMenu(hwnd_win);
-    if (windowedMenu) SetMenu(hwnd_win, NULL);
-
-    HWND hStatusBar = FindWindowEx(hwnd_win, NULL, "msctls_statusbar32", NULL); // 1964
-    if (hStatusBar) ShowWindow(hStatusBar, SW_HIDE);
-
-    SetWindowLong(hwnd_win, GWL_STYLE, 0);
-    SetWindowLong(hwnd_win, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
-    SetWindowPos(hwnd_win, NULL, 0, 0, width, height, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
-
-    viewport_offset = 0;
-    fullscreen = 1;
-  }
-
-  TMU_SIZE = (config.vram_size - width * height * 4 * 3) / 2;
-
-  // save screen resolution for hwfbe, after resolution enumeration
-  screen_width = width;
-  screen_height = height;
-
-  if ((hDC = GetDC(hwnd_win)) == NULL)
-  {
-    display_warning("GetDC on main window failed");
-    return FXFALSE;
-  }
-
-  if ((pfm = ChoosePixelFormat(hDC, &pfd)) == 0) {
-    //printf("disabling auxiliary buffers\n");
-    pfd.cAuxBuffers = 0;
-    pfm = ChoosePixelFormat(hDC, &pfd);
-  }
-  if (pfm == 0)
-  {
-    display_warning("ChoosePixelFormat failed");
-    return FXFALSE;
-  }
-  if (SetPixelFormat(hDC, pfm, &pfd) == 0)
-  {
-    display_warning("SetPixelFormat failed");
-    return FXFALSE;
-  }
-
-  if ((hGLRC = wglCreateContext(hDC)) == 0)
-  {
-    display_warning("wglCreateContext failed!");
-    grSstWinClose(0);
-    return FXFALSE;
-  }
-
-  if (!wglMakeCurrent(hDC, hGLRC))
-  {
-    display_warning("wglMakeCurrent failed!");
-    grSstWinClose(0);
-    return FXFALSE;
-  }
-#else // _WIN32
-
-  // init sdl & gl
-  const SDL_VideoInfo *videoInfo;
-  Uint32 videoFlags = 0;
-  fullscreen = 0;
-
-  /* Initialize SDL */
-  printf("(II) Initializing SDL video subsystem...\n");
-  if(SDL_InitSubSystem(SDL_INIT_VIDEO) == -1)
-  {
-    printf("(EE) Error initializing SDL video subsystem: %s\n", SDL_GetError());
+    printf("Could not open video settings");
     return false;
   }
-
-  /* Video Info */
-  printf("(II) Getting video info...\n");
-  if(!(videoInfo = SDL_GetVideoInfo()))
-  {
-    printf("(EE) Video query failed: %s\n", SDL_GetError());
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    return false;
-  }
-
-  /* Setting the video mode */
-  videoFlags |= SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_HWPALETTE;
-
-  if(videoInfo->hw_available)
-    videoFlags |= SDL_HWSURFACE;
-  else
-    videoFlags |= SDL_SWSURFACE;
-
-  if(videoInfo->blit_hw)
-    videoFlags |= SDL_HWACCEL;
-
-  //if (!(screen_resolution & 0x80000000))
-  //videoFlags |= SDL_FULLSCREEN;
-
-  if (screen_resolution & 0x80000000)
-  {
-    fullscreen = 0;
-  }
-  else
-  {
-    FxU32 _width, _height;
-    g_FullScreenResolutions.getResolution(screen_resolution, &_width, &_height);
-    width = _width;
-    height = _height;
-    videoFlags |= SDL_FULLSCREEN;
-    fullscreen = 1;
-  }
-  TMU_SIZE = (config.vram_size - width * height * 4 * 3) / 2;
+  width = ConfigGetParamInt(video_general_section, "ScreenWidth");
+  height = ConfigGetParamInt(video_general_section, "ScreenHeight");
+  fullscreen = ConfigGetParamBool(video_general_section, "Fullscreen");
 
   //viewport_offset = ((screen_resolution>>2) > 20) ? screen_resolution >> 2 : 20;
   // ZIGGY viewport_offset is WIN32 specific, with SDL just set it to zero
   viewport_offset = 0; //-10 //-20;
 
   // ZIGGY not sure, but it might be better to let the system choose
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 16);
+  CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
+  CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 16);
   //   SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
   //   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   //   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   //   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
   //   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+  CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, 16);
 
   printf("(II) Setting video mode %dx%d...\n", width, height);
-  if(!(m_pScreen = SDL_SetVideoMode(width, height, 0, videoFlags)))
+  if(CoreVideo_SetVideoMode(width, height, 0, fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED) != M64ERR_SUCCESS)
   {
-    printf("(EE) Error setting videomode %dx%d: %s\n", width, height, SDL_GetError());
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+    printf("(EE) Error setting videomode %dx%d\n", width, height);
     return false;
   }
 
@@ -949,9 +500,9 @@ grSstWinOpen(
 # else // _DEBUG
   sprintf(caption, "Glide64");
 # endif // _DEBUG
-  SDL_WM_SetCaption(caption, caption);
+  CoreVideo_SetCaption(caption);
+
   glViewport(0, viewport_offset, width, height);
-#endif // _WIN32
   lfb_color_fmt = color_format;
   if (origin_location != GR_ORIGIN_UPPER_LEFT) display_warning("origin must be in upper left corner");
   if (nColBuffers != 2) display_warning("number of color buffer is not 2");
@@ -1224,7 +775,6 @@ grSstWinClose( GrContext_t context )
 #else
   //SDL_QuitSubSystem(SDL_INIT_VIDEO);
   //sleep(2);
-  m_pScreen = NULL;
 #endif
   return FXTRUE;
 }
@@ -2086,6 +1636,9 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
 {
+//  printf("rendercallback is %p\n", renderCallback);
+  if(renderCallback)
+      (*renderCallback)();
   int i;
   LOG("grBufferSwap(%d)\r\n", swap_interval);
   //printf("swap\n");
@@ -2094,11 +1647,7 @@ grBufferSwap( FxU32 swap_interval )
     return;
   }
 
-#ifdef _WIN32
-  SwapBuffers(wglGetCurrentDC());
-#else // _WIN32
-  SDL_GL_SwapBuffers();
-#endif // _WIN32
+  CoreVideo_GL_SwapBuffers();
   for (i = 0; i < nb_fb; i++)
     fbs[i].buff_clear = 1;
 
@@ -2440,19 +1989,27 @@ grLfbWriteRegion( GrBuffer_t dst_buffer,
 FX_ENTRY char ** FX_CALL
 grQueryResolutionsExt(FxI32 * Size)
 {
+  return 0;
+/*
   LOG("grQueryResolutionsExt\r\n");
   return g_FullScreenResolutions.getResolutionsList(Size);
+*/
 }
 
 FX_ENTRY GrScreenResolution_t FX_CALL grWrapperFullScreenResolutionExt(FxU32* width, FxU32* height)
 {
+  return 0;
+/*
   LOG("grWrapperFullScreenResolutionExt\r\n");
   g_FullScreenResolutions.getResolution(config.res, width, height);
   return config.res;
+*/
 }
 
 FX_ENTRY FxBool FX_CALL grKeyPressedExt(FxU32 key)
 {
+  return 0;
+/*
 #ifdef _WIN32
   return (GetAsyncKeyState(key) & 0x8000);
 #else
@@ -2474,6 +2031,7 @@ FX_ENTRY FxBool FX_CALL grKeyPressedExt(FxU32 key)
     }
   }
 #endif
+*/
 }
 
 FX_ENTRY void FX_CALL grConfigWrapperExt(FxI32 resolution, FxI32 vram, FxBool fbo, FxBool aniso)
@@ -2732,7 +2290,7 @@ grTexMultibaseAddress( GrChipID_t       tmu,
   display_warning("grTexMultibaseAddress");
 }
 
-
+/*
 inline void MySleep(FxU32 ms)
 {
 #ifdef _WIN32
@@ -2741,6 +2299,7 @@ inline void MySleep(FxU32 ms)
   SDL_Delay(ms);
 #endif
 }
+*/
 
 #ifdef _WIN32
 static void CorrectGamma(LPVOID apGammaRamp)
@@ -2755,8 +2314,9 @@ static void CorrectGamma(LPVOID apGammaRamp)
 #else
 static void CorrectGamma(const FxU16 aGammaRamp[3][256])
 {
-  int res = SDL_SetGammaRamp(aGammaRamp[0], aGammaRamp[1], aGammaRamp[2]);
-  LOG("SDL_SetGammaRamp returned %d\r\n", res);
+  //TODO?
+  //int res = SDL_SetGammaRamp(aGammaRamp[0], aGammaRamp[1], aGammaRamp[2]);
+  //LOG("SDL_SetGammaRamp returned %d\r\n", res);
 }
 #endif
 
@@ -2774,12 +2334,15 @@ grLoadGammaTable( FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
     aGammaRamp[2][i] = (FxU16)((blue[i] << 8) & 0xFFFF);
   }
   CorrectGamma(aGammaRamp);
-  MySleep(1000); //workaround for Mupen64
+  //MySleep(1000); //workaround for Mupen64
 }
 
 FX_ENTRY void FX_CALL
 grGetGammaTableExt(FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
 {
+  return;
+  //TODO?
+  /*
   LOG("grGetGammaTableExt()\r\n");
   FxU16 aGammaRamp[3][256];
 #ifdef _WIN32
@@ -2800,6 +2363,7 @@ grGetGammaTableExt(FxU32 nentries, FxU32 *red, FxU32 *green, FxU32 *blue)
       blue[i] = aGammaRamp[2][i] >> 8;
     }
   }
+  */
 }
 
 FX_ENTRY void FX_CALL
@@ -2844,7 +2408,22 @@ void grTexChromaModeExt(GrChipID_t tmu, GrChromakeyMode_t mode)
   display_warning("grTexChromaRangeModeExt");
 }
 
+static void (*l_DebugCallback)(void *, int, const char *) = NULL;
+static void *l_DebugCallContext = NULL;
 
+void WriteLog(m64p_msg_level level, const char *msg, ...)
+{
+  char buf[1024];
+  va_list args;
+  va_start(args, msg);
+  vsnprintf(buf, 1023, msg, args);
+  buf[1023]='\0';
+  va_end(args);
+  if (l_DebugCallback)
+  {
+    l_DebugCallback(l_DebugCallContext, level, buf);
+  }
+}
 
 // VP debug
 #ifdef VPDEBUG
