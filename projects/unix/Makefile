@@ -59,6 +59,12 @@ ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   SO_EXTENSION = so
   SHARED = -shared
 endif
+ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
+  OS = MINGW
+  SO_EXTENSION = dll
+  SHARED = -shared
+  CC = gcc
+endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
@@ -240,8 +246,13 @@ OBJDIR = _obj
 SOURCE = \
 	$(SRCDIR)/plugin.c \
 	$(SRCDIR)/autoconfig.c \
-	$(SRCDIR)/config.c \
-	$(SRCDIR)/osal_dynamiclib_unix.c
+	$(SRCDIR)/config.c
+
+ifeq ($(OS),MINGW)
+SOURCE += $(SRCDIR)/osal_dynamiclib_win32.c
+else
+SOURCE += $(SRCDIR)/osal_dynamiclib_unix.c
+endif
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
