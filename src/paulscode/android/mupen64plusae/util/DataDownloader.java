@@ -85,7 +85,7 @@ public class DataDownloader extends Thread
         {
             if( downloadFiles[i].length() > 0 )
                 if( !downloadDataFile( downloadFiles[i],
-                        "libsdl-DownloadFinished-" + String.valueOf( i ) + ".flag" ) )
+                        "libsdl-DownloadFinished-" + i + ".flag" ) )
                 {
                     mDownloadFailed = true;
                     return;

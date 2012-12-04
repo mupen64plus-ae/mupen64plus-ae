@@ -37,7 +37,7 @@ public class Prompt
     /**
      * The listener interface for receiving a file selected by the user.
      * 
-     * @see promptFile
+     * @see Prompt#promptFile
      */
     public interface OnFileListener
     {
@@ -53,7 +53,7 @@ public class Prompt
     /**
      * The listener interface for receiving text provided by the user.
      * 
-     * @see promptText
+     * @see Prompt#promptText
      */
     public interface OnTextListener
     {
