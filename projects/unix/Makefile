@@ -45,6 +45,10 @@ endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
 endif
+ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
+  OS = MINGW
+  CC = gcc
+endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
 endif
@@ -90,8 +94,15 @@ endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
-CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -pthread -I../../src
-LDLIBS += -pthread
+
+CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -I../../src
+ifeq ($(OS), MINGW)
+  CFLAGS += -lpthread
+  LDLIBS += -lpthread
+else
+  CFLAGS += -pthread
+  LDLIBS += -pthread
+endif
 
 ifeq ($(PIE), 1)
   CFLAGS += -fPIE
@@ -117,6 +128,13 @@ ifeq ($(OS), OSX)
       LDFLAGS += -arch i686
     endif
   endif
+endif
+
+ifeq ($(OS), MINGW)
+  # Do NOT include SDL_main for Windows; we are building a console app!
+  # NO -mwindows either!  (it will still be a valid 32-bit Windows program)
+  CFLAGS += -I/usr/local/include/SDL -D_GNU_SOURCE=1
+  LDLIBS += -L/usr/local/lib -lmingw32 -lSDL
 endif
 
 ifeq ($(BIG_ENDIAN), 1)
@@ -203,15 +221,29 @@ endif
 SRCDIR = ../../src
 OBJDIR = _obj
 
+ifeq ("$(OS)","MINGW")
+  EXEEXT = .exe
+else
+  EXEEXT =
+endif
+
 # list of source files to compile
 SOURCE = \
 	$(SRCDIR)/cheat.c \
 	$(SRCDIR)/compare_core.c \
 	$(SRCDIR)/core_interface.c \
 	$(SRCDIR)/main.c \
-	$(SRCDIR)/plugin.c \
+	$(SRCDIR)/plugin.c
+
+ifeq ($(OS), MINGW)
+SOURCE += \
+	$(SRCDIR)/osal_dynamiclib_win32.c \
+	$(SRCDIR)/osal_files_win32.c
+else
+SOURCE += \
 	$(SRCDIR)/osal_dynamiclib_unix.c \
 	$(SRCDIR)/osal_files_unix.c
+endif
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
@@ -249,7 +281,7 @@ targets:
 all: $(TARGET)
 
 clean:
-	$(RM) -r ./_obj $(TARGET)
+	$(RM) -r ./_obj $(TARGET)$(EXEEXT)
 
 rebuild: clean all
 
