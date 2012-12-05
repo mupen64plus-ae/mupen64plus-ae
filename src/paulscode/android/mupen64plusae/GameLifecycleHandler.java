@@ -98,9 +98,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         mActivity = activity;
         mControllers = new ArrayList<AbstractController>();
-        mIsXperiaPlay = activity instanceof GameActivityXperiaPlay;
+        mIsXperiaPlay = !( activity instanceof GameActivity );
     }
-    
+
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
