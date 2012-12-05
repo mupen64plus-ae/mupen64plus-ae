@@ -19,7 +19,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.os.Build;
 
@@ -31,9 +30,6 @@ public class Globals
 {
     /** Read-only accessor for user preferences. */
     public static UserPrefs userPrefs;
-    
-    /** Persistent application state and data. */
-    public static AppData appData;
     
     /** True if device is running Eclair or later (Android 2.0.x) */
     public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;

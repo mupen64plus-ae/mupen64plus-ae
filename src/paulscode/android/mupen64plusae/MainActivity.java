@@ -43,6 +43,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
     private TextView mTextView = null;
     private DataDownloader mDownloader = null;
     private Paths mPaths = null;
+    private AppData mAppData = null;
     
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -51,7 +52,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         
         // Get persisted system settings
         mPaths = new Paths( this );
-        Globals.appData = new AppData( this, mPaths.appDataFilename );
+        mAppData = new AppData( this, mPaths.appDataFilename );
         
         // Initialize the error logger
         ErrorLogger.initialize( mPaths.error_log );
@@ -96,7 +97,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         mDownloader = null;
         
         // Record that the update completed
-        Globals.appData.setUpgradedVer19( true );
+        mAppData.setUpgradedVer19( true );
         
         // Restore saves if they were backed up:
         File savesBak = new File( mPaths.savesBackupDir );

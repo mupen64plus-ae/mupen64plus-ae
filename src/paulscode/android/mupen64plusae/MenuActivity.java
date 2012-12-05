@@ -59,7 +59,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2N64 = "categoryGles2N64";
     
+    // App data
     private Paths mPaths = null;
+    private AppData mAppData = null;
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -67,12 +69,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         super.onCreate( savedInstanceState );
 
-        // Refresh path and app data objects if not already loaded
+        // Get app data
         mPaths = new Paths( this );
-        Globals.appData = new AppData( this, mPaths.appDataFilename );
+        mAppData = new AppData( this, mPaths.appDataFilename );
         
         // Disable the Xperia PLAY plugin as necessary
-        if( !Globals.appData.hardwareInfo.isXperiaPlay )
+        if( !mAppData.hardwareInfo.isXperiaPlay )
         {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
             prefs.edit().putBoolean( XPERIA_ENABLED, false ).commit();
@@ -90,7 +92,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         findPreference( MENU_PERIPHERAL_INFO ).setOnPreferenceClickListener( this );
         
         // Hide the Xperia PLAY menu items as necessary
-        if( !Globals.appData.hardwareInfo.isXperiaPlay )
+        if( !mAppData.hardwareInfo.isXperiaPlay )
         {
             PreferenceScreen screen = (PreferenceScreen) findPreference( TOUCHSCREEN );
             screen.removePreference( findPreference( XPERIA_ENABLED) );

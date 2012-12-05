@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.input.map.InputMap;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -73,6 +74,7 @@ public class CoreInterface
     private static Object sAudioBuffer;
     private static String sExtraArgs = "";
     private static Paths sPaths = null;
+    private static AppData sAppData = null;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
@@ -80,6 +82,7 @@ public class CoreInterface
         sSurface = surface;
         sVibrator = vibrator;
         sPaths = new Paths( sActivity );
+        sAppData = new AppData( sActivity, sPaths.appDataFilename );
         syncConfigFiles( Globals.userPrefs, sPaths );
     }
     
@@ -101,6 +104,11 @@ public class CoreInterface
     public static void flipEGL()
     {
         sSurface.flipEGL();
+    }
+    
+    public static int getHardwareType()
+    {
+        return sAppData.hardwareInfo.hardwareType;
     }
     
     public static Object getDataDir()
