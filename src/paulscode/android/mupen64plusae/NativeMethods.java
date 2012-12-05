@@ -122,7 +122,7 @@ public class NativeMethods
     
     public static boolean getAutoFrameSkip()
     {
-        return UserPrefs.sSingleton.isGles2N64AutoFrameskipEnabled;
+        return UserPrefs.get().isGles2N64AutoFrameskipEnabled;
     }
     
     public static Object getDataDir()
@@ -142,7 +142,7 @@ public class NativeMethods
     
     public static int getMaxFrameSkip()
     {
-        return UserPrefs.sSingleton.gles2N64MaxFrameskip;
+        return UserPrefs.get().gles2N64MaxFrameskip;
     }
     
     public static Object getROMPath()
@@ -152,7 +152,7 @@ public class NativeMethods
     
     public static boolean getScreenStretch()
     {
-        return UserPrefs.sSingleton.isStretched;
+        return UserPrefs.get().isStretched;
     }
     
     public static void setActivityTitle( String title )
@@ -167,7 +167,7 @@ public class NativeMethods
     
     public static boolean useRGBA8888()
     {
-        return UserPrefs.sSingleton.isRgba8888;
+        return UserPrefs.get().isRgba8888;
     }
     
     public static void vibrate( boolean active )

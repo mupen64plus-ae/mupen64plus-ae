@@ -240,7 +240,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             
             // @formatter:off
             int[] configSpec;
-            if( UserPrefs.sSingleton.isRgba8888 )
+            if( UserPrefs.get().isRgba8888 )
             {
                 configSpec = new int[]
                         { 

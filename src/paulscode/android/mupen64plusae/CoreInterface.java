@@ -80,7 +80,7 @@ public class CoreInterface
         sSurface = surface;
         sVibrator = vibrator;
         sAppData = new AppData( sActivity );
-        syncConfigFiles( UserPrefs.sSingleton, sAppData );
+        syncConfigFiles( UserPrefs.get(), sAppData );
     }
     
     public static String getExtraArgs()
@@ -115,7 +115,7 @@ public class CoreInterface
     
     public static Object getRomPath()
     {
-        String selectedGame = UserPrefs.sSingleton.selectedGame;
+        String selectedGame = UserPrefs.get().selectedGame;
         boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
         boolean isSelectedGameZipped = !isSelectedGameNull
                 && selectedGame.length() > 3

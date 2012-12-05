@@ -46,7 +46,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     {
         // Set the new TouchMap
         mTouchMap = touchMap;
-        mRefreshPeriod = UserPrefs.sSingleton.touchscreenRefresh;
+        mRefreshPeriod = UserPrefs.get().touchscreenRefresh;
         mRefreshEnabled = mRefreshPeriod > 0;
     }
     
@@ -101,7 +101,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         mTouchMap.drawAnalog( canvas );
         
         // Redraw the dynamic frame rate info
-        if( UserPrefs.sSingleton.isFpsEnabled )
+        if( UserPrefs.get().isFpsEnabled )
             mTouchMap.drawFps( canvas );
     }
 }

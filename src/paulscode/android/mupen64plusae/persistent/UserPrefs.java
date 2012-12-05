@@ -25,14 +25,15 @@ import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
  * <p>
- * An instance of this class should be re-constructed every time a preference value changes, from a
- * android.content.SharedPreferences.OnSharedPreferenceChangeListener. A good place to implement the
- * listener is in your PreferenceActivity subclass.
+ * The static method {@link #refresh(Context)} should be called every time a preference value
+ * changes, from an {@link OnSharedPreferenceChangeListener}. A good place to implement the listener
+ * is in your PreferenceActivity subclass.
  * <p>
  * <b>Developers:</b> After creating a preference in /res/xml/preferences.xml, you are encouraged to
  * provide convenient access to it by expanding this class. Although this adds an extra step to
@@ -47,10 +48,10 @@ import android.preference.PreferenceManager;
  * }
  * </pre>
  * 
- * If you didn't use this class, you would need to search through the entire codebase for every call
- * to getString( "myOldKey", ... ) and update each one. This class also ensures that the same
- * fallback value will be used everywhere. A third advantage is that you can easily provide
- * frequently-used "derived" preferences, as in
+ * Without this class, you would need to search through the entire code base for every call to
+ * getString( "myOldKey", ... ) and update each one. This class also ensures that the same fallback
+ * value will be used everywhere. A third advantage is that you can easily provide frequently-used
+ * "derived" preferences, as in
  * 
  * <pre>
  * {@code
@@ -64,13 +65,13 @@ import android.preference.PreferenceManager;
  */
 public class UserPrefs
 {
-    /** Read-only accessor for user preferences. */
-    public static UserPrefs sSingleton;
-
     /** The filename of the ROM selected by the user. */
     public final String selectedGame;
     
-    /** The directory containing game save files. */
+    /** The filename of the auto-saved session of the ROM selected by the user. */
+    public final String selectedGameAutoSavefile;
+    
+    /** The directory containing manual save files. */
     public final String gameSaveDir;
     
     /** The directory containing slot save files. */
@@ -78,9 +79,6 @@ public class UserPrefs
     
     /** The directory containing auto save files. */
     public final String autoSaveDir;
-    
-    /** The filename of the auto-saved session of the ROM selected by the user. */
-    public final String selectedGameAutoSavefile;
     
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
@@ -109,7 +107,7 @@ public class UserPrefs
     /** True if a custom touchscreen is provided. */
     public final boolean isTouchscreenCustom;
     
-    /** The number of frames over which touchscreen is redrawn (0 = disabled) */
+    /** The number of frames over which touchscreen is redrawn (0 = disabled). */
     public final int touchscreenRefresh;
     
     /** True if the touchscreen is redrawn periodically. */
@@ -139,16 +137,16 @@ public class UserPrefs
     /** The screen orientation for the game activity. */
     public final int screenOrientation;
     
-    /** The number of frames over which FPS is calculated (0 = disabled) */
+    /** The number of frames over which FPS is calculated (0 = disabled). */
     public final int fpsRefresh;
     
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
     
-    /** True if the left and right audio channels are swapped */
+    /** True if the left and right audio channels are swapped. */
     public final boolean swapChannels;
     
-    /** The audio resampling algorithm to use */
+    /** The audio resampling algorithm to use. */
     public final String audioResamplingAlg;
     
     /** True if the video should be stretched. */
@@ -196,19 +194,42 @@ public class UserPrefs
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
-    /** The object used to retrieve the settings. */
+    /**
+     * Refreshes the preferences wrapper.
+     * 
+     * @param context The application context.
+     * @see UserPrefs#get()
+     */
+    public static void refresh( Context context )
+    {
+        sSingleton = new UserPrefs( context );
+    }
+    
+    /**
+     * @return The preferences wrapper.
+     * @see UserPrefs#refresh(Context)
+     */
+    public static UserPrefs get()
+    {
+        return sSingleton;
+    }
+    
+    /** Singleton object for wrapping user preferences. */
+    private static UserPrefs sSingleton;
+
+    /** The object used to retrieve the preference data. */
     private final SharedPreferences mPreferences;
 
     /**
-     * Instantiates a new UserPrefs object to retrieve user preferences.
+     * Instantiates a new user preferences wrapper.
      * 
      * @param context The application context.
-     * @param appData The persistent application data.
      */
-    public UserPrefs( Context context, AppData appData )
+    private UserPrefs( Context context )
     {
+        AppData appData = new AppData( context );
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
-
+        
         // Files
         selectedGame = mPreferences.getString( "selectedGame", "" );
         gameSaveDir = mPreferences.getString( "gameSaveDir", appData.defaultSavesDir );
@@ -220,13 +241,13 @@ public class UserPrefs
         // Create directories, if necessary
         ( new File( slotSaveDir ) ).mkdirs();
         ( new File( autoSaveDir ) ).mkdirs();
-
+        
         // Plug-ins
         videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
         inputPlugin = new Plugin( mPreferences, appData.libsDir, "inputPlugin" );
-        rspPlugin   = new Plugin( mPreferences, appData.libsDir, "rspPlugin" );
-        corePlugin  = new Plugin( mPreferences, appData.libsDir, "corePlugin" );
+        rspPlugin = new Plugin( mPreferences, appData.libsDir, "rspPlugin" );
+        corePlugin = new Plugin( mPreferences, appData.libsDir, "corePlugin" );
         
         // Xperia PLAY prefs
         isXperiaEnabled = mPreferences.getBoolean( "xperiaEnabled", false );
@@ -247,8 +268,8 @@ public class UserPrefs
         isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", false );
         
         // Audio prefs
-        swapChannels = mPreferences.getBoolean("swapAudioChannels", false);
-        audioResamplingAlg = mPreferences.getString("resamplingAlgs", "trivial");
+        swapChannels = mPreferences.getBoolean( "swapAudioChannels", false );
+        audioResamplingAlg = mPreferences.getString( "resamplingAlgs", "trivial" );
         
         // Video prefs
         screenOrientation = getSafeInt( mPreferences, "screenOrientation", 0 );
@@ -303,6 +324,26 @@ public class UserPrefs
     }
     
     /**
+     * Gets the selected value of a ListPreference, as an integer.
+     * 
+     * @param preferences The object containing the ListPreference.
+     * @param key The key of the ListPreference.
+     * @param defaultValue The value to use if parsing fails.
+     * @return The value of the selected entry, as an integer.
+     */
+    private static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )
+    {
+        try
+        {
+            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
+        }
+        catch( NumberFormatException ex )
+        {
+            return defaultValue;
+        }
+    }
+
+    /**
      * A tiny class containing inter-dependent plug-in information.
      */
     public static class Plugin
@@ -321,33 +362,13 @@ public class UserPrefs
          * 
          * @param prefs The shared preferences containing plug-in information.
          * @param libsDir The directory containing the plug-in file.
-         * @param key The shared preference key for the plugin.
+         * @param key The shared preference key for the plug-in.
          */
         public Plugin( SharedPreferences prefs, String libsDir, String key )
         {
             name = prefs.getString( key, "" );
             enabled = ( name != null && !name.equals( "" ) );
             path = enabled ? libsDir + name : "dummy";
-        }
-    }
-    
-    /**
-     * Gets the selected value of a ListPreference, as an integer.
-     * 
-     * @param preferences the object containing the ListPreference
-     * @param key the key of the ListPreference
-     * @param defaultValue the value to use if parsing fails
-     * @return the value of the selected entry, as an integer
-     */
-    private static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )
-    {
-        try
-        {
-            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
-        }
-        catch( NumberFormatException ex )
-        {
-            return defaultValue;
         }
     }
 }

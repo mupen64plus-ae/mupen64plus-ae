@@ -93,7 +93,7 @@ public class GameMenuHandler
                 //////
                 //  paulscode: temporary workaround for ASDP bug after emulator shuts down
                   Notifier.showToast( mActivity, R.string.toast_savingSession );
-                  NativeMethods.fileSaveEmulator( UserPrefs.sSingleton.selectedGameAutoSavefile );
+                  NativeMethods.fileSaveEmulator( UserPrefs.get().selectedGameAutoSavefile );
                   try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
                   for( int c = 0; NativeMethods.stateEmulator() == 3 && c < 120;  c++ )
                   {
@@ -174,7 +174,7 @@ public class GameMenuHandler
     {
         NativeMethods.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.ingameLoad_title );
-        File startPath = new File( UserPrefs.sSingleton.gameSaveDir );
+        File startPath = new File( UserPrefs.get().gameSaveDir );
         Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
         {
             @Override
@@ -189,7 +189,7 @@ public class GameMenuHandler
     
     private void saveState( final String filename )
     {
-        final File file = new File( UserPrefs.sSingleton.gameSaveDir + "/" + filename );
+        final File file = new File( UserPrefs.get().gameSaveDir + "/" + filename );
         if( file.exists() )
         {
             String title = mActivity.getString( R.string._confirmation );
