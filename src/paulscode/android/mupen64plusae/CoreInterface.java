@@ -73,6 +73,7 @@ public class CoreInterface
     private static Object sAudioBuffer;
     private static String sExtraArgs = "";
     private static AppData sAppData = null;
+    private static UserPrefs sUserPrefs = null;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
@@ -80,7 +81,8 @@ public class CoreInterface
         sSurface = surface;
         sVibrator = vibrator;
         sAppData = new AppData( sActivity );
-        syncConfigFiles( UserPrefs.get(), sAppData );
+        sUserPrefs = new UserPrefs( sActivity );
+        syncConfigFiles( sUserPrefs, sAppData );
     }
     
     public static String getExtraArgs()
@@ -103,6 +105,34 @@ public class CoreInterface
         sSurface.flipEGL();
     }
     
+    public static boolean getAutoFrameSkip()
+    {
+        return sUserPrefs.isGles2N64AutoFrameskipEnabled;
+    }
+    
+    public static int getMaxFrameSkip()
+    {
+        return sUserPrefs.gles2N64MaxFrameskip;
+    }
+    
+    public static boolean getScreenStretch()
+    {
+        return sUserPrefs.isStretched;
+    }
+    
+    public static Object getFramelimiter()
+    {
+        if( sUserPrefs.isFramelimiterEnabled )
+            return "";
+        else
+            return "--nospeedlimit";
+    }
+
+    public static boolean useRGBA8888()
+    {
+        return sUserPrefs.isRgba8888;
+    }
+    
     public static int getHardwareType()
     {
         return sAppData.hardwareInfo.hardwareType;
@@ -112,18 +142,10 @@ public class CoreInterface
     {
         return sAppData.dataDir;
     }
-	
-	public static Object getFramelimiter()
-	{
-		if( UserPrefs.get().isFramelimiterEnabled )
-			return "";
-		else
-			return "--nospeedlimit";
-    }
-	
+    
     public static Object getRomPath()
     {
-        String selectedGame = UserPrefs.get().selectedGame;
+        String selectedGame = sUserPrefs.selectedGame;
         boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
         boolean isSelectedGameZipped = !isSelectedGameNull
                 && selectedGame.length() > 3

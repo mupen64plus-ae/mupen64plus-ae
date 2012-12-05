@@ -19,6 +19,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
 import android.os.Bundle;
@@ -29,12 +30,11 @@ import android.view.MenuItem;
 public class GameActivityXperiaPlay extends NativeActivity
 {
     private final GameLifecycleHandler mLifecycleHandler;
-    private final GameMenuHandler mMenuHandler;
+    private GameMenuHandler mMenuHandler;
     
     public GameActivityXperiaPlay()
     {
         mLifecycleHandler = new GameLifecycleHandler( this );
-        mMenuHandler = new GameMenuHandler( this );
     }
     
     @Override
@@ -54,6 +54,9 @@ public class GameActivityXperiaPlay extends NativeActivity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
+        UserPrefs userPrefs = new UserPrefs( this );
+        mMenuHandler = new GameMenuHandler( this, userPrefs.gameSaveDir, userPrefs.selectedGameAutoSavefile );
+
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
         mLifecycleHandler.onCreateEnd( savedInstanceState );

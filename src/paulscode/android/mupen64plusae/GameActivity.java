@@ -19,6 +19,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -27,12 +28,11 @@ import android.view.MenuItem;
 public class GameActivity extends Activity
 {
     private final GameLifecycleHandler mLifecycleHandler;
-    private final GameMenuHandler mMenuHandler;
+    private GameMenuHandler mMenuHandler;
     
     public GameActivity()
     {
         mLifecycleHandler = new GameLifecycleHandler( this );
-        mMenuHandler = new GameMenuHandler( this );
     }
     
     @Override
@@ -52,6 +52,9 @@ public class GameActivity extends Activity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
+        UserPrefs userPrefs = new UserPrefs( this );
+        mMenuHandler = new GameMenuHandler( this, userPrefs.gameSaveDir, userPrefs.selectedGameAutoSavefile );
+
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
         mLifecycleHandler.onCreateEnd( savedInstanceState );

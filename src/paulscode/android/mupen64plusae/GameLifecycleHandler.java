@@ -96,8 +96,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private boolean mCoreRunning = false;
     private final boolean mIsXperiaPlay;
     
-    // App data
+    // App data and user preferences
     private AppData mAppData;
+    private UserPrefs mUserPrefs;
     
     public GameLifecycleHandler( Activity activity )
     {
@@ -109,8 +110,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
-        // Get app data
+        // Get app data and user preferences
         mAppData = new AppData( mActivity );
+        mUserPrefs = new UserPrefs( mActivity );
         
         // Load native libraries
         if( mIsXperiaPlay )
@@ -118,10 +120,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
-        FileUtil.loadNativeLib( UserPrefs.get().videoPlugin.path );
-        FileUtil.loadNativeLib( UserPrefs.get().audioPlugin.path );
-        FileUtil.loadNativeLib( UserPrefs.get().inputPlugin.path );
-        FileUtil.loadNativeLib( UserPrefs.get().rspPlugin.path );
+        FileUtil.loadNativeLib( mUserPrefs.videoPlugin.path );
+        FileUtil.loadNativeLib( mUserPrefs.audioPlugin.path );
+        FileUtil.loadNativeLib( mUserPrefs.inputPlugin.path );
+        FileUtil.loadNativeLib( mUserPrefs.rspPlugin.path );
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
@@ -138,7 +140,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Set the screen orientation
-        mActivity.setRequestedOrientation( UserPrefs.get().screenOrientation );        
+        mActivity.setRequestedOrientation( mUserPrefs.screenOrientation );        
     }
     
     @TargetApi( 11 )
@@ -164,18 +166,18 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
         
         // Initialize the screen elements
-        if( UserPrefs.get().isTouchscreenEnabled || UserPrefs.get().isFpsEnabled )
+        if( mUserPrefs.isTouchscreenEnabled || mUserPrefs.isFpsEnabled )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    UserPrefs.get().isFpsEnabled, mAppData.fontsDir );
-            mTouchscreenMap.load( UserPrefs.get().touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap );
+                    mUserPrefs.isFpsEnabled, mAppData.fontsDir );
+            mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
+            mOverlay.initialize( mTouchscreenMap, mUserPrefs.touchscreenRefresh, mUserPrefs.isFpsEnabled );
         }
         
         // Initialize user interface devices
         View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
-        if( UserPrefs.get().inputPlugin.enabled )
+        if( mUserPrefs.inputPlugin.enabled )
             initControllers( inputSource );
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
 
@@ -183,7 +185,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         inputSource.setOnKeyListener( this );
         
         // Start listening to game surface events
-        mSurface.setListeners( this, mOverlay, UserPrefs.get().fpsRefresh );
+        mSurface.init( this, mOverlay, mUserPrefs.fpsRefresh, mUserPrefs.isRgba8888 );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
@@ -194,7 +196,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         if( mCoreRunning )
         {
             Notifier.showToast( mActivity, R.string.toast_loadingSession );
-            NativeMethods.fileLoadEmulator( UserPrefs.get().selectedGameAutoSavefile );
+            NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
             NativeMethods.resumeEmulator();
         }
     }
@@ -205,7 +207,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             NativeMethods.pauseEmulator();
             Notifier.showToast( mActivity, R.string.toast_savingSession );
-            NativeMethods.fileSaveEmulator( UserPrefs.get().selectedGameAutoSavefile );
+            NativeMethods.fileSaveEmulator( mUserPrefs.selectedGameAutoSavefile );
         }
     }
     
@@ -214,7 +216,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         mCoreRunning = true;
         Notifier.showToast( mActivity, R.string.toast_loadingSession );
-        NativeMethods.fileLoadEmulator( UserPrefs.get().selectedGameAutoSavefile );
+        NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
         NativeMethods.resumeEmulator();
     }
     
@@ -244,7 +246,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
         
         // Let Android handle the volume keys if not used for control
-        else if( !UserPrefs.get().isVolKeysEnabled
+        else if( !mUserPrefs.isVolKeysEnabled
                 && ( keyCode == KeyEvent.KEYCODE_VOLUME_UP
                         || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
             return false;
@@ -266,12 +268,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             // Create the map for the touchpad
             TouchMap touchpadMap = new TouchMap( mActivity.getResources() );
-            touchpadMap.load( UserPrefs.get().xperiaLayout );
+            touchpadMap.load( mUserPrefs.xperiaLayout );
             touchpadMap.resize( NativeInputSource.PAD_WIDTH, NativeInputSource.PAD_HEIGHT );
             
             // Create the touchpad controller
             touchpadController = new TouchController( touchpadMap, inputSource,
-                    null, UserPrefs.get().isOctagonalJoystick );            
+                    null, mUserPrefs.isOctagonalJoystick );            
             mControllers.add( touchpadController );
 
             // Filter by source identifier
@@ -279,11 +281,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
         
         // Create the touchscreen controls
-        if( UserPrefs.get().isTouchscreenEnabled )
+        if( mUserPrefs.isTouchscreenEnabled )
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, UserPrefs.get().isOctagonalJoystick );
+                    inputSource, mOverlay, mUserPrefs.isOctagonalJoystick );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...
@@ -305,24 +307,24 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1 ? new AxisProvider( inputSource ) : null;
         
         // Create the peripheral controls to handle key/stick presses
-        if( UserPrefs.get().inputMap1.isEnabled() )
+        if( mUserPrefs.inputMap1.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 1, UserPrefs.get().inputMap1,
+            mControllers.add( new PeripheralController( 1, mUserPrefs.inputMap1,
                     mKeyProvider, axisProvider ) );
         }
-        if( UserPrefs.get().inputMap2.isEnabled() )
+        if( mUserPrefs.inputMap2.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 2, UserPrefs.get().inputMap2,
+            mControllers.add( new PeripheralController( 2, mUserPrefs.inputMap2,
                     mKeyProvider, axisProvider ) );
         }
-        if( UserPrefs.get().inputMap3.isEnabled() )
+        if( mUserPrefs.inputMap3.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 3, UserPrefs.get().inputMap3,
+            mControllers.add( new PeripheralController( 3, mUserPrefs.inputMap3,
                     mKeyProvider, axisProvider ) );
         }
-        if( UserPrefs.get().inputMap4.isEnabled() )
+        if( mUserPrefs.inputMap4.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 4, UserPrefs.get().inputMap4,
+            mControllers.add( new PeripheralController( 4, mUserPrefs.inputMap4,
                     mKeyProvider, axisProvider ) );
         }
     }

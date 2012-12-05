@@ -151,8 +151,8 @@ public class UserPrefs
     
     /** True if the video should be stretched. */
     public final boolean isStretched;
-	
-	/** True if framelimiter is used. */
+    
+    /** True if framelimiter is used. */
     public final boolean isFramelimiterEnabled;
     
     /** True if RGBA8888 mode should be used for video. */
@@ -193,52 +193,26 @@ public class UserPrefs
     
     /** True if fast texture loading is enabled in the gles2rice library. */
     public final boolean isGles2RiceFastTextureLoadingEnabled;
-	
-	/** True if force texture filter is enabled in the gles2rice library. */
+    
+    /** True if force texture filter is enabled in the gles2rice library. */
     public final boolean isGles2RiceForceTextureFilterEnabled;
     
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
     /**
-     * Refreshes the preferences wrapper.
-     * 
-     * @param context The application context.
-     * @see UserPrefs#get()
-     */
-    public static void refresh( Context context )
-    {
-        sSingleton = new UserPrefs( context );
-    }
-    
-    /**
-     * @return The preferences wrapper.
-     * @see UserPrefs#refresh(Context)
-     */
-    public static UserPrefs get()
-    {
-        return sSingleton;
-    }
-    
-    /** Singleton object for wrapping user preferences. */
-    private static UserPrefs sSingleton;
-
-    /** The object used to retrieve the preference data. */
-    private final SharedPreferences mPreferences;
-
-    /**
      * Instantiates a new user preferences wrapper.
      * 
      * @param context The application context.
      */
-    private UserPrefs( Context context )
+    public UserPrefs( Context context )
     {
         AppData appData = new AppData( context );
-        mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        SharedPreferences prefsData = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Files
-        selectedGame = mPreferences.getString( "selectedGame", "" );
-        gameSaveDir = mPreferences.getString( "gameSaveDir", appData.defaultSavesDir );
+        selectedGame = prefsData.getString( "selectedGame", "" );
+        gameSaveDir = prefsData.getString( "gameSaveDir", appData.defaultSavesDir );
         slotSaveDir = gameSaveDir + "/SlotSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         File game = new File( selectedGame );
@@ -249,77 +223,75 @@ public class UserPrefs
         ( new File( autoSaveDir ) ).mkdirs();
         
         // Plug-ins
-        videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );
-        audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
-        inputPlugin = new Plugin( mPreferences, appData.libsDir, "inputPlugin" );
-        rspPlugin = new Plugin( mPreferences, appData.libsDir, "rspPlugin" );
-        corePlugin = new Plugin( mPreferences, appData.libsDir, "corePlugin" );
+        videoPlugin = new Plugin( prefsData, appData.libsDir, "videoPlugin" );
+        audioPlugin = new Plugin( prefsData, appData.libsDir, "audioPlugin" );
+        inputPlugin = new Plugin( prefsData, appData.libsDir, "inputPlugin" );
+        rspPlugin = new Plugin( prefsData, appData.libsDir, "rspPlugin" );
+        corePlugin = new Plugin( prefsData, appData.libsDir, "corePlugin" );
         
         // Xperia PLAY prefs
-        isXperiaEnabled = mPreferences.getBoolean( "xperiaEnabled", false );
-        xperiaLayout = appData.xperiaPlayLayoutsDir + mPreferences.getString( "xperiaLayout", "" );
+        isXperiaEnabled = prefsData.getBoolean( "xperiaEnabled", false );
+        xperiaLayout = appData.xperiaPlayLayoutsDir + prefsData.getString( "xperiaLayout", "" );
         
         // Touchscreen prefs
-        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
+        isTouchscreenEnabled = prefsData.getBoolean( "touchscreenEnabled", true );
         // isTouchscreenCustom, touchscreenLayout: see below
-        touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
+        touchscreenRefresh = getSafeInt( prefsData, "touchscreenRefresh", 0 );
         isTouchscreenRefreshEnabled = touchscreenRefresh > 0;
-        isOctagonalJoystick = mPreferences.getBoolean( "touchscreenOctagonJoystick", true );
+        isOctagonalJoystick = prefsData.getBoolean( "touchscreenOctagonJoystick", true );
         
         // Peripheral prefs
-        inputMap1 = new InputMap( mPreferences.getString( "peripheralMap1", "" ) );
-        inputMap2 = new InputMap( mPreferences.getString( "peripheralMap2", "" ) );
-        inputMap3 = new InputMap( mPreferences.getString( "peripheralMap3", "" ) );
-        inputMap4 = new InputMap( mPreferences.getString( "peripheralMap4", "" ) );
-        isVolKeysEnabled = mPreferences.getBoolean( "volumeKeysEnabled", false );
+        inputMap1 = new InputMap( prefsData.getString( "peripheralMap1", "" ) );
+        inputMap2 = new InputMap( prefsData.getString( "peripheralMap2", "" ) );
+        inputMap3 = new InputMap( prefsData.getString( "peripheralMap3", "" ) );
+        inputMap4 = new InputMap( prefsData.getString( "peripheralMap4", "" ) );
+        isVolKeysEnabled = prefsData.getBoolean( "volumeKeysEnabled", false );
         
         // Audio prefs
-        swapChannels = mPreferences.getBoolean( "swapAudioChannels", false );
-        audioResamplingAlg = mPreferences.getString( "resamplingAlgs", "trivial" );
+        swapChannels = prefsData.getBoolean( "swapAudioChannels", false );
+        audioResamplingAlg = prefsData.getString( "resamplingAlgs", "trivial" );
         
         // Video prefs
-        screenOrientation = getSafeInt( mPreferences, "screenOrientation", 0 );
-        fpsRefresh = getSafeInt( mPreferences, "fpsRefresh", 0 );
+        screenOrientation = getSafeInt( prefsData, "screenOrientation", 0 );
+        fpsRefresh = getSafeInt( prefsData, "fpsRefresh", 0 );
         isFpsEnabled = fpsRefresh > 0;
-        isStretched = mPreferences.getBoolean( "videoStretch", false );
-		isFramelimiterEnabled = mPreferences.getBoolean( "useFramelimiter", false );
-        isRgba8888 = mPreferences.getBoolean( "videoRGBA8888", false );
+        isStretched = prefsData.getBoolean( "videoStretch", false );
+        isRgba8888 = prefsData.getBoolean( "videoRGBA8888", false );
+        isFramelimiterEnabled = prefsData.getBoolean( "useFramelimiter", false );
         
         // Video prefs - gles2n64
         isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
-        gles2N64MaxFrameskip = getSafeInt( mPreferences, "gles2N64Frameskip", -1 );
+        gles2N64MaxFrameskip = getSafeInt( prefsData, "gles2N64Frameskip", -1 );
         isGles2N64AutoFrameskipEnabled = ( gles2N64MaxFrameskip < 0 );
-        isGles2N64FogEnabled = mPreferences.getBoolean( "gles2N64Fog", false );
-        isGles2N64SaiEnabled = mPreferences.getBoolean( "gles2N64Sai", false );
-        isGles2N64ScreenClearEnabled = mPreferences.getBoolean( "gles2N64ScreenClear", true );
-        isGles2N64AlphaTestEnabled = mPreferences.getBoolean( "gles2N64AlphaTest", true );
-        isGles2N64DepthTestEnabled = mPreferences.getBoolean( "gles2N64DepthTest", true );
+        isGles2N64FogEnabled = prefsData.getBoolean( "gles2N64Fog", false );
+        isGles2N64SaiEnabled = prefsData.getBoolean( "gles2N64Sai", false );
+        isGles2N64ScreenClearEnabled = prefsData.getBoolean( "gles2N64ScreenClear", true );
+        isGles2N64AlphaTestEnabled = prefsData.getBoolean( "gles2N64AlphaTest", true );
+        isGles2N64DepthTestEnabled = prefsData.getBoolean( "gles2N64DepthTest", true );
         
         // Video prefs - gles2rice
         isGles2RiceEnabled = videoPlugin.name.equals( "libgles2rice.so" );
-        isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
-        isGles2RiceFastTextureCrcEnabled = mPreferences
-                .getBoolean( "gles2RiceFastTextureCRC", true );
-        isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture",
-                false );
-		isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
-        isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
+        isGles2RiceAutoFrameskipEnabled = prefsData.getBoolean( "gles2RiceAutoFrameskip", false );
+        isGles2RiceFastTextureCrcEnabled = prefsData.getBoolean( "gles2RiceFastTextureCRC", true );
+        isGles2RiceFastTextureLoadingEnabled = prefsData.getBoolean( "gles2RiceFastTexture", false );
+        isGles2RiceForceTextureFilterEnabled = prefsData.getBoolean( "gles2RiceForceTextureFilter", false );
+        isGles2RiceHiResTexturesEnabled = prefsData.getBoolean( "gles2RiceHiResTextures", true );
         
         // Touchscreen layouts
         boolean isCustom = false;
         String folder = "";
         if( inputPlugin.enabled && isTouchscreenEnabled )
         {
-            String layout = mPreferences.getString( "touchscreenLayout", "" );
+            String layout = prefsData.getString( "touchscreenLayout", "" );
             if( layout.equals( "Custom" ) )
             {
                 isCustom = true;
-                folder = mPreferences.getString( "touchscreenCustom", "" );
+                folder = prefsData.getString( "touchscreenCustom", "" );
             }
             else
             {
                 folder = appData.touchscreenLayoutsDir + layout
-                        + mPreferences.getString( "touchscreenSize", "" );
+                        + prefsData.getString( "touchscreenSize", "" );
             }
         }
         else if( isFpsEnabled )
@@ -350,7 +322,7 @@ public class UserPrefs
             return defaultValue;
         }
     }
-
+    
     /**
      * A tiny class containing inter-dependent plug-in information.
      */

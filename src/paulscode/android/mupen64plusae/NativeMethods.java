@@ -19,7 +19,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 
 /**
  * A class containing all bridging methods between Java and JNI, and nothing else.
@@ -122,7 +121,7 @@ public class NativeMethods
     
     public static boolean getAutoFrameSkip()
     {
-        return UserPrefs.get().isGles2N64AutoFrameskipEnabled;
+        return CoreInterface.getAutoFrameSkip();
     }
     
     public static Object getDataDir()
@@ -142,7 +141,7 @@ public class NativeMethods
     
     public static int getMaxFrameSkip()
     {
-        return UserPrefs.get().gles2N64MaxFrameskip;
+        return CoreInterface.getMaxFrameSkip();
     }
     
     public static Object getROMPath()
@@ -152,12 +151,12 @@ public class NativeMethods
     
     public static boolean getScreenStretch()
     {
-        return UserPrefs.get().isStretched;
+        return CoreInterface.getScreenStretch();
     }
-	
-	public static Object getFramelimiter()
+    
+    public static Object getFramelimiter()
     {
-		return CoreInterface.getFramelimiter();
+        return CoreInterface.getFramelimiter();
     }
     
     public static void setActivityTitle( String title )
@@ -172,7 +171,7 @@ public class NativeMethods
     
     public static boolean useRGBA8888()
     {
-        return UserPrefs.get().isRgba8888;
+        return CoreInterface.useRGBA8888();
     }
     
     public static void vibrate( boolean active )

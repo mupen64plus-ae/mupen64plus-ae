@@ -25,7 +25,6 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -71,6 +70,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     
     // Internal flags
     private boolean mBuffFlipped = false;
+    private boolean mIsRgba8888 = false;
     
     // EGL private objects
     private EGLSurface mEGLSurface;
@@ -87,12 +87,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         requestFocus();
     }
     
-    public void setListeners( CoreLifecycleListener clListener, OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
+    public void init( CoreLifecycleListener clListener, OnFpsChangedListener fpsListener, int fpsRecalcPeriod, boolean isRgba8888 )
     {
         mClListener = clListener;
         mFpsListener = fpsListener;
         mFpsRecalcPeriod = fpsRecalcPeriod;
         mIsFpsEnabled = mFpsRecalcPeriod > 0;
+        mIsRgba8888 = isRgba8888;
     }
 
     @Override
@@ -240,7 +241,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             
             // @formatter:off
             int[] configSpec;
-            if( UserPrefs.get().isRgba8888 )
+            if( mIsRgba8888 )
             {
                 configSpec = new int[]
                         { 

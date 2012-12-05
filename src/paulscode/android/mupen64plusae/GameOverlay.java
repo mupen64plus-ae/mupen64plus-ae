@@ -21,7 +21,6 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -34,20 +33,22 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
 {
     private VisibleTouchMap mTouchMap;
     private int mRefreshPeriod = 0;
-    private boolean mRefreshEnabled = false;
     private int mRefreshCount = 0;
+    private boolean mRefreshEnabled = false;
+    private boolean mFpsEnabled = false;
     
     public GameOverlay( Context context, AttributeSet attribs )
     {
         super( context, attribs );
     }
     
-    public void initialize( VisibleTouchMap touchMap )
+    public void initialize( VisibleTouchMap touchMap, int refreshPeriod, boolean fpsEnabled )
     {
         // Set the new TouchMap
         mTouchMap = touchMap;
-        mRefreshPeriod = UserPrefs.get().touchscreenRefresh;
+        mRefreshPeriod = refreshPeriod;
         mRefreshEnabled = mRefreshPeriod > 0;
+        mFpsEnabled = fpsEnabled;
     }
     
     @Override
@@ -101,7 +102,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         mTouchMap.drawAnalog( canvas );
         
         // Redraw the dynamic frame rate info
-        if( UserPrefs.get().isFpsEnabled )
+        if( mFpsEnabled )
             mTouchMap.drawFps( canvas );
     }
 }

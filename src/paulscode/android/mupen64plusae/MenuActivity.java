@@ -58,8 +58,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2N64 = "categoryGles2N64";
     
-    // App data
+    // App data and user preferences
     private AppData mAppData = null;
+    private UserPrefs mUserPrefs = null;
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -67,8 +68,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         super.onCreate( savedInstanceState );
 
-        // Get app data
+        // Get app data and user preferences
         mAppData = new AppData( this );
+        mUserPrefs = new UserPrefs( this );
         
         // Disable the Xperia PLAY plugin as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
@@ -81,7 +83,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         addPreferencesFromResource( R.xml.preferences );
         
         // Refresh the preference data wrapper
-        UserPrefs.refresh( this );
+        mUserPrefs = new UserPrefs( this );
         
         // Define the click callback for certain menu items that aren't actually preferences
         findPreference( MENU_RESUME ).setOnPreferenceClickListener( this );
@@ -102,7 +104,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     protected void onResume()
     {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        refreshViews( sharedPreferences, UserPrefs.get() );
+        refreshViews( sharedPreferences, mUserPrefs );
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
         super.onResume();
     }
@@ -133,7 +135,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             Notifier.showToast( this, R.string.toast_appStarted );
             
             // Launch the appropriate game activity
-            Intent intent = UserPrefs.get().isXperiaEnabled
+            Intent intent = mUserPrefs.isXperiaEnabled
                     ? new Intent( this, GameActivityXperiaPlay.class )
                     : new Intent( this, GameActivity.class );
             startActivity( intent );
@@ -169,15 +171,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         // Refresh the preference data wrapper
-        UserPrefs.refresh( this );
-        refreshViews( sharedPreferences, UserPrefs.get() );
+        mUserPrefs = new UserPrefs( this );
+        refreshViews( sharedPreferences, mUserPrefs );
     }
     
     @SuppressWarnings( "deprecation" )
     private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
     {
         // Determine which menu items should be enabled
-        boolean enableResume = new File( UserPrefs.get().selectedGame ).exists();
+        boolean enableResume = new File( mUserPrefs.selectedGame ).exists();
         boolean enableCustom = user.isTouchscreenEnabled && user.isTouchscreenCustom;
         boolean enableSize = user.isTouchscreenEnabled && !user.isTouchscreenCustom;
         
