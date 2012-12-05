@@ -32,6 +32,7 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -117,10 +118,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
-        FileUtil.loadNativeLib( Globals.userPrefs.videoPlugin.path );
-        FileUtil.loadNativeLib( Globals.userPrefs.audioPlugin.path );
-        FileUtil.loadNativeLib( Globals.userPrefs.inputPlugin.path );
-        FileUtil.loadNativeLib( Globals.userPrefs.rspPlugin.path );
+        FileUtil.loadNativeLib( UserPrefs.sSingleton.videoPlugin.path );
+        FileUtil.loadNativeLib( UserPrefs.sSingleton.audioPlugin.path );
+        FileUtil.loadNativeLib( UserPrefs.sSingleton.inputPlugin.path );
+        FileUtil.loadNativeLib( UserPrefs.sSingleton.rspPlugin.path );
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
@@ -137,7 +138,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Set the screen orientation
-        mActivity.setRequestedOrientation( Globals.userPrefs.screenOrientation );        
+        mActivity.setRequestedOrientation( UserPrefs.sSingleton.screenOrientation );        
     }
     
     @TargetApi( 11 )
@@ -163,18 +164,18 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
         
         // Initialize the screen elements
-        if( Globals.userPrefs.isTouchscreenEnabled || Globals.userPrefs.isFpsEnabled )
+        if( UserPrefs.sSingleton.isTouchscreenEnabled || UserPrefs.sSingleton.isFpsEnabled )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    Globals.userPrefs.isFpsEnabled, mAppData.fontsDir );
-            mTouchscreenMap.load( Globals.userPrefs.touchscreenLayout );
+                    UserPrefs.sSingleton.isFpsEnabled, mAppData.fontsDir );
+            mTouchscreenMap.load( UserPrefs.sSingleton.touchscreenLayout );
             mOverlay.initialize( mTouchscreenMap );
         }
         
         // Initialize user interface devices
         View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
-        if( Globals.userPrefs.inputPlugin.enabled )
+        if( UserPrefs.sSingleton.inputPlugin.enabled )
             initControllers( inputSource );
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
 
@@ -182,7 +183,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         inputSource.setOnKeyListener( this );
         
         // Start listening to game surface events
-        mSurface.setListeners( this, mOverlay, Globals.userPrefs.fpsRefresh );
+        mSurface.setListeners( this, mOverlay, UserPrefs.sSingleton.fpsRefresh );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
@@ -193,7 +194,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         if( mCoreRunning )
         {
             Notifier.showToast( mActivity, R.string.toast_loadingSession );
-            NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+            NativeMethods.fileLoadEmulator( UserPrefs.sSingleton.selectedGameAutoSavefile );
             NativeMethods.resumeEmulator();
         }
     }
@@ -204,7 +205,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             NativeMethods.pauseEmulator();
             Notifier.showToast( mActivity, R.string.toast_savingSession );
-            NativeMethods.fileSaveEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+            NativeMethods.fileSaveEmulator( UserPrefs.sSingleton.selectedGameAutoSavefile );
         }
     }
     
@@ -213,7 +214,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         mCoreRunning = true;
         Notifier.showToast( mActivity, R.string.toast_loadingSession );
-        NativeMethods.fileLoadEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+        NativeMethods.fileLoadEmulator( UserPrefs.sSingleton.selectedGameAutoSavefile );
         NativeMethods.resumeEmulator();
     }
     
@@ -243,7 +244,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
         
         // Let Android handle the volume keys if not used for control
-        else if( !Globals.userPrefs.isVolKeysEnabled
+        else if( !UserPrefs.sSingleton.isVolKeysEnabled
                 && ( keyCode == KeyEvent.KEYCODE_VOLUME_UP
                         || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
             return false;
@@ -265,12 +266,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             // Create the map for the touchpad
             TouchMap touchpadMap = new TouchMap( mActivity.getResources() );
-            touchpadMap.load( Globals.userPrefs.xperiaLayout );
+            touchpadMap.load( UserPrefs.sSingleton.xperiaLayout );
             touchpadMap.resize( NativeInputSource.PAD_WIDTH, NativeInputSource.PAD_HEIGHT );
             
             // Create the touchpad controller
             touchpadController = new TouchController( touchpadMap, inputSource,
-                    null, Globals.userPrefs.isOctagonalJoystick );            
+                    null, UserPrefs.sSingleton.isOctagonalJoystick );            
             mControllers.add( touchpadController );
 
             // Filter by source identifier
@@ -278,11 +279,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
         
         // Create the touchscreen controls
-        if( Globals.userPrefs.isTouchscreenEnabled )
+        if( UserPrefs.sSingleton.isTouchscreenEnabled )
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, Globals.userPrefs.isOctagonalJoystick );
+                    inputSource, mOverlay, UserPrefs.sSingleton.isOctagonalJoystick );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...
@@ -304,24 +305,24 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1 ? new AxisProvider( inputSource ) : null;
         
         // Create the peripheral controls to handle key/stick presses
-        if( Globals.userPrefs.inputMap1.isEnabled() )
+        if( UserPrefs.sSingleton.inputMap1.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 1, Globals.userPrefs.inputMap1,
+            mControllers.add( new PeripheralController( 1, UserPrefs.sSingleton.inputMap1,
                     mKeyProvider, axisProvider ) );
         }
-        if( Globals.userPrefs.inputMap2.isEnabled() )
+        if( UserPrefs.sSingleton.inputMap2.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 2, Globals.userPrefs.inputMap2,
+            mControllers.add( new PeripheralController( 2, UserPrefs.sSingleton.inputMap2,
                     mKeyProvider, axisProvider ) );
         }
-        if( Globals.userPrefs.inputMap3.isEnabled() )
+        if( UserPrefs.sSingleton.inputMap3.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 3, Globals.userPrefs.inputMap3,
+            mControllers.add( new PeripheralController( 3, UserPrefs.sSingleton.inputMap3,
                     mKeyProvider, axisProvider ) );
         }
-        if( Globals.userPrefs.inputMap4.isEnabled() )
+        if( UserPrefs.sSingleton.inputMap4.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 4, Globals.userPrefs.inputMap4,
+            mControllers.add( new PeripheralController( 4, UserPrefs.sSingleton.inputMap4,
                     mKeyProvider, axisProvider ) );
         }
     }

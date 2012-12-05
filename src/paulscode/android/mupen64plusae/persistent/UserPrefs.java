@@ -64,6 +64,9 @@ import android.preference.PreferenceManager;
  */
 public class UserPrefs
 {
+    /** Read-only accessor for user preferences. */
+    public static UserPrefs sSingleton;
+
     /** The filename of the ROM selected by the user. */
     public final String selectedGame;
     
@@ -195,7 +198,7 @@ public class UserPrefs
     
     /** The object used to retrieve the settings. */
     private final SharedPreferences mPreferences;
-    
+
     /**
      * Instantiates a new UserPrefs object to retrieve user preferences.
      * 

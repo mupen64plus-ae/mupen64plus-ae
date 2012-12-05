@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
@@ -92,7 +93,7 @@ public class GameMenuHandler
                 //////
                 //  paulscode: temporary workaround for ASDP bug after emulator shuts down
                   Notifier.showToast( mActivity, R.string.toast_savingSession );
-                  NativeMethods.fileSaveEmulator( Globals.userPrefs.selectedGameAutoSavefile );
+                  NativeMethods.fileSaveEmulator( UserPrefs.sSingleton.selectedGameAutoSavefile );
                   try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
                   for( int c = 0; NativeMethods.stateEmulator() == 3 && c < 120;  c++ )
                   {
@@ -173,7 +174,7 @@ public class GameMenuHandler
     {
         NativeMethods.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.ingameLoad_title );
-        File startPath = new File( Globals.userPrefs.gameSaveDir );
+        File startPath = new File( UserPrefs.sSingleton.gameSaveDir );
         Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
         {
             @Override
@@ -188,7 +189,7 @@ public class GameMenuHandler
     
     private void saveState( final String filename )
     {
-        final File file = new File( Globals.userPrefs.gameSaveDir + "/" + filename );
+        final File file = new File( UserPrefs.sSingleton.gameSaveDir + "/" + filename );
         if( file.exists() )
         {
             String title = mActivity.getString( R.string._confirmation );

@@ -19,7 +19,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 
 /**
  * Global settings and meta info. Generally just read-only convenience functions and debug options
@@ -27,8 +26,6 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
  */
 public class Globals
 {
-    /** Read-only accessor for user preferences. */
-    public static UserPrefs userPrefs;
 }
 
 /**

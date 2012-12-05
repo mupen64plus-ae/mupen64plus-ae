@@ -80,7 +80,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
         
-        Globals.userPrefs = new UserPrefs( this, mAppData );
+        UserPrefs.sSingleton = new UserPrefs( this, mAppData );
         
         // Define the click callback for certain menu items that aren't actually preferences
         findPreference( MENU_RESUME ).setOnPreferenceClickListener( this );
@@ -101,7 +101,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     protected void onResume()
     {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        refreshViews( sharedPreferences, Globals.userPrefs );
+        refreshViews( sharedPreferences, UserPrefs.sSingleton );
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
         super.onResume();
     }
@@ -132,7 +132,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             Notifier.showToast( this, R.string.toast_appStarted );
             
             // Launch the appropriate game activity
-            Intent intent = Globals.userPrefs.isXperiaEnabled
+            Intent intent = UserPrefs.sSingleton.isXperiaEnabled
                     ? new Intent( this, GameActivityXperiaPlay.class )
                     : new Intent( this, GameActivity.class );
             startActivity( intent );
@@ -168,15 +168,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         // Update the global convenience class
-        Globals.userPrefs = new UserPrefs( this, mAppData );
-        refreshViews( sharedPreferences, Globals.userPrefs );
+        UserPrefs.sSingleton = new UserPrefs( this, mAppData );
+        refreshViews( sharedPreferences, UserPrefs.sSingleton );
     }
     
     @SuppressWarnings( "deprecation" )
     private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
     {
         // Determine which menu items should be enabled
-        boolean enableResume = new File( Globals.userPrefs.selectedGame ).exists();
+        boolean enableResume = new File( UserPrefs.sSingleton.selectedGame ).exists();
         boolean enableCustom = user.isTouchscreenEnabled && user.isTouchscreenCustom;
         boolean enableSize = user.isTouchscreenEnabled && !user.isTouchscreenCustom;
         
