@@ -112,7 +112,15 @@ public class CoreInterface
     {
         return sAppData.dataDir;
     }
-    
+	
+	public static Object getFramelimiter()
+	{
+		if( UserPrefs.get().isFramelimiterEnabled )
+			return "";
+		else
+			return "--nospeedlimit";
+    }
+	
     public static Object getRomPath()
     {
         String selectedGame = UserPrefs.get().selectedGame;

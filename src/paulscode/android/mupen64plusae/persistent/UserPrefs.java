@@ -151,6 +151,9 @@ public class UserPrefs
     
     /** True if the video should be stretched. */
     public final boolean isStretched;
+	
+	/** True if framelimiter is used. */
+    public final boolean isFramelimiterEnabled;
     
     /** True if RGBA8888 mode should be used for video. */
     public final boolean isRgba8888;
@@ -276,6 +279,7 @@ public class UserPrefs
         fpsRefresh = getSafeInt( mPreferences, "fpsRefresh", 0 );
         isFpsEnabled = fpsRefresh > 0;
         isStretched = mPreferences.getBoolean( "videoStretch", false );
+		isFramelimiterEnabled = mPreferences.getBoolean( "useFramelimiter", false );
         isRgba8888 = mPreferences.getBoolean( "videoRGBA8888", false );
         
         // Video prefs - gles2n64

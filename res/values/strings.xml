@@ -123,6 +123,8 @@
     <string name="fpsRefresh_title">Display framerate</string>
     <string name="videoStretch_title">Stretch screen</string>
     <string name="videoStretch_summary">May skew aspect ratio</string>
+	<string name="useFramelimiter_title">Use Framelimiter</string>
+    <string name="useFramelimiter_summary">Disable for speed (Smooth gameplay)</string>
     <string name="videoRGBA8888_title">RGBA_8888 mode</string>
     <string name="videoRGBA8888_summary">Improves graphics on some devices</string>
     <!-- GLES2N64 -->

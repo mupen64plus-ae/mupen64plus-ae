@@ -63,6 +63,7 @@ static jmethodID midFlipBuffers;
 static jmethodID midGetDataDir;
 static jmethodID midGetHardwareType;
 static jmethodID midGetExtraArgs;
+static jmethodID midGetFramelimiter;
 static jmethodID midGetROMPath;
 static jmethodID midGetScreenStretch;
 static jmethodID midGetAutoFrameSkip;
@@ -109,6 +110,8 @@ extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls)
                                 "getHardwareType", "()I");
     midGetExtraArgs = mEnv->GetStaticMethodID(mActivityClass,
                                 "getExtraArgs", "()Ljava/lang/Object;");
+	midGetFramelimiter = mEnv->GetStaticMethodID(mActivityClass,	
+                                "getFramelimiter", "()Ljava/lang/Object;");
     midGetROMPath = mEnv->GetStaticMethodID(mActivityClass,
                                 "getROMPath", "()Ljava/lang/Object;");
     midGetScreenStretch = mEnv->GetStaticMethodID(mActivityClass,
@@ -129,7 +132,7 @@ extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls)
                                 "audioQuit", "()V");
 
     if(!midCreateGLContext || !midVibrate || !midUseRGBA8888 || !midFlipBuffers || !midGetDataDir ||
-       !midGetHardwareType || !midGetExtraArgs || !midGetROMPath ||
+       !midGetHardwareType || !midGetExtraArgs || !midGetFramelimiter || !midGetROMPath ||
        !midGetScreenStretch || !midGetAutoFrameSkip || !midGetMaxFrameSkip || !midShowToast || !midAudioInit ||
        !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit) {
         __android_log_print(ANDROID_LOG_WARN, "SDL", "SDL: Couldn't locate Java callbacks, check that they're named and typed correctly");
@@ -231,6 +234,14 @@ static char buffArray[1024];
 extern "C" char * Android_JNI_GetExtraArgs()
 {
     buffString = (jstring) mEnv->CallStaticObjectMethod( mActivityClass, midGetExtraArgs );
+    const char *nativeString = mEnv->GetStringUTFChars( buffString, 0 );
+    strcpy( buffArray, nativeString );
+    mEnv->ReleaseStringUTFChars( buffString, nativeString );
+    return buffArray;
+}
+extern "C" char * Android_JNI_GetFramelimiter()
+{
+    buffString = (jstring) mEnv->CallStaticObjectMethod( mActivityClass, midGetFramelimiter );
     const char *nativeString = mEnv->GetStringUTFChars( buffString, 0 );
     strcpy( buffArray, nativeString );
     mEnv->ReleaseStringUTFChars( buffString, nativeString );

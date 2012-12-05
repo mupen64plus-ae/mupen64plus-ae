@@ -214,6 +214,12 @@
                 android:key="videoStretch"
                 android:summary="@string/videoStretch_summary"
                 android:title="@string/videoStretch_title" />
+				
+			<CheckBoxPreference
+                android:defaultValue="false"
+                android:key="useFramelimiter"
+                android:summary="@string/useFramelimiter_summary"
+                android:title="@string/useFramelimiter_title" />
 
             <CheckBoxPreference
                 android:defaultValue="false"

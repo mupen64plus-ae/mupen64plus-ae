@@ -11,6 +11,8 @@
 extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls);
 // Used to look up any extra commandline args
 extern "C" char * Android_JNI_GetExtraArgs();  // TODO: allow this to be used for other args too, not just cheats
+// Used to look up framelimiter arg
+extern "C" char * Android_JNI_GetFramelimiter();
 // Used to look up which ROM to run
 extern "C" char * Android_JNI_GetROMPath();
 
@@ -35,7 +37,7 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_init(JNIEnv* 
     argv[0] = strdup("mupen64plus");
     argv[1] = strdup("--cheats");
     argv[2] = strdup( Android_JNI_GetExtraArgs() );  // TODO: allow this to hold other things besides cheats
-    argv[3] = strdup("--nospeedlimit");
+    argv[3] = strdup( Android_JNI_GetFramelimiter() );
     argv[4] = strdup( Android_JNI_GetROMPath() );
     argv[5] = NULL;
     status = SDL_main(5, argv);

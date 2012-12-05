@@ -154,6 +154,11 @@ public class NativeMethods
     {
         return UserPrefs.get().isStretched;
     }
+	
+	public static Object getFramelimiter()
+    {
+		return CoreInterface.getFramelimiter();
+    }
     
     public static void setActivityTitle( String title )
     {
