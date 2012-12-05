@@ -123,7 +123,7 @@
     <string name="fpsRefresh_title">Display framerate</string>
     <string name="videoStretch_title">Stretch screen</string>
     <string name="videoStretch_summary">May skew aspect ratio</string>
-	<string name="useFramelimiter_title">Use Framelimiter</string>
+    <string name="useFramelimiter_title">Use Framelimiter</string>
     <string name="useFramelimiter_summary">Disable for speed (Smooth gameplay)</string>
     <string name="videoRGBA8888_title">RGBA_8888 mode</string>
     <string name="videoRGBA8888_summary">Improves graphics on some devices</string>
@@ -148,7 +148,7 @@
     <string name="gles2RiceFastTextureCRC_summary">Improves game speed at cost of 2D elements</string>
     <string name="gles2RiceFastTexture_title">Fast texture loading</string>
     <string name="gles2RiceFastTexture_summary">Fixes circle transitions</string>
-	<string name="gles2RiceForceTextureFilter_title">Force Texture Filter</string>
+    <string name="gles2RiceForceTextureFilter_title">Force Texture Filter</string>
     <string name="gles2RiceForceTextureFilter_summary">Fixes pixelated textures</string>
     <string name="gles2RiceHiResTextures_title">High resolution textures</string>
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>

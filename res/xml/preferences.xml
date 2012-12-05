@@ -214,8 +214,8 @@
                 android:key="videoStretch"
                 android:summary="@string/videoStretch_summary"
                 android:title="@string/videoStretch_title" />
-				
-			<CheckBoxPreference
+
+            <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="useFramelimiter"
                 android:summary="@string/useFramelimiter_summary"
@@ -291,8 +291,8 @@
                     android:key="gles2RiceFastTexture"
                     android:summary="@string/gles2RiceFastTexture_summary"
                     android:title="@string/gles2RiceFastTexture_title" />
-					
-				<CheckBoxPreference
+
+                <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="gles2RiceForceTextureFilter"
                     android:summary="@string/gles2RiceForceTextureFilter_summary"

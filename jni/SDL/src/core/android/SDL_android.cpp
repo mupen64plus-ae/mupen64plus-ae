@@ -110,7 +110,7 @@ extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls)
                                 "getHardwareType", "()I");
     midGetExtraArgs = mEnv->GetStaticMethodID(mActivityClass,
                                 "getExtraArgs", "()Ljava/lang/Object;");
-	midGetFramelimiter = mEnv->GetStaticMethodID(mActivityClass,	
+    midGetFramelimiter = mEnv->GetStaticMethodID(mActivityClass,
                                 "getFramelimiter", "()Ljava/lang/Object;");
     midGetROMPath = mEnv->GetStaticMethodID(mActivityClass,
                                 "getROMPath", "()Ljava/lang/Object;");
