@@ -72,13 +72,15 @@ public class CoreInterface
     private static AudioTrack sAudioTrack = null;
     private static Object sAudioBuffer;
     private static String sExtraArgs = "";
+    private static Paths sPaths = null;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
         sActivity = activity;
         sSurface = surface;
         sVibrator = vibrator;
-        syncConfigFiles( Globals.userPrefs, Globals.paths );
+        sPaths = new Paths( sActivity );
+        syncConfigFiles( Globals.userPrefs, sPaths );
     }
     
     public static String getExtraArgs()
@@ -99,6 +101,11 @@ public class CoreInterface
     public static void flipEGL()
     {
         sSurface.flipEGL();
+    }
+    
+    public static Object getDataDir()
+    {
+        return sPaths.dataDir;
     }
     
     public static Object getRomPath()
@@ -122,7 +129,7 @@ public class CoreInterface
         else if( isSelectedGameZipped )
         {
             // Create the temp folder if it doesn't exist:
-            String tmpFolderName = Globals.paths.dataDir + "/tmp";
+            String tmpFolderName = sPaths.dataDir + "/tmp";
             File tmpFolder = new File( tmpFolderName );
             tmpFolder.mkdir();
             

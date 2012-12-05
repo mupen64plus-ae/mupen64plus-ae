@@ -19,10 +19,9 @@
  */
 package paulscode.android.mupen64plusae;
 
-import android.os.Build;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import android.os.Build;
 
 /**
  * Global settings and meta info. Generally just read-only convenience functions and debug options
@@ -35,9 +34,6 @@ public class Globals
     
     /** Persistent application state and data. */
     public static AppData appData;
-    
-    /** Read-only accessor for file system path strings. */
-    public static Paths paths;
     
     /** True if device is running Eclair or later (Android 2.0.x) */
     public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;

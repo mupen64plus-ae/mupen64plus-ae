@@ -42,6 +42,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
     
     private TextView mTextView = null;
     private DataDownloader mDownloader = null;
+    private Paths mPaths = null;
     
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -49,11 +50,11 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         super.onCreate( savedInstanceState );
         
         // Get persisted system settings
-        Globals.paths = new Paths( this );
-        Globals.appData = new AppData( this, Globals.paths.appDataFilename );
+        mPaths = new Paths( this );
+        Globals.appData = new AppData( this, mPaths.appDataFilename );
         
         // Initialize the error logger
-        ErrorLogger.initialize( Globals.paths.error_log );
+        ErrorLogger.initialize( mPaths.error_log );
         
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
@@ -85,7 +86,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         {
             Log.i( "MainActivity", "libSDL: Starting downloader" );
             mDownloader = new DataDownloader( MainActivity.this, MainActivity.this, mTextView,
-                    Globals.paths.dataDir );
+                    mPaths.dataDir );
         }
     }
     
@@ -98,11 +99,11 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         Globals.appData.setUpgradedVer19( true );
         
         // Restore saves if they were backed up:
-        File savesBak = new File( Globals.paths.savesBackupDir );
+        File savesBak = new File( mPaths.savesBackupDir );
         if( savesBak.exists() )
         {
-            FileUtil.copyFile( savesBak, new File( Globals.paths.defaultSavesDir ) );
-            FileUtil.deleteFolder( new File( Globals.paths.dataBackupDir ) );
+            FileUtil.copyFile( savesBak, new File( mPaths.defaultSavesDir ) );
+            FileUtil.deleteFolder( new File( mPaths.dataBackupDir ) );
         }
         
         // Launch the MenuActivity

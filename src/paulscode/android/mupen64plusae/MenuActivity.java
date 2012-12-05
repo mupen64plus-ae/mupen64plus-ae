@@ -59,6 +59,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2N64 = "categoryGles2N64";
     
+    private Paths mPaths = null;
+    
     @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -66,8 +68,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         super.onCreate( savedInstanceState );
 
         // Refresh path and app data objects if not already loaded
-        Globals.paths = new Paths( this );
-        Globals.appData = new AppData( this, Globals.paths.appDataFilename );
+        mPaths = new Paths( this );
+        Globals.appData = new AppData( this, mPaths.appDataFilename );
         
         // Disable the Xperia PLAY plugin as necessary
         if( !Globals.appData.hardwareInfo.isXperiaPlay )
@@ -79,7 +81,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
         
-        Globals.userPrefs = new UserPrefs( this, Globals.paths );
+        Globals.userPrefs = new UserPrefs( this, mPaths );
         
         // Define the click callback for certain menu items that aren't actually preferences
         findPreference( MENU_RESUME ).setOnPreferenceClickListener( this );
@@ -120,7 +122,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( key.equals( MENU_RESUME ) )
         {
             // Launch the last game in a new activity
-            if( !Globals.paths.isSdCardAccessible() )
+            if( !mPaths.isSdCardAccessible() )
             {
                 Log.e( "MenuActivity", "SD Card not accessable in MenuResume.onPreferenceClick" );
                 Notifier.showToast( this, R.string.toast_sdInaccessible );
@@ -167,7 +169,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         // Update the global convenience class
-        Globals.userPrefs = new UserPrefs( this, Globals.paths );
+        Globals.userPrefs = new UserPrefs( this, mPaths );
         refreshViews( sharedPreferences, Globals.userPrefs );
     }
     

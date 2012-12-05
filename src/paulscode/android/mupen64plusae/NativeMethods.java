@@ -125,7 +125,7 @@ public class NativeMethods
     
     public static Object getDataDir()
     {
-        return Globals.paths.dataDir;
+        return CoreInterface.getDataDir();
     }
     
     public static Object getExtraArgs()
