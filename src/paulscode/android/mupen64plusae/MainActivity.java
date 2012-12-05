@@ -17,6 +17,40 @@
  * 
  * Authors: paulscode, lioncash, littleguy77
  */
+
+/**
+ * Bugs and feature requests not listed elsewhere, in order of priority.
+ * 
+ * Major bugs or missing features
+ * TODO: Major - Add cheats menu
+ * TODO: Major - Add reset to ingame menu
+ * TODO: Major - Implement multi-player peripheral controls
+ * TODO: Major - Implement special func mapping
+ * 
+ * Minor bugs or missing features
+ * TODO: Minor - Figure out crash on NativeMethods.quit (or implement workaround)
+ * TODO: Minor - Keep surface rendering onPause (don't blackout)
+ * 
+ * Bugs/features related to older APIs (e.g. Gingerbread)
+ * TODO: API - Alternative to setAlpha for button-mapping
+ * 
+ * Bugs/features related to device parameters (e.g. screensize)
+ * TODO: Device - Button mapping layout
+ * 
+ * Features, nice-to-haves, anti-features
+ * TODO: Feature - Hide action bar on menu click
+ * TODO: Feature - Add menu item for quick access to IME (like Language menu)
+ * TODO: Feature - Look into BlueZ and Zeemote protocols
+ * TODO: Feature - Implement SensorController if desired
+ * TODO: Feature - Do we need an updater class?
+ * TODO: Feature - Do we need status notification? 
+ * 
+ * Code polishing (doesn't directly affect end user)
+ * TODO: Polish - Cleanup Utility.java
+ * TODO: Polish - Cleanup DataDownloader.java
+ * TODO: Polish - Look into AssetManager class vs DataDownloader
+ */
+
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
