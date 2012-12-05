@@ -395,6 +395,11 @@ public class CoreInterface
         mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", booleanToString( user.isGles2RiceFastTextureLoadingEnabled ) );
         mupen64plus_cfg.put( "Video-Rice", "FastTextureCRC", booleanToString( user.isGles2RiceFastTextureCrcEnabled ) );
         mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", booleanToString( user.isGles2RiceHiResTexturesEnabled ) );
+		
+		if(user.isGles2RiceForceTextureFilterEnabled)
+			mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "2");
+		else
+			mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
         
         syncConfigFileInputs( mupen64plus_cfg, user.inputMap1, 1);
         syncConfigFileInputs( mupen64plus_cfg, user.inputMap2, 2);

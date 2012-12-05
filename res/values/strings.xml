@@ -148,6 +148,8 @@
     <string name="gles2RiceFastTextureCRC_summary">Improves game speed at cost of 2D elements</string>
     <string name="gles2RiceFastTexture_title">Fast texture loading</string>
     <string name="gles2RiceFastTexture_summary">Fixes circle transitions</string>
+	<string name="gles2RiceForceTextureFilter_title">Force Texture Filter</string>
+    <string name="gles2RiceForceTextureFilter_summary">Fixes pixelated textures</string>
     <string name="gles2RiceHiResTextures_title">High resolution textures</string>
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
     <string name="gles2RiceImportHiResTextures_title">Import texture pack</string>
