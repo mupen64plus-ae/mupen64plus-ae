@@ -22,7 +22,6 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.InputMap;
@@ -123,7 +122,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         }
         
         // Setup analog axis listening
-        if( Globals.IS_HONEYCOMB_MR1 )
+        if( AppData.IS_HONEYCOMB_MR1 )
             mProvider.addProvider( new AxisProvider( view ) );
         
         // Refresh the dialog view
@@ -231,7 +230,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
             
             // Fade any buttons that aren't mapped
             // TODO: provide alternative for lower APIs
-            if( Globals.IS_HONEYCOMB )
+            if( AppData.IS_HONEYCOMB )
             {
                 if( mMap.getMappedInputCodes()[i] == 0 )
                     button.setAlpha( UNMAPPED_BUTTON_ALPHA );

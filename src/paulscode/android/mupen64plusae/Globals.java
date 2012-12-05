@@ -20,7 +20,6 @@
 package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import android.os.Build;
 
 /**
  * Global settings and meta info. Generally just read-only convenience functions and debug options
@@ -30,24 +29,6 @@ public class Globals
 {
     /** Read-only accessor for user preferences. */
     public static UserPrefs userPrefs;
-    
-    /** True if device is running Eclair or later (Android 2.0.x) */
-    public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
-    
-    /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
-    public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
-    
-    /** True if device is running Honeycomb or later (11 - Android 3.0.x) */
-    public static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    
-    /** True if device is running Honeycomb MR1 or later (12 - Android 3.1.x) */
-    public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
-    
-    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
-    public static final boolean IS_JELLYBEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    
-    /** Debug option: download data to SD card (default true). */
-    public static final boolean DOWNLOAD_TO_SDCARD = true;
 }
 
 /**

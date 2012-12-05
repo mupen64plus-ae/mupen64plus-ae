@@ -19,8 +19,8 @@
  */
 package paulscode.android.mupen64plusae.input;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.util.FloatMath;
@@ -111,11 +111,11 @@ public class TouchController extends AbstractController implements OnTouchListen
     public boolean onTouch( View view, MotionEvent event )
     {
         // Eclair is needed for multi-touch tracking (getPointerId, getPointerCount)
-        if( !Globals.IS_ECLAIR )
+        if( !AppData.IS_ECLAIR )
             return false;
         
         // Filter by source, if applicable
-        int source = Globals.IS_GINGERBREAD ? event.getSource() : 0;
+        int source = AppData.IS_GINGERBREAD ? event.getSource() : 0;
         if( mSourceFilter != 0 && mSourceFilter != source )
             return false;
         

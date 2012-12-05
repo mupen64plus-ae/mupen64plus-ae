@@ -14,8 +14,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Point;
@@ -161,17 +161,17 @@ public class Utility
     {
         StringBuilder builder = new StringBuilder();
         
-        if( Globals.IS_GINGERBREAD )
+        if( AppData.IS_GINGERBREAD )
         {
             int[] ids = InputDevice.getDeviceIds();
             for( int i = 0; i < ids.length; i++ )
             {
                 InputDevice device = InputDevice.getDevice( ids[i] );
                 
-                if( !Globals.IS_JELLYBEAN || !device.isVirtual() )
+                if( !AppData.IS_JELLYBEAN || !device.isVirtual() )
                 {
                     List<MotionRange> ranges;
-                    if( Globals.IS_HONEYCOMB_MR1 )
+                    if( AppData.IS_HONEYCOMB_MR1 )
                     {
                         ranges = device.getMotionRanges();
                     }
@@ -202,7 +202,7 @@ public class Utility
                     {
                         builder.append( "Device: " + device.getName() + "\r\n" );
                         builder.append( "Id: " + device.getId() + "\r\n" );
-                        if( Globals.IS_JELLYBEAN && device.getVibrator().hasVibrator() )
+                        if( AppData.IS_JELLYBEAN && device.getVibrator().hasVibrator() )
                         {
                             builder.append( "Vibrator: true\r\n" );
                         }
@@ -210,7 +210,7 @@ public class Utility
                         for( int j = 0; j < ranges.size(); j++ )
                         {
                             MotionRange range = ranges.get( j );
-                            String axisName = Globals.IS_HONEYCOMB_MR1
+                            String axisName = AppData.IS_HONEYCOMB_MR1
                                     ? MotionEvent.axisToString( range.getAxis() )
                                     : "Axis " + j;
                             builder.append( "  " + axisName + ": ( " + range.getMin() + " , "

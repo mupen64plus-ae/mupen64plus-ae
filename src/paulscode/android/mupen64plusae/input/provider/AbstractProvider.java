@@ -19,8 +19,8 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.input.map.InputMap;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.annotation.TargetApi;
 import android.view.InputEvent;
@@ -115,7 +115,7 @@ public abstract class AbstractProvider
     {   
         if( inputCode > 0 )
         {
-            if( Globals.IS_HONEYCOMB_MR1 )
+            if( AppData.IS_HONEYCOMB_MR1 )
                 return KeyEvent.keyCodeToString( inputCode );
             else
                 return "KEYCODE_" + inputCode;
@@ -126,7 +126,7 @@ public abstract class AbstractProvider
             String direction = inputToAxisDirection( inputCode )
                     ? " (+)"
                     : " (-)";
-            if( Globals.IS_HONEYCOMB_MR1 )
+            if( AppData.IS_HONEYCOMB_MR1 )
                 return MotionEvent.axisToString( axis ) + direction;
             else
                 return "AXIS_" + axis + direction;
@@ -194,12 +194,12 @@ public abstract class AbstractProvider
     @TargetApi( 16 )
     protected static int getHardwareId( InputEvent event )
     {
-        if( Globals.IS_JELLYBEAN )
+        if( AppData.IS_JELLYBEAN )
         {
             // This value is persistent across reboots
             return event.getDevice().getDescriptor().hashCode();
         }
-        else if( Globals.IS_GINGERBREAD )
+        else if( AppData.IS_GINGERBREAD )
         {
             // This value is only valid for this session
             return event.getDeviceId();

@@ -22,10 +22,10 @@ package paulscode.android.mupen64plusae.persistent;
 import java.io.File;
 import java.util.Locale;
 
-import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -37,9 +37,24 @@ import android.util.Log;
  */
 public class AppData
 {
-    /** The hardware info, refreshed at the beginning of every session. */
-    public final HardwareInfo hardwareInfo;
+    /** True if device is running Eclair or later (4 - Android 2.0.x) */
+    public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
     
+    /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
+    public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
+    
+    /** True if device is running Honeycomb or later (11 - Android 3.0.x) */
+    public static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    
+    /** True if device is running Honeycomb MR1 or later (12 - Android 3.1.x) */
+    public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
+    
+    /** True if device is running Jellybean or later (16 - Android 4.1.x) */
+    public static final boolean IS_JELLYBEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    
+    /** Debug option: download data to SD card (default true). */
+    public static final boolean DOWNLOAD_TO_SDCARD = true;
+
     /** Unknown hardware configuration. */
     public static final int HARDWARE_TYPE_UNKNOWN = 0;
     
@@ -67,7 +82,7 @@ public class AppData
     /** The data download URL. */
     public static final String DATA_DOWNLOAD_URL = "Data size is 1.0 Mb|mupen64plus_data.zip";
     
-    /** The package name. */
+   /** The package name. */
     public final String packageName;
     
     /** The user storage directory (typically the external storage directory). */
@@ -109,6 +124,9 @@ public class AppData
     /** The name of the error log file. */
     public final String error_log;
     
+    /** The hardware info, refreshed at the beginning of every session. */
+    public final HardwareInfo hardwareInfo;
+    
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
     
@@ -122,7 +140,7 @@ public class AppData
         packageName = context.getPackageName();
         
         // Directories
-        if( Globals.DOWNLOAD_TO_SDCARD )
+        if( DOWNLOAD_TO_SDCARD )
         {
             storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
             dataDir = storageDir + "/Android/data/" + packageName;
