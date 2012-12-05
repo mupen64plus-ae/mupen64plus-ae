@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.util.DataDownloader;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -42,7 +41,6 @@ public class MainActivity extends Activity implements DataDownloader.Listener
     
     private TextView mTextView = null;
     private DataDownloader mDownloader = null;
-    private Paths mPaths = null;
     private AppData mAppData = null;
     
     @Override
@@ -50,12 +48,11 @@ public class MainActivity extends Activity implements DataDownloader.Listener
     {
         super.onCreate( savedInstanceState );
         
-        // Get persisted system settings
-        mPaths = new Paths( this );
-        mAppData = new AppData( this, mPaths.appDataFilename );
+        // Get app data
+        mAppData = new AppData( this );
         
         // Initialize the error logger
-        ErrorLogger.initialize( mPaths.error_log );
+        ErrorLogger.initialize( mAppData.error_log );
         
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
@@ -87,7 +84,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         {
             Log.i( "MainActivity", "libSDL: Starting downloader" );
             mDownloader = new DataDownloader( MainActivity.this, MainActivity.this, mTextView,
-                    mPaths.dataDir );
+                    mAppData.dataDir );
         }
     }
     
@@ -100,11 +97,11 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         mAppData.setUpgradedVer19( true );
         
         // Restore saves if they were backed up:
-        File savesBak = new File( mPaths.savesBackupDir );
+        File savesBak = new File( mAppData.savesBackupDir );
         if( savesBak.exists() )
         {
-            FileUtil.copyFile( savesBak, new File( mPaths.defaultSavesDir ) );
-            FileUtil.deleteFolder( new File( mPaths.dataBackupDir ) );
+            FileUtil.copyFile( savesBak, new File( mAppData.defaultSavesDir ) );
+            FileUtil.deleteFolder( new File( mAppData.dataBackupDir ) );
         }
         
         // Launch the MenuActivity

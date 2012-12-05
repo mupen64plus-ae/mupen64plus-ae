@@ -199,16 +199,16 @@ public class UserPrefs
     /**
      * Instantiates a new UserPrefs object to retrieve user preferences.
      * 
-     * @param context the context of the app
-     * @param paths the app's path definitions
+     * @param context The application context.
+     * @param appData The persistent application data.
      */
-    public UserPrefs( Context context, Paths paths )
+    public UserPrefs( Context context, AppData appData )
     {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
 
         // Files
         selectedGame = mPreferences.getString( "selectedGame", "" );
-        gameSaveDir = mPreferences.getString( "gameSaveDir", paths.defaultSavesDir );
+        gameSaveDir = mPreferences.getString( "gameSaveDir", appData.defaultSavesDir );
         slotSaveDir = gameSaveDir + "/SlotSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         File game = new File( selectedGame );
@@ -219,15 +219,15 @@ public class UserPrefs
         ( new File( autoSaveDir ) ).mkdirs();
 
         // Plug-ins
-        videoPlugin = new Plugin( mPreferences, paths.libsDir, "videoPlugin" );
-        audioPlugin = new Plugin( mPreferences, paths.libsDir, "audioPlugin" );
-        inputPlugin = new Plugin( mPreferences, paths.libsDir, "inputPlugin" );
-        rspPlugin   = new Plugin( mPreferences, paths.libsDir, "rspPlugin" );
-        corePlugin  = new Plugin( mPreferences, paths.libsDir, "corePlugin" );
+        videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );
+        audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
+        inputPlugin = new Plugin( mPreferences, appData.libsDir, "inputPlugin" );
+        rspPlugin   = new Plugin( mPreferences, appData.libsDir, "rspPlugin" );
+        corePlugin  = new Plugin( mPreferences, appData.libsDir, "corePlugin" );
         
         // Xperia PLAY prefs
         isXperiaEnabled = mPreferences.getBoolean( "xperiaEnabled", false );
-        xperiaLayout = paths.xperiaPlayLayoutsDir + mPreferences.getString( "xperiaLayout", "" );
+        xperiaLayout = appData.xperiaPlayLayoutsDir + mPreferences.getString( "xperiaLayout", "" );
         
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
@@ -286,13 +286,13 @@ public class UserPrefs
             }
             else
             {
-                folder = paths.touchscreenLayoutsDir + layout
+                folder = appData.touchscreenLayoutsDir + layout
                         + mPreferences.getString( "touchscreenSize", "" );
             }
         }
         else if( isFpsEnabled )
         {
-            folder = paths.touchscreenLayoutsDir
+            folder = appData.touchscreenLayoutsDir
                     + context.getString( R.string.touchscreenLayout_fpsOnly );
         }
         isTouchscreenCustom = isCustom;

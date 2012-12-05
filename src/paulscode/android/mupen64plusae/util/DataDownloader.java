@@ -38,7 +38,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import paulscode.android.mupen64plusae.R;
-import paulscode.android.mupen64plusae.persistent.Paths;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.text.SpannedString;
@@ -80,7 +80,7 @@ public class DataDownloader extends Thread
     @Override
     public void run()
     {
-        String[] downloadFiles = Paths.DATA_DOWNLOAD_URL.split( "\\^" );
+        String[] downloadFiles = AppData.DATA_DOWNLOAD_URL.split( "\\^" );
         for( int i = 0; i < downloadFiles.length; i++ )
         {
             if( downloadFiles[i].length() > 0 )
@@ -279,7 +279,7 @@ public class DataDownloader extends Thread
         {
             try
             {
-                byte b[] = new byte[Paths.DATA_DOWNLOAD_URL.getBytes( "UTF-8" ).length + 1];
+                byte b[] = new byte[AppData.DATA_DOWNLOAD_URL.getBytes( "UTF-8" ).length + 1];
                 int readed = checkFile.read( b );
                 String compare = new String( b, 0, readed, "UTF-8" );
                 for( int i = 1; i < downloadUrls.length; i++ )

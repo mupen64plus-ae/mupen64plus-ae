@@ -24,7 +24,6 @@ import java.io.File;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
-import paulscode.android.mupen64plusae.persistent.Paths;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -73,7 +72,6 @@ public class CoreInterface
     private static AudioTrack sAudioTrack = null;
     private static Object sAudioBuffer;
     private static String sExtraArgs = "";
-    private static Paths sPaths = null;
     private static AppData sAppData = null;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
@@ -81,9 +79,8 @@ public class CoreInterface
         sActivity = activity;
         sSurface = surface;
         sVibrator = vibrator;
-        sPaths = new Paths( sActivity );
-        sAppData = new AppData( sActivity, sPaths.appDataFilename );
-        syncConfigFiles( Globals.userPrefs, sPaths );
+        sAppData = new AppData( sActivity );
+        syncConfigFiles( Globals.userPrefs, sAppData );
     }
     
     public static String getExtraArgs()
@@ -113,7 +110,7 @@ public class CoreInterface
     
     public static Object getDataDir()
     {
-        return sPaths.dataDir;
+        return sAppData.dataDir;
     }
     
     public static Object getRomPath()
@@ -137,7 +134,7 @@ public class CoreInterface
         else if( isSelectedGameZipped )
         {
             // Create the temp folder if it doesn't exist:
-            String tmpFolderName = sPaths.dataDir + "/tmp";
+            String tmpFolderName = sAppData.dataDir + "/tmp";
             File tmpFolder = new File( tmpFolderName );
             tmpFolder.mkdir();
             
@@ -338,12 +335,12 @@ public class CoreInterface
     /**
      * Populates the core configuration files with the user preferences.
      */
-    private static void syncConfigFiles( UserPrefs user, Paths paths )
+    private static void syncConfigFiles( UserPrefs user, AppData appData )
     {
         //@formatter:off
         
         // Core and GLES2RICE config file
-        ConfigFile mupen64plus_cfg = new ConfigFile( paths.mupen64plus_cfg );
+        ConfigFile mupen64plus_cfg = new ConfigFile( appData.mupen64plus_cfg );
         mupen64plus_cfg.put( "Core", "Version", "1.00" );
         mupen64plus_cfg.put( "Core", "OnScreenDisplay", "True" ); // TODO: Should this be false?
         mupen64plus_cfg.put( "Core", "R4300Emulator", "2" );
@@ -378,7 +375,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", booleanToString( user.swapChannels ) );
         mupen64plus_cfg.put( "Audio-SDL", "RESAMPLE", user.audioResamplingAlg);
         mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
-        mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + paths.libsDir + '"' );
+        mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + user.videoPlugin.path + '"' );
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + user.audioPlugin.path + '"' );
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + user.inputPlugin.path + '"' );
@@ -399,7 +396,7 @@ public class CoreInterface
         mupen64plus_cfg.save();
         
         // GLES2N64 config file
-        ConfigFile gles2n64_conf = new ConfigFile( paths.gles2n64_conf );
+        ConfigFile gles2n64_conf = new ConfigFile( appData.gles2n64_conf );
         gles2n64_conf.put( "[<sectionless!>]", "enable fog", booleanToString( user.isGles2N64FogEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", booleanToString( user.isGles2N64AlphaTestEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "force screen clear", booleanToString( user.isGles2N64ScreenClearEnabled ) );

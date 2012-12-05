@@ -19,11 +19,15 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import java.io.File;
 import java.util.Locale;
 
+import paulscode.android.mupen64plusae.Globals;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
+import android.util.Log;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
@@ -60,21 +64,114 @@ public class AppData
     /** Default value for isUpgradedVer19(). */
     public static final boolean DEFAULT_IS_UPGRADED_VER19 = false;
     
+    /** The data download URL. */
+    public static final String DATA_DOWNLOAD_URL = "Data size is 1.0 Mb|mupen64plus_data.zip";
+    
+    /** The package name. */
+    public final String packageName;
+    
+    /** The user storage directory (typically the external storage directory). */
+    public final String storageDir;
+    
+    /** The directory for storing internal app data. */
+    public final String dataDir;
+    
+    /** The directory containing the native Mupen64Plus libraries. */
+    public final String libsDir;
+    
+    /** The directory containing all touchscreen layout folders. */
+    public final String touchscreenLayoutsDir;
+    
+    /** The directory containing all Xperia Play layout folders. */
+    public final String xperiaPlayLayoutsDir;
+    
+    /** The directory containing all fonts. */
+    public final String fontsDir;
+    
+    /** The directory for backing up user data during (un)installation. */
+    public final String dataBackupDir;
+    
+    /** The directory for backing up game save files. */
+    public final String savesBackupDir;
+    
+    /** The default directory containing game ROM files. */
+    public final String defaultRomDir;
+    
+    /** The default directory containing game save files. */
+    public final String defaultSavesDir;
+    
+    /** The name of the mupen64 core configuration file. */
+    public final String mupen64plus_cfg;
+    
+    /** The name of the gles2n64 configuration file. */
+    public final String gles2n64_conf;
+    
+    /** The name of the error log file. */
+    public final String error_log;
+    
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
     
     /**
-     * Instantiates a new AppData object to retrieve and persist app data.
+     * Instantiates a new object to retrieve and persist app data.
      * 
-     * @param context the context of the app data
-     * @param filename the filename where the app data is persisted
+     * @param context The application context.
      */
-    public AppData( Context context, String filename )
+    public AppData( Context context )
     {
-        mPreferences = context.getSharedPreferences( filename, Context.MODE_PRIVATE );
+        packageName = context.getPackageName();
+        
+        // Directories
+        if( Globals.DOWNLOAD_TO_SDCARD )
+        {
+            storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+            dataDir = storageDir + "/Android/data/" + packageName;
+        }
+        else
+        {
+            storageDir = context.getFilesDir().getAbsolutePath();
+            dataDir = storageDir;
+        }
+        libsDir = "/data/data/" + packageName + "/lib/";
+        touchscreenLayoutsDir = dataDir + "/skins/gamepads/";
+        xperiaPlayLayoutsDir = dataDir + "/skins/touchpads/";
+        fontsDir = dataDir + "/skins/fonts/";
+        dataBackupDir = storageDir + "/mp64p_tmp_asdf1234lkjh0987/data/save";
+        savesBackupDir = dataBackupDir + "/data/save";
+        
+        String romFolder = storageDir + "/roms/n64";
+        if( ( new File( romFolder ) ).isDirectory() )
+            defaultRomDir = romFolder;
+        else
+            defaultRomDir = storageDir;
+        defaultSavesDir = storageDir + "/GameSaves";
+        
+        // Files
+        mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
+        gles2n64_conf = dataDir + "/data/gles2n64.conf";
+        error_log = dataDir + "/error.log";
+        
+        // Preference object for persisting app data
+        String appDataFilename = packageName + "_preferences_device";
+        mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         hardwareInfo = new HardwareInfo();
+        
+        Log.v( "Paths - DataDir Check", "PackageName set to '" + packageName + "'" );
+        Log.v( "Paths - DataDir Check", "LibsDir set to '" + libsDir + "'" );
+        Log.v( "Paths - DataDir Check", "StorageDir set to '" + storageDir + "'" );
+        Log.v( "Paths - DataDir Check", "DataDir set to '" + dataDir + "'" );
     }
     
+    /**
+     * Checks if the storage directory is accessible.
+     * 
+     * @return True, if the storage directory is accessible.
+     */
+    public boolean isSdCardAccessible()
+    {
+        return ( new File( storageDir ) ).exists();
+    }
+
     /**
      * Checks if this is the first time the app has been run.
      * 

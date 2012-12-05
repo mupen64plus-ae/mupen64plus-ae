@@ -31,7 +31,7 @@ import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
-import paulscode.android.mupen64plusae.persistent.Paths;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -96,7 +96,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private final boolean mIsXperiaPlay;
     
     // App data
-    private Paths mPaths;
+    private AppData mAppData;
     
     public GameLifecycleHandler( Activity activity )
     {
@@ -109,7 +109,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     public void onCreateBegin( Bundle savedInstanceState )
     {
         // Get app data
-        mPaths = new Paths( mActivity );
+        mAppData = new AppData( mActivity );
         
         // Load native libraries
         if( mIsXperiaPlay )
@@ -167,7 +167,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    Globals.userPrefs.isFpsEnabled, mPaths.fontsDir );
+                    Globals.userPrefs.isFpsEnabled, mAppData.fontsDir );
             mTouchscreenMap.load( Globals.userPrefs.touchscreenLayout );
             mOverlay.initialize( mTouchscreenMap );
         }
