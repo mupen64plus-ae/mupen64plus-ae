@@ -235,65 +235,75 @@ public class AppData
      */
     public class HardwareInfo
     {
-        public final int hardwareType;
-        public final boolean isXperiaPlay;
         public final String hardware;
         public final String processor;
         public final String features;
+        public final int hardwareType;
+        public final boolean isXperiaPlay;
         
         public HardwareInfo()
         {
-            // Parse a long string of information from the operating system
-            String _hardware = "";
-            String _features = "";
-            String _processor = "";
-            
-            String hwString = Utility.getCpuInfo().toLowerCase( Locale.ENGLISH );
-            String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
-
-            for( int i = 0; i < lines.length; i++ )
+            // Identify the hardware, features, and processor strings
             {
-                String[] splitLine = lines[i].split( ":" );
-                if( splitLine.length == 2 )
+                // Temporaries since we can't assign the final fields this way
+                String _hardware = "";
+                String _features = "";
+                String _processor = "";   
+                
+                // Parse a long string of information from the operating system
+                String hwString = Utility.getCpuInfo().toLowerCase( Locale.ENGLISH );
+                String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
+                for( int i = 0; i < lines.length; i++ )
                 {
-                    String heading = splitLine[0].trim();
-                    if( _processor == null && heading.equals( "processor" ) )
-                        _processor = splitLine[1].trim();
-                    else if( _features == null && heading.equals( "features" ) )
-                        _features = splitLine[1].trim();
-                    else if( _hardware == null && heading.equals( "hardware" ) )
-                        _hardware = splitLine[1].trim();
+                    String[] splitLine = lines[i].split( ":" );
+                    if( splitLine.length == 2 )
+                    {
+                        String heading = splitLine[0].trim();
+                        if( _processor == "" && heading.equals( "processor" ) )
+                            _processor = splitLine[1].trim();
+                        else if( _features == "" && heading.equals( "features" ) )
+                            _features = splitLine[1].trim();
+                        else if( _hardware == "" && heading.equals( "hardware" ) )
+                            _hardware = splitLine[1].trim();
+                    }
                 }
-            }
+                
+                // Assign the final fields
+                hardware = _hardware;
+                processor = _processor;
+                features = _features;
+            }            
             
             // Identify the hardware type from the substrings
-            int type = DEFAULT_HARDWARE_TYPE;
-            if( _hardware != null )
-            {
-                if( _hardware.contains( "mapphone" ) || _hardware.contains( "tuna" )
-                        || _hardware.contains( "smdkv" ) || _hardware.contains( "herring" )
-                        || _hardware.contains( "aries" ) )
-                    type = HARDWARE_TYPE_OMAP;
-                
-                else if( _hardware.contains( "liberty" ) || _hardware.contains( "gt-s5830" )
-                        || _hardware.contains( "zeus" ) )
-                    type = HARDWARE_TYPE_QUALCOMM;
-                
-                else if( _hardware.contains( "imap" ) )
-                    type = HARDWARE_TYPE_IMAP;
-                
-                else if( _hardware.contains( "tegra 2" ) || _hardware.contains( "grouper" )
-                        || _hardware.contains( "meson-m1" ) || _hardware.contains( "smdkc" )
-                        || _hardware.contains( "smdk4x12" )
-                        || ( _features != null && _features.contains( "vfpv3d16" ) ) )
-                    type = HARDWARE_TYPE_TEGRA;
-            }
+            //@formatter:off
+            if(        hardware.contains( "mapphone" )
+                    || hardware.contains( "tuna" )
+                    || hardware.contains( "smdkv" )
+                    || hardware.contains( "herring" )
+                    || hardware.contains( "aries" ) )
+                hardwareType = HARDWARE_TYPE_OMAP;
             
-            hardwareType = type;
-            hardware = _hardware;
-            processor = _processor;
-            features = _features;
-            isXperiaPlay = hardware.contains( "zeus" );            
+            else if(   hardware.contains( "liberty" )
+                    || hardware.contains( "gt-s5830" )
+                    || hardware.contains( "zeus" ) )
+                hardwareType = HARDWARE_TYPE_QUALCOMM;
+            
+            else if(   hardware.contains( "imap" ) )
+                hardwareType = HARDWARE_TYPE_IMAP;
+            
+            else if(   hardware.contains( "tegra 2" )
+                    || hardware.contains( "grouper" )
+                    || hardware.contains( "meson-m1" )
+                    || hardware.contains( "smdkc" )
+                    || hardware.contains( "smdk4x12" )
+                    || ( features != null && features.contains( "vfpv3d16" ) ) )
+                hardwareType = HARDWARE_TYPE_TEGRA;
+            else
+                hardwareType = DEFAULT_HARDWARE_TYPE;
+            //@formatter:on
+            
+            // Identify whether this is an Xperia PLAY
+            isXperiaPlay = hardware.contains( "zeus" );           
         }
     }
 }
