@@ -37,6 +37,9 @@
 #include "eventloop.h"
 #include "util.h" // list utilities
 
+#include <stdio.h>
+#include <string.h>
+
 // local definitions
 #define CHEAT_CODE_MAGIC_VALUE 0xDEAD0000
 
@@ -198,6 +201,55 @@ void cheat_apply_cheats(int entry)
     list_t node1 = NULL;
     list_t node2 = NULL;
     cheat_code_t *code;
+    
+    long u32CRC1;
+    long u32CRC2;
+
+    //If game is Zelda OOT, apply subscreen delay fix  
+    if ((strncmp((char *) ROM_HEADER.Name, "THE LEGEND OF ZELDA",19) == 0) && (entry == ENTRY_VI))
+    {
+        //Compute CRC in correct order
+        u32CRC1=( ((ROM_HEADER.CRC1  >> 24) & 0xFF)| 
+                  ((ROM_HEADER.CRC1  >> 8)  & 0xFF00)|
+                  ((ROM_HEADER.CRC1  << 8)  & 0xFF0000)|
+                  ((ROM_HEADER.CRC1  << 24) & 0xFF000000) );
+
+        u32CRC2=( ((ROM_HEADER.CRC2  >> 24) & 0xFF)| 
+                  ((ROM_HEADER.CRC2  >> 8)  & 0xFF00)|
+                  ((ROM_HEADER.CRC2  << 8)  & 0xFF0000)|
+                  ((ROM_HEADER.CRC2  << 24) & 0xFF000000) );
+
+        //Legend of Zelda, The - Ocarina of Time (U) + (J) (V1.0) 
+        if((u32CRC1 == 0xEC7011B7) && (u32CRC2 == 0x7616D72B))
+        {
+            execute_cheat(0x801DA5CB, 0x0002, NULL);
+        }
+        //Legend of Zelda, The - Ocarina of Time (U) + (J) (V1.1)
+        else if((u32CRC1 == 0xD43DA81F) && (u32CRC2 == 0x021E1E19))
+        {
+            execute_cheat(0x801DA78B, 0x0002, NULL);
+        }
+        //Legend of Zelda, The - Ocarina of Time (U) + (J) (V1.2)
+        else if((u32CRC1 == 0x693BA2AE) && (u32CRC2 == 0xB7F14E9F))
+        {
+            execute_cheat(0x801DAE8B, 0x0002, NULL);
+        }
+        //Legend of Zelda, The - Ocarina of Time (E) (V1.0)
+        else if((u32CRC1 == 0xB044B569) && (u32CRC2 == 0x373C1985))
+        {
+            execute_cheat(0x801D860B, 0x0002, NULL);
+        }
+        //Legend of Zelda, The - Ocarina of Time (E) (V1.1)
+        else if((u32CRC1 == 0xB2055FBD) && (u32CRC2 == 0x0BAB4E0C))
+        {
+            execute_cheat(0x801D864B, 0x0002, NULL);
+        }
+        //Legend of Zelda, The - Ocarina of Time Master Quest
+        else
+        {
+            execute_cheat(0x801D8F4B, 0x0002, NULL);
+        }
+    }
     
     if (active_cheats == NULL)
         return;
