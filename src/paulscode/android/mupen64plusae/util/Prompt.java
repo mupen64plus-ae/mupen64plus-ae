@@ -23,11 +23,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
+import paulscode.android.mupen64plusae.input.provider.AxisProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider;
+import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import paulscode.android.mupen64plusae.input.provider.LazyProvider;
+import paulscode.android.mupen64plusae.persistent.AppData;
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 /**
  * A utility class that generates dialogs to prompt the user for information.
@@ -67,12 +76,28 @@ public class Prompt
     }
     
     /**
+     * The listener interface for receiving an input code provided by the user.
+     * 
+     * @see Prompt#promptInputCode
+     */
+    public interface OnInputCodeListener
+    {
+        /**
+         * Process the input code provided by the user.
+         *
+         * @param inputCode The input code provided by the user, or 0.
+         * @param hardwareId The identifier of the source device.
+         */
+        public void OnInputCode( int inputCode, int hardwareId );
+    }
+    
+    /**
      * Open a dialog to prompt the user for a confirmation (Ok/Cancel).
      * 
-     * @param context the context
-     * @param title the title of the dialog
-     * @param message the message to be shown inside the dialog
-     * @param listener the listener to process the confirmation
+     * @param context The activity context.
+     * @param title The title of the dialog.
+     * @param message The message to be shown inside the dialog.
+     * @param listener The listener to process the confirmation.
      */
     public static void promptConfirm( Context context, CharSequence title, CharSequence message,
             OnClickListener listener )
@@ -125,11 +150,11 @@ public class Prompt
     /**
      * Open a dialog to prompt the user for text.
      * 
-     * @param context the context
-     * @param title the title of the dialog
-     * @param message the message to be shown inside the dialog
-     * @param hint the hint to be shown inside the text edit widget
-     * @param listener the listener to process the text, when provided
+     * @param context The activity context.
+     * @param title The title of the dialog.
+     * @param message The message to be shown inside the dialog.
+     * @param hint The hint to be shown inside the text edit widget.
+     * @param listener The listener to process the text, when provided.
      */
     public static void promptText( Context context, CharSequence title, CharSequence message,
             CharSequence hint, final OnTextListener listener )
@@ -157,13 +182,85 @@ public class Prompt
     }
     
     /**
+     * Open a dialog to prompt the user for an input code.
+     *
+     * @param context The activity context.
+     * @param title The title of the dialog.
+     * @param message The message to be shown inside the dialog.
+     * @param positiveButtonText The text to be shown on the positive button, or null.
+     * @param listener The listener to process the input code, when provided.
+     */
+    public static void promptInputCode( Context context, CharSequence title, CharSequence message,
+            CharSequence positiveButtonText, final OnInputCodeListener listener )
+    {
+        // Create a custom view to provide key/motion event data
+        // This can be absolutely any kind of view, we just something to dispatch events
+        ImageView view = new ImageView( context );
+        view.setImageResource( R.drawable.ic_joystick );
+        
+        // Set the focus parameters of the view so that it will dispatch events
+        view.setFocusable( true );
+        view.setFocusableInTouchMode( true );
+        view.requestFocus();
+        
+        // Notify the client when the user clicks the dialog's positive button
+        DialogInterface.OnClickListener clickListener = new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                    listener.OnInputCode( 0, 0 );
+            }
+        };
+        
+        // Create the dialog, customizing the view and button text in the process
+        final AlertDialog dialog = prefillBuilder( context, title, message, clickListener )
+                .setPositiveButton( positiveButtonText, clickListener )
+                .setView( view )
+                .create();
+        
+        // Construct an object to aggregate key and motion event data
+        LazyProvider provider = new LazyProvider();
+
+        // Connect the upstream key event listener
+        provider.addProvider( new KeyProvider( view, ImeFormula.DEFAULT ) );
+        
+        // Connect the upstream motion event listener
+        if( AppData.IS_HONEYCOMB_MR1 )
+            provider.addProvider( new AxisProvider( view ) );
+        
+        // Connect the downstream listener
+        provider.registerListener( new OnInputListener()
+        {
+            @Override
+            public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
+            {
+            }
+            
+            @Override
+            public void onInput( int inputCode, float strength, int hardwareId )
+            {
+                if( inputCode != 0 )
+                {
+                    listener.OnInputCode( inputCode, hardwareId );
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Launch the dialog
+        dialog.show();
+    }
+    
+    /**
      * A convenience method for consistently initializing dialogs across the various methods.
      * 
-     * @param context the context
-     * @param title the title of the dialog
-     * @param message the message to be shown inside the dialog
-     * @param listener the listener to process user clicks
-     * @return the builder for the dialog
+     * @param context The activity context.
+     * @param title The title of the dialog.
+     * @param message The message to be shown inside the dialog.
+     * @param listener The listener to process user clicks.
+     * @return The builder for the dialog
      */
     private static Builder prefillBuilder( Context context, CharSequence title,
             CharSequence message, OnClickListener listener )

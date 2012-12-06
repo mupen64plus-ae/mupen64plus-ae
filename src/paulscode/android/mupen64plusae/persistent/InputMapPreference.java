@@ -30,6 +30,8 @@ import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.LazyProvider;
+import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -170,22 +172,33 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         }
         
         // Else, find the button that was clicked and map it
-        // (never unmap, would confuse user)
-        else if( mInputCodeToBeMapped != 0 )
+        else
         {
-            // Find the button that was touched and map it
+            // Find the button that was pressed
+            Button button = null;
             for( int i = 0; i < mN64Button.length; i++ )
             {
                 if( view.equals( mN64Button[i] ) )
                 {
-                    mMap.mapInput( i, mInputCodeToBeMapped );
-                    mInputCodeToBeMapped = 0;
-                    break;
+                    final int index = i;
+                    button = (Button) view;
+                    // TODO: localize strings
+                    Prompt.promptInputCode( getContext(), button.getText(), "Press a button, key, or joystick to map...",
+                            "Unmap", new OnInputCodeListener()
+                            {
+                                @Override
+                                public void OnInputCode( int inputCode, int hardwareId )
+                                {
+                                    if( inputCode == 0 )
+                                        mMap.unmapInput( index );
+                                    else
+                                        mMap.mapInput( index, inputCode );
+                                    updateViews();
+                                }
+                            } );
                 }
             }
             
-            // Refresh the dialog
-            updateViews();
         }
     }
     
