@@ -132,9 +132,6 @@ public class InputMapPreference extends DialogPreference implements
         
         // Setup key listening
         mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT ) );
-        
-        // TODO: Fix this temporary solution to provide more screen space
-        builder.setTitle( null );
     }
     
     @Override
@@ -178,11 +175,12 @@ public class InputMapPreference extends DialogPreference implements
             {
                 if( view.equals( mN64Button[i] ) )
                 {
+                    // Popup a dialog to listen to input codes from user
                     final int index = i;
                     button = (Button) view;
-                    // TODO: localize strings
-                    Prompt.promptInputCode( getContext(), button.getText(),
-                            "Press a button, key, or joystick to map...", "Unmap",
+                    String message = getContext().getString( R.string.inputMapPreference_popupMessage );
+                    String btnText = getContext().getString( R.string.inputMapPreference_popupPosButtonText );
+                    Prompt.promptInputCode( getContext(), button.getText(), message, btnText,
                             new OnInputCodeListener()
                             {
                                 @Override
