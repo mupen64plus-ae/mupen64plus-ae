@@ -39,19 +39,17 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.TextView;
 
-public class InputMapPreference extends DialogPreference implements AbstractProvider.OnInputListener,
-        OnClickListener, OnLongClickListener
+public class InputMapPreference extends DialogPreference implements
+        AbstractProvider.OnInputListener, OnClickListener
 {
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
     
     private final InputMap mMap;
     private final LazyProvider mProvider;
-    private int mInputCodeToBeMapped;
     private View mToggleWidget;
     private TextView mFeedbackText;
     private Button[] mN64Button;
@@ -63,7 +61,6 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         mMap = new InputMap();
         mProvider = new LazyProvider();
         mProvider.registerListener( this );
-        mInputCodeToBeMapped = 0;
         mN64Button = new Button[InputMap.NUM_N64_CONTROLS];
         
         setDialogLayoutResource( R.layout.input_map_preference );
@@ -118,10 +115,7 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         
         // Define the button click callbacks
         for( Button b : mN64Button )
-        {
             b.setOnClickListener( this );
-            b.setOnLongClickListener( this );
-        }
         
         // Setup analog axis listening
         if( AppData.IS_HONEYCOMB_MR1 )
@@ -150,11 +144,15 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         // state so that the toggle doesn't persist unwanted changes.
         
         if( positiveResult )
+        {
             // User pressed Ok: clean the state by persisting map
             persistString( mMap.serialize() );
+        }
         else
+        {
             // User pressed Cancel/Back: clean the state by restoring map
             mMap.deserialize( getPersistedString( "" ) );
+        }
         
         // Unregister parent providers, new ones added on next click
         mProvider.removeAllProviders();
@@ -183,8 +181,9 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
                     final int index = i;
                     button = (Button) view;
                     // TODO: localize strings
-                    Prompt.promptInputCode( getContext(), button.getText(), "Press a button, key, or joystick to map...",
-                            "Unmap", new OnInputCodeListener()
+                    Prompt.promptInputCode( getContext(), button.getText(),
+                            "Press a button, key, or joystick to map...", "Unmap",
+                            new OnInputCodeListener()
                             {
                                 @Override
                                 public void OnInputCode( int inputCode, int hardwareId )
@@ -203,24 +202,8 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
     }
     
     @Override
-    public boolean onLongClick( View view )
-    {
-        // Find the button that was long-clicked and unmap it
-        for( int i = 0; i < mN64Button.length; i++ )
-        {
-            if( view.equals( mN64Button[i] ) )
-                mMap.unmapInput( i );
-        }
-        
-        // Refresh the dialog
-        updateViews();
-        return true;
-    }
-    
-    @Override
     public void onInput( int inputCode, float strength, int hardwareId )
     {
-        mInputCodeToBeMapped = mProvider.getActiveCode();
         updateViews( inputCode, strength );
     }
     
@@ -253,7 +236,9 @@ public class InputMapPreference extends DialogPreference implements AbstractProv
         }
         
         // Update the feedback text
-        mFeedbackText.setText( AbstractProvider.getInputName( mInputCodeToBeMapped ) );
+        mFeedbackText.setText( strength > 0.5
+                ? AbstractProvider.getInputName( inputCode )
+                : "" );
     }
     
     private void updateViews()
