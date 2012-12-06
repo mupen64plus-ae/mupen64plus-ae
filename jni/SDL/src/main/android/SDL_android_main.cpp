@@ -10,9 +10,7 @@
 // Called before SDL_main() to initialize JNI bindings in SDL library
 extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls);
 // Used to look up any extra commandline args
-extern "C" char * Android_JNI_GetExtraArgs();  // TODO: allow this to be used for other args too, not just cheats
-// Used to look up framelimiter arg
-extern "C" char * Android_JNI_GetFramelimiter();
+extern "C" char * Android_JNI_GetExtraArgs();
 // Used to look up which ROM to run
 extern "C" char * Android_JNI_GetROMPath();
 
@@ -31,24 +29,59 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_init(JNIEnv* 
     /* Run the application code! */
     int status;
 
-    /* Let's play Mario 64 */
-    char *argv[6];
+    /* Simple usage: (i.e. to play Mario 64..)
+        char *argv[3];
+        argv[0] = strdup("mupen64plus");
+        argv[1] = strdup( "roms/mario.n64" );
+        argv[2] = NULL;
+        status = SDL_main( 2, argv );
+    */
 
-    argv[0] = strdup("mupen64plus");
-    argv[1] = strdup("--cheats");
-    argv[2] = strdup( Android_JNI_GetExtraArgs() );  // TODO: allow this to hold other things besides cheats
-    argv[3] = strdup( Android_JNI_GetFramelimiter() );
-    argv[4] = strdup( Android_JNI_GetROMPath() );
-    argv[5] = NULL;
-    status = SDL_main(5, argv);
+    // Retrieve the (space-separated) extra args string from Java:
+    char *extraArgs = Android_JNI_GetExtraArgs();
 
-//    argv[0] = strdup("mupen64plus");
-//    argv[1] = strdup( /*"roms/mario.n64"*/ Android_JNI_GetROMPath() );
-//    argv[2] = NULL;
-//    status = SDL_main(2, argv);
+    char **argv;              // Map to hold the indices
+    int argc = 1;             // First arg is reserved for program name
+    char *index = extraArgs;  // Start at the beginning of the string
+    
+    // Loop through the args string to count them:
+    while( index != NULL )
+    {
+        argc++;                        // Count the arg
+        index = strchr( index, ' ' );  // Advance to next space
+    }
+    argc += 2;  // Last two args are the ROM path and NULL
+    
+    // Allocate enough char pointers to index all the args:
+    argv = (char **) malloc( sizeof( char *) * argc );
+    
+    argv[0] = strdup( "mupen64plus" );  // Store the first arg
+    
+    char *argSpace;     // Index for pointing to the next space
+    argc = 1;           // Reuse argc rather than making a new counter
+    index = extraArgs;  // Rewind back to the beginning of the string
+    
+    // Loop through the args string again, this time to index them:
+    while( index != NULL )
+    {
+        argSpace = strchr( index, ' ' );  // Find the end of the arg
+        // Make sure this isn't the last arg:
+        if( argSpace != NULL )
+            memcpy ( argSpace, "", 1 ); // Change space to end-of-string
+        argv[argc] = index;  // Index the arg's location
+        if( argSpace == NULL )
+            index = NULL;  // Last arg, end the loop
+        else
+            index = argSpace + 1; // Advance to the next arg
+        argc++;  // Count the arg
+    }
+    argv[argc] = strdup( Android_JNI_GetROMPath() );
+    argc++;  // Count the ROM path arg
+    argv[argc] = NULL;  // End of args
+    status = SDL_main( argc, argv );  // Launch the emulator
 
     /* We exit here for consistency with other platforms. */
-    exit(status);
+    exit( status );  // <---- TODO: This may be the ASDP bug culprit
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

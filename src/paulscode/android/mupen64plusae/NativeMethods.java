@@ -154,11 +154,6 @@ public class NativeMethods
         return CoreInterface.getScreenStretch();
     }
     
-    public static Object getFramelimiter()
-    {
-        return CoreInterface.getFramelimiter();
-    }
-    
     public static void setActivityTitle( String title )
     {
         CoreInterface.setActivityTitle( title );

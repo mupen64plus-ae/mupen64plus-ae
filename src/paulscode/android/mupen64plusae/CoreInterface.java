@@ -71,7 +71,6 @@ public class CoreInterface
     private static Thread sAudioThread = null;
     private static AudioTrack sAudioTrack = null;
     private static Object sAudioBuffer;
-    private static String sExtraArgs = "";
     private static AppData sAppData = null;
     private static UserPrefs sUserPrefs = null;
     
@@ -85,14 +84,17 @@ public class CoreInterface
         syncConfigFiles( sUserPrefs, sAppData );
     }
     
-    public static String getExtraArgs()
+    /**
+     * Constructs any extra parameters to pass to the front-end, based on user preferences
+     * @return Object handle to String containing space-separated parameters.
+     */
+    public static Object getExtraArgs()
     {
-        return sExtraArgs;
-    }
-    
-    public static void setExtraArgs( String extraArgs )
-    {
-        sExtraArgs = extraArgs;
+        String extraArgs = "";
+        if( !sUserPrefs.isFramelimiterEnabled )
+            extraArgs += "--nospeedlimit";
+        // TODO: add args for selected cheat preferences
+        return extraArgs;
     }
     
     public static boolean initEGL( int majorVersion, int minorVersion )
@@ -120,14 +122,6 @@ public class CoreInterface
         return sUserPrefs.isStretched;
     }
     
-    public static Object getFramelimiter()
-    {
-        if( sUserPrefs.isFramelimiterEnabled )
-            return "";
-        else
-            return "--nospeedlimit";
-    }
-
     public static boolean useRGBA8888()
     {
         return sUserPrefs.isRgba8888;
