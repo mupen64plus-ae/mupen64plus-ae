@@ -244,9 +244,9 @@ public class AppData
         public HardwareInfo()
         {
             // Parse a long string of information from the operating system
-            String _hardware = null;
-            String _features = null;
-            String _processor = null;
+            String _hardware = "";
+            String _features = "";
+            String _processor = "";
             
             String hwString = Utility.getCpuInfo().toLowerCase( Locale.ENGLISH );
             String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
