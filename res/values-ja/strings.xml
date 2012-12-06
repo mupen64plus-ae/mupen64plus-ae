@@ -262,8 +262,8 @@
     <string name="dataDownloader_failedConnectingTo">%1$sに接続できません</string>
     <string name="gameMenu_confirmFile">%1$s上書き?</string>
     <string name="gameMenu_saveHint">ファイル名</string>
-    <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
-    <string name="inputMapPreference_popupPosButtonText">Unmap</string>
+    <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。</string>
+    <string name="inputMapPreference_popupPosButtonText">アンマップ</string>
     <string name="inputMapPreference_rumble">振動\nパック</string>
     <string name="inputMapPreference_mempak">拡張\nパック</string>
     <string name="inputMapPreference_special">特別な機能</string>
