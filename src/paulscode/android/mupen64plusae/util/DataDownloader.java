@@ -279,7 +279,7 @@ public class DataDownloader extends Thread
         {
             try
             {
-                byte b[] = new byte[AppData.DATA_DOWNLOAD_URL.getBytes( "UTF-8" ).length + 1];
+                byte[] b = new byte[AppData.DATA_DOWNLOAD_URL.getBytes( "UTF-8" ).length + 1];
                 int readed = checkFile.read( b );
                 String compare = new String( b, 0, readed, "UTF-8" );
                 for( int i = 1; i < downloadUrls.length; i++ )
@@ -457,8 +457,8 @@ public class DataDownloader extends Thread
                 check.close();
                 if( check.getChecksum().getValue() != entry.getCrc() )
                 {
-                    File ff = new File( path );
-                    ff.delete();
+                    File file = new File( path );
+                    file.delete();
                     throw new Exception();
                 }
                 Log.i( "DataDownloader", "File '" + path
@@ -528,8 +528,8 @@ public class DataDownloader extends Thread
                 check.close();
                 if( check.getChecksum().getValue() != entry.getCrc() )
                 {
-                    File ff = new File( path );
-                    ff.delete();
+                    File file = new File( path );
+                    file.delete();
                     throw new Exception();
                 }
             }

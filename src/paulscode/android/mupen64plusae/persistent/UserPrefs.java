@@ -31,10 +31,6 @@ import android.preference.PreferenceManager;
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
  * <p>
- * The static method {@link #refresh(Context)} should be called every time a preference value
- * changes, from an {@link OnSharedPreferenceChangeListener}. A good place to implement the listener
- * is in your PreferenceActivity subclass.
- * <p>
  * <b>Developers:</b> After creating a preference in /res/xml/preferences.xml, you are encouraged to
  * provide convenient access to it by expanding this class. Although this adds an extra step to
  * development, it simplifies code maintenance later since all maintenance can be consolidated to a

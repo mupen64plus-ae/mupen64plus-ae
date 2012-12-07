@@ -604,7 +604,7 @@ public class Utility
         BufferedInputStream inputStream = new BufferedInputStream( zipfile.getInputStream( entry ) );
         BufferedOutputStream outputStream = new BufferedOutputStream( new FileOutputStream(
                 outputFile ) );
-        byte b[] = new byte[1024];
+        byte[] b = new byte[1024];
         int n;
         
         while( ( n = inputStream.read( b, 0, 1024 ) ) >= 0 )
