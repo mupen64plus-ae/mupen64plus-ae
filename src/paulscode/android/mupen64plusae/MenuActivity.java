@@ -34,27 +34,30 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.util.Log;
 
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
-    private static final String MENU_RESUME = "menuResume";
-    private static final String MENU_RESET_USER_PREFS = "menuResetUserPrefs";
-    private static final String MENU_DEVICE_INFO = "menuDeviceInfo";
-    private static final String MENU_PERIPHERAL_INFO = "menuPeripheralInfo";
+    
+    private static final String LAUNCH_RESUME = "menuResume";
+    private static final String LAUNCH_RESET_USER_PREFS = "menuResetUserPrefs";
+    private static final String LAUNCH_DEVICE_INFO = "menuDeviceInfo";
+    private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
+
     private static final String TOUCHSCREEN = "touchscreen";
-    private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
-    private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
-    private static final String TOUCHSCREEN_OCTAGON_JOYSTICK = "touchscreenOctagonJoystick";
-    private static final String XPERIA_ENABLED = "xperiaEnabled";
-    private static final String XPERIA_LAYOUT = "xperiaLayout";
     private static final String PERIPHERAL = "peripheral";
     private static final String AUDIO = "audio";
     private static final String VIDEO = "video";
+    
+    private static final String XPERIA_ENABLED = "xperiaEnabled";
+    private static final String XPERIA_LAYOUT = "xperiaLayout";
+    private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
+    private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
+    private static final String TOUCHSCREEN_OCTAGON_JOYSTICK = "touchscreenOctagonJoystick";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2N64 = "categoryGles2N64";
     
@@ -86,129 +89,166 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mUserPrefs = new UserPrefs( this );
         
         // Define the click callback for certain menu items that aren't actually preferences
-        findPreference( MENU_RESUME ).setOnPreferenceClickListener( this );
-        findPreference( MENU_RESET_USER_PREFS ).setOnPreferenceClickListener( this );
-        findPreference( MENU_DEVICE_INFO ).setOnPreferenceClickListener( this );
-        findPreference( MENU_PERIPHERAL_INFO ).setOnPreferenceClickListener( this );
+        listenTo( LAUNCH_RESUME );
+        listenTo( LAUNCH_RESET_USER_PREFS );
+        listenTo( LAUNCH_DEVICE_INFO );
+        listenTo( LAUNCH_PERIPHERAL_INFO );
         
         // Hide the Xperia PLAY menu items as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
         {
-            PreferenceScreen screen = (PreferenceScreen) findPreference( TOUCHSCREEN );
-            screen.removePreference( findPreference( XPERIA_ENABLED) );
-            screen.removePreference( findPreference( XPERIA_LAYOUT) );
+            removePreference( TOUCHSCREEN, XPERIA_ENABLED );
+            removePreference( TOUCHSCREEN, XPERIA_LAYOUT );
         }
     }
     
     @Override
     protected void onResume()
     {
+        super.onResume();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         refreshViews( sharedPreferences, mUserPrefs );
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
-        super.onResume();
     }
     
     @Override
     protected void onPause()
     {
         super.onPause();
-        PreferenceManager.getDefaultSharedPreferences( this )
-                .unregisterOnSharedPreferenceChangeListener( this );
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+    }
+    
+    @Override
+    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
+    {
+        // Refresh the preference data wrapper and the views
+        mUserPrefs = new UserPrefs( this );
+        refreshViews( sharedPreferences, mUserPrefs );
     }
     
     @Override
     public boolean onPreferenceClick( Preference preference )
     {
         String key = preference.getKey();
-        if( key.equals( MENU_RESUME ) )
-        {
-            // Launch the last game in a new activity
-            if( !mAppData.isSdCardAccessible() )
-            {
-                Log.e( "MenuActivity", "SD Card not accessable in MenuResume.onPreferenceClick" );
-                Notifier.showToast( this, R.string.toast_sdInaccessible );
-                return true;
-            }
-            
-            // Notify user that the game activity is starting
-            Notifier.showToast( this, R.string.toast_appStarted );
-            
-            // Launch the appropriate game activity
-            Intent intent = mUserPrefs.isXperiaEnabled
-                    ? new Intent( this, GameActivityXperiaPlay.class )
-                    : new Intent( this, GameActivity.class );
-            startActivity( intent );
-            return true;
-        }
-        else if( key.equals( MENU_RESET_USER_PREFS ) )
-        {
-            // Reset the user preferences
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( this );
-            preferences.edit().clear().commit();
-            PreferenceManager.setDefaultValues( this, R.xml.preferences, true );
-            
-            // Restart the activity so that the entire menu system is rebuilt
-            // (OnSharedPreferenceChangedListener is not sufficient for this)
-            finish();
-            startActivity( getIntent() );
-            return true;
-        }
-        else if( key.equals( MENU_DEVICE_INFO ) )
-        {
-            new Builder( this ).setTitle( this.getString( R.string.menuDeviceInfo_title ) )
-                    .setMessage( Utility.getCpuInfo() ).create().show();
-        }
-        else if( key.equals( MENU_PERIPHERAL_INFO ) )
-        {
-            new Builder( this ).setTitle( this.getString( R.string.menuPeripheralInfo_title ) )
-                    .setMessage( Utility.getPeripheralInfo( this ) ).create().show();
-        }
-        return false;
+        
+        if( key.equals( LAUNCH_RESUME ) )
+            launchResume();
+        
+        else if( key.equals( LAUNCH_RESET_USER_PREFS ) )
+            launchResetUserPrefs();
+        
+        else if( key.equals( LAUNCH_DEVICE_INFO ) )
+            launchDeviceInfo();
+        
+        else if( key.equals( LAUNCH_PERIPHERAL_INFO ) )
+            launchPeripheralInfo();
+        
+        else
+            return false;
+        
+        return true;
     }
     
-    @Override
-    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
+    private void launchResume()
     {
-        // Refresh the preference data wrapper
-        mUserPrefs = new UserPrefs( this );
-        refreshViews( sharedPreferences, mUserPrefs );
+        // Launch the last game in a new activity
+        if( !mAppData.isSdCardAccessible() )
+        {
+            Log.e( "MenuActivity", "SD Card not accessable in MenuResume.onPreferenceClick" );
+            Notifier.showToast( this, R.string.toast_sdInaccessible );
+            return;
+        }
+        
+        // Notify user that the game activity is starting
+        Notifier.showToast( this, R.string.toast_appStarted );
+        
+        // Launch the appropriate game activity
+        Intent intent = mUserPrefs.isXperiaEnabled
+                ? new Intent( this, GameActivityXperiaPlay.class )
+                : new Intent( this, GameActivity.class );
+        startActivity( intent );
+    }
+
+    private void launchResetUserPrefs()
+    {
+        // Reset the user preferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( this );
+        preferences.edit().clear().commit();
+        PreferenceManager.setDefaultValues( this, R.xml.preferences, true );
+        
+        // Restart the activity so that the entire menu system is rebuilt
+        // (OnSharedPreferenceChangedListener is not sufficient for this)
+        finish();
+        startActivity( getIntent() );
+    }
+
+    private void launchDeviceInfo()
+    {
+        String title = getString( R.string.menuDeviceInfo_title );
+        String message = Utility.getCpuInfo();
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void launchPeripheralInfo()
+    {
+        String title = getString( R.string.menuPeripheralInfo_title );
+        String message = Utility.getPeripheralInfo( this );
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+
+    private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
+    {
+        // Enable the play menu only if the selected game actually exists
+        enablePreference( LAUNCH_RESUME, new File( mUserPrefs.selectedGame ).exists() );
+        
+        // Enable the various input menus only if the input plug-in is not a dummy
+        enablePreference( TOUCHSCREEN, user.inputPlugin.enabled );
+        enablePreference( PERIPHERAL, user.inputPlugin.enabled );
+        enablePreference( TOUCHSCREEN_OCTAGON_JOYSTICK, user.isTouchscreenEnabled || user.isXperiaEnabled );
+        
+        // Enable the audio menu only if the audio plug-in is not a dummy
+        enablePreference( AUDIO, user.audioPlugin.enabled );
+        
+        // Enable the video menu only if the video plug-in is not a dummy
+        enablePreference( VIDEO, user.videoPlugin.enabled );
+        enablePreference( CATEGORY_GLES2N64, user.isGles2N64Enabled );
+        enablePreference( CATEGORY_GLES2_RICE, user.isGles2RiceEnabled );        
+        
+        // Enable the custom touchscreen prefs under certain conditions
+        enablePreference( TOUCHSCREEN_CUSTOM, user.isTouchscreenEnabled && user.isTouchscreenCustom );
+        enablePreference( TOUCHSCREEN_SIZE, user.isTouchscreenEnabled && !user.isTouchscreenCustom );
+        
+        // Update the summary text for all relevant preferences
+        for( String key : sharedPreferences.getAll().keySet() )
+            refreshText( key );
     }
     
     @SuppressWarnings( "deprecation" )
-    private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
+    private void refreshText( String key )
     {
-        // Determine which menu items should be enabled
-        boolean enableResume = new File( mUserPrefs.selectedGame ).exists();
-        boolean enableCustom = user.isTouchscreenEnabled && user.isTouchscreenCustom;
-        boolean enableSize = user.isTouchscreenEnabled && !user.isTouchscreenCustom;
-        
-        // Enable the play menu only if the selected game actually exists
-        findPreference( MENU_RESUME ).setEnabled( enableResume );
-        
-        // Enable the various input menus only if the input plug-in is not a dummy
-        findPreference( TOUCHSCREEN ).setEnabled( user.inputPlugin.enabled );
-        findPreference( PERIPHERAL ).setEnabled( user.inputPlugin.enabled );
-        findPreference( TOUCHSCREEN_OCTAGON_JOYSTICK ).setEnabled( user.isTouchscreenEnabled || user.isXperiaEnabled );
-        
-        // Enable the audio menu only if the audio plug-in is not a dummy
-        findPreference( AUDIO ).setEnabled( user.audioPlugin.enabled );
-        
-        // Enable the video menu only if the video plug-in is not a dummy
-        findPreference( VIDEO ).setEnabled( user.videoPlugin.enabled );
-        findPreference( CATEGORY_GLES2N64 ).setEnabled( user.isGles2N64Enabled );
-        findPreference( CATEGORY_GLES2_RICE ).setEnabled( user.isGles2RiceEnabled );        
-        
-        // Enable the custom touchscreen prefs under certain conditions
-        findPreference( TOUCHSCREEN_CUSTOM ).setEnabled( enableCustom );
-        findPreference( TOUCHSCREEN_SIZE ).setEnabled( enableSize );
-        
-        // Update the summary text for all ListPreferences
-        for( String key : sharedPreferences.getAll().keySet() )
-        {
-            Preference preference = findPreference( key );
-            if( preference instanceof ListPreference )
-                preference.setSummary( ( (ListPreference) preference ).getEntry() );
-        }
+        Preference preference = findPreference( key );
+        if( preference instanceof ListPreference )
+            preference.setSummary( ( (ListPreference) preference ).getEntry() );
+    }    
+
+    @SuppressWarnings( "deprecation" )
+    private void listenTo( String key )
+    {
+        findPreference( key ).setOnPreferenceClickListener( this );
+    }
+
+    @SuppressWarnings( "deprecation" )
+    private void removePreference( String keyParent, String keyChild )
+    {
+        Preference parent = findPreference( keyParent );
+        if( parent instanceof PreferenceGroup )
+            ( (PreferenceGroup) parent ).removePreference( findPreference( keyChild ) );
+    }
+
+    @SuppressWarnings( "deprecation" )
+    private void enablePreference( String key, boolean enabled )
+    {
+        findPreference( key ).setEnabled( enabled );
     }
 }
