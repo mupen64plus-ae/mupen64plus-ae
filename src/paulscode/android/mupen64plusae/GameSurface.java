@@ -29,15 +29,15 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
+import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 
 /**
  * Represents a graphical area of memory that can be drawn to.
  */
-public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
+public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
 {
     public interface CoreLifecycleListener
     {
