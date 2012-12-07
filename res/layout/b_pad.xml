@@ -57,15 +57,4 @@
         android:text="S"
         android:textColor="@android:color/primary_text_dark_nodisable" />
 
-    <TextView
-        android:id="@+id/textFeedback"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:text="feedback"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/primary_text_dark_nodisable" />
-
 </RelativeLayout>

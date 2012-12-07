@@ -35,10 +35,13 @@ import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.TextView;
@@ -47,6 +50,9 @@ public class InputMapPreference extends DialogPreference implements
         AbstractProvider.OnInputListener, OnClickListener
 {
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
+    private static final int MARGIN = 140;
+    private static final int MIN_LAYOUT_WIDTH_DP = 440 + MARGIN;
+    private static final int MIN_LAYOUT_HEIGHT_DP = 320 + MARGIN;
     
     private final InputMap mMap;
     private final LazyProvider mProvider;
@@ -62,9 +68,30 @@ public class InputMapPreference extends DialogPreference implements
         mProvider = new LazyProvider();
         mProvider.registerListener( this );
         mN64Button = new Button[InputMap.NUM_N64_CONTROLS];
-        
-        setDialogLayoutResource( R.layout.input_map_preference );
         setWidgetLayoutResource( R.layout.widget_toggle );
+        
+        // Select the appropriate dialog layout according to device configuration. Although you can
+        // do this through the resource directory structure and layout aliases, we'll do it this way
+        // for now since it's easier to maintain in the short term while the design is in flux.
+        // TODO: Consider using resource directories to handle device variation, once design is set.
+        WindowManager manager = (WindowManager) getContext().getSystemService( Context.WINDOW_SERVICE );
+        DisplayMetrics metrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics( metrics );
+        float scalefactor = (float) DisplayMetrics.DENSITY_DEFAULT / (float) metrics.densityDpi;
+        int widthDp = Math.round( metrics.widthPixels * scalefactor );
+        int heightDp = Math.round( metrics.heightPixels * scalefactor );
+        
+        if( widthDp >= MIN_LAYOUT_WIDTH_DP && heightDp >= MIN_LAYOUT_HEIGHT_DP )
+        {
+            setDialogLayoutResource( R.layout.input_map_preference );
+        }
+        else
+        {
+            int orientation = getContext().getResources().getConfiguration().orientation;
+            setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
+                    ? R.layout.input_map_preference_vertical
+                    : R.layout.input_map_preference_horizontal );
+        }
     }
     
     @Override
@@ -233,10 +260,13 @@ public class InputMapPreference extends DialogPreference implements
             }
         }
         
-        // Update the feedback text
-        mFeedbackText.setText( strength > 0.5
-                ? AbstractProvider.getInputName( inputCode )
-                : "" );
+        // Update the feedback text (not all layouts include this, so check null)
+        if( mFeedbackText != null )
+        {
+            mFeedbackText.setText( strength > 0.5
+                    ? AbstractProvider.getInputName( inputCode )
+                    : "" );
+        }
     }
     
     private void updateViews()
