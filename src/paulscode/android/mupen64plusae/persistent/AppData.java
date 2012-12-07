@@ -236,7 +236,7 @@ public class AppData
     /**
      * Small class containing hardware info provided by /proc/cpuinfo.
      */
-    public class HardwareInfo
+    public static class HardwareInfo
     {
         public final String hardware;
         public final String processor;
@@ -256,17 +256,17 @@ public class AppData
                 // Parse a long string of information from the operating system
                 String hwString = Utility.getCpuInfo().toLowerCase( Locale.ENGLISH );
                 String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
-                for( int i = 0; i < lines.length; i++ )
+                for( String line : lines )
                 {
-                    String[] splitLine = lines[i].split( ":" );
+                    String[] splitLine = line.split( ":" );
                     if( splitLine.length == 2 )
                     {
                         String heading = splitLine[0].trim();
-                        if( _processor == "" && heading.equals( "processor" ) )
+                        if( heading.equals( "processor" ) )
                             _processor = splitLine[1].trim();
-                        else if( _features == "" && heading.equals( "features" ) )
+                        else if( heading.equals( "features" ) )
                             _features = splitLine[1].trim();
-                        else if( _hardware == "" && heading.equals( "hardware" ) )
+                        else if( heading.equals( "hardware" ) )
                             _hardware = splitLine[1].trim();
                     }
                 }
