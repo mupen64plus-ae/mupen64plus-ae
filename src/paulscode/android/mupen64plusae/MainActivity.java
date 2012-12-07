@@ -124,9 +124,6 @@ public class MainActivity extends Activity implements DataDownloader.Listener
     {
         mDownloader = null;
         
-        // Record that the update completed
-        mAppData.setUpgradedVer19( true );
-        
         // Restore saves if they were backed up:
         File savesBak = new File( mAppData.savesBackupDir );
         if( savesBak.exists() )

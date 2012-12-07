@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: littleguy77
+ * Authors: paulscode, littleguy77
  */
 package paulscode.android.mupen64plusae.persistent;
 
@@ -32,8 +32,42 @@ import android.util.Log;
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
  * <p>
- * Hardware types are used to apply device-specific fixes for missing shadows and decals, and must
- * match the #defines in OpenGL.cpp.
+ * <b>Developers:</b> Use this class to persist small bits of application data across sessions and
+ * reboots. (For large data sets, consider using databases or files.) To add a new variable to
+ * persistent storage, use the following pattern:
+ * 
+ * <pre>
+ * {@code
+ * // Define keys for each variable
+ * private static final String KEY_FOO = "foo";
+ * private static final String KEY_BAR = "bar";
+ * 
+ * // Define default values for each variable
+ * private static final float   DEFAULT_FOO = 3.14f;
+ * private static final boolean DEFAULT_BAR = false;
+ * 
+ * // Create getters
+ * public float getFoo()
+ * {
+ *     return mPreferences.getFloat( KEY_FOO, DEFAULT_FOO );
+ * }
+ * 
+ * public boolean getBar()
+ * {
+ *     return mPreferences.getBoolean( KEY_BAR, DEFAULT_BAR );
+ * }
+ * 
+ * // Create setters
+ * public void setFoo( float value )
+ * {
+ *     mPreferences.edit().putFloat( KEY_FOO, value ).commit();
+ * }
+ * 
+ * public void setBar( boolean value )
+ * {
+ *     mPreferences.edit().putBoolean( KEY_BAR, value ).commit();
+ * }
+ * </pre>
  */
 public class AppData
 {
@@ -54,38 +88,14 @@ public class AppData
     
     /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;
-
-    /** Unknown hardware configuration. */
-    public static final int HARDWARE_TYPE_UNKNOWN = 0;
-    
-    /** OMAP-based hardware. */
-    public static final int HARDWARE_TYPE_OMAP = 1;
-    
-    /** OMAP-based hardware, type #2. */
-    public static final int HARDWARE_TYPE_OMAP_2 = 2;
-    
-    /** QualComm-based hardware. */
-    public static final int HARDWARE_TYPE_QUALCOMM = 3;
-    
-    /** IMAP-based hardware. */
-    public static final int HARDWARE_TYPE_IMAP = 4;
-    
-    /** Tegra-based hardware. */
-    public static final int HARDWARE_TYPE_TEGRA = 5;
-
-    /** Default value for getHardwareType(). */
-    public static final int DEFAULT_HARDWARE_TYPE = HARDWARE_TYPE_UNKNOWN;
-    
-    /** Default value for isFirstRun(). */
-    public static final boolean DEFAULT_FIRST_RUN = false;
-    
-    /** Default value for isUpgradedVer19(). */
-    public static final boolean DEFAULT_IS_UPGRADED_VER19 = false;
     
     /** The data download URL. */
     public static final String DATA_DOWNLOAD_URL = "Data size is 1.0 Mb|mupen64plus_data.zip";
     
-   /** The package name. */
+    /** The hardware info, refreshed at the beginning of every session. */
+    public final HardwareInfo hardwareInfo;
+    
+    /** The package name. */
     public final String packageName;
     
     /** The user storage directory (typically the external storage directory). */
@@ -127,11 +137,16 @@ public class AppData
     /** The name of the error log file. */
     public final String error_log;
     
-    /** The hardware info, refreshed at the beginning of every session. */
-    public final HardwareInfo hardwareInfo;
-    
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
+    
+    // Shared preferences keys
+    private static final String KEY_FIRST_RUN = "firstRun";
+    // ... add more as needed
+    
+    // Shared preferences default values
+    private static final boolean DEFAULT_FIRST_RUN = false;
+    // ... add more as needed
     
     /**
      * Instantiates a new object to retrieve and persist app data.
@@ -140,6 +155,7 @@ public class AppData
      */
     public AppData( Context context )
     {
+        hardwareInfo = new HardwareInfo();
         packageName = context.getPackageName();
         
         // Directories
@@ -175,7 +191,6 @@ public class AppData
         // Preference object for persisting app data
         String appDataFilename = packageName + "_preferences_device";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
-        hardwareInfo = new HardwareInfo();
         
         Log.v( "Paths - DataDir Check", "PackageName set to '" + packageName + "'" );
         Log.v( "Paths - DataDir Check", "LibsDir set to '" + libsDir + "'" );
@@ -192,52 +207,56 @@ public class AppData
     {
         return ( new File( storageDir ) ).exists();
     }
-
+    
     /**
      * Checks if this is the first time the app has been run.
      * 
-     * @return true, if the app has never been run
+     * @return True, if the app has never been run.
      */
     public boolean isFirstRun()
     {
-        return mPreferences.getBoolean( "firstRun", DEFAULT_FIRST_RUN );
+        return mPreferences.getBoolean( KEY_FIRST_RUN, DEFAULT_FIRST_RUN );
     }
     
     /**
      * Sets the flag indicating whether the app has run at least once.
      * 
-     * @param value true, to indicate the app has never been run
+     * @param value True, to indicate the app has never been run.
      */
     public void setFirstRun( boolean value )
     {
-        mPreferences.edit().putBoolean( "firstRun", value ).commit();
+        mPreferences.edit().putBoolean( KEY_FIRST_RUN, value ).commit();
     }
     
     /**
-     * Checks if the app has been upgraded to Version 1.9.
-     * 
-     * @return true, if the app has been upgraded
-     */
-    public boolean isUpgradedVer19()
-    {
-        return mPreferences.getBoolean( "upgradedVer19", DEFAULT_IS_UPGRADED_VER19 );
-    }
-    
-    /**
-     * Sets the flag indicating whether the app has been upgraded to Version 1.9
-     * 
-     * @param value true, to indicate the app has been upgraded
-     */
-    public void setUpgradedVer19( boolean value )
-    {
-        mPreferences.edit().putBoolean( "upgradedVer19", value ).commit();
-    }
-    
-    /**
-     * Small class containing hardware info provided by /proc/cpuinfo.
+     * Small class that summarizes the info provided by /proc/cpuinfo.
+     * <p>
+     * <b>Developers:</b> Hardware types are used to apply device-specific fixes for missing shadows
+     * and decals, and must match the #defines in OpenGL.cpp.
      */
     public static class HardwareInfo
     {
+        /** Unknown hardware configuration. */
+        public static final int HARDWARE_TYPE_UNKNOWN = 0;
+        
+        /** OMAP-based hardware. */
+        public static final int HARDWARE_TYPE_OMAP = 1;
+        
+        /** OMAP-based hardware, type #2. */
+        public static final int HARDWARE_TYPE_OMAP_2 = 2;
+        
+        /** QualComm-based hardware. */
+        public static final int HARDWARE_TYPE_QUALCOMM = 3;
+        
+        /** IMAP-based hardware. */
+        public static final int HARDWARE_TYPE_IMAP = 4;
+        
+        /** Tegra-based hardware. */
+        public static final int HARDWARE_TYPE_TEGRA = 5;
+        
+        /** Default hardware type */
+        private static final int DEFAULT_HARDWARE_TYPE = HARDWARE_TYPE_UNKNOWN;
+        
         public final String hardware;
         public final String processor;
         public final String features;
@@ -251,7 +270,7 @@ public class AppData
                 // Temporaries since we can't assign the final fields this way
                 String _hardware = "";
                 String _features = "";
-                String _processor = "";   
+                String _processor = "";
                 
                 // Parse a long string of information from the operating system
                 String hwString = Utility.getCpuInfo().toLowerCase( Locale.ENGLISH );
@@ -275,7 +294,7 @@ public class AppData
                 hardware = _hardware;
                 processor = _processor;
                 features = _features;
-            }            
+            }
             
             // Identify the hardware type from the substrings
             //@formatter:off
@@ -286,8 +305,10 @@ public class AppData
                     || ( hardware.contains( "tuna" )
                          && !IS_JELLYBEAN ) )
                 hardwareType = HARDWARE_TYPE_OMAP;
+            
             else if(   hardware.contains( "tuna" ) )
                 hardwareType = HARDWARE_TYPE_OMAP_2;
+            
             else if(   hardware.contains( "liberty" )
                     || hardware.contains( "gt-s5830" )
                     || hardware.contains( "zeus" ) )
@@ -303,12 +324,13 @@ public class AppData
                     || hardware.contains( "smdk4x12" )
                     || ( features != null && features.contains( "vfpv3d16" ) ) )
                 hardwareType = HARDWARE_TYPE_TEGRA;
+            
             else
                 hardwareType = DEFAULT_HARDWARE_TYPE;
             //@formatter:on
             
             // Identify whether this is an Xperia PLAY
-            isXperiaPlay = hardware.contains( "zeus" );           
+            isXperiaPlay = hardware.contains( "zeus" );
         }
     }
 }
