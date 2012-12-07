@@ -4,6 +4,7 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import android.app.Activity;
@@ -94,31 +95,32 @@ public class GameMenuHandler
             case R.id.ingameMenu:
                 // Return to previous activity (MenuActivity)
                 // It's easier just to finish so that everything will be reloaded next time
-
+                // mActivity.finish();
+                
+                // TODO: Uncomment the line above and delete the block below
+                
                 //////
                 //  paulscode: temporary workaround for ASDP bug after emulator shuts down
                   Notifier.showToast( mActivity, R.string.toast_savingSession );
                   NativeMethods.fileSaveEmulator( mAutoSaveFile );
-                  try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  SafeMethods.sleep( 500 );
                   for( int c = 0; NativeMethods.stateEmulator() == 3 && c < 120;  c++ )
                   {
-                      try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                      SafeMethods.sleep( 500 );
                   }
-                  try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  SafeMethods.sleep( 500 );
                   NativeMethods.pauseEmulator();
-                  try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  SafeMethods.sleep( 500 );
                   for( int c = 0; NativeMethods.stateEmulator() != 3 && c < 120;  c++ )
                   {
-                      try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                      SafeMethods.sleep( 500 );
                   }
-                  try{ Thread.sleep( 500 ); } catch( InterruptedException e ) {}
+                  SafeMethods.sleep( 500 );
                   Intent intent = new Intent( mActivity, MenuActivity.class );
                   intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                   mActivity.startActivity( intent );
                   System.exit( 0 );  // Bad, bad..
                 //////
-
-//                mActivity.finish();
                 break;
             default:
                 break;
@@ -127,13 +129,8 @@ public class GameMenuHandler
     
     private void setSlot( int value, MenuItem item )
     {
-        setSlot( value );
-        item.setChecked( true );
-    }
-    
-    private void setSlot( int value )
-    {
         setSlot( value, true );
+        item.setChecked( true );
     }
     
     private void setSlot( int value, boolean notify )
