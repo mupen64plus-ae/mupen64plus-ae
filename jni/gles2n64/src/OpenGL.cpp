@@ -41,12 +41,13 @@ extern "C" int Android_JNI_GetHardwareType();
 //// paulscode, added for switching between modes RGBA8888 and RGB565
 // (part of the color banding fix)
 extern "C" int Android_JNI_UseRGBA8888();
-// Must match the static final int's in Globals.java!
+// Must match the static final int's in AppData.java!
 #define HARDWARE_TYPE_UNKNOWN       0
 #define HARDWARE_TYPE_OMAP          1
-#define HARDWARE_TYPE_QUALCOMM      2
-#define HARDWARE_TYPE_IMAP          3
-#define HARDWARE_TYPE_TEGRA2        4
+#define HARDWARE_TYPE_OMAP_2        2
+#define HARDWARE_TYPE_QUALCOMM      3
+#define HARDWARE_TYPE_IMAP          4
+#define HARDWARE_TYPE_TEGRA         5
 ////
 
 //#define BATCH_TEST
@@ -181,6 +182,11 @@ void OGL_InitStates()
         printf( "Using settings for hardware profile OMAP (0.2f, 0.2f)" );
         glPolygonOffset( 0.2f, 0.2f );
     }
+    else if( hardwareType == HARDWARE_TYPE_OMAP_2 )
+    {
+        printf( "Using settings for hardware profile OMAP, type #2 (-1.5f, -1.5f)" );
+        glPolygonOffset( -1.5f, -1.5f );
+    }
     else if( hardwareType == HARDWARE_TYPE_QUALCOMM )
     {
         printf( "Using settings for hardware profile QUALCOMM (-0.2f, -0.2f)" );
@@ -191,9 +197,9 @@ void OGL_InitStates()
         printf( "Using settings for hardware profile IMAP (-0.001f, -0.001f)" );
         glPolygonOffset( -0.001f, -0.001f );
     }
-    else if( hardwareType == HARDWARE_TYPE_TEGRA2 )
+    else if( hardwareType == HARDWARE_TYPE_TEGRA )
     {
-        printf( "Using settings for hardware profile TEGRA2 (-2.0f, -2.0f)" );
+        printf( "Using settings for hardware profile TEGRA (-2.0f, -2.0f)" );
         glPolygonOffset( -2.0f, -2.0f );
     }
     else  // HARDWARE_TYPE_UNKNOWN

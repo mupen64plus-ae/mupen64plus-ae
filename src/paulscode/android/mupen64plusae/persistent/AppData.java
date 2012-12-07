@@ -61,15 +61,18 @@ public class AppData
     /** OMAP-based hardware. */
     public static final int HARDWARE_TYPE_OMAP = 1;
     
+    /** OMAP-based hardware, type #2. */
+    public static final int HARDWARE_TYPE_OMAP_2 = 2;
+    
     /** QualComm-based hardware. */
-    public static final int HARDWARE_TYPE_QUALCOMM = 2;
+    public static final int HARDWARE_TYPE_QUALCOMM = 3;
     
     /** IMAP-based hardware. */
-    public static final int HARDWARE_TYPE_IMAP = 3;
+    public static final int HARDWARE_TYPE_IMAP = 4;
     
     /** Tegra-based hardware. */
-    public static final int HARDWARE_TYPE_TEGRA = 4;
-    
+    public static final int HARDWARE_TYPE_TEGRA = 5;
+
     /** Default value for getHardwareType(). */
     public static final int DEFAULT_HARDWARE_TYPE = HARDWARE_TYPE_UNKNOWN;
     
@@ -277,12 +280,14 @@ public class AppData
             // Identify the hardware type from the substrings
             //@formatter:off
             if(        hardware.contains( "mapphone" )
-                    || hardware.contains( "tuna" )
                     || hardware.contains( "smdkv" )
                     || hardware.contains( "herring" )
-                    || hardware.contains( "aries" ) )
+                    || hardware.contains( "aries" )
+                    || ( hardware.contains( "tuna" )
+                         && !IS_JELLYBEAN ) )
                 hardwareType = HARDWARE_TYPE_OMAP;
-            
+            else if(   hardware.contains( "tuna" ) )
+                hardwareType = HARDWARE_TYPE_OMAP_2;
             else if(   hardware.contains( "liberty" )
                     || hardware.contains( "gt-s5830" )
                     || hardware.contains( "zeus" ) )

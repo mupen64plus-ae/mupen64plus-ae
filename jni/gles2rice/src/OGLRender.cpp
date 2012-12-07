@@ -39,12 +39,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //// paulscode, added for different configurations based on hardware
 // (part of the missing shadows and stars bug fix)
 extern "C" int Android_JNI_GetHardwareType();
-// Must match the static final int's in Globals.java!
+// Must match the static final int's in AppData.java!
 #define HARDWARE_TYPE_UNKNOWN       0
 #define HARDWARE_TYPE_OMAP          1
-#define HARDWARE_TYPE_QUALCOMM      2
-#define HARDWARE_TYPE_IMAP          3
-#define HARDWARE_TYPE_TEGRA2        4
+#define HARDWARE_TYPE_OMAP_2        2
+#define HARDWARE_TYPE_QUALCOMM      3
+#define HARDWARE_TYPE_IMAP          4
+#define HARDWARE_TYPE_TEGRA         5
 ///
 
 //#include "liblinux/BMGLibPNG.h"
@@ -288,6 +289,11 @@ void OGLRender::ApplyZBias(int bias)
         f1 = bias > 0 ? 0.2f : 0.0f;
         f2 = bias > 0 ? 0.2f : 0.0f;
     }
+    else if( hardwareType == HARDWARE_TYPE_OMAP_2 )
+    {
+        f1 = bias > 0 ? -1.5f : 0.0f;
+        f2 = bias > 0 ? -1.5f : 0.0f;
+    }
     else if( hardwareType == HARDWARE_TYPE_QUALCOMM )
     {
         f1 = bias > 0 ? -0.2f : 0.0f;
@@ -298,7 +304,7 @@ void OGLRender::ApplyZBias(int bias)
         f1 = bias > 0 ? -0.001f : 0.0f;
         f2 = bias > 0 ? -0.001f : 0.0f;
     }
-    else if( hardwareType == HARDWARE_TYPE_TEGRA2 )
+    else if( hardwareType == HARDWARE_TYPE_TEGRA )
     {
         f1 = bias > 0 ? -2.0f : 0.0f;
         f2 = bias > 0 ? -2.0f : 0.0f;
