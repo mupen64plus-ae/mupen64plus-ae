@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Set;
 
 import android.util.Log;
@@ -297,15 +296,6 @@ public class ConfigFile
         
         // Success
         return true;
-    }
-
-    /**
-     * Returns a handle to the configList iterator.
-     * @return ListIterator for accessing all sections in order.
-     */
-    public ListIterator<ConfigSection> listIterator()
-    {
-        return mConfigList.listIterator();
     }
     
     /**
