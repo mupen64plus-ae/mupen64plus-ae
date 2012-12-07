@@ -371,8 +371,11 @@ static bool StartVideo(void)
           }
           // Calculate aspect ratio
           const float ratio = ( romPAL ? 9.0f/11.0f : 0.75f );
-          int videoWidth = videoInfo->current_w;
-          int videoHeight = videoInfo->current_h;
+          int screenWidth = videoInfo->current_w;
+          int screenHeight = videoInfo->current_h;
+ 
+          int videoWidth = screenWidth;
+          int videoHeight = screenHeight;
 
           stretchVideo = (bool) Android_JNI_GetScreenStretch();
           if( !stretchVideo )
@@ -387,38 +390,18 @@ static bool StartVideo(void)
           int x = ( videoInfo->current_w - videoWidth ) / 2;
           int y = ( videoInfo->current_h - videoHeight ) / 2;
 
-          // TODO: Where do we save x and y values, so the frame isn't at top-left corner??
-          // We have the following in windowSetting struct.
-          //float   fViWidth, fViHeight;
-          //unsigned short        uViWidth, uViHeight;
-          //unsigned short        uDisplayWidth, uDisplayHeight;
-          //BOOL    bDisplayFullscreen;
-          //BOOL    bVerticalSync;
-          //float   fMultX, fMultY;
-          //int     vpLeftW, vpTopW, vpRightW, vpBottomW, vpWidthW, vpHeightW;
-          //int     statusBarHeight, statusBarHeightToUse, toolbarHeight, toolbarHeightToUse;
-          //BOOL    screenSaverStatus;
-          //struct {
-              //uint32      left;
-              //uint32      top;
-              //uint32      right;
-              //uint32      bottom;
-              //uint32      width;
-              //uint32      height;
-              //bool        needToClip;
-          //} clipping;
-          //int     timer;
-          //float   fps;    // frame per second
-          //float   dps;    // dlist per second
-          //uint32  lastSecFrameCount;
-          //uint32  lastSecDlistCount;
-        ////
+        windowSetting.uDisplayWidth = screenWidth;
+        windowSetting.uDisplayHeight = screenHeight;
+        printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );
 
+        windowSetting.width = videoWidth;
+        windowSetting.height = videoHeight;
+        windowSetting.xpos = x;
+        windowSetting.ypos = y;        
         ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenWidth", videoWidth, "Width of output window or fullscreen width" );
         ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenHeight", videoHeight, "Height of output window or fullscreen height" );
-        windowSetting.uDisplayWidth = videoWidth;
-        windowSetting.uDisplayHeight = videoHeight;
-        printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );
+
+
 
 #endif
 

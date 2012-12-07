@@ -1101,7 +1101,7 @@ void OGLRender::glViewportWrapper(GLint x, GLint y, GLsizei width, GLsizei heigh
         mflag=flag;
 //        if( flag )  glOrthof(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
         OPENGL_CHECK_ERRORS;
-        glViewport(x,y,width,height);
+        glViewport(windowSetting.xpos,windowSetting.ypos,windowSetting.width,windowSetting.height);
         OPENGL_CHECK_ERRORS;
     }
 }
