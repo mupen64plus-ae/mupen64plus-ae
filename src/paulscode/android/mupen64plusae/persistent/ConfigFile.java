@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
+import paulscode.android.mupen64plusae.util.Utility;
+
 import android.util.Log;
 
 /**
@@ -177,6 +179,10 @@ public class ConfigFile
      */
     public boolean load( String filename )
     {   
+        // Make sure a file was actually specified
+        if( Utility.isNullOrEmpty( filename ) )
+            return false;
+        
         // Free any previously loaded data
         clear();
         
@@ -188,10 +194,6 @@ public class ConfigFile
         if( mConfigList == null )
             mConfigList = new LinkedList<ConfigSection>();
         
-        // Make sure a file was actually specified
-        if( filename == null || filename.length() < 1 )
-            return false;
-
         FileInputStream fstream = null;
         try
         {
@@ -212,18 +214,15 @@ public class ConfigFile
         mConfigList.add( section ); // Add it to the list as well
         
         // Loop through reading the remaining sections
-        while( section.nextName != null && section.nextName.length() > 0 )
+        while( !Utility.isNullOrEmpty( section.nextName ) )
         {
             // Get the next section name
             sectionName = section.nextName;
-            
-            if( sectionName.length() > 0 )
-            {   
-                // Load the next section
-                section = new ConfigSection( sectionName, br );
-                mConfigMap.put( sectionName, section );  // Save the data to 'configMap'
-                mConfigList.add( section );  // Add it to the list as well
-            }
+ 
+            // Load the next section
+            section = new ConfigSection( sectionName, br );
+            mConfigMap.put( sectionName, section );  // Save the data to 'configMap'
+            mConfigList.add( section );  // Add it to the list as well  
         }
         
         try
@@ -248,7 +247,7 @@ public class ConfigFile
     public boolean save()
     {
         // No filename was specified.
-        if( mFilename == null || mFilename.length() < 1 )
+        if( Utility.isNullOrEmpty( mFilename ) )
         {
             Log.e( "ConfigFile", "Filename not specified in method save()" );
             return false;   // Quit
@@ -399,8 +398,10 @@ public class ConfigFile
         {
             parameters = new HashMap<String, ConfigParameter>();
             lines = new LinkedList<ConfigLine>();
-            if( sectionName != null && sectionName.length() > 0 && !sectionName.equals( "[<sectionless!>]" ) )
+            
+            if( !Utility.isNullOrEmpty( sectionName ) && !sectionName.equals( "[<sectionless!>]" ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
+            
             name = sectionName;
         }
         
@@ -418,7 +419,7 @@ public class ConfigFile
             parameters = new HashMap<String, ConfigParameter>();
             lines = new LinkedList<ConfigLine>();
 
-            if( sectionName != null && sectionName.length() > 0 && !sectionName.equals( "[<sectionless!>]" ) )
+            if( !Utility.isNullOrEmpty( sectionName ) && !sectionName.equals( "[<sectionless!>]" ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
 
             name = sectionName;
@@ -526,7 +527,7 @@ public class ConfigFile
         public String get( String parameter )
         {
             // Error: no parameters, or parameter was null
-            if( parameters == null || parameter == null || parameter.length() < 1 )
+            if( parameters == null || Utility.isNullOrEmpty( parameter ) )
                 return null;
             
             ConfigParameter confParam = parameters.get( parameter );
@@ -550,7 +551,7 @@ public class ConfigFile
             ConfigParameter confParam = parameters.get( parameter );
             if( confParam == null )  // New parameter
             {
-                if( value != null && value.length() > 0 )
+                if( !Utility.isNullOrEmpty( value ) )
                 {
                     confParam = new ConfigParameter( parameter, value );
                     lines.add( new ConfigLine( ConfigLine.LINE_PARAM, parameter + "=" + value + "\n", confParam ) );

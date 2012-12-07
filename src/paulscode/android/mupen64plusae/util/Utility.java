@@ -60,6 +60,20 @@ public class Utility
         return Math.max( Math.min( val, max ), min );
     }
     
+    /**
+     * Checks if a string is null or empty.
+     * @param string The string to check
+     * @return True if the string is null or empty.
+     *         False otherwise.
+     */
+    public static boolean isNullOrEmpty( String string )
+    {
+        if ( string != null )
+            return string.length() == 0;
+        else
+            return true;
+    }
+    
     public static Point constrainToOctagon( int dX, int dY, int halfWidth )
     {
         final float dC = halfWidth;

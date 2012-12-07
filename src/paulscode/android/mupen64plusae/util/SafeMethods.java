@@ -36,7 +36,7 @@ public class SafeMethods
      */
     public static boolean toBoolean( String val, boolean fail )
     {
-        if( val == null || val.length() < 1 )
+        if( Utility.isNullOrEmpty( val ) )
             return fail; // Not a boolean
         
         try
@@ -60,7 +60,7 @@ public class SafeMethods
      */
     public static int toInt( String val, int fail )
     {
-        if( val == null || val.length() < 1 )
+        if( Utility.isNullOrEmpty( val ) )
             return fail; // Not a number
         
         try
@@ -84,7 +84,7 @@ public class SafeMethods
      */
     public static float toFloat( String val, float fail )
     {
-        if( val == null || val.length() < 1 )
+        if( Utility.isNullOrEmpty( val ) )
             return fail; // Not a number
         
         try
