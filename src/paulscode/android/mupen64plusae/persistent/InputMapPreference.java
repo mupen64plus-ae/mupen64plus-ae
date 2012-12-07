@@ -89,8 +89,8 @@ public class InputMapPreference extends DialogPreference implements
         {
             int orientation = getContext().getResources().getConfiguration().orientation;
             setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
-                    ? R.layout.input_map_preference_vertical
-                    : R.layout.input_map_preference_horizontal );
+                    ? R.layout.input_map_preference_port
+                    : R.layout.input_map_preference_land );
         }
     }
     

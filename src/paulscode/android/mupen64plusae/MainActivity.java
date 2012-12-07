@@ -33,9 +33,6 @@
  * Bugs/features related to older APIs (e.g. Gingerbread)
  * TODO: API - Alternative to setAlpha for button-mapping
  * 
- * Bugs/features related to device parameters (e.g. screensize)
- * TODO: Device - Button mapping layout
- * 
  * Features, nice-to-haves, anti-features
  * TODO: Feature - Do we need status notification? 
  * TODO: Feature - Hide action bar on menu click
