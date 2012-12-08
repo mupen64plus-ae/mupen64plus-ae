@@ -77,11 +77,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mUserPrefs = new UserPrefs( this );
         
         // Disable the Xperia PLAY plugin as necessary
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
         if( !mAppData.hardwareInfo.isXperiaPlay )
-        {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
             prefs.edit().putBoolean( XPERIA_ENABLED, false ).commit();
-        }
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
@@ -89,11 +87,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Refresh the preference data wrapper
         mUserPrefs = new UserPrefs( this );
         
-        // Define the click callback for certain menu items that aren't actually preferences
-        listenTo( LAUNCH_RESUME );
-        listenTo( LAUNCH_RESET_USER_PREFS );
-        listenTo( LAUNCH_DEVICE_INFO );
-        listenTo( LAUNCH_PERIPHERAL_INFO );
+        // Provide the opportunity to override each preference click
+        for( String key : prefs.getAll().keySet() )
+            listenTo( key );
         
         // Hide the Xperia PLAY menu items as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
@@ -103,46 +99,18 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
     }
     
-    @Override
-    protected void onResume()
+    @SuppressWarnings( "deprecation" )
+    private void listenTo( String key )
     {
-        super.onResume();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        refreshViews( sharedPreferences, mUserPrefs );
-        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+        Preference preference = findPreference( key );
+        if( preference != null )
+            preference.setOnPreferenceClickListener( this );
     }
-    
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
-    }
-    
-    @Override
-    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
-    {
-        boolean restoreMissingPreferences = key.equals( VIDEO_PLUGIN );
-        
-        if( restoreMissingPreferences )
-        {
-            // Restore the preference categories that were removed in refreshViews(...)
-            finish();
-            startActivity( getIntent() );
-            return;
-        }
-        else
-        {
-            // Just refresh the preference screens in place
-            mUserPrefs = new UserPrefs( this );
-            refreshViews( sharedPreferences, mUserPrefs );
-        }
-    }
-    
+
     @Override
     public boolean onPreferenceClick( Preference preference )
     {
+        // Handle the clicks on certain menu items that aren't actually preferences
         String key = preference.getKey();
         
         if( key.equals( LAUNCH_RESUME ) )
@@ -157,9 +125,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         else if( key.equals( LAUNCH_PERIPHERAL_INFO ) )
             launchPeripheralInfo();
         
-        else
+        else // Let Android handle all other preference clicks
             return false;
         
+        // Tell Android that we handled the click
         return true;
     }
     
@@ -210,6 +179,43 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        refreshViews( sharedPreferences, mUserPrefs );
+        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+    }
+
+    @Override
+    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
+    {
+        boolean restoreMissingPreferences = key.equals( VIDEO_PLUGIN );
+        
+        if( restoreMissingPreferences )
+        {
+            // Restore the preference categories that were removed in refreshViews(...)
+            finish();
+            startActivity( getIntent() );
+            return;
+        }
+        else
+        {
+            // Just refresh the preference screens in place
+            mUserPrefs = new UserPrefs( this );
+            refreshViews( sharedPreferences, mUserPrefs );
+        }
+    }
+
     private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
     {
         // Enable the play menu only if the selected game actually exists
@@ -253,9 +259,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     }    
 
     @SuppressWarnings( "deprecation" )
-    private void listenTo( String key )
+    private void enablePreference( String key, boolean enabled )
     {
-        findPreference( key ).setOnPreferenceClickListener( this );
+        Preference preference = findPreference( key );
+        if( preference != null )
+            preference.setEnabled( enabled );
     }
 
     @SuppressWarnings( "deprecation" )
@@ -264,11 +272,5 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         Preference parent = findPreference( keyParent );
         if( parent instanceof PreferenceGroup )
             ( (PreferenceGroup) parent ).removePreference( findPreference( keyChild ) );
-    }
-
-    @SuppressWarnings( "deprecation" )
-    private void enablePreference( String key, boolean enabled )
-    {
-        findPreference( key ).setEnabled( enabled );
     }
 }
