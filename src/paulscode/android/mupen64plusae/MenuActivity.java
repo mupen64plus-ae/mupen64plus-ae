@@ -87,7 +87,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Refresh the preference data wrapper
         mUserPrefs = new UserPrefs( this );
         
-        // Provide the opportunity to override each preference click
+        // Define the click callback for certain menu items that aren't actually preferences
+        listenTo( LAUNCH_RESUME );
+        listenTo( LAUNCH_RESET_USER_PREFS );
+        listenTo( LAUNCH_DEVICE_INFO );
+        listenTo( LAUNCH_PERIPHERAL_INFO );
+        
+        // Provide the opportunity to override other preference clicks
         for( String key : prefs.getAll().keySet() )
             listenTo( key );
         
