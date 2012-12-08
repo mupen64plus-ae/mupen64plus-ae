@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.ZipEntry;
@@ -263,45 +264,38 @@ public class DataDownloader extends Thread
     private boolean isDownloadRequired( String[] downloadUrls, String path )
     {
         boolean isRequired = true;
-        InputStream checkFile = null;
+        InputStream checkFile;
+        
+        if ( Utility.isNullOrEmpty( path ) )
+            return isRequired;
+        
         try
         {
             checkFile = new FileInputStream( path );
+    
+            byte[] b = new byte[AppData.DATA_DOWNLOAD_URL.getBytes( "UTF-8" ).length + 1];
+            int readed = checkFile.read( b );
+            String compare = new String( b, 0, readed, "UTF-8" );
+            for( int i = 1; i < downloadUrls.length; i++ )
+            {
+                if( compare.compareTo( downloadUrls[i] ) == 0 )
+                {
+                    isRequired = false;
+                }
+            }
+            
+            checkFile.close();
         }
-        catch( FileNotFoundException e )
+        catch( FileNotFoundException fnfe )
         {
         }
-        catch( SecurityException e )
+        catch( UnsupportedEncodingException uee )
+        {
+        }
+        catch( IOException e )
         {
         }
         
-        if( checkFile != null )
-        {
-            try
-            {
-                byte[] b = new byte[AppData.DATA_DOWNLOAD_URL.getBytes( "UTF-8" ).length + 1];
-                int readed = checkFile.read( b );
-                String compare = new String( b, 0, readed, "UTF-8" );
-                for( int i = 1; i < downloadUrls.length; i++ )
-                {
-                    if( compare.compareTo( downloadUrls[i] ) == 0 )
-                    {
-                        isRequired = false;
-                    }
-                }
-            }
-            catch( IOException e )
-            {
-            }
-        }
-        try
-        {
-            checkFile.close();
-        }
-        catch( Exception e )
-        {
-        }
-        checkFile = null;
         return isRequired;
     }
     
