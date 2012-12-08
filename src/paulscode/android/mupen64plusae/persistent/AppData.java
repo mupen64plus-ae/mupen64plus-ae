@@ -116,12 +116,6 @@ public class AppData
     /** The directory containing all fonts. */
     public final String fontsDir;
     
-    /** The directory for backing up user data during (un)installation. */
-    public final String dataBackupDir;
-    
-    /** The directory for backing up game save files. */
-    public final String savesBackupDir;
-    
     /** The default directory containing game ROM files. */
     public final String defaultRomDir;
     
@@ -141,11 +135,11 @@ public class AppData
     private final SharedPreferences mPreferences;
     
     // Shared preferences keys
-    private static final String KEY_FIRST_RUN = "firstRun";
+    private static final String KEY_LAST_SLOT = "lastSlot";
     // ... add more as needed
     
     // Shared preferences default values
-    private static final boolean DEFAULT_FIRST_RUN = false;
+    private static final int DEFAULT_LAST_SLOT = 0;
     // ... add more as needed
     
     /**
@@ -173,8 +167,6 @@ public class AppData
         touchscreenLayoutsDir = dataDir + "/skins/gamepads/";
         xperiaPlayLayoutsDir = dataDir + "/skins/touchpads/";
         fontsDir = dataDir + "/skins/fonts/";
-        dataBackupDir = storageDir + "/mp64p_tmp_asdf1234lkjh0987/data/save";
-        savesBackupDir = dataBackupDir + "/data/save";
         
         String romFolder = storageDir + "/roms/n64";
         if( ( new File( romFolder ) ).isDirectory() )
@@ -189,7 +181,7 @@ public class AppData
         error_log = dataDir + "/error.log";
         
         // Preference object for persisting app data
-        String appDataFilename = packageName + "_preferences_device";
+        String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
         Log.v( "Paths - DataDir Check", "PackageName set to '" + packageName + "'" );
@@ -209,23 +201,23 @@ public class AppData
     }
     
     /**
-     * Checks if this is the first time the app has been run.
+     * Gets the last savegame slot.
      * 
-     * @return True, if the app has never been run.
+     * @return The last slot.
      */
-    public boolean isFirstRun()
+    public int getLastSlot()
     {
-        return mPreferences.getBoolean( KEY_FIRST_RUN, DEFAULT_FIRST_RUN );
+        return mPreferences.getInt( KEY_LAST_SLOT, DEFAULT_LAST_SLOT );
     }
     
     /**
-     * Sets the flag indicating whether the app has run at least once.
+     * Sets the last savegame slot.
      * 
-     * @param value True, to indicate the app has never been run.
+     * @param value The last slot.
      */
-    public void setFirstRun( boolean value )
+    public void setLastSlot( int value )
     {
-        mPreferences.edit().putBoolean( KEY_FIRST_RUN, value ).commit();
+        mPreferences.edit().putInt( KEY_LAST_SLOT, value ).commit();
     }
     
     /**

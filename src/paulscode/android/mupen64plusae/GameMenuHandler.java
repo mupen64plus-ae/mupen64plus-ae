@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -26,6 +27,8 @@ public class GameMenuHandler
     
     private MenuItem mSlotMenuItem;
     
+    private AppData mAppData;
+    
     private int mSlot = 0;
     
     public GameMenuHandler( Activity activity, String gameSaveDir, String autoSaveFile )
@@ -40,7 +43,14 @@ public class GameMenuHandler
         // Inflate the in-game menu, record the 'Slot X' menu object for later
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
-        setSlot( 0, false );
+        
+        // Get the app data after the activity has been created
+        mAppData = new AppData( mActivity );
+      
+        // Initialize to the last slot used
+        int slot = mAppData.getLastSlot();
+        MenuItem item = menu.findItem( R.id.ingameSlot ).getSubMenu().getItem( slot );
+        setSlot( slot, item );
     }
     
     public void onOptionsItemSelected( MenuItem item )
@@ -136,6 +146,7 @@ public class GameMenuHandler
     private void setSlot( int value, boolean notify )
     {
         mSlot = value % NUM_SLOTS;
+        mAppData.setLastSlot( mSlot );
         NativeMethods.stateSetSlotEmulator( mSlot );
         if( notify )
             Notifier.showToast( mActivity, R.string.toast_savegameSlot, mSlot );

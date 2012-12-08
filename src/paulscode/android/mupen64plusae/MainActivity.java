@@ -47,12 +47,9 @@
 
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.DataDownloader;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.app.Activity;
 import android.content.Intent;
@@ -120,14 +117,6 @@ public class MainActivity extends Activity implements DataDownloader.Listener
     public void onDownloadComplete()
     {
         mDownloader = null;
-        
-        // Restore saves if they were backed up:
-        File savesBak = new File( mAppData.savesBackupDir );
-        if( savesBak.exists() )
-        {
-            FileUtil.copyFile( savesBak, new File( mAppData.defaultSavesDir ) );
-            FileUtil.deleteFolder( new File( mAppData.dataBackupDir ) );
-        }
         
         // Launch the MenuActivity
         startActivity( new Intent( this, MenuActivity.class ) );
