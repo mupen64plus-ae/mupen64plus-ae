@@ -27,7 +27,7 @@
 #define VERSION_H
 
 #define PLUGIN_NAME    "GLES2Rice: Android build of Mupen64Plus 'Rice Video', ported to GLES2 by Kris"
-#define PLUGIN_VERSION           0x016304
+#define PLUGIN_VERSION           0x016305
 #define VIDEO_PLUGIN_API_VERSION 0x020100
 #define CONFIG_API_VERSION       0x020000
 #define VIDEXT_API_VERSION       0x020000
