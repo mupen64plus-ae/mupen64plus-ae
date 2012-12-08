@@ -270,7 +270,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private void removePreference( String keyParent, String keyChild )
     {
         Preference parent = findPreference( keyParent );
-        if( parent instanceof PreferenceGroup )
-            ( (PreferenceGroup) parent ).removePreference( findPreference( keyChild ) );
+        Preference child = findPreference( keyChild );
+        if( parent instanceof PreferenceGroup && child != null )
+            ( (PreferenceGroup) parent ).removePreference( child );
     }
 }
