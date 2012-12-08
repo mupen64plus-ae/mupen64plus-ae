@@ -1,0 +1,4 @@
+syntax: regexp
+
+^projects/unix/_obj/
+^projects/unix/mupen64plus-audio-sdl.so$
