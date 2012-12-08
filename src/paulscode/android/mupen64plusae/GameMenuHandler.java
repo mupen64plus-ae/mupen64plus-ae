@@ -21,11 +21,13 @@ public class GameMenuHandler
     
     private final Activity mActivity;
     
-    private String mGameSaveDir;
+    private final String mGameSaveDir;
 
-    private String mAutoSaveFile;
+    private final String mAutoSaveFile;
     
     private MenuItem mSlotMenuItem;
+    
+    private Menu mSlotSubMenu;
     
     private AppData mAppData;
     
@@ -40,17 +42,16 @@ public class GameMenuHandler
     
     public void onCreateOptionsMenu( Menu menu )
     {
-        // Inflate the in-game menu, record the 'Slot X' menu object for later
+        // Inflate the in-game menu, record the 'Slot X' menu item/submenu for later
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
+        mSlotSubMenu = mSlotMenuItem.getSubMenu();
         
         // Get the app data after the activity has been created
         mAppData = new AppData( mActivity );
       
         // Initialize to the last slot used
-        int slot = mAppData.getLastSlot();
-        MenuItem item = menu.findItem( R.id.ingameSlot ).getSubMenu().getItem( slot );
-        setSlot( slot, item );
+        setSlot( mAppData.getLastSlot(), false );
     }
     
     public void onOptionsItemSelected( MenuItem item )
@@ -58,34 +59,34 @@ public class GameMenuHandler
         switch( item.getItemId() )
         {
             case R.id.slot0:
-                setSlot( 0, item );
+                setSlot( 0, true );
                 break;
             case R.id.slot1:
-                setSlot( 1, item );
+                setSlot( 1, true );
                 break;
             case R.id.slot2:
-                setSlot( 2, item );
+                setSlot( 2, true );
                 break;
             case R.id.slot3:
-                setSlot( 3, item );
+                setSlot( 3, true );
                 break;
             case R.id.slot4:
-                setSlot( 4, item );
+                setSlot( 4, true );
                 break;
             case R.id.slot5:
-                setSlot( 5, item );
+                setSlot( 5, true );
                 break;
             case R.id.slot6:
-                setSlot( 6, item );
+                setSlot( 6, true );
                 break;
             case R.id.slot7:
-                setSlot( 7, item );
+                setSlot( 7, true );
                 break;
             case R.id.slot8:
-                setSlot( 8, item );
+                setSlot( 8, true );
                 break;
             case R.id.slot9:
-                setSlot( 9, item );
+                setSlot( 9, true );
                 break;
             case R.id.ingameQuicksave:
                 saveSlot();
@@ -137,21 +138,30 @@ public class GameMenuHandler
         }
     }
     
-    private void setSlot( int value, MenuItem item )
-    {
-        setSlot( value, true );
-        item.setChecked( true );
-    }
-    
     private void setSlot( int value, boolean notify )
     {
+        // Sanity check and persist the value
         mSlot = value % NUM_SLOTS;
         mAppData.setLastSlot( mSlot );
+        
+        // Set the slot in the core
         NativeMethods.stateSetSlotEmulator( mSlot );
-        if( notify )
-            Notifier.showToast( mActivity, R.string.toast_savegameSlot, mSlot );
+        
+        // Refresh the slot item in the top-level options menu
         if( mSlotMenuItem != null )
             mSlotMenuItem.setTitle( mActivity.getString( R.string.ingameSlot_title, mSlot ) );
+        
+        // Refresh the slot submenu
+        if( mSlotSubMenu != null )
+        {
+            MenuItem item = mSlotSubMenu.getItem( mSlot );
+            if( item != null )
+                item.setChecked( true );
+        }
+        
+        // Send a toast if requested
+        if( notify )
+            Notifier.showToast( mActivity, R.string.toast_savegameSlot, mSlot );
     }
     
     private void saveSlot()
