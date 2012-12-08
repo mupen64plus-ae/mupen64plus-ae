@@ -58,8 +58,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     private static final String TOUCHSCREEN_OCTAGON_JOYSTICK = "touchscreenOctagonJoystick";
+    private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
-    private static final String CATEGORY_GLES2N64 = "categoryGles2N64";
+    private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -122,9 +123,21 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        // Refresh the preference data wrapper and the views
-        mUserPrefs = new UserPrefs( this );
-        refreshViews( sharedPreferences, mUserPrefs );
+        boolean restoreMissingPreferences = key.equals( VIDEO_PLUGIN );
+        
+        if( restoreMissingPreferences )
+        {
+            // Restore the preference categories that were removed in refreshViews(...)
+            finish();
+            startActivity( getIntent() );
+            return;
+        }
+        else
+        {
+            // Just refresh the preference screens in place
+            mUserPrefs = new UserPrefs( this );
+            refreshViews( sharedPreferences, mUserPrefs );
+        }
     }
     
     @Override
@@ -212,8 +225,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Enable the video menu only if the video plug-in is not a dummy
         enablePreference( VIDEO, user.videoPlugin.enabled );
-        enablePreference( CATEGORY_GLES2N64, user.isGles2N64Enabled );
-        enablePreference( CATEGORY_GLES2_RICE, user.isGles2RiceEnabled );        
+        
+        // Hide certain categories altogether if they're not applicable. Normally we just rely on
+        // the built-in dependency disabler, but here the categories are so large that hiding them
+        // provides a better user experience.
+        if( !user.isGles2N64Enabled )
+            removePreference( VIDEO, CATEGORY_GLES2_N64 );
+        
+        if( !user.isGles2RiceEnabled )
+            removePreference( VIDEO, CATEGORY_GLES2_RICE );
         
         // Enable the custom touchscreen prefs under certain conditions
         enablePreference( TOUCHSCREEN_CUSTOM, user.isTouchscreenEnabled && user.isTouchscreenCustom );
