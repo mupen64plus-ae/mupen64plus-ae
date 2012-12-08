@@ -25,6 +25,7 @@
 /assets/* binary
 /res/drawable* binary
 *.gif binary
+*.gz binary
 *.jar binary
 *.jpg binary
 *.pdf binary
@@ -33,3 +34,4 @@
 *dynamiclib_win32.c binary
 *files_win32.c binary
 *.vcproj binary
+*.sln binary
