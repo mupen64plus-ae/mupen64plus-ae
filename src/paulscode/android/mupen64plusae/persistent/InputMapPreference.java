@@ -41,14 +41,13 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.TextView;
 
 public class InputMapPreference extends DialogPreference implements
-        AbstractProvider.OnInputListener, OnClickListener
+        AbstractProvider.OnInputListener, DialogInterface.OnClickListener, View.OnClickListener
 {
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
     private static final int MARGIN = 140;
@@ -174,36 +173,8 @@ public class InputMapPreference extends DialogPreference implements
         // Setup key listening
         mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT ) );
         
-        // Setup the calibration interface
-        // Due to a quirk in Android, analog axes whose center-point is not zero (e.g. an analog
-        // trigger whose rest position is -1) still produce a zero value at rest until they have
-        // been wiggled a little bit. After that point, their rest position is correctly recorded.
-        // The problem is that LazyProvider calibrates the rest position of each analog channel
-        // based on the first measurement it receives. As a workaround, we provide a calibration
-        // button, which makes the user go through a little dance to ensure all analog axes are
-        // pressed, then re-calibrates itself.
-        // TODO: Find a solution that is automatic (e.g. LazyProvider calibrates per channel)
-        builder.setNeutralButton( R.string.inputMapPreference_calibrate, new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                String title = getContext().getString( R.string.inputMapPreference_calibrate );
-                String message = getContext().getString( R.string.inputMapPreference_calibrateMessage );
-                Builder innerBuilder = new Builder( getContext() ).setTitle( title ).setMessage( message );
-                innerBuilder.setCancelable( true );
-                innerBuilder.setPositiveButton( android.R.string.ok, new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick( DialogInterface dialog2, int which2 )
-                    {
-                        // Reset the strength biases
-                        mProvider.resetBiases();
-                    }
-                } );
-                innerBuilder.create().show();
-            }
-        } );
+        // Add a button for calibrating the controller
+        builder.setNeutralButton( R.string.inputMapPreference_calibrate, this);
     }
     
     @Override
@@ -226,10 +197,61 @@ public class InputMapPreference extends DialogPreference implements
         // Unregister parent providers, new ones added on next click
         mProvider.removeAllProviders();
     }
+
+    @Override
+    public void onClick( DialogInterface dialog, int which )
+    {
+        // Handle clicks on the main dialog buttons
+        
+        if( which == DialogInterface.BUTTON_NEUTRAL )
+        {
+            // Calibration button clicked on the main dialog
+            // Due to a quirk in Android, analog axes whose center-point is not zero (e.g. an analog
+            // trigger whose rest position is -1) still produce a zero value at rest until they have
+            // been wiggled a little bit. After that point, their rest position is correctly
+            // recorded. The problem is that LazyProvider calibrates the rest position of each
+            // analog channel based on the first measurement it receives. As a workaround, we
+            // provide a calibration button, which makes the user go through a little dance to
+            // ensure all analog axes are pressed, then re-calibrates itself.
+            // TODO: Find a solution that is automatic (e.g. LazyProvider calibrates per channel)            
+            
+            // Remember the dirty state of the preference
+            final String dirtyMap = mMap.serialize();
+            
+            // Prepare calibration dialog strings
+            String title = getContext().getString( R.string.inputMapPreference_calibrate );
+            String message = getContext().getString( R.string.inputMapPreference_calibrateMessage );
+            
+            // Prepare calibration dialog callbacks
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick( DialogInterface dialog2, int which2 )
+                {
+                    // Button clicked on the calibration dialog
+
+                    // Reset the strength biases if OK clicked
+                    if( which2 == DialogInterface.BUTTON_POSITIVE )
+                        mProvider.resetBiases();
+                    
+                    // Reopen the mapping screen and restore the dirty state
+                    InputMapPreference.this.onClick();
+                    mMap.deserialize( dirtyMap );
+                }
+            };
+            
+            // Create and show the calibration dialog
+            new Builder( getContext() ).setTitle( title ).setMessage( message )
+                    .setNegativeButton( android.R.string.cancel, listener )
+                    .setPositiveButton( android.R.string.ok, listener ).create().show();
+        }
+    }
     
     @Override
     public void onClick( View view )
     {
+        // Handle clicks on the widgets and icons
+        
         // Handle the toggle button in the preferences menu
         if( view.equals( mToggleWidget ) )
         {
