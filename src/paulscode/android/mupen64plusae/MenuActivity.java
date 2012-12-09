@@ -134,10 +134,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             launchPeripheralInfo();
         
         else if( key.equals( LAUNCH_CRASH ) )
-        {
-            String x = null;
-            x.replace( 'a', 'b' );
-        }
+            launchCrash();
         
         else // Let Android handle all other preference clicks
             return false;
@@ -191,6 +188,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         String title = getString( R.string.menuPeripheralInfo_title );
         String message = Utility.getPeripheralInfo( this );
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    @SuppressWarnings( "null" )
+    private void launchCrash()
+    {
+        // Intentionally crash the app to test auto crash reporting
+        String x = null;
+        x.replace( 'a', 'b' );
     }
 
     @Override
