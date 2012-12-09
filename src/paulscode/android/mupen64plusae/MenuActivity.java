@@ -47,6 +47,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String LAUNCH_RESET_USER_PREFS = "menuResetUserPrefs";
     private static final String LAUNCH_DEVICE_INFO = "menuDeviceInfo";
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
+    private static final String LAUNCH_CRASH = "launchCrash";
 
     private static final String TOUCHSCREEN = "touchscreen";
     private static final String PERIPHERAL = "peripheral";
@@ -92,6 +93,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         listenTo( LAUNCH_RESET_USER_PREFS );
         listenTo( LAUNCH_DEVICE_INFO );
         listenTo( LAUNCH_PERIPHERAL_INFO );
+        listenTo( LAUNCH_CRASH );
         
         // Provide the opportunity to override other preference clicks
         for( String key : prefs.getAll().keySet() )
@@ -130,6 +132,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         else if( key.equals( LAUNCH_PERIPHERAL_INFO ) )
             launchPeripheralInfo();
+        
+        else if( key.equals( LAUNCH_CRASH ) )
+        {
+            String x = null;
+            x.replace( 'a', 'b' );
+        }
         
         else // Let Android handle all other preference clicks
             return false;

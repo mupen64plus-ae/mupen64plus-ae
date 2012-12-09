@@ -380,6 +380,43 @@
                     android:summary="@string/menuPeripheralInfo_summary"
                     android:title="@string/menuPeripheralInfo_title" />
 
+            <PreferenceScreen
+                android:key="menuCrashReports "
+                android:title="Crash reports" >
+        
+                <CheckBoxPreference
+                    android:key="acra.enable"
+                    android:title="Crash reports"
+                    android:summaryOn="Crash reporting enabled"
+                    android:summaryOff="Crash reporting disabled"
+                    android:defaultValue="false" />
+
+                <!-- <CheckBoxPreference
+                    android:key="acra.syslog.enable"
+                    android:summaryOn="System logging enabled"
+                    android:summaryOff="System logging disabled"
+                    android:title="System logs"
+                    android:defaultValue="true" /> -->
+         
+                <EditTextPreference
+                    android:key="acra.user.email"
+                    android:title="Contact info"
+                    android:summary="Your email address or paulscode.com username (not required)" />
+          
+                <!-- <CheckBoxPreference
+                    android:key="acra.alwaysaccept"
+                    android:title="Auto-accept"
+                    android:summaryOn="Always send reports"
+                    android:summaryOff="Ask before sending reports"
+                    android:defaultValue="false"/> -->
+        
+                <Preference
+                    android:key="launchCrash"
+                    android:summary="Intentionally crash the app; see report at http://tinyurl.com/c6n4quo"
+                    android:title="Test" />
+        
+            </PreferenceScreen>
+
             </PreferenceScreen>
 
             <Preference
