@@ -8,7 +8,7 @@
             <gradient
                 android:startColor="@color/holo_blue1"
                 android:endColor="@color/holo_blue2"
-                android:angle="270" />
+                android:angle="90" />
             <stroke
                 android:width="3dp"
                 android:color="@color/holo_blue2" />
@@ -21,9 +21,9 @@
         <shape
             android:shape="rectangle" >
             <gradient
-                android:endColor="@color/gray3"
-                android:startColor="@color/gray4"
-                android:angle="270" />
+                android:startColor="@color/gray3"
+                android:endColor="@color/gray4"
+                android:angle="90" />
             <stroke
                 android:width="3dp"
                 android:color="@color/gray4" />
