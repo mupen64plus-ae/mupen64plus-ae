@@ -243,7 +243,9 @@ public class InputMapPreference extends DialogPreference implements
             // Create and show the calibration dialog
             new Builder( getContext() ).setTitle( title ).setMessage( message )
                     .setNegativeButton( android.R.string.cancel, listener )
-                    .setPositiveButton( android.R.string.ok, listener ).create().show();
+                    .setPositiveButton( android.R.string.ok, listener )
+                    .setCancelable(false)
+                    .create().show();
         }
     }
     
