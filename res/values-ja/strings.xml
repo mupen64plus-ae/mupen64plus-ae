@@ -264,6 +264,7 @@
     <string name="gameMenu_saveHint">ファイル名</string>
     <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。</string>
     <string name="inputMapPreference_popupPosButtonText">アンマップ</string>
+    <string name="inputMapPreference_xperiaPlay">(Analog stick and C-pad controlled with touchpad)</string>
     <string name="inputMapPreference_rumble">振動\nパック</string>
     <string name="inputMapPreference_mempak">拡張\nパック</string>
     <string name="inputMapPreference_special">特別な機能</string>

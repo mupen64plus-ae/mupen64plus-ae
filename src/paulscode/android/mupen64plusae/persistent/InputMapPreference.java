@@ -87,10 +87,20 @@ public class InputMapPreference extends DialogPreference implements
         }
         else
         {
+            UserPrefs prefs = new UserPrefs( context );
             int orientation = getContext().getResources().getConfiguration().orientation;
-            setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
-                    ? R.layout.input_map_preference_port
-                    : R.layout.input_map_preference_land );
+            if( prefs.isXperiaEnabled )
+            {
+                setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
+                        ? R.layout.input_map_preference_port_xplay
+                        : R.layout.input_map_preference_land_xplay );
+            }
+            else
+            {
+                setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
+                        ? R.layout.input_map_preference_port
+                        : R.layout.input_map_preference_land );
+            }
         }
     }
     
@@ -142,7 +152,10 @@ public class InputMapPreference extends DialogPreference implements
         
         // Define the button click callbacks
         for( Button b : mN64Button )
-            b.setOnClickListener( this );
+        {
+            if( b != null )
+                b.setOnClickListener( this );
+        }
         
         // Setup analog axis listening
         if( AppData.IS_HONEYCOMB_MR1 )
@@ -247,16 +260,19 @@ public class InputMapPreference extends DialogPreference implements
         {
             // Highlight the currently active button
             Button button = mN64Button[i];
-            button.setPressed( i == selectedIndex && strength > AbstractProvider.STRENGTH_THRESHOLD );
-            
-            // Fade any buttons that aren't mapped
-            // TODO: provide alternative for lower APIs
-            if( AppData.IS_HONEYCOMB )
+            if( button != null )
             {
-                if( mMap.getMappedInputCodes()[i] == 0 )
-                    button.setAlpha( UNMAPPED_BUTTON_ALPHA );
-                else
-                    button.setAlpha( 1 );
+                button.setPressed( i == selectedIndex && strength > AbstractProvider.STRENGTH_THRESHOLD );
+            
+                // Fade any buttons that aren't mapped
+                // TODO: provide alternative for lower APIs
+                if( AppData.IS_HONEYCOMB )
+                {
+                    if( mMap.getMappedInputCodes()[i] == 0 )
+                        button.setAlpha( UNMAPPED_BUTTON_ALPHA );
+                    else
+                        button.setAlpha( 1 );
+                }
             }
         }
         

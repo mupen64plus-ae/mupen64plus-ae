@@ -272,6 +272,7 @@
     <string name="gameMenu_saveHint">filename</string>
     <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
     <string name="inputMapPreference_popupPosButtonText">Unmap</string>
+    <string name="inputMapPreference_xperiaPlay">(Analog stick and C-pad\ncontrolled with touchpad)</string>
     <string name="inputMapPreference_rumble">Rumble\nPak</string>
     <string name="inputMapPreference_mempak">Expansion\nPak</string>
     <string name="inputMapPreference_special">Special functions</string>
