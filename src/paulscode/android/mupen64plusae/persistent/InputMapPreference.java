@@ -37,6 +37,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.graphics.PorterDuff;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -50,6 +51,7 @@ public class InputMapPreference extends DialogPreference implements
         AbstractProvider.OnInputListener, DialogInterface.OnClickListener, View.OnClickListener
 {
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
+    private static final int UNMAPPED_BUTTON_FILTER = 0x66FFFFFF;
     private static final int MARGIN = 140;
     private static final int MIN_LAYOUT_WIDTH_DP = 440 + MARGIN;
     private static final int MIN_LAYOUT_HEIGHT_DP = 320 + MARGIN;
@@ -319,15 +321,24 @@ public class InputMapPreference extends DialogPreference implements
             if( button != null )
             {
                 button.setPressed( i == selectedIndex && strength > AbstractProvider.STRENGTH_THRESHOLD );
-            
+                
                 // Fade any buttons that aren't mapped
-                // TODO: provide alternative for lower APIs
                 if( AppData.IS_HONEYCOMB )
                 {
                     if( mMap.getMappedInputCodes()[i] == 0 )
                         button.setAlpha( UNMAPPED_BUTTON_ALPHA );
                     else
                         button.setAlpha( 1 );
+                }
+                else
+                {
+                    // For older API's try something similar (not quite the same)
+                    if( mMap.getMappedInputCodes()[i] == 0 )
+                        button.getBackground().setColorFilter( UNMAPPED_BUTTON_FILTER,
+                                PorterDuff.Mode.MULTIPLY );
+                    else
+                        button.getBackground().clearColorFilter();
+                    button.invalidate();
                 }
             }
         }
