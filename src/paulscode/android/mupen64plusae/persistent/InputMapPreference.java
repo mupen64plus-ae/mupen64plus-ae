@@ -35,6 +35,7 @@ import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -172,6 +173,37 @@ public class InputMapPreference extends DialogPreference implements
         
         // Setup key listening
         mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT ) );
+        
+        // Setup the calibration interface
+        // Due to a quirk in Android, analog axes whose center-point is not zero (e.g. an analog
+        // trigger whose rest position is -1) still produce a zero value at rest until they have
+        // been wiggled a little bit. After that point, their rest position is correctly recorded.
+        // The problem is that LazyProvider calibrates the rest position of each analog channel
+        // based on the first measurement it receives. As a workaround, we provide a calibration
+        // button, which makes the user go through a little dance to ensure all analog axes are
+        // pressed, then re-calibrates itself.
+        // TODO: Find a solution that is automatic (e.g. LazyProvider calibrates per channel)
+        builder.setNeutralButton( R.string.inputMapPreference_calibrate, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                String title = getContext().getString( R.string.inputMapPreference_calibrate );
+                String message = getContext().getString( R.string.inputMapPreference_calibrateMessage );
+                Builder innerBuilder = new Builder( getContext() ).setTitle( title ).setMessage( message );
+                innerBuilder.setCancelable( true );
+                innerBuilder.setPositiveButton( android.R.string.ok, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick( DialogInterface dialog2, int which2 )
+                    {
+                        // Reset the strength biases
+                        mProvider.resetBiases();
+                    }
+                } );
+                innerBuilder.create().show();
+            }
+        } );
     }
     
     @Override

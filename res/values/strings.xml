@@ -277,6 +277,8 @@
     <string name="inputMapPreference_mempak">Expansion\nPak</string>
     <string name="inputMapPreference_special">Special functions</string>
     <string name="inputMapPreference_controls">N64 controls</string>
+    <string name="inputMapPreference_calibrate">Calibrate</string>
+    <string name="inputMapPreference_calibrateMessage">Wiggle every analog trigger and joystick, then press Ok</string>
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
     <string name="resetPrefs_popupMessage">Reset all preferences to their defaults?</string>
     
