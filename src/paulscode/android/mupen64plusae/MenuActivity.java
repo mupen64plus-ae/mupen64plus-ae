@@ -24,8 +24,11 @@ import java.io.File;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -165,17 +168,30 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
 
     private void launchResetUserPrefs()
     {
-        // Reset the user preferences
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( this );
-        preferences.edit().clear().commit();
-        PreferenceManager.setDefaultValues( this, R.xml.preferences, true );
-        
-        // Restart the activity so that the entire menu system is rebuilt
-        // (OnSharedPreferenceChangedListener is not sufficient for this)
-        finish();
-        startActivity( getIntent() );
+        String title = getString( R.string._confirmation );
+        String message = getString( R.string.resetPrefs_popupMessage );
+        Prompt.promptConfirm( this, title, message, new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    // Reset the user preferences
+                    SharedPreferences preferences = PreferenceManager
+                            .getDefaultSharedPreferences( MenuActivity.this );
+                    preferences.edit().clear().commit();
+                    PreferenceManager.setDefaultValues( MenuActivity.this, R.xml.preferences, true );
+                    
+                    // Restart the activity so that the entire menu system is rebuilt
+                    // (OnSharedPreferenceChangedListener is not sufficient for this)
+                    finish();
+                    startActivity( getIntent() );
+                }
+            }
+        } );
     }
-
+    
     private void launchDeviceInfo()
     {
         String title = getString( R.string.menuDeviceInfo_title );

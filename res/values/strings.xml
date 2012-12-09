@@ -277,6 +277,7 @@
     <string name="inputMapPreference_mempak">Expansion\nPak</string>
     <string name="inputMapPreference_special">Special functions</string>
     <string name="inputMapPreference_controls">N64 controls</string>
-    <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>    
+    <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
+    <string name="resetPrefs_popupMessage">Reset all preferences to their defaults?</string>
     
 </resources>
