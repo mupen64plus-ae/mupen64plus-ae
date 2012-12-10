@@ -401,7 +401,7 @@
                 <EditTextPreference
                     android:key="acra.user.email"
                     android:title="Contact info"
-                    android:summary="Your email address or paulscode.com username (not required)" />
+                    android:summary="Your paulscode.com username (optional)" />
           
                 <!-- <CheckBoxPreference
                     android:key="acra.alwaysaccept"
@@ -412,7 +412,7 @@
         
                 <Preference
                     android:key="launchCrash"
-                    android:summary="Intentionally crash the app; see report at http://tinyurl.com/c6n4quo"
+                    android:summary="Intentionally crash the app; see report at http://tinyurl.com/b82jgen"
                     android:title="Test" />
         
             </PreferenceScreen>
