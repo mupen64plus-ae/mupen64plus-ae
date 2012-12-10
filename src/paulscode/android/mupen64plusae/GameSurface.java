@@ -164,8 +164,7 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
         mCoreThread.start();
         
         // Wait for initialization to complete
-        while( !CoreInterface.finishedReading )
-            SafeMethods.sleep( 40 );
+        CoreInterface.waitForRomLoad();
         
         while( NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_RUNNING )
             SafeMethods.sleep( 40 );
@@ -178,7 +177,7 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
         if( mClListener != null )
             mClListener.onCoreStartup();
     }
-    
+
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
@@ -205,7 +204,6 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             }
             mCoreThread = null;
         }
-
     }
     
     @Override

@@ -50,10 +50,6 @@ import android.util.Log;
  */
 public class CoreInterface
 {
-    // TODO: Eliminate or encapsulate
-    // This is used by getRomPath() and queried in class GameSurface
-    protected static boolean finishedReading = false;
-    
     // Public constants
     public static final int EMULATOR_STATE_UNKNOWN = 0;
     public static final int EMULATOR_STATE_STOPPED = 1;
@@ -73,6 +69,7 @@ public class CoreInterface
     private static Object sAudioBuffer;
     private static AppData sAppData = null;
     private static UserPrefs sUserPrefs = null;
+    private static boolean finishedReading = false;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
@@ -84,6 +81,19 @@ public class CoreInterface
         syncConfigFiles( sUserPrefs, sAppData );
     }
     
+    public static void waitForRomLoad()
+    {
+        // TODO: This function blocks until the core thread loads a ROM...
+        // ... which might never happen depending on when this is called.
+        // Problem is we are mixing a poll-and-sleep approach with an event-
+        // driven-callback approach.  Ideally, getRomPath should fire a
+        // callback when it's done loading rather than setting a flag to be
+        // polled.
+        finishedReading = false;
+        while( !finishedReading )
+            SafeMethods.sleep( 40 );
+    }
+
     /**
      * Constructs any extra parameters to pass to the front-end, based on user preferences
      * @return Object handle to String containing space-separated parameters.
