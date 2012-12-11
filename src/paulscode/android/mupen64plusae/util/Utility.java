@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -162,6 +163,12 @@ public class Utility
         {
             ex.printStackTrace();
         }
+        
+        // Remove the serial number for privacy
+        Pattern pattern = Pattern.compile( "^serial\\s*?:.*?$", Pattern.CASE_INSENSITIVE
+                | Pattern.MULTILINE );
+        result = pattern.matcher( result ).replaceAll( "Serial : XXXX" );
+        
         return result;
     }
     
