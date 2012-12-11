@@ -202,7 +202,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private void launchPeripheralInfo()
     {
         String title = getString( R.string.menuPeripheralInfo_title );
-        String message = Utility.getPeripheralInfo( this );
+        String message = Utility.getPeripheralInfo();
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     

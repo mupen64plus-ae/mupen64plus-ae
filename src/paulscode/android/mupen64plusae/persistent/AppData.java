@@ -22,6 +22,8 @@ package paulscode.android.mupen64plusae.persistent;
 import java.io.File;
 import java.util.Locale;
 
+import org.acra.ACRA;
+
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -149,6 +151,10 @@ public class AppData
      */
     public AppData( Context context )
     {
+        // Record some info in the crash reporter
+        ACRA.getErrorReporter().putCustomData( "CPU_INFO", Utility.getCpuInfo() );
+        ACRA.getErrorReporter().putCustomData( "PERIPHERAL_INFO", Utility.getPeripheralInfo() );
+
         hardwareInfo = new HardwareInfo();
         packageName = context.getPackageName();
         

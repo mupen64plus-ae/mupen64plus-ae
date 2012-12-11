@@ -15,9 +15,9 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.graphics.Point;
 import android.util.FloatMath;
 import android.util.Log;
@@ -166,12 +166,12 @@ public class Utility
     }
     
     /**
-     * Gets the peripheral information from the appropriate Android API.
+     * Gets the peripheral information using the appropriate Android API.
      * 
      * @return The peripheral info string.
      */
     @TargetApi( 16 )
-    public static String getPeripheralInfo( Activity activity )
+    public static String getPeripheralInfo()
     {
         StringBuilder builder = new StringBuilder();
         
@@ -182,40 +182,15 @@ public class Utility
             {
                 InputDevice device = InputDevice.getDevice( ids[i] );
                 
-                if( !AppData.IS_JELLYBEAN || !device.isVirtual() )
+                // Ignore JellyBean virtual devices
+                if( !( AppData.IS_JELLYBEAN && device.isVirtual() ) )
                 {
-                    List<MotionRange> ranges;
-                    if( AppData.IS_HONEYCOMB_MR1 )
-                    {
-                        ranges = device.getMotionRanges();
-                    }
-                    else
-                    {
-                        // Earlier APIs we have to do it the hard way
-                        // TODO: Smelly... must be a better way
-                        ranges = new ArrayList<MotionRange>();
-                        boolean finished = false;
-                        for( int j = 0; j < 256 && !finished; j++ )
-                        {
-                            try
-                            {
-                                if( device.getMotionRange( j ) != null )
-                                    ranges.add( device.getMotionRange( j ) );
-                            }
-                            catch( Exception e )
-                            {
-                                finished = true;
-                                Log.i( "Utility", "Number of axes = " + j );
-                                // In Xperia PLAY (API 9) I found this to be 9
-                                // Not sure if this is device or API specific
-                            }
-                        }
-                    }
+                    List<MotionRange> ranges = getPeripheralMotionRanges( device );
                     
                     if( ranges.size() > 0 )
                     {
                         builder.append( "Device: " + device.getName() + "\r\n" );
-                        builder.append( "Id: " + device.getId() + "\r\n" );
+                        builder.append( "Id: " + AbstractProvider.getHardwareId( device ) + "\r\n" );
                         if( AppData.IS_JELLYBEAN && device.getVibrator().hasVibrator() )
                         {
                             builder.append( "Vibrator: true\r\n" );
@@ -256,6 +231,49 @@ public class Utility
         // }
         
         return builder.toString();
+    }
+
+    /**
+     * Gets the motion ranges of a peripheral using the appropriate Android API.
+     * 
+     * @return The motion ranges associated with the peripheral.
+     */
+    @TargetApi( 12 )
+    private static List<MotionRange> getPeripheralMotionRanges( InputDevice device )
+    {
+        List<MotionRange> ranges;
+        if( AppData.IS_HONEYCOMB_MR1 )
+        {
+            ranges = device.getMotionRanges();
+        }
+        else if( AppData.IS_GINGERBREAD )
+        {
+            // Earlier APIs we have to do it the hard way
+            ranges = new ArrayList<MotionRange>();
+            boolean finished = false;
+            for( int j = 0; j < 256 && !finished; j++ )
+            {
+                // TODO: Eliminate reliance on try-catch
+                try
+                {
+                    if( device.getMotionRange( j ) != null )
+                        ranges.add( device.getMotionRange( j ) );
+                }
+                catch( Exception e )
+                {
+                    finished = true;
+                    Log.i( "Utility", "Number of axes = " + j );
+                    // In Xperia PLAY (API 9) I found this to be 9
+                    // Not sure if this is device or API specific
+                }
+            }
+        }
+        else
+        {
+            ranges = new ArrayList<InputDevice.MotionRange>();
+        }
+        
+        return ranges;
     }
     
     public static String getHeaderName( String filename, String tempDir )
