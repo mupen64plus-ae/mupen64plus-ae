@@ -323,7 +323,6 @@
                 mupen64:selectionMode="0" />
 
             <Preference
-                android:dependency="developerEnabled"
                 android:icon="@drawable/ic_key"
                 android:key="cheats"
                 android:summary="@string/cheats_summary"
@@ -424,11 +423,6 @@
                 android:key="menuResetUserPrefs"
                 android:summary="@string/menuResetUserPrefs_summary"
                 android:title="@string/menuResetUserPrefs_title" />
-
-            <CheckBoxPreference
-                android:key="developerEnabled"
-                android:summary="Enable menu items that are currently broken or unstable"
-                android:title="Unstable preferences" />
 
         </PreferenceCategory>
 
