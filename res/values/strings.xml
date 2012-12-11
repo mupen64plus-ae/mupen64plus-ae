@@ -225,6 +225,19 @@
     <string name="fpsRefresh_entry1">Occasionally</string>
     <string name="fpsRefresh_entry2">Frequently</string>
     
+    <!-- Frameskip Entries -->
+    <string name="gles2N64Frameskip_entryNever">Never skip frames</string>
+    <string name="gles2N64Frameskip_entryUpTo1">No more than 1 frame</string>
+    <string name="gles2N64Frameskip_entryUpTo2">No more than 2 frames</string>
+    <string name="gles2N64Frameskip_entryUpTo3">No more than 3 frames</string>
+    <string name="gles2N64Frameskip_entryUpTo4">No more than 4 frames</string>
+    <string name="gles2N64Frameskip_entryUpTo5">No more than 5 frames</string>
+    <string name="gles2N64Frameskip_entryExactly1">Exactly 1 frame</string>
+    <string name="gles2N64Frameskip_entryExactly2">Exactly 2 frames</string>
+    <string name="gles2N64Frameskip_entryExactly3">Exactly 3 frames</string>
+    <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
+    <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
+    
     <!-- Special Functions -->
     <string name="specialFunction_entry0">Stop</string>
     <string name="specialFunction_entry1">Fullscreen</string>

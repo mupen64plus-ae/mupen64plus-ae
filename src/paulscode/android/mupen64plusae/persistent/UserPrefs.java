@@ -256,8 +256,9 @@ public class UserPrefs
         
         // Video prefs - gles2n64
         isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
-        gles2N64MaxFrameskip = getSafeInt( prefsData, "gles2N64Frameskip", -1 );
-        isGles2N64AutoFrameskipEnabled = ( gles2N64MaxFrameskip < 0 );
+        int maxFrameskip = getSafeInt( prefsData, "gles2N64Frameskip", 0 );
+        isGles2N64AutoFrameskipEnabled = ( maxFrameskip < 0 );
+        gles2N64MaxFrameskip = Math.abs( maxFrameskip );
         isGles2N64FogEnabled = prefsData.getBoolean( "gles2N64Fog", false );
         isGles2N64SaiEnabled = prefsData.getBoolean( "gles2N64Sai", false );
         isGles2N64ScreenClearEnabled = prefsData.getBoolean( "gles2N64ScreenClear", true );
