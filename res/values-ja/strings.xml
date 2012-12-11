@@ -72,8 +72,8 @@
     <string name="touchscreen_summary">タッチパネル/タッチパッドの設定</string>
     <string name="peripheral_title">入力</string>
     <string name="peripheral_summary">ボタン/ジョイスティックの設定</string>
-    <string name="audio_title">Audio</string>
-    <string name="audio_summary">Sound settings</string>
+    <string name="audio_title">オーディオ</string>
+    <string name="audio_summary">サウンド設定</string>
     <string name="video_title">ビデオ</string>
     <string name="video_summary">グラフィック設定</string>
     <string name="plugins_title">@string/_advanced</string>
@@ -117,10 +117,11 @@
     <string name="fpsRefresh_title">フレームレート表示</string>
     <string name="videoStretch_title">ストレッチ画面</string>
     <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
-    <string name="useFramelimiter_title">Use framelimiter</string>
-    <string name="useFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
+    <string name="useFramelimiter_title">フレームリミッター</string>
+    <string name="useFramelimiter_summary">スムーズなゲームプレイのためにこれを有効 （一部のゲームが遅くなる）</string>
     <string name="videoRGBA8888_title">RGBA_8888 モード</string>
     <string name="videoRGBA8888_summary">いくつかのデバイス上でグラフィックスをかもしれない向上させる。</string>
+    
     <!-- GLES2N64 -->
     <string name="categoryGles2N64_title">GLES2N64設定</string>
     <string name="gles2N64Frameskip_title">フレームスキップ</string>
@@ -134,6 +135,7 @@
     <string name="gles2N64AlphaTest_summary">スピードハックを取得する設定を無効</string>
     <string name="gles2N64DepthTest_title">ハックZ</string>
     <string name="gles2N64DepthTest_summary">点滅している背景を修正するには、この設定を有効にします。</string>
+    
     <!-- GLES2Rice -->
     <string name="categoryGles2Rice_title">GLES2Rice設定</string>
     <string name="gles2RiceAutoFrameskip_title">オートフレームスキップ</string>
@@ -142,8 +144,8 @@
     <string name="gles2RiceFastTextureCRC_summary">設定が無効になっている場合、2D要素が改善され</string>
     <string name="gles2RiceFastTexture_title">高速テクスチャの読み込み</string>
     <string name="gles2RiceFastTexture_summary">サークルの遷移を修正</string>
-    <string name="gles2RiceForceTextureFilter_title">Force Texture Filter</string>
-    <string name="gles2RiceForceTextureFilter_summary">Fixes pixelated textures</string>
+    <string name="gles2RiceForceTextureFilter_title">テクスチャフィルタの使用を強制し</string>
+    <string name="gles2RiceForceTextureFilter_summary">ピクセル化されたテクスチャを修正</string>
     <string name="gles2RiceHiResTextures_title">高解像度のテクスチャ</string>
     <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
     <string name="gles2RiceImportHiResTextures_title">インポートテクスチャパック</string>
@@ -210,9 +212,9 @@
     <string name="resamplingAlgs_trivial">些細</string>
     <string name="resamplingAlgs_linear">線形補間</string>
     <string name="resamplingAlgs_zoh">ゼロ次ホールド</string>
-    <string name="resamplingAlgs_sinc_fastest">Sinc (最速)</string>
-    <string name="resamplingAlgs_sinc_medium">Sinc (中通り)</string>
-    <string name="resamplingAlgs_sinc_best">Sinc (最高)</string>
+    <string name="resamplingAlgs_sinc_fastest">Sinc （最速）</string>
+    <string name="resamplingAlgs_sinc_medium">Sinc （中通り）</string>
+    <string name="resamplingAlgs_sinc_best">Sinc （最高）</string>
 
     <!-- Screen Orientation Entries -->
     <string name="screenOrientation_entry0">横方向</string>
@@ -264,21 +266,21 @@
     <string name="dataDownloader_connectingTo">%1$sへの接続</string>
     <string name="dataDownloader_downloadingFrom">%1$sからデータをダウンロードします</string>
     <string name="dataDownloader_errorDownloadingFrom">%1$sからデータをダウンロード中にエラー</string>
-    <string name="dataDownloader_errorWrite">書き込みエラー (USBストレージ·モードのデバイスですか？) %1$s</string>
+    <string name="dataDownloader_errorWrite">書き込みエラー （USBストレージ·モードのデバイスですか？） %1$s</string>
     <string name="dataDownloader_failedConnectingTo">%1$sに接続できません</string>
     <string name="dataDownloader_finished">完成した</string>
     <string name="dataDownloader_progress">%1$.0f%% が行わ: ファイル %2$s</string>
     <string name="gameMenu_confirmFile">%1$s上書き?</string>
-    <string name="gameMenu_confirmReset">Reset game? All progress will be lost since your last save.</string>
+    <string name="gameMenu_confirmReset">ゲームをリセットしますか？ すべての進行状況は、前回の保存以降に失われます。</string>
     <string name="gameMenu_saveHint">ファイル名</string>
     <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。</string>
     <string name="inputMapPreference_popupPosButtonText">アンマップ</string>
-    <string name="inputMapPreference_xperiaPlay">(Analog stick and C-pad controlled with touchpad)</string>
+    <string name="inputMapPreference_xperiaPlay">（アナログスティックとC-パッドはタッチパッドで制御されます。）</string>
     <string name="inputMapPreference_rumble">振動\nパック</string>
     <string name="inputMapPreference_mempak">拡張\nパック</string>
-    <string name="inputMapPreference_calibrate">Calibrate</string>
-    <string name="inputMapPreference_calibrateMessage">Wiggle every analog trigger and joystick, then press OK…</string>
+    <string name="inputMapPreference_calibrate">キャリブレーション</string>
+    <string name="inputMapPreference_calibrateMessage">すべてのアナログスティックを移動し、[OK]を押します。</string>
     <string name="pathPreference_dialogTitle">選択したフォルダ： %1$s</string> 
-    <string name="resetPrefs_popupMessage">Reset all preferences to their defaults?</string>
+    <string name="resetPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
     
 </resources>
