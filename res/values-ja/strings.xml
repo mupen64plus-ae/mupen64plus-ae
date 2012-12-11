@@ -72,6 +72,8 @@
     <string name="touchscreen_summary">タッチパネル/タッチパッドの設定</string>
     <string name="peripheral_title">入力</string>
     <string name="peripheral_summary">ボタン/ジョイスティックの設定</string>
+    <string name="audio_title">Audio</string>
+    <string name="audio_summary">Sound settings</string>
     <string name="video_title">ビデオ</string>
     <string name="video_summary">グラフィック設定</string>
     <string name="plugins_title">@string/_advanced</string>
@@ -109,18 +111,14 @@
     <string name="swapAudioChannels_summary">スワップ左右のオーディオチャンネル</string>
     <string name="resamplingAlgs_title">再サンプリングアルゴリズム</string>
     <string name="resamplingAlgs_summary">オーディオを再サンプリングするときに使用されるアルゴリズム</string>
-    <string name="resamplingAlg_trivial">些細</string>
-    <string name="resamplingAlg_linear">線形補間</string>
-    <string name="resamplingAlg_zoh">ゼロ次ホールド</string>
-    <string name="resamplingAlg_sinc_fastest">Sinc (最速)</string>
-    <string name="resamplingAlg_sinc_medium">Sinc (中通り)</string>
-    <string name="resamplingAlg_sinc_best">Sinc (最高)</string>
     
     <!-- Video Menu -->
     <string name="screenOrientation_title">画面の向き</string>
     <string name="fpsRefresh_title">フレームレート表示</string>
     <string name="videoStretch_title">ストレッチ画面</string>
     <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
+    <string name="useFramelimiter_title">Use framelimiter</string>
+    <string name="useFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
     <string name="videoRGBA8888_title">RGBA_8888 モード</string>
     <string name="videoRGBA8888_summary">いくつかのデバイス上でグラフィックスをかもしれない向上させる。</string>
     <!-- GLES2N64 -->
@@ -144,6 +142,8 @@
     <string name="gles2RiceFastTextureCRC_summary">設定が無効になっている場合、2D要素が改善され</string>
     <string name="gles2RiceFastTexture_title">高速テクスチャの読み込み</string>
     <string name="gles2RiceFastTexture_summary">サークルの遷移を修正</string>
+    <string name="gles2RiceForceTextureFilter_title">Force Texture Filter</string>
+    <string name="gles2RiceForceTextureFilter_summary">Fixes pixelated textures</string>
     <string name="gles2RiceHiResTextures_title">高解像度のテクスチャ</string>
     <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
     <string name="gles2RiceImportHiResTextures_title">インポートテクスチャパック</string>
@@ -205,6 +205,14 @@
     <string name="touchscreenRefresh_entry0">決して</string>
     <string name="touchscreenRefresh_entry1">時折</string>
     <string name="touchscreenRefresh_entry2">頻繁</string>
+    
+    <!-- Audio Resampling Entries -->
+    <string name="resamplingAlgs_trivial">些細</string>
+    <string name="resamplingAlgs_linear">線形補間</string>
+    <string name="resamplingAlgs_zoh">ゼロ次ホールド</string>
+    <string name="resamplingAlgs_sinc_fastest">Sinc (最速)</string>
+    <string name="resamplingAlgs_sinc_medium">Sinc (中通り)</string>
+    <string name="resamplingAlgs_sinc_best">Sinc (最高)</string>
 
     <!-- Screen Orientation Entries -->
     <string name="screenOrientation_entry0">横方向</string>
@@ -249,26 +257,28 @@
     <string name="toast_loadingGame">%1$s再開</string>
     <string name="toast_savingGame">ゲームを保存</string>
     <string name="toast_sdInaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
+    <string name="toast_resettingGame">Resetting…</string>
     <string name="toast_overwritingGame">%1$s上書き</string>
     
     <!-- Other Strings -->
     <string name="dataDownloader_connectingTo">%1$sへの接続</string>
-    <string name="dataDownloader_finished">完成した</string>
     <string name="dataDownloader_downloadingFrom">%1$sからデータをダウンロードします</string>
-    <string name="dataDownloader_progress">%1$.0f%% が行わ: ファイル %2$s</string>
-    <string name="dataDownloader_downloadUnneeded">ダウンロードする必要はありません</string>
     <string name="dataDownloader_errorDownloadingFrom">%1$sからデータをダウンロード中にエラー</string>
     <string name="dataDownloader_errorWrite">書き込みエラー (USBストレージ·モードのデバイスですか？) %1$s</string>
     <string name="dataDownloader_failedConnectingTo">%1$sに接続できません</string>
+    <string name="dataDownloader_finished">完成した</string>
+    <string name="dataDownloader_progress">%1$.0f%% が行わ: ファイル %2$s</string>
     <string name="gameMenu_confirmFile">%1$s上書き?</string>
+    <string name="gameMenu_confirmReset">Reset game? All progress will be lost since your last save.</string>
     <string name="gameMenu_saveHint">ファイル名</string>
     <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。</string>
     <string name="inputMapPreference_popupPosButtonText">アンマップ</string>
     <string name="inputMapPreference_xperiaPlay">(Analog stick and C-pad controlled with touchpad)</string>
     <string name="inputMapPreference_rumble">振動\nパック</string>
     <string name="inputMapPreference_mempak">拡張\nパック</string>
-    <string name="inputMapPreference_special">特別な機能</string>
-    <string name="inputMapPreference_controls">N64コントロール</string>
+    <string name="inputMapPreference_calibrate">Calibrate</string>
+    <string name="inputMapPreference_calibrateMessage">Wiggle every analog trigger and joystick, then press OK…</string>
     <string name="pathPreference_dialogTitle">選択したフォルダ： %1$s</string> 
+    <string name="resetPrefs_popupMessage">Reset all preferences to their defaults?</string>
     
 </resources>

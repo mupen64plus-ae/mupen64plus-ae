@@ -73,7 +73,7 @@
     <string name="peripheral_title">Input</string>
     <string name="peripheral_summary">Button/joystick settings</string>
     <string name="audio_title">Audio</string>
-    <string name="audio_summary">Audio settings</string>
+    <string name="audio_summary">Sound settings</string>
     <string name="video_title">Video</string>
     <string name="video_summary">Graphics settings</string>
     <string name="plugins_title">@string/_advanced</string>
@@ -111,12 +111,6 @@
     <string name="swapAudioChannels_summary">Swap the left and right audio channels</string>
     <string name="resamplingAlgs_title">Resampling algorithm</string>
     <string name="resamplingAlgs_summary">Algorithm to use when resampling audio</string>
-    <string name="resamplingAlg_trivial">Trivial</string>
-    <string name="resamplingAlg_linear">Linear interpolation</string>
-    <string name="resamplingAlg_zoh">Zero order hold</string>
-    <string name="resamplingAlg_sinc_fastest">Sinc (fastest)</string>
-    <string name="resamplingAlg_sinc_medium">Sinc (medium)</string>
-    <string name="resamplingAlg_sinc_best">Sinc (best)</string>
     
     <!-- Video Menu -->
     <string name="screenOrientation_title">Screen orientation</string>
@@ -158,7 +152,7 @@
     <!-- Plugins Menu -->
     <string name="videoPlugin_title">Video</string>
     <string name="audioPlugin_title">Audio</string>
-    <string name="inputPlugin_title">Input</string>    
+    <string name="inputPlugin_title">Input</string>
     <string name="rspPlugin_title">Reality signal processor (RSP)</string>
     <string name="corePlugin_title">Emulation core</string>
     <string name="menuDeviceInfo_title">Device info</string>
@@ -212,6 +206,14 @@
     <string name="touchscreenRefresh_entry1">Occasionally</string>
     <string name="touchscreenRefresh_entry2">Frequently</string>
     
+    <!-- Audio Resampling Entries -->
+    <string name="resamplingAlgs_trivial">Trivial</string>
+    <string name="resamplingAlgs_linear">Linear interpolation</string>
+    <string name="resamplingAlgs_zoh">Zero order hold</string>
+    <string name="resamplingAlgs_sinc_fastest">Sinc (fastest)</string>
+    <string name="resamplingAlgs_sinc_medium">Sinc (medium)</string>
+    <string name="resamplingAlgs_sinc_best">Sinc (best)</string>
+    
     <!-- Screen Orientation Entries -->
     <string name="screenOrientation_entry0">Landscape</string>
     <string name="screenOrientation_entry1">Reverse landscape</string>
@@ -261,7 +263,6 @@
     <!-- Other Strings -->
     <string name="dataDownloader_connectingTo">Connecting to %1$s</string>
     <string name="dataDownloader_downloadingFrom">Downloading data from %1$s</string>
-    <string name="dataDownloader_downloadUnneeded">No need to download</string>
     <string name="dataDownloader_errorDownloadingFrom">Error downloading data from %1$s</string>
     <string name="dataDownloader_errorWrite">Write error (plugged in USB Mass Storage Device mode?) %1$s</string>
     <string name="dataDownloader_failedConnectingTo">Failed connecting to %1$s</string>
@@ -275,8 +276,6 @@
     <string name="inputMapPreference_xperiaPlay">(Analog stick and C-pad\ncontrolled with touchpad)</string>
     <string name="inputMapPreference_rumble">Rumble\nPak</string>
     <string name="inputMapPreference_mempak">Expansion\nPak</string>
-    <string name="inputMapPreference_special">Special functions</string>
-    <string name="inputMapPreference_controls">N64 controls</string>
     <string name="inputMapPreference_calibrate">Calibrate</string>
     <string name="inputMapPreference_calibrateMessage">Wiggle every analog trigger and joystick, then press OK…</string>
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>

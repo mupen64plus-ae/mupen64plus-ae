@@ -176,7 +176,7 @@
                     android:title="@string/swapAudioChannels_title" />
 
                 <ListPreference
-                    android:defaultValue="@string/resamplingAlg_default"
+                    android:defaultValue="@string/resamplingAlgs_default"
                     android:entries="@array/resamplingAlgs_entries"
                     android:entryValues="@array/resamplingAlgs_values"
                     android:key="resamplingAlgs"

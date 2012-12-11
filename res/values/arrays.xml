@@ -126,12 +126,12 @@
     
     <!-- Audio Resampling Algorithm List -->
 	<string-array name="resamplingAlgs_entries">
-	    <item>@string/resamplingAlg_trivial</item>
-	    <item>@string/resamplingAlg_linear</item>
-	    <item>@string/resamplingAlg_zoh</item>
-	    <item>@string/resamplingAlg_sinc_fastest</item>
-	    <item>@string/resamplingAlg_sinc_medium</item>
-	    <item>@string/resamplingAlg_sinc_best</item>
+	    <item>@string/resamplingAlgs_trivial</item>
+	    <item>@string/resamplingAlgs_linear</item>
+	    <item>@string/resamplingAlgs_zoh</item>
+	    <item>@string/resamplingAlgs_sinc_fastest</item>
+	    <item>@string/resamplingAlgs_sinc_medium</item>
+	    <item>@string/resamplingAlgs_sinc_best</item>
 	</string-array>
 	<string-array name="resamplingAlgs_values" translatable="false">
 	    <item>trivial</item>
@@ -141,7 +141,7 @@
 	    <item>src-sinc-medium-quality</item>
 	    <item>src-sinc-best-quality</item>
 	</string-array>
-	<string name="resamplingAlg_default">trivial</string>
+	<string name="resamplingAlgs_default" translatable="false">trivial</string>
 	
     <!-- Screen Orientation List -->
     <string-array name="screenOrientation_entries">

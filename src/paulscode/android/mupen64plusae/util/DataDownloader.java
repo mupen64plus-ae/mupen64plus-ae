@@ -123,7 +123,7 @@ public class DataDownloader extends Thread
         String path = getOutFilePath( downloadFlagFileName );
         if( !isDownloadRequired( downloadUrls, path ) )
         {
-            mStatus.setText( res.getString( R.string.dataDownloader_downloadUnneeded ) );
+            mStatus.setText( res.getString( R.string.dataDownloader_finished ) );
             return true;
         }
         
