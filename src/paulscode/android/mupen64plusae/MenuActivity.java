@@ -21,6 +21,8 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import org.acra.ACRA;
+
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -206,12 +208,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
-    @SuppressWarnings( "null" )
     private void launchCrash()
     {
-        // Intentionally crash the app to test auto crash reporting
-        String x = null;
-        x.replace( 'a', 'b' );
+        // Test auto crash reporting system by sending a report
+        ACRA.getErrorReporter().handleSilentException( new Exception( "BENIGN CRASH TEST" ) );
+        Notifier.showToast( this, "Report sent." );  // TODO localize
     }
 
     @Override

@@ -412,7 +412,7 @@
         
                 <Preference
                     android:key="launchCrash"
-                    android:summary="Intentionally crash the app; see report at http://tinyurl.com/b82jgen"
+                    android:summary="Send a configuration report to the developers, viewable at http://tinyurl.com/b82jgen"
                     android:title="Test" />
         
             </PreferenceScreen>
