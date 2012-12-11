@@ -172,7 +172,7 @@
     <string name="fpsRefresh_default" translatable="false">0</string>
 
     <!-- GLES2N64 Frameskip List -->
-    <string-array name="gles2N64Frameskip_entries" translatable="false">
+    <string-array name="gles2N64Frameskip_entries">
         <item>@string/gles2N64Frameskip_entryNever</item>
         <item>@string/gles2N64Frameskip_entryUpTo1</item>
         <item>@string/gles2N64Frameskip_entryUpTo2</item>

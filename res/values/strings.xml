@@ -91,7 +91,7 @@
     <string name="touchscreenLayout_title">Touchscreen layout</string>
     <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenCustom_title">Custom layout folder</string>
-    <string name="touchscreenRefresh_title">Redraw joystick</string>
+    <string name="touchscreenRefresh_title">Joystick animation</string>
     <string name="touchscreenOctagonJoystick_title">Octagonal joystick limits</string>
     <string name="touchscreenOctagonJoystick_summary">Constrain analog motion to an octagon, like the original N64 controller</string>
     
@@ -142,7 +142,7 @@
     <string name="gles2RiceFastTextureCRC_summary">Improves game speed at cost of 2D elements</string>
     <string name="gles2RiceFastTexture_title">Fast texture loading</string>
     <string name="gles2RiceFastTexture_summary">Fixes circle transitions</string>
-    <string name="gles2RiceForceTextureFilter_title">Force Texture Filter</string>
+    <string name="gles2RiceForceTextureFilter_title">Force texture filter</string>
     <string name="gles2RiceForceTextureFilter_summary">Fixes pixelated textures</string>
     <string name="gles2RiceHiResTextures_title">High resolution textures</string>
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
@@ -262,7 +262,7 @@
     
     <!-- In-Game Toast Messages (Game*.java) -->
     <string name="toast_appStarted">Launching emulator…</string>
-    <string name="toast_sdInaccessible">SD card not accessible (plugged in USB Mass Storage Device mode?)</string>
+    <string name="toast_sdInaccessible">SD card not accessible (disconnect the USB cable and try again)</string>
     <string name="toast_savegameSlot">Now using slot %1$d.</string>
     <string name="toast_loadingSession">Auto-resuming game…</string>
     <string name="toast_savingSession">Auto-saving game…</string>    
@@ -277,12 +277,12 @@
     <string name="dataDownloader_connectingTo">Connecting to %1$s</string>
     <string name="dataDownloader_downloadingFrom">Downloading data from %1$s</string>
     <string name="dataDownloader_errorDownloadingFrom">Error downloading data from %1$s</string>
-    <string name="dataDownloader_errorWrite">Write error (plugged in USB Mass Storage Device mode?) %1$s</string>
+    <string name="dataDownloader_errorWrite">Write error (disconnect the USB cable and try again) %1$s</string>
     <string name="dataDownloader_failedConnectingTo">Failed connecting to %1$s</string>
     <string name="dataDownloader_finished">Finished</string>
     <string name="dataDownloader_progress">%1$.0f%% done: file %2$s</string>
     <string name="gameMenu_confirmFile">Overwrite %1$s?</string>
-    <string name="gameMenu_confirmReset">Reset game? All progress will be lost since your last save.</string>
+    <string name="gameMenu_confirmReset">Reset game? All progress since your last save will be lost.</string>
     <string name="gameMenu_saveHint">filename</string>
     <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
     <string name="inputMapPreference_popupPosButtonText">Unmap</string>
