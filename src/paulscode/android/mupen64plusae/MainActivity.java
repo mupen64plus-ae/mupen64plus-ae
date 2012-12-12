@@ -134,11 +134,7 @@ public class MainActivity extends Activity implements DataDownloader.Listener
             synchronized( mDownloader )
             {
                 mDownloader.setStatusField( mTextView );
-                if( mDownloader.mDownloadComplete )
-                {
-                    onDownloadComplete(); // TODO: is this necessary?
-                }
-                else if( mDownloader.mDownloadFailed )
+                if( mDownloader.mDownloadFailed )
                 {
                     // Try again
                     mDownloader.mDownloadFailed = false;
