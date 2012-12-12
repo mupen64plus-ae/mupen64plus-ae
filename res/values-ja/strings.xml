@@ -227,6 +227,19 @@
     <string name="fpsRefresh_entry1">時折</string>
     <string name="fpsRefresh_entry2">頻繁</string>
     
+    <!-- Frameskip Entries -->
+    <string name="gles2N64Frameskip_entryNever">フレームをスキップしない</string>
+    <string name="gles2N64Frameskip_entryUpTo1">最大、1フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryUpTo2">最大、2フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryUpTo3">最大、3フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryUpTo4">最大、4フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryUpTo5">最大、5フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly1">唯一の1フレームをスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly2">唯一の2フレームをスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly3">唯一の3フレームをスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly4">唯一の4フレームをスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly5">唯一の5フレームをスキップ</string>
+    
     <!-- Special Functions -->
     <string name="specialFunction_entry0">ストップ</string>
     <string name="specialFunction_entry1">フルスクリーン</string>
