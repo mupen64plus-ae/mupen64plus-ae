@@ -115,14 +115,14 @@ public class GameMenuHandler
                   Notifier.showToast( mActivity, R.string.toast_savingSession );
                   NativeMethods.fileSaveEmulator( mAutoSaveFile );
                   SafeMethods.sleep( 500 );
-                  for( int c = 0; NativeMethods.stateEmulator() == 3 && c < 120;  c++ )
+                  for( int c = 0; NativeMethods.stateEmulator() == CoreInterface.EMULATOR_STATE_PAUSED && c < 120;  c++ )
                   {
                       SafeMethods.sleep( 500 );
                   }
                   SafeMethods.sleep( 500 );
                   NativeMethods.pauseEmulator();
                   SafeMethods.sleep( 500 );
-                  for( int c = 0; NativeMethods.stateEmulator() != 3 && c < 120;  c++ )
+                  for( int c = 0; NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_PAUSED && c < 120;  c++ )
                   {
                       SafeMethods.sleep( 500 );
                   }
@@ -130,7 +130,7 @@ public class GameMenuHandler
                   Intent intent = new Intent( mActivity, MenuActivity.class );
                   intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                   mActivity.startActivity( intent );
-                  System.exit( 0 );  // Bad, bad..
+                  System.exit( 0 );  // Bad, bad.. // TODO: Remove this in the future.
                 //////
                 break;
             default:
