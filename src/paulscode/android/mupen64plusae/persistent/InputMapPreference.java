@@ -208,6 +208,7 @@ public class InputMapPreference extends DialogPreference implements
     public void onClick( DialogInterface dialog, int which )
     {
         // Handle clicks on the main dialog buttons
+        super.onClick( dialog, which );
         
         if( which == DialogInterface.BUTTON_NEUTRAL )
         {
