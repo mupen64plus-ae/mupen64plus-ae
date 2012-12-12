@@ -21,6 +21,8 @@ package paulscode.android.mupen64plusae.input.provider;
 
 import java.util.ArrayList;
 
+import android.view.MotionEvent;
+
 /**
  * A provider class that aggregates inputs from other providers, and lazily notifies listeners only
  * when the aggregate input has changed significantly.
@@ -129,7 +131,24 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
             
             // Record the strength bias and remove its effect
             if( refreshBiases )
-                mStrengthBiases[i] = strength;
+            {
+                int axis = AbstractProvider.inputToAxisCode( inputCode );
+                switch( axis )
+                {
+                    default:
+                        // Round the bias to -1, 0, or 1
+                        mStrengthBiases[i] = Math.round( strength );
+                        break;
+                    case MotionEvent.AXIS_HAT_X:
+                    case MotionEvent.AXIS_HAT_Y:
+                        // The resting value for these axes should always be zero. If we used the
+                        // default method for these, their bias might be incorrectly stored as +/-
+                        // 1. Subtracting this incorrect bias would then make one direction of the
+                        // d-pad unusable. So we do nothing here, to ensure the bias remains zero
+                        // for these axes.
+                        break;
+                }
+            }
             strength -= mStrengthBiases[i];
             
             // Cache the strongest input
