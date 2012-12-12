@@ -251,7 +251,7 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
-TARGET = mupen64plus
+TARGET = mupen64plus$(EXEEXT)
 
 targets:
 	@echo "Mupen64Plus-ui-console makefile."
