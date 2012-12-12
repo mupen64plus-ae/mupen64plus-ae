@@ -85,6 +85,7 @@ public class InputMapPreference extends DialogPreference implements
         
         if( widthDp >= MIN_LAYOUT_WIDTH_DP && heightDp >= MIN_LAYOUT_HEIGHT_DP )
         {
+            // Geometric layout for large screens
             setDialogLayoutResource( R.layout.input_map_preference );
         }
         else
@@ -93,12 +94,14 @@ public class InputMapPreference extends DialogPreference implements
             int orientation = getContext().getResources().getConfiguration().orientation;
             if( prefs.isXperiaEnabled )
             {
+                // Special layout for Xperia PLAY devices (hide analog/c-pad icons)
                 setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
                         ? R.layout.input_map_preference_port_xplay
                         : R.layout.input_map_preference_land_xplay );
             }
             else
             {
+                // Scrollable layout for small screens
                 setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
                         ? R.layout.input_map_preference_port
                         : R.layout.input_map_preference_land );
@@ -159,7 +162,7 @@ public class InputMapPreference extends DialogPreference implements
                 b.setOnClickListener( this );
         }
         
-        // Setup analog axis listening
+        // Setup analog axis listening, if applicable
         if( AppData.IS_HONEYCOMB_MR1 )
             mProvider.addProvider( new AxisProvider( view ) );
         
@@ -175,8 +178,9 @@ public class InputMapPreference extends DialogPreference implements
         // Setup key listening
         mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT ) );
         
-        // Add a button for calibrating the controller
-        builder.setNeutralButton( R.string.inputMapPreference_calibrate, this);
+        // Add a button for calibrating analog axes, if applicable
+        if( AppData.IS_HONEYCOMB_MR1 )        
+            builder.setNeutralButton( R.string.inputMapPreference_calibrate, this);
     }
     
     @Override
