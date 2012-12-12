@@ -156,17 +156,4 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         }
         super.onPause();
     }
-    
-    @Override
-    protected void onDestroy()
-    {
-        if( mDownloader != null )
-        {
-            synchronized( mDownloader )
-            {
-                mDownloader.setStatusField( null );
-            }
-        }
-        super.onDestroy();
-    }
 }
