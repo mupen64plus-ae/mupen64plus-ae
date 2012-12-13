@@ -95,7 +95,7 @@ endif
 OPTFLAGS ?= -O3
 
 # default configuration programs
-SDL_CONFIG ?= sdl-config
+SDL_CONFIG = $(CROSS_COMPILE)sdl-config
 
 CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -I../../src
 ifeq ($(OS), MINGW)
@@ -183,8 +183,8 @@ endif
 endif
 
 # set base program pointers and flags
-CC       ?= gcc
-CXX      ?= g++
+CC        = $(CROSS_COMPILE)gcc
+CXX       = $(CROSS_COMPILE)g++
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
