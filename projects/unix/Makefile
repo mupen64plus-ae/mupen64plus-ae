@@ -21,7 +21,7 @@
 # Makefile for Mupen64plus-ui-console
 
 # detect operation system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
