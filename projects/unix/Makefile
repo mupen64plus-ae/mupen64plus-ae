@@ -276,7 +276,7 @@ ifeq ($(PLUGINDIR),)
 endif
 
 SRCDIR = ../../src
-OBJDIR = _obj
+OBJDIR = _obj$(POSTFIX)
 
 # list of source files to compile
 SOURCE = \
@@ -295,7 +295,7 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
-TARGET = mupen64plus-audio-sdl.$(SO_EXTENSION)
+TARGET = mupen64plus-audio-sdl$(POSTFIX).$(SO_EXTENSION)
 
 targets:
 	@echo "Mupen64Plus-audio-sdl makefile. "
@@ -313,6 +313,7 @@ targets:
 	@echo "    NO_SRC=1      == build without libsamplerate; disables src-* high-quality audio resampling"
 	@echo "    NO_SPEEX=1    == build without libspeexdsp; disables speex-* high-quality audio resampling"
 	@echo "    NO_OSS=1      == build without OSS; disables Open Sound System support"
+	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
@@ -334,7 +335,7 @@ uninstall:
 	$(RM) "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
 
 clean:
-	$(RM) -r ./_obj $(TARGET)
+	$(RM) -r ./_obj$(POSTFIX) $(TARGET)
 
 rebuild: clean all
 
