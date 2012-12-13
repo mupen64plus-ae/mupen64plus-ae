@@ -56,6 +56,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String REFRESH_CHEATS = "menuCheats";
     private static final String LAUNCH_CRASH = "launchCrash";
 
+    // private static final String SELECTED_GAME = "selectedGame";
+
     private static final String TOUCHSCREEN = "touchscreen";
     private static final String PERIPHERAL = "peripheral";
     private static final String AUDIO = "audio";
@@ -258,11 +260,18 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        boolean restoreMissingPreferences = key.equals( VIDEO_PLUGIN );
+        boolean rebuildHierarchy =
+                   key.equals( VIDEO_PLUGIN )
+                // || key.equals( SELECTED_GAME )
+                || key.equals( XPERIA_ENABLED );
         
-        if( restoreMissingPreferences )
+        if( rebuildHierarchy )
         {
-            // Restore the preference categories that were removed in refreshViews(...)
+            // Sometimes one preference change affects the hierarchy or layout of the views.
+            // In this case it's easier just to restart the activity than trying to figure out what to fix.
+            // Examples:
+            //   Restore the preference categories that were removed in refreshViews(...)
+            //   Change the input mapping layout file when Xperia Play touchpad en/disabled
             finish();
             startActivity( getIntent() );
             return;
