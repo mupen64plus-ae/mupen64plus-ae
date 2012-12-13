@@ -94,6 +94,9 @@ endif
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
 
+# default configuration programs
+SDL_CONFIG ?= sdl-config
+
 CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -I../../src
 ifeq ($(OS), MINGW)
   CFLAGS += -lpthread
@@ -117,7 +120,7 @@ ifeq ($(OS), LINUX)
 endif
 ifeq ($(OS), OSX)
   # The mac version of SDL requires inclusion of SDL_main in the executable
-  LDLIBS += -ldl $(shell sdl-config --libs)
+  LDLIBS += -ldl $(shell $(SDL_CONFIG) --libs)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
