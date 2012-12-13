@@ -384,7 +384,7 @@ uninstall:
 	$(RM) "$(DESTDIR)$(SHAREDIR)/RiceVideoLinux.ini"
 
 clean:
-	$(RM) -r ./_obj$(POSTFIX) $(TARGET)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
 
