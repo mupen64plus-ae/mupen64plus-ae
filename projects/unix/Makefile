@@ -283,7 +283,7 @@ targets:
 all: $(TARGET)
 
 clean:
-	$(RM) -r ./_obj $(TARGET)$(EXEEXT)
+	$(RM) -r ./_obj $(TARGET)
 
 rebuild: clean all
 
