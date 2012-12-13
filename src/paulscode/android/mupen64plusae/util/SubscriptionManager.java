@@ -45,8 +45,7 @@ public class SubscriptionManager<Subscriber>
     public void unsubscribe( Subscriber subscriber )
     {
         if( subscriber != null )
-            while( mSubscribers.remove( subscriber ) )
-                ;
+            mSubscribers.remove( subscriber ); 
     }
     
     public void unsubscribeAll()
