@@ -50,7 +50,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     private static HashMap<String, String> Cheat_title = null;
     private static HashMap<String, String> Cheat_N = null;
     private static HashMap<String, String> Cheat_O = null;
-    
+
     // Used when concatenating the extra args string
     public static String cheatOptions = null;
     
@@ -71,7 +71,8 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         mUserPrefs = userPrefs;
         
         // Place to unzip the ROM if necessary:
-        String tmpFolderName = mAppData.dataDir + "/tmp";
+        final String tmpFolderName = mAppData.dataDir + "/tmp";
+
         // No need to reload the ROM header if we already have it:
         if( ROM == null || !ROM.equals( mUserPrefs.selectedGame ) )
         {
@@ -149,6 +150,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                                 else
                                     opts[z] = mActivity.getString( R.string.cheats_longPress );
                             }
+
                             checkBoxPref = new OptionCheckBoxPreference( mActivity, title, opts,
                                     mActivity.getString( R.string.cheat_disabled ) );
                         }
@@ -237,7 +239,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             // Launch the last game in a new activity
             if( !mAppData.isSdCardAccessible() )
             {
-                Log.e( "CheatMenuHandler", "SD Card not accessable in method onPreferenceClick" );
+                Log.e( "CheatMenuHandler", "SD Card not accessible in method onPreferenceClick" );
                 Notifier.showToast( mActivity, R.string.toast_sdInaccessible );
                 return true;
             }
