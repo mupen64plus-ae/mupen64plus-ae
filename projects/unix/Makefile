@@ -261,10 +261,6 @@ OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
-# build dependency files
-CFLAGS += -MD
--include $(OBJECTS:.o=.d)
-
 # build targets
 TARGET = mupen64plus-input-sdl.$(SO_EXTENSION)
 
@@ -309,6 +305,10 @@ clean:
 	$(RM) -r ./_obj $(TARGET)
 
 rebuild: clean all
+
+# build dependency files
+CFLAGS += -MD
+-include $(OBJECTS:.o=.d)
 
 ifeq ($(LTO), 1)
   CFLAGS += -flto
