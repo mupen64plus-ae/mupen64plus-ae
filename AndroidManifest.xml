@@ -37,16 +37,17 @@
         </activity>
 
         <!-- For the GameActivities, do not restart the activity when the phone's slider
-        opens or closes.  This behavior is specified in android:configChanges below. -->
+        opens or closes, or when the orientation (and thereby screen size) changes.
+        This behavior is specified in android:configChanges below. -->
         <activity
             android:name=".GameActivity"
             android:label="@string/app_name"
-            android:configChanges="keyboardHidden" >
+            android:configChanges="keyboardHidden|orientation|screenSize" >
         </activity>
         <activity
             android:name=".GameActivityXperiaPlay"
             android:label="@string/app_name"
-            android:configChanges="keyboardHidden" >
+            android:configChanges="keyboardHidden|orientation|screenSize" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="xperia-touchpad" />
