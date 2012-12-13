@@ -284,7 +284,7 @@ targets:
 all: $(TARGET)
 
 clean:
-	$(RM) -r ./_obj$(POSTFIX) $(TARGET)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
 
