@@ -221,7 +221,7 @@ ifeq ($(MANDIR),)
 endif
 
 SRCDIR = ../../src
-OBJDIR = _obj
+OBJDIR = _obj$(POSTFIX)
 
 ifeq ("$(OS)","MINGW")
   EXEEXT = .exe
@@ -253,7 +253,7 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
-TARGET = mupen64plus$(EXEEXT)
+TARGET = mupen64plus$(POSTFIX)$(EXEEXT)
 
 targets:
 	@echo "Mupen64Plus-ui-console makefile."
@@ -270,6 +270,7 @@ targets:
 	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3)"
 	@echo "    PIE=(1|0)      == Force enable/disable of position independent executables"
+	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
@@ -283,7 +284,7 @@ targets:
 all: $(TARGET)
 
 clean:
-	$(RM) -r ./_obj $(TARGET)
+	$(RM) -r ./_obj$(POSTFIX) $(TARGET)
 
 rebuild: clean all
 
