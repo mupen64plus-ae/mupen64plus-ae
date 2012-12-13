@@ -208,7 +208,6 @@ endif
 ifeq ($(OS), MINGW)
   CFLAGS += $(shell $(SDL_CONFIG) --cflags)
   LDLIBS += $(shell $(SDL_CONFIG) --libs)
-  LDLIBS += $(shell $(PKG_CONFIG) libpng --libs)
 endif
 
 # set mupen64plus core API header path
