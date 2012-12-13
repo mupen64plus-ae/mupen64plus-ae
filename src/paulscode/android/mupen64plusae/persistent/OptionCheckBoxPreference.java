@@ -22,9 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 import paulscode.android.mupen64plusae.R;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.View;
-import android.preference.CheckBoxPreference;
 
 public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implements OptionDialog.Listener, View.OnLongClickListener
 {
