@@ -51,7 +51,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     private static HashMap<String, String> Cheat_N = null;
     private static HashMap<String, String> Cheat_O = null;
     
-    // Used when concatinating the extra args string
+    // Used when concatenating the extra args string
     public static String cheatOptions = null;
     
     private MenuActivity mActivity = null;
@@ -103,7 +103,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             else
             {
                 String ROM_name = configSection.get( "Name" );
-                if( ROM_name == null || ROM_name.length() < 1 )
+                if( Utility.isNullOrEmpty( ROM_name ) )
                     cheatsScreen.setTitle( mActivity.getString( R.string.cheats_title ) );
                 else
                     cheatsScreen.setTitle( mActivity.getString( R.string.cheats_titleFor ) + ROM_name );
@@ -116,10 +116,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                 String val_N, val_O, title;
                 String val = " ";
                 LongClickCheckBoxPreference checkBoxPref;
-                for( int i = 0; val != null && val.length() > 0; i++ )
+                for( int i = 0; !Utility.isNullOrEmpty( val ); i++ )
                 {
                     val = configSection.get( "Cheat" + i );
-                    if( val != null && val.length() > 0 )
+                    if( !Utility.isNullOrEmpty( val ) )
                     {
                         x = val.indexOf( "," );
                         if( x < 3 || x >= val.length() )
@@ -127,15 +127,16 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                         else
                             title = val.substring( 1, x - 1 );
                         Cheat_title.put( "Cheat" + i, title );
+
                         val_N = configSection.get( "Cheat" + i + "_N" );
-                        if( val_N != null && val_N.length() > 0 )
+                        if( !Utility.isNullOrEmpty( val_N ) )
                             Cheat_N.put( "Cheat" + i, val_N );
+
                         val_O = configSection.get( "Cheat" + i + "_O" );
-                        if( val_O != null && val_O.length() > 0 )
-                            Cheat_O.put( "Cheat" + i, val_O );
-                        
-                        if( val_O != null && val_O.length() > 0 )
+                        if( !Utility.isNullOrEmpty( val_O ) )
                         {
+                            Cheat_O.put( "Cheat" + i, val_O );
+
                             String[] uOpts = val_O.split( "," );
                             String[] opts = new String[ uOpts.length ];
                             int c;
@@ -155,6 +156,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                         {
                             checkBoxPref = new LongClickCheckBoxPreference( mActivity );
                         }
+
                         checkBoxPref.setTitle( title );
                         checkBoxPref.setChecked( false );
                         checkBoxPref.setKey( "Cheat" + i );
@@ -175,11 +177,13 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         
         // Determine the title
         if( Cheat_title == null )
+        {
             title = mActivity.getString( R.string.cheatNotes_title );
+        }
         else
         {
             title = Cheat_title.get( whichCheat );
-            if( title == null || title.length() < 1 )
+            if( Utility.isNullOrEmpty( title ) )
             {
                 title = mActivity.getString( R.string.cheatNotes_title );
             }
@@ -187,11 +191,13 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         
         // Determine the summary
         if( Cheat_N == null )
+        {
              summary = mActivity.getString( R.string.cheatNotes_none );
+        }
         else
         {
             summary = Cheat_N.get( whichCheat );
-            if( summary == null || summary.length() < 1 )
+            if( Utility.isNullOrEmpty( summary ) )
             {
                 summary = mActivity.getString( R.string.cheatNotes_none );
             }
@@ -210,7 +216,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             CheckBoxPreference chkBx;
             for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
             {
-                key = "Cheat" + i;
+                key = "Cheat" + i; // TODO: This supposed to be used somewhere ?
                 chkBx = (CheckBoxPreference) cheatsCategory.getPreference( i );
                 if( chkBx.isChecked() )
                 {
@@ -220,7 +226,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                         cheatArgs += ",";
                     cheatArgs += String.valueOf( i );
                     if( chkBx instanceof OptionCheckBoxPreference )
-                        cheatArgs += "-" + String.valueOf( ( (OptionCheckBoxPreference) chkBx ).mChoice );
+                        cheatArgs += "-" + ((OptionCheckBoxPreference) chkBx).mChoice;
                 }
             }
             if( cheatArgs != null )
