@@ -118,6 +118,9 @@ OPTFLAGS ?= -O3
 CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 LDFLAGS += $(SHARED)
 
+# default configuration programs
+SDL_CONFIG ?= sdl-config
+
 # Since we are building a shared library, we must compile with -fPIC on some architectures
 # On 32-bit x86 systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(PIC), 1)
@@ -161,17 +164,17 @@ ifeq ($(OS), OSX)
 endif
 
 # test for presence of SDL
-ifeq ($(shell which sdl-config 2>/dev/null),)
+ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
 ifeq ("$(UNAME)","Darwin")
-    CFLAGS  += $(shell sdl-config --cflags)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
     LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
 else
-    CFLAGS  += $(shell sdl-config --cflags)
-    LDLIBS += $(shell sdl-config --libs)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+    LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
 
 # set mupen64plus core API header path
