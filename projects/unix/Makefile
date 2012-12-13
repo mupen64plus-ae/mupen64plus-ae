@@ -21,7 +21,7 @@
 # Makefile for SDL Input plugin in Mupen64plus
 
 # detect operating system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
