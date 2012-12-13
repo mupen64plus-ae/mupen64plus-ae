@@ -22,7 +22,7 @@
 # Makefile for SDL Audio plugin in Mupen64plus
 
 # detect operation system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
