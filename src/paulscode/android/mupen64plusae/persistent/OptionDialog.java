@@ -34,9 +34,10 @@ public class OptionDialog
         public void onOptionChoice( int choice );
         public void onOptionLongPress( int item );
     }
+
     public final int id;
     private final Listener mListener;
-    private AlertDialog.Builder mBuilder;
+    private final AlertDialog.Builder mBuilder;
     private AlertDialog mDialog = null;
     private final String[] mOptions;
     

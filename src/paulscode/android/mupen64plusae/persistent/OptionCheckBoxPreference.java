@@ -26,8 +26,8 @@ import android.view.View;
 
 public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implements OptionDialog.Listener, View.OnLongClickListener
 {
-    private Context mContext;
-    private OptionDialog mDialog;
+    private final Context mContext;
+    private final OptionDialog mDialog;
     private String[] mOptions = null;
     public int mChoice = -1;
     
@@ -46,11 +46,10 @@ public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implem
         else
         {
             mOptions = new String[ options.length + 1 ];
-            for( int i = 0; i < options.length; i++ )
-            {
-                mOptions[i + 1] = options[i];
-            }
+
+            System.arraycopy( options, 0, mOptions, 1, options.length );
         }
+
         mOptions[0] = negativeOption;
         mDialog = new OptionDialog( title.hashCode(), title, mOptions, context, this );
     }
@@ -65,10 +64,12 @@ public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implem
     public void onOptionChoice( int choice )
     {
         setChecked( choice != 0 );
+
         if( choice == 0 )
             setSummary( "" );
         else
             setSummary( mOptions[choice] );
+
         mChoice = choice - 1;
     }
     public void onOptionLongPress( int item )
