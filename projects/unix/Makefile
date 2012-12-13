@@ -303,7 +303,7 @@ uninstall:
 	$(RM) "$(DESTDIR)$(SHAREDIR)/InputAutoCfg.ini"
 
 clean:
-	$(RM) -r ./_obj$(POSTFIX) $(TARGET)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
 
