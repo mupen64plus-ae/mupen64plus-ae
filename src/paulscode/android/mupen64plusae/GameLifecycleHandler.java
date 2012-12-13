@@ -216,7 +216,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         mCoreRunning = true;
         Notifier.showToast( mActivity, R.string.toast_loadingSession );
-        NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
+        
+        // TODO: remove if cheats are not actually lost upon load-state (need to test)
+        if( mUserPrefs.cheatOptions == null )
+            NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
+        
         NativeMethods.resumeEmulator();
     }
     

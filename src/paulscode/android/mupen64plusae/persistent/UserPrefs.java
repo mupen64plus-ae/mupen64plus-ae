@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.CheatsMenuHandler;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -195,6 +196,9 @@ public class UserPrefs
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
+    /** The selected cheat options. */
+    public final String cheatOptions;
+    
     /**
      * Instantiates a new user preferences wrapper.
      * 
@@ -272,6 +276,9 @@ public class UserPrefs
         isGles2RiceFastTextureLoadingEnabled = prefsData.getBoolean( "gles2RiceFastTexture", false );
         isGles2RiceForceTextureFilterEnabled = prefsData.getBoolean( "gles2RiceForceTextureFilter", false );
         isGles2RiceHiResTexturesEnabled = prefsData.getBoolean( "gles2RiceHiResTextures", true );
+        
+        // Cheat prefs
+        cheatOptions = CheatsMenuHandler.cheatOptions;
         
         // Touchscreen layouts
         boolean isCustom = false;

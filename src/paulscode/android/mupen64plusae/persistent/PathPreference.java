@@ -28,6 +28,7 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Environment;
 import android.preference.DialogPreference;
@@ -46,22 +47,35 @@ public class PathPreference extends DialogPreference
     /** The user may select a file or a directory. The Ok button must be used. */
     public static final int SELECTION_MODE_ANY = 2;
     
+    /** The type of file being selected is not special (start in storage root). */
+    public static final int CATEGORY_NORMAL = 0;
+    
+    /** The type of file being selected is a ROM (start in standard ROM folder). */
+    public static final int CATEGORY_ROM = 1;
+    
     private int mSelectionMode = SELECTION_MODE_ANY;
+    private int mCategory = CATEGORY_NORMAL;
     private boolean mDoRefresh = true;
     private boolean mDoReclick = false;
     private List<CharSequence> mEntries = new ArrayList<CharSequence>();
     private List<String> mValues = new ArrayList<String>();
     private CharSequence mEntry;
     private String mValue;
+    private AppData mAppData = null;
     
     public PathPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
         
+        mAppData = new AppData( context );
+        
         // Get the selection mode from the XML file, if provided
         TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.PathPreference );
         mSelectionMode = a
                 .getInteger( R.styleable.PathPreference_selectionMode, SELECTION_MODE_ANY );
+        // Get the file category from the XML file, if provided
+        mCategory = a
+                .getInteger( R.styleable.PathPreference_fileCategory, CATEGORY_NORMAL );
         a.recycle();
     }
     
@@ -83,7 +97,12 @@ public class PathPreference extends DialogPreference
         if( mDoRefresh )
         {
             mDoRefresh = false;
-            String defaultFilename = Environment.getExternalStorageDirectory().getAbsolutePath();
+            
+            String defaultFilename;
+            if( mCategory == CATEGORY_ROM )
+                defaultFilename = mAppData.defaultRomDir;
+            else
+                defaultFilename = Environment.getExternalStorageDirectory().getAbsolutePath();            
             File file = new File( getPersistedString( defaultFilename ) );
             
             // Make sure the file still exists (file may have been moved to another directory)
@@ -156,8 +175,8 @@ public class PathPreference extends DialogPreference
             // Save the preference data if user clicked Ok
             persistString( mValue );
             setSummary( mSelectionMode == SELECTION_MODE_FILE
-                    ? mEntry
-                    : mValue );
+                ? mEntry
+                : mValue );
             notifyChanged();
         }
         else if( mDoReclick )

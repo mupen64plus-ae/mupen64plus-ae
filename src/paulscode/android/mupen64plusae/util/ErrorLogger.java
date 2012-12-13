@@ -61,7 +61,10 @@ public class ErrorLogger
     
     public static void put( String section, String parameter, String value )
     {
-        mLogfile.put( section, parameter, value );
-        mLogfile.save();
+        if( mLogfile != null )
+        {  // TODO: sometimes getting null pointer exception for mLogfile.. figure out why it is null.
+            mLogfile.put( section, parameter, value );
+            mLogfile.save();
+        }
     }
 }

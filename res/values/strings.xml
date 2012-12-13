@@ -157,6 +157,18 @@
     <string name="corePlugin_title">Emulation core</string>
     <string name="menuDeviceInfo_title">Device info</string>
     <string name="menuDeviceInfo_summary">Device hardware and model information</string>
+
+    <!-- Cheats Menu -->
+    <string name="cheatsLaunch_title">Play</string>
+    <string name="cheatsLaunch_summary">Launch game with selected cheats</string>
+    <string name="cheatsCategory_title">Long-press a cheat for notes</string>
+    <string name="cheats_titleFor">"Cheats for "</string>
+    <string name="cheats_defaultName">Cheat</string>
+    <string name="cheats_longPress">(long-press for full text)</string>
+    <string name="cheatNotes_title">Notes</string>
+    <string name="cheatNotes_none">(no notes available for this cheat)</string>
+    <string name="cheatOption_title">Full Text</string>
+    <string name="cheat_disabled">(disabled)</string>
     
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->

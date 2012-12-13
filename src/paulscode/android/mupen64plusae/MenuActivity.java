@@ -25,6 +25,7 @@ import org.acra.ACRA;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -52,6 +53,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String LAUNCH_RESET_USER_PREFS = "menuResetUserPrefs";
     private static final String LAUNCH_DEVICE_INFO = "menuDeviceInfo";
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
+    private static final String REFRESH_CHEATS = "menuCheats";
     private static final String LAUNCH_CRASH = "launchCrash";
 
     private static final String TOUCHSCREEN = "touchscreen";
@@ -68,6 +70,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
     
+    private CheatsMenuHandler mCheatsMenuHandler = null;
+    
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
@@ -77,7 +81,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-
+        
+        // Required for reading CRC header
+        FileUtil.loadNativeLibName( "SDL" );
+        FileUtil.loadNativeLibName( "core" );
+        FileUtil.loadNativeLibName( "front-end" );
+        
         // Get app data and user preferences
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
@@ -93,12 +102,19 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Refresh the preference data wrapper
         mUserPrefs = new UserPrefs( this );
         
+        // Instantiate the cheats menu handler
+        if( mCheatsMenuHandler == null )
+            mCheatsMenuHandler = new CheatsMenuHandler();
+        // TODO: Need to repopulate cheats menu on orientation changes!
+        
         // Define the click callback for certain menu items that aren't actually preferences
         listenTo( LAUNCH_RESUME );
         listenTo( LAUNCH_RESET_USER_PREFS );
         listenTo( LAUNCH_DEVICE_INFO );
         listenTo( LAUNCH_PERIPHERAL_INFO );
         listenTo( LAUNCH_CRASH );
+        listenTo( REFRESH_CHEATS );
+
         
         // Provide the opportunity to override other preference clicks
         for( String key : prefs.getAll().keySet() )
@@ -140,6 +156,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         else if( key.equals( LAUNCH_CRASH ) )
             launchCrash();
+        
+        else if( key.equals( REFRESH_CHEATS ) )
+        {
+            mCheatsMenuHandler.refresh( this, mAppData, mUserPrefs );
+            // Let Android open the cheats preference screen, once refreshed
+            return false;
+        }
         
         else // Let Android handle all other preference clicks
             return false;
@@ -256,6 +279,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         // Enable the play menu only if the selected game actually exists
         enablePreference( LAUNCH_RESUME, new File( mUserPrefs.selectedGame ).exists() );
+        enablePreference( REFRESH_CHEATS, new File( mUserPrefs.selectedGame ).exists() );
         
         // Enable the various input menus only if the input plug-in is not a dummy
         enablePreference( TOUCHSCREEN, user.inputPlugin.enabled );

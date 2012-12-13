@@ -56,7 +56,8 @@
         android:icon="@drawable/ic_folder"
         android:key="selectedGame"
         android:title="@string/selectedGame_title"
-        mupen64:selectionMode="1" />
+        mupen64:selectionMode="1"
+        mupen64:fileCategory="1" />
 
     <PreferenceScreen
         android:icon="@drawable/ic_settings"
@@ -322,11 +323,23 @@
                 android:title="@string/gameSaveDir_title"
                 mupen64:selectionMode="0" />
 
-            <Preference
+            <PreferenceScreen
                 android:icon="@drawable/ic_key"
-                android:key="cheats"
-                android:summary="@string/cheats_summary"
-                android:title="@string/cheats_title" />
+                android:key="menuCheats"
+                android:title="@string/cheats_title" >
+
+                <Preference
+                    android:icon="@drawable/ic_play"
+                    android:key="cheatsLaunch"
+                    android:title="@string/cheatsLaunch_title"
+                    android:summary="@string/cheatsLaunch_summary" />
+
+                <PreferenceCategory
+                    android:key="cheatsCategory"
+                    android:title="@string/cheatsCategory_title" >
+                </PreferenceCategory>
+
+            </PreferenceScreen>
 
             <PreferenceScreen
                 android:icon="@drawable/ic_arrow_d"

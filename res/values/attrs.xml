@@ -3,6 +3,7 @@
 
     <declare-styleable name="PathPreference">
         <attr name="selectionMode" format="integer" />
+        <attr name="fileCategory" format="integer" />
     </declare-styleable>
 
 </resources>

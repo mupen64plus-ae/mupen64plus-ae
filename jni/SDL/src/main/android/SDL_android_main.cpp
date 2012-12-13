@@ -6,6 +6,8 @@
                  Functions called by JNI
 *******************************************************************************/
 #include <jni.h>
+#include <android/log.h>
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "SDL_android_main", __VA_ARGS__)
 
 // Called before SDL_main() to initialize JNI bindings in SDL library
 extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls);
@@ -36,10 +38,9 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_init(JNIEnv* 
         argv[2] = NULL;
         status = SDL_main( 2, argv );
     */
-
     // Retrieve the (space-separated) extra args string from Java:
     char *extraArgs = Android_JNI_GetExtraArgs();
-
+    
     char **argv;              // Map to hold the indices
     int argc = 1;             // First arg is reserved for program name
     char *index = extraArgs;  // Start at the beginning of the string
@@ -48,7 +49,7 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_init(JNIEnv* 
     while( index != NULL )
     {
         argc++;                        // Count the arg
-        index = strchr( index, ' ' );  // Advance to next space
+        index = strchr( index + 1, ' ' );  // Advance to next space
     }
     argc += 2;  // Last two args are the ROM path and NULL
     
@@ -64,11 +65,11 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_init(JNIEnv* 
     // Loop through the args string again, this time to index them:
     while( index != NULL )
     {
-        argSpace = strchr( index, ' ' );  // Find the end of the arg
+        argSpace = strchr( index + 1, ' ' );  // Find the end of the arg
         // Make sure this isn't the last arg:
         if( argSpace != NULL )
-            memcpy ( argSpace, "", 1 ); // Change space to end-of-string
-        argv[argc] = index;  // Index the arg's location
+           argSpace[0] = '\0'; // Change space to end-of-string
+        argv[argc] = strdup( index );  // Have to strdup, or args not recognized
         if( argSpace == NULL )
             index = NULL;  // Last arg, end the loop
         else
@@ -78,10 +79,11 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_init(JNIEnv* 
     argv[argc] = strdup( Android_JNI_GetROMPath() );
     argc++;  // Count the ROM path arg
     argv[argc] = NULL;  // End of args
+    
     status = SDL_main( argc, argv );  // Launch the emulator
 
     /* We exit here for consistency with other platforms. */
-    exit( status );  // <---- TODO: This may be the ASDP bug culprit
+    exit( status );  // <---- TODO: This is the ASDP bug culprit
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

@@ -1,0 +1,222 @@
+12-09 22:29:38.448: I/ActivityManager(288): START {cmp=paulscode.android.mupen64plusae/.GameActivity u=0} from pid 27258
+12-09 22:29:38.557: V/Paths - DataDir Check(27258): PackageName set to 'paulscode.android.mupen64plusae'
+12-09 22:29:38.557: V/Paths - DataDir Check(27258): LibsDir set to '/data/data/paulscode.android.mupen64plusae/lib/'
+12-09 22:29:38.557: V/Paths - DataDir Check(27258): StorageDir set to '/storage/sdcard0'
+12-09 22:29:38.557: V/Paths - DataDir Check(27258): DataDir set to '/storage/sdcard0/Android/data/paulscode.android.mupen64plusae'
+12-09 22:29:38.588: V/Paths - DataDir Check(27258): PackageName set to 'paulscode.android.mupen64plusae'
+12-09 22:29:38.588: V/Paths - DataDir Check(27258): LibsDir set to '/data/data/paulscode.android.mupen64plusae/lib/'
+12-09 22:29:38.588: V/Paths - DataDir Check(27258): StorageDir set to '/storage/sdcard0'
+12-09 22:29:38.588: V/Paths - DataDir Check(27258): DataDir set to '/storage/sdcard0/Android/data/paulscode.android.mupen64plusae'
+12-09 22:29:38.612: V/Paths - DataDir Check(27258): PackageName set to 'paulscode.android.mupen64plusae'
+12-09 22:29:38.612: V/Paths - DataDir Check(27258): LibsDir set to '/data/data/paulscode.android.mupen64plusae/lib/'
+12-09 22:29:38.612: V/Paths - DataDir Check(27258): StorageDir set to '/storage/sdcard0'
+12-09 22:29:38.612: V/Paths - DataDir Check(27258): DataDir set to '/storage/sdcard0/Android/data/paulscode.android.mupen64plusae'
+12-09 22:29:38.620: V/FileUtil(27258): Loading native library 'SDL'
+12-09 22:29:38.620: D/dalvikvm(27258): Trying to load lib /data/data/paulscode.android.mupen64plusae/lib/libSDL.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): Shared lib '/data/data/paulscode.android.mupen64plusae/lib/libSDL.so' already loaded in same CL 0x4160bef0
+12-09 22:29:38.620: V/FileUtil(27258): Loading native library 'core'
+12-09 22:29:38.620: D/dalvikvm(27258): Trying to load lib /data/data/paulscode.android.mupen64plusae/lib/libcore.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): Shared lib '/data/data/paulscode.android.mupen64plusae/lib/libcore.so' already loaded in same CL 0x4160bef0
+12-09 22:29:38.620: V/FileUtil(27258): Loading native library 'front-end'
+12-09 22:29:38.620: D/dalvikvm(27258): Trying to load lib /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): Shared lib '/data/data/paulscode.android.mupen64plusae/lib/libfront-end.so' already loaded in same CL 0x4160bef0
+12-09 22:29:38.620: V/FileUtil(27258): Loading native library '/data/data/paulscode.android.mupen64plusae/lib/libgles2n64.so'
+12-09 22:29:38.620: D/dalvikvm(27258): Trying to load lib /data/data/paulscode.android.mupen64plusae/lib/libgles2n64.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): Added shared lib /data/data/paulscode.android.mupen64plusae/lib/libgles2n64.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): No JNI_OnLoad found in /data/data/paulscode.android.mupen64plusae/lib/libgles2n64.so 0x4160bef0, skipping init
+12-09 22:29:38.620: V/FileUtil(27258): Loading native library '/data/data/paulscode.android.mupen64plusae/lib/libaudio-sdl.so'
+12-09 22:29:38.620: D/dalvikvm(27258): Trying to load lib /data/data/paulscode.android.mupen64plusae/lib/libaudio-sdl.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): Added shared lib /data/data/paulscode.android.mupen64plusae/lib/libaudio-sdl.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): No JNI_OnLoad found in /data/data/paulscode.android.mupen64plusae/lib/libaudio-sdl.so 0x4160bef0, skipping init
+12-09 22:29:38.620: V/FileUtil(27258): Loading native library '/data/data/paulscode.android.mupen64plusae/lib/libinput-sdl.so'
+12-09 22:29:38.620: D/dalvikvm(27258): Trying to load lib /data/data/paulscode.android.mupen64plusae/lib/libinput-sdl.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): Added shared lib /data/data/paulscode.android.mupen64plusae/lib/libinput-sdl.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): No JNI_OnLoad found in /data/data/paulscode.android.mupen64plusae/lib/libinput-sdl.so 0x4160bef0, skipping init
+12-09 22:29:38.620: V/FileUtil(27258): Loading native library '/data/data/paulscode.android.mupen64plusae/lib/librsp-hle.so'
+12-09 22:29:38.620: D/dalvikvm(27258): Trying to load lib /data/data/paulscode.android.mupen64plusae/lib/librsp-hle.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): Added shared lib /data/data/paulscode.android.mupen64plusae/lib/librsp-hle.so 0x4160bef0
+12-09 22:29:38.620: D/dalvikvm(27258): No JNI_OnLoad found in /data/data/paulscode.android.mupen64plusae/lib/librsp-hle.so 0x4160bef0, skipping init
+12-09 22:29:38.682: D/dalvikvm(27258): GC_FOR_ALLOC freed 220K, 4% free 13537K/13959K, paused 13ms, total 13ms
+12-09 22:29:38.713: D/dalvikvm(27258): GC_FOR_ALLOC freed 320K, 5% free 13920K/14535K, paused 12ms, total 12ms
+12-09 22:29:38.753: D/dalvikvm(27258): GC_FOR_ALLOC freed 365K, 5% free 14279K/14983K, paused 12ms, total 12ms
+12-09 22:29:38.776: V/Paths - DataDir Check(27258): PackageName set to 'paulscode.android.mupen64plusae'
+12-09 22:29:38.776: V/Paths - DataDir Check(27258): LibsDir set to '/data/data/paulscode.android.mupen64plusae/lib/'
+12-09 22:29:38.776: V/Paths - DataDir Check(27258): StorageDir set to '/storage/sdcard0'
+12-09 22:29:38.776: V/Paths - DataDir Check(27258): DataDir set to '/storage/sdcard0/Android/data/paulscode.android.mupen64plusae'
+12-09 22:29:38.799: V/Paths - DataDir Check(27258): PackageName set to 'paulscode.android.mupen64plusae'
+12-09 22:29:38.799: V/Paths - DataDir Check(27258): LibsDir set to '/data/data/paulscode.android.mupen64plusae/lib/'
+12-09 22:29:38.799: V/Paths - DataDir Check(27258): StorageDir set to '/storage/sdcard0'
+12-09 22:29:38.799: V/Paths - DataDir Check(27258): DataDir set to '/storage/sdcard0/Android/data/paulscode.android.mupen64plusae'
+12-09 22:29:38.940: I/GameSurface(27258): surfaceCreated: 
+12-09 22:29:38.940: I/GameSurface(27258): surfaceChanged: 
+12-09 22:29:38.940: I/SDL(27258): SDL_Android_Init()
+12-09 22:29:39.643: V/front-end(27258): Using Android data folder '/storage/sdcard0/Android/data/paulscode.android.mupen64plusae' for config read/write functions
+12-09 22:29:39.643: V/front_end(27258):  __  __                         __   _  _   ____  _             
+12-09 22:29:39.643: V/front_end(27258): |  \/  |_   _ _ __   ___ _ __  / /_ | || | |  _ \| |_   _ ___ 
+12-09 22:29:39.643: V/front_end(27258): | |\/| | | | | '_ \ / _ \ '_ \| '_ \| || |_| |_) | | | | / __|  
+12-09 22:29:39.643: V/front_end(27258): | |  | | |_| | |_) |  __/ | | | (_) |__   _|  __/| | |_| \__ \  
+12-09 22:29:39.643: V/front_end(27258): |_|  |_|\__,_| .__/ \___|_| |_|\___/   |_| |_|   |_|\__,_|___/  
+12-09 22:29:39.643: V/front_end(27258):              |_|         http://code.google.com/p/mupen64plus/  
+12-09 22:29:39.643: V/front_end(27258): Mupen64Plus Console User-Interface Version 1.99.5
+12-09 22:29:39.643: A/libc(27258): Fatal signal 11 (SIGSEGV) at 0x00000000 (code=1), thread 27290 (CoreThread)
+12-09 22:29:39.667: A/libc(27258): Fatal signal 11 (SIGSEGV) at 0x00000000 (code=1), thread 27258 (d.mupen64plusae)
+12-09 22:29:39.745: I/DEBUG(27157): *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+12-09 22:29:39.745: I/DEBUG(27157): Build fingerprint: 'google/mysid/toro:4.1.1/JRO03O/424425:user/release-keys'
+12-09 22:29:39.745: I/DEBUG(27157): pid: 27258, tid: 27290, name: CoreThread  >>> paulscode.android.mupen64plusae <<<
+12-09 22:29:39.745: I/DEBUG(27157): signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 00000000
+12-09 22:29:39.901: I/DEBUG(27157):     r0 00000000  r1 5be0b66c  r2 00000000  r3 00009276
+12-09 22:29:39.901: I/DEBUG(27157):     r4 00000002  r5 5dff7c48  r6 00000001  r7 00000000
+12-09 22:29:39.901: I/DEBUG(27157):     r8 00000000  r9 5be0b678  sl 0000267c  fp 5be0b684
+12-09 22:29:39.901: I/DEBUG(27157):     ip 5be0ded0  sp 5dff7be0  lr 5be08ffd  pc 4010a530  cpsr 60000010
+12-09 22:29:39.901: I/DEBUG(27157):     d0  6e6f697372655620  d1  746e492d72657372
+12-09 22:29:39.901: I/DEBUG(27157):     d2  65646f632f2f3a66  d3  2e656c676f6f6761
+12-09 22:29:39.901: I/DEBUG(27157):     d4  2e65646f63736c75  d5  2e64696f72646e61
+12-09 22:29:39.901: I/DEBUG(27157):     d6  7034366e6570756d  d7  6d742f656173756c
+12-09 22:29:39.901: I/DEBUG(27157):     d8  0000000000000000  d9  4491800043c30000
+12-09 22:29:39.901: I/DEBUG(27157):     d10 0000000044018000  d11 0000000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     d12 0000000000000000  d13 0000000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     d14 0000000000000000  d15 0000000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     d16 0000000000000000  d17 0000000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     d18 4048000000000000  d19 0000000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     d20 4040000000000000  d21 3ff0000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     d22 8000000000000000  d23 c048000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     d24 4048000000000000  d25 8000000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     d26 3ff0000000000000  d27 00ff00ff00ff00ff
+12-09 22:29:39.901: I/DEBUG(27157):     d28 0100010001000100  d29 0100010001000100
+12-09 22:29:39.901: I/DEBUG(27157):     d30 3ff0000000000000  d31 3ff0000000000000
+12-09 22:29:39.901: I/DEBUG(27157):     scr 20000013
+12-09 22:29:39.909: I/DEBUG(27157): backtrace:
+12-09 22:29:39.909: I/DEBUG(27157):     #00  pc 0000e530  /system/lib/libc.so (strcmp+32)
+12-09 22:29:39.909: I/DEBUG(27157):     #01  pc 00003ff9  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so (SDL_main+336)
+12-09 22:29:39.909: I/DEBUG(27157):     #02  pc 0000202d  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so (Java_paulscode_android_mupen64plusae_NativeMethods_init+28)
+12-09 22:29:39.909: I/DEBUG(27157):     #03  pc 0001de30  /system/lib/libdvm.so (dvmPlatformInvoke+112)
+12-09 22:29:39.909: I/DEBUG(27157):     #04  pc 0004d083  /system/lib/libdvm.so (dvmCallJNIMethod(unsigned int const*, JValue*, Method const*, Thread*)+394)
+12-09 22:29:39.909: I/DEBUG(27157):     #05  pc 0004f19f  /system/lib/libdvm.so (dvmResolveNativeMethod(unsigned int const*, JValue*, Method const*, Thread*)+174)
+12-09 22:29:39.909: I/DEBUG(27157):     #06  pc 00027260  /system/lib/libdvm.so
+12-09 22:29:39.909: I/DEBUG(27157):     #07  pc 0002bb68  /system/lib/libdvm.so (dvmInterpret(Thread*, Method const*, JValue*)+180)
+12-09 22:29:39.909: I/DEBUG(27157):     #08  pc 0005f7f1  /system/lib/libdvm.so (dvmCallMethodV(Thread*, Method const*, Object*, bool, JValue*, std::__va_list)+272)
+12-09 22:29:39.909: I/DEBUG(27157):     #09  pc 0005f81b  /system/lib/libdvm.so (dvmCallMethod(Thread*, Method const*, Object*, JValue*, ...)+20)
+12-09 22:29:39.909: I/DEBUG(27157):     #10  pc 000543d3  /system/lib/libdvm.so
+12-09 22:29:39.909: I/DEBUG(27157):     #11  pc 00012bb0  /system/lib/libc.so (__thread_entry+48)
+12-09 22:29:39.909: I/DEBUG(27157):     #12  pc 00012308  /system/lib/libc.so (pthread_create+172)
+12-09 22:29:39.909: I/DEBUG(27157): stack:
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7ba0  5bf54d68  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7ba4  0000000f  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7ba8  5dff7c6c  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bac  40112d31  /system/lib/libc.so (malloc+12)
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bb0  5be0b49b  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bb4  4011b935  /system/lib/libc.so (setenv+224)
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bb8  5be0b48c  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bbc  0000000f  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bc0  00000002  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bc4  2054100a  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bc8  00000002  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bcc  5dff7c48  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bd0  5be0b2b0  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bd4  5be08fa9  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so (SDL_main+256)
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bd8  df0027ad  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bdc  00000000  
+12-09 22:29:39.909: I/DEBUG(27157):     #00  5dff7be0  00000001  
+12-09 22:29:39.909: I/DEBUG(27157):          ........  ........
+12-09 22:29:39.909: I/DEBUG(27157):     #01  5dff7be0  00000001  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7be4  00000063  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7be8  00000005  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bec  5c3fbc34  /data/data/paulscode.android.mupen64plusae/lib/libSDL.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bf0  4014556c  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bf4  4011125b  /system/lib/libc.so (dlmalloc+5326)
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bf8  5c3fbbf4  /data/data/paulscode.android.mupen64plusae/lib/libSDL.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7bfc  5be0de3c  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c00  5be0b690  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c04  00009276  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c08  5be0b698  /data/data/paulscode.android.mupen64plusae/lib/libfront-end.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c0c  570c0258  /dev/ashmem/dalvik-LinearAlloc (deleted)
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c10  00000055  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c14  5c3fbc34  /data/data/paulscode.android.mupen64plusae/lib/libSDL.so
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c18  5c0f5fc0  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c1c  5dff7c58  
+12-09 22:29:39.909: I/DEBUG(27157):          ........  ........
+12-09 22:29:39.909: I/DEBUG(27157):     #02  5dff7c48  5bf504f0  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c4c  00000000  
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c50  41966718  /dev/ashmem/dalvik-heap (deleted)
+12-09 22:29:39.909: I/DEBUG(27157):          5dff7c54  40754e34  /system/lib/libdvm.so (dvmPlatformInvoke+116)
+12-09 22:29:39.917: I/DEBUG(27157): memory near r1:
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b64c 5034366e 2073756c 736e6f43 20656c6f  n64Plus Console 
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b65c 72657355 746e492d 61667265 00006563  User-Interface..
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b66c 6f632d2d 696c6572 00000062 6f632d2d  --corelib...--co
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b67c 6769666e 00726964 61642d2d 69646174  nfigdir.--datadi
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b68c 00000072 65682d2d 0000706c 0000682d  r...--help..-h..
+12-09 22:29:39.917: I/DEBUG(27157): memory near r3:
+12-09 22:29:39.917: I/DEBUG(27157):     00009254 ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157):     00009264 ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157):     00009274 ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157):     00009284 ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157):     00009294 ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157): memory near r5:
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7c28 5be02278 00000000 5c0f5fc0 5dff7c58  x".[....._.\X|.]
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7c38 5c0f5fb8 5be02288 5dff7c6c 5be07031  ._.\.".[l|.]1p.[
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7c48 5bf504f0 00000000 41966718 40754e34  ...[.....g.A4Nu@
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7c58 5c0f5fb8 00000001 41966718 00000008  ._.\.....g.A....
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7c68 00000000 40784087 5c0f5fb8 5bfb0690  .....@x@._.\...[
+12-09 22:29:39.917: I/DEBUG(27157): memory near r9:
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b658 20656c6f 72657355 746e492d 61667265  ole User-Interfa
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b668 00006563 6f632d2d 696c6572 00000062  ce..--corelib...
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b678 6f632d2d 6769666e 00726964 61642d2d  --configdir.--da
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b688 69646174 00000072 65682d2d 0000706c  tadir...--help..
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b698 0000682d 67617355 25203a65 705b2073  -h..Usage: %s [p
+12-09 22:29:39.917: I/DEBUG(27157): memory near sl:
+12-09 22:29:39.917: I/DEBUG(27157):     0000265c ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157):     0000266c ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157):     0000267c ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157):     0000268c ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157):     0000269c ffffffff ffffffff ffffffff ffffffff  ................
+12-09 22:29:39.917: I/DEBUG(27157): memory near fp:
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b664 61667265 00006563 6f632d2d 696c6572  erface..--coreli
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b674 00000062 6f632d2d 6769666e 00726964  b...--configdir.
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b684 61642d2d 69646174 00000072 65682d2d  --datadir...--he
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b694 0000706c 0000682d 67617355 25203a65  lp..-h..Usage: %
+12-09 22:29:39.917: I/DEBUG(27157):     5be0b6a4 705b2073 6d617261 72657465 5b205d73  s [parameters] [
+12-09 22:29:39.917: I/DEBUG(27157): memory near ip:
+12-09 22:29:39.917: I/DEBUG(27157):     5be0deb0 40117089 400dbb79 4011e889 40116eed  .p.@y..@...@.n.@
+12-09 22:29:39.917: I/DEBUG(27157):     5be0dec0 4011774d 5c3a97f1 4011686d 401157ad  Mw.@..:\mh.@.W.@
+12-09 22:29:39.917: I/DEBUG(27157):     5be0ded0 4010a510 40118411 40117a29 4011b33d  ...@...@)z.@=..@
+12-09 22:29:39.917: I/DEBUG(27157):     5be0dee0 4011b139 40112edc 4011e605 40115899  9..@...@...@.X.@
+12-09 22:29:39.917: I/DEBUG(27157):     5be0def0 5c3a9bad 40112d39 5be122cc 5be122b8  ..:\9-.@.".[.".[
+12-09 22:29:39.917: I/DEBUG(27157): memory near sp:
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7bc0 00000002 2054100a 00000002 5dff7c48  ......T ....H|.]
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7bd0 5be0b2b0 5be08fa9 df0027ad 00000000  ...[...[.'......
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7be0 00000001 00000063 00000005 5c3fbc34  ....c.......4.?\
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7bf0 4014556c 4011125b 5c3fbbf4 5be0de3c  lU.@[..@..?\<..[
+12-09 22:29:39.917: I/DEBUG(27157):     5dff7c00 5be0b690 00009276 5be0b698 570c0258  ...[v......[X..W
+12-09 22:29:39.917: I/DEBUG(27157): code around pc:
+12-09 22:29:39.917: I/DEBUG(27157):     4010a510 f5d0f000 f5d1f000 e0202001 e3120003  .........  .....
+12-09 22:29:39.917: I/DEBUG(27157):     4010a520 1a000023 e2102003 e3c00003 e3c11003  #.... ..........
+12-09 22:29:39.917: I/DEBUG(27157):     4010a530 e490c004 04913004 0a000006 e2222003  .....0....... ".
+12-09 22:29:39.917: I/DEBUG(27157):     4010a540 e1a02182 e3e034ff e1a02233 e4913004  .!...4..3"...0..
+12-09 22:29:39.924: I/DEBUG(27157):     4010a550 e18cc002 e1833002 e52d4004 e3a04001  .....0...@-..@..
+12-09 22:29:39.924: I/DEBUG(27157): code around lr:
+12-09 22:29:39.924: I/DEBUG(27157):     5be08fdc 1414f8c3 42b43601 f855dd3b 46517026  .....6.B;.U.&pQF
+12-09 22:29:39.924: I/DEBUG(27157):     5be08fec ebc64479 f1080804 463838ff efb4f7fd  yD.......88F....
+12-09 22:29:39.924: I/DEBUG(27157):     5be08ffc f1b81c72 f8df0f00 4649384c f04fbfd4  r.......L8IF..O.
+12-09 22:29:39.924: I/DEBUG(27157):     5be0900c f04f0800 447b0801 f1be4686 bf140f00  ..O...{D.F......
+12-09 22:29:39.924: I/DEBUG(27157):     5be0901c 0e00f04f 0e01f008 f1be4638 d1d40f00  O.......8F......
+12-09 22:29:40.104: I/BootReceiver(288): Copying /data/tombstones/tombstone_08 to DropBox (SYSTEM_TOMBSTONE)
+12-09 22:29:40.120: I/WindowState(288): WIN DEATH: Window{41bd6290 paulscode.android.mupen64plusae/paulscode.android.mupen64plusae.GameActivity paused=false}
+12-09 22:29:40.120: I/ActivityManager(288): Process paulscode.android.mupen64plusae (pid 27258) has died.
+12-09 22:29:40.120: W/ActivityManager(288): Force removing ActivityRecord{4186bec8 paulscode.android.mupen64plusae/.GameActivity}: app died, no saved state
+12-09 22:29:40.120: I/WindowState(288): WIN DEATH: Window{41b08ac8 Toast paused=false}
+12-09 22:29:40.120: I/WindowState(288): WIN DEATH: Window{419da5c8 paulscode.android.mupen64plusae/paulscode.android.mupen64plusae.MenuActivity paused=false}
+12-09 22:29:40.120: I/WindowState(288): WIN DEATH: Window{41c48f00 SurfaceView paused=false}
+12-09 22:29:40.128: W/ActivityManager(288): Force removing ActivityRecord{422d7828 paulscode.android.mupen64plusae/.MenuActivity}: app died, no saved state
+12-09 22:29:40.128: I/InputReader(288): Reconfiguring input devices.  changes=0x00000004
+12-09 22:29:40.128: I/InputReader(288): Device reconfigured: id=6, name='Melfas MMSxxx Touchscreen', surface size is now 720x1280, mode is 1
+12-09 22:29:40.151: I/DEBUG(27157): unexpected waitpid response: n=27258, status=0000000b
+12-09 22:29:40.151: I/DEBUG(27157): ptrace detach from 27258 failed: No such process
+12-09 22:29:40.151: I/DEBUG(27157): debuggerd committing suicide to free the zombie!
+12-09 22:29:40.151: D/Zygote(122): Process 27258 terminated by signal (11)
+12-09 22:29:40.159: I/DEBUG(27291): debuggerd: Aug  6 2012 20:25:31
+12-09 22:29:40.229: I/ActivityManager(288): Config changed: {1.0 311mcc480mnc en_US sw360dp w360dp h567dp nrml port finger -keyb/v/h -nav/h s.113}
+12-09 22:29:40.331: W/InputMethodManagerService(288): Got RemoteException sending setActive(false) notification to pid 27258 uid 10090
+12-09 22:29:40.440: W/NotificationService(288): Object died trying to hide notification android.app.ITransientNotification$Stub$Proxy@41de3288 in package paulscode.android.mupen64plusae
+12-09 22:29:42.487: D/dalvikvm(288): WAIT_FOR_CONCURRENT_GC blocked 0ms
+12-09 22:29:42.604: D/dalvikvm(288): GC_EXPLICIT freed 2247K, 25% free 23935K/31559K, paused 9ms+11ms, total 118ms
+

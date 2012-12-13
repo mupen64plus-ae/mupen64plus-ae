@@ -102,9 +102,16 @@ public class CoreInterface
     {
         String extraArgs = "";
         if( !sUserPrefs.isFramelimiterEnabled )
-            extraArgs += "--nospeedlimit";
-        // TODO: add args for selected cheat preferences
+            extraArgs = "--nospeedlimit";
+        if( sUserPrefs.cheatOptions != null )
+            extraArgs = appendArg( extraArgs, sUserPrefs.cheatOptions );
         return extraArgs;
+    }
+    private static String appendArg( String prev, String arg )
+    {
+        if( Utility.isNullOrEmpty( prev ) )
+            return arg;
+        return prev + " " + arg;
     }
     
     public static boolean initEGL( int majorVersion, int minorVersion )
