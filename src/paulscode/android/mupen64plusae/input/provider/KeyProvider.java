@@ -113,10 +113,6 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
      */
     private boolean onKey( int keyCode, KeyEvent event )
     {
-        // Ignore cancellations via back key
-        if( keyCode == KeyEvent.KEYCODE_BACK )
-            return false;
-        
         // Translate input code and analog strength (ranges between 0.0 and 1.0)
         int inputCode;
         float strength;

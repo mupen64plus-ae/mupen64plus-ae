@@ -235,9 +235,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
         
-        if( keyCode == KeyEvent.KEYCODE_BACK )
+        if( keyCode == KeyEvent.KEYCODE_BACK && AppData.IS_HONEYCOMB )
         {
-            // Absorb all back key presses, and toggle the ActionBar if applicable
+            // For devices with an action bar, absorb all back key presses
+            // and toggle the action bar on key down
             if( keyDown )
                 toggleActionBar( view.getRootView() );
             return true;
