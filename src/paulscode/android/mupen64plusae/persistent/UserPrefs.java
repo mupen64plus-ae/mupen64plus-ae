@@ -134,9 +134,6 @@ public class UserPrefs
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
     
-    /** True if volume keys can be used as controls. */
-    public final boolean isVolKeysMappable;
-    
     /** The screen orientation for the game activity. */
     public final int screenOrientation;
     
@@ -251,7 +248,6 @@ public class UserPrefs
         inputMap2 = new InputMap( prefsData.getString( "peripheralMap2", "" ) );
         inputMap3 = new InputMap( prefsData.getString( "peripheralMap3", "" ) );
         inputMap4 = new InputMap( prefsData.getString( "peripheralMap4", "" ) );
-        isVolKeysMappable = prefsData.getBoolean( "volumeKeysEnabled", false );
         
         // Audio prefs
         swapChannels = prefsData.getBoolean( "swapAudioChannels", false );
@@ -317,6 +313,7 @@ public class UserPrefs
         touchscreenLayout = folder;
         
         // Define the key codes that should not be mapped to controls
+        boolean volKeysMappable = prefsData.getBoolean( "volumeKeysEnabled", false );
         List<Integer> unmappables = new ArrayList<Integer>();
         if( AppData.IS_HONEYCOMB )
         {
@@ -326,7 +323,7 @@ public class UserPrefs
         {
             unmappables.add( KeyEvent.KEYCODE_MENU );
         }
-        if( !isVolKeysMappable )
+        if( !volKeysMappable )
         {
             unmappables.add( KeyEvent.KEYCODE_VOLUME_UP );
             unmappables.add( KeyEvent.KEYCODE_VOLUME_DOWN );
