@@ -93,6 +93,10 @@ public class InputMapPreference extends DialogPreference implements
         }
         else
         {
+            // Hide the dialog title to yield more screen space
+            setDialogTitle( null );
+            
+            // Choose the appropriate layout depending on device and orientation
             UserPrefs prefs = new UserPrefs( context );
             int orientation = getContext().getResources().getConfiguration().orientation;
             if( prefs.isXperiaEnabled )
