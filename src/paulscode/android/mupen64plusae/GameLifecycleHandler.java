@@ -235,34 +235,26 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         boolean keyDown = event.getAction() == KeyEvent.ACTION_DOWN;
         
+        // For devices with an action bar, absorb all back key presses
+        // and toggle the action bar
         if( keyCode == KeyEvent.KEYCODE_BACK && AppData.IS_HONEYCOMB )
         {
-            // For devices with an action bar, absorb all back key presses
-            // and toggle the action bar on key down
             if( keyDown )
                 toggleActionBar( view.getRootView() );
             return true;
         }
         
-        // Let Android handle the menu key if available
-        else if( keyCode == KeyEvent.KEYCODE_MENU )
+        // Let the PeripheralControllers and Android handle everything else
+        else
         {
+            // If PeripheralControllers exist and handle the event,
+            // they return true. Else they return false, signaling
+            // Android to handle the event (menu button, vol keys).
+            if( mKeyProvider != null )
+                return mKeyProvider.onKey( view, keyCode, event );
+            
             return false;
         }
-        
-        // Let Android handle the volume keys if not used for control
-        else if( !mUserPrefs.isVolKeysEnabled
-                && ( keyCode == KeyEvent.KEYCODE_VOLUME_UP
-                        || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE ) )
-            return false;
-        
-        // Let the PeripheralControllers handle everything else
-        else if( mKeyProvider != null )
-            return mKeyProvider.onKey( view, keyCode, event );
-        
-        // Let Android handle everything else if no PeripheralControllers
-        else
-            return false;
     }
     
     private void initControllers( View inputSource )
@@ -308,7 +300,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         }
 
         // Create the input providers shared among all peripheral controllers
-        mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT );
+        mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT, mUserPrefs.unmappableKeyCodes );
         AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1 ? new AxisProvider( inputSource ) : null;
         
         // Create the peripheral controls to handle key/stick presses

@@ -19,6 +19,8 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import java.util.List;
+
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
@@ -48,16 +50,21 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
     /** The IME formula for decoding KeyEvent data. */
     private ImeFormula mImeFormula;
     
+    /** The list of key codes that should be ignored. */
+    private List<Integer> mIgnoredCodes;
+    
     /**
      * Instantiates a new key provider.
      * 
      * @param view The view receiving KeyEvent data.
      * @param formula The decoding formula to be used.
+     * @param ignoredCodes List of key codes that should be ignored.
      */
-    public KeyProvider( View view, ImeFormula formula )
+    public KeyProvider( View view, ImeFormula formula, List<Integer> ignoredCodes )
     {
-        // Assign the IME decoding formula
+        // Assign the fields
         mImeFormula = formula;
+        mIgnoredCodes = ignoredCodes;
         
         // Connect the input source
         view.setOnKeyListener( this );
@@ -71,11 +78,13 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
      * 
      * @param builder The builder for the dialog receiving KeyEvent data.
      * @param formula The decoding formula to be used.
+     * @param ignoredCodes List of key codes that should be ignored.
      */
-    public KeyProvider( Builder builder, ImeFormula formula )
+    public KeyProvider( Builder builder, ImeFormula formula, List<Integer> ignoredCodes )
     {
-        // Assign the IME decoding formula
+        // Assign the fields
         mImeFormula = formula;
+        mIgnoredCodes = ignoredCodes;
         
         // Connect the input source
         builder.setOnKeyListener( this );
@@ -113,6 +122,12 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
      */
     private boolean onKey( int keyCode, KeyEvent event )
     {
+        // Ignore specified key codes
+        if( mIgnoredCodes != null && mIgnoredCodes.contains( keyCode ) )
+        {
+            return false;
+        }
+        
         // Translate input code and analog strength (ranges between 0.0 and 1.0)
         int inputCode;
         float strength;

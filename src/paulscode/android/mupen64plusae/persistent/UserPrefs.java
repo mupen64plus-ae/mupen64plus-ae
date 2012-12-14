@@ -20,13 +20,17 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.CheatsMenuHandler;
+import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
@@ -127,8 +131,11 @@ public class UserPrefs
     /** The button map for player 4. */
     public final InputMap inputMap4;
     
+    /** The set of key codes that are not allowed to be mapped. **/
+    public final List<Integer> unmappableKeyCodes;
+    
     /** True if volume keys can be used as controls. */
-    public final boolean isVolKeysEnabled;
+    public final boolean isVolKeysMappable;
     
     /** The screen orientation for the game activity. */
     public final int screenOrientation;
@@ -244,7 +251,7 @@ public class UserPrefs
         inputMap2 = new InputMap( prefsData.getString( "peripheralMap2", "" ) );
         inputMap3 = new InputMap( prefsData.getString( "peripheralMap3", "" ) );
         inputMap4 = new InputMap( prefsData.getString( "peripheralMap4", "" ) );
-        isVolKeysEnabled = prefsData.getBoolean( "volumeKeysEnabled", false );
+        isVolKeysMappable = prefsData.getBoolean( "volumeKeysEnabled", false );
         
         // Audio prefs
         swapChannels = prefsData.getBoolean( "swapAudioChannels", false );
@@ -308,6 +315,24 @@ public class UserPrefs
         }
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
+        
+        // Define the key codes that should not be mapped to controls
+        List<Integer> unmappables = new ArrayList<Integer>();
+        if( AppData.IS_HONEYCOMB )
+        {
+            unmappables.add( KeyEvent.KEYCODE_BACK );
+        }
+        else
+        {
+            unmappables.add( KeyEvent.KEYCODE_MENU );
+        }
+        if( !isVolKeysMappable )
+        {
+            unmappables.add( KeyEvent.KEYCODE_VOLUME_UP );
+            unmappables.add( KeyEvent.KEYCODE_VOLUME_DOWN );
+            unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
+        }
+        unmappableKeyCodes = Collections.unmodifiableList( unmappables );
     }
     
     /**

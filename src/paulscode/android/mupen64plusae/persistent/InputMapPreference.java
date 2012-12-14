@@ -22,6 +22,8 @@
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import java.util.List;
+
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.map.InputMap;
@@ -61,6 +63,7 @@ public class InputMapPreference extends DialogPreference implements
     private View mToggleWidget;
     private TextView mFeedbackText;
     private Button[] mN64Button;
+    private List<Integer> mUnmappableKeyCodes;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -176,11 +179,12 @@ public class InputMapPreference extends DialogPreference implements
         super.onPrepareDialogBuilder( builder );
         
         // Setup key listening
-        mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT ) );
+        mUnmappableKeyCodes = ( new UserPrefs( getContext() ) ).unmappableKeyCodes;
+        mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT, mUnmappableKeyCodes ) );
         
         // Add a button for calibrating analog axes, if applicable
-        if( AppData.IS_HONEYCOMB_MR1 )        
-            builder.setNeutralButton( R.string.inputMapPreference_calibrate, this);
+        if( AppData.IS_HONEYCOMB_MR1 )
+            builder.setNeutralButton( R.string.inputMapPreference_calibrate, this );
     }
     
     @Override
@@ -203,7 +207,7 @@ public class InputMapPreference extends DialogPreference implements
         // Unregister parent providers, new ones added on next click
         mProvider.removeAllProviders();
     }
-
+    
     @Override
     public void onClick( DialogInterface dialog, int which )
     {
@@ -220,7 +224,7 @@ public class InputMapPreference extends DialogPreference implements
             // analog channel based on the first measurement it receives. As a workaround, we
             // provide a calibration button, which makes the user go through a little dance to
             // ensure all analog axes are pressed, then re-calibrates itself.
-            // TODO: Find a solution that is automatic (e.g. LazyProvider calibrates per channel)            
+            // TODO: Find a solution that is automatic (e.g. LazyProvider calibrates per channel)
             
             // Remember the dirty state of the preference
             final String dirtyMap = mMap.serialize();
@@ -236,7 +240,7 @@ public class InputMapPreference extends DialogPreference implements
                 public void onClick( DialogInterface dialog2, int which2 )
                 {
                     // Button clicked on the calibration dialog
-
+                    
                     // Reset the strength biases if OK clicked
                     if( which2 == DialogInterface.BUTTON_POSITIVE )
                         mProvider.resetBiases();
@@ -284,7 +288,7 @@ public class InputMapPreference extends DialogPreference implements
                     String message = getContext().getString( R.string.inputMapPreference_popupMessage );
                     String btnText = getContext().getString( R.string.inputMapPreference_popupPosButtonText );
                     Prompt.promptInputCode( getContext(), button.getText(), message, btnText,
-                            new OnInputCodeListener()
+                            mUnmappableKeyCodes, new OnInputCodeListener()
                             {
                                 @Override
                                 public void OnInputCode( int inputCode, int hardwareId )

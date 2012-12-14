@@ -191,7 +191,7 @@ public class Prompt
      * @param listener The listener to process the input code, when provided.
      */
     public static void promptInputCode( Context context, CharSequence title, CharSequence message,
-            CharSequence positiveButtonText, final OnInputCodeListener listener )
+            CharSequence positiveButtonText, List<Integer> ignoredKeyCodes, final OnInputCodeListener listener )
     {
         // Create a custom view to provide key/motion event data
         // This can be absolutely any kind of view, we just something to dispatch events
@@ -224,7 +224,7 @@ public class Prompt
         LazyProvider provider = new LazyProvider();
 
         // Connect the upstream key event listener
-        provider.addProvider( new KeyProvider( view, ImeFormula.DEFAULT ) );
+        provider.addProvider( new KeyProvider( view, ImeFormula.DEFAULT, ignoredKeyCodes ) );
         
         // Connect the upstream motion event listener
         if( AppData.IS_HONEYCOMB_MR1 )
