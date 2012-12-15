@@ -412,9 +412,7 @@ EXPORT void CALL ControllerCommand(int Control, unsigned char *Command)
     unsigned char *Data = &Command[5];
 
     if (Control == -1)
-    {
         return;
-    }
 
     switch (Command[2])
     {
@@ -482,7 +480,6 @@ printf( "dwAddress is not PAK_IO_RUMBLE" );
 
 #ifdef __linux__
                 struct input_event play;
-
                 if( dwAddress == PAK_IO_RUMBLE && controller[Control].event_joystick != 0)
                 {
                     if( *Data )
