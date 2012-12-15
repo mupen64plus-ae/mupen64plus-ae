@@ -1,10 +1,6 @@
 # keep EOL normalized
 * text=auto
 
-# force win32 file ending
-*dynamiclib_win32.c text eol=crlf
-*files_win32.c text eol=crlf
-
 # use native line ending
 *.c text
 *.cc text
@@ -29,8 +25,13 @@
 /assets/* binary
 /res/drawable* binary
 *.gif binary
+*.gz binary
 *.jar binary
 *.jpg binary
 *.pdf binary
 *.png binary
 *.zip binary
+*dynamiclib_win32.c binary
+*files_win32.c binary
+*.vcproj binary
+*.sln binary
