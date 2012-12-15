@@ -70,6 +70,8 @@ public class CoreInterface
     private static AppData sAppData = null;
     private static UserPrefs sUserPrefs = null;
     private static boolean finishedReading = false;
+    private static OnEmuStateChangeListener emuStateChangeListener = null;
+    private static final Object emuStateLock = new Object();
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
@@ -210,6 +212,23 @@ public class CoreInterface
         }
         finishedReading = true;
         return selectedGame;
+    }
+    
+    public static void setOnEmuStateChangeListener( OnEmuStateChangeListener listener )
+    {
+        synchronized( emuStateLock )
+        {
+            emuStateChangeListener = listener;
+        }
+    }
+    
+    public static void emuStateCallback( int newState )
+    {
+        synchronized( emuStateLock )
+        {
+            if( emuStateChangeListener != null )
+                emuStateChangeListener.onEmuStateChange( newState );
+        }
     }
     
     public static void runOnUiThread( Runnable action )

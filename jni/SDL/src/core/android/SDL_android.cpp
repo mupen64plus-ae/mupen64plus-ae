@@ -66,6 +66,7 @@ static jmethodID midGetROMPath;
 static jmethodID midGetScreenStretch;
 static jmethodID midGetAutoFrameSkip;
 static jmethodID midGetMaxFrameSkip;
+static jmethodID midEmuStateCallback;
 static jmethodID midShowToast;
 static jmethodID midAudioInit;
 static jmethodID midAudioWriteShortBuffer;
@@ -116,6 +117,8 @@ extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls)
                                 "getAutoFrameSkip", "()Z");
     midGetMaxFrameSkip = mEnv->GetStaticMethodID(mActivityClass,
                                 "getMaxFrameSkip", "()I");
+    midEmuStateCallback = mEnv->GetStaticMethodID(mActivityClass,
+                                "emuStateCallback", "(I)V");
     midShowToast = mEnv->GetStaticMethodID(mActivityClass,
                                 "showToast", "(Ljava/lang/String;)V");
     midAudioInit = mEnv->GetStaticMethodID(mActivityClass, 
@@ -128,9 +131,10 @@ extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls)
                                 "audioQuit", "()V");
 
     if(!midCreateGLContext || !midVibrate || !midUseRGBA8888 || !midFlipBuffers || !midGetDataDir ||
-       !midGetHardwareType || !midGetExtraArgs || !midGetROMPath ||
-       !midGetScreenStretch || !midGetAutoFrameSkip || !midGetMaxFrameSkip || !midShowToast || !midAudioInit ||
-       !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit) {
+       !midGetHardwareType || !midGetExtraArgs || !midGetROMPath || !midGetScreenStretch ||
+       !midGetAutoFrameSkip || !midGetMaxFrameSkip || ! midEmuStateCallback || !midShowToast ||
+       !midAudioInit || !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit)
+    {
         __android_log_print(ANDROID_LOG_WARN, "SDL", "SDL: Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
 }
@@ -267,6 +271,11 @@ extern "C" int Android_JNI_GetMaxFrameSkip()
     jint i = mEnv->CallStaticIntMethod( mActivityClass, midGetMaxFrameSkip );
     __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Android_JNI_GetMaxFrameSkip returning %i", (int) i );
     return (int) i;
+}
+extern "C" void Android_JNI_EMU_STATE_Callback( int newState )
+{
+    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Emulator state changed to %i", newState );
+    mEnv->CallStaticVoidMethod( mActivityClass, midEmuStateCallback, newState );
 }
 
 // paulscode, added for showing the user a short message

@@ -352,6 +352,23 @@ static void FrameCallback(unsigned int FrameIndex)
         }
     }
 }
+void StateCallback( void *Context, m64p_core_param ParamChanged, int NewValue )
+{
+    /*----ParamChanged---------------
+     *    --------NewValue--------
+     *    M64CORE_EMU_STATE         1
+     *            M64EMU_STOPPED 1
+     *            M64EMU_RUNNING 2
+     *            M64EMU_PAUSED  3
+     *    M64CORE_VIDEO_MODE        2
+     *    M64CORE_SAVESTATE_SLOT    3
+     *    M64CORE_SPEED_FACTOR      4
+     *    M64CORE_SPEED_LIMITER     5
+     */
+    if( ParamChanged == M64CORE_EMU_STATE )
+        Android_JNI_EMU_STATE_Callback( NewValue );
+}
+
 /*********************************************************************************************************
  *  Configuration handling
  */
@@ -848,7 +865,7 @@ int main(int argc, char *argv[])
     }
 
     /* start the Mupen64Plus core library, load the configuration file */
-    m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, NULL);
+    m64p_error rval = (*CoreStartup)( CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, StateCallback );
     if (rval != M64ERR_SUCCESS)
     {
         DebugMessage(M64MSG_ERROR, "couldn't start Mupen64Plus core library.");

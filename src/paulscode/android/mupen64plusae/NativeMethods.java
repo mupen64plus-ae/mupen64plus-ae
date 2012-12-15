@@ -148,7 +148,10 @@ public class NativeMethods
     {
         return CoreInterface.getRomPath();
     }
-    
+    public static void emuStateCallback( int newState )
+    {
+        CoreInterface.emuStateCallback( newState );
+    }    
     public static boolean getScreenStretch()
     {
         return CoreInterface.getScreenStretch();

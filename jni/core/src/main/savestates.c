@@ -1375,6 +1375,12 @@ int savestates_save(void)
         get_next_event_type() > COMPARE_INT)
         return 0;
 
+    #ifdef ANDROID
+        // paulscode, added to allow synchronization between savestates and state changes
+        // TODO: remove after solving ASDP bug.
+        StateChanged( M64CORE_EMU_STATE, M64EMU_PAUSED );
+    #endif
+
     if (fname != NULL && type == savestates_type_unknown)
         type = savestates_type_m64p;
     else if (fname == NULL) // Always save slots in M64P format
@@ -1394,5 +1400,12 @@ int savestates_save(void)
     }
 
     savestates_clear_job();
+
+    #ifdef ANDROID
+        // paulscode, added to allow synchronization between savestates and state changes
+        // TODO: remove after solving ASDP bug.
+        StateChanged( M64CORE_EMU_STATE, M64EMU_RUNNING );
+    #endif
+
     return ret;
 }

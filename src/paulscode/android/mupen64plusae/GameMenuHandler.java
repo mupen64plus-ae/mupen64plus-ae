@@ -113,24 +113,25 @@ public class GameMenuHandler
                 //////
                 //  paulscode: temporary workaround for ASDP bug after emulator shuts down
                   Notifier.showToast( mActivity, R.string.toast_savingSession );
+                  CoreInterface.setOnEmuStateChangeListener
+                  (
+                      new OnEmuStateChangeListener()
+                      {
+                          @Override
+                          public void onEmuStateChange( int newState1 )
+                          {
+                              if( newState1 == CoreInterface.EMULATOR_STATE_RUNNING )
+                              {
+                                  System.exit( 0 );  // Bad, bad..
+                                  CoreInterface.setOnEmuStateChangeListener( null );
+                                  Intent intent = new Intent( mActivity, MenuActivity.class );
+                                  intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                                  mActivity.startActivity( intent );
+                              }
+                          }
+                      }
+                  );
                   NativeMethods.fileSaveEmulator( mAutoSaveFile );
-                  SafeMethods.sleep( 500 );
-                  for( int c = 0; NativeMethods.stateEmulator() == CoreInterface.EMULATOR_STATE_PAUSED && c < 120;  c++ )
-                  {
-                      SafeMethods.sleep( 500 );
-                  }
-                  SafeMethods.sleep( 500 );
-                  NativeMethods.pauseEmulator();
-                  SafeMethods.sleep( 500 );
-                  for( int c = 0; NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_PAUSED && c < 120;  c++ )
-                  {
-                      SafeMethods.sleep( 500 );
-                  }
-                  SafeMethods.sleep( 500 );
-                  Intent intent = new Intent( mActivity, MenuActivity.class );
-                  intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-                  mActivity.startActivity( intent );
-                  System.exit( 0 );  // Bad, bad.. // TODO: Remove this in the future.
                 //////
                 break;
             default:
