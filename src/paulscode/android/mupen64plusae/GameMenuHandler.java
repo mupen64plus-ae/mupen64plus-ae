@@ -5,13 +5,11 @@ import java.io.File;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -124,9 +122,7 @@ public class GameMenuHandler
                               {
                                   System.exit( 0 );  // Bad, bad..
                                   CoreInterface.setOnEmuStateChangeListener( null );
-                                  Intent intent = new Intent( mActivity, MenuActivity.class );
-                                  intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-                                  mActivity.startActivity( intent );
+                                  mActivity.finish();
                               }
                           }
                       }
