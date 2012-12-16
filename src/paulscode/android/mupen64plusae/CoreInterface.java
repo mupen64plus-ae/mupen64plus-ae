@@ -222,6 +222,7 @@ public class CoreInterface
             {
                 if( newState == waitState )
                 {
+                    setOnEmuStateChangeListener( null );
                     synchronized( lock )
                     {
                         lock.notify();
