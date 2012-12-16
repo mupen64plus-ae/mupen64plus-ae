@@ -152,7 +152,6 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
                 break;
         }
         NativeMethods.onResize( width, height, sdlFormat );
-        
         mCoreThread = new Thread( new Runnable()
         {
             @Override
@@ -163,21 +162,14 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
         }, "CoreThread" );
         mCoreThread.start();
         
-        // Wait for initialization to complete
-        CoreInterface.waitForRomLoad();
+        // Wait for the emu state callback indicating emulation has started
+        CoreInterface.waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
         
-        while( NativeMethods.stateEmulator() != CoreInterface.EMULATOR_STATE_RUNNING )
-            SafeMethods.sleep( 40 );
-        
-        mBuffFlipped = false;
-        while( !mBuffFlipped )
-            SafeMethods.sleep( 40 );
-        
-        // The core is fully started up, notify the listener
+        // The core has started up, notify the listener
         if( mClListener != null )
             mClListener.onCoreStartup();
     }
-
+    
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {

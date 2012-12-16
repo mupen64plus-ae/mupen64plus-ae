@@ -111,22 +111,19 @@ public class GameMenuHandler
                 //////
                 //  paulscode: temporary workaround for ASDP bug after emulator shuts down
                   Notifier.showToast( mActivity, R.string.toast_savingSession );
-                  CoreInterface.setOnEmuStateChangeListener
-                  (
-                      new OnEmuStateChangeListener()
+                  CoreInterface.setOnEmuStateChangeListener( new OnEmuStateChangeListener()
+                  {
+                      @Override
+                      public void onEmuStateChange( int newState )
                       {
-                          @Override
-                          public void onEmuStateChange( int newState1 )
+                          if( newState == CoreInterface.EMULATOR_STATE_RUNNING )
                           {
-                              if( newState1 == CoreInterface.EMULATOR_STATE_RUNNING )
-                              {
-                                  System.exit( 0 );  // Bad, bad..
-                                  CoreInterface.setOnEmuStateChangeListener( null );
-                                  mActivity.finish();
-                              }
+                              System.exit( 0 );  // Bad, bad..
+                              CoreInterface.setOnEmuStateChangeListener( null );
+                              mActivity.finish();
                           }
                       }
-                  );
+                  } );
                   NativeMethods.fileSaveEmulator( mAutoSaveFile );
                 //////
                 break;

@@ -69,7 +69,7 @@ public class CoreInterface
     private static Object sAudioBuffer;
     private static AppData sAppData = null;
     private static UserPrefs sUserPrefs = null;
-    private static boolean finishedReading = false;
+    private static boolean sBlockThread = false;
     private static OnEmuStateChangeListener emuStateChangeListener = null;
     private static final Object emuStateLock = new Object();
     
@@ -83,19 +83,6 @@ public class CoreInterface
         syncConfigFiles( sUserPrefs, sAppData );
     }
     
-    public static void waitForRomLoad()
-    {
-        // TODO: This function blocks until the core thread loads a ROM...
-        // ... which might never happen depending on when this is called.
-        // Problem is we are mixing a poll-and-sleep approach with an event-
-        // driven-callback approach.  Ideally, getRomPath should fire a
-        // callback when it's done loading rather than setting a flag to be
-        // polled.
-        finishedReading = false;
-        while( !finishedReading )
-            SafeMethods.sleep( 40 );
-    }
-
     /**
      * Constructs any extra parameters to pass to the front-end, based on user preferences
      * @return Object handle to String containing space-separated parameters.
@@ -168,10 +155,8 @@ public class CoreInterface
         if( sActivity == null )
             return null;
         
-        finishedReading = false;
         if( isSelectedGameNull )
         {
-            finishedReading = true;
             SafeMethods.exit( "Invalid ROM", sActivity, 2000 );
         }
         else if( isSelectedGameZipped )
@@ -199,18 +184,14 @@ public class CoreInterface
                 if( ErrorLogger.hasError() )
                     ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
                 
-                finishedReading = true;
-                
                 // Kick back out to the main menu
                 sActivity.finish();
             }
             else
             {
-                finishedReading = true;
                 return selectedGameUnzipped;
             }
         }
-        finishedReading = true;
         return selectedGame;
     }
     
@@ -229,6 +210,23 @@ public class CoreInterface
             if( emuStateChangeListener != null )
                 emuStateChangeListener.onEmuStateChange( newState );
         }
+    }
+    
+    public static void waitForEmuState( int state )
+    {
+        final int waitState = state;
+        sBlockThread = true;
+        setOnEmuStateChangeListener( new OnEmuStateChangeListener()
+        {
+            @Override
+            public void onEmuStateChange( int newState )
+            {
+                if( newState == waitState )
+                    sBlockThread = false;
+            }
+        } );
+        while( sBlockThread )
+            SafeMethods.sleep( 40 );
     }
     
     public static void runOnUiThread( Runnable action )
