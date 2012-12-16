@@ -101,8 +101,8 @@
     <string name="peripheralMap3_title">Player 3</string>
     <string name="peripheralMap4_title">Player 4</string>
     <string name="peripheralMap_summary">Configure buttons and sticks</string>
-    <string name="volumeKeysEnabled_title">Volume key controls</string>
-    <string name="volumeKeysEnabled_summary">Use volume keys as controller buttons</string>
+    <string name="volumeKeysEnabled_title">Mappable volume keys</string>
+    <string name="volumeKeysEnabled_summary">Allow volume keys to be mapped to controls</string>
     <string name="menuPeripheralInfo_title">Controller info</string>
     <string name="menuPeripheralInfo_summary">Peripheral hardware and model information</string>
     

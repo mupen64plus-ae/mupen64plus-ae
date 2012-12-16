@@ -160,6 +160,17 @@
             android:text="@string/inputMapPreference_rumble"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/primary_text_dark_nodisable" />
+
+        <TextView
+            android:id="@+id/textFeedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="feedback"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/primary_text_dark_nodisable" />
     </LinearLayout>
 
 </ScrollView>

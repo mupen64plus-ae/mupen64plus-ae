@@ -174,6 +174,23 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@android:color/primary_text_dark_nodisable" />
         </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRowFeedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" >
+
+            <TextView
+                android:id="@+id/textFeedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:text="feedback"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/primary_text_dark_nodisable" />
+        </TableRow>
     </LinearLayout>
 
 </ScrollView>
