@@ -25,6 +25,18 @@
 #define __PLUGIN_H__
 
 #include <SDL.h>
+#if ! SDL_VERSION_ATLEAST(1,3,0)
+
+#define SDL_GetKeyboardState SDL_GetKeyState
+#define SDL_SCANCODE_UNKNOWN SDLK_UNKNOWN
+#define SDL_NUM_SCANCODES SDLK_LAST
+#define SDL_SCANCODE_RCTRL SDLK_RCTRL
+#define SDL_SCANCODE_RSHIFT SDLK_RSHIFT
+#define SDL_SCANCODE_LCTRL SDLK_LCTRL
+#define SDL_SCANCODE_LALT SDLK_LALT
+#define SDL_Scancode SDLKey
+
+#endif
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
@@ -70,7 +82,7 @@ enum EButton
 typedef struct
 {
     int button;         // button index; -1 if notassigned
-    SDLKey key;         // sdl keysym; SDLK_UNKNOWN if not assigned
+    SDL_Scancode key;   // sdl keysym; SDL_SCANCODE_UNKNOWN if not assigned
     int axis, axis_dir; // aixs + direction (i.e. 0, 1 = X Axis +; 0, -1 = X Axis -); -1 if notassigned
     int axis_deadzone;  // -1 for default, or >= 0 for custom value
     int hat, hat_pos;   // hat + hat position; -1 if not assigned
@@ -80,7 +92,7 @@ typedef struct
 typedef struct
 {
     int button_a, button_b;         // up/down or left/right; -1 if not assigned
-    SDLKey key_a, key_b;            // up/down or left/right; SDLK_UNKNOWN if not assigned
+    SDL_Scancode key_a, key_b;      // up/down or left/right; SDL_SCANCODE_UNKNOWN if not assigned
     int axis_a, axis_b;             // axis index; -1 if not assigned
     int axis_dir_a, axis_dir_b;     // direction (1 = X+, 0, -1 = X-)
     int hat, hat_pos_a, hat_pos_b;  // hat + hat position up/down and left/right; -1 if not assigned

@@ -88,7 +88,7 @@ static void clear_controller(int iCtrlIdx)
     for( b = 0; b < 16; b++ )
     {
         controller[iCtrlIdx].button[b].button = -1;
-        controller[iCtrlIdx].button[b].key = SDLK_UNKNOWN;
+        controller[iCtrlIdx].button[b].key = SDL_SCANCODE_UNKNOWN;
         controller[iCtrlIdx].button[b].axis = -1;
         controller[iCtrlIdx].button[b].axis_deadzone = -1;
         controller[iCtrlIdx].button[b].hat = -1;
@@ -101,7 +101,7 @@ static void clear_controller(int iCtrlIdx)
         controller[iCtrlIdx].axis_deadzone[b] = 4096;
         controller[iCtrlIdx].axis_peak[b] = 32768;
         controller[iCtrlIdx].axis[b].button_a = controller[iCtrlIdx].axis[b].button_b = -1;
-        controller[iCtrlIdx].axis[b].key_a = controller[iCtrlIdx].axis[b].key_b = SDLK_UNKNOWN;
+        controller[iCtrlIdx].axis[b].key_a = controller[iCtrlIdx].axis[b].key_b = SDL_SCANCODE_UNKNOWN;
         controller[iCtrlIdx].axis[b].axis_a = -1;
         controller[iCtrlIdx].axis[b].axis_dir_a = 1;
         controller[iCtrlIdx].axis[b].axis_b = -1;
