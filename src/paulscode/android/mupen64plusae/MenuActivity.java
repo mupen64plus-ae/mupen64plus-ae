@@ -182,7 +182,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             return;
         }
         
-        // Make sure that the game save subdirectories exist
+        // Make sure that the game save subdirectories exist so that we can write to them
+        new File( mUserPrefs.manualSaveDir ).mkdirs();
         new File( mUserPrefs.slotSaveDir ).mkdirs();
         new File( mUserPrefs.autoSaveDir ).mkdirs();
         

@@ -19,7 +19,7 @@ public class GameMenuHandler
     
     private final Activity mActivity;
     
-    private final String mGameSaveDir;
+    private final String mManualSaveDir;
 
     private final String mAutoSaveFile;
     
@@ -31,10 +31,10 @@ public class GameMenuHandler
     
     private int mSlot = 0;
     
-    public GameMenuHandler( Activity activity, String gameSaveDir, String autoSaveFile )
+    public GameMenuHandler( Activity activity, String manualSaveDir, String autoSaveFile )
     {
         mActivity = activity;
-        mGameSaveDir = gameSaveDir;
+        mManualSaveDir = manualSaveDir;
         mAutoSaveFile = autoSaveFile;
     }
     
@@ -191,7 +191,7 @@ public class GameMenuHandler
     {
         NativeMethods.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.ingameLoad_title );
-        File startPath = new File( mGameSaveDir );
+        File startPath = new File( mManualSaveDir );
         Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
         {
             @Override
@@ -206,7 +206,7 @@ public class GameMenuHandler
     
     private void saveState( final String filename )
     {
-        final File file = new File( mGameSaveDir + "/" + filename );
+        final File file = new File( mManualSaveDir + "/" + filename );
         if( file.exists() )
         {
             String title = mActivity.getString( R.string._confirmation );

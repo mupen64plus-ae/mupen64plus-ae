@@ -53,7 +53,7 @@ public class GameActivity extends Activity
     protected void onCreate( Bundle savedInstanceState )
     {
         UserPrefs userPrefs = new UserPrefs( this );
-        mMenuHandler = new GameMenuHandler( this, userPrefs.gameSaveDir, userPrefs.selectedGameAutoSavefile );
+        mMenuHandler = new GameMenuHandler( this, userPrefs.manualSaveDir, userPrefs.selectedGameAutoSavefile );
 
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );

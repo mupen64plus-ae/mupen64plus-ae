@@ -71,13 +71,16 @@ public class UserPrefs
     /** The filename of the auto-saved session of the ROM selected by the user. */
     public final String selectedGameAutoSavefile;
     
-    /** The directory containing manual save files. */
+    /** The parent directory containing all save files. */
     public final String gameSaveDir;
     
-    /** The directory containing slot save files. */
+    /** The subdirectory containing manual save files. */
+    public final String manualSaveDir;
+    
+    /** The subdirectory containing slot save files. */
     public final String slotSaveDir;
     
-    /** The directory containing auto save files. */
+    /** The subdirectory containing auto save files. */
     public final String autoSaveDir;
     
     /** The selected video plug-in. */
@@ -219,6 +222,7 @@ public class UserPrefs
         slotSaveDir = gameSaveDir + "/SlotSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         File game = new File( selectedGame );
+        manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
         
         // Plug-ins
