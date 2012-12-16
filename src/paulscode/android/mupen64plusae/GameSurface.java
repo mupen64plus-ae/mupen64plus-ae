@@ -25,7 +25,6 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
@@ -69,7 +68,6 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
     private int mFrameCount = -1;
     
     // Internal flags
-    private boolean mBuffFlipped = false;
     private boolean mIsRgba8888 = false;
     
     // EGL private objects
@@ -332,7 +330,6 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
                 Log.v( "GameSurface", s.toString() );
             }
         }
-        mBuffFlipped = true;
         
         // Update frame rate info
         if( mIsFpsEnabled )
