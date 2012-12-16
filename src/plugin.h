@@ -38,6 +38,27 @@
 
 #endif
 
+#if SDL_VERSION_ATLEAST(2,0,0)
+
+static inline const char* _SDL_JoystickName(int device_index)
+{
+    SDL_Joystick *joystick;
+    const char *name;
+
+    joystick = SDL_JoystickOpen(device_index);
+    if (!joystick)
+        return NULL;
+
+    name = SDL_JoystickName(joystick);
+    SDL_JoystickClose(joystick);
+
+    return name;
+}
+
+#define SDL_JoystickName(device_index) _SDL_JoystickName(device_index)
+
+#endif
+
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
 #include "m64p_config.h"
