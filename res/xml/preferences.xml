@@ -137,21 +137,25 @@
                 android:title="@string/peripheral_title" >
 
                 <paulscode.android.mupen64plusae.persistent.InputMapPreference
+                    android:defaultValue="@string/inputMapPreference_default_PS3_on"
                     android:key="peripheralMap1"
                     android:summary="@string/peripheralMap_summary"
                     android:title="@string/peripheralMap1_title" />
 
                 <paulscode.android.mupen64plusae.persistent.InputMapPreference
+                    android:defaultValue="@string/inputMapPreference_default_PS3_off"
                     android:key="peripheralMap2"
                     android:summary="@string/peripheralMap_summary"
                     android:title="@string/peripheralMap2_title" />
 
                 <paulscode.android.mupen64plusae.persistent.InputMapPreference
+                    android:defaultValue="@string/inputMapPreference_default_Xbox_off"
                     android:key="peripheralMap3"
                     android:summary="@string/peripheralMap_summary"
                     android:title="@string/peripheralMap3_title" />
 
                 <paulscode.android.mupen64plusae.persistent.InputMapPreference
+                    android:defaultValue="@string/inputMapPreference_default_Xbox_off"
                     android:key="peripheralMap4"
                     android:summary="@string/peripheralMap_summary"
                     android:title="@string/peripheralMap4_title" />

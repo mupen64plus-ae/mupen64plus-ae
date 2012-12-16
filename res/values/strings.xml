@@ -306,4 +306,10 @@
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
     <string name="resetPrefs_popupMessage">Reset all preferences to their defaults?</string>
     
+    <!-- Non-Translatable Default Values -->
+    <string name="inputMapPreference_default_PS3_on" translatable="false">true:22,21,20,19,108,-35,96,99,-23,-24,-29,-30,103,102,-1,-2,-3,-4</string>
+    <string name="inputMapPreference_default_PS3_off" translatable="false">false:22,21,20,19,108,-35,96,99,-23,-24,-29,-30,103,102,-1,-2,-3,-4</string>
+    <string name="inputMapPreference_default_Xbox_on" translatable="false">true:-31,-32,-33,-34,108,-23,99,96,-25,-26,-27,-28,103,102,-1,-2,-3,-4</string>
+    <string name="inputMapPreference_default_Xbox_off" translatable="false">false:-31,-32,-33,-34,108,-23,99,96,-25,-26,-27,-28,103,102,-1,-2,-3,-4</string>
+    
 </resources>

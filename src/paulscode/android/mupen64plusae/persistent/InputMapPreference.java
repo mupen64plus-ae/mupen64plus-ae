@@ -39,6 +39,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -116,6 +117,30 @@ public class InputMapPreference extends DialogPreference implements
         }
     }
     
+    @Override
+    protected Object onGetDefaultValue( TypedArray a, int index )
+    {
+        return a.getString( index );
+    }
+    
+    @Override
+    protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
+    {
+        if( restorePersistedValue )
+        {
+            // Restore persisted value
+            mMap.deserialize( getPersistedString( "" ) );
+        }
+        else
+        {
+            // Set default state from the XML attribute
+            String value = (String) defaultValue;
+            persistString( value );
+            mMap.deserialize( value );
+        }
+        updateViews();
+    }
+
     @Override
     protected void onBindView( View view )
     {
@@ -201,6 +226,7 @@ public class InputMapPreference extends DialogPreference implements
         {
             // User pressed Ok: clean the state by persisting map
             persistString( mMap.serialize() );
+            notifyChanged();
         }
         else
         {
