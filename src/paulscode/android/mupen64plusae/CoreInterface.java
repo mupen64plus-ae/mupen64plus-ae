@@ -69,7 +69,6 @@ public class CoreInterface
     private static Object sAudioBuffer;
     private static AppData sAppData = null;
     private static UserPrefs sUserPrefs = null;
-    private static boolean sBlockThread = false;
     private static OnEmuStateChangeListener emuStateChangeListener = null;
     private static final Object emuStateLock = new Object();
     
@@ -215,18 +214,30 @@ public class CoreInterface
     public static void waitForEmuState( int state )
     {
         final int waitState = state;
-        sBlockThread = true;
+        final Object lock = new Object();
         setOnEmuStateChangeListener( new OnEmuStateChangeListener()
         {
             @Override
             public void onEmuStateChange( int newState )
             {
                 if( newState == waitState )
-                    sBlockThread = false;
+                {
+                    synchronized( lock )
+                    {
+                        lock.notify();
+                    }
+                }
             }
         } );
-        while( sBlockThread )
-            SafeMethods.sleep( 40 );
+        synchronized( lock )
+        {
+            try
+            {
+                lock.wait();
+            }
+            catch( InterruptedException ie )
+            {}
+        }
     }
     
     public static void runOnUiThread( Runnable action )
