@@ -247,7 +247,7 @@ public class InputMapPreference extends DialogPreference implements
                     
                     // Reset the strength biases if OK clicked
                     if( which2 == DialogInterface.BUTTON_POSITIVE )
-                        mProvider.resetBiases();
+                        mProvider.resetBiasesLast();
                     
                     // Reopen the mapping screen and restore the dirty state
                     InputMapPreference.this.onClick();

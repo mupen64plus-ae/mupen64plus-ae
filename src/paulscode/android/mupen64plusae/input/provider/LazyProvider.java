@@ -44,6 +44,12 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
     /** The strength biases associated with each input channel, used to re-center raw analog values. */
     private float[] mStrengthBiases = null;
     
+    /** The raw strengths associated with each input channel, from the most recent input event. */
+    private float[] mLastRawStrengths = null;
+    
+    /** The codes associated with each input channel, from the most recent input event. */
+    private int[] mLastInputCodes = null;
+    
     /** The providers whose inputs are aggregated. */
     private final ArrayList<AbstractProvider> providers = new ArrayList<AbstractProvider>();
     
@@ -87,11 +93,57 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
     }
     
     /**
-     * Resets the strength biases, i.e. re-centers analog inputs.
+     * Resets the strength biases based on the next input event.
      */
-    public void resetBiases()
+    public void resetBiasesNext()
     {
+        // Setting biases to null will force a refresh on next input
         mStrengthBiases = null;
+    }
+    
+    /**
+     * Resets the strength biases based on the last input event.
+     */
+    public void resetBiasesLast()
+    {
+        setBiases( mLastInputCodes, mLastRawStrengths );
+    }
+    
+    /**
+     * Sets the strength biases on each analog channel.
+     * @param inputCodes Universal input codes for each channel.
+     * @param rawStrengths Raw (biased) strength for each channel.
+     */
+    private void setBiases( int[] inputCodes, float[] rawStrengths )
+    {
+        if( inputCodes == null || rawStrengths == null )
+            return;
+        
+        mStrengthBiases = new float[rawStrengths.length];
+        
+        for( int i = 0; i < rawStrengths.length; i++ )
+        {
+            int inputCode = inputCodes[i];
+            float rawStrength = rawStrengths[i];
+            
+            // Record the strength bias
+            int axis = AbstractProvider.inputToAxisCode( inputCode );
+            switch( axis )
+            {
+                default:
+                    // Round the bias to -1, 0, or 1
+                    mStrengthBiases[i] = Math.round( rawStrength );
+                    break;
+                case MotionEvent.AXIS_HAT_X:
+                case MotionEvent.AXIS_HAT_Y:
+                    // The resting value for these axes should always be zero. If we used the
+                    // default method for these, their bias might be incorrectly stored as +/-
+                    // 1. Subtracting this incorrect bias would then make one direction of the
+                    // d-pad unusable. So we do nothing here, to ensure the bias remains zero
+                    // for these axes.
+                    break;
+            }
+        }
     }
     
     /**
@@ -113,13 +165,13 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
     @Override
     public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
-        // Get strength biases first time through
-        boolean refreshBiases = false;
+        // Get strength biases if necessary
         if( mStrengthBiases == null )
-        {
-            mStrengthBiases = new float[strengths.length];
-            refreshBiases = true;
-        }
+            setBiases( inputCodes, strengths );
+        
+        // Cache the input codes and raw strengths
+        mLastInputCodes = inputCodes.clone();
+        mLastRawStrengths = strengths.clone();
         
         // Find the strongest input
         float maxStrength = AbstractProvider.STRENGTH_THRESHOLD;
@@ -129,27 +181,9 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
             int inputCode = inputCodes[i];
             float strength = strengths[i];
             
-            // Record the strength bias and remove its effect
-            if( refreshBiases )
-            {
-                int axis = AbstractProvider.inputToAxisCode( inputCode );
-                switch( axis )
-                {
-                    default:
-                        // Round the bias to -1, 0, or 1
-                        mStrengthBiases[i] = Math.round( strength );
-                        break;
-                    case MotionEvent.AXIS_HAT_X:
-                    case MotionEvent.AXIS_HAT_Y:
-                        // The resting value for these axes should always be zero. If we used the
-                        // default method for these, their bias might be incorrectly stored as +/-
-                        // 1. Subtracting this incorrect bias would then make one direction of the
-                        // d-pad unusable. So we do nothing here, to ensure the bias remains zero
-                        // for these axes.
-                        break;
-                }
-            }
-            strength -= mStrengthBiases[i];
+            // Remove the bias in the channel
+            if( mStrengthBiases != null )
+                strength -= mStrengthBiases[i];
             
             // Cache the strongest input
             if( strength > maxStrength )
