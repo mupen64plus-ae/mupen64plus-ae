@@ -48,10 +48,10 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
     }
     
     /** The IME formula for decoding KeyEvent data. */
-    private ImeFormula mImeFormula;
+    private final ImeFormula mImeFormula;
     
     /** The list of key codes that should be ignored. */
-    private List<Integer> mIgnoredCodes;
+    private final List<Integer> mIgnoredCodes;
     
     /**
      * Instantiates a new key provider.

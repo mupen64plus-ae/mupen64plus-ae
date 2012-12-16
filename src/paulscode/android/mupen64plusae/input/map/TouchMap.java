@@ -66,13 +66,13 @@ public class TouchMap
     protected ArrayList<Image> buttonImages;
     
     /** Button masks. */
-    private ArrayList<Image> buttonMasks;
+    private final ArrayList<Image> buttonMasks;
     
     /** X-coordinates of the buttons, in percent. */
-    private ArrayList<Integer> buttonX;
+    private final ArrayList<Integer> buttonX;
     
     /** Y-coordinates of the buttons, in percent. */
-    private ArrayList<Integer> buttonY;
+    private final ArrayList<Integer> buttonY;
     
     /** Analog background image (fixed). */
     protected Image analogBackImage;

@@ -307,7 +307,7 @@ public class InputMapPreference extends DialogPreference implements
         else
         {
             // Find the button that was pressed
-            Button button = null;
+            Button button;
             for( int i = 0; i < mN64Button.length; i++ )
             {
                 if( view.equals( mN64Button[i] ) )

@@ -373,9 +373,9 @@ public class DataDownloader extends Thread
                     percent = stream.getBytesRead() * 100.0f / totalLen;
                 mStatus.setText( res.getString( R.string.dataDownloader_progress, percent, path ) );
             }
+
             out.flush();
             out.close();
-            out = null;
         }
         catch( IOException e )
         {
@@ -394,7 +394,7 @@ public class DataDownloader extends Thread
         ZipInputStream zip = new ZipInputStream( stream );
         while( true )
         {
-            ZipEntry entry = null;
+            ZipEntry entry;
             try
             {
                 entry = zip.getNextEntry();
@@ -500,9 +500,9 @@ public class DataDownloader extends Thread
                         percent = stream.getBytesRead() * 100.0f / totalLen;
                     mStatus.setText( res.getString( R.string.dataDownloader_progress, percent, path ) );
                 }
+
                 out.flush();
                 out.close();
-                out = null;
             }
             catch( IOException e )
             {
@@ -542,7 +542,7 @@ public class DataDownloader extends Thread
             String[] downloadUrls, int downloadUrlIndex )
     {
         String path;
-        OutputStream out = null;
+        OutputStream out;
         path = getOutFilePath( downloadFlagFileName );
         try
         {

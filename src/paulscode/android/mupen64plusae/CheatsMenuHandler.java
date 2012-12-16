@@ -218,7 +218,6 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             CheckBoxPreference chkBx;
             for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
             {
-                key = "Cheat" + i; // TODO: This supposed to be used somewhere ?
                 chkBx = (CheckBoxPreference) cheatsCategory.getPreference( i );
                 if( chkBx.isChecked() )
                 {

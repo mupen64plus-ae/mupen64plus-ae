@@ -64,9 +64,9 @@ public class MainActivity extends Activity implements DataDownloader.Listener
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     public static final int SPLASH_DELAY = 1000;
     
-    private TextView mTextView = null;
-    private DataDownloader mDownloader = null;
-    private AppData mAppData = null;
+    private TextView mTextView;
+    private DataDownloader mDownloader;
+    private AppData mAppData;
     
     @Override
     public void onCreate( Bundle savedInstanceState )

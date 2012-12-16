@@ -133,16 +133,16 @@ public class InputMap
     // @formatter:on
     
     /** Map from N64/Mupen function to standardized input code. */
-    private int[] mN64ToCode;
+    private final int[] mN64ToCode;
     
     /** Map from standardized input code to N64/Mupen function. */
-    private SparseIntArray mCodeToN64;
+    private final SparseIntArray mCodeToN64;
     
     /** Flag indicating whether the map is enabled. */
     private boolean mEnabled;
     
     /** Listener management. */
-    private SubscriptionManager<Listener> mPublisher;
+    private final SubscriptionManager<Listener> mPublisher;
     
     /**
      * Instantiates a new input map.
