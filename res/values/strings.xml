@@ -312,4 +312,8 @@
     <string name="inputMapPreference_default_Xbox_on" translatable="false">true:-31,-32,-33,-34,108,-23,99,96,-25,-26,-27,-28,103,102,-1,-2,-3,-4</string>
     <string name="inputMapPreference_default_Xbox_off" translatable="false">false:-31,-32,-33,-34,108,-23,99,96,-25,-26,-27,-28,103,102,-1,-2,-3,-4</string>
     
+    <string name="gameSaveDir_default" translatable="false">!GameSaves</string> <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
+    <string name="selectedGame_default" translatable="false">~roms/n64</string> <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
+    <string name="touchscreenCustom_default" translatable="false">~</string>    <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
+    
 </resources>

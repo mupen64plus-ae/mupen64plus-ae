@@ -53,7 +53,7 @@
     </Preference>
 
     <paulscode.android.mupen64plusae.persistent.PathPreference
-        android:defaultValue="~roms/n64"
+        android:defaultValue="@string/selectedGame_default"
         android:icon="@drawable/ic_folder"
         android:key="selectedGame"
         android:title="@string/selectedGame_title"
@@ -109,6 +109,7 @@
                     android:title="@string/touchscreenSize_title" />
 
                 <paulscode.android.mupen64plusae.persistent.PathPreference
+                    android:defaultValue="@string/touchscreenCustom_default"
                     android:dependency="touchscreenEnabled"
                     android:key="touchscreenCustom"
                     android:title="@string/touchscreenCustom_title"
@@ -322,7 +323,7 @@
             android:title="@string/categoryOther_title" >
 
             <paulscode.android.mupen64plusae.persistent.PathPreference
-                android:defaultValue="!GameSaves"
+                android:defaultValue="@string/gameSaveDir_default"
                 android:icon="@drawable/ic_folder"
                 android:key="gameSaveDir"
                 android:title="@string/gameSaveDir_title"
