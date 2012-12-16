@@ -53,11 +53,11 @@
     </Preference>
 
     <paulscode.android.mupen64plusae.persistent.PathPreference
+        android:defaultValue="~roms/n64"
         android:icon="@drawable/ic_folder"
         android:key="selectedGame"
         android:title="@string/selectedGame_title"
-        mupen64:selectionMode="1"
-        mupen64:fileCategory="1" />
+        mupen64:selectionMode="1" />
 
     <PreferenceScreen
         android:icon="@drawable/ic_settings"
@@ -318,6 +318,7 @@
             android:title="@string/categoryOther_title" >
 
             <paulscode.android.mupen64plusae.persistent.PathPreference
+                android:defaultValue="!GameSaves"
                 android:icon="@drawable/ic_folder"
                 android:key="gameSaveDir"
                 android:title="@string/gameSaveDir_title"

@@ -25,6 +25,7 @@ import java.util.List;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,35 +47,22 @@ public class PathPreference extends DialogPreference
     /** The user may select a file or a directory. The Ok button must be used. */
     public static final int SELECTION_MODE_ANY = 2;
     
-    /** The type of file being selected is not special (start in storage root). */
-    public static final int CATEGORY_NORMAL = 0;
-    
-    /** The type of file being selected is a ROM (start in standard ROM folder). */
-    public static final int CATEGORY_ROM = 1;
+    private static final String STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
     
     private int mSelectionMode = SELECTION_MODE_ANY;
-    private int mCategory = CATEGORY_NORMAL;
-    private boolean mDoRefresh = true;
     private boolean mDoReclick = false;
     private List<CharSequence> mEntries = new ArrayList<CharSequence>();
     private List<String> mValues = new ArrayList<String>();
     private CharSequence mEntry;
     private String mValue;
-    private AppData mAppData = null;
     
     public PathPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
         
-        mAppData = new AppData( context );
-        
         // Get the selection mode from the XML file, if provided
         TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.PathPreference );
-        mSelectionMode = a
-                .getInteger( R.styleable.PathPreference_selectionMode, SELECTION_MODE_ANY );
-        // Get the file category from the XML file, if provided
-        mCategory = a
-                .getInteger( R.styleable.PathPreference_fileCategory, CATEGORY_NORMAL );
+        mSelectionMode = a.getInteger( R.styleable.PathPreference_selectionMode, SELECTION_MODE_ANY );
         a.recycle();
     }
     
@@ -91,36 +79,72 @@ public class PathPreference extends DialogPreference
     @Override
     protected View onCreateView( ViewGroup parent )
     {
-        // Refresh the cached entry, value, and summary
-        // This occurs first time through, and after user presses Cancel
-        if( mDoRefresh )
-        {
-            mDoRefresh = false;
-            
-            String defaultFilename;
-            if( mCategory == CATEGORY_ROM )
-                defaultFilename = mAppData.defaultRomDir;
-            else
-                defaultFilename = Environment.getExternalStorageDirectory().getAbsolutePath();            
-            File file = new File( getPersistedString( defaultFilename ) );
-            
-            // Make sure the file still exists (file may have been moved to another directory)
-            if( !file.exists() )
-                file = new File( defaultFilename );
-            
-            populate( file );
-            setSummary( mSelectionMode == SELECTION_MODE_FILE ? mEntry : mValue );
-        }
+        // Restore the persisted value
+        mValue = getPersistedString( "" );
+        populate( new File( mValue ) );
+        setSummary( mSelectionMode == SELECTION_MODE_FILE ? mEntry : mValue );
+
         return super.onCreateView( parent );
+    }
+    
+    @Override
+    protected Object onGetDefaultValue( TypedArray a, int index )
+    {
+        String value = a.getString( index );
+        
+        if( Utility.isNullOrEmpty( value ) )
+        {
+            // Use storage directory if no default provided in XML file
+            value = STORAGE_DIR;
+        }
+        else
+        {
+            // Default value was provided in XML file
+            // Prefixes encode additional information:
+            // ! means path is relative to storage dir, and parent dirs should be created if path does not exist
+            // ~ means path is relative to storage dir, and that storage dir should be used if path does not exist
+            boolean isRelativePath = value.startsWith( "!" ) || value.startsWith( "~" );
+            boolean forceParentDirs = value.startsWith( "!" );
+            
+            // Build the absolute path if necessary
+            if( isRelativePath )
+                value = STORAGE_DIR + "/" + value.substring( 1 );
+            
+            // Ensure the parent directories exist if requested
+            if( forceParentDirs )
+                ( new File( value ) ).mkdirs();
+        }
+        
+        return value;
+    }
+    
+    @Override
+    protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
+    {
+        if( restorePersistedValue )
+        {
+            // Restore persisted value
+            mValue = this.getPersistedString( STORAGE_DIR );
+            
+            // Fall back to storage directory if path no longer exists
+            if( !( new File( mValue ) ).exists() )
+            {
+                mValue = STORAGE_DIR;
+                persistString( mValue );
+            }
+        }
+        else
+        {
+            // Set default state from the XML attribute
+            mValue = (String) defaultValue;
+            persistString( mValue );
+        }
     }
     
     @Override
     protected void onPrepareDialogBuilder( Builder builder )
     {
         super.onPrepareDialogBuilder( builder );
-        
-        // Refresh the list again whenever the dialog is reopened
-        populate( new File( mValue ) );
         
         // Add the list entries
         builder.setItems( mEntries.toArray( new CharSequence[mEntries.size()] ), this );
@@ -138,9 +162,8 @@ public class PathPreference extends DialogPreference
         // If the user clicked a list item...
         if( mValues != null && which >= 0 && which < mValues.size() )
         {
-            File path = new File( mValues.get( which ) );
-            mEntry = mEntries.get( which ).toString();
             mValue = mValues.get( which );
+            File path = new File( mValue );
             if( path.isDirectory() )
             {
                 // ...navigate into...
@@ -149,18 +172,10 @@ public class PathPreference extends DialogPreference
             }
             else
             {
-                // ...or select and close
-                mEntry = mEntries.get( which ).toString();
-                mValue = mValues.get( which );
-                PathPreference.this.onClick( dialog, DialogInterface.BUTTON_POSITIVE );
+                // ...or close dialog positively
+                onClick( dialog, DialogInterface.BUTTON_POSITIVE );
                 dialog.dismiss();
             }
-        }
-        else if( which == DialogInterface.BUTTON_NEGATIVE )
-        {
-            // User manually clicked Cancel, next time refresh from the persisted value
-            mDoRefresh = true;
-            notifyChanged();
         }
     }
     
@@ -169,28 +184,32 @@ public class PathPreference extends DialogPreference
     {
         super.onDialogClosed( positiveResult );
         
+        // Clicking Cancel or Ok returns us to the parent preference menu. For these cases we return
+        // to a clean state by persisting or restoring the value.
         if( positiveResult )
         {
-            // Save the preference data if user clicked Ok
+            // User clicked Ok: clean the state by persisting value
             persistString( mValue );
-            setSummary( mSelectionMode == SELECTION_MODE_FILE
-                ? mEntry
-                : mValue );
             notifyChanged();
         }
         else if( mDoReclick )
         {
-            // Automatically reopen the dialog after it closes
+            // User clicked a list item: maintain dirty value and re-open
             mDoReclick = false;
             onClick();
+        }
+        else
+        {
+            // User clicked Cancel/Back: clean state by restoring value
+            mValue = getPersistedString( "" );
+            populate( new File( mValue ) );
         }
     }
     
     private void populate( File startPath )
     {
-        // Refresh the currently selected entry and value
+        // Refresh the currently selected entry
         mEntry = startPath.getName();
-        mValue = startPath.getPath();
         
         // If start path is a file, list it and its siblings in the parent directory
         if( startPath.isFile() )

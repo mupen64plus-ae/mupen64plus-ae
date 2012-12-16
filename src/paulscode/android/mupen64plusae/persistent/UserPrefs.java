@@ -215,15 +215,11 @@ public class UserPrefs
         
         // Files
         selectedGame = prefsData.getString( "selectedGame", "" );
-        gameSaveDir = prefsData.getString( "gameSaveDir", appData.defaultSavesDir );
+        gameSaveDir = prefsData.getString( "gameSaveDir", "" );
         slotSaveDir = gameSaveDir + "/SlotSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         File game = new File( selectedGame );
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
-        
-        // Create directories, if necessary
-        ( new File( slotSaveDir ) ).mkdirs();
-        ( new File( autoSaveDir ) ).mkdirs();
         
         // Plug-ins
         videoPlugin = new Plugin( prefsData, appData.libsDir, "videoPlugin" );

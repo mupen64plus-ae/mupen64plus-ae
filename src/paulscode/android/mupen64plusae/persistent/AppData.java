@@ -118,12 +118,6 @@ public class AppData
     /** The directory containing all fonts. */
     public final String fontsDir;
     
-    /** The default directory containing game ROM files. */
-    public final String defaultRomDir;
-    
-    /** The default directory containing game save files. */
-    public final String defaultSavesDir;
-    
     /** The name of the mupen64 core configuration file. */
     public final String mupen64plus_cfg;
     
@@ -173,13 +167,6 @@ public class AppData
         touchscreenLayoutsDir = dataDir + "/skins/gamepads/";
         xperiaPlayLayoutsDir = dataDir + "/skins/touchpads/";
         fontsDir = dataDir + "/skins/fonts/";
-        
-        String romFolder = storageDir + "/roms/n64";
-        if( ( new File( romFolder ) ).isDirectory() )
-            defaultRomDir = romFolder;
-        else
-            defaultRomDir = storageDir;
-        defaultSavesDir = storageDir + "/GameSaves";
         
         // Files
         mupen64plus_cfg = dataDir + "/mupen64plus.cfg";

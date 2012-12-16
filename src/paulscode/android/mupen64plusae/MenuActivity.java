@@ -116,7 +116,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         listenTo( LAUNCH_PERIPHERAL_INFO );
         listenTo( LAUNCH_CRASH );
         listenTo( REFRESH_CHEATS );
-
         
         // Provide the opportunity to override other preference clicks
         for( String key : prefs.getAll().keySet() )
@@ -183,6 +182,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             return;
         }
         
+        // Make sure that the game save subdirectories exist
+        new File( mUserPrefs.slotSaveDir ).mkdirs();
+        new File( mUserPrefs.autoSaveDir ).mkdirs();
+        
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_appStarted );
         
@@ -204,14 +207,19 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
+                    // Don't handle all the changes that are about to be made
+                    SharedPreferences sharedPreferences = PreferenceManager
+                            .getDefaultSharedPreferences( MenuActivity.this );
+                    sharedPreferences
+                            .unregisterOnSharedPreferenceChangeListener( MenuActivity.this );
+                    
                     // Reset the user preferences
                     SharedPreferences preferences = PreferenceManager
                             .getDefaultSharedPreferences( MenuActivity.this );
                     preferences.edit().clear().commit();
                     PreferenceManager.setDefaultValues( MenuActivity.this, R.xml.preferences, true );
                     
-                    // Restart the activity so that the entire menu system is rebuilt
-                    // (OnSharedPreferenceChangedListener is not sufficient for this)
+                    // Rebuild the menu system by restarting the activity
                     finish();
                     startActivity( getIntent() );
                 }
@@ -287,8 +295,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
     {
         // Enable the play menu only if the selected game actually exists
-        enablePreference( LAUNCH_RESUME, new File( mUserPrefs.selectedGame ).exists() );
-        enablePreference( REFRESH_CHEATS, new File( mUserPrefs.selectedGame ).exists() );
+        File selectedGame = new File( mUserPrefs.selectedGame );
+        boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
+        enablePreference( LAUNCH_RESUME, isValidGame );
+        enablePreference( REFRESH_CHEATS, isValidGame );
         
         // Enable the various input menus only if the input plug-in is not a dummy
         enablePreference( TOUCHSCREEN, user.inputPlugin.enabled );
