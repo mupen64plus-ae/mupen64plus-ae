@@ -315,13 +315,11 @@ public class UserPrefs
         // Define the key codes that should not be mapped to controls
         boolean volKeysMappable = prefsData.getBoolean( "volumeKeysEnabled", false );
         List<Integer> unmappables = new ArrayList<Integer>();
+        unmappables.add( KeyEvent.KEYCODE_MENU );
         if( AppData.IS_HONEYCOMB )
         {
+            // Back key is needed to show/hide the action bar in HC+
             unmappables.add( KeyEvent.KEYCODE_BACK );
-        }
-        else
-        {
-            unmappables.add( KeyEvent.KEYCODE_MENU );
         }
         if( !volKeysMappable )
         {
