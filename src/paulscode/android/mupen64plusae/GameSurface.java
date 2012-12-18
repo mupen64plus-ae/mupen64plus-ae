@@ -208,15 +208,22 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
         Log.v( "GameSurface", "Starting up OpenGL ES " + majorVersion + "." + minorVersion );
         try
         {
+            final int EGL_OPENGL_ES_BIT = 1;
+            final int EGL_OPENGL_ES2_BIT = 4;
+            final int[] version = new int[2];
+            final int[] configSpec;
+
+            // Get EGL instance.
             EGL10 egl = (EGL10) EGLContext.getEGL();
-            
+
+            // Now get an EGL display connection for the native display
             EGLDisplay dpy = egl.eglGetDisplay( EGL10.EGL_DEFAULT_DISPLAY );
-            
-            int[] version = new int[2];
+
+            // Now initialize the EGL display.
+            // In this case, all we're doing is using this
+            // to get the EGL version number (since the display is already initialized).
             egl.eglInitialize( dpy, version );
-            
-            int EGL_OPENGL_ES_BIT = 1;
-            int EGL_OPENGL_ES2_BIT = 4;
+
             int renderableType = 0;
             if( majorVersion == 2 )
             {
@@ -228,16 +235,15 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             }
             
             // @formatter:off
-            int[] configSpec;
             if( mIsRgba8888 )
             {
                 configSpec = new int[]
                         { 
-                            EGL10.EGL_RED_SIZE,    8, // get a config with red 8
-                            EGL10.EGL_GREEN_SIZE,  8, // get a config with green 8
-                            EGL10.EGL_BLUE_SIZE,   8, // get a config with blue 8
-                            EGL10.EGL_ALPHA_SIZE,  8, // get a config with alpha 8
-                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with depth 16
+                            EGL10.EGL_RED_SIZE,    8, // get a config with 8 bits of red
+                            EGL10.EGL_GREEN_SIZE,  8, // get a config with 8 bits of green
+                            EGL10.EGL_BLUE_SIZE,   8, // get a config with 8 bits of blue
+                            EGL10.EGL_ALPHA_SIZE,  8, // get a config with 8 bits of alpha
+                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with a 16-bit depth color buffer
                             EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
                         };
             }
@@ -245,28 +251,31 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             {
                 configSpec = new int[] 
                         { 
-                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with depth 16
+                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with a 16-bit depth color buffer.
                             EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
                         };
             }
-            // @formatter:on
             
-            EGLConfig[] configs = new EGLConfig[1];
-            int[] num_config = new int[1];
-            if( !egl.eglChooseConfig( dpy, configSpec, configs, 1, num_config )
-                    || num_config[0] == 0 )
+            final EGLConfig[] configs = new EGLConfig[1];
+            final int[] num_config = new int[1];
+
+            // If none of the EGL framebuffer configs correspond to our attributes, then we stop initializing.
+            if( !egl.eglChooseConfig( dpy, configSpec, configs, 1, num_config ) || num_config[0] == 0 )
             {
                 Log.e( "GameSurface", "No EGL config available" );
                 return false;
             }
+            // @formatter:on
             
             EGLConfig config = configs[0];
             // paulscode, GLES2 fix:
             int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-            int[] contextAttrs = new int[] {
-                EGL_CONTEXT_CLIENT_VERSION,
-                majorVersion,
-                EGL10.EGL_NONE };
+            int[] contextAttrs = new int[]
+                    {
+                        EGL_CONTEXT_CLIENT_VERSION,
+                        majorVersion,
+                        EGL10.EGL_NONE
+                    };
             
             EGLContext ctx = egl.eglCreateContext( dpy, config, EGL10.EGL_NO_CONTEXT, contextAttrs );
             // end GLES2 fix
@@ -311,14 +320,20 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
     {
         try
         {
+            // Get an EGL instance.
             EGL10 egl = (EGL10) EGLContext.getEGL();
-            
+
+            // Make sure native-side executions complete before
+            // doing any further GL rendering calls.
             egl.eglWaitNative( EGL10.EGL_CORE_NATIVE_ENGINE, null );
             
-            // Drawing here
-            
+            //-- Drawing here --//
+
+            // Make sure all GL executions are complete before
+            // doing any further native-side rendering calls.
             egl.eglWaitGL();
-            
+
+            // Now finally 'flip' the buffer.
             egl.eglSwapBuffers( mEGLDisplay, mEGLSurface );
             
         }
