@@ -41,6 +41,7 @@
     <!-- ******************************************** -->
     
     <!-- In-Game Menu (GameActivity.java) -->
+    <string name="ingameSetSpeed_title">スピード</string>
     <string name="ingameQuicksave_title">保存</string>
     <string name="ingameQuickload_title">ロード</string>
     <string name="ingameSlot_title">%1$dスロット</string>
@@ -159,6 +160,18 @@
     <string name="corePlugin_title">コア</string>
     <string name="menuDeviceInfo_title">デバイス情報</string>
     <string name="menuDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
+    
+    <!-- Cheats Menu -->
+    <string name="cheatsLaunch_title">プレー</string>
+    <string name="cheatsLaunch_summary">選択したチートを使ってゲームを起動する</string>
+    <string name="cheatsCategory_title">詳細情報を表示するチートを長押し</string>
+    <string name="cheats_titleFor">"のチート "</string>
+    <string name="cheats_defaultName">チート</string>
+    <string name="cheats_longPress">（長押しチートはその全文を見さために）</string>
+    <string name="cheatNotes_title">注釈</string>
+    <string name="cheatNotes_none">（このチートで使用可能なノートはありません。）</string>
+    <string name="cheatOption_title">全文</string>
+    <string name="cheat_disabled">（使用禁止）</string>
     
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->

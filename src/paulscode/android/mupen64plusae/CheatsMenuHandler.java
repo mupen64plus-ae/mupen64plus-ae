@@ -105,9 +105,15 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             {
                 String ROM_name = configSection.get( "Name" );
                 if( Utility.isNullOrEmpty( ROM_name ) )
+                {
                     cheatsScreen.setTitle( mActivity.getString( R.string.cheats_title ) );
+                }
                 else
+                {
+                    // TODO: This is not region friendly. Consider Japanese for example. "Cheats for Mario 64"
+                    // in Japanese would be "Mario 64ÇÃÉ`Å[Ég" (ie. The text is AFTER the name of the ROM)
                     cheatsScreen.setTitle( mActivity.getString( R.string.cheats_titleFor ) + ROM_name );
+                }
                 
                 Cheat_title = new HashMap<String, String>();
                 Cheat_N = new HashMap<String, String>();
