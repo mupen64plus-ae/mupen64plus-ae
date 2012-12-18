@@ -241,7 +241,7 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
                             EGL10.EGL_GREEN_SIZE,  8, // get a config with 8 bits of green
                             EGL10.EGL_BLUE_SIZE,   8, // get a config with 8 bits of blue
                             EGL10.EGL_ALPHA_SIZE,  8, // get a config with 8 bits of alpha
-                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with a 16-bit depth color buffer
+                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with 16 bits of Z in the depth buffer
                             EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
                         };
             }
@@ -249,7 +249,7 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             {
                 configSpec = new int[] 
                         { 
-                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with a 16-bit depth color buffer.
+                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with 16-bits of Z in the depth buffer.
                             EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
                         };
             }
