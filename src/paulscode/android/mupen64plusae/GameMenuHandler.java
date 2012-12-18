@@ -31,6 +31,8 @@ public class GameMenuHandler
     
     private int mSlot = 0;
     
+    private boolean mUserSpeed = false;
+    
     public GameMenuHandler( Activity activity, String manualSaveDir, String autoSaveFile )
     {
         mActivity = activity;
@@ -91,6 +93,10 @@ public class GameMenuHandler
                 break;
             case R.id.ingameQuickload:
                 loadSlot();
+                break;
+            case R.id.ingameSetSpeed:
+                mUserSpeed = !mUserSpeed;
+                setSpeed(mUserSpeed);
                 break;
             case R.id.ingameSave:
                 saveStateFromPrompt();
@@ -256,5 +262,13 @@ public class GameMenuHandler
                 NativeMethods.resumeEmulator();
             }
         } );
+    }
+
+    private void setSpeed(boolean user)
+    {
+        if(user)
+            NativeMethods.stateSetSpeed(200);
+        else
+            NativeMethods.stateSetSpeed(100);
     }
 }

@@ -78,7 +78,8 @@ public class NativeMethods
     
     public static native void updateVirtualGamePadStates( int controllerNum, boolean[] buttons,
             int axisX, int axisY );
-    
+
+    public static native void stateSetSpeed( int percent );
     // ********************************************
     // ********************************************
     // ********************************************

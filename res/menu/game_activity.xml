@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/ingameSetSpeed"
+        android:icon="@drawable/ic_clock"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/ingameSetSpeed_title"/>
+    <item
         android:id="@+id/ingameQuickload"
         android:icon="@drawable/ic_folder"
         android:showAsAction="ifRoom|withText"

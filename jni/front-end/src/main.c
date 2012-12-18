@@ -291,6 +291,12 @@ jstring Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderCRC(
 
     return (*env)->NewStringUTF( env, strBuff );
 }
+
+void Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSpeed(
+                                    JNIEnv* env, jclass cls, jint percent )
+{
+    (*CoreDoCommand) ( M64CMD_SET_SPEED, (int) percent, NULL );
+}
 // end Android
  
 /*********************************************************************************************************

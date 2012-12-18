@@ -41,6 +41,7 @@
     <!-- ******************************************** -->
     
     <!-- In-Game Menu (GameActivity.java) -->
+    <string name="ingameSetSpeed_title">Speed</string>
     <string name="ingameQuicksave_title">Slot save</string>
     <string name="ingameQuickload_title">Slot load</string>
     <string name="ingameSlot_title">Slot %1$d</string>

@@ -321,6 +321,10 @@ EXPORT m64p_error CALL CoreDoCommand(m64p_command Command, int ParamInt, void *P
                 return M64ERR_INVALID_STATE;
             main_advance_one();
             return M64ERR_SUCCESS;
+        case M64CMD_SET_SPEED:
+            if (ParamInt < 1 || ParamInt > 1000)
+                return M64ERR_INPUT_INVALID;
+            return main_core_state_set(M64CORE_SPEED_FACTOR, ParamInt);
         default:
             return M64ERR_INPUT_INVALID;
     }
