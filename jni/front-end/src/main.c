@@ -295,7 +295,8 @@ jstring Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderCRC(
 void Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSpeed(
                                     JNIEnv* env, jclass cls, jint percent )
 {
-    (*CoreDoCommand) ( M64CMD_SET_SPEED, (int) percent, NULL );
+	int speed_factor = (int) percent;
+    (*CoreDoCommand) ( M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR,  &speed_factor);
 }
 // end Android
  
