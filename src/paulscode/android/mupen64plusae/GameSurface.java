@@ -220,8 +220,6 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             EGLDisplay dpy = egl.eglGetDisplay( EGL10.EGL_DEFAULT_DISPLAY );
 
             // Now initialize the EGL display.
-            // In this case, all we're doing is using this
-            // to get the EGL version number (since the display is already initialized).
             egl.eglInitialize( dpy, version );
 
             int renderableType = 0;
