@@ -160,6 +160,8 @@
     <string name="corePlugin_title">コア</string>
     <string name="menuDeviceInfo_title">デバイス情報</string>
     <string name="menuDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
+    <string name="menuReloadAppData_title">データを再ロード</string>
+    <string name="menuReloadAppData_summary">アプリケーションのデータ·ファイルを再ロード</string>
     
     <!-- Cheats Menu -->
     <string name="cheatsLaunch_title">プレー</string>

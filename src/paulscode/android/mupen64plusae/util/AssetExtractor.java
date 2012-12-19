@@ -92,28 +92,27 @@ public class AssetExtractor
         }
     }
     
-    public static int countAssets( String srcPath )
+    public static int countAssets( AssetManager assetManager, String srcPath )
     {
         int count = 0;
-        File srcFile = new File( srcPath );
-        File[] files = srcFile.listFiles();
 
-        if ( files != null )
+        // TODO: This function takes a surprisingly long time to complete.
+        if( srcPath.startsWith( "/" ) )
+            srcPath = srcPath.substring( 1 );
+        
+        String[] srcSubPaths = getAssetList( assetManager, srcPath );
+        if( srcSubPaths.length > 0 )
         {
-            for ( File file : files )
+            // srcPath is a directory
+            for( String srcSubPath : srcSubPaths )
             {
-                if ( file.isDirectory() )
-                {
-                    // Recurse through next directory, add total of its
-                    // contained files to count.
-                    count += countAssets( file.getAbsolutePath() );
-                }
-                else
-                {
-                    // Just a regular file.
-                    count++;
-                }
+                count += countAssets( assetManager, srcPath + "/" + srcSubPath );
             }
+        }
+        else
+        {
+            // srcPath is a file
+            count++;
         }
 
         return count;
@@ -122,6 +121,7 @@ public class AssetExtractor
     private static String[] getAssetList( AssetManager assetManager, String srcPath )
     {
         String[] srcSubPaths = null;
+
         try
         {
             srcSubPaths = assetManager.list( srcPath );
@@ -130,6 +130,7 @@ public class AssetExtractor
         {
             Log.w( "AssetExtractor", "Failed to get asset file list." );
         }
+
         return srcSubPaths;
     }
 }
