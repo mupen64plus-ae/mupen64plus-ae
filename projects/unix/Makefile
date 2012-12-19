@@ -164,11 +164,11 @@ ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -bundle -framework OpenGL -arch x86_64
+      LDFLAGS += -bundle -arch x86_64
       LDLIBS += -ldl
     else
       CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -bundle -framework OpenGL -arch i686
+      LDFLAGS += -bundle -arch i686
       LDLIBS += -ldl
     endif
   endif
@@ -178,14 +178,25 @@ endif
 ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
   $(error $(PKG_CONFIG) not found)
 endif
-ifeq ($(shell $(PKG_CONFIG) --modversion gl 2>/dev/null),)
-  $(error No OpenGL development libraries found!)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags libpng)
+LDLIBS += $(shell $(PKG_CONFIG) --libs libpng)
+
+# search for OpenGL libraries
+GL_LIBS=
+ifeq ($(OS), OSX)
+  GL_LIBS = -framework OpenGL
 endif
-ifeq ($(shell $(PKG_CONFIG) --modversion libpng 2>/dev/null),)
-  $(error No libpng development libraries found!)
+ifeq ($(OS), MINGW)
+  GL_LIBS = -lopengl32
 endif
-CFLAGS += $(shell $(PKG_CONFIG) --cflags gl libpng)
-LDLIBS += $(shell $(PKG_CONFIG) --libs gl libpng)
+ifeq ("$(GL_LIBS)", "")
+  ifeq ($(shell $(PKG_CONFIG) --modversion gl 2>/dev/null),)
+    $(error No OpenGL development libraries found!)
+  endif
+  CFLAGS += $(shell $(PKG_CONFIG) --cflags gl)
+  GL_LIBS = $(shell $(PKG_CONFIG) --libs gl)
+endif
+LDLIBS += $(GL_LIBS)
 
 # test for presence of SDL
 ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
