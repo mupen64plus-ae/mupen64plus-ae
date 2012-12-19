@@ -18,56 +18,61 @@
  * Authors: paulscode, lioncash, littleguy77
  */
 
-/**
- * Bugs and feature requests not listed elsewhere, in order of priority.
- * 
- * Major bugs or missing features
- * TODO: Major - Add cheats menu
- * TODO: Major - Implement multi-player peripheral controls
- * TODO: Major - Implement special func mapping
- * 
- * Minor bugs or missing features
- * TODO: Minor - Figure out crash on NativeMethods.quit
- * TODO: Minor - Keep surface rendering onPause (don't blackout)
- * 
- * Bugs/features related to older APIs (e.g. Gingerbread)
- * TODO: API - Alternative to setAlpha for button-mapping
- * 
- * Features, nice-to-haves, anti-features
- * TODO: Feature - Do we need status notification? 
- * TODO: Feature - Hide action bar on menu click
- * TODO: Feature - Add menu item for quick access to IME (like Language menu)
- * TODO: Feature - Look into BlueZ and Zeemote protocols
- * TODO: Feature - Implement SensorController if desired
- * 
- * Code polishing (doesn't directly affect end user)
- * TODO: Polish - Cleanup Utility.java
- * TODO: Polish - Cleanup DataDownloader.java
- */
-
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
+
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.util.DataDownloader;
+import paulscode.android.mupen64plusae.util.AssetExtractor;
+import paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements DataDownloader.Listener
+/**
+ * The main activity that presents the splash screen, extracts the assets if necessary, and launches
+ * the main menu activity.
+ */
+public class MainActivity extends Activity implements OnExtractionProgressListener
 {
-    /** The minimum duration that the splash screen is shown, in milliseconds. */
-    public static final int SPLASH_DELAY = 1000;
+    /**
+     * Asset version number, used to determine stale assets. Increment this number every time the
+     * assets are updated on disk.
+     */
+    private static final int ASSET_VERSION = 1;
     
-    private TextView mTextView;
-    private DataDownloader mDownloader;
+    /** The total number of assets to be extracted (for computing progress %). */
+    private static final int TOTAL_ASSETS = 227;
+    
+    /** The minimum duration that the splash screen is shown, in milliseconds. */
+    private static final int SPLASH_DELAY = 1000;
+    
+    /**
+     * The subdirectory within the assets directory to extract. A subdirectory is necessary to avoid
+     * extracting all the default system assets in addition to ours.
+     */
+    private static final String SOURCE_DIR = "mupen64plus_data";
+    
+    /** Persistent application data. */
     private AppData mAppData;
     
+    /** The text view that displays extraction progress info. */
+    private TextView mTextView;
+    
+    /** The running count of assets extracted. */
+    private int mAssetsExtracted;
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
@@ -82,78 +87,90 @@ public class MainActivity extends Activity implements DataDownloader.Listener
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
         
-        // TODO: Is this necessary?
+        // Don't let the activity sleep in the middle of extraction
         getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Lay out the content
         setContentView( R.layout.main_activity );
         mTextView = (TextView) findViewById( R.id.mainText );
         
+        // Extract the assets in a separate thread and launch the menu activity
+        // Handler.postDelayed ensures this runs only after activity has resumed
         final Handler handler = new Handler();
-        handler.postDelayed( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                // Run the downloader on a separate thread
-                // It will launch MenuActivity when it's done
-                runOnUiThread( new DownloaderThread() );
-            }
-        }, MainActivity.SPLASH_DELAY );
+        handler.postDelayed( nonUiThreadLauncher, SPLASH_DELAY );
     }
     
-    private class DownloaderThread implements Runnable
+    /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
+    private Runnable nonUiThreadLauncher = new Runnable()
     {
         @Override
         public void run()
         {
-            Log.i( "MainActivity", "libSDL: Starting downloader" );
-            mDownloader = new DataDownloader( MainActivity.this, MainActivity.this, mTextView,
-                    mAppData.dataDir );
+            Thread nonUiThread = new Thread( nonUiThreadWorker, "AssetExtractorThread" );
+            nonUiThread.start();
         }
-    }
+    };
     
-    @Override
-    public void onDownloadComplete()
+    /** Runnable that performs the asset extraction from the non-UI thread. */
+    private Runnable nonUiThreadWorker = new Runnable()
     {
-        mDownloader = null;
-        
-        // Launch the MenuActivity
-        startActivity( new Intent( this, MenuActivity.class ) );
-        
-        // We never want to come back to this screen, so finish it
-        finish();
-    }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        if( mDownloader != null )
+        @Override
+        public void run()
         {
-            synchronized( mDownloader )
+            // This runs on non-UI thread and ensures that the app is responsive during the lengthy
+            // extraction process
+            
+            // Extract the assets if they
+            if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
-                mDownloader.setStatusField( mTextView );
-                if( mDownloader.mDownloadFailed )
-                {
-                    // Try again
-                    mDownloader.mDownloadFailed = false;
-                    runOnUiThread( new DownloaderThread() );
-                }
+                FileUtil.deleteFolder( new File( mAppData.dataDir ) );
+                mAssetsExtracted = 0;
+                AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.dataDir,
+                        MainActivity.this );
+                mAppData.setAssetVersion( ASSET_VERSION );
             }
+            
+            updateText( R.string.dataDownloader_finished );
+            
+            // Launch the MenuActivity
+            startActivity( new Intent( MainActivity.this, MenuActivity.class ) );
+            
+            // We never want to come back to this activity, so finish it
+            finish();
         }
+    };
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener#
+     * onExtractionProgress(java.lang.String)
+     */
+    @Override
+    public void onExtractionProgress( final String nextFileExtracted )
+    {
+        float percent = ( 100f * mAssetsExtracted ) / (float) TOTAL_ASSETS;
+        mAssetsExtracted++;
+        updateText( R.string.dataDownloader_progress, percent, nextFileExtracted );
     }
     
-    @Override
-    protected void onPause()
+    /**
+     * Update the status text from the UI thread.
+     * 
+     * @param resId Resource id for the format string.
+     * @param formatArgs The format arguments that will be used for substitution.
+     */
+    private void updateText( int resId, Object... formatArgs )
     {
-        if( mDownloader != null )
+        // Ensures that text view is updated from the UI thread
+        final String text = getString( resId, formatArgs );
+        runOnUiThread( new Runnable()
         {
-            synchronized( mDownloader )
+            @Override
+            public void run()
             {
-                mDownloader.setStatusField( null );
+                mTextView.setText( text );
             }
-        }
-        super.onPause();
+        } );
     }
 }

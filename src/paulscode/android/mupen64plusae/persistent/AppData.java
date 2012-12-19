@@ -91,9 +91,6 @@ public class AppData
     /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;
     
-    /** The data download URL. */
-    public static final String DATA_DOWNLOAD_URL = "Data size is 1.0 Mb|mupen64plus_data.zip";
-    
     /** The hardware info, refreshed at the beginning of every session. */
     public final HardwareInfo hardwareInfo;
     
@@ -132,10 +129,12 @@ public class AppData
     
     // Shared preferences keys
     private static final String KEY_LAST_SLOT = "lastSlot";
+    private static final String KEY_ASSET_VERSION = "assetVersion";
     // ... add more as needed
     
     // Shared preferences default values
     private static final int DEFAULT_LAST_SLOT = 0;
+    private static final int DEFAULT_ASSET_VERSION = 0;
     // ... add more as needed
     
     /**
@@ -211,6 +210,26 @@ public class AppData
     public void setLastSlot( int value )
     {
         mPreferences.edit().putInt( KEY_LAST_SLOT, value ).commit();
+    }
+    
+    /**
+     * Gets the asset version.
+     * 
+     * @return The asset version.
+     */
+    public int getAssetVersion()
+    {
+        return mPreferences.getInt( KEY_ASSET_VERSION, DEFAULT_ASSET_VERSION );
+    }
+    
+    /**
+     * Sets the asset version.
+     * 
+     * @param value The asset version.
+     */
+    public void setAssetVersion( int value )
+    {
+        mPreferences.edit().putInt( KEY_ASSET_VERSION, value ).commit();
     }
     
     /**
