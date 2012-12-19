@@ -51,6 +51,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String LAUNCH_RESUME = "menuResume";
     private static final String LAUNCH_RESET_USER_PREFS = "menuResetUserPrefs";
+    private static final String LAUNCH_RELOAD_APP_DATA = "menuReloadAppData";
     private static final String LAUNCH_DEVICE_INFO = "menuDeviceInfo";
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
     private static final String REFRESH_CHEATS = "menuCheats";
@@ -112,6 +113,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Define the click callback for certain menu items that aren't actually preferences
         listenTo( LAUNCH_RESUME );
         listenTo( LAUNCH_RESET_USER_PREFS );
+        listenTo( LAUNCH_RELOAD_APP_DATA );
         listenTo( LAUNCH_DEVICE_INFO );
         listenTo( LAUNCH_PERIPHERAL_INFO );
         listenTo( LAUNCH_CRASH );
@@ -148,6 +150,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         else if( key.equals( LAUNCH_RESET_USER_PREFS ) )
             launchResetUserPrefs();
+        
+        else if( key.equals( LAUNCH_RELOAD_APP_DATA ) )
+            launchReloadAppData();
         
         else if( key.equals( LAUNCH_DEVICE_INFO ) )
             launchDeviceInfo();
@@ -226,6 +231,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 }
             }
         } );
+    }
+    
+    private void launchReloadAppData()
+    {
+        mAppData.setAssetVersion( 0 );        
+        startActivity( new Intent( this, MainActivity.class ) );
+        finish();
     }
     
     private void launchDeviceInfo()
