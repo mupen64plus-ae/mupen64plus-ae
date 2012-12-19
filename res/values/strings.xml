@@ -67,12 +67,16 @@
     <!-- Categories -->
     <string name="categoryHardware_title">Hardware</string>
     <string name="categoryOther_title">@string/_other</string>
+    <string name="categorySinglePlayer_title">Player 1</string>
+    <string name="categoryMultiPlayer_title">Multi-player</string>
     
     <!-- Settings Menu -->
-    <string name="touchscreen_title">Touch</string>
-    <string name="touchscreen_summary">Touchscreen/touchpad settings</string>
-    <string name="peripheral_title">Input</string>
-    <string name="peripheral_summary">Button/joystick settings</string>
+    <string name="input_title">Input</string>
+    <string name="input_summary">Control settings</string>
+    <string name="touchscreen_title">Touchscreen</string>
+    <string name="touchscreen_summary">On-screen controller settings</string>
+    <string name="xperia_title">Touchpad</string>
+    <string name="xperia_summary">Xperia PLAY settings</string>
     <string name="audio_title">Audio</string>
     <string name="audio_summary">Sound settings</string>
     <string name="video_title">Video</string>
@@ -97,11 +101,11 @@
     <string name="touchscreenOctagonJoystick_summary">Constrain analog motion to an octagon, like the original N64 controller</string>
     
     <!-- Peripherals Menu -->
-    <string name="peripheralMap1_title">Player 1</string>
+    <string name="peripheralMap1_title">Gamepad/keyboard</string>
     <string name="peripheralMap2_title">Player 2</string>
     <string name="peripheralMap3_title">Player 3</string>
     <string name="peripheralMap4_title">Player 4</string>
-    <string name="peripheralMap_summary">Configure buttons and sticks</string>
+    <string name="peripheralMap_summary">Button/joystick mappings</string>
     <string name="volumeKeysEnabled_title">Mappable volume keys</string>
     <string name="volumeKeysEnabled_summary">Allow volume keys to be mapped to controls</string>
     <string name="menuPeripheralInfo_title">Controller info</string>

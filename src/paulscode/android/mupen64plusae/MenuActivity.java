@@ -59,16 +59,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
 
     // private static final String SELECTED_GAME = "selectedGame";
 
+    private static final String INPUT = "input";
     private static final String TOUCHSCREEN = "touchscreen";
-    private static final String PERIPHERAL = "peripheral";
+    private static final String XPERIA = "xperia";
     private static final String AUDIO = "audio";
     private static final String VIDEO = "video";
     
     private static final String XPERIA_ENABLED = "xperiaEnabled";
-    private static final String XPERIA_LAYOUT = "xperiaLayout";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
-    private static final String TOUCHSCREEN_OCTAGON_JOYSTICK = "touchscreenOctagonJoystick";
     private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
@@ -126,8 +125,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Hide the Xperia PLAY menu items as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
         {
-            removePreference( TOUCHSCREEN, XPERIA_ENABLED );
-            removePreference( TOUCHSCREEN, XPERIA_LAYOUT );
+            removePreference( TOUCHSCREEN, XPERIA );
         }
     }
     
@@ -313,10 +311,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         enablePreference( LAUNCH_RESUME, isValidGame );
         enablePreference( REFRESH_CHEATS, isValidGame );
         
-        // Enable the various input menus only if the input plug-in is not a dummy
-        enablePreference( TOUCHSCREEN, user.inputPlugin.enabled );
-        enablePreference( PERIPHERAL, user.inputPlugin.enabled );
-        enablePreference( TOUCHSCREEN_OCTAGON_JOYSTICK, user.isTouchscreenEnabled || user.isXperiaEnabled );
+        // Enable the input menu only if the input plug-in is not a dummy
+        enablePreference( INPUT, user.inputPlugin.enabled );
         
         // Enable the audio menu only if the audio plug-in is not a dummy
         enablePreference( AUDIO, user.audioPlugin.enabled );

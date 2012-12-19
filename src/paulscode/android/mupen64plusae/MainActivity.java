@@ -120,7 +120,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
             // This runs on non-UI thread and ensures that the app is responsive during the lengthy
             // extraction process
             
-            // Extract the assets if they
+            // Extract the assets if they are out of date
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
                 FileUtil.deleteFolder( new File( mAppData.dataDir ) );
