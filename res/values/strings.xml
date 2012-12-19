@@ -165,8 +165,8 @@
     <string name="cheatsLaunch_title">Play</string>
     <string name="cheatsLaunch_summary">Launch game with selected cheats</string>
     <string name="cheatsCategory_title">Long-press a cheat for notes</string>
-    <string name="cheats_titleFor">"Cheats for "</string>
-    <string name="cheats_defaultName">Cheat</string>
+    <string name="cheats_titleFor">"Cheats for %1$s"</string>
+    <string name="cheats_defaultName">Cheat %1$d</string>
     <string name="cheats_longPress">(long-press for full text)</string>
     <string name="cheatNotes_title">Notes</string>
     <string name="cheatNotes_none">(no notes available for this cheat)</string>

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2012 Paul Lamb
@@ -110,9 +110,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                 }
                 else
                 {
-                    // TODO: This is not region friendly. Consider Japanese for example. "Cheats for Mario 64"
-                    // in Japanese would be "Mario 64[...]" (ie. The text is AFTER the name of the ROM)
-                    cheatsScreen.setTitle( mActivity.getString( R.string.cheats_titleFor ) + ROM_name );
+                    cheatsScreen.setTitle( mActivity.getString( R.string.cheats_titleFor, ROM_name ) );
                 }
                 
                 Cheat_title = new HashMap<String, String>();
@@ -130,7 +128,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                     {
                         x = val.indexOf( "," );
                         if( x < 3 || x >= val.length() )
-                            title = mActivity.getString( R.string.cheats_defaultName ) + " " + i;
+                            title = mActivity.getString( R.string.cheats_defaultName, i );
                         else
                             title = val.substring( 1, x - 1 );
                         Cheat_title.put( "Cheat" + i, title );
