@@ -60,15 +60,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     // private static final String SELECTED_GAME = "selectedGame";
 
     private static final String INPUT = "input";
-    private static final String TOUCHSCREEN = "touchscreen";
-    private static final String XPERIA = "xperia";
     private static final String AUDIO = "audio";
     private static final String VIDEO = "video";
     
+    private static final String XPERIA = "xperia";
     private static final String XPERIA_ENABLED = "xperiaEnabled";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     private static final String VIDEO_PLUGIN = "videoPlugin";
+    private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
     
@@ -125,7 +125,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Hide the Xperia PLAY menu items as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
         {
-            removePreference( TOUCHSCREEN, XPERIA );
+            removePreference( CATEGORY_SINGLE_PLAYER, XPERIA );
         }
     }
     

@@ -111,6 +111,21 @@
     <string name="menuPeripheralInfo_title">Controller info</string>
     <string name="menuPeripheralInfo_summary">Peripheral hardware and model information</string>
     
+    <!-- Special Functions -->
+    <string name="specialFunction_title">Special functions</string>
+    <string name="specialFunction_summary">Mupen64Plus hotkeys</string>
+    <string name="specialFunctionIncrementSlot_title">Increment slot</string>
+    <string name="specialFunctionSaveState_title">@string/ingameQuicksave_title</string>
+    <string name="specialFunctionLoadState_title">@string/ingameQuickload_title</string>
+    <string name="specialFunctionReset_title">@string/ingameReset_title</string>
+    <string name="specialFunctionStop_title">Stop</string>
+    <string name="specialFunctionPause_title">Pause</string>
+    <string name="specialFunctionFastForward_title">Fast forward</string>
+    <string name="specialFunctionFrameAdvance_title">Frame advance</string>
+    <string name="specialFunctionSpeedUp_title">Speed up</string>
+    <string name="specialFunctionSpeedDown_title">Speed down</string>
+    <string name="specialFunctionGameshark_title">Gameshark</string>
+    
     <!-- Audio Menu -->
     <string name="swapAudioChannels_title">Swap audio channels</string>
     <string name="swapAudioChannels_summary">Swap the left and right audio channels</string>
@@ -256,24 +271,6 @@
     <string name="gles2N64Frameskip_entryExactly3">Exactly 3 frames</string>
     <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
-    
-    <!-- Special Functions -->
-    <string name="specialFunction_entry0">Stop</string>
-    <string name="specialFunction_entry1">Fullscreen</string>
-    <string name="specialFunction_entry2">Save state</string>
-    <string name="specialFunction_entry3">Load state</string>
-    <string name="specialFunction_entry4">Increment slot</string>
-    <string name="specialFunction_entry5">Reset</string>
-    <string name="specialFunction_entry6">Speed down</string>
-    <string name="specialFunction_entry7">Speed up</string>
-    <string name="specialFunction_entry8">Screenshot</string>
-    <string name="specialFunction_entry9">Pause</string>
-    <string name="specialFunction_entry10">Mute</string>
-    <string name="specialFunction_entry11">Volume up</string>
-    <string name="specialFunction_entry12">Volume down</string>
-    <string name="specialFunction_entry13">Fast forward</string>
-    <string name="specialFunction_entry14">Frame advance</string>
-    <string name="specialFunction_entry15">Gameshark</string>
     
     <!-- ******************************************** -->
     <!-- Other Strings                                -->

@@ -41,7 +41,7 @@
     To minimize app size, consider using Android's built-in resources when possible.
     For example, consider icon resources in "@android:drawable/..." instead of custom
     resources in "@drawable/...".       
-    ***********************************************************************************
+    ***********************************************************************************
 -->
 <PreferenceScreen xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
     xmlns:android="http://schemas.android.com/apk/res/android" >
@@ -140,9 +140,45 @@
                         android:summary="@string/peripheralMap_summary"
                         android:title="@string/peripheralMap1_title" />
 
-                    <Preference
-                        android:enabled="false"
-                        android:title="Special functions" />
+                    <PreferenceScreen
+                        android:icon="@drawable/ic_special"
+                        android:key="specialFunction"
+                        android:summary="@string/specialFunction_summary"
+                        android:title="@string/specialFunction_title" >
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionIncrementSlot"
+                            android:title="@string/specialFunctionIncrementSlot_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionSaveState"
+                            android:title="@string/specialFunctionSaveState_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionLoadState"
+                            android:title="@string/specialFunctionLoadState_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionReset"
+                            android:title="@string/specialFunctionReset_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionStop"
+                            android:title="@string/specialFunctionStop_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionPause"
+                            android:title="@string/specialFunctionPause_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionFastForward"
+                            android:title="@string/specialFunctionFastForward_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionFrameAdvance"
+                            android:title="@string/specialFunctionFrameAdvance_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionSpeedUp"
+                            android:title="@string/specialFunctionSpeedUp_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionSpeedDown"
+                            android:title="@string/specialFunctionSpeedDown_title" />
+                        <paulscode.android.mupen64plusae.persistent.InputCodePreference
+                            android:key="specialFunctionGameshark"
+                            android:title="@string/specialFunctionGameshark_title" />
+                    </PreferenceScreen>
 
                     <CheckBoxPreference
                         android:defaultValue="true"
@@ -394,7 +430,7 @@
                     android:summaryOn="System logging enabled"
                     android:summaryOff="System logging disabled"
                     android:title="System logs"
-                    android:defaultValue="true" />
+                    android:defaultValue="true" />
                     -->
 
                     <EditTextPreference
@@ -408,7 +444,7 @@
                     android:title="Auto-accept"
                     android:summaryOn="Always send reports"
                     android:summaryOff="Ask before sending reports"
-                    android:defaultValue="false"/>
+                    android:defaultValue="false"/>
                     -->
 
                     <Preference
