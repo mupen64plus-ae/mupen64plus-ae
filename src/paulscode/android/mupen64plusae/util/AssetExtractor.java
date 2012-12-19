@@ -75,10 +75,12 @@ public class AssetExtractor
                 OutputStream out = new FileOutputStream( dstPath );
                 byte[] buffer = new byte[1024];
                 int read;
+
                 while( ( read = in.read( buffer ) ) != -1 )
                 {
                     out.write( buffer, 0, read );
                 }
+
                 in.close();
                 out.flush();
                 out.close();
@@ -90,27 +92,30 @@ public class AssetExtractor
         }
     }
     
-    public static int countAssets( AssetManager assetManager, String srcPath )
+    public static int countAssets( String srcPath )
     {
-        // TODO: This function takes a surprisingly long time to complete.
-        if( srcPath.startsWith( "/" ) )
-            srcPath = srcPath.substring( 1 );
-        
-        String[] srcSubPaths = getAssetList( assetManager, srcPath );
         int count = 0;
-        if( srcSubPaths.length > 0 )
+        File srcFile = new File( srcPath );
+        File[] files = srcFile.listFiles();
+
+        if ( files != null )
         {
-            // srcPath is a directory
-            for( String srcSubPath : srcSubPaths )
+            for ( File file : files )
             {
-                count += countAssets( assetManager, srcPath + "/" + srcSubPath );
+                if ( file.isDirectory() )
+                {
+                    // Recurse through next directory, add total of its
+                    // contained files to count.
+                    count += countAssets( file.getAbsolutePath() );
+                }
+                else
+                {
+                    // Just a regular file.
+                    count++;
+                }
             }
         }
-        else
-        {
-            // srcPath is a file
-            count++;
-        }
+
         return count;
     }
 
