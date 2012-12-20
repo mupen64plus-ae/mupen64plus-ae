@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Mupen64PlusAE, an N64 emulator for the Android platform
  * 
  * Copyright (C) 2012 Paul Lamb
