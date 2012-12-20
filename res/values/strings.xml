@@ -191,6 +191,8 @@
     <string name="cheatNotes_none">(no notes available for this cheat)</string>
     <string name="cheatOption_title">Full Text</string>
     <string name="cheat_disabled">(disabled)</string>
+    <string name="cheatsTaskHandler_title">Reading Game Header</string>
+    <string name="cheatsTaskHandler_message">Please be patient.  This process may take some time.</string>
     
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->

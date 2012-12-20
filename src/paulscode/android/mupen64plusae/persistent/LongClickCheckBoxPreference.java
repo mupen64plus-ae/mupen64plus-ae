@@ -30,6 +30,7 @@ public class LongClickCheckBoxPreference extends CheckBoxPreference implements V
     public LongClickCheckBoxPreference( Context context )
     {
         super( context );
+        setPersistent( false );
     }
 
     @Override

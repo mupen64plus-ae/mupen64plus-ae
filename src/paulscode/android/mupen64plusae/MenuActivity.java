@@ -35,6 +35,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -43,6 +44,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.OrientationEventListener;
 
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
@@ -54,8 +56,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String LAUNCH_RELOAD_APP_DATA = "menuReloadAppData";
     private static final String LAUNCH_DEVICE_INFO = "menuDeviceInfo";
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
-    private static final String REFRESH_CHEATS = "menuCheats";
     private static final String LAUNCH_CRASH = "launchCrash";
+    private static final String CHEATS_MENU= "menuCheats";
 
     // private static final String SELECTED_GAME = "selectedGame";
 
@@ -77,17 +79,21 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
+
+    // Don't need to call these every time the orientation changes
+    static
+    {
+        // Required for reading CRC header
+        FileUtil.loadNativeLibName( "SDL" );
+        FileUtil.loadNativeLibName( "core" );
+        FileUtil.loadNativeLibName( "front-end" );
+    }
     
     @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        
-        // Required for reading CRC header
-        FileUtil.loadNativeLibName( "SDL" );
-        FileUtil.loadNativeLibName( "core" );
-        FileUtil.loadNativeLibName( "front-end" );
         
         // Get app data and user preferences
         mAppData = new AppData( this );
@@ -106,8 +112,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Instantiate the cheats menu handler
         if( mCheatsMenuHandler == null )
-            mCheatsMenuHandler = new CheatsMenuHandler();
-        // TODO: Need to repopulate cheats menu on orientation changes!
+            mCheatsMenuHandler = new CheatsMenuHandler( this, mAppData, mUserPrefs );
+        // TODO: Only refresh when the cheats menu is open
+        mCheatsMenuHandler.refresh();
         
         // Define the click callback for certain menu items that aren't actually preferences
         listenTo( LAUNCH_RESUME );
@@ -116,7 +123,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         listenTo( LAUNCH_DEVICE_INFO );
         listenTo( LAUNCH_PERIPHERAL_INFO );
         listenTo( LAUNCH_CRASH );
-        listenTo( REFRESH_CHEATS );
+        listenTo( CHEATS_MENU );
         
         // Provide the opportunity to override other preference clicks
         for( String key : prefs.getAll().keySet() )
@@ -161,10 +168,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         else if( key.equals( LAUNCH_CRASH ) )
             launchCrash();
         
-        else if( key.equals( REFRESH_CHEATS ) )
+        else if( key.equals( CHEATS_MENU ) )
         {
-            mCheatsMenuHandler.refresh( this, mAppData, mUserPrefs );
-            // Let Android open the cheats preference screen, once refreshed
+            mCheatsMenuHandler.rebuild();
+            // Let Android open the cheats preference screen, once built
             return false;
         }
         
@@ -309,7 +316,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         File selectedGame = new File( mUserPrefs.selectedGame );
         boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
         enablePreference( LAUNCH_RESUME, isValidGame );
-        enablePreference( REFRESH_CHEATS, isValidGame );
+        enablePreference( CHEATS_MENU, isValidGame );
         
         // Enable the input menu only if the input plug-in is not a dummy
         enablePreference( INPUT, user.inputPlugin.enabled );

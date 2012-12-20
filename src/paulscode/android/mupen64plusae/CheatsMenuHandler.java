@@ -20,6 +20,8 @@
 package paulscode.android.mupen64plusae;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
@@ -28,6 +30,7 @@ import paulscode.android.mupen64plusae.persistent.OnPreferenceLongClickListener;
 import paulscode.android.mupen64plusae.persistent.OptionCheckBoxPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -51,6 +54,9 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     private static HashMap<String, String> Cheat_N = null;
     private static HashMap<String, String> Cheat_O = null;
 
+    // Storing them here, since they get lost on orientation change
+    private static LinkedList<Preference> cheatPreferences = new LinkedList<Preference>();
+
     // Used when concatenating the extra args string
     public static String cheatOptions = null;
     
@@ -61,114 +67,156 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-    
-    @SuppressWarnings( "deprecation" )
-    public void refresh( MenuActivity activity, AppData appData, UserPrefs userPrefs )
+
+    public CheatsMenuHandler( MenuActivity activity, AppData appData, UserPrefs userPrefs )
     {
         mActivity = activity;
         // Get app data and user preferences
         mAppData = appData;
         mUserPrefs = userPrefs;
-        
-        // Place to unzip the ROM if necessary:
+    }
+    
+    @SuppressWarnings( "deprecation" )
+    public void rebuild()
+    {
+        // Place to unzip the ROM if necessary
         final String tmpFolderName = mAppData.dataDir + "/tmp";
-
-        // No need to reload the ROM header if we already have it:
-        if( ROM == null || !ROM.equals( mUserPrefs.selectedGame ) )
+        // Path to the game selected in the user preferences
+        final String selectedGame = mUserPrefs.selectedGame;
+        // No need to reload the ROM header if we already have it
+        if( CRC == null || ROM == null || !ROM.equals( mUserPrefs.selectedGame ) )
         {
             ROM = mUserPrefs.selectedGame;
-            // TODO: "Reading ROM header, please wait" dialog -- load on non-UI thread!
-            CRC = Utility.getHeaderCRC( mUserPrefs.selectedGame, tmpFolderName );
+            TaskHandler.run
+            (
+                mActivity, mActivity.getString( R.string.cheatsTaskHandler_title ),
+                mActivity.getString( R.string.cheatsTaskHandler_message ),
+                new TaskHandler.Task()
+                {
+                    @Override
+                    public void run()
+                    {
+                        CheatsMenuHandler.CRC = Utility.getHeaderCRC( selectedGame, tmpFolderName );
+                    }
+                    @Override
+                    public void onComplete()
+                    {
+                        build();
+                    }
+                }
+            );
         }
-        
+        else
+        {
+            refresh();
+        }
+    }
+
+    public void refresh()
+    {
+        if( ROM == null )
+            return;
+
         cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_CHEATS );
-        
-        Preference cheatsLaunch = mActivity.findPreference( CHEATS_LAUNCH );
-        cheatsLaunch.setOnPreferenceClickListener( this );
+        mActivity.findPreference( CHEATS_LAUNCH ).setOnPreferenceClickListener( this );
+        cheatsCategory = (PreferenceCategory) mActivity.findPreference( CHEATS_CATEGORY );
+        if( cheatPreferences.size() > 0 && cheatsCategory.getPreferenceCount() == 0 )
+        {
+            ListIterator<Preference> itr = cheatPreferences.listIterator();
+            while( itr.hasNext() )
+                cheatsCategory.addPreference( itr.next() );
+            return;
+        }
+        build();
+    }
+
+    private void build()
+    {
+        cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_CHEATS );
+        mActivity.findPreference( CHEATS_LAUNCH ).setOnPreferenceClickListener( this );
         cheatsCategory = (PreferenceCategory) mActivity.findPreference( CHEATS_CATEGORY );
         cheatsCategory.removeAll();
+        cheatPreferences.clear();
         
         if( CRC == null )
         {
             Log.e( "CheatMenuHandler", "CRC null in method refresh" );
             return;
         }
+        ConfigFile mupen64plus_cht = new ConfigFile( mAppData.dataDir + "/data/mupen64plus.cht" );
+        ConfigFile.ConfigSection configSection = mupen64plus_cht.match( "^" + CRC.replace( ' ', '.' ) + ".*" );
+        if( configSection == null )
+        {
+            Log.e( "CheatMenuHandler", "No cheat section found for '" + CRC + "'" );
+        }
         else
         {
-            ConfigFile mupen64plus_cht = new ConfigFile( mAppData.dataDir + "/data/mupen64plus.cht" );
-            ConfigFile.ConfigSection configSection = mupen64plus_cht.match( "^" + CRC.replace( ' ', '.' ) + ".*" );
-            if( configSection == null )
+            String ROM_name = configSection.get( "Name" );
+            if( Utility.isNullOrEmpty( ROM_name ) )
             {
-                Log.e( "CheatMenuHandler", "No cheat section found for '" + CRC + "'" );
+                cheatsScreen.setTitle( mActivity.getString( R.string.cheats_title ) );
             }
             else
             {
-                String ROM_name = configSection.get( "Name" );
-                if( Utility.isNullOrEmpty( ROM_name ) )
+                cheatsScreen.setTitle( mActivity.getString( R.string.cheats_titleFor, ROM_name ) );
+            }
+            
+            Cheat_title = new HashMap<String, String>();
+            Cheat_N = new HashMap<String, String>();
+            Cheat_O = new HashMap<String, String>();
+            
+            int x;
+            String val_N, val_O, title;
+            String val = " ";
+            LongClickCheckBoxPreference checkBoxPref;
+            for( int i = 0; !Utility.isNullOrEmpty( val ); i++ )
+            {
+                val = configSection.get( "Cheat" + i );
+                if( !Utility.isNullOrEmpty( val ) )
                 {
-                    cheatsScreen.setTitle( mActivity.getString( R.string.cheats_title ) );
-                }
-                else
-                {
-                    cheatsScreen.setTitle( mActivity.getString( R.string.cheats_titleFor, ROM_name ) );
-                }
-                
-                Cheat_title = new HashMap<String, String>();
-                Cheat_N = new HashMap<String, String>();
-                Cheat_O = new HashMap<String, String>();
-                
-                int x;
-                String val_N, val_O, title;
-                String val = " ";
-                LongClickCheckBoxPreference checkBoxPref;
-                for( int i = 0; !Utility.isNullOrEmpty( val ); i++ )
-                {
-                    val = configSection.get( "Cheat" + i );
-                    if( !Utility.isNullOrEmpty( val ) )
+                    x = val.indexOf( "," );
+                    if( x < 3 || x >= val.length() )
+                        title = mActivity.getString( R.string.cheats_defaultName, i );
+                    else
+                        title = val.substring( 1, x - 1 );
+                    Cheat_title.put( "Cheat" + i, title );
+                    
+                    val_N = configSection.get( "Cheat" + i + "_N" );
+                    if( !Utility.isNullOrEmpty( val_N ) )
+                        Cheat_N.put( "Cheat" + i, val_N );
+                    
+                    val_O = configSection.get( "Cheat" + i + "_O" );
+                    if( !Utility.isNullOrEmpty( val_O ) )
                     {
-                        x = val.indexOf( "," );
-                        if( x < 3 || x >= val.length() )
-                            title = mActivity.getString( R.string.cheats_defaultName, i );
-                        else
-                            title = val.substring( 1, x - 1 );
-                        Cheat_title.put( "Cheat" + i, title );
-
-                        val_N = configSection.get( "Cheat" + i + "_N" );
-                        if( !Utility.isNullOrEmpty( val_N ) )
-                            Cheat_N.put( "Cheat" + i, val_N );
-
-                        val_O = configSection.get( "Cheat" + i + "_O" );
-                        if( !Utility.isNullOrEmpty( val_O ) )
+                        Cheat_O.put( "Cheat" + i, val_O );
+                        
+                        String[] uOpts = val_O.split( "," );
+                        String[] opts = new String[ uOpts.length ];
+                        int c;
+                        for( int z = 0; z < uOpts.length; z++ )
                         {
-                            Cheat_O.put( "Cheat" + i, val_O );
-
-                            String[] uOpts = val_O.split( "," );
-                            String[] opts = new String[ uOpts.length ];
-                            int c;
-                            for( int z = 0; z < uOpts.length; z++ )
-                            {
-                                opts[z] = uOpts[z].trim();
-                                c = opts[z].indexOf( " " );
-                                if( c > -1 && c < opts[z].length() - 1 )
-                                    opts[z] = opts[z].substring( c + 1 );
-                                else
-                                    opts[z] = mActivity.getString( R.string.cheats_longPress );
-                            }
-
-                            checkBoxPref = new OptionCheckBoxPreference( mActivity, title, opts,
-                                    mActivity.getString( R.string.cheat_disabled ) );
+                            opts[z] = uOpts[z].trim();
+                            c = opts[z].indexOf( " " );
+                            if( c > -1 && c < opts[z].length() - 1 )
+                                opts[z] = opts[z].substring( c + 1 );
+                            else
+                                opts[z] = mActivity.getString( R.string.cheats_longPress );
                         }
-                        else
-                        {
-                            checkBoxPref = new LongClickCheckBoxPreference( mActivity );
-                        }
-
-                        checkBoxPref.setTitle( title );
-                        checkBoxPref.setChecked( false );
-                        checkBoxPref.setKey( "Cheat" + i );
-                        checkBoxPref.setLongClickListener( this );
-                        cheatsCategory.addPreference( checkBoxPref );        
+                        
+                        checkBoxPref = new OptionCheckBoxPreference( mActivity, title, opts,
+                            mActivity.getString( R.string.cheat_disabled ) );
                     }
+                    else
+                    {
+                        checkBoxPref = new LongClickCheckBoxPreference( mActivity );
+                    }
+                    
+                    checkBoxPref.setTitle( title );
+                    checkBoxPref.setChecked( false );
+                    checkBoxPref.setKey( "Cheat" + i );
+                    checkBoxPref.setLongClickListener( this );
+                    cheatsCategory.addPreference( checkBoxPref );
+                    cheatPreferences.add( checkBoxPref );
                 }
             }
         }
