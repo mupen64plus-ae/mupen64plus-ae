@@ -16,7 +16,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.NativeMethods;
-import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.graphics.Point;
@@ -189,53 +188,29 @@ public class Utility
             {
                 InputDevice device = InputDevice.getDevice( ids[i] );
                 
-                // Ignore JellyBean virtual devices
-                if( !( AppData.IS_JELLYBEAN && device.isVirtual() ) )
+                List<MotionRange> ranges = getPeripheralMotionRanges( device );
+                if( ranges.size() > 0 )
                 {
-                    List<MotionRange> ranges = getPeripheralMotionRanges( device );
-                    
-                    if( ranges.size() > 0 )
+                    builder.append( "Device: " + device.getName() + "\r\n" );
+                    builder.append( "Id: " + device.getId() + "\r\n" );
+                    if( AppData.IS_JELLYBEAN && device.getVibrator().hasVibrator() )
                     {
-                        builder.append( "Device: " + device.getName() + "\r\n" );
-                        builder.append( "Id: " + AbstractProvider.getHardwareId( device ) + "\r\n" );
-                        if( AppData.IS_JELLYBEAN && device.getVibrator().hasVibrator() )
-                        {
-                            builder.append( "Vibrator: true\r\n" );
-                        }
-                        builder.append( "Axes: " + ranges.size() + "\r\n" );
-                        for( int j = 0; j < ranges.size(); j++ )
-                        {
-                            MotionRange range = ranges.get( j );
-                            String axisName = AppData.IS_HONEYCOMB_MR1
-                                    ? MotionEvent.axisToString( range.getAxis() )
-                                    : "Axis " + j;
-                            builder.append( "  " + axisName + ": ( " + range.getMin() + " , "
-                                    + range.getMax() + " )\r\n" );
-                        }
-                        builder.append( "\r\n" );
+                        builder.append( "Vibrator: true\r\n" );
                     }
+                    builder.append( "Axes: " + ranges.size() + "\r\n" );
+                    for( int j = 0; j < ranges.size(); j++ )
+                    {
+                        MotionRange range = ranges.get( j );
+                        String axisName = AppData.IS_HONEYCOMB_MR1
+                                ? MotionEvent.axisToString( range.getAxis() )
+                                : "Axis " + j;
+                        builder.append( "  " + axisName + ": ( " + range.getMin() + " , "
+                                + range.getMax() + " )\r\n" );
+                    }
+                    builder.append( "\r\n" );
                 }
             }
         }
-        
-        // if( Globals.IS_HONEYCOMB_MR1 )
-        // {
-        // builder.append( "USB Devices:\r\n\r\n" );
-        // UsbManager manager = (UsbManager) activity.getSystemService( Context.USB_SERVICE );
-        // HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-        // for( String key : deviceList.keySet() )
-        // {
-        // UsbDevice device = deviceList.get( key );
-        // builder.append( "DeviceName: " + device.getDeviceName() + "\r\n" );
-        // builder.append( "DeviceId: " + device.getDeviceId() + "\r\n" );
-        // builder.append( "DeviceClass: " + device.getDeviceClass() + "\r\n" );
-        // builder.append( "DeviceSubclass: " + device.getDeviceSubclass() + "\r\n" );
-        // builder.append( "DeviceProtocol: " + device.getDeviceProtocol() + "\r\n" );
-        // builder.append( "VendorId: " + device.getVendorId() + "\r\n" );
-        // builder.append( "ProductId: " + device.getProductId() + "\r\n" );
-        // builder.append( "\r\n" );
-        // }
-        // }
         
         return builder.toString();
     }
