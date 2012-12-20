@@ -146,38 +146,38 @@
                         android:summary="@string/specialFunction_summary"
                         android:title="@string/specialFunction_title" >
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionIncrementSlot"
-                            android:title="@string/specialFunctionIncrementSlot_title" />
+                            android:key="inputCodeIncrementSlot"
+                            android:title="@string/inputCodeIncrementSlot_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionSaveState"
-                            android:title="@string/specialFunctionSaveState_title" />
+                            android:key="inputCodeSaveSlot"
+                            android:title="@string/inputCodeSaveSlot_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionLoadState"
-                            android:title="@string/specialFunctionLoadState_title" />
+                            android:key="inputCodeLoadSlot"
+                            android:title="@string/inputCodeLoadSlot_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionReset"
-                            android:title="@string/specialFunctionReset_title" />
+                            android:key="inputCodeReset"
+                            android:title="@string/inputCodeReset_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionStop"
-                            android:title="@string/specialFunctionStop_title" />
+                            android:key="inputCodeStop"
+                            android:title="@string/inputCodeStop_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionPause"
-                            android:title="@string/specialFunctionPause_title" />
+                            android:key="inputCodePause"
+                            android:title="@string/inputCodePause_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionFastForward"
-                            android:title="@string/specialFunctionFastForward_title" />
+                            android:key="inputCodeFastForward"
+                            android:title="@string/inputCodeFastForward_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionFrameAdvance"
-                            android:title="@string/specialFunctionFrameAdvance_title" />
+                            android:key="inputCodeFrameAdvance"
+                            android:title="@string/inputCodeFrameAdvance_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionSpeedUp"
-                            android:title="@string/specialFunctionSpeedUp_title" />
+                            android:key="inputCodeSpeedUp"
+                            android:title="@string/inputCodeSpeedUp_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionSpeedDown"
-                            android:title="@string/specialFunctionSpeedDown_title" />
+                            android:key="inputCodeSpeedDown"
+                            android:title="@string/inputCodeSpeedDown_title" />
                         <paulscode.android.mupen64plusae.persistent.InputCodePreference
-                            android:key="specialFunctionGameshark"
-                            android:title="@string/specialFunctionGameshark_title" />
+                            android:key="inputCodeGameshark"
+                            android:title="@string/inputCodeGameshark_title" />
                     </PreferenceScreen>
 
                     <CheckBoxPreference

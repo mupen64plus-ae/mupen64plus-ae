@@ -73,7 +73,7 @@ public class InputMapPreference extends DialogPreference implements
         mMap = new InputMap();
         mProvider = new LazyProvider();
         mProvider.registerListener( this );
-        mN64Button = new Button[InputMap.NUM_N64_CONTROLS];
+        mN64Button = new Button[InputMap.NUM_PLAYER_INPUTS];
         setWidgetLayoutResource( R.layout.widget_toggle );
         
         // Select the appropriate dialog layout according to device configuration. Although you can

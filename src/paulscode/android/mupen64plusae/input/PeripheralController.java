@@ -21,8 +21,10 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import android.util.Log;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
@@ -155,14 +157,15 @@ public class PeripheralController extends AbstractController implements Abstract
      */
     private boolean apply( int inputCode, float strength )
     {
-        boolean state = strength > AbstractProvider.STRENGTH_THRESHOLD;
+        boolean keyDown = strength > AbstractProvider.STRENGTH_THRESHOLD;
         int n64Index = mInputMap.get( inputCode );
         
         if( n64Index >= 0 && n64Index < NUM_N64_BUTTONS )
         {
-            mState.buttons[n64Index] = state;
+            mState.buttons[n64Index] = keyDown;
+            return true;
         }
-        else
+        else if( n64Index < InputMap.NUM_N64_CONTROLS )
         {
             switch( n64Index )
             {
@@ -185,7 +188,69 @@ public class PeripheralController extends AbstractController implements Abstract
             // Update the net position of the analog stick
             mState.axisFractionX = mStrengthXpos - mStrengthXneg;
             mState.axisFractionY = mStrengthYpos - mStrengthYneg;
+            return true;
         }
-        return true;
+        else if( keyDown )
+        {
+            switch( n64Index )
+            {
+                case InputMap.BTN_RUMBLE:
+                    Log.v( "PeripheralController", "BTN_RUMBLE" );
+                    // TODO: Invoke rumble
+                    break;
+                case InputMap.BTN_MEMPAK:
+                    Log.v( "PeripheralController", "BTN_MEMPAK" );
+                    // TODO: Invoke mempak
+                    break;
+                case InputMap.FUNC_INCREMENT_SLOT:
+                    Log.v( "PeripheralController", "FUNC_INCREMENT_SLOT" );
+                    // TODO: Invoke increment slot
+                    break;
+                case InputMap.FUNC_SAVE_SLOT:
+                    Log.v( "PeripheralController", "FUNC_SAVE_SLOT" );
+                    NativeMethods.stateSaveEmulator();
+                    break;
+                case InputMap.FUNC_LOAD_SLOT:
+                    Log.v( "PeripheralController", "FUNC_LOAD_SLOT" );
+                    NativeMethods.stateLoadEmulator();
+                    break;
+                case InputMap.FUNC_RESET:
+                    Log.v( "PeripheralController", "FUNC_RESET" );
+                    // TODO: NativeMethods.resetEmulator() needs some fine-tuning
+                    break;
+                case InputMap.FUNC_STOP:
+                    Log.v( "PeripheralController", "FUNC_STOP" );
+                    // TODO: Invoke stop
+                    break;
+                case InputMap.FUNC_PAUSE:
+                    Log.v( "PeripheralController", "FUNC_PAUSE" );
+                    // TODO: Invoke pause
+                    break;
+                case InputMap.FUNC_FAST_FORWARD:
+                    Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
+                    // TODO: Invoke fast forward
+                    break;
+                case InputMap.FUNC_FRAME_ADVANCE:
+                    Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
+                    // TODO: Invoke frame advance
+                    break;
+                case InputMap.FUNC_SPEED_UP:
+                    Log.v( "PeripheralController", "FUNC_SPEED_UP" );
+                    // TODO: Invoke speed up
+                    break;
+                case InputMap.FUNC_SPEED_DOWN:
+                    Log.v( "PeripheralController", "FUNC_SPEED_DOWN" );
+                    // TODO: Invoke speed down
+                    break;
+                case InputMap.FUNC_GAMESHARK:
+                    Log.v( "PeripheralController", "FUNC_GAMESHARK" );
+                    // TODO: Invoke gameshark
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

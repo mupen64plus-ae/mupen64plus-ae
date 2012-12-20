@@ -114,17 +114,17 @@
     <!-- Special Functions -->
     <string name="specialFunction_title">Special functions</string>
     <string name="specialFunction_summary">Mupen64Plus hotkeys</string>
-    <string name="specialFunctionIncrementSlot_title">Increment slot</string>
-    <string name="specialFunctionSaveState_title">@string/ingameQuicksave_title</string>
-    <string name="specialFunctionLoadState_title">@string/ingameQuickload_title</string>
-    <string name="specialFunctionReset_title">@string/ingameReset_title</string>
-    <string name="specialFunctionStop_title">Stop</string>
-    <string name="specialFunctionPause_title">Pause</string>
-    <string name="specialFunctionFastForward_title">Fast forward</string>
-    <string name="specialFunctionFrameAdvance_title">Frame advance</string>
-    <string name="specialFunctionSpeedUp_title">Speed up</string>
-    <string name="specialFunctionSpeedDown_title">Speed down</string>
-    <string name="specialFunctionGameshark_title">Gameshark</string>
+    <string name="inputCodeIncrementSlot_title">Increment slot</string>
+    <string name="inputCodeSaveSlot_title">@string/ingameQuicksave_title</string>
+    <string name="inputCodeLoadSlot_title">@string/ingameQuickload_title</string>
+    <string name="inputCodeReset_title">@string/ingameReset_title</string>
+    <string name="inputCodeStop_title">Stop</string>
+    <string name="inputCodePause_title">Pause</string>
+    <string name="inputCodeFastForward_title">Fast forward</string>
+    <string name="inputCodeFrameAdvance_title">Frame advance</string>
+    <string name="inputCodeSpeedUp_title">Speed up</string>
+    <string name="inputCodeSpeedDown_title">Speed down</string>
+    <string name="inputCodeGameshark_title">Gameshark</string>
     
     <!-- Audio Menu -->
     <string name="swapAudioChannels_title">Swap audio channels</string>
