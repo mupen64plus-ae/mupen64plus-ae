@@ -75,13 +75,13 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         mUserPrefs = userPrefs;
     }
     
-    @SuppressWarnings( "deprecation" )
     public void rebuild()
     {
         // Place to unzip the ROM if necessary
         final String tmpFolderName = mAppData.dataDir + "/tmp";
         // Path to the game selected in the user preferences
         final String selectedGame = mUserPrefs.selectedGame;
+        
         // No need to reload the ROM header if we already have it
         if( CRC == null || ROM == null || !ROM.equals( mUserPrefs.selectedGame ) )
         {
@@ -111,6 +111,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         }
     }
 
+    @SuppressWarnings( "deprecation" )
     public void refresh()
     {
         if( ROM == null )
@@ -130,6 +131,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         build();
     }
 
+    @SuppressWarnings( "deprecation" )
     private void build()
     {
         cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_CHEATS );
