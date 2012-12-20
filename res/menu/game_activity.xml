@@ -64,6 +64,9 @@
         android:id="@+id/ingameSave"
         android:title="@string/ingameSave_title"/>
     <item
+        android:id="@+id/ingameSpeed"
+        android:title="@string/ingameSpeed_title"/>
+    <item
         android:id="@+id/ingameReset"
         android:title="@string/ingameReset_title"/>
     <item

@@ -47,6 +47,7 @@
     <string name="ingameSlot_title">Slot %1$d</string>
     <string name="ingameSave_title">Save to file…</string>
     <string name="ingameLoad_title">Load from file…</string>
+    <string name="ingameSpeed_title">Game speed</string>
     <string name="ingameReset_title">Reset game</string>
     <string name="ingameMenu_title">Main menu</string>
     
@@ -302,6 +303,7 @@
     <string name="gameMenu_confirmFile">Overwrite %1$s?</string>
     <string name="gameMenu_confirmReset">Reset game? All progress since your last save will be lost.</string>
     <string name="gameMenu_saveHint">filename</string>
+    <string name="gameMenu_speedHint">Speed between 10 to 300</string>
     <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
     <string name="inputMapPreference_popupPosButtonText">Unmap</string>
     <string name="inputMapPreference_xperiaPlay">(Analog stick and C-pad\ncontrolled with touchpad)</string>

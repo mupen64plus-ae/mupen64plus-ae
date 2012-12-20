@@ -10,6 +10,7 @@ import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,13 +26,19 @@ public class GameMenuHandler
     
     private MenuItem mSlotMenuItem;
     
+    private MenuItem mGameSpeedItem;
+    
     private Menu mSlotSubMenu;
     
     private AppData mAppData;
     
     private int mSlot = 0;
     
-    private boolean mUserSpeed = false;
+    private boolean mCustomSpeed = false;
+
+    private int mSpeedFactor = 250;
+
+    private int mLastSpeedFactor = 250;
     
     public GameMenuHandler( Activity activity, String manualSaveDir, String autoSaveFile )
     {
@@ -46,6 +53,8 @@ public class GameMenuHandler
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
         mSlotSubMenu = mSlotMenuItem.getSubMenu();
+        mGameSpeedItem = menu.findItem( R.id.ingameSetSpeed );
+        mGameSpeedItem.setTitle( mActivity.getText( R.string.ingameSetSpeed_title ) + " " + "100" +"%" );
         
         // Get the app data after the activity has been created
         mAppData = new AppData( mActivity );
@@ -95,14 +104,26 @@ public class GameMenuHandler
                 loadSlot();
                 break;
             case R.id.ingameSetSpeed:
-                mUserSpeed = !mUserSpeed;
-                setSpeed(mUserSpeed);
+                mCustomSpeed = !mCustomSpeed;
+                if(mCustomSpeed)
+                {
+                    NativeMethods.stateSetSpeed(mSpeedFactor);
+                    mGameSpeedItem.setTitle( mActivity.getText( R.string.ingameSetSpeed_title ) + " " + mSpeedFactor +"%" );
+                }
+                else
+                {
+                    NativeMethods.stateSetSpeed(100);
+                    mGameSpeedItem.setTitle( mActivity.getText( R.string.ingameSetSpeed_title ) + " " + "100" +"%" );
+                }
                 break;
             case R.id.ingameSave:
                 saveStateFromPrompt();
                 break;
             case R.id.ingameLoad:
                 loadStateFromPrompt();
+                break;
+            case R.id.ingameSpeed:
+                configureSpeed();
                 break;
             case R.id.ingameReset:
                 resetState();
@@ -181,7 +202,8 @@ public class GameMenuHandler
         NativeMethods.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.ingameSave_title );
         CharSequence hint = mActivity.getText( R.string.gameMenu_saveHint );
-        Prompt.promptText( mActivity, title, null, hint, new OnTextListener()
+        int inputType = InputType.TYPE_CLASS_TEXT;
+        Prompt.promptText( mActivity, title, null, hint, inputType, new OnTextListener()
         {
             @Override
             public void onText( CharSequence text, int which )
@@ -264,11 +286,37 @@ public class GameMenuHandler
         } );
     }
 
-    private void setSpeed(boolean user)
+    private void configureSpeed()
     {
-        if(user)
-            NativeMethods.stateSetSpeed(200);
-        else
-            NativeMethods.stateSetSpeed(100);
+        NativeMethods.pauseEmulator();
+        CharSequence title = mActivity.getText( R.string.ingameSpeed_title );
+        CharSequence hint = mActivity.getText( R.string.gameMenu_speedHint );
+        int inputType = InputType.TYPE_CLASS_NUMBER; 
+        Prompt.promptText( mActivity, title, null, hint, inputType, new OnTextListener()
+        {
+            @Override
+            public void onText( CharSequence text, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    if(text.length() != 0)
+                    {
+                        mSpeedFactor = Integer.parseInt(text.toString());
+
+                        if(mSpeedFactor < 10 || mSpeedFactor > 300)
+                            mSpeedFactor = mLastSpeedFactor;
+
+                        mLastSpeedFactor = mSpeedFactor;
+
+                        if(mCustomSpeed)
+                        {
+                            NativeMethods.stateSetSpeed(mSpeedFactor);
+                            mGameSpeedItem.setTitle( mActivity.getText( R.string.ingameSetSpeed_title ) + " " + mSpeedFactor +"%" );
+                        }
+                    }
+                }
+                NativeMethods.resumeEmulator();
+            }
+        } );
     }
 }

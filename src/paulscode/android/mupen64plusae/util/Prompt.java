@@ -157,11 +157,12 @@ public class Prompt
      * @param listener The listener to process the text, when provided.
      */
     public static void promptText( Context context, CharSequence title, CharSequence message,
-            CharSequence hint, final OnTextListener listener )
+            CharSequence hint, int inputType, final OnTextListener listener )
     {
         // Create an edit-text widget, and add the hint text
         final EditText editText = new EditText( context );
         editText.setHint( hint );
+        editText.setRawInputType ( inputType );
         
         // When the user clicks Ok, notify the downstream listener
         OnClickListener internalListener = new OnClickListener()
@@ -265,7 +266,7 @@ public class Prompt
     private static Builder prefillBuilder( Context context, CharSequence title,
             CharSequence message, OnClickListener listener )
     {
-        return new Builder( context ).setTitle( title ).setMessage( message )
+        return new Builder( context ).setTitle( title ).setMessage( message ).setCancelable(false)
                 .setNegativeButton( context.getString( android.R.string.cancel ), listener )
                 .setPositiveButton( context.getString( android.R.string.ok ), listener );
     }
