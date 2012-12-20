@@ -5,8 +5,10 @@ import java.io.File;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -16,12 +18,20 @@ import android.view.MenuItem;
 
 public class GameMenuHandler
 {
+    private static final int BASELINE_SPEED_FACTOR = 100;
+    
+    private static final int DEFAULT_SPEED_FACTOR = 250;
+    
+    private static final int MAX_SPEED_FACTOR = 300;
+    
+    private static final int MIN_SPEED_FACTOR = 10;
+    
     private static final int NUM_SLOTS = 10;
     
     private final Activity mActivity;
     
     private final String mManualSaveDir;
-
+    
     private final String mAutoSaveFile;
     
     private MenuItem mSlotMenuItem;
@@ -35,10 +45,8 @@ public class GameMenuHandler
     private int mSlot = 0;
     
     private boolean mCustomSpeed = false;
-
-    private int mSpeedFactor = 250;
-
-    private int mLastSpeedFactor = 250;
+    
+    private int mSpeedFactor = DEFAULT_SPEED_FACTOR;
     
     public GameMenuHandler( Activity activity, String manualSaveDir, String autoSaveFile )
     {
@@ -54,11 +62,12 @@ public class GameMenuHandler
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
         mSlotSubMenu = mSlotMenuItem.getSubMenu();
         mGameSpeedItem = menu.findItem( R.id.ingameSetSpeed );
-        mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, 100 ) );
+        mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title,
+                BASELINE_SPEED_FACTOR ) );
         
         // Get the app data after the activity has been created
         mAppData = new AppData( mActivity );
-      
+        
         // Initialize to the last slot used
         setSlot( mAppData.getLastSlot(), false );
     }
@@ -104,17 +113,7 @@ public class GameMenuHandler
                 loadSlot();
                 break;
             case R.id.ingameSetSpeed:
-                mCustomSpeed = !mCustomSpeed;
-                if(mCustomSpeed)
-                {
-                    NativeMethods.stateSetSpeed(mSpeedFactor);
-                    mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, mSpeedFactor ) );
-                }
-                else
-                {
-                    NativeMethods.stateSetSpeed(100);
-                    mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, 100 ) );
-                }
+                toggleSpeed();
                 break;
             case R.id.ingameSave:
                 saveStateFromPrompt();
@@ -129,34 +128,20 @@ public class GameMenuHandler
                 resetState();
                 break;
             case R.id.ingameMenu:
-                // Return to previous activity (MenuActivity)
-                // It's easier just to finish so that everything will be reloaded next time
-                // mActivity.finish();
-                
-                // TODO: Uncomment the line above and delete the block below
-                
-                //////
-                //  paulscode: temporary workaround for ASDP bug after emulator shuts down
-                  Notifier.showToast( mActivity, R.string.toast_savingSession );
-                  CoreInterface.setOnEmuStateChangeListener( new OnEmuStateChangeListener()
-                  {
-                      @Override
-                      public void onEmuStateChange( int newState )
-                      {
-                          if( newState == CoreInterface.EMULATOR_STATE_RUNNING )
-                          {
-                              System.exit( 0 );  // Bad, bad..
-                              CoreInterface.setOnEmuStateChangeListener( null );
-                              mActivity.finish();
-                          }
-                      }
-                  } );
-                  NativeMethods.fileSaveEmulator( mAutoSaveFile );
-                //////
+                quitToMenu();
                 break;
             default:
                 break;
         }
+    }
+    
+    private void toggleSpeed()
+    {
+        mCustomSpeed = !mCustomSpeed;
+        int speed = mCustomSpeed ? mSpeedFactor : BASELINE_SPEED_FACTOR;
+        
+        NativeMethods.stateSetSpeed( speed );
+        mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, speed ) );
     }
     
     private void setSlot( int value, boolean notify )
@@ -285,13 +270,13 @@ public class GameMenuHandler
             }
         } );
     }
-
+    
     private void configureSpeed()
     {
         NativeMethods.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.ingameSpeed_title );
         CharSequence hint = mActivity.getText( R.string.gameMenu_speedHint );
-        int inputType = InputType.TYPE_CLASS_NUMBER; 
+        int inputType = InputType.TYPE_CLASS_NUMBER;
         Prompt.promptText( mActivity, title, null, hint, inputType, new OnTextListener()
         {
             @Override
@@ -299,24 +284,47 @@ public class GameMenuHandler
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    if(text.length() != 0)
+                    if( text.length() != 0 )
                     {
-                        mSpeedFactor = Integer.parseInt(text.toString());
-
-                        if(mSpeedFactor < 10 || mSpeedFactor > 300)
-                            mSpeedFactor = mLastSpeedFactor;
-
-                        mLastSpeedFactor = mSpeedFactor;
-
-                        if(mCustomSpeed)
-                        {
-                            NativeMethods.stateSetSpeed(mSpeedFactor);
-                            mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, mSpeedFactor ) );
-                        }
+                        mSpeedFactor = SafeMethods.toInt( text.toString(), DEFAULT_SPEED_FACTOR );
+                        mSpeedFactor = Utility.clamp( mSpeedFactor, MIN_SPEED_FACTOR,
+                                MAX_SPEED_FACTOR );
+                        mCustomSpeed = true;
+                        NativeMethods.stateSetSpeed( mSpeedFactor );
+                        mGameSpeedItem.setTitle( mActivity.getString(
+                                R.string.ingameSetSpeed_title, mSpeedFactor ) );
                     }
                 }
                 NativeMethods.resumeEmulator();
             }
         } );
+    }
+    
+    private void quitToMenu()
+    {
+        // Return to previous activity (MenuActivity)
+        // It's easier just to finish so that everything will be reloaded next time
+        // mActivity.finish();
+        
+        // TODO: Uncomment the line above and delete the block below
+        
+        // ////
+        // paulscode: temporary workaround for ASDP bug after emulator shuts down
+        Notifier.showToast( mActivity, R.string.toast_savingSession );
+        CoreInterface.setOnEmuStateChangeListener( new OnEmuStateChangeListener()
+        {
+            @Override
+            public void onEmuStateChange( int newState )
+            {
+                if( newState == CoreInterface.EMULATOR_STATE_RUNNING )
+                {
+                    System.exit( 0 ); // Bad, bad..
+                    CoreInterface.setOnEmuStateChangeListener( null );
+                    mActivity.finish();
+                }
+            }
+        } );
+        NativeMethods.fileSaveEmulator( mAutoSaveFile );
+        // ////
     }
 }
