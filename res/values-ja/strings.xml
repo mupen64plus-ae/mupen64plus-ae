@@ -41,7 +41,7 @@
     <!-- ******************************************** -->
     
     <!-- In-Game Menu (GameActivity.java) -->
-    <string name="ingameSetSpeed_title">スピード</string>
+    <string name="ingameSetSpeed_title">%1$d%% スピード</string>
     <string name="ingameQuicksave_title">保存</string>
     <string name="ingameQuickload_title">ロード</string>
     <string name="ingameSlot_title">%1$dスロット</string>

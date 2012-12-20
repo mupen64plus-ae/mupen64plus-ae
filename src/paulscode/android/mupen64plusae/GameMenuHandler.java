@@ -49,12 +49,12 @@ public class GameMenuHandler
     
     public void onCreateOptionsMenu( Menu menu )
     {
-        // Inflate the in-game menu, record the 'Slot X' menu item/submenu for later
+        // Inflate the in-game menu, record the dynamic menu items/submenus for later
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
         mSlotMenuItem = menu.findItem( R.id.ingameSlot );
         mSlotSubMenu = mSlotMenuItem.getSubMenu();
         mGameSpeedItem = menu.findItem( R.id.ingameSetSpeed );
-        mGameSpeedItem.setTitle( mActivity.getText( R.string.ingameSetSpeed_title ) + " " + "100" +"%" );
+        mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, 100 ) );
         
         // Get the app data after the activity has been created
         mAppData = new AppData( mActivity );
@@ -108,12 +108,12 @@ public class GameMenuHandler
                 if(mCustomSpeed)
                 {
                     NativeMethods.stateSetSpeed(mSpeedFactor);
-                    mGameSpeedItem.setTitle( mActivity.getText( R.string.ingameSetSpeed_title ) + " " + mSpeedFactor +"%" );
+                    mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, mSpeedFactor ) );
                 }
                 else
                 {
                     NativeMethods.stateSetSpeed(100);
-                    mGameSpeedItem.setTitle( mActivity.getText( R.string.ingameSetSpeed_title ) + " " + "100" +"%" );
+                    mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, 100 ) );
                 }
                 break;
             case R.id.ingameSave:
@@ -311,7 +311,7 @@ public class GameMenuHandler
                         if(mCustomSpeed)
                         {
                             NativeMethods.stateSetSpeed(mSpeedFactor);
-                            mGameSpeedItem.setTitle( mActivity.getText( R.string.ingameSetSpeed_title ) + " " + mSpeedFactor +"%" );
+                            mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, mSpeedFactor ) );
                         }
                     }
                 }
