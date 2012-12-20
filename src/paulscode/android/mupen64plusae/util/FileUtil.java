@@ -35,11 +35,13 @@ public class FileUtil
         
         outEntries.clear();
         outValues.clear();
+        
         if( includeParent )
         {
             outEntries.add( Html.fromHtml( "<b>..</b>" ) );
             outValues.add( startPath.getParentFile().getPath() );
         }
+        
         if( includeDirectories )
         {
             for( File directory : getContents( startPath, new VisibleDirectoryFilter() ) )
@@ -48,6 +50,7 @@ public class FileUtil
                 outValues.add( directory.getPath() );
             }
         }
+        
         if( includeFiles )
         {
             for( File file : getContents( startPath, new VisibleFileFilter() ) )
@@ -63,11 +66,13 @@ public class FileUtil
         // Get a filtered, sorted list of files
         List<File> results = new ArrayList<File>();
         File[] files = startPath.listFiles( fileFilter );
+        
         if( files != null )
         {
             Collections.addAll( results, files );
             Collections.sort( results, new FileUtil.FileComparer() );
         }
+        
         return results;
     }
     
@@ -120,6 +125,7 @@ public class FileUtil
                     return false;
             }
         }
+        
         return folder.delete();
     }
 
@@ -215,6 +221,7 @@ public class FileUtil
     public static void loadNativeLib( String filepath )
     {
         String filename = null;
+        
         if( filepath != null && filepath.length() > 0 )
         {
             filename = filepath.replace( "\"", "" );

@@ -118,7 +118,7 @@ public abstract class AbstractController
     public static final int NUM_N64_BUTTONS = 14;
     
     /** The state of all four player controllers. */
-    private static final ArrayList<State> sStates = new ArrayList<AbstractController.State>();
+    private static final ArrayList<State> sStates = new ArrayList<State>();
     
     /** The state of this controller. */
     protected State mState;
