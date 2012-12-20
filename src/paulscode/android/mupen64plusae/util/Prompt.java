@@ -154,6 +154,7 @@ public class Prompt
      * @param title The title of the dialog.
      * @param message The message to be shown inside the dialog.
      * @param hint The hint to be shown inside the text edit widget.
+     * @param inputType The type of input expected, e.g. InputType.TYPE_CLASS_NUMBER.
      * @param listener The listener to process the text, when provided.
      */
     public static void promptText( Context context, CharSequence title, CharSequence message,
