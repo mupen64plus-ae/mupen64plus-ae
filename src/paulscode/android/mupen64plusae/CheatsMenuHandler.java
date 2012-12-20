@@ -21,7 +21,6 @@ package paulscode.android.mupen64plusae;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
@@ -120,13 +119,14 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_CHEATS );
         mActivity.findPreference( CHEATS_LAUNCH ).setOnPreferenceClickListener( this );
         cheatsCategory = (PreferenceCategory) mActivity.findPreference( CHEATS_CATEGORY );
+        
         if( cheatPreferences.size() > 0 && cheatsCategory.getPreferenceCount() == 0 )
         {
-            ListIterator<Preference> itr = cheatPreferences.listIterator();
-            while( itr.hasNext() )
-                cheatsCategory.addPreference( itr.next() );
+            for (Preference pref : cheatPreferences)
+                cheatsCategory.addPreference( pref );
             return;
         }
+        
         build();
     }
 
