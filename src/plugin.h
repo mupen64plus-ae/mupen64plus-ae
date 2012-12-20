@@ -44,15 +44,21 @@ static inline const char* _SDL_JoystickName(int device_index)
 {
     SDL_Joystick *joystick;
     const char *name;
+    static char JoyName[256];
 
     joystick = SDL_JoystickOpen(device_index);
     if (!joystick)
         return NULL;
 
     name = SDL_JoystickName(joystick);
+    if (name)
+    {
+        strncpy(JoyName, name, 255);
+        JoyName[255] = 0;
+    }
     SDL_JoystickClose(joystick);
 
-    return name;
+    return JoyName;
 }
 
 #define SDL_JoystickName(device_index) _SDL_JoystickName(device_index)
