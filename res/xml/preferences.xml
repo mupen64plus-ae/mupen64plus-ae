@@ -340,7 +340,7 @@
                     android:title="@string/resamplingAlgs_title" />
             </PreferenceScreen>
             <PreferenceScreen
-                android:icon="@drawable/ic_arrow_d"
+                android:icon="@drawable/ic_plugin"
                 android:key="plugins"
                 android:summary="@string/plugins_summary"
                 android:title="@string/plugins_title" >
@@ -403,7 +403,7 @@
                 mupen64:selectionMode="0" />
 
             <PreferenceScreen
-                android:icon="@drawable/ic_arrow_d"
+                android:icon="@drawable/ic_debug"
                 android:key="advanced"
                 android:summary="@string/advanced_summary"
                 android:title="@string/advanced_title" >
