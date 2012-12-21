@@ -134,6 +134,9 @@ public class UserPrefs
     /** The button map for player 4. */
     public final InputMap inputMap4;
     
+    /** True if multi-player is enabled. */
+    public final boolean isMultiplayer;
+    
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
     
@@ -260,6 +263,12 @@ public class UserPrefs
         inputMap2 = new InputMap( prefsData.getString( "peripheralMap2", "" ) );
         inputMap3 = new InputMap( prefsData.getString( "peripheralMap3", "" ) );
         inputMap4 = new InputMap( prefsData.getString( "peripheralMap4", "" ) );
+        int numPlayers = 0;
+        numPlayers += inputMap1.isEnabled() ? 1 : 0;
+        numPlayers += inputMap2.isEnabled() ? 1 : 0;
+        numPlayers += inputMap3.isEnabled() ? 1 : 0;
+        numPlayers += inputMap4.isEnabled() ? 1 : 0;
+        isMultiplayer = numPlayers > 1;
         
         // Audio prefs
         swapChannels = prefsData.getBoolean( "swapAudioChannels", false );

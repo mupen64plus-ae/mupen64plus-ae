@@ -1,8 +1,11 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.List;
 
+import paulscode.android.mupen64plusae.input.map.HardwareMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -42,6 +45,8 @@ public class GameMenuHandler
     
     private AppData mAppData;
     
+    private List<Integer> mIgnoredKeyCodes;
+    
     private int mSlot = 0;
     
     private boolean mCustomSpeed = false;
@@ -70,6 +75,15 @@ public class GameMenuHandler
         
         // Initialize to the last slot used
         setSlot( mAppData.getLastSlot(), false );
+        
+        // Initialize the multiplayer settings menu
+        UserPrefs userPrefs = new UserPrefs( mActivity );
+        mIgnoredKeyCodes = userPrefs.unmappableKeyCodes;
+        menu.findItem( R.id.ingameHardwareMap ).setVisible( userPrefs.isMultiplayer );
+        menu.findItem( R.id.ingameHardwareMap1 ).setVisible( userPrefs.inputMap1.isEnabled() );
+        menu.findItem( R.id.ingameHardwareMap2 ).setVisible( userPrefs.inputMap2.isEnabled() );
+        menu.findItem( R.id.ingameHardwareMap3 ).setVisible( userPrefs.inputMap3.isEnabled() );
+        menu.findItem( R.id.ingameHardwareMap4 ).setVisible( userPrefs.inputMap4.isEnabled() );
     }
     
     public void onOptionsItemSelected( MenuItem item )
@@ -126,6 +140,18 @@ public class GameMenuHandler
                 break;
             case R.id.ingameReset:
                 resetState();
+                break;
+            case R.id.ingameHardwareMap1:
+                HardwareMap.Prompter.show( mActivity, 1, mIgnoredKeyCodes );
+                break;
+            case R.id.ingameHardwareMap2:
+                HardwareMap.Prompter.show( mActivity, 2, mIgnoredKeyCodes );
+                break;
+            case R.id.ingameHardwareMap3:
+                HardwareMap.Prompter.show( mActivity, 3, mIgnoredKeyCodes );
+                break;
+            case R.id.ingameHardwareMap4:
+                HardwareMap.Prompter.show( mActivity, 4, mIgnoredKeyCodes );
                 break;
             case R.id.ingameMenu:
                 quitToMenu();
@@ -254,8 +280,8 @@ public class GameMenuHandler
     private void resetState()
     {
         NativeMethods.pauseEmulator();
-        String title = mActivity.getString( R.string._confirmation );
-        String message = mActivity.getString( R.string.gameMenu_confirmReset );
+        CharSequence title = mActivity.getText( R.string._confirmation );
+        CharSequence message = mActivity.getText( R.string.gameMenu_confirmReset );
         Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
         {
             @Override

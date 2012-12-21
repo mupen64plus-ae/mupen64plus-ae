@@ -124,7 +124,7 @@ public abstract class AbstractController
     protected State mState;
     
     /** The player number, between 1 and 4, inclusive. */
-    private int mPlayerNumber = 1;
+    protected int mPlayerNumber = 1;
     
     /** The factor by which the axis fractions are scaled before going to the core. */
     private static final float AXIS_SCALE = 80;

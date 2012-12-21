@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchController;
+import paulscode.android.mupen64plusae.input.map.HardwareMap;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
@@ -339,6 +340,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         mUserPrefs.inputMap1.mapInput( InputMap.FUNC_SPEED_UP, mUserPrefs.inputCodeSpeedUp );
         mUserPrefs.inputMap1.mapInput( InputMap.FUNC_SPEED_DOWN, mUserPrefs.inputCodeSpeedDown );
         mUserPrefs.inputMap1.mapInput( InputMap.FUNC_GAMESHARK, mUserPrefs.inputCodeGameshark );
+        
+        // Setup multiplayer hardware mapping
+        HardwareMap.setEnabled( mUserPrefs.isMultiplayer );
     }
     
     @TargetApi( 11 )

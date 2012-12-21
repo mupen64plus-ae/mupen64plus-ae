@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.input;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.input.map.HardwareMap;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import android.util.Log;
@@ -35,9 +36,6 @@ public class PeripheralController extends AbstractController implements Abstract
 {
     /** The map from hardware codes to N64 commands. */
     private final InputMap mInputMap;
-    
-    /** The ID of the hardware to listen to. */
-    private int mHardwareIdFilter;
     
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
@@ -70,10 +68,6 @@ public class PeripheralController extends AbstractController implements Abstract
         if( mInputMap != null )
             mInputMap.registerListener( this );
         
-        mHardwareIdFilter = 0;          
-        // TODO: Create user interface for mapping peripheral to player, and set filter here
-        // TODO: Only set filter in multi-player mode (otherwise assume everything player 1)
-        
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
         for( AbstractProvider provider : providers )
@@ -99,7 +93,7 @@ public class PeripheralController extends AbstractController implements Abstract
         // Process user inputs from keyboard, gamepad, etc.
         if( mInputMap != null )
         {
-            if( mHardwareIdFilter == 0 || hardwareId == 0 || mHardwareIdFilter == hardwareId )
+            if( HardwareMap.testHardware( hardwareId, mPlayerNumber ) )
             {            
                 // Apply user changes to the controller state
                 apply( inputCode, strength );
@@ -122,12 +116,15 @@ public class PeripheralController extends AbstractController implements Abstract
         // Process multiple simultaneous user inputs from gamepad, keyboard, etc.
         if( mInputMap != null )
         {
-            // Apply user changes to the controller state
-            for( int i = 0; i < inputCodes.length; i++ )
-                apply( inputCodes[i], strengths[i] );
-            
-            // Notify the core that controller state has changed
-            notifyChanged();
+            if( HardwareMap.testHardware( hardwareId, mPlayerNumber ) )
+            {            
+                // Apply user changes to the controller state
+                for( int i = 0; i < inputCodes.length; i++ )
+                    apply( inputCodes[i], strengths[i] );
+                
+                // Notify the core that controller state has changed
+                notifyChanged();
+            }
         }
     }
     

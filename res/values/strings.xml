@@ -49,6 +49,11 @@
     <string name="ingameLoad_title">Load from file…</string>
     <string name="ingameSpeed_title">Game speed</string>
     <string name="ingameReset_title">Reset game</string>
+    <string name="ingameHardwareMap_title">Multiplayer setup</string>
+    <string name="ingameHardwareMap1_title">Player 1</string>
+    <string name="ingameHardwareMap2_title">Player 2</string>
+    <string name="ingameHardwareMap3_title">Player 3</string>
+    <string name="ingameHardwareMap4_title">Player 4</string>
     <string name="ingameMenu_title">Main menu</string>
     
     <!-- ******************************************** -->
@@ -304,6 +309,8 @@
     <string name="gameMenu_confirmReset">Reset game? All progress since your last save will be lost.</string>
     <string name="gameMenu_saveHint">filename</string>
     <string name="gameMenu_speedHint">Speed between 10 to 300</string>
+    <string name="hardwareMapPrompt_title">Player %1$d setup</string>
+    <string name="hardwareMapPrompt_message">Press a button/stick on every device used by player %1$d, then touch Ok…</string>
     <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
     <string name="inputMapPreference_popupPosButtonText">Unmap</string>
     <string name="inputMapPreference_xperiaPlay">(Analog stick and C-pad\ncontrolled with touchpad)</string>

@@ -332,7 +332,6 @@ public class InputMapPreference extends DialogPreference implements
                             } );
                 }
             }
-            
         }
     }
     
@@ -385,7 +384,7 @@ public class InputMapPreference extends DialogPreference implements
         // Update the feedback text (not all layouts include this, so check null)
         if( mFeedbackText != null )
         {
-            mFeedbackText.setText( strength > 0.5
+            mFeedbackText.setText( strength > AbstractProvider.STRENGTH_THRESHOLD
                     ? AbstractProvider.getInputName( inputCode )
                     : "" );
         }
