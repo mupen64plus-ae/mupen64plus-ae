@@ -1088,155 +1088,94 @@ GLES2_ResetState(SDL_Renderer *renderer)
 static SDL_Renderer *
 GLES2_CreateRenderer(SDL_Window *window, Uint32 flags)
 {
-
-//printf( "----Inside GLES2_CreateRenderer" );
-
     SDL_Renderer *renderer;
     GLES2_DriverContext *rdata;
     GLint nFormats;
 #ifndef ZUNE_HD
-//printf( "----no ZUNE_HD" );
     GLboolean hasCompiler;
 #endif
 
-//printf( "----(1)" );
     /* Create the renderer struct */
     renderer = (SDL_Renderer *)SDL_calloc(1, sizeof(SDL_Renderer));
-//printf( "----(2)" );
-    if (!renderer)
-    {
-//printf( "----out of memory" );
+    if (!renderer) {
         SDL_OutOfMemory();
         return NULL;
     }
 
-//printf( "----(3)" );
     rdata = (GLES2_DriverContext *)SDL_calloc(1, sizeof(GLES2_DriverContext));
-//printf( "----(4)" );
-    if (!rdata)
-    {
-//printf( "----out of memory" );
+    if (!rdata) {
         GLES2_DestroyRenderer(renderer);
         SDL_OutOfMemory();
         return NULL;
     }
-//printf( "----(5)" );
     renderer->info = GLES2_RenderDriver.info;
-//printf( "----(6)" );
     renderer->info.flags = SDL_RENDERER_ACCELERATED;
-//printf( "----(7)" );
     renderer->driverdata = rdata;
 
-//printf( "----(8)" );
     /* Create an OpenGL ES 2.0 context */
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-//printf( "----(9)" );
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-//printf( "----(10)" );
 
     rdata->context = SDL_GL_CreateContext(window);
-//printf( "----(11)" );
-
     if (!rdata->context)
     {
-//printf( "----no context" );
         GLES2_DestroyRenderer(renderer);
         return NULL;
     }
-//printf( "----(12)" );
-
-    if (SDL_GL_MakeCurrent(window, rdata->context) < 0)
-    {
-//printf( "----couldn't make current" );
+    if (SDL_GL_MakeCurrent(window, rdata->context) < 0) {
         GLES2_DestroyRenderer(renderer);
         return NULL;
     }
 
-//printf( "----(13)" );
-    if (flags & SDL_RENDERER_PRESENTVSYNC)
-    {
-//printf( "----calling SDL_GL_SetSwapInterval( 1 )" );
+    if (flags & SDL_RENDERER_PRESENTVSYNC) {
         SDL_GL_SetSwapInterval(1);
-    }
-    else
-    {
-//printf( "----calling SDL_GL_SetSwapInterval( 0 )" );
+    } else {
         SDL_GL_SetSwapInterval(0);
     }
-
-//printf( "----calling SDL_GL_GetSwapInterval()" );
-    if (SDL_GL_GetSwapInterval() > 0)
-    {
-//printf( "----SDL_GL_GetSwapInterval() > 0" );
+    if (SDL_GL_GetSwapInterval() > 0) {
         renderer->info.flags |= SDL_RENDERER_PRESENTVSYNC;
     }
 
-//printf( "----(14)" );
     /* Determine supported shader formats */
     /* HACK: glGetInteger is broken on the Zune HD's compositor, so we just hardcode this */
     glGetError();
-//printf( "----(15)" );
 #ifdef ZUNE_HD
-//printf( "----nFormats = 1" );
     nFormats = 1;
 #else /* !ZUNE_HD */
-//printf( "----(15a)" );
     glGetIntegerv(GL_NUM_SHADER_BINARY_FORMATS, &nFormats);
-//printf( "----(15b))" );
     glGetBooleanv(GL_SHADER_COMPILER, &hasCompiler);
-//printf( "----(15c)" );
-    //nF = nFormats;
     if (hasCompiler)
         ++nFormats;
-//printf( "----nFormats = %i", nFormats );
 #endif /* ZUNE_HD */
-//printf( "----(16)" );
     rdata->shader_formats = (GLenum *)SDL_calloc(nFormats, sizeof(GLenum));
-//printf( "----(17)" );
     if (!rdata->shader_formats)
     {
-//printf( "----!rdata->shader_formats" );
         GLES2_DestroyRenderer(renderer);
         SDL_OutOfMemory();
         return NULL;
     }
-//printf( "----(18)" );
     rdata->shader_format_count = nFormats;
 #ifdef ZUNE_HD
-//printf( "----ZUNE_HD" );
     rdata->shader_formats[0] = GL_NVIDIA_PLATFORM_BINARY_NV;
 #else /* !ZUNE_HD */
-//printf( "----(18a)" );
-//    if( nF > 0 )
-//    {
-//printf( "----(18b)" );
-        glGetIntegerv(GL_SHADER_BINARY_FORMATS, (GLint *)rdata->shader_formats);
-//printf( "----(18c)" );
-        GLenum gErr;
-        gErr = glGetError();
-        if( gErr == GL_INVALID_ENUM )
-        {
-//printf( "----(18c1)" );
-            nFormats = 1;
-            rdata->shader_format_count = nFormats;
-//printf( "----(18c2)" );
-        }
-        else if( gErr != GL_NO_ERROR)
-        {
-//printf( "----gl error" );
-            GLES2_DestroyRenderer(renderer);
-            SDL_SetError("Failed to query supported shader formats");
-            return NULL;
-        }
-//printf( "----(18d)" );
-//    }
-//printf( "----(18e)" );
+    glGetIntegerv(GL_SHADER_BINARY_FORMATS, (GLint *)rdata->shader_formats);
+    GLenum gErr;
+    gErr = glGetError();
+    if( gErr == GL_INVALID_ENUM )
+    {
+        nFormats = 1;
+        rdata->shader_format_count = nFormats;
+    }
+    else if( gErr != GL_NO_ERROR)
+    {
+        GLES2_DestroyRenderer(renderer);
+        SDL_SetError("Failed to query supported shader formats");
+        return NULL;
+    }
     if (hasCompiler)
         rdata->shader_formats[nFormats - 1] = (GLenum)-1;
-//printf( "----(18f)" );
 #endif /* ZUNE_HD */
 
-//printf( "----(19)" );
     /* Populate the function pointers for the module */
     renderer->WindowEvent         = &GLES2_WindowEvent;
     renderer->CreateTexture       = &GLES2_CreateTexture;
@@ -1252,10 +1191,9 @@ GLES2_CreateRenderer(SDL_Window *window, Uint32 flags)
     renderer->RenderPresent       = &GLES2_RenderPresent;
     renderer->DestroyTexture      = &GLES2_DestroyTexture;
     renderer->DestroyRenderer     = &GLES2_DestroyRenderer;
-//printf( "----(20)" );
 
     GLES2_ResetState(renderer);
-//printf( "----leaving GLES2_CreateRenderer" );
+
     return renderer;
 }
 

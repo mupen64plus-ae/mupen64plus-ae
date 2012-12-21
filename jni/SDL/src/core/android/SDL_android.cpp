@@ -29,12 +29,6 @@ extern "C" {
 #include "../../video/android/SDL_androidtouch.h"
 #include "../../video/android/SDL_androidvideo.h"
 
-/*
-#include "../../../../core/src/api/m64p_frontend.h"
-#include "../../../../core/src/api/m64p_types.h"
-extern ptr_CoreDoCommand       CoreDoCommand;
-*/
-
 /* Impelemented in audio/android/SDL_androidaudio.c */
 extern void Android_RunAudioThread();
 } // C

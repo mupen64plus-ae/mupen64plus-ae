@@ -209,149 +209,102 @@ ShouldUseTextureFramebuffer()
 static int
 SDL_CreateWindowTexture(_THIS, SDL_Window * window, Uint32 * format, void ** pixels, int *pitch)
 {
-//printf( "#### Inside SDL_CreateWindowTexture" );
     SDL_WindowTextureData *data;
     SDL_RendererInfo info;
     Uint32 i;
 
-//printf( "#### (1)" );
     data = SDL_GetWindowData(window, SDL_WINDOWTEXTUREDATA);
-    if (!data)
-    {
-//printf( "#### (1a)" );
+    if (!data) {
         SDL_Renderer *renderer = NULL;
         SDL_RendererInfo info;
         int i;
         const char *hint = SDL_GetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION);
 
-//printf( "#### (1b)" );
         /* Check to see if there's a specific driver requested */
         if (hint && *hint != '0' && *hint != '1' &&
-            SDL_strcasecmp(hint, "software") != 0)
-        {
-//printf( "#### (1b1)" );
-            for (i = 0; i < SDL_GetNumRenderDrivers(); ++i)
-            {
+            SDL_strcasecmp(hint, "software") != 0) {
+            for (i = 0; i < SDL_GetNumRenderDrivers(); ++i) {
                 SDL_GetRenderDriverInfo(i, &info);
-                if (SDL_strcasecmp(info.name, hint) == 0)
-                {
+                if (SDL_strcasecmp(info.name, hint) == 0) {
                     renderer = SDL_CreateRenderer(window, i, 0);
-//printf( "#### set renderer" );
                     break;
                 }
             }
-//printf( "#### (1b2)" );
         }
 
-//printf( "#### (1c)" );
-        if (!renderer)
-        {
-//printf( "#### (1c1)" );
-            for (i = 0; i < SDL_GetNumRenderDrivers(); ++i)
-            {
+        if (!renderer) {
+            for (i = 0; i < SDL_GetNumRenderDrivers(); ++i) {
                 SDL_GetRenderDriverInfo(i, &info);
-//printf( "#### info.name = '%s'", info.name );
-                if (SDL_strcmp(info.name, "software") != 0)
-                {
-//printf( "#### info.name does not contain String 'software'" );
+                if (SDL_strcmp(info.name, "software") != 0) {
                     renderer = SDL_CreateRenderer(window, i, 0);
-                    if (renderer)
-                    {
-//printf( "#### renderer not null" );
+                    if (renderer) {
                         break;
                     }
                 }
             }
-//printf( "#### (1c2)" );
         }
-//printf( "#### (1d)" );
-        if (!renderer)
-        {
+        if (!renderer) {
             return -1;
         }
-//printf( "#### (1e)" );
 
         /* Create the data after we successfully create the renderer (bug #1116) */
         data = (SDL_WindowTextureData *)SDL_calloc(1, sizeof(*data));
-//printf( "#### (1f)" );
-        if (!data)
-        {
+        if (!data) {
             SDL_DestroyRenderer(renderer);
             SDL_OutOfMemory();
             return -1;
         }
-//printf( "#### (1g)" );
         SDL_SetWindowData(window, SDL_WINDOWTEXTUREDATA, data);
 
-//printf( "#### (1h)" );
         data->renderer = renderer;
     }
 
-//printf( "#### (2)" );
     /* Free any old texture and pixel data */
-    if (data->texture)
-    {
-//printf( "#### data->texture" );
+    if (data->texture) {
         SDL_DestroyTexture(data->texture);
         data->texture = NULL;
     }
-//printf( "#### (3)" );
-    if (data->pixels)
-    {
-//printf( "#### data->pixels" );
+    if (data->pixels) {
         SDL_free(data->pixels);
         data->pixels = NULL;
     }
-//printf( "#### (4)" );
 
-    if (SDL_GetRendererInfo(data->renderer, &info) < 0)
-    {
+    if (SDL_GetRendererInfo(data->renderer, &info) < 0) {
         return -1;
     }
-//printf( "#### (5)" );
 
     /* Find the first format without an alpha channel */
     *format = info.texture_formats[0];
-    for (i = 0; i < info.num_texture_formats; ++i)
-    {
+    for (i = 0; i < info.num_texture_formats; ++i) {
         if (!SDL_ISPIXELFORMAT_FOURCC(info.texture_formats[i]) &&
-            !SDL_ISPIXELFORMAT_ALPHA(info.texture_formats[i]))
-        {
+            !SDL_ISPIXELFORMAT_ALPHA(info.texture_formats[i])) {
             *format = info.texture_formats[i];
-//printf( "#### set format" );
             break;
         }
     }
-//printf( "#### (6)" );
 
     data->texture = SDL_CreateTexture(data->renderer, *format,
                                       SDL_TEXTUREACCESS_STREAMING,
                                       window->w, window->h);
-//printf( "#### (7)" );
     if (!data->texture) {
         return -1;
     }
 
-//printf( "#### (8)" );
     /* Create framebuffer data */
     data->bytes_per_pixel = SDL_BYTESPERPIXEL(*format);
     data->pitch = (((window->w * data->bytes_per_pixel) + 3) & ~3);
     data->pixels = SDL_malloc(window->h * data->pitch);
-//printf( "#### (9)" );
     if (!data->pixels) {
         SDL_OutOfMemory();
         return -1;
     }
-//printf( "#### (10)" );
 
     *pixels = data->pixels;
     *pitch = data->pitch;
 
-//printf( "#### (11)" );
     /* Make sure we're not double-scaling the viewport */
     SDL_RenderSetViewport(data->renderer, NULL);
 
-//printf( "#### leaving SDL_CreateWindowTexture" );
     return 0;
 }
 
@@ -1690,62 +1643,43 @@ SDL_SetWindowFullscreen(SDL_Window * window, SDL_bool fullscreen)
 static SDL_Surface *
 SDL_CreateWindowFramebuffer(SDL_Window * window)
 {
-//printf( "********Inside SDL_GetWindowSurface" );
     Uint32 format;
     void *pixels;
     int pitch;
     int bpp;
     Uint32 Rmask, Gmask, Bmask, Amask;
 
-//printf( "********(1)" );
     if (!_this->CreateWindowFramebuffer || !_this->UpdateWindowFramebuffer) {
         return NULL;
     }
 
-//printf( "********(2)" );
     if (_this->CreateWindowFramebuffer(_this, window, &format, &pixels, &pitch) < 0) {
         return NULL;
     }
 
-//printf( "********(3)" );
     if (!SDL_PixelFormatEnumToMasks(format, &bpp, &Rmask, &Gmask, &Bmask, &Amask)) {
         return NULL;
     }
 
-//printf( "********leaving SDL_CreateWindowFramebuffer" );
     return SDL_CreateRGBSurfaceFrom(pixels, window->w, window->h, bpp, pitch, Rmask, Gmask, Bmask, Amask);
 }
 
 SDL_Surface *
 SDL_GetWindowSurface(SDL_Window * window)
 {
-//printf( "******Inside SDL_GetWindowSurface" );
     CHECK_WINDOW_MAGIC(window, NULL);
-//printf( "******After CHECK_WINDOW_MAGIC" );
 
-    if (!window->surface_valid)
-    {
-//printf( "******!window->surface_valid" );
-        if (window->surface)
-        {
-//printf( "******window->surface(1)" );
+    if (!window->surface_valid) {
+        if (window->surface) {
             window->surface->flags &= ~SDL_DONTFREE;
-//printf( "******(a)" );
             SDL_FreeSurface(window->surface);
-//printf( "******(b)" );
         }
-//printf( "******(1)" );
         window->surface = SDL_CreateWindowFramebuffer(window);
-//printf( "******(2)" );
-        if (window->surface)
-        {
-//printf( "******window->surface(2)" );
+        if (window->surface) {
             window->surface_valid = SDL_TRUE;
             window->surface->flags |= SDL_DONTFREE;
         }
-//printf( "******(3)" );
     }
-//printf( "******leaving SDL_GETWindowSurface" );
     return window->surface;
 }
 

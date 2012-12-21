@@ -464,48 +464,37 @@ SDL_ResizeVideoMode(int width, int height, int bpp, Uint32 flags)
 SDL_Surface *
 SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
 {
-//printf( "****Inside SDL_SetVideoMode" );
     SDL_DisplayMode desktop_mode;
-//printf( "****(1)" );
     int display = GetVideoDisplay();
-//printf( "****(2)" );
     int window_x = SDL_WINDOWPOS_UNDEFINED_DISPLAY(display);
-//printf( "****(3)" );
     int window_y = SDL_WINDOWPOS_UNDEFINED_DISPLAY(display);
-//printf( "****(4)" );
     int window_w;
     int window_h;
     Uint32 window_flags;
     Uint32 surface_flags;
 
-//printf( "****(5)" );
     if (!SDL_GetVideoDevice()) {
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
             return NULL;
         }
     }
-//printf( "****(6)" );
 
     SDL_GetDesktopDisplayMode(display, &desktop_mode);
 
-//printf( "****(7)" );
     if (width == 0) {
         width = desktop_mode.w;
     }
     if (height == 0) {
         height = desktop_mode.h;
     }
-//printf( "****(8)" );
     if (bpp == 0) {
         bpp = SDL_BITSPERPIXEL(desktop_mode.format);
     }
 
-//printf( "****(9)" );
     /* See if we can simply resize the existing window and surface */
     if (SDL_ResizeVideoMode(width, height, bpp, flags) == 0) {
         return SDL_PublicSurface;
     }
-//printf( "****(10)" );
 
     /* Destroy existing window */
     SDL_PublicSurface = NULL;
@@ -514,124 +503,93 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
         SDL_FreeSurface(SDL_ShadowSurface);
         SDL_ShadowSurface = NULL;
     }
-//printf( "****(11)" );
     if (SDL_VideoSurface) {
         SDL_VideoSurface->flags &= ~SDL_DONTFREE;
         SDL_FreeSurface(SDL_VideoSurface);
         SDL_VideoSurface = NULL;
     }
-//printf( "****(12)" );
     if (SDL_VideoContext) {
         /* SDL_GL_MakeCurrent(0, NULL); *//* Doesn't do anything */
         SDL_GL_DeleteContext(SDL_VideoContext);
         SDL_VideoContext = NULL;
     }
-//printf( "****(13)" );
     if (SDL_VideoWindow) {
         SDL_GetWindowPosition(SDL_VideoWindow, &window_x, &window_y);
         SDL_DestroyWindow(SDL_VideoWindow);
     }
 
-//printf( "****(14)" );
     /* Set up the event filter */
     if (!SDL_GetEventFilter(NULL, NULL)) {
         SDL_SetEventFilter(SDL_CompatEventFilter, NULL);
     }
 
-//printf( "****(15)" );
     /* Create a new window */
     window_flags = SDL_WINDOW_SHOWN;
     if (flags & SDL_FULLSCREEN) {
         window_flags |= SDL_WINDOW_FULLSCREEN;
     }
-//printf( "****(16)" );
     if (flags & SDL_OPENGL) {
         window_flags |= SDL_WINDOW_OPENGL;
     }
-//printf( "****(17)" );
     if (flags & SDL_RESIZABLE) {
         window_flags |= SDL_WINDOW_RESIZABLE;
     }
-//printf( "****(18)" );
     if (flags & SDL_NOFRAME) {
         window_flags |= SDL_WINDOW_BORDERLESS;
     }
-//printf( "****(19)" );
     GetEnvironmentWindowPosition(width, height, &window_x, &window_y);
-//printf( "****(20)" );
     SDL_VideoWindow =
         SDL_CreateWindow(wm_title, window_x, window_y, width, height,
                          window_flags);
-//printf( "****(21)" );
     if (!SDL_VideoWindow) {
         return NULL;
     }
-//printf( "****(22)" );
     SDL_SetWindowIcon(SDL_VideoWindow, SDL_VideoIcon);
 
-//printf( "****(23)" );
     SetupScreenSaver(flags);
 
-//printf( "****(24)" );
     window_flags = SDL_GetWindowFlags(SDL_VideoWindow);
     surface_flags = 0;
-//printf( "****(25)" );
     if (window_flags & SDL_WINDOW_FULLSCREEN) {
         surface_flags |= SDL_FULLSCREEN;
     }
-//printf( "****(26)" );
     if ((window_flags & SDL_WINDOW_OPENGL) && (flags & SDL_OPENGL)) {
         surface_flags |= SDL_OPENGL;
     }
-//printf( "****(27)" );
     if (window_flags & SDL_WINDOW_RESIZABLE) {
         surface_flags |= SDL_RESIZABLE;
     }
-//printf( "****(28)" );
     if (window_flags & SDL_WINDOW_BORDERLESS) {
         surface_flags |= SDL_NOFRAME;
     }
 
     SDL_VideoFlags = flags;
 
-//printf( "****(29)" );
     /* If we're in OpenGL mode, just create a stub surface and we're done! */
     if (flags & SDL_OPENGL) {
-//printf( "****(29.a)" );
         SDL_VideoContext = SDL_GL_CreateContext(SDL_VideoWindow);
-//printf( "****(29.b)" );
         if (!SDL_VideoContext) {
             return NULL;
         }
-//printf( "****(29.c)" );
         if (SDL_GL_MakeCurrent(SDL_VideoWindow, SDL_VideoContext) < 0) {
             return NULL;
         }
-//printf( "****(29.d)" );
         SDL_VideoSurface =
             SDL_CreateRGBSurfaceFrom(NULL, width, height, bpp, 0, 0, 0, 0, 0);
-//printf( "****(29.e)" );
         if (!SDL_VideoSurface) {
             return NULL;
         }
-//printf( "****(29.f)" );
         SDL_VideoSurface->flags |= surface_flags;
-//printf( "****(29.g)" );
         SDL_PublicSurface = SDL_VideoSurface;
-//printf( "****(29.h)" );
         return SDL_PublicSurface;
     }
 
-//printf( "****(30)" );
     /* Create the screen surface */
     SDL_WindowSurface = SDL_GetWindowSurface(SDL_VideoWindow);
-    if (!SDL_WindowSurface)
-    {
-//printf( "****!SDL_WindowSurface, returning NULL" );
+    if (!SDL_WindowSurface) {
         return NULL;
     }
 
-//printf( "****(31)" );
     /* Center the public surface in the window surface */
     SDL_GetWindowSize(SDL_VideoWindow, &window_w, &window_h);
     SDL_VideoViewport.x = (window_w - width)/2;
@@ -653,7 +611,6 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
         SDL_VideoViewport.x  * SDL_VideoSurface->format->BytesPerPixel);
     SDL_SetClipRect(SDL_VideoSurface, NULL);
 
-//printf( "****(32)" );
     /* Create a shadow surface if necessary */
     if ((bpp != SDL_VideoSurface->format->BitsPerPixel)
         && !(flags & SDL_ANYFORMAT)) {
@@ -674,14 +631,11 @@ SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags)
         SDL_FillRect(SDL_ShadowSurface, NULL,
             SDL_MapRGB(SDL_ShadowSurface->format, 0, 0, 0));
     }
-//printf( "****(33)" );
     SDL_PublicSurface =
         (SDL_ShadowSurface ? SDL_ShadowSurface : SDL_VideoSurface);
 
-//printf( "****(34)" );
     ClearVideoSurface();
 
-//printf( "****(35)" );
     /* We're finally done! */
     return SDL_PublicSurface;
 }

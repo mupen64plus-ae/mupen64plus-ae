@@ -194,19 +194,9 @@ TranslateKeycode(int keycode)
 {
     SDL_Scancode scancode = SDL_SCANCODE_UNKNOWN;
 
-    if( keycode < SDL_arraysize( Android_Keycodes ) )
+    if (keycode < SDL_arraysize(Android_Keycodes)) {
         scancode = Android_Keycodes[keycode];
-//    if( scancode == SDL_SCANCODE_UNKNOWN )
-//        __android_log_print(ANDROID_LOG_INFO, "SDL", "Unknown keycode %d", keycode);
-//    else
-//    {
-//        printf( "Converted Android KeyCode %i into SDL ScanCode %i", keycode, scancode );
-
-//        sprintf( str, "ScanCode %i", scancode );
-//        Android_JNI_ShowToast( str );
-
-//    }
-
+    }
     return scancode;
 }
 

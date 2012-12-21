@@ -124,24 +124,20 @@ SDL_RendererEventWatch(void *userdata, SDL_Event *event)
 SDL_Renderer *
 SDL_CreateRenderer(SDL_Window * window, int index, Uint32 flags)
 {
-//printf( "###### inside SDL_CreateRenderer" );
     SDL_Renderer *renderer = NULL;
     int n = SDL_GetNumRenderDrivers();
     const char *hint;
 
-//printf( "###### (1)" );
     if (!window) {
         SDL_SetError("Invalid window");
         return NULL;
     }
 
-//printf( "###### (2)" );
     if (SDL_GetRenderer(window)) {
         SDL_SetError("Renderer already associated with window");
         return NULL;
     }
 
-//printf( "###### (3)" );
     hint = SDL_GetHint(SDL_HINT_RENDER_VSYNC);
     if (hint) {
         if (*hint == '0') {
@@ -151,19 +147,13 @@ SDL_CreateRenderer(SDL_Window * window, int index, Uint32 flags)
         }
     }
 
-//printf( "###### (4)" );
-    if (index < 0)
-    {
+    if (index < 0) {
         hint = SDL_GetHint(SDL_HINT_RENDER_DRIVER);
-        if (hint)
-        {
-//printf( "###### hint" );
-            for (index = 0; index < n; ++index)
-            {
+        if (hint) {
+            for (index = 0; index < n; ++index) {
                 const SDL_RenderDriver *driver = render_drivers[index];
 
-                if (SDL_strcasecmp(hint, driver->info.name) == 0)
-                {
+                if (SDL_strcasecmp(hint, driver->info.name) == 0) {
                     /* Create a new renderer instance */
                     renderer = driver->CreateRenderer(window, flags);
                     break;
@@ -171,70 +161,47 @@ SDL_CreateRenderer(SDL_Window * window, int index, Uint32 flags)
             }
         }
 
-//printf( "###### (4a)" );
-        if (!renderer)
-        {
-            for (index = 0; index < n; ++index)
-            {
+        if (!renderer) {
+            for (index = 0; index < n; ++index) {
                 const SDL_RenderDriver *driver = render_drivers[index];
 
-                if ((driver->info.flags & flags) == flags)
-                {
+                if ((driver->info.flags & flags) == flags) {
                     /* Create a new renderer instance */
                     renderer = driver->CreateRenderer(window, flags);
-                    if (renderer)
-                    {
-//printf( "###### got a renderer" );
+                    if (renderer) {
                         /* Yay, we got one! */
                         break;
                     }
                 }
             }
         }
-//printf( "###### (4b)" );
-        if (index == n)
-        {
+        if (index == n) {
             SDL_SetError("Couldn't find matching render driver");
             return NULL;
         }
-//printf( "###### (4c)" );
-    }
-    else
-    {
-//printf( "###### (4a2)" );
+    } else {
         if (index >= SDL_GetNumRenderDrivers()) {
             SDL_SetError("index must be -1 or in the range of 0 - %d",
                          SDL_GetNumRenderDrivers() - 1);
             return NULL;
         }
-//printf( "###### (4b2)" );
         /* Create a new renderer instance */
         renderer = render_drivers[index]->CreateRenderer(window, flags);
-//printf( "###### (4c2)" );
     }
 
-//printf( "###### (5)" );
-    if (renderer)
-    {
-//printf( "###### (5b)" );
+    if (renderer) {
         renderer->magic = &renderer_magic;
         renderer->window = window;
 
-//printf( "###### (5c)" );
         SDL_SetWindowData(window, SDL_WINDOWRENDERDATA, renderer);
 
-//printf( "###### (5d)" );
         SDL_RenderSetViewport(renderer, NULL);
 
-//printf( "###### (5e)" );
         SDL_AddEventWatch(SDL_RendererEventWatch, renderer);
 
-//printf( "###### (5f)" );
         SDL_LogInfo(SDL_LOG_CATEGORY_RENDER,
                     "Created renderer: %s", renderer->info.name);
-//printf( "###### (5g)" );
     }
-//printf( "###### exiting SDL_CreateRenderer" );
     return renderer;
 }
 
