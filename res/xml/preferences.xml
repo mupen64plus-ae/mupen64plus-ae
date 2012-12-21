@@ -313,11 +313,12 @@
                         android:summary="@string/gles2RiceHiResTextures_summary"
                         android:title="@string/gles2RiceHiResTextures_title" />
 
-                    <Preference
+                    <paulscode.android.mupen64plusae.persistent.PathPreference
                         android:dependency="gles2RiceHiResTextures"
                         android:key="gles2RiceImportHiResTextures"
+                        android:title="@string/gles2RiceImportHiResTextures_title"
                         android:summary="@string/gles2RiceImportHiResTextures_summary"
-                        android:title="@string/gles2RiceImportHiResTextures_title" />
+                        mupen64:selectionMode="1" />
                 </PreferenceCategory>
             </PreferenceScreen>
             <PreferenceScreen

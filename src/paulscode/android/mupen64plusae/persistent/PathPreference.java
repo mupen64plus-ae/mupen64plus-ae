@@ -191,6 +191,7 @@ public class PathPreference extends DialogPreference
             // User clicked Ok: clean the state by persisting value
             persistString( mValue );
             notifyChanged();
+            callChangeListener( mValue );
         }
         else if( mDoReclick )
         {

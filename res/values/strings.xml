@@ -176,6 +176,10 @@
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
     <string name="gles2RiceImportHiResTextures_title">Import texture pack</string>
     <string name="gles2RiceImportHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
+    <string name="gles2RiceImportHiResTexturesPath_title">Select a texture pack (ZIP format)</string>
+    <string name="gles2RiceImportHiResTexturesTask_title">Unpacking Textures</string>
+    <string name="gles2RiceImportHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
+    <string name="gles2RiceImportHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
     
     <!-- Plugins Menu -->
     <string name="videoPlugin_title">Video</string>

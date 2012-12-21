@@ -25,9 +25,11 @@ import org.acra.ACRA;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -38,6 +40,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
@@ -45,7 +48,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener
+        OnPreferenceChangeListener, OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
     
@@ -56,6 +59,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
     private static final String LAUNCH_CRASH = "launchCrash";
     private static final String CHEATS_MENU= "menuCheats";
+    private static final String PROCESS_TEXTURE_PACK = "gles2RiceImportHiResTextures";
 
     // private static final String SELECTED_GAME = "selectedGame";
 
@@ -122,6 +126,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         listenTo( LAUNCH_PERIPHERAL_INFO );
         listenTo( LAUNCH_CRASH );
         listenTo( CHEATS_MENU );
+        listenToChange( PROCESS_TEXTURE_PACK );
         
         // Provide the opportunity to override other preference clicks
         for( String key : prefs.getAll().keySet() )
@@ -141,7 +146,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( preference != null )
             preference.setOnPreferenceClickListener( this );
     }
-
+    
+    @SuppressWarnings( "deprecation" )
+    private void listenToChange( String key )
+    {
+        Preference preference = findPreference( key );
+        if( preference != null )
+            preference.setOnPreferenceChangeListener( this );
+    }
+    
     @Override
     public boolean onPreferenceClick( Preference preference )
     {
@@ -178,6 +191,21 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Tell Android that we handled the click
         return true;
+    }
+    
+    @Override
+    public boolean onPreferenceChange( Preference preference, Object newValue )
+    {
+        // Handle changes to preference items that require additional post-processing
+        String key = preference.getKey();
+        
+        if( key.equals( PROCESS_TEXTURE_PACK ) )
+        {
+        	preference.setSummary( getString( R.string.gles2RiceImportHiResTextures_summary ) );
+            processTexturePak( newValue.toString() );
+        }
+        
+    	return false;
     }
     
     private void launchResume()
@@ -263,7 +291,46 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         ACRA.getErrorReporter().handleSilentException( new Exception( "BENIGN CRASH TEST" ) );
         Notifier.showToast( this, "Report sent." );  // TODO localize
     }
-
+    
+    private void processTexturePak( String filename )
+    {
+    	final String textureFile = filename;
+        TaskHandler.run
+        (
+            this, getString( R.string.gles2RiceImportHiResTexturesTask_title ),
+            getString( R.string.gles2RiceImportHiResTexturesTask_message ),
+            new TaskHandler.Task()
+            {
+                @Override
+                public void run()
+                {
+                    String headerName = Utility.getTexturePackName( textureFile );
+                    if( !ErrorLogger.hasError() )
+                    {
+	                    if( Utility.isNullOrEmpty( headerName ) )
+	                    {
+	                       	ErrorLogger.setLastError( getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
+	                       	ErrorLogger.putLastError( "Video", "gles2RiceImportHiResTextures" );
+	                    }
+	                    else
+	                    {
+		                    String outputFolder = mAppData.dataDir + "/data/hires_texture/" + headerName;
+		                    FileUtil.deleteFolder( new File( outputFolder ) );
+		                    Utility.unzipAll( new File( textureFile ), outputFolder );
+	                    }
+                    }
+                }
+                @Override
+                public void onComplete()
+                {
+                	if( ErrorLogger.hasError() )
+                		Notifier.showToast( MenuActivity.this, ErrorLogger.getLastError() );
+                	ErrorLogger.clearLastError();
+                }
+            }
+        );
+    }
+    
     @Override
     protected void onPause()
     {
