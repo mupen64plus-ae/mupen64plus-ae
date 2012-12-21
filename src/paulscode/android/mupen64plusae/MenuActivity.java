@@ -40,7 +40,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
@@ -48,7 +47,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
-        OnPreferenceChangeListener, OnSharedPreferenceChangeListener
+        OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
     
@@ -126,7 +125,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         listenTo( LAUNCH_PERIPHERAL_INFO );
         listenTo( LAUNCH_CRASH );
         listenTo( CHEATS_MENU );
-        listenToChange( PROCESS_TEXTURE_PACK );
         
         // Provide the opportunity to override other preference clicks
         for( String key : prefs.getAll().keySet() )
@@ -145,14 +143,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         Preference preference = findPreference( key );
         if( preference != null )
             preference.setOnPreferenceClickListener( this );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void listenToChange( String key )
-    {
-        Preference preference = findPreference( key );
-        if( preference != null )
-            preference.setOnPreferenceChangeListener( this );
     }
     
     @Override
@@ -191,21 +181,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Tell Android that we handled the click
         return true;
-    }
-    
-    @Override
-    public boolean onPreferenceChange( Preference preference, Object newValue )
-    {
-        // Handle changes to preference items that require additional post-processing
-        String key = preference.getKey();
-        
-        if( key.equals( PROCESS_TEXTURE_PACK ) )
-        {
-        	preference.setSummary( getString( R.string.gles2RiceImportHiResTextures_summary ) );
-            processTexturePak( newValue.toString() );
-        }
-        
-    	return false;
     }
     
     private void launchResume()
@@ -294,6 +269,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private void processTexturePak( String filename )
     {
+    	if( Utility.isNullOrEmpty( filename ) )
+    	{
+           	ErrorLogger.setLastError( getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
+           	ErrorLogger.putLastError( "Video", "gles2RiceImportHiResTextures" );
+    		Notifier.showToast( this, ErrorLogger.getLastError() );
+    		ErrorLogger.clearLastError();
+    		return;
+    	}
+    	
     	final String textureFile = filename;
         TaskHandler.run
         (
@@ -348,6 +332,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
     }
 
+    @SuppressWarnings( "deprecation" )
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
@@ -365,6 +350,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             //   Change the input mapping layout file when Xperia Play touchpad en/disabled
             finish();
             startActivity( getIntent() );
+        }
+        else if( key.equals( PROCESS_TEXTURE_PACK ) )
+        {
+        	// TODO: Make this summary persist, rather than the last selected filename
+        	findPreference( key ).setSummary( getString( R.string.gles2RiceImportHiResTextures_summary ) );
+            processTexturePak( sharedPreferences.getString( PROCESS_TEXTURE_PACK, "" ) );
         }
         else
         {
