@@ -269,14 +269,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private void processTexturePak( String filename )
     {
-    	if( Utility.isNullOrEmpty( filename ) )
-    	{
-           	ErrorLogger.setLastError( getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
-           	ErrorLogger.putLastError( "Video", "gles2RiceImportHiResTextures" );
-    		Notifier.showToast( this, ErrorLogger.getLastError() );
-    		ErrorLogger.clearLastError();
-    		return;
-    	}
+        if( Utility.isNullOrEmpty( filename ) )
+        {
+            ErrorLogger.put( "Video", "gles2RiceImportHiResTextures", "Filename not specified in MenuActivity.processTexturePak" );
+            Notifier.showToast( this, getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
+            return;
+        }
     	
     	final String textureFile = filename;
         TaskHandler.run
@@ -291,25 +289,25 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                     String headerName = Utility.getTexturePackName( textureFile );
                     if( !ErrorLogger.hasError() )
                     {
-	                    if( Utility.isNullOrEmpty( headerName ) )
-	                    {
-	                       	ErrorLogger.setLastError( getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
-	                       	ErrorLogger.putLastError( "Video", "gles2RiceImportHiResTextures" );
-	                    }
-	                    else
-	                    {
-		                    String outputFolder = mAppData.dataDir + "/data/hires_texture/" + headerName;
-		                    FileUtil.deleteFolder( new File( outputFolder ) );
-		                    Utility.unzipAll( new File( textureFile ), outputFolder );
-	                    }
+                        if( Utility.isNullOrEmpty( headerName ) )
+                        {
+                            ErrorLogger.setLastError( "getTexturePackName returned null in MenuActivity.processTexturePak" );
+                            ErrorLogger.putLastError( "Video", "gles2RiceImportHiResTextures" );
+                        }
+                        else
+                        {
+                            String outputFolder = mAppData.dataDir + "/data/hires_texture/" + headerName;
+                            FileUtil.deleteFolder( new File( outputFolder ) );
+                            Utility.unzipAll( new File( textureFile ), outputFolder );
+                        }
                     }
                 }
                 @Override
                 public void onComplete()
                 {
-                	if( ErrorLogger.hasError() )
-                		Notifier.showToast( MenuActivity.this, ErrorLogger.getLastError() );
-                	ErrorLogger.clearLastError();
+                    if( ErrorLogger.hasError() )
+                        Notifier.showToast( MenuActivity.this, getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
+                    ErrorLogger.clearLastError();
                 }
             }
         );
@@ -353,8 +351,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
         else if( key.equals( PROCESS_TEXTURE_PACK ) )
         {
-        	// TODO: Make this summary persist, rather than the last selected filename
-        	findPreference( key ).setSummary( getString( R.string.gles2RiceImportHiResTextures_summary ) );
+            // TODO: Make this summary persist, rather than the last selected filename
+            findPreference( key ).setSummary( getString( R.string.gles2RiceImportHiResTextures_summary ) );
             processTexturePak( sharedPreferences.getString( PROCESS_TEXTURE_PACK, "" ) );
         }
         else
