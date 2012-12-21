@@ -422,24 +422,25 @@
                     android:title="@string/menuReloadAppData_title" />
 
                 <PreferenceCategory
-                    android:key="menuCrashReports "
-                    android:title="Crash reports" >
+                    android:key="categoryCrashReports "
+                    android:title="@string/categoryCrashReports_title" >
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="acra.enable"
-                        android:summaryOff="Crash reporting disabled"
-                        android:summaryOn="Crash reporting enabled"
-                        android:title="Crash reports" />
+                        android:summary="@string/acraEnable_summary"
+                        android:title="@string/acraEnable_title" />
 
                     <EditTextPreference
+                        android:dependency="acra.enable"
                         android:key="acra.user.email"
-                        android:summary="Your paulscode.com username (optional)"
-                        android:title="Contact info" />
+                        android:summary="@string/acraUserEmail_summary"
+                        android:title="@string/acraUserEmail_title" />
 
                     <Preference
+                        android:dependency="acra.enable"
                         android:key="launchCrash"
-                        android:summary="Send a configuration report to the developers, viewable at http://tinyurl.com/b82jgen"
-                        android:title="Test" />
+                        android:summary="@string/launchCrash_summary"
+                        android:title="@string/launchCrash_title" />
                 </PreferenceCategory>
             </PreferenceScreen>
 

@@ -206,6 +206,15 @@
     <string name="cheatsTaskHandler_title">Reading Game Header</string>
     <string name="cheatsTaskHandler_message">Please be patient.  This process may take some time.</string>
     
+    <!-- ACRA Settings -->
+    <string name="categoryCrashReports_title">Crash reports</string>
+    <string name="acraEnable_title">Enable crash reporting</string>
+    <string name="acraEnable_summary"></string>
+    <string name="acraUserEmail_title">Contact info</string>
+    <string name="acraUserEmail_summary">Your paulscode.com username (optional)</string>
+    <string name="launchCrash_title">Test</string>
+    <string name="launchCrash_summary">Send a configuration report to the developers, viewable at http://tinyurl.com/b82jgen</string>
+    
     <!-- ******************************************** -->
     <!-- ListPreference Strings                       -->
     <!-- Developers: Please follow naming conventions -->
