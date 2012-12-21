@@ -298,7 +298,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             //   Change the input mapping layout file when Xperia Play touchpad en/disabled
             finish();
             startActivity( getIntent() );
-            return;
         }
         else
         {

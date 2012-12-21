@@ -79,6 +79,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     {
         // Place to unzip the ROM if necessary
         final String tmpFolderName = mAppData.dataDir + "/tmp";
+
         // Path to the game selected in the user preferences
         final String selectedGame = mUserPrefs.selectedGame;
         
@@ -97,6 +98,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                     {
                         CheatsMenuHandler.CRC = Utility.getHeaderCRC( selectedGame, tmpFolderName );
                     }
+
                     @Override
                     public void onComplete()
                     {
@@ -125,6 +127,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         {
             for (Preference pref : cheatPreferences)
                 cheatsCategory.addPreference( pref );
+
             return;
         }
         
@@ -145,8 +148,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             Log.e( "CheatMenuHandler", "CRC null in method refresh" );
             return;
         }
+
         ConfigFile mupen64plus_cht = new ConfigFile( mAppData.dataDir + "/data/mupen64plus.cht" );
         ConfigFile.ConfigSection configSection = mupen64plus_cht.match( "^" + CRC.replace( ' ', '.' ) + ".*" );
+
         if( configSection == null )
         {
             Log.e( "CheatMenuHandler", "No cheat section found for '" + CRC + "'" );
@@ -191,7 +196,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                     if( !Utility.isNullOrEmpty( val_O ) )
                     {
                         Cheat_O.put( "Cheat" + i, val_O );
-                        
+
                         String[] uOpts = val_O.split( "," );
                         String[] opts = new String[ uOpts.length ];
                         int c;
@@ -204,7 +209,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                             else
                                 opts[z] = mActivity.getString( R.string.cheats_longPress );
                         }
-                        
+
                         checkBoxPref = new OptionCheckBoxPreference( mActivity, title, opts,
                             mActivity.getString( R.string.cheat_disabled ) );
                     }
@@ -279,11 +284,14 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                         cheatArgs = "";
                     else
                         cheatArgs += ",";
+
                     cheatArgs += String.valueOf( i );
+
                     if( chkBx instanceof OptionCheckBoxPreference )
                         cheatArgs += "-" + ((OptionCheckBoxPreference) chkBx).mChoice;
                 }
             }
+
             if( cheatArgs != null )
                 cheatOptions = "--cheats " + cheatArgs;
             else

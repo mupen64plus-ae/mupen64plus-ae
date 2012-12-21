@@ -316,11 +316,20 @@ public class Utility
             return NativeMethods.getHeaderName( filename );
         }
     }
-    
+
+    /**
+     * Gets the two CRC values from the N64 ROM's header.
+     *
+     * @param filename The filename of the rom
+     * @param tempDir Temporary directory the ROM will be extracted in so that the header can be checked.
+     *
+     * @return The CRC values of the ROM as a string. <p>
+     *         If the extracted ROM is null, then null will be returned.
+     */
     public static String getHeaderCRC( String filename, String tempDir )
     {
         ErrorLogger.put( "READ_HEADER", "fail", "" );
-        if( filename == null || filename.length() < 1 )
+        if( isNullOrEmpty( filename ) )
         {
             ErrorLogger.put( "READ_HEADER", "fail", "filename not specified" );
             Log.e( "Utility", "filename not specified in method 'getHeaderCRC'" );
@@ -342,7 +351,7 @@ public class Utility
             
             ErrorLogger.clearLastError();
             String uzFile = unzipFirstROM( new File( filename ), tempDir );
-            if( uzFile == null || uzFile.length() < 1 )
+            if( isNullOrEmpty( uzFile ) )
             {
                 Log.e( "Utility", "Unable to unzip ROM: '" + filename + "'" );
                 if( ErrorLogger.hasError() )
@@ -355,18 +364,15 @@ public class Utility
                     ErrorLogger.put( "READ_HEADER", "fail", "Unable to unzip ROM: '" + filename
                             + "'" );
                 }
+
                 return null;
             }
             else
             {
                 String headerCRC = checkCRC( NativeMethods.getHeaderCRC( uzFile ) );
-                try
-                {
-                    new File( uzFile ).delete();
-                }
-                catch( Exception e )
-                {
-                }
+
+                new File( uzFile ).delete();
+
                 return headerCRC;
             }
         }
@@ -375,7 +381,16 @@ public class Utility
             return checkCRC( NativeMethods.getHeaderCRC( filename ) );
         }
     }
-    
+
+    /**
+     * Checks the CRC values that are retrieved from an N64 ROM.
+     *
+     * @param CRC The CRC value from the N64 ROM to check.
+     *
+     * @return If the CRC length is 17, then the CRC will be returned in an uppercase form. <p>
+     *         If the CRC is null, or has a length less than 3, null is returned. <p>
+     *         If the CRC doesn't contain a space, or if its last character is a space, null is returned.
+     */
     public static String checkCRC( String CRC )
     {
         // The smallest possible CRCs are "0 0", "1 a", etc.
@@ -494,6 +509,7 @@ public class Utility
             Log.e( "Utility", ErrorLogger.getLastError() );
             return null;
         }
+
         try
         {
             ZipFile zipfile = new ZipFile( archive );
@@ -536,8 +552,10 @@ public class Utility
             Log.e( "Utility", "Unzip error", e );
             return null;
         }
+
         ErrorLogger.setLastError( "No compatible ROMs found in .zip archive" );
         Log.e( "Utility", ErrorLogger.getLastError() );
+
         return null;
     }
     
@@ -557,11 +575,13 @@ public class Utility
             Log.e( "Utility", ErrorLogger.getLastError() );
             return false;
         }
+
         try
         {
             File f;
             ZipFile zipfile = new ZipFile( archive );
             Enumeration<? extends ZipEntry> e = zipfile.entries();
+
             while( e.hasMoreElements() )
             {
                 ZipEntry entry = e.nextElement();
@@ -598,6 +618,7 @@ public class Utility
             Log.e( "Utility", "Unzip error", e );
             return false;
         }
+
         return true;
     }
     

@@ -230,13 +230,14 @@ public class CoreInterface
                 }
             }
         } );
+
         synchronized( lock )
         {
             try
             {
                 lock.wait();
             }
-            catch( InterruptedException ie )
+            catch( InterruptedException ignored )
             {}
         }
     }
@@ -515,14 +516,14 @@ public class CoreInterface
         return b ? "1" : "0";
     }
     
-    private static Handler commandHandler = new Handler()
+    private static final Handler commandHandler = new Handler()
     {
         @Override
         public void handleMessage( Message msg )
         {
             if( msg.arg1 == COMMAND_CHANGE_TITLE )
             {
-                sActivity.setTitle( (String) msg.obj );
+                sActivity.setTitle( (CharSequence) msg.obj );
             }
         }
     };

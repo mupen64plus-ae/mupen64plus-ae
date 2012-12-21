@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class SubscriptionManager<Subscriber>
 {
-    private ArrayList<Subscriber> mSubscribers;
+    private final ArrayList<Subscriber> mSubscribers;
     
     public SubscriptionManager()
     {

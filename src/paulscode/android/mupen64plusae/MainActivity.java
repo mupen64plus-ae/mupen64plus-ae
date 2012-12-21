@@ -101,7 +101,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
     }
     
     /** Runnable that launches the non-UI thread from the UI thread after the activity has resumed. */
-    private Runnable nonUiThreadLauncher = new Runnable()
+    private final Runnable nonUiThreadLauncher = new Runnable()
     {
         @Override
         public void run()
@@ -112,7 +112,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
     };
     
     /** Runnable that performs the asset extraction from the non-UI thread. */
-    private Runnable nonUiThreadWorker = new Runnable()
+    private final Runnable nonUiThreadWorker = new Runnable()
     {
         @Override
         public void run()

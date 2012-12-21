@@ -35,6 +35,7 @@ public class TaskHandler
         final AlertDialog mDialog = new AlertDialog.Builder( activity ).setTitle( title ).setMessage( message ).create();
         final Activity mActivity = activity;
         final Task mTask = task;
+
         mDialog.show();
         new Thread( title )
         {
