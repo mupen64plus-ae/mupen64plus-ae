@@ -304,6 +304,11 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             Intent intent = new UserPrefs( mActivity ).isXperiaEnabled
                     ? new Intent( mActivity, GameActivityXperiaPlay.class )
                     : new Intent( mActivity, GameActivity.class );
+            
+            // TODO: Reconstruct the cheats menu after game closes, rather than reloading the entire menu
+            mActivity.finish();
+            mActivity.startActivity( mActivity.getIntent() );
+            
             mActivity.startActivity( intent );
             return true;
         }
