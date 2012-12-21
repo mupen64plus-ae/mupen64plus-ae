@@ -87,11 +87,13 @@
     <string name="audio_summary">Sound settings</string>
     <string name="video_title">Video</string>
     <string name="video_summary">Graphics settings</string>
-    <string name="plugins_title">@string/_advanced</string>
-    <string name="plugins_summary">Plug-ins and debug settings</string>    
+    <string name="plugins_title">Plug-ins</string>
+    <string name="plugins_summary">Core settings</string>    
     <string name="gameSaveDir_title">Savegame folder</string>
     <string name="cheats_title">Cheats</string>
     <string name="cheats_summary">Choose a game to hack</string>
+    <string name="advanced_title">@string/_advanced</string>
+    <string name="advanced_summary">Diagnostics and debug settings</string>    
     <string name="menuResetUserPrefs_title">Reset</string>
     <string name="menuResetUserPrefs_summary">Restore default settings</string>
     
@@ -183,8 +185,8 @@
     <string name="corePlugin_title">Emulation core</string>
     <string name="menuDeviceInfo_title">Device info</string>
     <string name="menuDeviceInfo_summary">Device hardware and model information</string>
-    <string name="menuReloadAppData_title">Reload data</string>
-    <string name="menuReloadAppData_summary">Reload all app data files</string>
+    <string name="menuReloadAppData_title">Reload app resources</string>
+    <string name="menuReloadAppData_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
     
     <!-- Cheats Menu -->
     <string name="cheatsLaunch_title">Play</string>
@@ -310,7 +312,7 @@
     <string name="gameMenu_saveHint">filename</string>
     <string name="gameMenu_speedHint">Speed between 10 to 300</string>
     <string name="hardwareMapPrompt_title">Player %1$d setup</string>
-    <string name="hardwareMapPrompt_message">Press a button/stick on every device used by player %1$d, then touch Ok…</string>
+    <string name="hardwareMapPrompt_message">Press a button/stick on every device used by Player %1$d, then touch OK…</string>
     <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
     <string name="inputMapPreference_popupPosButtonText">Unmap</string>
     <string name="inputMapPreference_xperiaPlay">(Analog stick and C-pad\ncontrolled with touchpad)</string>

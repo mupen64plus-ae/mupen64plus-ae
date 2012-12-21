@@ -41,7 +41,7 @@
     To minimize app size, consider using Android's built-in resources when possible.
     For example, consider icon resources in "@android:drawable/..." instead of custom
     resources in "@drawable/...".       
-    ***********************************************************************************
+    ***********************************************************************************
 -->
 <PreferenceScreen xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
     xmlns:android="http://schemas.android.com/apk/res/android" >
@@ -339,6 +339,42 @@
                     android:summary="@string/resamplingAlgs_summary"
                     android:title="@string/resamplingAlgs_title" />
             </PreferenceScreen>
+            <PreferenceScreen
+                android:icon="@drawable/ic_arrow_d"
+                android:key="plugins"
+                android:summary="@string/plugins_summary"
+                android:title="@string/plugins_title" >
+                <ListPreference
+                    android:defaultValue="@string/videoPlugin_default"
+                    android:entries="@array/videoPlugin_entries"
+                    android:entryValues="@array/videoPlugin_values"
+                    android:key="videoPlugin"
+                    android:title="@string/videoPlugin_title" />
+                <ListPreference
+                    android:defaultValue="@string/inputPlugin_default"
+                    android:entries="@array/inputPlugin_entries"
+                    android:entryValues="@array/inputPlugin_values"
+                    android:key="inputPlugin"
+                    android:title="@string/inputPlugin_title" />
+                <ListPreference
+                    android:defaultValue="@string/audioPlugin_default"
+                    android:entries="@array/audioPlugin_entries"
+                    android:entryValues="@array/audioPlugin_values"
+                    android:key="audioPlugin"
+                    android:title="@string/audioPlugin_title" />
+                <ListPreference
+                    android:defaultValue="@string/rspPlugin_default"
+                    android:entries="@array/rspPlugin_entries"
+                    android:entryValues="@array/rspPlugin_values"
+                    android:key="rspPlugin"
+                    android:title="@string/rspPlugin_title" />
+                <ListPreference
+                    android:defaultValue="@string/corePlugin_default"
+                    android:entries="@array/corePlugin_entries"
+                    android:entryValues="@array/corePlugin_values"
+                    android:key="corePlugin"
+                    android:title="@string/corePlugin_title" />
+            </PreferenceScreen>
         </PreferenceCategory>
         <PreferenceCategory
             android:key="categoryOther"
@@ -368,40 +404,9 @@
 
             <PreferenceScreen
                 android:icon="@drawable/ic_arrow_d"
-                android:key="plugins"
-                android:summary="@string/plugins_summary"
-                android:title="@string/plugins_title" >
-                <ListPreference
-                    android:defaultValue="@string/videoPlugin_default"
-                    android:entries="@array/videoPlugin_entries"
-                    android:entryValues="@array/videoPlugin_values"
-                    android:key="videoPlugin"
-                    android:title="@string/videoPlugin_title" />
-                <ListPreference
-                    android:defaultValue="@string/audioPlugin_default"
-                    android:entries="@array/audioPlugin_entries"
-                    android:entryValues="@array/audioPlugin_values"
-                    android:key="audioPlugin"
-                    android:title="@string/audioPlugin_title" />
-                <ListPreference
-                    android:defaultValue="@string/inputPlugin_default"
-                    android:entries="@array/inputPlugin_entries"
-                    android:entryValues="@array/inputPlugin_values"
-                    android:key="inputPlugin"
-                    android:title="@string/inputPlugin_title" />
-                <ListPreference
-                    android:defaultValue="@string/rspPlugin_default"
-                    android:entries="@array/rspPlugin_entries"
-                    android:entryValues="@array/rspPlugin_values"
-                    android:key="rspPlugin"
-                    android:title="@string/rspPlugin_title" />
-                <ListPreference
-                    android:defaultValue="@string/corePlugin_default"
-                    android:entries="@array/corePlugin_entries"
-                    android:entryValues="@array/corePlugin_values"
-                    android:key="corePlugin"
-                    android:title="@string/corePlugin_title" />
-
+                android:key="advanced"
+                android:summary="@string/advanced_summary"
+                android:title="@string/advanced_title" >
                 <Preference
                     android:key="menuDeviceInfo"
                     android:summary="@string/menuDeviceInfo_summary"
@@ -415,7 +420,7 @@
                     android:summary="@string/menuReloadAppData_summary"
                     android:title="@string/menuReloadAppData_title" />
 
-                <PreferenceScreen
+                <PreferenceCategory
                     android:key="menuCrashReports "
                     android:title="Crash reports" >
                     <CheckBoxPreference
@@ -425,34 +430,16 @@
                         android:summaryOn="Crash reporting enabled"
                         android:title="Crash reports" />
 
-                    <!--
-                     <CheckBoxPreference
-                    android:key="acra.syslog.enable"
-                    android:summaryOn="System logging enabled"
-                    android:summaryOff="System logging disabled"
-                    android:title="System logs"
-                    android:defaultValue="true" />
-                    -->
-
                     <EditTextPreference
                         android:key="acra.user.email"
                         android:summary="Your paulscode.com username (optional)"
                         android:title="Contact info" />
 
-                    <!--
-                     <CheckBoxPreference
-                    android:key="acra.alwaysaccept"
-                    android:title="Auto-accept"
-                    android:summaryOn="Always send reports"
-                    android:summaryOff="Ask before sending reports"
-                    android:defaultValue="false"/>
-                    -->
-
                     <Preference
                         android:key="launchCrash"
                         android:summary="Send a configuration report to the developers, viewable at http://tinyurl.com/b82jgen"
                         android:title="Test" />
-                </PreferenceScreen>
+                </PreferenceCategory>
             </PreferenceScreen>
 
             <Preference

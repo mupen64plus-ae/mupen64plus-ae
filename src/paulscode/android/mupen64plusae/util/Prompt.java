@@ -198,7 +198,7 @@ public class Prompt
         // Create a custom view to provide key/motion event data
         // This can be absolutely any kind of view, we just something to dispatch events
         ImageView view = new ImageView( context );
-        view.setImageResource( R.drawable.ic_gamepad );
+        view.setImageResource( R.drawable.ic_controller );
         
         // Set the focus parameters of the view so that it will dispatch events
         view.setFocusable( true );
