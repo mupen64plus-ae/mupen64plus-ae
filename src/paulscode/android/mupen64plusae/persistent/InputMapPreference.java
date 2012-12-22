@@ -330,8 +330,7 @@ public class InputMapPreference extends DialogPreference implements
         // Handle the toggle button in the preferences menu
         if( buttonView.equals( mToggleWidget ) )
         {
-            boolean isEnabled = mToggleWidget.isChecked();
-            mMap.setEnabled( isEnabled );
+            mMap.setEnabled( isChecked );
             persistString( mMap.serialize() );
         }
     }
