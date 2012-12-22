@@ -47,11 +47,12 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Checkable;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 public class InputMapPreference extends DialogPreference implements
-        AbstractProvider.OnInputListener, DialogInterface.OnClickListener, View.OnClickListener
+        AbstractProvider.OnInputListener, DialogInterface.OnClickListener, View.OnClickListener,
+        CompoundButton.OnCheckedChangeListener
 {
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
     private static final int UNMAPPED_BUTTON_FILTER = 0x66FFFFFF;
@@ -61,7 +62,7 @@ public class InputMapPreference extends DialogPreference implements
     
     private final InputMap mMap;
     private final LazyProvider mProvider;
-    private View mToggleWidget;
+    private CompoundButton mToggleWidget;
     private TextView mFeedbackText;
     private Button[] mN64Button;
     private List<Integer> mUnmappableKeyCodes;
@@ -80,7 +81,8 @@ public class InputMapPreference extends DialogPreference implements
         // do this through the resource directory structure and layout aliases, we'll do it this way
         // for now since it's easier to maintain in the short term while the design is in flux.
         // TODO: Consider using resource directories to handle device variation, once design is set.
-        WindowManager manager = (WindowManager) getContext().getSystemService( Context.WINDOW_SERVICE );
+        WindowManager manager = (WindowManager) getContext().getSystemService(
+                Context.WINDOW_SERVICE );
         DisplayMetrics metrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics( metrics );
         float scalefactor = (float) DisplayMetrics.DENSITY_DEFAULT / (float) metrics.densityDpi;
@@ -140,7 +142,7 @@ public class InputMapPreference extends DialogPreference implements
         }
         updateViews();
     }
-
+    
     @Override
     protected void onBindView( View view )
     {
@@ -151,9 +153,9 @@ public class InputMapPreference extends DialogPreference implements
         mMap.deserialize( getPersistedString( "" ) );
         
         // Get the toggle widget and set its state
-        mToggleWidget = view.findViewById( R.id.widgetToggle );
-        mToggleWidget.setOnClickListener( this );
-        ( (Checkable) mToggleWidget ).setChecked( mMap.isEnabled() );
+        mToggleWidget = (CompoundButton) view.findViewById( R.id.widgetToggle );
+        mToggleWidget.setOnCheckedChangeListener( this );
+        mToggleWidget.setChecked( mMap.isEnabled() );
     }
     
     @Override
@@ -284,8 +286,7 @@ public class InputMapPreference extends DialogPreference implements
             // Create and show the calibration dialog
             new Builder( getContext() ).setTitle( title ).setMessage( message )
                     .setNegativeButton( android.R.string.cancel, listener )
-                    .setPositiveButton( android.R.string.ok, listener )
-                    .setCancelable(false)
+                    .setPositiveButton( android.R.string.ok, listener ).setCancelable( false )
                     .create().show();
         }
     }
@@ -293,45 +294,45 @@ public class InputMapPreference extends DialogPreference implements
     @Override
     public void onClick( View view )
     {
-        // Handle clicks on the widgets and icons
-        
-        // Handle the toggle button in the preferences menu
-        if( view.equals( mToggleWidget ) )
-        {
-            boolean isEnabled = ( (Checkable) mToggleWidget ).isChecked();
-            mMap.setEnabled( isEnabled );
-            persistString( mMap.serialize() );
-        }
-        
-        // Else, find the button that was clicked and map it
-        else
+        // Handle button clicks in the mapping screen
+        Button button;
+        for( int i = 0; i < mN64Button.length; i++ )
         {
             // Find the button that was pressed
-            Button button;
-            for( int i = 0; i < mN64Button.length; i++ )
+            if( view.equals( mN64Button[i] ) )
             {
-                if( view.equals( mN64Button[i] ) )
-                {
-                    // Popup a dialog to listen to input codes from user
-                    final int index = i;
-                    button = (Button) view;
-                    String message = getContext().getString( R.string.inputMapPreference_popupMessage );
-                    String btnText = getContext().getString( R.string.inputMapPreference_popupPosButtonText );
-                    Prompt.promptInputCode( getContext(), button.getText(), message, btnText,
-                            mUnmappableKeyCodes, new OnInputCodeListener()
+                // Popup a dialog to listen to input codes from user
+                final int index = i;
+                button = (Button) view;
+                String message = getContext().getString( R.string.inputMapPreference_popupMessage );
+                String btnText = getContext().getString(
+                        R.string.inputMapPreference_popupPosButtonText );
+                Prompt.promptInputCode( getContext(), button.getText(), message, btnText,
+                        mUnmappableKeyCodes, new OnInputCodeListener()
+                        {
+                            @Override
+                            public void OnInputCode( int inputCode, int hardwareId )
                             {
-                                @Override
-                                public void OnInputCode( int inputCode, int hardwareId )
-                                {
-                                    if( inputCode == 0 )
-                                        mMap.unmapInput( index );
-                                    else
-                                        mMap.mapInput( index, inputCode );
-                                    updateViews();
-                                }
-                            } );
-                }
+                                if( inputCode == 0 )
+                                    mMap.unmapInput( index );
+                                else
+                                    mMap.mapInput( index, inputCode );
+                                updateViews();
+                            }
+                        } );
             }
+        }
+    }
+    
+    @Override
+    public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
+    {
+        // Handle the toggle button in the preferences menu
+        if( buttonView.equals( mToggleWidget ) )
+        {
+            boolean isEnabled = mToggleWidget.isChecked();
+            mMap.setEnabled( isEnabled );
+            persistString( mMap.serialize() );
         }
     }
     
@@ -344,7 +345,7 @@ public class InputMapPreference extends DialogPreference implements
     @Override
     public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
-        // Nothing to do here, just implements the interface
+        // Nothing to do here, just implement the interface
     }
     
     @TargetApi( 11 )
@@ -358,7 +359,8 @@ public class InputMapPreference extends DialogPreference implements
             Button button = mN64Button[i];
             if( button != null )
             {
-                button.setPressed( i == selectedIndex && strength > AbstractProvider.STRENGTH_THRESHOLD );
+                button.setPressed( i == selectedIndex
+                        && strength > AbstractProvider.STRENGTH_THRESHOLD );
                 
                 // Fade any buttons that aren't mapped
                 if( AppData.IS_HONEYCOMB )
