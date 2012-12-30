@@ -21,7 +21,7 @@
 # Makefile for Mupen64plus-ui-console
 
 # detect operation system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
@@ -47,7 +47,6 @@ ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
 endif
 ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   OS = MINGW
-  CC = gcc
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -95,6 +94,9 @@ endif
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
 
+# default configuration programs
+SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+
 CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -I../../src
 ifeq ($(OS), MINGW)
   CFLAGS += -lpthread
@@ -118,7 +120,7 @@ ifeq ($(OS), LINUX)
 endif
 ifeq ($(OS), OSX)
   # The mac version of SDL requires inclusion of SDL_main in the executable
-  LDLIBS += -ldl $(shell sdl-config --libs)
+  LDLIBS += -ldl $(shell $(SDL_CONFIG) --libs)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
@@ -181,8 +183,8 @@ endif
 endif
 
 # set base program pointers and flags
-CC       ?= gcc
-CXX      ?= g++
+CC        = $(CROSS_COMPILE)gcc
+CXX       = $(CROSS_COMPILE)g++
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
@@ -219,7 +221,7 @@ ifeq ($(MANDIR),)
 endif
 
 SRCDIR = ../../src
-OBJDIR = _obj
+OBJDIR = _obj$(POSTFIX)
 
 ifeq ("$(OS)","MINGW")
   EXEEXT = .exe
@@ -251,7 +253,7 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
-TARGET = mupen64plus
+TARGET = mupen64plus$(POSTFIX)$(EXEEXT)
 
 targets:
 	@echo "Mupen64Plus-ui-console makefile."
@@ -268,6 +270,7 @@ targets:
 	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3)"
 	@echo "    PIE=(1|0)      == Force enable/disable of position independent executables"
+	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
@@ -281,7 +284,7 @@ targets:
 all: $(TARGET)
 
 clean:
-	$(RM) -r ./_obj $(TARGET)$(EXEEXT)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
 
