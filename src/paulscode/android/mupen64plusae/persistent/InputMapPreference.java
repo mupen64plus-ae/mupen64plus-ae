@@ -153,50 +153,45 @@ public class InputMapPreference extends DialogPreference implements
         // Set up the dialog view seen when the preference menu item is clicked
         super.onBindDialogView( view );
         
-        // Get the text view object
-        mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
-        
-        // Create a button map to simplify highlighting
-        mN64Button[AbstractController.DPD_R] = (Button) view.findViewById( R.id.buttonDR );
-        mN64Button[AbstractController.DPD_L] = (Button) view.findViewById( R.id.buttonDL );
-        mN64Button[AbstractController.DPD_D] = (Button) view.findViewById( R.id.buttonDD );
-        mN64Button[AbstractController.DPD_U] = (Button) view.findViewById( R.id.buttonDU );
-        mN64Button[AbstractController.START] = (Button) view.findViewById( R.id.buttonS );
-        mN64Button[AbstractController.BTN_Z] = (Button) view.findViewById( R.id.buttonZ );
-        mN64Button[AbstractController.BTN_B] = (Button) view.findViewById( R.id.buttonB );
-        mN64Button[AbstractController.BTN_A] = (Button) view.findViewById( R.id.buttonA );
-        mN64Button[AbstractController.CPD_R] = (Button) view.findViewById( R.id.buttonCR );
-        mN64Button[AbstractController.CPD_L] = (Button) view.findViewById( R.id.buttonCL );
-        mN64Button[AbstractController.CPD_D] = (Button) view.findViewById( R.id.buttonCD );
-        mN64Button[AbstractController.CPD_U] = (Button) view.findViewById( R.id.buttonCU );
-        mN64Button[AbstractController.BTN_R] = (Button) view.findViewById( R.id.buttonR );
-        mN64Button[AbstractController.BTN_L] = (Button) view.findViewById( R.id.buttonL );
-        mN64Button[InputMap.AXIS_R] = (Button) view.findViewById( R.id.buttonAR );
-        mN64Button[InputMap.AXIS_L] = (Button) view.findViewById( R.id.buttonAL );
-        mN64Button[InputMap.AXIS_D] = (Button) view.findViewById( R.id.buttonAD );
-        mN64Button[InputMap.AXIS_U] = (Button) view.findViewById( R.id.buttonAU );
-        mN64Button[InputMap.BTN_RUMBLE] = (Button) view.findViewById( R.id.buttonRumble );
-        mN64Button[InputMap.BTN_MEMPAK] = (Button) view.findViewById( R.id.buttonMempak );
-        
         // Hide some widgets that do not apply
         UserPrefs prefs = new UserPrefs( getContext() );
         if( prefs.isXperiaEnabled && getKey().equals( PERIPHERAL_MAP1 ) )
         {
+            // First player and Xperia PLAY touchpad is enabled, hide the a- and c-pads
             view.findViewById( R.id.aPadDefault ).setVisibility( View.GONE );
             view.findViewById( R.id.cPadDefault ).setVisibility( View.GONE );
         }
         else
         {
+            // All other cases, hide the Xperia PLAY stuff
             view.findViewById( R.id.aPadXperiaPlay ).setVisibility( View.GONE );
             view.findViewById( R.id.cPadXperiaPlay ).setVisibility( View.GONE );
         }
         
-        // Define the button click callbacks
-        for( Button b : mN64Button )
-        {
-            if( b != null )
-                b.setOnClickListener( this );
-        }
+        // Get the text view object
+        mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
+        
+        // Create a button list to simplify highlighting and mapping
+        setupButton( view, R.id.buttonA, AbstractController.BTN_A );
+        setupButton( view, R.id.buttonB, AbstractController.BTN_B );
+        setupButton( view, R.id.buttonL, AbstractController.BTN_L );
+        setupButton( view, R.id.buttonR, AbstractController.BTN_R );
+        setupButton( view, R.id.buttonZ, AbstractController.BTN_Z );
+        setupButton( view, R.id.buttonS, AbstractController.START );
+        setupButton( view, R.id.buttonCR, AbstractController.CPD_R );
+        setupButton( view, R.id.buttonCL, AbstractController.CPD_L );
+        setupButton( view, R.id.buttonCD, AbstractController.CPD_D );
+        setupButton( view, R.id.buttonCU, AbstractController.CPD_U );
+        setupButton( view, R.id.buttonDR, AbstractController.DPD_R );
+        setupButton( view, R.id.buttonDL, AbstractController.DPD_L );
+        setupButton( view, R.id.buttonDD, AbstractController.DPD_D );
+        setupButton( view, R.id.buttonDU, AbstractController.DPD_U );
+        setupButton( view, R.id.buttonAR, InputMap.AXIS_R );
+        setupButton( view, R.id.buttonAL, InputMap.AXIS_L );
+        setupButton( view, R.id.buttonAD, InputMap.AXIS_D );
+        setupButton( view, R.id.buttonAU, InputMap.AXIS_U );
+        setupButton( view, R.id.buttonRumble, InputMap.BTN_RUMBLE );
+        setupButton( view, R.id.buttonMempak, InputMap.BTN_MEMPAK );
         
         // Setup analog axis listening, if applicable
         if( AppData.IS_HONEYCOMB_MR1 )
@@ -397,5 +392,12 @@ public class InputMapPreference extends DialogPreference implements
     {
         // Default update, don't highlight anything
         updateViews( 0, 0 );
+    }
+    
+    private void setupButton( View parentView, int resId, int index )
+    {
+        mN64Button[index] = (Button) parentView.findViewById( resId );
+        if( mN64Button[index] != null )
+            mN64Button[index].setOnClickListener( this );
     }
 }
