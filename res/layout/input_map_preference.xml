@@ -12,66 +12,77 @@
     the root view is the only view that listens to input from gamepads, keyboards, etc.
     ***********************************************************************************
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/inputMapPreference"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:padding="5dp" >
 
-    <TextView
-        android:id="@+id/textFeedback"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:text="feedback"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/primary_text_dark_nodisable" />
+        android:gravity="center"
+        android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/buttonRumble"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/button_gray"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:minHeight="@dimen/inputMapPreferenceButtonSize"
-        android:minLines="2"
-        android:minWidth="@dimen/inputMapPreferenceButtonSizeX3"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="@string/inputMapPreference_rumble"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/primary_text_dark_nodisable" />
+        <include
+            android:id="@+id/include_all_pads"
+            layout="@layout/all_pads" />
 
-    <Button
-        android:id="@+id/buttonMempak"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/button_gray"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:minHeight="@dimen/inputMapPreferenceButtonSize"
-        android:minLines="2"
-        android:minWidth="@dimen/inputMapPreferenceButtonSizeX3"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="@string/inputMapPreference_mempak"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/primary_text_dark_nodisable" />
+        <TextView
+            android:id="@+id/textFeedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="feedback"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/primary_text_dark_nodisable" />
 
-    <include
-        android:id="@+id/include_all_pads"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        layout="@layout/all_pads" />
+        <TableRow
+            android:id="@+id/tableRowPaks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" >
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/buttonMempak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_gray"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:minHeight="@dimen/inputMapPreferenceButtonSize"
+                android:minLines="2"
+                android:minWidth="@dimen/inputMapPreferenceButtonSizeX3"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="@string/inputMapPreference_mempak"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/primary_text_dark_nodisable" />
+
+            <Button
+                android:id="@+id/buttonRumble"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/button_gray"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:minHeight="@dimen/inputMapPreferenceButtonSize"
+                android:minLines="2"
+                android:minWidth="@dimen/inputMapPreferenceButtonSizeX3"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="@string/inputMapPreference_rumble"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/primary_text_dark_nodisable" />
+        </TableRow>
+    </LinearLayout>
+
+</ScrollView>
