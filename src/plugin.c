@@ -106,7 +106,7 @@ static unsigned short button_bits[] = {
 
 static int romopen = 0;         // is a rom opened
 
-static unsigned char myKeyState[SDLK_LAST];
+static unsigned char myKeyState[SDL_NUM_SCANCODES];
 
 #ifdef __linux__
 static struct ff_effect ffeffect[3];
@@ -194,7 +194,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
 
     /* reset controllers */
     memset(controller, 0, sizeof(SController) * 4);
-    for (i = 0; i < SDLK_LAST; i++)
+    for (i = 0; i < SDL_NUM_SCANCODES; i++)
     {
         myKeyState[i] = 0;
     }
@@ -255,16 +255,16 @@ doSdlKeys(unsigned char* keystate)
     static int grabmouse = 1, grabtoggled = 0;
 
     axis_max_val = 80;
-    if (keystate[SDLK_RCTRL])
+    if (keystate[SDL_SCANCODE_RCTRL])
         axis_max_val -= 40;
-    if (keystate[SDLK_RSHIFT])
+    if (keystate[SDL_SCANCODE_RSHIFT])
         axis_max_val -= 20;
 
     for( c = 0; c < 4; c++ )
     {
         for( b = 0; b < 16; b++ )
         {
-            if( controller[c].button[b].key == SDLK_UNKNOWN || ((int) controller[c].button[b].key) < 0)
+            if( controller[c].button[b].key == SDL_SCANCODE_UNKNOWN || ((int) controller[c].button[b].key) < 0)
                 continue;
             if( keystate[controller[c].button[b].key] )
                 controller[c].buttons.Value |= button_bits[b];
@@ -278,10 +278,10 @@ doSdlKeys(unsigned char* keystate)
             else
                 axis_val = -controller[c].buttons.Y_AXIS;
 
-            if( controller[c].axis[b].key_a != SDLK_UNKNOWN && ((int) controller[c].axis[b].key_a) > 0)
+            if( controller[c].axis[b].key_a != SDL_SCANCODE_UNKNOWN && ((int) controller[c].axis[b].key_a) > 0)
                 if( keystate[controller[c].axis[b].key_a] )
                     axis_val = -axis_max_val;
-            if( controller[c].axis[b].key_b != SDLK_UNKNOWN && ((int) controller[c].axis[b].key_b) > 0)
+            if( controller[c].axis[b].key_b != SDL_SCANCODE_UNKNOWN && ((int) controller[c].axis[b].key_b) > 0)
                 if( keystate[controller[c].axis[b].key_b] )
                     axis_val = axis_max_val;
 
@@ -292,14 +292,18 @@ doSdlKeys(unsigned char* keystate)
         }
         if (controller[c].mouse)
         {
-            if (keystate[SDLK_LCTRL] && keystate[SDLK_LALT])
+            if (keystate[SDL_SCANCODE_LCTRL] && keystate[SDL_SCANCODE_LALT])
             {
                 if (!grabtoggled)
                 {
                     grabtoggled = 1;
                     grabmouse = !grabmouse;
                     // grab/ungrab mouse
+#if SDL_VERSION_ATLEAST(2,0,0)
+#warning SDL mouse grabbing not yet supported with SDL 2.0
+#else
                     SDL_WM_GrabInput( grabmouse ? SDL_GRAB_ON : SDL_GRAB_OFF );
+#endif
                     SDL_ShowCursor( grabmouse ? 0 : 1 );
                 }
             }
@@ -455,7 +459,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
     unsigned char mstate;
 
     // Handle keyboard input first
-    doSdlKeys(SDL_GetKeyState(NULL));
+    doSdlKeys(SDL_GetKeyboardState(NULL));
     doSdlKeys(myKeyState);
 
     // read joystick state
@@ -556,10 +560,17 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
 
     if (controller[Control].mouse)
     {
+#if SDL_VERSION_ATLEAST(2,0,0)
+#warning SDL mouse grabbing not yet supported with SDL 2.0
+#else
         if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON)
         {
             SDL_PumpEvents();
+#if SDL_VERSION_ATLEAST(1,3,0)
+            while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) == 1)
+#else
             while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_MOUSEMOTION)) == 1)
+#endif
             {
                 if (event.motion.xrel)
                 {
@@ -572,6 +583,7 @@ EXPORT void CALL GetKeys( int Control, BUTTONS *Keys )
             }
         }
         else
+#endif
         {
             mousex_residual = 0;
             mousey_residual = 0;
@@ -757,7 +769,7 @@ EXPORT void CALL InitiateControllers(CONTROL_INFO ControlInfo)
 
     // reset controllers
     memset( controller, 0, sizeof( SController ) * 4 );
-    for ( i = 0; i < SDLK_LAST; i++)
+    for ( i = 0; i < SDL_NUM_SCANCODES; i++)
     {
         myKeyState[i] = 0;
     }
@@ -823,7 +835,11 @@ EXPORT void CALL RomClosed(void)
     SDL_QuitSubSystem( SDL_INIT_JOYSTICK );
 
     // release/ungrab mouse
+#if SDL_VERSION_ATLEAST(2,0,0)
+#warning SDL mouse grabbing not yet supported with SDL 2.0
+#else
     SDL_WM_GrabInput( SDL_GRAB_OFF );
+#endif
     SDL_ShowCursor( 1 );
 
     romopen = 0;
@@ -862,11 +878,15 @@ EXPORT int CALL RomOpen(void)
     // grab mouse
     if (controller[0].mouse || controller[1].mouse || controller[2].mouse || controller[3].mouse)
     {
+#if SDL_VERSION_ATLEAST(2,0,0)
+#warning SDL mouse grabbing not yet supported with SDL 2.0
+#else
         SDL_ShowCursor( 0 );
         if (SDL_WM_GrabInput( SDL_GRAB_ON ) != SDL_GRAB_ON)
         {
             DebugMessage(M64MSG_WARNING, "Couldn't grab input! Mouse support won't work!");
         }
+#endif
     }
 
     romopen = 1;
