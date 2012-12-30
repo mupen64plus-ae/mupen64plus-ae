@@ -3,9 +3,6 @@
     android:id="@+id/bPad"
     android:layout_width="@dimen/inputMapPreferenceButtonSizeX5"
     android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
-    android:layout_alignParentBottom="false"
-    android:layout_alignParentTop="true"
-    android:layout_centerHorizontal="true"
     android:focusable="false"
     android:focusableInTouchMode="false" >
 

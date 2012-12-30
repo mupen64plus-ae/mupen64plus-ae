@@ -59,6 +59,7 @@ public class InputMapPreference extends DialogPreference implements
     private static final int MARGIN = 140;
     private static final int MIN_LAYOUT_WIDTH_DP = 440 + MARGIN;
     private static final int MIN_LAYOUT_HEIGHT_DP = 320 + MARGIN;
+    private static final String PERIPHERAL_MAP1 = "peripheralMap1";
     
     private final InputMap mMap;
     private final LazyProvider mProvider;
@@ -100,22 +101,10 @@ public class InputMapPreference extends DialogPreference implements
             setDialogTitle( null );
             
             // Choose the appropriate layout depending on device and orientation
-            UserPrefs prefs = new UserPrefs( context );
             int orientation = getContext().getResources().getConfiguration().orientation;
-            if( prefs.isXperiaEnabled )
-            {
-                // Special layout for Xperia PLAY devices (hide analog/c-pad icons)
-                setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
-                        ? R.layout.input_map_preference_port_xplay
-                        : R.layout.input_map_preference_land_xplay );
-            }
-            else
-            {
-                // Scrollable layout for small screens
-                setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
-                        ? R.layout.input_map_preference_port
-                        : R.layout.input_map_preference_land );
-            }
+            setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
+                    ? R.layout.input_map_preference_port
+                    : R.layout.input_map_preference_land );
         }
     }
     
@@ -188,6 +177,19 @@ public class InputMapPreference extends DialogPreference implements
         mN64Button[InputMap.AXIS_U] = (Button) view.findViewById( R.id.buttonAU );
         mN64Button[InputMap.BTN_RUMBLE] = (Button) view.findViewById( R.id.buttonRumble );
         mN64Button[InputMap.BTN_MEMPAK] = (Button) view.findViewById( R.id.buttonMempak );
+        
+        // Hide some widgets that do not apply
+        UserPrefs prefs = new UserPrefs( getContext() );
+        if( prefs.isXperiaEnabled && getKey().equals( PERIPHERAL_MAP1 ) )
+        {
+            view.findViewById( R.id.aPadDefault ).setVisibility( View.GONE );
+            view.findViewById( R.id.cPadDefault ).setVisibility( View.GONE );
+        }
+        else
+        {
+            view.findViewById( R.id.aPadXperiaPlay ).setVisibility( View.GONE );
+            view.findViewById( R.id.cPadXperiaPlay ).setVisibility( View.GONE );
+        }
         
         // Define the button click callbacks
         for( Button b : mN64Button )

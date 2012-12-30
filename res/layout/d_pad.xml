@@ -3,8 +3,6 @@
     android:id="@+id/dPad"
     android:layout_width="@dimen/inputMapPreferenceButtonSizeX3"
     android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
-    android:layout_alignParentLeft="true"
-    android:layout_centerVertical="true"
     android:focusable="false"
     android:focusableInTouchMode="false" >
 
