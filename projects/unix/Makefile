@@ -64,6 +64,7 @@ ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   OS = MINGW
   SHARED = -shared
   SO_EXTENSION = dll
+  PIC = 0
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
