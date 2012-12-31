@@ -21,7 +21,7 @@
 # Makefile for SDL Input plugin in Mupen64plus
 
 # detect operating system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
@@ -57,6 +57,11 @@ endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
   SO_EXTENSION = so
+  SHARED = -shared
+endif
+ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
+  OS = MINGW
+  SO_EXTENSION = dll
   SHARED = -shared
 endif
 ifeq ("$(OS)","NONE")
@@ -113,6 +118,9 @@ OPTFLAGS ?= -O3
 CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 LDFLAGS += $(SHARED)
 
+# default configuration programs
+SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+
 # Since we are building a shared library, we must compile with -fPIC on some architectures
 # On 32-bit x86 systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(PIC), 1)
@@ -156,17 +164,17 @@ ifeq ($(OS), OSX)
 endif
 
 # test for presence of SDL
-ifeq ($(shell which sdl-config 2>/dev/null),)
+ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
 ifeq ("$(UNAME)","Darwin")
-    CFLAGS  += $(shell sdl-config --cflags)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
     LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
 else
-    CFLAGS  += $(shell sdl-config --cflags)
-    LDLIBS += $(shell sdl-config --libs)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+    LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
 
 # set mupen64plus core API header path
@@ -200,8 +208,8 @@ endif
 endif
 
 # set base program pointers and flags
-CC       ?= gcc
-CXX      ?= g++
+CC        = $(CROSS_COMPILE)gcc
+CXX       = $(CROSS_COMPILE)g++
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
@@ -234,26 +242,27 @@ ifeq ($(PLUGINDIR),)
 endif
 
 SRCDIR = ../../src
-OBJDIR = _obj
+OBJDIR = _obj$(POSTFIX)
 
 # list of source files to compile
 SOURCE = \
 	$(SRCDIR)/plugin.c \
 	$(SRCDIR)/autoconfig.c \
-	$(SRCDIR)/config.c \
-	$(SRCDIR)/osal_dynamiclib_unix.c
+	$(SRCDIR)/config.c
+
+ifeq ($(OS),MINGW)
+SOURCE += $(SRCDIR)/osal_dynamiclib_win32.c
+else
+SOURCE += $(SRCDIR)/osal_dynamiclib_unix.c
+endif
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
-# build dependency files
-CFLAGS += -MD
--include $(OBJECTS:.o=.d)
-
 # build targets
-TARGET = mupen64plus-input-sdl.$(SO_EXTENSION)
+TARGET = mupen64plus-input-sdl$(POSTFIX).$(SO_EXTENSION)
 
 targets:
 	@echo "Mupen64Plus-input-sdl makefile. "
@@ -268,6 +277,7 @@ targets:
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
+	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
@@ -293,9 +303,13 @@ uninstall:
 	$(RM) "$(DESTDIR)$(SHAREDIR)/InputAutoCfg.ini"
 
 clean:
-	$(RM) -r ./_obj $(TARGET)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
+
+# build dependency files
+CFLAGS += -MD
+-include $(OBJECTS:.o=.d)
 
 ifeq ($(LTO), 1)
   CFLAGS += -flto
