@@ -46,11 +46,29 @@
 <PreferenceScreen xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <Preference
+    <PreferenceScreen
         android:icon="@drawable/ic_play"
-        android:key="menuResume"
-        android:title="@string/menuResume_title" >
-    </Preference>
+        android:key="menuPlay"
+        android:title="@string/menuPlay_title" >
+
+            <Preference
+                android:icon="@drawable/ic_play"
+                android:key="gameResume"
+                android:title="@string/gameResume_title"
+                android:summary="@string/gameResume_summary" />
+
+            <Preference
+                android:icon="@drawable/ic_undo"
+                android:key="gameRestart"
+                android:title="@string/gameRestart_title"
+                android:summary="@string/gameRestart_summary" />
+
+            <PreferenceCategory
+                android:key="cheatsCategory"
+                android:title="@string/cheatsCategory_title" >
+            </PreferenceCategory>
+
+    </PreferenceScreen>
 
     <paulscode.android.mupen64plusae.persistent.PathPreference
         android:defaultValue="@string/selectedGame_default"
@@ -380,21 +398,6 @@
         <PreferenceCategory
             android:key="categoryOther"
             android:title="@string/categoryOther_title" >
-            <PreferenceScreen
-                android:icon="@drawable/ic_key"
-                android:key="menuCheats"
-                android:title="@string/cheats_title" >
-                <Preference
-                    android:icon="@drawable/ic_play"
-                    android:key="cheatsLaunch"
-                    android:summary="@string/cheatsLaunch_summary"
-                    android:title="@string/cheatsLaunch_title" />
-
-                <PreferenceCategory
-                    android:key="cheatsCategory"
-                    android:title="@string/cheatsCategory_title" >
-                </PreferenceCategory>
-            </PreferenceScreen>
 
             <paulscode.android.mupen64plusae.persistent.PathPreference
                 android:defaultValue="@string/gameSaveDir_default"

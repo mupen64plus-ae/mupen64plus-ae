@@ -51,13 +51,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
 {
     // These constants must match the keys used in res/xml/preferences.xml
     
-    private static final String LAUNCH_RESUME = "menuResume";
+    private static final String PLAY_MENU = "menuPlay";
     private static final String LAUNCH_RESET_USER_PREFS = "menuResetUserPrefs";
     private static final String LAUNCH_RELOAD_APP_DATA = "menuReloadAppData";
     private static final String LAUNCH_DEVICE_INFO = "menuDeviceInfo";
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
     private static final String LAUNCH_CRASH = "launchCrash";
-    private static final String CHEATS_MENU= "menuCheats";
     private static final String PROCESS_TEXTURE_PACK = "gles2RiceImportHiResTextures";
 
     // private static final String SELECTED_GAME = "selectedGame";
@@ -118,13 +117,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mCheatsMenuHandler.refresh();
         
         // Define the click callback for certain menu items that aren't actually preferences
-        listenTo( LAUNCH_RESUME );
         listenTo( LAUNCH_RESET_USER_PREFS );
         listenTo( LAUNCH_RELOAD_APP_DATA );
         listenTo( LAUNCH_DEVICE_INFO );
         listenTo( LAUNCH_PERIPHERAL_INFO );
         listenTo( LAUNCH_CRASH );
-        listenTo( CHEATS_MENU );
+        listenTo( PLAY_MENU );
         
         // Provide the opportunity to override other preference clicks
         for( String key : prefs.getAll().keySet() )
@@ -151,8 +149,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Handle the clicks on certain menu items that aren't actually preferences
         String key = preference.getKey();
         
-        if( key.equals( LAUNCH_RESUME ) )
-            launchResume();
+        if( key.equals( PLAY_MENU ) )
+        {
+            mCheatsMenuHandler.rebuild();
+            // Let Android open the play menu, once built
+            return false;
+        }
         
         else if( key.equals( LAUNCH_RESET_USER_PREFS ) )
             launchResetUserPrefs();
@@ -167,14 +169,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             launchPeripheralInfo();
         
         else if( key.equals( LAUNCH_CRASH ) )
-            launchCrash();
-        
-        else if( key.equals( CHEATS_MENU ) )
-        {
-            mCheatsMenuHandler.rebuild();
-            // Let Android open the cheats preference screen, once built
-            return false;
-        }
+            launchCrash();        
         
         else // Let Android handle all other preference clicks
             return false;
@@ -183,31 +178,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         return true;
     }
     
-    private void launchResume()
-    {
-        // Launch the last game in a new activity
-        if( !mAppData.isSdCardAccessible() )
-        {
-            Log.e( "MenuActivity", "SD Card not accessable in MenuResume.onPreferenceClick" );
-            Notifier.showToast( this, R.string.toast_sdInaccessible );
-            return;
-        }
-        
-        // Make sure that the game save subdirectories exist so that we can write to them
-        new File( mUserPrefs.manualSaveDir ).mkdirs();
-        new File( mUserPrefs.slotSaveDir ).mkdirs();
-        new File( mUserPrefs.autoSaveDir ).mkdirs();
-        
-        // Notify user that the game activity is starting
-        Notifier.showToast( this, R.string.toast_appStarted );
-        
-        // Launch the appropriate game activity
-        Intent intent = mUserPrefs.isXperiaEnabled
-                ? new Intent( this, GameActivityXperiaPlay.class )
-                : new Intent( this, GameActivity.class );
-        startActivity( intent );
-    }
-
     private void launchResetUserPrefs()
     {
         String title = getString( R.string._confirmation );
@@ -368,8 +338,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Enable the play menu only if the selected game actually exists
         File selectedGame = new File( mUserPrefs.selectedGame );
         boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
-        enablePreference( LAUNCH_RESUME, isValidGame );
-        enablePreference( CHEATS_MENU, isValidGame );
+        enablePreference( PLAY_MENU, isValidGame );
         
         // Enable the input menu only if the input plug-in is not a dummy
         enablePreference( INPUT, user.inputPlugin.enabled );

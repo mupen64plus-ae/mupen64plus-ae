@@ -42,8 +42,9 @@ import android.util.Log;
 
 public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenceLongClickListener
 {
-    private static final String MENU_CHEATS = "menuCheats";
-    private static final String CHEATS_LAUNCH = "cheatsLaunch";
+    private static final String MENU_PLAY = "menuPlay";
+    private static final String GAME_RESUME = "gameResume";
+    private static final String GAME_RESTART = "gameRestart";
     private static final String CHEATS_CATEGORY = "cheatsCategory";
     
     public static String ROM = null;
@@ -58,6 +59,9 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
 
     // Used when concatenating the extra args string
     public static String cheatOptions = null;
+    
+    // False if game should resume (default)
+    public static boolean toRestart = false;
     
     private MenuActivity mActivity = null;
     private PreferenceScreen cheatsScreen = null;
@@ -119,8 +123,9 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         if( ROM == null )
             return;
 
-        cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_CHEATS );
-        mActivity.findPreference( CHEATS_LAUNCH ).setOnPreferenceClickListener( this );
+        cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_PLAY );
+        mActivity.findPreference( GAME_RESUME ).setOnPreferenceClickListener( this );
+        mActivity.findPreference( GAME_RESTART ).setOnPreferenceClickListener( this );
         cheatsCategory = (PreferenceCategory) mActivity.findPreference( CHEATS_CATEGORY );
         
         if( cheatPreferences.size() > 0 && cheatsCategory.getPreferenceCount() == 0 )
@@ -137,8 +142,9 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     @SuppressWarnings( "deprecation" )
     private void build()
     {
-        cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_CHEATS );
-        mActivity.findPreference( CHEATS_LAUNCH ).setOnPreferenceClickListener( this );
+        cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_PLAY );
+        mActivity.findPreference( GAME_RESUME ).setOnPreferenceClickListener( this );
+        mActivity.findPreference( GAME_RESTART ).setOnPreferenceClickListener( this );
         cheatsCategory = (PreferenceCategory) mActivity.findPreference( CHEATS_CATEGORY );
         cheatsCategory.removeAll();
         cheatPreferences.clear();
@@ -270,9 +276,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     public boolean onPreferenceClick( Preference preference )
     {
         String key = preference.getKey();
-        if( key.equals( CHEATS_LAUNCH ) )
+        if( key.equals( GAME_RESUME ) || key.equals( GAME_RESTART ) )
         {
-            // Launch game with selected cheats
+            toRestart = key.equals( GAME_RESTART );
+            
             String cheatArgs = null;
             CheckBoxPreference chkBx;
             for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
@@ -291,9 +298,9 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                         cheatArgs += "-" + ((OptionCheckBoxPreference) chkBx).mChoice;
                 }
             }
-
-            if( cheatArgs != null )
-                cheatOptions = "--cheats " + cheatArgs;
+            
+            if( cheatArgs != null && toRestart )
+                cheatOptions = "--cheats " + cheatArgs;  // Restart game with selected cheats
             else
                 cheatOptions = null;
             

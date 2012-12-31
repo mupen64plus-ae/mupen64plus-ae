@@ -209,6 +209,9 @@ public class UserPrefs
     /** The selected cheat options. */
     public final String cheatOptions;
     
+    /** Whether game should resume or restart. */
+    public final boolean toRestart;
+    
     public final int inputCodeIncrementSlot;
     public final int inputCodeSaveSlot;
     public final int inputCodeLoadSlot;
@@ -303,6 +306,7 @@ public class UserPrefs
         
         // Cheat prefs
         cheatOptions = CheatsMenuHandler.cheatOptions;
+        toRestart = CheatsMenuHandler.toRestart;
         
         // Input codes
         inputCodeIncrementSlot = prefsData.getInt( "inputCodeIncrementSlot", 0 );

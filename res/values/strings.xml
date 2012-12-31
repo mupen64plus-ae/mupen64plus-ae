@@ -63,7 +63,7 @@
     <!-- ******************************************** -->
     
     <!-- Main Menu -->
-    <string name="menuResume_title">Play</string>
+    <string name="menuPlay_title">Play</string>
     <string name="selectedGame_title">Game</string>
     <string name="mainSettings_title">Settings</string>
     <string name="menuLocale_title">Language</string>
@@ -192,10 +192,12 @@
     <string name="menuReloadAppData_title">Reload app resources</string>
     <string name="menuReloadAppData_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
     
-    <!-- Cheats Menu -->
-    <string name="cheatsLaunch_title">Play</string>
-    <string name="cheatsLaunch_summary">Launch game with selected cheats</string>
-    <string name="cheatsCategory_title">Long-press a cheat for notes</string>
+    <!-- Play Menu -->
+    <string name="gameResume_title">Resume</string>
+    <string name="gameResume_summary">(unpredictable if cheats were selected)</string>
+    <string name="gameRestart_title">Restart</string>
+    <string name="gameRestart_summary">(recommended if cheats are selected)</string>
+    <string name="cheatsCategory_title">Cheat options (long-press for notes)</string>
     <string name="cheats_titleFor">"Cheats for %1$s"</string>
     <string name="cheats_defaultName">Cheat %1$d</string>
     <string name="cheats_longPress">(long-press for full text)</string>
