@@ -32,10 +32,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
     /** The delta-strength threshold above which an input is considered "changed". */
     private static final float STRENGTH_HYSTERESIS = 0.05f;
     
-    /** The code of the last active input. */
-    private int mActiveCode = 0;
-    
-    /** The code of the most recent input (not necessarily active). */
+    /** The code of the most recent input. */
     private int mCurrentCode = 0;
     
     /** The strength of the most recent input, ranging from 0 to 1, inclusive. */
@@ -43,12 +40,6 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
     
     /** The strength biases associated with each input channel, used to re-center raw analog values. */
     private float[] mStrengthBiases = null;
-    
-    /** The raw strengths associated with each input channel, from the most recent input event. */
-    private float[] mLastRawStrengths = null;
-    
-    /** The codes associated with each input channel, from the most recent input event. */
-    private int[] mLastInputCodes = null;
     
     /** The providers whose inputs are aggregated. */
     private final ArrayList<AbstractProvider> providers = new ArrayList<AbstractProvider>();
@@ -93,67 +84,12 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
     }
     
     /**
-     * Resets the strength biases based on the next input event.
+     * Resets the strength biases.
      */
-    public void resetBiasesNext()
+    public void resetBiases()
     {
         // Setting biases to null will force a refresh on next input
         mStrengthBiases = null;
-    }
-    
-    /**
-     * Resets the strength biases based on the last input event.
-     */
-    public void resetBiasesLast()
-    {
-        setBiases( mLastInputCodes, mLastRawStrengths );
-    }
-    
-    /**
-     * Sets the strength biases on each analog channel.
-     * @param inputCodes Universal input codes for each channel.
-     * @param rawStrengths Raw (biased) strength for each channel.
-     */
-    private void setBiases( int[] inputCodes, float[] rawStrengths )
-    {
-        if( inputCodes == null || rawStrengths == null )
-            return;
-        
-        mStrengthBiases = new float[rawStrengths.length];
-        
-        for( int i = 0; i < rawStrengths.length; i++ )
-        {
-            int inputCode = inputCodes[i];
-            float rawStrength = rawStrengths[i];
-            
-            // Record the strength bias
-            int axis = AbstractProvider.inputToAxisCode( inputCode );
-            switch( axis )
-            {
-                default:
-                    // Round the bias to -1, 0, or 1
-                    mStrengthBiases[i] = Math.round( rawStrength );
-                    break;
-                case MotionEvent.AXIS_HAT_X:
-                case MotionEvent.AXIS_HAT_Y:
-                    // The resting value for these axes should always be zero. If we used the
-                    // default method for these, their bias might be incorrectly stored as +/-
-                    // 1. Subtracting this incorrect bias would then make one direction of the
-                    // d-pad unusable. So we do nothing here, to ensure the bias remains zero
-                    // for these axes.
-                    break;
-            }
-        }
-    }
-    
-    /**
-     * Gets the universal input code for the last active input.
-     * 
-     * @return The code for the last active input.
-     */
-    public int getActiveCode()
-    {
-        return mActiveCode;
     }
     
     /*
@@ -165,13 +101,15 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
     @Override
     public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
-        // Get strength biases if necessary
-        if( mStrengthBiases == null )
-            setBiases( inputCodes, strengths );
+        if( inputCodes == null || strengths == null )
+            return;
         
-        // Cache the input codes and raw strengths
-        mLastInputCodes = inputCodes.clone();
-        mLastRawStrengths = strengths.clone();
+        // Reset the biases if necessary
+        if( mStrengthBiases == null )
+            mStrengthBiases = new float[strengths.length];
+        
+        // Update the strength biases if necessary
+        updateBiases( inputCodes, strengths );
         
         // Find the strongest input
         float maxStrength = AbstractProvider.STRENGTH_THRESHOLD;
@@ -209,13 +147,8 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
         // Filter the input before passing on to listeners
         
         // Determine the input conditions
-        boolean isActive = strength > AbstractProvider.STRENGTH_THRESHOLD;
         boolean inputChanged = inputCode != mCurrentCode;
         boolean strengthChanged = Math.abs( strength - mCurrentStrength ) > STRENGTH_HYSTERESIS;
-        
-        // Cache the last active code
-        if( isActive )
-            mActiveCode = inputCode;
         
         // Only notify listeners if the input has changed significantly
         if( strengthChanged || inputChanged )
@@ -223,6 +156,53 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
             mCurrentCode = inputCode;
             mCurrentStrength = strength;
             notifyListeners( mCurrentCode, mCurrentStrength, hardwareId );
+        }
+    }
+    
+    /**
+     * Initializes the strength biases on each analog channel if necessary.
+     * 
+     * @param inputCodes Universal input codes for each channel.
+     * @param rawStrengths Raw (biased) strength for each channel.
+     */
+    private void updateBiases( int[] inputCodes, float[] rawStrengths )
+    {
+        for( int i = 0; i < rawStrengths.length; i++ )
+        {
+            // Perfect 0 indicates that the bias for this axis is unset
+            if( mStrengthBiases[i] != 0 )
+                continue;
+            
+            // Get the strength of the axis
+            float rawStrength = rawStrengths[i];
+            
+            // Due to a quirk in Android, analog axes whose center-point is not zero (e.g. an analog
+            // trigger whose rest position is -1) still produce a perfect zero value at rest until
+            // they have been wiggled a little bit. After that point, their rest position is
+            // correctly recorded. Therefore we treat perfect zeros as suspicious and wait until we
+            // are sure that we have a real strength value.
+            if( rawStrength == 0 )
+                continue;
+            
+            int axis = AbstractProvider.inputToAxisCode( inputCodes[i] );
+            switch( axis )
+            {
+                default:
+                    // Round and record the bias to -1, 0, or 1
+                    mStrengthBiases[i] = Math.round( rawStrength );
+                    break;
+                case MotionEvent.AXIS_HAT_X:
+                case MotionEvent.AXIS_HAT_Y:
+                    // The resting value for these axes should always be zero. If we used the
+                    // default method for these, their bias might be incorrectly stored as +/-
+                    // 1. Subtracting this incorrect bias would then make one direction of the
+                    // d-pad unusable. So we do nothing here, to ensure the bias remains zero
+                    // for these axes.
+                    break;
+            }
+            
+            // Add a tiny number to indicate that the bias for this axis is now set
+            mStrengthBiases[i] += Float.MIN_VALUE;
         }
     }
 }
