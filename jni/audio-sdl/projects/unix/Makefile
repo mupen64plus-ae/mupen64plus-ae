@@ -22,7 +22,7 @@
 # Makefile for SDL Audio plugin in Mupen64plus
 
 # detect operation system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
@@ -59,6 +59,11 @@ ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
   SHARED = -shared
   SO_EXTENSION = so
+endif
+ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
+  OS = MINGW
+  SHARED = -shared
+  SO_EXTENSION = dll
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -114,6 +119,10 @@ OPTFLAGS ?= -O3
 CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 LDFLAGS += $(SHARED)
 
+# default configuration programs
+SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+PKG_CONFIG = $(CROSS_COMPILE)pkg-config
+
 # Since we are building a shared library, we must compile with -fPIC on some architectures
 # On 32-bit x86 systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(PIC), 1)
@@ -156,30 +165,34 @@ ifeq ($(OS), OSX)
 endif
 
 # test for presence of SDL
-ifeq ($(shell which sdl-config 2>/dev/null),)
+ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
 ifeq ($(OS),FREEBSD)
-    CFLAGS  += $(shell sdl-config --cflags)
-    LDLIBS += $(shell sdl-config --libs)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+    LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
 ifeq ($(OS),OSX)
-    CFLAGS  += $(shell sdl-config --cflags)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
     LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
 endif
 ifeq ($(OS),LINUX)
-    CFLAGS  += $(shell sdl-config --cflags)
-    LDLIBS += $(shell sdl-config --libs)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+    LDLIBS += $(shell $(SDL_CONFIG) --libs)
+endif
+ifeq ($(OS),MINGW)
+    CFLAGS += $(shell $(SDL_CONFIG) --cflags)
+    LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
 
 # test for presence of speexdsp
-ifneq ($(strip $(shell pkg-config speexdsp --modversion 2> /dev/null)),)
+ifneq ($(strip $(shell $(PKG_CONFIG) speexdsp --modversion 2> /dev/null)),)
   ifneq ($(NO_SPEEX), 1)
     # set speexdsp flags and libraries
-    CFLAGS += $(shell pkg-config speexdsp --cflags) -DUSE_SPEEX
-    LDLIBS += $(shell pkg-config speexdsp --libs)
+    CFLAGS += $(shell $(PKG_CONFIG) speexdsp --cflags) -DUSE_SPEEX
+    LDLIBS += $(shell $(PKG_CONFIG) speexdsp --libs)
   endif
 else
   # warn user
@@ -187,11 +200,11 @@ else
 endif
 
 # test for presence of libsamplerate
-ifneq ($(strip $(shell pkg-config samplerate --modversion 2> /dev/null)),)
+ifneq ($(strip $(shell $(PKG_CONFIG) samplerate --modversion 2> /dev/null)),)
   ifneq ($(NO_SRC), 1)
     # set libsamplerate flags and libraries
-    CFLAGS	+= $(shell pkg-config samplerate --cflags) -DUSE_SRC
-    LDLIBS += $(shell pkg-config samplerate --libs)
+    CFLAGS	+= $(shell $(PKG_CONFIG) samplerate --cflags) -DUSE_SRC
+    LDLIBS += $(shell $(PKG_CONFIG) samplerate --libs)
   endif
 else
   # warn user
@@ -236,7 +249,7 @@ endif
 endif
 
 # set base program pointers and flags
-CC       ?= gcc
+CC        = $(CROSS_COMPILE)gcc
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
@@ -263,25 +276,26 @@ ifeq ($(PLUGINDIR),)
 endif
 
 SRCDIR = ../../src
-OBJDIR = _obj
+OBJDIR = _obj$(POSTFIX)
 
 # list of source files to compile
 SOURCE = \
 	$(SRCDIR)/main.c \
-	$(SRCDIR)/volume.c \
-	$(SRCDIR)/osal_dynamiclib_unix.c
+	$(SRCDIR)/volume.c
+
+ifeq ($(OS),MINGW)
+SOURCE += $(SRCDIR)/osal_dynamiclib_win32.c
+else
+SOURCE += $(SRCDIR)/osal_dynamiclib_unix.c
+endif
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
-# build dependency files
-CFLAGS += -MD
--include $(OBJECTS:.o=.d)
-
 # build targets
-TARGET = mupen64plus-audio-sdl.$(SO_EXTENSION)
+TARGET = mupen64plus-audio-sdl$(POSTFIX).$(SO_EXTENSION)
 
 targets:
 	@echo "Mupen64Plus-audio-sdl makefile. "
@@ -299,6 +313,7 @@ targets:
 	@echo "    NO_SRC=1      == build without libsamplerate; disables src-* high-quality audio resampling"
 	@echo "    NO_SPEEX=1    == build without libspeexdsp; disables speex-* high-quality audio resampling"
 	@echo "    NO_OSS=1      == build without OSS; disables Open Sound System support"
+	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
@@ -320,9 +335,13 @@ uninstall:
 	$(RM) "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
 
 clean:
-	$(RM) -r ./_obj $(TARGET)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
+
+# build dependency files
+CFLAGS += -MD
+-include $(OBJECTS:.o=.d)
 
 ifeq ($(LTO), 1)
   CFLAGS += -flto
