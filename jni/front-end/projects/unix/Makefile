@@ -21,7 +21,7 @@
 # Makefile for Mupen64plus-ui-console
 
 # detect operation system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
@@ -44,6 +44,9 @@ ifeq ("$(UNAME)","OpenBSD")
 endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
+endif
+ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
+  OS = MINGW
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -90,8 +93,18 @@ endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
-CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -pthread -I../../src
-LDLIBS += -pthread
+
+# default configuration programs
+SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+
+CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -I../../src
+ifeq ($(OS), MINGW)
+  CFLAGS += -lpthread
+  LDLIBS += -lpthread
+else
+  CFLAGS += -pthread
+  LDLIBS += -pthread
+endif
 
 ifeq ($(PIE), 1)
   CFLAGS += -fPIE
@@ -107,7 +120,7 @@ ifeq ($(OS), LINUX)
 endif
 ifeq ($(OS), OSX)
   # The mac version of SDL requires inclusion of SDL_main in the executable
-  LDLIBS += -ldl $(shell sdl-config --libs)
+  LDLIBS += -ldl $(shell $(SDL_CONFIG) --libs)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
@@ -117,6 +130,13 @@ ifeq ($(OS), OSX)
       LDFLAGS += -arch i686
     endif
   endif
+endif
+
+ifeq ($(OS), MINGW)
+  # Do NOT include SDL_main for Windows; we are building a console app!
+  # NO -mwindows either!  (it will still be a valid 32-bit Windows program)
+  CFLAGS += -I/usr/local/include/SDL -D_GNU_SOURCE=1
+  LDLIBS += -L/usr/local/lib -lmingw32 -lSDL
 endif
 
 ifeq ($(BIG_ENDIAN), 1)
@@ -163,8 +183,8 @@ endif
 endif
 
 # set base program pointers and flags
-CC       ?= gcc
-CXX      ?= g++
+CC        = $(CROSS_COMPILE)gcc
+CXX       = $(CROSS_COMPILE)g++
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
@@ -201,7 +221,13 @@ ifeq ($(MANDIR),)
 endif
 
 SRCDIR = ../../src
-OBJDIR = _obj
+OBJDIR = _obj$(POSTFIX)
+
+ifeq ("$(OS)","MINGW")
+  EXEEXT = .exe
+else
+  EXEEXT =
+endif
 
 # list of source files to compile
 SOURCE = \
@@ -209,9 +235,17 @@ SOURCE = \
 	$(SRCDIR)/compare_core.c \
 	$(SRCDIR)/core_interface.c \
 	$(SRCDIR)/main.c \
-	$(SRCDIR)/plugin.c \
+	$(SRCDIR)/plugin.c
+
+ifeq ($(OS), MINGW)
+SOURCE += \
+	$(SRCDIR)/osal_dynamiclib_win32.c \
+	$(SRCDIR)/osal_files_win32.c
+else
+SOURCE += \
 	$(SRCDIR)/osal_dynamiclib_unix.c \
 	$(SRCDIR)/osal_files_unix.c
+endif
 
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
@@ -219,7 +253,7 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
-TARGET = mupen64plus
+TARGET = mupen64plus$(POSTFIX)$(EXEEXT)
 
 targets:
 	@echo "Mupen64Plus-ui-console makefile."
@@ -236,6 +270,7 @@ targets:
 	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3)"
 	@echo "    PIE=(1|0)      == Force enable/disable of position independent executables"
+	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path    == install/uninstall prefix (default: /usr/local/)"
 	@echo "    BINDIR=path    == path to install mupen64plus binary (default: PREFIX/bin/)"
@@ -249,7 +284,7 @@ targets:
 all: $(TARGET)
 
 clean:
-	$(RM) -r ./_obj $(TARGET)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
 
@@ -257,10 +292,10 @@ install: $(TARGET)
 	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
 	$(INSTALL) -m 0755 $(INSTALL_STRIP_FLAG) $(TARGET) "$(DESTDIR)$(BINDIR)"
 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6"
-	$(INSTALL) -m 0644 ../../doc/mupen64plus.6.gz "$(DESTDIR)$(MANDIR)/man6"
+	$(INSTALL) -m 0644 ../../doc/mupen64plus.6 "$(DESTDIR)$(MANDIR)/man6"
 
 uninstall:
-	$(RM) "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/man6/mupen64plus.6.gz"
+	$(RM) "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/man6/mupen64plus.6"
 
 # build dependency files
 CFLAGS += -MD
