@@ -23,6 +23,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#if defined(__MINGW32__)
+#include <pthread.h> /* localtime_r on mingw */
+#endif
 
 #include "memory.h"
 #include "pif.h"
@@ -255,7 +258,7 @@ static void EepromCommand(unsigned char *Command)
             break;
         case 2:
             time(&curtime_time);
-#if defined(WIN32)
+#if defined(WIN32) && !defined(__MINGW32__)
             localtime_s(&curtime, &curtime_time);
 #else
             localtime_r(&curtime_time, &curtime);

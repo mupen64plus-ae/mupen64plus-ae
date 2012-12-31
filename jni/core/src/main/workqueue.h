@@ -1,10 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - savestates.h                                            *
+ *   Mupen64plus - util.h                                                  *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2012 CasualJames                                        *
- *   Copyright (C) 2009 Olejl Tillin9                                      *
- *   Copyright (C) 2008 Richard42 Tillin9                                  *
- *   Copyright (C) 2002 Hacktarux                                          *
+ *   Copyright (C) 2012 Mupen64plus development team                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -22,36 +19,47 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef __SAVESTAVES_H__
-#define __SAVESTAVES_H__
+#ifndef __WORKQUEUE_H__
+#define __WORKQUEUE_H__
 
-typedef enum _savestates_job
+#include "list.h"
+
+struct work_struct *work;
+typedef void (*work_func_t)(struct work_struct *work);
+struct work_struct {
+    work_func_t func;
+    struct list_head list;
+};
+
+static inline void init_work(struct work_struct *work, work_func_t func)
 {
-    savestates_job_nothing,
-    savestates_job_load,
-    savestates_job_save
-} savestates_job;
+    INIT_LIST_HEAD(&work->list);
+    work->func = func;
+}
 
-typedef enum _savestates_type
+#ifdef M64P_PARALLEL
+
+int workqueue_init(void);
+void workqueue_shutdown(void);
+int queue_work(struct work_struct *work);
+
+#else
+
+static inline int workqueue_init(void)
 {
-    savestates_type_unknown,
-    savestates_type_m64p,
-    savestates_type_pj64_zip,
-    savestates_type_pj64_unc
-} savestates_type;
+    return 0;
+}
 
-savestates_job savestates_get_job(void);
-void savestates_set_job(savestates_job j, savestates_type t, const char *fn);
-void savestates_init(void);
-void savestates_deinit(void);
+static inline void workqueue_shutdown(void)
+{
+}
 
-int savestates_load(void);
-int savestates_save(void);
+static inline int queue_work(struct work_struct *work)
+{
+    work->func(work);
+    return 0;
+}
 
-void savestates_select_slot(unsigned int s);
-unsigned int savestates_get_slot(void);
-void savestates_set_autoinc_slot(int b);
-void savestates_inc_slot(void);
+#endif
 
-#endif /* __SAVESTAVES_H__ */
-
+#endif

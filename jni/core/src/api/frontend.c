@@ -44,6 +44,7 @@
 #include "main/savestates.h"
 #include "main/version.h"
 #include "main/util.h"
+#include "main/workqueue.h"
 #include "osd/screenshot.h"
 #include "plugin/plugin.h"
 
@@ -77,6 +78,8 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     plugin_connect(M64PLUGIN_INPUT, NULL);
     plugin_connect(M64PLUGIN_CORE, NULL);
 
+    savestates_init();
+
     /* next, start up the configuration handling code by loading and parsing the config file */
     if (ConfigInit(ConfigPath, DataPath) != M64ERR_SUCCESS)
         return M64ERR_INTERNAL;
@@ -91,6 +94,8 @@ EXPORT m64p_error CALL CoreStartup(int APIVersion, const char *ConfigPath, const
     /* The ROM database contains MD5 hashes, goodnames, and some game-specific parameters */
     romdatabase_open();
 
+    workqueue_init();
+
     l_CoreInit = 1;
     return M64ERR_SUCCESS;
 }
@@ -103,7 +108,8 @@ EXPORT m64p_error CALL CoreShutdown(void)
     /* close down some core sub-systems */
     romdatabase_close();
     ConfigShutdown();
-    savestates_clear_job();
+    workqueue_shutdown();
+    savestates_deinit();
 
     /* tell SDL to shut down */
     SDL_Quit();
