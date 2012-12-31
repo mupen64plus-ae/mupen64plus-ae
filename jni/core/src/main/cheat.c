@@ -40,9 +40,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <stdio.h>
-#include <string.h>
-
 // local definitions
 #define CHEAT_CODE_MAGIC_VALUE 0xDEAD0000
 
