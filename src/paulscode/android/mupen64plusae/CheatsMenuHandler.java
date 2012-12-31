@@ -19,6 +19,7 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -311,6 +312,11 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                 Notifier.showToast( mActivity, R.string.toast_sdInaccessible );
                 return true;
             }
+            
+            // Make sure that the game save subdirectories exist so that we can write to them
+            new File( mUserPrefs.manualSaveDir ).mkdirs();
+            new File( mUserPrefs.slotSaveDir ).mkdirs();
+            new File( mUserPrefs.autoSaveDir ).mkdirs();
             
             // Notify user that the game activity is starting
             Notifier.showToast( mActivity, R.string.toast_appStarted );
