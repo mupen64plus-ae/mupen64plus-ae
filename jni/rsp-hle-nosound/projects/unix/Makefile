@@ -22,7 +22,7 @@
 # Makefile for Mupen64 HLE RSP plugin in Mupen64plus.
 
 # detect operating system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
@@ -58,6 +58,11 @@ endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
   SO_EXTENSION = so
+  SHARED = -shared
+endif
+ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
+  OS = MINGW
+  SO_EXTENSION = dll
   SHARED = -shared
 endif
 ifeq ("$(OS)","NONE")
@@ -187,8 +192,8 @@ endif
 endif
 
 # set base program pointers and flags
-CC       ?= gcc
-CXX      ?= g++
+CC        = $(CROSS_COMPILE)gcc
+CXX       = $(CROSS_COMPILE)g++
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
@@ -216,7 +221,7 @@ ifeq ($(PLUGINDIR),)
 endif
 
 SRCDIR = ../../src
-OBJDIR = _obj
+OBJDIR = _obj$(POSTFIX)
 
 # list of source files to compile
 SOURCE = \
@@ -235,7 +240,7 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
-TARGET = mupen64plus-rsp-hle.$(SO_EXTENSION)
+TARGET = mupen64plus-rsp-hle$(POSTFIX).$(SO_EXTENSION)
 
 targets:
 	@echo "Mupen64Plus-rsp-hle makefile. "
@@ -250,6 +255,7 @@ targets:
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
+	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    LIBDIR=path   == library prefix (default: PREFIX/lib)"
@@ -270,7 +276,7 @@ uninstall:
 	$(RM) "$(DESTDIR)$(PLUGINDIR)/$(TARGET)"
 
 clean:
-	$(RM) -r ./_obj $(TARGET)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
 
