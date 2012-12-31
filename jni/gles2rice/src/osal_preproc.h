@@ -27,9 +27,13 @@
 
 #if defined(WIN32)
   #include <windows.h>
-  #define strncasecmp _strnicmp
-  #define strcasecmp _stricmp
-  #define ALIGN(BYTES,DATA) __declspec(align(BYTES)) DATA;
+  #if defined(__MINGW32__)
+    #define ALIGN(BYTES,DATA) DATA __attribute__((aligned(BYTES)));
+  #else
+    #define ALIGN(BYTES,DATA) __declspec(align(BYTES)) DATA;
+    #define strncasecmp _strnicmp
+    #define strcasecmp _stricmp
+  #endif
 #else
 
   #define ALIGN(BYTES,DATA) DATA __attribute__((aligned(BYTES)));

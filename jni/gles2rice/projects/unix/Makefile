@@ -22,7 +22,7 @@
 # Makefile for RiceVideo plugin in Mupen64Plus
 
 # detect operating system
-UNAME = $(shell uname -s)
+UNAME ?= $(shell uname -s)
 OS := NONE
 ifeq ("$(UNAME)","Linux")
   OS = LINUX
@@ -59,6 +59,11 @@ endif
 ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
   OS = LINUX
   SO_EXTENSION = so
+  SHARED = -shared
+endif
+ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
+  OS = MINGW
+  SO_EXTENSION = dll
   SHARED = -shared
 endif
 ifeq ("$(OS)","NONE")
@@ -118,6 +123,10 @@ CFLAGS += $(OPTFLAGS) -Wall -ffast-math -fno-strict-aliasing -fvisibility=hidden
 CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
 
+# default configuration programs
+SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+PKG_CONFIG = $(CROSS_COMPILE)pkg-config
+
 ifeq ($(CPU), X86)
   CFLAGS += -msse
 endif
@@ -155,46 +164,61 @@ ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -bundle -framework OpenGL -arch x86_64
+      LDFLAGS += -bundle -arch x86_64
       LDLIBS += -ldl
     else
       CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
-      LDFLAGS += -bundle -framework OpenGL -arch i686
+      LDFLAGS += -bundle -arch i686
       LDLIBS += -ldl
     endif
   endif
 endif
 
 # test for essential build dependencies
-ifeq ($(shell which pkg-config 2>/dev/null),)
-  $(error pkg-config not found)
+ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
+  $(error $(PKG_CONFIG) not found)
 endif
-ifeq ($(shell pkg-config --modversion gl 2>/dev/null),)
-  $(error No OpenGL development libraries found!)
+CFLAGS += $(shell $(PKG_CONFIG) --cflags libpng)
+LDLIBS += $(shell $(PKG_CONFIG) --libs libpng)
+
+# search for OpenGL libraries
+GL_LIBS=
+ifeq ($(OS), OSX)
+  GL_LIBS = -framework OpenGL
 endif
-ifeq ($(shell pkg-config --modversion libpng 2>/dev/null),)
-  $(error No libpng development libraries found!)
+ifeq ($(OS), MINGW)
+  GL_LIBS = -lopengl32
 endif
-CFLAGS += $(shell pkg-config --cflags gl libpng)
-LDLIBS += $(shell pkg-config --libs gl libpng)
+ifeq ("$(GL_LIBS)", "")
+  ifeq ($(shell $(PKG_CONFIG) --modversion gl 2>/dev/null),)
+    $(error No OpenGL development libraries found!)
+  endif
+  CFLAGS += $(shell $(PKG_CONFIG) --cflags gl)
+  GL_LIBS = $(shell $(PKG_CONFIG) --libs gl)
+endif
+LDLIBS += $(GL_LIBS)
 
 # test for presence of SDL
-ifeq ($(shell which sdl-config 2>/dev/null),)
+ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
 ifeq ($(OS),FREEBSD)
-    CFLAGS  += $(shell sdl-config --cflags)
-    LDLIBS += $(shell sdl-config --libs)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+    LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
 ifeq ($(OS),OSX)
-    CFLAGS  += $(shell sdl-config --cflags)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
     LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
 endif
 ifeq ($(OS),LINUX)
-    CFLAGS  += $(shell sdl-config --cflags)
-    LDLIBS += $(shell sdl-config --libs)
+    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+    LDLIBS += $(shell $(SDL_CONFIG) --libs)
+endif
+ifeq ($(OS), MINGW)
+  CFLAGS += $(shell $(SDL_CONFIG) --cflags)
+  LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
 
 # set mupen64plus core API header path
@@ -229,8 +253,8 @@ endif
 endif
 
 # set base program pointers and flags
-CC       ?= gcc
-CXX      ?= g++
+CC        = $(CROSS_COMPILE)gcc
+CXX       = $(CROSS_COMPILE)g++
 RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
@@ -264,7 +288,7 @@ ifeq ($(PLUGINDIR),)
 endif
 
 SRCDIR = ../../src
-OBJDIR = _obj
+OBJDIR = _obj$(POSTFIX)
 
 # list of source files to compile
 SOURCE = \
@@ -272,8 +296,6 @@ SOURCE = \
 	$(SRCDIR)/liblinux/BMGUtils.cpp \
 	$(SRCDIR)/liblinux/bmp.c \
 	$(SRCDIR)/liblinux/pngrw.c \
-	$(SRCDIR)/osal_dynamiclib_unix.c \
-	$(SRCDIR)/osal_files_unix.c \
 	$(SRCDIR)/Blender.cpp \
 	$(SRCDIR)/Combiner.cpp \
 	$(SRCDIR)/CombinerTable.cpp \
@@ -315,6 +337,16 @@ SOURCE = \
 	$(SRCDIR)/VectorMath.cpp \
 	$(SRCDIR)/Video.cpp
 
+ifeq ($(OS),MINGW)
+SOURCE += \
+	$(SRCDIR)/osal_dynamiclib_win32.c \
+	$(SRCDIR)/osal_files_win32.c
+else
+SOURCE += \
+	$(SRCDIR)/osal_dynamiclib_unix.c \
+	$(SRCDIR)/osal_files_unix.c
+endif
+
 # generate a list of object files build, make a temporary directory for them
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(filter %.c, $(SOURCE)))
 OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE)))
@@ -322,7 +354,7 @@ OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
 # build targets
-TARGET = mupen64plus-video-rice.$(SO_EXTENSION)
+TARGET = mupen64plus-video-rice$(POSTFIX).$(SO_EXTENSION)
 
 targets:
 	@echo "Mupen64plus-video-rice N64 Graphics plugin makefile. "
@@ -338,6 +370,7 @@ targets:
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
+	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
@@ -362,7 +395,7 @@ uninstall:
 	$(RM) "$(DESTDIR)$(SHAREDIR)/RiceVideoLinux.ini"
 
 clean:
-	$(RM) -r ./_obj $(TARGET)
+	$(RM) -r $(OBJDIR) $(TARGET)
 
 rebuild: clean all
 
