@@ -303,11 +303,8 @@
     <string name="gameMenu_saveHint">ファイル名</string>
     <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。</string>
     <string name="inputMapPreference_popupPosButtonText">アンマップ</string>
-    <string name="inputMapPreference_xperiaPlay">（アナログスティックとC-パッドはタッチパッドで制御されます。）</string>
     <string name="inputMapPreference_rumble">振動\nパック</string>
     <string name="inputMapPreference_mempak">拡張\nパック</string>
-    <string name="inputMapPreference_calibrate">キャリブレーション</string>
-    <string name="inputMapPreference_calibrateMessage">すべてのアナログスティックを移動し、[OK]を押します。</string>
     <string name="pathPreference_dialogTitle">選択したフォルダ： %1$s</string> 
     <string name="resetPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
     

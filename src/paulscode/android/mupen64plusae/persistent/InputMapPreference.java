@@ -16,9 +16,6 @@
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
  * Authors: littleguy77
- * 
- * Concise implementation inspired by
- * http://stackoverflow.com/questions/4505845/concise-way-of-writing-new-dialogpreference-classes
  */
 package paulscode.android.mupen64plusae.persistent;
 
@@ -209,10 +206,6 @@ public class InputMapPreference extends DialogPreference implements
         // Setup key listening
         mUnmappableKeyCodes = ( new UserPrefs( getContext() ) ).unmappableKeyCodes;
         mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT, mUnmappableKeyCodes ) );
-        
-        // Add a button for calibrating analog axes, if applicable
-        if( AppData.IS_HONEYCOMB_MR1 )
-            builder.setNeutralButton( R.string.inputMapPreference_calibrate, this );
     }
     
     @Override
@@ -235,57 +228,6 @@ public class InputMapPreference extends DialogPreference implements
         
         // Unregister parent providers, new ones added on next click
         mProvider.removeAllProviders();
-    }
-    
-    @Override
-    public void onClick( DialogInterface dialog, int which )
-    {
-        // Handle clicks on the main dialog buttons
-        super.onClick( dialog, which );
-        
-        if( which == DialogInterface.BUTTON_NEUTRAL )
-        {
-            // Calibration button clicked on the main dialog
-            // Due to a quirk in Android, analog axes whose center-point is not zero (e.g. an analog
-            // trigger whose rest position is -1) still produce a zero value at rest until they have
-            // been wiggled a little bit. After that point, their rest position is correctly
-            // recorded. The problem is that LazyProvider calibrates the rest position of each
-            // analog channel based on the first measurement it receives. As a workaround, we
-            // provide a calibration button, which makes the user go through a little dance to
-            // ensure all analog axes are pressed, then re-calibrates itself.
-            // TODO: Find a solution that is automatic (e.g. LazyProvider calibrates per channel)
-            
-            // Remember the dirty state of the preference
-            final String dirtyMap = mMap.serialize();
-            
-            // Prepare calibration dialog strings
-            String title = getContext().getString( R.string.inputMapPreference_calibrate );
-            String message = getContext().getString( R.string.inputMapPreference_calibrateMessage );
-            
-            // Prepare calibration dialog callbacks
-            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick( DialogInterface dialog2, int which2 )
-                {
-                    // Button clicked on the calibration dialog
-                    
-                    // Reset the strength biases if OK clicked
-                    if( which2 == DialogInterface.BUTTON_POSITIVE )
-                        mProvider.resetBiasesLast();
-                    
-                    // Reopen the mapping screen and restore the dirty state
-                    InputMapPreference.this.onClick();
-                    mMap.deserialize( dirtyMap );
-                }
-            };
-            
-            // Create and show the calibration dialog
-            new Builder( getContext() ).setTitle( title ).setMessage( message )
-                    .setNegativeButton( android.R.string.cancel, listener )
-                    .setPositiveButton( android.R.string.ok, listener ).setCancelable( false )
-                    .create().show();
-        }
     }
     
     @Override
