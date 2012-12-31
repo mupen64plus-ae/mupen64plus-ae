@@ -77,7 +77,7 @@ public class TouchMap
     /** Analog background image (fixed). */
     protected Image analogBackImage;
     
-    /** Analog foreground image (moveable). */
+    /** Analog foreground image (movable). */
     protected Image analogForeImage;
     
     /** X-coordinate of the analog background, in percent. */
@@ -462,7 +462,7 @@ public class TouchMap
      */
     private boolean isFilename( String parameter )
     {
-        return parameter != null && parameter.length() > 0 && !parameter.equals( "INFO" )
+        return parameter != null && !parameter.isEmpty() && !parameter.equals( "INFO" )
                 && !parameter.equals( "MASK_COLOR" ) && !parameter.equals( "[<sectionless!>]" );
     }
 }

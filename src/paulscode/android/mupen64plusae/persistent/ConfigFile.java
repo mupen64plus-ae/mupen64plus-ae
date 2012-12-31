@@ -194,7 +194,7 @@ public class ConfigFile
         if( mConfigList == null )
             mConfigList = new LinkedList<ConfigSection>();
         
-        FileInputStream fstream = null;
+        FileInputStream fstream;
         try
         {
             fstream = new FileInputStream( filename );
