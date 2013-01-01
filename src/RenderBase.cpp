@@ -1745,7 +1745,7 @@ void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
 {
     UpdateCombinedMatrix();
 
-    long pVtxBase = (long) (g_pRDRAMu8 + dwAddr);
+    long long pVtxBase = (long long) (g_pRDRAMu8 + dwAddr);
     g_pVtxBase = (FiddledVtx*)pVtxBase;
 
     Matrix &matWorldProject = gRSP.DKRMatrixes[gRSP.DKRCMatrixIndex];

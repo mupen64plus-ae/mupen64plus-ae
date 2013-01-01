@@ -510,7 +510,7 @@ void ConvertI8_16(CTexture *pTexture, const TxtrInfo &tinfo)
     DrawInfo dInfo;
     uint32 nFiddle;
 
-    long pSrc = (long) (tinfo.pPhysicalAddress);
+    long long pSrc = (long long) (tinfo.pPhysicalAddress);
     if (!pTexture->StartUpdate(&dInfo))
         return;
 
