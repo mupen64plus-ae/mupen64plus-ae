@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
     <style name="appTheme" parent="@android:style/Theme" />
+
+    <style name="btnMappable" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">@dimen/inputMapPreferenceButtonSize</item>
+        <item name="android:layout_height">@dimen/inputMapPreferenceButtonSize</item>
+        <item name="android:background">@drawable/button_gray</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:textColor">@android:color/primary_text_dark_nodisable</item>
+    </style>
+
+    <style name="btnSpecialMappable" parent="@style/btnMappable">
+        <item name="android:layout_width">@dimen/inputMapPreferenceButtonSizeX3</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    </style>
+
 </resources>

@@ -43,26 +43,18 @@
 
     <Button
         android:id="@+id/buttonA"
-        android:layout_width="@dimen/inputMapPreferenceButtonSize"
-        android:layout_height="@dimen/inputMapPreferenceButtonSize"
+        style="@style/btnMappable"
         android:layout_below="@+id/buttonB"
         android:layout_toRightOf="@+id/buttonB"
         android:background="@drawable/button_a"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:text="A"
-        android:textColor="@android:color/primary_text_dark_nodisable" />
+        android:text="A" />
 
     <Button
         android:id="@+id/buttonB"
-        android:layout_width="@dimen/inputMapPreferenceButtonSize"
-        android:layout_height="@dimen/inputMapPreferenceButtonSize"
+        style="@style/btnMappable"
         android:layout_alignBottom="@+id/include_c_pad"
         android:layout_toLeftOf="@+id/include_c_pad"
         android:background="@drawable/button_b"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:text="B"
-        android:textColor="@android:color/primary_text_dark_nodisable" />
+        android:text="B" />
 
 </RelativeLayout>
