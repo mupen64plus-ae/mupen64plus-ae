@@ -114,7 +114,26 @@ public class SafeMethods
         {
         }
     }
-
+    
+    /**
+     * Safely wait for a thread to die.
+     * 
+     * @param thread Thread to join.
+     * @param milliseconds Time to wait, in milliseconds (0 to wait indefinitely).
+     */
+    public static void join( Thread thread, int milliseconds )
+    {
+        if( thread == null || milliseconds < 0 )
+            return;
+        try
+        {
+            thread.join( milliseconds );
+        }
+        catch( InterruptedException e )
+        {
+        }
+    }
+    
     /**
      * Safely (?) exit the app.
      * 

@@ -30,6 +30,7 @@ import paulscode.android.mupen64plusae.persistent.OnPreferenceLongClickListener;
 import paulscode.android.mupen64plusae.persistent.OptionCheckBoxPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog;
@@ -71,7 +72,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-
+    
+    // Handle to the thread populating the cheat options
+    private Thread cheatsThread = null;
+    
     public CheatsMenuHandler( MenuActivity activity, AppData appData, UserPrefs userPrefs )
     {
         mActivity = activity;
@@ -92,10 +96,9 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         if( CRC == null || ROM == null || !ROM.equals( mUserPrefs.selectedGame ) )
         {
             ROM = mUserPrefs.selectedGame;
-            TaskHandler.run
+            cheatsThread = TaskHandler.run
             (
                 mActivity, mActivity.getString( R.string.cheatsTaskHandler_title ),
-                mActivity.getString( R.string.cheatsTaskHandler_message ),
                 new TaskHandler.Task()
                 {
                     @Override
@@ -123,7 +126,6 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     {
         if( ROM == null )
             return;
-
         cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_PLAY );
         mActivity.findPreference( GAME_RESUME ).setOnPreferenceClickListener( this );
         mActivity.findPreference( GAME_RESTART ).setOnPreferenceClickListener( this );
@@ -133,7 +135,6 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         {
             for (Preference pref : cheatPreferences)
                 cheatsCategory.addPreference( pref );
-
             return;
         }
         
@@ -283,6 +284,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             
             String cheatArgs = null;
             CheckBoxPreference chkBx;
+            
+            // Although this is apparently not necessary, there is no difference in the delay by commenting it out:
+            // SafeMethods.join( cheatsThread, 0 );
+            
             for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
             {
                 chkBx = (CheckBoxPreference) cheatsCategory.getPreference( i );
@@ -324,7 +329,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             // Launch the appropriate game activity
             Intent intent = new UserPrefs( mActivity ).isXperiaEnabled
                     ? new Intent( mActivity, GameActivityXperiaPlay.class )
-                    : new Intent( mActivity, GameActivity.class );
+                    : new Intent( mActivity, GameActivity.class );            
             
             // TODO: Reconstruct the cheats menu after game closes, rather than reloading the entire menu
             mActivity.finish();
