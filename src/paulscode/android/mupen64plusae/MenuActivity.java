@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import android.text.TextUtils;
 import org.acra.ACRA;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -239,7 +240,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private void processTexturePak( String filename )
     {
-        if( Utility.isNullOrEmpty( filename ) )
+        if( TextUtils.isEmpty( filename ) )
         {
             ErrorLogger.put( "Video", "gles2RiceImportHiResTextures", "Filename not specified in MenuActivity.processTexturePak" );
             Notifier.showToast( this, getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
@@ -259,7 +260,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                     String headerName = Utility.getTexturePackName( textureFile );
                     if( !ErrorLogger.hasError() )
                     {
-                        if( Utility.isNullOrEmpty( headerName ) )
+                        if( TextUtils.isEmpty( headerName ) )
                         {
                             ErrorLogger.setLastError( "getTexturePackName returned null in MenuActivity.processTexturePak" );
                             ErrorLogger.putLastError( "Video", "gles2RiceImportHiResTextures" );

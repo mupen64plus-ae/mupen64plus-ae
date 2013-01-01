@@ -23,9 +23,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.text.TextUtils;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -92,7 +92,7 @@ public class PathPreference extends DialogPreference
     {
         String value = a.getString( index );
         
-        if( Utility.isNullOrEmpty( value ) )
+        if( TextUtils.isEmpty( value ) )
         {
             // Use storage directory if no default provided in XML file
             value = STORAGE_DIR;

@@ -19,6 +19,7 @@ import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.graphics.Point;
+import android.text.TextUtils;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.InputDevice;
@@ -58,20 +59,6 @@ public class Utility
     public static float clamp( float val, float min, float max )
     {
         return Math.max( Math.min( val, max ), min );
-    }
-    
-    /**
-     * Checks if a string is null or empty.
-     * @param string The string to check
-     * @return True if the string is null or empty.
-     *         False otherwise.
-     */
-    public static boolean isNullOrEmpty( String string )
-    {
-        if ( string != null )
-            return string.length() == 0;
-        else
-            return true;
     }
     
     public static Point constrainToOctagon( int dX, int dY, int halfWidth )
@@ -187,7 +174,7 @@ public class Utility
             for( int i = 0; i < ids.length; i++ )
             {
                 InputDevice device = InputDevice.getDevice( ids[i] );
-                
+
                 List<MotionRange> ranges = getPeripheralMotionRanges( device );
                 if( ranges.size() > 0 )
                 {
@@ -329,7 +316,7 @@ public class Utility
     public static String getHeaderCRC( String filename, String tempDir )
     {
         ErrorLogger.put( "READ_HEADER", "fail", "" );
-        if( isNullOrEmpty( filename ) )
+        if( TextUtils.isEmpty( filename ) )
         {
             ErrorLogger.put( "READ_HEADER", "fail", "filename not specified" );
             Log.e( "Utility", "filename not specified in method 'getHeaderCRC'" );
@@ -351,7 +338,7 @@ public class Utility
             
             ErrorLogger.clearLastError();
             String uzFile = unzipFirstROM( new File( filename ), tempDir );
-            if( isNullOrEmpty( uzFile ) )
+            if( TextUtils.isEmpty( uzFile ) )
             {
                 Log.e( "Utility", "Unable to unzip ROM: '" + filename + "'" );
                 if( ErrorLogger.hasError() )

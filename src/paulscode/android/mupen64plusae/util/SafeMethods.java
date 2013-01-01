@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae.util;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.text.TextUtils;
 
 /**
  * A boilerplate class for safely doing things, with simple exception handling.
@@ -36,7 +37,7 @@ public class SafeMethods
      */
     public static boolean toBoolean( String val, boolean fail )
     {
-        if( Utility.isNullOrEmpty( val ) )
+        if( TextUtils.isEmpty( val ) )
             return fail; // Not a boolean
         
         try
@@ -60,7 +61,7 @@ public class SafeMethods
      */
     public static int toInt( String val, int fail )
     {
-        if( Utility.isNullOrEmpty( val ) )
+        if( TextUtils.isEmpty( val ) )
             return fail; // Not a number
         
         try
@@ -84,7 +85,7 @@ public class SafeMethods
      */
     public static float toFloat( String val, float fail )
     {
-        if( Utility.isNullOrEmpty( val ) )
+        if( TextUtils.isEmpty( val ) )
             return fail; // Not a number
         
         try
@@ -125,6 +126,7 @@ public class SafeMethods
     {
         if( thread == null || milliseconds < 0 )
             return;
+
         try
         {
             thread.join( milliseconds );

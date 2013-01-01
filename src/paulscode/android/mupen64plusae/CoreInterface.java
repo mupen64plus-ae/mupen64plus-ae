@@ -37,6 +37,7 @@ import android.media.AudioTrack;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -97,7 +98,7 @@ public class CoreInterface
     }
     private static String appendArg( String prev, String arg )
     {
-        if( Utility.isNullOrEmpty( prev ) )
+        if( TextUtils.isEmpty( prev ) )
             return arg;
         return prev + " " + arg;
     }

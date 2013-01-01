@@ -31,8 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
-import paulscode.android.mupen64plusae.util.Utility;
-
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -180,7 +179,7 @@ public class ConfigFile
     public boolean load( String filename )
     {   
         // Make sure a file was actually specified
-        if( Utility.isNullOrEmpty( filename ) )
+        if( TextUtils.isEmpty( filename ) )
             return false;
         
         // Free any previously loaded data
@@ -214,7 +213,7 @@ public class ConfigFile
         mConfigList.add( section ); // Add it to the list as well
         
         // Loop through reading the remaining sections
-        while( !Utility.isNullOrEmpty( section.nextName ) )
+        while( !TextUtils.isEmpty( section.nextName ) )
         {
             // Get the next section name
             sectionName = section.nextName;
@@ -247,7 +246,7 @@ public class ConfigFile
     public boolean save()
     {
         // No filename was specified.
-        if( Utility.isNullOrEmpty( mFilename ) )
+        if( TextUtils.isEmpty( mFilename ) )
         {
             Log.e( "ConfigFile", "Filename not specified in method save()" );
             return false;   // Quit
@@ -399,7 +398,7 @@ public class ConfigFile
             parameters = new HashMap<String, ConfigParameter>();
             lines = new LinkedList<ConfigLine>();
             
-            if( !Utility.isNullOrEmpty( sectionName ) && !sectionName.equals( "[<sectionless!>]" ) )
+            if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( "[<sectionless!>]" ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
             
             name = sectionName;
@@ -419,7 +418,7 @@ public class ConfigFile
             parameters = new HashMap<String, ConfigParameter>();
             lines = new LinkedList<ConfigLine>();
 
-            if( !Utility.isNullOrEmpty( sectionName ) && !sectionName.equals( "[<sectionless!>]" ) )
+            if( !TextUtils.isEmpty( sectionName ) && !sectionName.equals( "[<sectionless!>]" ) )
                 lines.add( new ConfigLine( ConfigLine.LINE_SECTION, "[" + sectionName + "]\n", null ) );
 
             name = sectionName;
@@ -527,7 +526,7 @@ public class ConfigFile
         public String get( String parameter )
         {
             // Error: no parameters, or parameter was null
-            if( parameters == null || Utility.isNullOrEmpty( parameter ) )
+            if( parameters == null || TextUtils.isEmpty( parameter ) )
                 return null;
             
             ConfigParameter confParam = parameters.get( parameter );
@@ -551,7 +550,7 @@ public class ConfigFile
             ConfigParameter confParam = parameters.get( parameter );
             if( confParam == null )  // New parameter
             {
-                if( !Utility.isNullOrEmpty( value ) )
+                if( !TextUtils.isEmpty( value ) )
                 {
                     confParam = new ConfigParameter( parameter, value );
                     lines.add( new ConfigLine( ConfigLine.LINE_PARAM, parameter + "=" + value + "\n", confParam ) );

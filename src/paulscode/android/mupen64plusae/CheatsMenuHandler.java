@@ -40,6 +40,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenceLongClickListener
@@ -167,7 +168,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         else
         {
             String ROM_name = configSection.get( "Name" );
-            if( Utility.isNullOrEmpty( ROM_name ) )
+            if( TextUtils.isEmpty( ROM_name ) )
             {
                 cheatsScreen.setTitle( mActivity.getString( R.string.cheats_title ) );
             }
@@ -184,10 +185,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
             String val_N, val_O, title;
             String val = " ";
             LongClickCheckBoxPreference checkBoxPref;
-            for( int i = 0; !Utility.isNullOrEmpty( val ); i++ )
+            for( int i = 0; !TextUtils.isEmpty( val ); i++ )
             {
                 val = configSection.get( "Cheat" + i );
-                if( !Utility.isNullOrEmpty( val ) )
+                if( !TextUtils.isEmpty( val ) )
                 {
                     x = val.indexOf( "," );
                     if( x < 3 || x >= val.length() )
@@ -197,11 +198,11 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                     Cheat_title.put( "Cheat" + i, title );
                     
                     val_N = configSection.get( "Cheat" + i + "_N" );
-                    if( !Utility.isNullOrEmpty( val_N ) )
+                    if( !TextUtils.isEmpty( val_N ) )
                         Cheat_N.put( "Cheat" + i, val_N );
                     
                     val_O = configSection.get( "Cheat" + i + "_O" );
-                    if( !Utility.isNullOrEmpty( val_O ) )
+                    if( !TextUtils.isEmpty( val_O ) )
                     {
                         Cheat_O.put( "Cheat" + i, val_O );
 
@@ -252,7 +253,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         else
         {
             title = Cheat_title.get( whichCheat );
-            if( Utility.isNullOrEmpty( title ) )
+            if( TextUtils.isEmpty( title ) )
             {
                 title = mActivity.getString( R.string.cheatNotes_title );
             }
@@ -266,7 +267,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         else
         {
             summary = Cheat_N.get( whichCheat );
-            if( Utility.isNullOrEmpty( summary ) )
+            if( TextUtils.isEmpty( summary ) )
             {
                 summary = mActivity.getString( R.string.cheatNotes_none );
             }
