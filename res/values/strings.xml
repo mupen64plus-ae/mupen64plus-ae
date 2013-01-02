@@ -109,30 +109,15 @@
     <string name="touchscreenOctagonJoystick_summary">Constrain analog motion to an octagon, like the original N64 controller</string>
     
     <!-- Peripherals Menu -->
-    <string name="peripheralMap1_title">Gamepad/keyboard</string>
+    <string name="peripheralMap1_title">Controller</string>
     <string name="peripheralMap2_title">Player 2</string>
     <string name="peripheralMap3_title">Player 3</string>
     <string name="peripheralMap4_title">Player 4</string>
-    <string name="peripheralMap_summary">Button/joystick mappings</string>
+    <string name="peripheralMap_summary">Button and special function mapping</string>
     <string name="volumeKeysEnabled_title">Mappable volume keys</string>
     <string name="volumeKeysEnabled_summary">Allow volume keys to be mapped to controls</string>
     <string name="menuPeripheralInfo_title">Controller info</string>
     <string name="menuPeripheralInfo_summary">Peripheral hardware and model information</string>
-    
-    <!-- Special Functions -->
-    <string name="specialFunction_title">Special functions</string>
-    <string name="specialFunction_summary">Mupen64Plus hotkeys</string>
-    <string name="inputCodeIncrementSlot_title">Increment slot</string>
-    <string name="inputCodeSaveSlot_title">@string/ingameQuicksave_title</string>
-    <string name="inputCodeLoadSlot_title">@string/ingameQuickload_title</string>
-    <string name="inputCodeReset_title">@string/ingameReset_title</string>
-    <string name="inputCodeStop_title">Stop</string>
-    <string name="inputCodePause_title">Pause</string>
-    <string name="inputCodeFastForward_title">Fast forward</string>
-    <string name="inputCodeFrameAdvance_title">Frame advance</string>
-    <string name="inputCodeSpeedUp_title">Speed up</string>
-    <string name="inputCodeSpeedDown_title">Speed down</string>
-    <string name="inputCodeGameshark_title">Gameshark</string>
     
     <!-- Audio Menu -->
     <string name="swapAudioChannels_title">Swap audio channels</string>
@@ -314,7 +299,28 @@
     <string name="toast_resettingGame">Resetting…</string>
     <string name="toast_overwritingGame">Overwriting %1$s…</string>
     
-    <!-- Other Strings -->
+    <!-- Input Mapping -->
+    <string name="inputMapPreference_showSpecial">Show special functions</string>
+    <string name="inputMapPreference_hideSpecial">Hide special functions</string>
+    <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
+    <string name="inputMapPreference_popupPosButtonText">Unmap</string>
+    <string name="inputMapPreference_aPadXperiaPlay">Analog stick controlled with touchpad</string>
+    <string name="inputMapPreference_cPadXperiaPlay">C-pad controlled with touchpad</string>
+    <string name="inputMapPreference_rumble">Rumble Pak</string>
+    <string name="inputMapPreference_mempak">Expansion Pak</string>
+    <string name="inputMapPreference_incrementSlot">Increment slot</string>
+    <string name="inputMapPreference_saveSlot">@string/ingameQuicksave_title</string>
+    <string name="inputMapPreference_loadSlot">@string/ingameQuickload_title</string>
+    <string name="inputMapPreference_reset">@string/ingameReset_title</string>
+    <string name="inputMapPreference_pause">Pause</string>
+    <string name="inputMapPreference_stop">Stop</string>
+    <string name="inputMapPreference_frameAdvance">Frame advance</string>
+    <string name="inputMapPreference_fastForward">Fast forward</string>
+    <string name="inputMapPreference_speedDown">Speed down</string>
+    <string name="inputMapPreference_speedUp">Speed up</string>
+    <string name="inputMapPreference_gameshark">Gameshark</string>
+    
+    <!-- Asset Extractor -->
     <string name="dataDownloader_connectingTo">Connecting to %1$s</string>
     <string name="dataDownloader_downloadingFrom">Downloading data from %1$s</string>
     <string name="dataDownloader_errorDownloadingFrom">Error downloading data from %1$s</string>
@@ -322,18 +328,14 @@
     <string name="dataDownloader_failedConnectingTo">Failed connecting to %1$s</string>
     <string name="dataDownloader_finished">Finished</string>
     <string name="dataDownloader_progress">%1$.0f%% done: %2$s</string>
+    
+    <!-- Other Strings -->
     <string name="gameMenu_confirmFile">Overwrite %1$s?</string>
     <string name="gameMenu_confirmReset">Reset game? All progress since your last save will be lost.</string>
     <string name="gameMenu_saveHint">filename</string>
     <string name="gameMenu_speedHint">Speed between 10 to 300</string>
     <string name="hardwareMapPrompt_title">Player %1$d setup</string>
     <string name="hardwareMapPrompt_message">Press a button/stick on every device used by Player %1$d, then touch OK…</string>
-    <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
-    <string name="inputMapPreference_popupPosButtonText">Unmap</string>
-    <string name="inputMapPreference_aPadXperiaPlay">Analog stick controlled with touchpad</string>
-    <string name="inputMapPreference_cPadXperiaPlay">C-pad controlled with touchpad</string>
-    <string name="inputMapPreference_rumble">Rumble\nPak</string>
-    <string name="inputMapPreference_mempak">Expansion\nPak</string>
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
     <string name="resetPrefs_popupMessage">Reset all preferences to their defaults?</string>
     

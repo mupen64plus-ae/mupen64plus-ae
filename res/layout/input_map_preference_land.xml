@@ -118,23 +118,9 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 
-        <TableRow
-            android:id="@+id/tableRowPaks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp" >
-
-            <Button
-                android:id="@+id/buttonMempak"
-                style="@style/btnSpecialMappable"
-                android:text="@string/inputMapPreference_mempak" />
-
-            <Button
-                android:id="@+id/buttonRumble"
-                style="@style/btnSpecialMappable"
-                android:layout_marginLeft="5dp"
-                android:text="@string/inputMapPreference_rumble" />
-        </TableRow>
+        <include
+            android:id="@+id/include_all_special_keys"
+            layout="@layout/all_special_keys" />
     </LinearLayout>
 
 </ScrollView>

@@ -212,18 +212,6 @@ public class UserPrefs
     /** Whether game should resume or restart. */
     public final boolean toRestart;
     
-    public final int inputCodeIncrementSlot;
-    public final int inputCodeSaveSlot;
-    public final int inputCodeLoadSlot;
-    public final int inputCodeReset;
-    public final int inputCodeStop;
-    public final int inputCodePause;
-    public final int inputCodeFastForward;
-    public final int inputCodeFrameAdvance;
-    public final int inputCodeSpeedUp;
-    public final int inputCodeSpeedDown;
-    public final int inputCodeGameshark;
-    
     /**
      * Instantiates a new user preferences wrapper.
      * 
@@ -307,19 +295,6 @@ public class UserPrefs
         // Cheat prefs
         cheatOptions = CheatsMenuHandler.cheatOptions;
         toRestart = CheatsMenuHandler.toRestart;
-        
-        // Input codes
-        inputCodeIncrementSlot = prefsData.getInt( "inputCodeIncrementSlot", 0 );
-        inputCodeSaveSlot = prefsData.getInt( "inputCodeSaveSlot", 0 );
-        inputCodeLoadSlot = prefsData.getInt( "inputCodeLoadSlot", 0 );
-        inputCodeReset = prefsData.getInt( "inputCodeReset", 0 );
-        inputCodeStop = prefsData.getInt( "inputCodeStop", 0 );
-        inputCodePause = prefsData.getInt( "inputCodePause", 0 );
-        inputCodeFastForward = prefsData.getInt( "inputCodeFastForward", 0 );
-        inputCodeFrameAdvance = prefsData.getInt( "inputCodeFrameAdvance", 0 );
-        inputCodeSpeedUp = prefsData.getInt( "inputCodeSpeedUp", 0 );
-        inputCodeSpeedDown = prefsData.getInt( "inputCodeSpeedDown", 0 );
-        inputCodeGameshark = prefsData.getInt( "inputCodeGameshark", 0 );
         
         // Touchscreen layouts
         boolean isCustom = false;

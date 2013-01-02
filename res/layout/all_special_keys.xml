@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/inputMapSpecialKeys"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonMempak"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapPreference_mempak" />
+
+        <Button
+            android:id="@+id/buttonRumble"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapPreference_rumble" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonIncrementSlot"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapPreference_incrementSlot" />
+
+        <Button
+            android:id="@+id/buttonSaveSlot"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapPreference_saveSlot" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonReset"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapPreference_reset" />
+
+        <Button
+            android:id="@+id/buttonLoadSlot"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapPreference_loadSlot" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonPause"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapPreference_pause" />
+
+        <Button
+            android:id="@+id/buttonStop"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapPreference_stop" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonFrameAdvance"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapPreference_frameAdvance" />
+
+        <Button
+            android:id="@+id/buttonFastForward"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapPreference_fastForward" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonSpeedDown"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapPreference_speedDown" />
+
+        <Button
+            android:id="@+id/buttonSpeedUp"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapPreference_speedUp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonGameshark"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapPreference_gameshark" />
+    </TableRow>
+
+</TableLayout>

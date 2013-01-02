@@ -97,11 +97,11 @@
     <string name="touchscreenOctagonJoystick_summary">八角形のパスにアナログ動きを拘束。 これは、元のN64のコントローラのようなものだ。</string>
     
     <!-- Peripherals Menu -->
-    <string name="peripheralMap1_title">プレイヤー1</string>
+    <string name="peripheralMap1_title">Controller</string>
     <string name="peripheralMap2_title">プレイヤー2</string>
     <string name="peripheralMap3_title">プレイヤー3</string>
     <string name="peripheralMap4_title">プレイヤー4</string>
-    <string name="peripheralMap_summary">ボタンとアナログスティック設定</string>
+    <string name="peripheralMap_summary">Button and special function mapping</string>
     <string name="volumeKeysEnabled_title">ボリュームキーを有効</string>
     <string name="volumeKeysEnabled_summary">コントローラのボタンとしてボリュームキーを使用</string>
     <string name="menuPeripheralInfo_title">コントローラ情報</string>
@@ -255,24 +255,6 @@
     <string name="gles2N64Frameskip_entryExactly4">唯一の4フレームをスキップ</string>
     <string name="gles2N64Frameskip_entryExactly5">唯一の5フレームをスキップ</string>
     
-    <!-- Special Functions -->
-    <string name="specialFunction_entry0">ストップ</string>
-    <string name="specialFunction_entry1">フルスクリーン</string>
-    <string name="specialFunction_entry2">ステートセーブ</string>
-    <string name="specialFunction_entry3">ステートロード</string>
-    <string name="specialFunction_entry4">インクリメントスロット</string>
-    <string name="specialFunction_entry5">リセット</string>
-    <string name="specialFunction_entry6">スピードダウン</string>
-    <string name="specialFunction_entry7">スピードアップ</string>
-    <string name="specialFunction_entry8">スクリーンショット</string>
-    <string name="specialFunction_entry9">一時停止</string>
-    <string name="specialFunction_entry10">ミュート</string>
-    <string name="specialFunction_entry11">音量を上げる</string>
-    <string name="specialFunction_entry12">音量を下げる</string>
-    <string name="specialFunction_entry13">早送り</string>
-    <string name="specialFunction_entry14">アドバンスフレーム</string>
-    <string name="specialFunction_entry15">Gameshark</string>
-    
     <!-- ******************************************** -->
     <!-- Other Strings                                -->
     <!-- ******************************************** -->
@@ -290,7 +272,28 @@
     <string name="toast_resettingGame">Resetting…</string>
     <string name="toast_overwritingGame">%1$s上書き</string>
     
-    <!-- Other Strings -->
+    <!-- Input Mapping -->
+    <string name="inputMapPreference_showSpecial">Show special functions</string>
+    <string name="inputMapPreference_hideSpecial">Hide special functions</string>
+    <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。</string>
+    <string name="inputMapPreference_popupPosButtonText">アンマップ</string>
+    <string name="inputMapPreference_aPadXperiaPlay">Analog stick controlled with touchpad</string>
+    <string name="inputMapPreference_cPadXperiaPlay">C-pad controlled with touchpad</string>
+    <string name="inputMapPreference_rumble">Rumble Pak</string>
+    <string name="inputMapPreference_mempak">Expansion Pak</string>
+    <string name="inputMapPreference_incrementSlot">Increment slot</string>
+    <string name="inputMapPreference_saveSlot">@string/ingameQuicksave_title</string>
+    <string name="inputMapPreference_loadSlot">@string/ingameQuickload_title</string>
+    <string name="inputMapPreference_reset">@string/ingameReset_title</string>
+    <string name="inputMapPreference_pause">Pause</string>
+    <string name="inputMapPreference_stop">Stop</string>
+    <string name="inputMapPreference_frameAdvance">Frame advance</string>
+    <string name="inputMapPreference_fastForward">Fast forward</string>
+    <string name="inputMapPreference_speedDown">Speed down</string>
+    <string name="inputMapPreference_speedUp">Speed up</string>
+    <string name="inputMapPreference_gameshark">Gameshark</string>
+    
+    <!-- Asset Extractor -->
     <string name="dataDownloader_connectingTo">%1$sへの接続</string>
     <string name="dataDownloader_downloadingFrom">%1$sからデータをダウンロードします</string>
     <string name="dataDownloader_errorDownloadingFrom">%1$sからデータをダウンロード中にエラー</string>
@@ -298,13 +301,11 @@
     <string name="dataDownloader_failedConnectingTo">%1$sに接続できません</string>
     <string name="dataDownloader_finished">完成した</string>
     <string name="dataDownloader_progress">%1$.0f%% が行わ: ファイル %2$s</string>
+    
+    <!-- Other Strings -->
     <string name="gameMenu_confirmFile">%1$s上書き?</string>
     <string name="gameMenu_confirmReset">ゲームをリセットしますか？ すべての進行状況は、前回の保存以降に失われます。</string>
     <string name="gameMenu_saveHint">ファイル名</string>
-    <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。</string>
-    <string name="inputMapPreference_popupPosButtonText">アンマップ</string>
-    <string name="inputMapPreference_rumble">振動\nパック</string>
-    <string name="inputMapPreference_mempak">拡張\nパック</string>
     <string name="pathPreference_dialogTitle">選択したフォルダ： %1$s</string> 
     <string name="resetPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
     

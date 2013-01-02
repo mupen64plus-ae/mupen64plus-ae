@@ -25,7 +25,6 @@ import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.HardwareMap;
-import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -325,20 +324,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             mControllers.add( new PeripheralController( 4, mUserPrefs.inputMap4,
                     mKeyProvider, axisProvider ) );
         }
-        
-        // Add the global functions to Player 1's input map
-        // TODO: This will overwrite any existing mappings if there's a conflict - UI needs to be clear
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_INCREMENT_SLOT, mUserPrefs.inputCodeIncrementSlot );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_SAVE_SLOT, mUserPrefs.inputCodeSaveSlot );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_LOAD_SLOT, mUserPrefs.inputCodeLoadSlot );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_RESET, mUserPrefs.inputCodeReset );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_STOP, mUserPrefs.inputCodeStop );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_PAUSE, mUserPrefs.inputCodePause );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_FAST_FORWARD, mUserPrefs.inputCodeFastForward );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_FRAME_ADVANCE, mUserPrefs.inputCodeFrameAdvance );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_SPEED_UP, mUserPrefs.inputCodeSpeedUp );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_SPEED_DOWN, mUserPrefs.inputCodeSpeedDown );
-        mUserPrefs.inputMap1.mapInput( InputMap.FUNC_GAMESHARK, mUserPrefs.inputCodeGameshark );
         
         // Setup multiplayer hardware mapping
         HardwareMap.setEnabled( mUserPrefs.isMultiplayer );

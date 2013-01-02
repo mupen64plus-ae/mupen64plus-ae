@@ -35,6 +35,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
@@ -62,8 +63,10 @@ public class InputMapPreference extends DialogPreference implements
     private final LazyProvider mProvider;
     private CompoundButton mToggleWidget;
     private TextView mFeedbackText;
-    private Button[] mN64Button;
+    private final Button[] mN64Button;
     private List<Integer> mUnmappableKeyCodes;
+    private boolean mSpecialKeysVisible = false;
+    private boolean mDoReclick = false;
     
     public InputMapPreference( Context context, AttributeSet attrs )
     {
@@ -72,7 +75,7 @@ public class InputMapPreference extends DialogPreference implements
         mMap = new InputMap();
         mProvider = new LazyProvider();
         mProvider.registerListener( this );
-        mN64Button = new Button[InputMap.NUM_PLAYER_INPUTS];
+        mN64Button = new Button[InputMap.NUM_MAPPABLES];
         setWidgetLayoutResource( R.layout.widget_toggle );
         
         // Select the appropriate dialog layout according to device configuration. Although you can
@@ -164,17 +167,20 @@ public class InputMapPreference extends DialogPreference implements
             view.findViewById( R.id.aPadXperiaPlay ).setVisibility( View.GONE );
             view.findViewById( R.id.cPadXperiaPlay ).setVisibility( View.GONE );
         }
+        int specialKeyVisibility = mSpecialKeysVisible ? View.VISIBLE : View.GONE;
+        view.findViewById( R.id.include_all_special_keys ).setVisibility( specialKeyVisibility );
         
         // Get the text view object
         mFeedbackText = (TextView) view.findViewById( R.id.textFeedback );
         
         // Create a button list to simplify highlighting and mapping
-        setupButton( view, R.id.buttonA, AbstractController.BTN_A );
-        setupButton( view, R.id.buttonB, AbstractController.BTN_B );
-        setupButton( view, R.id.buttonL, AbstractController.BTN_L );
-        setupButton( view, R.id.buttonR, AbstractController.BTN_R );
-        setupButton( view, R.id.buttonZ, AbstractController.BTN_Z );
-        setupButton( view, R.id.buttonS, AbstractController.START );
+        // @formatter:off
+        setupButton( view, R.id.buttonA,  AbstractController.BTN_A );
+        setupButton( view, R.id.buttonB,  AbstractController.BTN_B );
+        setupButton( view, R.id.buttonL,  AbstractController.BTN_L );
+        setupButton( view, R.id.buttonR,  AbstractController.BTN_R );
+        setupButton( view, R.id.buttonZ,  AbstractController.BTN_Z );
+        setupButton( view, R.id.buttonS,  AbstractController.START );
         setupButton( view, R.id.buttonCR, AbstractController.CPD_R );
         setupButton( view, R.id.buttonCL, AbstractController.CPD_L );
         setupButton( view, R.id.buttonCD, AbstractController.CPD_D );
@@ -187,8 +193,20 @@ public class InputMapPreference extends DialogPreference implements
         setupButton( view, R.id.buttonAL, InputMap.AXIS_L );
         setupButton( view, R.id.buttonAD, InputMap.AXIS_D );
         setupButton( view, R.id.buttonAU, InputMap.AXIS_U );
-        setupButton( view, R.id.buttonRumble, InputMap.BTN_RUMBLE );
-        setupButton( view, R.id.buttonMempak, InputMap.BTN_MEMPAK );
+        setupButton( view, R.id.buttonRumble,        InputMap.BTN_RUMBLE );
+        setupButton( view, R.id.buttonMempak,        InputMap.BTN_MEMPAK );
+        setupButton( view, R.id.buttonIncrementSlot, InputMap.FUNC_INCREMENT_SLOT );
+        setupButton( view, R.id.buttonSaveSlot,      InputMap.FUNC_SAVE_SLOT );
+        setupButton( view, R.id.buttonLoadSlot,      InputMap.FUNC_LOAD_SLOT );
+        setupButton( view, R.id.buttonReset,         InputMap.FUNC_RESET );
+        setupButton( view, R.id.buttonStop,          InputMap.FUNC_STOP );
+        setupButton( view, R.id.buttonPause,         InputMap.FUNC_PAUSE );
+        setupButton( view, R.id.buttonFastForward,   InputMap.FUNC_FAST_FORWARD );
+        setupButton( view, R.id.buttonFrameAdvance,  InputMap.FUNC_FRAME_ADVANCE );
+        setupButton( view, R.id.buttonSpeedUp,       InputMap.FUNC_SPEED_UP );
+        setupButton( view, R.id.buttonSpeedDown,     InputMap.FUNC_SPEED_DOWN );
+        setupButton( view, R.id.buttonGameshark,     InputMap.FUNC_GAMESHARK );
+        // @formatter:on
         
         // Setup analog axis listening, if applicable
         if( AppData.IS_HONEYCOMB_MR1 )
@@ -206,15 +224,38 @@ public class InputMapPreference extends DialogPreference implements
         // Setup key listening
         mUnmappableKeyCodes = ( new UserPrefs( getContext() ) ).unmappableKeyCodes;
         mProvider.addProvider( new KeyProvider( builder, ImeFormula.DEFAULT, mUnmappableKeyCodes ) );
+        
+        // Add neutral button to toggle special function visibility
+        int resId = mSpecialKeysVisible
+                ? R.string.inputMapPreference_hideSpecial
+                : R.string.inputMapPreference_showSpecial;
+        builder.setNeutralButton( resId, new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                mSpecialKeysVisible = !mSpecialKeysVisible;
+                mDoReclick = true;
+            }
+        } );
     }
     
     @Override
     protected void onDialogClosed( boolean positiveResult )
     {
+        // Unregister parent providers, new ones added on next click
+        mProvider.removeAllProviders();
+        
         // Clicking Cancel or Ok returns us to the parent preference menu. We must return to a clean
         // state so that the toggle doesn't persist unwanted changes.
         
-        if( positiveResult )
+        if( mDoReclick )
+        {
+            // User pressed neutral button: keep dirty state by immediately reopening
+            mDoReclick = false;
+            onClick();
+        }
+        else if( positiveResult )
         {
             // User pressed Ok: clean the state by persisting map
             persistString( mMap.serialize() );
@@ -225,9 +266,6 @@ public class InputMapPreference extends DialogPreference implements
             // User pressed Cancel/Back: clean the state by restoring map
             mMap.deserialize( getPersistedString( "" ) );
         }
-        
-        // Unregister parent providers, new ones added on next click
-        mProvider.removeAllProviders();
     }
     
     @Override

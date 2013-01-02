@@ -111,17 +111,9 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 
-        <Button
-            android:id="@+id/buttonMempak"
-            style="@style/btnSpecialMappable"
-            android:layout_marginTop="5dp"
-            android:text="@string/inputMapPreference_mempak" />
-
-        <Button
-            android:id="@+id/buttonRumble"
-            style="@style/btnSpecialMappable"
-            android:layout_marginTop="5dp"
-            android:text="@string/inputMapPreference_rumble" />
+        <include
+            android:id="@+id/include_all_special_keys"
+            layout="@layout/all_special_keys" />
     </LinearLayout>
 
 </ScrollView>
