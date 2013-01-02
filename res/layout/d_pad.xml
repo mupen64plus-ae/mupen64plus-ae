@@ -42,6 +42,8 @@
         android:id="@+id/buttonDC"
         style="@style/btnMappable"
         android:layout_centerInParent="true"
-        android:enabled="false" />
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 
 </RelativeLayout>

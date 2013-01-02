@@ -32,7 +32,9 @@
             android:layout_height="@dimen/inputMapPreferenceButtonSizeX1_5"
             android:layout_centerInParent="true"
             android:background="@drawable/analog_ring"
-            android:enabled="false" />
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:id="@+id/buttonAU"

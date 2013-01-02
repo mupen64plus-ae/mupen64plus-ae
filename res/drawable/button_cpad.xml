@@ -15,6 +15,19 @@
         </shape>
     </item>
 
+    <item android:state_focused="true" >
+        <shape
+            android:shape="oval" >
+            <gradient
+                android:startColor="@color/holo_purple1"
+                android:endColor="@color/holo_purple2"
+                android:angle="90" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/holo_purple2" />
+        </shape>
+    </item>
+
     <item>        
         <shape
             android:shape="oval" >
