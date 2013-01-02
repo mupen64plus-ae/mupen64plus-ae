@@ -36,39 +36,43 @@
 
         <Button
             android:id="@+id/buttonAU"
-            style="@style/btnMappable"
+            style="@style/btnMappableNoText"
             android:layout_height="@dimen/inputMapPreferenceButtonSizeX1_5"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
-            android:drawableBottom="@drawable/ic_arrow_u" />
+            android:drawableTop="@drawable/ic_arrow_u"
+            android:text="@string/inputMapPreference_btnAU" />
 
         <Button
             android:id="@+id/buttonAD"
-            style="@style/btnMappable"
+            style="@style/btnMappableNoText"
             android:layout_height="@dimen/inputMapPreferenceButtonSizeX1_5"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
-            android:drawableTop="@drawable/ic_arrow_d" />
+            android:drawableBottom="@drawable/ic_arrow_d"
+            android:text="@string/inputMapPreference_btnAD" />
 
         <Button
             android:id="@+id/buttonAL"
-            style="@style/btnMappable"
+            style="@style/btnMappableNoText"
             android:layout_width="@dimen/inputMapPreferenceButtonSizeX1_5"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
-            android:drawableRight="@drawable/ic_arrow_l" />
+            android:drawableLeft="@drawable/ic_arrow_l"
+            android:text="@string/inputMapPreference_btnAL" />
 
         <Button
             android:id="@+id/buttonAR"
-            style="@style/btnMappable"
+            style="@style/btnMappableNoText"
             android:layout_width="@dimen/inputMapPreferenceButtonSizeX1_5"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
-            android:drawableLeft="@drawable/ic_arrow_r" />
+            android:drawableRight="@drawable/ic_arrow_r"
+            android:text="@string/inputMapPreference_btnAR" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -72,20 +72,20 @@
                 layout="@layout/a_pad" />
 
             <Button
-                android:id="@+id/buttonA"
-                style="@style/btnMappable"
-                android:layout_below="@+id/buttonB"
-                android:layout_toRightOf="@+id/buttonB"
-                android:background="@drawable/button_a"
-                android:text="A" />
-
-            <Button
                 android:id="@+id/buttonB"
                 style="@style/btnMappable"
                 android:layout_alignBottom="@+id/include_c_pad"
                 android:layout_toLeftOf="@+id/include_c_pad"
                 android:background="@drawable/button_b"
-                android:text="B" />
+                android:text="@string/inputMapPreference_btnB" />
+
+            <Button
+                android:id="@+id/buttonA"
+                style="@style/btnMappable"
+                android:layout_below="@+id/buttonB"
+                android:layout_toRightOf="@+id/buttonB"
+                android:background="@drawable/button_a"
+                android:text="@string/inputMapPreference_btnA" />
         </RelativeLayout>
 
         <EditText
@@ -102,7 +102,7 @@
             android:layout_marginTop="@dimen/inputMapPreferenceButtonSize"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:text="KEY_CODE_XXXX"
+            android:text="@string/inputMapPreference_dummyFeedback"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 

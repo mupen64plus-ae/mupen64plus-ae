@@ -29,28 +29,11 @@
         android:gravity="center"
         android:orientation="vertical" >
 
-        <TableRow
-            android:id="@+id/tableRowTriggers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/buttonL"
-                style="@style/btnMappable"
-                android:text="L" />
-
-            <Button
-                android:id="@+id/buttonZ"
-                style="@style/btnMappable"
-                android:layout_marginLeft="@dimen/inputMapPreferenceButtonSize"
-                android:layout_marginRight="@dimen/inputMapPreferenceButtonSize"
-                android:text="Z" />
-
-            <Button
-                android:id="@+id/buttonR"
-                style="@style/btnMappable"
-                android:text="R" />
-        </TableRow>
+        <include
+            android:id="@+id/include_b_pad"
+            android:layout_width="@dimen/inputMapPreferenceButtonSizeX5"
+            android:layout_height="@dimen/inputMapPreferenceButtonSizeX3"
+            layout="@layout/b_pad" />
 
         <include
             android:id="@+id/include_d_pad"
@@ -80,24 +63,17 @@
             android:layout_marginTop="@dimen/inputMapPreferenceButtonSize" >
 
             <Button
-                android:id="@+id/buttonS"
-                style="@style/btnMappable"
-                android:background="@drawable/button_start"
-                android:text="S" />
-
-            <Button
                 android:id="@+id/buttonB"
                 style="@style/btnMappable"
-                android:layout_marginLeft="@dimen/inputMapPreferenceButtonSize"
-                android:layout_marginRight="@dimen/inputMapPreferenceButtonSize"
                 android:background="@drawable/button_b"
-                android:text="B" />
+                android:text="@string/inputMapPreference_btnB" />
 
             <Button
                 android:id="@+id/buttonA"
                 style="@style/btnMappable"
+                android:layout_marginLeft="@dimen/inputMapPreferenceButtonSize"
                 android:background="@drawable/button_a"
-                android:text="A" />
+                android:text="@string/inputMapPreference_btnA" />
         </TableRow>
 
         <EditText
@@ -114,7 +90,7 @@
             android:layout_marginTop="@dimen/inputMapPreferenceButtonSize"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:text="KEY_CODE_XXXX"
+            android:text="@string/inputMapPreference_dummyFeedback"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 

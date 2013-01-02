@@ -57,7 +57,7 @@
     <!-- ******************************************** -->
     
     <!-- Main Menu -->
-    <string name="menuResume_title">プレー</string>
+    <string name="menuPlay_title">プレー</string>
     <string name="selectedGame_title">ゲーム</string>
     <string name="mainSettings_title">設定</string>
     <string name="menuLocale_title">言語</string>
@@ -71,8 +71,6 @@
     <!-- Settings Menu -->
     <string name="touchscreen_title">タッチ</string>
     <string name="touchscreen_summary">タッチパネル/タッチパッドの設定</string>
-    <string name="peripheral_title">入力</string>
-    <string name="peripheral_summary">ボタン/ジョイスティックの設定</string>
     <string name="audio_title">オーディオ</string>
     <string name="audio_summary">サウンド設定</string>
     <string name="video_title">ビデオ</string>
@@ -164,8 +162,6 @@
     <string name="menuReloadAppData_summary">アプリケーションのデータ·ファイルを再ロード</string>
     
     <!-- Cheats Menu -->
-    <string name="cheatsLaunch_title">プレー</string>
-    <string name="cheatsLaunch_summary">選択したチートを使ってゲームを起動する</string>
     <string name="cheatsCategory_title">詳細情報を表示するチートを長押し</string>
     <string name="cheats_titleFor">"%1$sのチート"</string>
     <string name="cheats_defaultName">%1$dチート</string>

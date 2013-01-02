@@ -12,6 +12,10 @@
         <item name="android:textColor">@android:color/primary_text_dark_nodisable</item>
     </style>
 
+    <style name="btnMappableNoText" parent="@style/btnMappable">
+        <item name="android:textColor">@android:color/transparent</item>
+    </style>
+
     <style name="btnSpecialMappable" parent="@style/btnMappable">
         <item name="android:layout_width">@dimen/inputMapPreferenceButtonSizeX3</item>
         <item name="android:paddingLeft">5dp</item>

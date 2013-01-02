@@ -11,21 +11,21 @@
         style="@style/btnMappable"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="Z" />
+        android:text="@string/inputMapPreference_btnZ" />
 
     <Button
         android:id="@+id/buttonR"
         style="@style/btnMappable"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="R" />
+        android:text="@string/inputMapPreference_btnR" />
 
     <Button
         android:id="@+id/buttonL"
         style="@style/btnMappable"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="L" />
+        android:text="@string/inputMapPreference_btnL" />
 
     <Button
         android:id="@+id/buttonS"
@@ -33,6 +33,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/button_start"
-        android:text="S" />
+        android:text="@string/inputMapPreference_btnS" />
 
 </RelativeLayout>

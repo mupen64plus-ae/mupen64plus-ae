@@ -26,35 +26,39 @@
 
         <Button
             android:id="@+id/buttonCU"
-            style="@style/btnMappable"
+            style="@style/btnMappableNoText"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_cpad"
-            android:drawableTop="@drawable/ic_arrow_u" />
+            android:drawableTop="@drawable/ic_arrow_u"
+            android:text="@string/inputMapPreference_btnCU" />
 
         <Button
             android:id="@+id/buttonCD"
-            style="@style/btnMappable"
+            style="@style/btnMappableNoText"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_cpad"
-            android:drawableBottom="@drawable/ic_arrow_d" />
+            android:drawableBottom="@drawable/ic_arrow_d"
+            android:text="@string/inputMapPreference_btnCD" />
 
         <Button
             android:id="@+id/buttonCL"
-            style="@style/btnMappable"
+            style="@style/btnMappableNoText"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_cpad"
-            android:drawableLeft="@drawable/ic_arrow_l" />
+            android:drawableLeft="@drawable/ic_arrow_l"
+            android:text="@string/inputMapPreference_btnCL" />
 
         <Button
             android:id="@+id/buttonCR"
-            style="@style/btnMappable"
+            style="@style/btnMappableNoText"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/button_cpad"
-            android:drawableRight="@drawable/ic_arrow_r" />
+            android:drawableRight="@drawable/ic_arrow_r"
+            android:text="@string/inputMapPreference_btnCR" />
 
         <Button
             android:id="@+id/buttonCC"
@@ -62,7 +66,7 @@
             android:layout_centerInParent="true"
             android:background="@android:color/transparent"
             android:enabled="false"
-            android:text="C" />
+            android:text="@string/inputMapPreference_btnC" />
     </RelativeLayout>
 
 </RelativeLayout>
