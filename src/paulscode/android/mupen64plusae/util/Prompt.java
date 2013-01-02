@@ -35,7 +35,9 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 /**
@@ -84,7 +86,7 @@ public class Prompt
     {
         /**
          * Process the input code provided by the user.
-         *
+         * 
          * @param inputCode The input code provided by the user, or 0.
          * @param hardwareId The identifier of the source device.
          */
@@ -134,7 +136,8 @@ public class Prompt
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which >= 0 && which < filenames.size() )
-                    listener.onFile( new File( absolutePaths.get( which ) ), DialogInterface.BUTTON_POSITIVE );
+                    listener.onFile( new File( absolutePaths.get( which ) ),
+                            DialogInterface.BUTTON_POSITIVE );
                 else
                     listener.onFile( null, which );
             }
@@ -163,7 +166,7 @@ public class Prompt
         // Create an edit-text widget, and add the hint text
         final EditText editText = new EditText( context );
         editText.setHint( hint );
-        editText.setRawInputType ( inputType );
+        editText.setRawInputType( inputType );
         
         // When the user clicks Ok, notify the downstream listener
         OnClickListener internalListener = new OnClickListener()
@@ -185,20 +188,27 @@ public class Prompt
     
     /**
      * Open a dialog to prompt the user for an input code.
-     *
+     * 
      * @param context The activity context.
      * @param title The title of the dialog.
      * @param message The message to be shown inside the dialog.
      * @param positiveButtonText The text to be shown on the positive button, or null.
+     * @param ignoredKeyCodes The key codes to ignore.
      * @param listener The listener to process the input code, when provided.
      */
     public static void promptInputCode( Context context, CharSequence title, CharSequence message,
-            CharSequence positiveButtonText, List<Integer> ignoredKeyCodes, final OnInputCodeListener listener )
+            CharSequence positiveButtonText, List<Integer> ignoredKeyCodes,
+            final OnInputCodeListener listener )
     {
-        // Create a custom view to provide key/motion event data
-        // This can be absolutely any kind of view, we just something to dispatch events
-        ImageView view = new ImageView( context );
-        view.setImageResource( R.drawable.ic_controller );
+        // Create a widget to dispatch key/motion event data
+        FrameLayout view = new FrameLayout( context );
+        ImageView image = new ImageView( context );
+        image.setImageResource( R.drawable.ic_controller );
+        EditText dummyImeListener = new EditText( context );
+        dummyImeListener.setVisibility( View.INVISIBLE );
+        dummyImeListener.setHeight( 0 );
+        view.addView( image );
+        view.addView( dummyImeListener );
         
         // Set the focus parameters of the view so that it will dispatch events
         view.setFocusable( true );
@@ -218,13 +228,11 @@ public class Prompt
         
         // Create the dialog, customizing the view and button text in the process
         final AlertDialog dialog = prefillBuilder( context, title, message, clickListener )
-                .setPositiveButton( positiveButtonText, clickListener )
-                .setView( view )
-                .create();
+                .setPositiveButton( positiveButtonText, clickListener ).setView( view ).create();
         
         // Construct an object to aggregate key and motion event data
         LazyProvider provider = new LazyProvider();
-
+        
         // Connect the upstream key event listener
         provider.addProvider( new KeyProvider( view, ImeFormula.DEFAULT, ignoredKeyCodes ) );
         
@@ -249,8 +257,8 @@ public class Prompt
                     dialog.dismiss();
                 }
             }
-        });
-
+        } );
+        
         // Launch the dialog
         dialog.show();
     }
@@ -267,7 +275,7 @@ public class Prompt
     private static Builder prefillBuilder( Context context, CharSequence title,
             CharSequence message, OnClickListener listener )
     {
-        return new Builder( context ).setTitle( title ).setMessage( message ).setCancelable(false)
+        return new Builder( context ).setTitle( title ).setMessage( message ).setCancelable( false )
                 .setNegativeButton( context.getString( android.R.string.cancel ), listener )
                 .setPositiveButton( context.getString( android.R.string.ok ), listener );
     }

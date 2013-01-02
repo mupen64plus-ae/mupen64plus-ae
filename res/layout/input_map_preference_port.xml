@@ -100,6 +100,13 @@
                 android:text="A" />
         </TableRow>
 
+        <EditText
+            android:id="@+id/dummyImeListener"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:inputType="text"
+            android:visibility="invisible" />
+
         <TextView
             android:id="@+id/textFeedback"
             android:layout_width="wrap_content"
