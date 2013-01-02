@@ -6,6 +6,17 @@
     android:focusable="false"
     android:focusableInTouchMode="false" >
 
+    <TextView
+        android:id="@+id/cPadXperiaPlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/placeholder"
+        android:gravity="center"
+        android:maxHeight="@dimen/inputMapPreferenceButtonSizeX3"
+        android:maxWidth="@dimen/inputMapPreferenceButtonSizeX3"
+        android:text="@string/inputMapPreference_cPadXperiaPlay"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <RelativeLayout
         android:id="@+id/cPadDefault"
         android:layout_width="match_parent"
@@ -53,16 +64,5 @@
             android:enabled="false"
             android:text="C" />
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/cPadXperiaPlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:maxHeight="@dimen/inputMapPreferenceButtonSizeX3"
-        android:maxWidth="@dimen/inputMapPreferenceButtonSizeX3"
-        android:text="@string/inputMapPreference_cPadXperiaPlay"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

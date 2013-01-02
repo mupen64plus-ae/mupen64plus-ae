@@ -36,7 +36,6 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.preference.DialogPreference;
@@ -54,9 +53,8 @@ public class InputMapPreference extends DialogPreference implements
 {
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
     private static final int UNMAPPED_BUTTON_FILTER = 0x66FFFFFF;
-    private static final int MARGIN = 140;
-    private static final int MIN_LAYOUT_WIDTH_DP = 440 + MARGIN;
-    private static final int MIN_LAYOUT_HEIGHT_DP = 320 + MARGIN;
+    private static final int MIN_LAYOUT_WIDTH_DP = 480;
+    private static final int MIN_LAYOUT_HEIGHT_DP = 480;
     private static final String PERIPHERAL_MAP1 = "peripheralMap1";
     
     private final InputMap mMap;
@@ -90,22 +88,15 @@ public class InputMapPreference extends DialogPreference implements
         int widthDp = Math.round( metrics.widthPixels * scalefactor );
         int heightDp = Math.round( metrics.heightPixels * scalefactor );
         
-        if( widthDp >= MIN_LAYOUT_WIDTH_DP && heightDp >= MIN_LAYOUT_HEIGHT_DP )
-        {
-            // Geometric layout for large screens
-            setDialogLayoutResource( R.layout.input_map_preference );
-        }
+        // For short screens, hide the dialog title to yield more space
+        if( heightDp < MIN_LAYOUT_HEIGHT_DP )
+            setDialogTitle( null );            
+        
+        // For narrow screens, use an alternate layout
+        if( widthDp < MIN_LAYOUT_WIDTH_DP )
+            setDialogLayoutResource( R.layout.input_map_preference_port );
         else
-        {
-            // Hide the dialog title to yield more screen space
-            setDialogTitle( null );
-            
-            // Choose the appropriate layout depending on device and orientation
-            int orientation = getContext().getResources().getConfiguration().orientation;
-            setDialogLayoutResource( orientation == Configuration.ORIENTATION_PORTRAIT
-                    ? R.layout.input_map_preference_port
-                    : R.layout.input_map_preference_land );
-        }
+            setDialogLayoutResource( R.layout.input_map_preference );
     }
     
     @Override

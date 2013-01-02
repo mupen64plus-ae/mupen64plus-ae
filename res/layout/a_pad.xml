@@ -6,6 +6,17 @@
     android:focusable="false"
     android:focusableInTouchMode="false" >
 
+    <TextView
+        android:id="@+id/aPadXperiaPlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/placeholder"
+        android:gravity="center"
+        android:maxHeight="@dimen/inputMapPreferenceButtonSizeX3"
+        android:maxWidth="@dimen/inputMapPreferenceButtonSizeX3"
+        android:text="@string/inputMapPreference_aPadXperiaPlay"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <RelativeLayout
         android:id="@+id/aPadDefault"
         android:layout_width="match_parent"
@@ -59,16 +70,5 @@
             android:background="@drawable/button_apad"
             android:drawableLeft="@drawable/ic_arrow_r" />
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/aPadXperiaPlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:maxHeight="@dimen/inputMapPreferenceButtonSizeX3"
-        android:maxWidth="@dimen/inputMapPreferenceButtonSizeX3"
-        android:text="@string/inputMapPreference_aPadXperiaPlay"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>
