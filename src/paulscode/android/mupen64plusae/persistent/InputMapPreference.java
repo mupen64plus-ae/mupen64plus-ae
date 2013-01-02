@@ -284,7 +284,7 @@ public class InputMapPreference extends DialogPreference implements
                                 if( inputCode == 0 )
                                     mMap.unmapInput( index );
                                 else
-                                    mMap.mapInput( index, inputCode );
+                                    mMap.mapInput( inputCode, index );
                                 updateViews();
                             }
                         } );
@@ -332,19 +332,19 @@ public class InputMapPreference extends DialogPreference implements
                 // Fade any buttons that aren't mapped
                 if( AppData.IS_HONEYCOMB )
                 {
-                    if( mMap.getMappedInputCodes()[i] == 0 )
-                        button.setAlpha( UNMAPPED_BUTTON_ALPHA );
-                    else
+                    if( mMap.isMapped( i ) )
                         button.setAlpha( 1 );
+                    else
+                        button.setAlpha( UNMAPPED_BUTTON_ALPHA );
                 }
                 else
                 {
-                    // For older API's try something similar (not quite the same)
-                    if( mMap.getMappedInputCodes()[i] == 0 )
+                    // For older APIs try something similar (not quite the same)
+                    if( mMap.isMapped( i ) )
+                        button.getBackground().clearColorFilter();
+                    else
                         button.getBackground().setColorFilter( UNMAPPED_BUTTON_FILTER,
                                 PorterDuff.Mode.MULTIPLY );
-                    else
-                        button.getBackground().clearColorFilter();
                     button.invalidate();
                 }
             }

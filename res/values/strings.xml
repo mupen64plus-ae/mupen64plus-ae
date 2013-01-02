@@ -362,10 +362,10 @@
     <string name="resetPrefs_popupMessage">Reset all preferences to their defaults?</string>
     
     <!-- Non-Translatable Default Values -->
-    <string name="inputMapPreference_default_PS3_on" translatable="false">true:22,21,20,19,108,-35,96,99,-23,-24,-29,-30,103,102,-1,-2,-3,-4</string>
-    <string name="inputMapPreference_default_PS3_off" translatable="false">false:22,21,20,19,108,-35,96,99,-23,-24,-29,-30,103,102,-1,-2,-3,-4</string>
-    <string name="inputMapPreference_default_Xbox_on" translatable="false">true:-31,-32,-33,-34,108,-23,99,96,-25,-26,-27,-28,103,102,-1,-2,-3,-4</string>
-    <string name="inputMapPreference_default_Xbox_off" translatable="false">false:-31,-32,-33,-34,108,-23,99,96,-25,-26,-27,-28,103,102,-1,-2,-3,-4</string>
+    <string name="inputMapPreference_default_PS3_on" translatable="false">true/0:22,1:21,2:20,3:19,4:108,5:-35,6:96,7:99,8:-23,9:-24,10:-29,11:-30,12:103,13:102,14:-1,15:-2,16:-3,17:-4</string>
+    <string name="inputMapPreference_default_PS3_off" translatable="false">false/0:22,1:21,2:20,3:19,4:108,5:-35,6:96,7:99,8:-23,9:-24,10:-29,11:-30,12:103,13:102,14:-1,15:-2,16:-3,17:-4</string>
+    <string name="inputMapPreference_default_Xbox_on" translatable="false">true/0:-31,1:-32,2:-33,3:-34,4:108,5:-23,6:99,7:96,8:-25,9:-26,10:-27,11:-28,12:103,13:102,14:-1,15:-2,16:-3,17:-4</string>
+    <string name="inputMapPreference_default_Xbox_off" translatable="false">false/0:-31,1:-32,2:-33,3:-34,4:108,5:-23,6:99,7:96,8:-25,9:-26,10:-27,11:-28,12:103,13:102,14:-1,15:-2,16:-3,17:-4</string>
     
     <string name="gameSaveDir_default" translatable="false">!GameSaves</string> <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
     <string name="selectedGame_default" translatable="false">~roms/n64</string> <!-- '~' indicates rel path & use storage dir if path doesn't exist -->

@@ -123,9 +123,6 @@ public class InputMap
     public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 11;
     // @formatter:on
     
-    /** Map from N64/Mupen function to standardized input code. */
-    private final int[] mN64ToCode;
-    
     /** Map from standardized input code to N64/Mupen function. */
     private final SparseIntArray mCodeToN64;
     
@@ -140,8 +137,7 @@ public class InputMap
      */
     public InputMap()
     {
-        mN64ToCode = new int[NUM_MAPPABLES];
-        mCodeToN64 = new SparseIntArray( NUM_MAPPABLES );
+        mCodeToN64 = new SparseIntArray();
         mPublisher = new SubscriptionManager<InputMap.Listener>();
     }
     
@@ -170,18 +166,6 @@ public class InputMap
     }
     
     /**
-     * Gets a <b>copy</b> of the map from N64/Mupen functions to standardized input codes. Note that
-     * changing the values in the returned map does not change the information stored in the
-     * InputMap instance.
-     * 
-     * @return A copy of the map.
-     */
-    public int[] getMappedInputCodes()
-    {
-        return mN64ToCode.clone();
-    }
-    
-    /**
      * Checks if the map is enabled.
      * 
      * @return True, if the map is enabled.
@@ -203,12 +187,12 @@ public class InputMap
     }
     
     /**
-     * Maps an N64 control or Mupen64Plus function to an input code.
+     * Maps an input code to an N64 control or Mupen64Plus function.
      * 
-     * @param n64Index The index to the N64 control or Mupen64Plus function.
      * @param inputCode The standardized input code to be mapped.
+     * @param n64Index The index to the N64 control or Mupen64Plus function.
      */
-    public void mapInput( int n64Index, int inputCode )
+    public void mapInput( int inputCode, int n64Index )
     {
         // Call the private method, notifying listeners of the change.
         mapInput( inputCode, n64Index, true );
@@ -221,7 +205,24 @@ public class InputMap
      */
     public void unmapInput( int n64Index )
     {
-        mapInput( 0, n64Index, true );
+        // Remove any matching key-value pairs (count down to accommodate removal)
+        for( int i = mCodeToN64.size() - 1; i >= 0; i-- )
+        {
+            if( mCodeToN64.valueAt( i ) == n64Index )
+                mCodeToN64.removeAt( i );
+        }
+        notifyListeners();
+    }
+    
+    /**
+     * Checks if an N64 control or Mupen64Plus function is mapped to at least one input code.
+     * 
+     * @param n64Index The index to the N64 control or Mupen64Plus function.
+     * @return True if the mapping exists.
+     */
+    public boolean isMapped( int n64Index )
+    {
+        return mCodeToN64.indexOfValue( n64Index ) >= 0;
     }
     
     /**
@@ -252,10 +253,11 @@ public class InputMap
     public String serialize()
     {
         // Serialize the map values to a comma-delimited string
-        String result = mEnabled + ":";
-        for( int i = 0; i < mN64ToCode.length; i++ )
+        String result = mEnabled + "/";
+        for( int i = 0; i < mCodeToN64.size(); i++ )
         {
-            result += mN64ToCode[i] + ",";
+            // Putting the n64 command first makes the string a bit more human readable IMO
+            result += mCodeToN64.valueAt( i ) + ":" + mCodeToN64.keyAt( i ) + ",";
         }
         return result;
     }
@@ -268,29 +270,31 @@ public class InputMap
     public void deserialize( String s )
     {
         // Reset the map
-        for( int i = 0; i < mN64ToCode.length; i++ )
-            mapInput( 0, i, false );
+        mCodeToN64.clear();
+        mEnabled = false;
         
         // Parse the new map values from the comma-delimited string
         if( s != null )
         {
-            String[] groups = s.split( ":" );
-            if( groups.length > 1 )
+            String[] groups = s.split( "/" );
+            if( groups.length == 2 )
             {
                 // Read the enabled state
                 mEnabled = SafeMethods.toBoolean( groups[0], false );
-                s = groups[1];
+                
+                // Read the input mappings
+                String[] pairs = groups[1].split( "," );
+                for( String pair : pairs )
+                {
+                    String[] elements = pair.split( ":" );
+                    if( elements.length == 2 )
+                    {
+                        int value = SafeMethods.toInt( elements[0], UNMAPPED );
+                        int key = SafeMethods.toInt( elements[1], 0 );
+                        mapInput( key, value, false );
+                    }
+                }
             }
-            else
-            {
-                // Safety valve in case format changes
-                mEnabled = false;
-            }
-            
-            // Read the input mappings
-            String[] inputs = s.split( "," );
-            for( int i = 0; i < Math.min( NUM_MAPPABLES, inputs.length ); i++ )
-                mapInput( SafeMethods.toInt( inputs[i], 0 ), i, false );
         }
         
         // Notify the listeners that the map has changed
@@ -298,7 +302,7 @@ public class InputMap
     }
     
     /**
-     * Maps an N64 control or Mupen64Plus function to an input code.
+     * Maps an input code to an N64 control or Mupen64Plus function.
      * 
      * @param inputCode The standardized input code to be mapped.
      * @param n64Index The index to the N64 control or Mupen64Plus function.
@@ -308,28 +312,8 @@ public class InputMap
     private void mapInput( int inputCode, int n64Index, boolean notify )
     {
         // Map the input if a valid index was given
-        if( n64Index >= 0 && n64Index < NUM_MAPPABLES )
-        {
-            // Get the old code that was mapped to the new index
-            final int oldInputCode = mN64ToCode[n64Index];
-            
-            // Get the old index that was mapped to the new code
-            final int oldN64Index = get( inputCode );
-            
-            // Unmap the new code from the old index
-            if( oldN64Index != UNMAPPED )
-                mN64ToCode[oldN64Index] = 0;
-            
-            // Unmap the old code from the new index
-            mCodeToN64.delete( oldInputCode );
-            
-            // Map the new code to the new index
-            mN64ToCode[n64Index] = inputCode;
-            
-            // Map the new index to the new code
-            if( inputCode != 0 )
-                mCodeToN64.put( inputCode, n64Index );
-        }
+        if( n64Index >= 0 && n64Index < NUM_MAPPABLES && inputCode != 0 )
+            mCodeToN64.put( inputCode, n64Index );
         
         // Notify listeners that the map has changed
         if( notify )
