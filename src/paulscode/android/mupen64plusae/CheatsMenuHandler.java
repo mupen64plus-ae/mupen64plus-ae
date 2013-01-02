@@ -30,16 +30,15 @@ import paulscode.android.mupen64plusae.persistent.OnPreferenceLongClickListener;
 import paulscode.android.mupen64plusae.persistent.OptionCheckBoxPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -80,7 +79,6 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     public CheatsMenuHandler( MenuActivity activity, AppData appData, UserPrefs userPrefs )
     {
         mActivity = activity;
-        // Get app data and user preferences
         mAppData = appData;
         mUserPrefs = userPrefs;
     }

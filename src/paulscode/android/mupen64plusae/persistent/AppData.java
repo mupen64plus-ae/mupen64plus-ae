@@ -29,7 +29,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
@@ -175,11 +174,6 @@ public class AppData
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
-        
-        Log.v( "Paths - DataDir Check", "PackageName set to '" + packageName + "'" );
-        Log.v( "Paths - DataDir Check", "LibsDir set to '" + libsDir + "'" );
-        Log.v( "Paths - DataDir Check", "StorageDir set to '" + storageDir + "'" );
-        Log.v( "Paths - DataDir Check", "DataDir set to '" + dataDir + "'" );
     }
     
     /**

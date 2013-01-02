@@ -45,7 +45,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
@@ -59,8 +58,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
     private static final String LAUNCH_CRASH = "launchCrash";
     private static final String PROCESS_TEXTURE_PACK = "gles2RiceImportHiResTextures";
-
-    // private static final String SELECTED_GAME = "selectedGame";
 
     private static final String INPUT = "input";
     private static final String AUDIO = "audio";
@@ -307,7 +304,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         boolean rebuildHierarchy =
                    key.equals( VIDEO_PLUGIN )
-                // || key.equals( SELECTED_GAME )
                 || key.equals( XPERIA_ENABLED );
         
         if( rebuildHierarchy )
@@ -316,7 +312,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             // In this case it's easier just to restart the activity than trying to figure out what to fix.
             // Examples:
             //   Restore the preference categories that were removed in refreshViews(...)
-            //   Change the input mapping layout file when Xperia Play touchpad en/disabled
+            //   Change the input mapping layout when Xperia Play touchpad en/disabled
             finish();
             startActivity( getIntent() );
         }

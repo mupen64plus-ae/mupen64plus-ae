@@ -231,9 +231,6 @@ public class Utility
                 catch( Exception e )
                 {
                     finished = true;
-                    Log.i( "Utility", "Number of axes = " + j );
-                    // In Xperia PLAY (API 9) I found this to be 9
-                    // Not sure if this is device or API specific
                 }
             }
         }
