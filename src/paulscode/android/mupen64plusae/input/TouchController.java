@@ -24,6 +24,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.util.FloatMath;
+import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -53,6 +54,9 @@ public class TouchController extends AbstractController implements OnTouchListen
     /** The map from screen coordinates to N64 controls. */
     private final TouchMap mTouchMap;
     
+    /** The map from pointer ids to N64 controls. */
+    private final SparseIntArray mPointerMap = new SparseIntArray();
+    
     /** Whether the analog stick should be constrained to an octagon. */
     private final boolean mIsOctagonal;
     
@@ -76,7 +80,7 @@ public class TouchController extends AbstractController implements OnTouchListen
     
     /**
      * Instantiates a new touch controller.
-     *
+     * 
      * @param touchMap The map from touch coordinates to N64 controls.
      * @param view The view receiving touch event data.
      * @param listener The listener for controller state changes.
@@ -203,7 +207,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             
             // Process button inputs
             if( pid != analogPid )
-                processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid] );
+                processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid], pid );
             
             // Process analog inputs
             if( touchstate[pid] )
@@ -224,15 +228,25 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param touched Whether the button is pressed.
      * @param xLocation The x-coordinate of the touch, between 0 and (screenwidth-1), inclusive.
      * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
+     * @param pid The identifier of the touch pointer.
      */
-    private void processButtonTouch( boolean touched, int xLocation, int yLocation )
+    private void processButtonTouch( boolean touched, int xLocation, int yLocation, int pid )
     {
         // Determine the index of the button that was pressed
-        int index = mTouchMap.getButtonPress( xLocation, yLocation );
+        int index = touched
+                ? mTouchMap.getButtonPress( xLocation, yLocation )
+                : mPointerMap.get( pid, TouchMap.UNMAPPED );
         
         // Set the button state if a button was actually touched
         if( index != TouchMap.UNMAPPED )
         {
+            // Update the pointer map
+            if( touched )
+                mPointerMap.put( pid, index );
+            else
+                mPointerMap.delete( pid );
+            
+            // Set the button state
             if( index < AbstractController.NUM_N64_BUTTONS )
             {
                 // A single button was pressed
