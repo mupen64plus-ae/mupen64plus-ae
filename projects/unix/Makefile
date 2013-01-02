@@ -93,11 +93,12 @@ endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
+WARNFLAGS ?= -Wall
 
 # default configuration programs
 SDL_CONFIG = $(CROSS_COMPILE)sdl-config
 
-CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -I../../src
+CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -I../../src
 ifeq ($(OS), MINGW)
   CFLAGS += -lpthread
   LDLIBS += -lpthread
@@ -281,6 +282,7 @@ targets:
 	@echo "    SHAREDIR=path  == default path to search for shared data files"
 	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3)"
+	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIE=(1|0)      == Force enable/disable of position independent executables"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
