@@ -123,8 +123,8 @@ public class InputMap
     public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 11;
     // @formatter:on
     
-    /** Map from standardized input code to N64/Mupen function. */
-    private final SparseIntArray mCodeToN64;
+    /** Map from standardized input code to N64/Mupen command. */
+    private final SparseIntArray mMap;
     
     /** Flag indicating whether the map is enabled. */
     private boolean mEnabled;
@@ -137,7 +137,7 @@ public class InputMap
      */
     public InputMap()
     {
-        mCodeToN64 = new SparseIntArray();
+        mMap = new SparseIntArray();
         mPublisher = new SubscriptionManager<InputMap.Listener>();
     }
     
@@ -153,16 +153,16 @@ public class InputMap
     }
     
     /**
-     * Gets the N64/Mupen function mapped to a given input code.
+     * Gets the N64/Mupen command mapped to a given input code.
      * 
      * @param inputCode The standardized input code.
-     * @return The N64/Mupen function the code is mapped to, or UNMAPPED.
+     * @return The N64/Mupen command the code is mapped to, or UNMAPPED.
      * @see AbstractProvider
      * @see InputMap#UNMAPPED
      */
     public int get( int inputCode )
     {
-        return mCodeToN64.get( inputCode, UNMAPPED );
+        return mMap.get( inputCode, UNMAPPED );
     }
     
     /**
@@ -187,58 +187,68 @@ public class InputMap
     }
     
     /**
-     * Maps an input code to an N64 control or Mupen64Plus function.
+     * Maps an input code to an N64/Mupen command.
      * 
      * @param inputCode The standardized input code to be mapped.
-     * @param n64Index The index to the N64 control or Mupen64Plus function.
+     * @param command The index to the N64/Mupen command.
      */
-    public void mapInput( int inputCode, int n64Index )
+    public void map( int inputCode, int command )
     {
         // Call the private method, notifying listeners of the change.
-        mapInput( inputCode, n64Index, true );
+        mapInput( inputCode, command, true );
     }
     
     /**
-     * Unmaps an N64 control or Mupen64Plus function.
+     * Unmaps an input code.
      * 
-     * @param n64Index The index to the N64 control or Mupen64Plus function.
+     * @param inputCode The standardized input code to be unmapped.
      */
-    public void unmapInput( int n64Index )
+    public void unmap( int inputCode )
+    {
+        mMap.delete( inputCode );
+    }
+    
+    /**
+     * Unmaps an N64/Mupen command.
+     * 
+     * @param command The index to the N64/Mupen command.
+     */
+    public void unmapCommand( int command )
     {
         // Remove any matching key-value pairs (count down to accommodate removal)
-        for( int i = mCodeToN64.size() - 1; i >= 0; i-- )
+        for( int i = mMap.size() - 1; i >= 0; i-- )
         {
-            if( mCodeToN64.valueAt( i ) == n64Index )
-                mCodeToN64.removeAt( i );
+            if( mMap.valueAt( i ) == command )
+                mMap.removeAt( i );
         }
         notifyListeners();
     }
     
     /**
-     * Checks if an N64 control or Mupen64Plus function is mapped to at least one input code.
+     * Checks if an N64/Mupen command is mapped to at least one input code.
      * 
-     * @param n64Index The index to the N64 control or Mupen64Plus function.
-     * @return True if the mapping exists.
+     * @param command The index to the N64/Mupen64 command.
+     * @return True, if the mapping exists.
      */
-    public boolean isMapped( int n64Index )
+    public boolean isMapped( int command )
     {
-        return mCodeToN64.indexOfValue( n64Index ) >= 0;
+        return mMap.indexOfValue( command ) >= 0;
     }
     
     /**
-     * Gets a description of the input codes mapped to an N64 control or Mupen64Plus function.
+     * Gets a description of the input codes mapped to an N64/Mupen command.
      *
-     * @param n64Index The index to the N64 control or Mupen64Plus function.
-     * @return Description of the input codes mapped to the given index.
+     * @param command The index to the N64/Mupen command.
+     * @return Description of the input codes mapped to the given command.
      */
-    public String getMappedCodeInfo( int n64Index )
+    public String getMappedCodeInfo( int command )
     {
         String result = "";
-        for( int i = 0; i < mCodeToN64.size(); i++ )
+        for( int i = 0; i < mMap.size(); i++ )
         {
-            if( mCodeToN64.valueAt( i ) == n64Index )
+            if( mMap.valueAt( i ) == command )
             {
-                result += AbstractProvider.getInputName( mCodeToN64.keyAt( i ) ) + "\n";
+                result += AbstractProvider.getInputName( mMap.keyAt( i ) ) + "\n";
             }
         }
         return result.trim();
@@ -271,12 +281,12 @@ public class InputMap
      */
     public String serialize()
     {
-        // Serialize the map values to a comma-delimited string
+        // Serialize the map data to a multi-delimited string
         String result = mEnabled + "/";
-        for( int i = 0; i < mCodeToN64.size(); i++ )
+        for( int i = 0; i < mMap.size(); i++ )
         {
             // Putting the n64 command first makes the string a bit more human readable IMO
-            result += mCodeToN64.valueAt( i ) + ":" + mCodeToN64.keyAt( i ) + ",";
+            result += mMap.valueAt( i ) + ":" + mMap.keyAt( i ) + ",";
         }
         return result;
     }
@@ -289,10 +299,10 @@ public class InputMap
     public void deserialize( String s )
     {
         // Reset the map
-        mCodeToN64.clear();
+        mMap.clear();
         mEnabled = false;
         
-        // Parse the new map values from the comma-delimited string
+        // Parse the new map data from the multi-delimited string
         if( s != null )
         {
             String[] groups = s.split( "/" );
@@ -324,15 +334,15 @@ public class InputMap
      * Maps an input code to an N64 control or Mupen64Plus function.
      * 
      * @param inputCode The standardized input code to be mapped.
-     * @param n64Index The index to the N64 control or Mupen64Plus function.
+     * @param command The index to the N64/Mupen command.
      * @param notify Whether to notify listeners of the change. False provides an optimization when
      *            mapping in batches, but be sure to call notifyListeners() when finished.
      */
-    private void mapInput( int inputCode, int n64Index, boolean notify )
+    private void mapInput( int inputCode, int command, boolean notify )
     {
         // Map the input if a valid index was given
-        if( n64Index >= 0 && n64Index < NUM_MAPPABLES && inputCode != 0 )
-            mCodeToN64.put( inputCode, n64Index );
+        if( command >= 0 && command < NUM_MAPPABLES && inputCode != 0 )
+            mMap.put( inputCode, command );
         
         // Notify listeners that the map has changed
         if( notify )

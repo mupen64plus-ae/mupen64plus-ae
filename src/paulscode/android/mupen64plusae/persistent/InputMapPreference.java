@@ -276,6 +276,7 @@ public class InputMapPreference extends DialogPreference implements
                         mMap.getMappedCodeInfo( index ) );
                 String btnText = getContext().getString(
                         R.string.inputMapPreference_popupPosButtonText );
+                
                 Prompt.promptInputCode( getContext(), button.getText(), message, btnText,
                         mUnmappableKeyCodes, new OnInputCodeListener()
                         {
@@ -283,9 +284,9 @@ public class InputMapPreference extends DialogPreference implements
                             public void OnInputCode( int inputCode, int hardwareId )
                             {
                                 if( inputCode == 0 )
-                                    mMap.unmapInput( index );
+                                    mMap.unmapCommand( index );
                                 else
-                                    mMap.mapInput( inputCode, index );
+                                    mMap.map( inputCode, index );
                                 updateViews();
                             }
                         } );
