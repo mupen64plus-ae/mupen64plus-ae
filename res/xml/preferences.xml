@@ -152,7 +152,7 @@
                     </PreferenceScreen>
 
                     <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMapPreference_default_PS3_on"
+                        android:defaultValue="@string/inputMapPreference_default_on"
                         android:icon="@drawable/ic_gamepad"
                         android:key="peripheralMap1"
                         android:summary="@string/peripheralMap_summary"
@@ -173,19 +173,19 @@
                     android:key="categoryMultiplayer"
                     android:title="@string/categoryMultiPlayer_title" >
                     <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMapPreference_default_PS3_off"
+                        android:defaultValue="@string/inputMapPreference_default_off"
                         android:icon="@drawable/ic_gamepad"
                         android:key="peripheralMap2"
                         android:summary="@string/peripheralMap_summary"
                         android:title="@string/peripheralMap2_title" />
                     <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMapPreference_default_Xbox_off"
+                        android:defaultValue="@string/inputMapPreference_default_off"
                         android:icon="@drawable/ic_gamepad"
                         android:key="peripheralMap3"
                         android:summary="@string/peripheralMap_summary"
                         android:title="@string/peripheralMap3_title" />
                     <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMapPreference_default_Xbox_off"
+                        android:defaultValue="@string/inputMapPreference_default_off"
                         android:icon="@drawable/ic_gamepad"
                         android:key="peripheralMap4"
                         android:summary="@string/peripheralMap_summary"
