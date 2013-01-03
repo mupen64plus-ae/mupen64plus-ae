@@ -340,7 +340,7 @@
     <string name="inputMapPreference_gameshark">Gameshark</string>
     
     <!-- Player Mapping -->
-    <string name="playerMapPreference_btnPlayer">Player %1$d\n\nCurrent devices:\n%2$s</string>
+    <string name="playerMapPreference_btnPlayer">Player %1$d\n\n%2$s</string>
     <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller(s)…\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupTitle">Player %1$d</string>
     <string name="playerMapPreference_popupUnmap">Unmap</string>
@@ -361,8 +361,6 @@
     <string name="gameMenu_confirmReset">Reset game? All progress since your last save will be lost.</string>
     <string name="gameMenu_saveHint">filename</string>
     <string name="gameMenu_speedHint">Speed between 10 to 300</string>
-    <string name="hardwareMapPrompt_title">Player %1$d setup</string>
-    <string name="hardwareMapPrompt_message">Press a button/stick on every device used by Player %1$d, then touch OK…</string>
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
     <string name="resetPrefs_popupMessage">Reset all preferences to their defaults?</string>
     
