@@ -226,6 +226,25 @@ public class InputMap
     }
     
     /**
+     * Gets a description of the input codes mapped to an N64 control or Mupen64Plus function.
+     *
+     * @param n64Index The index to the N64 control or Mupen64Plus function.
+     * @return Description of the input codes mapped to the given index.
+     */
+    public String getMappedCodeInfo( int n64Index )
+    {
+        String result = "";
+        for( int i = 0; i < mCodeToN64.size(); i++ )
+        {
+            if( mCodeToN64.valueAt( i ) == n64Index )
+            {
+                result += AbstractProvider.getInputName( mCodeToN64.keyAt( i ) ) + "\n";
+            }
+        }
+        return result.trim();
+    }
+    
+    /**
      * Registers a listener to start receiving map change notifications.
      * 
      * @param listener The listener to register. Null values are safe.

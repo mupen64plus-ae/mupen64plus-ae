@@ -302,7 +302,7 @@
     <!-- Input Mapping -->
     <string name="inputMapPreference_showSpecial">Show special functions</string>
     <string name="inputMapPreference_hideSpecial">Hide special functions</string>
-    <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…</string>
+    <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
     <string name="inputMapPreference_popupPosButtonText">Unmap</string>
     <string name="inputMapPreference_aPadXperiaPlay">Analog stick controlled with touchpad</string>
     <string name="inputMapPreference_cPadXperiaPlay">C-pad controlled with touchpad</string>

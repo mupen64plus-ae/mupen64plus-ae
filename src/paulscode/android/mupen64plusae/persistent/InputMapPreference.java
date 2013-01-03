@@ -90,7 +90,7 @@ public class InputMapPreference extends DialogPreference implements
         
         // For short screens, hide the dialog title to yield more space
         if( heightDp < MIN_LAYOUT_HEIGHT_DP )
-            setDialogTitle( null );            
+            setDialogTitle( null );
         
         // For narrow screens, use an alternate layout
         if( widthDp < MIN_LAYOUT_WIDTH_DP )
@@ -272,7 +272,8 @@ public class InputMapPreference extends DialogPreference implements
                 // Popup a dialog to listen to input codes from user
                 final int index = i;
                 button = (Button) view;
-                String message = getContext().getString( R.string.inputMapPreference_popupMessage );
+                String message = getContext().getString( R.string.inputMapPreference_popupMessage,
+                        mMap.getMappedCodeInfo( index ) );
                 String btnText = getContext().getString(
                         R.string.inputMapPreference_popupPosButtonText );
                 Prompt.promptInputCode( getContext(), button.getText(), message, btnText,
