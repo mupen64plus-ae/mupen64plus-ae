@@ -27,6 +27,7 @@ import java.util.List;
 import paulscode.android.mupen64plusae.CheatsMenuHandler;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
+import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -121,6 +122,9 @@ public class UserPrefs
     
     /** True if the touchscreen joystick is represented as an octagon. */
     public final boolean isOctagonalJoystick;
+    
+    /** The player map for multi-player gaming. */
+    public final PlayerMap playerMap;
     
     /** The button map for player 1. */
     public final InputMap inputMap1;
@@ -250,6 +254,7 @@ public class UserPrefs
         isOctagonalJoystick = prefsData.getBoolean( "touchscreenOctagonJoystick", true );
         
         // Peripheral prefs
+        playerMap = new PlayerMap( prefsData.getString( "playerMap", "") );
         inputMap1 = new InputMap( prefsData.getString( "peripheralMap1", "" ) );
         inputMap2 = new InputMap( prefsData.getString( "peripheralMap2", "" ) );
         inputMap3 = new InputMap( prefsData.getString( "peripheralMap3", "" ) );

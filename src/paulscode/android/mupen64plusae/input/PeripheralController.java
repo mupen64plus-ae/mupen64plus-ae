@@ -22,8 +22,8 @@ package paulscode.android.mupen64plusae.input;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.NativeMethods;
-import paulscode.android.mupen64plusae.input.map.HardwareMap;
 import paulscode.android.mupen64plusae.input.map.InputMap;
+import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import android.util.Log;
 
@@ -31,10 +31,13 @@ import android.util.Log;
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
  * keyboards, mice, etc.).
  */
-public class PeripheralController extends AbstractController implements AbstractProvider.OnInputListener,
-        InputMap.Listener
+public class PeripheralController extends AbstractController implements
+        AbstractProvider.OnInputListener, InputMap.Listener
 {
-    /** The map from hardware codes to N64 commands. */
+    /** The map from hardware identifiers to players. */
+    private final PlayerMap mPlayerMap;
+    
+    /** The map from input codes to N64/Mupen commands. */
     private final InputMap mInputMap;
     
     /** The user input providers. */
@@ -56,14 +59,17 @@ public class PeripheralController extends AbstractController implements Abstract
      * Instantiates a new peripheral controller.
      * 
      * @param player The player number, between 1 and 4, inclusive.
-     * @param inputMap The map from hardware codes to N64 commands.
+     * @param playerMap The map from hardware identifiers to players.
+     * @param inputMap The map from input codes to N64/Mupen commands.
      * @param providers The user input providers. Null elements are safe.
      */
-    public PeripheralController( int player, InputMap inputMap, AbstractProvider... providers )
+    public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
+            AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
-        // Assign the map and listen for changes
+        // Assign the maps and listen for changes
+        mPlayerMap = playerMap;
         mInputMap = inputMap;
         if( mInputMap != null )
             mInputMap.registerListener( this );
@@ -91,16 +97,13 @@ public class PeripheralController extends AbstractController implements Abstract
     public void onInput( int inputCode, float strength, int hardwareId )
     {
         // Process user inputs from keyboard, gamepad, etc.
-        if( mInputMap != null )
+        if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
         {
-            if( HardwareMap.testHardware( hardwareId, mPlayerNumber ) )
-            {            
-                // Apply user changes to the controller state
-                apply( inputCode, strength );
-                
-                // Notify the core that controller state has changed
-                notifyChanged();
-            }
+            // Apply user changes to the controller state
+            apply( inputCode, strength );
+            
+            // Notify the core that controller state has changed
+            notifyChanged();
         }
     }
     
@@ -114,17 +117,14 @@ public class PeripheralController extends AbstractController implements Abstract
     public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
         // Process multiple simultaneous user inputs from gamepad, keyboard, etc.
-        if( mInputMap != null )
+        if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
         {
-            if( HardwareMap.testHardware( hardwareId, mPlayerNumber ) )
-            {            
-                // Apply user changes to the controller state
-                for( int i = 0; i < inputCodes.length; i++ )
-                    apply( inputCodes[i], strengths[i] );
-                
-                // Notify the core that controller state has changed
-                notifyChanged();
-            }
+            // Apply user changes to the controller state
+            for( int i = 0; i < inputCodes.length; i++ )
+                apply( inputCodes[i], strengths[i] );
+            
+            // Notify the core that controller state has changed
+            notifyChanged();
         }
     }
     

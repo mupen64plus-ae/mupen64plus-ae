@@ -49,11 +49,6 @@
     <string name="ingameLoad_title">Load from file…</string>
     <string name="ingameSpeed_title">Game speed</string>
     <string name="ingameReset_title">Reset game</string>
-    <string name="ingameHardwareMap_title">Multiplayer setup</string>
-    <string name="ingameHardwareMap1_title">Player 1</string>
-    <string name="ingameHardwareMap2_title">Player 2</string>
-    <string name="ingameHardwareMap3_title">Player 3</string>
-    <string name="ingameHardwareMap4_title">Player 4</string>
     <string name="ingameMenu_title">Main menu</string>
     
     <!-- ******************************************** -->
@@ -182,6 +177,8 @@
     <string name="gameResume_summary">(unpredictable if cheats were selected)</string>
     <string name="gameRestart_title">Restart</string>
     <string name="gameRestart_summary">(recommended if cheats are selected)</string>
+    <string name="playerMap_title">Multi-player</string>
+    <string name="playerMap_summary">Define each player\'s controller(s)</string>
     <string name="cheatsCategory_title">Cheat options (long-press for notes)</string>
     <string name="cheats_titleFor">"Cheats for %1$s"</string>
     <string name="cheats_defaultName">Cheat %1$d</string>
@@ -341,6 +338,12 @@
     <string name="inputMapPreference_speedDown">Speed down</string>
     <string name="inputMapPreference_speedUp">Speed up</string>
     <string name="inputMapPreference_gameshark">Gameshark</string>
+    
+    <!-- Player Mapping -->
+    <string name="playerMapPreference_btnPlayer">Player %1$d\n\nCurrent devices:\n%2$s</string>
+    <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller(s)…\n\nCurrent devices:\n%2$s</string>
+    <string name="playerMapPreference_popupTitle">Player %1$d</string>
+    <string name="playerMapPreference_popupUnmap">Unmap</string>
     
     <!-- Asset Extractor -->
     <string name="dataDownloader_connectingTo">Connecting to %1$s</string>

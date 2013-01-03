@@ -21,7 +21,6 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import android.text.TextUtils;
 import org.acra.ACRA;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -45,6 +44,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
@@ -58,11 +58,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
     private static final String LAUNCH_CRASH = "launchCrash";
     private static final String PROCESS_TEXTURE_PACK = "gles2RiceImportHiResTextures";
-
+    
     private static final String INPUT = "input";
     private static final String AUDIO = "audio";
     private static final String VIDEO = "video";
     
+    private static final String PLAYER_MAP = "playerMap";
     private static final String XPERIA = "xperia";
     private static final String XPERIA_ENABLED = "xperiaEnabled";
     private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
@@ -77,7 +78,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-
+    
     // Don't need to call these every time the orientation changes
     static
     {
@@ -167,9 +168,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             launchPeripheralInfo();
         
         else if( key.equals( LAUNCH_CRASH ) )
-            launchCrash();        
+            launchCrash();
         
-        else // Let Android handle all other preference clicks
+        else
+            // Let Android handle all other preference clicks
             return false;
         
         // Tell Android that we handled the click
@@ -209,7 +211,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private void launchReloadAppData()
     {
-        mAppData.setAssetVersion( 0 );        
+        mAppData.setAssetVersion( 0 );
         startActivity( new Intent( this, MainActivity.class ) );
         finish();
     }
@@ -232,15 +234,16 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         // Test auto crash reporting system by sending a report
         ACRA.getErrorReporter().handleSilentException( new Exception( "BENIGN CRASH TEST" ) );
-        Notifier.showToast( this, "Report sent." );  // TODO localize
+        Notifier.showToast( this, "Report sent." ); // TODO localize
     }
     
     private void processTexturePak( String filename )
     {
         if( TextUtils.isEmpty( filename ) )
         {
-            ErrorLogger.put( "Video", "gles2RiceImportHiResTextures", "Filename not specified in MenuActivity.processTexturePak" );
-            Notifier.showToast( this, getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
+            ErrorLogger.put( "Video", "gles2RiceImportHiResTextures",
+                    "Filename not specified in MenuActivity.processTexturePak" );
+            Notifier.showToast( this, R.string.gles2RiceImportHiResTexturesTask_errorMessage );
             return;
         }
     	
@@ -274,7 +277,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 public void onComplete()
                 {
                     if( ErrorLogger.hasError() )
-                        Notifier.showToast( MenuActivity.this, getString( R.string.gles2RiceImportHiResTexturesTask_errorMessage ) );
+                        Notifier.showToast( MenuActivity.this, R.string.gles2RiceImportHiResTexturesTask_errorMessage );
                     ErrorLogger.clearLastError();
                 }
             }
@@ -288,7 +291,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
     }
-
+    
     @Override
     protected void onResume()
     {
@@ -297,29 +300,27 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         refreshViews( sharedPreferences, mUserPrefs );
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
     }
-
+    
     @SuppressWarnings( "deprecation" )
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        boolean rebuildHierarchy =
-                   key.equals( VIDEO_PLUGIN )
-                || key.equals( XPERIA_ENABLED );
+        boolean rebuildHierarchy = key.equals( VIDEO_PLUGIN ) || key.equals( XPERIA_ENABLED );
         
         if( rebuildHierarchy )
         {
-            // Sometimes one preference change affects the hierarchy or layout of the views.
-            // In this case it's easier just to restart the activity than trying to figure out what to fix.
+            // Sometimes one preference change affects the hierarchy or layout of the views. In this
+            // case it's easier just to restart the activity than try to figure out what to fix.
             // Examples:
-            //   Restore the preference categories that were removed in refreshViews(...)
-            //   Change the input mapping layout when Xperia Play touchpad en/disabled
+            // * Restore the preference categories that were removed in refreshViews(...)
+            // * Change the input mapping layout when Xperia Play touchpad en/disabled
             finish();
             startActivity( getIntent() );
         }
         else if( key.equals( PROCESS_TEXTURE_PACK ) )
         {
             // TODO: Make this summary persist, rather than the last selected filename
-            findPreference( key ).setSummary( getString( R.string.gles2RiceImportHiResTextures_summary ) );
+            findPreference( key ).setSummary( R.string.gles2RiceImportHiResTextures_summary );
             processTexturePak( sharedPreferences.getString( PROCESS_TEXTURE_PACK, "" ) );
         }
         else
@@ -329,13 +330,16 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             refreshViews( sharedPreferences, mUserPrefs );
         }
     }
-
+    
     private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
     {
         // Enable the play menu only if the selected game actually exists
         File selectedGame = new File( mUserPrefs.selectedGame );
         boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
         enablePreference( PLAY_MENU, isValidGame );
+        
+        // Enable the multi-player menu only if multiple controllers enabled
+        enablePreference( PLAYER_MAP, user.isMultiplayer );
         
         // Enable the input menu only if the input plug-in is not a dummy
         enablePreference( INPUT, user.inputPlugin.enabled );
@@ -370,8 +374,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         Preference preference = findPreference( key );
         if( preference instanceof ListPreference )
             preference.setSummary( ( (ListPreference) preference ).getEntry() );
-    }    
-
+    }
+    
     @SuppressWarnings( "deprecation" )
     private void enablePreference( String key, boolean enabled )
     {
@@ -379,7 +383,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( preference != null )
             preference.setEnabled( enabled );
     }
-
+    
     @SuppressWarnings( "deprecation" )
     private void removePreference( String keyParent, String keyChild )
     {

@@ -70,24 +70,6 @@
         android:id="@+id/ingameReset"
         android:title="@string/ingameReset_title"/>
     <item
-        android:id="@+id/ingameHardwareMap"
-        android:title="@string/ingameHardwareMap_title">
-        <menu>
-            <item
-                android:id="@+id/ingameHardwareMap1"
-                android:title="@string/ingameHardwareMap1_title"/>
-            <item
-                android:id="@+id/ingameHardwareMap2"
-                android:title="@string/ingameHardwareMap2_title"/>
-            <item
-                android:id="@+id/ingameHardwareMap3"
-                android:title="@string/ingameHardwareMap3_title"/>
-            <item
-                android:id="@+id/ingameHardwareMap4"
-                android:title="@string/ingameHardwareMap4_title"/>
-        </menu>
-    </item>
-    <item
         android:id="@+id/ingameMenu"
         android:title="@string/ingameMenu_title"/>
 

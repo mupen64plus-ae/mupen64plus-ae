@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchController;
-import paulscode.android.mupen64plusae.input.map.HardwareMap;
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -107,7 +106,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         mControllers = new ArrayList<AbstractController>();
         mIsXperiaPlay = !( activity instanceof GameActivity );
     }
-
+    
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
@@ -141,7 +140,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Set the screen orientation
-        mActivity.setRequestedOrientation( mUserPrefs.screenOrientation );        
+        mActivity.setRequestedOrientation( mUserPrefs.screenOrientation );
     }
     
     @TargetApi( 11 )
@@ -173,7 +172,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
                     mUserPrefs.isFpsEnabled, mAppData.fontsDir );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, mUserPrefs.touchscreenRefresh, mUserPrefs.isFpsEnabled );
+            mOverlay.initialize( mTouchscreenMap, mUserPrefs.touchscreenRefresh,
+                    mUserPrefs.isFpsEnabled );
         }
         
         // Initialize user interface devices
@@ -181,7 +181,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         if( mUserPrefs.inputPlugin.enabled )
             initControllers( inputSource );
         Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
-
+        
         // Override the peripheral controllers' key provider, to add some extra functionality
         inputSource.setOnKeyListener( this );
         
@@ -269,10 +269,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             touchpadMap.resize( NativeInputSource.PAD_WIDTH, NativeInputSource.PAD_HEIGHT );
             
             // Create the touchpad controller
-            touchpadController = new TouchController( touchpadMap, inputSource,
-                    null, mUserPrefs.isOctagonalJoystick );            
+            touchpadController = new TouchController( touchpadMap, inputSource, null,
+                    mUserPrefs.isOctagonalJoystick );
             mControllers.add( touchpadController );
-
+            
             // Filter by source identifier
             touchpadController.setSourceFilter( NativeInputSource.SOURCE_TOUCHPAD );
         }
@@ -296,37 +296,40 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
                 demux.addListener( touchpadController );
                 demux.addListener( touchscreenController );
                 inputSource.setOnTouchListener( demux );
-            }            
+            }
         }
-
+        
         // Create the input providers shared among all peripheral controllers
-        mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT, mUserPrefs.unmappableKeyCodes );
-        AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1 ? new AxisProvider( inputSource ) : null;
+        mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
+                mUserPrefs.unmappableKeyCodes );
+        AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1
+                ? new AxisProvider( inputSource )
+                : null;
         
         // Create the peripheral controls to handle key/stick presses
         if( mUserPrefs.inputMap1.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 1, mUserPrefs.inputMap1,
-                    mKeyProvider, axisProvider ) );
+            mControllers.add( new PeripheralController( 1, mUserPrefs.playerMap,
+                    mUserPrefs.inputMap1, mKeyProvider, axisProvider ) );
         }
         if( mUserPrefs.inputMap2.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 2, mUserPrefs.inputMap2,
-                    mKeyProvider, axisProvider ) );
+            mControllers.add( new PeripheralController( 2, mUserPrefs.playerMap,
+                    mUserPrefs.inputMap2, mKeyProvider, axisProvider ) );
         }
         if( mUserPrefs.inputMap3.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 3, mUserPrefs.inputMap3,
-                    mKeyProvider, axisProvider ) );
+            mControllers.add( new PeripheralController( 3, mUserPrefs.playerMap,
+                    mUserPrefs.inputMap3, mKeyProvider, axisProvider ) );
         }
         if( mUserPrefs.inputMap4.isEnabled() )
         {
-            mControllers.add( new PeripheralController( 4, mUserPrefs.inputMap4,
-                    mKeyProvider, axisProvider ) );
+            mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap,
+                    mUserPrefs.inputMap4, mKeyProvider, axisProvider ) );
         }
         
         // Setup multiplayer hardware mapping
-        HardwareMap.setEnabled( mUserPrefs.isMultiplayer );
+        mUserPrefs.playerMap.setEnabled( mUserPrefs.isMultiplayer );
     }
     
     @TargetApi( 11 )
