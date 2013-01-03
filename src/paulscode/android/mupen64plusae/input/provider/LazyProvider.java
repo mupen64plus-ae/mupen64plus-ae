@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae.input.provider;
 
 import java.util.ArrayList;
 
+import android.util.SparseIntArray;
 import android.view.MotionEvent;
 
 /**
@@ -38,11 +39,25 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
     /** The strength of the most recent input, ranging from 0 to 1, inclusive. */
     private float mCurrentStrength = 0;
     
-    /** The strength biases associated with each input channel, used to re-center raw analog values. */
-    private float[] mStrengthBiases = null;
+    /** The strength biases associated with each input code, used to re-center raw analog values. */
+    private final SparseIntArray mStrengthBiases = new SparseIntArray();
     
     /** The providers whose inputs are aggregated. */
-    private final ArrayList<AbstractProvider> providers = new ArrayList<AbstractProvider>();
+    private final ArrayList<AbstractProvider> mProviders = new ArrayList<AbstractProvider>();
+    
+    /** Input codes for axes that might be biased. */
+    private static final ArrayList<Integer> BIAS_CANDIDATES = new ArrayList<Integer>();
+    
+    static
+    {
+        // Xbox360 controller triggers
+        BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_Z, false ) );
+        BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_RZ, false ) );
+        
+        // Wired PS3 controller triggers
+        BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_LTRIGGER, false ) );
+        BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_RTRIGGER, false ) );
+    }
     
     /**
      * Adds an upstream provider to the aggregate.
@@ -54,7 +69,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
         if( provider != null )
         {
             provider.registerListener( this );
-            providers.add( provider );
+            mProviders.add( provider );
         }
     }
     
@@ -68,7 +83,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
         if( provider != null )
         {
             provider.unregisterListener( this );
-            providers.remove( provider );
+            mProviders.remove( provider );
         }
     }
     
@@ -77,10 +92,10 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
      */
     public void removeAllProviders()
     {
-        for( AbstractProvider provider : providers )
+        for( AbstractProvider provider : mProviders )
             provider.unregisterListener( this );
         
-        providers.clear();
+        mProviders.clear();
     }
     
     /**
@@ -88,8 +103,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
      */
     public void resetBiases()
     {
-        // Setting biases to null will force a refresh on next input
-        mStrengthBiases = null;
+        mStrengthBiases.clear();
     }
     
     /*
@@ -104,10 +118,6 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
         if( inputCodes == null || strengths == null )
             return;
         
-        // Reset the biases if necessary
-        if( mStrengthBiases == null )
-            mStrengthBiases = new float[strengths.length];
-        
         // Update the strength biases if necessary
         updateBiases( inputCodes, strengths );
         
@@ -120,8 +130,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
             float strength = strengths[i];
             
             // Remove the bias in the channel
-            if( mStrengthBiases != null )
-                strength -= mStrengthBiases[i];
+            strength -= mStrengthBiases.get( inputCode, 0 );
             
             // Cache the strongest input
             if( strength > maxStrength )
@@ -167,42 +176,32 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
      */
     private void updateBiases( int[] inputCodes, float[] rawStrengths )
     {
-        for( int i = 0; i < rawStrengths.length; i++ )
+        // Due to a quirk in Android, analog axes whose center-point is not zero (e.g. an analog
+        // trigger whose rest position is -1) still produce a perfect zero value at rest until
+        // they have been wiggled a little bit. After that point, their rest position is
+        // correctly recorded. Therefore we treat perfect zeros as suspicious and wait until we
+        // are sure that we have a real strength value.
+        
+        for( int i = 0; i < inputCodes.length; i++ )
         {
-            // Perfect 0 indicates that the bias for this axis is unset
-            if( mStrengthBiases[i] != 0 )
-                continue;
-            
-            // Get the strength of the axis
+            // Get the array elements
+            int inputCode = inputCodes[i];
             float rawStrength = rawStrengths[i];
             
-            // Due to a quirk in Android, analog axes whose center-point is not zero (e.g. an analog
-            // trigger whose rest position is -1) still produce a perfect zero value at rest until
-            // they have been wiggled a little bit. After that point, their rest position is
-            // correctly recorded. Therefore we treat perfect zeros as suspicious and wait until we
-            // are sure that we have a real strength value.
-            if( rawStrength == 0 )
-                continue;
-            
-            int axis = AbstractProvider.inputToAxisCode( inputCodes[i] );
-            switch( axis )
+            // Record the bias under certain conditions
+            if( rawStrength != 0 )
             {
-                default:
-                    // Round and record the bias to -1, 0, or 1
-                    mStrengthBiases[i] = Math.round( rawStrength );
-                    break;
-                case MotionEvent.AXIS_HAT_X:
-                case MotionEvent.AXIS_HAT_Y:
-                    // The resting value for these axes should always be zero. If we used the
-                    // default method for these, their bias might be incorrectly stored as +/-
-                    // 1. Subtracting this incorrect bias would then make one direction of the
-                    // d-pad unusable. So we do nothing here, to ensure the bias remains zero
-                    // for these axes.
-                    break;
+                // Strength is genuine
+                if( mStrengthBiases.indexOfKey( inputCode ) < 0 )
+                {
+                    // Bias has not been recorded yet
+                    if( BIAS_CANDIDATES.contains( inputCode ) )
+                    {
+                        // Input code refers to an axis that might be biased
+                        mStrengthBiases.put( inputCode, Math.round( rawStrength ) );
+                    }
+                }
             }
-            
-            // Add a tiny number to indicate that the bias for this axis is now set
-            mStrengthBiases[i] += Float.MIN_VALUE;
         }
     }
 }
