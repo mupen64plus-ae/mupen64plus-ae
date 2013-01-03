@@ -23,6 +23,7 @@ import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.annotation.TargetApi;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -103,6 +104,26 @@ public abstract class AbstractProvider
         mPublisher.unsubscribeAll();
     }
     
+    /**
+     * Gets the human-readable name of the hardware.
+     *
+     * @param id The unique hardware identifier.
+     * @return The name of the hardware, or null if hardware not found.
+     */
+    @TargetApi( 9 )
+    public static String getHardwareName( int id )
+    {
+        if( AppData.IS_GINGERBREAD )
+        {
+            InputDevice device = InputDevice.getDevice( id );
+            return device == null ? null : device.getName();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     /**
      * Gets the human-readable name of the input.
      * 

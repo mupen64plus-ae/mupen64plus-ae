@@ -19,7 +19,10 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
+import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.util.SafeMethods;
+import android.content.Context;
 import android.util.Log;
 import android.util.SparseIntArray;
 
@@ -65,12 +68,13 @@ public class PlayerMap
     }
     
     /**
-     * Gets a description of the devices mapped to a player.
+     * Gets a human-readable summary of the devices mapped to a player.
      * 
+     * @param context The activity context.
      * @param player The index to the player.
      * @return Description of the devices mapped to the given player.
      */
-    public String getMappedDeviceInfo( int player )
+    public String getDeviceSummary( Context context, int player )
     {
         String result = "";
         for( int i = 0; i < mMap.size(); i++ )
@@ -78,7 +82,12 @@ public class PlayerMap
             if( mMap.valueAt( i ) == player )
             {
                 int deviceId = mMap.keyAt( i );
-                result += "Device " + deviceId + "\n";
+                String name = AbstractProvider.getHardwareName( deviceId );
+                if( name == null )
+                    result += context.getString( R.string.playerMap_deviceWithoutName, deviceId );
+                else
+                    result += context.getString( R.string.playerMap_deviceWithName, deviceId, name );
+                result += "\n";
             }
         }
         return result.trim();

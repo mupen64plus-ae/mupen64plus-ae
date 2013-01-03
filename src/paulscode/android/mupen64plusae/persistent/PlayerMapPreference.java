@@ -142,10 +142,11 @@ public class PlayerMapPreference extends DialogPreference implements
     
     private void promptPlayer( final int player )
     {
-        String title = getContext().getString( R.string.playerMapPreference_popupTitle, player );
-        String message = getContext().getString( R.string.playerMapPreference_popupMessage, player,
-                mMap.getMappedDeviceInfo( player ) );
-        String btnText = getContext().getString( R.string.playerMapPreference_popupUnmap );
+        Context context = getContext();
+        String title = context.getString( R.string.playerMapPreference_popupTitle, player );
+        String message = context.getString( R.string.playerMapPreference_popupMessage, player,
+                mMap.getDeviceSummary( context, player ) );
+        String btnText = context.getString( R.string.playerMapPreference_popupUnmap );
         
         Prompt.promptInputCode( getContext(), title, message, btnText, mUnmappableKeyCodes,
                 new OnInputCodeListener()
@@ -174,9 +175,10 @@ public class PlayerMapPreference extends DialogPreference implements
     {
         if( button != null )
         {
-            String deviceInfo = mMap.getMappedDeviceInfo( player );
-            String buttonText = getContext().getString( R.string.playerMapPreference_btnPlayer,
-                    player, deviceInfo );
+            Context context = getContext();
+            String deviceInfo = mMap.getDeviceSummary( context, player );
+            String buttonText = context.getString( R.string.playerMapPreference_btnPlayer, player,
+                    deviceInfo );
             button.setText( buttonText );
         }
     }

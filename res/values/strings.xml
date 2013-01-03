@@ -344,6 +344,8 @@
     <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller(s)…\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupTitle">Player %1$d</string>
     <string name="playerMapPreference_popupUnmap">Unmap</string>
+    <string name="playerMap_deviceWithName">Device %1$d (%2$s)</string>
+    <string name="playerMap_deviceWithoutName">Device %1$d</string>
     
     <!-- Asset Extractor -->
     <string name="dataDownloader_connectingTo">Connecting to %1$s</string>
