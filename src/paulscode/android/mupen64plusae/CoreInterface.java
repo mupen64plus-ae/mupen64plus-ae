@@ -21,7 +21,6 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -465,10 +464,10 @@ public class CoreInterface
         else
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
         
-        syncConfigFileInputs( mupen64plus_cfg, user.inputMap1, 1);
-        syncConfigFileInputs( mupen64plus_cfg, user.inputMap2, 2);
-        syncConfigFileInputs( mupen64plus_cfg, user.inputMap3, 3);
-        syncConfigFileInputs( mupen64plus_cfg, user.inputMap4, 4);
+        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged1, 1);
+        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged2, 2);
+        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged3, 3);
+        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged4, 4);
 
         mupen64plus_cfg.save();
         
@@ -482,13 +481,13 @@ public class CoreInterface
         //@formatter:on
     }
     
-    private static void syncConfigFileInputs( ConfigFile mupen64plus_cfg, InputMap map,
+    private static void syncConfigFileInputs( ConfigFile mupen64plus_cfg, boolean isPlugged,
             int playerNumber )
     {
         String sectionTitle = "Input-SDL-Control" + playerNumber;
         
         mupen64plus_cfg.put( sectionTitle, "Version", "1.00" );
-        mupen64plus_cfg.put( sectionTitle, "plugged", map.isEnabled() ? "True" : "False" );
+        mupen64plus_cfg.put( sectionTitle, "plugged", isPlugged ? "True" : "False" );
         mupen64plus_cfg.put( sectionTitle, "plugin", "2" );
         mupen64plus_cfg.put( sectionTitle, "device", "-2" );
         mupen64plus_cfg.put( sectionTitle, "mouse", "False" );

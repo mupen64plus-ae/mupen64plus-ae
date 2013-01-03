@@ -327,9 +327,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap,
                     mUserPrefs.inputMap4, mKeyProvider, axisProvider ) );
         }
-        
-        // Setup multiplayer hardware mapping
-        mUserPrefs.playerMap.setEnabled( mUserPrefs.isMultiplayer );
     }
     
     @TargetApi( 11 )

@@ -338,8 +338,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
         enablePreference( PLAY_MENU, isValidGame );
         
-        // Enable the multi-player menu only if multiple controllers enabled
-        enablePreference( PLAYER_MAP, user.isMultiplayer );
+        // Enable the multi-player menu only if the player map is enabled
+        enablePreference( PLAYER_MAP, user.playerMap.isEnabled() );
         
         // Enable the input menu only if the input plug-in is not a dummy
         enablePreference( INPUT, user.inputPlugin.enabled );

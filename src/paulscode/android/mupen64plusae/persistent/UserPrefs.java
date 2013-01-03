@@ -138,8 +138,17 @@ public class UserPrefs
     /** The button map for player 4. */
     public final InputMap inputMap4;
     
-    /** True if multi-player is enabled. */
-    public final boolean isMultiplayer;
+    /** True if any type of AbstractController is enabled for Player 1. */
+    public final boolean isPlugged1;
+    
+    /** True if any type of AbstractController is enabled for Player 2. */
+    public final boolean isPlugged2;
+    
+    /** True if any type of AbstractController is enabled for Player 3. */
+    public final boolean isPlugged3;
+    
+    /** True if any type of AbstractController is enabled for Player 4. */
+    public final boolean isPlugged4;
     
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
@@ -254,17 +263,18 @@ public class UserPrefs
         isOctagonalJoystick = prefsData.getBoolean( "touchscreenOctagonJoystick", true );
         
         // Peripheral prefs
-        playerMap = new PlayerMap( prefsData.getString( "playerMap", "") );
+        playerMap = new PlayerMap( prefsData.getString( "playerMap", "" ) );
         inputMap1 = new InputMap( prefsData.getString( "peripheralMap1", "" ) );
         inputMap2 = new InputMap( prefsData.getString( "peripheralMap2", "" ) );
         inputMap3 = new InputMap( prefsData.getString( "peripheralMap3", "" ) );
         inputMap4 = new InputMap( prefsData.getString( "peripheralMap4", "" ) );
+        
         int numPlayers = 0;
         numPlayers += inputMap1.isEnabled() ? 1 : 0;
         numPlayers += inputMap2.isEnabled() ? 1 : 0;
         numPlayers += inputMap3.isEnabled() ? 1 : 0;
         numPlayers += inputMap4.isEnabled() ? 1 : 0;
-        isMultiplayer = numPlayers > 1;
+        playerMap.setEnabled( numPlayers > 1 );
         
         // Audio prefs
         swapChannels = prefsData.getBoolean( "swapAudioChannels", false );
@@ -294,7 +304,8 @@ public class UserPrefs
         isGles2RiceAutoFrameskipEnabled = prefsData.getBoolean( "gles2RiceAutoFrameskip", false );
         isGles2RiceFastTextureCrcEnabled = prefsData.getBoolean( "gles2RiceFastTextureCRC", true );
         isGles2RiceFastTextureLoadingEnabled = prefsData.getBoolean( "gles2RiceFastTexture", false );
-        isGles2RiceForceTextureFilterEnabled = prefsData.getBoolean( "gles2RiceForceTextureFilter", false );
+        isGles2RiceForceTextureFilterEnabled = prefsData.getBoolean( "gles2RiceForceTextureFilter",
+                false );
         isGles2RiceHiResTexturesEnabled = prefsData.getBoolean( "gles2RiceHiResTextures", true );
         
         // Cheat prefs
@@ -346,6 +357,12 @@ public class UserPrefs
             unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
+        
+        // Identify which players are plugged in
+        isPlugged1 = inputMap1.isEnabled() || isTouchscreenEnabled || isXperiaEnabled;
+        isPlugged2 = inputMap2.isEnabled();
+        isPlugged3 = inputMap3.isEnabled();
+        isPlugged4 = inputMap4.isEnabled();
     }
     
     /**
