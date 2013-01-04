@@ -48,6 +48,7 @@
     <string name="ingameSave_title">Save to file…</string>
     <string name="ingameLoad_title">Load from file…</string>
     <string name="ingameSpeed_title">Game speed</string>
+    <string name="ingameIme_title">Change IME</string>
     <string name="ingameReset_title">Reset game</string>
     <string name="ingameMenu_title">Main menu</string>
     

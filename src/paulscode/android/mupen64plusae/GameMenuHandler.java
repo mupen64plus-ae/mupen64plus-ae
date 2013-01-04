@@ -10,11 +10,13 @@ import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 
 public class GameMenuHandler
 {
@@ -123,6 +125,9 @@ public class GameMenuHandler
                 break;
             case R.id.ingameSpeed:
                 configureSpeed();
+                break;
+            case R.id.ingameIme:
+                changeIme();
                 break;
             case R.id.ingameReset:
                 resetState();
@@ -249,6 +254,16 @@ public class GameMenuHandler
     {
         Notifier.showToast( mActivity, R.string.toast_loadingGame, file.getName() );
         NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
+    }
+    
+    private void changeIme()
+    {
+        InputMethodManager imeManager = (InputMethodManager) mActivity
+                .getSystemService( Context.INPUT_METHOD_SERVICE );
+        if( imeManager != null )
+        {
+            imeManager.showInputMethodPicker();
+        }
     }
     
     private void resetState()
