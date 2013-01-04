@@ -269,7 +269,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         // Test auto crash reporting system by sending a report
         ACRA.getErrorReporter().handleSilentException( new Exception( "BENIGN CRASH TEST" ) );
-        Notifier.showToast( this, "Report sent." ); // TODO localize
+        Notifier.showToast( this, getString( R.string.toast_crashReportSent ) );
     }
     
     private void processTexturePak( String filename )

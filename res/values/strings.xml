@@ -19,16 +19,16 @@
     ***********************************************************************************
 -->
 <resources>
-    
+
     <!-- Common Short Strings -->
     <string name="app_name">Mupen64 Plus</string>
     <string name="_confirmation">Confirmation</string>
     <string name="_default">Default</string>
-    
+
     <!-- ************************************************************************** -->
-    <!-- In-Game Strings                                                            -->
+    <!-- In-Game Strings -->
     <!-- ************************************************************************** -->
-    
+
     <!-- In-Game Menu -->
     <string name="ingameSetSpeed_title">Speed %1$d %%</string>
     <string name="ingameQuickload_title">Slot load</string>
@@ -40,33 +40,35 @@
     <string name="ingameIme_title">Change IME</string>
     <string name="ingameReset_title">Reset game</string>
     <string name="ingameMenu_title">Main menu</string>
-    
-    <!-- In-Game Dialogs -->
-    <string name="gameMenu_confirmFile">Overwrite %1$s?</string>
-    <string name="gameMenu_confirmReset">Reset game? All progress since your last save will be lost.</string>
-    <string name="gameMenu_saveHint">filename</string>
-    <string name="gameMenu_speedHint">Speed between 10 to 300</string>
-    
-    <!-- In-Game Toast Messages -->
+
+    <!-- ************************************************************************** -->
+    <!-- Toast Messages                                                             -->
+    <!-- Developers: Follow punctuation and grammar as shown below                  -->
+    <!-- ************************************************************************** -->
+
+    <!-- Something happening (typically use '-ing' and '…') -->
     <string name="toast_appStarted">Launching emulator…</string>
-    <string name="toast_sdInaccessible">SD card not accessible (disconnect the USB cable and try again)</string>
-    <string name="toast_savegameSlot">Now using slot %1$d.</string>
+    <string name="toast_resettingGame">Resetting game…</string>
     <string name="toast_loadingSession">Auto-resuming game…</string>
-    <string name="toast_savingSession">Auto-saving game…</string>    
+    <string name="toast_savingSession">Auto-saving game…</string>
     <string name="toast_loadingSlot">Resuming slot %1$d…</string>
-    <string name="toast_savingSlot">Saving slot %1$d…</string>    
+    <string name="toast_savingSlot">Saving slot %1$d…</string>
     <string name="toast_loadingGame">Resuming %1$s…</string>
     <string name="toast_savingGame">Saving %1$s…</string>
-    <string name="toast_resettingGame">Resetting…</string>
-    <string name="toast_overwritingGame">Overwriting %1$s…</string>    
-    
+    <string name="toast_overwritingGame">Overwriting %1$s…</string>
+
+    <!-- Something happened (use '.') -->
+    <string name="toast_savegameSlot">Now using slot %1$d.</string>
+    <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
+    <string name="toast_crashReportSent">Report sent.</string>
+
     <!-- ************************************************************************** -->
     <!-- Preference Menu Strings                                                    -->
-    <!-- Developers: Please follow naming conventions                               -->
-    <!-- as described in res/xml/preferences.xml                                    -->
+    <!-- Developers: Please follow naming conventions described in preferences.xml  -->
+    <!-- Developers: In general, capitalize first word only and avoid punctuation   -->
     <!-- ************************************************************************** -->
-    
-    <!-- Action Launchers -->    
+
+    <!-- Action Launchers -->
     <string name="gameResume_title">Resume</string>
     <string name="gameResume_summary">(unpredictable if cheats were selected)</string>
     <string name="gameRestart_title">Restart</string>
@@ -90,7 +92,7 @@
     <string name="menuLocale_title">Language</string>
     <string name="menuHelp_title">Help</string>
     <string name="menuAbout_title">About</string>
-    
+
     <!-- Preference Screens -->
     <string name="menuPlay_title">Play</string>
     <string name="mainSettings_title">Settings</string>
@@ -105,11 +107,11 @@
     <string name="audio_title">Audio</string>
     <string name="audio_summary">Sound settings</string>
     <string name="plugins_title">Plug-ins</string>
-    <string name="plugins_summary">Core settings</string>    
+    <string name="plugins_summary">Core settings</string>
     <string name="advanced_title">Advanced</string>
-    <string name="advanced_summary">Diagnostics and debug settings</string>    
-    
-    <!-- Preference Categories -->    
+    <string name="advanced_summary">Diagnostics and debug settings</string>
+
+    <!-- Preference Categories -->
     <string name="cheatsCategory_title">Cheat options (long-press for notes)</string>
     <string name="categoryHardware_title">Hardware</string>
     <string name="categoryOther_title">Other</string>
@@ -118,7 +120,7 @@
     <string name="categoryGles2N64_title">GLES2N64 settings</string>
     <string name="categoryGles2Rice_title">GLES2Rice settings</string>
     <string name="categoryCrashReports_title">Crash reports</string>
-    
+
     <!-- Checkbox Preferences -->
     <string name="touchscreenEnabled_title">Enable touchscreen</string>
     <string name="xperiaEnabled_title">Enable touchpad</string>
@@ -158,12 +160,12 @@
     <string name="swapAudioChannels_summary">Swap the left and right audio channels</string>
     <string name="acraEnable_title">Enable crash reporting</string>
     <string name="acraEnable_summary"></string>
-    
+
     <!-- Edit Text Preferences -->
     <string name="acraUserEmail_title">Contact info</string>
     <string name="acraUserEmail_summary">Your paulscode.com username (optional)</string>
-    
-    <!-- List Preferences (summary is automatically the selected value) -->
+
+    <!-- List Preferences (summary will be the selected value) -->
     <string name="xperiaLayout_title">Touchpad layout</string>
     <string name="xperiaLayout_entry0">Left pad: Analog control; Right pad: C buttons</string>
     <string name="xperiaLayout_entry1">Left pad: C buttons;  Right pad: Analog control</string>
@@ -201,7 +203,7 @@
     <string name="gles2N64Frameskip_entryExactly3">Exactly 3 frames</string>
     <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
-    <string name="resamplingAlgs_title">Resampling algorithm</string>    
+    <string name="resamplingAlgs_title">Resampling algorithm</string>
     <string name="resamplingAlgs_trivial">Trivial</string>
     <string name="resamplingAlgs_linear">Linear interpolation</string>
     <string name="resamplingAlgs_zoh">Zero order hold</string>
@@ -224,8 +226,8 @@
     <string name="rspPlugin_entry2">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     <string name="corePlugin_title">Emulation core</string>
     <string name="corePlugin_entry0">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
-    
-    <!-- Path Preferences (summary is automatically the selected path) -->
+
+    <!-- Path Preferences (summary will be the selected path) -->
     <string name="pathPreference_dialogTitle">Selected folder: %1$s</string>
     <string name="selectedGame_title">Game</string>
     <string name="touchscreenCustom_title">Custom layout folder</string>
@@ -236,36 +238,46 @@
     <string name="gles2RiceImportHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="gles2RiceImportHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
     <string name="gameSaveDir_title">Savegame folder</string>
-    
+
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multi-player</string>
-    <string name="playerMap_summary">Define each player\'s controller</string>    
-    
+    <string name="playerMap_summary">Define each player\'s controller</string>
+
     <!-- Input Map Preferences -->
     <string name="peripheralMap1_title">Controller</string>
     <string name="peripheralMap2_title">Player 2</string>
     <string name="peripheralMap3_title">Player 3</string>
     <string name="peripheralMap4_title">Player 4</string>
     <string name="peripheralMap_summary">Button and special function mapping</string>
-    
+
     <!-- Non-Translatable Default Values -->
     <string name="gameSaveDir_default" translatable="false">!GameSaves</string> <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
     <string name="selectedGame_default" translatable="false">~roms/n64</string> <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <string name="touchscreenCustom_default" translatable="false">~</string>    <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <string name="inputMapPreference_default_on" translatable="false">true/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,14:-1,15:-2,16:-3,17:-4</string>
     <string name="inputMapPreference_default_off" translatable="false">false/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,14:-1,15:-2,16:-3,17:-4</string>
-    
+
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback                                                 -->
+    <!-- Developers: Use formatting arguments rather than string concatenation:     -->
+    <!-- http://developer.android.com/guide/topics/resources/string-resource.html   -->
     <!-- ************************************************************************** -->
-    
+
+    <!-- In-Game Dialogs -->
+    <string name="gameMenu_confirmFile">Overwrite %1$s?</string>
+    <string name="gameMenu_confirmReset">Reset game? All progress since your last save will be lost.</string>
+
+    <!-- Text Editor Hints (lower-case) -->
+    <string name="gameMenu_saveHint">filename</string>
+    <string name="gameMenu_speedHint">speed between 10 to 300</string>
+
     <!-- Asset Extractor -->
-    <string name="_initializing">Initializing</string>
-    <string name="dataDownloader_finished">Finished</string>
+    <string name="_initializing">Initializing…</string>
     <string name="dataDownloader_progress">%1$.0f%% done: %2$s</string>
-    
+    <string name="dataDownloader_finished">Finished.</string>
+
     <!-- Cheats Configuration -->
-    <string name="cheats_titleFor">"Cheats for %1$s"</string>
+    <string name="cheats_titleFor">Cheats for %1$s</string>
     <string name="cheats_defaultName">Cheat %1$d</string>
     <string name="cheats_longPress">(long-press for full text)</string>
     <string name="cheatNotes_title">Notes</string>
@@ -276,19 +288,19 @@
     <string name="cheatsTaskHandler_message">Please be patient.  This process may take some time.</string>
     <string name="cheats_title">Cheats</string>
     <string name="cheats_summary">Choose a game to hack</string>
-    
+
     <!-- Player Mapping -->
     <string name="playerMap_deviceWithName">Device %1$d (%2$s)</string>
     <string name="playerMap_deviceWithoutName">Device %1$d</string>
     <string name="playerMapPreference_btnPlayer">Player %1$d\n\n%2$s</string>
-    <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller(s)…\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupTitle">Player %1$d</string>
+    <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Unmap</string>
-    
+
     <!-- Input Mapping -->
+    <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
     <string name="inputMapPreference_showSpecial">Show special functions</string>
     <string name="inputMapPreference_hideSpecial">Hide special functions</string>
-    <string name="inputMapPreference_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
     <string name="inputMapPreference_popupPosButtonText">Unmap</string>
     <string name="inputMapPreference_aPadXperiaPlay">Analog stick controlled with touchpad</string>
     <string name="inputMapPreference_cPadXperiaPlay">C-pad controlled with touchpad</string>
@@ -312,8 +324,8 @@
     <string name="inputMapPreference_btnAL">Analog left</string>
     <string name="inputMapPreference_btnAD">Analog down</string>
     <string name="inputMapPreference_btnAU">Analog up</string>
-    <string name="inputMapPreference_rumble">Rumble Pak</string>
-    <string name="inputMapPreference_mempak">Expansion Pak</string>
+    <string name="inputMapPreference_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="inputMapPreference_mempak">Expansion Pak</string> <!-- capitalize since trademark -->
     <string name="inputMapPreference_incrementSlot">Increment slot</string>
     <string name="inputMapPreference_saveSlot">@string/ingameQuicksave_title</string>
     <string name="inputMapPreference_loadSlot">@string/ingameQuickload_title</string>
@@ -325,5 +337,5 @@
     <string name="inputMapPreference_speedDown">Speed down</string>
     <string name="inputMapPreference_speedUp">Speed up</string>
     <string name="inputMapPreference_gameshark">Gameshark</string>
-    
+
 </resources>
