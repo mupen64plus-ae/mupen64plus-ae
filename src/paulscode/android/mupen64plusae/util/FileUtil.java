@@ -128,8 +128,13 @@ public class FileUtil
         
         return folder.delete();
     }
-
+    
     public static boolean copyFile( File src, File dest )
+    {
+        return copyFile( src, dest, false );
+    }
+    
+    public static boolean copyFile( File src, File dest, boolean makeBackups )
     {
         if( src == null )
         {
@@ -148,12 +153,11 @@ public class FileUtil
             boolean success = true;
             String[] files = src.list();
             
-            if( !dest.exists() )
-                dest.mkdirs();
+            dest.mkdirs();
             
             for( String file : files )
             {
-                success = success && copyFile( new File( src, file ), new File( dest, file ) );
+                success = success && copyFile( new File( src, file ), new File( dest, file ), makeBackups );
             }
             
             return success;
@@ -167,8 +171,9 @@ public class FileUtil
                 return false;
             }
             
-            if( !f.exists() )
-                f.mkdirs();
+            f.mkdirs();            
+            if( dest.exists() && makeBackups )
+                backupFile( dest );
             
             try
             {
@@ -193,6 +198,20 @@ public class FileUtil
 
             return true;
         }
+    }
+    
+    public static void backupFile( File file )
+    {
+        if( file.isDirectory() )
+            return;
+        
+        // Get a unique name for the backup
+        String backupName = file.getAbsolutePath() + ".bak";
+        File backup = new File( backupName );
+        for( int i = 1; backup.exists(); i++ )
+            backup = new File( backupName + i );
+        
+        copyFile( file, backup );
     }
 
     /**

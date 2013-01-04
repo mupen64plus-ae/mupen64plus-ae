@@ -393,6 +393,10 @@
                     android:summary="@string/menuPeripheralInfo_summary"
                     android:title="@string/menuPeripheralInfo_title" />
                 <Preference
+                    android:key="menuMigrateSavefiles"
+                    android:summary="@string/menuMigrateSavefiles_summary"
+                    android:title="@string/menuMigrateSavefiles_title" />
+                <Preference
                     android:key="menuReloadAppData"
                     android:summary="@string/menuReloadAppData_summary"
                     android:title="@string/menuReloadAppData_title" />

@@ -172,6 +172,11 @@
     <string name="corePlugin_title">Emulation core</string>
     <string name="menuDeviceInfo_title">Device info</string>
     <string name="menuDeviceInfo_summary">Device hardware and model information</string>
+    <string name="menuMigrateSavefiles_title">Migrate savefiles</string>
+    <string name="menuMigrateSavefiles_summary">Copy your slot saves from the old app into this one</string>
+    <string name="menuMigrateSavefiles_messageNotFound">No files to copy.</string>
+    <string name="menuMigrateSavefiles_messageConfirm">Are you sure you want to copy your old slot saves? Backups will be made if necessary.</string>
+    <string name="menuMigrateSavefiles_messageSuccess">Migration succeeded.</string>
     <string name="menuReloadAppData_title">Reload app resources</string>
     <string name="menuReloadAppData_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
     

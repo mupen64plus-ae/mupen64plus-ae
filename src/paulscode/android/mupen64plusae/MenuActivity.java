@@ -54,6 +54,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String PLAY_MENU = "menuPlay";
     private static final String LAUNCH_RESET_USER_PREFS = "menuResetUserPrefs";
     private static final String LAUNCH_RELOAD_APP_DATA = "menuReloadAppData";
+    private static final String LAUNCH_MIGRATE_SAVEFILES = "menuMigrateSavefiles";
     private static final String LAUNCH_DEVICE_INFO = "menuDeviceInfo";
     private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
     private static final String LAUNCH_CRASH = "launchCrash";
@@ -118,6 +119,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Define the click callback for certain menu items that aren't actually preferences
         listenTo( LAUNCH_RESET_USER_PREFS );
         listenTo( LAUNCH_RELOAD_APP_DATA );
+        listenTo( LAUNCH_MIGRATE_SAVEFILES );
         listenTo( LAUNCH_DEVICE_INFO );
         listenTo( LAUNCH_PERIPHERAL_INFO );
         listenTo( LAUNCH_CRASH );
@@ -160,6 +162,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         else if( key.equals( LAUNCH_RELOAD_APP_DATA ) )
             launchReloadAppData();
+        
+        else if( key.equals( LAUNCH_MIGRATE_SAVEFILES ) )
+            launchMigrateSavefiles();
         
         else if( key.equals( LAUNCH_DEVICE_INFO ) )
             launchDeviceInfo();
@@ -214,6 +219,36 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mAppData.setAssetVersion( 0 );
         startActivity( new Intent( this, MainActivity.class ) );
         finish();
+    }
+    
+    private void launchMigrateSavefiles()
+    {
+        final File oldDir = new File( mAppData.oldDataDir + "/data/save/" );
+        if( !oldDir.exists() )
+        {
+            String title = getString( R.string.menuMigrateSavefiles_title );
+            String message = getString( R.string.menuMigrateSavefiles_messageNotFound );
+            new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+        }
+        else
+        {
+            String title = getString( R.string._confirmation );
+            String message = getString( R.string.menuMigrateSavefiles_messageConfirm );
+            Prompt.promptConfirm( this, title, message, new OnClickListener()
+            {
+                @Override
+                public void onClick( DialogInterface dialog, int which )
+                {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
+                    {
+                        File newDir = new File( mUserPrefs.slotSaveDir );
+                        FileUtil.copyFile( oldDir, newDir, true );
+                        Notifier.showToast( MenuActivity.this,
+                                R.string.menuMigrateSavefiles_messageSuccess );
+                    }
+                }
+            } );
+        }
     }
     
     private void launchDeviceInfo()
