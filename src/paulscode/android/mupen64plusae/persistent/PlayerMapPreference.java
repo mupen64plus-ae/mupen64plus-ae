@@ -177,7 +177,7 @@ public class PlayerMapPreference extends DialogPreference implements
         {
             Context context = getContext();
             String deviceInfo = mMap.getDeviceSummary( context, player );
-            String buttonText = context.getString( R.string.playerMapPreference_btnPlayer, player,
+            String buttonText = context.getString( R.string.playerMapPreference_button, player,
                     deviceInfo );
             button.setText( buttonText );
         }

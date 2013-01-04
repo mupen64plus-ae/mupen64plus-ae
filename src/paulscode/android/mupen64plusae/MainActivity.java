@@ -130,7 +130,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
                 mAppData.setAssetVersion( ASSET_VERSION );
             }
             
-            updateText( R.string.dataDownloader_finished );
+            updateText( R.string.assetExtractor_finished );
             
             // Launch the MenuActivity
             startActivity( new Intent( MainActivity.this, MenuActivity.class ) );
@@ -151,7 +151,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
     {
         float percent = ( 100f * mAssetsExtracted ) / (float) TOTAL_ASSETS;
         mAssetsExtracted++;
-        updateText( R.string.dataDownloader_progress, percent, nextFileExtracted );
+        updateText( R.string.assetExtractor_progress, percent, nextFileExtracted );
     }
     
     /**

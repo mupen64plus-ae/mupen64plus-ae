@@ -61,10 +61,10 @@ public class GameMenuHandler
     {
         // Inflate the in-game menu, record the dynamic menu items/submenus for later
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
-        mSlotMenuItem = menu.findItem( R.id.ingameSlot );
+        mSlotMenuItem = menu.findItem( R.id.ingameSetSlot );
         mSlotSubMenu = mSlotMenuItem.getSubMenu();
-        mGameSpeedItem = menu.findItem( R.id.ingameSetSpeed );
-        mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title,
+        mGameSpeedItem = menu.findItem( R.id.ingameToggleSpeed );
+        mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameToggleSpeed_title,
                 BASELINE_SPEED_FACTOR ) );
         
         // Get the app data after the activity has been created
@@ -108,31 +108,31 @@ public class GameMenuHandler
             case R.id.slot9:
                 setSlot( 9, true );
                 break;
-            case R.id.ingameQuicksave:
-                saveSlot();
-                break;
-            case R.id.ingameQuickload:
-                loadSlot();
-                break;
-            case R.id.ingameSetSpeed:
+            case R.id.ingameToggleSpeed:
                 toggleSpeed();
                 break;
-            case R.id.ingameSave:
-                saveStateFromPrompt();
+            case R.id.ingameSlotSave:
+                saveSlot();
                 break;
-            case R.id.ingameLoad:
-                loadStateFromPrompt();
+            case R.id.ingameSlotLoad:
+                loadSlot();
                 break;
-            case R.id.ingameSpeed:
-                configureSpeed();
+            case R.id.ingameFileSave:
+                saveFileFromPrompt();
                 break;
-            case R.id.ingameIme:
-                changeIme();
+            case R.id.ingameFileLoad:
+                loadFileFromPrompt();
+                break;
+            case R.id.ingameSetSpeed:
+                setSpeed();
+                break;
+            case R.id.ingameSetIme:
+                setIme();
                 break;
             case R.id.ingameReset:
                 resetState();
                 break;
-            case R.id.ingameMenu:
+            case R.id.ingameMainMenu:
                 quitToMenu();
                 break;
             default:
@@ -146,7 +146,7 @@ public class GameMenuHandler
         int speed = mCustomSpeed ? mSpeedFactor : BASELINE_SPEED_FACTOR;
         
         NativeMethods.stateSetSpeed( speed );
-        mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameSetSpeed_title, speed ) );
+        mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameToggleSpeed_title, speed ) );
     }
     
     private void setSlot( int value, boolean notify )
@@ -160,7 +160,7 @@ public class GameMenuHandler
         
         // Refresh the slot item in the top-level options menu
         if( mSlotMenuItem != null )
-            mSlotMenuItem.setTitle( mActivity.getString( R.string.ingameSlot_title, mSlot ) );
+            mSlotMenuItem.setTitle( mActivity.getString( R.string.ingameSetSlot_title, mSlot ) );
         
         // Refresh the slot submenu
         if( mSlotSubMenu != null )
@@ -172,7 +172,7 @@ public class GameMenuHandler
         
         // Send a toast if requested
         if( notify )
-            Notifier.showToast( mActivity, R.string.toast_savegameSlot, mSlot );
+            Notifier.showToast( mActivity, R.string.toast_usingSlot, mSlot );
     }
     
     private void saveSlot()
@@ -187,11 +187,11 @@ public class GameMenuHandler
         NativeMethods.stateLoadEmulator();
     }
     
-    private void saveStateFromPrompt()
+    private void saveFileFromPrompt()
     {
         NativeMethods.pauseEmulator();
-        CharSequence title = mActivity.getText( R.string.ingameSave_title );
-        CharSequence hint = mActivity.getText( R.string.gameMenu_saveHint );
+        CharSequence title = mActivity.getText( R.string.ingameFileSave_title );
+        CharSequence hint = mActivity.getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
         Prompt.promptText( mActivity, title, null, hint, inputType, new OnTextListener()
         {
@@ -205,10 +205,10 @@ public class GameMenuHandler
         } );
     }
     
-    private void loadStateFromPrompt()
+    private void loadFileFromPrompt()
     {
         NativeMethods.pauseEmulator();
-        CharSequence title = mActivity.getText( R.string.ingameLoad_title );
+        CharSequence title = mActivity.getText( R.string.ingameFileLoad_title );
         File startPath = new File( mManualSaveDir );
         Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
         {
@@ -227,8 +227,8 @@ public class GameMenuHandler
         final File file = new File( mManualSaveDir + "/" + filename );
         if( file.exists() )
         {
-            String title = mActivity.getString( R.string._confirmation );
-            String message = mActivity.getString( R.string.gameMenu_confirmFile, filename );
+            String title = mActivity.getString( R.string.confirm_title );
+            String message = mActivity.getString( R.string.confirmOverwriteFile_message, filename );
             Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
             {
                 @Override
@@ -236,7 +236,7 @@ public class GameMenuHandler
                 {
                     if( which == DialogInterface.BUTTON_POSITIVE )
                     {
-                        Notifier.showToast( mActivity, R.string.toast_overwritingGame,
+                        Notifier.showToast( mActivity, R.string.toast_overwritingFile,
                                 file.getName() );
                         NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
                     }
@@ -245,18 +245,18 @@ public class GameMenuHandler
         }
         else
         {
-            Notifier.showToast( mActivity, R.string.toast_savingGame, file.getName() );
+            Notifier.showToast( mActivity, R.string.toast_savingFile, file.getName() );
             NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
         }
     }
     
     private void loadState( File file )
     {
-        Notifier.showToast( mActivity, R.string.toast_loadingGame, file.getName() );
+        Notifier.showToast( mActivity, R.string.toast_loadingFile, file.getName() );
         NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
     }
     
-    private void changeIme()
+    private void setIme()
     {
         InputMethodManager imeManager = (InputMethodManager) mActivity
                 .getSystemService( Context.INPUT_METHOD_SERVICE );
@@ -269,8 +269,8 @@ public class GameMenuHandler
     private void resetState()
     {
         NativeMethods.pauseEmulator();
-        CharSequence title = mActivity.getText( R.string._confirmation );
-        CharSequence message = mActivity.getText( R.string.gameMenu_confirmReset );
+        CharSequence title = mActivity.getText( R.string.confirm_title );
+        CharSequence message = mActivity.getText( R.string.confirmResetGame_message );
         Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
         {
             @Override
@@ -286,11 +286,11 @@ public class GameMenuHandler
         } );
     }
     
-    private void configureSpeed()
+    private void setSpeed()
     {
         NativeMethods.pauseEmulator();
-        CharSequence title = mActivity.getText( R.string.ingameSpeed_title );
-        CharSequence hint = mActivity.getText( R.string.gameMenu_speedHint );
+        CharSequence title = mActivity.getText( R.string.ingameSetSpeed_title );
+        CharSequence hint = mActivity.getText( R.string.hintSetSpeed );
         int inputType = InputType.TYPE_CLASS_NUMBER;
         Prompt.promptText( mActivity, title, null, hint, inputType, new OnTextListener()
         {
@@ -307,7 +307,7 @@ public class GameMenuHandler
                         mCustomSpeed = true;
                         NativeMethods.stateSetSpeed( mSpeedFactor );
                         mGameSpeedItem.setTitle( mActivity.getString(
-                                R.string.ingameSetSpeed_title, mSpeedFactor ) );
+                                R.string.ingameToggleSpeed_title, mSpeedFactor ) );
                     }
                 }
                 NativeMethods.resumeEmulator();

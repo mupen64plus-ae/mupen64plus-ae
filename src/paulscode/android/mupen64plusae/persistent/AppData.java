@@ -112,7 +112,7 @@ public class AppData
     public final String touchscreenLayoutsDir;
     
     /** The directory containing all Xperia Play layout folders. */
-    public final String xperiaPlayLayoutsDir;
+    public final String touchpadLayoutsDir;
     
     /** The directory containing all fonts. */
     public final String fontsDir;
@@ -167,7 +167,7 @@ public class AppData
         oldDataDir = storageDir + "/Android/data/trev.android.mupen64plusae";
         libsDir = "/data/data/" + packageName + "/lib/";
         touchscreenLayoutsDir = dataDir + "/skins/gamepads/";
-        xperiaPlayLayoutsDir = dataDir + "/skins/touchpads/";
+        touchpadLayoutsDir = dataDir + "/skins/touchpads/";
         fontsDir = dataDir + "/skins/fonts/";
         
         // Files

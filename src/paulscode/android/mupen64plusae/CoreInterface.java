@@ -443,8 +443,8 @@ public class CoreInterface
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Gameshark", "0" );
 
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
-        mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", booleanToString( user.swapChannels ) );
-        mupen64plus_cfg.put( "Audio-SDL", "RESAMPLE", user.audioResamplingAlg);
+        mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", booleanToString( user.audioSwapChannels ) );
+        mupen64plus_cfg.put( "Audio-SDL", "RESAMPLE", user.audioResampleAlg);
         mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + user.videoPlugin.path + '"' );

@@ -49,30 +49,32 @@ import android.text.TextUtils;
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
-    // These constants must match the keys used in res/xml/preferences.xml
+    // These constants must match the keys used in res/xml/preferences.xmlA
     
-    private static final String PLAY_MENU = "menuPlay";
-    private static final String LAUNCH_RESET_USER_PREFS = "menuResetUserPrefs";
-    private static final String LAUNCH_RELOAD_APP_DATA = "menuReloadAppData";
-    private static final String LAUNCH_MIGRATE_SAVEFILES = "menuMigrateSavefiles";
-    private static final String LAUNCH_DEVICE_INFO = "menuDeviceInfo";
-    private static final String LAUNCH_PERIPHERAL_INFO = "menuPeripheralInfo";
-    private static final String LAUNCH_CRASH = "launchCrash";
-    private static final String PROCESS_TEXTURE_PACK = "gles2RiceImportHiResTextures";
+    private static final String ACTION_DEVICE_INFO = "actionDeviceInfo";
+    private static final String ACTION_CONTROLLER_INFO = "actionControllerInfo";
+    private static final String ACTION_MIGRATE_SLOT_SAVES = "actionMigrateSlotSaves";
+    private static final String ACTION_CRASH_TEST = "actionCrashTest";
+    private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
+    private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
     
-    private static final String INPUT = "input";
-    private static final String AUDIO = "audio";
-    private static final String VIDEO = "video";
+    private static final String SCREEN_PLAY = "screenPlay";
+    private static final String SCREEN_INPUT = "screenInput";
+    private static final String SCREEN_TOUCHPAD = "screenTouchpad";
+    private static final String SCREEN_VIDEO = "screenVideo";
+    private static final String SCREEN_AUDIO = "screenAudio";
     
-    private static final String PLAYER_MAP = "playerMap";
-    private static final String XPERIA = "xperia";
-    private static final String XPERIA_ENABLED = "xperiaEnabled";
-    private static final String TOUCHSCREEN_CUSTOM = "touchscreenCustom";
-    private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
-    private static final String VIDEO_PLUGIN = "videoPlugin";
     private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
+    
+    private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
+    private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
+    private static final String PLUGIN_VIDEO = "videoPlugin";
+    
+    private static final String PLAYER_MAP = "playerMap";
+    private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
+    private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     
     private CheatsMenuHandler mCheatsMenuHandler = null;
     
@@ -102,7 +104,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Disable the Xperia PLAY plugin as necessary
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
         if( !mAppData.hardwareInfo.isXperiaPlay )
-            prefs.edit().putBoolean( XPERIA_ENABLED, false ).commit();
+            prefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
@@ -116,24 +118,105 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // TODO: Only refresh when the cheats menu is open
         mCheatsMenuHandler.refresh();
         
-        // Define the click callback for certain menu items that aren't actually preferences
-        listenTo( LAUNCH_RESET_USER_PREFS );
-        listenTo( LAUNCH_RELOAD_APP_DATA );
-        listenTo( LAUNCH_MIGRATE_SAVEFILES );
-        listenTo( LAUNCH_DEVICE_INFO );
-        listenTo( LAUNCH_PERIPHERAL_INFO );
-        listenTo( LAUNCH_CRASH );
-        listenTo( PLAY_MENU );
-        
-        // Provide the opportunity to override other preference clicks
-        for( String key : prefs.getAll().keySet() )
-            listenTo( key );
+        // Handle certain menu items that require extra processing or aren't actually preferences
+        listenTo( SCREEN_PLAY );
+        listenTo( ACTION_DEVICE_INFO );
+        listenTo( ACTION_CONTROLLER_INFO );
+        listenTo( ACTION_MIGRATE_SLOT_SAVES );
+        listenTo( ACTION_RELOAD_ASSETS );
+        listenTo( ACTION_CRASH_TEST );
+        listenTo( ACTION_RESET_USER_PREFS );
+        listenTo( PATH_HI_RES_TEXTURES );
         
         // Hide the Xperia PLAY menu items as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
         {
-            removePreference( CATEGORY_SINGLE_PLAYER, XPERIA );
+            removePreference( CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
         }
+    }
+    
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        refreshViews( sharedPreferences, mUserPrefs );
+        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+    }
+    
+    @Override
+    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
+    {
+        if( key.equals( PLUGIN_VIDEO ) || key.equals( TOUCHPAD_ENABLED ) )
+        {
+            // Sometimes one preference change affects the hierarchy or layout of the views. In this
+            // case it's easier just to restart the activity than try to figure out what to fix.
+            // Examples:
+            // * Restore the preference categories that were removed in refreshViews(...)
+            // * Change the input mapping layout when Xperia Play touchpad en/disabled
+            finish();
+            startActivity( getIntent() );
+        }
+        else if( key.equals( PATH_HI_RES_TEXTURES ) )
+        {
+            // TODO: Make this summary persist, rather than the last selected filename
+            // We'll need to extend PathPreference in that case, or use a different type of
+            // preference
+            // findPreference( key ).setSummary( R.string.pathHiResTextures_summary );
+            processTexturePak( sharedPreferences.getString( PATH_HI_RES_TEXTURES, "" ) );
+        }
+        else
+        {
+            // Just refresh the preference screens in place
+            mUserPrefs = new UserPrefs( this );
+            refreshViews( sharedPreferences, mUserPrefs );
+        }
+    }
+    
+    private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
+    {
+        // Enable the play menu only if the selected game actually exists
+        File selectedGame = new File( mUserPrefs.selectedGame );
+        boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
+        enablePreference( SCREEN_PLAY, isValidGame );
+        
+        // Enable the multi-player menu only if the player map is enabled
+        enablePreference( PLAYER_MAP, user.playerMap.isEnabled() );
+        
+        // Enable the input menu only if the input plug-in is not a dummy
+        enablePreference( SCREEN_INPUT, user.inputPlugin.enabled );
+        
+        // Enable the audio menu only if the audio plug-in is not a dummy
+        enablePreference( SCREEN_AUDIO, user.audioPlugin.enabled );
+        
+        // Enable the video menu only if the video plug-in is not a dummy
+        enablePreference( SCREEN_VIDEO, user.videoPlugin.enabled );
+        
+        // Hide certain categories altogether if they're not applicable. Normally we just rely on
+        // the built-in dependency disabler, but here the categories are so large that hiding them
+        // provides a better user experience.
+        if( !user.isGles2N64Enabled )
+            removePreference( SCREEN_VIDEO, CATEGORY_GLES2_N64 );
+        
+        if( !user.isGles2RiceEnabled )
+            removePreference( SCREEN_VIDEO, CATEGORY_GLES2_RICE );
+        
+        // Enable the custom touchscreen prefs under certain conditions
+        enablePreference( PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled
+                && user.isTouchscreenCustom );
+        enablePreference( TOUCHSCREEN_SIZE, user.isTouchscreenEnabled && !user.isTouchscreenCustom );
+        
+        // Update the summary text for all relevant preferences
+        for( String key : sharedPreferences.getAll().keySet() )
+            refreshText( key );
     }
     
     @SuppressWarnings( "deprecation" )
@@ -144,36 +227,60 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             preference.setOnPreferenceClickListener( this );
     }
     
+    @SuppressWarnings( "deprecation" )
+    private void refreshText( String key )
+    {
+        Preference preference = findPreference( key );
+        if( preference instanceof ListPreference )
+            preference.setSummary( ( (ListPreference) preference ).getEntry() );
+    }
+    
+    @SuppressWarnings( "deprecation" )
+    private void enablePreference( String key, boolean enabled )
+    {
+        Preference preference = findPreference( key );
+        if( preference != null )
+            preference.setEnabled( enabled );
+    }
+    
+    @SuppressWarnings( "deprecation" )
+    private void removePreference( String keyParent, String keyChild )
+    {
+        Preference parent = findPreference( keyParent );
+        Preference child = findPreference( keyChild );
+        if( parent instanceof PreferenceGroup && child != null )
+            ( (PreferenceGroup) parent ).removePreference( child );
+    }
+    
     @Override
     public boolean onPreferenceClick( Preference preference )
     {
         // Handle the clicks on certain menu items that aren't actually preferences
         String key = preference.getKey();
         
-        if( key.equals( PLAY_MENU ) )
+        if( key.equals( SCREEN_PLAY ) )
         {
             mCheatsMenuHandler.rebuild();
             // Let Android open the play menu, once built
             return false;
         }
+        else if( key.equals( ACTION_DEVICE_INFO ) )
+            actionDeviceInfo();
         
-        else if( key.equals( LAUNCH_RESET_USER_PREFS ) )
-            launchResetUserPrefs();
+        else if( key.equals( ACTION_CONTROLLER_INFO ) )
+            actionControllerInfo();
         
-        else if( key.equals( LAUNCH_RELOAD_APP_DATA ) )
-            launchReloadAppData();
+        else if( key.equals( ACTION_MIGRATE_SLOT_SAVES ) )
+            actionMigrateSlotSaves();
         
-        else if( key.equals( LAUNCH_MIGRATE_SAVEFILES ) )
-            launchMigrateSavefiles();
+        else if( key.equals( ACTION_RELOAD_ASSETS ) )
+            actionReloadAssets();
         
-        else if( key.equals( LAUNCH_DEVICE_INFO ) )
-            launchDeviceInfo();
+        else if( key.equals( ACTION_CRASH_TEST ) )
+            actionCrashTest();
         
-        else if( key.equals( LAUNCH_PERIPHERAL_INFO ) )
-            launchPeripheralInfo();
-        
-        else if( key.equals( LAUNCH_CRASH ) )
-            launchCrash();
+        else if( key.equals( ACTION_RESET_USER_PREFS ) )
+            actionResetUserPrefs();
         
         else
             // Let Android handle all other preference clicks
@@ -183,10 +290,67 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         return true;
     }
     
-    private void launchResetUserPrefs()
+    private void actionDeviceInfo()
     {
-        String title = getString( R.string._confirmation );
-        String message = getString( R.string.resetPrefs_popupMessage );
+        String title = getString( R.string.actionDeviceInfo_title );
+        String message = Utility.getCpuInfo();
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void actionControllerInfo()
+    {
+        String title = getString( R.string.actionControllerInfo_title );
+        String message = Utility.getPeripheralInfo();
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void actionMigrateSlotSaves()
+    {
+        final File oldDir = new File( mAppData.oldDataDir + "/data/save/" );
+        if( !oldDir.exists() )
+        {
+            String title = getString( R.string.actionMigrateSlotSaves_title );
+            String message = getString( R.string.actionMigrateSlotSaves_messageNotFound );
+            new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+        }
+        else
+        {
+            String title = getString( R.string.confirm_title );
+            String message = getString( R.string.actionMigrateSlotSaves_messageConfirm );
+            Prompt.promptConfirm( this, title, message, new OnClickListener()
+            {
+                @Override
+                public void onClick( DialogInterface dialog, int which )
+                {
+                    if( which == DialogInterface.BUTTON_POSITIVE )
+                    {
+                        File newDir = new File( mUserPrefs.slotSaveDir );
+                        FileUtil.copyFile( oldDir, newDir, true );
+                        Notifier.showToast( MenuActivity.this,
+                                R.string.actionMigrateSlotSaves_messageSuccess );
+                    }
+                }
+            } );
+        }
+    }
+    
+    private void actionReloadAssets()
+    {
+        mAppData.setAssetVersion( 0 );
+        startActivity( new Intent( this, MainActivity.class ) );
+        finish();
+    }
+    
+    private void actionCrashTest()
+    {
+        ACRA.getErrorReporter().handleSilentException( new Exception( "BENIGN CRASH TEST" ) );
+        Notifier.showToast( this, getString( R.string.toast_crashReportSent ) );
+    }
+    
+    private void actionResetUserPrefs()
+    {
+        String title = getString( R.string.confirm_title );
+        String message = getString( R.string.actionResetUserPrefs_popupMessage );
         Prompt.promptConfirm( this, title, message, new OnClickListener()
         {
             @Override
@@ -214,217 +378,52 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         } );
     }
     
-    private void launchReloadAppData()
-    {
-        mAppData.setAssetVersion( 0 );
-        startActivity( new Intent( this, MainActivity.class ) );
-        finish();
-    }
-    
-    private void launchMigrateSavefiles()
-    {
-        final File oldDir = new File( mAppData.oldDataDir + "/data/save/" );
-        if( !oldDir.exists() )
-        {
-            String title = getString( R.string.menuMigrateSavefiles_title );
-            String message = getString( R.string.menuMigrateSavefiles_messageNotFound );
-            new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-        }
-        else
-        {
-            String title = getString( R.string._confirmation );
-            String message = getString( R.string.menuMigrateSavefiles_messageConfirm );
-            Prompt.promptConfirm( this, title, message, new OnClickListener()
-            {
-                @Override
-                public void onClick( DialogInterface dialog, int which )
-                {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        File newDir = new File( mUserPrefs.slotSaveDir );
-                        FileUtil.copyFile( oldDir, newDir, true );
-                        Notifier.showToast( MenuActivity.this,
-                                R.string.menuMigrateSavefiles_messageSuccess );
-                    }
-                }
-            } );
-        }
-    }
-    
-    private void launchDeviceInfo()
-    {
-        String title = getString( R.string.menuDeviceInfo_title );
-        String message = Utility.getCpuInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void launchPeripheralInfo()
-    {
-        String title = getString( R.string.menuPeripheralInfo_title );
-        String message = Utility.getPeripheralInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void launchCrash()
-    {
-        // Test auto crash reporting system by sending a report
-        ACRA.getErrorReporter().handleSilentException( new Exception( "BENIGN CRASH TEST" ) );
-        Notifier.showToast( this, getString( R.string.toast_crashReportSent ) );
-    }
-    
-    private void processTexturePak( String filename )
+    private void processTexturePak( final String filename )
     {
         if( TextUtils.isEmpty( filename ) )
         {
-            ErrorLogger.put( "Video", "gles2RiceImportHiResTextures",
+            ErrorLogger.put( "Video", "pathHiResTextures",
                     "Filename not specified in MenuActivity.processTexturePak" );
-            Notifier.showToast( this, R.string.gles2RiceImportHiResTexturesTask_errorMessage );
+            Notifier.showToast( this, R.string.pathHiResTexturesTask_errorMessage );
             return;
         }
-    	
-    	final String textureFile = filename;
-        TaskHandler.run
-        (
-            this, getString( R.string.gles2RiceImportHiResTexturesTask_title ),
-            getString( R.string.gles2RiceImportHiResTexturesTask_message ),
-            new TaskHandler.Task()
+        
+        TaskHandler.Task task = new TaskHandler.Task()
+        {
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
+                String headerName = Utility.getTexturePackName( filename );
+                if( !ErrorLogger.hasError() )
                 {
-                    String headerName = Utility.getTexturePackName( textureFile );
-                    if( !ErrorLogger.hasError() )
+                    if( TextUtils.isEmpty( headerName ) )
                     {
-                        if( TextUtils.isEmpty( headerName ) )
-                        {
-                            ErrorLogger.setLastError( "getTexturePackName returned null in MenuActivity.processTexturePak" );
-                            ErrorLogger.putLastError( "Video", "gles2RiceImportHiResTextures" );
-                        }
-                        else
-                        {
-                            String outputFolder = mAppData.dataDir + "/data/hires_texture/" + headerName;
-                            FileUtil.deleteFolder( new File( outputFolder ) );
-                            Utility.unzipAll( new File( textureFile ), outputFolder );
-                        }
+                        ErrorLogger
+                                .setLastError( "getTexturePackName returned null in MenuActivity.processTexturePak" );
+                        ErrorLogger.putLastError( "Video", "pathHiResTextures" );
+                    }
+                    else
+                    {
+                        String outputFolder = mAppData.dataDir + "/data/hires_texture/"
+                                + headerName;
+                        FileUtil.deleteFolder( new File( outputFolder ) );
+                        Utility.unzipAll( new File( filename ), outputFolder );
                     }
                 }
-                @Override
-                public void onComplete()
-                {
-                    if( ErrorLogger.hasError() )
-                        Notifier.showToast( MenuActivity.this, R.string.gles2RiceImportHiResTexturesTask_errorMessage );
-                    ErrorLogger.clearLastError();
-                }
             }
-        );
-    }
-    
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
-    }
-    
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        refreshViews( sharedPreferences, mUserPrefs );
-        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    @Override
-    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
-    {
-        boolean rebuildHierarchy = key.equals( VIDEO_PLUGIN ) || key.equals( XPERIA_ENABLED );
+            
+            @Override
+            public void onComplete()
+            {
+                if( ErrorLogger.hasError() )
+                    Notifier.showToast( MenuActivity.this,
+                            R.string.pathHiResTexturesTask_errorMessage );
+                ErrorLogger.clearLastError();
+            }
+        };
         
-        if( rebuildHierarchy )
-        {
-            // Sometimes one preference change affects the hierarchy or layout of the views. In this
-            // case it's easier just to restart the activity than try to figure out what to fix.
-            // Examples:
-            // * Restore the preference categories that were removed in refreshViews(...)
-            // * Change the input mapping layout when Xperia Play touchpad en/disabled
-            finish();
-            startActivity( getIntent() );
-        }
-        else if( key.equals( PROCESS_TEXTURE_PACK ) )
-        {
-            // TODO: Make this summary persist, rather than the last selected filename
-            findPreference( key ).setSummary( R.string.gles2RiceImportHiResTextures_summary );
-            processTexturePak( sharedPreferences.getString( PROCESS_TEXTURE_PACK, "" ) );
-        }
-        else
-        {
-            // Just refresh the preference screens in place
-            mUserPrefs = new UserPrefs( this );
-            refreshViews( sharedPreferences, mUserPrefs );
-        }
-    }
-    
-    private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
-    {
-        // Enable the play menu only if the selected game actually exists
-        File selectedGame = new File( mUserPrefs.selectedGame );
-        boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
-        enablePreference( PLAY_MENU, isValidGame );
-        
-        // Enable the multi-player menu only if the player map is enabled
-        enablePreference( PLAYER_MAP, user.playerMap.isEnabled() );
-        
-        // Enable the input menu only if the input plug-in is not a dummy
-        enablePreference( INPUT, user.inputPlugin.enabled );
-        
-        // Enable the audio menu only if the audio plug-in is not a dummy
-        enablePreference( AUDIO, user.audioPlugin.enabled );
-        
-        // Enable the video menu only if the video plug-in is not a dummy
-        enablePreference( VIDEO, user.videoPlugin.enabled );
-        
-        // Hide certain categories altogether if they're not applicable. Normally we just rely on
-        // the built-in dependency disabler, but here the categories are so large that hiding them
-        // provides a better user experience.
-        if( !user.isGles2N64Enabled )
-            removePreference( VIDEO, CATEGORY_GLES2_N64 );
-        
-        if( !user.isGles2RiceEnabled )
-            removePreference( VIDEO, CATEGORY_GLES2_RICE );
-        
-        // Enable the custom touchscreen prefs under certain conditions
-        enablePreference( TOUCHSCREEN_CUSTOM, user.isTouchscreenEnabled && user.isTouchscreenCustom );
-        enablePreference( TOUCHSCREEN_SIZE, user.isTouchscreenEnabled && !user.isTouchscreenCustom );
-        
-        // Update the summary text for all relevant preferences
-        for( String key : sharedPreferences.getAll().keySet() )
-            refreshText( key );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void refreshText( String key )
-    {
-        Preference preference = findPreference( key );
-        if( preference instanceof ListPreference )
-            preference.setSummary( ( (ListPreference) preference ).getEntry() );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void enablePreference( String key, boolean enabled )
-    {
-        Preference preference = findPreference( key );
-        if( preference != null )
-            preference.setEnabled( enabled );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void removePreference( String keyParent, String keyChild )
-    {
-        Preference parent = findPreference( keyParent );
-        Preference child = findPreference( keyChild );
-        if( parent instanceof PreferenceGroup && child != null )
-            ( (PreferenceGroup) parent ).removePreference( child );
+        String title = getString( R.string.pathHiResTexturesTask_title );
+        String message = getString( R.string.pathHiResTexturesTask_message );
+        TaskHandler.run( this, title, message, task );
     }
 }

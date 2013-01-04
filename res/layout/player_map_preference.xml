@@ -13,14 +13,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/playerMapPreference_btnPlayer" />
+            android:text="@string/playerMapPreference_button" />
 
         <Button
             android:id="@+id/btnPlayer2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/playerMapPreference_btnPlayer" />
+            android:text="@string/playerMapPreference_button" />
     </TableRow>
 
     <TableRow
@@ -34,14 +34,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/playerMapPreference_btnPlayer" />
+            android:text="@string/playerMapPreference_button" />
 
         <Button
             android:id="@+id/btnPlayer4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/playerMapPreference_btnPlayer" />
+            android:text="@string/playerMapPreference_button" />
     </TableRow>
 
 </TableLayout>

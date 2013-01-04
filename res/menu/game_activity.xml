@@ -2,25 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/ingameSetSpeed"
+        android:id="@+id/ingameToggleSpeed"
         android:icon="@drawable/ic_clock"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameSetSpeed_title"/>
+        android:title="@string/ingameToggleSpeed_title"/>
     <item
-        android:id="@+id/ingameQuickload"
+        android:id="@+id/ingameSlotLoad"
         android:icon="@drawable/ic_folder"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameQuickload_title"/>
+        android:title="@string/ingameSlotLoad_title"/>
     <item
-        android:id="@+id/ingameQuicksave"
+        android:id="@+id/ingameSlotSave"
         android:icon="@drawable/ic_save"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameQuicksave_title"/>
+        android:title="@string/ingameSlotSave_title"/>
     <item
-        android:id="@+id/ingameSlot"
+        android:id="@+id/ingameSetSlot"
         android:icon="@drawable/ic_storage"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameSlot_title">
+        android:title="@string/ingameSetSlot_title">
         <menu>
             <group android:checkableBehavior="single" >
                 <item
@@ -58,22 +58,22 @@
         </menu>
     </item>
     <item
-        android:id="@+id/ingameLoad"
-        android:title="@string/ingameLoad_title"/>
+        android:id="@+id/ingameFileLoad"
+        android:title="@string/ingameFileLoad_title"/>
     <item
-        android:id="@+id/ingameSave"
-        android:title="@string/ingameSave_title"/>
+        android:id="@+id/ingameFileSave"
+        android:title="@string/ingameFileSave_title"/>
     <item
-        android:id="@+id/ingameSpeed"
-        android:title="@string/ingameSpeed_title"/>
+        android:id="@+id/ingameSetSpeed"
+        android:title="@string/ingameSetSpeed_title"/>
     <item
-        android:id="@+id/ingameIme"
-        android:title="@string/ingameIme_title"/>
+        android:id="@+id/ingameSetIme"
+        android:title="@string/ingameSetIme_title"/>
     <item
         android:id="@+id/ingameReset"
         android:title="@string/ingameReset_title"/>
     <item
-        android:id="@+id/ingameMenu"
-        android:title="@string/ingameMenu_title"/>
+        android:id="@+id/ingameMainMenu"
+        android:title="@string/ingameMainMenu_title"/>
 
 </menu>

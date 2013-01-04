@@ -55,7 +55,7 @@ public class InputMapPreference extends DialogPreference implements
     private static final int UNMAPPED_BUTTON_FILTER = 0x66FFFFFF;
     private static final int MIN_LAYOUT_WIDTH_DP = 480;
     private static final int MIN_LAYOUT_HEIGHT_DP = 480;
-    private static final String PERIPHERAL_MAP1 = "peripheralMap1";
+    private static final String INPUT_MAP1 = "inputMap1";
     
     private final InputMap mMap;
     private final LazyProvider mProvider;
@@ -146,7 +146,7 @@ public class InputMapPreference extends DialogPreference implements
         
         // Hide some widgets that do not apply
         UserPrefs prefs = new UserPrefs( getContext() );
-        if( prefs.isXperiaEnabled && getKey().equals( PERIPHERAL_MAP1 ) )
+        if( prefs.isTouchpadEnabled && getKey().equals( INPUT_MAP1 ) )
         {
             // First player and Xperia PLAY touchpad is enabled, hide the a- and c-pads
             view.findViewById( R.id.aPadDefault ).setVisibility( View.GONE );
@@ -274,8 +274,7 @@ public class InputMapPreference extends DialogPreference implements
                 button = (Button) view;
                 String message = getContext().getString( R.string.inputMapPreference_popupMessage,
                         mMap.getMappedCodeInfo( index ) );
-                String btnText = getContext().getString(
-                        R.string.inputMapPreference_popupPosButtonText );
+                String btnText = getContext().getString( R.string.inputMapPreference_popupUnmap );
                 
                 Prompt.promptInputCode( getContext(), button.getText(), message, btnText,
                         mUnmappableKeyCodes, new OnInputCodeListener()

@@ -84,6 +84,12 @@ public class UserPrefs
     /** The subdirectory containing auto save files. */
     public final String autoSaveDir;
     
+    /** The selected cheat options. */
+    public final String cheatOptions;
+    
+    /** Whether game should resume or restart. */
+    public final boolean toRestart;
+    
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
     
@@ -98,12 +104,6 @@ public class UserPrefs
     
     /** The selected emulator core. */
     public final Plugin corePlugin;
-    
-    /** True if Xperia Play-specific features are enabled. */
-    public final boolean isXperiaEnabled;
-    
-    /** The filename of the selected Xperia Play layout. */
-    public final String xperiaLayout;
     
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
@@ -120,8 +120,11 @@ public class UserPrefs
     /** The filename of the selected touchscreen layout. */
     public final String touchscreenLayout;
     
-    /** True if the touchscreen joystick is represented as an octagon. */
-    public final boolean isOctagonalJoystick;
+    /** True if Xperia Play-specific features are enabled. */
+    public final boolean isTouchpadEnabled;
+    
+    /** The filename of the selected Xperia Play layout. */
+    public final String touchpadLayout;
     
     /** The player map for multi-player gaming. */
     public final PlayerMap playerMap;
@@ -153,20 +156,17 @@ public class UserPrefs
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
     
+    /** True if the analog is constrained to an octagon. */
+    public final boolean isOctagonalJoystick;
+    
     /** The screen orientation for the game activity. */
-    public final int screenOrientation;
+    public final int videoOrientation;
     
     /** The number of frames over which FPS is calculated (0 = disabled). */
-    public final int fpsRefresh;
+    public final int videoFpsRefresh;
     
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
-    
-    /** True if the left and right audio channels are swapped. */
-    public final boolean swapChannels;
-    
-    /** The audio resampling algorithm to use. */
-    public final String audioResamplingAlg;
     
     /** True if the video should be stretched. */
     public final boolean isStretched;
@@ -219,11 +219,11 @@ public class UserPrefs
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
-    /** The selected cheat options. */
-    public final String cheatOptions;
+    /** True if the left and right audio channels are swapped. */
+    public final boolean audioSwapChannels;
     
-    /** Whether game should resume or restart. */
-    public final boolean toRestart;
+    /** The audio resampling algorithm to use. */
+    public final String audioResampleAlg;
     
     /**
      * Instantiates a new user preferences wrapper.
@@ -236,13 +236,17 @@ public class UserPrefs
         SharedPreferences prefsData = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Files
-        selectedGame = prefsData.getString( "selectedGame", "" );
-        gameSaveDir = prefsData.getString( "gameSaveDir", "" );
+        selectedGame = prefsData.getString( "pathSelectedGame", "" );
+        gameSaveDir = prefsData.getString( "pathGameSaves", "" );
         slotSaveDir = gameSaveDir + "/SlotSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         File game = new File( selectedGame );
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
+        
+        // Cheat prefs
+        cheatOptions = CheatsMenuHandler.cheatOptions;
+        toRestart = CheatsMenuHandler.toRestart;
         
         // Plug-ins
         videoPlugin = new Plugin( prefsData, appData.libsDir, "videoPlugin" );
@@ -251,47 +255,37 @@ public class UserPrefs
         rspPlugin = new Plugin( prefsData, appData.libsDir, "rspPlugin" );
         corePlugin = new Plugin( prefsData, appData.libsDir, "corePlugin" );
         
-        // Xperia PLAY prefs
-        isXperiaEnabled = prefsData.getBoolean( "xperiaEnabled", false );
-        xperiaLayout = appData.xperiaPlayLayoutsDir + prefsData.getString( "xperiaLayout", "" );
-        
         // Touchscreen prefs
         isTouchscreenEnabled = prefsData.getBoolean( "touchscreenEnabled", true );
-        // isTouchscreenCustom, touchscreenLayout: see below
         touchscreenRefresh = getSafeInt( prefsData, "touchscreenRefresh", 0 );
         isTouchscreenHidden = prefsData.getBoolean( "touchscreenHidden", false );
-        isOctagonalJoystick = prefsData.getBoolean( "touchscreenOctagonJoystick", true );
         
-        // Peripheral prefs
+        // Xperia PLAY touchpad prefs
+        isTouchpadEnabled = prefsData.getBoolean( "touchpadEnabled", false );
+        touchpadLayout = appData.touchpadLayoutsDir + prefsData.getString( "touchpadLayout", "" );
+        
+        // Controller prefs
         playerMap = new PlayerMap( prefsData.getString( "playerMap", "" ) );
-        inputMap1 = new InputMap( prefsData.getString( "peripheralMap1", "" ) );
-        inputMap2 = new InputMap( prefsData.getString( "peripheralMap2", "" ) );
-        inputMap3 = new InputMap( prefsData.getString( "peripheralMap3", "" ) );
-        inputMap4 = new InputMap( prefsData.getString( "peripheralMap4", "" ) );
+        inputMap1 = new InputMap( prefsData.getString( "inputMap1", "" ) );
+        inputMap2 = new InputMap( prefsData.getString( "inputMap2", "" ) );
+        inputMap3 = new InputMap( prefsData.getString( "inputMap3", "" ) );
+        inputMap4 = new InputMap( prefsData.getString( "inputMap4", "" ) );
         
-        int numPlayers = 0;
-        numPlayers += inputMap1.isEnabled() ? 1 : 0;
-        numPlayers += inputMap2.isEnabled() ? 1 : 0;
-        numPlayers += inputMap3.isEnabled() ? 1 : 0;
-        numPlayers += inputMap4.isEnabled() ? 1 : 0;
-        playerMap.setEnabled( numPlayers > 1 );
-        
-        // Audio prefs
-        swapChannels = prefsData.getBoolean( "swapAudioChannels", false );
-        audioResamplingAlg = prefsData.getString( "resamplingAlgs", "trivial" );
+        // Input prefs
+        isOctagonalJoystick = prefsData.getBoolean( "inputOctagonConstraints", true );
         
         // Video prefs
-        screenOrientation = getSafeInt( prefsData, "screenOrientation", 0 );
-        fpsRefresh = getSafeInt( prefsData, "fpsRefresh", 0 );
-        isFpsEnabled = fpsRefresh > 0;
+        videoOrientation = getSafeInt( prefsData, "videoOrientation", 0 );
+        videoFpsRefresh = getSafeInt( prefsData, "videoFpsRefresh", 0 );
+        isFpsEnabled = videoFpsRefresh > 0;
         isStretched = prefsData.getBoolean( "videoStretch", false );
-        isRgba8888 = prefsData.getBoolean( "videoRGBA8888", false );
-        isFramelimiterEnabled = prefsData.getBoolean( "useFramelimiter", false );
+        isRgba8888 = prefsData.getBoolean( "videoRgba8888", false );
+        isFramelimiterEnabled = prefsData.getBoolean( "videoUseFramelimiter", false );
         
         // Video prefs - gles2n64
         isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
         int maxFrameskip = getSafeInt( prefsData, "gles2N64Frameskip", 0 );
-        isGles2N64AutoFrameskipEnabled = ( maxFrameskip < 0 );
+        isGles2N64AutoFrameskipEnabled = maxFrameskip < 0;
         gles2N64MaxFrameskip = Math.abs( maxFrameskip );
         isGles2N64FogEnabled = prefsData.getBoolean( "gles2N64Fog", false );
         isGles2N64SaiEnabled = prefsData.getBoolean( "gles2N64Sai", false );
@@ -302,17 +296,16 @@ public class UserPrefs
         // Video prefs - gles2rice
         isGles2RiceEnabled = videoPlugin.name.equals( "libgles2rice.so" );
         isGles2RiceAutoFrameskipEnabled = prefsData.getBoolean( "gles2RiceAutoFrameskip", false );
-        isGles2RiceFastTextureCrcEnabled = prefsData.getBoolean( "gles2RiceFastTextureCRC", true );
+        isGles2RiceFastTextureCrcEnabled = prefsData.getBoolean( "gles2RiceFastTextureCrc", true );
         isGles2RiceFastTextureLoadingEnabled = prefsData.getBoolean( "gles2RiceFastTexture", false );
-        isGles2RiceForceTextureFilterEnabled = prefsData.getBoolean( "gles2RiceForceTextureFilter",
-                false );
+        isGles2RiceForceTextureFilterEnabled = prefsData.getBoolean( "gles2RiceForceTextureFilter", false );
         isGles2RiceHiResTexturesEnabled = prefsData.getBoolean( "gles2RiceHiResTextures", true );
         
-        // Cheat prefs
-        cheatOptions = CheatsMenuHandler.cheatOptions;
-        toRestart = CheatsMenuHandler.toRestart;
+        // Audio prefs
+        audioSwapChannels = prefsData.getBoolean( "audioSwapChannels", false );
+        audioResampleAlg = prefsData.getString( "audioResampleAlg", "trivial" );
         
-        // Touchscreen layouts
+        // Determine the touchscreen layout
         boolean isCustom = false;
         String folder = "";
         if( inputPlugin.enabled && isTouchscreenEnabled )
@@ -321,7 +314,7 @@ public class UserPrefs
             if( layout.equals( "Custom" ) )
             {
                 isCustom = true;
-                folder = prefsData.getString( "touchscreenCustom", "" );
+                folder = prefsData.getString( "pathCustomTouchscreen", "" );
             }
             else
             {
@@ -341,8 +334,22 @@ public class UserPrefs
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
         
-        // Define the key codes that should not be mapped to controls
-        boolean volKeysMappable = prefsData.getBoolean( "volumeKeysEnabled", false );
+        // Determine which players are "plugged in"
+        isPlugged1 = inputMap1.isEnabled() || isTouchscreenEnabled || isTouchpadEnabled;
+        isPlugged2 = inputMap2.isEnabled();
+        isPlugged3 = inputMap3.isEnabled();
+        isPlugged4 = inputMap4.isEnabled();
+        
+        // Determine whether controller deconfliction is needed
+        int numPlayers = 0;
+        numPlayers += inputMap1.isEnabled() ? 1 : 0;
+        numPlayers += inputMap2.isEnabled() ? 1 : 0;
+        numPlayers += inputMap3.isEnabled() ? 1 : 0;
+        numPlayers += inputMap4.isEnabled() ? 1 : 0;
+        playerMap.setEnabled( numPlayers > 1 );
+        
+        // Determine the key codes that should not be mapped to controls
+        boolean volKeysMappable = prefsData.getBoolean( "inputVolumeMappable", false );
         List<Integer> unmappables = new ArrayList<Integer>();
         unmappables.add( KeyEvent.KEYCODE_MENU );
         if( AppData.IS_HONEYCOMB )
@@ -357,12 +364,6 @@ public class UserPrefs
             unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
-        
-        // Identify which players are plugged in
-        isPlugged1 = inputMap1.isEnabled() || isTouchscreenEnabled || isXperiaEnabled;
-        isPlugged2 = inputMap2.isEnabled();
-        isPlugged3 = inputMap3.isEnabled();
-        isPlugged4 = inputMap4.isEnabled();
     }
     
     /**

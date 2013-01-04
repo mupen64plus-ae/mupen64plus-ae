@@ -13,7 +13,7 @@
         android:minLines="2"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:text="@string/_initializing" />
+        android:text="@string/assetExtractor_initializing" />
     
     <ImageView
         android:id="@+id/mainImage"

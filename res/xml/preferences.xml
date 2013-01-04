@@ -43,66 +43,63 @@
     resources in "@drawable/...".       
     ***********************************************************************************
 -->
-<PreferenceScreen xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae" >
 
     <PreferenceScreen
         android:icon="@drawable/ic_play"
-        android:key="menuPlay"
-        android:title="@string/menuPlay_title" >
+        android:key="screenPlay"
+        android:title="@string/screenPlay_title" >
+        <Preference
+            android:icon="@drawable/ic_play"
+            android:key="actionResume"
+            android:summary="@string/actionResume_summary"
+            android:title="@string/actionResume_title" />
+        <Preference
+            android:icon="@drawable/ic_undo"
+            android:key="actionRestart"
+            android:summary="@string/actionRestart_summary"
+            android:title="@string/actionRestart_title" />
 
-            <Preference
-                android:icon="@drawable/ic_play"
-                android:key="gameResume"
-                android:title="@string/gameResume_title"
-                android:summary="@string/gameResume_summary" />
+        <paulscode.android.mupen64plusae.persistent.PlayerMapPreference
+            android:icon="@drawable/ic_users"
+            android:key="playerMap"
+            android:summary="@string/playerMap_summary"
+            android:title="@string/playerMap_title" />
 
-            <Preference
-                android:icon="@drawable/ic_undo"
-                android:key="gameRestart"
-                android:title="@string/gameRestart_title"
-                android:summary="@string/gameRestart_summary" />
-
-            <paulscode.android.mupen64plusae.persistent.PlayerMapPreference
-                android:icon="@drawable/ic_users"
-                android:key="playerMap"
-                android:summary="@string/playerMap_summary"
-                android:title="@string/playerMap_title" />
-
-            <PreferenceCategory
-                android:key="cheatsCategory"
-                android:title="@string/cheatsCategory_title" >
-            </PreferenceCategory>
-
+        <PreferenceCategory
+            android:key="categoryCheats"
+            android:title="@string/categoryCheats_title" >
+        </PreferenceCategory>
     </PreferenceScreen>
 
     <paulscode.android.mupen64plusae.persistent.PathPreference
-        android:defaultValue="@string/selectedGame_default"
+        android:defaultValue="@string/pathSelectedGame_default"
         android:icon="@drawable/ic_folder"
-        android:key="selectedGame"
-        android:title="@string/selectedGame_title"
+        android:key="pathSelectedGame"
+        android:title="@string/pathSelectedGame_title"
         mupen64:selectionMode="1" />
 
     <PreferenceScreen
         android:icon="@drawable/ic_settings"
-        android:key="mainSettings"
-        android:title="@string/mainSettings_title" >
+        android:key="screenSettings"
+        android:title="@string/screenSettings_title" >
         <PreferenceCategory
             android:key="categoryHardware"
             android:title="@string/categoryHardware_title" >
             <PreferenceScreen
                 android:icon="@drawable/ic_controller"
-                android:key="input"
-                android:summary="@string/input_summary"
-                android:title="@string/input_title" >
+                android:key="screenInput"
+                android:summary="@string/screenInput_summary"
+                android:title="@string/screenInput_title" >
                 <PreferenceCategory
                     android:key="categorySinglePlayer"
                     android:title="@string/categorySinglePlayer_title" >
                     <PreferenceScreen
                         android:icon="@drawable/ic_phone"
-                        android:key="touchscreen"
-                        android:summary="@string/touchscreen_summary"
-                        android:title="@string/touchscreen_title" >
+                        android:key="screenTouchscreen"
+                        android:summary="@string/screenTouchscreen_summary"
+                        android:title="@string/screenTouchscreen_title" >
                         <CheckBoxPreference
                             android:defaultValue="true"
                             android:key="touchscreenEnabled"
@@ -124,10 +121,10 @@
                             android:title="@string/touchscreenSize_title" />
 
                         <paulscode.android.mupen64plusae.persistent.PathPreference
-                            android:defaultValue="@string/touchscreenCustom_default"
+                            android:defaultValue="@string/pathCustomTouchscreen_default"
                             android:dependency="touchscreenEnabled"
-                            android:key="touchscreenCustom"
-                            android:title="@string/touchscreenCustom_title"
+                            android:key="pathCustomTouchscreen"
+                            android:title="@string/pathCustomTouchscreen_title"
                             mupen64:selectionMode="0" />
 
                         <ListPreference
@@ -147,81 +144,81 @@
                     </PreferenceScreen>
                     <PreferenceScreen
                         android:icon="@drawable/ic_xperia"
-                        android:key="xperia"
-                        android:summary="@string/xperia_summary"
-                        android:title="@string/xperia_title" >
+                        android:key="screenTouchpad"
+                        android:summary="@string/screenTouchpad_summary"
+                        android:title="@string/screenTouchpad_title" >
                         <CheckBoxPreference
                             android:defaultValue="true"
-                            android:key="xperiaEnabled"
-                            android:title="@string/xperiaEnabled_title" />
+                            android:key="touchpadEnabled"
+                            android:title="@string/touchpadEnabled_title" />
 
                         <ListPreference
-                            android:defaultValue="@string/xperiaLayout_default"
-                            android:dependency="xperiaEnabled"
-                            android:entries="@array/xperiaLayout_entries"
-                            android:entryValues="@array/xperiaLayout_values"
-                            android:key="xperiaLayout"
-                            android:title="@string/xperiaLayout_title" />
+                            android:defaultValue="@string/touchpadLayout_default"
+                            android:dependency="touchpadEnabled"
+                            android:entries="@array/touchpadLayout_entries"
+                            android:entryValues="@array/touchpadLayout_values"
+                            android:key="touchpadLayout"
+                            android:title="@string/touchpadLayout_title" />
                     </PreferenceScreen>
 
                     <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMapPreference_default_on"
+                        android:defaultValue="@string/inputMap_defaultOn"
                         android:icon="@drawable/ic_gamepad"
-                        android:key="peripheralMap1"
-                        android:summary="@string/peripheralMap_summary"
-                        android:title="@string/peripheralMap1_title" />
+                        android:key="inputMap1"
+                        android:summary="@string/inputMap_summary"
+                        android:title="@string/inputMap1_title" />
 
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        android:key="touchscreenOctagonJoystick"
-                        android:summary="@string/touchscreenOctagonJoystick_summary"
-                        android:title="@string/touchscreenOctagonJoystick_title" />
+                        android:key="inputOctagonConstraints"
+                        android:summary="@string/inputOctagonConstraints_summary"
+                        android:title="@string/inputOctagonConstraints_title" />
                     <CheckBoxPreference
                         android:defaultValue="false"
-                        android:key="volumeKeysEnabled"
-                        android:summary="@string/volumeKeysEnabled_summary"
-                        android:title="@string/volumeKeysEnabled_title" />
+                        android:key="inputVolumeMappable"
+                        android:summary="@string/inputVolumeMappable_summary"
+                        android:title="@string/inputVolumeMappable_title" />
                 </PreferenceCategory>
                 <PreferenceCategory
-                    android:key="categoryMultiplayer"
+                    android:key="categoryMultiPlayer"
                     android:title="@string/categoryMultiPlayer_title" >
                     <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMapPreference_default_off"
+                        android:defaultValue="@string/inputMap_defaultOff"
                         android:icon="@drawable/ic_gamepad"
-                        android:key="peripheralMap2"
-                        android:summary="@string/peripheralMap_summary"
-                        android:title="@string/peripheralMap2_title" />
+                        android:key="inputMap2"
+                        android:summary="@string/inputMap_summary"
+                        android:title="@string/inputMap2_title" />
                     <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMapPreference_default_off"
+                        android:defaultValue="@string/inputMap_defaultOff"
                         android:icon="@drawable/ic_gamepad"
-                        android:key="peripheralMap3"
-                        android:summary="@string/peripheralMap_summary"
-                        android:title="@string/peripheralMap3_title" />
+                        android:key="inputMap3"
+                        android:summary="@string/inputMap_summary"
+                        android:title="@string/inputMap3_title" />
                     <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMapPreference_default_off"
+                        android:defaultValue="@string/inputMap_defaultOff"
                         android:icon="@drawable/ic_gamepad"
-                        android:key="peripheralMap4"
-                        android:summary="@string/peripheralMap_summary"
-                        android:title="@string/peripheralMap4_title" />
+                        android:key="inputMap4"
+                        android:summary="@string/inputMap_summary"
+                        android:title="@string/inputMap4_title" />
                 </PreferenceCategory>
             </PreferenceScreen>
             <PreferenceScreen
                 android:icon="@drawable/ic_picture"
-                android:key="video"
-                android:summary="@string/video_summary"
-                android:title="@string/video_title" >
+                android:key="screenVideo"
+                android:summary="@string/screenVideo_summary"
+                android:title="@string/screenVideo_title" >
                 <ListPreference
-                    android:defaultValue="@string/screenOrientation_default"
-                    android:entries="@array/screenOrientation_entries"
-                    android:entryValues="@array/screenOrientation_values"
-                    android:key="screenOrientation"
-                    android:title="@string/screenOrientation_title" />
+                    android:defaultValue="@string/videoOrientation_default"
+                    android:entries="@array/videoOrientation_entries"
+                    android:entryValues="@array/videoOrientation_values"
+                    android:key="videoOrientation"
+                    android:title="@string/videoOrientation_title" />
                 <ListPreference
-                    android:defaultValue="@string/fpsRefresh_default"
-                    android:entries="@array/fpsRefresh_entries"
-                    android:entryValues="@array/fpsRefresh_values"
-                    android:key="fpsRefresh"
-                    android:title="@string/fpsRefresh_title" />
+                    android:defaultValue="@string/videoFpsRefresh_default"
+                    android:entries="@array/videoFpsRefresh_entries"
+                    android:entryValues="@array/videoFpsRefresh_values"
+                    android:key="videoFpsRefresh"
+                    android:title="@string/videoFpsRefresh_title" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"
@@ -230,14 +227,14 @@
                     android:title="@string/videoStretch_title" />
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="useFramelimiter"
-                    android:summary="@string/useFramelimiter_summary"
-                    android:title="@string/useFramelimiter_title" />
+                    android:key="videoUseFramelimiter"
+                    android:summary="@string/videoUseFramelimiter_summary"
+                    android:title="@string/videoUseFramelimiter_title" />
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="videoRGBA8888"
-                    android:summary="@string/videoRGBA8888_summary"
-                    android:title="@string/videoRGBA8888_title" />
+                    android:key="videoRgba8888"
+                    android:summary="@string/videoRgba8888_summary"
+                    android:title="@string/videoRgba8888_title" />
 
                 <PreferenceCategory
                     android:key="categoryGles2N64"
@@ -285,9 +282,9 @@
                         android:title="@string/gles2RiceAutoFrameskip_title" />
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        android:key="gles2RiceFastTextureCRC"
-                        android:summary="@string/gles2RiceFastTextureCRC_summary"
-                        android:title="@string/gles2RiceFastTextureCRC_title" />
+                        android:key="gles2RiceFastTextureCrc"
+                        android:summary="@string/gles2RiceFastTextureCrc_summary"
+                        android:title="@string/gles2RiceFastTextureCrc_title" />
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="gles2RiceFastTexture"
@@ -305,103 +302,102 @@
                         android:title="@string/gles2RiceHiResTextures_title" />
 
                     <paulscode.android.mupen64plusae.persistent.PathPreference
+                        android:defaultValue="@string/pathHiResTextures_default"
                         android:dependency="gles2RiceHiResTextures"
-                        android:key="gles2RiceImportHiResTextures"
-                        android:title="@string/gles2RiceImportHiResTextures_title"
-                        android:summary="@string/gles2RiceImportHiResTextures_summary"
+                        android:key="pathHiResTextures"
+                        android:title="@string/pathHiResTextures_title"
                         mupen64:selectionMode="1" />
                 </PreferenceCategory>
             </PreferenceScreen>
             <PreferenceScreen
                 android:icon="@drawable/ic_speaker"
-                android:key="audio"
-                android:summary="@string/audio_summary"
-                android:title="@string/audio_title" >
+                android:key="screenAudio"
+                android:summary="@string/screenAudio_summary"
+                android:title="@string/screenAudio_title" >
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="swapAudioChannels"
-                    android:summary="@string/swapAudioChannels_summary"
-                    android:title="@string/swapAudioChannels_title" />
+                    android:key="audioSwapChannels"
+                    android:summary="@string/audioSwapChannels_summary"
+                    android:title="@string/audioSwapChannels_title" />
 
                 <ListPreference
-                    android:defaultValue="@string/resamplingAlgs_default"
-                    android:entries="@array/resamplingAlgs_entries"
-                    android:entryValues="@array/resamplingAlgs_values"
-                    android:key="resamplingAlgs"
-                    android:title="@string/resamplingAlgs_title" />
+                    android:defaultValue="@string/audioResampleAlg_default"
+                    android:entries="@array/audioResampleAlg_entries"
+                    android:entryValues="@array/audioResampleAlg_values"
+                    android:key="audioResampleAlg"
+                    android:title="@string/audioResampleAlg_title" />
             </PreferenceScreen>
             <PreferenceScreen
                 android:icon="@drawable/ic_plugin"
-                android:key="plugins"
-                android:summary="@string/plugins_summary"
-                android:title="@string/plugins_title" >
+                android:key="screenPlugin"
+                android:summary="@string/screenPlugin_summary"
+                android:title="@string/screenPlugin_title" >
                 <ListPreference
-                    android:defaultValue="@string/videoPlugin_default"
-                    android:entries="@array/videoPlugin_entries"
-                    android:entryValues="@array/videoPlugin_values"
-                    android:key="videoPlugin"
-                    android:title="@string/videoPlugin_title" />
+                    android:defaultValue="@string/pluginVideo_default"
+                    android:entries="@array/pluginVideo_entries"
+                    android:entryValues="@array/pluginVideo_values"
+                    android:key="pluginVideo"
+                    android:title="@string/pluginVideo_title" />
                 <ListPreference
-                    android:defaultValue="@string/inputPlugin_default"
-                    android:entries="@array/inputPlugin_entries"
-                    android:entryValues="@array/inputPlugin_values"
-                    android:key="inputPlugin"
-                    android:title="@string/inputPlugin_title" />
+                    android:defaultValue="@string/pluginInput_default"
+                    android:entries="@array/pluginInput_entries"
+                    android:entryValues="@array/pluginInput_values"
+                    android:key="pluginInput"
+                    android:title="@string/pluginInput_title" />
                 <ListPreference
-                    android:defaultValue="@string/audioPlugin_default"
-                    android:entries="@array/audioPlugin_entries"
-                    android:entryValues="@array/audioPlugin_values"
-                    android:key="audioPlugin"
-                    android:title="@string/audioPlugin_title" />
+                    android:defaultValue="@string/pluginAudio_default"
+                    android:entries="@array/pluginAudio_entries"
+                    android:entryValues="@array/pluginAudio_values"
+                    android:key="pluginAudio"
+                    android:title="@string/pluginAudio_title" />
                 <ListPreference
-                    android:defaultValue="@string/rspPlugin_default"
-                    android:entries="@array/rspPlugin_entries"
-                    android:entryValues="@array/rspPlugin_values"
-                    android:key="rspPlugin"
-                    android:title="@string/rspPlugin_title" />
+                    android:defaultValue="@string/pluginRsp_default"
+                    android:entries="@array/pluginRsp_entries"
+                    android:entryValues="@array/pluginRsp_values"
+                    android:key="pluginRsp"
+                    android:title="@string/pluginRsp_title" />
                 <ListPreference
-                    android:defaultValue="@string/corePlugin_default"
-                    android:entries="@array/corePlugin_entries"
-                    android:entryValues="@array/corePlugin_values"
-                    android:key="corePlugin"
-                    android:title="@string/corePlugin_title" />
+                    android:defaultValue="@string/pluginCore_default"
+                    android:entries="@array/pluginCore_entries"
+                    android:entryValues="@array/pluginCore_values"
+                    android:key="pluginCore"
+                    android:title="@string/pluginCore_title" />
             </PreferenceScreen>
         </PreferenceCategory>
         <PreferenceCategory
             android:key="categoryOther"
             android:title="@string/categoryOther_title" >
-
             <paulscode.android.mupen64plusae.persistent.PathPreference
-                android:defaultValue="@string/gameSaveDir_default"
+                android:defaultValue="@string/pathGameSaves_default"
                 android:icon="@drawable/ic_folder"
-                android:key="gameSaveDir"
-                android:title="@string/gameSaveDir_title"
+                android:key="pathGameSaves"
+                android:title="@string/pathGameSaves_title"
                 mupen64:selectionMode="0" />
 
             <PreferenceScreen
                 android:icon="@drawable/ic_debug"
-                android:key="advanced"
-                android:summary="@string/advanced_summary"
-                android:title="@string/advanced_title" >
+                android:key="screenAdvanced"
+                android:summary="@string/screenAdvanced_summary"
+                android:title="@string/screenAdvanced_title" >
                 <Preference
-                    android:key="menuDeviceInfo"
-                    android:summary="@string/menuDeviceInfo_summary"
-                    android:title="@string/menuDeviceInfo_title" />
+                    android:key="actionDeviceInfo"
+                    android:summary="@string/actionDeviceInfo_summary"
+                    android:title="@string/actionDeviceInfo_title" />
                 <Preference
-                    android:key="menuPeripheralInfo"
-                    android:summary="@string/menuPeripheralInfo_summary"
-                    android:title="@string/menuPeripheralInfo_title" />
+                    android:key="actionControllerInfo"
+                    android:summary="@string/actionControllerInfo_summary"
+                    android:title="@string/actionControllerInfo_title" />
                 <Preference
-                    android:key="menuMigrateSavefiles"
-                    android:summary="@string/menuMigrateSavefiles_summary"
-                    android:title="@string/menuMigrateSavefiles_title" />
+                    android:key="actionMigrateSlotSaves"
+                    android:summary="@string/actionMigrateSlotSaves_summary"
+                    android:title="@string/actionMigrateSlotSaves_title" />
                 <Preference
-                    android:key="menuReloadAppData"
-                    android:summary="@string/menuReloadAppData_summary"
-                    android:title="@string/menuReloadAppData_title" />
+                    android:key="actionReloadAssets"
+                    android:summary="@string/actionReloadAssets_summary"
+                    android:title="@string/actionReloadAssets_title" />
 
                 <PreferenceCategory
-                    android:key="categoryCrashReports "
+                    android:key="categoryCrashReports"
                     android:title="@string/categoryCrashReports_title" >
                     <CheckBoxPreference
                         android:defaultValue="false"
@@ -417,38 +413,38 @@
 
                     <Preference
                         android:dependency="acra.enable"
-                        android:key="launchCrash"
-                        android:summary="@string/launchCrash_summary"
-                        android:title="@string/launchCrash_title" />
+                        android:key="actionCrashTest"
+                        android:summary="@string/actionCrashTest_summary"
+                        android:title="@string/actionCrashTest_title" />
                 </PreferenceCategory>
             </PreferenceScreen>
 
             <Preference
                 android:icon="@drawable/ic_undo"
-                android:key="menuResetUserPrefs"
-                android:summary="@string/menuResetUserPrefs_summary"
-                android:title="@string/menuResetUserPrefs_title" />
+                android:key="actionResetUserPrefs"
+                android:summary="@string/actionResetUserPrefs_summary"
+                android:title="@string/actionResetUserPrefs_title" />
         </PreferenceCategory>
     </PreferenceScreen>
 
     <Preference
         android:icon="@drawable/ic_location"
-        android:key="menuLocale"
-        android:title="@string/menuLocale_title" >
+        android:key="actionSetLocale"
+        android:title="@string/actionSetLocale_title" >
         <intent android:action="android.settings.LOCALE_SETTINGS" />
     </Preference>
     <Preference
         android:icon="@drawable/ic_help"
-        android:key="menuHelp"
-        android:title="@string/menuHelp_title" >
+        android:key="actionHelp"
+        android:title="@string/actionHelp_title" >
         <intent
             android:action="android.intent.action.VIEW"
             android:data="http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018" />
     </Preference>
     <Preference
         android:icon="@drawable/ic_about"
-        android:key="menuAbout"
-        android:title="@string/menuAbout_title" >
+        android:key="actionAbout"
+        android:title="@string/actionAbout_title" >
         <intent
             android:action="android.intent.action.VIEW"
             android:data="http://www.paulscode.com" />

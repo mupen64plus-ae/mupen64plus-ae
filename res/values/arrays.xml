@@ -12,164 +12,92 @@
 -->
 <resources>
 
-    <!-- Video Plugins -->
-    <string-array name="videoPlugin_entries">
-        <item>@string/videoPlugin_entry0</item>
-        <item>@string/videoPlugin_entry1</item>
-        <item>@string/videoPlugin_entry2</item>
-        </string-array>
-    <string-array name="videoPlugin_values" translatable="false">
-        <item></item>
-        <item>libgles2n64.so</item>
-        <item>libgles2rice.so</item>
+    <!-- Touchscreen Layouts -->
+    <string-array name="touchscreenLayout_entries">
+        <item>@string/touchscreenLayout_entryAnalog</item>
+        <item>@string/touchscreenLayout_entryDigital</item>
+        <item>@string/touchscreenLayout_entryCustom</item>
     </string-array>
-    <string name="videoPlugin_default" translatable="false">libgles2n64.so</string>
+    <string-array name="touchscreenLayout_values" translatable="false">
+        <item>Mupen64Plus-AE-Analog</item>
+        <item>Mupen64Plus-AE-Digital</item>
+        <item>Custom</item>
+    </string-array>
 
-    <!-- Audio Plugins -->
-    <string-array name="audioPlugin_entries">
-        <item>@string/audioPlugin_entry0</item>
-        <item>@string/audioPlugin_entry1</item>
-    </string-array>
-    <string-array name="audioPlugin_values" translatable="false">
-        <item></item>
-        <item>libaudio-sdl.so</item>
-    </string-array>
-    <string name="audioPlugin_default" translatable="false">libaudio-sdl.so</string>
+    <string name="touchscreenLayout_default" translatable="false">Mupen64Plus-AE-Analog</string>
+    <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
 
-    <!-- Input Plugins -->
-    <string-array name="inputPlugin_entries">
-        <item>@string/inputPlugin_entry0</item>
-        <item>@string/inputPlugin_entry1</item>
+    <!-- Touchscreen Sizes -->
+    <string-array name="touchscreenSize_entries">
+        <item>@string/touchscreenSize_entryTiny</item>
+        <item>@string/touchscreenSize_entrySmall</item>
+        <item>@string/touchscreenSize_entryNormal</item>
+        <item>@string/touchscreenSize_entryTablet</item>
     </string-array>
-    <string-array name="inputPlugin_values" translatable="false">
-        <item></item>
-        <item>libinput-sdl.so</item>
+    <string-array name="touchscreenSize_values" translatable="false">
+        <item>-Tiny</item>
+        <item>-Small</item>
+        <item></item> <!-- Intentionally empty -->
+        <item>-Tablet</item>
     </string-array>
-    <string name="inputPlugin_default" translatable="false">libinput-sdl.so</string>
 
-    <!-- RSP Plugins -->
-    <string-array name="rspPlugin_entries">
-        <item>@string/rspPlugin_entry0</item>
-        <item>@string/rspPlugin_entry1</item>
-        <item>@string/rspPlugin_entry2</item>
-    </string-array>
-    <string-array name="rspPlugin_values" translatable="false">
-        <item></item>
-        <item>librsp-hle.so</item>
-        <item>librsp-hle-nosound.so</item>
-    </string-array>
-    <string name="rspPlugin_default" translatable="false">librsp-hle.so</string>
-
-    <!-- Core Plugins -->
-    <string-array name="corePlugin_entries">
-        <item>@string/corePlugin_entry0</item>
-    </string-array>
-    <string-array name="corePlugin_values" translatable="false">
-        <item>libcore.so</item>
-    </string-array>
-    <string name="corePlugin_default" translatable="false">libcore.so</string>
-
-    <!-- Xperia Play Touchpad Layouts -->
-    <string-array name="xperiaLayout_entries">
-        <item>@string/xperiaLayout_entry0</item>
-        <item>@string/xperiaLayout_entry1</item>
-    </string-array>
-    <string-array name="xperiaLayout_values" translatable="false">
-        <item>Mupen64Plus-AE-Xperia-Play</item>
-        <item>Mupen64Plus-AE-Analog-Right</item>
-    </string-array>
-    <string name="xperiaLayout_default" translatable="false">Mupen64Plus-AE-Xperia-Play</string>
+    <string name="touchscreenSize_default" translatable="false"></string>
 
     <!-- Touchscreen Refresh List -->
     <string-array name="touchscreenRefresh_entries">
-        <item>@string/touchscreenRefresh_entry0</item>
-        <item>@string/touchscreenRefresh_entry1</item>
-        <item>@string/touchscreenRefresh_entry2</item>
+        <item>@string/touchscreenRefresh_entryNever</item>
+        <item>@string/touchscreenRefresh_entryOccasionally</item>
+        <item>@string/touchscreenRefresh_entryFrequently</item>
     </string-array>
     <string-array name="touchscreenRefresh_values" translatable="false">
         <item>0</item>
         <item>10</item>
         <item>3</item>
     </string-array>
+
     <string name="touchscreenRefresh_default" translatable="false">0</string>
 
-    <!-- Touchscreen Layouts -->
-    <string-array name="touchscreenLayout_entries">
-        <item>@string/touchscreenLayout_entry0</item>
-        <item>@string/touchscreenLayout_entry1</item>
-        <!-- <item>@string/touchscreenLayout_entry2</item> -->
-        <item>@string/touchscreenLayout_entry3</item>
+    <!-- Xperia Play Touchpad Layouts -->
+    <string-array name="touchpadLayout_entries">
+        <item>@string/touchpadLayout_entryDefault</item>
+        <item>@string/touchpadLayout_entryReverse</item>
     </string-array>
-    <string-array name="touchscreenLayout_values" translatable="false">
-        <item>Mupen64Plus-AE-Analog</item>
-        <item>Mupen64Plus-AE-Digital</item>
-        <!-- <item>Mupen64Plus-AE-Everything</item> TODO: Create an "everything skin" -->
-        <item>Custom</item>
+    <string-array name="touchpadLayout_values" translatable="false">
+        <item>Mupen64Plus-AE-Xperia-Play</item>
+        <item>Mupen64Plus-AE-Analog-Right</item>
     </string-array>
-    <string name="touchscreenLayout_default" translatable="false">Mupen64Plus-AE-Analog</string>
-    <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
 
-    <!-- Touchscreen Sizes -->
-    <string-array name="touchscreenSize_entries">
-        <item>@string/touchscreenSize_entry0</item>
-        <item>@string/touchscreenSize_entry1</item>
-        <item>@string/touchscreenSize_entry2</item>
-        <item>@string/touchscreenSize_entry3</item>
-    </string-array>
-    <string-array name="touchscreenSize_values" translatable="false">
-        <item>-Tiny</item>
-        <item>-Small</item>
-        <item></item>
-        <item>-Tablet</item>
-    </string-array>
-    <string name="touchscreenSize_default" translatable="false"></string>
-    
-    <!-- Audio Resampling Algorithm List -->
-	<string-array name="resamplingAlgs_entries">
-	    <item>@string/resamplingAlgs_trivial</item>
-	    <item>@string/resamplingAlgs_linear</item>
-	    <item>@string/resamplingAlgs_zoh</item>
-	    <item>@string/resamplingAlgs_sinc_fastest</item>
-	    <item>@string/resamplingAlgs_sinc_medium</item>
-	    <item>@string/resamplingAlgs_sinc_best</item>
-	</string-array>
-	<string-array name="resamplingAlgs_values" translatable="false">
-	    <item>trivial</item>
-	    <item>src-linear</item>
-	    <item>src-zero-order-hold</item>
-	    <item>src-sinc-fastest</item>
-	    <item>src-sinc-medium-quality</item>
-	    <item>src-sinc-best-quality</item>
-	</string-array>
-	<string name="resamplingAlgs_default" translatable="false">trivial</string>
-	
+    <string name="touchpadLayout_default" translatable="false">Mupen64Plus-AE-Xperia-Play</string>
+
     <!-- Screen Orientation List -->
-    <string-array name="screenOrientation_entries">
-        <item>@string/screenOrientation_entry0</item>
-        <item>@string/screenOrientation_entry1</item>
-        <item>@string/screenOrientation_entry2</item>
-        <item>@string/screenOrientation_entry3</item>
+    <string-array name="videoOrientation_entries">
+        <item>@string/videoOrientation_entryLandscape</item>
+        <item>@string/videoOrientation_entryReverseLandscape</item>
+        <item>@string/videoOrientation_entryPortrait</item>
+        <item>@string/videoOrientation_entryReversePortrait</item>
     </string-array>
-    <string-array name="screenOrientation_values" translatable="false">
+    <string-array name="videoOrientation_values" translatable="false">
         <item>0</item> <!-- ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -->
         <item>8</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -->
         <item>1</item> <!-- ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -->
         <item>9</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -->
-        </string-array>
-    <string name="screenOrientation_default" translatable="false">0</string>
+    </string-array>
+
+    <string name="videoOrientation_default" translatable="false">0</string>
 
     <!-- Framerate Refresh List -->
-    <string-array name="fpsRefresh_entries">
-        <item>@string/fpsRefresh_entry0</item>
-        <item>@string/fpsRefresh_entry1</item>
-        <item>@string/fpsRefresh_entry2</item>
+    <string-array name="videoFpsRefresh_entries">
+        <item>@string/videoFpsRefresh_entryNever</item>
+        <item>@string/videoFpsRefresh_entryOccasionally</item>
+        <item>@string/videoFpsRefresh_entryFrequently</item>
     </string-array>
-    <string-array name="fpsRefresh_values" translatable="false">
+    <string-array name="videoFpsRefresh_values" translatable="false">
         <item>0</item>
         <item>60</item>
         <item>15</item>
     </string-array>
-    <string name="fpsRefresh_default" translatable="false">0</string>
+
+    <string name="videoFpsRefresh_default" translatable="false">0</string>
 
     <!-- GLES2N64 Frameskip List -->
     <string-array name="gles2N64Frameskip_entries">
@@ -198,11 +126,89 @@
         <item>4</item>
         <item>5</item>
     </string-array>
+
     <string name="gles2N64Frameskip_default" translatable="false">-2</string>
 
+    <!-- Audio Resampling Algorithm List -->
+    <string-array name="audioResampleAlg_entries">
+        <item>@string/audioResampleAlg_entryTrivial</item>
+        <item>@string/audioResampleAlg_entryLinear</item>
+        <item>@string/audioResampleAlg_entryZoh</item>
+        <item>@string/audioResampleAlg_entrySincFastest</item>
+        <item>@string/audioResampleAlg_entrySincMedium</item>
+        <item>@string/audioResampleAlg_entrySincBest</item>
+    </string-array>
+    <string-array name="audioResampleAlg_values" translatable="false">
+        <item>trivial</item>
+        <item>src-linear</item>
+        <item>src-zero-order-hold</item>
+        <item>src-sinc-fastest</item>
+        <item>src-sinc-medium-quality</item>
+        <item>src-sinc-best-quality</item>
+    </string-array>
+
+    <string name="audioResampleAlg_default" translatable="false">trivial</string>
+
+    <!-- Video Plugins -->
+    <string-array name="pluginVideo_entries">
+        <item>@string/pluginVideo_entryNone</item>
+        <item>@string/pluginVideo_entryGles2N64</item>
+        <item>@string/pluginVideo_entryGles2Rice</item>
+    </string-array>
+    <string-array name="pluginVideo_values" translatable="false">
+        <item></item>
+        <item>libgles2n64.so</item>
+        <item>libgles2rice.so</item>
+    </string-array>
+
+    <string name="pluginVideo_default" translatable="false">libgles2n64.so</string>
+
+    <!-- Audio Plugins -->
+    <string-array name="pluginAudio_entries">
+        <item>@string/pluginAudio_entryNone</item>
+        <item>@string/pluginAudio_entrySdl</item>
+    </string-array>
+    <string-array name="pluginAudio_values" translatable="false">
+        <item></item>
+        <item>libaudio-sdl.so</item>
+    </string-array>
+
+    <string name="pluginAudio_default" translatable="false">libaudio-sdl.so</string>
+
+    <!-- Input Plugins -->
+    <string-array name="pluginInput_entries">
+        <item>@string/pluginInput_entryNone</item>
+        <item>@string/pluginInput_entrySdl</item>
+    </string-array>
+    <string-array name="pluginInput_values" translatable="false">
+        <item></item>
+        <item>libinput-sdl.so</item>
+    </string-array>
+
+    <string name="pluginInput_default" translatable="false">libinput-sdl.so</string>
+
+    <!-- RSP Plugins -->
+    <string-array name="pluginRsp_entries">
+        <item>@string/pluginRsp_entryNone</item>
+        <item>@string/pluginRsp_entryHle</item>
+        <item>@string/pluginRsp_entryHleNoSound</item>
+    </string-array>
+    <string-array name="pluginRsp_values" translatable="false">
+        <item></item>
+        <item>librsp-hle.so</item>
+        <item>librsp-hle-nosound.so</item>
+    </string-array>
+
+    <string name="pluginRsp_default" translatable="false">librsp-hle.so</string>
+
+    <!-- Core Plugins -->
+    <string-array name="pluginCore_entries">
+        <item>@string/pluginCore_entryV110</item>
+    </string-array>
+    <string-array name="pluginCore_values" translatable="false">
+        <item>libcore.so</item>
+    </string-array>
+
+    <string name="pluginCore_default" translatable="false">libcore.so</string>
+
 </resources>
-<!--
-    ***********************************************************************************
-    DO NOT TRANSLATE ANY STRINGS IN THIS FILE!
-    ***********************************************************************************
--->

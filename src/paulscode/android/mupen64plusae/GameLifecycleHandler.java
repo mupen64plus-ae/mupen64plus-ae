@@ -140,7 +140,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Set the screen orientation
-        mActivity.setRequestedOrientation( mUserPrefs.screenOrientation );
+        mActivity.setRequestedOrientation( mUserPrefs.videoOrientation );
     }
     
     @TargetApi( 11 )
@@ -186,7 +186,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         inputSource.setOnKeyListener( this );
         
         // Start listening to game surface events
-        mSurface.init( this, mOverlay, mUserPrefs.fpsRefresh, mUserPrefs.isRgba8888 );
+        mSurface.init( this, mOverlay, mUserPrefs.videoFpsRefresh, mUserPrefs.isRgba8888 );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
@@ -265,7 +265,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             // Create the map for the touchpad
             TouchMap touchpadMap = new TouchMap( mActivity.getResources() );
-            touchpadMap.load( mUserPrefs.xperiaLayout );
+            touchpadMap.load( mUserPrefs.touchpadLayout );
             touchpadMap.resize( NativeInputSource.PAD_WIDTH, NativeInputSource.PAD_HEIGHT );
             
             // Create the touchpad controller

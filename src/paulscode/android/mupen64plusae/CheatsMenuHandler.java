@@ -47,10 +47,10 @@ import android.util.Log;
 
 public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenceLongClickListener
 {
-    private static final String MENU_PLAY = "menuPlay";
-    private static final String GAME_RESUME = "gameResume";
-    private static final String GAME_RESTART = "gameRestart";
-    private static final String CHEATS_CATEGORY = "cheatsCategory";
+    private static final String SCREEN_PLAY = "screenPlay";
+    private static final String ACTION_RESUME = "actionResume";
+    private static final String ACTION_RESTART = "actionRestart";
+    private static final String CATEGORY_CHEATS = "cheatsCategory";
     
     public static String ROM = null;
     public static String CRC = null;
@@ -129,10 +129,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     {
         if( ROM == null )
             return;
-        cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_PLAY );
-        mActivity.findPreference( GAME_RESUME ).setOnPreferenceClickListener( this );
-        mActivity.findPreference( GAME_RESTART ).setOnPreferenceClickListener( this );
-        cheatsCategory = (PreferenceCategory) mActivity.findPreference( CHEATS_CATEGORY );
+        cheatsScreen = (PreferenceScreen) mActivity.findPreference( SCREEN_PLAY );
+        mActivity.findPreference( ACTION_RESUME ).setOnPreferenceClickListener( this );
+        mActivity.findPreference( ACTION_RESTART ).setOnPreferenceClickListener( this );
+        cheatsCategory = (PreferenceCategory) mActivity.findPreference( CATEGORY_CHEATS );
         
         if( cheatPreferences.size() > 0 && cheatsCategory.getPreferenceCount() == 0 )
         {
@@ -147,10 +147,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     @SuppressWarnings( "deprecation" )
     private void build()
     {
-        cheatsScreen = (PreferenceScreen) mActivity.findPreference( MENU_PLAY );
-        mActivity.findPreference( GAME_RESUME ).setOnPreferenceClickListener( this );
-        mActivity.findPreference( GAME_RESTART ).setOnPreferenceClickListener( this );
-        cheatsCategory = (PreferenceCategory) mActivity.findPreference( CHEATS_CATEGORY );
+        cheatsScreen = (PreferenceScreen) mActivity.findPreference( SCREEN_PLAY );
+        mActivity.findPreference( ACTION_RESUME ).setOnPreferenceClickListener( this );
+        mActivity.findPreference( ACTION_RESTART ).setOnPreferenceClickListener( this );
+        cheatsCategory = (PreferenceCategory) mActivity.findPreference( CATEGORY_CHEATS );
         cheatsCategory.removeAll();
         cheatPreferences.clear();
         
@@ -281,17 +281,17 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     public boolean onPreferenceClick( Preference preference )
     {
         String key = preference.getKey();
-        if( key.equals( GAME_RESUME ) )
+        if( key.equals( ACTION_RESUME ) )
         {
             toRestart = false;
             launchGame();
             return true;
         }
-        else if( key.equals( GAME_RESTART ) )
+        else if( key.equals( ACTION_RESTART ) )
         {
             toRestart = true;
-            CharSequence title = mActivity.getText( R.string._confirmation );
-            CharSequence message = mActivity.getText( R.string.gameMenu_confirmReset );
+            CharSequence title = mActivity.getText( R.string.confirm_title );
+            CharSequence message = mActivity.getText( R.string.confirmResetGame_message );
             Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
             {
                 @Override
@@ -352,10 +352,10 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
         new File( mUserPrefs.autoSaveDir ).mkdirs();
         
         // Notify user that the game activity is starting
-        Notifier.showToast( mActivity, R.string.toast_appStarted );
+        Notifier.showToast( mActivity, R.string.toast_launchingEmulator );
         
         // Launch the appropriate game activity
-        Intent intent = new UserPrefs( mActivity ).isXperiaEnabled
+        Intent intent = new UserPrefs( mActivity ).isTouchpadEnabled
                 ? new Intent( mActivity, GameActivityXperiaPlay.class )
                 : new Intent( mActivity, GameActivity.class );            
         
