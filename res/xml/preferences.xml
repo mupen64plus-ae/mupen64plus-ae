@@ -328,7 +328,6 @@
                     android:entries="@array/resamplingAlgs_entries"
                     android:entryValues="@array/resamplingAlgs_values"
                     android:key="resamplingAlgs"
-                    android:summary="@string/resamplingAlgs_summary"
                     android:title="@string/resamplingAlgs_title" />
             </PreferenceScreen>
             <PreferenceScreen

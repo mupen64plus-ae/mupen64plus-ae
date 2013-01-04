@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+    <issue id="UnusedResources">
+        <ignore path="res\values\colors.xml" />
+    </issue>
     <issue id="UseCompoundDrawables">
         <ignore path="res\layout\main_activity.xml" />
     </issue>
