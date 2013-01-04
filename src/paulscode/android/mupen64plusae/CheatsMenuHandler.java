@@ -30,9 +30,12 @@ import paulscode.android.mupen64plusae.persistent.OnPreferenceLongClickListener;
 import paulscode.android.mupen64plusae.persistent.OptionCheckBoxPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -74,6 +77,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     private UserPrefs mUserPrefs = null;
     
     // Handle to the thread populating the cheat options
+    @SuppressWarnings( "unused" )
     private Thread cheatsThread = null;
     
     public CheatsMenuHandler( MenuActivity activity, AppData appData, UserPrefs userPrefs )
@@ -277,66 +281,88 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     public boolean onPreferenceClick( Preference preference )
     {
         String key = preference.getKey();
-        if( key.equals( GAME_RESUME ) || key.equals( GAME_RESTART ) )
+        if( key.equals( GAME_RESUME ) )
         {
-            toRestart = key.equals( GAME_RESTART );
-            
-            String cheatArgs = null;
-            CheckBoxPreference chkBx;
-            
-            // Although this is apparently not necessary, there is no difference in the delay by commenting it out:
-            // SafeMethods.join( cheatsThread, 0 );
-            
-            for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
+            toRestart = false;
+            launchGame();
+            return true;
+        }
+        else if( key.equals( GAME_RESTART ) )
+        {
+            toRestart = true;
+            CharSequence title = mActivity.getText( R.string._confirmation );
+            CharSequence message = mActivity.getText( R.string.gameMenu_confirmReset );
+            Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
             {
-                chkBx = (CheckBoxPreference) cheatsCategory.getPreference( i );
-                if( chkBx.isChecked() )
+                @Override
+                public void onClick( DialogInterface dialog, int which )
                 {
-                    if( cheatArgs == null )
-                        cheatArgs = "";
-                    else
-                        cheatArgs += ",";
-
-                    cheatArgs += String.valueOf( i );
-
-                    if( chkBx instanceof OptionCheckBoxPreference )
-                        cheatArgs += "-" + ((OptionCheckBoxPreference) chkBx).mChoice;
+                    if( which == DialogInterface.BUTTON_POSITIVE )
+                    {
+                        launchGame();
+                    }
                 }
-            }
-            
-            if( cheatArgs != null && toRestart )
-                cheatOptions = "--cheats " + cheatArgs;  // Restart game with selected cheats
-            else
-                cheatOptions = null;
-            
-            // Launch the last game in a new activity
-            if( !mAppData.isSdCardAccessible() )
-            {
-                Log.e( "CheatMenuHandler", "SD Card not accessible in method onPreferenceClick" );
-                Notifier.showToast( mActivity, R.string.toast_sdInaccessible );
-                return true;
-            }
-            
-            // Make sure that the game save subdirectories exist so that we can write to them
-            new File( mUserPrefs.manualSaveDir ).mkdirs();
-            new File( mUserPrefs.slotSaveDir ).mkdirs();
-            new File( mUserPrefs.autoSaveDir ).mkdirs();
-            
-            // Notify user that the game activity is starting
-            Notifier.showToast( mActivity, R.string.toast_appStarted );
-            
-            // Launch the appropriate game activity
-            Intent intent = new UserPrefs( mActivity ).isXperiaEnabled
-                    ? new Intent( mActivity, GameActivityXperiaPlay.class )
-                    : new Intent( mActivity, GameActivity.class );            
-            
-            // TODO: Reconstruct the cheats menu after game closes, rather than reloading the entire menu
-            mActivity.finish();
-            mActivity.startActivity( mActivity.getIntent() );
-            
-            mActivity.startActivity( intent );
+            } );
             return true;
         }
         return false;
+    }
+
+    private void launchGame()
+    {
+        String cheatArgs = null;
+        CheckBoxPreference chkBx;
+        
+        // Although this is apparently not necessary, there is no difference in the delay by commenting it out:
+        // SafeMethods.join( cheatsThread, 0 );
+        
+        for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
+        {
+            chkBx = (CheckBoxPreference) cheatsCategory.getPreference( i );
+            if( chkBx.isChecked() )
+            {
+                if( cheatArgs == null )
+                    cheatArgs = "";
+                else
+                    cheatArgs += ",";
+
+                cheatArgs += String.valueOf( i );
+
+                if( chkBx instanceof OptionCheckBoxPreference )
+                    cheatArgs += "-" + ((OptionCheckBoxPreference) chkBx).mChoice;
+            }
+        }
+        
+        if( cheatArgs != null && toRestart )
+            cheatOptions = "--cheats " + cheatArgs;  // Restart game with selected cheats
+        else
+            cheatOptions = null;
+        
+        // Launch the last game in a new activity
+        if( !mAppData.isSdCardAccessible() )
+        {
+            Log.e( "CheatMenuHandler", "SD Card not accessible in method onPreferenceClick" );
+            Notifier.showToast( mActivity, R.string.toast_sdInaccessible );
+            return;
+        }
+        
+        // Make sure that the game save subdirectories exist so that we can write to them
+        new File( mUserPrefs.manualSaveDir ).mkdirs();
+        new File( mUserPrefs.slotSaveDir ).mkdirs();
+        new File( mUserPrefs.autoSaveDir ).mkdirs();
+        
+        // Notify user that the game activity is starting
+        Notifier.showToast( mActivity, R.string.toast_appStarted );
+        
+        // Launch the appropriate game activity
+        Intent intent = new UserPrefs( mActivity ).isXperiaEnabled
+                ? new Intent( mActivity, GameActivityXperiaPlay.class )
+                : new Intent( mActivity, GameActivity.class );            
+        
+        // TODO: Reconstruct the cheats menu after game closes, rather than reloading the entire menu
+        mActivity.finish();
+        mActivity.startActivity( mActivity.getIntent() );
+        
+        mActivity.startActivity( intent );
     }
 }
