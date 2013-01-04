@@ -249,11 +249,11 @@ public class UserPrefs
         toRestart = CheatsMenuHandler.toRestart;
         
         // Plug-ins
-        videoPlugin = new Plugin( prefsData, appData.libsDir, "videoPlugin" );
-        audioPlugin = new Plugin( prefsData, appData.libsDir, "audioPlugin" );
-        inputPlugin = new Plugin( prefsData, appData.libsDir, "inputPlugin" );
-        rspPlugin = new Plugin( prefsData, appData.libsDir, "rspPlugin" );
-        corePlugin = new Plugin( prefsData, appData.libsDir, "corePlugin" );
+        videoPlugin = new Plugin( prefsData, appData.libsDir, "pluginVideo" );
+        audioPlugin = new Plugin( prefsData, appData.libsDir, "pluginAudio" );
+        inputPlugin = new Plugin( prefsData, appData.libsDir, "pluginInput" );
+        rspPlugin = new Plugin( prefsData, appData.libsDir, "pluginRsp" );
+        corePlugin = new Plugin( prefsData, appData.libsDir, "pluginCore" );
         
         // Touchscreen prefs
         isTouchscreenEnabled = prefsData.getBoolean( "touchscreenEnabled", true );
