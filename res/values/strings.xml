@@ -21,7 +21,7 @@
 <resources>
 
     <!-- Common Short Strings -->
-    <string name="app_name">Mupen64 Plus</string>
+    <string name="app_name">Mupen64Plus</string>
 
     <!-- ************************************************************************** -->
     <!-- In-Game Strings -->

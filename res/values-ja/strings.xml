@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    All strings visible to the user should be defined in this resource file.  Avoid
+    explicitly defining locale-dependent string values in the java code.
+    
+    Please follow the official Android guidelines for writing style:
+        http://developer.android.com/design/style/writing.html
+        http://developer.android.com/design/patterns/settings.html#writing
+    
+    Please follow the official Android guidelines for localization:
+        http://developer.android.com/guide/topics/resources/localization.html
+    Note that localization is easiest when the number of strings is minimized and the
+    strings themselves are concise.  Avoid strings wherever universally-recognized
+    icons will suffice.  Use Android's built-in string resources (@android:string/...)
+    wherever possible to eliminate translation requirements.
+    ***********************************************************************************
+-->
+<resources>
+
+    <!-- Common Short Strings -->
+    <string name="app_name">Mupen64Plus</string>
+
+    <!-- ************************************************************************** -->
+    <!-- In-Game Strings -->
+    <!-- ************************************************************************** -->
+
+    <!-- In-Game Menu -->
+    <string name="ingameToggleSpeed_title">%1$d%% スピード</string>
+    <string name="ingameSlotSave_title">保存</string>
+    <string name="ingameSlotLoad_title">ロード</string>
+    <string name="ingameSetSlot_title">%1$dスロット</string>
+    <string name="ingameFileSave_title">ファイルに保存…</string>
+    <string name="ingameFileLoad_title">ファイルからのロード…</string>
+    <string name="ingameSetSpeed_title">Game speed</string>
+    <string name="ingameSetIme_title">Change IME</string>
+    <string name="ingameReset_title">ゲームをリセット</string>
+    <string name="ingameMainMenu_title">メニュー</string>
+
+    <!-- ************************************************************************** -->
+    <!-- Toast Messages                                                             -->
+    <!-- Developers: Follow punctuation and grammar as shown below                  -->
+    <!-- ************************************************************************** -->
+
+    <!-- Something happening (typically use '-ing' and '…') -->
+    <string name="toast_launchingEmulator">Launching emulator…</string>
+    <string name="toast_resettingGame">Resetting game…</string>
+    <string name="toast_loadingSession">自動再開ゲーム</string>
+    <string name="toast_savingSession">自動保存ゲーム</string>
+    <string name="toast_loadingSlot">スロット%1$dの再開</string>
+    <string name="toast_savingSlot">スロット%1$dの保存</string>
+    <string name="toast_loadingFile">%1$s再開</string>
+    <string name="toast_savingFile">ゲームを保存</string>
+    <string name="toast_overwritingFile">%1$s上書き</string>
+
+    <!-- Something happened (use '.') -->
+    <string name="toast_usingSlot">%1$dセーブデータスロット</string>
+    <string name="toast_sdInaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
+    <string name="toast_crashReportSent">Report sent.</string>
+
+    <!-- ************************************************************************** -->
+    <!-- Preference Menu Strings                                                    -->
+    <!-- Developers: Please follow naming conventions described in preferences.xml  -->
+    <!-- Developers: In general, capitalize first word only and avoid punctuation   -->
+    <!-- ************************************************************************** -->
+
+    <!-- Actions (simply launch an action, aren't related to persistent data) -->
+    <string name="actionResume_title">Resume</string>
+    <string name="actionResume_summary">Unpredictable if cheats are used</string>
+    <string name="actionRestart_title">Restart</string>
+    <string name="actionRestart_summary">Recommended if cheats are used</string>
+    <string name="actionDeviceInfo_title">デバイス情報</string>
+    <string name="actionDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
+    <string name="actionControllerInfo_title">コントローラ情報</string>
+    <string name="actionControllerInfo_summary">周辺ハードウエアとモデル情報</string>
+    <string name="actionMigrateSlotSaves_title">Migrate savefiles</string>
+    <string name="actionMigrateSlotSaves_summary">Copy your slot saves from the old app into this one</string>
+    <string name="actionMigrateSlotSaves_messageNotFound">No files to copy.</string>
+    <string name="actionMigrateSlotSaves_messageConfirm">Are you sure you want to copy your old slot saves? Backups will be made if necessary.</string>
+    <string name="actionMigrateSlotSaves_messageSuccess">Migration succeeded.</string>
+    <string name="actionReloadAssets_title">データを再ロード</string>
+    <string name="actionReloadAssets_summary">アプリケーションのデータ·ファイルを再ロード</string>
+    <string name="actionCrashTest_title">Test</string>
+    <string name="actionCrashTest_summary">Send a configuration report to the developers, viewable at http://tinyurl.com/b82jgen</string>
+    <string name="actionResetUserPrefs_title">リセット</string>
+    <string name="actionResetUserPrefs_summary">既定値にリセット</string>
+    <string name="actionResetUserPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
+    <string name="actionSetLocale_title">言語</string>
+    <string name="actionHelp_title">ヘルプ</string>
+    <string name="actionAbout_title">ついて</string>
+
+    <!-- Preference Screens -->
+    <string name="screenPlay_title">プレー</string>
+    <string name="screenSettings_title">設定</string>
+    <string name="screenInput_title">Input</string>
+    <string name="screenInput_summary">Control settings</string>
+    <string name="screenTouchscreen_title">タッチ</string>
+    <string name="screenTouchscreen_summary">タッチパネル/タッチパッドの設定</string>
+    <string name="screenTouchpad_title">Touchpad</string>
+    <string name="screenTouchpad_summary">Xperia PLAY settings</string>
+    <string name="screenAudio_title">オーディオ</string>
+    <string name="screenAudio_summary">サウンド設定</string>
+    <string name="screenVideo_title">ビデオ</string>
+    <string name="screenVideo_summary">グラフィック設定</string>
+    <string name="screenPlugin_title">アドバンスド</string>
+    <string name="screenPlugin_summary">オーディオ、プロセッサ、コア、など。</string>
+    <string name="screenAdvanced_title">Advanced</string>
+    <string name="screenAdvanced_summary">Diagnostics and debug settings</string>
+
+    <!-- Preference Categories -->
+    <string name="categoryCheats_title">詳細情報を表示するチートを長押し</string>
+    <string name="categoryHardware_title">ハードウェア設定</string>
+    <string name="categoryOther_title">その他設定</string>
+    <string name="categorySinglePlayer_title">Player 1</string>
+    <string name="categoryMultiPlayer_title">Multi-player</string>
+    <string name="categoryGles2N64_title">GLES2N64設定</string>
+    <string name="categoryGles2Rice_title">GLES2Rice設定</string>
+    <string name="categoryCrashReports_title">Crash reports</string>
+
+    <!-- Checkbox Preferences -->
+    <string name="touchscreenEnabled_title">タッチスクリーンを有効</string>
+    <string name="touchscreenHidden_title">Hide buttons</string>
+    <string name="touchscreenHidden_summary">For touch-mapped controllers and pinball wizards</string>
+    <string name="touchpadEnabled_title">タッチパッドを有効</string>
+    <string name="inputOctagonConstraints_title">八角形のようにアナログスティックをエミュレート</string>
+    <string name="inputOctagonConstraints_summary">八角形のパスにアナログ動きを拘束。 これは、元のN64のコントローラのようなものだ。</string>
+    <string name="inputVolumeMappable_title">ボリュームキーを有効</string>
+    <string name="inputVolumeMappable_summary">コントローラのボタンとしてボリュームキーを使用</string>
+    <string name="videoStretch_title">ストレッチ画面</string>
+    <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
+    <string name="videoUseFramelimiter_title">フレームリミッター</string>
+    <string name="videoUseFramelimiter_summary">スムーズなゲームプレイのためにこれを有効 （一部のゲームが遅くなる）</string>
+    <string name="videoRgba8888_title">RGBA_8888 モード</string>
+    <string name="videoRgba8888_summary">いくつかのデバイス上でグラフィックスをかもしれない向上させる。</string>
+    <string name="gles2N64Fog_title">霧</string>
+    <string name="gles2N64Fog_summary">(WIP)</string>
+    <string name="gles2N64Sai_title">2xSaiテクスチャフィルタ</string>
+    <string name="gles2N64Sai_summary"></string>
+    <string name="gles2N64ScreenClear_title">力画面のリフレッシュ</string>
+    <string name="gles2N64ScreenClear_summary">いくつかのグラフィカル·アーティファクトをクリアします。</string>
+    <string name="gles2N64AlphaTest_title">アルファテスト</string>
+    <string name="gles2N64AlphaTest_summary">スピードハックを取得する設定を無効</string>
+    <string name="gles2N64DepthTest_title">ハックZ</string>
+    <string name="gles2N64DepthTest_summary">点滅している背景を修正するには、この設定を有効にします。</string>
+    <string name="gles2RiceAutoFrameskip_title">オートフレームスキップ</string>
+    <string name="gles2RiceAutoFrameskip_summary">FPSの費用で速度を向上させる。</string>
+    <string name="gles2RiceFastTextureCrc_title">高速テクスチャCRC</string>
+    <string name="gles2RiceFastTextureCrc_summary">設定が無効になっている場合、2D要素が改善され</string>
+    <string name="gles2RiceFastTexture_title">高速テクスチャの読み込み</string>
+    <string name="gles2RiceFastTexture_summary">サークルの遷移を修正</string>
+    <string name="gles2RiceForceTextureFilter_title">テクスチャフィルタの使用を強制し</string>
+    <string name="gles2RiceForceTextureFilter_summary">ピクセル化されたテクスチャを修正</string>
+    <string name="gles2RiceHiResTextures_title">高解像度のテクスチャ</string>
+    <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
+    <string name="audioSwapChannels_title">オーディオチャンネルを交換</string>
+    <string name="audioSwapChannels_summary">スワップ左右のオーディオチャンネル</string>
+
+    <!-- List Preferences (selected value will become the summary) -->
+    <string name="touchscreenLayout_title">タッチスクリーン·レイアウト</string>
+    <string name="touchscreenLayout_entryAnalog">アナログ (roymustang16によって)</string>
+    <string name="touchscreenLayout_entryDigital">デジタル (roymustang16によって)</string>
+    <string name="touchscreenLayout_entryCustom">カスタム (ご覧ください http://tinyurl.com/984ofyo)</string>
+    <string name="touchscreenSize_title">画面サイズ</string>
+    <string name="touchscreenSize_entryTiny">小さな</string>
+    <string name="touchscreenSize_entrySmall">小</string>
+    <string name="touchscreenSize_entryNormal">デフォル</string>
+    <string name="touchscreenSize_entryTablet">タブレット</string>
+    <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
+    <string name="touchscreenRefresh_entryNever">決して</string>
+    <string name="touchscreenRefresh_entryOccasionally">時折</string>
+    <string name="touchscreenRefresh_entryFrequently">頻繁</string>
+    <string name="touchpadLayout_title">タッチパッド·レイアウト</string>
+    <string name="touchpadLayout_entryDefault">左パッド： アナログ制御; 右パッド： Cボタン</string>
+    <string name="touchpadLayout_entryReverse">左パッド： Cボタ; 右パッド: アナログ制御</string>
+    <string name="videoOrientation_title">画面の向き</string>
+    <string name="videoOrientation_entryLandscape">横方向</string>
+    <string name="videoOrientation_entryReverseLandscape">反転横方向</string>
+    <string name="videoOrientation_entryPortrait">縦方向</string>
+    <string name="videoOrientation_entryReversePortrait">反転縦方向</string>
+    <string name="videoFpsRefresh_title">フレームレート表示</string>
+    <string name="videoFpsRefresh_entryNever">決して</string>
+    <string name="videoFpsRefresh_entryOccasionally">時折</string>
+    <string name="videoFpsRefresh_entryFrequently">頻繁</string>
+    <string name="gles2N64Frameskip_title">フレームスキップ</string>
+    <string name="gles2N64Frameskip_entryNever">フレームをスキップしない</string>
+    <string name="gles2N64Frameskip_entryUpTo1">最大、1フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryUpTo2">最大、2フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryUpTo3">最大、3フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryUpTo4">最大、4フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryUpTo5">最大、5フレームでスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly1">唯一の1フレームをスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly2">唯一の2フレームをスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly3">唯一の3フレームをスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly4">唯一の4フレームをスキップ</string>
+    <string name="gles2N64Frameskip_entryExactly5">唯一の5フレームをスキップ</string>
+    <string name="audioResampleAlg_title">再サンプリングアルゴリズム</string>
+    <string name="audioResampleAlg_entryTrivial">些細</string>
+    <string name="audioResampleAlg_entryLinear">線形補間</string>
+    <string name="audioResampleAlg_entryZoh">ゼロ次ホールド</string>
+    <string name="audioResampleAlg_entrySincFastest">Sinc （最速）</string>
+    <string name="audioResampleAlg_entrySincMedium">Sinc （中通り）</string>
+    <string name="audioResampleAlg_entrySincBest">Sinc （最高）</string>
+    <string name="pluginVideo_title">ビデオ</string>
+    <string name="pluginVideo_entryNone">なし（ビデオ無効）</string>
+    <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</string>
+    <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</string>
+    <string name="pluginAudio_title">オーディオ設定</string>
+    <string name="pluginAudio_entryNone">なし（オーディオ無効）</string>
+    <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+    <string name="pluginInput_title">入力デバイス</string>
+    <string name="pluginInput_entryNone">なし（入力無効）</string>
+    <string name="pluginInput_entrySdl">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    <string name="pluginRsp_title">RSP</string>
+    <string name="pluginRsp_entryNone">なし（RSP無効）</string>
+    <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+    <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    <string name="pluginCore_title">コア</string>
+    <string name="pluginCore_entryV110">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+
+    <!-- ACRA Preferences (key names must not be changed) -->
+    <string name="acraEnable_title">Enable crash reporting</string>
+    <string name="acraEnable_summary"></string>
+    <string name="acraUserEmail_title">Contact info</string>
+    <string name="acraUserEmail_summary">Your paulscode.com username (optional)</string>
+
+    <!-- Path Preferences (selected path will become the summary) -->
+    <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
+    <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
+    <string name="pathPreference_dialogTitle">選択したフォルダ： %1$s</string>
+    <string name="pathSelectedGame_title">ゲーム</string>
+    <string name="pathSelectedGame_default">~roms/n64</string>
+    <string name="pathCustomTouchscreen_title">カスタムレイアウトフォルダ</string>
+    <string name="pathCustomTouchscreen_default">~</string>
+    <string name="pathHiResTextures_title">インポートテクスチャパック</string>
+    <string name="pathHiResTextures_default">~</string>
+    <string name="pathGameSaves_title">セーブデータのフォルダ</string>
+    <string name="pathGameSaves_default">!GameSaves</string>
+
+    <!-- Player Map Preferences -->
+    <string name="playerMap_title">Multi-player</string>
+    <string name="playerMap_summary">Define each player\'s controller</string>
+
+    <!-- Input Map Preferences -->
+    <string name="inputMap1_title">Controller</string>
+    <string name="inputMap2_title">プレイヤー2</string>
+    <string name="inputMap3_title">プレイヤー3</string>
+    <string name="inputMap4_title">プレイヤー4</string>
+    <string name="inputMap_summary">Button and special function mapping</string>
+
+    <!-- ************************************************************************** -->
+    <!-- Dialogs and Other Feedback                                                 -->
+    <!-- Developers: Use formatting arguments rather than string concatenation:     -->
+    <!-- http://developer.android.com/guide/topics/resources/string-resource.html   -->
+    <!-- ************************************************************************** -->
+
+    <!-- Confirmation Dialogs -->
+    <string name="confirm_title">確認</string>
+    <string name="confirmResetGame_message">ゲームをリセットしますか？ すべての進行状況は、前回の保存以降に失われます。</string>
+    <string name="confirmOverwriteFile_message">%1$s上書き?</string>
+
+    <!-- Text Editor Hints (start lower-case) -->
+    <string name="hintFileSave">ファイル名</string>
+    <string name="hintSetSpeed">speed between 10 to 300</string>
+
+    <!-- Asset Extractor -->
+    <string name="assetExtractor_initializing">初期化</string>
+    <string name="assetExtractor_finished">完成した</string>
+    <string name="assetExtractor_progress">%1$.0f%% が行わ: ファイル %2$s</string>
+
+    <!-- Cheats Configuration -->
+    <string name="cheats_titleFor">"%1$sのチート"</string>
+    <string name="cheats_defaultName">%1$dチート</string>
+    <string name="cheats_longPress">（長押しチートはその全文を見さために）</string>
+    <string name="cheatNotes_title">注釈</string>
+    <string name="cheatNotes_none">（このチートで使用可能なノートはありません。）</string>
+    <string name="cheatOption_title">全文</string>
+    <string name="cheat_disabled">（使用禁止）</string>
+    <string name="cheatsTaskHandler_title">Reading Game Header</string>
+    <string name="cheatsTaskHandler_message">Please be patient.  This process may take some time.</string>
+    <string name="cheats_title">チート</string>
+    <string name="cheats_summary">でチートを使用するゲームを選択して。</string>
+
+    <!-- Hi-Res Texture Unpacking -->
+    <string name="pathHiResTexturesPath_title">Select a texture pack (ZIP format)</string>
+    <string name="pathHiResTexturesTask_title">Unpacking Textures</string>
+    <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
+    <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
+
+    <!-- Player Mapping -->
+    <string name="playerMap_deviceWithName">Device %1$d (%2$s)</string>
+    <string name="playerMap_deviceWithoutName">Device %1$d</string>
+    <string name="playerMapPreference_popupTitle">Player %1$d</string>
+    <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
+    <string name="playerMapPreference_popupUnmap">Unmap</string>
+    <string name="playerMapPreference_button">Player %1$d\n\n%2$s</string>
+    
+    <!-- Input Mapping -->
+    <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。\n\nCurrent mappings:\n%1$s</string>
+    <string name="inputMapPreference_showSpecial">Show special functions</string>
+    <string name="inputMapPreference_hideSpecial">Hide special functions</string>
+    <string name="inputMapPreference_popupUnmap">アンマップ</string>
+    <string name="inputMapPreference_aPadXperiaPlay">Analog stick controlled with touchpad</string>
+    <string name="inputMapPreference_cPadXperiaPlay">C-pad controlled with touchpad</string>
+    <string name="inputMapPreference_btnA">A</string>
+    <string name="inputMapPreference_btnB">B</string>
+    <string name="inputMapPreference_btnC">C</string>
+    <string name="inputMapPreference_btnL">L</string>
+    <string name="inputMapPreference_btnR">R</string>
+    <string name="inputMapPreference_btnZ">Z</string>
+    <string name="inputMapPreference_btnS">S</string>
+    <string name="inputMapPreference_btnCR">C-pad right</string>
+    <string name="inputMapPreference_btnCL">C-pad left</string>
+    <string name="inputMapPreference_btnCD">C-pad down</string>
+    <string name="inputMapPreference_btnCU">C-pad up</string>
+    <string name="inputMapPreference_btnDR">D-pad right</string>
+    <string name="inputMapPreference_btnDL">D-pad left</string>
+    <string name="inputMapPreference_btnDD">D-pad down</string>
+    <string name="inputMapPreference_btnDU">D-pad up</string>
+    <string name="inputMapPreference_btnAR">Analog right</string>
+    <string name="inputMapPreference_btnAL">Analog left</string>
+    <string name="inputMapPreference_btnAD">Analog down</string>
+    <string name="inputMapPreference_btnAU">Analog up</string>
+    <string name="inputMapPreference_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="inputMapPreference_mempak">Expansion Pak</string> <!-- capitalize since trademark -->
+    <string name="inputMapPreference_incrementSlot">Increment slot</string>
+    <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
+    <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
+    <string name="inputMapPreference_reset">@string/ingameReset_title</string>
+    <string name="inputMapPreference_pause">Pause</string>
+    <string name="inputMapPreference_stop">Stop</string>
+    <string name="inputMapPreference_frameAdvance">Frame advance</string>
+    <string name="inputMapPreference_fastForward">Fast forward</string>
+    <string name="inputMapPreference_speedDown">Speed down</string>
+    <string name="inputMapPreference_speedUp">Speed up</string>
+    <string name="inputMapPreference_gameshark">Gameshark</string>
+
+</resources>
