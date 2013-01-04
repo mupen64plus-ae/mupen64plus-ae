@@ -114,8 +114,8 @@ public class UserPrefs
     /** The number of frames over which touchscreen is redrawn (0 = disabled). */
     public final int touchscreenRefresh;
     
-    /** True if the touchscreen is redrawn periodically. */
-    public final boolean isTouchscreenRefreshEnabled;
+    /** True if the touchscreen overlay is hidden. */
+    public final boolean isTouchscreenHidden;
     
     /** The filename of the selected touchscreen layout. */
     public final String touchscreenLayout;
@@ -259,7 +259,7 @@ public class UserPrefs
         isTouchscreenEnabled = prefsData.getBoolean( "touchscreenEnabled", true );
         // isTouchscreenCustom, touchscreenLayout: see below
         touchscreenRefresh = getSafeInt( prefsData, "touchscreenRefresh", 0 );
-        isTouchscreenRefreshEnabled = touchscreenRefresh > 0;
+        isTouchscreenHidden = prefsData.getBoolean( "touchscreenHidden", false );
         isOctagonalJoystick = prefsData.getBoolean( "touchscreenOctagonJoystick", true );
         
         // Peripheral prefs

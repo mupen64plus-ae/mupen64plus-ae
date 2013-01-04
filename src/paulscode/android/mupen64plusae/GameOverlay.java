@@ -36,19 +36,20 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     private int mRefreshCount = 0;
     private boolean mRefreshEnabled = false;
     private boolean mFpsEnabled = false;
+    private boolean mDrawingEnabled = true;
     
     public GameOverlay( Context context, AttributeSet attribs )
     {
         super( context, attribs );
     }
     
-    public void initialize( VisibleTouchMap touchMap, int refreshPeriod, boolean fpsEnabled )
+    public void initialize( VisibleTouchMap touchMap, int refreshPeriod, boolean fpsEnabled, boolean drawingEnabled )
     {
-        // Set the new TouchMap
         mTouchMap = touchMap;
         mRefreshPeriod = refreshPeriod;
-        mRefreshEnabled = mRefreshPeriod > 0;
         mFpsEnabled = fpsEnabled;
+        mDrawingEnabled = drawingEnabled;
+        mRefreshEnabled = mRefreshPeriod > 0 && mDrawingEnabled;
     }
     
     @Override
@@ -95,14 +96,19 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         if( mTouchMap == null )
             return;
         
-        // Redraw the static buttons
-        mTouchMap.drawButtons( canvas );
+        if( mDrawingEnabled )
+        {
+            // Redraw the static buttons
+            mTouchMap.drawButtons( canvas );
         
-        // Redraw the dynamic analog stick
-        mTouchMap.drawAnalog( canvas );
+            // Redraw the dynamic analog stick
+            mTouchMap.drawAnalog( canvas );
+        }
         
-        // Redraw the dynamic frame rate info
         if( mFpsEnabled )
+        {
+            // Redraw the dynamic frame rate info
             mTouchMap.drawFps( canvas );
+        }
     }
 }

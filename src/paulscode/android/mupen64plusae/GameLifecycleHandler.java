@@ -173,7 +173,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
                     mUserPrefs.isFpsEnabled, mAppData.fontsDir );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
             mOverlay.initialize( mTouchscreenMap, mUserPrefs.touchscreenRefresh,
-                    mUserPrefs.isFpsEnabled );
+                    mUserPrefs.isFpsEnabled, !mUserPrefs.isTouchscreenHidden );
         }
         
         // Initialize user interface devices
