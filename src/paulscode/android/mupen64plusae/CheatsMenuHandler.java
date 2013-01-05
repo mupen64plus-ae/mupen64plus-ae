@@ -50,7 +50,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     private static final String SCREEN_PLAY = "screenPlay";
     private static final String ACTION_RESUME = "actionResume";
     private static final String ACTION_RESTART = "actionRestart";
-    private static final String CATEGORY_CHEATS = "cheatsCategory";
+    private static final String CATEGORY_CHEATS = "categoryCheats";
     
     public static String ROM = null;
     public static String CRC = null;
