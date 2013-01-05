@@ -43,6 +43,20 @@ import android.view.View;
 // Line reserved for future use
 // Line reserved for future use
 
+/**
+ * BugSense classifies errors by their stack trace. If so much as a line number changes in the stack
+ * trace, the error will be categorized as a new error. That's undesirable for benign crash tests -
+ * we don't want a new error report every time the lines get shuffled. So we move the crash test
+ * machinery into a separate class that will remain line-stable for a long time.
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Space reserved for future use
+ */
 public class CrashTester implements OnPreferenceClickListener, DialogInterface.OnClickListener,
         View.OnClickListener
         // Line reserved for future use
@@ -53,7 +67,7 @@ public class CrashTester implements OnPreferenceClickListener, DialogInterface.O
 {
     private void testCrash()
     {
-        ACRA.getErrorReporter().handleException( new Exception( "BENIGN CRASH TEST" ) ); // Line 56
+        ACRA.getErrorReporter().handleException( new Exception( "BENIGN CRASH TEST" ) ); // Line 70
         Notifier.showToast( mActivity, R.string.toast_crashReportSent );
     }
     
@@ -82,7 +96,7 @@ public class CrashTester implements OnPreferenceClickListener, DialogInterface.O
     @Override
     public boolean onPreferenceClick( Preference preference )
     {
-        testCrash(); // Line 85
+        testCrash(); // Line 99
         return false;
     }
     
@@ -94,7 +108,7 @@ public class CrashTester implements OnPreferenceClickListener, DialogInterface.O
     @Override
     public void onClick( DialogInterface dialog, int which )
     {
-        testCrash(); // Line 97
+        testCrash(); // Line 111
     }
     
     // Line reserved for future use
@@ -105,7 +119,7 @@ public class CrashTester implements OnPreferenceClickListener, DialogInterface.O
     @Override
     public void onClick( View v )
     {
-        testCrash(); // Line 108
+        testCrash(); // Line 122
     }
     
     // Add any new handlers below. Don't move any of the lines above or else BugSense will
