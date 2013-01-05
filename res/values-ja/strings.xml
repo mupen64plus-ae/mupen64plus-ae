@@ -83,7 +83,7 @@
     <string name="actionReloadAssets_title">データを再ロード</string>
     <string name="actionReloadAssets_summary">アプリケーションのデータ·ファイルを再ロード</string>
     <string name="actionCrashTest_title">Test</string>
-    <string name="actionCrashTest_summary">Send a configuration report to the developers, viewable at http://tinyurl.com/b82jgen</string>
+    <string name="actionCrashTest_summary">Send a configuration report to the developers</string>
     <string name="actionResetUserPrefs_title">リセット</string>
     <string name="actionResetUserPrefs_summary">既定値にリセット</string>
     <string name="actionResetUserPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>

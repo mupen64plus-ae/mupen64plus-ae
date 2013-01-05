@@ -2,10 +2,12 @@ package paulscode.android.mupen64plusae.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -635,5 +637,111 @@ public class Utility
         inputStream.close();
         
         return newFile;
+    }
+
+    /**
+     * @author Kevin Kowalewski
+     * @see http://stackoverflow.com/questions/1101380/determine-if-running-on-a-rooted-device
+     */
+    public static class Root
+    {
+        public static class ExecShell
+        {
+            private static String LOG_TAG = ExecShell.class.getName();
+            
+            public static enum SHELL_CMD
+            {
+                check_su_binary( new String[] { "/system/xbin/which", "su" } ), ;
+                
+                String[] command;
+                
+                SHELL_CMD( String[] command )
+                {
+                    this.command = command;
+                }
+            }
+            
+            public ArrayList<String> executeCommand( SHELL_CMD shellCmd )
+            {
+                String line = null;
+                ArrayList<String> fullResponse = new ArrayList<String>();
+                Process localProcess = null;
+                
+                try
+                {
+                    localProcess = Runtime.getRuntime().exec( shellCmd.command );
+                }
+                catch( Exception e )
+                {
+                    return null;
+                }
+                
+                BufferedReader in = new BufferedReader( new InputStreamReader(
+                        localProcess.getInputStream() ) );
+                
+                try
+                {
+                    while( ( line = in.readLine() ) != null )
+                    {
+                        Log.d( LOG_TAG, "--> Line received: " + line );
+                        fullResponse.add( line );
+                    }
+                }
+                catch( Exception e )
+                {
+                    e.printStackTrace();
+                }
+                
+                Log.d( LOG_TAG, "--> Full response was: " + fullResponse );
+                
+                return fullResponse;
+            }
+            
+        }
+        
+        public boolean isDeviceRooted()
+        {
+            return( checkRootMethod1() || checkRootMethod2() || checkRootMethod3() );
+        }
+        
+        public boolean checkRootMethod1()
+        {
+            String buildTags = android.os.Build.TAGS;
+            
+            if( buildTags != null && buildTags.contains( "test-keys" ) )
+            {
+                return true;
+            }
+            return false;
+        }
+        
+        public boolean checkRootMethod2()
+        {
+            try
+            {
+                File file = new File( "/system/app/Superuser.apk" );
+                if( file.exists() )
+                {
+                    return true;
+                }
+            }
+            catch( Exception e )
+            {
+            }
+            
+            return false;
+        }
+        
+        public boolean checkRootMethod3()
+        {
+            if( new ExecShell().executeCommand( ExecShell.SHELL_CMD.check_su_binary ) != null )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

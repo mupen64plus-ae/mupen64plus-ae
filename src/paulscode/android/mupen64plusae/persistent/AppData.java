@@ -20,9 +20,11 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.Locale;
 
 import org.acra.ACRA;
+import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
@@ -144,12 +146,9 @@ public class AppData
      * 
      * @param context The application context.
      */
+    @SuppressWarnings( "deprecation" )
     public AppData( Context context )
     {
-        // Record some info in the crash reporter
-        ACRA.getErrorReporter().putCustomData( "CPU_INFO", Utility.getCpuInfo() );
-        ACRA.getErrorReporter().putCustomData( "PERIPHERAL_INFO", Utility.getPeripheralInfo() );
-
         hardwareInfo = new HardwareInfo();
         packageName = context.getPackageName();
         
@@ -178,6 +177,15 @@ public class AppData
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
+        
+        // Record some info in the crash reporter
+        ErrorReporter reporter = ACRA.getErrorReporter();
+        reporter.putCustomData( "CPU Hardware", hardwareInfo.hardware );
+        reporter.putCustomData( "CPU Processor", hardwareInfo.processor );
+        reporter.putCustomData( "CPU Features", hardwareInfo.features );
+        reporter.putCustomData( "HID Info", URLEncoder.encode( Utility.getPeripheralInfo() ) );
+        reporter.putCustomData( "CPU Info", URLEncoder.encode( Utility.getCpuInfo() ) );
+        reporter.putCustomData( "Is Rooted", Boolean.toString( new Utility.Root().isDeviceRooted() ) );
     }
     
     /**

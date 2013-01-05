@@ -49,7 +49,7 @@ import android.text.TextUtils;
 public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
-    // These constants must match the keys used in res/xml/preferences.xmlA
+    // These constants must match the keys used in res/xml/preferences.xml
     
     private static final String ACTION_DEVICE_INFO = "actionDeviceInfo";
     private static final String ACTION_CONTROLLER_INFO = "actionControllerInfo";
@@ -343,7 +343,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private void actionCrashTest()
     {
-        ACRA.getErrorReporter().handleSilentException( new Exception( "BENIGN CRASH TEST" ) );
+        ACRA.getErrorReporter().handleException( new Exception( "BENIGN CRASH TEST" ) );
         Notifier.showToast( this, getString( R.string.toast_crashReportSent ) );
     }
     

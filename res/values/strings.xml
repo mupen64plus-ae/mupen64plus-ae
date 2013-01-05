@@ -83,7 +83,7 @@
     <string name="actionReloadAssets_title">Reload app resources</string>
     <string name="actionReloadAssets_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
     <string name="actionCrashTest_title">Test</string>
-    <string name="actionCrashTest_summary">Send a configuration report to the developers, viewable at http://tinyurl.com/b82jgen</string>
+    <string name="actionCrashTest_summary">Send a configuration report to the developers</string>
     <string name="actionResetUserPrefs_title">Reset</string>
     <string name="actionResetUserPrefs_summary">Restore default settings</string>
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?</string>
@@ -267,9 +267,9 @@
     <string name="hintSetSpeed">speed between 10 to 300</string>
 
     <!-- Asset Extractor -->
-    <string name="assetExtractor_initializing">Initializing…</string>
+    <string name="assetExtractor_initializing">Initializing</string>
     <string name="assetExtractor_progress">%1$.0f%% done: %2$s</string>
-    <string name="assetExtractor_finished">Finished.</string>
+    <string name="assetExtractor_finished">Finished</string>
 
     <!-- Cheats Configuration -->
     <string name="cheats_titleFor">Cheats for %1$s</string>
