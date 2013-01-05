@@ -21,10 +21,9 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import org.acra.ACRA;
-
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.util.CrashTester;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -124,9 +123,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         listenTo( ACTION_CONTROLLER_INFO );
         listenTo( ACTION_MIGRATE_SLOT_SAVES );
         listenTo( ACTION_RELOAD_ASSETS );
-        listenTo( ACTION_CRASH_TEST );
         listenTo( ACTION_RESET_USER_PREFS );
         listenTo( PATH_HI_RES_TEXTURES );
+        
+        // Handle crash tests in a particular way (see CrashTester for more info)
+        findPreference( ACTION_CRASH_TEST ).setOnPreferenceClickListener( new CrashTester( this ) );
         
         // Hide the Xperia PLAY menu items as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
@@ -276,9 +277,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         else if( key.equals( ACTION_RELOAD_ASSETS ) )
             actionReloadAssets();
         
-        else if( key.equals( ACTION_CRASH_TEST ) )
-            actionCrashTest();
-        
         else if( key.equals( ACTION_RESET_USER_PREFS ) )
             actionResetUserPrefs();
         
@@ -339,12 +337,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mAppData.setAssetVersion( 0 );
         startActivity( new Intent( this, MainActivity.class ) );
         finish();
-    }
-    
-    private void actionCrashTest()
-    {
-        ACRA.getErrorReporter().handleException( new Exception( "BENIGN CRASH TEST" ) );
-        Notifier.showToast( this, getString( R.string.toast_crashReportSent ) );
     }
     
     private void actionResetUserPrefs()
