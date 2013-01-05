@@ -379,23 +379,36 @@
                 android:key="screenAdvanced"
                 android:summary="@string/screenAdvanced_summary"
                 android:title="@string/screenAdvanced_title" >
-                <Preference
-                    android:key="actionDeviceInfo"
-                    android:summary="@string/actionDeviceInfo_summary"
-                    android:title="@string/actionDeviceInfo_title" />
-                <Preference
-                    android:key="actionControllerInfo"
-                    android:summary="@string/actionControllerInfo_summary"
-                    android:title="@string/actionControllerInfo_title" />
-                <Preference
-                    android:key="actionMigrateSlotSaves"
-                    android:summary="@string/actionMigrateSlotSaves_summary"
-                    android:title="@string/actionMigrateSlotSaves_title" />
-                <Preference
-                    android:key="actionReloadAssets"
-                    android:summary="@string/actionReloadAssets_summary"
-                    android:title="@string/actionReloadAssets_title" />
-
+                <PreferenceCategory
+                    android:key="categoryDiagnostics"
+                    android:title="@string/categoryDiagnostics_title" >
+                    <Preference
+                        android:key="actionDeviceInfo"
+                        android:summary="@string/actionDeviceInfo_summary"
+                        android:title="@string/actionDeviceInfo_title" />
+                    <Preference
+                        android:key="actionControllerInfo"
+                        android:summary="@string/actionControllerInfo_summary"
+                        android:title="@string/actionControllerInfo_title" />
+                    <Preference
+                        android:key="actionControllerDiagnostics"
+                        android:summary="@string/actionControllerDiagnostics_summary"
+                        android:title="@string/actionControllerDiagnostics_title" >
+                        <intent android:action=".input.DiagnosticActivity" />
+                    </Preference>
+                </PreferenceCategory>
+                <PreferenceCategory
+                    android:key="categoryData"
+                    android:title="@string/categoryData_title" >
+                    <Preference
+                        android:key="actionMigrateSlotSaves"
+                        android:summary="@string/actionMigrateSlotSaves_summary"
+                        android:title="@string/actionMigrateSlotSaves_title" />
+                    <Preference
+                        android:key="actionReloadAssets"
+                        android:summary="@string/actionReloadAssets_summary"
+                        android:title="@string/actionReloadAssets_title" />
+                </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryCrashReports"
                     android:title="@string/categoryCrashReports_title" >

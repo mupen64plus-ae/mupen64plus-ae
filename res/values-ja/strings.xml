@@ -75,6 +75,8 @@
     <string name="actionDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
     <string name="actionControllerInfo_title">コントローラ情報</string>
     <string name="actionControllerInfo_summary">周辺ハードウエアとモデル情報</string>
+    <string name="actionControllerDiagnostics_title">Controller diagnostics</string>
+    <string name="actionControllerDiagnostics_summary">Test raw communication capability</string>
     <string name="actionMigrateSlotSaves_title">Migrate savefiles</string>
     <string name="actionMigrateSlotSaves_summary">Copy your slot saves from the old app into this one</string>
     <string name="actionMigrateSlotSaves_messageNotFound">No files to copy.</string>
@@ -117,6 +119,8 @@
     <string name="categoryMultiPlayer_title">Multi-player</string>
     <string name="categoryGles2N64_title">GLES2N64設定</string>
     <string name="categoryGles2Rice_title">GLES2Rice設定</string>
+    <string name="categoryDiagnostics_title">Diagnostics</string>
+    <string name="categoryData_title">Data</string>
     <string name="categoryCrashReports_title">Crash reports</string>
 
     <!-- Checkbox Preferences -->

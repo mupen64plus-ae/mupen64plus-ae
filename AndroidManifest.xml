@@ -35,6 +35,15 @@
             android:name=".MenuActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".input.DiagnosticActivity"
+            android:label="@string/app_name"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name=".input.DiagnosticActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <!-- For the GameActivities, do not restart the activity when the phone's slider
         opens or closes, or when the orientation (and thereby screen size) changes.
