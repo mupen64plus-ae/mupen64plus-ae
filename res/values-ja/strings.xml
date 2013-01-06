@@ -146,7 +146,7 @@
     <string name="gles2N64Fog_title">霧</string>
     <string name="gles2N64Fog_summary">(WIP)</string>
     <string name="gles2N64Sai_title">2xSaiテクスチャフィルタ</string>
-    <string name="gles2N64Sai_summary"></string>
+    <string name="gles2N64Sai_summary">Reduces texture pixellation</string>
     <string name="gles2N64ScreenClear_title">力画面のリフレッシュ</string>
     <string name="gles2N64ScreenClear_summary">いくつかのグラフィカル·アーティファクトをクリアします。</string>
     <string name="gles2N64AlphaTest_title">アルファテスト</string>
