@@ -111,7 +111,7 @@
     <string name="screenPlugin_title">アドバンスド</string>
     <string name="screenPlugin_summary">オーディオ、プロセッサ、コア、など。</string>
     <string name="screenAdvanced_title">Advanced</string>
-    <string name="screenAdvanced_summary">Diagnostics and debug settings</string>
+    <string name="screenAdvanced_summary">Storage and debug settings</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">詳細情報を表示するチートを長押し</string>
@@ -242,7 +242,7 @@
     <string name="pathHiResTextures_title">インポートテクスチャパック</string>
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">セーブデータのフォルダ</string>
-    <string name="pathGameSaves_default">!GameSaves</string>
+    <string name="pathGameSaves_default">!mupen64plus</string>
 
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multi-player</string>

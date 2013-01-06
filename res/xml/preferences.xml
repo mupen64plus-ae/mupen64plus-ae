@@ -367,18 +367,29 @@
         <PreferenceCategory
             android:key="categoryOther"
             android:title="@string/categoryOther_title" >
-            <paulscode.android.mupen64plusae.persistent.PathPreference
-                android:defaultValue="@string/pathGameSaves_default"
-                android:icon="@drawable/ic_folder"
-                android:key="pathGameSaves"
-                android:title="@string/pathGameSaves_title"
-                mupen64:selectionMode="0" />
-
             <PreferenceScreen
                 android:icon="@drawable/ic_debug"
                 android:key="screenAdvanced"
                 android:summary="@string/screenAdvanced_summary"
                 android:title="@string/screenAdvanced_title" >
+                <PreferenceCategory
+                    android:key="categoryData"
+                    android:title="@string/categoryData_title" >
+                    <paulscode.android.mupen64plusae.persistent.PathPreference
+                        android:defaultValue="@string/pathGameSaves_default"
+                        android:key="pathGameSaves"
+                        android:title="@string/pathGameSaves_title"
+                        mupen64:selectionMode="0" />
+
+                    <Preference
+                        android:key="actionMigrateSlotSaves"
+                        android:summary="@string/actionMigrateSlotSaves_summary"
+                        android:title="@string/actionMigrateSlotSaves_title" />
+                    <Preference
+                        android:key="actionReloadAssets"
+                        android:summary="@string/actionReloadAssets_summary"
+                        android:title="@string/actionReloadAssets_title" />
+                </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryDiagnostics"
                     android:title="@string/categoryDiagnostics_title" >
@@ -396,18 +407,6 @@
                         android:title="@string/actionControllerDiagnostics_title" >
                         <intent android:action=".input.DiagnosticActivity" />
                     </Preference>
-                </PreferenceCategory>
-                <PreferenceCategory
-                    android:key="categoryData"
-                    android:title="@string/categoryData_title" >
-                    <Preference
-                        android:key="actionMigrateSlotSaves"
-                        android:summary="@string/actionMigrateSlotSaves_summary"
-                        android:title="@string/actionMigrateSlotSaves_title" />
-                    <Preference
-                        android:key="actionReloadAssets"
-                        android:summary="@string/actionReloadAssets_summary"
-                        android:title="@string/actionReloadAssets_title" />
                 </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryCrashReports"
