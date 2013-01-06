@@ -1,9 +1,12 @@
 package paulscode.android.mupen64plusae.input;
 
+import static android.view.MotionEvent.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -17,6 +20,43 @@ import android.widget.TextView;
 
 public class DiagnosticActivity extends Activity
 {
+    public static String getDeviceName( int device )
+    {
+        String name = AbstractProvider.getHardwareName( device );
+        return Integer.toString( device ) + ( name == null ? "" : " (" + name + ")" );
+    }
+    
+    public static String getActionName( int action, boolean isMotionEvent )
+    {
+        switch( action )
+        {
+            case ACTION_DOWN:
+                return "DOWN";
+            case ACTION_UP:
+                return "UP";
+            case ACTION_MOVE:
+                return isMotionEvent ? "MOVE" : "MULTIPLE";
+            case ACTION_CANCEL:
+                return "CANCEL";
+            case ACTION_OUTSIDE:
+                return "OUTSIDE";
+            case ACTION_POINTER_DOWN:
+                return "POINTER_DOWN";
+            case ACTION_POINTER_UP:
+                return "POINTER_UP";
+            case ACTION_HOVER_MOVE:
+                return "HOVER_MOVE";
+            case ACTION_SCROLL:
+                return "SCROLL";
+            case ACTION_HOVER_ENTER:
+                return "HOVER_ENTER";
+            case ACTION_HOVER_EXIT:
+                return "HOVER_EXIT";
+            default:
+                return "ACTION_" + Integer.toString( action );
+        }
+    }
+    
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
@@ -36,6 +76,12 @@ public class DiagnosticActivity extends Activity
         return onKey( event );
     }
     
+    @Override
+    public boolean onTouchEvent( MotionEvent event )
+    {
+        return onMotion( event );
+    }
+    
     @TargetApi( 12 )
     @Override
     public boolean onGenericMotionEvent( MotionEvent event )
@@ -47,21 +93,23 @@ public class DiagnosticActivity extends Activity
     private boolean onKey( KeyEvent event )
     {
         int key = event.getKeyCode();
-        int action = event.getAction();
-        String name = AppData.IS_HONEYCOMB_MR1 ? KeyEvent.keyCodeToString( key ) : "KEYCODE_" + key;
         
         String message = "KeyEvent:";
-        message += "\r\nDevice: " + event.getDeviceId();
-        message += "\r\nAction: " + ( action == 0 ? "down" : "up" );
+        message += "\r\nDevice: " + getDeviceName( event.getDeviceId() );
+        message += "\r\nAction: " + getActionName( event.getAction(), false );
         message += "\r\nKeyCode: " + key;
-        message += "\r\n\r\n  " + name;
+        
+        if( AppData.IS_HONEYCOMB_MR1 )
+        {
+            message += "\r\n\r\n" + KeyEvent.keyCodeToString( key );
+        }
         
         TextView view = (TextView) findViewById( R.id.textKey );
         view.setText( message );
         
         if( key == KeyEvent.KEYCODE_BACK )
         {
-            if( action == 0 )
+            if( event.getAction() == 0 )
                 return super.onKeyDown( key, event );
             else
                 return super.onKeyUp( key, event );
@@ -73,11 +121,9 @@ public class DiagnosticActivity extends Activity
     @TargetApi( 12 )
     private boolean onMotion( MotionEvent event )
     {
-        int action = event.getAction();
-        
         String message = "MotionEvent:";
-        message += "\r\nDevice: " + event.getDeviceId();
-        message += "\r\nAction: " + ( action == 2 ? "move" : action );
+        message += "\r\nDevice: " + getDeviceName( event.getDeviceId() );
+        message += "\r\nAction: " + getActionName( event.getAction(), true );
         message += "\r\n";
         
         if( AppData.IS_GINGERBREAD )
@@ -89,7 +135,7 @@ public class DiagnosticActivity extends Activity
                     int axis = range.getAxis();
                     String name = MotionEvent.axisToString( axis );
                     double value = event.getAxisValue( axis );
-                    message += "\r\n  " + name + ": " + value;
+                    message += "\r\n" + name + ": " + value;
                 }
                 else
                 {
