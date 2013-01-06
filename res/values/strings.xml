@@ -91,7 +91,11 @@
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?</string>
     <string name="actionSetLocale_title">Language</string>
     <string name="actionHelp_title">Help</string>
-    <string name="actionHelp_uri" translatable="false">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
+    <string name="actionHelp_message">Mupen64Plus is developed and maintained by a small team of volunteers.\n\nPlease help us improve it!</string>
+    <string name="actionHelp_faq">FAQ</string>
+    <string name="actionHelp_reportbug">Report bug</string>
+    <string name="actionHelp_urifaq" translatable="false">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
+    <string name="actionHelp_uribug" translatable="false">http://github.com/paulscode/mupen64plus-ae/issues</string>
     <string name="actionAbout_title">About</string>
     <string name="actionAbout_message">Version: %1$s\nVersion code: %2$d</string>
     <string name="actionAbout_credits">Credits</string>

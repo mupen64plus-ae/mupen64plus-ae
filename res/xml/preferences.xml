@@ -450,9 +450,6 @@
         android:icon="@drawable/ic_help"
         android:key="actionHelp"
         android:title="@string/actionHelp_title" >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="@string/actionHelp_uri" />
     </Preference>
     <Preference
         android:icon="@drawable/ic_about"

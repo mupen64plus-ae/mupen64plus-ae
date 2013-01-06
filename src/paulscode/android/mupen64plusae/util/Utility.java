@@ -20,7 +20,10 @@ import java.util.zip.ZipFile;
 import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.FloatMath;
 import android.util.Log;
@@ -126,6 +129,13 @@ public class Utility
         
         // Segments don't cross
         return false;
+    }
+    
+    public static void launchUri( Context context, int resId )
+    {
+        String uri = context.getString( resId );
+        Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
+        context.startActivity( intent );
     }
     
     /**

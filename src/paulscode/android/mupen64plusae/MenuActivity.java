@@ -36,7 +36,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -58,6 +57,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String ACTION_CRASH_TEST = "actionCrashTest";
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
+    private static final String ACTION_HELP = "actionHelp";
     private static final String ACTION_ABOUT = "actionAbout";
     
     private static final String SCREEN_PLAY = "screenPlay";
@@ -128,6 +128,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         listenTo( ACTION_MIGRATE_SLOT_SAVES );
         listenTo( ACTION_RELOAD_ASSETS );
         listenTo( ACTION_RESET_USER_PREFS );
+        listenTo( ACTION_HELP );
         listenTo( ACTION_ABOUT );
         listenTo( PATH_HI_RES_TEXTURES );
         
@@ -294,6 +295,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         else if( key.equals( ACTION_RESET_USER_PREFS ) )
             actionResetUserPrefs();
         
+        else if( key.equals( ACTION_HELP ) )
+            actionHelp();
+        
         else if( key.equals( ACTION_ABOUT ) )
             actionAbout();
         
@@ -387,6 +391,28 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         } );
     }
     
+    private void actionHelp()
+    {
+        String title = getString( R.string.actionHelp_title );
+        String message = getString( R.string.actionHelp_message );
+        String faq = getString( R.string.actionHelp_faq );
+        String bug = getString( R.string.actionHelp_reportbug );
+        OnClickListener listener = new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which == DialogInterface.BUTTON_NEUTRAL )
+                    Utility.launchUri( MenuActivity.this, R.string.actionHelp_urifaq );
+                else if( which == DialogInterface.BUTTON_POSITIVE )
+                    Utility.launchUri( MenuActivity.this, R.string.actionHelp_uribug );
+            }
+        };
+        new Builder( this ).setTitle( title ).setMessage( message )
+                .setNeutralButton( faq, listener ).setNegativeButton( null, null )
+                .setPositiveButton( bug, listener ).create().show();
+    }
+    
     private void actionAbout()
     {
         String title = getString( R.string.actionAbout_title );
@@ -399,15 +425,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    String uri = getString( R.string.actionAbout_uri );
-                    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
-                    startActivity( intent );
-                }
+                    Utility.launchUri( MenuActivity.this, R.string.actionAbout_uri );
             }
         };
-        new Builder( this ).setTitle( title ).setMessage( message )
-                .setNegativeButton( android.R.string.ok, null )
+        new Builder( this ).setTitle( title ).setMessage( message ).setNegativeButton( null, null )
                 .setPositiveButton( credits, listener ).create().show();
     }
     

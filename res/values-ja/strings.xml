@@ -91,6 +91,9 @@
     <string name="actionResetUserPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
     <string name="actionSetLocale_title">言語</string>
     <string name="actionHelp_title">ヘルプ</string>
+    <string name="actionHelp_message">Mupen64Plus is developed and maintained by a small team of volunteers.\n\nPlease help us improve it!</string>
+    <string name="actionHelp_faq">FAQ</string>
+    <string name="actionHelp_reportbug">Report bug</string>
     <string name="actionAbout_title">ついて</string>
     <string name="actionAbout_message">Version: %1$s\nVersion code: %2$d</string>
     <string name="actionAbout_credits">Credits</string>
