@@ -21,7 +21,7 @@
 <resources>
 
     <!-- Common Short Strings -->
-    <string name="app_name">Mupen64Plus</string>
+    <string name="app_name" translatable="false">Mupen64Plus</string>
 
     <!-- ************************************************************************** -->
     <!-- In-Game Strings -->
@@ -233,7 +233,7 @@
 
     <!-- ACRA Preferences (key names must not be changed) -->
     <string name="acraEnable_title">Enable crash reporting</string>
-    <string name="acraEnable_summary"></string>
+    <string name="acraEnable_summary">No personal information is collected</string>
     <string name="acraUserEmail_title">Contact info</string>
     <string name="acraUserEmail_summary">Your paulscode.com username (optional)</string>
 
@@ -291,14 +291,14 @@
     <string name="cheatNotes_none">(no notes available for this cheat)</string>
     <string name="cheatOption_title">Full Text</string>
     <string name="cheat_disabled">(disabled)</string>
-    <string name="cheatsTaskHandler_title">Reading Game Header</string>
+    <string name="cheatsTaskHandler_title">Reading game header</string>
     <string name="cheatsTaskHandler_message">Please be patient.  This process may take some time.</string>
     <string name="cheats_title">Cheats</string>
     <string name="cheats_summary">Choose a game to hack</string>
 
     <!-- Hi-Res Texture Unpacking -->
     <string name="pathHiResTexturesPath_title">Select a texture pack (ZIP format)</string>
-    <string name="pathHiResTexturesTask_title">Unpacking Textures</string>
+    <string name="pathHiResTexturesTask_title">Unpacking textures</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
 

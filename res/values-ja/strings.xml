@@ -20,9 +20,6 @@
 -->
 <resources>
 
-    <!-- Common Short Strings -->
-    <string name="app_name">Mupen64Plus</string>
-
     <!-- ************************************************************************** -->
     <!-- In-Game Strings -->
     <!-- ************************************************************************** -->
@@ -230,7 +227,7 @@
 
     <!-- ACRA Preferences (key names must not be changed) -->
     <string name="acraEnable_title">Enable crash reporting</string>
-    <string name="acraEnable_summary"></string>
+    <string name="acraEnable_summary">No personal information is collected</string>
     <string name="acraUserEmail_title">Contact info</string>
     <string name="acraUserEmail_summary">Your paulscode.com username (optional)</string>
 
@@ -286,14 +283,14 @@
     <string name="cheatNotes_none">（このチートで使用可能なノートはありません。）</string>
     <string name="cheatOption_title">全文</string>
     <string name="cheat_disabled">（使用禁止）</string>
-    <string name="cheatsTaskHandler_title">Reading Game Header</string>
+    <string name="cheatsTaskHandler_title">Reading game header</string>
     <string name="cheatsTaskHandler_message">Please be patient.  This process may take some time.</string>
     <string name="cheats_title">チート</string>
     <string name="cheats_summary">でチートを使用するゲームを選択して。</string>
 
     <!-- Hi-Res Texture Unpacking -->
     <string name="pathHiResTexturesPath_title">Select a texture pack (ZIP format)</string>
-    <string name="pathHiResTexturesTask_title">Unpacking Textures</string>
+    <string name="pathHiResTexturesTask_title">Unpacking textures</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
 
