@@ -92,6 +92,8 @@
     <string name="actionSetLocale_title">言語</string>
     <string name="actionHelp_title">ヘルプ</string>
     <string name="actionAbout_title">ついて</string>
+    <string name="actionAbout_message">Version: %1$s\nVersion code: %2$d</string>
+    <string name="actionAbout_credits">Credits</string>
 
     <!-- Preference Screens -->
     <string name="screenPlay_title">プレー</string>

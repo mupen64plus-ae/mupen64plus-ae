@@ -29,8 +29,11 @@ import org.acra.ErrorReporter;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
@@ -98,6 +101,12 @@ public class AppData
     /** The package name. */
     public final String packageName;
     
+    /** The app version string. */
+    public final String appVersion;
+    
+    /** The app version code. */
+    public final int appVersionCode;
+    
     /** The user storage directory (typically the external storage directory). */
     public final String storageDir;
     
@@ -151,6 +160,22 @@ public class AppData
     {
         hardwareInfo = new HardwareInfo();
         packageName = context.getPackageName();
+        
+        PackageInfo info;
+        String version = "";
+        int versionCode = -1;
+        try
+        {
+            info = context.getPackageManager().getPackageInfo( packageName, 0 );
+            version = info.versionName;
+            versionCode = info.versionCode;
+        }
+        catch( NameNotFoundException e )
+        {
+            Log.e( "AppData", e.getMessage() );
+        }
+        appVersion = version;
+        appVersionCode = versionCode;
         
         // Directories
         if( DOWNLOAD_TO_SDCARD )

@@ -452,15 +452,12 @@
         android:title="@string/actionHelp_title" >
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018" />
+            android:data="@string/actionHelp_uri" />
     </Preference>
     <Preference
         android:icon="@drawable/ic_about"
         android:key="actionAbout"
         android:title="@string/actionAbout_title" >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="http://www.paulscode.com" />
     </Preference>
 
 </PreferenceScreen>

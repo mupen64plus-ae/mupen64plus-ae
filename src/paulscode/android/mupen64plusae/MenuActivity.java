@@ -36,6 +36,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -56,6 +57,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String ACTION_CRASH_TEST = "actionCrashTest";
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
+    private static final String ACTION_ABOUT = "actionAbout";
     
     private static final String SCREEN_PLAY = "screenPlay";
     private static final String SCREEN_INPUT = "screenInput";
@@ -124,6 +126,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         listenTo( ACTION_MIGRATE_SLOT_SAVES );
         listenTo( ACTION_RELOAD_ASSETS );
         listenTo( ACTION_RESET_USER_PREFS );
+        listenTo( ACTION_ABOUT );
         listenTo( PATH_HI_RES_TEXTURES );
         
         // Handle crash tests in a particular way (see CrashTester for more info)
@@ -280,6 +283,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         else if( key.equals( ACTION_RESET_USER_PREFS ) )
             actionResetUserPrefs();
         
+        else if( key.equals( ACTION_ABOUT ) )
+            actionAbout();
+        
         else
             // Let Android handle all other preference clicks
             return false;
@@ -368,6 +374,30 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 }
             }
         } );
+    }
+    
+    private void actionAbout()
+    {
+        String title = getString( R.string.actionAbout_title );
+        String message = getString( R.string.actionAbout_message, mAppData.appVersion,
+                mAppData.appVersionCode );
+        String credits = getString( R.string.actionAbout_credits );
+        OnClickListener listener = new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    String uri = getString( R.string.actionAbout_uri );
+                    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
+                    startActivity( intent );
+                }
+            }
+        };
+        new Builder( this ).setTitle( title ).setMessage( message )
+                .setNegativeButton( android.R.string.ok, null )
+                .setPositiveButton( credits, listener ).create().show();
     }
     
     private void processTexturePak( final String filename )

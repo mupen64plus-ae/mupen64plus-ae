@@ -91,7 +91,11 @@
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?</string>
     <string name="actionSetLocale_title">Language</string>
     <string name="actionHelp_title">Help</string>
+    <string name="actionHelp_uri" translatable="false">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
     <string name="actionAbout_title">About</string>
+    <string name="actionAbout_message">Version: %1$s\nVersion code: %2$d</string>
+    <string name="actionAbout_credits">Credits</string>
+    <string name="actionAbout_uri" translatable="false">http://www.paulscode.com</string>
 
     <!-- Preference Screens -->
     <string name="screenPlay_title">Play</string>
