@@ -38,6 +38,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -76,6 +77,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String PLAYER_MAP = "playerMap";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
+    private static final String ACRA_USER_EMAIL = "acra.user.email";
     
     private CheatsMenuHandler mCheatsMenuHandler = null;
     
@@ -185,6 +187,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
     }
     
+    @SuppressWarnings( "deprecation" )
     private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
     {
         // Enable the play menu only if the selected game actually exists
@@ -221,6 +224,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Update the summary text for all relevant preferences
         for( String key : sharedPreferences.getAll().keySet() )
             refreshText( key );
+        
+        // Update the summary text in a particular way for ACRA user info
+        EditTextPreference pref = (EditTextPreference) findPreference( ACRA_USER_EMAIL );
+        String value = pref.getText();
+        if( TextUtils.isEmpty( value ) )
+            pref.setSummary( getString( R.string.acraUserEmail_summary ) );
+        else
+            pref.setSummary( value );
     }
     
     @SuppressWarnings( "deprecation" )
