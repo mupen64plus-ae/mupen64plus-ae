@@ -70,9 +70,6 @@
         android:id="@+id/ingameSetIme"
         android:title="@string/ingameSetIme_title"/>
     <item
-        android:id="@+id/ingameReset"
-        android:title="@string/ingameReset_title"/>
-    <item
         android:id="@+id/ingameMainMenu"
         android:title="@string/ingameMainMenu_title"/>
 

@@ -36,7 +36,6 @@
     <string name="ingameFileLoad_title">Load from file…</string>
     <string name="ingameSetSpeed_title">Game speed</string>
     <string name="ingameSetIme_title">Change IME</string>
-    <string name="ingameReset_title">Reset game</string>
     <string name="ingameMainMenu_title">Main menu</string>
 
     <!-- ************************************************************************** -->
@@ -342,7 +341,7 @@
     <string name="inputMapPreference_incrementSlot">Increment slot</string>
     <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
     <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
-    <string name="inputMapPreference_reset">@string/ingameReset_title</string>
+    <string name="inputMapPreference_reset">Reset</string>
     <string name="inputMapPreference_pause">Pause</string>
     <string name="inputMapPreference_stop">Stop</string>
     <string name="inputMapPreference_frameAdvance">Frame advance</string>

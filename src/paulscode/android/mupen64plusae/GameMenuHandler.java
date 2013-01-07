@@ -129,9 +129,6 @@ public class GameMenuHandler
             case R.id.ingameSetIme:
                 setIme();
                 break;
-            case R.id.ingameReset:
-                resetState();
-                break;
             case R.id.ingameMainMenu:
                 quitToMenu();
                 break;
@@ -264,26 +261,6 @@ public class GameMenuHandler
         {
             imeManager.showInputMethodPicker();
         }
-    }
-    
-    private void resetState()
-    {
-        NativeMethods.pauseEmulator();
-        CharSequence title = mActivity.getText( R.string.confirm_title );
-        CharSequence message = mActivity.getText( R.string.confirmResetGame_message );
-        Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    Notifier.showToast( mActivity, R.string.toast_resettingGame );
-                    NativeMethods.resetEmulator();
-                }
-                NativeMethods.resumeEmulator();
-            }
-        } );
     }
     
     private void setSpeed()
