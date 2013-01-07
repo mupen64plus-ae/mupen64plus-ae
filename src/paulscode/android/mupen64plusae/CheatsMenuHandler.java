@@ -52,15 +52,15 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     private static final String ACTION_RESTART = "actionRestart";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     
-    public static String ROM = null;
-    public static String CRC = null;
+    private static String ROM = null;
+    private static String CRC = null;
     
-    private static HashMap<String, String> Cheat_title = null;
-    private static HashMap<String, String> Cheat_N = null;
-    private static HashMap<String, String> Cheat_O = null;
+    private final static HashMap<String, String> Cheat_title = new HashMap<String, String>();
+    private final static HashMap<String, String> Cheat_N = new HashMap<String, String>();
+    private final static HashMap<String, String> Cheat_O = new HashMap<String, String>();
 
     // Storing them here, since they get lost on orientation change
-    private static LinkedList<Preference> cheatPreferences = new LinkedList<Preference>();
+    private final static LinkedList<Preference> cheatPreferences = new LinkedList<Preference>();
 
     // Used when concatenating the extra args string
     public static String cheatOptions = null;
@@ -179,9 +179,9 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                 cheatsScreen.setTitle( mActivity.getString( R.string.cheats_titleFor, ROM_name ) );
             }
             
-            Cheat_title = new HashMap<String, String>();
-            Cheat_N = new HashMap<String, String>();
-            Cheat_O = new HashMap<String, String>();
+            Cheat_title.clear();
+            Cheat_N.clear();
+            Cheat_O.clear();
             
             int x;
             String val_N, val_O, title;
@@ -244,36 +244,21 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
     public void onPreferenceLongClick( Preference preference )
     {
         String whichCheat = preference.getKey();
-        String title;   // Title of the cheat
-        String summary; // Summary of the cheat
         
         // Determine the title
-        if( Cheat_title == null )
+        String title = Cheat_title.get( whichCheat );
+        if( TextUtils.isEmpty( title ) )
         {
             title = mActivity.getString( R.string.cheatNotes_title );
         }
-        else
-        {
-            title = Cheat_title.get( whichCheat );
-            if( TextUtils.isEmpty( title ) )
-            {
-                title = mActivity.getString( R.string.cheatNotes_title );
-            }
-        }
         
         // Determine the summary
-        if( Cheat_N == null )
+        String summary = Cheat_N.get( whichCheat );
+        if( TextUtils.isEmpty( summary ) )
         {
-             summary = mActivity.getString( R.string.cheatNotes_none );
+            summary = mActivity.getString( R.string.cheatNotes_none );
         }
-        else
-        {
-            summary = Cheat_N.get( whichCheat );
-            if( TextUtils.isEmpty( summary ) )
-            {
-                summary = mActivity.getString( R.string.cheatNotes_none );
-            }
-        }
+        
         new AlertDialog.Builder( mActivity ).setTitle( title ).setMessage( summary ).create().show();
     }
     
