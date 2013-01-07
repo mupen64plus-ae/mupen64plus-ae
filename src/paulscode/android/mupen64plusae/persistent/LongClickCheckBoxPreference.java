@@ -22,9 +22,16 @@ package paulscode.android.mupen64plusae.persistent;
 import android.content.Context;
 import android.view.View;
 import android.preference.CheckBoxPreference;
+import android.preference.Preference;
 
-public class LongClickCheckBoxPreference extends CheckBoxPreference implements View.OnLongClickListener, View.OnClickListener
+public class LongClickCheckBoxPreference extends CheckBoxPreference implements
+        View.OnLongClickListener, View.OnClickListener
 {
+    public interface OnPreferenceLongClickListener
+    {
+        public void onPreferenceLongClick( Preference preference );
+    }
+    
     private OnPreferenceLongClickListener mListener = null;
     
     public LongClickCheckBoxPreference( Context context )
@@ -32,7 +39,12 @@ public class LongClickCheckBoxPreference extends CheckBoxPreference implements V
         super( context );
         setPersistent( false );
     }
-
+    
+    public void setOnPreferenceLongClickListener( OnPreferenceLongClickListener listener )
+    {
+        mListener = listener;
+    }
+    
     @Override
     protected void onBindView( View view )
     {
@@ -40,18 +52,16 @@ public class LongClickCheckBoxPreference extends CheckBoxPreference implements V
         view.setOnLongClickListener( this );
         view.setOnClickListener( this );
     }
-
-    public void setLongClickListener( OnPreferenceLongClickListener listener )
-    {
-        mListener = listener;
-    }
     
+    @Override
     public boolean onLongClick( View view )
     {
         if( mListener != null )
             mListener.onPreferenceLongClick( this );
         return false;
     }
+    
+    @Override
     public void onClick( View view )
     {
         // Setting the View's OnLongClickListener causes this.onClick() to stop firing

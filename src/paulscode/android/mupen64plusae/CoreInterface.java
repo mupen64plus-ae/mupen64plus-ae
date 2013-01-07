@@ -50,6 +50,11 @@ import android.util.Log;
  */
 public class CoreInterface
 {
+    public interface OnEmuStateChangeListener
+    {
+        public void onEmuStateChange( int newState );
+    }
+    
     // Public constants
     public static final int EMULATOR_STATE_UNKNOWN = 0;
     public static final int EMULATOR_STATE_STOPPED = 1;

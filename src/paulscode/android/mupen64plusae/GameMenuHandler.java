@@ -2,6 +2,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import paulscode.android.mupen64plusae.CoreInterface.OnEmuStateChangeListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;

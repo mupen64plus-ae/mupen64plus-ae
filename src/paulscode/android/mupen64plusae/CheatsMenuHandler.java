@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.LongClickCheckBoxPreference;
-import paulscode.android.mupen64plusae.persistent.OnPreferenceLongClickListener;
+import paulscode.android.mupen64plusae.persistent.LongClickCheckBoxPreference.OnPreferenceLongClickListener;
 import paulscode.android.mupen64plusae.persistent.OptionCheckBoxPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -232,7 +232,7 @@ public class CheatsMenuHandler implements OnPreferenceClickListener, OnPreferenc
                     checkBoxPref.setTitle( title );
                     checkBoxPref.setChecked( false );
                     checkBoxPref.setKey( "Cheat" + i );
-                    checkBoxPref.setLongClickListener( this );
+                    checkBoxPref.setOnPreferenceLongClickListener( this );
                     cheatsCategory.addPreference( checkBoxPref );
                     cheatPreferences.add( checkBoxPref );
                 }
