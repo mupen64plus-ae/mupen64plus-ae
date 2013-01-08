@@ -71,14 +71,8 @@ public class InputMap
     /** Total number of N64 controls. */
     public static final int NUM_N64_CONTROLS            = OFFSET_EXTRAS + 4;
     
-    /** Map offset: Mupen64Plus player functions. */
-    public static final int OFFSET_PLAYER_FUNCS         = NUM_N64_CONTROLS;
-    
-    /** Total number of per-player inputs. */
-    public static final int NUM_PLAYER_INPUTS           = OFFSET_PLAYER_FUNCS;
-    
     /** Map offset: Mupen64Plus global functions. */
-    public static final int OFFSET_GLOBAL_FUNCS         = NUM_PLAYER_INPUTS;
+    public static final int OFFSET_GLOBAL_FUNCS         = NUM_N64_CONTROLS;
 
     /** Mupen64Plus function: increment slot. */
     public static final int FUNC_INCREMENT_SLOT         = OFFSET_GLOBAL_FUNCS;
@@ -231,7 +225,7 @@ public class InputMap
     
     /**
      * Gets a description of the input codes mapped to an N64/Mupen command.
-     *
+     * 
      * @param command The index to the N64/Mupen command.
      * @return Description of the input codes mapped to the given command.
      */

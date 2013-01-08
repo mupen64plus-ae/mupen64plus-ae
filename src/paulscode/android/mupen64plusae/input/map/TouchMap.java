@@ -107,27 +107,29 @@ public class TouchMap
     static
     {
         // Define the map from strings in the .ini file to N64 button indices
+        // @formatter:off
         BUTTON_STRING_MAP = new HashMap<String, Integer>();
-        BUTTON_STRING_MAP.put( "right", AbstractController.DPD_R );
-        BUTTON_STRING_MAP.put( "left", AbstractController.DPD_L );
-        BUTTON_STRING_MAP.put( "down", AbstractController.DPD_D );
-        BUTTON_STRING_MAP.put( "up", AbstractController.DPD_U );
-        BUTTON_STRING_MAP.put( "start", AbstractController.START );
-        BUTTON_STRING_MAP.put( "z", AbstractController.BTN_Z );
-        BUTTON_STRING_MAP.put( "b", AbstractController.BTN_B );
-        BUTTON_STRING_MAP.put( "a", AbstractController.BTN_A );
-        BUTTON_STRING_MAP.put( "cright", AbstractController.CPD_R );
-        BUTTON_STRING_MAP.put( "cleft", AbstractController.CPD_L );
-        BUTTON_STRING_MAP.put( "cdown", AbstractController.CPD_D );
-        BUTTON_STRING_MAP.put( "cup", AbstractController.CPD_U );
-        BUTTON_STRING_MAP.put( "r", AbstractController.BTN_R );
-        BUTTON_STRING_MAP.put( "l", AbstractController.BTN_L );
-        BUTTON_STRING_MAP.put( "upright", DPD_RU );
-        BUTTON_STRING_MAP.put( "rightdown", DPD_RD );
-        BUTTON_STRING_MAP.put( "leftdown", DPD_LD );
-        BUTTON_STRING_MAP.put( "leftup", DPD_LU );
-        BUTTON_STRING_MAP.put( "mempak", AbstractController.BTN_MEMPAK );
+        BUTTON_STRING_MAP.put( "right",     AbstractController.DPD_R );
+        BUTTON_STRING_MAP.put( "left",      AbstractController.DPD_L );
+        BUTTON_STRING_MAP.put( "down",      AbstractController.DPD_D );
+        BUTTON_STRING_MAP.put( "up",        AbstractController.DPD_U );
+        BUTTON_STRING_MAP.put( "start",     AbstractController.START );
+        BUTTON_STRING_MAP.put( "z",         AbstractController.BTN_Z );
+        BUTTON_STRING_MAP.put( "b",         AbstractController.BTN_B );
+        BUTTON_STRING_MAP.put( "a",         AbstractController.BTN_A );
+        BUTTON_STRING_MAP.put( "cright",    AbstractController.CPD_R );
+        BUTTON_STRING_MAP.put( "cleft",     AbstractController.CPD_L );
+        BUTTON_STRING_MAP.put( "cdown",     AbstractController.CPD_D );
+        BUTTON_STRING_MAP.put( "cup",       AbstractController.CPD_U );
+        BUTTON_STRING_MAP.put( "r",         AbstractController.BTN_R );
+        BUTTON_STRING_MAP.put( "l",         AbstractController.BTN_L );
+        BUTTON_STRING_MAP.put( "mempak",    AbstractController.BTN_MEMPAK );
         BUTTON_STRING_MAP.put( "rumblepak", AbstractController.BTN_RUMBLEPAK );
+        BUTTON_STRING_MAP.put( "upright",   DPD_RU );
+        BUTTON_STRING_MAP.put( "rightdown", DPD_RD );
+        BUTTON_STRING_MAP.put( "leftdown",  DPD_LD );
+        BUTTON_STRING_MAP.put( "leftup",    DPD_LU );
+        // @formatter:on
     }
     
     /**

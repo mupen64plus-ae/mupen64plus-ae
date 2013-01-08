@@ -166,26 +166,26 @@ public class InputMapPreference extends DialogPreference implements
         
         // Create a button list to simplify highlighting and mapping
         // @formatter:off
-        setupButton( view, R.id.buttonA,          AbstractController.BTN_A );
-        setupButton( view, R.id.buttonB,          AbstractController.BTN_B );
-        setupButton( view, R.id.buttonL,          AbstractController.BTN_L );
-        setupButton( view, R.id.buttonR,          AbstractController.BTN_R );
-        setupButton( view, R.id.buttonZ,          AbstractController.BTN_Z );
-        setupButton( view, R.id.buttonS,          AbstractController.START );
-        setupButton( view, R.id.buttonCR,         AbstractController.CPD_R );
-        setupButton( view, R.id.buttonCL,         AbstractController.CPD_L );
-        setupButton( view, R.id.buttonCD,         AbstractController.CPD_D );
-        setupButton( view, R.id.buttonCU,         AbstractController.CPD_U );
-        setupButton( view, R.id.buttonDR,         AbstractController.DPD_R );
-        setupButton( view, R.id.buttonDL,         AbstractController.DPD_L );
-        setupButton( view, R.id.buttonDD,         AbstractController.DPD_D );
-        setupButton( view, R.id.buttonDU,         AbstractController.DPD_U );
-        setupButton( view, R.id.buttonMempak,     AbstractController.BTN_MEMPAK );
-        setupButton( view, R.id.buttonRumble,     AbstractController.BTN_RUMBLEPAK );
-        setupButton( view, R.id.buttonAR, InputMap.AXIS_R );
-        setupButton( view, R.id.buttonAL, InputMap.AXIS_L );
-        setupButton( view, R.id.buttonAD, InputMap.AXIS_D );
-        setupButton( view, R.id.buttonAU, InputMap.AXIS_U );
+        setupButton( view, R.id.buttonDR,     AbstractController.DPD_R );
+        setupButton( view, R.id.buttonDL,     AbstractController.DPD_L );
+        setupButton( view, R.id.buttonDD,     AbstractController.DPD_D );
+        setupButton( view, R.id.buttonDU,     AbstractController.DPD_U );
+        setupButton( view, R.id.buttonS,      AbstractController.START );
+        setupButton( view, R.id.buttonZ,      AbstractController.BTN_Z );
+        setupButton( view, R.id.buttonB,      AbstractController.BTN_B );
+        setupButton( view, R.id.buttonA,      AbstractController.BTN_A );
+        setupButton( view, R.id.buttonCR,     AbstractController.CPD_R );
+        setupButton( view, R.id.buttonCL,     AbstractController.CPD_L );
+        setupButton( view, R.id.buttonCD,     AbstractController.CPD_D );
+        setupButton( view, R.id.buttonCU,     AbstractController.CPD_U );
+        setupButton( view, R.id.buttonR,      AbstractController.BTN_R );
+        setupButton( view, R.id.buttonL,      AbstractController.BTN_L );
+        setupButton( view, R.id.buttonMempak, AbstractController.BTN_MEMPAK );
+        setupButton( view, R.id.buttonRumble, AbstractController.BTN_RUMBLEPAK );
+        setupButton( view, R.id.buttonAR,            InputMap.AXIS_R );
+        setupButton( view, R.id.buttonAL,            InputMap.AXIS_L );
+        setupButton( view, R.id.buttonAD,            InputMap.AXIS_D );
+        setupButton( view, R.id.buttonAU,            InputMap.AXIS_U );
         setupButton( view, R.id.buttonIncrementSlot, InputMap.FUNC_INCREMENT_SLOT );
         setupButton( view, R.id.buttonSaveSlot,      InputMap.FUNC_SAVE_SLOT );
         setupButton( view, R.id.buttonLoadSlot,      InputMap.FUNC_LOAD_SLOT );
