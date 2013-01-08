@@ -114,8 +114,14 @@ public abstract class AbstractController
     /** N64 button: shoulder-l. */
     public static final int BTN_L = 13;
     
+    /** N64 button: mempak switch. */
+    public static final int BTN_MEMPAK = 14;
+
+    /** N64 button: rumblepak switch. */
+    public static final int BTN_RUMBLEPAK = 15;
+
     /** Total number of N64 buttons. */
-    public static final int NUM_N64_BUTTONS = 14;
+    public static final int NUM_N64_BUTTONS = 16;
     
     /** The state of all four player controllers. */
     private static final ArrayList<State> sStates = new ArrayList<State>();

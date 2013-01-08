@@ -121,7 +121,7 @@ static struct ff_effect ffweak[3];
 extern void Android_JNI_Vibrate( int active );
 
 //// paulscode, for the virtual gamepad:
-unsigned char virtualGamePadButtonState[4][14];
+unsigned char virtualGamePadButtonState[4][16];
 signed char virtualGamePadAxisState[4][2];
 void Java_paulscode_android_mupen64plusae_NativeMethods_updateVirtualGamePadStates(
                                     JNIEnv* env, jclass jcls, jint controllerNum,
@@ -130,7 +130,7 @@ void Java_paulscode_android_mupen64plusae_NativeMethods_updateVirtualGamePadStat
     jboolean *elements = (*env)->GetBooleanArrayElements( env, mp64pButtons, NULL );
     int b;
 
-    for( b = 0; b < 14; b++ )
+    for( b = 0; b < 16; b++ )
     {
         virtualGamePadButtonState[controllerNum][b] = elements[b];
     }
@@ -347,7 +347,7 @@ static void doVirtualGamePad()
     int b, c;
     for( c = 0; c < 4; c++ )
     {
-        for( b = 0; b < 14; b++ )
+        for( b = 0; b < 16; b++ )
         {
             if( virtualGamePadButtonState[c][b] )
                 controller[c].buttons.Value |= button_bits[b];

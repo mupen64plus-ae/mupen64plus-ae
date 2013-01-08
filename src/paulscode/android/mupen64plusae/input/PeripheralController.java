@@ -21,6 +21,7 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.GameMenuHandler;
 import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
@@ -54,6 +55,15 @@ public class PeripheralController extends AbstractController implements
     
     /** The negative analogy-y strength, between 0 and 1, inclusive. */
     private float mStrengthYneg;
+    
+    /** Toggle so pause function also acts as resume. */
+    private boolean doPause = false;
+    
+    /** Difference in emulation speed after modification by mapped speed-up and slow-down functions. */
+    private int speedOffset = 0;
+    
+    /** Ammount to change the speed with each speed-up or slow-down function press. */
+    private static final int SPEED_INC = 10;
     
     /**
      * Instantiates a new peripheral controller.
@@ -191,17 +201,10 @@ public class PeripheralController extends AbstractController implements
         {
             switch( n64Index )
             {
-                case InputMap.BTN_RUMBLE:
-                    Log.v( "PeripheralController", "BTN_RUMBLE" );
-                    // TODO: Invoke rumble
-                    break;
-                case InputMap.BTN_MEMPAK:
-                    Log.v( "PeripheralController", "BTN_MEMPAK" );
-                    // TODO: Invoke mempak
-                    break;
                 case InputMap.FUNC_INCREMENT_SLOT:
                     Log.v( "PeripheralController", "FUNC_INCREMENT_SLOT" );
-                    // TODO: Invoke increment slot
+                    if( GameMenuHandler.sInstance != null )
+                        GameMenuHandler.sInstance.setSlot( GameMenuHandler.sInstance.mSlot + 1, true );
                     break;
                 case InputMap.FUNC_SAVE_SLOT:
                     Log.v( "PeripheralController", "FUNC_SAVE_SLOT" );
@@ -213,35 +216,75 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_RESET:
                     Log.v( "PeripheralController", "FUNC_RESET" );
+                    NativeMethods.resetEmulator();
                     // TODO: NativeMethods.resetEmulator() needs some fine-tuning
                     break;
                 case InputMap.FUNC_STOP:
                     Log.v( "PeripheralController", "FUNC_STOP" );
-                    // TODO: Invoke stop
+                    NativeMethods.stopEmulator();
                     break;
                 case InputMap.FUNC_PAUSE:
                     Log.v( "PeripheralController", "FUNC_PAUSE" );
-                    // TODO: Invoke pause
+                    if( doPause )
+                        NativeMethods.pauseEmulator();
+                    else
+                        NativeMethods.resumeEmulator();
+                    doPause = !doPause;
                     break;
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    // TODO: Invoke fast forward
+                    NativeMethods.stateSetSpeed( 300 );
                     break;
                 case InputMap.FUNC_FRAME_ADVANCE:
                     Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
-                    // TODO: Invoke frame advance
+/*****
+TODO:
+Frame advance is hard-coded into the core, without an equivalent function in the API to call from the front-end.
+Possible implementation utilizing the available M64CMD_SET_FRAME_CALLBACK instead:
+   1) Pause the emulator (utilize state change callback to ensure emulation has paused)
+   2) Register a frame callback
+   3) Start the emulator
+   4) When frame callback is called, pause the emulator
+*****/
                     break;
                 case InputMap.FUNC_SPEED_UP:
                     Log.v( "PeripheralController", "FUNC_SPEED_UP" );
-                    // TODO: Invoke speed up
+                    speedOffset += SPEED_INC;
+                    setSpeed();
                     break;
                 case InputMap.FUNC_SPEED_DOWN:
                     Log.v( "PeripheralController", "FUNC_SPEED_DOWN" );
-                    // TODO: Invoke speed down
+                    speedOffset -= SPEED_INC;
+                    setSpeed();
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    // TODO: Invoke gameshark
+/*****
+TODO:
+Gameshark button emulation is hard-coded into the core, without an equivalent function in the API to call from the front-end.
+Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL_KEYUP and M64CMD_SEND_SDL_KEYDOWN?
+*****/
+                    break;
+// TODO: Less hackish method of synchronizing slots and speeds between PeripheralController and GameMenuHandler
+                default:
+                    return false;
+            }
+            return true;
+        }
+        else if( keyDown )
+        {
+            switch( n64Index )
+            {
+                case InputMap.FUNC_FAST_FORWARD:
+                    Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
+                    if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
+                        NativeMethods.stateSetSpeed( GameMenuHandler.sInstance.mSpeedFactor );
+                    else
+                        NativeMethods.stateSetSpeed( 100 );
+                    break;
+                case InputMap.FUNC_GAMESHARK:
+                    Log.v( "PeripheralController", "FUNC_GAMESHARK" );
+                    // TODO: Release gameshark button
                     break;
                 default:
                     return false;
@@ -249,5 +292,17 @@ public class PeripheralController extends AbstractController implements
             return true;
         }
         return false;
+    }
+    private void setSpeed()
+    {
+        int speed = 100;
+        if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
+            speed = GameMenuHandler.sInstance.mSpeedFactor;
+        speed += speedOffset;
+        if( speed > GameMenuHandler.MAX_SPEED_FACTOR )
+            speed = GameMenuHandler.MAX_SPEED_FACTOR;
+        if( speed < GameMenuHandler.MIN_SPEED_FACTOR )
+            speed = GameMenuHandler.MIN_SPEED_FACTOR;
+        NativeMethods.stateSetSpeed( speed );
     }
 }

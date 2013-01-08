@@ -126,6 +126,8 @@ public class TouchMap
         BUTTON_STRING_MAP.put( "rightdown", DPD_RD );
         BUTTON_STRING_MAP.put( "leftdown", DPD_LD );
         BUTTON_STRING_MAP.put( "leftup", DPD_LU );
+        BUTTON_STRING_MAP.put( "mempak", AbstractController.BTN_MEMPAK );
+        BUTTON_STRING_MAP.put( "rumblepak", AbstractController.BTN_RUMBLEPAK );
     }
     
     /**

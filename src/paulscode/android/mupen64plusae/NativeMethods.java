@@ -72,6 +72,7 @@ public class NativeMethods
     
     public static native void stateSaveEmulator();
     
+    public static int sSlot = 0;
     public static native void stateSetSlotEmulator( int slotID );
     
     public static native void stopEmulator();

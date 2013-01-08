@@ -25,9 +25,9 @@ public class GameMenuHandler
     
     private static final int DEFAULT_SPEED_FACTOR = 250;
     
-    private static final int MAX_SPEED_FACTOR = 300;
+    public static final int MAX_SPEED_FACTOR = 300;
     
-    private static final int MIN_SPEED_FACTOR = 10;
+    public static final int MIN_SPEED_FACTOR = 10;
     
     private static final int NUM_SLOTS = 10;
     
@@ -45,17 +45,20 @@ public class GameMenuHandler
     
     private AppData mAppData;
     
-    private int mSlot = 0;
+    public int mSlot = 0;
     
-    private boolean mCustomSpeed = false;
+    public boolean mCustomSpeed = false;
     
-    private int mSpeedFactor = DEFAULT_SPEED_FACTOR;
+    public int mSpeedFactor = DEFAULT_SPEED_FACTOR;
+    
+    public static GameMenuHandler sInstance = null;
     
     public GameMenuHandler( Activity activity, String manualSaveDir, String autoSaveFile )
     {
         mActivity = activity;
         mManualSaveDir = manualSaveDir;
         mAutoSaveFile = autoSaveFile;
+        sInstance = this;
     }
     
     public void onCreateOptionsMenu( Menu menu )
@@ -147,7 +150,7 @@ public class GameMenuHandler
         mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameToggleSpeed_title, speed ) );
     }
     
-    private void setSlot( int value, boolean notify )
+    public void setSlot( int value, boolean notify )
     {
         // Sanity check and persist the value
         mSlot = value % NUM_SLOTS;
@@ -283,7 +286,7 @@ public class GameMenuHandler
                         mSpeedFactor = Utility.clamp( mSpeedFactor, MIN_SPEED_FACTOR,
                                 MAX_SPEED_FACTOR );
                         mCustomSpeed = true;
-                        NativeMethods.stateSetSpeed( mSpeedFactor );
+                        
                         mGameSpeedItem.setTitle( mActivity.getString(
                                 R.string.ingameToggleSpeed_title, mSpeedFactor ) );
                     }

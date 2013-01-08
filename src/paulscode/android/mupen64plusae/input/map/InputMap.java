@@ -74,14 +74,8 @@ public class InputMap
     /** Map offset: Mupen64Plus player functions. */
     public static final int OFFSET_PLAYER_FUNCS         = NUM_N64_CONTROLS;
     
-    /** N64 control: Rumble Pak. */
-    public static final int BTN_RUMBLE                  = OFFSET_PLAYER_FUNCS;
-    
-    /** N64 control: Expansion Pak. */
-    public static final int BTN_MEMPAK                  = OFFSET_PLAYER_FUNCS + 1;
-    
     /** Total number of per-player inputs. */
-    public static final int NUM_PLAYER_INPUTS           = OFFSET_PLAYER_FUNCS + 2;
+    public static final int NUM_PLAYER_INPUTS           = OFFSET_PLAYER_FUNCS;
     
     /** Map offset: Mupen64Plus global functions. */
     public static final int OFFSET_GLOBAL_FUNCS         = NUM_PLAYER_INPUTS;
