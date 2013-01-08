@@ -403,9 +403,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which == DialogInterface.BUTTON_NEUTRAL )
-                    Utility.launchUri( MenuActivity.this, R.string.actionHelp_urifaq );
+                    Utility.launchUri( MenuActivity.this, R.string.actionHelp_uriFaq );
                 else if( which == DialogInterface.BUTTON_POSITIVE )
-                    Utility.launchUri( MenuActivity.this, R.string.actionHelp_uribug );
+                    Utility.launchUri( MenuActivity.this, R.string.actionHelp_uriBug );
             }
         };
         new Builder( this ).setTitle( title ).setMessage( message )
@@ -419,17 +419,21 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         String message = getString( R.string.actionAbout_message, mAppData.appVersion,
                 mAppData.appVersionCode );
         String credits = getString( R.string.actionAbout_credits );
+        String changelog = getString( R.string.actionAbout_changelog );
         OnClickListener listener = new OnClickListener()
         {
             @Override
             public void onClick( DialogInterface dialog, int which )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                    Utility.launchUri( MenuActivity.this, R.string.actionAbout_uri );
+                if( which == DialogInterface.BUTTON_NEUTRAL )
+                    Utility.launchUri( MenuActivity.this, R.string.actionAbout_uriCredits );
+                else if( which == DialogInterface.BUTTON_POSITIVE )
+                    Utility.launchUri( MenuActivity.this, R.string.actionAbout_uriChangelog );
             }
         };
         new Builder( this ).setTitle( title ).setMessage( message ).setNegativeButton( null, null )
-                .setPositiveButton( credits, listener ).create().show();
+                .setNeutralButton( credits, listener )
+                .setPositiveButton( changelog, listener ).create().show();
     }
     
     private void processTexturePak( final String filename )
