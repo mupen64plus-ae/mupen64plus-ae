@@ -20,9 +20,6 @@
 -->
 <resources>
 
-    <!-- Common Short Strings -->
-    <string name="app_name" translatable="false">Mupen64Plus</string>
-
     <!-- ************************************************************************** -->
     <!-- In-Game Strings -->
     <!-- ************************************************************************** -->
@@ -93,14 +90,10 @@
     <string name="actionHelp_message">Mupen64Plus is developed and maintained by volunteers.\n\nPlease help us improve it!</string>
     <string name="actionHelp_faq">FAQ</string>
     <string name="actionHelp_reportbug">Report bug</string>
-    <string name="actionHelp_uriFaq" translatable="false">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
-    <string name="actionHelp_uriBug" translatable="false">http://github.com/paulscode/mupen64plus-ae/issues</string>
     <string name="actionAbout_title">About</string>
     <string name="actionAbout_message">Version: %1$s\nVersion code: %2$d</string>
     <string name="actionAbout_credits">Credits</string>
     <string name="actionAbout_changelog">Changelog</string>
-    <string name="actionAbout_uriCredits" translatable="false">http://www.paulscode.com</string>
-    <string name="actionAbout_uriChangelog" translatable="false">http://www.paulscode.com/forum/index.php?topic=833.msg7727#msg7727</string>
     
     <!-- Preference Screens -->
     <string name="screenPlay_title">Play</string>
@@ -261,8 +254,6 @@
     <string name="inputMap3_title">Player 3</string>
     <string name="inputMap4_title">Player 4</string>
     <string name="inputMap_summary">Button and special function mapping</string>
-    <string name="inputMap_defaultOn" translatable="false">true/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,16:-1,17:-2,18:-3,19:-4</string>
-    <string name="inputMap_defaultOff" translatable="false">false/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,16:-1,17:-2,18:-3,19:-4</string>
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback                                                 -->
@@ -318,7 +309,6 @@
     <string name="inputMapPreference_popupUnmap">Unmap</string>
     <string name="inputMapPreference_aPadXperiaPlay">Analog stick controlled with touchpad</string>
     <string name="inputMapPreference_cPadXperiaPlay">C-pad controlled with touchpad</string>
-    <string name="inputMapPreference_dummyFeedback" translatable="false">KEY_CODE_XXXX</string>
     <string name="inputMapPreference_btnA">A</string>
     <string name="inputMapPreference_btnB">B</string>
     <string name="inputMapPreference_btnC">C</string>
