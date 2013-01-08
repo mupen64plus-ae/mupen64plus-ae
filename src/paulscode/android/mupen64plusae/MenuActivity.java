@@ -72,7 +72,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
-    private static final String PLUGIN_VIDEO = "videoPlugin";
+    private static final String PLUGIN_VIDEO = "pluginVideo";
     
     private static final String PLAYER_MAP = "playerMap";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
