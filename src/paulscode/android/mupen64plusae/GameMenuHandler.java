@@ -286,6 +286,7 @@ public class GameMenuHandler
                         mSpeedFactor = Utility.clamp( mSpeedFactor, MIN_SPEED_FACTOR,
                                 MAX_SPEED_FACTOR );
                         mCustomSpeed = true;
+                        NativeMethods.stateSetSpeed( mSpeedFactor );
                         
                         mGameSpeedItem.setTitle( mActivity.getString(
                                 R.string.ingameToggleSpeed_title, mSpeedFactor ) );
