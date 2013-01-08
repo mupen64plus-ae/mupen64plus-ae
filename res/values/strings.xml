@@ -259,8 +259,8 @@
     <string name="inputMap3_title">Player 3</string>
     <string name="inputMap4_title">Player 4</string>
     <string name="inputMap_summary">Button and special function mapping</string>
-    <string name="inputMap_defaultOn" translatable="false">true/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,14:-1,15:-2,16:-3,17:-4</string>
-    <string name="inputMap_defaultOff" translatable="false">false/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,14:-1,15:-2,16:-3,17:-4</string>
+    <string name="inputMap_defaultOn" translatable="false">true/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,16:-1,17:-2,18:-3,19:-4</string>
+    <string name="inputMap_defaultOff" translatable="false">false/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,16:-1,17:-2,18:-3,19:-4</string>
 
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback                                                 -->
