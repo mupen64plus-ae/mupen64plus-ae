@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := rsp-hle
-#LOCAL_ARM_MODE := arm
+LOCAL_ARM_MODE := arm
 SRCDIR := $(shell readlink $(LOCAL_PATH)/src)src
 
 SDL_PATH := ../SDL

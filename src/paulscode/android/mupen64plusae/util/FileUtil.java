@@ -254,7 +254,7 @@ public class FileUtil
             }
             catch( UnsatisfiedLinkError e )
             {
-                Log.e( "FileUtil", "Unable to load native library '" + filename + "'" );
+                Log.e( "FileUtil", "Unable to load native library '" + filename + "'", e );
             }
         }
     }
