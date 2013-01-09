@@ -136,19 +136,19 @@ char *trim(char *str)
     return str;
 }
 
-void Java_paulscode_android_mupen64plusae_NativeMethods_pauseEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_pauseEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_PAUSE, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_NativeMethods_resumeEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_resumeEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_RESUME, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_NativeMethods_resetEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_resetEmulator(
                                     JNIEnv* env, jclass cls)
 {
     // (*CoreDoCommand) ( M64CMD_RESET, 0, NULL );
@@ -156,36 +156,36 @@ void Java_paulscode_android_mupen64plusae_NativeMethods_resetEmulator(
     (*CoreDoCommand) ( M64CMD_STOP, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_NativeMethods_stopEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_stopEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STOP, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSlotEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSlotEmulator(
                                     JNIEnv* env, jclass cls, jint slotID )
 {
     (*CoreDoCommand) ( M64CMD_STATE_SET_SLOT, (int) slotID, NULL );
 }
-void Java_paulscode_android_mupen64plusae_NativeMethods_stateSaveEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSaveEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STATE_SAVE, 1, NULL );
 }
-void Java_paulscode_android_mupen64plusae_NativeMethods_stateLoadEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_stateLoadEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STATE_LOAD, 0, NULL );
 }
 
-void Java_paulscode_android_mupen64plusae_NativeMethods_fileSaveEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_fileSaveEmulator(
                                     JNIEnv* env, jclass cls, jstring filename )
 {
     const char *nativeString = (*env)->GetStringUTFChars( env, filename, 0 );
     (*CoreDoCommand) ( M64CMD_STATE_SAVE, 1, (void *) nativeString );
     (*env)->ReleaseStringUTFChars( env, filename, nativeString );
 }
-void Java_paulscode_android_mupen64plusae_NativeMethods_fileLoadEmulator(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_fileLoadEmulator(
                                     JNIEnv* env, jclass cls, jstring filename )
 {
     const char *nativeString = (*env)->GetStringUTFChars( env, filename, 0 );
@@ -193,7 +193,7 @@ void Java_paulscode_android_mupen64plusae_NativeMethods_fileLoadEmulator(
     (*env)->ReleaseStringUTFChars( env, filename, nativeString );
 }
 
-jint Java_paulscode_android_mupen64plusae_NativeMethods_stateEmulator(
+EXPORT jint CALL Java_paulscode_android_mupen64plusae_NativeMethods_stateEmulator(
                                     JNIEnv* env, jclass cls)
 {
     int state = 0;
@@ -209,7 +209,7 @@ jint Java_paulscode_android_mupen64plusae_NativeMethods_stateEmulator(
 }
 
 static char strBuff[1024];
-jstring Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderName(
+EXPORT jstring CALL Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderName(
                                        JNIEnv* env, jclass cls, jstring jFilename )
 {
     const char *nativeS = (*env)->GetStringUTFChars( env, jFilename, 0 );
@@ -250,7 +250,7 @@ jstring Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderName(
 
     return (*env)->NewStringUTF( env, strBuff );
 }
-jstring Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderCRC(
+EXPORT jstring CALL Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderCRC(
                                        JNIEnv* env, jclass cls, jstring jFilename )
 {
     const char *nativeS = (*env)->GetStringUTFChars( env, jFilename, 0 );
@@ -292,7 +292,7 @@ jstring Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderCRC(
     return (*env)->NewStringUTF( env, strBuff );
 }
 
-void Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSpeed(
+EXPORT void CALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSpeed(
                                     JNIEnv* env, jclass cls, jint percent )
 {
 	int speed_factor = (int) percent;
