@@ -25,8 +25,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.annotation.TargetApi;
-import paulscode.android.mupen64plusae.persistent.AppData;
 
 /**
  * The Image class provides a simple interface to common image manipulation methods.
@@ -222,10 +220,9 @@ public class Image
      * @param alpha
      *            alpha value.
      */
-    @TargetApi( 11 )
     public void setAlpha(int alpha) 
     {
-        if( drawable != null && alpha < 255 && AppData.IS_HONEYCOMB )
+        if( drawable != null && alpha < 255 )
             drawable.setAlpha(alpha);
     }
 }
