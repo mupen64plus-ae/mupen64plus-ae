@@ -213,4 +213,17 @@ public class Image
         if( drawable != null )
             drawable.draw( canvas );
     }
+    
+    /**
+     * Sets the alpha value of the image.
+     * 
+     * @param alpha
+     *            alpha value.
+     */
+    public void setAlpha(int alpha) 
+    {
+        if( drawable != null )
+            drawable.setAlpha(alpha);
+    }
+
 }

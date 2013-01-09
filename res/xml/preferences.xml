@@ -141,6 +141,15 @@
                             android:key="touchscreenHidden"
                             android:summary="@string/touchscreenHidden_summary"
                             android:title="@string/touchscreenHidden_title" />
+
+                        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+                            android:key="touchscreenTransparency"
+                            android:dependency="touchscreenEnabled"
+                            android:defaultValue="200"
+                            android:max="255"
+                            android:summary="@string/touchscreenTransparency_summary"
+                            android:title="@string/touchscreenTransparency_title" />
+                        
                     </PreferenceScreen>
                     <PreferenceScreen
                         android:icon="@drawable/ic_xperia"

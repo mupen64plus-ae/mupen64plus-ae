@@ -62,6 +62,9 @@ public class VisibleTouchMap extends TouchMap
     /** True if the FPS indicator should be drawn. */
     private final boolean mFpsEnabled;
     
+    /**Touchscreen transparency. */
+    private final int mTouchscreenTransparency;
+    
     /** The file directory containing the FPS font resources. */
     private final String mFontsDir;
     
@@ -78,13 +81,14 @@ public class VisibleTouchMap extends TouchMap
      * @param fpsEnabled True to display the FPS indicator.
      * @param fontsDirectory The directory containing the FPS font resources.
      */
-    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDirectory )
+    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDirectory, int alpha )
     {
         super( resources );
         mFpsEnabled = fpsEnabled;
         mFontsDir = fontsDirectory;
         mFpsDigits = new ArrayList<Image>();
         mNumerals = new Image[10];
+        mTouchscreenTransparency = alpha;
     }
     
     /*
@@ -146,7 +150,10 @@ public class VisibleTouchMap extends TouchMap
     {
         // Draw the buttons onto the canvas
         for( Image button : buttonImages )
+        {
+            button.setAlpha( mTouchscreenTransparency );
             button.draw( canvas );
+        }
     }
     
     /**
@@ -158,11 +165,17 @@ public class VisibleTouchMap extends TouchMap
     {
         // Draw the background image
         if( analogBackImage != null )
+        {
+            analogBackImage.setAlpha( mTouchscreenTransparency );
             analogBackImage.draw( canvas );
+        }
         
         // Draw the movable foreground (the stick)
         if( analogForeImage != null )
+        {
+            analogForeImage.setAlpha( mTouchscreenTransparency );
             analogForeImage.draw( canvas );
+        }
     }
     
     /**
