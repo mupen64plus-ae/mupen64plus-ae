@@ -76,13 +76,13 @@ static float fLastAccelerometer[3];
 *******************************************************************************/
 
 // Library init
-extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
+extern "C" DECLSPEC jint SDLCALL JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     return JNI_VERSION_1_4;
 }
 
 // Called before SDL_main() to initialize JNI bindings
-extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls)
+extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* env, jclass cls)
 {
     __android_log_print(ANDROID_LOG_INFO, "SDL", "SDL_Android_Init()");
 
@@ -134,7 +134,7 @@ extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls)
 }
 
 // Resize
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onResize(
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_onResize(
                                     JNIEnv* env, jclass jcls,
                                     jint width, jint height, jint format)
 {
@@ -142,7 +142,7 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onResize(
 }
 
 // Accelerometer
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onAccel(
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_onAccel(
                                     JNIEnv* env, jclass jcls,
                                     jfloat x, jfloat y, jfloat z)
 {
@@ -152,14 +152,14 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_onAccel(
 }
 
 // Quit
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_quit(
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_quit(
                                     JNIEnv* env, jclass cls)
 {    
     // Inject a SDL_QUIT event
     SDL_SendQuit();
 }
 
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_runAudioThread(
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_runAudioThread(
                                     JNIEnv* env, jclass cls)
 {
     /* This is the audio thread, with a different environment */
@@ -170,7 +170,7 @@ extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_runAudioThrea
 
 //// paulscode, added for different configurations based on hardware
 // (part of the missing shadows and stars bug fix)
-extern "C" int Android_JNI_GetHardwareType()
+extern "C" DECLSPEC int SDLCALL Android_JNI_GetHardwareType()
 {
     jint hardwareType = mEnv->CallStaticIntMethod(mActivityClass, midGetHardwareType);
     return (int) hardwareType;
@@ -181,7 +181,7 @@ extern "C" int Android_JNI_GetHardwareType()
              Functions called by SDL into Java
 *******************************************************************************/
 
-extern "C" SDL_bool Android_JNI_CreateContext(int majorVersion, int minorVersion)
+extern "C" DECLSPEC SDL_bool SDLCALL Android_JNI_CreateContext(int majorVersion, int minorVersion)
 {
     if (mEnv->CallStaticBooleanMethod(mActivityClass, midCreateGLContext, majorVersion, minorVersion)) {
         return SDL_TRUE;
@@ -190,7 +190,7 @@ extern "C" SDL_bool Android_JNI_CreateContext(int majorVersion, int minorVersion
     }
 }
 
-extern "C" void Android_JNI_Vibrate( int active )
+extern "C" DECLSPEC void SDLCALL Android_JNI_Vibrate( int active )
 {
     jboolean a = JNI_FALSE;
     if( active )
@@ -198,7 +198,7 @@ extern "C" void Android_JNI_Vibrate( int active )
     mEnv->CallStaticVoidMethod( mActivityClass, midVibrate, a ); 
 }
 
-extern "C" int Android_JNI_UseRGBA8888()
+extern "C" DECLSPEC int SDLCALL Android_JNI_UseRGBA8888()
 {
     if (mEnv->CallStaticBooleanMethod(mActivityClass, midUseRGBA8888)) {
         return 1;
@@ -207,14 +207,14 @@ extern "C" int Android_JNI_UseRGBA8888()
     }
 }
 
-extern "C" void Android_JNI_SwapWindow()
+extern "C" DECLSPEC void SDLCALL Android_JNI_SwapWindow()
 {
     mEnv->CallStaticVoidMethod(mActivityClass, midFlipBuffers); 
 }
 
 static jstring dataDirString = NULL;
 static char appDataDir[60];
-extern "C" char * Android_JNI_GetDataDir()
+extern "C" DECLSPEC char * SDLCALL Android_JNI_GetDataDir()
 {
     dataDirString = (jstring) mEnv->CallStaticObjectMethod( mActivityClass, midGetDataDir );
     const char *nativeString = mEnv->GetStringUTFChars( dataDirString, 0 );
@@ -225,7 +225,7 @@ extern "C" char * Android_JNI_GetDataDir()
 
 static jstring buffString = NULL;
 static char buffArray[1024];
-extern "C" char * Android_JNI_GetExtraArgs()
+extern "C" DECLSPEC char * SDLCALL Android_JNI_GetExtraArgs()
 {
     buffString = (jstring) mEnv->CallStaticObjectMethod( mActivityClass, midGetExtraArgs );
     const char *nativeString = mEnv->GetStringUTFChars( buffString, 0 );
@@ -233,7 +233,7 @@ extern "C" char * Android_JNI_GetExtraArgs()
     mEnv->ReleaseStringUTFChars( buffString, nativeString );
     return buffArray;
 }
-extern "C" char * Android_JNI_GetROMPath()
+extern "C" DECLSPEC char * SDLCALL Android_JNI_GetROMPath()
 {
     buffString = (jstring) mEnv->CallStaticObjectMethod( mActivityClass, midGetROMPath );
     const char *nativeString = mEnv->GetStringUTFChars( buffString, 0 );
@@ -241,7 +241,7 @@ extern "C" char * Android_JNI_GetROMPath()
     mEnv->ReleaseStringUTFChars( buffString, nativeString );
     return buffArray;
 }
-extern "C" int Android_JNI_GetScreenStretch()
+extern "C" DECLSPEC int SDLCALL Android_JNI_GetScreenStretch()
 {
     jboolean b;
     b = mEnv->CallStaticBooleanMethod( mActivityClass, midGetScreenStretch );
@@ -250,7 +250,7 @@ extern "C" int Android_JNI_GetScreenStretch()
     else
         return 0;
 }
-extern "C" int Android_JNI_GetAutoFrameSkip()
+extern "C" DECLSPEC int SDLCALL Android_JNI_GetAutoFrameSkip()
 {
     jboolean b;
     b = mEnv->CallStaticBooleanMethod( mActivityClass, midGetAutoFrameSkip );
@@ -259,14 +259,14 @@ extern "C" int Android_JNI_GetAutoFrameSkip()
     else
         return 0;
 }
-extern "C" int Android_JNI_GetMaxFrameSkip()
+extern "C" DECLSPEC int SDLCALL Android_JNI_GetMaxFrameSkip()
 {
     __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "About to call midGetMaxFrameSkip" );
     jint i = mEnv->CallStaticIntMethod( mActivityClass, midGetMaxFrameSkip );
     __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Android_JNI_GetMaxFrameSkip returning %i", (int) i );
     return (int) i;
 }
-extern "C" void Android_JNI_EMU_STATE_Callback( int newState )
+extern "C" DECLSPEC void SDLCALL Android_JNI_EMU_STATE_Callback( int newState )
 {
     __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Emulator state changed to %i", newState );
     mEnv->CallStaticVoidMethod( mActivityClass, midEmuStateCallback, newState );
@@ -274,7 +274,7 @@ extern "C" void Android_JNI_EMU_STATE_Callback( int newState )
 
 // paulscode, added for showing the user a short message
 static jstring jmessage = NULL;
-extern "C" void Android_JNI_ShowToast( const char *message )
+extern "C" DECLSPEC void SDLCALL Android_JNI_ShowToast( const char *message )
 {
     jmessage = mEnv->NewStringUTF( message );
     mEnv->CallStaticVoidMethod( mActivityClass, midShowToast, jmessage );
@@ -282,7 +282,7 @@ extern "C" void Android_JNI_ShowToast( const char *message )
 }
 //
 
-extern "C" void Android_JNI_SetActivityTitle(const char *title)
+extern "C" DECLSPEC void SDLCALL Android_JNI_SetActivityTitle(const char *title)
 {
     jmethodID mid;
 
@@ -292,7 +292,7 @@ extern "C" void Android_JNI_SetActivityTitle(const char *title)
     }
 }
 
-extern "C" void Android_JNI_GetAccelerometerValues(float values[3])
+extern "C" DECLSPEC void SDLCALL Android_JNI_GetAccelerometerValues(float values[3])
 {
     int i;
     for (i = 0; i < 3; ++i) {
@@ -308,7 +308,7 @@ static jboolean audioBufferStereo = JNI_FALSE;
 static jobject audioBuffer = NULL;
 static void* audioBufferPinned = NULL;
 
-extern "C" int Android_JNI_OpenAudioDevice(int sampleRate, int is16Bit, int channelCount, int desiredBufferFrames)
+extern "C" DECLSPEC int SDLCALL Android_JNI_OpenAudioDevice(int sampleRate, int is16Bit, int channelCount, int desiredBufferFrames)
 {
     int audioBufferFrames;
 
@@ -339,12 +339,12 @@ extern "C" int Android_JNI_OpenAudioDevice(int sampleRate, int is16Bit, int chan
     return audioBufferFrames;
 }
 
-extern "C" void * Android_JNI_GetAudioBuffer()
+extern "C" DECLSPEC void * SDLCALL Android_JNI_GetAudioBuffer()
 {
     return audioBufferPinned;
 }
 
-extern "C" void Android_JNI_WriteAudioBuffer()
+extern "C" DECLSPEC void SDLCALL Android_JNI_WriteAudioBuffer()
 {
     if (audioBuffer16Bit) {
         mAudioEnv->ReleaseShortArrayElements((jshortArray)audioBuffer, (jshort *)audioBufferPinned, JNI_COMMIT);
@@ -357,7 +357,7 @@ extern "C" void Android_JNI_WriteAudioBuffer()
     /* JNI_COMMIT means the changes are committed to the VM but the buffer remains pinned */
 }
 
-extern "C" void Android_JNI_CloseAudioDevice()
+extern "C" DECLSPEC void SDLCALL Android_JNI_CloseAudioDevice()
 {
     mEnv->CallStaticVoidMethod(mActivityClass, midAudioQuit); 
 

@@ -10,20 +10,20 @@
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "SDL_android_main", __VA_ARGS__)
 
 // Called before SDL_main() to initialize JNI bindings in SDL library
-extern "C" void SDL_Android_Init(JNIEnv* env, jclass cls);
+extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* env, jclass cls);
 // Used to look up any extra commandline args
-extern "C" char * Android_JNI_GetExtraArgs();
+extern "C" DECLSPEC char * SDLCALL Android_JNI_GetExtraArgs();
 // Used to look up which ROM to run
-extern "C" char * Android_JNI_GetROMPath();
+extern "C" DECLSPEC char * SDLCALL Android_JNI_GetROMPath();
 
 // Library init
-extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
+extern "C" DECLSPEC jint SDLCALL JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     return JNI_VERSION_1_4;
 }
 
 // Start up the SDL app
-extern "C" void Java_paulscode_android_mupen64plusae_NativeMethods_init(JNIEnv* env, jclass cls, jobject obj)
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_init(JNIEnv* env, jclass cls, jobject obj)
 {
     /* This interface could expand with ABI negotiation, calbacks, etc. */
     SDL_Android_Init(env, cls);
