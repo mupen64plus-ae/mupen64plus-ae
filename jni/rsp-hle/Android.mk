@@ -38,7 +38,8 @@ else
 endif
 
 
-LOCAL_CFLAGS += -O3
+LOCAL_CFLAGS += -O3 -ffast-math -fno-strict-aliasing -fvisibility=hidden
+LOCAL_CXXFLAGS += -fvisibility-inlines-hidden
 #LOCAL_LDLIBS += -lcore
 
 LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/rsp_api_export.ver

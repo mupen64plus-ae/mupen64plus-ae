@@ -62,6 +62,7 @@ else
 endif
 
 
-LOCAL_CFLAGS += -O3
+LOCAL_CFLAGS += -O3  -fvisibility=hidden -ffast-math
+LOCAL_LDFLAGS += -Wl,-Bsymbolic
 
 include $(BUILD_SHARED_LIBRARY)

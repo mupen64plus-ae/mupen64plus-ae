@@ -80,12 +80,10 @@ else
 	# Any other architectures that Android could be running on?
 endif
 
-LOCAL_CFLAGS += -O3
+LOCAL_CFLAGS += -O3 -ffast-math -fno-strict-aliasing -fvisibility=hidden
+LOCAL_CXXFLAGS += -fvisibility-inlines-hidden
 #LOCAL_LDLIBS += -lcore
 
-LOCAL_CFLAGS += -ffast-math -fno-strict-aliasing
-
-LOCAL_CFLAGS += -fvisibility=hidden
 LOCAL_CFLAGS += -fsigned-char
 LOCAL_CFLAGS += -fexceptions
 

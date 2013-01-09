@@ -40,7 +40,7 @@ else
 endif
 
 
-LOCAL_CFLAGS += -O3
+LOCAL_CFLAGS += -O3 -ffast-math -fno-strict-aliasing -fvisibility=hidden
 #LOCAL_LDLIBS += -lcore
 
 LOCAL_LDLIBS := -ldl -llog

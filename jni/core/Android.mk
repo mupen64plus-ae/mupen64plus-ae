@@ -88,9 +88,8 @@ else
 	# Any other architectures that Android could be running on?
 endif
 
-LOCAL_CFLAGS += -O3
-
-LOCAL_CFLAGS += -ffast-math -fno-strict-aliasing
+LOCAL_CFLAGS += -O3 -ffast-math -fno-strict-aliasing -fvisibility=hidden
+LOCAL_LDFLAGS += -Wl,-Bsymbolic -shared -Wl,-export-dynamic
 
 LOCAL_SHARED_LIBRARIES := SDL
 
