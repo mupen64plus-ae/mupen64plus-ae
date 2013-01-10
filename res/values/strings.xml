@@ -127,8 +127,6 @@
 
     <!-- Checkbox Preferences -->
     <string name="touchscreenEnabled_title">Enable touchscreen</string>
-    <string name="touchscreenHidden_title">Hide buttons</string>
-    <string name="touchscreenHidden_summary">For touch-mapped controllers and gaming wizards</string>
     <string name="touchpadEnabled_title">Enable touchpad</string>
     <string name="inputOctagonConstraints_title">Octagonal joystick limits</string>
     <string name="inputOctagonConstraints_summary">Constrain analog motion to an octagon, like a real N64 controller</string>

@@ -261,8 +261,8 @@ public class UserPrefs
         // Touchscreen prefs
         isTouchscreenEnabled = prefsData.getBoolean( "touchscreenEnabled", true );
         touchscreenRefresh = getSafeInt( prefsData, "touchscreenRefresh", 0 );
-        isTouchscreenHidden = prefsData.getBoolean( "touchscreenHidden", false );
         int transparencyPercent = prefsData.getInt( "touchscreenTransparency", 100 );
+        isTouchscreenHidden = transparencyPercent == 0;
         touchscreenTransparency = ( 255 * transparencyPercent ) / 100;
         
         // Xperia PLAY touchpad prefs

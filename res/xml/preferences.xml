@@ -135,13 +135,6 @@
                             android:key="touchscreenRefresh"
                             android:title="@string/touchscreenRefresh_title" />
 
-                        <CheckBoxPreference
-                            android:defaultValue="false"
-                            android:dependency="touchscreenEnabled"
-                            android:key="touchscreenHidden"
-                            android:summary="@string/touchscreenHidden_summary"
-                            android:title="@string/touchscreenHidden_title" />
-
                         <paulscode.android.mupen64plusae.persistent.SeekBarPreference
                             android:defaultValue="100"
                             android:dependency="touchscreenEnabled"
