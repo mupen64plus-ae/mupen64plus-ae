@@ -24,7 +24,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
 
-public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implements OptionDialog.Listener, View.OnLongClickListener
+public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implements
+        OptionDialog.Listener, View.OnLongClickListener
 {
     private final Context mContext;
     private final OptionDialog mDialog;
@@ -34,7 +35,8 @@ public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implem
     // TODO: Allow implementation in XML, too
     // public OptionCheckBoxPreference( Context context, AttributeSet attrs )
     
-    public OptionCheckBoxPreference( Context context, String title, String[] options, String negativeOption )
+    public OptionCheckBoxPreference( Context context, String title, String[] options,
+            String negativeOption )
     {
         super( context );
         mContext = context;
@@ -44,11 +46,11 @@ public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implem
         }
         else
         {
-            mOptions = new String[ options.length + 1 ];
-
+            mOptions = new String[options.length + 1];
+            
             System.arraycopy( options, 0, mOptions, 1, options.length );
         }
-
+        
         mOptions[0] = negativeOption;
         mDialog = new OptionDialog( title.hashCode(), title, mOptions, context, this );
     }
@@ -63,22 +65,24 @@ public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implem
     public void onOptionChoice( int choice )
     {
         setChecked( choice != 0 );
-
+        
         if( choice == 0 )
             setSummary( "" );
         else
             setSummary( mOptions[choice] );
-
+        
         mChoice = choice - 1;
     }
+    
     public void onOptionLongPress( int item )
     {
         // TODO: Look through cheat options to see if any have really long strings.
         // If not, then long-pressing on cheat options for full text isn't needed.
         if( item != 0 )
         {
-            new AlertDialog.Builder( mContext ).setTitle( mContext.getString( R.string.cheatOption_title ) )
-                .setMessage( mOptions[item] ).create().show();
+            new AlertDialog.Builder( mContext )
+                    .setTitle( mContext.getString( R.string.cheatOption_title ) )
+                    .setMessage( mOptions[item] ).create().show();
         }
     }
 }

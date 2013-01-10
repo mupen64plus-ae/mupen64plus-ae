@@ -20,8 +20,6 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
@@ -59,12 +57,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String ACTION_RESTART = "actionRestart";
     private static final String PLAYER_MAP = "playerMap";
     private static final String CATEGORY_CHEATS = "categoryCheats";
-    
-    // Storing them here, since they get lost on orientation change
-    private final static HashMap<String, String> cheatTitles = new HashMap<String, String>();
-    private final static HashMap<String, String> cheatNotes = new HashMap<String, String>();
-    private final static HashMap<String, String> cheatOptionMaps = new HashMap<String, String>();
-    private final static LinkedList<Preference> cheatPreferences = new LinkedList<Preference>();
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -120,17 +112,17 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     @Override
     public void onPreferenceLongClick( Preference preference )
     {
-        String whichCheat = preference.getKey();
+        LongClickCheckBoxPreference checkBoxPref = (LongClickCheckBoxPreference) preference;
         
         // Determine the title
-        String title = cheatTitles.get( whichCheat );
+        String title = checkBoxPref.getDialogTitle();
         if( TextUtils.isEmpty( title ) )
         {
             title = getString( R.string.cheatNotes_title );
         }
         
         // Determine the summary
-        String summary = cheatNotes.get( whichCheat );
+        String summary = checkBoxPref.getDialogMessage();
         if( TextUtils.isEmpty( summary ) )
         {
             summary = getString( R.string.cheatNotes_none );
@@ -224,11 +216,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( !TextUtils.isEmpty( ROM_name ) )
             setTitle( ROM_name );
         
-        // Refresh hashmaps to hold the configuration info for each cheat
-        cheatTitles.clear();
-        cheatNotes.clear();
-        cheatOptionMaps.clear();
-        
         // Layout the menu, populating it with appropriate cheat options
         PreferenceCategory cheatsCategory = (PreferenceCategory) findPreference( CATEGORY_CHEATS );
         String cheat = " ";
@@ -250,14 +237,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                     // Title available, remove the leading/trailing quotation marks
                     title = cheat.substring( 1, x - 1 );
                 }
-                cheatTitles.put( "Cheat" + i, title );
                 
                 // Get the descriptive note for this cheat (shown on long-click)
                 final String note = configSection.get( "Cheat" + i + "_N" );
-                if( !TextUtils.isEmpty( note ) )
-                {
-                    cheatNotes.put( "Cheat" + i, note );
-                }
                 
                 // Get the options for this cheat
                 LongClickCheckBoxPreference checkBoxPref;
@@ -269,9 +251,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 }
                 else
                 {
-                    // This cheat contains a list of options, use a type of list preference
-                    cheatOptionMaps.put( "Cheat" + i, val_O );
-                    
                     // Parse the comma-delimited string to get the map elements
                     String[] uOpts = val_O.split( "," );
                     
@@ -295,13 +274,14 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 
                 // Set the preference menu item properties
                 checkBoxPref.setTitle( title );
+                checkBoxPref.setDialogTitle( title );
+                checkBoxPref.setDialogMessage( note );
                 checkBoxPref.setChecked( false );
                 checkBoxPref.setKey( crc + " Cheat" + i );
                 checkBoxPref.setOnPreferenceLongClickListener( this );
                 
                 // Add the preference menu item to the cheats category
                 cheatsCategory.addPreference( checkBoxPref );
-                cheatPreferences.add( checkBoxPref );
             }
         }
     }

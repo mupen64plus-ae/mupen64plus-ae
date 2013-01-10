@@ -20,9 +20,9 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.content.Context;
-import android.view.View;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.view.View;
 
 public class LongClickCheckBoxPreference extends CheckBoxPreference implements
         View.OnLongClickListener, View.OnClickListener
@@ -33,6 +33,8 @@ public class LongClickCheckBoxPreference extends CheckBoxPreference implements
     }
     
     private OnPreferenceLongClickListener mListener = null;
+    private String mDialogTitle;
+    private String mDialogMessage;
     
     public LongClickCheckBoxPreference( Context context )
     {
@@ -43,6 +45,26 @@ public class LongClickCheckBoxPreference extends CheckBoxPreference implements
     public void setOnPreferenceLongClickListener( OnPreferenceLongClickListener listener )
     {
         mListener = listener;
+    }
+    
+    public String getDialogTitle()
+    {
+        return mDialogTitle;
+    }
+    
+    public void setDialogTitle( String mDialogTitle )
+    {
+        this.mDialogTitle = mDialogTitle;
+    }
+    
+    public String getDialogMessage()
+    {
+        return mDialogMessage;
+    }
+    
+    public void setDialogMessage( String mDialogMessage )
+    {
+        this.mDialogMessage = mDialogMessage;
     }
     
     @Override
