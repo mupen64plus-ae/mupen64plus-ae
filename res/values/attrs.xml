@@ -4,5 +4,10 @@
     <declare-styleable name="PathPreference">
         <attr name="selectionMode" format="integer" />
     </declare-styleable>
+    <declare-styleable name="SeekBarPreference">
+        <attr name="maximumValue" format="integer" />
+        <attr name="stepSize" format="integer" />
+        <attr name="units" format="string" />
+    </declare-styleable>
 
 </resources>

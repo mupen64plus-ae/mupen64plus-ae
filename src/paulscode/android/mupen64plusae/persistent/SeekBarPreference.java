@@ -15,114 +15,180 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: Gillou68310
+ * Authors: Gillou68310, littleguy77
  */
 package paulscode.android.mupen64plusae.persistent;
 
+import paulscode.android.mupen64plusae.R;
 import android.content.Context;
-import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.View;
+import android.content.res.TypedArray;
 import android.preference.DialogPreference;
+import android.util.AttributeSet;
+import android.view.View;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.LinearLayout;
 
-
-public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener
+public class SeekBarPreference extends DialogPreference implements OnSeekBarChangeListener
 {
-    private static final String androidns="http://schemas.android.com/apk/res/android";
-
+    private static final int DEFAULT_VALUE = 50;
+    private static final int DEFAULT_MAX = 100;
+    private static final int DEFAULT_STEP = 10;
+    private static final String DEFAULT_UNITS = "%";
+    
+    private int mValue = DEFAULT_VALUE;
+    private int mMaxValue = DEFAULT_MAX;
+    private int mStepSize = DEFAULT_STEP;
+    private String mUnits = DEFAULT_UNITS;
+    
+    private TextView mTextView;
     private SeekBar mSeekBar;
-    private TextView mValueText;
-    private Context mContext;
-
-    private int mDefault;
-    private int mMax;
-    private int mProgress;
-    private int mValue = 0;
-
-    public SeekBarPreference(Context context, AttributeSet attrs)
-    { 
-        super(context,attrs); 
-        mContext = context;
-
-        mDefault = attrs.getAttributeIntValue(androidns,"defaultValue", 100);
-        mMax = attrs.getAttributeIntValue(androidns,"max", 100);
-    }
-
-    @Override 
-    protected View onCreateDialogView()
+    
+    public SeekBarPreference( Context context, AttributeSet attrs )
     {
-        LinearLayout.LayoutParams params;
-        LinearLayout layout = new LinearLayout(mContext);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(6,6,6,6);
-
-        mValueText = new TextView(mContext);
-        mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
-        params = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT);
-        layout.addView(mValueText, params);
-
-        mSeekBar = new SeekBar(mContext);
-        mSeekBar.setOnSeekBarChangeListener(this);
-        layout.addView(mSeekBar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        if (shouldPersist())
-            mValue = getPersistedInt(mDefault);
-
-        mSeekBar.setMax(mMax);
-        mSeekBar.setProgress(mValue);
-        return layout;
+        super( context, attrs );
+        
+        // Get the attributes from the XML file, if provided
+        TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.SeekBarPreference );
+        setMaxValue( a.getInteger( R.styleable.SeekBarPreference_maximumValue, DEFAULT_MAX ) );
+        setStepSize( a.getInteger( R.styleable.SeekBarPreference_stepSize, DEFAULT_STEP ) );
+        setUnits( a.getString( R.styleable.SeekBarPreference_units ) );
+        a.recycle();
+        
+        // Setup the layout
+        setDialogLayoutResource( R.layout.seek_bar_preference );
     }
-  
-    @Override 
-    protected void onBindDialogView(View v)
+    
+    public SeekBarPreference( Context context )
     {
-        super.onBindDialogView(v);
-        mSeekBar.setMax(mMax);
-        mSeekBar.setProgress(mValue);
+        this( context, null );
     }
-  
-    @Override
-    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue)  
+    
+    public void setValue( int value )
     {
-        super.onSetInitialValue(restorePersistedValue, defaultValue);
-        if (restorePersistedValue) 
-            mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
-        else 
-            mValue = (Integer)defaultValue;
+        mValue = validate( value );
+        if( shouldPersist() )
+            persistInt( mValue );
     }
-
-    @Override
-    public void onProgressChanged(SeekBar seek, int progress, boolean fromTouch)
+    
+    public void setMaxValue( int maxValue )
     {
-        mProgress = progress;
-        mValueText.setText(String.valueOf(progress));
+        mMaxValue = maxValue;
     }
-
+    
+    public void setStepSize( int stepSize )
+    {
+        mStepSize = stepSize;
+    }
+    
+    public void setUnits( String units )
+    {
+        mUnits = units;
+    }
+    
+    public int getValue()
+    {
+        return mValue;
+    }
+    
+    public int getMaxValue()
+    {
+        return mMaxValue;
+    }
+    
+    public int getStepSize()
+    {
+        return mStepSize;
+    }
+    
+    public String getUnits()
+    {
+        return mUnits;
+    }
+    
+    public String getValueString( int value )
+    {
+        return getContext().getString( R.string.seekBarPreference_summary, value, mUnits );
+    }
+    
     @Override
-    public void onStartTrackingTouch(SeekBar seek) {}
-
+    protected Object onGetDefaultValue( TypedArray a, int index )
+    {
+        return a.getInteger( index, DEFAULT_VALUE );
+    }
+    
     @Override
-    public void onStopTrackingTouch(SeekBar seek) {}
-  
+    protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
+    {
+        setValue( restorePersistedValue ? getPersistedInt( mValue ) : (Integer) defaultValue );
+    }
+    
+    @Override
+    protected void onBindView( View view )
+    {
+        setSummary( getValueString( mValue ) );
+        super.onBindView( view );
+    }
+    
+    @Override
+    protected void onBindDialogView( View view )
+    {
+        // Setup the dialog that is shown when the menu item is clicked
+        super.onBindDialogView( view );
+        
+        // Grab the widget references
+        mTextView = (TextView) view.findViewById( R.id.textFeedback );
+        mSeekBar = (SeekBar) view.findViewById( R.id.seekbar );
+        
+        // Initialize and refresh the widgets
+        mSeekBar.setMax( mMaxValue );
+        mSeekBar.setOnSeekBarChangeListener( this );
+        mSeekBar.setProgress( mValue );
+    }
+    
     @Override
     protected void onDialogClosed( boolean positiveResult )
     {
         super.onDialogClosed( positiveResult );
-      
-        // Clicking Cancel or Ok returns us to the parent preference menu. For these cases we return
-        // to a clean state by persisting or restoring the value.
+        
         if( positiveResult )
         {
-            // User clicked Ok: clean the state by persisting value
-            persistInt( mProgress );
-            notifyChanged();
-            callChangeListener( mProgress );
+            int value = mSeekBar.getProgress();
+            if( callChangeListener( value ) )
+                setValue( value );
         }
     }
+    
+    @Override
+    public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
+    {
+        int value = validate( progress );
+        if( value != progress )
+            seekBar.setProgress( value );
+        mTextView.setText( getValueString( value ) );
+    }
+    
+    @Override
+    public void onStartTrackingTouch( SeekBar seekBar )
+    {
+    }
+    
+    @Override
+    public void onStopTrackingTouch( SeekBar seekBar )
+    {
+    }
+    
+    private int validate( int value )
+    {
+        // Round to nearest integer multiple of mStepSize
+        int newValue = Math.round( value / (float) mStepSize ) * mStepSize;
+        
+        // Address issues when mStepSize is not an integral factor of mMaxValue
+        // e.g. mMaxValue = 100, mStepSize = 9, progress = 100 --> mValue = 99 (should be 100)
+        // e.g. mMaxValue = 100, mStepSize = 6, progress = 99 --> mValue = 102 (should be 100)
+        if( value == mMaxValue || newValue > mMaxValue )
+            newValue = mMaxValue;
+        
+        return newValue;
+    }
 }
-
