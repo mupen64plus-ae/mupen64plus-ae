@@ -154,7 +154,7 @@ public class GameMenuHandler
     {
         // Sanity check and persist the value
         mSlot = value % NUM_SLOTS;
-        mAppData.setLastSlot( mSlot );
+        mAppData.putLastSlot( mSlot );
         
         // Set the slot in the core
         NativeMethods.stateSetSlotEmulator( mSlot );

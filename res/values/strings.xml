@@ -41,6 +41,7 @@
     <!-- ************************************************************************** -->
 
     <!-- Something happening (typically use '-ing' and '…') -->
+    <string name="toast_rebuildingCheats">Rebuilding cheats database…</string>
     <string name="toast_launchingEmulator">Launching emulator…</string>
     <string name="toast_resettingGame">Resetting game…</string>
     <string name="toast_loadingSession">Auto-resuming game…</string>
@@ -63,6 +64,7 @@
     <!-- ************************************************************************** -->
 
     <!-- Actions (simply launch an action, aren't related to persistent data) -->
+    <string name="actionPlay_title">Play</string>
     <string name="actionResume_title">Resume</string>
     <string name="actionResume_summary">Unpredictable if cheats are used</string>
     <string name="actionRestart_title">Restart</string>
@@ -96,7 +98,6 @@
     <string name="actionAbout_changelog">Changelog</string>
     
     <!-- Preference Screens -->
-    <string name="screenPlay_title">Play</string>
     <string name="screenSettings_title">Settings</string>
     <string name="screenInput_title">Input</string>
     <string name="screenInput_summary">Control settings</string>

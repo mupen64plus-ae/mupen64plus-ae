@@ -27,6 +27,7 @@ import paulscode.android.mupen64plusae.util.CrashTester;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -38,11 +39,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -51,6 +50,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
 {
     // These constants must match the keys used in res/xml/preferences.xml
     
+    private static final String ACTION_PLAY = "actionPlay";
     private static final String ACTION_DEVICE_INFO = "actionDeviceInfo";
     private static final String ACTION_CONTROLLER_INFO = "actionControllerInfo";
     private static final String ACTION_MIGRATE_SLOT_SAVES = "actionMigrateSlotSaves";
@@ -60,7 +60,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String ACTION_HELP = "actionHelp";
     private static final String ACTION_ABOUT = "actionAbout";
     
-    private static final String SCREEN_PLAY = "screenPlay";
     private static final String SCREEN_INPUT = "screenInput";
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
     private static final String SCREEN_VIDEO = "screenVideo";
@@ -74,25 +73,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     private static final String PLUGIN_VIDEO = "pluginVideo";
     
-    private static final String PLAYER_MAP = "playerMap";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     
-    private CheatsMenuHandler mCheatsMenuHandler = null;
-    
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
-    
-    // Don't need to call these every time the orientation changes
-    static
-    {
-        // Required for reading CRC header
-        FileUtil.loadNativeLibName( "SDL" );
-        FileUtil.loadNativeLibName( "core" );
-        FileUtil.loadNativeLibName( "front-end" );
-    }
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -115,22 +102,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Refresh the preference data wrapper
         mUserPrefs = new UserPrefs( this );
         
-        // Instantiate the cheats menu handler
-        if( mCheatsMenuHandler == null )
-            mCheatsMenuHandler = new CheatsMenuHandler( this, mAppData, mUserPrefs );
-        // TODO: Only refresh when the cheats menu is open
-        mCheatsMenuHandler.refresh();
-        
         // Handle certain menu items that require extra processing or aren't actually preferences
-        listenTo( SCREEN_PLAY );
-        listenTo( ACTION_DEVICE_INFO );
-        listenTo( ACTION_CONTROLLER_INFO );
-        listenTo( ACTION_MIGRATE_SLOT_SAVES );
-        listenTo( ACTION_RELOAD_ASSETS );
-        listenTo( ACTION_RESET_USER_PREFS );
-        listenTo( ACTION_HELP );
-        listenTo( ACTION_ABOUT );
-        listenTo( PATH_HI_RES_TEXTURES );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_DEVICE_INFO, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_CONTROLLER_INFO, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_MIGRATE_SLOT_SAVES, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_USER_PREFS, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_HELP, this );
+        PrefUtil.setOnPreferenceClickListener( this, ACTION_ABOUT, this );
+        PrefUtil.setOnPreferenceClickListener( this, PATH_HI_RES_TEXTURES, this );
         
         // Handle crash tests in a particular way (see CrashTester for more info)
         findPreference( ACTION_CRASH_TEST ).setOnPreferenceClickListener( new CrashTester( this ) );
@@ -138,7 +118,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Hide the Xperia PLAY menu items as necessary
         if( !mAppData.hardwareInfo.isXperiaPlay )
         {
-            removePreference( CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
+            PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
         }
     }
     
@@ -194,37 +174,34 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Enable the play menu only if the selected game actually exists
         File selectedGame = new File( mUserPrefs.selectedGame );
         boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
-        enablePreference( SCREEN_PLAY, isValidGame );
-        
-        // Enable the multi-player menu only if the player map is enabled
-        enablePreference( PLAYER_MAP, user.playerMap.isEnabled() );
+        PrefUtil.enablePreference( this, ACTION_PLAY, isValidGame );
         
         // Enable the input menu only if the input plug-in is not a dummy
-        enablePreference( SCREEN_INPUT, user.inputPlugin.enabled );
+        PrefUtil.enablePreference( this, SCREEN_INPUT, user.inputPlugin.enabled );
         
         // Enable the audio menu only if the audio plug-in is not a dummy
-        enablePreference( SCREEN_AUDIO, user.audioPlugin.enabled );
+        PrefUtil.enablePreference( this, SCREEN_AUDIO, user.audioPlugin.enabled );
         
         // Enable the video menu only if the video plug-in is not a dummy
-        enablePreference( SCREEN_VIDEO, user.videoPlugin.enabled );
+        PrefUtil.enablePreference( this, SCREEN_VIDEO, user.videoPlugin.enabled );
         
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
         if( !user.isGles2N64Enabled )
-            removePreference( SCREEN_VIDEO, CATEGORY_GLES2_N64 );
+            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_N64 );
         
         if( !user.isGles2RiceEnabled )
-            removePreference( SCREEN_VIDEO, CATEGORY_GLES2_RICE );
+            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
         
         // Enable the custom touchscreen prefs under certain conditions
-        enablePreference( PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled
+        PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled
                 && user.isTouchscreenCustom );
-        enablePreference( TOUCHSCREEN_SIZE, user.isTouchscreenEnabled && !user.isTouchscreenCustom );
+        PrefUtil.enablePreference( this, TOUCHSCREEN_SIZE, user.isTouchscreenEnabled && !user.isTouchscreenCustom );
         
         // Update the summary text for all relevant preferences
         for( String key : sharedPreferences.getAll().keySet() )
-            refreshText( key );
+            PrefUtil.refreshSummary( this, key );
         
         // Update the summary text in a particular way for ACRA user info
         EditTextPreference pref = (EditTextPreference) findPreference( ACRA_USER_EMAIL );
@@ -235,52 +212,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             pref.setSummary( value );
     }
     
-    @SuppressWarnings( "deprecation" )
-    private void listenTo( String key )
-    {
-        Preference preference = findPreference( key );
-        if( preference != null )
-            preference.setOnPreferenceClickListener( this );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void refreshText( String key )
-    {
-        Preference preference = findPreference( key );
-        if( preference instanceof ListPreference )
-            preference.setSummary( ( (ListPreference) preference ).getEntry() );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void enablePreference( String key, boolean enabled )
-    {
-        Preference preference = findPreference( key );
-        if( preference != null )
-            preference.setEnabled( enabled );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void removePreference( String keyParent, String keyChild )
-    {
-        Preference parent = findPreference( keyParent );
-        Preference child = findPreference( keyChild );
-        if( parent instanceof PreferenceGroup && child != null )
-            ( (PreferenceGroup) parent ).removePreference( child );
-    }
-    
     @Override
     public boolean onPreferenceClick( Preference preference )
     {
         // Handle the clicks on certain menu items that aren't actually preferences
         String key = preference.getKey();
         
-        if( key.equals( SCREEN_PLAY ) )
-        {
-            mCheatsMenuHandler.rebuild();
-            // Let Android open the play menu, once built
-            return false;
-        }
-        else if( key.equals( ACTION_DEVICE_INFO ) )
+        if( key.equals( ACTION_DEVICE_INFO ) )
             actionDeviceInfo();
         
         else if( key.equals( ACTION_CONTROLLER_INFO ) )
@@ -355,7 +293,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private void actionReloadAssets()
     {
-        mAppData.setAssetVersion( 0 );
+        mAppData.putAssetVersion( 0 );
         startActivity( new Intent( this, MainActivity.class ) );
         finish();
     }

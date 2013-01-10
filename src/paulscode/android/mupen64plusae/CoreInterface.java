@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU
  * General Public License along with Mupen64PlusAE. If not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: littleguy77
+ * Authors: Paul Lamb, littleguy77
  */
 package paulscode.android.mupen64plusae;
 
@@ -76,6 +76,8 @@ public class CoreInterface
     private static UserPrefs sUserPrefs = null;
     private static OnEmuStateChangeListener emuStateChangeListener = null;
     private static final Object emuStateLock = new Object();
+    private static String sCheatOptions;
+    private static boolean sIsRestarting;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
@@ -87,8 +89,23 @@ public class CoreInterface
         syncConfigFiles( sUserPrefs, sAppData );
     }
     
+    public static void setStartupMode( String cheatArgs, boolean isRestarting )
+    {
+        if( cheatArgs != null && isRestarting )
+            sCheatOptions = "--cheats " + cheatArgs; // Restart game with selected cheats
+        else
+            sCheatOptions = null;
+        sIsRestarting = isRestarting;
+    }
+    
+    public static boolean isRestarting()
+    {
+        return sIsRestarting;
+    }
+    
     /**
      * Constructs any extra parameters to pass to the front-end, based on user preferences
+     * 
      * @return Object handle to String containing space-separated parameters.
      */
     public static Object getExtraArgs()
@@ -96,10 +113,11 @@ public class CoreInterface
         String extraArgs = "";
         if( !sUserPrefs.isFramelimiterEnabled )
             extraArgs = "--nospeedlimit";
-        if( sUserPrefs.cheatOptions != null )
-            extraArgs = appendArg( extraArgs, sUserPrefs.cheatOptions );
+        if( sCheatOptions != null )
+            extraArgs = appendArg( extraArgs, sCheatOptions );
         return extraArgs;
     }
+    
     private static String appendArg( String prev, String arg )
     {
         if( TextUtils.isEmpty( prev ) )
@@ -178,7 +196,8 @@ public class CoreInterface
             }
             
             // Unzip the ROM
-            String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
+            String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ),
+                    tmpFolderName );
             if( selectedGameUnzipped == null )
             {
                 Log.v( "CoreInterface", "Cannot play zipped ROM: '" + selectedGame + "'" );
@@ -235,7 +254,7 @@ public class CoreInterface
                 }
             }
         } );
-
+        
         synchronized( lock )
         {
             try
@@ -243,7 +262,8 @@ public class CoreInterface
                 lock.wait();
             }
             catch( InterruptedException ignored )
-            {}
+            {
+            }
         }
     }
     
@@ -280,14 +300,8 @@ public class CoreInterface
         int channelConfig = isStereo
                 ? AudioFormat.CHANNEL_OUT_STEREO
                 : AudioFormat.CHANNEL_OUT_MONO;
-        int audioFormat = is16Bit
-                ? AudioFormat.ENCODING_PCM_16BIT
-                : AudioFormat.ENCODING_PCM_8BIT;
-        int frameSize = ( isStereo
-                ? 2
-                : 1 ) * ( is16Bit
-                ? 2
-                : 1 );
+        int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
+        int frameSize = ( isStereo ? 2 : 1 ) * ( is16Bit ? 2 : 1 );
         
         // Let the user pick a larger buffer if they really want -- but ye
         // gods they probably shouldn't, the minimums are horrifyingly high
@@ -305,15 +319,11 @@ public class CoreInterface
         
         if( is16Bit )
         {
-            sAudioBuffer = new short[desiredFrames * ( isStereo
-                    ? 2
-                    : 1 )];
+            sAudioBuffer = new short[desiredFrames * ( isStereo ? 2 : 1 )];
         }
         else
         {
-            sAudioBuffer = new byte[desiredFrames * ( isStereo
-                    ? 2
-                    : 1 )];
+            sAudioBuffer = new byte[desiredFrames * ( isStereo ? 2 : 1 )];
         }
         return sAudioBuffer;
     }

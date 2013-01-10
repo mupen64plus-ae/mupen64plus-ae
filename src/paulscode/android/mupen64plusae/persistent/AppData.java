@@ -141,13 +141,17 @@ public class AppData
     private final SharedPreferences mPreferences;
     
     // Shared preferences keys
-    private static final String KEY_LAST_SLOT = "lastSlot";
     private static final String KEY_ASSET_VERSION = "assetVersion";
+    private static final String KEY_LAST_SLOT = "lastSlot";
+    private static final String KEY_LAST_ROM = "lastRom";
+    private static final String KEY_LAST_CRC = "lastCrc";
     // ... add more as needed
     
     // Shared preferences default values
-    private static final int DEFAULT_LAST_SLOT = 0;
     private static final int DEFAULT_ASSET_VERSION = 0;
+    private static final int DEFAULT_LAST_SLOT = 0;
+    private static final String DEFAULT_LAST_ROM = "";
+    private static final String DEFAULT_LAST_CRC = "";    
     // ... add more as needed
     
     /**
@@ -224,45 +228,105 @@ public class AppData
     }
     
     /**
-     * Gets the last savegame slot.
-     * 
-     * @return The last slot.
-     */
-    public int getLastSlot()
-    {
-        return mPreferences.getInt( KEY_LAST_SLOT, DEFAULT_LAST_SLOT );
-    }
-    
-    /**
-     * Sets the last savegame slot.
-     * 
-     * @param value The last slot.
-     */
-    public void setLastSlot( int value )
-    {
-        mPreferences.edit().putInt( KEY_LAST_SLOT, value ).commit();
-    }
-    
-    /**
      * Gets the asset version.
      * 
      * @return The asset version.
      */
     public int getAssetVersion()
     {
-        return mPreferences.getInt( KEY_ASSET_VERSION, DEFAULT_ASSET_VERSION );
+        return getInt( KEY_ASSET_VERSION, DEFAULT_ASSET_VERSION );
     }
     
     /**
-     * Sets the asset version.
+     * Gets the last savegame slot.
+     * 
+     * @return The last slot.
+     */
+    public int getLastSlot()
+    {
+        return getInt( KEY_LAST_SLOT, DEFAULT_LAST_SLOT );
+    }
+    
+    /**
+     * Gets the last ROM that the CRC was computed for.
+     * 
+     * @return The last ROM.
+     */
+    public String getLastRom()
+    {
+        return getString( KEY_LAST_ROM, DEFAULT_LAST_ROM );
+    }
+    
+    /**
+     * Gets the last CRC computed.
+     * 
+     * @return The last CRC.
+     */
+    public String getLastCrc()
+    {
+        return getString( KEY_LAST_CRC, DEFAULT_LAST_CRC );
+    }
+    
+    /**
+     * Persists the asset version.
      * 
      * @param value The asset version.
      */
-    public void setAssetVersion( int value )
+    public void putAssetVersion( int value )
     {
-        mPreferences.edit().putInt( KEY_ASSET_VERSION, value ).commit();
+        putInt( KEY_ASSET_VERSION, value );
     }
     
+    /**
+     * Persists the last savegame slot.
+     * 
+     * @param value The last slot.
+     */
+    public void putLastSlot( int value )
+    {
+        putInt( KEY_LAST_SLOT, value );
+    }
+    
+    /**
+     * Persists the last ROM that the CRC was computed for.
+     * 
+     * @param value The last ROM.
+     */
+    public void putLastRom( String value )
+    {
+        putString( KEY_LAST_ROM, value );
+    }
+    
+    /**
+     * Persists the last CRC computed.
+     * 
+     * @param value The last CRC.
+     */
+    public void putLastCrc( String value )
+    {
+        putString( KEY_LAST_CRC, value );
+    }
+    
+    private int getInt( String key, int defaultValue )
+    {
+        return mPreferences.getInt( key, defaultValue );
+    }
+
+    private String getString( String key, String defaultValue )
+    {
+        return mPreferences.getString( key, defaultValue );
+    }
+
+    private void putInt( String key, int value )
+    {
+        mPreferences.edit().putInt( key, value ).commit();
+    }
+
+    private void putString( String key, String value )
+    {
+        mPreferences.edit().putString( key, value ).commit();
+    }
+
     /**
      * Small class that summarizes the info provided by /proc/cpuinfo.
      * <p>

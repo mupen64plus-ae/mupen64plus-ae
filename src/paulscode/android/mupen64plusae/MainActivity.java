@@ -127,7 +127,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
                 mAssetsExtracted = 0;
                 AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.dataDir,
                         MainActivity.this );
-                mAppData.setAssetVersion( ASSET_VERSION );
+                mAppData.putAssetVersion( ASSET_VERSION );
             }
             
             updateText( R.string.assetExtractor_finished );

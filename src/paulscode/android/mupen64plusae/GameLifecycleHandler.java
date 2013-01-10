@@ -218,7 +218,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         mCoreRunning = true;
         Notifier.showToast( mActivity, R.string.toast_loadingSession );
         
-        if( !mUserPrefs.toRestart )
+        if( !CoreInterface.isRestarting() )
             NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
         
         NativeMethods.resumeEmulator();

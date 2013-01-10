@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import paulscode.android.mupen64plusae.CheatsMenuHandler;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
@@ -83,12 +82,6 @@ public class UserPrefs
     
     /** The subdirectory containing auto save files. */
     public final String autoSaveDir;
-    
-    /** The selected cheat options. */
-    public final String cheatOptions;
-    
-    /** Whether game should resume or restart. */
-    public final boolean toRestart;
     
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
@@ -246,10 +239,6 @@ public class UserPrefs
         File game = new File( selectedGame );
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
-        
-        // Cheat prefs
-        cheatOptions = CheatsMenuHandler.cheatOptions;
-        toRestart = CheatsMenuHandler.toRestart;
         
         // Plug-ins
         videoPlugin = new Plugin( prefsData, appData.libsDir, "pluginVideo" );

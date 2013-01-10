@@ -46,32 +46,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mupen64="http://schemas.android.com/apk/res/paulscode.android.mupen64plusae" >
 
-    <PreferenceScreen
+    <Preference
         android:icon="@drawable/ic_play"
-        android:key="screenPlay"
-        android:title="@string/screenPlay_title" >
-        <Preference
-            android:icon="@drawable/ic_play"
-            android:key="actionResume"
-            android:summary="@string/actionResume_summary"
-            android:title="@string/actionResume_title" />
-        <Preference
-            android:icon="@drawable/ic_undo"
-            android:key="actionRestart"
-            android:summary="@string/actionRestart_summary"
-            android:title="@string/actionRestart_title" />
-
-        <paulscode.android.mupen64plusae.persistent.PlayerMapPreference
-            android:icon="@drawable/ic_users"
-            android:key="playerMap"
-            android:summary="@string/playerMap_summary"
-            android:title="@string/playerMap_title" />
-
-        <PreferenceCategory
-            android:key="categoryCheats"
-            android:title="@string/categoryCheats_title" >
-        </PreferenceCategory>
-    </PreferenceScreen>
+        android:key="actionPlay"
+        android:title="@string/actionPlay_title" >
+        <intent android:action=".PlayMenuActivity" />
+    </Preference>
 
     <paulscode.android.mupen64plusae.persistent.PathPreference
         android:defaultValue="@string/pathSelectedGame_default"

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="screenPlay" >
+
+    <Preference
+        android:icon="@drawable/ic_play"
+        android:key="actionResume"
+        android:summary="@string/actionResume_summary"
+        android:title="@string/actionResume_title" />
+    <Preference
+        android:icon="@drawable/ic_undo"
+        android:key="actionRestart"
+        android:summary="@string/actionRestart_summary"
+        android:title="@string/actionRestart_title" />
+
+    <paulscode.android.mupen64plusae.persistent.PlayerMapPreference
+        android:icon="@drawable/ic_users"
+        android:key="playerMap"
+        android:summary="@string/playerMap_summary"
+        android:title="@string/playerMap_title" />
+
+    <PreferenceCategory
+        android:key="categoryCheats"
+        android:title="@string/categoryCheats_title" />
+
+</PreferenceScreen>
