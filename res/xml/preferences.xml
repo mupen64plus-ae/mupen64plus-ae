@@ -145,8 +145,8 @@
                         <paulscode.android.mupen64plusae.persistent.SeekBarPreference
                             android:key="touchscreenTransparency"
                             android:dependency="touchscreenEnabled"
-                            android:defaultValue="255"
-                            android:max="255"
+                            android:defaultValue="100"
+                            android:max="100"
                             android:summary="@string/touchscreenTransparency_summary"
                             android:title="@string/touchscreenTransparency_title" />
                         
