@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--In-Game Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="ingameToggleSpeed_title">Geschwindigkeit %1$d %%</string>
+  <string name="ingameSlotSave_title">Steckplatz speichern</string>
+  <string name="ingameSlotLoad_title">Steckplatz laden</string>
+  <string name="ingameSetSlot_title">Steckplatz %1$d</string>
+  <string name="ingameFileSave_title">Speichere in Datei...</string>
+  <string name="ingameFileLoad_title">Lade aus Datei...</string>
+  <string name="ingameSetSpeed_title">Spielgeschwindigkeit</string>
+  <string name="ingameSetIme_title">Wechsle IME</string>
+  <string name="ingameMainMenu_title">Hauptmenü</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_launchingEmulator">Starte Emulator...</string>
+  <string name="toast_resettingGame">Setzte Spiel zurück...</string>
+  <string name="toast_loadingSession">Setze Spiel fort...</string>
+  <string name="toast_savingSession">Speichere Spielstand...</string>
+  <string name="toast_loadingSlot">Lade Steckplatz %1$d…</string>
+  <string name="toast_savingSlot">Speicher Steckplatz %1$d…</string>
+  <string name="toast_loadingFile">Lade %1$s…</string>
+  <string name="toast_savingFile">Speichere %1$s…</string>
+  <string name="toast_overwritingFile">Überschreibe %1$s...</string>
+  <!--Something happened (use '.')-->
+  <string name="toast_usingSlot">Benutzt Steckplatz %1$d.</string>
+  <string name="toast_sdInaccessible">SD Karte nicht zugriffsbereit (nimm sie heraus und versuche es erneut).</string>
+  <string name="toast_crashReportSent">Bericht gesendet.</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Fortsetzen</string>
+  <string name="actionResume_summary">Unberechenbar, wenn Cheats benutzt werden</string>
+  <string name="actionRestart_title">Neustart</string>
+  <string name="actionRestart_summary">Empfohlen, wenn Cheats benutzt werden</string>
+  <string name="actionDeviceInfo_title">Geräteinformation</string>
+  <string name="actionDeviceInfo_summary">Gerätehardware- und Modellinformationen</string>
+  <string name="actionControllerInfo_title">Steuerungsinfo</string>
+  <string name="actionControllerInfo_summary">Zusätzliche Hardware und Modellinformationen</string>
+  <string name="actionControllerDiagnostics_title">Steuerungsdiagnose</string>
+  <string name="actionControllerDiagnostics_summary">Teste reine Verbindungsmöglichkeiten</string>
+  <string name="actionMigrateSlotSaves_title">Importiere Speicherstände</string>
+  <string name="actionMigrateSlotSaves_summary">Kopiere deine Speicherstände von der alten App in diese</string>
+  <string name="actionMigrateSlotSaves_messageNotFound">Keine Dateien zum kopieren.</string>
+  <string name="actionMigrateSlotSaves_messageConfirm">Bist du sicher deine alten Speicherstände zu kopieren? Backups werden erstellt, wenn es nötig ist.</string>
+  <string name="actionMigrateSlotSaves_messageSuccess">Import erfolgreich.</string>
+  <string name="actionReloadAssets_title">Neuladen der App Ressourcen</string>
+  <string name="actionCrashTest_title">Test</string>
+  <string name="actionCrashTest_summary">Sende einen Konfigurationsbericht an die Entwickler</string>
+  <string name="actionResetUserPrefs_title">Zurücksetzen</string>
+  <string name="actionResetUserPrefs_summary">Stelle Standardeinstellungen wiederher</string>
+  <string name="actionResetUserPrefs_popupMessage">Alle Einstellungen auf den Standard zurücksetzen?</string>
+  <string name="actionSetLocale_title">Sprache</string>
+  <string name="actionHelp_title">Hilfe</string>
+  <string name="actionAbout_title">Über</string>
+  <string name="actionAbout_message">Version: %1$s⏎ Version code: %2$d</string>
+  <string name="actionAbout_credits">Danksagung</string>
+  <!--Preference Screens-->
+  <string name="screenPlay_title">Spielen</string>
+  <string name="screenSettings_title">Einstellungen</string>
+  <string name="screenInput_title">Eingabe</string>
+  <string name="screenTouchscreen_title">Touchscreen</string>
+  <string name="screenTouchpad_title">Touchpad</string>
+  <string name="screenTouchpad_summary">Xperia PLAY Einstellungen</string>
+  <string name="screenVideo_title">Video</string>
+  <string name="screenVideo_summary">Grafikeinstellungen</string>
+  <string name="screenAudio_title">Audio</string>
+  <string name="screenAudio_summary">Toneinstellungen</string>
+  <string name="screenPlugin_title">Plug-ins</string>
+  <string name="screenPlugin_summary">Emulator Einstellungen</string>
+  <string name="screenAdvanced_title">Fortgeschritten</string>
+  <string name="screenAdvanced_summary">Speicher- und Debugeinstellungen</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Cheatoptionen (gedrückt halten für Notizen)</string>
+  <string name="categoryHardware_title">Hardware</string>
+  <string name="categoryOther_title">Anderes</string>
+  <string name="categorySinglePlayer_title">Spieler 1</string>
+  <string name="categoryMultiPlayer_title">Multiplayer</string>
+  <string name="categoryGles2N64_title">GLES2N64 Einstellungen</string>
+  <string name="categoryGles2Rice_title">GLES2Rice Einstellungen</string>
+  <string name="categoryDiagnostics_title">Diagnose</string>
+  <string name="categoryData_title">Data</string>
+  <string name="categoryCrashReports_title">Absturzberichte</string>
+  <!--Checkbox Preferences-->
+  <string name="touchscreenEnabled_title">Aktiviere Touchscreen</string>
+  <string name="touchscreenHidden_title">Verstecke Knöpfe</string>
+  <string name="touchpadEnabled_title">Aktiviere Touchpad</string>
+  <string name="videoStretch_title">Bild strecken</string>
+  <string name="videoStretch_summary">Könnte das Bild verzerren</string>
+  <string name="videoUseFramelimiter_title">Verwende Framebegrenzung</string>
+  <string name="videoUseFramelimiter_summary">Einschalten für ein flüssigeres Gameplay (verlangsamt manche Spiele)</string>
+  <string name="videoRgba8888_title">RGBA_8888 Farbmodus</string>
+  <string name="videoRgba8888_summary">Verbessert die Grafik auf manchen Geräten</string>
+  <string name="gles2N64Fog_title">Nebel</string>
+  <string name="gles2N64Fog_summary">(benötigt Arbeit)</string>
+  <string name="gles2RiceHiResTextures_title">Hochauflösende Texturen</string>
+  <string name="gles2RiceHiResTextures_summary">Benutze importierte Texturpakete</string>
+  <!--List Preferences (selected value will become the summary)-->
+  <string name="touchscreenLayout_title">Touchscreen Anordnung</string>
+  <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
+  <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>
+  <string name="touchscreenLayout_entryCustom">Benutzerdefiniert (siehe http://tinyurl.com/984ofyo)</string>
+  <string name="touchscreenSize_title">Bildgröße</string>
+  <string name="touchscreenSize_entryTiny">Winzig</string>
+  <string name="touchscreenSize_entrySmall">Klein</string>
+  <string name="touchscreenSize_entryNormal">Normal</string>
+  <string name="touchscreenSize_entryTablet">Tablet</string>
+  <string name="touchscreenRefresh_title">Joystick Animation</string>
+  <string name="touchscreenRefresh_entryNever">Nie</string>
+  <string name="touchscreenRefresh_entryOccasionally">Gelegentlich</string>
+  <string name="touchscreenRefresh_entryFrequently">Vielfach</string>
+  <string name="touchpadLayout_title">Touchpad-Anordnung</string>
+  <string name="touchpadLayout_entryDefault">Linkes Pad: Analog-Stick; Rechtes Pad: C-Knöpfe</string>
+  <string name="touchpadLayout_entryReverse">Linkes Pad: C-Knöpfe; Rechtes Pad: Analog-Stick</string>
+  <string name="videoOrientation_title">Bildausrichtung</string>
+  <string name="videoOrientation_entryLandscape">Landscape</string>
+  <string name="videoOrientation_entryReverseLandscape">Umgekehrter Landscape</string>
+  <string name="videoOrientation_entryPortrait">Portrait</string>
+  <string name="videoOrientation_entryReversePortrait">Umgekehrtes Portrait</string>
+  <string name="videoFpsRefresh_title">Zeige die Framerate</string>
+  <!--ACRA Preferences (key names must not be changed)-->
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <!--Player Map Preferences-->
+  <!--Input Map Preferences-->
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <!--Text Editor Hints (start lower-case)-->
+  <!--Asset Extractor-->
+  <!--Cheats Configuration-->
+  <!--Hi-Res Texture Unpacking-->
+  <!--Player Mapping-->
+  <!--Input Mapping-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--Controller Diagnostics-->
+</resources>
