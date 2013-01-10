@@ -58,6 +58,7 @@ public class OptionDialog
             (
                 new AdapterView.OnItemLongClickListener()
                 {
+                    @Override
                     public boolean onItemLongClick( AdapterView<?> adapterView, View view, int position, long id )
                     {
                         mListener.onOptionLongPress( position );
@@ -80,6 +81,7 @@ public class OptionDialog
         mBuilder.setSingleChoiceItems( mOptions, -1,
                                        new DialogInterface.OnClickListener()
                                        {
+                                           @Override
                                            public void onClick( DialogInterface dialog, int which )
                                            {
                                                dialog.dismiss();

@@ -37,7 +37,10 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     private TextView mValueText;
     private Context mContext;
 
-    private int mDefault, mMax, mProgress ,mValue = 0;
+    private int mDefault;
+    private int mMax;
+    private int mProgress;
+    private int mValue = 0;
 
     public SeekBarPreference(Context context, AttributeSet attrs)
     { 
@@ -59,7 +62,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         mValueText = new TextView(mContext);
         mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
         params = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, 
+            LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT);
         layout.addView(mValueText, params);
 
@@ -93,13 +96,17 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
             mValue = (Integer)defaultValue;
     }
 
+    @Override
     public void onProgressChanged(SeekBar seek, int progress, boolean fromTouch)
     {
         mProgress = progress;
         mValueText.setText(String.valueOf(progress));
     }
 
+    @Override
     public void onStartTrackingTouch(SeekBar seek) {}
+
+    @Override
     public void onStopTrackingTouch(SeekBar seek) {}
   
     @Override

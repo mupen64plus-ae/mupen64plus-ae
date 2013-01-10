@@ -59,7 +59,8 @@ public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implem
         // The checked state is controlled by the option dialog choice
         mDialog.getDialog().show();
     }
-    
+
+    @Override
     public void onOptionChoice( int choice )
     {
         setChecked( choice != 0 );
@@ -71,6 +72,8 @@ public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implem
 
         mChoice = choice - 1;
     }
+
+    @Override
     public void onOptionLongPress( int item )
     {
         // TODO: Look through cheat options to see if any have really long strings.
