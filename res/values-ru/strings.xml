@@ -1,0 +1,235 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--In-Game Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="ingameToggleSpeed_title">Скорость %1$d %%</string>
+  <string name="ingameSetSlot_title">Слот %1$d</string>
+  <string name="ingameFileSave_title">Сохранение в файл…</string>
+  <string name="ingameFileLoad_title">Загрузка из файла…</string>
+  <string name="ingameSetSpeed_title">Скорость игры</string>
+  <string name="ingameSetIme_title">Выбор метода ввода</string>
+  <string name="ingameMainMenu_title">Главное меню</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_launchingEmulator">Эмулятор запускается…</string>
+  <string name="toast_resettingGame">Перезапуск игры…</string>
+  <string name="toast_loadingSession">Возобновление игры…</string>
+  <string name="toast_savingSession">Авто-сохранение…</string>
+  <!--Something happened (use '.')-->
+  <string name="toast_sdInaccessible">Карта недоступна</string>
+  <string name="toast_crashReportSent">Отчёт отправлен.</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Продолжить</string>
+  <string name="actionResume_summary">Возможно использование чит-кодов</string>
+  <string name="actionRestart_title">Перезапуск</string>
+  <string name="actionRestart_summary">Рекомендуется при использовании читов.</string>
+  <string name="actionDeviceInfo_title">Сведения об устройстве</string>
+  <string name="actionDeviceInfo_summary">Модель и аппаратные характеристики</string>
+  <string name="actionControllerInfo_title">Устройства ввода</string>
+  <string name="actionControllerDiagnostics_title">Проверка устройств ввода</string>
+  <string name="actionMigrateSlotSaves_title">Импортировать сохранения</string>
+  <string name="actionMigrateSlotSaves_summary">Скопировать файлы сохранений в эту версию эмулятора</string>
+  <string name="actionMigrateSlotSaves_messageNotFound">Нет файлов для копирования</string>
+  <string name="actionMigrateSlotSaves_messageSuccess">Перенос прошёлуспешно</string>
+  <string name="actionReloadAssets_title">Перезагрузить ресурсы</string>
+  <string name="actionCrashTest_title">Проверка</string>
+  <string name="actionCrashTest_summary">Отправить отчёт разработчикам</string>
+  <string name="actionResetUserPrefs_title">Сброс</string>
+  <string name="actionResetUserPrefs_summary">Восстановить настройки по умолчанию</string>
+  <string name="actionResetUserPrefs_popupMessage">Сбросить настройки на дефолтные?</string>
+  <string name="actionSetLocale_title">Язык</string>
+  <string name="actionHelp_title">Помощь</string>
+  <string name="actionHelp_message">Mupen64Plus разрабатывается добровольцами.\n\nВнесите свой вклад!</string>
+  <string name="actionHelp_faq">ЧАВО</string>
+  <string name="actionHelp_reportbug">Сообщить об ошибке</string>
+  <string name="actionAbout_title">О программе</string>
+  <string name="actionAbout_message">Версия: %1$s\nКод версии: %2$d</string>
+  <string name="actionAbout_credits">Благодарности</string>
+  <string name="actionAbout_changelog">Список изменений</string>
+  <!--Preference Screens-->
+  <string name="screenPlay_title">Продолжить игру</string>
+  <string name="screenSettings_title">Настройки</string>
+  <string name="screenInput_title">Ввод</string>
+  <string name="screenInput_summary">Настройки управления</string>
+  <string name="screenTouchscreen_title">Тачскрин</string>
+  <string name="screenTouchscreen_summary">Параметры экранных кнопок</string>
+  <string name="screenTouchpad_title">Тачпад</string>
+  <string name="screenTouchpad_summary">Для Xperia PLAY</string>
+  <string name="screenVideo_title">Видео</string>
+  <string name="screenVideo_summary">Настройки графики</string>
+  <string name="screenAudio_title">Звук</string>
+  <string name="screenAudio_summary">Аудио параметры</string>
+  <string name="screenPlugin_title">Плагины</string>
+  <string name="screenPlugin_summary">Параметры эмулятора</string>
+  <string name="screenAdvanced_title">Другое</string>
+  <string name="screenAdvanced_summary">Диагностика и другие настройки</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Чит-коды (нажмите и удерживайте для показа справки)</string>
+  <string name="categoryHardware_title">Оборудование</string>
+  <string name="categoryGles2N64_title">Настройки GLES2N64</string>
+  <string name="categoryGles2Rice_title">Настройки GLES2Rice</string>
+  <string name="categoryCrashReports_title">Сообщения об ошибках</string>
+  <!--Checkbox Preferences-->
+  <string name="touchscreenEnabled_title">Использовать тачскрин</string>
+  <string name="touchscreenHidden_title">Скрыть кнопки</string>
+  <string name="touchpadEnabled_title">Использовать экранные кнопки</string>
+  <string name="inputVolumeMappable_summary">Разрешить переназначение кнопок управления звуком</string>
+  <string name="videoStretch_title">Растянуть экран</string>
+  <string name="videoStretch_summary">Можно искажать соотношение сторон</string>
+  <string name="videoUseFramelimiter_title">Ограничить FPS</string>
+  <string name="videoUseFramelimiter_summary">Плавнее, но ниже FPS</string>
+  <string name="videoRgba8888_title">Режим RGBA_8888</string>
+  <string name="videoRgba8888_summary">Улучшает картинку на некоторых устройствах</string>
+  <string name="gles2N64Fog_title">Туман</string>
+  <string name="gles2N64Fog_summary">(требует доработки)</string>
+  <string name="gles2N64ScreenClear_title">Форсировать очистку экрана</string>
+  <string name="gles2N64ScreenClear_summary">При отключении возможны помехи</string>
+  <string name="gles2N64AlphaTest_title">Проверка прозрачности</string>
+  <string name="gles2N64AlphaTest_summary">При отключении возможны чёрные квадраты на месте текстур</string>
+  <string name="gles2N64DepthTest_title">Проверка глубины</string>
+  <string name="gles2N64DepthTest_summary">При отключении возможны блики</string>
+  <string name="gles2RiceAutoFrameskip_title">Автоматический пропуск кадров</string>
+  <string name="gles2RiceAutoFrameskip_summary">Улучшает скорость ценой FPS</string>
+  <string name="gles2RiceFastTextureCrc_title">Быстрая CRC текстур</string>
+  <string name="gles2RiceFastTextureCrc_summary">Улучшает скорость ценой качества 2D</string>
+  <string name="gles2RiceFastTexture_title">Быстрая загрузка текстур</string>
+  <string name="gles2RiceHiResTextures_title">Текстуры высокого разрешения</string>
+  <string name="audioSwapChannels_title">Поменять местами аудио каналы</string>
+  <string name="audioSwapChannels_summary">Меняет местами звук слева и справа</string>
+  <!--List Preferences (selected value will become the summary)-->
+  <string name="touchscreenLayout_title">Тип экранных кнопок</string>
+  <string name="touchscreenLayout_entryAnalog">Аналоговый (от roymustang16)</string>
+  <string name="touchscreenLayout_entryDigital">Цифровой (от roymustang16)</string>
+  <string name="touchscreenLayout_entryCustom">Свой (см http://tinyurl.com/984ofyo)</string>
+  <string name="touchscreenSize_title">Размер экрана</string>
+  <string name="touchscreenSize_entryTiny">Крохотный</string>
+  <string name="touchscreenSize_entrySmall">Небольшой</string>
+  <string name="touchscreenSize_entryNormal">Нормальный</string>
+  <string name="touchscreenSize_entryTablet">Планшетный</string>
+  <string name="touchscreenRefresh_entryNever">Никогда</string>
+  <string name="touchscreenRefresh_entryOccasionally">Изредка</string>
+  <string name="touchscreenRefresh_entryFrequently">Часто</string>
+  <string name="touchpadLayout_title">Расположение экранных кнопок</string>
+  <string name="touchpadLayout_entryDefault">Слева джойстик, справа кнопки</string>
+  <string name="touchpadLayout_entryReverse">Слева кнопки, справа джойстик</string>
+  <string name="videoOrientation_title">Ориентация экрана</string>
+  <string name="videoOrientation_entryLandscape">Альбомная</string>
+  <string name="videoOrientation_entryReverseLandscape">Зеркальная альбомная</string>
+  <string name="videoOrientation_entryPortrait">Портретная</string>
+  <string name="videoOrientation_entryReversePortrait">Зеркальная портретная</string>
+  <string name="videoFpsRefresh_title">Отображать FPS</string>
+  <string name="videoFpsRefresh_entryNever">Никогда</string>
+  <string name="videoFpsRefresh_entryOccasionally">Изредка</string>
+  <string name="videoFpsRefresh_entryFrequently">Часто</string>
+  <string name="gles2N64Frameskip_title">Пропуск кадров</string>
+  <string name="gles2N64Frameskip_entryNever">Не пропускать</string>
+  <string name="gles2N64Frameskip_entryUpTo1">Не больше 1</string>
+  <string name="gles2N64Frameskip_entryUpTo2">Не больше 2</string>
+  <string name="gles2N64Frameskip_entryUpTo3">Не больше 3</string>
+  <string name="gles2N64Frameskip_entryUpTo4">Не больше 4</string>
+  <string name="gles2N64Frameskip_entryUpTo5">Не больше 5</string>
+  <string name="gles2N64Frameskip_entryExactly1">Всегда 1</string>
+  <string name="gles2N64Frameskip_entryExactly2">Всегда 2</string>
+  <string name="gles2N64Frameskip_entryExactly3">Всегда 3</string>
+  <string name="gles2N64Frameskip_entryExactly4">Всегда 4</string>
+  <string name="gles2N64Frameskip_entryExactly5">Всегда 5</string>
+  <string name="pluginVideo_title">Видео плагин</string>
+  <string name="pluginVideo_entryNone">Заглушка (выключить изображение)</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (порт GLN64 под Android и GLES2 за авторством Orkin, Adventus, Yongzh, Paul Lamb)</string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (порт Rice Video под GLES2 для m64p v1.99.5 за авторством Rice, Kris (Metricity))</string>
+  <string name="pluginAudio_title">Звуковой плагин</string>
+  <string name="pluginAudio_entryNone">Заглушка (выключить звук)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (порт под Android для Mupen64Plus за авторством Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginInput_title">Плагин ввода</string>
+  <string name="pluginInput_entryNone">Заглушка</string>
+  <string name="pluginInput_entrySdl">input-sdl, v1.10 (порт под Android для Mupen64Plus за авторством Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_title">Reality signal processor (RSP)</string>
+  <string name="pluginRsp_entryNone">Выключен</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (порт под Android для Mupen64Plus за авторством Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (спид-хак, без поддержки звука Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_title">Ядро эмулятора</string>
+  <string name="pluginCore_entryV110">core, v1.10 (порт Mupen64Plus под Android за авторством Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <!--ACRA Preferences (key names must not be changed)-->
+  <string name="acraEnable_title">Разрешить отправку сообщений об ошибках</string>
+  <string name="acraEnable_summary">Вся информация собирается анонимно</string>
+  <string name="acraUserEmail_title">Ваши контактные данные</string>
+  <string name="acraUserEmail_summary">Имя пользователя на paulscode.com</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <string name="pathPreference_dialogTitle">Выбранная папка: %1$s</string>
+  <string name="pathSelectedGame_title">Игра</string>
+  <string name="pathSelectedGame_default">~roms/n64</string>
+  <string name="pathCustomTouchscreen_default">~</string>
+  <string name="pathHiResTextures_title">Указать путь к архиву с текстурами</string>
+  <string name="pathHiResTextures_default">~</string>
+  <string name="pathGameSaves_title">Папка для сохранений</string>
+  <string name="pathGameSaves_default">!mupen64plus</string>
+  <!--Player Map Preferences-->
+  <string name="playerMap_title">Многопользовательская игра</string>
+  <!--Input Map Preferences-->
+  <string name="inputMap2_title">Игрок 2</string>
+  <string name="inputMap3_title">Игрок 3</string>
+  <string name="inputMap4_title">Игрок 4</string>
+  <string name="inputMap_summary">Настройка кнопок</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Подтверждение</string>
+  <string name="confirmResetGame_message">Сбросить игру? Прогресс с момента последнего сохранения будет потерян.</string>
+  <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">имя файла</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_finished">Готово</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_longPress">(нажмите и удерживайте для полного описания)</string>
+  <string name="cheatNotes_title">Примечания</string>
+  <string name="cheatNotes_none">(для этого чит-кода нет примечаний)</string>
+  <string name="cheatOption_title">Полный текст</string>
+  <string name="cheat_disabled">(выключ.)</string>
+  <string name="cheatsTaskHandler_message">Подождите немного.</string>
+  <string name="cheats_title">Чит-коды</string>
+  <string name="cheats_summary">Выберите игру</string>
+  <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesPath_title">Выберите пакет с текстурами (в zip)</string>
+  <string name="pathHiResTexturesTask_title">Извлечение текстур</string>
+  <string name="pathHiResTexturesTask_message">Подождите немного.</string>
+  <string name="pathHiResTexturesTask_errorMessage">Ошибка при извлечении текстур!</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithoutName">Устройство %1$d</string>
+  <string name="playerMapPreference_popupTitle">Игрок %1$d</string>
+  <string name="playerMapPreference_popupUnmap">Сброс</string>
+  <!--Input Mapping-->
+  <string name="inputMapPreference_popupUnmap">Сбросить</string>
+  <string name="inputMapPreference_btnA">A</string>
+  <string name="inputMapPreference_btnB">B</string>
+  <string name="inputMapPreference_btnC">C</string>
+  <string name="inputMapPreference_btnL">L</string>
+  <string name="inputMapPreference_btnR">R</string>
+  <string name="inputMapPreference_btnZ">Z</string>
+  <string name="inputMapPreference_btnS">S</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="inputMapPreference_reset">Сброс</string>
+  <string name="inputMapPreference_pause">Пауза</string>
+  <string name="inputMapPreference_fastForward">Ускорение времени</string>
+  <string name="inputMapPreference_speedDown">Скорость ниже</string>
+  <string name="inputMapPreference_speedUp">Скорость выше</string>
+  <string name="inputMapPreference_gameshark">Gameshark</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Нажмите кнопку…</string>
+</resources>
