@@ -59,9 +59,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String PLAYER_MAP = "playerMap";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     
-    // App data and user preferences
+    // App data
     private AppData mAppData = null;
-    private UserPrefs mUserPrefs = null;
     
     // Handle to the thread populating the cheat options
     private Thread crcThread = null;
@@ -83,7 +82,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        mUserPrefs = new UserPrefs( this );
+        UserPrefs userPrefs = new UserPrefs( this );
         
         // Define the path to the object holding cheat preferences. We use a different file than the
         // default one used by MenuActivity and UserPrefs so that they stay decoupled.
@@ -98,11 +97,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESTART, this );
         
         // Hide the multi-player menu if not needed
-        if( !mUserPrefs.playerMap.isEnabled() )
+        if( !userPrefs.playerMap.isEnabled() )
             PrefUtil.removePreference( this, SCREEN_PLAY, PLAYER_MAP );
         
         // Populate cheats category with menu items
-        if( mUserPrefs.selectedGame.equals( mAppData.getLastRom() ) )
+        if( userPrefs.selectedGame.equals( mAppData.getLastRom() ) )
         {
             // Use the cached CRC and add the cheats menu items
             build( mAppData.getLastCrc() );
@@ -110,7 +109,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         else
         {
             // Recompute the CRC in a separate thread, then add the cheats menu items
-            rebuild( mUserPrefs.selectedGame );
+            rebuild( userPrefs.selectedGame );
         }
     }
     
@@ -293,6 +292,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private void launchGame( boolean isRestarting )
     {
+        // Wait for the CRC calculation thread to finish
         SafeMethods.join( crcThread, 0 );
         
         // Make sure that the storage is accessible
@@ -304,9 +304,10 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
         
         // Make sure that the game save subdirectories exist so that we can write to them
-        new File( mUserPrefs.manualSaveDir ).mkdirs();
-        new File( mUserPrefs.slotSaveDir ).mkdirs();
-        new File( mUserPrefs.autoSaveDir ).mkdirs();
+        UserPrefs userPrefs = new UserPrefs( this );
+        new File( userPrefs.manualSaveDir ).mkdirs();
+        new File( userPrefs.slotSaveDir ).mkdirs();
+        new File( userPrefs.autoSaveDir ).mkdirs();
         
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_launchingEmulator );
@@ -315,7 +316,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         CoreInterface.setStartupMode( getCheatArgs(), isRestarting );
         
         // Launch the appropriate game activity
-        Intent intent = mUserPrefs.isTouchpadEnabled ? new Intent( this,
+        Intent intent = userPrefs.isTouchpadEnabled ? new Intent( this,
                 GameActivityXperiaPlay.class ) : new Intent( this, GameActivity.class );
         
         startActivity( intent );
