@@ -120,6 +120,13 @@ public class PlayerMapPreference extends DialogPreference implements
     @Override
     protected void onRestoreInstanceState( Parcelable state )
     {
+        if( state == null || !state.getClass().equals( SavedStringState.class ) )
+        {
+            // Didn't save state for us in onSaveInstanceState
+            super.onRestoreInstanceState( state );
+            return;
+        }
+        
         final SavedStringState myState = (SavedStringState) state;
         super.onRestoreInstanceState( myState.getSuperState() );
         mMap.deserialize( myState.mValue );
