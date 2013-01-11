@@ -32,6 +32,7 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.TaskHandler.Task;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -288,9 +289,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private void launchGame( boolean isRestarting )
     {
-        // Although this is apparently not necessary, there is no difference in the delay by
-        // commenting it out:
-        // SafeMethods.join( crcThread, 0 );
+        SafeMethods.join( crcThread, 0 );
         
         // Make sure that the storage is accessible
         if( !mAppData.isSdCardAccessible() )
