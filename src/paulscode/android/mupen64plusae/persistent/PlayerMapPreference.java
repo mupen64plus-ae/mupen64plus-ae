@@ -25,16 +25,13 @@ import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 public class PlayerMapPreference extends DialogPreference implements
@@ -50,21 +47,9 @@ public class PlayerMapPreference extends DialogPreference implements
     
     private String mValue = "";
     
-    private void log( String func )
-    {
-        log( func, 0 );
-    }
-    
-    private void log( String func, int num )
-    {
-        Log.w( "PlayerMapPreference", func + num + " val(" + mValue + ") map(" + mMap.serialize() + ")" );
-    }
-    
     public PlayerMapPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
-        
-        // Setup the layout
         setDialogLayoutResource( R.layout.player_map_preference );
     }
     
@@ -83,43 +68,18 @@ public class PlayerMapPreference extends DialogPreference implements
     @Override
     protected Object onGetDefaultValue( TypedArray a, int index )
     {
-        log( "onGetDefaultValue" );
         return a.getString( index );
     }
     
     @Override
     protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
     {
-        log( "onSetInitialValue" );
         setValue( restorePersistedValue ? getPersistedString( mValue ) : (String) defaultValue );
-        log( "onSetInitialValue", 1 );
-    }
-    
-    @Override
-    protected View onCreateView( ViewGroup parent )
-    {
-        log( "onCreateView" );
-        return super.onCreateView( parent );
-    }
-    
-    @Override
-    protected void onBindView( View view )
-    {
-        log( "onBindView" );
-        super.onBindView( view );
-    }
-    
-    @Override
-    protected View onCreateDialogView()
-    {
-        log( "onCreateDialogView" );
-        return super.onCreateDialogView();
     }
     
     @Override
     protected void onBindDialogView( View view )
     {
-        log( "onBindDialogView" );
         // Set up the dialog view seen when the preference menu item is clicked
         super.onBindDialogView( view );
         
@@ -127,8 +87,7 @@ public class PlayerMapPreference extends DialogPreference implements
         UserPrefs prefs = new UserPrefs( getContext() );
         mUnmappableKeyCodes = prefs.unmappableKeyCodes;
         mMap.deserialize( mValue );
-        log( "onBindDialogView", 1 );
-
+        
         // Initialize and refresh the widgets
         buttonPlayer1 = setupButton( view, R.id.btnPlayer1, prefs.inputMap1.isEnabled() );
         buttonPlayer2 = setupButton( view, R.id.btnPlayer2, prefs.inputMap2.isEnabled() );
@@ -138,16 +97,8 @@ public class PlayerMapPreference extends DialogPreference implements
     }
     
     @Override
-    protected void onPrepareDialogBuilder( Builder builder )
-    {
-        log( "onPrepareDialogBuilder" );
-        super.onPrepareDialogBuilder( builder );
-    }
-    
-    @Override
     protected void onDialogClosed( boolean positiveResult )
     {
-        log( "onDialogClosed" );
         super.onDialogClosed( positiveResult );
         
         if( positiveResult )
@@ -161,7 +112,6 @@ public class PlayerMapPreference extends DialogPreference implements
     @Override
     protected Parcelable onSaveInstanceState()
     {
-        log( "onSaveInstanceState" );
         final SavedStringState myState = new SavedStringState( super.onSaveInstanceState() );
         myState.mValue = mMap.serialize();
         return myState;
@@ -174,7 +124,6 @@ public class PlayerMapPreference extends DialogPreference implements
         super.onRestoreInstanceState( myState.getSuperState() );
         mMap.deserialize( myState.mValue );
         updateViews();
-        log( "onRestoreInstanceState" );
     }
     
     @Override
@@ -211,14 +160,11 @@ public class PlayerMapPreference extends DialogPreference implements
                     @Override
                     public void OnInputCode( int inputCode, int hardwareId )
                     {
-                        log( "promptPlayer" );
                         if( inputCode == 0 )
                             mMap.unmapPlayer( player );
                         else
                             mMap.map( hardwareId, player );
-                        log( "promptPlayer", 1 );
                         updateViews();
-                        log( "promptPlayer", 2 );
                     }
                 } );
     }
