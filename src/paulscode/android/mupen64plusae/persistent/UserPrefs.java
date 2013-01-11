@@ -109,7 +109,7 @@ public class UserPrefs
     
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
-
+    
     /** The touchscreen transparency value. */
     public final int touchscreenTransparency;
     
@@ -250,8 +250,9 @@ public class UserPrefs
         // Touchscreen prefs
         isTouchscreenEnabled = prefsData.getBoolean( "touchscreenEnabled", true );
         touchscreenRefresh = getSafeInt( prefsData, "touchscreenRefresh", 0 );
-        isTouchscreenHidden = prefsData.getBoolean( "touchscreenHidden", false );
-        touchscreenTransparency = prefsData.getInt("touchscreenTransparency", 255);
+        int transparencyPercent = prefsData.getInt( "touchscreenTransparency", 100 );
+        isTouchscreenHidden = transparencyPercent == 0;
+        touchscreenTransparency = ( 255 * transparencyPercent ) / 100;
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = prefsData.getBoolean( "touchpadEnabled", false );

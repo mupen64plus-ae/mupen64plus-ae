@@ -271,7 +271,7 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
             }
             return true;
         }
-        else if( keyDown )
+        else if( !keyDown )
         {
             switch( n64Index )
             {

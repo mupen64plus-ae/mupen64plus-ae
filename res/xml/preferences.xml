@@ -115,21 +115,14 @@
                             android:key="touchscreenRefresh"
                             android:title="@string/touchscreenRefresh_title" />
 
-                        <CheckBoxPreference
-                            android:defaultValue="false"
-                            android:dependency="touchscreenEnabled"
-                            android:key="touchscreenHidden"
-                            android:summary="@string/touchscreenHidden_summary"
-                            android:title="@string/touchscreenHidden_title" />
-
                         <paulscode.android.mupen64plusae.persistent.SeekBarPreference
-                            android:key="touchscreenTransparency"
+                            android:defaultValue="100"
                             android:dependency="touchscreenEnabled"
-                            android:defaultValue="255"
-                            android:max="255"
-                            android:summary="@string/touchscreenTransparency_summary"
-                            android:title="@string/touchscreenTransparency_title" />
-                        
+                            android:key="touchscreenTransparency"
+                            android:title="@string/touchscreenTransparency_title"
+                            mupen64:maximumValue="100"
+                            mupen64:stepSize="10"
+                            mupen64:units="%" />
                     </PreferenceScreen>
                     <PreferenceScreen
                         android:icon="@drawable/ic_xperia"
