@@ -64,7 +64,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private UserPrefs mUserPrefs = null;
     
     // Handle to the thread populating the cheat options
-    @SuppressWarnings( "unused" )
     private Thread crcThread = null;
     
     // Don't need to call these every time the orientation changes
@@ -90,7 +89,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // default one used by MenuActivity and UserPrefs so that they stay decoupled.
         String cheatPrefsFilename = mAppData.packageName + "_cheatprefs";
         getPreferenceManager().setSharedPreferencesName( cheatPrefsFilename );
-
+        
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_play );
         
