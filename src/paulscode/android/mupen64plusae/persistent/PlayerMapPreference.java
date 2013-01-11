@@ -25,18 +25,22 @@ import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
+import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
 public class PlayerMapPreference extends DialogPreference implements
         DialogInterface.OnClickListener, View.OnClickListener
 {
-    private final PlayerMap mMap;
+    private final PlayerMap mMap = new PlayerMap();
     private List<Integer> mUnmappableKeyCodes;
     
     private Button buttonPlayer1;
@@ -44,80 +48,133 @@ public class PlayerMapPreference extends DialogPreference implements
     private Button buttonPlayer3;
     private Button buttonPlayer4;
     
+    private String mValue = "";
+    
+    private void log( String func )
+    {
+        log( func, 0 );
+    }
+    
+    private void log( String func, int num )
+    {
+        Log.w( "PlayerMapPreference", func + num + " val(" + mValue + ") map(" + mMap.serialize() + ")" );
+    }
+    
     public PlayerMapPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
         
-        mMap = new PlayerMap();
+        // Setup the layout
         setDialogLayoutResource( R.layout.player_map_preference );
+    }
+    
+    public void setValue( String value )
+    {
+        mValue = value;
+        if( shouldPersist() )
+            persistString( mValue );
+    }
+    
+    public String getValue()
+    {
+        return mValue;
     }
     
     @Override
     protected Object onGetDefaultValue( TypedArray a, int index )
     {
+        log( "onGetDefaultValue" );
         return a.getString( index );
     }
     
     @Override
     protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
     {
-        if( restorePersistedValue )
-        {
-            // Restore persisted value
-            mMap.deserialize( getPersistedString( "" ) );
-        }
-        else
-        {
-            // Set default state from the XML attribute
-            String value = (String) defaultValue;
-            persistString( value );
-            mMap.deserialize( value );
-        }
-        updateViews();
+        log( "onSetInitialValue" );
+        setValue( restorePersistedValue ? getPersistedString( mValue ) : (String) defaultValue );
+        log( "onSetInitialValue", 1 );
+    }
+    
+    @Override
+    protected View onCreateView( ViewGroup parent )
+    {
+        log( "onCreateView" );
+        return super.onCreateView( parent );
     }
     
     @Override
     protected void onBindView( View view )
     {
-        // Set up the menu item seen in the preferences menu
+        log( "onBindView" );
         super.onBindView( view );
-        
-        // Restore the persisted map
-        mMap.deserialize( getPersistedString( "" ) );
+    }
+    
+    @Override
+    protected View onCreateDialogView()
+    {
+        log( "onCreateDialogView" );
+        return super.onCreateDialogView();
     }
     
     @Override
     protected void onBindDialogView( View view )
     {
+        log( "onBindDialogView" );
         // Set up the dialog view seen when the preference menu item is clicked
         super.onBindDialogView( view );
         
-        // Disable any buttons that do not apply
+        // Set the member variables
         UserPrefs prefs = new UserPrefs( getContext() );
         mUnmappableKeyCodes = prefs.unmappableKeyCodes;
+        mMap.deserialize( mValue );
+        log( "onBindDialogView", 1 );
+
+        // Initialize and refresh the widgets
         buttonPlayer1 = setupButton( view, R.id.btnPlayer1, prefs.inputMap1.isEnabled() );
         buttonPlayer2 = setupButton( view, R.id.btnPlayer2, prefs.inputMap2.isEnabled() );
         buttonPlayer3 = setupButton( view, R.id.btnPlayer3, prefs.inputMap3.isEnabled() );
         buttonPlayer4 = setupButton( view, R.id.btnPlayer4, prefs.inputMap4.isEnabled() );
-        
-        // Refresh the dialog view
         updateViews();
+    }
+    
+    @Override
+    protected void onPrepareDialogBuilder( Builder builder )
+    {
+        log( "onPrepareDialogBuilder" );
+        super.onPrepareDialogBuilder( builder );
     }
     
     @Override
     protected void onDialogClosed( boolean positiveResult )
     {
+        log( "onDialogClosed" );
+        super.onDialogClosed( positiveResult );
+        
         if( positiveResult )
         {
-            // User pressed Ok: clean the state by persisting map
-            persistString( mMap.serialize() );
-            notifyChanged();
+            String value = mMap.serialize();
+            if( callChangeListener( value ) )
+                setValue( value );
         }
-        else
-        {
-            // User pressed Cancel/Back: clean the state by restoring map
-            mMap.deserialize( getPersistedString( "" ) );
-        }
+    }
+    
+    @Override
+    protected Parcelable onSaveInstanceState()
+    {
+        log( "onSaveInstanceState" );
+        final SavedStringState myState = new SavedStringState( super.onSaveInstanceState() );
+        myState.mValue = mMap.serialize();
+        return myState;
+    }
+    
+    @Override
+    protected void onRestoreInstanceState( Parcelable state )
+    {
+        final SavedStringState myState = (SavedStringState) state;
+        super.onRestoreInstanceState( myState.getSuperState() );
+        mMap.deserialize( myState.mValue );
+        updateViews();
+        log( "onRestoreInstanceState" );
     }
     
     @Override
@@ -154,11 +211,14 @@ public class PlayerMapPreference extends DialogPreference implements
                     @Override
                     public void OnInputCode( int inputCode, int hardwareId )
                     {
+                        log( "promptPlayer" );
                         if( inputCode == 0 )
                             mMap.unmapPlayer( player );
                         else
                             mMap.map( hardwareId, player );
+                        log( "promptPlayer", 1 );
                         updateViews();
+                        log( "promptPlayer", 2 );
                     }
                 } );
     }

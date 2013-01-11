@@ -184,8 +184,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         int newValue = Math.round( value / (float) mStepSize ) * mStepSize;
         
         // Address issues when mStepSize is not an integral factor of mMaxValue
-        // e.g. mMaxValue = 100, mStepSize = 9, progress = 100 --> mValue = 99 (should be 100)
-        // e.g. mMaxValue = 100, mStepSize = 6, progress = 99 --> mValue = 102 (should be 100)
+        // e.g. mMaxValue = 100, mStepSize = 9, progress = 100 --> newValue = 99 (should be 100)
+        // e.g. mMaxValue = 100, mStepSize = 6, progress = 99 --> newValue = 102 (should be 100)
         if( value == mMaxValue || newValue > mMaxValue )
             newValue = mMaxValue;
         
