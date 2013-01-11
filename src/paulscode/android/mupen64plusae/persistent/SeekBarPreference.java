@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.persistent;
 import paulscode.android.mupen64plusae.R;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -157,6 +158,29 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
             if( callChangeListener( value ) )
                 setValue( value );
         }
+    }
+    
+    @Override
+    protected Parcelable onSaveInstanceState()
+    {
+        final SavedIntegerState myState = new SavedIntegerState( super.onSaveInstanceState() );
+        myState.mValue = mSeekBar.getProgress();
+        return myState;
+    }
+    
+    @Override
+    protected void onRestoreInstanceState( Parcelable state )
+    {
+        if( state == null || !state.getClass().equals( SavedIntegerState.class ) )
+        {
+            // Didn't save state for us in onSaveInstanceState
+            super.onRestoreInstanceState( state );
+            return;
+        }
+        
+        final SavedIntegerState myState = (SavedIntegerState) state;
+        super.onRestoreInstanceState( myState.getSuperState() );
+        mSeekBar.setProgress( myState.mValue );
     }
     
     @Override
