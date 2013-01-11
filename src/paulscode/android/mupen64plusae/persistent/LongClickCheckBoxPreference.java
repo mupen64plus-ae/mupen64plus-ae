@@ -39,7 +39,6 @@ public class LongClickCheckBoxPreference extends CheckBoxPreference implements
     public LongClickCheckBoxPreference( Context context )
     {
         super( context );
-        setPersistent( false );
     }
     
     public void setOnPreferenceLongClickListener( OnPreferenceLongClickListener listener )

@@ -39,6 +39,7 @@ public class OptionCheckBoxPreference extends LongClickCheckBoxPreference implem
             String negativeOption )
     {
         super( context );
+        setPersistent( false );
         mContext = context;
         if( options == null || options.length < 1 )
         {

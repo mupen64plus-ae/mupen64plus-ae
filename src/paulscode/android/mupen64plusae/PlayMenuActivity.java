@@ -86,6 +86,11 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         
+        // Define the path to the object holding cheat preferences. We use a different file than the
+        // default one used by MenuActivity and UserPrefs so that they stay decoupled.
+        String cheatPrefsFilename = mAppData.packageName + "_cheatprefs";
+        getPreferenceManager().setSharedPreferencesName( cheatPrefsFilename );
+
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_play );
         
