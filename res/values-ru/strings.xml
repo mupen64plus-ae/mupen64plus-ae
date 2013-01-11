@@ -82,6 +82,8 @@
   <!--Checkbox Preferences-->
   <string name="touchscreenEnabled_title">Использовать тачскрин</string>
   <string name="touchscreenHidden_title">Скрыть кнопки</string>
+  <string name="touchscreenTransparency_title">Прозрачность оверлея</string>
+  <string name="touchscreenTransparency_summary">Изменить прозрачность экранных кнопок (снижает скорость, значение 255 отключает прозрачность)</string>
   <string name="touchpadEnabled_title">Использовать экранные кнопки</string>
   <string name="inputVolumeMappable_summary">Разрешить переназначение кнопок управления звуком</string>
   <string name="videoStretch_title">Растянуть экран</string>
@@ -222,6 +224,18 @@
   <string name="inputMapPreference_btnR">R</string>
   <string name="inputMapPreference_btnZ">Z</string>
   <string name="inputMapPreference_btnS">S</string>
+  <string name="inputMapPreference_btnCR">C-pad →</string>
+  <string name="inputMapPreference_btnCL">C-pad ←</string>
+  <string name="inputMapPreference_btnCD">C-pad ↓</string>
+  <string name="inputMapPreference_btnCU">C-pad ↑</string>
+  <string name="inputMapPreference_btnDR">D-pad →</string>
+  <string name="inputMapPreference_btnDL">D-pad ←</string>
+  <string name="inputMapPreference_btnDD">D-pad ↓</string>
+  <string name="inputMapPreference_btnDU">D-pad ↑</string>
+  <string name="inputMapPreference_btnAR">Analog →</string>
+  <string name="inputMapPreference_btnAL">Analog ←</string>
+  <string name="inputMapPreference_btnAD">Analog ↓</string>
+  <string name="inputMapPreference_btnAU">Analog ↑</string>
   <!--capitalize since trademark-->
   <!--capitalize since trademark-->
   <string name="inputMapPreference_reset">Сброс</string>

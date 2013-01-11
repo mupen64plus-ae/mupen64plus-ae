@@ -101,6 +101,8 @@
   <string name="videoRgba8888_summary">Verbessert die Grafik auf manchen Geräten</string>
   <string name="gles2N64Fog_title">Nebel</string>
   <string name="gles2N64Fog_summary">(benötigt Arbeit)</string>
+  <string name="gles2RiceAutoFrameskip_title">Automatische Framesprünge</string>
+  <string name="gles2RiceFastTexture_title">Schnelles Texturladen</string>
   <string name="gles2RiceHiResTextures_title">Hochauflösende Texturen</string>
   <string name="gles2RiceHiResTextures_summary">Benutze importierte Texturpakete</string>
   <!--List Preferences (selected value will become the summary)-->
@@ -126,6 +128,22 @@
   <string name="videoOrientation_entryPortrait">Portrait</string>
   <string name="videoOrientation_entryReversePortrait">Umgekehrtes Portrait</string>
   <string name="videoFpsRefresh_title">Zeige die Framerate</string>
+  <string name="videoFpsRefresh_entryNever">Niemals</string>
+  <string name="gles2N64Frameskip_title">Framesprünge</string>
+  <string name="gles2N64Frameskip_entryNever">Niemals Frames überspringen</string>
+  <string name="gles2N64Frameskip_entryUpTo1">Nicht mehr als 1 Frame</string>
+  <string name="gles2N64Frameskip_entryUpTo2">Nicht mehr als 2 Frames</string>
+  <string name="gles2N64Frameskip_entryUpTo3">Nicht mehr als 3 Frames</string>
+  <string name="gles2N64Frameskip_entryUpTo4">Nicht mehr als 4 Frames</string>
+  <string name="gles2N64Frameskip_entryUpTo5">Nicht mehr als 5 Frames</string>
+  <string name="gles2N64Frameskip_entryExactly1">Genau 1 Frame</string>
+  <string name="gles2N64Frameskip_entryExactly2">Genau 2 Frames</string>
+  <string name="gles2N64Frameskip_entryExactly3">Genau 3 Frames</string>
+  <string name="gles2N64Frameskip_entryExactly4">Genau 4 Frames</string>
+  <string name="gles2N64Frameskip_entryExactly5">Genau 5 Frames</string>
+  <string name="audioResampleAlg_entryLinear">Lineare Interpolation</string>
+  <string name="pluginVideo_title">Video</string>
+  <string name="pluginVideo_entryNone">Nichts (Video ausgeschaltet)</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->

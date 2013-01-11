@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--In-Game Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="ingameToggleSpeed_title">Velocidade %1$d %%</string>
+  <string name="ingameSlotSave_title">Salvar entrada</string>
+  <string name="ingameSlotLoad_title">Carregar entrada</string>
+  <string name="ingameSetSlot_title">Entrada %1$d</string>
+  <string name="ingameFileSave_title">Salvar para o arquivoâ€¦</string>
+  <string name="ingameFileLoad_title">Carregar do arquivoâ€¦</string>
+  <string name="ingameSetSpeed_title">Velocidade do jogo</string>
+  <string name="ingameSetIme_title">Mudar IME</string>
+  <string name="ingameMainMenu_title">Menu Principal</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_launchingEmulator">Executando emuladorâ€¦</string>
+  <string name="toast_resettingGame">Resetando jogoâ€¦</string>
+  <string name="toast_loadingSession">Auto-resumindo jogoâ€¦</string>
+  <string name="toast_savingSession">Auto-salvando jogoâ€¦</string>
+  <string name="toast_loadingSlot">Carregando entrada %1$dâ€¦</string>
+  <string name="toast_savingSlot">Salvando entrada %1$dâ€¦</string>
+  <string name="toast_loadingFile">Carregando %1$sâ€¦</string>
+  <string name="toast_savingFile">Salvando %1$sâ€¦</string>
+  <string name="toast_overwritingFile">Sobrescrevendo %1$sâ€¦</string>
+  <!--Something happened (use '.')-->
+  <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
+  <string name="toast_sdInaccessible">Cartão SD não acessivel (desconecte o cabo USB e tente novamente).</string>
+  <string name="toast_crashReportSent">Relatório enviado.</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Resumir</string>
+  <string name="actionResume_summary">Não recomendado se você usar Cheats</string>
+  <string name="actionRestart_title">Reiniciar</string>
+  <string name="actionRestart_summary">Recomendado se você usar Cheats</string>
+  <string name="actionDeviceInfo_title">Informações do dispositivo</string>
+  <string name="actionDeviceInfo_summary">Informações de Hardware e modelo do dispositivo</string>
+  <string name="actionControllerInfo_title">Informação do Controle</string>
+  <string name="actionControllerInfo_summary">Informações de Hardware periférico e modelo</string>
+  <string name="actionControllerDiagnostics_title">Diagnóstico do Controle</string>
+  <string name="actionControllerDiagnostics_summary">Testar capacidade de comunicação raw</string>
+  <string name="actionMigrateSlotSaves_title">Migrar jogos salvos</string>
+  <string name="actionMigrateSlotSaves_summary">Copiar os jogos salvos do emulador antigo para esse</string>
+  <string name="actionMigrateSlotSaves_messageNotFound">Nenhum arquivo para copiar.</string>
+  <string name="actionMigrateSlotSaves_messageConfirm">Tem certeza que deseja copiar seus jogos antigos? Backups serão feitos se necessário.</string>
+  <string name="actionMigrateSlotSaves_messageSuccess">Migração concluída.</string>
+  <string name="actionReloadAssets_title">Recarregar dados do emulador</string>
+  <string name="actionReloadAssets_summary">Não afeta configurações do usuário, ROMs, jogos salvos, ou outros dados externos</string>
+  <string name="actionCrashTest_title">Testar</string>
+  <string name="actionCrashTest_summary">Enviar relatório de configuração aos desenvolvedores</string>
+  <string name="actionResetUserPrefs_title">Reiniciar</string>
+  <string name="actionResetUserPrefs_summary">Restaurar configuração padrão</string>
+  <string name="actionResetUserPrefs_popupMessage">Restauras todas as configurações para o padrão?</string>
+  <string name="actionSetLocale_title">Idioma</string>
+  <string name="actionHelp_title">Ajuda</string>
+  <string name="actionHelp_message">Mupen64Plus é desenvolvido e mantido por voluntários.\n\nPor favor, nos ajude a melhora-lo!</string>
+  <string name="actionHelp_faq">Dúvidas frequentes</string>
+  <string name="actionHelp_reportbug">Relatar bug</string>
+  <string name="actionAbout_title">Sobre</string>
+  <string name="actionAbout_message">Versão: %1$s\nCódigo da versão: %2$d</string>
+  <string name="actionAbout_credits">Créditos</string>
+  <string name="actionAbout_changelog">Melhorias do emulador</string>
+  <!--Preference Screens-->
+  <string name="screenPlay_title">Jogar</string>
+  <string name="screenSettings_title">Configurações</string>
+  <string name="screenInput_title">Controle</string>
+  <string name="screenInput_summary">Configurações de controle</string>
+  <string name="screenTouchscreen_title">Toque na tela</string>
+  <string name="screenTouchscreen_summary">Configuração do controle de toque</string>
+  <string name="screenTouchpad_title">Touchpad</string>
+  <string name="screenTouchpad_summary">Configurações do Xperia PLAY</string>
+  <string name="screenVideo_title">Video</string>
+  <string name="screenVideo_summary">Configurações gráficas</string>
+  <string name="screenAudio_title">Áudio</string>
+  <string name="screenAudio_summary">Configurações de som</string>
+  <string name="screenPlugin_title">Plug-ins</string>
+  <string name="screenPlugin_summary">Configurações do núcleo</string>
+  <string name="screenAdvanced_title">Avançado</string>
+  <string name="screenAdvanced_summary">Configurações de armazenamento e depuração</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Opções de Cheats (toque longo para ver notas)</string>
+  <string name="categoryHardware_title">Hardware</string>
+  <string name="categoryOther_title">Outros</string>
+  <string name="categorySinglePlayer_title">Jogador 1</string>
+  <string name="categoryMultiPlayer_title">Multi-jogador</string>
+  <string name="categoryGles2N64_title">Configurações do GLES2N64</string>
+  <string name="categoryGles2Rice_title">Configurações do GLES2Rice</string>
+  <string name="categoryDiagnostics_title">Diagnósticos</string>
+  <string name="categoryData_title">Dados</string>
+  <string name="categoryCrashReports_title">Erros críticos</string>
+  <!--Checkbox Preferences-->
+  <string name="touchscreenEnabled_title">Habilitar toque na tela</string>
+  <string name="touchscreenHidden_title">Esconder butões</string>
+  <string name="touchscreenHidden_summary">Para controles de toque e Gaming Wizards</string>
+  <string name="touchscreenTransparency_title">Transparência do controle de toque</string>
+  <string name="touchscreenTransparency_summary">Mudar transparência dos botões de toque (pode ficar lento, 255 desabilita transparência)</string>
+  <string name="touchpadEnabled_title">Habilitar touchpad</string>
+  <string name="inputOctagonConstraints_title">Limites do controle octagonal</string>
+  <string name="inputOctagonConstraints_summary">Concentra o movimento do analógico ao octagono, como em um controle de N64 real</string>
+  <string name="inputVolumeMappable_title">Teclas de volume mapeáveis</string>
+  <string name="inputVolumeMappable_summary">Permite que as teclas de volume sejam usadas como controle</string>
+  <string name="videoStretch_title">Esticar tela</string>
+  <string name="videoStretch_summary">Pode destorcer a imagem</string>
+  <string name="videoUseFramelimiter_title">Usar limite de frames</string>
+  <string name="videoUseFramelimiter_summary">Habilite para uma experiência de jogo suave (desacelera alguns jogos)</string>
+  <string name="videoRgba8888_title">Modo RGBA_8888</string>
+  <string name="videoRgba8888_summary">Melhora os gráficos em alguns dispositivos</string>
+  <string name="gles2N64Fog_title">Névoa</string>
+  <string name="gles2N64Fog_summary">(precisa de ajustes)</string>
+  <string name="gles2N64Sai_title">Filtro de textura 2xSaI</string>
+  <string name="gles2N64Sai_summary">Melhora qualidade das texturas</string>
+  <string name="gles2N64ScreenClear_title">Forçar limpeza da tela</string>
+  <string name="gles2N64ScreenClear_summary">Desabilite para ganhar velocidade (pode causar problemas gráficos)</string>
+  <string name="gles2N64AlphaTest_title">Teste de transparência</string>
+  <string name="gles2N64AlphaTest_summary">Desabilite para ganhar velocidade (deixa texturas transparentes)</string>
+  <string name="gles2N64DepthTest_title">Teste de profundidade</string>
+  <string name="gles2N64DepthTest_summary">Desabilite para ganhar velocidade (deixa o fundo piscando)</string>
+  <string name="gles2RiceAutoFrameskip_title">Frameskip automático</string>
+  <string name="gles2RiceAutoFrameskip_summary">Melhora a velocidade do jogo a custo da taxa de frames</string>
+  <string name="gles2RiceFastTextureCrc_title">CRC de textura rápido</string>
+  <string name="gles2RiceFastTextureCrc_summary">Melhora velociade do jogo ao custo de elementos 2D</string>
+  <string name="gles2RiceFastTexture_title">Carregamento de texturas rápido</string>
+  <string name="gles2RiceFastTexture_summary">Consertar transições circulares</string>
+  <string name="gles2RiceForceTextureFilter_title">Forçar filtro de textura</string>
+  <string name="gles2RiceForceTextureFilter_summary">Melhora texturas de baixa qualidade</string>
+  <string name="gles2RiceHiResTextures_title">Texturas de alta resolução</string>
+  <string name="gles2RiceHiResTextures_summary">Usa pacotes com texturas melhoradas</string>
+  <string name="audioSwapChannels_title">Trocar canais de áudio</string>
+  <string name="audioSwapChannels_summary">Troca canais de áudio da direita e da esquerda</string>
+  <!--List Preferences (selected value will become the summary)-->
+  <string name="touchscreenLayout_title">Tipo do controle de toque</string>
+  <string name="touchscreenLayout_entryAnalog">Analógico (por roymustang16)</string>
+  <string name="touchscreenLayout_entryDigital">Digital (por roymustang16)</string>
+  <string name="touchscreenLayout_entryCustom">Personalizado (veja http://tinyurl.com/984ofyo)</string>
+  <string name="touchscreenSize_title">Tamanho da tela</string>
+  <string name="touchscreenSize_entryTiny">Minúsculo</string>
+  <string name="touchscreenSize_entrySmall">Pequeno</string>
+  <string name="touchscreenSize_entryNormal">Normal</string>
+  <string name="touchscreenSize_entryTablet">Tablet</string>
+  <string name="touchscreenRefresh_title">Animação do controle</string>
+  <string name="touchscreenRefresh_entryNever">Nunca</string>
+  <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
+  <string name="touchscreenRefresh_entryFrequently">Frequentemente</string>
+  <string name="touchpadLayout_title">Posição dos controles de toque</string>
+  <string name="touchpadLayout_entryDefault">Esquerda: Analógico; Direita: Butões C</string>
+  <string name="touchpadLayout_entryReverse">Esquerda: Butões C; Direita: Analógico</string>
+  <string name="videoOrientation_title">Orientação da tela</string>
+  <string name="videoOrientation_entryLandscape">Paisagem</string>
+  <string name="videoOrientation_entryReverseLandscape">Paisagem invertida</string>
+  <string name="videoOrientation_entryPortrait">Retrato</string>
+  <string name="videoOrientation_entryReversePortrait">Retrato invertido</string>
+  <string name="videoFpsRefresh_title">Exibir taxa de frames</string>
+  <string name="videoFpsRefresh_entryNever">Nunca</string>
+  <string name="videoFpsRefresh_entryOccasionally">Ocasionalmente</string>
+  <string name="videoFpsRefresh_entryFrequently">Frequentemente</string>
+  <string name="gles2N64Frameskip_title">Pulo de frames</string>
+  <string name="gles2N64Frameskip_entryNever">Nunca pular frames</string>
+  <string name="gles2N64Frameskip_entryUpTo1">Não mais que 1 frame</string>
+  <string name="gles2N64Frameskip_entryUpTo2">Não mais que 2 frames</string>
+  <string name="gles2N64Frameskip_entryUpTo3">Não mais que 3 frames</string>
+  <string name="gles2N64Frameskip_entryUpTo4">Não mais que 4 frames</string>
+  <string name="gles2N64Frameskip_entryUpTo5">Não mais que 5 frames</string>
+  <string name="gles2N64Frameskip_entryExactly1">Exatamente 1 frame</string>
+  <string name="gles2N64Frameskip_entryExactly2">Exatamente 2 frames</string>
+  <string name="gles2N64Frameskip_entryExactly3">Exatamente 3 frames</string>
+  <string name="gles2N64Frameskip_entryExactly4">Exatamente 4 frames</string>
+  <string name="gles2N64Frameskip_entryExactly5">Exatamente 5 frames</string>
+  <string name="audioResampleAlg_title">Algoritmo de reamostragem</string>
+  <string name="audioResampleAlg_entryTrivial">Trivial</string>
+  <string name="audioResampleAlg_entryLinear">Interpolação linear</string>
+  <string name="audioResampleAlg_entryZoh">Manter ordem Zero</string>
+  <string name="audioResampleAlg_entrySincFastest">Sinc (rápido)</string>
+  <string name="audioResampleAlg_entrySincMedium">Sinc (médio)</string>
+  <string name="audioResampleAlg_entrySincBest">Sinc (melhor)</string>
+  <string name="pluginVideo_title">Video</string>
+  <string name="pluginVideo_entryNone">Nenhum (video desabilitado)</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (Port GLES2 do GLN64 para Android por Orkin, Adventus, Yongzh, Paul Lamb)</string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (Port GLES2 d\no Rice Video para m64p v1.99.5 por Rice, Kris (Metricity))</string>
+  <string name="pluginAudio_title">Áudio</string>
+  <string name="pluginAudio_entryNone">Nenhum (áudio desabilitado)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginInput_title">Controle</string>
+  <string name="pluginInput_entryNone">Nenhuma (controle desabilitado)</string>
+  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_title">Reality signal processor (RSP)</string>
+  <string name="pluginRsp_entryNone">Nenhum (RSP desabilitado)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sem preocessamento de áudio, hack de velocidade por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_title">Núcleo de emulação</string>
+  <string name="pluginCore_entryV110">core, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <!--ACRA Preferences (key names must not be changed)-->
+  <string name="acraEnable_title">Habilitar relatório de erros</string>
+  <string name="acraEnable_summary">Nenhuma informação pessoal é coletada</string>
+  <string name="acraUserEmail_title">Informações de contato</string>
+  <string name="acraUserEmail_summary">Seu usuário no paulscode.com (opcional)</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <string name="pathPreference_dialogTitle">Diretório selecionado: %1$s</string>
+  <string name="pathSelectedGame_title">Jogo</string>
+  <string name="pathSelectedGame_default">~roms/n64</string>
+  <string name="pathCustomTouchscreen_title">Diretório de layout personalizado</string>
+  <string name="pathCustomTouchscreen_default">~</string>
+  <string name="pathHiResTextures_title">Importar pacote de texturas</string>
+  <string name="pathHiResTextures_default">~</string>
+  <string name="pathGameSaves_title">Diretório para salvar jogo</string>
+  <string name="pathGameSaves_default">!mupen64plus</string>
+  <!--Player Map Preferences-->
+  <string name="playerMap_title">Multi-jogador</string>
+  <string name="playerMap_summary">Define controle de cada jogador</string>
+  <!--Input Map Preferences-->
+  <string name="inputMap1_title">Controlador</string>
+  <string name="inputMap2_title">Jogador 2</string>
+  <string name="inputMap3_title">Jogador 3</string>
+  <string name="inputMap4_title">Jogador 4</string>
+  <string name="inputMap_summary">Mapeamento de butões e funções especiais</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Confirmação</string>
+  <string name="confirmResetGame_message">Resetar jogo? Todo o progrsso desde o seu último jogo salvo será perdido.</string>
+  <string name="confirmOverwriteFile_message">Sobrescrever %1$s?</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">nome do arquivo</string>
+  <string name="hintSetSpeed">velocidade entre 10 e 300</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Inicializando</string>
+  <string name="assetExtractor_progress">%1$.0f%% feito: %2$s</string>
+  <string name="assetExtractor_finished">Finalizado</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_titleFor">Cheats para %1$s</string>
+  <string name="cheats_defaultName">Cheat %1$d</string>
+  <string name="cheats_longPress">(toque longo para ver texto completo)</string>
+  <string name="cheatNotes_title">Notas</string>
+  <string name="cheatNotes_none">(sem notas disponiveis para esse Cheat)</string>
+  <string name="cheatOption_title">Texto completo</string>
+  <string name="cheat_disabled">(desabilitado)</string>
+  <string name="cheatsTaskHandler_title">Lendo cabeçalho do jogo</string>
+  <string name="cheatsTaskHandler_message">Seja paciente.  Esse processo pode levar algum tempo.</string>
+  <string name="cheats_title">Cheats</string>
+  <string name="cheats_summary">Escolha um jogo para hackear</string>
+  <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesPath_title">Selecione um pacote de texturas (formato ZIP)</string>
+  <string name="pathHiResTexturesTask_title">Extraindo texturas</string>
+  <string name="pathHiResTexturesTask_message">Seja paciente.  Esse processo pode levar algum tempo.</string>
+  <string name="pathHiResTexturesTask_errorMessage">Problema extraindo texturas!</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Dispositivo %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
+  <string name="playerMapPreference_popupTitle">Jogador %1$d</string>
+  <string name="playerMapPreference_popupMessage">Jogador %1$d, pressione um botão ou ligue no seu controleâ€¦\n\nDispositivos atuais:\n%2$s</string>
+  <string name="playerMapPreference_popupUnmap">Desmapear</string>
+  <string name="playerMapPreference_button">Jogador %1$d\n\n%2$s</string>
+  <!--Input Mapping-->
+  <string name="inputMapPreference_popupMessage">Pressione um botão, tecla, ou joystick para mapearâ€¦\n\nMapeamento atual:\n%1$s</string>
+  <string name="inputMapPreference_showSpecial">Exibir funções especiais</string>
+  <string name="inputMapPreference_hideSpecial">Esconder funções especiais</string>
+  <string name="inputMapPreference_popupUnmap">Desmapear</string>
+  <string name="inputMapPreference_aPadXperiaPlay">Controle analógico controlado com touchpad</string>
+  <string name="inputMapPreference_cPadXperiaPlay">C-pad controlado com touchpad</string>
+  <string name="inputMapPreference_btnA">A</string>
+  <string name="inputMapPreference_btnB">B</string>
+  <string name="inputMapPreference_btnC">C</string>
+  <string name="inputMapPreference_btnL">L</string>
+  <string name="inputMapPreference_btnR">R</string>
+  <string name="inputMapPreference_btnZ">Z</string>
+  <string name="inputMapPreference_btnS">S</string>
+  <string name="inputMapPreference_btnCR">C-pad â†’</string>
+  <string name="inputMapPreference_btnCL">C-pad â†</string>
+  <string name="inputMapPreference_btnCD">C-pad â†“</string>
+  <string name="inputMapPreference_btnCU">C-pad â†‘</string>
+  <string name="inputMapPreference_btnDR">D-pad â†’</string>
+  <string name="inputMapPreference_btnDL">D-pad â†</string>
+  <string name="inputMapPreference_btnDD">D-pad â†“</string>
+  <string name="inputMapPreference_btnDU">D-pad â†‘</string>
+  <string name="inputMapPreference_btnAR">Analógico â†’</string>
+  <string name="inputMapPreference_btnAL">Analógico â†</string>
+  <string name="inputMapPreference_btnAD">Analógico â†“</string>
+  <string name="inputMapPreference_btnAU">Analógico â†‘</string>
+  <string name="inputMapPreference_rumble">Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="inputMapPreference_mempak">Expansion Pak</string>
+  <!--capitalize since trademark-->
+  <string name="inputMapPreference_incrementSlot">Incrementar entrada</string>
+  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
+  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
+  <string name="inputMapPreference_reset">Resetar</string>
+  <string name="inputMapPreference_pause">Pausar</string>
+  <string name="inputMapPreference_stop">Parar</string>
+  <string name="inputMapPreference_frameAdvance">Avançar frame</string>
+  <string name="inputMapPreference_fastForward">Avanço rápido</string>
+  <string name="inputMapPreference_speedDown">Desacelerar</string>
+  <string name="inputMapPreference_speedUp">Acelerar</string>
+  <string name="inputMapPreference_gameshark">Gameshark</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Pressione um botão ou teclaâ€¦</string>
+  <string name="diagnosticActivity_textMotion_text">Toque a tela ou use o joystickâ€¦</string>
+</resources>

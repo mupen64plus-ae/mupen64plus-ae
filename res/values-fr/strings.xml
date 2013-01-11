@@ -74,7 +74,7 @@
   <string name="screenInput_title">Contrôles</string>
   <string name="screenInput_summary">Paramètres de contrôles</string>
   <string name="screenTouchscreen_title">Commandes virtuelles</string>
-  <string name="screenTouchscreen_summary">Paramètres de contrôles tactiles</string>
+  <string name="screenTouchscreen_summary">Paramètres des boutons virtuels à l\'écran</string>
   <string name="screenTouchpad_title">Pavé tactile</string>
   <string name="screenTouchpad_summary">Paramètres de l\'Xperia PLAY</string>
   <string name="screenVideo_title">Vidéo</string>
@@ -97,9 +97,11 @@
   <string name="categoryData_title">Données</string>
   <string name="categoryCrashReports_title">Rapports de plantages</string>
   <!--Checkbox Preferences-->
-  <string name="touchscreenEnabled_title">Activer les commandes virtuelles</string>
-  <string name="touchscreenHidden_title">Masquer les boutons à l\'écran</string>
+  <string name="touchscreenEnabled_title">Activer les commandes virtuelles à l\'écran</string>
+  <string name="touchscreenHidden_title">Masquer les commandes virtuelles à l\'écran</string>
   <string name="touchscreenHidden_summary">Fait disparaître les boutons virtuels à l\'écran. Pour les utilisateurs de manette ou les Zatoichis en puissance.</string>
+  <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>
+  <string name="touchscreenTransparency_summary">Modifie la transparence des boutons virtuels à l\'écran (255 désactive la transparence)</string>
   <string name="touchpadEnabled_title">Activer le pavé tactile</string>
   <string name="inputOctagonConstraints_title">Limites octogonales du joystick</string>
   <string name="inputOctagonConstraints_summary">Limite les mouvements du stick analogique à un octogone, comme une vraie manette N64</string>
@@ -112,7 +114,7 @@
   <string name="videoRgba8888_title">Mode RGBA_8888</string>
   <string name="videoRgba8888_summary">Améliore les graphismes sur certains appareils</string>
   <string name="gles2N64Fog_title">Brouillard</string>
-  <string name="gles2N64Fog_summary">(requiert du travail)</string>
+  <string name="gles2N64Fog_summary">(fonction en cours de développement)</string>
   <string name="gles2N64Sai_title">Filtre à textures 2XSal</string>
   <string name="gles2N64Sai_summary">Réduit la pixellisation des textures</string>
   <string name="gles2N64ScreenClear_title">Forcer le nettoyage de l\'écran</string>
