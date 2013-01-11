@@ -673,7 +673,8 @@ app_instance_create( ANativeActivity* activity, void* saved_state, size_t saved_
 }
 
 // Entry point from android/nativeactivity
-void ANativeActivity_onCreate( ANativeActivity* activity, void* saved_state, size_t saved_state_size )
+JNIEXPORT void JNICALL
+ANativeActivity_onCreate( ANativeActivity* activity, void* saved_state, size_t saved_state_size )
 {
     LOGI( "NativeActivity creating: %p\n", activity );
 
