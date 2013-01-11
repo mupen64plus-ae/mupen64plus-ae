@@ -214,18 +214,18 @@ static int32_t engine_handle_input( struct APP_INSTANCE* app, AInputEvent* event
     return 0;
 }
 
-void app_lock_queue( struct APP_INSTANCE* state )
+static void app_lock_queue( struct APP_INSTANCE* state )
 {
     pthread_mutex_lock( &state->mutex );
 }
 
-void app_unlock_queue( struct APP_INSTANCE* state )
+static void app_unlock_queue( struct APP_INSTANCE* state )
 {
     pthread_cond_broadcast( &state->cond );
     pthread_mutex_unlock( &state->mutex );
 }
 
-void instance_app_main( struct APP_INSTANCE* app_instance )
+static void instance_app_main( struct APP_INSTANCE* app_instance )
 {
     LOGI( "main entering." );
 
