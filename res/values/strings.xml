@@ -134,7 +134,7 @@
     <string name="inputVolumeMappable_title">Mappable volume keys</string>
     <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
     <string name="inputShareController_title">Share controller</string>
-    <string name="inputShareController_summary">Allow a single keyboard/gamepad to control multiple players at once</string>
+    <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
     <string name="videoStretch_title">Stretch screen</string>
     <string name="videoStretch_summary">May skew aspect ratio</string>
     <string name="videoUseFramelimiter_title">Use framelimiter</string>
