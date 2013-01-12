@@ -580,10 +580,10 @@ void RSP_GBI2_PopMtx(Gfx *gfx)
 
 
 #define RSP_ZELDA_ZBUFFER               0x00000001      // Guess
-#define RSP_ZELDA_CULL_BACK             0x00000200
+#define RSP_ZELDA_CULL_BACK         0x00000200
 #define RSP_ZELDA_CULL_FRONT            0x00000400
 #define RSP_ZELDA_FOG                   0x00010000
-#define RSP_ZELDA_LIGHTING              0x00020000
+#define RSP_ZELDA_LIGHTING          0x00020000
 #define RSP_ZELDA_TEXTURE_GEN           0x00040000
 #define RSP_ZELDA_TEXTURE_GEN_LINEAR    0x00080000
 #define RSP_ZELDA_SHADING_SMOOTH        0x00200000
