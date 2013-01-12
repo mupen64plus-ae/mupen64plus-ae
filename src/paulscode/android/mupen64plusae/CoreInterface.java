@@ -157,7 +157,9 @@ public class CoreInterface
     
     public static int getHardwareType()
     {
-        return sAppData.hardwareInfo.hardwareType;
+        int autoDetected = sAppData.hardwareInfo.hardwareType;
+        int overridden = sUserPrefs.videoHardwareType;
+        return overridden < 0 ? autoDetected : overridden;
     }
     
     public static Object getDataDir()

@@ -207,6 +207,12 @@
                     android:entryValues="@array/videoFpsRefresh_values"
                     android:key="videoFpsRefresh"
                     android:title="@string/videoFpsRefresh_title" />
+                <ListPreference
+                    android:defaultValue="@string/videoHardwareType_default"
+                    android:entries="@array/videoHardwareType_entries"
+                    android:entryValues="@array/videoHardwareType_values"
+                    android:key="videoHardwareType"
+                    android:title="@string/videoHardwareType_title" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"

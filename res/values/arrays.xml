@@ -99,6 +99,28 @@
 
     <string name="videoFpsRefresh_default" translatable="false">0</string>
 
+    <!-- Hardware Profile List -->
+    <string-array name="videoHardwareType_entries" translatable="false">
+        <item>@string/videoHardwareType_entryAuto</item>
+        <item>@string/videoHardwareType_entryStandard</item>
+        <item>@string/videoHardwareType_entryI</item>
+        <item>@string/videoHardwareType_entryO1</item>
+        <item>@string/videoHardwareType_entryO2</item>
+        <item>@string/videoHardwareType_entryQ</item>
+        <item>@string/videoHardwareType_entryT</item>
+    </string-array>
+    <string-array name="videoHardwareType_values" translatable="false">
+        <item>-1</item>
+        <item>0</item>
+        <item>4</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+
+    <string name="videoHardwareType_default" translatable="false">-1</string>
+
     <!-- GLES2N64 Frameskip List -->
     <string-array name="gles2N64Frameskip_entries" translatable="false">
         <item>@string/gles2N64Frameskip_entryNever</item>

@@ -173,6 +173,9 @@ public class UserPrefs
     /** True if RGBA8888 mode should be used for video. */
     public final boolean isRgba8888;
     
+    /** The manually-overridden hardware type, used for flicker reduction. */
+    public final int videoHardwareType;
+    
     /** True if Gles2N64 video plug-in is enabled. */
     public final boolean isGles2N64Enabled;
     
@@ -272,6 +275,7 @@ public class UserPrefs
         videoOrientation = getSafeInt( prefsData, "videoOrientation", 0 );
         videoFpsRefresh = getSafeInt( prefsData, "videoFpsRefresh", 0 );
         isFpsEnabled = videoFpsRefresh > 0;
+        videoHardwareType = getSafeInt( prefsData, "videoHardwareType", -1 );
         isStretched = prefsData.getBoolean( "videoStretch", false );
         isRgba8888 = prefsData.getBoolean( "videoRgba8888", false );
         isFramelimiterEnabled = prefsData.getBoolean( "videoUseFramelimiter", false );

@@ -190,6 +190,14 @@
     <string name="videoFpsRefresh_entryNever">Never</string>
     <string name="videoFpsRefresh_entryOccasionally">Occasionally</string>
     <string name="videoFpsRefresh_entryFrequently">Frequently</string>
+    <string name="videoHardwareType_title">Flicker reduction</string>
+    <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
+    <string name="videoHardwareType_entryStandard">Standard profile</string>
+    <string name="videoHardwareType_entryI">I profile</string>
+    <string name="videoHardwareType_entryO1">O-1 profile</string>
+    <string name="videoHardwareType_entryO2">O-2 profile</string>
+    <string name="videoHardwareType_entryQ">Q profile</string>
+    <string name="videoHardwareType_entryT">T profile</string>
     <string name="gles2N64Frameskip_title">Frameskip</string>
     <string name="gles2N64Frameskip_entryNever">Never skip frames</string>
     <string name="gles2N64Frameskip_entryUpTo1">No more than 1 frame</string>
