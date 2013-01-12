@@ -107,14 +107,6 @@
                             android:title="@string/pathCustomTouchscreen_title"
                             mupen64:selectionMode="0" />
 
-                        <ListPreference
-                            android:defaultValue="@string/touchscreenRefresh_default"
-                            android:dependency="touchscreenEnabled"
-                            android:entries="@array/touchscreenRefresh_entries"
-                            android:entryValues="@array/touchscreenRefresh_values"
-                            android:key="touchscreenRefresh"
-                            android:title="@string/touchscreenRefresh_title" />
-
                         <paulscode.android.mupen64plusae.persistent.SeekBarPreference
                             android:defaultValue="100"
                             android:dependency="touchscreenEnabled"
@@ -123,6 +115,14 @@
                             mupen64:maximumValue="100"
                             mupen64:stepSize="10"
                             mupen64:units="%" />
+
+                        <ListPreference
+                            android:defaultValue="@string/touchscreenRefresh_default"
+                            android:dependency="touchscreenEnabled"
+                            android:entries="@array/touchscreenRefresh_entries"
+                            android:entryValues="@array/touchscreenRefresh_values"
+                            android:key="touchscreenRefresh"
+                            android:title="@string/touchscreenRefresh_title" />
                     </PreferenceScreen>
                     <PreferenceScreen
                         android:icon="@drawable/ic_xperia"
@@ -182,6 +182,12 @@
                         android:key="inputMap4"
                         android:summary="@string/inputMap_summary"
                         android:title="@string/inputMap4_title" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="inputShareController"
+                        android:summary="@string/inputShareController_summary"
+                        android:title="@string/inputShareController_title" />
                 </PreferenceCategory>
             </PreferenceScreen>
             <PreferenceScreen

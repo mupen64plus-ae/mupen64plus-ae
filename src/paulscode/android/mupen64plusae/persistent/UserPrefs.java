@@ -340,7 +340,8 @@ public class UserPrefs
         numPlayers += inputMap2.isEnabled() ? 1 : 0;
         numPlayers += inputMap3.isEnabled() ? 1 : 0;
         numPlayers += inputMap4.isEnabled() ? 1 : 0;
-        playerMap.setEnabled( numPlayers > 1 );
+        boolean isControllerShared = prefsData.getBoolean( "inputShareController", false );
+        playerMap.setEnabled( numPlayers > 1 && !isControllerShared );
         
         // Determine the key codes that should not be mapped to controls
         boolean volKeysMappable = prefsData.getBoolean( "inputVolumeMappable", false );
