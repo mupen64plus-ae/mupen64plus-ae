@@ -1878,7 +1878,7 @@ void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
 }
 
 
-extern uint32 dwPDCIAddr;
+/*extern*/ uint32 dwPDCIAddr = 0;
 void ProcessVertexDataPD(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
 {
     UpdateCombinedMatrix();

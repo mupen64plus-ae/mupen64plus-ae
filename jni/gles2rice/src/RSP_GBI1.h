@@ -566,7 +566,7 @@ void RSP_GBI1_Line3D(Gfx *gfx)
 
             gfx++;
             dwPC += 8;
-#ifdef DEBUGGER
+#ifdef _DEBUG
         } while (gfx->words.cmd == (uint8)RSP_LINE3D && !(pauseAtNext && eventToPause==NEXT_FLUSH_TRI));
 #else
         } while (gfx->words.cmd == (uint8)RSP_LINE3D);
@@ -587,7 +587,7 @@ void RSP_GBI1_ClearGeometryMode(Gfx *gfx)
     SP_Timing(RSP_GBI1_ClearGeometryMode);
     uint32 dwMask = ((gfx->words.cmd1));
 
-#ifdef DEBUGGER
+#ifdef _DEBUG
     LOG_UCODE("    Mask=0x%08x", dwMask);
     if (dwMask & G_ZBUFFER)                     LOG_UCODE("  Disabling ZBuffer");
     if (dwMask & G_TEXTURE_ENABLE)              LOG_UCODE("  Disabling Texture");
@@ -611,7 +611,7 @@ void RSP_GBI1_SetGeometryMode(Gfx *gfx)
     SP_Timing(RSP_GBI1_SetGeometryMode);
     uint32 dwMask = ((gfx->words.cmd1));
 
-#ifdef DEBUGGER
+#ifdef _DEBUG
     LOG_UCODE("    Mask=0x%08x", dwMask);
     if (dwMask & G_ZBUFFER)                     LOG_UCODE("  Enabling ZBuffer");
     if (dwMask & G_TEXTURE_ENABLE)              LOG_UCODE("  Enabling Texture");
@@ -624,7 +624,7 @@ void RSP_GBI1_SetGeometryMode(Gfx *gfx)
     if (dwMask & G_TEXTURE_GEN)                 LOG_UCODE("  Enabling Texture Gen");
     if (dwMask & G_TEXTURE_GEN_LINEAR)          LOG_UCODE("  Enabling Texture Gen Linear");
     if (dwMask & G_LOD)                         LOG_UCODE("  Enabling LOD (no impl)");
-#endif // DEBUGGER
+#endif // _DEBUG
     gRDP.geometryMode |= dwMask;
     RSP_GFX_InitGeometryMode();
 }
@@ -700,7 +700,7 @@ void RSP_GBI1_Texture(Gfx *gfx)
     {
         fTextureScaleS = 1/64.0f;
     }
-#ifdef DEBUGGER
+#ifdef _DEBUG
     else if( ((gfx->words.cmd1>>16)&0xFFFF) != 0 )
     {
         //DebuggerAppendMsg("Warning, texture scale = %08X is not integer", (word1>>16)&0xFFFF);
@@ -715,7 +715,7 @@ void RSP_GBI1_Texture(Gfx *gfx)
     {
         fTextureScaleT = 1/64.0f;
     }
-#ifdef DEBUGGER
+#ifdef _DEBUG
     else if( (gfx->words.cmd1&0xFFFF) != 0 )
     {
         //DebuggerAppendMsg("Warning, texture scale = %08X is not integer", (word1)&0xFFFF);
@@ -786,7 +786,7 @@ void RSP_GBI1_MoveWord(Gfx *gfx)
             if( dwBase > g_dwRamSize )
             {
                 gRSP.segments[dwSegment] = dwBase;
-#ifdef DEBUGGER
+#ifdef _DEBUG
                 if( pauseAtNext )
                     DebuggerAppendMsg("warning: Segment %d addr is %8X", dwSegment, dwBase);
 #endif
@@ -889,7 +889,7 @@ void RSP_GBI1_PopMtx(Gfx *gfx)
     {
         CRender::g_pRender->PopWorldView();
     }
-#ifdef DEBUGGER
+#ifdef _DEBUG
     if( pauseAtNext && eventToPause == NEXT_MATRIX_CMD )
     {
         pauseAtNext = false;
@@ -912,7 +912,7 @@ void RSP_GBI1_CullDL(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_CullDL);
 
-#ifdef DEBUGGER
+#ifdef _DEBUG
     if( !debuggerEnableCullFace )
     {
         return; //Disable Culling
@@ -991,7 +991,7 @@ void RSP_GBI1_Tri1(Gfx *gfx)
         gfx++;
         dwPC += 8;
 
-#ifdef DEBUGGER
+#ifdef _DEBUG
     } while (!(pauseAtNext && eventToPause==NEXT_TRIANGLE) && gfx->words.cmd == (uint8)RSP_TRI1);
 #else
     } while (gfx->words.cmd == (uint8)RSP_TRI1);

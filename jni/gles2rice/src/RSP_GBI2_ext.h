@@ -35,6 +35,9 @@ void RSP_GBI2_DL_Count(Gfx *gfx)
 
 void RSP_GBI2_0x8(Gfx *gfx)
 {
+    
+    
+
     if( ((gfx->words.cmd0)&0x00FFFFFF) == 0x2F && ((gfx->words.cmd1)&0xFF000000) == 0x80000000 )
     {
         // V-Rally 64
@@ -45,3 +48,5 @@ void RSP_GBI2_0x8(Gfx *gfx)
         RSP_RDP_Nothing(gfx);
     }
 }
+
+
