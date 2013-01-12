@@ -944,6 +944,7 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
     if (fread(sig, 1, 8, f) != 8)
     {
       DebugMessage(M64MSG_ERROR, "GetImageInfoFromFile() error: couldn't read first 8 bytes of file '%s'", pSrcFile);
+      fclose(f);
       return 1;
     }
     fclose(f);
