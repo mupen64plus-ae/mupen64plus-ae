@@ -145,6 +145,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         mSeekBar.setMax( mMaxValue );
         mSeekBar.setOnSeekBarChangeListener( this );
         mSeekBar.setProgress( mValue );
+        mTextView.setText( getValueString( mValue ) );
     }
     
     @Override
@@ -164,7 +165,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     protected Parcelable onSaveInstanceState()
     {
         final SavedIntegerState myState = new SavedIntegerState( super.onSaveInstanceState() );
-        myState.mValue = mSeekBar.getProgress();
+        if( mSeekBar != null )
+            myState.mValue = mSeekBar.getProgress();
         return myState;
     }
     
@@ -180,7 +182,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         
         final SavedIntegerState myState = (SavedIntegerState) state;
         super.onRestoreInstanceState( myState.getSuperState() );
-        mSeekBar.setProgress( myState.mValue );
+        if( mSeekBar != null )
+            mSeekBar.setProgress( myState.mValue );
     }
     
     @Override
