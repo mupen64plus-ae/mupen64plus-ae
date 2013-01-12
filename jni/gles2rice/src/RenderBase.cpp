@@ -1552,23 +1552,7 @@ bool PrepareTriangle(uint32 dwV0, uint32 dwV1, uint32 dwV2)
     return true;
 }
 
-bool AddTri(u32 v0, u32 v1, u32 v2)
-{
-    if (IsTriangleVisible(v0, v1, v2))
-    {
-        if (CRender::g_pRender->IsTextureEnabled())
-        {
-            PrepareTextures();
-            InitVertexTextureConstants();
-        }
 
-        CRender::g_pRender->SetCombinerAndBlender();
-
-        PrepareTriangle(v0, v1, v2);
-        return true;
-    }
-    return false;
-}
 
 // Returns TRUE if it thinks the triangle is visible
 // Returns FALSE if it is clipped
@@ -1878,7 +1862,7 @@ void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
 }
 
 
-/*extern*/ uint32 dwPDCIAddr = 0;
+extern uint32 dwPDCIAddr;
 void ProcessVertexDataPD(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
 {
     UpdateCombinedMatrix();

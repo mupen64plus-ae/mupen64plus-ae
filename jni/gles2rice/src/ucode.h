@@ -43,24 +43,15 @@ UcodeFunc(RSP_GBI0_Vtx);
 UcodeFunc(RSP_Vtx_DKR);
 UcodeFunc(RSP_Vtx_WRUS);
 UcodeFunc(RSP_Vtx_ShadowOfEmpire);
-UcodeFunc(RSP_Tri1_ShadowOfEmpire);
-UcodeFunc(RSP_Quad3d_ShadowOfEmpire);
 
 UcodeFunc(RSP_GBI0_Tri4);
 UcodeFunc(RSP_DMA_Tri_DKR);
-UcodeFunc(DLParser_Set_Addr_DKR);
+UcodeFunc(DLParser_Set_Addr_Ucode6);
 UcodeFunc(RSP_MoveWord_DKR);
 
 UcodeFunc(RSP_Vtx_PD);
 UcodeFunc(RSP_Set_Vtx_CI_PD);
 UcodeFunc(RSP_Tri4_PD);
-UcodeFunc(RSP_Vtx_Conker);
-UcodeFunc(RSP_MoveWord_Conker);
-UcodeFunc(RSP_Tri4_Conker);
-UcodeFunc(RSP_MoveMem_Conker);
-UcodeFunc(RSP_Quad_Conker);
-
-UcodeFunc(RSP_Vtx_Gemini);
 
 UcodeFunc(RSP_GBI0_Sprite2DBase);
 UcodeFunc(RSP_GBI0_Sprite2DDraw);
@@ -69,7 +60,6 @@ UcodeFunc(RSP_GBI1_Sprite2DScaleFlip);
 UcodeFunc(RSP_GBI1_Sprite2DDraw);
 UcodeFunc(RSP_GBI_Sprite2DBase);
 UcodeFunc(RSP_GBI_Sprite2D_PuzzleMaster64);
-
 
 UcodeFunc(RSP_GBI1_SpNoop);
 UcodeFunc(RSP_GBI1_Reserved);
@@ -122,7 +112,6 @@ UcodeFunc(DLParser_SetCombine);
 UcodeFunc(DLParser_SetTImg);
 UcodeFunc(DLParser_SetZImg);
 UcodeFunc(DLParser_SetCImg);
-UcodeFunc(DLParser_RDPHalf1_GoldenEye);
 
 UcodeFunc(RSP_GBI2_DL);
 UcodeFunc(RSP_GBI2_CullDL);

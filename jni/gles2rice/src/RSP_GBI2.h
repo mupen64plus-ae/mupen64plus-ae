@@ -22,9 +22,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void RSP_GBI2_Vtx(Gfx *gfx)
 {
-    uint32 addr = RSPSegmentAddr((gfx->vtx2.addr));
-    int vend    = gfx->vtx2.vend/2;
-    int n       = gfx->vtx2.n;
+    uint32 addr = RSPSegmentAddr((gfx->gbi2vtx.addr));
+    int vend    = gfx->gbi2vtx.vend/2;
+    int n       = gfx->gbi2vtx.n;
     int v0      = vend - n;
 
     LOG_UCODE("    Vtx: Address 0x%08x, vEnd: %d, v0: %d, Num: %d", addr, vend, v0, n);
@@ -70,8 +70,8 @@ void RSP_GBI2_CullDL(Gfx *gfx)
     }
 
     uint32 i;
-    uint32 dwVFirst = (((gfx->words.cmd0)) & 0xfff) / gRSP.vertexMult;
-    uint32 dwVLast  = (((gfx->words.cmd1)) & 0xfff) / gRSP.vertexMult;
+    uint32 dwVFirst = (((gfx->words.w0)) & 0xfff) / gRSP.vertexMult;
+    uint32 dwVLast  = (((gfx->words.w1)) & 0xfff) / gRSP.vertexMult;
 
     LOG_UCODE("    Culling using verts %d to %d", dwVFirst, dwVLast);
 
@@ -103,14 +103,14 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_MoveWord);
 
-    switch (gfx->mw2.type)
+    switch (gfx->gbi2moveword.type)
     {
     case RSP_MOVE_WORD_MATRIX:
         RSP_RDP_InsertMatrix(gfx);
         break;
     case RSP_MOVE_WORD_NUMLIGHT:
         {
-            uint32 dwNumLights = gfx->mw2.value/24;
+            uint32 dwNumLights = gfx->gbi2moveword.value/24;
             gRSP.ambientLightIndex = dwNumLights;
             SetNumLights(dwNumLights);
         }
@@ -118,15 +118,15 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
 
     case RSP_MOVE_WORD_CLIP:
         {
-            switch (gfx->mw2.offset)
+            switch (gfx->gbi2moveword.offset)
             {
             case RSP_MV_WORD_OFFSET_CLIP_RNX:
             case RSP_MV_WORD_OFFSET_CLIP_RNY:
             case RSP_MV_WORD_OFFSET_CLIP_RPX:
             case RSP_MV_WORD_OFFSET_CLIP_RPY:
-                CRender::g_pRender->SetClipRatio(gfx->mw2.offset, gfx->mw2.value);
+                CRender::g_pRender->SetClipRatio(gfx->gbi2moveword.offset, gfx->gbi2moveword.value);
             default:
-                LOG_UCODE("     RSP_MOVE_WORD_CLIP  ?   : 0x%08x", gfx->words.cmd1);
+                LOG_UCODE("     RSP_MOVE_WORD_CLIP  ?   : 0x%08x", gfx->words.w1);
                 break;
             }
         }
@@ -134,8 +134,8 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
 
     case RSP_MOVE_WORD_SEGMENT:
         {
-            uint32 dwSeg     = gfx->mw2.offset / 4;
-            uint32 dwAddr = gfx->mw2.value & 0x00FFFFFF;            // Hack - convert to physical
+            uint32 dwSeg     = gfx->gbi2moveword.offset / 4;
+            uint32 dwAddr = gfx->gbi2moveword.value & 0x00FFFFFF;           // Hack - convert to physical
 
             LOG_UCODE("      RSP_MOVE_WORD_SEGMENT Segment[%d] = 0x%08x",   dwSeg, dwAddr);
             if( dwAddr > g_dwRamSize )
@@ -154,8 +154,8 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
         break;
     case RSP_MOVE_WORD_FOG:
         {
-            uint16 wMult = (uint16)((gfx->mw2.value >> 16) & 0xFFFF);
-            uint16 wOff  = (uint16)((gfx->mw2.value      ) & 0xFFFF);
+            uint16 wMult = (uint16)((gfx->gbi2moveword.value >> 16) & 0xFFFF);
+            uint16 wOff  = (uint16)((gfx->gbi2moveword.value      ) & 0xFFFF);
 
             float fMult = (float)(short)wMult;
             float fOff = (float)(short)wOff;
@@ -181,19 +181,19 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
         break;
     case RSP_MOVE_WORD_LIGHTCOL:
         {
-            uint32 dwLight = gfx->mw2.offset / 0x18;
-            uint32 dwField = (gfx->mw2.offset & 0x7);
+            uint32 dwLight = gfx->gbi2moveword.offset / 0x18;
+            uint32 dwField = (gfx->gbi2moveword.offset & 0x7);
 
             switch (dwField)
             {
             case 0:
                 if (dwLight == gRSP.ambientLightIndex)
                 {
-                    SetAmbientLight( (gfx->mw2.value>>8) );
+                    SetAmbientLight( (gfx->gbi2moveword.value>>8) );
                 }
                 else
                 {
-                    SetLightCol(dwLight, gfx->mw2.value);
+                    SetLightCol(dwLight, gfx->gbi2moveword.value);
                 }
                 break;
 
@@ -210,7 +210,7 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
         break;
 
     case RSP_MOVE_WORD_PERSPNORM:
-        LOG_UCODE("     RSP_MOVE_WORD_PERSPNORM 0x%04x", (short)gfx->words.cmd1);
+        LOG_UCODE("     RSP_MOVE_WORD_PERSPNORM 0x%04x", (short)gfx->words.w1);
         break;
 
     case RSP_MOVE_WORD_POINTS:
@@ -228,7 +228,7 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
 
 void RSP_GBI2_Tri1(Gfx *gfx)
 {
-    if( gfx->words.cmd0 == 0x05000017 && gfx->gbi2tri1.flag == 0x80 )
+    if( gfx->words.w0 == 0x05000017 && gfx->gbi2tri1.flag == 0x80 )
     {
         // The ObjLoadTxtr / Tlut cmd for Evangelion.v64
         RSP_S2DEX_SPObjLoadTxtr(gfx);
@@ -253,7 +253,7 @@ void RSP_GBI2_Tri1(Gfx *gfx)
             if (IsTriangleVisible(dwV0, dwV1, dwV2))
             {
                 DEBUG_DUMP_VERTEXES("ZeldaTri1", dwV0, dwV1, dwV2);
-                LOG_UCODE("    ZeldaTri1: 0x%08x 0x%08x %d,%d,%d", gfx->words.cmd0, gfx->words.cmd1, dwV0, dwV1, dwV2);
+                LOG_UCODE("    ZeldaTri1: 0x%08x 0x%08x %d,%d,%d", gfx->words.w0, gfx->words.w1, dwV0, dwV1, dwV2);
                 if (!bTrisAdded)
                 {
                     if( bTexturesAreEnabled )
@@ -289,7 +289,7 @@ void RSP_GBI2_Tri1(Gfx *gfx)
 
 void RSP_GBI2_Tri2(Gfx *gfx)
 {
-    if( gfx->words.cmd0 == 0x0600002f && gfx->gbi2tri2.flag == 0x80 )
+    if( gfx->words.w0 == 0x0600002f && gfx->gbi2tri2.flag == 0x80 )
     {
         // The ObjTxSprite cmd for Evangelion.v64
         RSP_S2DEX_SPObjLoadTxSprite(gfx);
@@ -313,7 +313,7 @@ void RSP_GBI2_Tri2(Gfx *gfx)
             uint32 dwV4 = gfx->gbi2tri2.v4;
             uint32 dwV3 = gfx->gbi2tri2.v3;
 
-            LOG_UCODE("    ZeldaTri2: 0x%08x 0x%08x", gfx->words.cmd0, gfx->words.cmd1);
+            LOG_UCODE("    ZeldaTri2: 0x%08x 0x%08x", gfx->words.w0, gfx->words.w1);
             LOG_UCODE("           V0: %d, V1: %d, V2: %d", dwV0, dwV1, dwV2);
             LOG_UCODE("           V3: %d, V4: %d, V5: %d", dwV3, dwV4, dwV5);
 
@@ -376,7 +376,7 @@ void RSP_GBI2_Tri2(Gfx *gfx)
 
 void RSP_GBI2_Line3D(Gfx *gfx)
 {
-    if( gfx->words.cmd0 == 0x0700002f && (gfx->words.cmd1>>24) == 0x80 )
+    if( gfx->words.w0 == 0x0700002f && (gfx->words.w1>>24) == 0x80 )
     {
         // The ObjTxSprite cmd for Evangelion.v64
         RSP_S2DEX_SPObjLoadTxRect(gfx);
@@ -398,7 +398,7 @@ void RSP_GBI2_Line3D(Gfx *gfx)
             uint32 dwV4 = gfx->gbi2line3d.v4/gRSP.vertexMult;
             uint32 dwV5 = gfx->gbi2line3d.v5/gRSP.vertexMult;
 
-            LOG_UCODE("    ZeldaTri3: 0x%08x 0x%08x", gfx->words.cmd0, gfx->words.cmd1);
+            LOG_UCODE("    ZeldaTri3: 0x%08x 0x%08x", gfx->words.w0, gfx->words.w1);
             LOG_UCODE("           V0: %d, V1: %d, V2: %d", dwV0, dwV1, dwV2);
             LOG_UCODE("           V3: %d, V4: %d, V5: %d", dwV3, dwV4, dwV5);
 
@@ -464,33 +464,28 @@ void RSP_GBI2_Line3D(Gfx *gfx)
 void RSP_GBI2_Texture(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_Texture);
-    bool bEnable = gfx->texture.enable_gbi2;
-
-    CRender::g_pRender->SetTextureEnable( bEnable );
-
-    //Since the texture isnt enabled lets stop it from computing the rest
-    if(!bEnable) return;
 
     float fTextureScaleS = (float)(gfx->texture.scaleS) / (65536.0f * 32.0f);
     float fTextureScaleT = (float)(gfx->texture.scaleT) / (65536.0f * 32.0f);
 
-    if( (((gfx->words.cmd1)>>16)&0xFFFF) == 0xFFFF )
+    if( (((gfx->words.w1)>>16)&0xFFFF) == 0xFFFF )
     {
         fTextureScaleS = 1/32.0f;
     }
-    else if( (((gfx->words.cmd1)>>16)&0xFFFF) == 0x8000 )
+    else if( (((gfx->words.w1)>>16)&0xFFFF) == 0x8000 )
     {
         fTextureScaleS = 1/64.0f;
     }
-    if( (((gfx->words.cmd1)    )&0xFFFF) == 0xFFFF )
+    if( (((gfx->words.w1)    )&0xFFFF) == 0xFFFF )
     {
         fTextureScaleT = 1/32.0f;
     }
-    else if( (((gfx->words.cmd1)    )&0xFFFF) == 0x8000 )
+    else if( (((gfx->words.w1)    )&0xFFFF) == 0x8000 )
     {
         fTextureScaleT = 1/64.0f;
     }
 
+    CRender::g_pRender->SetTextureEnableAndScale(gfx->texture.tile, gfx->texture.enable_gbi2, fTextureScaleS, fTextureScaleT);
 
     /*
     if( g_curRomInfo.bTextureScaleHack )
@@ -518,7 +513,7 @@ void RSP_GBI2_Texture(Gfx *gfx)
     }
     */
 
-    CRender::g_pRender->SetTextureScale(gfx->texture.tile, fTextureScaleS, fTextureScaleT);
+    CRender::g_pRender->SetTextureEnableAndScale(gfx->texture.tile, gfx->texture.enable_gbi2, fTextureScaleS, fTextureScaleT);
 
     LOG_TEXTURE(
     {
@@ -538,7 +533,7 @@ void RSP_GBI2_PopMtx(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_PopMtx);
 
-    uint8 nCommand = (uint8)(gfx->words.cmd0 & 0xFF);
+    uint8 nCommand = (uint8)(gfx->words.w0 & 0xFF);
 
     LOG_UCODE("        PopMtx: 0x%02x (%s)",
         nCommand, 
@@ -585,8 +580,8 @@ void RSP_GBI2_GeometryMode(Gfx *gfx)
 {
     SP_Timing(RSP_GBI2_GeometryMode);
 
-    uint32 dwAnd = ((gfx->words.cmd0)) & 0x00FFFFFF;
-    uint32 dwOr  = ((gfx->words.cmd1)) & 0x00FFFFFF;
+    uint32 dwAnd = ((gfx->words.w0)) & 0x00FFFFFF;
+    uint32 dwOr  = ((gfx->words.w1)) & 0x00FFFFFF;
 
 #ifdef DEBUGGER
         LOG_UCODE("    0x%08x 0x%08x =(x & 0x%08x) | 0x%08x", gfx->words.cmd0, gfx->words.cmd1, dwAnd, dwOr);
@@ -657,19 +652,19 @@ void RSP_GBI2_Mtx(Gfx *gfx)
     SP_Timing(RSP_GBI0_Mtx);
     dwConkerVtxZAddr = 0;   // For Conker BFD
 
-    uint32 addr = RSPSegmentAddr((gfx->mtx2.addr));
+    uint32 addr = RSPSegmentAddr((gfx->gbi2matrix.addr));
 
-    if( gfx->mtx2.param == 0 && gfx->mtx2.len == 0 )
+    if( gfx->gbi2matrix.param == 0 && gfx->gbi2matrix.len == 0 )
     {
         DLParser_Bomberman2TextRect(gfx);
         return;
     }
 
     LOG_UCODE("    Mtx: %s %s %s Length %d Address 0x%08x",
-        gfx->mtx2.projection ? "Projection" : "ModelView",
-        gfx->mtx2.load ? "Load" : "Mul",
-        gfx->mtx2.nopush==0 ? "Push" : "No Push",
-        gfx->mtx2.len, addr);
+        gfx->gbi2matrix.projection ? "Projection" : "ModelView",
+        gfx->gbi2matrix.load ? "Load" : "Mul",  
+        gfx->gbi2matrix.nopush==0 ? "Push" : "No Push",
+        gfx->gbi2matrix.len, addr);
 
     if (addr + 64 > g_dwRamSize)
     {
@@ -679,14 +674,14 @@ void RSP_GBI2_Mtx(Gfx *gfx)
 
     LoadMatrix(addr);
 
-    if (gfx->mtx2.projection)
+    if (gfx->gbi2matrix.projection)
     {
         // So far only Extreme-G seems to Push/Pop projection matrices  
-        CRender::g_pRender->SetProjection(matToLoad, gfx->mtx2.nopush==0, gfx->mtx2.load);
+        CRender::g_pRender->SetProjection(matToLoad, gfx->gbi2matrix.nopush==0, gfx->gbi2matrix.load);
     }
     else
     {
-        CRender::g_pRender->SetWorldView(matToLoad, gfx->mtx2.nopush==0, gfx->mtx2.load);
+        CRender::g_pRender->SetWorldView(matToLoad, gfx->gbi2matrix.nopush==0, gfx->gbi2matrix.load);
 
         if( options.enableHackForGames == HACK_FOR_SOUTH_PARK_RALLY )
         {
@@ -699,15 +694,15 @@ void RSP_GBI2_Mtx(Gfx *gfx)
     }
 
 #ifdef DEBUGGER
-    const char *loadstr = gfx->mtx2.load?"Load":"Mul";
-    const char *pushstr = gfx->mtx2.nopush==0?"Push":"Nopush";
+    const char *loadstr = gfx->gbi2matrix.load?"Load":"Mul";
+    const char *pushstr = gfx->gbi2matrix.nopush==0?"Push":"Nopush";
     int projlevel = CRender::g_pRender->GetProjectMatrixLevel();
     int worldlevel = CRender::g_pRender->GetWorldViewMatrixLevel();
     if( pauseAtNext && eventToPause == NEXT_MATRIX_CMD )
     {
         pauseAtNext = false;
         debuggerPause = true;
-        if (gfx->mtx2.projection)
+        if (gfx->gbi2matrix.projection)
         {
             DebuggerAppendMsg("Pause after %s and %s Matrix: Projection, level=%d\n", loadstr, pushstr, projlevel );
         }
@@ -720,7 +715,7 @@ void RSP_GBI2_Mtx(Gfx *gfx)
     {
         if( pauseAtNext && logMatrix ) 
         {
-            if (gfx->mtx2.projection)
+            if (gfx->gbi2matrix.projection)
             {
                 DebuggerAppendMsg("Matrix: %s and %s Projection level=%d\n", loadstr, pushstr, projlevel);
             }
@@ -737,11 +732,11 @@ void RSP_GBI2_MoveMem(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_MoveMem);
 
-    uint32 addr = RSPSegmentAddr((gfx->words.cmd1));
-    uint32 type    = ((gfx->words.cmd0)     ) & 0xFE;
+    uint32 addr = RSPSegmentAddr((gfx->words.w1));
+    uint32 type    = ((gfx->words.w0)     ) & 0xFE;
 
-    //uint32 dwLen = ((gfx->words.cmd0) >> 16) & 0xFF;
-    //uint32 dwOffset = ((gfx->words.cmd0) >> 8) & 0xFFFF;
+    //uint32 dwLen = ((gfx->words.w0) >> 16) & 0xFF;
+    //uint32 dwOffset = ((gfx->words.w0) >> 8) & 0xFFFF;
 
     switch (type)
     {
@@ -752,7 +747,7 @@ void RSP_GBI2_MoveMem(Gfx *gfx)
         break;
     case RSP_GBI2_MV_MEM__LIGHT:
         {
-            uint32 dwOffset2 = ((gfx->words.cmd0) >> 5) & 0x3FFF;
+            uint32 dwOffset2 = ((gfx->words.w0) >> 5) & 0x3FFF;
         switch (dwOffset2)
         {
         case 0x00:
@@ -803,21 +798,22 @@ void RSP_GBI2_MoveMem(Gfx *gfx)
 
     case RSP_GBI2_MV_MEM__POINT:
         LOG_UCODE("Zelda Move Point");
+        void RDP_NOIMPL_WARN(const char* op);
         RDP_NOIMPL_WARN("Zelda Move Point");
         break;
 
     case RSP_GBI2_MV_MEM_O_LOOKATX:
-        if( (gfx->words.cmd0) == 0xDC170000 && ((gfx->words.cmd1)&0xFF000000) == 0x80000000 )
+        if( (gfx->words.w0) == 0xDC170000 && ((gfx->words.w1)&0xFF000000) == 0x80000000 )
         {
             // Ucode for Evangelion.v64, the ObjMatrix cmd
             RSP_S2DEX_OBJ_MOVEMEM(gfx);
         }
         break;
     case RSP_GBI2_MV_MEM_O_LOOKATY:
-        RSP_RDP_NOIMPL("Not implemented ZeldaMoveMem LOOKATY, Cmd0=0x%08X, Cmd1=0x%08X", gfx->words.cmd0, gfx->words.cmd1);
+        RSP_RDP_NOIMPL("Not implemented ZeldaMoveMem LOOKATY, Cmd0=0x%08X, Cmd1=0x%08X", gfx->words.w0, gfx->words.w1);
         break;
     case 0x02:
-        if( (gfx->words.cmd0) == 0xDC070002 && ((gfx->words.cmd1)&0xFF000000) == 0x80000000 )
+        if( (gfx->words.w0) == 0xDC070002 && ((gfx->words.w1)&0xFF000000) == 0x80000000 )
         {
             RSP_S2DEX_OBJ_MOVEMEM(gfx);
             break;
@@ -835,8 +831,8 @@ void RSP_GBI2_DL(Gfx *gfx)
 {
     SP_Timing(RSP_GBI0_DL);
 
-    uint32 dwPush = ((gfx->words.cmd0) >> 16) & 0xFF;
-    uint32 dwAddr = RSPSegmentAddr((gfx->words.cmd1));
+    uint32 dwPush = ((gfx->words.w0) >> 16) & 0xFF;
+    uint32 dwAddr = RSPSegmentAddr((gfx->words.w1));
 
     if( dwAddr > g_dwRamSize )
     {
@@ -882,9 +878,9 @@ void RSP_GBI2_SetOtherModeL(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_SetOtherModeL);
 
-    uint32 dwShift = ((gfx->words.cmd0)>>8)&0xFF;
-    uint32 dwLength= ((gfx->words.cmd0)   )&0xFF;
-    uint32 dwData  = (gfx->words.cmd1);
+    uint32 dwShift = ((gfx->words.w0)>>8)&0xFF;
+    uint32 dwLength= ((gfx->words.w0)   )&0xFF;
+    uint32 dwData  = (gfx->words.w1);
 
     // Mask is constructed slightly differently
     uint32 dwMask = (uint32)((s32)(0x80000000)>>dwLength)>>dwShift;
@@ -894,8 +890,8 @@ void RSP_GBI2_SetOtherModeL(Gfx *gfx)
     modeL = (modeL&(~dwMask)) | dwData;
 
     Gfx tempgfx;
-    tempgfx.words.cmd0 = gRDP.otherModeH;
-    tempgfx.words.cmd1 = modeL;
+    tempgfx.words.w0 = gRDP.otherModeH;
+    tempgfx.words.w1 = modeL;
     DLParser_RDPSetOtherMode(&tempgfx );
 }
 
@@ -905,17 +901,17 @@ void RSP_GBI2_SetOtherModeH(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_SetOtherModeH);
 
-    uint32 dwLength= (((gfx->words.cmd0))&0xFF)+1;
-    uint32 dwShift = 32 - (((gfx->words.cmd0)>>8)&0xFF) - dwLength;
-    uint32 dwData  = (gfx->words.cmd1);
+    uint32 dwLength= (((gfx->words.w0))&0xFF)+1;
+    uint32 dwShift = 32 - (((gfx->words.w0)>>8)&0xFF) - dwLength;
+    uint32 dwData  = (gfx->words.w1);
 
     uint32 dwMask2 = ((1<<dwLength)-1)<<dwShift;
     uint32 dwModeH = gRDP.otherModeH;
     dwModeH = (dwModeH&(~dwMask2)) | dwData;
 
     Gfx tempgfx;
-    tempgfx.words.cmd0 = dwModeH;
-    tempgfx.words.cmd1 = gRDP.otherModeL;
+    tempgfx.words.w0 = dwModeH;
+    tempgfx.words.w1 = gRDP.otherModeL;
     DLParser_RDPSetOtherMode(&tempgfx );
 }
 
@@ -924,6 +920,6 @@ void RSP_GBI2_SubModule(Gfx *gfx)
 {
     SP_Timing(RSP_GBI2_SubModule);
 
-    RSP_RDP_NOIMPL("RDP: RSP_GBI2_SubModule (0x%08x 0x%08x)", (gfx->words.cmd0), (gfx->words.cmd1));
+    RSP_RDP_NOIMPL("RDP: RSP_GBI2_SubModule (0x%08x 0x%08x)", (gfx->words.w0), (gfx->words.w1));
 }
 

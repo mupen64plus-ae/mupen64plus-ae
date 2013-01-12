@@ -24,11 +24,11 @@ void RSP_GBI2_DL_Count(Gfx *gfx)
     DP_Timing(DP_Minimal);
 
     // This cmd is likely to execute number of ucode at the given address
-    uint32 dwAddr = RSPSegmentAddr((gfx->words.cmd1));
+    uint32 dwAddr = RSPSegmentAddr((gfx->words.w1));
     {
         gDlistStackPointer++;
         gDlistStack[gDlistStackPointer].pc = dwAddr;
-        gDlistStack[gDlistStackPointer].countdown = ((gfx->words.cmd0)&0xFFFF);
+        gDlistStack[gDlistStackPointer].countdown = ((gfx->words.w0)&0xFFFF);
     }
 }
 
@@ -38,7 +38,7 @@ void RSP_GBI2_0x8(Gfx *gfx)
     
     
 
-    if( ((gfx->words.cmd0)&0x00FFFFFF) == 0x2F && ((gfx->words.cmd1)&0xFF000000) == 0x80000000 )
+    if( ((gfx->words.w0)&0x00FFFFFF) == 0x2F && ((gfx->words.w1)&0xFF000000) == 0x80000000 )
     {
         // V-Rally 64
         RSP_S2DEX_SPObjLoadTxRectR(gfx);
