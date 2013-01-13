@@ -34,7 +34,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         View.OnClickListener
 
 {
-    private static int DEFAULT_VALUE = 0;
+    private static final int DEFAULT_VALUE = 0;
     
     private int mValue = DEFAULT_VALUE;
     private CheckBox mCheckbox;

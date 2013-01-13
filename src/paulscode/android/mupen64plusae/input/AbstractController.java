@@ -114,10 +114,10 @@ public abstract class AbstractController
     /** N64 button: shoulder-l. */
     public static final int BTN_L = 13;
     
-    /** N64 button: mempak switch. */
+    /** N64 button: Controller Pak (Mempak) switch. */
     public static final int BTN_MEMPAK = 14;
 
-    /** N64 button: rumblepak switch. */
+    /** N64 button: Rumble Pak switch. */
     public static final int BTN_RUMBLEPAK = 15;
 
     /** Total number of N64 buttons. */

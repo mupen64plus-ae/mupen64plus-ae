@@ -27,6 +27,7 @@ import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import android.util.Log;
+import paulscode.android.mupen64plusae.util.Utility;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
@@ -62,7 +63,7 @@ public class PeripheralController extends AbstractController implements
     /** Difference in emulation speed after modification by mapped speed-up and slow-down functions. */
     private int speedOffset = 0;
     
-    /** Ammount to change the speed with each speed-up or slow-down function press. */
+    /** Amount to change the speed with each speed-up or slow-down function press. */
     private static final int SPEED_INC = 10;
     
     /**
@@ -298,11 +299,12 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
         int speed = 100;
         if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
             speed = GameMenuHandler.sInstance.mSpeedFactor;
+
         speed += speedOffset;
-        if( speed > GameMenuHandler.MAX_SPEED_FACTOR )
-            speed = GameMenuHandler.MAX_SPEED_FACTOR;
-        if( speed < GameMenuHandler.MIN_SPEED_FACTOR )
-            speed = GameMenuHandler.MIN_SPEED_FACTOR;
+
+        // Clamp the speed to valid values.
+        speed = Utility.clamp(speed, GameMenuHandler.MIN_SPEED_FACTOR, GameMenuHandler.MAX_SPEED_FACTOR);
+
         NativeMethods.stateSetSpeed( speed );
     }
 }
