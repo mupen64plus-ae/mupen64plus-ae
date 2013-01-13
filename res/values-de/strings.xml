@@ -8,8 +8,8 @@
   <string name="ingameSlotSave_title">Steckplatz speichern</string>
   <string name="ingameSlotLoad_title">Steckplatz laden</string>
   <string name="ingameSetSlot_title">Steckplatz %1$d</string>
-  <string name="ingameFileSave_title">Speichere in Datei...</string>
-  <string name="ingameFileLoad_title">Lade aus Datei...</string>
+  <string name="ingameFileSave_title">Speichere in Datei…</string>
+  <string name="ingameFileLoad_title">Lade aus Datei…</string>
   <string name="ingameSetSpeed_title">Spielgeschwindigkeit</string>
   <string name="ingameSetIme_title">Wechsle IME</string>
   <string name="ingameMainMenu_title">Hauptmenü</string>
@@ -18,16 +18,16 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Stelle Cheat-Datenbank wieder her...</string>
-  <string name="toast_launchingEmulator">Starte Emulator...</string>
-  <string name="toast_resettingGame">Setzte Spiel zurück...</string>
-  <string name="toast_loadingSession">Setze Spiel fort...</string>
-  <string name="toast_savingSession">Speichere Spielstand...</string>
+  <string name="toast_rebuildingCheats">Stelle Cheat-Datenbank wieder her…</string>
+  <string name="toast_launchingEmulator">Starte Emulator…</string>
+  <string name="toast_resettingGame">Setzte Spiel zurück…</string>
+  <string name="toast_loadingSession">Setze Spiel fort…</string>
+  <string name="toast_savingSession">Speichere Spielstand…</string>
   <string name="toast_loadingSlot">Lade Steckplatz %1$d…</string>
   <string name="toast_savingSlot">Speicher Steckplatz %1$d…</string>
   <string name="toast_loadingFile">Lade %1$s…</string>
   <string name="toast_savingFile">Speichere %1$s…</string>
-  <string name="toast_overwritingFile">Überschreibe %1$s...</string>
+  <string name="toast_overwritingFile">Überschreibe %1$s…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Benutzt Steckplatz %1$d.</string>
   <string name="toast_sdInaccessible">SD Karte nicht zugriffsbereit (nimm sie heraus und versuche es erneut).</string>
@@ -124,6 +124,8 @@
   <string name="gles2RiceForceTextureFilter_title">Texturfilter erzwingen</string>
   <string name="gles2RiceHiResTextures_title">Hochauflösende Texturen</string>
   <string name="gles2RiceHiResTextures_summary">Benutze importierte Texturpakete</string>
+  <string name="audioSwapChannels_title">tauscht Audiokanäle</string>
+  <string name="audioSwapChannels_summary">Tauscht den linken mit dem rechten Audiokanal</string>
   <!--List Preferences (selected value will become the summary)-->
   <string name="touchscreenLayout_title">Touchscreen Anordnung</string>
   <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
@@ -181,7 +183,10 @@
   <string name="pluginInput_title">Eingabe</string>
   <string name="pluginInput_entryNone">Nichts (Eingabe ausgeschaltet)</string>
   <string name="pluginInput_entrySdl">input-sdl, v1.10 (Android Portierung von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken und Paul Lamb)</string>
+  <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Nichts (RSP ausgeschaltet)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Androidportierung von Mupen64Plus von Hactarux, JttL, Ebenblues von Richard Goedeken)</string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Keine Audiowiedergabe, Speed Hack von Hactarux, JttL, Ebenblues, Richard Goedeken und Paul Lamb)</string>
   <string name="pluginCore_title">Emulationskern</string>
   <string name="pluginCore_entryV110">core, v1.10 (Android Portierung von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken und Paul Lamb)</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -197,6 +202,7 @@
   <string name="pathPreference_dialogTitle">Ausgewählter Ordner: %1$s</string>
   <string name="pathSelectedGame_title">Spiel</string>
   <string name="pathSelectedGame_default">~roms/n64</string>
+  <string name="pathCustomTouchscreen_title">Ordner für benutzerdefinierte Layouts</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">importiere Texturpacket</string>
   <string name="pathHiResTextures_default">~</string>
@@ -241,7 +247,7 @@
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Player Mapping-->
-  <string name="playerMap_deviceWithName">Gerät %d$d (%2$s)</string>
+  <string name="playerMap_deviceWithName">Gerät %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Gerät %1$d</string>
   <string name="playerMapPreference_popupTitle">Spieler %1$d</string>
   <!--Input Mapping-->
@@ -282,6 +288,6 @@
   <string name="inputMapPreference_speedUp">Schneller</string>
   <string name="inputMapPreference_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Drücke Knopf oder Taste...</string>
+  <string name="diagnosticActivity_textKey_text">Drücke Knopf oder Taste…</string>
   <string name="diagnosticActivity_textMotion_text">Touchscreen oder Joystick</string>
 </resources>
