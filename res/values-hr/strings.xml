@@ -69,7 +69,6 @@
   <string name="actionAbout_credits">Zasluge</string>
   <string name="actionAbout_changelog">Promjene u novoj inačici</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Igraj</string>
   <string name="screenSettings_title">Postavke</string>
   <string name="screenInput_title">Unos</string>
   <string name="screenInput_summary">Postavke kontrolera</string>
@@ -98,8 +97,6 @@
   <string name="categoryCrashReports_title">Izvještaji rušenja</string>
   <!--Checkbox Preferences-->
   <string name="touchscreenEnabled_title">Omogući dodirni ekran</string>
-  <string name="touchscreenHidden_title">Sakrij tipke</string>
-  <string name="touchscreenHidden_summary">Za dodirno-označene kontrolere i slično</string>
   <string name="touchpadEnabled_title">Omogući dodirnu površinu</string>
   <string name="inputOctagonConstraints_title">Oktagonalni kontroler</string>
   <string name="inputOctagonConstraints_summary">Kontrola slična pravom N64 kontroleru</string>
@@ -199,6 +196,7 @@
   <string name="acraEnable_summary">Ne prikupljavaju se osobni podaci</string>
   <string name="acraUserEmail_title">Kontakt</string>
   <string name="acraUserEmail_summary">Vaše paulscode.com korisničko ime (nije potrebno)</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -253,6 +251,7 @@
   <string name="pathHiResTexturesTask_title">Raspakiravanje teksture</string>
   <string name="pathHiResTexturesTask_message">Molimo pričekajte. Ovaj proces može potrajati.</string>
   <string name="pathHiResTexturesTask_errorMessage">Došlo je do greške sa raspakiravanjem teksture!</string>
+  <!--Seek Bar Preference-->
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Uređaj %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Uređaj %1$d</string>

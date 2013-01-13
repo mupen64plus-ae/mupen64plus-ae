@@ -8,25 +8,26 @@
   <string name="ingameSlotSave_title">Salvar entrada</string>
   <string name="ingameSlotLoad_title">Carregar entrada</string>
   <string name="ingameSetSlot_title">Entrada %1$d</string>
-  <string name="ingameFileSave_title">Salvar para o arquivoâ€¦</string>
-  <string name="ingameFileLoad_title">Carregar do arquivoâ€¦</string>
+  <string name="ingameFileSave_title">Salvar para o arquivo...</string>
+  <string name="ingameFileLoad_title">Carregar do arquivo...</string>
   <string name="ingameSetSpeed_title">Velocidade do jogo</string>
-  <string name="ingameSetIme_title">Mudar IME</string>
+  <string name="ingameSetIme_title">Mudar mét. entrada</string>
   <string name="ingameMainMenu_title">Menu Principal</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_launchingEmulator">Executando emuladorâ€¦</string>
-  <string name="toast_resettingGame">Resetando jogoâ€¦</string>
-  <string name="toast_loadingSession">Auto-resumindo jogoâ€¦</string>
-  <string name="toast_savingSession">Auto-salvando jogoâ€¦</string>
-  <string name="toast_loadingSlot">Carregando entrada %1$dâ€¦</string>
-  <string name="toast_savingSlot">Salvando entrada %1$dâ€¦</string>
-  <string name="toast_loadingFile">Carregando %1$sâ€¦</string>
-  <string name="toast_savingFile">Salvando %1$sâ€¦</string>
-  <string name="toast_overwritingFile">Sobrescrevendo %1$sâ€¦</string>
+  <string name="toast_rebuildingCheats">Reconstruindo banco de dados dos Cheats...</string>
+  <string name="toast_launchingEmulator">Executando emulador...</string>
+  <string name="toast_resettingGame">Resetando jogo...</string>
+  <string name="toast_loadingSession">Auto-resumindo jogo...</string>
+  <string name="toast_savingSession">Auto-salvando jogo...</string>
+  <string name="toast_loadingSlot">Carregando entrada %1$d...</string>
+  <string name="toast_savingSlot">Salvando entrada %1$d...</string>
+  <string name="toast_loadingFile">Carregando %1$s...</string>
+  <string name="toast_savingFile">Salvando %1$s...</string>
+  <string name="toast_overwritingFile">Sobrescrevendo %1$s...</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessivel (desconecte o cabo USB e tente novamente).</string>
@@ -37,6 +38,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionPlay_title">Jogar</string>
   <string name="actionResume_title">Resumir</string>
   <string name="actionResume_summary">Não recomendado se você usar Cheats</string>
   <string name="actionRestart_title">Reiniciar</string>
@@ -69,7 +71,6 @@
   <string name="actionAbout_credits">Créditos</string>
   <string name="actionAbout_changelog">Melhorias do emulador</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Jogar</string>
   <string name="screenSettings_title">Configurações</string>
   <string name="screenInput_title">Controle</string>
   <string name="screenInput_summary">Configurações de controle</string>
@@ -98,15 +99,13 @@
   <string name="categoryCrashReports_title">Erros críticos</string>
   <!--Checkbox Preferences-->
   <string name="touchscreenEnabled_title">Habilitar toque na tela</string>
-  <string name="touchscreenHidden_title">Esconder butões</string>
-  <string name="touchscreenHidden_summary">Para controles de toque e Gaming Wizards</string>
-  <string name="touchscreenTransparency_title">Transparência do controle de toque</string>
-  <string name="touchscreenTransparency_summary">Mudar transparência dos botões de toque (pode ficar lento, 255 desabilita transparência)</string>
   <string name="touchpadEnabled_title">Habilitar touchpad</string>
   <string name="inputOctagonConstraints_title">Limites do controle octagonal</string>
   <string name="inputOctagonConstraints_summary">Concentra o movimento do analógico ao octagono, como em um controle de N64 real</string>
   <string name="inputVolumeMappable_title">Teclas de volume mapeáveis</string>
   <string name="inputVolumeMappable_summary">Permite que as teclas de volume sejam usadas como controle</string>
+  <string name="inputShareController_title">Compartilhar controlador</string>
+  <string name="inputShareController_summary">Permitir um único controle controlar todos os multiplos jogadores de uma vez</string>
   <string name="videoStretch_title">Esticar tela</string>
   <string name="videoStretch_summary">Pode destorcer a imagem</string>
   <string name="videoUseFramelimiter_title">Usar limite de frames</string>
@@ -161,6 +160,14 @@
   <string name="videoFpsRefresh_entryNever">Nunca</string>
   <string name="videoFpsRefresh_entryOccasionally">Ocasionalmente</string>
   <string name="videoFpsRefresh_entryFrequently">Frequentemente</string>
+  <string name="videoHardwareType_title">Redução de Flicker</string>
+  <string name="videoHardwareType_entryAuto">Auto detectar pelo modelo do celular/tablet</string>
+  <string name="videoHardwareType_entryStandard">Perfil padrão</string>
+  <string name="videoHardwareType_entryI">Perfil I</string>
+  <string name="videoHardwareType_entryO1">Perfil O-1</string>
+  <string name="videoHardwareType_entryO2">Perfil O-2</string>
+  <string name="videoHardwareType_entryQ">Perfil Q</string>
+  <string name="videoHardwareType_entryT">Perfil T</string>
   <string name="gles2N64Frameskip_title">Pulo de frames</string>
   <string name="gles2N64Frameskip_entryNever">Nunca pular frames</string>
   <string name="gles2N64Frameskip_entryUpTo1">Não mais que 1 frame</string>
@@ -183,7 +190,7 @@
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Nenhum (video desabilitado)</string>
   <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (Port GLES2 do GLN64 para Android por Orkin, Adventus, Yongzh, Paul Lamb)</string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (Port GLES2 d\no Rice Video para m64p v1.99.5 por Rice, Kris (Metricity))</string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (Port GLES2 do Rice Video para m64p v1.99.5 por Rice, Kris (Metricity))</string>
   <string name="pluginAudio_title">Áudio</string>
   <string name="pluginAudio_entryNone">Nenhum (áudio desabilitado)</string>
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
@@ -201,6 +208,8 @@
   <string name="acraEnable_summary">Nenhuma informação pessoal é coletada</string>
   <string name="acraUserEmail_title">Informações de contato</string>
   <string name="acraUserEmail_summary">Seu usuário no paulscode.com (opcional)</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Transparência do controle de toque</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -255,15 +264,17 @@
   <string name="pathHiResTexturesTask_title">Extraindo texturas</string>
   <string name="pathHiResTexturesTask_message">Seja paciente.  Esse processo pode levar algum tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema extraindo texturas!</string>
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Dispositivo %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
   <string name="playerMapPreference_popupTitle">Jogador %1$d</string>
-  <string name="playerMapPreference_popupMessage">Jogador %1$d, pressione um botão ou ligue no seu controleâ€¦\n\nDispositivos atuais:\n%2$s</string>
+  <string name="playerMapPreference_popupMessage">Jogador %1$d, pressione um botão ou ligue no seu controle...\n\nDispositivos atuais:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desmapear</string>
   <string name="playerMapPreference_button">Jogador %1$d\n\n%2$s</string>
   <!--Input Mapping-->
-  <string name="inputMapPreference_popupMessage">Pressione um botão, tecla, ou joystick para mapearâ€¦\n\nMapeamento atual:\n%1$s</string>
+  <string name="inputMapPreference_popupMessage">Pressione um botão, tecla, ou joystick para mapear...\n\nMapeamento atual:\n%1$s</string>
   <string name="inputMapPreference_showSpecial">Exibir funções especiais</string>
   <string name="inputMapPreference_hideSpecial">Esconder funções especiais</string>
   <string name="inputMapPreference_popupUnmap">Desmapear</string>
@@ -305,5 +316,5 @@
   <string name="inputMapPreference_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Pressione um botão ou teclaâ€¦</string>
-  <string name="diagnosticActivity_textMotion_text">Toque a tela ou use o joystickâ€¦</string>
+  <string name="diagnosticActivity_textMotion_text">Toque a tela ou use o joystick...</string>
 </resources>

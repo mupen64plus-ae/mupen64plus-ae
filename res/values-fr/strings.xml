@@ -18,6 +18,7 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_rebuildingCheats">Reconstruction de la base de donnée des cheat codes</string>
   <string name="toast_launchingEmulator">Lancement de l\'émulateur…</string>
   <string name="toast_resettingGame">Réinitialisation du jeu…</string>
   <string name="toast_loadingSession">Reprise automatique du jeu…</string>
@@ -37,6 +38,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionPlay_title">Jouer</string>
   <string name="actionResume_title">Reprendre</string>
   <string name="actionResume_summary">Déconseillé en cas d\'utilisation de cheat codes</string>
   <string name="actionRestart_title">Redémarrer</string>
@@ -61,7 +63,7 @@
   <string name="actionResetUserPrefs_popupMessage">Êtes-vous sûr de vouloir réinitialiser tous les paramètres par défaut ?</string>
   <string name="actionSetLocale_title">Langue</string>
   <string name="actionHelp_title">Aide</string>
-  <string name="actionHelp_message">Mupen64Plus est développé et entretenu par une petite équipe de volontaires./n/nMerci de nous aider à l\'améliorer !</string>
+  <string name="actionHelp_message">Mupen64Plus est développé et entretenu par une petite équipe de volontaires.\n\nMerci de nous aider à l\'améliorer !</string>
   <string name="actionHelp_faq">FAQ</string>
   <string name="actionHelp_reportbug">Signaler un bug</string>
   <string name="actionAbout_title">À propos</string>
@@ -69,7 +71,6 @@
   <string name="actionAbout_credits">Équipe de Mupen64Plus</string>
   <string name="actionAbout_changelog">Liste des modifications</string>
   <!--Preference Screens-->
-  <string name="screenPlay_title">Jouer</string>
   <string name="screenSettings_title">Paramètres</string>
   <string name="screenInput_title">Contrôles</string>
   <string name="screenInput_summary">Paramètres de contrôles</string>
@@ -98,15 +99,13 @@
   <string name="categoryCrashReports_title">Rapports de plantages</string>
   <!--Checkbox Preferences-->
   <string name="touchscreenEnabled_title">Activer les commandes virtuelles à l\'écran</string>
-  <string name="touchscreenHidden_title">Masquer les commandes virtuelles à l\'écran</string>
-  <string name="touchscreenHidden_summary">Fait disparaître les boutons virtuels à l\'écran. Pour les utilisateurs de manette ou les Zatoichis en puissance.</string>
-  <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>
-  <string name="touchscreenTransparency_summary">Modifie la transparence des boutons virtuels à l\'écran (255 désactive la transparence)</string>
   <string name="touchpadEnabled_title">Activer le pavé tactile</string>
   <string name="inputOctagonConstraints_title">Limites octogonales du joystick</string>
   <string name="inputOctagonConstraints_summary">Limite les mouvements du stick analogique à un octogone, comme une vraie manette N64</string>
   <string name="inputVolumeMappable_title">Boutons de volume assignables</string>
   <string name="inputVolumeMappable_summary">Permet d\'utiliser les boutons de volume comme contrôles</string>
+  <string name="inputShareController_title">Partager manette</string>
+  <string name="inputShareController_summary">Autorise une unique manette à contrôler plusieurs joueurs à la fois</string>
   <string name="videoStretch_title">Étirement de l\'affichage</string>
   <string name="videoStretch_summary">Peut modifier le ratio original d\'affichage</string>
   <string name="videoUseFramelimiter_title">Utiliser un limitateur de FPS</string>
@@ -161,6 +160,14 @@
   <string name="videoFpsRefresh_entryNever">Jamais</string>
   <string name="videoFpsRefresh_entryOccasionally">Parfois</string>
   <string name="videoFpsRefresh_entryFrequently">Fréquemment</string>
+  <string name="videoHardwareType_title">Réduction du tremblement</string>
+  <string name="videoHardwareType_entryAuto">Détection automatique du mode : téléphone/tablette</string>
+  <string name="videoHardwareType_entryStandard">Profile standard</string>
+  <string name="videoHardwareType_entryI">Profile I</string>
+  <string name="videoHardwareType_entryO1">Profile O-1</string>
+  <string name="videoHardwareType_entryO2">Profile O-2</string>
+  <string name="videoHardwareType_entryQ">Profile Q</string>
+  <string name="videoHardwareType_entryT">Profile T</string>
   <string name="gles2N64Frameskip_title">Saut d\'images</string>
   <string name="gles2N64Frameskip_entryNever">Ne jamais sauter d\'image</string>
   <string name="gles2N64Frameskip_entryUpTo1">Pas plus d\'une image</string>
@@ -201,6 +208,8 @@
   <string name="acraEnable_summary">Aucune donnée personnelle n\'est collectée</string>
   <string name="acraUserEmail_title">Information de contact</string>
   <string name="acraUserEmail_summary">Votre nom d\'utilisateur paulscode.com (facultatif)</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -255,6 +264,8 @@
   <string name="pathHiResTexturesTask_title">Décompresser les textures</string>
   <string name="pathHiResTexturesTask_message">Merci de patienter. Cette opération peut prendre quelques minutes.</string>
   <string name="pathHiResTexturesTask_errorMessage">Une erreur est survenue durant la décompression des textures !</string>
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Appareil %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Appareil %1$d</string>
