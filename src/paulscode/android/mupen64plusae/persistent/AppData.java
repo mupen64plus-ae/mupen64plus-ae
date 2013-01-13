@@ -379,13 +379,14 @@ public class AppData
                     String[] splitLine = line.split( ":" );
                     if( splitLine.length == 2 )
                     {
-                        String heading = splitLine[0].trim();
-                        if( heading.equals( "processor" ) )
-                            _processor = splitLine[1].trim();
-                        else if( heading.equals( "features" ) )
-                            _features = splitLine[1].trim();
-                        else if( heading.equals( "hardware" ) )
-                            _hardware = splitLine[1].trim();
+                        String arg = splitLine[0].trim();
+                        String val = splitLine[1].trim();
+                        if( arg.equals( "processor" ) && val.length() > 1 )
+                            _processor = val;
+                        else if( arg.equals( "features" ) )
+                            _features = val;
+                        else if( arg.equals( "hardware" ) )
+                            _hardware = val;
                     }
                 }
                 
@@ -397,7 +398,8 @@ public class AppData
             
             // Identify the hardware type from the substrings
             //@formatter:off
-            if(        hardware.contains( "mapphone" )
+            if(        ( hardware.contains( "mapphone" )
+                         && !processor.contains( "rev 3" ) )
                     || hardware.contains( "smdkv" )
                     || hardware.contains( "herring" )
                     || hardware.contains( "aries" )
@@ -405,7 +407,8 @@ public class AppData
                          && !IS_JELLYBEAN ) )
                 hardwareType = HARDWARE_TYPE_OMAP;
             
-            else if(   hardware.contains( "tuna" ) )
+            else if(   hardware.contains( "tuna" )
+                    || hardware.contains( "mapphone" ) )
                 hardwareType = HARDWARE_TYPE_OMAP_2;
             
             else if(   hardware.contains( "liberty" )
