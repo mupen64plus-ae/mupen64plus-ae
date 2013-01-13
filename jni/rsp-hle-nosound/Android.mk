@@ -38,7 +38,7 @@ else
 endif
 
 
-LOCAL_CFLAGS += -O3 -ffast-math -fno-strict-aliasing -fvisibility=hidden
+LOCAL_CFLAGS += -O3 -ffast-math -frename-registers -fomit-frame-pointer -fsingle-precision-constant -fpredictive-commoning -fno-strict-aliasing -fvisibility=hidden
 LOCAL_CXXFLAGS += -fvisibility-inlines-hidden
 #LOCAL_LDLIBS += -lcore
 
