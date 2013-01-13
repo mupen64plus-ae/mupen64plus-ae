@@ -64,7 +64,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
             mOptions = new String[options.length + 1];
             mOptions[0] = context.getString( R.string.cheat_disabled );
             System.arraycopy( options, 0, mOptions, 1, options.length );
-            mOptionsDialog = new OptionDialog( title.hashCode(), title, mOptions, context, this );
+            mOptionsDialog = new OptionDialog( context, title, mOptions, this );
         }
         mNotesDialog = new Builder( context ).setTitle( title ).setMessage( notes ).create();
         mOptionNoteDialog = new Builder( context ).setTitle(
@@ -145,7 +145,7 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
         else
         {
             // Multi-choice cheat
-            mOptionsDialog.getDialog().show();
+            mOptionsDialog.show( mValue );
         }
     }
     

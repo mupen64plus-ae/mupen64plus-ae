@@ -20,76 +20,64 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
+import android.content.DialogInterface.OnClickListener;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 public class OptionDialog
 {
     public interface Listener
     {
         public void onOptionChoice( int choice );
+        
         public void onOptionLongPress( int item );
     }
-
-    public final int id;
-    private final Listener mListener;
-    private final AlertDialog.Builder mBuilder;
-    private AlertDialog mDialog = null;
-    private final String[] mOptions;
     
-    public final AlertDialog getDialog()
+    private final Listener mListener;
+    private final String[] mOptions;
+    private final Builder mBuilder;
+    
+    public OptionDialog( Context context, String title, String[] options, Listener listener )
     {
-        if( mDialog == null )
-        {
-            mDialog = mBuilder.create();
-        }
-        ListView listView = mDialog.getListView();
-        if( listView == null )
-        {
-            Log.e( "OptionDialog", "getListView() returned null in method getDialog" );
-        }
-        else
-        {
-            listView.setOnItemLongClickListener
-            (
-                new AdapterView.OnItemLongClickListener()
-                {
-                    @Override
-                    public boolean onItemLongClick( AdapterView<?> adapterView, View view, int position, long id )
-                    {
-                        mListener.onOptionLongPress( position );
-                        return true;
-                    }
-                }
-            );
-        }
-
-        return mDialog;
+        mListener = listener;
+        mOptions = options;
+        mBuilder = new Builder( context ).setTitle( title );
     }
     
-    public OptionDialog( final int id, String title, String[] options, Context context, Listener listener )
+    public final void show( int checkedItem )
     {
-        this.id = id;
-        mOptions = options;
-        mListener = listener;
-        mBuilder = new AlertDialog.Builder( context );
-        mBuilder.setTitle( title );
-        mBuilder.setSingleChoiceItems( mOptions, -1,
-                                       new DialogInterface.OnClickListener()
-                                       {
-                                           @Override
-                                           public void onClick( DialogInterface dialog, int which )
-                                           {
-                                               dialog.dismiss();
-                                               if( mListener != null )
-                                               {
-                                                   mListener.onOptionChoice( which );
-                                               }
-                                           }
-                                       } );
+        // Setup click handling for items in the dialog's list
+        OnClickListener clickListener = new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                dialog.dismiss();
+                if( mListener != null )
+                    mListener.onOptionChoice( which );
+            }
+        };
+        
+        // Setup long-click handling for items in the dialog's list
+        OnItemLongClickListener longClickListener = new OnItemLongClickListener()
+        {
+            @Override
+            public boolean onItemLongClick( AdapterView<?> av, View view, int position, long id )
+            {
+                if( mListener != null )
+                    mListener.onOptionLongPress( position );
+                return true;
+            }
+        };
+        
+        // Create and show the dialog
+        mBuilder.setSingleChoiceItems( mOptions, checkedItem, clickListener );
+        AlertDialog dialog = mBuilder.create();
+        dialog.getListView().setOnItemLongClickListener( longClickListener );
+        dialog.show();
     }
 }
