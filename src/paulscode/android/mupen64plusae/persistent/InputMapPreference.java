@@ -188,15 +188,15 @@ public class InputMapPreference extends DialogPreference implements
         setupButton( view, R.id.buttonAU,            InputMap.AXIS_U );
         setupButton( view, R.id.buttonIncrementSlot, InputMap.FUNC_INCREMENT_SLOT );
         setupButton( view, R.id.buttonSaveSlot,      InputMap.FUNC_SAVE_SLOT );
-        setupButton( view, R.id.buttonLoadSlot,      InputMap.FUNC_LOAD_SLOT );
         setupButton( view, R.id.buttonReset,         InputMap.FUNC_RESET );
-        setupButton( view, R.id.buttonStop,          InputMap.FUNC_STOP );
+        setupButton( view, R.id.buttonLoadSlot,      InputMap.FUNC_LOAD_SLOT );
         setupButton( view, R.id.buttonPause,         InputMap.FUNC_PAUSE );
-        setupButton( view, R.id.buttonFastForward,   InputMap.FUNC_FAST_FORWARD );
-        setupButton( view, R.id.buttonFrameAdvance,  InputMap.FUNC_FRAME_ADVANCE );
-        setupButton( view, R.id.buttonSpeedUp,       InputMap.FUNC_SPEED_UP );
+        setupButton( view, R.id.buttonStop,          InputMap.FUNC_STOP );
         setupButton( view, R.id.buttonSpeedDown,     InputMap.FUNC_SPEED_DOWN );
-        setupButton( view, R.id.buttonGameshark,     InputMap.FUNC_GAMESHARK );
+        setupButton( view, R.id.buttonSpeedUp,       InputMap.FUNC_SPEED_UP );
+        setupButton( view, R.id.buttonFastForward,   InputMap.FUNC_FAST_FORWARD );
+        // setupButton( view, R.id.buttonFrameAdvance,  InputMap.FUNC_FRAME_ADVANCE );
+        // setupButton( view, R.id.buttonGameshark,     InputMap.FUNC_GAMESHARK );
         // @formatter:on
         
         // Setup analog axis listening, if applicable
