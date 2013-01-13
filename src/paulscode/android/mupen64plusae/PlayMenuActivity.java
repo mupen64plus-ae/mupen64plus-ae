@@ -22,11 +22,9 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.CheatPreference;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
-import paulscode.android.mupen64plusae.persistent.LongClickCheckBoxPreference;
-import paulscode.android.mupen64plusae.persistent.LongClickCheckBoxPreference.OnPreferenceLongClickListener;
-import paulscode.android.mupen64plusae.persistent.OptionCheckBoxPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -36,12 +34,10 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.TaskHandler.Task;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -49,8 +45,7 @@ import android.preference.PreferenceCategory;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
-        OnPreferenceLongClickListener
+public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener
 {
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_PLAY = "screenPlay";
@@ -111,29 +106,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             // Recompute the CRC in a separate thread, then add the cheats menu items
             rebuild( userPrefs.selectedGame );
         }
-    }
-    
-    @Override
-    public void onPreferenceLongClick( Preference preference )
-    {
-        LongClickCheckBoxPreference checkBoxPref = (LongClickCheckBoxPreference) preference;
-        
-        // Determine the title
-        String title = checkBoxPref.getDialogTitle();
-        if( TextUtils.isEmpty( title ) )
-        {
-            title = getString( R.string.cheatNotes_title );
-        }
-        
-        // Determine the summary
-        String summary = checkBoxPref.getDialogMessage();
-        if( TextUtils.isEmpty( summary ) )
-        {
-            summary = getString( R.string.cheatNotes_none );
-        }
-        
-        // Popup a dialog to display the cheat notes
-        new Builder( this ).setTitle( title ).setMessage( summary ).create().show();
     }
     
     @Override
@@ -243,23 +215,20 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                 }
                 
                 // Get the descriptive note for this cheat (shown on long-click)
-                final String note = configSection.get( "Cheat" + i + "_N" );
+                final String notes = configSection.get( "Cheat" + i + "_N" );
                 
                 // Get the options for this cheat
-                LongClickCheckBoxPreference checkBoxPref;
                 final String val_O = configSection.get( "Cheat" + i + "_O" );
-                if( TextUtils.isEmpty( val_O ) )
+                String[] optionStrings = null;
+                
+                if( !TextUtils.isEmpty( val_O ) )
                 {
-                    // This cheat is a binary option, use a type of checkbox preference
-                    checkBoxPref = new LongClickCheckBoxPreference( this );
-                }
-                else
-                {
+                    // This is a multi-choice cheat
                     // Parse the comma-delimited string to get the map elements
                     String[] uOpts = val_O.split( "," );
+                    optionStrings = new String[uOpts.length];
                     
                     // Each element is a key-value pair
-                    String[] optionStrings = new String[uOpts.length];
                     for( int z = 0; z < uOpts.length; z++ )
                     {
                         // The first non-leading space character is the pair delimiter
@@ -270,22 +239,14 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
                         else
                             optionStrings[z] = getString( R.string.cheats_longPress );
                     }
-                    
-                    // Create the menu item associated with this cheat
-                    checkBoxPref = new OptionCheckBoxPreference( this, title, optionStrings,
-                            getString( R.string.cheat_disabled ) );
                 }
                 
-                // Set the preference menu item properties
-                checkBoxPref.setTitle( title );
-                checkBoxPref.setDialogTitle( title );
-                checkBoxPref.setDialogMessage( note );
-                checkBoxPref.setChecked( false );
-                checkBoxPref.setKey( crc + " Cheat" + i );
-                checkBoxPref.setOnPreferenceLongClickListener( this );
+                // Create the menu item associated with this cheat
+                CheatPreference pref = new CheatPreference( this, title, notes, optionStrings );
+                pref.setKey( crc + " Cheat" + i );
                 
                 // Add the preference menu item to the cheats category
-                cheatsCategory.addPreference( checkBoxPref );
+                cheatsCategory.addPreference( pref );
             }
         }
     }
@@ -330,18 +291,15 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         String cheatArgs = null;
         for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
         {
-            CheckBoxPreference chkBx = (CheckBoxPreference) cheatsCategory.getPreference( i );
-            if( chkBx.isChecked() )
+            CheatPreference pref = (CheatPreference) cheatsCategory.getPreference( i );
+            if( pref.isCheatEnabled() )
             {
                 if( cheatArgs == null )
-                    cheatArgs = "";
+                    cheatArgs = ""; // First time through
                 else
                     cheatArgs += ",";
                 
-                cheatArgs += String.valueOf( i );
-                
-                if( chkBx instanceof OptionCheckBoxPreference )
-                    cheatArgs += "-" + ( (OptionCheckBoxPreference) chkBx ).mChoice;
+                cheatArgs += pref.getCheatCodeString( i );
             }
         }
         return cheatArgs;
