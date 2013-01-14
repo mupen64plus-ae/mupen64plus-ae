@@ -21,6 +21,7 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
+        android:icon="@drawable/ic_key"
         android:key="playShowCheats"
         android:summary="@string/playShowCheats_summary"
         android:title="@string/playShowCheats_title" />
