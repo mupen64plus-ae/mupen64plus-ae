@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.Preference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 
@@ -111,7 +112,16 @@ public class CheatPreference extends Preference implements Listener, View.OnLong
     @Override
     protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
     {
-        setValue( restorePersistedValue ? getPersistedInt( mValue ) : (Integer) defaultValue );
+        try
+        {
+            setValue( restorePersistedValue ? getPersistedInt( mValue ) : (Integer) defaultValue );
+        }
+        catch( ClassCastException e )
+        {
+            // Using an obsolete file for persistence
+            Log.w( "CheatPreference", "Failure setting initial value", e );
+            setValue( DEFAULT_VALUE );
+        }
     }
     
     @Override
