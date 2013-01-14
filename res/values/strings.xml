@@ -127,6 +127,8 @@
     <string name="categoryCrashReports_title">Crash reports</string>
 
     <!-- Checkbox Preferences -->
+    <string name="playShowCheats_title">Enable cheats</string>
+    <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
     <string name="touchscreenEnabled_title">Enable touchscreen</string>
     <string name="touchpadEnabled_title">Enable touchpad</string>
     <string name="inputOctagonConstraints_title">Octagonal joystick limits</string>

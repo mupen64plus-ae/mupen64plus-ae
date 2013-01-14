@@ -35,23 +35,28 @@ import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.TaskHandler.Task;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener
+public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
+        OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences_play.xml
     private static final String SCREEN_PLAY = "screenPlay";
     private static final String ACTION_RESUME = "actionResume";
     private static final String ACTION_RESTART = "actionRestart";
     private static final String PLAYER_MAP = "playerMap";
+    private static final String PLAY_SHOW_CHEATS = "playShowCheats";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     
     // App data
@@ -90,16 +95,54 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( !userPrefs.playerMap.isEnabled() )
             PrefUtil.removePreference( this, SCREEN_PLAY, PLAYER_MAP );
         
-        // Populate cheats category with menu items
-        if( userPrefs.selectedGame.equals( mAppData.getLastRom() ) )
+        // Hide or populate the cheats category depending on user preference
+        if( userPrefs.isCheatOptionsShown )
         {
-            // Use the cached CRC and add the cheats menu items
-            build( mAppData.getLastCrc() );
+            // Populate cheats category with menu items
+            if( userPrefs.selectedGame.equals( mAppData.getLastRom() ) )
+            {
+                // Use the cached CRC and add the cheats menu items
+                build( mAppData.getLastCrc() );
+            }
+            else
+            {
+                // Recompute the CRC in a separate thread, then add the cheats menu items
+                rebuild( userPrefs.selectedGame );
+            }
         }
         else
         {
-            // Recompute the CRC in a separate thread, then add the cheats menu items
-            rebuild( userPrefs.selectedGame );
+            // Hide the cheats category
+            PrefUtil.removePreference( this, SCREEN_PLAY, CATEGORY_CHEATS );
+        }
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+    }
+    
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+    }
+    
+    @Override
+    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
+    {
+        if( key.equals( PLAY_SHOW_CHEATS ) )
+        {
+            // Rebuild the menu; the easiest way is to simply restart the activity
+            Intent intent = getIntent();
+            intent.setFlags( Intent.FLAG_ACTIVITY_NO_ANIMATION );
+            startActivity( intent );
+            finish();
         }
     }
     
@@ -281,22 +324,26 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     @SuppressWarnings( "deprecation" )
     private String getCheatArgs()
     {
-        PreferenceCategory cheatsCategory = (PreferenceCategory) findPreference( CATEGORY_CHEATS );
-        
         String cheatArgs = null;
-        for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
+        
+        PreferenceCategory cheatsCategory = (PreferenceCategory) findPreference( CATEGORY_CHEATS );
+        if( cheatsCategory != null )
         {
-            CheatPreference pref = (CheatPreference) cheatsCategory.getPreference( i );
-            if( pref.isCheatEnabled() )
+            for( int i = 0; i < cheatsCategory.getPreferenceCount(); i++ )
             {
-                if( cheatArgs == null )
-                    cheatArgs = ""; // First time through
-                else
-                    cheatArgs += ",";
-                
-                cheatArgs += pref.getCheatCodeString( i );
+                CheatPreference pref = (CheatPreference) cheatsCategory.getPreference( i );
+                if( pref.isCheatEnabled() )
+                {
+                    if( cheatArgs == null )
+                        cheatArgs = ""; // First time through
+                    else
+                        cheatArgs += ",";
+                    
+                    cheatArgs += pref.getCheatCodeString( i );
+                }
             }
         }
+        
         return cheatArgs;
     }
 }

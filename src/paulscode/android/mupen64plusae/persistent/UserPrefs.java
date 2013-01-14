@@ -98,6 +98,9 @@ public class UserPrefs
     /** The selected emulator core. */
     public final Plugin corePlugin;
     
+    /** True if the cheats category should be shown in the menu. */
+    public final boolean isCheatOptionsShown;
+    
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
     
@@ -249,6 +252,9 @@ public class UserPrefs
         inputPlugin = new Plugin( prefsData, appData.libsDir, "pluginInput" );
         rspPlugin = new Plugin( prefsData, appData.libsDir, "pluginRsp" );
         corePlugin = new Plugin( prefsData, appData.libsDir, "pluginCore" );
+        
+        // Play menu
+        isCheatOptionsShown = prefsData.getBoolean( "playShowCheats", false );
         
         // Touchscreen prefs
         isTouchscreenEnabled = prefsData.getBoolean( "touchscreenEnabled", true );

@@ -19,6 +19,12 @@
         android:summary="@string/playerMap_summary"
         android:title="@string/playerMap_title" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="playShowCheats"
+        android:summary="@string/playShowCheats_summary"
+        android:title="@string/playShowCheats_title" />
+
     <PreferenceCategory
         android:key="categoryCheats"
         android:title="@string/categoryCheats_title" />
