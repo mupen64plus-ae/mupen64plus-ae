@@ -34,10 +34,11 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.TaskHandler.Task;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -133,16 +134,20 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
     }
     
+    @TargetApi( 5 )
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         if( key.equals( PLAY_SHOW_CHEATS ) )
         {
             // Rebuild the menu; the easiest way is to simply restart the activity
+            // We disable the transition animation since it's confusing in this case
             Intent intent = getIntent();
             intent.setFlags( Intent.FLAG_ACTIVITY_NO_ANIMATION );
             startActivity( intent );
             finish();
+            if( AppData.IS_ECLAIR)
+                overridePendingTransition(0, 0);
         }
     }
     
@@ -226,9 +231,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         }
         
         // Set the title of the menu to the game name, if available
-        String ROM_name = configSection.get( "Name" );
-        if( !TextUtils.isEmpty( ROM_name ) )
-            setTitle( ROM_name );
+        // String ROM_name = configSection.get( "Name" );
+        // if( !TextUtils.isEmpty( ROM_name ) )
+        // setTitle( ROM_name );
         
         // Layout the menu, populating it with appropriate cheat options
         PreferenceCategory cheatsCategory = (PreferenceCategory) findPreference( CATEGORY_CHEATS );
