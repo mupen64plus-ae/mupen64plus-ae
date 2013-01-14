@@ -136,18 +136,22 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     @TargetApi( 5 )
     @Override
+    public void finish()
+    {
+        // Disable transition animation to behave like any other screen in the menu hierarchy
+        super.finish();
+        if( AppData.IS_ECLAIR )
+            overridePendingTransition( 0, 0 );
+    }
+    
+    @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         if( key.equals( PLAY_SHOW_CHEATS ) )
         {
             // Rebuild the menu; the easiest way is to simply restart the activity
-            // We disable the transition animation since it's confusing in this case
-            Intent intent = getIntent();
-            intent.setFlags( Intent.FLAG_ACTIVITY_NO_ANIMATION );
-            startActivity( intent );
+            startActivity( getIntent() );
             finish();
-            if( AppData.IS_ECLAIR)
-                overridePendingTransition(0, 0);
         }
     }
     

@@ -3,6 +3,10 @@
 
     <style name="appTheme" parent="@android:style/Theme" />
 
+    <style name="playTheme" parent="@style/appTheme">
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     <style name="btnMappable" parent="@android:style/Widget.Button">
         <item name="android:layout_width">@dimen/inputMapPreferenceButtonSize</item>
         <item name="android:layout_height">@dimen/inputMapPreferenceButtonSize</item>

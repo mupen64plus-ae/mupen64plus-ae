@@ -39,6 +39,7 @@
         <activity
             android:name=".PlayMenuActivity"
             android:label="@string/app_name"
+            android:theme="@style/playTheme" >
             android:exported="false" >
             <intent-filter>
                 <action android:name=".PlayMenuActivity" />
