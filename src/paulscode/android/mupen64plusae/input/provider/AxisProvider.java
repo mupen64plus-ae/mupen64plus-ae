@@ -102,7 +102,7 @@ public class AxisProvider extends AbstractProvider
                 
                 // Get the analog value using the Android API
                 float strength = event.getAxisValue( axisCode );
-                if( NORMALIZE )
+                if( NORMALIZE && device != null )
                 {
                     MotionRange motionRange = device.getMotionRange( axisCode );
                     if( motionRange != null )
