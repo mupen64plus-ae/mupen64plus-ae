@@ -336,6 +336,12 @@ public class Utility
         {
             // Create the tmp folder if it doesn't exist:
             File tmpFolder = new File( tempDir );
+            while( tmpFolder.exists() && !tmpFolder.isDirectory() )
+            {
+                // A file with this name already exists, choose another name
+                tempDir += "_";
+                tmpFolder = new File( tempDir );
+            }
             tmpFolder.mkdir();
             
             // Clear the folder if anything is in there:
