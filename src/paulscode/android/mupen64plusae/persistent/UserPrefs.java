@@ -339,13 +339,13 @@ public class UserPrefs
         isPlugged4 = inputMap4.isEnabled();
         
         // Determine whether controller deconfliction is needed
-        int numPlayers = 0;
-        numPlayers += inputMap1.isEnabled() ? 1 : 0;
-        numPlayers += inputMap2.isEnabled() ? 1 : 0;
-        numPlayers += inputMap3.isEnabled() ? 1 : 0;
-        numPlayers += inputMap4.isEnabled() ? 1 : 0;
+        int numControllers = 0;
+        numControllers += inputMap1.isEnabled() ? 1 : 0;
+        numControllers += inputMap2.isEnabled() ? 1 : 0;
+        numControllers += inputMap3.isEnabled() ? 1 : 0;
+        numControllers += inputMap4.isEnabled() ? 1 : 0;
         boolean isControllerShared = prefsData.getBoolean( "inputShareController", false );
-        playerMap.setEnabled( numPlayers > 1 && !isControllerShared );
+        playerMap.setEnabled( numControllers > 1 && !isControllerShared );
         
         // Determine the key codes that should not be mapped to controls
         boolean volKeysMappable = prefsData.getBoolean( "inputVolumeMappable", false );
