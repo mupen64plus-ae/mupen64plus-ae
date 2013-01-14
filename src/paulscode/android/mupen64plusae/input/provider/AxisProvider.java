@@ -30,6 +30,8 @@ import android.view.View;
  */
 public class AxisProvider extends AbstractProvider
 {
+    private final boolean NORMALIZE = true;
+    
     /** The input codes to listen for. */
     private int[] mInputCodes;
     
@@ -100,9 +102,12 @@ public class AxisProvider extends AbstractProvider
                 
                 // Get the analog value using the Android API
                 float strength = event.getAxisValue( axisCode );
-                MotionRange motionRange = device.getMotionRange( axisCode );
-                if( motionRange != null )
-                    strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
+                if( NORMALIZE )
+                {
+                    MotionRange motionRange = device.getMotionRange( axisCode );
+                    if( motionRange != null )
+                        strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
+                }
                 
                 // If the strength points in the correct direction, record it
                 boolean direction1 = inputToAxisDirection( inputCode );

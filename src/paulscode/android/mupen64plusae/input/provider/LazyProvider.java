@@ -30,6 +30,8 @@ import android.view.MotionEvent;
  */
 public class LazyProvider extends AbstractProvider implements AbstractProvider.OnInputListener
 {
+    private final boolean REMOVE_BIAS = true;
+    
     /** The delta-strength threshold above which an input is considered "changed". */
     private static final float STRENGTH_HYSTERESIS = 0.05f;
     
@@ -119,7 +121,8 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
             return;
         
         // Update the strength biases if necessary
-        updateBiases( inputCodes, strengths );
+        if( REMOVE_BIAS )
+            updateBiases( inputCodes, strengths );
         
         // Find the strongest input
         float maxStrength = AbstractProvider.STRENGTH_THRESHOLD;
@@ -130,7 +133,8 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
             float strength = strengths[i];
             
             // Remove the bias in the channel
-            strength -= mStrengthBiases.get( inputCode, 0 );
+            if( REMOVE_BIAS )
+                strength -= mStrengthBiases.get( inputCode, 0 );
             
             // Cache the strongest input
             if( strength > maxStrength )
