@@ -242,40 +242,58 @@ public class TouchController extends AbstractController implements OnTouchListen
         {
             // Update the pointer map
             if( touched )
+            {
+            	// Check if this pointer was already mapped to a button
+            	int prevIndex = mPointerMap.get( pid );
+                if( prevIndex > 0 && prevIndex != index ) {
+                	// Release the previous button
+                	setTouchState( prevIndex, false );
+                }
                 mPointerMap.put( pid, index );
+            }
             else
                 mPointerMap.delete( pid );
             
-            // Set the button state
-            if( index < AbstractController.NUM_N64_BUTTONS )
+            setTouchState( index, touched );
+        }
+    }
+    /**
+     * Sets the state of a button, and handles the D-Pad diagonals.
+     * 
+     * @param index Which button is affected.
+     * @param touched Whether the button is pressed.
+     */
+    private void setTouchState( int index, boolean touched )
+    {
+        // Set the button state
+        if( index < AbstractController.NUM_N64_BUTTONS )
+        {
+            // A single button was pressed
+            mState.buttons[index] = touched;
+        }
+        else
+        {
+            // Two d-pad buttons pressed simultaneously
+            switch( index )
             {
-                // A single button was pressed
-                mState.buttons[index] = touched;
-            }
-            else
-            {
-                // Two d-pad buttons pressed simultaneously
-                switch( index )
-                {
-                    case TouchMap.DPD_RU:
-                        mState.buttons[DPD_R] = touched;
-                        mState.buttons[DPD_U] = touched;
-                        break;
-                    case TouchMap.DPD_RD:
-                        mState.buttons[DPD_R] = touched;
-                        mState.buttons[DPD_D] = touched;
-                        break;
-                    case TouchMap.DPD_LD:
-                        mState.buttons[DPD_L] = touched;
-                        mState.buttons[DPD_D] = touched;
-                        break;
-                    case TouchMap.DPD_LU:
-                        mState.buttons[DPD_L] = touched;
-                        mState.buttons[DPD_U] = touched;
-                        break;
-                    default:
-                        break;
-                }
+                case TouchMap.DPD_RU:
+                    mState.buttons[DPD_R] = touched;
+                    mState.buttons[DPD_U] = touched;
+                    break;
+                case TouchMap.DPD_RD:
+                    mState.buttons[DPD_R] = touched;
+                    mState.buttons[DPD_D] = touched;
+                    break;
+                case TouchMap.DPD_LD:
+                    mState.buttons[DPD_L] = touched;
+                    mState.buttons[DPD_D] = touched;
+                    break;
+                case TouchMap.DPD_LU:
+                    mState.buttons[DPD_L] = touched;
+                    mState.buttons[DPD_U] = touched;
+                    break;
+                default:
+                    break;
             }
         }
     }
