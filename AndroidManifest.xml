@@ -3,7 +3,7 @@
     package="paulscode.android.mupen64plusae"
     android:installLocation="auto"
     android:versionCode="15"
-    android:versionName="2.a.5" >
+    android:versionName="2.a.6" >
 
     <uses-feature android:glEsVersion="0x00020000" />
 
@@ -39,7 +39,7 @@
         <activity
             android:name=".PlayMenuActivity"
             android:label="@string/app_name"
-            android:theme="@style/playTheme" >
+            android:theme="@style/playTheme"
             android:exported="false" >
             <intent-filter>
                 <action android:name=".PlayMenuActivity" />
