@@ -409,7 +409,9 @@ public class AppData
             
             else if(   hardware.contains( "tuna" )
                     || hardware.contains( "mapphone" )
-                    || hardware.contains( "amlogic meson3" ) )
+                    || hardware.contains( "amlogic meson3" )
+                    || hardware.contains( "rk30board" )
+                    || hardware.contains( "cardhu" ) )
                 hardwareType = HARDWARE_TYPE_OMAP_2;
             
             else if(   hardware.contains( "liberty" )
