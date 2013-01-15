@@ -8,8 +8,8 @@
   <string name="ingameSlotSave_title">Salvar entrada</string>
   <string name="ingameSlotLoad_title">Carregar entrada</string>
   <string name="ingameSetSlot_title">Entrada %1$d</string>
-  <string name="ingameFileSave_title">Salvar para o arquivo...</string>
-  <string name="ingameFileLoad_title">Carregar do arquivo...</string>
+  <string name="ingameFileSave_title">Salvar para o arquivo…</string>
+  <string name="ingameFileLoad_title">Carregar do arquivo…</string>
   <string name="ingameSetSpeed_title">Velocidade do jogo</string>
   <string name="ingameSetIme_title">Mudar mét. entrada</string>
   <string name="ingameMainMenu_title">Menu Principal</string>
@@ -18,16 +18,16 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Reconstruindo banco de dados dos Cheats...</string>
-  <string name="toast_launchingEmulator">Executando emulador...</string>
-  <string name="toast_resettingGame">Resetando jogo...</string>
-  <string name="toast_loadingSession">Auto-resumindo jogo...</string>
-  <string name="toast_savingSession">Auto-salvando jogo...</string>
-  <string name="toast_loadingSlot">Carregando entrada %1$d...</string>
-  <string name="toast_savingSlot">Salvando entrada %1$d...</string>
-  <string name="toast_loadingFile">Carregando %1$s...</string>
-  <string name="toast_savingFile">Salvando %1$s...</string>
-  <string name="toast_overwritingFile">Sobrescrevendo %1$s...</string>
+  <string name="toast_rebuildingCheats">Reconstruindo banco de dados dos Cheats…</string>
+  <string name="toast_launchingEmulator">Executando emulador…</string>
+  <string name="toast_resettingGame">Resetando jogo…</string>
+  <string name="toast_loadingSession">Auto-resumindo jogo…</string>
+  <string name="toast_savingSession">Auto-salvando jogo…</string>
+  <string name="toast_loadingSlot">Carregando entrada %1$d…</string>
+  <string name="toast_savingSlot">Salvando entrada %1$d…</string>
+  <string name="toast_loadingFile">Carregando %1$s…</string>
+  <string name="toast_savingFile">Salvando %1$s…</string>
+  <string name="toast_overwritingFile">Sobrescrevendo %1$s…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessivel (desconecte o cabo USB e tente novamente).</string>
@@ -98,6 +98,8 @@
   <string name="categoryData_title">Dados</string>
   <string name="categoryCrashReports_title">Erros críticos</string>
   <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Habilitar Cheats</string>
+  <string name="playShowCheats_summary">O carregamento do menu é mais lento quando habilitado</string>
   <string name="touchscreenEnabled_title">Habilitar toque na tela</string>
   <string name="touchpadEnabled_title">Habilitar touchpad</string>
   <string name="inputOctagonConstraints_title">Limites do controle octagonal</string>
@@ -270,11 +272,11 @@
   <string name="playerMap_deviceWithName">Dispositivo %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
   <string name="playerMapPreference_popupTitle">Jogador %1$d</string>
-  <string name="playerMapPreference_popupMessage">Jogador %1$d, pressione um botão ou ligue no seu controle...\n\nDispositivos atuais:\n%2$s</string>
+  <string name="playerMapPreference_popupMessage">Jogador %1$d, pressione um botão ou ligue no seu controle…\n\nDispositivos atuais:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desmapear</string>
   <string name="playerMapPreference_button">Jogador %1$d\n\n%2$s</string>
   <!--Input Mapping-->
-  <string name="inputMapPreference_popupMessage">Pressione um botão, tecla, ou joystick para mapear...\n\nMapeamento atual:\n%1$s</string>
+  <string name="inputMapPreference_popupMessage">Pressione um botão, tecla, ou joystick para mapear…\n\nMapeamento atual:\n%1$s</string>
   <string name="inputMapPreference_showSpecial">Exibir funções especiais</string>
   <string name="inputMapPreference_hideSpecial">Esconder funções especiais</string>
   <string name="inputMapPreference_popupUnmap">Desmapear</string>
@@ -316,5 +318,5 @@
   <string name="inputMapPreference_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Pressione um botão ou teclaâ€¦</string>
-  <string name="diagnosticActivity_textMotion_text">Toque a tela ou use o joystick...</string>
+  <string name="diagnosticActivity_textMotion_text">Toque a tela ou use o joystick…</string>
 </resources>

@@ -98,6 +98,8 @@
   <string name="categoryData_title">Dati</string>
   <string name="categoryCrashReports_title">Segnalazioni crash</string>
   <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Abilita trucchi</string>
+  <string name="playShowCheats_summary">Il caricamento del menù è più lento quando abilitato</string>
   <string name="touchscreenEnabled_title">Abilita touchscreen</string>
   <string name="touchpadEnabled_title">Abilita touchpad</string>
   <string name="inputOctagonConstraints_title">Limite joystick ottagonale</string>

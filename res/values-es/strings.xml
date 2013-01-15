@@ -8,8 +8,8 @@
   <string name="ingameSlotSave_title">Guardar slot</string>
   <string name="ingameSlotLoad_title">Cargar slot</string>
   <string name="ingameSetSlot_title">Slot %1$d</string>
-  <string name="ingameFileSave_title">Guardar a archivo...</string>
-  <string name="ingameFileLoad_title">Cargar desde archivo...</string>
+  <string name="ingameFileSave_title">Guardar a archivo…</string>
+  <string name="ingameFileLoad_title">Cargar desde archivo…</string>
   <string name="ingameSetSpeed_title">Velocidad del juego</string>
   <string name="ingameSetIme_title">Cambiar IME</string>
   <string name="ingameMainMenu_title">Menú principal</string>
@@ -18,16 +18,16 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Regenerando base de datos de cheats...</string>
-  <string name="toast_launchingEmulator">Iniciando emulador...</string>
-  <string name="toast_resettingGame">Reiniciando juego...</string>
-  <string name="toast_loadingSession">Reanudando juego...</string>
-  <string name="toast_savingSession">Creando guardado automático...</string>
-  <string name="toast_loadingSlot">Cargando slot %1$d...</string>
-  <string name="toast_savingSlot">Guardando slot %1$d...</string>
-  <string name="toast_loadingFile">Cargando %1$s...</string>
-  <string name="toast_savingFile">Guardando %1$s...</string>
-  <string name="toast_overwritingFile">Sobrescribiendo %1$s...</string>
+  <string name="toast_rebuildingCheats">Regenerando base de datos de cheats…</string>
+  <string name="toast_launchingEmulator">Iniciando emulador…</string>
+  <string name="toast_resettingGame">Reiniciando juego…</string>
+  <string name="toast_loadingSession">Reanudando juego…</string>
+  <string name="toast_savingSession">Creando guardado automático…</string>
+  <string name="toast_loadingSlot">Cargando slot %1$d…</string>
+  <string name="toast_savingSlot">Guardando slot %1$d…</string>
+  <string name="toast_loadingFile">Cargando %1$s…</string>
+  <string name="toast_savingFile">Guardando %1$s…</string>
+  <string name="toast_overwritingFile">Sobrescribiendo %1$s…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Usando ahora el slot %1$d.</string>
   <string name="toast_sdInaccessible">Tarjeta SD no accesible (desconecta el cable USB e intenta de nuevo).</string>
@@ -270,11 +270,11 @@
   <string name="playerMap_deviceWithName">Dispositivo %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
   <string name="playerMapPreference_popupTitle">Jugador %1$d</string>
-  <string name="playerMapPreference_popupMessage">Jugador %1$d, presiona un botón o mueve el stick en tu mando...\n\nDispositivos actuales:\n%2$s</string>
+  <string name="playerMapPreference_popupMessage">Jugador %1$d, presiona un botón o mueve el stick en tu mando…\n\nDispositivos actuales:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desasignar</string>
   <string name="playerMapPreference_button">Jugador %1$d\n\n%2$s</string>
   <!--Input Mapping-->
-  <string name="inputMapPreference_popupMessage">Presiona un botón, tecla o joystick a asignar...\n\nAsignaciones actuales:\n%1$s</string>
+  <string name="inputMapPreference_popupMessage">Presiona un botón, tecla o joystick a asignar…\n\nAsignaciones actuales:\n%1$s</string>
   <string name="inputMapPreference_showSpecial">Mostrar funciones especiales</string>
   <string name="inputMapPreference_hideSpecial">Ocultar funciones especiales</string>
   <string name="inputMapPreference_popupUnmap">Desasignar</string>
@@ -315,6 +315,6 @@
   <string name="inputMapPreference_speedUp">Acelerar</string>
   <string name="inputMapPreference_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Presiona un botón o tecla...</string>
-  <string name="diagnosticActivity_textMotion_text">Pantalla táctil o joystick...</string>
+  <string name="diagnosticActivity_textKey_text">Presiona un botón o tecla…</string>
+  <string name="diagnosticActivity_textMotion_text">Pantalla táctil o joystick…</string>
 </resources>

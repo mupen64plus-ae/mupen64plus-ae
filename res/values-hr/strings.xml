@@ -8,8 +8,8 @@
   <string name="ingameSlotSave_title">Spremi</string>
   <string name="ingameSlotLoad_title">Učitaj</string>
   <string name="ingameSetSlot_title">Spremnik #%1$d</string>
-  <string name="ingameFileSave_title">Spremi u datoteku...</string>
-  <string name="ingameFileLoad_title">Učitaj iz datoteke...</string>
+  <string name="ingameFileSave_title">Spremi u datoteku…</string>
+  <string name="ingameFileLoad_title">Učitaj iz datoteke…</string>
   <string name="ingameSetSpeed_title">Brzina igre</string>
   <string name="ingameSetIme_title">Promjena tipkovnice</string>
   <string name="ingameMainMenu_title">Glavni izbornik</string>
@@ -18,10 +18,10 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_launchingEmulator">Pokretanje emulatora...</string>
-  <string name="toast_resettingGame">Resetiranje igre...</string>
-  <string name="toast_loadingSession">Auto-učitavanje igre...</string>
-  <string name="toast_savingSession">Auto-spremanje igre...</string>
+  <string name="toast_launchingEmulator">Pokretanje emulatora…</string>
+  <string name="toast_resettingGame">Resetiranje igre…</string>
+  <string name="toast_loadingSession">Auto-učitavanje igre…</string>
+  <string name="toast_savingSession">Auto-spremanje igre…</string>
   <string name="toast_loadingSlot">Učitavanje iz spremnika %1$d…</string>
   <string name="toast_savingSlot">Spremanje u spremnik%1$d…</string>
   <string name="toast_loadingFile">Učitavanje %1$s…</string>
@@ -37,6 +37,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionPlay_title">Igraj</string>
   <string name="actionResume_title">Nastavi</string>
   <string name="actionResume_summary">Nepredvidivo ako se koriste opcije za varanje</string>
   <string name="actionRestart_title">Ponovo pokreni</string>
@@ -301,6 +302,6 @@
   <string name="inputMapPreference_speedUp">Ubrzavanje</string>
   <string name="inputMapPreference_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Pritisnite tipku...</string>
-  <string name="diagnosticActivity_textMotion_text">Dodirni ekran ili kontroler...</string>
+  <string name="diagnosticActivity_textKey_text">Pritisnite tipku…</string>
+  <string name="diagnosticActivity_textMotion_text">Dodirni ekran ili kontroler…</string>
 </resources>

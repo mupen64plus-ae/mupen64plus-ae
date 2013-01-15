@@ -98,6 +98,8 @@
   <string name="categoryData_title">Données</string>
   <string name="categoryCrashReports_title">Rapports de plantages</string>
   <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Activer les cheat codes</string>
+  <string name="playShowCheats_summary">Le chargement du menu prend plus de temps si activé</string>
   <string name="touchscreenEnabled_title">Activer les commandes virtuelles à l\'écran</string>
   <string name="touchpadEnabled_title">Activer le pavé tactile</string>
   <string name="inputOctagonConstraints_title">Limites octogonales du joystick</string>
@@ -270,11 +272,11 @@
   <string name="playerMap_deviceWithName">Appareil %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Appareil %1$d</string>
   <string name="playerMapPreference_popupTitle">Joueur %1$d</string>
-  <string name="playerMapPreference_popupMessage">Joueur %1$d, veuillez appuyer sur un bouton ou stick de votre manette...\n\nAppareil actuel :\n%2$s</string>
+  <string name="playerMapPreference_popupMessage">Joueur %1$d, veuillez appuyer sur un bouton ou stick de votre manette…\n\nAppareil actuel :\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Désassigner</string>
   <string name="playerMapPreference_button">Joueur %1$d\n\n%2$s</string>
   <!--Input Mapping-->
-  <string name="inputMapPreference_popupMessage">Veuillez appuyer sur un bouton, une touche ou le joystick pour assigner cette fonction...\n\nTouche(s) actuellement assignée(s) :\n%1$s</string>
+  <string name="inputMapPreference_popupMessage">Veuillez appuyer sur un bouton, une touche ou le joystick pour assigner cette fonction…\n\nTouche(s) actuellement assignée(s) :\n%1$s</string>
   <string name="inputMapPreference_showSpecial">Afficher les fonctions spéciales</string>
   <string name="inputMapPreference_hideSpecial">Masquer les fonctions spéciales</string>
   <string name="inputMapPreference_popupUnmap">Désassigner</string>
