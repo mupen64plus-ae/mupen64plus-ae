@@ -243,11 +243,12 @@ public class TouchController extends AbstractController implements OnTouchListen
             // Update the pointer map
             if( touched )
             {
-            	// Check if this pointer was already mapped to a button
-            	int prevIndex = mPointerMap.get( pid );
-                if( prevIndex > 0 && prevIndex != index ) {
-                	// Release the previous button
-                	setTouchState( prevIndex, false );
+                // Check if this pointer was already mapped to a button
+                int prevIndex = mPointerMap.get( pid );
+                if( prevIndex > 0 && prevIndex != index )
+                {
+                    // Release the previous button
+                    setTouchState( prevIndex, false );
                 }
                 mPointerMap.put( pid, index );
             }

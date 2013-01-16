@@ -6,7 +6,7 @@
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">Vitesse %1$d %%</string>
   <string name="ingameSlotSave_title">Emplacement de sauvegarde</string>
-  <string name="ingameSlotLoad_title">Emplacement de chargement</string>
+  <string name="ingameSlotLoad_title">Emplacement à charger</string>
   <string name="ingameSetSlot_title">Emplacement %1$d</string>
   <string name="ingameFileSave_title">Enregistrer sous…</string>
   <string name="ingameFileLoad_title">Ouvrir…</string>

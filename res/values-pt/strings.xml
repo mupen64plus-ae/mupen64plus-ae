@@ -11,7 +11,7 @@
   <string name="ingameFileSave_title">Salvar para o arquivo…</string>
   <string name="ingameFileLoad_title">Carregar do arquivo…</string>
   <string name="ingameSetSpeed_title">Velocidade do jogo</string>
-  <string name="ingameSetIme_title">Mudar mét. entrada</string>
+  <string name="ingameSetIme_title">Mudar método de entrada</string>
   <string name="ingameMainMenu_title">Menu Principal</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
@@ -48,7 +48,7 @@
   <string name="actionControllerInfo_title">Informação do Controle</string>
   <string name="actionControllerInfo_summary">Informações de Hardware periférico e modelo</string>
   <string name="actionControllerDiagnostics_title">Diagnóstico do Controle</string>
-  <string name="actionControllerDiagnostics_summary">Testar capacidade de comunicação raw</string>
+  <string name="actionControllerDiagnostics_summary">Testar capacidade de comunicação RAW</string>
   <string name="actionMigrateSlotSaves_title">Migrar jogos salvos</string>
   <string name="actionMigrateSlotSaves_summary">Copiar os jogos salvos do emulador antigo para esse</string>
   <string name="actionMigrateSlotSaves_messageNotFound">Nenhum arquivo para copiar.</string>
@@ -102,11 +102,11 @@
   <string name="playShowCheats_summary">O carregamento do menu é mais lento quando habilitado</string>
   <string name="touchscreenEnabled_title">Habilitar toque na tela</string>
   <string name="touchpadEnabled_title">Habilitar touchpad</string>
-  <string name="inputOctagonConstraints_title">Limites do controle octagonal</string>
+  <string name="inputOctagonConstraints_title">Limitar analógico ao octagono</string>
   <string name="inputOctagonConstraints_summary">Concentra o movimento do analógico ao octagono, como em um controle de N64 real</string>
-  <string name="inputVolumeMappable_title">Teclas de volume mapeáveis</string>
+  <string name="inputVolumeMappable_title">Botões de volume mapeáveis</string>
   <string name="inputVolumeMappable_summary">Permite que as teclas de volume sejam usadas como controle</string>
-  <string name="inputShareController_title">Compartilhar controlador</string>
+  <string name="inputShareController_title">Compartilhar controle</string>
   <string name="inputShareController_summary">Permitir um único controle controlar todos os multiplos jogadores de uma vez</string>
   <string name="videoStretch_title">Esticar tela</string>
   <string name="videoStretch_summary">Pode destorcer a imagem</string>
@@ -151,8 +151,8 @@
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
   <string name="touchscreenRefresh_entryFrequently">Frequentemente</string>
   <string name="touchpadLayout_title">Posição dos controles de toque</string>
-  <string name="touchpadLayout_entryDefault">Esquerda: Analógico; Direita: Butões C</string>
-  <string name="touchpadLayout_entryReverse">Esquerda: Butões C; Direita: Analógico</string>
+  <string name="touchpadLayout_entryDefault">Esquerda: Analógico; Direita: Botões C</string>
+  <string name="touchpadLayout_entryReverse">Esquerda: Botões C; Direita: Analógico</string>
   <string name="videoOrientation_title">Orientação da tela</string>
   <string name="videoOrientation_entryLandscape">Paisagem</string>
   <string name="videoOrientation_entryReverseLandscape">Paisagem invertida</string>
@@ -228,11 +228,11 @@
   <string name="playerMap_title">Multi-jogador</string>
   <string name="playerMap_summary">Define controle de cada jogador</string>
   <!--Input Map Preferences-->
-  <string name="inputMap1_title">Controlador</string>
+  <string name="inputMap1_title">Controle</string>
   <string name="inputMap2_title">Jogador 2</string>
   <string name="inputMap3_title">Jogador 3</string>
   <string name="inputMap4_title">Jogador 4</string>
-  <string name="inputMap_summary">Mapeamento de butões e funções especiais</string>
+  <string name="inputMap_summary">Mapeamento de botões e funções especiais</string>
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -240,7 +240,7 @@
   <!--**************************************************************************-->
   <!--Confirmation Dialogs-->
   <string name="confirm_title">Confirmação</string>
-  <string name="confirmResetGame_message">Resetar jogo? Todo o progrsso desde o seu último jogo salvo será perdido.</string>
+  <string name="confirmResetGame_message">Resetar jogo? Todo o progresso desde o seu último jogo salvo será perdido.</string>
   <string name="confirmOverwriteFile_message">Sobrescrever %1$s?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
@@ -317,6 +317,6 @@
   <string name="inputMapPreference_speedUp">Acelerar</string>
   <string name="inputMapPreference_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Pressione um botão ou teclaâ€¦</string>
+  <string name="diagnosticActivity_textKey_text">Pressione um botão ou tecla...</string>
   <string name="diagnosticActivity_textMotion_text">Toque a tela ou use o joystick…</string>
 </resources>

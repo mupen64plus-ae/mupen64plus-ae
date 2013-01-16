@@ -48,7 +48,7 @@
   <string name="actionControllerInfo_title">Controllerinfo</string>
   <string name="actionControllerInfo_summary">Peripherie-Hardware- und Modellinformationen</string>
   <string name="actionControllerDiagnostics_title">Controllerdiagnose</string>
-  <string name="actionControllerDiagnostics_summary">Teste reine Verbindungsmöglichkeiten</string>
+  <string name="actionControllerDiagnostics_summary">Rohe Verbindungsfähigkeit testen</string>
   <string name="actionMigrateSlotSaves_title">Speicherstände importieren</string>
   <string name="actionMigrateSlotSaves_summary">Kopiere deine Slot-Speicherstände von der alten App in diese</string>
   <string name="actionMigrateSlotSaves_messageNotFound">Keine Dateien zum kopieren.</string>
@@ -67,7 +67,7 @@
   <string name="actionHelp_faq">FAQ</string>
   <string name="actionHelp_reportbug">Bug melden</string>
   <string name="actionAbout_title">Über</string>
-  <string name="actionAbout_message">Version: %1$s⏎ Version code: %2$d</string>
+  <string name="actionAbout_message">Version: %1$s\nVersionscode: %2$d</string>
   <string name="actionAbout_credits">Credits</string>
   <string name="actionAbout_changelog">Changelog</string>
   <!--Preference Screens-->
@@ -83,7 +83,7 @@
   <string name="screenAudio_title">Audio</string>
   <string name="screenAudio_summary">Audioeinstellungen</string>
   <string name="screenPlugin_title">Plug-ins</string>
-  <string name="screenPlugin_summary">Emulator-Einstellungen</string>
+  <string name="screenPlugin_summary">Kerneinstellungen</string>
   <string name="screenAdvanced_title">Erweitert</string>
   <string name="screenAdvanced_summary">Speicher- und Debugeinstellungen</string>
   <!--Preference Categories-->

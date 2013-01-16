@@ -103,7 +103,7 @@
   <string name="touchscreenEnabled_title">Abilita touchscreen</string>
   <string name="touchpadEnabled_title">Abilita touchpad</string>
   <string name="inputOctagonConstraints_title">Limite joystick ottagonale</string>
-  <string name="inputOctagonConstraints_summary">forza il movimento dell\'analogico in un ottagono, come un vero controller N64</string>
+  <string name="inputOctagonConstraints_summary">Forza il movimento dell\'analogico in un ottagono, come un vero controller N64</string>
   <string name="inputVolumeMappable_title">Tasti volume impostabili</string>
   <string name="inputVolumeMappable_summary">Abilita i tasti volume ad essere impostati a controlli</string>
   <string name="inputShareController_title">Condividi controller</string>
@@ -216,7 +216,7 @@
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
   <string name="pathPreference_dialogTitle">Cartella selezionata: %1$s</string>
-  <string name="pathSelectedGame_title">Gioco</string>
+  <string name="pathSelectedGame_title">Seleziona gioco</string>
   <string name="pathSelectedGame_default">~roms/n64</string>
   <string name="pathCustomTouchscreen_title">Layout della cartella personalizzato</string>
   <string name="pathCustomTouchscreen_default">~</string>

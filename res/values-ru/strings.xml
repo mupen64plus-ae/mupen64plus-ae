@@ -98,6 +98,8 @@
   <string name="categoryData_title">Данные</string>
   <string name="categoryCrashReports_title">Сообщения об ошибках</string>
   <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Включить читы</string>
+  <string name="playShowCheats_summary">Загрузка меню медленнее при включенном</string>
   <string name="touchscreenEnabled_title">Использовать тачскрин</string>
   <string name="touchpadEnabled_title">Использовать экранные кнопки</string>
   <string name="inputOctagonConstraints_title">Восьмиугольные пределы джойстика</string>

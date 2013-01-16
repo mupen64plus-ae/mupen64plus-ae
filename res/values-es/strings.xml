@@ -98,6 +98,8 @@
   <string name="categoryData_title">Datos</string>
   <string name="categoryCrashReports_title">Informes de fallos</string>
   <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Habilitar cheats</string>
+  <string name="playShowCheats_summary">La carga del menú es más lenta cuando se encuentran activados</string>
   <string name="touchscreenEnabled_title">Habilitar pantalla táctil</string>
   <string name="touchpadEnabled_title">Habilitar touchpad</string>
   <string name="inputOctagonConstraints_title">Límites octogonales del joystick</string>

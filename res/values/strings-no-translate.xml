@@ -2,13 +2,13 @@
 <resources>
 
     <!-- Proper names, trademarks, etc. -->
-    <string name="app_name" translatable="false">Mupen64Plus AE</string>
+    <string name="app_name" translatable="false">Mupen64 Plus AE</string>
 
     <!-- Web links, email addresses, etc. -->
     <string name="actionHelp_uriFaq" translatable="false">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
     <string name="actionHelp_uriBug" translatable="false">http://github.com/paulscode/mupen64plus-ae/issues</string>
     <string name="actionAbout_uriCredits" translatable="false">http://www.paulscode.com/forum/index.php?topic=836.msg7873#msg7873</string>
-    <string name="actionAbout_uriChangelog" translatable="false">http://www.paulscode.com/forum/index.php?topic=833.msg7727#msg7727</string>
+    <string name="actionAbout_uriChangelog" translatable="false">http://www.paulscode.com/forum/index.php?topic=96.msg2243#msg2243</string>
 
     <!-- Encoded values -->
     <string name="inputMap_defaultOn" translatable="false">true/0:22,0:-31,1:21,1:-32,2:20,2:-33,3:19,3:-34,4:108,6:99,7:96,7:23,12:103,13:102,16:-1,17:-2,18:-3,19:-4</string>
