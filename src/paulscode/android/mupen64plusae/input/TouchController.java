@@ -245,7 +245,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             {
                 // Check if this pointer was already mapped to a button
                 int prevIndex = mPointerMap.get( pid );
-                if( prevIndex > 0 && prevIndex != index )
+                if( prevIndex >= 0 && prevIndex != index )
                 {
                     // Release the previous button
                     setTouchState( prevIndex, false );
@@ -258,6 +258,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             setTouchState( index, touched );
         }
     }
+    
     /**
      * Sets the state of a button, and handles the D-Pad diagonals.
      * 
