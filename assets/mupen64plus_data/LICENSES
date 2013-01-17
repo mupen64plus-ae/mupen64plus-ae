@@ -6,7 +6,7 @@ Mupen64Plus AE is built on the Mupen64Plus-Core, which was originally distribute
 OUYA Development Kit LICENSE
 ----------------------------
 
-Mupen64Plus AE is distributed with libraries from the OUYA Development Kit.  These libraries are licensed under the terms of the Apache License, Version 2.0.  Please see the included doc/apache-license for the terms and conditions of the Apache License.
+Mupen64Plus AE is distributed with libraries from the OUYA Development Kit (ODK), available at https://devs.ouya.tv/developers/odk.  These libraries are licensed under the terms of the Apache License, Version 2.0.  Please see the included doc/apache-license for the terms and conditions of the Apache License.
 
 Mupen64Plus-Core LICENSES
 -------------------------
