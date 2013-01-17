@@ -26,7 +26,7 @@ all: glitch64 glide64
 
 glitch64:
 	$(MAKE) $(MFLAGS) -C Glitch64 -f Makefile.gcc
-
+	cp Glitch64/glide3x.so Glide64/lib/
 glide64:
 	$(MAKE) $(MFLAGS) -C Glide64 -f Makefile.gcc
 
