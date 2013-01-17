@@ -1,3 +1,13 @@
+Mupen64Plus, Android Edition (AE) LICENSE
+-----------------------------------------
+
+Mupen64Plus AE is built on the Mupen64Plus-Core, which was originally distributed under the terms of the GNU General Public License (GPL) Version 2.0.  Mupen64Plus AE is licensed under the GPL Version 3.0.  Please see the included doc/gpl-license-3 for the terms and conditions of the GPL Version 3.0.
+
+OUYA Development Kit LICENSE
+----------------------------
+
+Mupen64Plus AE is distributed with libraries from the OUYA Development Kit.  These libraries are licensed under the terms of the Apache License, Version 2.0.  Please see the included doc/apache-license for the terms and conditions of the Apache License.
+
 Mupen64Plus-Core LICENSES
 -------------------------
 
