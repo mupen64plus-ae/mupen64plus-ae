@@ -6,20 +6,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.NativeMethods;
-import paulscode.android.mupen64plusae.persistent.AppData;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -27,9 +22,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.FloatMath;
 import android.util.Log;
-import android.view.InputDevice;
-import android.view.InputDevice.MotionRange;
-import android.view.MotionEvent;
 
 /**
  * Utility class which collects a bunch of commonly used methods into one class.
@@ -136,122 +128,6 @@ public class Utility
         String uri = context.getString( resId );
         Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
         context.startActivity( intent );
-    }
-    
-    /**
-     * Gets the hardware information from /proc/cpuinfo.
-     * 
-     * @return The hardware string.
-     */
-    public static String getCpuInfo()
-    {   
-        // From http://android-er.blogspot.com/2009/09/read-android-cpu-info.html
-        String result = "";
-        try
-        {
-            String[] args = { "/system/bin/cat", "/proc/cpuinfo" };
-            Process process = new ProcessBuilder( args ).start();
-            InputStream in = process.getInputStream();
-            byte[] re = new byte[1024];
-            while( in.read( re ) != -1 )
-                result = result + new String( re );
-            in.close();
-        }
-        catch( IOException ex )
-        {
-            ex.printStackTrace();
-        }
-        
-        // Remove the serial number for privacy
-        Pattern pattern = Pattern.compile( "^serial\\s*?:.*?$", Pattern.CASE_INSENSITIVE
-                | Pattern.MULTILINE );
-        result = pattern.matcher( result ).replaceAll( "Serial : XXXX" );
-        
-        return result;
-    }
-    
-    /**
-     * Gets the peripheral information using the appropriate Android API.
-     * 
-     * @return The peripheral info string.
-     */
-    @TargetApi( 16 )
-    public static String getPeripheralInfo()
-    {
-        StringBuilder builder = new StringBuilder();
-        
-        if( AppData.IS_GINGERBREAD )
-        {
-            int[] ids = InputDevice.getDeviceIds();
-            for( int i = 0; i < ids.length; i++ )
-            {
-                InputDevice device = InputDevice.getDevice( ids[i] );
-
-                List<MotionRange> ranges = getPeripheralMotionRanges( device );
-                if( ranges.size() > 0 )
-                {
-                    builder.append( "Device: " + device.getName() + "\r\n" );
-                    builder.append( "Id: " + device.getId() + "\r\n" );
-                    if( AppData.IS_JELLYBEAN && device.getVibrator().hasVibrator() )
-                    {
-                        builder.append( "Vibrator: true\r\n" );
-                    }
-                    builder.append( "Axes: " + ranges.size() + "\r\n" );
-                    for( int j = 0; j < ranges.size(); j++ )
-                    {
-                        MotionRange range = ranges.get( j );
-                        String axisName = AppData.IS_HONEYCOMB_MR1
-                                ? MotionEvent.axisToString( range.getAxis() )
-                                : "Axis " + j;
-                        builder.append( "  " + axisName + ": ( " + range.getMin() + " , "
-                                + range.getMax() + " )\r\n" );
-                    }
-                    builder.append( "\r\n" );
-                }
-            }
-        }
-        
-        return builder.toString();
-    }
-
-    /**
-     * Gets the motion ranges of a peripheral using the appropriate Android API.
-     * 
-     * @return The motion ranges associated with the peripheral.
-     */
-    @TargetApi( 12 )
-    private static List<MotionRange> getPeripheralMotionRanges( InputDevice device )
-    {
-        List<MotionRange> ranges;
-        if( AppData.IS_HONEYCOMB_MR1 )
-        {
-            ranges = device.getMotionRanges();
-        }
-        else if( AppData.IS_GINGERBREAD )
-        {
-            // Earlier APIs we have to do it the hard way
-            ranges = new ArrayList<MotionRange>();
-            boolean finished = false;
-            for( int j = 0; j < 256 && !finished; j++ )
-            {
-                // TODO: Eliminate reliance on try-catch
-                try
-                {
-                    if( device.getMotionRange( j ) != null )
-                        ranges.add( device.getMotionRange( j ) );
-                }
-                catch( Exception e )
-                {
-                    finished = true;
-                }
-            }
-        }
-        else
-        {
-            ranges = new ArrayList<InputDevice.MotionRange>();
-        }
-        
-        return ranges;
     }
     
     public static String getHeaderName( String filename, String tempDir )

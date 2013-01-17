@@ -24,6 +24,7 @@ import java.io.File;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.CrashTester;
+import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -250,14 +251,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private void actionDeviceInfo()
     {
         String title = getString( R.string.actionDeviceInfo_title );
-        String message = Utility.getCpuInfo();
+        String message = DeviceUtil.getCpuInfo();
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
     private void actionControllerInfo()
     {
         String title = getString( R.string.actionControllerInfo_title );
-        String message = Utility.getPeripheralInfo();
+        String message = DeviceUtil.getPeripheralInfo();
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     

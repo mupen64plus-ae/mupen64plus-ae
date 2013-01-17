@@ -26,6 +26,7 @@ import java.util.Locale;
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
 
+import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -212,8 +213,8 @@ public class AppData
         reporter.putCustomData( "CPU Hardware", hardwareInfo.hardware );
         reporter.putCustomData( "CPU Processor", hardwareInfo.processor );
         reporter.putCustomData( "CPU Features", hardwareInfo.features );
-        reporter.putCustomData( "HID Info", URLEncoder.encode( Utility.getPeripheralInfo() ) );
-        reporter.putCustomData( "CPU Info", URLEncoder.encode( Utility.getCpuInfo() ) );
+        reporter.putCustomData( "HID Info", URLEncoder.encode( DeviceUtil.getPeripheralInfo() ) );
+        reporter.putCustomData( "CPU Info", URLEncoder.encode( DeviceUtil.getCpuInfo() ) );
         reporter.putCustomData( "Is Rooted", Boolean.toString( new Utility.Root().isDeviceRooted() ) );
     }
     
@@ -372,7 +373,7 @@ public class AppData
                 String _processor = "";
                 
                 // Parse a long string of information from the operating system
-                String hwString = Utility.getCpuInfo().toLowerCase( Locale.ENGLISH );
+                String hwString = DeviceUtil.getCpuInfo().toLowerCase( Locale.ENGLISH );
                 String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
                 for( String line : lines )
                 {

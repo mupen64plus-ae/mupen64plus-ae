@@ -1,18 +1,13 @@
 package paulscode.android.mupen64plusae.input;
 
-import static android.view.MotionEvent.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.util.DeviceUtil;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -20,43 +15,6 @@ import android.widget.TextView;
 
 public class DiagnosticActivity extends Activity
 {
-    public static String getDeviceName( int device )
-    {
-        String name = AbstractProvider.getHardwareName( device );
-        return Integer.toString( device ) + ( name == null ? "" : " (" + name + ")" );
-    }
-    
-    public static String getActionName( int action, boolean isMotionEvent )
-    {
-        switch( action )
-        {
-            case ACTION_DOWN:
-                return "DOWN";
-            case ACTION_UP:
-                return "UP";
-            case ACTION_MOVE:
-                return isMotionEvent ? "MOVE" : "MULTIPLE";
-            case ACTION_CANCEL:
-                return "CANCEL";
-            case ACTION_OUTSIDE:
-                return "OUTSIDE";
-            case ACTION_POINTER_DOWN:
-                return "POINTER_DOWN";
-            case ACTION_POINTER_UP:
-                return "POINTER_UP";
-            case ACTION_HOVER_MOVE:
-                return "HOVER_MOVE";
-            case ACTION_SCROLL:
-                return "SCROLL";
-            case ACTION_HOVER_ENTER:
-                return "HOVER_ENTER";
-            case ACTION_HOVER_EXIT:
-                return "HOVER_EXIT";
-            default:
-                return "ACTION_" + Integer.toString( action );
-        }
-    }
-    
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
@@ -95,13 +53,13 @@ public class DiagnosticActivity extends Activity
         int key = event.getKeyCode();
         
         String message = "KeyEvent:";
-        message += "\r\nDevice: " + getDeviceName( event.getDeviceId() );
-        message += "\r\nAction: " + getActionName( event.getAction(), false );
-        message += "\r\nKeyCode: " + key;
+        message += "\nDevice: " + getDeviceName( event.getDeviceId() );
+        message += "\nAction: " + DeviceUtil.getActionName( event.getAction(), false );
+        message += "\nKeyCode: " + key;
         
         if( AppData.IS_HONEYCOMB_MR1 )
         {
-            message += "\r\n\r\n" + KeyEvent.keyCodeToString( key );
+            message += "\n\n" + KeyEvent.keyCodeToString( key );
         }
         
         TextView view = (TextView) findViewById( R.id.textKey );
@@ -122,20 +80,21 @@ public class DiagnosticActivity extends Activity
     private boolean onMotion( MotionEvent event )
     {
         String message = "MotionEvent:";
-        message += "\r\nDevice: " + getDeviceName( event.getDeviceId() );
-        message += "\r\nAction: " + getActionName( event.getAction(), true );
-        message += "\r\n";
+        message += "\nDevice: " + getDeviceName( event.getDeviceId() );
+        message += "\nAction: " + DeviceUtil.getActionName( event.getAction(), true );
+        message += "\n";
         
         if( AppData.IS_GINGERBREAD )
         {
-            for( MotionRange range : getPeripheralMotionRanges( event.getDevice() ) )
+            for( MotionRange range : DeviceUtil.getPeripheralMotionRanges( event.getDevice() ) )
             {
                 if( AppData.IS_HONEYCOMB_MR1 )
                 {
                     int axis = range.getAxis();
                     String name = MotionEvent.axisToString( axis );
+                    String source = DeviceUtil.getSourceName( range.getSource() );
                     double value = event.getAxisValue( axis );
-                    message += "\r\n" + name + ": " + value;
+                    message += "\n" + name + " (" + source + "): " + value;
                 }
                 else
                 {
@@ -149,43 +108,9 @@ public class DiagnosticActivity extends Activity
         return true;
     }
     
-    /**
-     * Gets the motion ranges of a peripheral using the appropriate Android API.
-     * 
-     * @return The motion ranges associated with the peripheral.
-     */
-    @TargetApi( 12 )
-    private static List<MotionRange> getPeripheralMotionRanges( InputDevice device )
+    private static String getDeviceName( int device )
     {
-        List<MotionRange> ranges;
-        if( AppData.IS_HONEYCOMB_MR1 )
-        {
-            ranges = device.getMotionRanges();
-        }
-        else if( AppData.IS_GINGERBREAD )
-        {
-            // Earlier APIs we have to do it the hard way
-            ranges = new ArrayList<MotionRange>();
-            boolean finished = false;
-            for( int j = 0; j < 256 && !finished; j++ )
-            {
-                // TODO: Eliminate reliance on try-catch
-                try
-                {
-                    if( device.getMotionRange( j ) != null )
-                        ranges.add( device.getMotionRange( j ) );
-                }
-                catch( Exception e )
-                {
-                    finished = true;
-                }
-            }
-        }
-        else
-        {
-            ranges = new ArrayList<InputDevice.MotionRange>();
-        }
-        
-        return ranges;
+        String name = AbstractProvider.getHardwareName( device );
+        return Integer.toString( device ) + ( name == null ? "" : " (" + name + ")" );
     }
 }
