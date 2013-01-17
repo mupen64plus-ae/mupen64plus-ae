@@ -45,7 +45,8 @@ extern char out_buf[2048];
 extern wxUint32 frame_count; // frame counter
 
 //GlideHQ support
-#define TEXTURE_FILTER
+#warning GlideHQ Disabled!
+// #define TEXTURE_FILTER
 #ifdef TEXTURE_FILTER
 #include "Ext_TxFilter.h"
 #endif
@@ -179,6 +180,8 @@ typedef struct {
 } LOAD_TILE_INFO;
 #endif
 
+// #warning no screenshot support
+/*
 typedef struct {
   const wxChar * format;
   const wxChar * extension;
@@ -187,7 +190,7 @@ typedef struct {
 
 extern const int NumOfFormats;
 extern SCREEN_SHOT_FORMAT ScreenShotFormats[];
-
+*/
 typedef struct {
   int card_id;
   int lang_id;
@@ -764,7 +767,7 @@ struct RDP : public RDP_Base
   COLOR_IMAGE *frame_buffers; //[NUMTEXBUF+2]
   TEXTURE_BUFFER texbufs[2];
 
-  wxString RomName;
+  char RomName[21];
 
   RDP();
   ~RDP();
@@ -790,9 +793,10 @@ extern wxUint32   offset_texbuf1;
 
 extern int	ucode_error_report;
 
+/*
 extern wxString pluginPath;
 extern wxString iniPath;
-
+*/
 // RDP functions
 void rdp_reset ();
 

@@ -37,131 +37,186 @@
 //
 //****************************************************************
 
-extern "C" void asmMirror16bS (int tex, int start, int width, int height, int mask, int line, int full, int count);
-extern "C" void asmWrap16bS (int tex, int start, int height, int mask, int line, int full, int count);
-extern "C" void asmClamp16bS (int tex, int constant, int height,int line, int full, int count);
+// I think this one is ok -- balrog
 
 //****************************************************************
 // 16-bit Horizontal Mirror
+#include <stdint.h>
+#include <string.h>
+typedef uint32_t wxUint32;
 
-void Mirror16bS (wxUint32 tex, wxUint32 mask, wxUint32 max_width, wxUint32 real_width, wxUint32 height)
+void Mirror16bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint32 real_width, wxUint32 height)
 {
-  if (mask == 0) return;
+    if (mask == 0) return;
 
-  wxUint32 mask_width = (1 << mask);
-  wxUint32 mask_mask = (mask_width-1) << 1;
-  if (mask_width >= max_width) return;
-  int count = max_width - mask_width;
-  if (count <= 0) return;
-  int line_full = real_width << 1;
-  int line = line_full - (count << 1);
-  if (line < 0) return;
-  wxUint32 start = tex + (mask_width << 1);
-  asmMirror16bS (tex, start, mask_width, height, mask_mask, line, line_full, count);
+    wxUint32 mask_width = (1 << mask);
+    wxUint32 mask_mask = (mask_width-1) << 1;
+    if (mask_width >= max_width) return;
+    int count = max_width - mask_width;
+    if (count <= 0) return;
+    int line_full = real_width << 1;
+    int line = line_full - (count << 1);
+    if (line < 0) return;
+    unsigned short * start = (unsigned short *)(tex) + mask_width;
+    
+    unsigned short * edi = start;
+    for(unsigned int ecx = height; ecx; --ecx)
+    {
+        for (int edx = 0; edx != count; ++edx)
+        {
+        unsigned short * esi = (unsigned short *)(tex);
+        if ((mask_width + edx) & mask_width)
+        {
+            esi += (mask_mask - ((edx << 1) & mask_mask)) >> 1;
+        }
+        else
+        {
+            esi += ((edx << 1) & mask_mask) >> 1;
+        }
+        *edi = *esi;
+        ++edi;
+        }
+        edi += line >> 1;
+        tex += line_full;
+    }
 }
 
 //****************************************************************
 // 16-bit Horizontal Wrap (like mirror)
 
-void Wrap16bS (wxUint32 tex, wxUint32 mask, wxUint32 max_width, wxUint32 real_width, wxUint32 height)
+void Wrap16bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint32 real_width, wxUint32 height)
 {
-  if (mask == 0) return;
+    if (mask == 0) return;
 
-  wxUint32 mask_width = (1 << mask);
-  wxUint32 mask_mask = (mask_width-1) >> 1;
-  if (mask_width >= max_width) return;
-  int count = (max_width - mask_width) >> 1;
-  if (count <= 0) return;
-  int line_full = real_width << 1;
-  int line = line_full - (count << 2);
-  if (line < 0) return;
-  wxUint32 start = tex + (mask_width << 1);
-  asmWrap16bS (tex, start, height, mask_mask, line, line_full, count);
+    wxUint32 mask_width = (1 << mask);
+
+    wxUint32 mask_mask = (mask_width-1) >> 1;
+
+    if (mask_width >= max_width) return;
+    
+    int count = (max_width - mask_width) >> 1;
+    if (count <= 0) return;
+
+    int line_full = real_width << 1;
+    int line = line_full - (count << 2);
+    if (line < 0) return;
+    unsigned char * start = tex + (mask_width << 1);
+    
+    // values that can't be changed are height and count
+
+//   asmWrap16bS (tex, start, height, mask_mask, line, line_full, count);
+    
+    wxUint32 *edi = (wxUint32 *)start;
+
+    for(wxUint32 ecx = height; ecx; ecx--) {
+      for(wxUint32 edx = 0; edx != count; edx++) {
+        wxUint32 *esi = (wxUint32 *)tex;
+        esi += (edx & mask_mask);
+        *edi = *esi;
+        edi++;
+      }
+      edi += line >> 2;
+      tex += line_full;
+    }
+    
 }
 
 //****************************************************************
 // 16-bit Horizontal Clamp
 
-void Clamp16bS (wxUint32 tex, wxUint32 width, wxUint32 clamp_to, wxUint32 real_width, wxUint32 real_height)
+void Clamp16bS (unsigned char * tex, wxUint32 width, wxUint32 clamp_to, wxUint32 real_width, wxUint32 real_height)
 {
-  if (real_width <= width) return;
+    if (real_width <= width) return;
 
-  wxUint32 dest = tex + (width << 1);
-  wxUint32 constant = dest-2;
-  int count = clamp_to - width;
+    unsigned char * dest = tex + (width << 1);
+    unsigned char * constant = dest-2;
+    int count = clamp_to - width;
 
-  int line_full = real_width << 1;
-  int line = width << 1;
+    int line_full = real_width << 1;
+    int line = width << 1;
 
-  asmClamp16bS (dest, constant, real_height, line, line_full, count);
+// it's ok to manipulate pointers directly, except for tex.
+    
+    wxUint16 *esi = (wxUint16 *)constant;
+    wxUint16 *edi = (wxUint16 *)dest;
+        
+    for (wxUint32 ecx = real_height; ecx; --ecx) {
+      for(wxUint32 edx = count; edx; --edx) {
+        *edi = *esi;
+        edi++;
+      }
+      esi += line_full >> 1;
+      edi += line >> 1;
+    }
+    
 }
 
 //****************************************************************
 // 16-bit Vertical Mirror
 
-void Mirror16bT (wxUint32 tex, wxUint32 mask, wxUint32 max_height, wxUint32 real_width)
+void Mirror16bT (unsigned char * tex, wxUint32 mask, wxUint32 max_height, wxUint32 real_width)
 {
-  if (mask == 0) return;
+    if (mask == 0) return;
 
-  wxUint32 mask_height = (1 << mask);
-  wxUint32 mask_mask = mask_height-1;
-  if (max_height <= mask_height) return;
-  int line_full = real_width << 1;
+    wxUint32 mask_height = (1 << mask);
+    wxUint32 mask_mask = mask_height-1;
+    if (max_height <= mask_height) return;
+    int line_full = real_width << 1;
 
-  wxUint32 dst = tex + mask_height * line_full;
+    unsigned char * dst = tex + mask_height * line_full;
 
-  for (wxUint32 y=mask_height; y<max_height; y++)
-  {
-    if (y & mask_height)
+    for (wxUint32 y=mask_height; y<max_height; y++)
     {
-      // mirrored
-      memcpy ((void*)dst, (void*)(tex + (mask_mask - (y & mask_mask)) * line_full), line_full);
-    }
-    else
-    {
-      // not mirrored
-      memcpy ((void*)dst, (void*)(tex + (y & mask_mask) * line_full), line_full);
-    }
+        if (y & mask_height)
+        {
+            // mirrored
+            memcpy ((void*)dst, (void*)(tex + (mask_mask - (y & mask_mask)) * line_full), line_full);
+        }
+        else
+        {
+            // not mirrored
+            memcpy ((void*)dst, (void*)(tex + (y & mask_mask) * line_full), line_full);
+        }
 
-    dst += line_full;
-  }
+        dst += line_full;
+    }
 }
 
 //****************************************************************
 // 16-bit Vertical Wrap
 
-void Wrap16bT (wxUint32 tex, wxUint32 mask, wxUint32 max_height, wxUint32 real_width)
+void Wrap16bT (unsigned char * tex, wxUint32 mask, wxUint32 max_height, wxUint32 real_width)
 {
-  if (mask == 0) return;
+    if (mask == 0) return;
 
-  wxUint32 mask_height = (1 << mask);
-  wxUint32 mask_mask = mask_height-1;
-  if (max_height <= mask_height) return;
-  int line_full = real_width << 1;
+    wxUint32 mask_height = (1 << mask);
+    wxUint32 mask_mask = mask_height-1;
+    if (max_height <= mask_height) return;
+    int line_full = real_width << 1;
 
-  wxUint32 dst = tex + mask_height * line_full;
+    unsigned char * dst = tex + mask_height * line_full;
 
-  for (wxUint32 y=mask_height; y<max_height; y++)
-  {
-    // not mirrored
-    memcpy ((void*)dst, (void*)(tex + (y & mask_mask) * line_full), line_full);
+    for (wxUint32 y=mask_height; y<max_height; y++)
+    {
+        // not mirrored
+        memcpy ((void*)dst, (void*)(tex + (y & mask_mask) * line_full), line_full);
 
-    dst += line_full;
-  }
+        dst += line_full;
+    }
 }
 
 //****************************************************************
 // 16-bit Vertical Clamp
 
-void Clamp16bT (wxUint32 tex, wxUint32 height, wxUint32 real_width, wxUint32 clamp_to)
+void Clamp16bT (unsigned char * tex, wxUint32 height, wxUint32 real_width, wxUint32 clamp_to)
 {
-  int line_full = real_width << 1;
-  wxUint32 dst = tex + height * line_full;
-  wxUint32 const_line = dst - line_full;
+    int line_full = real_width << 1;
+    unsigned char * dst = tex + height * line_full;
+    unsigned char * const_line = dst - line_full;
 
-  for (wxUint32 y=height; y<clamp_to; y++)
-  {
-    memcpy ((void*)dst, (void*)const_line, line_full);
-    dst += line_full;
-  }
+    for (wxUint32 y=height; y<clamp_to; y++)
+    {
+        memcpy ((void*)dst, (void*)const_line, line_full);
+        dst += line_full;
+    }
 }

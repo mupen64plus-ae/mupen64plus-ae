@@ -38,8 +38,8 @@
 //****************************************************************
 
 #include "Gfx #1.3.h"
-#include <wx/fileconf.h>
-#include <wx/wfstream.h>
+#include "Ini.h"
+#include "Config.h"
 #include "Util.h"
 #include "3dmath.h"
 #include "Debugger.h"
@@ -49,6 +49,8 @@
 #include "FBtoScreen.h"
 #include "DepthBufferRender.h"
 
+#include <sys/time.h>
+#include "osal_dynamiclib.h"
 #ifdef TEXTURE_FILTER // Hiroshi Morii <koolsmoky@users.sourceforge.net>
 #include <stdarg.h>
 int  ghq_dmptex_toggle_key = 0;
@@ -76,8 +78,36 @@ std::ofstream rdp_err;
 #endif
 
 GFX_INFO gfx;
-wxWindow * GFXWindow = NULL;
 
+/* definitions of pointers to Core config functions */
+ptr_ConfigOpenSection      ConfigOpenSection = NULL;
+ptr_ConfigSetParameter     ConfigSetParameter = NULL;
+ptr_ConfigGetParameter     ConfigGetParameter = NULL;
+ptr_ConfigGetParameterHelp ConfigGetParameterHelp = NULL;
+ptr_ConfigSetDefaultInt    ConfigSetDefaultInt = NULL;
+ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat = NULL;
+ptr_ConfigSetDefaultBool   ConfigSetDefaultBool = NULL;
+ptr_ConfigSetDefaultString ConfigSetDefaultString = NULL;
+ptr_ConfigGetParamInt      ConfigGetParamInt = NULL;
+ptr_ConfigGetParamFloat    ConfigGetParamFloat = NULL;
+ptr_ConfigGetParamBool     ConfigGetParamBool = NULL;
+ptr_ConfigGetParamString   ConfigGetParamString = NULL;
+
+ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = NULL;
+ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath = NULL;
+ptr_ConfigGetUserDataPath       ConfigGetUserDataPath = NULL;
+ptr_ConfigGetUserCachePath      ConfigGetUserCachePath = NULL;
+
+/* definitions of pointers to Core video extension functions */
+ptr_VidExt_Init                  CoreVideo_Init = NULL;
+ptr_VidExt_Quit                  CoreVideo_Quit = NULL;
+ptr_VidExt_ListFullscreenModes   CoreVideo_ListFullscreenModes = NULL;
+ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = NULL;
+ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
+ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
+ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
+ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
+ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
 int to_fullscreen = FALSE;
 int fullscreen = FALSE;
 int romopen = FALSE;
@@ -110,8 +140,9 @@ int64 perf_next;
 #endif
 
 #ifdef FPS
-wxDateTime fps_last;
-wxDateTime fps_next;
+LARGE_INTEGER perf_freq;
+LARGE_INTEGER fps_last;
+LARGE_INTEGER fps_next;
 float      fps = 0.0f;
 wxUint32   fps_count = 0;
 
@@ -125,40 +156,10 @@ float      pal_percent = 0.0f;
 
 #endif
 
-// Resolutions, MUST be in the correct order (SST1VID.H)
-wxUint32 resolutions[0x18][2] = {
-  { 320, 200 },
-  { 320, 240 },
-  { 400, 256 },
-  { 512, 384 },
-  { 640, 200 },
-  { 640, 350 },
-  { 640, 400 },
-  { 640, 480 },
-  { 800, 600 },
-  { 960, 720 },
-  { 856, 480 },
-  { 512, 256 },
-  { 1024, 768 },
-  { 1280, 1024 },
-  { 1600, 1200 },
-  { 400, 300 },
-
-  // 0x10
-  { 1152, 864 },
-  { 1280, 960 },
-  { 1600, 1024 },
-  { 1792, 1344 },
-  { 1856, 1392 },
-  { 1920, 1440 },
-  { 2048, 1536 },
-  { 2048, 2048 }
-};
-
 // ref rate
 // 60=0x0, 70=0x1, 72=0x2, 75=0x3, 80=0x4, 90=0x5, 100=0x6, 85=0x7, 120=0x8, none=0xff
 
-unsigned int BMASK = 0x7FFFFF;
+unsigned long BMASK = 0x7FFFFF;
 // Reality display processor structure
 RDP rdp;
 
@@ -179,50 +180,93 @@ wxUint32   offset_textures = 0;
 wxUint32   offset_texbuf1 = 0;
 
 int    capture_screen = 0;
-wxString capture_path;
+char    capture_path[256];
 
-wxString pluginPath;
-wxString iniPath;
-wxString iniName;
-wxMutex *mutexProcessDList = NULL;
+// SOME FUNCTION DEFINITIONS 
 
-/******************************************************************
-   NOTE: THIS HAS BEEN ADDED FOR MUPEN64PLUS AND IS NOT PART OF THE
-         ORIGINAL SPEC
-  Function: SetConfigDir
-  Purpose:  To pass the location where config files should be read/
-            written to.
-  input:    path to config directory
-  output:   none
-*******************************************************************/
-EXPORT void CALL SetConfigDir(char *configDir)
-{
-  wxString dirName(configDir, wxConvUTF8);
-  wxString path = wxPathOnly(dirName);
-  if (wxDirExists(path))
-  {
-    iniName = path + wxT("/Glide64.ini");
-    iniPath = path;
-  }
-}
+static void DrawFrameBuffer ();
+
+
+void (*renderCallback)() = NULL;
+static void (*l_DebugCallback)(void *, int, const char *) = NULL;
+static void *l_DebugCallContext = NULL;
+
+#ifdef TEXTURE_FILTER
+
+#ifdef _WIN32
+#define PATH_MAX _MAX_PATH
+#endif
+
+#ifdef __APPLE__
+#include <mach-o/dyld.h>
+#endif
+
+char pluginPath[PATH_MAX];
 
 static void PluginPath()
 {
-  wxDynamicLibraryDetailsArray dlls = wxDynamicLibrary::ListLoaded();
-  const size_t count = dlls.GetCount();
-  for ( size_t n = 0; n < count; ++n )
-  {
-    const wxDynamicLibraryDetails& details = dlls[n];
-    if (details.GetName().Find(wxT("Glide64")) != wxNOT_FOUND)
-    {
-      wxFileName libname(details.GetPath());
-      pluginPath = libname.GetPath();
-      return;
-    }
-  }
-  pluginPath = wxGetCwd() + _T("/Plugin"); //if ListLoaded is not supported by OS use default path
-}
+  unsigned int size = sizeof(pluginPath);
+  
+  #ifdef __APPLE__
+  if(_NSGetExecutablePath(pluginPath, &size) != 0) return;
+  #else
+    #ifdef _WIN32
+    GetModuleFileName (hInstance, pluginPath, PATH_MAX);
+    #else
+      #ifdef __FreeBSD__
+      int n = readlink("/proc/curproc/files", pluginPath, PATH_MAX);
+      #else
+      int n = readlink("/proc/self/exe", pluginPath, PATH_MAX);
+      #endif
+      if (n == -1) strcpy(pluginPath, "./");
+      else
+      {
+        char pluginPath2[PATH_MAX];
+        int i;
 
+        pluginPath[n] = '\0';
+        strcpy(pluginPath2, pluginPath);
+        for (i=strlen(pluginPath2)-1; i>0; i--)
+        {
+          if(pluginPath2[i] == '/') break;
+        }
+        if(i == 0) strcpy(pluginPath, "./");
+        else
+        {
+          DIR *dir;
+          struct dirent *entry;
+          int gooddir = 0;
+
+          pluginPath2[i+1] = '\0';
+          dir = opendir(pluginPath2);
+          while((entry = readdir(dir)) != NULL)
+          {
+            if(!strcmp(entry->d_name, "plugins"))
+              gooddir = 1;
+          }
+          closedir(dir);
+          if(!gooddir) strcpy(pluginPath, "./");
+        }
+      }      
+    #endif
+  #endif
+
+    // Find the previous backslash
+  int i;
+  for (i=strlen(pluginPath)-1; i>0; i--)
+  {
+#ifdef _WIN32
+    if (pluginPath[i] == '\\')
+#else // _WIN32
+      if (pluginPath[i] == '/')
+#endif // _WIN32
+        break;
+  }
+  if (pluginPath == 0) return;
+  pluginPath[i+1] = 0;
+
+}
+#endif
 void _ChangeSize ()
 {
   rdp.scale_1024 = settings.scr_res_x / 1024.0f;
@@ -342,7 +386,7 @@ void ConfigWrapper()
   if (grConfigWrapperExt)
     grConfigWrapperExt(settings.wrpResolution, settings.wrpVRAM * 1024 * 1024, settings.wrpFBO, settings.wrpAnisotropic);
 }
-
+/*
 static wxConfigBase * OpenIni()
 {
   wxConfigBase * ini = wxConfigBase::Get(false);
@@ -362,48 +406,71 @@ static wxConfigBase * OpenIni()
     wxMessageBox(_T("Can not find ini file! Plugin will not run properly."), _T("File not found"), wxOK|wxICON_EXCLAMATION);
   return ini;
 }
+*/
+#ifndef OLDAPI
+void WriteLog(m64p_msg_level level, const char *msg, ...)
+{
+  char buf[1024];
+  va_list args;
+  va_start(args, msg);
+  vsnprintf(buf, 1023, msg, args);
+  buf[1023]='\0';
+  va_end(args);
+  if (l_DebugCallback)
+  {
+    l_DebugCallback(l_DebugCallContext, level, buf);
+  }
+}
+#endif
 
 void ReadSettings ()
 {
   //  LOG("ReadSettings\n");
-  wxConfigBase * ini = OpenIni();
-  if (!ini || !ini->HasGroup(_T("/SETTINGS")))
+  if (!Config_Open())
+  {
+    ERRLOG("Could not open configuration!");
     return;
-  ini->SetPath(_T("/SETTINGS"));
+  }
 
-  settings.card_id = ini->Read(_T("card_id"), 0l);
-  settings.lang_id = ini->Read(_T("lang_id"), wxLANGUAGE_ENGLISH_US);
-  settings.res_data = (wxUint32)ini->Read(_T("resolution"), 7);
-  if (settings.res_data >= 24) settings.res_data = 12;
-  settings.scr_res_x = settings.res_x = resolutions[settings.res_data][0];
-  settings.scr_res_y = settings.res_y = resolutions[settings.res_data][1];
-  settings.vsync = ini->Read(_T("vsync"), 0l);
-  settings.ssformat = (wxUint8)ini->Read(_T("ssformat"), 0l);
-  settings.show_fps = (wxUint8)ini->Read(_T("show_fps"), 0l);
-  settings.clock = ini->Read(_T("clock"), 0l);
-  settings.clock_24_hr = ini->Read(_T("clock_24_hr"), 0l);
-  settings.advanced_options = ini->Read(_T("advanced_options"), 0l);
-  settings.texenh_options = ini->Read(_T("texenh_options"), 0l);
-  settings.use_hotkeys = ini->Read(_T("hotkeys"), 1l);
+  settings.card_id = (BYTE)Config_ReadInt ("card_id", "Card ID", 0, TRUE, FALSE);
+  //settings.lang_id not needed
+  // depth_bias = -Config_ReadInt ("depth_bias", "Depth bias level", 0, TRUE, FALSE);
+  settings.res_data = 0;
+  settings.scr_res_x = settings.res_x = Config_ReadScreenInt("ScreenWidth");
+  settings.scr_res_y = settings.res_y = Config_ReadScreenInt("ScreenHeight");
 
-  settings.wrpResolution = ini->Read(_T("wrpResolution"), 0l);
-  settings.wrpVRAM = ini->Read(_T("wrpVRAM"), 0l);
-  settings.wrpFBO = ini->Read(_T("wrpFBO"), 0l);
-  settings.wrpAnisotropic = ini->Read(_T("wrpAnisotropic"), 0l);
+  settings.vsync = (BOOL)Config_ReadInt ("vsync", "Vertical sync", 0);
+  settings.ssformat = (BOOL)Config_ReadInt("ssformat", "TODO:ssformat", 0);
+  //settings.fast_crc = (BOOL)Config_ReadInt ("fast_crc", "Fast CRC", 0);
+
+  settings.show_fps = (BYTE)Config_ReadInt ("show_fps", "Display performance stats (add together desired flags): 1=FPS counter, 2=VI/s counter, 4=% speed, 8=FPS transparent", 0, TRUE, FALSE);
+  settings.clock = (BOOL)Config_ReadInt ("clock", "Clock enabled", 0);
+  settings.clock_24_hr = (BOOL)Config_ReadInt ("clock_24_hr", "Clock is 24-hour", 0);
+  // settings.advanced_options only good for GUI config
+  // settings.texenh_options = only good for GUI config
+  //settings.use_hotkeys = ini->Read(_T("hotkeys"), 1l);
+
+  settings.wrpResolution = (BYTE)Config_ReadInt ("wrpResolution", "Wrapper resolution", 0, TRUE, FALSE);
+  settings.wrpVRAM = (BYTE)Config_ReadInt ("wrpVRAM", "Wrapper VRAM", 0, TRUE, FALSE);
+  settings.wrpFBO = (BOOL)Config_ReadInt ("wrpFBO", "Wrapper FBO", 1, TRUE, TRUE);
+  settings.wrpAnisotropic = (BOOL)Config_ReadInt ("wrpAnisotropic", "Wrapper Anisotropic Filtering", 0, TRUE, TRUE);
 
 #ifndef _ENDUSER_RELEASE_
-  settings.autodetect_ucode = ini->Read(_T("autodetect_ucode"), 1);
-  settings.ucode = ini->Read(_T("ucode"), 2);
-  settings.wireframe = ini->Read(_T("wireframe"), 0l);
-  settings.wfmode = ini->Read(_T("wfmode"), 1);
-  settings.logging = ini->Read(_T("logging"), 0l);
-  settings.log_clear = ini->Read(_T("log_clear"), 0l);
-  settings.run_in_window = ini->Read(_T("run_in_window"), 0l);
-  settings.elogging = ini->Read(_T("elogging"), 0l);
-  settings.filter_cache = ini->Read(_T("filter_cache"), 0l);
-  settings.unk_as_red = ini->Read(_T("unk_as_red"), 0l);
-  settings.log_unk = ini->Read(_T("log_unk"), 0l);
-  settings.unk_clear = ini->Read(_T("unk_clear"), 0l);
+  settings.autodetect_ucode = (BOOL)Config_ReadInt ("autodetect_ucode", "Auto-detect microcode", 1);
+  settings.ucode = (wxUint32)Config_ReadInt ("ucode", "Force microcode", 2, TRUE, FALSE);
+  settings.wireframe = (BOOL)Config_ReadInt ("wireframe", "Wireframe display", 0);
+  settings.wfmode = (int)Config_ReadInt ("wfmode", "Wireframe mode: 0=Normal colors, 1=Vertex colors, 2=Red only", 1, TRUE, FALSE);
+
+  settings.logging = (BOOL)Config_ReadInt ("logging", "Logging", 0);
+  settings.log_clear = (BOOL)Config_ReadInt ("log_clear", "", 0);
+
+  settings.run_in_window = (BOOL)Config_ReadInt ("run_in_window", "", 0);
+
+  settings.elogging = (BOOL)Config_ReadInt ("elogging", "", 0);
+  settings.filter_cache = (BOOL)Config_ReadInt ("filter_cache", "Filter cache", 0);
+  settings.unk_as_red = (BOOL)Config_ReadInt ("unk_as_red", "Display unknown combines as red", 0);
+  settings.log_unk = (BOOL)Config_ReadInt ("log_unk", "Log unknown combines", 0);
+  settings.unk_clear = (BOOL)Config_ReadInt ("unk_clear", "", 0);
 #else
   settings.autodetect_ucode = TRUE;
   settings.ucode = 2;
@@ -420,25 +487,44 @@ void ReadSettings ()
 #endif
 
 #ifdef TEXTURE_FILTER
-  settings.ghq_fltr = (wxUint8)ini->Read(_T("ghq_fltr"), 0l);
-  settings.ghq_cmpr = (wxUint8)ini->Read(_T("ghq_cmpr"), 0l);
-  settings.ghq_enht = (wxUint8)ini->Read(_T("ghq_enht"), 0l);
-  settings.ghq_hirs = (wxUint8)ini->Read(_T("ghq_hirs"), 0l);
-  settings.ghq_enht_cmpr  = ini->Read(_T("ghq_enht_cmpr"), 0l);
-  settings.ghq_enht_tile = ini->Read(_T("ghq_enht_tile"), 0l);
-  settings.ghq_enht_f16bpp = ini->Read(_T("ghq_enht_f16bpp"), 0l);
-  settings.ghq_enht_gz  = ini->Read(_T("ghq_enht_gz"), 1L);
-  settings.ghq_enht_nobg  = ini->Read(_T("ghq_enht_nobg"), 0l);
-  settings.ghq_hirs_cmpr  = ini->Read(_T("ghq_hirs_cmpr"), 0l);
-  settings.ghq_hirs_tile = ini->Read(_T("ghq_hirs_tile"), 0l);
-  settings.ghq_hirs_f16bpp = ini->Read(_T("ghq_hirs_f16bpp"), 0l);
-  settings.ghq_hirs_gz  = ini->Read(_T("ghq_hirs_gz"), 1);
-  settings.ghq_hirs_altcrc  = ini->Read(_T("ghq_hirs_altcrc"), 1);
-  settings.ghq_cache_save = ini->Read(_T("ghq_cache_save"), 1);
-  settings.ghq_cache_size = ini->Read(_T("ghq_cache_size"), 0l);
-  settings.ghq_hirs_let_texartists_fly = ini->Read(_T("ghq_hirs_let_texartists_fly"), 0l);
-  settings.ghq_hirs_dump = ini->Read(_T("ghq_hirs_dump"), 0l);
+  
+  // settings.ghq_fltr range is 0 through 6
+  // Filters:\nApply a filter to either smooth or sharpen textures.\nThere are 4 different smoothing filters and 2 different sharpening filters.\nThe higher the number, the stronger the effect,\ni.e. \"Smoothing filter 4\" will have a much more noticeable effect than \"Smoothing filter 1\".\nBe aware that performance may have an impact depending on the game and/or the PC.\n[Recommended: your preference]
+  // _("None"),
+  // _("Smooth filtering 1"),
+  // _("Smooth filtering 2"),
+  // _("Smooth filtering 3"),
+  // _("Smooth filtering 4"),
+  // _("Sharp filtering 1"),
+  // _("Sharp filtering 2")
+
+// settings.ghq_cmpr 0=S3TC and 1=FXT1
+
+//settings.ghq_ent is ___
+// "Texture enhancement:\n7 different filters are selectable here, each one with a distinctive look.\nBe aware of possible performance impacts.\n\nIMPORTANT: 'Store' mode - saves textures in cache 'as is'. It can improve performance in games, which load many textures.\nDisable 'Ignore backgrounds' option for better result.\n\n[Recommended: your preference]"
+
+
+
+  settings.ghq_fltr = Config_ReadInt ("ghq_fltr", "Texture Enhancement: Smooth/Sharpen Filters", 0, TRUE, FALSE);
+  settings.ghq_cmpr = Config_ReadInt ("ghq_cmpr", "Texture Compression: 0 for S3TC, 1 for FXT1", 0, TRUE, FALSE);
+  settings.ghq_enht = Config_ReadInt ("ghq_enht", "Texture Enhancement: More filters", 0, TRUE, FALSE);
+  settings.ghq_hirs = Config_ReadInt ("ghq_hirs", "Hi-res texture pack format (0 for none, 1 for Rice)", 0, TRUE, FALSE);
+  settings.ghq_enht_cmpr  = Config_ReadInt ("ghq_enht_cmpr", "Compress texture cache with S3TC or FXT1", 0, TRUE, TRUE);
+  settings.ghq_enht_tile = Config_ReadInt ("ghq_enht_tile", "Tile textures (saves memory but could cause issues)", 0, TRUE, FALSE);
+  settings.ghq_enht_f16bpp = Config_ReadInt ("ghq_enht_f16bpp", "Force 16bpp textures (saves ram but lower quality)", 0, TRUE, TRUE);
+  settings.ghq_enht_gz  = Config_ReadInt ("ghq_enht_gz", "Compress texture cache", 1, TRUE, TRUE);
+  settings.ghq_enht_nobg  = Config_ReadInt ("ghq_enht_nobg", "Don't enhance textures for backgrounds", 0, TRUE, TRUE);
+  settings.ghq_hirs_cmpr  = Config_ReadInt ("ghq_hirs_cmpr", "Enable S3TC and FXT1 compression", 0, TRUE, TRUE);
+  settings.ghq_hirs_tile = Config_ReadInt ("ghq_hirs_tile", "Tile hi-res textures (saves memory but could cause issues)", 0, TRUE, TRUE);
+  settings.ghq_hirs_f16bpp = Config_ReadInt ("ghq_hirs_f16bpp", "Force 16bpp hi-res textures (saves ram but lower quality)", 0, TRUE, TRUE);
+  settings.ghq_hirs_gz  = Config_ReadInt ("ghq_hirs_gz", "Compress hi-res texture cache", 1, TRUE, TRUE);
+  settings.ghq_hirs_altcrc = Config_ReadInt ("ghq_hirs_altcrc", "Alternative CRC calculation -- emulates Rice bug", 1, TRUE, TRUE);
+  settings.ghq_cache_save = Config_ReadInt ("ghq_cache_save", "Save tex cache to disk", 1, TRUE, TRUE);
+  settings.ghq_cache_size = Config_ReadInt ("ghq_cache_size", "Texture Cache Size (MB)", 128, TRUE, FALSE);
+  settings.ghq_hirs_let_texartists_fly = Config_ReadInt ("ghq_hirs_let_texartists_fly", "Use full alpha channel -- could cause issues for some tex packs", 0, TRUE, TRUE);
+  settings.ghq_hirs_dump = Config_ReadInt ("ghq_hirs_dump", "Dump textures", 0, FALSE, TRUE);
 #endif
+  //TODO-PORT: remove?
   ConfigWrapper();
 }
 
@@ -511,12 +597,10 @@ void ReadSpecialSettings (const char * name)
   else if (strstr(name, (const char *)"PUZZLE LEAGUE"))
     settings.hacks |= hack_PPL;
 
-  wxString groupName = wxT("/");
-  groupName += wxString::FromAscii(name);
-  wxConfigBase * ini = OpenIni();
-  if (!ini || !ini->HasGroup(groupName))
+  Ini * ini = Ini::OpenIni();
+  if (!ini)
     return;
-  ini->SetPath(groupName);
+  ini->SetPath(name);
 
   ini->Read(_T("alt_tex_size"), &(settings.alt_tex_size));
   ini->Read(_T("use_sts1_only"), &(settings.use_sts1_only));
@@ -571,13 +655,14 @@ void ReadSpecialSettings (const char * name)
     ini->Read(_T("swapmode"), &(settings.swapmode));
     ini->Read(_T("aspect"), &(settings.aspectmode));
     ini->Read(_T("lodmode"), &(settings.lodmode));
-    int resolution;
-    if (ini->Read(_T("resolution"), &resolution))
+    int resolution = 12;
+    //if (ini->Read(_T("resolution"), &resolution))
     {
       settings.res_data = (wxUint32)resolution;
       if (settings.res_data >= 0x18) settings.res_data = 12;
-      settings.scr_res_x = settings.res_x = resolutions[settings.res_data][0];
-      settings.scr_res_y = settings.res_y = resolutions[settings.res_data][1];
+	  //TODO-port: fix resolutions
+      settings.scr_res_x = settings.res_x = 1024;//resolutions[settings.res_data][0];
+      settings.scr_res_y = settings.res_y = 768;//resolutions[settings.res_data][1];
     }
 
     //frame buffer
@@ -609,8 +694,10 @@ void ReadSpecialSettings (const char * name)
   settings.flame_corona = (settings.hacks & hack_Zelda) && !fb_depth_render_enabled;
 }
 
+//TODO-PORT: more ini stuff
 void WriteSettings (bool saveEmulationSettings)
 {
+/*
   wxConfigBase * ini = OpenIni();
   if (!ini || !ini->HasGroup(_T("/SETTINGS")))
     return;
@@ -701,6 +788,7 @@ void WriteSettings (bool saveEmulationSettings)
 
   wxFileOutputStream os(iniName);
   ((wxFileConfig*)ini)->Save(os);
+*/
 }
 
 GRTEXBUFFEREXT   grTextureBufferExt = NULL;
@@ -889,7 +977,7 @@ int InitGfx ()
 
   OPEN_RDP_LOG ();  // doesn't matter if opens again; it will check for it
   OPEN_RDP_E_LOG ();
-  LOG ("InitGfx ()\n");
+  VLOG ("InitGfx ()\n");
 
   debugging = FALSE;
   rdp_reset ();
@@ -942,7 +1030,7 @@ int InitGfx ()
     LOG ("Using TEXUMA extension.\n");
   }
   //*/
-
+//TODO-PORT: fullscreen stuff
   wxUint32 res_data = settings.res_data;
   char strWrapperFullScreenResolutionExt[] = "grWrapperFullScreenResolutionExt";
   if (ev_fullscreen)
@@ -964,8 +1052,9 @@ int InitGfx ()
       if (grWrapperFullScreenResolutionExt != NULL)
       {
         settings.res_data = settings.res_data_org;
-        settings.scr_res_x = settings.res_x = resolutions[settings.res_data][0];
-        settings.scr_res_y = settings.res_y = resolutions[settings.res_data][1];
+		//TODO-port: fix resolutions
+        settings.scr_res_x = settings.res_x = 1024;//resolutions[settings.res_data][0];
+        settings.scr_res_y = settings.res_y = 768;//resolutions[settings.res_data][1];
       }
       res_data = settings.res_data | 0x80000000;
   }
@@ -979,7 +1068,7 @@ int InitGfx ()
     char strSstWinOpenExt[] ="grSstWinOpenExt";
     GRWINOPENEXT grSstWinOpenExt = (GRWINOPENEXT)grGetProcAddress(strSstWinOpenExt);
     if (grSstWinOpenExt)
-      gfx_context = grSstWinOpenExt (wxPtrToUInt(gfx.hWnd),
+      gfx_context = grSstWinOpenExt ((FxU32)NULL,
       res_data,
       GR_REFRESH_60Hz,
       GR_COLORFORMAT_RGBA,
@@ -989,7 +1078,7 @@ int InitGfx ()
       1);   // 1 auxillary buffer
   }
   if (!gfx_context)
-    gfx_context = grSstWinOpen (wxPtrToUInt(gfx.hWnd),
+    gfx_context = grSstWinOpen ((FxU32)NULL,
     res_data,
     GR_REFRESH_60Hz,
     GR_COLORFORMAT_RGBA,
@@ -999,7 +1088,7 @@ int InitGfx ()
 
   if (!gfx_context)
   {
-    wxMessageBox(_T("Error setting display mode"), _T("Error"), wxOK|wxICON_EXCLAMATION);
+    ERRLOG("Error setting display mode");
     //    grSstWinClose (gfx_context);
     grGlideShutdown ();
     return FALSE;
@@ -1008,14 +1097,6 @@ int InitGfx ()
   fullscreen = TRUE;
   to_fullscreen = FALSE;
 
-#ifdef __WINDOWS__
-    if (ev_fullscreen)
-    {
-      if (gfx.hStatusBar)
-        ShowWindow( gfx.hStatusBar, SW_HIDE );
-      ShowCursor( FALSE );
-    }
-#endif
 
   // get the # of TMUs available
   grGet (GR_NUM_TMU, 4, (FxI32*)&voodoo.num_tmu);
@@ -1073,7 +1154,8 @@ int InitGfx ()
   else
     grTextureBufferExt = 0;
 
-#ifdef __WINDOWS__
+#warning not sure what to replace wxDynamicLibrary with
+/*#ifdef __WINDOWS__
   wxDynamicLibrary glidelib(_T("glide3x"));
   if (glidelib.IsLoaded())
   {
@@ -1083,15 +1165,16 @@ int InitGfx ()
       grStipplePatternExt = (GRSTIPPLE)glidelib.GetSymbol(_T("_grStipplePattern@4"));
   }
 #else
+*/
   grStippleModeExt = (GRSTIPPLE)grStippleMode;
   grStipplePatternExt = (GRSTIPPLE)grStipplePattern;
-#endif
+//#endif
 
   if (grStipplePatternExt)
     grStipplePatternExt(settings.stipple_pattern);
 
-  char strKeyPressedExt[] = "grKeyPressedExt";
-  grKeyPressed = (FxBool (FX_CALL *)(FxU32))grGetProcAddress (strKeyPressedExt);
+//  char strKeyPressedExt[] = "grKeyPressedExt";
+//  grKeyPressed = (FxBool (FX_CALL *)(FxU32))grGetProcAddress (strKeyPressedExt);
 
   InitCombine();
 
@@ -1209,6 +1292,7 @@ int InitGfx ()
         settings.ghq_cache_size * 1024*1024, // cache texture to system memory
         pluginPath.wchar_str(), // plugin path
         rdp.RomName.wchar_str(), // name of ROM. must be no longer than 256 characters
+        #warning pluginpath needed for GlideHQ support
         DisplayLoadProgress);
     }
   }
@@ -1221,7 +1305,7 @@ int InitGfx ()
 
 void ReleaseGfx ()
 {
-  LOG("ReleaseGfx ()\n");
+  VLOG("ReleaseGfx ()\n");
 
   // Restore gamma settings
   if (voodoo.gamma_correction)
@@ -1243,97 +1327,36 @@ void ReleaseGfx ()
   rdp.window_changed = TRUE;
 }
 
-//
-// DllMain - called when the DLL is loaded, use this to get the DLL's instance
-//
-class wxDLLApp : public wxApp
-{
-public:
-  virtual bool OnInit();
-};
+// new API code begins here!
 
-IMPLEMENT_APP_NO_MAIN(wxDLLApp)
-
-bool wxDLLApp::OnInit()
-{
-  if (mutexProcessDList == NULL)
-    mutexProcessDList = new wxMutex(wxMUTEX_DEFAULT);
-  wxImage::AddHandler(new wxPNGHandler);
-  wxImage::AddHandler(new wxJPEGHandler);
-  PluginPath();
-  return true;
-}
-
-#ifndef __WINDOWS__
-int __attribute__ ((constructor)) DllLoad(void);
-int __attribute__ ((destructor)) DllUnload(void);
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-// Called when the library is loaded and before dlopen() returns
-int DllLoad(void)
+EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
 {
-    int argc = 0;
-    char **argv = NULL;
-    wxEntryStart(argc, argv);
-    if (wxTheApp)
-      return wxTheApp->CallOnInit() ? TRUE : FALSE;
-    return 0;
-}
-
-// Called when the library is unloaded and before dlclose() returns
-int DllUnload(void)
-{
-    if ( wxTheApp )
-      wxTheApp->OnExit();
-    wxEntryCleanup();
-    return TRUE;
-}
-
-#ifdef __WINDOWS__
-extern "C" int WINAPI DllMain (HINSTANCE hinstDLL,
-                     wxUint32 fdwReason,
-                     LPVOID lpReserved)
-{
-  sprintf (out_buf, "DllMain (%08lx - %d)\n", hinstDLL, fdwReason);
-  LOG (out_buf);
-
-  if (fdwReason == DLL_PROCESS_ATTACH)
-  {
-    wxSetInstance(hinstDLL);
-    return DllLoad();
-  }
-  else if (fdwReason == DLL_PROCESS_DETACH)
-  {
-    if (GFXWindow != NULL)
-      GFXWindow->SetHWND(NULL);
-    return DllUnload();
-  }
-  return TRUE;
-}
-#endif
-
-void CALL ReadScreen(void **dest, int *width, int *height)
-{
+  VLOG("CALL ReadScreen2 ()\n");
   *width = settings.res_x;
   *height = settings.res_y;
-  wxUint8 * buff = (wxUint8*)malloc(settings.res_x * settings.res_y * 3);
-  wxUint8 * line = buff;
-  *dest = (void*)buff;
-
-  if (!fullscreen)
+  if (dest)
   {
-    for (wxUint32 y=0; y<settings.res_y; y++)
+    BYTE * line = (BYTE*)dest;
+    if (!fullscreen)
     {
-      for (wxUint32 x=0; x<settings.res_x; x++)
+      for (wxUint32 y=0; y<settings.res_y; y++)
       {
-        line[x*3] = 0x20;
-        line[x*3+1] = 0x7f;
-        line[x*3+2] = 0x40;
+        for (wxUint32 x=0; x<settings.res_x; x++)
+        {
+          line[x*3] = 0x20;
+          line[x*3+1] = 0x7f;
+          line[x*3+2] = 0x40;
+        }
       }
+      // LOG ("ReadScreen. not in the fullscreen!\n");
+      WARNLOG("[Glide64] Cannot save screenshot in windowed mode?\n");
+
+      return;
     }
-    LOG ("ReadScreen. not in the fullscreen!\n");
-    return;
-  }
 
   GrLfbInfo_t info;
   info.size = sizeof(GrLfbInfo_t);
@@ -1344,54 +1367,121 @@ void CALL ReadScreen(void **dest, int *width, int *height)
     FXFALSE,
     &info))
   {
-    wxUint32 offset_src=info.strideInBytes*(settings.scr_res_y-1);
-
-    // Copy the screen
-    wxUint8 r, g, b;
-    if (info.writeMode == GR_LFBWRITEMODE_8888)
-    {
-      wxUint32 col;
+    // Copy the screen, let's hope this works.
       for (wxUint32 y=0; y<settings.res_y; y++)
       {
-        wxUint32 *ptr = (wxUint32*)((wxUint8*)info.lfbPtr + offset_src);
+        BYTE *ptr = (BYTE*) info.lfbPtr + (info.strideInBytes * y);
         for (wxUint32 x=0; x<settings.res_x; x++)
         {
-          col = *(ptr++);
-          r = (wxUint8)((col >> 16) & 0xFF);
-          g = (wxUint8)((col >> 8) & 0xFF);
-          b = (wxUint8)(col & 0xFF);
-          line[x*3] = b;
-          line[x*3+1] = g;
-          line[x*3+2] = r;
+          line[x*3]   = ptr[2];  // red
+          line[x*3+1] = ptr[1];  // green
+          line[x*3+2] = ptr[0];  // blue
+          ptr += 4;
         }
         line += settings.res_x * 3;
-        offset_src -= info.strideInBytes;
       }
+
+      // Unlock the frontbuffer
+      grLfbUnlock (GR_LFB_READ_ONLY, GR_BUFFER_FRONTBUFFER);
+    }
+    VLOG ("ReadScreen. Success.\n");
+  }
+}
+
+EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Context,
+                                   void (*DebugCallback)(void *, int, const char *))
+{
+  VLOG("CALL PluginStartup ()\n");
+    l_DebugCallback = DebugCallback;
+    l_DebugCallContext = Context;
+    ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
+    ConfigSetParameter = (ptr_ConfigSetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigSetParameter");
+    ConfigGetParameter = (ptr_ConfigGetParameter) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParameter");
+    ConfigSetDefaultInt = (ptr_ConfigSetDefaultInt) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultInt");
+    ConfigSetDefaultFloat = (ptr_ConfigSetDefaultFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultFloat");
+    ConfigSetDefaultBool = (ptr_ConfigSetDefaultBool) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultBool");
+    ConfigSetDefaultString = (ptr_ConfigSetDefaultString) osal_dynlib_getproc(CoreLibHandle, "ConfigSetDefaultString");
+    ConfigGetParamInt = (ptr_ConfigGetParamInt) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamInt");
+    ConfigGetParamFloat = (ptr_ConfigGetParamFloat) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamFloat");
+    ConfigGetParamBool = (ptr_ConfigGetParamBool) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamBool");
+    ConfigGetParamString = (ptr_ConfigGetParamString) osal_dynlib_getproc(CoreLibHandle, "ConfigGetParamString");
+
+    ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetSharedDataFilepath");
+    ConfigGetUserConfigPath = (ptr_ConfigGetUserConfigPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserConfigPath");
+    ConfigGetUserDataPath = (ptr_ConfigGetUserDataPath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserDataPath");
+    ConfigGetUserCachePath = (ptr_ConfigGetUserCachePath) osal_dynlib_getproc(CoreLibHandle, "ConfigGetUserCachePath");
+
+    if (!ConfigOpenSection   || !ConfigSetParameter    || !ConfigGetParameter ||
+        !ConfigSetDefaultInt || !ConfigSetDefaultFloat || !ConfigSetDefaultBool || !ConfigSetDefaultString ||
+        !ConfigGetParamInt   || !ConfigGetParamFloat   || !ConfigGetParamBool   || !ConfigGetParamString ||
+        !ConfigGetSharedDataFilepath || !ConfigGetUserConfigPath || !ConfigGetUserDataPath || !ConfigGetUserCachePath)
+    {
+        ERRLOG("Couldn't connect to Core configuration functions");
+        return M64ERR_INCOMPATIBLE;
+    }
+
+    /* Get the core Video Extension function pointers from the library handle */
+    CoreVideo_Init = (ptr_VidExt_Init) osal_dynlib_getproc(CoreLibHandle, "VidExt_Init");
+    CoreVideo_Quit = (ptr_VidExt_Quit) osal_dynlib_getproc(CoreLibHandle, "VidExt_Quit");
+    CoreVideo_ListFullscreenModes = (ptr_VidExt_ListFullscreenModes) osal_dynlib_getproc(CoreLibHandle, "VidExt_ListFullscreenModes");
+    CoreVideo_SetVideoMode = (ptr_VidExt_SetVideoMode) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetVideoMode");
+    CoreVideo_SetCaption = (ptr_VidExt_SetCaption) osal_dynlib_getproc(CoreLibHandle, "VidExt_SetCaption");
+    CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) osal_dynlib_getproc(CoreLibHandle, "VidExt_ToggleFullScreen");
+    CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetProcAddress");
+    CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SetAttribute");
+    CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
+
+    if (!CoreVideo_Init || !CoreVideo_Quit || !CoreVideo_ListFullscreenModes || !CoreVideo_SetVideoMode ||
+        !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_GL_GetProcAddress ||
+        !CoreVideo_GL_SetAttribute || !CoreVideo_GL_SwapBuffers)
+    {
+        ERRLOG("Couldn't connect to Core video functions");
+        return M64ERR_INCOMPATIBLE;
+    }
+
+    const char *configDir = ConfigGetSharedDataFilepath("Glide64.ini");
+    if (configDir)
+    {
+        SetConfigDir(configDir);
+        CoreVideo_Init();
+        ReadSettings();
+		return M64ERR_SUCCESS;
     }
     else
     {
-      wxUint16 col;
-      for (wxUint32 y=0; y<settings.res_y; y++)
-      {
-        wxUint16 *ptr = (wxUint16*)((wxUint8*)info.lfbPtr + offset_src);
-        for (wxUint32 x=0; x<settings.res_x; x++)
-        {
-          col = *(ptr++);
-          r = (wxUint8)((float)(col >> 11) / 31.0f * 255.0f);
-          g = (wxUint8)((float)((col >> 5) & 0x3F) / 63.0f * 255.0f);
-          b = (wxUint8)((float)(col & 0x1F) / 31.0f * 255.0f);
-          line[x*3] = b;
-          line[x*3+1] = g;
-          line[x*3+2] = r;
-        }
-        line += settings.res_x * 3;
-        offset_src -= info.strideInBytes;
-      }
+        ERRLOG("Couldn't find Glide64.ini");
+        return M64ERR_FILES;
     }
-    // Unlock the frontbuffer
-    grLfbUnlock (GR_LFB_READ_ONLY, GR_BUFFER_FRONTBUFFER);
-  }
-  LOG ("ReadScreen. Success.\n");
+}
+
+EXPORT m64p_error CALL PluginShutdown(void)
+{
+  VLOG("CALL PluginShutdown ()\n");
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
+{
+  VLOG("CALL PluginGetVersion ()\n");
+    /* set version info */
+    if (PluginType != NULL)
+        *PluginType = M64PLUGIN_GFX;
+
+    if (PluginVersion != NULL)
+        *PluginVersion = 0x016304;
+
+    if (APIVersion != NULL)
+        *APIVersion = VIDEO_PLUGIN_API_VERSION;
+
+    if (PluginNamePtr != NULL)
+        *PluginNamePtr = "Glide64 Video Plugin";
+
+    if (Capabilities != NULL)
+    {
+        *Capabilities = 0;
+    }
+
+    return M64ERR_SUCCESS;
 }
 
 /******************************************************************
@@ -1403,7 +1493,7 @@ output:   none
 EXPORT void CALL CaptureScreen ( char * Directory )
 {
   capture_screen = 1;
-  capture_path = wxString::FromAscii(Directory);
+  strcpy (capture_path, Directory);
 }
 
 /******************************************************************
@@ -1414,10 +1504,11 @@ change the screen to window mode and vice vesa.
 input:    none
 output:   none
 *******************************************************************/
+//#warning ChangeWindow unimplemented
 EXPORT void CALL ChangeWindow (void)
 {
-  LOG ("ChangeWindow()\n");
-
+  VLOG ("ChangeWindow()\n");
+  #ifdef OLDAPI
   if (evoodoo)
   {
     if (!ev_fullscreen)
@@ -1470,6 +1561,7 @@ EXPORT void CALL ChangeWindow (void)
 #endif
     }
   }
+#endif
 }
 
 /******************************************************************
@@ -1481,7 +1573,7 @@ output:   none
 *******************************************************************/
 void CALL CloseDLL (void)
 {
-  LOG ("CloseDLL ()\n");
+  VLOG ("CloseDLL ()\n");
 
   // re-set the old window proc
 #ifdef WINPROC_OVERRIDE
@@ -1538,7 +1630,7 @@ output:   none
 *******************************************************************/
 void CALL DrawScreen (void)
 {
-  LOG ("DrawScreen ()\n");
+  VLOG ("DrawScreen ()\n");
 }
 
 /******************************************************************
@@ -1551,7 +1643,7 @@ output:   none
 *******************************************************************/
 void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
 {
-  LOG ("GetDllInfo ()\n");
+  VLOG ("GetDllInfo ()\n");
   PluginInfo->Version = 0x0103;     // Set to 0x0103
   PluginInfo->Type  = PLUGIN_TYPE_GFX;  // Set to PLUGIN_TYPE_GFX
   sprintf (PluginInfo->Name, "Glide64 "G64_VERSION RELTIME);  // Name of the DLL
@@ -1562,6 +1654,25 @@ void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
   PluginInfo->MemoryBswaped = TRUE; // a normal wxUint8 array where the memory has been pre
   // bswap on a dword (32 bits) boundry
 }
+
+#ifndef WIN32
+BOOL WINAPI QueryPerformanceCounter(PLARGE_INTEGER counter)
+{
+   struct timeval tv;
+
+   /* generic routine */
+   gettimeofday( &tv, NULL );
+   counter->QuadPart = (LONGLONG)tv.tv_usec + (LONGLONG)tv.tv_sec * 1000000;
+   return TRUE;
+}
+
+BOOL WINAPI QueryPerformanceFrequency(PLARGE_INTEGER frequency)
+{
+   frequency->s.LowPart= 1000000;
+   frequency->s.HighPart= 0;
+   return TRUE;
+}
+#endif
 
 /******************************************************************
 Function: InitiateGFX
@@ -1581,7 +1692,7 @@ that there is a waiting interrupt.
 
 int CALL InitiateGFX (GFX_INFO Gfx_Info)
 {
-  LOG ("InitiateGFX (*)\n");
+  VLOG ("InitiateGFX (*)\n");
   voodoo.num_tmu = 2;
 
   // Assume scale of 1 for debug purposes
@@ -1593,19 +1704,14 @@ int CALL InitiateGFX (GFX_INFO Gfx_Info)
   char name[21] = "DEFAULT";
   ReadSpecialSettings (name);
   settings.res_data_org = settings.res_data;
-
 #ifdef FPS
-  fps_last = wxDateTime::UNow();
+  QueryPerformanceFrequency (&perf_freq);
+  QueryPerformanceCounter (&fps_last);
 #endif
 
   debug_init ();    // Initialize debugger
 
   gfx = Gfx_Info;
-#ifdef __WINDOWS__
-  if (GFXWindow == NULL)
-    GFXWindow = new wxWindow();
-  GFXWindow->SetHWND(gfx.hWnd);
-#endif
 
 #ifdef WINPROC_OVERRIDE
   // [H.Morii] inject our own winproc so that "alt-enter to fullscreen"
@@ -1659,7 +1765,6 @@ output:   none
 *******************************************************************/
 void CALL MoveScreen (int xpos, int ypos)
 {
-  LOG ("MoveScreen (" << xpos << ", " << ypos << ")\n");
   rdp.window_changed = TRUE;
 }
 
@@ -1671,7 +1776,7 @@ output:   none
 *******************************************************************/
 void CALL RomClosed (void)
 {
-  LOG ("RomClosed ()\n");
+  VLOG ("RomClosed ()\n");
 
   CLOSE_RDP_LOG ();
   CLOSE_RDP_E_LOG ();
@@ -1709,9 +1814,9 @@ emulation thread)
 input:    none
 output:   none
 *******************************************************************/
-void CALL RomOpen (void)
+EXPORT int CALL RomOpen (void)
 {
-  LOG ("RomOpen ()\n");
+  VLOG ("RomOpen ()\n");
   no_dlist = true;
   romopen = TRUE;
   ucode_error_report = TRUE;	// allowed to report ucode errors
@@ -1738,13 +1843,7 @@ void CALL RomOpen (void)
   while (name[strlen(name)-1] == ' ')
     name[strlen(name)-1] = 0;
 
-  wxString strRomName = wxString::FromAscii(name);
-  if (settings.ghq_use && strRomName != rdp.RomName)
-  {
-    ext_ghq_shutdown();
-    settings.ghq_use = 0;
-  }
-  rdp.RomName = strRomName;
+  strncpy(rdp.RomName, name, sizeof(name));
   ReadSpecialSettings (name);
   ClearCache ();
 
@@ -1782,6 +1881,7 @@ void CALL RomOpen (void)
     grSetRomName (name);
   }
   // **
+  return true;
 }
 
 /******************************************************************
@@ -1796,7 +1896,13 @@ bool no_dlist = true;
 void CALL ShowCFB (void)
 {
   no_dlist = true;
-  LOG ("ShowCFB ()\n");
+  VLOG ("ShowCFB ()\n");
+}
+
+EXPORT void CALL SetRenderingCallback(void (*callback)())
+{
+  VLOG("CALL SetRenderingCallback (*)\n");
+    renderCallback = callback;
 }
 
 void drawViRegBG()
@@ -1831,9 +1937,11 @@ void drawViRegBG()
   }
 }
 
+}
+
 void drawNoFullscreenMessage();
 
-static void DrawFrameBuffer ()
+void DrawFrameBuffer ()
 {
   if (!fullscreen)
   {
@@ -1851,6 +1959,7 @@ static void DrawFrameBuffer ()
   }
 }
 
+extern "C" {
 /******************************************************************
 Function: UpdateScreen
 Purpose:  This function is called in response to a vsync of the
@@ -1870,21 +1979,22 @@ void CALL UpdateScreen (void)
 #endif
   char out_buf[128];
   sprintf (out_buf, "UpdateScreen (). Origin: %08lx, Old origin: %08lx, width: %d\n", *gfx.VI_ORIGIN_REG, rdp.vi_org_reg, *gfx.VI_WIDTH_REG);
-  LOG (out_buf);
+  VLOG (out_buf);
   LRDP(out_buf);
 
   wxUint32 width = (*gfx.VI_WIDTH_REG) << 1;
   if (fullscreen && (*gfx.VI_ORIGIN_REG  > width))
     update_screen_count++;
-
+//TODO-PORT: wx times
 #ifdef FPS
   // vertical interrupt has occurred, increment counter
   vi_count ++;
 
   // Check frames per second
-  fps_next = wxDateTime::UNow();
-  wxTimeSpan difference = fps_next - fps_last;
-  double diff_secs = difference.GetMilliseconds().ToDouble() / 1000.0;
+  LARGE_INTEGER difference;
+  QueryPerformanceCounter (&fps_next);
+  difference.QuadPart = fps_next.QuadPart - fps_last.QuadPart;
+  float diff_secs = (float)((double)difference.QuadPart / (double)perf_freq.QuadPart);
   if (diff_secs > 0.5f)
   {
     fps = (float)(fps_count / diff_secs);
@@ -1966,6 +2076,7 @@ static void GetGammaTable()
   }
 }
 
+}
 wxUint32 curframe = 0;
 void newSwapBuffers()
 {
@@ -2013,13 +2124,36 @@ void newSwapBuffers()
     {
       if (settings.clock_24_hr)
       {
-        output (956.0f, 0, 1, (char*)wxDateTime::Now().Format(wxT("%H:%M:%S")).char_str(), 0);
+          time_t ltime;
+          time (&ltime);
+          tm *cur_time = localtime (&ltime);
+
+          sprintf (out_buf, "%.2d:%.2d:%.2d", cur_time->tm_hour, cur_time->tm_min, cur_time->tm_sec);
       }
       else
       {
-        output (930.0f, 0, 1, (char*)wxDateTime::Now().Format(wxT("%I:%M:%S %p")).char_str(), 0);
+          char ampm[] = "AM";
+          time_t ltime;
+
+          time (&ltime);
+          tm *cur_time = localtime (&ltime);
+
+          if (cur_time->tm_hour >= 12)
+          {
+            strcpy (ampm, "PM");
+            if (cur_time->tm_hour != 12)
+              cur_time->tm_hour -= 12;
+          }
+          if (cur_time->tm_hour == 0)
+            cur_time->tm_hour = 12;
+
+          if (cur_time->tm_hour >= 10)
+            sprintf (out_buf, "%.5s %s", asctime(cur_time) + 11, ampm);
+          else
+            sprintf (out_buf, " %.4s %s", asctime(cur_time) + 12, ampm);
+        }
+        output ((float)(settings.res_x - 68), y, 0, out_buf, 0);
       }
-    }
     //hotkeys
     if (CheckKeyPressed(G64_VK_BACK, 0x0001))
     {
@@ -2087,7 +2221,7 @@ void newSwapBuffers()
       output (120.0f, 0.0f, 1, message, 0);
     }
   }
-
+    #ifdef OLDAPI
   if (capture_screen)
   {
     //char path[256];
@@ -2172,6 +2306,7 @@ void newSwapBuffers()
       capture_screen = 0;
     }
   }
+    #endif
 
   // Capture the screen if debug capture is set
   if (_debugger.capture)
@@ -2235,7 +2370,6 @@ void newSwapBuffers()
   {
     if (fb_hwfbe_enabled && !(settings.hacks&hack_RE2) && !evoodoo)
       grAuxBufferExt( GR_BUFFER_AUXBUFFER );
-    LOG ("BUFFER SWAPPED\n");
     grBufferSwap (settings.vsync);
     fps_count ++;
     if (*gfx.VI_STATUS_REG&0x08) //gamma correction is used
@@ -2324,6 +2458,9 @@ void newSwapBuffers()
   }
 }
 
+extern "C"
+{
+
 /******************************************************************
 Function: ViStatusChanged
 Purpose:  This function is called to notify the dll that the
@@ -2366,6 +2503,8 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   return CallWindowProc(oldWndProc, hwnd, msg, wParam, lParam);
 }
 #endif
+
+}
 
 int CheckKeyPressed(int key, int mask)
 {
@@ -2432,4 +2571,157 @@ do_it:
 
   return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
+#endif
+
+//
+// DllMain - called when the DLL is loaded, use this to get the DLL's instance
+//
+#ifdef OLDAPI
+class wxDLLApp : public wxApp
+{
+public:
+  virtual bool OnInit();
+};
+
+IMPLEMENT_APP_NO_MAIN(wxDLLApp)
+
+bool wxDLLApp::OnInit()
+{
+  if (mutexProcessDList == NULL)
+    mutexProcessDList = new wxMutex(wxMUTEX_DEFAULT);
+  wxImage::AddHandler(new wxPNGHandler);
+  wxImage::AddHandler(new wxJPEGHandler);
+  PluginPath();
+  return true;
+}
+
+#ifndef __WINDOWS__
+int __attribute__ ((constructor)) DllLoad(void);
+int __attribute__ ((destructor)) DllUnload(void);
+#endif
+
+// Called when the library is loaded and before dlopen() returns
+int DllLoad(void)
+{
+    int argc = 0;
+    char **argv = NULL;
+    wxEntryStart(argc, argv);
+    if (wxTheApp)
+      return wxTheApp->CallOnInit() ? TRUE : FALSE;
+    return 0;
+}
+
+// Called when the library is unloaded and before dlclose() returns
+int DllUnload(void)
+{
+    if ( wxTheApp )
+      wxTheApp->OnExit();
+    wxEntryCleanup();
+    return TRUE;
+}
+
+#ifdef __WINDOWS__
+extern "C" int WINAPI DllMain (HINSTANCE hinstDLL,
+                     wxUint32 fdwReason,
+                     LPVOID lpReserved)
+{
+  sprintf (out_buf, "DllMain (%08lx - %d)\n", hinstDLL, fdwReason);
+  LOG (out_buf);
+
+  if (fdwReason == DLL_PROCESS_ATTACH)
+  {
+    wxSetInstance(hinstDLL);
+    return DllLoad();
+  }
+  else if (fdwReason == DLL_PROCESS_DETACH)
+  {
+    if (GFXWindow != NULL)
+      GFXWindow->SetHWND(NULL);
+    return DllUnload();
+  }
+  return TRUE;
+}
+
+void CALL ReadScreen(void **dest, int *width, int *height)
+{
+  *width = settings.res_x;
+  *height = settings.res_y;
+  wxUint8 * buff = (wxUint8*)malloc(settings.res_x * settings.res_y * 3);
+  wxUint8 * line = buff;
+  *dest = (void*)buff;
+
+  if (!fullscreen)
+  {
+    for (wxUint32 y=0; y<settings.res_y; y++)
+    {
+      for (wxUint32 x=0; x<settings.res_x; x++)
+      {
+        line[x*3] = 0x20;
+        line[x*3+1] = 0x7f;
+        line[x*3+2] = 0x40;
+      }
+    }
+    LOG ("ReadScreen. not in the fullscreen!\n");
+    return;
+  }
+
+  GrLfbInfo_t info;
+  info.size = sizeof(GrLfbInfo_t);
+  if (grLfbLock (GR_LFB_READ_ONLY,
+    GR_BUFFER_FRONTBUFFER,
+    GR_LFBWRITEMODE_565,
+    GR_ORIGIN_UPPER_LEFT,
+    FXFALSE,
+    &info))
+  {
+    wxUint32 offset_src=info.strideInBytes*(settings.scr_res_y-1);
+
+    // Copy the screen
+    wxUint8 r, g, b;
+    if (info.writeMode == GR_LFBWRITEMODE_8888)
+    {
+      wxUint32 col;
+      for (wxUint32 y=0; y<settings.res_y; y++)
+      {
+        wxUint32 *ptr = (wxUint32*)((wxUint8*)info.lfbPtr + offset_src);
+        for (wxUint32 x=0; x<settings.res_x; x++)
+        {
+          col = *(ptr++);
+          r = (wxUint8)((col >> 16) & 0xFF);
+          g = (wxUint8)((col >> 8) & 0xFF);
+          b = (wxUint8)(col & 0xFF);
+          line[x*3] = b;
+          line[x*3+1] = g;
+          line[x*3+2] = r;
+        }
+        line += settings.res_x * 3;
+        offset_src -= info.strideInBytes;
+      }
+    }
+    else
+    {
+      wxUint16 col;
+      for (wxUint32 y=0; y<settings.res_y; y++)
+      {
+        wxUint16 *ptr = (wxUint16*)((wxUint8*)info.lfbPtr + offset_src);
+        for (wxUint32 x=0; x<settings.res_x; x++)
+        {
+          col = *(ptr++);
+          r = (wxUint8)((float)(col >> 11) / 31.0f * 255.0f);
+          g = (wxUint8)((float)((col >> 5) & 0x3F) / 63.0f * 255.0f);
+          b = (wxUint8)((float)(col & 0x1F) / 31.0f * 255.0f);
+          line[x*3] = b;
+          line[x*3+1] = g;
+          line[x*3+2] = r;
+        }
+        line += settings.res_x * 3;
+        offset_src -= info.strideInBytes;
+      }
+    }
+    // Unlock the frontbuffer
+    grLfbUnlock (GR_LFB_READ_ONLY, GR_BUFFER_FRONTBUFFER);
+  }
+  LOG ("ReadScreen. Success.\n");
+}
+#endif
 #endif

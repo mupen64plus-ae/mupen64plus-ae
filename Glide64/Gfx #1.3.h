@@ -62,17 +62,22 @@ the plugin
 #ifndef _GFX_H_INCLUDED__
 #define _GFX_H_INCLUDED__
 
-#include <wx/wx.h>
-#include <wx/dynlib.h>
-#include <wx/filename.h>
-#include <wx/datetime.h>
+#include "winlnxdefs.h"
+#include "m64p.h"
+
 #include <stdio.h>
 #include <fstream>
+#include <stdlib.h>
 #include <stddef.h>		// offsetof
+#include <string.h>
+#include <stdarg.h>
 #include <glide.h>
 #include "GlideExtensions.h"
 #include "rdp.h"
 #include "Keys.h"
+
+#include <iostream>
+#include <fstream>
 
 #if defined __VISUALC__
 #define GLIDE64_TRY __try
@@ -83,13 +88,9 @@ the plugin
 #endif
 
 #ifndef __WINDOWS__
-typedef void* HWND;
+typedef int HWND;
 #endif
 
-#ifndef TEXTURE_FILTER
-typedef wxInt64 int64;
-typedef wxUint64 uint64;
-#endif
 
 #if defined(__cplusplus)
 extern "C" {
@@ -121,7 +122,7 @@ extern "C" {
 #define LOGNOTKEY			 // Log if not pressing:
 #define LOGKEY		0x11 // this key (CONTROL)
 
-#define LOG_COMMANDS		// log the whole 64-bit command as (0x........, 0x........)
+//#define LOG_COMMANDS		// log the whole 64-bit command as (0x........, 0x........)
 
 #define CATCH_EXCEPTIONS	// catch exceptions so it doesn't freeze and will report
 							// "The gfx plugin has caused an exception" instead.
@@ -170,15 +171,15 @@ extern std::ofstream extlog;
 #define COLORED_DEBUGGER	// ;) pretty colors
 
 #ifdef FPS
-extern wxDateTime fps_last;
-extern wxDateTime fps_next;
+extern LARGE_INTEGER fps_last;
+extern LARGE_INTEGER fps_next;
 extern float		  fps;
 extern wxUint32	  fps_count;
 #endif
 
 // rdram mask at 0x400000 bytes (bah, not right for majora's mask)
 //#define BMASK	0x7FFFFF
-extern unsigned int BMASK;
+extern unsigned long BMASK;
 #define WMASK	0x3FFFFF
 #define DMASK	0x1FFFFF
 
@@ -193,11 +194,22 @@ extern int64 perf_cur;
 extern int64 perf_next;
 #endif
 
-#ifdef LOGGING
-extern std::ofstream loga;
-#define LOG(x) loga.open("glide64_log.txt",std::ios::app); loga << x; loga.flush(); loga.close();
+//#ifdef LOGGING
+//extern std::ofstream loga;
+//#define LOG(X) loga.open("log.txt",std::ios::app); loga << (...); loga.flush(); loga.close();
+
+//#else
+  #ifndef OLD_API
+    #define LOG(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
+    #define VLOG(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+    #define WARNLOG(...) WriteLog(M64MSG_WARNING, __VA_ARGS__)
+    #define ERRLOG(...) WriteLog(M64MSG_ERROR, __VA_ARGS__)
 #else
-#define LOG(x)
+    #define LOG(...) printf(__VA_ARGS__)
+    #define VLOG(...)
+     #define WARNLOG(...) printf(__VA_ARGS__)
+    #define ERRLOG(X, ...) str.Printf(_T(X), __VA_ARGS__); wxMessageBox(str, _T("Error"), wxOK | wxICON_EXCLAMATION, GFXWindow)
+    #define ERRLOG(X) str.Printf(_T(X)); wxMessageBox(str, _T("Error"), wxOK | wxICON_EXCLAMATION, GFXWindow)
 #endif
 
 
@@ -278,9 +290,10 @@ extern int evoodoo;
 extern int ev_fullscreen;
 
 extern int exception;
-extern wxMutex *mutexProcessDList;
 
-int InitGfx ();
+// extern wxMutex *mutexProcessDList;
+
+int InitGfx (int);
 void ReleaseGfx ();
 
 // The highest 8 bits are the segment # (1-16), and the lower 24 bits are the offset to
@@ -293,14 +306,16 @@ __inline wxUint32 segoffset (wxUint32 so)
 /* Plugin types */
 #define PLUGIN_TYPE_GFX				2
 
+// this is already defined in API
+/*
 #ifdef __WINDOWS__
 #define EXPORT					__declspec(dllexport)
 #define CALL						_cdecl
 #else
 #define EXPORT					extern
-#define CALL
+#define CALL						
 #endif
-
+*/
 /***** Structures *****/
 typedef struct {
 	wxUint16 Version;        /* Set to 0x0103 */
@@ -314,52 +329,13 @@ typedef struct {
 	                          bswap on a dword (32 bits) boundry */
 } PLUGIN_INFO;
 
+/*
 typedef struct {
-	HWND hWnd;			/* Render window */
-	HWND hStatusBar;    /* if render window does not have a status bar then this is NULL */
-
-	int MemoryBswaped;    // If this is set to TRUE, then the memory has been pre
-	                       //   bswap on a dword (32 bits) boundry
-						   //	eg. the first 8 bytes are stored like this:
-	                       //        4 3 2 1   8 7 6 5
-
-	wxUint8 * HEADER;	// This is the rom header (first 40h bytes of the rom
-					// This will be in the same memory format as the rest of the memory.
-	wxUint8 * RDRAM;
-	wxUint8 * DMEM;
-	wxUint8 * IMEM;
-
-	wxUint32 * MI_INTR_REG;
-
-	wxUint32 * DPC_START_REG;
-	wxUint32 * DPC_END_REG;
-	wxUint32 * DPC_CURRENT_REG;
-	wxUint32 * DPC_STATUS_REG;
-	wxUint32 * DPC_CLOCK_REG;
-	wxUint32 * DPC_BUFBUSY_REG;
-	wxUint32 * DPC_PIPEBUSY_REG;
-	wxUint32 * DPC_TMEM_REG;
-
-	wxUint32 * VI_STATUS_REG;
-	wxUint32 * VI_ORIGIN_REG;
-	wxUint32 * VI_WIDTH_REG;
-	wxUint32 * VI_INTR_REG;
-	wxUint32 * VI_V_CURRENT_LINE_REG;
-	wxUint32 * VI_TIMING_REG;
-	wxUint32 * VI_V_SYNC_REG;
-	wxUint32 * VI_H_SYNC_REG;
-	wxUint32 * VI_LEAP_REG;
-	wxUint32 * VI_H_START_REG;
-	wxUint32 * VI_V_START_REG;
-	wxUint32 * VI_V_BURST_REG;
-	wxUint32 * VI_X_SCALE_REG;
-	wxUint32 * VI_Y_SCALE_REG;
-
-	void (*CheckInterrupts)( void );
+// <removed, already defined in API>
 } GFX_INFO;
-
+*/
 extern GFX_INFO gfx;
-extern wxWindow * GFXWindow;
+// extern wxWindow * GFXWindow;
 extern bool no_dlist;
 
 typedef GrContext_t (FX_CALL *GRWINOPENEXT)( FxU32                   hWnd,
@@ -435,6 +411,8 @@ void ReadSettings ();
 void ReadSpecialSettings (const char * name);
 void WriteSettings (bool saveEmulationSettings = false);
 
+#if 0
+//TODO: remove
 /******************************************************************
   Function: CaptureScreen
   Purpose:  This function dumps the current frame to a file
@@ -693,6 +671,7 @@ EXPORT void CALL FBGetFrameBufferInfo(void *pinfo);
   output:   none
 *******************************************************************/
 EXPORT void CALL SetConfigDir(char *configDir);
+#endif
 
 #if defined(__cplusplus)
 }

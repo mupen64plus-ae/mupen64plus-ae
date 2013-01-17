@@ -75,29 +75,33 @@ EXT_LIB = ./lib
 CC = g++ 
 STRIP = strip
 
-CFLAGS = -DBUILDING_DLL=1  -fexceptions 
-LDLIBS = -L"." -L"lib" `wx-config --libs` 
+CFLAGS += -DBUILDING_DLL=1  -fexceptions -I$(MPAPI_PATH) -fPIC -DPIC -O2 -DNOSSE #-fPIC -DPIC -O0
+LDLIBS = -L"." -L"lib" #`wx-config --libs` 
+
+ifeq ($(OSX_ARCH), i386)
+CFLAGS += -arch i386 -DNO_ASM=1
+LDFLAGS += -arch i386
+endif
 
 ifeq ($(OS), Linux)
-CC += -V 4.2
-LDFLAGS = -shared -lstdc++ 
+LDFLAGS += -shared -lstdc++ 
 CFLAGS += -D__unix__
 LDLIBS += $(EXT_LIB)/glide3x.so
 endif
 ifeq ($(OS), MACOSX)
-LDFLAGS = -dynamiclib -lstdc++ 
+LDFLAGS += -bundle -lstdc++ #-dynamiclib -lstdc++ 
 CFLAGS += -D__unix__ -Dmacintosh
 LDLIBS += $(EXT_LIB)/glide3x.dylib
 endif
 ifeq ($(OS), WINDOWS)
-LDFLAGS = -shared -mwindows 
+LDFLAGS += -shared -mwindows 
 CFLAGS += -D__WIN32__ -DWIN32 -D_WIN32
 LDLIBS += $(EXT_LIB)/glide3x.lib
 endif
 
 CFLAGS += -ffast-math -funroll-loops
 #CFLAGS += -fexpensive-optimizations -march=k6
-CFLAGS += -I. -I$(EXT_INC) `wx-config --cppflags`
+CFLAGS += -I. -I$(EXT_INC) #`wx-config --cppflags`
 
 ifdef DEBUG
 CFLAGS += -g -DDEBUG
@@ -106,29 +110,30 @@ endif
 LD = g++
 
 AS = nasm
-ifeq ($(OS), Linux)
+ASM_OBJ =
+#ifeq ($(OS), Linux)
 ASFLAGS = -O6 -felf -D__linux__ 
-ASM_OBJ = \
+#ASM_OBJ = \
   3dmathSIMD.o \
   FixedPoint.o \
   Texture.o
-else 
-  ifeq ($(OS), MACOSX)
+#else 
+#  ifeq ($(OS), MACOSX)
     ASFLAGS = -O6 -fmacho --prefix _
-    ASM_OBJ = \
+#    ASM_OBJ = \
      3dmathSIMD.o \
      FixedPoint.o \
      Texture.o
-  else 
-    ifeq ($(OS), WINDOWS)
-      ASFLAGS = -O6 -fwin32 -D__WIN32__ --prefix _
-      ASM_OBJ = \
+#  else 
+#    ifeq ($(OS), WINDOWS)
+#      ASFLAGS = -O6 -fwin32 -D__WIN32__ --prefix _
+#      ASM_OBJ = \
        3dmathSIMD.obj \
        FixedPoint.obj \
        Texture.obj
-    endif
-  endif
-endif
+#    endif
+#  endif
+#endif
 
 RM = rm
 
@@ -141,21 +146,29 @@ SOURCES = \
   DepthBufferRender.cpp \
   Ext_TxFilter.cpp \
   FBtoScreen.cpp \
+  Ini.cpp \
   Main.cpp \
   Keys.cpp \
   rdp.cpp \
   TexBuffer.cpp \
   TexCache.cpp \
+  TexLoad32b.cpp \
   Util.cpp
+
+CSOURCES = \
+  osal_dynamiclib_unix.c
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
 .cpp.o:
 	$(CC) -o $@ $(CFLAGS) -c $<
 
+COBJECTS = $(CSOURCES:.c=.o)
+.c.o:
+	$(CC) -o $@ $(CFLAGS) -c $<
 all: $(DLLNAME)
 
-$(DLLNAME): $(OBJECTS) $(ASM_OBJ)
+$(DLLNAME): $(OBJECTS) $(COBJECTS) $(ASM_OBJ)
 	$(LD) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 ifeq ($(OS), Linux)
 	$(STRIP) $@

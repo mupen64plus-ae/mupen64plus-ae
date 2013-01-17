@@ -37,8 +37,12 @@
 //
 //****************************************************************
 
+#include <math.h>
 #include "Gfx #1.3.h"
-#include <wx/confbase.h>
+#include "TexLoad32b.h"
+#include "m64p.h"
+#include "Ini.h"
+#include "Config.h"
 #include "3dmath.h"
 #include "Util.h"
 #include "Debugger.h"
@@ -47,13 +51,22 @@
 #include "TexBuffer.h"
 #include "FBtoScreen.h"
 #include "CRC.h"
+#if defined(WIN32) || defined(NO_ASM)
+  #define BYTESWAP1(s1) s1 = ((s1 & 0xff) << 24) | ((s1 & 0xff00) << 8) | ((s1 & 0xff0000) >> 8) | ((s1 & 0xff000000) >> 24);
+  #define BYTESWAP2(s1,s2) s1 = ((s1 & 0xff) << 24) | ((s1 & 0xff00) << 8) | ((s1 & 0xff0000) >> 8) | ((s1 & 0xff000000) >> 24); \
+  s2 = ((s2 & 0xff) << 24) | ((s2 & 0xff00) << 8) | ((s2 & 0xff0000) >> 8) | ((s2 & 0xff000000) >> 24);
+#else
+  #define BYTESWAP1(s1) asm volatile (" bswap %0; " : "+r" (s1) : :);
+  #define BYTESWAP2(s1,s2) asm volatile (" bswap %0; bswap %1; " : "+r" (s1), "+r" (s2) : :);
+#endif
 
-extern "C" void SwapBlock32 ();
-extern "C" void SwapBlock64 ();
+//extern "C" void SwapBlock32 ();
+//extern "C" void SwapBlock64 ();
 
+/*
 const int NumOfFormats = 3;
 SCREEN_SHOT_FORMAT ScreenShotFormats[NumOfFormats] = { {wxT("BMP"), wxT("bmp"), wxBITMAP_TYPE_BMP}, {wxT("PNG"), wxT("png"), wxBITMAP_TYPE_PNG}, {wxT("JPEG"), wxT("jpeg"), wxBITMAP_TYPE_JPEG} };
-
+*/
 const char *ACmp[] = { "NONE", "THRESHOLD", "UNKNOWN", "DITHER" };
 
 const char *Mode0[] = { "COMBINED",    "TEXEL0",
@@ -320,29 +333,27 @@ void microcheck ()
 
   FRDP("ucode = %08lx\n", uc_crc);
 
-  wxConfigBase * ini = wxConfigBase::Get(false);
-  ini->SetPath(wxT("/UCODE"));
-  wxString str;
-  str.Printf(wxT("%08lx"), uc_crc);
+  Ini * ini = Ini::OpenIni();
+  ini->SetPath("UCODE");
+  char str[9];
+  sprintf (str, "%08lx", (unsigned long)uc_crc);
   int uc = ini->Read(str, -2);
 
   if (uc == -2 && ucode_error_report)
   {
-    settings.ucode = ini->Read(_T("/SETTINGS/ucode"), 0l);
+    settings.ucode = Config_ReadInt("ucode", "Force microcode", 0, TRUE, FALSE);
 
     ReleaseGfx ();
-    str.Printf(_T("Error: uCode crc not found in INI, using currently selected uCode\n\n%08lx"), uc_crc);
-    wxMessageBox(str, _T("Error"), wxOK | wxICON_EXCLAMATION, GFXWindow);
+    ERRLOG("Error: uCode crc not found in INI, using currently selected uCode\n\n%08lx", (unsigned long)uc_crc);
 
     ucode_error_report = FALSE; // don't report any more ucode errors from this game
   }
   else if (uc == -1 && ucode_error_report)
   {
-    settings.ucode = ini->Read(_T("/SETTINGS/ucode"), 0l);
+    settings.ucode = ini->Read(_T("/SETTINGS/ucode"), 0);
 
     ReleaseGfx ();
-    str.Printf(_T("Error: Unsupported uCode!\n\ncrc: %08lx"), uc_crc);
-    wxMessageBox(str, _T("Error"), wxOK | wxICON_EXCLAMATION, GFXWindow);
+    ERRLOG("Error: Unsupported uCode!\n\ncrc: %08lx", (unsigned long)uc_crc);
 
     ucode_error_report = FALSE; // don't report any more ucode errors from this game
   }
@@ -573,18 +584,13 @@ static void CopyFrameBuffer (GrBuffer_t buffer = GR_BUFFER_BACKBUFFER)
 
 void GoToFullScreen()
 {
-    if (!InitGfx ())
+    //if (!InitGfx ())
     {
       LOG ("FAILED!!!\n");
       return;
     }
-#ifdef __WINDOWS__
-    if (gfx.hStatusBar)
-      ShowWindow( gfx.hStatusBar, SW_HIDE );
-    ShowCursor( FALSE );
-#endif
 }
-
+/*
 class SoftLocker
 {
 public:
@@ -605,6 +611,7 @@ private:
   bool     _isOk;
   wxMutex* _mutex;
 };
+*/
 
 /******************************************************************
 Function: ProcessDList
@@ -626,17 +633,19 @@ wxUint32 ucode5_texshiftcount = 0;
 wxUint16 ucode5_texshift = 0;
 int depth_buffer_fog;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 EXPORT void CALL ProcessDList(void)
 {
-  SoftLocker lock(mutexProcessDList);
-  if (!lock.IsOk()) //mutex is busy
   {
     if (!fullscreen)
       drawNoFullscreenMessage();
     // Set an interrupt to allow the game to continue
     *gfx.MI_INTR_REG |= 0x20;
     gfx.CheckInterrupts();
-    return;
   }
 
   no_dlist = false;
@@ -651,7 +660,7 @@ EXPORT void CALL ProcessDList(void)
   }
 #endif
 
-  LOG ("ProcessDList ()\n");
+  VLOG ("ProcessDList ()\n");
 
   if (!fullscreen)
   {
@@ -850,10 +859,8 @@ EXPORT void CALL ProcessDList(void)
       }
 #endif
     }
-    if (wxMessageBox(_T("The GFX plugin caused an exception and has been disabled.\nWould you like to turn it back on and attempt to continue?"), _T("Glide64 Exception"), wxYES_NO|wxICON_EXCLAMATION, GFXWindow) == wxNO)
+    ERRLOG("The GFX plugin caused an exception and has been disabled.");
       exception = TRUE;
-    else
-      to_fullscreen = TRUE;
     return;
   }
 #endif
@@ -875,6 +882,10 @@ EXPORT void CALL ProcessDList(void)
   }
   LRDP("ProcessDList end\n");
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 // undef - undefined instruction, always ignore
 static void undef()
@@ -1825,7 +1836,89 @@ void setTBufTex(wxUint16 t_mem, wxUint32 cnt)
   }
 }
 
-extern "C" void asmLoadBlock(int src, int dst, int off, int dxt, int cnt, int swp);
+static void CopyswapBlock(int *pDst, unsigned int cnt, unsigned int SrcOffs)
+{
+    // copy and byteswap a block of 8-byte dwords
+    int rem = SrcOffs & 3;
+    if (rem == 0)
+    {
+        int *pSrc = (int *) (wxPtrToUInt(gfx.RDRAM) + SrcOffs);
+        for (unsigned int x = 0; x < cnt; x++)
+        {
+            int s1 = *pSrc++;
+            int s2 = *pSrc++;
+            BYTESWAP2(s1, s2)
+            *pDst++ = s1;
+            *pDst++ = s2;
+        }
+    }
+    else
+    {
+        // set source pointer to 4-byte aligned RDRAM location before the start
+        int *pSrc = (int *) (wxPtrToUInt(gfx.RDRAM) + (SrcOffs & 0xfffffffc));
+        // do the first partial 32-bit word
+        int s0 = *pSrc++;
+        BYTESWAP1(s0)
+        for (int x = 0; x < rem; x++)
+            s0 >>= 8;
+        for (int x = 4; x > rem; x--)
+        {
+            *((char *) pDst) = s0 & 0xff;
+            pDst = (int *) ((char *) pDst + 1);
+            s0 >>= 8;
+        }
+        // do one full 32-bit word
+        s0 = *pSrc++;
+        BYTESWAP1(s0)
+        *pDst++ = s0;
+        // do 'cnt-1' 64-bit dwords
+        for (unsigned int x = 0; x < cnt-1; x++)
+        {
+            int s1 = *pSrc++;
+            int s2 = *pSrc++;
+            BYTESWAP2(s1, s2)
+            *pDst++ = s1;
+            *pDst++ = s2;
+        }
+        // do last partial 32-bit word
+        s0 = *pSrc++;
+        BYTESWAP1(s0)
+        for (; rem > 0; rem--)
+        {
+            *((char *) pDst) = s0 & 0xff;
+            pDst = (int *) ((char *) pDst + 1);
+            s0 >>= 8;
+        }
+    }
+}
+
+static void WordswapBlock(int *pDst, unsigned int cnt, unsigned int TileSize)
+{
+    // Since it's not loading 32-bit textures as the N64 would, 32-bit textures need to
+    // be swapped by 64-bits, not 32.
+    if (TileSize == 3)
+    {
+        // swapblock64 dst, cnt
+        for (unsigned int x = 0; x < cnt / 2; x++, pDst += 4)
+        {
+            long long s1 = ((long long *) pDst)[0];
+            long long s2 = ((long long *) pDst)[1];
+            ((long long *) pDst)[0] = s2;
+            ((long long *) pDst)[1] = s1;
+        }
+    }
+    else
+    {
+        // swapblock32 dst, cnt
+        for (unsigned int x = 0; x < cnt; x++, pDst += 2)
+        {
+            int s1 = pDst[0];
+            int s2 = pDst[1];
+            pDst[0] = s2;
+            pDst[1] = s1;
+        }
+    }
+}
 void LoadBlock32b(wxUint32 tile, wxUint32 ul_s, wxUint32 ul_t, wxUint32 lr_s, wxUint32 dxt);
 static void rdp_loadblock()
 {
@@ -1892,17 +1985,48 @@ static void rdp_loadblock()
   //angrylion's advice to use ul_s in texture image offset and cnt calculations.
   //Helps to fix Vigilante 8 jpeg backgrounds and logos
   wxUint32 off = rdp.timg.addr + (ul_s << rdp.tiles[tile].size >> 1);
-  wxUIntPtr dst = wxPtrToUInt(rdp.tmem)+(rdp.tiles[tile].t_mem<<3);
+
+  int * dst = (int *)(rdp.tmem)+(rdp.tiles[tile].t_mem<<3);
   wxUint32 cnt = lr_s-ul_s+1;
   if (rdp.tiles[tile].size == 3)
     cnt <<= 1;
 
-  wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
+  //wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
 
   if (rdp.timg.size == 3)
     LoadBlock32b(tile, ul_s, ul_t, lr_s, dxt);
   else
-    asmLoadBlock(wxPtrToUInt(gfx.RDRAM), dst, off, _dxt, cnt, SwapMethod);
+  {
+    // Load the block from RDRAM and byteswap it as it loads
+    CopyswapBlock(dst, cnt, off);
+
+    // now do 32-bit or 64-bit word swapping on every other row of data
+    int dxt_accum = 0;
+    while (cnt > 0)
+    {
+        // skip over unswapped blocks
+        do
+        {
+            dst += 2;
+            if (--cnt == 0)
+                break;
+            dxt_accum += _dxt;
+        } while (!(dxt_accum & 0x80000000));
+        // count number of blocks to swap
+        if (cnt == 0) break;
+        int swapcnt = 0;
+        do
+        {
+            swapcnt++;
+            if (--cnt == 0)
+                break;
+            dxt_accum += _dxt;
+        } while (dxt_accum & 0x80000000);
+        // do 32-bit or 64-bit swap operation on this block
+        WordswapBlock(dst, swapcnt, rdp.tiles[tile].size);
+        dst += swapcnt * 2;
+    }
+  }
 
   rdp.timg.addr += cnt << 3;
   rdp.tiles[tile].lr_t = ul_t + ((dxt*cnt)>>11);
@@ -1917,8 +2041,6 @@ static void rdp_loadblock()
     setTBufTex(rdp.tiles[tile].t_mem, cnt);
 }
 
-extern "C" void asmLoadTile(int src, int dst, int width, int height, int line, int off, int end, int swap);
-void LoadTile32b (wxUint32 tile, wxUint32 ul_s, wxUint32 ul_t, wxUint32 width, wxUint32 height);
 static void rdp_loadtile()
 {
   if (rdp.skip_drawing)
@@ -2006,10 +2128,19 @@ static void rdp_loadtile()
       return;
 
     wxUint32 wid_64 = rdp.tiles[tile].line;
-    wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
-    wxUIntPtr dst = wxPtrToUInt(rdp.tmem) + (rdp.tiles[tile].t_mem<<3);
-    wxUIntPtr end = wxPtrToUInt(rdp.tmem) + 4096 - (wid_64<<3);
-    asmLoadTile(wxPtrToUInt(gfx.RDRAM), dst, wid_64, height, line_n, offs, end, SwapMethod);
+    int * pDst = (int *) (wxPtrToUInt(rdp.tmem)+(rdp.tiles[tile].t_mem<<3));
+    int * pEnd = (int *) (wxPtrToUInt(rdp.tmem)+4096 - (wid_64<<3));
+    for (unsigned int y = 0; y < height; y++)
+    {
+        if (pDst > pEnd) break;
+        CopyswapBlock(pDst, wid_64, offs);
+        if (y & 1)
+        {
+            WordswapBlock(pDst, wid_64, rdp.tiles[tile].size);
+        }
+        pDst += wid_64 * 2;
+        offs += line_n;
+    }
   }
   FRDP("loadtile: tile: %d, ul_s: %d, ul_t: %d, lr_s: %d, lr_t: %d\n", tile,
     ul_s, ul_t, lr_s, lr_t);
@@ -2946,6 +3077,11 @@ val                     val
 size            1 = wxUint8, 2 = wxUint16, 4 = wxUint32
 output:   none
 *******************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 EXPORT void CALL FBRead(wxUint32 addr)
 {
   LOG ("FBRead ()\n");
@@ -2996,6 +3132,7 @@ EXPORT void CALL FBRead(wxUint32 addr)
   }
 }
 
+#if 0
 /******************************************************************
 Function: FrameBufferWriteList
 Purpose:  This function is called to notify the dll that the
@@ -3009,7 +3146,7 @@ EXPORT void CALL FBWList(FrameBufferModifyEntry *plist, wxUint32 size)
   LOG ("FBWList ()\n");
   FRDP("FBWList. size: %d\n", size);
 }
-
+#endif
 
 /******************************************************************
 Function: FrameBufferWrite
@@ -3069,6 +3206,7 @@ output:   Values are return in the FrameBufferInfo structure
 Plugin can return up to 6 frame buffer info
 ************************************************************************/
 ///*
+#if 0
 typedef struct
 {
   wxUint32 addr;
@@ -3076,9 +3214,10 @@ typedef struct
   wxUint32 width;
   wxUint32 height;
 } FrameBufferInfo;
+#endif
 EXPORT void CALL FBGetFrameBufferInfo(void *p)
 {
-  LOG ("FBGetFrameBufferInfo ()\n");
+  VLOG ("FBGetFrameBufferInfo ()\n");
   FrameBufferInfo * pinfo = (FrameBufferInfo *)p;
   memset(pinfo,0,sizeof(FrameBufferInfo)*6);
   if (!(settings.frame_buffer&fb_get_info))
@@ -3119,6 +3258,9 @@ EXPORT void CALL FBGetFrameBufferInfo(void *p)
   }
   //*/
 }
+#ifdef __cplusplus
+}
+#endif
 //*/
 #include "ucodeFB.h"
 
@@ -3448,7 +3590,7 @@ void lle_triangle(wxUint32 w1, wxUint32 w2, int shade, int texture, int zbuffer,
 #define WSCALE(w) (rdp.Persp_en? 65536.0f/float((w+ 0xffff)>>16) : 1.0f)
 #define CSCALE(c) (((c)>0x3ff0000? 0x3ff0000:((c)<0? 0 : (c)))>>18)
 #define _PERSP(w) ( w )
-#define PERSP(s, w) ( ((int64)(s) << 20) / (_PERSP(w)? _PERSP(w):1) )
+#define PERSP(s, w) ( ((int64_t)(s) << 20) / (_PERSP(w)? _PERSP(w):1) )
 #define SSCALE(s, _w) (rdp.Persp_en? float(PERSP(s, _w))/(1 << 10) : float(s)/(1<<21))
 #define TSCALE(s, w) (rdp.Persp_en? float(PERSP(s, w))/(1 << 10) : float(s)/(1<<21))
 
@@ -3955,20 +4097,21 @@ processed. (Low level GFX list)
 input:    none
 output:   none
 *******************************************************************/
+#ifdef __cplusplus
+extern "C" {
+#endif
 void CALL ProcessRDPList(void)
 {
   LOG ("ProcessRDPList ()\n");
   LRDP("ProcessRDPList ()\n");
 
-  SoftLocker lock(mutexProcessDList);
-  if (!lock.IsOk()) //mutex is busy
   {
     if (!fullscreen)
       drawNoFullscreenMessage();
     // Set an interrupt to allow the game to continue
     *gfx.MI_INTR_REG |= 0x20;
     gfx.CheckInterrupts();
-    return;
+    //return;
   }
 
   wxUint32 i;
@@ -4022,4 +4165,8 @@ void CALL ProcessRDPList(void)
 
   //}
 }
+
+#ifdef __cplusplus
+}
+#endif
 
