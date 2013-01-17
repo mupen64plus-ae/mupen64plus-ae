@@ -113,6 +113,8 @@ public class PathPreference extends DialogPreference
             // Ensure the parent directories exist if requested
             if( forceParentDirs )
                 ( new File( value ) ).mkdirs();
+            else if( !new File( value ).exists() )
+            	value = STORAGE_DIR;
         }
         
         return value;
