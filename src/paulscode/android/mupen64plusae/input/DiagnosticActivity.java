@@ -1,5 +1,7 @@
 package paulscode.android.mupen64plusae.input;
 
+import java.util.Locale;
+
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
@@ -92,9 +94,10 @@ public class DiagnosticActivity extends Activity
                 {
                     int axis = range.getAxis();
                     String name = MotionEvent.axisToString( axis );
-                    String source = DeviceUtil.getSourceName( range.getSource() );
-                    double value = event.getAxisValue( axis );
-                    message += "\n" + name + " (" + source + "): " + value;
+                    String source = DeviceUtil.getSourceName( range.getSource() ).toLowerCase(
+                            Locale.ENGLISH );
+                    float value = event.getAxisValue( axis );
+                    message += String.format( "\n%s (%s): %+.2f", name, source, value );
                 }
                 else
                 {
