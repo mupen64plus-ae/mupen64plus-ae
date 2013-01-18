@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.text.TextUtils;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import android.app.AlertDialog.Builder;
@@ -33,9 +32,8 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Environment;
 import android.preference.DialogPreference;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
 
 public class PathPreference extends DialogPreference
 {
@@ -54,7 +52,7 @@ public class PathPreference extends DialogPreference
     private boolean mDoReclick = false;
     private List<CharSequence> mEntries = new ArrayList<CharSequence>();
     private List<String> mValues = new ArrayList<String>();
-    private CharSequence mEntry;
+    private String mNewValue;
     private String mValue;
     
     public PathPreference( Context context, AttributeSet attrs )
@@ -67,9 +65,17 @@ public class PathPreference extends DialogPreference
         a.recycle();
     }
     
-    public int getSelectionMode()
+    public void setValue( String value )
     {
-        return mSelectionMode;
+        mValue = validate( value );
+        if( shouldPersist() )
+            persistString( mValue );
+        
+        // Summary always reflects the true/persisted value, does not track the temporary/new value
+        setSummary( mSelectionMode == SELECTION_MODE_FILE ? new File( mValue ).getName() : mValue );
+        
+        // Reset the dialog info
+        populate( mValue );
     }
     
     public void setSelectionMode( int value )
@@ -77,71 +83,26 @@ public class PathPreference extends DialogPreference
         mSelectionMode = value;
     }
     
-    @Override
-    protected View onCreateView( ViewGroup parent )
+    public String getValue()
     {
-        // Restore the persisted value
-        mValue = getPersistedString( "" );
-        populate( new File( mValue ) );
-        setSummary( mSelectionMode == SELECTION_MODE_FILE ? mEntry : mValue );
-
-        return super.onCreateView( parent );
+        return mValue;
+    }
+    
+    public int getSelectionMode()
+    {
+        return mSelectionMode;
     }
     
     @Override
     protected Object onGetDefaultValue( TypedArray a, int index )
     {
-        String value = a.getString( index );
-        
-        if( TextUtils.isEmpty( value ) )
-        {
-            // Use storage directory if no default provided in XML file
-            value = STORAGE_DIR;
-        }
-        else
-        {
-            // Default value was provided in XML file
-            // Prefixes encode additional information:
-            // ! means path is relative to storage dir, and parent dirs should be created if path does not exist
-            // ~ means path is relative to storage dir, and that storage dir should be used if path does not exist
-            boolean isRelativePath = value.startsWith( "!" ) || value.startsWith( "~" );
-            boolean forceParentDirs = value.startsWith( "!" );
-            
-            // Build the absolute path if necessary
-            if( isRelativePath )
-                value = STORAGE_DIR + "/" + value.substring( 1 );
-            
-            // Ensure the parent directories exist if requested
-            if( forceParentDirs )
-                ( new File( value ) ).mkdirs();
-            else if( !new File( value ).exists() )
-            	value = STORAGE_DIR;
-        }
-        
-        return value;
+        return a.getString( index );
     }
     
     @Override
     protected void onSetInitialValue( boolean restorePersistedValue, Object defaultValue )
     {
-        if( restorePersistedValue )
-        {
-            // Restore persisted value
-            mValue = this.getPersistedString( STORAGE_DIR );
-            
-            // Fall back to storage directory if path no longer exists
-            if( !( new File( mValue ) ).exists() )
-            {
-                mValue = STORAGE_DIR;
-                persistString( mValue );
-            }
-        }
-        else
-        {
-            // Set default state from the XML attribute
-            mValue = (String) defaultValue;
-            persistString( mValue );
-        }
+        setValue( restorePersistedValue ? getPersistedString( mValue ) : (String) defaultValue );
     }
     
     @Override
@@ -160,26 +121,26 @@ public class PathPreference extends DialogPreference
     @Override
     public void onClick( DialogInterface dialog, int which )
     {
-        super.onClick( dialog, which );
-        
         // If the user clicked a list item...
         if( mValues != null && which >= 0 && which < mValues.size() )
         {
-            mValue = mValues.get( which );
-            File path = new File( mValue );
+            mNewValue = mValues.get( which );
+            File path = new File( mNewValue );
             if( path.isDirectory() )
             {
                 // ...navigate into...
-                populate( path );
+                populate( mNewValue );
                 mDoReclick = true;
             }
             else
             {
                 // ...or close dialog positively
-                onClick( dialog, DialogInterface.BUTTON_POSITIVE );
-                dialog.dismiss();
+                which = DialogInterface.BUTTON_POSITIVE;
             }
         }
+        
+        // Call super last, parameters may have changed above
+        super.onClick( dialog, which );        
     }
     
     @Override
@@ -187,14 +148,10 @@ public class PathPreference extends DialogPreference
     {
         super.onDialogClosed( positiveResult );
         
-        // Clicking Cancel or Ok returns us to the parent preference menu. For these cases we return
-        // to a clean state by persisting or restoring the value.
-        if( positiveResult )
+        if( positiveResult && callChangeListener( mNewValue ) )
         {
             // User clicked Ok: clean the state by persisting value
-            persistString( mValue );
-            notifyChanged();
-            callChangeListener( mValue );
+            setValue( mNewValue );
         }
         else if( mDoReclick )
         {
@@ -204,18 +161,22 @@ public class PathPreference extends DialogPreference
         }
         else
         {
-            // User clicked Cancel/Back: clean state by restoring value
-            mValue = getPersistedString( "" );
-            populate( new File( mValue ) );
+            // User clicked Cancel/Back: clean state by restoring persisted value
+            populate( mValue );
         }
     }
     
-    private void populate( File startPath )
+    private void populate( String path )
     {
-        // Refresh the currently selected entry
-        mEntry = startPath.getName();
+        // Cache the path to persist on Ok
+        mNewValue = path;
+        
+        // Quick exit if null
+        if( path == null )
+            return;
         
         // If start path is a file, list it and its siblings in the parent directory
+        File startPath = new File( path );
         if( startPath.isFile() )
             startPath = startPath.getParentFile();
         
@@ -237,5 +198,36 @@ public class PathPreference extends DialogPreference
         // Populate the key-value pairs for the list entries
         boolean isFilesIncluded = mSelectionMode != SELECTION_MODE_DIRECTORY;
         FileUtil.populate( startPath, true, true, isFilesIncluded, mEntries, mValues );
+    }
+
+    private static String validate( String value )
+    {
+        if( TextUtils.isEmpty( value ) )
+        {
+            // Use storage directory if value is empty
+            value = STORAGE_DIR;
+        }
+        else
+        {
+            // Non-empty string provided
+            // Prefixes encode additional information:
+            // ! and ~ mean path is relative to storage dir
+            // ! means parent dirs should be created if path does not exist
+            // ~ means storage dir should be used if path does not exist
+            boolean isRelativePath = value.startsWith( "!" ) || value.startsWith( "~" );
+            boolean forceParentDirs = value.startsWith( "!" );
+            
+            // Build the absolute path if necessary
+            if( isRelativePath )
+                value = STORAGE_DIR + "/" + value.substring( 1 );
+            
+            // Ensure the parent directories exist if requested
+            File file = new File( value );
+            if( forceParentDirs )
+                file.mkdirs();
+            else if( !file.exists() )
+                value = STORAGE_DIR;
+        }        
+        return value;
     }
 }
