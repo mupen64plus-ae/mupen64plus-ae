@@ -2408,23 +2408,6 @@ void grTexChromaModeExt(GrChipID_t tmu, GrChromakeyMode_t mode)
   display_warning("grTexChromaRangeModeExt");
 }
 
-static void (*l_DebugCallback)(void *, int, const char *) = NULL;
-static void *l_DebugCallContext = NULL;
-
-void WriteLog(m64p_msg_level level, const char *msg, ...)
-{
-  char buf[1024];
-  va_list args;
-  va_start(args, msg);
-  vsnprintf(buf, 1023, msg, args);
-  buf[1023]='\0';
-  va_end(args);
-  if (l_DebugCallback)
-  {
-    l_DebugCallback(l_DebugCallContext, level, buf);
-  }
-}
-
 // VP debug
 #ifdef VPDEBUG
 int dumping = 0;
