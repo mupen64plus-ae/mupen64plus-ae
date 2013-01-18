@@ -4100,7 +4100,7 @@ output:   none
 #ifdef __cplusplus
 extern "C" {
 #endif
-void CALL ProcessRDPList(void)
+EXPORT void CALL ProcessRDPList(void)
 {
   LOG ("ProcessRDPList ()\n");
   LRDP("ProcessRDPList ()\n");

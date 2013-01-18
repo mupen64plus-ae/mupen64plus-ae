@@ -1690,7 +1690,7 @@ and then call the function CheckInterrupts to tell the emulator
 that there is a waiting interrupt.
 *******************************************************************/
 
-int CALL InitiateGFX (GFX_INFO Gfx_Info)
+EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
 {
   VLOG ("InitiateGFX (*)\n");
   voodoo.num_tmu = 2;
@@ -1763,7 +1763,7 @@ ypos - y-coordinate of the upper-left corner of the
 client area of the window.
 output:   none
 *******************************************************************/
-void CALL MoveScreen (int xpos, int ypos)
+EXPORT void CALL MoveScreen (int xpos, int ypos)
 {
   rdp.window_changed = TRUE;
 }
@@ -1774,7 +1774,7 @@ Purpose:  This function is called when a rom is closed.
 input:    none
 output:   none
 *******************************************************************/
-void CALL RomClosed (void)
+EXPORT void CALL RomClosed (void)
 {
   VLOG ("RomClosed ()\n");
 
@@ -1893,7 +1893,7 @@ input:    none
 output:   none
 *******************************************************************/
 bool no_dlist = true;
-void CALL ShowCFB (void)
+EXPORT void CALL ShowCFB (void)
 {
   no_dlist = true;
   VLOG ("ShowCFB ()\n");
@@ -1969,7 +1969,7 @@ input:    none
 output:   none
 *******************************************************************/
 wxUint32 update_screen_count = 0;
-void CALL UpdateScreen (void)
+EXPORT void CALL UpdateScreen (void)
 {
 #ifdef LOG_KEY
   if (CheckKeyPressed(G64_VK_SPACE, 0x0001))
@@ -2468,7 +2468,7 @@ ViStatus registers value has been changed.
 input:    none
 output:   none
 *******************************************************************/
-void CALL ViStatusChanged (void)
+EXPORT void CALL ViStatusChanged (void)
 {
 }
 
@@ -2479,7 +2479,7 @@ ViWidth registers value has been changed.
 input:    none
 output:   none
 *******************************************************************/
-void CALL ViWidthChanged (void)
+EXPORT void CALL ViWidthChanged (void)
 {
 }
 
