@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -163,6 +164,37 @@ public class PathPreference extends DialogPreference
         {
             // User clicked Cancel/Back: clean state by restoring persisted value
             populate( mValue );
+        }
+    }
+    
+    @Override
+    protected Parcelable onSaveInstanceState()
+    {
+        final SavedStringState myState = new SavedStringState( super.onSaveInstanceState() );
+        myState.mValue = mNewValue;
+        return myState;
+    }
+    
+    @Override
+    protected void onRestoreInstanceState( Parcelable state )
+    {
+        if( state == null || !state.getClass().equals( SavedStringState.class ) )
+        {
+            // Didn't save state for us in onSaveInstanceState
+            super.onRestoreInstanceState( state );
+            return;
+        }
+        
+        final SavedStringState myState = (SavedStringState) state;
+        super.onRestoreInstanceState( myState.getSuperState() );
+        populate( myState.mValue );
+        
+        // If the dialog is already showing, we must close and reopen to refresh the contents
+        // TODO: Find a less hackish solution, if one exists
+        if( getDialog() != null )
+        {
+            mDoReclick = true;
+            getDialog().dismiss();
         }
     }
     
