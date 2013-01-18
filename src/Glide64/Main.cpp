@@ -393,7 +393,7 @@ static wxConfigBase * OpenIni()
   if (!ini)
   {
     if (iniName.IsEmpty())
-      iniName = pluginPath + wxT("/Glide64.ini");
+      iniName = pluginPath + wxT("/Glide64mk2.ini");
     if (wxFileExists(iniName))
     {
       wxFileInputStream is(iniName);
@@ -1439,7 +1439,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
         return M64ERR_INCOMPATIBLE;
     }
 
-    const char *configDir = ConfigGetSharedDataFilepath("Glide64.ini");
+    const char *configDir = ConfigGetSharedDataFilepath("Glide64mk2.ini");
     if (configDir)
     {
         SetConfigDir(configDir);
@@ -1449,7 +1449,7 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     }
     else
     {
-        ERRLOG("Couldn't find Glide64.ini");
+        ERRLOG("Couldn't find Glide64mk2.ini");
         return M64ERR_FILES;
     }
 }

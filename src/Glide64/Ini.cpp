@@ -196,13 +196,13 @@ BOOL INI_Open ()
 #endif // _WIN32
     }
    
-    //strncat (path, "Glide64.ini", PATH_MAX - strlen(path));
+    //strncat (path, "Glide64mk2.ini", PATH_MAX - strlen(path));
     LOG("opening %s\n", path);
     // Open the file
     ini = fopen (path, "rb");
     if (ini == NULL)
     {
-        ERRLOG("Could not find Glide64.ini!");
+        ERRLOG("Could not find Glide64mk2.ini!");
         return FALSE;
         /*
         ini = fopen (path, "w+b");
