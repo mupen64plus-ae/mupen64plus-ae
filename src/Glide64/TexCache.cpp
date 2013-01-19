@@ -147,26 +147,31 @@ void ClearCache ()
 }
 
 //****************************************************************
-#warning textureCRC MAY NOT WORK
-//TODO-PORT: pointer length?
-wxUint32 textureCRC(wxUint32 * addr, wxUint32 wid_64, wxUint32 crc_height, wxUint32 line) {
-  
-  wxUint32 crc;
-  
-  
-  wxUint32 temp = 0;
-  wxUint32 * addr_tmp = addr;
-  
-  for(wxUint32 n = crc_height; n; n--) {
-    for(wxUint32 j = wid_64; j; j--) {            
-      temp = *addr_tmp + *(addr_tmp+1);
-      temp += (j * temp);
-      addr_tmp += 2;
+extern "C" int asmTextureCRC(uint8_t *addr, int width, int height, int line);
+
+uint32_t textureCRC(uint8_t *addr, int width, int height, int line)
+{
+#ifdef OLDASM_asmTextureCRC
+  return asmTextureCRC(addr, width, height, line);
+#else
+  uint32_t crc = 0;
+  uint32_t *pixelpos;
+  unsigned int i;
+  uint64_t twopixel_crc;
+
+  pixelpos = (uint32_t*)addr;
+  for (; height; height--) {
+    for (i = width; i; --i) {
+      twopixel_crc = i * (uint64_t)(pixelpos[1] + pixelpos[0] + crc);
+      crc = (twopixel_crc >> 32) + twopixel_crc;
+      pixelpos += 2;
     }
-    temp += (n * temp);
-    addr_tmp += (line >> 2);
-  }  
+    crc = ((unsigned int)height * (uint64_t)crc >> 32) + height * crc;
+    pixelpos = (uint32_t *)((char *)pixelpos + line);
+  }
+
   return crc;
+#endif
 }
 // GetTexInfo - gets information for either t0 or t1, checks if in cache & fills tex_found
 
@@ -358,8 +363,7 @@ void GetTexInfo (int id, int tile)
   {
     line = (line - wid_64) << 3;
     if (wid_64 < 1) wid_64 = 1;
-	#warning wxUIntPtr converted to wxUint32
-    wxUint32 * addr = (wxUint32 *)(rdp.tmem) + (rdp.tiles[tile].t_mem<<3);
+    uint8_t * addr = (((uint8_t*)rdp.tmem) + (rdp.tiles[tile].t_mem<<3));
     if (crc_height > 0) // Check the CRC
     {
       if (rdp.tiles[tile].size < 3)
