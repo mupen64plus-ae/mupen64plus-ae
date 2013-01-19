@@ -39,7 +39,6 @@
 
 #include <math.h>
 #include "Gfx #1.3.h"
-#include "TexLoad32b.h"
 #include "m64p.h"
 #include "Ini.h"
 #include "Config.h"

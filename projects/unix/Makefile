@@ -324,7 +324,6 @@ SOURCE = \
 	$(SRCDIR)/Glide64/rdp.cpp \
 	$(SRCDIR)/Glide64/TexBuffer.cpp \
 	$(SRCDIR)/Glide64/TexCache.cpp \
-	$(SRCDIR)/Glide64/TexLoad32b.cpp \
 	$(SRCDIR)/Glide64/Util.cpp
 
 ifeq ($(OS),MINGW)
