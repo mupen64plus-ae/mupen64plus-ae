@@ -140,7 +140,7 @@ void Mirror32bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint3
 	if (mask == 0) return;
 
 	wxUint32 mask_width = (1 << mask);
-  wxUint32 mask_mask = (mask_width-1) << 2;
+	wxUint32 mask_mask = (mask_width-1) << 2;
 	if (mask_width >= max_width) return;
 	int count = max_width - mask_width;
 	if (count <= 0) return;
@@ -160,21 +160,21 @@ void Mirror32bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint3
 
 void Wrap32bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint32 real_width, wxUint32 height)
 {
-  if (mask == 0) return;
+	if (mask == 0) return;
 
-  wxUint32 mask_width = (1 << mask);
-  wxUint32 mask_mask = (mask_width-1);
-  if (mask_width >= max_width) return;
-  int count = (max_width - mask_width);
-  if (count <= 0) return;
-  int line_full = real_width << 2;
-  int line = line_full - (count << 2);
-  if (line < 0) return;
-  unsigned char * start = tex + (mask_width << 2);
+	wxUint32 mask_width = (1 << mask);
+	wxUint32 mask_mask = (mask_width-1);
+	if (mask_width >= max_width) return;
+	int count = (max_width - mask_width);
+	if (count <= 0) return;
+	int line_full = real_width << 2;
+	int line = line_full - (count << 2);
+	if (line < 0) return;
+	unsigned char * start = tex + (mask_width << 2);
 #ifdef OLDASM_asmWrap32bS
-  asmWrap32bS (tex, start, height, mask_mask, line, line_full, count);
+	asmWrap32bS (tex, start, height, mask_mask, line, line_full, count);
 #else
-  wrap32bS (tex, start, height, mask_mask, line, line_full, count);
+	wrap32bS (tex, start, height, mask_mask, line, line_full, count);
 #endif
 }
 
@@ -209,7 +209,7 @@ void Mirror32bT (unsigned char * tex, wxUint32 mask, wxUint32 max_height, wxUint
 	wxUint32 mask_height = (1 << mask);
 	wxUint32 mask_mask = mask_height-1;
 	if (max_height <= mask_height) return;
-  int line_full = real_width << 2;
+	int line_full = real_width << 2;
 
 	unsigned char *dst = tex + mask_height * line_full;
 
