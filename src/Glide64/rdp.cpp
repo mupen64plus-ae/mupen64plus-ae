@@ -60,7 +60,7 @@
   #define BYTESWAP2(s1,s2) asm volatile (" bswap %0; bswap %1; " : "+r" (s1), "+r" (s2) : :);
 #endif
 
-//extern "C" void SwapBlock32 ();
+extern "C" void SwapBlock32 ();
 //extern "C" void SwapBlock64 ();
 
 /*
@@ -1836,6 +1836,109 @@ void setTBufTex(wxUint16 t_mem, wxUint32 cnt)
   }
 }
 
+// rotate left
+template<class T> static T __ROL__(T value, uint count)
+{
+  const uint nbits = sizeof(T) * 8;
+  count %= nbits;
+
+  T high = value >> (nbits - count);
+  value <<= count;
+  value |= high;
+  return value;
+}
+
+static inline void copyBlock(uint32_t offset, int num_words, uint32_t *dest_addr, uint32_t *base_addr)
+{
+  uint32_t *v4;
+  uint32_t v5;
+  uint32_t v6;
+  uint32_t v7;
+  uint32_t *v8;
+  uint32_t v9;
+  uint32_t v10;
+  uint32_t v11;
+  uint32_t v12;
+  uint32_t *v13;
+  int v14;
+
+  if ( num_words )
+  {
+    v14 = num_words;
+    v13 = base_addr;
+    v12 = offset;
+    v4 = (uint32_t *)((char *)base_addr + (offset & 0xFFFFFFFC));
+    v5 = offset & 3;
+    if ( !(offset & 3) )
+      goto LABEL_13;
+    v6 = 4 - v5;
+    v7 = *v4;
+    v8 = v4 + 1;
+    do
+    {
+      v7 = __ROL__(v7, 8);
+      --v5;
+    }
+    while ( v5 );
+    do
+    {
+      v7 = __ROL__(v7, 8);
+      *(uint8_t *)dest_addr = v7;
+      dest_addr = (uint32_t *)((char *)dest_addr + 1);
+      --v6;
+    }
+    while ( v6 );
+    v9 = *v8;
+    v4 = v8 + 1;
+    *dest_addr = __builtin_bswap32(v9);
+    ++dest_addr;
+    --num_words;
+    if ( num_words )
+    {
+LABEL_13:
+      do
+      {
+        *dest_addr = __builtin_bswap32(*v4);
+        dest_addr[1] = __builtin_bswap32(v4[1]);
+        v4 += 2;
+        dest_addr += 2;
+        --num_words;
+      }
+      while ( num_words );
+    }
+    v10 = v12 & 3;
+    if ( v12 & 3 )
+    {
+      v11 = *(uint32_t *)((char *)v13 + ((8 * v14 + v12) & 0xFFFFFFFC));
+      do
+      {
+        v11 = __ROL__(v11, 8);
+        *(uint8_t *)dest_addr = v11;
+        dest_addr = (uint32_t *)((char *)dest_addr + 1);
+        --v10;
+      }
+      while ( v10 );
+    }
+  }
+}
+
+static inline void swapBlock32(uint32_t num_words, uint32_t *addr)
+{
+  uint32_t v2;
+
+  for ( ; num_words; --num_words )
+  {
+    v2 = *addr;
+    *addr = addr[1];
+    addr[1] = v2;
+    addr += 2;
+  }
+}
+
+extern "C" void asmLoadBlock(uint32_t *src, uint32_t *dst, uint32_t off, int dxt, int cnt, int swp);
+/******************************************************************************
+ * TODO Remove hack: CopyswapBlock + WordswapBlock
+ */
 static void CopyswapBlock(int *pDst, unsigned int cnt, unsigned int SrcOffs)
 {
     // copy and byteswap a block of 8-byte dwords
@@ -1919,6 +2022,50 @@ static void WordswapBlock(int *pDst, unsigned int cnt, unsigned int TileSize)
         }
     }
 }
+
+/***************************BROKEN**************************************
+static inline void loadBlock(uint32_t *src, uint32_t *dst, uint32_t off, int dxt, int cnt)
+{
+  int v5;
+  int v6;
+  uint32_t *v7;
+  uint32_t v8;
+
+  copyBlock(off, cnt, dst, src);
+  v5 = cnt;
+  v6 = 0;
+  v7 = dst;
+  v8 = 0;
+dxt_test:
+  while ( 1 )
+  {
+    v7 += 2;
+    --v5;
+    if ( !v5 )
+      break;
+    v6 += dxt;
+    if ( v6 < 0 )
+    {
+      while ( 1 )
+      {
+        ++v8;
+        --v5;
+        if ( !v5 )
+          goto end_dxt_test;
+        v6 += dxt;
+        if ( v6 >= 0 )
+        {
+          swapBlock32(v8, v7);
+          goto dxt_test;
+        }
+      }
+    }
+  }
+end_dxt_test:
+  swapBlock32(v8, v7);
+}
+***********************************************************************/
+
 void LoadBlock32b(wxUint32 tile, wxUint32 ul_s, wxUint32 ul_t, wxUint32 lr_s, wxUint32 dxt);
 static void rdp_loadblock()
 {
@@ -1985,20 +2132,24 @@ static void rdp_loadblock()
   //angrylion's advice to use ul_s in texture image offset and cnt calculations.
   //Helps to fix Vigilante 8 jpeg backgrounds and logos
   wxUint32 off = rdp.timg.addr + (ul_s << rdp.tiles[tile].size >> 1);
-
-  int * dst = (int *)(rdp.tmem)+(rdp.tiles[tile].t_mem<<3);
+  unsigned char *dst = ((unsigned char *)rdp.tmem) + (rdp.tiles[tile].t_mem<<3);
   wxUint32 cnt = lr_s-ul_s+1;
   if (rdp.tiles[tile].size == 3)
     cnt <<= 1;
 
-  //wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
+  wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
 
   if (rdp.timg.size == 3)
     LoadBlock32b(tile, ul_s, ul_t, lr_s, dxt);
   else
+#ifdef OLDASM_asmLoadBlock
+    asmLoadBlock((uint32_t *)gfx.RDRAM, (uint32_t *)dst, off, _dxt, cnt, SwapMethod);
+#else
+// TODO replace hack with loadBlock((uint32_t *)gfx.RDRAM, (uint32_t *)dst, off, _dxt, cnt);
   {
+    int *pDst = (int *)dst;
     // Load the block from RDRAM and byteswap it as it loads
-    CopyswapBlock(dst, cnt, off);
+    CopyswapBlock(pDst, cnt, off);
 
     // now do 32-bit or 64-bit word swapping on every other row of data
     int dxt_accum = 0;
@@ -2007,7 +2158,7 @@ static void rdp_loadblock()
         // skip over unswapped blocks
         do
         {
-            dst += 2;
+            pDst += 2;
             if (--cnt == 0)
                 break;
             dxt_accum += _dxt;
@@ -2023,10 +2174,11 @@ static void rdp_loadblock()
             dxt_accum += _dxt;
         } while (dxt_accum & 0x80000000);
         // do 32-bit or 64-bit swap operation on this block
-        WordswapBlock(dst, swapcnt, rdp.tiles[tile].size);
-        dst += swapcnt * 2;
+        WordswapBlock(pDst, swapcnt, rdp.tiles[tile].size);
+        pDst += swapcnt * 2;
     }
   }
+#endif
 
   rdp.timg.addr += cnt << 3;
   rdp.tiles[tile].lr_t = ul_t + ((dxt*cnt)>>11);
@@ -2041,6 +2193,41 @@ static void rdp_loadblock()
     setTBufTex(rdp.tiles[tile].t_mem, cnt);
 }
 
+
+extern "C" void asmLoadTile(uint32_t *src, uint32_t *dst, int width, int height, int line, int off, uint32_t *end, int swp);
+/***************************BROKEN**************************************
+static inline void loadTile(uint32_t *src, uint32_t *dst, int width, int height, int line, int off, uint32_t *end)
+{
+  int v7;
+  int v8;
+  int v9;
+  int v10;
+  int v11;
+  uint32_t v12;
+
+  v7 = width;
+  v8 = off;
+  v9 = 0;
+  do
+  {
+    if ( end < dst )
+      break;
+    v12 = v7;
+    copyBlock(v8, v7, dst, src);
+    v7 = v12;
+    v9 ^= 1u;
+    if ( !v9 )
+    {
+      swapBlock32(v12, dst);
+      v7 = v12;
+    }
+    v8 = line + off;
+  }
+  while ( v10 != 1 );
+}
+***********************************************************************/
+
+void LoadTile32b (wxUint32 tile, wxUint32 ul_s, wxUint32 ul_t, wxUint32 width, wxUint32 height);
 static void rdp_loadtile()
 {
   if (rdp.skip_drawing)
@@ -2128,6 +2315,13 @@ static void rdp_loadtile()
       return;
 
     wxUint32 wid_64 = rdp.tiles[tile].line;
+    wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
+    unsigned char *dst = ((unsigned char *)rdp.tmem) + (rdp.tiles[tile].t_mem<<3);
+    unsigned char *end = ((unsigned char *)rdp.tmem) + 4096 - (wid_64<<3);
+#ifdef OLDASM_asmLoadTile
+    asmLoadTile((uint32_t *)gfx.RDRAM, (uint32_t *)dst, wid_64, height, line_n, offs, (uint32_t *)end, SwapMethod);
+#else
+// TODO replace hack with loadTile((uint32_t *)gfx.RDRAM, (uint32_t *)dst, wid_64, height, line_n, offs, (uint32_t *)end);
     int * pDst = (int *) (wxPtrToUInt(rdp.tmem)+(rdp.tiles[tile].t_mem<<3));
     int * pEnd = (int *) (wxPtrToUInt(rdp.tmem)+4096 - (wid_64<<3));
     for (unsigned int y = 0; y < height; y++)
@@ -2141,6 +2335,7 @@ static void rdp_loadtile()
         pDst += wid_64 * 2;
         offs += line_n;
     }
+#endif
   }
   FRDP("loadtile: tile: %d, ul_s: %d, ul_t: %d, lr_s: %d, lr_t: %d\n", tile,
     ul_s, ul_t, lr_s, lr_t);

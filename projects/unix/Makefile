@@ -346,6 +346,8 @@ ifeq ($(OLD_ASM),1)
 
 SOURCE = $(SRCDIR)/Glide64/Texture.asm
 #CFLAGS += -DOLDASM_asmTextureCRC
+#CFLAGS += -DOLDASM_asmLoadBlock
+#CFLAGS += -DOLDASM_asmLoadTile
 
 OBJECTS += $(patsubst $(SRCDIR)/%.asm, $(OBJDIR)/%.o, $(filter %.asm, $(SOURCE)))
 
