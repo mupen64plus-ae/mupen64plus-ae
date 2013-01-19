@@ -37,7 +37,96 @@
 //
 //****************************************************************
 
-// I think this one is ok -- balrog
+extern "C" void asmMirror16bS(uint8_t *tex, uint8_t *start, int width, int height, int mask, int line, int full, int count);
+extern "C" void asmWrap16bS(uint8_t *tex, uint8_t *start, int height, int mask, int line, int full, int count);
+extern "C" void asmClamp16bS(uint8_t *tex, uint8_t *constant, int height, int line, int full, int count);
+
+static inline void mirror16bS(uint8_t *tex, uint8_t *start, int width, int height, int mask, int line, int full, int count)
+{
+  uint16_t *v8;
+  int v9;
+  int v10;
+
+  v8 = (uint16_t *)start;
+  v9 = height;
+  do
+  {
+    v10 = 0;
+    do
+    {
+      if ( width & (v10 + width) )
+      {
+        *v8 = *(uint16_t *)(&tex[mask] - (mask & 2 * v10));
+        ++v8;
+      }
+      else
+      {
+        *v8 = *(uint16_t *)&tex[mask & 2 * v10];
+        ++v8;
+      }
+      ++v10;
+    }
+    while ( v10 != count );
+    v8 = (uint16_t *)((char *)v8 + line);
+    tex += full;
+    --v9;
+  }
+  while ( v9 );
+}
+
+static inline void wrap16bS(uint8_t *tex, uint8_t *start, int height, int mask, int line, int full, int count)
+{
+  uint32_t *v7;
+  int v8;
+  int v9;
+
+  v7 = (uint32_t *)start;
+  v8 = height;
+  do
+  {
+    v9 = 0;
+    do
+    {
+      *v7 = *(uint32_t *)&tex[4 * (mask & v9)];
+      ++v7;
+      ++v9;
+    }
+    while ( v9 != count );
+    v7 = (uint32_t *)((char *)v7 + line);
+    tex += full;
+    --v8;
+  }
+  while ( v8 );
+}
+
+static inline void clamp16bS(uint8_t *tex, uint8_t *constant, int height, int line, int full, int count)
+{
+  uint16_t *v6;
+  uint16_t *v7;
+  int v8;
+  uint16_t v9;
+  int v10;
+
+  v6 = (uint16_t *)constant;
+  v7 = (uint16_t *)tex;
+  v8 = height;
+  do
+  {
+    v9 = *v6;
+    v10 = count;
+    do
+    {
+      *v7 = v9;
+      ++v7;
+      --v10;
+    }
+    while ( v10 );
+    v6 = (uint16_t *)((char *)v6 + full);
+    v7 = (uint16_t *)((char *)v7 + line);
+    --v8;
+  }
+  while ( v8 );
+}
 
 //****************************************************************
 // 16-bit Horizontal Mirror
@@ -57,28 +146,12 @@ void Mirror16bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint3
     int line_full = real_width << 1;
     int line = line_full - (count << 1);
     if (line < 0) return;
-    unsigned short * start = (unsigned short *)(tex) + mask_width;
-    
-    unsigned short * edi = start;
-    for(unsigned int ecx = height; ecx; --ecx)
-    {
-        for (int edx = 0; edx != count; ++edx)
-        {
-        unsigned short * esi = (unsigned short *)(tex);
-        if ((mask_width + edx) & mask_width)
-        {
-            esi += (mask_mask - ((edx << 1) & mask_mask)) >> 1;
-        }
-        else
-        {
-            esi += ((edx << 1) & mask_mask) >> 1;
-        }
-        *edi = *esi;
-        ++edi;
-        }
-        edi += line >> 1;
-        tex += line_full;
-    }
+    unsigned char *start = tex + (mask_width << 1);
+#ifdef OLDASM_asmMirror16bS
+    asmMirror16bS (tex, start, mask_width, height, mask_mask, line, line_full, count);
+#else
+    mirror16bS (tex, start, mask_width, height, mask_mask, line, line_full, count);
+#endif
 }
 
 //****************************************************************
@@ -89,36 +162,19 @@ void Wrap16bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint32 
     if (mask == 0) return;
 
     wxUint32 mask_width = (1 << mask);
-
     wxUint32 mask_mask = (mask_width-1) >> 1;
-
     if (mask_width >= max_width) return;
-    
     int count = (max_width - mask_width) >> 1;
     if (count <= 0) return;
-
     int line_full = real_width << 1;
     int line = line_full - (count << 2);
     if (line < 0) return;
     unsigned char * start = tex + (mask_width << 1);
-    
-    // values that can't be changed are height and count
-
-//   asmWrap16bS (tex, start, height, mask_mask, line, line_full, count);
-    
-    wxUint32 *edi = (wxUint32 *)start;
-
-    for(wxUint32 ecx = height; ecx; ecx--) {
-      for(wxUint32 edx = 0; edx != count; edx++) {
-        wxUint32 *esi = (wxUint32 *)tex;
-        esi += (edx & mask_mask);
-        *edi = *esi;
-        edi++;
-      }
-      edi += line >> 2;
-      tex += line_full;
-    }
-    
+#ifdef OLDASM_asmWrap16bS
+    asmWrap16bS (tex, start, height, mask_mask, line, line_full, count);
+#else
+    wrap16bS (tex, start, height, mask_mask, line, line_full, count);
+#endif
 }
 
 //****************************************************************
@@ -135,20 +191,11 @@ void Clamp16bS (unsigned char * tex, wxUint32 width, wxUint32 clamp_to, wxUint32
     int line_full = real_width << 1;
     int line = width << 1;
 
-// it's ok to manipulate pointers directly, except for tex.
-    
-    wxUint16 *esi = (wxUint16 *)constant;
-    wxUint16 *edi = (wxUint16 *)dest;
-        
-    for (wxUint32 ecx = real_height; ecx; --ecx) {
-      for(wxUint32 edx = count; edx; --edx) {
-        *edi = *esi;
-        edi++;
-      }
-      esi += line_full >> 1;
-      edi += line >> 1;
-    }
-    
+#ifdef OLDASM_asmClamp16bS
+    asmClamp16bS (dest, constant, real_height, line, line_full, count);
+#else
+    clamp16bS (dest, constant, real_height, line, line_full, count);
+#endif
 }
 
 //****************************************************************
