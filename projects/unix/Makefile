@@ -341,6 +341,21 @@ OBJECTS += $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(filter %.cpp, $(SOURCE))
 OBJDIRS = $(dir $(OBJECTS))
 $(shell $(MKDIR) $(OBJDIRS))
 
+# development only support for using asm on i386 linux
+ifeq ($(OLD_ASM),1)
+
+SOURCE = $(SRCDIR)/Glide64/Texture.asm
+
+OBJECTS += $(patsubst $(SRCDIR)/%.asm, $(OBJDIR)/%.o, $(filter %.asm, $(SOURCE)))
+
+AS          = nasm
+COMPILE.asm = $(AS) -O6 -felf -I$(SRCDIR)/Glide64/
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.asm
+	$(COMPILE.asm) -o $@ $<
+
+endif
+
 # build targets
 TARGET = mupen64plus-video-glide64mk2$(POSTFIX).$(SO_EXTENSION)
 
