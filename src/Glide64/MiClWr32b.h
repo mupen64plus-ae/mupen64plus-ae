@@ -41,6 +41,97 @@
 //
 //****************************************************************
 
+extern "C" void asmMirror32bS(uint8_t *tex, uint8_t *start, int width, int height, int mask, int line, int full, int count);
+extern "C" void asmWrap32bS(uint8_t *tex, uint8_t *start, int height, int mask, int line, int full, int count);
+extern "C" void asmClamp32bS(uint8_t *tex, uint8_t *constant, int height, int line, int full, int count);
+
+static inline void mirror32bS(uint8_t *tex, uint8_t *start, int width, int height, int mask, int line, int full, int count)
+{
+  uint32_t *v8;
+  int v9;
+  int v10;
+
+  v8 = (uint32_t *)start;
+  v9 = height;
+  do
+  {
+    v10 = 0;
+    do
+    {
+      if ( width & (v10 + width) )
+      {
+        *v8 = *(uint32_t *)(&tex[mask] - (mask & 4 * v10));
+        ++v8;
+      }
+      else
+      {
+        *v8 = *(uint32_t *)&tex[mask & 4 * v10];
+        ++v8;
+      }
+      ++v10;
+    }
+    while ( v10 != count );
+    v8 = (uint32_t *)((char *)v8 + line);
+    tex += full;
+    --v9;
+  }
+  while ( v9 );
+}
+
+static inline void wrap32bS(uint8_t *tex, uint8_t *start, int height, int mask, int line, int full, int count)
+{
+  uint32_t *v7;
+  int v8;
+  int v9;
+
+  v7 = (uint32_t *)start;
+  v8 = height;
+  do
+  {
+    v9 = 0;
+    do
+    {
+      *v7 = *(uint32_t *)&tex[4 * (mask & v9)];
+      ++v7;
+      ++v9;
+    }
+    while ( v9 != count );
+    v7 = (uint32_t *)((char *)v7 + line);
+    tex += full;
+    --v8;
+  }
+  while ( v8 );
+}
+
+static inline void clamp32bS(uint8_t *tex, uint8_t *constant, int height, int line, int full, int count)
+{
+  uint32_t *v6;
+  uint32_t *v7;
+  int v8;
+  uint32_t v9;
+  int v10;
+
+  v6 = (uint32_t *)constant;
+  v7 = (uint32_t *)tex;
+  v8 = height;
+  do
+  {
+    v9 = *v6;
+    v10 = count;
+    do
+    {
+      *v7 = v9;
+      ++v7;
+      --v10;
+    }
+    while ( v10 );
+    v6 = (uint32_t *)((char *)v6 + full);
+    v7 = (uint32_t *)((char *)v7 + line);
+    --v8;
+  }
+  while ( v8 );
+}
+
 //****************************************************************
 // 32-bit Horizontal Mirror
 
@@ -53,33 +144,15 @@ void Mirror32bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint3
 	if (mask_width >= max_width) return;
 	int count = max_width - mask_width;
 	if (count <= 0) return;
-  int line_full = real_width; // << 2;
-  int line = line_full - (count); // << 2);
+	int line_full = real_width << 2;
+	int line = line_full - (count << 2);
 	if (line < 0) return;
-	
-  unsigned int * start = (unsigned int *)(tex) + (mask_width);
-	
-  unsigned int *edi = start;
-//     asmMirror32bS (tex, start, mask_width, height, mask_mask, line, line_full, count);
-  
-  for(unsigned int ecx = height; ecx; --ecx) {
-    for(int edx = 0; edx != count; ++edx) {
-      
-      unsigned int *esi = (unsigned int *)(tex);
-      
-      if ((mask_width + edx) & mask_width) {
-        esi += (mask_mask - ((edx << 2) & mask_mask)) >> 2;
-      }
-      else
-      {
-        esi += ((edx << 2) & mask_mask) >> 2;
-      } 
-      *edi = *esi;
-      edi++;
-    }
-    edi += line;
-    tex += line_full << 2;
-  }
+	unsigned char * start = tex + (mask_width << 2);
+#ifdef OLDASM_asmMirror32bS
+	asmMirror32bS (tex, start, mask_width, height, mask_mask, line, line_full, count);
+#else
+	mirror32bS (tex, start, mask_width, height, mask_mask, line, line_full, count);
+#endif
 }
 
 //****************************************************************
@@ -97,28 +170,12 @@ void Wrap32bS (unsigned char * tex, wxUint32 mask, wxUint32 max_width, wxUint32 
   int line_full = real_width << 2;
   int line = line_full - (count << 2);
   if (line < 0) return;
-
-  wxUint32 *start = (wxUint32 *)tex + (mask_width);
-
-//     asmWrap32bS (tex, start, height, mask_mask, line, line_full, count);
-
-  
-  wxUint32 *edi = start;
-
-  // esi is a pointer
-
-  for(wxUint32 ecx = height; ecx; ecx--) {
-
-    for(wxUint32 edx = 0; edx != count; edx++) {
-      wxUint32 *esi = (wxUint32 *)tex;
-
-      esi += edx & mask_mask;
-      *edi = *esi;
-      edi++;
-    }
-    edi += line >> 2;
-    tex += line_full;
-  }
+  unsigned char * start = tex + (mask_width << 2);
+#ifdef OLDASM_asmWrap32bS
+  asmWrap32bS (tex, start, height, mask_mask, line, line_full, count);
+#else
+  wrap32bS (tex, start, height, mask_mask, line, line_full, count);
+#endif
 }
 
 //****************************************************************
@@ -128,28 +185,18 @@ void Clamp32bS (unsigned char * tex, wxUint32 width, wxUint32 clamp_to, wxUint32
 {
 	if (real_width <= width) return;
 
-  wxUint32 *dest = (wxUint32 *)tex + (width);
-	wxUint32 *constant = dest-1;
+	unsigned char *dest = tex + (width << 2);
+	unsigned char *constant = dest-4;
 	
 	int count = clamp_to - width;
 	
-//    asmClamp32bS (dest, constant, real_height, line, line_full, count);	
-	
-	// converted asm portion begins here
-  wxUint32 *esi = constant;
-  wxUint32 *edi = dest;
-  
-  for(wxUint32 ecx = real_height; ecx; ecx--) {
-    wxUint32 eax = *esi;
-    
-    for(wxUint32 edx = count; edx; edx--) {
-      *edi = eax;
-      edi++;
-    }
-    esi += real_width;
-    edi += width;
-    
-  }
+	int line_full = real_width << 2;
+	int line = width << 2;
+#ifdef OLDASM_asmClamp32bS
+	asmClamp32bS (dest, constant, real_height, line, line_full, count);
+#else
+	clamp32bS (dest, constant, real_height, line, line_full, count);
+#endif
 }
 
 //****************************************************************
@@ -164,7 +211,7 @@ void Mirror32bT (unsigned char * tex, wxUint32 mask, wxUint32 max_height, wxUint
 	if (max_height <= mask_height) return;
   int line_full = real_width << 2;
 
-	wxUint32 *dst = (wxUint32 *)tex + ((mask_height * line_full) >> 2);
+	unsigned char *dst = tex + mask_height * line_full;
 
 	for (wxUint32 y=mask_height; y<max_height; y++)
 	{
@@ -179,7 +226,7 @@ void Mirror32bT (unsigned char * tex, wxUint32 mask, wxUint32 max_height, wxUint
 			memcpy ((void*)dst, (void*)(tex + (y & mask_mask) * line_full), line_full);
 		}
 
-		dst += line_full>>2;
+		dst += line_full;
 	}
 }
 
@@ -193,16 +240,16 @@ void Wrap32bT (unsigned char * tex, wxUint32 mask, wxUint32 max_height, wxUint32
 	wxUint32 mask_height = (1 << mask);
 	wxUint32 mask_mask = mask_height-1;
 	if (max_height <= mask_height) return;
-  int line_full = real_width; // << 2;
+  int line_full = real_width << 2;
 
-	wxUint32 *dst = (wxUint32 *)tex + mask_height * line_full;
+	unsigned char *dst = tex + mask_height * line_full;
 
 	for (wxUint32 y=mask_height; y<max_height; y++)
 	{
 		// not mirrored
 		memcpy ((void*)dst, (void*)(tex + (y & mask_mask) * (line_full>>2)), (line_full>>2));
 
-		dst += line_full>>2;
+		dst += line_full;
 	}
 }
 
@@ -211,13 +258,13 @@ void Wrap32bT (unsigned char * tex, wxUint32 mask, wxUint32 max_height, wxUint32
 
 void Clamp32bT (unsigned char * tex, wxUint32 height, wxUint32 real_width, wxUint32 clamp_to)
 {
-  int line_full = real_width; // << 2;
-	wxUint32  *dst = (wxUint32 *)tex + height * line_full;
-	wxUint32 *const_line = (wxUint32 *)dst - line_full;
+	int line_full = real_width << 2;
+	unsigned char *dst = tex + height * line_full;
+	unsigned char *const_line = dst - line_full;
 
 	for (wxUint32 y=height; y<clamp_to; y++)
 	{
-		memcpy ((void*)dst, (void*)const_line, line_full>>2);
-		dst += line_full>>2;
+		memcpy ((void*)dst, (void*)const_line, line_full);
+		dst += line_full;
 	}
 }
