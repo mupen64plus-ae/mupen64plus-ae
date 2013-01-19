@@ -39,7 +39,7 @@ wxUint32 Load8bCI (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int lin
 {
   if (wid_64 < 1) wid_64 = 1;
   if (height < 1) height = 1;
-  int ext = (real_width - (wid_64 << 3)) << 1;
+  int ext = (real_width - (wid_64 << 3));
   unsigned short * pal = rdp.pal_8;
 
   switch (rdp.tlut_mode) {    
