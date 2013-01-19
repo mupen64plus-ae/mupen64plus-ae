@@ -37,15 +37,79 @@
 //
 //****************************************************************
 
-//****************************************************************
-// Size: 2, Format: 0
-//
+extern "C" void asmLoad16bRGBA(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext);
+extern "C" void asmLoad16bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext);
 
-wxUint32 Load16bRGBA (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int line, int real_width, int tile)
+static inline void load16bRGBA(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext)
 {
-    if (wid_64 < 1) wid_64 = 1;
-    if (height < 1) height = 1;
-    int ext = (real_width - (wid_64 << 2)) << 1;
+/*******************BROKEN*************************************************
+  uint32_t *v6;
+  uint32_t *v7;
+  int v8;
+  int v9;
+  uint32_t v10;
+  uint32_t v11;
+  uint32_t *v12;
+  uint32_t *v13;
+  int v14;
+  uint32_t v15;
+  uint32_t v16;
+  int v17;
+  int v18;
+
+  v6 = (uint32_t *)src;
+  v7 = (uint32_t *)dst;
+  v8 = height;
+  do
+  {
+    v17 = v8;
+    v9 = wid_64;
+    do
+    {
+      v10 = __builtin_bswap32(*v6);
+      v11 = __builtin_bswap32(v6[1]);
+      ALOWORD(v10) = __ROR__(v10, 1);
+      ALOWORD(v11) = __ROR__(v11, 1);
+      v10 = __ROR__(v10, 16);
+      v11 = __ROR__(v11, 16);
+      ALOWORD(v10) = __ROR__(v10, 1);
+      ALOWORD(v11) = __ROR__(v11, 1);
+      *v7 = v10;
+      v7[1] = v11;
+      v6 += 2;
+      v7 += 2;
+      --v9;
+    }
+    while ( v9 );
+    if ( v17 == 1 )
+      break;
+    v18 = v17 - 1;
+    v12 = (uint32_t *)&src[(line + (uintptr_t)v6 - (uintptr_t)src) & 0xFFF];
+    v13 = (uint32_t *)((char *)v7 + ext);
+    v14 = wid_64;
+    do
+    {
+      v15 = __builtin_bswap32(v12[1]);
+      v16 = __builtin_bswap32(*v12);
+      ALOWORD(v15) = __ROR__(v15, 1);
+      ALOWORD(v16) = __ROR__(v16, 1);
+      v15 = __ROR__(v15, 16);
+      v16 = __ROR__(v16, 16);
+      ALOWORD(v15) = __ROR__(v15, 1);
+      ALOWORD(v16) = __ROR__(v16, 1);
+      *v13 = v15;
+      v13[1] = v16;
+      v12 += 2;
+      v13 += 2;
+      --v14;
+    }
+    while ( v14 );
+    v6 = (uint32_t *)&src[(line + (uintptr_t)v12 - (uintptr_t)src) & 0xFFF];
+    v7 = (uint32_t *)((char *)v13 + ext);
+    v8 = v18 - 1;
+  }
+  while ( v18 != 1 );
+*********************************************************************/
 #if !defined(__GNUC__) && !defined(NO_ASM)
     __asm {
         mov esi,dword ptr [src]
@@ -123,7 +187,7 @@ x_loop_2:
 
         dec ecx
         jnz x_loop_2
-        
+
         add esi,dword ptr [line]
         add edi,dword ptr [ext]
 
@@ -139,38 +203,38 @@ end_y_loop:
    asm volatile (
          "y_loop7:              \n"
          "mov %[c], %[temp]     \n"
-         
+
          "mov %[wid_64], %%ecx \n"
          "x_loop7:              \n"
          "mov (%[src]), %%eax    \n"        // read both pixels
          "add $4, %[src]         \n"
          "bswap %%eax           \n"
          "mov %%eax, %%edx      \n"
-         
+
          "ror $1, %%ax          \n"
          "ror $16, %%eax        \n"
          "ror $1, %%ax          \n"
-         
+
          "mov %%eax, (%[dst])    \n"
          "add $4, %[dst]         \n"
-         
+
          // * copy
          "mov (%[src]), %%eax    \n"        // read both pixels
          "add $4, %[src]         \n"
          "bswap %%eax           \n"
          "mov %%eax, %%edx      \n"
-         
+
          "ror $1, %%ax          \n"
          "ror $16, %%eax        \n"
          "ror $1, %%ax          \n"
-         
+
          "mov %%eax, (%[dst])    \n"
          "add $4, %[dst]         \n"
          // *
-         
+
          "dec %%ecx             \n"
          "jnz x_loop7           \n"
-         
+
          "mov %[temp], %[c]     \n"
          "dec %%ecx             \n"
          "jz end_y_loop7        \n"
@@ -178,51 +242,124 @@ end_y_loop:
 
          "add %[line], %[src]   \n"
          "add %[ext], %[dst]    \n"
-         
+
          "mov %[wid_64], %%ecx \n"
          "x_loop_27:            \n"
          "mov 4(%[src]), %%eax   \n"        // read both pixels
          "bswap %%eax           \n"
          "mov %%eax, %%edx      \n"
-         
+
          "ror $1, %%ax          \n"
          "ror $16, %%eax        \n"
          "ror $1, %%ax          \n"
-         
+
          "mov %%eax, (%[dst])    \n"
          "add $4, %[dst]         \n"
-         
+
          // * copy
          "mov (%[src]), %%eax    \n"        // read both pixels
          "add $8, %[src]         \n"
          "bswap %%eax           \n"
          "mov %%eax, %%edx      \n"
-         
+
          "ror $1, %%ax          \n"
          "ror $16, %%eax        \n"
          "ror $1, %%ax          \n"
-         
+
          "mov %%eax, (%[dst])    \n"
          "add $4, %[dst]         \n"
          // *
 
          "dec %%ecx             \n"
          "jnz x_loop_27         \n"
-         
+
          "add %[line], %[src]   \n"
          "add %[ext], %[dst]    \n"
-         
+
          "mov %[temp], %[c]     \n"
          "dec %%ecx             \n"
          "jnz y_loop7           \n"
-         
+
          "end_y_loop7:          \n"
          : [temp]"=m"(lTemp), [src]"+S"(src), [dst]"+D"(dst), [c]"+c"(lHeight)
          : [wid_64] "g" (wid_64), [line] "g" ((uintptr_t)line), [ext] "g" ((uintptr_t)ext)
          : "memory", "cc", "eax", "edx"
          );
 #endif
-    return (1 << 16) | GR_TEXFMT_ARGB_1555;
+}
+
+static inline void load16bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext)
+{
+  uint32_t *v6;
+  uint32_t *v7;
+  int v8;
+  int v9;
+  uint32_t v10;
+  uint32_t *v11;
+  uint32_t *v12;
+  int v13;
+  uint32_t v14;
+  int v15;
+  int v16;
+
+  v6 = (uint32_t *)src;
+  v7 = (uint32_t *)dst;
+  v8 = height;
+  do
+  {
+    v15 = v8;
+    v9 = wid_64;
+    do
+    {
+      v10 = v6[1];
+      *v7 = *v6;
+      v7[1] = v10;
+      v6 += 2;
+      v7 += 2;
+      --v9;
+    }
+    while ( v9 );
+    if ( v15 == 1 )
+      break;
+    v16 = v15 - 1;
+    v11 = (uint32_t *)((char *)v6 + line);
+    v12 = (uint32_t *)((char *)v7 + ext);
+    v13 = wid_64;
+    do
+    {
+      v14 = *v11;
+      *v12 = v11[1];
+      v12[1] = v14;
+      v11 += 2;
+      v12 += 2;
+      --v13;
+    }
+    while ( v13 );
+    v6 = (uint32_t *)((char *)v11 + line);
+    v7 = (uint32_t *)((char *)v12 + ext);
+    v8 = v16 - 1;
+  }
+  while ( v16 != 1 );
+}
+
+
+//****************************************************************
+// Size: 2, Format: 0
+//
+
+wxUint32 Load16bRGBA (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int line, int real_width, int tile)
+{
+  if (wid_64 < 1) wid_64 = 1;
+  if (height < 1) height = 1;
+  int ext = (real_width - (wid_64 << 2)) << 1;
+
+#ifdef OLDASM_asmLoad16bRGBA
+  asmLoad16bRGBA((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
+#else
+  load16bRGBA((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
+#endif
+
+  return (1 << 16) | GR_TEXFMT_ARGB_1555;
 }
 
 //****************************************************************
@@ -232,130 +369,17 @@ end_y_loop:
 
 wxUint32 Load16bIA (wxUIntPtr dst, wxUIntPtr src, int wid_64, int height, int line, int real_width, int tile)
 {
-    if (wid_64 < 1) wid_64 = 1;
-    if (height < 1) height = 1;
-    int ext = (real_width - (wid_64 << 2)) << 1;
-#if !defined(__GNUC__) && !defined(NO_ASM)
-    __asm {
-        mov esi,dword ptr [src]
-        mov edi,dword ptr [dst]
+  if (wid_64 < 1) wid_64 = 1;
+  if (height < 1) height = 1;
+  int ext = (real_width - (wid_64 << 2)) << 1;
 
-        mov ecx,dword ptr [height]
-y_loop:
-        push ecx
-
-        mov ecx,dword ptr [wid_64]
-x_loop:
-        mov eax,dword ptr [esi]     // read both pixels
-        add esi,4
-        mov dword ptr [edi],eax
-        add edi,4
-
-        // * copy
-        mov eax,dword ptr [esi]     // read both pixels
-        add esi,4
-        mov dword ptr [edi],eax
-        add edi,4
-        // *
-
-        dec ecx
-        jnz x_loop
-
-        pop ecx
-        dec ecx
-        jz end_y_loop
-        push ecx
-
-        add esi,dword ptr [line]
-        add edi,dword ptr [ext]
-
-        mov ecx,dword ptr [wid_64]
-x_loop_2:
-        mov eax,dword ptr [esi+4]       // read both pixels
-        mov dword ptr [edi],eax
-        add edi,4
-
-        // * copy
-        mov eax,dword ptr [esi]     // read both pixels
-        add esi,8
-        mov dword ptr [edi],eax
-        add edi,4
-        // *
-
-        dec ecx
-        jnz x_loop_2
-        
-        add esi,dword ptr [line]
-        add edi,dword ptr [ext]
-
-        pop ecx
-        dec ecx
-        jnz y_loop
-
-end_y_loop:
-    }
-#elif !defined(NO_ASM)
-   //printf("Load16bIA\n");
-   long lTemp, lHeight = (long) height;
-   asm volatile (
-         "y_loop8:              \n"
-         "mov %[c], %[temp]     \n"
-
-         "mov %[wid_64], %%ecx \n"
-         "x_loop8:              \n"
-         "mov (%[src]), %%eax    \n"        // read both pixels
-         "add $4, %[src]         \n"
-         "mov %%eax, (%[dst])    \n"
-         "add $4, %[dst]         \n"
-         
-         // * copy
-         "mov (%[src]), %%eax    \n"        // read both pixels
-         "add $4, %[src]         \n"
-         "mov %%eax, (%[dst])    \n"
-         "add $4, %[dst]         \n"
-         // *
-
-         "dec %%ecx             \n"
-         "jnz x_loop8           \n"
-         
-         "mov %[temp], %[c]     \n"
-         "dec %%ecx             \n"
-         "jz end_y_loop8        \n"
-         "mov %[c], %[temp]     \n"
-         
-         "add %[line], %[src]   \n"
-         "add %[ext], %[dst]    \n"
-         
-         "mov %[wid_64], %%ecx \n"
-         "x_loop_28:            \n"
-         "mov 4(%[src]), %%eax   \n"        // read both pixels
-         "mov %%eax, (%[dst])    \n"
-         "add $4, %[dst]         \n"
-         
-         // * copy
-         "mov (%[src]), %%eax    \n"        // read both pixels
-         "add $8, %[src]         \n"
-         "mov %%eax, (%[dst])    \n"
-         "add $4, %[dst]         \n"
-         // *
-
-         "dec %%ecx             \n"
-         "jnz x_loop_28         \n"
-         
-         "add %[line], %[src]   \n"
-         "add %[ext], %[dst]    \n"
-         
-         "mov %[temp], %[c]     \n"
-         "dec %%ecx             \n"
-         "jnz y_loop8           \n"
-         
-         "end_y_loop8:          \n"
-         : [temp]"=m"(lTemp), [src]"+S"(src), [dst]"+D"(dst), [c]"+c"(lHeight)
-         : [wid_64] "g" (wid_64), [line] "g" ((uintptr_t)line), [ext] "g" ((uintptr_t)ext)
-         : "memory", "cc", "eax"
-         );
+#ifdef OLDASM_asmLoad16bIA
+  asmLoad16bIA((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
+#else
+  load16bIA((uint8_t *)src, (uint8_t *)dst, wid_64, height, line, ext);
 #endif
-    return (1 << 16) | GR_TEXFMT_ALPHA_INTENSITY_88;
+
+  return (1 << 16) | GR_TEXFMT_ALPHA_INTENSITY_88;
 }
 
 //****************************************************************
