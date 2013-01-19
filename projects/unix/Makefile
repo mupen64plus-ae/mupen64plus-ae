@@ -352,6 +352,10 @@ SOURCE = $(SRCDIR)/Glide64/Texture.asm
 #CFLAGS += -DOLDASM_asmLoad4bI
 #CFLAGS += -DOLDASM_asmLoad16bRGBA
 #CFLAGS += -DOLDASM_asmLoad16bIA
+#CFLAGS += -DOLDASM_asmLoad8bCI
+#CFLAGS += -DOLDASM_asmLoad8bIA8
+#CFLAGS += -DOLDASM_asmLoad8bIA4
+#CFLAGS += -DOLDASM_asmLoad8bI
 #CFLAGS += -DOLDASM_asmLoadBlock
 #CFLAGS += -DOLDASM_asmLoadTile
 
