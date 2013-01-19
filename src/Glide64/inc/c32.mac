@@ -34,7 +34,7 @@
 
 %ifnctx proc
 
-%error Mismatched `endproc'/`proc'
+%error Mismatched endproc/proc
 
 %else
 
