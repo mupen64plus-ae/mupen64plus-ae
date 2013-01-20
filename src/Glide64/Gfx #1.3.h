@@ -66,6 +66,7 @@ the plugin
 #include "m64p.h"
 
 #include <stdio.h>
+#include <pthread.h>
 #include <fstream>
 #include <stdlib.h>
 #include <stddef.h>		// offsetof
@@ -289,6 +290,7 @@ extern int debugging;
 extern int evoodoo;
 extern int ev_fullscreen;
 
+extern pthread_mutex_t mutexProcessDList;
 extern int exception;
 
 // extern wxMutex *mutexProcessDList;

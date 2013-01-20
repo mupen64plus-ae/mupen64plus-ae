@@ -126,6 +126,14 @@ CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
 LDLIBS += -lboost_filesystem-mt -lboost_system-mt -lboost_thread-mt
 
+ifeq ($(OS), MINGW)
+  CFLAGS += -lpthread
+  LDLIBS += -lpthread
+else
+  CFLAGS += -pthread
+  LDLIBS += -pthread
+endif
+
 # default configuration programs
 SDL_CONFIG = $(CROSS_COMPILE)sdl-config
 PKG_CONFIG = $(CROSS_COMPILE)pkg-config

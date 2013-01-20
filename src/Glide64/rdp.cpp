@@ -38,6 +38,7 @@
 //****************************************************************
 
 #include <math.h>
+#include <pthread.h>
 #include "Gfx #1.3.h"
 #include "m64p.h"
 #include "Ini.h"
@@ -581,14 +582,14 @@ void GoToFullScreen()
       return;
     }
 }
-/*
+
 class SoftLocker
 {
 public:
   // lock the mutex in the ctor
-  SoftLocker(wxMutex* mutex)
+  SoftLocker(pthread_mutex_t *mutex)
     : _isOk(false), _mutex(mutex)
-  { _isOk = ( _mutex->TryLock() == wxMUTEX_NO_ERROR ); }
+  { _isOk = ( pthread_mutex_trylock(_mutex) == 0 ); }
 
   // returns true if mutex was successfully locked in ctor
   bool IsOk() const
@@ -596,13 +597,13 @@ public:
 
   // unlock the mutex in dtor
   ~SoftLocker()
-  { if ( IsOk() ) _mutex->Unlock(); }
+  { if ( IsOk() ) pthread_mutex_unlock(_mutex); }
 
 private:
   bool     _isOk;
-  wxMutex* _mutex;
+  pthread_mutex_t *_mutex;
 };
-*/
+
 
 /******************************************************************
 Function: ProcessDList
@@ -631,10 +632,8 @@ extern "C" {
 
 EXPORT void CALL ProcessDList(void)
 {
-  // TODO add SoftLocker
-  //SoftLocker lock(mutexProcessDList);
-  //if (!lock.IsOk()) //mutex is busy
-  if (0)
+  SoftLocker lock(&mutexProcessDList);
+  if (!lock.IsOk()) //mutex is busy
   {
     if (!fullscreen)
       drawNoFullscreenMessage();
@@ -4258,10 +4257,8 @@ EXPORT void CALL ProcessRDPList(void)
   LOG ("ProcessRDPList ()\n");
   LRDP("ProcessRDPList ()\n");
 
-  // TODO add SoftLocker
-  //SoftLocker lock(mutexProcessDList);
-  //if (!lock.IsOk()) //mutex is busy
-  if (0)
+  SoftLocker lock(&mutexProcessDList);
+  if (!lock.IsOk()) //mutex is busy
   {
     if (!fullscreen)
       drawNoFullscreenMessage();
