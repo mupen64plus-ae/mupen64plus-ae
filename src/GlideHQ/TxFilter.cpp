@@ -28,7 +28,6 @@
 #include "TxFilter.h"
 #include "TextureFilters.h"
 #include "TxDbg.h"
-#include "bldno.h"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
@@ -72,9 +71,9 @@ TxFilter::TxFilter(int maxwidth, int maxheight, int maxbpp, int options,
    * a file in the executable directory. */
   INFO(0, L"------------------------------------------------------------------\n");
 #ifdef GHQCHK
-  INFO(0, L" GlideHQ Hires Texture Checker 1.02.00.%d\n", BUILD_NUMBER);
+  INFO(0, L" GlideHQ Hires Texture Checker 1.02.00.%d\n", 0);
 #else
-  INFO(0, L" GlideHQ version 1.02.00.%d\n", BUILD_NUMBER);
+  INFO(0, L" GlideHQ version 1.02.00.%d\n", 0);
 #endif
   INFO(0, L" Copyright (C) 2010  Hiroshi Morii   All Rights Reserved\n");
   INFO(0, L"    email   : koolsmoky(at)users.sourceforge.net\n");

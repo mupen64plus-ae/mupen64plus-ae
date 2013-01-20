@@ -124,6 +124,7 @@ WARNFLAGS ?= -Wall
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -I../../src/Glitch64/inc -DGCC
 CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
+LDLIBS += -lboost_filesystem-mt -lboost_system-mt -lboost_thread-mt
 
 # default configuration programs
 SDL_CONFIG = $(CROSS_COMPILE)sdl-config
@@ -199,10 +200,20 @@ endif
 ifeq ($(OS), MINGW)
   GL_LIBS = -lopengl32
 endif
+
+ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
+  $(error $(PKG_CONFIG) not found)
+endif
+ifeq ($(shell pkg-config --modversion libpng 2>/dev/null),)
+  $(error No libpng development libraries found!)
+endif
+ifeq ($(shell pkg-config --modversion zlib 2>/dev/null),)
+  $(error No zlib development libraries found!)
+endif
+CFLAGS += $(shell pkg-config --cflags libpng zlib)
+LDLIBS += $(shell pkg-config --libs libpng zlib)
+
 ifeq ("$(GL_LIBS)", "")
-  ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
-    $(error $(PKG_CONFIG) not found)
-  endif
   ifeq ($(shell $(PKG_CONFIG) --modversion gl 2>/dev/null),)
     $(error No OpenGL development libraries found!)
   endif
@@ -315,7 +326,6 @@ SOURCE = \
 	$(SRCDIR)/Glide64/CRC.cpp \
 	$(SRCDIR)/Glide64/Debugger.cpp \
 	$(SRCDIR)/Glide64/DepthBufferRender.cpp \
-	$(SRCDIR)/Glide64/Ext_TxFilter.cpp \
 	$(SRCDIR)/Glide64/FBtoScreen.cpp \
 	$(SRCDIR)/Glide64/Ini.cpp \
 	$(SRCDIR)/Glide64/Keys.cpp \
@@ -323,7 +333,26 @@ SOURCE = \
 	$(SRCDIR)/Glide64/rdp.cpp \
 	$(SRCDIR)/Glide64/TexBuffer.cpp \
 	$(SRCDIR)/Glide64/TexCache.cpp \
-	$(SRCDIR)/Glide64/Util.cpp
+	$(SRCDIR)/Glide64/Util.cpp \
+	$(SRCDIR)/GlideHQ/Ext_TxFilter.cpp \
+	$(SRCDIR)/GlideHQ/TxFilterExport.cpp \
+	$(SRCDIR)/GlideHQ/TxFilter.cpp \
+	$(SRCDIR)/GlideHQ/TxCache.cpp \
+	$(SRCDIR)/GlideHQ/TxTexCache.cpp \
+	$(SRCDIR)/GlideHQ/TxHiResCache.cpp \
+	$(SRCDIR)/GlideHQ/TxQuantize.cpp \
+	$(SRCDIR)/GlideHQ/TxUtil.cpp \
+	$(SRCDIR)/GlideHQ/TextureFilters.cpp \
+	$(SRCDIR)/GlideHQ/TextureFilters_2xsai.cpp \
+	$(SRCDIR)/GlideHQ/TextureFilters_hq2x.cpp \
+	$(SRCDIR)/GlideHQ/TextureFilters_hq4x.cpp \
+	$(SRCDIR)/GlideHQ/TxImage.cpp \
+	$(SRCDIR)/GlideHQ/TxReSample.cpp \
+	$(SRCDIR)/GlideHQ/TxDbg.cpp \
+	$(SRCDIR)/GlideHQ/tc-1.1+/fxt1.c \
+	$(SRCDIR)/GlideHQ/tc-1.1+/dxtn.c \
+	$(SRCDIR)/GlideHQ/tc-1.1+/wrapper.c \
+	$(SRCDIR)/GlideHQ/tc-1.1+/texstore.c
 
 ifeq ($(OS),MINGW)
 SOURCE += $(SRCDIR)/Glide64/osal_dynamiclib_win32.c

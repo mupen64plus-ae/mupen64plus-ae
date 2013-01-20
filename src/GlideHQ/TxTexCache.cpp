@@ -44,7 +44,7 @@ TxTexCache::~TxTexCache()
     cachepath /= boost::filesystem::wpath(L"cache");
     int config = _options & (FILTER_MASK|ENHANCEMENT_MASK|COMPRESS_TEX|COMPRESSION_MASK|FORCE16BPP_TEX|GZ_TEXCACHE);
 
-    TxCache::save(cachepath.string().c_str(), filename.c_str(), config);
+    TxCache::save(cachepath.wstring().c_str(), filename.c_str(), config);
   }
 #endif
 }
@@ -65,7 +65,7 @@ TxTexCache::TxTexCache(int options, int cachesize, const wchar_t *path, const wc
     cachepath /= boost::filesystem::wpath(L"cache");
     int config = _options & (FILTER_MASK|ENHANCEMENT_MASK|COMPRESS_TEX|COMPRESSION_MASK|FORCE16BPP_TEX|GZ_TEXCACHE);
 
-    TxCache::load(cachepath.string().c_str(), filename.c_str(), config);
+    TxCache::load(cachepath.wstring().c_str(), filename.c_str(), config);
   }
 #endif
 }

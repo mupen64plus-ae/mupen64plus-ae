@@ -71,7 +71,7 @@ TxHiResCache::~TxHiResCache()
     cachepath /= boost::filesystem::wpath(L"cache");
     int config = _options & (HIRESTEXTURES_MASK|COMPRESS_HIRESTEX|COMPRESSION_MASK|TILE_HIRESTEX|FORCE16BPP_HIRESTEX|GZ_HIRESTEXCACHE|LET_TEXARTISTS_FLY);
 
-    TxCache::save(cachepath.string().c_str(), filename.c_str(), config);
+    TxCache::save(cachepath.wstring().c_str(), filename.c_str(), config);
   }
 #endif
 
@@ -113,7 +113,7 @@ TxHiResCache::TxHiResCache(int maxwidth, int maxheight, int maxbpp, int options,
     cachepath /= boost::filesystem::wpath(L"cache");
     int config = _options & (HIRESTEXTURES_MASK|COMPRESS_HIRESTEX|COMPRESSION_MASK|TILE_HIRESTEX|FORCE16BPP_HIRESTEX|GZ_HIRESTEXCACHE|LET_TEXARTISTS_FLY);
 
-    _haveCache = TxCache::load(cachepath.string().c_str(), filename.c_str(), config);
+    _haveCache = TxCache::load(cachepath.wstring().c_str(), filename.c_str(), config);
   }
 #endif
 
@@ -189,7 +189,7 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
 #else
   char curpath[MAX_PATH];
   char cbuf[MAX_PATH];
-  wcstombs(cbuf, dir_path.string().c_str(), MAX_PATH);
+  wcstombs(cbuf, dir_path.wstring().c_str(), MAX_PATH);
   GETCWD(MAX_PATH, curpath);
   CHDIR(cbuf);
 #endif
@@ -203,8 +203,8 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
    *
    * RULE OF THUMB: NEVER save texture packs in NON-ASCII names!!
    */
-  boost::filesystem::wdirectory_iterator it(dir_path);
-  boost::filesystem::wdirectory_iterator end_it; /* default construction yields past-the-end */
+  boost::filesystem::directory_iterator it(dir_path);
+  boost::filesystem::directory_iterator end_it; /* default construction yields past-the-end */
 
   for (; it != end_it; ++it) {
 
@@ -255,7 +255,9 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
     /* read in Rice's file naming convention */
 #define CRCFMTSIZ_LEN 13
 #define PALCRC_LEN 9
-    wcstombs(fname, it->path().leaf().c_str(), MAX_PATH);
+    //wcstombs(fname, it->path().leaf().c_str(), MAX_PATH);
+    strncpy(fname, it->path().leaf().c_str(), sizeof(fname));
+    fname[sizeof(fname) - 1] = '\0';
     /* XXX case sensitivity fiasco!
      * files must use _a, _rgb, _all, _allciByRGBA, _ciByRGBA, _ci
      * and file extensions must be in lower case letters! */

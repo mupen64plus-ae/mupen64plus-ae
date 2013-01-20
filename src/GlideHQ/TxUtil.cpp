@@ -25,6 +25,12 @@
 #include "TxDbg.h"
 #include <zlib.h>
 #include <malloc.h>
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 /*
  * External libraries
@@ -301,6 +307,48 @@ TxUtil::Adler32(const uint8* src, int width, int height, int size, int rowStride
   return ret;
 }
 
+// rotate left
+template<class T> static T __ROL__(T value, unsigned int count)
+{
+  const unsigned int nbits = sizeof(T) * 8;
+  count %= nbits;
+
+  T high = value >> (nbits - count);
+  value <<= count;
+  value |= high;
+  return value;
+}
+
+
+// sign flag
+template<class T> static int8_t __SETS__(T x)
+{
+  if ( sizeof(T) == 1 )
+    return int8_t(x) < 0;
+  if ( sizeof(T) == 2 )
+    return int16_t(x) < 0;
+  if ( sizeof(T) == 4 )
+    return int32_t(x) < 0;
+  return int64_t(x) < 0;
+}
+
+// overflow flag of subtraction (x-y)
+template<class T, class U> int8_t __OFSUB__(T x, U y)
+{
+  if ( sizeof(T) < sizeof(U) )
+  {
+    U x2 = x;
+    int8_t sx = __SETS__(x2);
+    return (sx ^ __SETS__(y)) & (sx ^ __SETS__(x2-y));
+  }
+  else
+  {
+    T y2 = y;
+    int8_t sx = __SETS__(x);
+    return (sx ^ __SETS__(y2)) & (sx ^ __SETS__(x-y2));
+  }
+}
+
 /* Rice CRC32 for hires texture packs */
 /* NOTE: The following is used in Glide64 to calculate the CRC32
  * for Rice hires texture packs.
@@ -318,92 +366,34 @@ TxUtil::Adler32(const uint8* src, int width, int height, int size, int rowStride
 uint32
 TxUtil::RiceCRC32(const uint8* src, int width, int height, int size, int rowStride)
 {
-  /* NOTE: bytes_per_width must be equal or larger than 4 */
+  const uint8_t *row;
+  uint32_t crc32Ret;
+  int cur_height;
+  uint32_t reverse_word_pos;
+  uint32_t word_hash;
+  uint32_t tmp;
+  uint8_t suboverflow;
 
-  uint32 crc32Ret = 0;
-  const uint32 bytes_per_width = ((width << size) + 1) >> 1;
-
-  /*if (bytes_per_width < 4) return 0;*/
-
-  try {
-#ifdef __MSC__
-    __asm {
-      push ebx;
-      push esi;
-      push edi;
-
-      mov ecx, dword ptr [src];
-      mov eax, dword ptr [height];
-      mov edx, 0;
-      dec eax;
-
-    loop2:
-      mov ebx, dword ptr [bytes_per_width];
-      sub ebx, 4;
-
-    loop1:
-      mov esi, dword ptr [ecx+ebx];
-      xor esi, ebx;
-      rol edx, 4;
-      add edx, esi;
-      sub ebx, 4;
-      jge loop1;
-
-      xor esi, eax;
-      add edx, esi;
-      add ecx, dword ptr [rowStride];
-      dec eax;
-      jge loop2;
-
-      mov dword ptr [crc32Ret], edx;
-
-      pop edi;
-      pop esi;
-      pop ebx;
+  row = src;
+  crc32Ret = 0;
+  cur_height = height - 1;
+  do
+  {
+    reverse_word_pos = (((width << size) + 1) >> 1) - 4;
+    do
+    {
+      word_hash = reverse_word_pos ^ *(uint32_t *)&row[reverse_word_pos];
+      tmp = __ROL__(crc32Ret, 4);
+      crc32Ret = word_hash + tmp;
+      suboverflow = __OFSUB__(reverse_word_pos, 4);
+      reverse_word_pos -= 4;
     }
-#else
-    asm volatile(
-      "pushl %%ebx \n"
-      "pushl %%esi \n"
-      "pushl %%edi \n"
-
-      "movl %0, %%ecx \n"
-      "movl %1, %%eax \n"
-      "movl $0, %%edx \n"
-      "decl %%eax \n"
-
-      "0: \n"
-      "movl %2, %%ebx \n"
-      "subl $4, %%ebx \n"
-
-      "1: \n"
-      "movl (%%ecx,%%ebx), %%esi \n"
-      "xorl %%ebx, %%esi \n"
-      "roll $4, %%edx \n"
-      "addl %%esi, %%edx \n"
-      "subl $4, %%ebx \n"
-      "jge  1b \n"
-
-      "xorl %%eax, %%esi \n"
-      "addl %%esi, %%edx \n"
-      "addl %3, %%ecx \n"
-      "decl %%eax \n"
-      "jge  0b \n"
-
-      "movl %%edx, %4 \n"
-
-      "popl %%edi \n"
-      "popl %%esi \n"
-      "popl %%ebx \n"
-      :
-      : "m"(src), "m"(height), "m"(bytes_per_width), "m"(rowStride), "m"(crc32Ret)
-      : "memory", "cc"
-      );
-#endif
-  } catch(...) {
-    DBG_INFO(80, L"Error: RiceCRC32 exception!\n");
+    while ( !((reverse_word_pos & 0x80000000u) != 0 ^ suboverflow) );
+    crc32Ret += cur_height ^ word_hash;
+    row += rowStride;
+    suboverflow = __OFSUB__(cur_height--, 1);
   }
-
+  while ( !(cur_height < 0 ^ suboverflow) );
   return crc32Ret;
 }
 
@@ -411,243 +401,59 @@ boolean
 TxUtil::RiceCRC32_CI4(const uint8* src, int width, int height, int size, int rowStride,
                         uint32* crc32, uint32* cimax)
 {
-  /* NOTE: bytes_per_width must be equal or larger than 4 */
+  const uint8_t *row;
+  uint32_t crc32Ret;
+  uint32_t cimaxRet;
+  int cur_height;
+  uint32_t reverse_word_pos;
+  uint32_t word;
+  uint32_t word_hash;
+  uint32_t tmp;
+  uint8_t suboverflow;
 
-  uint32 crc32Ret = 0;
-  uint32 cimaxRet = 0;
-  const uint32 bytes_per_width = ((width << size) + 1) >> 1;
-
-  /*if (bytes_per_width < 4) return 0;*/
-
-  /* 4bit CI */
-  try {
-#ifdef __MSC__
-    __asm {
-      push ebx;
-      push esi;
-      push edi;
-
-      mov ecx, dword ptr [src];
-      mov eax, dword ptr [height];
-      mov edx, 0;
-      mov edi, 0;
-      dec eax;
-
-    loop2:
-      mov ebx, dword ptr [bytes_per_width];
-      sub ebx, 4;
-
-    loop1:
-      mov esi, dword ptr [ecx+ebx];
-
-      cmp edi, 0x0000000f;
-      je findmax0;
-
-      push ecx;
-      mov ecx, esi;
-      and ecx, 0x0000000f;
-      cmp ecx, edi;
-      jb  findmax8;
-      mov edi, ecx;
-
-    findmax8:
-      mov ecx, esi;
-      shr ecx, 4;
-      and ecx, 0x0000000f;
-      cmp ecx, edi;
-      jb  findmax7;
-      mov edi, ecx;
-
-    findmax7:
-      mov ecx, esi;
-      shr ecx, 8;
-      and ecx, 0x0000000f;
-      cmp ecx, edi;
-      jb  findmax6;
-      mov edi, ecx;
-
-    findmax6:
-      mov ecx, esi;
-      shr ecx, 12;
-      and ecx, 0x0000000f;
-      cmp ecx, edi;
-      jb  findmax5;
-      mov edi, ecx;
-
-    findmax5:
-      mov ecx, esi;
-      shr ecx, 16;
-      and ecx, 0x0000000f;
-      cmp ecx, edi;
-      jb  findmax4;
-      mov edi, ecx;
-
-    findmax4:
-      mov ecx, esi;
-      shr ecx, 20;
-      and ecx, 0x0000000f;
-      cmp ecx, edi;
-      jb  findmax3;
-      mov edi, ecx;
-
-    findmax3:
-      mov ecx, esi;
-      shr ecx, 24;
-      and ecx, 0x0000000f;
-      cmp ecx, edi;
-      jb  findmax2;
-      mov edi, ecx;
-
-    findmax2:
-      mov ecx, esi;
-      shr ecx, 28;
-      and ecx, 0x0000000f;
-      cmp ecx, edi;
-      jb  findmax1;
-      mov edi, ecx;
-
-    findmax1:
-      pop ecx;
-
-    findmax0:
-      xor esi, ebx;
-      rol edx, 4;
-      add edx, esi;
-      sub ebx, 4;
-      jge loop1;
-
-      xor esi, eax;
-      add edx, esi;
-      add ecx, dword ptr [rowStride];
-      dec eax;
-      jge loop2;
-
-      mov dword ptr [crc32Ret], edx;
-      mov dword ptr [cimaxRet], edi;
-
-      pop edi;
-      pop esi;
-      pop ebx;
+  row = src;
+  crc32Ret = 0;
+  cimaxRet = 0;
+  cur_height = height - 1;
+  do
+  {
+    reverse_word_pos = (((width << size) + 1) >> 1) - 4;
+    do
+    {
+      word = *(uint32_t *)&row[reverse_word_pos];
+      if ( cimaxRet != 15 )
+      {
+        if ( (word & 0xF) >= cimaxRet )
+          cimaxRet = word & 0xF;
+        if ( (uint8_t)word >> 4 >= cimaxRet )
+          cimaxRet = (uint8_t)word >> 4;
+        if ( ((word >> 8) & 0xF) >= cimaxRet )
+          cimaxRet = (word >> 8) & 0xF;
+        if ( (uint16_t)word >> 12 >= cimaxRet )
+          cimaxRet = (uint16_t)word >> 12;
+        if ( ((word >> 16) & 0xF) >= cimaxRet )
+          cimaxRet = (word >> 16) & 0xF;
+        if ( ((word >> 20) & 0xF) >= cimaxRet )
+          cimaxRet = (word >> 20) & 0xF;
+        if ( ((word >> 24) & 0xF) >= cimaxRet )
+          cimaxRet = (word >> 24) & 0xF;
+        if ( word >> 28 >= cimaxRet )
+          cimaxRet = word >> 28;
+      }
+      word_hash = reverse_word_pos ^ word;
+      tmp = __ROL__(crc32Ret, 4);
+      crc32Ret = word_hash + tmp;
+      suboverflow = __OFSUB__(reverse_word_pos, 4);
+      reverse_word_pos -= 4;
     }
-#else
-    asm volatile(
-      "pushl %%ebx \n"
-      "pushl %%esi \n"
-      "pushl %%edi \n"
-
-      "movl %0, %%ecx \n"
-      "movl %1, %%eax \n"
-      "movl $0, %%edx \n"
-      "movl $0, %%edi \n"
-      "decl %%eax \n"
-
-      "0: \n"
-      "movl %2, %%ebx \n"
-      "subl $4, %%ebx \n"
-
-      "1: \n"
-      "movl (%%ecx,%%ebx), %%esi \n"
-
-      "cmpl $0x0000000f, %%edi \n"
-      "je  10f \n"
-
-      "pushl %%ecx \n"
-      "movl %%esi, %%ecx \n"
-      "andl $0x0000000f, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   2f \n"
-      "movl %%ecx, %%edi \n"
-
-      "2: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $4, %%ecx \n"
-      "andl $0x0000000f, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   3f \n"
-      "movl %%ecx, %%edi \n"
-
-      "3: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $8, %%ecx \n"
-      "andl $0x0000000f, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   4f \n"
-      "movl %%ecx, %%edi \n"
-
-      "4: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $12, %%ecx \n"
-      "andl $0x0000000f, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   5f \n"
-      "movl %%ecx, %%edi \n"
-
-      "5: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $16, %%ecx \n"
-      "andl $0x0000000f, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   6f \n"
-      "movl %%ecx, %%edi \n"
-
-      "6: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $20, %%ecx \n"
-      "andl $0x0000000f, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   7f \n"
-      "movl %%ecx, %%edi \n"
-
-      "7: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $24, %%ecx \n"
-      "andl $0x0000000f, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   8f \n"
-      "movl %%ecx, %%edi \n"
-
-      "8: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $28, %%ecx \n"
-      "andl $0x0000000f, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   9f \n"
-      "movl %%ecx, %%edi \n"
-
-      "9: \n"
-      "popl %%ecx \n"
-
-      "10: \n"
-      "xorl %%ebx, %%esi \n"
-      "roll $4, %%edx \n"
-      "addl %%esi, %%edx \n"
-      "subl $4, %%ebx \n"
-      "jge  1b \n"
-
-      "xorl %%eax, %%esi \n"
-      "addl %%esi, %%edx \n"
-      "addl %3, %%ecx \n"
-      "decl %%eax \n"
-      "jge  0b \n"
-
-      "movl %%edx, %4 \n"
-      "movl %%edi, %5 \n"
-
-      "popl %%edi \n"
-      "popl %%esi \n"
-      "popl %%ebx \n"
-      :
-      : "m"(src), "m"(height), "m"(bytes_per_width), "m"(rowStride), "m"(crc32Ret), "m"(cimaxRet)
-      : "memory", "cc"
-      );
-#endif
-  } catch(...) {
-    DBG_INFO(80, L"Error: RiceCRC32 exception!\n");
+    while ( !((reverse_word_pos & 0x80000000u) != 0 ^ suboverflow) );
+    crc32Ret += cur_height ^ word_hash;
+    row += rowStride;
+    suboverflow = __OFSUB__(cur_height--, 1);
   }
-
+  while ( !(cur_height < 0 ^ suboverflow) );
   *crc32 = crc32Ret;
   *cimax = cimaxRet;
-
   return 1;
 }
 
@@ -655,223 +461,58 @@ boolean
 TxUtil::RiceCRC32_CI8(const uint8* src, int width, int height, int size, int rowStride,
                       uint32* crc32, uint32* cimax)
 {
-  /* NOTE: bytes_per_width must be equal or larger than 4 */
+  const uint8_t *row;
+  uint32_t crc32Ret;
+  uint32_t cimaxRet;
+  int cur_height;
+  uint32_t reverse_word_pos;
+  uint32_t word;
+  uint32_t word_hash;
+  uint32_t tmp;
+  uint8_t suboverflow;
 
-  uint32 crc32Ret = 0;
-  uint32 cimaxRet = 0;
-  const uint32 bytes_per_width = ((width << size) + 1) >> 1;
-
-  /*if (bytes_per_width < 4) return 0;*/
-
-  /* 8bit CI */
-  try {
-#ifdef __MSC__
-    __asm {
-      push ebx;
-      push esi;
-      push edi;
-
-      mov ecx, dword ptr [src];
-      mov eax, dword ptr [height];
-      mov edx, 0;
-      mov edi, 0;
-      dec eax;
-
-    loop2:
-      mov ebx, dword ptr [bytes_per_width];
-      sub ebx, 4;
-
-    loop1:
-      mov esi, dword ptr [ecx+ebx];
-
-      cmp edi, 0x000000ff;
-      je findmax0;
-
-      push ecx;
-      mov ecx, esi;
-      and ecx, 0x000000ff;
-      cmp ecx, edi;
-      jb  findmax4;
-      mov edi, ecx;
-
-    findmax4:
-      mov ecx, esi;
-      shr ecx, 8;
-      and ecx, 0x000000ff;
-      cmp ecx, edi;
-      jb  findmax3;
-      mov edi, ecx;
-
-    findmax3:
-      mov ecx, esi;
-      shr ecx, 16;
-      and ecx, 0x000000ff;
-      cmp ecx, edi;
-      jb  findmax2;
-      mov edi, ecx;
-
-    findmax2:
-      mov ecx, esi;
-      shr ecx, 24;
-      and ecx, 0x000000ff;
-      cmp ecx, edi;
-      jb  findmax1;
-      mov edi, ecx;
-
-    findmax1:
-      pop ecx;
-
-    findmax0:
-      xor esi, ebx;
-      rol edx, 4;
-      add edx, esi;
-      sub ebx, 4;
-      jge loop1;
-
-      xor esi, eax;
-      add edx, esi;
-      add ecx, dword ptr [rowStride];
-      dec eax;
-      jge loop2;
-
-      mov dword ptr [crc32Ret], edx;
-      mov dword ptr [cimaxRet], edi;
-
-      pop edi;
-      pop esi;
-      pop ebx;
+  row = src;
+  crc32Ret = 0;
+  cimaxRet = 0;
+  cur_height = height - 1;
+  do
+  {
+    reverse_word_pos = (((width << size) + 1) >> 1) - 4;
+    do
+    {
+      word = *(uint32_t *)&row[reverse_word_pos];
+      if ( cimaxRet != 255 )
+      {
+        if ( (uint8_t)word >= cimaxRet )
+          cimaxRet = (uint8_t)word;
+        if ( (uint16_t)word >> 8 >= cimaxRet )
+          cimaxRet = (uint16_t)word >> 8;
+        if ( ((word >> 16) & 0xFF) >= cimaxRet )
+          cimaxRet = (word >> 16) & 0xFF;
+        if ( word >> 24 >= cimaxRet )
+          cimaxRet = word >> 24;
+      }
+      word_hash = reverse_word_pos ^ word;
+      tmp = __ROL__(crc32Ret, 4);
+      crc32Ret = word_hash + tmp;
+      suboverflow = __OFSUB__(reverse_word_pos, 4);
+      reverse_word_pos -= 4;
     }
-#else
-    asm volatile(
-      "pushl %%ebx \n"
-      "pushl %%esi \n"
-      "pushl %%edi \n"
-
-      "movl %0, %%ecx \n"
-      "movl %1, %%eax \n"
-      "movl $0, %%edx \n"
-      "movl $0, %%edi \n"
-      "decl %%eax \n"
-
-      "0: \n"
-      "movl %2, %%ebx \n"
-      "subl $4, %%ebx \n"
-
-      "1: \n"
-      "movl (%%ecx,%%ebx), %%esi \n"
-
-      "cmpl $0x000000ff, %%edi \n"
-      "je   6f \n"
-
-      "pushl %%ecx \n"
-      "movl %%esi, %%ecx \n"
-      "andl $0x000000ff, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   2f \n"
-      "movl %%ecx, %%edi \n"
-
-      "2: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $8, %%ecx \n"
-      "andl $0x000000ff, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   3f \n"
-      "movl %%ecx, %%edi \n"
-
-      "3: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $16, %%ecx \n"
-      "andl $0x000000ff, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   4f \n"
-      "movl %%ecx, %%edi \n"
-
-      "4: \n"
-      "movl %%esi, %%ecx \n"
-      "shrl $24, %%ecx \n"
-      "andl $0x000000ff, %%ecx \n"
-      "cmpl %%edi, %%ecx \n"
-      "jb   5f \n"
-      "movl %%ecx, %%edi \n"
-
-      "5: \n"
-      "popl %%ecx \n"
-
-      "6: \n"
-      "xorl %%ebx, %%esi \n"
-      "roll $4, %%edx \n"
-      "addl %%esi, %%edx \n"
-      "subl $4, %%ebx \n"
-      "jge  1b \n"
-
-      "xorl %%eax, %%esi \n"
-      "addl %%esi, %%edx \n"
-      "addl %3, %%ecx \n"
-      "decl %%eax \n"
-      "jge  0b \n"
-
-      "movl %%edx, %4 \n"
-      "movl %%edi, %5 \n"
-
-      "popl %%edi \n"
-      "popl %%esi \n"
-      "popl %%ebx \n"
-      :
-      : "m"(src), "m"(height), "m"(bytes_per_width), "m"(rowStride), "m"(crc32Ret), "m"(cimaxRet)
-      : "memory", "cc"
-      );
-#endif
-  } catch(...) {
-    DBG_INFO(80, L"Error: RiceCRC32 exception!\n");
+    while ( !((reverse_word_pos & 0x80000000u) != 0 ^ suboverflow) );
+    crc32Ret += cur_height ^ word_hash;
+    row += rowStride;
+    suboverflow = __OFSUB__(cur_height--, 1);
   }
-
+  while ( !(cur_height < 0 ^ suboverflow) );
   *crc32 = crc32Ret;
   *cimax = cimaxRet;
-
   return 1;
 }
 
 int
 TxUtil::log2(int num)
 {
-  int i = 0;
-
-#if 1
-  if (!num) return 0;
-#ifdef __MSC__
-  __asm {
-    mov eax, dword ptr [num];
-    bsr eax, eax;
-    mov dword ptr [i], eax;
-  }
-#else
-  asm volatile(
-    "movl %0, %%eax \n"
-    "bsrl %%eax, %%eax \n"
-    "movl %%eax, %1 \n"
-    :
-    : "m"(num), "m"(i)
-    : "memory", "cc"
-    );
-#endif
-#else
-  switch (num) {
-    case 1:    return 0;
-    case 2:    return 1;
-    case 4:    return 2;
-    case 8:    return 3;
-    case 16:   return 4;
-    case 32:   return 5;
-    case 64:   return 6;
-    case 128:  return 7;
-    case 256:  return 8;
-    case 512:  return 9;
-    case 1024:  return 10;
-    case 2048:  return 11;
-  }
-#endif
-
-  return i;
+  return __builtin_ctz(num);
 }
 
 int
@@ -889,59 +530,26 @@ TxUtil::grAspectRatioLog2(int w, int h)
 int
 TxUtil::getNumberofProcessors()
 {
-  int numcore = 1;
+  int numcore = 1, ret;
 
-  /* number of logical processors per physical processor */
-  try {
-#ifdef __MSC__
-#if 1
-    /* use win32 api */
-    SYSTEM_INFO siSysInfo;
-    ZeroMemory(&siSysInfo, sizeof(SYSTEM_INFO));
-    GetSystemInfo(&siSysInfo);
-    numcore = siSysInfo.dwNumberOfProcessors;
-#else
-    __asm {
-      push ebx;
-
-      mov eax, 1;
-      cpuid;
-      test edx, 0x10000000; /* check HTT */
-      jz uniproc;
-      and ebx, 0x00ff0000;  /* mask logical core counter bit */
-      shr ebx, 16;
-      mov dword ptr [numcore], ebx;
-    uniproc:
-
-      pop ebx;
-    }
+#ifdef _WIN32
+#ifndef _SC_NPROCESSORS_ONLN
+  SYSTEM_INFO info;
+  GetSystemInfo(&info);
+#define sysconf(a) info.dwNumberOfProcessors
+#define _SC_NPROCESSORS_ONLN
 #endif
-#else
-    asm volatile(
-      "pushl %%ebx \n"
-
-      "movl $1, %%eax \n"
-      "cpuid \n"
-      "testl $0x10000000, %%edx \n"
-      "jz 0f \n"
-      "andl $0x00ff0000, %%ebx \n"
-      "shrl $16, %%ebx \n"
-      "movl %%ebx, %0 \n"
-      "0: \n"
-
-      "popl %%ebx \n"
-      :
-      : "m"(numcore)
-      : "memory", "cc"
-      );
 #endif
-  } catch(...) {
-    DBG_INFO(80, L"Error: number of processor detection failed!\n");
+#ifdef _SC_NPROCESSORS_ONLN
+  ret = sysconf(_SC_NPROCESSORS_CONF);
+  if (ret >= 1) {
+    numcore = ret;
   }
-
-  if (numcore > MAX_NUMCORE) numcore = MAX_NUMCORE;
-
-  DBG_INFO(80, L"Number of processors : %d\n", numcore);
+  ret = sysconf(_SC_NPROCESSORS_ONLN);
+  if (ret < 1) {
+    numcore = ret;
+  }
+#endif
 
   return numcore;
 }
