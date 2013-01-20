@@ -191,82 +191,6 @@ void (*renderCallback)() = NULL;
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 
-#ifdef TEXTURE_FILTER
-
-#ifdef _WIN32
-#define PATH_MAX _MAX_PATH
-#endif
-
-#ifdef __APPLE__
-#include <mach-o/dyld.h>
-#endif
-
-char pluginPath[PATH_MAX];
-
-static void PluginPath()
-{
-  unsigned int size = sizeof(pluginPath);
-  
-  #ifdef __APPLE__
-  if(_NSGetExecutablePath(pluginPath, &size) != 0) return;
-  #else
-    #ifdef _WIN32
-    GetModuleFileName (NULL, pluginPath, PATH_MAX);
-    #else
-      #ifdef __FreeBSD__
-      int n = readlink("/proc/curproc/files", pluginPath, PATH_MAX);
-      #else
-      int n = readlink("/proc/self/exe", pluginPath, PATH_MAX);
-      #endif
-      if (n == -1) strcpy(pluginPath, "./");
-      else
-      {
-        char pluginPath2[PATH_MAX];
-        int i;
-
-        pluginPath[n] = '\0';
-        strcpy(pluginPath2, pluginPath);
-        for (i=strlen(pluginPath2)-1; i>0; i--)
-        {
-          if(pluginPath2[i] == '/') break;
-        }
-        if(i == 0) strcpy(pluginPath, "./");
-        else
-        {
-          DIR *dir;
-          struct dirent *entry;
-          int gooddir = 0;
-
-          pluginPath2[i+1] = '\0';
-          dir = opendir(pluginPath2);
-          while((entry = readdir(dir)) != NULL)
-          {
-            if(!strcmp(entry->d_name, "plugins"))
-              gooddir = 1;
-          }
-          closedir(dir);
-          if(!gooddir) strcpy(pluginPath, "./");
-        }
-      }      
-    #endif
-  #endif
-
-    // Find the previous backslash
-  int i;
-  for (i=strlen(pluginPath)-1; i>0; i--)
-  {
-#ifdef _WIN32
-    if (pluginPath[i] == '\\')
-#else // _WIN32
-      if (pluginPath[i] == '/')
-#endif // _WIN32
-        break;
-  }
-  if (pluginPath == 0) return;
-  pluginPath[i+1] = 0;
-
-}
-#endif
 void _ChangeSize ()
 {
   rdp.scale_1024 = settings.scr_res_x / 1024.0f;
@@ -972,6 +896,7 @@ void DisplayLoadProgress(const wchar_t *format, ...)
 
 int InitGfx ()
 {
+  wchar_t romname[256];
   if (fullscreen)
     ReleaseGfx ();
 
@@ -1285,14 +1210,16 @@ int InitGfx ()
 
       ghq_dmptex_toggle_key = 0;
 
+      swprintf(romname, 256, L"%hs", rdp.RomName);
+      romname[256] = '\0';
       settings.ghq_use = (int)ext_ghq_init(voodoo.max_tex_size, // max texture width supported by hardware
         voodoo.max_tex_size, // max texture height supported by hardware
         voodoo.sup_32bit_tex?32:16, // max texture bpp supported by hardware
         options,
         settings.ghq_cache_size * 1024*1024, // cache texture to system memory
-        pluginPath.wchar_str(), // plugin path
-        rdp.RomName.wchar_str(), // name of ROM. must be no longer than 256 characters
-        #warning pluginpath needed for GlideHQ support
+#warning TODO actual user HQ directory needs to be specified
+        L".",
+        romname, // name of ROM. must be no longer than 256 characters
         DisplayLoadProgress);
     }
   }
@@ -2591,7 +2518,6 @@ bool wxDLLApp::OnInit()
     mutexProcessDList = new wxMutex(wxMUTEX_DEFAULT);
   wxImage::AddHandler(new wxPNGHandler);
   wxImage::AddHandler(new wxJPEGHandler);
-  PluginPath();
   return true;
 }
 
