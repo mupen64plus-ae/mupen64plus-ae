@@ -60,6 +60,10 @@ typedef FxU8  GrFog_t;
 typedef FxU32 GrContext_t;
 typedef int (FX_CALL *GrProc)();
 
+#ifndef WIN32
+typedef int HWND;
+#endif
+
 /*
 ** -----------------------------------------------------------------------
 ** CONSTANTS AND TYPES
@@ -617,7 +621,7 @@ grFlush(void);
 
 FX_ENTRY GrContext_t FX_CALL 
 grSstWinOpen(
-          FxU32                hWnd,
+          HWND                 hWnd,
           GrScreenResolution_t screen_resolution,
           GrScreenRefresh_t    refresh_rate,
           GrColorFormat_t      color_format,

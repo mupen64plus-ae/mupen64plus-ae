@@ -211,7 +211,7 @@ static void PluginPath()
   if(_NSGetExecutablePath(pluginPath, &size) != 0) return;
   #else
     #ifdef _WIN32
-    GetModuleFileName (hInstance, pluginPath, PATH_MAX);
+    GetModuleFileName (NULL, pluginPath, PATH_MAX);
     #else
       #ifdef __FreeBSD__
       int n = readlink("/proc/curproc/files", pluginPath, PATH_MAX);

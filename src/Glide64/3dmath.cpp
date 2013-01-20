@@ -37,12 +37,14 @@
 //
 //****************************************************************
 
+#include "Gfx #1.3.h"
+extern "C" {
 #ifndef NOSSE
 #include <xmmintrin.h>
 #endif
+}
 
 #include <math.h>
-#include "Gfx #1.3.h"
 #include "3dmath.h"
 
 void calc_light (VERTEX *v)

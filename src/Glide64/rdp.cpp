@@ -647,7 +647,7 @@ EXPORT void CALL ProcessDList(void)
   if (!hhkLowLevelKybd)
   {
     hhkLowLevelKybd = SetWindowsHookEx(WH_KEYBOARD_LL,
-      LowLevelKeyboardProc, hInstance, 0);
+      LowLevelKeyboardProc, NULL, 0);
   }
 #endif
 
@@ -1828,9 +1828,9 @@ void setTBufTex(wxUint16 t_mem, wxUint32 cnt)
 }
 
 // rotate left
-template<class T> static T __ROL__(T value, uint count)
+template<class T> static T __ROL__(T value, unsigned int count)
 {
-  const uint nbits = sizeof(T) * 8;
+  const unsigned int nbits = sizeof(T) * 8;
   count %= nbits;
 
   T high = value >> (nbits - count);

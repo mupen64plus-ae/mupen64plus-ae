@@ -46,6 +46,8 @@
 #include <string.h>
 #include <dirent.h>
 #include <stdlib.h>
+#else
+#include <io.h>
 #endif // _WIN32
 
 #include <errno.h>
@@ -137,7 +139,7 @@ BOOL INI_Open ()
     else
     {
 #ifdef _WIN32
-    GetModuleFileName (hInstance, path, PATH_MAX);
+    GetModuleFileName (NULL, path, PATH_MAX);
 #else // _WIN32
 # ifdef __FreeBSD__
    int n = readlink("/proc/curproc/files", path, PATH_MAX);

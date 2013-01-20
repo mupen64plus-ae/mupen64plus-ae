@@ -46,9 +46,9 @@ extern "C" void asmLoad4bI(uint8_t *src, uint8_t *dst, int wid_64, int height, i
 
 #define ALOWORD(x)   (*((uint16_t*)&(x)))   // low word
 
-template<class T> static inline T __ROR__(T value, uint count)
+template<class T> static inline T __ROR__(T value, unsigned int count)
 {
-  const uint nbits = sizeof(T) * 8;
+  const unsigned int nbits = sizeof(T) * 8;
   count %= nbits;
 
   T low = value << (nbits - count);

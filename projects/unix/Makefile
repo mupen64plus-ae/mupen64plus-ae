@@ -309,7 +309,6 @@ SOURCE = \
 	$(SRCDIR)/Glitch64/geometry.cpp \
 	$(SRCDIR)/Glitch64/main.cpp \
 	$(SRCDIR)/Glitch64/textures.cpp \
-	$(SRCDIR)/Glitch64/vram.cpp \
 	$(SRCDIR)/Glide64/3dmath.cpp \
 	$(SRCDIR)/Glide64/Combine.cpp \
 	$(SRCDIR)/Glide64/Config.cpp \

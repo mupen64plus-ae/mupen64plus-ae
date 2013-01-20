@@ -7,22 +7,22 @@
 
 #define _T(x) x
 
-#ifndef WIN32
+#if !defined(WIN32) || defined(__GNUC__)
 
 #include <stdint.h>
 
 
 typedef int BOOL;
-typedef unsigned int wxUint32;
-typedef unsigned short wxUint16;
-typedef unsigned char wxUint8;
-typedef unsigned char BYTE;
+typedef uint32_t wxUint32;
+typedef uint16_t wxUint16;
+typedef uint8_t wxUint8;
+typedef uint8_t BYTE;
 typedef long long LONGLONG;
 
 
-typedef int wxInt32;
-typedef short wxInt16;
-typedef char wxInt8;
+typedef int32_t wxInt32;
+typedef int16_t wxInt16;
+typedef int8_t wxInt8;
 
 typedef uint64_t wxUint64;
 typedef int64_t wxInt64;
@@ -30,6 +30,24 @@ typedef int64_t wxInt64;
 typedef unsigned char wxChar;
 typedef uintptr_t wxUIntPtr;
 
+#else
+
+typedef DWORD wxUint32;
+typedef WORD wxUint16;
+typedef BYTE wxUint8;
+
+typedef int wxInt32;
+typedef short wxInt16;
+typedef char wxInt8;
+
+
+typedef BYTE char wxChar;
+typedef uintptr_t wxUIntPtr;
+
+#endif
+
+
+#ifndef WIN32
 
 typedef union _LARGE_INTEGER
 {
@@ -47,20 +65,6 @@ typedef union _LARGE_INTEGER
 } LARGE_INTEGER, *PLARGE_INTEGER;
 
 #define WINAPI
-
-#else
-
-typedef DWORD wxUint32;
-typedef WORD wxUint16;
-typedef BYTE wxUint8;
-
-typedef int wxInt32;
-typedef short wxInt16;
-typedef char wxInt8;
-
-
-typedef BYTE char wxChar;
-typedef uintptr_t wxUIntPtr;
 
 #endif
 
