@@ -631,12 +631,17 @@ extern "C" {
 
 EXPORT void CALL ProcessDList(void)
 {
+  // TODO add SoftLocker
+  //SoftLocker lock(mutexProcessDList);
+  //if (!lock.IsOk()) //mutex is busy
+  if (0)
   {
     if (!fullscreen)
       drawNoFullscreenMessage();
     // Set an interrupt to allow the game to continue
     *gfx.MI_INTR_REG |= 0x20;
     gfx.CheckInterrupts();
+    return;
   }
 
   no_dlist = false;
@@ -4253,13 +4258,17 @@ EXPORT void CALL ProcessRDPList(void)
   LOG ("ProcessRDPList ()\n");
   LRDP("ProcessRDPList ()\n");
 
+  // TODO add SoftLocker
+  //SoftLocker lock(mutexProcessDList);
+  //if (!lock.IsOk()) //mutex is busy
+  if (0)
   {
     if (!fullscreen)
       drawNoFullscreenMessage();
     // Set an interrupt to allow the game to continue
     *gfx.MI_INTR_REG |= 0x20;
     gfx.CheckInterrupts();
-    //return;
+    return;
   }
 
   wxUint32 i;
