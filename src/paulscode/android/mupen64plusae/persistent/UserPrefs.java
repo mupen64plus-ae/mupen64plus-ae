@@ -239,7 +239,7 @@ public class UserPrefs
     private static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     // ... add more as needed
     
-    private final SharedPreferences prefsData;
+    private final SharedPreferences mPreferences;
     
     /**
      * Instantiates a new user preferences wrapper.
@@ -249,11 +249,11 @@ public class UserPrefs
     public UserPrefs( Context context )
     {
         AppData appData = new AppData( context );
-        prefsData = PreferenceManager.getDefaultSharedPreferences( context );
+        mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Files
-        selectedGame = prefsData.getString( "pathSelectedGame", "" );
-        gameSaveDir = prefsData.getString( "pathGameSaves", "" );
+        selectedGame = mPreferences.getString( "pathSelectedGame", "" );
+        gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
         slotSaveDir = gameSaveDir + "/SlotSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         File game = new File( selectedGame );
@@ -261,78 +261,78 @@ public class UserPrefs
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
         
         // Plug-ins
-        videoPlugin = new Plugin( prefsData, appData.libsDir, "pluginVideo" );
-        audioPlugin = new Plugin( prefsData, appData.libsDir, "pluginAudio" );
-        inputPlugin = new Plugin( prefsData, appData.libsDir, "pluginInput" );
-        rspPlugin = new Plugin( prefsData, appData.libsDir, "pluginRsp" );
-        corePlugin = new Plugin( prefsData, appData.libsDir, "pluginCore" );
+        videoPlugin = new Plugin( mPreferences, appData.libsDir, "pluginVideo" );
+        audioPlugin = new Plugin( mPreferences, appData.libsDir, "pluginAudio" );
+        inputPlugin = new Plugin( mPreferences, appData.libsDir, "pluginInput" );
+        rspPlugin = new Plugin( mPreferences, appData.libsDir, "pluginRsp" );
+        corePlugin = new Plugin( mPreferences, appData.libsDir, "pluginCore" );
         
         // Play menu
-        isCheatOptionsShown = prefsData.getBoolean( "playShowCheats", false );
+        isCheatOptionsShown = mPreferences.getBoolean( "playShowCheats", false );
         
         // Touchscreen prefs
-        isTouchscreenEnabled = prefsData.getBoolean( "touchscreenEnabled", true );
-        touchscreenRefresh = getSafeInt( prefsData, "touchscreenRefresh", 0 );
-        int transparencyPercent = prefsData.getInt( "touchscreenTransparency", 100 );
+        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
+        touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
+        int transparencyPercent = mPreferences.getInt( "touchscreenTransparency", 100 );
         isTouchscreenHidden = transparencyPercent == 0;
         touchscreenTransparency = ( 255 * transparencyPercent ) / 100;
         
         // Xperia PLAY touchpad prefs
-        isTouchpadEnabled = prefsData.getBoolean( "touchpadEnabled", false );
-        touchpadLayout = appData.touchpadLayoutsDir + prefsData.getString( "touchpadLayout", "" );
+        isTouchpadEnabled = mPreferences.getBoolean( "touchpadEnabled", false );
+        touchpadLayout = appData.touchpadLayoutsDir + mPreferences.getString( "touchpadLayout", "" );
         
         // Controller prefs
-        playerMap = new PlayerMap( prefsData.getString( "playerMap", "" ) );
-        inputMap1 = new InputMap( prefsData.getString( "inputMap1", "" ) );
-        inputMap2 = new InputMap( prefsData.getString( "inputMap2", "" ) );
-        inputMap3 = new InputMap( prefsData.getString( "inputMap3", "" ) );
-        inputMap4 = new InputMap( prefsData.getString( "inputMap4", "" ) );
+        playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
+        inputMap1 = new InputMap( mPreferences.getString( "inputMap1", "" ) );
+        inputMap2 = new InputMap( mPreferences.getString( "inputMap2", "" ) );
+        inputMap3 = new InputMap( mPreferences.getString( "inputMap3", "" ) );
+        inputMap4 = new InputMap( mPreferences.getString( "inputMap4", "" ) );
         
         // Input prefs
-        isOctagonalJoystick = prefsData.getBoolean( "inputOctagonConstraints", true );
+        isOctagonalJoystick = mPreferences.getBoolean( "inputOctagonConstraints", true );
         
         // Video prefs
-        videoOrientation = getSafeInt( prefsData, "videoOrientation", 0 );
-        videoFpsRefresh = getSafeInt( prefsData, "videoFpsRefresh", 0 );
+        videoOrientation = getSafeInt( mPreferences, "videoOrientation", 0 );
+        videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
         isFpsEnabled = videoFpsRefresh > 0;
-        videoHardwareType = getSafeInt( prefsData, "videoHardwareType", -1 );
-        isStretched = prefsData.getBoolean( "videoStretch", false );
-        isRgba8888 = prefsData.getBoolean( "videoRgba8888", false );
-        isFramelimiterEnabled = prefsData.getBoolean( "videoUseFramelimiter", false );
+        videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
+        isStretched = mPreferences.getBoolean( "videoStretch", false );
+        isRgba8888 = mPreferences.getBoolean( "videoRgba8888", false );
+        isFramelimiterEnabled = mPreferences.getBoolean( "videoUseFramelimiter", false );
         
         // Video prefs - gles2n64
         isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
-        int maxFrameskip = getSafeInt( prefsData, "gles2N64Frameskip", 0 );
+        int maxFrameskip = getSafeInt( mPreferences, "gles2N64Frameskip", 0 );
         isGles2N64AutoFrameskipEnabled = maxFrameskip < 0;
         gles2N64MaxFrameskip = Math.abs( maxFrameskip );
-        isGles2N64FogEnabled = prefsData.getBoolean( "gles2N64Fog", false );
-        isGles2N64SaiEnabled = prefsData.getBoolean( "gles2N64Sai", false );
-        isGles2N64ScreenClearEnabled = prefsData.getBoolean( "gles2N64ScreenClear", true );
-        isGles2N64AlphaTestEnabled = prefsData.getBoolean( "gles2N64AlphaTest", true );
-        isGles2N64DepthTestEnabled = prefsData.getBoolean( "gles2N64DepthTest", true );
+        isGles2N64FogEnabled = mPreferences.getBoolean( "gles2N64Fog", false );
+        isGles2N64SaiEnabled = mPreferences.getBoolean( "gles2N64Sai", false );
+        isGles2N64ScreenClearEnabled = mPreferences.getBoolean( "gles2N64ScreenClear", true );
+        isGles2N64AlphaTestEnabled = mPreferences.getBoolean( "gles2N64AlphaTest", true );
+        isGles2N64DepthTestEnabled = mPreferences.getBoolean( "gles2N64DepthTest", true );
         
         // Video prefs - gles2rice
         isGles2RiceEnabled = videoPlugin.name.equals( "libgles2rice.so" );
-        isGles2RiceAutoFrameskipEnabled = prefsData.getBoolean( "gles2RiceAutoFrameskip", false );
-        isGles2RiceFastTextureCrcEnabled = prefsData.getBoolean( "gles2RiceFastTextureCrc", true );
-        isGles2RiceFastTextureLoadingEnabled = prefsData.getBoolean( "gles2RiceFastTexture", false );
-        isGles2RiceForceTextureFilterEnabled = prefsData.getBoolean( "gles2RiceForceTextureFilter", false );
-        isGles2RiceHiResTexturesEnabled = prefsData.getBoolean( "gles2RiceHiResTextures", true );
+        isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
+        isGles2RiceFastTextureCrcEnabled = mPreferences.getBoolean( "gles2RiceFastTextureCrc", true );
+        isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
+        isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
+        isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
         
         // Audio prefs
-        audioSwapChannels = prefsData.getBoolean( "audioSwapChannels", false );
-        audioResampleAlg = prefsData.getString( "audioResampleAlg", "trivial" );
+        audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
+        audioResampleAlg = mPreferences.getString( "audioResampleAlg", "trivial" );
         
         // Determine the touchscreen layout
         boolean isCustom = false;
         String folder = "";
         if( inputPlugin.enabled && isTouchscreenEnabled )
         {
-            String layout = prefsData.getString( "touchscreenLayout", "" );
+            String layout = mPreferences.getString( "touchscreenLayout", "" );
             if( layout.equals( "Custom" ) )
             {
                 isCustom = true;
-                folder = prefsData.getString( "pathCustomTouchscreen", "" );
+                folder = mPreferences.getString( "pathCustomTouchscreen", "" );
             }
             else
             {
@@ -341,7 +341,7 @@ public class UserPrefs
                     layout = "Mupen64Plus-AE-Touch";
                 
                 folder = appData.touchscreenLayoutsDir + layout
-                        + prefsData.getString( "touchscreenSize", "" );
+                        + mPreferences.getString( "touchscreenSize", "" );
             }
         }
         else if( isFpsEnabled )
@@ -364,11 +364,11 @@ public class UserPrefs
         numControllers += inputMap2.isEnabled() ? 1 : 0;
         numControllers += inputMap3.isEnabled() ? 1 : 0;
         numControllers += inputMap4.isEnabled() ? 1 : 0;
-        boolean isControllerShared = prefsData.getBoolean( "inputShareController", false );
+        boolean isControllerShared = mPreferences.getBoolean( "inputShareController", false );
         playerMap.setEnabled( numControllers > 1 && !isControllerShared );
         
         // Determine the key codes that should not be mapped to controls
-        boolean volKeysMappable = prefsData.getBoolean( "inputVolumeMappable", false );
+        boolean volKeysMappable = mPreferences.getBoolean( "inputVolumeMappable", false );
         List<Integer> unmappables = new ArrayList<Integer>();
         unmappables.add( KeyEvent.KEYCODE_MENU );
         if( AppData.IS_HONEYCOMB )
@@ -388,13 +388,13 @@ public class UserPrefs
     public boolean getSpecialVisibility( int player )
     {
         String key = String.format( Locale.US, KEYTEMPLATE_SPECIAL_VISIBILITY, player );
-        return prefsData.getBoolean( key, DEFAULT_SPECIAL_VISIBILITY );
+        return mPreferences.getBoolean( key, DEFAULT_SPECIAL_VISIBILITY );
     }
     
     public String getMapString( int player )
     {
         String key = String.format( Locale.US, KEYTEMPLATE_MAP_STRING, player );
-        return prefsData.getString( key, DEFAULT_MAP_STRING );
+        return mPreferences.getString( key, DEFAULT_MAP_STRING );
     }
     
     public void putSpecialVisibility( int player, boolean value )
@@ -411,12 +411,12 @@ public class UserPrefs
     
     private void putBoolean( String key, boolean value )
     {
-        prefsData.edit().putBoolean( key, value ).commit();
+        mPreferences.edit().putBoolean( key, value ).commit();
     }
     
     private void putString( String key, String value )
     {
-        prefsData.edit().putString( key, value ).commit();
+        mPreferences.edit().putString( key, value ).commit();
     }
     
     /**
