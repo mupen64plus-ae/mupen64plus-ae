@@ -24,6 +24,7 @@
 package paulscode.android.mupen64plusae.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +61,8 @@ public class AssetExtractor
             for( String srcSubPath : srcSubPaths )
             {
                 String suffix = "/" + srcSubPath;
-                result &= extractAssets( assetManager, srcPath + suffix, dstPath + suffix, onProgress );
+                if( !extractAssets( assetManager, srcPath + suffix, dstPath + suffix, onProgress ) )
+                    return false;
             }
         }
         else
@@ -71,27 +73,72 @@ public class AssetExtractor
             if( onProgress != null )
                 onProgress.onExtractionProgress( dstPath );
             
+            // IO objects, initialize null to eliminate lint error
+            OutputStream out = null;
+            InputStream in = null;
+            
             // Extract the file
             try
             {
-                InputStream in = assetManager.open( srcPath );
-                OutputStream out = new FileOutputStream( dstPath );
+                out = new FileOutputStream( dstPath );
+                in = assetManager.open( srcPath );
                 byte[] buffer = new byte[1024];
                 int read;
-
+                
                 while( ( read = in.read( buffer ) ) != -1 )
                 {
                     out.write( buffer, 0, read );
                 }
-
+                
                 in.close();
                 out.flush();
                 out.close();
             }
+            catch( FileNotFoundException e )
+            {
+                Log.e( "AssetExtractor", "Failed to open output file " + dstPath, e );
+                result = false;
+            }
             catch( IOException e )
             {
-                Log.w( "AssetExtractor", "Failed to extract asset file: " + srcPath );
+                Log.e( "AssetExtractor", "Failed to extract asset " + srcPath + " to " + dstPath, e );
                 result = false;
+            }
+            finally
+            {
+                if( out != null )
+                {
+                    try
+                    {
+                        out.flush();
+                    }
+                    catch( IOException e )
+                    {
+                        Log.e( "AssetExtractor", "Failed to flush output file " + dstPath, e );
+                        result = false;
+                    }
+                    try
+                    {
+                        out.close();
+                    }
+                    catch( IOException e )
+                    {
+                        Log.e( "AssetExtractor", "Failed to close output file " + dstPath, e );
+                        result = false;
+                    }
+                }
+                if( in != null )
+                {
+                    try
+                    {
+                        in.close();
+                    }
+                    catch( IOException e )
+                    {
+                        Log.e( "AssetExtractor", "Failed to close asset " + srcPath, e );
+                        result = false;
+                    }
+                }
             }
         }
         
@@ -101,7 +148,7 @@ public class AssetExtractor
     public static int countAssets( AssetManager assetManager, String srcPath )
     {
         int count = 0;
-
+        
         // TODO: This function takes a surprisingly long time to complete.
         if( srcPath.startsWith( "/" ) )
             srcPath = srcPath.substring( 1 );
@@ -120,14 +167,14 @@ public class AssetExtractor
             // srcPath is a file
             count++;
         }
-
+        
         return count;
     }
-
+    
     private static String[] getAssetList( AssetManager assetManager, String srcPath )
     {
         String[] srcSubPaths = null;
-
+        
         try
         {
             srcSubPaths = assetManager.list( srcPath );
@@ -136,7 +183,7 @@ public class AssetExtractor
         {
             Log.w( "AssetExtractor", "Failed to get asset file list." );
         }
-
+        
         return srcSubPaths;
     }
 }
