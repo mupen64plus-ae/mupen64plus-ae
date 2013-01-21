@@ -176,7 +176,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.input_map_activity, menu );
-        mMenuSpecialVisibility = menu.findItem( R.id.menuItem_SpecialVisibility );
+        mMenuSpecialVisibility = menu.findItem( R.id.menuItem_specialVisibility );
         refreshSpecialVisibility();
         
         return super.onCreateOptionsMenu( menu );
@@ -186,17 +186,17 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         switch( item.getItemId() )
         {
-            case R.id.menuItem_SpecialVisibility:
+            case R.id.menuItem_specialVisibility:
                 mUserPrefs.putSpecialVisibility( mPlayer,
                         !mUserPrefs.getSpecialVisibility( mPlayer ) );
                 refreshSpecialVisibility();
                 break;
-            case R.id.menuItem_ControllerInfo:
+            case R.id.menuItem_controllerInfo:
                 String title = getString( R.string.actionControllerInfo_title );
                 String message = DeviceUtil.getPeripheralInfo();
                 new Builder( this ).setTitle( title ).setMessage( message ).create().show();
                 break;
-            case R.id.menuItem_ControllerDiagnostics:
+            case R.id.menuItem_controllerDiagnostics:
                 startActivity( new Intent( this, DiagnosticActivity.class ) );
                 break;
             default:

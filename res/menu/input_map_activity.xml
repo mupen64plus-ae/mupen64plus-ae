@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menuItem_SpecialVisibility"
+        android:id="@+id/menuItem_specialVisibility"
         android:title="@string/inputMapPreference_showSpecial"/>
     <item
-        android:id="@+id/menuItem_ControllerInfo"
+        android:id="@+id/menuItem_controllerInfo"
         android:title="@string/actionControllerInfo_title"/>
     <item
-        android:id="@+id/menuItem_ControllerDiagnostics"
+        android:id="@+id/menuItem_controllerDiagnostics"
         android:title="@string/actionControllerDiagnostics_title"/>
 
 </menu>

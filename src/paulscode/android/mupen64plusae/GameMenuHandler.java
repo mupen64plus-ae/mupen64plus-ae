@@ -85,9 +85,9 @@ public class GameMenuHandler
     {
         // Inflate the in-game menu, record the dynamic menu items/submenus for later
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
-        mSlotMenuItem = menu.findItem( R.id.ingameSetSlot );
+        mSlotMenuItem = menu.findItem( R.id.menuItem_setSlot );
         mSlotSubMenu = mSlotMenuItem.getSubMenu();
-        mGameSpeedItem = menu.findItem( R.id.ingameToggleSpeed );
+        mGameSpeedItem = menu.findItem( R.id.menuItem_toggleSpeed );
         mGameSpeedItem.setTitle( mActivity.getString( R.string.ingameToggleSpeed_title,
                 BASELINE_SPEED_FACTOR ) );
         
@@ -102,58 +102,58 @@ public class GameMenuHandler
     {
         switch( item.getItemId() )
         {
-            case R.id.slot0:
+            case R.id.menuItem_slot0:
                 setSlot( 0, true );
                 break;
-            case R.id.slot1:
+            case R.id.menuItem_slot1:
                 setSlot( 1, true );
                 break;
-            case R.id.slot2:
+            case R.id.menuItem_slot2:
                 setSlot( 2, true );
                 break;
-            case R.id.slot3:
+            case R.id.menuItem_slot3:
                 setSlot( 3, true );
                 break;
-            case R.id.slot4:
+            case R.id.menuItem_slot4:
                 setSlot( 4, true );
                 break;
-            case R.id.slot5:
+            case R.id.menuItem_slot5:
                 setSlot( 5, true );
                 break;
-            case R.id.slot6:
+            case R.id.menuItem_slot6:
                 setSlot( 6, true );
                 break;
-            case R.id.slot7:
+            case R.id.menuItem_slot7:
                 setSlot( 7, true );
                 break;
-            case R.id.slot8:
+            case R.id.menuItem_slot8:
                 setSlot( 8, true );
                 break;
-            case R.id.slot9:
+            case R.id.menuItem_slot9:
                 setSlot( 9, true );
                 break;
-            case R.id.ingameToggleSpeed:
+            case R.id.menuItem_toggleSpeed:
                 toggleSpeed();
                 break;
-            case R.id.ingameSlotSave:
+            case R.id.menuItem_slotSave:
                 saveSlot();
                 break;
-            case R.id.ingameSlotLoad:
+            case R.id.menuItem_slotLoad:
                 loadSlot();
                 break;
-            case R.id.ingameFileSave:
+            case R.id.menuItem_fileSave:
                 saveFileFromPrompt();
                 break;
-            case R.id.ingameFileLoad:
+            case R.id.menuItem_fileLoad:
                 loadFileFromPrompt();
                 break;
-            case R.id.ingameSetSpeed:
+            case R.id.menuItem_setSpeed:
                 setSpeed();
                 break;
-            case R.id.ingameSetIme:
+            case R.id.menuItem_setIme:
                 setIme();
                 break;
-            case R.id.ingameMainMenu:
+            case R.id.menuItem_mainMenu:
                 quitToMenu();
                 break;
             default:
