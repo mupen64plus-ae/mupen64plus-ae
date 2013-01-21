@@ -57,15 +57,26 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
     /**
      * Instantiates a new key provider.
      * 
+     * @param formula The decoding formula to be used.
+     * @param ignoredCodes List of key codes that should be ignored.
+     */
+    public KeyProvider( ImeFormula formula, List<Integer> ignoredCodes )
+    {
+        // Assign the fields
+        mImeFormula = formula;
+        mIgnoredCodes = ignoredCodes;
+    }
+    
+    /**
+     * Instantiates a new key provider.
+     * 
      * @param view The view receiving KeyEvent data.
      * @param formula The decoding formula to be used.
      * @param ignoredCodes List of key codes that should be ignored.
      */
     public KeyProvider( View view, ImeFormula formula, List<Integer> ignoredCodes )
     {
-        // Assign the fields
-        mImeFormula = formula;
-        mIgnoredCodes = ignoredCodes;
+        this( formula, ignoredCodes );
         
         // Connect the input source
         view.setOnKeyListener( this );
@@ -83,9 +94,7 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
      */
     public KeyProvider( Builder builder, ImeFormula formula, List<Integer> ignoredCodes )
     {
-        // Assign the fields
-        mImeFormula = formula;
-        mIgnoredCodes = ignoredCodes;
+        this( formula, ignoredCodes );
         
         // Connect the input source
         builder.setOnKeyListener( this );
@@ -121,7 +130,7 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
      * @param event the event
      * @return True if the listener has consumed the event, false otherwise.
      */
-    private boolean onKey( int keyCode, KeyEvent event )
+    public boolean onKey( int keyCode, KeyEvent event )
     {
         // Ignore specified key codes
         if( mIgnoredCodes != null && mIgnoredCodes.contains( keyCode ) )

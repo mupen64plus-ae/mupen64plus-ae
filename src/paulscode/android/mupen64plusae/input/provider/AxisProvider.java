@@ -41,16 +41,25 @@ public class AxisProvider extends AbstractProvider
     
     /**
      * Instantiates a new axis provider.
+     */
+    @TargetApi( 12 )
+    public AxisProvider()
+    {
+        // By default, provide data from all possible axes
+        mInputCodes = new int[DEFAULT_NUM_INPUTS];
+        for( int i = 0; i < mInputCodes.length; i++ )
+            mInputCodes[i] = -( i + 1 );
+    }
+    
+    /**
+     * Instantiates a new axis provider.
      * 
      * @param view The view receiving MotionEvent data.
      */
     @TargetApi( 12 )
     public AxisProvider( View view )
     {
-        // By default, provide data from all possible axes
-        mInputCodes = new int[DEFAULT_NUM_INPUTS];
-        for( int i = 0; i < mInputCodes.length; i++ )
-            mInputCodes[i] = -( i + 1 );
+        this();
         
         // Connect the input source
         view.setOnGenericMotionListener( new GenericMotionListener() );
@@ -67,6 +76,11 @@ public class AxisProvider extends AbstractProvider
     public void setInputCodeFilter( int[] inputCodeFilter )
     {
         mInputCodes = inputCodeFilter.clone();
+    }
+    
+    public boolean onGenericMotion( MotionEvent event )
+    {
+        return new GenericMotionListener().onGenericMotion( null, event );
     }
     
     /**
