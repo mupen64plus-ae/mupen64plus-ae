@@ -21,9 +21,9 @@
 package paulscode.android.mupen64plusae.input.map;
 
 import paulscode.android.mupen64plusae.input.AbstractController;
+import paulscode.android.mupen64plusae.input.InputMapActivity;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import paulscode.android.mupen64plusae.persistent.InputMapPreference;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.util.SparseIntArray;
@@ -33,7 +33,7 @@ import android.util.SparseIntArray;
  * 
  * @see AbstractProvider
  * @see PeripheralController
- * @see InputMapPreference
+ * @see InputMapActivity
  */
 public class InputMap
 {
@@ -115,9 +115,6 @@ public class InputMap
     /** Map from standardized input code to N64/Mupen command. */
     private final SparseIntArray mMap;
     
-    /** Flag indicating whether the map is enabled. */
-    private boolean mEnabled;
-    
     /** Listener management. */
     private final SubscriptionManager<Listener> mPublisher;
     
@@ -152,27 +149,6 @@ public class InputMap
     public int get( int inputCode )
     {
         return mMap.get( inputCode, UNMAPPED );
-    }
-    
-    /**
-     * Checks if the map is enabled.
-     * 
-     * @return True, if the map is enabled.
-     */
-    public boolean isEnabled()
-    {
-        return mEnabled;
-    }
-    
-    /**
-     * Enables or disables the map. Note that this does <b>not</b> change the map data itself, but
-     * rather indicates whether client code should or should not use the map.
-     * 
-     * @param value True to enable the map; false to disable.
-     */
-    public void setEnabled( boolean value )
-    {
-        mEnabled = value;
     }
     
     /**
@@ -271,7 +247,7 @@ public class InputMap
     public String serialize()
     {
         // Serialize the map data to a multi-delimited string
-        String result = mEnabled + "/";
+        String result = "";
         for( int i = 0; i < mMap.size(); i++ )
         {
             // Putting the n64 command first makes the string a bit more human readable IMO
@@ -289,28 +265,20 @@ public class InputMap
     {
         // Reset the map
         mMap.clear();
-        mEnabled = false;
         
         // Parse the new map data from the multi-delimited string
         if( s != null )
         {
-            String[] groups = s.split( "/" );
-            if( groups.length == 2 )
+            // Read the input mappings
+            String[] pairs = s.split( "," );
+            for( String pair : pairs )
             {
-                // Read the enabled state
-                mEnabled = SafeMethods.toBoolean( groups[0], false );
-                
-                // Read the input mappings
-                String[] pairs = groups[1].split( "," );
-                for( String pair : pairs )
+                String[] elements = pair.split( ":" );
+                if( elements.length == 2 )
                 {
-                    String[] elements = pair.split( ":" );
-                    if( elements.length == 2 )
-                    {
-                        int value = SafeMethods.toInt( elements[0], UNMAPPED );
-                        int key = SafeMethods.toInt( elements[1], 0 );
-                        mapInput( key, value, false );
-                    }
+                    int value = SafeMethods.toInt( elements[0], UNMAPPED );
+                    int key = SafeMethods.toInt( elements[1], 0 );
+                    mapInput( key, value, false );
                 }
             }
         }

@@ -143,12 +143,18 @@
                             android:title="@string/touchpadLayout_title" />
                     </PreferenceScreen>
 
-                    <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMap_defaultOn"
+                    <paulscode.android.mupen64plusae.persistent.TogglePreference
+                        android:defaultValue="true"
                         android:icon="@drawable/ic_gamepad"
-                        android:key="inputMap1"
+                        android:key="inputEnabled1"
                         android:summary="@string/inputMap_summary"
-                        android:title="@string/inputMap1_title" />
+                        android:title="@string/inputMap1_title" >
+                        <intent android:action=".input.InputMapActivity" >
+                            <extra
+                                android:name="paulscode.android.mupen64plusae.EXTRA_PLAYER"
+                                android:value="1" />
+                        </intent>
+                    </paulscode.android.mupen64plusae.persistent.TogglePreference>
 
                     <CheckBoxPreference
                         android:defaultValue="true"
@@ -164,24 +170,42 @@
                 <PreferenceCategory
                     android:key="categoryMultiPlayer"
                     android:title="@string/categoryMultiPlayer_title" >
-                    <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMap_defaultOff"
+                    <paulscode.android.mupen64plusae.persistent.TogglePreference
+                        android:defaultValue="false"
                         android:icon="@drawable/ic_gamepad"
-                        android:key="inputMap2"
+                        android:key="inputEnabled2"
                         android:summary="@string/inputMap_summary"
-                        android:title="@string/inputMap2_title" />
-                    <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMap_defaultOff"
+                        android:title="@string/inputMap2_title" >
+                        <intent android:action=".input.InputMapActivity" >
+                            <extra
+                                android:name="paulscode.android.mupen64plusae.EXTRA_PLAYER"
+                                android:value="2" />
+                        </intent>
+                    </paulscode.android.mupen64plusae.persistent.TogglePreference>
+                    <paulscode.android.mupen64plusae.persistent.TogglePreference
+                        android:defaultValue="false"
                         android:icon="@drawable/ic_gamepad"
-                        android:key="inputMap3"
+                        android:key="inputEnabled3"
                         android:summary="@string/inputMap_summary"
-                        android:title="@string/inputMap3_title" />
-                    <paulscode.android.mupen64plusae.persistent.InputMapPreference
-                        android:defaultValue="@string/inputMap_defaultOff"
+                        android:title="@string/inputMap3_title" >
+                        <intent android:action=".input.InputMapActivity" >
+                            <extra
+                                android:name="paulscode.android.mupen64plusae.EXTRA_PLAYER"
+                                android:value="3" />
+                        </intent>
+                    </paulscode.android.mupen64plusae.persistent.TogglePreference>
+                    <paulscode.android.mupen64plusae.persistent.TogglePreference
+                        android:defaultValue="false"
                         android:icon="@drawable/ic_gamepad"
-                        android:key="inputMap4"
+                        android:key="inputEnabled4"
                         android:summary="@string/inputMap_summary"
-                        android:title="@string/inputMap4_title" />
+                        android:title="@string/inputMap4_title" >
+                        <intent android:action=".input.InputMapActivity" >
+                            <extra
+                                android:name="paulscode.android.mupen64plusae.EXTRA_PLAYER"
+                                android:value="4" />
+                        </intent>
+                    </paulscode.android.mupen64plusae.persistent.TogglePreference>
 
                     <CheckBoxPreference
                         android:defaultValue="false"

@@ -90,10 +90,10 @@ public class PlayerMapPreference extends DialogPreference implements
         mMap.deserialize( mValue );
         
         // Initialize and refresh the widgets
-        buttonPlayer1 = setupButton( view, R.id.btnPlayer1, prefs.inputMap1.isEnabled() );
-        buttonPlayer2 = setupButton( view, R.id.btnPlayer2, prefs.inputMap2.isEnabled() );
-        buttonPlayer3 = setupButton( view, R.id.btnPlayer3, prefs.inputMap3.isEnabled() );
-        buttonPlayer4 = setupButton( view, R.id.btnPlayer4, prefs.inputMap4.isEnabled() );
+        buttonPlayer1 = setupButton( view, R.id.btnPlayer1, prefs.isInputEnabled1 );
+        buttonPlayer2 = setupButton( view, R.id.btnPlayer2, prefs.isInputEnabled2 );
+        buttonPlayer3 = setupButton( view, R.id.btnPlayer3, prefs.isInputEnabled3 );
+        buttonPlayer4 = setupButton( view, R.id.btnPlayer4, prefs.isInputEnabled4 );
         updateViews();
     }
     

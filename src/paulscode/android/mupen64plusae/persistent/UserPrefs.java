@@ -121,26 +121,38 @@ public class UserPrefs
     /** The filename of the selected touchscreen layout. */
     public final String touchscreenLayout;
     
-    /** True if Xperia Play-specific features are enabled. */
+    /** True if Xperia Play touchpad is enabled. */
     public final boolean isTouchpadEnabled;
     
     /** The filename of the selected Xperia Play layout. */
     public final String touchpadLayout;
     
-    /** The player map for multi-player gaming. */
-    public final PlayerMap playerMap;
+    /** True if Player 1's controller is enabled. */
+    public final boolean isInputEnabled1;
     
-    /** The button map for player 1. */
+    /** True if Player 2's controller is enabled. */
+    public final boolean isInputEnabled2;
+    
+    /** True if Player 3's controller is enabled. */
+    public final boolean isInputEnabled3;
+    
+    /** True if Player 4's controller is enabled. */
+    public final boolean isInputEnabled4;
+    
+    /** The button map for Player 1. */
     public final InputMap inputMap1;
     
-    /** The button map for player 2. */
+    /** The button map for Player 2. */
     public final InputMap inputMap2;
     
-    /** The button map for player 3. */
+    /** The button map for Player 3. */
     public final InputMap inputMap3;
     
-    /** The button map for player 4. */
+    /** The button map for Player 4. */
     public final InputMap inputMap4;
+    
+    /** The player map for multi-player gaming. */
+    public final PlayerMap playerMap;
     
     /** True if any type of AbstractController is enabled for Player 1. */
     public final boolean isPlugged1;
@@ -235,7 +247,7 @@ public class UserPrefs
     // ... add more as needed
     
     // Shared preferences default values
-    private static final String DEFAULT_MAP_STRING = "";
+    private static final String DEFAULT_MAP_STRING = "0:22,1:21,2:20,3:19,4:108,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
     private static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     // ... add more as needed
     
@@ -281,15 +293,19 @@ public class UserPrefs
         isTouchpadEnabled = mPreferences.getBoolean( "touchpadEnabled", false );
         touchpadLayout = appData.touchpadLayoutsDir + mPreferences.getString( "touchpadLayout", "" );
         
-        // Controller prefs
-        playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
-        inputMap1 = new InputMap( mPreferences.getString( "inputMap1", "" ) );
-        inputMap2 = new InputMap( mPreferences.getString( "inputMap2", "" ) );
-        inputMap3 = new InputMap( mPreferences.getString( "inputMap3", "" ) );
-        inputMap4 = new InputMap( mPreferences.getString( "inputMap4", "" ) );
-        
         // Input prefs
         isOctagonalJoystick = mPreferences.getBoolean( "inputOctagonConstraints", true );
+        isInputEnabled1 = mPreferences.getBoolean( "inputEnabled1", false );
+        isInputEnabled2 = mPreferences.getBoolean( "inputEnabled2", false );
+        isInputEnabled3 = mPreferences.getBoolean( "inputEnabled3", false );
+        isInputEnabled4 = mPreferences.getBoolean( "inputEnabled4", false );
+        
+        // Controller prefs
+        inputMap1 = new InputMap( getMapString( 1 ) );
+        inputMap2 = new InputMap( getMapString( 2 ) );
+        inputMap3 = new InputMap( getMapString( 3 ) );
+        inputMap4 = new InputMap( getMapString( 4 ) );
+        playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
         
         // Video prefs
         videoOrientation = getSafeInt( mPreferences, "videoOrientation", 0 );
@@ -353,17 +369,17 @@ public class UserPrefs
         touchscreenLayout = folder;
         
         // Determine which players are "plugged in"
-        isPlugged1 = inputMap1.isEnabled() || isTouchscreenEnabled || isTouchpadEnabled;
-        isPlugged2 = inputMap2.isEnabled();
-        isPlugged3 = inputMap3.isEnabled();
-        isPlugged4 = inputMap4.isEnabled();
+        isPlugged1 = isInputEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;
+        isPlugged2 = isInputEnabled2;
+        isPlugged3 = isInputEnabled3;
+        isPlugged4 = isInputEnabled4;
         
         // Determine whether controller deconfliction is needed
         int numControllers = 0;
-        numControllers += inputMap1.isEnabled() ? 1 : 0;
-        numControllers += inputMap2.isEnabled() ? 1 : 0;
-        numControllers += inputMap3.isEnabled() ? 1 : 0;
-        numControllers += inputMap4.isEnabled() ? 1 : 0;
+        numControllers += isInputEnabled1 ? 1 : 0;
+        numControllers += isInputEnabled2 ? 1 : 0;
+        numControllers += isInputEnabled3 ? 1 : 0;
+        numControllers += isInputEnabled4 ? 1 : 0;
         boolean isControllerShared = mPreferences.getBoolean( "inputShareController", false );
         playerMap.setEnabled( numControllers > 1 && !isControllerShared );
         
