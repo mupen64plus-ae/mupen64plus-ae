@@ -10,5 +10,8 @@
     <item
         android:id="@+id/menuItem_controllerDiagnostics"
         android:title="@string/actionControllerDiagnostics_title"/>
+    <item
+        android:id="@+id/menuItem_exit"
+        android:title="@string/menuItem_exit"/>
 
 </menu>

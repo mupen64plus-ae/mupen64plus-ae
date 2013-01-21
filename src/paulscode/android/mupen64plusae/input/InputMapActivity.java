@@ -199,6 +199,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             case R.id.menuItem_controllerDiagnostics:
                 startActivity( new Intent( this, DiagnosticActivity.class ) );
                 break;
+            case R.id.menuItem_exit:
+                finish();
+                break;
             default:
                 return false;
         }

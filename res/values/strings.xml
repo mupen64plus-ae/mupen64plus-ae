@@ -21,7 +21,7 @@
 <resources>
 
     <!-- ************************************************************************** -->
-    <!-- In-Game Strings -->
+    <!-- Menu Strings -->
     <!-- ************************************************************************** -->
 
     <!-- In-Game Menu -->
@@ -34,6 +34,9 @@
     <string name="ingameSetSpeed_title">Game speed</string>
     <string name="ingameSetIme_title">Change IME</string>
     <string name="ingameMainMenu_title">Main menu</string>
+
+    <!-- Input Mapping Activity -->
+    <string name="menuItem_exit">Exit</string>
 
     <!-- ************************************************************************** -->
     <!-- Toast Messages                                                             -->
