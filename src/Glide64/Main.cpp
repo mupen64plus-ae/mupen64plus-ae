@@ -581,15 +581,17 @@ void ReadSpecialSettings (const char * name)
     ini->Read(_T("swapmode"), &(settings.swapmode));
     ini->Read(_T("aspect"), &(settings.aspectmode));
     ini->Read(_T("lodmode"), &(settings.lodmode));
-    int resolution = 12;
-    //if (ini->Read(_T("resolution"), &resolution))
+    /*
+    TODO-port: fix resolutions
+    int resolution;
+    if (ini->Read(_T("resolution"), &resolution))
     {
       settings.res_data = (wxUint32)resolution;
       if (settings.res_data >= 0x18) settings.res_data = 12;
-	  //TODO-port: fix resolutions
-      settings.scr_res_x = settings.res_x = 1024;//resolutions[settings.res_data][0];
-      settings.scr_res_y = settings.res_y = 768;//resolutions[settings.res_data][1];
+      settings.scr_res_x = settings.res_x = resolutions[settings.res_data][0];
+      settings.scr_res_y = settings.res_y = resolutions[settings.res_data][1];
     }
+    */
 
     //frame buffer
     int smart_read = ini->Read(_T("fb_smart"), -1);
@@ -979,10 +981,12 @@ int InitGfx ()
         (GRWRAPPERFULLSCREENRESOLUTIONEXT)grGetProcAddress(strWrapperFullScreenResolutionExt);
       if (grWrapperFullScreenResolutionExt != NULL)
       {
+/*
+        TODO-port: fix resolutions
         settings.res_data = settings.res_data_org;
-		//TODO-port: fix resolutions
-        settings.scr_res_x = settings.res_x = 1024;//resolutions[settings.res_data][0];
-        settings.scr_res_y = settings.res_y = 768;//resolutions[settings.res_data][1];
+        settings.scr_res_x = settings.res_x = resolutions[settings.res_data][0];
+        settings.scr_res_y = settings.res_y = resolutions[settings.res_data][1];
+*/
       }
       res_data = settings.res_data | 0x80000000;
   }
