@@ -118,7 +118,7 @@ public class FileUtil
         public boolean accept( File pathname )
         {
             return ( pathname != null ) && ( pathname.isFile() ) && ( !pathname.isHidden() )
-                    && ( !pathname.getName().startsWith( "." ) );
+                    && ( pathname.getName() != null ) && ( !pathname.getName().startsWith( "." ) );
         }
     }
     
