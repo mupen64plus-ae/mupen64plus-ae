@@ -89,10 +89,7 @@ public class AssetExtractor
                 {
                     out.write( buffer, 0, read );
                 }
-                
-                in.close();
                 out.flush();
-                out.close();
             }
             catch( FileNotFoundException e )
             {
@@ -108,15 +105,6 @@ public class AssetExtractor
             {
                 if( out != null )
                 {
-                    try
-                    {
-                        out.flush();
-                    }
-                    catch( IOException e )
-                    {
-                        Log.e( "AssetExtractor", "Failed to flush output file " + dstPath, e );
-                        result = false;
-                    }
                     try
                     {
                         out.close();
