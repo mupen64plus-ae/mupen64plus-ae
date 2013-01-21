@@ -215,11 +215,18 @@ endif
 ifeq ($(shell pkg-config --modversion libpng 2>/dev/null),)
   $(error No libpng development libraries found!)
 endif
-ifeq ($(shell pkg-config --modversion zlib 2>/dev/null),)
-  $(error No zlib development libraries found!)
+ifeq ($(OS), OSX) # use system zlib on OSX
+  LDLIBS += -lz
+else
+  ifeq ($(shell $(PKG_CONFIG) --modversion zlib 2>/dev/null),)
+    $(error No zlib development libraries found!)
+  endif
+  CFLAGS += $(shell $(PKG_CONFIG) --cflags zlib)
+  LDLIBS +=  $(shell $(PKG_CONFIG) --libs zlib)
 endif
-CFLAGS += $(shell pkg-config --cflags libpng zlib)
-LDLIBS += $(shell pkg-config --libs libpng zlib)
+
+CFLAGS += $(shell $(PKG_CONFIG) --cflags libpng)
+LDLIBS +=  $(shell $(PKG_CONFIG) --libs libpng)
 
 ifeq ("$(GL_LIBS)", "")
   ifeq ($(shell $(PKG_CONFIG) --modversion gl 2>/dev/null),)
