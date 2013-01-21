@@ -119,24 +119,34 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
         {
             // This runs on non-UI thread and ensures that the app is responsive during the lengthy
             // extraction process
+            boolean success = true;
             
             // Extract the assets if they are out of date
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
                 FileUtil.deleteFolder( new File( mAppData.dataDir ) );
                 mAssetsExtracted = 0;
-                AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.dataDir,
+                success = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.dataDir,
                         MainActivity.this );
-                mAppData.putAssetVersion( ASSET_VERSION );
             }
             
-            updateText( R.string.assetExtractor_finished );
-            
-            // Launch the MenuActivity
-            startActivity( new Intent( MainActivity.this, MenuActivity.class ) );
-            
-            // We never want to come back to this activity, so finish it
-            finish();
+            // Launch menu activity if successful; post failure notice otherwise
+            if( success )
+            {
+                mAppData.putAssetVersion( ASSET_VERSION );
+                updateText( R.string.assetExtractor_finished );
+                
+                // Launch the MenuActivity
+                startActivity( new Intent( MainActivity.this, MenuActivity.class ) );
+                
+                // We never want to come back to this activity, so finish it
+                finish();
+            }
+            else
+            {
+                String weblink = getResources().getString( R.string.assetExtractor_help );
+                updateText( R.string.assetExtractor_failed, weblink );
+            }
         }
     };
     

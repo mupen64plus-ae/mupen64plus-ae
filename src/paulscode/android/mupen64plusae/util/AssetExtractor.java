@@ -39,9 +39,11 @@ public class AssetExtractor
         public void onExtractionProgress( String nextFileExtracted );
     }
     
-    public static void extractAssets( AssetManager assetManager, String srcPath, String dstPath,
+    public static boolean extractAssets( AssetManager assetManager, String srcPath, String dstPath,
             OnExtractionProgressListener onProgress )
     {
+        boolean result = true;
+        
         if( srcPath.startsWith( "/" ) )
             srcPath = srcPath.substring( 1 );
         
@@ -89,8 +91,11 @@ public class AssetExtractor
             catch( IOException e )
             {
                 Log.w( "AssetExtractor", "Failed to extract asset file: " + srcPath );
+                result = false;
             }
         }
+        
+        return result;
     }
     
     public static int countAssets( AssetManager assetManager, String srcPath )
