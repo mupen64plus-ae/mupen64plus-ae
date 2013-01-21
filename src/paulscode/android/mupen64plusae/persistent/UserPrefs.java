@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
@@ -228,6 +229,18 @@ public class UserPrefs
     /** The audio resampling algorithm to use. */
     public final String audioResampleAlg;
     
+    // Shared preferences keys and key templates
+    private static final String KEYTEMPLATE_MAP_STRING = "inputMapString%1$d";
+    private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
+    // ... add more as needed
+    
+    // Shared preferences default values
+    private static final String DEFAULT_MAP_STRING = "";
+    private static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
+    // ... add more as needed
+    
+    private final SharedPreferences prefsData;
+    
     /**
      * Instantiates a new user preferences wrapper.
      * 
@@ -236,7 +249,7 @@ public class UserPrefs
     public UserPrefs( Context context )
     {
         AppData appData = new AppData( context );
-        SharedPreferences prefsData = PreferenceManager.getDefaultSharedPreferences( context );
+        prefsData = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Files
         selectedGame = prefsData.getString( "pathSelectedGame", "" );
@@ -370,6 +383,40 @@ public class UserPrefs
             unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
+    }
+    
+    public boolean getSpecialVisibility( int player )
+    {
+        String key = String.format( Locale.US, KEYTEMPLATE_SPECIAL_VISIBILITY, player );
+        return prefsData.getBoolean( key, DEFAULT_SPECIAL_VISIBILITY );
+    }
+    
+    public String getMapString( int player )
+    {
+        String key = String.format( Locale.US, KEYTEMPLATE_MAP_STRING, player );
+        return prefsData.getString( key, DEFAULT_MAP_STRING );
+    }
+    
+    public void putSpecialVisibility( int player, boolean value )
+    {
+        String key = String.format( Locale.US, KEYTEMPLATE_SPECIAL_VISIBILITY, player );
+        putBoolean( key, value );
+    }
+    
+    public void putMapString( int player, String value )
+    {
+        String key = String.format( Locale.US, KEYTEMPLATE_MAP_STRING, player );
+        putString( key, value );
+    }
+    
+    private void putBoolean( String key, boolean value )
+    {
+        prefsData.edit().putBoolean( key, value ).commit();
+    }
+    
+    private void putString( String key, String value )
+    {
+        prefsData.edit().putString( key, value ).commit();
     }
     
     /**
