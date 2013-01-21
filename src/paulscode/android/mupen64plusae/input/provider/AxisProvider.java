@@ -90,6 +90,10 @@ public class AxisProvider extends AbstractProvider
         @Override
         public boolean onGenericMotion( View v, MotionEvent event )
         {
+            // Ignore motion events from non-joysticks (mice are a problem)
+            if( event.getSource() != InputDevice.SOURCE_JOYSTICK )
+                return false;
+            
             InputDevice device = event.getDevice();
             
             // Read all the requested axes
@@ -105,7 +109,8 @@ public class AxisProvider extends AbstractProvider
                 float strength = event.getAxisValue( axisCode );
                 if( NORMALIZE && device != null )
                 {
-                    MotionRange motionRange = device.getMotionRange( axisCode );
+                    MotionRange motionRange = device.getMotionRange( axisCode,
+                            InputDevice.SOURCE_JOYSTICK );
                     if( motionRange != null )
                         strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
                 }

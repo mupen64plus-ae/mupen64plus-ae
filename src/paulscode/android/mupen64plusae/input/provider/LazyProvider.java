@@ -57,9 +57,11 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
         BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_Z, false ) );
         BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_RZ, false ) );
         
-        // Wired PS3 controller triggers
+        // Other axes that are often analog triggers
         BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_LTRIGGER, false ) );
         BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_RTRIGGER, false ) );
+        BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_BRAKE, false ) );
+        BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_GAS, false ) );
     }
     
     /**
