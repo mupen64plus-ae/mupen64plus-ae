@@ -60,7 +60,7 @@ public class AssetExtractor
             for( String srcSubPath : srcSubPaths )
             {
                 String suffix = "/" + srcSubPath;
-                extractAssets( assetManager, srcPath + suffix, dstPath + suffix, onProgress );
+                result &= extractAssets( assetManager, srcPath + suffix, dstPath + suffix, onProgress );
             }
         }
         else
