@@ -62,6 +62,7 @@ public class LazyProvider extends AbstractProvider implements AbstractProvider.O
         BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_RTRIGGER, false ) );
         BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_BRAKE, false ) );
         BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_GAS, false ) );
+        BIAS_CANDIDATES.add( AbstractProvider.axisToInputCode( MotionEvent.AXIS_GENERIC_1, false ) );
     }
     
     /**
