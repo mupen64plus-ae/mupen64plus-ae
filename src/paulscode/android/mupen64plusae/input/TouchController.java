@@ -211,8 +211,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                 processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid], pid );
             
             // Process analog inputs
-            if( touchstate[pid] )
-                analogMoved = processAnalogTouch( pid, pointerX[pid], pointerY[pid] );
+            if( touchstate[pid] && processAnalogTouch( pid, pointerX[pid], pointerY[pid]) )
+                analogMoved = true;
         }
         
         // Call the super method to send the input to the core
