@@ -565,7 +565,7 @@ public class Utility
     {
         public static class ExecShell
         {
-            private static String LOG_TAG = ExecShell.class.getName();
+            private static final String LOG_TAG = ExecShell.class.getName();
             
             public static enum SHELL_CMD
             {

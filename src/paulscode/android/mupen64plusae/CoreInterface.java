@@ -64,7 +64,7 @@ public class CoreInterface
     
     // Private constants
     private static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
-    private static int COMMAND_CHANGE_TITLE = 1;
+    private static final int COMMAND_CHANGE_TITLE = 1;
     
     // Internals
     private static Activity sActivity = null;

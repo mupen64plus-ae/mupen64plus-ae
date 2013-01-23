@@ -71,7 +71,7 @@ public class CrashTester implements OnPreferenceClickListener, DialogInterface.O
         Notifier.showToast( mActivity, R.string.toast_crashReportSent );
     }
     
-    private Activity mActivity;
+    private final Activity mActivity;
     // Line reserved for future use
     // Line reserved for future use
     // Line reserved for future use
