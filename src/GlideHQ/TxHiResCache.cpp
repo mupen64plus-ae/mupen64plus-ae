@@ -185,7 +185,7 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
 #ifdef WIN32
   wchar_t curpath[MAX_PATH];
   GETCWD(MAX_PATH, curpath);
-  CHDIR(dir_path.string().c_str());
+  CHDIR(dir_path.wstring().c_str());
 #else
   char curpath[MAX_PATH];
   char cbuf[MAX_PATH];
@@ -256,7 +256,7 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
 #define CRCFMTSIZ_LEN 13
 #define PALCRC_LEN 9
     //wcstombs(fname, it->path().leaf().c_str(), MAX_PATH);
-    strncpy(fname, it->path().leaf().c_str(), sizeof(fname));
+    strncpy(fname, it->path().leaf().string().c_str(), sizeof(fname));
     fname[sizeof(fname) - 1] = '\0';
     /* XXX case sensitivity fiasco!
      * files must use _a, _rgb, _all, _allciByRGBA, _ciByRGBA, _ci

@@ -66,6 +66,8 @@ ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   SO_EXTENSION = dll
   SHARED = -shared
   PIC = 0
+  BOOST_SUFFIX = -mt
+  BOOST_THREAD_SUFFIX = _win32-mt
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -124,10 +126,12 @@ WARNFLAGS ?= -Wall
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -I../../src/Glitch64/inc -DGCC
 CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
-LDLIBS += -lboost_filesystem-mt -lboost_system-mt -lboost_thread-mt
+BOOST_SUFFIX ?= -mt
+BOOST_THREAD_SUFFIX ?= -mt
+LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX) -lboost_thread$(BOOST_THREAD_SUFFIX)
 
 ifeq ($(OS), MINGW)
-  CFLAGS += -lpthread
+  CFLAGS += -DBOOST_THREAD_USE_LIB
   LDLIBS += -lpthread
 else
   CFLAGS += -pthread

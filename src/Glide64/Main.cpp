@@ -55,6 +55,10 @@
 #include <stdarg.h>
 int  ghq_dmptex_toggle_key = 0;
 #endif
+#if defined(__MINGW32__)
+#define swprintf _snwprintf
+#define vswprintf _vsnwprintf
+#endif
 
 #define G64_VERSION "G64 Mk2"
 #define RELTIME "Date: " __DATE__// " Time: " __TIME__

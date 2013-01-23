@@ -236,10 +236,10 @@ TxCache::save(const wchar_t *path, const wchar_t *filename, int config)
     boost::filesystem::create_directory(cachepath);
 
     /* Ugly hack to enable fopen/gzopen in Win9x */
-#ifdef WIN32
+#ifdef BOOST_WINDOWS_API
     wchar_t curpath[MAX_PATH];
     GETCWD(MAX_PATH, curpath);
-    CHDIR(cachepath.string().c_str());
+    CHDIR(cachepath.wstring().c_str());
 #else
     char curpath[MAX_PATH];
     wcstombs(cbuf, cachepath.wstring().c_str(), MAX_PATH);
@@ -324,10 +324,10 @@ TxCache::load(const wchar_t *path, const wchar_t *filename, int config)
 
   boost::filesystem::wpath cachepath(path);
 
-#ifdef WIN32
+#ifdef BOOST_WINDOWS_API
   wchar_t curpath[MAX_PATH];
   GETCWD(MAX_PATH, curpath);
-  CHDIR(cachepath.string().c_str());
+  CHDIR(cachepath.wstring().c_str());
 #else
   char curpath[MAX_PATH];
   wcstombs(cbuf, cachepath.wstring().c_str(), MAX_PATH);
