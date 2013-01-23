@@ -44,19 +44,6 @@ extern "C" void asmLoad4bIAPal(uint8_t *src, uint8_t *dst, int wid_64, int heigh
 extern "C" void asmLoad4bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext);
 extern "C" void asmLoad4bI(uint8_t *src, uint8_t *dst, int wid_64, int height, int line, int ext);
 
-#define ALOWORD(x)   (*((uint16_t*)&(x)))   // low word
-
-template<class T> static inline T __ROR__(T value, unsigned int count)
-{
-  const unsigned int nbits = sizeof(T) * 8;
-  count %= nbits;
-
-  T low = value << (nbits - count);
-  value >>= count;
-  value |= low;
-  return value;
-}
-
 static inline void load4bCI(uint8_t *src, uint8_t *dst, int wid_64, int height, uint16_t line, int ext, uint16_t *pal)
 {
   uint8_t *v7;
@@ -90,7 +77,7 @@ static inline void load4bCI(uint8_t *src, uint8_t *dst, int wid_64, int height, 
     do
     {
       v11 = v10;
-      v12 = __builtin_bswap32(*(uint32_t *)v7);
+      v12 = bswap32(*(uint32_t *)v7);
       v13 = v7 + 4;
       ALOWORD(v10) = __ROR__(*(uint16_t *)((char *)pal + ((v12 >> 23) & 0x1E)), 1);
       v14 = v10 << 16;
@@ -112,7 +99,7 @@ static inline void load4bCI(uint8_t *src, uint8_t *dst, int wid_64, int height, 
       ALOWORD(v14) = __ROR__(*(uint16_t *)((char *)pal + ((v12 >> 3) & 0x1E)), 1);
       *v15 = v14;
       ++v15;
-      v16 = __builtin_bswap32(*(uint32_t *)v13);
+      v16 = bswap32(*(uint32_t *)v13);
       v7 = v13 + 4;
       ALOWORD(v14) = __ROR__(*(uint16_t *)((char *)pal + ((v16 >> 23) & 0x1E)), 1);
       v14 <<= 16;
@@ -146,7 +133,7 @@ static inline void load4bCI(uint8_t *src, uint8_t *dst, int wid_64, int height, 
     do
     {
       v20 = v19;
-      v21 = __builtin_bswap32(*((uint32_t *)v17 + 1));
+      v21 = bswap32(*((uint32_t *)v17 + 1));
       ALOWORD(v19) = __ROR__(*(uint16_t *)((char *)pal + ((v21 >> 23) & 0x1E)), 1);
       v22 = v19 << 16;
       ALOWORD(v22) = __ROR__(*(uint16_t *)((char *)pal + ((v21 >> 27) & 0x1E)), 1);
@@ -167,7 +154,7 @@ static inline void load4bCI(uint8_t *src, uint8_t *dst, int wid_64, int height, 
       ALOWORD(v22) = __ROR__(*(uint16_t *)((char *)pal + ((v21 >> 3) & 0x1E)), 1);
       *v23 = v22;
       ++v23;
-      v24 = __builtin_bswap32(*(uint32_t *)v17);
+      v24 = bswap32(*(uint32_t *)v17);
       v17 = &src[((uintptr_t)v17 + 8 - (uintptr_t)src) & 0x7FF];
       ALOWORD(v22) = __ROR__(*(uint16_t *)((char *)pal + ((v24 >> 23) & 0x1E)), 1);
       v22 <<= 16;
@@ -232,7 +219,7 @@ static inline void load4bIAPal(uint8_t *src, uint8_t *dst, int wid_64, int heigh
     do
     {
       v11 = v10;
-      v12 = __builtin_bswap32(*(uint32_t *)v7);
+      v12 = bswap32(*(uint32_t *)v7);
       v13 = (uint32_t *)(v7 + 4);
       ALOWORD(v10) = __ROR__(*(uint16_t *)((char *)pal + ((v12 >> 23) & 0x1E)), 8);
       v14 = v10 << 16;
@@ -254,7 +241,7 @@ static inline void load4bIAPal(uint8_t *src, uint8_t *dst, int wid_64, int heigh
       ALOWORD(v14) = __ROR__(*(uint16_t *)((char *)pal + ((v12 >> 3) & 0x1E)), 8);
       *v15 = v14;
       ++v15;
-      v16 = __builtin_bswap32(*v13);
+      v16 = bswap32(*v13);
       v7 = (uint8_t *)(v13 + 1);
       ALOWORD(v14) = __ROR__(*(uint16_t *)((char *)pal + ((v16 >> 23) & 0x1E)), 8);
       v14 <<= 16;
@@ -288,7 +275,7 @@ static inline void load4bIAPal(uint8_t *src, uint8_t *dst, int wid_64, int heigh
     do
     {
       v20 = v19;
-      v21 = __builtin_bswap32(*((uint32_t *)v17 + 1));
+      v21 = bswap32(*((uint32_t *)v17 + 1));
       ALOWORD(v19) = __ROR__(*(uint16_t *)((char *)pal + ((v21 >> 23) & 0x1E)), 8);
       v22 = v19 << 16;
       ALOWORD(v22) = __ROR__(*(uint16_t *)((char *)pal + ((v21 >> 27) & 0x1E)), 8);
@@ -309,7 +296,7 @@ static inline void load4bIAPal(uint8_t *src, uint8_t *dst, int wid_64, int heigh
       ALOWORD(v22) = __ROR__(*(uint16_t *)((char *)pal + ((v21 >> 3) & 0x1E)), 8);
       *v23 = v22;
       ++v23;
-      v24 = __builtin_bswap32(*(uint32_t *)v17);
+      v24 = bswap32(*(uint32_t *)v17);
       v17 = &src[((uintptr_t)v17 + 8 - (uintptr_t)src) & 0x7FF];
       ALOWORD(v22) = __ROR__(*(uint16_t *)((char *)pal + ((v24 >> 23) & 0x1E)), 8);
       v22 <<= 16;
@@ -407,7 +394,7 @@ static inline void load4bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, 
     do
     {
       v10 = v9;
-      v11 = __builtin_bswap32(*v6);
+      v11 = bswap32(*v6);
       v12 = v6 + 1;
       v13 = v11;
       v14 = 8 * (v11 & 0x100000) | 4 * (v11 & 0x100000) | 2 * (v11 & 0x100000) | v11 & 0x100000 | (((v11 >> 16) & 0xE00) >> 3) & 0x100 | (v11 >> 16) & 0xE00 | 8 * ((v11 >> 12) & 0x1000) | 4 * ((v11 >> 12) & 0x1000) | 2 * ((v11 >> 12) & 0x1000) | (v11 >> 12) & 0x1000 | (((v11 >> 28) & 0xE) >> 3) | (v11 >> 28) & 0xE | 8 * ((v11 >> 24) & 0x10) | 4 * ((v11 >> 24) & 0x10) | 2 * ((v11 >> 24) & 0x10) | (v11 >> 24) & 0x10;
@@ -427,7 +414,7 @@ static inline void load4bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, 
       v21 >>= 3;
       *v16 = (((v13 << 24) & 0xE000000) >> 3) & 0x1000000 | (v13 << 24) & 0xE000000 | 8 * ((v13 << 28) & 0x10000000) | 4 * ((v13 << 28) & 0x10000000) | 2 * ((v13 << 28) & 0x10000000) | (v13 << 28) & 0x10000000 | v21 & 0x10000 | v22;
       ++v16;
-      v23 = __builtin_bswap32(*v12);
+      v23 = bswap32(*v12);
       v6 = v12 + 1;
       v24 = v23;
       v25 = 8 * (v23 & 0x100000) | 4 * (v23 & 0x100000) | 2 * (v23 & 0x100000) | v23 & 0x100000 | (((v23 >> 16) & 0xE00) >> 3) & 0x100 | (v23 >> 16) & 0xE00 | 8 * ((v23 >> 12) & 0x1000) | 4 * ((v23 >> 12) & 0x1000) | 2 * ((v23 >> 12) & 0x1000) | (v23 >> 12) & 0x1000 | (((v23 >> 28) & 0xE) >> 3) | (v23 >> 28) & 0xE | 8 * ((v23 >> 24) & 0x10) | 4 * ((v23 >> 24) & 0x10) | 2 * ((v23 >> 24) & 0x10) | (v23 >> 24) & 0x10;
@@ -459,7 +446,7 @@ static inline void load4bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, 
     do
     {
       v36 = v35;
-      v37 = __builtin_bswap32(v33[1]);
+      v37 = bswap32(v33[1]);
       v38 = v37 >> 4;
       v38 &= 0xE0000u;
       v39 = v38 | 8 * (v37 & 0x100000) | 4 * (v37 & 0x100000) | 2 * (v37 & 0x100000) | v37 & 0x100000 | (((v37 >> 16) & 0xE00) >> 3) & 0x100 | (v37 >> 16) & 0xE00 | 8 * ((v37 >> 12) & 0x1000) | 4 * ((v37 >> 12) & 0x1000) | 2 * ((v37 >> 12) & 0x1000) | (v37 >> 12) & 0x1000 | (((v37 >> 28) & 0xE) >> 3) | (v37 >> 28) & 0xE | 8 * ((v37 >> 24) & 0x10) | 4 * ((v37 >> 24) & 0x10) | 2 * ((v37 >> 24) & 0x10) | (v37 >> 24) & 0x10;
@@ -476,7 +463,7 @@ static inline void load4bIA(uint8_t *src, uint8_t *dst, int wid_64, int height, 
       v45 >>= 3;
       *v40 = (((v37 << 24) & 0xE000000) >> 3) & 0x1000000 | (v37 << 24) & 0xE000000 | 8 * ((v37 << 28) & 0x10000000) | 4 * ((v37 << 28) & 0x10000000) | 2 * ((v37 << 28) & 0x10000000) | (v37 << 28) & 0x10000000 | v45 & 0x10000 | v46;
       ++v40;
-      v47 = __builtin_bswap32(*v33);
+      v47 = bswap32(*v33);
       v33 += 2;
       v48 = v47;
       v49 = 8 * (v47 & 0x100000) | 4 * (v47 & 0x100000) | 2 * (v47 & 0x100000) | v47 & 0x100000 | (((v47 >> 16) & 0xE00) >> 3) & 0x100 | (v47 >> 16) & 0xE00 | 8 * ((v47 >> 12) & 0x1000) | 4 * ((v47 >> 12) & 0x1000) | 2 * ((v47 >> 12) & 0x1000) | (v47 >> 12) & 0x1000 | (((v47 >> 28) & 0xE) >> 3) | (v47 >> 28) & 0xE | 8 * ((v47 >> 24) & 0x10) | 4 * ((v47 >> 24) & 0x10) | 2 * ((v47 >> 24) & 0x10) | (v47 >> 24) & 0x10;
@@ -548,7 +535,7 @@ static inline void load4bI(uint8_t *src, uint8_t *dst, int wid_64, int height, i
     do
     {
       v10 = v9;
-      v11 = __builtin_bswap32(*v6);
+      v11 = bswap32(*v6);
       v12 = v6 + 1;
       v13 = v11;
       v14 = 16 * ((v11 >> 16) & 0xF00) | (v11 >> 16) & 0xF00 | 16 * (v11 >> 28) | (v11 >> 28);
@@ -558,7 +545,7 @@ static inline void load4bI(uint8_t *src, uint8_t *dst, int wid_64, int height, i
       v16 = v13 << 12;
       *v15 = 16 * ((v13 << 24) & 0xF000000) | (v13 << 24) & 0xF000000 | 16 * (v16 & 0xF0000) | v16 & 0xF0000 | 16 * (v13 & 0xF00) | v13 & 0xF00 | 16 * ((uint16_t)v13 >> 12) | ((uint16_t)v13 >> 12);
       ++v15;
-      v17 = __builtin_bswap32(*v12);
+      v17 = bswap32(*v12);
       v6 = v12 + 1;
       v18 = v17;
       v19 = 16 * ((v17 >> 16) & 0xF00) | (v17 >> 16) & 0xF00 | 16 * (v17 >> 28) | (v17 >> 28);
@@ -580,14 +567,14 @@ static inline void load4bI(uint8_t *src, uint8_t *dst, int wid_64, int height, i
     do
     {
       v24 = v23;
-      v25 = __builtin_bswap32(v21[1]);
+      v25 = bswap32(v21[1]);
       v26 = v25 >> 4;
       *v22 = 16 * ((v25 << 8) & 0xF000000) | (v25 << 8) & 0xF000000 | 16 * (v26 & 0xF0000) | v26 & 0xF0000 | 16 * ((v25 >> 16) & 0xF00) | (v25 >> 16) & 0xF00 | 16 * (v25 >> 28) | (v25 >> 28);
       v27 = v22 + 1;
       v28 = v25 << 12;
       *v27 = 16 * ((v25 << 24) & 0xF000000) | (v25 << 24) & 0xF000000 | 16 * (v28 & 0xF0000) | v28 & 0xF0000 | 16 * (v25 & 0xF00) | v25 & 0xF00 | 16 * ((uint16_t)v25 >> 12) | ((uint16_t)v25 >> 12);
       ++v27;
-      v29 = __builtin_bswap32(*v21);
+      v29 = bswap32(*v21);
       v21 += 2;
       v30 = v29;
       v31 = 16 * ((v29 >> 16) & 0xF00) | (v29 >> 16) & 0xF00 | 16 * (v29 >> 28) | (v29 >> 28);

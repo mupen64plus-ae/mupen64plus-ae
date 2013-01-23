@@ -40,6 +40,7 @@
 #include "Gfx #1.3.h"
 #include "TexCache.h"
 #include "Combine.h"
+#include "Util.h"
 
 void LoadTex (int id, int tmu);
 

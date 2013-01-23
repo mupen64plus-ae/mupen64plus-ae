@@ -1831,18 +1831,6 @@ void setTBufTex(wxUint16 t_mem, wxUint32 cnt)
   }
 }
 
-// rotate left
-template<class T> static T __ROL__(T value, unsigned int count)
-{
-  const unsigned int nbits = sizeof(T) * 8;
-  count %= nbits;
-
-  T high = value >> (nbits - count);
-  value <<= count;
-  value |= high;
-  return value;
-}
-
 extern "C" void asmLoadBlock(uint32_t *src, uint32_t *dst, uint32_t off, int dxt, int cnt, int swp);
 
 static inline void loadBlock(uint32_t *src, uint32_t *dst, uint32_t off, int dxt, int cnt)
@@ -1892,7 +1880,7 @@ static inline void loadBlock(uint32_t *src, uint32_t *dst, uint32_t off, int dxt
     while ( v9 );
     v12 = *v11;
     v7 = v11 + 1;
-    *v5 = __builtin_bswap32(v12);
+    *v5 = bswap32(v12);
     ++v5;
     v6 = cnt - 1;
     if ( cnt != 1 )
@@ -1900,8 +1888,8 @@ static inline void loadBlock(uint32_t *src, uint32_t *dst, uint32_t off, int dxt
 LABEL_23:
       do
       {
-        *v5 = __builtin_bswap32(*v7);
-        v5[1] = __builtin_bswap32(v7[1]);
+        *v5 = bswap32(*v7);
+        v5[1] = bswap32(v7[1]);
         v7 += 2;
         v5 += 2;
         --v6;
@@ -2139,7 +2127,7 @@ static inline void loadTile(uint32_t *src, uint32_t *dst, int width, int height,
       while ( v15 );
       v18 = *v17;
       v13 = v17 + 1;
-      *v7 = __builtin_bswap32(v18);
+      *v7 = bswap32(v18);
       ++v7;
       --v8;
       if ( v8 )
@@ -2147,8 +2135,8 @@ static inline void loadTile(uint32_t *src, uint32_t *dst, int width, int height,
 LABEL_20:
         do
         {
-          *v7 = __builtin_bswap32(*v13);
-          v7[1] = __builtin_bswap32(v13[1]);
+          *v7 = bswap32(*v13);
+          v7[1] = bswap32(v13[1]);
           v13 += 2;
           v7 += 2;
           --v8;

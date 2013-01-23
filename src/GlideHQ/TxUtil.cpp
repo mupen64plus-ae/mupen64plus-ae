@@ -512,7 +512,30 @@ TxUtil::RiceCRC32_CI8(const uint8* src, int width, int height, int size, int row
 int
 TxUtil::log2(int num)
 {
+#if defined(__GNUC__)
   return __builtin_ctz(num);
+#elif defined(__MSC__)
+  __asm {
+    mov eax, dword ptr [num];
+    bsr eax, eax;
+    mov dword ptr [i], eax;
+  }
+#else
+  switch (num) {
+    case 1:    return 0;
+    case 2:    return 1;
+    case 4:    return 2;
+    case 8:    return 3;
+    case 16:   return 4;
+    case 32:   return 5;
+    case 64:   return 6;
+    case 128:  return 7;
+    case 256:  return 8;
+    case 512:  return 9;
+    case 1024:  return 10;
+    case 2048:  return 11;
+  }
+#endif
 }
 
 int
