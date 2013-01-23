@@ -115,7 +115,7 @@ public class DiagnosticActivity extends Activity
                     int axis = range.getAxis();
                     String name = MotionEvent.axisToString( axis );
                     String source = DeviceUtil.getSourceName( range.getSource() ).toLowerCase(
-                            Locale.ENGLISH );
+                            Locale.US );
                     float value = event.getAxisValue( axis );
                     message += String.format( "\n%s (%s): %+.2f", name, source, value );
                 }

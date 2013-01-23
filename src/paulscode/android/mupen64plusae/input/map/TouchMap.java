@@ -352,7 +352,7 @@ public class TouchMap
             {
                 // Assign the map colors to the appropriate N64 button
                 String val = section.get( key );
-                int index = BUTTON_STRING_MAP.get( key.toLowerCase( Locale.ENGLISH ) );
+                int index = BUTTON_STRING_MAP.get( key.toLowerCase( Locale.US ) );
                 mN64ToColor[index] = SafeMethods.toInt( val, -1 );
             }
         }
@@ -379,7 +379,7 @@ public class TouchMap
                     if( info != null )
                     {
                         // Let's not make this part case-sensitive
-                        loadAssetSection( directory, filename, section, info.toLowerCase( Locale.ENGLISH ) );
+                        loadAssetSection( directory, filename, section, info.toLowerCase( Locale.US ) );
                     }
                 }
             }

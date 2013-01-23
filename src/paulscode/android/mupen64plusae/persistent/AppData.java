@@ -374,7 +374,7 @@ public class AppData
                 String _processor = "";
                 
                 // Parse a long string of information from the operating system
-                String hwString = DeviceUtil.getCpuInfo().toLowerCase( Locale.ENGLISH );
+                String hwString = DeviceUtil.getCpuInfo().toLowerCase( Locale.US );
                 String[] lines = hwString.split( "\\r\\n|\\n|\\r" );
                 for( String line : lines )
                 {

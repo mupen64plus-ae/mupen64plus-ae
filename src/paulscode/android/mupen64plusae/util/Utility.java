@@ -309,10 +309,10 @@ public class Utility
         
         // We probably have the full CRC, just upper-case it.
         if( CRC.length() == 17 )
-            return CRC.toUpperCase( Locale.ENGLISH );
+            return CRC.toUpperCase( Locale.US );
         
-        String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase( Locale.ENGLISH ).trim();
-        String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase( Locale.ENGLISH ).trim();
+        String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase( Locale.US ).trim();
+        String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase( Locale.US ).trim();
         return CRC_1.substring( CRC_1.length() - 8, CRC_1.length() ) + " "
                 + CRC_2.substring( CRC_2.length() - 8, CRC_2.length() );
     }
@@ -349,7 +349,7 @@ public class Utility
                     if( textureName != null && textureName.length() > 3 )
                     {
                         textureExt = textureName.substring( textureName.length() - 4,
-                                textureName.length() ).toLowerCase( Locale.ENGLISH );
+                                textureName.length() ).toLowerCase( Locale.US );
                         if( supportedExt.contains( textureExt ) )
                         {
                             x = textureName.indexOf( '#' );
@@ -428,7 +428,7 @@ public class Utility
                     if( romName != null && romName.length() > 3 )
                     {
                         romExt = romName.substring( romName.length() - 4, romName.length() )
-                                .toLowerCase( Locale.ENGLISH );
+                                .toLowerCase( Locale.US );
                         if( supportedExt.contains( romExt ) )
                             return unzipEntry( zipfile, entry, outputDir );
                     }
