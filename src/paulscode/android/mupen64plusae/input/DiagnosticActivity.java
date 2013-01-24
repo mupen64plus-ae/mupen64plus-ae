@@ -25,6 +25,7 @@ import java.util.Locale;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -41,6 +42,7 @@ public class DiagnosticActivity extends Activity
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        new UserPrefs(this).enforceLocale( this );
         setContentView( R.layout.diagnostic_activity );
     }
     

@@ -12,6 +12,22 @@
 -->
 <resources>
 
+    <!-- Locales -->
+    <string-array name="localeOverride_values" translatable="false">
+        <item></item>
+        <item>de</item>
+        <item>en</item>
+        <item>es</item>
+        <item>fr</item>
+        <item>hr</item>
+        <item>it</item>
+        <item>pt</item>
+        <item>ru</item>
+        <item>ja</item>
+    </string-array>
+
+    <string name="localeOverride_default" translatable="false"></string>
+
     <!-- Touchscreen Layouts -->
     <string-array name="touchscreenLayout_entries" translatable="false">
         <item>@string/touchscreenLayout_entryAnalog</item>

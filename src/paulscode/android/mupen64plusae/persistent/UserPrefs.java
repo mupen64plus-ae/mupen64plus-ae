@@ -29,9 +29,12 @@ import java.util.Locale;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 
 /**
@@ -252,6 +255,7 @@ public class UserPrefs
     // ... add more as needed
     
     private final SharedPreferences mPreferences;
+    private final Locale mLocale;
     
     /**
      * Instantiates a new user preferences wrapper.
@@ -262,6 +266,10 @@ public class UserPrefs
     {
         AppData appData = new AppData( context );
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
+        
+        // Locale
+        String language = mPreferences.getString( "localeOverride", null );
+        mLocale = TextUtils.isEmpty( language ) ? Locale.getDefault() : new Locale( language );
         
         // Files
         selectedGame = mPreferences.getString( "pathSelectedGame", "" );
@@ -399,6 +407,18 @@ public class UserPrefs
             unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
+    }
+    
+    public void enforceLocale( Activity activity )
+    {
+        Configuration config = activity.getBaseContext().getResources().getConfiguration();
+        if( mLocale != null && !mLocale.equals( config.locale ) )
+        {
+            config.locale = mLocale;
+            activity.getBaseContext().getResources().updateConfiguration( config, null );
+            activity.finish();
+            activity.startActivity( activity.getIntent() );
+        }
     }
     
     public boolean getSpecialVisibility( int player )

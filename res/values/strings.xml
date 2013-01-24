@@ -238,6 +238,7 @@
     <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     <string name="pluginCore_title">Emulation core</string>
     <string name="pluginCore_entryV110">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    <string name="localeOverride_entrySystemDefault">System default</string>
 
     <!-- ACRA Preferences (key names must not be changed) -->
     <string name="acraEnable_title">Enable crash reporting</string>

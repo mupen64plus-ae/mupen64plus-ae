@@ -23,5 +23,8 @@
 
     <!-- Strings only seen in the eclipse editor -->
     <string name="inputMapPreference_dummyFeedback" translatable="false">KEY_CODE_XXXX</string>
+    
+    <!-- Aliases to other strings -->
+    <string name="localeOverride_title">@string/actionSetLocale_title</string>
 
 </resources>

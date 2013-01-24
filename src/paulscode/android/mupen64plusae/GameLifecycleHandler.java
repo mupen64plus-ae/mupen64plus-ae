@@ -114,6 +114,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         // Get app data and user preferences
         mAppData = new AppData( mActivity );
         mUserPrefs = new UserPrefs( mActivity );
+        mUserPrefs.enforceLocale( mActivity );
         
         // Load native libraries
         if( mIsXperiaPlay )

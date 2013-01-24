@@ -457,21 +457,19 @@
         </PreferenceCategory>
     </PreferenceScreen>
 
-    <Preference
+    <ListPreference
+        android:defaultValue="@string/localeOverride_default"
         android:icon="@drawable/ic_location"
-        android:key="actionSetLocale"
-        android:title="@string/actionSetLocale_title" >
-        <intent android:action="android.settings.LOCALE_SETTINGS" />
-    </Preference>
+        android:entryValues="@array/localeOverride_values"
+        android:key="localeOverride"
+        android:title="@string/localeOverride_title" />
     <Preference
         android:icon="@drawable/ic_help"
         android:key="actionHelp"
-        android:title="@string/actionHelp_title" >
-    </Preference>
+        android:title="@string/actionHelp_title" />
     <Preference
         android:icon="@drawable/ic_about"
         android:key="actionAbout"
-        android:title="@string/actionAbout_title" >
-    </Preference>
+        android:title="@string/actionAbout_title" />
 
 </PreferenceScreen>

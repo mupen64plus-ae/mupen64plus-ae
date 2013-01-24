@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.AssetExtractor;
 import paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
@@ -77,6 +78,9 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        
+        // Enforce any locale overrides
+        new UserPrefs( this ).enforceLocale( this );
         
         // Get app data
         mAppData = new AppData( this );

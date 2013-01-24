@@ -85,6 +85,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Get app data and user preferences
         mAppData = new AppData( this );
         UserPrefs userPrefs = new UserPrefs( this );
+        userPrefs.enforceLocale( this );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_play );

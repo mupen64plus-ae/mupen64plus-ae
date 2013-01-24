@@ -21,6 +21,10 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.Locale;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.WordUtils;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -41,6 +45,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -74,10 +79,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     private static final String PLUGIN_VIDEO = "pluginVideo";
-    
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
+    private static final String LOCALE_OVERRIDE = "localeOverride";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -92,6 +97,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Get app data and user preferences
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
+        mUserPrefs.enforceLocale( this );
         
         // Disable the Xperia PLAY plugin as necessary
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
@@ -103,6 +109,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Refresh the preference data wrapper
         mUserPrefs = new UserPrefs( this );
+        
+        // Populate the language menu
+        initLanguagePreference( findPreference( LOCALE_OVERRIDE ) );
         
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_DEVICE_INFO, this );
@@ -122,6 +131,32 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
         }
+    }
+    
+    private void initLanguagePreference( Preference preference )
+    {
+        ListPreference languagePref = (ListPreference) preference;
+        Locale[] availableLocales = Locale.getAvailableLocales();
+        String[] values = getResources().getStringArray( R.array.localeOverride_values );
+        String[] entries = new String[values.length];
+        for( int i = values.length - 1; i > 0; i-- )
+        {
+            Locale locale = new Locale( values[i] );
+            if( ArrayUtils.contains( availableLocales, locale ) )
+            {
+                // Get the name of the language, as written natively
+                entries[i] = WordUtils.capitalize( locale.getDisplayName( locale ) );
+            }
+            else
+            {
+                // Remove the item from the list
+                entries = (String[]) ArrayUtils.remove( entries, i );
+                values = (String[]) ArrayUtils.remove( values, i );
+            }
+        }
+        entries[0] = getString( R.string.localeOverride_entrySystemDefault );
+        languagePref.setEntryValues( values );
+        languagePref.setEntries( entries );
     }
     
     @Override
@@ -144,7 +179,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        if( key.equals( PLUGIN_VIDEO ) || key.equals( TOUCHPAD_ENABLED ) )
+        if( key.equals( PLUGIN_VIDEO ) || key.equals( TOUCHPAD_ENABLED )
+                || key.equals( LOCALE_OVERRIDE ) )
         {
             // Sometimes one preference change affects the hierarchy or layout of the views. In this
             // case it's easier just to restart the activity than try to figure out what to fix.
@@ -199,7 +235,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Enable the custom touchscreen prefs under certain conditions
         PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled
                 && user.isTouchscreenCustom );
-        PrefUtil.enablePreference( this, TOUCHSCREEN_SIZE, user.isTouchscreenEnabled && !user.isTouchscreenCustom );
+        PrefUtil.enablePreference( this, TOUCHSCREEN_SIZE, user.isTouchscreenEnabled
+                && !user.isTouchscreenCustom );
         
         // Update the summary text for all relevant preferences
         for( String key : sharedPreferences.getAll().keySet() )
@@ -372,8 +409,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             }
         };
         new Builder( this ).setTitle( title ).setMessage( message ).setNegativeButton( null, null )
-                .setNeutralButton( credits, listener )
-                .setPositiveButton( changelog, listener ).create().show();
+                .setNeutralButton( credits, listener ).setPositiveButton( changelog, listener )
+                .create().show();
     }
     
     private void processTexturePak( final String filename )

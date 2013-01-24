@@ -68,6 +68,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         
         // Get the user preferences wrapper
         mUserPrefs = new UserPrefs( this );
+        mUserPrefs.enforceLocale( this );
         
         // Get the player number and get the associated preference values
         Bundle extras = getIntent().getExtras();
