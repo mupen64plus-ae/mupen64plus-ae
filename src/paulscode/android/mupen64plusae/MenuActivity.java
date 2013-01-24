@@ -111,7 +111,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mUserPrefs = new UserPrefs( this );
         
         // Populate the language menu
-        initLanguagePreference( findPreference( LOCALE_OVERRIDE ) );
+        initLanguagePreference( LOCALE_OVERRIDE );
         
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_DEVICE_INFO, this );
@@ -133,9 +133,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
     }
     
-    private void initLanguagePreference( Preference preference )
+    @SuppressWarnings( "deprecation" )
+    private void initLanguagePreference( String key )
     {
-        ListPreference languagePref = (ListPreference) preference;
+        ListPreference languagePref = (ListPreference) findPreference( key );
         Locale[] availableLocales = Locale.getAvailableLocales();
         String[] values = getResources().getStringArray( R.array.localeOverride_values );
         String[] entries = new String[values.length];

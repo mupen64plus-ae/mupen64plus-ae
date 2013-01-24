@@ -412,12 +412,10 @@ public class UserPrefs
     public void enforceLocale( Activity activity )
     {
         Configuration config = activity.getBaseContext().getResources().getConfiguration();
-        if( mLocale != null && !mLocale.equals( config.locale ) )
+        if( !mLocale.equals( config.locale ) )
         {
             config.locale = mLocale;
             activity.getBaseContext().getResources().updateConfiguration( config, null );
-            activity.finish();
-            activity.startActivity( activity.getIntent() );
         }
     }
     

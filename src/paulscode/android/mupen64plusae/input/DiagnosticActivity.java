@@ -42,7 +42,7 @@ public class DiagnosticActivity extends Activity
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        new UserPrefs(this).enforceLocale( this );
+        new UserPrefs( this ).enforceLocale( this );
         setContentView( R.layout.diagnostic_activity );
     }
     
