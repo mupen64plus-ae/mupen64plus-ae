@@ -26,6 +26,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.WordUtils;
+
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
@@ -70,6 +73,12 @@ import android.view.KeyEvent;
  */
 public class UserPrefs
 {
+    /** Display names of locales that are both available on the device and translated for Mupen. */
+    public final String[] localeNames;
+    
+    /** Codes of locales that are both available on the device and translated for Mupen. */
+    public final String[] localeCodes;
+    
     /** The filename of the ROM selected by the user. */
     public final String selectedGame;
     
@@ -269,7 +278,30 @@ public class UserPrefs
         
         // Locale
         String language = mPreferences.getString( "localeOverride", null );
-        mLocale = TextUtils.isEmpty( language ) ? Locale.getDefault() : new Locale( language );
+        mLocale = TextUtils.isEmpty( language ) ? Locale.getDefault() : createLocale( language );
+        Locale[] availableLocales = Locale.getAvailableLocales();
+        String[] values = context.getResources().getStringArray( R.array.localeOverride_values );
+        String[] entries = new String[values.length];
+        for( int i = values.length - 1; i > 0; i-- )
+        {
+            Locale locale = createLocale( values[i] );
+            
+            // Get intersection of languages (available on device) and (translated for Mupen)
+            if( ArrayUtils.contains( availableLocales, locale ) )
+            {
+                // Get the name of the language, as written natively
+                entries[i] = WordUtils.capitalize( locale.getDisplayName( locale ) );
+            }
+            else
+            {
+                // Remove the item from the list
+                entries = (String[]) ArrayUtils.remove( entries, i );
+                values = (String[]) ArrayUtils.remove( values, i );
+            }
+        }
+        entries[0] = context.getString( R.string.localeOverride_entrySystemDefault );
+        localeNames = entries;
+        localeCodes = values;
         
         // Files
         selectedGame = mPreferences.getString( "pathSelectedGame", "" );
@@ -451,6 +483,23 @@ public class UserPrefs
     private void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).commit();
+    }
+    
+    private Locale createLocale( String code )
+    {
+        String[] codes = code.split( "_" );
+        switch( codes.length )
+        {
+            case 0:
+                return null;
+            case 1:
+                return new Locale( codes[0] );
+            case 2:
+                return new Locale( codes[0], codes[1] );
+            case 3:
+            default:
+                return new Locale( codes[0], codes[1], codes[2] );
+        }
     }
     
     /**

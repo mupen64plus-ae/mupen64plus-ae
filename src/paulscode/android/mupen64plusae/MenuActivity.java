@@ -21,10 +21,6 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
-import java.util.Locale;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.WordUtils;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -111,7 +107,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mUserPrefs = new UserPrefs( this );
         
         // Populate the language menu
-        initLanguagePreference( LOCALE_OVERRIDE );
+        ListPreference languagePref = (ListPreference) findPreference( LOCALE_OVERRIDE );
+        languagePref.setEntryValues( mUserPrefs.localeCodes );
+        languagePref.setEntries( mUserPrefs.localeNames );
         
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_DEVICE_INFO, this );
@@ -131,33 +129,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
         }
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private void initLanguagePreference( String key )
-    {
-        ListPreference languagePref = (ListPreference) findPreference( key );
-        Locale[] availableLocales = Locale.getAvailableLocales();
-        String[] values = getResources().getStringArray( R.array.localeOverride_values );
-        String[] entries = new String[values.length];
-        for( int i = values.length - 1; i > 0; i-- )
-        {
-            Locale locale = new Locale( values[i] );
-            if( ArrayUtils.contains( availableLocales, locale ) )
-            {
-                // Get the name of the language, as written natively
-                entries[i] = WordUtils.capitalize( locale.getDisplayName( locale ) );
-            }
-            else
-            {
-                // Remove the item from the list
-                entries = (String[]) ArrayUtils.remove( entries, i );
-                values = (String[]) ArrayUtils.remove( values, i );
-            }
-        }
-        entries[0] = getString( R.string.localeOverride_entrySystemDefault );
-        languagePref.setEntryValues( values );
-        languagePref.setEntries( entries );
     }
     
     @Override
