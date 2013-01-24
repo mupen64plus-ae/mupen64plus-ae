@@ -36,6 +36,10 @@
     <string name="ingameMainMenu_title">Main menu</string>
 
     <!-- Input Mapping Activity -->
+    <string name="menuItem_calibrate">Calibrate</string>
+    <string name="menuItem_triggers">Triggers</string>
+    <string name="menuItem_sticks">Sticks</string>
+    <string name="menuItem_unmapAll">Unmap everything</string>
     <string name="menuItem_exit">Exit</string>
 
     <!-- ************************************************************************** -->
@@ -271,6 +275,7 @@
     <string name="inputMap2_title">Player 2</string>
     <string name="inputMap3_title">Player 3</string>
     <string name="inputMap4_title">Player 4</string>
+    <string name="inputMap_title">Player %1$d</string>
     <string name="inputMap_summary">Button and special function mapping</string>
 
     <!-- ************************************************************************** -->

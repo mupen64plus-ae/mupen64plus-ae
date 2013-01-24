@@ -25,7 +25,10 @@
     <string name="inputMapPreference_dummyFeedback" translatable="false">KEY_CODE_XXXX</string>
     
     <!-- Aliases to other strings -->
-    <string name="localeOverride_title">@string/actionSetLocale_title</string>
     <string name="selectedValue">%1$s</string>
+    <string name="menuItem_specialVisibility">@string/inputMapPreference_showSpecial</string>
+    <string name="menuItem_controllerInfo">@string/actionControllerInfo_title</string>
+    <string name="menuItem_controllerDiagnostics">@string/actionControllerDiagnostics_title</string>
+    <string name="localeOverride_title">@string/actionSetLocale_title</string>
 
 </resources>
