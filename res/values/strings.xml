@@ -262,6 +262,7 @@
     <string name="pathCustomTouchscreen_title">Custom layout folder</string>
     <string name="pathCustomTouchscreen_default">~</string>
     <string name="pathHiResTextures_title">Import texture pack</string>
+    <string name="pathHiResTextures_summary">Apply custom textures (ZIP format) to a game</string>
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Game save folder</string>
     <string name="pathGameSaves_default">!mupen64plus</string>
@@ -275,7 +276,6 @@
     <string name="inputMap2_title">Player 2</string>
     <string name="inputMap3_title">Player 3</string>
     <string name="inputMap4_title">Player 4</string>
-    <string name="inputMap_title">Player %1$d</string>
     <string name="inputMap_summary">Button and special function mapping</string>
 
     <!-- ************************************************************************** -->
@@ -358,8 +358,6 @@
     <string name="inputMapPreference_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
     <string name="inputMapPreference_mempak">Expansion Pak</string> <!-- capitalize since trademark -->
     <string name="inputMapPreference_incrementSlot">Increment slot</string>
-    <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-    <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
     <string name="inputMapPreference_reset">Reset</string>
     <string name="inputMapPreference_pause">Pause</string>
     <string name="inputMapPreference_stop">Stop</string>

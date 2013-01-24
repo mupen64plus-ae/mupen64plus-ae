@@ -496,7 +496,6 @@ public class UserPrefs
                 return new Locale( codes[0] );
             case 2:
                 return new Locale( codes[0], codes[1] );
-            case 3:
             default:
                 return new Locale( codes[0], codes[1], codes[2] );
         }

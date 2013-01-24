@@ -164,10 +164,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
         else if( key.equals( PATH_HI_RES_TEXTURES ) )
         {
-            // TODO: Make this summary persist, rather than the last selected filename
-            // We'll need to extend PathPreference in that case, or use a different type of
-            // preference
-            // findPreference( key ).setSummary( R.string.pathHiResTextures_summary );
             processTexturePak( sharedPreferences.getString( PATH_HI_RES_TEXTURES, "" ) );
         }
         else

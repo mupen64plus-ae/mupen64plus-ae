@@ -49,6 +49,7 @@ public class PathPreference extends DialogPreference
     
     private static final String STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
     
+    private final boolean mUseDefaultSummary;
     private int mSelectionMode = SELECTION_MODE_ANY;
     private boolean mDoReclick = false;
     private List<CharSequence> mEntries = new ArrayList<CharSequence>();
@@ -59,6 +60,8 @@ public class PathPreference extends DialogPreference
     public PathPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
+        
+        mUseDefaultSummary = TextUtils.isEmpty( getSummary() );
         
         // Get the selection mode from the XML file, if provided
         TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.PathPreference );
@@ -73,7 +76,8 @@ public class PathPreference extends DialogPreference
             persistString( mValue );
         
         // Summary always reflects the true/persisted value, does not track the temporary/new value
-        setSummary( mSelectionMode == SELECTION_MODE_FILE ? new File( mValue ).getName() : mValue );
+        if( mUseDefaultSummary )
+            setSummary( mSelectionMode == SELECTION_MODE_FILE ? new File( mValue ).getName() : mValue );
         
         // Reset the dialog info
         populate( mValue );

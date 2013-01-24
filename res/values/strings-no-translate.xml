@@ -30,5 +30,8 @@
     <string name="menuItem_controllerInfo">@string/actionControllerInfo_title</string>
     <string name="menuItem_controllerDiagnostics">@string/actionControllerDiagnostics_title</string>
     <string name="localeOverride_title">@string/actionSetLocale_title</string>
-
+    <string name="inputMap_title">@string/playerMapPreference_popupTitle</string>
+    <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
+    <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
+    
 </resources>

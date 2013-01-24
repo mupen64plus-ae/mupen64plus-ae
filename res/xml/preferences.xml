@@ -331,6 +331,7 @@
                         android:defaultValue="@string/pathHiResTextures_default"
                         android:dependency="gles2RiceHiResTextures"
                         android:key="pathHiResTextures"
+                        android:summary="@string/pathHiResTextures_summary"
                         android:title="@string/pathHiResTextures_title"
                         mupen64:selectionMode="1" />
                 </PreferenceCategory>
