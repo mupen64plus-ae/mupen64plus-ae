@@ -26,5 +26,6 @@
     
     <!-- Aliases to other strings -->
     <string name="localeOverride_title">@string/actionSetLocale_title</string>
+    <string name="selectedValue">%1$s</string>
 
 </resources>

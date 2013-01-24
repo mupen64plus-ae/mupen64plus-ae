@@ -91,6 +91,7 @@
                             android:entries="@array/touchscreenLayout_entries"
                             android:entryValues="@array/touchscreenLayout_values"
                             android:key="touchscreenLayout"
+                            android:summary="@string/selectedValue"
                             android:title="@string/touchscreenLayout_title" />
                         <ListPreference
                             android:defaultValue="@string/touchscreenSize_default"
@@ -98,6 +99,7 @@
                             android:entries="@array/touchscreenSize_entries"
                             android:entryValues="@array/touchscreenSize_values"
                             android:key="touchscreenSize"
+                            android:summary="@string/selectedValue"
                             android:title="@string/touchscreenSize_title" />
 
                         <paulscode.android.mupen64plusae.persistent.PathPreference
@@ -122,6 +124,7 @@
                             android:entries="@array/touchscreenRefresh_entries"
                             android:entryValues="@array/touchscreenRefresh_values"
                             android:key="touchscreenRefresh"
+                            android:summary="@string/selectedValue"
                             android:title="@string/touchscreenRefresh_title" />
                     </PreferenceScreen>
                     <PreferenceScreen
@@ -140,6 +143,7 @@
                             android:entries="@array/touchpadLayout_entries"
                             android:entryValues="@array/touchpadLayout_values"
                             android:key="touchpadLayout"
+                            android:summary="@string/selectedValue"
                             android:title="@string/touchpadLayout_title" />
                     </PreferenceScreen>
 
@@ -224,18 +228,21 @@
                     android:entries="@array/videoOrientation_entries"
                     android:entryValues="@array/videoOrientation_values"
                     android:key="videoOrientation"
+                    android:summary="@string/selectedValue"
                     android:title="@string/videoOrientation_title" />
                 <ListPreference
                     android:defaultValue="@string/videoFpsRefresh_default"
                     android:entries="@array/videoFpsRefresh_entries"
                     android:entryValues="@array/videoFpsRefresh_values"
                     android:key="videoFpsRefresh"
+                    android:summary="@string/selectedValue"
                     android:title="@string/videoFpsRefresh_title" />
                 <ListPreference
                     android:defaultValue="@string/videoHardwareType_default"
                     android:entries="@array/videoHardwareType_entries"
                     android:entryValues="@array/videoHardwareType_values"
                     android:key="videoHardwareType"
+                    android:summary="@string/selectedValue"
                     android:title="@string/videoHardwareType_title" />
 
                 <CheckBoxPreference
@@ -262,6 +269,7 @@
                         android:entries="@array/gles2N64Frameskip_entries"
                         android:entryValues="@array/gles2N64Frameskip_values"
                         android:key="gles2N64Frameskip"
+                        android:summary="@string/selectedValue"
                         android:title="@string/gles2N64Frameskip_title" />
 
                     <CheckBoxPreference
@@ -343,6 +351,7 @@
                     android:entries="@array/audioResampleAlg_entries"
                     android:entryValues="@array/audioResampleAlg_values"
                     android:key="audioResampleAlg"
+                    android:summary="@string/selectedValue"
                     android:title="@string/audioResampleAlg_title" />
             </PreferenceScreen>
             <PreferenceScreen
@@ -355,30 +364,35 @@
                     android:entries="@array/pluginVideo_entries"
                     android:entryValues="@array/pluginVideo_values"
                     android:key="pluginVideo"
+                    android:summary="@string/selectedValue"
                     android:title="@string/pluginVideo_title" />
                 <ListPreference
                     android:defaultValue="@string/pluginInput_default"
                     android:entries="@array/pluginInput_entries"
                     android:entryValues="@array/pluginInput_values"
                     android:key="pluginInput"
+                    android:summary="@string/selectedValue"
                     android:title="@string/pluginInput_title" />
                 <ListPreference
                     android:defaultValue="@string/pluginAudio_default"
                     android:entries="@array/pluginAudio_entries"
                     android:entryValues="@array/pluginAudio_values"
                     android:key="pluginAudio"
+                    android:summary="@string/selectedValue"
                     android:title="@string/pluginAudio_title" />
                 <ListPreference
                     android:defaultValue="@string/pluginRsp_default"
                     android:entries="@array/pluginRsp_entries"
                     android:entryValues="@array/pluginRsp_values"
                     android:key="pluginRsp"
+                    android:summary="@string/selectedValue"
                     android:title="@string/pluginRsp_title" />
                 <ListPreference
                     android:defaultValue="@string/pluginCore_default"
                     android:entries="@array/pluginCore_entries"
                     android:entryValues="@array/pluginCore_values"
                     android:key="pluginCore"
+                    android:summary="@string/selectedValue"
                     android:title="@string/pluginCore_title" />
             </PreferenceScreen>
         </PreferenceCategory>
