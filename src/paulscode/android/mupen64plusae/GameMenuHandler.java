@@ -26,6 +26,7 @@ import paulscode.android.mupen64plusae.CoreInterface.OnEmuStateChangeListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -33,7 +34,6 @@ import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -250,17 +250,13 @@ public class GameMenuHandler
         {
             String title = mActivity.getString( R.string.confirm_title );
             String message = mActivity.getString( R.string.confirmOverwriteFile_message, filename );
-            Prompt.promptConfirm( mActivity, title, message, new OnClickListener()
+            Prompt.promptConfirm( mActivity, title, message, new OnConfirmListener()
             {
                 @Override
-                public void onClick( DialogInterface dialog, int which )
+                public void onConfirm()
                 {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        Notifier.showToast( mActivity, R.string.toast_overwritingFile,
-                                file.getName() );
-                        NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
-                    }
+                    Notifier.showToast( mActivity, R.string.toast_overwritingFile, file.getName() );
+                    NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
                 }
             } );
         }

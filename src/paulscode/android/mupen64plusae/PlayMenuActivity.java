@@ -31,13 +31,12 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.TaskHandler.Task;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -170,15 +169,12 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         {
             CharSequence title = getText( R.string.confirm_title );
             CharSequence message = getText( R.string.confirmResetGame_message );
-            Prompt.promptConfirm( this, title, message, new OnClickListener()
+            Prompt.promptConfirm( this, title, message, new OnConfirmListener()
             {
                 @Override
-                public void onClick( DialogInterface dialog, int which )
+                public void onConfirm()
                 {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        launchGame( true );
-                    }
+                    launchGame( true );
                 }
             } );
             return true;

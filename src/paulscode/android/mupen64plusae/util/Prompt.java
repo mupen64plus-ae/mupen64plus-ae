@@ -47,6 +47,19 @@ import android.widget.ImageView;
 public class Prompt
 {
     /**
+     * The listener interface for handling confirmations.
+     * 
+     * @see Prompt#promptConfirm
+     */
+    public interface OnConfirmListener
+    {
+        /**
+         * Handle the user's confirmation.
+         */
+        public void onConfirm();
+    }
+    
+    /**
      * The listener interface for receiving a file selected by the user.
      * 
      * @see Prompt#promptFile
@@ -103,10 +116,21 @@ public class Prompt
      * @param listener The listener to process the confirmation.
      */
     public static void promptConfirm( Context context, CharSequence title, CharSequence message,
-            OnClickListener listener )
+            final OnConfirmListener listener )
     {
+        // When the user clicks Ok, notify the downstream listener
+        OnClickListener internalListener = new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                    listener.onConfirm();
+            }
+        };
+        
         // Create and launch a simple confirmation dialog
-        prefillBuilder( context, title, message, listener ).create().show();
+        prefillBuilder( context, title, message, internalListener ).create().show();
     }
     
     /**

@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.AlertDialog.Builder;
@@ -277,18 +278,15 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             String title = getString( R.string.confirm_title );
             String message = getString( R.string.actionMigrateSlotSaves_messageConfirm );
-            Prompt.promptConfirm( this, title, message, new OnClickListener()
+            Prompt.promptConfirm( this, title, message, new OnConfirmListener()
             {
                 @Override
-                public void onClick( DialogInterface dialog, int which )
+                public void onConfirm()
                 {
-                    if( which == DialogInterface.BUTTON_POSITIVE )
-                    {
-                        File newDir = new File( mUserPrefs.slotSaveDir );
-                        FileUtil.copyFile( oldDir, newDir, true );
-                        Notifier.showToast( MenuActivity.this,
-                                R.string.actionMigrateSlotSaves_messageSuccess );
-                    }
+                    File newDir = new File( mUserPrefs.slotSaveDir );
+                    FileUtil.copyFile( oldDir, newDir, true );
+                    Notifier.showToast( MenuActivity.this,
+                            R.string.actionMigrateSlotSaves_messageSuccess );
                 }
             } );
         }
@@ -305,29 +303,25 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         String title = getString( R.string.confirm_title );
         String message = getString( R.string.actionResetUserPrefs_popupMessage );
-        Prompt.promptConfirm( this, title, message, new OnClickListener()
+        Prompt.promptConfirm( this, title, message, new OnConfirmListener()
         {
             @Override
-            public void onClick( DialogInterface dialog, int which )
+            public void onConfirm()
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    // Don't handle all the changes that are about to be made
-                    SharedPreferences sharedPreferences = PreferenceManager
-                            .getDefaultSharedPreferences( MenuActivity.this );
-                    sharedPreferences
-                            .unregisterOnSharedPreferenceChangeListener( MenuActivity.this );
-                    
-                    // Reset the user preferences
-                    SharedPreferences preferences = PreferenceManager
-                            .getDefaultSharedPreferences( MenuActivity.this );
-                    preferences.edit().clear().commit();
-                    PreferenceManager.setDefaultValues( MenuActivity.this, R.xml.preferences, true );
-                    
-                    // Rebuild the menu system by restarting the activity
-                    finish();
-                    startActivity( getIntent() );
-                }
+                // Don't handle all the changes that are about to be made
+                SharedPreferences sharedPreferences = PreferenceManager
+                        .getDefaultSharedPreferences( MenuActivity.this );
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener( MenuActivity.this );
+                
+                // Reset the user preferences
+                SharedPreferences preferences = PreferenceManager
+                        .getDefaultSharedPreferences( MenuActivity.this );
+                preferences.edit().clear().commit();
+                PreferenceManager.setDefaultValues( MenuActivity.this, R.xml.preferences, true );
+                
+                // Rebuild the menu system by restarting the activity
+                finish();
+                startActivity( getIntent() );
             }
         } );
     }
