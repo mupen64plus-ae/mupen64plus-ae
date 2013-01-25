@@ -9,11 +9,11 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputLi
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
-import paulscode.android.mupen64plusae.input.provider.LazyProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -50,7 +50,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     
     // Input mapping and listening
     private final InputMap mMap = new InputMap();
-    private final LazyProvider mProvider = new LazyProvider();
     private KeyProvider mKeyProvider;
     private AxisProvider mAxisProvider;
     private List<Integer> mUnmappableInputCodes;
@@ -80,11 +79,12 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         // Set up input listeners
         mUnmappableInputCodes = mUserPrefs.unmappableKeyCodes;
         mKeyProvider = new KeyProvider( ImeFormula.DEFAULT, mUnmappableInputCodes );
+        mKeyProvider.registerListener( this );
         if( AppData.IS_HONEYCOMB_MR1 )
+        {
             mAxisProvider = new AxisProvider();
-        mProvider.registerListener( this );
-        mProvider.addProvider( mKeyProvider );
-        mProvider.addProvider( mAxisProvider );
+            mAxisProvider.registerListener( this );
+        }
         
         // Select the appropriate window layout according to device configuration. Although you can
         // do this through the resource directory structure and layout aliases, we'll do it this way
@@ -102,9 +102,13 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         else
             setContentView( R.layout.input_map_preference );
         
+        // Set the title of the activity
+        CharSequence title = getResources().getString( R.string.inputMap_title, mPlayer );
+        setTitle( title );
+        
         // Initialize and refresh the widgets
         initWidgets();
-        refreshWidgets();
+        refreshAllButtons();
     }
     
     private void initWidgets()
@@ -129,6 +133,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         
         // Get the text view object
         mFeedbackText = (TextView) findViewById( R.id.textFeedback );
+        mFeedbackText.setText( "" );
         
         // Create a button list to simplify highlighting and mapping
         // @formatter:off
@@ -180,6 +185,13 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         mMenuSpecialVisibility = menu.findItem( R.id.menuItem_specialVisibility );
         refreshSpecialVisibility();
         
+        // Hide analog-related stuff if it doesn't apply
+        // if( !AppData.IS_HONEYCOMB_MR1 )
+        if( true ) // TODO: Uncomment the line above when the calibrate menu is ready
+        {
+            menu.findItem( R.id.menuItem_calibrate ).setVisible( false );
+        }
+        
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -187,6 +199,19 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         switch( item.getItemId() )
         {
+            case R.id.menuItem_empty:
+                loadProfile( "", item.getTitle() );
+                break;
+            case R.id.menuItem_default:
+                loadProfile( UserPrefs.DEFAULT_MAP_STRING, item.getTitle() );
+                break;
+            case R.id.menuItem_xbox360:
+                loadProfile( UserPrefs.DEFAULT_MAP_STRING_XBOX360, item.getTitle() );
+                break;
+            case R.id.menuItem_triggers:
+                break;
+            case R.id.menuItem_sticks:
+                break;
             case R.id.menuItem_specialVisibility:
                 mUserPrefs.putSpecialVisibility( mPlayer,
                         !mUserPrefs.getSpecialVisibility( mPlayer ) );
@@ -207,6 +232,22 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 return false;
         }
         return true;
+    }
+    
+    private void loadProfile( final String mapString, CharSequence profileName )
+    {
+        CharSequence title = getString( R.string.confirm_title );
+        CharSequence message = getString( R.string.confirmLoadProfile, profileName, getTitle() );
+        Prompt.promptConfirm( this, title, message, new OnConfirmListener()
+        {
+            @Override
+            public void onConfirm()
+            {
+                mMap.deserialize( mapString );
+                mUserPrefs.putMapString( mPlayer, mMap.serialize() );
+                refreshAllButtons();
+            }
+        } );
     }
     
     private void refreshSpecialVisibility()
@@ -255,7 +296,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                                 else
                                     mMap.map( inputCode, index );
                                 mUserPrefs.putMapString( mPlayer, mMap.serialize() );
-                                refreshWidgets();
+                                refreshAllButtons();
                             }
                         } );
             }
@@ -287,50 +328,34 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     @Override
     public void onInput( int inputCode, float strength, int hardwareId )
     {
-        refreshWidgets( inputCode, strength );
+        refreshButton( inputCode, strength );
+        refreshFeedbackText( inputCode, strength );
     }
     
     @Override
     public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
     {
-        // Nothing to do here, just implement the interface
+        float maxStrength = AbstractProvider.STRENGTH_THRESHOLD;
+        int strongestInputCode = 0;
+        for( int i = 0; i < inputCodes.length; i++ )
+        {
+            int inputCode = inputCodes[i];
+            float strength = strengths[i];
+            
+            // Cache the strongest input
+            if( strength > maxStrength )
+            {
+                maxStrength = strength;
+                strongestInputCode = inputCode;
+            }
+            
+            refreshButton( inputCode, strength );
+        }
+        refreshFeedbackText( strongestInputCode, maxStrength );
     }
     
-    @TargetApi( 11 )
-    private void refreshWidgets( int inputCode, float strength )
+    private void refreshFeedbackText( int inputCode, float strength )
     {
-        // Modify the button appearance to provide feedback to user
-        int selectedIndex = mMap.get( inputCode );
-        for( int i = 0; i < mN64Button.length; i++ )
-        {
-            // Highlight the currently active button
-            Button button = mN64Button[i];
-            if( button != null )
-            {
-                button.setPressed( i == selectedIndex
-                        && strength > AbstractProvider.STRENGTH_THRESHOLD );
-                
-                // Fade any buttons that aren't mapped
-                if( AppData.IS_HONEYCOMB )
-                {
-                    if( mMap.isMapped( i ) )
-                        button.setAlpha( 1 );
-                    else
-                        button.setAlpha( UNMAPPED_BUTTON_ALPHA );
-                }
-                else
-                {
-                    // For older APIs try something similar (not quite the same)
-                    if( mMap.isMapped( i ) )
-                        button.getBackground().clearColorFilter();
-                    else
-                        button.getBackground().setColorFilter( UNMAPPED_BUTTON_FILTER,
-                                PorterDuff.Mode.MULTIPLY );
-                    button.invalidate();
-                }
-            }
-        }
-        
         // Update the feedback text (not all layouts include this, so check null)
         if( mFeedbackText != null )
         {
@@ -340,9 +365,49 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         }
     }
     
-    private void refreshWidgets()
+    private void refreshButton( int inputCode, float strength )
     {
-        // Default update, don't highlight anything
-        refreshWidgets( 0, 0 );
+        int command = mMap.get( inputCode );
+        if( command != InputMap.UNMAPPED )
+        {
+            Button button = mN64Button[command];
+            refreshButton( button, strength, true );
+        }
+    }
+    
+    @TargetApi( 11 )
+    private void refreshButton( Button button, float strength, boolean isMapped )
+    {
+        if( button != null )
+        {
+            button.setPressed( strength > AbstractProvider.STRENGTH_THRESHOLD );
+            
+            // Fade any buttons that aren't mapped
+            if( AppData.IS_HONEYCOMB )
+            {
+                if( isMapped )
+                    button.setAlpha( 1 );
+                else
+                    button.setAlpha( UNMAPPED_BUTTON_ALPHA );
+            }
+            else
+            {
+                // For older APIs try something similar (not quite the same)
+                if( isMapped )
+                    button.getBackground().clearColorFilter();
+                else
+                    button.getBackground().setColorFilter( UNMAPPED_BUTTON_FILTER,
+                            PorterDuff.Mode.MULTIPLY );
+                button.invalidate();
+            }
+        }
+    }
+    
+    private void refreshAllButtons()
+    {
+        for( int i = 0; i < mN64Button.length; i++ )
+        {
+            refreshButton( mN64Button[i], 0, mMap.isMapped( i ) );
+        }
     }
 }

@@ -189,6 +189,11 @@ public class InputMap
         notifyListeners();
     }
     
+    public void unmapAll()
+    {
+        mMap.clear();        
+    }
+
     /**
      * Checks if an N64/Mupen command is mapped to at least one input code.
      * 
@@ -264,7 +269,7 @@ public class InputMap
     public void deserialize( String s )
     {
         // Reset the map
-        mMap.clear();
+        unmapAll();
         
         // Parse the new map data from the multi-delimited string
         if( s != null )

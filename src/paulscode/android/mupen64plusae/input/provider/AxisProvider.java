@@ -31,7 +31,9 @@ import android.view.View;
  */
 public class AxisProvider extends AbstractProvider
 {
-    private final boolean NORMALIZE = true;
+    private static final int AXIS_CLASS_UNKNOWN = 0;
+    private static final int AXIS_CLASS_STICK = 1;
+    private static final int AXIS_CLASS_TRIGGER = 2;
     
     /** The input codes to listen for. */
     private int[] mInputCodes;
@@ -121,12 +123,27 @@ public class AxisProvider extends AbstractProvider
                 
                 // Get the analog value using the Android API
                 float strength = event.getAxisValue( axisCode );
-                if( NORMALIZE && device != null )
+                
+                // Re-scale strength if necessary
+                if( device != null )
                 {
                     MotionRange motionRange = device.getMotionRange( axisCode,
                             InputDevice.SOURCE_JOYSTICK );
                     if( motionRange != null )
-                        strength = 2f * ( strength - motionRange.getMin() ) / motionRange.getRange() - 1f;
+                    {
+                        final int axisClass = getAnalogClass( device, axisCode );
+                        if( axisClass == AXIS_CLASS_STICK )
+                        {
+                            // Normalize to [-1,1]
+                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange()
+                                    * 2f - 1f;
+                        }
+                        else if( axisClass == AXIS_CLASS_TRIGGER )
+                        {
+                            // Normalize to [0,1]
+                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
+                        }
+                    }
                 }
                 
                 // If the strength points in the correct direction, record it
@@ -143,5 +160,21 @@ public class AxisProvider extends AbstractProvider
             
             return true;
         }
+    }
+
+    @TargetApi( 12 )
+    private int getAnalogClass( InputDevice device, int axisCode )
+    {
+        // TODO: This is just a default stub. Eventually this will be user-overridable.
+        MotionRange motionRange = device.getMotionRange( axisCode, InputDevice.SOURCE_JOYSTICK );
+        
+        if( motionRange != null )
+        {
+            if( motionRange.getMin() == -1 )
+                return AXIS_CLASS_STICK;
+            else if( motionRange.getMin() == 0 )
+                return AXIS_CLASS_TRIGGER;
+        }
+        return AXIS_CLASS_UNKNOWN;
     }
 }
