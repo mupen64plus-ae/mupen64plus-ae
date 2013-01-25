@@ -514,6 +514,10 @@ TxUtil::log2(int num)
 {
 #if defined(__GNUC__)
   return __builtin_ctz(num);
+#elif defined(_MSC_VER) && _MSC_VER >= 1400
+  uint32_t i;
+  _BitScanForward((DWORD *)&i, num);
+  return i;
 #elif defined(__MSC__)
   __asm {
     mov eax, dword ptr [num];

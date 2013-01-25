@@ -544,7 +544,7 @@ void TexCache ()
       if (ghq_dmptex_toggle_key) {
         DisplayLoadProgress(L"Texture dump - ON\n");
         ClearCache();
-        #warning should sleep here
+        #pragma message( "TODO: should sleep here" )
 //        wxThread::Sleep(1000);
       } else {
         DisplayLoadProgress(L"Texture dump - OFF\n");

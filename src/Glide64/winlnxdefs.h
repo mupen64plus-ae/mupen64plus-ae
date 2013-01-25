@@ -7,10 +7,7 @@
 
 #define _T(x) x
 
-#if !defined(WIN32) || defined(__GNUC__)
-
 #include <stdint.h>
-
 
 typedef int BOOL;
 typedef uint32_t wxUint32;
@@ -29,23 +26,6 @@ typedef int64_t wxInt64;
 
 typedef unsigned char wxChar;
 typedef uintptr_t wxUIntPtr;
-
-#else
-
-typedef DWORD wxUint32;
-typedef WORD wxUint16;
-typedef BYTE wxUint8;
-
-typedef int wxInt32;
-typedef short wxInt16;
-typedef char wxInt8;
-
-
-typedef BYTE char wxChar;
-typedef uintptr_t wxUIntPtr;
-
-#endif
-
 
 #ifndef WIN32
 

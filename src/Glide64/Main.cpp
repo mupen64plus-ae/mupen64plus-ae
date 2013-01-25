@@ -49,7 +49,12 @@
 #include "FBtoScreen.h"
 #include "DepthBufferRender.h"
 
+#if defined(__GNUC__)
 #include <sys/time.h>
+#elif defined(__MSC__)
+#include <time.h>
+#define PATH_MAX MAX_PATH
+#endif
 #include "osal_dynamiclib.h"
 #ifdef TEXTURE_FILTER // Hiroshi Morii <koolsmoky@users.sourceforge.net>
 #include <stdarg.h>
@@ -1090,7 +1095,7 @@ int InitGfx ()
   else
     grTextureBufferExt = 0;
 
-#warning not sure what to replace wxDynamicLibrary with
+#pragma message ( "TODO: not sure what to replace wxDynamicLibrary with" )
 /*#ifdef __WINDOWS__
   wxDynamicLibrary glidelib(_T("glide3x"));
   if (glidelib.IsLoaded())

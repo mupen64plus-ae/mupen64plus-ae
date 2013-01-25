@@ -51,8 +51,10 @@
 #include "FBtoScreen.h"
 #include "CRC.h"
 
+#if defined(OLDASM_asmLoadBlock) || defined(OLDASM_asmLoadTile)
 extern "C" void SwapBlock32 ();
 //extern "C" void SwapBlock64 ();
+#endif
 
 /*
 const int NumOfFormats = 3;
@@ -2027,12 +2029,11 @@ static void rdp_loadblock()
   if (rdp.tiles[tile].size == 3)
     cnt <<= 1;
 
-  wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
-
   if (rdp.timg.size == 3)
     LoadBlock32b(tile, ul_s, ul_t, lr_s, dxt);
   else
 #ifdef OLDASM_asmLoadBlock
+    wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
     asmLoadBlock((uint32_t *)gfx.RDRAM, (uint32_t *)dst, off, _dxt, cnt, SwapMethod);
 #else
   loadBlock((uint32_t *)gfx.RDRAM, (uint32_t *)dst, off, _dxt, cnt);
@@ -2272,10 +2273,10 @@ static void rdp_loadtile()
       return;
 
     wxUint32 wid_64 = rdp.tiles[tile].line;
-    wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
     unsigned char *dst = ((unsigned char *)rdp.tmem) + (rdp.tiles[tile].t_mem<<3);
     unsigned char *end = ((unsigned char *)rdp.tmem) + 4096 - (wid_64<<3);
 #ifdef OLDASM_asmLoadTile
+    wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
     asmLoadTile((uint32_t *)gfx.RDRAM, (uint32_t *)dst, wid_64, height, line_n, offs, (uint32_t *)end, SwapMethod);
 #else
     loadTile((uint32_t *)gfx.RDRAM, (uint32_t *)dst, wid_64, height, line_n, offs, (uint32_t *)end);
