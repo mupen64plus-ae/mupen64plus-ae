@@ -36,10 +36,13 @@
     <string name="ingameMainMenu_title">Main menu</string>
 
     <!-- Input Mapping Activity -->
+    <string name="menuItem_profiles">Profiles</string>
+    <string name="menuItem_empty">Empty</string>
+    <string name="menuItem_default">Default</string>
+    <string name="menuItem_xbox360">Xbox 360</string>
     <string name="menuItem_calibrate">Calibrate</string>
     <string name="menuItem_triggers">Triggers</string>
     <string name="menuItem_sticks">Sticks</string>
-    <string name="menuItem_unmapAll">Unmap everything</string>
     <string name="menuItem_exit">Exit</string>
 
     <!-- ************************************************************************** -->
@@ -288,6 +291,7 @@
     <string name="confirm_title">Confirmation</string>
     <string name="confirmResetGame_message">Reset game? All progress since your last save will be lost.</string>
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
+    <string name="confirmLoadProfile">Load profile \"%1$s\" for %2$s?</string>
 
     <!-- Text Editor Hints (start lower-case) -->
     <string name="hintFileSave">filename</string>
