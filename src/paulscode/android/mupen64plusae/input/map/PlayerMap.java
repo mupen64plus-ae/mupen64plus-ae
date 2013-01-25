@@ -22,18 +22,13 @@ package paulscode.android.mupen64plusae.input.map;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.content.Context;
 import android.util.Log;
-import android.util.SparseIntArray;
 
-public class PlayerMap
+public class PlayerMap extends SerializableMap
 {
     /** Flag indicating whether hardware filtering is enabled. */
     boolean mDisabled = true;
-    
-    /** Map from hardware identifier to player number. */
-    final SparseIntArray mMap = new SparseIntArray();
     
     /**
      * Instantiates a new player map.
@@ -49,8 +44,7 @@ public class PlayerMap
      */
     public PlayerMap( String serializedMap )
     {
-        this();
-        deserialize( serializedMap );
+        super( serializedMap );
     }
     
     public boolean testHardware( int hardwareId, int player )
@@ -112,50 +106,5 @@ public class PlayerMap
         for( int index = mMap.size() - 1; index >= 0; index-- )
             if( mMap.valueAt( index ) == player )
                 mMap.removeAt( index );
-    }
-    
-    /**
-     * Serializes the map data to a string.
-     * 
-     * @return The string representation of the map data.
-     */
-    public String serialize()
-    {
-        // Serialize the map values to a comma-delimited string
-        String result = "";
-        for( int i = 0; i < mMap.size(); i++ )
-        {
-            // Putting the player number first makes the string a bit more human readable IMO
-            result += mMap.valueAt( i ) + ":" + mMap.keyAt( i ) + ",";
-        }
-        return result;
-    }
-    
-    /**
-     * Deserializes the map data from a string.
-     * 
-     * @param s The string representation of the map data.
-     */
-    public void deserialize( String s )
-    {
-        // Reset the map
-        mMap.clear();
-        
-        // Parse the new map values from the comma-delimited string
-        if( s != null )
-        {
-            // Read the input mappings
-            String[] pairs = s.split( "," );
-            for( String pair : pairs )
-            {
-                String[] elements = pair.split( ":" );
-                if( elements.length == 2 )
-                {
-                    int value = SafeMethods.toInt( elements[0], -1 );
-                    int key = SafeMethods.toInt( elements[1], 0 );
-                    map( key, value );
-                }
-            }
-        }
     }
 }

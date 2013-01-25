@@ -24,9 +24,6 @@ import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.InputMapActivity;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import paulscode.android.mupen64plusae.util.SafeMethods;
-import paulscode.android.mupen64plusae.util.SubscriptionManager;
-import android.util.SparseIntArray;
 
 /**
  * A class for mapping arbitrary user inputs to N64 buttons/axes.
@@ -35,21 +32,8 @@ import android.util.SparseIntArray;
  * @see PeripheralController
  * @see InputMapActivity
  */
-public class InputMap
+public class InputMap extends SerializableMap
 {
-    /**
-     * The interface for listening to map changes.
-     */
-    public interface Listener
-    {
-        /**
-         * Called when the map data has changed.
-         * 
-         * @param map The new value of the map.
-         */
-        public void onMapChanged( InputMap map );
-    }
-    
     // @formatter:off
     /** Map flag: Input code is not mapped. */
     public static final int UNMAPPED                    = -1;
@@ -112,19 +96,11 @@ public class InputMap
     public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 11;
     // @formatter:on
     
-    /** Map from standardized input code to N64/Mupen command. */
-    private final SparseIntArray mMap;
-    
-    /** Listener management. */
-    private final SubscriptionManager<Listener> mPublisher;
-    
     /**
      * Instantiates a new input map.
      */
     public InputMap()
     {
-        mMap = new SparseIntArray();
-        mPublisher = new SubscriptionManager<InputMap.Listener>();
     }
     
     /**
@@ -134,8 +110,7 @@ public class InputMap
      */
     public InputMap( String serializedMap )
     {
-        this();
-        deserialize( serializedMap );
+        super( serializedMap );
     }
     
     /**
@@ -160,7 +135,7 @@ public class InputMap
     public void map( int inputCode, int command )
     {
         // Call the private method, notifying listeners of the change.
-        mapInput( inputCode, command, true );
+        mapInput( inputCode, command );
     }
     
     /**
@@ -186,14 +161,8 @@ public class InputMap
             if( mMap.valueAt( i ) == command )
                 mMap.removeAt( i );
         }
-        notifyListeners();
     }
     
-    public void unmapAll()
-    {
-        mMap.clear();        
-    }
-
     /**
      * Checks if an N64/Mupen command is mapped to at least one input code.
      * 
@@ -225,74 +194,6 @@ public class InputMap
     }
     
     /**
-     * Registers a listener to start receiving map change notifications.
-     * 
-     * @param listener The listener to register. Null values are safe.
-     */
-    public void registerListener( Listener listener )
-    {
-        mPublisher.subscribe( listener );
-    }
-    
-    /**
-     * Unregisters a listener to stop receiving map change notifications.
-     * 
-     * @param listener The listener to unregister. Null values are safe.
-     */
-    public void unregisterListener( Listener listener )
-    {
-        mPublisher.unsubscribe( listener );
-    }
-    
-    /**
-     * Serializes the map data to a string.
-     * 
-     * @return The string representation of the map data.
-     */
-    public String serialize()
-    {
-        // Serialize the map data to a multi-delimited string
-        String result = "";
-        for( int i = 0; i < mMap.size(); i++ )
-        {
-            // Putting the n64 command first makes the string a bit more human readable IMO
-            result += mMap.valueAt( i ) + ":" + mMap.keyAt( i ) + ",";
-        }
-        return result;
-    }
-    
-    /**
-     * Deserializes the map data from a string.
-     * 
-     * @param s The string representation of the map data.
-     */
-    public void deserialize( String s )
-    {
-        // Reset the map
-        unmapAll();
-        
-        // Parse the new map data from the multi-delimited string
-        if( s != null )
-        {
-            // Read the input mappings
-            String[] pairs = s.split( "," );
-            for( String pair : pairs )
-            {
-                String[] elements = pair.split( ":" );
-                if( elements.length == 2 )
-                {
-                    int value = SafeMethods.toInt( elements[0], UNMAPPED );
-                    int key = SafeMethods.toInt( elements[1], 0 );
-                    mapInput( key, value, false );
-                }
-            }
-        }
-        
-        // Notify the listeners that the map has changed
-        notifyListeners();
-    }
-    
-    /**
      * Maps an input code to an N64 control or Mupen64Plus function.
      * 
      * @param inputCode The standardized input code to be mapped.
@@ -300,23 +201,10 @@ public class InputMap
      * @param notify Whether to notify listeners of the change. False provides an optimization when
      *            mapping in batches, but be sure to call notifyListeners() when finished.
      */
-    private void mapInput( int inputCode, int command, boolean notify )
+    private void mapInput( int inputCode, int command )
     {
         // Map the input if a valid index was given
         if( command >= 0 && command < NUM_MAPPABLES && inputCode != 0 )
             mMap.put( inputCode, command );
-        
-        // Notify listeners that the map has changed
-        if( notify )
-            notifyListeners();
-    }
-    
-    /**
-     * Notifies all listeners that the map data has changed.
-     */
-    protected void notifyListeners()
-    {
-        for( Listener listener : mPublisher.getSubscribers() )
-            listener.onMapChanged( this );
     }
 }

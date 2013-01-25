@@ -27,15 +27,15 @@ import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
-import android.util.Log;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.util.Log;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
  * keyboards, mice, etc.).
  */
 public class PeripheralController extends AbstractController implements
-        AbstractProvider.OnInputListener, InputMap.Listener
+        AbstractProvider.OnInputListener
 {
     /** The map from hardware identifiers to players. */
     private final PlayerMap mPlayerMap;
@@ -80,11 +80,9 @@ public class PeripheralController extends AbstractController implements
     {
         setPlayerNumber( player );
         
-        // Assign the maps and listen for changes
+        // Assign the maps
         mPlayerMap = playerMap;
         mInputMap = inputMap;
-        if( mInputMap != null )
-            mInputMap.registerListener( this );
         
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
@@ -94,9 +92,6 @@ public class PeripheralController extends AbstractController implements
                 mProviders.add( provider );
                 provider.registerListener( this );
             }
-        
-        // Make listening optimizations based on the input map
-        onMapChanged( mInputMap );
     }
     
     /*
@@ -138,23 +133,6 @@ public class PeripheralController extends AbstractController implements
             // Notify the core that controller state has changed
             notifyChanged();
         }
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * paulscode.android.mupen64plusae.input.map.InputMap.Listener#onMapChanged(paulscode.android
-     * .mupen64plusae.input.map.InputMap)
-     */
-    @Override
-    public void onMapChanged( InputMap map )
-    {
-        // TODO: This optimization seems to have negative side-effects... buttons can't be held for long.
-        // Update any axis providers' notification filters
-        // for( AbstractProvider provider : mProviders )
-        //     if( provider instanceof AxisProvider )
-        //         ( (AxisProvider) provider ).setInputCodeFilter( map.getMappedInputCodes() );
     }
     
     /**
@@ -295,17 +273,19 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
         }
         return false;
     }
+    
     private void setSpeed()
     {
         int speed = 100;
         if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
             speed = GameMenuHandler.sInstance.mSpeedFactor;
-
+        
         speed += speedOffset;
-
+        
         // Clamp the speed to valid values.
-        speed = Utility.clamp(speed, GameMenuHandler.MIN_SPEED_FACTOR, GameMenuHandler.MAX_SPEED_FACTOR);
-
+        speed = Utility.clamp( speed, GameMenuHandler.MIN_SPEED_FACTOR,
+                GameMenuHandler.MAX_SPEED_FACTOR );
+        
         NativeMethods.stateSetSpeed( speed );
     }
 }
