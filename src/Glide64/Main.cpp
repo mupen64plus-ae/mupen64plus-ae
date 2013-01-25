@@ -186,7 +186,7 @@ wxUint32   offset_texbuf1 = 0;
 int    capture_screen = 0;
 char    capture_path[256];
 
-pthread_mutex_t mutexProcessDList = PTHREAD_MUTEX_INITIALIZER;
+SDL_sem *mutexProcessDList = SDL_CreateSemaphore(1);
 
 // SOME FUNCTION DEFINITIONS 
 

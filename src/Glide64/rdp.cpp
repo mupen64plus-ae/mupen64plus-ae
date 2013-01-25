@@ -38,7 +38,6 @@
 //****************************************************************
 
 #include <math.h>
-#include <pthread.h>
 #include "Gfx #1.3.h"
 #include "m64p.h"
 #include "Ini.h"
@@ -587,9 +586,9 @@ class SoftLocker
 {
 public:
   // lock the mutex in the ctor
-  SoftLocker(pthread_mutex_t *mutex)
+  SoftLocker(SDL_sem *mutex)
     : _isOk(false), _mutex(mutex)
-  { _isOk = ( pthread_mutex_trylock(_mutex) == 0 ); }
+  { _isOk = ( SDL_SemTryWait(_mutex) == 0 ); }
 
   // returns true if mutex was successfully locked in ctor
   bool IsOk() const
@@ -597,11 +596,11 @@ public:
 
   // unlock the mutex in dtor
   ~SoftLocker()
-  { if ( IsOk() ) pthread_mutex_unlock(_mutex); }
+  { if ( IsOk() ) SDL_SemPost(_mutex); }
 
 private:
   bool     _isOk;
-  pthread_mutex_t *_mutex;
+  SDL_sem *_mutex;
 };
 
 
@@ -632,7 +631,7 @@ extern "C" {
 
 EXPORT void CALL ProcessDList(void)
 {
-  SoftLocker lock(&mutexProcessDList);
+  SoftLocker lock(mutexProcessDList);
   if (!lock.IsOk()) //mutex is busy
   {
     if (!fullscreen)
@@ -4245,7 +4244,7 @@ EXPORT void CALL ProcessRDPList(void)
   LOG ("ProcessRDPList ()\n");
   LRDP("ProcessRDPList ()\n");
 
-  SoftLocker lock(&mutexProcessDList);
+  SoftLocker lock(mutexProcessDList);
   if (!lock.IsOk()) //mutex is busy
   {
     if (!fullscreen)
