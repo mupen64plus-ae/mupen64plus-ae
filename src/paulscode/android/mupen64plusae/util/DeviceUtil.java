@@ -93,7 +93,7 @@ public class DeviceUtil
                     if( device.getVibrator().hasVibrator() )
                         builder.append( "Vibrator: true\n" );
                 }
-                builder.append( "Sources: " + getSourcesString( device.getSources() ) + "\n" );
+                builder.append( "Class: " + getSourceClassesString( device.getSources() ) + "\n" );
                 
                 List<MotionRange> ranges = getPeripheralMotionRanges( device );
                 if( ranges.size() > 0 )
@@ -102,16 +102,17 @@ public class DeviceUtil
                     for( int j = 0; j < ranges.size(); j++ )
                     {
                         MotionRange range = ranges.get( j );
-                        String axisName = AppData.IS_HONEYCOMB_MR1 ? MotionEvent
-                                .axisToString( range.getAxis() ) : "Axis";
-                        builder.append( "  " + axisName + ":\n" );
-                        builder.append( "      Min: " + range.getMin() + "\n" );
-                        builder.append( "      Max: " + range.getMax() + "\n" );
-                        builder.append( "      Range: " + range.getRange() + "\n" );
-                        builder.append( "      Flat: " + range.getFlat() + "\n" );
-                        builder.append( "      Fuzz: " + range.getFuzz() + "\n" );
                         if( AppData.IS_HONEYCOMB_MR1 )
-                            builder.append( "      Source: " + getSourceName( range.getSource() ) + "\n" );
+                        {
+                            String axisName = MotionEvent.axisToString( range.getAxis() );
+                            String source = getSourceName( range.getSource() );
+                            builder.append( "  " + axisName + " (" + source + "):" );
+                        }
+                        else
+                        {
+                            builder.append( "  Axis:" );
+                        }
+                        builder.append( ": ( " + range.getMin() + " , " + range.getMax() + " )\n" );
                     }
                 }
                 builder.append( "\n" );
@@ -196,57 +197,69 @@ public class DeviceUtil
     {
         switch( source )
         {
-            case InputDevice.SOURCE_DPAD:
-                return "DPAD";
-            case InputDevice.SOURCE_GAMEPAD:
-                return "GAMEPAD";
-            case InputDevice.SOURCE_JOYSTICK:
-                return "JOYSTICK";
-            case InputDevice.SOURCE_KEYBOARD:
-                return "KEYBOARD";
-            case InputDevice.SOURCE_MOUSE:
-                return "MOUSE";
-            case InputDevice.SOURCE_STYLUS:
-                return "STYLUS";
-            case InputDevice.SOURCE_TOUCHPAD:
-                return "TOUCHPAD";
-            case InputDevice.SOURCE_TOUCHSCREEN:
-                return "TOUCHSCREEN";
-            case InputDevice.SOURCE_TRACKBALL:
+            case InputDevice.SOURCE_CLASS_BUTTON:
+                return "BUTTON";
+            case InputDevice.SOURCE_CLASS_POINTER:
+                return "POINTER";
+            case InputDevice.SOURCE_CLASS_TRACKBALL:
                 return "TRACKBALL";
+            case InputDevice.SOURCE_CLASS_POSITION:
+                return "POSITION";
+            case InputDevice.SOURCE_CLASS_JOYSTICK:
+                return "JOYSTICK";
+            case InputDevice.SOURCE_DPAD:
+                return "dpad";
+            case InputDevice.SOURCE_GAMEPAD:
+                return "gamepad";
+            case InputDevice.SOURCE_JOYSTICK:
+                return "joystick";
+            case InputDevice.SOURCE_KEYBOARD:
+                return "keyboard";
+            case InputDevice.SOURCE_MOUSE:
+                return "mouse";
+            case InputDevice.SOURCE_STYLUS:
+                return "stylus";
+            case InputDevice.SOURCE_TOUCHPAD:
+                return "touchpad";
+            case InputDevice.SOURCE_TOUCHSCREEN:
+                return "touchscreen";
+            case InputDevice.SOURCE_TRACKBALL:
+                return "trackball";
             case InputDevice.SOURCE_UNKNOWN:
-                return "UNKNOWN";
+                return "unknown";
             default:
-                return "SOURCE_" + source;
+                return "source_" + source;
         }
     }
     
     public static String getSourcesString( int sources )
     {
-        List<String> types = new ArrayList<String>();
-        addString( sources, InputDevice.SOURCE_KEYBOARD, "KEYBOARD", types );
-        addString( sources, InputDevice.SOURCE_DPAD, "DPAD", types );
-        addString( sources, InputDevice.SOURCE_GAMEPAD, "GAMEPAD", types );
-        addString( sources, InputDevice.SOURCE_TOUCHSCREEN, "TOUCHSCREEN", types );
-        addString( sources, InputDevice.SOURCE_MOUSE, "MOUSE", types );
-        addString( sources, InputDevice.SOURCE_STYLUS, "STYLUS", types );
-        addString( sources, InputDevice.SOURCE_TOUCHPAD, "TOUCHPAD", types );
-        addString( sources, InputDevice.SOURCE_JOYSTICK, "JOYSTICK", types );
-        
-        List<String> classes = new ArrayList<String>();
-        addString( sources, InputDevice.SOURCE_CLASS_BUTTON, "button", classes );
-        addString( sources, InputDevice.SOURCE_CLASS_POINTER, "pointer", classes );
-        addString( sources, InputDevice.SOURCE_CLASS_TRACKBALL, "trackball", classes );
-        addString( sources, InputDevice.SOURCE_CLASS_POSITION, "position", classes );
-        addString( sources, InputDevice.SOURCE_CLASS_JOYSTICK, "joystick", classes );
-        
-        return TextUtils.join( ", ", types ) + " (" + TextUtils.join( ", ", classes ) + ")";
+        List<String> names = new ArrayList<String>();
+        addString( sources, InputDevice.SOURCE_KEYBOARD, names );
+        addString( sources, InputDevice.SOURCE_DPAD, names );
+        addString( sources, InputDevice.SOURCE_GAMEPAD, names );
+        addString( sources, InputDevice.SOURCE_TOUCHSCREEN, names );
+        addString( sources, InputDevice.SOURCE_MOUSE, names );
+        addString( sources, InputDevice.SOURCE_STYLUS, names );
+        addString( sources, InputDevice.SOURCE_TOUCHPAD, names );
+        addString( sources, InputDevice.SOURCE_JOYSTICK, names );
+        return TextUtils.join( ", ", names );
     }
     
-    private static void addString( int sources, int sourceClass, String sourceName,
-            List<String> strings )
+    public static String getSourceClassesString( int sources )
+    {
+        List<String> names = new ArrayList<String>();
+        addString( sources, InputDevice.SOURCE_CLASS_BUTTON, names );
+        addString( sources, InputDevice.SOURCE_CLASS_POINTER, names );
+        addString( sources, InputDevice.SOURCE_CLASS_TRACKBALL, names );
+        addString( sources, InputDevice.SOURCE_CLASS_POSITION, names );
+        addString( sources, InputDevice.SOURCE_CLASS_JOYSTICK, names );        
+        return TextUtils.join( ", ", names );
+    }
+    
+    private static void addString( int sources, int sourceClass, List<String> strings )
     {
         if( ( sources & sourceClass ) > 0 )
-            strings.add( sourceName );
+            strings.add( getSourceName( sourceClass ) );
     }
 }
