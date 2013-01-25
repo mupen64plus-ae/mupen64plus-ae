@@ -559,7 +559,8 @@ public class Utility
 
     /**
      * @author Kevin Kowalewski
-     * @see http://stackoverflow.com/questions/1101380/determine-if-running-on-a-rooted-device
+     * @see <a href="http://stackoverflow.com/questions/1101380/determine-if-running-on-a-rooted-device">
+     *    Determining if an app is running on a rooted device</a>
      */
     public static class Root
     {
@@ -616,13 +617,18 @@ public class Utility
             }
             
         }
-        
+
+        /**
+         * Checks if the device is rooted.
+         *
+         * @return True if the device is rooted, false otherwise.
+         */
         public boolean isDeviceRooted()
         {
             return( checkRootMethod1() || checkRootMethod2() || checkRootMethod3() );
         }
         
-        public boolean checkRootMethod1()
+        private boolean checkRootMethod1()
         {
             String buildTags = android.os.Build.TAGS;
             
@@ -633,7 +639,7 @@ public class Utility
             return false;
         }
         
-        public boolean checkRootMethod2()
+        private boolean checkRootMethod2()
         {
             try
             {
@@ -650,7 +656,7 @@ public class Utility
             return false;
         }
         
-        public boolean checkRootMethod3()
+        private boolean checkRootMethod3()
         {
             if( new ExecShell().executeCommand( ExecShell.SHELL_CMD.check_su_binary ) != null )
             {
