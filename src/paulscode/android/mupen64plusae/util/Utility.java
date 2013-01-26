@@ -200,7 +200,7 @@ public class Utility
                 {
                     new File( uzFile ).delete();
                 }
-                catch( Exception e )
+                catch( NullPointerException ignored )
                 {
                 }
                 return headerName;
@@ -462,7 +462,15 @@ public class Utility
 
         return null;
     }
-    
+
+    /**
+     * Unzips a ZIP file in its entirety.
+     *
+     * @param archive   The archive to extract.
+     * @param outputDir Directory to place all of the extracted files.
+     *
+     * @return True if extraction was successful, false otherwise.
+     */
     public static boolean unzipAll( File archive, String outputDir )
     {
         if( archive == null )
@@ -525,7 +533,8 @@ public class Utility
 
         return true;
     }
-    
+
+    // Unzips a specific entry from a ZIP file.
     private static String unzipEntry( ZipFile zipfile, ZipEntry entry, String outputDir )
             throws IOException
     {
@@ -567,7 +576,10 @@ public class Utility
         public static class ExecShell
         {
             private static final String LOG_TAG = ExecShell.class.getName();
-            
+
+            /**
+             * Enum which represents a shell command to execute
+             */
             public static enum SHELL_CMD
             {
                 check_su_binary( new String[] { "/system/xbin/which", "su" } ), ;
@@ -579,7 +591,14 @@ public class Utility
                     this.command = command;
                 }
             }
-            
+
+            /**
+             * Executes a given shell command.
+             *
+             * @param shellCmd The shell command to execute
+             *
+             * @return An {@link ArrayList} which contains response strings
+             */
             public ArrayList<String> executeCommand( SHELL_CMD shellCmd )
             {
                 String line = null;
@@ -590,7 +609,7 @@ public class Utility
                 {
                     localProcess = Runtime.getRuntime().exec( shellCmd.command );
                 }
-                catch( Exception e )
+                catch( IOException couldNotExecCommand )
                 {
                     return null;
                 }
@@ -606,11 +625,11 @@ public class Utility
                         fullResponse.add( line );
                     }
                 }
-                catch( Exception e )
+                catch( IOException e )
                 {
                     e.printStackTrace();
                 }
-                
+
                 Log.d( LOG_TAG, "--> Full response was: " + fullResponse );
                 
                 return fullResponse;
@@ -627,7 +646,7 @@ public class Utility
         {
             return( checkRootMethod1() || checkRootMethod2() || checkRootMethod3() );
         }
-        
+
         private boolean checkRootMethod1()
         {
             String buildTags = android.os.Build.TAGS;
@@ -638,7 +657,8 @@ public class Utility
             }
             return false;
         }
-        
+
+        // Checks if the SuperUser application is installed on the device in the /system/app directory
         private boolean checkRootMethod2()
         {
             try
@@ -649,13 +669,14 @@ public class Utility
                     return true;
                 }
             }
-            catch( Exception e )
+            catch( NullPointerException ignored )
             {
             }
             
             return false;
         }
-        
+
+        // Checks if the su binary can be found in the environment paths
         private boolean checkRootMethod3()
         {
             if( new ExecShell().executeCommand( ExecShell.SHELL_CMD.check_su_binary ) != null )
