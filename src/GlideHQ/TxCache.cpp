@@ -25,6 +25,7 @@
 #pragma warning(disable: 4786)
 #endif
 
+#include "../Glide64/m64p.h"
 #include "TxCache.h"
 #include "TxDbg.h"
 #include <zlib.h>
@@ -388,6 +389,39 @@ TxCache::load(const wchar_t *path, const wchar_t *filename, int config)
 
       } while (!gzeof(gzfp));
       gzclose(gzfp);
+    } else {
+      if ((tmpconfig & HIRESTEXTURES_MASK) != (config & HIRESTEXTURES_MASK)) {
+        const char *conf_str;
+        if ((tmpconfig & HIRESTEXTURES_MASK) == NO_HIRESTEXTURES)
+          conf_str = "0";
+        else if ((tmpconfig & HIRESTEXTURES_MASK) == RICE_HIRESTEXTURES)
+          conf_str = "1";
+        else
+          conf_str = "set to an unsupported format";
+
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_hirs must be %s", conf_str);
+      }
+      if ((tmpconfig & COMPRESS_HIRESTEX) != (config & COMPRESS_HIRESTEX))
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_hirs_cmpr must be %s", (tmpconfig & COMPRESS_HIRESTEX) ? "True" : "False");
+      if ((tmpconfig & COMPRESSION_MASK) != (config & COMPRESSION_MASK) && (tmpconfig & COMPRESS_HIRESTEX)) {
+        const char *conf_str;
+        if ((tmpconfig & COMPRESSION_MASK) == FXT1_COMPRESSION)
+          conf_str = "1";
+        else if ((tmpconfig & COMPRESSION_MASK) == S3TC_COMPRESSION)
+          conf_str = "0";
+        else
+          conf_str = "set to an unsupported format";
+
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_cmpr must be %s", conf_str);
+      }
+      if ((tmpconfig & TILE_HIRESTEX) != (config & TILE_HIRESTEX))
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_hirs_tile must be %s", (tmpconfig & TILE_HIRESTEX) ? "True" : "False");
+      if ((tmpconfig & FORCE16BPP_HIRESTEX) != (config & FORCE16BPP_HIRESTEX))
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_hirs_f16bpp must be %s", (tmpconfig & FORCE16BPP_HIRESTEX) ? "True" : "False");
+      if ((tmpconfig & GZ_HIRESTEXCACHE) != (config & GZ_HIRESTEXCACHE))
+        WriteLog(M64MSG_WARNING, "ghq_hirs_gz must be %s", (tmpconfig & GZ_HIRESTEXCACHE) ? "True" : "False");
+      if ((tmpconfig & LET_TEXARTISTS_FLY) != (config & LET_TEXARTISTS_FLY))
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_hirs_let_texartists_fly must be %s", (tmpconfig & LET_TEXARTISTS_FLY) ? "True" : "False");
     }
   }
 
