@@ -133,6 +133,13 @@ public class FileUtil
         }
     }
 
+    /**
+     * Deletes a given folder directory in the form of a {@link File}
+     *
+     * @param folder The folder to delete.
+     *
+     * @return True if the folder was deleted, false otherwise.
+     */
     public static boolean deleteFolder( File folder )
     {
         if( folder.isDirectory() )
@@ -148,12 +155,35 @@ public class FileUtil
         
         return folder.delete();
     }
-    
+
+    /**
+     * Copies a <code>src</code> {@link File} to a desired destination
+     * represented by a <code>dest</code> {@link File}
+     * <p>
+     * This method assumes no backups will be wanted to be made.
+     *
+     * @param src  Source file.
+     * @param dest Desired destination.
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
     public static boolean copyFile( File src, File dest )
     {
         return copyFile( src, dest, false );
     }
-    
+
+    /**
+     * Copies a <code>src</code> {@link File} to a desired destination
+     * represented by a <code>dest</code> {@link File}
+     * <p>
+     * This method supports the making of backups of src.
+     *
+     * @param src         Source file
+     * @param dest        Desired destination
+     * @param makeBackups True if backups are wanted, false otherwise.
+     *
+     * @return True if the copy succeeded, false otherwise.
+     */
     public static boolean copyFile( File src, File dest, boolean makeBackups )
     {
         if( src == null )
@@ -219,7 +249,19 @@ public class FileUtil
             return true;
         }
     }
-    
+
+    /**
+     * Backs up a given {@link File}.
+     * <p>
+     * Backups are made in the form: 'filename + [number]',
+     * where number can be any number depending on the amount of backups there are.
+     * <p>
+     * eg. if only the file "thisfile.ext" exists, it's backup will be "thisfile.ext.bak1" <p>
+     *     if "thisfile" and "thisfile.ext.bak1" exists, it's backup will be "thisfile.ext.bak2" and so on.
+     *
+     *
+     * @param file The file to back up.
+     */
     public static void backupFile( File file )
     {
         if( file.isDirectory() )

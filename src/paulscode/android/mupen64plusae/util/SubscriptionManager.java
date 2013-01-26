@@ -31,29 +31,50 @@ import java.util.List;
 public class SubscriptionManager<Subscriber>
 {
     private final ArrayList<Subscriber> mSubscribers;
-    
+
+    /**
+     * Constructor
+     */
     public SubscriptionManager()
     {
         mSubscribers = new ArrayList<Subscriber>();
     }
-    
+
+    /**
+     * Adds a {@link Subscriber} to the list of subscribers.
+     *
+     * @param subscriber The subscriber to add/subscribe.
+     */
     public void subscribe( Subscriber subscriber )
     {
         if( ( subscriber != null ) && !mSubscribers.contains( subscriber ) )
             mSubscribers.add( subscriber );
     }
-    
+
+    /**
+     * Unsubscribes a {@link Subscriber} from the list of subscribers.
+     *
+     * @param subscriber The subscriber to unsubscribe.
+     */
     public void unsubscribe( Subscriber subscriber )
     {
         if( subscriber != null )
             mSubscribers.remove( subscriber ); 
     }
-    
+
+    /**
+     * Unsubscribes all Subscribers from the list of subscribers.
+     */
     public void unsubscribeAll()
     {
         mSubscribers.clear();            
     }
-    
+
+    /**
+     * Gets the list of all current subscribers.
+     *
+     * @return A list of all current subscribers.
+     */
     public List<Subscriber> getSubscribers()
     {
         return mSubscribers;
