@@ -254,17 +254,17 @@ public class UserPrefs
     public final String audioResampleAlg;
     
     // Shared preferences keys and key templates
-    private static final String KEYTEMPLATE_MAP_STRING = "inputMapString%1$d";
+    private static final String KEYTEMPLATE_INPUT_MAP_STRING = "inputMapString%1$d";
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
     // ... add more as needed
     
     // Shared preferences default values
-    public static final String DEFAULT_MAP_STRING = "0:22,1:21,2:20,3:19,4:108,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
+    public static final String DEFAULT_INPUT_MAP_STRING = "0:22,1:21,2:20,3:19,4:108,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     // ... add more as needed
     
     // Commonly-used values
-    public static final String DEFAULT_MAP_STRING_XBOX360 = "0:-31,1:-32,2:-33,3:-34,4:108,5:-23,6:99,7:96,8:-25,9:-26,10:-27,11:-28,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
+    public static final String DEFAULT_INPUT_MAP_STRING_XBOX360 = "0:-31,1:-32,2:-33,3:-34,4:108,5:-23,6:99,7:96,8:-25,9:-26,10:-27,11:-28,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
     
     private final SharedPreferences mPreferences;
     private final Locale mLocale;
@@ -344,10 +344,10 @@ public class UserPrefs
         isInputEnabled4 = mPreferences.getBoolean( "inputEnabled4", false );
         
         // Controller prefs
-        inputMap1 = new InputMap( getMapString( 1 ) );
-        inputMap2 = new InputMap( getMapString( 2 ) );
-        inputMap3 = new InputMap( getMapString( 3 ) );
-        inputMap4 = new InputMap( getMapString( 4 ) );
+        inputMap1 = new InputMap( getInputMapString( 1 ) );
+        inputMap2 = new InputMap( getInputMapString( 2 ) );
+        inputMap3 = new InputMap( getInputMapString( 3 ) );
+        inputMap4 = new InputMap( getInputMapString( 4 ) );
         playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
         
         // Video prefs
@@ -460,10 +460,10 @@ public class UserPrefs
         return mPreferences.getBoolean( key, DEFAULT_SPECIAL_VISIBILITY );
     }
     
-    public String getMapString( int player )
+    public String getInputMapString( int player )
     {
-        String key = String.format( Locale.US, KEYTEMPLATE_MAP_STRING, player );
-        return mPreferences.getString( key, DEFAULT_MAP_STRING );
+        String key = String.format( Locale.US, KEYTEMPLATE_INPUT_MAP_STRING, player );
+        return mPreferences.getString( key, DEFAULT_INPUT_MAP_STRING );
     }
     
     public void putSpecialVisibility( int player, boolean value )
@@ -472,9 +472,9 @@ public class UserPrefs
         putBoolean( key, value );
     }
     
-    public void putMapString( int player, String value )
+    public void putInputMapString( int player, String value )
     {
-        String key = String.format( Locale.US, KEYTEMPLATE_MAP_STRING, player );
+        String key = String.format( Locale.US, KEYTEMPLATE_INPUT_MAP_STRING, player );
         putString( key, value );
     }
     

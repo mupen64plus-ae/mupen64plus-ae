@@ -74,7 +74,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         mPlayer = extras == null ? DEFAULT_PLAYER : extras.getInt( KEYEXTRA_PLAYER, DEFAULT_PLAYER );
         
         // Update the member variables from the persisted values
-        mMap.deserialize( mUserPrefs.getMapString( mPlayer ) );
+        mMap.deserialize( mUserPrefs.getInputMapString( mPlayer ) );
         
         // Set up input listeners
         mUnmappableInputCodes = mUserPrefs.unmappableKeyCodes;
@@ -203,10 +203,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 loadProfile( "", item.getTitle() );
                 break;
             case R.id.menuItem_default:
-                loadProfile( UserPrefs.DEFAULT_MAP_STRING, item.getTitle() );
+                loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING, item.getTitle() );
                 break;
             case R.id.menuItem_xbox360:
-                loadProfile( UserPrefs.DEFAULT_MAP_STRING_XBOX360, item.getTitle() );
+                loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING_XBOX360, item.getTitle() );
                 break;
             case R.id.menuItem_triggers:
                 break;
@@ -244,7 +244,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             public void onConfirm()
             {
                 mMap.deserialize( mapString );
-                mUserPrefs.putMapString( mPlayer, mMap.serialize() );
+                mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
                 refreshAllButtons();
             }
         } );
@@ -295,7 +295,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                                     mMap.unmapCommand( index );
                                 else
                                     mMap.map( inputCode, index );
-                                mUserPrefs.putMapString( mPlayer, mMap.serialize() );
+                                mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
                                 refreshAllButtons();
                             }
                         } );

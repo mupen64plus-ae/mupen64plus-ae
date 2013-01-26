@@ -175,7 +175,6 @@ public class PeripheralController extends AbstractController implements
             // Update the net position of the analog stick
             mState.axisFractionX = mStrengthXpos - mStrengthXneg;
             mState.axisFractionY = mStrengthYpos - mStrengthYneg;
-            return true;
         }
         else if( keyDown )
         {
@@ -249,9 +248,8 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
                 default:
                     return false;
             }
-            return true;
         }
-        else if( !keyDown )
+        else
         {
             switch( n64Index )
             {
@@ -269,9 +267,8 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
                 default:
                     return false;
             }
-            return true;
         }
-        return false;
+        return true;
     }
     
     private void setSpeed()

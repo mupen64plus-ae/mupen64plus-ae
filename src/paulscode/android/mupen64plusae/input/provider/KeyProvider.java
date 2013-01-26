@@ -124,10 +124,10 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
     }
     
     /**
-     * Called when a key is dispatched to a dialog or view.
+     * Manually dispatches a KeyEvent through the provider's listening chain.
      * 
-     * @param keyCode The Android key code.
-     * @param event the event
+     * @param keyCode The code for the physical key that was pressed.
+     * @param event The KeyEvent object containing full information about the event.
      * @return True if the listener has consumed the event, false otherwise.
      */
     public boolean onKey( int keyCode, KeyEvent event )
