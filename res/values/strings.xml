@@ -241,6 +241,10 @@
     <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     <string name="pluginCore_title">Emulation core</string>
     <string name="pluginCore_entryV110">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+    <string name="r4300Emulator_title">R4300 Emulator</string>
+    <string name="r4300Emulator_entryPureInterpreter">Pure Interpreter</string>
+    <string name="r4300Emulator_entryCachedInterpreter">Cached Interpreter</string>
+    <string name="r4300Emulator_entryDynarec">Dynamic Recompiler</string>
     <string name="localeOverride_entrySystemDefault">System default</string>
 
     <!-- ACRA Preferences (key names must not be changed) -->

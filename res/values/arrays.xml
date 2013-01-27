@@ -251,4 +251,18 @@
 
     <string name="pluginCore_default" translatable="false">libcore.so</string>
 
+    <!-- R4300 Emulator -->
+    <string-array name="r4300Emulator_entries" translatable="false">
+        <item>@string/r4300Emulator_entryPureInterpreter</item>
+        <item>@string/r4300Emulator_entryCachedInterpreter</item>
+        <item>@string/r4300Emulator_entryDynarec</item>
+    </string-array>
+    <string-array name="r4300Emulator_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string name="r4300Emulator_default" translatable="false">2</string>
+
 </resources>

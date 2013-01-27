@@ -992,8 +992,7 @@ void r4300_execute(void)
     last_addr = 0xa4000040;
     next_interupt = 624999;
     init_interupt();
-/* TODO mupen64plus-ae specific hack */
-r4300emu = 2;
+
     if (r4300emu == CORE_PURE_INTERPRETER)
     {
         DebugMessage(M64MSG_INFO, "Starting R4300 emulator: Pure Interpreter");

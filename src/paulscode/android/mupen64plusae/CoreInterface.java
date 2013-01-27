@@ -431,8 +431,8 @@ public class CoreInterface
         // Core and GLES2RICE config file
         ConfigFile mupen64plus_cfg = new ConfigFile( appData.mupen64plus_cfg );
         mupen64plus_cfg.put( "Core", "Version", "1.00" );
-        mupen64plus_cfg.put( "Core", "OnScreenDisplay", "True" ); // TODO: Should this be false?
-        mupen64plus_cfg.put( "Core", "R4300Emulator", "2" );
+        mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );
+        mupen64plus_cfg.put( "Core", "R4300Emulator", user.r4300Emulator );
         mupen64plus_cfg.put( "Core", "NoCompiledJump", "False" );
         mupen64plus_cfg.put( "Core", "DisableExtraMem", "False" );
         mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );

@@ -112,6 +112,9 @@ public class UserPrefs
     /** The selected emulator core. */
     public final Plugin corePlugin;
     
+    /** The selected R4300 emulator. */
+    public final String r4300Emulator;
+    
     /** True if the cheats category should be shown in the menu. */
     public final boolean isCheatOptionsShown;
     
@@ -321,6 +324,9 @@ public class UserPrefs
         inputPlugin = new Plugin( mPreferences, appData.libsDir, "pluginInput" );
         rspPlugin = new Plugin( mPreferences, appData.libsDir, "pluginRsp" );
         corePlugin = new Plugin( mPreferences, appData.libsDir, "pluginCore" );
+        
+        // R4300 emulator
+        r4300Emulator = mPreferences.getString( "r4300Emulator", "2" );
         
         // Play menu
         isCheatOptionsShown = mPreferences.getBoolean( "playShowCheats", false );
