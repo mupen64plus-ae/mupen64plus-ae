@@ -454,37 +454,47 @@ public class UserPrefs
         }
     }
     
-    public boolean getSpecialVisibility( int player )
-    {
-        String key = String.format( Locale.US, KEYTEMPLATE_SPECIAL_VISIBILITY, player );
-        return mPreferences.getBoolean( key, DEFAULT_SPECIAL_VISIBILITY );
-    }
-    
     public String getInputMapString( int player )
     {
-        String key = String.format( Locale.US, KEYTEMPLATE_INPUT_MAP_STRING, player );
-        return mPreferences.getString( key, DEFAULT_INPUT_MAP_STRING );
+        return getString( KEYTEMPLATE_INPUT_MAP_STRING, player, DEFAULT_INPUT_MAP_STRING );
     }
     
-    public void putSpecialVisibility( int player, boolean value )
+    public boolean getSpecialVisibility( int player )
     {
-        String key = String.format( Locale.US, KEYTEMPLATE_SPECIAL_VISIBILITY, player );
-        putBoolean( key, value );
+        return getBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, DEFAULT_SPECIAL_VISIBILITY );
     }
     
     public void putInputMapString( int player, String value )
     {
-        String key = String.format( Locale.US, KEYTEMPLATE_INPUT_MAP_STRING, player );
-        putString( key, value );
+        putString( KEYTEMPLATE_INPUT_MAP_STRING, player, value );
     }
     
-    private void putBoolean( String key, boolean value )
+    public void putSpecialVisibility( int player, boolean value )
     {
+        putBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, value );
+    }
+    
+    private boolean getBoolean( String keyTemplate, int index, boolean defaultValue )
+    {
+        String key = String.format( Locale.US, keyTemplate, index );
+        return mPreferences.getBoolean( key, defaultValue );
+    }
+    
+    private String getString( String keyTemplate, int index, String defaultValue )
+    {
+        String key = String.format( Locale.US, keyTemplate, index );
+        return mPreferences.getString( key, defaultValue );
+    }
+    
+    private void putBoolean( String keyTemplate, int index, boolean value )
+    {
+        String key = String.format( Locale.US, keyTemplate, index );
         mPreferences.edit().putBoolean( key, value ).commit();
     }
     
-    private void putString( String key, String value )
+    private void putString( String keyTemplate, int index, String value )
     {
+        String key = String.format( Locale.US, keyTemplate, index );
         mPreferences.edit().putString( key, value ).commit();
     }
     
@@ -493,14 +503,14 @@ public class UserPrefs
         String[] codes = code.split( "_" );
         switch( codes.length )
         {
-            case 0:  // TODO: Should really add a descriptive constant here instead of magic numbers.
-                return null;
-            case 1:
+            case 1: // Language code provided
                 return new Locale( codes[0] );
-            case 2:
+            case 2: // Language and country code provided
                 return new Locale( codes[0], codes[1] );
-            default:
+            case 3: // Language, country, and variant code provided
                 return new Locale( codes[0], codes[1], codes[2] );
+            default: // Invalid input
+                return null;
         }
     }
     

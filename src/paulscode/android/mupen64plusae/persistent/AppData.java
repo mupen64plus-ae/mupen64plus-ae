@@ -153,7 +153,7 @@ public class AppData
     private static final int DEFAULT_ASSET_VERSION = 0;
     private static final int DEFAULT_LAST_SLOT = 0;
     private static final String DEFAULT_LAST_ROM = "";
-    private static final String DEFAULT_LAST_CRC = "";    
+    private static final String DEFAULT_LAST_CRC = "";
     // ... add more as needed
     
     /**
@@ -313,22 +313,22 @@ public class AppData
     {
         return mPreferences.getInt( key, defaultValue );
     }
-
+    
     private String getString( String key, String defaultValue )
     {
         return mPreferences.getString( key, defaultValue );
     }
-
+    
     private void putInt( String key, int value )
     {
         mPreferences.edit().putInt( key, value ).commit();
     }
-
+    
     private void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).commit();
     }
-
+    
     /**
      * Small class that summarizes the info provided by /proc/cpuinfo.
      * <p>
