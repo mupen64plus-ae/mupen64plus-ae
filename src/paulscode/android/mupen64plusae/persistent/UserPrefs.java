@@ -493,7 +493,7 @@ public class UserPrefs
         String[] codes = code.split( "_" );
         switch( codes.length )
         {
-            case 0:
+            case 0:  // TODO: Should really add a descriptive constant here instead of magic numbers.
                 return null;
             case 1:
                 return new Locale( codes[0] );
