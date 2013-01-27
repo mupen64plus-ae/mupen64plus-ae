@@ -29,7 +29,6 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputLi
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
-import paulscode.android.mupen64plusae.input.provider.LazyProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -255,18 +254,7 @@ public class Prompt
         final AlertDialog dialog = prefillBuilder( context, title, message, clickListener )
                 .setPositiveButton( positiveButtonText, clickListener ).setView( view ).create();
         
-        // Construct an object to aggregate key and motion event data
-        LazyProvider provider = new LazyProvider();
-        
-        // Connect the upstream key event listener
-        provider.addProvider( new KeyProvider( view, ImeFormula.DEFAULT, ignoredKeyCodes ) );
-        
-        // Connect the upstream motion event listener
-        if( AppData.IS_HONEYCOMB_MR1 )
-            provider.addProvider( new AxisProvider( view ) );
-        
-        // Connect the downstream listener
-        provider.registerListener( new OnInputListener()
+        OnInputListener inputListener = new OnInputListener()
         {
             @Override
             public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
@@ -282,7 +270,15 @@ public class Prompt
                     dialog.dismiss();
                 }
             }
-        } );
+        };
+        
+        // Connect the upstream key event listener
+        new KeyProvider( view, ImeFormula.DEFAULT, ignoredKeyCodes )
+                .registerListener( inputListener );
+        
+        // Connect the upstream motion event listener
+        if( AppData.IS_HONEYCOMB_MR1 )
+            new AxisProvider( view ).registerListener( inputListener );
         
         // Launch the dialog
         dialog.show();
