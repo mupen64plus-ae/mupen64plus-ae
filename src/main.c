@@ -30,6 +30,7 @@
 #include "m64p_common.h"
 #include "m64p_plugin.h"
 #include "hle.h"
+#include "jpeg.h"
 
 /* global variables */
 RSP_INFO rsp;
@@ -222,11 +223,11 @@ static int DoJPEGTask(OSTask_t *task, int sum)
       taskdone();
       return 1;
     case 0x2caa6: // Zelda OOT, Pokemon Stadium {1,2} jpg decompression
-        ps_jpg_uncompress(task);
+        jpeg_decode_PS(task);
         taskdone();
         return 1;
     case 0x130de: // Ogre Battle background decompression
-        ob_jpg_uncompress(task);
+        jpeg_decode_OB(task);
         taskdone();
         return 1;
     }
