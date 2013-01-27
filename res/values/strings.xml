@@ -37,12 +37,9 @@
 
     <!-- Input Mapping Activity -->
     <string name="menuItem_profiles">Profiles</string>
-    <string name="menuItem_empty">Empty</string>
     <string name="menuItem_default">Default</string>
     <string name="menuItem_xbox360">Xbox 360</string>
-    <string name="menuItem_calibrate">Calibrate</string>
-    <string name="menuItem_triggers">Triggers</string>
-    <string name="menuItem_sticks">Sticks</string>
+    <string name="menuItem_unmapAll">Unmap all</string>
     <string name="menuItem_exit">Exit</string>
 
     <!-- ************************************************************************** -->
@@ -53,7 +50,6 @@
     <!-- Something happening (typically use '-ing' and '…') -->
     <string name="toast_rebuildingCheats">Rebuilding cheats database…</string>
     <string name="toast_launchingEmulator">Launching emulator…</string>
-    <string name="toast_resettingGame">Resetting game…</string>
     <string name="toast_loadingSession">Auto-resuming game…</string>
     <string name="toast_savingSession">Auto-saving game…</string>
     <string name="toast_loadingSlot">Loading slot %1$d…</string>
@@ -292,6 +288,7 @@
     <string name="confirmResetGame_message">Reset game? All progress since your last save will be lost.</string>
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
     <string name="confirmLoadProfile">Load profile \"%1$s\" for %2$s?</string>
+    <string name="confirmUnmapAll">Unmap all inputs for %1$s?</string>
 
     <!-- Text Editor Hints (start lower-case) -->
     <string name="hintFileSave">filename</string>

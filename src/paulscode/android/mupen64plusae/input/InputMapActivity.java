@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -185,13 +186,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         mMenuSpecialVisibility = menu.findItem( R.id.menuItem_specialVisibility );
         refreshSpecialVisibility();
         
-        // Hide analog-related stuff if it doesn't apply
-        // if( !AppData.IS_HONEYCOMB_MR1 )
-        if( true ) // TODO: Uncomment the line above when the calibrate menu is ready
-        {
-            menu.findItem( R.id.menuItem_calibrate ).setVisible( false );
-        }
-        
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -199,7 +193,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         switch( item.getItemId() )
         {
-            case R.id.menuItem_empty:
+            case R.id.menuItem_unmapAll:
                 loadProfile( "", item.getTitle() );
                 break;
             case R.id.menuItem_default:
@@ -207,10 +201,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 break;
             case R.id.menuItem_xbox360:
                 loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING_XBOX360, item.getTitle() );
-                break;
-            case R.id.menuItem_triggers:
-                break;
-            case R.id.menuItem_sticks:
                 break;
             case R.id.menuItem_specialVisibility:
                 mUserPrefs.putSpecialVisibility( mPlayer,
@@ -237,7 +227,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     private void loadProfile( final String mapString, CharSequence profileName )
     {
         CharSequence title = getString( R.string.confirm_title );
-        CharSequence message = getString( R.string.confirmLoadProfile, profileName, getTitle() );
+        CharSequence message = TextUtils.isEmpty( mapString )
+                ? getString( R.string.confirmUnmapAll, getTitle() )
+                : getString( R.string.confirmLoadProfile, profileName, getTitle() );
+        
         Prompt.promptConfirm( this, title, message, new OnConfirmListener()
         {
             @Override
