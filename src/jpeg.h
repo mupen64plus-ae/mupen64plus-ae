@@ -22,6 +22,7 @@
 #ifndef JPEG_H
 #define JPEG_H
 
+void jpeg_decode_PS0(OSTask_t *task);
 void jpeg_decode_PS(OSTask_t *task);
 void jpeg_decode_OB(OSTask_t *task);
 

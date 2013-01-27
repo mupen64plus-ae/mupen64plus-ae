@@ -222,6 +222,10 @@ static int DoJPEGTask(OSTask_t *task, int sum)
     case 0x278: // Zelda OOT during boot
       taskdone();
       return 1;
+    case 0x2c85a: // Pokemon stadium J jpg decompression
+        jpeg_decode_PS0(task);
+        taskdone();
+        return 1;
     case 0x2caa6: // Zelda OOT, Pokemon Stadium {1,2} jpg decompression
         jpeg_decode_PS(task);
         taskdone();

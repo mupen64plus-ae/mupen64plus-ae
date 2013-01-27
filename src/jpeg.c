@@ -43,6 +43,7 @@ static void rdram_write_many_u32(const uint32_t *src, uint32_t address, unsigned
 
 /* helper functions */
 static uint8_t clamp_u8(int16_t x);
+static int16_t clamp_s12(int16_t x);
 static int16_t clamp_s16(int32_t x);
 static uint16_t clamp_RGBA_component(int16_t x);
 
@@ -52,11 +53,13 @@ static uint16_t GetRGBA(int16_t y, int16_t u, int16_t v);
 
 /* tile line emitters */
 static void EmitYUVTileLine(const int16_t *y, const int16_t *u, uint32_t address);
+static void EmitYUVTileLine_SwapY1Y2(const int16_t *y, const int16_t *u, uint32_t address);
 static void EmitRGBATileLine(const int16_t *y, const int16_t *u, uint32_t address);
 
 /* macroblocks operations */
 static void DecodeMacroblock1(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc, int32_t *v_dc, const int16_t *qtable);
 static void DecodeMacroblock2(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
+static void DecodeMacroblock3(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
 static void EmitTilesMode0(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 static void EmitTilesMode2(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 
@@ -69,6 +72,8 @@ static void ScaleSubBlock(int16_t *dst, const int16_t *src, int16_t scale);
 static void RShiftSubBlock(int16_t *dst, const int16_t *src, unsigned int shift);
 static void InverseDCT1D(const float * const x, float *dst, unsigned int stride);
 static void InverseDCTSubBlock(int16_t *dst, const int16_t *src);
+static void RescaleYSubBlock(int16_t *dst, const int16_t *src);
+static void RescaleUVSubBlock(int16_t *dst, const int16_t *src);
 
 /* transposed dequantization table */
 static const int16_t DEFAULT_QTABLE[SUBBLOCK_SIZE] =
@@ -111,6 +116,67 @@ static const unsigned int TRANSPOSE_TABLE[SUBBLOCK_SIZE] =
 
 /* global functions */
 
+/***************************************************************************
+ * JPEG decoding ucode found in Japanese exclusive version of Pokemon Stadium.
+ **************************************************************************/
+void jpeg_decode_PS0(OSTask_t *task)
+{
+    int16_t qtables[3][SUBBLOCK_SIZE];
+    unsigned int mb;
+
+    if (task->flags & 0x1)
+    {
+        DebugMessage(M64MSG_WARNING, "jpeg_decode_PS0: task yielding not implemented");
+        return;
+    }
+
+    uint32_t       address          = rdram_read_u32(task->data_ptr);
+    const uint32_t macroblock_count = rdram_read_u32(task->data_ptr + 4);
+    const uint32_t mode             = rdram_read_u32(task->data_ptr + 8);
+    const uint32_t qtableY_ptr      = rdram_read_u32(task->data_ptr + 12);
+    const uint32_t qtableU_ptr      = rdram_read_u32(task->data_ptr + 16);
+    const uint32_t qtableV_ptr      = rdram_read_u32(task->data_ptr + 20);
+
+    DebugMessage(M64MSG_VERBOSE, "jpeg_decode_PS0: *buffer=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, *Qv=%x",
+            address,
+            macroblock_count,
+            mode,
+            qtableY_ptr,
+            qtableU_ptr,
+            qtableV_ptr);
+
+    if (mode != 0 && mode != 2)
+    {
+        DebugMessage(M64MSG_WARNING, "jpeg_decode_PS0: invalid mode %d", mode);
+        return;
+    }
+    
+    const unsigned int subblock_count = mode + 4;
+    const unsigned int macroblock_size = 2*subblock_count*SUBBLOCK_SIZE;
+
+    rdram_read_many_u16((uint16_t*)qtables[0], qtableY_ptr, SUBBLOCK_SIZE);
+    rdram_read_many_u16((uint16_t*)qtables[1], qtableU_ptr, SUBBLOCK_SIZE);
+    rdram_read_many_u16((uint16_t*)qtables[2], qtableV_ptr, SUBBLOCK_SIZE);
+
+    for (mb = 0; mb < macroblock_count; ++mb)
+    {
+        int16_t macroblock[macroblock_size];
+
+        rdram_read_many_u16((uint16_t*)macroblock, address, macroblock_size >> 1);
+        DecodeMacroblock3(macroblock, subblock_count, (const int16_t (*)[SUBBLOCK_SIZE])qtables);
+
+        if (mode == 0)
+        {
+            EmitTilesMode0(EmitYUVTileLine_SwapY1Y2, macroblock, address);
+        }
+        else
+        {
+            EmitTilesMode2(EmitYUVTileLine_SwapY1Y2, macroblock, address);
+        }
+
+        address += macroblock_size;
+    }
+}
 
 /***************************************************************************
  * JPEG decoding ucode found in Ocarina of Time, Pokemon Stadium 1 and
@@ -227,6 +293,12 @@ static uint8_t clamp_u8(int16_t x)
     return (x & (0xff00)) ? ((-x) >> 15) & 0xff : x;
 }
 
+static int16_t clamp_s12(int16_t x)
+{
+    if (x < -0x800) { x = -0x800; } else if (x > 0x7f0) { x = 0x7f0; }
+    return x;
+}
+
 static int16_t clamp_s16(int32_t x)
 {
     if (x > 32767) { x = 32767; } else if (x < -32768) { x = -32768; }
@@ -275,6 +347,25 @@ static void EmitYUVTileLine(const int16_t *y, const int16_t *u, uint32_t address
     uyvy[5] = GetUYVY(y2[2], y2[3], u[5], v[5]);
     uyvy[6] = GetUYVY(y2[4], y2[5], u[6], v[6]);
     uyvy[7] = GetUYVY(y2[6], y2[7], u[7], v[7]);
+
+    rdram_write_many_u32(uyvy, address, 8);
+}
+
+static void EmitYUVTileLine_SwapY1Y2(const int16_t *y, const int16_t *u, uint32_t address)
+{
+    uint32_t uyvy[8];
+
+    const int16_t * const v  = u + SUBBLOCK_SIZE;
+    const int16_t * const y2 = y + SUBBLOCK_SIZE;
+
+    uyvy[0] = GetUYVY(y[1],  y[0],  u[0], v[0]);
+    uyvy[1] = GetUYVY(y[3],  y[2],  u[1], v[1]);
+    uyvy[2] = GetUYVY(y[5],  y[4],  u[2], v[2]);
+    uyvy[3] = GetUYVY(y[7],  y[6],  u[3], v[3]);
+    uyvy[4] = GetUYVY(y2[1], y2[0], u[4], v[4]);
+    uyvy[5] = GetUYVY(y2[3], y2[2], u[5], v[5]);
+    uyvy[6] = GetUYVY(y2[5], y2[4], u[6], v[6]);
+    uyvy[7] = GetUYVY(y2[7], y2[6], u[7], v[7]);
 
     rdram_write_many_u32(uyvy, address, 8);
 }
@@ -387,6 +478,35 @@ static void DecodeMacroblock2(int16_t *macroblock, unsigned int subblock_count, 
         macroblock += SUBBLOCK_SIZE;
     }
 
+}
+
+static void DecodeMacroblock3(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE])
+{
+    unsigned int sb;
+    unsigned int q = 0;
+
+    for (sb = 0; sb < subblock_count; ++sb)
+    {
+        int16_t tmp_sb[SUBBLOCK_SIZE];
+        const int isChromaSubBlock = (subblock_count - sb <= 2);
+
+        if (isChromaSubBlock) { ++q; }
+
+        MultSubBlocks(macroblock, macroblock, qtables[q], 4);
+        ZigZagSubBlock(tmp_sb, macroblock);
+        InverseDCTSubBlock(macroblock, tmp_sb);
+
+        if (isChromaSubBlock)
+        {
+            RescaleUVSubBlock(macroblock, macroblock);
+        }
+        else
+        {
+            RescaleYSubBlock(macroblock, macroblock);
+        }
+
+        macroblock += SUBBLOCK_SIZE;
+    }
 }
 
 static void TransposeSubBlock(int16_t *dst, const int16_t *src)
@@ -538,6 +658,32 @@ static void InverseDCTSubBlock(int16_t *dst, const int16_t *src)
         }
     }
 }
+
+static void RescaleYSubBlock(int16_t *dst, const int16_t *src)
+{
+    unsigned int i;
+
+    for (i = 0; i < SUBBLOCK_SIZE; ++i)
+    {
+#if 0
+        dst[i] = (((uint32_t)(clamp_s12(src[i]) + 0x800) * 0xdb0) >> 16) + 0x10;
+#else
+        /* FIXME: ! DIRTY HACK ! (compensate for too dark pictures) */
+        dst[i] = (((uint32_t)(clamp_s12(src[i]) + 0x800) * 0xdb0) >> 16) + 0x50;
+#endif
+    }
+}
+
+static void RescaleUVSubBlock(int16_t *dst, const int16_t *src)
+{
+    unsigned int i;
+
+    for (i = 0; i < SUBBLOCK_SIZE; ++i)
+    {
+        dst[i] = (((int)clamp_s12(src[i]) * 0xe00) >> 16) + 0x80;
+    }
+}
+
 
 
 /* FIXME: assume presence of expansion pack */
