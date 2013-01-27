@@ -30,25 +30,25 @@
 
 #ifndef WIN32
 typedef struct tagBITMAPFILEHEADER {
-  unsigned short bfType;
-  unsigned long  bfSize;
-  unsigned short bfReserved1;
-  unsigned short bfReserved2;
-  unsigned long  bfOffBits;
+  uint16_t bfType;
+  uint32_t bfSize;
+  uint16_t bfReserved1;
+  uint16_t bfReserved2;
+  uint32_t bfOffBits;
 } BITMAPFILEHEADER;
 
 typedef struct tagBITMAPINFOHEADER {
-  unsigned long  biSize;
-  long           biWidth;
-  long           biHeight;
-  unsigned short biPlanes;
-  unsigned short biBitCount;
-  unsigned long  biCompression;
-  unsigned long  biSizeImage;
-  long           biXPelsPerMeter;
-  long           biYPelsPerMeter;
-  unsigned long  biClrUsed;
-  unsigned long  biClrImportant;
+  uint32_t biSize;
+  uint32_t biWidth;
+  uint32_t biHeight;
+  uint16_t biPlanes;
+  uint16_t biBitCount;
+  uint32_t biCompression;
+  uint32_t biSizeImage;
+  uint32_t biXPelsPerMeter;
+  uint32_t biYPelsPerMeter;
+  uint32_t biClrUsed;
+  uint32_t biClrImportant;
 } BITMAPINFOHEADER;
 #else
 typedef struct tagBITMAPFILEHEADER BITMAPFILEHEADER;
@@ -73,29 +73,29 @@ typedef struct tagBITMAPINFOHEADER BITMAPINFOHEADER;
 #define DDSCAPS_MIPMAP	0x00400000
 
 typedef struct tagDDSPIXELFORMAT {
-  unsigned long dwSize;
-  unsigned long dwFlags;
-  unsigned long dwFourCC;
-  unsigned long dwRGBBitCount;
-  unsigned long dwRBitMask;
-  unsigned long dwGBitMask;
-  unsigned long dwBBitMask;
-  unsigned long dwRGBAlphaBitMask;
+  uint32_t dwSize;
+  uint32_t dwFlags;
+  uint32_t dwFourCC;
+  uint32_t dwRGBBitCount;
+  uint32_t dwRBitMask;
+  uint32_t dwGBitMask;
+  uint32_t dwBBitMask;
+  uint32_t dwRGBAlphaBitMask;
 } DDSPIXELFORMAT;
 
 typedef struct tagDDSFILEHEADER {
-  unsigned long dwMagic;
-  unsigned long dwSize;
-  unsigned long dwFlags;
-  unsigned long dwHeight;
-  unsigned long dwWidth;
-  unsigned long dwLinearSize;
-  unsigned long dwDepth;
-  unsigned long dwMipMapCount;
-  unsigned long dwReserved1[11];
+  uint32_t dwMagic;
+  uint32_t dwSize;
+  uint32_t dwFlags;
+  uint32_t dwHeight;
+  uint32_t dwWidth;
+  uint32_t dwLinearSize;
+  uint32_t dwDepth;
+  uint32_t dwMipMapCount;
+  uint32_t dwReserved1[11];
   DDSPIXELFORMAT ddpf;
-  unsigned long dwCaps1;
-  unsigned long dwCaps2;
+  uint32_t dwCaps1;
+  uint32_t dwCaps2;
 } DDSFILEHEADER;
 
 class TxImage
