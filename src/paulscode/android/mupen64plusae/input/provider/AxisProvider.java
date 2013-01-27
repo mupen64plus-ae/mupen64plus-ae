@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.input.provider;
 
+import paulscode.android.mupen64plusae.input.map.AxisMap;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
@@ -31,10 +33,6 @@ import android.view.View;
  */
 public class AxisProvider extends AbstractProvider
 {
-    private static final int AXIS_CLASS_UNKNOWN = 0;
-    private static final int AXIS_CLASS_STICK = 1;
-    private static final int AXIS_CLASS_TRIGGER = 2;
-    
     /** The input codes to listen for. */
     private int[] mInputCodes;
     
@@ -80,9 +78,18 @@ public class AxisProvider extends AbstractProvider
         mInputCodes = inputCodeFilter.clone();
     }
     
+    /**
+     * Manually dispatches a MotionEvent through the provider's listening chain.
+     * 
+     * @param event The MotionEvent object containing full information about the event.
+     * @return True if the listener has consumed the event, false otherwise.
+     */
     public boolean onGenericMotion( MotionEvent event )
     {
-        return new GenericMotionListener().onGenericMotion( null, event );
+        if( AppData.IS_HONEYCOMB_MR1 )
+            return new GenericMotionListener().onGenericMotion( null, event );
+        else
+            return false;
     }
     
     /**
@@ -111,6 +118,7 @@ public class AxisProvider extends AbstractProvider
                 return false;
             
             InputDevice device = event.getDevice();
+            AxisMap axisInfo = AxisMap.getMap( device );
             
             // Read all the requested axes
             float[] strengths = new float[mInputCodes.length];
@@ -124,27 +132,8 @@ public class AxisProvider extends AbstractProvider
                 // Get the analog value using the Android API
                 float strength = event.getAxisValue( axisCode );
                 
-                // Re-scale strength if necessary
-                if( device != null )
-                {
-                    MotionRange motionRange = device.getMotionRange( axisCode,
-                            InputDevice.SOURCE_JOYSTICK );
-                    if( motionRange != null )
-                    {
-                        final int axisClass = getAnalogClass( device, axisCode );
-                        if( axisClass == AXIS_CLASS_STICK )
-                        {
-                            // Normalize to [-1,1]
-                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange()
-                                    * 2f - 1f;
-                        }
-                        else if( axisClass == AXIS_CLASS_TRIGGER )
-                        {
-                            // Normalize to [0,1]
-                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
-                        }
-                    }
-                }
+                // Modify strength if necessary
+                strength = normalizeStrength( strength, axisInfo, device, axisCode );
                 
                 // If the strength points in the correct direction, record it
                 boolean direction1 = inputToAxisDirection( inputCode );
@@ -160,21 +149,42 @@ public class AxisProvider extends AbstractProvider
             
             return true;
         }
-    }
-
-    @TargetApi( 12 )
-    private int getAnalogClass( InputDevice device, int axisCode )
-    {
-        // TODO: This is just a default stub. Eventually this will be user-overridable.
-        MotionRange motionRange = device.getMotionRange( axisCode, InputDevice.SOURCE_JOYSTICK );
         
-        if( motionRange != null )
+        @TargetApi( 12 )
+        private float normalizeStrength( float strength, AxisMap axisInfo, InputDevice device,
+                int axisCode )
         {
-            if( motionRange.getMin() == -1 )
-                return AXIS_CLASS_STICK;
-            else if( motionRange.getMin() == 0 )
-                return AXIS_CLASS_TRIGGER;
+            if( axisInfo != null )
+            {
+                int axisClass = axisInfo.getClass( axisCode );
+                
+                if( axisClass == AxisMap.AXIS_CLASS_IGNORED )
+                {
+                    // User has specified that we ignore this axis
+                    strength = 0;
+                }
+                else if( axisClass != AxisMap.AXIS_CLASS_UNKNOWN && device != null )
+                {
+                    // User has specified that we normalize this axis
+                    MotionRange motionRange = device.getMotionRange( axisCode,
+                            InputDevice.SOURCE_JOYSTICK );
+                    if( motionRange != null )
+                    {
+                        if( axisClass == AxisMap.AXIS_CLASS_STICK )
+                        {
+                            // Normalize to [-1,1]
+                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange()
+                                    * 2f - 1f;
+                        }
+                        else if( axisClass == AxisMap.AXIS_CLASS_TRIGGER )
+                        {
+                            // Normalize to [0,1]
+                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
+                        }
+                    }
+                }
+            }
+            return strength;
         }
-        return AXIS_CLASS_UNKNOWN;
     }
 }

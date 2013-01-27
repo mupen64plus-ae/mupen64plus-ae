@@ -20,7 +20,17 @@
  */
 package paulscode.android.mupen64plusae.util;
 
-import static android.view.MotionEvent.*;
+import static android.view.MotionEvent.ACTION_CANCEL;
+import static android.view.MotionEvent.ACTION_DOWN;
+import static android.view.MotionEvent.ACTION_HOVER_ENTER;
+import static android.view.MotionEvent.ACTION_HOVER_EXIT;
+import static android.view.MotionEvent.ACTION_HOVER_MOVE;
+import static android.view.MotionEvent.ACTION_MOVE;
+import static android.view.MotionEvent.ACTION_OUTSIDE;
+import static android.view.MotionEvent.ACTION_POINTER_DOWN;
+import static android.view.MotionEvent.ACTION_POINTER_UP;
+import static android.view.MotionEvent.ACTION_SCROLL;
+import static android.view.MotionEvent.ACTION_UP;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import paulscode.android.mupen64plusae.input.map.AxisMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.text.TextUtils;
@@ -95,6 +106,16 @@ public class DeviceUtil
                 }
                 builder.append( "Class: " + getSourceClassesString( device.getSources() ) + "\n" );
                 
+                // Custom signature
+                AxisMap axisMap = AxisMap.getMap( device );
+                if( !TextUtils.isEmpty( axisMap.getSignature() ) )
+                {
+                    builder.append( "Signature:\n" );
+                    builder.append( "  String: " + axisMap.getSignature() + "\n" );
+                    builder.append( "  Hash: " + axisMap.getSignature().hashCode() + "\n" );
+                    builder.append( "  Type: " + axisMap.getSignatureName() + "\n" );
+                }
+                
                 List<MotionRange> ranges = getPeripheralMotionRanges( device );
                 if( ranges.size() > 0 )
                 {
@@ -106,11 +127,11 @@ public class DeviceUtil
                         {
                             String axisName = MotionEvent.axisToString( range.getAxis() );
                             String source = getSourceName( range.getSource() );
-                            builder.append( "  " + axisName + " (" + source + "):" );
+                            builder.append( "  " + axisName + " (" + source + ")" );
                         }
                         else
                         {
-                            builder.append( "  Axis:" );
+                            builder.append( "  Axis" );
                         }
                         builder.append( ": ( " + range.getMin() + " , " + range.getMax() + " )\n" );
                     }
@@ -253,7 +274,7 @@ public class DeviceUtil
         addString( sources, InputDevice.SOURCE_CLASS_POINTER, names );
         addString( sources, InputDevice.SOURCE_CLASS_TRACKBALL, names );
         addString( sources, InputDevice.SOURCE_CLASS_POSITION, names );
-        addString( sources, InputDevice.SOURCE_CLASS_JOYSTICK, names );        
+        addString( sources, InputDevice.SOURCE_CLASS_JOYSTICK, names );
         return TextUtils.join( ", ", names );
     }
     
