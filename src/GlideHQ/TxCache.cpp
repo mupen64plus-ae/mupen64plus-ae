@@ -422,6 +422,57 @@ TxCache::load(const wchar_t *path, const wchar_t *filename, int config)
         WriteLog(M64MSG_WARNING, "ghq_hirs_gz must be %s", (tmpconfig & GZ_HIRESTEXCACHE) ? "True" : "False");
       if ((tmpconfig & LET_TEXARTISTS_FLY) != (config & LET_TEXARTISTS_FLY))
         WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_hirs_let_texartists_fly must be %s", (tmpconfig & LET_TEXARTISTS_FLY) ? "True" : "False");
+
+      if ((tmpconfig & FILTER_MASK) != (config & FILTER_MASK)) {
+        const char *conf_str;
+        if ((tmpconfig & FILTER_MASK) == NO_FILTER)
+          conf_str = "0";
+        else if ((tmpconfig & FILTER_MASK) == SMOOTH_FILTER_1)
+          conf_str = "1";
+        else if ((tmpconfig & FILTER_MASK) == SMOOTH_FILTER_2)
+          conf_str = "2";
+        else if ((tmpconfig & FILTER_MASK) == SMOOTH_FILTER_3)
+          conf_str = "3";
+        else if ((tmpconfig & FILTER_MASK) == SMOOTH_FILTER_4)
+          conf_str = "4";
+        else if ((tmpconfig & FILTER_MASK) == SHARP_FILTER_1)
+          conf_str = "5";
+        else if ((tmpconfig & FILTER_MASK) == SHARP_FILTER_2)
+          conf_str = "6";
+        else
+          conf_str = "set to an unsupported format";
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_fltr must be %s", conf_str);
+      }
+
+      if ((tmpconfig & ENHANCEMENT_MASK) != (config & ENHANCEMENT_MASK)) {
+        const char *conf_str;
+        if ((tmpconfig & ENHANCEMENT_MASK) == NO_ENHANCEMENT)
+          conf_str = "0";
+        else if ((tmpconfig & ENHANCEMENT_MASK) == X2_ENHANCEMENT)
+          conf_str = "2";
+        else if ((tmpconfig & ENHANCEMENT_MASK) == X2SAI_ENHANCEMENT)
+          conf_str = "3";
+        else if ((tmpconfig & ENHANCEMENT_MASK) == HQ2X_ENHANCEMENT)
+          conf_str = "4";
+        else if ((tmpconfig & ENHANCEMENT_MASK) == HQ2XS_ENHANCEMENT)
+          conf_str = "5";
+        else if ((tmpconfig & ENHANCEMENT_MASK) == LQ2X_ENHANCEMENT)
+          conf_str = "6";
+        else if ((tmpconfig & ENHANCEMENT_MASK) == LQ2XS_ENHANCEMENT)
+          conf_str = "7";
+        else if ((tmpconfig & ENHANCEMENT_MASK) == HQ4X_ENHANCEMENT)
+          conf_str = "8";
+        else
+          conf_str = "set to an unsupported format";
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_enht must be %s", conf_str);
+      }
+
+      if ((tmpconfig & COMPRESS_TEX) != (config & COMPRESS_TEX))
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_enht_cmpr must be %s", (tmpconfig & COMPRESS_TEX) ? "True" : "False");
+      if ((tmpconfig & FORCE16BPP_TEX) != (config & FORCE16BPP_TEX))
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_enht_f16bpp must be %s", (tmpconfig & FORCE16BPP_TEX) ? "True" : "False");
+      if ((tmpconfig & GZ_TEXCACHE) != (config & GZ_TEXCACHE))
+        WriteLog(M64MSG_WARNING, "Ignored texture cache due to incompatible setting: ghq_enht_gz must be %s", (tmpconfig & GZ_TEXCACHE) ? "True" : "False");
     }
   }
 
