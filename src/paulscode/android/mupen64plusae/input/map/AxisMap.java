@@ -21,6 +21,7 @@ public class AxisMap extends SerializableMap
     public static final int AXIS_CLASS_TRIGGER = 3;
     
     private static final int SIGNATURE_HASH_XBOX360 = 449832952;
+    private static final int SIGNATURE_HASH_PS3 = -528816963;
     private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
     
@@ -69,16 +70,30 @@ public class AxisMap extends SerializableMap
         switch( mSignature.hashCode() )
         {
             case SIGNATURE_HASH_XBOX360:
+                // Resting value is -1 on the analog triggers; fix that
                 setClass( MotionEvent.AXIS_Z, AXIS_CLASS_TRIGGER );
                 setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_TRIGGER );
                 break;
             
+            case SIGNATURE_HASH_PS3:
+                // Ignore pressure sensitive buttons (buggy on Android)
+                setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_2, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_3, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_4, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_5, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_6, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_7, AXIS_CLASS_IGNORED );
+                break;
+            
             case SIGNATURE_HASH_NYKO_PLAYPAD:
+                // Ignore AXIS_HAT_X/Y because they are sent with (and overpower) AXIS_X/Y
                 setClass( MotionEvent.AXIS_HAT_X, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_HAT_Y, AXIS_CLASS_IGNORED );
                 break;
             
             case SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD:
+                // Bug in controller firmware cross-wires throttle and right stick up/down
                 setClass( MotionEvent.AXIS_THROTTLE, AXIS_CLASS_STICK );
                 break;
         }
