@@ -76,7 +76,7 @@ public class SerializableMap
                         int key = Integer.valueOf( elements[1] );
                         mMap.put( key, value );
                     }
-                    catch( Exception ex )
+                    catch( NumberFormatException ignored )
                     {
                     }
                 }

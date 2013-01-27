@@ -198,8 +198,6 @@ public class InputMap extends SerializableMap
      * 
      * @param inputCode The standardized input code to be mapped.
      * @param command The index to the N64/Mupen command.
-     * @param notify Whether to notify listeners of the change. False provides an optimization when
-     *            mapping in batches, but be sure to call notifyListeners() when finished.
      */
     private void mapInput( int inputCode, int command )
     {
