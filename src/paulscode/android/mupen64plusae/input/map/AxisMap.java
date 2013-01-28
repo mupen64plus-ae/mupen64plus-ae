@@ -84,6 +84,7 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_GENERIC_5, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_6, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_7, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_8, AXIS_CLASS_IGNORED );
                 break;
             
             case SIGNATURE_HASH_NYKO_PLAYPAD:
@@ -123,6 +124,8 @@ public class AxisMap extends SerializableMap
         {
             case SIGNATURE_HASH_XBOX360:
                 return "Xbox 360 compatible";
+            case SIGNATURE_HASH_PS3:
+                return "PS3 compatible";
             case SIGNATURE_HASH_NYKO_PLAYPAD:
                 return "Nyko PlayPad series";
             case SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD:
