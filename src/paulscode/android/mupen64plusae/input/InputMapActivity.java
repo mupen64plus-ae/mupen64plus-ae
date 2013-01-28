@@ -186,6 +186,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         mMenuSpecialVisibility = menu.findItem( R.id.menuItem_specialVisibility );
         refreshSpecialVisibility();
         
+        // Hide menu items that do not apply
+        if( !AppData.IS_HONEYCOMB_MR1 )
+            menu.findItem( R.id.menuItem_axisInfo ).setVisible( false );
+        
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -207,10 +211,11 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                         !mUserPrefs.getSpecialVisibility( mPlayer ) );
                 refreshSpecialVisibility();
                 break;
+            case R.id.menuItem_axisInfo:
+                showAxisInfo();
+                break;
             case R.id.menuItem_controllerInfo:
-                String title = getString( R.string.actionControllerInfo_title );
-                String message = DeviceUtil.getPeripheralInfo();
-                new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+                showControllerInfo();
                 break;
             case R.id.menuItem_controllerDiagnostics:
                 startActivity( new Intent( this, DiagnosticActivity.class ) );
@@ -256,9 +261,23 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         if( mMenuSpecialVisibility != null )
         {
             mMenuSpecialVisibility.setTitle( specialVisibility
-                    ? R.string.inputMapPreference_hideSpecial
-                    : R.string.inputMapPreference_showSpecial );
+                    ? R.string.menuItem_specialVisibility_hide
+                    : R.string.menuItem_specialVisibility_show );
         }
+    }
+    
+    private void showAxisInfo()
+    {
+        String title = getString( R.string.menuItem_axisInfo );
+        String message = DeviceUtil.getAxisInfo();
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void showControllerInfo()
+    {
+        String title = getString( R.string.menuItem_controllerInfo );
+        String message = DeviceUtil.getPeripheralInfo();
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
     @Override

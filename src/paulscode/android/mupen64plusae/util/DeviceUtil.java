@@ -80,6 +80,45 @@ public class DeviceUtil
         return result;
     }
     
+    @TargetApi( 12 )
+    public static String getAxisInfo()
+    {
+        StringBuilder builder = new StringBuilder();
+        
+        if( AppData.IS_HONEYCOMB_MR1 )
+        {
+            int[] ids = InputDevice.getDeviceIds();
+            for( int i = 0; i < ids.length; i++ )
+            {
+                InputDevice device = InputDevice.getDevice( ids[i] );
+                AxisMap axisMap = AxisMap.getMap( device );
+                if( !TextUtils.isEmpty( axisMap.getSignature() ) )
+                {
+                    builder.append( "Device: " + device.getName() + "\n" );
+                    builder.append( "Type: " + axisMap.getSignatureName() + "\n" );
+                    builder.append( "Signature:" + axisMap.getSignature() + "\n" );
+                    builder.append( "Hash: " + axisMap.getSignature().hashCode() + "\n" );
+                    
+                    List<MotionRange> ranges = getPeripheralMotionRanges( device );
+                    for( int j = 0; j < ranges.size(); j++ )
+                    {
+                        MotionRange range = ranges.get( j );
+                        if( range.getSource() == InputDevice.SOURCE_JOYSTICK )
+                        {
+                            int axisCode = range.getAxis();
+                            String axisName = MotionEvent.axisToString( axisCode );
+                            String className = getAxisClassName( axisMap.getClass( axisCode ) );
+                            builder.append( "  " + axisName + ": " + className + "\n" );
+                        }
+                    }
+                    builder.append( "\n" );
+                }
+            }
+        }
+        
+        return builder.toString();
+    }
+    
     /**
      * Gets the peripheral information using the appropriate Android API.
      * 
@@ -105,16 +144,6 @@ public class DeviceUtil
                         builder.append( "Vibrator: true\n" );
                 }
                 builder.append( "Class: " + getSourceClassesString( device.getSources() ) + "\n" );
-                
-                // Custom signature
-                AxisMap axisMap = AxisMap.getMap( device );
-                if( !TextUtils.isEmpty( axisMap.getSignature() ) )
-                {
-                    builder.append( "Signature:\n" );
-                    builder.append( "  String: " + axisMap.getSignature() + "\n" );
-                    builder.append( "  Hash: " + axisMap.getSignature().hashCode() + "\n" );
-                    builder.append( "  Type: " + axisMap.getSignatureName() + "\n" );
-                }
                 
                 List<MotionRange> ranges = getPeripheralMotionRanges( device );
                 if( ranges.size() > 0 )
@@ -181,6 +210,23 @@ public class DeviceUtil
         }
         
         return ranges;
+    }
+    
+    public static String getAxisClassName( int axisClass )
+    {
+        switch( axisClass )
+        {
+            case AxisMap.AXIS_CLASS_UNKNOWN:
+                return "Unknown";
+            case AxisMap.AXIS_CLASS_IGNORED:
+                return "Ignored";
+            case AxisMap.AXIS_CLASS_STICK:
+                return "Stick";
+            case AxisMap.AXIS_CLASS_TRIGGER:
+                return "Trigger";
+            default:
+                return "";
+        }
     }
     
     public static String getActionName( int action, boolean isMotionEvent )
