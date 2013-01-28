@@ -12,11 +12,13 @@
   <string name="menuItem_fileLoad">Laden van bestand</string>
   <string name="menuItem_setSpeed">Spel snelheid</string>
   <string name="menuItem_setIme">Verander IME</string>
+  <string name="menuItem_exit">Einde</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profielen</string>
   <string name="menuItem_default">Standaard waarden</string>
   <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_exit">Einde</string>
+  <string name="menuItem_specialVisibility_show">Laat speciale functies zien</string>
+  <string name="menuItem_specialVisibility_hide">Verberg speciale functies</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -33,6 +35,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Huidig slot %1$d.</string>
   <string name="toast_sdInaccessible">SD kaart niet berijkbaar (verwijder de USB kabel en probeer opnieuw)</string>
+  <string name="toast_migrateSlotSavesNotFound">Geen bestanden om te kopiëren.</string>
+  <string name="toast_migrateSlotSavesSuccess">Migratie succesvol afgerond.</string>
   <string name="toast_crashReportSent">Rapport verzonden.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -53,8 +57,6 @@
   <string name="actionControllerDiagnostics_summary">Test ruwe communicatie mogelijkheden</string>
   <string name="actionMigrateSlotSaves_title">Overzetten opgeslagen spelen</string>
   <string name="actionMigrateSlotSaves_summary">kopieer opgeslagen slots van de oude naar deze app </string>
-  <string name="toast_migrateSlotSavesNotFound">Geen bestanden om te kopiëren.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migratie succesvol afgerond.</string>
   <string name="actionReloadAssets_title">Herladen app bronnen</string>
   <string name="actionReloadAssets_summary">Heeft geen invloed op gebruikersinstellingen, ROM\'s, opgeslagen spellen, of andere eigen gegevens,</string>
   <string name="actionCrashTest_title">Test</string>
@@ -62,7 +64,6 @@
   <string name="actionResetUserPrefs_title">Herstart</string>
   <string name="actionResetUserPrefs_summary">Herstel standaard instellingen</string>
   <string name="actionResetUserPrefs_popupMessage">Alle voorkeuren naar standaard waarden terugzetten?</string>
-  <string name="localeOverride_title">Taal</string>
   <string name="actionHelp_title">Help</string>
   <string name="actionHelp_message">Mupen64Plus wordt ontwikkeld en onderhouden door vrijwilligers.⏎ ⏎ Help ons alstublieft het te verbeteren!</string>
   <string name="actionHelp_faq">FAQ</string>
@@ -177,6 +178,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Geen geluid verwerking, snelheid hack door Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Emulatie kern</string>
   <string name="pluginCore_entryV110">core, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_title">Taal</string>
   <string name="localeOverride_entrySystemDefault">Systeem standaard</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Inschakelen crash rapporten</string>
@@ -224,10 +226,10 @@
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(lang indrukken voor volledige tekst)</string>
+  <string name="cheat_disabled">(uitgeschakeld)</string>
+  <string name="cheatOption_title">Volledige tekst</string>
   <string name="cheatNotes_title">Opmerkingen</string>
   <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
-  <string name="cheatOption_title">Volledige tekst</string>
-  <string name="cheat_disabled">(uitgeschakeld)</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">Selecteer een texturen pakket (ZIP formaat)</string>
   <string name="pathHiResTexturesTask_title">Uitpakken texturen</string>
@@ -243,8 +245,6 @@
   <string name="playerMapPreference_button">Speler %1$d⏎ ⏎ %2$s</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Druk op een knop, toets, of joystick om toe te wijzen…⏎ ⏎ Huidige toewijzingen:⏎ %1$s</string>
-  <string name="menuItem_specialVisibility_show">Laat speciale functies zien</string>
-  <string name="menuItem_specialVisibility_hide">Verberg speciale functies</string>
   <string name="inputMapActivity_popupUnmap">Toewijzing ongedaan maken</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>

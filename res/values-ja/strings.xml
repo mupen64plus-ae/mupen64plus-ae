@@ -13,6 +13,8 @@
   <string name="menuItem_setSpeed">ゲームの速度</string>
   <string name="menuItem_setIme">IMEを変更</string>
   <!--Input Mapping Activity-->
+  <string name="menuItem_specialVisibility_show">特別な機能を表示</string>
+  <string name="menuItem_specialVisibility_hide">特別な機能を非表示</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -30,6 +32,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">%1$dセーブデータスロット</string>
   <string name="toast_sdInaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
+  <string name="toast_migrateSlotSavesNotFound">コピーするファイルがありません。</string>
+  <string name="toast_migrateSlotSavesSuccess">移行に成功。</string>
   <string name="toast_crashReportSent">エラーレポートを送信しました。</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -50,9 +54,6 @@
   <string name="actionControllerDiagnostics_summary">テスト通信機能</string>
   <string name="actionMigrateSlotSaves_title">セーブファイルを移行</string>
   <string name="actionMigrateSlotSaves_summary">このアプリケーションに古いアプリケーションからコピーセーブファイル。</string>
-  <string name="toast_migrateSlotSavesNotFound">コピーするファイルがありません。</string>
-  <string name="confirmMigrateSlotSaves_message">あなたがあなたの古いセーブファイルをコピーしてもよろしいですか？ バックアップは、必要に応じて行われます。</string>
-  <string name="toast_migrateSlotSavesSuccess">移行に成功。</string>
   <string name="actionReloadAssets_title">データを再ロード</string>
   <string name="actionReloadAssets_summary">アプリケーションのデータ·ファイルを再ロード</string>
   <string name="actionCrashTest_title">テスト</string>
@@ -60,7 +61,6 @@
   <string name="actionResetUserPrefs_title">リセット</string>
   <string name="actionResetUserPrefs_summary">既定値にリセット</string>
   <string name="actionResetUserPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
-  <string name="localeOverride_title">言語</string>
   <string name="actionHelp_title">ヘルプ</string>
   <string name="actionHelp_message">Mupen64Plusはボランティアによって開発され維持されます。\n\n私たちはそれを改善するために助けてください！</string>
   <string name="actionHelp_faq">よくある質問</string>
@@ -192,6 +192,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">コア</string>
   <string name="pluginCore_entryV110">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_title">言語</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">クラッシュレポートを有効</string>
   <string name="acraEnable_summary">個人情報は収集されません</string>
@@ -229,6 +230,7 @@
   <string name="confirm_title">確認</string>
   <string name="confirmResetGame_message">ゲームをリセットしますか？ すべての進行状況は、前回の保存以降に失われます。</string>
   <string name="confirmOverwriteFile_message">%1$s上書き?</string>
+  <string name="confirmMigrateSlotSaves_message">あなたがあなたの古いセーブファイルをコピーしてもよろしいですか？ バックアップは、必要に応じて行われます。</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ファイル名</string>
   <string name="hintSetSpeed">300から10の間で</string>
@@ -239,10 +241,10 @@
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">%1$dチート</string>
   <string name="cheats_longPress">（長押しチートはその全文を見さために）</string>
+  <string name="cheat_disabled">（使用禁止）</string>
+  <string name="cheatOption_title">全文</string>
   <string name="cheatNotes_title">注釈</string>
   <string name="cheatNotes_none">（このチートで使用可能なノートはありません。）</string>
-  <string name="cheatOption_title">全文</string>
-  <string name="cheat_disabled">（使用禁止）</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">テクスチャパック（ZIP形式）を選択.</string>
   <string name="pathHiResTexturesTask_title">開梱のテクスチャ</string>
@@ -259,8 +261,6 @@
   <string name="playerMapPreference_button">プレーヤー %1$d\n\n%2$s</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。\n\n現在のマッピング:\n%1$s</string>
-  <string name="menuItem_specialVisibility_show">特別な機能を表示</string>
-  <string name="menuItem_specialVisibility_hide">特別な機能を非表示</string>
   <string name="inputMapActivity_popupUnmap">アンマップ</string>
   <string name="inputMapActivity_aPadXperiaPlay">アナログスティックはタッチパッドで制御され。</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-パッドはタッチパッドで制御されている。</string>

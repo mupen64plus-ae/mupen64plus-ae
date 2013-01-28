@@ -12,11 +12,13 @@
   <string name="menuItem_fileLoad">Загрузка из файла…</string>
   <string name="menuItem_setSpeed">Скорость игры</string>
   <string name="menuItem_setIme">Выбор метода ввода</string>
+  <string name="menuItem_exit">Выход</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Профили</string>
   <string name="menuItem_default">Умолчание</string>
   <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_exit">Выход</string>
+  <string name="menuItem_specialVisibility_show">Показать дополнительные возможности</string>
+  <string name="menuItem_specialVisibility_hide">Скрыть дополнительные возможности</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -34,6 +36,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Сейчас используется слот %1$d.</string>
   <string name="toast_sdInaccessible">Карта недоступна</string>
+  <string name="toast_migrateSlotSavesNotFound">Нет файлов для копирования</string>
+  <string name="toast_migrateSlotSavesSuccess">Перенос прошёл успешно</string>
   <string name="toast_crashReportSent">Отчёт отправлен.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -54,9 +58,6 @@
   <string name="actionControllerDiagnostics_summary">Проверить работоспособность средств ввода</string>
   <string name="actionMigrateSlotSaves_title">Импортировать сохранения</string>
   <string name="actionMigrateSlotSaves_summary">Скопировать файлы сохранений в эту версию эмулятора</string>
-  <string name="toast_migrateSlotSavesNotFound">Нет файлов для копирования</string>
-  <string name="confirmMigrateSlotSaves_message">Вы действительно хотите скопировать старый слот сохранений? Резервное копирование будет сделано, если это необходимо.</string>
-  <string name="toast_migrateSlotSavesSuccess">Перенос прошёл успешно</string>
   <string name="actionReloadAssets_title">Перезагрузить ресурсы</string>
   <string name="actionReloadAssets_summary">Не влияет на настройки пользователя, ROMs, сохранения игр, или другие пользовательские данные</string>
   <string name="actionCrashTest_title">Проверка</string>
@@ -64,7 +65,6 @@
   <string name="actionResetUserPrefs_title">Сброс</string>
   <string name="actionResetUserPrefs_summary">Восстановить настройки по умолчанию</string>
   <string name="actionResetUserPrefs_popupMessage">Сбросить настройки на дефолтные?</string>
-  <string name="localeOverride_title">Язык</string>
   <string name="actionHelp_title">Помощь</string>
   <string name="actionHelp_message">Mupen64Plus разрабатывается добровольцами.\n\nВнесите свой вклад!</string>
   <string name="actionHelp_faq">ЧАВО</string>
@@ -208,6 +208,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (спид-хак, без поддержки звука Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Ядро эмулятора</string>
   <string name="pluginCore_entryV110">core, v1.10 (порт Mupen64Plus под Android за авторством Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_title">Язык</string>
   <string name="localeOverride_entrySystemDefault">Система по умолчанию</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Разрешить отправку сообщений об ошибках</string>
@@ -248,6 +249,7 @@
   <string name="confirmResetGame_message">Сбросить игру? Прогресс с момента последнего сохранения будет потерян.</string>
   <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
   <string name="confirmLoadProfile_message">Загрузить профиль \"%1$s\" для %2$s?</string>
+  <string name="confirmMigrateSlotSaves_message">Вы действительно хотите скопировать старый слот сохранений? Резервное копирование будет сделано, если это необходимо.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">имя файла</string>
   <string name="hintSetSpeed">скорость от 10 до 300</string>
@@ -259,10 +261,10 @@
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Чит %1$d</string>
   <string name="cheats_longPress">(нажмите и удерживайте для полного описания)</string>
+  <string name="cheat_disabled">(выключ.)</string>
+  <string name="cheatOption_title">Полный текст</string>
   <string name="cheatNotes_title">Примечания</string>
   <string name="cheatNotes_none">(для этого чит-кода нет примечаний)</string>
-  <string name="cheatOption_title">Полный текст</string>
-  <string name="cheat_disabled">(выключ.)</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">Выберите пакет с текстурами (в zip)</string>
   <string name="pathHiResTexturesTask_title">Извлечение текстур</string>
@@ -279,8 +281,6 @@
   <string name="playerMapPreference_button">Игрок %1$d\n\n%2$s</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Нажмите кнопку…\n\nТекущее соответствие:\n%1$s</string>
-  <string name="menuItem_specialVisibility_show">Показать дополнительные возможности</string>
-  <string name="menuItem_specialVisibility_hide">Скрыть дополнительные возможности</string>
   <string name="inputMapActivity_popupUnmap">Сбросить</string>
   <string name="inputMapActivity_aPadXperiaPlay">Управление джойстиком с сенсорной панели</string>
   <string name="inputMapActivity_cPadXperiaPlay">Управление C-pad с сенсорной панели</string>

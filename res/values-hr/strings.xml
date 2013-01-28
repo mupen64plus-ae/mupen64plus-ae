@@ -12,8 +12,10 @@
   <string name="menuItem_fileLoad">Učitaj iz datoteke…</string>
   <string name="menuItem_setSpeed">Brzina igre</string>
   <string name="menuItem_setIme">Promjena zadanog unosa</string>
-  <!--Input Mapping Activity-->
   <string name="menuItem_exit">Izlaz</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_specialVisibility_show">Prikaži specijalne funkcije</string>
+  <string name="menuItem_specialVisibility_hide">Sakrij specijalne funkcije</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -31,6 +33,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Koristi se spremnik #%1$d.</string>
   <string name="toast_sdInaccessible">SD kartica nije dostupna (iskopčajte USB kabel i pokušajte ponovo).</string>
+  <string name="toast_migrateSlotSavesNotFound">Nema datoteka za kopiranje.</string>
+  <string name="toast_migrateSlotSavesSuccess">Migracija uspješno završena.</string>
   <string name="toast_crashReportSent">Izvještaj poslan.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -51,9 +55,6 @@
   <string name="actionControllerDiagnostics_summary">Ispitivanje mogućnosti komunikacije kontrolera</string>
   <string name="actionMigrateSlotSaves_title">Migracija spremnika</string>
   <string name="actionMigrateSlotSaves_summary">Kopiranje spremnika iz stare aplikacije u ovu</string>
-  <string name="toast_migrateSlotSavesNotFound">Nema datoteka za kopiranje.</string>
-  <string name="confirmMigrateSlotSaves_message">Jeste li sigurni da želite kopirati svoje stare spremnike? Ako je potrebno, pričuvne kopije će biti napravljene.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migracija uspješno završena.</string>
   <string name="actionReloadAssets_title">Ponovno učitaj resurse</string>
   <string name="actionReloadAssets_summary">Nema nikakav utjecaj na korisničke postavke, igre, spremnike ili ostale korisničke podatke</string>
   <string name="actionCrashTest_title">Ispitaj</string>
@@ -61,7 +62,6 @@
   <string name="actionResetUserPrefs_title">Resetiranje</string>
   <string name="actionResetUserPrefs_summary">Vraćanje postavki na zadano</string>
   <string name="actionResetUserPrefs_popupMessage">Resetirati sve postavke na zadano?</string>
-  <string name="localeOverride_title">Jezik</string>
   <string name="actionHelp_title">Pomoć</string>
   <string name="actionHelp_message">Mupen64Plus je razvijen i održavan od strane volontera.\n\nPomozite nam ga poboljšati!</string>
   <string name="actionHelp_faq">FAQ</string>
@@ -205,6 +205,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Izvorni tip emulacije</string>
   <string name="pluginCore_entryV110">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_title">Jezik</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Uključi izvještavanje o rušenju</string>
   <string name="acraEnable_summary">Ne prikupljavaju se osobni podaci</string>
@@ -242,6 +243,7 @@
   <string name="confirm_title">Potvrda</string>
   <string name="confirmResetGame_message">Resetirati igru? Sve što nije bilo spremljeno u igri će biti izgubljeno.</string>
   <string name="confirmOverwriteFile_message">Prepisati %1$s?</string>
+  <string name="confirmMigrateSlotSaves_message">Jeste li sigurni da želite kopirati svoje stare spremnike? Ako je potrebno, pričuvne kopije će biti napravljene.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ime datoteke</string>
   <string name="hintSetSpeed">brzina između 10 do 300</string>
@@ -253,10 +255,10 @@
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Opcija varanja %1$d</string>
   <string name="cheats_longPress">(držati za više detalja)</string>
+  <string name="cheat_disabled">(isključeno)</string>
+  <string name="cheatOption_title">Više detalja</string>
   <string name="cheatNotes_title">Detalji</string>
   <string name="cheatNotes_none">(nema detalja)</string>
-  <string name="cheatOption_title">Više detalja</string>
-  <string name="cheat_disabled">(isključeno)</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">Odabir teksture (ZIP format)</string>
   <string name="pathHiResTexturesTask_title">Raspakiravanje teksture</string>
@@ -273,8 +275,6 @@
   <string name="playerMapPreference_button">Igrač %1$d\n\n%2$s</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Pritisnite tipku ili kontroler za označivanje…\n\nTrenutno označeno:\n%1$s</string>
-  <string name="menuItem_specialVisibility_show">Prikaži specijalne funkcije</string>
-  <string name="menuItem_specialVisibility_hide">Sakrij specijalne funkcije</string>
   <string name="inputMapActivity_popupUnmap">Odznači</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analogna palica kontrolirana sa dodirnom površinom</string>
   <string name="inputMapActivity_cPadXperiaPlay">C tipke kontrolirane sa dodirnom površinom</string>

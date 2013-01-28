@@ -12,11 +12,13 @@
   <string name="menuItem_fileLoad">Carregar do arquivo…</string>
   <string name="menuItem_setSpeed">Velocidade do jogo</string>
   <string name="menuItem_setIme">Mudar método de entrada</string>
+  <string name="menuItem_exit">Sair</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Perfis</string>
   <string name="menuItem_default">Padrão</string>
   <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_exit">Sair</string>
+  <string name="menuItem_specialVisibility_show">Exibir funções especiais</string>
+  <string name="menuItem_specialVisibility_hide">Esconder funções especiais</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -34,6 +36,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessível (desconecte o cabo USB e tente novamente).</string>
+  <string name="toast_migrateSlotSavesNotFound">Nenhum arquivo para copiar.</string>
+  <string name="toast_migrateSlotSavesSuccess">Migração concluída.</string>
   <string name="toast_crashReportSent">Relatório enviado.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -54,9 +58,6 @@
   <string name="actionControllerDiagnostics_summary">Testar capacidade de comunicação RAW</string>
   <string name="actionMigrateSlotSaves_title">Migrar jogos salvos</string>
   <string name="actionMigrateSlotSaves_summary">Copiar os jogos salvos do emulador antigo para esse</string>
-  <string name="toast_migrateSlotSavesNotFound">Nenhum arquivo para copiar.</string>
-  <string name="confirmMigrateSlotSaves_message">Tem certeza que deseja copiar seus jogos antigos? Backups serão feitos se necessário.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migração concluída.</string>
   <string name="actionReloadAssets_title">Recarregar dados do emulador</string>
   <string name="actionReloadAssets_summary">Não afeta configurações do usuário, ROMs, jogos salvos, ou outros dados externos</string>
   <string name="actionCrashTest_title">Testar</string>
@@ -64,7 +65,6 @@
   <string name="actionResetUserPrefs_title">Reiniciar</string>
   <string name="actionResetUserPrefs_summary">Restaurar configuração padrão</string>
   <string name="actionResetUserPrefs_popupMessage">Restauras todas as configurações para o padrão?</string>
-  <string name="localeOverride_title">Idioma</string>
   <string name="actionHelp_title">Ajuda</string>
   <string name="actionHelp_message">Mupen64Plus é desenvolvido e mantido por voluntários.\n\nPor favor, nos ajude a melhora-lo!</string>
   <string name="actionHelp_faq">Dúvidas frequentes</string>
@@ -208,6 +208,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sem preocessamento de áudio, hack de velocidade por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Núcleo de emulação</string>
   <string name="pluginCore_entryV110">core, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Padrão</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Habilitar relatório de erros</string>
@@ -248,6 +249,7 @@
   <string name="confirmResetGame_message">Resetar jogo? Todo o progresso desde o seu último jogo salvo será perdido.</string>
   <string name="confirmOverwriteFile_message">Sobrescrever %1$s?</string>
   <string name="confirmLoadProfile_message">Carregar perfil \"%1$s\" para %2$s?</string>
+  <string name="confirmMigrateSlotSaves_message">Tem certeza que deseja copiar seus jogos antigos? Backups serão feitos se necessário.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
   <string name="hintSetSpeed">velocidade entre 10 e 300</string>
@@ -259,10 +261,10 @@
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(toque longo para ver texto completo)</string>
+  <string name="cheat_disabled">(desabilitado)</string>
+  <string name="cheatOption_title">Texto completo</string>
   <string name="cheatNotes_title">Notas</string>
   <string name="cheatNotes_none">(sem notas disponíveis para esse Cheat)</string>
-  <string name="cheatOption_title">Texto completo</string>
-  <string name="cheat_disabled">(desabilitado)</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">Selecione um pacote de texturas (formato ZIP)</string>
   <string name="pathHiResTexturesTask_title">Extraindo texturas</string>
@@ -279,8 +281,6 @@
   <string name="playerMapPreference_button">Jogador %1$d\n\n%2$s</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Pressione um botão, tecla, ou joystick para mapear…\n\nMapeamento atual:\n%1$s</string>
-  <string name="menuItem_specialVisibility_show">Exibir funções especiais</string>
-  <string name="menuItem_specialVisibility_hide">Esconder funções especiais</string>
   <string name="inputMapActivity_popupUnmap">Desmapear</string>
   <string name="inputMapActivity_aPadXperiaPlay">Controle analógico controlado com touchpad</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad controlado com touchpad</string>
