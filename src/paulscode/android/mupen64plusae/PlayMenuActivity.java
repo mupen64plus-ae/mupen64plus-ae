@@ -211,7 +211,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         };
         
         // Run the task on a separate thread
-        crcThread = TaskHandler.run( this, getString( R.string.cheatsTaskHandler_title ), task );
+        crcThread = TaskHandler.run( this, "ReadGameHeader", task );
     }
     
     @SuppressWarnings( "deprecation" )

@@ -14,7 +14,7 @@
         android:gravity="center"
         android:maxHeight="@dimen/inputMapPreferenceButtonSizeX3"
         android:maxWidth="@dimen/inputMapPreferenceButtonSizeX3"
-        android:text="@string/inputMapPreference_aPadXperiaPlay"
+        android:text="@string/inputMapActivity_aPadXperiaPlay"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <RelativeLayout
@@ -44,7 +44,7 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
             android:drawableTop="@drawable/ic_arrow_u"
-            android:text="@string/inputMapPreference_btnAU" />
+            android:text="@string/inputMapActivity_btnAU" />
 
         <Button
             android:id="@+id/buttonAD"
@@ -54,7 +54,7 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_apad"
             android:drawableBottom="@drawable/ic_arrow_d"
-            android:text="@string/inputMapPreference_btnAD" />
+            android:text="@string/inputMapActivity_btnAD" />
 
         <Button
             android:id="@+id/buttonAL"
@@ -64,7 +64,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
             android:drawableLeft="@drawable/ic_arrow_l"
-            android:text="@string/inputMapPreference_btnAL" />
+            android:text="@string/inputMapActivity_btnAL" />
 
         <Button
             android:id="@+id/buttonAR"
@@ -74,7 +74,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/button_apad"
             android:drawableRight="@drawable/ic_arrow_r"
-            android:text="@string/inputMapPreference_btnAR" />
+            android:text="@string/inputMapActivity_btnAR" />
     </RelativeLayout>
 
 </RelativeLayout>

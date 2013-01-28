@@ -4,23 +4,18 @@
   <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
-  <string name="ingameToggleSpeed_title">Скорость %1$d %%</string>
-  <string name="ingameSlotSave_title">Сохранить в слот</string>
-  <string name="ingameSlotLoad_title">Загрузить из слота</string>
-  <string name="ingameSetSlot_title">Слот %1$d</string>
-  <string name="ingameFileSave_title">Сохранение в файл…</string>
-  <string name="ingameFileLoad_title">Загрузка из файла…</string>
-  <string name="ingameSetSpeed_title">Скорость игры</string>
-  <string name="ingameSetIme_title">Выбор метода ввода</string>
-  <string name="ingameMainMenu_title">Главное меню</string>
+  <string name="menuItem_toggleSpeed">Скорость %1$d %%</string>
+  <string name="menuItem_slotSave">Сохранить в слот</string>
+  <string name="menuItem_slotLoad">Загрузить из слота</string>
+  <string name="menuItem_setSlot">Слот %1$d</string>
+  <string name="menuItem_fileSave">Сохранение в файл…</string>
+  <string name="menuItem_fileLoad">Загрузка из файла…</string>
+  <string name="menuItem_setSpeed">Скорость игры</string>
+  <string name="menuItem_setIme">Выбор метода ввода</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Профили</string>
-  <string name="menuItem_empty">Пустой</string>
   <string name="menuItem_default">Умолчание</string>
   <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_calibrate">Откалибровать</string>
-  <string name="menuItem_triggers">Триггеры</string>
-  <string name="menuItem_sticks">Палочки</string>
   <string name="menuItem_exit">Выход</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
@@ -29,7 +24,6 @@
   <!--Something happening (typically use '-ing' and '…')-->
   <string name="toast_rebuildingCheats">Пересборка базы чит-кодов…</string>
   <string name="toast_launchingEmulator">Эмулятор запускается…</string>
-  <string name="toast_resettingGame">Перезапуск игры…</string>
   <string name="toast_loadingSession">Возобновление игры…</string>
   <string name="toast_savingSession">Авто-сохранение…</string>
   <string name="toast_loadingSlot">Загрузка слота %1$d…</string>
@@ -60,9 +54,9 @@
   <string name="actionControllerDiagnostics_summary">Проверить работоспособность средств ввода</string>
   <string name="actionMigrateSlotSaves_title">Импортировать сохранения</string>
   <string name="actionMigrateSlotSaves_summary">Скопировать файлы сохранений в эту версию эмулятора</string>
-  <string name="actionMigrateSlotSaves_messageNotFound">Нет файлов для копирования</string>
-  <string name="actionMigrateSlotSaves_messageConfirm">Вы действительно хотите скопировать старый слот сохранений? Резервное копирование будет сделано, если это необходимо.</string>
-  <string name="actionMigrateSlotSaves_messageSuccess">Перенос прошёл успешно</string>
+  <string name="toast_migrateSlotSavesNotFound">Нет файлов для копирования</string>
+  <string name="confirmMigrateSlotSaves_message">Вы действительно хотите скопировать старый слот сохранений? Резервное копирование будет сделано, если это необходимо.</string>
+  <string name="toast_migrateSlotSavesSuccess">Перенос прошёл успешно</string>
   <string name="actionReloadAssets_title">Перезагрузить ресурсы</string>
   <string name="actionReloadAssets_summary">Не влияет на настройки пользователя, ROMs, сохранения игр, или другие пользовательские данные</string>
   <string name="actionCrashTest_title">Проверка</string>
@@ -70,7 +64,7 @@
   <string name="actionResetUserPrefs_title">Сброс</string>
   <string name="actionResetUserPrefs_summary">Восстановить настройки по умолчанию</string>
   <string name="actionResetUserPrefs_popupMessage">Сбросить настройки на дефолтные?</string>
-  <string name="actionSetLocale_title">Язык</string>
+  <string name="localeOverride_title">Язык</string>
   <string name="actionHelp_title">Помощь</string>
   <string name="actionHelp_message">Mupen64Plus разрабатывается добровольцами.\n\nВнесите свой вклад!</string>
   <string name="actionHelp_faq">ЧАВО</string>
@@ -253,7 +247,7 @@
   <string name="confirm_title">Подтверждение</string>
   <string name="confirmResetGame_message">Сбросить игру? Прогресс с момента последнего сохранения будет потерян.</string>
   <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
-  <string name="confirmLoadProfile">Загрузить профиль \"%1$s\" для %2$s?</string>
+  <string name="confirmLoadProfile_message">Загрузить профиль \"%1$s\" для %2$s?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">имя файла</string>
   <string name="hintSetSpeed">скорость от 10 до 300</string>
@@ -263,17 +257,12 @@
   <string name="assetExtractor_finished">Готово</string>
   <string name="assetExtractor_failed">Ошибка извлечения данных приложением. \nПожалуйста, отключите USB-кабель, перезапустите устройство, и повторно запустите приложение. \nДля справки, пожалуйста, посетите %1$s.</string>
   <!--Cheats Configuration-->
-  <string name="cheats_titleFor">Чит-коды для %1$s</string>
   <string name="cheats_defaultName">Чит %1$d</string>
   <string name="cheats_longPress">(нажмите и удерживайте для полного описания)</string>
   <string name="cheatNotes_title">Примечания</string>
   <string name="cheatNotes_none">(для этого чит-кода нет примечаний)</string>
   <string name="cheatOption_title">Полный текст</string>
   <string name="cheat_disabled">(выключ.)</string>
-  <string name="cheatsTaskHandler_title">Чтение заголовка игры</string>
-  <string name="cheatsTaskHandler_message">Подождите немного.</string>
-  <string name="cheats_title">Чит-коды</string>
-  <string name="cheats_summary">Выберите игру</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">Выберите пакет с текстурами (в zip)</string>
   <string name="pathHiResTexturesTask_title">Извлечение текстур</string>
@@ -289,44 +278,44 @@
   <string name="playerMapPreference_popupUnmap">Сброс</string>
   <string name="playerMapPreference_button">Игрок %1$d\n\n%2$s</string>
   <!--Input Mapping-->
-  <string name="inputMapPreference_popupMessage">Нажмите кнопку…\n\nТекущее соответствие:\n%1$s</string>
-  <string name="inputMapPreference_showSpecial">Показать дополнительные возможности</string>
-  <string name="inputMapPreference_hideSpecial">Скрыть дополнительные возможности</string>
-  <string name="inputMapPreference_popupUnmap">Сбросить</string>
-  <string name="inputMapPreference_aPadXperiaPlay">Управление джойстиком с сенсорной панели</string>
-  <string name="inputMapPreference_cPadXperiaPlay">Управление C-pad с сенсорной панели</string>
-  <string name="inputMapPreference_btnA">A</string>
-  <string name="inputMapPreference_btnB">B</string>
-  <string name="inputMapPreference_btnC">C</string>
-  <string name="inputMapPreference_btnL">L</string>
-  <string name="inputMapPreference_btnR">R</string>
-  <string name="inputMapPreference_btnZ">Z</string>
-  <string name="inputMapPreference_btnS">S</string>
-  <string name="inputMapPreference_btnCR">C-pad →</string>
-  <string name="inputMapPreference_btnCL">C-pad ←</string>
-  <string name="inputMapPreference_btnCD">C-pad ↓</string>
-  <string name="inputMapPreference_btnCU">C-pad ↑</string>
-  <string name="inputMapPreference_btnDR">D-pad →</string>
-  <string name="inputMapPreference_btnDL">D-pad ←</string>
-  <string name="inputMapPreference_btnDD">D-pad ↓</string>
-  <string name="inputMapPreference_btnDU">D-pad ↑</string>
-  <string name="inputMapPreference_btnAR">Analog →</string>
-  <string name="inputMapPreference_btnAL">Analog ←</string>
-  <string name="inputMapPreference_btnAD">Analog ↓</string>
-  <string name="inputMapPreference_btnAU">Analog ↑</string>
-  <string name="inputMapPreference_rumble">Rumble Pak</string>
+  <string name="inputMapActivity_popupMessage">Нажмите кнопку…\n\nТекущее соответствие:\n%1$s</string>
+  <string name="menuItem_specialVisibility_show">Показать дополнительные возможности</string>
+  <string name="menuItem_specialVisibility_hide">Скрыть дополнительные возможности</string>
+  <string name="inputMapActivity_popupUnmap">Сбросить</string>
+  <string name="inputMapActivity_aPadXperiaPlay">Управление джойстиком с сенсорной панели</string>
+  <string name="inputMapActivity_cPadXperiaPlay">Управление C-pad с сенсорной панели</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analog →</string>
+  <string name="inputMapActivity_btnAL">Analog ←</string>
+  <string name="inputMapActivity_btnAD">Analog ↓</string>
+  <string name="inputMapActivity_btnAU">Analog ↑</string>
+  <string name="inputMapActivity_rumble">Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="inputMapPreference_mempak">Expansion Pak</string>
+  <string name="inputMapActivity_mempak">Expansion Pak</string>
   <!--capitalize since trademark-->
-  <string name="inputMapPreference_incrementSlot">Увеличить слот</string>
-  <string name="inputMapPreference_reset">Сброс</string>
-  <string name="inputMapPreference_pause">Пауза</string>
-  <string name="inputMapPreference_stop">Остановить</string>
-  <string name="inputMapPreference_frameAdvance">Кадр вперед</string>
-  <string name="inputMapPreference_fastForward">Ускорение времени</string>
-  <string name="inputMapPreference_speedDown">Скорость ниже</string>
-  <string name="inputMapPreference_speedUp">Скорость выше</string>
-  <string name="inputMapPreference_gameshark">Gameshark</string>
+  <string name="inputMapActivity_incrementSlot">Увеличить слот</string>
+  <string name="inputMapActivity_reset">Сброс</string>
+  <string name="inputMapActivity_pause">Пауза</string>
+  <string name="inputMapActivity_stop">Остановить</string>
+  <string name="inputMapActivity_frameAdvance">Кадр вперед</string>
+  <string name="inputMapActivity_fastForward">Ускорение времени</string>
+  <string name="inputMapActivity_speedDown">Скорость ниже</string>
+  <string name="inputMapActivity_speedUp">Скорость выше</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Нажмите кнопку…</string>
   <string name="diagnosticActivity_textMotion_text">Прикоснитесь к экрану или джойстику…</string>

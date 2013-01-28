@@ -66,14 +66,14 @@
                 android:id="@+id/buttonB"
                 style="@style/btnMappable"
                 android:background="@drawable/button_b"
-                android:text="@string/inputMapPreference_btnB" />
+                android:text="@string/inputMapActivity_btnB" />
 
             <Button
                 android:id="@+id/buttonA"
                 style="@style/btnMappable"
                 android:layout_marginLeft="@dimen/inputMapPreferenceButtonSize"
                 android:background="@drawable/button_a"
-                android:text="@string/inputMapPreference_btnA" />
+                android:text="@string/inputMapActivity_btnA" />
         </TableRow>
 
         <EditText
@@ -90,7 +90,7 @@
             android:layout_marginTop="@dimen/inputMapPreferenceButtonSize"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:text="@string/inputMapPreference_dummyFeedback"
+            android:text="@string/inputMapActivity_dummyFeedback"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 

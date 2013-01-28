@@ -271,13 +271,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !oldDir.exists() )
         {
             String title = getString( R.string.actionMigrateSlotSaves_title );
-            String message = getString( R.string.actionMigrateSlotSaves_messageNotFound );
+            String message = getString( R.string.toast_migrateSlotSavesNotFound );
             new Builder( this ).setTitle( title ).setMessage( message ).create().show();
         }
         else
         {
             String title = getString( R.string.confirm_title );
-            String message = getString( R.string.actionMigrateSlotSaves_messageConfirm );
+            String message = getString( R.string.confirmMigrateSlotSaves_message );
             Prompt.promptConfirm( this, title, message, new OnConfirmListener()
             {
                 @Override
@@ -286,7 +286,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                     File newDir = new File( mUserPrefs.slotSaveDir );
                     FileUtil.copyFile( oldDir, newDir, true );
                     Notifier.showToast( MenuActivity.this,
-                            R.string.actionMigrateSlotSaves_messageSuccess );
+                            R.string.toast_migrateSlotSavesSuccess );
                 }
             } );
         }

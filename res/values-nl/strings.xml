@@ -4,21 +4,18 @@
   <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
-  <string name="ingameToggleSpeed_title">Snelheid %1$d %%</string>
-  <string name="ingameSlotSave_title">Slot opslaan</string>
-  <string name="ingameSlotLoad_title">Slot laden</string>
-  <string name="ingameSetSlot_title">Slot %1$d</string>
-  <string name="ingameFileSave_title">Opslaan naar bestand</string>
-  <string name="ingameFileLoad_title">Laden van bestand</string>
-  <string name="ingameSetSpeed_title">Spel snelheid</string>
-  <string name="ingameSetIme_title">Verander IME</string>
-  <string name="ingameMainMenu_title">Hoofd menu</string>
+  <string name="menuItem_toggleSpeed">Snelheid %1$d %%</string>
+  <string name="menuItem_slotSave">Slot opslaan</string>
+  <string name="menuItem_slotLoad">Slot laden</string>
+  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_fileSave">Opslaan naar bestand</string>
+  <string name="menuItem_fileLoad">Laden van bestand</string>
+  <string name="menuItem_setSpeed">Spel snelheid</string>
+  <string name="menuItem_setIme">Verander IME</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profielen</string>
-  <string name="menuItem_empty">Leeg</string>
   <string name="menuItem_default">Standaard waarden</string>
   <string name="menuItem_xbox360">Xbox 360</string>
-  <string name="menuItem_calibrate">Kalibreren</string>
   <string name="menuItem_exit">Einde</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
@@ -26,9 +23,8 @@
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
   <string name="toast_launchingEmulator">Emulator starten</string>
-  <string name="toast_resettingGame">Spel herstarten</string>
-  <string name="toast_loadingSession">Automatisch hervatten spel...</string>
-  <string name="toast_savingSession">Automatisch opslaan spel...</string>
+  <string name="toast_loadingSession">Automatisch hervatten spel…</string>
+  <string name="toast_savingSession">Automatisch opslaan spel…</string>
   <string name="toast_loadingSlot">Bezig met laden slot %1$d…</string>
   <string name="toast_savingSlot">Bezig met opslaan slot %1$d…</string>
   <string name="toast_loadingFile">Laden</string>
@@ -57,8 +53,8 @@
   <string name="actionControllerDiagnostics_summary">Test ruwe communicatie mogelijkheden</string>
   <string name="actionMigrateSlotSaves_title">Overzetten opgeslagen spelen</string>
   <string name="actionMigrateSlotSaves_summary">kopieer opgeslagen slots van de oude naar deze app </string>
-  <string name="actionMigrateSlotSaves_messageNotFound">Geen bestanden om te kopiëren.</string>
-  <string name="actionMigrateSlotSaves_messageSuccess">Migratie succesvol afgerond.</string>
+  <string name="toast_migrateSlotSavesNotFound">Geen bestanden om te kopiëren.</string>
+  <string name="toast_migrateSlotSavesSuccess">Migratie succesvol afgerond.</string>
   <string name="actionReloadAssets_title">Herladen app bronnen</string>
   <string name="actionReloadAssets_summary">Heeft geen invloed op gebruikersinstellingen, ROM\'s, opgeslagen spellen, of andere eigen gegevens,</string>
   <string name="actionCrashTest_title">Test</string>
@@ -66,7 +62,7 @@
   <string name="actionResetUserPrefs_title">Herstart</string>
   <string name="actionResetUserPrefs_summary">Herstel standaard instellingen</string>
   <string name="actionResetUserPrefs_popupMessage">Alle voorkeuren naar standaard waarden terugzetten?</string>
-  <string name="actionSetLocale_title">Taal</string>
+  <string name="localeOverride_title">Taal</string>
   <string name="actionHelp_title">Help</string>
   <string name="actionHelp_message">Mupen64Plus wordt ontwikkeld en onderhouden door vrijwilligers.⏎ ⏎ Help ons alstublieft het te verbeteren!</string>
   <string name="actionHelp_faq">FAQ</string>
@@ -218,7 +214,7 @@
   <!--Confirmation Dialogs-->
   <string name="confirm_title">Bevestiging</string>
   <string name="confirmOverwriteFile_message">%1$s overschrijven?</string>
-  <string name="confirmLoadProfile">Profiel \"%1$s\" for %2$s laden?</string>
+  <string name="confirmLoadProfile_message">Profiel \"%1$s\" for %2$s laden?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">bestandsnaam</string>
   <string name="hintSetSpeed">snelheid tussen 10 en 300</string>
@@ -226,16 +222,12 @@
   <string name="assetExtractor_initializing">Bezig te initialiseren</string>
   <string name="assetExtractor_finished">Afgerond</string>
   <!--Cheats Configuration-->
-  <string name="cheats_titleFor">Cheats voor %1$s</string>
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(lang indrukken voor volledige tekst)</string>
   <string name="cheatNotes_title">Opmerkingen</string>
   <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
   <string name="cheatOption_title">Volledige tekst</string>
   <string name="cheat_disabled">(uitgeschakeld)</string>
-  <string name="cheatsTaskHandler_message">Wees geduldig. Dit proces kan enige tijd duren.</string>
-  <string name="cheats_title">Cheats</string>
-  <string name="cheats_summary">Kies een spel om te hacken</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">Selecteer een texturen pakket (ZIP formaat)</string>
   <string name="pathHiResTexturesTask_title">Uitpakken texturen</string>
@@ -250,40 +242,40 @@
   <string name="playerMapPreference_popupUnmap">Toewijzing ongedaan maken</string>
   <string name="playerMapPreference_button">Speler %1$d⏎ ⏎ %2$s</string>
   <!--Input Mapping-->
-  <string name="inputMapPreference_popupMessage">Druk op een knop, toets, of joystick om toe te wijzen…⏎ ⏎ Huidige toewijzingen:⏎ %1$s</string>
-  <string name="inputMapPreference_showSpecial">Laat speciale functies zien</string>
-  <string name="inputMapPreference_hideSpecial">Verberg speciale functies</string>
-  <string name="inputMapPreference_popupUnmap">Toewijzing ongedaan maken</string>
-  <string name="inputMapPreference_btnA">A</string>
-  <string name="inputMapPreference_btnB">B</string>
-  <string name="inputMapPreference_btnC">C</string>
-  <string name="inputMapPreference_btnL">L</string>
-  <string name="inputMapPreference_btnR">R</string>
-  <string name="inputMapPreference_btnZ">Z</string>
-  <string name="inputMapPreference_btnS">S</string>
-  <string name="inputMapPreference_btnCR">C-pad →</string>
-  <string name="inputMapPreference_btnCL">C-pad ←</string>
-  <string name="inputMapPreference_btnCD">C-pad ↓</string>
-  <string name="inputMapPreference_btnCU">C-pad ↑</string>
-  <string name="inputMapPreference_btnDR">D-pad →</string>
-  <string name="inputMapPreference_btnDL">D-pad ←</string>
-  <string name="inputMapPreference_btnDD">D-pad ↓</string>
-  <string name="inputMapPreference_btnDU">D-pad ↑</string>
-  <string name="inputMapPreference_btnAR">Analog →</string>
-  <string name="inputMapPreference_btnAL">Analoog ←</string>
-  <string name="inputMapPreference_btnAD">Analoog ↓</string>
-  <string name="inputMapPreference_btnAU">Analoog ↑</string>
+  <string name="inputMapActivity_popupMessage">Druk op een knop, toets, of joystick om toe te wijzen…⏎ ⏎ Huidige toewijzingen:⏎ %1$s</string>
+  <string name="menuItem_specialVisibility_show">Laat speciale functies zien</string>
+  <string name="menuItem_specialVisibility_hide">Verberg speciale functies</string>
+  <string name="inputMapActivity_popupUnmap">Toewijzing ongedaan maken</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analog →</string>
+  <string name="inputMapActivity_btnAL">Analoog ←</string>
+  <string name="inputMapActivity_btnAD">Analoog ↓</string>
+  <string name="inputMapActivity_btnAU">Analoog ↑</string>
   <!--capitalize since trademark-->
   <!--capitalize since trademark-->
-  <string name="inputMapPreference_incrementSlot">Slot ophogen</string>
-  <string name="inputMapPreference_reset">Herstarten</string>
-  <string name="inputMapPreference_pause">Pauze</string>
-  <string name="inputMapPreference_stop">Stop</string>
-  <string name="inputMapPreference_fastForward">Versneld vooruit</string>
-  <string name="inputMapPreference_speedDown">Vertragen</string>
-  <string name="inputMapPreference_speedUp">Versnellen</string>
-  <string name="inputMapPreference_gameshark">Gameshark</string>
+  <string name="inputMapActivity_incrementSlot">Slot ophogen</string>
+  <string name="inputMapActivity_reset">Herstarten</string>
+  <string name="inputMapActivity_pause">Pauze</string>
+  <string name="inputMapActivity_stop">Stop</string>
+  <string name="inputMapActivity_fastForward">Versneld vooruit</string>
+  <string name="inputMapActivity_speedDown">Vertragen</string>
+  <string name="inputMapActivity_speedUp">Versnellen</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Druk op knop of toets...</string>
+  <string name="diagnosticActivity_textKey_text">Druk op knop of toets…</string>
   <string name="diagnosticActivity_textMotion_text">Aanraakscherm of joystick</string>
 </resources>

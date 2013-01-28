@@ -4,23 +4,18 @@
   <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
-  <string name="ingameToggleSpeed_title">Velocità %1$d %%</string>
-  <string name="ingameSlotSave_title">Salva stato</string>
-  <string name="ingameSlotLoad_title">Carica stato</string>
-  <string name="ingameSetSlot_title">Slot %1$d</string>
-  <string name="ingameFileSave_title">Salva a file…</string>
-  <string name="ingameFileLoad_title">Carica da file…</string>
-  <string name="ingameSetSpeed_title">Velocità gioco</string>
-  <string name="ingameSetIme_title">Cambia Metodo di input</string>
-  <string name="ingameMainMenu_title">Menù principale</string>
+  <string name="menuItem_toggleSpeed">Velocità %1$d %%</string>
+  <string name="menuItem_slotSave">Salva stato</string>
+  <string name="menuItem_slotLoad">Carica stato</string>
+  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_fileSave">Salva a file…</string>
+  <string name="menuItem_fileLoad">Carica da file…</string>
+  <string name="menuItem_setSpeed">Velocità gioco</string>
+  <string name="menuItem_setIme">Cambia Metodo di input</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profili</string>
-  <string name="menuItem_empty">Vuoto</string>
   <string name="menuItem_default">Default</string>
   <string name="menuItem_xbox360">Xbox360</string>
-  <string name="menuItem_calibrate">Calibra</string>
-  <string name="menuItem_triggers">Grilletti</string>
-  <string name="menuItem_sticks">Analogici</string>
   <string name="menuItem_exit">Esci</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
@@ -29,7 +24,6 @@
   <!--Something happening (typically use '-ing' and '…')-->
   <string name="toast_rebuildingCheats">Ricostruendo database trucchi…</string>
   <string name="toast_launchingEmulator">Avviando l\'emulatore…</string>
-  <string name="toast_resettingGame">Resettando il gioco…</string>
   <string name="toast_loadingSession">Auto-riprendendo gioco…</string>
   <string name="toast_savingSession">Auto-salvando gioco…</string>
   <string name="toast_loadingSlot">Caricando slot %1$d…</string>
@@ -60,9 +54,9 @@
   <string name="actionControllerDiagnostics_summary">Prova capacità di comunicazione</string>
   <string name="actionMigrateSlotSaves_title">Migra salvataggi</string>
   <string name="actionMigrateSlotSaves_summary">Copia i tuoi salvataggi slot dalla vecchia app a questa</string>
-  <string name="actionMigrateSlotSaves_messageNotFound">Nessun file da copiare.</string>
-  <string name="actionMigrateSlotSaves_messageConfirm">Sei sicuro che vuoi copiare i tuoi vecchi salvataggi slot? I backup verranno fatti se necessario.</string>
-  <string name="actionMigrateSlotSaves_messageSuccess">Migrazione riuscita.</string>
+  <string name="toast_migrateSlotSavesNotFound">Nessun file da copiare.</string>
+  <string name="confirmMigrateSlotSaves_message">Sei sicuro che vuoi copiare i tuoi vecchi salvataggi slot? I backup verranno fatti se necessario.</string>
+  <string name="toast_migrateSlotSavesSuccess">Migrazione riuscita.</string>
   <string name="actionReloadAssets_title">Ricarica risorse app</string>
   <string name="actionReloadAssets_summary">NON influenza impostazioni utente, ROM, salvataggi o altri dati personalizzati</string>
   <string name="actionCrashTest_title">Prova</string>
@@ -70,7 +64,7 @@
   <string name="actionResetUserPrefs_title">Resetta</string>
   <string name="actionResetUserPrefs_summary">Ripristina impostazioni di default</string>
   <string name="actionResetUserPrefs_popupMessage">Resettare tutte le preferenze al loro default?</string>
-  <string name="actionSetLocale_title">Linguaggio</string>
+  <string name="localeOverride_title">Linguaggio</string>
   <string name="actionHelp_title">Aiuto</string>
   <string name="actionHelp_message">Mupen64Plus è sviluppato e mantenuto da volontari.\n\nPer favore aiutaci a migliorarlo!</string>
   <string name="actionHelp_faq">FAQ</string>
@@ -253,7 +247,7 @@
   <string name="confirm_title">Conferma</string>
   <string name="confirmResetGame_message">Resettare il gioco? Tutto il progresso dopo il tuo ultimo salvataggio verrà perso.</string>
   <string name="confirmOverwriteFile_message">Sovrascrivere %1$s?</string>
-  <string name="confirmLoadProfile">Caricare il profilo \"%1$s\" per %2$s?</string>
+  <string name="confirmLoadProfile_message">Caricare il profilo \"%1$s\" per %2$s?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome file</string>
   <string name="hintSetSpeed">una velocita da 10 a 300</string>
@@ -263,17 +257,12 @@
   <string name="assetExtractor_finished">Finito</string>
   <string name="assetExtractor_failed">Errore nell\'estrazione dell\'app data\nPer favore disconnetti il cavo USB, riavvia il dispositivo e riapri l\'applicazione.\nPer aiuto, per favore visita %1$s.</string>
   <!--Cheats Configuration-->
-  <string name="cheats_titleFor">Trucchi per %1$s</string>
   <string name="cheats_defaultName">Trucco %1$d</string>
   <string name="cheats_longPress">(Lascia premuto per il testo completo)</string>
   <string name="cheatNotes_title">Note</string>
   <string name="cheatNotes_none">(Niente note disponibili per questi trucchi)</string>
   <string name="cheatOption_title">Testo completo</string>
   <string name="cheat_disabled">(disabilitato)</string>
-  <string name="cheatsTaskHandler_title">Leggendo testata gioco</string>
-  <string name="cheatsTaskHandler_message">Per favore abbi pazienza. Questo processo potrebbe durare un po\' di tempo.</string>
-  <string name="cheats_title">Trucchi</string>
-  <string name="cheats_summary">Scegli un gioco da modificare</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">Scegli un pacchetto texture (formato ZIP)</string>
   <string name="pathHiResTexturesTask_title">Spacchettando texture</string>
@@ -289,44 +278,44 @@
   <string name="playerMapPreference_popupUnmap">Rimuovi</string>
   <string name="playerMapPreference_button">Giocatore %1$d\n\n%2$s</string>
   <!--Input Mapping-->
-  <string name="inputMapPreference_popupMessage">Premi un tasto, lettera, o joystick da assegnare…\n\nAssegnazioni correnti:\n%1$s</string>
-  <string name="inputMapPreference_showSpecial">Mostra funzioni speciali</string>
-  <string name="inputMapPreference_hideSpecial">Nascondi funzioni speciali</string>
-  <string name="inputMapPreference_popupUnmap">Rimuovi</string>
-  <string name="inputMapPreference_aPadXperiaPlay">Levetta analogica controllata col touchpad</string>
-  <string name="inputMapPreference_cPadXperiaPlay">C-pad controllato col touchpad</string>
-  <string name="inputMapPreference_btnA">A</string>
-  <string name="inputMapPreference_btnB">B</string>
-  <string name="inputMapPreference_btnC">C</string>
-  <string name="inputMapPreference_btnL">L</string>
-  <string name="inputMapPreference_btnR">R</string>
-  <string name="inputMapPreference_btnZ">Z</string>
-  <string name="inputMapPreference_btnS">S</string>
-  <string name="inputMapPreference_btnCR">C-pad →</string>
-  <string name="inputMapPreference_btnCL">C-pad ←</string>
-  <string name="inputMapPreference_btnCD">C-pad ↓</string>
-  <string name="inputMapPreference_btnCU">C-pad ↑</string>
-  <string name="inputMapPreference_btnDR">D-pad →</string>
-  <string name="inputMapPreference_btnDL">D-pad ←</string>
-  <string name="inputMapPreference_btnDD">D-pad ↓</string>
-  <string name="inputMapPreference_btnDU">D-pad ↑</string>
-  <string name="inputMapPreference_btnAR">Analogico →</string>
-  <string name="inputMapPreference_btnAL">Analogico ←</string>
-  <string name="inputMapPreference_btnAD">Analogico ↓</string>
-  <string name="inputMapPreference_btnAU">Analogico ↑</string>
-  <string name="inputMapPreference_rumble">Rumble Pak</string>
+  <string name="inputMapActivity_popupMessage">Premi un tasto, lettera, o joystick da assegnare…\n\nAssegnazioni correnti:\n%1$s</string>
+  <string name="menuItem_specialVisibility_show">Mostra funzioni speciali</string>
+  <string name="menuItem_specialVisibility_hide">Nascondi funzioni speciali</string>
+  <string name="inputMapActivity_popupUnmap">Rimuovi</string>
+  <string name="inputMapActivity_aPadXperiaPlay">Levetta analogica controllata col touchpad</string>
+  <string name="inputMapActivity_cPadXperiaPlay">C-pad controllato col touchpad</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analogico →</string>
+  <string name="inputMapActivity_btnAL">Analogico ←</string>
+  <string name="inputMapActivity_btnAD">Analogico ↓</string>
+  <string name="inputMapActivity_btnAU">Analogico ↑</string>
+  <string name="inputMapActivity_rumble">Rumble Pak</string>
   <!--capitalize since trademark-->
-  <string name="inputMapPreference_mempak">Expansion Pak</string>
+  <string name="inputMapActivity_mempak">Expansion Pak</string>
   <!--capitalize since trademark-->
-  <string name="inputMapPreference_incrementSlot">Incrementa slot</string>
-  <string name="inputMapPreference_reset">Resetta</string>
-  <string name="inputMapPreference_pause">Pausa</string>
-  <string name="inputMapPreference_stop">Ferma</string>
-  <string name="inputMapPreference_frameAdvance">Avanza fotogramma</string>
-  <string name="inputMapPreference_fastForward">Avanzamento rapido</string>
-  <string name="inputMapPreference_speedDown">Abbassa velocità</string>
-  <string name="inputMapPreference_speedUp">Aumenta velocità</string>
-  <string name="inputMapPreference_gameshark">Gameshark</string>
+  <string name="inputMapActivity_incrementSlot">Incrementa slot</string>
+  <string name="inputMapActivity_reset">Resetta</string>
+  <string name="inputMapActivity_pause">Pausa</string>
+  <string name="inputMapActivity_stop">Ferma</string>
+  <string name="inputMapActivity_frameAdvance">Avanza fotogramma</string>
+  <string name="inputMapActivity_fastForward">Avanzamento rapido</string>
+  <string name="inputMapActivity_speedDown">Abbassa velocità</string>
+  <string name="inputMapActivity_speedUp">Aumenta velocità</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Premi tasto o lettera…</string>
   <string name="diagnosticActivity_textMotion_text">Touchscreen o joystick…</string>

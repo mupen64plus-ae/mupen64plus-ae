@@ -14,7 +14,7 @@
         android:gravity="center"
         android:maxHeight="@dimen/inputMapPreferenceButtonSizeX3"
         android:maxWidth="@dimen/inputMapPreferenceButtonSizeX3"
-        android:text="@string/inputMapPreference_cPadXperiaPlay"
+        android:text="@string/inputMapActivity_cPadXperiaPlay"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <RelativeLayout
@@ -31,7 +31,7 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_cpad"
             android:drawableTop="@drawable/ic_arrow_u"
-            android:text="@string/inputMapPreference_btnCU" />
+            android:text="@string/inputMapActivity_btnCU" />
 
         <Button
             android:id="@+id/buttonCD"
@@ -40,7 +40,7 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_cpad"
             android:drawableBottom="@drawable/ic_arrow_d"
-            android:text="@string/inputMapPreference_btnCD" />
+            android:text="@string/inputMapActivity_btnCD" />
 
         <Button
             android:id="@+id/buttonCL"
@@ -49,7 +49,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/button_cpad"
             android:drawableLeft="@drawable/ic_arrow_l"
-            android:text="@string/inputMapPreference_btnCL" />
+            android:text="@string/inputMapActivity_btnCL" />
 
         <Button
             android:id="@+id/buttonCR"
@@ -58,7 +58,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/button_cpad"
             android:drawableRight="@drawable/ic_arrow_r"
-            android:text="@string/inputMapPreference_btnCR" />
+            android:text="@string/inputMapActivity_btnCR" />
 
         <Button
             android:id="@+id/buttonCC"
@@ -68,7 +68,7 @@
             android:enabled="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:text="@string/inputMapPreference_btnC" />
+            android:text="@string/inputMapActivity_btnC" />
     </RelativeLayout>
 
 </RelativeLayout>

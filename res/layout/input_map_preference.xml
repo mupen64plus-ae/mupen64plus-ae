@@ -77,7 +77,7 @@
                 android:layout_alignBottom="@+id/include_c_pad"
                 android:layout_toLeftOf="@+id/include_c_pad"
                 android:background="@drawable/button_b"
-                android:text="@string/inputMapPreference_btnB" />
+                android:text="@string/inputMapActivity_btnB" />
 
             <Button
                 android:id="@+id/buttonA"
@@ -85,7 +85,7 @@
                 android:layout_below="@+id/buttonB"
                 android:layout_toRightOf="@+id/buttonB"
                 android:background="@drawable/button_a"
-                android:text="@string/inputMapPreference_btnA" />
+                android:text="@string/inputMapActivity_btnA" />
         </RelativeLayout>
 
         <EditText
@@ -102,7 +102,7 @@
             android:layout_marginTop="@dimen/inputMapPreferenceButtonSize"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:text="@string/inputMapPreference_dummyFeedback"
+            android:text="@string/inputMapActivity_dummyFeedback"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
 

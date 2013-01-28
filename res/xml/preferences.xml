@@ -355,6 +355,10 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/audioResampleAlg_title" />
             </PreferenceScreen>
+        </PreferenceCategory>
+        <PreferenceCategory
+            android:key="categoryOther"
+            android:title="@string/categoryOther_title" >
             <PreferenceScreen
                 android:icon="@drawable/ic_plugin"
                 android:key="screenPlugin"
@@ -403,10 +407,6 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/r4300Emulator_title" />
             </PreferenceScreen>
-        </PreferenceCategory>
-        <PreferenceCategory
-            android:key="categoryOther"
-            android:title="@string/categoryOther_title" >
             <PreferenceScreen
                 android:icon="@drawable/ic_debug"
                 android:key="screenAdvanced"

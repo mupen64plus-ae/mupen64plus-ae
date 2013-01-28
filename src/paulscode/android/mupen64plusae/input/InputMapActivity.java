@@ -104,7 +104,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             setContentView( R.layout.input_map_preference );
         
         // Set the title of the activity
-        CharSequence title = getResources().getString( R.string.inputMap_title, mPlayer );
+        CharSequence title = getResources().getString( R.string.inputMapActivity_title, mPlayer );
         setTitle( title );
         
         // Initialize and refresh the widgets
@@ -236,8 +236,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         CharSequence title = getString( R.string.confirm_title );
         CharSequence message = TextUtils.isEmpty( mapString )
-                ? getString( R.string.confirmUnmapAll, getTitle() )
-                : getString( R.string.confirmLoadProfile, profileName, getTitle() );
+                ? getString( R.string.confirmUnmapAll_message, getTitle() )
+                : getString( R.string.confirmLoadProfile_message, profileName, getTitle() );
         
         Prompt.promptConfirm( this, title, message, new OnConfirmListener()
         {
@@ -296,9 +296,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 // Popup a dialog to listen to input codes from user
                 final int index = i;
                 button = (Button) view;
-                String message = getString( R.string.inputMapPreference_popupMessage,
+                String message = getString( R.string.inputMapActivity_popupMessage,
                         mMap.getMappedCodeInfo( index ) );
-                String btnText = getString( R.string.inputMapPreference_popupUnmap );
+                String btnText = getString( R.string.inputMapActivity_popupUnmap );
                 
                 Prompt.promptInputCode( this, button.getText(), message, btnText,
                         mUnmappableInputCodes, new OnInputCodeListener()

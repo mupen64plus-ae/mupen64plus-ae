@@ -5,22 +5,22 @@
         android:id="@+id/menuItem_toggleSpeed"
         android:icon="@drawable/ic_clock"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameToggleSpeed_title"/>
+        android:title="@string/menuItem_toggleSpeed"/>
     <item
         android:id="@+id/menuItem_slotLoad"
         android:icon="@drawable/ic_folder"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameSlotLoad_title"/>
+        android:title="@string/menuItem_slotLoad"/>
     <item
         android:id="@+id/menuItem_slotSave"
         android:icon="@drawable/ic_save"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameSlotSave_title"/>
+        android:title="@string/menuItem_slotSave"/>
     <item
         android:id="@+id/menuItem_setSlot"
         android:icon="@drawable/ic_storage"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/ingameSetSlot_title">
+        android:title="@string/menuItem_setSlot">
         <menu>
             <group android:checkableBehavior="single" >
                 <item
@@ -59,18 +59,18 @@
     </item>
     <item
         android:id="@+id/menuItem_fileLoad"
-        android:title="@string/ingameFileLoad_title"/>
+        android:title="@string/menuItem_fileLoad"/>
     <item
         android:id="@+id/menuItem_fileSave"
-        android:title="@string/ingameFileSave_title"/>
+        android:title="@string/menuItem_fileSave"/>
     <item
         android:id="@+id/menuItem_setSpeed"
-        android:title="@string/ingameSetSpeed_title"/>
+        android:title="@string/menuItem_setSpeed"/>
     <item
         android:id="@+id/menuItem_setIme"
-        android:title="@string/ingameSetIme_title"/>
+        android:title="@string/menuItem_setIme"/>
     <item
-        android:id="@+id/menuItem_mainMenu"
-        android:title="@string/ingameMainMenu_title"/>
+        android:id="@+id/menuItem_exit"
+        android:title="@string/menuItem_exit"/>
 
 </menu>

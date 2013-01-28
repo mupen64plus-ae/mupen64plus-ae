@@ -4,15 +4,14 @@
   <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
-  <string name="ingameToggleSpeed_title">%1$d%% スピード</string>
-  <string name="ingameSlotSave_title">保存</string>
-  <string name="ingameSlotLoad_title">ロード</string>
-  <string name="ingameSetSlot_title">%1$dスロット</string>
-  <string name="ingameFileSave_title">ファイルに保存…</string>
-  <string name="ingameFileLoad_title">ファイルからのロード…</string>
-  <string name="ingameSetSpeed_title">ゲームの速度</string>
-  <string name="ingameSetIme_title">IMEを変更</string>
-  <string name="ingameMainMenu_title">メニュー</string>
+  <string name="menuItem_toggleSpeed">%1$d%% スピード</string>
+  <string name="menuItem_slotSave">保存</string>
+  <string name="menuItem_slotLoad">ロード</string>
+  <string name="menuItem_setSlot">%1$dスロット</string>
+  <string name="menuItem_fileSave">ファイルに保存…</string>
+  <string name="menuItem_fileLoad">ファイルからのロード…</string>
+  <string name="menuItem_setSpeed">ゲームの速度</string>
+  <string name="menuItem_setIme">IMEを変更</string>
   <!--Input Mapping Activity-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
@@ -21,7 +20,6 @@
   <!--Something happening (typically use '-ing' and '…')-->
   <string name="toast_rebuildingCheats">チートデータベースを再構築…</string>
   <string name="toast_launchingEmulator">エミュレータを起動する…</string>
-  <string name="toast_resettingGame">ゲームをリセット…</string>
   <string name="toast_loadingSession">自動再開ゲーム</string>
   <string name="toast_savingSession">自動保存ゲーム</string>
   <string name="toast_loadingSlot">スロット%1$dの再開</string>
@@ -52,9 +50,9 @@
   <string name="actionControllerDiagnostics_summary">テスト通信機能</string>
   <string name="actionMigrateSlotSaves_title">セーブファイルを移行</string>
   <string name="actionMigrateSlotSaves_summary">このアプリケーションに古いアプリケーションからコピーセーブファイル。</string>
-  <string name="actionMigrateSlotSaves_messageNotFound">コピーするファイルがありません。</string>
-  <string name="actionMigrateSlotSaves_messageConfirm">あなたがあなたの古いセーブファイルをコピーしてもよろしいですか？ バックアップは、必要に応じて行われます。</string>
-  <string name="actionMigrateSlotSaves_messageSuccess">移行に成功。</string>
+  <string name="toast_migrateSlotSavesNotFound">コピーするファイルがありません。</string>
+  <string name="confirmMigrateSlotSaves_message">あなたがあなたの古いセーブファイルをコピーしてもよろしいですか？ バックアップは、必要に応じて行われます。</string>
+  <string name="toast_migrateSlotSavesSuccess">移行に成功。</string>
   <string name="actionReloadAssets_title">データを再ロード</string>
   <string name="actionReloadAssets_summary">アプリケーションのデータ·ファイルを再ロード</string>
   <string name="actionCrashTest_title">テスト</string>
@@ -62,7 +60,7 @@
   <string name="actionResetUserPrefs_title">リセット</string>
   <string name="actionResetUserPrefs_summary">既定値にリセット</string>
   <string name="actionResetUserPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
-  <string name="actionSetLocale_title">言語</string>
+  <string name="localeOverride_title">言語</string>
   <string name="actionHelp_title">ヘルプ</string>
   <string name="actionHelp_message">Mupen64Plusはボランティアによって開発され維持されます。\n\n私たちはそれを改善するために助けてください！</string>
   <string name="actionHelp_faq">よくある質問</string>
@@ -239,17 +237,12 @@
   <string name="assetExtractor_progress">%1$.0f%% が行わ: ファイル %2$s</string>
   <string name="assetExtractor_finished">完成した</string>
   <!--Cheats Configuration-->
-  <string name="cheats_titleFor">%1$sのチート</string>
   <string name="cheats_defaultName">%1$dチート</string>
   <string name="cheats_longPress">（長押しチートはその全文を見さために）</string>
   <string name="cheatNotes_title">注釈</string>
   <string name="cheatNotes_none">（このチートで使用可能なノートはありません。）</string>
   <string name="cheatOption_title">全文</string>
   <string name="cheat_disabled">（使用禁止）</string>
-  <string name="cheatsTaskHandler_title">ゲームヘッダを読書</string>
-  <string name="cheatsTaskHandler_message">しばらくお待ちください。このプロセスには多少時間がかかる場合があります。</string>
-  <string name="cheats_title">チート</string>
-  <string name="cheats_summary">でチートを使用するゲームを選択して。</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">テクスチャパック（ZIP形式）を選択.</string>
   <string name="pathHiResTexturesTask_title">開梱のテクスチャ</string>
@@ -265,44 +258,44 @@
   <string name="playerMapPreference_popupUnmap">アンマップ</string>
   <string name="playerMapPreference_button">プレーヤー %1$d\n\n%2$s</string>
   <!--Input Mapping-->
-  <string name="inputMapPreference_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。\n\n現在のマッピング:\n%1$s</string>
-  <string name="inputMapPreference_showSpecial">特別な機能を表示</string>
-  <string name="inputMapPreference_hideSpecial">特別な機能を非表示</string>
-  <string name="inputMapPreference_popupUnmap">アンマップ</string>
-  <string name="inputMapPreference_aPadXperiaPlay">アナログスティックはタッチパッドで制御され。</string>
-  <string name="inputMapPreference_cPadXperiaPlay">C-パッドはタッチパッドで制御されている。</string>
-  <string name="inputMapPreference_btnA">A</string>
-  <string name="inputMapPreference_btnB">B</string>
-  <string name="inputMapPreference_btnC">C</string>
-  <string name="inputMapPreference_btnL">L</string>
-  <string name="inputMapPreference_btnR">R</string>
-  <string name="inputMapPreference_btnZ">Z</string>
-  <string name="inputMapPreference_btnS">S</string>
-  <string name="inputMapPreference_btnCR">Cパッド →</string>
-  <string name="inputMapPreference_btnCL">Cパッド ←</string>
-  <string name="inputMapPreference_btnCD">Cパッド ↓</string>
-  <string name="inputMapPreference_btnCU">Cパッド ↑</string>
-  <string name="inputMapPreference_btnDR">Dパッド →</string>
-  <string name="inputMapPreference_btnDL">Dパッド ←</string>
-  <string name="inputMapPreference_btnDD">Dパッド ↓</string>
-  <string name="inputMapPreference_btnDU">Dパッド ↑</string>
-  <string name="inputMapPreference_btnAR">アナログ →</string>
-  <string name="inputMapPreference_btnAL">アナログ ←</string>
-  <string name="inputMapPreference_btnAD">アナログ ↓</string>
-  <string name="inputMapPreference_btnAU">アナログ ↑</string>
-  <string name="inputMapPreference_rumble">振動パック</string>
+  <string name="inputMapActivity_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。\n\n現在のマッピング:\n%1$s</string>
+  <string name="menuItem_specialVisibility_show">特別な機能を表示</string>
+  <string name="menuItem_specialVisibility_hide">特別な機能を非表示</string>
+  <string name="inputMapActivity_popupUnmap">アンマップ</string>
+  <string name="inputMapActivity_aPadXperiaPlay">アナログスティックはタッチパッドで制御され。</string>
+  <string name="inputMapActivity_cPadXperiaPlay">C-パッドはタッチパッドで制御されている。</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">Cパッド →</string>
+  <string name="inputMapActivity_btnCL">Cパッド ←</string>
+  <string name="inputMapActivity_btnCD">Cパッド ↓</string>
+  <string name="inputMapActivity_btnCU">Cパッド ↑</string>
+  <string name="inputMapActivity_btnDR">Dパッド →</string>
+  <string name="inputMapActivity_btnDL">Dパッド ←</string>
+  <string name="inputMapActivity_btnDD">Dパッド ↓</string>
+  <string name="inputMapActivity_btnDU">Dパッド ↑</string>
+  <string name="inputMapActivity_btnAR">アナログ →</string>
+  <string name="inputMapActivity_btnAL">アナログ ←</string>
+  <string name="inputMapActivity_btnAD">アナログ ↓</string>
+  <string name="inputMapActivity_btnAU">アナログ ↑</string>
+  <string name="inputMapActivity_rumble">振動パック</string>
   <!--capitalize since trademark-->
-  <string name="inputMapPreference_mempak">拡張パック</string>
+  <string name="inputMapActivity_mempak">拡張パック</string>
   <!--capitalize since trademark-->
-  <string name="inputMapPreference_incrementSlot">インクリメントスロット</string>
-  <string name="inputMapPreference_reset">ゲームをリセット</string>
-  <string name="inputMapPreference_pause">休止</string>
-  <string name="inputMapPreference_stop">停止</string>
-  <string name="inputMapPreference_frameAdvance">コマ送り</string>
-  <string name="inputMapPreference_fastForward">早送り</string>
-  <string name="inputMapPreference_speedDown">スピードダウン</string>
-  <string name="inputMapPreference_speedUp">スピードアップ</string>
-  <string name="inputMapPreference_gameshark">Gameshark</string>
+  <string name="inputMapActivity_incrementSlot">インクリメントスロット</string>
+  <string name="inputMapActivity_reset">ゲームをリセット</string>
+  <string name="inputMapActivity_pause">休止</string>
+  <string name="inputMapActivity_stop">停止</string>
+  <string name="inputMapActivity_frameAdvance">コマ送り</string>
+  <string name="inputMapActivity_fastForward">早送り</string>
+  <string name="inputMapActivity_speedDown">スピードダウン</string>
+  <string name="inputMapActivity_speedUp">スピードアップ</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">ボタンまたはキーを押してください…</string>
   <string name="diagnosticActivity_textMotion_text">画面またはジョイスティックをタッチしてください…</string>

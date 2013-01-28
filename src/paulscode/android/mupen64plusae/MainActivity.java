@@ -148,7 +148,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
             }
             else
             {
-                String weblink = getResources().getString( R.string.assetExtractor_help );
+                String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
                 updateText( R.string.assetExtractor_failed, weblink );
             }
         }
