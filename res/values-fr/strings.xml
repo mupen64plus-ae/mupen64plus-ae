@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--**************************************************************************-->
-  <!--In-Game Strings-->
+  <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">Vitesse %1$d %%</string>
@@ -13,6 +13,15 @@
   <string name="ingameSetSpeed_title">Vitesse de jeu</string>
   <string name="ingameSetIme_title">Changer la méthode d\'entrée (IME)</string>
   <string name="ingameMainMenu_title">Menu principal</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Profiles</string>
+  <string name="menuItem_empty">Vide</string>
+  <string name="menuItem_default">Par défaut</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_calibrate">Calibration</string>
+  <string name="menuItem_triggers">Gâchettes</string>
+  <string name="menuItem_sticks">Sticks analogiques</string>
+  <string name="menuItem_exit">Quitter</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -205,6 +214,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Pas de calcul audio, speed hack par Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Noyau d\'émulation</string>
   <string name="pluginCore_entryV110">noyau, v1.10 (portage Android de Mupen64Plus par Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_entrySystemDefault">Système par défaut</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Activer le rapport de plantage</string>
   <string name="acraEnable_summary">Aucune donnée personnelle n\'est collectée</string>
@@ -221,6 +231,7 @@
   <string name="pathCustomTouchscreen_title">Dossier de thème personnalisé</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importer pack de textures</string>
+  <string name="pathHiResTextures_summary">Utiliser des textures personnalisées (au format .ZIP) dans un jeu</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Dossier de sauvegardes</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -242,6 +253,7 @@
   <string name="confirm_title">Confirmation</string>
   <string name="confirmResetGame_message">Réinitialiser le jeu ? Toute progression non sauvegardée sera perdue.</string>
   <string name="confirmOverwriteFile_message">Écraser %1$s ?</string>
+  <string name="confirmLoadProfile">Voulez-vous charger le profil \"%1$s\" pour %2$s ?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nomdefichier</string>
   <string name="hintSetSpeed">vitesse de 10 à 300</string>
@@ -249,6 +261,7 @@
   <string name="assetExtractor_initializing">Initialisation</string>
   <string name="assetExtractor_progress">%1$.0f%% effectué : %2$s</string>
   <string name="assetExtractor_finished">Terminé</string>
+  <string name="assetExtractor_failed">Erreur lors de l\'extraction des données de l\'application. \n Veuillez débrancher puis rebrancher le câble usb, redémarrer l\'appareil puis relancer l\'application. \n Pour un complément d\'aide, merci de visiter %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_titleFor">Cheat pour %1$s</string>
   <string name="cheats_defaultName">Cheat %1$d</string>
@@ -306,8 +319,6 @@
   <string name="inputMapPreference_mempak">Expansion Pak</string>
   <!--capitalize since trademark-->
   <string name="inputMapPreference_incrementSlot">Incrémenter l\'emplacement</string>
-  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
   <string name="inputMapPreference_reset">Réinitialiser</string>
   <string name="inputMapPreference_pause">Pause</string>
   <string name="inputMapPreference_stop">Stop</string>

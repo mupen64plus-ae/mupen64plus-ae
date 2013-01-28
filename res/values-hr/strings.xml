@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--**************************************************************************-->
-  <!--In-Game Strings-->
+  <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">Brzina %1$d %%</string>
@@ -13,6 +13,8 @@
   <string name="ingameSetSpeed_title">Brzina igre</string>
   <string name="ingameSetIme_title">Promjena zadanog unosa</string>
   <string name="ingameMainMenu_title">Glavni izbornik</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_exit">Izlaz</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -249,6 +251,7 @@
   <string name="assetExtractor_initializing">Pokretanje</string>
   <string name="assetExtractor_progress">%1$.0f%% : %2$s</string>
   <string name="assetExtractor_finished">Završeno</string>
+  <string name="assetExtractor_failed">Greška tijekom vađenja podataka aplikacije.\nIskopčajte USB priključak, ponovno pokrenite uređaj i ponovno pokrenite aplikaciju.P\nZa više informacija, posjetite %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_titleFor">Opcije varanja za %1$s</string>
   <string name="cheats_defaultName">Opcija varanja %1$d</string>
@@ -306,8 +309,6 @@
   <string name="inputMapPreference_mempak">Expansion Pak</string>
   <!--capitalize since trademark-->
   <string name="inputMapPreference_incrementSlot">Promjena broja spremnika</string>
-  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
   <string name="inputMapPreference_reset">Reset</string>
   <string name="inputMapPreference_pause">Pauza</string>
   <string name="inputMapPreference_stop">Zaustavi</string>

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--**************************************************************************-->
-  <!--In-Game Strings-->
+  <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">Скорость %1$d %%</string>
@@ -13,6 +13,15 @@
   <string name="ingameSetSpeed_title">Скорость игры</string>
   <string name="ingameSetIme_title">Выбор метода ввода</string>
   <string name="ingameMainMenu_title">Главное меню</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Профили</string>
+  <string name="menuItem_empty">Пустой</string>
+  <string name="menuItem_default">Умолчание</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_calibrate">Откалибровать</string>
+  <string name="menuItem_triggers">Триггеры</string>
+  <string name="menuItem_sticks">Палочки</string>
+  <string name="menuItem_exit">Выход</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -205,6 +214,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (спид-хак, без поддержки звука Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Ядро эмулятора</string>
   <string name="pluginCore_entryV110">core, v1.10 (порт Mupen64Plus под Android за авторством Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_entrySystemDefault">Система по умолчанию</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Разрешить отправку сообщений об ошибках</string>
   <string name="acraEnable_summary">Вся информация собирается анонимно</string>
@@ -221,6 +231,7 @@
   <string name="pathCustomTouchscreen_title">Стандартное расположение папки</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Указать путь к архиву с текстурами</string>
+  <string name="pathHiResTextures_summary">Использовать в игре свои текстуры (zip файл)</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Папка для сохранений</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -242,6 +253,7 @@
   <string name="confirm_title">Подтверждение</string>
   <string name="confirmResetGame_message">Сбросить игру? Прогресс с момента последнего сохранения будет потерян.</string>
   <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
+  <string name="confirmLoadProfile">Загрузить профиль \"%1$s\" для %2$s?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">имя файла</string>
   <string name="hintSetSpeed">скорость от 10 до 300</string>
@@ -249,6 +261,7 @@
   <string name="assetExtractor_initializing">Инициализация</string>
   <string name="assetExtractor_progress">%1$.0f%% Успешно: %2$s</string>
   <string name="assetExtractor_finished">Готово</string>
+  <string name="assetExtractor_failed">Ошибка извлечения данных приложением. \nПожалуйста, отключите USB-кабель, перезапустите устройство, и повторно запустите приложение. \nДля справки, пожалуйста, посетите %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_titleFor">Чит-коды для %1$s</string>
   <string name="cheats_defaultName">Чит %1$d</string>
@@ -306,8 +319,6 @@
   <string name="inputMapPreference_mempak">Expansion Pak</string>
   <!--capitalize since trademark-->
   <string name="inputMapPreference_incrementSlot">Увеличить слот</string>
-  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
   <string name="inputMapPreference_reset">Сброс</string>
   <string name="inputMapPreference_pause">Пауза</string>
   <string name="inputMapPreference_stop">Остановить</string>

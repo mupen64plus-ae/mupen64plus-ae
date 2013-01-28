@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--**************************************************************************-->
-  <!--In-Game Strings-->
+  <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">Velocidade %1$d %%</string>
@@ -13,6 +13,15 @@
   <string name="ingameSetSpeed_title">Velocidade do jogo</string>
   <string name="ingameSetIme_title">Mudar método de entrada</string>
   <string name="ingameMainMenu_title">Menu Principal</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Perfis</string>
+  <string name="menuItem_empty">Vazio</string>
+  <string name="menuItem_default">Padrão</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_calibrate">Calibrar</string>
+  <string name="menuItem_triggers">Gatilhos</string>
+  <string name="menuItem_sticks">Analógicos</string>
+  <string name="menuItem_exit">Sair</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -205,6 +214,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sem preocessamento de áudio, hack de velocidade por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Núcleo de emulação</string>
   <string name="pluginCore_entryV110">core, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_entrySystemDefault">Padrão</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Habilitar relatório de erros</string>
   <string name="acraEnable_summary">Nenhuma informação pessoal é coletada</string>
@@ -221,6 +231,7 @@
   <string name="pathCustomTouchscreen_title">Diretório de layout personalizado</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importar pacote de texturas</string>
+  <string name="pathHiResTextures_summary">Aplicar textura custumizada (formato ZIP) para um jogo</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Diretório para salvar jogo</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -242,6 +253,7 @@
   <string name="confirm_title">Confirmação</string>
   <string name="confirmResetGame_message">Resetar jogo? Todo o progresso desde o seu último jogo salvo será perdido.</string>
   <string name="confirmOverwriteFile_message">Sobrescrever %1$s?</string>
+  <string name="confirmLoadProfile">Carregar perfil \"%1$s\" para %2$s?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
   <string name="hintSetSpeed">velocidade entre 10 e 300</string>
@@ -249,6 +261,7 @@
   <string name="assetExtractor_initializing">Inicializando</string>
   <string name="assetExtractor_progress">%1$.0f%% feito: %2$s</string>
   <string name="assetExtractor_finished">Finalizado</string>
+  <string name="assetExtractor_failed">Erro extraindo os dados do aplicativo. Por favor, desconecte o cabo USB, reinicie seu dispositivo e abra o emulador. Para ajuda, visite %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_titleFor">Cheats para %1$s</string>
   <string name="cheats_defaultName">Cheat %1$d</string>
@@ -306,8 +319,6 @@
   <string name="inputMapPreference_mempak">Expansion Pak</string>
   <!--capitalize since trademark-->
   <string name="inputMapPreference_incrementSlot">Incrementar entrada</string>
-  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
   <string name="inputMapPreference_reset">Resetar</string>
   <string name="inputMapPreference_pause">Pausar</string>
   <string name="inputMapPreference_stop">Parar</string>

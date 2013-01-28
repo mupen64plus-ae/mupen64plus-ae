@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--**************************************************************************-->
-  <!--In-Game Strings-->
+  <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">Velocità %1$d %%</string>
@@ -13,6 +13,15 @@
   <string name="ingameSetSpeed_title">Velocità gioco</string>
   <string name="ingameSetIme_title">Cambia Metodo di input</string>
   <string name="ingameMainMenu_title">Menù principale</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Profili</string>
+  <string name="menuItem_empty">Vuoto</string>
+  <string name="menuItem_default">Default</string>
+  <string name="menuItem_xbox360">Xbox360</string>
+  <string name="menuItem_calibrate">Calibra</string>
+  <string name="menuItem_triggers">Grilletti</string>
+  <string name="menuItem_sticks">Analogici</string>
+  <string name="menuItem_exit">Esci</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -205,6 +214,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Niente elaborazione audio, hack prestazioni da Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Core emulazione</string>
   <string name="pluginCore_entryV110">core, v1.10 (port Android di Mupen64Plus da Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_entrySystemDefault">Default di sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Abilita segnalazione crash</string>
   <string name="acraEnable_summary">Nessuna informazione personale è raccolta</string>
@@ -221,6 +231,7 @@
   <string name="pathCustomTouchscreen_title">Layout della cartella personalizzato</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importa pacchetti texture</string>
+  <string name="pathHiResTextures_summary">Applica textures custom (formato ZIP) ad un gioco</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Cartella di salvataggio giochi</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -242,6 +253,7 @@
   <string name="confirm_title">Conferma</string>
   <string name="confirmResetGame_message">Resettare il gioco? Tutto il progresso dopo il tuo ultimo salvataggio verrà perso.</string>
   <string name="confirmOverwriteFile_message">Sovrascrivere %1$s?</string>
+  <string name="confirmLoadProfile">Caricare il profilo \"%1$s\" per %2$s?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome file</string>
   <string name="hintSetSpeed">una velocita da 10 a 300</string>
@@ -249,6 +261,7 @@
   <string name="assetExtractor_initializing">Inizializzando</string>
   <string name="assetExtractor_progress">%1$.0f%% completo: %2$s</string>
   <string name="assetExtractor_finished">Finito</string>
+  <string name="assetExtractor_failed">Errore nell\'estrazione dell\'app data\nPer favore disconnetti il cavo USB, riavvia il dispositivo e riapri l\'applicazione.\nPer aiuto, per favore visita %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_titleFor">Trucchi per %1$s</string>
   <string name="cheats_defaultName">Trucco %1$d</string>
@@ -306,8 +319,6 @@
   <string name="inputMapPreference_mempak">Expansion Pak</string>
   <!--capitalize since trademark-->
   <string name="inputMapPreference_incrementSlot">Incrementa slot</string>
-  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
   <string name="inputMapPreference_reset">Resetta</string>
   <string name="inputMapPreference_pause">Pausa</string>
   <string name="inputMapPreference_stop">Ferma</string>

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--**************************************************************************-->
-  <!--In-Game Strings-->
+  <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">Geschwindigkeit %1$d %%</string>
@@ -13,6 +13,15 @@
   <string name="ingameSetSpeed_title">Spielgeschwindigkeit</string>
   <string name="ingameSetIme_title">IME wechseln</string>
   <string name="ingameMainMenu_title">Hauptmenü</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Profile</string>
+  <string name="menuItem_empty">Leer</string>
+  <string name="menuItem_default">Standard</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_calibrate">Kalibrieren</string>
+  <string name="menuItem_triggers">Trigger</string>
+  <string name="menuItem_sticks">Sticks</string>
+  <string name="menuItem_exit">Verlassen</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -205,6 +214,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (keine Audioberechnung, Geschwindigkeits-Hack von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Emulationskern</string>
   <string name="pluginCore_entryV110">core, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_entrySystemDefault">System Standard</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Absturzberichte aktivieren</string>
   <string name="acraEnable_summary">Es werden keine persönlichen Daten gesammelt.</string>
@@ -221,6 +231,7 @@
   <string name="pathCustomTouchscreen_title">Benutzerdefiniertes Layout-Ordner</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Texturpaket importieren</string>
+  <string name="pathHiResTextures_summary">Nutze benutzerdefinierte Texturen (ZIP-format) für ein Spiel</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Speicherstand-Ordner</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -242,6 +253,7 @@
   <string name="confirm_title">Bestätigung</string>
   <string name="confirmResetGame_message">Spiel zurücksetzen? Ungespeicherter Fortschritt geht dabei verloren.</string>
   <string name="confirmOverwriteFile_message">%1$s überschreiben?</string>
+  <string name="confirmLoadProfile">Lade Profil \"%1$s\" für %2§s?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">Dateiname</string>
   <string name="hintSetSpeed">Geschwindigkeit zwischen 10 und 300</string>
@@ -249,6 +261,7 @@
   <string name="assetExtractor_initializing">Wird initialisiert</string>
   <string name="assetExtractor_progress">%1$.0f%% fertig: %2$s</string>
   <string name="assetExtractor_finished">Abgeschlossen</string>
+  <string name="assetExtractor_failed">Fehler beim Extrahieren der App Daten.\nBitte entferne das USB-Kabel, starte das Gerät neu und starte dann die App erneut.\nBesuche %1$s für Hilfe.</string>
   <!--Cheats Configuration-->
   <string name="cheats_titleFor">Cheats für %1$s</string>
   <string name="cheats_defaultName">Cheat %1$d</string>
@@ -306,8 +319,6 @@
   <string name="inputMapPreference_mempak">Expansion-Pack</string>
   <!--capitalize since trademark-->
   <string name="inputMapPreference_incrementSlot">Slot erhöhen</string>
-  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
   <string name="inputMapPreference_reset">Zurücksetzen</string>
   <string name="inputMapPreference_pause">Pausieren</string>
   <string name="inputMapPreference_stop">Anhalten</string>

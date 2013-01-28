@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--**************************************************************************-->
-  <!--In-Game Strings-->
+  <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">%1$d%% スピード</string>
@@ -13,6 +13,7 @@
   <string name="ingameSetSpeed_title">ゲームの速度</string>
   <string name="ingameSetIme_title">IMEを変更</string>
   <string name="ingameMainMenu_title">メニュー</string>
+  <!--Input Mapping Activity-->
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -294,8 +295,6 @@
   <string name="inputMapPreference_mempak">拡張パック</string>
   <!--capitalize since trademark-->
   <string name="inputMapPreference_incrementSlot">インクリメントスロット</string>
-  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
   <string name="inputMapPreference_reset">ゲームをリセット</string>
   <string name="inputMapPreference_pause">休止</string>
   <string name="inputMapPreference_stop">停止</string>

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--**************************************************************************-->
-  <!--In-Game Strings-->
+  <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="ingameToggleSpeed_title">Velocidad %1$d %%</string>
@@ -13,6 +13,15 @@
   <string name="ingameSetSpeed_title">Velocidad del juego</string>
   <string name="ingameSetIme_title">Cambiar IME</string>
   <string name="ingameMainMenu_title">Menú principal</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Perfiles</string>
+  <string name="menuItem_empty">Vacío</string>
+  <string name="menuItem_default">Por defecto</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_calibrate">Calibrar</string>
+  <string name="menuItem_triggers">Gatillos</string>
+  <string name="menuItem_sticks">Sticks</string>
+  <string name="menuItem_exit">Salir</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -38,7 +47,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Jugar</string>
+  <string name="actionPlay_title">Iniciar emulación</string>
   <string name="actionResume_title">Reanudar</string>
   <string name="actionResume_summary">Impredecible si se aplican cheats</string>
   <string name="actionRestart_title">Reiniciar</string>
@@ -205,6 +214,7 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sin procesamiento de audio, hack de velocidad por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Núcleo de emulación</string>
   <string name="pluginCore_entryV110">core, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="localeOverride_entrySystemDefault">Predeterminado del sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Activar informes de fallos</string>
   <string name="acraEnable_summary">Ningún tipo de información personal es recolectada</string>
@@ -221,6 +231,7 @@
   <string name="pathCustomTouchscreen_title">Carpeta con datos de disposición</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Importar paquete de texturas</string>
+  <string name="pathHiResTextures_summary">Aplicar texturas personalizadas (en formato ZIP) a un juego</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Directorio de partidas de juego</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -242,6 +253,7 @@
   <string name="confirm_title">Confirmación</string>
   <string name="confirmResetGame_message">¿En serio quieres reiniciar el juego? Se perderá todo el progreso realizado desde la última vez que guardaste.</string>
   <string name="confirmOverwriteFile_message">¿Sobrescribir %1$s?</string>
+  <string name="confirmLoadProfile">¿Quieres cargar el perfil \"%1$s\" para %2$s?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nombre de archivo</string>
   <string name="hintSetSpeed">velocidad entre 10 y 300</string>
@@ -249,6 +261,7 @@
   <string name="assetExtractor_initializing">Inicializando</string>
   <string name="assetExtractor_progress">%1$.0f%% completado: %2$s</string>
   <string name="assetExtractor_finished">Completado</string>
+  <string name="assetExtractor_failed">Error al extraer datos de la aplicación. Por favor, desconecta el cable USB, reinicia el dispositivo y ejecuta nuevamente la aplicación. Para obtener ayuda, visita %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_titleFor">Cheats para %1$s</string>
   <string name="cheats_defaultName">Cheat %1$d</string>
@@ -306,8 +319,6 @@
   <string name="inputMapPreference_mempak">Expansion Pak</string>
   <!--capitalize since trademark-->
   <string name="inputMapPreference_incrementSlot">Incrementar slot</string>
-  <string name="inputMapPreference_saveSlot">@string/ingameSlotSave_title</string>
-  <string name="inputMapPreference_loadSlot">@string/ingameSlotLoad_title</string>
   <string name="inputMapPreference_reset">Reiniciar</string>
   <string name="inputMapPreference_pause">Pausa</string>
   <string name="inputMapPreference_stop">Parar</string>
