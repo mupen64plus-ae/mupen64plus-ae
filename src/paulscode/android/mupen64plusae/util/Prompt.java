@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.R;
+import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
@@ -259,12 +260,31 @@ public class Prompt
             @Override
             public void onInput( int[] inputCodes, float[] strengths, int hardwareId )
             {
+                if( inputCodes == null || strengths == null )
+                    return;
+                
+                // Find the strongest input
+                float maxStrength = 0;
+                int strongestInputCode = 0;
+                for( int i = 0; i < inputCodes.length; i++ )
+                {
+                    // Identify the strongest input
+                    float strength = strengths[i];
+                    if( strength > maxStrength )
+                    {
+                        maxStrength = strength;
+                        strongestInputCode = inputCodes[i];
+                    }
+                }
+                
+                // Call the overloaded method with the strongest found
+                onInput( strongestInputCode, maxStrength, hardwareId );
             }
             
             @Override
             public void onInput( int inputCode, float strength, int hardwareId )
             {
-                if( inputCode != 0 )
+                if( inputCode != 0 && strength > AbstractProvider.STRENGTH_THRESHOLD )
                 {
                     listener.OnInputCode( inputCode, hardwareId );
                     dialog.dismiss();
