@@ -268,6 +268,7 @@ public class UserPrefs
     
     // Commonly-used values
     public static final String DEFAULT_INPUT_MAP_STRING_XBOX360 = "0:-31,1:-32,2:-33,3:-34,4:108,5:-23,6:99,7:96,8:-25,9:-26,10:-27,11:-28,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
+    public static final String DEFAULT_INPUT_MAP_STRING_XPERIA_PLAY = "0:22,1:21,2:20,3:19,4:108,5:102,6:99,7:23,12:103";
     
     private final SharedPreferences mPreferences;
     private final Locale mLocale;

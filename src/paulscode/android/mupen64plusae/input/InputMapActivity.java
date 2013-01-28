@@ -206,6 +206,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             case R.id.menuItem_xbox360:
                 loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING_XBOX360, item.getTitle() );
                 break;
+            case R.id.menuItem_xperiaPlay:
+                loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING_XPERIA_PLAY, item.getTitle() );
+                break;
             case R.id.menuItem_specialVisibility:
                 mUserPrefs.putSpecialVisibility( mPlayer,
                         !mUserPrefs.getSpecialVisibility( mPlayer ) );

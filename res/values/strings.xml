@@ -39,6 +39,7 @@
     <string name="menuItem_profiles">Profiles</string>
     <string name="menuItem_default">Default</string>
     <string name="menuItem_xbox360">Xbox 360</string>
+    <string name="menuItem_xperiaPlay">Xperia PLAY</string>
     <string name="menuItem_axisInfo">Analog info</string>
     <string name="menuItem_unmapAll">Unmap all</string>
     <string name="menuItem_exit">Exit</string>

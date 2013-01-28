@@ -12,6 +12,9 @@
             <item
                 android:id="@+id/menuItem_xbox360"
                 android:title="@string/menuItem_xbox360"/>
+            <item
+                android:id="@+id/menuItem_xperiaPlay"
+                android:title="@string/menuItem_xperiaPlay"/>
         </menu>
     </item>
     <item
