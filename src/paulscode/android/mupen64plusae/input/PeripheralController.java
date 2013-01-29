@@ -27,8 +27,10 @@ import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.util.Log;
+import android.view.KeyEvent;
 
 /**
  * A class for generating N64 controller commands from peripheral hardware (gamepads, joysticks,
@@ -243,6 +245,14 @@ TODO:
 Gameshark button emulation is hard-coded into the core, without an equivalent function in the API to call from the front-end.
 Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL_KEYUP and M64CMD_SEND_SDL_KEYDOWN?
 *****/
+                    break;
+                case InputMap.FUNC_SIMULATE_BACK:
+                    String[] back_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_BACK ) };
+                    SafeMethods.exec( back_cmd, false );
+                    break;
+                case InputMap.FUNC_SIMULATE_MENU:
+                    String[] menu_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_MENU ) };
+                    SafeMethods.exec( menu_cmd, false );
                     break;
 // TODO: Less hackish method of synchronizing slots and speeds between PeripheralController and GameMenuHandler
                 default:

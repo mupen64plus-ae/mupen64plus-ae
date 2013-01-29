@@ -23,6 +23,10 @@ package paulscode.android.mupen64plusae.util;
 import android.app.Activity;
 import android.os.Handler;
 import android.text.TextUtils;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * A boilerplate class for safely doing things, with simple exception handling.
@@ -156,5 +160,38 @@ public class SafeMethods
                 System.exit( 0 );
             }
         }, milliseconds );
+    }
+    
+    /**
+     * Safely executes a command and its arguments in a separate native process
+     * 
+     * @param cmd Array containing the command and its arguments.
+     * @param wait Whether or not to wait for the command to finish executing.
+     * @return Array containing the output (if any), or null if wait was false.
+     */
+    public static String[] exec( String[] cmd, boolean wait )
+    {
+        try
+        {
+            Process process = Runtime.getRuntime().exec( cmd );
+            if( wait )
+            {
+                process.waitFor();
+                LinkedList<String> output = new LinkedList<String>();
+                BufferedReader buffer = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
+                String line;
+                while( ( line = buffer.readLine() ) != null )
+                {
+                    output.add( line );
+                }
+                if( output.size() > 0 )
+                    return output.toArray( new String[ output.size() ] );
+            }
+        }
+        catch( IOException ioe )
+        {}
+        catch( InterruptedException ie )
+        {}
+        return null;
     }
 }

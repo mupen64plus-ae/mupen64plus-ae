@@ -367,6 +367,8 @@
     <string name="inputMapActivity_speedDown">Speed down</string>
     <string name="inputMapActivity_speedUp">Speed up</string>
     <string name="inputMapActivity_gameshark">Gameshark</string>
+    <string name="inputMapActivity_simulateBack">Back Key</string>
+    <string name="inputMapActivity_simulateMenu">Menu Key</string>
 
     <!-- Controller Diagnostics -->
     <string name="diagnosticActivity_textKey_text">Press button or key…</string>

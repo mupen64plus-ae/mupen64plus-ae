@@ -99,6 +99,23 @@
             style="@style/btnSpecialMappable"
             android:text="@string/inputMapActivity_fastForward" />
 
+        <Button
+            android:id="@+id/buttonSimulateBack"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapActivity_simulateBack" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
+            android:id="@+id/buttonSimulateMenu"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapActivity_simulateMenu" />
+
         <!-- <Button
             android:id="@+id/buttonFrameAdvance"
             style="@style/btnSpecialMappable"

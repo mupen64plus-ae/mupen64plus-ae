@@ -92,8 +92,14 @@ public class InputMap extends SerializableMap
     /** Mupen64Plus function: Gameshark. */
     public static final int FUNC_GAMESHARK              = OFFSET_GLOBAL_FUNCS + 10;
     
+    /** Simulated key-press function: Back. */
+    public static final int FUNC_SIMULATE_BACK          = OFFSET_GLOBAL_FUNCS + 11;
+    
+    /** Simulated key-press function: Menu. */
+    public static final int FUNC_SIMULATE_MENU          = OFFSET_GLOBAL_FUNCS + 12;
+    
     /** Total number of mappable controls/functions. */
-    public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 11;
+    public static final int NUM_MAPPABLES               = OFFSET_GLOBAL_FUNCS + 13;
     // @formatter:on
     
     /**
