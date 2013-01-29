@@ -99,9 +99,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         
         // For narrow screens, use an alternate layout
         if( widthDp < MIN_LAYOUT_WIDTH_DP )
-            setContentView( R.layout.input_map_preference_port );
+            setContentView( R.layout.input_map_activity_port );
         else
-            setContentView( R.layout.input_map_preference );
+            setContentView( R.layout.input_map_activity );
         
         // Set the title of the activity
         CharSequence title = getResources().getString( R.string.inputMapActivity_title, mPlayer );
