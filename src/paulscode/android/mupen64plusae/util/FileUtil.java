@@ -145,11 +145,14 @@ public class FileUtil
         if( folder.isDirectory() )
         {
             String[] children = folder.list();
-            for( String child : children )
+            if( children != null )
             {
-                boolean success = deleteFolder( new File( folder, child ) );
-                if( !success )
-                    return false;
+                for( String child : children )
+                {
+                    boolean success = deleteFolder( new File( folder, child ) );
+                    if( !success )
+                        return false;
+                }
             }
         }
         

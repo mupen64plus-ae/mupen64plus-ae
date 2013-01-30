@@ -186,6 +186,9 @@ public class VisibleTouchMap extends TouchMap
      */
     public void drawFps( Canvas canvas )
     {
+        if( canvas == null )
+            return;
+        
         // Redraw the FPS indicator
         if( mFpsFrame != null )
             mFpsFrame.draw( canvas );
