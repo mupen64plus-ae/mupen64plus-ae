@@ -298,6 +298,9 @@
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmMigrateSlotSaves_message">Are you sure you want to copy your old slot saves? Backups will be made if necessary.</string>
 
+    <!-- Change Log -->
+    <string name="changeLog_dialogTitle">Change log</string>
+
     <!-- Text Editor Hints (start lower-case) -->
     <string name="hintFileSave">filename</string>
     <string name="hintSetSpeed">speed between 10 to 300</string>

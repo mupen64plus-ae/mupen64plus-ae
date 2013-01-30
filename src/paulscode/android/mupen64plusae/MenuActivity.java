@@ -24,6 +24,7 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.CrashTester;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
@@ -97,6 +98,17 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        
+        int lastVer = mAppData.getLastAppVersionCode();
+        int currVer = mAppData.appVersionCode;
+        if( lastVer != currVer )
+        {
+            ChangeLog log = new ChangeLog( getAssets() );
+            if( log.show( this, lastVer + 1, currVer ) )
+            {
+                mAppData.putLastAppVersionCode( currVer );
+            }
+        }
         
         // Disable the Xperia PLAY plugin as necessary
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
@@ -295,8 +307,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 {
                     File newDir = new File( mUserPrefs.slotSaveDir );
                     FileUtil.copyFile( oldDir, newDir, true );
-                    Notifier.showToast( MenuActivity.this,
-                            R.string.toast_migrateSlotSavesSuccess );
+                    Notifier.showToast( MenuActivity.this, R.string.toast_migrateSlotSavesSuccess );
                 }
             } );
         }
@@ -373,7 +384,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 if( which == DialogInterface.BUTTON_NEUTRAL )
                     Utility.launchUri( MenuActivity.this, R.string.actionAbout_uriCredits );
                 else if( which == DialogInterface.BUTTON_POSITIVE )
-                    Utility.launchUri( MenuActivity.this, R.string.actionAbout_uriChangelog );
+                    new ChangeLog( getAssets() ).show( MenuActivity.this, 0, mAppData.appVersionCode );
             }
         };
         new Builder( this ).setTitle( title ).setMessage( message ).setNegativeButton( null, null )

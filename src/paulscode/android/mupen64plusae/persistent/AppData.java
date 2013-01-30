@@ -144,6 +144,7 @@ public class AppData
     
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
+    private static final String KEY_LAST_APP_VERSION_CODE = "lastAppVersion";
     private static final String KEY_LAST_SLOT = "lastSlot";
     private static final String KEY_LAST_ROM = "lastRom";
     private static final String KEY_LAST_CRC = "lastCrc";
@@ -151,6 +152,7 @@ public class AppData
     
     // Shared preferences default values
     private static final int DEFAULT_ASSET_VERSION = 0;
+    private static final int DEFAULT_LAST_APP_VERSION_CODE = 0;
     private static final int DEFAULT_LAST_SLOT = 0;
     private static final String DEFAULT_LAST_ROM = "";
     private static final String DEFAULT_LAST_CRC = "";
@@ -240,6 +242,16 @@ public class AppData
     }
     
     /**
+     * Gets the version code when the user last ran the app
+     * 
+     * @return The app version.
+     */
+    public int getLastAppVersionCode()
+    {
+        return getInt( KEY_LAST_APP_VERSION_CODE, DEFAULT_LAST_APP_VERSION_CODE );
+    }
+    
+    /**
      * Gets the last savegame slot.
      * 
      * @return The last slot.
@@ -277,6 +289,16 @@ public class AppData
     public void putAssetVersion( int value )
     {
         putInt( KEY_ASSET_VERSION, value );
+    }
+    
+    /**
+     * Persists the version code when the user last ran the app.
+     * 
+     * @param value The app version code.
+     */
+    public void putLastAppVersionCode( int value )
+    {
+        putInt( KEY_LAST_APP_VERSION_CODE, value );
     }
     
     /**

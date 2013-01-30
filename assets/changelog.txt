@@ -1,0 +1,91 @@
+[19:2.0.3]
+- Improved joystick compatibility
+- Added button mapping profiles
+- Fixed touchscreen analog redraw bug
+- Fixed various crashes
+[18:2.0.2]
+- Fixed crash caused by failed data extraction
+[17:2.0.1]
+- Fixed unnavigability in file chooser on first run
+- Fixed disappearing list in file chooser on orientation change
+- Updated license to GPLv3
+[16:2.0.0]
+- Rebuilt user interface and menu system
+- Added native joystick support, with analog control
+- Better synchronized core with upstream
+- Added support for x86 CPUs
+- Fixed Majora's Mask freeze
+- Added flicker reduction settings
+- Added framelimiter settings
+- Added orientation selections
+- Added resampling algorithm selections
+- Added swap audio channels setting
+- Improved optimizations
+- Increased game and device compatibility
+- Integrated OUYA support
+[14:1.9.2]
+- Fixed touchpad setting forgotten after each game
+- Fixed checking for libs in wrong folder
+- Sped up analog redraw a tad (too laggy on low-density screens)
+- Fixed Special Button mapping screen
+[13:1.9]
+- Merged Xperia Play branch into main branch
+- Upgraded core to v1.99.5
+- Fixed plug-in importing
+- Fixed core functions button-mapping
+- Improved in-game menu behavior on HC and ICS
+- Added cheats option
+- Added several language translations
+- established github
+[12:1.8.2]
+- Fixed hardware buttons not functioning when freshly installed
+[11:1.8]
+- Added multi-controller support
+- Fixed multiple crash report causes
+- Improved GUI functionality
+[10:1.7.2 (Xperia Play)]
+- Fixed speed regression on R800i
+- Fixed crash with settings apps, caused by app icon resolution
+[9:1.7]
+- Fixed speed regression caused by previous update
+[8:1.6.2 (Xperia Play)]
+- Fixed hi-res launcher icon (thanks, Epic_bubble!)
+[7:1.6]
+- Fixed several causes for Crash Reports (null pointers, illegal states, etc)
+- Consolidated source code (reduced complexity/ redundancy)
+- Added minor optimization to build settings
+- Added Help option to main menu (links to paulscode.com forum)
+- Updated graphics by Artwork Competition winner shuy3n!
+[6:1.5]
+- Galaxy S: Zelda crash fixed
+- Mario Kart: backwards drivers fixed (gles2rice)
+- gles2n64, gles2rice: separated settings (see below for specific bug-fixes/ optimizations)
+[5:1.4]
+- Improved GUI usability
+- Added Reset Default Settings
+- Added work-around for black-squares (Bionic, Razer). Settings->Video->Configure->Alpha Test (NOT a complete fix)
+- Fixed crash to home on some devices (Apollo). Zelda gles2n64 crash NOT fixed (S2, Yinlips). Recommend gles2rice until fixed
+- Fixed corrupt data causes (no controllers, crash) requiring "Restore App Data"
+- Fixed crash on Resume causes
+[4:1.3]
+- Fixed Zelda OOT crash at Hyrule castle and Kakariko village
+- Eliminated internet requirement on first run to download app data
+- Added option in settings to restore app data if it becomes corrupt
+- Added support for true analog input from USB Joystick Center IME
+- Started "Open ROM" in folder roms/n64 if exists, otherwise in SD card root folder
+- (Xperia Play version) Fixed splash screen image swapped with status bar image
+[3:1.2]
+- Improved compressed-ROM reading (Game Hunter ROMs no longer require unzipping)
+- Fixed problem where input from IMEs was not detected by Key Listener dialog
+- Implemented work-around for missing buttons bug (enable Skins->Virtual Gamepad->Redraw All).  This bug will be fixed in a future update after implementing the virtual gamepad in GLES instead of through the Android API (which is painfully slow and buggy).
+- (Xperia Play version) Fixed Xperia Play "optimized" metadata
+- (Xperia Play version) Fixed missing plug-ins in "change" menus
+[2:1.1]
+- Fixed a potential crash on devices with SD Card not mounted at /mnt/sdcard
+- Fixed a potential menu crash due to a NullPointerException
+- Fixed a potential crash when input plugin is disabled
+- Improved hardware profiling logic used in gles2n64 initialization code
+- Made auto-save optional
+- (Xperia Play version) Possibly fixed problem where the C buttons were mapped to the wrong side of the touchpad (please report if you still experience this problem)
+[1:1.0]
+- Original market release
