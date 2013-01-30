@@ -1194,7 +1194,10 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
 
                 uint64 crc64 = newinfo.crc32;
                 crc64 <<= 32;
-                crc64 |= (newinfo.pal_crc32&0xFFFFFF00)|(newinfo.fmt<<4)|newinfo.siz;
+                if (options.bLoadHiResCRCOnly)
+                    crc64 |= newinfo.pal_crc32&0xFFFFFFFF;
+                else
+                    crc64 |= (newinfo.pal_crc32&0xFFFFFF00)|(newinfo.fmt<<4)|newinfo.siz;
                 infos.add(crc64,newinfo);
             }
         }
@@ -1398,8 +1401,13 @@ int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &e
     uint64 crc64a = entry.dwCRC;
     crc64a <<= 32;
     uint64 crc64b = crc64a;
-    crc64a |= (0xFFFFFF00|(entry.ti.Format<<4)|entry.ti.Size);
-    crc64b |= ((entry.dwPalCRC&0xFFFFFF00)|(entry.ti.Format<<4)|entry.ti.Size);
+    if (options.bLoadHiResCRCOnly) {
+        crc64a |= (0xFFFFFFFF);
+        crc64b |= (entry.dwPalCRC&0xFFFFFFFF);
+    } else {
+        crc64a |= (0xFFFFFF00|(entry.ti.Format<<4)|entry.ti.Size);
+        crc64b |= ((entry.dwPalCRC&0xFFFFFF00)|(entry.ti.Format<<4)|entry.ti.Size);
+    }
 
     int infosize = infos.size();
     int indexb=-1;
@@ -1519,7 +1527,10 @@ void DumpCachedTexture( TxtrCacheEntry &entry )
 
         uint64 crc64 = newinfo.crc32;
         crc64 <<= 32;
-        crc64 |= (newinfo.pal_crc32&0xFFFFFF00)|(newinfo.fmt<<4)|newinfo.siz;
+        if (options.bLoadHiResCRCOnly)
+            crc64 |= newinfo.pal_crc32&0xFFFFFFFF;
+        else
+            crc64 |= (newinfo.pal_crc32&0xFFFFFF00)|(newinfo.fmt<<4)|newinfo.siz;
         gTxtrDumpInfos.add(crc64,newinfo);
 
     }
