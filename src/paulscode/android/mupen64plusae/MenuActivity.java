@@ -66,6 +66,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String SCREEN_INPUT = "screenInput";
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
+    private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
     private static final String SCREEN_VIDEO = "screenVideo";
     private static final String SCREEN_AUDIO = "screenAudio";
     
@@ -74,6 +75,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
     
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
+    private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     private static final String PLUGIN_VIDEO = "pluginVideo";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
@@ -100,6 +102,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
         if( !mAppData.hardwareInfo.isXperiaPlay )
             prefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
+        // Disable the touchscreen when running on OUYA
+        if( mAppData.hardwareInfo.isOUYA )
+            prefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
@@ -129,6 +134,11 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !mAppData.hardwareInfo.isXperiaPlay )
         {
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
+        }
+        // Hide the touchscreen menu when running on the OUYA
+        if( mAppData.hardwareInfo.isOUYA )
+        {
+            PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
         }
     }
     

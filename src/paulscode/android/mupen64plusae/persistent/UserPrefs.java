@@ -334,7 +334,7 @@ public class UserPrefs
         isCheatOptionsShown = mPreferences.getBoolean( "playShowCheats", false );
         
         // Touchscreen prefs
-        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
+        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", appData.hardwareInfo.isOUYA ? false : true );
         touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
         int transparencyPercent = mPreferences.getInt( "touchscreenTransparency", 100 );
         isTouchscreenHidden = transparencyPercent == 0;
