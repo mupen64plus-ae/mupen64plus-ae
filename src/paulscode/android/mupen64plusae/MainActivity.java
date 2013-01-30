@@ -34,6 +34,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager.LayoutParams;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -97,6 +98,12 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
         // Lay out the content
         setContentView( R.layout.main_activity );
         mTextView = (TextView) findViewById( R.id.mainText );
+        
+        if( mAppData.hardwareInfo.isOUYA )
+        {
+            ImageView splash = (ImageView) findViewById( R.id.mainImage );
+            splash.setImageResource( R.drawable.publisherlogo_ouya );
+        }
         
         // Extract the assets in a separate thread and launch the menu activity
         // Handler.postDelayed ensures this runs only after activity has resumed

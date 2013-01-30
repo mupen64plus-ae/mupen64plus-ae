@@ -40,6 +40,7 @@
     <string name="menuItem_default">Default</string>
     <string name="menuItem_xbox360">Xbox 360</string>
     <string name="menuItem_xperiaPlay">Xperia PLAY</string>
+    <string name="menuItem_OUYA">OUYA</string>
     <string name="menuItem_specialVisibility_show">Show special functions</string>
     <string name="menuItem_specialVisibility_hide">Hide special functions</string>
     <string name="menuItem_axisInfo">Analog info</string>

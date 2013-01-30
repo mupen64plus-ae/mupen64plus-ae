@@ -15,6 +15,9 @@
             <item
                 android:id="@+id/menuItem_xperiaPlay"
                 android:title="@string/menuItem_xperiaPlay"/>
+            <item
+                android:id="@+id/menuItem_OUYA"
+                android:title="@string/menuItem_OUYA"/>
         </menu>
     </item>
     <item
