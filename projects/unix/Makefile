@@ -481,6 +481,7 @@ CFLAGS += -MD
 
 CXXFLAGS += $(CFLAGS)
 ifeq ($(LTO), 1)
+  CFLAGS += -flto -ffunction-sections -fdata-sections
   CXXFLAGS += -flto -ffunction-sections -fdata-sections
   LDFLAGS += -fuse-linker-plugin -Wl,--gc-sections $(CXXFLAGS)
 endif
