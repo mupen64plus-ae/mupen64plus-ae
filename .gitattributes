@@ -22,8 +22,6 @@
 *.xml text
 
 # don't modify binary files
-/assets/* binary
-/res/drawable* binary
 *.gif binary
 *.gz binary
 *.jar binary
