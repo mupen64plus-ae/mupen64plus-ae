@@ -894,8 +894,8 @@ enum TextureType
  RGBA_PNG_FOR_ALL_CI,
 };
 typedef struct {
-    int width;
-    int height;
+    unsigned int width;
+    unsigned int height;
     int fmt;
     int siz;
     int crc32;
@@ -1363,23 +1363,25 @@ is of type TxtrInfo) are uint32.
 */
 int FindScaleFactor(const ExtTxtrInfo &info, TxtrCacheEntry &entry)
 {
+    // init scale shift
     int scaleShift = 0;
- 
-    // find the smallest power of 2 which is greater than or equal to the ratio of the hi-res texture's
-    // dimensions to the original (N64) texture dimensions
-    while (info.height > (int) entry.ti.HeightToLoad * (1 << scaleShift) && info.width > (int) entry.ti.WidthToLoad * (1 << scaleShift))
+
+    // check if the original texture dimensions (x and y) scaled with the current shift is still smaller or of the same size as the hires one
+    while(info.height >= entry.ti.HeightToLoad*(1<<scaleShift)  && info.width >= entry.ti.WidthToLoad*(1<<scaleShift))
     {
+        // check if the original texture dimensions (x and y)scaled with the current shift have the same size as the hires one
+        if(info.height == entry.ti.HeightToLoad*(1<<scaleShift)  && info.width == entry.ti.WidthToLoad*(1<<scaleShift))
+            // found appropriate scale shift, return it
+            return scaleShift;
+
         scaleShift++;
     }
-    // if the ratio of the 2 textures' dimensions is an even power of 2, then the hi-res texture is allowed
-    if (info.height == (int) entry.ti.HeightToLoad * (1 << scaleShift) && info.width == (int) entry.ti.WidthToLoad * (1 << scaleShift))
-    {
-        // found appropriate scale shift, return it
-        return scaleShift;
-    }
 
-    // the dimensions of the hires replacement are not power of 2 of the original texture
-    return -1;
+    // original texture dimensions (x or y or both) scaled with the last scale shift have become larger than the dimensions
+    // of the hires texture. That means the dimensions of the hires replacement are not power of 2 of the original texture.
+    // Therefore indicate a crop shift (or -1 when the hires_texture was smaller from the beginning)
+    scaleShift -= 1;
+    return scaleShift;
 }
 
 int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &entry, int &indexa, int &scaleShift, bool bForDump = false)
@@ -1879,6 +1881,11 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
     int scale = 1 << scaleShift;
     int mirrorx = 1;
     int mirrory = 1;
+    int input_height_shift = height - entry.ti.HeightToLoad * scale;
+    int input_pitch_a = width;
+    int input_pitch_rgb = width;
+    width = entry.ti.WidthToLoad * scale;
+    height = entry.ti.HeightToLoad * scale;
     if (entry.ti.WidthToCreate/entry.ti.WidthToLoad == 2) mirrorx = 2;
     if (entry.ti.HeightToCreate/entry.ti.HeightToLoad == 2) mirrory = 2;
     entry.pEnhancedTexture = CDeviceBuilder::GetBuilder()->CreateTexture(entry.ti.WidthToCreate*scale, entry.ti.HeightToCreate*scale);
@@ -1889,8 +1896,8 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
 
         if( gHiresTxtrInfos[idx].type == RGB_PNG )
         {
-            unsigned char *pRGB = buf_rgba;
-            unsigned char *pA = buf_a;
+            input_pitch_rgb *= 3;
+            input_pitch_a *= 3;
 
             if (info.lPitch < width * 4)
                 DebugMessage(M64MSG_ERROR, "Texture pitch %i less than width %i times 4", info.lPitch, width);
@@ -1898,9 +1905,11 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
                 DebugMessage(M64MSG_ERROR, "Texture source height %i greater than destination height %i", height, info.dwHeight);
 
             // Update the texture by using the buffer
-            for( int i=height-1; i>=0; i--)
+            for( int i=0; i<height; i++)
             {
-                unsigned char* pdst = (unsigned char*)info.lpSurface + i*info.lPitch;
+                unsigned char *pRGB = buf_rgba + (input_height_shift + i) * input_pitch_rgb;
+                unsigned char *pA = buf_a + (input_height_shift + i) * input_pitch_a;
+                unsigned char* pdst = (unsigned char*)info.lpSurface + (height - i - 1)*info.lPitch;
                 for( int j=0; j<width; j++)
                 {
                     *pdst++ = *pRGB++;      // R
@@ -1925,11 +1934,13 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
         }
         else
         {
+            input_pitch_rgb *= 4;
+
             // Update the texture by using the buffer
-            uint32 *pRGB = (uint32*)buf_rgba;
             for( int i=height-1; i>=0; i--)
             {
-                uint32 *pdst = (uint32*)((unsigned char*)info.lpSurface + i*info.lPitch);
+                uint32 *pRGB = (uint32*)(buf_rgba + (input_height_shift + i) * input_pitch_rgb);
+                uint32 *pdst = (uint32*)((unsigned char*)info.lpSurface + (height - i - 1)*info.lPitch);
                 for( int j=0; j<width; j++)
                 {
                     *pdst++ = *pRGB++;      // RGBA
