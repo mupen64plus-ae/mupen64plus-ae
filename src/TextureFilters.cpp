@@ -1863,7 +1863,7 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
             return;
     }
 
-    if( !bResRGBA )
+    if( !bResRGBA || !buf_rgba )
     {
         DebugMessage(M64MSG_ERROR, "RGBBuffer creation failed for file '%s'.", filename_rgb);
         return;
