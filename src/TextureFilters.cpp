@@ -901,9 +901,9 @@ typedef struct {
     int crc32;
     int pal_crc32;
     char *foldername;
+    char *filename;
+    char *filename_a;
     //char name[40];
-    char RGBNameTail[23];
-    char AlphaNameTail[20];
     TextureType type;
     bool        bSeparatedAlpha;
 } ExtTxtrInfo;
@@ -1163,6 +1163,8 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
             //strcpy(newinfo.name,g_curRomInfo.szGameName);
                 newinfo.foldername = new char[strlen(foldername)+1];
                 strcpy(newinfo.foldername,foldername);
+                newinfo.filename = strdup(foundfilename);
+                newinfo.filename_a = NULL;
                 newinfo.fmt = fmt;
                 newinfo.siz = siz;
                 newinfo.crc32 = crc;
@@ -1170,26 +1172,12 @@ void FindAllTexturesFromFolder(char *foldername, CSortedList<uint64,ExtTxtrInfo>
                 newinfo.type = type;
                 newinfo.bSeparatedAlpha = bSeparatedAlpha;
 
-                newinfo.RGBNameTail[0] = newinfo.AlphaNameTail[0] = 0;
+                if (bSeparatedAlpha) {
+                    char filename2[PATH_MAX];
 
-                switch ( type )
-                {
-                    case RGB_PNG:
-                        strcpy(newinfo.RGBNameTail, "_rgb.png");
-                        strcpy(newinfo.AlphaNameTail, "_a.png");
-                        break;
-                    case COLOR_INDEXED_BMP:
-                        strcpy(newinfo.RGBNameTail, "_ci.bmp");
-                        break;
-                    case RGBA_PNG_FOR_CI:
-                        strcpy(newinfo.RGBNameTail, right(ptr,22));
-                        break;
-                    case RGBA_PNG_FOR_ALL_CI:
-                        strcpy(newinfo.RGBNameTail, "_allciByRGBA.png");
-                        break;
-                    default:
-                        strcpy(newinfo.RGBNameTail, "_all.png");
-                        break;
+                    strcpy(filename2, foundfilename);
+                    strcpy(filename2+strlen(filename2)-8,"_a.png");
+                    newinfo.filename_a = strdup(filename2);
                 }
 
                 uint64 crc64 = newinfo.crc32;
@@ -1312,6 +1300,10 @@ void CloseHiresTextures(void)
     {
         if( gHiresTxtrInfos[i].foldername )
             delete [] gHiresTxtrInfos[i].foldername;
+        if( gHiresTxtrInfos[i].filename )
+            delete [] gHiresTxtrInfos[i].filename;
+        if( gHiresTxtrInfos[i].filename_a )
+            delete [] gHiresTxtrInfos[i].filename_a;
     }
 
     gHiresTxtrInfos.clear();
@@ -1323,6 +1315,10 @@ void CloseTextureDump(void)
     {
         if( gTxtrDumpInfos[i].foldername )  
             delete [] gTxtrDumpInfos[i].foldername;
+        if( gTxtrDumpInfos[i].filename )
+            delete [] gTxtrDumpInfos[i].filename;
+        if( gTxtrDumpInfos[i].filename_a )
+            delete [] gTxtrDumpInfos[i].filename_a;
     }
 
     gTxtrDumpInfos.clear();
@@ -1523,7 +1519,8 @@ void DumpCachedTexture( TxtrCacheEntry &entry )
 
         newinfo.pal_crc32 = entry.dwPalCRC;
         newinfo.foldername = NULL;
-        newinfo.RGBNameTail[0] = newinfo.AlphaNameTail[0] = 0;
+        newinfo.filename = NULL;
+        newinfo.filename_a = NULL;
 
         uint64 crc64 = newinfo.crc32;
         crc64 <<= 32;
@@ -1827,11 +1824,14 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
     char filename_a[PATH_MAX];
 
     strcpy(filename_rgb, gHiresTxtrInfos[idx].foldername);
+    strcat(filename_rgb, gHiresTxtrInfos[idx].filename);
 
-    sprintf(filename_rgb+strlen(filename_rgb), "%s#%08X#%d#%d", g_curRomInfo.szGameName, entry.dwCRC, entry.ti.Format, entry.ti.Size);
-    strcpy(filename_a,filename_rgb);
-    strcat(filename_rgb,gHiresTxtrInfos[idx].RGBNameTail);
-    strcat(filename_a,gHiresTxtrInfos[idx].AlphaNameTail);
+    if (gHiresTxtrInfos[idx].filename_a) {
+        strcpy(filename_a, gHiresTxtrInfos[idx].foldername);
+        strcat(filename_a, gHiresTxtrInfos[idx].filename_a);
+    } else {
+        strcpy(filename_a, "");
+    }
 
     // Load BMP image to buffer_rbg
     unsigned char *buf_rgba = NULL;
