@@ -130,7 +130,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
         Window window = mActivity.getWindow();
-        if( AppData.IS_HONEYCOMB )
+        if( AppData.IS_HONEYCOMB && !mAppData.hardwareInfo.isOUYA )
             window.requestFeature( Window.FEATURE_ACTION_BAR_OVERLAY );
         else
             window.requestFeature( Window.FEATURE_NO_TITLE );
@@ -158,7 +158,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
         // Hide the action bar introduced in higher Android versions
-        if( AppData.IS_HONEYCOMB )
+        if( AppData.IS_HONEYCOMB && !mAppData.hardwareInfo.isOUYA )
         {
             // SDK version at least HONEYCOMB, so there should be software buttons on this device:
             View view = mSurface.getRootView();
@@ -239,7 +239,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         
         // For devices with an action bar, absorb all back key presses
         // and toggle the action bar
-        if( keyCode == KeyEvent.KEYCODE_BACK && AppData.IS_HONEYCOMB )
+        if( keyCode == KeyEvent.KEYCODE_BACK && AppData.IS_HONEYCOMB && !mAppData.hardwareInfo.isOUYA )
         {
             if( keyDown )
                 toggleActionBar( view.getRootView() );
