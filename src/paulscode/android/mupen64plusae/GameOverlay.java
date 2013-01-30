@@ -73,6 +73,16 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
             }
         }
     }
+
+    @Override
+    public void onAutoHold( boolean autoHold, int index )
+    {
+        // Update the AutoHold mask, and redraw if required
+        if( mTouchMap != null && mTouchMap.updateAutoHold( autoHold , index) )
+        {
+            postInvalidate();
+        }
+    }
     
     @Override
     public void onFpsChanged( int fps )
@@ -104,6 +114,9 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
         
             // Redraw the dynamic analog stick
             mTouchMap.drawAnalog( canvas );
+            
+            // Redraw the autoHold mask
+            mTouchMap.drawAutoHold( canvas );
         }
         
         if( mFpsEnabled )

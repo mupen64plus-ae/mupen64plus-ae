@@ -29,6 +29,7 @@ import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.os.Vibrator;
 
 /**
  * A class for generating N64 controller commands from a touchscreen.
@@ -44,6 +45,13 @@ public class TouchController extends AbstractController implements OnTouchListen
          * @param axisFractionY The y-axis fraction, between -1 and 1, inclusive.
          */
         public void onAnalogChanged( float axisFractionX, float axisFractionY );
+
+        /**
+         * Called after autoHold button state changed.
+         * @param autoHold The autohold state.
+         * @param index The index of the autohold mask.
+         */
+        public void onAutoHold( boolean autoHold, int index );
     }
     
     /** The maximum number of pointers to query. */
@@ -70,6 +78,12 @@ public class TouchController extends AbstractController implements OnTouchListen
     /** The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive. */
     private final int[] mPointerY = new int[MAX_POINTER_IDS];
     
+   /** The pressed start time of each pointer. */
+    private final long[] mStartTime = new long[MAX_POINTER_IDS];
+    
+    /** The time between pressed and released of each pointer. */
+    private final long[] mElapsedTime = new long[MAX_POINTER_IDS];
+    
     /**
      * The identifier of the pointer associated with the analog stick. -1 indicates the stick has
      * been released.
@@ -78,6 +92,9 @@ public class TouchController extends AbstractController implements OnTouchListen
     
     /** The touch event source to listen to, or 0 to listen to all sources. */
     private int mSourceFilter = 0;
+    
+    private static Vibrator mVibrator = null;
+    
     
     /**
      * Instantiates a new touch controller.
@@ -88,12 +105,13 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param isOctagonal True if the analog stick should be constrained to an octagon.
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
-            boolean isOctagonal )
+            boolean isOctagonal, Vibrator vibrator)
     {
         mListener = listener;
         mTouchMap = touchMap;
         mIsOctagonal = isOctagonal;
         view.setOnTouchListener( this );
+        mVibrator = vibrator;
     }
     
     /**
@@ -133,11 +151,13 @@ public class TouchController extends AbstractController implements OnTouchListen
             case MotionEvent.ACTION_POINTER_DOWN:
                 // A non-primary touch has been made
                 pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
+                mStartTime[pid] = System.currentTimeMillis();
                 mTouchState[pid] = true;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 // A non-primary touch has been released
                 pid = event.getPointerId( action >> MotionEvent.ACTION_POINTER_INDEX_SHIFT );
+                mElapsedTime[pid] = System.currentTimeMillis() - mStartTime[pid];
                 mTouchState[pid] = false;
                 break;
             case MotionEvent.ACTION_DOWN:
@@ -145,6 +165,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 for( int i = 0; i < event.getPointerCount(); i++ )
                 {
                     pid = event.getPointerId( i );
+                    mStartTime[pid] = System.currentTimeMillis();
                     mTouchState[pid] = true;
                 }
                 break;
@@ -154,6 +175,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 for( int i = 0; i < event.getPointerCount(); i++ )
                 {
                     pid = event.getPointerId( i );
+                    mElapsedTime[pid] = System.currentTimeMillis() - mStartTime[pid];
                     mTouchState[pid] = false;
                 }
                 break;
@@ -255,8 +277,29 @@ public class TouchController extends AbstractController implements OnTouchListen
             }
             else
                 mPointerMap.delete( pid );
-            
-            setTouchState( index, touched );
+
+            //AutoHold
+            if( mTouchMap.autoHoldImage[index] != null )
+            {
+                if(touched)
+                    setTouchState( index, true );
+                else
+                {
+                    if( mElapsedTime[pid] < 1000 )
+                    {
+                        mListener.onAutoHold( false, index );
+                        setTouchState( index, false );
+                    }
+                    else
+                    {
+                        mVibrator.vibrate(100);
+                        mListener.onAutoHold( true, index );
+                        setTouchState( index, true );
+                    }
+                }
+            }
+            else
+                setTouchState( index, touched );
         }
     }
     

@@ -263,6 +263,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         // Create the touchpad controls, if applicable
         TouchController touchpadController = null;
+        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        
         if( mIsXperiaPlay )
         {
             // Create the map for the touchpad
@@ -272,7 +274,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             
             // Create the touchpad controller
             touchpadController = new TouchController( touchpadMap, inputSource, null,
-                    mUserPrefs.isOctagonalJoystick );
+                    mUserPrefs.isOctagonalJoystick, vibrator);
             mControllers.add( touchpadController );
             
             // Filter by source identifier
@@ -284,7 +286,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, mUserPrefs.isOctagonalJoystick );
+                    inputSource, mOverlay, mUserPrefs.isOctagonalJoystick, vibrator );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...

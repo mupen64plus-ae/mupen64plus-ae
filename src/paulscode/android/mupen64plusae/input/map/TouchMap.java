@@ -74,6 +74,15 @@ public class TouchMap
     
     /** Y-coordinates of the buttons, in percent. */
     private final ArrayList<Integer> buttonY;
+
+    /** AutoHold mask image. */
+    public final Image[] autoHoldImage;
+
+    /** X-coordinates of the AutoHold mask, in percent. */
+    private final int[] autoHoldX;
+    
+    /** Y-coordinates of the AutoHold mask, in percent. */
+    private final int[] autoHoldY;
     
     /** Analog background image (fixed). */
     protected Image analogBackImage;
@@ -146,6 +155,9 @@ public class TouchMap
         buttonMasks = new ArrayList<Image>();
         buttonX = new ArrayList<Integer>();
         buttonY = new ArrayList<Integer>();
+        autoHoldImage = new Image[BUTTON_STRING_MAP.size()];;
+        autoHoldX = new int[BUTTON_STRING_MAP.size()];
+        autoHoldY = new int[BUTTON_STRING_MAP.size()];;
     }
     
     /**
@@ -165,6 +177,12 @@ public class TouchMap
         analogMaximum = 360;
         for( int i = 0; i < mN64ToColor.length; i++ )
             mN64ToColor[i] = -1;
+        for( int i = 0; i < autoHoldImage.length; i++ )
+            autoHoldImage[i] = null;
+        for( int i = 0; i < autoHoldX.length; i++ )
+            autoHoldX[i] = 0;
+        for( int i = 0; i < autoHoldY.length; i++ )
+            autoHoldY[i] = 0;
     }
     
     /**
@@ -182,6 +200,17 @@ public class TouchMap
             int cY = (int) ( h * ( (float) buttonY.get( i ) / 100f ) );
             buttonImages.get( i ).fitCenter( cX, cY, w, h );
             buttonMasks.get( i ).fitCenter( cX, cY, w, h );
+        }
+
+        // Recompute AutoHold mask locations
+        for( int i = 0; i < autoHoldImage.length; i++ )
+        {
+            if( autoHoldImage[i] != null )
+            {
+                int cX = (int) ( w * ( (float) autoHoldX[i] / 100f ) );
+                int cY = (int) ( h * ( (float) autoHoldY[i] / 100f ) );
+                autoHoldImage[i].fitCenter( cX, cY, w, h );
+            }
         }
         
         // Recompute analog background location
@@ -400,8 +429,11 @@ public class TouchMap
     {
         if( info.contains( "analog" ) )
             loadAnalog( directory, filename, section, info.contains( "hat" ) );
-        else
+        else if( filename.contains( "BUTTON" ) )
             loadButton( directory, filename, section );
+        else
+            loadAutoHold( directory, filename, section, info );
+
     }
     
     /**
@@ -457,6 +489,33 @@ public class TouchMap
         // Position (percentages of the digitizer dimensions)
         buttonX.add( SafeMethods.toInt( section.get( "x" ), 0 ) );
         buttonY.add( SafeMethods.toInt( section.get( "y" ), 0 ) );
+    }
+
+    /**
+     * Loads Autohold assets and properties from the filesystem.
+     * 
+     * @param directory The directory containing the Autohold assets.
+     * @param filename The filename of the Autohold assets, without extension.
+     * @param section The configuration section containing the Autohold properties.
+     * @param info The information section containing the Autohold button.
+     */
+    private void loadAutoHold( final String directory, String filename, ConfigSection section, String info )
+    {
+        // Assign the auto hold option to the appropriate N64 button
+        if(info != null)
+        {
+            //TODO: fix possible crash when info isn't a N64 button 
+            int index = BUTTON_STRING_MAP.get( info.toLowerCase( Locale.ENGLISH ) );
+
+            // The drawable image is in PNG image format. 
+            autoHoldImage[index] = new Image( mResources, directory + "/" + filename + ".png" );
+            autoHoldImage[index].setAlpha( 0 );
+            
+            // Position (percentages of the digitizer dimensions)
+            autoHoldX[index] = SafeMethods.toInt( section.get( "x" ), 0 ) ;
+            autoHoldY[index] = SafeMethods.toInt( section.get( "y" ), 0 ) ;
+        }
+        
     }
     
     /**

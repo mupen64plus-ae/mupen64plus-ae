@@ -156,6 +156,23 @@ public class VisibleTouchMap extends TouchMap
             button.draw( canvas );
         }
     }
+
+    /**
+     * Draws the AutoHold mask.
+     * 
+     * @param canvas The canvas on which to draw.
+     */
+    public void drawAutoHold( Canvas canvas )
+    {
+        // Draw the AutoHold mask onto the canvas
+        for( int i = 0; i < autoHoldImage.length; i++ )
+        {
+            if( autoHoldImage[i] != null )
+            {
+                autoHoldImage[i].draw( canvas );
+            }
+        }
+    }
     
     /**
      * Draws the analog stick.
@@ -254,6 +271,26 @@ public class VisibleTouchMap extends TouchMap
         return true;
     }
     
+    /**
+     * Updates the autohold state to reflect a new value.
+     * 
+     * @param autohold The new autohold state value.
+     * @param index The index of the autohold mask.
+     * @return True if the autohold assets changed.
+     */
+    public boolean updateAutoHold( boolean autoHold, int index )
+    {
+        if( autoHoldImage[index] != null )
+        {
+            if( autoHold )
+                autoHoldImage[index].setAlpha( mTouchscreenTransparency );
+            else
+                autoHoldImage[index].setAlpha( 0 );
+            return true;
+        }
+        return false;
+    }    
+
     /**
      * Refreshes the images used to draw the FPS string.
      */
