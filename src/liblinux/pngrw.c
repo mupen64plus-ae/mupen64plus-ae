@@ -274,6 +274,103 @@ BMGError ReadPNG( const char *filename,
     return BMG_OK;
 }
 
+BMGError ReadPNGInfo( const char *filename,
+        struct BMGImageStruct * volatile img )
+{
+    jmp_buf             err_jmp;
+    int                 error;
+
+    FILE * volatile     file = NULL;
+    int                 BitDepth;
+    int                 ColorType;
+    int                 InterlaceType;
+    unsigned char       signature[8];
+    png_structp volatile png_ptr = NULL;
+    png_infop   volatile info_ptr = NULL;
+    png_infop   volatile end_info = NULL;
+    png_uint_32         Width, Height;
+
+    /* error handler */
+    error = setjmp( err_jmp );
+    if (error != 0)
+    {
+        if (end_info != NULL)
+            png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, (png_infop *) &end_info);
+        else if (info_ptr != NULL)
+            png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, NULL);
+        else if (png_ptr != NULL)
+            png_destroy_read_struct((png_structp *) &png_ptr, NULL, NULL);
+        if (img)
+            FreeBMGImage(img);
+        if (file)
+            fclose(file);
+        SetLastBMGError((BMGError) error);
+        return (BMGError) error;
+    }
+
+    if ( img == NULL )
+        longjmp ( err_jmp, (int)errInvalidBMGImage );
+
+    file = fopen( filename, "rb" );
+    if ( !file || fread( signature, 1, 8, file ) != 8)
+        longjmp ( err_jmp, (int)errFileOpen );
+
+    /* check the signature */
+    if ( png_sig_cmp( signature, 0, 8 ) != 0 )
+        longjmp( err_jmp, (int)errUnsupportedFileFormat );
+
+    /* create a pointer to the png read structure */
+    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, NULL, NULL );
+    if ( !png_ptr )
+        longjmp( err_jmp, (int)errMemoryAllocation );
+
+    /* create a pointer to the png info structure */
+    info_ptr = png_create_info_struct( png_ptr );
+    if ( !info_ptr )
+        longjmp( err_jmp, (int)errMemoryAllocation );
+
+    /* create a pointer to the png end-info structure */
+    end_info = png_create_info_struct(png_ptr);
+    if (!end_info)
+        longjmp( err_jmp, (int)errMemoryAllocation );
+
+    /* bamboozle the PNG longjmp buffer */
+    /*generic PNG error handler*/
+    /* error will always == 1 which == errLib */
+//    error = png_setjmp(png_ptr);
+    error = setjmp( png_jmpbuf( png_ptr ) );
+    if ( error > 0 )
+        longjmp( err_jmp, error );
+
+    /* set function pointers in the PNG library, for read callbacks */
+    png_set_read_fn(png_ptr, (png_voidp) file, user_read_data);
+
+    /*let the read functions know that we have already read the 1st 8 bytes */
+    png_set_sig_bytes( png_ptr, 8 );
+
+    /* read all PNG data up to the image data */
+    png_read_info( png_ptr, info_ptr );
+
+    /* extract the data we need to form the HBITMAP from the PNG header */
+    png_get_IHDR( png_ptr, info_ptr, &Width, &Height, &BitDepth, &ColorType,
+        &InterlaceType, NULL, NULL);
+
+    img->width = (unsigned int) Width;
+    img->height = (unsigned int) Height;
+
+    img->bits_per_pixel = (unsigned char)32;
+    img->scan_width = Width * 4;
+
+    img->palette_size = (unsigned short)0;
+    img->bytes_per_palette_entry = 4U;
+    img->bits = NULL;
+
+    png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, (png_infop *) &end_info);
+    fclose( file );
+
+    return BMG_OK;
+}
+
 /*
 WritePNG - writes the contents of a BMGImageStruct to a PNG file.
 

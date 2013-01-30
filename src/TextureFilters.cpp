@@ -960,7 +960,7 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
     {
         struct BMGImageStruct img;
         memset(&img, 0, sizeof(BMGImageStruct));
-        BMG_Error code = ReadPNG(pSrcFile, &img);
+        BMG_Error code = ReadPNGInfo(pSrcFile, &img);
         if( code == BMG_OK )
         {
             pSrcInfo->Width = img.width;
