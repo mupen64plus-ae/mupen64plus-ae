@@ -24,8 +24,6 @@
 /* 2007 Gonetz <gonetz(at)ngs.ru>
  * Added callback to display hires texture info. */
 
-#include <time.h>
-
 #ifdef __MSC__
 #pragma warning(disable: 4786)
 #endif
@@ -62,6 +60,7 @@
 #include "TxDbg.h"
 #include <zlib.h>
 #include <string>
+#include <SDL.h>
 
 TxHiResCache::~TxHiResCache()
 {
@@ -170,10 +169,10 @@ TxHiResCache::load(boolean replace) /* 0 : reload, 1 : replace partial */
 boolean
 TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean replace)
 {
-  struct timespec last, now, diff;
+  uint32_t last, now, diff;
   DBG_INFO(80, L"-----\n");
   DBG_INFO(80, L"path: %ls\n", dir_path.string().c_str());
-  clock_gettime(CLOCK_MONOTONIC, &last);
+  last = SDL_GetTicks();
 
   /* find it on disk */
   if (!boost::filesystem::exists(dir_path)) {
@@ -1066,21 +1065,12 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
 
       /* add to cache */
       if (TxCache::add(chksum64, &tmpInfo)) {
-        unsigned int msec;
-
-        clock_gettime(CLOCK_MONOTONIC, &now);
-        diff.tv_sec = now.tv_sec - last.tv_sec;
-        if (now.tv_nsec < last.tv_nsec) {
-          diff.tv_sec--;
-          diff.tv_nsec = now.tv_nsec - last.tv_nsec + 1000000000UL;
-        } else {
-          diff.tv_nsec = now.tv_nsec - last.tv_nsec;
-        }
-        msec = diff.tv_sec * 1000 + diff.tv_nsec / 1000000UL;
+        now = SDL_GetTicks();
+        diff = now - last;
 
         /* Callback to display hires texture info.
          * Gonetz <gonetz(at)ngs.ru> */
-        if (_callback && msec > 250) {
+        if (_callback && diff > 250) {
           wchar_t tmpbuf[MAX_PATH];
           mbstowcs(tmpbuf, fname, MAX_PATH);
           (*_callback)(L"[%d] total mem:%.2fmb - %ls\n", _cache.size(), (float)_totalSize/1000000, tmpbuf);
