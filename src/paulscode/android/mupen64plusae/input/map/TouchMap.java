@@ -75,8 +75,8 @@ public class TouchMap
     /** Y-coordinates of the buttons, in percent. */
     private final ArrayList<Integer> buttonY;
 
-    /** AutoHold mask image. */
-    public final Image[] autoHoldImage;
+    /** AutoHold mask images. */
+    public final Image[] autoHoldImages;
 
     /** X-coordinates of the AutoHold mask, in percent. */
     private final int[] autoHoldX;
@@ -155,7 +155,7 @@ public class TouchMap
         buttonMasks = new ArrayList<Image>();
         buttonX = new ArrayList<Integer>();
         buttonY = new ArrayList<Integer>();
-        autoHoldImage = new Image[BUTTON_STRING_MAP.size()];
+        autoHoldImages = new Image[BUTTON_STRING_MAP.size()];
         autoHoldX = new int[BUTTON_STRING_MAP.size()];
         autoHoldY = new int[BUTTON_STRING_MAP.size()];
     }
@@ -177,8 +177,8 @@ public class TouchMap
         analogMaximum = 360;
         for( int i = 0; i < mN64ToColor.length; i++ )
             mN64ToColor[i] = -1;
-        for( int i = 0; i < autoHoldImage.length; i++ )
-            autoHoldImage[i] = null;
+        for( int i = 0; i < autoHoldImages.length; i++ )
+            autoHoldImages[i] = null;
         for( int i = 0; i < autoHoldX.length; i++ )
             autoHoldX[i] = 0;
         for( int i = 0; i < autoHoldY.length; i++ )
@@ -203,13 +203,13 @@ public class TouchMap
         }
 
         // Recompute AutoHold mask locations
-        for( int i = 0; i < autoHoldImage.length; i++ )
+        for( int i = 0; i < autoHoldImages.length; i++ )
         {
-            if( autoHoldImage[i] != null )
+            if( autoHoldImages[i] != null )
             {
                 int cX = (int) ( w * ( (float) autoHoldX[i] / 100f ) );
                 int cY = (int) ( h * ( (float) autoHoldY[i] / 100f ) );
-                autoHoldImage[i].fitCenter( cX, cY, w, h );
+                autoHoldImages[i].fitCenter( cX, cY, w, h );
             }
         }
         
@@ -508,8 +508,8 @@ public class TouchMap
             int index = BUTTON_STRING_MAP.get( info.toLowerCase( Locale.ENGLISH ) );
 
             // The drawable image is in PNG image format. 
-            autoHoldImage[index] = new Image( mResources, directory + "/" + filename + ".png" );
-            autoHoldImage[index].setAlpha( 0 );
+            autoHoldImages[index] = new Image( mResources, directory + "/" + filename + ".png" );
+            autoHoldImages[index].setAlpha( 0 );
             
             // Position (percentages of the digitizer dimensions)
             autoHoldX[index] = SafeMethods.toInt( section.get( "x" ), 0 ) ;

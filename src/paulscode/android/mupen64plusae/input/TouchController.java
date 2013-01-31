@@ -279,7 +279,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 mPointerMap.delete( pid );
 
             //AutoHold
-            if( mTouchMap.autoHoldImage[index] != null )
+            if( mTouchMap.autoHoldImages[index] != null )
             {
                 if(touched)
                     setTouchState( index, true );

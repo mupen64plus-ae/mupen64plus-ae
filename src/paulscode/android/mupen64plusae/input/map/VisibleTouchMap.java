@@ -165,11 +165,11 @@ public class VisibleTouchMap extends TouchMap
     public void drawAutoHold( Canvas canvas )
     {
         // Draw the AutoHold mask onto the canvas
-        for ( Image anAutoHoldImage : autoHoldImage )
+        for ( Image autoHoldImage : autoHoldImages )
         {
-            if ( anAutoHoldImage != null )
+            if ( autoHoldImage != null )
             {
-                anAutoHoldImage.draw( canvas );
+                autoHoldImage.draw( canvas );
             }
         }
     }
@@ -280,12 +280,12 @@ public class VisibleTouchMap extends TouchMap
      */
     public boolean updateAutoHold( boolean autoHold, int index )
     {
-        if( autoHoldImage[index] != null )
+        if( autoHoldImages[index] != null )
         {
             if( autoHold )
-                autoHoldImage[index].setAlpha( mTouchscreenTransparency );
+                autoHoldImages[index].setAlpha( mTouchscreenTransparency );
             else
-                autoHoldImage[index].setAlpha( 0 );
+                autoHoldImages[index].setAlpha( 0 );
             return true;
         }
         return false;
