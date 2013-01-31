@@ -165,11 +165,11 @@ public class VisibleTouchMap extends TouchMap
     public void drawAutoHold( Canvas canvas )
     {
         // Draw the AutoHold mask onto the canvas
-        for( int i = 0; i < autoHoldImage.length; i++ )
+        for ( Image anAutoHoldImage : autoHoldImage )
         {
-            if( autoHoldImage[i] != null )
+            if ( anAutoHoldImage != null )
             {
-                autoHoldImage[i].draw( canvas );
+                anAutoHoldImage.draw( canvas );
             }
         }
     }
@@ -274,7 +274,7 @@ public class VisibleTouchMap extends TouchMap
     /**
      * Updates the autohold state to reflect a new value.
      * 
-     * @param autohold The new autohold state value.
+     * @param autoHold The new autohold state value.
      * @param index The index of the autohold mask.
      * @return True if the autohold assets changed.
      */

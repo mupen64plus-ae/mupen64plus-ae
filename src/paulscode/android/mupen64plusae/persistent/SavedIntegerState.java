@@ -51,11 +51,13 @@ public class SavedIntegerState extends BaseSavedState
     
     public static final Parcelable.Creator<SavedIntegerState> CREATOR = new Parcelable.Creator<SavedIntegerState>()
     {
+        @Override
         public SavedIntegerState createFromParcel( Parcel in )
         {
             return new SavedIntegerState( in );
         }
-        
+
+        @Override
         public SavedIntegerState[] newArray( int size )
         {
             return new SavedIntegerState[size];

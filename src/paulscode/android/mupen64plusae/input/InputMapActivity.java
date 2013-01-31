@@ -214,7 +214,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         
         return super.onCreateOptionsMenu( menu );
     }
-    
+
+    @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
         switch( item.getItemId() )

@@ -51,11 +51,13 @@ public class SavedStringState extends BaseSavedState
     
     public static final Parcelable.Creator<SavedStringState> CREATOR = new Parcelable.Creator<SavedStringState>()
     {
+        @Override
         public SavedStringState createFromParcel( Parcel in )
         {
             return new SavedStringState( in );
         }
-        
+
+        @Override
         public SavedStringState[] newArray( int size )
         {
             return new SavedStringState[size];

@@ -104,7 +104,9 @@ public class PlayerMap extends SerializableMap
     public void unmapPlayer( int player )
     {
         for( int index = mMap.size() - 1; index >= 0; index-- )
+        {
             if( mMap.valueAt( index ) == player )
                 mMap.removeAt( index );
+        }
     }
 }

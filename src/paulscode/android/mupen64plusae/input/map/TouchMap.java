@@ -155,9 +155,9 @@ public class TouchMap
         buttonMasks = new ArrayList<Image>();
         buttonX = new ArrayList<Integer>();
         buttonY = new ArrayList<Integer>();
-        autoHoldImage = new Image[BUTTON_STRING_MAP.size()];;
+        autoHoldImage = new Image[BUTTON_STRING_MAP.size()];
         autoHoldX = new int[BUTTON_STRING_MAP.size()];
-        autoHoldY = new int[BUTTON_STRING_MAP.size()];;
+        autoHoldY = new int[BUTTON_STRING_MAP.size()];
     }
     
     /**

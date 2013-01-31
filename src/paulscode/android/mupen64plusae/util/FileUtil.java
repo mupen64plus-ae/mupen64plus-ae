@@ -160,8 +160,8 @@ public class FileUtil
     }
 
     /**
-     * Copies a <code>src</code> {@link File} to a desired destination
-     * represented by a <code>dest</code> {@link File}
+     * Copies a {@code src} {@link File} to a desired destination
+     * represented by a {@code dest} {@link File}
      * <p>
      * This method assumes no backups will be wanted to be made.
      *
@@ -176,8 +176,8 @@ public class FileUtil
     }
 
     /**
-     * Copies a <code>src</code> {@link File} to a desired destination
-     * represented by a <code>dest</code> {@link File}
+     * Copies a {@code src} {@link File} to a desired destination
+     * represented by a {@code dest} {@link File}
      * <p>
      * This method supports the making of backups of src.
      *
