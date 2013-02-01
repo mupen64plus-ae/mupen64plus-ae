@@ -95,7 +95,7 @@ public class AppData
     public static final boolean IS_ICE_CREAM_SANDWICH = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
     
     /** True if device is running Jellybean or later (16 - Android 4.1.x) */
-    public static final boolean IS_JELLYBEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
     /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;
@@ -432,7 +432,7 @@ public class AppData
                     || hardware.contains( "herring" )
                     || hardware.contains( "aries" )
                     || ( hardware.contains( "tuna" )
-                         && !IS_JELLYBEAN ) )
+                         && !IS_JELLY_BEAN ) )
                 hardwareType = HARDWARE_TYPE_OMAP;
             
             else if(   hardware.contains( "tuna" )

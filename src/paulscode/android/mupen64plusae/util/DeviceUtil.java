@@ -139,7 +139,7 @@ public class DeviceUtil
                 {
                     builder.append( "Device: " + device.getName() + "\n" );
                     builder.append( "Id: " + device.getId() + "\n" );
-                    if( AppData.IS_JELLYBEAN )
+                    if( AppData.IS_JELLY_BEAN )
                     {
                         builder.append( "Descriptor: " + device.getDescriptor() + "\n" );
                         if( device.getVibrator().hasVibrator() )
