@@ -43,6 +43,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -278,7 +279,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             mControllers.add( touchpadController );
             
             // Filter by source identifier
-            touchpadController.setSourceFilter( NativeInputSource.SOURCE_TOUCHPAD );
+            touchpadController.setSourceFilter( InputDevice.SOURCE_TOUCHPAD );
         }
         
         // Create the touchscreen controls
@@ -293,7 +294,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             if( touchpadController != null )
             {
                 // filter by source identifier...
-                touchscreenController.setSourceFilter( NativeInputSource.SOURCE_TOUCHSCREEN );
+                touchscreenController.setSourceFilter( InputDevice.SOURCE_TOUCHSCREEN );
                 
                 // and demux the input source to both touch listeners
                 Demultiplexer.OnTouchListener demux = new Demultiplexer.OnTouchListener();

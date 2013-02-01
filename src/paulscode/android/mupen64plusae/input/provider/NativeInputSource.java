@@ -38,10 +38,6 @@ public class NativeInputSource extends View
     public static final int PAD_WIDTH = 966;
     public static final int PAD_HEIGHT = 360;
     
-    // Source identifiers for the Xperia PLAY
-    public static final int SOURCE_TOUCHSCREEN = 4098;
-    public static final int SOURCE_TOUCHPAD = 1048584;
-    
     /**
      * Instantiates a new native input source.
      * 
