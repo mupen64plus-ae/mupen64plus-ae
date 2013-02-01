@@ -1,3 +1,23 @@
+/*
+* Glide64 - Glide video plugin for Nintendo 64 emulators.
+* Copyright (c) 2002  Dave2001
+* Copyright (c) 2003-2009  Sergey 'Gonetz' Lipski
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 #define SAVE_CBUFFER
 
 #ifdef _WIN32
@@ -23,7 +43,7 @@
 #include <IL/il.h>
 #endif
 
-extern void (*renderCallback)();
+extern void (*renderCallback)(int);
 
 wrapper_config config = {0, 0, 0, 0};
 int screen_width, screen_height;
@@ -472,13 +492,14 @@ grSstWinOpen(
   width = ConfigGetParamInt(video_general_section, "ScreenWidth");
   height = ConfigGetParamInt(video_general_section, "ScreenHeight");
   fullscreen = ConfigGetParamBool(video_general_section, "Fullscreen");
-
+  int vsync = ConfigGetParamBool(video_general_section, "VerticalSync");
   //viewport_offset = ((screen_resolution>>2) > 20) ? screen_resolution >> 2 : 20;
   // ZIGGY viewport_offset is WIN32 specific, with SDL just set it to zero
   viewport_offset = 0; //-10 //-20;
 
   // ZIGGY not sure, but it might be better to let the system choose
   CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
+  CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, vsync);
   CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 16);
   //   SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
   //   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -1636,9 +1657,10 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
 {
+	glFinish();
 //  printf("rendercallback is %p\n", renderCallback);
   if(renderCallback)
-      (*renderCallback)();
+      (*renderCallback)(1);
   int i;
   LOG("grBufferSwap(%d)\r\n", swap_interval);
   //printf("swap\n");
