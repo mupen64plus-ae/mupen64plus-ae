@@ -68,6 +68,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     
     // User preferences wrapper
     private UserPrefs mUserPrefs;
+    private boolean mIsOuya;
     
     // Input mapping and listening
     private final InputMap mMap = new InputMap();
@@ -89,6 +90,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         // Get the user preferences wrapper
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        mIsOuya = new AppData( this ).hardwareInfo.isOUYA;
         
         // Get the player number and get the associated preference values
         Bundle extras = getIntent().getExtras();
@@ -99,12 +101,15 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         
         // Set up input listeners
         mUnmappableInputCodes = mUserPrefs.unmappableKeyCodes;
-        mKeyProvider = new KeyProvider( ImeFormula.DEFAULT, mUnmappableInputCodes );
-        mKeyProvider.registerListener( this );
-        if( AppData.IS_HONEYCOMB_MR1 )
+        if( !mIsOuya )
         {
-            mAxisProvider = new AxisProvider();
-            mAxisProvider.registerListener( this );
+            mKeyProvider = new KeyProvider( ImeFormula.DEFAULT, mUnmappableInputCodes );
+            mKeyProvider.registerListener( this );
+            if( AppData.IS_HONEYCOMB_MR1 )
+            {
+                mAxisProvider = new AxisProvider();
+                mAxisProvider.registerListener( this );
+            }
         }
         
         // Select the appropriate window layout according to device configuration. Although you can
@@ -198,7 +203,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         mN64Button[index] = (Button) findViewById( resId );
         if( mN64Button[index] != null )
+        {
             mN64Button[index].setOnClickListener( this );
+            mN64Button[index].setFocusable( mIsOuya );
+        }
     }
     
     @Override
@@ -347,13 +355,19 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     @Override
     public boolean onKeyDown( int keyCode, KeyEvent event )
     {
-        return mKeyProvider.onKey( keyCode, event ) || super.onKeyDown( keyCode, event );
+        if( mIsOuya )
+            return super.onKeyDown( keyCode, event );
+        else
+            return mKeyProvider.onKey( keyCode, event ) || super.onKeyDown( keyCode, event );
     }
     
     @Override
     public boolean onKeyUp( int keyCode, KeyEvent event )
     {
-        return mKeyProvider.onKey( keyCode, event ) || super.onKeyUp( keyCode, event );
+        if( mIsOuya )
+            return super.onKeyUp( keyCode, event );
+        else
+            return mKeyProvider.onKey( keyCode, event ) || super.onKeyUp( keyCode, event );
     }
     
     @TargetApi( 12 )
@@ -362,8 +376,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         if( !AppData.IS_HONEYCOMB_MR1 )
             return false;
-        
-        return mAxisProvider.onGenericMotion( event ) || super.onGenericMotionEvent( event );
+        else if( mIsOuya )
+            return super.onGenericMotionEvent( event );
+        else
+            return mAxisProvider.onGenericMotion( event ) || super.onGenericMotionEvent( event );
     }
     
     @Override
