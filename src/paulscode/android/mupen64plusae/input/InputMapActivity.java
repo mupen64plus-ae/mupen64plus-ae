@@ -75,7 +75,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     
     // User preferences wrapper
     private UserPrefs mUserPrefs;
-    private boolean mIsOuya;
     
     // Command information
     private String[] mCommandNames;
@@ -102,7 +101,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         // Get the user preferences wrapper
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
-        mIsOuya = new AppData( this ).hardwareInfo.isOUYA;
         
         // Get the command info
         mCommandNames = getResources().getStringArray( R.array.inputMapActivity_entries );
@@ -122,7 +120,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         
         // Set up input listeners
         mUnmappableInputCodes = mUserPrefs.unmappableKeyCodes;
-        if( !mIsOuya )
+        if( !mUserPrefs.isOuyaMode )
         {
             mKeyProvider = new KeyProvider( ImeFormula.DEFAULT, mUnmappableInputCodes );
             mKeyProvider.registerListener( this );
@@ -138,7 +136,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         setTitle( title );
         
         // Initialize the layout
-        if( mIsOuya )
+        if( mUserPrefs.isOuyaMode )
             initLayoutOuya();
         else
             initLayoutDefault();
@@ -253,8 +251,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         refreshSpecialVisibility();
         
         // Hide menu items that do not apply
-        mMenuSpecialVisibility.setVisible( !mIsOuya );
-        menu.findItem( R.id.menuItem_exit ).setVisible( !mIsOuya );
+        mMenuSpecialVisibility.setVisible( !mUserPrefs.isOuyaMode );
+        menu.findItem( R.id.menuItem_exit ).setVisible( !mUserPrefs.isOuyaMode );
         menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         
         return super.onCreateOptionsMenu( menu );
@@ -401,7 +399,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     @Override
     public boolean onKeyDown( int keyCode, KeyEvent event )
     {
-        if( mIsOuya )
+        if( mUserPrefs.isOuyaMode )
             return super.onKeyDown( keyCode, event );
         else
             return mKeyProvider.onKey( keyCode, event ) || super.onKeyDown( keyCode, event );
@@ -410,7 +408,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     @Override
     public boolean onKeyUp( int keyCode, KeyEvent event )
     {
-        if( mIsOuya )
+        if( mUserPrefs.isOuyaMode )
             return super.onKeyUp( keyCode, event );
         else
             return mKeyProvider.onKey( keyCode, event ) || super.onKeyUp( keyCode, event );
@@ -422,7 +420,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         if( !AppData.IS_HONEYCOMB_MR1 )
             return false;
-        else if( mIsOuya )
+        else if( mUserPrefs.isOuyaMode )
             return super.onGenericMotionEvent( event );
         else
             return mAxisProvider.onGenericMotion( event ) || super.onGenericMotionEvent( event );

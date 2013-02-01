@@ -247,6 +247,11 @@
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
+    <string name="navigationMode_title">Accessibility</string>
+    <string name="navigationMode_summary">Menu navigation mode: %1$s</string>
+    <string name="navigationMode_entryAuto">Auto-select from device configuration</string>
+    <string name="navigationMode_entryStandard">Standard mode</string>
+    <string name="navigationMode_entryOuya">OUYA mode (no touchscreen; gamepad input only)</string>
     <string name="localeOverride_title">Language</string>
     <string name="localeOverride_entrySystemDefault">System default</string>
 

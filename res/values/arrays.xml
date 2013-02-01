@@ -266,6 +266,20 @@
 
     <string name="r4300Emulator_default" translatable="false">2</string>
 
+    <!-- Navigation Mode -->
+    <string-array name="navigationMode_entries" translatable="false">
+        <item>@string/navigationMode_entryAuto</item>
+        <item>@string/navigationMode_entryStandard</item>
+        <item>@string/navigationMode_entryOuya</item>
+    </string-array>
+    <string-array name="navigationMode_values" translatable="false">
+        <item>auto</item>
+        <item>standard</item>
+        <item>ouya</item>
+    </string-array>
+
+    <string name="navigationMode_default" translatable="false">auto</string>
+
     <!-- OUYA Input Mapping Screen -->
     <string-array name="inputMapActivity_entries" translatable="false">
         <item>@string/inputMapActivity_btnA</item>

@@ -412,6 +412,14 @@
                 android:key="screenAdvanced"
                 android:summary="@string/screenAdvanced_summary"
                 android:title="@string/screenAdvanced_title" >
+                <ListPreference
+                    android:defaultValue="@string/navigationMode_default"
+                    android:entries="@array/navigationMode_entries"
+                    android:entryValues="@array/navigationMode_values"
+                    android:key="navigationMode"
+                    android:summary="@string/navigationMode_summary"
+                    android:title="@string/navigationMode_title" />
+
                 <PreferenceCategory
                     android:key="categoryData"
                     android:title="@string/categoryData_title" >
@@ -481,10 +489,11 @@
 
     <ListPreference
         android:defaultValue="@string/localeOverride_default"
-        android:icon="@drawable/ic_location"
         android:entryValues="@array/localeOverride_values"
+        android:icon="@drawable/ic_location"
         android:key="localeOverride"
         android:title="@string/localeOverride_title" />
+
     <Preference
         android:icon="@drawable/ic_help"
         android:key="actionHelp"

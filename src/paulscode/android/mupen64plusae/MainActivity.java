@@ -99,7 +99,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
         setContentView( R.layout.main_activity );
         mTextView = (TextView) findViewById( R.id.mainText );
         
-        if( mAppData.hardwareInfo.isOUYA )
+        if( new UserPrefs( this ).isOuyaMode )
         {
             ImageView splash = (ImageView) findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo_ouya );

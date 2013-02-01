@@ -75,12 +75,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
     
-    private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
+    private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
+    private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String PLUGIN_VIDEO = "pluginVideo";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
-    private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
+    private static final String NAVIGATION_MODE = "navigationMode";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     private static final String LOCALE_OVERRIDE = "localeOverride";
     
@@ -142,16 +143,20 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Handle crash tests in a particular way (see CrashTester for more info)
         findPreference( ACTION_CRASH_TEST ).setOnPreferenceClickListener( new CrashTester( this ) );
         
-        // Hide the Xperia PLAY menu items as necessary
+        // Hide certain categories altogether if they're not applicable. Normally we just rely on
+        // the built-in dependency disabler, but here the categories are so large that hiding them
+        // provides a better user experience.
+        if( !mUserPrefs.isGles2N64Enabled )
+            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_N64 );
+        
+        if( !mUserPrefs.isGles2RiceEnabled )
+            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
+        
         if( !mAppData.hardwareInfo.isXperiaPlay )
-        {
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
-        }
-        // Hide the touchscreen menu when running on the OUYA
-        if( mAppData.hardwareInfo.isOUYA )
-        {
+        
+        if( mUserPrefs.isOuyaMode )
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
-        }
     }
     
     @Override
@@ -175,7 +180,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         if( key.equals( PLUGIN_VIDEO ) || key.equals( TOUCHPAD_ENABLED )
-                || key.equals( LOCALE_OVERRIDE ) )
+                || key.equals( NAVIGATION_MODE ) || key.equals( LOCALE_OVERRIDE ) )
         {
             // Sometimes one preference change affects the hierarchy or layout of the views. In this
             // case it's easier just to restart the activity than try to figure out what to fix.
@@ -213,15 +218,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Enable the video menu only if the video plug-in is not a dummy
         PrefUtil.enablePreference( this, SCREEN_VIDEO, user.videoPlugin.enabled );
-        
-        // Hide certain categories altogether if they're not applicable. Normally we just rely on
-        // the built-in dependency disabler, but here the categories are so large that hiding them
-        // provides a better user experience.
-        if( !user.isGles2N64Enabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_N64 );
-        
-        if( !user.isGles2RiceEnabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
         
         // Enable the custom touchscreen prefs under certain conditions
         PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled

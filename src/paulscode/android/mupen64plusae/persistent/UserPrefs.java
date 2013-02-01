@@ -256,6 +256,9 @@ public class UserPrefs
     /** The audio resampling algorithm to use. */
     public final String audioResampleAlg;
     
+    /** True if OUYA navigation mode is enabled.*/
+    public final boolean isOuyaMode;
+    
     // Shared preferences keys and key templates
     private static final String KEYTEMPLATE_INPUT_MAP_STRING = "inputMapString%1$d";
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
@@ -334,7 +337,7 @@ public class UserPrefs
         isCheatOptionsShown = mPreferences.getBoolean( "playShowCheats", false );
         
         // Touchscreen prefs
-        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", appData.hardwareInfo.isOUYA ? false : true );
+        isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
         touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
         int transparencyPercent = mPreferences.getInt( "touchscreenTransparency", 100 );
         isTouchscreenHidden = transparencyPercent == 0;
@@ -389,6 +392,15 @@ public class UserPrefs
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         audioResampleAlg = mPreferences.getString( "audioResampleAlg", "trivial" );
+        
+        // Navigation mode
+        String navMode = mPreferences.getString( "navigationMode", "auto" );
+        if( navMode.equals( "ouya" ) )
+            isOuyaMode = true;
+        else if ( navMode.equals( "standard" ) )
+            isOuyaMode = false;
+        else
+            isOuyaMode = appData.hardwareInfo.isOUYA;
         
         // Determine the touchscreen layout
         boolean isCustom = false;
