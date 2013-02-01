@@ -91,7 +91,6 @@ void Ini::SetPath(const char *path)
 	if (!INI_FindSection(path, false))
 	{
 		printf("Could not find [%s] section in INI file!", path);
-		exit(1);
 	}
 }
 

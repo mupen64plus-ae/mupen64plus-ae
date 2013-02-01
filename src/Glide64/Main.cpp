@@ -198,7 +198,7 @@ SDL_sem *mutexProcessDList = SDL_CreateSemaphore(1);
 static void DrawFrameBuffer ();
 
 
-void (*renderCallback)() = NULL;
+void (*renderCallback)(int) = NULL;
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 
@@ -601,6 +601,11 @@ void ReadSpecialSettings (const char * name)
       settings.scr_res_y = settings.res_y = resolutions[settings.res_data][1];
     }
     */
+	
+	PackedScreenResolution tmpRes = Config_ReadScreenSettings();
+	settings.res_data = tmpRes.resolution;
+	settings.scr_res_x = settings.res_x = tmpRes.width;
+	settings.scr_res_y = settings.res_y = tmpRes.height;
 
     //frame buffer
     int smart_read = ini->Read(_T("fb_smart"), -1);
@@ -1305,7 +1310,7 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int front)
   info.size = sizeof(GrLfbInfo_t);
   if (grLfbLock (GR_LFB_READ_ONLY,
     GR_BUFFER_FRONTBUFFER,
-    GR_LFBWRITEMODE_565,
+    GR_LFBWRITEMODE_888,
     GR_ORIGIN_UPPER_LEFT,
     FXFALSE,
     &info))
@@ -1842,7 +1847,7 @@ EXPORT void CALL ShowCFB (void)
   VLOG ("ShowCFB ()\n");
 }
 
-EXPORT void CALL SetRenderingCallback(void (*callback)())
+EXPORT void CALL SetRenderingCallback(void (*callback)(int))
 {
   VLOG("CALL SetRenderingCallback (*)\n");
     renderCallback = callback;
@@ -2042,24 +2047,24 @@ void newSwapBuffers()
     if ((settings.show_fps & 0xF) || settings.clock)
       set_message_combiner ();
 #ifdef FPS
-    float y = 0;//(float)settings.res_y;
+    float y = (float)settings.res_y;
     if (settings.show_fps & 0x0F)
     {
       if (settings.show_fps & 4)
       {
         if (region)   // PAL
-          output (0, y, 1, "%d%% ", (int)pal_percent);
+          output (0, y, 0, "%d%% ", (int)pal_percent);
         else
-          output (0, y, 1, "%d%% ", (int)ntsc_percent);
-        y += 16;
+          output (0, y, 0, "%d%% ", (int)ntsc_percent);
+        y -= 16;
       }
       if (settings.show_fps & 2)
       {
-        output (0, y, 1, "VI/s: %.02f ", vi);
-        y += 16;
+        output (0, y, 0, "VI/s: %.02f ", vi);
+        y -= 16;
       }
       if (settings.show_fps & 1)
-        output (0, y, 1, "FPS: %.02f ", fps);
+        output (0, y, 0, "FPS: %.02f ", fps);
     }
 #endif
 
@@ -2161,7 +2166,7 @@ void newSwapBuffers()
         }
         hotkey_info.hk_filtering--;
       }
-      output (120.0f, 0.0f, 1, message, 0);
+      output (120.0f, (float)settings.res_y, 0, message, 0);
     }
   }
     #ifdef OLDAPI

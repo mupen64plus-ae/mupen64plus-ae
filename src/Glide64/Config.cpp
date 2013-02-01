@@ -49,6 +49,17 @@ int Config_ReadScreenInt(const char *itemname)
     return ConfigGetParamInt(video_general_section, itemname);
 }
 
+PackedScreenResolution Config_ReadScreenSettings()
+{
+    PackedScreenResolution packedResolution;
+
+    packedResolution.width = ConfigGetParamInt(video_general_section, "ScreenWidth");
+    packedResolution.height = ConfigGetParamInt(video_general_section, "ScreenHeight");
+    packedResolution.fullscreen = ConfigGetParamBool(video_general_section, "Fullscreen");
+
+    return packedResolution;
+}
+
 BOOL Config_ReadInt(const char *itemname, const char *desc, int def_value, int create, int isBoolean)
 {
     VLOG("Getting value %s", itemname);
