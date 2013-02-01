@@ -1,7 +1,10 @@
 [20:2.0.4]
-- Nyko PlayPad series gamepads fully supported
-- Fixed several bugs and added items to input mapping screen
+- Improved joystick compatibility (Nyko PlayPad, OUYA)
+- Fixed various bugs in input mapping screen
 - Added input profiles for Xperia PLAY and OUYA
+- Added OUYA mode (gamepad-only navigation)
+- Added in-app change log
+- Added icons to file/folder dialogs
 - Added plugins for R4300 emulation (incomplete)
 - Updated translations
 - Fixed various crashes
@@ -45,16 +48,16 @@
 - Improved in-game menu behavior on HC and ICS
 - Added cheats option
 - Added several language translations
-- established github
+- Established github
 [12:1.8.2]
 - Fixed hardware buttons not functioning when freshly installed
 [11:1.8]
 - Added multi-controller support
 - Fixed multiple crash report causes
 - Improved GUI functionality
-[10:1.7.2 (Xperia Play)]
-- Fixed speed regression on R800i
-- Fixed crash with settings apps, caused by app icon resolution
+[10:1.7.2]
+- (Xperia Play version) Fixed speed regression on R800i
+- (Xperia Play version) Fixed crash with settings apps, caused by app icon resolution
 [9:1.7]
 - Fixed speed regression caused by previous update
 [8:1.6.2 (Xperia Play)]
