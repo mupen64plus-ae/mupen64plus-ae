@@ -198,7 +198,7 @@ public class TouchController extends AbstractController implements OnTouchListen
         }
         
         // Process each touch
-        processTouches( mTouchState, mPointerX, mPointerY, maxPid );
+        processTouches( mTouchState, mPointerX, mPointerY, mElapsedTime, maxPid );
         
         return true;
     }
@@ -212,7 +212,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param pointerY The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive.
      * @param maxPid Maximum ID of the pointers that have changed (speed optimization).
      */
-    private void processTouches( boolean[] touchstate, int[] pointerX, int[] pointerY, int maxPid )
+    private void processTouches( boolean[] touchstate, int[] pointerX, int[] pointerY, long[] elapsedTime, int maxPid )
     {
         boolean analogMoved = false;
         
@@ -230,7 +230,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             
             // Process button inputs
             if( pid != analogPid )
-                processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid], pid );
+                processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid], elapsedTime[pid], pid );
             
             // Process analog inputs
             if( touchstate[pid] && processAnalogTouch( pid, pointerX[pid], pointerY[pid]) )
@@ -253,7 +253,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
      * @param pid The identifier of the touch pointer.
      */
-    private void processButtonTouch( boolean touched, int xLocation, int yLocation, int pid )
+    private void processButtonTouch( boolean touched, int xLocation, int yLocation, long timeElapsed, int pid )
     {
         // Determine the index of the button that was pressed
         int index = touched
@@ -272,6 +272,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                 {
                     // Release the previous button
                     setTouchState( prevIndex, false );
+                    if( mTouchMap.autoHoldImages[prevIndex] != null )
+                        mListener.onAutoHold( false, prevIndex );
                 }
                 mPointerMap.put( pid, index );
             }
@@ -285,7 +287,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                     setTouchState( index, true );
                 else
                 {
-                    if( mElapsedTime[pid] < 1000 )
+                    if( timeElapsed < 1000 )
                     {
                         mListener.onAutoHold( false, index );
                         setTouchState( index, false );
