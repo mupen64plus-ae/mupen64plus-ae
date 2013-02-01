@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -52,5 +54,16 @@ public class PrefUtil
         Preference child = activity.findPreference( keyChild );
         if( parent instanceof PreferenceGroup && child != null )
             ( (PreferenceGroup) parent ).removePreference( child );
+    }
+    
+    @SuppressWarnings( "deprecation" )
+    public static void refreshSummary( PreferenceActivity activity, String key )
+    {
+        if( !AppData.IS_ICE_CREAM_SANDWICH )
+        {
+            Preference preference = activity.findPreference( key );
+            if( preference instanceof ListPreference )
+                preference.setSummary( ( (ListPreference) preference ).getEntry() );
+        }
     }
 }

@@ -225,6 +225,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.enablePreference( this, TOUCHSCREEN_SIZE, user.isTouchscreenEnabled
                 && !user.isTouchscreenCustom );
         
+        // Update the summary text for all relevant preferences
+        for( String key : sharedPreferences.getAll().keySet() )
+            PrefUtil.refreshSummary( this, key );
+        
         // Update the summary text in a particular way for ACRA user info
         EditTextPreference pref = (EditTextPreference) findPreference( ACRA_USER_EMAIL );
         String value = pref.getText();

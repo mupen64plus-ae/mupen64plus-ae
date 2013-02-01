@@ -91,6 +91,9 @@ public class AppData
     /** True if device is running Honeycomb MR1 or later (12 - Android 3.1.x) */
     public static final boolean IS_HONEYCOMB_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
     
+    /** True if device is running Honeycomb MR1 or later (12 - Android 3.1.x) */
+    public static final boolean IS_ICE_CREAM_SANDWICH = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+    
     /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLYBEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
