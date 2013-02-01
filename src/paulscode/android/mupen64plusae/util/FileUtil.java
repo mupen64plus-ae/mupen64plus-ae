@@ -32,17 +32,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import android.text.Html;
 import android.util.Log;
 
 /**
- * Utility class that provides methods
- * which simplify file I/O tasks.
+ * Utility class that provides methods which simplify file I/O tasks.
  */
 public class FileUtil
 {
     public static void populate( File startPath, boolean includeParent, boolean includeDirectories,
-            boolean includeFiles, List<CharSequence> outEntries, List<String> outValues )
+            boolean includeFiles, List<String> outNames, List<String> outPaths )
     {
         if( !startPath.exists() )
             return;
@@ -53,21 +51,21 @@ public class FileUtil
         if( startPath.getParentFile() == null )
             includeParent = false;
         
-        outEntries.clear();
-        outValues.clear();
+        outNames.clear();
+        outPaths.clear();
         
         if( includeParent )
         {
-            outEntries.add( Html.fromHtml( "<b>..</b>" ) );
-            outValues.add( startPath.getParentFile().getPath() );
+            outNames.add( ".." );
+            outPaths.add( startPath.getParentFile().getPath() );
         }
         
         if( includeDirectories )
         {
             for( File directory : getContents( startPath, new VisibleDirectoryFilter() ) )
             {
-                outEntries.add( Html.fromHtml( "<b>" + directory.getName() + "</b>" ) );
-                outValues.add( directory.getPath() );
+                outNames.add( directory.getName() );
+                outPaths.add( directory.getPath() );
             }
         }
         
@@ -75,8 +73,8 @@ public class FileUtil
         {
             for( File file : getContents( startPath, new VisibleFileFilter() ) )
             {
-                outEntries.add( Html.fromHtml( file.getName() ) );
-                outValues.add( file.getPath() );
+                outNames.add( file.getName() );
+                outPaths.add( file.getPath() );
             }
         }
     }
@@ -132,12 +130,11 @@ public class FileUtil
                     && ( !pathname.getName().startsWith( "." ) );
         }
     }
-
+    
     /**
      * Deletes a given folder directory in the form of a {@link File}
-     *
+     * 
      * @param folder The folder to delete.
-     *
      * @return True if the folder was deleted, false otherwise.
      */
     public static boolean deleteFolder( File folder )
@@ -158,40 +155,38 @@ public class FileUtil
         
         return folder.delete();
     }
-
+    
     /**
-     * Copies a {@code src} {@link File} to a desired destination
-     * represented by a {@code dest} {@link File}
+     * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
+     * {@link File}
      * <p>
-     * This method assumes no backups will be wanted to be made.
-     *
-     * @param src  Source file.
+     * This method assumes no backups will want to be made.
+     * 
+     * @param src Source file.
      * @param dest Desired destination.
-     *
      * @return True if the copy succeeded, false otherwise.
      */
     public static boolean copyFile( File src, File dest )
     {
         return copyFile( src, dest, false );
     }
-
+    
     /**
-     * Copies a {@code src} {@link File} to a desired destination
-     * represented by a {@code dest} {@link File}
+     * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
+     * {@link File}
      * <p>
      * This method supports the making of backups of src.
-     *
-     * @param src         Source file
-     * @param dest        Desired destination
+     * 
+     * @param src Source file
+     * @param dest Desired destination
      * @param makeBackups True if backups are wanted, false otherwise.
-     *
      * @return True if the copy succeeded, false otherwise.
      */
     public static boolean copyFile( File src, File dest, boolean makeBackups )
     {
         if( src == null )
         {
-            Log.e("FileUtil", "src null in method 'copyFile'");
+            Log.e( "FileUtil", "src null in method 'copyFile'" );
             return false;
         }
         
@@ -224,7 +219,7 @@ public class FileUtil
                 return false;
             }
             
-            f.mkdirs();            
+            f.mkdirs();
             if( dest.exists() && makeBackups )
                 backupFile( dest );
             
@@ -248,21 +243,22 @@ public class FileUtil
                 Log.e( "FileUtil", "IOException in method 'copyFile': " + ioe.getMessage() );
                 return false;
             }
-
+            
             return true;
         }
     }
-
+    
     /**
      * Backs up a given {@link File}.
      * <p>
-     * Backups are made in the form: 'filename + [number]',
-     * where number can be any number depending on the amount of backups there are.
+     * Backups are made in the form: 'filename + [number]', where number can be any number depending
+     * on the amount of backups there are.
      * <p>
-     * eg. if only the file "thisfile.ext" exists, it's backup will be "thisfile.ext.bak1" <p>
-     *     if "thisfile" and "thisfile.ext.bak1" exists, it's backup will be "thisfile.ext.bak2" and so on.
-     *
-     *
+     * eg. if only the file "thisfile.ext" exists, its backup will be "thisfile.ext.bak1"
+     * <p>
+     * if "thisfile" and "thisfile.ext.bak1" exists, its backup will be "thisfile.ext.bak2" and so
+     * on.
+     * 
      * @param file The file to back up.
      */
     public static void backupFile( File file )
@@ -278,7 +274,7 @@ public class FileUtil
         
         copyFile( file, backup );
     }
-
+    
     /**
      * Loads the specified native library name (without "lib" and ".so").
      * 
@@ -296,7 +292,7 @@ public class FileUtil
             Log.e( "FileUtil", "Unable to load native library '" + libname + "'" );
         }
     }
-
+    
     /**
      * Loads the native .so file specified.
      * 

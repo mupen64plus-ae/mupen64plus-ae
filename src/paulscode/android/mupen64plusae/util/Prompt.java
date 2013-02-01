@@ -36,16 +36,45 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.TextView;
 
 /**
  * A utility class that generates dialogs to prompt the user for information.
  */
 public class Prompt
 {
+    /**
+     * An interface that simplifies the population of list items.
+     * 
+     * @param <T> The type of the data to be wrapped.
+     * @see Prompt#createAdapter(Context, List, int, int, ListItemPopulator)
+     */
+    public interface ListItemPopulator<T>
+    {
+        public void onPopulateListItem( T item, int position, View view );
+    }
+    
+    /**
+     * An interface that simplifies the population of list items having two text fields and an icon.
+     * 
+     * @param <T> The type of the data to be wrapped.
+     * @see Prompt#createAdapter(Context, List, ListItemTwoTextIconPopulator)
+     */
+    public interface ListItemTwoTextIconPopulator<T>
+    {
+        public void onPopulateListItem( T item, int position, TextView text1, TextView text2,
+                ImageView icon );
+    }
+    
     /**
      * The listener interface for handling confirmations.
      * 
@@ -108,6 +137,109 @@ public class Prompt
     }
     
     /**
+     * Create a {@link ListAdapter} where each list item has a specified layout.
+     * 
+     * @param <T> The type of the data to be wrapped.
+     * @param context The current context.
+     * @param items The data source for the list items.
+     * @param layoutResId The layout resource to be used for each list item.
+     * @param textResId The {@link TextView} resource within the layout to be populated by default.
+     * @param populator The object to populate the fields in each list item.
+     * @return An adapter that can be used to create list dialogs.
+     */
+    public static <T> ArrayAdapter<T> createAdapter( Context context, List<T> items,
+            final int layoutResId, final int textResId, final ListItemPopulator<T> populator )
+    {
+        return new ArrayAdapter<T>( context, layoutResId, textResId, items )
+        {
+            @Override
+            public View getView( int position, View convertView, ViewGroup parent )
+            {
+                View row;
+                if( convertView == null )
+                {
+                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
+                            Context.LAYOUT_INFLATER_SERVICE );
+                    row = (View) inflater.inflate( layoutResId, null );
+                }
+                else
+                {
+                    row = (View) convertView;
+                }
+                
+                populator.onPopulateListItem( getItem( position ), position, row );
+                return row;
+            }
+        };
+    }
+    
+    /**
+     * Create a {@link ListAdapter} where each list item has two text fields and an icon.
+     * 
+     * @param <T> The type of the data to be wrapped.
+     * @param context The activity context.
+     * @param items The data source for list items.
+     * @param populator The object to populate the fields in each list item.
+     * @return An adapter that can be used to create list dialogs.
+     */
+    public static <T> ArrayAdapter<T> createAdapter( Context context, List<T> items,
+            final ListItemTwoTextIconPopulator<T> populator )
+    {
+        return createAdapter( context, items, R.layout.list_item_two_text_icon, R.id.text1,
+                new ListItemPopulator<T>()
+                {
+                    @Override
+                    public void onPopulateListItem( T item, int position, View view )
+                    {
+                        TextView text1 = (TextView) view.findViewById( R.id.text1 );
+                        TextView text2 = (TextView) view.findViewById( R.id.text2 );
+                        ImageView icon = (ImageView) view.findViewById( R.id.icon );
+                        populator.onPopulateListItem( item, position, text1, text2, icon );
+                    }
+                } );
+    }
+    
+    public static ArrayAdapter<String> createFilenameAdapter( Context context, List<String> items,
+            final List<String> entries )
+    {
+        return createAdapter( context, items, new ListItemTwoTextIconPopulator<String>()
+        {
+            @Override
+            public void onPopulateListItem( String item, int position, TextView text1,
+                    TextView text2, ImageView icon )
+            {
+                if( !TextUtils.isEmpty( item ) )
+                {
+                    String entry = entries.get( position ).toString();
+                    File file = new File( item );
+                    if( entry.equals( ".." ) )
+                    {
+                        text1.setText( R.string.pathPreference_parentFolder );
+                        icon.setVisibility( View.VISIBLE );
+                        icon.setImageResource( R.drawable.ic_arrow_u );
+                    }
+                    else
+                    {
+                        text1.setText( entry );
+                        if( file.isDirectory() )
+                        {
+                            icon.setVisibility( View.VISIBLE );
+                            icon.setImageResource( R.drawable.ic_folder );
+                        }
+                        else
+                        {
+                            icon.setVisibility( View.GONE );
+                            icon.setImageResource( 0 );
+                        }
+                    }
+                    text2.setVisibility( View.GONE );
+                    text2.setText( null );
+                }
+            }
+        } );
+    }
+    
+    /**
      * Open a dialog to prompt the user for a confirmation (Ok/Cancel).
      * 
      * @param context The activity context.
@@ -150,9 +282,9 @@ public class Prompt
             return;
         
         // Get the filenames and absolute paths
-        final List<CharSequence> filenames = new ArrayList<CharSequence>();
-        final List<String> absolutePaths = new ArrayList<String>();
-        FileUtil.populate( startPath, false, false, true, filenames, absolutePaths );
+        final List<String> names = new ArrayList<String>();
+        final List<String> paths = new ArrayList<String>();
+        FileUtil.populate( startPath, false, false, true, names, paths );
         
         // When the user clicks a file, notify the downstream listener
         OnClickListener internalListener = new OnClickListener()
@@ -160,19 +292,20 @@ public class Prompt
             @Override
             public void onClick( DialogInterface dialog, int which )
             {
-                if( which >= 0 && which < filenames.size() )
-                    listener.onFile( new File( absolutePaths.get( which ) ),
+                if( which >= 0 && which < names.size() )
+                    listener.onFile( new File( paths.get( which ) ),
                             DialogInterface.BUTTON_POSITIVE );
                 else
                     listener.onFile( null, which );
             }
         };
         
+        // Create adapter for displaying files in list
+        ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( context, paths, names );
+        
         // Create and launch the dialog, removing Ok button and populating list in the process
-        prefillBuilder( context, title, message, internalListener )
-                .setPositiveButton( null, null )
-                .setItems( filenames.toArray( new CharSequence[filenames.size()] ),
-                        internalListener ).create().show();
+        prefillBuilder( context, title, message, internalListener ).setPositiveButton( null, null )
+                .setAdapter( adapter, internalListener ).create().show();
     }
     
     /**

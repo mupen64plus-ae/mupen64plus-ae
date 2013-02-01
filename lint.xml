@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+    <issue id="ContentDescription">
+        <ignore path="res\layout\list_item_two_text_icon.xml" />
+    </issue>
     <issue id="UnusedResources">
         <ignore path="res\values\colors.xml" />
     </issue>

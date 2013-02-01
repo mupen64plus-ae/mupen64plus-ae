@@ -328,6 +328,9 @@
     <!-- Seek Bar Preference -->
     <string name="seekBarPreference_summary">%1$d %2$s</string>
 
+    <!-- Path Preference -->
+    <string name="pathPreference_parentFolder">Parent folder</string>
+
     <!-- Player Mapping -->
     <string name="playerMap_deviceWithName">Device %1$d (%2$s)</string>
     <string name="playerMap_deviceWithoutName">Device %1$d</string>

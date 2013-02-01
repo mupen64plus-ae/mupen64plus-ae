@@ -26,6 +26,7 @@ import java.util.List;
 
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.Prompt;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,6 +36,7 @@ import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.widget.ArrayAdapter;
 
 public class PathPreference extends DialogPreference
 {
@@ -52,8 +54,8 @@ public class PathPreference extends DialogPreference
     private final boolean mUseDefaultSummary;
     private int mSelectionMode = SELECTION_MODE_ANY;
     private boolean mDoReclick = false;
-    private List<CharSequence> mEntries = new ArrayList<CharSequence>();
-    private List<String> mValues = new ArrayList<String>();
+    private List<String> mNames = new ArrayList<String>();
+    private List<String> mPaths = new ArrayList<String>();
     private String mNewValue;
     private String mValue;
     
@@ -115,8 +117,11 @@ public class PathPreference extends DialogPreference
     {
         super.onPrepareDialogBuilder( builder );
         
+        // Create adapter for displaying files in list
+        ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( getContext(), mPaths, mNames );
+        
         // Add the list entries
-        builder.setItems( mEntries.toArray( new CharSequence[mEntries.size()] ), this );
+        builder.setAdapter( adapter, this );
         
         // Remove the Ok button when user must choose a file
         if( mSelectionMode == SELECTION_MODE_FILE )
@@ -127,9 +132,9 @@ public class PathPreference extends DialogPreference
     public void onClick( DialogInterface dialog, int which )
     {
         // If the user clicked a list item...
-        if( mValues != null && which >= 0 && which < mValues.size() )
+        if( mPaths != null && which >= 0 && which < mPaths.size() )
         {
-            mNewValue = mValues.get( which );
+            mNewValue = mPaths.get( which );
             File path = new File( mNewValue );
             if( path.isDirectory() )
             {
@@ -145,7 +150,7 @@ public class PathPreference extends DialogPreference
         }
         
         // Call super last, parameters may have changed above
-        super.onClick( dialog, which );        
+        super.onClick( dialog, which );
     }
     
     @Override
@@ -233,9 +238,9 @@ public class PathPreference extends DialogPreference
         
         // Populate the key-value pairs for the list entries
         boolean isFilesIncluded = mSelectionMode != SELECTION_MODE_DIRECTORY;
-        FileUtil.populate( startPath, true, true, isFilesIncluded, mEntries, mValues );
+        FileUtil.populate( startPath, true, true, isFilesIncluded, mNames, mPaths );
     }
-
+    
     private static String validate( String value )
     {
         if( TextUtils.isEmpty( value ) )
@@ -263,7 +268,7 @@ public class PathPreference extends DialogPreference
                 file.mkdirs();
             else if( !file.exists() )
                 value = STORAGE_DIR;
-        }        
+        }
         return value;
     }
 }
