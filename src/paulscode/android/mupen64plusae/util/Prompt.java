@@ -199,20 +199,19 @@ public class Prompt
                 } );
     }
     
-    public static ArrayAdapter<String> createFilenameAdapter( Context context, List<String> items,
-            final List<String> entries )
+    public static ArrayAdapter<String> createFilenameAdapter( Context context, List<String> paths,
+            final List<String> names )
     {
-        return createAdapter( context, items, new ListItemTwoTextIconPopulator<String>()
+        return createAdapter( context, paths, new ListItemTwoTextIconPopulator<String>()
         {
             @Override
-            public void onPopulateListItem( String item, int position, TextView text1,
+            public void onPopulateListItem( String path, int position, TextView text1,
                     TextView text2, ImageView icon )
             {
-                if( !TextUtils.isEmpty( item ) )
+                if( !TextUtils.isEmpty( path ) )
                 {
-                    String entry = entries.get( position ).toString();
-                    File file = new File( item );
-                    if( entry.equals( ".." ) )
+                    String name = names.get( position ).toString();
+                    if( name.equals( ".." ) )
                     {
                         text1.setText( R.string.pathPreference_parentFolder );
                         icon.setVisibility( View.VISIBLE );
@@ -220,7 +219,8 @@ public class Prompt
                     }
                     else
                     {
-                        text1.setText( entry );
+                        File file = new File( path );
+                        text1.setText( name );
                         if( file.isDirectory() )
                         {
                             icon.setVisibility( View.VISIBLE );
