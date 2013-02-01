@@ -266,4 +266,76 @@
 
     <string name="r4300Emulator_default" translatable="false">2</string>
 
+    <!-- OUYA Input Mapping Screen -->
+    <string-array name="inputMapActivity_entries" translatable="false">
+        <item>@string/inputMapActivity_btnA</item>
+        <item>@string/inputMapActivity_btnB</item>
+        <item>@string/inputMapActivity_btnL</item>
+        <item>@string/inputMapActivity_btnR</item>
+        <item>@string/inputMapActivity_btnZ</item>
+        <item>@string/inputMapActivity_btnS</item>
+        <item>@string/inputMapActivity_btnCR</item>
+        <item>@string/inputMapActivity_btnCL</item>
+        <item>@string/inputMapActivity_btnCD</item>
+        <item>@string/inputMapActivity_btnCU</item>
+        <item>@string/inputMapActivity_btnDR</item>
+        <item>@string/inputMapActivity_btnDL</item>
+        <item>@string/inputMapActivity_btnDD</item>
+        <item>@string/inputMapActivity_btnDU</item>
+        <item>@string/inputMapActivity_btnAR</item>
+        <item>@string/inputMapActivity_btnAL</item>
+        <item>@string/inputMapActivity_btnAD</item>
+        <item>@string/inputMapActivity_btnAU</item>
+        <item>@string/inputMapActivity_rumble</item>
+        <item>@string/inputMapActivity_mempak</item>
+        <item>@string/inputMapActivity_incrementSlot</item>
+        <item>@string/inputMapActivity_saveSlot</item>
+        <item>@string/inputMapActivity_loadSlot</item>
+        <item>@string/inputMapActivity_reset</item>
+        <item>@string/inputMapActivity_pause</item>
+        <item>@string/inputMapActivity_stop</item>
+        <item>@string/inputMapActivity_speedDown</item>
+        <item>@string/inputMapActivity_speedUp</item>
+        <item>@string/inputMapActivity_fastForward</item>
+        <!-- <item>@string/inputMapActivity_frameAdvance</item> -->
+        <!-- <item>@string/inputMapActivity_gameshark</item> -->
+        <item>@string/inputMapActivity_simulateBack</item>
+        <item>@string/inputMapActivity_simulateMenu</item>
+    </string-array>
+    <string-array name="inputMapActivity_values" translatable="false">
+        <item>7</item>
+        <item>6</item>
+        <item>13</item>
+        <item>12</item>
+        <item>5</item>
+        <item>4</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>15</item>
+        <item>14</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>25</item>
+        <item>24</item>
+        <item>29</item>
+        <item>28</item>
+        <item>26</item>
+        <!-- <item>27</item> -->
+        <!-- <item>30</item> -->
+        <item>31</item>
+        <item>32</item>
+    </string-array>
+
 </resources>

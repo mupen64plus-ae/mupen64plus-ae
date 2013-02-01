@@ -96,7 +96,7 @@ public class DeviceUtil
                 {
                     builder.append( "Device: " + device.getName() + "\n" );
                     builder.append( "Type: " + axisMap.getSignatureName() + "\n" );
-                    builder.append( "Signature:" + axisMap.getSignature() + "\n" );
+                    builder.append( "Signature: " + axisMap.getSignature() + "\n" );
                     builder.append( "Hash: " + axisMap.getSignature().hashCode() + "\n" );
                     
                     List<MotionRange> ranges = getPeripheralMotionRanges( device );

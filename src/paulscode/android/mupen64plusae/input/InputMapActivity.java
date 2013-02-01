@@ -20,6 +20,7 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import java.util.Arrays;
 import java.util.List;
 
 import paulscode.android.mupen64plusae.R;
@@ -33,6 +34,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
 import android.annotation.TargetApi;
@@ -51,10 +53,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class InputMapActivity extends Activity implements OnInputListener, OnClickListener
+public class InputMapActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
 {
     // Visual settings
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
@@ -70,6 +77,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     private UserPrefs mUserPrefs;
     private boolean mIsOuya;
     
+    // Command information
+    private String[] mCommandNames;
+    private int[] mCommandIndices;
+    
     // Input mapping and listening
     private final InputMap mMap = new InputMap();
     private KeyProvider mKeyProvider;
@@ -81,6 +92,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     private TextView mFeedbackText;
     private View mSpecialFuncsView;
     private MenuItem mMenuSpecialVisibility;
+    private ListView mListView;
     
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -91,6 +103,15 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
         mIsOuya = new AppData( this ).hardwareInfo.isOUYA;
+        
+        // Get the command info
+        mCommandNames = getResources().getStringArray( R.array.inputMapActivity_entries );
+        String[] indices = getResources().getStringArray( R.array.inputMapActivity_values );
+        mCommandIndices = new int[indices.length];
+        for( int i = 0; i < indices.length; i++ )
+        {
+            mCommandIndices[i] = Integer.parseInt( indices[i] );
+        }
         
         // Get the player number and get the associated preference values
         Bundle extras = getIntent().getExtras();
@@ -112,6 +133,29 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             }
         }
         
+        // Set the title of the activity
+        CharSequence title = getResources().getString( R.string.inputMapActivity_title, mPlayer );
+        setTitle( title );
+        
+        // Initialize the layout
+        if( mIsOuya )
+            initLayoutOuya();
+        else
+            initLayoutDefault();
+        
+        // Refresh everything
+        refreshAllButtons();
+    }
+    
+    private void initLayoutOuya()
+    {
+        setContentView( R.layout.input_map_activity_ouya );
+        mListView = (ListView) findViewById( R.id.input_map_activity_ouya );
+        mListView.setOnItemClickListener( this );
+    }
+    
+    private void initLayoutDefault()
+    {
         // Select the appropriate window layout according to device configuration. Although you can
         // do this through the resource directory structure and layout aliases, we'll do it this way
         // for now since it's easier to maintain in the short term while the design is in flux.
@@ -128,13 +172,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         else
             setContentView( R.layout.input_map_activity );
         
-        // Set the title of the activity
-        CharSequence title = getResources().getString( R.string.inputMapActivity_title, mPlayer );
-        setTitle( title );
-        
         // Initialize and refresh the widgets
         initWidgets();
-        refreshAllButtons();
     }
     
     private void initWidgets()
@@ -203,10 +242,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         mN64Button[index] = (Button) findViewById( resId );
         if( mN64Button[index] != null )
-        {
             mN64Button[index].setOnClickListener( this );
-            mN64Button[index].setFocusable( mIsOuya );
-        }
     }
     
     @Override
@@ -217,12 +253,13 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         refreshSpecialVisibility();
         
         // Hide menu items that do not apply
-        if( !AppData.IS_HONEYCOMB_MR1 )
-            menu.findItem( R.id.menuItem_axisInfo ).setVisible( false );
+        mMenuSpecialVisibility.setVisible( !mIsOuya );
+        menu.findItem( R.id.menuItem_exit ).setVisible( !mIsOuya );
+        menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         
         return super.onCreateOptionsMenu( menu );
     }
-
+    
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
@@ -318,38 +355,47 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     }
     
     @Override
+    public void onItemClick( AdapterView<?> parent, View view, int position, long id )
+    {
+        popupListener( mCommandNames[position], mCommandIndices[position] );
+    }
+    
+    @Override
     public void onClick( View view )
     {
         // Handle button clicks in the mapping screen
-        Button button;
         for( int i = 0; i < mN64Button.length; i++ )
         {
             // Find the button that was pressed
             if( view.equals( mN64Button[i] ) )
             {
                 // Popup a dialog to listen to input codes from user
-                final int index = i;
-                button = (Button) view;
-                String message = getString( R.string.inputMapActivity_popupMessage,
-                        mMap.getMappedCodeInfo( index ) );
-                String btnText = getString( R.string.inputMapActivity_popupUnmap );
-                
-                Prompt.promptInputCode( this, button.getText(), message, btnText,
-                        mUnmappableInputCodes, new OnInputCodeListener()
-                        {
-                            @Override
-                            public void OnInputCode( int inputCode, int hardwareId )
-                            {
-                                if( inputCode == 0 )
-                                    mMap.unmapCommand( index );
-                                else
-                                    mMap.map( inputCode, index );
-                                mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
-                                refreshAllButtons();
-                            }
-                        } );
+                Button button = (Button) view;
+                popupListener( button.getText(), i );
             }
         }
+    }
+    
+    private void popupListener( CharSequence title, final int index )
+    {
+        String message = getString( R.string.inputMapActivity_popupMessage,
+                mMap.getMappedCodeInfo( index ) );
+        String btnText = getString( R.string.inputMapActivity_popupUnmap );
+        
+        Prompt.promptInputCode( this, title, message, btnText,
+                mUnmappableInputCodes, new OnInputCodeListener()
+                {
+                    @Override
+                    public void OnInputCode( int inputCode, int hardwareId )
+                    {
+                        if( inputCode == 0 )
+                            mMap.unmapCommand( index );
+                        else
+                            mMap.map( inputCode, index );
+                        mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
+                        refreshAllButtons();
+                    }
+                } );
     }
     
     @Override
@@ -465,6 +511,23 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         for( int i = 0; i < mN64Button.length; i++ )
         {
             refreshButton( mN64Button[i], 0, mMap.isMapped( i ) );
+        }
+        if( mListView != null )
+        {
+            ArrayAdapter<String> adapter = Prompt.createAdapter( this, Arrays.asList( mCommandNames ),
+                    new ListItemTwoTextIconPopulator<String>()
+                    {
+                        @Override
+                        public void onPopulateListItem( String item, int position, TextView text1,
+                                TextView text2, ImageView icon )
+                        {
+                            text1.setText( item );
+                            text2.setText( mMap.getMappedCodeInfo( mCommandIndices[position] ) );
+                            icon.setVisibility( View.GONE );
+                        }
+                    } );
+            
+            mListView.setAdapter( adapter );
         }
     }
 }
