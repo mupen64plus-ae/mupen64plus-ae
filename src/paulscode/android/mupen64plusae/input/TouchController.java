@@ -272,6 +272,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 {
                     // Release the previous button
                     setTouchState( prevIndex, false );
+                    mStartTime[pid] = System.currentTimeMillis();
                     if( mTouchMap.autoHoldImages[prevIndex] != null )
                         mListener.onAutoHold( false, prevIndex );
                 }
