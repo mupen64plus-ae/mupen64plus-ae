@@ -200,7 +200,7 @@ public class Prompt
     }
     
     public static ArrayAdapter<String> createFilenameAdapter( Context context, List<String> paths,
-            final List<String> names )
+            final List<CharSequence> names )
     {
         return createAdapter( context, paths, new ListItemTwoTextIconPopulator<String>()
         {
@@ -282,7 +282,7 @@ public class Prompt
             return;
         
         // Get the filenames and absolute paths
-        final List<String> names = new ArrayList<String>();
+        final List<CharSequence> names = new ArrayList<CharSequence>();
         final List<String> paths = new ArrayList<String>();
         FileUtil.populate( startPath, false, false, true, names, paths );
         

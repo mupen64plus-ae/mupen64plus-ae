@@ -54,7 +54,7 @@ public class PathPreference extends DialogPreference
     private final boolean mUseDefaultSummary;
     private int mSelectionMode = SELECTION_MODE_ANY;
     private boolean mDoReclick = false;
-    private List<String> mNames = new ArrayList<String>();
+    private List<CharSequence> mNames = new ArrayList<CharSequence>();
     private List<String> mPaths = new ArrayList<String>();
     private String mNewValue;
     private String mValue;
@@ -117,14 +117,19 @@ public class PathPreference extends DialogPreference
     {
         super.onPrepareDialogBuilder( builder );
         
-        // Create adapter for displaying files in list
-        ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( getContext(), mPaths, mNames );
-        
-        // Add the list entries (Holo version is a little fancier)
+        // Add the list entries
         if( AppData.IS_HONEYCOMB )
+        {
+            // Holo theme has folder icons and "Parent folder" text
+            ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( getContext(), mPaths, mNames );
             builder.setAdapter( adapter, this );
+        }
         else
-            builder.setItems( mNames.toArray( new String[mNames.size()] ), this );
+        {
+            // Basic theme uses bold text for folders and ".." for the parent
+            CharSequence[] items = mNames.toArray( new CharSequence[mNames.size()] );
+            builder.setItems( items, this );
+        }
         
         // Remove the Ok button when user must choose a file
         if( mSelectionMode == SELECTION_MODE_FILE )

@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import android.text.Html;
 import android.util.Log;
 
 /**
@@ -40,7 +41,7 @@ import android.util.Log;
 public class FileUtil
 {
     public static void populate( File startPath, boolean includeParent, boolean includeDirectories,
-            boolean includeFiles, List<String> outNames, List<String> outPaths )
+            boolean includeFiles, List<CharSequence> outNames, List<String> outPaths )
     {
         if( !startPath.exists() )
             return;
@@ -56,7 +57,7 @@ public class FileUtil
         
         if( includeParent )
         {
-            outNames.add( ".." );
+            outNames.add( Html.fromHtml( "<b>..</b>" ) );
             outPaths.add( startPath.getParentFile().getPath() );
         }
         
@@ -64,7 +65,7 @@ public class FileUtil
         {
             for( File directory : getContents( startPath, new VisibleDirectoryFilter() ) )
             {
-                outNames.add( directory.getName() );
+                outNames.add( Html.fromHtml( "<b>" + directory.getName() + "</b>" ) );
                 outPaths.add( directory.getPath() );
             }
         }
@@ -73,7 +74,7 @@ public class FileUtil
         {
             for( File file : getContents( startPath, new VisibleFileFilter() ) )
             {
-                outNames.add( file.getName() );
+                outNames.add( Html.fromHtml( file.getName() ) );
                 outPaths.add( file.getPath() );
             }
         }
