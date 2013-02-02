@@ -243,7 +243,7 @@
     <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
     <string name="pluginCore_title">Emulation core</string>
     <string name="pluginCore_entryV110">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
-    <string name="r4300Emulator_title">R4300 Emulator</string>
+    <string name="r4300Emulator_title">R4300 emulator</string>
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
@@ -379,8 +379,8 @@
     <string name="inputMapActivity_speedDown">Speed down</string>
     <string name="inputMapActivity_speedUp">Speed up</string>
     <string name="inputMapActivity_gameshark">Gameshark</string>
-    <string name="inputMapActivity_simulateBack">Back Key</string>
-    <string name="inputMapActivity_simulateMenu">Menu Key</string>
+    <string name="inputMapActivity_simulateBack">Back key</string>
+    <string name="inputMapActivity_simulateMenu">Menu key</string>
 
     <!-- Controller Diagnostics -->
     <string name="diagnosticActivity_textKey_text">Press button or key…</string>
