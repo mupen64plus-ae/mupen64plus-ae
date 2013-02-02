@@ -120,8 +120,11 @@ public class PathPreference extends DialogPreference
         // Create adapter for displaying files in list
         ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( getContext(), mPaths, mNames );
         
-        // Add the list entries
-        builder.setAdapter( adapter, this );
+        // Add the list entries (Holo version is a little fancier)
+        if( AppData.IS_HONEYCOMB )
+            builder.setAdapter( adapter, this );
+        else
+            builder.setItems( mNames.toArray( new String[mNames.size()] ), this );
         
         // Remove the Ok button when user must choose a file
         if( mSelectionMode == SELECTION_MODE_FILE )
