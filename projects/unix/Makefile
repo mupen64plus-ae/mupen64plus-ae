@@ -181,15 +181,8 @@ endif
 ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
-ifeq ("$(UNAME)","Darwin")
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    # sdl-config on mac screws up when we're trying to build a library and not an executable
-    # SDL 1.3 is supposed to fix that, if it's ever released
-    LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
-else
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
+CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+LDLIBS += $(shell $(SDL_CONFIG) --libs)
 
 # set mupen64plus core API header path
 ifneq ("$(APIDIR)","")
@@ -235,7 +228,9 @@ ifeq ($(DEBUG),1)
   CFLAGS += -g
   INSTALL_STRIP_FLAG ?= 
 else
-  INSTALL_STRIP_FLAG ?= -s
+  ifneq ($(OS),OSX)
+    INSTALL_STRIP_FLAG ?= -s
+  endif
 endif
 ifeq ($(PLUGINDBG), 1)
   CFLAGS += -D_DEBUG
