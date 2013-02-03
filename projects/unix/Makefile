@@ -188,9 +188,7 @@ ifeq ($(OS),FREEBSD)
 endif
 ifeq ($(OS),OSX)
     CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    # sdl-config on mac screws up when we're trying to build a library and not an executable
-    # SDL 1.3 is supposed to fix that, if it's ever released
-    LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
+    LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
 ifeq ($(OS),LINUX)
     CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
@@ -275,7 +273,9 @@ ifeq ($(DEBUG),1)
   CFLAGS += -g
   INSTALL_STRIP_FLAG ?= 
 else
-  INSTALL_STRIP_FLAG ?= -s
+  ifneq ($(OS),OSX)
+    INSTALL_STRIP_FLAG ?= -s
+  endif
 endif
 
 # set installation options
