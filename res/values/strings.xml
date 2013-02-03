@@ -26,8 +26,8 @@
 
     <!-- In-Game Menu -->
     <string name="menuItem_toggleSpeed">Speed %1$d %%</string>
-    <string name="menuItem_slotSave">Slot save</string>
-    <string name="menuItem_slotLoad">Slot load</string>
+    <string name="menuItem_slotSave">Save slot</string>
+    <string name="menuItem_slotLoad">Load slot</string>
     <string name="menuItem_setSlot">Slot %1$d</string>
     <string name="menuItem_fileSave">Save to file…</string>
     <string name="menuItem_fileLoad">Load from file…</string>
