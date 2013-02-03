@@ -300,12 +300,24 @@ public class Prompt
             }
         };
         
-        // Create adapter for displaying files in list
-        ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( context, paths, names );
+        // Create the dialog builder, removing Ok button and populating list in the process
+        Builder builder = prefillBuilder( context, title, message, internalListener )
+                .setPositiveButton( null, null );
+        if( AppData.IS_HONEYCOMB )
+        {
+            // Holo theme has folder icons and "Parent folder" text
+            ArrayAdapter<String> adapter = Prompt.createFilenameAdapter( context, paths, names );
+            builder.setAdapter( adapter, internalListener );
+        }
+        else
+        {
+            // Basic theme uses bold text for folders and ".." for the parent
+            CharSequence[] items = names.toArray( new CharSequence[names.size()] );
+            builder.setItems( items, internalListener );
+        }
         
-        // Create and launch the dialog, removing Ok button and populating list in the process
-        prefillBuilder( context, title, message, internalListener ).setPositiveButton( null, null )
-                .setAdapter( adapter, internalListener ).create().show();
+        // Create and launch the dialog
+        builder.create().show();
     }
     
     /**
