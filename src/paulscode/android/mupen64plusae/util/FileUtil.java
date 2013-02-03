@@ -340,7 +340,7 @@ public class FileUtil
         {
             FileChannel chan = stream.getChannel();
             MappedByteBuffer buf = chan.map( FileChannel.MapMode.READ_ONLY, 0, chan.size() );
-            return Charset.forName( "UTF" ).decode( buf ).toString();
+            return Charset.forName( "UTF-8" ).decode( buf ).toString();
         }
         finally
         {
