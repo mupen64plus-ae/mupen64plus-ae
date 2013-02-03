@@ -23,43 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 //static BOOL g_bHiliteRGBAHack = FALSE;
 
-//const char * sc_colcombtypes32[32] =
-//{
-//  "Combined    ", "Texel0      ",
-//  "Texel1      ", "Primitive   ", 
-//  "Shade       ", "Environment ",
-//  "1           ", "CombAlp     ",
-//  "Texel0_Alpha", "Texel1_Alpha",
-//  "Prim_Alpha  ", "Shade_Alpha ",
-//  "Env_Alpha   ", "LOD_Fraction",
-//  "PrimLODFrac ", "K5          ",
-//  "?           ", "?           ",
-//  "?           ", "?           ",
-//  "?           ", "?           ",
-//  "?           ", "?           ",
-//  "?           ", "?           ",
-//  "?           ", "?           ",
-//  "?           ", "?           ",
-//  "?           ", "0           "
-//};
-//const char *sc_colcombtypes16[16] =
-//{
-//  "Combined    ", "Texel0      ",
-//  "Texel1      ", "Prim        ", 
-//  "Shade       ", "Environment ",
-//  "1           ", "CombAlp     ",
-//  "Texel0_Alpha", "Texel1_Alpha",
-//  "Prim_Alp    ", "Shade_Alpha ",
-//  "Env_Alpha   ", "LOD_Fraction",
-//  "PrimLOD_Frac", "0           "
-//};
-//const char *sc_colcombtypes8[8] =
-//{
-//  "Combined    ", "Texel0      ",
-//  "Texel1      ", "Primitive   ", 
-//  "Shade       ", "Environment ",
-//  "1           ", "0           ",
-//};
 
 #ifdef DEBUGGER
 const char *constStrs[] = {
@@ -309,13 +272,6 @@ COLOR CColorCombiner::GetConstFactor(uint32 colorFlag, uint32   alphaFlag, uint3
 //*****************************************************************************
 //
 //*****************************************************************************
-//*****************************************************************************
-//
-//*****************************************************************************
-
-//*****************************************************************************
-//
-//*****************************************************************************
 bool    gUsingPrimColour = false;
 bool    gUsingEnvColour = false;
 
@@ -362,8 +318,8 @@ bool IsTxtrUsed(N64CombinerType &m)
 
 void CColorCombiner::InitCombinerMode(void)
 {
-#ifdef DEBUGGER
     LOG_UCODE(cycleTypeStrs[gRDP.otherMode.cycle_type]);
+#ifdef DEBUGGER
 
     if( debuggerDropDecodedMux )
     {

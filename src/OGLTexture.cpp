@@ -95,7 +95,7 @@ bool COGLTexture::StartUpdate(DrawInfo *di)
 
 void COGLTexture::EndUpdate(DrawInfo *di)
 {
-    COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);	// we need this to check if the GL extension is avaible
+    COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext); // we need this to check if the GL extension is avaible
 
     glBindTexture(GL_TEXTURE_2D, m_dwTextureName);
     OPENGL_CHECK_ERRORS;
@@ -109,7 +109,7 @@ void COGLTexture::EndUpdate(DrawInfo *di)
         int m_maximumAnistropy = pcontext->getMaxAnisotropicFiltering(); //if getMaxAnisotropicFiltering() return more than 0, so aniso is supported and maxAnisotropicFiltering is set
 
         // Set Anisotropic filtering (mipmapping have to be activated, aniso filtering is not effective without)
-        if( m_maximumAnistropy )	
+        if( m_maximumAnistropy )
         {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maximumAnistropy);
             OPENGL_CHECK_ERRORS;

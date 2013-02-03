@@ -97,11 +97,6 @@ inline bool isTexel(uint8 val)
         return false;
 }
 
-
-extern const char * sc_colcombtypes32[];
-extern const char *sc_colcombtypes16[];
-extern const char *sc_colcombtypes8[];
-
 COLOR CalculateConstFactor(uint32 colorOp, uint32 alphaOp, uint32 curCol=0);
 
 #endif
