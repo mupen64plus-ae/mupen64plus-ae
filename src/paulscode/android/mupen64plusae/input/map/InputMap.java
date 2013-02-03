@@ -34,6 +34,12 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
  */
 public class InputMap extends SerializableMap
 {
+    // Default maps for various popular devices
+    public static final String DEFAULT_INPUT_MAP_STRING_OUYA = "0:22,1:21,2:20,3:19,4:100,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4,32:97";
+    public static final String DEFAULT_INPUT_MAP_STRING_PS3 = "0:22,1:21,2:20,3:19,4:108,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
+    public static final String DEFAULT_INPUT_MAP_STRING_XBOX360 = "0:-31,1:-32,2:-33,3:-34,4:108,5:-23,6:99,7:96,8:-25,9:-26,10:-27,11:-28,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
+    public static final String DEFAULT_INPUT_MAP_STRING_XPERIA_PLAY = "0:22,1:21,2:20,3:19,4:108,5:102,6:99,7:23,12:103";
+    
     // @formatter:off
     /** Map flag: Input code is not mapped. */
     public static final int UNMAPPED                    = -1;

@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,19 +35,26 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
+import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
+import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -101,6 +110,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         // Get the user preferences wrapper
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        
+        // Make sure the profiles directory exists
+        new File( mUserPrefs.profileDir ).mkdirs();
         
         // Get the command info
         mCommandNames = getResources().getStringArray( R.array.inputMapActivity_entries );
@@ -266,17 +278,23 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             case R.id.menuItem_unmapAll:
                 loadProfile( "", item.getTitle() );
                 break;
-            case R.id.menuItem_default:
-                loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING, item.getTitle() );
+            case R.id.menuItem_ouya:
+                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_OUYA, item.getTitle() );
+                break;
+            case R.id.menuItem_ps3:
+                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_PS3, item.getTitle() );
                 break;
             case R.id.menuItem_xbox360:
-                loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING_XBOX360, item.getTitle() );
+                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_XBOX360, item.getTitle() );
                 break;
             case R.id.menuItem_xperiaPlay:
-                loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING_XPERIA_PLAY, item.getTitle() );
+                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_XPERIA_PLAY, item.getTitle() );
                 break;
-            case R.id.menuItem_OUYA:
-                loadProfile( UserPrefs.DEFAULT_INPUT_MAP_STRING_OUYA, item.getTitle() );
+            case R.id.menuItem_load:
+                loadProfile();
+                break;
+            case R.id.menuItem_save:
+                saveProfile();
                 break;
             case R.id.menuItem_specialVisibility:
                 mUserPrefs.putSpecialVisibility( mPlayer,
@@ -318,6 +336,89 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 refreshAllButtons();
             }
         } );
+    }
+    
+    private void loadProfile()
+    {
+        CharSequence title = getText( R.string.menuItem_fileLoad );
+        File startPath = new File( mUserPrefs.profileDir );
+        
+        Prompt.promptFile( this, title, null, startPath, new OnFileListener()
+        {
+            @Override
+            public void onFile( File file, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                    loadProfile( file );
+            }
+        } );
+    }
+    
+    private void loadProfile( File file )
+    {
+        try
+        {
+            mMap.deserialize( FileUtil.readStringFromFile( file ) );
+            mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
+            refreshAllButtons();
+        }
+        catch( IOException e )
+        {
+            Log.e( "InputMapActivity", "Error loading profile: ", e );
+            Notifier.showToast( this, R.string.toast_fileReadError );
+        }
+    }
+    
+    private void saveProfile()
+    {
+        CharSequence title = getText( R.string.menuItem_fileSave );
+        CharSequence hint = getText( R.string.hintFileSave );
+        int inputType = InputType.TYPE_CLASS_TEXT;
+        
+        Prompt.promptText( this, title, null, hint, inputType, new OnTextListener()
+        {
+            @Override
+            public void onText( CharSequence text, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    String filename = text.toString();
+                    final File file = new File( mUserPrefs.profileDir + "/" + filename );
+                    if( file.exists() )
+                    {
+                        String title = getString( R.string.confirm_title );
+                        String message = getString( R.string.confirmOverwriteFile_message, filename );
+                        Prompt.promptConfirm( InputMapActivity.this, title, message,
+                                new OnConfirmListener()
+                                {
+                                    @Override
+                                    public void onConfirm()
+                                    {
+                                        saveProfile( file );
+                                    }
+                                } );
+                    }
+                    else
+                    {
+                        saveProfile( file );
+                    }
+                }
+            }
+        } );
+    }
+    
+    private void saveProfile( File file )
+    {
+        try
+        {
+            Notifier.showToast( this, R.string.toast_savingFile, file.getName() );
+            FileUtil.writeStringToFile( file, mMap.serialize() );
+        }
+        catch( IOException e )
+        {
+            Log.e( "InputMapActivity", "Error saving profile: ", e );
+            Notifier.showToast( this, R.string.toast_fileWriteError );
+        }
     }
     
     private void refreshSpecialVisibility()

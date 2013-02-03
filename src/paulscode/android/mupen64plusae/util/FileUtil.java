@@ -24,9 +24,13 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -318,6 +322,29 @@ public class FileUtil
             {
                 Log.e( "FileUtil", "Unable to load native library '" + filename + "'", e );
             }
+        }
+    }
+    
+    public static void writeStringToFile( File file, String text ) throws IOException
+    {
+        FileWriter out = new FileWriter( file );
+        out.write( text );
+        out.close();
+    }
+    
+    public static String readStringFromFile( File file ) throws IOException
+    {
+        // From http://stackoverflow.com/a/326440/254218
+        FileInputStream stream = new FileInputStream( file );
+        try
+        {
+            FileChannel chan = stream.getChannel();
+            MappedByteBuffer buf = chan.map( FileChannel.MapMode.READ_ONLY, 0, chan.size() );
+            return Charset.forName( "UTF" ).decode( buf ).toString();
+        }
+        finally
+        {
+            stream.close();
         }
     }
 }

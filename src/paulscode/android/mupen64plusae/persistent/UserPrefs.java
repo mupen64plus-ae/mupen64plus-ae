@@ -97,6 +97,9 @@ public class UserPrefs
     /** The subdirectory containing auto save files. */
     public final String autoSaveDir;
     
+    /** The subdirectory containing input map profiles. */
+    public final String profileDir;
+    
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
     
@@ -256,7 +259,7 @@ public class UserPrefs
     /** The audio resampling algorithm to use. */
     public final String audioResampleAlg;
     
-    /** True if OUYA navigation mode is enabled.*/
+    /** True if OUYA navigation mode is enabled. */
     public final boolean isOuyaMode;
     
     // Shared preferences keys and key templates
@@ -265,14 +268,9 @@ public class UserPrefs
     // ... add more as needed
     
     // Shared preferences default values
-    public static final String DEFAULT_INPUT_MAP_STRING = "0:22,1:21,2:20,3:19,4:108,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
+    public static final String DEFAULT_INPUT_MAP_STRING = InputMap.DEFAULT_INPUT_MAP_STRING_PS3;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     // ... add more as needed
-    
-    // Commonly-used values
-    public static final String DEFAULT_INPUT_MAP_STRING_XBOX360 = "0:-31,1:-32,2:-33,3:-34,4:108,5:-23,6:99,7:96,8:-25,9:-26,10:-27,11:-28,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
-    public static final String DEFAULT_INPUT_MAP_STRING_XPERIA_PLAY = "0:22,1:21,2:20,3:19,4:108,5:102,6:99,7:23,12:103";
-    public static final String DEFAULT_INPUT_MAP_STRING_OUYA = "0:22,1:21,2:20,3:19,4:100,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4,32:97";
     
     private final SharedPreferences mPreferences;
     private final Locale mLocale;
@@ -319,6 +317,7 @@ public class UserPrefs
         gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
         slotSaveDir = gameSaveDir + "/SlotSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
+        profileDir = gameSaveDir + "/InputProfiles";
         File game = new File( selectedGame );
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
@@ -397,7 +396,7 @@ public class UserPrefs
         String navMode = mPreferences.getString( "navigationMode", "auto" );
         if( navMode.equals( "ouya" ) )
             isOuyaMode = true;
-        else if ( navMode.equals( "standard" ) )
+        else if( navMode.equals( "standard" ) )
             isOuyaMode = false;
         else
             isOuyaMode = appData.hardwareInfo.isOUYA;

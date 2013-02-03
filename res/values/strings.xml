@@ -38,9 +38,12 @@
     <!-- Input Mapping Activity -->
     <string name="menuItem_profiles">Profiles</string>
     <string name="menuItem_default">Default</string>
+    <string name="menuItem_load">Load…</string>
+    <string name="menuItem_save">Save…</string>
+    <string name="menuItem_ouya">OUYA</string>
+    <string name="menuItem_ps3">PS3</string>
     <string name="menuItem_xbox360">Xbox 360</string>
     <string name="menuItem_xperiaPlay">Xperia PLAY</string>
-    <string name="menuItem_OUYA">OUYA</string>
     <string name="menuItem_specialVisibility_show">Show special functions</string>
     <string name="menuItem_specialVisibility_hide">Hide special functions</string>
     <string name="menuItem_axisInfo">Analog info</string>
@@ -65,6 +68,8 @@
     <!-- Something happened (use '.') -->
     <string name="toast_usingSlot">Now using slot %1$d.</string>
     <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
+    <string name="toast_fileReadError">Could not read file!</string>
+    <string name="toast_fileWriteError">Could not write file!</string>
     <string name="toast_migrateSlotSavesNotFound">No files to copy.</string>
     <string name="toast_migrateSlotSavesSuccess">Migration succeeded.</string>
     <string name="toast_crashReportSent">Report sent.</string>
