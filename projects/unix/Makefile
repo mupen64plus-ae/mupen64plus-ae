@@ -133,6 +133,7 @@ ifeq ($(OS), OSX)
   endif
 
   # The mac version of SDL requires inclusion of SDL_main in the executable
+  CFLAGS += $(shell $(SDL_CONFIG) --cflags)
   LDLIBS += -ldl $(shell $(SDL_CONFIG) --libs)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
