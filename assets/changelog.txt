@@ -1,7 +1,8 @@
 [20:2.0.4]
 - Improved joystick compatibility (Nyko PlayPad, OUYA)
 - Fixed various bugs in input mapping screen
-- Added input profiles for Xperia PLAY and OUYA
+- Added ability to save custom input profiles
+- Added stock input profiles for Xperia PLAY and OUYA
 - Added OUYA mode (gamepad-only navigation)
 - Added in-app change log
 - Added icons to file/folder dialogs for Honeycomb+
