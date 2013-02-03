@@ -268,7 +268,7 @@ public class UserPrefs
     // ... add more as needed
     
     // Shared preferences default values
-    public static final String DEFAULT_INPUT_MAP_STRING = InputMap.DEFAULT_INPUT_MAP_STRING_PS3;
+    public static final String DEFAULT_INPUT_MAP_STRING = InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     // ... add more as needed
     
