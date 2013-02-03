@@ -7,29 +7,26 @@
         android:title="@string/menuItem_profiles">
         <menu>
             <item
-                android:id="@+id/menuItem_default"
-                android:title="@string/menuItem_default">
-                <menu>
-                    <item
-                        android:id="@+id/menuItem_ouya"
-                        android:title="@string/menuItem_ouya"/>
-                    <item
-                        android:id="@+id/menuItem_ps3"
-                        android:title="@string/menuItem_ps3"/>
-                    <item
-                        android:id="@+id/menuItem_xbox360"
-                        android:title="@string/menuItem_xbox360"/>
-                    <item
-                        android:id="@+id/menuItem_xperiaPlay"
-                        android:title="@string/menuItem_xperiaPlay"/>
-                </menu>
-            </item>
-            <item
                 android:id="@+id/menuItem_load"
                 android:title="@string/menuItem_load"/>
             <item
                 android:id="@+id/menuItem_save"
                 android:title="@string/menuItem_save"/>
+            <item
+                android:id="@+id/menuItem_default"
+                android:title="@string/menuItem_default"/>
+            <item
+                android:id="@+id/menuItem_ouya"
+                android:title="@string/menuItem_ouya"/>
+            <item
+                android:id="@+id/menuItem_ps3"
+                android:title="@string/menuItem_ps3"/>
+            <item
+                android:id="@+id/menuItem_xbox360"
+                android:title="@string/menuItem_xbox360"/>
+            <item
+                android:id="@+id/menuItem_xperiaPlay"
+                android:title="@string/menuItem_xperiaPlay"/>
         </menu>
     </item>
     <item
