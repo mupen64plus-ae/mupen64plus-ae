@@ -40,36 +40,6 @@
 #  define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
 #endif
 
-/****************************************************************************/
-/*
-* this function will expand 1 byte of a 4-color bit values to 2 bytes of
-* a 16 color bit value.
-*/
-static void Expand2to4( char *b4, char b2, int NumBytes )
-{
-    struct TwoBit
-    {
-        unsigned char b1 : 2;
-        unsigned char b2 : 2;
-        unsigned char b3 : 2;
-        unsigned char b4 : 2;
-    } bit2;
-
-    struct FourBit
-    {
-        unsigned char b1 : 4;
-        unsigned char b2 : 4;
-        unsigned char b3 : 4;
-        unsigned char b4 : 4;
-    } bit4;
-
-    memcpy( (void *)&bit2, (void *)&b2, 1 );
-    bit4.b3 = bit2.b1;
-    bit4.b4 = bit2.b2;
-    bit4.b1 = bit2.b3;
-    bit4.b2 = bit2.b4;
-    memcpy( (void *)b4, (void *)&bit4, NumBytes );
-}
 
 /* this stuff is necessary because the normal png_init_io() method crashes in Win32 */
 static void user_read_data(png_structp png_read, png_bytep data, png_size_t length)
@@ -122,33 +92,23 @@ BMGError ReadPNG( const char *filename,
 
     FILE * volatile     file = NULL;
     int                 BitDepth;
-    int                 BitsPerPixel;
-    int                 FixedBitDepth;
     int                 ColorType;
-    int                 ImageChannels;
     int                 InterlaceType;
     unsigned char       signature[8];
     png_structp volatile png_ptr = NULL;
     png_infop   volatile info_ptr = NULL;
     png_infop   volatile end_info = NULL;
-    png_colorp          PNGPalette = NULL;
     png_color_16       *ImageBackground = NULL;
     png_bytep           trns = NULL;
     int                 NumTrans = 0;
-    int                 i, j, k;
+    int                 i, k;
     png_color_16p       TransColors = NULL;
     png_uint_32         Width, Height;
 
-    unsigned char      *bits, *p, *q;
+    unsigned char      *bits;
     unsigned char** volatile rows = NULL;
-    int                 NumColors = 0;
-    unsigned char       BgdRed = 0;
-    unsigned char       BgdGreen = 0;
-    unsigned char       BgdBlue = 0;
-    int                 PaletteTo32 = 0;
 
     BMGError tmp;
-    unsigned int DIBLineWidth;
 
     /* error handler */
     error = setjmp( err_jmp );
@@ -223,27 +183,47 @@ BMGError ReadPNG( const char *filename,
 
     img->width = (unsigned int) Width;
     img->height = (unsigned int) Height;
-    ImageChannels = png_get_channels( png_ptr, info_ptr );
-    FixedBitDepth = BitDepth;
 
-    /* convert 2 pixel images to 4 pixel images */
-    if ( BitDepth == 2 )
-        FixedBitDepth = 4;
-
-/* There is logic in the following code that will
-    convert 16-bit grayscale images to 8-bit paletted images and
-    convert 16-bit color images to 24-bit RGB images */
-    if ( BitDepth == 16 )
-        FixedBitDepth = 8;
-    BitsPerPixel = FixedBitDepth *
-            ( ColorType & PNG_COLOR_MASK_ALPHA && !(ColorType & PNG_COLOR_MASK_COLOR)?
-            ImageChannels - 1 : ImageChannels );
-
-    img->bits_per_pixel = (unsigned char)BitsPerPixel;
+    img->bits_per_pixel = (unsigned char)32;
+    img->scan_width = Width * 4;
 
     /* convert 16-bit images to 8-bit images */
     if (BitDepth == 16)
         png_set_strip_16(png_ptr);
+
+    /* These are not really required per Rice format spec,
+     * but is done just in case someone uses them.
+     */
+    /* convert palette color to rgb color */
+    if (ColorType == PNG_COLOR_TYPE_PALETTE) {
+        png_set_palette_to_rgb(png_ptr);
+        ColorType = PNG_COLOR_TYPE_RGB;
+    }
+
+    /* expand 1,2,4 bit gray scale to 8 bit gray scale */
+    if (ColorType == PNG_COLOR_TYPE_GRAY && BitDepth < 8)
+        png_set_expand_gray_1_2_4_to_8(png_ptr);
+
+    /* convert gray scale or gray scale + alpha to rgb color */
+    if (ColorType == PNG_COLOR_TYPE_GRAY ||
+        ColorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
+        png_set_gray_to_rgb(png_ptr);
+        ColorType = PNG_COLOR_TYPE_RGB;
+    }
+
+    /* add alpha channel if any */
+    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
+        png_set_tRNS_to_alpha(png_ptr);
+        ColorType = PNG_COLOR_TYPE_RGB_ALPHA;
+    }
+
+    /* convert rgb to rgba */
+    if (ColorType == PNG_COLOR_TYPE_RGB) {
+        png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+        ColorType = PNG_COLOR_TYPE_RGB_ALPHA;
+    }
+
+    png_set_bgr(png_ptr);
 
     /* set the background color if one is found */
     if ( png_get_valid(png_ptr, info_ptr, PNG_INFO_bKGD) )
@@ -253,131 +233,12 @@ BMGError ReadPNG( const char *filename,
     if ( png_get_valid( png_ptr, info_ptr, PNG_INFO_tRNS ) )
         png_get_tRNS( png_ptr, info_ptr, &trns, &NumTrans, &TransColors );
 
-    /* Get the background color if we have transparent pixels */
-    if ( NumTrans > 0 )
-    {
-        if ( NumTrans == 1 )
-        {
-    // we will shove the background color into the palette array
-    // or pixel location
-            if ( ImageBackground )
-            {
-                BgdRed   = (unsigned char)ImageBackground->red;
-                BgdGreen = (unsigned char)ImageBackground->green;
-                BgdBlue  = (unsigned char)ImageBackground->blue;
-            }
-    // if the alpha component == 0 then set the transparenct index
-    // and let the user deal with it
-            else if ( trns[0] == 0 )
-                img->transparency_index = 0;
-    // otherwise we must perform blending so we will need to create
-    // a 32-bit ARGB image.
-            else
-                PaletteTo32 = 1;
-        }
-    // if we have more than 1 transparent color then create a 32-bit ARGB
-    // image
-        else
-            PaletteTo32 = 1;
-    }
-
-    /* convert all palette based images to 8-bit arrays */
-    if ( BitDepth < 8 && PaletteTo32 == 1 )
-    {
-        BitDepth = 8;
-        png_set_packing(png_ptr);
-    }
-
-    /* calculate the the scan line width */
-/* 8 & 16-bit images with an alpha component are converted to 32-bit
-    true color images in order to retain the alpha component in the bitmap */
-    if ( ColorType & PNG_COLOR_MASK_ALPHA && BitsPerPixel == 8 )
-    {
-        img->bits_per_pixel = 32U;
-        DIBLineWidth = 4U * (unsigned int) Width;
-    }
-/* paletted images with more than 1 transparency index or a non-zero alpha
-    component are converted to 32-bit ABGR images */
-    else if ( ColorType & PNG_COLOR_MASK_PALETTE && PaletteTo32 == 1 )
-    {
-        img->bits_per_pixel = 32U;
-        DIBLineWidth = 4U * (unsigned int) Width;
-    }
-    else
-    {
-        DIBLineWidth = img->scan_width = ( BitsPerPixel * (unsigned int) Width + 7 ) / 8;
-        if ( img->opt_for_bmp > 0 && img->scan_width % 4 )
-            img->scan_width += 4 - img->scan_width % 4;
-    }
-
-/* Determine palette parameters.  We will not create a palette for
-    grayscale images that have an alpha component.  Those images will be
-    expanded to 32-bit true color images in order to retain the alpha
-    component in the bitmap. */
-    if ( BitsPerPixel <= 8 && !(ColorType & PNG_COLOR_MASK_ALPHA))
-    {
-        if ( ColorType & PNG_COLOR_MASK_PALETTE )
-        {
-            png_get_PLTE( png_ptr, info_ptr, &PNGPalette, &NumColors );
-            if ( NumTrans == 1 && PaletteTo32 == 0 && ImageBackground != NULL )
-            {
-                PNGPalette[0].red   =
-                        AlphaComp(PNGPalette[0].red,   trns[0], BgdRed);
-                PNGPalette[0].green =
-                        AlphaComp(PNGPalette[0].green, trns[0], BgdGreen);
-                PNGPalette[0].blue  =
-                        AlphaComp(PNGPalette[0].blue,  trns[0], BgdBlue);
-            }
-        }
-        else  /* gray scale */
-            NumColors = 1 << (BitDepth == 2 ? 2 : FixedBitDepth);
-    }
-
-    /* set up palette parameters */
-    if ( PaletteTo32 != 1 && BitsPerPixel <= 8 &&
-        !(ColorType & PNG_COLOR_MASK_ALPHA) )
-    {
-        img->palette_size = (unsigned short)NumColors;
-        img->bytes_per_palette_entry = img->opt_for_bmp > 0 ? 4U : 3U;
-    }
+    img->palette_size = (unsigned short)0;
+    img->bytes_per_palette_entry = 4U;
 
     tmp = AllocateBMGImage( img );
     if ( tmp != BMG_OK )
         longjmp( err_jmp, (int)tmp );
-
-
-    if ( img->palette != NULL )
-    {
-        /* color palette */
-        if ( ColorType & PNG_COLOR_MASK_PALETTE )
-        {
-            bits = img->palette;
-            for ( i = 0; i < NumColors; 
-                        i++, bits += img->bytes_per_palette_entry )
-            {
-                bits[2] = PNGPalette[i].red;
-                bits[1] = PNGPalette[i].green;
-                bits[0] = PNGPalette[i].blue;
-            }
-        }
-        else /* Gray scale palette */
-        {
-            j = 255 / (NumColors - 1);
-            bits = img->palette;
-            for ( i = 0; i < NumColors; 
-                        i++, bits += img->bytes_per_palette_entry )
-            {
-                memset( (void *)bits, i*j, 3 );
-            }
-
-            if ( NumTrans == 1 && ImageBackground != NULL )
-            {
-                img->palette[2] = BgdRed;
-                img->palette[1] = BgdGreen;
-                img->palette[0] = BgdBlue;
-            }
-        }
-    }
 
     png_read_update_info( png_ptr, info_ptr );
 
@@ -397,116 +258,113 @@ BMGError ReadPNG( const char *filename,
     /* read the entire image into rows */
     png_read_image( png_ptr, rows );
 
-/* extract bits
-    The following logic is convoluted compared to the simple examples
-    provided with the source.  I wrote the code this way to ensure that
-    hBitmap cantained the minimal amount of information needed to store
-    the image as well as capturing all alpha components */
     bits = img->bits + (Height - 1) * img->scan_width;
     for ( i = 0; i < (int)Height; i++ )
     {
-        p = rows[i];
-        switch ( BitDepth )
-        {
-            case 1:
-            case 4:
-                memcpy((void *)bits, (void *)p, DIBLineWidth);
-                break;
-            case 2:
-                for ( j = 0; j < (int)(Width/2); j += 2 )
-                    Expand2to4((char*)&bits[j], p[j/2], 2);
-                if ( Width % 2 )
-                    Expand2to4((char*)&bits[Width/2+1], p[Width/4+1], 1);
-                break;
-            case 8:
-                /* 16-bit images were converted to 8-bit */
-            case 16:
-                /* this section for data with alpha components */
-                if ( ColorType & PNG_COLOR_MASK_ALPHA )
-                {
-        /* expand this format to a 32-bit true color image so that
-                    the alpha term is retained in the bitmap */
-                    if ( BitsPerPixel == 8 )
-                    {
-                        for ( q = bits; q < bits + img->scan_width;
-                                        q += 4, p+=2)
-                        {
-                            memset( (void *)q, *p, 3 );
-                            q[3] = p[1];
-                        }
-                    }
-                    else  /* BitsPerPixel == 32 */
-                    {
-                        for ( j = 0; j < (int)(4*Width); j += 4 )
-                        {
-                            bits[j+3] = p[j+3];
-                            bits[j+2] = p[j  ];
-                            bits[j+1] = p[j+1];
-                            bits[j  ] = p[j+2];
-                        }
-                    }
-                }
-        /* this section is for paletted images that contain multiple
-                transparency values or non-zero alpha transparencies */
-                else if ( PaletteTo32 == 1 )
-                {
-                    for ( q = bits; q < bits + img->scan_width; q += 4, p++ )
-                    {
-                        png_colorp pal = PNGPalette + *p;
-                        q[0] = pal->blue;
-                        q[1] = pal->green;
-                        q[2] = pal->red;
-                        if ( *p >= NumTrans )
-                            q[3] = 0xFF;
-                        else
-                            q[3] = trns[*p];
-                    }
-                }
-                /* no alpha component */
-                else
-                {
-                    if ( BitsPerPixel == 8 )
-                        memcpy( (void *)bits, (void *)p, DIBLineWidth );
-                    else /* BitsPerPixel == 24 */
-                    {
-                        for ( j = 0; j < (int)(3*Width); j += 3 )
-                        {
-                            if ( TransColors != NULL &&
-                                        ImageBackground != NULL )
-                            {
-                                if ( TransColors->red == p[j] &&
-                                        TransColors->green == p[j+1] &&
-                                        TransColors->blue == p[j+2] )
-                                {
-                                    bits[j+2] = BgdRed;
-                                    bits[j+1] = BgdGreen;
-                                    bits[j  ] = BgdBlue;
-                                }
-                                else
-                                {
-                                    bits[j+2] = p[j  ];
-                                    bits[j+1] = p[j+1];
-                                    bits[j  ] = p[j+2];
-                                }
-                            }
-                            else
-                            {
-                                bits[j+2] = p[j  ];
-                                bits[j+1] = p[j+1];
-                                bits[j  ] = p[j+2];
-                            }
-                        }
-                    }
-                }
-                break;
-        }
-
+        memcpy(bits, rows[i], 4*Width);
         bits -= img->scan_width;
     }
 
     free( rows[0] );
     free( rows );
     png_read_end( png_ptr, info_ptr );
+    png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, (png_infop *) &end_info);
+    fclose( file );
+
+    return BMG_OK;
+}
+
+BMGError ReadPNGInfo( const char *filename,
+        struct BMGImageStruct * volatile img )
+{
+    jmp_buf             err_jmp;
+    int                 error;
+
+    FILE * volatile     file = NULL;
+    int                 BitDepth;
+    int                 ColorType;
+    int                 InterlaceType;
+    unsigned char       signature[8];
+    png_structp volatile png_ptr = NULL;
+    png_infop   volatile info_ptr = NULL;
+    png_infop   volatile end_info = NULL;
+    png_uint_32         Width, Height;
+
+    /* error handler */
+    error = setjmp( err_jmp );
+    if (error != 0)
+    {
+        if (end_info != NULL)
+            png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, (png_infop *) &end_info);
+        else if (info_ptr != NULL)
+            png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, NULL);
+        else if (png_ptr != NULL)
+            png_destroy_read_struct((png_structp *) &png_ptr, NULL, NULL);
+        if (img)
+            FreeBMGImage(img);
+        if (file)
+            fclose(file);
+        SetLastBMGError((BMGError) error);
+        return (BMGError) error;
+    }
+
+    if ( img == NULL )
+        longjmp ( err_jmp, (int)errInvalidBMGImage );
+
+    file = fopen( filename, "rb" );
+    if ( !file || fread( signature, 1, 8, file ) != 8)
+        longjmp ( err_jmp, (int)errFileOpen );
+
+    /* check the signature */
+    if ( png_sig_cmp( signature, 0, 8 ) != 0 )
+        longjmp( err_jmp, (int)errUnsupportedFileFormat );
+
+    /* create a pointer to the png read structure */
+    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, NULL, NULL );
+    if ( !png_ptr )
+        longjmp( err_jmp, (int)errMemoryAllocation );
+
+    /* create a pointer to the png info structure */
+    info_ptr = png_create_info_struct( png_ptr );
+    if ( !info_ptr )
+        longjmp( err_jmp, (int)errMemoryAllocation );
+
+    /* create a pointer to the png end-info structure */
+    end_info = png_create_info_struct(png_ptr);
+    if (!end_info)
+        longjmp( err_jmp, (int)errMemoryAllocation );
+
+    /* bamboozle the PNG longjmp buffer */
+    /*generic PNG error handler*/
+    /* error will always == 1 which == errLib */
+//    error = png_setjmp(png_ptr);
+    error = setjmp( png_jmpbuf( png_ptr ) );
+    if ( error > 0 )
+        longjmp( err_jmp, error );
+
+    /* set function pointers in the PNG library, for read callbacks */
+    png_set_read_fn(png_ptr, (png_voidp) file, user_read_data);
+
+    /*let the read functions know that we have already read the 1st 8 bytes */
+    png_set_sig_bytes( png_ptr, 8 );
+
+    /* read all PNG data up to the image data */
+    png_read_info( png_ptr, info_ptr );
+
+    /* extract the data we need to form the HBITMAP from the PNG header */
+    png_get_IHDR( png_ptr, info_ptr, &Width, &Height, &BitDepth, &ColorType,
+        &InterlaceType, NULL, NULL);
+
+    img->width = (unsigned int) Width;
+    img->height = (unsigned int) Height;
+
+    img->bits_per_pixel = (unsigned char)32;
+    img->scan_width = Width * 4;
+
+    img->palette_size = (unsigned short)0;
+    img->bytes_per_palette_entry = 4U;
+    img->bits = NULL;
+
     png_destroy_read_struct((png_structp *) &png_ptr, (png_infop *) &info_ptr, (png_infop *) &end_info);
     fclose( file );
 

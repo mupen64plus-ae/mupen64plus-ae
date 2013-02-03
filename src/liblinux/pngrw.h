@@ -40,6 +40,8 @@ extern "C" {
 
 extern
 BMGError  ReadPNG( const char *filename, struct BMGImageStruct * volatile img );
+extern
+BMGError  ReadPNGInfo( const char *filename, struct BMGImageStruct * volatile img );
 
 extern
 BMGError  WritePNG( const char *filename,
