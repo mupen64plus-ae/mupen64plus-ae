@@ -46,8 +46,8 @@ import paulscode.android.mupen64plusae.util.Utility;
  * 
  * <pre>
  * {@code
- * mDpadR = true; notifyChanges(); mDpadL = false; notifyChanged(); // Inefficient
- * mDpadR = true; mDpadL = false; notifyChanged(); // Better
+ * buttons[0] = true; notifyChanged(); buttons[1] = false; notifyChanged(); // Inefficient
+ * buttons[0] = true; buttons[1] = false; notifyChanged(); // Better
  * }
  * </pre>
  * 
