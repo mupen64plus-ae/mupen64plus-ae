@@ -147,8 +147,9 @@ public class InputMap extends SerializableMap
      */
     public void map( int inputCode, int command )
     {
-        // Call the private method, notifying listeners of the change.
-        mapInput( inputCode, command );
+        // Map the input if a valid index was given
+        if( command >= 0 && command < NUM_MAPPABLES && inputCode != 0 )
+            mMap.put( inputCode, command );
     }
     
     /**
@@ -204,18 +205,5 @@ public class InputMap extends SerializableMap
             }
         }
         return result.trim();
-    }
-    
-    /**
-     * Maps an input code to an N64 control or Mupen64Plus function.
-     * 
-     * @param inputCode The standardized input code to be mapped.
-     * @param command The index to the N64/Mupen command.
-     */
-    private void mapInput( int inputCode, int command )
-    {
-        // Map the input if a valid index was given
-        if( command >= 0 && command < NUM_MAPPABLES && inputCode != 0 )
-            mMap.put( inputCode, command );
     }
 }
