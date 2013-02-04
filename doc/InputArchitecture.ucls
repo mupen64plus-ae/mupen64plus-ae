@@ -3,7 +3,7 @@
   <class id="1" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.AbstractController" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/AbstractController.java" 
     binary="false">    
-    <position height="-1" width="-1" x="865" y="77"/>    
+    <position height="-1" width="-1" x="360" y="77"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -12,7 +12,7 @@
   <class id="2" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.PeripheralController" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/PeripheralController.java" 
     binary="false">    
-    <position height="-1" width="-1" x="630" y="263"/>    
+    <position height="-1" width="-1" x="615" y="263"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -21,7 +21,7 @@
   <class id="3" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.TouchController" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/TouchController.java" 
     binary="false">    
-    <position height="-1" width="-1" x="1108" y="254"/>    
+    <position height="-1" width="-1" x="86" y="263"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -29,7 +29,7 @@
   </class>  
   <class id="4" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.map.InputMap" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/map/InputMap.java" binary="false">    
-    <position height="-1" width="-1" x="744" y="502"/>    
+    <position height="-1" width="-1" x="724" y="468"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -38,7 +38,7 @@
   <class id="5" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.provider.AxisProvider" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/provider/AxisProvider.java" 
     binary="false">    
-    <position height="-1" width="-1" x="215" y="749"/>    
+    <position height="-1" width="-1" x="215" y="891"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -47,7 +47,7 @@
   <class id="6" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.provider.KeyProvider" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/provider/KeyProvider.java" 
     binary="false">    
-    <position height="-1" width="-1" x="500" y="766"/>    
+    <position height="-1" width="-1" x="500" y="908"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -55,42 +55,42 @@
   </class>  
   <class id="7" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.map.TouchMap" 
     project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/map/TouchMap.java" binary="false">    
-    <position height="-1" width="-1" x="1241" y="476"/>    
+    <position height="-1" width="-1" x="207" y="476"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
   <interface id="8" corner="BOTTOM_RIGHT" language="java" name="android.view.View.OnGenericMotionListener" 
-    project="mupen64plus" file="C:/Program Files (x86)/Android/android-sdk/platforms/android-16/android.jar" 
+    project="mupen64plus" file="C:/Program Files (x86)/Android/android-sdk/platforms/android-17/android.jar" 
     binary="true">    
-    <position height="-1" width="-1" x="131" y="978"/>    
+    <position height="-1" width="-1" x="131" y="1155"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </interface>  
   <interface id="9" corner="BOTTOM_RIGHT" language="java" name="android.content.DialogInterface.OnKeyListener" 
-    project="mupen64plus" file="C:/Program Files (x86)/Android/android-sdk/platforms/android-16/android.jar" 
+    project="mupen64plus" file="C:/Program Files (x86)/Android/android-sdk/platforms/android-17/android.jar" 
     binary="true">    
-    <position height="-1" width="-1" x="607" y="978"/>    
+    <position height="-1" width="-1" x="607" y="1155"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </interface>  
   <interface id="10" corner="BOTTOM_RIGHT" language="java" name="android.view.View.OnKeyListener" project="mupen64plus" 
-    file="C:/Program Files (x86)/Android/android-sdk/platforms/android-16/android.jar" binary="true">    
-    <position height="-1" width="-1" x="383" y="978"/>    
+    file="C:/Program Files (x86)/Android/android-sdk/platforms/android-17/android.jar" binary="true">    
+    <position height="-1" width="-1" x="383" y="1155"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </interface>  
   <interface id="11" corner="BOTTOM_RIGHT" language="java" name="android.view.View.OnTouchListener" 
-    project="mupen64plus" file="C:/Program Files (x86)/Android/android-sdk/platforms/android-16/android.jar" 
+    project="mupen64plus" file="C:/Program Files (x86)/Android/android-sdk/platforms/android-17/android.jar" 
     binary="true">    
-    <position height="-1" width="-1" x="986" y="408"/>    
+    <position height="-1" width="-1" x="-23" y="408"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -99,16 +99,16 @@
   <class id="12" corner="BOTTOM_RIGHT" language="java" 
     name="paulscode.android.mupen64plusae.input.provider.SensorProvider" project="mupen64plus" 
     file="/mupen64plus/src/paulscode/android/mupen64plusae/input/provider/SensorProvider.java" binary="false">    
-    <position height="-1" width="-1" x="772" y="757"/>    
+    <position height="-1" width="-1" x="772" y="882"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
   <interface id="13" corner="BOTTOM_RIGHT" language="java" name="android.hardware.SensorEventListener" 
-    project="mupen64plus" file="C:/Program Files (x86)/Android/android-sdk/platforms/android-16/android.jar" 
+    project="mupen64plus" file="C:/Program Files (x86)/Android/android-sdk/platforms/android-17/android.jar" 
     binary="true">    
-    <position height="-1" width="-1" x="866" y="987"/>    
+    <position height="-1" width="-1" x="866" y="1164"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -117,7 +117,7 @@
   <class id="14" corner="BOTTOM_RIGHT" language="java" 
     name="paulscode.android.mupen64plusae.input.provider.AbstractProvider" project="mupen64plus" 
     file="/mupen64plus/src/paulscode/android/mupen64plusae/input/provider/AbstractProvider.java" binary="false">    
-    <position height="-1" width="-1" x="500" y="542"/>    
+    <position height="-1" width="-1" x="500" y="626"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
@@ -135,89 +135,130 @@
   <class id="16" corner="BOTTOM_RIGHT" language="java" 
     name="paulscode.android.mupen64plusae.input.provider.AxisProvider.GenericMotionListener" project="mupen64plus" 
     file="/mupen64plus/src/paulscode/android/mupen64plusae/input/provider/AxisProvider.java" binary="false">    
-    <position height="-1" width="-1" x="215" y="850"/>    
+    <position height="-1" width="-1" x="215" y="1009"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="false" private="false"/>    
     </display>  
   </class>  
   <class id="17" corner="BOTTOM_RIGHT" language="java" name="android.view.View" project="mupen64plus" 
-    file="C:/Program Files (x86)/Android/android-sdk/platforms/android-16/android.jar" binary="true">    
-    <position height="-1" width="-1" x="985" y="481"/>    
+    file="C:/Program Files (x86)/Android/android-sdk/platforms/android-17/android.jar" binary="true">    
+    <position height="-1" width="-1" x="-24" y="555"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
-  <association id="18">    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="19" name="mInputMap"/>      
-      <multiplicity id="20" minimum="0" maximum="1"/>    
+  <class id="18" corner="BOTTOM_RIGHT" language="java" name="paulscode.android.mupen64plusae.input.map.PlayerMap" 
+    project="mupen64plus" file="/mupen64plus/src/paulscode/android/mupen64plusae/input/map/PlayerMap.java" 
+    binary="false">    
+    <position height="-1" width="-1" x="947" y="476"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="true" package="true" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="19" corner="BOTTOM_RIGHT" language="java" 
+    name="paulscode.android.mupen64plusae.input.AbstractController.State" project="mupen64plus" 
+    file="/mupen64plus/src/paulscode/android/mupen64plusae/input/AbstractController.java" binary="false">    
+    <position height="-1" width="-1" x="609" y="85"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <association id="20">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="21" name="mState">        
+        <position height="15" width="42" x="465" y="117"/>      
+      </attribute>      
+      <multiplicity id="22" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
+    <end type="TARGET" refId="19" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="21">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
+  <generalization id="23">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="14"/>  
   </generalization>  
-  <realization id="22">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="8"/>  
-  </realization>  
-  <nesting id="23">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="11"/>  
+  <nesting id="24">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="19"/>  
   </nesting>  
-  <realization id="24">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <generalization id="25">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="14"/>  
-  </generalization>  
-  <realization id="26">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="11"/>  
-  </realization>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <generalization id="28">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="14"/>  
-  </generalization>  
-  <realization id="29">    
+  <realization id="25">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="15"/>  
   </realization>  
+  <association id="26">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="27" name="mTouchMap"/>      
+      <multiplicity id="28" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="29">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
   <generalization id="30">    
-    <end type="SOURCE" refId="12"/>    
+    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="14"/>  
   </generalization>  
   <realization id="31">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="9"/>  
   </realization>  
-  <nesting id="32">    
+  <realization id="32">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="10"/>  
+  </realization>  
+  <realization id="33">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="11"/>  
+  </realization>  
+  <nesting id="34">    
     <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="16"/>  
   </nesting>  
-  <realization id="33">    
+  <realization id="35">    
     <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="13"/>  
   </realization>  
-  <association id="34">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="35" name="mTouchMap"/>      
-      <multiplicity id="36" minimum="0" maximum="1"/>    
+  <generalization id="36">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="37">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="14"/>  
+  </generalization>  
+  <realization id="38">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="8"/>  
+  </realization>  
+  <association id="39">    
+    <bendpoint x="835" y="343"/>    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="40" name="mPlayerMap"/>      
+      <multiplicity id="41" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
+    <end type="TARGET" refId="18" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="37">    
+  <nesting id="42">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="11"/>  
+  </nesting>  
+  <association id="43">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="44" name="mInputMap"/>      
+      <multiplicity id="45" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="46">    
     <end type="SOURCE" refId="14"/>    
     <end type="TARGET" refId="15"/>  
   </nesting>  
