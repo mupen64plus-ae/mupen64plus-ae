@@ -109,4 +109,24 @@ public class PlayerMap extends SerializableMap
                 mMap.removeAt( index );
         }
     }
+    
+    public void removeUnavailableMappings()
+    {
+        for( int i = mMap.size() - 1; i >= 0; i-- )
+        {
+            int id = mMap.keyAt( i );
+            if( !AbstractProvider.isHardwareAvailable( id ) )
+            {
+                Log.v( "PlayerMap", "Removing device " + id + " from map" );
+                mMap.removeAt( i );
+            }
+        }
+    }
+    
+    @Override
+    public void deserialize( String s )
+    {
+        super.deserialize( s );
+        removeUnavailableMappings();
+    }
 }
