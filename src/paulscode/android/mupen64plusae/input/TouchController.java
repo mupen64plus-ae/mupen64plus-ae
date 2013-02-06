@@ -298,7 +298,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                 
                 if( prevIndex != TouchMap.UNMAPPED )
                 {
-                    if( mTouchMap.autoHoldImages[prevIndex] == null )
+                    if( mTouchMap.autoHoldImages[prevIndex] == null
+                            || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
                     {
                         // Release previous (non-auto-hold) button
                         setTouchState( prevIndex, false );
@@ -331,7 +332,8 @@ public class TouchController extends AbstractController implements OnTouchListen
         
         if( index != TouchMap.UNMAPPED )
         {
-            if( mTouchMap.autoHoldImages[index] == null )
+            if( mTouchMap.autoHoldImages[index] == null
+                    || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
                 // Press and release (non-auto-hold) button
                 setTouchState( index, touched );
