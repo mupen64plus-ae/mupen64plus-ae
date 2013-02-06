@@ -126,15 +126,14 @@
                             android:key="touchscreenRefresh"
                             android:summary="@string/selectedValue"
                             android:title="@string/touchscreenRefresh_title" />
-                            
                         <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                            android:defaultValue="@string/autoHoldMethod_default"
+                            android:defaultValue="@string/touchscreenAutoHold_default"
                             android:dependency="touchscreenEnabled"
-                            android:entries="@array/autoHoldMethod_entries"
-                            android:entryValues="@array/autoHoldMethod_values"
-                            android:key="autoHoldMethod"
+                            android:entries="@array/touchscreenAutoHold_entries"
+                            android:entryValues="@array/touchscreenAutoHold_values"
+                            android:key="touchscreenAutoHold"
                             android:summary="@string/selectedValue"
-                            android:title="@string/autoHoldMethod_title" />
+                            android:title="@string/touchscreenAutoHold_title" />
                     </PreferenceScreen>
                     <PreferenceScreen
                         android:icon="@drawable/ic_xperia"

@@ -75,18 +75,18 @@
     </string-array>
 
     <string name="touchscreenRefresh_default" translatable="false">0</string>
-    
-    <!-- AutoHold Method List -->
-    <string-array name="autoHoldMethod_entries" translatable="false">
-        <item>@string/autoHoldMethod_longPress</item>
-        <item>@string/autoHoldMethod_slideOut</item>
+
+    <!-- Touchscreen Auto-Hold Methods -->
+    <string-array name="touchscreenAutoHold_entries" translatable="false">
+        <item>@string/touchscreenAutoHold_entryLongPress</item>
+        <item>@string/touchscreenAutoHold_entrySlideOut</item>
     </string-array>
-    <string-array name="autoHoldMethod_values" translatable="false">
+    <string-array name="touchscreenAutoHold_values" translatable="false">
         <item>0</item>
         <item>1</item>
     </string-array>
 
-    <string name="autoHoldMethod_default" translatable="false">0</string>
+    <string name="touchscreenAutoHold_default" translatable="false">0</string>
 
     <!-- Xperia Play Touchpad Layouts -->
     <string-array name="touchpadLayout_entries" translatable="false">
