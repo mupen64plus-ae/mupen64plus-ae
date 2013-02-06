@@ -194,6 +194,7 @@
     <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
     <string name="touchscreenRefresh_entryFrequently">Frequently</string>
     <string name="touchscreenAutoHold_title">Button auto-hold (requires custom layout)</string>
+    <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
     <string name="touchscreenAutoHold_entryLongPress">By long-press</string>
     <string name="touchscreenAutoHold_entrySlideOut">By slide-out</string>
     <string name="touchpadLayout_title">Touchpad layout</string>

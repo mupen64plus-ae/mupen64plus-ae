@@ -55,8 +55,9 @@ public class TouchController extends AbstractController implements OnTouchListen
         public void onAutoHold( boolean pressed, int index );
     }
     
-    public static final int AUTOHOLD_METHOD_LONGPRESS = 0;
-    public static final int AUTOHOLD_METHOD_SLIDEOUT = 1;
+    public static final int AUTOHOLD_METHOD_DISABLED = 0;
+    public static final int AUTOHOLD_METHOD_LONGPRESS = 1;
+    public static final int AUTOHOLD_METHOD_SLIDEOUT = 2;
     
     /** The number of milliseconds to wait before auto-holding (long-press method). */
     private static final int AUTOHOLD_LONGPRESS_TIME = 1000;

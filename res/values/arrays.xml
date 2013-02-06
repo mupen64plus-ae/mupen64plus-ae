@@ -78,12 +78,14 @@
 
     <!-- Touchscreen Auto-Hold Methods -->
     <string-array name="touchscreenAutoHold_entries" translatable="false">
+        <item>@string/touchscreenAutoHold_entryDisabled</item>
         <item>@string/touchscreenAutoHold_entryLongPress</item>
         <item>@string/touchscreenAutoHold_entrySlideOut</item>
     </string-array>
     <string-array name="touchscreenAutoHold_values" translatable="false">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string name="touchscreenAutoHold_default" translatable="false">0</string>
