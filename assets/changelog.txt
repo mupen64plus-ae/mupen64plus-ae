@@ -4,6 +4,8 @@
 - Added ability to save custom input profiles
 - Added stock input profiles for Xperia PLAY and OUYA
 - Added OUYA mode (gamepad-only navigation)
+- Removed disconnected controllers from multi-player dialog
+- Fixed bugs in summary text for list preferences
 - Added in-app change log
 - Added icons to file/folder dialogs for Honeycomb+
 - Added plugins for R4300 emulation (incomplete)
