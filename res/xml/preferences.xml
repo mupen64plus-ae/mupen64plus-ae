@@ -85,7 +85,7 @@
                             android:key="touchscreenEnabled"
                             android:title="@string/touchscreenEnabled_title" />
 
-                        <ListPreference
+                        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                             android:defaultValue="@string/touchscreenLayout_default"
                             android:dependency="touchscreenEnabled"
                             android:entries="@array/touchscreenLayout_entries"
@@ -93,7 +93,7 @@
                             android:key="touchscreenLayout"
                             android:summary="@string/selectedValue"
                             android:title="@string/touchscreenLayout_title" />
-                        <ListPreference
+                        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                             android:defaultValue="@string/touchscreenSize_default"
                             android:dependency="touchscreenEnabled"
                             android:entries="@array/touchscreenSize_entries"
@@ -118,7 +118,7 @@
                             mupen64:stepSize="10"
                             mupen64:units="%" />
 
-                        <ListPreference
+                        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                             android:defaultValue="@string/touchscreenRefresh_default"
                             android:dependency="touchscreenEnabled"
                             android:entries="@array/touchscreenRefresh_entries"
@@ -137,7 +137,7 @@
                             android:key="touchpadEnabled"
                             android:title="@string/touchpadEnabled_title" />
 
-                        <ListPreference
+                        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                             android:defaultValue="@string/touchpadLayout_default"
                             android:dependency="touchpadEnabled"
                             android:entries="@array/touchpadLayout_entries"
@@ -223,21 +223,21 @@
                 android:key="screenVideo"
                 android:summary="@string/screenVideo_summary"
                 android:title="@string/screenVideo_title" >
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/videoOrientation_default"
                     android:entries="@array/videoOrientation_entries"
                     android:entryValues="@array/videoOrientation_values"
                     android:key="videoOrientation"
                     android:summary="@string/selectedValue"
                     android:title="@string/videoOrientation_title" />
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/videoFpsRefresh_default"
                     android:entries="@array/videoFpsRefresh_entries"
                     android:entryValues="@array/videoFpsRefresh_values"
                     android:key="videoFpsRefresh"
                     android:summary="@string/selectedValue"
                     android:title="@string/videoFpsRefresh_title" />
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/videoHardwareType_default"
                     android:entries="@array/videoHardwareType_entries"
                     android:entryValues="@array/videoHardwareType_values"
@@ -264,7 +264,7 @@
                 <PreferenceCategory
                     android:key="categoryGles2N64"
                     android:title="@string/categoryGles2N64_title" >
-                    <ListPreference
+                    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                         android:defaultValue="@string/gles2N64Frameskip_default"
                         android:entries="@array/gles2N64Frameskip_entries"
                         android:entryValues="@array/gles2N64Frameskip_values"
@@ -347,7 +347,7 @@
                     android:summary="@string/audioSwapChannels_summary"
                     android:title="@string/audioSwapChannels_title" />
 
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/audioResampleAlg_default"
                     android:entries="@array/audioResampleAlg_entries"
                     android:entryValues="@array/audioResampleAlg_values"
@@ -364,42 +364,42 @@
                 android:key="screenPlugin"
                 android:summary="@string/screenPlugin_summary"
                 android:title="@string/screenPlugin_title" >
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/pluginVideo_default"
                     android:entries="@array/pluginVideo_entries"
                     android:entryValues="@array/pluginVideo_values"
                     android:key="pluginVideo"
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginVideo_title" />
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/pluginInput_default"
                     android:entries="@array/pluginInput_entries"
                     android:entryValues="@array/pluginInput_values"
                     android:key="pluginInput"
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginInput_title" />
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/pluginAudio_default"
                     android:entries="@array/pluginAudio_entries"
                     android:entryValues="@array/pluginAudio_values"
                     android:key="pluginAudio"
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginAudio_title" />
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/pluginRsp_default"
                     android:entries="@array/pluginRsp_entries"
                     android:entryValues="@array/pluginRsp_values"
                     android:key="pluginRsp"
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginRsp_title" />
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/pluginCore_default"
                     android:entries="@array/pluginCore_entries"
                     android:entryValues="@array/pluginCore_values"
                     android:key="pluginCore"
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginCore_title" />
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/r4300Emulator_default"
                     android:entries="@array/r4300Emulator_entries"
                     android:entryValues="@array/r4300Emulator_values"
@@ -412,7 +412,7 @@
                 android:key="screenAdvanced"
                 android:summary="@string/screenAdvanced_summary"
                 android:title="@string/screenAdvanced_title" >
-                <ListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/navigationMode_default"
                     android:entries="@array/navigationMode_entries"
                     android:entryValues="@array/navigationMode_values"
@@ -487,7 +487,7 @@
         </PreferenceCategory>
     </PreferenceScreen>
 
-    <ListPreference
+    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
         android:defaultValue="@string/localeOverride_default"
         android:entryValues="@array/localeOverride_values"
         android:icon="@drawable/ic_location"
