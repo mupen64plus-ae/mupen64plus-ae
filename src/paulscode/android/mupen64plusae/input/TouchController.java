@@ -69,6 +69,9 @@ public class TouchController extends AbstractController implements OnTouchListen
     /** Whether the analog stick should be constrained to an octagon. */
     private final boolean mIsOctagonal;
     
+    /** The method used for auto holding buttons. */
+    private final int mAutoHoldMethod;
+    
     /** The touch state of each pointer. True indicates down, false indicates up. */
     private final boolean[] mTouchState = new boolean[MAX_POINTER_IDS];
     
@@ -105,13 +108,14 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param isOctagonal True if the analog stick should be constrained to an octagon.
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
-            boolean isOctagonal, Vibrator vibrator)
+            boolean isOctagonal, Vibrator vibrator, int autoHoldMethod)
     {
         mListener = listener;
         mTouchMap = touchMap;
         mIsOctagonal = isOctagonal;
         view.setOnTouchListener( this );
         mVibrator = vibrator;
+        mAutoHoldMethod = autoHoldMethod;
     }
     
     /**
@@ -259,50 +263,87 @@ public class TouchController extends AbstractController implements OnTouchListen
         int index = touched
                 ? mTouchMap.getButtonPress( xLocation, yLocation )
                 : mPointerMap.get( pid, TouchMap.UNMAPPED );
-        
-        // Set the button state if a button was actually touched
-        if( index != TouchMap.UNMAPPED )
-        {
-            // Update the pointer map
-            if( touched )
+                
+        // Update the pointer map
+        if( touched )
+        {    
+            // Check if this pointer was already mapped to a button
+            int prevIndex = mPointerMap.get( pid );    
+            if( prevIndex != index )
             {
-                // Check if this pointer was already mapped to a button
-                int prevIndex = mPointerMap.get( pid );
-                if( prevIndex >= 0 && prevIndex != index )
+                //Reinit Start Time
+                mStartTime[pid] = System.currentTimeMillis();
+                
+                if( prevIndex >= 0 )
                 {
-                    // Release the previous button
-                    setTouchState( prevIndex, false );
-                    mStartTime[pid] = System.currentTimeMillis();
                     if( mTouchMap.autoHoldImages[prevIndex] != null )
-                        mListener.onAutoHold( false, prevIndex );
-                }
-                mPointerMap.put( pid, index );
-            }
-            else
-                mPointerMap.delete( pid );
-
-            //AutoHold
-            if( mTouchMap.autoHoldImages[index] != null )
-            {
-                if(touched)
-                    setTouchState( index, true );
-                else
-                {
-                    if( timeElapsed < 1000 )
                     {
-                        mListener.onAutoHold( false, index );
-                        setTouchState( index, false );
+                        if( mAutoHoldMethod == 0 )
+                        {
+                            // Release previous AutoHold button (longPress Method)
+                            mListener.onAutoHold( false, prevIndex );
+                        }
+                        else
+                        {
+                            if( index == TouchMap.UNMAPPED )
+                            {
+                                // AutoHold previous button (SlideOut Method)
+                                mVibrator.vibrate(100);
+                                mListener.onAutoHold( true, prevIndex );
+                                setTouchState( prevIndex, true );
+                            }
+                        }
                     }
                     else
                     {
-                        mVibrator.vibrate(100);
-                        mListener.onAutoHold( true, index );
-                        setTouchState( index, true );
+                        // Release previous (non AutoHold) button
+                        setTouchState( prevIndex, false );
                     }
                 }
             }
+            mPointerMap.put( pid, index );
+        }
+        else
+            mPointerMap.delete( pid );    
+            
+            
+        if( index != TouchMap.UNMAPPED )
+        {
+            if( mTouchMap.autoHoldImages[index] != null )    
+            {    
+                if(touched)    
+                    setTouchState( index, true );    
+                else    
+                {   
+                    if( mAutoHoldMethod == 0 )
+                    {
+                        if( timeElapsed < 1000 )    
+                        {    
+                            // Release AutoHold button if < 1s (longPress Method)
+                            mListener.onAutoHold( false, index );    
+                            setTouchState( index, false );    
+                        }    
+                        else    
+                        {   
+                            // AutoHold button if > 1s (LongPress Method) 
+                            mVibrator.vibrate(100);    
+                            mListener.onAutoHold( true, index );    
+                            setTouchState( index, true );    
+                        }
+                    }
+                    else
+                    {
+                        // Release AutoHold button (SlideOut Method)
+                        mListener.onAutoHold( false, index );
+                        setTouchState( index, false );
+                    }
+                }    
+            }    
             else
-                setTouchState( index, touched );
+            {
+                // Press and Release (non AutoHold) button    
+                setTouchState( index, touched );    
+            }  
         }
     }
     

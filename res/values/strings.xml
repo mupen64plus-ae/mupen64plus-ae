@@ -193,6 +193,9 @@
     <string name="touchscreenRefresh_entryNever">Never</string>
     <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
     <string name="touchscreenRefresh_entryFrequently">Frequently</string>
+    <string name="autoHoldMethod_title">AutoHold method</string>
+    <string name="autoHoldMethod_longPress">Long press(1s)</string>
+    <string name="autoHoldMethod_slideOut">Slide out</string>
     <string name="touchpadLayout_title">Touchpad layout</string>
     <string name="touchpadLayout_entryDefault">Left pad: Analog control; Right pad: C buttons</string>
     <string name="touchpadLayout_entryReverse">Left pad: C buttons; Right pad: Analog control</string>

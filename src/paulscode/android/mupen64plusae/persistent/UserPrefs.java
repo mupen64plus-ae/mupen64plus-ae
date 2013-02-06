@@ -130,6 +130,9 @@ public class UserPrefs
     /** The number of frames over which touchscreen is redrawn (0 = disabled). */
     public final int touchscreenRefresh;
     
+    /** The method used for auto holding buttons. */
+    public final int autoHoldMethod;
+    
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
     
@@ -338,6 +341,7 @@ public class UserPrefs
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
         touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
+        autoHoldMethod = getSafeInt( mPreferences, "autoHoldMethod", 0 );
         int transparencyPercent = mPreferences.getInt( "touchscreenTransparency", 100 );
         isTouchscreenHidden = transparencyPercent == 0;
         touchscreenTransparency = ( 255 * transparencyPercent ) / 100;

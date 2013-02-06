@@ -275,7 +275,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             
             // Create the touchpad controller
             touchpadController = new TouchController( touchpadMap, inputSource, null,
-                    mUserPrefs.isOctagonalJoystick, vibrator);
+                    mUserPrefs.isOctagonalJoystick, vibrator, mUserPrefs.autoHoldMethod );
             mControllers.add( touchpadController );
             
             // Filter by source identifier
@@ -287,7 +287,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, mUserPrefs.isOctagonalJoystick, vibrator );
+                    inputSource, mOverlay, mUserPrefs.isOctagonalJoystick, vibrator, mUserPrefs.autoHoldMethod );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...
