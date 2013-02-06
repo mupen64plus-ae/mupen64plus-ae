@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: Paul Lamb, littleguy77
+ * Authors: Paul Lamb, Gillou68310, littleguy77
  */
 package paulscode.android.mupen64plusae.input;
 
@@ -24,12 +24,12 @@ import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.graphics.Point;
+import android.os.Vibrator;
 import android.util.FloatMath;
 import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.os.Vibrator;
 
 /**
  * A class for generating N64 controller commands from a touchscreen.
@@ -45,15 +45,25 @@ public class TouchController extends AbstractController implements OnTouchListen
          * @param axisFractionY The y-axis fraction, between -1 and 1, inclusive.
          */
         public void onAnalogChanged( float axisFractionX, float axisFractionY );
-
+        
         /**
-         * Called after autoHold button state changed.
-         * @param autoHold The autohold state.
-         * @param index The index of the autohold mask.
+         * Called after auto-hold button state changed.
+         * 
+         * @param pressed The auto-hold state.
+         * @param index The index of the auto-hold mask.
          */
-        public void onAutoHold( boolean autoHold, int index );
+        public void onAutoHold( boolean pressed, int index );
     }
     
+    public static final int AUTOHOLD_METHOD_LONGPRESS = 0;
+    public static final int AUTOHOLD_METHOD_SLIDEOUT = 1;
+    
+    /** The number of milliseconds to wait before auto-holding (long-press method). */
+    private static final int AUTOHOLD_LONGPRESS_TIME = 1000;
+    
+    /** The number of milliseconds of vibration when auto-hold is engaged. */
+    private static final int AUTOHOLD_VIBRATE_TIME = 100;
+
     /** The maximum number of pointers to query. */
     private static final int MAX_POINTER_IDS = 256;
     
@@ -69,7 +79,7 @@ public class TouchController extends AbstractController implements OnTouchListen
     /** Whether the analog stick should be constrained to an octagon. */
     private final boolean mIsOctagonal;
     
-    /** The method used for auto holding buttons. */
+    /** The method used for auto-holding buttons. */
     private final int mAutoHoldMethod;
     
     /** The touch state of each pointer. True indicates down, false indicates up. */
@@ -81,23 +91,22 @@ public class TouchController extends AbstractController implements OnTouchListen
     /** The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive. */
     private final int[] mPointerY = new int[MAX_POINTER_IDS];
     
-   /** The pressed start time of each pointer. */
+    /** The pressed start time of each pointer. */
     private final long[] mStartTime = new long[MAX_POINTER_IDS];
     
-    /** The time between pressed and released of each pointer. */
+    /** The time between press and release of each pointer. */
     private final long[] mElapsedTime = new long[MAX_POINTER_IDS];
     
     /**
      * The identifier of the pointer associated with the analog stick. -1 indicates the stick has
      * been released.
      */
-    private int analogPid = -1;
+    private int mAnalogPid = -1;
     
     /** The touch event source to listen to, or 0 to listen to all sources. */
     private int mSourceFilter = 0;
     
-    private static Vibrator mVibrator = null;
-    
+    private Vibrator mVibrator = null;
     
     /**
      * Instantiates a new touch controller.
@@ -108,7 +117,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param isOctagonal True if the analog stick should be constrained to an octagon.
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
-            boolean isOctagonal, Vibrator vibrator, int autoHoldMethod)
+            boolean isOctagonal, Vibrator vibrator, int autoHoldMethod )
     {
         mListener = listener;
         mTouchMap = touchMap;
@@ -216,7 +225,8 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param pointerY The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive.
      * @param maxPid Maximum ID of the pointers that have changed (speed optimization).
      */
-    private void processTouches( boolean[] touchstate, int[] pointerX, int[] pointerY, long[] elapsedTime, int maxPid )
+    private void processTouches( boolean[] touchstate, int[] pointerX, int[] pointerY,
+            long[] elapsedTime, int maxPid )
     {
         boolean analogMoved = false;
         
@@ -224,20 +234,21 @@ public class TouchController extends AbstractController implements OnTouchListen
         for( int pid = 0; pid <= maxPid; pid++ )
         {
             // Release analog if its pointer is not touching the screen
-            if( pid == analogPid && !touchstate[pid] )
+            if( pid == mAnalogPid && !touchstate[pid] )
             {
                 analogMoved = true;
-                analogPid = -1;
+                mAnalogPid = -1;
                 mState.axisFractionX = 0;
                 mState.axisFractionY = 0;
             }
             
             // Process button inputs
-            if( pid != analogPid )
-                processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid], elapsedTime[pid], pid );
+            if( pid != mAnalogPid )
+                processButtonTouch( touchstate[pid], pointerX[pid], pointerY[pid],
+                        elapsedTime[pid], pid );
             
             // Process analog inputs
-            if( touchstate[pid] && processAnalogTouch( pid, pointerX[pid], pointerY[pid]) )
+            if( touchstate[pid] && processAnalogTouch( pid, pointerX[pid], pointerY[pid] ) )
                 analogMoved = true;
         }
         
@@ -257,7 +268,8 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
      * @param pid The identifier of the touch pointer.
      */
-    private void processButtonTouch( boolean touched, int xLocation, int yLocation, long timeElapsed, int pid )
+    private void processButtonTouch( boolean touched, int xLocation, int yLocation,
+            long timeElapsed, int pid )
     {
         // Determine the index of the button that was pressed
         int index = touched
@@ -265,85 +277,94 @@ public class TouchController extends AbstractController implements OnTouchListen
                 : mPointerMap.get( pid, TouchMap.UNMAPPED );
                 
         // Update the pointer map
-        if( touched )
-        {    
+        if( !touched )
+        {
+            mPointerMap.delete( pid );
+        }
+        else
+        {
             // Check if this pointer was already mapped to a button
-            int prevIndex = mPointerMap.get( pid );    
+            int prevIndex = mPointerMap.get( pid );
+            
+            // Record the new button index in the map
+            mPointerMap.put( pid, index );
+            
+            // If mapped to a different button previously, take various actions
             if( prevIndex != index )
             {
-                //Reinit Start Time
+                // Reset auto-hold start time
                 mStartTime[pid] = System.currentTimeMillis();
                 
-                if( prevIndex >= 0 )
+                if( prevIndex != TouchMap.UNMAPPED )
                 {
-                    if( mTouchMap.autoHoldImages[prevIndex] != null )
+                    if( mTouchMap.autoHoldImages[prevIndex] == null )
                     {
-                        if( mAutoHoldMethod == 0 )
-                        {
-                            // Release previous AutoHold button (longPress Method)
-                            mListener.onAutoHold( false, prevIndex );
-                        }
-                        else
-                        {
-                            if( index == TouchMap.UNMAPPED )
-                            {
-                                // AutoHold previous button (SlideOut Method)
-                                mVibrator.vibrate(100);
-                                mListener.onAutoHold( true, prevIndex );
-                                setTouchState( prevIndex, true );
-                            }
-                        }
+                        // Release previous (non-auto-hold) button
+                        setTouchState( prevIndex, false );
                     }
                     else
                     {
-                        // Release previous (non AutoHold) button
-                        setTouchState( prevIndex, false );
+                        switch( mAutoHoldMethod )
+                        {
+                            case AUTOHOLD_METHOD_LONGPRESS:
+                                // Release previous auto-hold button (long-press method)
+                                mListener.onAutoHold( false, prevIndex );
+                                break;
+                            
+                            case AUTOHOLD_METHOD_SLIDEOUT:
+                                if( index == TouchMap.UNMAPPED )
+                                {
+                                    // Auto-hold previous button (slide-out method)
+                                    mVibrator.vibrate( AUTOHOLD_VIBRATE_TIME );
+                                    mListener.onAutoHold( true, prevIndex );
+                                    setTouchState( prevIndex, true );
+                                }
+                                break;
+                        }
                     }
                 }
             }
-            mPointerMap.put( pid, index );
         }
-        else
-            mPointerMap.delete( pid );    
-            
-            
+        
         if( index != TouchMap.UNMAPPED )
         {
-            if( mTouchMap.autoHoldImages[index] != null )    
-            {    
-                if(touched)    
-                    setTouchState( index, true );    
-                else    
-                {   
-                    if( mAutoHoldMethod == 0 )
-                    {
-                        if( timeElapsed < 1000 )    
-                        {    
-                            // Release AutoHold button if < 1s (longPress Method)
-                            mListener.onAutoHold( false, index );    
-                            setTouchState( index, false );    
-                        }    
-                        else    
-                        {   
-                            // AutoHold button if > 1s (LongPress Method) 
-                            mVibrator.vibrate(100);    
-                            mListener.onAutoHold( true, index );    
-                            setTouchState( index, true );    
-                        }
-                    }
-                    else
-                    {
-                        // Release AutoHold button (SlideOut Method)
-                        mListener.onAutoHold( false, index );
-                        setTouchState( index, false );
-                    }
-                }    
-            }    
+            if( mTouchMap.autoHoldImages[index] == null )
+            {
+                // Press and release (non-auto-hold) button
+                setTouchState( index, touched );
+            }
             else
             {
-                // Press and Release (non AutoHold) button    
-                setTouchState( index, touched );    
-            }  
+                if( touched )
+                    setTouchState( index, true );
+                else
+                {
+                    switch( mAutoHoldMethod )
+                    {
+                        case AUTOHOLD_METHOD_LONGPRESS:
+                            if( timeElapsed < AUTOHOLD_LONGPRESS_TIME )
+                            {
+                                // Release auto-hold button if < 1 second (long-press method)
+                                mListener.onAutoHold( false, index );
+                                setTouchState( index, false );
+                            }
+                            else
+                            {
+                                // Auto-hold button if > 1 second (long-press method)
+                                mVibrator.vibrate( AUTOHOLD_VIBRATE_TIME );
+                                mListener.onAutoHold( true, index );
+                                setTouchState( index, true );
+                            }
+                            break;
+                        
+                        case AUTOHOLD_METHOD_SLIDEOUT:
+                            // Release autoHold button (slide-out method)
+                            mListener.onAutoHold( false, index );
+                            setTouchState( index, false );
+                            break;
+                    }
+                }
+            }
         }
     }
     
@@ -409,9 +430,9 @@ public class TouchController extends AbstractController implements OnTouchListen
         
         // "Capture" the analog control
         if( mTouchMap.isInCaptureRange( displacement ) )
-            analogPid = pointerId;
+            mAnalogPid = pointerId;
         
-        if( pointerId == analogPid )
+        if( pointerId == mAnalogPid )
         {
             // User is controlling the analog stick
             if( mIsOctagonal )
