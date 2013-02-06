@@ -308,7 +308,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                         {
                             case AUTOHOLD_METHOD_LONGPRESS:
                                 // Release previous auto-hold button (long-press method)
-                                mListener.onAutoHold( false, prevIndex );
+                                if( mListener != null )
+                                    mListener.onAutoHold( false, prevIndex );
                                 break;
                             
                             case AUTOHOLD_METHOD_SLIDEOUT:
@@ -316,7 +317,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                                 {
                                     // Auto-hold previous button (slide-out method)
                                     mVibrator.vibrate( AUTOHOLD_VIBRATE_TIME );
-                                    mListener.onAutoHold( true, prevIndex );
+                                    if( mListener != null )
+                                        mListener.onAutoHold( true, prevIndex );
                                     setTouchState( prevIndex, true );
                                 }
                                 break;
@@ -345,21 +347,24 @@ public class TouchController extends AbstractController implements OnTouchListen
                             if( timeElapsed < AUTOHOLD_LONGPRESS_TIME )
                             {
                                 // Release auto-hold button if < 1 second (long-press method)
-                                mListener.onAutoHold( false, index );
+                                if( mListener != null )
+                                    mListener.onAutoHold( false, index );
                                 setTouchState( index, false );
                             }
                             else
                             {
                                 // Auto-hold button if > 1 second (long-press method)
                                 mVibrator.vibrate( AUTOHOLD_VIBRATE_TIME );
-                                mListener.onAutoHold( true, index );
+                                if( mListener != null )
+                                    mListener.onAutoHold( true, index );
                                 setTouchState( index, true );
                             }
                             break;
                         
                         case AUTOHOLD_METHOD_SLIDEOUT:
                             // Release autoHold button (slide-out method)
-                            mListener.onAutoHold( false, index );
+                            if( mListener != null )
+                                mListener.onAutoHold( false, index );
                             setTouchState( index, false );
                             break;
                     }
