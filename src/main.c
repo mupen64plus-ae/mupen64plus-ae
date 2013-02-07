@@ -85,8 +85,7 @@ static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
  **/
 static int is_run_through_task(OSTask_t* task)
 {
-    return (task->ucode_boot_size <= 0x1000
-        && task->ucode_boot_size >= 0);
+    return (task->ucode_boot_size <= 0x1000);
 }
 
 
