@@ -327,6 +327,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                                 // Using long-press method, release auto-hold button
                                 if( mListener != null )
                                     mListener.onAutoHold( false, prevIndex );
+                                setTouchState( prevIndex, false );
                                 break;
                             
                             case AUTOHOLD_METHOD_SLIDEOUT:
