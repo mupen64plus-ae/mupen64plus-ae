@@ -89,11 +89,13 @@ public class PeripheralController extends AbstractController implements
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
         for( AbstractProvider provider : providers )
+        {
             if( provider != null )
             {
                 mProviders.add( provider );
                 provider.registerListener( this );
             }
+        }
     }
     
     /*

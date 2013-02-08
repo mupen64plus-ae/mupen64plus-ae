@@ -66,7 +66,7 @@ public abstract class AbstractProvider
     public static final float STRENGTH_THRESHOLD = 0.5f;
     
     /** Listener management. */
-    private SubscriptionManager<AbstractProvider.OnInputListener> mPublisher;
+    private final SubscriptionManager<AbstractProvider.OnInputListener> mPublisher;
     
     /**
      * Instantiates a new abstract provider.

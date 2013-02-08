@@ -404,7 +404,8 @@ public class ConfigFile
             
             name = sectionName;
         }
-        
+
+        // TODO: Clean this method up a bit?
         /**
          * Constructor: Reads the next section of the config file, and saves it in 'parameters'
          * @param sectionName The section title.

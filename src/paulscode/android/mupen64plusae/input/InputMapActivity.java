@@ -96,7 +96,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     private List<Integer> mUnmappableInputCodes;
     
     // Widgets
-    private final Button[] mN64Button = new Button[InputMap.NUM_MAPPABLES];
+    private final Button[] mN64Buttons = new Button[InputMap.NUM_MAPPABLES];
     private TextView mFeedbackText;
     private View mSpecialFuncsView;
     private MenuItem mMenuSpecialVisibility;
@@ -250,9 +250,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     
     private void setupButton( int resId, int index )
     {
-        mN64Button[index] = (Button) findViewById( resId );
-        if( mN64Button[index] != null )
-            mN64Button[index].setOnClickListener( this );
+        mN64Buttons[index] = (Button) findViewById( resId );
+        if( mN64Buttons[index] != null )
+            mN64Buttons[index].setOnClickListener( this );
     }
     
     @Override
@@ -466,10 +466,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     public void onClick( View view )
     {
         // Handle button clicks in the mapping screen
-        for( int i = 0; i < mN64Button.length; i++ )
+        for( int i = 0; i < mN64Buttons.length; i++ )
         {
             // Find the button that was pressed
-            if( view.equals( mN64Button[i] ) )
+            if( view.equals( mN64Buttons[i] ) )
             {
                 // Popup a dialog to listen to input codes from user
                 Button button = (Button) view;
@@ -575,7 +575,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         int command = mMap.get( inputCode );
         if( command != InputMap.UNMAPPED )
         {
-            Button button = mN64Button[command];
+            Button button = mN64Buttons[command];
             refreshButton( button, strength, true );
         }
     }
@@ -610,9 +610,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     
     private void refreshAllButtons()
     {
-        for( int i = 0; i < mN64Button.length; i++ )
+        for( int i = 0; i < mN64Buttons.length; i++ )
         {
-            refreshButton( mN64Button[i], 0, mMap.isMapped( i ) );
+            refreshButton( mN64Buttons[i], 0, mMap.isMapped( i ) );
         }
         if( mListView != null )
         {

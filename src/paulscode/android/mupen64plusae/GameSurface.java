@@ -189,7 +189,7 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             {
                 mCoreThread.join();
             }
-            catch( Exception e )
+            catch( InterruptedException e )
             {
                 Log.i( "GameSurface", "Problem stopping core thread: " + e );
             }
@@ -302,7 +302,7 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             mEGLDisplay = dpy;
             mEGLSurface = surface;
         }
-        catch( Exception e )
+        catch( IllegalArgumentException e )
         {
             Log.v( "GameSurface", e.toString() );
             for( StackTraceElement s : e.getStackTrace() )
@@ -336,7 +336,7 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             egl.eglSwapBuffers( mEGLDisplay, mEGLSurface );
             
         }
-        catch( Exception e )
+        catch( IllegalArgumentException e )
         {
             Log.v( "GameSurface", "flipEGL(): " + e );
             for( StackTraceElement s : e.getStackTrace() )
