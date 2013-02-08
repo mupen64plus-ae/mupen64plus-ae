@@ -63,7 +63,7 @@ public class TouchController extends AbstractController implements OnTouchListen
     private static final int AUTOHOLD_LONGPRESS_TIME = 1000;
     
     /** The pattern vibration when auto-hold is engaged. */
-    private static final long[] AUTOHOLD_VIBRATE_PATTERN = {0, 50, 50, 50};
+    private static final long[] AUTOHOLD_VIBRATE_PATTERN = { 0, 50, 50, 50 };
     
     /** The number of milliseconds of vibration when pressing a key. */
     private static final int FEEDBACK_VIBRATE_TIME = 50;
@@ -287,46 +287,58 @@ public class TouchController extends AbstractController implements OnTouchListen
         // Update the pointer map
         if( !touched )
         {
+            // Finger lifted off screen, forget what this pointer was touching
             mPointerMap.delete( pid );
         }
         else
         {
-            // Check if this pointer was already mapped to a button
-            int prevIndex = mPointerMap.get( pid );
+            // Determine where the finger came from if is was slid
+            int prevIndex = mPointerMap.get( pid, TouchMap.UNMAPPED );
             
-            // Record the new button index in the map
+            // Finger touched somewhere on screen, remember what this pointer is touching
             mPointerMap.put( pid, index );
             
-            // If mapped to a different button previously, take various actions
             if( prevIndex != index )
             {
-                // Reset auto-hold start time
+                // Finger slid from somewhere else, act accordingly
+                // There are three possibilities:
+                // - old button --> new button
+                // - nothing --> new button
+                // - old button --> nothing
+                
+                // Reset this pointer's start time
                 mStartTime[pid] = System.currentTimeMillis();
                 
                 if( prevIndex != TouchMap.UNMAPPED )
                 {
+                    // Slid off a valid button
                     if( mTouchMap.autoHoldImages[prevIndex] == null
                             || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
                     {
-                        // Release previous (non-auto-hold) button
+                        // Slid off a non-auto-hold button
                         setTouchState( prevIndex, false );
                     }
                     else
                     {
+                        // Slid off an auto-hold button
                         switch( mAutoHoldMethod )
                         {
                             case AUTOHOLD_METHOD_LONGPRESS:
-                                // Release previous auto-hold button (long-press method)
+                                // Using long-press method, release auto-hold button
                                 if( mListener != null )
                                     mListener.onAutoHold( false, prevIndex );
                                 break;
                             
                             case AUTOHOLD_METHOD_SLIDEOUT:
+                                // Using slide-off method
                                 if( index == TouchMap.UNMAPPED )
                                 {
-                                    // Auto-hold previous button (slide-out method)
-                                    mVibrator.cancel();
-                                    mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1);
+                                    // Finger slid onto nothing, engage auto-hold button
+                                    if( mVibrator != null )
+                                    {
+                                        mVibrator.cancel();
+                                        mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1 );
+                                    }
                                     if( mListener != null )
                                         mListener.onAutoHold( true, prevIndex );
                                     setTouchState( prevIndex, true );
@@ -340,53 +352,57 @@ public class TouchController extends AbstractController implements OnTouchListen
         
         if( index != TouchMap.UNMAPPED )
         {
-            // Vibration feedback
-             if( touched && mTouchscreenFeedback && !mState.buttons[index] )
+            // Finger is on a valid button
+            
+            // Provide simple vibration feedback for any valid button when first touched
+            if( touched && mTouchscreenFeedback && !mState.buttons[index] && mVibrator != null )
             {
-                    mVibrator.cancel();
-                    mVibrator.vibrate( FEEDBACK_VIBRATE_TIME );
+                mVibrator.cancel();
+                mVibrator.vibrate( FEEDBACK_VIBRATE_TIME );
             }
-                    
-            if( mTouchMap.autoHoldImages[index] == null
+            
+            // Set the controller state accordingly
+            if( touched || mTouchMap.autoHoldImages[index] == null
                     || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
-                // Press and release (non-auto-hold) button
+                // Finger just touched a button (any kind) OR
+                // Finger just lifted off non-auto-holdable button
                 setTouchState( index, touched );
+                // Do not provide auto-hold feedback yet
             }
             else
             {
-                if( touched )
-                    setTouchState( index, true );
-                else
+                // Finger just lifted off an auto-holdable button
+                switch( mAutoHoldMethod )
                 {
-                    switch( mAutoHoldMethod )
-                    {
-                        case AUTOHOLD_METHOD_LONGPRESS:
-                            if( timeElapsed < AUTOHOLD_LONGPRESS_TIME )
-                            {
-                                // Release auto-hold button if < 1 second (long-press method)
-                                if( mListener != null )
-                                    mListener.onAutoHold( false, index );
-                                setTouchState( index, false );
-                            }
-                            else
-                            {
-                                // Auto-hold button if > 1 second (long-press method)
-                                mVibrator.cancel();
-                                mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN , -1);
-                                if( mListener != null )
-                                    mListener.onAutoHold( true, index );
-                                setTouchState( index, true );
-                            }
-                            break;
-                        
-                        case AUTOHOLD_METHOD_SLIDEOUT:
-                            // Release autoHold button (slide-out method)
+                    case AUTOHOLD_METHOD_SLIDEOUT:
+                        // Release auto-hold button if using slide-off method
+                        if( mListener != null )
+                            mListener.onAutoHold( false, index );
+                        setTouchState( index, false );
+                        break;
+                    
+                    case AUTOHOLD_METHOD_LONGPRESS:
+                        if( timeElapsed < AUTOHOLD_LONGPRESS_TIME )
+                        {
+                            // Release auto-hold if short-pressed
                             if( mListener != null )
                                 mListener.onAutoHold( false, index );
                             setTouchState( index, false );
-                            break;
-                    }
+                        }
+                        else
+                        {
+                            // Engage auto-hold if long-pressed
+                            if( mVibrator != null )
+                            {
+                                mVibrator.cancel();
+                                mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1 );
+                            }
+                            if( mListener != null )
+                                mListener.onAutoHold( true, index );
+                            setTouchState( index, true );
+                        }
+                        break;
                 }
             }
         }
