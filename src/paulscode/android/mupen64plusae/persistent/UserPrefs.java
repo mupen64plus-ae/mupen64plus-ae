@@ -124,6 +124,9 @@ public class UserPrefs
     /** True if the touchscreen is enabled. */
     public final boolean isTouchscreenEnabled;
     
+    /** True if the touchscreen feedback is enabled. */
+    public final boolean isTouchscreenFeedbackEnabled;
+    
     /** True if a custom touchscreen is provided. */
     public final boolean isTouchscreenCustom;
     
@@ -345,6 +348,7 @@ public class UserPrefs
         int transparencyPercent = mPreferences.getInt( "touchscreenTransparency", 100 );
         isTouchscreenHidden = transparencyPercent == 0;
         touchscreenTransparency = ( 255 * transparencyPercent ) / 100;
+        isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = mPreferences.getBoolean( "touchpadEnabled", false );

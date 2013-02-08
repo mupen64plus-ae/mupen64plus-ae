@@ -62,9 +62,12 @@ public class TouchController extends AbstractController implements OnTouchListen
     /** The number of milliseconds to wait before auto-holding (long-press method). */
     private static final int AUTOHOLD_LONGPRESS_TIME = 1000;
     
-    /** The number of milliseconds of vibration when auto-hold is engaged. */
-    private static final int AUTOHOLD_VIBRATE_TIME = 100;
-
+    /** The pattern vibration when auto-hold is engaged. */
+    private static final long[] AUTOHOLD_VIBRATE_PATTERN = {0, 50, 50, 50};
+    
+    /** The number of milliseconds of vibration when pressing a key. */
+    private static final int FEEDBACK_VIBRATE_TIME = 50;
+    
     /** The maximum number of pointers to query. */
     private static final int MAX_POINTER_IDS = 256;
     
@@ -82,6 +85,9 @@ public class TouchController extends AbstractController implements OnTouchListen
     
     /** The method used for auto-holding buttons. */
     private final int mAutoHoldMethod;
+    
+    /** Whether touchscreen feedback is enabled. */
+    private final boolean mTouchscreenFeedback;
     
     /** The touch state of each pointer. True indicates down, false indicates up. */
     private final boolean[] mTouchState = new boolean[MAX_POINTER_IDS];
@@ -118,7 +124,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param isOctagonal True if the analog stick should be constrained to an octagon.
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
-            boolean isOctagonal, Vibrator vibrator, int autoHoldMethod )
+            boolean isOctagonal, Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback )
     {
         mListener = listener;
         mTouchMap = touchMap;
@@ -126,6 +132,7 @@ public class TouchController extends AbstractController implements OnTouchListen
         view.setOnTouchListener( this );
         mVibrator = vibrator;
         mAutoHoldMethod = autoHoldMethod;
+        mTouchscreenFeedback = touchscreenFeedback;
     }
     
     /**
@@ -318,7 +325,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                                 if( index == TouchMap.UNMAPPED )
                                 {
                                     // Auto-hold previous button (slide-out method)
-                                    mVibrator.vibrate( AUTOHOLD_VIBRATE_TIME );
+                                    mVibrator.cancel();
+                                    mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1);
                                     if( mListener != null )
                                         mListener.onAutoHold( true, prevIndex );
                                     setTouchState( prevIndex, true );
@@ -332,6 +340,13 @@ public class TouchController extends AbstractController implements OnTouchListen
         
         if( index != TouchMap.UNMAPPED )
         {
+            // Vibration feedback
+             if( touched && mTouchscreenFeedback && !mState.buttons[index] )
+            {
+                    mVibrator.cancel();
+                    mVibrator.vibrate( FEEDBACK_VIBRATE_TIME );
+            }
+                    
             if( mTouchMap.autoHoldImages[index] == null
                     || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
@@ -357,7 +372,8 @@ public class TouchController extends AbstractController implements OnTouchListen
                             else
                             {
                                 // Auto-hold button if > 1 second (long-press method)
-                                mVibrator.vibrate( AUTOHOLD_VIBRATE_TIME );
+                                mVibrator.cancel();
+                                mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN , -1);
                                 if( mListener != null )
                                     mListener.onAutoHold( true, index );
                                 setTouchState( index, true );

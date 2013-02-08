@@ -138,11 +138,14 @@
     <string name="categoryDiagnostics_title">Diagnostics</string>
     <string name="categoryData_title">Data</string>
     <string name="categoryCrashReports_title">Crash reports</string>
+    <string name="categoryTouchscreenConfig_title">Configuration</string>
+    <string name="categoryTouchscreenAppearance_title">Appearance</string>
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
     <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
     <string name="touchscreenEnabled_title">Enable touchscreen</string>
+    <string name="touchscreenFeedback_title">Vibrate on key-press</string>
     <string name="touchpadEnabled_title">Enable touchpad</string>
     <string name="inputOctagonConstraints_title">Octagonal joystick limits</string>
     <string name="inputOctagonConstraints_summary">Constrain analog motion to an octagon, like a real N64 controller</string>

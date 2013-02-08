@@ -84,56 +84,72 @@
                             android:defaultValue="true"
                             android:key="touchscreenEnabled"
                             android:title="@string/touchscreenEnabled_title" />
+                            
+                        <PreferenceCategory
+                            android:key="categoryTouchscreenConfig"
+                            android:title="@string/categoryTouchscreenConfig_title" >
+                            <CheckBoxPreference
+                                android:defaultValue="false"
+                                android:dependency="touchscreenEnabled"
+                                android:key="touchscreenFeedback"
+                                android:title="@string/touchscreenFeedback_title" />
 
-                        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                            android:defaultValue="@string/touchscreenLayout_default"
-                            android:dependency="touchscreenEnabled"
-                            android:entries="@array/touchscreenLayout_entries"
-                            android:entryValues="@array/touchscreenLayout_values"
-                            android:key="touchscreenLayout"
-                            android:summary="@string/selectedValue"
-                            android:title="@string/touchscreenLayout_title" />
-                        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                            android:defaultValue="@string/touchscreenSize_default"
-                            android:dependency="touchscreenEnabled"
-                            android:entries="@array/touchscreenSize_entries"
-                            android:entryValues="@array/touchscreenSize_values"
-                            android:key="touchscreenSize"
-                            android:summary="@string/selectedValue"
-                            android:title="@string/touchscreenSize_title" />
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenAutoHold_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenAutoHold_entries"
+                                android:entryValues="@array/touchscreenAutoHold_values"
+                                android:key="touchscreenAutoHold"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenAutoHold_title" />
+                        </PreferenceCategory>
 
-                        <paulscode.android.mupen64plusae.persistent.PathPreference
-                            android:defaultValue="@string/pathCustomTouchscreen_default"
-                            android:dependency="touchscreenEnabled"
-                            android:key="pathCustomTouchscreen"
-                            android:title="@string/pathCustomTouchscreen_title"
-                            mupen64:selectionMode="0" />
+                        <PreferenceCategory
+                            android:key="categoryTouchscreenAppearance"
+                            android:title="@string/categoryTouchscreenAppearance_title" >
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenLayout_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenLayout_entries"
+                                android:entryValues="@array/touchscreenLayout_values"
+                                android:key="touchscreenLayout"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenLayout_title" />
+                            
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenSize_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenSize_entries"
+                                android:entryValues="@array/touchscreenSize_values"
+                                android:key="touchscreenSize"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenSize_title" />
 
-                        <paulscode.android.mupen64plusae.persistent.SeekBarPreference
-                            android:defaultValue="100"
-                            android:dependency="touchscreenEnabled"
-                            android:key="touchscreenTransparency"
-                            android:title="@string/touchscreenTransparency_title"
-                            mupen64:maximumValue="100"
-                            mupen64:stepSize="10"
-                            mupen64:units="%" />
+                            <paulscode.android.mupen64plusae.persistent.PathPreference
+                                android:defaultValue="@string/pathCustomTouchscreen_default"
+                                android:dependency="touchscreenEnabled"
+                                android:key="pathCustomTouchscreen"
+                                android:title="@string/pathCustomTouchscreen_title"
+                                mupen64:selectionMode="0" />
 
-                        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                            android:defaultValue="@string/touchscreenRefresh_default"
-                            android:dependency="touchscreenEnabled"
-                            android:entries="@array/touchscreenRefresh_entries"
-                            android:entryValues="@array/touchscreenRefresh_values"
-                            android:key="touchscreenRefresh"
-                            android:summary="@string/selectedValue"
-                            android:title="@string/touchscreenRefresh_title" />
-                        <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                            android:defaultValue="@string/touchscreenAutoHold_default"
-                            android:dependency="touchscreenEnabled"
-                            android:entries="@array/touchscreenAutoHold_entries"
-                            android:entryValues="@array/touchscreenAutoHold_values"
-                            android:key="touchscreenAutoHold"
-                            android:summary="@string/selectedValue"
-                            android:title="@string/touchscreenAutoHold_title" />
+                            <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+                                android:defaultValue="100"
+                                android:dependency="touchscreenEnabled"
+                                android:key="touchscreenTransparency"
+                                android:title="@string/touchscreenTransparency_title"
+                                mupen64:maximumValue="100"
+                                mupen64:stepSize="10"
+                                mupen64:units="%" />
+
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenRefresh_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenRefresh_entries"
+                                android:entryValues="@array/touchscreenRefresh_values"
+                                android:key="touchscreenRefresh"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenRefresh_title" />
+                        </PreferenceCategory>
                     </PreferenceScreen>
                     <PreferenceScreen
                         android:icon="@drawable/ic_xperia"
