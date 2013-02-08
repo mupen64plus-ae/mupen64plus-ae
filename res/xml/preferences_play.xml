@@ -2,6 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="screenPlay" >
 
+    <paulscode.android.mupen64plusae.persistent.PlayerMapPreference
+        android:icon="@drawable/ic_users"
+        android:key="playerMap"
+        android:summary="@string/playerMap_summary"
+        android:title="@string/playerMap_title" />
+
     <Preference
         android:icon="@drawable/ic_play"
         android:key="actionResume"
@@ -12,12 +18,6 @@
         android:key="actionRestart"
         android:summary="@string/actionRestart_summary"
         android:title="@string/actionRestart_title" />
-
-    <paulscode.android.mupen64plusae.persistent.PlayerMapPreference
-        android:icon="@drawable/ic_users"
-        android:key="playerMap"
-        android:summary="@string/playerMap_summary"
-        android:title="@string/playerMap_title" />
 
     <CheckBoxPreference
         android:defaultValue="false"

@@ -84,14 +84,15 @@
                             android:defaultValue="true"
                             android:key="touchscreenEnabled"
                             android:title="@string/touchscreenEnabled_title" />
-                            
+
                         <PreferenceCategory
-                            android:key="categoryTouchscreenConfig"
-                            android:title="@string/categoryTouchscreenConfig_title" >
+                            android:key="categoryTouchscreenBehavior"
+                            android:title="@string/categoryTouchscreenBehavior_title" >
                             <CheckBoxPreference
                                 android:defaultValue="false"
                                 android:dependency="touchscreenEnabled"
                                 android:key="touchscreenFeedback"
+                                android:summary="@string/touchscreenFeedback_summary"
                                 android:title="@string/touchscreenFeedback_title" />
 
                             <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
@@ -102,11 +103,27 @@
                                 android:key="touchscreenAutoHold"
                                 android:summary="@string/selectedValue"
                                 android:title="@string/touchscreenAutoHold_title" />
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenRefresh_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenRefresh_entries"
+                                android:entryValues="@array/touchscreenRefresh_values"
+                                android:key="touchscreenRefresh"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenRefresh_title" />
                         </PreferenceCategory>
-
                         <PreferenceCategory
                             android:key="categoryTouchscreenAppearance"
                             android:title="@string/categoryTouchscreenAppearance_title" >
+                            <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+                                android:defaultValue="100"
+                                android:dependency="touchscreenEnabled"
+                                android:key="touchscreenTransparency"
+                                android:title="@string/touchscreenTransparency_title"
+                                mupen64:maximumValue="100"
+                                mupen64:stepSize="10"
+                                mupen64:units="%" />
+
                             <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                                 android:defaultValue="@string/touchscreenLayout_default"
                                 android:dependency="touchscreenEnabled"
@@ -115,7 +132,6 @@
                                 android:key="touchscreenLayout"
                                 android:summary="@string/selectedValue"
                                 android:title="@string/touchscreenLayout_title" />
-                            
                             <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                                 android:defaultValue="@string/touchscreenSize_default"
                                 android:dependency="touchscreenEnabled"
@@ -131,24 +147,6 @@
                                 android:key="pathCustomTouchscreen"
                                 android:title="@string/pathCustomTouchscreen_title"
                                 mupen64:selectionMode="0" />
-
-                            <paulscode.android.mupen64plusae.persistent.SeekBarPreference
-                                android:defaultValue="100"
-                                android:dependency="touchscreenEnabled"
-                                android:key="touchscreenTransparency"
-                                android:title="@string/touchscreenTransparency_title"
-                                mupen64:maximumValue="100"
-                                mupen64:stepSize="10"
-                                mupen64:units="%" />
-
-                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                                android:defaultValue="@string/touchscreenRefresh_default"
-                                android:dependency="touchscreenEnabled"
-                                android:entries="@array/touchscreenRefresh_entries"
-                                android:entryValues="@array/touchscreenRefresh_values"
-                                android:key="touchscreenRefresh"
-                                android:summary="@string/selectedValue"
-                                android:title="@string/touchscreenRefresh_title" />
                         </PreferenceCategory>
                     </PreferenceScreen>
                     <PreferenceScreen

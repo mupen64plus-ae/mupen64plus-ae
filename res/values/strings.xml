@@ -131,6 +131,8 @@
     <string name="categoryCheats_title">Cheat options (long-press for notes)</string>
     <string name="categoryHardware_title">Hardware</string>
     <string name="categoryOther_title">Other</string>
+    <string name="categoryTouchscreenBehavior_title">Behavior</string>
+    <string name="categoryTouchscreenAppearance_title">Appearance</string>
     <string name="categorySinglePlayer_title">Player 1</string>
     <string name="categoryMultiPlayer_title">Multi-player</string>
     <string name="categoryGles2N64_title">GLES2N64 settings</string>
@@ -138,14 +140,13 @@
     <string name="categoryDiagnostics_title">Diagnostics</string>
     <string name="categoryData_title">Data</string>
     <string name="categoryCrashReports_title">Crash reports</string>
-    <string name="categoryTouchscreenConfig_title">Configuration</string>
-    <string name="categoryTouchscreenAppearance_title">Appearance</string>
 
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
     <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
     <string name="touchscreenEnabled_title">Enable touchscreen</string>
-    <string name="touchscreenFeedback_title">Vibrate on key-press</string>
+    <string name="touchscreenFeedback_title">Haptic feedback</string>
+    <string name="touchscreenFeedback_summary">Vibrate on button press</string>
     <string name="touchpadEnabled_title">Enable touchpad</string>
     <string name="inputOctagonConstraints_title">Octagonal joystick limits</string>
     <string name="inputOctagonConstraints_summary">Constrain analog motion to an octagon, like a real N64 controller</string>
@@ -183,6 +184,14 @@
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
 
     <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
+    <string name="touchscreenAutoHold_title">Button auto-hold (requires custom layout)</string>
+    <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
+    <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
+    <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
+    <string name="touchscreenRefresh_title">Joystick animation</string>
+    <string name="touchscreenRefresh_entryNever">Never</string>
+    <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
+    <string name="touchscreenRefresh_entryFrequently">Frequently</string>
     <string name="touchscreenLayout_title">Touchscreen layout</string>
     <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
     <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>
@@ -192,14 +201,6 @@
     <string name="touchscreenSize_entrySmall">Small</string>
     <string name="touchscreenSize_entryNormal">Normal</string>
     <string name="touchscreenSize_entryTablet">Tablet</string>
-    <string name="touchscreenRefresh_title">Joystick animation</string>
-    <string name="touchscreenRefresh_entryNever">Never</string>
-    <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
-    <string name="touchscreenRefresh_entryFrequently">Frequently</string>
-    <string name="touchscreenAutoHold_title">Button auto-hold (requires custom layout)</string>
-    <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
-    <string name="touchscreenAutoHold_entryLongPress">By long-press</string>
-    <string name="touchscreenAutoHold_entrySlideOut">By slide-out</string>
     <string name="touchpadLayout_title">Touchpad layout</string>
     <string name="touchpadLayout_entryDefault">Left pad: Analog control; Right pad: C buttons</string>
     <string name="touchpadLayout_entryReverse">Left pad: C buttons; Right pad: Analog control</string>
@@ -274,7 +275,7 @@
     <string name="acraUserEmail_summary">Your paulscode.com username (optional)</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
-    <string name="touchscreenTransparency_title">Touchscreen transparency</string>
+    <string name="touchscreenTransparency_title">Touchscreen opacity</string>
 
     <!-- Path Preferences (selected path will become the summary) -->
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
