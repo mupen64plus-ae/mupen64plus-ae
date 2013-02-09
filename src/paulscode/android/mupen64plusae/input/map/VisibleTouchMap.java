@@ -105,15 +105,6 @@ public class VisibleTouchMap extends TouchMap
         mTouchscreenTransparency = alpha;
     }
     
-    /* (non-Javadoc)
-     * @see paulscode.android.mupen64plusae.input.map.TouchMap#isAutoHoldable(int)
-     */
-    @Override
-    public boolean isAutoHoldable( int commandIndex )
-    {
-        return autoHoldImages[commandIndex] != null;
-    }
-    
     /*
      * (non-Javadoc)
      * 

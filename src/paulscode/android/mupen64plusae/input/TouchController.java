@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae.input;
 
+import java.util.Set;
+
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
@@ -86,6 +88,9 @@ public class TouchController extends AbstractController implements OnTouchListen
     /** The method used for auto-holding buttons. */
     private final int mAutoHoldMethod;
     
+    /** The set of auto-holdable buttons. */
+    private final Set<Integer> mAutoHoldables;
+    
     /** Whether touchscreen feedback is enabled. */
     private final boolean mTouchscreenFeedback;
     
@@ -122,17 +127,23 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param view The view receiving touch event data.
      * @param listener The listener for controller state changes.
      * @param isOctagonal True if the analog stick should be constrained to an octagon.
+     * @param vibrator The haptic feedback device.
+     * @param autoHoldMethod The method for auto-holding buttons.
+     * @param touchscreenFeedback True if haptic feedback should be used.
+     * @param autoHoldableButtons The N64 commands that correspond to auto-holdable buttons.
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
-            boolean isOctagonal, Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback )
+            boolean isOctagonal, Vibrator vibrator, int autoHoldMethod,
+            boolean touchscreenFeedback, Set<Integer> autoHoldableButtons )
     {
         mListener = listener;
         mTouchMap = touchMap;
         mIsOctagonal = isOctagonal;
-        view.setOnTouchListener( this );
         mVibrator = vibrator;
         mAutoHoldMethod = autoHoldMethod;
         mTouchscreenFeedback = touchscreenFeedback;
+        mAutoHoldables = autoHoldableButtons;
+        view.setOnTouchListener( this );
     }
     
     /**
@@ -312,7 +323,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 if( prevIndex != TouchMap.UNMAPPED )
                 {
                     // Slid off a valid button
-                    if( !mTouchMap.isAutoHoldable( prevIndex ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
+                    if( !isAutoHoldable( prevIndex ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
                     {
                         // Slid off a non-auto-hold button
                         setTouchState( prevIndex, false );
@@ -362,7 +373,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             }
             
             // Set the controller state accordingly
-            if( touched || !mTouchMap.isAutoHoldable( index ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
+            if( touched || !isAutoHoldable( index ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
                 // Finger just touched a button (any kind) OR
                 // Finger just lifted off non-auto-holdable button
@@ -405,6 +416,17 @@ public class TouchController extends AbstractController implements OnTouchListen
                 }
             }
         }
+    }
+    
+    /**
+     * Checks if the button mapped to an N64 command is auto-holdable.
+     * 
+     * @param commandIndex The index to the N64 command.
+     * @return True if the button mapped to the command is auto-holdable.
+     */
+    private boolean isAutoHoldable( int commandIndex )
+    {
+        return mAutoHoldables != null && mAutoHoldables.contains( commandIndex );
     }
     
     /**

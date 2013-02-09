@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ChangeLog;
@@ -76,6 +77,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
+    private static final String TOUCHSCREEN_AUTO_HOLDABLES = "touchscreenAutoHoldables";
     private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
@@ -218,6 +220,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Enable the video menu only if the video plug-in is not a dummy
         PrefUtil.enablePreference( this, SCREEN_VIDEO, user.videoPlugin.enabled );
+        
+        // Enable the auto-holdables pref if auto-hold is not disabled
+        PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, user.isTouchscreenEnabled
+                && user.touchscreenAutoHold != TouchController.AUTOHOLD_METHOD_DISABLED );
         
         // Enable the custom touchscreen prefs under certain conditions
         PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled

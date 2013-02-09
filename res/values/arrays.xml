@@ -90,6 +90,42 @@
 
     <string name="touchscreenAutoHold_default" translatable="false">0</string>
 
+    <!-- Touchscreen Auto-Holdable Buttons -->
+    <string-array name="touchscreenAutoHoldables_entries" translatable="false">
+        <item>@string/inputMapActivity_btnL</item>
+        <item>@string/inputMapActivity_btnR</item>
+        <item>@string/inputMapActivity_btnZ</item>
+        <item>@string/inputMapActivity_btnS</item>
+        <item>@string/inputMapActivity_btnA</item>
+        <item>@string/inputMapActivity_btnB</item>
+        <item>@string/inputMapActivity_btnCR</item>
+        <item>@string/inputMapActivity_btnCL</item>
+        <item>@string/inputMapActivity_btnCD</item>
+        <item>@string/inputMapActivity_btnCU</item>
+        <item>@string/inputMapActivity_btnDR</item>
+        <item>@string/inputMapActivity_btnDL</item>
+        <item>@string/inputMapActivity_btnDD</item>
+        <item>@string/inputMapActivity_btnDU</item>
+    </string-array>
+    <string-array name="touchscreenAutoHoldables_values" translatable="false">
+        <item>13</item>
+        <item>12</item>
+        <item>5</item>
+        <item>4</item>
+        <item>7</item>
+        <item>6</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="touchscreenAutoHoldables_default" translatable="false">13~12~5</string>
+
     <!-- Xperia Play Touchpad Layouts -->
     <string-array name="touchpadLayout_entries" translatable="false">
         <item>@string/touchpadLayout_entryDefault</item>
@@ -296,12 +332,12 @@
 
     <!-- OUYA Input Mapping Screen -->
     <string-array name="inputMapActivity_entries" translatable="false">
-        <item>@string/inputMapActivity_btnA</item>
-        <item>@string/inputMapActivity_btnB</item>
         <item>@string/inputMapActivity_btnL</item>
         <item>@string/inputMapActivity_btnR</item>
         <item>@string/inputMapActivity_btnZ</item>
         <item>@string/inputMapActivity_btnS</item>
+        <item>@string/inputMapActivity_btnA</item>
+        <item>@string/inputMapActivity_btnB</item>
         <item>@string/inputMapActivity_btnCR</item>
         <item>@string/inputMapActivity_btnCL</item>
         <item>@string/inputMapActivity_btnCD</item>
@@ -331,12 +367,12 @@
         <item>@string/inputMapActivity_simulateMenu</item>
     </string-array>
     <string-array name="inputMapActivity_values" translatable="false">
-        <item>7</item>
-        <item>6</item>
         <item>13</item>
         <item>12</item>
         <item>5</item>
         <item>4</item>
+        <item>7</item>
+        <item>6</item>
         <item>8</item>
         <item>9</item>
         <item>10</item>

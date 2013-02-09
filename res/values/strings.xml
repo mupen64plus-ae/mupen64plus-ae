@@ -184,10 +184,11 @@
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
 
     <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
-    <string name="touchscreenAutoHold_title">Button auto-hold (requires custom layout)</string>
+    <string name="touchscreenAutoHold_title">Button auto-hold</string>
     <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
     <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
     <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
+    <string name="touchscreenAutoHoldables_title">Holdable buttons</string>
     <string name="touchscreenRefresh_title">Joystick animation</string>
     <string name="touchscreenRefresh_entryNever">Never</string>
     <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>

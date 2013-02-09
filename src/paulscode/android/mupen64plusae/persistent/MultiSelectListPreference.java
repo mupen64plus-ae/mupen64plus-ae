@@ -40,10 +40,10 @@ import android.util.AttributeSet;
  */
 public class MultiSelectListPreference extends ListPreference implements OnMultiChoiceClickListener
 {
-    /** The default delimiter used internally for serialization/deserialization to/from a string. */
+    /** The default delimiter for internal serialization/deserialization. */
     private static final String DEFAULT_DELIMITER = "~";
     
-    /** The default delimiter used externally for displaying the selected values as a string. */
+    /** The default delimiter for external display of the selected values. */
     private static final String DEFAULT_SEPARATOR = ", ";
     
     /** The delimiter for internal serialization/deserialization. */
@@ -213,6 +213,17 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
     }
     
     /**
+     * Deserialize the selected values array from a string using the default delimiter.
+     * 
+     * @param value The serialized value of the array.
+     * @return The array of selected values.
+     */
+    public static List<String> deserialize( String value )
+    {
+        return deserialize( value, DEFAULT_DELIMITER );
+    }
+    
+    /**
      * Serialize the selected values array to a string.
      * 
      * @param selectedValues The array of selected values.
@@ -222,5 +233,16 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
     public static String serialize( List<String> selectedValues, String delimiter )
     {
         return selectedValues == null ? "" : TextUtils.join( delimiter, selectedValues );
+    }
+    
+    /**
+     * Serialize the selected values array to a string using the default delimiter.
+     * 
+     * @param selectedValues The array of selected values.
+     * @return The serialized value of the array.
+     */
+    public static String serialize( List<String> selectedValues )
+    {
+        return serialize( selectedValues, DEFAULT_DELIMITER );
     }
 }

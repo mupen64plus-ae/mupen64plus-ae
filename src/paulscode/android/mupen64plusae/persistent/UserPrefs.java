@@ -23,8 +23,10 @@ package paulscode.android.mupen64plusae.persistent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
@@ -127,23 +129,26 @@ public class UserPrefs
     /** True if the touchscreen feedback is enabled. */
     public final boolean isTouchscreenFeedbackEnabled;
     
-    /** True if a custom touchscreen is provided. */
-    public final boolean isTouchscreenCustom;
-    
     /** The number of frames over which touchscreen is redrawn (0 = disabled). */
     public final int touchscreenRefresh;
     
     /** The method used for auto holding buttons. */
     public final int touchscreenAutoHold;
     
-    /** True if the touchscreen overlay is hidden. */
-    public final boolean isTouchscreenHidden;
+    /** The set of auto-holdable button commands. */
+    public final Set<Integer> touchscreenAutoHoldables;
     
     /** The touchscreen transparency value. */
     public final int touchscreenTransparency;
     
+    /** True if the touchscreen overlay is hidden. */
+    public final boolean isTouchscreenHidden;
+    
     /** The filename of the selected touchscreen layout. */
     public final String touchscreenLayout;
+    
+    /** True if a custom touchscreen is provided. */
+    public final boolean isTouchscreenCustom;
     
     /** True if Xperia Play touchpad is enabled. */
     public final boolean isTouchpadEnabled;
@@ -343,12 +348,13 @@ public class UserPrefs
         
         // Touchscreen prefs
         isTouchscreenEnabled = mPreferences.getBoolean( "touchscreenEnabled", true );
+        isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
         touchscreenRefresh = getSafeInt( mPreferences, "touchscreenRefresh", 0 );
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHold", 0 );
+        touchscreenAutoHoldables = getSafeIntSet( mPreferences, "touchscreenAutoHoldables" );
         int transparencyPercent = mPreferences.getInt( "touchscreenTransparency", 100 );
-        isTouchscreenHidden = transparencyPercent == 0;
         touchscreenTransparency = ( 255 * transparencyPercent ) / 100;
-        isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
+        isTouchscreenHidden = transparencyPercent == 0;
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = mPreferences.getBoolean( "touchpadEnabled", false );
@@ -561,6 +567,32 @@ public class UserPrefs
         }
     }
     
+    /**
+     * Gets the selected values of a MultiSelectListPreference, as an integer set.
+     *
+     * @param preferences The object containing the MultiSelectListPreference.
+     * @param key The key of the MultiSelectListPreference.
+     * @return The values, as an integer set.
+     */
+    private static Set<Integer> getSafeIntSet( SharedPreferences preferences, String key )
+    {
+        Set<Integer> mutableSet = new HashSet<Integer>();
+        {
+            String holdables = preferences.getString( key, "" );
+            for( String s : MultiSelectListPreference.deserialize( holdables ) )
+            {
+                try
+                {
+                    mutableSet.add( Integer.parseInt( s ) );
+                }
+                catch( NumberFormatException ignored )
+                {
+                }
+            }
+        }
+        return Collections.unmodifiableSet( mutableSet );
+    }
+
     /**
      * A tiny class containing inter-dependent plug-in information.
      */

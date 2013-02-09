@@ -149,18 +149,6 @@ public class TouchMap
     }
     
     /**
-     * Checks if the button mapped to an N64 command is auto-holdable.
-     * 
-     * @param commandIndex The index to the N64 command.
-     * @return True if the button mapped to the command is auto-holdable.
-     */
-    public boolean isAutoHoldable( int commandIndex )
-    {
-        // TODO Implement GUI to select auto-holdable buttons
-        return true;
-    }
-    
-    /**
      * Clears the map data.
      */
     public void clear()

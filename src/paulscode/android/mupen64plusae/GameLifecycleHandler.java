@@ -173,7 +173,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenTransparency);
+                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
             mOverlay.initialize( mTouchscreenMap, mUserPrefs.touchscreenRefresh,
                     mUserPrefs.isFpsEnabled, !mUserPrefs.isTouchscreenHidden );
@@ -275,7 +275,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             
             // Create the touchpad controller
             touchpadController = new TouchController( touchpadMap, inputSource, null,
-                    mUserPrefs.isOctagonalJoystick, vibrator, TouchController.AUTOHOLD_METHOD_DISABLED, false );
+                    mUserPrefs.isOctagonalJoystick, vibrator,
+                    TouchController.AUTOHOLD_METHOD_DISABLED, false, null );
             mControllers.add( touchpadController );
             
             // Filter by source identifier
@@ -287,7 +288,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, mUserPrefs.isOctagonalJoystick, vibrator, mUserPrefs.touchscreenAutoHold, mUserPrefs.isTouchscreenFeedbackEnabled );
+                    inputSource, mOverlay, mUserPrefs.isOctagonalJoystick, vibrator,
+                    mUserPrefs.touchscreenAutoHold, mUserPrefs.isTouchscreenFeedbackEnabled,
+                    mUserPrefs.touchscreenAutoHoldables );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...
