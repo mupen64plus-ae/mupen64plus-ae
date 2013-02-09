@@ -1422,7 +1422,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
         *APIVersion = VIDEO_PLUGIN_API_VERSION;
 
     if (PluginNamePtr != NULL)
-        *PluginNamePtr = "Glide64 Video Plugin";
+        *PluginNamePtr = "Glide64mk2 Video Plugin";
 
     if (Capabilities != NULL)
     {
@@ -1594,7 +1594,7 @@ void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo )
   VLOG ("GetDllInfo ()\n");
   PluginInfo->Version = 0x0103;     // Set to 0x0103
   PluginInfo->Type  = PLUGIN_TYPE_GFX;  // Set to PLUGIN_TYPE_GFX
-  sprintf (PluginInfo->Name, "Glide64 "G64_VERSION RELTIME);  // Name of the DLL
+  sprintf (PluginInfo->Name, "Glide64mk2 "G64_VERSION RELTIME);  // Name of the DLL
 
   // If DLL supports memory these memory options then set them to TRUE or FALSE
   //  if it does not support it
@@ -2184,7 +2184,7 @@ void newSwapBuffers()
     for (int i=1; ; i++)
     {
       path = capture_path;
-      path += wxT("Glide64_");
+      path += wxT("Glide64mk2_");
       path += romName;
       path += wxT("_");
       if (i < 10)

@@ -1,5 +1,5 @@
 #/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-# *   Mupen64plus-video-glide64 - Makefile                                  *
+# *   Mupen64plus-video-glide64mk2 - Makefile                               *
 # *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
 # *   Copyright (C) 2010 Jon Ring                                           *
 # *   Copyright (C) 2007-2009 Richard Goedeken                              *

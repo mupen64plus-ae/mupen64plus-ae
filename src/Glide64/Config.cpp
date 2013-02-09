@@ -32,7 +32,7 @@ static m64p_handle video_glide64_section;
 BOOL Config_Open()
 {
     if (ConfigOpenSection("Video-General", &video_general_section) != M64ERR_SUCCESS ||
-        ConfigOpenSection("Video-Glide64", &video_glide64_section) != M64ERR_SUCCESS)
+        ConfigOpenSection("Video-Glide64mk2", &video_glide64_section) != M64ERR_SUCCESS)
     {
         ERRLOG("Could not open configuration");
         return FALSE;

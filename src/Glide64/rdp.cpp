@@ -395,7 +395,7 @@ void drawNoFullscreenMessage()
     dc.DrawRectangle(0, 0, width, height);
 
     wxCoord w, h;
-    wxString text = wxT("Glide64");
+    wxString text = wxT("Glide64mk2");
     dc.GetTextExtent(text, &w, &h);
     wxCoord x = (width - w)/2;
     wxCoord y = height/2 - h*4;
