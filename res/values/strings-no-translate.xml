@@ -16,6 +16,8 @@
 
     <!-- Aliases to other strings -->
     <string name="selectedValue" translatable="false">%1$s</string>
+    <string name="touchpadFeedback_title" translatable="false">@string/touchscreenFeedback_title</string>
+    <string name="touchpadFeedback_summary" translatable="false">@string/touchscreenFeedback_summary</string>
     <string name="menuItem_controllerInfo" translatable="false">@string/actionControllerInfo_title</string>
     <string name="menuItem_controllerDiagnostics" translatable="false">@string/actionControllerDiagnostics_title</string>
     <string name="inputMapActivity_title" translatable="false">@string/playerMapPreference_popupTitle</string>

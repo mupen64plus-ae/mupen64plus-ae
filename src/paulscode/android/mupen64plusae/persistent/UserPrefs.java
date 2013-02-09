@@ -153,6 +153,9 @@ public class UserPrefs
     /** True if Xperia Play touchpad is enabled. */
     public final boolean isTouchpadEnabled;
     
+    /** True if Xperia Play touchpad feedback is enabled. */
+    public final boolean isTouchpadFeedbackEnabled;
+    
     /** The filename of the selected Xperia Play layout. */
     public final String touchpadLayout;
     
@@ -358,6 +361,7 @@ public class UserPrefs
         
         // Xperia PLAY touchpad prefs
         isTouchpadEnabled = mPreferences.getBoolean( "touchpadEnabled", false );
+        isTouchpadFeedbackEnabled = mPreferences.getBoolean( "touchpadFeedback", false );
         touchpadLayout = appData.touchpadLayoutsDir + mPreferences.getString( "touchpadLayout", "" );
         
         // Input prefs

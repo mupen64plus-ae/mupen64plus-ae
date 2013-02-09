@@ -276,7 +276,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             // Create the touchpad controller
             touchpadController = new TouchController( touchpadMap, inputSource, null,
                     mUserPrefs.isOctagonalJoystick, vibrator,
-                    TouchController.AUTOHOLD_METHOD_DISABLED, false, null );
+                    TouchController.AUTOHOLD_METHOD_DISABLED, mUserPrefs.isTouchpadFeedbackEnabled,
+                    null );
             mControllers.add( touchpadController );
             
             // Filter by source identifier
