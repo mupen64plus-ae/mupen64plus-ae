@@ -450,7 +450,9 @@ public class Prompt
     }
     
     /**
-     * A convenience method for consistently initializing dialogs across the various methods.
+     * A convenience method for consistently initializing dialogs across the various methods. By
+     * default the cancelable flag is set to false, to fix a bug with in-game dialogs where games
+     * stay paused after user presses the back key.
      * 
      * @param context The activity context.
      * @param title The title of the dialog.
