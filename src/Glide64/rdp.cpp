@@ -51,11 +51,6 @@
 #include "FBtoScreen.h"
 #include "CRC.h"
 
-#if defined(OLDASM_asmLoadBlock) || defined(OLDASM_asmLoadTile)
-extern "C" void SwapBlock32 ();
-//extern "C" void SwapBlock64 ();
-#endif
-
 /*
 const int NumOfFormats = 3;
 SCREEN_SHOT_FORMAT ScreenShotFormats[NumOfFormats] = { {wxT("BMP"), wxT("bmp"), wxBITMAP_TYPE_BMP}, {wxT("PNG"), wxT("png"), wxBITMAP_TYPE_PNG}, {wxT("JPEG"), wxT("jpeg"), wxBITMAP_TYPE_JPEG} };
@@ -1832,8 +1827,6 @@ void setTBufTex(wxUint16 t_mem, wxUint32 cnt)
   }
 }
 
-extern "C" void asmLoadBlock(uint32_t *src, uint32_t *dst, uint32_t off, int dxt, int cnt, int swp);
-
 static inline void loadBlock(uint32_t *src, uint32_t *dst, uint32_t off, int dxt, int cnt)
 {
   uint32_t *v5;
@@ -2032,12 +2025,7 @@ static void rdp_loadblock()
   if (rdp.timg.size == 3)
     LoadBlock32b(tile, ul_s, ul_t, lr_s, dxt);
   else
-#ifdef OLDASM_asmLoadBlock
-    wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
-    asmLoadBlock((uint32_t *)gfx.RDRAM, (uint32_t *)dst, off, _dxt, cnt, SwapMethod);
-#else
-  loadBlock((uint32_t *)gfx.RDRAM, (uint32_t *)dst, off, _dxt, cnt);
-#endif
+    loadBlock((uint32_t *)gfx.RDRAM, (uint32_t *)dst, off, _dxt, cnt);
 
   rdp.timg.addr += cnt << 3;
   rdp.tiles[tile].lr_t = ul_t + ((dxt*cnt)>>11);
@@ -2052,8 +2040,6 @@ static void rdp_loadblock()
     setTBufTex(rdp.tiles[tile].t_mem, cnt);
 }
 
-
-extern "C" void asmLoadTile(uint32_t *src, uint32_t *dst, int width, int height, int line, int off, uint32_t *end, int swp);
 
 static inline void loadTile(uint32_t *src, uint32_t *dst, int width, int height, int line, int off, uint32_t *end)
 {
@@ -2275,12 +2261,7 @@ static void rdp_loadtile()
     wxUint32 wid_64 = rdp.tiles[tile].line;
     unsigned char *dst = ((unsigned char *)rdp.tmem) + (rdp.tiles[tile].t_mem<<3);
     unsigned char *end = ((unsigned char *)rdp.tmem) + 4096 - (wid_64<<3);
-#ifdef OLDASM_asmLoadTile
-    wxUIntPtr SwapMethod = wxPtrToUInt(reinterpret_cast<void*>(SwapBlock32));
-    asmLoadTile((uint32_t *)gfx.RDRAM, (uint32_t *)dst, wid_64, height, line_n, offs, (uint32_t *)end, SwapMethod);
-#else
     loadTile((uint32_t *)gfx.RDRAM, (uint32_t *)dst, wid_64, height, line_n, offs, (uint32_t *)end);
-#endif
   }
   FRDP("loadtile: tile: %d, ul_s: %d, ul_t: %d, lr_s: %d, lr_t: %d\n", tile,
     ul_s, ul_t, lr_s, lr_t);
