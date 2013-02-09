@@ -89,6 +89,19 @@ public class Prompt
     }
     
     /**
+     * The listener interface for handling confirmations.
+     * 
+     * @see Prompt#promptCustomLayout
+     */
+    public interface OnCustomLayoutListener
+    {
+        /**
+         * Handle the user's confirmation.
+         */
+        public void onCustomLayout( int which );
+    }
+    
+    /**
      * The listener interface for receiving a file selected by the user.
      * 
      * @see Prompt#promptFile
@@ -263,6 +276,31 @@ public class Prompt
         
         // Create and launch a simple confirmation dialog
         prefillBuilder( context, title, message, internalListener ).create().show();
+    }
+    
+    /**
+     * Open a custom layout dialog.
+     * 
+     * @param context The activity context.
+     * @param title The title of the dialog.
+     * @param layout The layout to be shown inside the dialog.
+     * @param listener The listener to process the confirmation.
+     */
+    public static void promptCustomLayout( Context context, CharSequence title, View layout,
+            final OnCustomLayoutListener listener )
+    {
+        // When the user clicks Ok, notify the downstream listener
+        OnClickListener internalListener = new OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                    listener.onCustomLayout( which );
+            }
+        };
+        
+        // Create and launch a simple confirmation dialog
+        prefillBuilder( context, title, null, internalListener ).setView(layout).create().show();
     }
     
     /**
