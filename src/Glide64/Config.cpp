@@ -18,7 +18,7 @@
 * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA  02110-1301, USA
 */
-#include "Gfx #1.3.h"
+#include "Gfx_1.3.h"
 #include "Config.h"
 #include "m64p.h"
 #include "rdp.h"
