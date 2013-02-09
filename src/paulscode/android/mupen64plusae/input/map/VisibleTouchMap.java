@@ -459,7 +459,7 @@ public class VisibleTouchMap extends TouchMap
             
             // The drawable image is in PNG image format.
             autoHoldImages[index] = new Image( mResources, directory + "/" + filename + ".png" );
-            //autoHoldImages[index].setAlpha( 0 );
+            autoHoldImages[index].setAlpha( 0 );
             
             // Position (percentages of the digitizer dimensions)
             autoHoldX[index] = SafeMethods.toInt( section.get( "x" ), 0 );
