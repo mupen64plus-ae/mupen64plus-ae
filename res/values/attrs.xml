@@ -9,5 +9,9 @@
         <attr name="stepSize" format="integer" />
         <attr name="units" format="string" />
     </declare-styleable>
+    <declare-styleable name="MultiSelectListPreference">
+        <attr name="delimiter" format="string" />
+        <attr name="separator" format="string" />
+    </declare-styleable>
 
 </resources>
