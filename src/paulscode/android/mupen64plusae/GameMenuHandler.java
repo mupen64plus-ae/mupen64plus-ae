@@ -27,12 +27,12 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnCustomLayoutListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -300,7 +300,7 @@ public class GameMenuHandler
         final TextView text = (TextView) layout.findViewById( R.id.textFeedback );
         final CharSequence title = mActivity.getText( R.string.menuItem_setSpeed );
         
-        text.setText(Integer.toString(mSpeedFactor));
+        text.setText( Integer.toString( mSpeedFactor ) );
         seek.setMax( MAX_SPEED_FACTOR - MIN_SPEED_FACTOR );
         seek.setProgress( mSpeedFactor - MIN_SPEED_FACTOR );
         seek.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
@@ -319,10 +319,10 @@ public class GameMenuHandler
             }
         } );
         
-        Prompt.promptCustomLayout( mActivity, title, layout, new OnCustomLayoutListener()
+        Prompt.prefillBuilder( mActivity, title, null, new OnClickListener()
         {
             @Override
-            public void onCustomLayout( int which )
+            public void onClick( DialogInterface dialog, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
@@ -336,7 +336,7 @@ public class GameMenuHandler
                 
                 NativeMethods.resumeEmulator();
             }
-        } );
+        } ).setView( layout ).create().show();
     }
     
     private void quitToMenu()
