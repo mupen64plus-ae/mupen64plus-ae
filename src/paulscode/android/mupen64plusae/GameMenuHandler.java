@@ -75,8 +75,6 @@ public class GameMenuHandler
     
     public int mSpeedFactor = DEFAULT_SPEED_FACTOR;
     
-    public int mPreviousSpeedFactor = DEFAULT_SPEED_FACTOR;
-    
     public static GameMenuHandler sInstance = null;
     
     public GameMenuHandler( Activity activity, String manualSaveDir, String autoSaveFile )
@@ -293,17 +291,33 @@ public class GameMenuHandler
     {
         NativeMethods.pauseEmulator();
         
-        final LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View layout = inflater.inflate(R.layout.seek_bar_preference, 
-                (ViewGroup)mActivity.findViewById(R.id.rootLayout));
+        final LayoutInflater inflater = (LayoutInflater) mActivity
+                .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View layout = inflater.inflate( R.layout.seek_bar_preference,
+                (ViewGroup) mActivity.findViewById( R.id.rootLayout ) );
         
-        final SeekBar seek = (SeekBar)layout.findViewById(R.id.seekbar);
-        final TextView text = (TextView)layout.findViewById(R.id.textFeedback);
+        final SeekBar seek = (SeekBar) layout.findViewById( R.id.seekbar );
+        final TextView text = (TextView) layout.findViewById( R.id.textFeedback );
         final CharSequence title = mActivity.getText( R.string.menuItem_setSpeed );
         
         text.setText(Integer.toString(mSpeedFactor));
         seek.setMax( MAX_SPEED_FACTOR - MIN_SPEED_FACTOR );
         seek.setProgress( mSpeedFactor - MIN_SPEED_FACTOR );
+        seek.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
+        {
+            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
+            {
+                text.setText( Integer.toString( progress + MIN_SPEED_FACTOR ) );
+            }
+            
+            public void onStartTrackingTouch( SeekBar seekBar )
+            {
+            }
+            
+            public void onStopTrackingTouch( SeekBar seekBar )
+            {
+            }
+        } );
         
         Prompt.promptCustomLayout( mActivity, title, layout, new OnCustomLayoutListener()
         {
@@ -312,35 +326,17 @@ public class GameMenuHandler
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
+                    mSpeedFactor = seek.getProgress() + MIN_SPEED_FACTOR;
                     mCustomSpeed = true;
                     NativeMethods.stateSetSpeed( mSpeedFactor );
-                         
-                    mGameSpeedItem.setTitle( mActivity.getString(
-                            R.string.menuItem_toggleSpeed, mSpeedFactor ) );
-                     
-                    mPreviousSpeedFactor = mSpeedFactor;      
+                    
+                    mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed,
+                            mSpeedFactor ) );
                 }
-                else
-                    mSpeedFactor = mPreviousSpeedFactor;
                 
                 NativeMethods.resumeEmulator();
             }
         } );
-        
-        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
-        {
-            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
-            {
-                mSpeedFactor = progress + MIN_SPEED_FACTOR;
-                text.setText(Integer.toString(mSpeedFactor));
-            }
-            public void onStartTrackingTouch( SeekBar seekBar )
-            {
-            }
-            public void onStopTrackingTouch( SeekBar seekBar )
-            {
-            }
-        });
     }
     
     private void quitToMenu()
