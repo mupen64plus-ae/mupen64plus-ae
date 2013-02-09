@@ -916,6 +916,7 @@ int InitGfx ()
 {
   wchar_t romname[256];
   wchar_t foldername[PATH_MAX + 64];
+  wchar_t cachename[PATH_MAX + 64];
   if (fullscreen)
     ReleaseGfx ();
 
@@ -1233,6 +1234,7 @@ int InitGfx ()
 
       swprintf(romname, 256, L"%hs", rdp.RomName);
       swprintf(foldername, sizeof(foldername), L"%hs", ConfigGetUserDataPath());
+      swprintf(cachename, sizeof(cachename), L"%hs", ConfigGetUserCachePath());
 
       settings.ghq_use = (int)ext_ghq_init(voodoo.max_tex_size, // max texture width supported by hardware
         voodoo.max_tex_size, // max texture height supported by hardware
@@ -1240,6 +1242,7 @@ int InitGfx ()
         options,
         settings.ghq_cache_size * 1024*1024, // cache texture to system memory
         foldername,
+        cachename,
         romname, // name of ROM. must be no longer than 256 characters
         DisplayLoadProgress);
     }
