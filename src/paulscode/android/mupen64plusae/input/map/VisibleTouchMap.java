@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae.input.map;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
@@ -63,7 +64,7 @@ public class VisibleTouchMap extends TouchMap
     /** True if the FPS indicator should be drawn. */
     private final boolean mFpsEnabled;
     
-    /**Touchscreen transparency. */
+    /** Touchscreen opacity. */
     private final int mTouchscreenTransparency;
     
     /** The file directory containing the FPS font resources. */
@@ -74,6 +75,15 @@ public class VisibleTouchMap extends TouchMap
     
     /** The set of images representing the numerals 0, 1, 2, ..., 9. */
     private final Image[] mNumerals;
+    
+    /** Auto-hold overlay images. */
+    public final Image[] autoHoldImages;
+    
+    /** X-coordinates of the AutoHold mask, in percent. */
+    private final int[] autoHoldX;
+    
+    /** Y-coordinates of the AutoHold mask, in percent. */
+    private final int[] autoHoldY;
     
     /**
      * Instantiates a new visible touch map.
@@ -89,7 +99,19 @@ public class VisibleTouchMap extends TouchMap
         mFontsDir = fontsDirectory;
         mFpsDigits = new ArrayList<Image>();
         mNumerals = new Image[10];
+        autoHoldImages = new Image[BUTTON_STRING_MAP.size()];
+        autoHoldX = new int[BUTTON_STRING_MAP.size()];
+        autoHoldY = new int[BUTTON_STRING_MAP.size()];
         mTouchscreenTransparency = alpha;
+    }
+    
+    /* (non-Javadoc)
+     * @see paulscode.android.mupen64plusae.input.map.TouchMap#isAutoHoldable(int)
+     */
+    @Override
+    public boolean isAutoHoldable( int commandIndex )
+    {
+        return autoHoldImages[commandIndex] != null;
     }
     
     /*
@@ -109,6 +131,12 @@ public class VisibleTouchMap extends TouchMap
         mFpsDigits.clear();
         for( int i = 0; i < mNumerals.length; i++ )
             mNumerals[i] = null;
+        for( int i = 0; i < autoHoldImages.length; i++ )
+            autoHoldImages[i] = null;
+        for( int i = 0; i < autoHoldX.length; i++ )
+            autoHoldX[i] = 0;
+        for( int i = 0; i < autoHoldY.length; i++ )
+            autoHoldY[i] = 0;
     }
     
     /*
@@ -130,6 +158,17 @@ public class VisibleTouchMap extends TouchMap
                     analogBackImage.width, analogBackImage.height );
         }
         
+        // Compute auto-hold overlay locations
+        for( int i = 0; i < autoHoldImages.length; i++ )
+        {
+            if( autoHoldImages[i] != null )
+            {
+                int cX = (int) ( w * ( (float) autoHoldX[i] / 100f ) );
+                int cY = (int) ( h * ( (float) autoHoldY[i] / 100f ) );
+                autoHoldImages[i].fitCenter( cX, cY, w, h );
+            }
+        }
+        
         // Compute FPS frame location
         if( mFpsFrame != null )
         {
@@ -141,7 +180,7 @@ public class VisibleTouchMap extends TouchMap
         // Compute the FPS digit locations
         refreshFpsPositions();
     }
-
+    
     /**
      * Draws the buttons.
      * 
@@ -156,7 +195,7 @@ public class VisibleTouchMap extends TouchMap
             button.draw( canvas );
         }
     }
-
+    
     /**
      * Draws the AutoHold mask.
      * 
@@ -165,9 +204,9 @@ public class VisibleTouchMap extends TouchMap
     public void drawAutoHold( Canvas canvas )
     {
         // Draw the AutoHold mask onto the canvas
-        for ( Image autoHoldImage : autoHoldImages )
+        for( Image autoHoldImage : autoHoldImages )
         {
-            if ( autoHoldImage != null )
+            if( autoHoldImage != null )
             {
                 autoHoldImage.draw( canvas );
             }
@@ -244,8 +283,8 @@ public class VisibleTouchMap extends TouchMap
             return true;
         }
         return false;
-    }    
-
+    }
+    
     /**
      * Updates the FPS indicator assets to reflect a new value.
      * 
@@ -272,25 +311,25 @@ public class VisibleTouchMap extends TouchMap
     }
     
     /**
-     * Updates the autohold state to reflect a new value.
+     * Updates the auto-hold assets to reflect a new value.
      * 
-     * @param autoHold The new autohold state value.
-     * @param index The index of the autohold mask.
+     * @param pressed The new autohold state value.
+     * @param index The index of the auto-hold mask.
      * @return True if the autohold assets changed.
      */
-    public boolean updateAutoHold( boolean autoHold, int index )
+    public boolean updateAutoHold( boolean pressed, int index )
     {
         if( autoHoldImages[index] != null )
         {
-            if( autoHold )
+            if( pressed )
                 autoHoldImages[index].setAlpha( mTouchscreenTransparency );
             else
                 autoHoldImages[index].setAlpha( 0 );
             return true;
         }
         return false;
-    }    
-
+    }
+    
     /**
      * Refreshes the images used to draw the FPS string.
      */
@@ -353,14 +392,16 @@ public class VisibleTouchMap extends TouchMap
      */
     @Override
     protected void loadAssetSection( String directory, String filename, ConfigSection section,
-            String assetType )
+            String info )
     {
-        if( assetType.contains( "fps" ) )
+        if( info.contains( "fps" ) )
             loadFpsIndicator( directory, filename, section );
+        else if( filename.contains( "AUTOHOLD" ) )
+            loadAutoHold( directory, filename, section, info );
         else
-            super.loadAssetSection( directory, filename, section, assetType );
+            super.loadAssetSection( directory, filename, section, info );
     }
-
+    
     /**
      * Loads FPS indicator assets and properties from the filesystem.
      * 
@@ -405,6 +446,33 @@ public class VisibleTouchMap extends TouchMap
                 Log.e( "VisibleTouchMap", "Problem loading font '" + mFontsDir + fpsFont + "/" + i
                         + ".png', error message: " + e.getMessage() );
             }
+        }
+    }
+    
+    /**
+     * Loads auto-hold assets and properties from the filesystem.
+     * 
+     * @param directory The directory containing the auto-hold assets.
+     * @param filename The filename of the auto-hold assets, without extension.
+     * @param section The configuration section containing the auto-hold properties.
+     * @param info The information section containing the auto-hold button.
+     */
+    private void loadAutoHold( final String directory, String filename, ConfigSection section,
+            String info )
+    {
+        // Assign the auto-hold option to the appropriate N64 button
+        if( info != null )
+        {
+            // TODO: fix possible crash when info isn't a N64 button
+            int index = BUTTON_STRING_MAP.get( info.toLowerCase( Locale.US ) );
+            
+            // The drawable image is in PNG image format.
+            autoHoldImages[index] = new Image( mResources, directory + "/" + filename + ".png" );
+            //autoHoldImages[index].setAlpha( 0 );
+            
+            // Position (percentages of the digitizer dimensions)
+            autoHoldX[index] = SafeMethods.toInt( section.get( "x" ), 0 );
+            autoHoldY[index] = SafeMethods.toInt( section.get( "y" ), 0 );
         }
     }
 }

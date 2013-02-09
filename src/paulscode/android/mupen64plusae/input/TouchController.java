@@ -312,8 +312,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 if( prevIndex != TouchMap.UNMAPPED )
                 {
                     // Slid off a valid button
-                    if( mTouchMap.autoHoldImages[prevIndex] == null
-                            || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
+                    if( !mTouchMap.isAutoHoldable( prevIndex ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
                     {
                         // Slid off a non-auto-hold button
                         setTouchState( prevIndex, false );
@@ -363,8 +362,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             }
             
             // Set the controller state accordingly
-            if( touched || mTouchMap.autoHoldImages[index] == null
-                    || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
+            if( touched || !mTouchMap.isAutoHoldable( index ) || mAutoHoldMethod == AUTOHOLD_METHOD_DISABLED )
             {
                 // Finger just touched a button (any kind) OR
                 // Finger just lifted off non-auto-holdable button
