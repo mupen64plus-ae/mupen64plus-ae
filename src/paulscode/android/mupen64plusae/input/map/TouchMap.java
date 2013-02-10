@@ -364,7 +364,7 @@ public class TouchMap
      * @param pad_ini The configuration file.
      * @param directory The directory containing the assets.
      */
-    private void loadAllAssets( ConfigFile pad_ini, String directory )
+    protected void loadAllAssets( ConfigFile pad_ini, String directory )
     {
         for( String filename : pad_ini.keySet() )
         {

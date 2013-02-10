@@ -223,7 +223,7 @@ public class Image
      */
     public void setAlpha(int alpha) 
     {
-        if( drawable != null && alpha < 255 )
+        if( drawable != null )
             drawable.setAlpha(alpha);
     }
 }

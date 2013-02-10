@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import paulscode.android.mupen64plusae.GameOverlay;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.util.Image;
 import paulscode.android.mupen64plusae.util.SafeMethods;
@@ -90,9 +91,10 @@ public class VisibleTouchMap extends TouchMap
      * 
      * @param resources The resources of the activity associated with this touch map.
      * @param fpsEnabled True to display the FPS indicator.
-     * @param fontsDirectory The directory containing the FPS font resources.
+     * @param fontsDir The directory containing the FPS font resources.
+     * @param alpha The opacity of the visible elements.
      */
-    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDirectory, int alpha )
+    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, int alpha )
     {
         super( resources );
         mFpsEnabled = fpsEnabled;
@@ -182,7 +184,6 @@ public class VisibleTouchMap extends TouchMap
         // Draw the buttons onto the canvas
         for( Image button : buttonImages )
         {
-            button.setAlpha( mTouchscreenTransparency );
             button.draw( canvas );
         }
     }
@@ -214,14 +215,12 @@ public class VisibleTouchMap extends TouchMap
         // Draw the background image
         if( analogBackImage != null )
         {
-            analogBackImage.setAlpha( mTouchscreenTransparency );
             analogBackImage.draw( canvas );
         }
         
         // Draw the movable foreground (the stick)
         if( analogForeImage != null )
         {
-            analogForeImage.setAlpha( mTouchscreenTransparency );
             analogForeImage.draw( canvas );
         }
     }
@@ -371,6 +370,33 @@ public class VisibleTouchMap extends TouchMap
         {
             digit.setPos( x, y - digit.hHeight );
             x += digit.width;
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * paulscode.android.mupen64plusae.input.map.TouchMap#loadAllAssets(paulscode.android.mupen64plusae
+     * .persistent.ConfigFile, java.lang.String)
+     */
+    @Override
+    protected void loadAllAssets( ConfigFile pad_ini, String directory )
+    {
+        super.loadAllAssets( pad_ini, directory );
+        
+        // Set the transparency of the images
+        for( Image buttonImage : buttonImages )
+        {
+            buttonImage.setAlpha( mTouchscreenTransparency );
+        }
+        if( analogBackImage != null )
+        {
+            analogBackImage.setAlpha( mTouchscreenTransparency );
+        }        
+        if( analogForeImage != null )
+        {
+            analogForeImage.setAlpha( mTouchscreenTransparency );
         }
     }
     
