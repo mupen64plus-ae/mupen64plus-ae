@@ -342,9 +342,9 @@ public class ConfigFile
         
         /**
          * Constructor: Saves the relevant information about the line.
-         * @param type
-         * @param line
-         * @param param
+         * @param type   The type of line
+         * @param line   The line itself
+         * @param param  Config parameters pertaining to the line
          */
         public ConfigLine( int type, String line, ConfigParameter param )
         {
