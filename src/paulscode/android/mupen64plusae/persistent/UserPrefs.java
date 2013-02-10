@@ -621,7 +621,7 @@ public class UserPrefs
         public Plugin( SharedPreferences prefs, String libsDir, String key )
         {
             name = prefs.getString( key, "" );
-            enabled = ( name != null && !name.equals( "" ) );
+            enabled = ( name != null && !TextUtils.isEmpty( name ) );
             path = enabled ? libsDir + name : "dummy";
         }
     }

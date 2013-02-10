@@ -54,8 +54,8 @@ public class PathPreference extends DialogPreference
     private final boolean mUseDefaultSummary;
     private int mSelectionMode = SELECTION_MODE_ANY;
     private boolean mDoReclick = false;
-    private List<CharSequence> mNames = new ArrayList<CharSequence>();
-    private List<String> mPaths = new ArrayList<String>();
+    private final List<CharSequence> mNames = new ArrayList<CharSequence>();
+    private final List<String> mPaths = new ArrayList<String>();
     private String mNewValue;
     private String mValue;
     
@@ -140,7 +140,7 @@ public class PathPreference extends DialogPreference
     public void onClick( DialogInterface dialog, int which )
     {
         // If the user clicked a list item...
-        if( mPaths != null && which >= 0 && which < mPaths.size() )
+        if( which >= 0 && which < mPaths.size() )
         {
             mNewValue = mPaths.get( which );
             File path = new File( mNewValue );

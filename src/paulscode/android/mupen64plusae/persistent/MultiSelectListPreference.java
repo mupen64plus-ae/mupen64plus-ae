@@ -47,10 +47,10 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
     private static final String DEFAULT_SEPARATOR = ", ";
     
     /** The delimiter for internal serialization/deserialization. */
-    private String mDelimiter;
+    private final String mDelimiter;
     
     /** The delimiter for external display of the selected values. */
-    private String mSeparator;
+    private final String mSeparator;
     
     /** The state of each checkbox in the list. */
     private boolean[] mCheckedStates;
