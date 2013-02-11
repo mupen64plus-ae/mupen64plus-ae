@@ -26,6 +26,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.CheatPreference;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -60,8 +61,9 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private static final String PLAY_SHOW_CHEATS = "playShowCheats";
     private static final String CATEGORY_CHEATS = "categoryCheats";
     
-    // App data
+    // App data and user preferences
     private AppData mAppData = null;
+    private UserPrefs mUserPrefs = null;
     
     // Handle to the thread populating the cheat options
     private Thread crcThread = null;
@@ -83,8 +85,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Get app data and user preferences
         mAppData = new AppData( this );
-        UserPrefs userPrefs = new UserPrefs( this );
-        userPrefs.enforceLocale( this );
+        mUserPrefs = new UserPrefs( this );
+        mUserPrefs.enforceLocale( this );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_play );
@@ -94,14 +96,14 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESTART, this );
         
         // Hide the multi-player menu if not needed
-        if( !userPrefs.playerMap.isEnabled() )
+        if( !mUserPrefs.playerMap.isEnabled() )
             PrefUtil.removePreference( this, SCREEN_PLAY, PLAYER_MAP );
         
         // Hide or populate the cheats category depending on user preference
-        if( userPrefs.isCheatOptionsShown )
+        if( mUserPrefs.isCheatOptionsShown )
         {
             // Populate cheats category with menu items
-            if( userPrefs.selectedGame.equals( mAppData.getLastRom() ) )
+            if( mUserPrefs.selectedGame.equals( mAppData.getLastRom() ) )
             {
                 // Use the cached CRC and add the cheats menu items
                 build( mAppData.getLastCrc() );
@@ -109,7 +111,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             else
             {
                 // Recompute the CRC in a separate thread, then add the cheats menu items
-                rebuild( userPrefs.selectedGame );
+                rebuild( mUserPrefs.selectedGame );
             }
         }
         else
@@ -154,6 +156,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             startActivity( getIntent() );
             finish();
         }
+        mUserPrefs = new UserPrefs( this );
     }
     
     @Override
@@ -298,6 +301,27 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     private void launchGame( boolean isRestarting )
     {
+        // Popup the multi-player dialog and abort if any players don't have a controller assigned
+        if( mUserPrefs.playerMap.isEnabled() )
+        {
+            mUserPrefs.playerMap.removeUnavailableMappings();
+            boolean needs1 = mUserPrefs.isInputEnabled1 && !mUserPrefs.playerMap.isMapped( 1 );
+            boolean needs2 = mUserPrefs.isInputEnabled2 && !mUserPrefs.playerMap.isMapped( 2 );
+            boolean needs3 = mUserPrefs.isInputEnabled3 && !mUserPrefs.playerMap.isMapped( 3 );
+            boolean needs4 = mUserPrefs.isInputEnabled4 && !mUserPrefs.playerMap.isMapped( 4 );
+            Log.w("PlayMenuActivity", "Needs1: " + needs1);
+            Log.w("PlayMenuActivity", "Needs2: " + needs2);
+            Log.w("PlayMenuActivity", "Needs3: " + needs3);
+            Log.w("PlayMenuActivity", "Needs4: " + needs4);
+            if( needs1 || needs2 || needs3 || needs4 )
+            {
+                @SuppressWarnings( "deprecation" )
+                PlayerMapPreference pref = (PlayerMapPreference) findPreference( "playerMap" );
+                pref.show();
+                return;
+            }
+        }
+        
         // Wait for the CRC calculation thread to finish
         SafeMethods.join( crcThread, 0 );
         

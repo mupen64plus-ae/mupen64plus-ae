@@ -52,6 +52,7 @@ public class PlayerMapPreference extends DialogPreference implements
     {
         super( context, attrs );
         setDialogLayoutResource( R.layout.player_map_preference );
+        setDialogMessage( getSummary() );
     }
     
     public void setValue( String value )
@@ -64,6 +65,11 @@ public class PlayerMapPreference extends DialogPreference implements
     public String getValue()
     {
         return mValue;
+    }
+    
+    public void show()
+    {
+        showDialog( null );
     }
     
     @Override

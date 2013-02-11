@@ -88,6 +88,11 @@ public class PlayerMap extends SerializableMap
         return result.trim();
     }
     
+    public boolean isMapped( int player )
+    {
+        return mMap.indexOfValue( player ) >= 0;
+    }
+    
     public void map( int hardwareId, int player )
     {
         if( player > 0 && player < 5 )
