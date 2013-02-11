@@ -98,7 +98,7 @@ public class VisibleTouchMap extends TouchMap
     {
         super( resources );
         mFpsEnabled = fpsEnabled;
-        mFontsDir = fontsDirectory;
+        mFontsDir = fontsDir;
         mFpsDigits = new ArrayList<Image>();
         mNumerals = new Image[10];
         autoHoldImages = new Image[BUTTON_STRING_MAP.size()];
