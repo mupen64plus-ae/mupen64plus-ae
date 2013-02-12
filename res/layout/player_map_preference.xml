@@ -1,50 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
     <TextView
         android:id="@android:id/message"
         style="@style/alertDialogMessage" />
 
-    <TableRow
+    <Button
+        android:id="@+id/btnPlayer1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:text="@string/playerMapPreference_button" />
 
-        <Button
-            android:id="@+id/btnPlayer1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/playerMapPreference_button" />
-
-        <Button
-            android:id="@+id/btnPlayer2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/playerMapPreference_button" />
-    </TableRow>
-
-    <TableRow
+    <Button
+        android:id="@+id/btnPlayer2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:text="@string/playerMapPreference_button" />
 
-        <Button
-            android:id="@+id/btnPlayer3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/playerMapPreference_button" />
+    <Button
+        android:id="@+id/btnPlayer3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/playerMapPreference_button" />
 
-        <Button
-            android:id="@+id/btnPlayer4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/playerMapPreference_button" />
-    </TableRow>
+    <Button
+        android:id="@+id/btnPlayer4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/playerMapPreference_button" />
 
-</TableLayout>
+</LinearLayout>

@@ -294,7 +294,7 @@
 
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multi-player</string>
-    <string name="playerMap_summary">Define each player\'s controller</string>
+    <string name="playerMap_summary">Define each player\'s controller(s)</string>
 
     <!-- Input Map Preferences -->
     <string name="inputMap1_title">Controller</string>
@@ -356,7 +356,7 @@
     <string name="playerMapPreference_popupTitle">Player %1$d</string>
     <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Unmap</string>
-    <string name="playerMapPreference_button">Player %1$d\n\n%2$s</string>
+    <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
 
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>

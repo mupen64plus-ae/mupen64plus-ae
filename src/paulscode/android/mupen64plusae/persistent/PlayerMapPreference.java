@@ -206,7 +206,7 @@ public class PlayerMapPreference extends DialogPreference implements
     private Button setupButton( View parentView, int resId, boolean isEnabled )
     {
         Button button = (Button) parentView.findViewById( resId );
-        button.setEnabled( isEnabled );
+        button.setVisibility( isEnabled? View.VISIBLE : View.GONE );
         button.setOnClickListener( this );
         return button;
     }
