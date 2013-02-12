@@ -309,10 +309,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             boolean needs2 = mUserPrefs.isInputEnabled2 && !mUserPrefs.playerMap.isMapped( 2 );
             boolean needs3 = mUserPrefs.isInputEnabled3 && !mUserPrefs.playerMap.isMapped( 3 );
             boolean needs4 = mUserPrefs.isInputEnabled4 && !mUserPrefs.playerMap.isMapped( 4 );
-            Log.w("PlayMenuActivity", "Needs1: " + needs1);
-            Log.w("PlayMenuActivity", "Needs2: " + needs2);
-            Log.w("PlayMenuActivity", "Needs3: " + needs3);
-            Log.w("PlayMenuActivity", "Needs4: " + needs4);
+            
             if( needs1 || needs2 || needs3 || needs4 )
             {
                 @SuppressWarnings( "deprecation" )
