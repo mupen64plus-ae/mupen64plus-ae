@@ -302,7 +302,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     private void launchGame( boolean isRestarting )
     {
         // Popup the multi-player dialog and abort if any players don't have a controller assigned
-        if( mUserPrefs.playerMap.isEnabled() )
+        if( mUserPrefs.playerMap.isEnabled() && mUserPrefs.getPlayerMapReminder() )
         {
             mUserPrefs.playerMap.removeUnavailableMappings();
             boolean needs1 = mUserPrefs.isInputEnabled1 && !mUserPrefs.playerMap.isMapped( 1 );

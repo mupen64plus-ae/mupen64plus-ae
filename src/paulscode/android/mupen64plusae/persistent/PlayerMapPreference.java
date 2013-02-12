@@ -34,9 +34,12 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class PlayerMapPreference extends DialogPreference implements
-        DialogInterface.OnClickListener, View.OnClickListener
+        DialogInterface.OnClickListener, View.OnClickListener, OnCheckedChangeListener
 {
     private final PlayerMap mMap = new PlayerMap();
     private List<Integer> mUnmappableKeyCodes;
@@ -45,6 +48,7 @@ public class PlayerMapPreference extends DialogPreference implements
     private Button buttonPlayer2;
     private Button buttonPlayer3;
     private Button buttonPlayer4;
+    private CheckBox checkBoxReminder;
     
     private String mValue = "";
     
@@ -100,6 +104,9 @@ public class PlayerMapPreference extends DialogPreference implements
         buttonPlayer2 = setupButton( view, R.id.btnPlayer2, prefs.isInputEnabled2 );
         buttonPlayer3 = setupButton( view, R.id.btnPlayer3, prefs.isInputEnabled3 );
         buttonPlayer4 = setupButton( view, R.id.btnPlayer4, prefs.isInputEnabled4 );
+        checkBoxReminder = (CheckBox) view.findViewById( R.id.checkBox );
+        checkBoxReminder.setChecked( prefs.getPlayerMapReminder() );
+        checkBoxReminder.setOnCheckedChangeListener( this );
         updateViews();
     }
     
@@ -160,6 +167,12 @@ public class PlayerMapPreference extends DialogPreference implements
         }
     }
     
+    @Override
+    public void onCheckedChanged( CompoundButton buttonView, boolean isChecked )
+    {
+        new UserPrefs( getContext() ).putPlayerMapReminder( isChecked );
+    }
+    
     private void promptPlayer( final int player )
     {
         Context context = getContext();
@@ -206,7 +219,7 @@ public class PlayerMapPreference extends DialogPreference implements
     private Button setupButton( View parentView, int resId, boolean isEnabled )
     {
         Button button = (Button) parentView.findViewById( resId );
-        button.setVisibility( isEnabled? View.VISIBLE : View.GONE );
+        button.setVisibility( isEnabled ? View.VISIBLE : View.GONE );
         button.setOnClickListener( this );
         return button;
     }

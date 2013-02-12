@@ -279,11 +279,13 @@ public class UserPrefs
     // Shared preferences keys and key templates
     private static final String KEYTEMPLATE_INPUT_MAP_STRING = "inputMapString%1$d";
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
+    private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     // ... add more as needed
     
     // Shared preferences default values
     public static final String DEFAULT_INPUT_MAP_STRING = InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
+    public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     // ... add more as needed
     
     private final SharedPreferences mPreferences;
@@ -501,6 +503,11 @@ public class UserPrefs
         return getBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, DEFAULT_SPECIAL_VISIBILITY );
     }
     
+    public boolean getPlayerMapReminder()
+    {
+        return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
+    }
+    
     public void putInputMapString( int player, String value )
     {
         putString( KEYTEMPLATE_INPUT_MAP_STRING, player, value );
@@ -511,10 +518,20 @@ public class UserPrefs
         putBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, value );
     }
     
+    public void putPlayerMapReminder( boolean value )
+    {
+        putBoolean( KEY_PLAYER_MAP_REMINDER, value );
+    }
+    
+    private boolean getBoolean( String key, boolean defaultValue )
+    {
+        return mPreferences.getBoolean( key, defaultValue );
+    }
+    
     private boolean getBoolean( String keyTemplate, int index, boolean defaultValue )
     {
         String key = String.format( Locale.US, keyTemplate, index );
-        return mPreferences.getBoolean( key, defaultValue );
+        return getBoolean( key, defaultValue );
     }
     
     private String getString( String keyTemplate, int index, String defaultValue )
@@ -523,10 +540,15 @@ public class UserPrefs
         return mPreferences.getString( key, defaultValue );
     }
     
+    private void putBoolean( String key, boolean value )
+    {
+        mPreferences.edit().putBoolean( key, value ).commit();
+    }
+    
     private void putBoolean( String keyTemplate, int index, boolean value )
     {
         String key = String.format( Locale.US, keyTemplate, index );
-        mPreferences.edit().putBoolean( key, value ).commit();
+        putBoolean( key, value );
     }
     
     private void putString( String keyTemplate, int index, String value )

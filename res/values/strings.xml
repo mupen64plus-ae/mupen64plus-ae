@@ -357,6 +357,7 @@
     <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Unmap</string>
     <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
+    <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
 
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
