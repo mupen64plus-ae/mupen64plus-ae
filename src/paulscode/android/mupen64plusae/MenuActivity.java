@@ -224,7 +224,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Enable the screen position prefs only if the screen is in portrait mode
         PrefUtil.enablePreference( this, SCREEN_POSITION, user.isTouchscreenEnabled
-                && ( ( user.videoOrientation == 1 ) || ( user.videoOrientation == 9 ) ) );
+                && ( ( user.videoOrientation == 1 ) || ( user.videoOrientation == 9 ) )
+                && !user.isStretched );
         
         // Enable the auto-holdables pref if auto-hold is not disabled
         PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, user.isTouchscreenEnabled

@@ -385,7 +385,10 @@ public class UserPrefs
         
         // Video prefs
         videoOrientation = getSafeInt( mPreferences, "videoOrientation", 0 );
-        videoPosition = getSafeInt( mPreferences, "videoPosition", 1 );
+        if( (videoOrientation == 1 ) || ( videoOrientation == 9)) 
+            videoPosition = getSafeInt( mPreferences, "videoPosition", 1 );
+        else
+            videoPosition = 1;
         videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
         isFpsEnabled = videoFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
