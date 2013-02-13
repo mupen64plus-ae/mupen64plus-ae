@@ -1,4 +1,5 @@
 [20:2.0.4]
+- Added screen position option for portrait mode
 - Added vibration feedback for touchscreen/pad buttons
 - Added auto-hold feature for touchscreen buttons
 - Added feature to save/load custom input profiles
