@@ -49,6 +49,9 @@ extern "C" int Android_JNI_UseRGBA8888();
 #define HARDWARE_TYPE_IMAP          4
 #define HARDWARE_TYPE_TEGRA         5
 ////
+#define SCREEN_POSITION_BOTTOM      0
+#define SCREEN_POSITION_MIDDLE      1
+#define SCREEN_POSITION_TOP         2
 
 //#define BATCH_TEST
 //#define TEXTURECACHE_TEST
@@ -60,6 +63,8 @@ extern "C" int Android_JNI_UseRGBA8888();
 extern "C" void Android_JNI_SwapWindow();
 //// paulscode, maintain aspect ratio, or stretch to fill the screen:
 extern "C" int Android_JNI_GetScreenStretch();
+//// Gillou68310, screen position when in portrait mode:
+extern "C" int Android_JNI_GetScreenPosition();
 //// paulscode, function prototype missing from Yongzh's code
 void OGL_UpdateDepthUpdate();
 ////
@@ -271,19 +276,19 @@ void OGL_UpdateScale()
 
 void OGL_ResizeWindow(int x, int y, int width, int height)
 {
- 	config.window.xpos = x;
-	config.window.ypos = y;
-	config.window.width = width;
-	config.window.height = height;
+    config.window.xpos = x;
+    config.window.ypos = y;
+    config.window.width = width;
+    config.window.height = height;
 
-	config.framebuffer.xpos = x;
-	config.framebuffer.ypos = y;
-	config.framebuffer.width = width;
-	config.framebuffer.height = height;
-	OGL_UpdateScale();
+    config.framebuffer.xpos = x;
+    config.framebuffer.ypos = y;
+    config.framebuffer.width = width;
+    config.framebuffer.height = height;
+    OGL_UpdateScale();
 
-	glViewport(config.framebuffer.xpos, config.framebuffer.ypos,
-			config.framebuffer.width, config.framebuffer.height);
+    glViewport(config.framebuffer.xpos, config.framebuffer.ypos,
+            config.framebuffer.width, config.framebuffer.height);
 }
 
 ////// paulscode, added for SDL linkage
@@ -333,8 +338,11 @@ else
     const float ratio = ( config.romPAL ? 9.0f/11.0f : 0.75f );
     int videoWidth = videoInfo->current_w;
     int videoHeight = videoInfo->current_h;
-
+    int screenPosition;
+    int x, y;
+    
     config.stretchVideo = (bool) Android_JNI_GetScreenStretch();
+    screenPosition = (int) Android_JNI_GetScreenPosition();
     if( !config.stretchVideo )
     {
         videoWidth = (int) ( videoInfo->current_h / ratio );
@@ -343,9 +351,30 @@ else
             videoWidth = videoInfo->current_w;
             videoHeight = (int) ( videoInfo->current_w * ratio );
         }
+        
+        switch( screenPosition )
+        {
+            case SCREEN_POSITION_BOTTOM:
+                x = 0;
+                y = 0;
+                break;
+            
+            case SCREEN_POSITION_MIDDLE:
+                x = ( videoInfo->current_w - videoWidth ) / 2;
+                y = ( videoInfo->current_h - videoHeight ) / 2;
+                break;
+            
+            case SCREEN_POSITION_TOP:
+                x = videoInfo->current_w - videoWidth;
+                y = videoInfo->current_h - videoHeight;
+                break;
+        }
     }
-    int x = ( videoInfo->current_w - videoWidth ) / 2;
-    int y = ( videoInfo->current_h - videoHeight ) / 2;
+    else
+    {
+        x = ( videoInfo->current_w - videoWidth ) / 2;
+        y = ( videoInfo->current_h - videoHeight ) / 2;
+    }
     config.window.xpos = x;
     config.window.ypos = y;
     config.window.width = videoWidth;

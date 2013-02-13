@@ -216,6 +216,9 @@ public class UserPrefs
     /** True if the video should be stretched. */
     public final boolean isStretched;
     
+    /** The screen Position in Portrait mode. */
+    public final int videoPosition;
+    
     /** True if framelimiter is used. */
     public final boolean isFramelimiterEnabled;
     
@@ -382,6 +385,7 @@ public class UserPrefs
         
         // Video prefs
         videoOrientation = getSafeInt( mPreferences, "videoOrientation", 0 );
+        videoPosition = getSafeInt( mPreferences, "videoPosition", 1 );
         videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
         isFpsEnabled = videoFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );

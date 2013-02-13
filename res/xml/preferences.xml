@@ -267,6 +267,13 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/videoOrientation_title" />
                 <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/videoPosition_default"
+                    android:entries="@array/videoPosition_entries"
+                    android:entryValues="@array/videoPosition_values"
+                    android:key="videoPosition"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/videoPosition_title" />
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/videoFpsRefresh_default"
                     android:entries="@array/videoFpsRefresh_entries"
                     android:entryValues="@array/videoFpsRefresh_values"

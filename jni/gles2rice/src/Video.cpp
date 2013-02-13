@@ -51,10 +51,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <android/log.h>
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "GLES2Rice (Video.cpp)", __VA_ARGS__)
 ////
+#define SCREEN_POSITION_BOTTOM      0
+#define SCREEN_POSITION_MIDDLE      1
+#define SCREEN_POSITION_TOP         2
+
 // paulscode, moved screen dimension configuration here
 extern m64p_handle l_ConfigVideoGeneral;
 //// paulscode, maintain aspect ratio, or stretch to fill the screen:
 extern "C" int Android_JNI_GetScreenStretch();
+//// Gillou68310, screen position when in portrait mode:
+extern "C" int Android_JNI_GetScreenPosition();
 ////
 
 //=======================================================
@@ -376,8 +382,11 @@ static bool StartVideo(void)
  
           int videoWidth = screenWidth;
           int videoHeight = screenHeight;
+          int screenPosition;
+          int x, y;
 
           stretchVideo = (bool) Android_JNI_GetScreenStretch();
+          screenPosition = (int) Android_JNI_GetScreenPosition();
           if( !stretchVideo )
           {
               videoWidth = (int) ( videoInfo->current_h / ratio );
@@ -386,9 +395,30 @@ static bool StartVideo(void)
                   videoWidth = videoInfo->current_w;
                   videoHeight = (int) ( videoInfo->current_w * ratio );
               }
+              
+              switch( screenPosition )
+              {
+                  case SCREEN_POSITION_BOTTOM:
+                      x = 0;
+                      y = 0;
+                      break;
+            
+                  case SCREEN_POSITION_MIDDLE:
+                      x = ( videoInfo->current_w - videoWidth ) / 2;
+                      y = ( videoInfo->current_h - videoHeight ) / 2;
+                      break;
+            
+                  case SCREEN_POSITION_TOP:
+                      x = videoInfo->current_w - videoWidth;
+                      y = videoInfo->current_h - videoHeight;
+                      break;
+              }
           }
-          int x = ( videoInfo->current_w - videoWidth ) / 2;
-          int y = ( videoInfo->current_h - videoHeight ) / 2;
+          else
+          {
+              x = ( videoInfo->current_w - videoWidth ) / 2;
+              y = ( videoInfo->current_h - videoHeight ) / 2;
+          }
 
         windowSetting.uDisplayWidth = screenWidth;
         windowSetting.uDisplayHeight = screenHeight;

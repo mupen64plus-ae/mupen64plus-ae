@@ -58,6 +58,7 @@ static jmethodID midGetHardwareType;
 static jmethodID midGetExtraArgs;
 static jmethodID midGetROMPath;
 static jmethodID midGetScreenStretch;
+static jmethodID midGetScreenPosition;
 static jmethodID midGetAutoFrameSkip;
 static jmethodID midGetMaxFrameSkip;
 static jmethodID midEmuStateCallback;
@@ -107,6 +108,8 @@ extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* env, jclass cls)
                                 "getROMPath", "()Ljava/lang/Object;");
     midGetScreenStretch = mEnv->GetStaticMethodID(mActivityClass,
                                 "getScreenStretch", "()Z");
+    midGetScreenPosition = mEnv->GetStaticMethodID(mActivityClass,
+                                "getScreenPosition", "()I");
     midGetAutoFrameSkip = mEnv->GetStaticMethodID(mActivityClass,
                                 "getAutoFrameSkip", "()Z");
     midGetMaxFrameSkip = mEnv->GetStaticMethodID(mActivityClass,
@@ -125,7 +128,7 @@ extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* env, jclass cls)
                                 "audioQuit", "()V");
 
     if(!midCreateGLContext || !midVibrate || !midUseRGBA8888 || !midFlipBuffers || !midGetDataDir ||
-       !midGetHardwareType || !midGetExtraArgs || !midGetROMPath || !midGetScreenStretch ||
+       !midGetHardwareType || !midGetExtraArgs || !midGetROMPath || !midGetScreenStretch || !midGetScreenPosition ||
        !midGetAutoFrameSkip || !midGetMaxFrameSkip || ! midEmuStateCallback || !midShowToast ||
        !midAudioInit || !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit)
     {
@@ -250,6 +253,15 @@ extern "C" DECLSPEC int SDLCALL Android_JNI_GetScreenStretch()
     else
         return 0;
 }
+
+extern "C" DECLSPEC int SDLCALL Android_JNI_GetScreenPosition()
+{
+    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "About to call midGetScreenPosition" );
+    jint i = mEnv->CallStaticIntMethod( mActivityClass, midGetScreenPosition );
+    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Android_JNI_GetScreenPosition returning %i", (int) i );
+    return (int) i;
+}
+
 extern "C" DECLSPEC int SDLCALL Android_JNI_GetAutoFrameSkip()
 {
     jboolean b;

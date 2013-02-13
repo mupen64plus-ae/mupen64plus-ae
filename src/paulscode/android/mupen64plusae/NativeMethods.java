@@ -154,6 +154,11 @@ public class NativeMethods
     {
         CoreInterface.emuStateCallback( newState );
     }    
+    public static int getScreenPosition()
+    {
+        return CoreInterface.getScreenPosition();
+    }
+    
     public static boolean getScreenStretch()
     {
         return CoreInterface.getScreenStretch();

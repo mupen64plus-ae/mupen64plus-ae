@@ -151,6 +151,11 @@ public class CoreInterface
         return sUserPrefs.isStretched;
     }
     
+    public static int getScreenPosition()
+    {
+        return sUserPrefs.videoPosition;
+    }
+    
     public static boolean useRGBA8888()
     {
         return sUserPrefs.isRgba8888;
