@@ -71,6 +71,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
     private static final String SCREEN_VIDEO = "screenVideo";
     private static final String SCREEN_AUDIO = "screenAudio";
+    private static final String SCREEN_POSITION = "videoPosition";
     
     private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
@@ -220,6 +221,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Enable the video menu only if the video plug-in is not a dummy
         PrefUtil.enablePreference( this, SCREEN_VIDEO, user.videoPlugin.enabled );
+        
+        // Enable the screen position prefs only if the screen is in portrait mode
+        PrefUtil.enablePreference( this, SCREEN_POSITION, user.isTouchscreenEnabled
+                && ( ( user.videoOrientation == 1 ) || ( user.videoOrientation == 9 ) ) );
         
         // Enable the auto-holdables pref if auto-hold is not disabled
         PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, user.isTouchscreenEnabled
