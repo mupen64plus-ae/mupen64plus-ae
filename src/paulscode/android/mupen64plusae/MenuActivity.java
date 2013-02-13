@@ -42,6 +42,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -71,7 +72,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
     private static final String SCREEN_VIDEO = "screenVideo";
     private static final String SCREEN_AUDIO = "screenAudio";
-    private static final String SCREEN_POSITION = "videoPosition";
     
     private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
@@ -83,6 +83,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String PLUGIN_VIDEO = "pluginVideo";
+    private static final String VIDEO_POSITION = "videoPosition";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String NAVIGATION_MODE = "navigationMode";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
@@ -223,8 +224,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.enablePreference( this, SCREEN_VIDEO, user.videoPlugin.enabled );
         
         // Enable the screen position prefs only if the screen is in portrait mode
-        PrefUtil.enablePreference( this, SCREEN_POSITION, user.isTouchscreenEnabled
-                && ( ( user.videoOrientation == 1 ) || ( user.videoOrientation == 9 ) )
+        boolean isPortrait = user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                || user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+        PrefUtil.enablePreference( this, VIDEO_POSITION, user.isTouchscreenEnabled && isPortrait
                 && !user.isStretched );
         
         // Enable the auto-holdables pref if auto-hold is not disabled

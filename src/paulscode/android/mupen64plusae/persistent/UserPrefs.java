@@ -207,6 +207,9 @@ public class UserPrefs
     /** The screen orientation for the game activity. */
     public final int videoOrientation;
     
+    /** The screen position in portrait mode. */
+    public final int videoPosition;
+    
     /** The number of frames over which FPS is calculated (0 = disabled). */
     public final int videoFpsRefresh;
     
@@ -215,9 +218,6 @@ public class UserPrefs
     
     /** True if the video should be stretched. */
     public final boolean isStretched;
-    
-    /** The screen Position in Portrait mode. */
-    public final int videoPosition;
     
     /** True if framelimiter is used. */
     public final boolean isFramelimiterEnabled;
