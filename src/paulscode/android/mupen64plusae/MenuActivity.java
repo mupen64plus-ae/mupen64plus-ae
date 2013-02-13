@@ -223,11 +223,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Enable the video menu only if the video plug-in is not a dummy
         PrefUtil.enablePreference( this, SCREEN_VIDEO, user.videoPlugin.enabled );
         
-        // Enable the screen position prefs only if the screen is in portrait mode
+        // Enable the screen position prefs only if the screen is in portrait mode and not stretched
         boolean isPortrait = user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 || user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-        PrefUtil.enablePreference( this, VIDEO_POSITION, user.isTouchscreenEnabled && isPortrait
-                && !user.isStretched );
+        PrefUtil.enablePreference( this, VIDEO_POSITION, isPortrait && !user.isStretched );
         
         // Enable the auto-holdables pref if auto-hold is not disabled
         PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, user.isTouchscreenEnabled
