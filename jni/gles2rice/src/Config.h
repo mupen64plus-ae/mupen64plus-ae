@@ -224,6 +224,7 @@ typedef struct {
     BOOL    bSmallTextureOnly;
     BOOL    bDumpTexturesToFiles;
     BOOL    bLoadHiResTextures;
+    BOOL    bLoadHiResCRCOnly;
 
     int     OpenglDepthBufferSetting;
     int     OpenglRenderSetting;

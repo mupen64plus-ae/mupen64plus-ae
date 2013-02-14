@@ -1303,7 +1303,7 @@ void DLParser_FillRect(Gfx *gfx)
             // Emulating Clear, by write the memory in RDRAM
             uint16 color = (uint16)gRDP.originalFillColor;
             uint32 pitch = g_CI.dwWidth<<1;
-            long base = (long) (g_pRDRAMu8 + g_CI.dwAddr);
+            long long base = (long long) (g_pRDRAMu8 + g_CI.dwAddr);
             for( uint32 i =y0; i<y1; i++ )
             {
                 for( uint32 j=x0; j<x1; j++ )
@@ -1330,7 +1330,7 @@ void DLParser_FillRect(Gfx *gfx)
             {
                 uint16 color = (uint16)gRDP.originalFillColor;
                 uint32 pitch = g_pRenderTextureInfo->N64Width<<1;
-                long base = (long) (g_pRDRAMu8 + g_pRenderTextureInfo->CI_Info.dwAddr);
+                long long base = (long long) (g_pRDRAMu8 + g_pRenderTextureInfo->CI_Info.dwAddr);
                 for( uint32 i =y0; i<y1; i++ )
                 {
                     for( uint32 j=x0; j<x1; j++ )
@@ -1343,7 +1343,7 @@ void DLParser_FillRect(Gfx *gfx)
             {
                 uint8 color = (uint8)gRDP.originalFillColor;
                 uint32 pitch = g_pRenderTextureInfo->N64Width;
-                long base = (long) (g_pRDRAMu8 + g_pRenderTextureInfo->CI_Info.dwAddr);
+                long long base = (long long) (g_pRDRAMu8 + g_pRenderTextureInfo->CI_Info.dwAddr);
                 for( uint32 i=y0; i<y1; i++ )
                 {
                     for( uint32 j=x0; j<x1; j++ )

@@ -223,7 +223,7 @@ void COGLExtRender::ApplyTextureFilter()
             case TEXTURE_NO_FILTER:
                 iMinFilter = GL_NEAREST_MIPMAP_NEAREST;
                 break;
-	    case TEXTURE_NO_MIPMAP:
+            case TEXTURE_NO_MIPMAP:
             default:
                 //Bilinear without mipmap
                 iMinFilter = GL_LINEAR;
