@@ -1,0 +1,43 @@
+[Promotional Text]
+
+
+Nintendo 64 emulator za Android. Mupen64Plus AE je još uvijek u stanju testiranja.
+
+
+
+
+
+
+
+
+[App Description]
+
+
+OVA APLIKACIJA NE SADRŽAVA ROM-OVE IGARA
+- Morate imati legalnu kopiju ROM-a prije samog igranja!
+- Većina javno dostupnih igara je dostupna na www.pdroms.de
+
+99¢ (oko 5,59kn) SU SAMO ZA DONACIJE
+- Ovu aplikaciju je moguće preuzeti sa paulscode.com besplatno (BEZ REKLAMA!)
+- Molimo vas da donirate ako je moguće
+- Donacije održavaju VEĆINU projekata otvorenog koda i programera
+
+Mupen64Plus, Android Edition (AE) je N64 emulator za Android. Trenutno je u stanju testiranja, što znači da još uvijek nije dovršen. Tu još uvijek postoji veliki broj grafičkih i zvučnih grešaka, čak i na modernim uređajima. Posjetite www.paulscode.com ako želite pomoći u ispitivanju i razvijanju programa.
+
+Ovo je službena aplikacija, koja je bila uklonjena iz Play trgovine zbog konkurencije koja je prijavila lažni DMCA zahtjev. Trev (Keowsktech) je objavio ovu aplikaciju na svom korisničkom računu prije nekoliko mjeseci dok je autor ove aplikacije (Paul Lamb) morao rješavati probleme sa svojim korisničkim računom. Pošto je sada njegov korisnički račun ponovno vraćen, nova ažuriranja će ovdje biti dostupna.
+
+Razlog zbog kašnjenja u DMCA protu-zahtjevima je bio moguć zbog potencijalnih kršenja autorskih prava povezana sa slikama aplikacije u kojoj su pokrenute autorski zaštićene igre. Odlučeno je da će se koristiti slike samo onih igara koje su javno dostupne da se izbjegne ponovno uklanjanje iz Play trgovine. U slučaju da se ponovno ukloni, još uvijek ćete biti u mogućnosti preuzeti nova ažuriranja na paulscode.com, besplatno.
+
+Ova aplikacija je licencirana pod licencom GNU GPL v2, a čitavi izvorni kod je dostupan na javnom GIT skladištu, https://github.com/paulscode/mupen64plus-ae . Ako neki programer želi pristup za pisanje, i pomoć oko grananja projekta kontaktirajte autora aplikacije (Paul) na forumu.
+
+OPTIMIZIRANO ZA XPERIA PLAY
+- Analogni unos preko dodirne površine!
+
+UVODNI POSTUPCI
+- Prebacite svoje ROM-ove bilo gdje na SD kartici ili memoriji uređaja
+- Pronađite ROM-ove gdje ste ih spremili preko izbornika
+- Zadana lokacija SD kartice je na većini uređaja pod "/mnt/sdcard"
+- ROM-ovi moraju biti .n64, .v64 ili .z64 format, podržane su komprimirane .zip datoteke, također
+
+ZA POMOĆ, FAQ, POPIS PROMJENA I UPUTA:
+- http://www.paulscode.com

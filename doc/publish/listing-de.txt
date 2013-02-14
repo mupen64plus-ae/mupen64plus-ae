@@ -1,0 +1,43 @@
+[Promotional Text]
+
+
+Nintendo 64 Emulator für Android. Mupen64Plus AE ist noch in der Betaphase.
+
+
+
+
+
+
+
+
+[App Description]
+
+
+DIESE APP BEINHALTET KEINE ROMS
+- Du musst der rechtliche Besitzer einer ROM sein bevor du sie nutzen darfst!
+- Eine Reihe öffentlich zugänglicher Spiele/Demos ist auf www.pdroms.de zu finden
+
+99¢ SIND NUR EINE SPENDE
+- Diese App gibt es auch kostenfrei auf meiner Website (OHNE WERBUNG!)
+- Bitte zieh die Spende in betracht
+- Spenden helfen vielen open-source Projekten und deren Entwicklern
+
+Mupen64Plus, Android Edition (AE) ist ein N64 Emulator für Android. Derzeit befindet sich das Projekt noch in der Beta und ist damit noch im Entwicklungsprozess.Aktuell gibt es noch viele Lag-, Grafik- und Audioprobleme - selbst auf Modernen Geräten. Besuche www.paulscode.com  um an der Entwicklung und am Testprozess teilzuhaben. Ausserdem findest du dort Informationen über Bugfixes und FAQ.
+
+Dies ist die offizielle App welche vor ein paar Monaten aus dem Play Store genommen wurde weil einige Konkurrenten gefakte DMCA Meldungen publizierten. Trev (Keowsktech) hat diese App über seinen Account veröffentlicht währen ich mit Google an meinen Accountproblemen gearbeitet habe.
+
+Ich glaube, dass ein Grund für die Verzögerung in meiner DMCA Gegandarstellung die Screenshots der Spiele waren die ich für diese App genutzt habe. Diese stellten eine potentielle Copyrightverletzung dar. Ich habe mich entschieden in Zukunft nur noch Screenshots von öffentlich zugänglichen Spielen und Demos zu nutzen um weiteren Probleme vorzubeugen. Falls wie App, warum auch immer, wiedermal vom Market genommen werden sollte wird sie weiterhin über paulscode.com kostenfrei erhältlich sein.
+
+Die App ist lizensiert von GNU GPL v2. Der vollständige Quellcode ist für die Öffentlichkeit im GIT Repository verfügbar unter: https://github.com/paulscode/mupen64plus-ae. Wenn ein Entwickler Zugriff darauf möchte kann er mich (Paul) einfach im Forum darauf anschreiben. Wenn du Hilfe bei deinem Projekt brauchst lass es mich Wissen.
+
+XPERIA PLAY OPTIMIERT
+- Analoge Steuerung über das Touchpad!
+
+ERSTE SCHRITTE
+- Kopiere ROMs irgendwo auf deinen Telefonspeicher oder deine SD-Karte.
+- Suche die ROM innerhalb der App
+- Normalerweise ist die SD-Karte unter /mnt/sdcard zu finden
+- Die ROMs müssen im .n64, v64 oder im z64 sein. ZIP Dateien werden auch erkannt.
+
+HILFE, FAQS, BUG-FIXES UND SPIEL BACKUP ANLEITUNGEN:
+- http://www.paulscode.com

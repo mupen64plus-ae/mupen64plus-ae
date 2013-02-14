@@ -1,0 +1,44 @@
+[Texte Promotionnel]
+
+
+Émulateur Nintendo 64 pour Android. Mupen64Plus AE est en phase de beta test.
+
+
+
+
+
+
+
+
+[Description de l'Application]
+
+
+Cette application ne contient pas de ROMs !
+-Vous devez posséder les droits de vos ROMs avant de pouvoir les utiliser.
+-Un certain nombre de jeux/démos tombés dans le domaine public sont disponibles sur www.pdroms.de
+
+La version à 0.74€/0.99$ ne sert qu'à rémunérer l'équipe et soutenir le développement.
+-Cette application est disponible librement, gratuitement et sans publicité sur notre site internet.
+-Merci de considérer la version de support si vous appréciez cette application.
+-Les dons permettent de soutenir de nombreux projets open-source et de rémunérer leurs développeurs.
+
+Mupen64Plus Android Edition (AE) est un émulateur Nintendo 64 pour Android. Cette application est actuellement en phase de beta-test, ce qui signifie qu'elle est continuellement améliorée. Toutefois de nombreux problèmes subsistent en termes de visuels, lag ou audio et ce, même sur des appareil Android modernes.
+Veuillez visiter wwww.paulscode.com pour intégrer l'équipe de développement ou de test ainsi que pour avoir accès aux listes de correction des bugs et aux questions fréquemment posées.
+
+Ceci est l'application officielle, qui a été retirée de Google Play précédemment. L'application a été publiée sous le compte "Keowsktech" pendant quelques mois le temps de résoudre un problème de compte avec Google. Le compte "Keowsktech" va cesser de supporter cette appli, toutes les prochaines mises à jour seront publiées sur le compte de Paul Lamb.
+
+Nous pensons que l'une des raisons qui a retardé la réhabilitation du compte de cette application est une possible utilisation frauduleuse de captures d'écran de jeux sous licence. Toutes les captures d'écran sont désormais basées sur des jeux et démos tombés dans le domaine publique. Si l'application venait à être retirée de Google Play pour une raison ou une autre, vous pourrez toujours obtenir la dernière mise à jour gratuitement sur paulscode.com.
+
+Cette application est sous licence GNU GPL v2, et le code source complet est disponible grâce au dépôt GIT public https://github.com/paulscode/mupen64plus-ae. Si un développeur désire l'accès en écriture au dépôt, merci d'entrer en contact avec le développeur principal (Paul) sur le forum. Si vous avez besoin d'aide pour orienter le projet, merci de le lui faire savoir afin qu'il puisse vous aider à démarrer.
+
+APPLICATION OPTIMISÉE POUR LE XPERIA PLAY
+-Utilisez le pavé tactile comme stick analogique !
+
+GUIDE D'UTILISATION
+-Transférez vos ROMs sur votre appareil (mémoire interne ou carte SD)
+-Localisez le dossier contenant vos ROMs depuis l'application
+-Le dossier de carte SD par défaut est /mnt/sdcard sur la plupart des téléphones et tablettes
+-Les ROMs doivent être au format .n64, .v64 ou .z64. Les fichiers .zip sont également reconnus.
+
+AIDE, FAQ, CORRECTIFS, SUPPORT, CRÉATION DE VOS PROPRES ROMs :
+- http://www.paulscode.com
