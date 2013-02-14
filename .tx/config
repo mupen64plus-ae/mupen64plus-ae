@@ -11,7 +11,8 @@ minimum_perc = 80
 
 [mupen64plus-ae.market-listing]
 file_filter = ./doc/publish/listing-<lang>.txt
-source_lang = ./doc/publish/listing.txt
+source_file = ./doc/publish/listing.txt
+source_lang = en
 trans.en_US = /dev/null
 type = TXT
 minimum_perc = 80
