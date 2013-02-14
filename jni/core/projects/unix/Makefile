@@ -49,6 +49,7 @@ ifneq ("$(filter GNU/kFreeBSD kfreebsd,$(UNAME))","")
 endif
 ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   OS = MINGW
+  PIC = 0
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -104,7 +105,8 @@ endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
-CFLAGS += $(OPTFLAGS) -Wall -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -DM64P_PARALLEL
+WARNFLAGS ?= -Wall
+CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -DM64P_PARALLEL
 CXXFLAGS += -fvisibility-inlines-hidden
 LDLIBS +=  -lm
 
@@ -151,15 +153,27 @@ ifeq ($(OS), LINUX)
   LDFLAGS += -Wl,-version-script,$(SRCDIR)/api/api_export.ver
 endif
 ifeq ($(OS), OSX)
+  # Select the proper SDK
+  # Also, SDKs are stored in a different location since XCode 4.3
+  OSX_SDK ?= $(shell sw_vers -productVersion | cut -f1 -f2 -d .)
+  OSX_XCODEMAJ = $(shell xcodebuild -version | grep '[0-9]*\.[0-9]*' | cut -f2 -d ' ' | cut -f1 -d .)
+  OSX_XCODEMIN = $(shell xcodebuild -version | grep '[0-9]*\.[0-9]*' | cut -f2 -d ' ' | cut -f2 -d .)
+  OSX_XCODEGE43 = $(shell echo "`expr $(OSX_XCODEMAJ) \>= 4``expr $(OSX_XCODEMIN) \>= 3`")
+  ifeq ($(OSX_XCODEGE43), 11)
+    OSX_SYSROOT := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+  else
+    OSX_SYSROOT := /Developer/SDKs
+  endif
+
   TARGET = libmupen64plus$(POSTFIX).dylib
   LDFLAGS += -bundle -read_only_relocs suppress
   LDLIBS += -ldl
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
       LDFLAGS += -arch x86_64
     else
-      CFLAGS += -pipe -mmmx -msse -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      CFLAGS += -pipe -mmmx -msse -arch i686 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
       LDFLAGS += -arch i686
       ifneq ($(PROFILE), 1)
         CFLAGS += -fomit-frame-pointer
@@ -172,6 +186,7 @@ ifeq ($(OS), MINGW)
   LDFLAGS += -Wl,-Bsymbolic -shared -Wl,-export-all-symbols
   # only export api symbols
   LDFLAGS += -Wl,-version-script,$(SRCDIR)/api/api_export.ver
+  LDLIBS += -lpthread
 endif
 
 ifeq ($(CPU_ENDIANNESS), BIG)
@@ -194,11 +209,18 @@ endif
 ifeq ($(shell $(PKG_CONFIG) --modversion libpng 2>/dev/null),)
   $(error No libpng development libraries found!)
 endif
-ifeq ($(shell $(PKG_CONFIG) --modversion zlib 2>/dev/null),)
-  $(error No zlib development libraries found!)
+ifeq ($(OS), OSX) # use system zlib on OSX
+  LDLIBS += -lz
+else
+  ifeq ($(shell $(PKG_CONFIG) --modversion zlib 2>/dev/null),)
+    $(error No zlib development libraries found!)
+  endif
+  CFLAGS += $(shell $(PKG_CONFIG) --cflags zlib)
+  LDLIBS +=  $(shell $(PKG_CONFIG) --libs zlib)
 endif
-CFLAGS += $(shell $(PKG_CONFIG) --cflags libpng zlib)
-LDLIBS +=  $(shell $(PKG_CONFIG) --libs libpng zlib)
+ 
+CFLAGS += $(shell $(PKG_CONFIG) --cflags libpng)
+LDLIBS +=  $(shell $(PKG_CONFIG) --libs libpng)
 
 # test for presence of SDL
 ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
@@ -273,7 +295,9 @@ else
     CFLAGS += -g
     INSTALL_STRIP_FLAG ?= 
   else
-    INSTALL_STRIP_FLAG ?= -s
+    ifneq ($(OS),OSX)
+      INSTALL_STRIP_FLAG ?= -s
+	endif
   endif
 endif
 # 3. other options given to the makefile on the command line
@@ -474,6 +498,7 @@ targets:
 	@echo "    NO_ASM=1      == build without assembly (no dynamic recompiler or MMX/SSE code)"
 	@echo "    SHAREDIR=path == extra path to search for shared data files"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
+	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    OSD=(1|0)     == Enable/disable build of OpenGL On-screen display"
 	@echo "    NEW_DYNAREC=1 == Replace dynamic recompiler with Ari64's experimental dynarec"
@@ -526,9 +551,9 @@ CFLAGS += -MD
 
 CXXFLAGS += $(CFLAGS)
 ifeq ($(LTO), 1)
-  CFLAGS += -flto
-  CXXFLAGS += -flto
-  LDFLAGS += -fuse-linker-plugin $(CXXFLAGS)
+  CFLAGS += -flto -ffunction-sections -fdata-sections
+  CXXFLAGS += -flto -ffunction-sections -fdata-sections
+  LDFLAGS += -fuse-linker-plugin -Wl,--gc-sections $(CXXFLAGS)
 endif
 
 # standard build rules

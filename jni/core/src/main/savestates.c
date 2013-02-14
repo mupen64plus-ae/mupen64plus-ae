@@ -437,9 +437,18 @@ static int savestates_load_m64p(char *filepath)
     }
 
 #ifdef NEW_DYNAREC
-    pcaddr = GETDATA(curr, unsigned int);
-    pending_exception = 1;
-    invalidate_all_pages();
+    if (r4300emu == CORE_DYNAREC) {
+        pcaddr = GETDATA(curr, unsigned int);
+        pending_exception = 1;
+        invalidate_all_pages();
+    } else {
+        if(r4300emu != CORE_PURE_INTERPRETER)
+        {
+            for (i = 0; i < 0x100000; i++)
+                invalid_code[i] = 1;
+        }
+        generic_jump_to(GETDATA(curr, unsigned int)); // PC
+    }
 #else
     if(r4300emu != CORE_PURE_INTERPRETER)
     {
@@ -459,7 +468,10 @@ static int savestates_load_m64p(char *filepath)
     load_eventqueue_infos(queue);
 
 #ifdef NEW_DYNAREC
-    last_addr = pcaddr;
+    if (r4300emu == CORE_DYNAREC)
+        last_addr = pcaddr;
+    else
+        last_addr = PC->addr;
 #else
     last_addr = PC->addr;
 #endif
@@ -678,11 +690,13 @@ static int savestates_load_pj64(char *filepath, void *handle,
     memset(tlb_LUT_w, 0, 0x400000);
     for (i=0; i < 32; i++)
     {
+        unsigned int MyPageMask, MyEntryHi, MyEntryLo0, MyEntryLo1;
+
         (void)GETDATA(curr, unsigned int); // Dummy read - EntryDefined
-        unsigned int MyPageMask = GETDATA(curr, unsigned int);
-        unsigned int MyEntryHi = GETDATA(curr, unsigned int);
-        unsigned int MyEntryLo0 = GETDATA(curr, unsigned int);
-        unsigned int MyEntryLo1 = GETDATA(curr, unsigned int);
+        MyPageMask = GETDATA(curr, unsigned int);
+        MyEntryHi = GETDATA(curr, unsigned int);
+        MyEntryLo0 = GETDATA(curr, unsigned int);
+        MyEntryLo1 = GETDATA(curr, unsigned int);
 
         // This is copied from TLBWI instruction
         tlb_e[i].g = (MyEntryLo0 & MyEntryLo1 & 1);
@@ -737,9 +751,18 @@ static int savestates_load_pj64(char *filepath, void *handle,
     init_flashram();
 
 #ifdef NEW_DYNAREC
-    pcaddr = GETDATA(curr, unsigned int);
-    pending_exception = 1;
-    invalidate_all_pages();
+    if (r4300emu == CORE_DYNAREC) {
+        pcaddr = GETDATA(curr, unsigned int);
+        pending_exception = 1;
+        invalidate_all_pages();
+    } else {
+        if(r4300emu != CORE_PURE_INTERPRETER)
+        {
+            for (i = 0; i < 0x100000; i++)
+                invalid_code[i] = 1;
+        }
+        generic_jump_to(last_addr);
+    }
 #else
     if(r4300emu != CORE_PURE_INTERPRETER)
     {
@@ -1153,7 +1176,10 @@ static int savestates_save_m64p(char *filepath)
         PUTDATA(curr, unsigned int, tlb_e[i].phys_odd);
     }
 #ifdef NEW_DYNAREC
-    PUTDATA(curr, unsigned int, pcaddr);
+    if (r4300emu == CORE_DYNAREC)
+        PUTDATA(curr, unsigned int, pcaddr);
+    else
+        PUTDATA(curr, unsigned int, PC->addr);
 #else
     PUTDATA(curr, unsigned int, PC->addr);
 #endif
@@ -1197,7 +1223,10 @@ static int savestates_save_pj64(char *filepath, void *handle,
     PUTARRAY(rom, curr, unsigned int, 0x40/4);
     PUTDATA(curr, unsigned int, get_event(VI_INT) - reg_cop0[9]); // vi_timer
 #ifdef NEW_DYNAREC
-    PUTDATA(curr, unsigned int, pcaddr);
+    if (r4300emu == CORE_DYNAREC)
+        PUTDATA(curr, unsigned int, pcaddr);
+    else
+        PUTDATA(curr, unsigned int, PC->addr);
 #else
     PUTDATA(curr, unsigned int, PC->addr);
 #endif
