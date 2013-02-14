@@ -14,6 +14,7 @@
 *.d
 *.so
 *~
+*.tmp
 
 # Generated files
 bin/
