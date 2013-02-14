@@ -63,6 +63,7 @@ ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   OS = MINGW
   SO_EXTENSION = dll
   SHARED = -shared
+  PIC = 0
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -115,7 +116,8 @@ endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
-CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
+WARNFLAGS ?= -Wall
+CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 LDFLAGS += $(SHARED)
 
 # default configuration programs
@@ -151,12 +153,24 @@ ifeq ($(OS), LINUX)
   LDLIBS += -ldl
 endif
 ifeq ($(OS), OSX)
+  # Select the proper SDK
+  # Also, SDKs are stored in a different location since XCode 4.3
+  OSX_SDK ?= $(shell sw_vers -productVersion | cut -f1 -f2 -d .)
+  OSX_XCODEMAJ = $(shell xcodebuild -version | grep '[0-9]*\.[0-9]*' | cut -f2 -d ' ' | cut -f1 -d .)
+  OSX_XCODEMIN = $(shell xcodebuild -version | grep '[0-9]*\.[0-9]*' | cut -f2 -d ' ' | cut -f2 -d .)
+  OSX_XCODEGE43 = $(shell echo "`expr $(OSX_XCODEMAJ) \>= 4``expr $(OSX_XCODEMIN) \>= 3`")
+  ifeq ($(OSX_XCODEGE43), 11)
+    OSX_SYSROOT := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+  else
+    OSX_SYSROOT := /Developer/SDKs
+  endif
+
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      CFLAGS += -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
       LDLIBS += -ldl
     else
-      CFLAGS += -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      CFLAGS += -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
       LDFLAGS += -arch i686
       LDLIBS += -ldl -read_only_relocs suppress
     endif
@@ -167,15 +181,8 @@ endif
 ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
   $(error No SDL development libraries found!)
 endif
-ifeq ("$(UNAME)","Darwin")
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    # sdl-config on mac screws up when we're trying to build a library and not an executable
-    # SDL 1.3 is supposed to fix that, if it's ever released
-    LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
-else
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
+CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+LDLIBS += $(shell $(SDL_CONFIG) --libs)
 
 # set mupen64plus core API header path
 ifneq ("$(APIDIR)","")
@@ -221,7 +228,9 @@ ifeq ($(DEBUG),1)
   CFLAGS += -g
   INSTALL_STRIP_FLAG ?= 
 else
-  INSTALL_STRIP_FLAG ?= -s
+  ifneq ($(OS),OSX)
+    INSTALL_STRIP_FLAG ?= -s
+  endif
 endif
 ifeq ($(PLUGINDBG), 1)
   CFLAGS += -D_DEBUG
@@ -276,6 +285,7 @@ targets:
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
+	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
