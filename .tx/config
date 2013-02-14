@@ -2,16 +2,16 @@
 host = https://www.transifex.com
 
 [mupen64plus-ae.menu-strings]
-file_filter = res/values-<lang>/strings.xml
-source_file = res/values/strings.xml
+file_filter = ./res/values-<lang>/strings.xml
+source_file = ./res/values/strings.xml
 source_lang = en
 trans.en_US = /dev/null
 type = ANDROID
 minimum_perc = 80
 
 [mupen64plus-ae.market-listing]
-file_filter = publish/listing-<lang>.txt
-source_lang = en
+file_filter = ./doc/publish/listing-<lang>.txt
+source_lang = ./doc/publish/listing.txt
 trans.en_US = /dev/null
 type = TXT
 minimum_perc = 80

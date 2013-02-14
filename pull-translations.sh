@@ -1,6 +1,8 @@
 # Pull the transifex translation files using the command-line tool.
 
+pattern='./res/values*/strings.xml ./doc/publish/listing-*.txt'
+
 git pull
 tx pull -a -f
-git add ./res/values*/strings.xml
-git commit ./res/values*/strings.xml -m "res: Updated translations."
+git add $pattern
+git commit $pattern -m "res: Updated translations."
