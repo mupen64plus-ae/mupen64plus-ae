@@ -16,9 +16,13 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profili</string>
   <string name="menuItem_default">Default</string>
+  <string name="menuItem_ouya">OUYA</string>
   <string name="menuItem_xbox360">Xbox360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Mostra funzioni speciali</string>
   <string name="menuItem_specialVisibility_hide">Nascondi funzioni speciali</string>
+  <string name="menuItem_axisInfo">Info analogico</string>
+  <string name="menuItem_unmapAll">Rimuovi tasti impostati da tutto</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -139,7 +143,11 @@
   <string name="gles2RiceHiResTextures_summary">Usa pacchetti texture importati</string>
   <string name="audioSwapChannels_title">Inverti canali audio</string>
   <string name="audioSwapChannels_summary">Inverte i canali audio sinistra e destra</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Animazione joystick</string>
+  <string name="touchscreenRefresh_entryNever">Mai</string>
+  <string name="touchscreenRefresh_entryOccasionally">Occasionalmente</string>
+  <string name="touchscreenRefresh_entryFrequently">Frequentemente</string>
   <string name="touchscreenLayout_title">Layout touchscreen</string>
   <string name="touchscreenLayout_entryAnalog">Analogico (da roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digitale (da roymustang 16)</string>
@@ -149,10 +157,6 @@
   <string name="touchscreenSize_entrySmall">Piccolo</string>
   <string name="touchscreenSize_entryNormal">Normale</string>
   <string name="touchscreenSize_entryTablet">Tablet</string>
-  <string name="touchscreenRefresh_title">Animazione joystick</string>
-  <string name="touchscreenRefresh_entryNever">Mai</string>
-  <string name="touchscreenRefresh_entryOccasionally">Occasionalmente</string>
-  <string name="touchscreenRefresh_entryFrequently">Frequentemente</string>
   <string name="touchpadLayout_title">Layout touchpad</string>
   <string name="touchpadLayout_entryDefault">Pad sinistro: Controllo analogico;Pad destro: Tasti C</string>
   <string name="touchpadLayout_entryReverse">Pad sinistro: Tasti C; Pad destro:Controllo analogico</string>
@@ -208,6 +212,15 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Niente elaborazione audio, hack prestazioni da Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Core emulazione</string>
   <string name="pluginCore_entryV110">core, v1.10 (port Android di Mupen64Plus da Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="r4300Emulator_title">Emulatore R4300</string>
+  <string name="r4300Emulator_entryPureInterpreter">Interprete puro</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Interprete in cache</string>
+  <string name="r4300Emulator_entryDynarec">Ricompilatore dinamico (dynarec)</string>
+  <string name="navigationMode_title">Accessibilità</string>
+  <string name="navigationMode_summary">Modalità di navigazione menu: %1$s</string>
+  <string name="navigationMode_entryAuto">Seleziona automaticamente dalla configurazione del dispositivo</string>
+  <string name="navigationMode_entryStandard">Modalità standard</string>
+  <string name="navigationMode_entryOuya">Modalità OUYA (niente touchscreen; solo input gamepad)</string>
   <string name="localeOverride_title">Linguaggio</string>
   <string name="localeOverride_entrySystemDefault">Default di sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -249,7 +262,10 @@
   <string name="confirmResetGame_message">Resettare il gioco? Tutto il progresso dopo il tuo ultimo salvataggio verrà perso.</string>
   <string name="confirmOverwriteFile_message">Sovrascrivere %1$s?</string>
   <string name="confirmLoadProfile_message">Caricare il profilo \"%1$s\" per %2$s?</string>
+  <string name="confirmUnmapAll_message">Rimuovere tasti impostati da tutti gli input per %1$s?</string>
   <string name="confirmMigrateSlotSaves_message">Sei sicuro che vuoi copiare i tuoi vecchi salvataggi slot? I backup verranno fatti se necessario.</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Cambiamenti recenti</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome file</string>
   <string name="hintSetSpeed">una velocita da 10 a 300</string>
@@ -272,6 +288,8 @@
   <string name="pathHiResTexturesTask_errorMessage">Problema spacchettando texture!</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Cartella superiore</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Dispositivo %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
@@ -316,6 +334,8 @@
   <string name="inputMapActivity_speedDown">Abbassa velocità</string>
   <string name="inputMapActivity_speedUp">Aumenta velocità</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Tasto indietro</string>
+  <string name="inputMapActivity_simulateMenu">Tasto menu </string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Premi tasto o lettera…</string>
   <string name="diagnosticActivity_textMotion_text">Touchscreen o joystick…</string>

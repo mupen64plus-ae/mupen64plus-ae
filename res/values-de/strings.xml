@@ -16,9 +16,16 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profile</string>
   <string name="menuItem_default">Standard</string>
+  <string name="menuItem_load">Lade…</string>
+  <string name="menuItem_save">Speichert…</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia Play</string>
   <string name="menuItem_specialVisibility_show">Spezialfunktionen anzeigen</string>
   <string name="menuItem_specialVisibility_hide">Spezialfunktionen verstecken</string>
+  <string name="menuItem_axisInfo">Analog Info</string>
+  <string name="menuItem_unmapAll">Alle Tastenbelegungen entfernen</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -26,8 +33,8 @@
   <!--Something happening (typically use '-ing' and '…')-->
   <string name="toast_rebuildingCheats">Cheat-Datenbank wird wiederaufgebaut…</string>
   <string name="toast_launchingEmulator">Emulator wird gestartet…</string>
-  <string name="toast_loadingSession">Spiel wird auto-fortgesetzt…</string>
-  <string name="toast_savingSession">Spiel wird auto-gespeichert…</string>
+  <string name="toast_loadingSession">Spiel wird autom. fortgesetzt…</string>
+  <string name="toast_savingSession">Spiel wird autom. gespeichert…</string>
   <string name="toast_loadingSlot">Slot %1$d wird geladen…</string>
   <string name="toast_savingSlot">Slot %1$d wird gespeichert…</string>
   <string name="toast_loadingFile">%1$s wird geladen…</string>
@@ -36,6 +43,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Slot %1$d wird nun benutzt.</string>
   <string name="toast_sdInaccessible">SD-Karte nicht erreichbar (trenne USB und versuche es erneut).</string>
+  <string name="toast_fileReadError">Kann Datei nicht lesen!</string>
+  <string name="toast_fileWriteError">Kann Datei nicht schreiben!</string>
   <string name="toast_migrateSlotSavesNotFound">Keine Dateien zum kopieren.</string>
   <string name="toast_migrateSlotSavesSuccess">Import erfolgreich.</string>
   <string name="toast_crashReportSent">Bericht gesendet.</string>
@@ -139,7 +148,11 @@
   <string name="gles2RiceHiResTextures_summary">Importierte Texturpakete benutzen</string>
   <string name="audioSwapChannels_title">Audiokanäle tauschen</string>
   <string name="audioSwapChannels_summary">Linken und rechten Audiokanal tauschen</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Joystickanimation</string>
+  <string name="touchscreenRefresh_entryNever">Nie</string>
+  <string name="touchscreenRefresh_entryOccasionally">Gelegentlich</string>
+  <string name="touchscreenRefresh_entryFrequently">Häufig</string>
   <string name="touchscreenLayout_title">Touchscreen-Layout</string>
   <string name="touchscreenLayout_entryAnalog">Analog (von roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (von roymustang16)</string>
@@ -149,10 +162,6 @@
   <string name="touchscreenSize_entrySmall">Klein</string>
   <string name="touchscreenSize_entryNormal">Normal</string>
   <string name="touchscreenSize_entryTablet">Tablet</string>
-  <string name="touchscreenRefresh_title">Joystickanimation</string>
-  <string name="touchscreenRefresh_entryNever">Nie</string>
-  <string name="touchscreenRefresh_entryOccasionally">Gelegentlich</string>
-  <string name="touchscreenRefresh_entryFrequently">Häufig</string>
   <string name="touchpadLayout_title">Touchpad-Layout</string>
   <string name="touchpadLayout_entryDefault">Linkes Pad: Analog-Stick; rechtes Pad: C-Knöpfe</string>
   <string name="touchpadLayout_entryReverse">Linkes Pad: C-Knöpfe; rechtes Pad: Analog-Stick</string>
@@ -208,6 +217,15 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (keine Audioberechnung, Geschwindigkeits-Hack von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Emulationskern</string>
   <string name="pluginCore_entryV110">core, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="r4300Emulator_title">R4300 Emulator</string>
+  <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Cached Interpreter</string>
+  <string name="r4300Emulator_entryDynarec">Dynamischer Recopiler (dynarec)</string>
+  <string name="navigationMode_title">Erreichbarkeit</string>
+  <string name="navigationMode_summary">Menü-Navigationsmethode: %1$s</string>
+  <string name="navigationMode_entryAuto">Automatisch nach Gerätekonfiguration richten</string>
+  <string name="navigationMode_entryStandard">Standartmodus</string>
+  <string name="navigationMode_entryOuya">OUYA Modus (kein Touchscreen; Reine Gamepadeingabe)</string>
   <string name="localeOverride_title">Sprache</string>
   <string name="localeOverride_entrySystemDefault">System Standard</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -249,7 +267,10 @@
   <string name="confirmResetGame_message">Spiel zurücksetzen? Ungespeicherter Fortschritt geht dabei verloren.</string>
   <string name="confirmOverwriteFile_message">%1$s überschreiben?</string>
   <string name="confirmLoadProfile_message">Lade Profil \"%1$s\" für %2$s?</string>
+  <string name="confirmUnmapAll_message">Alle Tastenbelegungen für %1$s entfernen?</string>
   <string name="confirmMigrateSlotSaves_message">Bist du sicher, dass du deine alten Slot-Speicherstände kopieren willst? Backups werden erstellt, falls nötig.</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Changelog</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">Dateiname</string>
   <string name="hintSetSpeed">Geschwindigkeit zwischen 10 und 300</string>
@@ -272,6 +293,8 @@
   <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Stammordner</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Gerät %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Gerät %1$d</string>
@@ -316,6 +339,8 @@
   <string name="inputMapActivity_speedDown">Verlangsamen</string>
   <string name="inputMapActivity_speedUp">Beschleunigen</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Zurück Knopf</string>
+  <string name="inputMapActivity_simulateMenu">Menü Knopf</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Knopf oder Taste drücken…</string>
   <string name="diagnosticActivity_textMotion_text">Bildschirm oder Joystick berühren…</string>

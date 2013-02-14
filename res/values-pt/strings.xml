@@ -16,9 +16,16 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Perfis</string>
   <string name="menuItem_default">Padrão</string>
+  <string name="menuItem_load">Carregar…</string>
+  <string name="menuItem_save">Salvar…</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Exibir funções especiais</string>
   <string name="menuItem_specialVisibility_hide">Esconder funções especiais</string>
+  <string name="menuItem_axisInfo">Informações do Analógico</string>
+  <string name="menuItem_unmapAll">Desmapear tudo</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -36,6 +43,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessível (desconecte o cabo USB e tente novamente).</string>
+  <string name="toast_fileReadError">Não foi possivel ler o arquivo!</string>
+  <string name="toast_fileWriteError">Não foi possivel salvar o arquivo!</string>
   <string name="toast_migrateSlotSavesNotFound">Nenhum arquivo para copiar.</string>
   <string name="toast_migrateSlotSavesSuccess">Migração concluída.</string>
   <string name="toast_crashReportSent">Relatório enviado.</string>
@@ -139,7 +148,11 @@
   <string name="gles2RiceHiResTextures_summary">Usa pacotes com texturas melhoradas</string>
   <string name="audioSwapChannels_title">Trocar canais de áudio</string>
   <string name="audioSwapChannels_summary">Troca canais de áudio da direita e da esquerda</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Animação do controle</string>
+  <string name="touchscreenRefresh_entryNever">Nunca</string>
+  <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
+  <string name="touchscreenRefresh_entryFrequently">Frequentemente</string>
   <string name="touchscreenLayout_title">Tipo do controle de toque</string>
   <string name="touchscreenLayout_entryAnalog">Analógico (por roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (por roymustang16)</string>
@@ -149,10 +162,6 @@
   <string name="touchscreenSize_entrySmall">Pequeno</string>
   <string name="touchscreenSize_entryNormal">Normal</string>
   <string name="touchscreenSize_entryTablet">Tablet</string>
-  <string name="touchscreenRefresh_title">Animação do controle</string>
-  <string name="touchscreenRefresh_entryNever">Nunca</string>
-  <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
-  <string name="touchscreenRefresh_entryFrequently">Frequentemente</string>
   <string name="touchpadLayout_title">Posição dos controles de toque</string>
   <string name="touchpadLayout_entryDefault">Esquerda: Analógico; Direita: Botões C</string>
   <string name="touchpadLayout_entryReverse">Esquerda: Botões C; Direita: Analógico</string>
@@ -208,6 +217,15 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sem preocessamento de áudio, hack de velocidade por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Núcleo de emulação</string>
   <string name="pluginCore_entryV110">core, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="r4300Emulator_title">Emulador do R4300</string>
+  <string name="r4300Emulator_entryPureInterpreter">Interpretador puro</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Interpretador com Cache</string>
+  <string name="r4300Emulator_entryDynarec">Recompilador dinâmico (dynarec)</string>
+  <string name="navigationMode_title">Acessibilidade</string>
+  <string name="navigationMode_summary">Modo de menu de navegação: %1$s</string>
+  <string name="navigationMode_entryAuto">Seleção automática a partir da configuração do dispositivo</string>
+  <string name="navigationMode_entryStandard">Modo padrão</string>
+  <string name="navigationMode_entryOuya">Modo OUYA (sem touchscreen, entrada somente por gamepad)</string>
   <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Padrão</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -249,7 +267,10 @@
   <string name="confirmResetGame_message">Resetar jogo? Todo o progresso desde o seu último jogo salvo será perdido.</string>
   <string name="confirmOverwriteFile_message">Sobrescrever %1$s?</string>
   <string name="confirmLoadProfile_message">Carregar perfil \"%1$s\" para %2$s?</string>
+  <string name="confirmUnmapAll_message">Desmapear todos os controles de %1$s?</string>
   <string name="confirmMigrateSlotSaves_message">Tem certeza que deseja copiar seus jogos antigos? Backups serão feitos se necessário.</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Atualizações recentes</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
   <string name="hintSetSpeed">velocidade entre 10 e 300</string>
@@ -272,6 +293,8 @@
   <string name="pathHiResTexturesTask_errorMessage">Problema extraindo texturas!</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Pasta raiz</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Dispositivo %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
@@ -316,6 +339,8 @@
   <string name="inputMapActivity_speedDown">Desacelerar</string>
   <string name="inputMapActivity_speedUp">Acelerar</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Voltar</string>
+  <string name="inputMapActivity_simulateMenu">Menu</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Pressione um botão ou tecla…</string>
   <string name="diagnosticActivity_textMotion_text">Toque a tela ou use o joystick…</string>

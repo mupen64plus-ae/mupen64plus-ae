@@ -16,9 +16,16 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Профили</string>
   <string name="menuItem_default">Умолчание</string>
+  <string name="menuItem_load">Загрузка…</string>
+  <string name="menuItem_save">Сохранение…</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Показать дополнительные возможности</string>
   <string name="menuItem_specialVisibility_hide">Скрыть дополнительные возможности</string>
+  <string name="menuItem_axisInfo">Аналоговая информация</string>
+  <string name="menuItem_unmapAll">Сбросить всё</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -36,6 +43,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Сейчас используется слот %1$d.</string>
   <string name="toast_sdInaccessible">Карта недоступна</string>
+  <string name="toast_fileReadError">Не удалось прочитать файл!</string>
+  <string name="toast_fileWriteError">Не удалось записать файл!</string>
   <string name="toast_migrateSlotSavesNotFound">Нет файлов для копирования</string>
   <string name="toast_migrateSlotSavesSuccess">Перенос прошёл успешно</string>
   <string name="toast_crashReportSent">Отчёт отправлен.</string>
@@ -139,7 +148,11 @@
   <string name="gles2RiceHiResTextures_summary">Использовать импортированные пакеты текстур</string>
   <string name="audioSwapChannels_title">Поменять местами аудио каналы</string>
   <string name="audioSwapChannels_summary">Меняет местами звук слева и справа</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Анимация джойстика </string>
+  <string name="touchscreenRefresh_entryNever">Никогда</string>
+  <string name="touchscreenRefresh_entryOccasionally">Изредка</string>
+  <string name="touchscreenRefresh_entryFrequently">Часто</string>
   <string name="touchscreenLayout_title">Тип экранных кнопок</string>
   <string name="touchscreenLayout_entryAnalog">Аналоговый (от roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Цифровой (от roymustang16)</string>
@@ -149,10 +162,6 @@
   <string name="touchscreenSize_entrySmall">Небольшой</string>
   <string name="touchscreenSize_entryNormal">Нормальный</string>
   <string name="touchscreenSize_entryTablet">Планшетный</string>
-  <string name="touchscreenRefresh_title">Анимация джойстика </string>
-  <string name="touchscreenRefresh_entryNever">Никогда</string>
-  <string name="touchscreenRefresh_entryOccasionally">Изредка</string>
-  <string name="touchscreenRefresh_entryFrequently">Часто</string>
   <string name="touchpadLayout_title">Расположение экранных кнопок</string>
   <string name="touchpadLayout_entryDefault">Слева джойстик, справа кнопки</string>
   <string name="touchpadLayout_entryReverse">Слева кнопки, справа джойстик</string>
@@ -208,6 +217,15 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (спид-хак, без поддержки звука Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Ядро эмулятора</string>
   <string name="pluginCore_entryV110">core, v1.10 (порт Mupen64Plus под Android за авторством Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="r4300Emulator_title">R4300 Эмулятор</string>
+  <string name="r4300Emulator_entryPureInterpreter">Интерпретация</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Интерпретация с кешированием</string>
+  <string name="r4300Emulator_entryDynarec">Рекомпиляция</string>
+  <string name="navigationMode_title">Всякая хрень</string>
+  <string name="navigationMode_summary">Режим навигации в меню: %1$s</string>
+  <string name="navigationMode_entryAuto">Автоопределение из настроек</string>
+  <string name="navigationMode_entryStandard">Стандартный режим</string>
+  <string name="navigationMode_entryOuya">Режим OUYA (ввод только с геймпада)</string>
   <string name="localeOverride_title">Язык</string>
   <string name="localeOverride_entrySystemDefault">Система по умолчанию</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -249,7 +267,10 @@
   <string name="confirmResetGame_message">Сбросить игру? Прогресс с момента последнего сохранения будет потерян.</string>
   <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
   <string name="confirmLoadProfile_message">Загрузить профиль \"%1$s\" для %2$s?</string>
+  <string name="confirmUnmapAll_message">Сбросить все ассоциации для %1$s?</string>
   <string name="confirmMigrateSlotSaves_message">Вы действительно хотите скопировать старый слот сохранений? Резервное копирование будет сделано, если это необходимо.</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Список изменений</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">имя файла</string>
   <string name="hintSetSpeed">скорость от 10 до 300</string>
@@ -272,6 +293,8 @@
   <string name="pathHiResTexturesTask_errorMessage">Ошибка при извлечении текстур!</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Родительская папка</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Устройство %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Устройство %1$d</string>
@@ -316,6 +339,8 @@
   <string name="inputMapActivity_speedDown">Скорость ниже</string>
   <string name="inputMapActivity_speedUp">Скорость выше</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Клавиша \"BACK\"</string>
+  <string name="inputMapActivity_simulateMenu">Клавиша \"MENU\"</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Нажмите кнопку…</string>
   <string name="diagnosticActivity_textMotion_text">Прикоснитесь к экрану или джойстику…</string>

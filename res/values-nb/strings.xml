@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <!--Input Mapping Activity-->
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <!--Something happened (use '.')-->
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <!--Preference Screens-->
+  <!--Preference Categories-->
+  <!--Checkbox Preferences-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <!--ACRA Preferences (key names must not be changed)-->
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <!--Player Map Preferences-->
+  <!--Input Map Preferences-->
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <!--Change Log-->
+  <!--Text Editor Hints (start lower-case)-->
+  <!--Asset Extractor-->
+  <!--Cheats Configuration-->
+  <!--Hi-Res Texture Unpacking-->
+  <!--Seek Bar Preference-->
+  <!--Path Preference-->
+  <!--Player Mapping-->
+  <!--Input Mapping-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--Controller Diagnostics-->
+</resources>

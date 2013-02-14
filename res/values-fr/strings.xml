@@ -16,15 +16,22 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profiles</string>
   <string name="menuItem_default">Par défaut</string>
+  <string name="menuItem_load">Chargement…</string>
+  <string name="menuItem_save">Sauvegarde…</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Afficher les fonctions spéciales</string>
   <string name="menuItem_specialVisibility_hide">Masquer les fonctions spéciales</string>
+  <string name="menuItem_axisInfo">Infos stick analogique</string>
+  <string name="menuItem_unmapAll">Désassigner toutes les touches</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Reconstruction de la base de donnée des cheat codes</string>
+  <string name="toast_rebuildingCheats">Reconstruction de la base de donnée des cheat codes…</string>
   <string name="toast_launchingEmulator">Lancement de l\'émulateur…</string>
   <string name="toast_loadingSession">Reprise automatique du jeu…</string>
   <string name="toast_savingSession">Sauvegarde automatique du jeu…</string>
@@ -34,8 +41,10 @@
   <string name="toast_savingFile">Sauvegarde %1$s…</string>
   <string name="toast_overwritingFile">Écrasement %1$s…</string>
   <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">Utilise l\'emplacement %1$d.</string>
+  <string name="toast_usingSlot">Utilisation de l\'emplacement %1$d.</string>
   <string name="toast_sdInaccessible">Carte SD indisponible (veuillez déconnecter le cable USB puis réessayer)</string>
+  <string name="toast_fileReadError">Le fichier ne peut être lu !</string>
+  <string name="toast_fileWriteError">Le fichier ne peut être modifié !</string>
   <string name="toast_migrateSlotSavesNotFound">Aucun fichier à copier.</string>
   <string name="toast_migrateSlotSavesSuccess">Migration réussie.</string>
   <string name="toast_crashReportSent">Rapport envoyé.</string>
@@ -61,7 +70,7 @@
   <string name="actionReloadAssets_title">Recharger les ressources de l\'application</string>
   <string name="actionReloadAssets_summary">N\'affecte PAS les paramètres utilisateurs, ROMs, sauvegardes ou autres données personnalisées</string>
   <string name="actionCrashTest_title">Test</string>
-  <string name="actionCrashTest_summary">Envoie un rapport de configuration aux développeurs</string>
+  <string name="actionCrashTest_summary">Envoyer un rapport de configuration aux développeurs</string>
   <string name="actionResetUserPrefs_title">Réinitialiser</string>
   <string name="actionResetUserPrefs_summary">Restaure les réglages par défaut</string>
   <string name="actionResetUserPrefs_popupMessage">Êtes-vous sûr de vouloir réinitialiser tous les paramètres par défaut ?</string>
@@ -109,7 +118,7 @@
   <string name="inputOctagonConstraints_summary">Limite les mouvements du stick analogique à un octogone, comme une vraie manette N64</string>
   <string name="inputVolumeMappable_title">Boutons de volume assignables</string>
   <string name="inputVolumeMappable_summary">Permet d\'utiliser les boutons de volume comme contrôles</string>
-  <string name="inputShareController_title">Partager manette</string>
+  <string name="inputShareController_title">Partager la manette</string>
   <string name="inputShareController_summary">Autorise une unique manette à contrôler plusieurs joueurs à la fois</string>
   <string name="videoStretch_title">Étirement de l\'affichage</string>
   <string name="videoStretch_summary">Peut modifier le ratio original d\'affichage</string>
@@ -139,7 +148,11 @@
   <string name="gles2RiceHiResTextures_summary">Utilise des packs de textures importés</string>
   <string name="audioSwapChannels_title">Inversion des voies audio</string>
   <string name="audioSwapChannels_summary">Inverse le canal audio droit et le canal audio gauche</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Animation du joystick</string>
+  <string name="touchscreenRefresh_entryNever">Jamais</string>
+  <string name="touchscreenRefresh_entryOccasionally">Parfois</string>
+  <string name="touchscreenRefresh_entryFrequently">Fréquemment</string>
   <string name="touchscreenLayout_title">Thème de commandes virtuelles</string>
   <string name="touchscreenLayout_entryAnalog">Analogique (par roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Numérique (par roymustang16)</string>
@@ -149,10 +162,6 @@
   <string name="touchscreenSize_entrySmall">Petite</string>
   <string name="touchscreenSize_entryNormal">Normale</string>
   <string name="touchscreenSize_entryTablet">Tablette</string>
-  <string name="touchscreenRefresh_title">Animation du joystick</string>
-  <string name="touchscreenRefresh_entryNever">Jamais</string>
-  <string name="touchscreenRefresh_entryOccasionally">Parfois</string>
-  <string name="touchscreenRefresh_entryFrequently">Fréquemment</string>
   <string name="touchpadLayout_title">Disposition du pavé tactile</string>
   <string name="touchpadLayout_entryDefault">Pavé de gauche : stick analogique - Pavé de droite : boutons C</string>
   <string name="touchpadLayout_entryReverse">Pavé de gauche : boutons C - Pavé de droite : stick analogique</string>
@@ -208,6 +217,15 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Pas de calcul audio, speed hack par Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Noyau d\'émulation</string>
   <string name="pluginCore_entryV110">noyau, v1.10 (portage Android de Mupen64Plus par Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="r4300Emulator_title">Émulateur R4300</string>
+  <string name="r4300Emulator_entryPureInterpreter">Interpréteur pur</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Interpréteur en cache</string>
+  <string name="r4300Emulator_entryDynarec">Recompileur dynamique (dynarec)</string>
+  <string name="navigationMode_title">Accessibilité</string>
+  <string name="navigationMode_summary">Mode de navigation de menu : %1$s</string>
+  <string name="navigationMode_entryAuto">Choix automatique selon la configuration de l\'appareil</string>
+  <string name="navigationMode_entryStandard">Mode standard</string>
+  <string name="navigationMode_entryOuya">Mode OUYA (écran tactile désactivé : contrôles à la manette uniquement)</string>
   <string name="localeOverride_title">Langue</string>
   <string name="localeOverride_entrySystemDefault">Système par défaut</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -249,7 +267,10 @@
   <string name="confirmResetGame_message">Réinitialiser le jeu ? Toute progression non sauvegardée sera perdue.</string>
   <string name="confirmOverwriteFile_message">Écraser %1$s ?</string>
   <string name="confirmLoadProfile_message">Voulez-vous charger le profil \"%1$s\" pour %2$s ?</string>
+  <string name="confirmUnmapAll_message">Désassigner toutes les touches de %1$s ?</string>
   <string name="confirmMigrateSlotSaves_message">Êtes-vous sûr de vouloir copier vos anciens emplacements de sauvegarde ? Un backup sera effectué si nécessaire.</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Notes de version</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nomdefichier</string>
   <string name="hintSetSpeed">vitesse de 10 à 300</string>
@@ -272,6 +293,8 @@
   <string name="pathHiResTexturesTask_errorMessage">Une erreur est survenue durant la décompression des textures !</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Dossier parent</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Appareil %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Appareil %1$d</string>
@@ -316,6 +339,8 @@
   <string name="inputMapActivity_speedDown">Réduire la vitesse</string>
   <string name="inputMapActivity_speedUp">Augmenter la vitesse</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Touche retour</string>
+  <string name="inputMapActivity_simulateMenu">Touche menu</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Appuyez sur un bouton ou une touche…</string>
   <string name="diagnosticActivity_textMotion_text">Touchez l\'écran ou un joystick…</string>

@@ -12,9 +12,20 @@
   <string name="menuItem_fileLoad">ファイルからのロード…</string>
   <string name="menuItem_setSpeed">ゲームの速度</string>
   <string name="menuItem_setIme">IMEを変更</string>
+  <string name="menuItem_exit">終了</string>
   <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">プロファイル</string>
+  <string name="menuItem_default">デフォルト</string>
+  <string name="menuItem_load">ロード…</string>
+  <string name="menuItem_save">保存…</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">特別な機能を表示</string>
   <string name="menuItem_specialVisibility_hide">特別な機能を非表示</string>
+  <string name="menuItem_axisInfo">アナログ情報</string>
+  <string name="menuItem_unmapAll">全てをアンマップ</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -32,6 +43,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">%1$dセーブデータスロット</string>
   <string name="toast_sdInaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
+  <string name="toast_fileReadError">ファイルを読み取れませんでした！</string>
+  <string name="toast_fileWriteError">ファイルを書き込めませんでした！</string>
   <string name="toast_migrateSlotSavesNotFound">コピーするファイルがありません。</string>
   <string name="toast_migrateSlotSavesSuccess">移行に成功。</string>
   <string name="toast_crashReportSent">エラーレポートを送信しました。</string>
@@ -97,12 +110,15 @@
   <string name="categoryData_title">データ</string>
   <string name="categoryCrashReports_title">クラッシュレポート</string>
   <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">チートをイネーブル</string>
+  <string name="playShowCheats_summary">これが有効になっているときに、メニューのロードが遅くなります。</string>
   <string name="touchscreenEnabled_title">タッチスクリーンを有効</string>
   <string name="touchpadEnabled_title">タッチパッドを有効</string>
   <string name="inputOctagonConstraints_title">八角形のようにアナログスティックをエミュレート</string>
   <string name="inputOctagonConstraints_summary">八角形のパスにアナログ動きを拘束。 これは、元のN64のコントローラのようなものだ。</string>
   <string name="inputVolumeMappable_title">ボリュームキーを有効</string>
   <string name="inputVolumeMappable_summary">コントローラのボタンとしてボリュームキーを使用</string>
+  <string name="inputShareController_title">共有コントローラ</string>
   <string name="videoStretch_title">ストレッチ画面</string>
   <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
   <string name="videoUseFramelimiter_title">フレームリミッター</string>
@@ -131,7 +147,11 @@
   <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
   <string name="audioSwapChannels_title">オーディオチャンネルを交換</string>
   <string name="audioSwapChannels_summary">スワップ左右のオーディオチャンネル</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
+  <string name="touchscreenRefresh_entryNever">決して</string>
+  <string name="touchscreenRefresh_entryOccasionally">時折</string>
+  <string name="touchscreenRefresh_entryFrequently">頻繁</string>
   <string name="touchscreenLayout_title">タッチスクリーン·レイアウト</string>
   <string name="touchscreenLayout_entryAnalog">アナログ (roymustang16によって)</string>
   <string name="touchscreenLayout_entryDigital">デジタル (roymustang16によって)</string>
@@ -141,10 +161,6 @@
   <string name="touchscreenSize_entrySmall">小</string>
   <string name="touchscreenSize_entryNormal">デフォル</string>
   <string name="touchscreenSize_entryTablet">タブレット</string>
-  <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
-  <string name="touchscreenRefresh_entryNever">決して</string>
-  <string name="touchscreenRefresh_entryOccasionally">時折</string>
-  <string name="touchscreenRefresh_entryFrequently">頻繁</string>
   <string name="touchpadLayout_title">タッチパッド·レイアウト</string>
   <string name="touchpadLayout_entryDefault">左パッド： アナログ制御; 右パッド： Cボタン</string>
   <string name="touchpadLayout_entryReverse">左パッド： Cボタ; 右パッド: アナログ制御</string>
@@ -157,6 +173,14 @@
   <string name="videoFpsRefresh_entryNever">決して</string>
   <string name="videoFpsRefresh_entryOccasionally">時折</string>
   <string name="videoFpsRefresh_entryFrequently">頻繁</string>
+  <string name="videoHardwareType_title">フリッカー低減</string>
+  <string name="videoHardwareType_entryAuto">携帯電話/タブレットモデルから自動検出</string>
+  <string name="videoHardwareType_entryStandard">標準プロファイル</string>
+  <string name="videoHardwareType_entryI">Iプロフィール</string>
+  <string name="videoHardwareType_entryO1">O-1プロフィール</string>
+  <string name="videoHardwareType_entryO2">O-2プロフィール</string>
+  <string name="videoHardwareType_entryQ">Qプロフィール</string>
+  <string name="videoHardwareType_entryT">Tプロフィール</string>
   <string name="gles2N64Frameskip_title">フレームスキップ</string>
   <string name="gles2N64Frameskip_entryNever">フレームをスキップしない</string>
   <string name="gles2N64Frameskip_entryUpTo1">最大、1フレームでスキップ</string>
@@ -192,7 +216,17 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">コア</string>
   <string name="pluginCore_entryV110">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="r4300Emulator_title">R4300エミュレータ</string>
+  <string name="r4300Emulator_entryPureInterpreter">純粋なインタプリタ</string>
+  <string name="r4300Emulator_entryCachedInterpreter">キャッシュインタプリタ</string>
+  <string name="r4300Emulator_entryDynarec">動的リコンパイラ (DynaRec)</string>
+  <string name="navigationMode_title">アクセシビリティ</string>
+  <string name="navigationMode_summary">メニューナビゲーションモード：%1$s</string>
+  <string name="navigationMode_entryAuto">デバイス構成から自動選択</string>
+  <string name="navigationMode_entryStandard">スタンダードモード</string>
+  <string name="navigationMode_entryOuya">OUYAモード（ゲームパッドのみ）</string>
   <string name="localeOverride_title">言語</string>
+  <string name="localeOverride_entrySystemDefault">システムのデフォルト</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">クラッシュレポートを有効</string>
   <string name="acraEnable_summary">個人情報は収集されません</string>
@@ -209,6 +243,7 @@
   <string name="pathCustomTouchscreen_title">カスタムレイアウトフォルダ</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">インポートテクスチャパック</string>
+  <string name="pathHiResTextures_summary">ゲームにカスタムテクスチャ(ZIP)を適用</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">セーブデータのフォルダ</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -230,7 +265,11 @@
   <string name="confirm_title">確認</string>
   <string name="confirmResetGame_message">ゲームをリセットしますか？ すべての進行状況は、前回の保存以降に失われます。</string>
   <string name="confirmOverwriteFile_message">%1$s上書き?</string>
+  <string name="confirmLoadProfile_message">%2$sのプロファイル%1$sを読み込む？</string>
+  <string name="confirmUnmapAll_message">%1$sに対するすべての入力をアンマップ？</string>
   <string name="confirmMigrateSlotSaves_message">あなたがあなたの古いセーブファイルをコピーしてもよろしいですか？ バックアップは、必要に応じて行われます。</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">変更履歴</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ファイル名</string>
   <string name="hintSetSpeed">300から10の間で</string>
@@ -252,6 +291,8 @@
   <string name="pathHiResTexturesTask_errorMessage">テクスチャを開梱時に問題が発生しました！</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">親フォルダー</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">デバイス %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">デバイス %1$d</string>
@@ -296,6 +337,8 @@
   <string name="inputMapActivity_speedDown">スピードダウン</string>
   <string name="inputMapActivity_speedUp">スピードアップ</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">戻るキー</string>
+  <string name="inputMapActivity_simulateMenu">メニューキー</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">ボタンまたはキーを押してください…</string>
   <string name="diagnosticActivity_textMotion_text">画面またはジョイスティックをタッチしてください…</string>

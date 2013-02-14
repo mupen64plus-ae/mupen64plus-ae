@@ -16,14 +16,19 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profielen</string>
   <string name="menuItem_default">Standaard waarden</string>
+  <string name="menuItem_ouya">OUYA</string>
   <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Laat speciale functies zien</string>
   <string name="menuItem_specialVisibility_hide">Verberg speciale functies</string>
+  <string name="menuItem_axisInfo">Analoge informatie</string>
+  <string name="menuItem_unmapAll">Alle toewijzingen verwijderen</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_rebuildingCheats">Cheat database opnieuw aan het opbouwen…</string>
   <string name="toast_launchingEmulator">Emulator starten</string>
   <string name="toast_loadingSession">Automatisch hervatten spel…</string>
   <string name="toast_savingSession">Automatisch opslaan spel…</string>
@@ -101,36 +106,51 @@
   <string name="playShowCheats_summary">Menu laadt langzamer indien ingeschakeld</string>
   <string name="touchscreenEnabled_title">Inschakelen aanraakscherm</string>
   <string name="touchpadEnabled_title">Touchpad inschakelen</string>
+  <string name="inputOctagonConstraints_title">Achthoekige joystick limieten</string>
+  <string name="inputOctagonConstraints_summary">Beperk analoge bewegingen tot een achthoek, zoals een echte N64 controller.</string>
   <string name="inputVolumeMappable_title">Toewijsbare volume knoppen</string>
+  <string name="inputVolumeMappable_summary">Sta het toe om volume knoppen toe te wijzen</string>
   <string name="inputShareController_title">Deel controller</string>
+  <string name="inputShareController_summary">Laat meerdere spelers besturen met 1 invoer apparaat.</string>
   <string name="videoStretch_title">Scherm oprekken</string>
   <string name="videoStretch_summary">Kan beeldverhouding scheef maken</string>
+  <string name="videoUseFramelimiter_title">Gebruik beeldbeperker</string>
+  <string name="videoUseFramelimiter_summary">Schakel in voor vloeiender spelen (vertraagt sommige spellen)</string>
   <string name="videoRgba8888_title">RGBA_8888 modus</string>
   <string name="videoRgba8888_summary">Verbetert beeld op sommige apparaten</string>
   <string name="gles2N64Fog_title">Mist</string>
   <string name="gles2N64Fog_summary">(moet aan gewerkt worden)</string>
+  <string name="gles2N64Sai_summary">Verminderd puntvorming op texturen</string>
+  <string name="gles2N64ScreenClear_title">Forceer scherm leegmaken</string>
+  <string name="gles2N64ScreenClear_summary">Schakel uit voor snelheid (kan verstoringen in beeld veroorzaken)</string>
   <string name="gles2N64AlphaTest_title">Alpha test</string>
   <string name="gles2N64AlphaTest_summary">Uitschakelen voor snelheid (veroorzaakt zwarte texturen)</string>
   <string name="gles2N64DepthTest_title">Diepte test</string>
   <string name="gles2N64DepthTest_summary">Uitschakelen voor snelheid (veroorzaakt knipperende achtergrond)</string>
+  <string name="gles2RiceAutoFrameskip_title">Automatisch beeld overslaan</string>
+  <string name="gles2RiceAutoFrameskip_summary">Verbetert spel snelheid ten koste van framesnelheid</string>
+  <string name="gles2RiceFastTextureCrc_title">Snelle texturen CRC</string>
+  <string name="gles2RiceFastTextureCrc_summary">Verbetert spel snelheid ten koste van 2D elementen</string>
   <string name="gles2RiceFastTexture_title">Snel texturen laden</string>
+  <string name="gles2RiceForceTextureFilter_title">Forceer textuur filter</string>
   <string name="gles2RiceHiResTextures_title">Hoge resolutie texturen</string>
   <string name="gles2RiceHiResTextures_summary">Gebruik geïmporteerde texturen pakketten</string>
   <string name="audioSwapChannels_title">Verwissel geluid kanalen</string>
   <string name="audioSwapChannels_summary">Verwissel linker en rechter audio kanaal</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Joystick animatie</string>
+  <string name="touchscreenRefresh_entryNever">Nooit</string>
+  <string name="touchscreenRefresh_entryOccasionally">Soms</string>
+  <string name="touchscreenRefresh_entryFrequently">Vaak</string>
   <string name="touchscreenLayout_title">Aanraakscherm indeling</string>
   <string name="touchscreenLayout_entryAnalog">Analoog (door roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digitaal (door roymustang16)</string>
+  <string name="touchscreenLayout_entryCustom">Eigen indeling (zie http://tinyurl.com/984ofyo)</string>
   <string name="touchscreenSize_title">Scherm formaat</string>
   <string name="touchscreenSize_entryTiny">Zeer klein</string>
   <string name="touchscreenSize_entrySmall">Klein</string>
   <string name="touchscreenSize_entryNormal">Normaal</string>
   <string name="touchscreenSize_entryTablet">Tablet</string>
-  <string name="touchscreenRefresh_title">Joystick animatie</string>
-  <string name="touchscreenRefresh_entryNever">Nooit</string>
-  <string name="touchscreenRefresh_entryOccasionally">Soms</string>
-  <string name="touchscreenRefresh_entryFrequently">Vaak</string>
   <string name="touchpadLayout_title">Touchpad indeling</string>
   <string name="videoOrientation_title">Scherm richting</string>
   <string name="videoOrientation_entryLandscape">Landschap</string>
@@ -163,9 +183,13 @@
   <string name="gles2N64Frameskip_entryExactly5">Precies 5 beelden</string>
   <string name="audioResampleAlg_entryTrivial">Triviaal</string>
   <string name="audioResampleAlg_entryLinear">Lineaire interpolatie</string>
+  <string name="audioResampleAlg_entrySincFastest">Sinc (snelst)</string>
+  <string name="audioResampleAlg_entrySincMedium">Sinc (middelmatig)</string>
+  <string name="audioResampleAlg_entrySincBest">Sinc (beste)</string>
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Geen (video uitgeschakeld)</string>
   <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (Android GLES2 versie van GLN64 door Orkin, Adventus, Yongzh, Paul Lamb)</string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)⏎ <small>(GLES2 versie van Rice Video voor m64p v1.99.5 door Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Geluid</string>
   <string name="pluginAudio_entryNone">Geen (geluid uitgeschakeld)</string>
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
@@ -178,6 +202,13 @@
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Geen geluid verwerking, snelheid hack door Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Emulatie kern</string>
   <string name="pluginCore_entryV110">core, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="r4300Emulator_title">R4300 Emulator</string>
+  <string name="r4300Emulator_entryDynarec">Dynamische hercompileerder (dynarec)</string>
+  <string name="navigationMode_title">Toegankelijkheid</string>
+  <string name="navigationMode_summary">Menu navigatie modus: %1$s</string>
+  <string name="navigationMode_entryAuto">Automatisch selecteren uit apparaat configuratie</string>
+  <string name="navigationMode_entryStandard">Standaard modus</string>
+  <string name="navigationMode_entryOuya">OUYA modus (geen aanraakscherm; alleen gamepad invoer)</string>
   <string name="localeOverride_title">Taal</string>
   <string name="localeOverride_entrySystemDefault">Systeem standaard</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -215,14 +246,20 @@
   <!--**************************************************************************-->
   <!--Confirmation Dialogs-->
   <string name="confirm_title">Bevestiging</string>
+  <string name="confirmResetGame_message">Spel opnieuw starten? Alle voortgang sinds laatste keer opslaan gaat verloren.</string>
   <string name="confirmOverwriteFile_message">%1$s overschrijven?</string>
   <string name="confirmLoadProfile_message">Profiel \"%1$s\" for %2$s laden?</string>
+  <string name="confirmMigrateSlotSaves_message">Weet u zeker dat u uw oude opgeslagen slots wilt kopiëren?  Er zullen backups worden gemaakt, indien nodig.</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Wijzigingsgeschiedenis</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">bestandsnaam</string>
   <string name="hintSetSpeed">snelheid tussen 10 en 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Bezig te initialiseren</string>
+  <string name="assetExtractor_progress">%1$.0f%% gedaan: %2$s</string>
   <string name="assetExtractor_finished">Afgerond</string>
+  <string name="assetExtractor_failed">Fout bij het uitpakken van app data.⏎ Haal de USB kabel er uit, herstart het apparaat, en herstart de app.⏎ Voor hulp, bezoek %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
   <string name="cheats_longPress">(lang indrukken voor volledige tekst)</string>
@@ -237,15 +274,20 @@
   <string name="pathHiResTexturesTask_errorMessage">Probleem met uitpakken texturen!</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Bovenliggende map</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Apparaat %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Apparaat %1$d</string>
   <string name="playerMapPreference_popupTitle">Speler %1$d</string>
+  <string name="playerMapPreference_popupMessage">Speler %1$d, druk op een knop of stick op uw controller…⏎ ⏎ Huidige apparaten:⏎ %2$s</string>
   <string name="playerMapPreference_popupUnmap">Toewijzing ongedaan maken</string>
   <string name="playerMapPreference_button">Speler %1$d⏎ ⏎ %2$s</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Druk op een knop, toets, of joystick om toe te wijzen…⏎ ⏎ Huidige toewijzingen:⏎ %1$s</string>
   <string name="inputMapActivity_popupUnmap">Toewijzing ongedaan maken</string>
+  <string name="inputMapActivity_aPadXperiaPlay">Analoge stick bestuurt met touchpad</string>
+  <string name="inputMapActivity_cPadXperiaPlay">C-pad bestuurt met touchpad</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>
@@ -266,6 +308,7 @@
   <string name="inputMapActivity_btnAD">Analoog ↓</string>
   <string name="inputMapActivity_btnAU">Analoog ↑</string>
   <!--capitalize since trademark-->
+  <string name="inputMapActivity_mempak">Uitbreidingspakket</string>
   <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Slot ophogen</string>
   <string name="inputMapActivity_reset">Herstarten</string>
@@ -275,6 +318,8 @@
   <string name="inputMapActivity_speedDown">Vertragen</string>
   <string name="inputMapActivity_speedUp">Versnellen</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Terug toets</string>
+  <string name="inputMapActivity_simulateMenu">Menu toets</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Druk op knop of toets…</string>
   <string name="diagnosticActivity_textMotion_text">Aanraakscherm of joystick</string>

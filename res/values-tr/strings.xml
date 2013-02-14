@@ -4,34 +4,47 @@
   <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
-  <string name="menuItem_fileSave">Dosyaya kaydet...</string>
-  <string name="menuItem_fileLoad">Dosyadan yükle...</string>
+  <string name="menuItem_toggleSpeed">Hız %1$d%%</string>
+  <string name="menuItem_slotSave">Slotu kaydet</string>
+  <string name="menuItem_slotLoad">Slotu yükle</string>
+  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_fileSave">Dosyaya kaydet…</string>
+  <string name="menuItem_fileLoad">Dosyadan yükle…</string>
   <string name="menuItem_setSpeed">Oyun hızı</string>
+  <string name="menuItem_setIme">IME\'yi değiştir</string>
   <string name="menuItem_exit">Çıkış</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profiller</string>
   <string name="menuItem_default">Varsayılan</string>
+  <string name="menuItem_load">Yükle…</string>
+  <string name="menuItem_save">Kaydet…</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Özel işlevleri göster</string>
   <string name="menuItem_specialVisibility_hide">Özel işlevleri gizle</string>
+  <string name="menuItem_axisInfo">Analog bilgisi</string>
+  <string name="menuItem_unmapAll">Tüm eşlemeleri kaldır</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Hile veritabanı tekrar oluşturuluyor...</string>
-  <string name="toast_launchingEmulator">Öykünücü başlatılıyor...</string>
-  <string name="toast_loadingSession">Oyuna otomatik devam ediliyor...</string>
-  <string name="toast_savingSession">Oyun otomatik kaydediliyor...</string>
-  <string name="toast_loadingSlot">%1$d slotu yükleniyor...</string>
-  <string name="toast_savingSlot">%1$d slotu kaydediliyor...</string>
-  <string name="toast_loadingFile">%1$d yükleniyor...</string>
-  <string name="toast_savingFile">%1$s kaydediliyor...</string>
-  <string name="toast_overwritingFile">%1$s üzerine yazılıyor...</string>
+  <string name="toast_rebuildingCheats">Hile veritabanı tekrar oluşturuluyor…</string>
+  <string name="toast_launchingEmulator">Öykünücü başlatılıyor…</string>
+  <string name="toast_loadingSession">Oyuna otomatik devam ediliyor…</string>
+  <string name="toast_savingSession">Oyun otomatik kaydediliyor…</string>
+  <string name="toast_loadingSlot">%1$d slotu yükleniyor…</string>
+  <string name="toast_savingSlot">%1$d slotu kaydediliyor…</string>
+  <string name="toast_loadingFile">%1$s yükleniyor…</string>
+  <string name="toast_savingFile">%1$s kaydediliyor…</string>
+  <string name="toast_overwritingFile">%1$s üzerine yazılıyor…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Şimdi %1$d soltu kullanılıyor</string>
   <string name="toast_sdInaccessible">SD kart erişilemez (USB kablosunu çıkartıp tekrar deneyin)</string>
+  <string name="toast_fileReadError">Dosya okunamadı!</string>
+  <string name="toast_fileWriteError">Dosyaya yazılamadı!</string>
   <string name="toast_migrateSlotSavesNotFound">Kopyalanacak dosya yok.</string>
   <string name="toast_migrateSlotSavesSuccess">Taşıma başarılı.</string>
   <string name="toast_crashReportSent">Rapor gönderildi.</string>
@@ -43,12 +56,15 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionPlay_title">Oyna</string>
   <string name="actionResume_title">Devam Et</string>
+  <string name="actionResume_summary">Hileler kullanılıyorsa tahmin edilemez</string>
   <string name="actionRestart_title">Yeniden Başlat</string>
+  <string name="actionRestart_summary">Hileler kullanılıyorsa tavsiye edilir</string>
   <string name="actionDeviceInfo_title">Aygıt bilgisi</string>
   <string name="actionDeviceInfo_summary">Aygıt donanımı ve model bilgisi</string>
   <string name="actionControllerInfo_title">Kumanda bilgisi</string>
   <string name="actionControllerInfo_summary">Çevresel donanım ve model bilgisi</string>
   <string name="actionControllerDiagnostics_title">Kumanda tanılama</string>
+  <string name="actionControllerDiagnostics_summary">Saf iletişim kabiliyetini sına</string>
   <string name="actionMigrateSlotSaves_title">Kayıt dosyalarını taşı</string>
   <string name="actionMigrateSlotSaves_summary">Slot kayıtlarını eski uygulamanızdan buna kopyalayın</string>
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
@@ -59,6 +75,7 @@
   <string name="actionResetUserPrefs_summary">Varsayılan ayarları geri yükle</string>
   <string name="actionResetUserPrefs_popupMessage">Tüm tercihleri varsayılanlara çek?</string>
   <string name="actionHelp_title">Yardım</string>
+  <string name="actionHelp_message">Mupen64Plus gönüllüler tarafından geliştiriliyor ve sürdürülüyor.\n \n Lütfen geliştirmemize yardım edin!</string>
   <string name="actionHelp_faq">SSS</string>
   <string name="actionHelp_reportbug">Hata raporla</string>
   <string name="actionAbout_title">Hakkında</string>
@@ -97,9 +114,12 @@
   <string name="playShowCheats_summary">Etkin olduğunda menü yüklenmesi yavaşlar</string>
   <string name="touchscreenEnabled_title">Dokunmatik ekranı etkinleştir</string>
   <string name="touchpadEnabled_title">Dokunmatik yüzeyi etkinleştir</string>
+  <string name="inputOctagonConstraints_title">Sekizgen oyun çubuğu limitleri</string>
+  <string name="inputOctagonConstraints_summary">Analog hareketi gerçek bir N64 kumandası gibi sekizgene zorla</string>
   <string name="inputVolumeMappable_title">Haritalanabilir ses tuşları</string>
   <string name="inputVolumeMappable_summary">Ses tuşlarının denetimler için haritalanmasına izin ver</string>
   <string name="inputShareController_title">Kumandayı paylaş</string>
+  <string name="inputShareController_summary">Tek bir girdi aygıtının aynı anda birden fazla oyuncuyu kontrol etmesine izin ver</string>
   <string name="videoStretch_title">Ekranı uzat</string>
   <string name="videoStretch_summary">Görüş oranına uymayabilir</string>
   <string name="videoUseFramelimiter_title">Kare sabitleyici kullan</string>
@@ -107,6 +127,7 @@
   <string name="videoRgba8888_title">RGBA_8888 modu</string>
   <string name="videoRgba8888_summary">Bazı aygıtlarda grafikleri iyileştirir</string>
   <string name="gles2N64Fog_title">Sis</string>
+  <string name="gles2N64Fog_summary">(çalışılması gerekiliyor)</string>
   <string name="gles2N64Sai_title">2xSal doku filtresi</string>
   <string name="gles2N64Sai_summary">Doku kareliğini azaltır</string>
   <string name="gles2N64ScreenClear_title">Ekranı temiz tutmaya zorla</string>
@@ -120,13 +141,18 @@
   <string name="gles2RiceFastTextureCrc_title">Hızlı doku CRC\'si</string>
   <string name="gles2RiceFastTextureCrc_summary">2B öğe pahasına oyun hızını iyileştirir</string>
   <string name="gles2RiceFastTexture_title">Hızlı doku yükleme</string>
+  <string name="gles2RiceFastTexture_summary">Dairesel geçişleri düzeltir</string>
   <string name="gles2RiceForceTextureFilter_title">Doku filtresini zorla</string>
   <string name="gles2RiceForceTextureFilter_summary">Karelenmiş dokuları düzeltir</string>
   <string name="gles2RiceHiResTextures_title">Yüksek çözünürlüklü dokular</string>
   <string name="gles2RiceHiResTextures_summary">İçe aktarılmış doku paketleri kullan</string>
   <string name="audioSwapChannels_title">Ses kanallarını değiştir</string>
   <string name="audioSwapChannels_summary">Sol ve sağ ses kanallarını değiştir</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Oyun çubuğu animasyonu</string>
+  <string name="touchscreenRefresh_entryNever">Asla</string>
+  <string name="touchscreenRefresh_entryOccasionally">Bazen</string>
+  <string name="touchscreenRefresh_entryFrequently">Sıkça</string>
   <string name="touchscreenLayout_title">Dokunmatik ekran düzeni</string>
   <string name="touchscreenLayout_entryAnalog">Analog (roymustang16 tarafından)</string>
   <string name="touchscreenLayout_entryDigital">Dijital (roymustang16 tarafından)</string>
@@ -136,10 +162,6 @@
   <string name="touchscreenSize_entrySmall">Küçük</string>
   <string name="touchscreenSize_entryNormal">Normal</string>
   <string name="touchscreenSize_entryTablet">Tablet</string>
-  <string name="touchscreenRefresh_title">Oyun çubuğu animasyonu</string>
-  <string name="touchscreenRefresh_entryNever">Asla</string>
-  <string name="touchscreenRefresh_entryOccasionally">Bazen</string>
-  <string name="touchscreenRefresh_entryFrequently">Sıkça</string>
   <string name="touchpadLayout_title">Dokunmatik yüzey düzeni</string>
   <string name="videoOrientation_title">Ekran yönlendirmesi</string>
   <string name="videoOrientation_entryPortrait">Portre</string>
@@ -177,19 +199,32 @@
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Hiç (video devre dışı)</string>
   <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (Orkin tarafından GLN64\'ün Android GLES2 portu, Adventus, Yongzh, Paul Lamb)</string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (m64p v1.99.5 için Rice Video\'nun GLES2 portu, Rice tarafından, Kris (Metricity))</string>
   <string name="pluginAudio_title">Ses</string>
   <string name="pluginAudio_entryNone">Hiçbiri (ses devre dışı)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Girdi</string>
   <string name="pluginInput_entryNone">Hiçbirit</string>
+  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Gerçeklik Sinyali İşlemcisi (RSP)</string>
   <string name="pluginRsp_entryNone">Hiçbiri (RSP devre dışı)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (sessiz işleme, Hactarux tarafından hız hacki, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Öykünüm çekirdeği</string>
+  <string name="pluginCore_entryV110">core, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="r4300Emulator_title">R4300 Öykünücüsü</string>
   <string name="r4300Emulator_entryPureInterpreter">Saf yorumlayıcı</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Önbellekli yorumlayıcı</string>
+  <string name="r4300Emulator_entryDynarec">Dinamik derleyici (dynarec)</string>
+  <string name="navigationMode_title">Erişilebilirlik</string>
+  <string name="navigationMode_entryStandard">Standart mod</string>
+  <string name="navigationMode_entryOuya">OUYA modu (dokunmatik ekran yok; sadece oyun kumandası)</string>
   <string name="localeOverride_title">Dil</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Çökme raporlamayı etkinleştir</string>
+  <string name="acraEnable_summary">Hiçbir kişisel veri toplanmadı</string>
+  <string name="acraUserEmail_title">İletişim bilgisi</string>
   <string name="acraUserEmail_summary">paulscode.com kullanıcı adınız (isteğe bağlı)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Dokunmatik ekran şeffaflığı</string>
@@ -202,6 +237,7 @@
   <string name="pathCustomTouchscreen_title">Özel düzen klasörü</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">İçe doku paketi aktar</string>
+  <string name="pathHiResTextures_summary">Oyuna özel dokuları (ZIP biçiminde) uygula</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Oyun kayıtları klasörü</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -222,31 +258,44 @@
   <!--Confirmation Dialogs-->
   <string name="confirm_title">Onaylama</string>
   <string name="confirmResetGame_message">Oyunu sıfırla? Son kaydınızdan bu yana tüm işlemler kaybedilecek.</string>
+  <string name="confirmLoadProfile_message">%2$s için \"%1$s\" profilini yükle?</string>
+  <string name="confirmUnmapAll_message">%1$s için tüm girdilerin eşlemelerini kaldır?</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Değişiklik kaydı</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">dosya adı</string>
   <string name="hintSetSpeed">10 ile 300 arası hız</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Başlatılıyor</string>
+  <string name="assetExtractor_progress">%1$.0f%% tamamlandı: %2$s</string>
   <string name="assetExtractor_finished">Bitti</string>
   <!--Cheats Configuration-->
+  <string name="cheats_defaultName">%1$d Hilesi</string>
   <string name="cheats_longPress">(tüm yazılar için uzun bas)</string>
   <string name="cheat_disabled">(devre dışı)</string>
   <string name="cheatOption_title">Tüm metin</string>
   <string name="cheatNotes_title">Notlar</string>
+  <string name="cheatNotes_none">(bu hile için notlar mevcut değil)</string>
   <!--Hi-Res Texture Unpacking-->
   <string name="pathHiResTexturesPath_title">Doku paketi seç (ZIP biçimi)</string>
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>
   <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>
   <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Üst dizin</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">%1$d (%2$s) Aygıtı</string>
   <string name="playerMap_deviceWithoutName">%1$d Aygıtı</string>
   <string name="playerMapPreference_popupTitle">Oyuncu %1$d</string>
-  <string name="playerMapPreference_popupMessage">Oyuncu %1$d, kumandanızdaki bir düğmeye veya çubuğa basın...\n \nMevcut aygıtlar:\n %2$s</string>
+  <string name="playerMapPreference_popupMessage">Oyuncu %1$d, kumandanızdaki bir düğmeye veya çubuğa basın…\n \nMevcut aygıtlar:\n %2$s</string>
   <string name="playerMapPreference_popupUnmap">Eşlemeyi kaldır</string>
+  <string name="playerMapPreference_button">Oyuncu %1$d\n \n%2$s</string>
   <!--Input Mapping-->
+  <string name="inputMapActivity_popupMessage">Eşlemek için bir düğmeye, tuşa veya oyun çubuğuna basın…\n \nMevcut eşlemeler:\n %1$s</string>
   <string name="inputMapActivity_popupUnmap">Eşlemeyi kaldır</string>
+  <string name="inputMapActivity_aPadXperiaPlay">Dokunmatik yüzeyle kontrol edilen analog çubuk</string>
   <string name="inputMapActivity_btnA">A</string>
   <string name="inputMapActivity_btnB">B</string>
   <string name="inputMapActivity_btnC">C</string>
@@ -271,11 +320,14 @@
   <string name="inputMapActivity_reset">Sıfırla</string>
   <string name="inputMapActivity_pause">Duraklat</string>
   <string name="inputMapActivity_stop">Durdur</string>
+  <string name="inputMapActivity_frameAdvance">Kare ilerlemesi</string>
   <string name="inputMapActivity_fastForward">İleri sar</string>
   <string name="inputMapActivity_speedDown">Hızı azalt</string>
   <string name="inputMapActivity_speedUp">Hızı arttır</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Geri tuşu</string>
+  <string name="inputMapActivity_simulateMenu">Menü tuşu</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Düğmeye veya tuşa basın...</string>
-  <string name="diagnosticActivity_textMotion_text">Dokunmatik ekran veya oyun çubuğu...</string>
+  <string name="diagnosticActivity_textKey_text">Düğmeye veya tuşa basın…</string>
+  <string name="diagnosticActivity_textMotion_text">Dokunmatik ekran veya oyun çubuğu…</string>
 </resources>

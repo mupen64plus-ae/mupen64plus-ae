@@ -136,7 +136,11 @@
   <string name="gles2RiceHiResTextures_summary">Korištenje korisničko uvezenih tekstura</string>
   <string name="audioSwapChannels_title">Zamjena zvučnih kanala</string>
   <string name="audioSwapChannels_summary">Zamjena lijevog i desnog kanala zvuka</string>
-  <!--List Preferences (selected value will become the summary)-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Animacija kontrolera</string>
+  <string name="touchscreenRefresh_entryNever">Nikad</string>
+  <string name="touchscreenRefresh_entryOccasionally">Nekad</string>
+  <string name="touchscreenRefresh_entryFrequently">Često</string>
   <string name="touchscreenLayout_title">Raspored dodirnog ekrana</string>
   <string name="touchscreenLayout_entryAnalog">Analog (autor \"roymustang16\")</string>
   <string name="touchscreenLayout_entryDigital">Digital (autor \"roymustang16\")</string>
@@ -146,10 +150,6 @@
   <string name="touchscreenSize_entrySmall">Malo</string>
   <string name="touchscreenSize_entryNormal">Normalno</string>
   <string name="touchscreenSize_entryTablet">Tablet</string>
-  <string name="touchscreenRefresh_title">Animacija kontrolera</string>
-  <string name="touchscreenRefresh_entryNever">Nikad</string>
-  <string name="touchscreenRefresh_entryOccasionally">Nekad</string>
-  <string name="touchscreenRefresh_entryFrequently">Često</string>
   <string name="touchpadLayout_title">Raspored dodirne površine</string>
   <string name="touchpadLayout_entryDefault">Lijeva strana: Analogna kontrola; Desna strana: C tipke</string>
   <string name="touchpadLayout_entryReverse">Lijeva strana: C tipke; Desna strana: Analogna kontrola</string>
@@ -244,6 +244,7 @@
   <string name="confirmResetGame_message">Resetirati igru? Sve što nije bilo spremljeno u igri će biti izgubljeno.</string>
   <string name="confirmOverwriteFile_message">Prepisati %1$s?</string>
   <string name="confirmMigrateSlotSaves_message">Jeste li sigurni da želite kopirati svoje stare spremnike? Ako je potrebno, pričuvne kopije će biti napravljene.</string>
+  <!--Change Log-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ime datoteke</string>
   <string name="hintSetSpeed">brzina između 10 do 300</string>
@@ -266,6 +267,7 @@
   <string name="pathHiResTexturesTask_errorMessage">Došlo je do greške sa raspakiravanjem teksture!</string>
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Uređaj %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Uređaj %1$d</string>
