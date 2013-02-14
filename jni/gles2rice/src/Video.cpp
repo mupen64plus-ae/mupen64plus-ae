@@ -377,11 +377,8 @@ static bool StartVideo(void)
           }
           // Calculate aspect ratio
           const float ratio = ( romPAL ? 9.0f/11.0f : 0.75f );
-          int screenWidth = videoInfo->current_w;
-          int screenHeight = videoInfo->current_h;
- 
-          int videoWidth = screenWidth;
-          int videoHeight = screenHeight;
+          int videoWidth = videoInfo->current_w;
+          int videoHeight = videoInfo->current_h;
           int screenPosition;
           int x, y;
 
@@ -420,19 +417,14 @@ static bool StartVideo(void)
               y = ( videoInfo->current_h - videoHeight ) / 2;
           }
 
-        windowSetting.uDisplayWidth = screenWidth;
-        windowSetting.uDisplayHeight = screenHeight;
-        printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );
-
-        windowSetting.width = videoWidth;
-        windowSetting.height = videoHeight;
+        windowSetting.uDisplayWidth = videoWidth;
+        windowSetting.uDisplayHeight = videoHeight;
         windowSetting.xpos = x;
-        windowSetting.ypos = y;        
+        windowSetting.ypos = y;   
+        
+        printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );     
         ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenWidth", videoWidth, "Width of output window or fullscreen width" );
         ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenHeight", videoHeight, "Height of output window or fullscreen height" );
-
-
-
 #endif
 
         bool res = CGraphicsContext::Get()->Initialize( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,

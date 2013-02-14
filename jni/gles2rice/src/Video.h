@@ -38,7 +38,7 @@ typedef struct {
     int     vpLeftW, vpTopW, vpRightW, vpBottomW, vpWidthW, vpHeightW;
 
     int     statusBarHeight, statusBarHeightToUse, toolbarHeight, toolbarHeightToUse;
-    int     xpos, ypos, width, height;
+    int     xpos, ypos;
     BOOL    screenSaverStatus;
 
     struct {

@@ -32,7 +32,7 @@ void OGLRender::DrawText(const char* str, RECT *rect)
 
 void OGLRender::DrawSpriteR_Render()    // With Rotation
 {
-    glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    glViewportWrapper(windowSetting.xpos, windowSetting.ypos, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
