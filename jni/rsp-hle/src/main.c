@@ -30,6 +30,7 @@
 #include "m64p_common.h"
 #include "m64p_plugin.h"
 #include "hle.h"
+#include "jpeg.h"
 
 /* global variables */
 RSP_INFO rsp;
@@ -84,8 +85,7 @@ static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
  **/
 static int is_run_through_task(OSTask_t* task)
 {
-    return (task->ucode_boot_size <= 0x1000
-        && task->ucode_boot_size >= 0);
+    return (task->ucode_boot_size <= 0x1000);
 }
 
 
@@ -221,12 +221,16 @@ static int DoJPEGTask(OSTask_t *task, int sum)
     case 0x278: // Zelda OOT during boot
       taskdone();
       return 1;
+    case 0x2c85a: // Pokemon stadium J jpg decompression
+        jpeg_decode_PS0(task);
+        taskdone();
+        return 1;
     case 0x2caa6: // Zelda OOT, Pokemon Stadium {1,2} jpg decompression
-        ps_jpg_uncompress(task);
+        jpeg_decode_PS(task);
         taskdone();
         return 1;
     case 0x130de: // Ogre Battle background decompression
-        ob_jpg_uncompress(task);
+        jpeg_decode_OB(task);
         taskdone();
         return 1;
     }
