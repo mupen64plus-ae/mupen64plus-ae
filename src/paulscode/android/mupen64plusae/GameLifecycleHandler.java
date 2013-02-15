@@ -41,6 +41,8 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.InputDevice;
@@ -158,7 +160,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
-        // Hide the action bar introduced in higher Android versions
+        // Configure the action bar introduced in higher Android versions
         if( AppData.IS_HONEYCOMB && !mUserPrefs.isOuyaMode )
         {
             // SDK version at least HONEYCOMB, so there should be software buttons on this device:
@@ -166,6 +168,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             if( view != null )
                 view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
             mActivity.getActionBar().hide();
+            
+            ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
+            color.setAlpha( mUserPrefs.videoActionBarTransparency );
+            mActivity.getActionBar().setBackgroundDrawable( color );
         }
         
         // Initialize the screen elements

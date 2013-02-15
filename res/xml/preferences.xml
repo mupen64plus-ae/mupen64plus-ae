@@ -273,6 +273,15 @@
                     android:key="videoPosition"
                     android:summary="@string/selectedValue"
                     android:title="@string/videoPosition_title" />
+
+                <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+                    android:defaultValue="50"
+                    android:key="videoActionBarTransparency"
+                    android:title="@string/videoActionBarTransparency_title"
+                    mupen64:maximumValue="100"
+                    mupen64:stepSize="10"
+                    mupen64:units="%" />
+
                 <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/videoFpsRefresh_default"
                     android:entries="@array/videoFpsRefresh_entries"

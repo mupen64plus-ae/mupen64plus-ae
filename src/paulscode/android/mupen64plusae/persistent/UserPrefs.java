@@ -210,6 +210,9 @@ public class UserPrefs
     /** The screen position in portrait mode. */
     public final int videoPosition;
     
+    /** The action bar transparency value. */
+    public final int videoActionBarTransparency;
+    
     /** The number of frames over which FPS is calculated (0 = disabled). */
     public final int videoFpsRefresh;
     
@@ -389,6 +392,8 @@ public class UserPrefs
             videoPosition = getSafeInt( mPreferences, "videoPosition", 1 );
         else
             videoPosition = 1;
+        transparencyPercent = mPreferences.getInt( "videoActionBarTransparency", 50 );
+        videoActionBarTransparency = ( 255 * transparencyPercent ) / 100;
         videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
         isFpsEnabled = videoFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );

@@ -281,6 +281,7 @@
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
     <string name="touchscreenTransparency_title">Touchscreen opacity</string>
+    <string name="videoActionBarTransparency_title">Action bar opacity</string>
 
     <!-- Path Preferences (selected path will become the summary) -->
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
