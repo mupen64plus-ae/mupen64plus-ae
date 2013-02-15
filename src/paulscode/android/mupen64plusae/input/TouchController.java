@@ -366,10 +366,42 @@ public class TouchController extends AbstractController implements OnTouchListen
             // Finger is on a valid button
             
             // Provide simple vibration feedback for any valid button when first touched
-            if( touched && mTouchscreenFeedback && !mState.buttons[index] && mVibrator != null )
+            if( touched && mTouchscreenFeedback && mVibrator != null )
             {
-                mVibrator.cancel();
-                mVibrator.vibrate( FEEDBACK_VIBRATE_TIME );
+                boolean firstTouched;
+                if( index < NUM_N64_BUTTONS )
+                {
+                    // Single button pressed
+                    firstTouched = !mState.buttons[index];
+                }
+                else
+                {
+                    // Two d-pad buttons pressed simultaneously
+                    switch( index )
+                    {
+                        case TouchMap.DPD_RU:
+                            firstTouched = !( mState.buttons[DPD_R] && mState.buttons[DPD_U] );
+                            break;
+                        case TouchMap.DPD_RD:
+                            firstTouched = !( mState.buttons[DPD_R] && mState.buttons[DPD_D] );
+                            break;
+                        case TouchMap.DPD_LD:
+                            firstTouched = !( mState.buttons[DPD_L] && mState.buttons[DPD_D] );
+                            break;
+                        case TouchMap.DPD_LU:
+                            firstTouched = !( mState.buttons[DPD_L] && mState.buttons[DPD_U] );
+                            break;
+                        default:
+                            firstTouched = false;
+                            break;
+                    }
+                }
+                
+                if( firstTouched )
+                {
+                    mVibrator.cancel();
+                    mVibrator.vibrate( FEEDBACK_VIBRATE_TIME );
+                }
             }
             
             // Set the controller state accordingly
