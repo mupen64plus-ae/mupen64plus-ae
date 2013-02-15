@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="appTheme" parent="@android:style/Theme.Holo" />
-
-    <style name="gameTheme" parent="@style/appTheme">
-        <item name="android:actionBarStyle">@style/grayActionBar</item>
-    </style>
-
-    <style name="grayActionBar" parent="@android:style/Widget.Holo.ActionBar">
+    <style name="appTheme" parent="@android:style/Theme.Holo">
+    	<item name="android:actionBarStyle">@style/MyActionBar</item>
+	</style>
+	
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.ActionBar">
         <item name="android:background">#303030</item>
     </style>
-
+    
     <style name="alertDialogMessage">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
