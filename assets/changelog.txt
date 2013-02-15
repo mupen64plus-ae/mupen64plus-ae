@@ -1,5 +1,7 @@
 [21:2.1.1]
+- Added option to change action bar transparency
 - Fixed crash with haptic feedback on d-pad diagonal
+- Fixed gles2N64 graphical issues (Star Wars Ep. 1 Racer and others)
 [20:2.1.0]
 - Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)
 - Added screen position option for portrait mode
