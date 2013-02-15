@@ -232,7 +232,7 @@ void Config_LoadRomConfig(unsigned char* header)
             {
                 char* v = strchr(line, '\n');
                 if (v) *v='\0';
-                isRom = (strcasecmp(config.romName, line+9) == 0);
+                isRom = (strncmp(config.romName, line+9, strlen(config.romName)) == 0);
             }
             else
             {
@@ -242,6 +242,7 @@ void Config_LoadRomConfig(unsigned char* header)
                     if (!val) continue;
                     *val++ = '\0';
                     Config_SetOption(line,val);
+                    LOG(LOG_MINIMAL, "%s = %s", line, val);
                 }
             }
         }
