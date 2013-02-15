@@ -102,6 +102,8 @@
   <string name="categoryCheats_title">Ajustes de cheats (mantén oprimido para mostrar notas)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Otras</string>
+  <string name="categoryTouchscreenBehavior_title">Funcionamiento</string>
+  <string name="categoryTouchscreenAppearance_title">Apariencia</string>
   <string name="categorySinglePlayer_title">Jugador 1</string>
   <string name="categoryMultiPlayer_title">Multijugador</string>
   <string name="categoryGles2N64_title">Opciones del plugin GLES2N64</string>
@@ -113,6 +115,8 @@
   <string name="playShowCheats_title">Habilitar cheats</string>
   <string name="playShowCheats_summary">La carga del menú es más lenta cuando se encuentran activados</string>
   <string name="touchscreenEnabled_title">Habilitar pantalla táctil</string>
+  <string name="touchscreenFeedback_title">Retroalimentación háptica</string>
+  <string name="touchscreenFeedback_summary">Vibrar al pulsar un botón</string>
   <string name="touchpadEnabled_title">Habilitar touchpad</string>
   <string name="inputOctagonConstraints_title">Límites octogonales del joystick</string>
   <string name="inputOctagonConstraints_summary">Restringe el movimiento analógico a un octágono, como en un mando real de N64</string>
@@ -149,6 +153,7 @@
   <string name="audioSwapChannels_title">Intercambiar canales de audio</string>
   <string name="audioSwapChannels_summary">Intercambia los canales de audio izquierdo y derecho</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_entryDisabled">Deshabilitado</string>
   <string name="touchscreenRefresh_title">Animación del joystick</string>
   <string name="touchscreenRefresh_entryNever">Nunca</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>

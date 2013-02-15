@@ -14,8 +14,18 @@
   <string name="menuItem_setIme">Promjena zadanog unosa</string>
   <string name="menuItem_exit">Izlaz</string>
   <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Profili</string>
+  <string name="menuItem_default">Zadano</string>
+  <string name="menuItem_load">Učitaj...</string>
+  <string name="menuItem_save">Spremi...</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Prikaži specijalne funkcije</string>
   <string name="menuItem_specialVisibility_hide">Sakrij specijalne funkcije</string>
+  <string name="menuItem_axisInfo">Analog info</string>
+  <string name="menuItem_unmapAll">Odznači sve</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -33,6 +43,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Koristi se spremnik #%1$d.</string>
   <string name="toast_sdInaccessible">SD kartica nije dostupna (iskopčajte USB kabel i pokušajte ponovo).</string>
+  <string name="toast_fileReadError">Nije moguće očitavanje podataka iz datoteke!</string>
+  <string name="toast_fileWriteError">Nije moguće zapisati podatke u datoteku!</string>
   <string name="toast_migrateSlotSavesNotFound">Nema datoteka za kopiranje.</string>
   <string name="toast_migrateSlotSavesSuccess">Migracija uspješno završena.</string>
   <string name="toast_crashReportSent">Izvještaj poslan.</string>
@@ -90,6 +102,8 @@
   <string name="categoryCheats_title">Opcije za varanje (držati za detalje)</string>
   <string name="categoryHardware_title">Hardver</string>
   <string name="categoryOther_title">Ostalo</string>
+  <string name="categoryTouchscreenBehavior_title">Ponašanje</string>
+  <string name="categoryTouchscreenAppearance_title">Izgled</string>
   <string name="categorySinglePlayer_title">Igrač 1</string>
   <string name="categoryMultiPlayer_title">Više igrača</string>
   <string name="categoryGles2N64_title">GLES2N64 postavke</string>
@@ -101,6 +115,8 @@
   <string name="playShowCheats_title">Uključi opcije za varanje</string>
   <string name="playShowCheats_summary">Usporava učitavanje izbornika ako je uključeno</string>
   <string name="touchscreenEnabled_title">Omogući dodirni ekran</string>
+  <string name="touchscreenFeedback_title">Vibriranje</string>
+  <string name="touchscreenFeedback_summary">Vibra pri pritisku tipke</string>
   <string name="touchpadEnabled_title">Omogući dodirnu površinu</string>
   <string name="inputOctagonConstraints_title">Oktagonalni kontroler</string>
   <string name="inputOctagonConstraints_summary">Kontrola slična pravom N64 kontroleru</string>
@@ -137,6 +153,11 @@
   <string name="audioSwapChannels_title">Zamjena zvučnih kanala</string>
   <string name="audioSwapChannels_summary">Zamjena lijevog i desnog kanala zvuka</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Automatsko držanje tipke</string>
+  <string name="touchscreenAutoHold_entryDisabled">Isključeno</string>
+  <string name="touchscreenAutoHold_entryLongPress">Pri držanju</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Pri pomaku izvana</string>
+  <string name="touchscreenAutoHoldables_title">Tipke s mogućnošću stalnog držanja</string>
   <string name="touchscreenRefresh_title">Animacija kontrolera</string>
   <string name="touchscreenRefresh_entryNever">Nikad</string>
   <string name="touchscreenRefresh_entryOccasionally">Nekad</string>
@@ -158,6 +179,10 @@
   <string name="videoOrientation_entryReverseLandscape">Obrnuti pejzaž</string>
   <string name="videoOrientation_entryPortrait">Portret</string>
   <string name="videoOrientation_entryReversePortrait">Obrnuti portret</string>
+  <string name="videoPosition_title">Portretna pozicija ekrana</string>
+  <string name="videoPosition_entryBottom">Dno</string>
+  <string name="videoPosition_entryMiddle">Sredina</string>
+  <string name="videoPosition_entryTop">Vrh</string>
   <string name="videoFpsRefresh_title">Prikaži FPS</string>
   <string name="videoFpsRefresh_entryNever">Nikad</string>
   <string name="videoFpsRefresh_entryOccasionally">Nekad</string>
@@ -191,21 +216,31 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (najkvalitetnije)</string>
   <string name="pluginVideo_title">Grafika</string>
   <string name="pluginVideo_entryNone">Nema (grafika isključena)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Zvuk</string>
   <string name="pluginAudio_entryNone">Nema (zvuk isključen)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Kontroler</string>
   <string name="pluginInput_entryNone">Nema (kontroler isključen)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginInput_entrySdl">input-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginRsp_title">RSP</string>
   <string name="pluginRsp_entryNone">Nema (RSP isključen)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Izvorni tip emulacije</string>
-  <string name="pluginCore_entryV110">core, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="r4300Emulator_title">R4300 emulator</string>
+  <string name="r4300Emulator_entryPureInterpreter">Čisti interpretator</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Priručni interpretator</string>
+  <string name="r4300Emulator_entryDynarec">Dinamički interpretator (dynarec)</string>
+  <string name="navigationMode_title">Pristupačnost</string>
+  <string name="navigationMode_summary">Način navigacije izbornika: %1$s</string>
+  <string name="navigationMode_entryAuto">Automatski odabir</string>
+  <string name="navigationMode_entryStandard">Standardno</string>
+  <string name="navigationMode_entryOuya">OUYA (bez dodirnog ekrana; koristi se samo kontroler)</string>
   <string name="localeOverride_title">Jezik</string>
+  <string name="localeOverride_entrySystemDefault">Zadano</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Uključi izvještavanje o rušenju</string>
   <string name="acraEnable_summary">Ne prikupljavaju se osobni podaci</string>
@@ -222,6 +257,7 @@
   <string name="pathCustomTouchscreen_title">Mapa za korisnički stil dodirnog ekrana</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Uvoz teksture</string>
+  <string name="pathHiResTextures_summary">Primjeni korisničke teksture (ZIP format)</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Mapa spremnika</string>
   <string name="pathGameSaves_default">!mupen64plus</string>
@@ -233,7 +269,7 @@
   <string name="inputMap2_title">Igrač 2</string>
   <string name="inputMap3_title">Igrač 3</string>
   <string name="inputMap4_title">Igrač 4</string>
-  <string name="inputMap_summary">Označivanje tipki i specijalnih funkcija</string>
+  <string name="inputMap_summary">Označavanje tipki i specijalnih funkcija</string>
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
@@ -243,8 +279,11 @@
   <string name="confirm_title">Potvrda</string>
   <string name="confirmResetGame_message">Resetirati igru? Sve što nije bilo spremljeno u igri će biti izgubljeno.</string>
   <string name="confirmOverwriteFile_message">Prepisati %1$s?</string>
+  <string name="confirmLoadProfile_message">Učitati profil \"%1$s\" za %2$s?</string>
+  <string name="confirmUnmapAll_message">Odznači sve unose za %1$s?</string>
   <string name="confirmMigrateSlotSaves_message">Jeste li sigurni da želite kopirati svoje stare spremnike? Ako je potrebno, pričuvne kopije će biti napravljene.</string>
   <!--Change Log-->
+  <string name="changeLog_dialogTitle">Što je novo?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ime datoteke</string>
   <string name="hintSetSpeed">brzina između 10 do 300</string>
@@ -268,6 +307,7 @@
   <!--Seek Bar Preference-->
   <string name="seekBarPreference_summary">%1$d %2$s</string>
   <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Prethodna mapa</string>
   <!--Player Mapping-->
   <string name="playerMap_deviceWithName">Uređaj %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Uređaj %1$d</string>
@@ -275,8 +315,9 @@
   <string name="playerMapPreference_popupMessage">Igrač %1$d, pritisnite tipku ili palicu na vašem kontroleru…\n\nTrenutni uređaji:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Odznači</string>
   <string name="playerMapPreference_button">Igrač %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">Podsjeti me kad igrači nisu označili sve tipke</string>
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Pritisnite tipku ili kontroler za označivanje…\n\nTrenutno označeno:\n%1$s</string>
+  <string name="inputMapActivity_popupMessage">Pritisnite tipku ili kontroler za označavanje…\n\nTrenutno označeno:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Odznači</string>
   <string name="inputMapActivity_aPadXperiaPlay">Analogna palica kontrolirana sa dodirnom površinom</string>
   <string name="inputMapActivity_cPadXperiaPlay">C tipke kontrolirane sa dodirnom površinom</string>
@@ -312,6 +353,8 @@
   <string name="inputMapActivity_speedDown">Usporavanje</string>
   <string name="inputMapActivity_speedUp">Ubrzavanje</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Tipka za povratak</string>
+  <string name="inputMapActivity_simulateMenu">Tipka za izbornik</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Pritisnite tipku…</string>
   <string name="diagnosticActivity_textMotion_text">Dodirni ekran ili kontroler…</string>

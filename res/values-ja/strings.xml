@@ -154,6 +154,9 @@
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">ボタンオートホールド</string>
   <string name="touchscreenAutoHold_entryDisabled">使用禁止</string>
+  <string name="touchscreenAutoHold_entryLongPress">長押し</string>
+  <string name="touchscreenAutoHold_entrySlideOut">スライドオフ</string>
+  <string name="touchscreenAutoHoldables_title">保持可能なボタン</string>
   <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
   <string name="touchscreenRefresh_entryNever">決して</string>
   <string name="touchscreenRefresh_entryOccasionally">時折</string>
@@ -175,6 +178,7 @@
   <string name="videoOrientation_entryReverseLandscape">反転横方向</string>
   <string name="videoOrientation_entryPortrait">縦方向</string>
   <string name="videoOrientation_entryReversePortrait">反転縦方向</string>
+  <string name="videoPosition_title">肖像画の画面位置</string>
   <string name="videoPosition_entryBottom">下部</string>
   <string name="videoPosition_entryMiddle">中央</string>
   <string name="videoPosition_entryTop">上部</string>
@@ -309,6 +313,7 @@
   <string name="playerMapPreference_popupMessage">プレイヤー%1$dは、コントローラ上のボタンまたはジョイスティックを押してください。\n\n現在のデバイス:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">アンマップ</string>
   <string name="playerMapPreference_button">プレーヤー %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">プレイヤーがコントロールにマップされていない時に通知。</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。\n\n現在のマッピング:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">アンマップ</string>
