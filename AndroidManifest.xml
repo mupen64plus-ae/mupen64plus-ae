@@ -78,12 +78,14 @@
         <activity
             android:name=".GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/gameTheme" >
         </activity>
         <activity
             android:name=".GameActivityXperiaPlay"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/gameTheme" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="xperia-touchpad" />
