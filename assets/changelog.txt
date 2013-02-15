@@ -1,6 +1,5 @@
 [20:2.1.0]
-- Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue
-action icon, and many others)
+- Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)
 - Added screen position option for portrait mode
 - Added vibration feedback for touchscreen/pad buttons
 - Added auto-hold feature for touchscreen buttons
