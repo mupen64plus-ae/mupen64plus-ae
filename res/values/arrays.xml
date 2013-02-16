@@ -23,6 +23,8 @@
         <item>hr</item>
         <item>it</item>
         <item>nl</item>
+        <!-- <item>nb</item> -->
+        <item>pl</item>
         <item>pt</item>
         <item>tr</item>
         <item>ru</item>
@@ -154,6 +156,20 @@
 
     <string name="videoOrientation_default" translatable="false">0</string>
 
+    <!-- Screen Position List -->
+    <string-array name="videoPosition_entries" translatable="false">
+        <item>@string/videoPosition_entryTop</item>
+        <item>@string/videoPosition_entryMiddle</item>
+        <item>@string/videoPosition_entryBottom</item>
+    </string-array>
+    <string-array name="videoPosition_values" translatable="false">
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+
+    <string name="videoPosition_default" translatable="false">1</string>
+    
     <!-- Framerate Refresh List -->
     <string-array name="videoFpsRefresh_entries" translatable="false">
         <item>@string/videoFpsRefresh_entryNever</item>
