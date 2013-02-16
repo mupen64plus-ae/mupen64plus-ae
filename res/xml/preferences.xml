@@ -267,22 +267,6 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/videoOrientation_title" />
                 <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/videoPosition_default"
-                    android:entries="@array/videoPosition_entries"
-                    android:entryValues="@array/videoPosition_values"
-                    android:key="videoPosition"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/videoPosition_title" />
-
-                <paulscode.android.mupen64plusae.persistent.SeekBarPreference
-                    android:defaultValue="50"
-                    android:key="videoActionBarTransparency"
-                    android:title="@string/videoActionBarTransparency_title"
-                    mupen64:maximumValue="100"
-                    mupen64:stepSize="10"
-                    mupen64:units="%" />
-
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/videoFpsRefresh_default"
                     android:entries="@array/videoFpsRefresh_entries"
                     android:entryValues="@array/videoFpsRefresh_values"
@@ -353,6 +337,14 @@
                 <PreferenceCategory
                     android:key="categoryGles2Rice"
                     android:title="@string/categoryGles2Rice_title" >
+                    
+                    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                        android:defaultValue="@string/gles2RiceTextureEnhancement_default"
+                        android:entries="@array/gles2RiceTextureEnhancement_entries"
+                        android:entryValues="@array/gles2RiceTextureEnhancement_values"
+                        android:key="gles2RiceTextureEnhancement"
+                        android:summary="@string/gles2RiceTextureEnhancement_summary"
+                        android:title="@string/gles2RiceTextureEnhancement_title" />
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="gles2RiceAutoFrameskip"
@@ -451,13 +443,13 @@
                     android:key="pluginCore"
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginCore_title" />
-                <!-- <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/r4300Emulator_default"
                     android:entries="@array/r4300Emulator_entries"
                     android:entryValues="@array/r4300Emulator_values"
                     android:key="r4300Emulator"
                     android:summary="@string/selectedValue"
-                    android:title="@string/r4300Emulator_title" /> -->
+                    android:title="@string/r4300Emulator_title" />
             </PreferenceScreen>
             <PreferenceScreen
                 android:icon="@drawable/ic_debug"

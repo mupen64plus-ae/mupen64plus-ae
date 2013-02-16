@@ -189,35 +189,38 @@
     <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
     <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
     <string name="touchscreenAutoHoldables_title">Holdable buttons</string>
+    
     <string name="touchscreenRefresh_title">Joystick animation</string>
     <string name="touchscreenRefresh_entryNever">Never</string>
     <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
     <string name="touchscreenRefresh_entryFrequently">Frequently</string>
+    
     <string name="touchscreenLayout_title">Touchscreen layout</string>
     <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
     <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>
     <string name="touchscreenLayout_entryCustom">Custom (see http://tinyurl.com/984ofyo)</string>
+    
     <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenSize_entryTiny">Tiny</string>
     <string name="touchscreenSize_entrySmall">Small</string>
     <string name="touchscreenSize_entryNormal">Normal</string>
     <string name="touchscreenSize_entryTablet">Tablet</string>
+    
     <string name="touchpadLayout_title">Touchpad layout</string>
     <string name="touchpadLayout_entryDefault">Left pad: Analog control; Right pad: C buttons</string>
     <string name="touchpadLayout_entryReverse">Left pad: C buttons; Right pad: Analog control</string>
+    
     <string name="videoOrientation_title">Screen orientation</string>
     <string name="videoOrientation_entryLandscape">Landscape</string>
     <string name="videoOrientation_entryReverseLandscape">Reverse landscape</string>
     <string name="videoOrientation_entryPortrait">Portrait</string>
     <string name="videoOrientation_entryReversePortrait">Reverse portrait</string>
-    <string name="videoPosition_title">Portrait screen position</string>
-    <string name="videoPosition_entryBottom">Bottom</string>
-    <string name="videoPosition_entryMiddle">Middle</string>
-    <string name="videoPosition_entryTop">Top</string>
+    
     <string name="videoFpsRefresh_title">Display framerate</string>
     <string name="videoFpsRefresh_entryNever">Never</string>
     <string name="videoFpsRefresh_entryOccasionally">Occasionally</string>
     <string name="videoFpsRefresh_entryFrequently">Frequently</string>
+    
     <string name="videoHardwareType_title">Flicker reduction</string>
     <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
     <string name="videoHardwareType_entryStandard">Standard profile</string>
@@ -226,6 +229,7 @@
     <string name="videoHardwareType_entryO2">O-2 profile</string>
     <string name="videoHardwareType_entryQ">Q profile</string>
     <string name="videoHardwareType_entryT">T profile</string>
+    
     <string name="gles2N64Frameskip_title">Frameskip</string>
     <string name="gles2N64Frameskip_entryNever">Never skip frames</string>
     <string name="gles2N64Frameskip_entryUpTo1">No more than 1 frame</string>
@@ -238,6 +242,18 @@
     <string name="gles2N64Frameskip_entryExactly3">Exactly 3 frames</string>
     <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
+    
+    <string name="gles2RiceTextureEnhancement_title">Texture Enhancements</string>
+    <string name="gles2RiceTextureEnhancement_summary">Algorithms that enhance texture quality to varying degrees.</string>
+    <string name="gles2RiceTextureEnhancement_none">None</string>
+    <string name="gles2RiceTextureEnhancement_scale2x">Scale 2x</string>
+    <string name="gles2RiceTextureEnhancement_2xsai">2x SaI</string>
+    <string name="gles2RiceTextureEnhancement_hq2x">HQ2x</string>
+    <string name="gles2RiceTextureEnhancement_lq2x">LQ2x</string>
+    <string name="gles2RiceTextureEnhancement_hq4x">HQ4x</string>
+    <string name="gles2RiceTextureEnhancement_sharpen">Sharpen</string>
+    <string name="gles2RiceTextureEnhancement_sharpen_more">Sharpen More</string>
+    
     <string name="audioResampleAlg_title">Resampling algorithm</string>
     <string name="audioResampleAlg_entryTrivial">Trivial</string>
     <string name="audioResampleAlg_entryLinear">Linear interpolation</string>
@@ -245,6 +261,7 @@
     <string name="audioResampleAlg_entrySincFastest">Sinc (fastest)</string>
     <string name="audioResampleAlg_entrySincMedium">Sinc (medium)</string>
     <string name="audioResampleAlg_entrySincBest">Sinc (best)</string>
+    
     <string name="pluginVideo_title">Video</string>
     <string name="pluginVideo_entryNone">None (video disabled)</string>
     <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
@@ -261,15 +278,18 @@
     <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
     <string name="pluginCore_title">Emulation core</string>
     <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+    
     <string name="r4300Emulator_title">R4300 emulator</string>
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
+    
     <string name="navigationMode_title">Accessibility</string>
     <string name="navigationMode_summary">Menu navigation mode: %1$s</string>
     <string name="navigationMode_entryAuto">Auto-select from device configuration</string>
     <string name="navigationMode_entryStandard">Standard mode</string>
     <string name="navigationMode_entryOuya">OUYA mode (no touchscreen; gamepad input only)</string>
+    
     <string name="localeOverride_title">Language</string>
     <string name="localeOverride_entrySystemDefault">System default</string>
 
@@ -281,7 +301,6 @@
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
     <string name="touchscreenTransparency_title">Touchscreen opacity</string>
-    <string name="videoActionBarTransparency_title">Action bar opacity</string>
 
     <!-- Path Preferences (selected path will become the summary) -->
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
@@ -299,7 +318,7 @@
 
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multi-player</string>
-    <string name="playerMap_summary">Define each player\'s controller(s)</string>
+    <string name="playerMap_summary">Define each player\'s controller</string>
 
     <!-- Input Map Preferences -->
     <string name="inputMap1_title">Controller</string>
@@ -361,8 +380,7 @@
     <string name="playerMapPreference_popupTitle">Player %1$d</string>
     <string name="playerMapPreference_popupMessage">Player %1$d, press a button or stick on your controller…\n\nCurrent devices:\n%2$s</string>
     <string name="playerMapPreference_popupUnmap">Unmap</string>
-    <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
-    <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
+    <string name="playerMapPreference_button">Player %1$d\n\n%2$s</string>
 
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>

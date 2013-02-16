@@ -273,6 +273,9 @@ public class UserPrefs
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
+    /** The texture enhancement to be used for the gles2rice plugin */
+    public final String gles2RiceTextureEnhancement;
+    
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
     
@@ -419,6 +422,7 @@ public class UserPrefs
         isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
         isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
+        gles2RiceTextureEnhancement = mPreferences.getString("gles2RiceTextureEnhancement", "0");
         
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );

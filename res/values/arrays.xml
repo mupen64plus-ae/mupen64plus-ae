@@ -23,8 +23,6 @@
         <item>hr</item>
         <item>it</item>
         <item>nl</item>
-        <!-- <item>nb</item> -->
-        <item>pl</item>
         <item>pt</item>
         <item>tr</item>
         <item>ru</item>
@@ -155,20 +153,6 @@
     </string-array>
 
     <string name="videoOrientation_default" translatable="false">0</string>
-    
-    <!-- Screen Position List -->
-    <string-array name="videoPosition_entries" translatable="false">
-        <item>@string/videoPosition_entryTop</item>
-        <item>@string/videoPosition_entryMiddle</item>
-        <item>@string/videoPosition_entryBottom</item>
-    </string-array>
-    <string-array name="videoPosition_values" translatable="false">
-        <item>2</item>
-        <item>1</item>
-        <item>0</item>
-    </string-array>
-
-    <string name="videoPosition_default" translatable="false">1</string>
 
     <!-- Framerate Refresh List -->
     <string-array name="videoFpsRefresh_entries" translatable="false">
@@ -236,6 +220,30 @@
 
     <string name="gles2N64Frameskip_default" translatable="false">-2</string>
 
+    <!-- gles2Rice Texture Enhancements -->
+    <string-array name="gles2RiceTextureEnhancement_entries">
+        <item>@string/gles2RiceTextureEnhancement_none</item>
+        <item>@string/gles2RiceTextureEnhancement_scale2x</item>
+        <item>@string/gles2RiceTextureEnhancement_2xsai</item>
+        <item>@string/gles2RiceTextureEnhancement_hq2x</item>
+        <item>@string/gles2RiceTextureEnhancement_lq2x</item>
+        <item>@string/gles2RiceTextureEnhancement_hq4x</item>
+        <item>@string/gles2RiceTextureEnhancement_sharpen</item>
+        <item>@string/gles2RiceTextureEnhancement_sharpen_more</item>
+    </string-array>
+    <string-array name="gles2RiceTextureEnhancement_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    
+    <string name="gles2RiceTextureEnhancement_default">0</string>
+    
     <!-- Audio Resampling Algorithm List -->
     <string-array name="audioResampleAlg_entries" translatable="false">
         <item>@string/audioResampleAlg_entryTrivial</item>
