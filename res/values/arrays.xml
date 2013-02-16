@@ -169,7 +169,7 @@
     </string-array>
 
     <string name="videoPosition_default" translatable="false">1</string>
-    
+
     <!-- Framerate Refresh List -->
     <string-array name="videoFpsRefresh_entries" translatable="false">
         <item>@string/videoFpsRefresh_entryNever</item>
@@ -236,16 +236,16 @@
 
     <string name="gles2N64Frameskip_default" translatable="false">-2</string>
 
-    <!-- gles2Rice Texture Enhancements -->
+    <!-- GLES2Rice Texture Enhancement Algorithm List -->
     <string-array name="gles2RiceTextureEnhancement_entries">
-        <item>@string/gles2RiceTextureEnhancement_none</item>
-        <item>@string/gles2RiceTextureEnhancement_scale2x</item>
-        <item>@string/gles2RiceTextureEnhancement_2xsai</item>
-        <item>@string/gles2RiceTextureEnhancement_hq2x</item>
-        <item>@string/gles2RiceTextureEnhancement_lq2x</item>
-        <item>@string/gles2RiceTextureEnhancement_hq4x</item>
-        <item>@string/gles2RiceTextureEnhancement_sharpen</item>
-        <item>@string/gles2RiceTextureEnhancement_sharpen_more</item>
+        <item>@string/gles2RiceTextureEnhancement_entryNone</item>
+        <item>@string/gles2RiceTextureEnhancement_entryScale2x</item>
+        <item>@string/gles2RiceTextureEnhancement_entry2xsai</item>
+        <item>@string/gles2RiceTextureEnhancement_entryHq2x</item>
+        <item>@string/gles2RiceTextureEnhancement_entryLq2x</item>
+        <item>@string/gles2RiceTextureEnhancement_entryHq4x</item>
+        <item>@string/gles2RiceTextureEnhancement_entrySharpen</item>
+        <item>@string/gles2RiceTextureEnhancement_entrySharpen_more</item>
     </string-array>
     <string-array name="gles2RiceTextureEnhancement_values" translatable="false">
         <item>0</item>
@@ -257,9 +257,9 @@
         <item>6</item>
         <item>7</item>
     </string-array>
-    
+
     <string name="gles2RiceTextureEnhancement_default">0</string>
-    
+
     <!-- Audio Resampling Algorithm List -->
     <string-array name="audioResampleAlg_entries" translatable="false">
         <item>@string/audioResampleAlg_entryTrivial</item>
