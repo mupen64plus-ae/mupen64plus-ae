@@ -368,6 +368,11 @@
                         android:key="gles2RiceFastTexture"
                         android:summary="@string/gles2RiceFastTexture_summary"
                         android:title="@string/gles2RiceFastTexture_title" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="gles2RiceForceTextureFilter"
+                        android:summary="@string/gles2RiceForceTextureFilter_summary"
+                        android:title="@string/gles2RiceForceTextureFilter_title" />
 
                     <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                         android:defaultValue="@string/gles2RiceTextureEnhancement_default"
@@ -377,11 +382,6 @@
                         android:summary="@string/selectedValue"
                         android:title="@string/gles2RiceTextureEnhancement_title" />
 
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="gles2RiceForceTextureFilter"
-                        android:summary="@string/gles2RiceForceTextureFilter_summary"
-                        android:title="@string/gles2RiceForceTextureFilter_title" />
                     <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="gles2RiceHiResTextures"

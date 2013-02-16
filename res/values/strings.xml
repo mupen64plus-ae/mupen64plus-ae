@@ -176,8 +176,8 @@
     <string name="gles2RiceFastTextureCrc_summary">Improves game speed at cost of 2D elements</string>
     <string name="gles2RiceFastTexture_title">Fast texture loading</string>
     <string name="gles2RiceFastTexture_summary">Fixes circle transitions</string>
-    <string name="gles2RiceForceTextureFilter_title">Force texture filter</string>
-    <string name="gles2RiceForceTextureFilter_summary">Fixes pixelated textures</string>
+    <string name="gles2RiceForceTextureFilter_title">Texture filtering</string>
+    <string name="gles2RiceForceTextureFilter_summary">Fixes texture shimmering and blur on distant objects</string>
     <string name="gles2RiceHiResTextures_title">High resolution textures</string>
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
@@ -248,7 +248,7 @@
     <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
     
-    <string name="gles2RiceTextureEnhancement_title">Texture enhancement algorithm</string>
+    <string name="gles2RiceTextureEnhancement_title">Texture upscaling/enhancement</string>
     <string name="gles2RiceTextureEnhancement_entryNone">None</string>
     <string name="gles2RiceTextureEnhancement_entryScale2x">Scale 2x</string>
     <string name="gles2RiceTextureEnhancement_entry2xsai">2x SaI</string>

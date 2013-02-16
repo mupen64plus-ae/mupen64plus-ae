@@ -267,11 +267,11 @@ public class UserPrefs
     /** True if fast texture loading is enabled in the gles2rice library. */
     public final boolean isGles2RiceFastTextureLoadingEnabled;
     
-    /** The texture enhancement algorithm to be used in the gles2rice library */
-    public final String gles2RiceTextureEnhancement;
-    
     /** True if force texture filter is enabled in the gles2rice library. */
     public final boolean isGles2RiceForceTextureFilterEnabled;
+    
+    /** The texture enhancement algorithm to be used in the gles2rice library */
+    public final String gles2RiceTextureEnhancement;
     
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
@@ -420,8 +420,8 @@ public class UserPrefs
         isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
         isGles2RiceFastTextureCrcEnabled = mPreferences.getBoolean( "gles2RiceFastTextureCrc", true );
         isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
-        gles2RiceTextureEnhancement = mPreferences.getString("gles2RiceTextureEnhancement", "0");
         isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
+        gles2RiceTextureEnhancement = mPreferences.getString("gles2RiceTextureEnhancement", "0");
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
         
         // Audio prefs
