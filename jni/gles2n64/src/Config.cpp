@@ -232,7 +232,7 @@ void Config_LoadRomConfig(unsigned char* header)
             {
                 char* v = strchr(line, '\n');
                 if (v) *v='\0';
-                isRom = (strncmp(config.romName, line+9, strlen(config.romName)) == 0);
+                isRom = (strncmp(config.romName, line+9, strlen(line+9)-1) == 0);
             }
             else
             {

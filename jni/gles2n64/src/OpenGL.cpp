@@ -375,14 +375,30 @@ else
         x = ( videoInfo->current_w - videoWidth ) / 2;
         y = ( videoInfo->current_h - videoHeight ) / 2;
     }
-    config.window.xpos = x;
-    config.window.ypos = y;
-    config.window.width = videoWidth;
-    config.window.height = videoHeight;
-    config.framebuffer.xpos = x;
-    config.framebuffer.ypos = y;
-    config.framebuffer.width = videoWidth;
-    config.framebuffer.height = videoHeight;
+    
+    //xpos and ypos from config file
+    float xpos = (float)x + ((float)videoWidth * ((float)config.window.xpos/800.f));
+    float ypos = (float)y + ((float)videoHeight * ((float)config.window.ypos/480.f));
+    
+    //width and height from config file
+    float width = (float)videoWidth + ((float)videoWidth * (((float)config.window.width - 800.f)/800.f));
+    float height = (float)videoHeight + ((float)videoHeight * (((float)config.window.height - 480.f)/480.f));
+    
+    //center video
+    xpos = xpos - ( width - (float)videoWidth )/2.f;
+    ypos = ypos - ( height - (float)videoHeight )/2.f;
+    
+    //set xpos and ypos
+    config.window.xpos = (int)xpos;
+    config.window.ypos = (int)ypos;
+    config.framebuffer.xpos = (int)xpos;
+    config.framebuffer.ypos = (int)ypos;
+    
+    //set width and height
+    config.window.width = (int)width;
+    config.window.height = (int)height;
+    config.framebuffer.width = (int)width;
+    config.framebuffer.height = (int)height;
 ////
     return true;
 }
