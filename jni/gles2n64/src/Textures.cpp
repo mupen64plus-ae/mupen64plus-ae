@@ -431,7 +431,7 @@ void TextureCache_Init()
 
 bool TextureCache_Verify()
 {
-    s16 i = 0;
+    u16 i = 0;
     CachedTexture *current;
 
     current = cache.top;
@@ -441,7 +441,7 @@ bool TextureCache_Verify()
         i++;
         current = current->lower;
     }
-    if ((unsigned short)i != cache.numCached) return false;
+    if (i != cache.numCached) return false;
 
     i = 0;
     current = cache.bottom;
@@ -450,7 +450,7 @@ bool TextureCache_Verify()
         i++;
         current = current->higher;
     }
-    if ((unsigned short)i != cache.numCached) return false;
+    if (i != cache.numCached) return false;
 
     return true;
 }
