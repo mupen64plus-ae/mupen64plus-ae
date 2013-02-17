@@ -375,6 +375,14 @@
                         android:title="@string/gles2RiceForceTextureFilter_title" />
 
                     <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                        android:defaultValue="@string/gles2RiceMipmapping_default"
+                        android:entries="@array/gles2RiceMipmapping_entries"
+                        android:entryValues="@array/gles2RiceMipmapping_values"
+                        android:key="gles2RiceMipmapping"
+                        android:summary="@string/selectedValue"
+                        android:title="@string/gles2RiceMipmapping_title" />
+                        
+                    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                         android:defaultValue="@string/gles2RiceTextureEnhancement_default"
                         android:entries="@array/gles2RiceTextureEnhancement_entries"
                         android:entryValues="@array/gles2RiceTextureEnhancement_values"

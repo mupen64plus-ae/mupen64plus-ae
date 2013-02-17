@@ -236,6 +236,22 @@
 
     <string name="gles2N64Frameskip_default" translatable="false">-2</string>
 
+    <!-- GLES2Rice Mipmapping List -->
+    <string-array name="gles2RiceMipmapping_entries">
+        <item>@string/gles2RiceMipmapping_entryNone</item>
+        <item>@string/gles2RiceMipmapping_entryNearest</item>
+        <item>@string/gles2RiceMipmapping_entryBilinear</item>
+        <item>@string/gles2RiceMipmapping_entryTrilinear</item>
+    </string-array>
+    <string-array name="gles2RiceMipmapping_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    
+    <string name="gles2RiceMipmapping_default">0</string>
+    
     <!-- GLES2Rice Texture Enhancement Algorithm List -->
     <string-array name="gles2RiceTextureEnhancement_entries">
         <item>@string/gles2RiceTextureEnhancement_entryNone</item>

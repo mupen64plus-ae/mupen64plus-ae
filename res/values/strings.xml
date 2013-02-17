@@ -248,6 +248,12 @@
     <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
     
+    <string name="gles2RiceMipmapping_title">Mipmapping</string>
+    <string name="gles2RiceMipmapping_entryNone">None</string>
+    <string name="gles2RiceMipmapping_entryNearest">Nearest</string>
+    <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
+    <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
+    
     <string name="gles2RiceTextureEnhancement_title">Texture upscaling/enhancement</string>
     <string name="gles2RiceTextureEnhancement_entryNone">None</string>
     <string name="gles2RiceTextureEnhancement_entryScale2x">Scale 2x</string>

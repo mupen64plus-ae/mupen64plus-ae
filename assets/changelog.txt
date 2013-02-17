@@ -1,4 +1,5 @@
 [21:2.1.1]
+- Added option which allows choosing which mipmapping algorithm to use. They are listed from least intensive to most intensive in terms of possible hits to performance.
 - Added option which allows applying a texture filter using the gles2rice video plugin
 - Added option to change action bar transparency
 - Fixed crash with haptic feedback on d-pad diagonal
