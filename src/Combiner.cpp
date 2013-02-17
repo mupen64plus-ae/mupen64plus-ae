@@ -318,9 +318,8 @@ bool IsTxtrUsed(N64CombinerType &m)
 
 void CColorCombiner::InitCombinerMode(void)
 {
-    LOG_UCODE(cycleTypeStrs[gRDP.otherMode.cycle_type]);
 #ifdef DEBUGGER
-
+    LOG_UCODE(cycleTypeStrs[gRDP.otherMode.cycle_type]);
     if( debuggerDropDecodedMux )
     {
         UpdateCombiner(m_pDecodedMux->m_dwMux0, m_pDecodedMux->m_dwMux1);
