@@ -1128,8 +1128,8 @@ void TextureCache_Update( u32 t )
 
     if (gDP.textureMode == TEXTUREMODE_TEXRECT)
     {
-        u16 texRectWidth = gDP.texRect.width - gSP.textureTile[t]->uls;
-        u16 texRectHeight = gDP.texRect.height - gSP.textureTile[t]->ult;
+        u32 texRectWidth = gDP.texRect.width - gSP.textureTile[t]->uls;
+        u32 texRectHeight = gDP.texRect.height - gSP.textureTile[t]->ult;
 
         if (gSP.textureTile[t]->masks && ((maskWidth * maskHeight) <= maxTexels))
             width = maskWidth;
@@ -1139,7 +1139,7 @@ void TextureCache_Update( u32 t )
             width = tileWidth;
         else if ((texRectWidth * tileHeight) <= maxTexels)
             width = gDP.texRect.width;
-        else if ((unsigned int)(texRectWidth * texRectHeight) <= maxTexels)
+        else if ((texRectWidth * texRectHeight) <= maxTexels)
             width = gDP.texRect.width;
         else if (gDP.loadType == LOADTYPE_TILE)
             width = loadWidth;
@@ -1154,7 +1154,7 @@ void TextureCache_Update( u32 t )
             height = gDP.texRect.height;
         else if ((texRectWidth * tileHeight) <= maxTexels)
             height = tileHeight;
-        else if ((unsigned int)(texRectWidth * texRectHeight) <= maxTexels)
+        else if ((texRectWidth * texRectHeight) <= maxTexels)
             height = gDP.texRect.height;
         else if (gDP.loadType == LOADTYPE_TILE)
             height = loadHeight;
