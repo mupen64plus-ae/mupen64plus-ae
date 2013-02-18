@@ -230,9 +230,12 @@ void Config_LoadRomConfig(unsigned char* header)
 
             if (strncmp(line,"rom name=", 9) == 0)
             {
-                char* v = strchr(line, '\n');
-                if (v) *v='\0';
-                isRom = (strncmp(config.romName, line+9, strlen(line+9)-1) == 0);
+                //Depending on the editor, end lines could be terminated by "LF" or "CRLF"
+                char* lf = strchr(line, '\n'); //Line Feed
+                char* cr = strchr(line, '\r'); //Carriage Return
+                if (lf) *lf='\0';
+                if (cr) *cr='\0';
+                isRom = (strcasecmp(config.romName, line+9) == 0);
             }
             else
             {
