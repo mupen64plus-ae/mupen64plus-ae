@@ -508,7 +508,7 @@ void RSP_S2DEX_BG_1CYC(Gfx *gfx)
 
     DEBUGGER_PAUSE_AT_COND_AND_DUMP_COUNT_N((eventToPause == NEXT_OBJ_TXT_CMD||eventToPause == NEXT_FLUSH_TRI||eventToPause == NEXT_OBJ_BG),
         {
-            DebuggerAppendMsg("S2DEX BG 1CYC: %08X-%08X\n", (gfx->words.cmd0), (gfx->words.cmd1) );     
+            DebuggerAppendMsg("S2DEX BG 1CYC: %08X-%08X\n", (gfx->words.cmd0), (gfx->words.cmd1) );
             TRACE0("Paused at RSP_S2DEX_BG_1CYC");
         }
     );

@@ -123,7 +123,7 @@ void DLParser_OgreBatter64BG(Gfx *gfx)
 #ifdef DEBUGGER
     CRender::g_pRender->DrawSpriteR(*ptr, false);
 
-    DEBUGGER_PAUSE_AT_COND_AND_DUMP_COUNT_N((pauseAtNext && 
+    DEBUGGER_PAUSE_AT_COND_AND_DUMP_COUNT_N((pauseAtNext &&
     (eventToPause==NEXT_OBJ_TXT_CMD|| eventToPause==NEXT_FLUSH_TRI)),
     {DebuggerAppendMsg("OgreBattle 64 BG: Addr=%08X\n", dwAddr);});
 #endif
@@ -259,7 +259,7 @@ void DLParser_Ucode8_DL(Gfx *gfx)   // DL Function Call
         GSBlkAddrSaves[gDlistStackPointer][1] = dwCmd3;
     }
 
-    DEBUGGER_PAUSE_AND_DUMP(NEXT_DLIST, 
+    DEBUGGER_PAUSE_AND_DUMP(NEXT_DLIST,
         DebuggerAppendMsg("\nPC=%08X: Call DL at Address %08X - %08X, %08X\n\n", dwPC, dwAddr, dwCmd2, dwCmd3)
     );
 }
@@ -285,7 +285,7 @@ void DLParser_Ucode8_JUMP(Gfx *gfx) // DL Function Call
 #endif
 
         gDlistStack[gDlistStackPointer].pc = dwAddr+8; // Jump to new address
-        DEBUGGER_PAUSE_AND_DUMP(NEXT_DLIST, 
+        DEBUGGER_PAUSE_AND_DUMP(NEXT_DLIST,
         DebuggerAppendMsg("\nPC=%08X: Jump to Address %08X - %08X, %08X\n\n", dwPC, dwAddr, dwCmd2, dwCmd3));
     }
     else

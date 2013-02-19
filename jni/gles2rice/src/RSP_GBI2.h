@@ -673,7 +673,7 @@ void RSP_GBI2_Mtx(Gfx *gfx)
 
     LOG_UCODE("    Mtx: %s %s %s Length %d Address 0x%08x",
         gfx->mtx2.projection ? "Projection" : "ModelView",
-        gfx->mtx2.load ? "Load" : "Mul",    
+        gfx->mtx2.load ? "Load" : "Mul",
         gfx->mtx2.nopush==0 ? "Push" : "No Push",
         gfx->mtx2.len, addr);
 

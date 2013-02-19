@@ -1036,8 +1036,8 @@ void OGLRender::SetFogEnable(bool bEnable)
     if( gRSP.bFogEnabled )
     {
         //TRACE2("Enable fog, min=%f, max=%f",gRSPfFogMin,gRSPfFogMax );
-    
-        
+
+
         //glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
         //OPENGL_CHECK_ERRORS;
         //glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth

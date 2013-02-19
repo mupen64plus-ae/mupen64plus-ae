@@ -87,7 +87,7 @@ bool COGLColorCombiner::Initialize(void)
 
 void COGLColorCombiner::DisableCombiner(void)
 {
-	DebugMessage(M64MSG_INFO,"Disabling Combiner\n");
+    DebugMessage(M64MSG_INFO,"Disabling Combiner\n");
     m_pOGLRender->DisableMultiTexture();
     glEnable(GL_BLEND);
     OPENGL_CHECK_ERRORS;

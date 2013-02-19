@@ -1420,7 +1420,7 @@ void DLParser_FillRect(Gfx *gfx)
         DebuggerAppendMsg("Pause after FillRect: Color=%08X\n", gRDP.originalFillColor);});
     }
 }
-//Nintro64 uses Sprite2d 
+//Nintro64 uses Sprite2d
 void RSP_RDP_Nothing(Gfx *gfx)
 {
     SP_Timing(RSP_RDP_Nothing);
@@ -1444,10 +1444,10 @@ void RSP_RDP_Nothing(Gfx *gfx)
         return;
     }
 #endif
-        
+
     if( options.bEnableHacks )
         return;
-    
+
     gDlistStackPointer=-1;
 }
 
@@ -1497,7 +1497,7 @@ void RSP_RDP_InsertMatrix(Gfx *gfx)
     }
     else
     {
-        if( pauseAtNext && logMatrix ) 
+        if( pauseAtNext && logMatrix )
         {
             DebuggerAppendMsg("insert matrix: %08X, %08X", gfx->words.cmd0, gfx->words.cmd1);
         }
