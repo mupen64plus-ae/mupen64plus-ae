@@ -198,6 +198,7 @@
     <string name="touchscreenLayout_title">Touchscreen layout</string>
     <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
     <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>
+    <string name="touchscreenLayout_entryAll">Both (by roymustang16)</string>
     <string name="touchscreenLayout_entryCustom">Custom (see http://tinyurl.com/984ofyo)</string>
     
     <string name="touchscreenSize_title">Screen size</string>

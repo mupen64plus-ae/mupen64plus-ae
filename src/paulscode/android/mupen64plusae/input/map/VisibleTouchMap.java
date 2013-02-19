@@ -412,9 +412,9 @@ public class VisibleTouchMap extends TouchMap
             String info )
     {
         if( info.contains( "fps" ) )
-            loadFpsIndicator( directory, filename, section );
+            loadFpsIndicator( imageFolder, filename, section );
         else if( filename.contains( "AUTOHOLD" ) )
-            loadAutoHold( directory, filename, section, info );
+            loadAutoHold( imageFolder, filename, section, info );
         else
             super.loadAssetSection( directory, filename, section, info );
     }

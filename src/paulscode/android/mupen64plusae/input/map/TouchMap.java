@@ -33,6 +33,7 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.text.TextUtils;
 
 /**
  * A class for mapping digitizer coordinates to N64 buttons/axes.
@@ -62,6 +63,9 @@ public class TouchMap
     
     /** Total number of N64 (pseudo-)buttons. */
     public static final int NUM_N64_PSEUDOBUTTONS = OFFSET_EXTRAS + 4;
+    
+    /** Folder containing the images (if provided). */
+    protected String imageFolder;
     
     /** Button images. */
     protected ArrayList<Image> buttonImages;
@@ -326,6 +330,13 @@ public class TouchMap
         // Load the configuration file (pad.ini)
         ConfigFile pad_ini = new ConfigFile( directory + "/pad.ini" );
         
+        // Look up the image folder (if provided)
+        imageFolder = pad_ini.get( "INFO", "images" );
+        if( TextUtils.isEmpty( imageFolder ) )
+            imageFolder = directory;
+        else
+            imageFolder = directory + "/../../images/" + imageFolder;  // TODO: Get rid of the ..'s
+        
         // Look up the mask colors
         loadMaskColors( pad_ini );
         
@@ -399,9 +410,9 @@ public class TouchMap
             ConfigSection section, String info )
     {
         if( info.contains( "analog" ) )
-            loadAnalog( directory, filename, section, info.contains( "hat" ) );
+            loadAnalog( imageFolder, filename, section, info.contains( "hat" ) );
         else if( filename.contains( "BUTTON" ) )
-            loadButton( directory, filename, section );
+            loadButton( imageFolder, filename, section );
     }
     
     /**

@@ -37,11 +37,13 @@
     <string-array name="touchscreenLayout_entries" translatable="false">
         <item>@string/touchscreenLayout_entryAnalog</item>
         <item>@string/touchscreenLayout_entryDigital</item>
+        <item>@string/touchscreenLayout_entryAll</item>
         <item>@string/touchscreenLayout_entryCustom</item>
     </string-array>
     <string-array name="touchscreenLayout_values" translatable="false">
         <item>Mupen64Plus-AE-Analog</item>
         <item>Mupen64Plus-AE-Digital</item>
+        <item>Mupen64Plus-AE-All</item>
         <item>Custom</item>
     </string-array>
 

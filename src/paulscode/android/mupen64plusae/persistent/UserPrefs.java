@@ -457,6 +457,8 @@ public class UserPrefs
                 // Substitute the "Touch" skin if analog stick is never redrawn
                 if( layout.equals( "Mupen64Plus-AE-Analog" ) && touchscreenRefresh == 0 )
                     layout = "Mupen64Plus-AE-Touch";
+                else if( layout.equals( "Mupen64Plus-AE-All" ) && touchscreenRefresh == 0 )
+                	layout = "Mupen64Plus-AE-All-Touch";
                 
                 folder = appData.touchscreenLayoutsDir + layout
                         + mPreferences.getString( "touchscreenSize", "" );
