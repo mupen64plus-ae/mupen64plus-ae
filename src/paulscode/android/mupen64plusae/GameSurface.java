@@ -151,22 +151,26 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                 break;
         }
         NativeMethods.onResize( width, height, sdlFormat );
-        mCoreThread = new Thread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                NativeMethods.init();
-            }
-        }, "CoreThread" );
-        mCoreThread.start();
         
-        // Wait for the emu state callback indicating emulation has started
-        CoreInterface.waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
-        
-        // The core has started up, notify the listener
-        if( mClListener != null )
-            mClListener.onCoreStartup();
+        if(!GameLifecycleHandler.mCoreRunning)
+        {	
+	        mCoreThread = new Thread( new Runnable()
+	        {
+	            @Override
+	            public void run()
+	            {
+	                NativeMethods.init();
+	            }
+	        }, "CoreThread" );
+	        mCoreThread.start();
+	        
+	        // Wait for the emu state callback indicating emulation has started
+	        CoreInterface.waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
+	        
+	        // The core has started up, notify the listener
+	        if( mClListener != null )
+	            mClListener.onCoreStartup();
+        }
     }
     
     @Override

@@ -97,7 +97,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private KeyProvider mKeyProvider;
     
     // Internal flags
-    private boolean mCoreRunning = false;
+    public static boolean mCoreRunning = false;
     private final boolean mIsXperiaPlay;
     
     // App data and user preferences
@@ -205,8 +205,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     {
         if( mCoreRunning )
         {
-            Notifier.showToast( mActivity, R.string.toast_loadingSession );
-            NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
             NativeMethods.resumeEmulator();
         }
     }
