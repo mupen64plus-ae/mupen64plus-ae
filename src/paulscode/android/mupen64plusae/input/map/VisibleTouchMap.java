@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 /**
@@ -132,6 +133,31 @@ public class VisibleTouchMap extends TouchMap
             autoHoldY[i] = 0;
     }
     
+    /**
+     * Recomputes the map data for a given digitizer size, and
+     * recalculates the scaling factor.
+     * 
+     * @param w The width of the digitizer, in pixels.
+     * @param h The height of the digitizer, in pixels.
+     * @param metrics Metrics about the display (for use in scaling).
+     */
+    public void resize( int w, int h, DisplayMetrics metrics )
+    {
+        scale = 1.0f;
+        if( pixelWidth > 0 && inchWidth > 0 && metrics != null )
+        {
+            // TODO: Consider portrait modes
+            float screenInches = metrics.widthPixels / metrics.xdpi;
+            
+            scale = (float) metrics.widthPixels / (float) pixelWidth;
+            float inchScale = inchWidth / screenInches;
+            // Scale down if screen is physically larger
+            if( inchScale < 1 )
+                scale *= inchScale;
+        }
+        resize( w, h );
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -145,10 +171,11 @@ public class VisibleTouchMap extends TouchMap
         // Compute analog foreground location (centered)
         if( analogBackImage != null && analogForeImage != null )
         {
-            int cX = analogBackImage.x + analogBackImage.hWidth;
-            int cY = analogBackImage.y + analogBackImage.hHeight;
+            int cX = analogBackImage.x + (int) ( analogBackImage.hWidth * scale );
+            int cY = analogBackImage.y + (int) ( analogBackImage.hHeight * scale );
+            analogForeImage.setScale( scale );
             analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
-                    analogBackImage.width, analogBackImage.height );
+                    (int) ( analogBackImage.width * scale ), (int) ( analogBackImage.height * scale ) );
         }
         
         // Compute auto-hold overlay locations
@@ -158,6 +185,7 @@ public class VisibleTouchMap extends TouchMap
             {
                 int cX = (int) ( w * ( (float) autoHoldX[i] / 100f ) );
                 int cY = (int) ( h * ( (float) autoHoldY[i] / 100f ) );
+                autoHoldImages[i].setScale( scale );
                 autoHoldImages[i].fitCenter( cX, cY, w, h );
             }
         }
@@ -167,6 +195,7 @@ public class VisibleTouchMap extends TouchMap
         {
             int cX = (int) ( w * ( mFpsFrameX / 100f ) );
             int cY = (int) ( h * ( mFpsFrameY / 100f ) );
+            mFpsFrame.setScale( scale );
             mFpsFrame.fitCenter( cX, cY, w, h );
         }
         
