@@ -27,6 +27,8 @@ local.properties
 
 # IDE related
 .idea/
+.project
+.cproject
 
 # Crash-report related
 crashreport.txt
