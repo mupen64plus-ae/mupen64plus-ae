@@ -1481,13 +1481,6 @@ int savestates_save(void)
     StateChanged(M64CORE_STATE_SAVECOMPLETE, ret);
 
     savestates_clear_job();
-
-    #ifdef ANDROID
-        // paulscode, added to allow synchronization between savestates and state changes
-        // TODO: remove after solving ASDP bug.
-        StateChanged( M64CORE_EMU_STATE, M64EMU_RUNNING );
-    #endif
-
     return ret;
 }
 

@@ -150,9 +150,9 @@ public class NativeMethods
     {
         return CoreInterface.getRomPath();
     }
-    public static void emuStateCallback( int newState )
+    public static void stateCallback( int paramChanged, int newValue )
     {
-        CoreInterface.emuStateCallback( newState );
+        CoreInterface.stateCallback( paramChanged, newValue );
     }    
     public static int getScreenPosition()
     {
