@@ -28,7 +28,6 @@ import javax.microedition.khronos.egl.EGLSurface;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.PixelFormat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -39,12 +38,6 @@ import android.view.SurfaceView;
  */
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 {
-    public interface CoreLifecycleListener
-    {
-        public void onCoreStartup();
-        public void onCoreShutdown();
-    }
-    
     public interface OnFpsChangedListener
     {
         /**
@@ -54,12 +47,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
          */
         public void onFpsChanged( int fps );
     }
-    
-    // Thread that the emulator core runs on
-    private static Thread mCoreThread;
-    
-    // Core lifecycle listener
-    private CoreLifecycleListener mClListener;
     
     // Frame rate listener
     private OnFpsChangedListener mFpsListener;
@@ -86,115 +73,33 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         requestFocus();
     }
     
-    public void init( CoreLifecycleListener clListener, OnFpsChangedListener fpsListener, int fpsRecalcPeriod, boolean isRgba8888 )
+    public void init( OnFpsChangedListener fpsListener, int fpsRecalcPeriod, boolean isRgba8888 )
     {
-        mClListener = clListener;
         mFpsListener = fpsListener;
         mFpsRecalcPeriod = fpsRecalcPeriod;
         mIsFpsEnabled = mFpsRecalcPeriod > 0;
         mIsRgba8888 = isRgba8888;
     }
-
+    
     @Override
     public void surfaceCreated( SurfaceHolder holder )
     {
-        // Called when we have a valid drawing surface
         Log.i( "GameSurface", "surfaceCreated: " );
     }
     
-    @SuppressWarnings( "deprecation" )
     @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
-        // Called when the surface is resized
         Log.i( "GameSurface", "surfaceChanged: " );
-        
-        int sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565 by default
-        switch( format )
-        {
-            case PixelFormat.A_8:
-                break;
-            case PixelFormat.LA_88:
-                break;
-            case PixelFormat.L_8:
-                break;
-            case PixelFormat.RGBA_4444:
-                sdlFormat = 0x85421002; // SDL_PIXELFORMAT_RGBA4444
-                break;
-            case PixelFormat.RGBA_5551:
-                sdlFormat = 0x85441002; // SDL_PIXELFORMAT_RGBA5551
-                break;
-            case PixelFormat.RGBA_8888:
-                sdlFormat = 0x86462004; // SDL_PIXELFORMAT_RGBA8888
-                break;
-            case PixelFormat.RGBX_8888:
-                sdlFormat = 0x86262004; // SDL_PIXELFORMAT_RGBX8888
-                break;
-            case PixelFormat.RGB_332:
-                sdlFormat = 0x84110801; // SDL_PIXELFORMAT_RGB332
-                break;
-            case PixelFormat.RGB_565:
-                sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565
-                break;
-            case PixelFormat.RGB_888:
-                // Not sure this is right, maybe SDL_PIXELFORMAT_RGB24 instead?
-                sdlFormat = 0x86161804; // SDL_PIXELFORMAT_RGB888
-                break;
-            case PixelFormat.OPAQUE:
-                /*
-                 * TODO: Not sure this is right, Android API says,
-                 * "System chooses an opaque format", but how do we know which one??
-                 */
-                break;
-            default:
-                Log.w( "GameLifecycleHandler", "Pixel format unknown: " + format );
-                break;
-        }
-        NativeMethods.onResize( width, height, sdlFormat );
-        mCoreThread = new Thread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                NativeMethods.init();
-            }
-        }, "CoreThread" );
-        mCoreThread.start();
-        
-        // Wait for the emu state callback indicating emulation has started
-        CoreInterface.waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
-        
-        // The core has started up, notify the listener
-        if( mClListener != null )
-            mClListener.onCoreStartup();
+        CoreInterface.onResize( format, width, height );
+        CoreInterface.init();
     }
     
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
-        // Called when we lose the surface
         Log.i( "GameSurface", "surfaceDestroyed: " );
-        
-        // The core is about to shut down, notify the listener
-        if( mClListener != null )
-            mClListener.onCoreShutdown();
-        
-        // Tell the core to quit
-        NativeMethods.quit();
-        
-        // Now wait for the core thread to quit
-        if( mCoreThread != null )
-        {
-            try
-            {
-                mCoreThread.join();
-            }
-            catch( InterruptedException e )
-            {
-                Log.i( "GameSurface", "Problem stopping core thread: " + e );
-            }
-            mCoreThread = null;
-        }
+        CoreInterface.quit();
     }
     
     @Override
@@ -213,16 +118,16 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             final int EGL_OPENGL_ES2_BIT = 4;
             final int[] version = new int[2];
             final int[] configSpec;
-
+            
             // Get EGL instance.
             EGL10 egl = (EGL10) EGLContext.getEGL();
-
+            
             // Now get an EGL display connection for the native display
             EGLDisplay dpy = egl.eglGetDisplay( EGL10.EGL_DEFAULT_DISPLAY );
-
+            
             // Now initialize the EGL display.
             egl.eglInitialize( dpy, version );
-
+            
             int renderableType = 0;
             if( majorVersion == 2 )
             {
@@ -269,12 +174,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             EGLConfig config = configs[0];
             // paulscode, GLES2 fix:
             int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-            int[] contextAttrs = new int[]
-                    {
-                        EGL_CONTEXT_CLIENT_VERSION,
-                        majorVersion,
-                        EGL10.EGL_NONE
-                    };
+            int[] contextAttrs = new int[] {
+                EGL_CONTEXT_CLIENT_VERSION,
+                majorVersion,
+                EGL10.EGL_NONE };
             
             EGLContext ctx = egl.eglCreateContext( dpy, config, EGL10.EGL_NO_CONTEXT, contextAttrs );
             // end GLES2 fix
@@ -321,17 +224,17 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         {
             // Get an EGL instance.
             EGL10 egl = (EGL10) EGLContext.getEGL();
-
+            
             // Make sure native-side executions complete before
             // doing any further GL rendering calls.
             egl.eglWaitNative( EGL10.EGL_CORE_NATIVE_ENGINE, null );
             
-            //-- Drawing here --//
-
+            // -- Drawing here --//
+            
             // Make sure all GL executions are complete before
             // doing any further native-side rendering calls.
             egl.eglWaitGL();
-
+            
             // Now finally 'flip' the buffer.
             egl.eglSwapBuffers( mEGLDisplay, mEGLSurface );
             

@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
+import android.graphics.PixelFormat;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -89,8 +90,12 @@ public class CoreInterface
     private static UserPrefs sUserPrefs = null;
     private static OnStateCallbackListener stateCallbackListener = null;
     private static final Object stateCallbackLock = new Object();
-    private static String sCheatOptions;
-    private static boolean sIsRestarting;
+    private static String sCheatOptions = null;
+    private static boolean sIsRestarting = false;
+    private static boolean sIsRunning = false;
+    
+    // Thread that the emulator core runs on
+    private static Thread sCoreThread;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
@@ -109,11 +114,6 @@ public class CoreInterface
         else
             sCheatOptions = null;
         sIsRestarting = isRestarting;
-    }
-    
-    public static boolean isRestarting()
-    {
-        return sIsRestarting;
     }
     
     /**
@@ -138,6 +138,120 @@ public class CoreInterface
         return prev + " " + arg;
     }
     
+    public static void init()
+    {
+        sCoreThread = new Thread( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                NativeMethods.init();
+            }
+        }, "CoreThread" );
+        sCoreThread.start();
+        
+        // Wait for the emu state callback indicating emulation has started
+        waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
+        
+        // Auto-load state and resume
+        sIsRunning = true;
+        resumeEmulator( !sIsRestarting );
+    }
+    
+    public static void quit()
+    {
+        // Pause and auto-save state
+        pauseEmulator();
+        sIsRunning = false;
+        
+        // Tell the core to quit
+        NativeMethods.quit();
+        
+        // Now wait for the core thread to quit
+        if( sCoreThread != null )
+        {
+            try
+            {
+                sCoreThread.join();
+            }
+            catch( InterruptedException e )
+            {
+                Log.i( "CoreInterface", "Problem stopping core thread: " + e );
+            }
+            sCoreThread = null;
+        }
+    }
+    
+    public static void resumeEmulator( boolean loadAutoSave )
+    {
+        if( sIsRunning )
+        {
+            if( loadAutoSave )
+            {
+                Notifier.showToast( sActivity, R.string.toast_loadingSession );
+                NativeMethods.fileLoadEmulator( sUserPrefs.selectedGameAutoSavefile );
+            }
+            NativeMethods.resumeEmulator();
+        }
+    }
+    
+    public static void pauseEmulator()
+    {
+        if( sIsRunning )
+        {
+            NativeMethods.pauseEmulator();
+            Notifier.showToast( sActivity, R.string.toast_savingSession );
+            NativeMethods.fileSaveEmulator( sUserPrefs.selectedGameAutoSavefile );
+        }
+    }
+    
+    @SuppressWarnings( "deprecation" )
+    public static void onResize( int format, int width, int height )
+    {
+        int sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565 by default
+        switch( format )
+        {
+            case PixelFormat.A_8:
+                break;
+            case PixelFormat.LA_88:
+                break;
+            case PixelFormat.L_8:
+                break;
+            case PixelFormat.RGBA_4444:
+                sdlFormat = 0x85421002; // SDL_PIXELFORMAT_RGBA4444
+                break;
+            case PixelFormat.RGBA_5551:
+                sdlFormat = 0x85441002; // SDL_PIXELFORMAT_RGBA5551
+                break;
+            case PixelFormat.RGBA_8888:
+                sdlFormat = 0x86462004; // SDL_PIXELFORMAT_RGBA8888
+                break;
+            case PixelFormat.RGBX_8888:
+                sdlFormat = 0x86262004; // SDL_PIXELFORMAT_RGBX8888
+                break;
+            case PixelFormat.RGB_332:
+                sdlFormat = 0x84110801; // SDL_PIXELFORMAT_RGB332
+                break;
+            case PixelFormat.RGB_565:
+                sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565
+                break;
+            case PixelFormat.RGB_888:
+                // Not sure this is right, maybe SDL_PIXELFORMAT_RGB24 instead?
+                sdlFormat = 0x86161804; // SDL_PIXELFORMAT_RGB888
+                break;
+            case PixelFormat.OPAQUE:
+                /*
+                 * TODO: Not sure this is right, Android API says,
+                 * "System chooses an opaque format", but how do we know which one??
+                 */
+                break;
+            default:
+                Log.w( "CoreInterface", "Pixel format unknown: " + format );
+                break;
+        }
+        NativeMethods.onResize( width, height, sdlFormat );
+    }
+
     public static boolean initEGL( int majorVersion, int minorVersion )
     {
         return sSurface.initEGL( majorVersion, minorVersion );
@@ -255,7 +369,7 @@ public class CoreInterface
         }
     }
     
-    public static void waitForEmuState( int state )
+    private static void waitForEmuState( int state )
     {
         final int waitState = state;
         final Object lock = new Object();
