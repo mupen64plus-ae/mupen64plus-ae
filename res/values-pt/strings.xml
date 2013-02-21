@@ -102,6 +102,8 @@
   <string name="categoryCheats_title">Opções de Cheats (toque longo para ver notas)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Outros</string>
+  <string name="categoryTouchscreenBehavior_title">Funcionamento</string>
+  <string name="categoryTouchscreenAppearance_title">Aparência</string>
   <string name="categorySinglePlayer_title">Jogador 1</string>
   <string name="categoryMultiPlayer_title">Multi-jogador</string>
   <string name="categoryGles2N64_title">Configurações do GLES2N64</string>
@@ -113,6 +115,8 @@
   <string name="playShowCheats_title">Habilitar Cheats</string>
   <string name="playShowCheats_summary">O carregamento do menu é mais lento quando habilitado</string>
   <string name="touchscreenEnabled_title">Habilitar toque na tela</string>
+  <string name="touchscreenFeedback_title">Feedback tátil</string>
+  <string name="touchscreenFeedback_summary">Vibrar ao apertar botão</string>
   <string name="touchpadEnabled_title">Habilitar touchpad</string>
   <string name="inputOctagonConstraints_title">Limitar analógico ao octagono</string>
   <string name="inputOctagonConstraints_summary">Concentra o movimento do analógico ao octagono, como em um controle de N64 real</string>
@@ -149,6 +153,11 @@
   <string name="audioSwapChannels_title">Trocar canais de áudio</string>
   <string name="audioSwapChannels_summary">Troca canais de áudio da direita e da esquerda</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Auto-segurar botão</string>
+  <string name="touchscreenAutoHold_entryDisabled">Desabilitado</string>
+  <string name="touchscreenAutoHold_entryLongPress">Em toque longo</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Ao arrastar fora</string>
+  <string name="touchscreenAutoHoldables_title">Botões seguráveis</string>
   <string name="touchscreenRefresh_title">Animação do controle</string>
   <string name="touchscreenRefresh_entryNever">Nunca</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
@@ -170,6 +179,10 @@
   <string name="videoOrientation_entryReverseLandscape">Paisagem invertida</string>
   <string name="videoOrientation_entryPortrait">Retrato</string>
   <string name="videoOrientation_entryReversePortrait">Retrato invertido</string>
+  <string name="videoPosition_title">Posição da tela retrato</string>
+  <string name="videoPosition_entryBottom">Em baixo</string>
+  <string name="videoPosition_entryMiddle">No meio</string>
+  <string name="videoPosition_entryTop">Em cima</string>
   <string name="videoFpsRefresh_title">Exibir taxa de frames</string>
   <string name="videoFpsRefresh_entryNever">Nunca</string>
   <string name="videoFpsRefresh_entryOccasionally">Ocasionalmente</string>
@@ -302,6 +315,7 @@
   <string name="playerMapPreference_popupMessage">Jogador %1$d, pressione um botão ou ligue no seu controle…\n\nDispositivos atuais:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desmapear</string>
   <string name="playerMapPreference_button">Jogador %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">Lembrar quando os jogadores não estiverem mapeados</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Pressione um botão, tecla, ou joystick para mapear…\n\nMapeamento atual:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Desmapear</string>

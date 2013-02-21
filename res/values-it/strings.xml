@@ -16,7 +16,10 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profili</string>
   <string name="menuItem_default">Default</string>
+  <string name="menuItem_load">Carica…</string>
+  <string name="menuItem_save">Salva…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_specialVisibility_show">Mostra funzioni speciali</string>
@@ -40,6 +43,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Usando slot %1$d.</string>
   <string name="toast_sdInaccessible">Scheda SD non accessibile (disconnetti cavo USB e riprova)</string>
+  <string name="toast_fileReadError">Errore leggendo il file!</string>
+  <string name="toast_fileWriteError">Errore scrivendo il file</string>
   <string name="toast_migrateSlotSavesNotFound">Nessun file da copiare.</string>
   <string name="toast_migrateSlotSavesSuccess">Migrazione riuscita.</string>
   <string name="toast_crashReportSent">Segnalazione inviata.</string>
@@ -97,6 +102,8 @@
   <string name="categoryCheats_title">Opzioni trucchi (lascia premuto per le note)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Altro</string>
+  <string name="categoryTouchscreenBehavior_title">Comportamento</string>
+  <string name="categoryTouchscreenAppearance_title">Aspetto</string>
   <string name="categorySinglePlayer_title">Giocatore 1</string>
   <string name="categoryMultiPlayer_title">Multigiocatore</string>
   <string name="categoryGles2N64_title">Impostazioni GLES2N64</string>
@@ -108,6 +115,8 @@
   <string name="playShowCheats_title">Abilita trucchi</string>
   <string name="playShowCheats_summary">Il caricamento del menù è più lento quando abilitato</string>
   <string name="touchscreenEnabled_title">Abilita touchscreen</string>
+  <string name="touchscreenFeedback_title">Feedback aptico</string>
+  <string name="touchscreenFeedback_summary">Vibra su pressione tasti</string>
   <string name="touchpadEnabled_title">Abilita touchpad</string>
   <string name="inputOctagonConstraints_title">Limite joystick ottagonale</string>
   <string name="inputOctagonConstraints_summary">Forza il movimento dell\'analogico in un ottagono, come un vero controller N64</string>
@@ -144,6 +153,11 @@
   <string name="audioSwapChannels_title">Inverti canali audio</string>
   <string name="audioSwapChannels_summary">Inverte i canali audio sinistra e destra</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Auto tasto premuto</string>
+  <string name="touchscreenAutoHold_entryDisabled">Disabilitato</string>
+  <string name="touchscreenAutoHold_entryLongPress">Su tocco lungo</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Su scorrimento-off</string>
+  <string name="touchscreenAutoHoldables_title">Tasti lasciati premuti</string>
   <string name="touchscreenRefresh_title">Animazione joystick</string>
   <string name="touchscreenRefresh_entryNever">Mai</string>
   <string name="touchscreenRefresh_entryOccasionally">Occasionalmente</string>
@@ -165,6 +179,10 @@
   <string name="videoOrientation_entryReverseLandscape">Panorama inverso</string>
   <string name="videoOrientation_entryPortrait">Ritratto</string>
   <string name="videoOrientation_entryReversePortrait">Ritratto inverso</string>
+  <string name="videoPosition_title">Posizione schermo in ritratto</string>
+  <string name="videoPosition_entryBottom">Sotto</string>
+  <string name="videoPosition_entryMiddle">Centro</string>
+  <string name="videoPosition_entryTop">Sopra</string>
   <string name="videoFpsRefresh_title">Mostra fotogrammi al secondo</string>
   <string name="videoFpsRefresh_entryNever">Mai</string>
   <string name="videoFpsRefresh_entryOccasionally">Occasionalmente</string>
@@ -297,6 +315,7 @@
   <string name="playerMapPreference_popupMessage">Giocatore %1$d,premi un tasto o una levetta sul tuo controller…\n\nDispositivi correnti:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Rimuovi</string>
   <string name="playerMapPreference_button">Giocatore %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">Ricordami quando i giocatori non sono impostati</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Premi un tasto, lettera, o joystick da assegnare…\n\nAssegnazioni correnti:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Rimuovi</string>

@@ -102,6 +102,8 @@
   <string name="categoryCheats_title">Cheatoptionen (gedrückt halten für Notizen)</string>
   <string name="categoryHardware_title">Hardware</string>
   <string name="categoryOther_title">Andere</string>
+  <string name="categoryTouchscreenBehavior_title">Verhalten</string>
+  <string name="categoryTouchscreenAppearance_title">Aussehen</string>
   <string name="categorySinglePlayer_title">Spieler 1</string>
   <string name="categoryMultiPlayer_title">Multiplayer</string>
   <string name="categoryGles2N64_title">GLES2N64-Einstellungen</string>
@@ -113,6 +115,8 @@
   <string name="playShowCheats_title">Cheats aktivieren</string>
   <string name="playShowCheats_summary">Menü lädt langsamer, wenn aktiviert</string>
   <string name="touchscreenEnabled_title">Touchscreen aktivieren</string>
+  <string name="touchscreenFeedback_title">Haptisches Feedback</string>
+  <string name="touchscreenFeedback_summary">Vibration bei Tastendruck</string>
   <string name="touchpadEnabled_title">Touchpad aktivieren</string>
   <string name="inputOctagonConstraints_title">Achteckige Joysticklimitierung</string>
   <string name="inputOctagonConstraints_summary">Die Analogstick-Bewegung wird auf ein Achteck eingeschränkt, wie beim echten N64-Controller.</string>
@@ -149,6 +153,11 @@
   <string name="audioSwapChannels_title">Audiokanäle tauschen</string>
   <string name="audioSwapChannels_summary">Linken und rechten Audiokanal tauschen</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Autom. Button halten</string>
+  <string name="touchscreenAutoHold_entryDisabled">Deaktiviert</string>
+  <string name="touchscreenAutoHold_entryLongPress">Bei langem Drücken</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Bei wegsliden</string>
+  <string name="touchscreenAutoHoldables_title">Haltbare Buttons</string>
   <string name="touchscreenRefresh_title">Joystickanimation</string>
   <string name="touchscreenRefresh_entryNever">Nie</string>
   <string name="touchscreenRefresh_entryOccasionally">Gelegentlich</string>
@@ -170,6 +179,10 @@
   <string name="videoOrientation_entryReverseLandscape">Querformat, umgekehrt</string>
   <string name="videoOrientation_entryPortrait">Hochformat</string>
   <string name="videoOrientation_entryReversePortrait">Hochformat, umgekehrt</string>
+  <string name="videoPosition_title">Hochkant-Bildposition</string>
+  <string name="videoPosition_entryBottom">Unten</string>
+  <string name="videoPosition_entryMiddle">Mitte</string>
+  <string name="videoPosition_entryTop">Oben</string>
   <string name="videoFpsRefresh_title">Framerate anzeigen</string>
   <string name="videoFpsRefresh_entryNever">Nie</string>
   <string name="videoFpsRefresh_entryOccasionally">Gelegentlich</string>
@@ -302,6 +315,7 @@
   <string name="playerMapPreference_popupMessage">Spieler %1$d, drücke einen Knopf oder Stick auf deinem Controller…\n\nDerzeitige Geräte:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Belegung entfernen</string>
   <string name="playerMapPreference_button">Spieler %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">Erinnere mich wenn Spieler nicht belegt sind</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Drücke eine/-n Knopf, Taste oder Joystick zum Belegen…\n\nDerzeitige Belegung:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Belegung entfernen</string>
