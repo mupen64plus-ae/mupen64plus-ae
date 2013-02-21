@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import paulscode.android.mupen64plusae.input.map.AxisMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
@@ -77,6 +78,17 @@ public class DeviceUtil
                 | Pattern.MULTILINE );
         result = pattern.matcher( result ).replaceAll( "Serial : XXXX" );
         
+        // Additional information in android.os.Build may be useful
+        result += "\n";
+        result += "Board: " + Build.BOARD + "\n";
+        result += "Brand: " + Build.BRAND + "\n";
+        result += "Device: " + Build.DEVICE + "\n";
+        result += "Display: " + Build.DISPLAY + "\n";
+        result += "Host: " + Build.HOST + "\n";
+        result += "ID: " + Build.ID + "\n";
+        result += "Manufacturer: " + Build.MANUFACTURER + "\n";
+        result += "Model: " + Build.MODEL + "\n";
+        result += "Product: " + Build.PRODUCT + "\n";
         return result;
     }
     

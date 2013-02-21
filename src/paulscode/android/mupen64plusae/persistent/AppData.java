@@ -466,7 +466,7 @@ public class AppData
             // Identify whether this is an Xperia PLAY
             isXperiaPlay = hardware.contains( "zeus" );
             // TODO: Check for OUYA framework, rather than relying on proc/cpuinfo
-            isOUYA = hardware.contains( "cardhu" );
+            isOUYA = ( (hardware.contains( "cardhu" )) && (Build.BOARD != null) && (Build.BOARD.contains( "unknown" )) && (Build.BRAND != null) && (Build.BRAND.contains( "generic" )) );
         }
     }
 }
