@@ -21,14 +21,12 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.util.Locale;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -159,6 +157,7 @@ public class AppData
     private static final int DEFAULT_LAST_SLOT = 0;
     private static final String DEFAULT_LAST_ROM = "";
     private static final String DEFAULT_LAST_CRC = "";
+    
     // ... add more as needed
     
     /**
@@ -166,7 +165,6 @@ public class AppData
      * 
      * @param context The application context.
      */
-    @SuppressWarnings( "deprecation" )
     public AppData( Context context )
     {
         hardwareInfo = new HardwareInfo();
@@ -216,12 +214,31 @@ public class AppData
         
         // Record some info in the crash reporter
         ErrorReporter reporter = ACRA.getErrorReporter();
+        reporter.putCustomData( "CPU Features", hardwareInfo.features );
         reporter.putCustomData( "CPU Hardware", hardwareInfo.hardware );
         reporter.putCustomData( "CPU Processor", hardwareInfo.processor );
-        reporter.putCustomData( "CPU Features", hardwareInfo.features );
-        reporter.putCustomData( "HID Info", URLEncoder.encode( DeviceUtil.getPeripheralInfo() ) );
-        reporter.putCustomData( "CPU Info", URLEncoder.encode( DeviceUtil.getCpuInfo() ) );
-        reporter.putCustomData( "Is Rooted", Boolean.toString( new Utility.Root().isDeviceRooted() ) );
+        reportMultilineText( reporter, "Axis Report", DeviceUtil.getAxisInfo() );
+        reportMultilineText( reporter, "CPU Report", DeviceUtil.getCpuInfo() );
+        reportMultilineText( reporter, "HID Report", DeviceUtil.getPeripheralInfo() );
+    }
+    
+    public static void reportMultilineText( ErrorReporter reporter, String key, String multilineText )
+    {
+        final String[] lines = multilineText.split( "\n" );
+        
+        int numLines = lines.length;
+        int padding = 1;
+        while( numLines > 9 )
+        {
+            numLines /= 10;
+            padding++;
+        }
+        final String template = "%s.%0" + padding + "d"; 
+        
+        for( int i = 0; i < lines.length; i++ )
+        {
+            reporter.putCustomData( String.format( template, key, i ), lines[i].trim() );
+        }
     }
     
     /**
