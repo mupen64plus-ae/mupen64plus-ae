@@ -97,7 +97,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private KeyProvider mKeyProvider;
     
     // Internal flags
-    public static boolean mCoreRunning = false;
+    private boolean mCoreRunning = false;
     private final boolean mIsXperiaPlay;
     
     // App data and user preferences
@@ -214,6 +214,10 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         if( mCoreRunning )
         {
             NativeMethods.pauseEmulator();
+            
+            // Auto-save in case onCoreShutdown() doesn't get called. This can happen when the core
+            // doesn't shutdown properly, e.g. an unhandled exception is thrown during shutdown or
+            // power is suddenly lost.
             Notifier.showToast( mActivity, R.string.toast_savingSession );
             NativeMethods.fileSaveEmulator( mUserPrefs.selectedGameAutoSavefile );
         }
@@ -222,19 +226,27 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     @Override
     public void onCoreStartup()
     {
-        mCoreRunning = true;
         Notifier.showToast( mActivity, R.string.toast_loadingSession );
-        
         if( !CoreInterface.isRestarting() )
             NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
         
         NativeMethods.resumeEmulator();
+        
+        mCoreRunning = true;
     }
     
     @Override
     public void onCoreShutdown()
     {
         mCoreRunning = false;
+        
+        NativeMethods.pauseEmulator();
+        
+        // Auto-save in case onPause() is not called before core shutdown. This can occur when the
+        // activity stays in the foreground but the render surface is lost, e.g. when the user puts
+        // the device to sleep while the emulator is running.
+        Notifier.showToast( mActivity, R.string.toast_savingSession );
+        NativeMethods.fileSaveEmulator( mUserPrefs.selectedGameAutoSavefile );
     }
     
     @Override
