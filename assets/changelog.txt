@@ -1,9 +1,11 @@
 [21:2.1.1]
-- Added option which allows choosing which mipmapping algorithm to use. They are listed from least intensive to most intensive in terms of possible hits to performance.
-- Added option which allows applying a texture filter using the gles2rice video plugin
-- Added option to change action bar transparency
+- Fixed immediate crash on Android 4.0.4
 - Fixed crash with haptic feedback on d-pad diagonal
-- Fixed gles2N64 graphical issues (Star Wars Ep. 1 Racer and others)
+- Fixed bug where stale auto-save is loaded when device sleeps & wakes
+- Fixed some gles2N64 graphical issues (Star Wars Ep. 1 Racer and others)
+- Added mipmapping option for gles2rice video plugin
+- Added texture filter option for gles2rice video plugin
+- Added option to change action bar transparency
 [20:2.1.0]
 - Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)
 - Added screen position option for portrait mode
