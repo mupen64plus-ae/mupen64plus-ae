@@ -58,44 +58,50 @@ public class CoreInterface
     }
     
     // Public constants
+    // @formatter:off
     public static final int EMULATOR_STATE_UNKNOWN = 0;
     public static final int EMULATOR_STATE_STOPPED = 1;
     public static final int EMULATOR_STATE_RUNNING = 2;
-    public static final int EMULATOR_STATE_PAUSED = 3;
-
-    public static final int M64CORE_EMU_STATE = 1;
-    public static final int M64CORE_VIDEO_MODE = 2;
-    public static final int M64CORE_SAVESTATE_SLOT = 3;
-    public static final int M64CORE_SPEED_FACTOR = 4;
-    public static final int M64CORE_SPEED_LIMITER = 5;
-    public static final int M64CORE_VIDEO_SIZE = 6;
-    public static final int M64CORE_AUDIO_VOLUME = 7;
-    public static final int M64CORE_AUDIO_MUTE = 8;
-    public static final int M64CORE_INPUT_GAMESHARK = 9;
+    public static final int EMULATOR_STATE_PAUSED  = 3;
+    
+    public static final int M64CORE_EMU_STATE          = 1;
+    public static final int M64CORE_VIDEO_MODE         = 2;
+    public static final int M64CORE_SAVESTATE_SLOT     = 3;
+    public static final int M64CORE_SPEED_FACTOR       = 4;
+    public static final int M64CORE_SPEED_LIMITER      = 5;
+    public static final int M64CORE_VIDEO_SIZE         = 6;
+    public static final int M64CORE_AUDIO_VOLUME       = 7;
+    public static final int M64CORE_AUDIO_MUTE         = 8;
+    public static final int M64CORE_INPUT_GAMESHARK    = 9;
     public static final int M64CORE_STATE_LOADCOMPLETE = 10;
     public static final int M64CORE_STATE_SAVECOMPLETE = 11;
+    // @formatter:on
     
     // Private constants
     private static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
     private static final int COMMAND_CHANGE_TITLE = 1;
     
-    // Internals
+    // External objects from Java side
     private static Activity sActivity = null;
-    private static GameSurface sSurface;
+    private static GameSurface sSurface = null;
     private static Vibrator sVibrator = null;
-    private static Thread sAudioThread = null;
-    private static AudioTrack sAudioTrack = null;
-    private static Object sAudioBuffer;
     private static AppData sAppData = null;
     private static UserPrefs sUserPrefs = null;
     private static OnStateCallbackListener stateCallbackListener = null;
-    private static final Object stateCallbackLock = new Object();
-    private static String sCheatOptions = null;
+    
+    // Internal flags/caches
     private static boolean sIsRestarting = false;
     private static boolean sIsRunning = false;
+    private static String sCheatOptions = null;
     
-    // Thread that the emulator core runs on
+    // Threading objects
     private static Thread sCoreThread;
+    private static Thread sAudioThread = null;
+    private static final Object stateCallbackLock = new Object();
+    
+    // Audio objects
+    private static AudioTrack sAudioTrack = null;
+    private static Object sAudioBuffer;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
@@ -107,6 +113,14 @@ public class CoreInterface
         syncConfigFiles( sUserPrefs, sAppData );
     }
     
+    public static void setOnStateCallbackListener( OnStateCallbackListener listener )
+    {
+        synchronized( stateCallbackLock )
+        {
+            stateCallbackListener = listener;
+        }
+    }
+    
     public static void setStartupMode( String cheatArgs, boolean isRestarting )
     {
         if( cheatArgs != null && isRestarting )
@@ -115,30 +129,6 @@ public class CoreInterface
             sCheatOptions = null;
         sIsRestarting = isRestarting;
     }
-    
-    /**
-     * Constructs any extra parameters to pass to the front-end, based on user preferences
-     * 
-     * @return Object handle to String containing space-separated parameters.
-     */
-    public static Object getExtraArgs()
-    {
-        String extraArgs = "";
-        if( !sUserPrefs.isFramelimiterEnabled )
-            extraArgs = "--nospeedlimit";
-        if( sCheatOptions != null )
-            extraArgs = appendArg( extraArgs, sCheatOptions );
-        return extraArgs;
-    }
-    
-    private static String appendArg( String prev, String arg )
-    {
-        if( TextUtils.isEmpty( prev ) )
-            return arg;
-        return prev + " " + arg;
-    }
-    
-    public static native void nativeInit();
     
     public static void init()
     {
@@ -253,7 +243,59 @@ public class CoreInterface
         }
         NativeMethods.onResize( width, height, sdlFormat );
     }
-
+    
+    public static void waitForEmuState( int state )
+    {
+        final int waitState = state;
+        final Object lock = new Object();
+        setOnStateCallbackListener( new OnStateCallbackListener()
+        {
+            @Override
+            public void onStateCallback( int paramChanged, int newValue )
+            {
+                if( paramChanged == M64CORE_EMU_STATE && newValue == waitState )
+                {
+                    setOnStateCallbackListener( null );
+                    synchronized( lock )
+                    {
+                        lock.notify();
+                    }
+                }
+            }
+        } );
+        
+        synchronized( lock )
+        {
+            try
+            {
+                lock.wait();
+            }
+            catch( InterruptedException ignored )
+            {
+            }
+        }
+    }
+    
+    // *************************************************
+    // *************************************************
+    // *************************************************
+    // Call-outs made TO the native code
+    // See jni/SDL/src/main/android/SDL_android_main.cpp
+    // *************************************************
+    // *************************************************
+    // *************************************************
+    
+    public static native void nativeInit();
+    
+    // ********************************************
+    // ********************************************
+    // ********************************************
+    // Call-ins made FROM the native code
+    // See jni/SDL/src/core/android/SDL_android.cpp
+    // ********************************************
+    // ********************************************
+    // ********************************************
+    
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
         return sSurface.initEGL( majorVersion, minorVersion );
@@ -354,80 +396,19 @@ public class CoreInterface
         return selectedGame;
     }
     
-    public static void setOnStateCallbackListener( OnStateCallbackListener listener )
+    /**
+     * Constructs any extra parameters to pass to the front-end, based on user preferences
+     * 
+     * @return Object handle to String containing space-separated parameters.
+     */
+    public static Object getExtraArgs()
     {
-        synchronized( stateCallbackLock )
-        {
-            stateCallbackListener = listener;
-        }
-    }
-    
-    public static void stateCallback( int paramChanged, int newValue )
-    {
-        synchronized( stateCallbackLock )
-        {
-            if( stateCallbackListener != null )
-                stateCallbackListener.onStateCallback( paramChanged, newValue );
-        }
-    }
-    
-    private static void waitForEmuState( int state )
-    {
-        final int waitState = state;
-        final Object lock = new Object();
-        setOnStateCallbackListener( new OnStateCallbackListener()
-        {
-            @Override
-            public void onStateCallback( int paramChanged, int newValue )
-            {
-                if( paramChanged == M64CORE_EMU_STATE && newValue == waitState )
-                {
-                    setOnStateCallbackListener( null );
-                    synchronized( lock )
-                    {
-                        lock.notify();
-                    }
-                }
-            }
-        } );
-        
-        synchronized( lock )
-        {
-            try
-            {
-                lock.wait();
-            }
-            catch( InterruptedException ignored )
-            {
-            }
-        }
-    }
-    
-    public static void runOnUiThread( Runnable action )
-    {
-        if( sActivity != null )
-            sActivity.runOnUiThread( action );
-    }
-    
-    public static void setActivityTitle( String title )
-    {
-        sendCommand( COMMAND_CHANGE_TITLE, title );
-    }
-    
-    public static void showToast( String message )
-    {
-        if( sActivity != null )
-            Notifier.showToast( sActivity, message );
-    }
-    
-    public static void vibrate( boolean active )
-    {
-        if( sVibrator == null )
-            return;
-        if( active )
-            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
-        else
-            sVibrator.cancel();
+        String extraArgs = "";
+        if( !sUserPrefs.isFramelimiterEnabled )
+            extraArgs = "--nospeedlimit";
+        if( sCheatOptions != null )
+            extraArgs = appendArg( extraArgs, sCheatOptions );
+        return extraArgs;
     }
     
     public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo,
@@ -464,48 +445,6 @@ public class CoreInterface
         return sAudioBuffer;
     }
     
-    public static void audioWriteShortBuffer( short[] buffer )
-    {
-        for( int i = 0; i < buffer.length; )
-        {
-            int result = sAudioTrack.write( buffer, i, buffer.length - i );
-            if( result > 0 )
-            {
-                i += result;
-            }
-            else if( result == 0 )
-            {
-                SafeMethods.sleep( 1 );
-            }
-            else
-            {
-                Log.w( "CoreInterface", "SDL Audio: Error returned from write(short[])" );
-                return;
-            }
-        }
-    }
-    
-    public static void audioWriteByteBuffer( byte[] buffer )
-    {
-        for( int i = 0; i < buffer.length; )
-        {
-            int result = sAudioTrack.write( buffer, i, buffer.length - i );
-            if( result > 0 )
-            {
-                i += result;
-            }
-            else if( result == 0 )
-            {
-                SafeMethods.sleep( 1 );
-            }
-            else
-            {
-                Log.w( "CoreInterface", "SDL Audio: Error returned from write(byte[])" );
-                return;
-            }
-        }
-    }
-    
     public static void audioQuit()
     {
         if( sAudioThread != null )
@@ -530,29 +469,91 @@ public class CoreInterface
         }
     }
     
-    private static void audioStartThread()
+    public static void audioWriteByteBuffer( byte[] buffer )
     {
-        sAudioThread = new Thread( new Runnable()
+        for( int i = 0; i < buffer.length; )
         {
-            @Override
-            public void run()
+            int result = sAudioTrack.write( buffer, i, buffer.length - i );
+            if( result > 0 )
             {
-                try
-                {
-                    sAudioTrack.play();
-                    NativeMethods.runAudioThread();
-                }
-                catch( IllegalStateException ise )
-                {
-                    Log.e( "CoreInterface", "audioStartThread IllegalStateException", ise );
-                }
+                i += result;
             }
-        }, "Audio Thread" );
-        
-        // I'd take REALTIME if I could get it!
-        sAudioThread.setPriority( Thread.MAX_PRIORITY );
-        sAudioThread.start();
+            else if( result == 0 )
+            {
+                SafeMethods.sleep( 1 );
+            }
+            else
+            {
+                Log.w( "CoreInterface", "SDL Audio: Error returned from write(byte[])" );
+                return;
+            }
+        }
     }
+    
+    public static void audioWriteShortBuffer( short[] buffer )
+    {
+        for( int i = 0; i < buffer.length; )
+        {
+            int result = sAudioTrack.write( buffer, i, buffer.length - i );
+            if( result > 0 )
+            {
+                i += result;
+            }
+            else if( result == 0 )
+            {
+                SafeMethods.sleep( 1 );
+            }
+            else
+            {
+                Log.w( "CoreInterface", "SDL Audio: Error returned from write(short[])" );
+                return;
+            }
+        }
+    }
+    
+    public static void stateCallback( int paramChanged, int newValue )
+    {
+        synchronized( stateCallbackLock )
+        {
+            if( stateCallbackListener != null )
+                stateCallbackListener.onStateCallback( paramChanged, newValue );
+        }
+    }
+    
+    public static void showToast( String message )
+    {
+        if( sActivity != null )
+            Notifier.showToast( sActivity, message );
+    }
+    
+    public static void vibrate( boolean active )
+    {
+        if( sVibrator == null )
+            return;
+        if( active )
+            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
+        else
+            sVibrator.cancel();
+    }
+    
+    public static void runOnUiThread( Runnable action )
+    {
+        if( sActivity != null )
+            sActivity.runOnUiThread( action );
+    }
+    
+    public static void setActivityTitle( String title )
+    {
+        sendCommand( COMMAND_CHANGE_TITLE, title );
+    }
+    
+    // ********************************************
+    // ********************************************
+    // ********************************************
+    // Private implementation details
+    // ********************************************
+    // ********************************************
+    // ********************************************
     
     /**
      * Populates the core configuration files with the user preferences.
@@ -574,7 +575,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "Core", "ScreenshotPath", "\"\"" );
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + user.slotSaveDir + '"' );
         mupen64plus_cfg.put( "Core", "SharedDataPath", "\"\"" );
-
+    
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.00" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", "0" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Fullscreen", "0" );
@@ -592,7 +593,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Fast Forward", "0" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Frame Advance", "0" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Gameshark", "0" );
-
+    
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", booleanToString( user.audioSwapChannels ) );
         mupen64plus_cfg.put( "Audio-SDL", "RESAMPLE", user.audioResampleAlg);
@@ -602,7 +603,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + user.audioPlugin.path + '"' );
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + user.inputPlugin.path + '"' );
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin.path + '"' );
-
+    
         mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
         mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", booleanToString( user.isGles2RiceAutoFrameskipEnabled ) );
@@ -611,7 +612,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", booleanToString( user.isGles2RiceHiResTexturesEnabled ) );
         mupen64plus_cfg.put( "Video-Rice", "Mipmapping", user.gles2RiceMipmappingAlg );
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", user.gles2RiceTextureEnhancement );
-
+    
         if(user.isGles2RiceForceTextureFilterEnabled)
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "2");
         else
@@ -621,7 +622,7 @@ public class CoreInterface
         syncConfigFileInputs( mupen64plus_cfg, user.isPlugged2, 2);
         syncConfigFileInputs( mupen64plus_cfg, user.isPlugged3, 3);
         syncConfigFileInputs( mupen64plus_cfg, user.isPlugged4, 4);
-
+    
         mupen64plus_cfg.save();
         
         // GLES2N64 config file
@@ -633,7 +634,7 @@ public class CoreInterface
         gles2n64_conf.save();        
         //@formatter:on
     }
-    
+
     private static void syncConfigFileInputs( ConfigFile mupen64plus_cfg, boolean isPlugged,
             int playerNumber )
     {
@@ -663,26 +664,57 @@ public class CoreInterface
         mupen64plus_cfg.put( sectionTitle, "X Axis", "key(0,0)" );
         mupen64plus_cfg.put( sectionTitle, "Y Axis", "key(0,0)" );
     }
-    
+
     private static String booleanToString( boolean b )
     {
         return b ? "1" : "0";
     }
-    
-    private static final Handler commandHandler = new Handler()
+
+    private static String appendArg( String prev, String arg )
     {
-        @Override
-        public void handleMessage( Message msg )
+        if( TextUtils.isEmpty( prev ) )
+            return arg;
+        return prev + " " + arg;
+    }
+
+    private static void audioStartThread()
+    {
+        sAudioThread = new Thread( new Runnable()
         {
-            if( msg.arg1 == COMMAND_CHANGE_TITLE )
+            @Override
+            public void run()
             {
-                sActivity.setTitle( (CharSequence) msg.obj );
+                try
+                {
+                    sAudioTrack.play();
+                    NativeMethods.runAudioThread();
+                }
+                catch( IllegalStateException ise )
+                {
+                    Log.e( "CoreInterface", "audioStartThread IllegalStateException", ise );
+                }
             }
-        }
-    };
-    
+        }, "Audio Thread" );
+        
+        // I'd take REALTIME if I could get it!
+        sAudioThread.setPriority( Thread.MAX_PRIORITY );
+        sAudioThread.start();
+    }
+
     private static void sendCommand( int command, Object data )
     {
+        Handler commandHandler = new Handler()
+        {
+            @Override
+            public void handleMessage( Message msg )
+            {
+                if( msg.arg1 == COMMAND_CHANGE_TITLE )
+                {
+                    sActivity.setTitle( (CharSequence) msg.obj );
+                }
+            }
+        };
+        
         Message msg = commandHandler.obtainMessage();
         msg.arg1 = command;
         msg.obj = data;

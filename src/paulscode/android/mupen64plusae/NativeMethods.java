@@ -35,7 +35,6 @@ public class NativeMethods
     // See jni/front-end/src/main.c
     // jni/input-sdl/src/plugin.c
     // jni/SDL/src/core/android/SDL_android.cpp
-    // jni/SDL/src/main/android/SDL_android_main.cpp
     // *************************************************
     // *************************************************
     // *************************************************
@@ -79,12 +78,4 @@ public class NativeMethods
             int axisX, int axisY );
 
     public static native void stateSetSpeed( int percent );
-    // ********************************************
-    // ********************************************
-    // ********************************************
-    // Call-ins made FROM the native code
-    // See jni/SDL/src/core/android/SDL_android.cpp
-    // ********************************************
-    // ********************************************
-    // ********************************************
 }
