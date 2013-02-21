@@ -138,6 +138,8 @@ public class CoreInterface
         return prev + " " + arg;
     }
     
+    public static native void nativeInit();
+    
     public static void init()
     {
         sCoreThread = new Thread( new Runnable()
@@ -145,7 +147,7 @@ public class CoreInterface
             @Override
             public void run()
             {
-                NativeMethods.init();
+                nativeInit();
             }
         }, "CoreThread" );
         sCoreThread.start();
@@ -252,12 +254,12 @@ public class CoreInterface
         NativeMethods.onResize( width, height, sdlFormat );
     }
 
-    public static boolean initEGL( int majorVersion, int minorVersion )
+    public static boolean createGLContext( int majorVersion, int minorVersion )
     {
         return sSurface.initEGL( majorVersion, minorVersion );
     }
     
-    public static void flipEGL()
+    public static void flipBuffers()
     {
         sSurface.flipEGL();
     }
@@ -299,7 +301,7 @@ public class CoreInterface
         return sAppData.dataDir;
     }
     
-    public static Object getRomPath()
+    public static Object getROMPath()
     {
         String selectedGame = sUserPrefs.selectedGame;
         boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();

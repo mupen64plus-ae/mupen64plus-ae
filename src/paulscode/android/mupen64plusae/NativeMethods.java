@@ -47,8 +47,6 @@ public class NativeMethods
     
     public static native void fileSaveEmulator( String filename );
     
-    public static native void init();
-    
     public static native String getHeaderCRC( String filename );
     
     public static native String getHeaderName( String filename );
@@ -89,98 +87,4 @@ public class NativeMethods
     // ********************************************
     // ********************************************
     // ********************************************
-    
-    public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo,
-            int desiredFrames )
-    {
-        return CoreInterface.audioInit( sampleRate, is16Bit, isStereo, desiredFrames );
-    }
-    
-    public static void audioQuit()
-    {
-        CoreInterface.audioQuit();
-    }
-    
-    public static void audioWriteByteBuffer( byte[] buffer )
-    {
-        CoreInterface.audioWriteByteBuffer( buffer );
-    }
-    
-    public static void audioWriteShortBuffer( short[] buffer )
-    {
-        CoreInterface.audioWriteShortBuffer( buffer );
-    }
-    
-    public static boolean createGLContext( int majorVersion, int minorVersion )
-    {
-        return CoreInterface.initEGL( majorVersion, minorVersion );
-    }
-    
-    public static void flipBuffers()
-    {
-        CoreInterface.flipEGL();
-    }
-    
-    public static boolean getAutoFrameSkip()
-    {
-        return CoreInterface.getAutoFrameSkip();
-    }
-    
-    public static Object getDataDir()
-    {
-        return CoreInterface.getDataDir();
-    }
-    
-    public static Object getExtraArgs()
-    {
-        return CoreInterface.getExtraArgs();
-    }
-    
-    public static int getHardwareType()
-    {
-        return CoreInterface.getHardwareType();
-    }
-    
-    public static int getMaxFrameSkip()
-    {
-        return CoreInterface.getMaxFrameSkip();
-    }
-    
-    public static Object getROMPath()
-    {
-        return CoreInterface.getRomPath();
-    }
-    public static void stateCallback( int paramChanged, int newValue )
-    {
-        CoreInterface.stateCallback( paramChanged, newValue );
-    }    
-    public static int getScreenPosition()
-    {
-        return CoreInterface.getScreenPosition();
-    }
-    
-    public static boolean getScreenStretch()
-    {
-        return CoreInterface.getScreenStretch();
-    }
-    
-    public static void setActivityTitle( String title )
-    {
-        CoreInterface.setActivityTitle( title );
-    }
-    
-    public static void showToast( String message )
-    {
-        CoreInterface.showToast( message );
-    }
-    
-    public static boolean useRGBA8888()
-    {
-        return CoreInterface.useRGBA8888();
-    }
-    
-    public static void vibrate( boolean active )
-    {
-        CoreInterface.vibrate( active );
-    }
 }
