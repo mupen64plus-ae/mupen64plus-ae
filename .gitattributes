@@ -33,3 +33,6 @@
 *files_win32.c binary
 *.vcproj binary
 *.sln binary
+
+# use linux line ending
+*.sh binary
