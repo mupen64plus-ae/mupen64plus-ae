@@ -43,8 +43,8 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Agora usando entrada %1$d.</string>
   <string name="toast_sdInaccessible">Cartão SD não acessível (desconecte o cabo USB e tente novamente).</string>
-  <string name="toast_fileReadError">Não foi possivel ler o arquivo!</string>
-  <string name="toast_fileWriteError">Não foi possivel salvar o arquivo!</string>
+  <string name="toast_fileReadError">Não foi possível ler o arquivo!</string>
+  <string name="toast_fileWriteError">Não foi possível salvar o arquivo!</string>
   <string name="toast_migrateSlotSavesNotFound">Nenhum arquivo para copiar.</string>
   <string name="toast_migrateSlotSavesSuccess">Migração concluída.</string>
   <string name="toast_crashReportSent">Relatório enviado.</string>
@@ -286,7 +286,6 @@
   <string name="changeLog_dialogTitle">Atualizações recentes</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
-  <string name="hintSetSpeed">velocidade entre 10 e 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Inicializando</string>
   <string name="assetExtractor_progress">%1$.0f%% feito: %2$s</string>
@@ -300,7 +299,6 @@
   <string name="cheatNotes_title">Notas</string>
   <string name="cheatNotes_none">(sem notas disponíveis para esse Cheat)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Selecione um pacote de texturas (formato ZIP)</string>
   <string name="pathHiResTexturesTask_title">Extraindo texturas</string>
   <string name="pathHiResTexturesTask_message">Seja paciente.  Esse processo pode levar algum tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema extraindo texturas!</string>

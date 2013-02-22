@@ -264,7 +264,6 @@
   <string name="changeLog_dialogTitle">Değişiklik kaydı</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">dosya adı</string>
-  <string name="hintSetSpeed">10 ile 300 arası hız</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Başlatılıyor</string>
   <string name="assetExtractor_progress">%1$.0f%% tamamlandı: %2$s</string>
@@ -277,7 +276,6 @@
   <string name="cheatNotes_title">Notlar</string>
   <string name="cheatNotes_none">(bu hile için notlar mevcut değil)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Doku paketi seç (ZIP biçimi)</string>
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>
   <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>

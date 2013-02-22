@@ -31,7 +31,7 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Przebudowuje bazę cheat\'ów...</string>
+  <string name="toast_rebuildingCheats">Przebudowuje bazę cheat\'ów…</string>
   <string name="toast_launchingEmulator">Uruchamiam emulator…</string>
   <string name="toast_loadingSession">Automatyczne wznawianie gry…</string>
   <string name="toast_savingSession"> Automatyczne zapisywanie gry…</string>
@@ -286,7 +286,6 @@
   <string name="changeLog_dialogTitle">Lista zmian</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nazwa pliku</string>
-  <string name="hintSetSpeed">prędkość z przedziału 10-300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Uruchamianie</string>
   <string name="assetExtractor_progress">%1$.0f%% ukończono: %2$s</string>
@@ -300,7 +299,6 @@
   <string name="cheatNotes_title">Notatki</string>
   <string name="cheatNotes_none">(brak dostępnych notatek dla tego cheat\'a)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Wybierz pakiet tekstur (format ZIP)</string>
   <string name="pathHiResTexturesTask_title">Rozpakowywanie tekstur</string>
   <string name="pathHiResTexturesTask_message">Prosimy o cierpliwość. Może to potrwać kilka minut.</string>
   <string name="pathHiResTexturesTask_errorMessage">Błąd przy rozpakowywaniu tekstur!</string>
@@ -356,6 +354,6 @@
   <string name="inputMapActivity_simulateBack">Klawisz Wstecz</string>
   <string name="inputMapActivity_simulateMenu">Klawisz Menu</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Wciśnij dowolny przycisk...</string>
-  <string name="diagnosticActivity_textMotion_text">Dotknij ekranu lub Joystick\'a...</string>
+  <string name="diagnosticActivity_textKey_text">Wciśnij dowolny przycisk…</string>
+  <string name="diagnosticActivity_textMotion_text">Dotknij ekranu lub Joystick\'a…</string>
 </resources>

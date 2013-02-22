@@ -285,7 +285,6 @@
   <string name="changeLog_dialogTitle">変更履歴</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ファイル名</string>
-  <string name="hintSetSpeed">300から10の間で</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">初期化</string>
   <string name="assetExtractor_progress">%1$.0f%% が行わ: ファイル %2$s</string>
@@ -298,7 +297,6 @@
   <string name="cheatNotes_title">注釈</string>
   <string name="cheatNotes_none">（このチートで使用可能なノートはありません。）</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">テクスチャパック（ZIP形式）を選択.</string>
   <string name="pathHiResTexturesTask_title">開梱のテクスチャ</string>
   <string name="pathHiResTexturesTask_message">しばらくお待ちください。このプロセスには多少時間がかかる場合があります。</string>
   <string name="pathHiResTexturesTask_errorMessage">テクスチャを開梱時に問題が発生しました！</string>

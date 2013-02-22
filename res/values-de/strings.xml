@@ -286,7 +286,6 @@
   <string name="changeLog_dialogTitle">Changelog</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">Dateiname</string>
-  <string name="hintSetSpeed">Geschwindigkeit zwischen 10 und 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Wird initialisiert</string>
   <string name="assetExtractor_progress">%1$.0f%% fertig: %2$s</string>
@@ -300,7 +299,6 @@
   <string name="cheatNotes_title">Notizen</string>
   <string name="cheatNotes_none">(für diesen Cheat sind keine Notizen vorhanden)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Wähle ein Texturpaket (ZIP-Format)</string>
   <string name="pathHiResTexturesTask_title">Entpacke Texturen</string>
   <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>

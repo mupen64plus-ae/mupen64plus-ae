@@ -286,7 +286,6 @@
   <string name="changeLog_dialogTitle">Cambiamenti recenti</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome file</string>
-  <string name="hintSetSpeed">una velocita da 10 a 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Inizializzando</string>
   <string name="assetExtractor_progress">%1$.0f%% completo: %2$s</string>
@@ -300,7 +299,6 @@
   <string name="cheatNotes_title">Note</string>
   <string name="cheatNotes_none">(Niente note disponibili per questi trucchi)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Scegli un pacchetto texture (formato ZIP)</string>
   <string name="pathHiResTexturesTask_title">Spacchettando texture</string>
   <string name="pathHiResTexturesTask_message">Per favore.  Questo processo potrebbe durare un po\' di tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema spacchettando texture!</string>

@@ -280,7 +280,6 @@
   <string name="changeLog_dialogTitle">Список изменений</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">имя файла</string>
-  <string name="hintSetSpeed">скорость от 10 до 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Инициализация</string>
   <string name="assetExtractor_progress">%1$.0f%% Успешно: %2$s</string>
@@ -294,7 +293,6 @@
   <string name="cheatNotes_title">Примечания</string>
   <string name="cheatNotes_none">(для этого чит-кода нет примечаний)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Выберите пакет с текстурами (в zip)</string>
   <string name="pathHiResTexturesTask_title">Извлечение текстур</string>
   <string name="pathHiResTexturesTask_message">Подождите немного.</string>
   <string name="pathHiResTexturesTask_errorMessage">Ошибка при извлечении текстур!</string>
