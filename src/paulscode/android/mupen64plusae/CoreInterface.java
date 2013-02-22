@@ -158,9 +158,9 @@ public class CoreInterface
     
     public static void startupEmulator()
     {
-        // Start the core thread
         if( sCoreThread == null )
         {
+            // Start the core thread if not already running
             sCoreThread = new Thread( new Runnable()
             {
                 @Override
@@ -170,29 +170,35 @@ public class CoreInterface
                 }
             }, "CoreThread" );
             sCoreThread.start();
-
+            
             // Wait for the emulator to start running
             waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
+            
+            // Auto-load state and resume
+            if( !sIsRestarting )
+            {
+                // Clear the flag so that subsequent calls don't reset
+                sIsRestarting = false;
+                
+                Notifier.showToast( sActivity, R.string.toast_loadingSession );
+                NativeMethods.fileLoadEmulator( sUserPrefs.selectedGameAutoSavefile );
+            }
+            
+            resumeEmulator();
         }
-        
-        // Auto-load state and resume
-        resumeEmulator( !sIsRestarting );
-        
-        // Clear the flag so that subsequent calls don't reset
-        sIsRestarting = false;
     }
     
     public static void shutdownEmulator()
     {
-        // Pause and auto-save state
-        pauseEmulator();
-        
-        // Tell the core to quit
-        NativeMethods.quit();
-        
-        // Now wait for the core thread to quit
         if( sCoreThread != null )
         {
+            // Pause and auto-save state
+            pauseEmulator();
+            
+            // Tell the core to quit
+            NativeMethods.quit();
+            
+            // Now wait for the core thread to quit
             try
             {
                 sCoreThread.join();
@@ -208,15 +214,10 @@ public class CoreInterface
         audioQuit();
     }
     
-    public static void resumeEmulator( boolean loadAutoSave )
+    public static void resumeEmulator()
     {
         if( sCoreThread != null )
         {
-            if( loadAutoSave )
-            {
-                Notifier.showToast( sActivity, R.string.toast_loadingSession );
-                NativeMethods.fileLoadEmulator( sUserPrefs.selectedGameAutoSavefile );
-            }
             NativeMethods.resumeEmulator();
         }
     }
@@ -226,6 +227,8 @@ public class CoreInterface
         if( sCoreThread != null )
         {
             NativeMethods.pauseEmulator();
+            
+            // Always auto-save just in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
             Notifier.showToast( sActivity, R.string.toast_savingSession );
             NativeMethods.fileSaveEmulator( sUserPrefs.selectedGameAutoSavefile );
         }
