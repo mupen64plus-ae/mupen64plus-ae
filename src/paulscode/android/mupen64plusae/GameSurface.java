@@ -38,23 +38,6 @@ import android.view.SurfaceView;
  */
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 {
-    public interface OnFpsChangedListener
-    {
-        /**
-         * Called when the frame rate value has changed.
-         * 
-         * @param fps The new FPS value.
-         */
-        public void onFpsChanged( int fps );
-    }
-    
-    // Frame rate listener
-    private OnFpsChangedListener mFpsListener;
-    private int mFpsRecalcPeriod = 0;
-    private boolean mIsFpsEnabled = false;
-    private long mLastFpsTime = 0;
-    private int mFrameCount = -1;
-    
     // Internal flags
     private boolean mIsRgba8888 = false;
     
@@ -73,11 +56,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         requestFocus();
     }
     
-    public void init( OnFpsChangedListener fpsListener, int fpsRecalcPeriod, boolean isRgba8888 )
+    public void init( boolean isRgba8888 )
     {
-        mFpsListener = fpsListener;
-        mFpsRecalcPeriod = fpsRecalcPeriod;
-        mIsFpsEnabled = mFpsRecalcPeriod > 0;
         mIsRgba8888 = isRgba8888;
     }
     
@@ -241,24 +221,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
         catch( IllegalArgumentException e )
         {
-            Log.v( "GameSurface", "flipEGL(): " + e );
+            Log.v( "GameSurface", "flipBuffers(): " + e );
             for( StackTraceElement s : e.getStackTrace() )
             {
                 Log.v( "GameSurface", s.toString() );
-            }
-        }
-        
-        // Update frame rate info
-        if( mIsFpsEnabled )
-        {
-            mFrameCount++;
-            if( mFrameCount >= mFpsRecalcPeriod && mFpsListener != null )
-            {
-                long currentTime = System.currentTimeMillis();
-                float fFPS = ( (float) mFrameCount / (float) ( currentTime - mLastFpsTime ) ) * 1000.0f;
-                mFpsListener.onFpsChanged( Math.round( fFPS ) );
-                mFrameCount = 0;
-                mLastFpsTime = currentTime;
             }
         }
     }

@@ -179,8 +179,8 @@ public class GameLifecycleHandler implements View.OnKeyListener
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
                     mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, mUserPrefs.touchscreenRefresh,
-                    mUserPrefs.isFpsEnabled, !mUserPrefs.isTouchscreenHidden );
+            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden,
+                    mUserPrefs.videoFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
         
         // Initialize user interface devices
@@ -193,7 +193,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         inputSource.setOnKeyListener( this );
         
         // Initialize the game surface
-        mSurface.init( mOverlay, mUserPrefs.videoFpsRefresh, mUserPrefs.isRgba8888 );
+        mSurface.init( mUserPrefs.isRgba8888 );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );

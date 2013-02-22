@@ -53,7 +53,23 @@ public class CoreInterface
 {
     public interface OnStateCallbackListener
     {
+        /**
+         * Called when an emulator state/parameter has changed
+         * 
+         * @param paramChanged The parameter ID.
+         * @param newValue The new value of the parameter.
+         */
         public void onStateCallback( int paramChanged, int newValue );
+    }
+    
+    public interface OnFpsChangedListener
+    {
+        /**
+         * Called when the frame rate has changed.
+         * 
+         * @param newValue The new FPS value.
+         */
+        public void onFpsChanged( int newValue );
     }
     
     // Public constants
@@ -101,6 +117,12 @@ public class CoreInterface
     private static AudioTrack sAudioTrack = null;
     private static Object sAudioBuffer;
     
+    // Frame rate listener
+    private static OnFpsChangedListener sFpsListener;
+    private static int sFpsRecalcPeriod = 0;
+    private static int sFrameCount = -1;
+    private static long sLastFpsTime = 0;
+    
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
         sActivity = activity;
@@ -117,6 +139,12 @@ public class CoreInterface
         {
             sStateCallbackListener = listener;
         }
+    }
+    
+    public static void setOnFpsChangedListener( OnFpsChangedListener fpsListener, int fpsRecalcPeriod )
+    {
+        sFpsListener = fpsListener;
+        sFpsRecalcPeriod = fpsRecalcPeriod;
     }
     
     public static void setStartupMode( String cheatArgs, boolean isRestarting )
@@ -309,6 +337,20 @@ public class CoreInterface
     public static void flipBuffers()
     {
         sSurface.flipBuffers();
+        
+        // Update frame rate info
+        if( sFpsRecalcPeriod > 0 && sFpsListener != null )
+        {
+            sFrameCount++;
+            if( sFrameCount >= sFpsRecalcPeriod )
+            {
+                long currentTime = System.currentTimeMillis();
+                float fFPS = ( (float) sFrameCount / (float) ( currentTime - sLastFpsTime ) ) * 1000.0f;
+                sFpsListener.onFpsChanged( Math.round( fFPS ) );
+                sFrameCount = 0;
+                sLastFpsTime = currentTime;
+            }
+        }
     }
     
     public static boolean getAutoFrameSkip()
