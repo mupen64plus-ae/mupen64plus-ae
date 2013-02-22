@@ -170,7 +170,7 @@ public class GameMenuHandler
         mCustomSpeed = !mCustomSpeed;
         int speed = mCustomSpeed ? mSpeedFactor : BASELINE_SPEED_FACTOR;
         
-        NativeMethods.stateSetSpeed( speed );
+        CoreInterfaceNative.stateSetSpeed( speed );
         mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, speed ) );
     }
     
@@ -181,7 +181,7 @@ public class GameMenuHandler
         mAppData.putLastSlot( mSlot );
         
         // Set the slot in the core
-        NativeMethods.stateSetSlotEmulator( mSlot );
+        CoreInterfaceNative.stateSetSlotEmulator( mSlot );
         
         // Refresh the slot item in the top-level options menu
         if( mSlotMenuItem != null )
@@ -203,18 +203,18 @@ public class GameMenuHandler
     private void saveSlot()
     {
         Notifier.showToast( mActivity, R.string.toast_savingSlot, mSlot );
-        NativeMethods.stateSaveEmulator();
+        CoreInterfaceNative.stateSaveEmulator();
     }
     
     private void loadSlot()
     {
         Notifier.showToast( mActivity, R.string.toast_loadingSlot, mSlot );
-        NativeMethods.stateLoadEmulator();
+        CoreInterfaceNative.stateLoadEmulator();
     }
     
     private void saveFileFromPrompt()
     {
-        NativeMethods.pauseEmulator();
+        CoreInterface.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.menuItem_fileSave );
         CharSequence hint = mActivity.getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
@@ -225,14 +225,14 @@ public class GameMenuHandler
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                     saveState( text.toString() );
-                NativeMethods.resumeEmulator();
+                CoreInterface.resumeEmulator();
             }
         } );
     }
     
     private void loadFileFromPrompt()
     {
-        NativeMethods.pauseEmulator();
+        CoreInterface.pauseEmulator();
         CharSequence title = mActivity.getText( R.string.menuItem_fileLoad );
         File startPath = new File( mManualSaveDir );
         Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
@@ -242,7 +242,7 @@ public class GameMenuHandler
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                     loadState( file );
-                NativeMethods.resumeEmulator();
+                CoreInterface.resumeEmulator();
             }
         } );
     }
@@ -260,21 +260,21 @@ public class GameMenuHandler
                 public void onConfirm()
                 {
                     Notifier.showToast( mActivity, R.string.toast_overwritingFile, file.getName() );
-                    NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+                    CoreInterfaceNative.fileSaveEmulator( file.getAbsolutePath() );
                 }
             } );
         }
         else
         {
             Notifier.showToast( mActivity, R.string.toast_savingFile, file.getName() );
-            NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+            CoreInterfaceNative.fileSaveEmulator( file.getAbsolutePath() );
         }
     }
     
     private void loadState( File file )
     {
         Notifier.showToast( mActivity, R.string.toast_loadingFile, file.getName() );
-        NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
+        CoreInterfaceNative.fileLoadEmulator( file.getAbsolutePath() );
     }
     
     private void setIme()
@@ -289,7 +289,7 @@ public class GameMenuHandler
     
     private void setSpeed()
     {
-        NativeMethods.pauseEmulator();
+        CoreInterface.pauseEmulator();
         
         final LayoutInflater inflater = (LayoutInflater) mActivity
                 .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -328,13 +328,13 @@ public class GameMenuHandler
                 {
                     mSpeedFactor = seek.getProgress() + MIN_SPEED_FACTOR;
                     mCustomSpeed = true;
-                    NativeMethods.stateSetSpeed( mSpeedFactor );
+                    CoreInterfaceNative.stateSetSpeed( mSpeedFactor );
                     
                     mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed,
                             mSpeedFactor ) );
                 }
                 
-                NativeMethods.resumeEmulator();
+                CoreInterface.resumeEmulator();
             }
         } ).setView( layout ).create().show();
     }
@@ -363,7 +363,7 @@ public class GameMenuHandler
                 }
             }
         } );
-        NativeMethods.fileSaveEmulator( mAutoSaveFile );
+        CoreInterfaceNative.fileSaveEmulator( mAutoSaveFile );
         // ////
     }
 }

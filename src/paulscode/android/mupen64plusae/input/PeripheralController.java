@@ -22,8 +22,9 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.CoreInterface;
+import paulscode.android.mupen64plusae.CoreInterfaceNative;
 import paulscode.android.mupen64plusae.GameMenuHandler;
-import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -191,32 +192,32 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_SAVE_SLOT:
                     Log.v( "PeripheralController", "FUNC_SAVE_SLOT" );
-                    NativeMethods.stateSaveEmulator();
+                    CoreInterfaceNative.stateSaveEmulator();
                     break;
                 case InputMap.FUNC_LOAD_SLOT:
                     Log.v( "PeripheralController", "FUNC_LOAD_SLOT" );
-                    NativeMethods.stateLoadEmulator();
+                    CoreInterfaceNative.stateLoadEmulator();
                     break;
                 case InputMap.FUNC_RESET:
                     Log.v( "PeripheralController", "FUNC_RESET" );
-                    NativeMethods.resetEmulator();
-                    // TODO: NativeMethods.resetEmulator() needs some fine-tuning
+                    CoreInterfaceNative.resetEmulator();
+                    // TODO: CoreInterfaceNative.resetEmulator() needs some fine-tuning
                     break;
                 case InputMap.FUNC_STOP:
                     Log.v( "PeripheralController", "FUNC_STOP" );
-                    NativeMethods.stopEmulator();
+                    CoreInterfaceNative.stopEmulator();
                     break;
                 case InputMap.FUNC_PAUSE:
                     Log.v( "PeripheralController", "FUNC_PAUSE" );
                     if( doPause )
-                        NativeMethods.pauseEmulator();
+                        CoreInterface.pauseEmulator();
                     else
-                        NativeMethods.resumeEmulator();
+                        CoreInterface.resumeEmulator();
                     doPause = !doPause;
                     break;
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    NativeMethods.stateSetSpeed( 300 );
+                    CoreInterfaceNative.stateSetSpeed( 300 );
                     break;
                 case InputMap.FUNC_FRAME_ADVANCE:
                     Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
@@ -268,9 +269,9 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
                     if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
-                        NativeMethods.stateSetSpeed( GameMenuHandler.sInstance.mSpeedFactor );
+                        CoreInterfaceNative.stateSetSpeed( GameMenuHandler.sInstance.mSpeedFactor );
                     else
-                        NativeMethods.stateSetSpeed( 100 );
+                        CoreInterfaceNative.stateSetSpeed( 100 );
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
@@ -295,6 +296,6 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
         speed = Utility.clamp( speed, GameMenuHandler.MIN_SPEED_FACTOR,
                 GameMenuHandler.MAX_SPEED_FACTOR );
         
-        NativeMethods.stateSetSpeed( speed );
+        CoreInterfaceNative.stateSetSpeed( speed );
     }
 }

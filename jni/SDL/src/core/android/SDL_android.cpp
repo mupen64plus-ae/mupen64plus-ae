@@ -137,7 +137,7 @@ extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* env, jclass cls)
 }
 
 // Resize
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_onResize(
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_onResize(
                                     JNIEnv* env, jclass jcls,
                                     jint width, jint height, jint format)
 {
@@ -145,7 +145,7 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMeth
 }
 
 // Accelerometer
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_onAccel(
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_onAccel(
                                     JNIEnv* env, jclass jcls,
                                     jfloat x, jfloat y, jfloat z)
 {
@@ -155,14 +155,14 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMeth
 }
 
 // Quit
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_quit(
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_quit(
                                     JNIEnv* env, jclass cls)
 {    
     // Inject a SDL_QUIT event
     SDL_SendQuit();
 }
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_NativeMethods_runAudioThread(
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_runAudioThread(
                                     JNIEnv* env, jclass cls)
 {
     /* This is the audio thread, with a different environment */

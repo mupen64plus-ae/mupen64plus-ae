@@ -34,7 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.CoreInterfaceNative;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -195,7 +195,7 @@ public class Utility
             }
             else
             {
-                String headerName = NativeMethods.getHeaderName( uzFile );
+                String headerName = CoreInterfaceNative.getHeaderName( uzFile );
                 try
                 {
                     new File( uzFile ).delete();
@@ -208,7 +208,7 @@ public class Utility
         }
         else
         {
-            return NativeMethods.getHeaderName( filename );
+            return CoreInterfaceNative.getHeaderName( filename );
         }
     }
 
@@ -273,7 +273,7 @@ public class Utility
             }
             else
             {
-                String headerCRC = checkCRC( NativeMethods.getHeaderCRC( uzFile ) );
+                String headerCRC = checkCRC( CoreInterfaceNative.getHeaderCRC( uzFile ) );
 
                 new File( uzFile ).delete();
 
@@ -282,7 +282,7 @@ public class Utility
         }
         else
         {
-            return checkCRC( NativeMethods.getHeaderCRC( filename ) );
+            return checkCRC( CoreInterfaceNative.getHeaderCRC( filename ) );
         }
     }
 

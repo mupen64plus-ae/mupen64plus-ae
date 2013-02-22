@@ -20,23 +20,13 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.ErrorLogger;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.SafeMethods;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.graphics.PixelFormat;
-import android.media.AudioFormat;
-import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.os.Handler;
-import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
 
@@ -47,7 +37,7 @@ import android.util.Log;
  * the core launches. This is much cleaner and safer than using public static fields (i.e. globals),
  * since client code need not know how and when to update each global object.
  * 
- * @see NativeMethods
+ * @see CoreInterfaceNative
  */
 public class CoreInterface
 {
@@ -93,35 +83,35 @@ public class CoreInterface
     // @formatter:on
     
     // Private constants
-    private static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
-    private static final int COMMAND_CHANGE_TITLE = 1;
+    protected static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
+    protected static final int COMMAND_CHANGE_TITLE = 1;
     
     // External objects from Java side
-    private static Activity sActivity = null;
-    private static GameSurface sSurface = null;
-    private static Vibrator sVibrator = null;
-    private static AppData sAppData = null;
-    private static UserPrefs sUserPrefs = null;
-    private static OnStateCallbackListener sStateCallbackListener = null;
+    protected static Activity sActivity = null;
+    protected static GameSurface sSurface = null;
+    protected static Vibrator sVibrator = null;
+    protected static AppData sAppData = null;
+    protected static UserPrefs sUserPrefs = null;
+    protected static OnStateCallbackListener sStateCallbackListener = null;
     
     // Internal flags/caches
-    private static boolean sIsRestarting = false;
-    private static String sCheatOptions = null;
+    protected static boolean sIsRestarting = false;
+    protected static String sCheatOptions = null;
     
     // Threading objects
-    private static Thread sCoreThread;
-    private static Thread sAudioThread = null;
-    private static final Object sStateCallbackLock = new Object();
+    protected static Thread sCoreThread;
+    protected static Thread sAudioThread = null;
+    protected static final Object sStateCallbackLock = new Object();
     
     // Audio objects
-    private static AudioTrack sAudioTrack = null;
-    private static Object sAudioBuffer;
+    protected static AudioTrack sAudioTrack = null;
+    protected static Object sAudioBuffer;
     
     // Frame rate listener
-    private static OnFpsChangedListener sFpsListener;
-    private static int sFpsRecalcPeriod = 0;
-    private static int sFrameCount = -1;
-    private static long sLastFpsTime = 0;
+    protected static OnFpsChangedListener sFpsListener;
+    protected static int sFpsRecalcPeriod = 0;
+    protected static int sFrameCount = -1;
+    protected static long sLastFpsTime = 0;
     
     public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
     {
@@ -166,7 +156,7 @@ public class CoreInterface
                 @Override
                 public void run()
                 {
-                    nativeInit();
+                    CoreInterfaceNative.init();
                 }
             }, "CoreThread" );
             sCoreThread.start();
@@ -181,7 +171,7 @@ public class CoreInterface
                 sIsRestarting = false;
                 
                 Notifier.showToast( sActivity, R.string.toast_loadingSession );
-                NativeMethods.fileLoadEmulator( sUserPrefs.selectedGameAutoSavefile );
+                CoreInterfaceNative.fileLoadEmulator( sUserPrefs.selectedGameAutoSavefile );
             }
             
             resumeEmulator();
@@ -196,7 +186,7 @@ public class CoreInterface
             pauseEmulator();
             
             // Tell the core to quit
-            NativeMethods.quit();
+            CoreInterfaceNative.quit();
             
             // Now wait for the core thread to quit
             try
@@ -211,14 +201,14 @@ public class CoreInterface
         }
         
         // Clean up other resources
-        audioQuit();
+        CoreInterfaceNative.audioQuit();
     }
     
     public static void resumeEmulator()
     {
         if( sCoreThread != null )
         {
-            NativeMethods.resumeEmulator();
+            CoreInterfaceNative.resumeEmulator();
         }
     }
     
@@ -226,11 +216,11 @@ public class CoreInterface
     {
         if( sCoreThread != null )
         {
-            NativeMethods.pauseEmulator();
+            CoreInterfaceNative.pauseEmulator();
             
             // Always auto-save just in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
             Notifier.showToast( sActivity, R.string.toast_savingSession );
-            NativeMethods.fileSaveEmulator( sUserPrefs.selectedGameAutoSavefile );
+            CoreInterfaceNative.fileSaveEmulator( sUserPrefs.selectedGameAutoSavefile );
         }
     }
     
@@ -278,7 +268,7 @@ public class CoreInterface
                 Log.w( "CoreInterface", "Pixel format unknown: " + format );
                 break;
         }
-        NativeMethods.onResize( width, height, sdlFormat );
+        CoreInterfaceNative.onResize( width, height, sdlFormat );
     }
     
     public static void waitForEmuState( final int state )
@@ -311,312 +301,6 @@ public class CoreInterface
             }
         }
     }
-    
-    // *************************************************
-    // *************************************************
-    // *************************************************
-    // Call-outs made TO the native code
-    // See jni/SDL/src/main/android/SDL_android_main.cpp
-    // *************************************************
-    // *************************************************
-    // *************************************************
-    
-    public static native void nativeInit();
-    
-    // ********************************************
-    // ********************************************
-    // ********************************************
-    // Call-ins made FROM the native code
-    // See jni/SDL/src/core/android/SDL_android.cpp
-    // ********************************************
-    // ********************************************
-    // ********************************************
-    
-    public static boolean createGLContext( int majorVersion, int minorVersion )
-    {
-        return sSurface.createGLContext( majorVersion, minorVersion );
-    }
-    
-    public static void flipBuffers()
-    {
-        sSurface.flipBuffers();
-        
-        // Update frame rate info
-        if( sFpsRecalcPeriod > 0 && sFpsListener != null )
-        {
-            sFrameCount++;
-            if( sFrameCount >= sFpsRecalcPeriod )
-            {
-                long currentTime = System.currentTimeMillis();
-                float fFPS = ( (float) sFrameCount / (float) ( currentTime - sLastFpsTime ) ) * 1000.0f;
-                sFpsListener.onFpsChanged( Math.round( fFPS ) );
-                sFrameCount = 0;
-                sLastFpsTime = currentTime;
-            }
-        }
-    }
-    
-    public static boolean getAutoFrameSkip()
-    {
-        return sUserPrefs.isGles2N64AutoFrameskipEnabled;
-    }
-    
-    public static int getMaxFrameSkip()
-    {
-        return sUserPrefs.gles2N64MaxFrameskip;
-    }
-    
-    public static boolean getScreenStretch()
-    {
-        return sUserPrefs.isStretched;
-    }
-    
-    public static int getScreenPosition()
-    {
-        return sUserPrefs.videoPosition;
-    }
-    
-    public static boolean useRGBA8888()
-    {
-        return sUserPrefs.isRgba8888;
-    }
-    
-    public static int getHardwareType()
-    {
-        int autoDetected = sAppData.hardwareInfo.hardwareType;
-        int overridden = sUserPrefs.videoHardwareType;
-        return overridden < 0 ? autoDetected : overridden;
-    }
-    
-    public static Object getDataDir()
-    {
-        return sAppData.dataDir;
-    }
-    
-    public static Object getROMPath()
-    {
-        String selectedGame = sUserPrefs.selectedGame;
-        boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
-        boolean isSelectedGameZipped = !isSelectedGameNull
-                && selectedGame.length() > 3
-                && selectedGame.substring( selectedGame.length() - 3, selectedGame.length() )
-                        .equalsIgnoreCase( "zip" );
-        
-        if( sActivity == null )
-            return null;
-        
-        if( isSelectedGameNull )
-        {
-            SafeMethods.exit( "Invalid ROM", sActivity, 2000 );
-        }
-        else if( isSelectedGameZipped )
-        {
-            // Create the temp folder if it doesn't exist:
-            String tmpFolderName = sAppData.dataDir + "/tmp";
-            File tmpFolder = new File( tmpFolderName );
-            tmpFolder.mkdir();
-            
-            // Clear the folder if anything is in there:
-            String[] children = tmpFolder.list();
-            for( String child : children )
-            {
-                FileUtil.deleteFolder( new File( tmpFolder, child ) );
-            }
-            
-            // Unzip the ROM
-            String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ),
-                    tmpFolderName );
-            if( selectedGameUnzipped == null )
-            {
-                Log.v( "CoreInterface", "Cannot play zipped ROM: '" + selectedGame + "'" );
-                
-                Notifier.clear();
-                
-                if( ErrorLogger.hasError() )
-                    ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
-                
-                // Kick back out to the main menu
-                sActivity.finish();
-            }
-            else
-            {
-                return selectedGameUnzipped;
-            }
-        }
-        return selectedGame;
-    }
-    
-    /**
-     * Constructs any extra parameters to pass to the front-end, based on user preferences
-     * 
-     * @return Object handle to String containing space-separated parameters.
-     */
-    public static Object getExtraArgs()
-    {
-        String extraArgs = sUserPrefs.isFramelimiterEnabled ? "" : "--nospeedlimit ";
-        if( sCheatOptions != null )
-            extraArgs += sCheatOptions;
-        return extraArgs.trim();
-    }
-    
-    public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo,
-            int desiredFrames )
-    {
-        // Be sure audio is stopped so that we can restart it
-        audioQuit();
-        
-        // Audio configuration
-        int channelConfig = isStereo
-                ? AudioFormat.CHANNEL_OUT_STEREO
-                : AudioFormat.CHANNEL_OUT_MONO;
-        int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
-        int frameSize = ( isStereo ? 2 : 1 ) * ( is16Bit ? 2 : 1 );
-        
-        // Let the user pick a larger buffer if they really want -- but ye gods they probably
-        // shouldn't, the minimums are horrifyingly high latency already
-        int minBufSize = AudioTrack.getMinBufferSize( sampleRate, channelConfig, audioFormat );
-        int defaultFrames = ( minBufSize + frameSize - 1 ) / frameSize;
-        desiredFrames = Math.max( desiredFrames, defaultFrames );
-        
-        sAudioTrack = new AudioTrack( AudioManager.STREAM_MUSIC, sampleRate, channelConfig,
-                audioFormat, desiredFrames * frameSize, AudioTrack.MODE_STREAM );
-        
-        // if( sAudioThread == null )
-        assert( sAudioThread == null );
-        {
-            sAudioThread = new Thread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        sAudioTrack.play();
-                        NativeMethods.runAudioThread();
-                    }
-                    catch( IllegalStateException ise )
-                    {
-                        Log.e( "CoreInterface", "audioStartThread IllegalStateException", ise );
-                    }
-                }
-            }, "Audio Thread" );
-            
-            sAudioThread.setPriority( Thread.MAX_PRIORITY );
-            sAudioThread.start();
-        }
-        
-        int bufSize = desiredFrames * ( isStereo ? 2 : 1 );
-        sAudioBuffer = is16Bit ? new short[bufSize] : new byte[bufSize];
-        return sAudioBuffer;
-    }
-    
-    public static void audioQuit()
-    {
-        if( sAudioThread != null )
-        {
-            try
-            {
-                sAudioThread.join();
-            }
-            catch( Exception e )
-            {
-                Log.v( "CoreInterface", "Problem stopping audio thread: " + e );
-            }
-            sAudioThread = null;
-        }
-        
-        if( sAudioTrack != null )
-        {
-            sAudioTrack.stop();
-            sAudioTrack = null;
-        }
-    }
-    
-    public static void audioWriteByteBuffer( byte[] buffer )
-    {
-        for( int i = 0; i < buffer.length; )
-        {
-            int result = sAudioTrack.write( buffer, i, buffer.length - i );
-            if( result > 0 )
-            {
-                i += result;
-            }
-            else if( result == 0 )
-            {
-                SafeMethods.sleep( 1 );
-            }
-            else
-            {
-                Log.w( "CoreInterface", "SDL Audio: Error returned from write(byte[])" );
-                return;
-            }
-        }
-    }
-    
-    public static void audioWriteShortBuffer( short[] buffer )
-    {
-        for( int i = 0; i < buffer.length; )
-        {
-            int result = sAudioTrack.write( buffer, i, buffer.length - i );
-            if( result > 0 )
-            {
-                i += result;
-            }
-            else if( result == 0 )
-            {
-                SafeMethods.sleep( 1 );
-            }
-            else
-            {
-                Log.w( "CoreInterface", "SDL Audio: Error returned from write(short[])" );
-                return;
-            }
-        }
-    }
-    
-    public static void stateCallback( int paramChanged, int newValue )
-    {
-        synchronized( sStateCallbackLock )
-        {
-            if( sStateCallbackListener != null )
-                sStateCallbackListener.onStateCallback( paramChanged, newValue );
-        }
-    }
-    
-    public static void showToast( String message )
-    {
-        if( sActivity != null )
-            Notifier.showToast( sActivity, message );
-    }
-    
-    public static void vibrate( boolean active )
-    {
-        if( sVibrator == null )
-            return;
-        if( active )
-            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
-        else
-            sVibrator.cancel();
-    }
-    
-    public static void runOnUiThread( Runnable action )
-    {
-        if( sActivity != null )
-            sActivity.runOnUiThread( action );
-    }
-    
-    public static void setActivityTitle( String title )
-    {
-        sendCommand( COMMAND_CHANGE_TITLE, title );
-    }
-    
-    // ********************************************
-    // ********************************************
-    // ********************************************
-    // Private implementation details
-    // ********************************************
-    // ********************************************
-    // ********************************************
     
     /**
      * Populates the core configuration files with the user preferences.
@@ -731,25 +415,5 @@ public class CoreInterface
     private static String booleanToString( boolean b )
     {
         return b ? "1" : "0";
-    }
-    
-    private static void sendCommand( int command, Object data )
-    {
-        Handler commandHandler = new Handler()
-        {
-            @Override
-            public void handleMessage( Message msg )
-            {
-                if( msg.arg1 == COMMAND_CHANGE_TITLE )
-                {
-                    sActivity.setTitle( (CharSequence) msg.obj );
-                }
-            }
-        };
-        
-        Message msg = commandHandler.obtainMessage();
-        msg.arg1 = command;
-        msg.obj = data;
-        commandHandler.sendMessage( msg );
     }
 }

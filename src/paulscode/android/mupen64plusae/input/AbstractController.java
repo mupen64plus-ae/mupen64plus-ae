@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
-import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.CoreInterfaceNative;
 import paulscode.android.mupen64plusae.util.Utility;
 
 /**
@@ -159,7 +159,7 @@ public abstract class AbstractController
     {
         int axisX = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionX, -1, 1 ) );
         int axisY = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionY, -1, 1 ) );
-        NativeMethods.updateVirtualGamePadStates( mPlayerNumber - 1, mState.buttons, axisX, axisY );
+        CoreInterfaceNative.updateVirtualGamePadStates( mPlayerNumber - 1, mState.buttons, axisX, axisY );
     }
     
     /**

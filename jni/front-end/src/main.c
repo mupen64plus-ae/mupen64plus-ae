@@ -136,19 +136,19 @@ char *trim(char *str)
     return str;
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_pauseEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_pauseEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_PAUSE, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_resumeEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_resumeEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_RESUME, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_resetEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_resetEmulator(
                                     JNIEnv* env, jclass cls)
 {
     // (*CoreDoCommand) ( M64CMD_RESET, 0, NULL );
@@ -156,36 +156,36 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_resetE
     (*CoreDoCommand) ( M64CMD_STOP, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stopEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stopEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STOP, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSlotEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSetSlotEmulator(
                                     JNIEnv* env, jclass cls, jint slotID )
 {
     (*CoreDoCommand) ( M64CMD_STATE_SET_SLOT, (int) slotID, NULL );
 }
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSaveEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSaveEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STATE_SAVE, 1, NULL );
 }
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateLoadEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateLoadEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STATE_LOAD, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_fileSaveEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_fileSaveEmulator(
                                     JNIEnv* env, jclass cls, jstring filename )
 {
     const char *nativeString = (*env)->GetStringUTFChars( env, filename, 0 );
     (*CoreDoCommand) ( M64CMD_STATE_SAVE, 1, (void *) nativeString );
     (*env)->ReleaseStringUTFChars( env, filename, nativeString );
 }
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_fileLoadEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_fileLoadEmulator(
                                     JNIEnv* env, jclass cls, jstring filename )
 {
     const char *nativeString = (*env)->GetStringUTFChars( env, filename, 0 );
@@ -193,7 +193,7 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_fileLo
     (*env)->ReleaseStringUTFChars( env, filename, nativeString );
 }
 
-JNIEXPORT jint JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateEmulator(
+JNIEXPORT jint JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateEmulator(
                                     JNIEnv* env, jclass cls)
 {
     int state = 0;
@@ -209,7 +209,7 @@ JNIEXPORT jint JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateE
 }
 
 static char strBuff[1024];
-JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderName(
+JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_getHeaderName(
                                        JNIEnv* env, jclass cls, jstring jFilename )
 {
     const char *nativeS = (*env)->GetStringUTFChars( env, jFilename, 0 );
@@ -250,7 +250,7 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_get
 
     return (*env)->NewStringUTF( env, strBuff );
 }
-JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderCRC(
+JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_getHeaderCRC(
                                        JNIEnv* env, jclass cls, jstring jFilename )
 {
     const char *nativeS = (*env)->GetStringUTFChars( env, jFilename, 0 );
@@ -292,7 +292,7 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_get
     return (*env)->NewStringUTF( env, strBuff );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSpeed(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSetSpeed(
                                     JNIEnv* env, jclass cls, jint percent )
 {
 	int speed_factor = (int) percent;
