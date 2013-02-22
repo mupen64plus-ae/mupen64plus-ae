@@ -36,7 +36,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Notifier;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -84,7 +83,7 @@ import android.view.WindowManager.LayoutParams;
  */
 //@formatter:on
 
-public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.CoreLifecycleListener
+public class GameLifecycleHandler implements View.OnKeyListener
 {
     // Activity and views
     private Activity mActivity;
@@ -97,7 +96,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private KeyProvider mKeyProvider;
     
     // Internal flags
-    private boolean mCoreRunning = false;
     private final boolean mIsXperiaPlay;
     
     // App data and user preferences
@@ -181,8 +179,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
                     mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, mUserPrefs.touchscreenRefresh,
-                    mUserPrefs.isFpsEnabled, !mUserPrefs.isTouchscreenHidden );
+            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden,
+                    mUserPrefs.videoFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
         
         // Initialize user interface devices
@@ -194,8 +192,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
         // Override the peripheral controllers' key provider, to add some extra functionality
         inputSource.setOnKeyListener( this );
         
-        // Start listening to game surface events
-        mSurface.init( this, mOverlay, mUserPrefs.videoFpsRefresh, mUserPrefs.isRgba8888 );
+        // Initialize the game surface
+        mSurface.init( mUserPrefs.isRgba8888 );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
@@ -203,50 +201,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     
     public void onResume()
     {
-        if( mCoreRunning )
-        {
-            NativeMethods.resumeEmulator();
-        }
+        CoreInterface.resumeEmulator( false );
     }
     
     public void onPause()
     {
-        if( mCoreRunning )
-        {
-            NativeMethods.pauseEmulator();
-            
-            // Auto-save in case onCoreShutdown() doesn't get called. This can happen when the core
-            // doesn't shutdown properly, e.g. an unhandled exception is thrown during shutdown or
-            // power is suddenly lost.
-            Notifier.showToast( mActivity, R.string.toast_savingSession );
-            NativeMethods.fileSaveEmulator( mUserPrefs.selectedGameAutoSavefile );
-        }
-    }
-    
-    @Override
-    public void onCoreStartup()
-    {
-        Notifier.showToast( mActivity, R.string.toast_loadingSession );
-        if( !CoreInterface.isRestarting() )
-            NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
-        
-        NativeMethods.resumeEmulator();
-        
-        mCoreRunning = true;
-    }
-    
-    @Override
-    public void onCoreShutdown()
-    {
-        mCoreRunning = false;
-        
-        NativeMethods.pauseEmulator();
-        
-        // Auto-save in case onPause() is not called before core shutdown. This can occur when the
-        // activity stays in the foreground but the render surface is lost, e.g. when the user puts
-        // the device to sleep while the emulator is running.
-        Notifier.showToast( mActivity, R.string.toast_savingSession );
-        NativeMethods.fileSaveEmulator( mUserPrefs.selectedGameAutoSavefile );
+        CoreInterface.pauseEmulator();
     }
     
     @Override
