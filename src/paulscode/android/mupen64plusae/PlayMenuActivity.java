@@ -37,7 +37,6 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.TaskHandler.Task;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -137,14 +136,12 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
     }
     
-    @TargetApi( 5 )
     @Override
     public void finish()
     {
         // Disable transition animation to behave like any other screen in the menu hierarchy
         super.finish();
-        if( AppData.IS_ECLAIR )
-            overridePendingTransition( 0, 0 );
+        overridePendingTransition( 0, 0 );
     }
     
     @Override

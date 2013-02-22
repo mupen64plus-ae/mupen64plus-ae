@@ -77,9 +77,6 @@ import android.util.Log;
  */
 public class AppData
 {
-    /** True if device is running Eclair or later (5 - Android 2.0.x) */
-    public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
-    
     /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
     public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
     
