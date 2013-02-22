@@ -357,7 +357,6 @@
 
     <!-- Text Editor Hints (start lower-case) -->
     <string name="hintFileSave">filename</string>
-    <string name="hintSetSpeed">speed between 10 to 300</string>
 
     <!-- Asset Extractor -->
     <string name="assetExtractor_initializing">Initializing</string>
@@ -374,7 +373,6 @@
     <string name="cheatNotes_none">(no notes available for this cheat)</string>
     
     <!-- Hi-Res Texture Unpacking -->
-    <string name="pathHiResTexturesPath_title">Select a texture pack (ZIP format)</string>
     <string name="pathHiResTexturesTask_title">Unpacking textures</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
