@@ -92,14 +92,14 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         Log.i( "GameSurface", "surfaceChanged: " );
         CoreInterface.onResize( format, width, height );
-        CoreInterface.init();
+        CoreInterface.startupEmulator();
     }
     
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
         Log.i( "GameSurface", "surfaceDestroyed: " );
-        CoreInterface.quit();
+        CoreInterface.shutdownEmulator();
     }
     
     @Override
@@ -109,7 +109,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     }
     
     // EGL functions
-    public boolean initEGL( int majorVersion, int minorVersion )
+    public boolean createGLContext( int majorVersion, int minorVersion )
     {
         Log.v( "GameSurface", "Starting up OpenGL ES " + majorVersion + "." + minorVersion );
         try
@@ -218,7 +218,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     }
     
     // EGL buffer flip
-    public void flipEGL()
+    public void flipBuffers()
     {
         try
         {

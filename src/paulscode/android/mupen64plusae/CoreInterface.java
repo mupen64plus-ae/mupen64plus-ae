@@ -38,7 +38,6 @@ import android.media.AudioTrack;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
-import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -87,17 +86,16 @@ public class CoreInterface
     private static Vibrator sVibrator = null;
     private static AppData sAppData = null;
     private static UserPrefs sUserPrefs = null;
-    private static OnStateCallbackListener stateCallbackListener = null;
+    private static OnStateCallbackListener sStateCallbackListener = null;
     
     // Internal flags/caches
     private static boolean sIsRestarting = false;
-    private static boolean sIsRunning = false;
     private static String sCheatOptions = null;
     
     // Threading objects
     private static Thread sCoreThread;
     private static Thread sAudioThread = null;
-    private static final Object stateCallbackLock = new Object();
+    private static final Object sStateCallbackLock = new Object();
     
     // Audio objects
     private static AudioTrack sAudioTrack = null;
@@ -115,9 +113,9 @@ public class CoreInterface
     
     public static void setOnStateCallbackListener( OnStateCallbackListener listener )
     {
-        synchronized( stateCallbackLock )
+        synchronized( sStateCallbackLock )
         {
-            stateCallbackListener = listener;
+            sStateCallbackListener = listener;
         }
     }
     
@@ -130,31 +128,36 @@ public class CoreInterface
         sIsRestarting = isRestarting;
     }
     
-    public static void init()
+    public static void startupEmulator()
     {
-        sCoreThread = new Thread( new Runnable()
+        // Start the core thread
+        if( sCoreThread == null )
         {
-            @Override
-            public void run()
+            sCoreThread = new Thread( new Runnable()
             {
-                nativeInit();
-            }
-        }, "CoreThread" );
-        sCoreThread.start();
-        
-        // Wait for the emu state callback indicating emulation has started
-        waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
+                @Override
+                public void run()
+                {
+                    nativeInit();
+                }
+            }, "CoreThread" );
+            sCoreThread.start();
+
+            // Wait for the emulator to start running
+            waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
+        }
         
         // Auto-load state and resume
-        sIsRunning = true;
         resumeEmulator( !sIsRestarting );
+        
+        // Clear the flag so that subsequent calls don't reset
+        sIsRestarting = false;
     }
     
-    public static void quit()
+    public static void shutdownEmulator()
     {
         // Pause and auto-save state
         pauseEmulator();
-        sIsRunning = false;
         
         // Tell the core to quit
         NativeMethods.quit();
@@ -172,11 +175,14 @@ public class CoreInterface
             }
             sCoreThread = null;
         }
+        
+        // Clean up other resources
+        audioQuit();
     }
     
     public static void resumeEmulator( boolean loadAutoSave )
     {
-        if( sIsRunning )
+        if( sCoreThread != null )
         {
             if( loadAutoSave )
             {
@@ -189,7 +195,7 @@ public class CoreInterface
     
     public static void pauseEmulator()
     {
-        if( sIsRunning )
+        if( sCoreThread != null )
         {
             NativeMethods.pauseEmulator();
             Notifier.showToast( sActivity, R.string.toast_savingSession );
@@ -244,16 +250,15 @@ public class CoreInterface
         NativeMethods.onResize( width, height, sdlFormat );
     }
     
-    public static void waitForEmuState( int state )
+    public static void waitForEmuState( final int state )
     {
-        final int waitState = state;
         final Object lock = new Object();
         setOnStateCallbackListener( new OnStateCallbackListener()
         {
             @Override
             public void onStateCallback( int paramChanged, int newValue )
             {
-                if( paramChanged == M64CORE_EMU_STATE && newValue == waitState )
+                if( paramChanged == M64CORE_EMU_STATE && newValue == state )
                 {
                     setOnStateCallbackListener( null );
                     synchronized( lock )
@@ -298,12 +303,12 @@ public class CoreInterface
     
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
-        return sSurface.initEGL( majorVersion, minorVersion );
+        return sSurface.createGLContext( majorVersion, minorVersion );
     }
     
     public static void flipBuffers()
     {
-        sSurface.flipEGL();
+        sSurface.flipBuffers();
     }
     
     public static boolean getAutoFrameSkip()
@@ -403,45 +408,60 @@ public class CoreInterface
      */
     public static Object getExtraArgs()
     {
-        String extraArgs = "";
-        if( !sUserPrefs.isFramelimiterEnabled )
-            extraArgs = "--nospeedlimit";
+        String extraArgs = sUserPrefs.isFramelimiterEnabled ? "" : "--nospeedlimit ";
         if( sCheatOptions != null )
-            extraArgs = appendArg( extraArgs, sCheatOptions );
-        return extraArgs;
+            extraArgs += sCheatOptions;
+        return extraArgs.trim();
     }
     
     public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo,
             int desiredFrames )
     {
+        // Be sure audio is stopped so that we can restart it
+        audioQuit();
+        
+        // Audio configuration
         int channelConfig = isStereo
                 ? AudioFormat.CHANNEL_OUT_STEREO
                 : AudioFormat.CHANNEL_OUT_MONO;
         int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
         int frameSize = ( isStereo ? 2 : 1 ) * ( is16Bit ? 2 : 1 );
         
-        // Let the user pick a larger buffer if they really want -- but ye
-        // gods they probably shouldn't, the minimums are horrifyingly high
-        // latency already
-        desiredFrames = Math
-                .max( desiredFrames,
-                        ( AudioTrack.getMinBufferSize( sampleRate, channelConfig, audioFormat )
-                                + frameSize - 1 )
-                                / frameSize );
+        // Let the user pick a larger buffer if they really want -- but ye gods they probably
+        // shouldn't, the minimums are horrifyingly high latency already
+        int minBufSize = AudioTrack.getMinBufferSize( sampleRate, channelConfig, audioFormat );
+        int defaultFrames = ( minBufSize + frameSize - 1 ) / frameSize;
+        desiredFrames = Math.max( desiredFrames, defaultFrames );
         
         sAudioTrack = new AudioTrack( AudioManager.STREAM_MUSIC, sampleRate, channelConfig,
                 audioFormat, desiredFrames * frameSize, AudioTrack.MODE_STREAM );
         
-        audioStartThread();
+        // if( sAudioThread == null )
+        assert( sAudioThread == null );
+        {
+            sAudioThread = new Thread( new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        sAudioTrack.play();
+                        NativeMethods.runAudioThread();
+                    }
+                    catch( IllegalStateException ise )
+                    {
+                        Log.e( "CoreInterface", "audioStartThread IllegalStateException", ise );
+                    }
+                }
+            }, "Audio Thread" );
+            
+            sAudioThread.setPriority( Thread.MAX_PRIORITY );
+            sAudioThread.start();
+        }
         
-        if( is16Bit )
-        {
-            sAudioBuffer = new short[desiredFrames * ( isStereo ? 2 : 1 )];
-        }
-        else
-        {
-            sAudioBuffer = new byte[desiredFrames * ( isStereo ? 2 : 1 )];
-        }
+        int bufSize = desiredFrames * ( isStereo ? 2 : 1 );
+        sAudioBuffer = is16Bit ? new short[bufSize] : new byte[bufSize];
         return sAudioBuffer;
     }
     
@@ -458,8 +478,6 @@ public class CoreInterface
                 Log.v( "CoreInterface", "Problem stopping audio thread: " + e );
             }
             sAudioThread = null;
-            
-            // Log.v("CoreInterface", "Finished waiting for audio thread");
         }
         
         if( sAudioTrack != null )
@@ -513,10 +531,10 @@ public class CoreInterface
     
     public static void stateCallback( int paramChanged, int newValue )
     {
-        synchronized( stateCallbackLock )
+        synchronized( sStateCallbackLock )
         {
-            if( stateCallbackListener != null )
-                stateCallbackListener.onStateCallback( paramChanged, newValue );
+            if( sStateCallbackListener != null )
+                sStateCallbackListener.onStateCallback( paramChanged, newValue );
         }
     }
     
@@ -634,7 +652,7 @@ public class CoreInterface
         gles2n64_conf.save();        
         //@formatter:on
     }
-
+    
     private static void syncConfigFileInputs( ConfigFile mupen64plus_cfg, boolean isPlugged,
             int playerNumber )
     {
@@ -664,43 +682,12 @@ public class CoreInterface
         mupen64plus_cfg.put( sectionTitle, "X Axis", "key(0,0)" );
         mupen64plus_cfg.put( sectionTitle, "Y Axis", "key(0,0)" );
     }
-
+    
     private static String booleanToString( boolean b )
     {
         return b ? "1" : "0";
     }
-
-    private static String appendArg( String prev, String arg )
-    {
-        if( TextUtils.isEmpty( prev ) )
-            return arg;
-        return prev + " " + arg;
-    }
-
-    private static void audioStartThread()
-    {
-        sAudioThread = new Thread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    sAudioTrack.play();
-                    NativeMethods.runAudioThread();
-                }
-                catch( IllegalStateException ise )
-                {
-                    Log.e( "CoreInterface", "audioStartThread IllegalStateException", ise );
-                }
-            }
-        }, "Audio Thread" );
-        
-        // I'd take REALTIME if I could get it!
-        sAudioThread.setPriority( Thread.MAX_PRIORITY );
-        sAudioThread.start();
-    }
-
+    
     private static void sendCommand( int command, Object data )
     {
         Handler commandHandler = new Handler()
