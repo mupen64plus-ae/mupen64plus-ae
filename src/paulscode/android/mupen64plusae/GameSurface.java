@@ -41,11 +41,10 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     // Internal flags
     private boolean mIsRgba8888 = false;
     
-    // EGL private objects
+    // Internal EGL objects
     private EGLSurface mEGLSurface;
     private EGLDisplay mEGLDisplay;
     
-    // Startup
     public GameSurface( Context context, AttributeSet attribs )
     {
         super( context, attribs );
@@ -56,7 +55,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         requestFocus();
     }
     
-    public void init( boolean isRgba8888 )
+    public void setColorMode( boolean isRgba8888 )
     {
         mIsRgba8888 = isRgba8888;
     }
@@ -88,26 +87,33 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         // Unused, suppress the super method
     }
     
-    // EGL functions
     public boolean createGLContext( int majorVersion, int minorVersion )
     {
         Log.v( "GameSurface", "Starting up OpenGL ES " + majorVersion + "." + minorVersion );
         try
         {
-            final int EGL_OPENGL_ES_BIT = 1;
-            final int EGL_OPENGL_ES2_BIT = 4;
-            final int[] version = new int[2];
-            final int[] configSpec;
-            
-            // Get EGL instance.
+            // Get EGL instance
             EGL10 egl = (EGL10) EGLContext.getEGL();
             
-            // Now get an EGL display connection for the native display
-            EGLDisplay dpy = egl.eglGetDisplay( EGL10.EGL_DEFAULT_DISPLAY );
+            // Get an EGL display connection for the native display
+            EGLDisplay display = egl.eglGetDisplay( EGL10.EGL_DEFAULT_DISPLAY );
+            if( display == EGL10.EGL_NO_DISPLAY )
+            {
+                Log.e( "GameSurface", "Couldn't find EGL display connection" );
+                return false;
+            }
             
-            // Now initialize the EGL display.
-            egl.eglInitialize( dpy, version );
+            // Initialize the EGL display connection and obtain the GLES version supported by the device
+            final int[] version = new int[2];
+            if( !egl.eglInitialize( display, version ) )
+            {
+                Log.e( "GameSurface", "Couldn't initialize EGL display connection" );
+                return false;
+            }
             
+            // Generate a bit mask to limit the configuration search to compatible GLES versions
+            final int EGL_OPENGL_ES_BIT = 1;
+            final int EGL_OPENGL_ES2_BIT = 4;
             int renderableType = 0;
             if( majorVersion == 2 )
             {
@@ -118,72 +124,75 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                 renderableType = EGL_OPENGL_ES_BIT;
             }
             
+            // Specify the desired EGL frame buffer configuration
             // @formatter:off
+            final int[] configSpec;
             if( mIsRgba8888 )
             {
+                // User has requested 32-bit color
                 configSpec = new int[]
-                        { 
-                            EGL10.EGL_RED_SIZE,    8, // get a config with 8 bits of red
-                            EGL10.EGL_GREEN_SIZE,  8, // get a config with 8 bits of green
-                            EGL10.EGL_BLUE_SIZE,   8, // get a config with 8 bits of blue
-                            EGL10.EGL_ALPHA_SIZE,  8, // get a config with 8 bits of alpha
-                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with 16 bits of Z in the depth buffer
-                            EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
-                        };
+                { 
+                    EGL10.EGL_RED_SIZE,    8,                   // request 8 bits of red
+                    EGL10.EGL_GREEN_SIZE,  8,                   // request 8 bits of green
+                    EGL10.EGL_BLUE_SIZE,   8,                   // request 8 bits of blue
+                    EGL10.EGL_ALPHA_SIZE,  8,                   // request 8 bits of alpha
+                    EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                    EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                    EGL10.EGL_NONE                              // terminate array
+                };
             }
             else
             {
+                // User will take whatever color depth is available
                 configSpec = new int[] 
-                        { 
-                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with 16-bits of Z in the depth buffer.
-                            EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
-                        };
+                { 
+                    EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                    EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                    EGL10.EGL_NONE                              // terminate array
+                };
             }
+            // @formatter:on            
             
+            // Get an EGL frame buffer configuration that is compatible with the display and specification
             final EGLConfig[] configs = new EGLConfig[1];
             final int[] num_config = new int[1];
-
-            // If none of the EGL framebuffer configs correspond to our attributes, then we stop initializing.
-            if( !egl.eglChooseConfig( dpy, configSpec, configs, 1, num_config ) || num_config[0] == 0 )
+            if( !egl.eglChooseConfig( display, configSpec, configs, 1, num_config ) || num_config[0] == 0 )
             {
-                Log.e( "GameSurface", "No EGL config available" );
+                Log.e( "GameSurface", "Couldn't find compatible EGL frame buffer configuration" );
                 return false;
             }
-            // @formatter:on
-            
             EGLConfig config = configs[0];
-            // paulscode, GLES2 fix:
-            int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-            int[] contextAttrs = new int[] {
-                EGL_CONTEXT_CLIENT_VERSION,
-                majorVersion,
-                EGL10.EGL_NONE };
             
-            EGLContext ctx = egl.eglCreateContext( dpy, config, EGL10.EGL_NO_CONTEXT, contextAttrs );
-            // end GLES2 fix
-            // EGLContext ctx = egl.eglCreateContext( dpy, config, EGL10.EGL_NO_CONTEXT, null );
-            
-            if( ctx.equals( EGL10.EGL_NO_CONTEXT ) )
+            // Create an EGL rendering context and ensure that it supports the requested GLES version, display
+            // connection, and frame buffer configuration (http://stackoverflow.com/a/5930935/254218)
+            final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+            final int[] contextAttrs = new int[] { EGL_CONTEXT_CLIENT_VERSION, majorVersion, EGL10.EGL_NONE };
+            EGLContext context = egl.eglCreateContext( display, config, EGL10.EGL_NO_CONTEXT, contextAttrs );
+            if( context.equals( EGL10.EGL_NO_CONTEXT ) )
             {
-                Log.e( "GameSurface", "Couldn't create context" );
+                Log.e( "GameSurface", "Couldn't create EGL rendering context" );
                 return false;
             }
             
-            EGLSurface surface = egl.eglCreateWindowSurface( dpy, config, this, null );
+            // Create an EGL window surface from the generated EGL display and configuration
+            EGLSurface surface = egl.eglCreateWindowSurface( display, config, this, null );
             if( surface.equals( EGL10.EGL_NO_SURFACE ) )
             {
-                Log.e( "GameSurface", "Couldn't create surface" );
+                Log.e( "GameSurface", "Couldn't create EGL window surface" );
                 return false;
             }
             
-            if( !egl.eglMakeCurrent( dpy, surface, surface, ctx ) )
+            // Bind the EGL rendering context to the window surface and current rendering thread
+            if( !egl.eglMakeCurrent( display, surface, surface, context ) )
             {
-                Log.e( "GameSurface", "Couldn't make context current" );
+                Log.e( "GameSurface", "Couldn't bind EGL rendering context to surface" );
                 return false;
             }
             
-            mEGLDisplay = dpy;
+            // Store the EGL objects to permit frame buffer swaps later
+            mEGLDisplay = display;
             mEGLSurface = surface;
+            return true;
         }
         catch( IllegalArgumentException e )
         {
@@ -192,32 +201,27 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             {
                 Log.v( "GameSurface", s.toString() );
             }
+            return false;
         }
-        
-        return true;
     }
     
-    // EGL buffer flip
     public void flipBuffers()
     {
         try
         {
-            // Get an EGL instance.
+            // Get EGL instance
             EGL10 egl = (EGL10) EGLContext.getEGL();
             
-            // Make sure native-side executions complete before
-            // doing any further GL rendering calls.
+            // Wait for native-side executions to complete before doing any further GL rendering calls
             egl.eglWaitNative( EGL10.EGL_CORE_NATIVE_ENGINE, null );
             
-            // -- Drawing here --//
+            // -- Drawing from the core occurs here -- //
             
-            // Make sure all GL executions are complete before
-            // doing any further native-side rendering calls.
+            // Wait for GL executions to complete before doing any further native-side rendering calls
             egl.eglWaitGL();
             
-            // Now finally 'flip' the buffer.
+            // Rendering is complete, swap the buffers
             egl.eglSwapBuffers( mEGLDisplay, mEGLSurface );
-            
         }
         catch( IllegalArgumentException e )
         {

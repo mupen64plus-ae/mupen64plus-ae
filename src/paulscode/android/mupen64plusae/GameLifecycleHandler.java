@@ -193,7 +193,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         inputSource.setOnKeyListener( this );
         
         // Initialize the game surface
-        mSurface.init( mUserPrefs.isRgba8888 );
+        mSurface.setColorMode( mUserPrefs.isRgba8888 );
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface, vibrator );
