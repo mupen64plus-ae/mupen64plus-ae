@@ -27,7 +27,6 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -79,12 +78,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     {
         Log.i( "GameSurface", "surfaceDestroyed: " );
         CoreInterface.shutdownEmulator();
-    }
-    
-    @Override
-    public void onDraw( Canvas canvas )
-    {
-        // Unused, suppress the super method
     }
     
     public boolean createGLContext( int majorVersion, int minorVersion )
