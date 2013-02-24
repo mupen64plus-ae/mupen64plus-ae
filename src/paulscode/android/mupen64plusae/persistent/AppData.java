@@ -455,6 +455,7 @@ public class AppData
                     || hardware.contains( "amlogic meson3" )
                     || hardware.contains( "rk30board" )
                     || hardware.contains( "smdk4210" )
+                    || hardware.contains( "riogrande" )
                     || hardware.contains( "cardhu" ) )
                 hardwareType = HARDWARE_TYPE_OMAP_2;
             
