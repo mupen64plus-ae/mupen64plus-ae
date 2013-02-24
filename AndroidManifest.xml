@@ -16,7 +16,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name="AppMupen64Plus"
+        android:name="paulscode.android.mupen64plusae.AppMupen64Plus"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
@@ -24,7 +24,7 @@
         android:launchMode="singleTask"
         android:theme="@style/appTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name="paulscode.android.mupen64plusae.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,12 +34,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MenuActivity"
+            android:name="paulscode.android.mupen64plusae.MenuActivity"
             android:exported="false"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".PlayMenuActivity"
+            android:name="paulscode.android.mupen64plusae.PlayMenuActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/playTheme" >
@@ -50,7 +50,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".input.InputMapActivity"
+            android:name="paulscode.android.mupen64plusae.input.InputMapActivity"
             android:exported="false"
             android:label="@string/app_name" >
             <intent-filter>
@@ -60,7 +60,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".input.DiagnosticActivity"
+            android:name="paulscode.android.mupen64plusae.input.DiagnosticActivity"
             android:exported="false"
             android:label="@string/app_name" >
             <intent-filter>
@@ -76,12 +76,12 @@
         This behavior is specified in android:configChanges below.
         -->
         <activity
-            android:name=".GameActivity"
+            android:name="paulscode.android.mupen64plusae.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".GameActivityXperiaPlay"
+            android:name="paulscode.android.mupen64plusae.GameActivityXperiaPlay"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >
             <meta-data
