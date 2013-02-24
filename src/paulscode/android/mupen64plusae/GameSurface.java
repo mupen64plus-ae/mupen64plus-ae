@@ -105,17 +105,27 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             }
             
             // Generate a bit mask to limit the configuration search to compatible GLES versions
+            final int UNKNOWN = 0;
             final int EGL_OPENGL_ES_BIT = 1;
             final int EGL_OPENGL_ES2_BIT = 4;
-            int renderableType = 0;
-            if( majorVersion == 2 )
+            final int renderableType;
+
+            // Determine which version of EGL we're using.
+            switch ( majorVersion )
             {
-                renderableType = EGL_OPENGL_ES2_BIT;
+                case 1:
+                    renderableType = EGL_OPENGL_ES_BIT;
+                    break;
+
+                case 2:
+                    renderableType = EGL_OPENGL_ES2_BIT;
+                    break;
+
+                default: // Shouldn't happen.
+                    renderableType = UNKNOWN;
+                    break;
             }
-            else if( majorVersion == 1 )
-            {
-                renderableType = EGL_OPENGL_ES_BIT;
-            }
+
             
             // Specify the desired EGL frame buffer configuration
             // @formatter:off
