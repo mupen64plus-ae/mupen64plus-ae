@@ -520,7 +520,7 @@ bool OGL_Start()
     VI.displayNum = 0;
     glGetError();
 
-    return TRUE;
+    return true;
 }
 
 void OGL_Stop()

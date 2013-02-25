@@ -33,16 +33,16 @@ char uc_str[256];
 
 SpecialMicrocodeInfo specialMicrocodes[] =
 {
-    {F3DWRUS, FALSE, 0xd17906e2, "RSP SW Version: 2.0D, 04-01-96"},
-    {F3DWRUS, FALSE,  0x94c4c833, "RSP SW Version: 2.0D, 04-01-96"},
-    {S2DEX, FALSE, 0x9df31081, "RSP Gfx ucode S2DEX  1.06 Yoshitaka Yasumoto Nintendo."},
-    {F3DDKR, FALSE, 0x8d91244f, "Diddy Kong Racing"},
-    {F3DDKR, FALSE, 0x6e6fc893, "Diddy Kong Racing"},
-    {F3DDKR, FALSE, 0xbde9d1fb, "Jet Force Gemini"},
-    {F3DPD, FALSE, 0x1c4f7869, "Perfect Dark"},
-    {F3DEX, FALSE, 0x0ace4c3f, "Mario Kart"},
-    //{F3DEX, FALSE, 0xda51ccdb, "Rogue Squadron"},
-    //{F3DCBFD, FALSE, 0x1b4ace88, "RSP Gfx ucode F3DEXBG.NoN fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo."},
+    {F3DWRUS, false, 0xd17906e2, "RSP SW Version: 2.0D, 04-01-96"},
+    {F3DWRUS, false, 0x94c4c833, "RSP SW Version: 2.0D, 04-01-96"},
+    {S2DEX,   false, 0x9df31081, "RSP Gfx ucode S2DEX  1.06 Yoshitaka Yasumoto Nintendo."},
+    {F3DDKR,  false, 0x8d91244f, "Diddy Kong Racing"},
+    {F3DDKR,  false, 0x6e6fc893, "Diddy Kong Racing"},
+    {F3DDKR,  false, 0xbde9d1fb, "Jet Force Gemini"},
+    {F3DPD,   false, 0x1c4f7869, "Perfect Dark"},
+    {F3DEX,   false, 0x0ace4c3f, "Mario Kart"},
+    //{F3DEX,   false, 0xda51ccdb, "Rogue Squadron"},
+    //{F3DCBFD, false, 0x1b4ace88, "RSP Gfx ucode F3DEXBG.NoN fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo."},
 };
 
 u32 G_RDPHALF_1, G_RDPHALF_2, G_RDPHALF_CONT;
@@ -115,39 +115,39 @@ INT_PTR CALLBACK MicrocodeDlgProc( HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARA
             char text[1024];
             sprintf( text, "Microcode CRC:\t\t0x%08x\r\nMicrocode Data CRC:\t0x%08x\r\nMicrocode Text:\t\t%s", uc_crc, uc_dcrc, uc_str );
             SendDlgItemMessage( hWndDlg, IDC_TEXTBOX, WM_SETTEXT, NULL, (LPARAM)text );
-            return TRUE;
+            return true;
 
         case WM_COMMAND:
             switch (LOWORD(wParam))
             {
                 case IDOK:
                     EndDialog( hWndDlg, SendDlgItemMessage( hWndDlg, IDC_MICROCODE, CB_GETCURSEL, 0, 0 ) );
-                    return TRUE;
+                    return true;
 
                 case IDCANCEL:
                     EndDialog( hWndDlg, NONE );
-                    return TRUE;
+                    return true;
             }
             break;
     }
 
-    return FALSE;
+    return false;
 }
 #elif defined(USE_GTK)
 static int selectedMicrocode = -1;
-static GtkWidget *microcodeWindow = 0;
-static GtkWidget *microcodeList = 0;
+static GtkWidget *microcodeWindow = NULL;
+static GtkWidget *microcodeList = NULL;
 
 static void okButton_clicked( GtkWidget *widget, void *data )
 {
     gtk_widget_hide( microcodeWindow );
     if (GTK_LIST(microcodeList)->selection != 0)
     {
-        char *text = 0;
+        char *text = NULL;
         GtkListItem *item = GTK_LIST_ITEM(GTK_LIST(microcodeList)->selection->data);
         GtkLabel *label = GTK_LABEL(GTK_BIN(item)->child);
         gtk_label_get( label, &text );
-        if (text != 0)
+        if (text != NULL)
             for (int i = 0; i < numMicrocodeTypes; i++)
                 if (!strcmp( text, MicrocodeTypes[i] ))
                 {
@@ -168,7 +168,7 @@ static void stopButton_clicked( GtkWidget *widget, void *data )
 static gint
 delete_question_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
-    return TRUE; // undeleteable
+    return true; // undeleteable
 }
 
 static int MicrocodeDialog()
@@ -180,7 +180,7 @@ static int MicrocodeDialog()
     GtkWidget *selectUcodeLabel;
     //GtkWidget *microcodeLabel;
     GtkWidget *okButton, *stopButton;
-    GList *ucodeList = 0;
+    GList *ucodeList = NULL;
     char buf[1024];
 
     if (!g_thread_supported())
@@ -188,7 +188,7 @@ static int MicrocodeDialog()
     gdk_threads_enter();
 
     // create dialog
-    if (microcodeWindow == 0)
+    if (microcodeWindow == NULL)
     {
         microcodeWindow = gtk_dialog_new();
         gtk_signal_connect( GTK_OBJECT(microcodeWindow), "delete_event",
@@ -218,7 +218,7 @@ static int MicrocodeDialog()
         gtk_container_set_border_width( GTK_CONTAINER(infoFrame), 7 );
         gtk_box_pack_start_defaults( GTK_BOX(GTK_DIALOG(microcodeWindow)->vbox), infoFrame );
 
-        infoTable = gtk_table_new( 3, 2, FALSE );
+        infoTable = gtk_table_new( 3, 2, false );
         gtk_container_set_border_width( GTK_CONTAINER(infoTable), 7 );
         gtk_table_set_col_spacings( GTK_TABLE(infoTable), 3 );
         gtk_table_set_row_spacings( GTK_TABLE(infoTable), 3 );
@@ -251,7 +251,7 @@ static int MicrocodeDialog()
     }
 
     snprintf( buf, 1024, "0x%8.8X", (unsigned int)uc_crc );
-        if(crcLabel) gtk_label_set_text( GTK_LABEL(crcLabel), buf );
+    if(crcLabel) gtk_label_set_text( GTK_LABEL(crcLabel), buf );
     snprintf( buf, 1024, "0x%8.8X", (unsigned int)uc_dcrc );
     if(crcDataLabel) gtk_label_set_text( GTK_LABEL(crcDataLabel), buf );
     if(textLabel) gtk_label_set_text( GTK_LABEL(textLabel), uc_str );
@@ -822,7 +822,7 @@ MicrocodeInfo *GBI_DetectMicrocode( u32 uc_start, u32 uc_dstart, u16 uc_dsize )
     current->address = uc_start;
     current->dataAddress = uc_dstart;
     current->dataSize = uc_dsize;
-    current->NoN = FALSE;
+    current->NoN = false;
     current->type = NONE;
 
     // See if we can identify it by CRC

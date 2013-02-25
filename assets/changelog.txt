@@ -7,6 +7,7 @@
 - Added mipmapping option for gles2rice video plugin
 - Added texture filter option for gles2rice video plugin
 - Added option to change action bar transparency
+- Very tiny simplification of the gles2n64 plugin.
 - Utilized new core features to fix some internal state-related bugs
 [20:2.1.0]
 - Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)

@@ -26,14 +26,6 @@ typedef volatile int64_t   vs64;   /* signed 64-bit */
 typedef float              f32;    /* single prec floating point */
 typedef double             f64;    /* double prec floating point */
 
-#ifndef TRUE
-#define TRUE    1
-#endif
-
-#ifndef FALSE
-#define FALSE   0
-#endif
-
 #ifndef NULL
 #define NULL    0
 #endif
