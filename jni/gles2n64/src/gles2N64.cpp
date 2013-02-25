@@ -236,7 +236,8 @@ EXPORT void CALL UpdateScreen (void)
 
     OGL.frame_prevdl = OGL.frame_dl;
 
-    if (OGL.frame_dl > 0) OGL.frame_vsync++;
+    if (OGL.frame_dl > 0)
+        OGL.frame_vsync++;
 
     if (OGL.mustRenderDlist)
     {
@@ -375,4 +376,3 @@ EXPORT void CALL ResizeGL(int width, int height)
 }
 
 } // extern "C"
-

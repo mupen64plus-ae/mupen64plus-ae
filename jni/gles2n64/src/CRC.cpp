@@ -3,7 +3,7 @@
 #define CRC32_POLYNOMIAL     0x04C11DB7
 
 #ifdef __CRC_OPT
-unsigned int CRCTable[ 256 * 4];
+unsigned int CRCTable[ 256 * 4 ];
 #else
 unsigned int CRCTable[ 256 ];
 #endif
@@ -60,16 +60,18 @@ u32 CRC_Calculate( u32 crc, void *buffer, u32 count )
     {
         crc ^= *(unsigned int*) p; p += 4;
         crc = CRCTable[3*256 + (crc&0xFF)]
-          ^ CRCTable[2*256 + ((crc>>8)&0xFF)]
-          ^ CRCTable[1*256 + ((crc>>16)&0xFF)]
-          ^ CRCTable[0*256 + ((crc>>24))];
+            ^ CRCTable[2*256 + ((crc>>8)&0xFF)]
+            ^ CRCTable[1*256 + ((crc>>16)&0xFF)]
+            ^ CRCTable[0*256 + ((crc>>24))];
 
         count -= 4;
     }
 #endif
 
     while (count--)
+    {
         crc = (crc >> 8) ^ CRCTable[(crc & 0xFF) ^ *p++];
+    }
 
     return crc ^ orig;
 }

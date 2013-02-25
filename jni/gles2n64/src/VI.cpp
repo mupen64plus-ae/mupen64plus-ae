@@ -30,8 +30,9 @@ void VI_UpdateSize()
         u32 vEnd = _SHIFTR( *REG.VI_V_START, 1, 9 );
         u32 vStart = _SHIFTR( *REG.VI_V_START, 17, 9 );
 
-        //Glide does this:
-        if (hEnd == hStart) hEnd = (u32)(*REG.VI_WIDTH / xScale);
+        // Glide does this:
+        if (hEnd == hStart) 
+            hEnd = (u32)(*REG.VI_WIDTH / xScale);
 
 
         VI.width = (hEnd - hStart) * xScale;
@@ -77,7 +78,6 @@ void VI_UpdateScreen()
 
     switch(config.updateMode)
     {
-
         case SCREEN_UPDATE_AT_VI_CHANGE:
             if (*REG.VI_ORIGIN != VI.lastOrigin)
             {
@@ -96,6 +96,4 @@ void VI_UpdateScreen()
             }
             break;
     }
-
 }
-

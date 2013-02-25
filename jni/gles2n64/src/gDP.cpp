@@ -28,7 +28,7 @@ bool _IsRenderTexture()
     unsigned int newFillColor = 0;
     unsigned int dwPC = RSP.PC[RSP.PCi];       // This points to the next instruction
 
-    for(int i=0; i<10; i++ )
+    for(int i=0; i<10; i++)
     {
         unsigned int w0 = *(unsigned int *)(RDRAM + dwPC + i*8);
         unsigned int w1 = *(unsigned int *)(RDRAM + dwPC + 4 + i*8);
@@ -106,12 +106,16 @@ bool _IsRenderTexture()
         return false;
     }
     else
+    {
+        return true;
+    }
+
+
+    if (!foundSetCImg)
         return true;
 
-
-    if (!foundSetCImg) return true;
-
-    if (foundSetScissor ) return true;
+    if (foundSetScissor)
+        return true;
 
     return false;
 }
@@ -379,9 +383,9 @@ void gDPSetColorImage( u32 format, u32 size, u32 width, u32 address )
     {
         int i;
 
-        //colorimage byte size:
-        //color image height is not the best thing to base this on, its normally set
-        //later on in the code
+        // colorimage byte size:
+        // color image height is not the best thing to base this on, it's normally set
+        // later on in the code
 
         if (gDP.colorImage.address == gDP.depthImageAddress)
         {
@@ -642,7 +646,10 @@ void gDPLoadTile( u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt )
     for (y = 0; y < height; y++)
     {
         UnswapCopy( src, dest, bpl );
-        if (y & 1) Interleave( dest, line );
+        if (y & 1)
+        {
+            Interleave( dest, line );
+        }
 
         src += gDP.textureImage.bpl;
         dest += line;
@@ -707,13 +714,13 @@ void gDPLoadBlock( u32 tile, u32 uls, u32 ult, u32 lrs, u32 dxt )
                 src += line;
                 dest += line;
             }
-
         }
-
     }
     else
+    {   
         UnswapCopy( src, dest, bytes );
-
+    }
+    
     gDP.textureMode = TEXTUREMODE_NORMAL;
     gDP.loadType = LOADTYPE_BLOCK;
     gDP.changed |= CHANGED_TMEM;
