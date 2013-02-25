@@ -185,7 +185,7 @@ void gSPTriangle(s32 v0, s32 v1, s32 v2)
     if (depthBuffer.current != NULL)
         depthBuffer.current->cleared = false;
         
-    gDP.colorImage.changed = TRUE;
+    gDP.colorImage.changed = true;
     gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
 }
 
@@ -1395,7 +1395,7 @@ void gSPPerspNormalize( u16 scale )
 {
 }
 
-void gSPTexture( f32 sc, f32 tc, s32 level, s32 tile, s32 on )
+void gSPTexture( f32 sc, f32 tc, s32 level, s32 tile, bool on )
 {
     gSP.texture.scales = sc;
     gSP.texture.scalet = tc;
@@ -1529,7 +1529,7 @@ void gSPBgRect1Cyc( u32 bg )
 
     gDP.otherMode.cycleType = G_CYC_1CYCLE;
     gDP.changed |= CHANGED_CYCLETYPE;
-    gSPTexture( 1.0f, 1.0f, 0, 0, TRUE );
+    gSPTexture( 1.0f, 1.0f, 0, 0, true );
     gDPTextureRectangle( frameX0, frameY0, frameX1 - 1, frameY1 - 1, 0, frameS0 - 1, frameT0 - 1, scaleW, scaleH );
 
     if ((frameX1 - frameX0) < frameW)
@@ -1570,7 +1570,7 @@ void gSPBgRectCopy( u32 bg )
     u16 frameW = objBg->frameW >> 2;
     u16 frameH = objBg->frameH >> 2;
 
-    gSPTexture( 1.0f, 1.0f, 0, 0, TRUE );
+    gSPTexture( 1.0f, 1.0f, 0, 0, true );
 
     gDPTextureRectangle( frameX, frameY, frameX + frameW - 1, frameY + frameH - 1, 0, imageX, imageY, 4, 1 );
 }
@@ -1672,7 +1672,7 @@ void gSPObjSprite( u32 sp )
 
     gDPSetTile( objSprite->imageFmt, objSprite->imageSiz, objSprite->imageStride, objSprite->imageAdrs, 0, objSprite->imagePal, G_TX_CLAMP, G_TX_CLAMP, 0, 0, 0, 0 );
     gDPSetTileSize( 0, 0, 0, (imageW - 1) << 2, (imageH - 1) << 2 );
-    gSPTexture( 1.0f, 1.0f, 0, 0, TRUE );
+    gSPTexture( 1.0f, 1.0f, 0, 0, true );
 
     //glOrtho( 0, VI.width, VI.height, 0, 0.0f, 32767.0f );
     OGL.triangles.vertices[v0].x = 2.0f * VI.rwidth * OGL.triangles.vertices[v0].x - 1.0f;
@@ -1699,7 +1699,7 @@ void gSPObjSprite( u32 sp )
     if (depthBuffer.current != NULL) 
         depthBuffer.current->cleared = false;
         
-    gDP.colorImage.changed = TRUE;
+    gDP.colorImage.changed = true;
     gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
 }
 

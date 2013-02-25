@@ -363,7 +363,7 @@ void gDPSetColorImage( u32 format, u32 size, u32 width, u32 address )
 
     if (gDP.colorImage.address != addr)
     {
-        gDP.colorImage.changed = FALSE;
+        gDP.colorImage.changed = false;
         if (width == VI.width)
             gDP.colorImage.height = VI.height;
         else
@@ -819,7 +819,7 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
     if (depthBuffer.current != NULL)
         depthBuffer.current->cleared = false;
         
-    gDP.colorImage.changed = TRUE;
+    gDP.colorImage.changed = true;
     gDP.colorImage.height = max( gDP.colorImage.height, (unsigned int)lry );
 
 #ifdef DEBUG
@@ -913,7 +913,7 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
     if (depthBuffer.current != NULL) 
         depthBuffer.current->cleared = false;
         
-    gDP.colorImage.changed = TRUE;
+    gDP.colorImage.changed = true;
     gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
 
 #ifdef DEBUG

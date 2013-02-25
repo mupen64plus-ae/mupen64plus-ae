@@ -39,8 +39,8 @@ Config config;
 struct Option
 {
     const char* name;
-    int*  data;
-    const int   initial;
+    int* data;
+    const int initial;
 };
 
 
