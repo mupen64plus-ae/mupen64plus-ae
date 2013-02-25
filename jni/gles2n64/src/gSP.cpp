@@ -182,7 +182,9 @@ void gSPTriangle(s32 v0, s32 v1, s32 v2)
 
     }
 
-    if (depthBuffer.current) depthBuffer.current->cleared = FALSE;
+    if (depthBuffer.current != NULL)
+        depthBuffer.current->cleared = false;
+        
     gDP.colorImage.changed = TRUE;
     gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
 }
@@ -1215,26 +1217,29 @@ void gSP1Quadrangle( s32 v0, s32 v1, s32 v2, s32 v3)
 bool gSPCullVertices( u32 v0, u32 vn )
 {
     if (!config.enableClipping)
-        return FALSE;
+        return false;
 
-    s32 v = v0;
 #ifdef __TRIBUFFER_OPT
-    v = OGL.triangles.indexmap[v0];
+    s32 v = OGL.triangles.indexmap[v0];
+#else
+    s32 v = v0;
 #endif
 
     u32 clip = OGL.triangles.vertices[v].clip;
     if (clip == 0)
-        return FALSE;
+        return false;
 
     for (unsigned int i = (v0+1); i <= vn; i++)
     {
-        v = i;
 #ifdef __TRIBUFFER_OPT
         v = OGL.triangles.indexmap[i];
+#else
+        v = i;
 #endif
-        if (OGL.triangles.vertices[v].clip != clip) return FALSE;
+        if (OGL.triangles.vertices[v].clip != clip)
+            return false;
     }
-    return TRUE;
+    return true;
 }
 
 void gSPCullDisplayList( u32 v0, u32 vn )
@@ -1691,7 +1696,9 @@ void gSPObjSprite( u32 sp )
     OGL_AddTriangle(v0, v2, v3);
     OGL_DrawTriangles();
 
-    if (depthBuffer.current) depthBuffer.current->cleared = FALSE;
+    if (depthBuffer.current != NULL) 
+        depthBuffer.current->cleared = false;
+        
     gDP.colorImage.changed = TRUE;
     gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
 }

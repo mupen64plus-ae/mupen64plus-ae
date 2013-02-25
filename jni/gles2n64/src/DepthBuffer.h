@@ -7,7 +7,8 @@ struct DepthBuffer
 {
     DepthBuffer *higher, *lower;
 
-    u32 address, cleared;
+    u32 address;
+    bool cleared;
 };
 
 struct DepthBufferInfo

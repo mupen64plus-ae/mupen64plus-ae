@@ -302,7 +302,7 @@ bool OGL_SDL_Start()
     if (SDL_InitSubSystem( SDL_INIT_VIDEO ) == -1)
     {
          LOG(LOG_ERROR, "Error initializing SDL video subsystem: %s\n", SDL_GetError() );
-        return FALSE;
+        return false;
     }
 
     /* Video Info */
@@ -311,7 +311,7 @@ bool OGL_SDL_Start()
     {
         LOG(LOG_VERBOSE,"Video query failed: %s\n", SDL_GetError() );
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
-        return FALSE;
+        return false;
     }
 
     /* Set the video mode */
@@ -331,7 +331,7 @@ else
     {
         LOG(LOG_ERROR, "Problem setting videomode %dx%d: %s\n", videoInfo->current_w, videoInfo->current_h, SDL_GetError() );
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
-        return FALSE;
+        return false;
     }
 
 //// paulscode, fixes the screen-size problem

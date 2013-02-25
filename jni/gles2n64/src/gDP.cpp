@@ -788,8 +788,8 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
 {
     DepthBuffer *buffer = DepthBuffer_FindBuffer( gDP.colorImage.address );
 
-    if (buffer)
-        buffer->cleared = TRUE;
+    if (buffer != NULL)
+        buffer->cleared = true;
 
     if (gDP.depthImageAddress == gDP.colorImage.address)
     {
@@ -816,7 +816,9 @@ void gDPFillRectangle( s32 ulx, s32 uly, s32 lrx, s32 lry )
     float black[] = {0,0,0,0};
     OGL_DrawRect( ulx, uly, lrx, lry, (gDP.otherMode.cycleType == G_CYC_FILL) ? &gDP.fillColor.r : black);
 
-    if (depthBuffer.current) depthBuffer.current->cleared = FALSE;
+    if (depthBuffer.current != NULL)
+        depthBuffer.current->cleared = false;
+        
     gDP.colorImage.changed = TRUE;
     gDP.colorImage.height = max( gDP.colorImage.height, (unsigned int)lry );
 
@@ -908,7 +910,9 @@ void gDPTextureRectangle( f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, f32 s, f
     gSP.textureTile[0] = &gDP.tiles[gSP.texture.tile];
     gSP.textureTile[1] = &gDP.tiles[(gSP.texture.tile < 7) ? (gSP.texture.tile + 1) : gSP.texture.tile];
 
-    if (depthBuffer.current) depthBuffer.current->cleared = FALSE;
+    if (depthBuffer.current != NULL) 
+        depthBuffer.current->cleared = false;
+        
     gDP.colorImage.changed = TRUE;
     gDP.colorImage.height = (unsigned int)(max( gDP.colorImage.height, gDP.scissor.lry ));
 

@@ -144,7 +144,7 @@ void DepthBuffer_SetBuffer( u32 address )
     current = DepthBuffer_AddTop();
 
     current->address = address;
-    current->cleared = TRUE;
+    current->cleared = true;
 
     depthBuffer.current = current;
 }
