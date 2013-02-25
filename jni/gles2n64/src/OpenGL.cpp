@@ -295,8 +295,6 @@ void OGL_ResizeWindow(int x, int y, int width, int height)
 #ifdef USE_SDL
 bool OGL_SDL_Start()
 {
-   const SDL_VideoInfo *videoInfo;
-
     /* Initialize SDL */
     LOG(LOG_MINIMAL, "Initializing SDL video subsystem...\n" );
     if (SDL_InitSubSystem( SDL_INIT_VIDEO ) == -1)
@@ -307,7 +305,8 @@ bool OGL_SDL_Start()
 
     /* Video Info */
     LOG(LOG_VERBOSE,"Getting video info...\n" );
-    if (!(videoInfo = SDL_GetVideoInfo()))
+    const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+    if (videoInfo == NULL)
     {
         LOG(LOG_VERBOSE,"Video query failed: %s\n", SDL_GetError() );
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
@@ -327,7 +326,7 @@ else
     bitsPP = 16;
 ////
 
-    SDL_Surface *hScreen = SDL_SetVideoMode( videoInfo->current_w, videoInfo->current_h, bitsPP, SDL_HWSURFACE );
+    const SDL_Surface *hScreen = SDL_SetVideoMode( videoInfo->current_w, videoInfo->current_h, bitsPP, SDL_HWSURFACE );
     if (hScreen == NULL)
     {
         LOG(LOG_ERROR, "Problem setting videomode %dx%d: %s\n", videoInfo->current_w, videoInfo->current_h, SDL_GetError() );
@@ -560,7 +559,9 @@ void OGL_UpdateCullFace()
             glCullFace(GL_FRONT);
     }
     else
+    {
         glDisable(GL_CULL_FACE);
+    }
 }
 
 void OGL_UpdateViewport()
@@ -747,7 +748,6 @@ void OGL_UpdateStates()
             glEnable(GL_DEPTH_TEST);
         else
             glDisable(GL_DEPTH_TEST);
-
     }
 
     if (gDP.changed & CHANGED_CONVERT)
@@ -766,7 +766,7 @@ void OGL_UpdateStates()
 
             if (gDP.otherMode.depthMode == ZMODE_DEC)
                 glEnable(GL_POLYGON_OFFSET_FILL);
-           else
+            else
                 glDisable(GL_POLYGON_OFFSET_FILL);
         }
         else
@@ -1287,7 +1287,12 @@ void OGL_UpdateFrameTime()
 {
     unsigned ticks = ticksGetTicks();
     static unsigned lastFrameTicks = 0;
-    for(int i = OGL_FRAMETIME_NUM-1; i > 0; i--) OGL.frameTime[i] = OGL.frameTime[i-1];
+    
+    for(int i = OGL_FRAMETIME_NUM-1; i > 0; i--) 
+    {
+        OGL.frameTime[i] = OGL.frameTime[i-1];
+    }
+    
     OGL.frameTime[0] = ticks - lastFrameTicks;
     lastFrameTicks = ticks;
 }
@@ -1395,7 +1400,10 @@ void OGL_SwapBuffers()
 
         glBindFramebuffer(GL_FRAMEBUFFER, OGL.framebuffer.fb);
         OGL_UpdateViewport();
-        if (scProgramCurrent) glUseProgram(scProgramCurrent->program);
+        
+        if (scProgramCurrent)
+            glUseProgram(scProgramCurrent->program);
+        
         OGL.renderState = RS_NONE;
     }
     else
