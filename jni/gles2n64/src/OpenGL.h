@@ -76,7 +76,6 @@ struct GLInfo
 {
 #ifdef USE_SDL
 // TODO: More EGL stuff, need to do this in Java
-    SDL_Surface *hScreen;  // TODO: Do we really need this?  Only using it in one place AFAICT..
 /*
     struct
     {
@@ -95,7 +94,9 @@ struct GLInfo
 
     struct
     {
-        GLuint fb,depth_buffer, color_buffer;
+        GLuint fb;
+        GLuint depth_buffer;
+        GLuint color_buffer;
     } framebuffer;
 
 
@@ -105,8 +106,8 @@ struct GLInfo
 
     int     frame_vsync, frame_actual, frame_dl;
     int     frame_prevdl;
-    int     mustRenderDlist;
-    int     renderingToTexture;
+    bool    mustRenderDlist;
+    bool    renderingToTexture;
 
 
     GLint   defaultProgram;

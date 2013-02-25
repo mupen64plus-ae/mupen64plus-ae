@@ -327,7 +327,8 @@ else
     bitsPP = 16;
 ////
 
-    if (!(OGL.hScreen = SDL_SetVideoMode( videoInfo->current_w, videoInfo->current_h, bitsPP, SDL_HWSURFACE )))
+    SDL_Surface *hScreen = SDL_SetVideoMode( videoInfo->current_w, videoInfo->current_h, bitsPP, SDL_HWSURFACE );
+    if (hScreen == NULL)
     {
         LOG(LOG_ERROR, "Problem setting videomode %dx%d: %s\n", videoInfo->current_w, videoInfo->current_h, SDL_GetError() );
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
@@ -992,7 +993,8 @@ void OGL_DrawTriangles()
 
 void OGL_DrawLine(int v0, int v1, float width )
 {
-    if (OGL.renderingToTexture && config.ignoreOffscreenRendering) return;
+    if (OGL.renderingToTexture && config.ignoreOffscreenRendering)
+        return;
 
     if ((config.updateMode == SCREEN_UPDATE_AT_1ST_PRIMITIVE) && OGL.screenUpdate)
         OGL_SwapBuffers();
@@ -1026,7 +1028,8 @@ void OGL_DrawLine(int v0, int v1, float width )
 
 void OGL_DrawRect( int ulx, int uly, int lrx, int lry, float *color)
 {
-    if (OGL.renderingToTexture && config.ignoreOffscreenRendering) return;
+    if (OGL.renderingToTexture && config.ignoreOffscreenRendering)
+        return;
 
     if ((config.updateMode == SCREEN_UPDATE_AT_1ST_PRIMITIVE) && OGL.screenUpdate)
         OGL_SwapBuffers();
@@ -1084,7 +1087,8 @@ void OGL_DrawTexturedRect( float ulx, float uly, float lrx, float lry, float uls
         }
     }
 
-    if (OGL.renderingToTexture && config.ignoreOffscreenRendering) return;
+    if (OGL.renderingToTexture && config.ignoreOffscreenRendering)
+        return;
 
     if ((config.updateMode == SCREEN_UPDATE_AT_1ST_PRIMITIVE) && OGL.screenUpdate)
         OGL_SwapBuffers();
@@ -1224,7 +1228,8 @@ void OGL_DrawTexturedRect( float ulx, float uly, float lrx, float lry, float uls
 
 void OGL_ClearDepthBuffer()
 {
-    if (OGL.renderingToTexture && config.ignoreOffscreenRendering) return;
+    if (OGL.renderingToTexture && config.ignoreOffscreenRendering)
+        return;
 
     if ((config.updateMode == SCREEN_UPDATE_AT_1ST_PRIMITIVE) && OGL.screenUpdate)
         OGL_SwapBuffers();
@@ -1246,7 +1251,8 @@ void OGL_ClearDepthBuffer()
 
 void OGL_ClearColorBuffer( float *color )
 {
-    if (OGL.renderingToTexture && config.ignoreOffscreenRendering) return;
+    if (OGL.renderingToTexture && config.ignoreOffscreenRendering)
+        return;
 
     if ((config.updateMode == SCREEN_UPDATE_AT_1ST_PRIMITIVE) && OGL.screenUpdate)
         OGL_SwapBuffers();

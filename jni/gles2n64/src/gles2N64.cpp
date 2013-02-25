@@ -231,7 +231,8 @@ EXPORT void CALL UpdateScreen (void)
     frameSkipper.update();
 
     //has there been any display lists since last update
-    if (OGL.frame_prevdl == OGL.frame_dl) return;
+    if (OGL.frame_prevdl == OGL.frame_dl) 
+        return;
 
     OGL.frame_prevdl = OGL.frame_dl;
 
@@ -239,7 +240,7 @@ EXPORT void CALL UpdateScreen (void)
 
     if (OGL.mustRenderDlist)
     {
-        OGL.screenUpdate=true;
+        OGL.screenUpdate = true;
         VI_UpdateScreen();
         OGL.mustRenderDlist = false;
     }
