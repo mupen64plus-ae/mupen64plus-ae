@@ -327,31 +327,39 @@ void __texture_format_ci(int size, int format, TextureFormat *texFormat)
 
 void __texture_format(int size, int format, TextureFormat *texFormat)
 {
-    if (format == G_IM_FMT_RGBA)
+    switch (format)
     {
-        __texture_format_rgba(size, format, texFormat);
-    }
-    else if (format == G_IM_FMT_YUV)
-    {
-        *texFormat = textureFormat[size*6 + G_IM_FMT_YUV];
-    }
-    else if (format == G_IM_FMT_CI)
-    {
-        __texture_format_ci(size, format, texFormat);
-    }
-    else if (format == G_IM_FMT_IA)
-    {
-        if (gDP.otherMode.textureLUT != G_TT_NONE)
+        case G_IM_FMT_RGBA:
+            __texture_format_rgba(size, format, texFormat);
+            break;
+            
+        case G_IM_FMT_YUV:
+            *texFormat = textureFormat[size*6 + G_IM_FMT_YUV];
+            break;
+            
+        case G_IM_FMT_CI:
             __texture_format_ci(size, format, texFormat);
-        else
-            *texFormat = textureFormat[size*6 + G_IM_FMT_IA];
-    }
-    else if (format == G_IM_FMT_I)
-    {
-        if (gDP.otherMode.textureLUT == G_TT_NONE)
-            *texFormat = textureFormat[size*6 + G_IM_FMT_I];
-        else
-            __texture_format_ci(size, format, texFormat);
+            break;
+            
+        case G_IM_FMT_IA:
+        {
+            if (gDP.otherMode.textureLUT != G_TT_NONE)
+                __texture_format_ci(size, format, texFormat);
+            else
+                *texFormat = textureFormat[size*6 + G_IM_FMT_IA];
+            
+            break;
+        }
+        
+        case G_IM_FMT_I:
+        {
+            if (gDP.otherMode.textureLUT == G_TT_NONE)
+                *texFormat = textureFormat[size*6 + G_IM_FMT_I];
+            else
+                __texture_format_ci(size, format, texFormat);
+            
+            break;
+        }
     }
 }
 
@@ -441,7 +449,9 @@ bool TextureCache_Verify()
         i++;
         current = current->lower;
     }
-    if (i != cache.numCached) return false;
+    
+    if (i != cache.numCached) 
+        return false;
 
     i = 0;
     current = cache.bottom;
@@ -450,7 +460,9 @@ bool TextureCache_Verify()
         i++;
         current = current->higher;
     }
-    if (i != cache.numCached) return false;
+    
+    if (i != cache.numCached)
+        return false;
 
     return true;
 }
