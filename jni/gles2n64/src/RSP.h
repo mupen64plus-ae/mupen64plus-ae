@@ -19,7 +19,17 @@
 
 typedef struct
 {
-    u32 PC[18], PCi, busy, halt, close, DList, uc_start, uc_dstart, cmd, nextCmd, count;
+    u32 PC[18];
+    u32 PCi;
+    u32 close;
+    u32 DList;
+    u32 uc_start;
+    u32 uc_dstart;
+    u32 cmd;
+    u32 nextCmd;
+    u32 count;
+    bool busy;
+    bool halt;
 } RSPInfo;
 
 extern RSPInfo RSP;

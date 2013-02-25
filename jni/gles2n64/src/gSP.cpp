@@ -45,8 +45,11 @@ void __indexmap_init()
 void __indexmap_clear()
 {
     memset(OGL.triangles.indexmapinv, 0xFF, VERTBUFF_SIZE * sizeof(u32));
+    
     for(int i=0;i<INDEXMAP_SIZE;i++)
+    {
         OGL.triangles.indexmapinv[OGL.triangles.indexmap[i]] = i;
+    }
 }
 
 u32 __indexmap_findunused(u32 num)
@@ -54,6 +57,7 @@ u32 __indexmap_findunused(u32 num)
     u32 c = 0;
     u32 i = min(OGL.triangles.indexmap_prev+1, VERTBUFF_SIZE-1);
     u32 n = 0;
+    
     while(n < VERTBUFF_SIZE)
     {
         c = (OGL.triangles.indexmapinv[i] == 0xFFFFFFFF) ? (c+1) : 0;
@@ -65,6 +69,7 @@ u32 __indexmap_findunused(u32 num)
         if (i >= VERTBUFF_SIZE) {i=0; c=0;}
         n++;
     }
+    
     return (c == num) ? (i-num+1) : (0xFFFFFFFF);
 }
 
@@ -98,7 +103,6 @@ u32 __indexmap_getnew(u32 index, u32 num)
             unmapped = 0;
             break;
         }
-
     }
 
     if (unmapped)
@@ -224,8 +228,8 @@ f32 identityMatrix[4][4] =
 static void gSPTransformVertex4_default(u32 v, float mtx[4][4])
 {
     float x, y, z, w;
-    int i;
-    for(i = 0; i < 4; i++)
+
+    for(int i = 0; i < 4; i++)
     {
         x = OGL.triangles.vertices[v+i].x;
         y = OGL.triangles.vertices[v+i].y;
@@ -240,8 +244,8 @@ static void gSPTransformVertex4_default(u32 v, float mtx[4][4])
 
 void gSPClipVertex4(u32 v)
 {
-    int i;
-    for(i = 0; i < 4; i++){
+    for(int i = 0; i < 4; i++)
+    {
         SPVertex *vtx = &OGL.triangles.vertices[v+i];
         vtx->clip = 0;
         if (vtx->x > +vtx->w)   vtx->clip |= CLIP_POSX;
@@ -254,8 +258,9 @@ void gSPClipVertex4(u32 v)
 static void gSPTransformNormal4_default(u32 v, float mtx[4][4])
 {
     float len, x, y, z;
-    int i;
-    for(i = 0; i < 4; i++){
+
+    for(int i = 0; i < 4; i++)
+    {
         x = OGL.triangles.vertices[v+i].nx;
         y = OGL.triangles.vertices[v+i].ny;
         z = OGL.triangles.vertices[v+i].nz;
@@ -1240,7 +1245,7 @@ void gSPCullDisplayList( u32 v0, u32 vn )
             RSP.PCi--;
         else
         {
-            RSP.halt = TRUE;
+            RSP.halt = true;
         }
     }
 }
@@ -1413,7 +1418,7 @@ void gSPEndDisplayList()
         RSP.PCi--;
     else
     {
-        RSP.halt = TRUE;
+        RSP.halt = true;
     }
 
 #ifdef __TRIBUFFER_OPT

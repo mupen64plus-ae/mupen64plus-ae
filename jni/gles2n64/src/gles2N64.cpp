@@ -166,7 +166,7 @@ EXPORT void CALL ProcessDList(void)
             {
                 OGL.consecutiveSkips++;
                 OGL.frameSkipped++;
-                RSP.busy = FALSE;
+                RSP.busy = false;
                 RSP.DList++;
 
                 /* avoid hang on frameskip */
@@ -181,7 +181,7 @@ EXPORT void CALL ProcessDList(void)
     else if (frameSkipper.willSkipNext())
     {
         OGL.frameSkipped++;
-        RSP.busy = FALSE;
+        RSP.busy = false;
         RSP.DList++;
 
         /* avoid hang on frameskip */

@@ -46,8 +46,8 @@ void RSP_ProcessDList()
     RSP.PCi = 0;
     RSP.count = 0;
 
-    RSP.halt = FALSE;
-    RSP.busy = TRUE;
+    RSP.halt = false;
+    RSP.busy = true;
 
 #ifdef __TRIBUFFER_OPT
     __indexmap_clear();
@@ -130,7 +130,7 @@ void RSP_ProcessDList()
         if ((RSP.DList%PRINT_DISPLAYLIST_NUM) == 0) LOG(LOG_VERBOSE, "END DISPLAY LIST %i \n", RSP.DList);
 #endif
 
-    RSP.busy = FALSE;
+    RSP.busy = false;
     RSP.DList++;
     gSP.changed |= CHANGED_COLORBUFFER;
 }
