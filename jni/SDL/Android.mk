@@ -63,6 +63,7 @@ endif
 
 
 LOCAL_CFLAGS += -O3 -ffast-math -frename-registers -fomit-frame-pointer -fsingle-precision-constant -fpredictive-commoning -fvisibility=hidden
+LOCAL_CFLAGS += -Wno-psabi
 LOCAL_LDFLAGS += -Wl,-Bsymbolic
 
 include $(BUILD_SHARED_LIBRARY)
