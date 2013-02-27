@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--
     ***********************************************************************************
     RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
@@ -19,11 +19,9 @@
     ***********************************************************************************
 -->
 <resources>
-
     <!-- ************************************************************************** -->
     <!-- Menu Strings -->
     <!-- ************************************************************************** -->
-
     <!-- In-Game Menu -->
     <string name="menuItem_toggleSpeed">Speed %1$d %%</string>
     <string name="menuItem_slotSave">Save slot</string>
@@ -34,7 +32,6 @@
     <string name="menuItem_setSpeed">Game speed</string>
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
-
     <!-- Input Mapping Activity -->
     <string name="menuItem_profiles">Profiles</string>
     <string name="menuItem_default">Default</string>
@@ -48,12 +45,10 @@
     <string name="menuItem_specialVisibility_hide">Hide special functions</string>
     <string name="menuItem_axisInfo">Analog info</string>
     <string name="menuItem_unmapAll">Unmap all</string>
-
     <!-- ************************************************************************** -->
     <!-- Toast Messages                                                             -->
     <!-- Developers: Follow punctuation and grammar as shown below                  -->
     <!-- ************************************************************************** -->
-
     <!-- Something happening (typically use '-ing' and '…') -->
     <string name="toast_rebuildingCheats">Rebuilding cheats database…</string>
     <string name="toast_launchingEmulator">Launching emulator…</string>
@@ -64,7 +59,6 @@
     <string name="toast_loadingFile">Loading %1$s…</string>
     <string name="toast_savingFile">Saving %1$s…</string>
     <string name="toast_overwritingFile">Overwriting %1$s…</string>
-
     <!-- Something happened (use '.') -->
     <string name="toast_usingSlot">Now using slot %1$d.</string>
     <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
@@ -73,13 +67,11 @@
     <string name="toast_migrateSlotSavesNotFound">No files to copy.</string>
     <string name="toast_migrateSlotSavesSuccess">Migration succeeded.</string>
     <string name="toast_crashReportSent">Report sent.</string>
-    
     <!-- ************************************************************************** -->
     <!-- Preference Menu Strings                                                    -->
     <!-- Developers: Please follow naming conventions described in preferences.xml  -->
     <!-- Developers: In general, capitalize first word only and avoid punctuation   -->
     <!-- ************************************************************************** -->
-
     <!-- Actions (simply launch an action, aren't related to persistent data) -->
     <string name="actionPlay_title">Play</string>
     <string name="actionResume_title">Resume</string>
@@ -109,7 +101,6 @@
     <string name="actionAbout_message">Version: %1$s\nVersion code: %2$d</string>
     <string name="actionAbout_credits">Credits</string>
     <string name="actionAbout_changelog">Changelog</string>
-
     <!-- Preference Screens -->
     <string name="screenSettings_title">Settings</string>
     <string name="screenInput_title">Input</string>
@@ -126,7 +117,6 @@
     <string name="screenPlugin_summary">Core settings</string>
     <string name="screenAdvanced_title">Advanced</string>
     <string name="screenAdvanced_summary">Storage and debug settings</string>
-
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Cheat options (long-press for notes)</string>
     <string name="categoryHardware_title">Hardware</string>
@@ -140,7 +130,6 @@
     <string name="categoryDiagnostics_title">Diagnostics</string>
     <string name="categoryData_title">Data</string>
     <string name="categoryCrashReports_title">Crash reports</string>
-
     <!-- Checkbox Preferences -->
     <string name="playShowCheats_title">Enable cheats</string>
     <string name="playShowCheats_summary">Menu loading is slower when enabled</string>
@@ -182,51 +171,45 @@
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
-
     <!-- List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue") -->
     <string name="touchscreenAutoHold_title">Button auto-hold</string>
     <string name="touchscreenAutoHold_entryDisabled">Disabled</string>
     <string name="touchscreenAutoHold_entryLongPress">On long-press</string>
     <string name="touchscreenAutoHold_entrySlideOut">On slide-off</string>
     <string name="touchscreenAutoHoldables_title">Holdable buttons</string>
-    
     <string name="touchscreenRefresh_title">Joystick animation</string>
     <string name="touchscreenRefresh_entryNever">Never</string>
     <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
     <string name="touchscreenRefresh_entryFrequently">Frequently</string>
-    
     <string name="touchscreenLayout_title">Touchscreen layout</string>
     <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
     <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>
     <string name="touchscreenLayout_entryAll">Both (by roymustang16)</string>
     <string name="touchscreenLayout_entryCustom">Custom (see http://tinyurl.com/984ofyo)</string>
-    
+    <string name="touchscreenStyle_title">Touchscreen style</string>
+    <string name="touchscreenStyle_entryOutline">Outlines</string>
+    <string name="touchscreenStyle_entryShaded">Shaded</string>
     <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenSize_entryTiny">Tiny</string>
     <string name="touchscreenSize_entrySmall">Small</string>
     <string name="touchscreenSize_entryNormal">Normal</string>
     <string name="touchscreenSize_entryTablet">Tablet</string>
-    
     <string name="touchpadLayout_title">Touchpad layout</string>
     <string name="touchpadLayout_entryDefault">Left pad: Analog control; Right pad: C buttons</string>
     <string name="touchpadLayout_entryReverse">Left pad: C buttons; Right pad: Analog control</string>
-    
     <string name="videoOrientation_title">Screen orientation</string>
     <string name="videoOrientation_entryLandscape">Landscape</string>
     <string name="videoOrientation_entryReverseLandscape">Reverse landscape</string>
     <string name="videoOrientation_entryPortrait">Portrait</string>
     <string name="videoOrientation_entryReversePortrait">Reverse portrait</string>
-    
-    <string name="videoPosition_title">Portrait screen position</string> 	
-    <string name="videoPosition_entryBottom">Bottom</string>  	
-    <string name="videoPosition_entryMiddle">Middle</string> 	
+    <string name="videoPosition_title">Portrait screen position</string>
+    <string name="videoPosition_entryBottom">Bottom</string>
+    <string name="videoPosition_entryMiddle">Middle</string>
     <string name="videoPosition_entryTop">Top</string>
-    
     <string name="videoFpsRefresh_title">Display framerate</string>
     <string name="videoFpsRefresh_entryNever">Never</string>
     <string name="videoFpsRefresh_entryOccasionally">Occasionally</string>
     <string name="videoFpsRefresh_entryFrequently">Frequently</string>
-    
     <string name="videoHardwareType_title">Flicker reduction</string>
     <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
     <string name="videoHardwareType_entryStandard">Standard profile</string>
@@ -235,7 +218,6 @@
     <string name="videoHardwareType_entryO2">O-2 profile</string>
     <string name="videoHardwareType_entryQ">Q profile</string>
     <string name="videoHardwareType_entryT">T profile</string>
-    
     <string name="gles2N64Frameskip_title">Frameskip</string>
     <string name="gles2N64Frameskip_entryNever">Never skip frames</string>
     <string name="gles2N64Frameskip_entryUpTo1">No more than 1 frame</string>
@@ -248,13 +230,11 @@
     <string name="gles2N64Frameskip_entryExactly3">Exactly 3 frames</string>
     <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
-    
     <string name="gles2RiceMipmapping_title">Mipmapping</string>
     <string name="gles2RiceMipmapping_entryNone">None</string>
     <string name="gles2RiceMipmapping_entryNearest">Nearest</string>
     <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
     <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
-    
     <string name="gles2RiceTextureEnhancement_title">Texture upscaling/enhancement</string>
     <string name="gles2RiceTextureEnhancement_entryNone">None</string>
     <string name="gles2RiceTextureEnhancement_entryScale2x">Scale 2x</string>
@@ -264,7 +244,6 @@
     <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
     <string name="gles2RiceTextureEnhancement_entrySharpen">Sharpen</string>
     <string name="gles2RiceTextureEnhancement_entrySharpen_more">Sharpen more</string>
-    
     <string name="audioResampleAlg_title">Resampling algorithm</string>
     <string name="audioResampleAlg_entryTrivial">Trivial</string>
     <string name="audioResampleAlg_entryLinear">Linear interpolation</string>
@@ -272,7 +251,6 @@
     <string name="audioResampleAlg_entrySincFastest">Sinc (fastest)</string>
     <string name="audioResampleAlg_entrySincMedium">Sinc (medium)</string>
     <string name="audioResampleAlg_entrySincBest">Sinc (best)</string>
-    
     <string name="pluginVideo_title">Video</string>
     <string name="pluginVideo_entryNone">None (video disabled)</string>
     <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
@@ -289,31 +267,25 @@
     <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
     <string name="pluginCore_title">Emulation core</string>
     <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
-    
     <string name="r4300Emulator_title">R4300 emulator</string>
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
-    
     <string name="navigationMode_title">Accessibility</string>
     <string name="navigationMode_summary">Menu navigation mode: %1$s</string>
     <string name="navigationMode_entryAuto">Auto-select from device configuration</string>
     <string name="navigationMode_entryStandard">Standard mode</string>
     <string name="navigationMode_entryOuya">OUYA mode (no touchscreen; gamepad input only)</string>
-    
     <string name="localeOverride_title">Language</string>
     <string name="localeOverride_entrySystemDefault">System default</string>
-
     <!-- ACRA Preferences (key names must not be changed) -->
     <string name="acraEnable_title">Enable crash reporting</string>
     <string name="acraEnable_summary">No personal information is collected</string>
     <string name="acraUserEmail_title">Contact info</string>
     <string name="acraUserEmail_summary">Your paulscode.com username (optional)</string>
-
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
     <string name="touchscreenTransparency_title">Touchscreen opacity</string>
     <string name="videoActionBarTransparency_title">Action bar opacity</string>
-
     <!-- Path Preferences (selected path will become the summary) -->
     <!-- '~' indicates rel path & use storage dir if path doesn't exist -->
     <!-- '!' indicates rel path & create parent dirs if path doesn't exist -->
@@ -327,24 +299,20 @@
     <string name="pathHiResTextures_default">~</string>
     <string name="pathGameSaves_title">Game save folder</string>
     <string name="pathGameSaves_default">!mupen64plus</string>
-
     <!-- Player Map Preferences -->
     <string name="playerMap_title">Multi-player</string>
     <string name="playerMap_summary">Define each player\'s controller(s)</string>
-
     <!-- Input Map Preferences -->
     <string name="inputMap1_title">Controller</string>
     <string name="inputMap2_title">Player 2</string>
     <string name="inputMap3_title">Player 3</string>
     <string name="inputMap4_title">Player 4</string>
     <string name="inputMap_summary">Button and special function mapping</string>
-
     <!-- ************************************************************************** -->
     <!-- Dialogs and Other Feedback                                                 -->
     <!-- Developers: Use formatting arguments rather than string concatenation:     -->
     <!-- http://developer.android.com/guide/topics/resources/string-resource.html   -->
     <!-- ************************************************************************** -->
-
     <!-- Confirmation Dialogs -->
     <string name="confirm_title">Confirmation</string>
     <string name="confirmResetGame_message">Reset game? All progress since your last save will be lost.</string>
@@ -352,20 +320,16 @@
     <string name="confirmLoadProfile_message">Load profile \"%1$s\" for %2$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
     <string name="confirmMigrateSlotSaves_message">Are you sure you want to copy your old slot saves? Backups will be made if necessary.</string>
-
     <!-- Change Log -->
     <string name="changeLog_dialogTitle">Change log</string>
-
     <!-- Text Editor Hints (start lower-case) -->
     <string name="hintFileSave">filename</string>
     <string name="hintSetSpeed">speed between 10 to 300</string>
-
     <!-- Asset Extractor -->
     <string name="assetExtractor_initializing">Initializing</string>
     <string name="assetExtractor_progress">%1$.0f%% done: %2$s</string>
     <string name="assetExtractor_finished">Finished</string>
     <string name="assetExtractor_failed">Error extracting app data.\nPlease unplug USB cable, reboot device, and re-launch app.\nFor help, please visit %1$s.</string>
-
     <!-- Cheats Configuration -->
     <string name="cheats_defaultName">Cheat %1$d</string>
     <string name="cheats_longPress">(long-press for full text)</string>
@@ -373,19 +337,15 @@
     <string name="cheatOption_title">Full text</string>
     <string name="cheatNotes_title">Notes</string>
     <string name="cheatNotes_none">(no notes available for this cheat)</string>
-    
     <!-- Hi-Res Texture Unpacking -->
     <string name="pathHiResTexturesPath_title">Select a texture pack (ZIP format)</string>
     <string name="pathHiResTexturesTask_title">Unpacking textures</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
-
     <!-- Seek Bar Preference -->
     <string name="seekBarPreference_summary">%1$d %2$s</string>
-
     <!-- Path Preference -->
     <string name="pathPreference_parentFolder">Parent folder</string>
-
     <!-- Player Mapping -->
     <string name="playerMap_deviceWithName">Device %1$d (%2$s)</string>
     <string name="playerMap_deviceWithoutName">Device %1$d</string>
@@ -394,7 +354,6 @@
     <string name="playerMapPreference_popupUnmap">Unmap</string>
     <string name="playerMapPreference_button">Player %1$d\n%2$s</string>
     <string name="playerMapPreference_reminder">Remind me whenever players are not mapped</string>
-
     <!-- Input Mapping -->
     <string name="inputMapActivity_popupMessage">Press a button, key, or joystick to map…\n\nCurrent mappings:\n%1$s</string>
     <string name="inputMapActivity_popupUnmap">Unmap</string>
@@ -419,8 +378,10 @@
     <string name="inputMapActivity_btnAL">Analog ←</string>
     <string name="inputMapActivity_btnAD">Analog ↓</string>
     <string name="inputMapActivity_btnAU">Analog ↑</string>
-    <string name="inputMapActivity_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
-    <string name="inputMapActivity_mempak">Expansion Pak</string> <!-- capitalize since trademark -->
+    <string name="inputMapActivity_rumble">Rumble Pak</string>
+    <!-- capitalize since trademark -->
+    <string name="inputMapActivity_mempak">Expansion Pak</string>
+    <!-- capitalize since trademark -->
     <string name="inputMapActivity_incrementSlot">Increment slot</string>
     <string name="inputMapActivity_reset">Reset</string>
     <string name="inputMapActivity_pause">Pause</string>
@@ -432,9 +393,7 @@
     <string name="inputMapActivity_gameshark">Gameshark</string>
     <string name="inputMapActivity_simulateBack">Back key</string>
     <string name="inputMapActivity_simulateMenu">Menu key</string>
-
     <!-- Controller Diagnostics -->
     <string name="diagnosticActivity_textKey_text">Press button or key…</string>
     <string name="diagnosticActivity_textMotion_text">Touch screen or joystick…</string>
-
 </resources>

@@ -144,8 +144,11 @@ public class UserPrefs
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
     
-    /** The filename of the selected touchscreen layout. */
+    /** The folder name of the selected touchscreen layout. */
     public final String touchscreenLayout;
+    
+    /** The folder name of the selected touchscreen style. */
+    public final String touchscreenStyle;
     
     /** True if a custom touchscreen is provided. */
     public final boolean isTouchscreenCustom;
@@ -471,6 +474,13 @@ public class UserPrefs
         }
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
+        
+        // Determine the touchscreen style
+        folder = "";
+        if( inputPlugin.enabled && isTouchscreenEnabled && !isCustom ) {
+            folder = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
+        }
+        touchscreenStyle = folder;
         
         // Determine which players are "plugged in"
         isPlugged1 = isInputEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;

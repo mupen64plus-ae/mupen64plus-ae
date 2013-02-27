@@ -96,13 +96,15 @@ public class VisibleTouchMap extends TouchMap
      * @param resources The resources of the activity associated with this touch map.
      * @param fpsEnabled True to display the FPS indicator.
      * @param fontsDir The directory containing the FPS font resources.
+     * @param imageDir The directory containing the button images.
      * @param alpha The opacity of the visible elements.
      */
-    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, int alpha )
+    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, String imageDir, int alpha )
     {
         super( resources );
         mFpsEnabled = fpsEnabled;
         mFontsDir = fontsDir;
+        imageFolder = imageDir;
         mFpsDigits = new ArrayList<Image>();
         mNumerals = new Image[10];
         autoHoldImages = new Image[BUTTON_STRING_MAP.size()];
@@ -487,7 +489,7 @@ public class VisibleTouchMap extends TouchMap
         // Refresh rate (in frames.. integer greater than 1)
         mFpsRecalcPeriod = SafeMethods.toInt( section.get( "rate" ), 15 );
         
-        // Minimum size to the FPS indicator can be scaled
+        // Minimum factor the FPS indicator can be scaled by
         mFpsMinScale = SafeMethods.toFloat( section.get( "minPixels" ), 0 ) / (float) mFpsFrame.width;
         
         // Need at least 2 frames to calculate FPS

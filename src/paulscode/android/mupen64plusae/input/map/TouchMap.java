@@ -342,8 +342,10 @@ public class TouchMap
         // Load the configuration file (pad.ini)
         ConfigFile pad_ini = new ConfigFile( directory + "/pad.ini" );
         
-        // Look up the image folder (if provided)
-        imageFolder = pad_ini.get( "INFO", "images" );
+        // If a style wasn't chosen, check if an image folder is listed in pad.ini
+        if( TextUtils.isEmpty( imageFolder ) )
+            imageFolder = pad_ini.get( "INFO", "images" );
+        // If no image folder was provided, use the layout directory
         if( TextUtils.isEmpty( imageFolder ) )
             imageFolder = directory;
         else

@@ -141,6 +141,14 @@
                                 android:summary="@string/selectedValue"
                                 android:title="@string/touchscreenLayout_title" />
                             <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenStyle_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenStyle_entries"
+                                android:entryValues="@array/touchscreenStyle_values"
+                                android:key="touchscreenStyle"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenStyle_title" />
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                                 android:defaultValue="@string/touchscreenSize_default"
                                 android:dependency="touchscreenEnabled"
                                 android:entries="@array/touchscreenSize_entries"
