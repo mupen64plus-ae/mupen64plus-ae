@@ -63,6 +63,9 @@ public class VisibleTouchMap extends TouchMap
     /** The current FPS value. */
     private int mFpsValue;
     
+    /** The minimum size to scale the FPS indicator. */
+    private float mFpsMinScale;
+    
     /** True if the FPS indicator should be drawn. */
     private final boolean mFpsEnabled;
     
@@ -144,17 +147,22 @@ public class VisibleTouchMap extends TouchMap
     public void resize( int w, int h, DisplayMetrics metrics )
     {
         scale = 1.0f;
-        if( pixelWidth > 0 && inchWidth > 0 && metrics != null )
+        
+        if( metrics != null )
         {
             // TODO: Consider portrait modes
-            float screenInches = metrics.widthPixels / metrics.xdpi;
-            
-            scale = (float) metrics.widthPixels / (float) pixelWidth;
-            float inchScale = inchWidth / screenInches;
-            // Scale down if screen is physically larger
-            if( inchScale < 1 )
-                scale *= inchScale;
+            if( targetPixels > 0 )
+                scale = (float) metrics.widthPixels / (float) targetPixels;
+
+            if( maxInches > 0.0f )
+            {
+                float inchScale = maxInches / ( (float) metrics.widthPixels / (float) metrics.xdpi );
+                // Don't allow controls to exceeded the maximum physical size
+                if( inchScale < 1.0f )
+                    scale *= inchScale;
+            }
         }
+        
         resize( w, h );
     }
     
@@ -191,14 +199,23 @@ public class VisibleTouchMap extends TouchMap
         }
         
         // Compute FPS frame location
+        float fpsScale = scale;
+        if( mFpsMinScale > scale )
+            fpsScale = mFpsMinScale;
         if( mFpsFrame != null )
         {
+            
             int cX = (int) ( w * ( mFpsFrameX / 100f ) );
             int cY = (int) ( h * ( mFpsFrameY / 100f ) );
-            mFpsFrame.setScale( scale );
+            mFpsFrame.setScale( fpsScale );
             mFpsFrame.fitCenter( cX, cY, w, h );
         }
-        
+        if( mNumerals != null )
+        {
+            for( int i = 0; i < mNumerals.length; i++ )
+                mNumerals[i].setScale( fpsScale );
+        }
+
         // Compute the FPS digit locations
         refreshFpsPositions();
     }
@@ -382,23 +399,23 @@ public class VisibleTouchMap extends TouchMap
         int y = 0;
         if( mFpsFrame != null )
         {
-            x = mFpsFrame.x + (int) ( mFpsFrame.width * ( mFpsTextX / 100f ) );
-            y = mFpsFrame.y + (int) ( mFpsFrame.height * ( mFpsTextY / 100f ) );
+            x = mFpsFrame.x + (int) ( ( mFpsFrame.width * mFpsFrame.scale ) * ( mFpsTextX / 100f ) );
+            y = mFpsFrame.y + (int) ( ( mFpsFrame.height * mFpsFrame.scale ) * ( mFpsTextY / 100f ) );
         }
         
         // Compute the width of the FPS text
         int totalWidth = 0;
         for( Image digit : mFpsDigits )
-            totalWidth += digit.width;
+            totalWidth += (int) ( digit.width * digit.scale );
         
         // Compute the starting position of the FPS text
-        x = x - (int) ( totalWidth / 2f );
+        x -= (int) ( totalWidth / 2f );
         
         // Compute the position of each digit
         for( Image digit : mFpsDigits )
         {
-            digit.setPos( x, y - digit.hHeight );
-            x += digit.width;
+            digit.setPos( x, y - (int) ( digit.hHeight * digit.scale ) );
+            x += (int) ( digit.width * digit.scale );
         }
     }
     
@@ -469,6 +486,9 @@ public class VisibleTouchMap extends TouchMap
         
         // Refresh rate (in frames.. integer greater than 1)
         mFpsRecalcPeriod = SafeMethods.toInt( section.get( "rate" ), 15 );
+        
+        // Minimum size to the FPS indicator can be scaled
+        mFpsMinScale = SafeMethods.toFloat( section.get( "minPixels" ), 0 ) / (float) mFpsFrame.width;
         
         // Need at least 2 frames to calculate FPS
         if( mFpsRecalcPeriod < 2 )

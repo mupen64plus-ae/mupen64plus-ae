@@ -68,10 +68,10 @@ public class TouchMap
     protected String imageFolder;
     
     /** Target width in pixels (if provided). */
-    protected int pixelWidth = 0;
+    protected int targetPixels = 0;
     
-    /** Target width in inches (if provided). */
-    protected float inchWidth = 0;
+    /** Maximum width in inches (if provided). */
+    protected float maxInches = 0;
     
     /** Scaling factor to apply to images. */
     protected float scale = 1.0f;
@@ -349,8 +349,8 @@ public class TouchMap
         else
             imageFolder = directory + "/../../images/" + imageFolder;  // TODO: Get rid of the ..'s
         
-        pixelWidth = SafeMethods.toInt( pad_ini.get( "INFO", "pixelWidth" ), 0 );
-        inchWidth = SafeMethods.toFloat( pad_ini.get( "INFO", "inchWidth" ), 0 );
+        targetPixels = SafeMethods.toInt( pad_ini.get( "INFO", "targetPixels" ), 0 );
+        maxInches = SafeMethods.toFloat( pad_ini.get( "INFO", "maxInches" ), 0 );
         
         // Look up the mask colors
         loadMaskColors( pad_ini );
