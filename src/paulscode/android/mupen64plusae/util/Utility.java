@@ -51,6 +51,7 @@ import android.view.View;
  */
 public class Utility
 {
+    public static final float MINIMUM_TABLET_SIZE = 6.5f;
     /**
      * Clamps an integer value to the limit defined by min and max.
      * 

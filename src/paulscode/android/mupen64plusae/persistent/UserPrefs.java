@@ -34,12 +34,15 @@ import org.apache.commons.lang.WordUtils;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 
 /**
@@ -463,8 +466,24 @@ public class UserPrefs
                 else if( layout.equals( "Mupen64Plus-AE-All" ) && touchscreenRefresh == 0 )
                 	layout = "Mupen64Plus-AE-All-Touch";
                 
+                // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
+                if( context != null && context instanceof Activity )
+                {
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
+                    float screenWidthInches = (float) metrics.widthPixels / (float) metrics.xdpi;
+                    float screenHeightInches = (float) metrics.heightPixels / (float) metrics.ydpi;
+                    float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
+                    if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE ||
+                        videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                        videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
+                    {
+                        layout += "-Tablet";
+                    }
+                }
+                
                 folder = appData.touchscreenLayoutsDir + layout
-                        + mPreferences.getString( "touchscreenSize", "" );
+                        + mPreferences.getString( "touchscreenSize", "" );                
             }
         }
         else if( isFpsEnabled )
