@@ -210,7 +210,7 @@ public class PeripheralController extends AbstractController implements
                 case InputMap.FUNC_PAUSE:
                     Log.v( "PeripheralController", "FUNC_PAUSE" );
                     if( doPause )
-                        CoreInterface.pauseEmulator();
+                        CoreInterface.pauseEmulator( false );
                     else
                         CoreInterface.resumeEmulator();
                     doPause = !doPause;

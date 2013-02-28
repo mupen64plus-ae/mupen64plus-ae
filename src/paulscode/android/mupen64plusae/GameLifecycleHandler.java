@@ -206,7 +206,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
     
     public void onPause()
     {
-        CoreInterface.pauseEmulator();
+        CoreInterface.pauseEmulator( true );
     }
     
     @Override

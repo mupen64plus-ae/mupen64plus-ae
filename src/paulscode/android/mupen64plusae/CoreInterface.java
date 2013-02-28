@@ -183,7 +183,7 @@ public class CoreInterface
         if( sCoreThread != null )
         {
             // Pause and auto-save state
-            pauseEmulator();
+            pauseEmulator( true );
             
             // Tell the core to quit
             CoreInterfaceNative.quit();
@@ -212,15 +212,18 @@ public class CoreInterface
         }
     }
     
-    public static void pauseEmulator()
+    public static void pauseEmulator( boolean autoSave )
     {
         if( sCoreThread != null )
         {
             CoreInterfaceNative.pauseEmulator();
             
-            // Always auto-save just in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
-            Notifier.showToast( sActivity, R.string.toast_savingSession );
-            CoreInterfaceNative.fileSaveEmulator( sUserPrefs.selectedGameAutoSavefile );
+            // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
+            if( autoSave )
+            {
+                Notifier.showToast( sActivity, R.string.toast_savingSession );
+                CoreInterfaceNative.fileSaveEmulator( sUserPrefs.selectedGameAutoSavefile );
+            }
         }
     }
     

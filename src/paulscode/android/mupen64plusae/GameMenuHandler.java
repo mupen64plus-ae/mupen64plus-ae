@@ -214,7 +214,7 @@ public class GameMenuHandler
     
     private void saveFileFromPrompt()
     {
-        CoreInterface.pauseEmulator();
+        CoreInterface.pauseEmulator( false );
         CharSequence title = mActivity.getText( R.string.menuItem_fileSave );
         CharSequence hint = mActivity.getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
@@ -232,7 +232,7 @@ public class GameMenuHandler
     
     private void loadFileFromPrompt()
     {
-        CoreInterface.pauseEmulator();
+        CoreInterface.pauseEmulator( false );
         CharSequence title = mActivity.getText( R.string.menuItem_fileLoad );
         File startPath = new File( mManualSaveDir );
         Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
@@ -289,7 +289,7 @@ public class GameMenuHandler
     
     private void setSpeed()
     {
-        CoreInterface.pauseEmulator();
+        CoreInterface.pauseEmulator( false );
         
         final LayoutInflater inflater = (LayoutInflater) mActivity
                 .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
