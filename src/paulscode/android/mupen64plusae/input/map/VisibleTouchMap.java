@@ -20,8 +20,8 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
-import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
@@ -72,7 +72,7 @@ public class VisibleTouchMap extends TouchMap
     private final String mFontsDir;
     
     /** The set of images representing the FPS string. */
-    private final ArrayList<Image> mFpsDigits;
+    private final CopyOnWriteArrayList<Image> mFpsDigits;
     
     /** The set of images representing the numerals 0, 1, 2, ..., 9. */
     private final Image[] mNumerals;
@@ -99,7 +99,7 @@ public class VisibleTouchMap extends TouchMap
         super( resources );
         mFpsEnabled = fpsEnabled;
         mFontsDir = fontsDir;
-        mFpsDigits = new ArrayList<Image>();
+        mFpsDigits = new CopyOnWriteArrayList<Image>();
         mNumerals = new Image[10];
         autoHoldImages = new Image[BUTTON_STRING_MAP.size()];
         autoHoldX = new int[BUTTON_STRING_MAP.size()];
