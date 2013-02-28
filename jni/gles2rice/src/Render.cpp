@@ -1064,15 +1064,11 @@ void myVec3Transform(float *vecout, float *vecin, float* m)
     vecout[2] = (m[2]*vecin[0]+m[6]*vecin[1]+m[10]*vecin[2]+m[14])/w;
 }
 
-void CRender::SetTextureEnable(bool bEnable)
+void CRender::SetTextureEnableAndScale(int dwTile, bool bEnable, float fScaleX, float fScaleY)
 {
     gRSP.bTextureEnabled = bEnable;
 
-}
-
-void CRender::SetTextureScale(int dwTile,  float fScaleX, float fScaleY)
-{
-    if( gRSP.bTextureEnabled )
+    if( bEnable )
     {
         if( gRSP.curTile != (unsigned int)dwTile )
             gRDP.textureIsChanged = true;

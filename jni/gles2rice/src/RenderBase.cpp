@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2003-2009 Rice1964
+Copyright (C) 2003 Rice1964
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -669,6 +669,8 @@ void InitRenderBase()
     gRSP.shadeMode=SHADE_SMOOTH;
     gRDP.keyR=gRDP.keyG=gRDP.keyB=gRDP.keyA=gRDP.keyRGB=gRDP.keyRGBA = 0;
     gRDP.fKeyA = 0;
+    gRSP.DKRCMatrixIndex = gRSP.dwDKRVtxAddr = gRSP.dwDKRMatrixAddr = 0;
+    gRSP.DKRBillBoard = false;
 
     gRSP.fTexScaleX = 1/32.0f;
     gRSP.fTexScaleY = 1/32.0f;
@@ -697,6 +699,13 @@ void InitRenderBase()
     gRSP.real_clip_ratio_negy = 1;
     gRSP.real_clip_ratio_posx = 1;
     gRSP.real_clip_ratio_posy = 1;
+
+    gRSP.DKRCMatrixIndex=0;
+    gRSP.DKRVtxCount=0;
+    gRSP.DKRBillBoard = false;
+    gRSP.dwDKRVtxAddr=0;
+    gRSP.dwDKRMatrixAddr=0;
+
 
     gRDP.geometryMode   = 0;
     gRDP.otherModeL     = 0;
@@ -740,7 +749,7 @@ void SetFogMinMax(float fMin, float fMax, float fMul, float fOffset)
         gRSPfFogMax = fMax/500-1;
     }
 
-    gRSPfFogDivider = 220/(gRSPfFogMax-gRSPfFogMin); //CHECKME 255 replace with 220, Aristotle claimed to of improved fog rendering and this is the only real thing that has changed?
+    gRSPfFogDivider = 255/(gRSPfFogMax-gRSPfFogMin);
     CRender::g_pRender->SetFogMinMax(fMin, fMax);
 }
 
@@ -787,8 +796,8 @@ void TexGen(float &s, float &t)
 {
     if (gRDP.geometryMode & G_TEXTURE_GEN_LINEAR)
     {   
-        s = acosf(g_normal.x) / 3.14f;
-        t = acosf(g_normal.y) / 3.14f;
+        s = acosf(g_normal.x) / 3.14159f;
+        t = acosf(g_normal.y) / 3.14159f;
     }
     else
     {
@@ -1119,16 +1128,15 @@ loopback:
         cmp         ecx, DWORD PTR gRSPnumLights;
         jae         breakout;
         mov         eax,ecx;
-        imul        eax,0x48;
+        imul        eax,0x44;
         movups      xmm5, DWORD PTR gRSPlights[eax];        // Light Dir
-        movups      xmm1, DWORD PTR gRSPlights[0x18][eax];  // Light color
+        movups      xmm1, DWORD PTR gRSPlights[0x14][eax];  // Light color
         mulps       xmm5, xmm4;                 // Lightdir * normals
 
         movhlps     xmm0,xmm5;
         addps       xmm0,xmm5;
-        shufps      xmm5,xmm0,0xf0;         // xmm5 3rd float = xmm0 4th float
+        shufps      xmm5,xmm0,0x01;
         addps       xmm0,xmm5;
-        shufps      xmm0,xmm0,0x02;         // xmm0 1st float = xmm0 3rd float
 
         comiss      xmm0,zero;
         jc          endloop
@@ -1544,23 +1552,7 @@ bool PrepareTriangle(uint32 dwV0, uint32 dwV1, uint32 dwV2)
     return true;
 }
 
-bool AddTri(u32 v0, u32 v1, u32 v2)
-{
-    if (IsTriangleVisible(v0, v1, v2))
-    {
-        if (CRender::g_pRender->IsTextureEnabled())
-        {
-            PrepareTextures();
-            InitVertexTextureConstants();
-        }
 
-        CRender::g_pRender->SetCombinerAndBlender();
-
-        PrepareTriangle(v0, v1, v2);
-        return true;
-    }
-    return false;
-}
 
 // Returns TRUE if it thinks the triangle is visible
 // Returns FALSE if it is clipped
@@ -1696,10 +1688,15 @@ void ModifyVertexInfo(uint32 where, uint32 vertex, uint32 val)
         break;
     case RSP_MV_WORD_OFFSET_POINT_XYSCREEN:     // Modify X,Y
         {
-            uint16 x = (uint16)(val>>16) / 4.0f;
-            uint16 y = (uint16)(val & 0xFFFF) / 4.0f;
+            uint16 nX = (uint16)(val>>16);
+            short x = *((short*)&nX);
+            x /= 4;
 
-            // Should do viewport transform
+            uint16 nY = (uint16)(val&0xFFFF);
+            short y = *((short*)&nY);
+            y /= 4;
+
+            // Should do viewport transform.
 
 
             x -= windowSetting.uViWidth/2;
@@ -1744,10 +1741,6 @@ void ModifyVertexInfo(uint32 where, uint32 vertex, uint32 val)
     DEBUGGER_PAUSE_AND_DUMP(NEXT_VERTEX_CMD,{TRACE0("Paused at ModVertex Cmd");});
 }
 
-extern u32 gDKRCMatrixIndex;
-extern u32 gDKRVtxCount;
-extern bool gDKRBillBoard;
-
 void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
 {
     UpdateCombinedMatrix();
@@ -1755,24 +1748,24 @@ void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
     long long pVtxBase = (long long) (g_pRDRAMu8 + dwAddr);
     g_pVtxBase = (FiddledVtx*)pVtxBase;
 
-    Matrix &matWorldProject = (gRSP.DKRMatrixes[gDKRCMatrixIndex]);
+    Matrix &matWorldProject = gRSP.DKRMatrixes[gRSP.DKRCMatrixIndex];
 
     uint32 i;
     int nOff;
 
     bool addbase=false;
-    if ((!gDKRBillBoard) || (gDKRCMatrixIndex != 2) )
+    if ((!gRSP.DKRBillBoard) || (gRSP.DKRCMatrixIndex != 2) )
         addbase = false;
     else
         addbase = true;
 
-    if( addbase && gDKRVtxCount == 0 && dwNum > 1 )
+    if( addbase && gRSP.DKRVtxCount == 0 && dwNum > 1 )
     {
-        gDKRVtxCount++;
+        gRSP.DKRVtxCount++;
     }
 
-    LOG_UCODE("    ProcessVertexDataDKR, CMatrix = %d, Add base=%s", gDKRCMatrixIndex, gDKRBillBoard?"true":"false");
-    VTX_DUMP(TRACE2("DKR Setting Vertexes\nCMatrix = %d, Add base=%s", gDKRCMatrixIndex, gDKRBillBoard?"true":"false"));
+    LOG_UCODE("    ProcessVertexDataDKR, CMatrix = %d, Add base=%s", gRSP.DKRCMatrixIndex, gRSP.DKRBillBoard?"true":"false");
+    VTX_DUMP(TRACE2("DKR Setting Vertexes\nCMatrix = %d, Add base=%s", gRSP.DKRCMatrixIndex, gRSP.DKRBillBoard?"true":"false"));
 
     nOff = 0;
     uint32 end = dwV0 + dwNum;
@@ -1789,7 +1782,7 @@ void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
         //else
             Vec3Transform(&g_vtxTransformed[i], (XVECTOR3*)&g_vtxNonTransformed[i], &matWorldProject);  // Convert to w=1
 
-        if( gDKRVtxCount == 0 && dwNum==1 )
+        if( gRSP.DKRVtxCount == 0 && dwNum==1 )
         {
             gRSP.DKRBaseVec.x = g_vtxTransformed[i].x;
             gRSP.DKRBaseVec.y = g_vtxTransformed[i].y;
@@ -1809,7 +1802,7 @@ void ProcessVertexDataDKR(uint32 dwAddr, uint32 dwV0, uint32 dwNum)
         g_vecProjected[i].y = g_vtxTransformed[i].y * g_vecProjected[i].w;
         g_vecProjected[i].z = g_vtxTransformed[i].z * g_vecProjected[i].w;
 
-        gDKRVtxCount++;
+        gRSP.DKRVtxCount++;
 
         VTX_DUMP(TRACE5("vtx %d: %f, %f, %f, %f", i, 
             g_vtxTransformed[i].x,g_vtxTransformed[i].y,g_vtxTransformed[i].z,g_vtxTransformed[i].w));
@@ -2387,20 +2380,31 @@ void UpdateCombinedMatrix()
         if( options.enableHackForGames == HACK_REVERSE_XY_COOR )
         {
             gRSPworldProject = gRSPworldProject * reverseXY;
-            gRSPmodelViewTop = gRSPmodelViewTop * reverseXY;
         }
         if( options.enableHackForGames == HACK_REVERSE_Y_COOR )
         {
             gRSPworldProject = gRSPworldProject * reverseY;
-            gRSPmodelViewTop = gRSPmodelViewTop * reverseY;
         }
 #if !defined(NO_ASM)
         if( status.isSSEEnabled )
         {
             MatrixTranspose(&gRSPworldProjectTransported, &gRSPworldProject);
-            MatrixTranspose(&gRSPmodelViewTopTranspose, &gRSPmodelViewTop);
         }
 #endif
         gRSP.bCombinedMatrixIsUpdated = false;
     }
+
+    //if( gRSP.bWorldMatrixIsUpdated || gRSP.bLightIsUpdated )
+    //{
+    //  // Update lights with transported world matrix
+    //  for( unsigned int l=0; l<gRSPnumLights; l++)
+    //  {
+    //      Vec3TransformCoord(&gRSPlights[l].td, &gRSPlights[l].od, &gRSPmodelViewTopTranspose);
+    //      Vec3Normalize(&gRSPlights[l].td,&gRSPlights[l].td);
+    //  }
+
+    //  gRSP.bWorldMatrixIsUpdated = false;
+    //  gRSP.bLightIsUpdated = false;
+    //}
 }
+
