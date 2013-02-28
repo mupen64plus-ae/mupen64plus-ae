@@ -41,7 +41,7 @@ endif
 
 
 LOCAL_CFLAGS += -O3 -ffast-math -frename-registers -fomit-frame-pointer -fsingle-precision-constant -fpredictive-commoning -fno-strict-aliasing -fvisibility=hidden
-LOCAL_CXXFLAGS += -fvisibility-inlines-hidden
+LOCAL_CPPFLAGS += -fvisibility-inlines-hidden
 #LOCAL_LDLIBS += -lcore
 
 LOCAL_SHARED_LIBRARIES := SDL core
