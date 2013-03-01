@@ -368,11 +368,6 @@ public class CoreInterface
         else
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
         
-        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged1, 1);
-        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged2, 2);
-        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged3, 3);
-        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged4, 4);
-    
         mupen64plus_cfg.save();
         
         // GLES2N64 config file
@@ -383,36 +378,6 @@ public class CoreInterface
         gles2n64_conf.put( "[<sectionless!>]", "hack z", booleanToString( !user.isGles2N64DepthTestEnabled ) ); // hack z enabled means that depth test is disabled
         gles2n64_conf.save();        
         //@formatter:on
-    }
-    
-    private static void syncConfigFileInputs( ConfigFile mupen64plus_cfg, boolean isPlugged,
-            int playerNumber )
-    {
-        String sectionTitle = "Input-SDL-Control" + playerNumber;
-        
-        mupen64plus_cfg.put( sectionTitle, "Version", "1.00" );
-        mupen64plus_cfg.put( sectionTitle, "plugged", isPlugged ? "True" : "False" );
-        mupen64plus_cfg.put( sectionTitle, "plugin", "2" );
-        mupen64plus_cfg.put( sectionTitle, "device", "-2" );
-        mupen64plus_cfg.put( sectionTitle, "mouse", "False" );
-        mupen64plus_cfg.put( sectionTitle, "DPad R", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "DPad L", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "DPad D", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "DPad U", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "Start", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "Z Trig", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "B Button", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "A Button", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "C Button R", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "C Button L", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "C Button D", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "C Button U", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "R Trig", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "L Trig", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "Mempak switch", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "Rumblepak switch", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "X Axis", "key(0,0)" );
-        mupen64plus_cfg.put( sectionTitle, "Y Axis", "key(0,0)" );
     }
     
     private static String booleanToString( boolean b )
