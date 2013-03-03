@@ -187,7 +187,6 @@ public class GameLifecycleHandler implements View.OnKeyListener
         View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
         if( mUserPrefs.inputPlugin.enabled )
             initControllers( inputSource );
-        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controllers' key provider, to add some extra functionality
         inputSource.setOnKeyListener( this );
@@ -196,7 +195,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mSurface.setColorMode( mUserPrefs.isRgba8888 );
         
         // Refresh the objects and data files interfacing to the emulator core
-        CoreInterface.refresh( mActivity, mSurface, vibrator );
+        CoreInterface.refresh( mActivity, mSurface );
     }
     
     public void onResume()
@@ -238,10 +237,14 @@ public class GameLifecycleHandler implements View.OnKeyListener
     
     private void initControllers( View inputSource )
     {
-        // Create the touchpad controls, if applicable
-        TouchController touchpadController = null;
-        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        // TODO: Register multiplayer/gamepad vibrators
         
+        // By default, send Player 1 rumbles through phone vibrator
+        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        CoreInterface.registerVibrator( 1, vibrator );
+
+        // Create the touchpad controls, if applicable
+        TouchController touchpadController = null;        
         if( mIsXperiaPlay )
         {
             // Create the map for the touchpad

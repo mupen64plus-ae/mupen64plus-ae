@@ -93,7 +93,7 @@ public class CoreInterface
     // External objects from Java side
     protected static Activity sActivity = null;
     protected static GameSurface sSurface = null;
-    protected static Vibrator sVibrator = null;
+    protected static final Vibrator[] sVibrators = new Vibrator[4];
     protected static AppData sAppData = null;
     protected static UserPrefs sUserPrefs = null;
     protected static OnStateCallbackListener sStateCallbackListener = null;
@@ -117,14 +117,21 @@ public class CoreInterface
     protected static int sFrameCount = -1;
     protected static long sLastFpsTime = 0;
     
-    public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
+    public static void refresh( Activity activity, GameSurface surface )
     {
         sActivity = activity;
         sSurface = surface;
-        sVibrator = vibrator;
         sAppData = new AppData( sActivity );
         sUserPrefs = new UserPrefs( sActivity );
         syncConfigFiles( sUserPrefs, sAppData );
+    }
+    
+    public static void registerVibrator( int player, Vibrator vibrator )
+    {
+        if( player > 0 && player < 5 )
+        {
+            sVibrators[player - 1] = vibrator;
+        }
     }
     
     public static void setOnStateCallbackListener( OnStateCallbackListener listener )

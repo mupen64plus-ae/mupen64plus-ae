@@ -59,14 +59,13 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static void rumble( int controllerNum, boolean active )
     {
-        if( sVibrator == null || controllerNum != 0 )
+        if( sVibrators[controllerNum] == null )
             return;
         
-        // TODO: Implement for multi-player and for gamepads
         if( active )
-            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
+            sVibrators[controllerNum].vibrate( VIBRATE_PATTERN, 0 );
         else
-            sVibrator.cancel();
+            sVibrators[controllerNum].cancel();
     }    
     
     // *************************************************
@@ -387,12 +386,12 @@ public class CoreInterfaceNative extends CoreInterface
     // TODO: Remove this from front-end
     public static void vibrate( boolean active )
     {
-        if( sVibrator == null )
+        if( sVibrators[0] == null )
             return;
         if( active )
-            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
+            sVibrators[0].vibrate( VIBRATE_PATTERN, 0 );
         else
-            sVibrator.cancel();
+            sVibrators[0].cancel();
     }
     
     public static void runOnUiThread( Runnable action )
