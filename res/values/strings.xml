@@ -281,7 +281,6 @@
     <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
     <string name="pluginInput_title">Input</string>
     <string name="pluginInput_entryNone">None (input disabled)</string>
-    <string name="pluginInput_entrySdl">input-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
     <string name="pluginInput_entryAndroid">input-android, v1.0</string>
     <string name="pluginRsp_title">Reality signal processor (RSP)</string>
     <string name="pluginRsp_entryNone">None (RSP disabled)</string>

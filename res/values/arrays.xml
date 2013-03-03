@@ -325,16 +325,14 @@
     <!-- Input Plugins -->
     <string-array name="pluginInput_entries" translatable="false">
         <item>@string/pluginInput_entryNone</item>
-        <item>@string/pluginInput_entrySdl</item>
         <item>@string/pluginInput_entryAndroid</item>
     </string-array>
     <string-array name="pluginInput_values" translatable="false">
         <item></item>
-        <item>libinput-sdl.so</item>
         <item>libinput-android.so</item>
     </string-array>
 
-    <string name="pluginInput_default" translatable="false">libinput-sdl.so</string>
+    <string name="pluginInput_default" translatable="false">libinput-android.so</string>
 
     <!-- RSP Plugins -->
     <string-array name="pluginRsp_entries" translatable="false">
