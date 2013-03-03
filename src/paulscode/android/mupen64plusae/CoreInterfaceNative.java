@@ -45,6 +45,33 @@ public class CoreInterfaceNative extends CoreInterface
     // *************************************************
     // *************************************************
     // *************************************************
+    // Input Plug-in Methods
+    // jni/input-android/plugin.c
+    // *************************************************
+    // *************************************************
+    // *************************************************
+    
+    public static native void jniInitInput();
+    
+    public static native void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY );   
+    
+    public static native void setControllerConfig( int controllerNum, boolean plugged, int pakType );   
+    
+    public static void rumble( int controllerNum, boolean active )
+    {
+        if( sVibrator == null || controllerNum != 0 )
+            return;
+        
+        // TODO: Implement for multi-player and for gamepads
+        if( active )
+            sVibrator.vibrate( VIBRATE_PATTERN, 0 );
+        else
+            sVibrator.cancel();
+    }    
+    
+    // *************************************************
+    // *************************************************
+    // *************************************************
     // Call-outs made TO the native code
     // See jni/front-end/src/main.c
     //     jni/input-sdl/src/plugin.c
@@ -91,6 +118,7 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void stopEmulator();
     
+    // TODO: Remove this from front-end
     public static native void updateVirtualGamePadStates( int controllerNum, boolean[] buttons,
             int axisX, int axisY );
 
@@ -356,6 +384,7 @@ public class CoreInterfaceNative extends CoreInterface
             Notifier.showToast( sActivity, message );
     }
     
+    // TODO: Remove this from front-end
     public static void vibrate( boolean active )
     {
         if( sVibrator == null )

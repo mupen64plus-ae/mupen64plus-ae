@@ -80,6 +80,10 @@ public class CoreInterface
     public static final int M64CORE_INPUT_GAMESHARK    = 9;
     public static final int M64CORE_STATE_LOADCOMPLETE = 10;
     public static final int M64CORE_STATE_SAVECOMPLETE = 11;
+    
+    public static final int PAK_TYPE_NONE   = 1;
+    public static final int PAK_TYPE_MEM    = 2;
+    public static final int PAK_TYPE_RUMBLE = 5;
     // @formatter:on
     
     // Private constants
@@ -156,6 +160,12 @@ public class CoreInterface
                 @Override
                 public void run()
                 {
+                    CoreInterfaceNative.jniInitInput();
+                    CoreInterfaceNative.setControllerConfig( 0, sUserPrefs.isPlugged1, PAK_TYPE_RUMBLE );
+                    CoreInterfaceNative.setControllerConfig( 1, sUserPrefs.isPlugged2, PAK_TYPE_RUMBLE );
+                    CoreInterfaceNative.setControllerConfig( 2, sUserPrefs.isPlugged3, PAK_TYPE_RUMBLE );
+                    CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, PAK_TYPE_RUMBLE );
+                    
                     CoreInterfaceNative.init();
                 }
             }, "CoreThread" );

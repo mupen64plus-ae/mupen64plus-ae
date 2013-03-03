@@ -30,6 +30,9 @@
 #define PLUGIN_VERSION              0x010000
 #define INPUT_PLUGIN_API_VERSION    0x020000
 #define PAK_IO_RUMBLE       		0xC000	// the address where rumble commands are sent
+#define PAK_TYPE_NONE               1;
+#define PAK_TYPE_MEM                2;
+#define PAK_TYPE_RUMBLE             5;
 
 // ControllerCommand commands
 #define RD_GETSTATUS        		0x00   	// get status
@@ -61,20 +64,109 @@ static const unsigned short const BUTTON_BITS[] =
     0x8000   // Rumblepak switch
 };
 
-// Internal function declarations
-static unsigned char DataCRC( unsigned char*, int );
-
 // Internal variables
 static int _pluginInitialized = 0;
+static JNIEnv* _jniEnv = NULL;
+static jclass _jniClass;
+static jmethodID _jniRumble;
+static int _androidPluggedState[4];
+static int _androidPakType[4];
 static unsigned char _androidButtonState[4][16];
 static signed char _androidAnalogX[4];
 static signed char _androidAnalogY[4];
+
+// Function declarations
+static void DebugMessage( int level, const char *message, ... );
+
+//*****************************************************************************
+// JNI exported function definitions
+//*****************************************************************************
+
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_jniInitInput(JNIEnv* env, jclass cls, jobject obj )
+{
+    DebugMessage( M64MSG_INFO, "jniInitInput()" );
+
+    _jniEnv = env;
+    _jniClass = cls;
+
+    _jniRumble = (*env)->GetStaticMethodID( env, cls, "rumble", "(IZ)V" );
+    if( !_jniRumble )
+    {
+        DebugMessage( M64MSG_WARNING, "Couldn't locate Java callbacks, check that they're named and typed correctly" );
+    }
+}
+
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_setControllerState(
+        JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons, jint mp64pXAxis, jint mp64pYAxis )
+{
+    jboolean *elements = (*env)->GetBooleanArrayElements( env, mp64pButtons, NULL );
+    int b;
+    for( b = 0; b < 16; b++ )
+    {
+        _androidButtonState[controllerNum][b] = elements[b];
+    }
+    (*env)->ReleaseBooleanArrayElements( env, mp64pButtons, elements, 0 );
+
+    _androidAnalogX[controllerNum] = (signed char) ( (int) mp64pXAxis );
+    _androidAnalogY[controllerNum] = (signed char) ( (int) mp64pYAxis );
+}
+
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_setControllerConfig(
+        JNIEnv* env, jclass jcls, jint controllerNum, jboolean plugged, jint pakType )
+{
+    if( controllerNum < 4 && controllerNum > -1 )
+    {
+        _androidPluggedState[controllerNum] = ( plugged == JNI_TRUE ? 1 : 0 );
+        _androidPakType[controllerNum] = (int) pakType;
+    }
+}
+
+//*****************************************************************************
+// JNI imported function definitions
+//*****************************************************************************
+
+JNIEXPORT void JNICALL JNI_Rumble( int controllerNum, int active )
+{
+    if( _jniEnv == NULL )
+        return;
+
+    jboolean a = active == 0 ? JNI_FALSE : JNI_TRUE;
+    (*_jniEnv)->CallStaticVoidMethod( _jniEnv, _jniClass, _jniRumble, controllerNum, a );
+}
+
+//*****************************************************************************
+// Internal helper function definitions
+//*****************************************************************************
+
+static unsigned char DataCRC( unsigned char *data, int length )
+{
+    unsigned char remainder = data[0];
+
+    int iByte = 1;
+    unsigned char bBit = 0;
+
+    while( iByte <= length )
+    {
+        int highBit = ((remainder & 0x80) != 0);
+        remainder = remainder << 1;
+
+        remainder += ( iByte < length && data[iByte] & (0x80 >> bBit )) ? 1 : 0;
+
+        remainder ^= (highBit) ? 0x85 : 0;
+
+        bBit++;
+        iByte += bBit/8;
+        bBit %= 8;
+    }
+
+    return remainder;
+}
 
 //*****************************************************************************
 // Mupen64Plus debug function definitions
 //*****************************************************************************
 
-void DebugMessage( int level, const char *message, ... )
+static void DebugMessage( int level, const char *message, ... )
 {
     char msgbuf[1024];
     va_list args;
@@ -155,9 +247,8 @@ EXPORT void CALL InitiateControllers( CONTROL_INFO controlInfo )
     for( i = 0; i < 4; i++ )
     {
         // Configure each controller
-        // TODO: Obtain this through JNI
-        ( controlInfo.Controls + i )->Present = 1;
-        ( controlInfo.Controls + i )->Plugin = 5;
+        ( controlInfo.Controls + i )->Present = _androidPluggedState[i];
+        ( controlInfo.Controls + i )->Plugin = _androidPakType[i];
         ( controlInfo.Controls + i )->RawData = 0;
     }
 }
@@ -207,14 +298,12 @@ EXPORT void CALL ControllerCommand( int controllerNum, unsigned char *command )
 			if( *data )
 			{
 				DebugMessage( M64MSG_INFO, "Vibrating..." );
-				// TODO: Implement vibration interface to java
-				// Android_JNI_Vibrate( 1 );
+				JNI_Rumble( controllerNum, 1 );
 			}
 			else
 			{
 				DebugMessage( M64MSG_INFO, "off" );
-				// TODO: Implement vibration interface to java
-				// Android_JNI_Vibrate( 0 );
+                JNI_Rumble( controllerNum, 0 );
 			}
 		}
 		data[32] = DataCRC( data, 32 );
@@ -241,51 +330,4 @@ EXPORT void CALL SDL_KeyDown( int keymod, int keysym )
 
 EXPORT void CALL SDL_KeyUp( int keymod, int keysym )
 {
-}
-
-//*****************************************************************************
-// Internal function definitions
-//*****************************************************************************
-
-static unsigned char DataCRC( unsigned char *data, int length )
-{
-    unsigned char remainder = data[0];
-
-    int iByte = 1;
-    unsigned char bBit = 0;
-
-    while( iByte <= length )
-    {
-        int highBit = ((remainder & 0x80) != 0);
-        remainder = remainder << 1;
-
-        remainder += ( iByte < length && data[iByte] & (0x80 >> bBit )) ? 1 : 0;
-
-        remainder ^= (highBit) ? 0x85 : 0;
-
-        bBit++;
-        iByte += bBit/8;
-        bBit %= 8;
-    }
-
-    return remainder;
-}
-
-//*****************************************************************************
-// JNI exported function definitions
-//*****************************************************************************
-
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_updateVirtualGamePadStates(
-        JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons, jint mp64pXAxis, jint mp64pYAxis )
-{
-    jboolean *elements = (*env)->GetBooleanArrayElements( env, mp64pButtons, NULL );
-    int b;
-    for( b = 0; b < 16; b++ )
-    {
-        _androidButtonState[controllerNum][b] = elements[b];
-    }
-    (*env)->ReleaseBooleanArrayElements( env, mp64pButtons, elements, 0 );
-
-    _androidAnalogX[controllerNum] = (signed char) ( (int) mp64pXAxis );
-    _androidAnalogY[controllerNum] = (signed char) ( (int) mp64pYAxis );
 }
