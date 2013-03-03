@@ -4,17 +4,13 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := gles2rice
 LOCAL_ARM_MODE := arm
-SRCDIR := $(shell readlink $(LOCAL_PATH)/src)src
+SRCDIR := ../../src
 
-SDL_PATH := ../SDL
-PNG_PATH := ../png
-CORE_PATH := ../core
-
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(PNG_PATH)/include
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(CORE_PATH)/src/api
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(SRCDIR)
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SRCDIR)
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(SRCDIR)/liblinux
+LOCAL_C_INCLUDES += $(SDL_INCLUDES)
+LOCAL_C_INCLUDES += $(PNG_INCLUDES)
+LOCAL_C_INCLUDES += $(M64P_API_INCLUDES)
 
 LOCAL_SRC_FILES := \
 	$(SRCDIR)/osal_dynamiclib_unix.c \
@@ -83,7 +79,6 @@ endif
 LOCAL_CFLAGS += -O3 -ffast-math -frename-registers -fomit-frame-pointer -fsingle-precision-constant -fpredictive-commoning -fno-strict-aliasing -fvisibility=hidden
 LOCAL_CFLAGS += -Wno-psabi
 LOCAL_CPPFLAGS += -fvisibility-inlines-hidden
-#LOCAL_LDLIBS += -lcore
 
 LOCAL_CFLAGS += -fsigned-char
 LOCAL_CFLAGS += -fexceptions
