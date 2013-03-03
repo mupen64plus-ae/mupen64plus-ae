@@ -74,6 +74,7 @@ static int _androidPakType[4];
 static unsigned char _androidButtonState[4][16];
 static signed char _androidAnalogX[4];
 static signed char _androidAnalogY[4];
+static CONTROL* _controls = NULL;
 
 // Function declarations
 static void DebugMessage( int level, const char *message, ... );
@@ -116,8 +117,16 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_
 {
     if( controllerNum < 4 && controllerNum > -1 )
     {
+        // Cache the values if called before InitiateControllers
         _androidPluggedState[controllerNum] = ( plugged == JNI_TRUE ? 1 : 0 );
         _androidPakType[controllerNum] = (int) pakType;
+
+        // Update the values if called after InitiateControllers
+        if( _controls != NULL )
+        {
+            _controls[controllerNum].Present = _androidPluggedState[controllerNum];
+            _controls[controllerNum].Plugin = _androidPakType[controllerNum];
+        }
     }
 }
 
@@ -243,13 +252,15 @@ EXPORT m64p_error CALL PluginShutdown()
 
 EXPORT void CALL InitiateControllers( CONTROL_INFO controlInfo )
 {
+    _controls = controlInfo.Controls;
+
     int i;
     for( i = 0; i < 4; i++ )
     {
         // Configure each controller
-        ( controlInfo.Controls + i )->Present = _androidPluggedState[i];
-        ( controlInfo.Controls + i )->Plugin = _androidPakType[i];
-        ( controlInfo.Controls + i )->RawData = 0;
+        _controls[i].Present = _androidPluggedState[i];
+        _controls[i].Plugin = _androidPakType[i];
+        _controls[i].RawData = 0;
     }
 }
 
