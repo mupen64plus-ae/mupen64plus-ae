@@ -39,6 +39,12 @@ extern DECLSPEC void* SDLCALL Android_JNI_GetAudioBuffer();
 extern DECLSPEC void SDLCALL Android_JNI_WriteAudioBuffer();
 extern DECLSPEC void SDLCALL Android_JNI_CloseAudioDevice();
 
+// Threads
+#include <jni.h>
+static void Android_JNI_ThreadDestroyed(void*);
+JNIEnv *Android_JNI_GetEnv(void);
+int Android_JNI_SetupThread(void);
+
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
 /* *INDENT-OFF* */

@@ -229,115 +229,90 @@ public class CoreInterfaceNative extends CoreInterface
         return extraArgs.trim();
     }
     
-    public static Object audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
-    {
-        // Be sure audio is stopped so that we can restart it
-        audioQuit();
-        
-        // Audio configuration
-        int channelConfig = isStereo ? AudioFormat.CHANNEL_OUT_STEREO : AudioFormat.CHANNEL_OUT_MONO;
+    public static void audioInit(int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames) {
+        int channelConfig = isStereo ? AudioFormat.CHANNEL_CONFIGURATION_STEREO : AudioFormat.CHANNEL_CONFIGURATION_MONO;
         int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
-        int frameSize = ( isStereo ? 2 : 1 ) * ( is16Bit ? 2 : 1 );
+        int frameSize = (isStereo ? 2 : 1) * (is16Bit ? 2 : 1);
         
-        // Let the user pick a larger buffer if they really want -- but ye gods they probably
-        // shouldn't, the minimums are horrifyingly high latency already
-        int minBufSize = AudioTrack.getMinBufferSize( sampleRate, channelConfig, audioFormat );
-        int defaultFrames = ( minBufSize + frameSize - 1 ) / frameSize;
-        desiredFrames = Math.max( desiredFrames, defaultFrames );
+        Log.v("SDL", "SDL audio: wanted " + (isStereo ? "stereo" : "mono") + " " + (is16Bit ? "16-bit" : "8-bit") + " " + ((float)sampleRate / 1000f) + "kHz, " + desiredFrames + " frames buffer");
         
-        sAudioTrack = new AudioTrack( AudioManager.STREAM_MUSIC, sampleRate, channelConfig, audioFormat, desiredFrames
-                * frameSize, AudioTrack.MODE_STREAM );
+        // Let the user pick a larger buffer if they really want -- but ye
+        // gods they probably shouldn't, the minimums are horrifyingly high
+        // latency already
+        desiredFrames = Math.max(desiredFrames, (AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat) + frameSize - 1) / frameSize);
         
-        // if( sAudioThread == null )
-        assert ( sAudioThread == null );
-        {
-            sAudioThread = new Thread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        sAudioTrack.play();
-                        runAudioThread();
-                    }
-                    catch( IllegalStateException ise )
-                    {
-                        Log.e( "CoreInterface", "audioStartThread IllegalStateException", ise );
-                    }
-                }
-            }, "Audio Thread" );
-            
-            sAudioThread.setPriority( Thread.MAX_PRIORITY );
-            sAudioThread.start();
-        }
+        sAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate,
+                channelConfig, audioFormat, desiredFrames * frameSize, AudioTrack.MODE_STREAM);
         
-        int bufSize = desiredFrames * ( isStereo ? 2 : 1 );
-        sAudioBuffer = is16Bit ? new short[bufSize] : new byte[bufSize];
-        return sAudioBuffer;
+        audioStartThread();
+        
+        Log.v("SDL", "SDL audio: got " + ((sAudioTrack.getChannelCount() >= 2) ? "stereo" : "mono") + " " + ((sAudioTrack.getAudioFormat() == AudioFormat.ENCODING_PCM_16BIT) ? "16-bit" : "8-bit") + " " + ((float)sAudioTrack.getSampleRate() / 1000f) + "kHz, " + desiredFrames + " frames buffer");
     }
     
-    public static void audioQuit()
-    {
-        if( sAudioThread != null )
-        {
-            try
-            {
-                sAudioThread.join();
+    public static void audioStartThread() {
+        sAudioThread = new Thread(new Runnable() {
+            public void run() {
+                sAudioTrack.play();
+                runAudioThread();
             }
-            catch( Exception e )
-            {
-                Log.v( "CoreInterface", "Problem stopping audio thread: " + e );
+        });
+        
+        // I'd take REALTIME if I could get it!
+        sAudioThread.setPriority(Thread.MAX_PRIORITY);
+        sAudioThread.start();
+    }
+    
+    public static void audioWriteShortBuffer(short[] buffer) {
+        for (int i = 0; i < buffer.length; ) {
+            int result = sAudioTrack.write(buffer, i, buffer.length - i);
+            if (result > 0) {
+                i += result;
+            } else if (result == 0) {
+                try {
+                    Thread.sleep(1);
+                } catch(InterruptedException e) {
+                    // Nom nom
+                }
+            } else {
+                Log.w("SDL", "SDL audio: error return from write(short)");
+                return;
+            }
+        }
+    }
+    
+    public static void audioWriteByteBuffer(byte[] buffer) {
+        for (int i = 0; i < buffer.length; ) {
+            int result = sAudioTrack.write(buffer, i, buffer.length - i);
+            if (result > 0) {
+                i += result;
+            } else if (result == 0) {
+                try {
+                    Thread.sleep(1);
+                } catch(InterruptedException e) {
+                    // Nom nom
+                }
+            } else {
+                Log.w("SDL", "SDL audio: error return from write(short)");
+                return;
+            }
+        }
+    }
+
+    public static void audioQuit() {
+        if (sAudioThread != null) {
+            try {
+                sAudioThread.join();
+            } catch(Exception e) {
+                Log.v("SDL", "Problem stopping audio thread: " + e);
             }
             sAudioThread = null;
+
+            //Log.v("SDL", "Finished waiting for audio thread");
         }
-        
-        if( sAudioTrack != null )
-        {
+
+        if (sAudioTrack != null) {
             sAudioTrack.stop();
             sAudioTrack = null;
-        }
-    }
-    
-    public static void audioWriteByteBuffer( byte[] buffer )
-    {
-        for( int i = 0; i < buffer.length; )
-        {
-            int result = sAudioTrack.write( buffer, i, buffer.length - i );
-            if( result > 0 )
-            {
-                i += result;
-            }
-            else if( result == 0 )
-            {
-                SafeMethods.sleep( 1 );
-            }
-            else
-            {
-                Log.w( "CoreInterface", "SDL Audio: Error returned from write(byte[])" );
-                return;
-            }
-        }
-    }
-    
-    public static void audioWriteShortBuffer( short[] buffer )
-    {
-        for( int i = 0; i < buffer.length; )
-        {
-            int result = sAudioTrack.write( buffer, i, buffer.length - i );
-            if( result > 0 )
-            {
-                i += result;
-            }
-            else if( result == 0 )
-            {
-                SafeMethods.sleep( 1 );
-            }
-            else
-            {
-                Log.w( "CoreInterface", "SDL Audio: Error returned from write(short[])" );
-                return;
-            }
         }
     }
     
