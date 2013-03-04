@@ -334,7 +334,6 @@ public class TouchMap
         
         // Free the data that was loaded from the config file:
         pad_ini.clear();
-        pad_ini = null;
     }
     
     /**
