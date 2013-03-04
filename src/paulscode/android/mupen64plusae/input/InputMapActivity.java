@@ -284,6 +284,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             case R.id.menuItem_ouya:
                 loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_OUYA, item.getTitle() );
                 break;
+            case R.id.menuItem_n64Adapter:
+                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_N64_ADAPTER, item.getTitle() );
+                break;
             case R.id.menuItem_ps3:
                 loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_PS3, item.getTitle() );
                 break;

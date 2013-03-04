@@ -19,6 +19,9 @@
                 android:id="@+id/menuItem_ouya"
                 android:title="@string/menuItem_ouya"/>
             <item
+                android:id="@+id/menuItem_n64Adapter"
+                android:title="@string/menuItem_n64Adapter"/>
+            <item
                 android:id="@+id/menuItem_ps3"
                 android:title="@string/menuItem_ps3"/>
             <item
