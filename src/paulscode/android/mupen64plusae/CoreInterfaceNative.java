@@ -306,7 +306,7 @@ public class CoreInterfaceNative extends CoreInterface
         if (sAudioThread != null) {
             try {
                 sAudioThread.join();
-            } catch(Exception e) {
+            } catch(InterruptedException e) {
                 Log.v("SDL", "Problem stopping audio thread: " + e);
             }
             sAudioThread = null;
