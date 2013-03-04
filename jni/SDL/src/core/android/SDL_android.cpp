@@ -330,7 +330,7 @@ extern "C" DECLSPEC void SDLCALL Android_JNI_ShowToast( const char *message )
 }
 //
 
-extern "C" void Android_JNI_SetActivityTitle(const char *title)
+extern "C" DECLSPEC void SDLCALL Android_JNI_SetActivityTitle(const char *title)
 {
     jmethodID mid;
     JNIEnv *mEnv = Android_JNI_GetEnv();
