@@ -63,6 +63,8 @@ import org.acra.sender.HttpSender.Type;
     httpMethod = Method.PUT,
     formUriBasicAuthLogin = "reporter",
     formUriBasicAuthPassword = "perorter",
+    logcatArguments = { "-t", "300" },
+    logcatFilterByPid = true,
     customReportContent =
     {
         REPORT_ID,
