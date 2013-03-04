@@ -22,5 +22,9 @@
     <string name="inputMapActivity_title" translatable="false">@string/playerMapPreference_popupTitle</string>
     <string name="inputMapActivity_saveSlot" translatable="false">@string/menuItem_slotSave</string>
     <string name="inputMapActivity_loadSlot" translatable="false">@string/menuItem_slotLoad</string>
+    <string name="menuItem_pak1" translatable="false">@string/player1</string>
+    <string name="menuItem_pak2" translatable="false">@string/player2</string>
+    <string name="menuItem_pak3" translatable="false">@string/player3</string>
+    <string name="menuItem_pak4" translatable="false">@string/player4</string>
 
 </resources>

@@ -21,7 +21,15 @@
 <resources>
 
     <!-- ************************************************************************** -->
-    <!-- Menu Strings -->
+    <!-- Multi-use Strings                                                          -->
+    <!-- ************************************************************************** -->
+    <string name="player1">Player 1</string>
+    <string name="player2">Player 2</string>
+    <string name="player3">Player 3</string>
+    <string name="player4">Player 4</string>
+
+    <!-- ************************************************************************** -->
+    <!-- Menu Strings                                                               -->
     <!-- ************************************************************************** -->
 
     <!-- In-Game Menu -->
@@ -32,6 +40,10 @@
     <string name="menuItem_fileSave">Save to file…</string>
     <string name="menuItem_fileLoad">Load from file…</string>
     <string name="menuItem_setSpeed">Game speed</string>
+    <string name="menuItem_paks">Controller Paks</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak_empty">Empty</string>
+    <string name="menuItem_pak_mem">Expansion Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
 
@@ -67,6 +79,7 @@
 
     <!-- Something happened (use '.') -->
     <string name="toast_usingSlot">Now using slot %1$d.</string>
+    <string name="toast_usingPak">Player %1$d now using %2$s.</string>
     <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
     <string name="toast_fileReadError">Could not read file!</string>
     <string name="toast_fileWriteError">Could not write file!</string>

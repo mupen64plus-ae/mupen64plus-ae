@@ -24,6 +24,7 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
@@ -69,6 +70,8 @@ public class GameMenuHandler
     
     private AppData mAppData;
     
+    private UserPrefs mUserPrefs;
+    
     public int mSlot = 0;
     
     public boolean mCustomSpeed = false;
@@ -95,11 +98,56 @@ public class GameMenuHandler
         mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed,
                 BASELINE_SPEED_FACTOR ) );
         
-        // Get the app data after the activity has been created
+        // Get the app data and user prefs after the activity has been created
         mAppData = new AppData( mActivity );
+        mUserPrefs = new UserPrefs( mActivity );
         
         // Initialize to the last slot used
         setSlot( mAppData.getLastSlot(), false );
+        
+        // Initialize the pak menus
+        initializePakMenu( menu, 1, mUserPrefs.isPlugged1, mUserPrefs.getPakType( 1 ) );
+        initializePakMenu( menu, 2, mUserPrefs.isPlugged2, mUserPrefs.getPakType( 2 ) );
+        initializePakMenu( menu, 3, mUserPrefs.isPlugged3, mUserPrefs.getPakType( 3 ) );
+        initializePakMenu( menu, 4, mUserPrefs.isPlugged4, mUserPrefs.getPakType( 4 ) );
+    }
+    
+    private void initializePakMenu( Menu menu, int player, boolean isPlugged, int pakType )
+    {
+        int menuPlayerId;
+        int index;
+        switch( player )
+        {
+            default:
+            case 1:
+                menuPlayerId = R.id.menuItem_pak1;
+                break;
+            case 2:
+                menuPlayerId = R.id.menuItem_pak2;
+                break;
+            case 3:
+                menuPlayerId = R.id.menuItem_pak3;
+                break;
+            case 4:
+                menuPlayerId = R.id.menuItem_pak4;
+                break;
+        }
+        switch( pakType )
+        {
+            default:
+            case CoreInterface.PAK_TYPE_NONE:
+                index = 0;
+                break;
+            case CoreInterface.PAK_TYPE_MEM:
+                index = 1;
+                break;
+            case CoreInterface.PAK_TYPE_RUMBLE:
+                index = 2;
+                break;
+        }
+        MenuItem menuPlayer = menu.findItem( menuPlayerId );
+        menuPlayer.getSubMenu().getItem( index ).setChecked( true );
+        menuPlayer.setVisible( isPlugged );
     }
     
     public void onOptionsItemSelected( MenuItem item )
@@ -135,6 +183,42 @@ public class GameMenuHandler
                 break;
             case R.id.menuItem_slot9:
                 setSlot( 9, true );
+                break;
+            case R.id.menuItem_pak1_empty:
+                setPak( 1, CoreInterface.PAK_TYPE_NONE, item, true );
+                break;
+            case R.id.menuItem_pak2_empty:
+                setPak( 2, CoreInterface.PAK_TYPE_NONE, item, true );
+                break;
+            case R.id.menuItem_pak3_empty:
+                setPak( 3, CoreInterface.PAK_TYPE_NONE, item, true );
+                break;
+            case R.id.menuItem_pak4_empty:
+                setPak( 4, CoreInterface.PAK_TYPE_NONE, item, true );
+                break;
+            case R.id.menuItem_pak1_mem:
+                setPak( 1, CoreInterface.PAK_TYPE_MEM, item, true );
+                break;
+            case R.id.menuItem_pak2_mem:
+                setPak( 2, CoreInterface.PAK_TYPE_MEM, item, true );
+                break;
+            case R.id.menuItem_pak3_mem:
+                setPak( 3, CoreInterface.PAK_TYPE_MEM, item, true );
+                break;
+            case R.id.menuItem_pak4_mem:
+                setPak( 4, CoreInterface.PAK_TYPE_MEM, item, true );
+                break;
+            case R.id.menuItem_pak1_rumble:
+                setPak( 1, CoreInterface.PAK_TYPE_RUMBLE, item, true );
+                break;
+            case R.id.menuItem_pak2_rumble:
+                setPak( 2, CoreInterface.PAK_TYPE_RUMBLE, item, true );
+                break;
+            case R.id.menuItem_pak3_rumble:
+                setPak( 3, CoreInterface.PAK_TYPE_RUMBLE, item, true );
+                break;
+            case R.id.menuItem_pak4_rumble:
+                setPak( 4, CoreInterface.PAK_TYPE_RUMBLE, item, true );
                 break;
             case R.id.menuItem_toggleSpeed:
                 toggleSpeed();
@@ -198,6 +282,23 @@ public class GameMenuHandler
         // Send a toast if requested
         if( notify )
             Notifier.showToast( mActivity, R.string.toast_usingSlot, mSlot );
+    }
+    
+    public void setPak( int player, int pakType, MenuItem item, boolean notify )
+    {
+        // Persist the value
+        mUserPrefs.putPakType( player, pakType );
+        
+        // Set the pak in the core
+        CoreInterfaceNative.setControllerConfig( player - 1, true, pakType );
+
+        // Refresh the pak submenu
+        if( item != null )
+            item.setChecked( true );
+
+        // Send a toast if requested
+        if( notify )
+            Notifier.showToast( mActivity, R.string.toast_usingPak, player, item.getTitle() );
     }
     
     private void saveSlot()

@@ -168,10 +168,10 @@ public class CoreInterface
                 public void run()
                 {
                     CoreInterfaceNative.jniInitInput();
-                    CoreInterfaceNative.setControllerConfig( 0, sUserPrefs.isPlugged1, PAK_TYPE_RUMBLE );
-                    CoreInterfaceNative.setControllerConfig( 1, sUserPrefs.isPlugged2, PAK_TYPE_RUMBLE );
-                    CoreInterfaceNative.setControllerConfig( 2, sUserPrefs.isPlugged3, PAK_TYPE_RUMBLE );
-                    CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, PAK_TYPE_RUMBLE );
+                    CoreInterfaceNative.setControllerConfig( 0, sUserPrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
+                    CoreInterfaceNative.setControllerConfig( 1, sUserPrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
+                    CoreInterfaceNative.setControllerConfig( 2, sUserPrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
+                    CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
                     
                     CoreInterfaceNative.init();
                 }
