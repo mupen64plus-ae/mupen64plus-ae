@@ -42,6 +42,7 @@
 #define RD_READEEPROM       		0x04  	// read eeprom
 #define RD_WRITEEPROM       		0x05   	// write eeprom
 #define RD_RESETCONTROLLER  		0xff   	// reset controller
+
 // Internal constants
 static const unsigned short const BUTTON_BITS[] =
 {
@@ -210,9 +211,7 @@ static void DebugMessage(int level, const char* message, ...)
 // Mupen64Plus common plugin function definitions
 //*****************************************************************************
 
-EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type* pluginType,
-        int* pluginVersion, int* apiVersion, const char** pluginNamePtr,
-        int* capabilities)
+EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type* pluginType, int* pluginVersion, int* apiVersion, const char** pluginNamePtr, int* capabilities)
 {
     if (pluginType != NULL)
         *pluginType = M64PLUGIN_INPUT;
@@ -310,16 +309,7 @@ EXPORT void CALL ControllerCommand(int controllerNum, unsigned char* command)
     case RD_WRITEPAK:
         if (dwAddress == PAK_IO_RUMBLE)
         {
-            if (data[0])
-            {
-                DebugMessage(M64MSG_INFO, "Vibrating...");
-                JNI_Rumble(controllerNum, 1);
-            }
-            else
-            {
-                DebugMessage(M64MSG_INFO, "off");
-                JNI_Rumble(controllerNum, 0);
-            }
+            JNI_Rumble(controllerNum, data[0]);
         }
         data[32] = DataCRC(data, 32);
         break;
