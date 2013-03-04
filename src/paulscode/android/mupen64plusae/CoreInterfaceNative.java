@@ -63,6 +63,10 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void fileSaveEmulator( String filename );
     
+    public static native void frameAdvance();
+
+    public static native void gameShark( boolean pressed );
+
     public static native String getHeaderCRC( String filename );
     
     public static native String getHeaderName( String filename );
@@ -89,13 +93,13 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void stateSetSlotEmulator( int slotID );
     
+    public static native void stateSetSpeed( int percent );
+
     public static native void stopEmulator();
     
     public static native void updateVirtualGamePadStates( int controllerNum, boolean[] buttons,
             int axisX, int axisY );
 
-    public static native void stateSetSpeed( int percent );
-    
     // ********************************************
     // ********************************************
     // ********************************************

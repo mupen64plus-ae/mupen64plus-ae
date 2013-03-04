@@ -221,15 +221,7 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_FRAME_ADVANCE:
                     Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
-/*****
-TODO:
-Frame advance is hard-coded into the core, without an equivalent function in the API to call from the front-end.
-Possible implementation utilizing the available M64CMD_SET_FRAME_CALLBACK instead:
-   1) Pause the emulator (utilize state change callback to ensure emulation has paused)
-   2) Register a frame callback
-   3) Start the emulator
-   4) When frame callback is called, pause the emulator
-*****/
+                    CoreInterfaceNative.frameAdvance();
                     break;
                 case InputMap.FUNC_SPEED_UP:
                     Log.v( "PeripheralController", "FUNC_SPEED_UP" );
@@ -243,11 +235,7 @@ Possible implementation utilizing the available M64CMD_SET_FRAME_CALLBACK instea
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-/*****
-TODO:
-Gameshark button emulation is hard-coded into the core, without an equivalent function in the API to call from the front-end.
-Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL_KEYUP and M64CMD_SEND_SDL_KEYDOWN?
-*****/
+                    CoreInterfaceNative.gameShark( true );
                     break;
                 case InputMap.FUNC_SIMULATE_BACK:
                     String[] back_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_BACK ) };
@@ -275,7 +263,7 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    // TODO: Release gameshark button
+                    CoreInterfaceNative.gameShark( false );
                     break;
                 default:
                     return false;

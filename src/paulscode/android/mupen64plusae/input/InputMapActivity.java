@@ -241,8 +241,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         setupButton( R.id.buttonSpeedDown,     InputMap.FUNC_SPEED_DOWN );
         setupButton( R.id.buttonSpeedUp,       InputMap.FUNC_SPEED_UP );
         setupButton( R.id.buttonFastForward,   InputMap.FUNC_FAST_FORWARD );
-        // setupButton( R.id.buttonFrameAdvance,  InputMap.FUNC_FRAME_ADVANCE );
-        // setupButton( R.id.buttonGameshark,     InputMap.FUNC_GAMESHARK );
+        setupButton( R.id.buttonFrameAdvance,  InputMap.FUNC_FRAME_ADVANCE );
+        setupButton( R.id.buttonGameshark,     InputMap.FUNC_GAMESHARK );
         setupButton( R.id.buttonSimulateBack,  InputMap.FUNC_SIMULATE_BACK );
         setupButton( R.id.buttonSimulateMenu,  InputMap.FUNC_SIMULATE_MENU );
         // @formatter:on
