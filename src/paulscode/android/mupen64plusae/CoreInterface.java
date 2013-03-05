@@ -87,7 +87,7 @@ public class CoreInterface
     // @formatter:on
     
     // Private constants
-    protected static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
+    protected static final long VIBRATE_TIMEOUT = 1000;
     protected static final int COMMAND_CHANGE_TITLE = 1;
     
     // External objects from Java side

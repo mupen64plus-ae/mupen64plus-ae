@@ -63,7 +63,7 @@ public class CoreInterfaceNative extends CoreInterface
             return;
         
         if( active )
-            sVibrators[controllerNum].vibrate( VIBRATE_PATTERN, 0 );
+            sVibrators[controllerNum].vibrate( VIBRATE_TIMEOUT );
         else
             sVibrators[controllerNum].cancel();
     }    
@@ -117,7 +117,7 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void stopEmulator();
     
-    // TODO: Remove this from front-end
+    // TODO: Remove this from JNI
     public static native void updateVirtualGamePadStates( int controllerNum, boolean[] buttons,
             int axisX, int axisY );
 
@@ -383,15 +383,9 @@ public class CoreInterfaceNative extends CoreInterface
             Notifier.showToast( sActivity, message );
     }
     
-    // TODO: Remove this from front-end
     public static void vibrate( boolean active )
     {
-        if( sVibrators[0] == null )
-            return;
-        if( active )
-            sVibrators[0].vibrate( VIBRATE_PATTERN, 0 );
-        else
-            sVibrators[0].cancel();
+        // TODO: Remove this from JNI
     }
     
     public static void runOnUiThread( Runnable action )
