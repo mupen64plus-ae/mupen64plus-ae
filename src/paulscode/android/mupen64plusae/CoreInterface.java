@@ -82,7 +82,7 @@ public class CoreInterface
     public static final int M64CORE_STATE_SAVECOMPLETE = 11;
     
     public static final int PAK_TYPE_NONE   = 1;
-    public static final int PAK_TYPE_MEM    = 2;
+    public static final int PAK_TYPE_MEMORY = 2;
     public static final int PAK_TYPE_RUMBLE = 5;
     // @formatter:on
     

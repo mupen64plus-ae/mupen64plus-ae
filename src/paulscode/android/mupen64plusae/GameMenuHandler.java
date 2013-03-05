@@ -126,7 +126,7 @@ public class GameMenuHandler
             case CoreInterface.PAK_TYPE_NONE:
                 pakIndex = 0;
                 break;
-            case CoreInterface.PAK_TYPE_MEM:
+            case CoreInterface.PAK_TYPE_MEMORY:
                 pakIndex = 1;
                 break;
             case CoreInterface.PAK_TYPE_RUMBLE:
@@ -206,16 +206,16 @@ public class GameMenuHandler
                 setPak( 4, CoreInterface.PAK_TYPE_NONE, item );
                 break;
             case R.id.menuItem_pak1_mem:
-                setPak( 1, CoreInterface.PAK_TYPE_MEM, item );
+                setPak( 1, CoreInterface.PAK_TYPE_MEMORY, item );
                 break;
             case R.id.menuItem_pak2_mem:
-                setPak( 2, CoreInterface.PAK_TYPE_MEM, item );
+                setPak( 2, CoreInterface.PAK_TYPE_MEMORY, item );
                 break;
             case R.id.menuItem_pak3_mem:
-                setPak( 3, CoreInterface.PAK_TYPE_MEM, item );
+                setPak( 3, CoreInterface.PAK_TYPE_MEMORY, item );
                 break;
             case R.id.menuItem_pak4_mem:
-                setPak( 4, CoreInterface.PAK_TYPE_MEM, item );
+                setPak( 4, CoreInterface.PAK_TYPE_MEMORY, item );
                 break;
             case R.id.menuItem_pak1_rumble:
                 setPak( 1, CoreInterface.PAK_TYPE_RUMBLE, item );
