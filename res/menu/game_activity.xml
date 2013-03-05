@@ -70,7 +70,9 @@
         android:id="@+id/menuItem_paks"
         android:title="@string/menuItem_paks">
         <menu>
-            <group android:checkableBehavior="single" >
+            <group
+                android:id="@+id/menuGroup_pak1"
+                android:checkableBehavior="single" >
                 <item
                     android:id="@+id/menuItem_pak1_empty"
                     android:title="@string/menuItem_pak1_empty"/>
@@ -81,7 +83,9 @@
                     android:id="@+id/menuItem_pak1_rumble"
                     android:title="@string/menuItem_pak1_rumble"/>
             </group>
-            <group android:checkableBehavior="single" >
+            <group
+                android:id="@+id/menuGroup_pak2"
+                android:checkableBehavior="single" >
                 <item
                     android:id="@+id/menuItem_pak2_empty"
                     android:title="@string/menuItem_pak2_empty"/>
@@ -92,7 +96,9 @@
                     android:id="@+id/menuItem_pak2_rumble"
                     android:title="@string/menuItem_pak2_rumble"/>
             </group>
-            <group android:checkableBehavior="single" >
+            <group
+                android:id="@+id/menuGroup_pak3"
+                android:checkableBehavior="single" >
                 <item
                     android:id="@+id/menuItem_pak3_empty"
                     android:title="@string/menuItem_pak3_empty"/>
@@ -103,7 +109,9 @@
                     android:id="@+id/menuItem_pak3_rumble"
                     android:title="@string/menuItem_pak3_rumble"/>
             </group>
-            <group android:checkableBehavior="single" >
+            <group
+                android:id="@+id/menuGroup_pak4"
+                android:checkableBehavior="single" >
                 <item
                     android:id="@+id/menuItem_pak4_empty"
                     android:title="@string/menuItem_pak4_empty"/>
