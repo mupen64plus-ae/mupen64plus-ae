@@ -81,7 +81,6 @@
 
     <!-- Something happened (use '.') -->
     <string name="toast_usingSlot">Now using slot %1$d.</string>
-    <string name="toast_usingPak">Player %1$d now using %2$s.</string>
     <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
     <string name="toast_fileReadError">Could not read file!</string>
     <string name="toast_fileWriteError">Could not write file!</string>
