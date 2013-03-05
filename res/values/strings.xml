@@ -21,14 +21,6 @@
 <resources>
 
     <!-- ************************************************************************** -->
-    <!-- Multi-use Strings                                                          -->
-    <!-- ************************************************************************** -->
-    <string name="player1">Player 1</string>
-    <string name="player2">Player 2</string>
-    <string name="player3">Player 3</string>
-    <string name="player4">Player 4</string>
-
-    <!-- ************************************************************************** -->
     <!-- Menu Strings                                                               -->
     <!-- ************************************************************************** -->
 
@@ -41,9 +33,18 @@
     <string name="menuItem_fileLoad">Load from file…</string>
     <string name="menuItem_setSpeed">Game speed</string>
     <string name="menuItem_paks">Controller Paks</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak_empty">Empty</string>
-    <string name="menuItem_pak_mem">Expansion Pak</string> <!-- capitalize since trademark -->
-    <string name="menuItem_pak_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak1_empty">Player 1: Empty</string>
+    <string name="menuItem_pak1_mem">Player 1: Expansion Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak1_rumble">Player 1: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak2_empty">Player 2: Empty</string>
+    <string name="menuItem_pak2_mem">Player 2: Expansion Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak2_rumble">Player 2: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak3_empty">Player 3: Empty</string>
+    <string name="menuItem_pak3_mem">Player 3: Expansion Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak3_rumble">Player 3: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak4_empty">Player 4: Empty</string>
+    <string name="menuItem_pak4_mem">Player 4: Expansion Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak4_rumble">Player 4: Rumble Pak</string> <!-- capitalize since trademark -->
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
 

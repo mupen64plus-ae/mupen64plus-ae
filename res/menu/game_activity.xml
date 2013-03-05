@@ -70,74 +70,50 @@
         android:id="@+id/menuItem_paks"
         android:title="@string/menuItem_paks">
         <menu>
-            <item
-                android:id="@+id/menuItem_pak1"
-                android:title="@string/menuItem_pak1">
-                <menu>
-                    <group android:checkableBehavior="single" >
-                        <item
-                            android:id="@+id/menuItem_pak1_empty"
-                            android:title="@string/menuItem_pak_empty"/>
-                        <item
-                            android:id="@+id/menuItem_pak1_mem"
-                            android:title="@string/menuItem_pak_mem"/>
-                        <item
-                            android:id="@+id/menuItem_pak1_rumble"
-                            android:title="@string/menuItem_pak_rumble"/>
-                    </group>
-                </menu>
-            </item>
-            <item
-                android:id="@+id/menuItem_pak2"
-                android:title="@string/menuItem_pak2">
-                <menu>
-                    <group android:checkableBehavior="single" >
-                        <item
-                            android:id="@+id/menuItem_pak2_empty"
-                            android:title="@string/menuItem_pak_empty"/>
-                        <item
-                            android:id="@+id/menuItem_pak2_mem"
-                            android:title="@string/menuItem_pak_mem"/>
-                        <item
-                            android:id="@+id/menuItem_pak2_rumble"
-                            android:title="@string/menuItem_pak_rumble"/>
-                    </group>
-                </menu>
-            </item>
-            <item
-                android:id="@+id/menuItem_pak3"
-                android:title="@string/menuItem_pak3">
-                <menu>
-                    <group android:checkableBehavior="single" >
-                        <item
-                            android:id="@+id/menuItem_pak3_empty"
-                            android:title="@string/menuItem_pak_empty"/>
-                        <item
-                            android:id="@+id/menuItem_pak3_mem"
-                            android:title="@string/menuItem_pak_mem"/>
-                        <item
-                            android:id="@+id/menuItem_pak3_rumble"
-                            android:title="@string/menuItem_pak_rumble"/>
-                    </group>
-                </menu>
-            </item>
-            <item
-                android:id="@+id/menuItem_pak4"
-                android:title="@string/menuItem_pak4">
-                <menu>
-                    <group android:checkableBehavior="single" >
-                        <item
-                            android:id="@+id/menuItem_pak4_empty"
-                            android:title="@string/menuItem_pak_empty"/>
-                        <item
-                            android:id="@+id/menuItem_pak4_mem"
-                            android:title="@string/menuItem_pak_mem"/>
-                        <item
-                            android:id="@+id/menuItem_pak4_rumble"
-                            android:title="@string/menuItem_pak_rumble"/>
-                    </group>
-                </menu>
-            </item>
+            <group android:checkableBehavior="single" >
+                <item
+                    android:id="@+id/menuItem_pak1_empty"
+                    android:title="@string/menuItem_pak1_empty"/>
+                <item
+                    android:id="@+id/menuItem_pak1_mem"
+                    android:title="@string/menuItem_pak1_mem"/>
+                <item
+                    android:id="@+id/menuItem_pak1_rumble"
+                    android:title="@string/menuItem_pak1_rumble"/>
+            </group>
+            <group android:checkableBehavior="single" >
+                <item
+                    android:id="@+id/menuItem_pak2_empty"
+                    android:title="@string/menuItem_pak2_empty"/>
+                <item
+                    android:id="@+id/menuItem_pak2_mem"
+                    android:title="@string/menuItem_pak2_mem"/>
+                <item
+                    android:id="@+id/menuItem_pak2_rumble"
+                    android:title="@string/menuItem_pak2_rumble"/>
+            </group>
+            <group android:checkableBehavior="single" >
+                <item
+                    android:id="@+id/menuItem_pak3_empty"
+                    android:title="@string/menuItem_pak3_empty"/>
+                <item
+                    android:id="@+id/menuItem_pak3_mem"
+                    android:title="@string/menuItem_pak3_mem"/>
+                <item
+                    android:id="@+id/menuItem_pak3_rumble"
+                    android:title="@string/menuItem_pak3_rumble"/>
+            </group>
+            <group android:checkableBehavior="single" >
+                <item
+                    android:id="@+id/menuItem_pak4_empty"
+                    android:title="@string/menuItem_pak4_empty"/>
+                <item
+                    android:id="@+id/menuItem_pak4_mem"
+                    android:title="@string/menuItem_pak4_mem"/>
+                <item
+                    android:id="@+id/menuItem_pak4_rumble"
+                    android:title="@string/menuItem_pak4_rumble"/>
+            </group>
         </menu>
     </item>
     <item
