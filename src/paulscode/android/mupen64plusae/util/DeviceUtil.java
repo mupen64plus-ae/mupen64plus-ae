@@ -112,9 +112,8 @@ public class DeviceUtil
                     builder.append( "Hash: " + axisMap.getSignature().hashCode() + "\n" );
                     
                     List<MotionRange> ranges = getPeripheralMotionRanges( device );
-                    for( int j = 0; j < ranges.size(); j++ )
+                    for( MotionRange range : ranges )
                     {
-                        MotionRange range = ranges.get( j );
                         if( range.getSource() == InputDevice.SOURCE_JOYSTICK )
                         {
                             int axisCode = range.getAxis();
@@ -164,9 +163,8 @@ public class DeviceUtil
                     if( ranges.size() > 0 )
                     {
                         builder.append( "Axes: " + ranges.size() + "\n" );
-                        for( int j = 0; j < ranges.size(); j++ )
+                        for( MotionRange range : ranges )
                         {
-                            MotionRange range = ranges.get( j );
                             if( AppData.IS_HONEYCOMB_MR1 )
                             {
                                 String axisName = MotionEvent.axisToString( range.getAxis() );
