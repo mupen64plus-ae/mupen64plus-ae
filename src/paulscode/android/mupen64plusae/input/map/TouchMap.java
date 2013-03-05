@@ -124,8 +124,6 @@ public class TouchMap
         BUTTON_STRING_MAP.put( "cup",       AbstractController.CPD_U );
         BUTTON_STRING_MAP.put( "r",         AbstractController.BTN_R );
         BUTTON_STRING_MAP.put( "l",         AbstractController.BTN_L );
-        BUTTON_STRING_MAP.put( "mempak",    AbstractController.BTN_MEMPAK );
-        BUTTON_STRING_MAP.put( "rumblepak", AbstractController.BTN_RUMBLEPAK );
         BUTTON_STRING_MAP.put( "upright",   DPD_RU );
         BUTTON_STRING_MAP.put( "rightdown", DPD_RD );
         BUTTON_STRING_MAP.put( "leftdown",  DPD_LD );

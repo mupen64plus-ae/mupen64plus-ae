@@ -430,8 +430,6 @@
     <string name="inputMapActivity_btnAL">Analog ←</string>
     <string name="inputMapActivity_btnAD">Analog ↓</string>
     <string name="inputMapActivity_btnAU">Analog ↑</string>
-    <string name="inputMapActivity_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
-    <string name="inputMapActivity_mempak">Expansion Pak</string> <!-- capitalize since trademark -->
     <string name="inputMapActivity_incrementSlot">Increment slot</string>
     <string name="inputMapActivity_reset">Reset</string>
     <string name="inputMapActivity_pause">Pause</string>

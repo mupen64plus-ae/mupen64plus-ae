@@ -10,23 +10,6 @@
         android:layout_marginTop="5dp" >
 
         <Button
-            android:id="@+id/buttonMempak"
-            style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_mempak" />
-
-        <Button
-            android:id="@+id/buttonRumble"
-            style="@style/btnSpecialMappable"
-            android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_rumble" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
-
-        <Button
             android:id="@+id/buttonIncrementSlot"
             style="@style/btnSpecialMappable"
             android:text="@string/inputMapActivity_incrementSlot" />
