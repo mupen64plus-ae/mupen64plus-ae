@@ -136,6 +136,19 @@ char *trim(char *str)
     return str;
 }
 
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_frameAdvance(
+                                    JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand) ( M64CMD_ADVANCE_FRAME, 0, NULL );
+}
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_gameShark(
+                                    JNIEnv* env, jclass cls, jboolean pressed)
+{
+    int p = 0;
+    if( pressed == JNI_TRUE )
+        p = 1;
+    (*CoreDoCommand) ( M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK,  &p );
+}
 JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_pauseEmulator(
                                     JNIEnv* env, jclass cls)
 {

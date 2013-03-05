@@ -157,8 +157,8 @@ public abstract class AbstractController
      */
     protected void notifyChanged()
     {
-        int axisX = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionX, -1, 1 ) );
-        int axisY = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionY, -1, 1 ) );
+        int axisX = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionX, -1.0f, 1.0f ) );
+        int axisY = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionY, -1.0f, 1.0f ) );
         CoreInterfaceNative.setControllerState( mPlayerNumber - 1, mState.buttons, axisX, axisY );
     }
     

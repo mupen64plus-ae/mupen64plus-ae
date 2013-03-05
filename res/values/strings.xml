@@ -54,6 +54,7 @@
     <string name="menuItem_load">Load…</string>
     <string name="menuItem_save">Save…</string>
     <string name="menuItem_ouya">OUYA</string>
+    <string name="menuItem_n64Adapter">N64 USB Adapter</string>
     <string name="menuItem_ps3">PS3</string>
     <string name="menuItem_xbox360">Xbox 360</string>
     <string name="menuItem_xperiaPlay">Xperia PLAY</string>

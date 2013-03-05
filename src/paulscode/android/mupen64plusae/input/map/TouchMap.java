@@ -296,7 +296,7 @@ public class TouchMap
     public float getAnalogStrength( float displacement )
     {
         float p = ( displacement - analogDeadzone ) / ( analogMaximum - analogDeadzone );
-        return Utility.clamp( p, 0, 1 );
+        return Utility.clamp( p, 0.0f, 1.0f );
     }
     
     /**
@@ -332,7 +332,6 @@ public class TouchMap
         
         // Free the data that was loaded from the config file:
         pad_ini.clear();
-        pad_ini = null;
     }
     
     /**

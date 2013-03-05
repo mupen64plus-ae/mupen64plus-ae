@@ -99,7 +99,7 @@
             style="@style/btnSpecialMappable"
             android:text="@string/inputMapActivity_simulateMenu" />
 
-        <!-- <Button
+        <Button
             android:id="@+id/buttonFrameAdvance"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
@@ -114,7 +114,7 @@
         <Button
             android:id="@+id/buttonGameshark"
             style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_gameshark" /> -->
+            android:text="@string/inputMapActivity_gameshark" />
     </TableRow>
 
 </TableLayout>

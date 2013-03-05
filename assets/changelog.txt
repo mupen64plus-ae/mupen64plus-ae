@@ -1,3 +1,9 @@
+[22:2.1.2]
+- Fixed crash when audio enabled on some devices
+- Fixed regressions in gles2rice
+- Added interface for Gameshark button
+- Added interface for Frame Advance function
+- Added input profile for N64 USB adapters
 [21:2.1.1]
 - Fixed crash with haptic feedback on d-pad diagonal
 - Fixed missing touch controls on ASUS Transformer
