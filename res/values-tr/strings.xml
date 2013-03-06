@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Dosyaya kaydet…</string>
   <string name="menuItem_fileLoad">Dosyadan yükle…</string>
   <string name="menuItem_setSpeed">Oyun hızı</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">IME\'yi değiştir</string>
   <string name="menuItem_exit">Çıkış</string>
   <!--Input Mapping Activity-->
@@ -205,7 +214,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Girdi</string>
   <string name="pluginInput_entryNone">Hiçbirit</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Gerçeklik Sinyali İşlemcisi (RSP)</string>
   <string name="pluginRsp_entryNone">Hiçbiri (RSP devre dışı)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken)</string>
@@ -313,8 +321,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <!--capitalize since trademark-->
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_reset">Sıfırla</string>
   <string name="inputMapActivity_pause">Duraklat</string>
   <string name="inputMapActivity_stop">Durdur</string>

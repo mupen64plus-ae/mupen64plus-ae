@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Сохранение в файл…</string>
   <string name="menuItem_fileLoad">Загрузка из файла…</string>
   <string name="menuItem_setSpeed">Скорость игры</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Выбор метода ввода</string>
   <string name="menuItem_exit">Выход</string>
   <!--Input Mapping Activity-->
@@ -217,7 +226,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (порт под Android для Mupen64Plus за авторством Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Плагин ввода</string>
   <string name="pluginInput_entryNone">Заглушка</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (порт под Android для Mupen64Plus за авторством Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Выключен</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (порт под Android для Mupen64Plus за авторством Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
@@ -332,10 +340,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <string name="inputMapActivity_rumble">Rumble Pak</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion Pak</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Увеличить слот</string>
   <string name="inputMapActivity_reset">Сброс</string>
   <string name="inputMapActivity_pause">Пауза</string>

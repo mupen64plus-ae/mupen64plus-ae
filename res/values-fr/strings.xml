@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Enregistrer sous…</string>
   <string name="menuItem_fileLoad">Ouvrir…</string>
   <string name="menuItem_setSpeed">Vitesse de jeu</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Changer la méthode d\'entrée (IME)</string>
   <string name="menuItem_exit">Quitter</string>
   <!--Input Mapping Activity-->
@@ -207,6 +216,20 @@
   <string name="gles2N64Frameskip_entryExactly3">Exactement 3 images</string>
   <string name="gles2N64Frameskip_entryExactly4">Exactement 4 images</string>
   <string name="gles2N64Frameskip_entryExactly5">Exactement 5 images</string>
+  <string name="gles2RiceMipmapping_title">Mip mapping</string>
+  <string name="gles2RiceMipmapping_entryNone">Aucun</string>
+  <string name="gles2RiceMipmapping_entryNearest">Le plus proche</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Bilinéaire</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Trilinéaire</string>
+  <string name="gles2RiceTextureEnhancement_title">Upscalling/amélioration des textures</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Aucun</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Mise à l\'échelle 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Affiner </string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Affiner plus</string>
   <string name="audioResampleAlg_title">Algorithme de rééchantillonnage </string>
   <string name="audioResampleAlg_entryTrivial">Trivial</string>
   <string name="audioResampleAlg_entryLinear">Interpolation linéaire</string>
@@ -223,7 +246,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (portage Android de Mupen64Plus par Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Contrôles</string>
   <string name="pluginInput_entryNone">Sans (contrôles désactivés)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (portage Android de Mupen64Plus par Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Processeur Reality Signal (RSP)</string>
   <string name="pluginRsp_entryNone">Sans (RSP désactivé)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (portage Android de Mupen64Plus par Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
@@ -248,6 +270,7 @@
   <string name="acraUserEmail_summary">Votre nom d\'utilisateur paulscode.com (facultatif)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>
+  <string name="videoActionBarTransparency_title">Opacité de la barre d\'action</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -338,10 +361,6 @@
   <string name="inputMapActivity_btnAL">Stick analogique vers la gauche</string>
   <string name="inputMapActivity_btnAD">Stick analogique vers le bas</string>
   <string name="inputMapActivity_btnAU">Stick analogique vers le haut</string>
-  <string name="inputMapActivity_rumble">Rumble Pak</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion Pak</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Incrémenter l\'emplacement</string>
   <string name="inputMapActivity_reset">Réinitialiser</string>
   <string name="inputMapActivity_pause">Pause</string>
