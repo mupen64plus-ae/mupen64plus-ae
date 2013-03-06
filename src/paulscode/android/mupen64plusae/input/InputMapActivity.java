@@ -226,8 +226,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         setupButton( R.id.buttonCU,     AbstractController.CPD_U );
         setupButton( R.id.buttonR,      AbstractController.BTN_R );
         setupButton( R.id.buttonL,      AbstractController.BTN_L );
-        setupButton( R.id.buttonMempak, AbstractController.BTN_MEMPAK );
-        setupButton( R.id.buttonRumble, AbstractController.BTN_RUMBLEPAK );
         setupButton( R.id.buttonAR,            InputMap.AXIS_R );
         setupButton( R.id.buttonAL,            InputMap.AXIS_L );
         setupButton( R.id.buttonAD,            InputMap.AXIS_D );

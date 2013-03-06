@@ -21,7 +21,7 @@
 <resources>
 
     <!-- ************************************************************************** -->
-    <!-- Menu Strings -->
+    <!-- Menu Strings                                                               -->
     <!-- ************************************************************************** -->
 
     <!-- In-Game Menu -->
@@ -32,6 +32,19 @@
     <string name="menuItem_fileSave">Save to file…</string>
     <string name="menuItem_fileLoad">Load from file…</string>
     <string name="menuItem_setSpeed">Game speed</string>
+    <string name="menuItem_paks">Controller Paks</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak1_empty">Player 1: Empty</string>
+    <string name="menuItem_pak1_mem">Player 1: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak1_rumble">Player 1: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak2_empty">Player 2: Empty</string>
+    <string name="menuItem_pak2_mem">Player 2: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak2_rumble">Player 2: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak3_empty">Player 3: Empty</string>
+    <string name="menuItem_pak3_mem">Player 3: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak3_rumble">Player 3: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak4_empty">Player 4: Empty</string>
+    <string name="menuItem_pak4_mem">Player 4: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak4_rumble">Player 4: Rumble Pak</string> <!-- capitalize since trademark -->
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
 
@@ -282,7 +295,7 @@
     <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
     <string name="pluginInput_title">Input</string>
     <string name="pluginInput_entryNone">None (input disabled)</string>
-    <string name="pluginInput_entrySdl">input-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+    <string name="pluginInput_entryAndroid">input-android, v1.0</string>
     <string name="pluginRsp_title">Reality signal processor (RSP)</string>
     <string name="pluginRsp_entryNone">None (RSP disabled)</string>
     <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
@@ -417,8 +430,6 @@
     <string name="inputMapActivity_btnAL">Analog ←</string>
     <string name="inputMapActivity_btnAD">Analog ↓</string>
     <string name="inputMapActivity_btnAU">Analog ↑</string>
-    <string name="inputMapActivity_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
-    <string name="inputMapActivity_mempak">Expansion Pak</string> <!-- capitalize since trademark -->
     <string name="inputMapActivity_incrementSlot">Increment slot</string>
     <string name="inputMapActivity_reset">Reset</string>
     <string name="inputMapActivity_pause">Pause</string>

@@ -80,16 +80,20 @@ public class CoreInterface
     public static final int M64CORE_INPUT_GAMESHARK    = 9;
     public static final int M64CORE_STATE_LOADCOMPLETE = 10;
     public static final int M64CORE_STATE_SAVECOMPLETE = 11;
+    
+    public static final int PAK_TYPE_NONE   = 1;
+    public static final int PAK_TYPE_MEMORY = 2;
+    public static final int PAK_TYPE_RUMBLE = 5;
     // @formatter:on
     
     // Private constants
-    protected static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
+    protected static final long VIBRATE_TIMEOUT = 1000;
     protected static final int COMMAND_CHANGE_TITLE = 1;
     
     // External objects from Java side
     protected static Activity sActivity = null;
     protected static GameSurface sSurface = null;
-    protected static Vibrator sVibrator = null;
+    protected static final Vibrator[] sVibrators = new Vibrator[4];
     protected static AppData sAppData = null;
     protected static UserPrefs sUserPrefs = null;
     protected static OnStateCallbackListener sStateCallbackListener = null;
@@ -113,14 +117,21 @@ public class CoreInterface
     protected static int sFrameCount = -1;
     protected static long sLastFpsTime = 0;
     
-    public static void refresh( Activity activity, GameSurface surface, Vibrator vibrator )
+    public static void refresh( Activity activity, GameSurface surface )
     {
         sActivity = activity;
         sSurface = surface;
-        sVibrator = vibrator;
         sAppData = new AppData( sActivity );
         sUserPrefs = new UserPrefs( sActivity );
         syncConfigFiles( sUserPrefs, sAppData );
+    }
+    
+    public static void registerVibrator( int player, Vibrator vibrator )
+    {
+        if( player > 0 && player < 5 )
+        {
+            sVibrators[player - 1] = vibrator;
+        }
     }
     
     public static void setOnStateCallbackListener( OnStateCallbackListener listener )
@@ -156,6 +167,12 @@ public class CoreInterface
                 @Override
                 public void run()
                 {
+                    CoreInterfaceNative.jniInitInput();
+                    CoreInterfaceNative.setControllerConfig( 0, sUserPrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
+                    CoreInterfaceNative.setControllerConfig( 1, sUserPrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
+                    CoreInterfaceNative.setControllerConfig( 2, sUserPrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
+                    CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
+                    
                     CoreInterfaceNative.init();
                 }
             }, "CoreThread" );
@@ -368,11 +385,6 @@ public class CoreInterface
         else
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
         
-        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged1, 1);
-        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged2, 2);
-        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged3, 3);
-        syncConfigFileInputs( mupen64plus_cfg, user.isPlugged4, 4);
-    
         mupen64plus_cfg.save();
         
         // GLES2N64 config file
@@ -383,36 +395,6 @@ public class CoreInterface
         gles2n64_conf.put( "[<sectionless!>]", "hack z", booleanToString( !user.isGles2N64DepthTestEnabled ) ); // hack z enabled means that depth test is disabled
         gles2n64_conf.save();        
         //@formatter:on
-    }
-    
-    private static void syncConfigFileInputs( ConfigFile mupen64plus_cfg, boolean isPlugged,
-            int playerNumber )
-    {
-        String sectionTitle = "Input-SDL-Control" + playerNumber;
-        
-        mupen64plus_cfg.put( sectionTitle, "Version", "1.00" );
-        mupen64plus_cfg.put( sectionTitle, "plugged", isPlugged ? "True" : "False" );
-        mupen64plus_cfg.put( sectionTitle, "plugin", "2" );
-        mupen64plus_cfg.put( sectionTitle, "device", "-2" );
-        mupen64plus_cfg.put( sectionTitle, "mouse", "False" );
-        mupen64plus_cfg.put( sectionTitle, "DPad R", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "DPad L", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "DPad D", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "DPad U", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "Start", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "Z Trig", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "B Button", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "A Button", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "C Button R", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "C Button L", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "C Button D", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "C Button U", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "R Trig", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "L Trig", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "Mempak switch", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "Rumblepak switch", "key(0)" );
-        mupen64plus_cfg.put( sectionTitle, "X Axis", "key(0,0)" );
-        mupen64plus_cfg.put( sectionTitle, "Y Axis", "key(0,0)" );
     }
     
     private static String booleanToString( boolean b )

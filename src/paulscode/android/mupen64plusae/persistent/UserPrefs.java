@@ -31,6 +31,7 @@ import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
 
+import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
@@ -289,12 +290,14 @@ public class UserPrefs
     public final boolean isOuyaMode;
     
     // Shared preferences keys and key templates
+    private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     private static final String KEYTEMPLATE_INPUT_MAP_STRING = "inputMapString%1$d";
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     // ... add more as needed
     
     // Shared preferences default values
+    public static final int DEFAULT_PAK_TYPE = CoreInterface.PAK_TYPE_MEMORY;
     public static final String DEFAULT_INPUT_MAP_STRING = InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
@@ -513,6 +516,11 @@ public class UserPrefs
         }
     }
     
+    public int getPakType( int player )
+    {
+        return getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE );
+    }
+    
     public String getInputMapString( int player )
     {
         return getString( KEYTEMPLATE_INPUT_MAP_STRING, player, DEFAULT_INPUT_MAP_STRING );
@@ -526,6 +534,11 @@ public class UserPrefs
     public boolean getPlayerMapReminder()
     {
         return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
+    }
+    
+    public void putPakType( int player, int value )
+    {
+        putInt( KEYTEMPLATE_PAK_TYPE, player, value );
     }
     
     public void putInputMapString( int player, String value )
@@ -554,6 +567,12 @@ public class UserPrefs
         return getBoolean( key, defaultValue );
     }
     
+    private int getInt( String keyTemplate, int index, int defaultValue )
+    {
+        String key = String.format( Locale.US, keyTemplate, index );
+        return mPreferences.getInt( key, defaultValue );
+    }
+    
     private String getString( String keyTemplate, int index, String defaultValue )
     {
         String key = String.format( Locale.US, keyTemplate, index );
@@ -569,6 +588,12 @@ public class UserPrefs
     {
         String key = String.format( Locale.US, keyTemplate, index );
         putBoolean( key, value );
+    }
+    
+    private void putInt( String keyTemplate, int index, int value )
+    {
+        String key = String.format( Locale.US, keyTemplate, index );
+        mPreferences.edit().putInt( key, value ).commit();
     }
     
     private void putString( String keyTemplate, int index, String value )

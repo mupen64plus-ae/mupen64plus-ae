@@ -28,9 +28,12 @@ import paulscode.android.mupen64plusae.GameMenuHandler;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.TargetApi;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 
 /**
@@ -105,12 +108,19 @@ public class PeripheralController extends AbstractController implements
      * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int,
      * float, int)
      */
+    @TargetApi( 16 )
     @Override
     public void onInput( int inputCode, float strength, int hardwareId )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
         {
+            // Update the registered vibrator for this player
+            if( AppData.IS_JELLY_BEAN )
+            {
+                CoreInterface.registerVibrator( mPlayerNumber, InputDevice.getDevice( hardwareId ).getVibrator() );
+            }
+            
             // Apply user changes to the controller state
             apply( inputCode, strength );
             

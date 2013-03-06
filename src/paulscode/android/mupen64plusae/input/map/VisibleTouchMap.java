@@ -101,9 +101,9 @@ public class VisibleTouchMap extends TouchMap
         mFontsDir = fontsDir;
         mFpsDigits = new CopyOnWriteArrayList<Image>();
         mNumerals = new Image[10];
-        autoHoldImages = new Image[BUTTON_STRING_MAP.size()];
-        autoHoldX = new int[BUTTON_STRING_MAP.size()];
-        autoHoldY = new int[BUTTON_STRING_MAP.size()];
+        autoHoldImages = new Image[NUM_N64_PSEUDOBUTTONS];
+        autoHoldX = new int[NUM_N64_PSEUDOBUTTONS];
+        autoHoldY = new int[NUM_N64_PSEUDOBUTTONS];
         mTouchscreenTransparency = alpha;
     }
     
