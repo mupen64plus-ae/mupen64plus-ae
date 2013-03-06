@@ -244,7 +244,7 @@
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Activer le rapport de plantage</string>
   <string name="acraEnable_summary">Aucune donnée personnelle n\'est collectée</string>
-  <string name="acraUserEmail_title">Information de contact</string>
+  <string name="acraUserEmail_title">Informations de contact</string>
   <string name="acraUserEmail_summary">Votre nom d\'utilisateur paulscode.com (facultatif)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>
@@ -286,7 +286,6 @@
   <string name="changeLog_dialogTitle">Notes de version</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nomdefichier</string>
-  <string name="hintSetSpeed">vitesse de 10 à 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Initialisation</string>
   <string name="assetExtractor_progress">%1$.0f%% effectué : %2$s</string>
@@ -300,7 +299,6 @@
   <string name="cheatNotes_title">Remarques</string>
   <string name="cheatNotes_none">(Aucune remarque n\'est disponible pour ce cheat)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Sélectionnez un pack de textures (au format ZIP)</string>
   <string name="pathHiResTexturesTask_title">Décompresser les textures</string>
   <string name="pathHiResTexturesTask_message">Merci de patienter. Cette opération peut prendre quelques minutes.</string>
   <string name="pathHiResTexturesTask_errorMessage">Une erreur est survenue durant la décompression des textures !</string>

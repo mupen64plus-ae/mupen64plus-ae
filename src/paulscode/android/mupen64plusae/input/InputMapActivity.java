@@ -226,8 +226,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         setupButton( R.id.buttonCU,     AbstractController.CPD_U );
         setupButton( R.id.buttonR,      AbstractController.BTN_R );
         setupButton( R.id.buttonL,      AbstractController.BTN_L );
-        setupButton( R.id.buttonMempak, AbstractController.BTN_MEMPAK );
-        setupButton( R.id.buttonRumble, AbstractController.BTN_RUMBLEPAK );
         setupButton( R.id.buttonAR,            InputMap.AXIS_R );
         setupButton( R.id.buttonAL,            InputMap.AXIS_L );
         setupButton( R.id.buttonAD,            InputMap.AXIS_D );
@@ -241,8 +239,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         setupButton( R.id.buttonSpeedDown,     InputMap.FUNC_SPEED_DOWN );
         setupButton( R.id.buttonSpeedUp,       InputMap.FUNC_SPEED_UP );
         setupButton( R.id.buttonFastForward,   InputMap.FUNC_FAST_FORWARD );
-        // setupButton( R.id.buttonFrameAdvance,  InputMap.FUNC_FRAME_ADVANCE );
-        // setupButton( R.id.buttonGameshark,     InputMap.FUNC_GAMESHARK );
+        setupButton( R.id.buttonFrameAdvance,  InputMap.FUNC_FRAME_ADVANCE );
+        setupButton( R.id.buttonGameshark,     InputMap.FUNC_GAMESHARK );
         setupButton( R.id.buttonSimulateBack,  InputMap.FUNC_SIMULATE_BACK );
         setupButton( R.id.buttonSimulateMenu,  InputMap.FUNC_SIMULATE_MENU );
         // @formatter:on
@@ -283,6 +281,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 break;
             case R.id.menuItem_ouya:
                 loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_OUYA, item.getTitle() );
+                break;
+            case R.id.menuItem_n64Adapter:
+                loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_N64_ADAPTER, item.getTitle() );
                 break;
             case R.id.menuItem_ps3:
                 loadProfile( InputMap.DEFAULT_INPUT_MAP_STRING_PS3, item.getTitle() );

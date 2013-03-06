@@ -1,9 +1,22 @@
+[22:2.1.2]
+- Added rumble support using phone vibrator (see in-game menu, Player 1 only)
+- Added rumble support for external controllers (all players, Jelly Bean only)
+- Added interface for Gameshark button
+- Added interface for Frame Advance function
+- Added input profile for N64 USB adapters
+- Fixed crash when audio enabled on some devices
+- Fixed crash when FPS enabled on some devices
+- Fixed regressions in gles2rice
 [21:2.1.1]
-- Added option which allows choosing which mipmapping algorithm to use. They are listed from least intensive to most intensive in terms of possible hits to performance.
-- Added option which allows applying a texture filter using the gles2rice video plugin
-- Added option to change action bar transparency
 - Fixed crash with haptic feedback on d-pad diagonal
-- Fixed gles2N64 graphical issues (Star Wars Ep. 1 Racer and others)
+- Fixed missing touch controls on ASUS Transformer
+- Fixed crash on some Android 4.0.4 devices
+- Fixed some gles2N64 graphical issues (Star Wars Ep. 1 Racer and others)
+- Fixed bug where stale auto-save is loaded when device sleeps & wakes
+- Added mipmapping option for gles2rice video plugin
+- Added texture filter option for gles2rice video plugin
+- Added option to change action bar transparency
+- Utilized new core features to fix some internal state-related bugs
 [20:2.1.0]
 - Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)
 - Added screen position option for portrait mode

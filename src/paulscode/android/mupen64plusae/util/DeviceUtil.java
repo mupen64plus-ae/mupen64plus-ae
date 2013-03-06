@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import paulscode.android.mupen64plusae.input.map.AxisMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
@@ -77,6 +78,17 @@ public class DeviceUtil
                 | Pattern.MULTILINE );
         result = pattern.matcher( result ).replaceAll( "Serial : XXXX" );
         
+        // Additional information in android.os.Build may be useful
+        result += "\n";
+        result += "Board: " + Build.BOARD + "\n";
+        result += "Brand: " + Build.BRAND + "\n";
+        result += "Device: " + Build.DEVICE + "\n";
+        result += "Display: " + Build.DISPLAY + "\n";
+        result += "Host: " + Build.HOST + "\n";
+        result += "ID: " + Build.ID + "\n";
+        result += "Manufacturer: " + Build.MANUFACTURER + "\n";
+        result += "Model: " + Build.MODEL + "\n";
+        result += "Product: " + Build.PRODUCT + "\n";
         return result;
     }
     
@@ -100,9 +112,8 @@ public class DeviceUtil
                     builder.append( "Hash: " + axisMap.getSignature().hashCode() + "\n" );
                     
                     List<MotionRange> ranges = getPeripheralMotionRanges( device );
-                    for( int j = 0; j < ranges.size(); j++ )
+                    for( MotionRange range : ranges )
                     {
-                        MotionRange range = ranges.get( j );
                         if( range.getSource() == InputDevice.SOURCE_JOYSTICK )
                         {
                             int axisCode = range.getAxis();
@@ -152,9 +163,8 @@ public class DeviceUtil
                     if( ranges.size() > 0 )
                     {
                         builder.append( "Axes: " + ranges.size() + "\n" );
-                        for( int j = 0; j < ranges.size(); j++ )
+                        for( MotionRange range : ranges )
                         {
-                            MotionRange range = ranges.get( j );
                             if( AppData.IS_HONEYCOMB_MR1 )
                             {
                                 String axisName = MotionEvent.axisToString( range.getAxis() );

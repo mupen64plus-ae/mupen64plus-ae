@@ -28,46 +28,43 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-// TODO: Minor glitch: hold analog, then hold button, then release analog -> analog doesn't redraw
-
-public class GameOverlay extends View implements TouchController.OnStateChangedListener,
-        GameSurface.OnFpsChangedListener
+public class GameOverlay extends View implements TouchController.OnStateChangedListener, CoreInterface.OnFpsChangedListener
 {
     private VisibleTouchMap mTouchMap;
-    private int mRefreshPeriod = 0;
-    private int mRefreshCount = 0;
-    private boolean mRefreshEnabled = false;
-    private boolean mFpsEnabled = false;
     private boolean mDrawingEnabled = true;
+    private boolean mFpsEnabled = false;
+    private int mHatRefreshPeriod = 0;
+    private int mHatRefreshCount = 0;
     
     public GameOverlay( Context context, AttributeSet attribs )
     {
         super( context, attribs );
     }
     
-    public void initialize( VisibleTouchMap touchMap, int refreshPeriod, boolean fpsEnabled, boolean drawingEnabled )
+    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, int fpsRefreshPeriod, int hatRefreshPeriod )
     {
         mTouchMap = touchMap;
-        mRefreshPeriod = refreshPeriod;
-        mFpsEnabled = fpsEnabled;
         mDrawingEnabled = drawingEnabled;
-        mRefreshEnabled = mRefreshPeriod > 0 && mDrawingEnabled;
+        mFpsEnabled = fpsRefreshPeriod > 0;
+        mHatRefreshPeriod = hatRefreshPeriod;
+        
+        CoreInterface.setOnFpsChangedListener( this, fpsRefreshPeriod );
     }
     
     @Override
     public void onAnalogChanged( float axisFractionX, float axisFractionY )
     {
-        if( mRefreshEnabled )
+        if( mHatRefreshPeriod > 0 && mDrawingEnabled )
         {
             // Increment the count since last refresh
-            mRefreshCount++;
+            mHatRefreshCount++;
             
             // If stick re-centered, always refresh
             if( axisFractionX == 0 && axisFractionY == 0 )
-                mRefreshCount = 0;
+                mHatRefreshCount = 0;
             
             // Update the analog stick assets and redraw if required
-            if( mRefreshCount % mRefreshPeriod == 0 && mTouchMap != null
+            if( mHatRefreshCount % mHatRefreshPeriod == 0 && mTouchMap != null
                     && mTouchMap.updateAnalog( axisFractionX, axisFractionY ) )
             {
                 postInvalidate();

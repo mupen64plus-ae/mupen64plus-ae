@@ -16,8 +16,8 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profili</string>
   <string name="menuItem_default">Zadano</string>
-  <string name="menuItem_load">Učitaj...</string>
-  <string name="menuItem_save">Spremi...</string>
+  <string name="menuItem_load">Učitaj…</string>
+  <string name="menuItem_save">Spremi…</string>
   <string name="menuItem_ouya">OUYA</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
@@ -286,7 +286,6 @@
   <string name="changeLog_dialogTitle">Što je novo?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ime datoteke</string>
-  <string name="hintSetSpeed">brzina između 10 do 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Pokretanje</string>
   <string name="assetExtractor_progress">%1$.0f%% : %2$s</string>
@@ -300,7 +299,6 @@
   <string name="cheatNotes_title">Detalji</string>
   <string name="cheatNotes_none">(nema detalja)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Odabir teksture (ZIP format)</string>
   <string name="pathHiResTexturesTask_title">Raspakiravanje teksture</string>
   <string name="pathHiResTexturesTask_message">Molimo pričekajte. Ovaj proces može potrajati.</string>
   <string name="pathHiResTexturesTask_errorMessage">Došlo je do greške sa raspakiravanjem teksture!</string>

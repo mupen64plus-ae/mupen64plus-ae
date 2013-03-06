@@ -21,6 +21,9 @@
 *.ver text
 *.xml text
 
+# use linux line ending
+*.sh text eol=lf
+
 # don't modify binary files
 *.gif binary
 *.gz binary

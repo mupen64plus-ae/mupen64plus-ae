@@ -27,55 +27,23 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.PixelFormat;
-import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 /**
  * Represents a graphical area of memory that can be drawn to.
  */
-public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
+public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
 {
-    public interface CoreLifecycleListener
-    {
-        public void onCoreStartup();
-        public void onCoreShutdown();
-    }
-    
-    public interface OnFpsChangedListener
-    {
-        /**
-         * Called when the frame rate value has changed.
-         * 
-         * @param fps The new FPS value.
-         */
-        public void onFpsChanged( int fps );
-    }
-    
-    // Thread that the emulator core runs on
-    private static Thread mCoreThread;
-    
-    // Core lifecycle listener
-    private CoreLifecycleListener mClListener;
-    
-    // Frame rate listener
-    private OnFpsChangedListener mFpsListener;
-    private int mFpsRecalcPeriod = 0;
-    private boolean mIsFpsEnabled = false;
-    private long mLastFpsTime = 0;
-    private int mFrameCount = -1;
-    
     // Internal flags
     private boolean mIsRgba8888 = false;
     
-    // EGL private objects
+    // Internal EGL objects
     private EGLSurface mEGLSurface;
     private EGLDisplay mEGLDisplay;
     
-    // Startup
     public GameSurface( Context context, AttributeSet attribs )
     {
         super( context, attribs );
@@ -86,221 +54,148 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
         requestFocus();
     }
     
-    public void init( CoreLifecycleListener clListener, OnFpsChangedListener fpsListener, int fpsRecalcPeriod, boolean isRgba8888 )
+    public void setColorMode( boolean isRgba8888 )
     {
-        mClListener = clListener;
-        mFpsListener = fpsListener;
-        mFpsRecalcPeriod = fpsRecalcPeriod;
-        mIsFpsEnabled = mFpsRecalcPeriod > 0;
         mIsRgba8888 = isRgba8888;
     }
-
+    
     @Override
     public void surfaceCreated( SurfaceHolder holder )
     {
-        // Called when we have a valid drawing surface
         Log.i( "GameSurface", "surfaceCreated: " );
     }
     
-    @SuppressWarnings( "deprecation" )
     @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
-        // Called when the surface is resized
         Log.i( "GameSurface", "surfaceChanged: " );
-        
-        int sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565 by default
-        switch( format )
-        {
-            case PixelFormat.A_8:
-                break;
-            case PixelFormat.LA_88:
-                break;
-            case PixelFormat.L_8:
-                break;
-            case PixelFormat.RGBA_4444:
-                sdlFormat = 0x85421002; // SDL_PIXELFORMAT_RGBA4444
-                break;
-            case PixelFormat.RGBA_5551:
-                sdlFormat = 0x85441002; // SDL_PIXELFORMAT_RGBA5551
-                break;
-            case PixelFormat.RGBA_8888:
-                sdlFormat = 0x86462004; // SDL_PIXELFORMAT_RGBA8888
-                break;
-            case PixelFormat.RGBX_8888:
-                sdlFormat = 0x86262004; // SDL_PIXELFORMAT_RGBX8888
-                break;
-            case PixelFormat.RGB_332:
-                sdlFormat = 0x84110801; // SDL_PIXELFORMAT_RGB332
-                break;
-            case PixelFormat.RGB_565:
-                sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565
-                break;
-            case PixelFormat.RGB_888:
-                // Not sure this is right, maybe SDL_PIXELFORMAT_RGB24 instead?
-                sdlFormat = 0x86161804; // SDL_PIXELFORMAT_RGB888
-                break;
-            case PixelFormat.OPAQUE:
-                /*
-                 * TODO: Not sure this is right, Android API says,
-                 * "System chooses an opaque format", but how do we know which one??
-                 */
-                break;
-            default:
-                Log.w( "GameLifecycleHandler", "Pixel format unknown: " + format );
-                break;
-        }
-        NativeMethods.onResize( width, height, sdlFormat );
-        mCoreThread = new Thread( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                NativeMethods.init();
-            }
-        }, "CoreThread" );
-        mCoreThread.start();
-        
-        // Wait for the emu state callback indicating emulation has started
-        CoreInterface.waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
-        
-        // The core has started up, notify the listener
-        if( mClListener != null )
-            mClListener.onCoreStartup();
+        CoreInterface.onResize( format, width, height );
+        CoreInterface.startupEmulator();
     }
     
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
-        // Called when we lose the surface
         Log.i( "GameSurface", "surfaceDestroyed: " );
-        
-        // The core is about to shut down, notify the listener
-        if( mClListener != null )
-            mClListener.onCoreShutdown();
-        
-        // Tell the core to quit
-        NativeMethods.quit();
-        
-        // Now wait for the core thread to quit
-        if( mCoreThread != null )
-        {
-            try
-            {
-                mCoreThread.join();
-            }
-            catch( InterruptedException e )
-            {
-                Log.i( "GameSurface", "Problem stopping core thread: " + e );
-            }
-            mCoreThread = null;
-        }
+        CoreInterface.shutdownEmulator();
     }
     
-    @Override
-    public void onDraw( Canvas canvas )
-    {
-        // Unused, suppress the super method
-    }
-    
-    // EGL functions
-    public boolean initEGL( int majorVersion, int minorVersion )
+    public boolean createGLContext( int majorVersion, int minorVersion )
     {
         Log.v( "GameSurface", "Starting up OpenGL ES " + majorVersion + "." + minorVersion );
         try
         {
-            final int EGL_OPENGL_ES_BIT = 1;
-            final int EGL_OPENGL_ES2_BIT = 4;
-            final int[] version = new int[2];
-            final int[] configSpec;
-
-            // Get EGL instance.
+            // Get EGL instance
             EGL10 egl = (EGL10) EGLContext.getEGL();
-
-            // Now get an EGL display connection for the native display
-            EGLDisplay dpy = egl.eglGetDisplay( EGL10.EGL_DEFAULT_DISPLAY );
-
-            // Now initialize the EGL display.
-            egl.eglInitialize( dpy, version );
-
-            int renderableType = 0;
-            if( majorVersion == 2 )
+            
+            // Get an EGL display connection for the native display
+            EGLDisplay display = egl.eglGetDisplay( EGL10.EGL_DEFAULT_DISPLAY );
+            if( display == EGL10.EGL_NO_DISPLAY )
             {
-                renderableType = EGL_OPENGL_ES2_BIT;
-            }
-            else if( majorVersion == 1 )
-            {
-                renderableType = EGL_OPENGL_ES_BIT;
+                Log.e( "GameSurface", "Couldn't find EGL display connection" );
+                return false;
             }
             
+            // Initialize the EGL display connection and obtain the GLES version supported by the device
+            final int[] version = new int[2];
+            if( !egl.eglInitialize( display, version ) )
+            {
+                Log.e( "GameSurface", "Couldn't initialize EGL display connection" );
+                return false;
+            }
+            
+            // Generate a bit mask to limit the configuration search to compatible GLES versions
+            final int UNKNOWN = 0;
+            final int EGL_OPENGL_ES_BIT = 1;
+            final int EGL_OPENGL_ES2_BIT = 4;
+            final int renderableType;
+
+            // Determine which version of EGL we're using.
+            switch ( majorVersion )
+            {
+                case 1:
+                    renderableType = EGL_OPENGL_ES_BIT;
+                    break;
+
+                case 2:
+                    renderableType = EGL_OPENGL_ES2_BIT;
+                    break;
+
+                default: // Shouldn't happen.
+                    renderableType = UNKNOWN;
+                    break;
+            }
+
+            
+            // Specify the desired EGL frame buffer configuration
             // @formatter:off
+            final int[] configSpec;
             if( mIsRgba8888 )
             {
+                // User has requested 32-bit color
                 configSpec = new int[]
-                        { 
-                            EGL10.EGL_RED_SIZE,    8, // get a config with 8 bits of red
-                            EGL10.EGL_GREEN_SIZE,  8, // get a config with 8 bits of green
-                            EGL10.EGL_BLUE_SIZE,   8, // get a config with 8 bits of blue
-                            EGL10.EGL_ALPHA_SIZE,  8, // get a config with 8 bits of alpha
-                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with 16 bits of Z in the depth buffer
-                            EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
-                        };
+                { 
+                    EGL10.EGL_RED_SIZE,    8,                   // request 8 bits of red
+                    EGL10.EGL_GREEN_SIZE,  8,                   // request 8 bits of green
+                    EGL10.EGL_BLUE_SIZE,   8,                   // request 8 bits of blue
+                    EGL10.EGL_ALPHA_SIZE,  8,                   // request 8 bits of alpha
+                    EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                    EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                    EGL10.EGL_NONE                              // terminate array
+                };
             }
             else
             {
+                // User will take whatever color depth is available
                 configSpec = new int[] 
-                        { 
-                            EGL10.EGL_DEPTH_SIZE, 16, // get a config with 16-bits of Z in the depth buffer.
-                            EGL10.EGL_RENDERABLE_TYPE, renderableType, EGL10.EGL_NONE
-                        };
+                { 
+                    EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                    EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                    EGL10.EGL_NONE                              // terminate array
+                };
             }
+            // @formatter:on            
             
+            // Get an EGL frame buffer configuration that is compatible with the display and specification
             final EGLConfig[] configs = new EGLConfig[1];
             final int[] num_config = new int[1];
-
-            // If none of the EGL framebuffer configs correspond to our attributes, then we stop initializing.
-            if( !egl.eglChooseConfig( dpy, configSpec, configs, 1, num_config ) || num_config[0] == 0 )
+            if( !egl.eglChooseConfig( display, configSpec, configs, 1, num_config ) || num_config[0] == 0 )
             {
-                Log.e( "GameSurface", "No EGL config available" );
+                Log.e( "GameSurface", "Couldn't find compatible EGL frame buffer configuration" );
                 return false;
             }
-            // @formatter:on
-            
             EGLConfig config = configs[0];
-            // paulscode, GLES2 fix:
-            int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-            int[] contextAttrs = new int[]
-                    {
-                        EGL_CONTEXT_CLIENT_VERSION,
-                        majorVersion,
-                        EGL10.EGL_NONE
-                    };
             
-            EGLContext ctx = egl.eglCreateContext( dpy, config, EGL10.EGL_NO_CONTEXT, contextAttrs );
-            // end GLES2 fix
-            // EGLContext ctx = egl.eglCreateContext( dpy, config, EGL10.EGL_NO_CONTEXT, null );
-            
-            if( ctx.equals( EGL10.EGL_NO_CONTEXT ) )
+            // Create an EGL rendering context and ensure that it supports the requested GLES version, display
+            // connection, and frame buffer configuration (http://stackoverflow.com/a/5930935/254218)
+            final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+            final int[] contextAttrs = new int[] { EGL_CONTEXT_CLIENT_VERSION, majorVersion, EGL10.EGL_NONE };
+            EGLContext context = egl.eglCreateContext( display, config, EGL10.EGL_NO_CONTEXT, contextAttrs );
+            if( context.equals( EGL10.EGL_NO_CONTEXT ) )
             {
-                Log.e( "GameSurface", "Couldn't create context" );
+                Log.e( "GameSurface", "Couldn't create EGL rendering context" );
                 return false;
             }
             
-            EGLSurface surface = egl.eglCreateWindowSurface( dpy, config, this, null );
+            // Create an EGL window surface from the generated EGL display and configuration
+            EGLSurface surface = egl.eglCreateWindowSurface( display, config, this, null );
             if( surface.equals( EGL10.EGL_NO_SURFACE ) )
             {
-                Log.e( "GameSurface", "Couldn't create surface" );
+                Log.e( "GameSurface", "Couldn't create EGL window surface" );
                 return false;
             }
             
-            if( !egl.eglMakeCurrent( dpy, surface, surface, ctx ) )
+            // Bind the EGL rendering context to the window surface and current rendering thread
+            if( !egl.eglMakeCurrent( display, surface, surface, context ) )
             {
-                Log.e( "GameSurface", "Couldn't make context current" );
+                Log.e( "GameSurface", "Couldn't bind EGL rendering context to surface" );
                 return false;
             }
             
-            mEGLDisplay = dpy;
+            // Store the EGL objects to permit frame buffer swaps later
+            mEGLDisplay = display;
             mEGLSurface = surface;
+            return true;
         }
         catch( IllegalArgumentException e )
         {
@@ -309,53 +204,34 @@ public class GameSurface extends GLSurfaceView implements SurfaceHolder.Callback
             {
                 Log.v( "GameSurface", s.toString() );
             }
+            return false;
         }
-        
-        return true;
     }
     
-    // EGL buffer flip
-    public void flipEGL()
+    public void flipBuffers()
     {
         try
         {
-            // Get an EGL instance.
+            // Get EGL instance
             EGL10 egl = (EGL10) EGLContext.getEGL();
-
-            // Make sure native-side executions complete before
-            // doing any further GL rendering calls.
+            
+            // Wait for native-side executions to complete before doing any further GL rendering calls
             egl.eglWaitNative( EGL10.EGL_CORE_NATIVE_ENGINE, null );
             
-            //-- Drawing here --//
-
-            // Make sure all GL executions are complete before
-            // doing any further native-side rendering calls.
-            egl.eglWaitGL();
-
-            // Now finally 'flip' the buffer.
-            egl.eglSwapBuffers( mEGLDisplay, mEGLSurface );
+            // -- Drawing from the core occurs here -- //
             
+            // Wait for GL executions to complete before doing any further native-side rendering calls
+            egl.eglWaitGL();
+            
+            // Rendering is complete, swap the buffers
+            egl.eglSwapBuffers( mEGLDisplay, mEGLSurface );
         }
         catch( IllegalArgumentException e )
         {
-            Log.v( "GameSurface", "flipEGL(): " + e );
+            Log.v( "GameSurface", "flipBuffers(): " + e );
             for( StackTraceElement s : e.getStackTrace() )
             {
                 Log.v( "GameSurface", s.toString() );
-            }
-        }
-        
-        // Update frame rate info
-        if( mIsFpsEnabled )
-        {
-            mFrameCount++;
-            if( mFrameCount >= mFpsRecalcPeriod && mFpsListener != null )
-            {
-                long currentTime = System.currentTimeMillis();
-                float fFPS = ( (float) mFrameCount / (float) ( currentTime - mLastFpsTime ) ) * 1000.0f;
-                mFpsListener.onFpsChanged( Math.round( fFPS ) );
-                mFrameCount = 0;
-                mLastFpsTime = currentTime;
             }
         }
     }

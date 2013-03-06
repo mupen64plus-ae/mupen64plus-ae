@@ -36,6 +36,7 @@ import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -43,6 +44,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -122,6 +124,17 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Disable the touchscreen when running on OUYA
         if( mAppData.hardwareInfo.isOUYA )
             prefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
+        
+        // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
+        PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
+        
+        // Ensure that selected plugin names are valid
+        Resources res = getResources();
+        PrefUtil.validateListPreference( res, prefs, "pluginInput", R.string.pluginInput_default, R.array.pluginInput_values );
+        PrefUtil.validateListPreference( res, prefs, "pluginVideo", R.string.pluginVideo_default, R.array.pluginVideo_values );
+        PrefUtil.validateListPreference( res, prefs, "pluginAudio", R.string.pluginAudio_default, R.array.pluginAudio_values );
+        PrefUtil.validateListPreference( res, prefs, "pluginRsp", R.string.pluginRsp_default, R.array.pluginRsp_values );
+        PrefUtil.validateListPreference( res, prefs, "pluginCore", R.string.pluginCore_default, R.array.pluginCore_values );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
@@ -206,6 +219,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         }
     }
     
+    @TargetApi( 9 )
     @SuppressWarnings( "deprecation" )
     private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
     {
@@ -338,14 +352,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             @Override
             public void onConfirm()
             {
-                // Don't handle all the changes that are about to be made
-                SharedPreferences sharedPreferences = PreferenceManager
-                        .getDefaultSharedPreferences( MenuActivity.this );
-                sharedPreferences.unregisterOnSharedPreferenceChangeListener( MenuActivity.this );
-                
                 // Reset the user preferences
                 SharedPreferences preferences = PreferenceManager
                         .getDefaultSharedPreferences( MenuActivity.this );
+                preferences.unregisterOnSharedPreferenceChangeListener( MenuActivity.this );
                 preferences.edit().clear().commit();
                 PreferenceManager.setDefaultValues( MenuActivity.this, R.xml.preferences, true );
                 

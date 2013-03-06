@@ -36,7 +36,6 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Notifier;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -84,7 +83,7 @@ import android.view.WindowManager.LayoutParams;
  */
 //@formatter:on
 
-public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.CoreLifecycleListener
+public class GameLifecycleHandler implements View.OnKeyListener
 {
     // Activity and views
     private Activity mActivity;
@@ -97,7 +96,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     private KeyProvider mKeyProvider;
     
     // Internal flags
-    private boolean mCoreRunning = false;
     private final boolean mIsXperiaPlay;
     
     // App data and user preferences
@@ -181,62 +179,33 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
                     mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenStyle, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, mUserPrefs.touchscreenRefresh,
-                    mUserPrefs.isFpsEnabled, !mUserPrefs.isTouchscreenHidden );
+            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden,
+                    mUserPrefs.videoFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
         
         // Initialize user interface devices
         View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
         if( mUserPrefs.inputPlugin.enabled )
             initControllers( inputSource );
-        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controllers' key provider, to add some extra functionality
         inputSource.setOnKeyListener( this );
         
-        // Start listening to game surface events
-        mSurface.init( this, mOverlay, mUserPrefs.videoFpsRefresh, mUserPrefs.isRgba8888 );
+        // Initialize the game surface
+        mSurface.setColorMode( mUserPrefs.isRgba8888 );
         
         // Refresh the objects and data files interfacing to the emulator core
-        CoreInterface.refresh( mActivity, mSurface, vibrator );
+        CoreInterface.refresh( mActivity, mSurface );
     }
     
     public void onResume()
     {
-        if( mCoreRunning )
-        {
-            Notifier.showToast( mActivity, R.string.toast_loadingSession );
-            NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
-            NativeMethods.resumeEmulator();
-        }
+        CoreInterface.resumeEmulator();
     }
     
     public void onPause()
     {
-        if( mCoreRunning )
-        {
-            NativeMethods.pauseEmulator();
-            Notifier.showToast( mActivity, R.string.toast_savingSession );
-            NativeMethods.fileSaveEmulator( mUserPrefs.selectedGameAutoSavefile );
-        }
-    }
-    
-    @Override
-    public void onCoreStartup()
-    {
-        mCoreRunning = true;
-        Notifier.showToast( mActivity, R.string.toast_loadingSession );
-        
-        if( !CoreInterface.isRestarting() )
-            NativeMethods.fileLoadEmulator( mUserPrefs.selectedGameAutoSavefile );
-        
-        NativeMethods.resumeEmulator();
-    }
-    
-    @Override
-    public void onCoreShutdown()
-    {
-        mCoreRunning = false;
+        CoreInterface.pauseEmulator( true );
     }
     
     @Override
@@ -268,10 +237,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, GameSurface.Cor
     
     private void initControllers( View inputSource )
     {
-        // Create the touchpad controls, if applicable
-        TouchController touchpadController = null;
-        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        // TODO: Register multiplayer/gamepad vibrators
         
+        // By default, send Player 1 rumbles through phone vibrator
+        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        CoreInterface.registerVibrator( 1, vibrator );
+
+        // Create the touchpad controls, if applicable
+        TouchController touchpadController = null;        
         if( mIsXperiaPlay )
         {
             // Create the map for the touchpad

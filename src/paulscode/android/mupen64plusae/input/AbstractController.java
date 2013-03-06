@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
-import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.CoreInterfaceNative;
 import paulscode.android.mupen64plusae.util.Utility;
 
 /**
@@ -115,11 +115,11 @@ public abstract class AbstractController
     /** N64 button: shoulder-l. */
     public static final int BTN_L = 13;
     
-    /** N64 button: Controller Pak (Mempak) switch. */
-    public static final int BTN_MEMPAK = 14;
+    /** N64 button: reserved-1. */
+    public static final int BTN_RESERVED1 = 14;
 
-    /** N64 button: Rumble Pak switch. */
-    public static final int BTN_RUMBLEPAK = 15;
+    /** N64 button: reserved-2. */
+    public static final int BTN_RESERVED2 = 15;
 
     /** Total number of N64 buttons. */
     public static final int NUM_N64_BUTTONS = 16;
@@ -157,9 +157,9 @@ public abstract class AbstractController
      */
     protected void notifyChanged()
     {
-        int axisX = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionX, -1, 1 ) );
-        int axisY = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionY, -1, 1 ) );
-        NativeMethods.updateVirtualGamePadStates( mPlayerNumber - 1, mState.buttons, axisX, axisY );
+        int axisX = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionX, -1.0f, 1.0f ) );
+        int axisY = Math.round( AXIS_SCALE * Utility.clamp( mState.axisFractionY, -1.0f, 1.0f ) );
+        CoreInterfaceNative.setControllerState( mPlayerNumber - 1, mState.buttons, axisX, axisY );
     }
     
     /**

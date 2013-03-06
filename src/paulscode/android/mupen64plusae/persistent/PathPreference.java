@@ -38,6 +38,9 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 
+/**
+ * A {@link DialogPreference} that is specifically for choosing a directory path or file on a device.
+ */
 public class PathPreference extends DialogPreference
 {
     /** The user must select a directory. No files will be shown in the list. */
@@ -58,7 +61,13 @@ public class PathPreference extends DialogPreference
     private final List<String> mPaths = new ArrayList<String>();
     private String mNewValue;
     private String mValue;
-    
+
+    /**
+     * Constructor
+     *
+     * @param context The {@link Context} that this PathPreference is being used in.
+     * @param attrs   A collection of attributes, as found associated with a tag in an XML document.
+     */
     public PathPreference( Context context, AttributeSet attrs )
     {
         super( context, attrs );
@@ -70,7 +79,11 @@ public class PathPreference extends DialogPreference
         mSelectionMode = a.getInteger( R.styleable.PathPreference_selectionMode, SELECTION_MODE_ANY );
         a.recycle();
     }
-    
+
+    /**
+     * Sets the path that PathPrefence will use.
+     * @param value The path that this PathPreference instance will use.
+     */
     public void setValue( String value )
     {
         mValue = validate( value );
@@ -84,17 +97,32 @@ public class PathPreference extends DialogPreference
         // Reset the dialog info
         populate( mValue );
     }
-    
+
+    /**
+     * Sets the specific selection mode to use.
+     * @param value The selection mode to use.</p>
+     *              <li>0 = Directories can only be used as a choice.
+     *              <li>1 = Files can only be used as a choice.
+     *              <li>2 = Directories and files can be used as a choice.</li>
+     */
     public void setSelectionMode( int value )
     {
         mSelectionMode = value;
     }
-    
+
+    /**
+     * Gets the path value being used.
+     * @return The path value being used by this PathPreference.
+     */
     public String getValue()
     {
         return mValue;
     }
-    
+
+    /**
+     * Gets the current selection mode being used.
+     * @return The current selection mode being used by this PathPreference.
+     */
     public int getSelectionMode()
     {
         return mSelectionMode;
@@ -214,7 +242,8 @@ public class PathPreference extends DialogPreference
             getDialog().dismiss();
         }
     }
-    
+
+    // Populates the dialog view with files and folders on the device.
     private void populate( String path )
     {
         // Cache the path to persist on Ok
@@ -248,7 +277,7 @@ public class PathPreference extends DialogPreference
         boolean isFilesIncluded = mSelectionMode != SELECTION_MODE_DIRECTORY;
         FileUtil.populate( startPath, true, true, isFilesIncluded, mNames, mPaths );
     }
-    
+
     private static String validate( String value )
     {
         if( TextUtils.isEmpty( value ) )

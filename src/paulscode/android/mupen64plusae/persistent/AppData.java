@@ -21,14 +21,12 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.util.Locale;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -79,9 +77,6 @@ import android.util.Log;
  */
 public class AppData
 {
-    /** True if device is running Eclair or later (5 - Android 2.0.x) */
-    public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
-    
     /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
     public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
     
@@ -159,6 +154,7 @@ public class AppData
     private static final int DEFAULT_LAST_SLOT = 0;
     private static final String DEFAULT_LAST_ROM = "";
     private static final String DEFAULT_LAST_CRC = "";
+    
     // ... add more as needed
     
     /**
@@ -166,7 +162,6 @@ public class AppData
      * 
      * @param context The application context.
      */
-    @SuppressWarnings( "deprecation" )
     public AppData( Context context )
     {
         hardwareInfo = new HardwareInfo();
@@ -216,12 +211,31 @@ public class AppData
         
         // Record some info in the crash reporter
         ErrorReporter reporter = ACRA.getErrorReporter();
+        reporter.putCustomData( "CPU Features", hardwareInfo.features );
         reporter.putCustomData( "CPU Hardware", hardwareInfo.hardware );
         reporter.putCustomData( "CPU Processor", hardwareInfo.processor );
-        reporter.putCustomData( "CPU Features", hardwareInfo.features );
-        reporter.putCustomData( "HID Info", URLEncoder.encode( DeviceUtil.getPeripheralInfo() ) );
-        reporter.putCustomData( "CPU Info", URLEncoder.encode( DeviceUtil.getCpuInfo() ) );
-        reporter.putCustomData( "Is Rooted", Boolean.toString( new Utility.Root().isDeviceRooted() ) );
+        reportMultilineText( reporter, "Axis Report", DeviceUtil.getAxisInfo() );
+        reportMultilineText( reporter, "CPU Report", DeviceUtil.getCpuInfo() );
+        reportMultilineText( reporter, "HID Report", DeviceUtil.getPeripheralInfo() );
+    }
+    
+    public static void reportMultilineText( ErrorReporter reporter, String key, String multilineText )
+    {
+        final String[] lines = multilineText.split( "\n" );
+        
+        int numLines = lines.length;
+        int padding = 1;
+        while( numLines > 9 )
+        {
+            numLines /= 10;
+            padding++;
+        }
+        final String template = "%s.%0" + padding + "d"; 
+        
+        for( int i = 0; i < lines.length; i++ )
+        {
+            reporter.putCustomData( String.format( template, key, i ), lines[i].trim() );
+        }
     }
     
     /**
@@ -431,6 +445,7 @@ public class AppData
                     || hardware.contains( "smdkv" )
                     || hardware.contains( "herring" )
                     || hardware.contains( "aries" )
+                    || hardware.contains( "expresso10" )
                     || ( hardware.contains( "tuna" )
                          && !IS_JELLY_BEAN ) )
                 hardwareType = HARDWARE_TYPE_OMAP;
@@ -440,6 +455,7 @@ public class AppData
                     || hardware.contains( "amlogic meson3" )
                     || hardware.contains( "rk30board" )
                     || hardware.contains( "smdk4210" )
+                    || hardware.contains( "riogrande" )
                     || hardware.contains( "cardhu" ) )
                 hardwareType = HARDWARE_TYPE_OMAP_2;
             
@@ -456,6 +472,7 @@ public class AppData
                     || hardware.contains( "meson-m1" )
                     || hardware.contains( "smdkc" )
                     || hardware.contains( "smdk4x12" )
+                    || hardware.contains( "sun6i" )
                     || ( features != null && features.contains( "vfpv3d16" ) ) )
                 hardwareType = HARDWARE_TYPE_TEGRA;
             
@@ -466,7 +483,7 @@ public class AppData
             // Identify whether this is an Xperia PLAY
             isXperiaPlay = hardware.contains( "zeus" );
             // TODO: Check for OUYA framework, rather than relying on proc/cpuinfo
-            isOUYA = hardware.contains( "cardhu" );
+            isOUYA = ( (hardware.contains( "cardhu" )) && (Build.BOARD != null) && (Build.BOARD.contains( "unknown" )) && (Build.BRAND != null) && (Build.BRAND.contains( "generic" )) );
         }
     }
 }

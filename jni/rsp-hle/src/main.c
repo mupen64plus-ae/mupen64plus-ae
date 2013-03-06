@@ -146,6 +146,11 @@ static int audio_ucode(OSTask_t *task)
     unsigned int i;
     u32 inst1_idx;
 
+    /* TODO mupen64plus-ae specific hack */
+#ifdef M64P_NO_AUDIO
+    return 0;
+#endif
+
     switch(audio_ucode_detect(task))
     {
     case 1: // mario ucode

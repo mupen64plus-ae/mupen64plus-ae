@@ -102,6 +102,8 @@
   <string name="categoryCheats_title">Чит-коды (нажмите и удерживайте для показа справки)</string>
   <string name="categoryHardware_title">Оборудование</string>
   <string name="categoryOther_title">Остальные</string>
+  <string name="categoryTouchscreenBehavior_title">Поведение</string>
+  <string name="categoryTouchscreenAppearance_title">Внешний вид</string>
   <string name="categorySinglePlayer_title">Игрок 1</string>
   <string name="categoryMultiPlayer_title">Мультиплеер</string>
   <string name="categoryGles2N64_title">Настройки GLES2N64</string>
@@ -149,6 +151,8 @@
   <string name="audioSwapChannels_title">Поменять местами аудио каналы</string>
   <string name="audioSwapChannels_summary">Меняет местами звук слева и справа</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_entryLongPress">При долгом нажатии</string>
+  <string name="touchscreenAutoHold_entrySlideOut">При смещении</string>
   <string name="touchscreenRefresh_title">Анимация джойстика </string>
   <string name="touchscreenRefresh_entryNever">Никогда</string>
   <string name="touchscreenRefresh_entryOccasionally">Изредка</string>
@@ -170,6 +174,9 @@
   <string name="videoOrientation_entryReverseLandscape">Зеркальная альбомная</string>
   <string name="videoOrientation_entryPortrait">Портретная</string>
   <string name="videoOrientation_entryReversePortrait">Зеркальная портретная</string>
+  <string name="videoPosition_entryBottom">Низ</string>
+  <string name="videoPosition_entryMiddle">Середина</string>
+  <string name="videoPosition_entryTop">Верх</string>
   <string name="videoFpsRefresh_title">Отображать FPS</string>
   <string name="videoFpsRefresh_entryNever">Никогда</string>
   <string name="videoFpsRefresh_entryOccasionally">Изредка</string>
@@ -273,7 +280,6 @@
   <string name="changeLog_dialogTitle">Список изменений</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">имя файла</string>
-  <string name="hintSetSpeed">скорость от 10 до 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Инициализация</string>
   <string name="assetExtractor_progress">%1$.0f%% Успешно: %2$s</string>
@@ -287,7 +293,6 @@
   <string name="cheatNotes_title">Примечания</string>
   <string name="cheatNotes_none">(для этого чит-кода нет примечаний)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Выберите пакет с текстурами (в zip)</string>
   <string name="pathHiResTexturesTask_title">Извлечение текстур</string>
   <string name="pathHiResTexturesTask_message">Подождите немного.</string>
   <string name="pathHiResTexturesTask_errorMessage">Ошибка при извлечении текстур!</string>
@@ -302,6 +307,7 @@
   <string name="playerMapPreference_popupMessage">Игрок %1$d, нажмите кнопку или джойстик на вашем контроллере…\n\nТекущие устройства:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Сброс</string>
   <string name="playerMapPreference_button">Игрок %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">Напоминать, если управление настроено не для всех игроков</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Нажмите кнопку…\n\nТекущее соответствие:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Сбросить</string>

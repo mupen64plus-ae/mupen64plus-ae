@@ -254,7 +254,6 @@
   <string name="changeLog_dialogTitle">Wijzigingsgeschiedenis</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">bestandsnaam</string>
-  <string name="hintSetSpeed">snelheid tussen 10 en 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Bezig te initialiseren</string>
   <string name="assetExtractor_progress">%1$.0f%% gedaan: %2$s</string>
@@ -268,7 +267,6 @@
   <string name="cheatNotes_title">Opmerkingen</string>
   <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Selecteer een texturen pakket (ZIP formaat)</string>
   <string name="pathHiResTexturesTask_title">Uitpakken texturen</string>
   <string name="pathHiResTexturesTask_message">Wees geduldig. Dit proces kan enige tijd duren.</string>
   <string name="pathHiResTexturesTask_errorMessage">Probleem met uitpakken texturen!</string>
