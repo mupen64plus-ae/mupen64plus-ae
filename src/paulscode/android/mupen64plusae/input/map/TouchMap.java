@@ -139,7 +139,7 @@ public class TouchMap
     public TouchMap( Resources resources )
     {
         mResources = resources;
-        mN64ToColor = new int[BUTTON_STRING_MAP.size()];
+        mN64ToColor = new int[NUM_N64_PSEUDOBUTTONS];
         buttonImages = new ArrayList<Image>();
         buttonMasks = new ArrayList<Image>();
         buttonX = new ArrayList<Integer>();
