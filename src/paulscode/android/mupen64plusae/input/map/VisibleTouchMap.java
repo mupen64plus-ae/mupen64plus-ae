@@ -223,9 +223,12 @@ public class VisibleTouchMap extends TouchMap
         if( mNumerals != null )
         {
             for( int i = 0; i < mNumerals.length; i++ )
-                mNumerals[i].setScale( fpsScale );
+            {
+                if( mNumerals[i] != null )
+                    mNumerals[i].setScale( fpsScale );
+            }
         }
-
+        
         // Compute the FPS digit locations
         refreshFpsPositions();
     }
