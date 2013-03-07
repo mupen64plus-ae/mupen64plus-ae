@@ -484,27 +484,7 @@ public class AppData
             isXperiaPlay = hardware.contains( "zeus" );
             
             // Identify whether this is an OUYA
-            boolean hardwareOUYA = false;
-            // Check for ICS, just in case OuyaFacade.isRunningOnOUYAHardware does anything API-specific
-            if( IS_ICE_CREAM_SANDWICH )
-            {
-                // Retrieve the result from OuyaFacade.isRunningOnOUYAHardware
-                try
-                {
-                    Class<?> OuyaFacadeClass = Class.forName( "tv.ouya.console.api.OuyaFacade" );
-                    hardwareOUYA = ( OuyaFacadeClass.getMethod(  "isRunningOnOUYAHardware", OuyaFacadeClass ).invoke( null ).toString().equals( "true" ) );
-                }
-                // Don't care if it fails (must not be OUYA)
-                catch( ClassNotFoundException cnfe )
-                {}
-                catch( NoSuchMethodException nsme )
-                {}
-                catch( IllegalAccessException iae )
-                {}
-                catch( java.lang.reflect.InvocationTargetException ite )
-                {}
-            }
-            isOUYA = hardwareOUYA;
+            isOUYA = IS_ICE_CREAM_SANDWICH && tv.ouya.console.api.OuyaFacade.getInstance().isRunningOnOUYAHardware();
             // TODO: Would be useful to also check for OUYA framework, for determining when to show OUYA storefront components
         }
     }
