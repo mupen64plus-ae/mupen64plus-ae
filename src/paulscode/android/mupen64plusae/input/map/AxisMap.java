@@ -27,8 +27,6 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
     
-    private static final int DESCRIPTOR_HASH_OUYA = 123456789; // TODO Replace with correct value
-    
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
     private final String mSignature;
     
@@ -49,7 +47,7 @@ public class AxisMap extends SerializableMap
         return map;
     }
     
-    @TargetApi( 16 )
+    @TargetApi( 12 )
     public AxisMap( InputDevice device )
     {
         // Auto-classify the axes
@@ -103,15 +101,11 @@ public class AxisMap extends SerializableMap
                 break;
         }
         
-        if( AppData.IS_JELLY_BEAN )
+        // Don't have access to a Context here, so calling isRunningOnOUYAHardware() again
+        if( AppData.IS_ICE_CREAM_SANDWICH && tv.ouya.console.api.OuyaFacade.getInstance().isRunningOnOUYAHardware() )
         {
-            switch( device.getDescriptor().hashCode() )
-            {
-                case DESCRIPTOR_HASH_OUYA:
-                    // Treat OUYA left x-axis as special case
-                    setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
-                    break;
-            }
+            if( tv.ouya.console.api.OuyaController.getPlayerNumByDeviceId( device.getId() ) >= 0 )
+                setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
         }
     }
     
