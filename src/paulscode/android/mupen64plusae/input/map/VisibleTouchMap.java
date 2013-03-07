@@ -220,16 +220,14 @@ public class VisibleTouchMap extends TouchMap
             mFpsFrame.setScale( fpsScale );
             mFpsFrame.fitCenter( cX, cY, w, h );
         }
-        if( mNumerals != null )
+        for( int i = 0; i < mNumerals.length; i++ )
         {
-            for( int i = 0; i < mNumerals.length; i++ )
-            {
-                if( mNumerals[i] != null )
-                    mNumerals[i].setScale( fpsScale );
-            }
+            if( mNumerals[i] != null )
+                mNumerals[i].setScale( fpsScale );
         }
         
         // Compute the FPS digit locations
+        refreshFpsImages();
         refreshFpsPositions();
     }
     
