@@ -727,7 +727,7 @@ void InitRenderBase()
 
     for( int i=0; i<MAX_VERTS; i++ )
     {
-        g_clipFlag[i] = 0
+        g_clipFlag[i] = 0;
         g_vtxNonTransformed[i].w = 1;
     }
 
