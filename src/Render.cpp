@@ -601,7 +601,7 @@ bool CRender::TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, 
     if( options.bEnableHacks )
     {
         // Goldeneye HACK
-        if( options.bEnableHacks && nY1 - nY0 < 2 ) 
+        if( nY1 - nY0 < 2 ) 
             nY1 = nY1+2;
 
         //// Text edge hack
