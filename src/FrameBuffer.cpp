@@ -1135,7 +1135,6 @@ int FrameBufferManager::CheckRenderTexturesWithNewCI(SetImgInfo &CIinfo, uint32 
                 info.CI_Info.dwWidth == CIinfo.dwWidth &&
                 info.CI_Info.dwFormat == CIinfo.dwFormat &&
                 info.N64Height == height 
-                && info.CI_Info.dwAddr == CIinfo.dwAddr 
                 )
             {
                 // This is the same texture at the same address
