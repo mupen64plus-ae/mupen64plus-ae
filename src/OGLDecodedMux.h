@@ -26,7 +26,6 @@ class COGLDecodedMux : public DecodedMux
 protected:
     virtual void Simplify(void);
     virtual void Reformat(void);
-    
 };
 
 class COGLExtDecodedMux : public COGLDecodedMux
@@ -40,7 +39,6 @@ class COGLExtDecodedMuxTNT2 : public COGLExtDecodedMux
 {
 protected:
     virtual void FurtherFormatForOGL2(void);
-    
 };
 
 #endif

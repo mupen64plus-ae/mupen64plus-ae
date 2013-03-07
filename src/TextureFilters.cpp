@@ -503,7 +503,8 @@ void SmoothFilter_16(uint16 *pdata, uint32 width, uint32 height, uint32 pitch, u
     uint32 len=height*pitch;
     uint16 *pcopy = new uint16[len];
 
-    if( !pcopy )    return;
+    if( !pcopy )
+        return;
 
     memcpy(pcopy, pdata, len<<1);
 
@@ -642,8 +643,8 @@ void EnhanceTexture(TxtrCacheEntry *pEntry)
     uint32 realheight = srcInfo.dwHeight;
     uint32 nWidth = srcInfo.dwCreatedWidth;
     uint32 nHeight = srcInfo.dwCreatedHeight;
+    
     //Sharpen option is enabled, sharpen the texture
-
     if( options.textureEnhancement == TEXTURE_SHARPEN_ENHANCEMENT || options.textureEnhancement == TEXTURE_SHARPEN_MORE_ENHANCEMENT )
     {
         if( pEntry->pTexture->GetPixelSize() == 4 )
@@ -1479,21 +1480,22 @@ void CloseExternalTextures(void)
  ********************************************************************************************************************/
 void InitHiresTextures(void)
 {
-if( options.bLoadHiResTextures )
+    if( options.bLoadHiResTextures )
     {
-    DebugMessage(M64MSG_INFO, "Texture loading option is enabled. Finding all hires textures");
-    FindAllHiResTextures();
+        DebugMessage(M64MSG_INFO, "Texture loading option is enabled. Finding all hires textures");
+        FindAllHiResTextures();
     }
 }
 
 void InitTextureDump(void)
 {
-if( options.bDumpTexturesToFiles )
+    if( options.bDumpTexturesToFiles )
     {
-    DebugMessage(M64MSG_INFO, "Texture dump option is enabled. Finding all dumpped textures");
-    FindAllDumpedTextures();
+        DebugMessage(M64MSG_INFO, "Texture dump option is enabled. Finding all dumpped textures");
+        FindAllDumpedTextures();
     }
 }
+
 /********************************************************************************************************************
  * Inits the hires textures. For doing so, all hires textures info & the cached textures (for dumping and the hires ones)
  * are deleted. Afterwards they are reloaded from file system. This only takes place if a new rom has been loaded.

@@ -27,8 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLTexture.h"
 #include "DirectXDecodedMux.h"
 
-#define         GL_MODULATE_ADD_ATI                   0x8744
-#define         GL_MODULATE_SUBTRACT_ATI              0x8746
+#define GL_MODULATE_ADD_ATI        0x8744
+#define GL_MODULATE_SUBTRACT_ATI   0x8746
 
 //========================================================================
 COGLColorCombiner4::COGLColorCombiner4(CRender *pRender)
@@ -106,14 +106,14 @@ bool COGLColorCombiner2::Initialize(void)
 
         m_bTxtOpAdd = m_bSupportAdd;
         m_bTxtOpSub = m_bSupportSubtract;
-        m_bTxtOpLerp = true;                
+        m_bTxtOpLerp = true;
 
-        m_bTxtOpAddSmooth = true;           
-        m_bTxtOpBlendCurAlpha = true;       
-        m_bTxtOpBlendDifAlpha = true;       
-        m_bTxtOpBlendFacAlpha = true;       
-        m_bTxtOpBlendTxtAlpha = true;       
-        m_bTxtOpMulAdd = m_bSupportModAdd_ATI;          
+        m_bTxtOpAddSmooth = true;
+        m_bTxtOpBlendCurAlpha = true;
+        m_bTxtOpBlendDifAlpha = true;
+        m_bTxtOpBlendFacAlpha = true;
+        m_bTxtOpBlendTxtAlpha = true;
+        m_bTxtOpMulAdd = m_bSupportModAdd_ATI;
 
         return true;
     }
@@ -209,7 +209,9 @@ int COGLColorCombiner4::ParseDecodedMux()
         return  ParseDecodedMux2Units();
 
     OGLExtCombinerSaveType res;
-    for( int k=0; k<8; k++ )    res.units[k].tex = -1;
+    for( int k=0; k<8; k++ )
+        res.units[k].tex = -1;
+    
     COGLDecodedMux &mux = *(COGLDecodedMux*)m_pDecodedMux;
 
     int unitNos[2];
@@ -232,7 +234,7 @@ int COGLColorCombiner4::ParseDecodedMux()
                 unit.ops[rgbalpha] = GL_REPLACE;
                 nextUnit();
                 break;
-            case CM_FMT_TYPE_D:             // = A
+            case CM_FMT_TYPE_D:                 // = A
                 comb.arg0 = m.d;
                 unit.ops[rgbalpha] = GL_REPLACE;
                 nextUnit();
@@ -255,7 +257,7 @@ int COGLColorCombiner4::ParseDecodedMux()
                 unit.ops[rgbalpha] = GL_MODULATE;
                 nextUnit();
                 break;
-            case CM_FMT_TYPE_A_MOD_C_ADD_D: // = A*C+D
+            case CM_FMT_TYPE_A_MOD_C_ADD_D:     // = A*C+D
                 if( m_bSupportModAdd_ATI )
                 {
                     comb.arg0 = m.a;
@@ -294,7 +296,7 @@ int COGLColorCombiner4::ParseDecodedMux()
                 unit.ops[rgbalpha] = GL_INTERPOLATE_ARB;
                 nextUnit();
                 break;
-            case CM_FMT_TYPE_A_SUB_B_ADD_D: // = A-B+D
+            case CM_FMT_TYPE_A_SUB_B_ADD_D:     // = A-B+D
                 if( unitNo < m_maxTexUnits-1 )
                 {
                     comb.arg0 = m.a;
@@ -315,7 +317,7 @@ int COGLColorCombiner4::ParseDecodedMux()
                     nextUnit();
                 }
                 break;
-            case CM_FMT_TYPE_A_SUB_B_MOD_C: // = (A-B)*C
+            case CM_FMT_TYPE_A_SUB_B_MOD_C:     // = (A-B)*C
                 if( unitNo < m_maxTexUnits-1 )
                 {
                     comb.arg0 = m.a;
@@ -406,7 +408,8 @@ int COGLColorCombiner4::ParseDecodedMux()
 int COGLColorCombiner4::ParseDecodedMux2Units()
 {
     OGLExtCombinerSaveType res;
-    for( int k=0; k<8; k++ )    res.units[k].tex = -1;
+    for( int k=0; k<8; k++ )
+        res.units[k].tex = -1;
 
     res.numOfUnits = 2;
 
@@ -429,7 +432,7 @@ int COGLColorCombiner4::ParseDecodedMux2Units()
             comb.arg0 = MUX_COMBINED;
             unit.ops[i%2] = GL_REPLACE;
             break;
-        case CM_FMT_TYPE_D:             // = A
+        case CM_FMT_TYPE_D:                 // = A
             comb.arg0 = m.d;
             unit.ops[i%2] = GL_REPLACE;
             break;
@@ -448,7 +451,7 @@ int COGLColorCombiner4::ParseDecodedMux2Units()
             comb.arg1 = m.c;
             unit.ops[i%2] = GL_MODULATE;
             break;
-        case CM_FMT_TYPE_A_MOD_C_ADD_D: // = A*C+D
+        case CM_FMT_TYPE_A_MOD_C_ADD_D:     // = A*C+D
             comb.arg0 = m.a;
             comb.arg1 = m.c;
             comb.arg2 = m.d;
@@ -460,13 +463,13 @@ int COGLColorCombiner4::ParseDecodedMux2Units()
             comb.arg2 = m.c;
             unit.ops[i%2] = GL_INTERPOLATE_ARB;
             break;
-        case CM_FMT_TYPE_A_SUB_B_ADD_D: // = A-B+D
+        case CM_FMT_TYPE_A_SUB_B_ADD_D:     // = A-B+D
             // fix me, to use 2 texture units
             comb.arg0 = m.a;
             comb.arg1 = m.b;
             unit.ops[i%2] = GL_SUBTRACT_ARB;
             break;
-        case CM_FMT_TYPE_A_SUB_B_MOD_C: // = (A-B)*C
+        case CM_FMT_TYPE_A_SUB_B_MOD_C:     // = (A-B)*C
             // fix me, to use 2 texture units
             comb.arg0 = m.a;
             comb.arg1 = m.c;

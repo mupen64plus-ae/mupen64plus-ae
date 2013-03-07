@@ -1555,8 +1555,5 @@ void DecodedMux::Hack(void)
             cRGB1 = MUX_TEXEL0;
         }
     }
-
-
-
 }
 

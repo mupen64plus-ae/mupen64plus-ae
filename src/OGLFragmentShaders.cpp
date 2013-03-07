@@ -136,24 +136,24 @@ void COGL_FragmentProgramCombiner::InitCombinerCycleFill(void)
 
 const char *muxToFP_Maps[][2] = {
 //color -- alpha
-{"0", "0"}, //MUX_0 = 0,
-{"1", "1"}, //MUX_1,
-{"comb", "comb.a"}, //MUX_COMBINED,
-{"t0", "t0.a"}, //MUX_TEXEL0,
-{"t1", "t1.a"}, //MUX_TEXEL1,
-{"program.env[2]", "program.env[2].a"}, //MUX_PRIM,
-{"fragment.color", "fragment.color.a"}, //MUX_SHADE,
-{"program.env[1]", "program.env[1].a"}, //MUX_ENV,
-{"comb.a", "comb.a"}, //MUX_COMBALPHA,
-{"t0.a", "t0.a"}, //MUX_T0_ALPHA,   
-{"t1.a", "t1.a"}, //MUX_T1_ALPHA,   
-{"primcolor.a", "primcolor.a"}, //MUX_PRIM_ALPHA,   
-{"fragment.color.a", "fragment.color.a"}, //MUX_SHADE_ALPHA,    
-{"envcolor.a", "envcolor.a"}, //MUX_ENV_ALPHA,  
-{"program.env[3]", "program.env[3]"}, //MUX_LODFRAC,
-{"program.env[4]", "program.env[4]"}, //MUX_PRIMLODFRAC,
-{"1", "1"}, //MUX_K5,
-{"1", "1"}, //MUX_UNK,  // Should not be used
+{"0", "0"},                                //MUX_0 = 0,
+{"1", "1"},                                //MUX_1,
+{"comb", "comb.a"},                        //MUX_COMBINED,
+{"t0", "t0.a"},                            //MUX_TEXEL0,
+{"t1", "t1.a"},                            //MUX_TEXEL1,
+{"program.env[2]", "program.env[2].a"},    //MUX_PRIM,
+{"fragment.color", "fragment.color.a"},    //MUX_SHADE,
+{"program.env[1]", "program.env[1].a"},    //MUX_ENV,
+{"comb.a", "comb.a"},                      //MUX_COMBALPHA,
+{"t0.a", "t0.a"},                          //MUX_T0_ALPHA,
+{"t1.a", "t1.a"},                          //MUX_T1_ALPHA,
+{"primcolor.a", "primcolor.a"},            //MUX_PRIM_ALPHA,
+{"fragment.color.a", "fragment.color.a"},  //MUX_SHADE_ALPHA,
+{"envcolor.a", "envcolor.a"},              //MUX_ENV_ALPHA,
+{"program.env[3]", "program.env[3]"},      //MUX_LODFRAC,
+{"program.env[4]", "program.env[4]"},      //MUX_PRIMLODFRAC,
+{"1", "1"},                                //MUX_K5,
+{"1", "1"},                                //MUX_UNK,  // Should not be used
 };
 
 

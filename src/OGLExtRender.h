@@ -44,7 +44,6 @@ protected:
     ~COGLExtRender() {};
     GLint m_maxTexUnits;
     int m_textureUnitMap[8];
-
 };
 
 #endif

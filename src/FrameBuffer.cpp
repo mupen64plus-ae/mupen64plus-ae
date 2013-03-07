@@ -39,8 +39,6 @@ extern TMEMLoadMapInfo g_tmemLoadAddrMap[0x200];    // Totally 4KB TMEM;
 3) This is slow due to the reading process, not the writing
 */
 
-
-
 RecentCIInfo g_RecentCIInfo[5];
 RecentCIInfo *g_uRecentCIInfoPtrs[5] =
 {
@@ -116,7 +114,7 @@ void FrameBufferManager::UpdateRecentCIAddr(SetImgInfo &ciinfo)
 
     RecentCIInfo *temp;
 
-        int i;
+    int i;
     for( i=1; i<numOfRecentCIInfos; i++ )
     {
         if( ciinfo.dwAddr == g_uRecentCIInfoPtrs[i]->dwAddr )
@@ -169,7 +167,8 @@ void FrameBufferManager::SetAddrBeDisplayed(uint32 addr)
 {
     uint32 viwidth = *g_GraphicsInfo.VI_WIDTH_REG;
     addr &= (g_dwRamSize-1);
-        int i;
+    
+    int i;
     for( i=0; i<numOfRecentCIInfos; i++ )
     {
         if( g_uRecentCIInfoPtrs[i]->dwAddr+2*viwidth == addr )
@@ -221,7 +220,8 @@ void FrameBufferManager::SetAddrBeDisplayed(uint32 addr)
 bool FrameBufferManager::HasAddrBeenDisplayed(uint32 addr, uint32 width)
 {
     addr &= (g_dwRamSize-1);
-        int i;
+    
+    int i;
     for( i=0; i<numOfRecentCIInfos; i++ )
     {
         if( g_uRecentCIInfoPtrs[i]->dwAddr == 0 )
@@ -381,7 +381,9 @@ bool FrameBufferManager::IsDIaRenderTexture()
         return false;
     }
     else
+    {
         return true;
+    }
 
 
     if( !foundSetCImg )
@@ -425,7 +427,7 @@ int FrameBufferManager::CheckAddrInBackBuffers(uint32 addr, uint32 memsize, bool
         DEBUGGER_IF_DUMP((logTextureBuffer&&r>1),TRACE2("Hit old back buffer at %08X, size=0x%X", addr, memsize));
 
         SaveBackBuffer(r, NULL, true);
-    }       
+    }
 
     return r;
 }
@@ -482,9 +484,11 @@ void TexRectToFrameBuffer_8b(uint32 dwXL, uint32 dwYL, uint32 dwXH, uint32 dwYH,
     uint32 dwLeft = dwXL;
     uint32 dwTop = dwYL;
 
-    dwWidth = min(dwWidth,maxW-dwLeft);
+    dwWidth = min(dwWidth, maxW-dwLeft);
     dwHeight = min(dwHeight, maxH-dwTop);
-    if( maxH <= dwTop ) return;
+    
+    if( maxH <= dwTop )
+        return;
 
     for (uint32 y = 0; y < dwHeight; y++)
     {
@@ -584,23 +588,23 @@ uint32 CalculateRDRAMCRC(void *pPhysicalAddress, uint32 left, uint32 top, uint32
         uint32 y = 0;
         while (y < height)
         {
-          uint32 x = 0;
-          while (x < realWidthInDWORD)
-          {
-            dwAsmCRC = (dwAsmCRC << 4) + ((dwAsmCRC >> 28) & 15);
-            dwAsmCRC += pStart[x];
-            x += xinc;
-            dwAsmCRC += x;
-          }
-          dwAsmCRC ^= y;
-          y += yinc;
-          pStart += pitch;
+            uint32 x = 0;
+            while (x < realWidthInDWORD)
+            {
+                dwAsmCRC = (dwAsmCRC << 4) + ((dwAsmCRC >> 28) & 15);
+                dwAsmCRC += pStart[x];
+                x += xinc;
+                dwAsmCRC += x;
+            }
+            dwAsmCRC ^= y;
+            y += yinc;
+            pStart += pitch;
         }
-
     }
     else
     {
-        try{
+        try
+        {
             dwAsmdwBytesPerLine = ((width<<size)+1)/2;
 
             pAsmStart = (uint8*)(pPhysicalAddress);
@@ -618,9 +622,9 @@ uint32 CalculateRDRAMCRC(void *pPhysicalAddress, uint32 left, uint32 top, uint32
                 push edx
                 push esi
 
-                mov ecx, pAsmStart; // = pStart
-                mov edx, 0          // The CRC
-                mov eax, dwAsmHeight    // = y
+                mov ecx, pAsmStart;             // = pStart
+                mov edx, 0                      // The CRC
+                mov eax, dwAsmHeight            // = y
 l2:             mov ebx, dwAsmdwBytesPerLine    // = x
                 sub ebx, 4
 l1:             mov esi, [ecx+ebx]
@@ -668,11 +672,11 @@ l1:             mov esi, [ecx+ebx]
 #elif !defined(NO_ASM)
 # if !defined(__PIC__)
            asm volatile("pusha                        \n"
-                "mov    %[pAsmStart], %%ecx           \n"  // = pStart
-                "mov    $0, %%edx                     \n"          // The CRC
-                "mov    %[dwAsmHeight], %%eax         \n"  // = y
+                "mov    %[pAsmStart], %%ecx           \n" // = pStart
+                "mov    $0, %%edx                     \n" // The CRC
+                "mov    %[dwAsmHeight], %%eax         \n" // = y
                 "0:                                   \n" //l2:
-                "mov    %[dwAsmdwBytesPerLine], %%ebx \n"  // = x
+                "mov    %[dwAsmdwBytesPerLine], %%ebx \n" // = x
                 "sub    $4, %%ebx                     \n"
                 "1:                                   \n" //l1:
                 "mov    (%%ecx,%%ebx), %%esi          \n"
@@ -708,11 +712,11 @@ l1:             mov esi, [ecx+ebx]
                 "mov    %%ecx, %7                  \n"
                 "mov    %%edx, %8                  \n"
                 "mov    %%esi, %9                  \n"
-                "mov    %0, %%ecx                  \n"  // = pStart
-                "mov    $0, %%edx                  \n"          // The CRC
-                "mov    %1, %%eax                  \n"  // = y
+                "mov    %0, %%ecx                  \n" // = pStart
+                "mov    $0, %%edx                  \n" // The CRC
+                "mov    %1, %%eax                  \n" // = y
                 "0:                                \n" //l2:
-                "mov    %3, %%ebx                  \n"  // = x
+                "mov    %3, %%ebx                  \n" // = x
                 "sub    $4, %%ebx                  \n"
                 "1:                                \n" //l1:
                 "mov    (%%ecx,%%ebx), %%esi       \n"
@@ -1270,13 +1274,13 @@ void FrameBufferManager::SetRenderTexture(void)
 
 int FrameBufferManager::SetBackBufferAsRenderTexture(SetImgInfo &CIinfo, int ciInfoIdx)
 {
-/* MUDLORD:
-OK, heres the drill!
-* We  set the graphics card's back buffer's contents as a render_texure
-* This is done due to how the current framebuffer implementation detects
-  changes to the backbuffer memory pointer and then we do a texture
-  copy. This might be slow since it doesnt use hardware auxillary buffers*/
-         
+    // MUDLORD:
+    // OK, heres the drill!
+    //
+    // We  set the graphics card's back buffer's contents as a render_texure
+    // This is done due to how the current framebuffer implementation detects
+    // changes to the backbuffer memory pointer and then we do a texture
+    // copy. This might be slow since it doesnt use hardware auxillary buffers
 
     RenderTextureInfo tempRenderTextureInfo;
 
@@ -1328,11 +1332,13 @@ OK, heres the drill!
 
 void FrameBufferManager::CloseRenderTexture(bool toSave)
 {
-    if( m_curRenderTextureIndex < 0 )   return;
+    if( m_curRenderTextureIndex < 0 )
+        return;
 
     status.bHandleN64RenderTexture = false;
     if( status.bDirectWriteIntoRDRAM )
     {
+        // TODO: Implement
     }
     else 
     {
@@ -1415,7 +1421,7 @@ void InitTlutReverseLookup(void)
 }
 
 
-//copies backbuffer to N64 framebuffer by notification by emu core
+// Copies backbuffer to N64 framebuffer by notification by emu core
 // **buggy**
 void FrameBufferManager::CopyBackToFrameBufferIfReadByCPU(uint32 addr)
 {
@@ -1429,7 +1435,8 @@ void FrameBufferManager::CopyBackToFrameBufferIfReadByCPU(uint32 addr)
         TRACE1("Copy back for CI Addr=%08X", info->dwAddr);
     }
 }
-//we do this checks to see if a render_texture operation is occuring...
+
+// We do these checks to see if a render_texture operation is occurring...
 void FrameBufferManager::CheckRenderTextureCRCInRDRAM(void)
 {
     for( int i=0; i<numOfTxtBufInfos; i++ )
@@ -1459,7 +1466,7 @@ void FrameBufferManager::CheckRenderTextureCRCInRDRAM(void)
     }
 }
 
-//check render_texture memory addresses
+// Check render_texture memory addresses
 int FrameBufferManager::CheckAddrInRenderTextures(uint32 addr, bool checkcrc)
 {
     for( int i=0; i<numOfTxtBufInfos; i++ )
@@ -1504,7 +1511,7 @@ int FrameBufferManager::CheckAddrInRenderTextures(uint32 addr, bool checkcrc)
     return -1;
 }
 
-//load texture from render_texture buffer
+// Load texture from render_texture buffer
 void FrameBufferManager::LoadTextureFromRenderTexture(TxtrCacheEntry* pEntry, int infoIdx)
 {
     if( infoIdx < 0 || infoIdx >= numOfTxtBufInfos )
@@ -1550,7 +1557,7 @@ uint32 FrameBufferManager::ComputeRenderTextureCRCInRDRAM(int infoIdx)
     return CalculateRDRAMCRC(pAddr, 0, 0, info.N64Width, height, info.CI_Info.dwSize, pitch);
 }
 
-//activates texture buffer for drawing
+// Activates texture buffer for drawing
 void FrameBufferManager::ActiveTextureBuffer(void)
 {
     status.bCIBufferIsRendered = true;
@@ -1659,7 +1666,7 @@ void FrameBufferManager::ActiveTextureBuffer(void)
 
 #define SAVE_CI {g_CI.dwAddr = newCI.dwAddr;g_CI.dwFormat = newCI.dwFormat;g_CI.dwSize = newCI.dwSize;g_CI.dwWidth = newCI.dwWidth;g_CI.bpl=newCI.bpl;}
 
-//sets CI address for framebuffer copies
+// Sets CI address for framebuffer copies
 void FrameBufferManager::Set_CI_addr(SetImgInfo &newCI)
 {
     bool wasDrawingTextureBuffer = status.bN64IsDrawingTextureBuffer;
@@ -1799,7 +1806,8 @@ void FrameBufferManager::Set_CI_addr(SetImgInfo &newCI)
 
 void FrameBufferManager::StoreRenderTextureToRDRAM(int infoIdx)
 {
-    if( !frameBufferOptions.bRenderTextureWriteBack )   return;
+    if( !frameBufferOptions.bRenderTextureWriteBack )
+        return;
 
     if( infoIdx < 0 )
         infoIdx = m_lastTextureBufferIndex;
@@ -1821,7 +1829,9 @@ void FrameBufferManager::StoreRenderTextureToRDRAM(int infoIdx)
 void FrameBufferManager::CopyBufferToRDRAM(uint32 addr, uint32 fmt, uint32 siz, uint32 width, uint32 height, uint32 bufWidth, uint32 bufHeight, uint32 startaddr, uint32 memsize, uint32 pitch, TextureFmt bufFmt, void *buffer, uint32 bufPitch)
 {
     uint32 startline=0;
-    if( startaddr == 0xFFFFFFFF )   startaddr = addr;
+    
+    if( startaddr == 0xFFFFFFFF )
+        startaddr = addr;
 
     startline = (startaddr-addr)/siz/pitch;
     if( startline >= height )
@@ -1888,7 +1898,6 @@ void FrameBufferManager::CopyBufferToRDRAM(uint32 addr, uint32 fmt, uint32 siz, 
 
                     // Liner
                     *(pD+(j^1)) = ConvertRGBATo555( r, g, b, a);
-
                 }
             }
         }
@@ -1914,9 +1923,10 @@ void FrameBufferManager::CopyBufferToRDRAM(uint32 addr, uint32 fmt, uint32 siz, 
                 {
                     int pos = 4*(j*bufWidth/width);
                     tempword = ConvertRGBATo555((pS[pos+2]),        // Red
-                        (pS[pos+1]),        // G
-                        (pS[pos+0]),        // B
-                        (pS[pos+3]));       // Alpha
+                                                (pS[pos+1]),        // Green
+                                                (pS[pos+0]),        // Blue
+                                                (pS[pos+3]));       // Alpha
+                    
                     //*pD = CIFindIndex(tempword);
                     *(pD+(j^3)) = RevTlutTable[tempword];
                 }
@@ -1953,7 +1963,6 @@ void FrameBufferManager::CopyBufferToRDRAM(uint32 addr, uint32 fmt, uint32 siz, 
 
                     // Liner
                     *(pD+(j^3)) = (uint8)((r+b+g)/3);
-
                 }
             }
         }
@@ -1995,10 +2004,10 @@ void FrameBufferManager::DisplayRenderTexture(int infoIdx)
 
 
 
-//Saves backbuffer
-//this is the core to the current framebuffer code
-//We need to save backbuffer when changed by framebuffer
-//so that we can use it for framebuffer effects
+// Saves backbuffer
+// this is the core to the current framebuffer code
+// We need to save backbuffer when changed by framebuffer
+// so that we can use it for framebuffer effects
 void FrameBufferManager::SaveBackBuffer(int ciInfoIdx, RECT* pSrcRect, bool forceToSaveToRDRAM)
 {
     RecentCIInfo &ciInfo = *g_uRecentCIInfoPtrs[ciInfoIdx];

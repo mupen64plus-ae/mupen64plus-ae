@@ -108,10 +108,11 @@ void RSP_GBI1_Tri2(Gfx *gfx)
             if (!bTrisAdded)
             {
                 if( bTexturesAreEnabled )
-            {
-                PrepareTextures();
-                InitVertexTextureConstants();
-            }
+                {
+                    PrepareTextures();
+                    InitVertexTextureConstants();
+                }
+
                 CRender::g_pRender->SetCombinerAndBlender();
                 bTrisAdded = true;
             }
@@ -125,10 +126,11 @@ void RSP_GBI1_Tri2(Gfx *gfx)
             if (!bTrisAdded)
             {
                 if( bTexturesAreEnabled )
-            {
-                PrepareTextures();
-                InitVertexTextureConstants();
-            }
+                {
+                    PrepareTextures();
+                    InitVertexTextureConstants();
+                }
+
                 CRender::g_pRender->SetCombinerAndBlender();
                 bTrisAdded = true;
             }
@@ -319,7 +321,6 @@ void RSP_MoveMemLight(uint32 dwLight, uint32 dwAddr)
     }
     else
     {
-        
         LOG_UCODE("      (Normal Light)");
 
         SetLightCol(dwLight, gRSPn64lights[dwLight].dwRGBA);
@@ -372,7 +373,6 @@ void RSP_MoveMemViewport(uint32 dwAddr)
     int maxZ = 0x3FF;
 
     CRender::g_pRender->SetViewport(nLeft, nTop, nRight, nBottom, maxZ);
-
 
     LOG_UCODE("        Scale: %d %d %d %d = %d,%d", scale[0], scale[1], scale[2], scale[3], nWidth, nHeight);
     LOG_UCODE("        Trans: %d %d %d %d = %d,%d", trans[0], trans[1], trans[2], trans[3], nCenterX, nCenterY);

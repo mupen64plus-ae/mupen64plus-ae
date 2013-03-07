@@ -101,11 +101,11 @@ void DumpMatrix(const Matrix &mtx, const char* prompt);
 //Some common used macros
 #define DEBUG_DUMP_VERTEXES(str, v0, v1, v2)    \
     if( (pauseAtNext && (eventToPause == NEXT_TRIANGLE || eventToPause == NEXT_FLUSH_TRI)) && logTriangles )    \
-    {                                                           \
+    {                                                              \
         DebuggerAppendMsg("%s:%d(%08X),%d(%08X),%d(%08X)\n", (str),\
-        (v0), GetVertexDiffuseColor((v0)),                  \
-            (v1), GetVertexDiffuseColor((v1)),                  \
-            (v2), GetVertexDiffuseColor((v2)));             \
+        (v0), GetVertexDiffuseColor((v0)),              \
+        (v1), GetVertexDiffuseColor((v1)),              \
+        (v2), GetVertexDiffuseColor((v2)));             \
     }
 
 #define DEBUGGER_IF(op)     if(op)
@@ -131,24 +131,24 @@ extern void DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(uint32 val);
 void RDP_NOIMPL_Real(const char* op,uint32,uint32) ;
 #define RSP_RDP_NOIMPL RDP_NOIMPL_Real
 #define DEBUGGER_IF_DUMP(cond, dumpfunc)    {if(cond) {dumpfunc}}
-#define TXTRBUF_DUMP(dumpfunc)          DEBUGGER_IF_DUMP((logTextureBuffer), dumpfunc)
-#define TXTRBUF_DETAIL_DUMP(dumpfunc)           DEBUGGER_IF_DUMP((logTextureBuffer&&logDetails), dumpfunc)
-#define TXTRBUF_OR_CI_DUMP(dumpfunc)    DEBUGGER_IF_DUMP((logTextureBuffer || (pauseAtNext && eventToPause == NEXT_SET_CIMG)), dumpfunc)
+#define TXTRBUF_DUMP(dumpfunc)              DEBUGGER_IF_DUMP((logTextureBuffer), dumpfunc)
+#define TXTRBUF_DETAIL_DUMP(dumpfunc)       DEBUGGER_IF_DUMP((logTextureBuffer&&logDetails), dumpfunc)
+#define TXTRBUF_OR_CI_DUMP(dumpfunc)        DEBUGGER_IF_DUMP((logTextureBuffer || (pauseAtNext && eventToPause == NEXT_SET_CIMG)), dumpfunc)
 #define TXTRBUF_OR_CI_DETAIL_DUMP(dumpfunc) DEBUGGER_IF_DUMP(((logTextureBuffer || (pauseAtNext && eventToPause == NEXT_SET_CIMG))&&logDetails), dumpfunc)
-#define VTX_DUMP(dumpfunc)          DEBUGGER_IF_DUMP((logVertex && pauseAtNext), dumpfunc)
-#define TRI_DUMP(dumpfunc)          DEBUGGER_IF_DUMP((logTriangles && pauseAtNext), dumpfunc)
-#define LIGHT_DUMP(dumpfunc)        DEBUGGER_IF_DUMP((eventToPause == NEXT_SET_LIGHT && pauseAtNext), dumpfunc)
-#define WARNING(dumpfunc)           DEBUGGER_IF_DUMP(logWarning, dumpfunc)
-#define FOG_DUMP(dumpfunc)          DEBUGGER_IF_DUMP(logFog, dumpfunc)
-#define LOG_TEXTURE(dumpfunc)           DEBUGGER_IF_DUMP((logTextures || (pauseAtNext && eventToPause==NEXT_TEXTURE_CMD) ), dumpfunc)
-#define DEBUGGER_ONLY_IF    DEBUGGER_IF_DUMP
+#define VTX_DUMP(dumpfunc)                  DEBUGGER_IF_DUMP((logVertex && pauseAtNext), dumpfunc)
+#define TRI_DUMP(dumpfunc)                  DEBUGGER_IF_DUMP((logTriangles && pauseAtNext), dumpfunc)
+#define LIGHT_DUMP(dumpfunc)                DEBUGGER_IF_DUMP((eventToPause == NEXT_SET_LIGHT && pauseAtNext), dumpfunc)
+#define WARNING(dumpfunc)                   DEBUGGER_IF_DUMP(logWarning, dumpfunc)
+#define FOG_DUMP(dumpfunc)                  DEBUGGER_IF_DUMP(logFog, dumpfunc)
+#define LOG_TEXTURE(dumpfunc)               DEBUGGER_IF_DUMP((logTextures || (pauseAtNext && eventToPause==NEXT_TEXTURE_CMD) ), dumpfunc)
+#define DEBUGGER_ONLY_IF                    DEBUGGER_IF_DUMP
 #define DEBUGGER_ONLY(func) {func}
 
-#define TRACE0(arg0)            {DebuggerAppendMsg(arg0);}
-#define TRACE1(arg0,arg1)       {DebuggerAppendMsg(arg0,arg1);}
-#define TRACE2(arg0,arg1,arg2)  {DebuggerAppendMsg(arg0,arg1,arg2);}
-#define TRACE3(arg0,arg1,arg2,arg3) {DebuggerAppendMsg(arg0,arg1,arg2,arg3);}
-#define TRACE4(arg0,arg1,arg2,arg3,arg4)    {DebuggerAppendMsg(arg0,arg1,arg2,arg3,arg4);}
+#define TRACE0(arg0)                            {DebuggerAppendMsg(arg0);}
+#define TRACE1(arg0,arg1)                       {DebuggerAppendMsg(arg0,arg1);}
+#define TRACE2(arg0,arg1,arg2)                  {DebuggerAppendMsg(arg0,arg1,arg2);}
+#define TRACE3(arg0,arg1,arg2,arg3)             {DebuggerAppendMsg(arg0,arg1,arg2,arg3);}
+#define TRACE4(arg0,arg1,arg2,arg3,arg4)        {DebuggerAppendMsg(arg0,arg1,arg2,arg3,arg4);}
 #define TRACE5(arg0,arg1,arg2,arg3,arg4,arg5)   {DebuggerAppendMsg(arg0,arg1,arg2,arg3,arg4,arg5);}
 
 #define DEBUG_TRIANGLE(dumpfunc) { if(pauseAtNext && eventToPause==NEXT_TRIANGLE ) { eventToPause = NEXT_FLUSH_TRI; debuggerPause = true; DEBUGGER_PAUSE(NEXT_FLUSH_TRI); dumpfunc} }

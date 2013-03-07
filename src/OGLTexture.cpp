@@ -29,7 +29,7 @@ COGLTexture::COGLTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
     CTexture(dwWidth,dwHeight,usage),
     m_glFmt(GL_RGBA)
 {
-    // Fix me, if usage is AS_RENDER_TARGET, we need to create pbuffer instead of regular texture
+    // FIXME: If usage is AS_RENDER_TARGET, we need to create pbuffer instead of regular texture
 
     m_dwTextureFmt = TEXTURE_FMT_A8R8G8B8;  // Always use 32bit to load texture
     glGenTextures( 1, &m_dwTextureName );
@@ -68,7 +68,7 @@ COGLTexture::COGLTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
 
 COGLTexture::~COGLTexture()
 {
-    // Fix me, if usage is AS_RENDER_TARGET, we need to destroy the pbuffer
+    // FIXME: If usage is AS_RENDER_TARGET, we need to destroy the pbuffer
 
     glDeleteTextures(1, &m_dwTextureName );
     OPENGL_CHECK_ERRORS;

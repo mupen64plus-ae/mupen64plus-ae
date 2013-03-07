@@ -84,7 +84,9 @@ void COGLExtRender::TexCoord2f(float u, float v)
         }
     }
     else
+    {
         OGLRender::TexCoord2f(u,v);
+    }
 }
 
 void COGLExtRender::TexCoord(TLITVERTEX &vtxInfo)
@@ -100,7 +102,9 @@ void COGLExtRender::TexCoord(TLITVERTEX &vtxInfo)
         }
     }
     else
+    {
         OGLRender::TexCoord(vtxInfo);
+    }
 }
 
 

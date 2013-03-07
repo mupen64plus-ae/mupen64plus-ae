@@ -23,15 +23,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLTexture.h"
 #include "TextureManager.h"
 
-// Fix me, use OGL internal L/T and matrix stack
-// Fix me, use OGL lookupAt function
-// Fix me, use OGL DisplayList
+// FIXME: Use OGL internal L/T and matrix stack
+// FIXME: Use OGL lookupAt function
+// FIXME: Use OGL DisplayList
 
 UVFlagMap OGLXUVFlagMaps[] =
 {
-{TEXTURE_UV_FLAG_WRAP, GL_REPEAT},
-{TEXTURE_UV_FLAG_MIRROR, GL_MIRRORED_REPEAT_ARB},
-{TEXTURE_UV_FLAG_CLAMP, GL_CLAMP},
+    {TEXTURE_UV_FLAG_WRAP, GL_REPEAT},
+    {TEXTURE_UV_FLAG_MIRROR, GL_MIRRORED_REPEAT_ARB},
+    {TEXTURE_UV_FLAG_CLAMP, GL_CLAMP},
 };
 
 //===================================================================
@@ -587,7 +587,7 @@ bool OGLRender::RenderLine3D()
     glEnd();
     OPENGL_CHECK_ERRORS;
 
-    ApplyZBias(m_dwZBias);          // set Z offset back to previous value
+    ApplyZBias(m_dwZBias);  // set Z offset back to previous value
 
     return true;
 }
@@ -609,7 +609,7 @@ bool OGLRender::RenderFlushTris()
         }
     }
 
-    ApplyZBias(m_dwZBias);                    // set the bias factors
+    ApplyZBias(m_dwZBias);  // set the bias factors
 
     glViewportWrapper(windowSetting.vpLeftW, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.statusBarHeightToUse, windowSetting.vpWidthW, windowSetting.vpHeightW, false);
     OPENGL_CHECK_ERRORS;
@@ -975,7 +975,7 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
     gRDP.fogColor = COLOR_RGBA(r, g, b, a); 
     gRDP.fvFogColor[0] = r/255.0f;      //r
     gRDP.fvFogColor[1] = g/255.0f;      //g
-    gRDP.fvFogColor[2] = b/255.0f;          //b
+    gRDP.fvFogColor[2] = b/255.0f;      //b
     gRDP.fvFogColor[3] = a/255.0f;      //a
     glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
     OPENGL_CHECK_ERRORS;

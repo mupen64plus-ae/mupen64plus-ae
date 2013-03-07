@@ -395,22 +395,23 @@ bool isSSESupported()
 {
     int SSESupport = 0;
 
-    // And finally, check the CPUID for Streaming SIMD Extensions support.
+// And finally, check the CPUID for Streaming SIMD Extensions support.
 #if !defined(__GNUC__) && !defined(NO_ASM)
-    _asm{
-       mov      eax, 1          // Put a "1" in eax to tell CPUID to get the feature bits
-         cpuid                  // Perform CPUID (puts processor feature info into EDX)
-         and        edx, 02000000h  // Test bit 25, for Streaming SIMD Extensions existence.
-         mov        SSESupport, edx // SIMD Extensions).  Set return value to 1 to indicate,
+    _asm
+	{
+            mov      eax, 1          // Put a "1" in eax to tell CPUID to get the feature bits
+            cpuid                    // Perform CPUID (puts processor feature info into EDX)
+            and      edx, 02000000h  // Test bit 25, for Streaming SIMD Extensions existence.
+            mov      SSESupport, edx // SIMD Extensions).  Set return value to 1 to indicate,
     }
 #elif defined(__GNUC__) && defined(__x86_64__) && !defined(NO_ASM)
   return true;
 #elif !defined(NO_ASM) // GCC assumed
    asm volatile (
          "push %%ebx                       \n"
-         "mov $1, %%eax                    \n"          // Put a "1" in eax to tell CPUID to get the feature bits
-         "cpuid                            \n"                  // Perform CPUID (puts processor feature info into EDX)
-         "and       $0x02000000, %%edx \n"  // Test bit 25, for Streaming SIMD Extensions existence.
+         "mov $1, %%eax                    \n"  // Put a "1" in eax to tell CPUID to get the feature bits
+         "cpuid                            \n"  // Perform CPUID (puts processor feature info into EDX)
+         "and       $0x02000000, %%edx     \n"  // Test bit 25, for Streaming SIMD Extensions existence.
          "pop %%ebx                        \n"
          : "=d"(SSESupport)
          :
@@ -676,16 +677,16 @@ void GenerateCurrentRomOptions()
 
     if( currentRomOptions.N64FrameBufferEmuType == 0 )      currentRomOptions.N64FrameBufferEmuType = defaultRomOptions.N64FrameBufferEmuType;
     else currentRomOptions.N64FrameBufferEmuType--;
-    if( currentRomOptions.N64RenderToTextureEmuType == 0 )      currentRomOptions.N64RenderToTextureEmuType = defaultRomOptions.N64RenderToTextureEmuType;
+    if( currentRomOptions.N64RenderToTextureEmuType == 0 )  currentRomOptions.N64RenderToTextureEmuType = defaultRomOptions.N64RenderToTextureEmuType;
     else currentRomOptions.N64RenderToTextureEmuType--;
     if( currentRomOptions.screenUpdateSetting == 0 )        currentRomOptions.screenUpdateSetting = defaultRomOptions.screenUpdateSetting;
     if( currentRomOptions.bNormalCombiner == 0 )            currentRomOptions.bNormalCombiner = defaultRomOptions.bNormalCombiner;
     else currentRomOptions.bNormalCombiner--;
-    if( currentRomOptions.bNormalBlender == 0 )         currentRomOptions.bNormalBlender = defaultRomOptions.bNormalBlender;
+    if( currentRomOptions.bNormalBlender == 0 )             currentRomOptions.bNormalBlender = defaultRomOptions.bNormalBlender;
     else currentRomOptions.bNormalBlender--;
     if( currentRomOptions.bFastTexCRC == 0 )                currentRomOptions.bFastTexCRC = defaultRomOptions.bFastTexCRC;
     else currentRomOptions.bFastTexCRC--;
-    if( currentRomOptions.bAccurateTextureMapping == 0 )        currentRomOptions.bAccurateTextureMapping = defaultRomOptions.bAccurateTextureMapping;
+    if( currentRomOptions.bAccurateTextureMapping == 0 )    currentRomOptions.bAccurateTextureMapping = defaultRomOptions.bAccurateTextureMapping;
     else currentRomOptions.bAccurateTextureMapping--;
 
     options.bUseFullTMEM = ((options.bFullTMEM && (g_curRomInfo.dwFullTMEM == 0)) || g_curRomInfo.dwFullTMEM == 2);

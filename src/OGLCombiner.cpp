@@ -31,10 +31,10 @@
 //========================================================================
 uint32 DirectX_OGL_BlendFuncMaps [] =
 {
-    GL_SRC_ALPHA,       //Nothing
-    GL_ZERO,            //BLEND_ZERO               = 1,
-    GL_ONE,             //BLEND_ONE                = 2,
-    GL_SRC_COLOR,       //BLEND_SRCCOLOR           = 3,
+    GL_SRC_ALPHA,               //Nothing
+    GL_ZERO,                    //BLEND_ZERO               = 1,
+    GL_ONE,                     //BLEND_ONE                = 2,
+    GL_SRC_COLOR,               //BLEND_SRCCOLOR           = 3,
     GL_ONE_MINUS_SRC_COLOR,     //BLEND_INVSRCCOLOR        = 4,
     GL_SRC_ALPHA,               //BLEND_SRCALPHA           = 5,
     GL_ONE_MINUS_SRC_ALPHA,     //BLEND_INVSRCALPHA        = 6,
