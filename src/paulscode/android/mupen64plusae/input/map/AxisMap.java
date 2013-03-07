@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import paulscode.android.mupen64plusae.persistent.AppData;
 import android.annotation.TargetApi;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,11 +20,14 @@ public class AxisMap extends SerializableMap
     public static final int AXIS_CLASS_IGNORED = 1;
     public static final int AXIS_CLASS_STICK = 2;
     public static final int AXIS_CLASS_TRIGGER = 3;
+    public static final int AXIS_CLASS_OUYA_LX_STICK = 101;
     
     private static final int SIGNATURE_HASH_XBOX360 = 449832952;
     private static final int SIGNATURE_HASH_PS3 = -528816963;
     private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
+    
+    private static final int DESCRIPTOR_HASH_OUYA = 123456789; // TODO Replace with correct value
     
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
     private final String mSignature;
@@ -45,7 +49,7 @@ public class AxisMap extends SerializableMap
         return map;
     }
     
-    @TargetApi( 12 )
+    @TargetApi( 16 )
     public AxisMap( InputDevice device )
     {
         // Auto-classify the axes
@@ -97,6 +101,17 @@ public class AxisMap extends SerializableMap
                 // Bug in controller firmware cross-wires throttle and right stick up/down
                 setClass( MotionEvent.AXIS_THROTTLE, AXIS_CLASS_STICK );
                 break;
+        }
+        
+        if( AppData.IS_JELLY_BEAN )
+        {
+            switch( device.getDescriptor().hashCode() )
+            {
+                case DESCRIPTOR_HASH_OUYA:
+                    // Treat OUYA left x-axis as special case
+                    setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
+                    break;
+            }
         }
     }
     
