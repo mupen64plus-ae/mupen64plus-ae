@@ -3,7 +3,7 @@
     package="paulscode.android.mupen64plusae"
     android:installLocation="auto"
     android:versionCode="21"
-    android:versionName="2.1.1 (debug)" >
+    android:versionName="2.1.1 (OUYA Review Candidate)" >
 
     <uses-feature android:glEsVersion="0x00020000" />
 
