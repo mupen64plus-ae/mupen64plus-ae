@@ -58,8 +58,8 @@ public class OUYAInterface
             Object ouyaFacadeObj = ( OuyaFacadeClass.getMethod(  "getInstance", new Class[0] )
                     .invoke( null, new Object[0] ) );
             
-            return OuyaFacadeClass.getMethod( "isRunningOnOUYAHardware", OuyaFacadeClass )
-                    .invoke( ouyaFacadeObj, new Object[0] ).toString().equals(  "true" );
+            return OuyaFacadeClass.getMethod( "isRunningOnOUYAHardware", new Class[0] )
+                    .invoke( ouyaFacadeObj, new Object[0] ).toString().equals( "true" );
         }
         // If it fails, assume this is not an OUYA
         catch( ClassNotFoundException cnfe )
@@ -86,7 +86,7 @@ public class OUYAInterface
             Class<?> OuyaControllerClass = Class.forName( "tv.ouya.console.api.OuyaController" );
             
             return !OuyaControllerClass.getMethod( "getPlayerNumByDeviceId", new Class[]{ int.class } )
-                    .invoke( null, new Object[]{ deviceId } ).toString().equals(  "-1" );
+                    .invoke( null, new Object[]{ deviceId } ).toString().equals( "-1" );
         }
         // If it fails, assume it is not an OUYA controller
         catch( ClassNotFoundException cnfe )
