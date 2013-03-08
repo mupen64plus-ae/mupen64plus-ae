@@ -27,6 +27,7 @@ import org.acra.ACRA;
 import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -91,9 +92,6 @@ public class AppData
     
     /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    
-    /** True if device is an OUYA */
-    public static final boolean IS_OUYA_HARDWARE = IS_ICE_CREAM_SANDWICH && tv.ouya.console.api.OuyaFacade.getInstance().isRunningOnOUYAHardware();
     
     /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;
@@ -213,9 +211,9 @@ public class AppData
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
         // Initialize OuyaController interface if running on OUYA (needed for DeviceUtil.getAxisInfo())
-        if( IS_OUYA_HARDWARE )
-            tv.ouya.console.api.OuyaController.init( context );
-
+        if( OUYAInterface.IS_OUYA_HARDWARE )
+            OUYAInterface.initOUYAController( context );
+        
         // Record some info in the crash reporter
         ErrorReporter reporter = ACRA.getErrorReporter();
         reporter.putCustomData( "CPU Features", hardwareInfo.features );

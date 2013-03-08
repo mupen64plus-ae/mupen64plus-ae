@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.annotation.TargetApi;
 import android.text.TextUtils;
 import android.util.Log;
@@ -101,9 +101,9 @@ public class AxisMap extends SerializableMap
                 break;
         }
         
-        if( AppData.IS_OUYA_HARDWARE )
+        if( OUYAInterface.IS_OUYA_HARDWARE )
         {
-            if( tv.ouya.console.api.OuyaController.getPlayerNumByDeviceId( device.getId() ) >= 0 )
+            if( OUYAInterface.isOUYAController( device.getId() ) )
                 setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
         }
     }
