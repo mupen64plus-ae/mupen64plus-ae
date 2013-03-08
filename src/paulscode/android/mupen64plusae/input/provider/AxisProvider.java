@@ -183,8 +183,11 @@ public class AxisProvider extends AbstractProvider
                         }
                         else if( axisClass == AxisMap.AXIS_CLASS_OUYA_LX_STICK )
                         {
-                            // Remove bias in OUYA left x-axis
-                            // strength = TODO
+                            // Remove bias in OUYA left x-axis (usually ~ .15, but occassionaly up to .33)
+                            if( strength > 0.3333f )
+                                strength = (strength - 0.3333f) / 0.6666f;
+                            else if( strength > 0 )
+                                strength = 0;
                         }
                     }
                 }
