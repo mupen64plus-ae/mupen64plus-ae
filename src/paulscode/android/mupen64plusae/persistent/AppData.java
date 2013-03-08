@@ -92,6 +92,9 @@ public class AppData
     /** True if device is running Jellybean or later (16 - Android 4.1.x) */
     public static final boolean IS_JELLY_BEAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
     
+    /** True if device is an OUYA */
+    public static final boolean IS_OUYA_HARDWARE = IS_ICE_CREAM_SANDWICH && tv.ouya.console.api.OuyaFacade.getInstance().isRunningOnOUYAHardware();
+    
     /** Debug option: download data to SD card (default true). */
     public static final boolean DOWNLOAD_TO_SDCARD = true;
     
@@ -210,7 +213,7 @@ public class AppData
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
         // Initialize OuyaController interface if running on OUYA (needed for DeviceUtil.getAxisInfo())
-        if( hardwareInfo.isOUYA )
+        if( IS_OUYA_HARDWARE )
             tv.ouya.console.api.OuyaController.init( context );
 
         // Record some info in the crash reporter
@@ -406,7 +409,6 @@ public class AppData
         public final String features;
         public final int hardwareType;
         public final boolean isXperiaPlay;
-        public final boolean isOUYA;
         
         public HardwareInfo()
         {
@@ -486,10 +488,6 @@ public class AppData
             
             // Identify whether this is an Xperia PLAY
             isXperiaPlay = hardware.contains( "zeus" );
-            
-            // Identify whether this is an OUYA
-            isOUYA = IS_ICE_CREAM_SANDWICH && tv.ouya.console.api.OuyaFacade.getInstance().isRunningOnOUYAHardware();
-            // TODO: Would be useful to also check for OUYA framework, for determining when to show OUYA storefront components
         }
     }
 }

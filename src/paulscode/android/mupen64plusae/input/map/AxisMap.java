@@ -101,8 +101,7 @@ public class AxisMap extends SerializableMap
                 break;
         }
         
-        // Don't have access to a Context here, so calling isRunningOnOUYAHardware() again
-        if( AppData.IS_ICE_CREAM_SANDWICH && tv.ouya.console.api.OuyaFacade.getInstance().isRunningOnOUYAHardware() )
+        if( AppData.IS_OUYA_HARDWARE )
         {
             if( tv.ouya.console.api.OuyaController.getPlayerNumByDeviceId( device.getId() ) >= 0 )
                 setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );

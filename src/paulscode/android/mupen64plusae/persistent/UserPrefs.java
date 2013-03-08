@@ -442,7 +442,7 @@ public class UserPrefs
         else if( navMode.equals( "standard" ) )
             isOuyaMode = false;
         else
-            isOuyaMode = appData.hardwareInfo.isOUYA;
+            isOuyaMode = AppData.IS_OUYA_HARDWARE;
         
         // Determine the touchscreen layout
         boolean isCustom = false;

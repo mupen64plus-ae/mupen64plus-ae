@@ -122,7 +122,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !mAppData.hardwareInfo.isXperiaPlay )
             prefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
         // Disable the touchscreen when running on OUYA
-        if( mAppData.hardwareInfo.isOUYA )
+        if( AppData.IS_OUYA_HARDWARE )
             prefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
