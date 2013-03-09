@@ -38,6 +38,8 @@ static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
 static void dump_binary(char *filename, unsigned char *bytes, unsigned size);
 static void dump_task(char *filename, const OSTask_t * const task);
 
+static void handle_unknown_task(unsigned int sum);
+static void handle_unknown_non_task(unsigned int sum);
 
 /* global variables */
 RSP_INFO rsp;
@@ -202,6 +204,56 @@ static int DoCFBTask(int sum)
     return 1;
 }
 
+static void handle_unknown_task(unsigned int sum)
+{
+    char filename[256];
+    const OSTask_t * const task = get_task();
+
+    DebugMessage(M64MSG_WARNING, "unknown OSTask: sum %x PC:%x", sum, *rsp.SP_PC_REG);
+
+    sprintf(&filename[0], "task_%x.log", sum);
+    dump_task(filename, task);
+    
+    // dump ucode_boot
+    sprintf(&filename[0], "ucode_boot_%x.bin", sum);
+    dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
+
+    // dump ucode
+    if (task->ucode != 0)
+    {
+        sprintf(&filename[0], "ucode_%x.bin", sum);
+        dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
+    }
+
+    // dump ucode_data
+    if (task->ucode_data != 0)
+    {
+        sprintf(&filename[0], "ucode_data_%x.bin", sum);
+        dump_binary(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
+    }
+
+    // dump data
+    if (task->data_ptr != 0)
+    {
+        sprintf(&filename[0], "data_%x.bin", sum);
+        dump_binary(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
+    }
+}
+
+static void handle_unknown_non_task(unsigned int sum)
+{
+    char filename[256];
+
+    DebugMessage(M64MSG_WARNING, "unknown RSP code: sum: %x PC:%x", sum, *rsp.SP_PC_REG);
+
+    // dump IMEM & DMEM for further analysis
+    sprintf(&filename[0], "imem_%x.bin", sum);
+    dump_binary(filename, rsp.IMEM, 0x1000);
+
+    sprintf(&filename[0], "dmem_%x.bin", sum);
+    dump_binary(filename, rsp.DMEM, 0x1000);
+}
+
 
 /* Global functions */
 void DebugMessage(int level, const char *message, ...)
@@ -276,8 +328,7 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
 EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 {
     const OSTask_t * const task = get_task();
-    unsigned int i, sum;
-    char filename[256];
+    unsigned int sum;
 
     if (is_task())
     {
@@ -325,35 +376,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
             }
         }
 
-        DebugMessage(M64MSG_WARNING, "unknown OSTask: sum %x PC:%x", sum, *rsp.SP_PC_REG);
-
-        sprintf(&filename[0], "task_%x.log", sum);
-        dump_task(filename, task);
-        
-        // dump ucode_boot
-        sprintf(&filename[0], "ucode_boot_%x.bin", sum);
-        dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
-
-        // dump ucode
-        if (task->ucode != 0)
-        {
-            sprintf(&filename[0], "ucode_%x.bin", sum);
-            dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
-        }
-
-        // dump ucode_data
-        if (task->ucode_data != 0)
-        {
-            sprintf(&filename[0], "ucode_data_%x.bin", sum);
-            dump_binary(filename, rsp.RDRAM + (task->ucode_data & 0x7fffff), task->ucode_data_size);
-        }
-
-        // dump data
-        if (task->data_ptr != 0)
-        {
-            sprintf(&filename[0], "data_%x.bin", sum);
-            dump_binary(filename, rsp.RDRAM + (task->data_ptr & 0x7fffff), task->data_size);
-        }
+        handle_unknown_task(sum);
     }
     else
     {
@@ -380,14 +403,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
             }
         }
 
-        DebugMessage(M64MSG_WARNING, "unknown RSP code: sum: %x PC:%x", sum, *rsp.SP_PC_REG);
-
-        // dump IMEM & DMEM for further analysis
-        sprintf(&filename[0], "imem_%x.bin", sum);
-        dump_binary(filename, rsp.IMEM, 0x1000);
-
-        sprintf(&filename[0], "dmem_%x.bin", sum);
-        dump_binary(filename, rsp.DMEM, 0x1000);
+        handle_unknown_non_task(sum);
     }
 
     return Cycles;
