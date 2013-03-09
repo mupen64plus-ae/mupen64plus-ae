@@ -338,7 +338,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
         if (task->ucode != 0)
         {
             sprintf(&filename[0], "ucode_%x.bin", sum);
-            dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), ucode_size);
+            dump_binary(filename, rsp.RDRAM + (task->ucode & 0x7fffff), 0xf80);
         }
 
         // dump ucode_data
