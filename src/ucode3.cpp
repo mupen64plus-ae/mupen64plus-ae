@@ -26,13 +26,16 @@
 extern "C" {
   #include "m64p_types.h"
   #include "hle.h"
+  #include "alist_internal.h"
 }
 
-extern "C" void (*ABI3[])(void);
+extern "C" acmd_t ABI3[];
 
+/*
 static void SPNOOP (void) {
     DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 3", (int)(inst1 >> 24));
 }
+*/
 
 extern u16 ResampleLUT [0x200];
 
@@ -825,11 +828,9 @@ static void DISABLE (void) {
 }
 
 
-void (*ABI3[0x20])(void) = {
+acmd_t ABI3[0x10] = {
     DISABLE , ADPCM3 , CLEARBUFF3,  ENVMIXER3  , LOADBUFF3, RESAMPLE3  , SAVEBUFF3, MP3,
-    MP3ADDY, SETVOL3, DMEMMOVE3 , LOADADPCM3 , MIXER3   , INTERLEAVE3, WHATISTHIS   , SETLOOP3,
-    SPNOOP , SPNOOP, SPNOOP   , SPNOOP    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP,
-    SPNOOP , SPNOOP, SPNOOP   , SPNOOP    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP
+    MP3ADDY, SETVOL3, DMEMMOVE3 , LOADADPCM3 , MIXER3   , INTERLEAVE3, WHATISTHIS   , SETLOOP3
 };
 
 

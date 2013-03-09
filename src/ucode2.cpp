@@ -26,9 +26,10 @@
 extern "C" {
   #include "m64p_types.h"
   #include "hle.h"
+  #include "alist_internal.h"
 }
 
-extern "C" void (*ABI2[])(void);
+extern "C" acmd_t ABI2[];
 
 extern u8 BufferSpace[0x10000];
 
@@ -48,7 +49,7 @@ extern u16 ResampleLUT [0x200];
 bool isMKABI = false;
 bool isZeldaABI = false;
 
-void init_ucode2() { isMKABI = isZeldaABI = false; }
+extern "C" void init_ucode2() { isMKABI = isZeldaABI = false; }
 
 static void LOADADPCM2 (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
     u32 v0;
@@ -910,7 +911,7 @@ void (*ABI2[0x20])(void) = {
     SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP
 };*/
 
-void (*ABI2[0x20])(void) = {
+acmd_t ABI2[0x20] = {
     SPNOOP , ADPCM2, CLEARBUFF2, UNKNOWN, ADDMIXER, RESAMPLE2, UNKNOWN, SEGMENT2,
     SETBUFF2 , DUPLICATE2, DMEMMOVE2, LOADADPCM2, MIXER2, INTERLEAVE2, HILOGAIN, SETLOOP2,
     SPNOOP, INTERL2 , ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,

@@ -242,6 +242,7 @@ OBJDIR = _obj$(POSTFIX)
 # list of source files to compile
 SOURCE = \
 	$(SRCDIR)/main.c \
+	$(SRCDIR)/alist.c \
 	$(SRCDIR)/jpeg.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \

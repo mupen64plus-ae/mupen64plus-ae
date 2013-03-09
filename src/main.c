@@ -30,6 +30,7 @@
 #include "m64p_common.h"
 #include "m64p_plugin.h"
 #include "hle.h"
+#include "alist.h"
 #include "jpeg.h"
 
 /* global variables */
@@ -134,48 +135,24 @@ static int audio_ucode_detect()
     }
 }
 
-extern void (*ABI1[0x20])();
-extern void (*ABI2[0x20])();
-extern void (*ABI3[0x20])();
-
-static void (*ABI[0x20])();
-
-u32 inst1, inst2;
-
 static int audio_ucode()
 {
-    const OSTask_t * const task = get_task();
-    unsigned int *p_alist = (unsigned int*)(rsp.RDRAM + task->data_ptr);
-    unsigned int i;
-    u32 inst1_idx;
-
     switch(audio_ucode_detect())
     {
     case 1: // mario ucode
-        memcpy( ABI, ABI1, sizeof(ABI[0])*0x20 );
+        alist_process_ABI1();
         break;
-    case 2: // banjo kazooie ucode
-        memcpy( ABI, ABI2, sizeof(ABI[0])*0x20 );
+    case 2: // zelda ucode
+        alist_process_ABI2();
         break;
-    case 3: // zelda ucode
-        memcpy( ABI, ABI3, sizeof(ABI[0])*0x20 );
+    case 3: // banjo kazooie ucode
+        alist_process_ABI3();
         break;
     default:
         {
         DebugMessage(M64MSG_WARNING, "unknown audio ucode");
         return -1;
         }
-    }
-
-    for (i = 0; i < (task->data_size/4); i += 2)
-    {
-        inst1 = p_alist[i];
-        inst2 = p_alist[i+1];
-        inst1_idx = inst1 >> 24;
-        if (inst1_idx < 0x20)
-            ABI[inst1_idx]();
-        else
-            DebugMessage(M64MSG_WARNING, "Invalid audio ABI index %u", inst1_idx);
     }
 
     return 0;

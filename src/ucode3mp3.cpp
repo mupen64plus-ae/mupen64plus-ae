@@ -25,6 +25,7 @@
 
 extern "C" {
   #include "hle.h"
+  #include "alist_internal.h"
 }
 
 static u16 DeWindowLUT [0x420] = {

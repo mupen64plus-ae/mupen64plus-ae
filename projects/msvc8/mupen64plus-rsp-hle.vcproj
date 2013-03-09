@@ -179,6 +179,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\src\alist.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\jpeg.c"
 				>
 			</File>
@@ -208,6 +212,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\src\alist.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\alist_internal.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\src\hle.h"
 				>
