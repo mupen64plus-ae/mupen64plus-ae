@@ -33,6 +33,12 @@
 #include "alist.h"
 #include "jpeg.h"
 
+/* helper functions prototypes */
+static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
+static void dump_binary(char *filename, unsigned char *bytes, unsigned size);
+static void dump_task(char *filename, const OSTask_t * const task);
+
+
 /* global variables */
 RSP_INFO rsp;
 
@@ -43,35 +49,6 @@ static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
 
 /* local functions */
-
-
-static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
-{
-    FILE *f;
-
-    // if file already exists, do nothing
-    f = fopen(filename, "r");
-    if (f == NULL)
-    {
-        // else we write bytes to the file
-        f= fopen(filename, "wb");
-        if (f != NULL) {
-            if (fwrite(bytes, 1, size, f) != size)
-            {
-                DebugMessage(M64MSG_ERROR, "Writing error on %s", filename);
-            }
-            fclose(f);
-        }
-        else
-        {
-            DebugMessage(M64MSG_ERROR, "Couldn't open %s for writing !", filename);
-        }
-    }
-    else
-    {
-        fclose(f);
-    }
-}
 
 
 /**
@@ -299,18 +276,15 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
 EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 {
     const OSTask_t * const task = get_task();
-    unsigned int i, sum=0;
+    unsigned int i, sum;
     char filename[256];
-    FILE *f = NULL;
 
     if (is_task())
     {
         // most ucode_boot procedure copy 0xf80 bytes of ucode whatever the ucode_size is.
         // For practical purpose we use a ucode_size = min(0xf80, task->ucode_size)
         unsigned int ucode_size = (task->ucode_size > 0xf80) ? 0xf80 : task->ucode_size;
-
-        for (i=0; i<ucode_size/2; i++)
-            sum += *(rsp.RDRAM + task->ucode + i);
+        unsigned int sum = sum_bytes(rsp.RDRAM + task->ucode, ucode_size >> 1);
 
         switch(task->type)
         {
@@ -354,38 +328,8 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
         DebugMessage(M64MSG_WARNING, "unknown OSTask: sum %x PC:%x", sum, *rsp.SP_PC_REG);
 
         sprintf(&filename[0], "task_%x.log", sum);
-
-        // dump task
-        f = fopen(filename, "r");
-        if (f == NULL)
-        {
-            f = fopen(filename, "w");
-            fprintf(f,
-                "type = %d\n"
-                "flags = %d\n"
-                "ucode_boot  = %#08x size  = %#x\n"
-                "ucode       = %#08x size  = %#x\n"
-                "ucode_data  = %#08x size  = %#x\n"
-                "dram_stack  = %#08x size  = %#x\n"
-                "output_buff = %#08x *size = %#x\n"
-                "data        = %#08x size  = %#x\n"
-                "yield_data  = %#08x size  = %#x\n",
-                task->type, task->flags,
-                task->ucode_boot, task->ucode_boot_size,
-                task->ucode, task->ucode_size,
-                task->ucode_data, task->ucode_data_size,
-                task->dram_stack, task->dram_stack_size,
-                task->output_buff, task->output_buff_size,
-                task->data_ptr, task->data_size,
-                task->yield_data_ptr, task->yield_data_size);
-            fclose(f);
-        }
-        else
-        {
-            fclose(f);
-        }
-
-
+        dump_task(filename, task);
+        
         // dump ucode_boot
         sprintf(&filename[0], "ucode_boot_%x.bin", sum);
         dump_binary(filename, rsp.RDRAM + (task->ucode_boot & 0x7fffff), task->ucode_boot_size);
@@ -416,8 +360,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
         // For ucodes that are not run using the osSpTask* functions
 
         // Try to identify the RSP code we should run
-        for (i=0; i<(0x1000/2); i++)
-            sum += *(rsp.IMEM + i);
+        sum = sum_bytes(rsp.IMEM, 0x1000 >> 1);
 
         switch(sum)
         {
@@ -464,4 +407,80 @@ EXPORT void CALL RomClosed(void)
     //init_ucode1();
     init_ucode2();
 }
+
+
+/* local helper functions */
+static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size)                     
+{                                                                                                
+    unsigned int sum = 0;                                                                        
+    const unsigned char * const bytes_end = bytes + size;                                        
+                                                                                                 
+    while (bytes != bytes_end)                                                                   
+        sum += *bytes++;                                                                         
+                                                                                                 
+    return sum;                                                                                  
+}   
+
+
+static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
+{
+    FILE *f;
+
+    // if file already exists, do nothing
+    f = fopen(filename, "r");
+    if (f == NULL)
+    {
+        // else we write bytes to the file
+        f= fopen(filename, "wb");
+        if (f != NULL) {
+            if (fwrite(bytes, 1, size, f) != size)
+            {
+                DebugMessage(M64MSG_ERROR, "Writing error on %s", filename);
+            }
+            fclose(f);
+        }
+        else
+        {
+            DebugMessage(M64MSG_ERROR, "Couldn't open %s for writing !", filename);
+        }
+    }
+    else
+    {
+        fclose(f);
+    }
+}
+
+static void dump_task(char *filename, const OSTask_t * const task)                               
+{                                                                                                
+    FILE *f;                                                                                     
+                                                                                                 
+    f = fopen(filename, "r");                                                                    
+    if (f == NULL)                                                                               
+    {                                                                                            
+        f = fopen(filename, "w");                                                                
+        fprintf(f,                                                                               
+            "type = %d\n"                                                                        
+            "flags = %d\n"                                                                       
+            "ucode_boot  = %#08x size  = %#x\n"                                                  
+            "ucode       = %#08x size  = %#x\n"                                                  
+            "ucode_data  = %#08x size  = %#x\n"                                                  
+            "dram_stack  = %#08x size  = %#x\n"                                                  
+            "output_buff = %#08x *size = %#x\n"                                                  
+            "data        = %#08x size  = %#x\n"                                                  
+            "yield_data  = %#08x size  = %#x\n",                                                 
+            task->type, task->flags,                                                             
+            task->ucode_boot, task->ucode_boot_size,                                             
+            task->ucode, task->ucode_size,                                                       
+            task->ucode_data, task->ucode_data_size,                                             
+            task->dram_stack, task->dram_stack_size,                                             
+            task->output_buff, task->output_buff_size,                                           
+            task->data_ptr, task->data_size,                                                     
+            task->yield_data_ptr, task->yield_data_size);                                        
+        fclose(f);                                                                               
+    }                                                                                            
+    else                                                                                         
+    {                                                                                            
+        fclose(f);                                                                               
+    }                                                                                            
+}        
 
