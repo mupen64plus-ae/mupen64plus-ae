@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">ファイルに保存…</string>
   <string name="menuItem_fileLoad">ファイルからのロード…</string>
   <string name="menuItem_setSpeed">ゲームの速度</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">IMEを変更</string>
   <string name="menuItem_exit">終了</string>
   <!--Input Mapping Activity-->
@@ -206,6 +215,20 @@
   <string name="gles2N64Frameskip_entryExactly3">唯一の3フレームをスキップ</string>
   <string name="gles2N64Frameskip_entryExactly4">唯一の4フレームをスキップ</string>
   <string name="gles2N64Frameskip_entryExactly5">唯一の5フレームをスキップ</string>
+  <string name="gles2RiceMipmapping_title">ミップマッピング</string>
+  <string name="gles2RiceMipmapping_entryNone">なし</string>
+  <string name="gles2RiceMipmapping_entryNearest">最近傍</string>
+  <string name="gles2RiceMipmapping_entryBilinear">バイリニア</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">トライリニア・</string>
+  <string name="gles2RiceTextureEnhancement_title">テクスチャアップスケーリング/強化</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">なし</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">スケール2倍</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">研ぐ</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">続き研ぐ</string>
   <string name="audioResampleAlg_title">再サンプリングアルゴリズム</string>
   <string name="audioResampleAlg_entryTrivial">些細</string>
   <string name="audioResampleAlg_entryLinear">線形補間</string>
@@ -222,7 +245,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">入力デバイス</string>
   <string name="pluginInput_entryNone">なし（入力無効）</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">RSP</string>
   <string name="pluginRsp_entryNone">なし（RSP無効）</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
@@ -247,6 +269,7 @@
   <string name="acraUserEmail_summary">あなたのpaulscode.comユーザ名（必須ではありません）</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">タッチスクリーンの透明度</string>
+  <string name="videoActionBarTransparency_title">アクションバーの不透明</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -336,10 +359,6 @@
   <string name="inputMapActivity_btnAL">アナログ ←</string>
   <string name="inputMapActivity_btnAD">アナログ ↓</string>
   <string name="inputMapActivity_btnAU">アナログ ↑</string>
-  <string name="inputMapActivity_rumble">振動パック</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">拡張パック</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">インクリメントスロット</string>
   <string name="inputMapActivity_reset">ゲームをリセット</string>
   <string name="inputMapActivity_pause">休止</string>

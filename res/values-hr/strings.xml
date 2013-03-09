@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Spremi u datoteku…</string>
   <string name="menuItem_fileLoad">Učitaj iz datoteke…</string>
   <string name="menuItem_setSpeed">Brzina igre</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Promjena zadanog unosa</string>
   <string name="menuItem_exit">Izlaz</string>
   <!--Input Mapping Activity-->
@@ -223,7 +232,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Kontroler</string>
   <string name="pluginInput_entryNone">Nema (kontroler isključen)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginRsp_title">RSP</string>
   <string name="pluginRsp_entryNone">Nema (RSP isključen)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
@@ -338,10 +346,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <string name="inputMapActivity_rumble">Rumble Pak</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion Pak</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Promjena broja spremnika</string>
   <string name="inputMapActivity_reset">Reset</string>
   <string name="inputMapActivity_pause">Pauza</string>

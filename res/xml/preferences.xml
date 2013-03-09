@@ -476,13 +476,13 @@
                     android:key="pluginCore"
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginCore_title" />
-              <!-- <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/r4300Emulator_default"
                     android:entries="@array/r4300Emulator_entries"
                     android:entryValues="@array/r4300Emulator_values"
                     android:key="r4300Emulator"
                     android:summary="@string/selectedValue"
-                    android:title="@string/r4300Emulator_title" /> -->
+                    android:title="@string/r4300Emulator_title" />
             </PreferenceScreen>
             <PreferenceScreen
                 android:icon="@drawable/ic_debug"

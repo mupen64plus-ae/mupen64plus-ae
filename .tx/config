@@ -5,7 +5,6 @@ host = https://www.transifex.com
 file_filter = ./res/values-<lang>/strings.xml
 source_file = ./res/values/strings.xml
 source_lang = en
-trans.en_US = /dev/null
 type = ANDROID
 minimum_perc = 80
 
@@ -13,6 +12,5 @@ minimum_perc = 80
 file_filter = ./doc/publish/listing-<lang>.txt
 source_file = ./doc/publish/listing.txt
 source_lang = en
-trans.en_US = /dev/null
 type = TXT
 minimum_perc = 80

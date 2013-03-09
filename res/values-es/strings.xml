@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Guardar a archivo…</string>
   <string name="menuItem_fileLoad">Cargar desde archivo…</string>
   <string name="menuItem_setSpeed">Velocidad del juego</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Cambiar IME</string>
   <string name="menuItem_exit">Salir</string>
   <!--Input Mapping Activity-->
@@ -175,6 +184,9 @@
   <string name="videoOrientation_entryReverseLandscape">Paisaje invertido</string>
   <string name="videoOrientation_entryPortrait">Retrato</string>
   <string name="videoOrientation_entryReversePortrait">Retrato invertido</string>
+  <string name="videoPosition_entryBottom">Abajo</string>
+  <string name="videoPosition_entryMiddle">En medio</string>
+  <string name="videoPosition_entryTop">Arriba</string>
   <string name="videoFpsRefresh_title">Mostrar velocidad de cuadros</string>
   <string name="videoFpsRefresh_entryNever">Nunca</string>
   <string name="videoFpsRefresh_entryOccasionally">Ocasionalmente</string>
@@ -199,6 +211,20 @@
   <string name="gles2N64Frameskip_entryExactly3">Exactamente 3 cuadros</string>
   <string name="gles2N64Frameskip_entryExactly4">Exactamente 4 cuadros</string>
   <string name="gles2N64Frameskip_entryExactly5">Exactamente 5 cuadros</string>
+  <string name="gles2RiceMipmapping_title">Mapeo de MIPs</string>
+  <string name="gles2RiceMipmapping_entryNone">Ninguno</string>
+  <string name="gles2RiceMipmapping_entryNearest">Cercano</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Bilineal</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Trilineal</string>
+  <string name="gles2RiceTextureEnhancement_title">Aumento de calidad de texturas</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Ninguna</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Escala 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x Sal</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Agudo</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Mas agudo</string>
   <string name="audioResampleAlg_title">Algoritmo de remuestreo</string>
   <string name="audioResampleAlg_entryTrivial">Trivial</string>
   <string name="audioResampleAlg_entryLinear">Interpolación lineal</string>
@@ -215,7 +241,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Ninguno (dispositivos de entrada deshabilitados)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Ninguno (RSP deshabilitado)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
@@ -240,6 +265,7 @@
   <string name="acraUserEmail_summary">Tu nombre de usuario en paulscode.com (opcional)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparencia de botones en la pantalla táctil</string>
+  <string name="videoActionBarTransparency_title">Opacidad de la barra de acciones</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -305,6 +331,7 @@
   <string name="playerMapPreference_popupMessage">Jugador %1$d, presiona un botón o mueve el stick en tu mando…\n\nDispositivos actuales:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desasignar</string>
   <string name="playerMapPreference_button">Jugador %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">Recordarme cuando los jugadores no estan asignados</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Presiona un botón, tecla o joystick a asignar…\n\nAsignaciones actuales:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Desasignar</string>
@@ -329,10 +356,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <string name="inputMapActivity_rumble">Rumble Pak</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion Pak</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Incrementar slot</string>
   <string name="inputMapActivity_reset">Reiniciar</string>
   <string name="inputMapActivity_pause">Pausa</string>

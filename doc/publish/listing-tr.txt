@@ -22,7 +22,7 @@ BAĞIŞLAR SADECE 99¢!
 - Lütfen bağış yapmayı düşünün
 - Bağışlar BİRÇOK açık kaynak kodlu projeye ve bunların geliştiricilerine destek olmaktadır
 
-Mupen64Plus, Android Edition (AE) is an N64 emulator for Android. It is currently in Beta testing, which means it is a work in progress. There are still many graphical, lag, and audio problems, even on modern devices. Visit www.paulscode.com to get involved in development and testing, as well as bug-fixes and FAQs.
+Mupen64Plus Android Edition (AE), Android için bir N64 öyküncüsüdür. Şu anda beta denemesinde olduğundan, halen daha geliştirilmektedir. Halen daha bir çok grafik, gecikme ve ses sorunu vardır, modern cihazlarda bile. Geliştirme ve denemeye katılma ile hata yamalama ve sıkça sorulan sorular için www.paulscode.com adresini ziyaret edin.
 
 This is the official app, which was taken down a few months ago after some of the competitors filed fake DMCA take-down notices. Trev (Keowsktech) published the app on his account for a few months while I was working out my account issues with Google. Now that my account has been restored, he will be unpublishing his branch in the near future. All future updates will be published from this account.
 

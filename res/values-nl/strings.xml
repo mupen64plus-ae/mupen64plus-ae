@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Opslaan naar bestand</string>
   <string name="menuItem_fileLoad">Laden van bestand</string>
   <string name="menuItem_setSpeed">Spel snelheid</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Verander IME</string>
   <string name="menuItem_exit">Einde</string>
   <!--Input Mapping Activity-->
@@ -195,7 +204,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Invoer</string>
   <string name="pluginInput_entryNone">Geen (invoer uitgeschakeld)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Geen (RSP uitgeschakeld)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
@@ -305,9 +313,6 @@
   <string name="inputMapActivity_btnAL">Analoog ←</string>
   <string name="inputMapActivity_btnAD">Analoog ↓</string>
   <string name="inputMapActivity_btnAU">Analoog ↑</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Uitbreidingspakket</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Slot ophogen</string>
   <string name="inputMapActivity_reset">Herstarten</string>
   <string name="inputMapActivity_pause">Pauze</string>

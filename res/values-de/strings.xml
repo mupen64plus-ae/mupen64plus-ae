@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">In Datei speichern…</string>
   <string name="menuItem_fileLoad">Aus Datei laden…</string>
   <string name="menuItem_setSpeed">Spielgeschwindigkeit</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">IME wechseln</string>
   <string name="menuItem_exit">Verlassen</string>
   <!--Input Mapping Activity-->
@@ -207,6 +216,20 @@
   <string name="gles2N64Frameskip_entryExactly3">Genau 3 Frames</string>
   <string name="gles2N64Frameskip_entryExactly4">Genau 4 Frames</string>
   <string name="gles2N64Frameskip_entryExactly5">Genau 5 Frames</string>
+  <string name="gles2RiceMipmapping_title">Mipmapping</string>
+  <string name="gles2RiceMipmapping_entryNone">Kein</string>
+  <string name="gles2RiceMipmapping_entryNearest">Nah</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
+  <string name="gles2RiceTextureEnhancement_title">Texturen Hochskallieren / Verbessern</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Keine</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Skaliere 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x Sal</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Schärfen</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Mehr Schärfen</string>
   <string name="audioResampleAlg_title">Resample-Algorithmus</string>
   <string name="audioResampleAlg_entryTrivial">Trivial</string>
   <string name="audioResampleAlg_entryLinear">Lineare Interpolation</string>
@@ -223,7 +246,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Eingabe</string>
   <string name="pluginInput_entryNone">Keins (Eingabe deaktiviert)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Reality Signal Processor (RSP)</string>
   <string name="pluginRsp_entryNone">Keins (RSP deaktiviert)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
@@ -248,6 +270,7 @@
   <string name="acraUserEmail_summary">Dein paulscode.com-Benutzername (optional)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Touchscreen-Transparenz</string>
+  <string name="videoActionBarTransparency_title">Actionbar Sichtbarkeit</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -338,10 +361,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <string name="inputMapActivity_rumble">Rumble-Pack</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion-Pack</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Slot erhöhen</string>
   <string name="inputMapActivity_reset">Zurücksetzen</string>
   <string name="inputMapActivity_pause">Pausieren</string>

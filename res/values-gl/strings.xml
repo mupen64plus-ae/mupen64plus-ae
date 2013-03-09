@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Gardar a un arquivo…</string>
   <string name="menuItem_fileLoad">Cargar dende un arquivo…</string>
   <string name="menuItem_setSpeed">Velocidade do xogo</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Cambiar IME</string>
   <string name="menuItem_exit">Saír</string>
   <!--Input Mapping Activity-->
@@ -210,7 +219,6 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Nada (dispositivo de entrada desactivado)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10\n<small>(Android port do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Nada (RSP desactivado)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
@@ -324,10 +332,6 @@
   <string name="inputMapActivity_btnAL">Analóxico ←</string>
   <string name="inputMapActivity_btnAD">Analóxico ↓</string>
   <string name="inputMapActivity_btnAU">Analóxico ↑</string>
-  <string name="inputMapActivity_rumble">Rumble Pak</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion Pak</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Incrementar slot</string>
   <string name="inputMapActivity_reset">Restablecer</string>
   <string name="inputMapActivity_pause">Pausa</string>
