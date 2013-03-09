@@ -273,6 +273,9 @@ public class UserPrefs
     
     /** The mipmapping algorithm to use in GLES2Rice */
     public final String gles2RiceMipmappingAlg;
+
+    /** The screen update setting to use in GLES2Rice */
+    public final String gles2RiceScreenUpdateType;
     
     /** The texture enhancement algorithm to be used in the gles2rice library */
     public final String gles2RiceTextureEnhancement;
@@ -427,8 +430,9 @@ public class UserPrefs
         isGles2RiceFastTextureCrcEnabled = mPreferences.getBoolean( "gles2RiceFastTextureCrc", true );
         isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
         isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
-        gles2RiceMipmappingAlg = mPreferences.getString("gles2RiceMipmapping", "0");
-        gles2RiceTextureEnhancement = mPreferences.getString("gles2RiceTextureEnhancement", "0");
+        gles2RiceMipmappingAlg = mPreferences.getString( "gles2RiceMipmapping", "0" );
+        gles2RiceScreenUpdateType = mPreferences.getString( "gles2RiceScreenUpdate", "4" );
+        gles2RiceTextureEnhancement = mPreferences.getString( "gles2RiceTextureEnhancement", "0" );
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
         
         // Audio prefs

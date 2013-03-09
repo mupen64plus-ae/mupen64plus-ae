@@ -251,6 +251,30 @@
     </string-array>
     
     <string name="gles2RiceMipmapping_default">0</string>
+
+    <!-- GLES2Rice Screen Update List -->
+    <string-array name="gles2RiceScreenUpdate_entries">
+        <item>@string/gles2RiceScreenUpdate_entryRomDefault</item>
+        <item>@string/gles2RiceScreenUpdate_entryVIOriginUpdate</item>
+        <item>@string/gles2RiceScreenUpdate_entryVIOriginChange</item>
+        <item>@string/gles2RiceScreenUpdate_entryCIChange</item>
+        <item>@string/gles2RiceScreenUpdate_entryFirstCIChange</item>
+        <item>@string/gles2RiceScreenUpdate_entryFirstPrimDraw</item>
+        <item>@string/gles2RiceScreenUpdate_entryBeforeScreenClear</item>
+        <item>@string/gles2RiceScreenUpdate_entryAfterScreenDrawn</item>
+    </string-array>
+    <string-array name="gles2RiceScreenUpdate_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
+    <string name="gles2RiceScreenUpdate_default">4</string>
     
     <!-- GLES2Rice Texture Enhancement Algorithm List -->
     <string-array name="gles2RiceTextureEnhancement_entries">
