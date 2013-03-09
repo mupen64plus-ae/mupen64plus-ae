@@ -152,17 +152,32 @@ public class VisibleTouchMap extends TouchMap
         
         if( metrics != null )
         {
+            float screenWidthPixels;
+            float screenWidthInches;
+            float screenHeightPixels;
+            float screenHeightInches;
+            if( metrics.widthPixels > metrics.heightPixels )
+            {
+                screenWidthPixels = metrics.widthPixels;
+                screenWidthInches = screenWidthPixels / (float) metrics.xdpi;
+                screenHeightPixels = metrics.heightPixels;
+                screenHeightInches = screenHeightPixels / (float) metrics.ydpi;
+            }
+            else
+            {
+                screenWidthPixels = metrics.heightPixels;
+                screenWidthInches = screenWidthPixels / (float) metrics.ydpi;
+                screenHeightPixels = metrics.widthPixels;
+                screenHeightInches = screenHeightPixels / (float) metrics.xdpi;
+            }
             if( targetPixels > 0 )
-                scale = (float) metrics.widthPixels / (float) targetPixels;
+                scale = screenWidthPixels / (float) targetPixels;
             
-            float screenWidthInches = (float) metrics.widthPixels / (float) metrics.xdpi;
-            float screenHeightInches = (float) metrics.heightPixels / (float) metrics.ydpi;
             float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
-            
-            // Increase the scale if the device is a phone in portrait mode
             if( screenSizeInches < Utility.MINIMUM_TABLET_SIZE && screenHeightInches > screenWidthInches )
-                scale *= 1.5f;
-            // TODO: Test on various screen dimensions to ensure the above doesn't create button overlap
+            {
+                // This is a phone in portrait mode.  TODO: Anything special?
+            }
 
             if( maxInches > 0.0f )
             {
