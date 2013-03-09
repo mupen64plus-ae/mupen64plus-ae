@@ -83,9 +83,9 @@ static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
  *
  * Using ucode_boot_size should be more robust in this regard.
  **/
-static int is_run_through_task(OSTask_t* task)
+static int is_task()
 {
-    return (task->ucode_boot_size <= 0x1000);
+    return (get_task()->ucode_boot_size <= 0x1000);
 }
 
 
@@ -114,8 +114,10 @@ static void taskdone()
 }
 
 
-static int audio_ucode_detect(OSTask_t *task)
+static int audio_ucode_detect()
 {
+    const OSTask_t * const task = get_task();
+
     if (*(unsigned int*)(rsp.RDRAM + task->ucode_data + 0) != 0x1)
     {
         if (*(rsp.RDRAM + task->ucode_data + (0 ^ (3-S8))) == 0xF)
@@ -140,13 +142,14 @@ static void (*ABI[0x20])();
 
 u32 inst1, inst2;
 
-static int audio_ucode(OSTask_t *task)
+static int audio_ucode()
 {
+    const OSTask_t * const task = get_task();
     unsigned int *p_alist = (unsigned int*)(rsp.RDRAM + task->data_ptr);
     unsigned int i;
     u32 inst1_idx;
 
-    switch(audio_ucode_detect(task))
+    switch(audio_ucode_detect())
     {
     case 1: // mario ucode
         memcpy( ABI, ABI1, sizeof(ABI[0])*0x20 );
@@ -178,7 +181,7 @@ static int audio_ucode(OSTask_t *task)
     return 0;
 }
 
-static int DoGFXTask(OSTask_t *task, int sum)
+static int DoGFXTask(int sum)
 {
     if (GraphicsHle && rsp.ProcessDlistList != NULL)
     {
@@ -194,7 +197,7 @@ static int DoGFXTask(OSTask_t *task, int sum)
     }
 }
 
-static int DoAudioTask(OSTask_t *task, int sum)
+static int DoAudioTask(int sum)
 {
     if (AudioHle && rsp.ProcessAlistList != NULL)
     {
@@ -204,7 +207,7 @@ static int DoAudioTask(OSTask_t *task, int sum)
     }
     else
     {
-        if (audio_ucode(task) == 0)
+        if (audio_ucode() == 0)
         {
             taskdone();
             return 1;
@@ -214,7 +217,7 @@ static int DoAudioTask(OSTask_t *task, int sum)
     return 0;
 }
 
-static int DoJPEGTask(OSTask_t *task, int sum)
+static int DoJPEGTask(int sum)
 {
     switch(sum)
     {
@@ -222,15 +225,15 @@ static int DoJPEGTask(OSTask_t *task, int sum)
       taskdone();
       return 1;
     case 0x2c85a: // Pokemon stadium J jpg decompression
-        jpeg_decode_PS0(task);
+        jpeg_decode_PS0();
         taskdone();
         return 1;
     case 0x2caa6: // Zelda OOT, Pokemon Stadium {1,2} jpg decompression
-        jpeg_decode_PS(task);
+        jpeg_decode_PS();
         taskdone();
         return 1;
     case 0x130de: // Ogre Battle background decompression
-        jpeg_decode_OB(task);
+        jpeg_decode_OB();
         taskdone();
         return 1;
     }
@@ -238,7 +241,7 @@ static int DoJPEGTask(OSTask_t *task, int sum)
     return 0;
 }
 
-static int DoCFBTask(OSTask_t *task, int sum)
+static int DoCFBTask(int sum)
 {
     rsp.ShowCFB();
     taskdone();
@@ -318,13 +321,12 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
 
 EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 {
-    OSTask_t *task = (OSTask_t*)(rsp.DMEM + 0xfc0);
-    int run_through_task = is_run_through_task(task);
+    const OSTask_t * const task = get_task();
     unsigned int i, sum=0;
     char filename[256];
     FILE *f = NULL;
 
-    if (run_through_task)
+    if (is_task())
     {
         // most ucode_boot procedure copy 0xf80 bytes of ucode whatever the ucode_size is.
         // For practical purpose we use a ucode_size = min(0xf80, task->ucode_size)
@@ -341,7 +343,7 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
                 {
                 case 0x212ee: // Twintris (task type is in fact GFX)
                     {
-                        if (DoGFXTask(task, sum)) return Cycles;
+                        if (DoGFXTask(sum)) return Cycles;
                         break;
                     }
                 }
@@ -349,25 +351,25 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
             }
         case 1: // GFX
             {
-                if (DoGFXTask(task, sum)) return Cycles;
+                if (DoGFXTask(sum)) return Cycles;
                 break;
             }
 
         case 2: // AUDIO
             {
-                if (DoAudioTask(task, sum)) return Cycles;
+                if (DoAudioTask(sum)) return Cycles;
                 break;
             }
 
         case 4: // JPEG
             {
-                if (DoJPEGTask(task, sum)) return Cycles;
+                if (DoJPEGTask(sum)) return Cycles;
                 break;
             }
 
         case 7: // CFB
             {
-                if (DoCFBTask(task, sum)) return Cycles;
+                if (DoCFBTask(sum)) return Cycles;
                 break;
             }
         }

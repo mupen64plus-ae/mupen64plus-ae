@@ -96,6 +96,11 @@ typedef struct
     unsigned int yield_data_size;
 } OSTask_t;
 
+static inline const OSTask_t * const get_task()
+{
+    return (OSTask_t*)(rsp.DMEM + 0xfc0);
+}
+
 void DebugMessage(int level, const char *message, ...);
 
 /*void ucode1(OSTask_t *task);
