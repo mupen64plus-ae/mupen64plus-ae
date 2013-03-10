@@ -33,6 +33,8 @@
 #include "alist.h"
 #include "jpeg.h"
 
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+
 /* helper functions prototypes */
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
 static void dump_binary(char *filename, unsigned char *bytes, unsigned size);
@@ -45,7 +47,7 @@ static void handle_unknown_non_task(unsigned int sum);
 RSP_INFO rsp;
 
 /* local variables */
-static const int AudioHle = 0, GraphicsHle = 1;
+static const int forward_audio = 0, forward_gfx = 1;
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
@@ -93,115 +95,131 @@ static void taskdone()
     }
 }
 
-
-static int audio_ucode_detect()
+static void forward_gfx_task()
 {
-    const OSTask_t * const task = get_task();
-
-    if (*(unsigned int*)(rsp.RDRAM + task->ucode_data + 0) != 0x1)
-    {
-        if (*(rsp.RDRAM + task->ucode_data + (0 ^ (3-S8))) == 0xF)
-            return 4;
-        else
-            return 3;
-    }
-    else
-    {
-        if (*(unsigned int*)(rsp.RDRAM + task->ucode_data + 0x30) == 0xF0000F00)
-            return 1;
-        else
-            return 2;
-    }
-}
-
-static int audio_ucode()
-{
-    switch(audio_ucode_detect())
-    {
-    case 1: // mario ucode
-        alist_process_ABI1();
-        break;
-    case 2: // zelda ucode
-        alist_process_ABI2();
-        break;
-    case 3: // banjo kazooie ucode
-        alist_process_ABI3();
-        break;
-    default:
-        {
-        DebugMessage(M64MSG_WARNING, "unknown audio ucode");
-        return -1;
-        }
-    }
-
-    return 0;
-}
-
-static int DoGFXTask(int sum)
-{
-    if (GraphicsHle && rsp.ProcessDlistList != NULL)
+    if (rsp.ProcessDlistList != NULL)
     {
         rsp.ProcessDlistList();
-        taskdone();
         *rsp.DPC_STATUS_REG &= ~0x0002;
-        return 1;
-    }
-    else
-    {
-        DebugMessage(M64MSG_WARNING, "GFX ucode through rsp plugin is not implemented");
-        return 0;
     }
 }
 
-static int DoAudioTask(int sum)
+static void forward_audio_task()
 {
-    if (AudioHle && rsp.ProcessAlistList != NULL)
+    if (rsp.ProcessAlistList != NULL)
     {
         rsp.ProcessAlistList();
-        taskdone();
-        return 1;
+    }
+}
+
+static void show_cfb()
+{
+    if (rsp.ShowCFB != NULL)
+    {
+        rsp.ShowCFB();
+    }
+}
+
+static int try_fast_audio_dispatching()
+{
+    /* identify audio ucode by using the content of ucode_data */
+    const OSTask_t * const task = get_task();
+    const unsigned char * const udata_ptr = rsp.RDRAM + task->ucode_data;
+
+    if (*(unsigned int*)(udata_ptr + 0) == 0x00000001)
+    {
+        if (*(unsigned int*)(udata_ptr + 0x30) == 0xf0000f00)
+        {
+            alist_process_ABI1(); return 1;
+        }
+        else
+        {
+            alist_process_ABI2(); return 1;
+        }
     }
     else
     {
-        if (audio_ucode() == 0)
+        if (*(udata_ptr + (0 ^ (3-S8))) != 0xf)
         {
-            taskdone();
-            return 1;
+            alist_process_ABI3(); return 1;
         }
     }
-
+    
     return 0;
 }
 
-static int DoJPEGTask(int sum)
+static int try_fast_task_dispatching()
 {
-    switch(sum)
+    /* identify task ucode by its type */
+    const OSTask_t * const task = get_task();
+
+    switch (task->type)
     {
-    case 0x278: // Zelda OOT during boot
-      taskdone();
-      return 1;
-    case 0x2c85a: // Pokemon stadium J jpg decompression
-        jpeg_decode_PS0();
-        taskdone();
-        return 1;
-    case 0x2caa6: // Zelda OOT, Pokemon Stadium {1,2} jpg decompression
-        jpeg_decode_PS();
-        taskdone();
-        return 1;
-    case 0x130de: // Ogre Battle background decompression
-        jpeg_decode_OB();
-        taskdone();
-        return 1;
+        case 1: if (forward_gfx) { forward_gfx_task(); return 1; } break;
+
+        case 2:
+            if (forward_audio) { forward_audio_task(); return 1; }
+            else if (try_fast_audio_dispatching()) { return 1; }
+            break;
+
+        case 7: show_cfb(); return 1;
     }
 
     return 0;
 }
 
-static int DoCFBTask(int sum)
+static void normal_task_dispatching()
 {
-    rsp.ShowCFB();
-    taskdone();
-    return 1;
+    const OSTask_t * const task = get_task();
+    const unsigned int sum =
+        sum_bytes(rsp.RDRAM + task->ucode, min(task->ucode_size, 0xf80) >> 1);
+
+    switch (sum)
+    {
+        /* StoreVe12: found in Zelda Ocarina of Time [misleading task->type == 4] */
+        case 0x278: /* Nothing to emulate */ return;
+
+        /* GFX: Twintris [misleading task->type == 0] */                                         
+        case 0x212ee:
+            if (forward_gfx) { forward_gfx_task(); return; }
+            break;
+
+        /* JPEG: found in Pokemon Stadium J */ 
+        case 0x2c85a: jpeg_decode_PS0(); return;
+
+        /* JPEG: found in Zelda Ocarina of Time, Pokemon Stadium 1, Pokemon Stadium 2 */
+        case 0x2caa6: jpeg_decode_PS(); return;
+
+        /* JPEG: found in Ogre Battle, Bottom of the 9th */
+        case 0x130de: jpeg_decode_OB(); return;
+    }
+
+    handle_unknown_task(sum);
+}
+
+static void non_task_dispatching()
+{
+    const unsigned int sum = sum_bytes(rsp.IMEM, 0x1000 >> 1);
+
+    switch(sum)
+    {
+        // CIC 6105 IPL3 run some code on the RSP
+        // We only emulate the part that modify RDRAM
+        //
+        // It is used for instance in Banjo Tooie, Zelda, Perfect Dark...
+        case 0x9e2: // banjo tooie (U)
+        case 0x9f2: // banjo tooie (E)
+            {
+            int i,j;
+            memcpy(rsp.IMEM + 0x120, rsp.RDRAM + 0x1e8, 0x1f0);
+            for (j=0; j<0xfc; j++)
+                for (i=0; i<8; i++)
+                    *(rsp.RDRAM+((0x2fb1f0+j*0xff0+i)^S8))=*(rsp.IMEM+((0x120+j*8+i)^S8));
+            }
+            return;
+    }
+
+    handle_unknown_non_task(sum);
 }
 
 static void handle_unknown_task(unsigned int sum)
@@ -327,83 +345,14 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
 
 EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
 {
-    const OSTask_t * const task = get_task();
-    unsigned int sum;
-
     if (is_task())
     {
-        // most ucode_boot procedure copy 0xf80 bytes of ucode whatever the ucode_size is.
-        // For practical purpose we use a ucode_size = min(0xf80, task->ucode_size)
-        unsigned int ucode_size = (task->ucode_size > 0xf80) ? 0xf80 : task->ucode_size;
-        unsigned int sum = sum_bytes(rsp.RDRAM + task->ucode, ucode_size >> 1);
-
-        switch(task->type)
-        {
-        case 0: // Not specified
-            {
-                switch(sum)
-                {
-                case 0x212ee: // Twintris (task type is in fact GFX)
-                    {
-                        if (DoGFXTask(sum)) return Cycles;
-                        break;
-                    }
-                }
-                break;
-            }
-        case 1: // GFX
-            {
-                if (DoGFXTask(sum)) return Cycles;
-                break;
-            }
-
-        case 2: // AUDIO
-            {
-                if (DoAudioTask(sum)) return Cycles;
-                break;
-            }
-
-        case 4: // JPEG
-            {
-                if (DoJPEGTask(sum)) return Cycles;
-                break;
-            }
-
-        case 7: // CFB
-            {
-                if (DoCFBTask(sum)) return Cycles;
-                break;
-            }
-        }
-
-        handle_unknown_task(sum);
+        if (!try_fast_task_dispatching()) { normal_task_dispatching(); }
+        taskdone();
     }
     else
     {
-        // For ucodes that are not run using the osSpTask* functions
-
-        // Try to identify the RSP code we should run
-        sum = sum_bytes(rsp.IMEM, 0x1000 >> 1);
-
-        switch(sum)
-        {
-        // CIC 6105 IPL3 run some code on the RSP
-        // We only emulate the part that modify RDRAM
-        //
-        // It is used for instance in Banjo Tooie, Zelda, Perfect Dark...
-        case 0x9e2: // banjo tooie (U)
-        case 0x9f2: // banjo tooie (E)
-            {
-            int i,j;
-            memcpy(rsp.IMEM + 0x120, rsp.RDRAM + 0x1e8, 0x1f0);
-            for (j=0; j<0xfc; j++)
-                for (i=0; i<8; i++)
-                    *(rsp.RDRAM+((0x2fb1f0+j*0xff0+i)^S8))=*(rsp.IMEM+((0x120+j*8+i)^S8));
-            return Cycles;
-            }
-        }
-
-        handle_unknown_non_task(sum);
+        non_task_dispatching();
     }
 
     return Cycles;
