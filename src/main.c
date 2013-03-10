@@ -35,6 +35,13 @@
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
+/* some rsp status flags */
+#define RSP_STATUS_HALT             0x1
+#define RSP_STATUS_BROKE            0x2
+#define RSP_STATUS_INTR_ON_BREAK    0x40
+#define RSP_STATUS_TASKDONE         0x200
+
+
 /* helper functions prototypes */
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
 static void dump_binary(char *filename, unsigned char *bytes, unsigned size);
@@ -70,25 +77,11 @@ static int is_task()
     return (get_task()->ucode_boot_size <= 0x1000);
 }
 
-
-/**
- * Simulate the effect of setting the TASKDONE bit (aliased to SIG2)
- * and executing a break instruction (setting HALT and BROKE bits).
- **/
-static void taskdone()
+static void rsp_break(unsigned int setbits)
 {
-    // On hardware writing to SP_STATUS_REG is an indirect way of changing its content.
-    // For instance, in order to set the TASKDONE bit (bit 9), one should write 0x4000
-    // to the SP_STATUS_REG : Read Access & Write Access don't have the same semantic.
-    //
-    // Here, this indirect way of changing the status register is bypassed :
-    // we modify the bits directly.
-    //
-    // 0x203 = TASKDONE | BROKE | HALT
-    *rsp.SP_STATUS_REG |= 0x203;
+    *rsp.SP_STATUS_REG |= setbits | RSP_STATUS_BROKE | RSP_STATUS_HALT;
 
-    // if INTERRUPT_ON_BREAK we generate the interrupt
-    if ((*rsp.SP_STATUS_REG & 0x40) != 0 )
+    if ((*rsp.SP_STATUS_REG & RSP_STATUS_INTR_ON_BREAK))
     {
         *rsp.MI_INTR_REG |= 0x1;
         rsp.CheckInterrupts();
@@ -348,11 +341,12 @@ EXPORT unsigned int CALL DoRspCycles(unsigned int Cycles)
     if (is_task())
     {
         if (!try_fast_task_dispatching()) { normal_task_dispatching(); }
-        taskdone();
+        rsp_break(RSP_STATUS_TASKDONE);
     }
     else
     {
         non_task_dispatching();
+        rsp_break(0);
     }
 
     return Cycles;
