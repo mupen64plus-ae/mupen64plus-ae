@@ -55,7 +55,7 @@ static void handle_unknown_non_task(unsigned int sum);
 RSP_INFO rsp;
 
 /* local variables */
-static const int forward_audio = 0, forward_gfx = 1;
+static const int FORWARD_AUDIO = 0, FORWARD_GFX = 1;
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
 static int l_PluginInit = 0;
@@ -149,10 +149,10 @@ static int try_fast_task_dispatching()
 
     switch (task->type)
     {
-        case 1: if (forward_gfx) { forward_gfx_task(); return 1; } break;
+        case 1: if (FORWARD_GFX) { forward_gfx_task(); return 1; } break;
 
         case 2:
-            if (forward_audio) { forward_audio_task(); return 1; }
+            if (FORWARD_AUDIO) { forward_audio_task(); return 1; }
             else if (try_fast_audio_dispatching()) { return 1; }
             break;
 
@@ -175,7 +175,7 @@ static void normal_task_dispatching()
 
         /* GFX: Twintris [misleading task->type == 0] */                                         
         case 0x212ee:
-            if (forward_gfx) { forward_gfx_task(); return; }
+            if (FORWARD_GFX) { forward_gfx_task(); return; }
             break;
 
         /* JPEG: found in Pokemon Stadium J */ 
