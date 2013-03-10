@@ -44,8 +44,9 @@
 
 /* helper functions prototypes */
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
-static void dump_binary(char *filename, unsigned char *bytes, unsigned size);
-static void dump_task(char *filename, const OSTask_t * const task);
+static void dump_binary(const char * const filename, const unsigned char * const bytes,
+                        unsigned int size);
+static void dump_task(const char * const filename, const OSTask_t * const task);
 
 static void handle_unknown_task(unsigned int sum);
 static void handle_unknown_non_task(unsigned int sum);
@@ -367,19 +368,20 @@ EXPORT void CALL RomClosed(void)
 
 
 /* local helper functions */
-static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size)                     
-{                                                                                                
-    unsigned int sum = 0;                                                                        
-    const unsigned char * const bytes_end = bytes + size;                                        
-                                                                                                 
-    while (bytes != bytes_end)                                                                   
-        sum += *bytes++;                                                                         
-                                                                                                 
-    return sum;                                                                                  
-}   
+static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size)
+{
+    unsigned int sum = 0;
+    const unsigned char * const bytes_end = bytes + size;
+
+    while (bytes != bytes_end)
+        sum += *bytes++;
+
+    return sum;
+}
 
 
-static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
+static void dump_binary(const char * const filename, const unsigned char * const bytes,
+                        unsigned int size)
 {
     FILE *f;
 
@@ -407,37 +409,37 @@ static void dump_binary(char *filename, unsigned char *bytes, unsigned size)
     }
 }
 
-static void dump_task(char *filename, const OSTask_t * const task)                               
-{                                                                                                
-    FILE *f;                                                                                     
-                                                                                                 
-    f = fopen(filename, "r");                                                                    
-    if (f == NULL)                                                                               
-    {                                                                                            
-        f = fopen(filename, "w");                                                                
-        fprintf(f,                                                                               
-            "type = %d\n"                                                                        
-            "flags = %d\n"                                                                       
-            "ucode_boot  = %#08x size  = %#x\n"                                                  
-            "ucode       = %#08x size  = %#x\n"                                                  
-            "ucode_data  = %#08x size  = %#x\n"                                                  
-            "dram_stack  = %#08x size  = %#x\n"                                                  
-            "output_buff = %#08x *size = %#x\n"                                                  
-            "data        = %#08x size  = %#x\n"                                                  
-            "yield_data  = %#08x size  = %#x\n",                                                 
-            task->type, task->flags,                                                             
-            task->ucode_boot, task->ucode_boot_size,                                             
-            task->ucode, task->ucode_size,                                                       
-            task->ucode_data, task->ucode_data_size,                                             
-            task->dram_stack, task->dram_stack_size,                                             
-            task->output_buff, task->output_buff_size,                                           
-            task->data_ptr, task->data_size,                                                     
-            task->yield_data_ptr, task->yield_data_size);                                        
-        fclose(f);                                                                               
-    }                                                                                            
-    else                                                                                         
-    {                                                                                            
-        fclose(f);                                                                               
-    }                                                                                            
-}        
+static void dump_task(const char * const filename, const OSTask_t * const task)
+{
+    FILE *f;
+
+    f = fopen(filename, "r");
+    if (f == NULL)
+    {
+        f = fopen(filename, "w");
+        fprintf(f,
+            "type = %d\n"
+            "flags = %d\n"
+            "ucode_boot  = %#08x size  = %#x\n"
+            "ucode       = %#08x size  = %#x\n"
+            "ucode_data  = %#08x size  = %#x\n"
+            "dram_stack  = %#08x size  = %#x\n"
+            "output_buff = %#08x *size = %#x\n"
+            "data        = %#08x size  = %#x\n"
+            "yield_data  = %#08x size  = %#x\n",
+            task->type, task->flags,
+            task->ucode_boot, task->ucode_boot_size,
+            task->ucode, task->ucode_size,
+            task->ucode_data, task->ucode_data_size,
+            task->dram_stack, task->dram_stack_size,
+            task->output_buff, task->output_buff_size,
+            task->data_ptr, task->data_size,
+            task->yield_data_ptr, task->yield_data_size);
+        fclose(f);
+    }
+    else
+    {
+        fclose(f);
+    }
+}
 
