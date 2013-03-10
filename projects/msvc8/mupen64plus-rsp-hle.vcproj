@@ -183,6 +183,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\cicx105.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\jpeg.c"
 				>
 			</File>
@@ -218,6 +222,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\alist_internal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\cicx105.h"
 				>
 			</File>
 			<File

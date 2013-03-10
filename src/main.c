@@ -31,6 +31,7 @@
 #include "m64p_plugin.h"
 #include "hle.h"
 #include "alist.h"
+#include "cicx105.h"
 #include "jpeg.h"
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
@@ -220,28 +221,10 @@ static void non_task_dispatching()
 
     switch(sum)
     {
-        // CIC x105 IPL3 run some code on the RSP
-        // We only emulate the part that modify RDRAM
-        //
-        // It is used for instance in Banjo Tooie, Zelda, Perfect Dark...
-        // Banjo Tooie is especially picky about this.
-        case 0x9e2: // CIC 6105
-        case 0x9f2: // CIC 7105
-            {
-            int i,j;
-
-            /* dma_read(0x1120, 0x1e8, 0x1e8) */
-            memcpy(rsp.IMEM + 0x120, rsp.RDRAM + 0x1e8, 0x1f0);
-
-            /* dma_write(0x1120, 0x2fb1f0, 0xfe817000) */
-            // NOTE: disassembly indicates a transfert of
-            // 24 lines of 8 bytes with a skip of 4072 bytes
-            // Following code uses 64 lines.
-            for (j=0; j<0xfc; j++)
-                for (i=0; i<8; i++)
-                    *(rsp.RDRAM+((0x2fb1f0+j*0xff0+i)^S8))=*(rsp.IMEM+((0x120+j*8+i)^S8));
-            }
-            return;
+        /* CIC x105 ucode (used during boot of CIC x105 games) */
+        case 0x9e2: /* CIC 6105 */
+        case 0x9f2: /* CIC 7105 */
+            cicx105_ucode(); return;
     }
 
     handle_unknown_non_task(sum);

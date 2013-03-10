@@ -243,6 +243,7 @@ OBJDIR = _obj$(POSTFIX)
 SOURCE = \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/alist.c \
+	$(SRCDIR)/cicx105.c \
 	$(SRCDIR)/jpeg.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \
