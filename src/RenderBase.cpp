@@ -180,7 +180,7 @@ n.z = (g_normal.x * matWorld.m02) + (g_normal.y * matWorld.m12) + (g_normal.z * 
                                         \
     __asm fld   dword ptr [vec + 4]     \
     __asm fmul  dword ptr [m + 16]      \ /* y m10  x m02  x m01  x m00*/
-    __asm fld   dword ptr [vec + 4]     \ 
+    __asm fld   dword ptr [vec + 4]     \
     __asm fmul  dword ptr [m + 20]      \ /* y m11  y m10  x m02  x m01  x m00*/
     __asm fld   dword ptr [vec + 4]     \
     __asm fmul  dword ptr [m + 24]      \ /* y m12  y m11  y m10  x m02  x m01  x m00*/
