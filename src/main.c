@@ -359,11 +359,9 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, unsigned int *CycleCount)
 
 EXPORT void CALL RomClosed(void)
 {
-    int i;
-    for (i=0; i<0x1000; i++)
-        rsp.DMEM[i] = rsp.IMEM[i] = 0;
+    memset(rsp.DMEM, 0, 0x1000);
+    memset(rsp.IMEM, 0, 0x1000);
 
-    //init_ucode1();
     init_ucode2();
 }
 
