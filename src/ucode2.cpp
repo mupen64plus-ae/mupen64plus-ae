@@ -29,8 +29,6 @@ extern "C" {
   #include "alist_internal.h"
 }
 
-extern "C" acmd_callback_t ABI2[];
-
 extern u8 BufferSpace[0x10000];
 
 static void SPNOOP (u32 inst1, u32 inst2) {
@@ -911,7 +909,7 @@ void (*ABI2[0x20])(void) = {
     SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP
 };*/
 
-acmd_callback_t ABI2[0x20] = {
+extern "C" const acmd_callback_t ABI2[0x20] = {
     SPNOOP , ADPCM2, CLEARBUFF2, UNKNOWN, ADDMIXER, RESAMPLE2, UNKNOWN, SEGMENT2,
     SETBUFF2 , DUPLICATE2, DMEMMOVE2, LOADADPCM2, MIXER2, INTERLEAVE2, HILOGAIN, SETLOOP2,
     SPNOOP, INTERL2 , ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,

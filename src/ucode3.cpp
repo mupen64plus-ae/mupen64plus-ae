@@ -29,8 +29,6 @@ extern "C" {
   #include "alist_internal.h"
 }
 
-extern "C" acmd_callback_t ABI3[];
-
 /*
 static void SPNOOP (u32 inst1, u32 inst2) {
     DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 3", (int)(inst1 >> 24));
@@ -828,7 +826,7 @@ static void DISABLE (u32 inst1, u32 inst2) {
 }
 
 
-acmd_callback_t ABI3[0x10] = {
+extern "C" const acmd_callback_t ABI3[0x10] = {
     DISABLE , ADPCM3 , CLEARBUFF3,  ENVMIXER3  , LOADBUFF3, RESAMPLE3  , SAVEBUFF3, MP3,
     MP3ADDY, SETVOL3, DMEMMOVE3 , LOADADPCM3 , MIXER3   , INTERLEAVE3, WHATISTHIS   , SETLOOP3
 };

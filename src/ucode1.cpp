@@ -27,8 +27,6 @@ extern "C" {
   #include "alist_internal.h"
 }
 
-extern "C" acmd_callback_t ABI1[];
-
 //#include "rsp.h"
 //#define SAFE_MEMORY
 /*
@@ -911,7 +909,7 @@ static void MIXER (u32 inst1, u32 inst2) { // Fixed a sign issue... 03-14-01
 //Command: RESAMPLE - Calls:  48 - Total Time: 276354 - Avg Time:  5757.38 - Percent: 22.95%
 
 
-acmd_callback_t ABI1[0x10] = { // TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER
+extern "C" const acmd_callback_t ABI1[0x10] = { // TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER
     SPNOOP , ADPCM , CLEARBUFF, ENVMIXER  , LOADBUFF, RESAMPLE  , SAVEBUFF, UNKNOWN,
     SETBUFF, SETVOL, DMEMMOVE , LOADADPCM , MIXER   , INTERLEAVE, UNKNOWN , SETLOOP
 };
