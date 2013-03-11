@@ -481,8 +481,8 @@ static void DMEMMOVE2 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     }
 }
 
-u32 t3, s5, s6;
-u16 env[8];
+static u32 t3, s5, s6;
+static u16 env[8];
 
 static void ENVSETUP1 (u32 inst1, u32 inst2) {
     u32 tmp;
