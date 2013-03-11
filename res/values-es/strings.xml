@@ -11,14 +11,27 @@
   <string name="menuItem_fileSave">Guardar a archivo…</string>
   <string name="menuItem_fileLoad">Cargar desde archivo…</string>
   <string name="menuItem_setSpeed">Velocidad del juego</string>
+  <string name="menuItem_paks">Controller Paks</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Jugador 1: Vacío</string>
+  <string name="menuItem_pak1_mem">Jugador 1: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Jugador 1:  Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Jugador 2: Vacío</string>
+  <string name="menuItem_pak2_mem">Jugador 2: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Jugador 2: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Jugador 3: Vacío</string>
+  <string name="menuItem_pak3_mem">Jugador 3: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Jugador 3: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Jugador 4: Vacío</string>
+  <string name="menuItem_pak4_mem">Jugador 4: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Jugador 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Cambiar IME</string>
   <string name="menuItem_exit">Salir</string>
@@ -28,6 +41,7 @@
   <string name="menuItem_load">Cargar…</string>
   <string name="menuItem_save">Guardar…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">Adaptador USB de N64</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
@@ -162,7 +176,11 @@
   <string name="audioSwapChannels_title">Intercambiar canales de audio</string>
   <string name="audioSwapChannels_summary">Intercambia los canales de audio izquierdo y derecho</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Mantener botones automaticamente</string>
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitado</string>
+  <string name="touchscreenAutoHold_entryLongPress">Al mantener apretado</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Al deslizar</string>
+  <string name="touchscreenAutoHoldables_title">Botones mantenibles</string>
   <string name="touchscreenRefresh_title">Animación del joystick</string>
   <string name="touchscreenRefresh_entryNever">Nunca</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
@@ -184,6 +202,7 @@
   <string name="videoOrientation_entryReverseLandscape">Paisaje invertido</string>
   <string name="videoOrientation_entryPortrait">Retrato</string>
   <string name="videoOrientation_entryReversePortrait">Retrato invertido</string>
+  <string name="videoPosition_title">Posicion de pantalla en modo retrato</string>
   <string name="videoPosition_entryBottom">Abajo</string>
   <string name="videoPosition_entryMiddle">En medio</string>
   <string name="videoPosition_entryTop">Arriba</string>
@@ -241,6 +260,7 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Ninguno (dispositivos de entrada deshabilitados)</string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Ninguno (RSP deshabilitado)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>

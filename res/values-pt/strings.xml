@@ -11,14 +11,27 @@
   <string name="menuItem_fileSave">Salvar para o arquivo…</string>
   <string name="menuItem_fileLoad">Carregar do arquivo…</string>
   <string name="menuItem_setSpeed">Velocidade do jogo</string>
+  <string name="menuItem_paks">Paks de Controles</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Jogador 1: Vazio</string>
+  <string name="menuItem_pak1_mem">Jogador 1: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Jogador 1: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Jogador 2: Vazio</string>
+  <string name="menuItem_pak2_mem">Jogador 2: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Jogador 2: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Jogador 3: Vazio</string>
+  <string name="menuItem_pak3_mem">Jogador 3: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Jogador 3: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Jogador 4: Vazio</string>
+  <string name="menuItem_pak4_mem">Jogador 4: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Jogador 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Mudar método de entrada</string>
   <string name="menuItem_exit">Sair</string>
@@ -28,6 +41,7 @@
   <string name="menuItem_load">Carregar…</string>
   <string name="menuItem_save">Salvar…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">Adaptador de N64 USB</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
@@ -246,6 +260,7 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Controle</string>
   <string name="pluginInput_entryNone">Nenhuma (controle desabilitado)</string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Nenhum (RSP desabilitado)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Port para Android do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
