@@ -42,7 +42,7 @@ extern u32 SEGMENTS[0x10];
 
 extern u16 adpcmtable[0x88];
 
-extern u16 ResampleLUT [0x200];
+extern const u16 ResampleLUT [0x200];
 
 bool isMKABI = false;
 bool isZeldaABI = false;

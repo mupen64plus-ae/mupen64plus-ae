@@ -35,7 +35,7 @@ static void SPNOOP (u32 inst1, u32 inst2) {
 }
 */
 
-extern u16 ResampleLUT [0x200];
+extern const u16 ResampleLUT [0x200];
 
 extern u32 loopval;
 
