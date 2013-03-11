@@ -311,13 +311,8 @@ BOOL InitConfiguration(void)
     }
 
     ConfigSetDefaultBool(l_ConfigVideoGeneral, "Fullscreen", 0, "Use fullscreen mode if True, or windowed mode if False ");
-#ifdef USE_SDL
-    //ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenWidth", 854, "Width of output window or fullscreen width");
-    //ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 486, "Height of output window or fullscreen height");
-#else
-    ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenWidth", 1024, "Width of output window or fullscreen width");
-    ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 768, "Height of output window or fullscreen height");
-#endif
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenWidth", 640, "Width of output window or fullscreen width");
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 480, "Height of output window or fullscreen height");
     ConfigSetDefaultBool(l_ConfigVideoGeneral, "VerticalSync", 0, "If true, activate the SDL_GL_SWAP_CONTROL attribute");
 
     ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferSetting", FRM_BUF_NONE, "Frame Buffer Emulation (0=ROM default, 1=disable)");
@@ -326,7 +321,7 @@ BOOL InitConfiguration(void)
 #if defined(WIN32)
     ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_1ST_CI_CHANGE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
 #else
-    ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_1ST_CI_CHANGE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
+    ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_VI_UPDATE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
 #endif
     ConfigSetDefaultBool(l_ConfigVideoRice, "NormalAlphaBlender", FALSE, "Force to use normal alpha blender");
     ConfigSetDefaultBool(l_ConfigVideoRice, "FastTextureLoading", FALSE, "Use a faster algorithm to speed up texture loading and CRC computation");
@@ -346,15 +341,15 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultBool(l_ConfigVideoRice, "TexRectOnly", FALSE, "If enabled, texture enhancement will be done only for TxtRect ucode");
     ConfigSetDefaultBool(l_ConfigVideoRice, "SmallTextureOnly", FALSE, "If enabled, texture enhancement will be done only for textures width+height<=128");
     ConfigSetDefaultBool(l_ConfigVideoRice, "LoadHiResCRCOnly", TRUE, "Select hi-resolution textures based only on the CRC and ignore format+size information (Glide64 compatibility)");
-    ConfigSetDefaultBool(l_ConfigVideoRice, "LoadHiResTextures", TRUE, "Enable hi-resolution texture file loading");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "LoadHiResTextures", FALSE, "Enable hi-resolution texture file loading");
     ConfigSetDefaultBool(l_ConfigVideoRice, "DumpTexturesToFiles", FALSE, "Enable texture dumping");
     ConfigSetDefaultBool(l_ConfigVideoRice, "ShowFPS", FALSE, "Display On-screen FPS");
 
-    ConfigSetDefaultInt(l_ConfigVideoRice, "Mipmapping", 0, "Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "Mipmapping", 2, "Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear");
     ConfigSetDefaultInt(l_ConfigVideoRice, "FogMethod", 0, "Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ForceTextureFilter", 0, "Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancement", 0, "Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)");
-    ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancementControl", 1, "Secondary texture enhancement filter (0 = none, 1-4 = filtered)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancementControl", 0, "Secondary texture enhancement filter (0 = none, 1-4 = filtered)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureQuality", TXT_QUALITY_DEFAULT, "Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting", 16, "Z-buffer depth (only 16 or 32)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "MultiSampling", 0, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)");
@@ -433,13 +428,8 @@ bool isSSESupported()
 static void ReadConfiguration(void)
 {
     windowSetting.bDisplayFullscreen = ConfigGetParamBool(l_ConfigVideoGeneral, "Fullscreen");
-#ifdef USE_SDL
-    //windowSetting.uDisplayWidth = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenWidth");
-    //windowSetting.uDisplayHeight = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenHeight");
-#else
     windowSetting.uDisplayWidth = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenWidth");
     windowSetting.uDisplayHeight = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenHeight");
-#endif
     windowSetting.bVerticalSync = ConfigGetParamBool(l_ConfigVideoGeneral, "VerticalSync");
 
     defaultRomOptions.N64FrameBufferEmuType = ConfigGetParamInt(l_ConfigVideoRice, "FrameBufferSetting");
