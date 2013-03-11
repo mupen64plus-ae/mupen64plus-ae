@@ -364,6 +364,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", booleanToString( user.audioSwapChannels ) );
         mupen64plus_cfg.put( "Audio-SDL", "RESAMPLE", user.audioResampleAlg);
+        
         mupen64plus_cfg.put( "UI-Console", "Version", "1.00" );
         mupen64plus_cfg.put( "UI-Console", "PluginDir", '"' + appData.libsDir + '"' );
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + user.videoPlugin.path + '"' );
@@ -372,6 +373,9 @@ public class CoreInterface
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin.path + '"' );
     
         mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
+        mupen64plus_cfg.put( "Video-General", "ScreenWidth", "800" );
+        mupen64plus_cfg.put( "Video-General", "ScreenHeight", "480" );
+        
         mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", booleanToString( user.isGles2RiceAutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", booleanToString( user.isGles2RiceFastTextureLoadingEnabled ) );
@@ -380,6 +384,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "Video-Rice", "Mipmapping", user.gles2RiceMipmappingAlg );
         mupen64plus_cfg.put( "Video-Rice", "ScreenUpdateSetting", user.gles2RiceScreenUpdateType );
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", user.gles2RiceTextureEnhancement );
+        mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );
     
         if(user.isGles2RiceForceTextureFilterEnabled)
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "2");
