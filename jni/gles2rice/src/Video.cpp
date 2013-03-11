@@ -88,7 +88,6 @@ RECT frameWriteByCPURectArray[20][20];
 bool frameWriteByCPURectFlag[20][20];
 std::vector<uint32> frameWriteRecord;
 
-//void (*renderCallback)() = NULL;
 void (*renderCallback)(int) = NULL;
 
 /* definitions of pointers to Core config functions */
@@ -278,7 +277,7 @@ static void ProcessDListStep2(void)
     }
 
     g_CritialSection.Unlock();
-}
+}   
 
 static bool StartVideo(void)
 {
@@ -1081,8 +1080,7 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
 }
     
 
-//EXPORT void CALL SetRenderingCallback(void (*callback)())
-EXPORT void CALL SetRenderingCallback(void (*callback)(int i))
+EXPORT void CALL SetRenderingCallback(void (*callback)(int))
 {
     renderCallback = callback;
 }

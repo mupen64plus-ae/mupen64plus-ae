@@ -24,60 +24,59 @@
 
 typedef struct _COLORVALUE 
 {
-   
-       float r;
-       float g;
-       float b;
-       float a;
+    float r;
+    float g;
+    float b;
+    float a;
 } COLORVALUE;
 
 
 typedef struct XCOLOR {
-   float r, g, b, a;
+    float r, g, b, a;
 #ifdef __cplusplus
- public:
-   XCOLOR() 
-     {
-     }
-   
-   XCOLOR( unsigned int argb );
-   XCOLOR( const float * );
-   XCOLOR( const COLORVALUE& );
-   XCOLOR( float r, float g, float b, float a );
-   
-   // casting
-   operator unsigned int () const;
-   
-   operator float* ();
-   operator const float* () const;
-   
-   operator COLORVALUE* ();
-   operator const COLORVALUE* () const;
-    
-   operator COLORVALUE& ();
-   operator const COLORVALUE& () const;
-   
-   // assignment operators
-   XCOLOR& operator += ( const XCOLOR& );
-   XCOLOR& operator -= ( const XCOLOR& );
-   XCOLOR& operator *= ( float );
-   XCOLOR& operator /= ( float );
-   
-   // unary operators
-   XCOLOR operator + () const;
-   XCOLOR operator - () const;
-   
-   // binary operators
-   XCOLOR operator + ( const XCOLOR& ) const;
-   XCOLOR operator - ( const XCOLOR& ) const;
-   XCOLOR operator * ( float ) const;
-   XCOLOR operator / ( float ) const;
-   
-   friend XCOLOR operator * (float, const XCOLOR& );
-    
-   bool operator == ( const XCOLOR& ) const;
-   bool operator != ( const XCOLOR& ) const;
-   
+public:
+    XCOLOR() 
+    {
+    }
+
+    XCOLOR( unsigned int argb );
+    XCOLOR( const float * );
+    XCOLOR( const COLORVALUE& );
+    XCOLOR( float r, float g, float b, float a );
+
+    // casting
+    operator unsigned int () const;
+
+    operator float* ();
+    operator const float* () const;
+
+    operator COLORVALUE* ();
+    operator const COLORVALUE* () const;
+
+    operator COLORVALUE& ();
+    operator const COLORVALUE& () const;
+
+    // assignment operators
+    XCOLOR& operator += ( const XCOLOR& );
+    XCOLOR& operator -= ( const XCOLOR& );
+    XCOLOR& operator *= ( float );
+    XCOLOR& operator /= ( float );
+
+    // unary operators
+    XCOLOR operator + () const;
+    XCOLOR operator - () const;
+
+    // binary operators
+    XCOLOR operator + ( const XCOLOR& ) const;
+    XCOLOR operator - ( const XCOLOR& ) const;
+    XCOLOR operator * ( float ) const;
+    XCOLOR operator / ( float ) const;
+
+    friend XCOLOR operator * (float, const XCOLOR& );
+
+    bool operator == ( const XCOLOR& ) const;
+    bool operator != ( const XCOLOR& ) const;
+
 #endif //__cplusplus
 } XCOLOR;
 

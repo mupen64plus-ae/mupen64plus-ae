@@ -82,18 +82,17 @@ void CRender::LoadFrameBuffer(bool useVIreg, uint32 left, uint32 top, uint32 wid
             gti.LeftToLoad      = left;
             gti.TopToLoad       = top;
 
-            gti.WidthToCreate       = width;
-            gti.HeightToCreate      = height;
+            gti.WidthToCreate   = width;
+            gti.HeightToCreate  = height;
         }
 
         if( gti.Size == TXT_SIZE_4b )
         {
-            gti.Pitch   = g_CI.dwWidth >> 1;
+            gti.Pitch = g_CI.dwWidth >> 1;
         }
         else
         {
-            gti.Pitch   = g_CI.dwWidth << (gti.Size-1);
-
+            gti.Pitch = g_CI.dwWidth << (gti.Size-1);
         }
     }
 
@@ -130,12 +129,12 @@ void CRender::LoadTextureFromMemory(void *buf, uint32 left, uint32 top, uint32 w
     gti.Palette = 0;
     gti.TLutFmt = TLUT_FMT_RGBA16;  //RGBA16
     gti.PalAddress = 0;
-    gti.bSwapped    = FALSE;
+    gti.bSwapped = FALSE;
     gti.Address = 0;
-    gti.LeftToLoad      = 0;
-    gti.TopToLoad       = 0;
-    gti.WidthToCreate       = width;
-    gti.HeightToCreate      = height;
+    gti.LeftToLoad = 0;
+    gti.TopToLoad = 0;
+    gti.WidthToCreate = width;
+    gti.HeightToCreate = height;
 
     gti.Pitch   = pitch;
 

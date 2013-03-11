@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2002-2009 Rice1964
+Copyright (C) 2002 Rice1964
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -98,14 +98,11 @@ void RSP_GBI0_Mtx(Gfx *gfx)
 }
 
 
-
-
 void RSP_GBI1_Reserved(Gfx *gfx)
-{       
+{
     SP_Timing(RSP_GBI1_Reserved);
     RSP_RDP_NOIMPL("RDP: Reserved (0x%08x 0x%08x)", (gfx->words.w0), (gfx->words.w1));
 }
-
 
 
 void RSP_GBI1_MoveMem(Gfx *gfx)
@@ -196,7 +193,7 @@ void RSP_GBI0_Vtx(Gfx *gfx)
 
 
 void RSP_GBI0_DL(Gfx *gfx)
-{   
+{
     SP_Timing(RSP_GBI0_DL);
 
     uint32 addr = RSPSegmentAddr((gfx->gbi0dlist.addr)) & (g_dwRamSize-1);
@@ -215,8 +212,8 @@ void RSP_GBI0_DL(Gfx *gfx)
     gDlistStack[gDlistStackPointer].pc = addr;
     gDlistStack[gDlistStackPointer].countdown = MAX_DL_COUNT;
 
-        LOG_UCODE("Level=%d", gDlistStackPointer+1);
-        LOG_UCODE("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    LOG_UCODE("Level=%d", gDlistStackPointer+1);
+    LOG_UCODE("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 }
 
 
@@ -337,17 +334,17 @@ void RSP_GBI1_ClearGeometryMode(Gfx *gfx)
 
 #ifdef DEBUGGER
     LOG_UCODE("    Mask=0x%08x", dwMask);
-    if (dwMask & G_ZBUFFER)                     LOG_UCODE("  Disabling ZBuffer");
-    if (dwMask & G_TEXTURE_ENABLE)              LOG_UCODE("  Disabling Texture");
-    if (dwMask & G_SHADE)                       LOG_UCODE("  Disabling Shade");
-    if (dwMask & G_SHADING_SMOOTH)              LOG_UCODE("  Disabling Smooth Shading");
-    if (dwMask & G_CULL_FRONT)                  LOG_UCODE("  Disabling Front Culling");
-    if (dwMask & G_CULL_BACK)                   LOG_UCODE("  Disabling Back Culling");
-    if (dwMask & G_FOG)                         LOG_UCODE("  Disabling Fog");
-    if (dwMask & G_LIGHTING)                    LOG_UCODE("  Disabling Lighting");
-    if (dwMask & G_TEXTURE_GEN)                 LOG_UCODE("  Disabling Texture Gen");
-    if (dwMask & G_TEXTURE_GEN_LINEAR)          LOG_UCODE("  Disabling Texture Gen Linear");
-    if (dwMask & G_LOD)                         LOG_UCODE("  Disabling LOD (no impl)");
+    if (dwMask & G_ZBUFFER)                 LOG_UCODE("  Disabling ZBuffer");
+    if (dwMask & G_TEXTURE_ENABLE)          LOG_UCODE("  Disabling Texture");
+    if (dwMask & G_SHADE)                   LOG_UCODE("  Disabling Shade");
+    if (dwMask & G_SHADING_SMOOTH)          LOG_UCODE("  Disabling Smooth Shading");
+    if (dwMask & G_CULL_FRONT)              LOG_UCODE("  Disabling Front Culling");
+    if (dwMask & G_CULL_BACK)               LOG_UCODE("  Disabling Back Culling");
+    if (dwMask & G_FOG)                     LOG_UCODE("  Disabling Fog");
+    if (dwMask & G_LIGHTING)                LOG_UCODE("  Disabling Lighting");
+    if (dwMask & G_TEXTURE_GEN)             LOG_UCODE("  Disabling Texture Gen");
+    if (dwMask & G_TEXTURE_GEN_LINEAR)      LOG_UCODE("  Disabling Texture Gen Linear");
+    if (dwMask & G_LOD)                     LOG_UCODE("  Disabling LOD (no impl)");
 #endif
 
     gRDP.geometryMode &= ~dwMask;
@@ -363,23 +360,21 @@ void RSP_GBI1_SetGeometryMode(Gfx *gfx)
 
 #ifdef DEBUGGER
     LOG_UCODE("    Mask=0x%08x", dwMask);
-    if (dwMask & G_ZBUFFER)                     LOG_UCODE("  Enabling ZBuffer");
-    if (dwMask & G_TEXTURE_ENABLE)              LOG_UCODE("  Enabling Texture");
-    if (dwMask & G_SHADE)                       LOG_UCODE("  Enabling Shade");
-    if (dwMask & G_SHADING_SMOOTH)              LOG_UCODE("  Enabling Smooth Shading");
-    if (dwMask & G_CULL_FRONT)                  LOG_UCODE("  Enabling Front Culling");
-    if (dwMask & G_CULL_BACK)                   LOG_UCODE("  Enabling Back Culling");
-    if (dwMask & G_FOG)                         LOG_UCODE("  Enabling Fog");
-    if (dwMask & G_LIGHTING)                    LOG_UCODE("  Enabling Lighting");
-    if (dwMask & G_TEXTURE_GEN)                 LOG_UCODE("  Enabling Texture Gen");
-    if (dwMask & G_TEXTURE_GEN_LINEAR)          LOG_UCODE("  Enabling Texture Gen Linear");
-    if (dwMask & G_LOD)                         LOG_UCODE("  Enabling LOD (no impl)");
+    if (dwMask & G_ZBUFFER)                 LOG_UCODE("  Enabling ZBuffer");
+    if (dwMask & G_TEXTURE_ENABLE)          LOG_UCODE("  Enabling Texture");
+    if (dwMask & G_SHADE)                   LOG_UCODE("  Enabling Shade");
+    if (dwMask & G_SHADING_SMOOTH)          LOG_UCODE("  Enabling Smooth Shading");
+    if (dwMask & G_CULL_FRONT)              LOG_UCODE("  Enabling Front Culling");
+    if (dwMask & G_CULL_BACK)               LOG_UCODE("  Enabling Back Culling");
+    if (dwMask & G_FOG)                     LOG_UCODE("  Enabling Fog");
+    if (dwMask & G_LIGHTING)                LOG_UCODE("  Enabling Lighting");
+    if (dwMask & G_TEXTURE_GEN)             LOG_UCODE("  Enabling Texture Gen");
+    if (dwMask & G_TEXTURE_GEN_LINEAR)      LOG_UCODE("  Enabling Texture Gen Linear");
+    if (dwMask & G_LOD)                     LOG_UCODE("  Enabling LOD (no impl)");
 #endif // DEBUGGER
     gRDP.geometryMode |= dwMask;
     RSP_GFX_InitGeometryMode();
 }
-
-
 
 
 void RSP_GBI1_EndDL(Gfx *gfx)
@@ -655,7 +650,6 @@ void RSP_GBI1_PopMtx(Gfx *gfx)
 }
 
 
-
 void RSP_GBI1_CullDL(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_CullDL);
@@ -671,7 +665,6 @@ void RSP_GBI1_CullDL(Gfx *gfx)
         return; //Disable Culling
     }
 
-    uint32 i;
     uint32 dwVFirst = ((gfx->words.w0) & 0xFFF) / gRSP.vertexMult;
     uint32 dwVLast  = (((gfx->words.w1)) & 0xFFF) / gRSP.vertexMult;
 
@@ -684,7 +677,7 @@ void RSP_GBI1_CullDL(Gfx *gfx)
     if( dwVLast < dwVFirst )    return;
     if( !gRSP.bRejectVtx )  return;
 
-    for (i = dwVFirst; i <= dwVLast; i++)
+    for (uint32 i = dwVFirst; i <= dwVLast; i++)
     {
         if (g_clipFlag[i] == 0)
         {
@@ -799,8 +792,8 @@ void RSP_GBI0_Tri4(Gfx *gfx)
             }
         }
         
-        w0          = *(uint32 *)(g_pRDRAMu8 + dwPC+0);
-        w1          = *(uint32 *)(g_pRDRAMu8 + dwPC+4);
+        w0  = *(uint32 *)(g_pRDRAMu8 + dwPC+0);
+        w1  = *(uint32 *)(g_pRDRAMu8 + dwPC+4);
         dwPC += 8;
 
 #ifdef DEBUGGER
@@ -811,7 +804,6 @@ void RSP_GBI0_Tri4(Gfx *gfx)
 
 
     gDlistStack[gDlistStackPointer].pc = dwPC-8;
-
 
     if (bTrisAdded) 
     {

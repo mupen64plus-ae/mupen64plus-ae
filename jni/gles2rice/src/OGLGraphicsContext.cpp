@@ -49,7 +49,6 @@ extern "C" int Android_JNI_UseRGBA8888();
 
 //#include "liblinux/BMGLibPNG.h"
 
-
 COGLGraphicsContext::COGLGraphicsContext() :
     m_bSupportMultiTexture(false),
     m_bSupportTextureEnvCombine(false),
@@ -70,7 +69,6 @@ COGLGraphicsContext::COGLGraphicsContext() :
     m_pExtensionStr(NULL),
     m_pVersionStr(NULL)
 {
-
 }
 
 
@@ -456,7 +454,6 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
    //eglSwapBuffers(EGL_display, EGL_surface);
     Android_JNI_SwapWindow();  // paulscode
    
-
    /*if(options.bShowFPS)
      {
     static unsigned int lastTick=0;

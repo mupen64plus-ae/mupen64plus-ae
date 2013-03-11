@@ -37,8 +37,6 @@ inline int GetNextPrime(int nFirst)
 {
     int nCurrent;
 
-    int i;
-
     nCurrent = nFirst;
 
     // Just make sure it's odd
@@ -53,11 +51,10 @@ inline int GetNextPrime(int nFirst)
         // nSqrtCurrent = nCurrent^0.5 + 1 (round up)
         nSqrtCurrent = (int)sqrt((double)nCurrent) + 1;
 
-
         bIsComposite = FALSE;
         
         // Test all odd numbers from 3..nSqrtCurrent
-        for (i = 3; i <= nSqrtCurrent; i+=2)
+        for (int i = 3; i <= nSqrtCurrent; i+=2)
         {
             if ((nCurrent % i) == 0)
             {
@@ -74,7 +71,6 @@ inline int GetNextPrime(int nFirst)
         // Select next odd candidate...
         nCurrent += 2;
     }
-
 }
 
 
@@ -124,13 +120,13 @@ bool CTextureManager::CleanUp()
 
     if (!g_bUseSetTextureMem)
     {
-    while (m_pHead)
-    {
-        TxtrCacheEntry * pVictim = m_pHead;
-        m_pHead = pVictim->pNext;
+        while (m_pHead)
+        {
+            TxtrCacheEntry * pVictim = m_pHead;
+            m_pHead = pVictim->pNext;
 
-        delete pVictim;
-    }
+            delete pVictim;
+        }
     }
 
     if( m_blackTextureEntry.pTexture )      delete m_blackTextureEntry.pTexture;    
@@ -149,11 +145,13 @@ bool CTextureManager::CleanUp()
 
 bool CTextureManager::TCacheEntryIsLoaded(TxtrCacheEntry *pEntry)
 {
-  for (int i = 0; i < MAX_TEXTURES; i++)
-    if (g_textures[i].pTextureEntry == pEntry)
-      return true;
+    for (int i = 0; i < MAX_TEXTURES; i++)
+    {
+        if (g_textures[i].pTextureEntry == pEntry)
+            return true;
+    }
 
-  return false;
+    return false;
 }
 
 // Purge any textures whos last usage was over 5 seconds ago
@@ -203,10 +201,8 @@ void CTextureManager::PurgeOldTextures()
         
         if ( status.gDlistCount - pCurr->FrameLastUsed > dwFramesToDelete && !TCacheEntryIsLoaded(pCurr) )
         {
-            if (pPrev != NULL)
-                pPrev->pNext = pCurr->pNext;
-            else
-                m_pHead = pCurr->pNext;
+            if (pPrev != NULL) pPrev->pNext        = pCurr->pNext;
+            else               m_pHead = pCurr->pNext;
             
             delete pCurr;
             pCurr = pNext;  
@@ -239,11 +235,10 @@ void CTextureManager::RecycleAllTextures()
             
             dwTotalUses += pTVictim->dwUses;
             dwCount++;
-
             if (g_bUseSetTextureMem)
                 delete pTVictim;
             else
-                RecycleTexture(pTVictim);
+            RecycleTexture(pTVictim);
         }
     }
 }
@@ -413,7 +408,7 @@ TxtrCacheEntry * CTextureManager::GetTxtrCacheEntry(TxtrInfo * pti)
         {
             MakeTextureYoungest(pEntry);
             return pEntry;
-    }
+        }
     }
 
     return NULL;
@@ -697,7 +692,7 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
         }
         else
         {
-            ; //Do something
+            //Do something
         }
     }
 
@@ -1545,6 +1540,7 @@ void ConvertTextureRGBAtoI(TxtrCacheEntry* pEntry, bool alpha)
                 buf[nX] = (a|(i<<16)|(i<<8)|i);
             }
         }
-        pEntry->pTexture->EndUpdate(&srcInfo);  }
+        pEntry->pTexture->EndUpdate(&srcInfo);
+    }
 }
 

@@ -44,9 +44,9 @@ public:
     XMATRIX( const float * );
     XMATRIX( const MATRIX & );
     XMATRIX( float _11, float _12, float _13, float _14,
-                float _21, float _22, float _23, float _24,
-                float _31, float _32, float _33, float _34,
-                float _41, float _42, float _43, float _44 );
+             float _21, float _22, float _23, float _24,
+             float _31, float _32, float _33, float _34,
+             float _41, float _42, float _43, float _44 );
 
     float& operator () ( unsigned int Row, unsigned int Col );
     float  operator () ( unsigned int Row, unsigned int Col ) const;
@@ -103,7 +103,7 @@ public:
     inline XVECTOR3& operator += ( const XVECTOR3 &op );
     inline XVECTOR3& operator -= ( const XVECTOR3 &op );
     inline XVECTOR3& operator *= ( float op );
-        inline XVECTOR3& operator /= ( float op );
+    inline XVECTOR3& operator /= ( float op );
 
     // unary operators
     inline XVECTOR3 operator + () const;
@@ -143,7 +143,7 @@ public:
     XVECTOR4( float _x, float _y, float _z, float _w );
 
     // casting
-        inline operator float* ();
+    inline operator float* ();
     inline operator const float* () const;
 
     // assignment operators

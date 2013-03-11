@@ -24,38 +24,38 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 class CCritSect
 {
- public:
-   CCritSect()
-     {
-    cs = SDL_CreateMutex();
-    locked = 0;
-     }
-   
-   ~CCritSect()
-     {
-    SDL_DestroyMutex(cs);
-     }
-   
-   void Lock()
-     {
-    SDL_LockMutex(cs);
-    locked = 1;
-     }
-   
-   void Unlock()
-     {
-    locked = 0;
-    SDL_UnlockMutex(cs);
-     }
-   
-   bool IsLocked()
-     {
-    return (locked != 0);
-     }
-   
- protected:
-   SDL_mutex *cs;
-   int locked;
+public:
+    CCritSect()
+    {
+        cs = SDL_CreateMutex();
+        locked = 0;
+    }
+
+    ~CCritSect()
+    {
+        SDL_DestroyMutex(cs);
+    }
+
+    void Lock()
+    {
+        SDL_LockMutex(cs);
+        locked = 1;
+    }
+
+    void Unlock()
+    {
+        locked = 0;
+        SDL_UnlockMutex(cs);
+    }
+
+    bool IsLocked()
+    {
+        return (locked != 0);
+    }
+
+protected:
+    SDL_mutex *cs;
+    int locked;
 };
 
 #endif // !defined(CRITSECT_H)

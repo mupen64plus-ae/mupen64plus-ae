@@ -201,7 +201,7 @@ public:
     }
     
     virtual ~DecodedMux() {}
-} ;
+};
 
 class DecodedMuxForPixelShader : public DecodedMux
 {
@@ -237,7 +237,7 @@ typedef struct
     bool bMergeShadeWithConstants;
     bool bSplitComplexStage;
     bool bReformatAgainWithTwoTexels;
-}MuxConverterOptions;
+} MuxConverterOptions;
 
 #endif
 

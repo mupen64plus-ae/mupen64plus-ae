@@ -56,9 +56,9 @@ extern "C" int Android_JNI_GetHardwareType();
 
 UVFlagMap OGLXUVFlagMaps[] =
 {
-{TEXTURE_UV_FLAG_WRAP, GL_REPEAT},
-{TEXTURE_UV_FLAG_MIRROR, GL_MIRRORED_REPEAT},
-{TEXTURE_UV_FLAG_CLAMP, GL_CLAMP_TO_EDGE},
+    {TEXTURE_UV_FLAG_WRAP, GL_REPEAT},
+    {TEXTURE_UV_FLAG_MIRROR, GL_MIRRORED_REPEAT},
+    {TEXTURE_UV_FLAG_CLAMP, GL_CLAMP_TO_EDGE},
 };
 
 GLuint disabledTextureID;
@@ -70,7 +70,6 @@ OGLRender::OGLRender()
     m_bSupportFogCoordExt = pcontext->m_bSupportFogCoord;
     m_bMultiTexture = pcontext->m_bSupportMultiTexture;
     m_bSupportClampToEdge = false;
-
     for( int i=0; i<8; i++ )
     {
         m_curBoundTex[i]=0;
@@ -1022,9 +1021,9 @@ void OGLRender::TurnFogOnOff(bool flag)
 void OGLRender::SetFogEnable(bool bEnable)
 {
 //    DEBUGGER_IF_DUMP( (gRSP.bFogEnabled != (bEnable==TRUE) && logFog ), TRACE1("Set Fog %s", bEnable? "enable":"disable"));
-//
-    gRSP.bFogEnabled = bEnable&&(options.fogMethod == 1);
 
+    gRSP.bFogEnabled = bEnable&&(options.fogMethod == 1);
+    
     // If force fog
     if(options.fogMethod == 2)
     {
@@ -1036,8 +1035,6 @@ void OGLRender::SetFogEnable(bool bEnable)
     if( gRSP.bFogEnabled )
     {
         //TRACE2("Enable fog, min=%f, max=%f",gRSPfFogMin,gRSPfFogMax );
-
-
         //glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
         //OPENGL_CHECK_ERRORS;
         //glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
@@ -1049,8 +1046,8 @@ void OGLRender::SetFogEnable(bool bEnable)
     }
     else
     {
-       /* glDisable(GL_FOG);
-        OPENGL_CHECK_ERRORS;*/
+        //glDisable(GL_FOG);
+        //OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -1059,7 +1056,7 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
     gRDP.fogColor = COLOR_RGBA(r, g, b, a); 
     gRDP.fvFogColor[0] = r/255.0f;      //r
     gRDP.fvFogColor[1] = g/255.0f;      //g
-    gRDP.fvFogColor[2] = b/255.0f;          //b
+    gRDP.fvFogColor[2] = b/255.0f;      //b
     gRDP.fvFogColor[3] = a/255.0f;      //a
     //glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
     OPENGL_CHECK_ERRORS;

@@ -30,8 +30,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *  to make them be accessed faster
  */
 
-#define RICE_MATRIX_STACK       60
-#define MAX_TEXTURES                8
+#define RICE_MATRIX_STACK   60
+#define MAX_TEXTURES         8
 
 enum FillMode
 {
@@ -55,20 +55,20 @@ extern uint32       g_dwVtxDifColor[MAX_VERTS];
 
 extern RenderTexture g_textures[MAX_TEXTURES];
 
-extern TLITVERTEX           g_vtxBuffer[1000];
-extern unsigned short       g_vtxIndex[1000];
+extern TLITVERTEX       g_vtxBuffer[1000];
+extern unsigned short   g_vtxIndex[1000];
 
-extern TLITVERTEX           g_clippedVtxBuffer[2000];
-extern int                  g_clippedVtxCount;
+extern TLITVERTEX       g_clippedVtxBuffer[2000];
+extern int              g_clippedVtxCount;
 
-extern uint8                g_oglVtxColors[1000][4];
-extern uint32               g_clipFlag[MAX_VERTS];
-extern uint32               g_clipFlag2[MAX_VERTS];
-extern float                g_fFogCoord[MAX_VERTS];
+extern uint8            g_oglVtxColors[1000][4];
+extern uint32           g_clipFlag[MAX_VERTS];
+extern uint32           g_clipFlag2[MAX_VERTS];
+extern float            g_fFogCoord[MAX_VERTS];
 
-extern TLITVERTEX           g_texRectTVtx[4];
+extern TLITVERTEX       g_texRectTVtx[4];
 
-extern EXTERNAL_VERTEX          g_vtxForExternal[MAX_VERTS];
+extern EXTERNAL_VERTEX  g_vtxForExternal[MAX_VERTS];
 
 
 //#define INIT_VERTEX_METHOD_2
@@ -81,16 +81,16 @@ extern EXTERNAL_VERTEX          g_vtxForExternal[MAX_VERTS];
 /*      Don't move                                                      */
 /************************************************************************/
 
-extern uint32   gRSPnumLights;
-extern Light    gRSPlights[16];
+extern uint32             gRSPnumLights;
+extern Light              gRSPlights[16];
 extern ALIGN(16, Matrix   gRSPworldProjectTransported)
 extern ALIGN(16, Matrix   gRSPworldProject)
-extern N64Light gRSPn64lights[16];
+extern N64Light           gRSPn64lights[16];
 extern ALIGN(16, Matrix   gRSPmodelViewTop)
 extern ALIGN(16, Matrix   gRSPmodelViewTopTranspose)
-extern float    gRSPfFogMin;
-extern float    gRSPfFogMax;
-extern float    gRSPfFogDivider;
+extern float              gRSPfFogMin;
+extern float              gRSPfFogMax;
+extern float              gRSPfFogDivider;
 
 /************************************************************************/
 /*      Don't move                                                      */
@@ -278,7 +278,7 @@ inline void SetEnvColor(uint32 dwCol)
     gRDP.colorsAreReloaded = true;
     gRDP.envColor = dwCol; 
     gRDP.fvEnvColor[0] = ((dwCol>>16)&0xFF)/255.0f;     //r
-    gRDP.fvEnvColor[1] = ((dwCol>>8)&0xFF)/255.0f;          //g
+    gRDP.fvEnvColor[1] = ((dwCol>>8)&0xFF)/255.0f;      //g
     gRDP.fvEnvColor[2] = ((dwCol)&0xFF)/255.0f;         //b
     gRDP.fvEnvColor[3] = ((dwCol>>24)&0xFF)/255.0f;     //a
 }

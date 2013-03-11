@@ -15,14 +15,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-//#define OPENGL_DEBUG
+
 #if !defined(OPENGL_DEBUG_H)
 #define OPENGL_DEBUG_H
 
 #if defined(OPENGL_DEBUG)
-  #define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) fprintf(stderr, "OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
+    #define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) fprintf(stderr, "OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
 #else
-  #define OPENGL_CHECK_ERRORS
+    #define OPENGL_CHECK_ERRORS
 #endif
 
 /*  Dump client state (for informational purposes)

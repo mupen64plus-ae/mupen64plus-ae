@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2002-2009 Rice1964
+Copyright (C) 2002 Rice1964
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -26,9 +26,6 @@ uint32 g_SavedUcode=1;
  
 void RSP_GBI_Sprite2DBase(Gfx *gfx)
 {
-    
-    
-
     uint32 dwAddr = RSPSegmentAddr((gfx->words.w1));
     dwAddr &= (g_dwRamSize-1);
 
@@ -66,9 +63,6 @@ typedef struct{
 
 void RSP_GBI_Sprite2D_PuzzleMaster64(Gfx *gfx)
 {
-    
-    
-
     uint32 dwAddr = RSPSegmentAddr((gfx->words.w1));
     dwAddr &= (g_dwRamSize-1);
 
@@ -100,9 +94,6 @@ void RSP_GBI_Sprite2D_PuzzleMaster64(Gfx *gfx)
 
 void RSP_GBI1_Sprite2DDraw(Gfx *gfx)
 {
-    
-    
-
     // This ucode is shared by PopMtx and gSPSprite2DDraw
     g_Sprite2DInfo.px = (short)(((gfx->words.w1)>>16)&0xFFFF)/4;
     g_Sprite2DInfo.py = (short)((gfx->words.w1)&0xFFFF)/4;
@@ -120,9 +111,6 @@ void RSP_GBI1_Sprite2DDraw(Gfx *gfx)
 
 void RSP_GBI0_Sprite2DDraw(Gfx *gfx)
 {
-    
-    
-
     // This ucode is shared by PopMtx and gSPSprite2DDraw
     g_Sprite2DInfo.px = (short)(((gfx->words.w1)>>16)&0xFFFF)/4;
     g_Sprite2DInfo.py = (short)((gfx->words.w1)&0xFFFF)/4;
@@ -135,9 +123,6 @@ void RSP_GBI0_Sprite2DDraw(Gfx *gfx)
 
 void RSP_GBI1_Sprite2DScaleFlip(Gfx *gfx)
 {
-
-    
-
     g_Sprite2DInfo.scaleX = (((gfx->words.w1)>>16)&0xFFFF)/1024.0f;
     g_Sprite2DInfo.scaleY = ((gfx->words.w1)&0xFFFF)/1024.0f;
 
@@ -155,12 +140,8 @@ void RSP_GBI1_Sprite2DScaleFlip(Gfx *gfx)
 }
 
 
-
 void RSP_GBI1_Sprite2DBase(Gfx *gfx)
 {
-    
-    
-
     if( !status.bUseModifiedUcodeMap )
     {
         memcpy( &LoadedUcodeMap, &ucodeMap1, sizeof(UcodeMap));
@@ -176,12 +157,8 @@ void RSP_GBI1_Sprite2DBase(Gfx *gfx)
 }
 
 
-
 void RSP_GBI0_Sprite2DBase(Gfx *gfx)
 {
-    
-    
-
     //Weired, this ucode 0 game is using ucode 1, but sprite2D cmd is working differently from
     //normal ucode1 sprite2D game
 

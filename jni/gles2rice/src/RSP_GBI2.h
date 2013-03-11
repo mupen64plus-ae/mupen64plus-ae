@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2002-2009 Rice1964
+Copyright (C) 2002 Rice1964
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -69,7 +69,6 @@ void RSP_GBI2_CullDL(Gfx *gfx)
         return; //Disable Culling
     }
 
-    uint32 i;
     uint32 dwVFirst = (((gfx->words.w0)) & 0xfff) / gRSP.vertexMult;
     uint32 dwVLast  = (((gfx->words.w1)) & 0xfff) / gRSP.vertexMult;
 
@@ -79,10 +78,10 @@ void RSP_GBI2_CullDL(Gfx *gfx)
     dwVFirst &= 0x1f;
     dwVLast &= 0x1f;
 
-    if( dwVLast < dwVFirst )    return;
-    if( !gRSP.bRejectVtx )  return;
+    if( dwVLast < dwVFirst ) return;
+    if( !gRSP.bRejectVtx )   return;
 
-    for (i = dwVFirst; i <= dwVLast; i++)
+    for (uint32 i = dwVFirst; i <= dwVLast; i++)
     {
         //if (g_dwVtxFlags[i] == 0)
         if (g_clipFlag[i] == 0)
@@ -257,10 +256,11 @@ void RSP_GBI2_Tri1(Gfx *gfx)
                 if (!bTrisAdded)
                 {
                     if( bTexturesAreEnabled )
-                {
-                    PrepareTextures();
-                    InitVertexTextureConstants();
-                }
+                    {
+                        PrepareTextures();
+                        InitVertexTextureConstants();
+                    }
+
                     CRender::g_pRender->SetCombinerAndBlender();
                     bTrisAdded = true;
                 }
@@ -324,10 +324,11 @@ void RSP_GBI2_Tri2(Gfx *gfx)
                 if (!bTrisAdded)
                 {
                     if( bTexturesAreEnabled )
-                {
-                    PrepareTextures();
-                    InitVertexTextureConstants();
-                }
+                    {
+                        PrepareTextures();
+                        InitVertexTextureConstants();
+                    }
+
                     CRender::g_pRender->SetCombinerAndBlender();
                     bTrisAdded = true;
                 }
@@ -342,10 +343,11 @@ void RSP_GBI2_Tri2(Gfx *gfx)
                 if (!bTrisAdded)
                 {
                     if( bTexturesAreEnabled )
-                {
-                    PrepareTextures();
-                    InitVertexTextureConstants();
-                }
+                    {
+                        PrepareTextures();
+                        InitVertexTextureConstants();
+                    }
+
                     CRender::g_pRender->SetCombinerAndBlender();
                     bTrisAdded = true;
                 }
@@ -567,14 +569,14 @@ void RSP_GBI2_PopMtx(Gfx *gfx)
 }
 
 
-#define RSP_ZELDA_ZBUFFER               0x00000001      // Guess
-#define RSP_ZELDA_CULL_BACK         0x00000200
-#define RSP_ZELDA_CULL_FRONT            0x00000400
-#define RSP_ZELDA_FOG                   0x00010000
-#define RSP_ZELDA_LIGHTING          0x00020000
-#define RSP_ZELDA_TEXTURE_GEN           0x00040000
-#define RSP_ZELDA_TEXTURE_GEN_LINEAR    0x00080000
-#define RSP_ZELDA_SHADING_SMOOTH        0x00200000
+#define RSP_ZELDA_ZBUFFER             0x00000001      // Guess
+#define RSP_ZELDA_CULL_BACK           0x00000200
+#define RSP_ZELDA_CULL_FRONT          0x00000400
+#define RSP_ZELDA_FOG                 0x00010000
+#define RSP_ZELDA_LIGHTING            0x00020000
+#define RSP_ZELDA_TEXTURE_GEN         0x00040000
+#define RSP_ZELDA_TEXTURE_GEN_LINEAR  0x00080000
+#define RSP_ZELDA_SHADING_SMOOTH      0x00200000
 
 void RSP_GBI2_GeometryMode(Gfx *gfx)
 {
@@ -586,29 +588,29 @@ void RSP_GBI2_GeometryMode(Gfx *gfx)
 #ifdef DEBUGGER
         LOG_UCODE("    0x%08x 0x%08x =(x & 0x%08x) | 0x%08x", gfx->words.cmd0, gfx->words.cmd1, dwAnd, dwOr);
 
-        if ((~dwAnd) & RSP_ZELDA_ZBUFFER)                   LOG_UCODE("  Disabling ZBuffer");
-        //  if ((~dwAnd) & RSP_ZELDA_TEXTURE_ENABLE)            LOG_UCODE("  Disabling Texture");
-        //  if ((~dwAnd) & RSP_ZELDA_SHADE)                 LOG_UCODE("  Disabling Shade");
-        if ((~dwAnd) & RSP_ZELDA_SHADING_SMOOTH)            LOG_UCODE("  Disabling Flat Shading");
-        if ((~dwAnd) & RSP_ZELDA_CULL_FRONT)                LOG_UCODE("  Disabling Front Culling");
+        if ((~dwAnd) & RSP_ZELDA_ZBUFFER)               LOG_UCODE("  Disabling ZBuffer");
+        //if ((~dwAnd) & RSP_ZELDA_TEXTURE_ENABLE)        LOG_UCODE("  Disabling Texture");
+        //if ((~dwAnd) & RSP_ZELDA_SHADE)                 LOG_UCODE("  Disabling Shade");
+        if ((~dwAnd) & RSP_ZELDA_SHADING_SMOOTH)        LOG_UCODE("  Disabling Flat Shading");
+        if ((~dwAnd) & RSP_ZELDA_CULL_FRONT)            LOG_UCODE("  Disabling Front Culling");
         if ((~dwAnd) & RSP_ZELDA_CULL_BACK)             LOG_UCODE("  Disabling Back Culling");
-        if ((~dwAnd) & RSP_ZELDA_FOG)                       LOG_UCODE("  Disabling Fog");
+        if ((~dwAnd) & RSP_ZELDA_FOG)                   LOG_UCODE("  Disabling Fog");
         if ((~dwAnd) & RSP_ZELDA_LIGHTING)              LOG_UCODE("  Disabling Lighting");
-        if ((~dwAnd) & RSP_ZELDA_TEXTURE_GEN)               LOG_UCODE("  Disabling Texture Gen");
-        if ((~dwAnd) & RSP_ZELDA_TEXTURE_GEN_LINEAR)        LOG_UCODE("  Disabling Texture Gen Linear");
+        if ((~dwAnd) & RSP_ZELDA_TEXTURE_GEN)           LOG_UCODE("  Disabling Texture Gen");
+        if ((~dwAnd) & RSP_ZELDA_TEXTURE_GEN_LINEAR)    LOG_UCODE("  Disabling Texture Gen Linear");
         //  if ((~dwAnd) & RSP_ZELDA_LOD)                       LOG_UCODE("  Disabling LOD (no impl)");
 
-        if (dwOr & RSP_ZELDA_ZBUFFER)                       LOG_UCODE("  Enabling ZBuffer");
-        //  if (dwOr & RSP_ZELDA_TEXTURE_ENABLE)                LOG_UCODE("  Enabling Texture");
-        //  if (dwOr & RSP_ZELDA_SHADE)                     LOG_UCODE("  Enabling Shade");
-        if (dwOr & RSP_ZELDA_SHADING_SMOOTH)                LOG_UCODE("  Enabling Flat Shading");
-        if (dwOr & RSP_ZELDA_CULL_FRONT)                    LOG_UCODE("  Enabling Front Culling");
+        if (dwOr & RSP_ZELDA_ZBUFFER)                   LOG_UCODE("  Enabling ZBuffer");
+        //if (dwOr & RSP_ZELDA_TEXTURE_ENABLE)            LOG_UCODE("  Enabling Texture");
+        //if (dwOr & RSP_ZELDA_SHADE)                     LOG_UCODE("  Enabling Shade");
+        if (dwOr & RSP_ZELDA_SHADING_SMOOTH)            LOG_UCODE("  Enabling Flat Shading");
+        if (dwOr & RSP_ZELDA_CULL_FRONT)                LOG_UCODE("  Enabling Front Culling");
         if (dwOr & RSP_ZELDA_CULL_BACK)                 LOG_UCODE("  Enabling Back Culling");
-        if (dwOr & RSP_ZELDA_FOG)                           LOG_UCODE("  Enabling Fog");
+        if (dwOr & RSP_ZELDA_FOG)                       LOG_UCODE("  Enabling Fog");
         if (dwOr & RSP_ZELDA_LIGHTING)                  LOG_UCODE("  Enabling Lighting");
-        if (dwOr & RSP_ZELDA_TEXTURE_GEN)                   LOG_UCODE("  Enabling Texture Gen");
-        if (dwOr & RSP_ZELDA_TEXTURE_GEN_LINEAR)            LOG_UCODE("  Enabling Texture Gen Linear");
-        //  if (dwOr & RSP_ZELDA_LOD)                           LOG_UCODE("  Enabling LOD (no impl)");
+        if (dwOr & RSP_ZELDA_TEXTURE_GEN)               LOG_UCODE("  Enabling Texture Gen");
+        if (dwOr & RSP_ZELDA_TEXTURE_GEN_LINEAR)        LOG_UCODE("  Enabling Texture Gen Linear");
+        ///if (dwOr & RSP_ZELDA_LOD)                       LOG_UCODE("  Enabling LOD (no impl)");
 #endif // DEBUGGER
 
         gRDP.geometryMode &= dwAnd;
@@ -618,8 +620,8 @@ void RSP_GBI2_GeometryMode(Gfx *gfx)
     bool bCullFront     = (gRDP.geometryMode & RSP_ZELDA_CULL_FRONT) ? true : false;
     bool bCullBack      = (gRDP.geometryMode & RSP_ZELDA_CULL_BACK) ? true : false;
     
-    //BOOL bShade           = (gRDP.geometryMode & G_SHADE) ? TRUE : FALSE;
-    //BOOL bFlatShade       = (gRDP.geometryMode & RSP_ZELDA_SHADING_SMOOTH) ? TRUE : FALSE;
+    //BOOL bShade         = (gRDP.geometryMode & G_SHADE) ? TRUE : FALSE;
+    //BOOL bFlatShade     = (gRDP.geometryMode & RSP_ZELDA_SHADING_SMOOTH) ? TRUE : FALSE;
     BOOL bFlatShade     = (gRDP.geometryMode & RSP_ZELDA_TEXTURE_GEN_LINEAR) ? TRUE : FALSE;
     if( options.enableHackForGames == HACK_FOR_TIGER_HONEY_HUNT )
         bFlatShade      = FALSE;
@@ -868,10 +870,7 @@ void RSP_GBI2_DL(Gfx *gfx)
     LOG_UCODE("");
     LOG_UCODE("\\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/");
     LOG_UCODE("#############################################");
-
-
 }
-
 
 
 void RSP_GBI2_SetOtherModeL(Gfx *gfx)
@@ -894,7 +893,6 @@ void RSP_GBI2_SetOtherModeL(Gfx *gfx)
     tempgfx.words.w1 = modeL;
     DLParser_RDPSetOtherMode(&tempgfx );
 }
-
 
 
 void RSP_GBI2_SetOtherModeH(Gfx *gfx)

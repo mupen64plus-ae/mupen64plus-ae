@@ -97,6 +97,7 @@ void CGeneralCombiner::General_DisplayBlendingStageInfo(GeneralCombinerInfo &gci
             s.colorOp.Arg0==CM_IGNORE?"":DecodedMux::FormatStr((uint8)s.colorOp.Arg0, str3),
             s.dwTexture!=0?" -Tex1":"");
     }
+    
     for( int i=0; i<gci.nStages; i++ )
     {
         GeneralCombineStage &s = gci.stages[i];
@@ -111,9 +112,9 @@ void CGeneralCombiner::General_DisplayBlendingStageInfo(GeneralCombinerInfo &gci
 #endif
 
 
-/*
- *  Combiner gci generating functions
- */
+///////////////////////////////////////
+// Combiner gci generating functions //
+///////////////////////////////////////
 
 bool textureUsedInStage[8][2];
 bool resultIsGood;
@@ -674,10 +675,10 @@ int CGeneralCombiner::GenCI_Type_A_SUB_B_MOD_C(int curN64Stage, int curStage, Ge
     return curStage;
 }
 
+ /////////////////////////////////////
+ // End of gci generating functions //
+ /////////////////////////////////////
 
-/*
- *  
- */
 
 void CGeneralCombiner::SkipStage(StageOperate &op, int &curStage)
 {
@@ -789,15 +790,13 @@ int CGeneralCombiner::CheckWhichTexToUseInThisStage(int curN64Stage, int curStag
 int CGeneralCombiner::ParseDecodedMux()
 {
     GeneralCombinerInfo gci;
-
-    int i,j;
     int stages[2];
 
     DecodedMux &mux = *(*m_ppGeneralDecodedMux);
 
     GenCI_Init(gci);
 
-    for( i=0; i<2; i++ )
+    for( int i=0; i<2; i++ )
     {
         //i=0       Color Channel
         //i=1       Alpha Channel
@@ -805,7 +804,7 @@ int CGeneralCombiner::ParseDecodedMux()
         stages[i] = 0;
         int n=0;    //stage count
 
-        for( j=0; j<2; j++ )
+        for( int j=0; j<2; j++ )
         {
             switch( mux.splitType[i+j*2] )
             {
@@ -887,7 +886,7 @@ int CGeneralCombiner::ParseDecodedMux()
         gci.bResultIsGoodWithinStages = false;
     }
 
-    if( gci.nStages > stages[0] )   //Color has less stages
+    if( gci.nStages > stages[0] )   // Color has less stages
     {
         for( int i=stages[0]; i<gci.nStages; i++ )
         {
@@ -898,7 +897,7 @@ int CGeneralCombiner::ParseDecodedMux()
         }
     }
 
-    if( gci.nStages > stages[1] )   //Color has less stages
+    if( gci.nStages > stages[1] )   // Color has less stages
     {
         for( int i=stages[1]; i<gci.nStages; i++ )
         {
@@ -909,7 +908,7 @@ int CGeneralCombiner::ParseDecodedMux()
         }
     }
 
-    for( i=0;i<gci.nStages;i++)
+    for( int i=0;i<gci.nStages;i++)
     {
         gci.stages[i].bTextureUsed = IsTextureUsedInStage(gci.stages[i]);
     }

@@ -54,6 +54,7 @@ public:
     bool Initialize(void);
     float m_AlphaRef;
     void UpdateFog(bool bEnable);
+
 protected:
     friend class OGLDeviceBuilder;
 

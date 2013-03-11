@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLTexture.h"
 #include "DirectXDecodedMux.h"
 
-#define         GL_MODULATE_ADD_ATI                   0x8744
-#define         GL_MODULATE_SUBTRACT_ATI              0x8746
+#define GL_MODULATE_ADD_ATI        0x8744
+#define GL_MODULATE_SUBTRACT_ATI   0x8746
 
 //========================================================================
 COGLColorCombiner4::COGLColorCombiner4(CRender *pRender)
@@ -105,14 +105,14 @@ bool COGLColorCombiner2::Initialize(void)
 
         m_bTxtOpAdd = m_bSupportAdd;
         m_bTxtOpSub = m_bSupportSubtract;
-        m_bTxtOpLerp = true;                
+        m_bTxtOpLerp = true;
 
-        m_bTxtOpAddSmooth = true;           
-        m_bTxtOpBlendCurAlpha = true;       
-        m_bTxtOpBlendDifAlpha = true;       
-        m_bTxtOpBlendFacAlpha = true;       
-        m_bTxtOpBlendTxtAlpha = true;       
-        m_bTxtOpMulAdd = m_bSupportModAdd_ATI;          
+        m_bTxtOpAddSmooth = true;
+        m_bTxtOpBlendCurAlpha = true;
+        m_bTxtOpBlendDifAlpha = true;
+        m_bTxtOpBlendFacAlpha = true;
+        m_bTxtOpBlendTxtAlpha = true;
+        m_bTxtOpMulAdd = m_bSupportModAdd_ATI;
 
         return true;
     }
@@ -406,7 +406,8 @@ return 0;
 int COGLColorCombiner4::ParseDecodedMux2Units()
 {
     OGLExtCombinerSaveType res;
-    for( int k=0; k<8; k++ )    res.units[k].tex = -1;
+    for( int k=0; k<8; k++ )
+        res.units[k].tex = -1;
 
     res.numOfUnits = 2;
 
@@ -429,7 +430,7 @@ int COGLColorCombiner4::ParseDecodedMux2Units()
             comb.arg0 = MUX_COMBINED;
             unit.ops[i%2] = GL_REPLACE;
             break;
-        case CM_FMT_TYPE_D:             // = A
+        case CM_FMT_TYPE_D:                 // = A
             comb.arg0 = m.d;
             unit.ops[i%2] = GL_REPLACE;
             break;
@@ -448,7 +449,7 @@ int COGLColorCombiner4::ParseDecodedMux2Units()
 //            comb.arg1 = m.c;
 //            unit.ops[i%2] = GL_MODULATE;
 //            break;
-//        case CM_FMT_TYPE_A_MOD_C_ADD_D: // = A*C+D
+//        case CM_FMT_TYPE_A_MOD_C_ADD_D:     // = A*C+D
 //            comb.arg0 = m.a;
 //            comb.arg1 = m.c;
 //            comb.arg2 = m.d;
