@@ -210,7 +210,7 @@ static void InnerLoop ();
     u32 t5;// = 0x0AC0;
     u32 t4;// = (inst1 & 0x1E);
 
-void MP3 () {
+void MP3 (u32 inst1, u32 inst2) {
     // Initialization Code
     u32 readPtr; // s5
     u32 writePtr; // s6

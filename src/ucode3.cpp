@@ -32,7 +32,7 @@ extern "C" {
 extern "C" acmd_callback_t ABI3[];
 
 /*
-static void SPNOOP (void) {
+static void SPNOOP (u32 inst1, u32 inst2) {
     DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 3", (int)(inst1 >> 24));
 }
 */
@@ -59,7 +59,7 @@ extern u16 adpcmtable[0x88];
 extern u8 BufferSpace[0x10000];
 
 /*
-static void SETVOL3 (void) { // Swapped Rate_Left and Vol
+static void SETVOL3 (u32 inst1, u32 inst2) { // Swapped Rate_Left and Vol
     u8 Flags = (u8)(inst1 >> 0x10);
     if (Flags & 0x4) { // 288
         if (Flags & 0x2) { // 290
@@ -76,7 +76,7 @@ static void SETVOL3 (void) { // Swapped Rate_Left and Vol
     }
 }
 */
-static void SETVOL3 (void) {
+static void SETVOL3 (u32 inst1, u32 inst2) {
     u8 Flags = (u8)(inst1 >> 0x10);
     if (Flags & 0x4) { // 288
         if (Flags & 0x2) { // 290
@@ -94,7 +94,7 @@ static void SETVOL3 (void) {
     }
 }
 
-static void ENVMIXER3 (void) {
+static void ENVMIXER3 (u32 inst1, u32 inst2) {
     u8 flags = (u8)((inst1 >> 16) & 0xff);
     u32 addy = (inst2 & 0xFFFFFF);
 
@@ -252,13 +252,13 @@ static void ENVMIXER3 (void) {
     memcpy(rsp.RDRAM+addy, (u8 *)hleMixerWorkArea,80);
 }
 
-static void CLEARBUFF3 (void) {
+static void CLEARBUFF3 (u32 inst1, u32 inst2) {
     u16 addr = (u16)(inst1 & 0xffff);
     u16 count = (u16)(inst2 & 0xffff);
     memset(BufferSpace+addr+0x4f0, 0, count);
 }
 
-static void MIXER3 (void) { // Needs accuracy verification...
+static void MIXER3 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     u16 dmemin  = (u16)(inst2 >> 0x10)  + 0x4f0;
     u16 dmemout = (u16)(inst2 & 0xFFFF) + 0x4f0;
     //u8  flags   = (u8)((inst1 >> 16) & 0xff);
@@ -278,7 +278,7 @@ static void MIXER3 (void) { // Needs accuracy verification...
     }
 }
 
-static void LOADBUFF3 (void) {
+static void LOADBUFF3 (u32 inst1, u32 inst2) {
     u32 v0;
     u32 cnt = (((inst1 >> 0xC)+3)&0xFFC);
     v0 = (inst2 & 0xfffffc);
@@ -286,7 +286,7 @@ static void LOADBUFF3 (void) {
     memcpy (BufferSpace+src, rsp.RDRAM+v0, cnt);
 }
 
-static void SAVEBUFF3 (void) {
+static void SAVEBUFF3 (u32 inst1, u32 inst2) {
     u32 v0;
     u32 cnt = (((inst1 >> 0xC)+3)&0xFFC);
     v0 = (inst2 & 0xfffffc);
@@ -294,7 +294,7 @@ static void SAVEBUFF3 (void) {
     memcpy (rsp.RDRAM+v0, BufferSpace+src, cnt);
 }
 
-static void LOADADPCM3 (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
+static void LOADADPCM3 (u32 inst1, u32 inst2) { // Loads an ADPCM table - Works 100% Now 03-13-01
     u32 v0;
     v0 = (inst2 & 0xffffff);
     //memcpy (dmem+0x3f0, rsp.RDRAM+v0, inst1&0xffff); 
@@ -316,7 +316,7 @@ static void LOADADPCM3 (void) { // Loads an ADPCM table - Works 100% Now 03-13-0
     }
 }
 
-static void DMEMMOVE3 (void) { // Needs accuracy verification...
+static void DMEMMOVE3 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     u32 v0, v1;
     u32 cnt;
     v0 = (inst1 & 0xFFFF) + 0x4f0;
@@ -329,11 +329,11 @@ static void DMEMMOVE3 (void) { // Needs accuracy verification...
     }
 }
 
-static void SETLOOP3 (void) {
+static void SETLOOP3 (u32 inst1, u32 inst2) {
     loopval = (inst2 & 0xffffff);
 }
 
-static void ADPCM3 (void) { // Verified to be 100% Accurate...
+static void ADPCM3 (u32 inst1, u32 inst2) { // Verified to be 100% Accurate...
     unsigned char Flags=(u8)(inst2>>0x1c)&0xff;
     //unsigned short Gain=(u16)(inst1&0xffff);
     unsigned int Address=(inst1 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
@@ -589,7 +589,7 @@ static void ADPCM3 (void) { // Verified to be 100% Accurate...
     memcpy(&rsp.RDRAM[Address],out,32);
 }
 
-static void RESAMPLE3 (void) {
+static void RESAMPLE3 (u32 inst1, u32 inst2) {
     unsigned char Flags=(u8)((inst2>>0x1e));
     unsigned int Pitch=((inst2>>0xe)&0xffff)<<1;
     u32 addy = (inst1 & 0xffffff);
@@ -687,7 +687,7 @@ static void RESAMPLE3 (void) {
     *(u16 *)(rsp.RDRAM+addy+10) = Accum;
 }
 
-static void INTERLEAVE3 (void) { // Needs accuracy verification...
+static void INTERLEAVE3 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     //u32 inL, inR;
     u16 *outbuff = (u16 *)(BufferSpace + 0x4f0);//(u16 *)(AudioOutBuffer+dmem);
     u16 *inSrcR;
@@ -729,7 +729,7 @@ static void INTERLEAVE3 (void) { // Needs accuracy verification...
     }
 }
 
-//static void UNKNOWN (void);
+//static void UNKNOWN (u32 inst1, u32 inst2);
 /*
 typedef struct {
     unsigned char sync;
@@ -755,12 +755,12 @@ mp3struct mp3;
 FILE *mp3dat;
 */
 
-static void WHATISTHIS (void) {
+static void WHATISTHIS (u32 inst1, u32 inst2) {
 }
 
 //static FILE *fp = fopen ("d:\\mp3info.txt", "wt");
 u32 setaddr;
-static void MP3ADDY (void) {
+static void MP3ADDY (u32 inst1, u32 inst2) {
     setaddr = (inst2 & 0xffffff);
 }
 
@@ -773,7 +773,7 @@ extern u32 base, dmembase;
 extern "C" {
     extern char *pDMEM;
 }
-void MP3 (void);
+void MP3 (u32 inst1, u32 inst2);
 /*
  {
 //  return;
@@ -822,7 +822,7 @@ achieve near-CD quality, an important specification to enable dual-channel ISDN
 (integrated-services-digital-network) to be the future high-bandwidth pipe to the home. 
 
 */
-static void DISABLE (void) {
+static void DISABLE (u32 inst1, u32 inst2) {
     //MessageBox (NULL, "Help", "ABI 3 Command 0", MB_OK);
     //ChangeABI (5);
 }

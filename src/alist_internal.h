@@ -22,7 +22,9 @@
 #ifndef ALIST_INTERNAL_H
 #define ALIST_INTERNAL_H
 
-typedef void (*acmd_callback_t)();
+#include "hle.h"
+
+typedef void (*acmd_callback_t)(u32 inst1, u32 inst2);
 
 /*
  * Audio flags
@@ -41,7 +43,6 @@ typedef void (*acmd_callback_t)();
 #define A_MAIN          0x00
 #define A_MIX           0x10
 
-extern u32 inst1, inst2;
 extern u16 AudioInBuffer, AudioOutBuffer, AudioCount;
 extern u16 AudioAuxA, AudioAuxC, AudioAuxE;
 extern u32 loopval; // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
