@@ -31,15 +31,15 @@
 // ABI2 in fact is a mix of at least 7 differents ABI which are mostly compatible
 // but not totally, that's why there is a isZeldaABI/isMKABI workaround.
 //
-extern acmd_t ABI1[0x10];
-extern acmd_t ABI2[0x20];
-extern acmd_t ABI3[0x10];
+extern acmd_callback_t ABI1[0x10];
+extern acmd_callback_t ABI2[0x20];
+extern acmd_callback_t ABI3[0x10];
 
 /* global variables */
 u32 inst1, inst2;
 
 /* local functions */
-static void alist_process(const acmd_t abi[], unsigned int abi_size)
+static void alist_process(const acmd_callback_t abi[], unsigned int abi_size)
 {
     unsigned int acmd;
     const OSTask_t * const task = get_task();

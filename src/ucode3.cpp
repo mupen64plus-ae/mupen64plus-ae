@@ -29,7 +29,7 @@ extern "C" {
   #include "alist_internal.h"
 }
 
-extern "C" acmd_t ABI3[];
+extern "C" acmd_callback_t ABI3[];
 
 /*
 static void SPNOOP (void) {
@@ -828,7 +828,7 @@ static void DISABLE (void) {
 }
 
 
-acmd_t ABI3[0x10] = {
+acmd_callback_t ABI3[0x10] = {
     DISABLE , ADPCM3 , CLEARBUFF3,  ENVMIXER3  , LOADBUFF3, RESAMPLE3  , SAVEBUFF3, MP3,
     MP3ADDY, SETVOL3, DMEMMOVE3 , LOADADPCM3 , MIXER3   , INTERLEAVE3, WHATISTHIS   , SETLOOP3
 };

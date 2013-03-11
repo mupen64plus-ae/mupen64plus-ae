@@ -22,7 +22,7 @@
 #ifndef ALIST_INTERNAL_H
 #define ALIST_INTERNAL_H
 
-typedef void (*acmd_t)();
+typedef void (*acmd_callback_t)();
 
 /*
  * Audio flags
