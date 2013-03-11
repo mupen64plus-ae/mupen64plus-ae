@@ -107,9 +107,6 @@ void COGLTexture::EndUpdate(DrawInfo *di)
     // Copy the image data from main memory to video card texture memory
 
     //GL_BGRA_IMG works on adreno but not inside profiler.
-#ifdef GLES_2
-//#define GL_BGRA GL_BGRA_IMG
-#endif
     glTexImage2D(GL_TEXTURE_2D, 0, m_glFmt, m_dwCreatedTextureWidth, m_dwCreatedTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pTexture);
 
     OPENGL_CHECK_ERRORS;
