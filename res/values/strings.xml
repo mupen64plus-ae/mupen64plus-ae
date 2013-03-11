@@ -268,7 +268,7 @@
     <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
     <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
 
-    <string name="gles2RiceScreenUpdate_title">Screen Update Method</string>
+    <string name="gles2RiceScreenUpdate_title">Screen update method</string>
     <string name="gles2RiceScreenUpdate_entryRomDefault">ROM default</string>
     <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
     <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI origin change</string>

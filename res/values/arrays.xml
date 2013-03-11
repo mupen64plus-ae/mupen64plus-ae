@@ -15,6 +15,7 @@
     <!-- Locales -->
     <string-array name="localeOverride_values" translatable="false">
         <item></item>
+        <item>ca</item>
         <item>de</item>
         <item>en</item>
         <item>es</item>
