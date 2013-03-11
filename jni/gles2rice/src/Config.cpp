@@ -728,11 +728,6 @@ void Ini_GetRomOptions(LPGAMESETTING pGameSetting)
     pGameSetting->bFastLoadTile         = IniSections[i].bFastLoadTile;
     pGameSetting->bUseSmallerTexture    = IniSections[i].bUseSmallerTexture;
 
-    pGameSetting->windowWidth           = IniSections[i].windowWidth;
-    pGameSetting->windowHeight          = IniSections[i].windowHeight;
-    pGameSetting->windowXpos            = IniSections[i].windowXpos;
-    pGameSetting->windowYpos            = IniSections[i].windowYpos;
-    
     pGameSetting->VIWidth               = IniSections[i].VIWidth;
     pGameSetting->VIHeight              = IniSections[i].VIHeight;
     pGameSetting->UseCIWidthAndRatio    = IniSections[i].UseCIWidthAndRatio;
@@ -873,26 +868,6 @@ void Ini_StoreRomOptions(LPGAMESETTING pGameSetting)
     {
         IniSections[i].bUseSmallerTexture   =pGameSetting->bUseSmallerTexture;
         bIniIsChanged=true;
-    }    
-    if( IniSections[i].windowWidth  != pGameSetting->windowWidth )
-    {
-        IniSections[i].windowWidth  =pGameSetting->windowWidth;
-        bIniIsChanged=true;
-    }
-    if( IniSections[i].windowHeight != pGameSetting->windowHeight )
-    {
-        IniSections[i].windowHeight =pGameSetting->windowHeight;
-        bIniIsChanged=true;
-    }
-    if( IniSections[i].windowXpos  != pGameSetting->windowXpos )
-    {
-        IniSections[i].windowXpos  =pGameSetting->windowXpos;
-        bIniIsChanged=true;
-    }
-    if( IniSections[i].windowYpos != pGameSetting->windowYpos )
-    {
-        IniSections[i].windowYpos =pGameSetting->windowYpos;
-        bIniIsChanged=true;
     }
     if( IniSections[i].VIWidth  != pGameSetting->VIWidth )
     {
@@ -1012,10 +987,6 @@ BOOL ReadIniFile()
                 newsection.bPrimaryDepthHack = FALSE;
                 newsection.bTexture1Hack = FALSE;
                 newsection.bDisableObjBG = FALSE;
-                newsection.windowWidth = 800;
-                newsection.windowHeight = 480;
-                newsection.windowXpos = 0;
-                newsection.windowYpos = 0;
                 newsection.VIWidth = -1;
                 newsection.VIHeight = -1;
                 newsection.UseCIWidthAndRatio = NOT_USE_CI_WIDTH_AND_RATIO;
@@ -1072,18 +1043,6 @@ BOOL ReadIniFile()
                 if (strcasecmp(left(readinfo,16), "TexRectScaleHack")==0)
                     IniSections[sectionno].bTextureScaleHack=true;
 
-                if (strcasecmp(left(readinfo,11), "windowWidth")==0)
-                    IniSections[sectionno].windowWidth = strtol(right(readinfo,3),NULL,10);
-
-                if (strcasecmp(left(readinfo,12), "windowHeight")==0)
-                    IniSections[sectionno].windowHeight = strtol(right(readinfo,3),NULL,10);
-                
-                if (strcasecmp(left(readinfo,10), "windowXpos")==0)
-                    IniSections[sectionno].windowXpos = strtol(right(readinfo,3),NULL,10);
-
-                if (strcasecmp(left(readinfo,10), "windowYpos")==0)
-                    IniSections[sectionno].windowYpos = strtol(right(readinfo,3),NULL,10);
-                
                 if (strcasecmp(left(readinfo,7), "VIWidth")==0)
                     IniSections[sectionno].VIWidth = strtol(right(readinfo,3),NULL,10);
 
@@ -1307,18 +1266,6 @@ void OutputSectionDetails(uint32 i, FILE * fh)
     if (IniSections[i].bTextureScaleHack)
         fprintf(fh, "TexRectScaleHack\n");
 
-    if (IniSections[i].windowWidth != 800)
-        fprintf(fh, "windowWidth=%d\n", IniSections[i].windowWidth);
-
-    if (IniSections[i].windowHeight != 480)
-        fprintf(fh, "windowHeight=%d\n", IniSections[i].windowHeight);
-        
-    if (IniSections[i].windowXpos != 0)
-        fprintf(fh, "windowXpos=%d\n", IniSections[i].windowXpos);
-
-    if (IniSections[i].windowYpos != 0)
-        fprintf(fh, "windowYpos=%d\n", IniSections[i].windowYpos);
-        
     if (IniSections[i].VIWidth > 0)
         fprintf(fh, "VIWidth=%d\n", IniSections[i].VIWidth);
 
@@ -1406,10 +1353,6 @@ static int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* sz
     newsection.bPrimaryDepthHack = FALSE;
     newsection.bTexture1Hack = FALSE;
     newsection.bDisableObjBG = FALSE;
-    newsection.windowWidth = 800;
-    newsection.windowHeight = 480;
-    newsection.windowXpos = 0;
-    newsection.windowYpos = 0;
     newsection.VIWidth = -1;
     newsection.VIHeight = -1;
     newsection.UseCIWidthAndRatio = NOT_USE_CI_WIDTH_AND_RATIO;
