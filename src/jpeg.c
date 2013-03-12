@@ -33,6 +33,7 @@
 #define SUBBLOCK_SIZE 64
 
 typedef void (*tile_line_emitter_t)(const int16_t *y, const int16_t *u, uint32_t address);
+typedef void (*std_macroblock_decoder_t)(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
 
 /* rdram operations */
 // FIXME: these functions deserve their own module
@@ -40,6 +41,9 @@ static void rdram_read_many_u16(uint16_t *dst, uint32_t address, unsigned int co
 static void rdram_write_many_u16(const uint16_t *src, uint32_t address, unsigned int count);
 static uint32_t rdram_read_u32(uint32_t address);
 static void rdram_write_many_u32(const uint32_t *src, uint32_t address, unsigned int count);
+
+/* standard jpeg ucode decoder */
+static void jpeg_decode_std(const char * const version, const std_macroblock_decoder_t decode_mb, const tile_line_emitter_t emit_line);
 
 /* helper functions */
 static uint8_t clamp_u8(int16_t x);
@@ -120,77 +124,7 @@ static const unsigned int TRANSPOSE_TABLE[SUBBLOCK_SIZE] =
  **************************************************************************/
 void jpeg_decode_PS0()
 {
-    int16_t qtables[3][SUBBLOCK_SIZE];
-    unsigned int mb;
-    uint32_t address;
-    uint32_t macroblock_count;
-    uint32_t mode;
-    uint32_t qtableY_ptr;
-    uint32_t qtableU_ptr;
-    uint32_t qtableV_ptr;
-    unsigned int subblock_count;
-    unsigned int macroblock_size;
-    int16_t *macroblock;
-    const OSTask_t * const task = get_task();
-
-    if (task->flags & 0x1)
-    {
-        DebugMessage(M64MSG_WARNING, "jpeg_decode_PS0: task yielding not implemented");
-        return;
-    }
-
-    address          = rdram_read_u32(task->data_ptr);
-    macroblock_count = rdram_read_u32(task->data_ptr + 4);
-    mode             = rdram_read_u32(task->data_ptr + 8);
-    qtableY_ptr      = rdram_read_u32(task->data_ptr + 12);
-    qtableU_ptr      = rdram_read_u32(task->data_ptr + 16);
-    qtableV_ptr      = rdram_read_u32(task->data_ptr + 20);
-
-    DebugMessage(M64MSG_VERBOSE, "jpeg_decode_PS0: *buffer=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, *Qv=%x",
-            address,
-            macroblock_count,
-            mode,
-            qtableY_ptr,
-            qtableU_ptr,
-            qtableV_ptr);
-
-    if (mode != 0 && mode != 2)
-    {
-        DebugMessage(M64MSG_WARNING, "jpeg_decode_PS0: invalid mode %d", mode);
-        return;
-    }
-    
-    subblock_count = mode + 4;
-    macroblock_size = 2*subblock_count*SUBBLOCK_SIZE;
-
-    rdram_read_many_u16((uint16_t*)qtables[0], qtableY_ptr, SUBBLOCK_SIZE);
-    rdram_read_many_u16((uint16_t*)qtables[1], qtableU_ptr, SUBBLOCK_SIZE);
-    rdram_read_many_u16((uint16_t*)qtables[2], qtableV_ptr, SUBBLOCK_SIZE);
-
-    macroblock = malloc(sizeof(*macroblock) * macroblock_size);
-    if (!macroblock)
-    {
-        DebugMessage(M64MSG_WARNING, "jpeg_decode_PS0: could not allocate macroblock");
-        return;
-    }
-
-    for (mb = 0; mb < macroblock_count; ++mb)
-    {
-        rdram_read_many_u16((uint16_t*)macroblock, address, macroblock_size >> 1);
-        DecodeMacroblock3(macroblock, subblock_count, (const int16_t (*)[SUBBLOCK_SIZE])qtables);
-
-        if (mode == 0)
-        {
-            EmitTilesMode0(EmitYUVTileLine, macroblock, address);
-        }
-        else
-        {
-            EmitTilesMode2(EmitYUVTileLine, macroblock, address);
-        }
-
-        address += macroblock_size;
-    }
-    free(macroblock);
+    jpeg_decode_std("PS0", DecodeMacroblock3, EmitYUVTileLine);
 }
 
 /***************************************************************************
@@ -199,77 +133,7 @@ void jpeg_decode_PS0()
  **************************************************************************/
 void jpeg_decode_PS()
 {
-    int16_t qtables[3][SUBBLOCK_SIZE];
-    unsigned int mb;
-    uint32_t address;
-    uint32_t macroblock_count;
-    uint32_t mode;
-    uint32_t qtableY_ptr;
-    uint32_t qtableU_ptr;
-    uint32_t qtableV_ptr;
-    unsigned int subblock_count;
-    unsigned int macroblock_size;
-    int16_t *macroblock;
-    const OSTask_t * const task = get_task();
-
-    if (task->flags & 0x1)
-    {
-        DebugMessage(M64MSG_WARNING, "jpeg_decode_PS: task yielding not implemented");
-        return;
-    }
-
-    address          = rdram_read_u32(task->data_ptr);
-    macroblock_count = rdram_read_u32(task->data_ptr + 4);
-    mode             = rdram_read_u32(task->data_ptr + 8);
-    qtableY_ptr      = rdram_read_u32(task->data_ptr + 12);
-    qtableU_ptr      = rdram_read_u32(task->data_ptr + 16);
-    qtableV_ptr      = rdram_read_u32(task->data_ptr + 20);
-
-    DebugMessage(M64MSG_VERBOSE, "jpeg_decode_PS: *buffer=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, *Qv=%x",
-            address,
-            macroblock_count,
-            mode,
-            qtableY_ptr,
-            qtableU_ptr,
-            qtableV_ptr);
-
-    if (mode != 0 && mode != 2)
-    {
-        DebugMessage(M64MSG_WARNING, "jpeg_decode_PS: invalid mode %d", mode);
-        return;
-    }
-    
-    subblock_count = mode + 4;
-    macroblock_size = 2*subblock_count*SUBBLOCK_SIZE;
-
-    rdram_read_many_u16((uint16_t*)qtables[0], qtableY_ptr, SUBBLOCK_SIZE);
-    rdram_read_many_u16((uint16_t*)qtables[1], qtableU_ptr, SUBBLOCK_SIZE);
-    rdram_read_many_u16((uint16_t*)qtables[2], qtableV_ptr, SUBBLOCK_SIZE);
-
-    macroblock = malloc(sizeof(*macroblock) * macroblock_size);
-    if (!macroblock)
-    {
-        DebugMessage(M64MSG_WARNING, "jpeg_decode_PS: could not allocate macroblock");
-        return;
-    }
-
-    for (mb = 0; mb < macroblock_count; ++mb)
-    {
-        rdram_read_many_u16((uint16_t*)macroblock, address, macroblock_size >> 1);
-        DecodeMacroblock2(macroblock, subblock_count, (const int16_t (*)[SUBBLOCK_SIZE])qtables);
-
-        if (mode == 0)
-        {
-            EmitTilesMode0(EmitRGBATileLine, macroblock, address);
-        }
-        else
-        {
-            EmitTilesMode2(EmitRGBATileLine, macroblock, address);
-        }
-
-        address += macroblock_size;
-    }
-    free(macroblock);
+    jpeg_decode_std("PS", DecodeMacroblock2, EmitRGBATileLine);
 }
 
 /***************************************************************************
@@ -321,6 +185,82 @@ void jpeg_decode_OB()
 
 
 /* local functions */
+static void jpeg_decode_std(const char * const version, const std_macroblock_decoder_t decode_mb, const tile_line_emitter_t emit_line)
+{
+    int16_t qtables[3][SUBBLOCK_SIZE];
+    unsigned int mb;
+    uint32_t address;
+    uint32_t macroblock_count;
+    uint32_t mode;
+    uint32_t qtableY_ptr;
+    uint32_t qtableU_ptr;
+    uint32_t qtableV_ptr;
+    unsigned int subblock_count;
+    unsigned int macroblock_size;
+    int16_t *macroblock;
+    const OSTask_t * const task = get_task();
+
+    if (task->flags & 0x1)
+    {
+        DebugMessage(M64MSG_WARNING, "jpeg_decode_%s: task yielding not implemented", version);
+        return;
+    }
+
+    address          = rdram_read_u32(task->data_ptr);
+    macroblock_count = rdram_read_u32(task->data_ptr + 4);
+    mode             = rdram_read_u32(task->data_ptr + 8);
+    qtableY_ptr      = rdram_read_u32(task->data_ptr + 12);
+    qtableU_ptr      = rdram_read_u32(task->data_ptr + 16);
+    qtableV_ptr      = rdram_read_u32(task->data_ptr + 20);
+
+    DebugMessage(M64MSG_VERBOSE, "jpeg_decode_%s: *buffer=%x, #MB=%d, mode=%d, *Qy=%x, *Qu=%x, *Qv=%x",
+            version,
+            address,
+            macroblock_count,
+            mode,
+            qtableY_ptr,
+            qtableU_ptr,
+            qtableV_ptr);
+
+    if (mode != 0 && mode != 2)
+    {
+        DebugMessage(M64MSG_WARNING, "jpeg_decode_%s: invalid mode %d", version, mode);
+        return;
+    }
+    
+    subblock_count = mode + 4;
+    macroblock_size = 2*subblock_count*SUBBLOCK_SIZE;
+
+    rdram_read_many_u16((uint16_t*)qtables[0], qtableY_ptr, SUBBLOCK_SIZE);
+    rdram_read_many_u16((uint16_t*)qtables[1], qtableU_ptr, SUBBLOCK_SIZE);
+    rdram_read_many_u16((uint16_t*)qtables[2], qtableV_ptr, SUBBLOCK_SIZE);
+
+    macroblock = malloc(sizeof(*macroblock) * macroblock_size);
+    if (!macroblock)
+    {
+        DebugMessage(M64MSG_WARNING, "jpeg_decode_%s: could not allocate macroblock", version);
+        return;
+    }
+
+    for (mb = 0; mb < macroblock_count; ++mb)
+    {
+        rdram_read_many_u16((uint16_t*)macroblock, address, macroblock_size >> 1);
+        decode_mb(macroblock, subblock_count, (const int16_t (*)[SUBBLOCK_SIZE])qtables);
+
+        if (mode == 0)
+        {
+            EmitTilesMode0(emit_line, macroblock, address);
+        }
+        else
+        {
+            EmitTilesMode2(emit_line, macroblock, address);
+        }
+
+        address += macroblock_size;
+    }
+    free(macroblock);
+}
+
 static uint8_t clamp_u8(int16_t x)
 {
     return (x & (0xff00)) ? ((-x) >> 15) & 0xff : x;
