@@ -53,7 +53,6 @@ static uint16_t GetRGBA(int16_t y, int16_t u, int16_t v);
 
 /* tile line emitters */
 static void EmitYUVTileLine(const int16_t *y, const int16_t *u, uint32_t address);
-static void EmitYUVTileLine_SwapY1Y2(const int16_t *y, const int16_t *u, uint32_t address);
 static void EmitRGBATileLine(const int16_t *y, const int16_t *u, uint32_t address);
 
 /* macroblocks operations */
@@ -123,7 +122,7 @@ void jpeg_decode_PS0()
 {
     int16_t qtables[3][SUBBLOCK_SIZE];
     unsigned int mb;
-    uint32_t       address;
+    uint32_t address;
     uint32_t macroblock_count;
     uint32_t mode;
     uint32_t qtableY_ptr;
@@ -182,11 +181,11 @@ void jpeg_decode_PS0()
 
         if (mode == 0)
         {
-            EmitTilesMode0(EmitYUVTileLine_SwapY1Y2, macroblock, address);
+            EmitTilesMode0(EmitYUVTileLine, macroblock, address);
         }
         else
         {
-            EmitTilesMode2(EmitYUVTileLine_SwapY1Y2, macroblock, address);
+            EmitTilesMode2(EmitYUVTileLine, macroblock, address);
         }
 
         address += macroblock_size;
@@ -381,25 +380,6 @@ static void EmitYUVTileLine(const int16_t *y, const int16_t *u, uint32_t address
     uyvy[5] = GetUYVY(y2[2], y2[3], u[5], v[5]);
     uyvy[6] = GetUYVY(y2[4], y2[5], u[6], v[6]);
     uyvy[7] = GetUYVY(y2[6], y2[7], u[7], v[7]);
-
-    rdram_write_many_u32(uyvy, address, 8);
-}
-
-static void EmitYUVTileLine_SwapY1Y2(const int16_t *y, const int16_t *u, uint32_t address)
-{
-    uint32_t uyvy[8];
-
-    const int16_t * const v  = u + SUBBLOCK_SIZE;
-    const int16_t * const y2 = y + SUBBLOCK_SIZE;
-
-    uyvy[0] = GetUYVY(y[1],  y[0],  u[0], v[0]);
-    uyvy[1] = GetUYVY(y[3],  y[2],  u[1], v[1]);
-    uyvy[2] = GetUYVY(y[5],  y[4],  u[2], v[2]);
-    uyvy[3] = GetUYVY(y[7],  y[6],  u[3], v[3]);
-    uyvy[4] = GetUYVY(y2[1], y2[0], u[4], v[4]);
-    uyvy[5] = GetUYVY(y2[3], y2[2], u[5], v[5]);
-    uyvy[6] = GetUYVY(y2[5], y2[4], u[6], v[6]);
-    uyvy[7] = GetUYVY(y2[7], y2[6], u[7], v[7]);
 
     rdram_write_many_u32(uyvy, address, 8);
 }
@@ -699,12 +679,7 @@ static void RescaleYSubBlock(int16_t *dst, const int16_t *src)
 
     for (i = 0; i < SUBBLOCK_SIZE; ++i)
     {
-#if 0
         dst[i] = (((uint32_t)(clamp_s12(src[i]) + 0x800) * 0xdb0) >> 16) + 0x10;
-#else
-        /* FIXME: ! DIRTY HACK ! (compensate for too dark pictures) */
-        dst[i] = (((uint32_t)(clamp_s12(src[i]) + 0x800) * 0xdb0) >> 16) + 0x50;
-#endif
     }
 }
 
