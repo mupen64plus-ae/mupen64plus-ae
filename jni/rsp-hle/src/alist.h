@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - jpeg.h                                          *
+ *   Mupen64plus-rsp-hle - alist.h                                         *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
@@ -19,12 +19,15 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef JPEG_H
-#define JPEG_H
+#ifndef ALIST_H
+#define ALIST_H
 
-void jpeg_decode_PS0();
-void jpeg_decode_PS();
-void jpeg_decode_OB();
+void alist_process_ABI1();
+void alist_process_ABI2();
+void alist_process_ABI3();
+
+// FIXME: to remove when isZeldaABI/isMKABI workaround is gone
+void init_ucode2();
 
 #endif
 

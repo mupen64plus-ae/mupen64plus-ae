@@ -202,7 +202,7 @@ static void CheatAddVariables(cheat_code * Code, char *varlist)
 
 static void ReadCheats(char *RomSection)
 {
-    sCheatInfo *curr_code;
+    sCheatInfo *curr_code = NULL;
     const char *romdbpath = ConfigGetSharedDataFilepath(CHEAT_FILE);
     if (romdbpath == NULL)
     {

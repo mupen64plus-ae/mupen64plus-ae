@@ -11,6 +11,8 @@ LOCAL_C_INCLUDES += $(M64P_API_INCLUDES)
 
 LOCAL_SRC_FILES := \
 	$(SRCDIR)/main.c \
+	$(SRCDIR)/alist.c \
+	$(SRCDIR)/cicx105.c \
 	$(SRCDIR)/jpeg.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \
@@ -43,6 +45,8 @@ LOCAL_C_INCLUDES += $(M64P_API_INCLUDES)
 
 LOCAL_SRC_FILES := \
 	$(SRCDIR)/main.c \
+	$(SRCDIR)/alist.c \
+	$(SRCDIR)/cicx105.c \
 	$(SRCDIR)/jpeg.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \

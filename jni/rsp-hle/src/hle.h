@@ -49,24 +49,6 @@ typedef signed short        s16;
 typedef signed int          s32;
 typedef signed long long    s64;
 
-//#define ACMD_SIZE               32
-/*
- * Audio flags
- */
-
-#define A_INIT          0x01
-#define A_CONTINUE      0x00
-#define A_LOOP          0x02
-#define A_OUT           0x02
-#define A_LEFT          0x02
-#define A_RIGHT         0x00
-#define A_VOL           0x04
-#define A_RATE          0x00
-#define A_AUX           0x08
-#define A_NOAUX         0x00
-#define A_MAIN          0x00
-#define A_MIX           0x10
-
 extern RSP_INFO rsp;
 
 typedef struct
@@ -96,19 +78,12 @@ typedef struct
     unsigned int yield_data_size;
 } OSTask_t;
 
+static inline const OSTask_t * const get_task()
+{
+    return (OSTask_t*)(rsp.DMEM + 0xfc0);
+}
+
 void DebugMessage(int level, const char *message, ...);
-
-/*void ucode1(OSTask_t *task);
-void ucode2(OSTask_t *task);
-void ucode3(OSTask_t *task);
-void init_ucode1();*/
-void init_ucode2();
-
-extern u32 inst1, inst2;
-extern u16 AudioInBuffer, AudioOutBuffer, AudioCount;
-extern u16 AudioAuxA, AudioAuxC, AudioAuxE;
-extern u32 loopval; // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
-//extern u32 UCData, UDataLen;
 
 #endif
 

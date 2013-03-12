@@ -539,7 +539,7 @@ static void printUsage(const char *progname)
 
 static int SetConfigParameter(const char *ParamSpec)
 {
-    char *ParsedString, *VarName, *VarValue;
+    char *ParsedString, *VarName, *VarValue=NULL;
     m64p_handle ConfigSection;
     m64p_type VarType;
     m64p_error rval;

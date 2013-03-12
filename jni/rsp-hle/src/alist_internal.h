@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - jpeg.h                                          *
+ *   Mupen64plus-rsp-hle - alist_internal.h                                *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *
@@ -19,12 +19,32 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef JPEG_H
-#define JPEG_H
+#ifndef ALIST_INTERNAL_H
+#define ALIST_INTERNAL_H
 
-void jpeg_decode_PS0();
-void jpeg_decode_PS();
-void jpeg_decode_OB();
+#include "hle.h"
+
+typedef void (*acmd_callback_t)(u32 inst1, u32 inst2);
+
+/*
+ * Audio flags
+ */
+
+#define A_INIT          0x01
+#define A_CONTINUE      0x00
+#define A_LOOP          0x02
+#define A_OUT           0x02
+#define A_LEFT          0x02
+#define A_RIGHT         0x00
+#define A_VOL           0x04
+#define A_RATE          0x00
+#define A_AUX           0x08
+#define A_NOAUX         0x00
+#define A_MAIN          0x00
+#define A_MIX           0x10
+
+extern u16 AudioInBuffer, AudioOutBuffer, AudioCount;
+extern u16 AudioAuxA, AudioAuxC, AudioAuxE;
+extern u32 loopval; // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
 
 #endif
-

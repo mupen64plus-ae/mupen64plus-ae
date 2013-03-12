@@ -119,7 +119,7 @@ static const unsigned int TRANSPOSE_TABLE[SUBBLOCK_SIZE] =
 /***************************************************************************
  * JPEG decoding ucode found in Japanese exclusive version of Pokemon Stadium.
  **************************************************************************/
-void jpeg_decode_PS0(OSTask_t *task)
+void jpeg_decode_PS0()
 {
     int16_t qtables[3][SUBBLOCK_SIZE];
     unsigned int mb;
@@ -132,6 +132,7 @@ void jpeg_decode_PS0(OSTask_t *task)
     unsigned int subblock_count;
     unsigned int macroblock_size;
     int16_t *macroblock;
+    const OSTask_t * const task = get_task();
 
     if (task->flags & 0x1)
     {
@@ -197,7 +198,7 @@ void jpeg_decode_PS0(OSTask_t *task)
  * JPEG decoding ucode found in Ocarina of Time, Pokemon Stadium 1 and
  * Pokemon Stadium 2.
  **************************************************************************/
-void jpeg_decode_PS(OSTask_t *task)
+void jpeg_decode_PS()
 {
     int16_t qtables[3][SUBBLOCK_SIZE];
     unsigned int mb;
@@ -210,6 +211,7 @@ void jpeg_decode_PS(OSTask_t *task)
     unsigned int subblock_count;
     unsigned int macroblock_size;
     int16_t *macroblock;
+    const OSTask_t * const task = get_task();
 
     if (task->flags & 0x1)
     {
@@ -274,7 +276,7 @@ void jpeg_decode_PS(OSTask_t *task)
 /***************************************************************************
  * JPEG decoding ucode found in Ogre Battle and Bottom of the 9th.
  **************************************************************************/
-void jpeg_decode_OB(OSTask_t *task)
+void jpeg_decode_OB()
 {
     int16_t qtable[SUBBLOCK_SIZE];
     unsigned int mb;
@@ -282,6 +284,8 @@ void jpeg_decode_OB(OSTask_t *task)
     int32_t y_dc = 0;
     int32_t u_dc = 0;
     int32_t v_dc = 0;
+    
+    const OSTask_t * const task = get_task();
 
     uint32_t           address          = task->data_ptr;
     const unsigned int macroblock_count = task->data_size;
