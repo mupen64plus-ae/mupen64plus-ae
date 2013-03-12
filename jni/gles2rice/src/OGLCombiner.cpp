@@ -19,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "OGLPlatform.h"
+#include "osal_opengl.h"
 
 #include "OGLCombiner.h"
 #include "OGLDebug.h"
