@@ -26,13 +26,12 @@
 extern "C" {
   #include "m64p_types.h"
   #include "hle.h"
+  #include "alist_internal.h"
 }
-
-extern "C" void (*ABI2[])(void);
 
 extern u8 BufferSpace[0x10000];
 
-static void SPNOOP (void) {
+static void SPNOOP (u32 inst1, u32 inst2) {
     DebugMessage(M64MSG_ERROR, "Unknown/Unimplemented Audio Command %i in ABI 2", (int)(inst1 >> 24));
 }
 extern u16 AudioInBuffer;       // 0x0000(T8)
@@ -43,14 +42,14 @@ extern u32 SEGMENTS[0x10];
 
 extern u16 adpcmtable[0x88];
 
-extern u16 ResampleLUT [0x200];
+extern const u16 ResampleLUT [0x200];
 
 bool isMKABI = false;
 bool isZeldaABI = false;
 
-void init_ucode2() { isMKABI = isZeldaABI = false; }
+extern "C" void init_ucode2() { isMKABI = isZeldaABI = false; }
 
-static void LOADADPCM2 (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
+static void LOADADPCM2 (u32 inst1, u32 inst2) { // Loads an ADPCM table - Works 100% Now 03-13-01
     u32 v0;
     v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
     u16 *table = (u16 *)(rsp.RDRAM+v0); // Zelda2 Specific...
@@ -71,17 +70,17 @@ static void LOADADPCM2 (void) { // Loads an ADPCM table - Works 100% Now 03-13-0
     }
 }
 
-static void SETLOOP2 (void) {
+static void SETLOOP2 (u32 inst1, u32 inst2) {
     loopval = inst2 & 0xffffff; // No segment?
 }
 
-static void SETBUFF2 (void) {
+static void SETBUFF2 (u32 inst1, u32 inst2) {
     AudioInBuffer   = u16(inst1);            // 0x00
     AudioOutBuffer  = u16((inst2 >> 0x10)); // 0x02
     AudioCount      = u16(inst2);            // 0x04
 }
 
-static void ADPCM2 (void) { // Verified to be 100% Accurate...
+static void ADPCM2 (u32 inst1, u32 inst2) { // Verified to be 100% Accurate...
     unsigned char Flags=(u8)(inst1>>16)&0xff;
     //unsigned short Gain=(u16)(inst1&0xffff);
     unsigned int Address=(inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
@@ -357,21 +356,21 @@ static void ADPCM2 (void) { // Verified to be 100% Accurate...
     memcpy(&rsp.RDRAM[Address],out,32);
 }
 
-static void CLEARBUFF2 (void) {
+static void CLEARBUFF2 (u32 inst1, u32 inst2) {
     u16 addr = (u16)(inst1 & 0xffff);
     u16 count = (u16)(inst2 & 0xffff);
     if (count > 0)
         memset(BufferSpace+addr, 0, count);
 }
 
-static void LOADBUFF2 (void) { // Needs accuracy verification...
+static void LOADBUFF2 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     u32 v0;
     u32 cnt = (((inst1 >> 0xC)+3)&0xFFC);
     v0 = (inst2 & 0xfffffc);// + SEGMENTS[(inst2>>24)&0xf];
     memcpy (BufferSpace+(inst1&0xfffc), rsp.RDRAM+v0, (cnt+3)&0xFFFC);
 }
 
-static void SAVEBUFF2 (void) { // Needs accuracy verification...
+static void SAVEBUFF2 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     u32 v0;
     u32 cnt = (((inst1 >> 0xC)+3)&0xFFC);
     v0 = (inst2 & 0xfffffc);// + SEGMENTS[(inst2>>24)&0xf];
@@ -379,7 +378,7 @@ static void SAVEBUFF2 (void) { // Needs accuracy verification...
 }
 
 
-static void MIXER2 (void) { // Needs accuracy verification...
+static void MIXER2 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     u16 dmemin  = (u16)(inst2 >> 0x10);
     u16 dmemout = (u16)(inst2 & 0xFFFF);
     u32 count   = ((inst1 >> 12) & 0xFF0);
@@ -401,7 +400,7 @@ static void MIXER2 (void) { // Needs accuracy verification...
 }
 
 
-static void RESAMPLE2 (void) {
+static void RESAMPLE2 (u32 inst1, u32 inst2) {
     unsigned char Flags=(u8)((inst1>>16)&0xff);
     unsigned int Pitch=((inst1&0xffff))<<1;
     u32 addy = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
@@ -463,7 +462,7 @@ static void RESAMPLE2 (void) {
     //memcpy (RSWORK, src+srcPtr, 0x8);
 }
 
-static void DMEMMOVE2 (void) { // Needs accuracy verification...
+static void DMEMMOVE2 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     u32 v0, v1;
     u32 cnt;
     if ((inst2 & 0xffff)==0)
@@ -482,10 +481,10 @@ static void DMEMMOVE2 (void) { // Needs accuracy verification...
     }
 }
 
-u32 t3, s5, s6;
-u16 env[8];
+static u32 t3, s5, s6;
+static u16 env[8];
 
-static void ENVSETUP1 (void) {
+static void ENVSETUP1 (u32 inst1, u32 inst2) {
     u32 tmp;
 
     //fprintf (dfile, "ENVSETUP1: inst1 = %08X, inst2 = %08X\n", inst1, inst2);
@@ -499,7 +498,7 @@ static void ENVSETUP1 (void) {
     //fprintf (dfile, " t3 = %X / s5 = %X / s6 = %X / env[4] = %X / env[5] = %X\n", t3, s5, s6, env[4], env[5]);
 }
 
-static void ENVSETUP2 (void) {
+static void ENVSETUP2 (u32 inst1, u32 inst2) {
     u32 tmp;
 
     //fprintf (dfile, "ENVSETUP2: inst1 = %08X, inst2 = %08X\n", inst1, inst2);
@@ -514,7 +513,7 @@ static void ENVSETUP2 (void) {
     //fprintf (dfile, " env[0] = %X / env[1] = %X / env[2] = %X / env[3] = %X\n", env[0], env[1], env[2], env[3]);
 }
 
-static void ENVMIXER2 (void) {
+static void ENVMIXER2 (u32 inst1, u32 inst2) {
     //fprintf (dfile, "ENVMIXER: inst1 = %08X, inst2 = %08X\n", inst1, inst2);
 
     s16 *bufft6, *bufft7, *buffs0, *buffs1;
@@ -617,7 +616,7 @@ static void ENVMIXER2 (void) {
     }
 }
 
-static void DUPLICATE2(void) {
+static void DUPLICATE2(u32 inst1, u32 inst2) {
     unsigned short Count = (inst1 >> 16) & 0xff;
     unsigned short In  = inst1&0xffff;
     unsigned short Out = (inst2>>16);
@@ -633,7 +632,7 @@ static void DUPLICATE2(void) {
     }
 }
 /*
-static void INTERL2 (void) { // Make your own...
+static void INTERL2 (u32 inst1, u32 inst2) { // Make your own...
     short Count = inst1 & 0xffff;
     unsigned short  Out   = inst2 & 0xffff;
     unsigned short In     = (inst2 >> 16);
@@ -664,7 +663,7 @@ static void INTERL2 (void) { // Make your own...
 }
 */
 
-static void INTERL2 (void) {
+static void INTERL2 (u32 inst1, u32 inst2) {
     short Count = inst1 & 0xffff;
     unsigned short  Out   = inst2 & 0xffff;
     unsigned short In     = (inst2 >> 16);
@@ -680,7 +679,7 @@ static void INTERL2 (void) {
     }
 }
 
-static void INTERLEAVE2 (void) { // Needs accuracy verification...
+static void INTERLEAVE2 (u32 inst1, u32 inst2) { // Needs accuracy verification...
     u32 inL, inR;
     u16 *outbuff;
     u16 *inSrcR;
@@ -721,7 +720,7 @@ static void INTERLEAVE2 (void) { // Needs accuracy verification...
     }
 }
 
-static void ADDMIXER (void) {
+static void ADDMIXER (u32 inst1, u32 inst2) {
     short Count   = (inst1 >> 12) & 0x00ff0;
     u16 InBuffer  = (inst2 >> 16);
     u16 OutBuffer = inst2 & 0xffff;
@@ -738,7 +737,7 @@ static void ADDMIXER (void) {
     }
 }
 
-static void HILOGAIN (void) {
+static void HILOGAIN (u32 inst1, u32 inst2) {
     u16 cnt = inst1 & 0xffff;
     u16 out = (inst2 >> 16) & 0xffff;
     s16 hi  = (s16)((inst1 >> 4) & 0xf000);
@@ -760,7 +759,7 @@ static void HILOGAIN (void) {
     }
 }
 
-static void FILTER2 (void) {
+static void FILTER2 (u32 inst1, u32 inst2) {
             static int cnt = 0;
             static s16 *lutt6;
             static s16 *lutt5;
@@ -885,9 +884,9 @@ static void FILTER2 (void) {
             memcpy (BufferSpace+(inst1&0xffff), outbuff, cnt);
 }
 
-static void SEGMENT2 (void) {
+static void SEGMENT2 (u32 inst1, u32 inst2) {
     if (isZeldaABI) {
-        FILTER2 ();
+        FILTER2 (inst1, inst2);
         return;
     }
     if ((inst1 & 0xffffff) == 0) {
@@ -896,11 +895,11 @@ static void SEGMENT2 (void) {
     } else {
         isMKABI = false;
         isZeldaABI = true;
-        FILTER2 ();
+        FILTER2 (inst1, inst2);
     }
 }
 
-static void UNKNOWN (void) {
+static void UNKNOWN (u32 inst1, u32 inst2) {
 }
 /*
 void (*ABI2[0x20])(void) = {
@@ -910,7 +909,7 @@ void (*ABI2[0x20])(void) = {
     SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP, SPNOOP
 };*/
 
-void (*ABI2[0x20])(void) = {
+extern "C" const acmd_callback_t ABI2[0x20] = {
     SPNOOP , ADPCM2, CLEARBUFF2, UNKNOWN, ADDMIXER, RESAMPLE2, UNKNOWN, SEGMENT2,
     SETBUFF2 , DUPLICATE2, DMEMMOVE2, LOADADPCM2, MIXER2, INTERLEAVE2, HILOGAIN, SETLOOP2,
     SPNOOP, INTERL2 , ENVSETUP1, ENVMIXER2, LOADBUFF2, SAVEBUFF2, ENVSETUP2, SPNOOP,
