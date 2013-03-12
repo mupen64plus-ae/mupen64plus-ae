@@ -345,24 +345,24 @@ void COGL_FragmentProgramCombiner::InitCombinerCycleFill(void)
 #ifdef BGR_SHADER
 const char *muxToFP_Maps[][2] = {
 //color -- alpha
-{"vec3(0.0)", "0.0"}, //MUX_0 = 0,
-{"vec3(1.0)", "1.0"}, //MUX_1,
-{"comb.rgb", "comb.a"}, //MUX_COMBINED,
-{"t0.rgb", "t0.a"}, //MUX_TEXEL0,
-{"t1.rgb", "t1.a"}, //MUX_TEXEL1,
-{"PrimColor.rgb", "PrimColor.a"}, //MUX_PRIM,
-{"vShadeColor.rgb", "vShadeColor.a"}, //MUX_SHADE,
-{"EnvColor.rgb", "EnvColor.a"}, //MUX_ENV,
-{"comb.rgb", "comb.a"}, //MUX_COMBALPHA,
-{"t0.rgb", "t0.a"}, //MUX_T0_ALPHA,
-{"t1.rgb", "t1.a"}, //MUX_T1_ALPHA,
-{"PrimColor.rgb", "PrimColor.a"}, //MUX_PRIM_ALPHA,
-{"vShadeColor.rgb", "vShadeColor.a"}, //MUX_SHADE_ALPHA,
-{"EnvColor.rgb", "EnvColor.a"}, //MUX_ENV_ALPHA,
-{"EnvFrac.a", "EnvFrac.a"}, //MUX_LODFRAC,
-{"PrimFrac.a", "PrimFrac.a"}, //MUX_PRIMLODFRAC,
-{"vec3(1.0)", "1.0"}, //MUX_K5,
-{"vec3(1.0)", "1.0"}, //MUX_UNK,  // Should not be used
+{"vec3(0.0)", "0.0"},                      //MUX_0 = 0,
+{"vec3(1.0)", "1.0"},                      //MUX_1,
+{"comb.rgb", "comb.a"},                    //MUX_COMBINED,
+{"t0.rgb", "t0.a"},                        //MUX_TEXEL0,
+{"t1.rgb", "t1.a"},                        //MUX_TEXEL1,
+{"PrimColor.rgb", "PrimColor.a"},          //MUX_PRIM,
+{"vShadeColor.rgb", "vShadeColor.a"},      //MUX_SHADE,
+{"EnvColor.rgb", "EnvColor.a"},            //MUX_ENV,
+{"comb.rgb", "comb.a"},                    //MUX_COMBALPHA,
+{"t0.rgb", "t0.a"},                        //MUX_T0_ALPHA,
+{"t1.rgb", "t1.a"},                        //MUX_T1_ALPHA,
+{"PrimColor.rgb", "PrimColor.a"},          //MUX_PRIM_ALPHA,
+{"vShadeColor.rgb", "vShadeColor.a"},      //MUX_SHADE_ALPHA,
+{"EnvColor.rgb", "EnvColor.a"},            //MUX_ENV_ALPHA,
+{"EnvFrac.a", "EnvFrac.a"},                //MUX_LODFRAC,
+{"PrimFrac.a", "PrimFrac.a"},              //MUX_PRIMLODFRAC,
+{"vec3(1.0)", "1.0"},                      //MUX_K5,
+{"vec3(1.0)", "1.0"},                      //MUX_UNK,  // Should not be used
 };
 #else
 const char *muxToFP_Maps[][2] = {

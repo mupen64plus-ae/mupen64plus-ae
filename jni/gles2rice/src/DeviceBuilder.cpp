@@ -329,15 +329,14 @@ CColorCombiner * OGLDeviceBuilder::CreateColorCombiner(CRender *pRender)
 //                    DebugMessage(M64MSG_INFO, "OpenGL Combiner: Nvidia");
 //                    break;
 //                case OGL_FRAGMENT_PROGRAM:
-                    m_pColorCombiner = new COGL_FragmentProgramCombiner(pRender);
-                    DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
+//                    m_pColorCombiner = new COGL_FragmentProgramCombiner(pRender);
+//                    DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
 //                    break;
 //                 default:
-//                     m_pColorCombiner = new COGLColorCombiner(pRender);
-//                     DebugMessage(M64MSG_INFO, "OpenGL Combiner: Basic OGL");
-//                     break;
-//                        break;
+//                    break;
 //                }
+                    m_pColorCombiner = new COGL_FragmentProgramCombiner(pRender);
+                    DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
             }
         }
 
