@@ -11,14 +11,27 @@
   <string name="menuItem_fileSave">In Datei speichern…</string>
   <string name="menuItem_fileLoad">Aus Datei laden…</string>
   <string name="menuItem_setSpeed">Spielgeschwindigkeit</string>
+  <string name="menuItem_paks">Controller Paks</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Spieler 1: Leer</string>
+  <string name="menuItem_pak1_mem">Spieler 1: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Spieler 1: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Spieler 2: Leer</string>
+  <string name="menuItem_pak2_mem">Spieler 2: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Spieler 2: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Spieler 3: Leer</string>
+  <string name="menuItem_pak3_mem">Spieler 3: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Spieler 3: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Spieler 4: Leer</string>
+  <string name="menuItem_pak4_mem">Spieler 4: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Spieler 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">IME wechseln</string>
   <string name="menuItem_exit">Verlassen</string>
@@ -28,6 +41,7 @@
   <string name="menuItem_load">Lade…</string>
   <string name="menuItem_save">Speichert…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">N64-USB-Adapter</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia Play</string>
@@ -221,6 +235,7 @@
   <string name="gles2RiceMipmapping_entryNearest">Nah</string>
   <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
   <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
+  <string name="gles2RiceScreenUpdate_title">Aktualisierung des Bildes</string>
   <string name="gles2RiceTextureEnhancement_title">Texturen Hochskallieren / Verbessern</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Keine</string>
   <string name="gles2RiceTextureEnhancement_entryScale2x">Skaliere 2x</string>
@@ -239,19 +254,20 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (beste)</string>
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Keins (Video deaktiviert)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (Android GLES2-Port von GLN64 von Orkin, Adventus, Yongzh, Paul Lamb)</string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (GLES2-Port von Rice Video für m64p v1.99.5 von Rice, Kris (Metricity))</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android-GLES2-Portierung von GLN64 von Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2-Portierung von Rice Video für m64p v1.99.5 von Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Keins (Audio deaktiviert)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Eingabe</string>
   <string name="pluginInput_entryNone">Keins (Eingabe deaktiviert)</string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality Signal Processor (RSP)</string>
   <string name="pluginRsp_entryNone">Keins (RSP deaktiviert)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (keine Audioberechnung, Geschwindigkeits-Hack von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(Geschwindigkeits-Hack ohne Audioberechnung von Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Emulationskern</string>
-  <string name="pluginCore_entryV110">core, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">R4300 Emulator</string>
   <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Cached Interpreter</string>
@@ -259,7 +275,7 @@
   <string name="navigationMode_title">Erreichbarkeit</string>
   <string name="navigationMode_summary">Menü-Navigationsmethode: %1$s</string>
   <string name="navigationMode_entryAuto">Automatisch nach Gerätekonfiguration richten</string>
-  <string name="navigationMode_entryStandard">Standartmodus</string>
+  <string name="navigationMode_entryStandard">Standardmodus</string>
   <string name="navigationMode_entryOuya">OUYA Modus (kein Touchscreen; Reine Gamepadeingabe)</string>
   <string name="localeOverride_title">Sprache</string>
   <string name="localeOverride_entrySystemDefault">System Standard</string>

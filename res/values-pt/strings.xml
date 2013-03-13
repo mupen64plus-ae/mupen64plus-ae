@@ -235,6 +235,15 @@
   <string name="gles2RiceMipmapping_entryNearest">Mais perto</string>
   <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
   <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
+  <string name="gles2RiceScreenUpdate_title">Método de atualização de tela</string>
+  <string name="gles2RiceScreenUpdate_entryRomDefault">ROM padrão</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">Atualização VI origin</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">Mudanças do VI origin</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">Mudanças Cl</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Primeira mudança de Cl</string>
+  <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Primeira renderização primitiva</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Antes de limpar a tela</string>
+  <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Depois de renderizar</string>
   <string name="gles2RiceTextureEnhancement_title">Melhorar texturas</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Nenhum</string>
   <string name="gles2RiceTextureEnhancement_entryScale2x">Scale 2x</string>
