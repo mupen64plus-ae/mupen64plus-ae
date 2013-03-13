@@ -4,6 +4,9 @@
 - Added interface for Gameshark button
 - Added interface for Frame Advance function
 - Added input profile for N64 USB adapters
+- Added R4300 emulation preference (plugin settings)
+- Added screen refresh preference (video-rice settings)
+- Added Catalan translation
 - Fixed crash when audio enabled on some devices
 - Fixed crash when FPS enabled on some devices
 - Fixed regressions in gles2rice
