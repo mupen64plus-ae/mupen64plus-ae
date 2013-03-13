@@ -8,7 +8,7 @@
   <string name="menuItem_slotSave">Guarda l\'slot</string>
   <string name="menuItem_slotLoad">Carrega slot</string>
   <string name="menuItem_setSlot">Slot %1$d</string>
-  <string name="menuItem_fileSave">Guarda a fitxer...</string>
+  <string name="menuItem_fileSave">Guarda a fitxer…</string>
   <string name="menuItem_fileLoad">Carrega des de fitxer</string>
   <string name="menuItem_setSpeed">Velocitat de joc</string>
   <string name="menuItem_paks">\t\nController Paks</string>
@@ -38,8 +38,8 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Perfils</string>
   <string name="menuItem_default">Per defecte</string>
-  <string name="menuItem_load">Carregant...</string>
-  <string name="menuItem_save">Guardant...</string>
+  <string name="menuItem_load">Carregant…</string>
+  <string name="menuItem_save">Guardant…</string>
   <string name="menuItem_ouya">OUYA</string>
   <string name="menuItem_n64Adapter">Adaptador USB de N64</string>
   <string name="menuItem_ps3">PS3</string>
@@ -54,10 +54,10 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Regenerant base de dades de cheats ...</string>
-  <string name="toast_launchingEmulator">Carregant emulador...</string>
-  <string name="toast_loadingSession">Auto-resumint el joc...</string>
-  <string name="toast_savingSession">Auto-guardant el joc...</string>
+  <string name="toast_rebuildingCheats">Regenerant base de dades de cheats…</string>
+  <string name="toast_launchingEmulator">Carregant emulador…</string>
+  <string name="toast_loadingSession">Auto-resumint el joc…</string>
+  <string name="toast_savingSession">Auto-guardant el joc…</string>
   <string name="toast_loadingSlot">Carregant slot %1$d…</string>
   <string name="toast_savingSlot">Guardant slot %1$d…</string>
   <string name="toast_loadingFile">Carregant %1$s…</string>
@@ -257,16 +257,16 @@
   <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)⏎ <small>(GLES2 adaptat per a Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Àudio</string>
   <string name="pluginAudio_entryNone">Cap (àudio deshabilitat)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10⏎ <small>(Adaptació del Mupen64Plus per Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10⏎ <small>(Adaptació del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">\t\nEntrada</string>
   <string name="pluginInput_entryNone">Cap (dispositius d\'entrada deshabilitats)</string>
   <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Cap (RSP disabled)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10⏎ <small>(Adaptació a Android del Mupen64Plus per Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10⏎ <small>(Àudo deshabilitat, speed hack per Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10⏎ <small>(Adaptació a Android del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10⏎ <small>(Àudo deshabilitat, speed hack per Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Nucli d\'emulació</string>
-  <string name="pluginCore_entryV110">core, v1.10⏎ <small>(Adaptació a Android del Mupen64Plus per Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="pluginCore_entryV110">core, v1.10⏎ <small>(Adaptació a Android del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intèrpret pur</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intèrpret  a cache</string>
@@ -353,7 +353,7 @@
   <string name="playerMapPreference_button">Jugador %1$d⏎ %2$s</string>
   <string name="playerMapPreference_reminder">Avisam quan els jugadors no estan assignats</string>
   <!--Input Mapping-->
-  <string name="inputMapActivity_popupMessage">Prem un botó, tecla o joystick a assignar ... ⏎ ⏎ Assignacions actives:⏎ %1$s</string>
+  <string name="inputMapActivity_popupMessage">Prem un botó, tecla o joystick a assignar… ⏎ ⏎ Assignacions actives:⏎ %1$s</string>
   <string name="inputMapActivity_popupUnmap">Dessasignar</string>
   <string name="inputMapActivity_aPadXperiaPlay">Estic analògic controlat amb touchpad</string>
   <string name="inputMapActivity_cPadXperiaPlay">C-pad controlat amb el touchpad</string>
@@ -388,6 +388,6 @@
   <string name="inputMapActivity_simulateBack">Tecla de retorn</string>
   <string name="inputMapActivity_simulateMenu">Tecla de menú</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Prem un botó o tecla...</string>
+  <string name="diagnosticActivity_textKey_text">Prem un botó o tecla…</string>
   <string name="diagnosticActivity_textMotion_text">\t\nPantalla tàctil o joystick…</string>
 </resources>

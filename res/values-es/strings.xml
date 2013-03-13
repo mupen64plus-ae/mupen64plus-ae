@@ -257,16 +257,16 @@
   <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (port GLES2 de Rice Video para m64p v1.99.5 por Rice, Kris (Metricity))</string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Ninguno (audio deshabilitado)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (port a Android de Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Ninguno (dispositivos de entrada deshabilitados)</string>
   <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Ninguno (RSP deshabilitado)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sin procesamiento de audio, hack de velocidad por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (port a Android de Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sin procesamiento de audio, hack de velocidad por Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Núcleo de emulación</string>
-  <string name="pluginCore_entryV110">core, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_entryV110">core, v1.10 (port a Android de Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intérprete en caché</string>
@@ -351,7 +351,7 @@
   <string name="playerMapPreference_popupMessage">Jugador %1$d, presiona un botón o mueve el stick en tu mando…\n\nDispositivos actuales:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desasignar</string>
   <string name="playerMapPreference_button">Jugador %1$d\n\n%2$s</string>
-  <string name="playerMapPreference_reminder">Recordarme cuando los jugadores no estan asignados</string>
+  <string name="playerMapPreference_reminder">Recordarme cuando los jugadores no están asignados</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Presiona un botón, tecla o joystick a asignar…\n\nAsignaciones actuales:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Desasignar</string>
