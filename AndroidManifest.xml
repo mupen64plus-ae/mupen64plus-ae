@@ -3,7 +3,7 @@
     package="paulscode.android.mupen64plusae"
     android:installLocation="auto"
     android:versionCode="22"
-    android:versionName="2.1.2" >
+    android:versionName="2.1.2 (debug)" >
 
     <uses-feature android:glEsVersion="0x00020000" />
 
