@@ -659,7 +659,7 @@ public class UserPrefs
             {
                 try
                 {
-                    mutableSet.add( Integer.parseInt( s ) );
+                    mutableSet.add( Integer.valueOf( s ) );
                 }
                 catch( NumberFormatException ignored )
                 {
