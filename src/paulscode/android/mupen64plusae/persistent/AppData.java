@@ -27,7 +27,6 @@ import org.acra.ACRA;
 import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;

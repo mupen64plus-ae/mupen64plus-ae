@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.annotation.TargetApi;
 import android.text.TextUtils;
 import android.util.Log;
