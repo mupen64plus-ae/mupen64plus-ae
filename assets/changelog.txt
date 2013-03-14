@@ -10,6 +10,7 @@
 - Fixed crash when audio enabled on some devices
 - Fixed crash when FPS enabled on some devices
 - Fixed regressions in gles2rice
+- Compensated for analog bias in OUYA controllers
 [21:2.1.1]
 - Fixed crash with haptic feedback on d-pad diagonal
 - Fixed missing touch controls on ASUS Transformer
