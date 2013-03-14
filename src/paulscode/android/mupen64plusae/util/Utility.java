@@ -156,8 +156,7 @@ public class Utility
             Log.e( "Utility", "filename not specified in method 'getHeaderName'" );
             return null;
         }
-        else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase(
-                "zip" ) )
+        else if( filename.toLowerCase( Locale.US ).endsWith( ".zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
             File tmpFolder = new File( tempDir );
@@ -227,8 +226,7 @@ public class Utility
             Log.e( "Utility", "filename not specified in method 'getHeaderCRC'" );
             return null;
         }
-        else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase(
-                "zip" ) )
+        else if( filename.toLowerCase( Locale.US ).endsWith( ".zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
             File tmpFolder = new File( tempDir );

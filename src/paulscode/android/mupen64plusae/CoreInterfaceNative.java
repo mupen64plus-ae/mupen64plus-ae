@@ -203,7 +203,7 @@ public class CoreInterfaceNative extends CoreInterface
         String selectedGame = sUserPrefs.selectedGame;
         boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
         boolean isSelectedGameZipped = !isSelectedGameNull && selectedGame.length() >= 5
-                && selectedGame.toLowerCase(Locale.ENGLISH).endsWith(".zip");
+                && selectedGame.toLowerCase( Locale.US ).endsWith( ".zip" );
         
         if( sActivity == null )
             return null;
