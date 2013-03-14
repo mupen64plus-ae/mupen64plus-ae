@@ -100,11 +100,10 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_THROTTLE, AXIS_CLASS_STICK );
                 break;
         }
-        
-        if( OUYAInterface.IS_OUYA_HARDWARE )
+        // Check if the controller is OUYA, to compensate for the +X axis bias
+        if( device.getName().contains( "OUYA" ) )
         {
-            if( OUYAInterface.isOUYAController( device.getId() ) )
-                setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
+            setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
         }
     }
     

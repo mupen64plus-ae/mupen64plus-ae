@@ -210,10 +210,6 @@ public class AppData
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
-        // Initialize OuyaController interface if running on OUYA (needed for DeviceUtil.getAxisInfo())
-        if( OUYAInterface.IS_OUYA_HARDWARE )
-            OUYAInterface.initOUYAController( context );
-        
         // Record some info in the crash reporter
         ErrorReporter reporter = ACRA.getErrorReporter();
         reporter.putCustomData( "CPU Features", hardwareInfo.features );

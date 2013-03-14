@@ -74,21 +74,20 @@ public class OUYAInterface
     }
     
     /**
-     * Checks if the specified input device is an OUYA controller
+     * Returns the OUYA player number for the specified controller
      *
-     * @return true if the device is an OUYA controller
+     * @return zero-based player number, or -1 if device is not a controller assigned to a player
      */
-    public static boolean isOUYAController( int deviceId )
+    public static int getPlayerNumByDeviceId( int deviceId )
     {
-        // If OuyaController.getPlayerNumByDeviceId returns a value other than -1, then it is an OUYA controller
         try
         {
             Class<?> OuyaControllerClass = Class.forName( "tv.ouya.console.api.OuyaController" );
             
-            return !OuyaControllerClass.getMethod( "getPlayerNumByDeviceId", new Class[]{ int.class } )
-                    .invoke( null, new Object[]{ deviceId } ).toString().equals( "-1" );
+            return Integer.parseInt( OuyaControllerClass.getMethod( "getPlayerNumByDeviceId", new Class[]{ int.class } )
+                    .invoke( null, new Object[]{ deviceId } ).toString() );
         }
-        // If it fails, assume it is not an OUYA controller
+        // If it fails, assume it is not assigned to a player
         catch( ClassNotFoundException cnfe )
         {}
         catch( NoSuchMethodException nsme )
@@ -97,10 +96,12 @@ public class OUYAInterface
         {}
         catch( InvocationTargetException ite )
         {}
+        catch( NumberFormatException nfe )
+        {}
         // NPE will be thrown if running on OUYA and initOUYAController failed
         catch( NullPointerException npe)
         {}
-        return false;
+        return -1;
     }
     
     /**
