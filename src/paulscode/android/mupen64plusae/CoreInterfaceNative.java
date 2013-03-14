@@ -21,6 +21,7 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.Locale;
 
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -201,8 +202,8 @@ public class CoreInterfaceNative extends CoreInterface
     {
         String selectedGame = sUserPrefs.selectedGame;
         boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
-        boolean isSelectedGameZipped = !isSelectedGameNull && selectedGame.length() > 3
-                && selectedGame.substring( selectedGame.length() - 3, selectedGame.length() ).equalsIgnoreCase( "zip" );
+        boolean isSelectedGameZipped = !isSelectedGameNull && selectedGame.length() >= 5
+                && selectedGame.toLowerCase(Locale.ENGLISH).endsWith(".zip");
         
         if( sActivity == null )
             return null;
