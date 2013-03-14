@@ -35,6 +35,7 @@ import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -446,7 +447,7 @@ public class UserPrefs
         else if( navMode.equals( "standard" ) )
             isOuyaMode = false;
         else
-            isOuyaMode = appData.hardwareInfo.isOUYA;
+            isOuyaMode = OUYAInterface.IS_OUYA_HARDWARE;
         
         // Determine the touchscreen layout
         boolean isCustom = false;

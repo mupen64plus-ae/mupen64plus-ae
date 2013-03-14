@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
@@ -122,7 +123,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !mAppData.hardwareInfo.isXperiaPlay )
             prefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
         // Disable the touchscreen when running on OUYA
-        if( mAppData.hardwareInfo.isOUYA )
+        if( OUYAInterface.IS_OUYA_HARDWARE )
             prefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)

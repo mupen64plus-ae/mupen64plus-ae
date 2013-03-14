@@ -181,6 +181,14 @@ public class AxisProvider extends AbstractProvider
                             // Normalize to [0,1]
                             strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
                         }
+                        else if( axisClass == AxisMap.AXIS_CLASS_OUYA_LX_STICK )
+                        {
+                            // Remove bias in OUYA left x-axis (usually ~ .15, but occassionaly up to .33)
+                            if( strength > 0.3333f )
+                                strength = (strength - 0.3333f) / 0.6666f;
+                            else if( strength > 0 )
+                                strength = 0;
+                        }
                     }
                 }
             }
