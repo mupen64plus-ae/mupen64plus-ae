@@ -854,7 +854,6 @@ void ConvertYUV_16(CTexture *pTexture, const TxtrInfo &tinfo)
             pSrc = (uint16*)(tinfo.pPhysicalAddress);
 
         uint8 * pByteSrc = (uint8 *)pSrc;
-
         for (y = 0; y < tinfo.HeightToLoad; y++)
         {
             nFiddle = ( y&1 )? 0x4 : 0;
