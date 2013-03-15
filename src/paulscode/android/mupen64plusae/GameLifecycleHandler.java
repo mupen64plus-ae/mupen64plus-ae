@@ -36,6 +36,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -239,10 +240,15 @@ public class GameLifecycleHandler implements View.OnKeyListener
     {
         // TODO: Register multiplayer/gamepad vibrators
         
-        // By default, send Player 1 rumbles through phone vibrator
-        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
-        CoreInterface.registerVibrator( 1, vibrator );
-
+        Vibrator vibrator = null;
+        // Do not use vibrator if running on OUYA
+        if( !OUYAInterface.IS_OUYA_HARDWARE )
+        {
+            // By default, send Player 1 rumbles through phone vibrator
+            vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+            CoreInterface.registerVibrator( 1, vibrator );
+        }
+        
         // Create the touchpad controls, if applicable
         TouchController touchpadController = null;        
         if( mIsXperiaPlay )
