@@ -118,7 +118,9 @@ public class PeripheralController extends AbstractController implements
             // Update the registered vibrator for this player
             if( AppData.IS_JELLY_BEAN )
             {
-                CoreInterface.registerVibrator( mPlayerNumber, InputDevice.getDevice( hardwareId ).getVibrator() );
+                InputDevice device = InputDevice.getDevice( hardwareId );
+                if( device != null )
+                    CoreInterface.registerVibrator( mPlayerNumber, device.getVibrator() );
             }
             
             // Apply user changes to the controller state

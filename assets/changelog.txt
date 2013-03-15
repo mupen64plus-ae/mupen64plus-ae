@@ -1,3 +1,5 @@
+[23:2.1.3]
+- Fixed input-related crash affecting some Android 4.1 devices
 [22:2.1.2]
 - Added rumble support using phone vibrator (see in-game menu, Player 1 only)
 - Added rumble support for external controllers (all players, Jelly Bean only)
