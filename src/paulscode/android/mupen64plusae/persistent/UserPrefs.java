@@ -302,7 +302,8 @@ public class UserPrefs
     
     // Shared preferences default values
     public static final int DEFAULT_PAK_TYPE = CoreInterface.PAK_TYPE_MEMORY;
-    public static final String DEFAULT_INPUT_MAP_STRING = InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
+    public static final String DEFAULT_INPUT_MAP_STRING = OUYAInterface.IS_OUYA_HARDWARE ?
+            InputMap.DEFAULT_INPUT_MAP_STRING_OUYA : InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     // ... add more as needed
