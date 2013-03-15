@@ -40,6 +40,75 @@ public class OUYAInterface
     /** True if device is an OUYA */
     public static final boolean IS_OUYA_HARDWARE = isRunningOnOUYAHardware();
     
+    /** Code for the left trigger axis */
+    public static final int AXIS_L2 = getOuyaControllerStaticIntField( "AXIS_L2" );
+    
+    /** Code for the left joystick x axis */
+    public static final int AXIS_LS_X = getOuyaControllerStaticIntField( "AXIS_LS_X" );    
+    
+    /** Code for the left joystick y axis */
+    public static final int AXIS_LS_Y = getOuyaControllerStaticIntField( "AXIS_LS_Y" );    
+    
+    /** Code for the right trigger axis */
+    public static final int AXIS_R2 = getOuyaControllerStaticIntField( "AXIS_R2" );    
+    
+    /** Code for the right joystick x axis */
+    public static final int AXIS_RS_X = getOuyaControllerStaticIntField( "AXIS_RS_X" );    
+    
+    /** Code for the right joystick y axis */
+    public static final int AXIS_RS_Y = getOuyaControllerStaticIntField( "AXIS_RS_Y" );    
+    
+    /** Code for the A button */
+    public static final int BUTTON_A = getOuyaControllerStaticIntField( "BUTTON_A" );    
+    
+    /** Code for the D-pad down button */
+    public static final int BUTTON_DPAD_DOWN = getOuyaControllerStaticIntField( "BUTTON_DPAD_DOWN" );    
+    
+    /** Code for the D-pad left button */
+    public static final int BUTTON_DPAD_LEFT = getOuyaControllerStaticIntField( "BUTTON_DPAD_LEFT" );    
+    
+    /** Code for the D-pad right button */
+    public static final int BUTTON_DPAD_RIGHT = getOuyaControllerStaticIntField( "BUTTON_DPAD_RIGHT" );    
+    
+    /** Code for the D-pad up button */
+    public static final int BUTTON_DPAD_UP = getOuyaControllerStaticIntField( "BUTTON_DPAD_UP" );    
+    
+    /** Code for the left bumper button */
+    public static final int BUTTON_L1 = getOuyaControllerStaticIntField( "BUTTON_L1" );    
+    
+    /** Code for the left trigger button */
+    public static final int BUTTON_L2 = getOuyaControllerStaticIntField( "BUTTON_L2" );    
+    
+    /** Code for left joystick button */
+    public static final int BUTTON_L3 = getOuyaControllerStaticIntField( "BUTTON_L3" );    
+    
+    /** Code for a short press of the system button */
+    public static final int BUTTON_MENU = getOuyaControllerStaticIntField( "BUTTON_MENU" );    
+    
+    /** Code for the O button */
+    public static final int BUTTON_O = getOuyaControllerStaticIntField( "BUTTON_O" );    
+    
+    /** Code for the right bumper button */
+    public static final int BUTTON_R1 = getOuyaControllerStaticIntField( "BUTTON_R1" );    
+    
+    /**  Code for the right trigger button */
+    public static final int BUTTON_R2 = getOuyaControllerStaticIntField( "BUTTON_R2" );    
+    
+    /**  Code for right joystick button */
+    public static final int BUTTON_R3 = getOuyaControllerStaticIntField( "BUTTON_R3" );    
+    
+    /**  Code for the U button */
+    public static final int BUTTON_U = getOuyaControllerStaticIntField( "BUTTON_U" );    
+    
+    /**  Code for the Y button */
+    public static final int BUTTON_Y = getOuyaControllerStaticIntField( "BUTTON_Y" );
+    
+    /**  The maximum number of connected controllers */
+    public static final int MAX_CONTROLLERS = getOuyaControllerStaticIntField( "MAX_CONTROLLERS" );
+    
+    /**  The deadzone amount to use for the analog sticks */
+    public static final float STICK_DEADZONE = getOuyaControllerStaticFloatField( "STICK_DEADZONE" );    
+    
     /**
      * Checks if the app is running on OUYA hardware.
      *
@@ -128,5 +197,76 @@ public class OUYAInterface
         {}
         catch( InvocationTargetException ite )
         {}
+    }
+    
+    /**
+     * Checks whether or not the value of a static field in the OuyaController
+     * class is accessible.
+     *
+     * @return True if the field is accessible
+     */
+    public static boolean checkOuyaControllerStaticFieldAccessible( String fieldName )
+    {
+        try
+        {
+            Class.forName( "tv.ouya.console.api.OuyaController" ).getField( fieldName ).get( null );
+            return true;
+        }        
+        // If it fails, return -1 (the ODK jar probably isn't linked)
+        catch( ClassNotFoundException cnfe )
+        {}
+        catch( NoSuchFieldException nsme )
+        {}
+        catch( IllegalAccessException iae )
+        {}
+        return false;
+    }    
+    
+    /**
+     * Returns the value of a static int field of the OuyaController class.
+     * 
+     * NOTE: If the value -1 is significant, use this method in conjunction with
+     * checkOuyaControllerStaticFieldAccessible
+     *
+     * @return The field's value, or -1 if unable to access it
+     */
+    public static int getOuyaControllerStaticIntField( String fieldName )
+    {
+        try
+        {
+            return Class.forName( "tv.ouya.console.api.OuyaController" ).getField( fieldName ).getInt( null );
+        }        
+        // If it fails, return -1 (the ODK jar probably isn't linked)
+        catch( ClassNotFoundException cnfe )
+        {}
+        catch( NoSuchFieldException nsme )
+        {}
+        catch( IllegalAccessException iae )
+        {}
+        return -1;
+    }
+    
+    /**
+     * Returns the value of a static float field of the OuyaController class.
+     * 
+     * NOTE: If the value -1 is significant, use this method in conjunction with
+     * checkOuyaControllerStaticFieldAccessible
+     *
+     * @return The field's value, or -1 if unable to access it
+     */
+    public static float getOuyaControllerStaticFloatField( String fieldName )
+    {
+        try
+        {
+            return Class.forName( "tv.ouya.console.api.OuyaController" ).getField( fieldName ).getFloat( null );
+        }        
+        // If it fails, return -1 (the ODK jar probably isn't linked)
+        catch( ClassNotFoundException cnfe )
+        {}
+        catch( NoSuchFieldException nsme )
+        {}
+        catch( IllegalAccessException iae )
+        {}
+        return -1;
     }
 }
