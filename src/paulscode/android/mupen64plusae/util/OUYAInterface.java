@@ -212,7 +212,7 @@ public class OUYAInterface
             Class.forName( "tv.ouya.console.api.OuyaController" ).getField( fieldName ).get( null );
             return true;
         }        
-        // If it fails, return -1 (the ODK jar probably isn't linked)
+        // If it fails, return false (the ODK jar probably isn't linked)
         catch( ClassNotFoundException cnfe )
         {}
         catch( NoSuchFieldException nsme )
