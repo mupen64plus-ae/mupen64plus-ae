@@ -22,6 +22,7 @@ public class AxisMap extends SerializableMap
     public static final int AXIS_CLASS_OUYA_LX_STICK = 101;
     
     private static final int SIGNATURE_HASH_XBOX360 = 449832952;
+    private static final int SIGNATURE_HASH_XBOX360_WIRELESS = -412618953;
     private static final int SIGNATURE_HASH_PS3 = -528816963;
     private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
@@ -71,6 +72,7 @@ public class AxisMap extends SerializableMap
         switch( mSignature.hashCode() )
         {
             case SIGNATURE_HASH_XBOX360:
+            case SIGNATURE_HASH_XBOX360_WIRELESS:
                 // Resting value is -1 on the analog triggers; fix that
                 setClass( MotionEvent.AXIS_Z, AXIS_CLASS_TRIGGER );
                 setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_TRIGGER );
@@ -130,6 +132,8 @@ public class AxisMap extends SerializableMap
         {
             case SIGNATURE_HASH_XBOX360:
                 return "Xbox 360 compatible";
+            case SIGNATURE_HASH_XBOX360_WIRELESS:
+                return "Xbox 360 wireless";
             case SIGNATURE_HASH_PS3:
                 return "PS3 compatible";
             case SIGNATURE_HASH_NYKO_PLAYPAD:
