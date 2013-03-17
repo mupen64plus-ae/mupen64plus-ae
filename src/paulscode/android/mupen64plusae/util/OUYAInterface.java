@@ -24,14 +24,19 @@ package paulscode.android.mupen64plusae.util;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.R;
 import android.content.Context;
+import android.os.Bundle;
 import java.io.InputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The OUYAInterface class consolidates all interactions with the OUYA SDK (a.k.a. ODK)
@@ -298,9 +303,95 @@ public class OUYAInterface
     }
     
     /**
-     * Decrypts a purchase response string from the server, revealing the encoded product id
+     * Sends a request for name and price information about a list of products
      * 
-     * @return Id of the purchased product, or -1 if there was a problem
+     */
+    public static void requestProducts( List<String> productIdentifiers, CancelIgnoringOuyaResponseListener listener )
+    {
+        final CancelIgnoringOuyaResponseListener listenerCallback = listener;
+        try
+        {
+            Class<?> PurchasableClass = Class.forName( "tv.ouya.console.api.Purchasable" );
+            List<Object> purchasableList = new ArrayList<Object>();
+            Object purchasableObject;
+            for( String identifier : productIdentifiers )
+            {
+                purchasableObject = ( PurchasableClass.getConstructor(  new Class[] { String.class } )
+                        .newInstance( new Object[] { identifier } ) );
+                purchasableList.add( purchasableObject );
+            }
+            
+            Object productListListener = Proxy.newProxyInstance(
+                    Class.forName( "tv.ouya.console.api.CancelIgnoringOuyaResponseListener" ).getClassLoader(),
+                    new Class[] { Class.forName( "tv.ouya.console.api.OuyaResponseListener" ) },
+                    new java.lang.reflect.InvocationHandler()
+            {
+                @Override
+                public Object invoke( Object proxy, Method method, Object[] args )
+                {
+                    String method_name = method.getName();
+                    try
+                    {
+                        if( method_name.equals( "onSuccess" ) && args.length == 1 && args[0] instanceof ArrayList )
+                        {
+                            Class<?> ProductClass = Class.forName( "tv.ouya.console.api.Product" );
+                            ArrayList<Product> products = new ArrayList<Product>();
+                            for( Object productObject : (ArrayList<?>) args[0] )
+                            {
+                                String productIdentifier = ProductClass.getMethod( "getIdentifier", new Class[0] )
+                                        .invoke( productObject, new Object[0] ).toString();
+                                String productName = ProductClass.getMethod( "getName", new Class[0] )
+                                        .invoke( productObject, new Object[0] ).toString();
+                                int productCost = Integer.parseInt( ProductClass.getMethod( "getPriceInCents", new Class[0] )
+                                        .invoke( productObject, new Object[0] ).toString() );
+                                products.add( new Product( productIdentifier, productName, productCost ) );
+                            }
+                            listenerCallback.onSuccess( products );
+                        }
+                        else if( method_name.equals( "onFailure" ) && args.length == 3 && args[2] instanceof Bundle )
+                        {
+                            listenerCallback.onFailure( Integer.parseInt( args[0].toString() ), args[1].toString(), (Bundle) args[2] );
+                        }
+                    }
+                    // If it fails, notify the listener by calling onFailure
+                    catch( ClassNotFoundException cnfe )
+                    {}
+                    catch( NoSuchMethodException nsme )
+                    {}
+                    catch( IllegalAccessException iae )
+                    {}
+                    catch( InvocationTargetException ite )
+                    {}
+                    catch( NumberFormatException nfe )
+                    {}
+                    listenerCallback.onFailure( -1, "Error during Proxy invoke in method 'requestProducts'", null );
+                    return null;
+                }
+            });
+                
+            Class<?> OuyaFacadeClass = Class.forName( "tv.ouya.console.api.OuyaFacade" );
+            OuyaFacadeClass.getMethod( "requestProductList", new Class[] { List.class, Class.forName( "tv.ouya.console.api.OuyaResponseListener" ) } )
+                    .invoke( sOuyaFacadeObject, new Object[] { purchasableList, productListListener } );
+        }
+        // If it fails, assume this is not an OUYA
+        catch( ClassNotFoundException cnfe )
+        {}
+        catch( NoSuchMethodException nsme )
+        {}
+        catch( IllegalAccessException iae )
+        {}
+        catch( InvocationTargetException ite )
+        {}
+        catch( InstantiationException ie )
+        {}
+        catch( IllegalArgumentException ire )
+        {}
+    }
+    
+    /**
+     * Decrypts a purchase response string from the server to get the purchase id
+     * 
+     * @return Id of the purchase, or -1 if there was a problem
      */
     public static int decryptPurchaseResponse( String response )
     {
@@ -354,5 +445,46 @@ public class OUYAInterface
         catch( InvalidKeySpecException ikse )
         {}
         return null;
+    }
+    
+    /**
+     * The product class provides a container for a purchasable product's identifier, name, and price.
+     * 
+     */
+    public static class Product
+    {
+        private String identifier;
+        private String name;
+        private int priceInCents;
+        
+        public Product( String identifier, String name, int priceInCents )
+        {
+            this.identifier = identifier;
+            this.name = name;
+            this.priceInCents = priceInCents;
+        }
+        
+        public String getIdentifier()
+        {
+            return identifier;
+        }
+        public String getName()
+        {
+            return name;
+        }
+        public int getPriceInCents()
+        {
+            return priceInCents;
+        }
+    }
+    
+    /**
+     * Interface for handling the server response after requesting product information.
+     * 
+     */
+    public static interface CancelIgnoringOuyaResponseListener
+    {
+        public void onSuccess( ArrayList<Product> products );
+        public void onFailure( int errorCode, String errorMessage, Bundle bundle );
     }
 }
