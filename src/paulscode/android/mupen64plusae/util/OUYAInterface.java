@@ -22,8 +22,16 @@
 package paulscode.android.mupen64plusae.util;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.R;
 import android.content.Context;
+import java.io.InputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.security.spec.InvalidKeySpecException;
 
 /**
  * The OUYAInterface class consolidates all interactions with the OUYA SDK (a.k.a. ODK)
@@ -36,6 +44,17 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class OUYAInterface
 {
+    /** PaulsCode OUYA developer UUID */
+    private static final String DEVELOPER_ID = "68d84579-c1e2-4418-8976-cda2692133f1";
+    
+    /** Mupen64Plus OUYA public key */
+    private static PublicKey sPublicKey = null;
+    
+    /** OuyaFacade Instance */
+    private static Object sOuyaFacadeObject = null;
+    
+    /** Context in which the OuyaFacade was instantiated */
+    private static Context sContext = null;
     
     /** True if device is an OUYA */
     public static final boolean IS_OUYA_HARDWARE = isRunningOnOUYAHardware();
@@ -110,7 +129,7 @@ public class OUYAInterface
     public static final float STICK_DEADZONE = getOuyaControllerStaticFloatField( "STICK_DEADZONE" );    
     
     /**
-     * Checks if the app is running on OUYA hardware.
+     * Checks if the app is running on OUYA hardware, and if so instantiates the OuyaFacade.
      *
      * @return true if the app is running on OUYA hardware
      */
@@ -124,11 +143,11 @@ public class OUYAInterface
         {
             Class<?> OuyaFacadeClass = Class.forName( "tv.ouya.console.api.OuyaFacade" );
             
-            Object ouyaFacadeObj = ( OuyaFacadeClass.getMethod(  "getInstance", new Class[0] )
+            sOuyaFacadeObject = ( OuyaFacadeClass.getMethod(  "getInstance", new Class[0] )
                     .invoke( null, new Object[0] ) );
             
             return OuyaFacadeClass.getMethod( "isRunningOnOUYAHardware", new Class[0] )
-                    .invoke( ouyaFacadeObj, new Object[0] ).toString().equals( "true" );
+                    .invoke( sOuyaFacadeObject, new Object[0] ).toString().equals( "true" );
         }
         // If it fails, assume this is not an OUYA
         catch( ClassNotFoundException cnfe )
@@ -174,21 +193,29 @@ public class OUYAInterface
     }
     
     /**
-     * Initializes the OuyaController interface
+     * Initializes the OuyaFacade and OuyaController interfaces, saves a handle to the context,
+     * and enerates the reads the public key
      *
      */
-    public static void initOUYAController( Context context )
+    public static void init( Context context )
     {
          // NOTE: All OUYAController interface methods should handle NullPointerException, which will
          // be thrown if this method fails when the app is running on OUYA
         try
         {
+            Class<?> OuyaFacadeClass = Class.forName( "tv.ouya.console.api.OuyaFacade" );
+            
+            OuyaFacadeClass.getMethod( "init", new Class[]{ Context.class, String.class } )
+                    .invoke( sOuyaFacadeObject, new Object[]{ context, DEVELOPER_ID } );
+            
             Class<?> OuyaControllerClass = Class.forName( "tv.ouya.console.api.OuyaController" );
             
             OuyaControllerClass.getMethod( "init", new Class[]{ Context.class } )
                     .invoke( null, new Object[]{ context } );
+            sContext = context;
+            sPublicKey = readPublicKey();
         }
-        // Nothing further needed if it fails (controller can not be initialized)
+        // Nothing further needed if it fails (OUYA can not be initialized)
         catch( ClassNotFoundException cnfe )
         {}
         catch( NoSuchMethodException nsme )
@@ -268,5 +295,64 @@ public class OUYAInterface
         catch( IllegalAccessException iae )
         {}
         return -1;
+    }
+    
+    /**
+     * Decrypts a purchase response string from the server, revealing the encoded product id
+     * 
+     * @return Id of the purchased product, or -1 if there was a problem
+     */
+    public static int decryptPurchaseResponse( String response )
+    {
+        // Fail if the public key was not successfully read
+        if( sPublicKey == null )
+            return -1;
+        try
+        {
+            Class<?> ouyaEncryptionHelperClass = Class.forName( "tv.ouya.console.api.OuyaEncryptionHelper" );
+            Object ouyaEncryptionHelperObject = ouyaEncryptionHelperClass.newInstance();
+            
+            return Integer.parseInt( ouyaEncryptionHelperClass.getMethod( "decryptPurchaseResponse", new Class[]{ String.class, PublicKey.class } )
+                    .invoke( ouyaEncryptionHelperObject, new Object[] { response, sPublicKey } ).toString() );
+        }
+        // If it fails, return -1 (the ODK jar probably isn't linked)
+        catch( ClassNotFoundException cnfe )
+        {}
+        catch( NoSuchMethodException nsme )
+        {}
+        catch( IllegalAccessException iae )
+        {}
+        catch( InvocationTargetException ite )
+        {}
+        catch( InstantiationException ie )
+        {}
+        return -1;
+    }
+    
+    /**
+     * Reads the OUYA public key from ouya_key.der.
+     * 
+     * @return PublicKey instance, or null if there was a problem
+     */
+    private static PublicKey readPublicKey()
+    {
+        try
+        {
+            InputStream inputStream = sContext.getResources().openRawResource( R.raw.ouya_key );
+            byte[] applicationKey = new byte[inputStream.available()];
+            inputStream.read( applicationKey );
+            inputStream.close();
+            return KeyFactory.getInstance( "RSA" ).generatePublic( new X509EncodedKeySpec( applicationKey ) );
+        }
+        // If there was a problem, simply return null
+        catch( IOException ioe )
+        {}
+        catch( NullPointerException npe )
+        {}
+        catch( NoSuchAlgorithmException nsae )
+        {}
+        catch( InvalidKeySpecException ikse )
+        {}
+        return null;
     }
 }

@@ -175,6 +175,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         if( mUserPrefs.isOuyaMode )
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
+        
+        // Initialize the OUYA interface if running on OUYA
+        if( OUYAInterface.IS_OUYA_HARDWARE )
+            OUYAInterface.init( this );
     }
     
     @Override
