@@ -53,7 +53,7 @@ public class OUYAInterface
     /** OuyaFacade Instance */
     private static Object sOuyaFacadeObject = null;
     
-    /** Context in which the OuyaFacade was instantiated */
+    /** Context from which the OuyaFacade was initialized */
     private static Context sContext = null;
     
     /** True if device is an OUYA */
@@ -194,7 +194,7 @@ public class OUYAInterface
     
     /**
      * Initializes the OuyaFacade and OuyaController interfaces, saves a handle to the context,
-     * and enerates the reads the public key
+     * and reads the public key
      *
      */
     public static void init( Context context )
