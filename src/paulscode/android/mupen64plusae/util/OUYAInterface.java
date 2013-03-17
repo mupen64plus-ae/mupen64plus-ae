@@ -347,10 +347,12 @@ public class OUYAInterface
                                 products.add( new Product( productIdentifier, productName, productCost ) );
                             }
                             listenerCallback.onSuccess( products );
+                            return null;
                         }
                         else if( method_name.equals( "onFailure" ) && args.length == 3 && args[2] instanceof Bundle )
                         {
                             listenerCallback.onFailure( Integer.parseInt( args[0].toString() ), args[1].toString(), (Bundle) args[2] );
+                            return null;
                         }
                     }
                     // If it fails, notify the listener by calling onFailure
