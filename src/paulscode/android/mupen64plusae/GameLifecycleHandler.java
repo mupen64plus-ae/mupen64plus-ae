@@ -179,7 +179,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
                     mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenStyle, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden,
+            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden, mUserPrefs.touchscreenScale,
                     mUserPrefs.videoFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
         

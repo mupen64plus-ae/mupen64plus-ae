@@ -37,11 +37,13 @@ import android.widget.TextView;
 public class SeekBarPreference extends DialogPreference implements OnSeekBarChangeListener
 {
     private static final int DEFAULT_VALUE = 50;
+    private static final int DEFAULT_MIN = 0;
     private static final int DEFAULT_MAX = 100;
     private static final int DEFAULT_STEP = 10;
     private static final String DEFAULT_UNITS = "%";
     
     private int mValue = DEFAULT_VALUE;
+    private int mMinValue = DEFAULT_MIN;
     private int mMaxValue = DEFAULT_MAX;
     private int mStepSize = DEFAULT_STEP;
     private String mUnits = DEFAULT_UNITS;
@@ -61,6 +63,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         
         // Get the attributes from the XML file, if provided
         TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.SeekBarPreference );
+        setMinValue( a.getInteger( R.styleable.SeekBarPreference_minimumValue, DEFAULT_MIN ) );
         setMaxValue( a.getInteger( R.styleable.SeekBarPreference_maximumValue, DEFAULT_MAX ) );
         setStepSize( a.getInteger( R.styleable.SeekBarPreference_stepSize, DEFAULT_STEP ) );
         setUnits( a.getString( R.styleable.SeekBarPreference_units ) );
@@ -90,6 +93,16 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         mValue = validate( value );
         if( shouldPersist() )
             persistInt( mValue );
+    }
+
+    /**
+     * Sets the minimum value this SeekBarPreference may have.
+     *
+     * @param minValue The minimum value for this SeekBarPreference.
+     */
+    public void setMinValue( int minValue )
+    {
+        mMinValue = minValue;
     }
 
     /**
@@ -128,6 +141,15 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     public int getValue()
     {
         return mValue;
+    }
+
+    /**
+     * Gets the currently set minimum value.
+     * @return The currently set minimum value for this SeekBarPreference.
+     */
+    public int getMinValue()
+    {
+        return mMinValue;
     }
 
     /**
@@ -197,9 +219,9 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         mSeekBar = (SeekBar) view.findViewById( R.id.seekbar );
         
         // Initialize and refresh the widgets
-        mSeekBar.setMax( mMaxValue );
+        mSeekBar.setMax( mMaxValue - mMinValue);
         mSeekBar.setOnSeekBarChangeListener( this );
-        mSeekBar.setProgress( mValue );
+        mSeekBar.setProgress( mValue - mMinValue );
         mTextView.setText( getValueString( mValue ) );
     }
     
@@ -212,7 +234,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         {
             int value = mSeekBar.getProgress();
             if( callChangeListener( value ) )
-                setValue( value );
+                setValue( value + mMinValue );
         }
     }
     
@@ -238,15 +260,15 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         final SavedIntegerState myState = (SavedIntegerState) state;
         super.onRestoreInstanceState( myState.getSuperState() );
         if( mSeekBar != null )
-            mSeekBar.setProgress( myState.mValue );
+            mSeekBar.setProgress( myState.mValue - mMinValue );
     }
     
     @Override
     public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
     {
-        int value = validate( progress );
-        if( value != progress )
-            seekBar.setProgress( value );
+        int value = validate( progress + mMinValue );
+        if( ( value - mMinValue ) != progress )
+            seekBar.setProgress( value - mMinValue );
         mTextView.setText( getValueString( value ) );
     }
     
@@ -268,6 +290,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         // Address issues when mStepSize is not an integral factor of mMaxValue
         // e.g. mMaxValue = 100, mStepSize = 9, progress = 100 --> newValue = 99 (should be 100)
         // e.g. mMaxValue = 100, mStepSize = 6, progress = 99 --> newValue = 102 (should be 100)
+        if( value == mMinValue || newValue < mMinValue )
+            newValue = mMinValue;
         if( value == mMaxValue || newValue > mMaxValue )
             newValue = mMaxValue;
         

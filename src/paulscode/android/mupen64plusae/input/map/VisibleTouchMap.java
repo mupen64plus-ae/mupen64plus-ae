@@ -145,8 +145,9 @@ public class VisibleTouchMap extends TouchMap
      * @param w The width of the digitizer, in pixels.
      * @param h The height of the digitizer, in pixels.
      * @param metrics Metrics about the display (for use in scaling).
+     * @param scalingFactor Factor applied to the final calculated scale.
      */
-    public void resize( int w, int h, DisplayMetrics metrics )
+    public void resize( int w, int h, DisplayMetrics metrics, float scalingFactor )
     {
         scale = 1.0f;
         
@@ -187,6 +188,8 @@ public class VisibleTouchMap extends TouchMap
                     scale *= inchScale;
             }
         }
+        // Apply the scaling factor (derived from user prefs)
+        scale *= scalingFactor;
         
         resize( w, h );
     }

@@ -154,6 +154,9 @@ public class UserPrefs
     /** The folder name of the selected touchscreen style. */
     public final String touchscreenStyle;
     
+    /** Factor applied to the final calculated visible touchmap scale. */
+    public final float touchscreenScale;
+    
     /** True if a custom touchscreen is provided. */
     public final boolean isTouchscreenCustom;
     
@@ -503,6 +506,8 @@ public class UserPrefs
             folder = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
         }
         touchscreenStyle = folder;
+        
+        touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f; 
         
         // Determine which players are "plugged in"
         isPlugged1 = isInputEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;

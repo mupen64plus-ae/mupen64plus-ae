@@ -34,6 +34,7 @@ import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * A class for mapping digitizer coordinates to N64 buttons/axes.
