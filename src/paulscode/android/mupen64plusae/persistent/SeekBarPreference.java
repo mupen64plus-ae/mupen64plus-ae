@@ -126,7 +126,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     }
 
     /**
-     * Sets the type of units this SeekBarPreference uses (ie. %, etc)
+     * Sets the type of units this SeekBarPreference uses (e.g. "%").
      * @param units The unit type for this SeekBarPreference to use.
      */
     public void setUnits( String units )
@@ -180,8 +180,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     }
 
     /**
-     * Gets the currently set value as a String and replaces it with the given value
-     * @param value The value to replace the existing one with.
+     * Gets the value as a string with units appended.
+     * @param value The value to use in the string.
      * @return The value as a String.
      */
     public String getValueString( int value )
@@ -232,9 +232,9 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         
         if( positiveResult )
         {
-            int value = mSeekBar.getProgress();
+            int value = mSeekBar.getProgress() + mMinValue;
             if( callChangeListener( value ) )
-                setValue( value + mMinValue );
+                setValue( value );
         }
     }
     
@@ -243,7 +243,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     {
         final SavedIntegerState myState = new SavedIntegerState( super.onSaveInstanceState() );
         if( mSeekBar != null )
-            myState.mValue = mSeekBar.getProgress();
+            myState.mValue = mSeekBar.getProgress() + mMinValue;
         return myState;
     }
     
@@ -267,7 +267,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
     public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
     {
         int value = validate( progress + mMinValue );
-        if( ( value - mMinValue ) != progress )
+        if( value != ( progress + mMinValue ) )
             seekBar.setProgress( value - mMinValue );
         mTextView.setText( getValueString( value ) );
     }
@@ -288,8 +288,8 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
         int newValue = Math.round( value / (float) mStepSize ) * mStepSize;
         
         // Address issues when mStepSize is not an integral factor of mMaxValue
-        // e.g. mMaxValue = 100, mStepSize = 9, progress = 100 --> newValue = 99 (should be 100)
-        // e.g. mMaxValue = 100, mStepSize = 6, progress = 99 --> newValue = 102 (should be 100)
+        // e.g. mMaxValue = 100, mMinValue = 0, mStepSize = 9, progress = 100 --> newValue = 99 (should be 100)
+        // e.g. mMaxValue = 100, mMinValue = 0, mStepSize = 6, progress = 99 --> newValue = 102 (should be 100)
         if( value == mMinValue || newValue < mMinValue )
             newValue = mMinValue;
         if( value == mMaxValue || newValue > mMaxValue )
