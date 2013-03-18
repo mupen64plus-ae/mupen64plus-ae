@@ -24,6 +24,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.PixelFormat;
 import android.media.AudioTrack;
@@ -126,9 +127,12 @@ public class CoreInterface
         syncConfigFiles( sUserPrefs, sAppData );
     }
     
+    @TargetApi( 11 )
     public static void registerVibrator( int player, Vibrator vibrator )
     {
-        if( player > 0 && player < 5 )
+        boolean isUseable = AppData.IS_HONEYCOMB ? vibrator.hasVibrator() : true;
+
+        if( isUseable && player > 0 && player < 5 )
         {
             sVibrators[player - 1] = vibrator;
         }
