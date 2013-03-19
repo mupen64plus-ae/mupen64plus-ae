@@ -33,32 +33,6 @@
 
     <string name="localeOverride_default" translatable="false"></string>
 
-    <!-- Touchscreen Layouts -->
-    <string-array name="touchscreenLayout_entries" translatable="false">
-        <item>@string/touchscreenLayout_entryAnalog</item>
-        <item>@string/touchscreenLayout_entryDigital</item>
-        <item>@string/touchscreenLayout_entryAll</item>
-        <item>@string/touchscreenLayout_entryCustom</item>
-    </string-array>
-    <string-array name="touchscreenLayout_values" translatable="false">
-        <item>Mupen64Plus-AE-Analog</item>
-        <item>Mupen64Plus-AE-Digital</item>
-        <item>Mupen64Plus-AE-All</item>
-        <item>Custom</item>
-    </string-array>
-    <string-array name="touchscreenStyle_entries" translatable="false">
-        <item>@string/touchscreenStyle_entryOutline</item>
-        <item>@string/touchscreenStyle_entryShaded</item>
-    </string-array>
-    <string-array name="touchscreenStyle_values" translatable="false">
-        <item>Mupen64Plus-AE-Outline</item>
-        <item>Mupen64Plus-AE-Shaded</item>
-    </string-array>
-    
-    <string name="touchscreenLayout_default" translatable="false">Mupen64Plus-AE-Analog</string>
-    <string name="touchscreenStyle_default" translatable="false">Mupen64Plus-AE-Outline</string>
-    <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
-
     <!-- Touchscreen Refresh List -->
     <string-array name="touchscreenRefresh_entries" translatable="false">
         <item>@string/touchscreenRefresh_entryNever</item>
@@ -122,6 +96,35 @@
     </string-array>
 
     <string name="touchscreenAutoHoldables_default" translatable="false">13~12~5</string>
+
+    <!-- Touchscreen Button Styles -->
+    <string-array name="touchscreenStyle_entries" translatable="false">
+        <item>@string/touchscreenStyle_entryOutline</item>
+        <item>@string/touchscreenStyle_entryShaded</item>
+    </string-array>
+    <string-array name="touchscreenStyle_values" translatable="false">
+        <item>Mupen64Plus-AE-Outline</item>
+        <item>Mupen64Plus-AE-Shaded</item>
+    </string-array>
+
+    <string name="touchscreenStyle_default" translatable="false">Mupen64Plus-AE-Outline</string>
+    
+    <!-- Touchscreen Layouts -->
+    <string-array name="touchscreenLayout_entries" translatable="false">
+        <item>@string/touchscreenLayout_entryAnalog</item>
+        <item>@string/touchscreenLayout_entryDigital</item>
+        <item>@string/touchscreenLayout_entryAll</item>
+        <item>@string/touchscreenLayout_entryCustom</item>
+    </string-array>
+    <string-array name="touchscreenLayout_values" translatable="false">
+        <item>Mupen64Plus-AE-Analog</item>
+        <item>Mupen64Plus-AE-Digital</item>
+        <item>Mupen64Plus-AE-All</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string name="touchscreenLayout_default" translatable="false">Mupen64Plus-AE-Analog</string>
+    <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
 
     <!-- Xperia Play Touchpad Layouts -->
     <string-array name="touchpadLayout_entries" translatable="false">

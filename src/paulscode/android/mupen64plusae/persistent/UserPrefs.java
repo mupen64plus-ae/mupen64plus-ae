@@ -148,14 +148,14 @@ public class UserPrefs
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
     
-    /** The folder name of the selected touchscreen layout. */
-    public final String touchscreenLayout;
+    /** Factor applied to the final calculated visible touchmap scale. */
+    public final float touchscreenScale;
     
     /** The folder name of the selected touchscreen style. */
     public final String touchscreenStyle;
     
-    /** Factor applied to the final calculated visible touchmap scale. */
-    public final float touchscreenScale;
+    /** The folder name of the selected touchscreen layout. */
+    public final String touchscreenLayout;
     
     /** True if a custom touchscreen is provided. */
     public final boolean isTouchscreenCustom;
