@@ -466,11 +466,14 @@ public class UserPrefs
             }
             else
             {
-                // Substitute the "Touch" skin if analog stick is never redrawn
-                if( layout.equals( "Mupen64Plus-AE-Analog" ) && touchscreenRefresh == 0 )
-                    layout = "Mupen64Plus-AE-Touch";
-                else if( layout.equals( "Mupen64Plus-AE-All" ) && touchscreenRefresh == 0 )
-                	layout = "Mupen64Plus-AE-All-Touch";
+                // Use the "No-stick" skin if analog input is shown but stick ("hat") is not animated
+                if( layout.equals( "Mupen64Plus-AE-Analog" ) || layout.equals( "Mupen64Plus-AE-All" ) )
+                {
+                    if( touchscreenRefresh == 0 )
+                        layout += "-Nostick";
+                    else
+                        layout += "-Stick";
+                }
                 
                 // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
                 if( context != null && context instanceof Activity )
@@ -485,6 +488,10 @@ public class UserPrefs
                         videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
                     {
                         layout += "-Tablet";
+                    }
+                    else
+                    {
+                        layout += "-Phone";
                     }
                 }
                 
