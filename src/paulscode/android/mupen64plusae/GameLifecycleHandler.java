@@ -178,9 +178,9 @@ public class GameLifecycleHandler implements View.OnKeyListener
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenTransparency );
+                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenStyle, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden,
+            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden, mUserPrefs.touchscreenScale,
                     mUserPrefs.videoFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
         

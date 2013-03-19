@@ -131,7 +131,32 @@
                                 mupen64:maximumValue="100"
                                 mupen64:stepSize="10"
                                 mupen64:units="%" />
+                            <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+                                android:defaultValue="100"
+                                android:dependency="touchscreenEnabled"
+                                android:key="touchscreenScale"
+                                android:title="@string/touchscreenScale_title"
+                                mupen64:maximumValue="200"
+                                mupen64:minimumValue="50"
+                                mupen64:stepSize="1"
+                                mupen64:units="%" />
 
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenStyle_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenStyle_entries"
+                                android:entryValues="@array/touchscreenStyle_values"
+                                android:key="touchscreenStyle"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenStyle_title" />
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenHeight_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenHeight_entries"
+                                android:entryValues="@array/touchscreenHeight_values"
+                                android:key="touchscreenHeight"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenHeight_title" />
                             <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                                 android:defaultValue="@string/touchscreenLayout_default"
                                 android:dependency="touchscreenEnabled"
@@ -140,14 +165,6 @@
                                 android:key="touchscreenLayout"
                                 android:summary="@string/selectedValue"
                                 android:title="@string/touchscreenLayout_title" />
-                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                                android:defaultValue="@string/touchscreenSize_default"
-                                android:dependency="touchscreenEnabled"
-                                android:entries="@array/touchscreenSize_entries"
-                                android:entryValues="@array/touchscreenSize_values"
-                                android:key="touchscreenSize"
-                                android:summary="@string/selectedValue"
-                                android:title="@string/touchscreenSize_title" />
 
                             <paulscode.android.mupen64plusae.persistent.PathPreference
                                 android:defaultValue="@string/pathCustomTouchscreen_default"

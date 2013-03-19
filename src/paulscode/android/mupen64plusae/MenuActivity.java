@@ -82,10 +82,18 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_AUTO_HOLDABLES = "touchscreenAutoHoldables";
-    private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
+    private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
+    private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
+    private static final String TOUCHSCREEN_LAYOUT = "touchscreenLayout";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
+    private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String PLUGIN_VIDEO = "pluginVideo";
+    private static final String PLUGIN_INPUT = "pluginInput";
+    private static final String PLUGIN_AUDIO = "pluginAudio";
+    private static final String PLUGIN_RSP = "pluginRsp";
+    private static final String PLUGIN_CORE = "pluginCore";
+    private static final String R4300_EMULATOR = "r4300Emulator";
     private static final String VIDEO_POSITION = "videoPosition";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String NAVIGATION_MODE = "navigationMode";
@@ -129,13 +137,18 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
         
-        // Ensure that selected plugin names are valid
+        // Ensure that selected plugin names and other list preferences are valid
         Resources res = getResources();
-        PrefUtil.validateListPreference( res, prefs, "pluginInput", R.string.pluginInput_default, R.array.pluginInput_values );
-        PrefUtil.validateListPreference( res, prefs, "pluginVideo", R.string.pluginVideo_default, R.array.pluginVideo_values );
-        PrefUtil.validateListPreference( res, prefs, "pluginAudio", R.string.pluginAudio_default, R.array.pluginAudio_values );
-        PrefUtil.validateListPreference( res, prefs, "pluginRsp", R.string.pluginRsp_default, R.array.pluginRsp_values );
-        PrefUtil.validateListPreference( res, prefs, "pluginCore", R.string.pluginCore_default, R.array.pluginCore_values );
+        PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_STYLE, R.string.touchscreenStyle_default, R.array.touchscreenStyle_values );
+        PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_HEIGHT, R.string.touchscreenHeight_default, R.array.touchscreenHeight_values );
+        PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_LAYOUT, R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
+        PrefUtil.validateListPreference( res, prefs, TOUCHPAD_LAYOUT, R.string.touchpadLayout_default, R.array.touchpadLayout_values );
+        PrefUtil.validateListPreference( res, prefs, PLUGIN_INPUT, R.string.pluginInput_default, R.array.pluginInput_values );
+        PrefUtil.validateListPreference( res, prefs, PLUGIN_VIDEO, R.string.pluginVideo_default, R.array.pluginVideo_values );
+        PrefUtil.validateListPreference( res, prefs, PLUGIN_AUDIO, R.string.pluginAudio_default, R.array.pluginAudio_values );
+        PrefUtil.validateListPreference( res, prefs, PLUGIN_RSP, R.string.pluginRsp_default, R.array.pluginRsp_values );
+        PrefUtil.validateListPreference( res, prefs, PLUGIN_CORE, R.string.pluginCore_default, R.array.pluginCore_values );
+        PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
@@ -254,7 +267,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Enable the custom touchscreen prefs under certain conditions
         PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled
                 && user.isTouchscreenCustom );
-        PrefUtil.enablePreference( this, TOUCHSCREEN_SIZE, user.isTouchscreenEnabled
+        PrefUtil.enablePreference( this, TOUCHSCREEN_STYLE, user.isTouchscreenEnabled
+                && !user.isTouchscreenCustom );
+        PrefUtil.enablePreference( this, TOUCHSCREEN_HEIGHT, user.isTouchscreenEnabled
                 && !user.isTouchscreenCustom );
         
         // Update the summary text in a particular way for ACRA user info

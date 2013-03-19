@@ -175,11 +175,6 @@
   <string name="touchscreenLayout_entryAnalog">Analog (autor \"roymustang16\")</string>
   <string name="touchscreenLayout_entryDigital">Digital (autor \"roymustang16\")</string>
   <string name="touchscreenLayout_entryCustom">Korisnički (pogledati http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Veličina</string>
-  <string name="touchscreenSize_entryTiny">Sitno</string>
-  <string name="touchscreenSize_entrySmall">Malo</string>
-  <string name="touchscreenSize_entryNormal">Normalno</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Raspored dodirne površine</string>
   <string name="touchpadLayout_entryDefault">Lijeva strana: Analogna kontrola; Desna strana: C tipke</string>
   <string name="touchpadLayout_entryReverse">Lijeva strana: C tipke; Desna strana: Analogna kontrola</string>

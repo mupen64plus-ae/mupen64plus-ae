@@ -189,11 +189,6 @@
   <string name="touchscreenLayout_entryAnalog">Analogique (par roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Numérique (par roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Personnalisé (voir http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Taille de l\'écran</string>
-  <string name="touchscreenSize_entryTiny">Très petite</string>
-  <string name="touchscreenSize_entrySmall">Petite</string>
-  <string name="touchscreenSize_entryNormal">Normale</string>
-  <string name="touchscreenSize_entryTablet">Tablette</string>
   <string name="touchpadLayout_title">Disposition du pavé tactile</string>
   <string name="touchpadLayout_entryDefault">Pavé de gauche : stick analogique - Pavé de droite : boutons C</string>
   <string name="touchpadLayout_entryReverse">Pavé de gauche : boutons C - Pavé de droite : stick analogique</string>

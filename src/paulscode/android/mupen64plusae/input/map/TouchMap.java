@@ -33,6 +33,7 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.text.TextUtils;
 
 /**
  * A class for mapping digitizer coordinates to N64 buttons/axes.
@@ -62,6 +63,18 @@ public class TouchMap
     
     /** Total number of N64 (pseudo-)buttons. */
     public static final int NUM_N64_PSEUDOBUTTONS = OFFSET_EXTRAS + 4;
+    
+    /** Folder containing the images (if provided). */
+    protected String imageFolder;
+    
+    /** Target width in pixels (if provided). */
+    protected int targetPixels = 0;
+    
+    /** Maximum width in inches (if provided). */
+    protected float maxInches = 0;
+    
+    /** Scaling factor to apply to images. */
+    protected float scale = 1.0f;
     
     /** Button images. */
     protected ArrayList<Image> buttonImages;
@@ -178,7 +191,9 @@ public class TouchMap
         {
             int cX = (int) ( w * ( (float) buttonX.get( i ) / 100f ) );
             int cY = (int) ( h * ( (float) buttonY.get( i ) / 100f ) );
+            buttonImages.get( i ).setScale( scale );
             buttonImages.get( i ).fitCenter( cX, cY, w, h );
+            buttonMasks.get( i ).setScale( scale );
             buttonMasks.get( i ).fitCenter( cX, cY, w, h );
         }
         
@@ -187,6 +202,7 @@ public class TouchMap
         {
             int cX = (int) ( w * ( analogBackX / 100f ) );
             int cY = (int) ( h * ( analogBackY / 100f ) );
+            analogBackImage.setScale(  scale );
             analogBackImage.fitCenter( cX, cY, w, h );
         }
     }
@@ -207,16 +223,16 @@ public class TouchMap
             if( mask != null )
             {
                 int left = mask.x;
-                int right = left + mask.width;
+                int right = left + (int) ( mask.width * mask.scale );
                 int bottom = mask.y;
-                int top = bottom + mask.height;
+                int top = bottom + (int) ( mask.height * mask.scale );
                 
                 // See if the touch falls in the vicinity of the button (conservative test)
                 if( xLocation >= left && xLocation < right && yLocation >= bottom
                         && yLocation < top )
                 {
                     // Get the mask color at this location
-                    int c = mask.image.getPixel( xLocation - mask.x, yLocation - mask.y );
+                    int c = mask.image.getPixel( (int) ( ( xLocation - mask.x ) / scale ), (int) ( ( yLocation - mask.y ) / scale ) );
                     
                     // Ignore the alpha component if any
                     int rgb = c & 0x00ffffff;
@@ -267,10 +283,10 @@ public class TouchMap
             return new Point( 0, 0 );
         
         // Distance from center along x-axis
-        int dX = xLocation - ( analogBackImage.x + analogBackImage.hWidth );
+        int dX = xLocation - ( analogBackImage.x + (int) ( analogBackImage.hWidth * scale ) );
         
         // Distance from center along y-axis
-        int dY = yLocation - ( analogBackImage.y + analogBackImage.hHeight );
+        int dY = yLocation - ( analogBackImage.y + (int) ( analogBackImage.hHeight * scale ) );
         
         return new Point( dX, dY );
     }
@@ -284,7 +300,7 @@ public class TouchMap
      */
     public Point getConstrainedDisplacement( int dX, int dY )
     {
-        return Utility.constrainToOctagon( dX, dY, analogMaximum );
+        return Utility.constrainToOctagon( dX, dY, (int) ( analogMaximum * scale ) );
     }
     
     /**
@@ -295,7 +311,7 @@ public class TouchMap
      */
     public float getAnalogStrength( float displacement )
     {
-        float p = ( displacement - analogDeadzone ) / ( analogMaximum - analogDeadzone );
+        float p = ( displacement - ( analogDeadzone * scale ) ) / ( ( analogMaximum * scale ) - ( analogDeadzone * scale ) );
         return Utility.clamp( p, 0.0f, 1.0f );
     }
     
@@ -307,8 +323,8 @@ public class TouchMap
      */
     public boolean isInCaptureRange( float displacement )
     {
-        return ( displacement >= analogDeadzone )
-                && ( displacement < analogMaximum + analogPadding );
+        return ( displacement >= ( analogDeadzone * scale ) )
+                && ( displacement < ( analogMaximum * scale ) + ( analogPadding * scale ) );
     }
     
     /**
@@ -323,6 +339,18 @@ public class TouchMap
         
         // Load the configuration file (pad.ini)
         ConfigFile pad_ini = new ConfigFile( directory + "/pad.ini" );
+        
+        // If a style wasn't chosen, check if an image folder is listed in pad.ini
+        if( TextUtils.isEmpty( imageFolder ) )
+            imageFolder = pad_ini.get( "INFO", "images" );
+        // If no image folder was provided, use the layout directory
+        if( TextUtils.isEmpty( imageFolder ) )
+            imageFolder = directory;
+        else
+            imageFolder = directory + "/../../images/" + imageFolder;  // TODO: Get rid of the ..'s
+        
+        targetPixels = SafeMethods.toInt( pad_ini.get( "INFO", "targetPixels" ), 0 );
+        maxInches = SafeMethods.toFloat( pad_ini.get( "INFO", "maxInches" ), 0 );
         
         // Look up the mask colors
         loadMaskColors( pad_ini );
@@ -396,9 +424,9 @@ public class TouchMap
             ConfigSection section, String info )
     {
         if( info.contains( "analog" ) )
-            loadAnalog( directory, filename, section, info.contains( "hat" ) );
+            loadAnalog( imageFolder, filename, section, info.contains( "hat" ) );
         else if( filename.contains( "BUTTON" ) )
-            loadButton( directory, filename, section );
+            loadButton( imageFolder, filename, section );
     }
     
     /**

@@ -39,6 +39,7 @@ public class Image
     public final int hWidth;
     public final int hHeight;
     
+    public float scale = 1.0f;
     public int x = 0;
     public int y = 0;
     public Rect drawRect = null;
@@ -100,8 +101,21 @@ public class Image
             height = clone.height;
             hWidth = clone.hWidth;
             hHeight = clone.hHeight;
+            scale = clone.scale;
         }
         drawRect = new Rect();
+    }
+    
+    /**
+     * Sets the scaling factor of the image.
+     * 
+     * @param scale
+     *            Factor to scale the image by.
+     */
+    public void setScale( float scale )
+    {
+        this.scale = scale;
+        setPos( x, y );  // Apply the new scaling factor
     }
     
     /**
@@ -118,7 +132,7 @@ public class Image
         this.y = y;
         
         if( drawRect != null )
-            drawRect.set( x, y, x + width, y + height );
+            drawRect.set( x, y, x + (int) ( width * scale ), y + (int) ( height * scale ) );
         if( drawable != null )
             drawable.setBounds( drawRect );
     }
@@ -138,24 +152,24 @@ public class Image
      */
     public void fitCenter( int centerX, int centerY, int screenW, int screenH )
     {
-        int cx = centerX;
-        int cy = centerY;
+        float cx = centerX;
+        float cy = centerY;
         
-        if( cx < hWidth )
-            cx = hWidth;
-        if( cy < hHeight )
-            cy = hHeight;
-        if( cx + hWidth > screenW )
-            cx = screenW - hWidth;
-        if( cy + hHeight > screenH )
-            cy = screenH - hHeight;
+        if( cx < hWidth * scale )
+            cx = hWidth * scale;
+        if( cy < hHeight * scale )
+            cy = hHeight * scale;
+        if( cx + ( hWidth * scale ) > screenW )
+            cx = screenW - ( hWidth * scale );
+        if( cy + ( hHeight * scale ) > screenH )
+            cy = screenH - ( hHeight * scale );
         
-        x = cx - hWidth;
-        y = cy - hHeight;
+        x = (int) ( cx - ( hWidth * scale ) );
+        y = (int) ( cy - ( hHeight * scale ) );
         
         if( drawRect != null )
         {
-            drawRect.set( x, y, x + width, y + height );
+            drawRect.set( x, y, x + (int) ( width * scale ), y + (int) ( height * scale ) );
             if( drawable != null )
                 drawable.setBounds( drawRect );
         }
@@ -180,24 +194,24 @@ public class Image
      */
     public void fitCenter( int centerX, int centerY, int rectX, int rectY, int rectW, int rectH )
     {
-        int cx = centerX;
-        int cy = centerY;
+        float cx = centerX;
+        float cy = centerY;
         
-        if( cx < rectX + hWidth )
-            cx = rectX + hWidth;
-        if( cy < rectY + hHeight )
-            cy = rectY + hHeight;
-        if( cx + hWidth > rectX + rectW )
-            cx = rectX + rectW - hWidth;
-        if( cy + hHeight > rectY + rectH )
-            cy = rectY + rectH - hHeight;
+        if( cx < rectX + ( hWidth * scale ) )
+            cx = rectX + ( hWidth * scale );
+        if( cy < rectY + ( hHeight * scale ) )
+            cy = rectY + ( hHeight * scale );
+        if( cx + ( hWidth * scale ) > rectX + rectW )
+            cx = rectX + rectW - ( hWidth * scale );
+        if( cy + ( hHeight * scale ) > rectY + rectH )
+            cy = rectY + rectH - ( hHeight * scale );
         
-        x = cx - hWidth;
-        y = cy - hHeight;
+        x = (int) ( cx - ( hWidth * scale ) );
+        y = (int) ( cy - ( hHeight * scale ) );
         
         if( drawRect != null )
         {
-            drawRect.set( x, y, x + width, y + height );
+            drawRect.set( x, y, x + (int) ( width * scale ), y + (int) ( height * scale ) );
             if( drawable != null )
                 drawable.setBounds( drawRect );
         }
@@ -221,9 +235,9 @@ public class Image
      * @param alpha
      *            alpha value.
      */
-    public void setAlpha(int alpha) 
+    public void setAlpha( int alpha ) 
     {
         if( drawable != null )
-            drawable.setAlpha(alpha);
+            drawable.setAlpha( alpha );
     }
 }

@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.input.map.VisibleTouchMap;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -34,18 +35,20 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     private boolean mFpsEnabled = false;
     private int mHatRefreshPeriod = 0;
     private int mHatRefreshCount = 0;
+    private float mScalingFactor = 1.0f;
     
     public GameOverlay( Context context, AttributeSet attribs )
     {
         super( context, attribs );
     }
     
-    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, int fpsRefreshPeriod, int hatRefreshPeriod )
+    public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, float scalingFactor, int fpsRefreshPeriod, int hatRefreshPeriod )
     {
         mTouchMap = touchMap;
         mDrawingEnabled = drawingEnabled;
         mFpsEnabled = fpsRefreshPeriod > 0;
         mHatRefreshPeriod = hatRefreshPeriod;
+        mScalingFactor = scalingFactor;
         
         CoreInterface.setOnFpsChangedListener( this, fpsRefreshPeriod );
     }
@@ -94,7 +97,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     {
         // Recompute skin layout geometry
         if( mTouchMap != null )
-            mTouchMap.resize( w, h );
+            mTouchMap.resize( w, h, Utility.getDisplayMetrics( this ), mScalingFactor );
         super.onSizeChanged( w, h, oldw, oldh );
     }
     

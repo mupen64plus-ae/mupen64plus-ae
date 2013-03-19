@@ -34,14 +34,16 @@ import org.apache.commons.lang.WordUtils;
 import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
-import paulscode.android.mupen64plusae.input.map.PlayerMap;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
+import paulscode.android.mupen64plusae.input.map.PlayerMap;import paulscode.android.mupen64plusae.util.OUYAInterface;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 
 /**
@@ -146,7 +148,13 @@ public class UserPrefs
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
     
-    /** The filename of the selected touchscreen layout. */
+    /** Factor applied to the final calculated visible touchmap scale. */
+    public final float touchscreenScale;
+    
+    /** The folder name of the selected touchscreen style. */
+    public final String touchscreenStyle;
+    
+    /** The folder name of the selected touchscreen layout. */
     public final String touchscreenLayout;
     
     /** True if a custom touchscreen is provided. */
@@ -463,12 +471,44 @@ public class UserPrefs
             }
             else
             {
-                // Substitute the "Touch" skin if analog stick is never redrawn
-                if( layout.equals( "Mupen64Plus-AE-Analog" ) && touchscreenRefresh == 0 )
-                    layout = "Mupen64Plus-AE-Touch";
+                // Use the "No-stick" skin if analog input is shown but stick ("hat") is not animated
+                if( layout.equals( "Mupen64Plus-AE-Analog" ) || layout.equals( "Mupen64Plus-AE-All" ) )
+                {
+                    if( touchscreenRefresh == 0 )
+                        layout += "-Nostick";
+                    else
+                        layout += "-Stick";
+                }
                 
-                folder = appData.touchscreenLayoutsDir + layout
-                        + mPreferences.getString( "touchscreenSize", "" );
+                String height = mPreferences.getString( "touchscreenHeight", "" );
+                if( TextUtils.isEmpty( height ) )
+                {
+                    // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
+                    if( context != null && context instanceof Activity )
+                    {
+                        DisplayMetrics metrics = new DisplayMetrics();
+                        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
+                        float screenWidthInches = (float) metrics.widthPixels / (float) metrics.xdpi;
+                        float screenHeightInches = (float) metrics.heightPixels / (float) metrics.ydpi;
+                        float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
+                        if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE ||
+                            videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                            videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
+                        {
+                            layout += "-Tablet";
+            }
+                        else
+                        {
+                            layout += "-Phone";
+        }
+                    }
+                }
+                else
+                {
+                    layout += height;
+                }
+                
+                folder = appData.touchscreenLayoutsDir + layout;
             }
         }
         else if( isFpsEnabled )
@@ -478,6 +518,15 @@ public class UserPrefs
         }
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
+        
+        // Determine the touchscreen style
+        folder = "";
+        if( inputPlugin.enabled && isTouchscreenEnabled && !isCustom ) {
+            folder = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
+        }
+        touchscreenStyle = folder;
+        
+        touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f; 
         
         // Determine which players are "plugged in"
         isPlugged1 = isInputEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;

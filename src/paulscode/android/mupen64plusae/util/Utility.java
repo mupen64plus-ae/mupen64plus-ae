@@ -35,19 +35,23 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import paulscode.android.mupen64plusae.CoreInterfaceNative;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.View;
 
 /**
  * Utility class which collects a bunch of commonly used methods into one class.
  */
 public class Utility
 {
+    public static final float MINIMUM_TABLET_SIZE = 6.5f;
     /**
      * Clamps a value to the limit defined by min and max.
      * 
@@ -560,7 +564,27 @@ public class Utility
         
         return newFile;
     }
-
+    
+    /**
+     * Returns display metrics for the specified view.
+     * 
+     * @param v An instance of View (must be the child of an Activity).
+     * 
+     * @return DisplayMetrics instance, or null if there was a problem.
+     */
+    public static DisplayMetrics getDisplayMetrics( View view )
+    {
+        if( view == null )
+            return null;
+        
+        Context context = view.getContext();
+        if( context == null || !( context instanceof Activity ) )
+            return null;
+        DisplayMetrics metrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        return metrics;
+    }
+    
     /**
      * @author Kevin Kowalewski
      * @see <a href="http://stackoverflow.com/questions/1101380/determine-if-running-on-a-rooted-device">
