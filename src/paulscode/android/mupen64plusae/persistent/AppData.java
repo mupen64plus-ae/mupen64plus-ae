@@ -21,18 +21,21 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -209,8 +212,15 @@ public class AppData
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
+        // Get the contents of the libraries directory
+        ArrayList<CharSequence> names = new ArrayList<CharSequence>();
+        ArrayList<String> paths = new ArrayList<String>();
+        FileUtil.populate( new File( libsDir ), false, false, true, names, paths );
+        String libnames = TextUtils.join( "\n", names );
+
         // Record some info in the crash reporter
         ErrorReporter reporter = ACRA.getErrorReporter();
+        reportMultilineText( reporter, "Libraries", libnames );
         reporter.putCustomData( "CPU Features", hardwareInfo.features );
         reporter.putCustomData( "CPU Hardware", hardwareInfo.hardware );
         reporter.putCustomData( "CPU Processor", hardwareInfo.processor );
