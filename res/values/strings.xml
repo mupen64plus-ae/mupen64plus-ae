@@ -213,6 +213,11 @@
     <string name="touchscreenStyle_entryOutline">Outlines</string>
     <string name="touchscreenStyle_entryShaded">Shaded</string>
     
+    <string name="touchscreenHeight_title">Button vertical spacing</string>
+    <string name="touchscreenHeight_entryAuto">Auto</string>
+    <string name="touchscreenHeight_entryPhone">Phone</string>
+    <string name="touchscreenHeight_entryTablet">Tablet</string>
+    
     <string name="touchscreenLayout_title">Button layout</string>
     <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
     <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>

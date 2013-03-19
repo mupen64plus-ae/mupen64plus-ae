@@ -150,6 +150,14 @@
                                 android:summary="@string/selectedValue"
                                 android:title="@string/touchscreenStyle_title" />
                             <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenHeight_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenHeight_entries"
+                                android:entryValues="@array/touchscreenHeight_values"
+                                android:key="touchscreenHeight"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenHeight_title" />
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                                 android:defaultValue="@string/touchscreenLayout_default"
                                 android:dependency="touchscreenEnabled"
                                 android:entries="@array/touchscreenLayout_entries"

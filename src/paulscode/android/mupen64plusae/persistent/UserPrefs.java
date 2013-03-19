@@ -475,24 +475,32 @@ public class UserPrefs
                         layout += "-Stick";
                 }
                 
-                // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
-                if( context != null && context instanceof Activity )
+                String height = mPreferences.getString( "touchscreenHeight", "" );
+                if( TextUtils.isEmpty( height ) )
                 {
-                    DisplayMetrics metrics = new DisplayMetrics();
-                    ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
-                    float screenWidthInches = (float) metrics.widthPixels / (float) metrics.xdpi;
-                    float screenHeightInches = (float) metrics.heightPixels / (float) metrics.ydpi;
-                    float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
-                    if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE ||
-                        videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
-                        videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
+                    // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
+                    if( context != null && context instanceof Activity )
                     {
-                        layout += "-Tablet";
+                        DisplayMetrics metrics = new DisplayMetrics();
+                        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
+                        float screenWidthInches = (float) metrics.widthPixels / (float) metrics.xdpi;
+                        float screenHeightInches = (float) metrics.heightPixels / (float) metrics.ydpi;
+                        float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
+                        if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE ||
+                            videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                            videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
+                        {
+                            layout += "-Tablet";
+                        }
+                        else
+                        {
+                            layout += "-Phone";
+                        }
                     }
-                    else
-                    {
-                        layout += "-Phone";
-                    }
+                }
+                else
+                {
+                    layout += height;
                 }
                 
                 folder = appData.touchscreenLayoutsDir + layout;
