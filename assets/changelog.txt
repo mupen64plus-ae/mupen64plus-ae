@@ -1,3 +1,14 @@
+[24:2.2.0]
+- Added Hungarian (Magyar) translation
+- Major update to touchscreen skins framework
+- Added alternate button style (colored, filled)
+- Buttons auto-scale according to device size (overridable)
+- Buttons auto-layout according to phone/tablet (overridable)
+- Buttons are highlighted when auto-held
+- Reduced the installed size of the app
+- Fixed loss of rumble when using hard-keys on some Jelly Bean devices
+- Fixed analog controls for official wireless Xbox 360 controller (D-pad is unfixable)
+- Updated some OUYA-related internals
 [23:2.1.3]
 - Fixed input-related crash affecting some Android 4.1 devices
 - Customized default button map when running on OUYA
