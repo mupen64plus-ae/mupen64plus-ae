@@ -57,9 +57,6 @@ public class VisibleTouchMap extends TouchMap
     /** Y-coordinate of the FPS text centroid, in percent. */
     private int mFpsTextY;
     
-    /** The number of frames over which to compute FPS. */
-    private int mFpsRecalcPeriod;
-    
     /** The current FPS value. */
     private int mFpsValue;
     
@@ -125,7 +122,6 @@ public class VisibleTouchMap extends TouchMap
         mFpsFrame = null;
         mFpsFrameX = mFpsFrameY = 0;
         mFpsTextX = mFpsTextY = 50;
-        mFpsRecalcPeriod = 15;
         mFpsValue = 0;
         mFpsDigits.clear();
         for( int i = 0; i < mNumerals.length; i++ )
@@ -513,15 +509,8 @@ public class VisibleTouchMap extends TouchMap
         mFpsTextX = SafeMethods.toInt( section.get( "numx" ), 50 );
         mFpsTextY = SafeMethods.toInt( section.get( "numy" ), 50 );
         
-        // Refresh rate (in frames.. integer greater than 1)
-        mFpsRecalcPeriod = SafeMethods.toInt( section.get( "rate" ), 15 );
-        
         // Minimum factor the FPS indicator can be scaled by
         mFpsMinScale = SafeMethods.toFloat( section.get( "minPixels" ), 0 ) / (float) mFpsFrame.width;
-        
-        // Need at least 2 frames to calculate FPS
-        if( mFpsRecalcPeriod < 2 )
-            mFpsRecalcPeriod = 2;
         
         // Numeral font
         String fpsFont = section.get( "font" );
