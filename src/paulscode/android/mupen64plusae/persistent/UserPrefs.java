@@ -488,8 +488,7 @@ public class UserPrefs
                     }
                 }
                 
-                folder = appData.touchscreenLayoutsDir + layout
-                        + mPreferences.getString( "touchscreenSize", "" );                
+                folder = appData.touchscreenLayoutsDir + layout;
             }
         }
         else if( isFpsEnabled )
