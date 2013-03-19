@@ -128,13 +128,17 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
         
-        // Ensure that selected plugin names are valid
+        // Ensure that selected plugin names and other list preferences are valid
         Resources res = getResources();
+        PrefUtil.validateListPreference( res, prefs, "touchscreenStyle", R.string.touchscreenStyle_default, R.array.touchscreenStyle_values );
+        PrefUtil.validateListPreference( res, prefs, "touchscreenLayout", R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
+        PrefUtil.validateListPreference( res, prefs, "touchpadLayout", R.string.touchpadLayout_default, R.array.touchpadLayout_values );
         PrefUtil.validateListPreference( res, prefs, "pluginInput", R.string.pluginInput_default, R.array.pluginInput_values );
         PrefUtil.validateListPreference( res, prefs, "pluginVideo", R.string.pluginVideo_default, R.array.pluginVideo_values );
         PrefUtil.validateListPreference( res, prefs, "pluginAudio", R.string.pluginAudio_default, R.array.pluginAudio_values );
         PrefUtil.validateListPreference( res, prefs, "pluginRsp", R.string.pluginRsp_default, R.array.pluginRsp_values );
         PrefUtil.validateListPreference( res, prefs, "pluginCore", R.string.pluginCore_default, R.array.pluginCore_values );
+        PrefUtil.validateListPreference( res, prefs, "r4300Emulator", R.string.r4300Emulator_default, R.array.r4300Emulator_values );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
