@@ -81,7 +81,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_AUTO_HOLDABLES = "touchscreenAutoHoldables";
-    private static final String TOUCHSCREEN_SIZE = "touchscreenSize";
+    private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
+    private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String PLUGIN_VIDEO = "pluginVideo";
@@ -253,7 +254,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Enable the custom touchscreen prefs under certain conditions
         PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled
                 && user.isTouchscreenCustom );
-        PrefUtil.enablePreference( this, TOUCHSCREEN_SIZE, user.isTouchscreenEnabled
+        PrefUtil.enablePreference( this, TOUCHSCREEN_STYLE, user.isTouchscreenEnabled
+                && !user.isTouchscreenCustom );
+        PrefUtil.enablePreference( this, TOUCHSCREEN_HEIGHT, user.isTouchscreenEnabled
                 && !user.isTouchscreenCustom );
         
         // Update the summary text in a particular way for ACRA user info
