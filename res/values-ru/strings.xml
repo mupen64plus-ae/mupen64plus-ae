@@ -166,6 +166,7 @@
   <string name="touchscreenRefresh_entryNever">Никогда</string>
   <string name="touchscreenRefresh_entryOccasionally">Изредка</string>
   <string name="touchscreenRefresh_entryFrequently">Часто</string>
+  <string name="touchscreenHeight_entryTablet">Планшетный</string>
   <string name="touchscreenLayout_title">Тип экранных кнопок</string>
   <string name="touchscreenLayout_entryAnalog">Аналоговый (от roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Цифровой (от roymustang16)</string>

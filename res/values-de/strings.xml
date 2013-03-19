@@ -185,6 +185,7 @@
   <string name="touchscreenRefresh_entryNever">Nie</string>
   <string name="touchscreenRefresh_entryOccasionally">Gelegentlich</string>
   <string name="touchscreenRefresh_entryFrequently">Häufig</string>
+  <string name="touchscreenHeight_entryTablet">Tablet</string>
   <string name="touchscreenLayout_title">Touchscreen-Layout</string>
   <string name="touchscreenLayout_entryAnalog">Analog (von roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (von roymustang16)</string>
@@ -231,6 +232,14 @@
   <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
   <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
   <string name="gles2RiceScreenUpdate_title">Aktualisierung des Bildes</string>
+  <string name="gles2RiceScreenUpdate_entryRomDefault">ROM Standart</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI origin Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">CI Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Erste CI Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Erstes primitive Draw</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Vor Screen Clear</string>
+  <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Nach Screen Clear</string>
   <string name="gles2RiceTextureEnhancement_title">Texturen Hochskallieren / Verbessern</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Keine</string>
   <string name="gles2RiceTextureEnhancement_entryScale2x">Skaliere 2x</string>

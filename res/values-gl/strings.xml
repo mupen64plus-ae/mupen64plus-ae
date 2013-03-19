@@ -162,6 +162,7 @@
   <string name="touchscreenRefresh_entryNever">Nunca</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
   <string name="touchscreenRefresh_entryFrequently">Habitualmente</string>
+  <string name="touchscreenHeight_entryTablet">Tablet</string>
   <string name="touchscreenLayout_title">Disposición da pantalla táctil</string>
   <string name="touchscreenLayout_entryAnalog">Analóxico (por roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Dixital (por roymustang16)</string>

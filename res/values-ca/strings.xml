@@ -185,15 +185,11 @@
   <string name="touchscreenRefresh_entryNever">Mai</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalment</string>
   <string name="touchscreenRefresh_entryFrequently">Freqüentment</string>
+  <string name="touchscreenHeight_entryTablet">Tablet</string>
   <string name="touchscreenLayout_title">Disposició de botons en pantalla</string>
   <string name="touchscreenLayout_entryAnalog">Analògic (per roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (per roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Personalitzat (visita http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Grandària de la pantalla</string>
-  <string name="touchscreenSize_entryTiny">Molt petita</string>
-  <string name="touchscreenSize_entrySmall">Petita</string>
-  <string name="touchscreenSize_entryNormal">Normal</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Disposició de botons de touchpad</string>
   <string name="touchpadLayout_entryDefault">Pad esquerre: Control analògic; Pad dret: Botons C</string>
   <string name="touchpadLayout_entryReverse">Pad esquerre: Botons C; Pad dret: Control analògic</string>

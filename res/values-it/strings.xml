@@ -11,14 +11,27 @@
   <string name="menuItem_fileSave">Salva a file…</string>
   <string name="menuItem_fileLoad">Carica da file…</string>
   <string name="menuItem_setSpeed">Velocità gioco</string>
+  <string name="menuItem_paks">Pak controller</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Giocatore 1: Vuoto</string>
+  <string name="menuItem_pak1_mem">Giocatore 1: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Giocatore 1: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Giocatore 2: Vuoto</string>
+  <string name="menuItem_pak2_mem">Giocatore 2: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Giocatore 2: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Giocatore 3: Vuoto</string>
+  <string name="menuItem_pak3_mem">Giocatore 3: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Giocatore 3: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Giocatore 4: Vuoto</string>
+  <string name="menuItem_pak4_mem">Giocatore 4: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Giocatore 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Cambia Metodo di input</string>
   <string name="menuItem_exit">Esci</string>
@@ -28,6 +41,7 @@
   <string name="menuItem_load">Carica…</string>
   <string name="menuItem_save">Salva…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">Adattatore USB N64</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
@@ -171,6 +185,7 @@
   <string name="touchscreenRefresh_entryNever">Mai</string>
   <string name="touchscreenRefresh_entryOccasionally">Occasionalmente</string>
   <string name="touchscreenRefresh_entryFrequently">Frequentemente</string>
+  <string name="touchscreenHeight_entryTablet">Tablet</string>
   <string name="touchscreenLayout_title">Layout touchscreen</string>
   <string name="touchscreenLayout_entryAnalog">Analogico (da roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digitale (da roymustang 16)</string>
@@ -216,6 +231,15 @@
   <string name="gles2RiceMipmapping_entryNearest">Più vicino</string>
   <string name="gles2RiceMipmapping_entryBilinear">Bilineare</string>
   <string name="gles2RiceMipmapping_entryTrilinear">Trilineare</string>
+  <string name="gles2RiceScreenUpdate_title">Metodo di aggiornamento schermo</string>
+  <string name="gles2RiceScreenUpdate_entryRomDefault">Default della rom</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">Aggiornamento VI origin</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">Cambiamento VI origin</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">Cambio CI</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Primo cambio CI</string>
+  <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Primo disegno primitivo</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Prima della pulizia schermo</string>
+  <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Dopo disegno schermo</string>
   <string name="gles2RiceTextureEnhancement_title">Aumento risoluzione/miglioramento texture</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Nessuno</string>
   <string name="gles2RiceTextureEnhancement_entryScale2x">Scala 2x</string>
@@ -241,6 +265,7 @@
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Port android di Mupen64Plus da Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Input</string>
   <string name="pluginInput_entryNone">Nessuno (input disabilitato)</string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Processore di segnale della realtà (RSP)</string>
   <string name="pluginRsp_entryNone">Nessuno (RSP disabilitato)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10 (port Android di Mupen64Plus da Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
