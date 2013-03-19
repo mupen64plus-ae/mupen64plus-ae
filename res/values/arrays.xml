@@ -59,22 +59,6 @@
     <string name="touchscreenStyle_default" translatable="false">Mupen64Plus-AE-Outline</string>
     <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
 
-    <!-- Touchscreen Sizes -->
-    <string-array name="touchscreenSize_entries" translatable="false">
-        <item>@string/touchscreenSize_entryTiny</item>
-        <item>@string/touchscreenSize_entrySmall</item>
-        <item>@string/touchscreenSize_entryNormal</item>
-        <item>@string/touchscreenSize_entryTablet</item>
-    </string-array>
-    <string-array name="touchscreenSize_values" translatable="false">
-        <item>-Tiny</item>
-        <item>-Small</item>
-        <item></item> <!-- Intentionally empty -->
-        <item>-Tablet</item>
-    </string-array>
-
-    <string name="touchscreenSize_default" translatable="false"></string>
-
     <!-- Touchscreen Refresh List -->
     <string-array name="touchscreenRefresh_entries" translatable="false">
         <item>@string/touchscreenRefresh_entryNever</item>

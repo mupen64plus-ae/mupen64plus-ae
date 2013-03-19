@@ -174,11 +174,6 @@
   <string name="touchscreenLayout_entryAnalog">アナログ (roymustang16によって)</string>
   <string name="touchscreenLayout_entryDigital">デジタル (roymustang16によって)</string>
   <string name="touchscreenLayout_entryCustom">カスタム (ご覧ください http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">画面サイズ</string>
-  <string name="touchscreenSize_entryTiny">小さな</string>
-  <string name="touchscreenSize_entrySmall">小</string>
-  <string name="touchscreenSize_entryNormal">デフォル</string>
-  <string name="touchscreenSize_entryTablet">タブレット</string>
   <string name="touchpadLayout_title">タッチパッド·レイアウト</string>
   <string name="touchpadLayout_entryDefault">左パッド： アナログ制御; 右パッド： Cボタン</string>
   <string name="touchpadLayout_entryReverse">左パッド： Cボタ; 右パッド: アナログ制御</string>

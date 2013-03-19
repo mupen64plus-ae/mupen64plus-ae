@@ -171,11 +171,6 @@
   <string name="touchscreenLayout_entryAnalog">Analógica (por roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (por roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Personalizado (véase http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Tamaño de la pantalla</string>
-  <string name="touchscreenSize_entryTiny">Diminuta</string>
-  <string name="touchscreenSize_entrySmall">Pequeña</string>
-  <string name="touchscreenSize_entryNormal">Normal</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Disposición de botones en touchpad</string>
   <string name="touchpadLayout_entryDefault">Pad izquierdo: Control analógico; Pad derecho: Botones C</string>
   <string name="touchpadLayout_entryReverse">Pad izquierdo: Botones C; Pad derecho: Control analógico</string>

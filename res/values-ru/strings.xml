@@ -170,11 +170,6 @@
   <string name="touchscreenLayout_entryAnalog">Аналоговый (от roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Цифровой (от roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Свой (см http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Размер экрана</string>
-  <string name="touchscreenSize_entryTiny">Крохотный</string>
-  <string name="touchscreenSize_entrySmall">Небольшой</string>
-  <string name="touchscreenSize_entryNormal">Нормальный</string>
-  <string name="touchscreenSize_entryTablet">Планшетный</string>
   <string name="touchpadLayout_title">Расположение экранных кнопок</string>
   <string name="touchpadLayout_entryDefault">Слева джойстик, справа кнопки</string>
   <string name="touchpadLayout_entryReverse">Слева кнопки, справа джойстик</string>
