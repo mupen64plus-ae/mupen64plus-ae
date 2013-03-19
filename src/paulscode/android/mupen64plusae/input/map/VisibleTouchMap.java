@@ -327,20 +327,20 @@ public class VisibleTouchMap extends TouchMap
         if( analogForeImage != null && analogBackImage != null )
         {
             // Get the location of stick center
-            int hX = analogBackImage.hWidth + (int) ( axisFractionX * analogMaximum );
-            int hY = analogBackImage.hHeight - (int) ( axisFractionY * analogMaximum );
+            int hX = (int) ( ( analogBackImage.hWidth + ( axisFractionX * analogMaximum ) ) * scale );
+            int hY = (int) ( ( analogBackImage.hHeight - ( axisFractionY * analogMaximum ) ) * scale );
             
             // Use other values if invalid
             if( hX < 0 )
-                hX = analogBackImage.hWidth;
+                hX = (int) ( analogBackImage.hWidth * scale );
             if( hY < 0 )
-                hY = analogBackImage.hHeight;
+                hY = (int) ( analogBackImage.hHeight * scale );
             
             // Update the position of the stick
             int cX = analogBackImage.x + hX;
             int cY = analogBackImage.y + hY;
             analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
-                    analogBackImage.width, analogBackImage.height );
+                    (int) ( analogBackImage.width * scale ), (int) ( analogBackImage.height * scale ) );
             return true;
         }
         return false;
