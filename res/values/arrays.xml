@@ -130,7 +130,7 @@
     </string-array>
     <string-array name="touchpadLayout_values" translatable="false">
         <item>Mupen64Plus-AE-Xperia-Play</item>
-        <item>Mupen64Plus-AE-Analog-Right</item>
+        <item>Mupen64Plus-AE-Xperia-Play-Swapped</item>
     </string-array>
 
     <string name="touchpadLayout_default" translatable="false">Mupen64Plus-AE-Xperia-Play</string>
