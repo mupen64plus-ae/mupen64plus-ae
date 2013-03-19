@@ -217,7 +217,6 @@
     <string name="touchscreenStyle_title">Touchscreen style</string>
     <string name="touchscreenStyle_entryOutline">Outlines</string>
     <string name="touchscreenStyle_entryShaded">Shaded</string>
-    <string name="touchscreenScale_title">Touchscreen scale</string>
     <string name="touchscreenSize_title">Screen size</string>
     <string name="touchscreenSize_entryTiny">Tiny</string>
     <string name="touchscreenSize_entrySmall">Small</string>
@@ -329,6 +328,7 @@
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
     <string name="touchscreenTransparency_title">Touchscreen opacity</string>
+    <string name="touchscreenScale_title">Touchscreen scale</string>
     <string name="videoActionBarTransparency_title">Action bar opacity</string>
 
     <!-- Path Preferences (selected path will become the summary) -->
