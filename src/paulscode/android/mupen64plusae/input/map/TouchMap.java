@@ -137,10 +137,14 @@ public class TouchMap
         BUTTON_STRING_MAP.put( "cup",       AbstractController.CPD_U );
         BUTTON_STRING_MAP.put( "r",         AbstractController.BTN_R );
         BUTTON_STRING_MAP.put( "l",         AbstractController.BTN_L );
+        BUTTON_STRING_MAP.put( "rightup",   DPD_RU );
         BUTTON_STRING_MAP.put( "upright",   DPD_RU );
         BUTTON_STRING_MAP.put( "rightdown", DPD_RD );
+        BUTTON_STRING_MAP.put( "downright", DPD_RD );
         BUTTON_STRING_MAP.put( "leftdown",  DPD_LD );
+        BUTTON_STRING_MAP.put( "downleft",  DPD_LD );
         BUTTON_STRING_MAP.put( "leftup",    DPD_LU );
+        BUTTON_STRING_MAP.put( "upleft",    DPD_LU );
         // @formatter:on
     }
     
@@ -377,8 +381,9 @@ public class TouchMap
             {
                 // Assign the map colors to the appropriate N64 button
                 String val = section.get( key );
-                int index = BUTTON_STRING_MAP.get( key.toLowerCase( Locale.US ) );
-                mN64ToColor[index] = SafeMethods.toInt( val, -1 );
+                Integer index = BUTTON_STRING_MAP.get( key.toLowerCase( Locale.US ) );
+                if( index != null )
+                    mN64ToColor[index] = SafeMethods.toInt( val, -1 );
             }
         }
     }
