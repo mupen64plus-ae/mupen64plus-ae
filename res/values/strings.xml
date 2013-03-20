@@ -215,8 +215,8 @@
     
     <string name="touchscreenHeight_title">Button vertical spacing</string>
     <string name="touchscreenHeight_entryAuto">Auto</string>
-    <string name="touchscreenHeight_entryPhone">Phone</string>
-    <string name="touchscreenHeight_entryTablet">Tablet</string>
+    <string name="touchscreenHeight_entryFullHeight">Full-height</string>
+    <string name="touchscreenHeight_entryHalfHeight">Half-height</string>
     
     <string name="touchscreenLayout_title">Button layout</string>
     <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>

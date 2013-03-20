@@ -114,13 +114,13 @@
     <!-- Touchscreen Layout Heights -->
     <string-array name="touchscreenHeight_entries" translatable="false">
         <item>@string/touchscreenHeight_entryAuto</item>
-        <item>@string/touchscreenHeight_entryPhone</item>
-        <item>@string/touchscreenHeight_entryTablet</item>
+        <item>@string/touchscreenHeight_entryFullHeight</item>
+        <item>@string/touchscreenHeight_entryHalfHeight</item>
     </string-array>
     <string-array name="touchscreenHeight_values" translatable="false">
         <item></item>
-        <item>-Phone</item>
-        <item>-Tablet</item>
+        <item>-Full-Height</item>
+        <item>-Half-Height</item>
     </string-array>
 
     <string name="touchscreenHeight_default" translatable="false"></string>

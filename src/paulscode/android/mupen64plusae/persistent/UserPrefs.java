@@ -495,12 +495,12 @@ public class UserPrefs
                             videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
                             videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
                         {
-                            layout += "-Tablet";
-            }
+                            layout += "-Half-Height";
+                        }
                         else
                         {
-                            layout += "-Phone";
-        }
+                            layout += "-Full-Height";
+                        }
                     }
                 }
                 else
