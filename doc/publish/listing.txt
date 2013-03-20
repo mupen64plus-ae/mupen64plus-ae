@@ -32,7 +32,7 @@ XPERIA PLAY OPTIMIZED
 - Analog input from the touchpad!
 
 PERMISSIONS
-Internet - The internet is used to sent crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
+Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
 Write External Storage - The device storage is used for writing savegames and custom input profiles.
 Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
 
