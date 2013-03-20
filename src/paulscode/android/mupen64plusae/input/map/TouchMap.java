@@ -351,7 +351,7 @@ public class TouchMap
         if( TextUtils.isEmpty( imageFolder ) )
             imageFolder = directory;
         else
-            imageFolder = directory + "/../../images/" + imageFolder;  // TODO: Get rid of the ..'s
+            imageFolder = directory + "/" + imageFolder;
         
         targetPixels = SafeMethods.toInt( pad_ini.get( "INFO", "targetPixels" ), 0 );
         maxInches = SafeMethods.toFloat( pad_ini.get( "INFO", "maxInches" ), 0 );
