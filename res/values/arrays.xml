@@ -453,8 +453,8 @@
         <item>@string/inputMapActivity_speedDown</item>
         <item>@string/inputMapActivity_speedUp</item>
         <item>@string/inputMapActivity_fastForward</item>
-        <!-- <item>@string/inputMapActivity_frameAdvance</item> -->
-        <!-- <item>@string/inputMapActivity_gameshark</item> -->
+        <item>@string/inputMapActivity_frameAdvance</item>
+        <item>@string/inputMapActivity_gameshark</item>
         <item>@string/inputMapActivity_simulateBack</item>
         <item>@string/inputMapActivity_simulateMenu</item>
     </string-array>
@@ -486,8 +486,8 @@
         <item>29</item>
         <item>28</item>
         <item>26</item>
-        <!-- <item>27</item> -->
-        <!-- <item>30</item> -->
+        <item>27</item>
+        <item>30</item>
         <item>31</item>
         <item>32</item>
     </string-array>
