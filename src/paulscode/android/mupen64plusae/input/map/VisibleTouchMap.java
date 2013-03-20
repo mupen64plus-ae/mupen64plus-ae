@@ -167,8 +167,8 @@ public class VisibleTouchMap extends TouchMap
                 screenHeightPixels = metrics.widthPixels;
                 screenHeightInches = screenHeightPixels / (float) metrics.xdpi;
             }
-            if( targetPixels > 0 )
-                scale = screenWidthPixels / (float) targetPixels;
+            if( referenceScreenWidthPixels > 0 )
+                scale = screenWidthPixels / (float) referenceScreenWidthPixels;
             
             float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
             if( screenSizeInches < Utility.MINIMUM_TABLET_SIZE && screenHeightInches > screenWidthInches )
@@ -176,9 +176,9 @@ public class VisibleTouchMap extends TouchMap
                 // This is a phone in portrait mode.  TODO: Anything special?
             }
 
-            if( maxInches > 0.0f )
+            if( buttonsNoScaleBeyondScreenWidthInches > 0.0f )
             {
-                float inchScale = maxInches / screenWidthInches;
+                float inchScale = buttonsNoScaleBeyondScreenWidthInches / screenWidthInches;
                 // Don't allow controls to exceeded the maximum physical size
                 if( inchScale < 1.0f )
                     scale *= inchScale;

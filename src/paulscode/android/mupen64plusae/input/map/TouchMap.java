@@ -67,11 +67,11 @@ public class TouchMap
     /** Folder containing the images (if provided). */
     protected String imageFolder;
     
-    /** Target width in pixels (if provided). */
-    protected int targetPixels = 0;
+    /** Reference screen width in pixels (if provided). */
+    protected int referenceScreenWidthPixels = 0;
     
-    /** Maximum width in inches (if provided). */
-    protected float maxInches = 0;
+    /** Upper limit screen-width in inches to scale the buttons */
+    protected float buttonsNoScaleBeyondScreenWidthInches = 0;
     
     /** Scaling factor to apply to images. */
     protected float scale = 1.0f;
@@ -353,8 +353,8 @@ public class TouchMap
         else
             imageFolder = directory + "/" + imageFolder;
         
-        targetPixels = SafeMethods.toInt( pad_ini.get( "INFO", "targetPixels" ), 0 );
-        maxInches = SafeMethods.toFloat( pad_ini.get( "INFO", "maxInches" ), 0 );
+        referenceScreenWidthPixels = SafeMethods.toInt( pad_ini.get( "INFO", "referenceScreenWidthPixels" ), 0 );
+        buttonsNoScaleBeyondScreenWidthInches = SafeMethods.toFloat( pad_ini.get( "INFO", "buttonsNoScaleBeyondScreenWidthInches" ), 0 );
         
         // Look up the mask colors
         loadMaskColors( pad_ini );
