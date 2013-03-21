@@ -53,7 +53,6 @@ LOCAL_CFLAGS :=         \
     -DANDROID           \
     -DUSE_SDL           \
     -fsigned-char       \
-    -Wno-psabi          \
     #-DSDL_NO_COMPAT     \
     
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)

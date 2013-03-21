@@ -36,7 +36,6 @@ LOCAL_SRC_FILES :=                                      \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
-    -Wno-psabi          \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
