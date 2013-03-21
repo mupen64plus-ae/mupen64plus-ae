@@ -5,7 +5,7 @@ SRCDIR := ../../src
 
 LOCAL_MODULE := gles2rice
 LOCAL_SHARED_LIBRARIES := SDL core
-LOCAL_STATIC_LIBRARIES := cpufeatures png
+LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=                     \
@@ -96,5 +96,3 @@ else
 endif
 
 include $(BUILD_SHARED_LIBRARY)
-
-$(call import-module, android/cpufeatures)

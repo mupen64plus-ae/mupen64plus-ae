@@ -5,7 +5,6 @@ SRCDIR := ../../src
 
 MY_LOCAL_MODULE := rsp-hle
 MY_LOCAL_SHARED_LIBRARIES := core
-MY_LOCAL_STATIC_LIBRARIES := cpufeatures
 MY_LOCAL_ARM_MODE := arm
 
 MY_LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
@@ -35,7 +34,6 @@ MY_LOCAL_LDLIBS := $(COMMON_LDLIBS)
 include $(CLEAR_VARS)
 
 LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
-LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES)
 LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES)
@@ -48,14 +46,11 @@ LOCAL_MODULE := $(MY_LOCAL_MODULE)
 
 include $(BUILD_SHARED_LIBRARY)
 
-$(call import-module, android/cpufeatures)
-
 ######### Same Module, No Sound ###############################################
 
 include $(CLEAR_VARS)
 
 LOCAL_SHARED_LIBRARIES  := $(MY_LOCAL_SHARED_LIBRARIES)
-LOCAL_STATIC_LIBRARIES  := $(MY_LOCAL_STATIC_LIBRARIES)
 LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
 LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES)
 LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES)
@@ -69,5 +64,3 @@ LOCAL_MODULE := $(MY_LOCAL_MODULE)-nosound
 LOCAL_CFLAGS += -DM64P_NO_AUDIO
 
 include $(BUILD_SHARED_LIBRARY)
-
-$(call import-module, android/cpufeatures)
