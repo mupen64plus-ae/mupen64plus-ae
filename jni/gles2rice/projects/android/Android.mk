@@ -74,8 +74,8 @@ LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ver
 
 LOCAL_LDLIBS :=         \
-    $(COMMON_LDLIBS)    \
     -lGLESv2            \
+    -llog               \
     -lz                 \
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)

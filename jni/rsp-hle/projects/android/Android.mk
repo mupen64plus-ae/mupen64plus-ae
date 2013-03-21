@@ -25,8 +25,6 @@ MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
 MY_LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/rsp_api_export.ver
 
-MY_LOCAL_LDLIBS := $(COMMON_LDLIBS)
-
 ######### Standard RSP Module #################################################
 
 include $(CLEAR_VARS)
@@ -38,7 +36,6 @@ LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES)
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS)
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
 LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
-LOCAL_LDLIBS            := $(MY_LOCAL_LDLIBS)
 
 LOCAL_MODULE := $(MY_LOCAL_MODULE)
 
@@ -55,7 +52,6 @@ LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES)
 LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS)
 LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
 LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
-LOCAL_LDLIBS            := $(MY_LOCAL_LDLIBS)
 
 # Only difference is the module name and a flag
 LOCAL_MODULE := $(MY_LOCAL_MODULE)-nosound

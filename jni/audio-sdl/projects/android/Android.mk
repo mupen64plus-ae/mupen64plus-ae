@@ -22,6 +22,4 @@ LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DUSE_SRC           \
 
-LOCAL_LDLIBS := $(COMMON_LDLIBS)
-
 include $(BUILD_SHARED_LIBRARY)

@@ -42,7 +42,7 @@ LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 LOCAL_LDFLAGS := -Wl,-Bsymbolic
 
 LOCAL_LDLIBS :=         \
-    $(COMMON_LDLIBS)    \
+    -llog               \
     -lGLESv1_CM         \
     -lGLESv2            \
 
