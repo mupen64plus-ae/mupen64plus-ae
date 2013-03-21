@@ -14,9 +14,9 @@ LOCAL_C_INCLUDES :=         \
     $(SAMPLERATE_INCLUDES)  \
 
 LOCAL_SRC_FILES :=                      \
-	$(SRCDIR)/main.c                    \
-	$(SRCDIR)/volume.c                  \
-	$(SRCDIR)/osal_dynamiclib_unix.c    \
+    $(SRCDIR)/main.c                    \
+    $(SRCDIR)/volume.c                  \
+    $(SRCDIR)/osal_dynamiclib_unix.c    \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \

@@ -1,4 +1,4 @@
-LOCAL_PATH:= $(call my-dir)
+LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
@@ -29,4 +29,3 @@ LOCAL_CFLAGS := -O3
 LOCAL_LDLIBS := -lz
 
 include $(BUILD_STATIC_LIBRARY)
-

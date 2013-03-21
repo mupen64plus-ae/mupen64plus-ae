@@ -15,48 +15,48 @@ LOCAL_C_INCLUDES :=                     \
     $(SDL_INCLUDES)                     \
 
 LOCAL_SRC_FILES :=                      \
-	$(SRCDIR)/Blender.cpp               \
-	$(SRCDIR)/Combiner.cpp              \
-	$(SRCDIR)/CombinerTable.cpp         \
-	$(SRCDIR)/Config.cpp                \
-	$(SRCDIR)/ConvertImage.cpp          \
-	$(SRCDIR)/ConvertImage16.cpp        \
-	$(SRCDIR)/Debugger.cpp              \
-	$(SRCDIR)/DecodedMux.cpp            \
-	$(SRCDIR)/DeviceBuilder.cpp         \
-	$(SRCDIR)/DirectXDecodedMux.cpp     \
-	$(SRCDIR)/FrameBuffer.cpp           \
-	$(SRCDIR)/GeneralCombiner.cpp       \
-	$(SRCDIR)/GraphicsContext.cpp       \
-	$(SRCDIR)/OGLCombiner.cpp           \
-	$(SRCDIR)/OGLDecodedMux.cpp         \
-	$(SRCDIR)/OGLExtCombiner.cpp        \
-	$(SRCDIR)/OGLExtRender.cpp          \
-	$(SRCDIR)/OGLFragmentShaders.cpp    \
-	$(SRCDIR)/OGLGraphicsContext.cpp    \
-	$(SRCDIR)/OGLRender.cpp             \
-	$(SRCDIR)/OGLRenderExt.cpp          \
-	$(SRCDIR)/OGLTexture.cpp            \
-	$(SRCDIR)/Render.cpp                \
-	$(SRCDIR)/RenderBase.cpp            \
-	$(SRCDIR)/RenderExt.cpp             \
-	$(SRCDIR)/RenderTexture.cpp         \
-	$(SRCDIR)/RSP_Parser.cpp            \
-	$(SRCDIR)/RSP_S2DEX.cpp             \
-	$(SRCDIR)/Texture.cpp               \
-	$(SRCDIR)/TextureFilters.cpp        \
-	$(SRCDIR)/TextureFilters_2xsai.cpp  \
-	$(SRCDIR)/TextureFilters_hq2x.cpp   \
-	$(SRCDIR)/TextureFilters_hq4x.cpp   \
-	$(SRCDIR)/TextureManager.cpp        \
-	$(SRCDIR)/VectorMath.cpp            \
-	$(SRCDIR)/Video.cpp                 \
-	$(SRCDIR)/osal_dynamiclib_unix.c    \
-	$(SRCDIR)/osal_files_unix.c         \
-	$(SRCDIR)/liblinux/BMGImage.c       \
-	$(SRCDIR)/liblinux/BMGUtils.c       \
-	$(SRCDIR)/liblinux/bmp.c            \
-	$(SRCDIR)/liblinux/pngrw.c          \
+    $(SRCDIR)/Blender.cpp               \
+    $(SRCDIR)/Combiner.cpp              \
+    $(SRCDIR)/CombinerTable.cpp         \
+    $(SRCDIR)/Config.cpp                \
+    $(SRCDIR)/ConvertImage.cpp          \
+    $(SRCDIR)/ConvertImage16.cpp        \
+    $(SRCDIR)/Debugger.cpp              \
+    $(SRCDIR)/DecodedMux.cpp            \
+    $(SRCDIR)/DeviceBuilder.cpp         \
+    $(SRCDIR)/DirectXDecodedMux.cpp     \
+    $(SRCDIR)/FrameBuffer.cpp           \
+    $(SRCDIR)/GeneralCombiner.cpp       \
+    $(SRCDIR)/GraphicsContext.cpp       \
+    $(SRCDIR)/OGLCombiner.cpp           \
+    $(SRCDIR)/OGLDecodedMux.cpp         \
+    $(SRCDIR)/OGLExtCombiner.cpp        \
+    $(SRCDIR)/OGLExtRender.cpp          \
+    $(SRCDIR)/OGLFragmentShaders.cpp    \
+    $(SRCDIR)/OGLGraphicsContext.cpp    \
+    $(SRCDIR)/OGLRender.cpp             \
+    $(SRCDIR)/OGLRenderExt.cpp          \
+    $(SRCDIR)/OGLTexture.cpp            \
+    $(SRCDIR)/Render.cpp                \
+    $(SRCDIR)/RenderBase.cpp            \
+    $(SRCDIR)/RenderExt.cpp             \
+    $(SRCDIR)/RenderTexture.cpp         \
+    $(SRCDIR)/RSP_Parser.cpp            \
+    $(SRCDIR)/RSP_S2DEX.cpp             \
+    $(SRCDIR)/Texture.cpp               \
+    $(SRCDIR)/TextureFilters.cpp        \
+    $(SRCDIR)/TextureFilters_2xsai.cpp  \
+    $(SRCDIR)/TextureFilters_hq2x.cpp   \
+    $(SRCDIR)/TextureFilters_hq4x.cpp   \
+    $(SRCDIR)/TextureManager.cpp        \
+    $(SRCDIR)/VectorMath.cpp            \
+    $(SRCDIR)/Video.cpp                 \
+    $(SRCDIR)/osal_dynamiclib_unix.c    \
+    $(SRCDIR)/osal_files_unix.c         \
+    $(SRCDIR)/liblinux/BMGImage.c       \
+    $(SRCDIR)/liblinux/BMGUtils.c       \
+    $(SRCDIR)/liblinux/bmp.c            \
+    $(SRCDIR)/liblinux/pngrw.c          \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
@@ -81,17 +81,17 @@ LOCAL_LDLIBS :=         \
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
-	LOCAL_CFLAGS += -mfpu=vfp
+    LOCAL_CFLAGS += -mfpu=vfp
     LOCAL_CFLAGS += -mfloat-abi=softfp
     
 else ifeq ($(TARGET_ARCH_ABI), armeabi)
     # Use for pre-ARM7a:
     
 else ifeq ($(TARGET_ARCH_ABI), x86)
-	# TODO: set the proper flags here
+    # TODO: set the proper flags here
     
 else
-	# Any other architectures that Android could be running on?
+    # Any other architectures that Android could be running on?
     
 endif
 

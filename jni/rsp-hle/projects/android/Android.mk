@@ -10,14 +10,14 @@ MY_LOCAL_ARM_MODE := arm
 MY_LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
 MY_LOCAL_SRC_FILES :=       \
-	$(SRCDIR)/alist.c       \
-	$(SRCDIR)/cicx105.c     \
-	$(SRCDIR)/jpeg.c        \
-	$(SRCDIR)/main.c        \
-	$(SRCDIR)/ucode1.cpp    \
-	$(SRCDIR)/ucode2.cpp    \
-	$(SRCDIR)/ucode3.cpp    \
-	$(SRCDIR)/ucode3mp3.cpp \
+    $(SRCDIR)/alist.c       \
+    $(SRCDIR)/cicx105.c     \
+    $(SRCDIR)/jpeg.c        \
+    $(SRCDIR)/main.c        \
+    $(SRCDIR)/ucode1.cpp    \
+    $(SRCDIR)/ucode2.cpp    \
+    $(SRCDIR)/ucode3.cpp    \
+    $(SRCDIR)/ucode3mp3.cpp \
 
 MY_LOCAL_CFLAGS :=      \
     $(COMMON_CFLAGS)    \
