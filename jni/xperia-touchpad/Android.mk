@@ -12,8 +12,6 @@ LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
 LOCAL_LDLIBS := \
     -landroid   \
-    -lEGL       \
-    -lGLESv1_CM \
     -llog       \
 
 include $(BUILD_SHARED_LIBRARY)
