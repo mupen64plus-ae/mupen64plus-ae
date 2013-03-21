@@ -36,6 +36,7 @@ import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -324,6 +325,7 @@ public class UserPrefs
      * 
      * @param context The application context.
      */
+    @SuppressLint( "InlinedApi" )
     public UserPrefs( Context context )
     {
         AppData appData = new AppData( context );

@@ -37,6 +37,7 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -147,6 +148,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mActivity.setRequestedOrientation( mUserPrefs.videoOrientation );
     }
     
+    @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
     {
@@ -165,7 +167,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
             // SDK version at least HONEYCOMB, so there should be software buttons on this device:
             View view = mSurface.getRootView();
             if( view != null )
-                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
             mActivity.getActionBar().hide();
             
             ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
@@ -236,6 +238,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         }
     }
     
+    @SuppressLint( "InlinedApi" )
     private void initControllers( View inputSource )
     {
         // TODO: Register multiplayer/gamepad vibrators
@@ -323,6 +326,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         }
     }
     
+    @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
     private void toggleActionBar( View rootView )
     {
@@ -338,7 +342,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
             
             // Make the home buttons almost invisible again
             if( rootView != null )
-                rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+                rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
         }
         else
         {

@@ -6,7 +6,8 @@
 
     <TextView
         android:id="@android:id/message"
-        style="@style/alertDialogMessage" />
+        style="@style/alertDialogMessage"
+        android:textIsSelectable="false" />
 
     <Button
         android:id="@+id/btnPlayer1"

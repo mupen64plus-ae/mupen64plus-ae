@@ -20,18 +20,6 @@
  */
 package paulscode.android.mupen64plusae.util;
 
-import static android.view.MotionEvent.ACTION_CANCEL;
-import static android.view.MotionEvent.ACTION_DOWN;
-import static android.view.MotionEvent.ACTION_HOVER_ENTER;
-import static android.view.MotionEvent.ACTION_HOVER_EXIT;
-import static android.view.MotionEvent.ACTION_HOVER_MOVE;
-import static android.view.MotionEvent.ACTION_MOVE;
-import static android.view.MotionEvent.ACTION_OUTSIDE;
-import static android.view.MotionEvent.ACTION_POINTER_DOWN;
-import static android.view.MotionEvent.ACTION_POINTER_UP;
-import static android.view.MotionEvent.ACTION_SCROLL;
-import static android.view.MotionEvent.ACTION_UP;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -40,6 +28,7 @@ import java.util.regex.Pattern;
 
 import paulscode.android.mupen64plusae.input.map.AxisMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.text.TextUtils;
@@ -248,27 +237,27 @@ public class DeviceUtil
     {
         switch( action )
         {
-            case ACTION_DOWN:
+            case MotionEvent.ACTION_DOWN:
                 return "DOWN";
-            case ACTION_UP:
+            case MotionEvent.ACTION_UP:
                 return "UP";
-            case ACTION_MOVE:
+            case MotionEvent.ACTION_MOVE:
                 return isMotionEvent ? "MOVE" : "MULTIPLE";
-            case ACTION_CANCEL:
+            case MotionEvent.ACTION_CANCEL:
                 return "CANCEL";
-            case ACTION_OUTSIDE:
+            case MotionEvent.ACTION_OUTSIDE:
                 return "OUTSIDE";
-            case ACTION_POINTER_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:
                 return "POINTER_DOWN";
-            case ACTION_POINTER_UP:
+            case MotionEvent.ACTION_POINTER_UP:
                 return "POINTER_UP";
-            case ACTION_HOVER_MOVE:
+            case MotionEvent.ACTION_HOVER_MOVE:
                 return "HOVER_MOVE";
-            case ACTION_SCROLL:
+            case MotionEvent.ACTION_SCROLL:
                 return "SCROLL";
-            case ACTION_HOVER_ENTER:
+            case MotionEvent.ACTION_HOVER_ENTER:
                 return "HOVER_ENTER";
-            case ACTION_HOVER_EXIT:
+            case MotionEvent.ACTION_HOVER_EXIT:
                 return "HOVER_EXIT";
             default:
                 return "ACTION_" + Integer.toString( action );
@@ -314,6 +303,7 @@ public class DeviceUtil
         }
     }
     
+    @SuppressLint( "InlinedApi" )
     public static String getSourcesString( int sources )
     {
         List<String> names = new ArrayList<String>();
@@ -328,6 +318,7 @@ public class DeviceUtil
         return TextUtils.join( ", ", names );
     }
     
+    @SuppressLint( "InlinedApi" )
     public static String getSourceClassesString( int sources )
     {
         List<String> names = new ArrayList<String>();
