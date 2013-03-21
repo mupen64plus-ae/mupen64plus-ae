@@ -75,7 +75,6 @@ LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ve
 
 LOCAL_LDLIBS :=         \
     $(COMMON_LDLIBS)    \
-    -lGLESv1_CM         \
     -lGLESv2            \
     -lz                 \
 

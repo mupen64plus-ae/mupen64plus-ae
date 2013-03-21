@@ -30,7 +30,6 @@ LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
 LOCAL_LDLIBS :=         \
     $(COMMON_LDLIBS)    \
-    -lGLESv1_CM         \
     -lGLESv2            \
 
 include $(BUILD_SHARED_LIBRARY)
