@@ -8,7 +8,7 @@
   <string name="menuItem_slotSave">Mentés</string>
   <string name="menuItem_slotLoad">Mentett hely betöltése</string>
   <string name="menuItem_setSlot">Mentett hely %1$d</string>
-  <string name="menuItem_fileSave">Mentés fájlba...</string>
+  <string name="menuItem_fileSave">Mentés fájlba…</string>
   <string name="menuItem_fileLoad">Betöltés fájlból</string>
   <string name="menuItem_setSpeed">Játék sebesség</string>
   <string name="menuItem_paks">Controller Paks</string>
@@ -38,8 +38,8 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profilok</string>
   <string name="menuItem_default">Alapértelmezett</string>
-  <string name="menuItem_load">Betöltés...</string>
-  <string name="menuItem_save">Mentés...</string>
+  <string name="menuItem_load">Betöltés…</string>
+  <string name="menuItem_save">Mentés…</string>
   <string name="menuItem_ouya">OUYA</string>
   <string name="menuItem_n64Adapter">N64 USB adapter</string>
   <string name="menuItem_ps3">PS3</string>
@@ -54,15 +54,15 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Csalás adatbázis újraépítése...</string>
-  <string name="toast_launchingEmulator">Emulátor indítása...</string>
+  <string name="toast_rebuildingCheats">Csalás adatbázis újraépítése…</string>
+  <string name="toast_launchingEmulator">Emulátor indítása…</string>
   <string name="toast_loadingSession">Játék auto folytatása</string>
   <string name="toast_savingSession">Auto-mentés</string>
   <string name="toast_loadingSlot">Mentése  %1$d betöltése</string>
   <string name="toast_savingSlot">%1$d Mentése</string>
   <string name="toast_loadingFile">Betöltés %1$s…</string>
   <string name="toast_savingFile">Mentés %1$s…</string>
-  <string name="toast_overwritingFile">%1$s felülírása...</string>
+  <string name="toast_overwritingFile">%1$s felülírása…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot"> %1$d hely használata</string>
   <string name="toast_sdInaccessible">SD kártya nem elérhető (USB-t csatlakoztasd le majd próbáld újra)</string>
@@ -185,7 +185,6 @@
   <string name="touchscreenRefresh_entryNever">Soha</string>
   <string name="touchscreenRefresh_entryOccasionally">Néha</string>
   <string name="touchscreenRefresh_entryFrequently">Gyakran</string>
-  <string name="touchscreenHeight_entryTablet">Tablet</string>
   <string name="touchscreenLayout_title">Érintőpanel kiosztás</string>
   <string name="touchscreenLayout_entryAnalog">Analóg (roymustang16 által)</string>
   <string name="touchscreenLayout_entryDigital">Digitális (roymustang16 által)</string>

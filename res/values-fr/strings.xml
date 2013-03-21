@@ -185,7 +185,6 @@
   <string name="touchscreenRefresh_entryNever">Jamais</string>
   <string name="touchscreenRefresh_entryOccasionally">Parfois</string>
   <string name="touchscreenRefresh_entryFrequently">Fréquemment</string>
-  <string name="touchscreenHeight_entryTablet">Tablette</string>
   <string name="touchscreenLayout_title">Thème de commandes virtuelles</string>
   <string name="touchscreenLayout_entryAnalog">Analogique (par roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Numérique (par roymustang16)</string>

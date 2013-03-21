@@ -185,7 +185,6 @@
   <string name="touchscreenRefresh_entryNever">Nie</string>
   <string name="touchscreenRefresh_entryOccasionally">Gelegentlich</string>
   <string name="touchscreenRefresh_entryFrequently">Häufig</string>
-  <string name="touchscreenHeight_entryTablet">Tablet</string>
   <string name="touchscreenLayout_title">Touchscreen-Layout</string>
   <string name="touchscreenLayout_entryAnalog">Analog (von roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (von roymustang16)</string>

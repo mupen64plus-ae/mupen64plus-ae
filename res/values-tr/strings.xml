@@ -168,7 +168,6 @@
   <string name="touchscreenRefresh_entryNever">Asla</string>
   <string name="touchscreenRefresh_entryOccasionally">Bazen</string>
   <string name="touchscreenRefresh_entryFrequently">Sıkça</string>
-  <string name="touchscreenHeight_entryTablet">Tablet</string>
   <string name="touchscreenLayout_title">Dokunmatik ekran düzeni</string>
   <string name="touchscreenLayout_entryAnalog">Analog (roymustang16 tarafından)</string>
   <string name="touchscreenLayout_entryDigital">Dijital (roymustang16 tarafından)</string>
