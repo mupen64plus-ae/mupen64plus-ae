@@ -19,9 +19,7 @@ MY_LOCAL_SRC_FILES :=       \
     $(SRCDIR)/ucode3.cpp    \
     $(SRCDIR)/ucode3mp3.cpp \
 
-MY_LOCAL_CFLAGS :=      \
-    $(COMMON_CFLAGS)    \
-    -DNO_ASM            \
+MY_LOCAL_CFLAGS := $(COMMON_CFLAGS)
 
 MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 

@@ -20,7 +20,6 @@ LOCAL_SRC_FILES :=                      \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
-    -DNO_ASM            \
     -DUSE_SRC           \
 
 LOCAL_LDLIBS := $(COMMON_LDLIBS)
