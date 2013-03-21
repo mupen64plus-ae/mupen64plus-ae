@@ -117,6 +117,27 @@ static const unsigned int TRANSPOSE_TABLE[SUBBLOCK_SIZE] =
     7, 15, 23, 31, 39, 47, 55, 63
 };
 
+
+
+/* IDCT related constants
+ * Cn = alpha * cos(n * PI / 16) (alpha is chosen such as C4 = 1) */
+static const float IDCT_C3 = 1.175875602f;
+static const float IDCT_C6 = 0.541196100f;
+static const float IDCT_K[10] =
+{
+  0.765366865f,   /*  C2-C6         */
+ -1.847759065f,   /* -C2-C6         */
+ -0.390180644f,   /*  C5-C3         */
+ -1.961570561f,   /* -C5-C3         */
+  1.501321110f,   /*  C1+C3-C5-C7   */
+  2.053119869f,   /*  C1+C3-C5+C7   */
+  3.072711027f,   /*  C1+C3+C5-C7   */
+  0.298631336f,   /* -C1+C3+C5-C7   */
+ -0.899976223f,   /*  C7-C3         */
+ -2.562915448f    /* -C1-C3         */
+};
+
+
 /* global functions */
 
 /***************************************************************************
@@ -524,42 +545,28 @@ static void RShiftSubBlock(int16_t *dst, const int16_t *src, unsigned int shift)
  * Implementation based on Wikipedia :
  * http://fr.wikipedia.org/wiki/Transform%C3%A9e_en_cosinus_discr%C3%A8te
  **************************************************************************/
-
-/* Normalized such as C4 = 1 */
-#define C3   1.175875602f
-#define C6   0.541196100f       
-#define K1   0.765366865f   //  C2-C6
-#define K2  -1.847759065f   // -C2-C6
-#define K3  -0.390180644f   //  C5-C3
-#define K4  -1.961570561f   // -C5-C3
-#define K5   1.501321110f   //  C1+C3-C5-C7
-#define K6   2.053119869f   //  C1+C3-C5+C7
-#define K7   3.072711027f   //  C1+C3+C5-C7
-#define K8   0.298631336f   // -C1+C3+C5-C7
-#define K9  -0.899976223f   //  C7-C3
-#define K10 -2.562915448f   // -C1-C3
 static void InverseDCT1D(const float * const x, float *dst, unsigned int stride)
 {
     float e[4];
     float f[4];
     float x26, x1357, x15, x37, x17, x35;
 
-    x15   =  K3 * (x[1] + x[5]);
-    x37   =  K4 * (x[3] + x[7]);
-    x17   =  K9 * (x[1] + x[7]);
-    x35   = K10 * (x[3] + x[5]);
-    x1357 =  C3 * (x[1] + x[3] + x[5] + x[7]);
-    x26   =  C6 * (x[2] + x[6]);
+    x15   = IDCT_K[2] * (x[1] + x[5]);
+    x37   = IDCT_K[3] * (x[3] + x[7]);
+    x17   = IDCT_K[8] * (x[1] + x[7]);
+    x35   = IDCT_K[9] * (x[3] + x[5]);
+    x1357 = IDCT_C3   * (x[1] + x[3] + x[5] + x[7]);
+    x26   = IDCT_C6   * (x[2] + x[6]);
 
     f[0] = x[0] + x[4];
     f[1] = x[0] - x[4];
-    f[2] = x26 + K1*x[2];
-    f[3] = x26 + K2*x[6];
+    f[2] = x26  + IDCT_K[0]*x[2];
+    f[3] = x26  + IDCT_K[1]*x[6];
 
-    e[0] = x1357 + x15 + K5*x[1] + x17;
-    e[1] = x1357 + x37 + K7*x[3] + x35;
-    e[2] = x1357 + x15 + K6*x[5] + x35;
-    e[3] = x1357 + x37 + K8*x[7] + x17;
+    e[0] = x1357 + x15 + IDCT_K[4]*x[1] + x17;
+    e[1] = x1357 + x37 + IDCT_K[6]*x[3] + x35;
+    e[2] = x1357 + x15 + IDCT_K[5]*x[5] + x35;
+    e[3] = x1357 + x37 + IDCT_K[7]*x[7] + x17;
 
     *dst = f[0] + f[2] + e[0]; dst += stride;
     *dst = f[1] + f[3] + e[1]; dst += stride;
@@ -570,18 +577,6 @@ static void InverseDCT1D(const float * const x, float *dst, unsigned int stride)
     *dst = f[1] + f[3] - e[1]; dst += stride;
     *dst = f[0] + f[2] - e[0]; dst += stride;
 }
-#undef C3  
-#undef C6  
-#undef K1  
-#undef K2  
-#undef K3  
-#undef K4  
-#undef K5  
-#undef K6  
-#undef K7  
-#undef K8  
-#undef K9  
-#undef K10 
 
 static void InverseDCTSubBlock(int16_t *dst, const int16_t *src)
 {
