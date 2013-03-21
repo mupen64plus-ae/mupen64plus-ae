@@ -34,8 +34,7 @@ LOCAL_SRC_FILES :=                                      \
     $(wildcard $(LOCAL_PATH)/src/video/android/*.c))    \
     $(SRCDIR)/atomic/SDL_atomic.c                       \
 
-LOCAL_CFLAGS :=         \
-    $(COMMON_CFLAGS)    \
+LOCAL_CFLAGS := $(COMMON_CFLAGS)
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 

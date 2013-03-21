@@ -12,7 +12,6 @@ COMMON_CFLAGS :=                    \
     -ffast-math                     \
     -fno-strict-aliasing            \
     -fomit-frame-pointer            \
-    -fpredictive-commoning          \
     -frename-registers              \
     -fsingle-precision-constant     \
     -fvisibility=hidden             \
