@@ -639,7 +639,7 @@ uint32 CalculateRDRAMCRC(void *pPhysicalAddress, uint32 left, uint32 top, uint32
                 y--;
             }
 
-#elif !defined(__GNUC__) && !defined(NO_ASM)
+#elif !defined(__GNUC__) // !defined(NO_ASM)
             __asm 
             {
                 push eax
@@ -673,7 +673,7 @@ l1:             mov esi, [ecx+ebx]
                 pop ebx
                 pop eax
             }
-#elif defined(__GNUC__) && defined(__x86_64__) && !defined(NO_ASM)
+#elif defined(__x86_64__) // defined(__GNUC__) && !defined(NO_ASM)
         asm volatile(" xorl          %k2,      %k2           \n"
                      " movslq        %k4,      %q4           \n"
                      "0:                                     \n"
@@ -695,8 +695,7 @@ l1:             mov esi, [ecx+ebx]
                      : "m"(dwAsmdwBytesPerLine), "r"(dwAsmPitch)
                      : "%rbx", "%rax", "memory", "cc"
                      );
-#elif !defined(NO_ASM)
-# if !defined(__PIC__)
+#elif !defined(__PIC__) // !defined(__x86_64__) && defined(__GNUC__) && !defined(NO_ASM)
            asm volatile("pusha                        \n"
                 "mov    %[pAsmStart], %%ecx           \n" // = pStart
                 "mov    $0, %%edx                     \n" // The CRC
@@ -723,7 +722,7 @@ l1:             mov esi, [ecx+ebx]
                 : [dwAsmdwBytesPerLine]"m"(dwAsmdwBytesPerLine), [dwAsmPitch]"m"(dwAsmPitch)
                 : "memory", "cc"
                 );
-# else // defined(__PIC__)
+#else // defined(__PIC__) && !defined(__x86_64__) && defined(__GNUC__) && !defined(NO_ASM)
            unsigned int saveEBX;
            unsigned int saveEAX;
            unsigned int saveECX;
@@ -769,7 +768,6 @@ l1:             mov esi, [ecx+ebx]
                 : "memory", "cc"
                 );
            dwAsmCRC = asmCRC;
-# endif // defined(__PIC__)
 #endif
         }
         catch(...)

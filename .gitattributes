@@ -35,4 +35,5 @@
 *dynamiclib_win32.c binary
 *files_win32.c binary
 *.vcproj binary
+*.vcxproj binary
 *.sln binary
