@@ -106,12 +106,11 @@ public:
             PalAddress == sec.PalAddress &&
             Palette == sec.Palette &&
             LeftToLoad == sec.LeftToLoad &&
-            TopToLoad == sec.TopToLoad &&           
-            Format == sec.Format &&         
+            TopToLoad == sec.TopToLoad &&
+            Format == sec.Format &&
             Size == sec.Size &&
             Pitch == sec.Pitch &&
             bSwapped == sec.bSwapped &&
-            TLutFmt == sec.TLutFmt &&
             mirrorS == sec.mirrorS &&
             mirrorT == sec.mirrorT &&
             clampS == sec.clampS &&
