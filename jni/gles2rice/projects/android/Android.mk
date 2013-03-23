@@ -63,20 +63,19 @@ LOCAL_CFLAGS :=         \
     -DANDROID           \
     -DNO_ASM            \
     -DUSE_SDL           \
-    -fexceptions        \
     -fsigned-char       \
-    -Wno-psabi          \
     #-DBGR_SHADER        \
     #-DSDL_NO_COMPAT     \
     
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
     
+LOCAL_CPP_FEATURES := exceptions
+
 LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/video_api_export.ver
 
 LOCAL_LDLIBS :=         \
     -lGLESv2            \
     -llog               \
-    -lz                 \
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:

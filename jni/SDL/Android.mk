@@ -24,7 +24,9 @@ LOCAL_SRC_FILES :=                                      \
     $(wildcard $(LOCAL_PATH)/src/loadso/dlopen/*.c)     \
     $(wildcard $(LOCAL_PATH)/src/power/*.c)             \
     $(wildcard $(LOCAL_PATH)/src/render/*.c)            \
-    $(wildcard $(LOCAL_PATH)/src/render/*/*.c)          \
+    $(wildcard $(LOCAL_PATH)/src/render/opengles/*.c)   \
+    $(wildcard $(LOCAL_PATH)/src/render/opengles2/*.c)  \
+    $(wildcard $(LOCAL_PATH)/src/render/software/*.c)   \
     $(wildcard $(LOCAL_PATH)/src/stdlib/*.c)            \
     $(wildcard $(LOCAL_PATH)/src/thread/*.c)            \
     $(wildcard $(LOCAL_PATH)/src/thread/pthread/*.c)    \

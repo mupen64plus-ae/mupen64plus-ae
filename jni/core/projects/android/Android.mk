@@ -11,7 +11,6 @@ LOCAL_C_INCLUDES :=         \
     $(LOCAL_PATH)/$(SRCDIR) \
     $(SDL_INCLUDES)         \
     $(SYSROOT)/usr/include/ \
-
 #   ^ Workaround for some reason 4.6 gcc doesnt include the usr/include directory
 
 LOCAL_SRC_FILES :=                              \
@@ -66,14 +65,11 @@ LOCAL_CFLAGS :=         \
     -DNOUNCRYPT         \
 
 LOCAL_LDFLAGS :=                                                    \
-    -shared                                                         \
     -Wl,-Bsymbolic                                                  \
     -Wl,-export-dynamic                                             \
     -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/api/api_export.ver  \
 
-LOCAL_LDLIBS := \
-    -llog       \
-    -lz         \
+LOCAL_LDLIBS := -lz
 
 ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
     # Use for ARM7a:
