@@ -149,24 +149,6 @@ static uint32 hq2x_interp_32_611(uint32 p1, uint32 p2, uint32 p3)
     | INTERP_32_MASK_SHIFTBACK_2_4((INTERP_32_MASK_SHIFT_2_4(p1)*6 + INTERP_32_MASK_SHIFT_2_4(p2) + INTERP_32_MASK_SHIFT_2_4(p3)) / 8);
 }
 
-static uint32 hq2x_interp_32_71(uint32 p1, uint32 p2)
-{
-  return INTERP_32_MASK_1_3((INTERP_32_MASK_1_3(p1)*7 + INTERP_32_MASK_1_3(p2)) / 8)
-    | INTERP_32_MASK_SHIFTBACK_2_4((INTERP_32_MASK_SHIFT_2_4(p1)*7 + INTERP_32_MASK_SHIFT_2_4(p2)) / 8);
-}
-
-static uint32 hq2x_interp_32_772(uint32 p1, uint32 p2, uint32 p3)
-{
-  return INTERP_32_MASK_1_3(((INTERP_32_MASK_1_3(p1) + INTERP_32_MASK_1_3(p2))*7 + INTERP_32_MASK_1_3(p3)*2) / 16)
-    | INTERP_32_MASK_SHIFTBACK_2_4(((INTERP_32_MASK_SHIFT_2_4(p1) + INTERP_32_MASK_SHIFT_2_4(p2))*7 + INTERP_32_MASK_SHIFT_2_4(p3)*2) / 16);
-}
-
-static uint32 hq2x_interp_32_11(uint32 p1, uint32 p2)
-{
-  return INTERP_32_MASK_1_3((INTERP_32_MASK_1_3(p1) + INTERP_32_MASK_1_3(p2)) / 2)
-    | INTERP_32_MASK_SHIFTBACK_2_4((INTERP_32_MASK_SHIFT_2_4(p1) + INTERP_32_MASK_SHIFT_2_4(p2)) / 2);
-}
-
 static uint32 hq2x_interp_32_31(uint32 p1, uint32 p2)
 {
   return INTERP_32_MASK_1_3((INTERP_32_MASK_1_3(p1)*3 + INTERP_32_MASK_1_3(p2)) / 4)
@@ -177,30 +159,6 @@ static uint32 hq2x_interp_32_1411(uint32 p1, uint32 p2, uint32 p3)
 {
   return INTERP_32_MASK_1_3((INTERP_32_MASK_1_3(p1)*14 + INTERP_32_MASK_1_3(p2) + INTERP_32_MASK_1_3(p3)) / 16)
     | INTERP_32_MASK_SHIFTBACK_2_4((INTERP_32_MASK_SHIFT_2_4(p1)*14 + INTERP_32_MASK_SHIFT_2_4(p2) + INTERP_32_MASK_SHIFT_2_4(p3)) / 16);
-}
-
-static uint32 hq2x_interp_32_431(uint32 p1, uint32 p2, uint32 p3)
-{
-  return INTERP_32_MASK_1_3((INTERP_32_MASK_1_3(p1)*4 + INTERP_32_MASK_1_3(p2)*3 + INTERP_32_MASK_1_3(p3)) / 8)
-    | INTERP_32_MASK_SHIFTBACK_2_4((INTERP_32_MASK_SHIFT_2_4(p1)*4 + INTERP_32_MASK_SHIFT_2_4(p2)*3 + INTERP_32_MASK_SHIFT_2_4(p3)) / 8);
-}
-
-static uint32 hq2x_interp_32_53(uint32 p1, uint32 p2)
-{
-  return INTERP_32_MASK_1_3((INTERP_32_MASK_1_3(p1)*5 + INTERP_32_MASK_1_3(p2)*3) / 8)
-    | INTERP_32_MASK_SHIFTBACK_2_4((INTERP_32_MASK_SHIFT_2_4(p1)*5 + INTERP_32_MASK_SHIFT_2_4(p2)*3) / 8);
-}
-
-static uint32 hq2x_interp_32_151(uint32 p1, uint32 p2)
-{
-  return INTERP_32_MASK_1_3((INTERP_32_MASK_1_3(p1)*15 + INTERP_32_MASK_1_3(p2)) / 16)
-    | INTERP_32_MASK_SHIFTBACK_2_4((INTERP_32_MASK_SHIFT_2_4(p1)*15 + INTERP_32_MASK_SHIFT_2_4(p2)) / 16);
-}
-
-static uint32 hq2x_interp_32_97(uint32 p1, uint32 p2)
-{
-  return INTERP_32_MASK_1_3((INTERP_32_MASK_1_3(p1)*9 + INTERP_32_MASK_1_3(p2)*7) / 16)
-    | INTERP_32_MASK_SHIFTBACK_2_4((INTERP_32_MASK_SHIFT_2_4(p1)*9 + INTERP_32_MASK_SHIFT_2_4(p2)*7) / 16);
 }
 
 /***************************************************************************/
@@ -584,19 +542,12 @@ static void hq2x_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const ui
 #define HQ2X_MDL hq2x_interp_32_diff(c[7], c[3])
 #define HQ2X_MUL hq2x_interp_32_diff(c[3], c[1])
 #define IC(p0) c[p0]
-#define I11(p0,p1) hq2x_interp_32_11(c[p0], c[p1])
 #define I211(p0,p1,p2) hq2x_interp_32_211(c[p0], c[p1], c[p2])
 #define I31(p0,p1) hq2x_interp_32_31(c[p0], c[p1])
 #define I332(p0,p1,p2) hq2x_interp_32_332(c[p0], c[p1], c[p2])
-#define I431(p0,p1,p2) hq2x_interp_32_431(c[p0], c[p1], c[p2])
 #define I521(p0,p1,p2) hq2x_interp_32_521(c[p0], c[p1], c[p2])
-#define I53(p0,p1) hq2x_interp_32_53(c[p0], c[p1])
 #define I611(p0,p1,p2) hq2x_interp_32_611(c[p0], c[p1], c[p2])
-#define I71(p0,p1) hq2x_interp_32_71(c[p0], c[p1])
-#define I772(p0,p1,p2) hq2x_interp_32_772(c[p0], c[p1], c[p2])
-#define I97(p0,p1) hq2x_interp_32_97(c[p0], c[p1])
 #define I1411(p0,p1,p2) hq2x_interp_32_1411(c[p0], c[p1], c[p2])
-#define I151(p0,p1) hq2x_interp_32_151(c[p0], c[p1])
 
     switch (mask) {
 #include "TextureFilters_hq2x.h"
@@ -611,19 +562,12 @@ static void hq2x_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const ui
 #undef HQ2X_MDL
 #undef HQ2X_MUL
 #undef IC
-#undef I11
 #undef I211
 #undef I31
 #undef I332
-#undef I431
 #undef I521
-#undef I53
 #undef I611
-#undef I71
-#undef I772
-#undef I97
 #undef I1411
-#undef I151
 
     src0 += 1;
     src1 += 1;
@@ -713,19 +657,12 @@ static void hq2xS_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const u
 #define HQ2X_MDL false
 #define HQ2X_MUL false
 #define IC(p0) c[p0]
-#define I11(p0,p1) hq2x_interp_32_11(c[p0], c[p1])
 #define I211(p0,p1,p2) hq2x_interp_32_211(c[p0], c[p1], c[p2])
 #define I31(p0,p1) hq2x_interp_32_31(c[p0], c[p1])
 #define I332(p0,p1,p2) hq2x_interp_32_332(c[p0], c[p1], c[p2])
-#define I431(p0,p1,p2) hq2x_interp_32_431(c[p0], c[p1], c[p2])
 #define I521(p0,p1,p2) hq2x_interp_32_521(c[p0], c[p1], c[p2])
-#define I53(p0,p1) hq2x_interp_32_53(c[p0], c[p1])
 #define I611(p0,p1,p2) hq2x_interp_32_611(c[p0], c[p1], c[p2])
-#define I71(p0,p1) hq2x_interp_32_71(c[p0], c[p1])
-#define I772(p0,p1,p2) hq2x_interp_32_772(c[p0], c[p1], c[p2])
-#define I97(p0,p1) hq2x_interp_32_97(c[p0], c[p1])
 #define I1411(p0,p1,p2) hq2x_interp_32_1411(c[p0], c[p1], c[p2])
-#define I151(p0,p1) hq2x_interp_32_151(c[p0], c[p1])
 
     switch (mask) {
 #include "TextureFilters_hq2x.h"
@@ -740,19 +677,12 @@ static void hq2xS_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const u
 #undef HQ2X_MDL
 #undef HQ2X_MUL
 #undef IC
-#undef I11
 #undef I211
 #undef I31
 #undef I332
-#undef I431
 #undef I521
-#undef I53
 #undef I611
-#undef I71
-#undef I772
-#undef I97
 #undef I1411
-#undef I151
 
     src0 += 1;
     src1 += 1;
@@ -1071,19 +1001,12 @@ static void lq2x_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const ui
 #define HQ2X_MDL (c[7] != c[3])
 #define HQ2X_MUL (c[3] != c[1])
 #define IC(p0) c[p0]
-#define I11(p0,p1) hq2x_interp_32_11(c[p0], c[p1])
 #define I211(p0,p1,p2) hq2x_interp_32_211(c[p0], c[p1], c[p2])
 #define I31(p0,p1) hq2x_interp_32_31(c[p0], c[p1])
 #define I332(p0,p1,p2) hq2x_interp_32_332(c[p0], c[p1], c[p2])
-#define I431(p0,p1,p2) hq2x_interp_32_431(c[p0], c[p1], c[p2])
 #define I521(p0,p1,p2) hq2x_interp_32_521(c[p0], c[p1], c[p2])
-#define I53(p0,p1) hq2x_interp_32_53(c[p0], c[p1])
 #define I611(p0,p1,p2) hq2x_interp_32_611(c[p0], c[p1], c[p2])
-#define I71(p0,p1) hq2x_interp_32_71(c[p0], c[p1])
-#define I772(p0,p1,p2) hq2x_interp_32_772(c[p0], c[p1], c[p2])
-#define I97(p0,p1) hq2x_interp_32_97(c[p0], c[p1])
 #define I1411(p0,p1,p2) hq2x_interp_32_1411(c[p0], c[p1], c[p2])
-#define I151(p0,p1) hq2x_interp_32_151(c[p0], c[p1])
 
     switch (mask) {
 #include "TextureFilters_lq2x.h"
@@ -1098,19 +1021,12 @@ static void lq2x_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const ui
 #undef HQ2X_MDL
 #undef HQ2X_MUL
 #undef IC
-#undef I11
 #undef I211
 #undef I31
 #undef I332
-#undef I431
 #undef I521
-#undef I53
 #undef I611
-#undef I71
-#undef I772
-#undef I97
 #undef I1411
-#undef I151
 
     src0 += 1;
     src1 += 1;
@@ -1200,19 +1116,12 @@ static void lq2xS_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const u
 #define HQ2X_MDL false
 #define HQ2X_MUL false
 #define IC(p0) c[p0]
-#define I11(p0,p1) hq2x_interp_32_11(c[p0], c[p1])
 #define I211(p0,p1,p2) hq2x_interp_32_211(c[p0], c[p1], c[p2])
 #define I31(p0,p1) hq2x_interp_32_31(c[p0], c[p1])
 #define I332(p0,p1,p2) hq2x_interp_32_332(c[p0], c[p1], c[p2])
-#define I431(p0,p1,p2) hq2x_interp_32_431(c[p0], c[p1], c[p2])
 #define I521(p0,p1,p2) hq2x_interp_32_521(c[p0], c[p1], c[p2])
-#define I53(p0,p1) hq2x_interp_32_53(c[p0], c[p1])
 #define I611(p0,p1,p2) hq2x_interp_32_611(c[p0], c[p1], c[p2])
-#define I71(p0,p1) hq2x_interp_32_71(c[p0], c[p1])
-#define I772(p0,p1,p2) hq2x_interp_32_772(c[p0], c[p1], c[p2])
-#define I97(p0,p1) hq2x_interp_32_97(c[p0], c[p1])
 #define I1411(p0,p1,p2) hq2x_interp_32_1411(c[p0], c[p1], c[p2])
-#define I151(p0,p1) hq2x_interp_32_151(c[p0], c[p1])
 
     switch (mask) {
 #include "TextureFilters_lq2x.h"
@@ -1227,19 +1136,12 @@ static void lq2xS_32_def(uint32* dst0, uint32* dst1, const uint32* src0, const u
 #undef HQ2X_MDL
 #undef HQ2X_MUL
 #undef IC
-#undef I11
 #undef I211
 #undef I31
 #undef I332
-#undef I431
 #undef I521
-#undef I53
 #undef I611
-#undef I71
-#undef I772
-#undef I97
 #undef I1411
-#undef I151
 
     src0 += 1;
     src1 += 1;
