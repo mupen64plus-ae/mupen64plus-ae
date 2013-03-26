@@ -126,8 +126,8 @@ WARNFLAGS ?= -Wall
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -I../../src/Glitch64/inc -DGCC
 CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
-BOOST_SUFFIX ?= -mt
-BOOST_THREAD_SUFFIX ?= -mt
+BOOST_SUFFIX ?=
+BOOST_THREAD_SUFFIX ?=
 LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX) -lboost_thread$(BOOST_THREAD_SUFFIX)
 
 ifeq ($(OS), MINGW)
