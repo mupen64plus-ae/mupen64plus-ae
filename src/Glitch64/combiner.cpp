@@ -1657,7 +1657,7 @@ static void setPattern()
   GLubyte stip[32*4];
   for(i=0; i<32; i++)
   {
-    unsigned int val = rand() << 17 | (rand() & 1) << 16 | rand() << 1 | rand() & 1;
+    unsigned int val = (rand() << 17) | ((rand() & 1) << 16) | (rand() << 1) | (rand() & 1);
     stip[i*4+0] = (val >> 24) & 0xFF;
     stip[i*4+1] = (val >> 16) & 0xFF;
     stip[i*4+2] = (val >> 8) & 0xFF;
