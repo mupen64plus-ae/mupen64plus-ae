@@ -1658,6 +1658,7 @@ FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
 {
 	glFinish();
+  glUseProgramObjectARB(0);
 //  printf("rendercallback is %p\n", renderCallback);
   if(renderCallback)
       (*renderCallback)(1);
