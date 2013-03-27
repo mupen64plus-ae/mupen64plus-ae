@@ -128,10 +128,11 @@ typedef unsigned char boolean;
 #endif /* GLIDE3 */
 
 struct GHQTexInfo {
+
   unsigned char *data;
+
   int width;
   int height;
-  unsigned short format;
 
   int smallLodLog2;
   int largeLodLog2;
@@ -140,6 +141,8 @@ struct GHQTexInfo {
   int tiles;
   int untiled_width;
   int untiled_height;
+
+  unsigned short format;
 
   unsigned char is_hires_tex;
 };
