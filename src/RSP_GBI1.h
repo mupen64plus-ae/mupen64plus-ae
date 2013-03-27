@@ -163,7 +163,7 @@ void RSP_GBI1_BranchZ(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_BranchZ);
 
-    uint32 vtx = ((gfx->words.w0)&0xFFF)>1;
+    uint32 vtx = ((gfx->words.w0)&0xFFF)>>1;
     float vtxdepth = g_vecProjected[vtx].z/g_vecProjected[vtx].w;
 
 #ifdef DEBUGGER
