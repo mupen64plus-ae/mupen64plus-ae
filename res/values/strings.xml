@@ -249,6 +249,7 @@
     <string name="pluginVideo_entryNone">None (video disabled)</string>
     <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
     <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
+    <string name="pluginVideo_entryGlide64mk2">glide64mk2</string>
     <string name="pluginAudio_title">Audio</string>
     <string name="pluginAudio_entryNone">None (audio disabled)</string>
     <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
