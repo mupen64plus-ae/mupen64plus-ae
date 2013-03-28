@@ -1055,8 +1055,8 @@ void LoadTex (int id, int tmu)
   cache->f_mirror_t = FALSE;
   cache->f_wrap_s = FALSE;
   cache->f_wrap_t = FALSE;
-  cache->is_hires_tex = FALSE;
 #ifdef TEXTURE_FILTER
+  cache->is_hires_tex = FALSE;
   cache->ricecrc    = texinfo[id].ricecrc;
 #endif
 

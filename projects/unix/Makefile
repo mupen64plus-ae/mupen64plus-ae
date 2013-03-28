@@ -128,15 +128,6 @@ CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
 BOOST_SUFFIX ?=
 BOOST_THREAD_SUFFIX ?=
-LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX) -lboost_thread$(BOOST_THREAD_SUFFIX)
-
-ifeq ($(OS), MINGW)
-  CFLAGS += -DBOOST_THREAD_USE_LIB
-  LDLIBS += -lpthread
-else
-  CFLAGS += -pthread
-  LDLIBS += -pthread
-endif
 
 # default configuration programs
 SDL_CONFIG = $(CROSS_COMPILE)sdl-config
@@ -352,7 +343,10 @@ SOURCE = \
 	$(SRCDIR)/Glide64/rdp.cpp \
 	$(SRCDIR)/Glide64/TexBuffer.cpp \
 	$(SRCDIR)/Glide64/TexCache.cpp \
-	$(SRCDIR)/Glide64/Util.cpp \
+	$(SRCDIR)/Glide64/Util.cpp
+
+ifneq ($(HIRES), 0)
+SOURCE += \
 	$(SRCDIR)/GlideHQ/Ext_TxFilter.cpp \
 	$(SRCDIR)/GlideHQ/TxFilterExport.cpp \
 	$(SRCDIR)/GlideHQ/TxFilter.cpp \
@@ -372,6 +366,18 @@ SOURCE = \
 	$(SRCDIR)/GlideHQ/tc-1.1+/dxtn.c \
 	$(SRCDIR)/GlideHQ/tc-1.1+/wrapper.c \
 	$(SRCDIR)/GlideHQ/tc-1.1+/texstore.c
+
+CFLAGS += -DTEXTURE_FILTER
+LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX) -lboost_thread$(BOOST_THREAD_SUFFIX)
+
+  ifeq ($(OS), MINGW)
+    CFLAGS += -DBOOST_THREAD_USE_LIB
+    LDLIBS += -lpthread
+  else
+    CFLAGS += -pthread
+    LDLIBS += -pthread
+  endif
+endif
 
 ifeq ($(OS),MINGW)
 SOURCE += $(SRCDIR)/Glide64/osal_dynamiclib_win32.c
@@ -406,6 +412,7 @@ targets:
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
+	@echo "    HIRES=(1|0)   == Enables/Disables support for hires textures and texture filters (default: 1)"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"
