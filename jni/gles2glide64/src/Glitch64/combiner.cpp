@@ -227,30 +227,6 @@ static char fragment_shader_texture0[1024];
 static char fragment_shader_chroma[1024];
 static char shader_log[2048];
 
-void updateCombiner(int i)
-{
-//  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, fct[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, source0[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB, operand0[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB, source1[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB, operand1[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB_ARB, source2[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB_ARB, operand2[i]);
-}
-
-void updateCombinera(int i)
-{
-//  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, fcta[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, sourcea0[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA_ARB, operanda0[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_ARB, sourcea1[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA_ARB, operanda1[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_ALPHA_ARB, sourcea2[i]);
-//  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_ALPHA_ARB, operanda2[i]);
-}
-
 void check_compile(GLint shader)
 {
     GLint success;
@@ -260,10 +236,6 @@ void check_compile(GLint shader)
         char log[1024];
         glGetShaderInfoLog(vertex_shader_object,1024,NULL,log);
         LOGINFO(log);
-    }
-    else
-    {
-        LOGINFO("Compile OK shader %d",shader);
     }
 }
 
@@ -275,11 +247,7 @@ void check_link(GLint program)
     {
         char log[1024];
         glGetProgramInfoLog(vertex_shader_object,1024,NULL,log);
-        LOGINFO(log);
-    }
-    else
-    {
-        LOGINFO("Link OK program %d",program);
+        LOG(log);
     }
 }
 
@@ -354,17 +322,6 @@ void init_combiner()
   check_link(program_object);
   glUseProgram(program_object);
 
-//  glGetObjectParameteriv(program_object, GL_OBJECT_LINK_STATUS , &log_length);
-//  if(!log_length)
-//  {
-//    glGetInfoLogARB(fragment_shader_object, 2048, &log_length, shader_log);
-//    if(log_length) display_warning(shader_log);
-//    glGetInfoLogARB(vertex_shader_object, 2048, &log_length, shader_log);
-//    if(log_length) display_warning(shader_log);
-//    glGetInfoLogARB(program_object, 2048, &log_length, shader_log);
-//    if(log_length) display_warning(shader_log);
-//  }
-
   texture0_location = glGetUniformLocation(program_object, "texture0");
   texture1_location = glGetUniformLocation(program_object, "texture1");
   glUniform1i(texture0_location, 0);
@@ -378,17 +335,6 @@ void init_combiner()
   glLinkProgram(program_object);
   check_link(program_object);
   glUseProgram(program_object);
-
-//  glGetObjectParameterivARB(program_object, GL_OBJECT_LINK_STATUS_ARB , &log_length);
-//  if(!log_length)
-//  {
-//    glGetInfoLogARB(fragment_shader_object, 2048, &log_length, shader_log);
-//    if(log_length) display_warning(shader_log);
-//    glGetInfoLogARB(vertex_shader_object, 2048, &log_length, shader_log);
-//    if(log_length) display_warning(shader_log);
-//    glGetInfoLogARB(program_object, 2048, &log_length, shader_log);
-//    if(log_length) display_warning(shader_log);
-//  }
 
   texture0_location = glGetUniformLocation(program_object, "texture0");
   texture1_location = glGetUniformLocation(program_object, "texture1");
