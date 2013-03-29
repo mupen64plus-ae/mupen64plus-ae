@@ -631,19 +631,10 @@ grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
 
   if(need_to_compile) compile_shader();
 
-  switch(mode)
+  if(mode != GR_TRIANGLE_FAN)
   {
-  case GR_TRIANGLE_FAN:
-    //glBegin(GL_TRIANGLE_FAN);
-    break;
-  default:
     display_warning("grDrawVertexArray : unknown mode : %x", mode);
   }
-
-   // float* pos = new float[Count*4]; 
- // float* col = new float[Count*4];
-  //float* tex0 = new float[Count*2];
-  //float* tex1 = new float[Count*2];
 
   x = (float*)pointers[0] + xy_off/sizeof(float);
   pargb = (unsigned char*)pointers[0] + pargb_off;
@@ -666,90 +657,7 @@ grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
   glEnableVertexAttribArray(FOG_ATTR);
   glVertexAttribPointer(FOG_ATTR,1,GL_FLOAT,false,VERTEX_SIZE,fog); //Fog
 
-
- // for (i=0; i<Count; i++)
- // {
- //   x = (float*)pointers[i] + xy_off/sizeof(float);
- //   y = (float*)pointers[i] + xy_off/sizeof(float) + 1;
- //   z = (float*)pointers[i] + z_off/sizeof(float);
- //   q = (float*)pointers[i] + q_off/sizeof(float);
- //   pargb = (unsigned char*)pointers[i] + pargb_off;
- //   s0 = (float*)pointers[i] + st0_off/sizeof(float);
- //   t0 = (float*)pointers[i] + st0_off/sizeof(float) + 1;
- //   s1 = (float*)pointers[i] + st1_off/sizeof(float);
- //   t1 = (float*)pointers[i] + st1_off/sizeof(float) + 1;
- //   fog = (float*)pointers[i] + fog_ext_off/sizeof(float);
-
-
-
-	//////pos[i*4] = (*x - (float)widtho) / (float)(width/2) / *q;
-	//////pos[i*4+1] = -(*y - (float)heighto) / (float)(height/2) / *q;
-	//////pos[i*4+2] = ZCALC(*z, *q);
-	//////pos[i*4+3] =  1.0f / *q;
-
-	////col[i*4] = pargb[2]/255.0f; 
-	////col[i*4+1] = pargb[1]/255.0f;
-	////col[i*4+2] = pargb[0]/255.0f;
- ////   col[i*4+3] = pargb[3]/255.0f;
-
-	////pos[i*4] = *x;
-	////pos[i*4+1] = *y;
-	////pos[i*4+2] = *z; // ZCALC(*z, *q);
-	////pos[i*4+3] = *q;
-
-	////col[i*4] = pargb[0]; 
-	////col[i*4+1] = pargb[1];
-	////col[i*4+2] = pargb[2];
- ////   col[i*4+3] = pargb[3];
-
-	//tex0[i*2] = *s0 / *q / (float)tex1_width;
-	//tex0[i*2+1] = ytex(1, *t0 / *q / (float)tex1_height);
-
-	//tex1[i*2] = *s1 / *q / (float)tex0_width;
-	//tex1[i*2+1] = ytex(1, *t1 / *q / (float)tex0_height);
-	//
-	////if (nbTextureUnits > 2)
- ////   {
- ////     if (st0_en)
- ////       glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *s0 / *q / (float)tex1_width,
- ////       ytex(0, *t0 / *q / (float)tex1_height));
- ////     if (st1_en)
- ////       glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *s1 / *q / (float)tex0_width,
- ////       ytex(1, *t1 / *q / (float)tex0_height));
- ////   }
- ////   else
- ////   {
- ////     if (st0_en)
- ////       glTexCoord2f(*s0 / *q / (float)tex0_width,
- ////       ytex(0, *t0 / *q / (float)tex0_height));
- ////   }
- ////   if (pargb_en)
- ////     glColor4f(pargb[2]/255.0f, pargb[1]/255.0f, pargb[0]/255.0f, pargb[3]/255.0f);
- ////   if (fog_enabled && fog_coord_support)
- ////   {
- ////     if(!fog_ext_en || fog_enabled != 2)
- ////       glSecondaryColor3f((1.0f / *q) / 255.0f, 0.0f, 0.0f);
- ////     else
- ////       glSecondaryColor3f((1.0f / *fog) / 255.0f, 0.0f, 0.0f);
- ////   }
- ////   glVertex4f((*x - (float)widtho) / (float)(width/2) / *q,
- ////     -(*y - (float)heighto) / (float)(height/2) / *q, ZCALC(*z, *q), 1.0f / *q);
- // }
-  //glEnd();
-
-  //glEnableVertexAttribArray(0);
-  //glVertexAttribPointer(0,4,GL_FLOAT,false,0,pos); //Position
-
-  //glEnableVertexAttribArray(1);
-  //glVertexAttribPointer(1,4,GL_FLOAT,false,0,col); //Colour
   glDrawArrays(GL_TRIANGLE_FAN,0,Count);
-
-  //delete [] pos;
-  //delete [] col;
-  //delete [] tex0;   
-  //delete [] tex1;
-  
-  
 }
 
 FX_ENTRY void FX_CALL
@@ -769,7 +677,7 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
 
   if(stride != 156)
   {
-	  LOG("Incompatible stride\n");
+	  LOGINFO("Incompatible stride\n");
   }
 
   reloadTexture();
@@ -780,10 +688,6 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
     pargb = (unsigned char*)pointers + pargb_off;
     s0 = (float*)((unsigned char*)pointers) + st0_off/sizeof(float);
     s1 = (float*)((unsigned char*)pointers) + st1_off/sizeof(float);
-  //  x = (float*)pointers[0] + xy_off/sizeof(float);
-  //pargb = (unsigned char*)pointers[0] + pargb_off;
-  //s0 = (float*)pointers[0] + st0_off/sizeof(float);
-  //s1 = (float*)pointers[0] + st1_off/sizeof(float);
    fog = (float*)((unsigned char*)pointers) + fog_ext_off/sizeof(float);
 
 
@@ -813,49 +717,4 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
   default:
     display_warning("grDrawVertexArrayContiguous : unknown mode : %x", mode);
   }
-
-  //for (i=0; i<Count; i++)
-  //{
-  //  x = (float*)((unsigned char*)pointers+stride*i) + xy_off/sizeof(float);
-  //  y = (float*)((unsigned char*)pointers+stride*i) + xy_off/sizeof(float) + 1;
-  //  z = (float*)((unsigned char*)pointers+stride*i) + z_off/sizeof(float);
-  //  q = (float*)((unsigned char*)pointers+stride*i) + q_off/sizeof(float);
-  //  pargb = (unsigned char*)pointers+stride*i + pargb_off;
-  //  s0 = (float*)((unsigned char*)pointers+stride*i) + st0_off/sizeof(float);
-  //  t0 = (float*)((unsigned char*)pointers+stride*i) + st0_off/sizeof(float) + 1;
-  //  s1 = (float*)((unsigned char*)pointers+stride*i) + st1_off/sizeof(float);
-  //  t1 = (float*)((unsigned char*)pointers+stride*i) + st1_off/sizeof(float) + 1;
-  //  fog = (float*)((unsigned char*)pointers+stride*i) + fog_ext_off/sizeof(float);
-
-  //  //if(*fog == 0.0f) *fog = 1.0f;
-
-  //  if (nbTextureUnits > 2)
-  //  {
-  //    if (st0_en)
-  //      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *s0 / *q / (float)tex1_width,
-  //      ytex(0, *t0 / *q / (float)tex1_height));
-  //    if (st1_en)
-  //      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *s1 / *q / (float)tex0_width,
-  //      ytex(1, *t1 / *q / (float)tex0_height));
-  //  }
-  //  else
-  //  {
-  //    if (st0_en)
-  //      glTexCoord2f(*s0 / *q / (float)tex0_width,
-  //      ytex(0, *t0 / *q / (float)tex0_height));
-  //  }
-  //  if (pargb_en)
-  //    glColor4f(pargb[2]/255.0f, pargb[1]/255.0f, pargb[0]/255.0f, pargb[3]/255.0f);
-  //  if (fog_enabled && fog_coord_support)
-  //  {
-  //    if(!fog_ext_en || fog_enabled != 2)
-  //      glSecondaryColor3f((1.0f / *q) / 255.0f, 0.0f, 0.0f);
-  //    else
-  //      glSecondaryColor3f((1.0f / *fog) / 255.0f, 0.0f, 0.0f);
-  //  }
-
-  //  glVertex4f((*x - (float)widtho) / (float)(width/2) / *q,
-  //    -(*y - (float)heighto) / (float)(height/2) / *q, ZCALC(*z, *q), 1.0f / *q);
-  //}
-  //glEnd();
 }
