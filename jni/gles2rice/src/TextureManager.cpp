@@ -716,23 +716,23 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
     pEntry->bExternalTxtrChecked = false;
     pEntry->maxCI = maxCI;
 
-    if( pEntry->pTexture->m_dwCreatedTextureWidth < pgti->WidthToCreate )
-    {
-        pEntry->ti.WidthToLoad = pEntry->pTexture->m_dwCreatedTextureWidth;
-        pEntry->pTexture->m_bScaledS = false;
-        pEntry->pTexture->m_bScaledT = false;
-    }
-    if( pEntry->pTexture->m_dwCreatedTextureHeight < pgti->HeightToCreate )
-    {
-        pEntry->ti.HeightToLoad = pEntry->pTexture->m_dwCreatedTextureHeight;
-        pEntry->pTexture->m_bScaledT = false;
-        pEntry->pTexture->m_bScaledS = false;
-    }
-
     try 
     {
         if (pEntry->pTexture != NULL)
         {
+            if( pEntry->pTexture->m_dwCreatedTextureWidth < pgti->WidthToCreate )
+            {
+                pEntry->ti.WidthToLoad = pEntry->pTexture->m_dwCreatedTextureWidth;
+                pEntry->pTexture->m_bScaledS = false;
+                pEntry->pTexture->m_bScaledT = false;
+            }
+            if( pEntry->pTexture->m_dwCreatedTextureHeight < pgti->HeightToCreate )
+            {
+                pEntry->ti.HeightToLoad = pEntry->pTexture->m_dwCreatedTextureHeight;
+                pEntry->pTexture->m_bScaledT = false;
+                pEntry->pTexture->m_bScaledS = false;
+            }
+            
             TextureFmt dwType = pEntry->pTexture->GetSurfaceFormat();
             SAFE_DELETE(pEntry->pEnhancedTexture);
             pEntry->dwEnhancementFlag = TEXTURE_NO_ENHANCEMENT;
