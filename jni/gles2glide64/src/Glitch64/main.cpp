@@ -1244,12 +1244,17 @@ static void render_rectangle(int texture_number,
     0.0f
   };
 
-  glDisableVertexAttribArray(1); //Disable Colour, Tex1 coord, Fog
-  glDisableVertexAttribArray(3);
-  glDisableVertexAttribArray(4);
+  glDisableVertexAttribArray(COLOUR_ATTR);
+  glDisableVertexAttribArray(TEXCOORD_1_ATTR);
+  glDisableVertexAttribArray(FOG_ATTR);
 
-  glVertexAttribPointer(0,2,GL_FLOAT,false,2,data); //Position
-  glVertexAttribPointer(2,2,GL_FLOAT,false,2,&data[2]); //Tex
+  glVertexAttribPointer(POSITION_ATTR,2,GL_FLOAT,false,2,data); //Position
+  glVertexAttribPointer(TEXCOORD_0_ATTR,2,GL_FLOAT,false,2,&data[2]); //Tex
+
+  glEnableVertexAttribArray(COLOUR_ATTR);
+  glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+  glEnableVertexAttribArray(FOG_ATTR);
+
 
   disable_textureSizes();
 
