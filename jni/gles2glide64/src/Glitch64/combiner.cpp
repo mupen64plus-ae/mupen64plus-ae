@@ -229,26 +229,26 @@ static char shader_log[2048];
 
 void check_compile(GLint shader)
 {
-    GLint success;
-    glGetShaderiv(vertex_shader_object,GL_COMPILE_STATUS,&success);
-    if(!success)
-    {
-        char log[1024];
-        glGetShaderInfoLog(vertex_shader_object,1024,NULL,log);
-        LOGINFO(log);
-    }
+  GLint success;
+  glGetShaderiv(vertex_shader_object,GL_COMPILE_STATUS,&success);
+  if(!success)
+  {
+    char log[1024];
+    glGetShaderInfoLog(vertex_shader_object,1024,NULL,log);
+    LOGINFO(log);
+  }
 }
 
 void check_link(GLint program)
 {
-    GLint success;
-    glGetProgramiv(vertex_shader_object,GL_LINK_STATUS,&success);
-    if(!success)
-    {
-        char log[1024];
-        glGetProgramInfoLog(vertex_shader_object,1024,NULL,log);
-        LOG(log);
-    }
+  GLint success;
+  glGetProgramiv(vertex_shader_object,GL_LINK_STATUS,&success);
+  if(!success)
+  {
+    char log[1024];
+    glGetProgramInfoLog(vertex_shader_object,1024,NULL,log);
+    LOGINFO(log);
+  }
 }
 
 void init_combiner()
