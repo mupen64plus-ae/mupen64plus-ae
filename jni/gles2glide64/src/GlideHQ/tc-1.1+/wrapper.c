@@ -79,32 +79,29 @@ tx_compress_dxtn (int srccomps, int width, int height,
 		  int destRowStride)
 {
     int srcRowStride = width * srccomps;
-    int rv;
 
     switch (destformat) {
 	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-	    rv = dxt1_rgb_encode(width, height, srccomps,
-				 source, srcRowStride,
-				 dest, destRowStride);
+	    dxt1_rgb_encode(width, height, srccomps,
+			    source, srcRowStride,
+			    dest, destRowStride);
 	    break;
 	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-	    rv = dxt1_rgba_encode(width, height, srccomps,
-				  source, srcRowStride,
-				  dest, destRowStride);
+	    dxt1_rgba_encode(width, height, srccomps,
+			     source, srcRowStride,
+			     dest, destRowStride);
 	    break;
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-	    rv = dxt3_rgba_encode(width, height, srccomps,
-				  source, srcRowStride,
-				  dest, destRowStride);
+	    dxt3_rgba_encode(width, height, srccomps,
+			     source, srcRowStride,
+			     dest, destRowStride);
 	    break;
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-	    rv = dxt5_rgba_encode(width, height, srccomps,
-				  source, srcRowStride,
-				  dest, destRowStride);
+	    dxt5_rgba_encode(width, height, srccomps,
+			     source, srcRowStride,
+			     dest, destRowStride);
 	    break;
 	default:
 	    assert(0);
     }
-
-    /*return rv;*/
 }

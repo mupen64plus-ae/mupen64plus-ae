@@ -57,11 +57,9 @@ int need_to_compile;
 
 static GLhandleARB fragment_shader_object;
 static GLhandleARB fragment_depth_shader_object;
-static GLhandleARB fragment_bw_shader_object;
 static GLhandleARB vertex_shader_object;
 static GLhandleARB program_object_default;
 static GLhandleARB program_object_depth;
-static GLhandleARB program_object_bw;
 static GLhandleARB program_object;
 static int constant_color_location;
 static int ccolor0_location;
@@ -104,16 +102,6 @@ static const char* fragment_shader_dither =
 
 static const char* fragment_shader_default =
 "  gl_FragColor = texture2D(texture0, vec2(gl_TexCoord[0])); \n"
-;
-
-static const char* fragment_shader_depth =
-"  gl_FragDepth = dot(texture2D(texture0, vec2(gl_TexCoord[0])), vec4(32*64*32/65536.0, 64*32/65536.0, 32/65536.0, 0))*0.5 + 0.5; \n"
-;
-
-static const char* fragment_shader_bw =
-"  vec4 readtex0 = texture2D(texture0, vec2(gl_TexCoord[0])); \n"
-"  gl_FragColor = vec4(vec3(readtex0.b),                      \n"
-"                 readtex0.r + readtex0.g * 8.0 / 256.0);     \n"
 ;
 
 static const char* fragment_shader_readtex0color =
@@ -1657,7 +1645,7 @@ static void setPattern()
   GLubyte stip[32*4];
   for(i=0; i<32; i++)
   {
-    unsigned int val = rand() << 17 | (rand() & 1) << 16 | rand() << 1 | rand() & 1;
+    unsigned int val = (rand() << 17) | ((rand() & 1) << 16) | (rand() << 1) | (rand() & 1);
     stip[i*4+0] = (val >> 24) & 0xFF;
     stip[i*4+1] = (val >> 16) & 0xFF;
     stip[i*4+2] = (val >> 8) & 0xFF;

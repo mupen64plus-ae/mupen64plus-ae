@@ -274,7 +274,7 @@ static inline void load8bIA4(uint8_t *src, uint8_t *dst, int wid_64, int height,
       v10 = *v6;
       v11 = (*v6 >> 4) & 0xF0F0F0F;
       v12 = v6 + 1;
-      *v7 = 16 * v10 & 0xF0F0F0F0 | v11;
+      *v7 = (16 * v10 & 0xF0F0F0F0) | v11;
       v13 = v7 + 1;
       v14 = (*v12 >> 4) & 0xF0F0F0F;
       v15 = 16 * *v12 & 0xF0F0F0F0;
@@ -292,11 +292,11 @@ static inline void load8bIA4(uint8_t *src, uint8_t *dst, int wid_64, int height,
     v18 = wid_64;
     do
     {
-      *v17 = 16 * v16[1] & 0xF0F0F0F0 | (v16[1] >> 4) & 0xF0F0F0F;
+      *v17 = (16 * v16[1] & 0xF0F0F0F0) | ((v16[1] >> 4) & 0xF0F0F0F);
       v19 = v17 + 1;
       v20 = *v16;
       v16 += 2;
-      *v19 = 16 * v20 & 0xF0F0F0F0 | (v20 >> 4) & 0xF0F0F0F;
+      *v19 = (16 * v20 & 0xF0F0F0F0) | ((v20 >> 4) & 0xF0F0F0F);
       v17 = v19 + 1;
       --v18;
     }

@@ -861,7 +861,6 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
                                          * NOTE: texture size must be checked before expanding to pow2 size.
                                          */
           ) {
-        uint32 alpha = 0;
         int dataSize = 0;
         int compressionType = _options & COMPRESSION_MASK;
 
