@@ -318,6 +318,13 @@ void init_combiner()
   program_object_depth = program_object;
   glAttachShader(program_object, fragment_depth_shader_object);
   glAttachShader(program_object, vertex_shader_object);
+
+  glBindAttribLocation(program_object,POSITION_ATTR,"aPosition");
+  glBindAttribLocation(program_object,COLOUR_ATTR,"aColor");
+  glBindAttribLocation(program_object,TEXCOORD_0_ATTR,"aMultiTexCoord0");
+  glBindAttribLocation(program_object,TEXCOORD_1_ATTR,"aMultiTexCoord1");
+  glBindAttribLocation(program_object,FOG_ATTR,"aFog");
+
   glLinkProgram(program_object);
   check_link(program_object);
   glUseProgram(program_object);
@@ -332,6 +339,13 @@ void init_combiner()
   program_object_default = program_object;
   glAttachShader(program_object, fragment_shader_object);
   glAttachShader(program_object, vertex_shader_object);
+
+  glBindAttribLocation(program_object,POSITION_ATTR,"aPosition");
+  glBindAttribLocation(program_object,COLOUR_ATTR,"aColor");
+  glBindAttribLocation(program_object,TEXCOORD_0_ATTR,"aMultiTexCoord0");
+  glBindAttribLocation(program_object,TEXCOORD_1_ATTR,"aMultiTexCoord1");
+  glBindAttribLocation(program_object,FOG_ATTR,"aFog");
+
   glLinkProgram(program_object);
   check_link(program_object);
   glUseProgram(program_object);
