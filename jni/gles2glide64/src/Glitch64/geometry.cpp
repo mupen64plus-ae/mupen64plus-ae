@@ -253,7 +253,7 @@ void FindBestDepthBias()
   float f, bestz = 0.25f;
   int x;
   if (biasFactor) return;
-  biasFactor = 64.0f; // default value
+  biasFactor = 0.0f; // default value
  //  glPushAttrib(GL_ALL_ATTRIB_BITS);
 //  glEnable(GL_DEPTH_TEST);
 //  glDepthFunc(GL_ALWAYS);
