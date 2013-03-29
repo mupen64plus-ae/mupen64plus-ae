@@ -31,6 +31,8 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Point;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -39,6 +41,8 @@ import android.os.Message;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 /**
  * A class that consolidates all interactions with the emulator core.
@@ -476,6 +480,14 @@ public class CoreInterface
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin.path + '"' );
 
         mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
+        
+        Display display = sActivity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        mupen64plus_cfg.put( "Video-General", "ScreenWidth", size.x + "" );
+        mupen64plus_cfg.put( "Video-General", "ScreenHeight", size.y + "" );
+        
+        
         mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", booleanToString( user.isGles2RiceAutoFrameskipEnabled ) );
         mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", booleanToString( user.isGles2RiceFastTextureLoadingEnabled ) );
