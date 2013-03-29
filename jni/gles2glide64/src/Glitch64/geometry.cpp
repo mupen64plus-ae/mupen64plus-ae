@@ -651,20 +651,20 @@ grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
   s1 = (float*)pointers[0] + st1_off/sizeof(float);
   fog = (float*)pointers[0] + fog_ext_off/sizeof(float);
 
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0,4,GL_FLOAT,false,VERTEX_SIZE,x); //Position
+  glEnableVertexAttribArray(POSITION_ATTR);
+  glVertexAttribPointer(POSITION_ATTR,4,GL_FLOAT,false,VERTEX_SIZE,x); //Position
 
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1,4,GL_UNSIGNED_BYTE,true,VERTEX_SIZE,pargb); //Colour
+  glEnableVertexAttribArray(COLOUR_ATTR);
+  glVertexAttribPointer(COLOUR_ATTR,4,GL_UNSIGNED_BYTE,true,VERTEX_SIZE,pargb); //Colour
 
-  glEnableVertexAttribArray(2);
-  glVertexAttribPointer(2,2,GL_FLOAT,false,VERTEX_SIZE,s1); //Tex0
+  glEnableVertexAttribArray(TEXCOORD_0_ATTR);
+  glVertexAttribPointer(TEXCOORD_0_ATTR,2,GL_FLOAT,false,VERTEX_SIZE,s1); //Tex0
 
-  glEnableVertexAttribArray(3);
-  glVertexAttribPointer(3,2,GL_FLOAT,false,VERTEX_SIZE,s0); //Tex1
+  glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+  glVertexAttribPointer(TEXCOORD_1_ATTR,2,GL_FLOAT,false,VERTEX_SIZE,s0); //Tex1
 
-  glEnableVertexAttribArray(4);
-  glVertexAttribPointer(4,1,GL_FLOAT,false,VERTEX_SIZE,fog); //Fog
+  glEnableVertexAttribArray(FOG_ATTR);
+  glVertexAttribPointer(FOG_ATTR,1,GL_FLOAT,false,VERTEX_SIZE,fog); //Fog
 
 
  // for (i=0; i<Count; i++)
@@ -787,20 +787,20 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
    fog = (float*)((unsigned char*)pointers) + fog_ext_off/sizeof(float);
 
 
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0,4,GL_FLOAT,false,VERTEX_SIZE,x); //Position
+  glEnableVertexAttribArray(POSITION_ATTR);
+  glVertexAttribPointer(POSITION_ATTR,4,GL_FLOAT,false,VERTEX_SIZE,x); //Position
 
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1,4,GL_UNSIGNED_BYTE,true,VERTEX_SIZE,pargb); //Colour
+  glEnableVertexAttribArray(COLOUR_ATTR);
+  glVertexAttribPointer(COLOUR_ATTR,4,GL_UNSIGNED_BYTE,true,VERTEX_SIZE,pargb); //Colour
 
-  glEnableVertexAttribArray(2);
-  glVertexAttribPointer(2,2,GL_FLOAT,false,VERTEX_SIZE,s1); //Tex0
+  glEnableVertexAttribArray(TEXCOORD_0_ATTR);
+  glVertexAttribPointer(TEXCOORD_0_ATTR,2,GL_FLOAT,false,VERTEX_SIZE,s1); //Tex0
 
-  glEnableVertexAttribArray(3);
-  glVertexAttribPointer(3,2,GL_FLOAT,false,VERTEX_SIZE,s0); //Tex1
+  glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+  glVertexAttribPointer(TEXCOORD_1_ATTR,2,GL_FLOAT,false,VERTEX_SIZE,s0); //Tex1
 
-  glEnableVertexAttribArray(4);
-  glVertexAttribPointer(4,1,GL_FLOAT,false,VERTEX_SIZE,fog); //Fog
+  glEnableVertexAttribArray(FOG_ATTR);
+  glVertexAttribPointer(FOG_ATTR,1,GL_FLOAT,false,VERTEX_SIZE,fog); //Fog
 
   switch(mode)
   {

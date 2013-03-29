@@ -88,6 +88,13 @@ void updateCombinera(int i);
 void remove_tex(unsigned int idmin, unsigned int idmax);
 void add_tex(unsigned int id);
 
+//Vertex Attribute Locations
+#define POSITION_ATTR 0
+#define COLOUR_ATTR 1
+#define TEXCOORD_0_ATTR 2
+#define TEXCOORD_1_ATTR 3
+#define FOG_ATTR 4
+
 extern int w_buffer_mode;
 extern int nbTextureUnits;
 extern int width, height, widtho, heighto;

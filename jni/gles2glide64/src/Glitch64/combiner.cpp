@@ -571,11 +571,11 @@ int texture0_location;
   shader_programs[number_of_programs].program_object = program_object;
 
   
-  glBindAttribLocation(program_object,0,"aPosition");
-  glBindAttribLocation(program_object,1,"aColor");
-  glBindAttribLocation(program_object,2,"aMultiTexCoord0");
-  glBindAttribLocation(program_object,3,"aMultiTexCoord1");
-  glBindAttribLocation(program_object,4,"aFog");
+  glBindAttribLocation(program_object,POSITION_ATTR,"aPosition");
+  glBindAttribLocation(program_object,COLOUR_ATTR,"aColor");
+  glBindAttribLocation(program_object,TEXCOORD_0_ATTR,"aMultiTexCoord0");
+  glBindAttribLocation(program_object,TEXCOORD_1_ATTR,"aMultiTexCoord1");
+  glBindAttribLocation(program_object,FOG_ATTR,"aFog");
 
   glAttachShader(program_object, shader_programs[number_of_programs].fragment_shader_object);
   glAttachShader(program_object, vertex_shader_object);
