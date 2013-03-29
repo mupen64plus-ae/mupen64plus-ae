@@ -666,41 +666,6 @@ grConstantColorValue( GrColor_t value )
     texture_env_color[2], texture_env_color[3]);
 }
 
-//int setOtherColorSource(int other)
-//{
-//  switch(other)
-//  {
-//  case GR_COMBINE_OTHER_ITERATED:
-//    return GL_PRIMARY_COLOR_ARB;
-//    break;
-//  case GR_COMBINE_OTHER_TEXTURE:
-//    return GL_PREVIOUS_ARB;
-//    break;
-//  case GR_COMBINE_OTHER_CONSTANT:
-//    return GL_CONSTANT_ARB;
-//    break;
-//  default:
-//    display_warning("unknwown other color source : %x", other);
-//  }
-//  return 0;
-//}
-//
-//int setLocalColorSource(int local)
-//{
-//  switch(local)
-//  {
-//  case GR_COMBINE_LOCAL_ITERATED:
-//    return GL_PRIMARY_COLOR_ARB;
-//    break;
-//  case GR_COMBINE_LOCAL_CONSTANT:
-//    return GL_CONSTANT_ARB;
-//    break;
-//  default:
-//    display_warning("unknwown local color source : %x", local);
-//  }
-//  return 0;
-//}
-
 void writeGLSLColorOther(int other)
 {
   switch(other)
