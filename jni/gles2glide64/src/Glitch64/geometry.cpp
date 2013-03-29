@@ -48,6 +48,8 @@ int w_buffer_mode;
 int inverted_culling;
 int culling_mode;
 
+void* previous_pointers;
+
 inline float ZCALC(const float & z, const float & q) {
   float res = z_en ? ((z) / Z_MAX) / (q) : 1.0f;
   return res;
@@ -319,137 +321,6 @@ grDrawTriangle( const void *a, const void *b, const void *c )
   memcpy(&triangle[VERTEX_SIZE*2],c,VERTEX_SIZE);
 
   grDrawVertexArrayContiguous(GR_TRIANGLE_FAN,3,triangle,VERTEX_SIZE);
-  //float *a_x = (float*)a + xy_off/sizeof(float);
-  //float *a_y = (float*)a + xy_off/sizeof(float) + 1;
-  //float *a_z = (float*)a + z_off/sizeof(float);
-  //float *a_q = (float*)a + q_off/sizeof(float);
-  //unsigned char *a_pargb = (unsigned char*)a + pargb_off;
-  //float *a_s0 = (float*)a + st0_off/sizeof(float);
-  //float *a_t0 = (float*)a + st0_off/sizeof(float) + 1;
-  //float *a_s1 = (float*)a + st1_off/sizeof(float);
-  //float *a_t1 = (float*)a + st1_off/sizeof(float) + 1;
-  //float *a_fog = (float*)a + fog_ext_off/sizeof(float);
-
-  //float *b_x = (float*)b + xy_off/sizeof(float);
-  //float *b_y = (float*)b + xy_off/sizeof(float) + 1;
-  //float *b_z = (float*)b + z_off/sizeof(float);
-  //float *b_q = (float*)b + q_off/sizeof(float);
-  //unsigned char *b_pargb = (unsigned char*)b + pargb_off;
-  //float *b_s0 = (float*)b + st0_off/sizeof(float);
-  //float *b_t0 = (float*)b + st0_off/sizeof(float) + 1;
-  //float *b_s1 = (float*)b + st1_off/sizeof(float);
-  //float *b_t1 = (float*)b + st1_off/sizeof(float) + 1;
-  //float *b_fog = (float*)b + fog_ext_off/sizeof(float);
-
-  //float *c_x = (float*)c + xy_off/sizeof(float);
-  //float *c_y = (float*)c + xy_off/sizeof(float) + 1;
-  //float *c_z = (float*)c + z_off/sizeof(float);
-  //float *c_q = (float*)c + q_off/sizeof(float);
-  //unsigned char *c_pargb = (unsigned char*)c + pargb_off;
-  //float *c_s0 = (float*)c + st0_off/sizeof(float);
-  //float *c_t0 = (float*)c + st0_off/sizeof(float) + 1;
-  //float *c_s1 = (float*)c + st1_off/sizeof(float);
-  //float *c_t1 = (float*)c + st1_off/sizeof(float) + 1;
-  //float *c_fog = (float*)c + fog_ext_off/sizeof(float);
-//  LOG("grDrawTriangle()\r\n");
-
-  // ugly ? i know but nvidia drivers are losing the viewport otherwise
-
-  /*if(nvidia_viewport_hack && !render_to_texture)
-  {
-    glViewport(0, viewport_offset, viewport_width, viewport_height);
-    nvidia_viewport_hack = 0;
-  }
-
-  reloadTexture();
-
-  if(need_to_compile) compile_shader();
-
-  glBegin(GL_TRIANGLES);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *a_s0 / *a_q / (float)tex1_width,
-      ytex(0, *a_t0 / *a_q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *a_s1 / *a_q / (float)tex0_width,
-      ytex(1, *a_t1 / *a_q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*a_s0 / *a_q / (float)tex0_width,
-      ytex(0, *a_t0 / *a_q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(a_pargb[2]/255.0f, a_pargb[1]/255.0f, a_pargb[0]/255.0f, a_pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *a_q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *a_fog) / 255.0f, 0.0f, 0.0f);
-  }
-  glVertex4f((*a_x - (float)widtho) / (float)(width/2) / *a_q,
-    -(*a_y - (float)heighto) / (float)(height/2) / *a_q, ZCALC(*a_z, *a_q), 1.0f / *a_q);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *b_s0 / *b_q / (float)tex1_width,
-      ytex(0, *b_t0 / *b_q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *b_s1 / *b_q / (float)tex0_width,
-      ytex(1, *b_t1 / *b_q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*b_s0 / *b_q / (float)tex0_width,
-      ytex(0, *b_t0 / *b_q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(b_pargb[2]/255.0f, b_pargb[1]/255.0f, b_pargb[0]/255.0f, b_pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *b_q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *b_fog) / 255.0f, 0.0f, 0.0f);
-  }
-
-  glVertex4f((*b_x - (float)widtho) / (float)(width/2) / *b_q,
-    -(*b_y - (float)heighto) / (float)(height/2) / *b_q, ZCALC(*b_z, *b_q), 1.0f / *b_q);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *c_s0 / *c_q / (float)tex1_width,
-      ytex(0, *c_t0 / *c_q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *c_s1 / *c_q / (float)tex0_width,
-      ytex(1, *c_t1 / *c_q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*c_s0 / *c_q / (float)tex0_width,
-      ytex(0, *c_t0 / *c_q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(c_pargb[2]/255.0f, c_pargb[1]/255.0f, c_pargb[0]/255.0f, c_pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *c_q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *c_fog) / 255.0f, 0.0f, 0.0f);
-  }
-  glVertex4f((*c_x - (float)widtho) / (float)(width/2) / *c_q,
-    -(*c_y - (float)heighto) / (float)(height/2) / *c_q, ZCALC(*c_z ,*c_q), 1.0f / *c_q);
-
-  glEnd();*/
 }
 
 FX_ENTRY void FX_CALL
@@ -636,26 +507,32 @@ grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
     display_warning("grDrawVertexArray : unknown mode : %x", mode);
   }
 
-  x = (float*)pointers[0] + xy_off/sizeof(float);
-  pargb = (unsigned char*)pointers[0] + pargb_off;
-  s0 = (float*)pointers[0] + st0_off/sizeof(float);
-  s1 = (float*)pointers[0] + st1_off/sizeof(float);
-  fog = (float*)pointers[0] + fog_ext_off/sizeof(float);
+  if (previous_pointers != pointers2)
+  {
+    x = (float*) pointers[0] + xy_off / sizeof(float);
+    pargb = (unsigned char*) pointers[0] + pargb_off;
+    s0 = (float*) pointers[0] + st0_off / sizeof(float);
+    s1 = (float*) pointers[0] + st1_off / sizeof(float);
+    fog = (float*) pointers[0] + fog_ext_off / sizeof(float);
 
-  glEnableVertexAttribArray(POSITION_ATTR);
-  glVertexAttribPointer(POSITION_ATTR,4,GL_FLOAT,false,VERTEX_SIZE,x); //Position
+    glEnableVertexAttribArray(POSITION_ATTR);
+    glVertexAttribPointer(POSITION_ATTR, 4, GL_FLOAT, false, VERTEX_SIZE, x); //Position
 
-  glEnableVertexAttribArray(COLOUR_ATTR);
-  glVertexAttribPointer(COLOUR_ATTR,4,GL_UNSIGNED_BYTE,true,VERTEX_SIZE,pargb); //Colour
+    glEnableVertexAttribArray(COLOUR_ATTR);
+    glVertexAttribPointer(COLOUR_ATTR, 4, GL_UNSIGNED_BYTE, true, VERTEX_SIZE,
+        pargb); //Colour
 
-  glEnableVertexAttribArray(TEXCOORD_0_ATTR);
-  glVertexAttribPointer(TEXCOORD_0_ATTR,2,GL_FLOAT,false,VERTEX_SIZE,s1); //Tex0
+    glEnableVertexAttribArray(TEXCOORD_0_ATTR);
+    glVertexAttribPointer(TEXCOORD_0_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s1); //Tex0
 
-  glEnableVertexAttribArray(TEXCOORD_1_ATTR);
-  glVertexAttribPointer(TEXCOORD_1_ATTR,2,GL_FLOAT,false,VERTEX_SIZE,s0); //Tex1
+    glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+    glVertexAttribPointer(TEXCOORD_1_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s0); //Tex1
 
-  glEnableVertexAttribArray(FOG_ATTR);
-  glVertexAttribPointer(FOG_ATTR,1,GL_FLOAT,false,VERTEX_SIZE,fog); //Fog
+    glEnableVertexAttribArray(FOG_ATTR);
+    glVertexAttribPointer(FOG_ATTR, 1, GL_FLOAT, false, VERTEX_SIZE, fog); //Fog
+
+    previous_pointers = pointers2;
+  }
 
   glDrawArrays(GL_TRIANGLE_FAN,0,Count);
 }
@@ -684,27 +561,32 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
 
   if(need_to_compile) compile_shader();
 
-    x = (float*)((unsigned char*)pointers) + xy_off/sizeof(float);
-    pargb = (unsigned char*)pointers + pargb_off;
-    s0 = (float*)((unsigned char*)pointers) + st0_off/sizeof(float);
-    s1 = (float*)((unsigned char*)pointers) + st1_off/sizeof(float);
-   fog = (float*)((unsigned char*)pointers) + fog_ext_off/sizeof(float);
+  if (pointers != previous_pointers)
+  {
+    x = (float*) ((unsigned char*) pointers) + xy_off / sizeof(float);
+    pargb = (unsigned char*) pointers + pargb_off;
+    s0 = (float*) ((unsigned char*) pointers) + st0_off / sizeof(float);
+    s1 = (float*) ((unsigned char*) pointers) + st1_off / sizeof(float);
+    fog = (float*) ((unsigned char*) pointers) + fog_ext_off / sizeof(float);
 
+    glEnableVertexAttribArray(POSITION_ATTR);
+    glVertexAttribPointer(POSITION_ATTR, 4, GL_FLOAT, false, VERTEX_SIZE, x); //Position
 
-  glEnableVertexAttribArray(POSITION_ATTR);
-  glVertexAttribPointer(POSITION_ATTR,4,GL_FLOAT,false,VERTEX_SIZE,x); //Position
+    glEnableVertexAttribArray(COLOUR_ATTR);
+    glVertexAttribPointer(COLOUR_ATTR, 4, GL_UNSIGNED_BYTE, true, VERTEX_SIZE,
+        pargb); //Colour
 
-  glEnableVertexAttribArray(COLOUR_ATTR);
-  glVertexAttribPointer(COLOUR_ATTR,4,GL_UNSIGNED_BYTE,true,VERTEX_SIZE,pargb); //Colour
+    glEnableVertexAttribArray(TEXCOORD_0_ATTR);
+    glVertexAttribPointer(TEXCOORD_0_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s1); //Tex0
 
-  glEnableVertexAttribArray(TEXCOORD_0_ATTR);
-  glVertexAttribPointer(TEXCOORD_0_ATTR,2,GL_FLOAT,false,VERTEX_SIZE,s1); //Tex0
+    glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+    glVertexAttribPointer(TEXCOORD_1_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s0); //Tex1
 
-  glEnableVertexAttribArray(TEXCOORD_1_ATTR);
-  glVertexAttribPointer(TEXCOORD_1_ATTR,2,GL_FLOAT,false,VERTEX_SIZE,s0); //Tex1
+    glEnableVertexAttribArray(FOG_ATTR);
+    glVertexAttribPointer(FOG_ATTR, 1, GL_FLOAT, false, VERTEX_SIZE, fog); //Fog
 
-  glEnableVertexAttribArray(FOG_ATTR);
-  glVertexAttribPointer(FOG_ATTR,1,GL_FLOAT,false,VERTEX_SIZE,fog); //Fog
+    previous_pointers = pointers;
+  }
 
   switch(mode)
   {
