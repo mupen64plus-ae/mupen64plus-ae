@@ -635,8 +635,8 @@ void set_depth_shader()
 
 void set_lambda()
 {
-  //int lambda_location = glGetUniformLocationARB(program_object, "lambda");
-  //glUniform1fARB(lambda_location, lambda);
+  int lambda_location = glGetUniformLocation(program_object, "lambda");
+  glUniform1f(lambda_location, lambda);
 }
 
 FX_ENTRY void FX_CALL 
