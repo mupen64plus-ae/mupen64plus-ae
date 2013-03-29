@@ -490,9 +490,9 @@ grSstWinOpen(
   nbTextureUnits = 2;
 #endif
 
-  if (isExtensionSupported("GL_EXT_blend_func_separate") == 0)
-    blend_func_separate_support = 0;
-  else
+//  if (isExtensionSupported("GL_EXT_blend_func_separate") == 0)
+//    blend_func_separate_support = 0;
+//  else
     blend_func_separate_support = 1;
 
   //if (isExtensionSupported("GL_EXT_packed_pixels") == 0)
