@@ -227,7 +227,7 @@ static char fragment_shader_texture0[1024];
 static char fragment_shader_chroma[1024];
 static char shader_log[2048];
 
-void check_compile(GLint shader)
+void check_compile(GLuint shader)
 {
   GLint success;
   glGetShaderiv(vertex_shader_object,GL_COMPILE_STATUS,&success);
@@ -239,7 +239,7 @@ void check_compile(GLint shader)
   }
 }
 
-void check_link(GLint program)
+void check_link(GLuint program)
 {
   GLint success;
   glGetProgramiv(vertex_shader_object,GL_LINK_STATUS,&success);

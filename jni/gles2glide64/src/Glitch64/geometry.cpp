@@ -250,12 +250,36 @@ grDepthMask( FxBool mask )
 }
 
 float biasFactor = 0;
+bool biasFound = false;
 void FindBestDepthBias()
 {
-  float f, bestz = 0.25f;
-  int x;
-  if (biasFactor) return;
-  biasFactor = 0.0f; // default value
+  //float f, bestz = 0.25f;
+  //int x;
+  if (biasFound) return;
+
+  const char* renderer = (const char*)glGetString(GL_RENDERER);
+
+//  if(strstr(renderer,"SGX") != NULL)
+//  {
+//    biasFactor = -1.5f;
+//  }
+//  else if(strstr(renderer,"Adreno") != NULL)
+//  {
+//    biasFactor = 0.2f;
+//  }
+//  else if(strstr(renderer,"Tegra") != NULL)
+//  {
+//    biasFactor = -2.0f;
+//  }
+//  else
+//  {
+    biasFactor = 0.2f;
+//  }
+  biasFound = true;
+
+  LOGINFO("Renderer:%s biasFactor:%f\n",renderer,biasFactor);
+
+  // default value
  //  glPushAttrib(GL_ALL_ATTRIB_BITS);
 //  glEnable(GL_DEPTH_TEST);
 //  glDepthFunc(GL_ALWAYS);
