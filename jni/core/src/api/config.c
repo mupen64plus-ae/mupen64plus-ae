@@ -371,9 +371,6 @@ static m64p_error write_configlist_file(void)
     if (filepath == NULL)
         return M64ERR_NO_MEMORY;
 
-     /* TODO mupen64plus-ae specific hack */
-    strcpy(filepath, configpath);
-    strcat(filepath, MUPEN64PLUS_CFG_NAME);
     fPtr = fopen(filepath, "wb"); 
     if (fPtr == NULL)
     {
@@ -443,8 +440,6 @@ m64p_error ConfigInit(const char *ConfigDirOverride, const char *DataDirOverride
         l_DataDirOverride = strdup(DataDirOverride);
         if (l_DataDirOverride == NULL)
             return M64ERR_NO_MEMORY;
-         /* TODO mupen64plus-ae specific hack */
-        strcpy(l_DataDirOverride, DataDirOverride);
     }
 
     /* if a config directory was specified, make a copy of it */
