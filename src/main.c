@@ -157,8 +157,19 @@ static int try_fast_audio_dispatching()
     }
     else
     {
-        // FIXME: very strange test
-        if (*(udata_ptr + (0 ^ (3-S8))) != 0xf)
+        if (*(unsigned int*)(udata_ptr + 0x10) == 0x00000001)
+        {
+            /**
+             * Musyx ucode found in following games:
+             * RogueSquadron, ResidentEvil2, SnowCrossPolaris, TheWorldIsNotEnough,
+             * RugratsInParis, NBAShowTime, HydroThunder, Tarzan,
+             * GauntletLegend, Rush2049, IndianaJones, BattleForNaboo
+             * TODO: implement ucode
+             **/
+            DebugMessage(M64MSG_WARNING, "MusyX ucode not implemented.");
+            /* return 1; */
+        }
+        else
         {
             /**
              * Many games including:
