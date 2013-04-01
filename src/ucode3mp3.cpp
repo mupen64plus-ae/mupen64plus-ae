@@ -204,11 +204,11 @@ static void MP3AB0 () {
 
 static void InnerLoop ();
 
-    u32 inPtr, outPtr;
+static u32 inPtr, outPtr;
 
-    u32 t6;// = 0x08A0; // I think these are temporary storage buffers
-    u32 t5;// = 0x0AC0;
-    u32 t4;// = (inst1 & 0x1E);
+static u32 t6;// = 0x08A0; // I think these are temporary storage buffers
+static u32 t5;// = 0x0AC0;
+static u32 t4;// = (inst1 & 0x1E);
 
 void MP3 (u32 inst1, u32 inst2) {
     // Initialization Code
