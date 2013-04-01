@@ -23,19 +23,13 @@
 extern "C" {
 #endif
 
-/* TODO mupen64plus-ae specific hack
-
+#ifdef ANDROID
+static inline void ScreenshotRomOpen(void) {}
+static inline void TakeScreenshot(int iFrameNumber) {}
+#else
 void ScreenshotRomOpen(void);
 void TakeScreenshot(int iFrameNumber);
-*/
-
-static inline void ScreenshotRomOpen(void)
-{
-}
-
-static inline void TakeScreenshot(int iFrameNumber)
-{
-}
+#endif
 
 #ifdef __cplusplus
 }
