@@ -24,19 +24,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct Instruction
 {
-    union 
+    union
     {
         uint32 cmd0;
-        struct 
+        struct
         {
             uint32 arg0:24;
             uint32 cmd:8;
         };
     };
-    union 
+    union
     {
         uint32 cmd1;
-        struct 
+        struct
         {
             uint32 arg1:24;
             uint32 pad:8;
@@ -54,7 +54,7 @@ struct GGBI1_Matrix
     uint32 cmd:8;
     uint32    addr;
 };
-        
+
 struct GGBI1_PopMatrix
 {
     uint32 :24;
@@ -65,16 +65,16 @@ struct GGBI1_PopMatrix
 
 struct GGBI2_Matrix
 {
-    union 
+    union
     {
-        struct 
+        struct
         {
             uint32 param:8;
             uint32 len:16;
             uint32 cmd:8;
         };
-        
-        struct 
+
+        struct
         {
             uint32 nopush:1;
             uint32 load:1;
@@ -119,19 +119,19 @@ struct GGBI2_Vtx
 
 struct GGBI1_BranchZ
 {
-    uint32 pad0:1;      
-    uint32 vtx:11;     
-    uint32 pad1:12;       
-    uint32 cmd:8;         
-    uint32 value:32;     
-}; 
+    uint32 pad0:1;
+    uint32 vtx:11;
+    uint32 pad1:12;
+    uint32 cmd:8;
+    uint32 value:32;
+};
 
 struct GGBI1_ModifyVtx
 {
-    uint32 pad0:1;          
-    uint32 vtx:15;  
-    uint32 offset:8;    
-    uint32 cmd:8;           
+    uint32 pad0:1;
+    uint32 vtx:15;
+    uint32 offset:8;
+    uint32 cmd:8;
     uint32 value;
 };
 
@@ -150,13 +150,13 @@ struct GBI_Texture
 
 struct SetCullDL
 {
-    uint32 pad0:1;             
-    uint32 first:15;   
-    uint32 pad2:8;            
-    uint32 cmd:8;             
-    uint32 pad3:1;            
-    uint32 end:15;    
-    uint32 pad4:8;             
+    uint32 pad0:1;
+    uint32 first:15;
+    uint32 pad2:8;
+    uint32 cmd:8;
+    uint32 pad3:1;
+    uint32 end:15;
+    uint32 pad4:8;
 };
 
 struct SetTImg
@@ -295,16 +295,16 @@ struct GSetColor
     uint32 pad:8;
     uint32 cmd:8;
 
-    union 
+    union
     {
         uint32 color;
-        struct 
+        struct
         {
             uint32 fillcolor:16;
             uint32 fillcolor2:16;
         };
-        
-        struct 
+
+        struct
         {
             uint32 a:8;
             uint32 b:8;
@@ -361,9 +361,9 @@ struct SetFillRect
 struct SetPrimDepth
 {
     uint32 pad0:24;
-    uint32 cmd:8; 
-    uint32 dz:16;   
-    uint32 z:15;   
+    uint32 cmd:8;
+    uint32 dz:16;
+    uint32 z:15;
     uint32 pad:1;
 };
 
@@ -389,7 +389,7 @@ union Gfx
     GGBI0_Vtx       vtx0;
     GGBI1_Vtx       vtx1;
     GGBI2_Vtx       vtx2;
-    
+
     GGBI1_ModifyVtx modifyvtx;
     GGBI1_BranchZ   branchz;
     GGBI1_Matrix    mtx1;
@@ -409,7 +409,7 @@ union Gfx
     GBI_Texture     texture;
     GGBI1_Dlist     dlist;
 
-    SetCullDL       culldl; 
+    SetCullDL       culldl;
     SetTImg         img;
     GSetColor       setcolor;
     LoadTile        loadtile;
@@ -443,7 +443,7 @@ typedef union
         unsigned int    w2;
         unsigned int    w3;
     };
-    
+
     struct
     {
         unsigned int    yl:12;  /* Y coordinate of upper left   */

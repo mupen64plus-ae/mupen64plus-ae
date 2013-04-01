@@ -32,7 +32,7 @@ typedef struct {
     uint32  dwMux1;
 
     bool    fogIsUsed;
-	bool	alphaTest;
+    bool    alphaTest;
     GLuint  fragmentShaderID;
     GLuint  vertexShaderID;
     GLuint  programID;
@@ -41,9 +41,9 @@ typedef struct {
     GLint  EnvColorLocation;
     GLint  PrimFracLocation;
     GLint  EnvFracLocation;
-	GLint  AlphaRefLocation;
-	GLint FogColorLocation;
-	GLint FogMinMaxLocation;
+    GLint  AlphaRefLocation;
+    GLint FogColorLocation;
+    GLint FogMinMaxLocation;
 
 } OGLShaderCombinerSaveType;
 
@@ -52,8 +52,8 @@ class COGL_FragmentProgramCombiner : public COGLColorCombiner4
 {
 public:
     bool Initialize(void);
-	float m_AlphaRef;
-	void UpdateFog(bool bEnable);
+    float m_AlphaRef;
+    void UpdateFog(bool bEnable);
 protected:
     friend class OGLDeviceBuilder;
 

@@ -411,7 +411,7 @@ void RSP_GBI1_SpNoop(Gfx *gfx)
 }
 
 void RSP_GBI1_Reserved(Gfx *gfx)
-{       
+{
     SP_Timing(RSP_GBI1_Reserved);
     RSP_RDP_NOIMPL("RDP: Reserved (0x%08x 0x%08x)", (gfx->words.cmd0), (gfx->words.cmd1));
 }
@@ -424,7 +424,7 @@ void RSP_GBI1_MoveMem(Gfx *gfx)
     uint32 dwLength  = ((gfx->words.cmd0))&0xFFFF;
     uint32 addr = RSPSegmentAddr((gfx->words.cmd1));
 
-    switch (type) 
+    switch (type)
     {
         case RSP_GBI1_MV_MEM_VIEWPORT:
             {
@@ -472,24 +472,24 @@ void RSP_GBI1_MoveMem(Gfx *gfx)
     }
 }
 
-void RSP_GBI1_RDPHalf_Cont(Gfx *gfx)    
+void RSP_GBI1_RDPHalf_Cont(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_RDPHalf_Cont);
 
-    LOG_UCODE("RDPHalf_Cont: (Ignored)"); 
+    LOG_UCODE("RDPHalf_Cont: (Ignored)");
 }
-void RSP_GBI1_RDPHalf_2(Gfx *gfx)       
-{ 
+void RSP_GBI1_RDPHalf_2(Gfx *gfx)
+{
     SP_Timing(RSP_GBI1_RDPHalf_2);
 
-    LOG_UCODE("RDPHalf_2: (Ignored)"); 
+    LOG_UCODE("RDPHalf_2: (Ignored)");
 }
 
-void RSP_GBI1_RDPHalf_1(Gfx *gfx)       
+void RSP_GBI1_RDPHalf_1(Gfx *gfx)
 {
     SP_Timing(RSP_GBI1_RDPHalf_1);
 
-    LOG_UCODE("RDPHalf_1: (Ignored)"); 
+    LOG_UCODE("RDPHalf_1: (Ignored)");
 }
 
 void RSP_GBI1_Line3D(Gfx *gfx)
@@ -506,8 +506,8 @@ void RSP_GBI1_Line3D(Gfx *gfx)
         uint32 dwV0     = gfx->gbi1line3d.v0/gRSP.vertexMult;
         uint32 dwV1     = gfx->gbi1line3d.v1/gRSP.vertexMult;
         uint32 dwWidth  = gfx->gbi1line3d.v2;
-        uint32 dwFlag   = gfx->gbi1line3d.v3/gRSP.vertexMult;   
-        
+        uint32 dwFlag   = gfx->gbi1line3d.v3/gRSP.vertexMult;
+
         CRender::g_pRender->SetCombinerAndBlender();
 
         status.dwNumTrisRendered++;
@@ -519,7 +519,7 @@ void RSP_GBI1_Line3D(Gfx *gfx)
     else
     {
         do {
-            uint32 dwV3  = gfx->gbi1line3d.v3/gRSP.vertexMult;      
+            uint32 dwV3  = gfx->gbi1line3d.v3/gRSP.vertexMult;
             uint32 dwV0  = gfx->gbi1line3d.v0/gRSP.vertexMult;
             uint32 dwV1  = gfx->gbi1line3d.v1/gRSP.vertexMult;
             uint32 dwV2  = gfx->gbi1line3d.v2/gRSP.vertexMult;
@@ -574,7 +574,7 @@ void RSP_GBI1_Line3D(Gfx *gfx)
 
         gDlistStack[gDlistStackPointer].pc = dwPC-8;
 
-        if (bTrisAdded) 
+        if (bTrisAdded)
         {
             CRender::g_pRender->DrawTriangles();
         }
@@ -863,7 +863,7 @@ void RSP_GBI1_MoveWord(Gfx *gfx)
         break;
     case RSP_MOVE_WORD_PERSPNORM:
         LOG_UCODE("    RSP_MOVE_WORD_PERSPNORM");
-        //if( word1 != 0x1A ) DebuggerAppendMsg("PerspNorm: 0x%04x", (short)word1); 
+        //if( word1 != 0x1A ) DebuggerAppendMsg("PerspNorm: 0x%04x", (short)word1);
         break;
     default:
         RSP_RDP_NOIMPL("Unknown MoveWord, %08X, %08X", gfx->words.cmd0, gfx->words.cmd1);
@@ -898,7 +898,7 @@ void RSP_GBI1_PopMtx(Gfx *gfx)
     }
     else
     {
-        if( pauseAtNext && logMatrix ) 
+        if( pauseAtNext && logMatrix )
         {
             DebuggerAppendMsg("Pause after Pop Matrix: %s\n", gfx->popmtx.projection ? "Proj":"World");
         }
@@ -963,7 +963,7 @@ void RSP_GBI1_Tri1(Gfx *gfx)
     // While the next command pair is Tri1, add vertices
     uint32 dwPC = gDlistStack[gDlistStackPointer].pc;
     uint32 * pCmdBase = (uint32 *)(g_pRDRAMu8 + dwPC);
-    
+
     do
     {
         uint32 dwV0 = gfx->gbi1tri1.v0/gRSP.vertexMult;
@@ -999,7 +999,7 @@ void RSP_GBI1_Tri1(Gfx *gfx)
 
     gDlistStack[gDlistStackPointer].pc = dwPC-8;
 
-    if (bTrisAdded) 
+    if (bTrisAdded)
     {
         CRender::g_pRender->DrawTriangles();
     }

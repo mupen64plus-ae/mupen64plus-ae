@@ -1,0 +1,43 @@
+[Promotional Text]
+
+
+L'emulatore della Nintendo64 per Android. Mupen64Plus AE è in Beta
+
+
+
+
+
+
+
+
+[App Description]
+
+
+QUESTA APPLICAZIONE NON VIENE FORNITA CON ROMS
+- Devi avere i diritti di una ROM prima di giocarci!
+- Un numero di giochi/demo a dominio pubblico sono disponibili a www.pdroms.de
+
+I 99 CENTESIMI SONO SOLO PER LE DONAZIONI
+- Questa app ha il download gratuito sul mio sito (NIENTE AD!)
+- Per favore considera fare una donazione
+- Le donazioni supportano MOLTI progetti open-source e sviluppatori
+
+Mupen64Plus, Android Edition (AE) è un emulatore della N64 per Android. È attualmente in beta testing, che significa che è un work in progress. Ci sono ancora molti problemi grafici, di velocità e audio, anche su dispositivi moderni. Visita www.paulscode.com per essere coinvolto nello sviluppo e testing, ed anche alla correzione dei bug e FAQ.
+
+Questa è l'applicazione ufficiale, che fu rimossa un paio di giorni fa dopo che alcuni competitori hanno compilato delle false richieste di rimozione per il violamento della DMCA. Trev (Keowsktech) pubblicò l'app sul suo account per un paio di mesi mentre stavo lavorando per i problemi di account con Google. Ora che il mio account è stato ripristinato, lui rimuoverà la sua app. Tutti i futuri aggiornamenti verranno pubblicati da questo account.
+
+Credo che parte del motivo del ritardo nella lavorazione delle mie contro richieste della DMCA erano i potenziali problemi di copyright relative alle immagini dei giochi che avevo pubblicato sull'app. Ho deciso di usare solo giochi e demo a dominio pubblico per le immagini in futuro, per prevenire che questo problema si ripeti. Tuttavia, se l'app viene rimossa un'altra volta dal negozio, potrai comunque ricevere aggiornamenti futuri gratuiti su paulscode.com
+
+Questa app ha una licenza GNU GPL v2, e il codice sorgente completo è disponibile nel deposito GIT a https://github.com/paulscode/mupen64plus-ae Se qualsiasi sviluppatore vorrebbe avere l'accesso in scrittura al deposito, per favore contattami (Paul) sul forum di supporto. Se hai bisogno di ramificare il progetto, fammi sapere e ti posso aiutare a configurare.
+
+OTTIMIZZATO PER XPERIA PLAY
+- Input analogico dal touchpad
+
+PER INIZIARE
+- Trasferisci ROM in qualsiasi posto nella tua memoria interna/scheda SD
+- Sfogliale dalla app
+- La directory di default della scheda SD sulla maggior parte dei dispositivi è /mnt/sdcard
+- Le ROM devono essere in .n64, .v64 o .z64, opzionalmente in file .zip
+
+AIUTO, DOMANDE, CORREZIONE DI BUG, INSTRUZIONI DI BACKUP DEI GIOCHI
+- http://www.paulscode.com

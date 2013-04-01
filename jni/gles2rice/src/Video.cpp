@@ -416,15 +416,30 @@ static bool StartVideo(void)
               x = ( videoInfo->current_w - videoWidth ) / 2;
               y = ( videoInfo->current_h - videoHeight ) / 2;
           }
-
-        windowSetting.uDisplayWidth = videoWidth;
-        windowSetting.uDisplayHeight = videoHeight;
-        windowSetting.xpos = x;
-        windowSetting.ypos = y;   
+          
+          //xpos and ypos from config file
+          float xpos = (float)x + ((float)videoWidth * ((float)g_curRomInfo.windowXpos /800.f));
+          float ypos = (float)y + ((float)videoHeight * ((float)g_curRomInfo.windowYpos /480.f));
+    
+          //width and height from config file
+          float width = (float)videoWidth + ((float)videoWidth * (((float)g_curRomInfo.windowWidth - 800.f)/800.f));
+          float height = (float)videoHeight + ((float)videoHeight * (((float)g_curRomInfo.windowHeight - 480.f)/480.f));
+    
+          //center video
+          xpos = xpos - ( width - (float)videoWidth )/2.f;
+          ypos = ypos - ( height - (float)videoHeight )/2.f;
+    
+          //set xpos and ypos
+          windowSetting.xpos = (int)xpos;
+          windowSetting.ypos = (int)ypos;
+    
+          //set width and height
+          windowSetting.uDisplayWidth = (int)width;
+          windowSetting.uDisplayHeight = (int)height;
         
-        printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );     
-        ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenWidth", videoWidth, "Width of output window or fullscreen width" );
-        ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenHeight", videoHeight, "Height of output window or fullscreen height" );
+          printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );     
+          ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenWidth", videoWidth, "Width of output window or fullscreen width" );
+          ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenHeight", videoHeight, "Height of output window or fullscreen height" );
 #endif
 
         bool res = CGraphicsContext::Get()->Initialize( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,

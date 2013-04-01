@@ -973,7 +973,7 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
     }
     else if(sig[0] == 137 && sig[1] == 'P' && sig[2] == 'N' && sig[3] == 'G' && sig[4] == '\r' && sig[5] == '\n' &&
                sig[6] == 26 && sig[7] == '\n') // PNG
-    	{
+        {
         struct BMGImageStruct img;
         memset(&img, 0, sizeof(BMGImageStruct));
         BMG_Error code = ReadPNGInfo(pSrcFile, &img);
@@ -982,17 +982,17 @@ int GetImageInfoFromFile(char* pSrcFile, IMAGE_INFO *pSrcInfo)
             pSrcInfo->Width = img.width;
             pSrcInfo->Height = img.height;
             pSrcInfo->Depth = img.bits_per_pixel;
-			pSrcInfo->MipLevels = 1;
+            pSrcInfo->MipLevels = 1;
             if(img.bits_per_pixel == 32)
-				pSrcInfo->Format = SURFFMT_A8R8G8B8;
+                pSrcInfo->Format = SURFFMT_A8R8G8B8;
             else if(img.bits_per_pixel == 8)
-				pSrcInfo->Format = SURFFMT_P8;
+                pSrcInfo->Format = SURFFMT_P8;
             // Resource and File Format ignored
             FreeBMGImage(&img);
-			return 0;
-    	}
+            return 0;
+        }
         DebugMessage(M64MSG_ERROR, "Couldn't read PNG file '%s'; error = %i", pSrcFile, code);
-    	return 1;
+        return 1;
     }
 
     DebugMessage(M64MSG_ERROR, "GetImageInfoFromFile : unknown file format (%s)", pSrcFile);
@@ -1603,8 +1603,6 @@ int CheckTextureInfos( CSortedList<uint64,ExtTxtrInfo> &infos, TxtrCacheEntry &e
     // did not found the ext. text. w/ sep. alpha channel
     if( indexb >= infosize )
         indexb = -1;
-
-    // found texture with sep. alpha channel
 
     // found texture with sep. alpha channel
 

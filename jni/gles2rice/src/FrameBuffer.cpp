@@ -610,30 +610,30 @@ uint32 CalculateRDRAMCRC(void *pPhysicalAddress, uint32 left, uint32 top, uint32
             dwAsmPitch = pitchInBytes;
 #if defined(NO_ASM)
 
-	        uint32 pitch = pitchInBytes>>2;
-			uint32* pStart = (uint32*)pPhysicalAddress;
-			pStart += (top * pitch) + (((left<<size)+1)>>3);
+            uint32 pitch = pitchInBytes>>2;
+            uint32* pStart = (uint32*)pPhysicalAddress;
+            pStart += (top * pitch) + (((left<<size)+1)>>3);
 
-			uint32 y = dwAsmHeight;
-			uint32 x,esi;
+            uint32 y = dwAsmHeight;
+            uint32 x,esi;
 
-			while((int)y >= 0)
-			{
-				x = dwAsmdwBytesPerLine - 4;
-				while((int)x >= 0)
-				{
-					esi = *(uint32*)(pAsmStart + x);
-					esi ^= x;
+            while((int)y >= 0)
+            {
+                x = dwAsmdwBytesPerLine - 4;
+                while((int)x >= 0)
+                {
+                    esi = *(uint32*)(pAsmStart + x);
+                    esi ^= x;
 
-					dwAsmCRC = (dwAsmCRC << 4) + ((dwAsmCRC >> 28) & 15);
-					dwAsmCRC += esi;
-					x-=4;
-				}
-				esi ^= y;
-				dwAsmCRC += esi;
-				pAsmStart += dwAsmPitch;
-				y--;
-			}
+                    dwAsmCRC = (dwAsmCRC << 4) + ((dwAsmCRC >> 28) & 15);
+                    dwAsmCRC += esi;
+                    x-=4;
+                }
+                esi ^= y;
+                dwAsmCRC += esi;
+                pAsmStart += dwAsmPitch;
+                y--;
+            }
 
 #elif !defined(__GNUC__) && !defined(NO_ASM)
             __asm 

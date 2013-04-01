@@ -210,6 +210,9 @@ public class UserPrefs
     /** The screen position in portrait mode. */
     public final int videoPosition;
     
+    /** The action bar transparency value. */
+    public final int videoActionBarTransparency;
+    
     /** The number of frames over which FPS is calculated (0 = disabled). */
     public final int videoFpsRefresh;
     
@@ -266,6 +269,12 @@ public class UserPrefs
     
     /** True if force texture filter is enabled in the gles2rice library. */
     public final boolean isGles2RiceForceTextureFilterEnabled;
+    
+    /** The mipmapping algorithm to use in GLES2Rice */
+    public final String gles2RiceMipmappingAlg;
+    
+    /** The texture enhancement algorithm to be used in the gles2rice library */
+    public final String gles2RiceTextureEnhancement;
     
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
@@ -389,6 +398,8 @@ public class UserPrefs
             videoPosition = getSafeInt( mPreferences, "videoPosition", 1 );
         else
             videoPosition = 1;
+        transparencyPercent = mPreferences.getInt( "videoActionBarTransparency", 50 );
+        videoActionBarTransparency = ( 255 * transparencyPercent ) / 100;
         videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
         isFpsEnabled = videoFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
@@ -413,6 +424,8 @@ public class UserPrefs
         isGles2RiceFastTextureCrcEnabled = mPreferences.getBoolean( "gles2RiceFastTextureCrc", true );
         isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
         isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
+        gles2RiceMipmappingAlg = mPreferences.getString("gles2RiceMipmapping", "0");
+        gles2RiceTextureEnhancement = mPreferences.getString("gles2RiceTextureEnhancement", "0");
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
         
         // Audio prefs

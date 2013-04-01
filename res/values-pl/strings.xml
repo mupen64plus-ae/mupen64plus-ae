@@ -102,6 +102,8 @@
   <string name="categoryCheats_title">Opcje cheat\'ów (przytrzymaj by zobaczyć opis)</string>
   <string name="categoryHardware_title">Sprzęt</string>
   <string name="categoryOther_title">Pozostałe</string>
+  <string name="categoryTouchscreenBehavior_title">Zachowanie</string>
+  <string name="categoryTouchscreenAppearance_title">Wygląd</string>
   <string name="categorySinglePlayer_title">Gracz nr. 1</string>
   <string name="categoryMultiPlayer_title">Gra wieloosobowa</string>
   <string name="categoryGles2N64_title">Ustawienia GLES2N64</string>
@@ -113,6 +115,8 @@
   <string name="playShowCheats_title">Włącz cheat\'y</string>
   <string name="playShowCheats_summary">Ładowanie Menu potrwa dłużej</string>
   <string name="touchscreenEnabled_title">Włącz ekran dotykowy</string>
+  <string name="touchscreenFeedback_title">Wibracje ekranu dotykowego</string>
+  <string name="touchscreenFeedback_summary">Wibracje po wciśnięciu przycisku</string>
   <string name="touchpadEnabled_title">Włącz touchpad</string>
   <string name="inputOctagonConstraints_title">Ustawienia limitów Joystick\'a</string>
   <string name="inputOctagonConstraints_summary">Ogranicz ruch drążka analogowego do ośmiu kierunków, tak jak w oryginalnym kontrolerze N64</string>
@@ -149,6 +153,11 @@
   <string name="audioSwapChannels_title">Zamień kanały audio</string>
   <string name="audioSwapChannels_summary">Zamień prawy i lewy kanał audio</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Auto przytrzymanie przycisku</string>
+  <string name="touchscreenAutoHold_entryDisabled">Wyłączone</string>
+  <string name="touchscreenAutoHold_entryLongPress">Przy długim przyciśnięciu</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Przy przesunięciu w bok</string>
+  <string name="touchscreenAutoHoldables_title">Trzymane przyciski</string>
   <string name="touchscreenRefresh_title">Animacja Joystick\'a</string>
   <string name="touchscreenRefresh_entryNever">Nigdy</string>
   <string name="touchscreenRefresh_entryOccasionally">Okazjonalnie</string>
@@ -170,6 +179,10 @@
   <string name="videoOrientation_entryReverseLandscape">Odwrócony poziomo</string>
   <string name="videoOrientation_entryPortrait">Pionowa</string>
   <string name="videoOrientation_entryReversePortrait">Odwrócony pionowo</string>
+  <string name="videoPosition_title">Pionowa orientacja ekranu</string>
+  <string name="videoPosition_entryBottom">Dół</string>
+  <string name="videoPosition_entryMiddle">Środek</string>
+  <string name="videoPosition_entryTop">Góra</string>
   <string name="videoFpsRefresh_title">Pokaz liczbę klatek</string>
   <string name="videoFpsRefresh_entryNever">Nigdy</string>
   <string name="videoFpsRefresh_entryOccasionally">Okazjonalnie</string>
@@ -302,6 +315,7 @@
   <string name="playerMapPreference_popupMessage">Gracz %1$d, proszę wcisnąć przycisk na swoim kontrolerze…\n\nDostępne urządzenia:\n %2$s</string>
   <string name="playerMapPreference_popupUnmap">Odmapuj</string>
   <string name="playerMapPreference_button">Gracz %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">Przypomnij gdy gracze nie będą zmapowani</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Wciśnij przycisk lub Joystick do mapowania…\n\nObecne mapowanie:\n %1$s</string>
   <string name="inputMapActivity_popupUnmap">Odmapuj</string>

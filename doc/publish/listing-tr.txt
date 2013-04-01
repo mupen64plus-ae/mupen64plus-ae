@@ -1,0 +1,43 @@
+[Promosyon Metni]
+
+
+Android için Nintendo64 öykünücüsü. Mupen64Plus AE, Beta sınamasındadır.
+
+
+
+
+
+
+
+
+[Uygulama Tanımı]
+
+
+BU UYGULAMA ROM'LARLA BİRLİKTE GELMEZ!
+- Oynamadan önce verilen ROM'u kullanma hakkına sahip olmalısınız!
+- www.pdroms.de adresinde birkaç kamusal oyun/demo mevcuttur.
+
+BAĞIŞLAR SADECE 99¢!
+- Bu uygulama web sayfamdan ücretsiz bir şekilde indirilebilir. (REKLAM YOK!)
+- Lütfen bağış yapmayı düşünün
+- Bağışlar BİRÇOK açık kaynak kodlu projeye ve bunların geliştiricilerine destek olmaktadır
+
+Mupen64Plus, Android Edition (AE) is an N64 emulator for Android. It is currently in Beta testing, which means it is a work in progress. There are still many graphical, lag, and audio problems, even on modern devices. Visit www.paulscode.com to get involved in development and testing, as well as bug-fixes and FAQs.
+
+This is the official app, which was taken down a few months ago after some of the competitors filed fake DMCA take-down notices. Trev (Keowsktech) published the app on his account for a few months while I was working out my account issues with Google. Now that my account has been restored, he will be unpublishing his branch in the near future. All future updates will be published from this account.
+
+I believe part of the reason for the delay in processing my DMCA counter claims was because of potential copyright issues related to game screenshots I had posted for the app. I've decided to use only public domain games and demos for screenshots in the future, to prevent this problem from reoccurring. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
+
+This app is licensed by the GNU GPL v2, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and he can help you get set up.
+
+XPERIA PLAY İÇİN İDEALLEŞTİRİLMİŞTİR
+- Dokunmatik yüzeyden analog giriş!
+
+BAŞLARKEN
+- ROM'larınızı dahili hafızada/SD kartta istediğiniz yere transfer edin
+- Onları uygulama içerisinde gözat
+- Çoğu aygıtta varsayılan SD kart dizini /mnt/sdcard'dır
+- ROM'lar .n64, .v64 veya .z64 biçiminde olmalıdır, isteğe bağlı olarak .zip içerisinde de olabilir.
+
+YARDIM, SSS, HATA ÇÖZÜMLERİ, OYUN YEDEKLEME TALİMATLARI
+- http://www.paulscode.com

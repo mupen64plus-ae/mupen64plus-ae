@@ -333,9 +333,9 @@ CColorCombiner * OGLDeviceBuilder::CreateColorCombiner(CRender *pRender)
                     DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
 //                    break;
 //                 default:
-//                	 m_pColorCombiner = new COGLColorCombiner(pRender);
-//					 DebugMessage(M64MSG_INFO, "OpenGL Combiner: Basic OGL");
-//					 break;
+//                     m_pColorCombiner = new COGLColorCombiner(pRender);
+//                     DebugMessage(M64MSG_INFO, "OpenGL Combiner: Basic OGL");
+//                     break;
 //                        break;
 //                }
             }

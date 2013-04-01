@@ -303,6 +303,11 @@ typedef struct IniSection
     BOOL    bTexture1Hack;
     BOOL    bDisableCulling;
 
+    int     windowWidth;
+    int     windowHeight;
+    int     windowXpos;
+    int     windowYpos;
+
     int     VIWidth;
     int     VIHeight;
     uint32  UseCIWidthAndRatio;
@@ -366,6 +371,12 @@ typedef struct
     BOOL    bPrimaryDepthHack;
     BOOL    bTexture1Hack;
     BOOL    bDisableCulling;
+    
+    int     windowWidth;
+    int     windowHeight;
+    int     windowXpos;
+    int     windowYpos;
+    
     int     VIWidth;
     int     VIHeight;
     uint32  UseCIWidthAndRatio;

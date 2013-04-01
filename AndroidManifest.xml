@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="paulscode.android.mupen64plusae"
     android:installLocation="auto"
-    android:versionCode="19"
-    android:versionName="2.0.3 (test 2)" >
+    android:versionCode="20"
+    android:versionName="2.1.0 (debug)" >
 
     <uses-feature android:glEsVersion="0x00020000" />
 
@@ -16,68 +16,74 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name="AppMupen64Plus"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:launchMode="singleTask"
-        android:name="AppMupen64Plus"
         android:theme="@style/appTheme" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="ouya.intent.category.GAME"/>
+                <category android:name="tv.ouya.intent.category.GAME" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MenuActivity"
-            android:label="@string/app_name"
-            android:exported="false" >
+            android:exported="false"
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name=".PlayMenuActivity"
+            android:exported="false"
             android:label="@string/app_name"
-            android:theme="@style/playTheme"
-            android:exported="false" >
+            android:theme="@style/playTheme" >
             <intent-filter>
                 <action android:name=".PlayMenuActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".input.InputMapActivity"
-            android:label="@string/app_name"
-            android:exported="false" >
+            android:exported="false"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name=".input.InputMapActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".input.DiagnosticActivity"
-            android:label="@string/app_name"
-            android:exported="false" >
+            android:exported="false"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name=".input.DiagnosticActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <!-- For the GameActivities, do not restart the activity when the phone's slider
+        <!--
+        For the GameActivities, do not restart the activity when the phone's slider
         opens or closes, or when the orientation (and thereby screen size) changes.
-        This behavior is specified in android:configChanges below. -->
+        This behavior is specified in android:configChanges below.
+        -->
         <activity
             android:name=".GameActivity"
-            android:label="@string/app_name"
-            android:configChanges="keyboardHidden|orientation|screenSize" >
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name=".GameActivityXperiaPlay"
-            android:label="@string/app_name"
-            android:configChanges="keyboardHidden|orientation|screenSize" >
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="xperia-touchpad" />

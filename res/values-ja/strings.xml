@@ -102,6 +102,8 @@
   <string name="categoryCheats_title">詳細情報を表示するチートを長押し</string>
   <string name="categoryHardware_title">ハードウェア設定</string>
   <string name="categoryOther_title">その他設定</string>
+  <string name="categoryTouchscreenBehavior_title">行動</string>
+  <string name="categoryTouchscreenAppearance_title">外観</string>
   <string name="categorySinglePlayer_title">プレイヤー1</string>
   <string name="categoryMultiPlayer_title">マルチプレイ</string>
   <string name="categoryGles2N64_title">GLES2N64設定</string>
@@ -113,6 +115,8 @@
   <string name="playShowCheats_title">チートをイネーブル</string>
   <string name="playShowCheats_summary">これが有効になっているときに、メニューのロードが遅くなります。</string>
   <string name="touchscreenEnabled_title">タッチスクリーンを有効</string>
+  <string name="touchscreenFeedback_title">触覚フィードバック</string>
+  <string name="touchscreenFeedback_summary">ボタンを押した際に振動</string>
   <string name="touchpadEnabled_title">タッチパッドを有効</string>
   <string name="inputOctagonConstraints_title">八角形のようにアナログスティックをエミュレート</string>
   <string name="inputOctagonConstraints_summary">八角形のパスにアナログ動きを拘束。 これは、元のN64のコントローラのようなものだ。</string>
@@ -148,6 +152,11 @@
   <string name="audioSwapChannels_title">オーディオチャンネルを交換</string>
   <string name="audioSwapChannels_summary">スワップ左右のオーディオチャンネル</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">ボタンオートホールド</string>
+  <string name="touchscreenAutoHold_entryDisabled">使用禁止</string>
+  <string name="touchscreenAutoHold_entryLongPress">長押し</string>
+  <string name="touchscreenAutoHold_entrySlideOut">スライドオフ</string>
+  <string name="touchscreenAutoHoldables_title">保持可能なボタン</string>
   <string name="touchscreenRefresh_title">ジョイスティックを再描画</string>
   <string name="touchscreenRefresh_entryNever">決して</string>
   <string name="touchscreenRefresh_entryOccasionally">時折</string>
@@ -169,6 +178,10 @@
   <string name="videoOrientation_entryReverseLandscape">反転横方向</string>
   <string name="videoOrientation_entryPortrait">縦方向</string>
   <string name="videoOrientation_entryReversePortrait">反転縦方向</string>
+  <string name="videoPosition_title">肖像画の画面位置</string>
+  <string name="videoPosition_entryBottom">下部</string>
+  <string name="videoPosition_entryMiddle">中央</string>
+  <string name="videoPosition_entryTop">上部</string>
   <string name="videoFpsRefresh_title">フレームレート表示</string>
   <string name="videoFpsRefresh_entryNever">決して</string>
   <string name="videoFpsRefresh_entryOccasionally">時折</string>
@@ -300,6 +313,7 @@
   <string name="playerMapPreference_popupMessage">プレイヤー%1$dは、コントローラ上のボタンまたはジョイスティックを押してください。\n\n現在のデバイス:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">アンマップ</string>
   <string name="playerMapPreference_button">プレーヤー %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">プレイヤーがコントロールにマップされていない時に通知。</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">あなたがマップしたいボタン、キー、ジョイスティックを押してください。\n\n現在のマッピング:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">アンマップ</string>

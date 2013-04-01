@@ -1,8 +1,15 @@
-[20:2.0.4]
+[21:2.1.1]
+- Added option which allows choosing which mipmapping algorithm to use. They are listed from least intensive to most intensive in terms of possible hits to performance.
+- Added option which allows applying a texture filter using the gles2rice video plugin
+- Added option to change action bar transparency
+- Fixed crash with haptic feedback on d-pad diagonal
+- Fixed gles2N64 graphical issues (Star Wars Ep. 1 Racer and others)
+[20:2.1.0]
+- Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)
 - Added screen position option for portrait mode
 - Added vibration feedback for touchscreen/pad buttons
 - Added auto-hold feature for touchscreen buttons
-- Added feature to save/load custom input profiles
+- Added UI to save/load custom input profiles
 - Improved joystick compatibility (Nyko PlayPad, OUYA)
 - Fixed various bugs in input mapping screen
 - Added stock input profiles for Xperia PLAY and OUYA
@@ -11,7 +18,6 @@
 - Fixed bugs in summary text for list preferences
 - Added in-app change log
 - Added icons to file/folder dialogs for Honeycomb+
-- Added plugins for R4300 emulation (incomplete)
 - Updated translations
 - Fixed various crashes
 [19:2.0.3]

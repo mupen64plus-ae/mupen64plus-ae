@@ -237,7 +237,7 @@ void CTextureManager::RecycleAllTextures()
             
             dwTotalUses += pTVictim->dwUses;
             dwCount++;
-            
+
             if (g_bUseSetTextureMem)
                 delete pTVictim;
             else
@@ -280,8 +280,8 @@ void CTextureManager::RecycleTexture(TxtrCacheEntry *pEntry)
     {
         // Add to the list
         pEntry->pNext = m_pHead;
-		// microdev: reset the texture enhancement flag
-		pEntry->dwEnhancementFlag = TEXTURE_NO_ENHANCEMENT;
+        // microdev: reset the texture enhancement flag
+        pEntry->dwEnhancementFlag = TEXTURE_NO_ENHANCEMENT;
         SAFE_DELETE(pEntry->pEnhancedTexture);
         m_pHead = pEntry;
     }
@@ -307,7 +307,7 @@ TxtrCacheEntry * CTextureManager::ReviveTexture( uint32 width, uint32 height )
             // Remove from list
             if (pPrev != NULL)
                 pPrev->pNext = pCurr->pNext;
-            else			   
+            else
                 m_pHead = pCurr->pNext;
             
             return pCurr;
@@ -430,7 +430,7 @@ void CTextureManager::RemoveTexture(TxtrCacheEntry * pEntry)
     while (pCurr)
     {
         // Check that the attributes match
-		if ( pCurr == pEntry )
+        if ( pCurr == pEntry )
         {
             if (pPrev != NULL) 
                 pPrev->pNext = pCurr->pNext;
@@ -585,14 +585,14 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
             }
         }
     }
-	bool loadFromBackBuffer=false;
+    bool loadFromBackBuffer=false;
 
     if( frameBufferOptions.bCheckBackBufs && g_pFrameBufferManager->CheckAddrInBackBuffers(pgti->Address, pgti->HeightToLoad*pgti->Pitch) >= 0 )
     {
         if( !frameBufferOptions.bWriteBackBufToRDRAM )
         {
             // Load the texture from recent back buffer
-			loadFromBackBuffer = true;
+            loadFromBackBuffer = true;
             txtBufIdxToLoadFrom = g_pFrameBufferManager->CheckAddrInRenderTextures(pgti->Address);
             if( txtBufIdxToLoadFrom >= 0 )
             {
@@ -686,12 +686,12 @@ TxtrCacheEntry * CTextureManager::GetTexture(TxtrInfo * pgti, bool fromTMEM, boo
                     break;
                 }
         }
-        // cannot find it 
+        // cannot find it
         if(!bChecksumDoMatch){
             // try to load it
             pEntry = NULL;
         }
-    } 
+    }
 
     if (pEntry && doCRCCheck )
     {
@@ -1136,12 +1136,12 @@ void CTextureManager::MirrorS32(uint32 *array, uint32 width, uint32 mask, uint32
     for( uint32 y = 0; y<rows; y++ )
     {
         uint32* line = array+y*arrayWidth;
-		// mirror the current row to the destination width
+        // mirror the current row to the destination width
         for( uint32 x=width; x<towidth; x++ )
         {
-		//	DebuggerAppendMsg("(%d)line[%d] = %d<=%d ? line[%d] : line[%d-%d](%d);",y,x,x&maskval2,maskval1,x&maskval1,maskval2,x&maskval2,maskval2-(x&maskval2));
-			// mirrors the content of one line and appends it to its right 
-			// value at position x of current line = ()
+        //    DebuggerAppendMsg("(%d)line[%d] = %d<=%d ? line[%d] : line[%d-%d](%d);",y,x,x&maskval2,maskval1,x&maskval1,maskval2,x&maskval2,maskval2-(x&maskval2));
+            // mirrors the content of one line and appends it to its right
+            // value at position x of current line = ()
             line[x] = (x&maskval2)<=maskval1 ? line[x&maskval1] : line[maskval2-(x&maskval2)];
         }
     }

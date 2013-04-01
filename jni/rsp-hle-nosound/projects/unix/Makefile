@@ -64,6 +64,7 @@ ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   OS = MINGW
   SO_EXTENSION = dll
   SHARED = -shared
+  PIC = 0
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -116,7 +117,8 @@ endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
 OPTFLAGS ?= -O3
-CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
+WARNFLAGS ?= -Wall
+CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 CXXFLAGS += -fvisibility-inlines-hidden
 LDFLAGS += $(SHARED)
 
@@ -149,12 +151,24 @@ ifeq ($(OS), LINUX)
   LDFLAGS += -Wl,-version-script,$(SRCDIR)/rsp_api_export.ver
 endif
 ifeq ($(OS), OSX)
+  # Select the proper SDK
+  # Also, SDKs are stored in a different location since XCode 4.3
+  OSX_SDK ?= $(shell sw_vers -productVersion | cut -f1 -f2 -d .)
+  OSX_XCODEMAJ = $(shell xcodebuild -version | grep '[0-9]*\.[0-9]*' | cut -f2 -d ' ' | cut -f1 -d .)
+  OSX_XCODEMIN = $(shell xcodebuild -version | grep '[0-9]*\.[0-9]*' | cut -f2 -d ' ' | cut -f2 -d .)
+  OSX_XCODEGE43 = $(shell echo "`expr $(OSX_XCODEMAJ) \>= 4``expr $(OSX_XCODEMIN) \>= 3`")
+  ifeq ($(OSX_XCODEGE43), 11)
+    OSX_SYSROOT := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+  else
+    OSX_SYSROOT := /Developer/SDKs
+  endif
+
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
-      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
       LDFLAGS += -arch x86_64
     else
-      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk
+      CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
       LDFLAGS += -arch i686 -read_only_relocs suppress
     endif
   endif
@@ -206,7 +220,9 @@ ifeq ($(DEBUG),1)
   CFLAGS += -g
   INSTALL_STRIP_FLAG ?= 
 else
-  INSTALL_STRIP_FLAG ?= -s
+  ifneq ($(OS),OSX)
+    INSTALL_STRIP_FLAG ?= -s
+  endif
 endif
 
 # set installation options
@@ -227,7 +243,6 @@ OBJDIR = _obj$(POSTFIX)
 SOURCE = \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/jpeg.c \
-	$(SRCDIR)/idct.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \
 	$(SRCDIR)/ucode1.cpp \
@@ -254,6 +269,7 @@ targets:
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
 	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
+	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "  Install Options:"
@@ -286,9 +302,9 @@ CFLAGS += -MD
 
 CXXFLAGS += $(CFLAGS)
 ifeq ($(LTO), 1)
-  CFLAGS += -flto
-  CXXFLAGS += -flto
-  LDFLAGS += -fuse-linker-plugin $(CXXFLAGS)
+  CFLAGS += -flto -ffunction-sections -fdata-sections
+  CXXFLAGS += -flto -ffunction-sections -fdata-sections
+  LDFLAGS += -fuse-linker-plugin -Wl,--gc-sections $(CXXFLAGS)
 endif
 
 # standard build rules

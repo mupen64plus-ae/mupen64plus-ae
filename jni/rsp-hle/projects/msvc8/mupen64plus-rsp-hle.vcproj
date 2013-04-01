@@ -179,10 +179,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\idct.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\jpeg.c"
 				>
 			</File>
@@ -214,6 +210,10 @@
 			>
 			<File
 				RelativePath="..\..\src\hle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\jpeg.h"
 				>
 			</File>
 		</Filter>

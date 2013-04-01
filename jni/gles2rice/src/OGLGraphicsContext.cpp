@@ -158,12 +158,12 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
 //    /* Get function pointers to OpenGL extensions (blame Microsoft Windows for this) */
 
 //#ifdef WIN32
-//	GLenum err = glewInit();
-//	if (GLEW_OK != err)
-//	{
-//	  /* Problem: glewInit failed, something is seriously wrong. */
-//	  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-//	}
+//    GLenum err = glewInit();
+//    if (GLEW_OK != err)
+//    {
+//      /* Problem: glewInit failed, something is seriously wrong. */
+//      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+//    }
 //#endif
 
 //    char caption[500];
@@ -192,7 +192,7 @@ else
     }
 #endif
 
-	
+
     InitState();
     InitOGLExtension();
     sprintf(m_strDeviceStats, "%.60s - %.128s : %.60s", m_pVendorStr, m_pRenderStr, m_pVersionStr);
@@ -343,7 +343,7 @@ void COGLGraphicsContext::InitOGLExtension(void)
 
 bool COGLGraphicsContext::IsExtensionSupported(const char* pExtName)
 {
-	return false;
+    return false;
     if (strstr((const char*)m_pExtensionStr, pExtName) != NULL)
     {
         DebugMessage(M64MSG_VERBOSE, "OpenGL Extension '%s' is supported.", pExtName);

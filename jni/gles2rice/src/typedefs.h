@@ -132,8 +132,8 @@ typedef struct
 
 typedef struct
 {
-	float u;
-	float v;
+    float u;
+    float v;
 } TexCord;
 
 typedef struct VECTOR2

@@ -16,7 +16,6 @@ LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(SRCDIR)
 LOCAL_SRC_FILES := \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/jpeg.c \
-	$(SRCDIR)/idct.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \
 	$(SRCDIR)/ucode1.cpp \

@@ -1546,20 +1546,20 @@ bool PrepareTriangle(uint32 dwV0, uint32 dwV1, uint32 dwV2)
 
 bool AddTri(u32 v0, u32 v1, u32 v2)
 {
-	if (IsTriangleVisible(v0, v1, v2))
-	{
-		if (CRender::g_pRender->IsTextureEnabled())
-		{
-			PrepareTextures();
-			InitVertexTextureConstants();
-		}
+    if (IsTriangleVisible(v0, v1, v2))
+    {
+        if (CRender::g_pRender->IsTextureEnabled())
+        {
+            PrepareTextures();
+            InitVertexTextureConstants();
+        }
 
-		CRender::g_pRender->SetCombinerAndBlender();
+        CRender::g_pRender->SetCombinerAndBlender();
 
-		PrepareTriangle(v0, v1, v2);
-		return true;
-	}
-	return false;
+        PrepareTriangle(v0, v1, v2);
+        return true;
+    }
+    return false;
 }
 
 // Returns TRUE if it thinks the triangle is visible

@@ -1,16 +1,8 @@
-echo "Transifex username:"
-read username
+# Pull the transifex translation files using the command-line tool.
 
-# Remember session using cookie
-# Doesn't seem to be working, Transifex probably uses javascript-based login
-cookies="cookies.tmp"
-curl -u "$username" -o "/dev/null" -c "$cookies" -k -s -L "https://www.transifex.com/signin/"
+pattern='./res/values*/strings.xml ./doc/publish/listing-*.txt'
 
-# Download the files by iterating through the language codes
-for lang in "de" "es" "fr" "gl" "hr" "it" "ja" "nb" "nl" "pl" "pt" "ru" "tr"
-do
-filename="res/values-$lang/strings.xml"
-url="https://www.transifex.com/api/2/project/mupen64plus-ae/resource/menu-strings/translation/$lang/?file&mode=default"
-echo "Downloading $filename"
-curl -u "$username" -o "$filename" -b "$cookies" -k -s -L "$url"
-done
+git pull
+tx pull -a -f
+git add $pattern
+git commit $pattern -m "res: Updated translations."

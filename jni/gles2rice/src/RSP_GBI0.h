@@ -30,7 +30,7 @@ void RSP_GBI0_Mtx(Gfx *gfx)
 
     LOG_UCODE("    Command: %s %s %s Length %d Address 0x%08x",
         gfx->mtx1.projection == 1 ? "Projection" : "ModelView",
-        gfx->mtx1.load == 1 ? "Load" : "Mul",   
+        gfx->mtx1.load == 1 ? "Load" : "Mul",
         gfx->mtx1.push == 1 ? "Push" : "NoPush",
         gfx->mtx1.len, addr);
 

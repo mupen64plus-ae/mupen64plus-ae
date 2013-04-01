@@ -1,32 +1,41 @@
-# Built application files
-*.apk
-*.ap_
-
-# Files for the Dalvik VM
-*.dex
-
-# Java class files
-*.class
-
-# Temporary, preliminary, built
-*.a
-*.o
-*.d
-*.so
-*~
-*.tmp
-
-# Generated files
+# Generated and temporary files
 bin/
 gen/
 obj/
+tmp/
+*~
+*~.nib
+*.a
+*.ap_
+*.apk
+*.bak
+*.class
+*.d
+*.dex
+*.o
+*.so
+*.swp
+*.tmp
 
-# Local configuration file (sdk path, etc)
+# Eclipse project files
+.settings/
+.externalToolBuilders/
+proguard/
+.buildpath
+.classpath
+.cproject
+.loadpath
+.metadata
+.project
+*.launch
+*.pydevproject
 local.properties
-*.iml
 
-# IDE related
+# Intellij project files
 .idea/
+*.iml
+*.ipr
+*.iws
 
 # Crash-report related
 crashreport.txt

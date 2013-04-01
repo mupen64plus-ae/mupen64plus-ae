@@ -30,7 +30,7 @@ void RSP_Vtx_WRUS(Gfx *gfx)
 
     if (dwV0 >= 32)
         dwV0 = 31;
-    
+
     if ((dwV0 + dwN) > 32)
     {
         TRACE0("Warning, attempting to load into invalid vertex positions");

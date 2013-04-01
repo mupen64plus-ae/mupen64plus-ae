@@ -1,0 +1,43 @@
+[Texto promocional]
+
+
+Emulador da Nintendo64 para Android. Mupen64Plus AE está en probas Beta.
+
+
+
+
+
+
+
+
+[Descrición da aplicación]
+
+
+ESTA APLICACIÓN NON VÉN CON ROMS
+- Tes que ter os permisos da ROM antes de xogar con ela!
+- Unha serie de xogos de dominio público e demos está dispoñible en www.pdroms.de
+
+99¢ É SÓ PARA DOAZÓNS
+- Esta aplicación pode descargarse de balde na miña web (SEN ANUNCIOS!)
+- Por favor, considera facer unha doazón 
+- As doazóns soportan a MOITOS proxectos de código aberto e desenvolvedores
+
+Mupen64Plus, Android Edition (AE) é un emulador da N64 para Android. Actualmente atópase en probas Beta, o que indica que se está a traballar nel. Inda hai varios problemas gráficos, de velocidade e son, incluso en dispositivos modernos. Visita www.paulscode.com para involucrarte no desenvolvemento e probas, así coma na corrección de bugs e preguntas habituais.
+
+Esta é a aplicación oficial, que foi retirada meses atrás atrás logo de que algúns dos competidores presentasen informes falsos de infraccións á DMCA. Trev (Keowsktech) publicou a aplicación na súa conta durante uns meses mentres eu resolvía os problemas da conta con Google. Agora que a miña conta se restaurou, el deixará de publicar as novidades. Todas as actualizacións futura publicaranse nesta conta.
+
+Penso que parte do motivo que atrasou as miñas reclamacións á DMCA derivaban dos potenciais problemas cos dereitos de autor das capturas de xogos que empreguei para a aplicación. De agora en diante, decidín usar só capturas de xogos de dominio público ou demos, para evitar que isto volva ocorrer. Porén, se a aplicación volve ser retirada do Market de novo, poderá seguir atopando as actualizacións de balde en paulscode.com.
+
+Esta aplicación está licenciada baixo a GNU GPL v2, e o código fonte completo está dispoñible no repositorio GIT público en https://github.com/paulscode/mupen64plus-ae. Se calquera desenvolvedor desexa permisos de escritura no repositorio, por favor, ponte en contacto comigo (Paul) no foro de soporte. Se precisa de axuda nunha derivación do proxecto, faimo saber, e axudareite a poñelo en marcha.
+
+OPTIMIZADO PARA XPERIA PLAY
+- Entrada analóxica dende o touchpad!
+
+PARA COMEZAR
+- Transfire ROMs a calquera lugar do teu almacenamento interno ou tarxeta SD
+- Navega cara elas dende a mesma aplicación
+- O cartafol predefinido da tarxeta SD soe ser /mnt/sdcard
+- As ROMs teñen que ter formato .n64, .v64 ou z64, ou ben dentro de arquivos .zip
+
+AXUDA, PREGUNTAS HABITUAIS, INSTRUCIÓNS PARA RESPALDAR XOGOS:
+- http://www.paulscode.com
