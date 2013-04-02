@@ -56,7 +56,7 @@ extern uint32       g_dwVtxDifColor[MAX_VERTS];
 extern RenderTexture g_textures[MAX_TEXTURES];
 
 extern TLITVERTEX       g_vtxBuffer[1000];
-extern unsigned int     g_vtxIndex[1000];
+extern unsigned short   g_vtxIndex[1000];
 
 extern TLITVERTEX       g_clippedVtxBuffer[2000];
 extern int              g_clippedVtxCount;

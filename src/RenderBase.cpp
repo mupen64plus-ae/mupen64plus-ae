@@ -137,7 +137,7 @@ TLITVERTEX          g_clippedVtxBuffer[2000];
 uint8               g_oglVtxColors[1000][4];
 int                 g_clippedVtxCount=0;
 TLITVERTEX          g_texRectTVtx[4];
-unsigned int        g_vtxIndex[1000];
+unsigned short      g_vtxIndex[1000];
 unsigned int        g_minIndex, g_maxIndex;
 
 float               gRSPfFogMin;

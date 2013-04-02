@@ -734,7 +734,7 @@ bool OGLRender::RenderFlushTris()
 
     //if options.bOGLVertexClipper == FALSE )
     {
-        glDrawElements( GL_TRIANGLES, gRSP.numVertices, GL_UNSIGNED_INT, g_vtxIndex );
+        glDrawElements( GL_TRIANGLES, gRSP.numVertices, GL_UNSIGNED_SHORT, g_vtxIndex );
         OPENGL_CHECK_ERRORS;
     }
 /*  else
