@@ -494,7 +494,7 @@ int COGLColorCombiner4::ParseDecodedMux2Units()
             comb.arg0 = m.a;
             comb.arg1 = m.b;
             comb.arg2 = m.c;
-//            unit.ops[i%2] = GL_INTERPOLATE;
+            unit.ops[i%2] = GL_INTERPOLATE_ARB;
             break;
         }
     }
@@ -617,11 +617,11 @@ int COGLColorCombiner4v2::SaveParsedResult(OGLExtCombinerSaveType &result)
 
         if( isGLtex(result.units[n].glRGBArgs[0]) && isGLtex(result.units[n].glRGBArgs[1]) && isGLtex(result.units[n].glRGBArgs[2]) )
         {
-//            result.units[n].glRGBArgs[2] = GL_CONSTANT;
+            result.units[n].glRGBArgs[2] = GL_CONSTANT_ARB;
         }
         if( isGLtex(result.units[n].glAlphaArgs[0]) && isGLtex(result.units[n].glAlphaArgs[1]) && isGLtex(result.units[n].glAlphaArgs[2]) )
         {
-//            result.units[n].glRGBArgs[2] = GL_CONSTANT;
+            result.units[n].glRGBArgs[2] = GL_CONSTANT_ARB;
         }
     }
 
@@ -644,12 +644,12 @@ int COGLColorCombiner4v2::SaveParsedResult(OGLExtCombinerSaveType &result)
         result.units[n].alphaComb.args[0]=MUX_COMBINED;
         result.units[n].rgbOp = GL_REPLACE;
         result.units[n].alphaOp = GL_REPLACE;
-//        result.units[n].glRGBArgs[0] = GL_PREVIOUS;
-//        result.units[n].glRGBArgs[1] = GL_PREVIOUS;
+        result.units[n].glRGBArgs[0] = GL_PREVIOUS_ARB;
+        result.units[n].glRGBArgs[1] = GL_PREVIOUS_ARB;
         result.units[n].rgbFlag0gl = GL_SRC_COLOR;
         result.units[n].rgbFlag1gl = GL_SRC_COLOR;
-//        result.units[n].glAlphaArgs[0] = GL_PREVIOUS;
-//        result.units[n].glAlphaArgs[1] = GL_PREVIOUS;
+        result.units[n].glAlphaArgs[0] = GL_PREVIOUS_ARB;
+        result.units[n].glAlphaArgs[1] = GL_PREVIOUS_ARB;
         result.units[n].alphaFlag0gl = GL_SRC_ALPHA;
         result.units[n].alphaFlag1gl = GL_SRC_ALPHA;
     }
@@ -1141,12 +1141,12 @@ int COGLColorCombiner2::ParseDecodedMux()
         {
             if( (unit.rgbArg0&MUX_MASK) == (unit.rgbArg2&MUX_MASK) && (unit.rgbArg0&MUX_COMPLEMENT) )
             {
-//                unit.rgbOp = GL_ADD;
+                unit.rgbOp = GL_ADD;
                 unit.rgbArg0 &= ~MUX_COMPLEMENT;
             }
             else
             {
-//                unit.rgbOp = GL_MODULATE;
+                unit.rgbOp = GL_MODULATE;
             }
         }
         unit.alphaOp = GeneralToGLMaps[generalRes.stages[unitNo].alphaOp.op];
@@ -1154,12 +1154,12 @@ int COGLColorCombiner2::ParseDecodedMux()
         {
             if( (unit.alphaArg0&MUX_MASK) == (unit.alphaArg2&MUX_MASK) && (unit.alphaArg0&MUX_COMPLEMENT) )
             {
-//                unit.alphaOp = GL_ADD;
+                unit.alphaOp = GL_ADD;
                 unit.alphaArg0 &= ~MUX_COMPLEMENT;
             }
             else
             {
-//                unit.alphaOp = GL_MODULATE;
+                unit.alphaOp = GL_MODULATE;
             }
         }
 
