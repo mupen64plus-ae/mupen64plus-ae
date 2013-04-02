@@ -385,8 +385,7 @@ static bool StartVideo(void)
           windowSetting.uDisplayHeight = videoHeight;
 #endif
 
-        bool res = CGraphicsContext::Get()->Initialize( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
-                                                        !windowSetting.bDisplayFullscreen );
+        bool res = CGraphicsContext::Get()->Initialize(640, 480, !windowSetting.bDisplayFullscreen);
         if (!res)
         {
             g_CritialSection.Unlock();
