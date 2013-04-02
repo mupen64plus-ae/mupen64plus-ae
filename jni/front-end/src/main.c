@@ -49,7 +49,9 @@
 #include "compare_core.h"
 #include "osal_preproc.h"
 
+#ifdef PAULSCODE
 #include <jni.h>
+#endif
 
 /* Version number for UI-Console config section parameters */
 #define CONFIG_PARAM_VERSION     1.00
@@ -80,9 +82,9 @@ static int   l_CoreCompareMode = 0;      // 0 = disable, 1 = send, 2 = receive
 static eCheatMode l_CheatMode = CHEAT_DISABLE;
 static char      *l_CheatNumList = NULL;
 
+#ifdef PAULSCODE
 static int do_Start = 1;
 
-// paulscode, added for Android
 static void swap_rom(unsigned char* localrom, int loadlength)
 {
     unsigned char temp;
@@ -313,7 +315,7 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_
 	int speed_factor = (int) percent;
     (*CoreDoCommand) ( M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR,  &speed_factor);
 }
-// end Android
+#endif // PAULSCODE
  
 /*********************************************************************************************************
  *  Callback functions from the core
@@ -389,6 +391,8 @@ static void FrameCallback(unsigned int FrameIndex)
         }
     }
 }
+
+#ifdef PAULSCODE
 void StateCallback( void *Context, m64p_core_param ParamChanged, int NewValue )
 {
     /*----ParamChanged-----------------
@@ -416,6 +420,7 @@ void StateCallback( void *Context, m64p_core_param ParamChanged, int NewValue )
     if( ParamChanged == M64CORE_EMU_STATE || ParamChanged == M64CORE_STATE_SAVECOMPLETE || ParamChanged == M64CORE_STATE_LOADCOMPLETE )
         Android_JNI_State_Callback( ParamChanged, NewValue );
 }
+#endif
 
 /*********************************************************************************************************
  *  Configuration handling
@@ -475,10 +480,17 @@ static m64p_error OpenConfigurationHandles(void)
     /* Set default values for my Config parameters */
     (*ConfigSetDefaultFloat)(l_ConfigUI, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.");
     (*ConfigSetDefaultString)(l_ConfigUI, "PluginDir", OSAL_CURRENT_DIR, "Directory in which to search for plugins");
+    #ifdef PAULSCODE
     (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "libgles2n64" OSAL_DLL_EXTENSION, "Filename of video plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "libaudio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "libinput-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "librsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
+    #else
+    (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "mupen64plus-video-rice" OSAL_DLL_EXTENSION, "Filename of video plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "mupen64plus-audio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "mupen64plus-input-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "mupen64plus-rsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
+    #endif
 
     if (bSaveConfig && ConfigSaveSection != NULL) /* ConfigSaveSection was added in Config API v2.1.0 */
         (*ConfigSaveSection)("UI-Console");
@@ -872,6 +884,7 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 int main(int argc, char *argv[])
 {
     int i;
+    #ifdef PAULSCODE
     char *appHomePath = (char *) Android_JNI_GetDataDir();
     if( chdir( appHomePath ) != 0 )
     {
@@ -883,6 +896,7 @@ int main(int argc, char *argv[])
     setenv( "XDG_CONFIG_HOME", appHomePath, 1 );
     setenv( "XDG_DATA_HOME", appHomePath, 1 );
     setenv( "XDG_CACHE_HOME", appHomePath, 1 );
+    #endif
 
     printf(" __  __                         __   _  _   ____  _             \n");  
     printf("|  \\/  |_   _ _ __   ___ _ __  / /_ | || | |  _ \\| |_   _ ___ \n");
@@ -906,14 +920,20 @@ int main(int argc, char *argv[])
         return 2;
     }
 
+    #ifdef PAULSCODE
     // paulscode, hack to allow configuration file to be in home directory
     if( l_ConfigDirPath == NULL )
     {
         l_ConfigDirPath = appHomePath;
     }
+    #endif
 
     /* start the Mupen64Plus core library, load the configuration file */
+    #ifdef PAULSCODE
     m64p_error rval = (*CoreStartup)( CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, StateCallback );
+    #else
+    m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, NULL);
+    #endif
     if (rval != M64ERR_SUCCESS)
     {
         DebugMessage(M64MSG_ERROR, "couldn't start Mupen64Plus core library.");
@@ -1040,13 +1060,17 @@ int main(int argc, char *argv[])
         }
     }
 
+    /* run the game */
+    #ifdef PAULSCODE
     // paulscode: workaround for broken M64CMD_RESET.  Set do_Start = 1 before M64CMD_STOP to reset the emulator.
     while( do_Start )
     {
         do_Start = 0;
-        /* run the game */
         (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
     }
+    #else
+    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+    #endif
 
     /* detach plugins from core and unload them */
     for (i = 0; i < 4; i++)
