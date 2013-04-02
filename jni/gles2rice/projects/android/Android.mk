@@ -62,7 +62,7 @@ LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DANDROID           \
     -DNO_ASM            \
-    -DUSE_SDL           \
+    -DPAULSCODE         \
     -fsigned-char       \
     #-DBGR_SHADER        \
     #-DSDL_NO_COMPAT     \

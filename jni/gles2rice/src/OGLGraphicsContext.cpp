@@ -18,24 +18,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "osal_opengl.h"
 
-//// paulscode, added for SDL linkage:
-#ifdef USE_SDL
-    #include <SDL.h>
-    // paulscode, holds information about the graphics:
-#endif
-////
-// JNI linkage:
+#ifdef PAULSCODE
+#include <SDL.h>
 #include <jni.h>
-//// paulscode, added for logcat output:
 #include <android/log.h>
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "GLES2Rice (OGLGraphicsContext.cpp)", __VA_ARGS__)
-////
-//// paulscode, added for callback to flip the EGL buffer
+
 extern "C" void Android_JNI_SwapWindow();
-//// paulscode, added for switching between modes RGBA8888 and RGB565
 // (part of the color banding fix)
 extern "C" int Android_JNI_UseRGBA8888();
-////
+#endif
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
@@ -99,9 +91,11 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     if( options.colorQuality == TEXTURE_FMT_A4R4G4B4 ) colorBufferDepth = 16;
 
     // init sdl & gl
-//    DebugMessage(M64MSG_VERBOSE, "Initializing video subsystem...");
-//    if (CoreVideo_Init() != M64ERR_SUCCESS)   
-//        return false;
+#ifndef PAULSCODE
+    DebugMessage(M64MSG_VERBOSE, "Initializing video subsystem...");
+    if (CoreVideo_Init() != M64ERR_SUCCESS)   
+        return false;
+#endif
 
     /* hard-coded attribute values */
     const int iDOUBLEBUFFER = 1;
@@ -150,8 +144,8 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
 
     /* Get function pointers to OpenGL extensions (blame Microsoft Windows for this) */
 
-#ifdef USE_SDL
-//// paulscode, added for switching between RGBA8888 and RGB565
+#ifdef PAULSCODE
+// Added for switching between RGBA8888 and RGB565
 // (part of the color banding fix)
 int bitsPP;
 if( Android_JNI_UseRGBA8888() )
@@ -169,8 +163,13 @@ else
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
         return false;
     }
-#endif
 
+#else // not PAULSCODE
+    char caption[500];
+    sprintf(caption, "%s v%i.%i.%i", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));
+    CoreVideo_SetCaption(caption);
+    SetWindowMode();
+#endif
 
     InitState();
     InitOGLExtension();
@@ -423,9 +422,12 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
    if(renderCallback)
        (*renderCallback)(status.bScreenIsDrawn);
 
-   //CoreVideo_GL_SwapBuffers();
-   //eglSwapBuffers(EGL_display, EGL_surface);
-    Android_JNI_SwapWindow();  // paulscode
+#ifdef PAULSCODE
+    //eglSwapBuffers(EGL_display, EGL_surface);
+    Android_JNI_SwapWindow();
+#else
+    CoreVideo_GL_SwapBuffers();
+#endif
    
    /*if(options.bShowFPS)
      {

@@ -25,18 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLCombiner.h" //For AlphaTestOverride in COGLBlender
 #include "OGLFragmentShaders.h"
 
-#include <iostream>
-#include <ostream>
-#include <fstream>
-
-// JNI linkage:
+#ifdef PAULSCODE
 #include <jni.h>
-//// paulscode, added for logcat output:
 #include <android/log.h>
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "gles2rice (OGLRenderer)", __VA_ARGS__)
-////
 
-//// paulscode, added for different configurations based on hardware
 // (part of the missing shadows and stars bug fix)
 extern "C" int Android_JNI_GetHardwareType();
 // Must match the static final int's in AppData.java!
@@ -46,7 +39,8 @@ extern "C" int Android_JNI_GetHardwareType();
 #define HARDWARE_TYPE_QUALCOMM      3
 #define HARDWARE_TYPE_IMAP          4
 #define HARDWARE_TYPE_TEGRA         5
-///
+static int hardwareType = HARDWARE_TYPE_UNKNOWN;
+#endif
 
 // FIXME: Use OGL internal L/T and matrix stack
 // FIXME: Use OGL lookupAt function
@@ -106,13 +100,9 @@ bool OGLRender::ClearDeviceObjects()
     return true;
 }
 
-//// paulscode, added for different configurations based on hardware
-// (part of the missing shadows and stars bug fix)
-static int hardwareType = HARDWARE_TYPE_UNKNOWN;
-////
 void OGLRender::Initialize(void)
 {
-    glViewportWrapper(windowSetting.xpos, windowSetting.ypos, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
 
     COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
@@ -139,7 +129,10 @@ void OGLRender::Initialize(void)
 //        m_bSupportClampToEdge = false;
 //        OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
 //    }
+
+#ifdef PAULSCODE
     hardwareType = Android_JNI_GetHardwareType();
+#endif
 }
 //===================================================================
 TextureFilterMap OglTexFilterMap[2]=
@@ -280,7 +273,8 @@ void OGLRender::ApplyZBias(int bias)
 {
     float f1 = bias > 0 ? -3.0f : 0.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
     float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
-    //// paulscode, added for different configurations based on hardware
+
+#ifdef PAULSCODE
     // (part of the missing shadows and stars bug fix)
     if( hardwareType == HARDWARE_TYPE_OMAP )
     {
@@ -312,7 +306,7 @@ void OGLRender::ApplyZBias(int bias)
         f1 = bias > 0 ? -0.2f : 0.0f;
         f2 = bias > 0 ? -0.2f : 0.0f;
     }
-    ////
+#endif
 
     if (bias > 0)
     {
@@ -521,7 +515,7 @@ void OGLRender::SetTextureVFlag(TextureUVFlag dwFlag, uint32 dwTile)
 
 bool OGLRender::RenderTexRect()
 {
-    glViewportWrapper(windowSetting.xpos, windowSetting.ypos, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
@@ -579,7 +573,7 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     float r = ((dwColor>>16)&0xFF)/255.0f;
     float g = ((dwColor>>8)&0xFF)/255.0f;
     float b = (dwColor&0xFF)/255.0f;
-    glViewportWrapper(windowSetting.xpos, windowSetting.ypos, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
@@ -661,7 +655,7 @@ bool OGLRender::RenderFlushTris()
 
     ApplyZBias(m_dwZBias);  // set the bias factors
 
-    glViewportWrapper(windowSetting.vpLeftW + windowSetting.xpos, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.ypos, windowSetting.vpWidthW, windowSetting.vpHeightW, false);
+    glViewportWrapper(windowSetting.vpLeftW, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.statusBarHeightToUse, windowSetting.vpWidthW, windowSetting.vpHeightW, false);
     OPENGL_CHECK_ERRORS;
 
     //if options.bOGLVertexClipper == FALSE )
@@ -728,7 +722,7 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 
-    glViewportWrapper(windowSetting.xpos, windowSetting.ypos, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
 
     float a = (g_texRectTVtx[0].dcDiffuse >>24)/255.0f;
@@ -862,7 +856,7 @@ COLOR OGLRender::PostProcessSpecularColor()
 
 void OGLRender::SetViewportRender()
 {
-    glViewportWrapper(windowSetting.vpLeftW + windowSetting.xpos, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.ypos, windowSetting.vpWidthW, windowSetting.vpHeightW);
+    glViewportWrapper(windowSetting.vpLeftW, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.statusBarHeightToUse, windowSetting.vpWidthW, windowSetting.vpHeightW);
     OPENGL_CHECK_ERRORS;
 }
 
@@ -949,8 +943,13 @@ void OGLRender::UpdateScissor()
         uint32 height = (gRDP.scissor.right*gRDP.scissor.bottom)/width;
         glEnable(GL_SCISSOR_TEST);
         OPENGL_CHECK_ERRORS;
+#ifdef PAULSCODE
         glScissor(windowSetting.xpos, int(height*windowSetting.fMultY+windowSetting.ypos),
             int(width*windowSetting.fMultX), int(height*windowSetting.fMultY) );
+#else
+        glScissor(0, int(height*windowSetting.fMultY+windowSetting.statusBarHeightToUse),
+            int(width*windowSetting.fMultX), int(height*windowSetting.fMultY) );
+#endif
         OPENGL_CHECK_ERRORS;
     }
     else
@@ -970,14 +969,24 @@ void OGLRender::ApplyRDPScissor(bool force)
         uint32 height = (gRDP.scissor.right*gRDP.scissor.bottom)/width;
         glEnable(GL_SCISSOR_TEST);
         OPENGL_CHECK_ERRORS;
+#ifdef PAULSCODE
         glScissor(windowSetting.xpos, int(height*windowSetting.fMultY+windowSetting.ypos),
             int(width*windowSetting.fMultX), int(height*windowSetting.fMultY) );
+#else
+        glScissor(0, int(height*windowSetting.fMultY+windowSetting.statusBarHeightToUse),
+            int(width*windowSetting.fMultX), int(height*windowSetting.fMultY) );
+#endif
         OPENGL_CHECK_ERRORS;
     }
     else
     {
+#ifdef PAULSCODE
         glScissor(int((gRDP.scissor.left*windowSetting.fMultX)+windowSetting.xpos), int((windowSetting.uViHeight-gRDP.scissor.bottom)*windowSetting.fMultY+windowSetting.ypos),
             int((gRDP.scissor.right-gRDP.scissor.left)*windowSetting.fMultX), int((gRDP.scissor.bottom-gRDP.scissor.top)*windowSetting.fMultY ));
+#else
+        glScissor(int(gRDP.scissor.left*windowSetting.fMultX), int((windowSetting.uViHeight-gRDP.scissor.bottom)*windowSetting.fMultY+windowSetting.statusBarHeightToUse),
+            int((gRDP.scissor.right-gRDP.scissor.left)*windowSetting.fMultX), int((gRDP.scissor.bottom-gRDP.scissor.top)*windowSetting.fMultY ));
+#endif
         OPENGL_CHECK_ERRORS;
     }
 
@@ -990,8 +999,13 @@ void OGLRender::ApplyScissorWithClipRatio(bool force)
 
     glEnable(GL_SCISSOR_TEST);
     OPENGL_CHECK_ERRORS;
+#ifdef PAULSCODE
     glScissor(int(windowSetting.clipping.left + windowSetting.xpos), int((windowSetting.uViHeight-gRSP.real_clip_scissor_bottom)*windowSetting.fMultY)+windowSetting.ypos,
         windowSetting.clipping.width, windowSetting.clipping.height);
+#else
+    glScissor(windowSetting.clipping.left, int((windowSetting.uViHeight-gRSP.real_clip_scissor_bottom)*windowSetting.fMultY)+windowSetting.statusBarHeightToUse,
+        windowSetting.clipping.width, windowSetting.clipping.height);
+#endif
     OPENGL_CHECK_ERRORS;
 
     status.curScissor = RSP_SCISSOR;
@@ -1093,6 +1107,12 @@ void OGLRender::EndRendering(void)
 
 void OGLRender::glViewportWrapper(GLint x, GLint y, GLsizei width, GLsizei height, bool flag)
 {
+#ifdef PAULSCODE
+    // (screen position feature)
+    x += windowSetting.xpos;
+    y += windowSetting.ypos - windowSetting.statusBarHeightToUse;
+#endif
+
     static GLint mx=0,my=0;
     static GLsizei m_width=0, m_height=0;
     static bool mflag=true;
