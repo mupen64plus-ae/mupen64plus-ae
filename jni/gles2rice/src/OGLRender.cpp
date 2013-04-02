@@ -20,14 +20,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #if SDL_VIDEO_OPENGL
 #include "OGLExtensions.h"
+#elif SDL_VIDEO_OPENGL_ES2
+#include "OGLES2FragmentShaders.h"
 #endif
 #include "OGLDebug.h"
 #include "OGLRender.h"
 #include "OGLGraphicsContext.h"
 #include "OGLTexture.h"
 #include "TextureManager.h"
-#include "OGLCombiner.h" //For AlphaTestOverride in COGLBlender
-#include "OGLFragmentShaders.h"
 
 #ifdef PAULSCODE
 #include <jni.h>

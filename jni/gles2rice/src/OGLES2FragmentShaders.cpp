@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "OGLDebug.h"
-#include "OGLFragmentShaders.h"
+#include "OGLES2FragmentShaders.h"
 #include "OGLRender.h"
 #include "OGLGraphicsContext.h"
 #include "OGLTexture.h"
@@ -336,7 +336,6 @@ void COGL_FragmentProgramCombiner::InitCombinerCycleCopy(void)
 
 void COGL_FragmentProgramCombiner::InitCombinerCycleFill(void)
 {
-    //return;
     glUseProgram(fillProgram);
     glUniform4f(fillColorLocation,((gRDP.fillColor>>16)&0xFF)/255.0f,((gRDP.fillColor>>8)&0xFF)/255.0f,((gRDP.fillColor)&0xFF)/255.0f,((gRDP.fillColor>>24)&0xFF)/255.0f);
     OPENGL_CHECK_ERRORS;
@@ -734,7 +733,6 @@ int COGL_FragmentProgramCombiner::FindCompiledMux()
             && m_vCompiledShaders[i].fogIsUsed == (gRDP.bFogEnableInBlender && gRSP.bFogEnabled)
             && m_vCompiledShaders[i].alphaTest == m_AlphaRef > 0.0f)
         {
-            //DebugMessage(M64MSG_INFO,"Alphatest %i",m_vCompiledShaders[i].alphaTest);
             return (int)i;
         }
     }

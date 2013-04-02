@@ -30,8 +30,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLCombinerNV.h"
 #include "OGLCombinerTNT2.h"
 #include "OGLExtensions.h"
-#endif
 #include "OGLFragmentShaders.h"
+#elif SDL_VIDEO_OPENGL_ES2
+#include "OGLES2FragmentShaders.h"
+#endif
 
 //========================================================================
 CDeviceBuilder* CDeviceBuilder::m_pInstance=NULL;
