@@ -924,10 +924,10 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
 
     *width = windowSetting.uDisplayWidth;
     *height = windowSetting.uDisplayHeight;
-   
+
     if (dest == NULL)
         return;
-   
+
     GLint oldMode;
     glGetIntegerv( GL_READ_BUFFER, &oldMode );
     if (bFront)

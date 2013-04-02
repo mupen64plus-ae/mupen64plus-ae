@@ -513,9 +513,9 @@ bool OGLRender::RenderTexRect()
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 
-    glBegin(GL_TRIANGLE_FAN);
-
     float depth = -(g_texRectTVtx[3].z*2-1);
+
+    glBegin(GL_TRIANGLE_FAN);
 
     glColor4f(g_texRectTVtx[3].r, g_texRectTVtx[3].g, g_texRectTVtx[3].b, g_texRectTVtx[3].a);
     TexCoord(g_texRectTVtx[3]);
@@ -604,8 +604,7 @@ bool OGLRender::RenderFlushTris()
     {
         if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
         {
-            glDisable(GL_FOG);
-            OPENGL_CHECK_ERRORS;
+            TurnFogOnOff(false);
         }
     }
 
@@ -657,8 +656,7 @@ bool OGLRender::RenderFlushTris()
     {
         if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
         {
-            glEnable(GL_FOG);
-            OPENGL_CHECK_ERRORS;
+            TurnFogOnOff(true);
         }
     }
     return true;
@@ -682,11 +680,13 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
 
-    glBegin(GL_TRIANGLES);
     float a = (g_texRectTVtx[0].dcDiffuse >>24)/255.0f;
     float r = ((g_texRectTVtx[0].dcDiffuse>>16)&0xFF)/255.0f;
     float g = ((g_texRectTVtx[0].dcDiffuse>>8)&0xFF)/255.0f;
     float b = (g_texRectTVtx[0].dcDiffuse&0xFF)/255.0f;
+
+    glBegin(GL_TRIANGLES);
+
     glColor4f(r,g,b,a);
 
     OGLRender::TexCoord(g_texRectTVtx[0]);
@@ -722,12 +722,13 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 
-    glBegin(GL_TRIANGLE_FAN);
-
     float a = (dwColor>>24)/255.0f;
     float r = ((dwColor>>16)&0xFF)/255.0f;
     float g = ((dwColor>>8)&0xFF)/255.0f;
     float b = (dwColor&0xFF)/255.0f;
+
+    glBegin(GL_TRIANGLE_FAN);
+
     glColor4f(r,g,b,a);
     glVertex3f(m_simpleRectVtx[1].x, m_simpleRectVtx[0].y, -depth);
     glVertex3f(m_simpleRectVtx[1].x, m_simpleRectVtx[1].y, -depth);

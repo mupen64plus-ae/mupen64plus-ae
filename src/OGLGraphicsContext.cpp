@@ -29,8 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Video.h"
 #include "version.h"
 
-#include "liblinux/BMGLibPNG.h"
-
 COGLGraphicsContext::COGLGraphicsContext() :
     m_bSupportMultiTexture(false),
     m_bSupportTextureEnvCombine(false),
@@ -109,7 +107,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
         else
             CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 16);
     }
-   
+
     /* Set the video mode */
     m64p_video_mode ScreenMode = bWindowed ? M64VIDEO_WINDOWED : M64VIDEO_FULLSCREEN;
     if (CoreVideo_SetVideoMode(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, ScreenMode) != M64ERR_SUCCESS)
@@ -401,9 +399,9 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
 
     glDepthMask(GL_TRUE);
     OPENGL_CHECK_ERRORS;
-    glClearDepth(1.0);
+    glClearDepth(1.0f);
     OPENGL_CHECK_ERRORS;
-    if( !g_curRomInfo.bForceScreenClear ) 
+    if( !g_curRomInfo.bForceScreenClear )
     {
         glClear(GL_DEPTH_BUFFER_BIT);
         OPENGL_CHECK_ERRORS;

@@ -226,7 +226,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
         case CM_FMT_TYPE_A_MOD_C_ADD_D: // = A*C+D
             if( shadeIsUsedInColor && texIsUsedInColor )
             {
-                if( ((comb.c & mask) == MUX_SHADE && !(comb.c&MUX_COMPLEMENT)) || 
+                if( ((comb.c & mask) == MUX_SHADE && !(comb.c&MUX_COMPLEMENT)) ||
                     ((comb.a & mask) == MUX_SHADE && !(comb.a&MUX_COMPLEMENT)) )
                     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
                 else
@@ -262,7 +262,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
         default:        // = (A-B)*C+D
             if( shadeIsUsedInColor )
             {
-                if( ((comb.c & mask) == MUX_SHADE && !(comb.c&MUX_COMPLEMENT)) || 
+                if( ((comb.c & mask) == MUX_SHADE && !(comb.c&MUX_COMPLEMENT)) ||
                     ((comb.a & mask) == MUX_SHADE && !(comb.a&MUX_COMPLEMENT)) )
                     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
                 else

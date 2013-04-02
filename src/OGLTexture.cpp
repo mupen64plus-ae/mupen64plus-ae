@@ -120,7 +120,7 @@ void COGLTexture::EndUpdate(DrawInfo *di)
         OPENGL_CHECK_ERRORS;
 
         // Tell to hardware to generate mipmap (himself) when glTexImage2D is called
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE); 
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
         OPENGL_CHECK_ERRORS;
     }
     else

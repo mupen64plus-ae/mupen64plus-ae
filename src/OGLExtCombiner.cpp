@@ -92,7 +92,6 @@ bool COGLColorCombiner4::Initialize(void)
         m_supportedStages = m_maxTexUnits;
         return true;
     }
-
     return false;
 }
 
