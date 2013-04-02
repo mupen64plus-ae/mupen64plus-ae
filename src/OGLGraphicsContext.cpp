@@ -227,6 +227,9 @@ void COGLGraphicsContext::InitState(void)
     OPENGL_CHECK_ERRORS;
     
     glDepthRange(-1, 1);
+
+#elif SDL_VIDEO_OPENGL_ES2
+    glDepthRangef(0.0f, 1.0f);
 #endif
     OPENGL_CHECK_ERRORS;
 }
@@ -234,7 +237,7 @@ void COGLGraphicsContext::InitState(void)
 void COGLGraphicsContext::InitOGLExtension(void)
 {
     // important extension features, it is very bad not to have these feature
-    m_bSupportMultiTexture = IsExtensionSupported("GL_ARB_multitexture");
+    m_bSupportMultiTexture = IsExtensionSupported(OSAL_GL_ARB_MULTITEXTURE);
     m_bSupportTextureEnvCombine = IsExtensionSupported("GL_EXT_texture_env_combine");
     
     m_bSupportSeparateSpecularColor = IsExtensionSupported("GL_EXT_separate_specular_color");

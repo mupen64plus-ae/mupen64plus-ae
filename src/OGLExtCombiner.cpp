@@ -96,6 +96,9 @@ bool COGLColorCombiner4::Initialize(void)
         return true;
     }
     return false;
+
+#elif SDL_VIDEO_OPENGL_ES2
+    return true;
 #endif
 }
 
@@ -407,6 +410,9 @@ int COGLColorCombiner4::ParseDecodedMux()
     res.lodFracIsUsed = mux.isUsed(MUX_LODFRAC) || mux.isUsed(MUX_PRIMLODFRAC);
 
     return SaveParsedResult(res);
+
+#elif SDL_VIDEO_OPENGL_ES2
+    return 0;
 #endif
 }
 

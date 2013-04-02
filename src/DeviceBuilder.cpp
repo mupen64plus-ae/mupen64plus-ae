@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLCombinerTNT2.h"
 #include "OGLExtensions.h"
 #include "OGLFragmentShaders.h"
+#elif SDL_VIDEO_OPENGL_ES2
+#include "OGLES2FragmentShaders.h"
 #endif
 
 //========================================================================
@@ -346,6 +348,9 @@ CColorCombiner * OGLDeviceBuilder::CreateColorCombiner(CRender *pRender)
                 }
             }
 
+#elif SDL_VIDEO_OPENGL_ES2
+            m_pColorCombiner = new COGL_FragmentProgramCombiner(pRender);
+            DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
 #endif
         }
 
