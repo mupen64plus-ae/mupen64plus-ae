@@ -375,8 +375,8 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
 {
     status.gFrameCount++;
 
-    //glFlush();
-    //OPENGL_CHECK_ERRORS;
+    glFlush();
+    OPENGL_CHECK_ERRORS;
     //glFinish();
     //wglSwapIntervalEXT(0);
 
@@ -429,12 +429,7 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
    if(renderCallback)
        (*renderCallback)(status.bScreenIsDrawn);
 
-#ifdef PAULSCODE
-    //eglSwapBuffers(EGL_display, EGL_surface);
-    Android_JNI_SwapWindow();
-#else
-    CoreVideo_GL_SwapBuffers();
-#endif
+   CoreVideo_GL_SwapBuffers();
    
    /*if(options.bShowFPS)
      {
@@ -458,7 +453,7 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
     OPENGL_CHECK_ERRORS;
     if( !g_curRomInfo.bForceScreenClear )
     {
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT);
         OPENGL_CHECK_ERRORS;
     }
     else
