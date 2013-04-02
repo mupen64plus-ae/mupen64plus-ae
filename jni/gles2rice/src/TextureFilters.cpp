@@ -2213,6 +2213,7 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
         entry.pEnhancedTexture->m_bIsEnhancedTexture = true;
         entry.dwEnhancementFlag = TEXTURE_EXTERNAL;
 
+        DebugMessage(M64MSG_VERBOSE, "Loaded hi-res texture: %s", filename_rgb);
     }
     else
     {

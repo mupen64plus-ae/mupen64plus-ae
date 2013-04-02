@@ -1056,15 +1056,17 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
 //    if (dest == NULL)
 //        return;
 //
-//    GLint oldMode;
-//    glGetIntegerv( GL_READ_BUFFER, &oldMode );
-//    if (bFront)
-//        glReadBuffer( GL_FRONT );
-//    else
-//        glReadBuffer( GL_BACK );
-//    glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
-//                 GL_RGB, GL_UNSIGNED_BYTE, dest );
-//    glReadBuffer( oldMode );
+/*
+    GLint oldMode;
+    glGetIntegerv( GL_READ_BUFFER, &oldMode );
+    if (bFront)
+        glReadBuffer( GL_FRONT );
+    else
+        glReadBuffer( GL_BACK );
+    glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
+                 GL_RGB, GL_UNSIGNED_BYTE, dest );
+    glReadBuffer( oldMode );
+*/
 }
     
 

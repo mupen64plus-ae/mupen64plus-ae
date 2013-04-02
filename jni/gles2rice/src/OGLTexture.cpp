@@ -103,14 +103,6 @@ void COGLTexture::EndUpdate(DrawInfo *di)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     OPENGL_CHECK_ERRORS;
 
-
-    // Copy the image data from main memory to video card texture memory
-
-    //GL_BGRA_IMG works on adreno but not inside profiler.
-    glTexImage2D(GL_TEXTURE_2D, 0, m_glFmt, m_dwCreatedTextureWidth, m_dwCreatedTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pTexture);
-
-    OPENGL_CHECK_ERRORS;
-
     // mipmap support
     if(options.mipmapping)
     {
@@ -127,16 +119,23 @@ void COGLTexture::EndUpdate(DrawInfo *di)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
         OPENGL_CHECK_ERRORS;
 
+/*
         // Tell to hardware to generate mipmap (himself) when glTexImage2D is called
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+*/
         //TODO:Check Mipmapping
-        //glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-        //OPENGL_CHECK_ERRORS;
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         OPENGL_CHECK_ERRORS;
     }
+
+    // Copy the image data from main memory to video card texture memory
+    //GL_BGRA_IMG works on adreno but not inside profiler.
+    glTexImage2D(GL_TEXTURE_2D, 0, m_glFmt, m_dwCreatedTextureWidth, m_dwCreatedTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pTexture);
+    OPENGL_CHECK_ERRORS;
 }
 
 

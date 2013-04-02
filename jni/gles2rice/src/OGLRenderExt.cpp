@@ -37,10 +37,6 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
 
-    //glColor4fv(gRDP.fvPrimitiveColor);
-
-
-
     GLfloat colour[] = {
             gRDP.fvPrimitiveColor[0], gRDP.fvPrimitiveColor[1], gRDP.fvPrimitiveColor[2], gRDP.fvPrimitiveColor[3],
             gRDP.fvPrimitiveColor[0], gRDP.fvPrimitiveColor[1], gRDP.fvPrimitiveColor[2], gRDP.fvPrimitiveColor[3],
@@ -80,7 +76,6 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     //OPENGL_CHECK_ERRORS;
     glDrawArrays(GL_TRIANGLES,0,6);
     //OPENGL_CHECK_ERRORS;
-
 
     //Restore old pointers
     glVertexAttribPointer(VS_COLOR, 4, GL_UNSIGNED_BYTE,GL_TRUE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );

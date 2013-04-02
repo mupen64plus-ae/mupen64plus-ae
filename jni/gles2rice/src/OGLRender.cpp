@@ -48,8 +48,6 @@ extern "C" int Android_JNI_GetHardwareType();
 #define HARDWARE_TYPE_TEGRA         5
 ///
 
-//#include "liblinux/BMGLibPNG.h"
-
 // FIXME: Use OGL internal L/T and matrix stack
 // FIXME: Use OGL lookupAt function
 // FIXME: Use OGL DisplayList
@@ -187,11 +185,13 @@ void OGLRender::ApplyTextureFilter()
 
 void OGLRender::SetShadeMode(RenderShadeMode mode)
 {
-//    if( mode == SHADE_SMOOTH )
-//        glShadeModel(GL_SMOOTH);
-//    else
-//        glShadeModel(GL_FLAT);
-//    OPENGL_CHECK_ERRORS;
+/*
+    if( mode == SHADE_SMOOTH )
+        glShadeModel(GL_SMOOTH);
+    else
+        glShadeModel(GL_FLAT);
+    OPENGL_CHECK_ERRORS;
+*/
 }
 
 void OGLRender::ZBufferEnable(BOOL bZBuffer)
@@ -276,11 +276,10 @@ void OGLRender::SetZUpdate(BOOL bZUpdate)
     }
 }
 
-static float f1, f2;
 void OGLRender::ApplyZBias(int bias)
 {
-//    float f1 = bias > 0 ? -3.0f : 0.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
-//    float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
+    float f1 = bias > 0 ? -3.0f : 0.0f;  // z offset = -3.0 * max(abs(dz/dx),abs(dz/dy)) per pixel delta z slope
+    float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
     //// paulscode, added for different configurations based on hardware
     // (part of the missing shadows and stars bug fix)
     if( hardwareType == HARDWARE_TYPE_OMAP )
@@ -344,30 +343,34 @@ void OGLRender::SetAlphaRef(uint32 dwAlpha)
 {
     if (m_dwAlpha != dwAlpha)
     {
-        ForceAlphaRef(dwAlpha);
+        m_dwAlpha = dwAlpha;
     }
 }
 
 void OGLRender::ForceAlphaRef(uint32 dwAlpha)
 {
-    m_dwAlpha = dwAlpha;
-    //float ref = dwAlpha/255.0f;
-    //glAlphaFunc(GL_GEQUAL, ref);
+/*
+    float ref = dwAlpha/255.0f;
+    glAlphaFunc(GL_GEQUAL, ref);
     OPENGL_CHECK_ERRORS;
+*/
+    m_dwAlpha = dwAlpha;
 }
 
 void OGLRender::SetFillMode(FillMode mode)
 {
-//    if( mode == RICE_FILLMODE_WINFRAME )
-//    {
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//        OPENGL_CHECK_ERRORS;
-//    }
-//    else
-//    {
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-//        OPENGL_CHECK_ERRORS;
-//    }
+/*
+    if( mode == RICE_FILLMODE_WINFRAME )
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        OPENGL_CHECK_ERRORS;
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        OPENGL_CHECK_ERRORS;
+    }
+*/
 }
 
 void OGLRender::SetCullMode(bool bCullFront, bool bCullBack)
@@ -526,7 +529,6 @@ bool OGLRender::RenderTexRect()
     OPENGL_CHECK_ERRORS;
 
     float depth = -(g_texRectTVtx[3].z*2-1);
-    //depth = 0.0001f;
 
 
     GLfloat colour[] = {
@@ -654,8 +656,6 @@ bool OGLRender::RenderFlushTris()
         if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
         {
             TurnFogOnOff(false);
-//            glDisable(GL_FOG);
-//            OPENGL_CHECK_ERRORS;
         }
     }
 
@@ -663,7 +663,6 @@ bool OGLRender::RenderFlushTris()
 
     glViewportWrapper(windowSetting.vpLeftW + windowSetting.xpos, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.ypos, windowSetting.vpWidthW, windowSetting.vpHeightW, false);
     OPENGL_CHECK_ERRORS;
-
 
     //if options.bOGLVertexClipper == FALSE )
     {
@@ -678,22 +677,22 @@ bool OGLRender::RenderFlushTris()
         glVertexPointer( 4, GL_FLOAT, sizeof(float)*5, &(g_vtxProjected5Clipped[0][0]) );
         glEnableClientState( GL_VERTEX_ARRAY );
 
-        pglClientActiveTextureARB( GL_TEXTURE0 );
+        pglClientActiveTextureARB( GL_TEXTURE0_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_clippedVtxBuffer[0].tcord[0].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
-        pglClientActiveTextureARB( GL_TEXTURE1 );
+        pglClientActiveTextureARB( GL_TEXTURE1_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_clippedVtxBuffer[0].tcord[1].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
         glDrawElements( GL_TRIANGLES, gRSP.numVertices, GL_UNSIGNED_INT, g_vtxIndex );
 
         // Reset the array
-        pglClientActiveTextureARB( GL_TEXTURE0 );
+        pglClientActiveTextureARB( GL_TEXTURE0_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
-        pglClientActiveTextureARB( GL_TEXTURE1 );
+        pglClientActiveTextureARB( GL_TEXTURE1_ARB );
         glTexCoordPointer( 2, GL_FLOAT, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[1].u) );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
@@ -709,7 +708,6 @@ bool OGLRender::RenderFlushTris()
         if( !gRDP.bFogEnableInBlender && gRSP.bFogEnabled )
         {
             TurnFogOnOff(true);
-            OPENGL_CHECK_ERRORS;
         }
     }
     return true;
@@ -791,7 +789,6 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
-
 
     float a = (dwColor>>24)/255.0f;
     float r = ((dwColor>>16)&0xFF)/255.0f;
@@ -876,18 +873,18 @@ void OGLRender::RenderReset()
 
 void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
 {
-//#ifdef DEBUGGER
-//    if( bAlphaTestEnable && debuggerEnableAlphaTest )
-//#else
-
-//#endif
-    COGL_FragmentProgramCombiner* frag = (COGL_FragmentProgramCombiner*)m_pColorCombiner;
+#ifdef DEBUGGER
+    if( bAlphaTestEnable && debuggerEnableAlphaTest )
+#else
     if( bAlphaTestEnable )
+#endif
     {
+        COGL_FragmentProgramCombiner* frag = (COGL_FragmentProgramCombiner*)m_pColorCombiner;
         frag->m_AlphaRef = m_dwAlpha / 255.0f;
     }
     else
     {
+        COGL_FragmentProgramCombiner* frag = (COGL_FragmentProgramCombiner*)m_pColorCombiner;
         frag->m_AlphaRef = 0.0f;
     }
     OPENGL_CHECK_ERRORS;
@@ -931,7 +928,6 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
             glActiveTexture(GL_TEXTURE0 + unitno);
             OPENGL_CHECK_ERRORS;
             glBindTexture(GL_TEXTURE_2D,m_curBoundTex[unitno]);
-            OPENGL_CHECK_ERRORS;
         }
         else
         {
@@ -939,8 +935,8 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
             OPENGL_CHECK_ERRORS;
             glEnable(GL_BLEND); //Need blend for transparent disabled texture
             glBindTexture(GL_TEXTURE_2D,disabledTextureID);
-            OPENGL_CHECK_ERRORS;
         }
+        OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -1003,26 +999,30 @@ void OGLRender::ApplyScissorWithClipRatio(bool force)
 
 void OGLRender::SetFogMinMax(float fMin, float fMax)
 {
+/*
+    glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
+    OPENGL_CHECK_ERRORS;
+    glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
+    OPENGL_CHECK_ERRORS;
+*/
     ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(gRSP.bFogEnabled);
-//    glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
-//    OPENGL_CHECK_ERRORS;
-//    glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
-//    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::TurnFogOnOff(bool flag)
 {
+/*
+    if( flag )
+        glEnable(GL_FOG);
+    else
+        glDisable(GL_FOG);
+    OPENGL_CHECK_ERRORS;
+*/
     ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(flag);
-//    if( flag )
-//        glEnable(GL_FOG);
-//    else
-//        glDisable(GL_FOG);
-//    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::SetFogEnable(bool bEnable)
 {
-//    DEBUGGER_IF_DUMP( (gRSP.bFogEnabled != (bEnable==TRUE) && logFog ), TRACE1("Set Fog %s", bEnable? "enable":"disable"));
+    DEBUGGER_IF_DUMP( (gRSP.bFogEnabled != (bEnable==TRUE) && logFog ), TRACE1("Set Fog %s", bEnable? "enable":"disable"));
 
     gRSP.bFogEnabled = bEnable&&(options.fogMethod == 1);
     
@@ -1034,23 +1034,25 @@ void OGLRender::SetFogEnable(bool bEnable)
 
     ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(gRSP.bFogEnabled);
 
+/*
     if( gRSP.bFogEnabled )
     {
         //TRACE2("Enable fog, min=%f, max=%f",gRSPfFogMin,gRSPfFogMax );
-        //glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
-        //OPENGL_CHECK_ERRORS;
-        //glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
-        //OPENGL_CHECK_ERRORS;
-        //glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
-        //OPENGL_CHECK_ERRORS;
-        //glEnable(GL_FOG);
-        //OPENGL_CHECK_ERRORS;
+        glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
+        OPENGL_CHECK_ERRORS;
+        glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
+        OPENGL_CHECK_ERRORS;
+        glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
+        OPENGL_CHECK_ERRORS;
+        glEnable(GL_FOG);
+        OPENGL_CHECK_ERRORS;
     }
     else
     {
-        //glDisable(GL_FOG);
-        //OPENGL_CHECK_ERRORS;
+        glDisable(GL_FOG);
+        OPENGL_CHECK_ERRORS;
     }
+*/
 }
 
 void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
@@ -1060,7 +1062,9 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
     gRDP.fvFogColor[1] = g/255.0f;      //g
     gRDP.fvFogColor[2] = b/255.0f;      //b
     gRDP.fvFogColor[3] = a/255.0f;      //a
-    //glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
+/*
+    glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
+*/
     OPENGL_CHECK_ERRORS;
 }
 
@@ -1079,8 +1083,10 @@ void OGLRender::DisableMultiTexture()
 
 void OGLRender::EndRendering(void)
 {
-    //glFlush();
-    //OPENGL_CHECK_ERRORS;
+/*
+    glFlush();
+    OPENGL_CHECK_ERRORS;
+*/
     if( CRender::gRenderReferenceCount > 0 ) 
         CRender::gRenderReferenceCount--;
 }
@@ -1098,7 +1104,7 @@ void OGLRender::glViewportWrapper(GLint x, GLint y, GLsizei width, GLsizei heigh
         m_width=width;
         m_height=height;
         mflag=flag;
-//        if( flag )  glOrthof(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
+        //if( flag )  glOrtho(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
         OPENGL_CHECK_ERRORS;
         glViewport(x,y,width,height);
         OPENGL_CHECK_ERRORS;
