@@ -320,7 +320,7 @@ int COGLColorCombinerNvidia::StagesNeedToUse(COGLDecodedMux &mux, N64StageNumber
         if( m.a == m.d )    // = 2A-B, simply it to A-B, in fact,we can do 2A-B with NV register combiner
             return 1;
         else    // Need two NV stages for this N64 combiner
-            return 1;
+            return 2;
     case CM_FMT_TYPE_A_B_C_D:           // = (A-B)*C+D      ==> can not be done in 1 stage
     default:
         //if( m.a == m.d )  // = (A-B)*C+A = A(C+1)-B*C = A-B*C
@@ -489,7 +489,7 @@ int COGLColorCombinerNvidia::Parse1Mux(COGLDecodedMux &mux, N64StageNumberType s
                 res.c=m.d;
                 res.d=MUX_1;
             }
-            return 1;
+            return 2;
         }
         break;
     case CM_FMT_TYPE_A_B_C_D:           // = (A-B)*C+D      ==> can not be done in 1 stage
@@ -529,7 +529,7 @@ int COGLColorCombinerNvidia::Parse1Mux(COGLDecodedMux &mux, N64StageNumberType s
                 res.c=m.b|MUX_NEG;
                 res.d=m.c;
             }
-            return 1;
+            return 2;
         }
         break;
     }
