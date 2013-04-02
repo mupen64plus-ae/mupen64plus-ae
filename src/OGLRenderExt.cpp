@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <SDL_opengl.h>
+#include "osal_opengl.h"
 
 #include "OGLRender.h"
 
@@ -36,6 +36,8 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
+
+#if SDL_VIDEO_OPENGL
 
     glBegin(GL_TRIANGLES);
     glColor4fv(gRDP.fvPrimitiveColor);
@@ -59,6 +61,8 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     glVertex3f(g_texRectTVtx[3].x, g_texRectTVtx[3].y, -g_texRectTVtx[3].z);
 
     glEnd();
+
+#endif
 
     if( cullface ) glEnable(GL_CULL_FACE);
 }

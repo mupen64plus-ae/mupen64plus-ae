@@ -16,7 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "osal_opengl.h"
+
+#if SDL_VIDEO_OPENGL
 #include "OGLExtensions.h"
+#endif
 #include "OGLDebug.h"
 #include "OGLExtRender.h"
 #include "OGLTexture.h"
@@ -73,6 +77,7 @@ void COGLExtRender::DisBindTexture(GLuint texture, int unitno)
 
 void COGLExtRender::TexCoord2f(float u, float v)
 {
+#if SDL_VIDEO_OPENGL
     if( m_bEnableMultiTexture )
     {
         for( int i=0; i<8; i++ )
@@ -87,10 +92,12 @@ void COGLExtRender::TexCoord2f(float u, float v)
     {
         OGLRender::TexCoord2f(u,v);
     }
+#endif
 }
 
 void COGLExtRender::TexCoord(TLITVERTEX &vtxInfo)
 {
+#if SDL_VIDEO_OPENGL
     if( m_bEnableMultiTexture )
     {
         for( int i=0; i<8; i++ )
@@ -105,6 +112,7 @@ void COGLExtRender::TexCoord(TLITVERTEX &vtxInfo)
     {
         OGLRender::TexCoord(vtxInfo);
     }
+#endif
 }
 
 

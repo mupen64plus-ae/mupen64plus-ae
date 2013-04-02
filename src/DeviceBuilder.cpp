@@ -17,6 +17,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "osal_opengl.h"
+
 #include "DeviceBuilder.h"
 #include "FrameBuffer.h"
 #include "OGLCombiner.h"
@@ -24,10 +26,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLExtRender.h"
 #include "OGLGraphicsContext.h"
 #include "OGLTexture.h"
+#if SDL_VIDEO_OPENGL
 #include "OGLCombinerNV.h"
 #include "OGLCombinerTNT2.h"
 #include "OGLExtensions.h"
 #include "OGLFragmentShaders.h"
+#endif
 
 //========================================================================
 CDeviceBuilder* CDeviceBuilder::m_pInstance=NULL;
@@ -237,6 +241,9 @@ CColorCombiner * OGLDeviceBuilder::CreateColorCombiner(CRender *pRender)
         else
         {
             m_deviceType = (SupportedDeviceType)options.OpenglRenderSetting;
+
+#if SDL_VIDEO_OPENGL
+
             if (m_deviceType == NVIDIA_OGL_DEVICE && !bNvidiaExtensionsSupported)
             {
                 DebugMessage(M64MSG_WARNING, "Your video card does not support Nvidia OpenGL extensions.  Falling back to auto device.");
@@ -338,6 +345,8 @@ CColorCombiner * OGLDeviceBuilder::CreateColorCombiner(CRender *pRender)
                     break;
                 }
             }
+
+#endif
         }
 
         SAFE_CHECK(m_pColorCombiner);

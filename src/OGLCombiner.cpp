@@ -19,7 +19,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <SDL_opengl.h>
+#include "osal_opengl.h"
 
 #include "OGLCombiner.h"
 #include "OGLDebug.h"
@@ -158,6 +158,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
         return;
     }
 
+#if SDL_VIDEO_OPENGL
     uint32 mask = 0x1f;
     COGLTexture* pTexture = g_textures[gRSP.curTile].m_pCOGLTexture;
     if( pTexture )
@@ -281,6 +282,7 @@ void COGLColorCombiner::InitCombinerCycle12(void)
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         OPENGL_CHECK_ERRORS;
     }
+#endif
 }
 
 void COGLBlender::NormalAlphaBlender(void)

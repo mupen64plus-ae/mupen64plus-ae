@@ -16,7 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "osal_opengl.h"
+
+#if SDL_VIDEO_OPENGL
 #include "OGLExtensions.h"
+#endif
 #include "OGLDebug.h"
 #include "OGLRender.h"
 #include "OGLGraphicsContext.h"
@@ -46,7 +50,10 @@ OGLRender::OGLRender()
         m_curBoundTex[i]=0;
         m_texUnitEnabled[i]=FALSE;
     }
+
+#if SDL_VIDEO_OPENGL
     m_bEnableMultiTexture = false;
+#endif
 }
 
 OGLRender::~OGLRender()
@@ -76,6 +83,7 @@ void OGLRender::Initialize(void)
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
 
+#if SDL_VIDEO_OPENGL
     COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
     if( pcontext->IsExtensionSupported("GL_IBM_texture_mirrored_repeat") )
     {
@@ -164,6 +172,7 @@ void OGLRender::Initialize(void)
         OPENGL_CHECK_ERRORS;
     }
 
+#endif
 }
 //===================================================================
 TextureFilterMap OglTexFilterMap[2]=
@@ -209,11 +218,13 @@ void OGLRender::ApplyTextureFilter()
 
 void OGLRender::SetShadeMode(RenderShadeMode mode)
 {
+#if SDL_VIDEO_OPENGL
     if( mode == SHADE_SMOOTH )
         glShadeModel(GL_SMOOTH);
     else
         glShadeModel(GL_FLAT);
     OPENGL_CHECK_ERRORS;
+#endif
 }
 
 void OGLRender::ZBufferEnable(BOOL bZBuffer)
@@ -332,20 +343,25 @@ void OGLRender::SetAlphaRef(uint32 dwAlpha)
     if (m_dwAlpha != dwAlpha)
     {
         m_dwAlpha = dwAlpha;
+#if SDL_VIDEO_OPENGL
         glAlphaFunc(GL_GEQUAL, (float)dwAlpha);
         OPENGL_CHECK_ERRORS;
+#endif
     }
 }
 
 void OGLRender::ForceAlphaRef(uint32 dwAlpha)
 {
+#if SDL_VIDEO_OPENGL
     float ref = dwAlpha/255.0f;
     glAlphaFunc(GL_GEQUAL, ref);
     OPENGL_CHECK_ERRORS;
+#endif
 }
 
 void OGLRender::SetFillMode(FillMode mode)
 {
+#if SDL_VIDEO_OPENGL
     if( mode == RICE_FILLMODE_WINFRAME )
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -356,6 +372,7 @@ void OGLRender::SetFillMode(FillMode mode)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         OPENGL_CHECK_ERRORS;
     }
+#endif
 }
 
 void OGLRender::SetCullMode(bool bCullFront, bool bCullBack)
@@ -515,6 +532,8 @@ bool OGLRender::RenderTexRect()
 
     float depth = -(g_texRectTVtx[3].z*2-1);
 
+#if SDL_VIDEO_OPENGL
+
     glBegin(GL_TRIANGLE_FAN);
 
     glColor4f(g_texRectTVtx[3].r, g_texRectTVtx[3].g, g_texRectTVtx[3].b, g_texRectTVtx[3].a);
@@ -536,6 +555,8 @@ bool OGLRender::RenderTexRect()
     glEnd();
     OPENGL_CHECK_ERRORS;
 
+#endif
+
     if( cullface ) glEnable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 
@@ -555,6 +576,8 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 
+#if SDL_VIDEO_OPENGL
+
     glBegin(GL_TRIANGLE_FAN);
     glColor4f(r,g,b,a);
     glVertex4f(m_fillRectVtx[0].x, m_fillRectVtx[1].y, depth, 1);
@@ -564,6 +587,8 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     glEnd();
     OPENGL_CHECK_ERRORS;
 
+#endif
+
     if( cullface ) glEnable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 
@@ -572,6 +597,7 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
 
 bool OGLRender::RenderLine3D()
 {
+#if SDL_VIDEO_OPENGL
     ApplyZBias(0);  // disable z offsets
 
     glBegin(GL_TRIANGLE_FAN);
@@ -588,6 +614,7 @@ bool OGLRender::RenderLine3D()
     OPENGL_CHECK_ERRORS;
 
     ApplyZBias(m_dwZBias);  // set Z offset back to previous value
+#endif
 
     return true;
 }
@@ -685,6 +712,8 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     float g = ((g_texRectTVtx[0].dcDiffuse>>8)&0xFF)/255.0f;
     float b = (g_texRectTVtx[0].dcDiffuse&0xFF)/255.0f;
 
+#if SDL_VIDEO_OPENGL
+
     glBegin(GL_TRIANGLES);
 
     glColor4f(r,g,b,a);
@@ -710,6 +739,8 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     glEnd();
     OPENGL_CHECK_ERRORS;
 
+#endif
+
     if( cullface ) glEnable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 }
@@ -727,6 +758,8 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     float g = ((dwColor>>8)&0xFF)/255.0f;
     float b = (dwColor&0xFF)/255.0f;
 
+#if SDL_VIDEO_OPENGL
+
     glBegin(GL_TRIANGLE_FAN);
 
     glColor4f(r,g,b,a);
@@ -737,6 +770,8 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     
     glEnd();
     OPENGL_CHECK_ERRORS;
+
+#endif
 
     if( cullface ) glEnable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
@@ -809,9 +844,11 @@ void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
 #else
     if( bAlphaTestEnable )
 #endif
+#if SDL_VIDEO_OPENGL
         glEnable(GL_ALPHA_TEST);
     else
         glDisable(GL_ALPHA_TEST);
+#endif
     OPENGL_CHECK_ERRORS;
 }
 
@@ -848,10 +885,12 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
     if( m_texUnitEnabled[0] != flag )
     {
         m_texUnitEnabled[0] = flag;
+#if SDL_VIDEO_OPENGL
         if( flag == TRUE )
             glEnable(GL_TEXTURE_2D);
         else
             glDisable(GL_TEXTURE_2D);
+#endif
         OPENGL_CHECK_ERRORS;
     }
 }
@@ -925,19 +964,23 @@ void OGLRender::ApplyScissorWithClipRatio(bool force)
 
 void OGLRender::SetFogMinMax(float fMin, float fMax)
 {
+#if SDL_VIDEO_OPENGL
     glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
     OPENGL_CHECK_ERRORS;
     glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
     OPENGL_CHECK_ERRORS;
+#endif
 }
 
 void OGLRender::TurnFogOnOff(bool flag)
 {
+#if SDL_VIDEO_OPENGL
     if( flag )
         glEnable(GL_FOG);
     else
         glDisable(GL_FOG);
     OPENGL_CHECK_ERRORS;
+#endif
 }
 
 void OGLRender::SetFogEnable(bool bEnable)
@@ -952,6 +995,7 @@ void OGLRender::SetFogEnable(bool bEnable)
         gRSP.bFogEnabled = true;
     }
 
+#if SDL_VIDEO_OPENGL
     if( gRSP.bFogEnabled )
     {
         //TRACE2("Enable fog, min=%f, max=%f",gRSPfFogMin,gRSPfFogMax );
@@ -969,6 +1013,7 @@ void OGLRender::SetFogEnable(bool bEnable)
         glDisable(GL_FOG);
         OPENGL_CHECK_ERRORS;
     }
+#endif
 }
 
 void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
@@ -978,7 +1023,9 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
     gRDP.fvFogColor[1] = g/255.0f;      //g
     gRDP.fvFogColor[2] = b/255.0f;      //b
     gRDP.fvFogColor[3] = a/255.0f;      //a
+#if SDL_VIDEO_OPENGL
     glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
+#endif
     OPENGL_CHECK_ERRORS;
 }
 
@@ -997,8 +1044,10 @@ void OGLRender::DisableMultiTexture()
 
 void OGLRender::EndRendering(void)
 {
+#if SDL_VIDEO_OPENGL
     glFlush();
     OPENGL_CHECK_ERRORS;
+#endif
     if( CRender::gRenderReferenceCount > 0 ) 
         CRender::gRenderReferenceCount--;
 }

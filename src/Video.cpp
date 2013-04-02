@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <stdarg.h>
 
-#include <SDL_opengl.h>
+#include "osal_opengl.h"
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_types.h"
@@ -928,6 +928,7 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
     if (dest == NULL)
         return;
 
+#if SDL_VIDEO_OPENGL
     GLint oldMode;
     glGetIntegerv( GL_READ_BUFFER, &oldMode );
     if (bFront)
@@ -937,6 +938,7 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
     glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
                  GL_RGB, GL_UNSIGNED_BYTE, dest );
     glReadBuffer( oldMode );
+#endif
 }
     
 

@@ -16,13 +16,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <SDL_opengl.h>
+#include "osal_opengl.h"
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
 #include "Config.h"
 #include "Debugger.h"
+#if SDL_VIDEO_OPENGL
 #include "OGLExtensions.h"
+#endif
 #include "OGLDebug.h"
 #include "OGLGraphicsContext.h"
 #include "TextureManager.h"
@@ -88,6 +90,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     /* hard-coded attribute values */
     const int iDOUBLEBUFFER = 1;
 
+#if SDL_VIDEO_OPENGL
     /* set opengl attributes */
     CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, iDOUBLEBUFFER);
     CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, bVerticalSync);
@@ -134,6 +137,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
 
     /* Get function pointers to OpenGL extensions (blame Microsoft Windows for this) */
     OGLExtensions_Init();
+#endif
 
     char caption[500];
     sprintf(caption, "%s v%i.%i.%i", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));
@@ -175,6 +179,7 @@ void COGLGraphicsContext::InitState(void)
     glClearDepth(1.0f);
     OPENGL_CHECK_ERRORS;
 
+#if SDL_VIDEO_OPENGL
     glShadeModel(GL_SMOOTH);
     OPENGL_CHECK_ERRORS;
 
@@ -184,6 +189,7 @@ void COGLGraphicsContext::InitState(void)
 
     glDisable(GL_ALPHA_TEST);
     OPENGL_CHECK_ERRORS;
+#endif
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     OPENGL_CHECK_ERRORS;
@@ -194,19 +200,24 @@ void COGLGraphicsContext::InitState(void)
     OPENGL_CHECK_ERRORS;
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
+#if SDL_VIDEO_OPENGL
     glDisable(GL_NORMALIZE);
     OPENGL_CHECK_ERRORS;
+#endif
 
     glDepthFunc(GL_LEQUAL);
     OPENGL_CHECK_ERRORS;
     glEnable(GL_DEPTH_TEST);
     OPENGL_CHECK_ERRORS;
 
+#if SDL_VIDEO_OPENGL
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     OPENGL_CHECK_ERRORS;
+#endif
 
     glEnable(GL_BLEND);
     OPENGL_CHECK_ERRORS;
+#if SDL_VIDEO_OPENGL
     glEnable(GL_ALPHA_TEST);
     OPENGL_CHECK_ERRORS;
 
@@ -216,6 +227,7 @@ void COGLGraphicsContext::InitState(void)
     OPENGL_CHECK_ERRORS;
     
     glDepthRange(-1, 1);
+#endif
     OPENGL_CHECK_ERRORS;
 }
 
