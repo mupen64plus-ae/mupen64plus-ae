@@ -30,8 +30,7 @@ void COGLExtRender::Initialize(void)
     OGLRender::Initialize();
 
     // Initialize multitexture
-    //glGetIntegerv(GL_MAX_TEXTURE_UNITS,&m_maxTexUnits);
-    m_maxTexUnits = 2;
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,&m_maxTexUnits);
     OPENGL_CHECK_ERRORS;
 
     for( int i=0; i<8; i++ )

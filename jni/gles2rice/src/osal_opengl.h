@@ -40,6 +40,7 @@
 
 // Constant substitutions
 #define GL_CLAMP                            GL_CLAMP_TO_EDGE
+#define GL_MAX_TEXTURE_UNITS_ARB            GL_MAX_TEXTURE_IMAGE_UNITS
 #define GL_MIRRORED_REPEAT_ARB              GL_MIRRORED_REPEAT
 #define GL_TEXTURE0_ARB                     GL_TEXTURE0
 #define GL_TEXTURE1_ARB                     GL_TEXTURE1

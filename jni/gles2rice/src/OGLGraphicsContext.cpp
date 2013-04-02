@@ -295,8 +295,7 @@ void COGLGraphicsContext::InitOGLExtension(void)
         || options.anisotropicFiltering == 16))
     {
         //Get the max value of aniso that the graphic card support
-        //glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropicFiltering);
-        m_maxAnisotropicFiltering = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropicFiltering);
         OPENGL_CHECK_ERRORS;
 
         // If user want more aniso than hardware can do
