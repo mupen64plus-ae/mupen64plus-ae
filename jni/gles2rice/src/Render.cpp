@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "FrameBuffer.h"
 #include "Render.h"
 
-//#include "liblinux/BMGLibPNG.h"
+#include "liblinux/BMGLibPNG.h"
 
 #include <algorithm>
 
@@ -2042,45 +2042,45 @@ bool SaveRGBBufferToFile(char *filename, unsigned char *buf, int width, int heig
     }
     else
     {
-//        if( strcasecmp(right(filename,4),".png") != 0 ) strcat(filename,".png");
-//
-//        struct BMGImageStruct img;
-//            memset(&img, 0, sizeof(BMGImageStruct));
-//        InitBMGImage(&img);
-//        img.bits = buf;
-//        img.bits_per_pixel = 24;
-//        img.height = height;
-//        img.width = width;
-//        img.scan_width = pitch;
-//        BMG_Error code = WritePNG(filename, img);
-//
-//        if( code == BMG_OK )
+        if( strcasecmp(right(filename,4),".png") != 0 ) strcat(filename,".png");
+
+        struct BMGImageStruct img;
+            memset(&img, 0, sizeof(BMGImageStruct));
+        InitBMGImage(&img);
+        img.bits = buf;
+        img.bits_per_pixel = 24;
+        img.height = height;
+        img.width = width;
+        img.scan_width = pitch;
+        BMG_Error code = WritePNG(filename, img);
+
+        if( code == BMG_OK )
             return true;
-//        else
-//            return false;
+        else
+            return false;
     }
 }
 
 bool SaveRGBABufferToPNGFile(char *filename, unsigned char *buf, int width, int height, int pitch)
 {
-//    if( pitch == -1 )
-//        pitch = width*4;
-//
-//    if( strcasecmp(right(filename,4),".png") != 0 ) strcat(filename,".png");
-//
-//    struct BMGImageStruct img;
-//        memset(&img, 0, sizeof(BMGImageStruct));
-//    InitBMGImage(&img);
-//    img.bits = buf;
-//    img.bits_per_pixel = 32;
-//    img.height = height;
-//    img.width = width;
-//    img.scan_width = pitch;
-//    BMG_Error code = WritePNG(filename, img);
-//
-//    if( code == BMG_OK )
+    if( pitch == -1 )
+        pitch = width*4;
+
+    if( strcasecmp(right(filename,4),".png") != 0 ) strcat(filename,".png");
+
+    struct BMGImageStruct img;
+        memset(&img, 0, sizeof(BMGImageStruct));
+    InitBMGImage(&img);
+    img.bits = buf;
+    img.bits_per_pixel = 32;
+    img.height = height;
+    img.width = width;
+    img.scan_width = pitch;
+    BMG_Error code = WritePNG(filename, img);
+
+    if( code == BMG_OK )
         return true;
-//    else
-//        return false;
+    else
+        return false;
 }
 
