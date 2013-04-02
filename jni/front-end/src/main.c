@@ -338,20 +338,20 @@ void DebugCallback(void *Context, int level, const char *message)
 {
 #ifdef ANDROID
     if (level == M64MSG_ERROR)
-        __android_log_print(ANDROID_LOG_ERROR, "%s Error: %s\n", (const char *) Context, message);
+        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Error: %s\n", message);
     else if (level == M64MSG_WARNING)
-        __android_log_print(ANDROID_LOG_WARN, "%s Warning: %s\n", (const char *) Context, message);
+        __android_log_print(ANDROID_LOG_WARN, (const char *) Context, "Warning: %s\n", message);
     else if (level == M64MSG_INFO)
-        __android_log_print(ANDROID_LOG_INFO, "%s Info: %s\n", (const char *) Context, message);
+        __android_log_print(ANDROID_LOG_INFO, (const char *) Context, "Info: %s\n", message);
     else if (level == M64MSG_STATUS)
-        __android_log_print(ANDROID_LOG_INFO, "%s Status: %s\n", (const char *) Context, message);
+        __android_log_print(ANDROID_LOG_DEBUG, (const char *) Context, "Status: %s\n", message);
     else if (level == M64MSG_VERBOSE)
     {
         if (g_Verbose)
-            __android_log_print(ANDROID_LOG_VERBOSE, "%s: %s\n", (const char *) Context, message);
+            __android_log_print(ANDROID_LOG_VERBOSE, (const char *) Context, "%s\n", message);
     }
     else
-        __android_log_print(ANDROID_LOG_ERROR, "%s Unknown: %s\n", (const char *) Context, message);
+        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Unknown: %s\n", message);
 #else
     if (level == M64MSG_ERROR)
         printf("%s Error: %s\n", (const char *) Context, message);
