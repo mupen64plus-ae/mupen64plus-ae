@@ -204,14 +204,14 @@ void COGLGraphicsContext::InitState(void)
     m_pExtensionStr = glGetString(GL_EXTENSIONS);
     m_pVersionStr = glGetString(GL_VERSION);
     m_pVendorStr = glGetString(GL_VENDOR);
-    //glMatrixMode(GL_PROJECTION);
-    //OPENGL_CHECK_ERRORS;
-    //glLoadIdentity();
-    //OPENGL_CHECK_ERRORS;
+    glMatrixMode(GL_PROJECTION);
+    OPENGL_CHECK_ERRORS;
+    glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     OPENGL_CHECK_ERRORS;
-    glClearDepthf(1.0f);
+    glClearDepth(1.0f);
     OPENGL_CHECK_ERRORS;
 
 #if SDL_VIDEO_OPENGL
@@ -369,7 +369,7 @@ void COGLGraphicsContext::Clear(ClearFlag dwFlags, uint32 color, float depth)
     float a = ((color>>24)&0xFF)/255.0f;
     glClearColor(r, g, b, a);
     OPENGL_CHECK_ERRORS;
-    glClearDepthf(depth);
+    glClearDepth(depth);
     OPENGL_CHECK_ERRORS;
     glClear(flag);  //Clear color buffer and depth buffer
     OPENGL_CHECK_ERRORS;
@@ -458,7 +458,7 @@ void COGLGraphicsContext::UpdateFrame(bool swaponly)
 
     glDepthMask(GL_TRUE);
     OPENGL_CHECK_ERRORS;
-    glClearDepthf(1.0f);
+    glClearDepth(1.0f);
     OPENGL_CHECK_ERRORS;
     if( !g_curRomInfo.bForceScreenClear )
     {

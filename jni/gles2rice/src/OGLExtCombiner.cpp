@@ -133,7 +133,7 @@ void COGLColorCombiner4::InitCombinerCycleFill(void)
 {
     for( int i=0; i<m_supportedStages; i++ )
     {
-        glActiveTexture(GL_TEXTURE0+i);
+        pglActiveTexture(GL_TEXTURE0_ARB+i);
         OPENGL_CHECK_ERRORS;
         m_pOGLRender->EnableTexUnit(i,FALSE);
     }
@@ -576,7 +576,7 @@ int COGLColorCombiner4::SaveParsedResult(OGLExtCombinerSaveType &result)
 
 bool isGLtex(GLint val)
 {
-    if( val >= GL_TEXTURE0 && val <= GL_TEXTURE7 )
+    if( val >= GL_TEXTURE0_ARB && val <= GL_TEXTURE7_ARB )
         return true;
     else
         return false;
@@ -600,16 +600,16 @@ int COGLColorCombiner4v2::SaveParsedResult(OGLExtCombinerSaveType &result)
             if( result.units[n].rgbComb.args[i] != CM_IGNORE_BYTE )
             {
                 result.units[n].glRGBArgs[i] = MapRGBArgs(result.units[n].rgbComb.args[i]);
-                if( result.units[n].glRGBArgs[i] == GL_TEXTURE3 && !result.envIsUsed )
-                    result.units[n].glRGBArgs[i] = GL_TEXTURE2;
+                if( result.units[n].glRGBArgs[i] == GL_TEXTURE3_ARB && !result.envIsUsed )
+                    result.units[n].glRGBArgs[i] = GL_TEXTURE2_ARB;
 
                 result.units[n].glRGBFlags[i] = MapRGBArgFlags(result.units[n].rgbComb.args[i]);
             }
             if( result.units[n].alphaComb.args[i] != CM_IGNORE_BYTE )
             {
                 result.units[n].glAlphaArgs[i] = MapAlphaArgs(result.units[n].alphaComb.args[i]);
-                if( result.units[n].glAlphaArgs[i] == GL_TEXTURE3 && !result.envIsUsed )
-                    result.units[n].glAlphaArgs[i] = GL_TEXTURE2;
+                if( result.units[n].glAlphaArgs[i] == GL_TEXTURE3_ARB && !result.envIsUsed )
+                    result.units[n].glAlphaArgs[i] = GL_TEXTURE2_ARB;
 
                 result.units[n].glAlphaFlags[i] = MapAlphaArgFlags(result.units[n].alphaComb.args[i]);
             }
@@ -741,7 +741,7 @@ GLint COGLColorCombiner4::RGBArgsMap4[] =
     GL_PRIMARY_COLOR_ARB,           //MUX_1
     GL_PREVIOUS_ARB,                //MUX_COMBINED,
 #endif
-    GL_TEXTURE0,                    //MUX_TEXEL0,
+    GL_TEXTURE0_ARB,                //MUX_TEXEL0,
 #if SDL_VIDEO_OPENGL
     GL_TEXTURE1_ARB,                //MUX_TEXEL1,
     GL_CONSTANT_ARB,                //MUX_PRIM,
@@ -749,7 +749,7 @@ GLint COGLColorCombiner4::RGBArgsMap4[] =
     GL_CONSTANT_ARB,                //MUX_ENV,
     GL_PREVIOUS_ARB,                //MUX_COMBALPHA,
 #endif
-    GL_TEXTURE0,                    //MUX_T0_ALPHA,
+    GL_TEXTURE0_ARB,                //MUX_T0_ALPHA,
 #if SDL_VIDEO_OPENGL
     GL_TEXTURE1_ARB,                //MUX_T1_ALPHA,
     GL_CONSTANT_ARB,                //MUX_PRIM_ALPHA,
@@ -769,7 +769,7 @@ GLint COGLColorCombiner4v2::RGBArgsMap4v2[] =
     GL_PRIMARY_COLOR_ARB,           //MUX_1
     GL_PREVIOUS_ARB,                //MUX_COMBINED,
 #endif
-    GL_TEXTURE0,                    //MUX_TEXEL0,
+    GL_TEXTURE0_ARB,                //MUX_TEXEL0,
 #if SDL_VIDEO_OPENGL
     GL_TEXTURE1_ARB,                //MUX_TEXEL1,
     GL_CONSTANT_ARB,                //MUX_PRIM,
@@ -801,7 +801,7 @@ GLint COGLColorCombiner2::RGBArgsMap2[] =
     //{GL_TEXTURE,              },  //MUX_TEXEL0,
     //{GL_TEXTURE,              },  //MUX_TEXEL1,
 #endif
-    GL_TEXTURE0,                    //MUX_TEXEL0,
+    GL_TEXTURE0_ARB,                //MUX_TEXEL0,
 #if SDL_VIDEO_OPENGL
     GL_TEXTURE1_ARB,                //MUX_TEXEL1,
     GL_CONSTANT_ARB,                //MUX_PRIM,
@@ -968,10 +968,10 @@ void COGLColorCombiner4::GenerateCombinerSetting(int index)
 
     for( int i=0; i<res.numOfUnits; i++ )
     {
-        glActiveTexture(GL_TEXTURE0+i);
+        pglActiveTexture(GL_TEXTURE0_ARB+i);
         OPENGL_CHECK_ERRORS;
         m_pOGLRender->EnableTexUnit(i,TRUE);
-//        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
         OPENGL_CHECK_ERRORS;
         ApplyFor1Unit(res.units[i]);
     }
@@ -980,7 +980,7 @@ void COGLColorCombiner4::GenerateCombinerSetting(int index)
     {
         for( int i=res.numOfUnits; i<m_maxTexUnits; i++ )
         {
-            glActiveTexture(GL_TEXTURE0+i);
+            pglActiveTexture(GL_TEXTURE0_ARB+i);
             OPENGL_CHECK_ERRORS;
             m_pOGLRender->DisBindTexture(0, i);
             m_pOGLRender->EnableTexUnit(i,FALSE);
@@ -1021,9 +1021,9 @@ void COGLColorCombiner4::GenerateCombinerSettingConstants(int index)
     {
         for( int i=0; i<res.numOfUnits; i++ )
         {
-            glActiveTexture(GL_TEXTURE0+i);
+            pglActiveTexture(GL_TEXTURE0_ARB+i);
             OPENGL_CHECK_ERRORS;
-//            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,fv);
+            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,fv);
             OPENGL_CHECK_ERRORS;
         }
     }
@@ -1043,9 +1043,9 @@ void COGLColorCombiner4v2::GenerateCombinerSettingConstants(int index)
         float *fv = GetPrimitiveColorfv();  // CONSTANT COLOR
         for( int i=0; i<res.numOfUnits; i++ )
         {
-            glActiveTexture(GL_TEXTURE0+i);
+            pglActiveTexture(GL_TEXTURE0_ARB+i);
             OPENGL_CHECK_ERRORS;
-//            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,fv);
+            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,fv);
             OPENGL_CHECK_ERRORS;
         }
     }
@@ -1053,7 +1053,7 @@ void COGLColorCombiner4v2::GenerateCombinerSettingConstants(int index)
     if( res.envIsUsed )
     {
         // Set Texture unit 2 to ENV
-        glActiveTexture(GL_TEXTURE2);
+        pglActiveTexture(GL_TEXTURE2_ARB);
         OPENGL_CHECK_ERRORS;
         prender->EnableTexUnit(2,TRUE);
         TxtrCacheEntry *pEntry = gTextureManager.GetConstantColorTexture(MUX_ENV);
@@ -1068,7 +1068,7 @@ void COGLColorCombiner4v2::GenerateCombinerSettingConstants(int index)
             unit = 2;
 
         // Set Texture unit 3 to LODFRAC
-        glActiveTexture(GL_TEXTURE0+unit);
+        pglActiveTexture(GL_TEXTURE0_ARB+unit);
         OPENGL_CHECK_ERRORS;
         prender->EnableTexUnit(unit,TRUE);
         TxtrCacheEntry *pEntry = gTextureManager.GetConstantColorTexture(MUX_LODFRAC);
@@ -1082,7 +1082,7 @@ void COGLColorCombiner4v2::GenerateCombinerSettingConstants(int index)
             unit = 2;
 
         // Disable texture unit 3
-        glActiveTexture(GL_TEXTURE0+unit);
+        pglActiveTexture(GL_TEXTURE0_ARB+unit);
         OPENGL_CHECK_ERRORS;
         prender->EnableTexUnit(unit,FALSE);
         prender->SetTextureToTextureUnitMap(-1,unit);
@@ -1205,9 +1205,9 @@ void COGLColorCombiner2::GenerateCombinerSettingConstants(int index)
     {
         for( int i=0; i<res.numOfUnits; i++ )
         {
-            glActiveTexture(GL_TEXTURE0+i);
+            pglActiveTextureARB(GL_TEXTURE0_ARB+i);
             OPENGL_CHECK_ERRORS;
-//            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,fv);
+            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,fv);
             OPENGL_CHECK_ERRORS;
         }
     }
@@ -1219,7 +1219,7 @@ void COGLColorCombiner2::GenerateCombinerSetting(int index)
 
     for( int i=0; i<res.numOfUnits; i++ )
     {
-        glActiveTexture(GL_TEXTURE0+i);
+        pglActiveTextureARB(GL_TEXTURE0_ARB+i);
         OPENGL_CHECK_ERRORS;
         //if(res.units[i].textureIsUsed)
         {
@@ -1238,7 +1238,7 @@ void COGLColorCombiner2::GenerateCombinerSetting(int index)
         }
         */
 
-//        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
         OPENGL_CHECK_ERRORS;
         ApplyFor1Unit(res.units[i]);
     }
@@ -1247,7 +1247,7 @@ void COGLColorCombiner2::GenerateCombinerSetting(int index)
     {
         for( int i=res.numOfUnits; i<m_maxTexUnits; i++ )
         {
-            glActiveTexture(GL_TEXTURE0+i);
+            pglActiveTextureARB(GL_TEXTURE0_ARB+i);
             OPENGL_CHECK_ERRORS;
             m_pOGLRender->EnableTexUnit(i,FALSE);
             prender->SetTextureToTextureUnitMap(-1,i);

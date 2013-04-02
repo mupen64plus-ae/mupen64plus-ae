@@ -53,8 +53,8 @@ static int hardwareType = HARDWARE_TYPE_UNKNOWN;
 UVFlagMap OGLXUVFlagMaps[] =
 {
     {TEXTURE_UV_FLAG_WRAP, GL_REPEAT},
-    {TEXTURE_UV_FLAG_MIRROR, GL_MIRRORED_REPEAT},
-    {TEXTURE_UV_FLAG_CLAMP, GL_CLAMP_TO_EDGE},
+    {TEXTURE_UV_FLAG_MIRROR, GL_MIRRORED_REPEAT_ARB},
+    {TEXTURE_UV_FLAG_CLAMP, GL_CLAMP},
 };
 
 GLuint disabledTextureID;
@@ -112,10 +112,10 @@ bool OGLRender::ClearDeviceObjects()
 
 void OGLRender::Initialize(void)
 {
-    //glMatrixMode(GL_MODELVIEW);
-    //OPENGL_CHECK_ERRORS;
-    //glLoadIdentity();
-    //OPENGL_CHECK_ERRORS;
+    glMatrixMode(GL_MODELVIEW);
+    OPENGL_CHECK_ERRORS;
+    glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
 
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
@@ -322,7 +322,7 @@ void OGLRender::ClearBuffer(bool cbuffer, bool zbuffer)
     if( cbuffer )   flag |= GL_COLOR_BUFFER_BIT;
     if( zbuffer )   flag |= GL_DEPTH_BUFFER_BIT;
     float depth = ((gRDP.originalFillColor&0xFFFF)>>2)/(float)0x3FFF;
-    glClearDepthf(depth);
+    glClearDepth(depth);
     OPENGL_CHECK_ERRORS;
     glClear(flag);
     OPENGL_CHECK_ERRORS;
@@ -331,7 +331,7 @@ void OGLRender::ClearBuffer(bool cbuffer, bool zbuffer)
 void OGLRender::ClearZBuffer(float depth)
 {
     uint32 flag=GL_DEPTH_BUFFER_BIT;
-    glClearDepthf(depth);
+    glClearDepth(depth);
     OPENGL_CHECK_ERRORS;
     glClear(flag);
     OPENGL_CHECK_ERRORS;
@@ -1065,18 +1065,18 @@ void OGLRender::RenderReset()
 {
     CRender::RenderReset();
 
-    //glMatrixMode(GL_PROJECTION);
-    //OPENGL_CHECK_ERRORS;
-    //glLoadIdentity();
-    //OPENGL_CHECK_ERRORS;
-    //glOrtho(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
-    //OPENGL_CHECK_ERRORS;
+    glMatrixMode(GL_PROJECTION);
+    OPENGL_CHECK_ERRORS;
+    glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
+    glOrtho(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
+    OPENGL_CHECK_ERRORS;
 
     // position viewer 
-    //glMatrixMode(GL_MODELVIEW);
-    //OPENGL_CHECK_ERRORS;
-    //glLoadIdentity();
-    //OPENGL_CHECK_ERRORS;
+    glMatrixMode(GL_MODELVIEW);
+    OPENGL_CHECK_ERRORS;
+    glLoadIdentity();
+    OPENGL_CHECK_ERRORS;
 }
 
 void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
@@ -1145,13 +1145,13 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
 #elif SDL_VIDEO_OPENGL_ES2
         if(flag)
         {
-            glActiveTexture(GL_TEXTURE0 + unitno);
+            pglActiveTexture(GL_TEXTURE0_ARB + unitno);
             OPENGL_CHECK_ERRORS;
             glBindTexture(GL_TEXTURE_2D,m_curBoundTex[unitno]);
         }
         else
         {
-            glActiveTexture(GL_TEXTURE0 + unitno);
+            pglActiveTexture(GL_TEXTURE0_ARB + unitno);
             OPENGL_CHECK_ERRORS;
             glEnable(GL_BLEND); //Need blend for transparent disabled texture
             glBindTexture(GL_TEXTURE_2D,disabledTextureID);
@@ -1163,12 +1163,12 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
 
 void OGLRender::TexCoord2f(float u, float v)
 {
-    //glTexCoord2f(u, v);
+    glTexCoord2f(u, v);
 }
 
 void OGLRender::TexCoord(TLITVERTEX &vtxInfo)
 {
-    //glTexCoord2f(vtxInfo.tcord[0].u, vtxInfo.tcord[0].v);
+    glTexCoord2f(vtxInfo.tcord[0].u, vtxInfo.tcord[0].v);
 }
 
 void OGLRender::UpdateScissor()
@@ -1326,13 +1326,13 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
 
 void OGLRender::DisableMultiTexture()
 {
-    glActiveTexture(GL_TEXTURE1);
+    pglActiveTexture(GL_TEXTURE1_ARB);
     OPENGL_CHECK_ERRORS;
     EnableTexUnit(1,FALSE);
-    glActiveTexture(GL_TEXTURE0);
+    pglActiveTexture(GL_TEXTURE0_ARB);
     OPENGL_CHECK_ERRORS;
     EnableTexUnit(0,FALSE);
-    glActiveTexture(GL_TEXTURE0);
+    pglActiveTexture(GL_TEXTURE0_ARB);
     OPENGL_CHECK_ERRORS;
     EnableTexUnit(0,TRUE);
 }
@@ -1366,11 +1366,11 @@ void OGLRender::glViewportWrapper(GLint x, GLint y, GLsizei width, GLsizei heigh
         m_width=width;
         m_height=height;
         mflag=flag;
-        //glMatrixMode(GL_PROJECTION);
-        //OPENGL_CHECK_ERRORS;
-        //glLoadIdentity();
-        //OPENGL_CHECK_ERRORS;
-        //if( flag )  glOrtho(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
+        glMatrixMode(GL_PROJECTION);
+        OPENGL_CHECK_ERRORS;
+        glLoadIdentity();
+        OPENGL_CHECK_ERRORS;
+        if( flag )  glOrtho(0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 0, -1, 1);
         OPENGL_CHECK_ERRORS;
         glViewport(x,y,width,height);
         OPENGL_CHECK_ERRORS;

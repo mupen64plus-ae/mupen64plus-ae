@@ -21,11 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "Combiner.h"
 #include "Render.h"
-#include "osal_opengl.h"
-#define VS_POSITION 0
-#define VS_COLOR 1
-#define VS_TEXCOORD0 2
-#define VS_TEXCOORD1 3
 
 class OGLRender : public CRender
 {

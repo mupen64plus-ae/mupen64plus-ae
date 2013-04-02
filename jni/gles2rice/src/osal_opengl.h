@@ -32,6 +32,38 @@
 #include <SDL_opengles2.h>
 #define GLSL_VERSION "100"
 
+// Vertex shader params
+#define VS_POSITION                         0
+#define VS_COLOR                            1
+#define VS_TEXCOORD0                        2
+#define VS_TEXCOORD1                        3
+
+// Constant substitutions
+#define GL_CLAMP                            GL_CLAMP_TO_EDGE
+#define GL_MIRRORED_REPEAT_ARB              GL_MIRRORED_REPEAT
+#define GL_TEXTURE0_ARB                     GL_TEXTURE0
+#define GL_TEXTURE1_ARB                     GL_TEXTURE1
+#define GL_TEXTURE2_ARB                     GL_TEXTURE2
+#define GL_TEXTURE3_ARB                     GL_TEXTURE3
+#define GL_TEXTURE4_ARB                     GL_TEXTURE4
+#define GL_TEXTURE5_ARB                     GL_TEXTURE5
+#define GL_TEXTURE6_ARB                     GL_TEXTURE6
+#define GL_TEXTURE7_ARB                     GL_TEXTURE7
+
+// Function substitutions
+#define glClearDepth                        glClearDepthf
+#define pglActiveTexture                    glActiveTexture
+#define pglActiveTextureARB                 glActiveTexture
+
+// No-op substitutions (unavailable in GLES2)
+#define glLoadIdentity()
+#define glMatrixMode(x)
+#define glOrtho(a,b,c,d,e,f)
+#define glReadBuffer(x)
+#define glTexEnvi(x,y,z)
+#define glTexEnvfv(x,y,z)
+#define glTexCoord2f(u,v)
+
 #endif // SDL_VIDEO_OPENGL*
 
 #endif // OSAL_OPENGL_H
