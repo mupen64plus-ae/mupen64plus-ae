@@ -24,6 +24,7 @@ LOCAL_SRC_FILES :=                      \
 
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
+    -DANDROID           \
     -DNO_ASM            \
 
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)

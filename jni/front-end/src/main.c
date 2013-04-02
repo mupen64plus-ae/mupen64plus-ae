@@ -33,8 +33,12 @@
 // The mac version of SDL requires inclusion of SDL_main in the executable
 #ifdef __APPLE__
 	 #include <SDL_main.h>
-#elif defined (ANDROID)
+#endif
+
+#ifdef ANDROID
 #include <SDL.h>
+#include <android/log.h>
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "front_end", __VA_ARGS__)
 #endif
 
 #include "cheat.h"
@@ -46,8 +50,6 @@
 #include "osal_preproc.h"
 
 #include <jni.h>
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "front_end", __VA_ARGS__)
 
 /* Version number for UI-Console config section parameters */
 #define CONFIG_PARAM_VERSION     1.00
@@ -232,7 +234,7 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNati
     FILE *fPtr = fopen( strBuff, "rb" );
     if( fPtr == NULL )
     {
-        printf( "Error: couldn't open ROM file '%s' for reading.\n", strBuff );
+        DebugMessage(M64MSG_ERROR, "couldn't open ROM file '%s' for reading.\n", strBuff );
         return NULL;
     }
 
@@ -240,14 +242,14 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNati
 
     if( hdr == NULL )
     {
-        printf( "Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
+        DebugMessage(M64MSG_ERROR, "couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
                 sizeof( m64p_rom_header ), strBuff );
         fclose(fPtr);
         return NULL;
     }
     else if( fread( hdr, 1, sizeof( m64p_rom_header ), fPtr ) != sizeof( m64p_rom_header ) )
     {
-        printf( "Error: couldn't read %li bytes from ROM image file '%s'.\n",
+        DebugMessage(M64MSG_ERROR, "couldn't read %li bytes from ROM image file '%s'.\n",
                 sizeof( m64p_rom_header ), strBuff );
         free( hdr );
         fclose( fPtr );
@@ -273,7 +275,7 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNati
     FILE *fPtr = fopen( strBuff, "rb" );
     if( fPtr == NULL )
     {
-        printf( "Error: couldn't open ROM file '%s' for reading.\n", strBuff );
+        DebugMessage(M64MSG_ERROR, "couldn't open ROM file '%s' for reading.\n", strBuff );
         return NULL;
     }
 
@@ -281,14 +283,14 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNati
 
     if( hdr == NULL )
     {
-        printf( "Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
+        DebugMessage(M64MSG_ERROR, "couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
                 sizeof( m64p_rom_header ), strBuff );
         fclose(fPtr);
         return NULL;
     }
     else if( fread( hdr, 1, sizeof( m64p_rom_header ), fPtr ) != sizeof( m64p_rom_header ) )
     {
-        printf( "Error: couldn't read %li bytes from ROM image file '%s'.\n",
+        DebugMessage(M64MSG_ERROR, "couldn't read %li bytes from ROM image file '%s'.\n",
                 sizeof( m64p_rom_header ), strBuff );
         free( hdr );
         fclose( fPtr );
@@ -332,11 +334,25 @@ void DebugMessage(int level, const char *message, ...)
 
 void DebugCallback(void *Context, int level, const char *message)
 {
+#ifdef ANDROID
     if (level == M64MSG_ERROR)
-//        printf("%s Error: %s\n", (const char *) Context, message);
+        __android_log_print(ANDROID_LOG_ERROR, "%s Error: %s\n", (const char *) Context, message);
+    else if (level == M64MSG_WARNING)
+        __android_log_print(ANDROID_LOG_WARN, "%s Warning: %s\n", (const char *) Context, message);
+    else if (level == M64MSG_INFO)
+        __android_log_print(ANDROID_LOG_INFO, "%s Info: %s\n", (const char *) Context, message);
+    else if (level == M64MSG_STATUS)
+        __android_log_print(ANDROID_LOG_INFO, "%s Status: %s\n", (const char *) Context, message);
+    else if (level == M64MSG_VERBOSE)
     {
-        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Error: %s\n", message);
+        if (g_Verbose)
+            __android_log_print(ANDROID_LOG_VERBOSE, "%s: %s\n", (const char *) Context, message);
     }
+    else
+        __android_log_print(ANDROID_LOG_ERROR, "%s Unknown: %s\n", (const char *) Context, message);
+#else
+    if (level == M64MSG_ERROR)
+        printf("%s Error: %s\n", (const char *) Context, message);
     else if (level == M64MSG_WARNING)
         printf("%s Warning: %s\n", (const char *) Context, message);
     else if (level == M64MSG_INFO)
@@ -350,6 +366,7 @@ void DebugCallback(void *Context, int level, const char *message)
     }
     else
         printf("%s Unknown: %s\n", (const char *) Context, message);
+#endif
 }
 
 static void FrameCallback(unsigned int FrameIndex)
@@ -858,10 +875,10 @@ int main(int argc, char *argv[])
     char *appHomePath = (char *) Android_JNI_GetDataDir();
     if( chdir( appHomePath ) != 0 )
     {
-        __android_log_print(ANDROID_LOG_ERROR, "front-end", "Unable to enter Android data folder '%s' (required for config read/write functions)", appHomePath );
+        DebugMessage(M64MSG_ERROR, "Unable to enter Android data folder '%s' (required for config read/write functions)", appHomePath);
         return 2;
     }
-    __android_log_print( ANDROID_LOG_VERBOSE, "front-end", "Using Android data folder '%s' for config read/write functions", appHomePath );
+    DebugMessage(M64MSG_ERROR, "Using Android data folder '%s' for config read/write functions", appHomePath);
     setenv( "HOME", appHomePath, 1 );
     setenv( "XDG_CONFIG_HOME", appHomePath, 1 );
     setenv( "XDG_DATA_HOME", appHomePath, 1 );
@@ -878,14 +895,14 @@ int main(int argc, char *argv[])
     /* bootstrap some special parameters from the command line */
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
     {
-        __android_log_print(ANDROID_LOG_ERROR, "front-end", "ParseCommandLineInitial not 0, returning 1.\n");
+        DebugMessage(M64MSG_ERROR, "ParseCommandLineInitial not 0, returning 1.\n");
         return 1;
     }
 
     /* load the Mupen64Plus core library */
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)
     {
-        __android_log_print(ANDROID_LOG_ERROR, "front-end", "AttachCoreLib unsuccessful, returning 2.\n");
+        DebugMessage(M64MSG_ERROR, "AttachCoreLib unsuccessful, returning 2.\n");
         return 2;
     }
 
