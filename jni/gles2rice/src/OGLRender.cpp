@@ -57,7 +57,7 @@ UVFlagMap OGLXUVFlagMaps[] =
     {TEXTURE_UV_FLAG_CLAMP, GL_CLAMP},
 };
 
-GLuint disabledTextureID;
+static GLuint disabledTextureID;
 
 //===================================================================
 OGLRender::OGLRender()

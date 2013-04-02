@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - osal_opengl.h                                           *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard Goedeken                                   *
+ *   Copyright (C) 2013 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,6 +31,7 @@
 // Extension names
 #define OSAL_GL_ARB_MULTITEXTURE            "GL_ARB_multitexture"
 #define OSAL_GL_ARB_TEXTURE_ENV_ADD         "GL_ARB_texture_env_add"
+
 
 
 #elif SDL_VIDEO_OPENGL_ES2
