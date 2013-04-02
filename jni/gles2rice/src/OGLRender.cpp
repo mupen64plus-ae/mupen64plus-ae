@@ -210,30 +210,9 @@ void OGLRender::Initialize(void)
     }
 
 #elif SDL_VIDEO_OPENGL_ES2
-    COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
-    if( pcontext->IsExtensionSupported("GL_IBM_texture_mirrored_repeat") )
-    {
-        //OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_MIRRORED_REPEAT_IBM;
-    }
-    else if( pcontext->IsExtensionSupported("ARB_texture_mirrored_repeat") )
-    {
-        //OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_MIRRORED_REPEAT;
-    }
-    else
-    {
-        OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_MIRRORED_REPEAT;
-    }
-
-//    if( pcontext->IsExtensionSupported("GL_texture_border_clamp") || pcontext->IsExtensionSupported("GL_EXT_texture_edge_clamp") )
-//    {
-        m_bSupportClampToEdge = true;
-        OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
-//    }
-//    else
-//    {
-//        m_bSupportClampToEdge = false;
-//        OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
-//    }
+    OGLXUVFlagMaps[TEXTURE_UV_FLAG_MIRROR].realFlag = GL_MIRRORED_REPEAT;
+    m_bSupportClampToEdge = true;
+    OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
 #endif
 
 #ifdef PAULSCODE

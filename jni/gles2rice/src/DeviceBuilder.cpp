@@ -349,22 +349,8 @@ CColorCombiner * OGLDeviceBuilder::CreateColorCombiner(CRender *pRender)
             }
 
 #elif SDL_VIDEO_OPENGL_ES2
-            if( m_deviceType == OGL_DEVICE )    // Best fit
-            {
-                GLint maxUnit = 2;
-                COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
-//                glGetIntegerv(GL_MAX_TEXTURE_UNITS,&maxUnit);
-                OPENGL_CHECK_ERRORS;
-
-                DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
-                    m_pColorCombiner = new COGL_FragmentProgramCombiner(pRender);
-                    DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
-            }
-            else
-            {
-                    m_pColorCombiner = new COGL_FragmentProgramCombiner(pRender);
-                    DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
-            }
+            m_pColorCombiner = new COGL_FragmentProgramCombiner(pRender);
+            DebugMessage(M64MSG_INFO, "OpenGL Combiner: Fragment Program");
 #endif
         }
 
