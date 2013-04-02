@@ -133,8 +133,11 @@ void COGLTexture::EndUpdate(DrawInfo *di)
     }
 
     // Copy the image data from main memory to video card texture memory
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
     //GL_BGRA_IMG works on adreno but not inside profiler.
     glTexImage2D(GL_TEXTURE_2D, 0, m_glFmt, m_dwCreatedTextureWidth, m_dwCreatedTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pTexture);
+#endif
     OPENGL_CHECK_ERRORS;
 }
 

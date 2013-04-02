@@ -253,8 +253,9 @@ void COGLGraphicsContext::InitState(void)
     glLoadIdentity();
     OPENGL_CHECK_ERRORS;
 */
-    
+#if SDL_VIDEO_OPENGL_ES2    
     glDepthRangef(0.0f, 1.0f);
+#endif
     OPENGL_CHECK_ERRORS;
 }
 

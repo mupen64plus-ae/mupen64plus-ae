@@ -67,6 +67,9 @@ OGLRender::OGLRender()
         m_curBoundTex[i]=0;
         m_texUnitEnabled[i]=FALSE;
     }
+
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
     m_bEnableMultiTexture = true;
 
     //Create a texture as replacement for glEnable/Disable(GL_TEXTURE_2D)
@@ -81,6 +84,7 @@ OGLRender::OGLRender()
     OPENGL_CHECK_ERRORS;
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &white.dcDiffuse);
     OPENGL_CHECK_ERRORS;
+#endif
 }
 
 OGLRender::~OGLRender()
@@ -105,6 +109,8 @@ void OGLRender::Initialize(void)
     glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
     OPENGL_CHECK_ERRORS;
 
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
     COGLGraphicsContext *pcontext = (COGLGraphicsContext *)(CGraphicsContext::g_pGraphicsContext);
     if( pcontext->IsExtensionSupported("GL_IBM_texture_mirrored_repeat") )
     {
@@ -129,6 +135,7 @@ void OGLRender::Initialize(void)
 //        m_bSupportClampToEdge = false;
 //        OGLXUVFlagMaps[TEXTURE_UV_FLAG_CLAMP].realFlag = GL_CLAMP_TO_EDGE;
 //    }
+#endif
 
 #ifdef PAULSCODE
     hardwareType = Android_JNI_GetHardwareType();
@@ -348,7 +355,9 @@ void OGLRender::ForceAlphaRef(uint32 dwAlpha)
     glAlphaFunc(GL_GEQUAL, ref);
     OPENGL_CHECK_ERRORS;
 */
+#if SDL_VIDEO_OPENGL_ES2
     m_dwAlpha = dwAlpha;
+#endif
 }
 
 void OGLRender::SetFillMode(FillMode mode)
@@ -524,6 +533,8 @@ bool OGLRender::RenderTexRect()
 
     float depth = -(g_texRectTVtx[3].z*2-1);
 
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
 
     GLfloat colour[] = {
             g_texRectTVtx[3].r, g_texRectTVtx[3].g, g_texRectTVtx[3].b, g_texRectTVtx[3].a,
@@ -560,6 +571,7 @@ bool OGLRender::RenderTexRect()
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][0]));
     glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u));
 
+#endif
 
     if( cullface ) glEnable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
@@ -579,6 +591,9 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
+
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
 
     GLfloat colour[] = {
             r,g,b,a,
@@ -606,6 +621,8 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
     glVertexAttribPointer(VS_COLOR, 4, GL_UNSIGNED_BYTE,GL_TRUE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][0]));
     glEnableVertexAttribArray(VS_TEXCOORD0);
+
+#endif
 
     if( cullface ) glEnable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
@@ -729,6 +746,10 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     float r = ((g_texRectTVtx[0].dcDiffuse>>16)&0xFF)/255.0f;
     float g = ((g_texRectTVtx[0].dcDiffuse>>8)&0xFF)/255.0f;
     float b = (g_texRectTVtx[0].dcDiffuse&0xFF)/255.0f;
+
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
+
     GLfloat colour[] = {
             r,g,b,a,
             r,g,b,a,
@@ -772,6 +793,8 @@ void OGLRender::DrawSimple2DTexture(float x0, float y0, float x1, float y1, floa
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][0]));
     glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u));
 
+#endif
+
     if( cullface ) glEnable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
 }
@@ -788,6 +811,10 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     float r = ((dwColor>>16)&0xFF)/255.0f;
     float g = ((dwColor>>8)&0xFF)/255.0f;
     float b = (dwColor&0xFF)/255.0f;
+
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
+
     GLfloat colour[] = {
             r,g,b,a,
             r,g,b,a,
@@ -813,6 +840,8 @@ void OGLRender::DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColo
     glVertexAttribPointer(VS_COLOR, 4, GL_UNSIGNED_BYTE,GL_TRUE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][0]));
     glEnableVertexAttribArray(VS_TEXCOORD0);
+
+#endif
 
     if( cullface ) glEnable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
@@ -872,6 +901,8 @@ void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
 #else
     if( bAlphaTestEnable )
 #endif
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
     {
         COGL_FragmentProgramCombiner* frag = (COGL_FragmentProgramCombiner*)m_pColorCombiner;
         frag->m_AlphaRef = m_dwAlpha / 255.0f;
@@ -881,6 +912,7 @@ void OGLRender::SetAlphaTestEnable(BOOL bAlphaTestEnable)
         COGL_FragmentProgramCombiner* frag = (COGL_FragmentProgramCombiner*)m_pColorCombiner;
         frag->m_AlphaRef = 0.0f;
     }
+#endif
     OPENGL_CHECK_ERRORS;
 }
 
@@ -917,6 +949,8 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
     if( m_texUnitEnabled[0] != flag )
     {
         m_texUnitEnabled[0] = flag;
+#if SDL_VIDEO_OPENGL
+#elif SDL_VIDEO_OPENGL_ES2
         if(flag)
         {
             glActiveTexture(GL_TEXTURE0 + unitno);
@@ -930,6 +964,7 @@ void OGLRender::EnableTexUnit(int unitno, BOOL flag)
             glEnable(GL_BLEND); //Need blend for transparent disabled texture
             glBindTexture(GL_TEXTURE_2D,disabledTextureID);
         }
+#endif
         OPENGL_CHECK_ERRORS;
     }
 }
@@ -1019,7 +1054,10 @@ void OGLRender::SetFogMinMax(float fMin, float fMax)
     glFogf(GL_FOG_END, gRSPfFogMax); // Fog End Depth
     OPENGL_CHECK_ERRORS;
 */
+#if SDL_VIDEO_OPENGL_ES2
     ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(gRSP.bFogEnabled);
+    OPENGL_CHECK_ERRORS;
+#endif
 }
 
 void OGLRender::TurnFogOnOff(bool flag)
@@ -1031,7 +1069,10 @@ void OGLRender::TurnFogOnOff(bool flag)
         glDisable(GL_FOG);
     OPENGL_CHECK_ERRORS;
 */
+#if SDL_VIDEO_OPENGL_ES2
     ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(flag);
+    OPENGL_CHECK_ERRORS;
+#endif
 }
 
 void OGLRender::SetFogEnable(bool bEnable)
@@ -1045,8 +1086,6 @@ void OGLRender::SetFogEnable(bool bEnable)
     {
         gRSP.bFogEnabled = true;
     }
-
-    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(gRSP.bFogEnabled);
 
 /*
     if( gRSP.bFogEnabled )
@@ -1067,6 +1106,10 @@ void OGLRender::SetFogEnable(bool bEnable)
         OPENGL_CHECK_ERRORS;
     }
 */
+#if SDL_VIDEO_OPENGL_ES2
+    ((COGL_FragmentProgramCombiner*)m_pColorCombiner)->UpdateFog(gRSP.bFogEnabled);
+    OPENGL_CHECK_ERRORS;
+#endif
 }
 
 void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)

@@ -94,7 +94,9 @@ bool COGLColorCombiner4::Initialize(void)
     }
     */
 
+#if SDL_VIDEO_OPENGL_ES2
     return true;
+#endif
 }
 
 bool COGLColorCombiner2::Initialize(void)
@@ -406,7 +408,9 @@ int COGLColorCombiner4::ParseDecodedMux()
 
     return SaveParsedResult(res);
     */
+#if SDL_VIDEO_OPENGL_ES2
     return 0;
+#endif
 }
 
 int COGLColorCombiner4::ParseDecodedMux2Units()
