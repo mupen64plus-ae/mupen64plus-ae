@@ -272,7 +272,7 @@ void COGLGraphicsContext::InitState(void)
 void COGLGraphicsContext::InitOGLExtension(void)
 {
     // important extension features, it is very bad not to have these feature
-    m_bSupportMultiTexture = IsExtensionSupported("GL_multitexture");
+    m_bSupportMultiTexture = IsExtensionSupported(OSAL_GL_ARB_MULTITEXTURE);
     m_bSupportTextureEnvCombine = IsExtensionSupported("GL_EXT_texture_env_combine");
     
     m_bSupportSeparateSpecularColor = IsExtensionSupported("GL_EXT_separate_specular_color");
@@ -322,7 +322,6 @@ void COGLGraphicsContext::InitOGLExtension(void)
 
 bool COGLGraphicsContext::IsExtensionSupported(const char* pExtName)
 {
-/*
     if (strstr((const char*)m_pExtensionStr, pExtName) != NULL)
     {
         DebugMessage(M64MSG_VERBOSE, "OpenGL Extension '%s' is supported.", pExtName);
@@ -333,8 +332,6 @@ bool COGLGraphicsContext::IsExtensionSupported(const char* pExtName)
         DebugMessage(M64MSG_VERBOSE, "OpenGL Extension '%s' is NOT supported.", pExtName);
         return false;
     }
-*/
-    return false;
 }
 
 bool COGLGraphicsContext::IsWglExtensionSupported(const char* pExtName)
