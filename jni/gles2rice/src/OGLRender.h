@@ -72,6 +72,8 @@ public:
     void SetTextureVFlag(TextureUVFlag dwFlag, uint32 tile);
     virtual void BindTexture(GLuint texture, int unitno);
     virtual void DisBindTexture(GLuint texture, int unitno);
+    virtual void TexCoord2f(float u, float v);
+    virtual void TexCoord(TLITVERTEX &vtxInfo);
 
     void DrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, COLOR spe, float z, float rhw);
     void DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor, float depth, float rhw);

@@ -33,6 +33,9 @@ extern "C" int Android_JNI_UseRGBA8888();
 #include "m64p_plugin.h"
 #include "Config.h"
 #include "Debugger.h"
+#if SDL_VIDEO_OPENGL
+#include "OGLExtensions.h"
+#endif
 #include "OGLDebug.h"
 #include "OGLGraphicsContext.h"
 #include "TextureManager.h"
@@ -100,12 +103,14 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     /* hard-coded attribute values */
     const int iDOUBLEBUFFER = 1;
 
-/*
+#if SDL_VIDEO_OPENGL
+    /* set opengl attributes */
     CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, iDOUBLEBUFFER);
     CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, bVerticalSync);
     CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, colorBufferDepth);
     CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, depthBufferDepth);
 
+    /* set multisampling */
     if (options.multiSampling > 0)
     {
         CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLEBUFFERS, 1);
@@ -119,6 +124,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
             CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 16);
     }
 
+    /* Set the video mode */
     m64p_video_mode ScreenMode = bWindowed ? M64VIDEO_WINDOWED : M64VIDEO_FULLSCREEN;
     if (CoreVideo_SetVideoMode(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, ScreenMode) != M64ERR_SUCCESS)
     {
@@ -127,6 +133,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
         return false;
     }
 
+    /* check that our opengl attributes were properly set */
     int iActual;
     if (CoreVideo_GL_GetAttribute(M64P_GL_DOUBLEBUFFER, &iActual) == M64ERR_SUCCESS)
         if (iActual != iDOUBLEBUFFER)
@@ -140,9 +147,10 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     if (CoreVideo_GL_GetAttribute(M64P_GL_DEPTH_SIZE, &iActual) == M64ERR_SUCCESS)
         if (iActual != depthBufferDepth)
             DebugMessage(M64MSG_WARNING, "Failed to set GL_DEPTH_SIZE to %i. (it's %i)", depthBufferDepth, iActual);
-*/
 
     /* Get function pointers to OpenGL extensions (blame Microsoft Windows for this) */
+    OGLExtensions_Init();
+#endif
 
 #ifdef PAULSCODE
 // Added for switching between RGBA8888 and RGB565
@@ -206,7 +214,7 @@ void COGLGraphicsContext::InitState(void)
     glClearDepthf(1.0f);
     OPENGL_CHECK_ERRORS;
 
-/*
+#if SDL_VIDEO_OPENGL
     glShadeModel(GL_SMOOTH);
     OPENGL_CHECK_ERRORS;
 
@@ -216,7 +224,7 @@ void COGLGraphicsContext::InitState(void)
 
     glDisable(GL_ALPHA_TEST);
     OPENGL_CHECK_ERRORS;
-*/
+#endif
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     OPENGL_CHECK_ERRORS;
@@ -227,24 +235,24 @@ void COGLGraphicsContext::InitState(void)
     OPENGL_CHECK_ERRORS;
     glDisable(GL_CULL_FACE);
     OPENGL_CHECK_ERRORS;
-/*
+#if SDL_VIDEO_OPENGL
     glDisable(GL_NORMALIZE);
     OPENGL_CHECK_ERRORS;
-*/
+#endif
 
     glDepthFunc(GL_LEQUAL);
     OPENGL_CHECK_ERRORS;
     glEnable(GL_DEPTH_TEST);
     OPENGL_CHECK_ERRORS;
 
-/*
+#if SDL_VIDEO_OPENGL
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     OPENGL_CHECK_ERRORS;
-*/
+#endif
 
     glEnable(GL_BLEND);
     OPENGL_CHECK_ERRORS;
-/*
+#if SDL_VIDEO_OPENGL
     glEnable(GL_ALPHA_TEST);
     OPENGL_CHECK_ERRORS;
 
@@ -252,8 +260,10 @@ void COGLGraphicsContext::InitState(void)
     OPENGL_CHECK_ERRORS;
     glLoadIdentity();
     OPENGL_CHECK_ERRORS;
-*/
-#if SDL_VIDEO_OPENGL_ES2    
+    
+    glDepthRange(-1, 1);
+
+#elif SDL_VIDEO_OPENGL_ES2
     glDepthRangef(0.0f, 1.0f);
 #endif
     OPENGL_CHECK_ERRORS;

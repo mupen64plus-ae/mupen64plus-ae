@@ -38,6 +38,30 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     glDisable(GL_CULL_FACE);
 
 #if SDL_VIDEO_OPENGL
+
+    glBegin(GL_TRIANGLES);
+    glColor4fv(gRDP.fvPrimitiveColor);
+
+    OGLRender::TexCoord(g_texRectTVtx[0]);
+    glVertex3f(g_texRectTVtx[0].x, g_texRectTVtx[0].y, -g_texRectTVtx[0].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[1]);
+    glVertex3f(g_texRectTVtx[1].x, g_texRectTVtx[1].y, -g_texRectTVtx[1].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[2]);
+    glVertex3f(g_texRectTVtx[2].x, g_texRectTVtx[2].y, -g_texRectTVtx[2].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[0]);
+    glVertex3f(g_texRectTVtx[0].x, g_texRectTVtx[0].y, -g_texRectTVtx[0].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[2]);
+    glVertex3f(g_texRectTVtx[2].x, g_texRectTVtx[2].y, -g_texRectTVtx[2].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[3]);
+    glVertex3f(g_texRectTVtx[3].x, g_texRectTVtx[3].y, -g_texRectTVtx[3].z);
+
+    glEnd();
+
 #elif SDL_VIDEO_OPENGL_ES2
 
     GLfloat colour[] = {
