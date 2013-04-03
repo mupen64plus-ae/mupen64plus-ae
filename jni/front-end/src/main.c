@@ -891,7 +891,7 @@ int main(int argc, char *argv[])
         DebugMessage(M64MSG_ERROR, "Unable to enter Android data folder '%s' (required for config read/write functions)", appHomePath);
         return 2;
     }
-    DebugMessage(M64MSG_ERROR, "Using Android data folder '%s' for config read/write functions", appHomePath);
+    DebugMessage(M64MSG_VERBOSE, "Using Android data folder '%s' for config read/write functions", appHomePath);
     setenv( "HOME", appHomePath, 1 );
     setenv( "XDG_CONFIG_HOME", appHomePath, 1 );
     setenv( "XDG_DATA_HOME", appHomePath, 1 );
