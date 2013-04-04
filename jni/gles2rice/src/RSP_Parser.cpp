@@ -54,21 +54,21 @@ UcodeMap *ucodeMaps[] =
 {
     &ucodeMap0,             // ucode 0 - Mario
     &ucodeMap1,             // ucode 1 - GBI1
-    &ucodeMap2,             // ucode 2 - Golden Eye
+    NULL,                   // ucode 2 - Golden Eye
     &ucodeMap3,             // ucode 3 - S2DEX GBI2
-    &ucodeMap4,             // ucode 4 - Wave Racer
+    NULL,                   // ucode 4 - Wave Racer
     &ucodeMap5,             // ucode 5 - BGI2
-    &ucodeMap6,             // ucode 6 - DKR
+    NULL,                   // ucode 6 - DKR
     &ucodeMap7,             // ucode 7 - S2DEX
     NULL,                   // ucode 8 - ucode 0 with sprite2D, for Demo Puzzle Master 64
-    &ucodeMap9,             // ucode 9 - Perfect Dark
+    NULL,                   // ucode 9 - Perfect Dark
     NULL,                   // ucode 10 - Conker
-    &ucodeMap11,            // ucode 11 - Gemini
+    NULL,                   // ucode 11 - Gemini
     NULL,                   // ucode 12 - Silicon Valley, Spacestation
     NULL,                   // ucode 13 - modified ucode S2DEX
     NULL,                   // ucode 14 - OgreBattle Background
     NULL,                   // ucode 15 - ucode 0 with sprite2D
-    &ucodeMap16,            // ucode 16 - Star War, Shadow of Empire
+    NULL,                   // ucode 16 - Star War, Shadow of Empire
     NULL,                   // ucode 17 - Star Wars - Rogue Squadron, 
     NULL,                   // ucode 18 - World Driver Championship
     NULL,                   // ucode 19 - Last Legion UX
@@ -136,82 +136,82 @@ static UcodeData g_UcodeData[] =
 
     // GBI1
     
-    {1, 0x45ca328e, 0x45ca328e, (unsigned char*)"RSP Gfx ucode F3DLX         0.95 Yoshitaka Yasumoto Nintendo.",}, // Mario Kart 64, 
-    {1, 0x98e3b909, 0x98e3b909, (unsigned char*)"RSP Gfx ucode F3DEX         0.95 Yoshitaka Yasumoto Nintendo.",},   // Mario Kart 64
+    {1, 0x45ca328e, 0x45ca328e, (unsigned char*)"RSP Gfx ucode F3DLX         0.95 Yoshitaka Yasumoto Nintendo.",},    // Mario Kart 64, 
+    {1, 0x98e3b909, 0x98e3b909, (unsigned char*)"RSP Gfx ucode F3DEX         0.95 Yoshitaka Yasumoto Nintendo.",},    // Mario Kart 64
     {1, 0x5d446090, 0x5d446090, (unsigned char*)"RSP Gfx ucode F3DLP.Rej     0.96 Yoshitaka Yasumoto Nintendo.",0,1}, // Jikkyou J. League Perfect Striker, 
-    {1, 0x244f5ca3, 0x244f5ca3, (unsigned char*)"RSP Gfx ucode F3DEX         1.00 Yoshitaka Yasumoto Nintendo.",}, // F-1 Pole Position 64, 
-    {1, 0x6a022585, 0x6a022585, (unsigned char*)"RSP Gfx ucode F3DEX.NoN     1.00 Yoshitaka Yasumoto Nintendo.",1}, // Turok - The Dinosaur Hunter (v1.0), 
-    {1, 0x150706be, 0x150706be, (unsigned char*)"RSP Gfx ucode F3DLX.NoN     1.00 Yoshitaka Yasumoto Nintendo.",1}, // Extreme-G, 
-    {1, 0x503f2c53, 0x503f2c53, (unsigned char*)"RSP Gfx ucode F3DEX.NoN     1.21 Yoshitaka Yasumoto Nintendo.",1}, // Bomberman 64, 
-    {1, 0xc705c37c, 0xc705c37c, (unsigned char*)"RSP Gfx ucode F3DLX         1.21 Yoshitaka Yasumoto Nintendo.",}, // Fighting Force 64, Wipeout 64
-    {1, 0xa2146075, 0xa2146075, (unsigned char*)"RSP Gfx ucode F3DLX.NoN     1.21 Yoshitaka Yasumoto Nintendo.",1}, // San Francisco Rush - Extreme Racing, 
-    {1, 0xb65aa2da, 0xb65aa2da, (unsigned char*)"RSP Gfx ucode L3DEX         1.21 Yoshitaka Yasumoto Nintendo.",}, // Wipeout 64, 
-    {1, 0x0c8e5ec9, 0x0c8e5ec9, (unsigned char*)"RSP Gfx ucode F3DEX         1.21 Yoshitaka Yasumoto Nintendo.",}, // 
+    {1, 0x244f5ca3, 0x244f5ca3, (unsigned char*)"RSP Gfx ucode F3DEX         1.00 Yoshitaka Yasumoto Nintendo.",},    // F-1 Pole Position 64, 
+    {1, 0x6a022585, 0x6a022585, (unsigned char*)"RSP Gfx ucode F3DEX.NoN     1.00 Yoshitaka Yasumoto Nintendo.",1},   // Turok - The Dinosaur Hunter (v1.0), 
+    {1, 0x150706be, 0x150706be, (unsigned char*)"RSP Gfx ucode F3DLX.NoN     1.00 Yoshitaka Yasumoto Nintendo.",1},   // Extreme-G, 
+    {1, 0x503f2c53, 0x503f2c53, (unsigned char*)"RSP Gfx ucode F3DEX.NoN     1.21 Yoshitaka Yasumoto Nintendo.",1},   // Bomberman 64, 
+    {1, 0xc705c37c, 0xc705c37c, (unsigned char*)"RSP Gfx ucode F3DLX         1.21 Yoshitaka Yasumoto Nintendo.",},    // Fighting Force 64, Wipeout 64
+    {1, 0xa2146075, 0xa2146075, (unsigned char*)"RSP Gfx ucode F3DLX.NoN     1.21 Yoshitaka Yasumoto Nintendo.",1},   // San Francisco Rush - Extreme Racing, 
+    {1, 0xb65aa2da, 0xb65aa2da, (unsigned char*)"RSP Gfx ucode L3DEX         1.21 Yoshitaka Yasumoto Nintendo.",},    // Wipeout 64, 
+    {1, 0x0c8e5ec9, 0x0c8e5ec9, (unsigned char*)"RSP Gfx ucode F3DEX         1.21 Yoshitaka Yasumoto Nintendo.",},    // 
     {1, 0xe30795f2, 0xa53df3c4, (unsigned char*)"RSP Gfx ucode F3DLP.Rej     1.21 Yoshitaka Yasumoto Nintendo.",0,1},
 
     {1, 0xaebeda7d, 0xaebeda7d, (unsigned char*)"RSP Gfx ucode F3DLX.Rej     1.21 Yoshitaka Yasumoto Nintendo.",0,1}, // Jikkyou World Soccer 3, 
-    {1, 0x0c8e5ec9, 0x0c8e5ec9, (unsigned char*)"RSP Gfx ucode F3DEX         1.23 Yoshitaka Yasumoto Nintendo" ,},  // Wave Race 64 (Rev. 2) - Shindou Rumble Edition (JAP) 
-    {1, 0xc705c37c, 0xc705c37c, (unsigned char*)"RSP Gfx ucode F3DLX         1.23 Yoshitaka Yasumoto Nintendo.",}, // GT
-    {1, 0x2a61350d, 0x2a61350d, (unsigned char*)"RSP Gfx ucode F3DLX         1.23 Yoshitaka Yasumoto Nintendo.",}, // Toy Story2
-    {1, 0x0c8e5ec9, 0x0c8e5ec9, (unsigned char*)"RSP Gfx ucode F3DEX         1.23 Yoshitaka Yasumoto Nintendo.",}, // Wave Race 64 Shindou Edition
-    {12,0xfc6529aa, 0xfc6529aa, (unsigned char*)"RSP Gfx ucode F3DEX         1.23 Yoshitaka Yasumoto Nintendo.",}, // Superman - The Animated Series, 
-    {1, 0xa56cf996, 0xa56cf996, (unsigned char*)"RSP Gfx ucode L3DEX         1.23 Yoshitaka Yasumoto Nintendo.",}, // Flying Dragon, 
-    {1, 0xcc83b43f, 0xcc83b43f, (unsigned char*)"RSP Gfx ucode F3DEX.NoN     1.23 Yoshitaka Yasumoto Nintendo.",1}, // AeroGauge, 
-    {1, 0xca8927a0, 0xca8927a0, (unsigned char*)"RSP Gfx ucode F3DLX.Rej     1.23 Yoshitaka Yasumoto Nintendo.",0,1},    // Puzzle Bobble 64, 
+    {1, 0x0c8e5ec9, 0x0c8e5ec9, (unsigned char*)"RSP Gfx ucode F3DEX         1.23 Yoshitaka Yasumoto Nintendo" ,},    // Wave Race 64 (Rev. 2) - Shindou Rumble Edition (JAP) 
+    {1, 0xc705c37c, 0xc705c37c, (unsigned char*)"RSP Gfx ucode F3DLX         1.23 Yoshitaka Yasumoto Nintendo.",},    // GT
+    {1, 0x2a61350d, 0x2a61350d, (unsigned char*)"RSP Gfx ucode F3DLX         1.23 Yoshitaka Yasumoto Nintendo.",},    // Toy Story2
+    {1, 0x0c8e5ec9, 0x0c8e5ec9, (unsigned char*)"RSP Gfx ucode F3DEX         1.23 Yoshitaka Yasumoto Nintendo.",},    // Wave Race 64 Shindou Edition
+    {12,0xfc6529aa, 0xfc6529aa, (unsigned char*)"RSP Gfx ucode F3DEX         1.23 Yoshitaka Yasumoto Nintendo.",},    // Superman - The Animated Series, 
+    {1, 0xa56cf996, 0xa56cf996, (unsigned char*)"RSP Gfx ucode L3DEX         1.23 Yoshitaka Yasumoto Nintendo.",},    // Flying Dragon, 
+    {1, 0xcc83b43f, 0xcc83b43f, (unsigned char*)"RSP Gfx ucode F3DEX.NoN     1.23 Yoshitaka Yasumoto Nintendo.",1},   // AeroGauge, 
+    {1, 0xca8927a0, 0xca8927a0, (unsigned char*)"RSP Gfx ucode F3DLX.Rej     1.23 Yoshitaka Yasumoto Nintendo.",0,1}, // Puzzle Bobble 64, 
     {1, 0x25689c75, 0xbe481ae8, (unsigned char*)"RSP Gfx ucode F3DLP.Rej     1.23 Yoshitaka Yasumoto Nintendo.",0,1},
-    {1, 0xd2d747b7, 0xd2d747b7, (unsigned char*)"RSP Gfx ucode F3DLX.NoN     1.23 Yoshitaka Yasumoto Nintendo.",1}, // Penny Racers, 
-    {1, 0xa849c858, 0x5bd32b5a, (unsigned char*)"RSP Gfx ucode F3DTEX/A      1.23 Yoshitaka Yasumoto Nintendo.",}, // Tamagotchi 
+    {1, 0xd2d747b7, 0xd2d747b7, (unsigned char*)"RSP Gfx ucode F3DLX.NoN     1.23 Yoshitaka Yasumoto Nintendo.",1},   // Penny Racers, 
+    {1, 0xa849c858, 0x5bd32b5a, (unsigned char*)"RSP Gfx ucode F3DTEX/A      1.23 Yoshitaka Yasumoto Nintendo.",},    // Tamagotchi 
 
-    {7, 0xecd8b772, 0xecd8b772, (unsigned char*)"RSP Gfx ucode S2DEX  1.06 Yoshitaka Yasumoto Nintendo.",}, // Yoshi's Story, 
-    {7, 0xf59132f5, 0xf59132f5, (unsigned char*)"RSP Gfx ucode S2DEX  1.07 Yoshitaka Yasumoto Nintendo.",}, // Bakuretsu Muteki Bangaioh, 
-    {7, 0x961dd811, 0x961dd811, (unsigned char*)"RSP Gfx ucode S2DEX  1.03 Yoshitaka Yasumoto Nintendo.",}, // GT
+    {7, 0xecd8b772, 0xecd8b772, (unsigned char*)"RSP Gfx ucode S2DEX  1.06 Yoshitaka Yasumoto Nintendo.",},           // Yoshi's Story, 
+    {7, 0xf59132f5, 0xf59132f5, (unsigned char*)"RSP Gfx ucode S2DEX  1.07 Yoshitaka Yasumoto Nintendo.",},           // Bakuretsu Muteki Bangaioh, 
+    {7, 0x961dd811, 0x961dd811, (unsigned char*)"RSP Gfx ucode S2DEX  1.03 Yoshitaka Yasumoto Nintendo.",},           // GT
 
-    {5, 0x3e083afa, 0x722f97cc, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.03  Yoshitaka Yasumoto 1998 Nintendo.",1}, // F-Zero X, 
-    {5, 0xa8050bd1, 0xa8050bd1, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.03  Yoshitaka Yasumoto 1998 Nintendo.",}, // F-Zero X, 
-    {5, 0x4e8055f0, 0x4e8055f0, (unsigned char*)"RSP Gfx ucode F3DLX.Rej   fifo 2.03  Yoshitaka Yasumoto 1998 Nintendo.",0,1}, // F-Zero X, 
-    {5, 0xabf001f5, 0xabf001f5, (unsigned char*)"RSP Gfx ucode F3DFLX.Rej  fifo 2.03F Yoshitaka Yasumoto 1998 Nintendo.",0,1}, // F-Zero X, 
-    {5, 0xadb4b686, 0xadb4b686, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.04  Yoshitaka Yasumoto 1998 Nintendo.",}, // Top Gear Rally 2, 
-    {5, 0x779e2a9b, 0x779e2a9b, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.04  Yoshitaka Yasumoto 1998 Nintendo.",1}, // California Speed, 
-    {5, 0xa8cb3e09, 0xa8cb3e09, (unsigned char*)"RSP Gfx ucode L3DEX       fifo 2.04  Yoshitaka Yasumoto 1998 Nintendo.",}, // In-Fisherman Bass Hunter 64, 
-    {5, 0x2a1341d6, 0x2a1341d6, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.04H Yoshitaka Yasumoto 1998 Nintendo.",}, // Kirby 64 - The Crystal Shards, 
-    {5, 0x3e083afa, 0x89a8e0ed, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo.",1}, // Carmageddon 64 (uncensored), 
+    {5, 0x3e083afa, 0x722f97cc, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.03  Yoshitaka Yasumoto 1998 Nintendo.",1},    // F-Zero X, 
+    {5, 0xa8050bd1, 0xa8050bd1, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.03  Yoshitaka Yasumoto 1998 Nintendo.",},     // F-Zero X, 
+    {5, 0x4e8055f0, 0x4e8055f0, (unsigned char*)"RSP Gfx ucode F3DLX.Rej   fifo 2.03  Yoshitaka Yasumoto 1998 Nintendo.",0,1},  // F-Zero X, 
+    {5, 0xabf001f5, 0xabf001f5, (unsigned char*)"RSP Gfx ucode F3DFLX.Rej  fifo 2.03F Yoshitaka Yasumoto 1998 Nintendo.",0,1},  // F-Zero X, 
+    {5, 0xadb4b686, 0xadb4b686, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.04  Yoshitaka Yasumoto 1998 Nintendo.",},     // Top Gear Rally 2, 
+    {5, 0x779e2a9b, 0x779e2a9b, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.04  Yoshitaka Yasumoto 1998 Nintendo.",1},    // California Speed, 
+    {5, 0xa8cb3e09, 0xa8cb3e09, (unsigned char*)"RSP Gfx ucode L3DEX       fifo 2.04  Yoshitaka Yasumoto 1998 Nintendo.",},     // In-Fisherman Bass Hunter 64, 
+    {5, 0x2a1341d6, 0x2a1341d6, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.04H Yoshitaka Yasumoto 1998 Nintendo.",},     // Kirby 64 - The Crystal Shards, 
+    {5, 0x3e083afa, 0x89a8e0ed, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo.",1},    // Carmageddon 64 (uncensored), 
     {5, 0x4964b75d, 0x4964b75d, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo.",1}, 
-    {5, 0x39e3e95a, 0x39e3e95a, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo."}, // Knife Edge - Nose Gunner, 
-    {5, 0xd2913522, 0xd2913522, (unsigned char*)"RSP Gfx ucode F3DAM       fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo."}, // Hey You, Pikachu!, 
-    {5, 0x3e083afa, 0xc998443f, (unsigned char*)"RSP Gfx ucode F3DEX       xbus 2.05  Yoshitaka Yasumoto 1998 Nintendo."}, //Triple play
-    {5, 0xf4184a7d, 0xf4184a7d, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.06  Yoshitaka Yasumoto 1998 Nintendo.",}, // Hey You, Pikachu!, 
-    {5, 0x595a88de, 0x595a88de, (unsigned char*)"RSP Gfx ucode F3DEX.Rej   fifo 2.06  Yoshitaka Yasumoto 1998 Nintendo.",0,1}, // Bio Hazard 2, 
-    {5, 0x0259f764, 0x0259f764, (unsigned char*)"RSP Gfx ucode F3DLX.Rej   fifo 2.06  Yoshitaka Yasumoto 1998 Nintendo.",0,1}, // Mario Party, 
-    {5, 0xe1a5477a, 0xe1a5477a, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   xbus 2.06  Yoshitaka Yasumoto 1998 Nintendo.",1}, // Command & Conquer, 
-    {5, 0x4cfa0a19, 0x4cfa0a19, (unsigned char*)"RSP Gfx ucode F3DZEX.NoN  fifo 2.06H Yoshitaka Yasumoto 1998 Nintendo.",1}, // The Legend of Zelda - Ocarina of Time (v1.0), 
+    {5, 0x39e3e95a, 0x39e3e95a, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo."},      // Knife Edge - Nose Gunner, 
+    {5, 0xd2913522, 0xd2913522, (unsigned char*)"RSP Gfx ucode F3DAM       fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo."},      // Hey You, Pikachu!, 
+    {5, 0x3e083afa, 0xc998443f, (unsigned char*)"RSP Gfx ucode F3DEX       xbus 2.05  Yoshitaka Yasumoto 1998 Nintendo."},      //Triple play
+    {5, 0xf4184a7d, 0xf4184a7d, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.06  Yoshitaka Yasumoto 1998 Nintendo.",},     // Hey You, Pikachu!, 
+    {5, 0x595a88de, 0x595a88de, (unsigned char*)"RSP Gfx ucode F3DEX.Rej   fifo 2.06  Yoshitaka Yasumoto 1998 Nintendo.",0,1},  // Bio Hazard 2, 
+    {5, 0x0259f764, 0x0259f764, (unsigned char*)"RSP Gfx ucode F3DLX.Rej   fifo 2.06  Yoshitaka Yasumoto 1998 Nintendo.",0,1},  // Mario Party, 
+    {5, 0xe1a5477a, 0xe1a5477a, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   xbus 2.06  Yoshitaka Yasumoto 1998 Nintendo.",1},    // Command & Conquer, 
+    {5, 0x4cfa0a19, 0x4cfa0a19, (unsigned char*)"RSP Gfx ucode F3DZEX.NoN  fifo 2.06H Yoshitaka Yasumoto 1998 Nintendo.",1},    // The Legend of Zelda - Ocarina of Time (v1.0), 
     {5, 0x2cbd9514, 0x5f40b9f5, (unsigned char*)"RSP Gfx ucode F3DZEX.NoN  fifo 2.06H Yoshitaka Yasumoto 1998 Nintendo.",1}, 
 
-    {5, 0x3e083afa, 0x882680f4, (unsigned char*)"RSP Gfx ucode L3DEX       fifo 2.07  Yoshitaka Yasumoto 1998 Nintendo."},   // Polaris Sno
+    {5, 0x3e083afa, 0x882680f4, (unsigned char*)"RSP Gfx ucode L3DEX       fifo 2.07  Yoshitaka Yasumoto 1998 Nintendo."},      // Polaris Sno
 
-    {5, 0xdeb1cac0, 0xdeb1cac0, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.07  Yoshitaka Yasumoto 1998 Nintendo.",1}, // Knockout Kings 2000, 
-    {5, 0xf4184a7d, 0xf4184a7d, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.07  Yoshitaka Yasumoto 1998 Nintendo.",}, // Xena Warrior Princess - Talisman of Fate, Army Men - Air Combat, Destruction Derby
-    {5, 0x4b013e60, 0x4b013e60, (unsigned char*)"RSP Gfx ucode F3DEX       xbus 2.07  Yoshitaka Yasumoto 1998 Nintendo.",}, // Lode Runner 3-D, 
-    {5, 0xd1a63836, 0xd1a63836, (unsigned char*)"RSP Gfx ucode L3DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // Hey You, Pikachu!, 
-    {5, 0x97193667, 0x97193667, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // Top Gear Hyper-Bike, 
-    {5, 0x92149ba8, 0x92149ba8, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.08  Yoshitaka Yasumoto/Kawasedo 1999.",}, // Paper Mario, 
-    {5, 0xae0fb88f, 0xae0fb88f, (unsigned char*)"RSP Gfx ucode F3DEX       xbus 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // WWF WrestleMania 2000, 
-    {5, 0xc572f368, 0xc572f368, (unsigned char*)"RSP Gfx ucode F3DLX.Rej   xbus 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // WWF No Mercy, 
+    {5, 0xdeb1cac0, 0xdeb1cac0, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.07  Yoshitaka Yasumoto 1998 Nintendo.",1},    // Knockout Kings 2000, 
+    {5, 0xf4184a7d, 0xf4184a7d, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.07  Yoshitaka Yasumoto 1998 Nintendo.",},     // Xena Warrior Princess - Talisman of Fate, Army Men - Air Combat, Destruction Derby
+    {5, 0x4b013e60, 0x4b013e60, (unsigned char*)"RSP Gfx ucode F3DEX       xbus 2.07  Yoshitaka Yasumoto 1998 Nintendo.",},     // Lode Runner 3-D, 
+    {5, 0xd1a63836, 0xd1a63836, (unsigned char*)"RSP Gfx ucode L3DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},     // Hey You, Pikachu!, 
+    {5, 0x97193667, 0x97193667, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},     // Top Gear Hyper-Bike, 
+    {5, 0x92149ba8, 0x92149ba8, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.08  Yoshitaka Yasumoto/Kawasedo 1999.",},     // Paper Mario, 
+    {5, 0xae0fb88f, 0xae0fb88f, (unsigned char*)"RSP Gfx ucode F3DEX       xbus 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},     // WWF WrestleMania 2000, 
+    {5, 0xc572f368, 0xc572f368, (unsigned char*)"RSP Gfx ucode F3DLX.Rej   xbus 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},     // WWF No Mercy, 
     {5, 0x3e083afa, 0x74252492, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   xbus 2.08  Yoshitaka Yasumoto 1999 Nintendo.",1}, 
 
-    {5, 0x9c2edb70, 0xea98e740, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",1}, // LEGO Racers, 
-    {5, 0x79e004a6, 0x79e004a6, (unsigned char*)"RSP Gfx ucode F3DLX.Rej   fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",0,1}, // Mario Party 2, 
-    {5, 0xaa6ab3ca, 0xaa6ab3ca, (unsigned char*)"RSP Gfx ucode F3DEX.Rej   fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",0,1}, // V-Rally Edition 99, 
-    {5, 0x2c597e0f, 0x2c597e0f, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // Cruis'n Exotica,
-    {10, 0x4e5f3e3b, 0x4e5f3e3b,(unsigned char*)"RSP Gfx ucode F3DEXBG.NoN fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",1}, // Conker The Bad Fur Day 
-    {5, 0x61f31862, 0x61f31862, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.08H Yoshitaka Yasumoto 1999 Nintendo.",1}, // Pokemon Snap, 
-    {5, 0x005f5b71, 0x005f5b71, (unsigned char*)"RSP Gfx ucode F3DZEX.NoN  fifo 2.08I Yoshitaka Yasumoto/Kawasedo 1999.",1}, // The Legend of Zelda 2 - Majora's Mask, 
+    {5, 0x9c2edb70, 0xea98e740, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",1},    // LEGO Racers, 
+    {5, 0x79e004a6, 0x79e004a6, (unsigned char*)"RSP Gfx ucode F3DLX.Rej   fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",0,1},  // Mario Party 2, 
+    {5, 0xaa6ab3ca, 0xaa6ab3ca, (unsigned char*)"RSP Gfx ucode F3DEX.Rej   fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",0,1},  // V-Rally Edition 99, 
+    {5, 0x2c597e0f, 0x2c597e0f, (unsigned char*)"RSP Gfx ucode F3DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},     // Cruis'n Exotica,
+    {10, 0x4e5f3e3b, 0x4e5f3e3b,(unsigned char*)"RSP Gfx ucode F3DEXBG.NoN fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",1},    // Conker The Bad Fur Day 
+    {5, 0x61f31862, 0x61f31862, (unsigned char*)"RSP Gfx ucode F3DEX.NoN   fifo 2.08H Yoshitaka Yasumoto 1999 Nintendo.",1},    // Pokemon Snap, 
+    {5, 0x005f5b71, 0x005f5b71, (unsigned char*)"RSP Gfx ucode F3DZEX.NoN  fifo 2.08I Yoshitaka Yasumoto/Kawasedo 1999.",1},    // The Legend of Zelda 2 - Majora's Mask, 
 
-    {3, 0x41839d1e, 0x41839d1e, (unsigned char*)"RSP Gfx ucode S2DEX       fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo.",}, // Chou Snobow Kids, 
+    {3, 0x41839d1e, 0x41839d1e, (unsigned char*)"RSP Gfx ucode S2DEX       fifo 2.05  Yoshitaka Yasumoto 1998 Nintendo.",},     // Chou Snobow Kids, 
     {3, 0x2cbd9514, 0xc639dbb9, (unsigned char*)"RSP Gfx ucode S2DEX       xbus 2.06  Yoshitaka Yasumoto 1998 Nintendo.",},
-    {3, 0xec89e273, 0xec89e273, (unsigned char*)"RSP Gfx ucode S2DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // V-Rally Edition 99, 
-    {3, 0x9429b7d6, 0x9429b7d6, (unsigned char*)"RSP Gfx ucode S2DEX       xbus 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // Star Craft, 
-    //{14,0x5a72397b, 0xec89e273, "RSP Gfx ucode S2DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // OgreBattle Background, 
-    {3, 0x2cbd9514, 0xec89e273, (unsigned char*)"RSP Gfx ucode S2DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",}, // Zelda MM, 
+    {3, 0xec89e273, 0xec89e273, (unsigned char*)"RSP Gfx ucode S2DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},     // V-Rally Edition 99, 
+    {3, 0x9429b7d6, 0x9429b7d6, (unsigned char*)"RSP Gfx ucode S2DEX       xbus 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},     // Star Craft, 
+    //{14,0x5a72397b, 0xec89e273, "RSP Gfx ucode S2DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},                   // OgreBattle Background, 
+    {3, 0x2cbd9514, 0xec89e273, (unsigned char*)"RSP Gfx ucode S2DEX       fifo 2.08  Yoshitaka Yasumoto 1999 Nintendo.",},     // Zelda MM, 
 
     {6, 0x6aef74f8, 0x6aef74f8, (unsigned char*)"Unknown 0x6aef74f8, 0x6aef74f8",}, // Diddy Kong Racing (v1.0), 
     {6, 0x4c4eead8, 0x4c4eead8, (unsigned char*)"Unknown 0x4c4eead8, 0x4c4eead8",}, // Diddy Kong Racing (v1.1), 
@@ -265,15 +265,6 @@ uint32  g_dwRDPPalCrc[16];
 #include "RSP_GBI_Others.h"
 #include "RSP_GBI_Sprite2D.h"
 #include "RDP_Texture.h"
-//Custom ucodes
-#include "RSP_WRUS.h" //Wave Race 64
-#include "RSP_LL.h" //Last Legion
-#include "RSP_DKR.h" //Diddy Kong Racing
-#include "RSP_SOTE.h" //Shadow Of The Empire
-#include "RSP_Conker.h" //Conkers Bad Fur Day
-#include "RSP_GE.h" //Golden Eye
-#include "RSP_PD.h" //Perfect Dark
-#include "RSP_RS.h" //Rouge Squadron
 
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
@@ -375,7 +366,7 @@ void RDP_SetUcodeMap(int ucode)
         //LoadedUcodeMap[9]=RSP_GBI1_Sprite2DBase;
         //LoadedUcodeMap[0xaf]=RSP_GBI1_LoadUCode;
         //LoadedUcodeMap[0xb0]=RSP_GBI1_BranchZ;
-        LoadedUcodeMap[0xb4]=DLParser_RDPHalf1_GoldenEye;
+        LoadedUcodeMap[0xb4]=DLParser_RDPHalf_1_0xb4_GoldenEye;
         status.bUseModifiedUcodeMap = true;
         break;
     case 3: // S2DEX GBI2
@@ -393,8 +384,19 @@ void RDP_SetUcodeMap(int ucode)
     case 5: // F3DEX GBI2
         break;
     case 6: // DKR, Jet Force Gemini, Mickey
-        break;
     case 11: // DKR, Jet Force Gemini, Mickey
+        memcpy( &LoadedUcodeMap, &ucodeMap0, sizeof(UcodeMap));
+        LoadedUcodeMap[1]=RSP_Mtx_DKR;
+        LoadedUcodeMap[4]=RSP_Vtx_DKR;
+        if( ucode == 11 )   LoadedUcodeMap[4]=RSP_Vtx_Gemini;
+        LoadedUcodeMap[5]=RSP_DMA_Tri_DKR;
+        LoadedUcodeMap[7]=RSP_DL_In_MEM_DKR;
+        LoadedUcodeMap[0xbc]=RSP_MoveWord_DKR;
+        LoadedUcodeMap[0xbf]=DLParser_Set_Addr_Ucode6;
+        //LoadedUcodeMap[9]=RSP_GBI1_Sprite2DBase;
+        //LoadedUcodeMap[0xb0]=RSP_GBI1_BranchZ;
+        //LoadedUcodeMap[0xb2]=RSP_GBI1_ModifyVtx;
+        status.bUseModifiedUcodeMap = true;
         break;
     case 7: // S2DEX GBI1
         break;
@@ -406,28 +408,34 @@ void RDP_SetUcodeMap(int ucode)
         status.bUseModifiedUcodeMap = true;
         break;
     case 9: // Perfect Dark
+        memcpy( &LoadedUcodeMap, &ucodeMap0, sizeof(UcodeMap));
+        LoadedUcodeMap[4]=RSP_Vtx_PD;
+        LoadedUcodeMap[7]=RSP_Set_Vtx_CI_PD;
+        LoadedUcodeMap[0xb1]=RSP_Tri4_PD;
+        LoadedUcodeMap[0xb4]=DLParser_RDPHalf_1_0xb4_GoldenEye;
+        status.bUseModifiedUcodeMap = true;
         break;
     case 10: // Conker BFD
         memcpy( &LoadedUcodeMap, &ucodeMap5, sizeof(UcodeMap));
         LoadedUcodeMap[1]=RSP_Vtx_Conker;
-        LoadedUcodeMap[0x10]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x11]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x12]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x13]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x14]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x15]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x16]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x17]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x18]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x19]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x1a]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x1b]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x1c]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x1d]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x1e]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0x1f]=RSP_Tri4_Conker;
-        LoadedUcodeMap[0xdb]=RSP_MoveWord_Conker;
-        LoadedUcodeMap[0xdc]=RSP_MoveMem_Conker;
+        LoadedUcodeMap[0x10]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x11]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x12]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x13]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x14]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x15]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x16]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x17]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x18]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x19]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x1a]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x1b]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x1c]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x1d]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x1e]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0x1f]=DLParser_Tri4_Conker;
+        LoadedUcodeMap[0xdb]=DLParser_MoveWord_Conker;
+        LoadedUcodeMap[0xdc]=DLParser_MoveMem_Conker;
         status.bUseModifiedUcodeMap = true;
         break;
     case 12: // Silicon Velley, Space Station
@@ -459,6 +467,9 @@ void RDP_SetUcodeMap(int ucode)
         status.bUseModifiedUcodeMap = true;
         break;
     case 16: // Star War, Shadow Of Empire
+        memcpy( &LoadedUcodeMap, &ucodeMap0, sizeof(UcodeMap));
+        LoadedUcodeMap[4]=RSP_Vtx_ShadowOfEmpire;
+        status.bUseModifiedUcodeMap = true;
         break;
     case 17:    //Indiana Jones, does not work anyway
         memcpy( &LoadedUcodeMap, &ucodeMap1, sizeof(UcodeMap));
@@ -681,10 +692,9 @@ uint32 DLParser_CheckUcode(uint32 ucStart, uint32 ucDStart, uint32 ucSize, uint3
     {
         for ( uint32 i = 0; i < 0x1000; i++ )
         {
-
             if ( g_pRDRAMs8[ base + ((i+0) ^ 3) ] == 'R' &&
-                g_pRDRAMs8[ base + ((i+1) ^ 3) ] == 'S' &&
-                g_pRDRAMs8[ base + ((i+2) ^ 3) ] == 'P' )
+                 g_pRDRAMs8[ base + ((i+1) ^ 3) ] == 'S' &&
+                 g_pRDRAMs8[ base + ((i+2) ^ 3) ] == 'P' )
             {
                 unsigned char * p = str;
                 while ( g_pRDRAMs8[ base + (i ^ 3) ] >= ' ')
@@ -825,8 +835,8 @@ void DLParser_Process(OSTask * pTask)
             {DebuggerAppendMsg("Start Task without DLIST: ucode=%08X, data=%08X", (uint32)pTask->t.ucode, (uint32)pTask->t.ucode_data);});
 
 
-    // Check if we need to purge
-    if (status.gRDPTime - status.lastPurgeTimeTime > 5000)
+    // Check if we need to purge (every 5 milliseconds)
+    if (status.gRDPTime - status.lastPurgeTimeTime > 5)
     {
         gTextureManager.PurgeOldTextures();
         status.lastPurgeTimeTime = status.gRDPTime;
@@ -875,10 +885,10 @@ void DLParser_Process(OSTask * pTask)
             Gfx *pgfx = (Gfx*)&g_pRDRAMu32[(gDlistStack[gDlistStackPointer].pc>>2)];
 #ifdef DEBUGGER
             LOG_UCODE("0x%08x: %08x %08x %-10s", 
-                gDlistStack[gDlistStackPointer].pc, pgfx->words.cmd0, pgfx->words.cmd1, (gRSP.ucode!=5&&gRSP.ucode!=10)?ucodeNames_GBI1[(pgfx->words.cmd0>>24)]:ucodeNames_GBI2[(pgfx->words.cmd0>>24)]);
+                gDlistStack[gDlistStackPointer].pc, pgfx->words.w0, pgfx->words.w1, (gRSP.ucode!=5&&gRSP.ucode!=10)?ucodeNames_GBI1[(pgfx->words.w0>>24)]:ucodeNames_GBI2[(pgfx->words.w0>>24)]);
 #endif
             gDlistStack[gDlistStackPointer].pc += 8;
-            currentUcodeMap[pgfx->words.cmd0 >>24](pgfx);
+            currentUcodeMap[pgfx->words.w0 >>24](pgfx);
 
             if ( gDlistStackPointer >= 0 && --gDlistStack[gDlistStackPointer].countdown < 0 )
             {
@@ -899,17 +909,6 @@ void DLParser_Process(OSTask * pTask)
     if( gRSP.ucode >= 17)
         TriggerDPInterrupt();
     TriggerSPInterrupt();
-}
-//*****************************************************************************
-// Reads the next command from the display list, updates the PC.
-//*****************************************************************************
-inline void DLParser_FetchNextCommand(Gfx * pgfx)
-{
-    // Current PC is the last value on the stack
-    *pgfx = *(Gfx*)&g_pRDRAMu32[(gDlistStack[gDlistStackPointer].pc>>2)];
-
-    gDlistStack[gDlistStackPointer].pc += 8;
-
 }
 
 //////////////////////////////////////////////////////////
@@ -1004,8 +1003,8 @@ void DLParser_SetKeyGB(Gfx *gfx)
 {
     DP_Timing(DLParser_SetKeyGB);
 
-    gRDP.keyB = ((gfx->words.cmd1)>>8)&0xFF;
-    gRDP.keyG = ((gfx->words.cmd1)>>24)&0xFF;
+    gRDP.keyB = ((gfx->words.w1)>>8)&0xFF;
+    gRDP.keyG = ((gfx->words.w1)>>24)&0xFF;
     gRDP.keyA = (gRDP.keyR+gRDP.keyG+gRDP.keyB)/3;
     gRDP.fKeyA = gRDP.keyA/255.0f;
 }
@@ -1013,7 +1012,7 @@ void DLParser_SetKeyR(Gfx *gfx)
 {
     DP_Timing(DLParser_SetKeyR);
 
-    gRDP.keyR = ((gfx->words.cmd1)>>8)&0xFF;
+    gRDP.keyR = ((gfx->words.w1)>>8)&0xFF;
     gRDP.keyA = (gRDP.keyR+gRDP.keyG+gRDP.keyB)/3;
     gRDP.fKeyA = gRDP.keyA/255.0f;
 }
@@ -1026,23 +1025,23 @@ void DLParser_SetConvert(Gfx *gfx)
 
     int temp;
 
-    temp = ((gfx->words.cmd0)>>13)&0x1FF;
+    temp = ((gfx->words.w0)>>13)&0x1FF;
     g_convk0 = temp>0xFF ? -(temp-0x100) : temp;
 
-    temp = ((gfx->words.cmd0)>>4)&0x1FF;
+    temp = ((gfx->words.w0)>>4)&0x1FF;
     g_convk1 = temp>0xFF ? -(temp-0x100) : temp;
 
-    temp = (gfx->words.cmd0)&0xF;
-    temp = (temp<<5)|(((gfx->words.cmd1)>>27)&0x1F);
+    temp = (gfx->words.w0)&0xF;
+    temp = (temp<<5)|(((gfx->words.w1)>>27)&0x1F);
     g_convk2 = temp>0xFF ? -(temp-0x100) : temp;
 
-    temp = ((gfx->words.cmd1)>>18)&0x1FF;
+    temp = ((gfx->words.w1)>>18)&0x1FF;
     g_convk3 = temp>0xFF ? -(temp-0x100) : temp;
 
-    temp = ((gfx->words.cmd1)>>9)&0x1FF;
+    temp = ((gfx->words.w1)>>9)&0x1FF;
     g_convk4 = temp>0xFF ? -(temp-0x100) : temp;
 
-    temp = (gfx->words.cmd1)&0x1FF;
+    temp = (gfx->words.w1)&0x1FF;
     g_convk5 = temp>0xFF ? -(temp-0x100) : temp;
 
     g_convc0 = g_convk5/255.0f+1.0f;
@@ -1054,11 +1053,11 @@ void DLParser_SetConvert(Gfx *gfx)
 void DLParser_SetPrimDepth(Gfx *gfx)
 {
     DP_Timing(DLParser_SetPrimDepth);
-    uint32 dwZ  = ((gfx->words.cmd1) >> 16) & 0xFFFF;
-    uint32 dwDZ = ((gfx->words.cmd1)      ) & 0xFFFF;
+    uint32 dwZ  = ((gfx->words.w1) >> 16) & 0xFFFF;
+    uint32 dwDZ = ((gfx->words.w1)      ) & 0xFFFF;
 
     LOG_UCODE("SetPrimDepth: 0x%08x 0x%08x - z: 0x%04x dz: 0x%04x",
-        gfx->words.cmd0, gfx->words.cmd1, dwZ, dwDZ);
+        gfx->words.w0, gfx->words.w1, dwZ, dwDZ);
     
     SetPrimitiveDepth(dwZ, dwDZ);
     DEBUGGER_PAUSE(NEXT_SET_PRIM_COLOR);
@@ -1067,28 +1066,28 @@ void DLParser_SetPrimDepth(Gfx *gfx)
 void DLParser_RDPSetOtherMode(Gfx *gfx)
 {
     DP_Timing(DLParser_RDPSetOtherMode);
-    gRDP.otherMode._u32[1] = (gfx->words.cmd0); // High
-    gRDP.otherMode._u32[0] = (gfx->words.cmd1); // Low
+    gRDP.otherMode._u32[1] = (gfx->words.w0);   // High
+    gRDP.otherMode._u32[0] = (gfx->words.w1);   // Low
 
-    if( gRDP.otherModeH != ((gfx->words.cmd0) & 0x0FFFFFFF) )
+    if( gRDP.otherModeH != ((gfx->words.w0) & 0x0FFFFFFF) )
     {
-        gRDP.otherModeH = ((gfx->words.cmd0) & 0x0FFFFFFF);
+        gRDP.otherModeH = ((gfx->words.w0) & 0x0FFFFFFF);
 
         uint32 dwTextFilt  = (gRDP.otherModeH>>RSP_SETOTHERMODE_SHIFT_TEXTFILT)&0x3;
         CRender::g_pRender->SetTextureFilter(dwTextFilt<<RSP_SETOTHERMODE_SHIFT_TEXTFILT);
     }
 
-    if( gRDP.otherModeL != (gfx->words.cmd1) )
+    if( gRDP.otherModeL != (gfx->words.w1) )
     {
-        if( (gRDP.otherModeL&ZMODE_DEC) != ((gfx->words.cmd1)&ZMODE_DEC) )
+        if( (gRDP.otherModeL&ZMODE_DEC) != ((gfx->words.w1)&ZMODE_DEC) )
         {
-            if( ((gfx->words.cmd1)&ZMODE_DEC) == ZMODE_DEC )
+            if( ((gfx->words.w1)&ZMODE_DEC) == ZMODE_DEC )
                 CRender::g_pRender->SetZBias( 2 );
             else
                 CRender::g_pRender->SetZBias( 0 );
         }
 
-        gRDP.otherModeL = (gfx->words.cmd1);
+        gRDP.otherModeL = (gfx->words.w1);
 
         BOOL bZCompare      = (gRDP.otherModeL & Z_COMPARE)         ? TRUE : FALSE;
         BOOL bZUpdate       = (gRDP.otherModeL & Z_UPDATE)          ? TRUE : FALSE;
@@ -1147,11 +1146,11 @@ void DLParser_SetScissor(Gfx *gfx)
 
     ScissorType tempScissor;
     // The coords are all in 8:2 fixed point
-    tempScissor.x0   = ((gfx->words.cmd0)>>12)&0xFFF;
-    tempScissor.y0   = ((gfx->words.cmd0)>>0 )&0xFFF;
-    tempScissor.mode = ((gfx->words.cmd1)>>24)&0x03;
-    tempScissor.x1   = ((gfx->words.cmd1)>>12)&0xFFF;
-    tempScissor.y1   = ((gfx->words.cmd1)>>0 )&0xFFF;
+    tempScissor.x0   = ((gfx->words.w0)>>12)&0xFFF;
+    tempScissor.y0   = ((gfx->words.w0)>>0 )&0xFFF;
+    tempScissor.mode = ((gfx->words.w1)>>24)&0x03;
+    tempScissor.x1   = ((gfx->words.w1)>>12)&0xFFF;
+    tempScissor.y1   = ((gfx->words.w1)>>0 )&0xFFF;
 
     tempScissor.left    = tempScissor.x0/4;
     tempScissor.top     = tempScissor.y0/4;
@@ -1234,10 +1233,10 @@ void DLParser_FillRect(Gfx *gfx)
         }
     }
 
-    uint32 x0   = (((gfx->words.cmd1)>>12)&0xFFF)/4;
-    uint32 y0   = (((gfx->words.cmd1)>>0 )&0xFFF)/4;
-    uint32 x1   = (((gfx->words.cmd0)>>12)&0xFFF)/4;
-    uint32 y1   = (((gfx->words.cmd0)>>0 )&0xFFF)/4;
+    uint32 x0   = (((gfx->words.w1)>>12)&0xFFF)/4;
+    uint32 y0   = (((gfx->words.w1)>>0 )&0xFFF)/4;
+    uint32 x1   = (((gfx->words.w0)>>12)&0xFFF)/4;
+    uint32 y1   = (((gfx->words.w0)>>0 )&0xFFF)/4;
 
     // Note, in some modes, the right/bottom lines aren't drawn
 
@@ -1420,100 +1419,16 @@ void DLParser_FillRect(Gfx *gfx)
         DebuggerAppendMsg("Pause after FillRect: Color=%08X\n", gRDP.originalFillColor);});
     }
 }
-//Nintro64 uses Sprite2d
-void RSP_RDP_Nothing(Gfx *gfx)
-{
-    SP_Timing(RSP_RDP_Nothing);
-
-#ifdef _DEBUG
-    if( logWarning )
-    {
-        TRACE0("Stack Trace");
-        for( int i=0; i<gDlistStackPointer; i++ )
-        {
-            DebuggerAppendMsg("  %08X", gDlistStack[i].pc);
-        }
-
-        uint32 dwPC = gDlistStack[gDlistStackPointer].pc-8;
-        DebuggerAppendMsg("PC=%08X",dwPC);
-        DebuggerAppendMsg("Warning, unknown ucode PC=%08X: 0x%08x 0x%08x\n", dwPC, gfx->words.cmd0, gfx->words.cmd1);
-    }
-    DEBUGGER_PAUSE_AND_DUMP_COUNT_N(NEXT_UNKNOWN_OP, {TRACE0("Paused at unknown ucode\n");})
-    if( debuggerContinueWithUnknown )
-    {
-        return;
-    }
-#endif
-
-    if( options.bEnableHacks )
-        return;
-
-    gDlistStackPointer=-1;
-}
-
-
-void RSP_RDP_InsertMatrix(Gfx *gfx)
-{
-    float fraction;
-
-    UpdateCombinedMatrix();
-
-    if ((gfx->words.cmd0) & 0x20)
-    {
-        int x = ((gfx->words.cmd0) & 0x1F) >> 1;
-        int y = x >> 2;
-        x &= 3;
-
-        fraction = ((gfx->words.cmd1)>>16)/65536.0f;
-        gRSPworldProject.m[y][x] = (float)(int)gRSPworldProject.m[y][x];
-        gRSPworldProject.m[y][x] += fraction;
-
-        fraction = ((gfx->words.cmd1)&0xFFFF)/65536.0f;
-        gRSPworldProject.m[y][x+1] = (float)(int)gRSPworldProject.m[y][x+1];
-        gRSPworldProject.m[y][x+1] += fraction;
-    }
-    else
-    {
-        int x = ((gfx->words.cmd0) & 0x1F) >> 1;
-        int y = x >> 2;
-        x &= 3;
-
-        fraction = (float)fabs(gRSPworldProject.m[y][x] - (int)gRSPworldProject.m[y][x]);
-        gRSPworldProject.m[y][x] = (short)((gfx->words.cmd1)>>16) + fraction;
-
-        fraction = (float)fabs(gRSPworldProject.m[y][x+1] - (int)gRSPworldProject.m[y][x+1]);
-        gRSPworldProject.m[y][x+1] = (short)((gfx->words.cmd1)&0xFFFF) + fraction;
-    }
-
-    gRSP.bMatrixIsUpdated = false;
-    gRSP.bCombinedMatrixIsUpdated = true;
-
-#ifdef _DEBUG
-    if( pauseAtNext && eventToPause == NEXT_MATRIX_CMD )
-    {
-        pauseAtNext = false;
-        debuggerPause = true;
-        DebuggerAppendMsg("Pause after insert matrix: %08X, %08X", gfx->words.cmd0, gfx->words.cmd1);
-    }
-    else
-    {
-        if( pauseAtNext && logMatrix )
-        {
-            DebuggerAppendMsg("insert matrix: %08X, %08X", gfx->words.cmd0, gfx->words.cmd1);
-        }
-    }
-#endif
-}
 
 
 #define STORE_CI    {g_CI.dwAddr = dwNewAddr;g_CI.dwFormat = dwFmt;g_CI.dwSize = dwSiz;g_CI.dwWidth = dwWidth;g_CI.bpl=dwBpl;}
 
 void DLParser_SetCImg(Gfx *gfx)
 {
-    uint32 dwFmt        = gfx->img.fmt;
-    uint32 dwSiz        = gfx->img.siz;
-    uint32 dwWidth      = gfx->img.width + 1;
-    uint32 dwNewAddr    = RSPSegmentAddr((gfx->img.addr)) & 0x00FFFFFF ;
+    uint32 dwFmt        = gfx->setimg.fmt;
+    uint32 dwSiz        = gfx->setimg.siz;
+    uint32 dwWidth      = gfx->setimg.width + 1;
+    uint32 dwNewAddr    = RSPSegmentAddr((gfx->setimg.addr)) & 0x00FFFFFF ;
     uint32 dwBpl        = dwWidth << dwSiz >> 1;
 
     TXTRBUF_DETAIL_DUMP(DebuggerAppendMsg("SetCImg: Addr=0x%08X, Fmt:%s-%sb, Width=%d\n", dwNewAddr, pszImgFormat[dwFmt], pszImgSize[dwSiz], dwWidth););
@@ -1524,7 +1439,7 @@ void DLParser_SetCImg(Gfx *gfx)
             g_CI.dwAddr, pszImgFormat[dwFmt], pszImgSize[dwSiz], dwWidth));
     }
 
-    LOG_UCODE("    Image: 0x%08x", RSPSegmentAddr(gfx->words.cmd1));
+    LOG_UCODE("    Image: 0x%08x", RSPSegmentAddr(gfx->words.w1));
     LOG_UCODE("    Fmt: %s Size: %s Width: %d",
         pszImgFormat[dwFmt], pszImgSize[dwSiz], dwWidth);
 
@@ -1612,12 +1527,12 @@ void DLParser_SetCImg(Gfx *gfx)
 void DLParser_SetZImg(Gfx *gfx)
 {
     DP_Timing(DLParser_SetZImg);
-    LOG_UCODE("    Image: 0x%08x", RSPSegmentAddr(gfx->words.cmd1));
+    LOG_UCODE("    Image: 0x%08x", RSPSegmentAddr(gfx->words.w1));
 
-    uint32 dwFmt   = gfx->img.fmt;
-    uint32 dwSiz   = gfx->img.siz;
-    uint32 dwWidth = gfx->img.width + 1;
-    uint32 dwAddr = RSPSegmentAddr((gfx->img.addr));
+    uint32 dwFmt   = gfx->setimg.fmt;
+    uint32 dwSiz   = gfx->setimg.siz;
+    uint32 dwWidth = gfx->setimg.width + 1;
+    uint32 dwAddr = RSPSegmentAddr((gfx->setimg.addr));
 
     if( dwAddr != g_ZI_saves[0].CI_Info.dwAddr )
     {
@@ -1668,8 +1583,8 @@ bool IsUsedAsDI(uint32 addr)
 void DLParser_SetCombine(Gfx *gfx)
 {
     DP_Timing(DLParser_SetCombine);
-    uint32 dwMux0 = (gfx->words.cmd0)&0x00FFFFFF;
-    uint32 dwMux1 = (gfx->words.cmd1);
+    uint32 dwMux0 = (gfx->words.w0)&0x00FFFFFF;
+    uint32 dwMux1 = (gfx->words.w1);
     CRender::g_pRender->SetMux(dwMux0, dwMux1);
 }
 
@@ -1679,7 +1594,7 @@ void DLParser_SetFillColor(Gfx *gfx)
     gRDP.fillColor = Convert555ToRGBA(gfx->setcolor.fillcolor);
     gRDP.originalFillColor = (gfx->setcolor.color);
 
-    LOG_UCODE("    Color5551=0x%04x = 0x%08x", (uint16)gfx->words.cmd1, gRDP.fillColor);
+    LOG_UCODE("    Color5551=0x%04x = 0x%08x", (uint16)gfx->words.w1, gRDP.fillColor);
 
 }
 
@@ -1724,8 +1639,8 @@ void RDP_DLParser_Process(void)
     gDlistStack[gDlistStackPointer].pc = start;
     gDlistStack[gDlistStackPointer].countdown = MAX_DL_COUNT;
 
-    // Check if we need to purge
-    if (status.gRDPTime - status.lastPurgeTimeTime > 5000)
+    // Check if we need to purge (every 5 milliseconds)
+    if (status.gRDPTime - status.lastPurgeTimeTime > 5)
     {
         gTextureManager.PurgeOldTextures();
         status.lastPurgeTimeTime = status.gRDPTime;
@@ -1744,7 +1659,7 @@ void RDP_DLParser_Process(void)
     {
         Gfx *pgfx = (Gfx*)&g_pRDRAMu32[(gDlistStack[gDlistStackPointer].pc>>2)];
         gDlistStack[gDlistStackPointer].pc += 8;
-        currentUcodeMap[pgfx->words.cmd0 >>24](pgfx);
+        currentUcodeMap[pgfx->words.w0 >>24](pgfx);
     }
 
     CRender::g_pRender->EndRendering();
@@ -1818,7 +1733,8 @@ static void make_crc_table()
 /* ========================================================================= */
 unsigned int ComputeCRC32(unsigned int crc, const uint8 *buf, unsigned int len)
 {
-    if (buf == NULL) return 0L;
+    if (buf == NULL)
+        return 0L;
 
     if (crc_table_empty)
       make_crc_table();
@@ -1838,21 +1754,20 @@ unsigned int ComputeCRC32(unsigned int crc, const uint8 *buf, unsigned int len)
 Matrix matToLoad;
 void LoadMatrix(uint32 addr)
 {
+    const float fRecip = 1.0f / 65536.0f;
     if (addr + 64 > g_dwRamSize)
     {
         TRACE1("Mtx: Address invalid (0x%08x)", addr);
         return;
     }
 
-    int i, j;
-
-    for (i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        for (j = 0; j < 4; j++) 
+        for (int j = 0; j < 4; j++) 
         {
-            int     hi = *(short *)(g_pRDRAMu8 + ((addr+(i<<3)+(j<<1)     )^0x2));
-            int  lo = *(unsigned short *)(g_pRDRAMu8 + ((addr+(i<<3)+(j<<1) + 32)^0x2));
-            matToLoad.m[i][j] = (float)((hi<<16) | (lo))/ 65536.0f;
+            int hi = *(short *)(g_pRDRAMu8 + ((addr+(i<<3)+(j<<1)     )^0x2));
+            int lo = *(unsigned short *)(g_pRDRAMu8 + ((addr+(i<<3)+(j<<1) + 32)^0x2));
+            matToLoad.m[i][j] = (float)((hi<<16) | lo) * fRecip;
         }
     }
 

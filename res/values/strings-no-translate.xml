@@ -8,7 +8,6 @@
     <string name="actionHelp_uriFaq" translatable="false">http://www.paulscode.com/forum/index.php?topic=197.msg3018#msg3018</string>
     <string name="actionHelp_uriBug" translatable="false">http://github.com/paulscode/mupen64plus-ae/issues</string>
     <string name="actionAbout_uriCredits" translatable="false">http://www.paulscode.com/forum/index.php?topic=836.msg7873#msg7873</string>
-    <string name="actionAbout_uriChangelog" translatable="false">http://www.paulscode.com/forum/index.php?topic=96.msg2243#msg2243</string>
     <string name="assetExtractor_uriHelp" translatable="false">tinyurl.com/bfbb4jc</string>
 
     <!-- Strings only seen in the eclipse editor -->

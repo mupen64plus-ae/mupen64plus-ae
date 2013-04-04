@@ -311,13 +311,8 @@ BOOL InitConfiguration(void)
     }
 
     ConfigSetDefaultBool(l_ConfigVideoGeneral, "Fullscreen", 0, "Use fullscreen mode if True, or windowed mode if False ");
-#ifdef USE_SDL
-    //ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenWidth", 854, "Width of output window or fullscreen width");
-    //ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 486, "Height of output window or fullscreen height");
-#else
-    ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenWidth", 1024, "Width of output window or fullscreen width");
-    ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 768, "Height of output window or fullscreen height");
-#endif
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenWidth", 640, "Width of output window or fullscreen width");
+    ConfigSetDefaultInt(l_ConfigVideoGeneral, "ScreenHeight", 480, "Height of output window or fullscreen height");
     ConfigSetDefaultBool(l_ConfigVideoGeneral, "VerticalSync", 0, "If true, activate the SDL_GL_SWAP_CONTROL attribute");
 
     ConfigSetDefaultInt(l_ConfigVideoRice, "FrameBufferSetting", FRM_BUF_NONE, "Frame Buffer Emulation (0=ROM default, 1=disable)");
@@ -326,7 +321,7 @@ BOOL InitConfiguration(void)
 #if defined(WIN32)
     ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_1ST_CI_CHANGE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
 #else
-    ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_1ST_CI_CHANGE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
+    ConfigSetDefaultInt(l_ConfigVideoRice, "ScreenUpdateSetting", SCREEN_UPDATE_AT_VI_UPDATE, "Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)");  // SCREEN_UPDATE_AT_VI_UPDATE_AND_DRAWN
 #endif
     ConfigSetDefaultBool(l_ConfigVideoRice, "NormalAlphaBlender", FALSE, "Force to use normal alpha blender");
     ConfigSetDefaultBool(l_ConfigVideoRice, "FastTextureLoading", FALSE, "Use a faster algorithm to speed up texture loading and CRC computation");
@@ -346,15 +341,15 @@ BOOL InitConfiguration(void)
     ConfigSetDefaultBool(l_ConfigVideoRice, "TexRectOnly", FALSE, "If enabled, texture enhancement will be done only for TxtRect ucode");
     ConfigSetDefaultBool(l_ConfigVideoRice, "SmallTextureOnly", FALSE, "If enabled, texture enhancement will be done only for textures width+height<=128");
     ConfigSetDefaultBool(l_ConfigVideoRice, "LoadHiResCRCOnly", TRUE, "Select hi-resolution textures based only on the CRC and ignore format+size information (Glide64 compatibility)");
-    ConfigSetDefaultBool(l_ConfigVideoRice, "LoadHiResTextures", TRUE, "Enable hi-resolution texture file loading");
+    ConfigSetDefaultBool(l_ConfigVideoRice, "LoadHiResTextures", FALSE, "Enable hi-resolution texture file loading");
     ConfigSetDefaultBool(l_ConfigVideoRice, "DumpTexturesToFiles", FALSE, "Enable texture dumping");
     ConfigSetDefaultBool(l_ConfigVideoRice, "ShowFPS", FALSE, "Display On-screen FPS");
 
-    ConfigSetDefaultInt(l_ConfigVideoRice, "Mipmapping", 0, "Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "Mipmapping", 2, "Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear");
     ConfigSetDefaultInt(l_ConfigVideoRice, "FogMethod", 0, "Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "ForceTextureFilter", 0, "Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancement", 0, "Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)");
-    ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancementControl", 1, "Secondary texture enhancement filter (0 = none, 1-4 = filtered)");
+    ConfigSetDefaultInt(l_ConfigVideoRice, "TextureEnhancementControl", 0, "Secondary texture enhancement filter (0 = none, 1-4 = filtered)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "TextureQuality", TXT_QUALITY_DEFAULT, "Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "OpenGLDepthBufferSetting", 16, "Z-buffer depth (only 16 or 32)");
     ConfigSetDefaultInt(l_ConfigVideoRice, "MultiSampling", 0, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)");
@@ -400,22 +395,23 @@ bool isSSESupported()
 {
     int SSESupport = 0;
 
-    // And finally, check the CPUID for Streaming SIMD Extensions support.
+// And finally, check the CPUID for Streaming SIMD Extensions support.
 #if !defined(__GNUC__) && !defined(NO_ASM)
-    _asm{
-       mov      eax, 1          // Put a "1" in eax to tell CPUID to get the feature bits
-         cpuid                  // Perform CPUID (puts processor feature info into EDX)
-         and        edx, 02000000h  // Test bit 25, for Streaming SIMD Extensions existence.
-         mov        SSESupport, edx // SIMD Extensions).  Set return value to 1 to indicate,
+    _asm
+	{
+            mov      eax, 1          // Put a "1" in eax to tell CPUID to get the feature bits
+            cpuid                    // Perform CPUID (puts processor feature info into EDX)
+            and      edx, 02000000h  // Test bit 25, for Streaming SIMD Extensions existence.
+            mov      SSESupport, edx // SIMD Extensions).  Set return value to 1 to indicate,
     }
 #elif defined(__GNUC__) && defined(__x86_64__) && !defined(NO_ASM)
   return true;
 #elif !defined(NO_ASM) // GCC assumed
    asm volatile (
          "push %%ebx                       \n"
-         "mov $1, %%eax                    \n"          // Put a "1" in eax to tell CPUID to get the feature bits
-         "cpuid                            \n"                  // Perform CPUID (puts processor feature info into EDX)
-         "and       $0x02000000, %%edx \n"  // Test bit 25, for Streaming SIMD Extensions existence.
+         "mov $1, %%eax                    \n"  // Put a "1" in eax to tell CPUID to get the feature bits
+         "cpuid                            \n"  // Perform CPUID (puts processor feature info into EDX)
+         "and       $0x02000000, %%edx     \n"  // Test bit 25, for Streaming SIMD Extensions existence.
          "pop %%ebx                        \n"
          : "=d"(SSESupport)
          :
@@ -432,13 +428,8 @@ bool isSSESupported()
 static void ReadConfiguration(void)
 {
     windowSetting.bDisplayFullscreen = ConfigGetParamBool(l_ConfigVideoGeneral, "Fullscreen");
-#ifdef USE_SDL
-    //windowSetting.uDisplayWidth = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenWidth");
-    //windowSetting.uDisplayHeight = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenHeight");
-#else
     windowSetting.uDisplayWidth = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenWidth");
     windowSetting.uDisplayHeight = ConfigGetParamInt(l_ConfigVideoGeneral, "ScreenHeight");
-#endif
     windowSetting.bVerticalSync = ConfigGetParamBool(l_ConfigVideoGeneral, "VerticalSync");
 
     defaultRomOptions.N64FrameBufferEmuType = ConfigGetParamInt(l_ConfigVideoRice, "FrameBufferSetting");
@@ -686,16 +677,16 @@ void GenerateCurrentRomOptions()
 
     if( currentRomOptions.N64FrameBufferEmuType == 0 )      currentRomOptions.N64FrameBufferEmuType = defaultRomOptions.N64FrameBufferEmuType;
     else currentRomOptions.N64FrameBufferEmuType--;
-    if( currentRomOptions.N64RenderToTextureEmuType == 0 )      currentRomOptions.N64RenderToTextureEmuType = defaultRomOptions.N64RenderToTextureEmuType;
+    if( currentRomOptions.N64RenderToTextureEmuType == 0 )  currentRomOptions.N64RenderToTextureEmuType = defaultRomOptions.N64RenderToTextureEmuType;
     else currentRomOptions.N64RenderToTextureEmuType--;
     if( currentRomOptions.screenUpdateSetting == 0 )        currentRomOptions.screenUpdateSetting = defaultRomOptions.screenUpdateSetting;
     if( currentRomOptions.bNormalCombiner == 0 )            currentRomOptions.bNormalCombiner = defaultRomOptions.bNormalCombiner;
     else currentRomOptions.bNormalCombiner--;
-    if( currentRomOptions.bNormalBlender == 0 )         currentRomOptions.bNormalBlender = defaultRomOptions.bNormalBlender;
+    if( currentRomOptions.bNormalBlender == 0 )             currentRomOptions.bNormalBlender = defaultRomOptions.bNormalBlender;
     else currentRomOptions.bNormalBlender--;
     if( currentRomOptions.bFastTexCRC == 0 )                currentRomOptions.bFastTexCRC = defaultRomOptions.bFastTexCRC;
     else currentRomOptions.bFastTexCRC--;
-    if( currentRomOptions.bAccurateTextureMapping == 0 )        currentRomOptions.bAccurateTextureMapping = defaultRomOptions.bAccurateTextureMapping;
+    if( currentRomOptions.bAccurateTextureMapping == 0 )    currentRomOptions.bAccurateTextureMapping = defaultRomOptions.bAccurateTextureMapping;
     else currentRomOptions.bAccurateTextureMapping--;
 
     options.bUseFullTMEM = ((options.bFullTMEM && (g_curRomInfo.dwFullTMEM == 0)) || g_curRomInfo.dwFullTMEM == 2);
@@ -727,11 +718,6 @@ void Ini_GetRomOptions(LPGAMESETTING pGameSetting)
     pGameSetting->bFastLoadTile         = IniSections[i].bFastLoadTile;
     pGameSetting->bUseSmallerTexture    = IniSections[i].bUseSmallerTexture;
 
-    pGameSetting->windowWidth           = IniSections[i].windowWidth;
-    pGameSetting->windowHeight          = IniSections[i].windowHeight;
-    pGameSetting->windowXpos            = IniSections[i].windowXpos;
-    pGameSetting->windowYpos            = IniSections[i].windowYpos;
-    
     pGameSetting->VIWidth               = IniSections[i].VIWidth;
     pGameSetting->VIHeight              = IniSections[i].VIHeight;
     pGameSetting->UseCIWidthAndRatio    = IniSections[i].UseCIWidthAndRatio;
@@ -872,26 +858,6 @@ void Ini_StoreRomOptions(LPGAMESETTING pGameSetting)
     {
         IniSections[i].bUseSmallerTexture   =pGameSetting->bUseSmallerTexture;
         bIniIsChanged=true;
-    }    
-    if( IniSections[i].windowWidth  != pGameSetting->windowWidth )
-    {
-        IniSections[i].windowWidth  =pGameSetting->windowWidth;
-        bIniIsChanged=true;
-    }
-    if( IniSections[i].windowHeight != pGameSetting->windowHeight )
-    {
-        IniSections[i].windowHeight =pGameSetting->windowHeight;
-        bIniIsChanged=true;
-    }
-    if( IniSections[i].windowXpos  != pGameSetting->windowXpos )
-    {
-        IniSections[i].windowXpos  =pGameSetting->windowXpos;
-        bIniIsChanged=true;
-    }
-    if( IniSections[i].windowYpos != pGameSetting->windowYpos )
-    {
-        IniSections[i].windowYpos =pGameSetting->windowYpos;
-        bIniIsChanged=true;
     }
     if( IniSections[i].VIWidth  != pGameSetting->VIWidth )
     {
@@ -1011,10 +977,6 @@ BOOL ReadIniFile()
                 newsection.bPrimaryDepthHack = FALSE;
                 newsection.bTexture1Hack = FALSE;
                 newsection.bDisableObjBG = FALSE;
-                newsection.windowWidth = 800;
-                newsection.windowHeight = 480;
-                newsection.windowXpos = 0;
-                newsection.windowYpos = 0;
                 newsection.VIWidth = -1;
                 newsection.VIHeight = -1;
                 newsection.UseCIWidthAndRatio = NOT_USE_CI_WIDTH_AND_RATIO;
@@ -1070,19 +1032,7 @@ BOOL ReadIniFile()
 
                 if (strcasecmp(left(readinfo,16), "TexRectScaleHack")==0)
                     IniSections[sectionno].bTextureScaleHack=true;
-                
-                if (strcasecmp(left(readinfo,11), "windowWidth")==0)
-                    IniSections[sectionno].windowWidth = strtol(right(readinfo,3),NULL,10);
 
-                if (strcasecmp(left(readinfo,12), "windowHeight")==0)
-                    IniSections[sectionno].windowHeight = strtol(right(readinfo,3),NULL,10);
-                
-                if (strcasecmp(left(readinfo,10), "windowXpos")==0)
-                    IniSections[sectionno].windowXpos = strtol(right(readinfo,3),NULL,10);
-
-                if (strcasecmp(left(readinfo,10), "windowYpos")==0)
-                    IniSections[sectionno].windowYpos = strtol(right(readinfo,3),NULL,10);
-                
                 if (strcasecmp(left(readinfo,7), "VIWidth")==0)
                     IniSections[sectionno].VIWidth = strtol(right(readinfo,3),NULL,10);
 
@@ -1305,19 +1255,7 @@ void OutputSectionDetails(uint32 i, FILE * fh)
 
     if (IniSections[i].bTextureScaleHack)
         fprintf(fh, "TexRectScaleHack\n");
-        
-    if (IniSections[i].windowWidth != 800)
-        fprintf(fh, "windowWidth=%d\n", IniSections[i].windowWidth);
 
-    if (IniSections[i].windowHeight != 480)
-        fprintf(fh, "windowHeight=%d\n", IniSections[i].windowHeight);
-        
-    if (IniSections[i].windowXpos != 0)
-        fprintf(fh, "windowXpos=%d\n", IniSections[i].windowXpos);
-
-    if (IniSections[i].windowYpos != 0)
-        fprintf(fh, "windowYpos=%d\n", IniSections[i].windowYpos);
-        
     if (IniSections[i].VIWidth > 0)
         fprintf(fh, "VIWidth=%d\n", IniSections[i].VIWidth);
 
@@ -1405,10 +1343,6 @@ static int FindIniEntry(uint32 dwCRC1, uint32 dwCRC2, uint8 nCountryID, char* sz
     newsection.bPrimaryDepthHack = FALSE;
     newsection.bTexture1Hack = FALSE;
     newsection.bDisableObjBG = FALSE;
-    newsection.windowWidth = 800;
-    newsection.windowHeight = 480;
-    newsection.windowXpos = 0;
-    newsection.windowYpos = 0;
     newsection.VIWidth = -1;
     newsection.VIHeight = -1;
     newsection.UseCIWidthAndRatio = NOT_USE_CI_WIDTH_AND_RATIO;

@@ -16,7 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "OGLPlatform.h"
+#include "osal_opengl.h"
 #include "OGLDebug.h"
 #include "OGLRender.h"
 #include "OGLGraphicsContext.h"
@@ -50,15 +50,15 @@ extern "C" int Android_JNI_GetHardwareType();
 
 //#include "liblinux/BMGLibPNG.h"
 
-// Fix me, use OGL internal L/T and matrix stack
-// Fix me, use OGL lookupAt function
-// Fix me, use OGL DisplayList
+// FIXME: Use OGL internal L/T and matrix stack
+// FIXME: Use OGL lookupAt function
+// FIXME: Use OGL DisplayList
 
 UVFlagMap OGLXUVFlagMaps[] =
 {
-{TEXTURE_UV_FLAG_WRAP, GL_REPEAT},
-{TEXTURE_UV_FLAG_MIRROR, GL_MIRRORED_REPEAT},
-{TEXTURE_UV_FLAG_CLAMP, GL_CLAMP_TO_EDGE},
+    {TEXTURE_UV_FLAG_WRAP, GL_REPEAT},
+    {TEXTURE_UV_FLAG_MIRROR, GL_MIRRORED_REPEAT},
+    {TEXTURE_UV_FLAG_CLAMP, GL_CLAMP_TO_EDGE},
 };
 
 GLuint disabledTextureID;
@@ -70,7 +70,6 @@ OGLRender::OGLRender()
     m_bSupportFogCoordExt = pcontext->m_bSupportFogCoord;
     m_bMultiTexture = pcontext->m_bSupportMultiTexture;
     m_bSupportClampToEdge = false;
-
     for( int i=0; i<8; i++ )
     {
         m_curBoundTex[i]=0;
@@ -620,22 +619,24 @@ bool OGLRender::RenderFillRect(uint32 dwColor, float depth)
 
 bool OGLRender::RenderLine3D()
 {
-//    ApplyZBias(0);  // disable z offsets
-//
-//    glBegin(GL_TRIANGLE_FAN);
-//
-//    glColor4f(m_line3DVtx[1].r, m_line3DVtx[1].g, m_line3DVtx[1].b, m_line3DVtx[1].a);
-//    glVertex3f(m_line3DVector[3].x, m_line3DVector[3].y, -m_line3DVtx[1].z);
-//    glVertex3f(m_line3DVector[2].x, m_line3DVector[2].y, -m_line3DVtx[0].z);
-//
-//    glColor4ub(m_line3DVtx[0].r, m_line3DVtx[0].g, m_line3DVtx[0].b, m_line3DVtx[0].a);
-//    glVertex3f(m_line3DVector[1].x, m_line3DVector[1].y, -m_line3DVtx[1].z);
-//    glVertex3f(m_line3DVector[0].x, m_line3DVector[0].y, -m_line3DVtx[0].z);
-//
-//    glEnd();
-//    OPENGL_CHECK_ERRORS;
-//
-//    ApplyZBias(m_dwZBias);          // set Z offset back to previous value
+/*
+    ApplyZBias(0);  // disable z offsets
+
+    glBegin(GL_TRIANGLE_FAN);
+
+    glColor4f(m_line3DVtx[1].r, m_line3DVtx[1].g, m_line3DVtx[1].b, m_line3DVtx[1].a);
+    glVertex3f(m_line3DVector[3].x, m_line3DVector[3].y, -m_line3DVtx[1].z);
+    glVertex3f(m_line3DVector[2].x, m_line3DVector[2].y, -m_line3DVtx[0].z);
+    
+    glColor4ub(m_line3DVtx[0].r, m_line3DVtx[0].g, m_line3DVtx[0].b, m_line3DVtx[0].a);
+    glVertex3f(m_line3DVector[1].x, m_line3DVector[1].y, -m_line3DVtx[1].z);
+    glVertex3f(m_line3DVector[0].x, m_line3DVector[0].y, -m_line3DVtx[0].z);
+
+    glEnd();
+    OPENGL_CHECK_ERRORS;
+
+    ApplyZBias(m_dwZBias);  // set Z offset back to previous value
+*/
 
     return true;
 }
@@ -658,7 +659,7 @@ bool OGLRender::RenderFlushTris()
         }
     }
 
-    ApplyZBias(m_dwZBias);                    // set the bias factors
+    ApplyZBias(m_dwZBias);  // set the bias factors
 
     glViewportWrapper(windowSetting.vpLeftW + windowSetting.xpos, windowSetting.uDisplayHeight-windowSetting.vpTopW-windowSetting.vpHeightW+windowSetting.ypos, windowSetting.vpWidthW, windowSetting.vpHeightW, false);
     OPENGL_CHECK_ERRORS;
@@ -1022,9 +1023,9 @@ void OGLRender::TurnFogOnOff(bool flag)
 void OGLRender::SetFogEnable(bool bEnable)
 {
 //    DEBUGGER_IF_DUMP( (gRSP.bFogEnabled != (bEnable==TRUE) && logFog ), TRACE1("Set Fog %s", bEnable? "enable":"disable"));
-//
-    gRSP.bFogEnabled = bEnable&&(options.fogMethod == 1);
 
+    gRSP.bFogEnabled = bEnable&&(options.fogMethod == 1);
+    
     // If force fog
     if(options.fogMethod == 2)
     {
@@ -1036,8 +1037,6 @@ void OGLRender::SetFogEnable(bool bEnable)
     if( gRSP.bFogEnabled )
     {
         //TRACE2("Enable fog, min=%f, max=%f",gRSPfFogMin,gRSPfFogMax );
-
-
         //glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
         //OPENGL_CHECK_ERRORS;
         //glFogf(GL_FOG_START, gRSPfFogMin); // Fog Start Depth
@@ -1049,8 +1048,8 @@ void OGLRender::SetFogEnable(bool bEnable)
     }
     else
     {
-       /* glDisable(GL_FOG);
-        OPENGL_CHECK_ERRORS;*/
+        //glDisable(GL_FOG);
+        //OPENGL_CHECK_ERRORS;
     }
 }
 
@@ -1059,7 +1058,7 @@ void OGLRender::SetFogColor(uint32 r, uint32 g, uint32 b, uint32 a)
     gRDP.fogColor = COLOR_RGBA(r, g, b, a); 
     gRDP.fvFogColor[0] = r/255.0f;      //r
     gRDP.fvFogColor[1] = g/255.0f;      //g
-    gRDP.fvFogColor[2] = b/255.0f;          //b
+    gRDP.fvFogColor[2] = b/255.0f;      //b
     gRDP.fvFogColor[3] = a/255.0f;      //a
     //glFogfv(GL_FOG_COLOR, gRDP.fvFogColor); // Set Fog Color
     OPENGL_CHECK_ERRORS;

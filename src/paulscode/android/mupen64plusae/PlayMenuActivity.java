@@ -28,7 +28,6 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -37,7 +36,6 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.TaskHandler.Task;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -67,15 +65,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // Handle to the thread populating the cheat options
     private Thread crcThread = null;
-    
-    // Don't need to call these every time the orientation changes
-    static
-    {
-        // Required for reading CRC header
-        FileUtil.loadNativeLibName( "SDL" );
-        FileUtil.loadNativeLibName( "core" );
-        FileUtil.loadNativeLibName( "front-end" );
-    }
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -137,14 +126,12 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
     }
     
-    @TargetApi( 5 )
     @Override
     public void finish()
     {
         // Disable transition animation to behave like any other screen in the menu hierarchy
         super.finish();
-        if( AppData.IS_ECLAIR )
-            overridePendingTransition( 0, 0 );
+        overridePendingTransition( 0, 0 );
     }
     
     @Override

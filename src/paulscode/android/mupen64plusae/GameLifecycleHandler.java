@@ -36,6 +36,8 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
 import paulscode.android.mupen64plusae.util.FileUtil;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -102,6 +104,13 @@ public class GameLifecycleHandler implements View.OnKeyListener
     private AppData mAppData;
     private UserPrefs mUserPrefs;
     
+    static
+    {
+        FileUtil.loadNativeLibName( "SDL" );
+        FileUtil.loadNativeLibName( "core" );
+        FileUtil.loadNativeLibName( "front-end" );
+    }
+
     public GameLifecycleHandler( Activity activity )
     {
         mActivity = activity;
@@ -120,9 +129,6 @@ public class GameLifecycleHandler implements View.OnKeyListener
         // Load native libraries
         if( mIsXperiaPlay )
             FileUtil.loadNativeLibName( "xperia-touchpad" );
-        FileUtil.loadNativeLibName( "SDL" );
-        FileUtil.loadNativeLibName( "core" );
-        FileUtil.loadNativeLibName( "front-end" );
         FileUtil.loadNativeLib( mUserPrefs.videoPlugin.path );
         FileUtil.loadNativeLib( mUserPrefs.audioPlugin.path );
         FileUtil.loadNativeLib( mUserPrefs.inputPlugin.path );
@@ -146,6 +152,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mActivity.setRequestedOrientation( mUserPrefs.videoOrientation );
     }
     
+    @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
     {
@@ -164,7 +171,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
             // SDK version at least HONEYCOMB, so there should be software buttons on this device:
             View view = mSurface.getRootView();
             if( view != null )
-                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
             mActivity.getActionBar().hide();
             
             ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
@@ -177,9 +184,9 @@ public class GameLifecycleHandler implements View.OnKeyListener
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( mActivity.getResources(),
-                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenTransparency );
+                    mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenStyle, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
-            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden,
+            mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden, mUserPrefs.touchscreenScale,
                     mUserPrefs.videoFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
         
@@ -187,26 +194,25 @@ public class GameLifecycleHandler implements View.OnKeyListener
         View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
         if( mUserPrefs.inputPlugin.enabled )
             initControllers( inputSource );
-        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
         
         // Override the peripheral controllers' key provider, to add some extra functionality
         inputSource.setOnKeyListener( this );
         
         // Initialize the game surface
-        mSurface.init( mUserPrefs.isRgba8888 );
+        mSurface.setColorMode( mUserPrefs.isRgba8888 );
         
         // Refresh the objects and data files interfacing to the emulator core
-        CoreInterface.refresh( mActivity, mSurface, vibrator );
+        CoreInterface.refresh( mActivity, mSurface );
     }
     
     public void onResume()
     {
-        CoreInterface.resumeEmulator( false );
+        CoreInterface.resumeEmulator();
     }
     
     public void onPause()
     {
-        CoreInterface.pauseEmulator();
+        CoreInterface.pauseEmulator( true );
     }
     
     @Override
@@ -236,12 +242,22 @@ public class GameLifecycleHandler implements View.OnKeyListener
         }
     }
     
+    @SuppressLint( "InlinedApi" )
     private void initControllers( View inputSource )
     {
-        // Create the touchpad controls, if applicable
-        TouchController touchpadController = null;
-        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        // TODO: Register multiplayer/gamepad vibrators
         
+        Vibrator vibrator = null;
+        // Do not use vibrator if running on OUYA
+        if( !OUYAInterface.IS_OUYA_HARDWARE )
+        {
+            // By default, send Player 1 rumbles through phone vibrator
+            vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+            CoreInterface.registerVibrator( 1, vibrator );
+        }
+        
+        // Create the touchpad controls, if applicable
+        TouchController touchpadController = null;        
         if( mIsXperiaPlay )
         {
             // Create the map for the touchpad
@@ -314,6 +330,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         }
     }
     
+    @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
     private void toggleActionBar( View rootView )
     {
@@ -329,7 +346,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
             
             // Make the home buttons almost invisible again
             if( rootView != null )
-                rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE );
+                rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
         }
         else
         {

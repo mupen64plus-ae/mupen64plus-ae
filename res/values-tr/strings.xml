@@ -11,6 +11,19 @@
   <string name="menuItem_fileSave">Dosyaya kaydet…</string>
   <string name="menuItem_fileLoad">Dosyadan yükle…</string>
   <string name="menuItem_setSpeed">Oyun hızı</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Oyuncu 1: Boş</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Oyuncu 2: Boş</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Oyuncu 3: Boş</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Oyuncu 4: Boş</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">IME\'yi değiştir</string>
   <string name="menuItem_exit">Çıkış</string>
   <!--Input Mapping Activity-->
@@ -102,6 +115,7 @@
   <string name="categoryCheats_title">Hile seçenekleri (notlar için uzun basın)</string>
   <string name="categoryHardware_title">Donanım</string>
   <string name="categoryOther_title">Diğer</string>
+  <string name="categoryTouchscreenAppearance_title">Görünüm</string>
   <string name="categorySinglePlayer_title">Oyuncu 1</string>
   <string name="categoryMultiPlayer_title">Çoklu Oyuncu</string>
   <string name="categoryGles2N64_title">GLES2N64 Ayarları</string>
@@ -149,6 +163,7 @@
   <string name="audioSwapChannels_title">Ses kanallarını değiştir</string>
   <string name="audioSwapChannels_summary">Sol ve sağ ses kanallarını değiştir</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_entryDisabled">Devre dışı</string>
   <string name="touchscreenRefresh_title">Oyun çubuğu animasyonu</string>
   <string name="touchscreenRefresh_entryNever">Asla</string>
   <string name="touchscreenRefresh_entryOccasionally">Bazen</string>
@@ -157,15 +172,11 @@
   <string name="touchscreenLayout_entryAnalog">Analog (roymustang16 tarafından)</string>
   <string name="touchscreenLayout_entryDigital">Dijital (roymustang16 tarafından)</string>
   <string name="touchscreenLayout_entryCustom">Özel (bkz: http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Ekran büyüklüğü</string>
-  <string name="touchscreenSize_entryTiny">Minik</string>
-  <string name="touchscreenSize_entrySmall">Küçük</string>
-  <string name="touchscreenSize_entryNormal">Normal</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Dokunmatik yüzey düzeni</string>
   <string name="videoOrientation_title">Ekran yönlendirmesi</string>
   <string name="videoOrientation_entryPortrait">Portre</string>
   <string name="videoOrientation_entryReversePortrait">Ters portre</string>
+  <string name="videoPosition_entryTop">Üst</string>
   <string name="videoFpsRefresh_title">Ekran kare hızı</string>
   <string name="videoFpsRefresh_entryNever">Asla</string>
   <string name="videoFpsRefresh_entryOccasionally">Bazen</string>
@@ -190,6 +201,12 @@
   <string name="gles2N64Frameskip_entryExactly3">Tam olarak 3 kare</string>
   <string name="gles2N64Frameskip_entryExactly4">Tam olarak 4 kare</string>
   <string name="gles2N64Frameskip_entryExactly5">Tam olarak 5 kare</string>
+  <string name="gles2RiceMipmapping_entryNone">Hiçbiri</string>
+  <string name="gles2RiceMipmapping_entryNearest">En yakın</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Hiçbiri</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Ölçek 2x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Keskinleştir</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Daha fazla keskinleştir</string>
   <string name="audioResampleAlg_title">Algoritma tekrar örnekleniyor</string>
   <string name="audioResampleAlg_entryTrivial">Önemsiz</string>
   <string name="audioResampleAlg_entryLinear">Doğrusal ilişkilendirme</string>
@@ -202,16 +219,15 @@
   <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (m64p v1.99.5 için Rice Video\'nun GLES2 portu, Rice tarafından, Kris (Metricity))</string>
   <string name="pluginAudio_title">Ses</string>
   <string name="pluginAudio_entryNone">Hiçbiri (ses devre dışı)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Mupen64Plus Android portu, Hacktarux tarafından, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Girdi</string>
   <string name="pluginInput_entryNone">Hiçbirit</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Gerçeklik Sinyali İşlemcisi (RSP)</string>
   <string name="pluginRsp_entryNone">Hiçbiri (RSP devre dışı)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (sessiz işleme, Hactarux tarafından hız hacki, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Mupen64Plus Android portu, Hacktarux tarafından, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (sessiz işleme, Hacktarux tarafından hız hacki, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Öykünüm çekirdeği</string>
-  <string name="pluginCore_entryV110">core, v1.10 (Mupen64Plus Android portu, Hactarux tarafından, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_entryV110">core, v1.10 (Mupen64Plus Android portu, Hacktarux tarafından, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="r4300Emulator_title">R4300 Öykünücüsü</string>
   <string name="r4300Emulator_entryPureInterpreter">Saf yorumlayıcı</string>
   <string name="r4300Emulator_entryCachedInterpreter">Önbellekli yorumlayıcı</string>
@@ -264,7 +280,6 @@
   <string name="changeLog_dialogTitle">Değişiklik kaydı</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">dosya adı</string>
-  <string name="hintSetSpeed">10 ile 300 arası hız</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Başlatılıyor</string>
   <string name="assetExtractor_progress">%1$.0f%% tamamlandı: %2$s</string>
@@ -277,7 +292,6 @@
   <string name="cheatNotes_title">Notlar</string>
   <string name="cheatNotes_none">(bu hile için notlar mevcut değil)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Doku paketi seç (ZIP biçimi)</string>
   <string name="pathHiResTexturesTask_title">Dokular çıkartılıyor</string>
   <string name="pathHiResTexturesTask_message">Lütfen sabırlı olun. Bu işlem biraz zaman alabilir.</string>
   <string name="pathHiResTexturesTask_errorMessage">Doku çıkartma sorunu!</string>
@@ -315,8 +329,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <!--capitalize since trademark-->
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_reset">Sıfırla</string>
   <string name="inputMapActivity_pause">Duraklat</string>
   <string name="inputMapActivity_stop">Durdur</string>

@@ -11,6 +11,28 @@
   <string name="menuItem_fileSave">Guardar a archivo…</string>
   <string name="menuItem_fileLoad">Cargar desde archivo…</string>
   <string name="menuItem_setSpeed">Velocidad del juego</string>
+  <string name="menuItem_paks">Controller Paks</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Jugador 1: Vacío</string>
+  <string name="menuItem_pak1_mem">Jugador 1: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Jugador 1:  Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Jugador 2: Vacío</string>
+  <string name="menuItem_pak2_mem">Jugador 2: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Jugador 2: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Jugador 3: Vacío</string>
+  <string name="menuItem_pak3_mem">Jugador 3: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Jugador 3: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Jugador 4: Vacío</string>
+  <string name="menuItem_pak4_mem">Jugador 4: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Jugador 4: Rumble Pak</string>
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Cambiar IME</string>
   <string name="menuItem_exit">Salir</string>
   <!--Input Mapping Activity-->
@@ -19,6 +41,7 @@
   <string name="menuItem_load">Cargar…</string>
   <string name="menuItem_save">Guardar…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">Adaptador USB de N64</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
@@ -153,7 +176,11 @@
   <string name="audioSwapChannels_title">Intercambiar canales de audio</string>
   <string name="audioSwapChannels_summary">Intercambia los canales de audio izquierdo y derecho</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Mantener botones automaticamente</string>
   <string name="touchscreenAutoHold_entryDisabled">Deshabilitado</string>
+  <string name="touchscreenAutoHold_entryLongPress">Al mantener apretado</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Al deslizar</string>
+  <string name="touchscreenAutoHoldables_title">Botones mantenibles</string>
   <string name="touchscreenRefresh_title">Animación del joystick</string>
   <string name="touchscreenRefresh_entryNever">Nunca</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
@@ -162,11 +189,6 @@
   <string name="touchscreenLayout_entryAnalog">Analógica (por roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (por roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Personalizado (véase http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Tamaño de la pantalla</string>
-  <string name="touchscreenSize_entryTiny">Diminuta</string>
-  <string name="touchscreenSize_entrySmall">Pequeña</string>
-  <string name="touchscreenSize_entryNormal">Normal</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Disposición de botones en touchpad</string>
   <string name="touchpadLayout_entryDefault">Pad izquierdo: Control analógico; Pad derecho: Botones C</string>
   <string name="touchpadLayout_entryReverse">Pad izquierdo: Botones C; Pad derecho: Control analógico</string>
@@ -175,6 +197,10 @@
   <string name="videoOrientation_entryReverseLandscape">Paisaje invertido</string>
   <string name="videoOrientation_entryPortrait">Retrato</string>
   <string name="videoOrientation_entryReversePortrait">Retrato invertido</string>
+  <string name="videoPosition_title">Posicion de pantalla en modo retrato</string>
+  <string name="videoPosition_entryBottom">Abajo</string>
+  <string name="videoPosition_entryMiddle">En medio</string>
+  <string name="videoPosition_entryTop">Arriba</string>
   <string name="videoFpsRefresh_title">Mostrar velocidad de cuadros</string>
   <string name="videoFpsRefresh_entryNever">Nunca</string>
   <string name="videoFpsRefresh_entryOccasionally">Ocasionalmente</string>
@@ -199,6 +225,20 @@
   <string name="gles2N64Frameskip_entryExactly3">Exactamente 3 cuadros</string>
   <string name="gles2N64Frameskip_entryExactly4">Exactamente 4 cuadros</string>
   <string name="gles2N64Frameskip_entryExactly5">Exactamente 5 cuadros</string>
+  <string name="gles2RiceMipmapping_title">Mapeo de MIPs</string>
+  <string name="gles2RiceMipmapping_entryNone">Ninguno</string>
+  <string name="gles2RiceMipmapping_entryNearest">Cercano</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Bilineal</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Trilineal</string>
+  <string name="gles2RiceTextureEnhancement_title">Aumento de calidad de texturas</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Ninguna</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Escala 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x Sal</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Agudo</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Mas agudo</string>
   <string name="audioResampleAlg_title">Algoritmo de remuestreo</string>
   <string name="audioResampleAlg_entryTrivial">Trivial</string>
   <string name="audioResampleAlg_entryLinear">Interpolación lineal</string>
@@ -212,16 +252,16 @@
   <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (port GLES2 de Rice Video para m64p v1.99.5 por Rice, Kris (Metricity))</string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Ninguno (audio deshabilitado)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (port a Android de Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Ninguno (dispositivos de entrada deshabilitados)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Ninguno (RSP deshabilitado)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sin procesamiento de audio, hack de velocidad por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (port a Android de Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Sin procesamiento de audio, hack de velocidad por Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Núcleo de emulación</string>
-  <string name="pluginCore_entryV110">core, v1.10 (port a Android de Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_entryV110">core, v1.10 (port a Android de Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intérprete en caché</string>
@@ -240,6 +280,7 @@
   <string name="acraUserEmail_summary">Tu nombre de usuario en paulscode.com (opcional)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparencia de botones en la pantalla táctil</string>
+  <string name="videoActionBarTransparency_title">Opacidad de la barra de acciones</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -278,7 +319,6 @@
   <string name="changeLog_dialogTitle">Registro de cambios</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nombre de archivo</string>
-  <string name="hintSetSpeed">velocidad entre 10 y 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Inicializando</string>
   <string name="assetExtractor_progress">%1$.0f%% completado: %2$s</string>
@@ -292,7 +332,6 @@
   <string name="cheatNotes_title">Notas</string>
   <string name="cheatNotes_none">(no hay notas disponibles para este cheat)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Selecciona un paquete de texturas (en formato ZIP)</string>
   <string name="pathHiResTexturesTask_title">Extrayendo texturas</string>
   <string name="pathHiResTexturesTask_message">Por favor, sé paciente. Este proceso puede tomar algo de tiempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">¡Error al extraer texturas!</string>
@@ -307,6 +346,7 @@
   <string name="playerMapPreference_popupMessage">Jugador %1$d, presiona un botón o mueve el stick en tu mando…\n\nDispositivos actuales:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Desasignar</string>
   <string name="playerMapPreference_button">Jugador %1$d\n\n%2$s</string>
+  <string name="playerMapPreference_reminder">Recordarme cuando los jugadores no están asignados</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupMessage">Presiona un botón, tecla o joystick a asignar…\n\nAsignaciones actuales:\n%1$s</string>
   <string name="inputMapActivity_popupUnmap">Desasignar</string>
@@ -331,10 +371,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <string name="inputMapActivity_rumble">Rumble Pak</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion Pak</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Incrementar slot</string>
   <string name="inputMapActivity_reset">Reiniciar</string>
   <string name="inputMapActivity_pause">Pausa</string>

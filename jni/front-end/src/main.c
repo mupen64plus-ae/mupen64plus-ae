@@ -33,8 +33,12 @@
 // The mac version of SDL requires inclusion of SDL_main in the executable
 #ifdef __APPLE__
 	 #include <SDL_main.h>
-#elif defined (ANDROID)
+#endif
+
+#ifdef ANDROID
 #include <SDL.h>
+#include <android/log.h>
+#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "front_end", __VA_ARGS__)
 #endif
 
 #include "cheat.h"
@@ -45,9 +49,9 @@
 #include "compare_core.h"
 #include "osal_preproc.h"
 
+#ifdef PAULSCODE
 #include <jni.h>
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "front_end", __VA_ARGS__)
+#endif
 
 /* Version number for UI-Console config section parameters */
 #define CONFIG_PARAM_VERSION     1.00
@@ -78,9 +82,9 @@ static int   l_CoreCompareMode = 0;      // 0 = disable, 1 = send, 2 = receive
 static eCheatMode l_CheatMode = CHEAT_DISABLE;
 static char      *l_CheatNumList = NULL;
 
+#ifdef PAULSCODE
 static int do_Start = 1;
 
-// paulscode, added for Android
 static void swap_rom(unsigned char* localrom, int loadlength)
 {
     unsigned char temp;
@@ -136,19 +140,32 @@ char *trim(char *str)
     return str;
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_pauseEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_frameAdvance(
+                                    JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand) ( M64CMD_ADVANCE_FRAME, 0, NULL );
+}
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_gameShark(
+                                    JNIEnv* env, jclass cls, jboolean pressed)
+{
+    int p = 0;
+    if( pressed == JNI_TRUE )
+        p = 1;
+    (*CoreDoCommand) ( M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK,  &p );
+}
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_pauseEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_PAUSE, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_resumeEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_resumeEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_RESUME, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_resetEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_resetEmulator(
                                     JNIEnv* env, jclass cls)
 {
     // (*CoreDoCommand) ( M64CMD_RESET, 0, NULL );
@@ -156,36 +173,36 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_resetE
     (*CoreDoCommand) ( M64CMD_STOP, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stopEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stopEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STOP, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSlotEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSetSlotEmulator(
                                     JNIEnv* env, jclass cls, jint slotID )
 {
     (*CoreDoCommand) ( M64CMD_STATE_SET_SLOT, (int) slotID, NULL );
 }
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSaveEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSaveEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STATE_SAVE, 1, NULL );
 }
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateLoadEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateLoadEmulator(
                                     JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand) ( M64CMD_STATE_LOAD, 0, NULL );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_fileSaveEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_fileSaveEmulator(
                                     JNIEnv* env, jclass cls, jstring filename )
 {
     const char *nativeString = (*env)->GetStringUTFChars( env, filename, 0 );
     (*CoreDoCommand) ( M64CMD_STATE_SAVE, 1, (void *) nativeString );
     (*env)->ReleaseStringUTFChars( env, filename, nativeString );
 }
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_fileLoadEmulator(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_fileLoadEmulator(
                                     JNIEnv* env, jclass cls, jstring filename )
 {
     const char *nativeString = (*env)->GetStringUTFChars( env, filename, 0 );
@@ -193,7 +210,7 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_fileLo
     (*env)->ReleaseStringUTFChars( env, filename, nativeString );
 }
 
-JNIEXPORT jint JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateEmulator(
+JNIEXPORT jint JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateEmulator(
                                     JNIEnv* env, jclass cls)
 {
     int state = 0;
@@ -209,7 +226,7 @@ JNIEXPORT jint JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateE
 }
 
 static char strBuff[1024];
-JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderName(
+JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_getHeaderName(
                                        JNIEnv* env, jclass cls, jstring jFilename )
 {
     const char *nativeS = (*env)->GetStringUTFChars( env, jFilename, 0 );
@@ -219,7 +236,7 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_get
     FILE *fPtr = fopen( strBuff, "rb" );
     if( fPtr == NULL )
     {
-        printf( "Error: couldn't open ROM file '%s' for reading.\n", strBuff );
+        DebugMessage(M64MSG_ERROR, "couldn't open ROM file '%s' for reading.\n", strBuff );
         return NULL;
     }
 
@@ -227,14 +244,14 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_get
 
     if( hdr == NULL )
     {
-        printf( "Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
+        DebugMessage(M64MSG_ERROR, "couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
                 sizeof( m64p_rom_header ), strBuff );
         fclose(fPtr);
         return NULL;
     }
     else if( fread( hdr, 1, sizeof( m64p_rom_header ), fPtr ) != sizeof( m64p_rom_header ) )
     {
-        printf( "Error: couldn't read %li bytes from ROM image file '%s'.\n",
+        DebugMessage(M64MSG_ERROR, "couldn't read %li bytes from ROM image file '%s'.\n",
                 sizeof( m64p_rom_header ), strBuff );
         free( hdr );
         fclose( fPtr );
@@ -250,7 +267,7 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_get
 
     return (*env)->NewStringUTF( env, strBuff );
 }
-JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_getHeaderCRC(
+JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_getHeaderCRC(
                                        JNIEnv* env, jclass cls, jstring jFilename )
 {
     const char *nativeS = (*env)->GetStringUTFChars( env, jFilename, 0 );
@@ -260,7 +277,7 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_get
     FILE *fPtr = fopen( strBuff, "rb" );
     if( fPtr == NULL )
     {
-        printf( "Error: couldn't open ROM file '%s' for reading.\n", strBuff );
+        DebugMessage(M64MSG_ERROR, "couldn't open ROM file '%s' for reading.\n", strBuff );
         return NULL;
     }
 
@@ -268,14 +285,14 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_get
 
     if( hdr == NULL )
     {
-        printf( "Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
+        DebugMessage(M64MSG_ERROR, "couldn't allocate %li-byte buffer for ROM header from file '%s'.\n",
                 sizeof( m64p_rom_header ), strBuff );
         fclose(fPtr);
         return NULL;
     }
     else if( fread( hdr, 1, sizeof( m64p_rom_header ), fPtr ) != sizeof( m64p_rom_header ) )
     {
-        printf( "Error: couldn't read %li bytes from ROM image file '%s'.\n",
+        DebugMessage(M64MSG_ERROR, "couldn't read %li bytes from ROM image file '%s'.\n",
                 sizeof( m64p_rom_header ), strBuff );
         free( hdr );
         fclose( fPtr );
@@ -292,13 +309,13 @@ JNIEXPORT jstring JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_get
     return (*env)->NewStringUTF( env, strBuff );
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_NativeMethods_stateSetSpeed(
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSetSpeed(
                                     JNIEnv* env, jclass cls, jint percent )
 {
 	int speed_factor = (int) percent;
     (*CoreDoCommand) ( M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR,  &speed_factor);
 }
-// end Android
+#endif // PAULSCODE
  
 /*********************************************************************************************************
  *  Callback functions from the core
@@ -319,11 +336,25 @@ void DebugMessage(int level, const char *message, ...)
 
 void DebugCallback(void *Context, int level, const char *message)
 {
+#ifdef ANDROID
     if (level == M64MSG_ERROR)
-//        printf("%s Error: %s\n", (const char *) Context, message);
-    {
         __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Error: %s\n", message);
+    else if (level == M64MSG_WARNING)
+        __android_log_print(ANDROID_LOG_WARN, (const char *) Context, "Warning: %s\n", message);
+    else if (level == M64MSG_INFO)
+        __android_log_print(ANDROID_LOG_INFO, (const char *) Context, "Info: %s\n", message);
+    else if (level == M64MSG_STATUS)
+        __android_log_print(ANDROID_LOG_DEBUG, (const char *) Context, "Status: %s\n", message);
+    else if (level == M64MSG_VERBOSE)
+    {
+        if (g_Verbose)
+            __android_log_print(ANDROID_LOG_VERBOSE, (const char *) Context, "%s\n", message);
     }
+    else
+        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Unknown: %s\n", message);
+#else
+    if (level == M64MSG_ERROR)
+        printf("%s Error: %s\n", (const char *) Context, message);
     else if (level == M64MSG_WARNING)
         printf("%s Warning: %s\n", (const char *) Context, message);
     else if (level == M64MSG_INFO)
@@ -337,6 +368,7 @@ void DebugCallback(void *Context, int level, const char *message)
     }
     else
         printf("%s Unknown: %s\n", (const char *) Context, message);
+#endif
 }
 
 static void FrameCallback(unsigned int FrameIndex)
@@ -359,6 +391,8 @@ static void FrameCallback(unsigned int FrameIndex)
         }
     }
 }
+
+#ifdef PAULSCODE
 void StateCallback( void *Context, m64p_core_param ParamChanged, int NewValue )
 {
     /*----ParamChanged-----------------
@@ -386,6 +420,7 @@ void StateCallback( void *Context, m64p_core_param ParamChanged, int NewValue )
     if( ParamChanged == M64CORE_EMU_STATE || ParamChanged == M64CORE_STATE_SAVECOMPLETE || ParamChanged == M64CORE_STATE_LOADCOMPLETE )
         Android_JNI_State_Callback( ParamChanged, NewValue );
 }
+#endif
 
 /*********************************************************************************************************
  *  Configuration handling
@@ -445,10 +480,17 @@ static m64p_error OpenConfigurationHandles(void)
     /* Set default values for my Config parameters */
     (*ConfigSetDefaultFloat)(l_ConfigUI, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.");
     (*ConfigSetDefaultString)(l_ConfigUI, "PluginDir", OSAL_CURRENT_DIR, "Directory in which to search for plugins");
+    #ifdef PAULSCODE
     (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "libgles2n64" OSAL_DLL_EXTENSION, "Filename of video plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "libaudio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "libinput-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "librsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
+    #else
+    (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "mupen64plus-video-rice" OSAL_DLL_EXTENSION, "Filename of video plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "mupen64plus-audio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "mupen64plus-input-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
+    (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "mupen64plus-rsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
+    #endif
 
     if (bSaveConfig && ConfigSaveSection != NULL) /* ConfigSaveSection was added in Config API v2.1.0 */
         (*ConfigSaveSection)("UI-Console");
@@ -526,7 +568,7 @@ static void printUsage(const char *progname)
 
 static int SetConfigParameter(const char *ParamSpec)
 {
-    char *ParsedString, *VarName, *VarValue;
+    char *ParsedString, *VarName, *VarValue=NULL;
     m64p_handle ConfigSection;
     m64p_type VarType;
     m64p_error rval;
@@ -842,17 +884,19 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 int main(int argc, char *argv[])
 {
     int i;
+    #ifdef PAULSCODE
     char *appHomePath = (char *) Android_JNI_GetDataDir();
     if( chdir( appHomePath ) != 0 )
     {
-        __android_log_print(ANDROID_LOG_ERROR, "front-end", "Unable to enter Android data folder '%s' (required for config read/write functions)", appHomePath );
+        DebugMessage(M64MSG_ERROR, "Unable to enter Android data folder '%s' (required for config read/write functions)", appHomePath);
         return 2;
     }
-    __android_log_print( ANDROID_LOG_VERBOSE, "front-end", "Using Android data folder '%s' for config read/write functions", appHomePath );
+    DebugMessage(M64MSG_VERBOSE, "Using Android data folder '%s' for config read/write functions", appHomePath);
     setenv( "HOME", appHomePath, 1 );
     setenv( "XDG_CONFIG_HOME", appHomePath, 1 );
     setenv( "XDG_DATA_HOME", appHomePath, 1 );
     setenv( "XDG_CACHE_HOME", appHomePath, 1 );
+    #endif
 
     printf(" __  __                         __   _  _   ____  _             \n");  
     printf("|  \\/  |_   _ _ __   ___ _ __  / /_ | || | |  _ \\| |_   _ ___ \n");
@@ -865,25 +909,31 @@ int main(int argc, char *argv[])
     /* bootstrap some special parameters from the command line */
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
     {
-        __android_log_print(ANDROID_LOG_ERROR, "front-end", "ParseCommandLineInitial not 0, returning 1.\n");
+        DebugMessage(M64MSG_ERROR, "ParseCommandLineInitial not 0, returning 1.\n");
         return 1;
     }
 
     /* load the Mupen64Plus core library */
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)
     {
-        __android_log_print(ANDROID_LOG_ERROR, "front-end", "AttachCoreLib unsuccessful, returning 2.\n");
+        DebugMessage(M64MSG_ERROR, "AttachCoreLib unsuccessful, returning 2.\n");
         return 2;
     }
 
+    #ifdef PAULSCODE
     // paulscode, hack to allow configuration file to be in home directory
     if( l_ConfigDirPath == NULL )
     {
         l_ConfigDirPath = appHomePath;
     }
+    #endif
 
     /* start the Mupen64Plus core library, load the configuration file */
+    #ifdef PAULSCODE
     m64p_error rval = (*CoreStartup)( CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, StateCallback );
+    #else
+    m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, NULL);
+    #endif
     if (rval != M64ERR_SUCCESS)
     {
         DebugMessage(M64MSG_ERROR, "couldn't start Mupen64Plus core library.");
@@ -1010,13 +1060,17 @@ int main(int argc, char *argv[])
         }
     }
 
+    /* run the game */
+    #ifdef PAULSCODE
     // paulscode: workaround for broken M64CMD_RESET.  Set do_Start = 1 before M64CMD_STOP to reset the emulator.
     while( do_Start )
     {
         do_Start = 0;
-        /* run the game */
         (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
     }
+    #else
+    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+    #endif
 
     /* detach plugins from core and unload them */
     for (i = 0; i < 4; i++)

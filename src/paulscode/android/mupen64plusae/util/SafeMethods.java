@@ -48,7 +48,7 @@ public class SafeMethods
         try
         {
             // Convert to boolean
-            return Boolean.valueOf( val );
+            return Boolean.parseBoolean( val );
         }
         catch( NumberFormatException nfe )
         {
@@ -72,7 +72,7 @@ public class SafeMethods
         try
         {
             // Convert to integer
-            return Integer.valueOf( val );
+            return Integer.parseInt( val );
         }
         catch( NumberFormatException nfe )
         {
@@ -96,7 +96,7 @@ public class SafeMethods
         try
         {
             // Convert to float
-            return Float.valueOf( val );
+            return Float.parseFloat( val );
         }
         catch( NumberFormatException nfe )
         {

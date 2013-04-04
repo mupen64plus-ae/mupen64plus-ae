@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2002-2009 Rice1964
+Copyright (C) 2002 Rice1964
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,14 +17,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include "OGLPlatform.h"
+#include "osal_opengl.h"
 #include "OGLDebug.h"
 #include "FrameBuffer.h"
 #include "Render.h"
 
 extern uObjMtxReal gObjMtxReal;
 extern Matrix g_MtxReal;
-extern Matrix gD3DObjOffset;
+
 //========================================================================
 
 void CRender::LoadFrameBuffer(bool useVIreg, uint32 left, uint32 top, uint32 width, uint32 height)
@@ -74,8 +74,8 @@ void CRender::LoadFrameBuffer(bool useVIreg, uint32 left, uint32 top, uint32 wid
             gti.LeftToLoad      = 0;
             gti.TopToLoad       = 0;
 
-            gti.WidthToCreate   = g_CI.dwWidth;
-            gti.HeightToCreate  = g_CI.dwWidth*3/4;
+            gti.WidthToCreate       = g_CI.dwWidth;
+            gti.HeightToCreate      = g_CI.dwWidth*3/4;
         }
         else
         {
@@ -88,12 +88,11 @@ void CRender::LoadFrameBuffer(bool useVIreg, uint32 left, uint32 top, uint32 wid
 
         if( gti.Size == TXT_SIZE_4b )
         {
-            gti.Pitch   = g_CI.dwWidth >> 1;
+            gti.Pitch = g_CI.dwWidth >> 1;
         }
         else
         {
-            gti.Pitch   = g_CI.dwWidth << (gti.Size-1);
-
+            gti.Pitch = g_CI.dwWidth << (gti.Size-1);
         }
     }
 
@@ -130,12 +129,12 @@ void CRender::LoadTextureFromMemory(void *buf, uint32 left, uint32 top, uint32 w
     gti.Palette = 0;
     gti.TLutFmt = TLUT_FMT_RGBA16;  //RGBA16
     gti.PalAddress = 0;
-    gti.bSwapped    = FALSE;
+    gti.bSwapped = FALSE;
     gti.Address = 0;
-    gti.LeftToLoad      = 0;
-    gti.TopToLoad       = 0;
-    gti.WidthToCreate       = width;
-    gti.HeightToCreate      = height;
+    gti.LeftToLoad = 0;
+    gti.TopToLoad = 0;
+    gti.WidthToCreate = width;
+    gti.HeightToCreate = height;
 
     gti.Pitch   = pitch;
 
@@ -163,10 +162,6 @@ void CRender::LoadTextureFromMemory(void *buf, uint32 left, uint32 top, uint32 w
     }
     SetCurrentTexture( 0, pEntry->pTexture, width, height, pEntry);
 }
-
-// implementation of ucode with same name (e.g. opcode 0x0A of ucode map 5)
-// this is an high-level implementation for loading static backgrounds
-// It is rarely used, but Zelda, a quite popular game is using it.
 
 void CRender::LoadObjBGCopy(uObjBg &info)
 {
@@ -210,9 +205,7 @@ void CRender::LoadObjBGCopy(uObjBg &info)
     gti.WidthToLoad = gti.WidthToCreate;
     gti.pPhysicalAddress = ((uint8*)g_pRDRAMu32)+gti.Address;
     gti.tileNo = -1;
-    // get the original texture
     TxtrCacheEntry *pEntry = gTextureManager.GetTexture(&gti, false);
-    // and push it to texture memory
     SetCurrentTexture(0,pEntry);
 
     DEBUGGER_IF_DUMP((pauseAtNext && (eventToPause == NEXT_OBJ_TXT_CMD||eventToPause == NEXT_FLUSH_TRI||eventToPause == NEXT_OBJ_BG)),
@@ -762,16 +755,16 @@ void CRender::DrawSprite(uObjTxSprite &sprite, bool rectR)  //Without Ratation
 
         x0 = gObjMtxReal.X + objX/gObjMtxReal.BaseScaleX;
         y0 = gObjMtxReal.Y + objY/gObjMtxReal.BaseScaleY;
-        x1 = gObjMtxReal.X + (objX + width / scaleW) / gObjMtxReal.BaseScaleX - 1;
-        y1 = gObjMtxReal.Y + (objY + high / scaleH) / gObjMtxReal.BaseScaleY - 1;
+        x1 = gObjMtxReal.X + (objX + width / scaleW) / gObjMtxReal.BaseScaleX;
+        y1 = gObjMtxReal.Y + (objY + high / scaleH) / gObjMtxReal.BaseScaleY;
     }
     else
     {
         // (objX, objY) - ( objX+imageW/scaleW-1, objY+imageH/scaleH-1)
         x0 = objX;
         y0 = objY;
-        x1 = objX + width / scaleW - 1;
-        y1 = objY + high / scaleH - 1;
+        x1 = objX + width / scaleW;
+        y1 = objY + high / scaleH;
 
         if( (sprite.sprite.imageFlags&1) ) // flipX
         {

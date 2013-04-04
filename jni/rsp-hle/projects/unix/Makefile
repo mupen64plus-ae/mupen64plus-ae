@@ -242,6 +242,8 @@ OBJDIR = _obj$(POSTFIX)
 # list of source files to compile
 SOURCE = \
 	$(SRCDIR)/main.c \
+	$(SRCDIR)/alist.c \
+	$(SRCDIR)/cicx105.c \
 	$(SRCDIR)/jpeg.c \
 	$(SRCDIR)/ucode3.cpp \
 	$(SRCDIR)/ucode2.cpp \
@@ -302,9 +304,9 @@ CFLAGS += -MD
 
 CXXFLAGS += $(CFLAGS)
 ifeq ($(LTO), 1)
-  CFLAGS += -flto -ffunction-sections -fdata-sections
-  CXXFLAGS += -flto -ffunction-sections -fdata-sections
-  LDFLAGS += -fuse-linker-plugin -Wl,--gc-sections $(CXXFLAGS)
+  CFLAGS += -flto
+  CXXFLAGS += -flto
+  LDFLAGS += -fuse-linker-plugin $(CXXFLAGS)
 endif
 
 # standard build rules

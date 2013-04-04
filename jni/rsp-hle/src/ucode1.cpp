@@ -24,9 +24,8 @@
 
 extern "C" {
   #include "hle.h"
+  #include "alist_internal.h"
 }
-
-extern "C" void (*ABI1[])(void);
 
 //#include "rsp.h"
 //#define SAFE_MEMORY
@@ -95,7 +94,7 @@ Address/Range       Description
     #define MEMMASK 0x3FFFFF
 #endif
 
-static void SPNOOP (void) {
+static void SPNOOP (u32 inst1, u32 inst2) {
     //MessageBox (NULL, "Unknown Audio Command in ABI 1", "Audio HLE Error", MB_OK);
 }
 
@@ -124,7 +123,7 @@ u8 BufferSpace[0x10000];
 short hleMixerWorkArea[256];
 u16 adpcmtable[0x88];
 
-u16 ResampleLUT [0x200] = {
+extern const u16 ResampleLUT [0x200] = {
     0x0C39, 0x66AD, 0x0D46, 0xFFDF, 0x0B39, 0x6696, 0x0E5F, 0xFFD8,
     0x0A44, 0x6669, 0x0F83, 0xFFD0, 0x095A, 0x6626, 0x10B4, 0xFFC8,
     0x087D, 0x65CD, 0x11F0, 0xFFBF, 0x07AB, 0x655E, 0x1338, 0xFFB6,
@@ -159,7 +158,7 @@ u16 ResampleLUT [0x200] = {
     0xFFD8, 0x0E5F, 0x6696, 0x0B39, 0xFFDF, 0x0D46, 0x66AD, 0x0C39
 };
 
-static void CLEARBUFF (void) {
+static void CLEARBUFF (u32 inst1, u32 inst2) {
     u32 addr = (u32)(inst1 & 0xffff);
     u32 count = (u32)(inst2 & 0xffff);
     addr &= 0xFFFC;
@@ -168,7 +167,7 @@ static void CLEARBUFF (void) {
 
 //FILE *dfile = fopen ("d:\\envmix.txt", "wt");
 
-static void ENVMIXER (void) {
+static void ENVMIXER (u32 inst1, u32 inst2) {
     //static int envmixcnt = 0;
     u8 flags = (u8)((inst1 >> 16) & 0xff);
     u32 addy = (inst2 & 0xFFFFFF);// + SEGMENTS[(inst2>>24)&0xf];
@@ -393,7 +392,7 @@ static void ENVMIXER (void) {
     memcpy(rsp.RDRAM+addy, (u8 *)hleMixerWorkArea,80);
 }
 
-static void RESAMPLE (void) {
+static void RESAMPLE (u32 inst1, u32 inst2) {
     unsigned char Flags=(u8)((inst1>>16)&0xff);
     unsigned int Pitch=((inst1&0xffff))<<1;
     u32 addy = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
@@ -469,7 +468,7 @@ static void RESAMPLE (void) {
     *(u16 *)(rsp.RDRAM+addy+10) = Accum;
 }
 
-static void SETVOL (void) {
+static void SETVOL (u32 inst1, u32 inst2) {
 // Might be better to unpack these depending on the flags...
     u8 flags = (u8)((inst1 >> 16) & 0xff);
     u16 vol = (s16)(inst1 & 0xffff);
@@ -514,15 +513,15 @@ static void SETVOL (void) {
     }
 }
 
-static void UNKNOWN (void) {}
+static void UNKNOWN (u32 inst1, u32 inst2) {}
 
-static void SETLOOP (void) {
+static void SETLOOP (u32 inst1, u32 inst2) {
     loopval = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
     //VolTrg_Left  = (s16)(loopval>>16);        // m_LeftVol
     //VolRamp_Left = (s16)(loopval);    // m_LeftVolTarget
 }
 
-static void ADPCM (void) { // Work in progress! :)
+static void ADPCM (u32 inst1, u32 inst2) { // Work in progress! :)
     unsigned char Flags=(u8)(inst1>>16)&0xff;
     //unsigned short Gain=(u16)(inst1&0xffff);
     unsigned int Address=(inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
@@ -767,7 +766,7 @@ static void ADPCM (void) { // Work in progress! :)
     memcpy(&rsp.RDRAM[Address],out,32);
 }
 
-static void LOADBUFF (void) { // memcpy causes static... endianess issue :(
+static void LOADBUFF (u32 inst1, u32 inst2) { // memcpy causes static... endianess issue :(
     u32 v0;
     //u32 cnt;
     if (AudioCount == 0)
@@ -776,7 +775,7 @@ static void LOADBUFF (void) { // memcpy causes static... endianess issue :(
     memcpy (BufferSpace+(AudioInBuffer&0xFFFC), rsp.RDRAM+v0, (AudioCount+3)&0xFFFC);
 }
 
-static void SAVEBUFF (void) { // memcpy causes static... endianess issue :(
+static void SAVEBUFF (u32 inst1, u32 inst2) { // memcpy causes static... endianess issue :(
     u32 v0;
     //u32 cnt;
     if (AudioCount == 0)
@@ -785,7 +784,7 @@ static void SAVEBUFF (void) { // memcpy causes static... endianess issue :(
     memcpy (rsp.RDRAM+v0, BufferSpace+(AudioOutBuffer&0xFFFC), (AudioCount+3)&0xFFFC);
 }
 
-static void SETBUFF (void) { // Should work ;-)
+static void SETBUFF (u32 inst1, u32 inst2) { // Should work ;-)
     if ((inst1 >> 0x10) & 0x8) { // A_AUX - Auxillary Sound Buffer Settings
         AudioAuxA       = u16(inst1);
         AudioAuxC       = u16((inst2 >> 0x10));
@@ -797,7 +796,7 @@ static void SETBUFF (void) { // Should work ;-)
     }
 }
 
-static void DMEMMOVE (void) { // Doesn't sound just right?... will fix when HLE is ready - 03-11-01
+static void DMEMMOVE (u32 inst1, u32 inst2) { // Doesn't sound just right?... will fix when HLE is ready - 03-11-01
     u32 v0, v1;
     u32 cnt;
     if ((inst2 & 0xffff)==0)
@@ -816,7 +815,7 @@ static void DMEMMOVE (void) { // Doesn't sound just right?... will fix when HLE 
     }
 }
 
-static void LOADADPCM (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
+static void LOADADPCM (u32 inst1, u32 inst2) { // Loads an ADPCM table - Works 100% Now 03-13-01
     u32 v0;
     v0 = (inst2 & 0xffffff);// + SEGMENTS[(inst2>>24)&0xf];
 /*  if (v0 > (1024*1024*8))
@@ -841,7 +840,7 @@ static void LOADADPCM (void) { // Loads an ADPCM table - Works 100% Now 03-13-01
 }
 
 
-static void INTERLEAVE (void) { // Works... - 3-11-01
+static void INTERLEAVE (u32 inst1, u32 inst2) { // Works... - 3-11-01
     u32 inL, inR;
     u16 *outbuff = (u16 *)(AudioOutBuffer+BufferSpace);
     u16 *inSrcR;
@@ -875,7 +874,7 @@ static void INTERLEAVE (void) { // Works... - 3-11-01
 }
 
 
-static void MIXER (void) { // Fixed a sign issue... 03-14-01
+static void MIXER (u32 inst1, u32 inst2) { // Fixed a sign issue... 03-14-01
     u32 dmemin  = (u16)(inst2 >> 0x10);
     u32 dmemout = (u16)(inst2 & 0xFFFF);
     //u8  flags   = (u8)((inst1 >> 16) & 0xff);
@@ -910,15 +909,13 @@ static void MIXER (void) { // Fixed a sign issue... 03-14-01
 //Command: RESAMPLE - Calls:  48 - Total Time: 276354 - Avg Time:  5757.38 - Percent: 22.95%
 
 
-void (*ABI1[0x20])(void) = { // TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER
+extern "C" const acmd_callback_t ABI1[0x10] = { // TOP Performace Hogs: MIXER, RESAMPLE, ENVMIXER
     SPNOOP , ADPCM , CLEARBUFF, ENVMIXER  , LOADBUFF, RESAMPLE  , SAVEBUFF, UNKNOWN,
-    SETBUFF, SETVOL, DMEMMOVE , LOADADPCM , MIXER   , INTERLEAVE, UNKNOWN , SETLOOP,
-    SPNOOP , SPNOOP, SPNOOP   , SPNOOP    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP,
-    SPNOOP , SPNOOP, SPNOOP   , SPNOOP    , SPNOOP  , SPNOOP    , SPNOOP  , SPNOOP
+    SETBUFF, SETVOL, DMEMMOVE , LOADADPCM , MIXER   , INTERLEAVE, UNKNOWN , SETLOOP
 };
 
 /*  BACKUPS
-void MIXER (void) { // Fixed a sign issue... 03-14-01
+void MIXER (u32 inst1, u32 inst2) { // Fixed a sign issue... 03-14-01
     u16 dmemin  = (u16)(inst2 >> 0x10);
     u16 dmemout = (u16)(inst2 & 0xFFFF);
     u16 gain    = (u16)(inst1 & 0xFFFF);

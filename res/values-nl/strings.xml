@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Opslaan naar bestand</string>
   <string name="menuItem_fileLoad">Laden van bestand</string>
   <string name="menuItem_setSpeed">Spel snelheid</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Verander IME</string>
   <string name="menuItem_exit">Einde</string>
   <!--Input Mapping Activity-->
@@ -146,11 +155,6 @@
   <string name="touchscreenLayout_entryAnalog">Analoog (door roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digitaal (door roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Eigen indeling (zie http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Scherm formaat</string>
-  <string name="touchscreenSize_entryTiny">Zeer klein</string>
-  <string name="touchscreenSize_entrySmall">Klein</string>
-  <string name="touchscreenSize_entryNormal">Normaal</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Touchpad indeling</string>
   <string name="videoOrientation_title">Scherm richting</string>
   <string name="videoOrientation_entryLandscape">Landschap</string>
@@ -192,16 +196,15 @@
   <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)⏎ <small>(GLES2 versie van Rice Video voor m64p v1.99.5 door Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Geluid</string>
   <string name="pluginAudio_entryNone">Geen (geluid uitgeschakeld)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android versie van Mupen64Plus door Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Invoer</string>
   <string name="pluginInput_entryNone">Geen (invoer uitgeschakeld)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Geen (RSP uitgeschakeld)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Geen geluid verwerking, snelheid hack door Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android versie van Mupen64Plus door Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Geen geluid verwerking, snelheid hack door Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Emulatie kern</string>
-  <string name="pluginCore_entryV110">core, v1.10 (Android versie van Mupen64Plus door Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_entryV110">core, v1.10 (Android versie van Mupen64Plus door Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="r4300Emulator_title">R4300 Emulator</string>
   <string name="r4300Emulator_entryDynarec">Dynamische hercompileerder (dynarec)</string>
   <string name="navigationMode_title">Toegankelijkheid</string>
@@ -254,7 +257,6 @@
   <string name="changeLog_dialogTitle">Wijzigingsgeschiedenis</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">bestandsnaam</string>
-  <string name="hintSetSpeed">snelheid tussen 10 en 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Bezig te initialiseren</string>
   <string name="assetExtractor_progress">%1$.0f%% gedaan: %2$s</string>
@@ -268,7 +270,6 @@
   <string name="cheatNotes_title">Opmerkingen</string>
   <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Selecteer een texturen pakket (ZIP formaat)</string>
   <string name="pathHiResTexturesTask_title">Uitpakken texturen</string>
   <string name="pathHiResTexturesTask_message">Wees geduldig. Dit proces kan enige tijd duren.</string>
   <string name="pathHiResTexturesTask_errorMessage">Probleem met uitpakken texturen!</string>
@@ -307,9 +308,6 @@
   <string name="inputMapActivity_btnAL">Analoog ←</string>
   <string name="inputMapActivity_btnAD">Analoog ↓</string>
   <string name="inputMapActivity_btnAU">Analoog ↑</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Uitbreidingspakket</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Slot ophogen</string>
   <string name="inputMapActivity_reset">Herstarten</string>
   <string name="inputMapActivity_pause">Pauze</string>

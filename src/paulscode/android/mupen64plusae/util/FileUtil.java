@@ -23,6 +23,7 @@ package paulscode.android.mupen64plusae.util;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -121,7 +122,7 @@ public class FileUtil
         public boolean accept( File pathname )
         {
             return ( pathname != null ) && ( pathname.isFile() ) && ( !pathname.isHidden() )
-                    && ( pathname.getName() != null ) && ( !pathname.getName().startsWith( "." ) );
+                    && ( !pathname.getName().startsWith( "." ) );
         }
     }
     
@@ -242,6 +243,11 @@ public class FileUtil
                 
                 in.close();
                 out.close();
+            }
+            catch( FileNotFoundException fnfe )
+            {
+                Log.e("FileUtil", "FileNotFoundException in method 'copyFile': " + fnfe.getMessage());
+                return false;
             }
             catch( IOException ioe )
             {

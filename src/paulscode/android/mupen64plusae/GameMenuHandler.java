@@ -24,15 +24,18 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Vibrator;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,6 +72,8 @@ public class GameMenuHandler
     
     private AppData mAppData;
     
+    private UserPrefs mUserPrefs;
+    
     public int mSlot = 0;
     
     public boolean mCustomSpeed = false;
@@ -95,11 +100,63 @@ public class GameMenuHandler
         mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed,
                 BASELINE_SPEED_FACTOR ) );
         
-        // Get the app data after the activity has been created
+        // Get the app data and user prefs after the activity has been created
         mAppData = new AppData( mActivity );
+        mUserPrefs = new UserPrefs( mActivity );
         
         // Initialize to the last slot used
         setSlot( mAppData.getLastSlot(), false );
+        
+        // Initialize the pak menus (reverse order since some get hidden)
+        initializePakMenu( menu, 4, mUserPrefs.isPlugged4, mUserPrefs.getPakType( 4 ) );
+        initializePakMenu( menu, 3, mUserPrefs.isPlugged3, mUserPrefs.getPakType( 3 ) );
+        initializePakMenu( menu, 2, mUserPrefs.isPlugged2, mUserPrefs.getPakType( 2 ) );
+        initializePakMenu( menu, 1, mUserPrefs.isPlugged1, mUserPrefs.getPakType( 1 ) );
+    }
+    
+    @TargetApi( 11 )
+    private void initializePakMenu( Menu menu, int player, boolean isPlugged, int pakType )
+    {
+        MenuItem pakMenu = menu.findItem( R.id.menuItem_paks );
+        int playerOffset = 3 * ( player - 1 );
+        int pakIndex;
+        switch( pakType )
+        {
+            default:
+            case CoreInterface.PAK_TYPE_NONE:
+                pakIndex = 0;
+                break;
+            case CoreInterface.PAK_TYPE_MEMORY:
+                pakIndex = 1;
+                break;
+            case CoreInterface.PAK_TYPE_RUMBLE:
+                pakIndex = 2;
+                break;
+        }
+        
+        if( isPlugged )
+        {
+            // Checkmark the menu item
+            pakMenu.getSubMenu().getItem( playerOffset + pakIndex ).setChecked( true );
+            
+            // Hide rumble pad menu item if not available
+            Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+            boolean hasPhoneVibrator = AppData.IS_HONEYCOMB
+                    ? vibrator.hasVibrator()
+                    : vibrator != null;
+            boolean permitRumble = AppData.IS_JELLY_BEAN || ( player == 1 && hasPhoneVibrator );
+            if( !permitRumble )
+            {
+                pakMenu.getSubMenu().getItem( playerOffset + 2 ).setVisible( false );
+            }
+        }
+        else
+        {
+            // Hide all pak options if this controller is not plugged
+            pakMenu.getSubMenu().getItem( playerOffset + 2 ).setVisible( false );
+            pakMenu.getSubMenu().getItem( playerOffset + 1 ).setVisible( false );
+            pakMenu.getSubMenu().getItem( playerOffset + 0 ).setVisible( false );
+        }
     }
     
     public void onOptionsItemSelected( MenuItem item )
@@ -136,6 +193,42 @@ public class GameMenuHandler
             case R.id.menuItem_slot9:
                 setSlot( 9, true );
                 break;
+            case R.id.menuItem_pak1_empty:
+                setPak( 1, CoreInterface.PAK_TYPE_NONE, item );
+                break;
+            case R.id.menuItem_pak2_empty:
+                setPak( 2, CoreInterface.PAK_TYPE_NONE, item );
+                break;
+            case R.id.menuItem_pak3_empty:
+                setPak( 3, CoreInterface.PAK_TYPE_NONE, item );
+                break;
+            case R.id.menuItem_pak4_empty:
+                setPak( 4, CoreInterface.PAK_TYPE_NONE, item );
+                break;
+            case R.id.menuItem_pak1_mem:
+                setPak( 1, CoreInterface.PAK_TYPE_MEMORY, item );
+                break;
+            case R.id.menuItem_pak2_mem:
+                setPak( 2, CoreInterface.PAK_TYPE_MEMORY, item );
+                break;
+            case R.id.menuItem_pak3_mem:
+                setPak( 3, CoreInterface.PAK_TYPE_MEMORY, item );
+                break;
+            case R.id.menuItem_pak4_mem:
+                setPak( 4, CoreInterface.PAK_TYPE_MEMORY, item );
+                break;
+            case R.id.menuItem_pak1_rumble:
+                setPak( 1, CoreInterface.PAK_TYPE_RUMBLE, item );
+                break;
+            case R.id.menuItem_pak2_rumble:
+                setPak( 2, CoreInterface.PAK_TYPE_RUMBLE, item );
+                break;
+            case R.id.menuItem_pak3_rumble:
+                setPak( 3, CoreInterface.PAK_TYPE_RUMBLE, item );
+                break;
+            case R.id.menuItem_pak4_rumble:
+                setPak( 4, CoreInterface.PAK_TYPE_RUMBLE, item );
+                break;
             case R.id.menuItem_toggleSpeed:
                 toggleSpeed();
                 break;
@@ -170,7 +263,7 @@ public class GameMenuHandler
         mCustomSpeed = !mCustomSpeed;
         int speed = mCustomSpeed ? mSpeedFactor : BASELINE_SPEED_FACTOR;
         
-        NativeMethods.stateSetSpeed( speed );
+        CoreInterfaceNative.stateSetSpeed( speed );
         mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, speed ) );
     }
     
@@ -181,7 +274,7 @@ public class GameMenuHandler
         mAppData.putLastSlot( mSlot );
         
         // Set the slot in the core
-        NativeMethods.stateSetSlotEmulator( mSlot );
+        CoreInterfaceNative.stateSetSlotEmulator( mSlot );
         
         // Refresh the slot item in the top-level options menu
         if( mSlotMenuItem != null )
@@ -200,21 +293,37 @@ public class GameMenuHandler
             Notifier.showToast( mActivity, R.string.toast_usingSlot, mSlot );
     }
     
+    public void setPak( int player, int pakType, MenuItem item )
+    {
+        // Persist the value
+        mUserPrefs.putPakType( player, pakType );
+        
+        // Set the pak in the core
+        CoreInterfaceNative.setControllerConfig( player - 1, true, pakType );
+        
+        // Refresh the pak submenu
+        if( item != null )
+            item.setChecked( true );
+        
+        // Send a toast message
+        Notifier.showToast( mActivity, item.getTitle().toString() + "." );
+    }
+    
     private void saveSlot()
     {
         Notifier.showToast( mActivity, R.string.toast_savingSlot, mSlot );
-        NativeMethods.stateSaveEmulator();
+        CoreInterfaceNative.stateSaveEmulator();
     }
     
     private void loadSlot()
     {
         Notifier.showToast( mActivity, R.string.toast_loadingSlot, mSlot );
-        NativeMethods.stateLoadEmulator();
+        CoreInterfaceNative.stateLoadEmulator();
     }
     
     private void saveFileFromPrompt()
     {
-        NativeMethods.pauseEmulator();
+        CoreInterface.pauseEmulator( false );
         CharSequence title = mActivity.getText( R.string.menuItem_fileSave );
         CharSequence hint = mActivity.getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
@@ -225,14 +334,14 @@ public class GameMenuHandler
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                     saveState( text.toString() );
-                NativeMethods.resumeEmulator();
+                CoreInterface.resumeEmulator();
             }
         } );
     }
     
     private void loadFileFromPrompt()
     {
-        NativeMethods.pauseEmulator();
+        CoreInterface.pauseEmulator( false );
         CharSequence title = mActivity.getText( R.string.menuItem_fileLoad );
         File startPath = new File( mManualSaveDir );
         Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
@@ -242,7 +351,7 @@ public class GameMenuHandler
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                     loadState( file );
-                NativeMethods.resumeEmulator();
+                CoreInterface.resumeEmulator();
             }
         } );
     }
@@ -260,21 +369,21 @@ public class GameMenuHandler
                 public void onConfirm()
                 {
                     Notifier.showToast( mActivity, R.string.toast_overwritingFile, file.getName() );
-                    NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+                    CoreInterfaceNative.fileSaveEmulator( file.getAbsolutePath() );
                 }
             } );
         }
         else
         {
             Notifier.showToast( mActivity, R.string.toast_savingFile, file.getName() );
-            NativeMethods.fileSaveEmulator( file.getAbsolutePath() );
+            CoreInterfaceNative.fileSaveEmulator( file.getAbsolutePath() );
         }
     }
     
     private void loadState( File file )
     {
         Notifier.showToast( mActivity, R.string.toast_loadingFile, file.getName() );
-        NativeMethods.fileLoadEmulator( file.getAbsolutePath() );
+        CoreInterfaceNative.fileLoadEmulator( file.getAbsolutePath() );
     }
     
     private void setIme()
@@ -289,7 +398,7 @@ public class GameMenuHandler
     
     private void setSpeed()
     {
-        NativeMethods.pauseEmulator();
+        CoreInterface.pauseEmulator( false );
         
         final LayoutInflater inflater = (LayoutInflater) mActivity
                 .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -328,13 +437,13 @@ public class GameMenuHandler
                 {
                     mSpeedFactor = seek.getProgress() + MIN_SPEED_FACTOR;
                     mCustomSpeed = true;
-                    NativeMethods.stateSetSpeed( mSpeedFactor );
+                    CoreInterfaceNative.stateSetSpeed( mSpeedFactor );
                     
                     mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed,
                             mSpeedFactor ) );
                 }
                 
-                NativeMethods.resumeEmulator();
+                CoreInterface.resumeEmulator();
             }
         } ).setView( layout ).create().show();
     }
@@ -363,7 +472,7 @@ public class GameMenuHandler
                 }
             }
         } );
-        NativeMethods.fileSaveEmulator( mAutoSaveFile );
+        CoreInterfaceNative.fileSaveEmulator( mAutoSaveFile );
         // ////
     }
 }

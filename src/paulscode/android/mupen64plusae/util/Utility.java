@@ -34,48 +34,49 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import paulscode.android.mupen64plusae.NativeMethods;
+import paulscode.android.mupen64plusae.CoreInterfaceNative;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.View;
 
 /**
  * Utility class which collects a bunch of commonly used methods into one class.
  */
 public class Utility
 {
+    public static final float MINIMUM_TABLET_SIZE = 6.5f;
     /**
-     * Clamps an integer value to the limit defined by min and max.
+     * Clamps a value to the limit defined by min and max.
      * 
      * @param val The value to clamp to min and max.
      * @param min The lowest number val can be equal to.
      * @param max The largest number val can be equal to.
      * 
-     * @return If the number is lower than min, min is returned. <br/>
-     *         If the number is higher than max, max is returned.
+     * @return If the value is lower than min, min is returned. <br/>
+     *         If the value is higher than max, max is returned.
      */
-    public static int clamp( int val, int min, int max )
+    public static<T extends Comparable<? super T>> T clamp( T val, T min, T max )
     {
-        return Math.max( Math.min( val, max ), min );
-    }
-    
-    /**
-     * Clamps a float value to the limit defined by min and max.
-     * 
-     * @param val The value to clamp between min and max.
-     * @param min The lowest number val can be equal to.
-     * @param max The largest number val can be equal to.
-     * 
-     * @return If the number is lower than min, min is returned. <br/>
-     *         If the number is larger than max, max is returned.
-     */
-    public static float clamp( float val, float min, float max )
-    {
-        return Math.max( Math.min( val, max ), min );
+        final T temp;
+
+        //  val < max
+        if ( val.compareTo(max) < 0 )
+            temp = val;
+        else
+            temp = max;
+
+        // temp > min
+        if ( temp.compareTo(min) > 0 )
+            return temp;
+        else
+            return min;
     }
     
     public static Point constrainToOctagon( int dX, int dY, int halfWidth )
@@ -159,8 +160,7 @@ public class Utility
             Log.e( "Utility", "filename not specified in method 'getHeaderName'" );
             return null;
         }
-        else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase(
-                "zip" ) )
+        else if( filename.toLowerCase( Locale.US ).endsWith( ".zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
             File tmpFolder = new File( tempDir );
@@ -195,7 +195,7 @@ public class Utility
             }
             else
             {
-                String headerName = NativeMethods.getHeaderName( uzFile );
+                String headerName = CoreInterfaceNative.getHeaderName( uzFile );
                 try
                 {
                     new File( uzFile ).delete();
@@ -208,7 +208,7 @@ public class Utility
         }
         else
         {
-            return NativeMethods.getHeaderName( filename );
+            return CoreInterfaceNative.getHeaderName( filename );
         }
     }
 
@@ -230,8 +230,7 @@ public class Utility
             Log.e( "Utility", "filename not specified in method 'getHeaderCRC'" );
             return null;
         }
-        else if( filename.substring( filename.length() - 3, filename.length() ).equalsIgnoreCase(
-                "zip" ) )
+        else if( filename.toLowerCase( Locale.US ).endsWith( ".zip" ) )
         {
             // Create the tmp folder if it doesn't exist:
             File tmpFolder = new File( tempDir );
@@ -273,7 +272,7 @@ public class Utility
             }
             else
             {
-                String headerCRC = checkCRC( NativeMethods.getHeaderCRC( uzFile ) );
+                String headerCRC = checkCRC( CoreInterfaceNative.getHeaderCRC( uzFile ) );
 
                 new File( uzFile ).delete();
 
@@ -282,7 +281,7 @@ public class Utility
         }
         else
         {
-            return checkCRC( NativeMethods.getHeaderCRC( filename ) );
+            return checkCRC( CoreInterfaceNative.getHeaderCRC( filename ) );
         }
     }
 
@@ -565,7 +564,27 @@ public class Utility
         
         return newFile;
     }
-
+    
+    /**
+     * Returns display metrics for the specified view.
+     * 
+     * @param v An instance of View (must be the child of an Activity).
+     * 
+     * @return DisplayMetrics instance, or null if there was a problem.
+     */
+    public static DisplayMetrics getDisplayMetrics( View view )
+    {
+        if( view == null )
+            return null;
+        
+        Context context = view.getContext();
+        if( context == null || !( context instanceof Activity ) )
+            return null;
+        DisplayMetrics metrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
+        return metrics;
+    }
+    
     /**
      * @author Kevin Kowalewski
      * @see <a href="http://stackoverflow.com/questions/1101380/determine-if-running-on-a-rooted-device">

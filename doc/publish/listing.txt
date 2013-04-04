@@ -24,14 +24,17 @@ THIS APP DOES NOT COME WITH ROMS
 
 Mupen64Plus, Android Edition (AE) is an N64 emulator for Android. It is currently in Beta testing, which means it is a work in progress. There are still many graphical, lag, and audio problems, even on modern devices. Visit www.paulscode.com to get involved in development and testing, as well as bug-fixes and FAQs.
 
-This is the official app, which was taken down a few months ago after some of the competitors filed fake DMCA take-down notices. Trev (Keowsktech) published the app on his account for a few months while I was working out my account issues with Google. Now that my account has been restored, he will be unpublishing his branch in the near future. All future updates will be published from this account.
+In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
 
-I believe part of the reason for the delay in processing my DMCA counter claims was because of potential copyright issues related to game screenshots I had posted for the app. I've decided to use only public domain games and demos for screenshots in the future, to prevent this problem from reoccurring. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
-
-This app is licensed by the GNU GPL v2, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and he can help you get set up.
+This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
 
 XPERIA PLAY OPTIMIZED
 - Analog input from the touchpad!
+
+PERMISSIONS
+Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
+Write External Storage - The device storage is used for writing savegames and custom input profiles.
+Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
 
 GETTING STARTED
 - Transfer ROMs anywhere to your internal storage/SD card

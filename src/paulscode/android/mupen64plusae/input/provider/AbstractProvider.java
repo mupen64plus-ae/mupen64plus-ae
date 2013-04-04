@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae.input.provider;
 
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.annotation.TargetApi;
 import android.view.InputDevice;
@@ -182,7 +183,46 @@ public abstract class AbstractProvider
         if( inputCode > 0 )
         {
             if( AppData.IS_HONEYCOMB_MR1 )
-                return KeyEvent.keyCodeToString( inputCode );
+            {
+                String name = null;
+                if( inputCode != -1 && OUYAInterface.IS_OUYA_HARDWARE )
+                {
+                    if( inputCode == OUYAInterface.BUTTON_A )
+                        name = "OUYA BUTTON_A";
+                    else if( inputCode == OUYAInterface.BUTTON_DPAD_DOWN )
+                        name = "OUYA BUTTON_DPAD_DOWN";
+                    else if( inputCode == OUYAInterface.BUTTON_DPAD_LEFT )
+                        name = "OUYA BUTTON_DPAD_LEFT";
+                    else if( inputCode == OUYAInterface.BUTTON_DPAD_RIGHT )
+                        name = "OUYA BUTTON_DPAD_RIGHT";
+                    else if( inputCode == OUYAInterface.BUTTON_DPAD_UP )
+                        name = "OUYA BUTTON_DPAD_UP";
+                    else if( inputCode == OUYAInterface.BUTTON_L1 )
+                        name = "OUYA BUTTON_L1";
+                    else if( inputCode == OUYAInterface.BUTTON_L2 )
+                        name = "OUYA BUTTON_L2";
+                    else if( inputCode == OUYAInterface.BUTTON_L3 )
+                        name = "OUYA BUTTON_L3";
+                    else if( inputCode == OUYAInterface.BUTTON_MENU )
+                        name = "OUYA BUTTON_MENU";
+                    else if( inputCode == OUYAInterface.BUTTON_O )
+                        name = "OUYA BUTTON_O";
+                    else if( inputCode == OUYAInterface.BUTTON_R1 )
+                        name = "OUYA BUTTON_R1";
+                    else if( inputCode == OUYAInterface.BUTTON_R2 )
+                        name = "OUYA BUTTON_R2";
+                    else if( inputCode == OUYAInterface.BUTTON_R3 )
+                        name = "OUYA BUTTON_R3";
+                    else if( inputCode == OUYAInterface.BUTTON_U )
+                        name = "OUYA BUTTON_U";
+                    else if( inputCode == OUYAInterface.BUTTON_Y )
+                        name = "OUYA BUTTON_Y";
+                }
+                if( name == null )
+                    return KeyEvent.keyCodeToString( inputCode );
+                else
+                    return name + " (" + KeyEvent.keyCodeToString( inputCode ) + ")";
+            }
             else
                 return "KEYCODE_" + inputCode;
         }
@@ -191,7 +231,28 @@ public abstract class AbstractProvider
             int axis = inputToAxisCode( inputCode );
             String direction = inputToAxisDirection( inputCode ) ? " (+)" : " (-)";
             if( AppData.IS_HONEYCOMB_MR1 )
-                return MotionEvent.axisToString( axis ) + direction;
+            {
+                String name = null;
+                if( axis != -1 && OUYAInterface.IS_OUYA_HARDWARE )
+                {
+                    if( axis == OUYAInterface.AXIS_L2 )
+                        name = "OUYA AXIS_L2";
+                    else if( axis == OUYAInterface.AXIS_LS_X )
+                        name = "OUYA AXIS_LS_X";
+                    else if( axis == OUYAInterface.AXIS_LS_Y )
+                        name = "OUYA AXIS_LS_Y";
+                    else if( axis == OUYAInterface.AXIS_R2 )
+                        name = "OUYA AXIS_R2";
+                    else if( axis == OUYAInterface.AXIS_RS_X )
+                        name = "OUYA AXIS_RS_X";
+                    else if( axis == OUYAInterface.AXIS_RS_Y )
+                        name = "OUYA AXIS_RS_Y";
+                }
+                if( name == null )
+                    return MotionEvent.axisToString( axis ) + direction;
+                else
+                    return name + " (" + MotionEvent.axisToString( axis ) + ")" + direction;
+            }
             else
                 return "AXIS_" + axis + direction;
         }

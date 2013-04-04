@@ -22,14 +22,18 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
+import paulscode.android.mupen64plusae.CoreInterface;
+import paulscode.android.mupen64plusae.CoreInterfaceNative;
 import paulscode.android.mupen64plusae.GameMenuHandler;
-import paulscode.android.mupen64plusae.NativeMethods;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.TargetApi;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 
 /**
@@ -104,12 +108,21 @@ public class PeripheralController extends AbstractController implements
      * @see paulscode.android.mupen64plusae.input.provider.AbstractProvider.Listener#onInput(int,
      * float, int)
      */
+    @TargetApi( 16 )
     @Override
     public void onInput( int inputCode, float strength, int hardwareId )
     {
         // Process user inputs from keyboard, gamepad, etc.
         if( mPlayerMap.testHardware( hardwareId, mPlayerNumber ) )
         {
+            // Update the registered vibrator for this player
+            if( AppData.IS_JELLY_BEAN )
+            {
+                InputDevice device = InputDevice.getDevice( hardwareId );
+                if( device != null )
+                    CoreInterface.registerVibrator( mPlayerNumber, device.getVibrator() );
+            }
+            
             // Apply user changes to the controller state
             apply( inputCode, strength );
             
@@ -191,44 +204,36 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_SAVE_SLOT:
                     Log.v( "PeripheralController", "FUNC_SAVE_SLOT" );
-                    NativeMethods.stateSaveEmulator();
+                    CoreInterfaceNative.stateSaveEmulator();
                     break;
                 case InputMap.FUNC_LOAD_SLOT:
                     Log.v( "PeripheralController", "FUNC_LOAD_SLOT" );
-                    NativeMethods.stateLoadEmulator();
+                    CoreInterfaceNative.stateLoadEmulator();
                     break;
                 case InputMap.FUNC_RESET:
                     Log.v( "PeripheralController", "FUNC_RESET" );
-                    NativeMethods.resetEmulator();
-                    // TODO: NativeMethods.resetEmulator() needs some fine-tuning
+                    CoreInterfaceNative.resetEmulator();
+                    // TODO: CoreInterfaceNative.resetEmulator() needs some fine-tuning
                     break;
                 case InputMap.FUNC_STOP:
                     Log.v( "PeripheralController", "FUNC_STOP" );
-                    NativeMethods.stopEmulator();
+                    CoreInterfaceNative.stopEmulator();
                     break;
                 case InputMap.FUNC_PAUSE:
                     Log.v( "PeripheralController", "FUNC_PAUSE" );
                     if( doPause )
-                        NativeMethods.pauseEmulator();
+                        CoreInterface.pauseEmulator( false );
                     else
-                        NativeMethods.resumeEmulator();
+                        CoreInterface.resumeEmulator();
                     doPause = !doPause;
                     break;
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    NativeMethods.stateSetSpeed( 300 );
+                    CoreInterfaceNative.stateSetSpeed( 300 );
                     break;
                 case InputMap.FUNC_FRAME_ADVANCE:
                     Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
-/*****
-TODO:
-Frame advance is hard-coded into the core, without an equivalent function in the API to call from the front-end.
-Possible implementation utilizing the available M64CMD_SET_FRAME_CALLBACK instead:
-   1) Pause the emulator (utilize state change callback to ensure emulation has paused)
-   2) Register a frame callback
-   3) Start the emulator
-   4) When frame callback is called, pause the emulator
-*****/
+                    CoreInterfaceNative.frameAdvance();
                     break;
                 case InputMap.FUNC_SPEED_UP:
                     Log.v( "PeripheralController", "FUNC_SPEED_UP" );
@@ -242,11 +247,7 @@ Possible implementation utilizing the available M64CMD_SET_FRAME_CALLBACK instea
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-/*****
-TODO:
-Gameshark button emulation is hard-coded into the core, without an equivalent function in the API to call from the front-end.
-Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL_KEYUP and M64CMD_SEND_SDL_KEYDOWN?
-*****/
+                    CoreInterfaceNative.gameShark( true );
                     break;
                 case InputMap.FUNC_SIMULATE_BACK:
                     String[] back_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_BACK ) };
@@ -268,13 +269,13 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
                     if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
-                        NativeMethods.stateSetSpeed( GameMenuHandler.sInstance.mSpeedFactor );
+                        CoreInterfaceNative.stateSetSpeed( GameMenuHandler.sInstance.mSpeedFactor );
                     else
-                        NativeMethods.stateSetSpeed( 100 );
+                        CoreInterfaceNative.stateSetSpeed( 100 );
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    // TODO: Release gameshark button
+                    CoreInterfaceNative.gameShark( false );
                     break;
                 default:
                     return false;
@@ -295,6 +296,6 @@ Possible impementation without modifying the core?  Maybe inject M64CMD_SEND_SDL
         speed = Utility.clamp( speed, GameMenuHandler.MIN_SPEED_FACTOR,
                 GameMenuHandler.MAX_SPEED_FACTOR );
         
-        NativeMethods.stateSetSpeed( speed );
+        CoreInterfaceNative.stateSetSpeed( speed );
     }
 }

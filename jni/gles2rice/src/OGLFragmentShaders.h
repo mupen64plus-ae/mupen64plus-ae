@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <vector>
 
-#include "OGLPlatform.h"
+#include "osal_opengl.h"
 
 #include "OGLCombiner.h"
 #include "OGLExtCombiner.h"
@@ -54,6 +54,7 @@ public:
     bool Initialize(void);
     float m_AlphaRef;
     void UpdateFog(bool bEnable);
+
 protected:
     friend class OGLDeviceBuilder;
 

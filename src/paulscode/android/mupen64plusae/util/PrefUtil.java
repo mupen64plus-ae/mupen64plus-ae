@@ -20,6 +20,10 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import org.apache.commons.lang.ArrayUtils;
+
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -52,5 +56,16 @@ public class PrefUtil
         Preference child = activity.findPreference( keyChild );
         if( parent instanceof PreferenceGroup && child != null )
             ( (PreferenceGroup) parent ).removePreference( child );
+    }
+
+    public static void validateListPreference( Resources res, SharedPreferences prefs, String key, int defaultResId, int arrayResId )
+    {
+        String value = prefs.getString( key, null );
+        String defValue = res.getString( defaultResId, (String) null );
+        String[] validValues = res.getStringArray( arrayResId );
+        if( !ArrayUtils.contains( validValues, value ) )
+        {
+            prefs.edit().putString( key, defValue ).commit();
+        }
     }
 }

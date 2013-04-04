@@ -21,7 +21,7 @@
 <resources>
 
     <!-- ************************************************************************** -->
-    <!-- Menu Strings -->
+    <!-- Menu Strings                                                               -->
     <!-- ************************************************************************** -->
 
     <!-- In-Game Menu -->
@@ -32,6 +32,19 @@
     <string name="menuItem_fileSave">Save to file…</string>
     <string name="menuItem_fileLoad">Load from file…</string>
     <string name="menuItem_setSpeed">Game speed</string>
+    <string name="menuItem_paks">Controller Paks</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak1_empty">Player 1: Empty</string>
+    <string name="menuItem_pak1_mem">Player 1: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak1_rumble">Player 1: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak2_empty">Player 2: Empty</string>
+    <string name="menuItem_pak2_mem">Player 2: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak2_rumble">Player 2: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak3_empty">Player 3: Empty</string>
+    <string name="menuItem_pak3_mem">Player 3: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak3_rumble">Player 3: Rumble Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak4_empty">Player 4: Empty</string>
+    <string name="menuItem_pak4_mem">Player 4: Memory Pak</string> <!-- capitalize since trademark -->
+    <string name="menuItem_pak4_rumble">Player 4: Rumble Pak</string> <!-- capitalize since trademark -->
     <string name="menuItem_setIme">Change IME</string>
     <string name="menuItem_exit">Exit</string>
 
@@ -41,6 +54,7 @@
     <string name="menuItem_load">Load…</string>
     <string name="menuItem_save">Save…</string>
     <string name="menuItem_ouya">OUYA</string>
+    <string name="menuItem_n64Adapter">N64 USB Adapter</string>
     <string name="menuItem_ps3">PS3</string>
     <string name="menuItem_xbox360">Xbox 360</string>
     <string name="menuItem_xperiaPlay">Xperia PLAY</string>
@@ -195,16 +209,20 @@
     <string name="touchscreenRefresh_entryOccasionally">Occasionally</string>
     <string name="touchscreenRefresh_entryFrequently">Frequently</string>
     
-    <string name="touchscreenLayout_title">Touchscreen layout</string>
+    <string name="touchscreenStyle_title">Button style</string>
+    <string name="touchscreenStyle_entryOutline">Outlines</string>
+    <string name="touchscreenStyle_entryShaded">Shaded</string>
+    
+    <string name="touchscreenHeight_title">Button vertical spacing</string>
+    <string name="touchscreenHeight_entryAuto">Auto</string>
+    <string name="touchscreenHeight_entryFullHeight">Full-height</string>
+    <string name="touchscreenHeight_entryHalfHeight">Half-height</string>
+    
+    <string name="touchscreenLayout_title">Button layout</string>
     <string name="touchscreenLayout_entryAnalog">Analog (by roymustang16)</string>
     <string name="touchscreenLayout_entryDigital">Digital (by roymustang16)</string>
+    <string name="touchscreenLayout_entryAll">Both (by roymustang16)</string>
     <string name="touchscreenLayout_entryCustom">Custom (see http://tinyurl.com/984ofyo)</string>
-    
-    <string name="touchscreenSize_title">Screen size</string>
-    <string name="touchscreenSize_entryTiny">Tiny</string>
-    <string name="touchscreenSize_entrySmall">Small</string>
-    <string name="touchscreenSize_entryNormal">Normal</string>
-    <string name="touchscreenSize_entryTablet">Tablet</string>
     
     <string name="touchpadLayout_title">Touchpad layout</string>
     <string name="touchpadLayout_entryDefault">Left pad: Analog control; Right pad: C buttons</string>
@@ -253,7 +271,17 @@
     <string name="gles2RiceMipmapping_entryNearest">Nearest</string>
     <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
     <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
-    
+
+    <string name="gles2RiceScreenUpdate_title">Screen update method</string>
+    <string name="gles2RiceScreenUpdate_entryRomDefault">ROM default</string>
+    <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
+    <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI origin change</string>
+    <string name="gles2RiceScreenUpdate_entryCIChange">CI change</string>
+    <string name="gles2RiceScreenUpdate_entryFirstCIChange">First CI change</string>
+    <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">First primitive draw</string>
+    <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Before screen clear</string>
+    <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">After screen drawn</string>
+
     <string name="gles2RiceTextureEnhancement_title">Texture upscaling/enhancement</string>
     <string name="gles2RiceTextureEnhancement_entryNone">None</string>
     <string name="gles2RiceTextureEnhancement_entryScale2x">Scale 2x</string>
@@ -279,16 +307,16 @@
     <string name="pluginVideo_entryGlide64mk2">glide64mk2</string>
     <string name="pluginAudio_title">Audio</string>
     <string name="pluginAudio_entryNone">None (audio disabled)</string>
-    <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+    <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
     <string name="pluginInput_title">Input</string>
     <string name="pluginInput_entryNone">None (input disabled)</string>
-    <string name="pluginInput_entrySdl">input-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+    <string name="pluginInput_entryAndroid">input-android, v1.0</string>
     <string name="pluginRsp_title">Reality signal processor (RSP)</string>
     <string name="pluginRsp_entryNone">None (RSP disabled)</string>
-    <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
-    <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+    <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+    <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(No audio processing, speed hack by Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
     <string name="pluginCore_title">Emulation core</string>
-    <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+    <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port of Mupen64Plus by Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
     
     <string name="r4300Emulator_title">R4300 emulator</string>
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
@@ -311,7 +339,8 @@
     <string name="acraUserEmail_summary">Your paulscode.com username (optional)</string>
 
     <!-- Seek Bar Preferences (selected value and units will become the summary -->
-    <string name="touchscreenTransparency_title">Touchscreen opacity</string>
+    <string name="touchscreenTransparency_title">Button opacity</string>
+    <string name="touchscreenScale_title">Button scale</string>
     <string name="videoActionBarTransparency_title">Action bar opacity</string>
 
     <!-- Path Preferences (selected path will become the summary) -->
@@ -358,7 +387,6 @@
 
     <!-- Text Editor Hints (start lower-case) -->
     <string name="hintFileSave">filename</string>
-    <string name="hintSetSpeed">speed between 10 to 300</string>
 
     <!-- Asset Extractor -->
     <string name="assetExtractor_initializing">Initializing</string>
@@ -375,7 +403,6 @@
     <string name="cheatNotes_none">(no notes available for this cheat)</string>
     
     <!-- Hi-Res Texture Unpacking -->
-    <string name="pathHiResTexturesPath_title">Select a texture pack (ZIP format)</string>
     <string name="pathHiResTexturesTask_title">Unpacking textures</string>
     <string name="pathHiResTexturesTask_message">Please be patient.  This process may take some time.</string>
     <string name="pathHiResTexturesTask_errorMessage">Problem unpacking textures!</string>
@@ -419,8 +446,6 @@
     <string name="inputMapActivity_btnAL">Analog ←</string>
     <string name="inputMapActivity_btnAD">Analog ↓</string>
     <string name="inputMapActivity_btnAU">Analog ↑</string>
-    <string name="inputMapActivity_rumble">Rumble Pak</string> <!-- capitalize since trademark -->
-    <string name="inputMapActivity_mempak">Expansion Pak</string> <!-- capitalize since trademark -->
     <string name="inputMapActivity_incrementSlot">Increment slot</string>
     <string name="inputMapActivity_reset">Reset</string>
     <string name="inputMapActivity_pause">Pause</string>

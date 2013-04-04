@@ -86,8 +86,7 @@ public:
     virtual void UpdateScissorWithClipRatio();
     virtual void ApplyScissorWithClipRatio(bool force=false) {}
 
-    void SetTextureEnable(bool bEnable);
-    void SetTextureScale(int dwTile, float fScaleX, float fScaleY);
+    void SetTextureEnableAndScale(int dwTile, bool enable, float fScaleX, float fScaleY);
     
     virtual void SetFogEnable(bool bEnable) 
     { 

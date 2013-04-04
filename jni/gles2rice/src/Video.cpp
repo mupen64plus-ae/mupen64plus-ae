@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <stdarg.h>
 
-#include "OGLPlatform.h"
+#include "osal_opengl.h"
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_types.h"
@@ -88,7 +88,6 @@ RECT frameWriteByCPURectArray[20][20];
 bool frameWriteByCPURectFlag[20][20];
 std::vector<uint32> frameWriteRecord;
 
-//void (*renderCallback)() = NULL;
 void (*renderCallback)(int) = NULL;
 
 /* definitions of pointers to Core config functions */
@@ -119,7 +118,7 @@ ptr_VidExt_SetCaption            CoreVideo_SetCaption = NULL;
 ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = NULL;
 ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = NULL;
 ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = NULL;
-//ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
+ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = NULL;
 ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = NULL;
 
 //---------------------------------------------------------------------------------------
@@ -278,7 +277,7 @@ static void ProcessDListStep2(void)
     }
 
     g_CritialSection.Unlock();
-}
+}   
 
 static bool StartVideo(void)
 {
@@ -417,25 +416,13 @@ static bool StartVideo(void)
               y = ( videoInfo->current_h - videoHeight ) / 2;
           }
           
-          //xpos and ypos from config file
-          float xpos = (float)x + ((float)videoWidth * ((float)g_curRomInfo.windowXpos /800.f));
-          float ypos = (float)y + ((float)videoHeight * ((float)g_curRomInfo.windowYpos /480.f));
-    
-          //width and height from config file
-          float width = (float)videoWidth + ((float)videoWidth * (((float)g_curRomInfo.windowWidth - 800.f)/800.f));
-          float height = (float)videoHeight + ((float)videoHeight * (((float)g_curRomInfo.windowHeight - 480.f)/480.f));
-    
-          //center video
-          xpos = xpos - ( width - (float)videoWidth )/2.f;
-          ypos = ypos - ( height - (float)videoHeight )/2.f;
-    
           //set xpos and ypos
-          windowSetting.xpos = (int)xpos;
-          windowSetting.ypos = (int)ypos;
+          windowSetting.xpos = x;
+          windowSetting.ypos = y;
     
           //set width and height
-          windowSetting.uDisplayWidth = (int)width;
-          windowSetting.uDisplayHeight = (int)height;
+          windowSetting.uDisplayWidth = videoWidth;
+          windowSetting.uDisplayHeight = videoHeight;
         
           printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );     
           ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenWidth", videoWidth, "Width of output window or fullscreen width" );
@@ -740,12 +727,12 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     CoreVideo_ToggleFullScreen = (ptr_VidExt_ToggleFullScreen) osal_dynlib_getproc(CoreLibHandle, "VidExt_ToggleFullScreen");
     CoreVideo_GL_GetProcAddress = (ptr_VidExt_GL_GetProcAddress) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetProcAddress");
     CoreVideo_GL_SetAttribute = (ptr_VidExt_GL_SetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SetAttribute");
-    //CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetAttribute");
+    CoreVideo_GL_GetAttribute = (ptr_VidExt_GL_GetAttribute) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_GetAttribute");
     CoreVideo_GL_SwapBuffers = (ptr_VidExt_GL_SwapBuffers) osal_dynlib_getproc(CoreLibHandle, "VidExt_GL_SwapBuffers");
 
     if (!CoreVideo_Init || !CoreVideo_Quit || !CoreVideo_ListFullscreenModes || !CoreVideo_SetVideoMode ||
         !CoreVideo_SetCaption || !CoreVideo_ToggleFullScreen || !CoreVideo_GL_GetProcAddress ||
-        !CoreVideo_GL_SetAttribute || /*!CoreVideo_GL_GetAttribute ||*/ !CoreVideo_GL_SwapBuffers)
+        !CoreVideo_GL_SetAttribute || !CoreVideo_GL_GetAttribute || !CoreVideo_GL_SwapBuffers)
     {
         DebugMessage(M64MSG_ERROR, "Couldn't connect to Core video extension functions");
         return M64ERR_INCOMPATIBLE;
@@ -1081,8 +1068,7 @@ EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
 }
     
 
-//EXPORT void CALL SetRenderingCallback(void (*callback)())
-EXPORT void CALL SetRenderingCallback(void (*callback)(int i))
+EXPORT void CALL SetRenderingCallback(void (*callback)(int))
 {
     renderCallback = callback;
 }

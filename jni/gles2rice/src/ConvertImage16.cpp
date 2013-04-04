@@ -79,7 +79,6 @@ void ConvertRGBA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
     if (tinfo.bSwapped)
     {
-
         for (y = 0; y < tinfo.HeightToLoad; y++)
         {
             if ((y%2) == 0)
@@ -148,7 +147,6 @@ void ConvertRGBA32_16(CTexture *pTexture, const TxtrInfo &tinfo)
         {
             pWordSrc = (uint32*)&g_Tmem.g_Tmem64bit[tile.dwTMem];
 
-
             for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
             {
                 uint16 * dwDst = (uint16 *)((uint8 *)dInfo.lpSurface + y*dInfo.lPitch);
@@ -169,28 +167,25 @@ void ConvertRGBA32_16(CTexture *pTexture, const TxtrInfo &tinfo)
     {
         if (tinfo.bSwapped)
         {
-
             for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
             {
                 if ((y%2) == 0)
                 {
-
                     uint16 *pDst = (uint16*)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
                     uint8 *pS = (uint8 *)pSrc + (y+tinfo.TopToLoad) * tinfo.Pitch + (tinfo.LeftToLoad*4);
 
                     for (uint32 x = 0; x < tinfo.WidthToLoad; x++)
                     {
 
-                        *pDst++ = R4G4B4A4_MAKE((pS[3]>>4),     // Red
-                            (pS[2]>>4),
-                            (pS[1]>>4),
-                            (pS[0]>>4));        // Alpha
+                        *pDst++ = R4G4B4A4_MAKE((pS[3]>>4),  // Red
+                                                (pS[2]>>4),  // Green
+                                                (pS[1]>>4),  // Blue
+                                                (pS[0]>>4)); // Alpha
                         pS+=4;
                     }
                 }
                 else
                 {
-
                     uint16 *pDst = (uint16*)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
                     uint8 *pS = (uint8 *)pSrc + (y+tinfo.TopToLoad) * tinfo.Pitch + (tinfo.LeftToLoad*4);
                     int n;
@@ -198,10 +193,10 @@ void ConvertRGBA32_16(CTexture *pTexture, const TxtrInfo &tinfo)
                     n = 0;
                     for (uint32 x = 0; x < tinfo.WidthToLoad; x++)
                     {
-                        *pDst++ = R4G4B4A4_MAKE((pS[(n^0x8) + 3]>>4),       // Red
-                            (pS[(n^0x8) + 2]>>4),
-                            (pS[(n^0x8) + 1]>>4),
-                            (pS[(n^0x8) + 0]>>4));  // Alpha
+                        *pDst++ = R4G4B4A4_MAKE((pS[(n^0x8) + 3]>>4),   // Red
+                                                (pS[(n^0x8) + 2]>>4),   // Green
+                                                (pS[(n^0x8) + 1]>>4),   // Blue
+                                                (pS[(n^0x8) + 0]>>4));  // Alpha
 
                         n += 4;
                     }
@@ -218,17 +213,14 @@ void ConvertRGBA32_16(CTexture *pTexture, const TxtrInfo &tinfo)
                 for (uint32 x = 0; x < tinfo.WidthToLoad; x++)
                 {
                     *pDst++ = R4G4B4A4_MAKE((pS[3]>>4),     // Red
-                        (pS[2]>>4),
-                        (pS[1]>>4),
-                        (pS[0]>>4));        // Alpha
+                                            (pS[2]>>4),     // Green
+                                            (pS[1]>>4),     // Blue
+                                            (pS[0]>>4));    // Alpha
                     pS+=4;
                 }
             }
-
         }
     }
-
-
 
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
@@ -269,20 +261,18 @@ void ConvertIA4_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                 // Even
                 *pDst++ = R4G4B4A4_MAKE(ThreeToFour[(b & 0xE0) >> 5],
-                                      ThreeToFour[(b & 0xE0) >> 5],
-                                      ThreeToFour[(b & 0xE0) >> 5],
-                                      OneToFour[(b & 0x10) >> 4]);
+                                        ThreeToFour[(b & 0xE0) >> 5],
+                                        ThreeToFour[(b & 0xE0) >> 5],
+                                        OneToFour[(b & 0x10) >> 4]);
     
                 // Odd
                 *pDst++ = R4G4B4A4_MAKE(ThreeToFour[(b & 0x0E) >> 1],
-                                      ThreeToFour[(b & 0x0E) >> 1],
-                                      ThreeToFour[(b & 0x0E) >> 1],
-                                      OneToFour[(b & 0x01)]     );
+                                        ThreeToFour[(b & 0x0E) >> 1],
+                                        ThreeToFour[(b & 0x0E) >> 1],
+                                        OneToFour[(b & 0x01)]     );
 
                 dwByteOffset++;
-
             }
-
         }
     }
     else
@@ -301,26 +291,23 @@ void ConvertIA4_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                 // Even
                 *pDst++ = R4G4B4A4_MAKE(ThreeToFour[(b & 0xE0) >> 5],
-                                      ThreeToFour[(b & 0xE0) >> 5],
-                                      ThreeToFour[(b & 0xE0) >> 5],
-                                      OneToFour[(b & 0x10) >> 4]);
+                                        ThreeToFour[(b & 0xE0) >> 5],
+                                        ThreeToFour[(b & 0xE0) >> 5],
+                                        OneToFour[(b & 0x10) >> 4]);
     
                 // Odd
                 *pDst++ = R4G4B4A4_MAKE(ThreeToFour[(b & 0x0E) >> 1],
-                                      ThreeToFour[(b & 0x0E) >> 1],
-                                      ThreeToFour[(b & 0x0E) >> 1],
-                                      OneToFour[(b & 0x01)]     );
-
+                                        ThreeToFour[(b & 0x0E) >> 1],
+                                        ThreeToFour[(b & 0x0E) >> 1],
+                                        OneToFour[(b & 0x01)]     );
 
                 dwByteOffset++;
-
             }
-        }   
+        }
     }
     
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
-
 }
 
 // E.g Mario's head textures
@@ -356,16 +343,13 @@ void ConvertIA8_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                 dwByteOffset++;
             }
-
-        }       
+        }
     }
     else
     {
-
         for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
         {
             uint16 *pDst = (uint16*)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
-
 
             // Points to current byte
             uint32 dwByteOffset = ((y+tinfo.TopToLoad) * tinfo.Pitch) + tinfo.LeftToLoad;
@@ -379,7 +363,7 @@ void ConvertIA8_16(CTexture *pTexture, const TxtrInfo &tinfo)
                 dwByteOffset++;
             }
         }
-    }   
+    }
     
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
@@ -415,7 +399,8 @@ void ConvertIA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
             dwWordOffset += 2;
         }
-    }       
+    }
+
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
 }
@@ -470,13 +455,10 @@ void ConvertI4_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                 dwByteOffset++;
             }
-
-        }   
-
+        }
     }
     else
     {
-
         for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
         {
             uint8 *pDst = (uint8 *)dInfo.lpSurface + y * dInfo.lPitch;
@@ -500,6 +482,7 @@ void ConvertI4_16(CTexture *pTexture, const TxtrInfo &tinfo)
             }
         }
     }
+    
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
 }
@@ -532,13 +515,13 @@ void ConvertI8_16(CTexture *pTexture, const TxtrInfo &tinfo)
                 uint8 b = *(uint8*)((pSrc+dwByteOffset)^nFiddle);
 
                 *pDst++ = R4G4B4A4_MAKE(b>>4,
-                    b>>4,
-                    b>>4,
-                    b>>4);
+                                        b>>4,
+                                        b>>4,
+                                        b>>4);
 
                 dwByteOffset++;
             }
-        }   
+        }
     }
     else
     {
@@ -553,13 +536,13 @@ void ConvertI8_16(CTexture *pTexture, const TxtrInfo &tinfo)
                 uint8 b = *(uint8*)((pSrc+dwByteOffset)^0x3);
 
                 *pDst++ = R4G4B4A4_MAKE(b>>4,
-                                      b>>4,
-                                      b>>4,
-                                      b>>4);
+                                        b>>4,
+                                        b>>4,
+                                        b>>4);
 
                 dwByteOffset++;
             }
-        }   
+        }
 
     }
     pTexture->EndUpdate(&dInfo);
@@ -612,7 +595,6 @@ void ConvertCI4_RGBA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
     }
     else
     {
-
         for (uint32 y = 0; y <  tinfo.HeightToLoad; y++)
         {
             uint16 * pDst = (uint16 *)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
@@ -632,9 +614,9 @@ void ConvertCI4_RGBA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                 dwByteOffset++;
             }
-        }   
-
+        }
     }
+
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
 }
@@ -642,7 +624,7 @@ void ConvertCI4_RGBA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 //*****************************************************************************
 // Convert CI4 images. We need to switch on the palette type
 //*****************************************************************************
-void    ConvertCI4_16( CTexture * p_texture, const TxtrInfo & tinfo )
+void ConvertCI4_16( CTexture * p_texture, const TxtrInfo & tinfo )
 {
     if ( tinfo.TLutFmt == TLUT_FMT_RGBA16 )
     {
@@ -657,7 +639,7 @@ void    ConvertCI4_16( CTexture * p_texture, const TxtrInfo & tinfo )
 //*****************************************************************************
 // Convert CI8 images. We need to switch on the palette type
 //*****************************************************************************
-void    ConvertCI8_16( CTexture * p_texture, const TxtrInfo & tinfo )
+void ConvertCI8_16( CTexture * p_texture, const TxtrInfo & tinfo )
 {
     if ( tinfo.TLutFmt == TLUT_FMT_RGBA16 )
     {
@@ -682,14 +664,12 @@ void ConvertCI4_IA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
     if (tinfo.bSwapped)
     {
-
         for (uint32 y = 0; y <  tinfo.HeightToLoad; y++)
         {
             if ((y%2) == 0)
                 nFiddle = 0x3;
             else
                 nFiddle = 0x7;
-
 
             uint16 * pDst = (uint16 *)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
 
@@ -707,12 +687,10 @@ void ConvertCI4_IA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
                 pDst += 2;
                 dwByteOffset++;
             }
-        }   
-        
+        }
     }
     else
     {
-
         for (uint32 y = 0; y <  tinfo.HeightToLoad; y++)
         {
             uint16 * pDst = (uint16 *)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
@@ -732,14 +710,12 @@ void ConvertCI4_IA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                 dwByteOffset++;
             }
-        }   
-
+        }
     }
+
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
 }
-
-
 
 
 // Used by MarioKart for Cars etc
@@ -755,8 +731,6 @@ void ConvertCI8_RGBA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
     if (tinfo.bSwapped)
     {
-
-
         for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
         {
             if ((y%2) == 0)
@@ -776,13 +750,10 @@ void ConvertCI8_RGBA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                 dwByteOffset++;
             }
-        }   
-    
-
+        }
     }
     else
     {
-
         for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
         {
             uint16 *pDst = (uint16 *)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
@@ -799,9 +770,9 @@ void ConvertCI8_RGBA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
             }
         }
     }
+
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
-
 }
 
 
@@ -818,8 +789,6 @@ void ConvertCI8_IA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
     if (tinfo.bSwapped)
     {
-
-
         for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
         {
             if ((y%2) == 0)
@@ -839,13 +808,10 @@ void ConvertCI8_IA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
                 dwByteOffset++;
             }
-        }   
-    
-
+        }
     }
     else
     {
-
         for (uint32 y = 0; y < tinfo.HeightToLoad; y++)
         {
             uint16 *pDst = (uint16 *)((uint8 *)dInfo.lpSurface + y * dInfo.lPitch);
@@ -862,6 +828,7 @@ void ConvertCI8_IA16_16(CTexture *pTexture, const TxtrInfo &tinfo)
             }
         }
     }
+
     pTexture->EndUpdate(&dInfo);
     pTexture->SetOthersVariables();
 }
@@ -887,7 +854,6 @@ void ConvertYUV_16(CTexture *pTexture, const TxtrInfo &tinfo)
             pSrc = (uint16*)(tinfo.pPhysicalAddress);
 
         uint8 * pByteSrc = (uint8 *)pSrc;
-
         for (y = 0; y < tinfo.HeightToLoad; y++)
         {
             nFiddle = ( y&1 )? 0x4 : 0;
@@ -917,7 +883,6 @@ void ConvertYUV_16(CTexture *pTexture, const TxtrInfo &tinfo)
 
         if (tinfo.bSwapped)
         {
-
             for (y = 0; y < tinfo.HeightToLoad; y++)
             {
                 if ((y%2) == 0)
@@ -988,8 +953,6 @@ uint16 ConvertYUV16ToR4G4B4(int Y, int U, int V)
     uint32 B = (B1 - g_convk4) * g_convk5 + B1;
     return (uint16)R4G4B4A4_MAKE((R>>4), (G>>4), (B>>4), 0xF*A);
 }
-
-
 
 
 // Used by Starfox intro

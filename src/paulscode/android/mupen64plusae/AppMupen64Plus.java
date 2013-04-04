@@ -41,7 +41,6 @@ import static org.acra.ReportField.PACKAGE_NAME;
 import static org.acra.ReportField.PHONE_MODEL;
 import static org.acra.ReportField.PRODUCT;
 import static org.acra.ReportField.REPORT_ID;
-import static org.acra.ReportField.SETTINGS_SYSTEM;
 import static org.acra.ReportField.SHARED_PREFERENCES;
 import static org.acra.ReportField.STACK_TRACE;
 import static org.acra.ReportField.TOTAL_MEM_SIZE;
@@ -64,6 +63,8 @@ import org.acra.sender.HttpSender.Type;
     httpMethod = Method.PUT,
     formUriBasicAuthLogin = "reporter",
     formUriBasicAuthPassword = "perorter",
+    logcatArguments = { "-t", "300" },
+    logcatFilterByPid = true,
     customReportContent =
     {
         REPORT_ID,
@@ -93,8 +94,7 @@ import org.acra.sender.HttpSender.Type;
         INSTALLATION_ID,
         DEVICE_FEATURES,
         ENVIRONMENT,
-        SHARED_PREFERENCES,
-        SETTINGS_SYSTEM
+        SHARED_PREFERENCES
     }
 )
 // @formatter:on

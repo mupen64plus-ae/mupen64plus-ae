@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "OGLTexture.h"
 #include "DirectXDecodedMux.h"
 
-#define         GL_MODULATE_ADD_ATI                   0x8744
-#define         GL_MODULATE_SUBTRACT_ATI              0x8746
+#define GL_MODULATE_ADD_ATI        0x8744
+#define GL_MODULATE_SUBTRACT_ATI   0x8746
 
 //========================================================================
 COGLColorCombiner4::COGLColorCombiner4(CRender *pRender)
@@ -105,14 +105,14 @@ bool COGLColorCombiner2::Initialize(void)
 
         m_bTxtOpAdd = m_bSupportAdd;
         m_bTxtOpSub = m_bSupportSubtract;
-        m_bTxtOpLerp = true;                
+        m_bTxtOpLerp = true;
 
-        m_bTxtOpAddSmooth = true;           
-        m_bTxtOpBlendCurAlpha = true;       
-        m_bTxtOpBlendDifAlpha = true;       
-        m_bTxtOpBlendFacAlpha = true;       
-        m_bTxtOpBlendTxtAlpha = true;       
-        m_bTxtOpMulAdd = m_bSupportModAdd_ATI;          
+        m_bTxtOpAddSmooth = true;
+        m_bTxtOpBlendCurAlpha = true;
+        m_bTxtOpBlendDifAlpha = true;
+        m_bTxtOpBlendFacAlpha = true;
+        m_bTxtOpBlendTxtAlpha = true;
+        m_bTxtOpMulAdd = m_bSupportModAdd_ATI;
 
         return true;
     }
@@ -204,209 +204,214 @@ void COGLColorCombiner4::InitCombinerCycle12(void)
 int COGLColorCombiner4::ParseDecodedMux()
 {
 #define nextUnit()  {unitNo++;}
-//    if( m_maxTexUnits<3)
-//        return  ParseDecodedMux2Units();
-//
-//    OGLExtCombinerSaveType res;
-//    for( int k=0; k<8; k++ )    res.units[k].tex = -1;
-//    COGLDecodedMux &mux = *(COGLDecodedMux*)m_pDecodedMux;
-//
-//    int unitNos[2];
-//    for( int rgbalpha = 0; rgbalpha<2; rgbalpha++ )
-//    {
-//        unitNos[rgbalpha] = 0;
-//        for( int cycle = 0; cycle<2; cycle++ )
-//        {
-//            int &unitNo = unitNos[rgbalpha];
-//            OGLExtCombinerType &unit = res.units[unitNo];
-//            OGLExt1CombType &comb = unit.Combs[rgbalpha];
-//            CombinerFormatType type = m_pDecodedMux->splitType[cycle*2+rgbalpha];
-//            N64CombinerType &m = m_pDecodedMux->m_n64Combiners[cycle*2+rgbalpha];
-//            comb.arg0 = comb.arg1 = comb.arg2 = CM_IGNORE_BYTE;
-//
-//            switch( type )
-//            {
-//            case CM_FMT_TYPE_NOT_USED:
-//                comb.arg0 = MUX_COMBINED;
-//                unit.ops[rgbalpha] = GL_REPLACE;
-//                nextUnit();
-//                break;
-//            case CM_FMT_TYPE_D:             // = A
-//                comb.arg0 = m.d;
-//                unit.ops[rgbalpha] = GL_REPLACE;
-//                nextUnit();
-//                break;
-//            case CM_FMT_TYPE_A_ADD_D:           // = A+D
-//                comb.arg0 = m.a;
-//                comb.arg1 = m.d;
-//                unit.ops[rgbalpha] = GL_ADD;
-//                nextUnit();
-//                break;
-//            case CM_FMT_TYPE_A_SUB_B:           // = A-B
-//                comb.arg0 = m.a;
-//                comb.arg1 = m.b;
-//                unit.ops[rgbalpha] = GL_SUBTRACT;
-//                nextUnit();
-//                break;
-//            case CM_FMT_TYPE_A_MOD_C:           // = A*C
-//                comb.arg0 = m.a;
-//                comb.arg1 = m.c;
-//                unit.ops[rgbalpha] = GL_MODULATE;
-//                nextUnit();
-//                break;
-//            case CM_FMT_TYPE_A_MOD_C_ADD_D: // = A*C+D
-//                if( m_bSupportModAdd_ATI )
-//                {
-//                    comb.arg0 = m.a;
-//                    comb.arg2 = m.c;
-//                    comb.arg1 = m.d;
-//                    unit.ops[rgbalpha] = GL_MODULATE_ADD_ATI;
-//                    nextUnit();
-//                }
-//                else
-//                {
-//                    if( unitNo < m_maxTexUnits-1 )
-//                    {
-//                        comb.arg0 = m.a;
-//                        comb.arg1 = m.c;
-//                        unit.ops[rgbalpha] = GL_MODULATE;
-//                        nextUnit();
-//                        res.units[unitNo].Combs[rgbalpha].arg0 = MUX_COMBINED;
-//                        res.units[unitNo].Combs[rgbalpha].arg1 = m.d;
-//                        res.units[unitNo].ops[rgbalpha] = GL_ADD;
-//                        nextUnit();
-//                    }
-//                    else
-//                    {
-//                        comb.arg0 = m.a;
-//                        comb.arg1 = m.c;
-//                        comb.arg2 = m.d;
-//                        unit.ops[rgbalpha] = GL_INTERPOLATE;
-//                        nextUnit();
-//                    }
-//                }
-//                break;
-//            case CM_FMT_TYPE_A_LERP_B_C:        // = (A-B)*C+B
-//                comb.arg0 = m.a;
-//                comb.arg1 = m.b;
-//                comb.arg2 = m.c;
-//                unit.ops[rgbalpha] = GL_INTERPOLATE;
-//                nextUnit();
-//                break;
-//            case CM_FMT_TYPE_A_SUB_B_ADD_D: // = A-B+D
-//                if( unitNo < m_maxTexUnits-1 )
-//                {
-//                    comb.arg0 = m.a;
-//                    comb.arg1 = m.b;
-//                    unit.ops[rgbalpha] = GL_SUBTRACT;
-//                    nextUnit();
-//                    res.units[unitNo].Combs[rgbalpha].arg0 = MUX_COMBINED;
-//                    res.units[unitNo].Combs[rgbalpha].arg1 = m.d;
-//                    res.units[unitNo].ops[rgbalpha] = GL_ADD;
-//                    nextUnit();
-//                }
-//                else
-//                {
-//                    comb.arg0 = m.a;
-//                    comb.arg1 = m.c;
-//                    comb.arg2 = m.d;
-//                    unit.ops[rgbalpha] = GL_INTERPOLATE;
-//                    nextUnit();
-//                }
-//                break;
-//            case CM_FMT_TYPE_A_SUB_B_MOD_C: // = (A-B)*C
-//                if( unitNo < m_maxTexUnits-1 )
-//                {
-//                    comb.arg0 = m.a;
-//                    comb.arg1 = m.b;
-//                    unit.ops[rgbalpha] = GL_SUBTRACT;
-//                    nextUnit();
-//                    res.units[unitNo].Combs[rgbalpha].arg0 = MUX_COMBINED;
-//                    res.units[unitNo].Combs[rgbalpha].arg1 = m.c;
-//                    res.units[unitNo].ops[rgbalpha] = GL_MODULATE;
-//                    nextUnit();
-//                }
-//                else
-//                {
-//                    comb.arg0 = m.a;
-//                    comb.arg1 = m.c;
-//                    comb.arg2 = m.d;
-//                    unit.ops[rgbalpha] = GL_INTERPOLATE;
-//                    nextUnit();
-//                }
-//                break;
-//            case CM_FMT_TYPE_A_B_C_D:           // = (A-B)*C+D
-//            default:
-//                if( unitNo < m_maxTexUnits-1 )
-//                {
-//                    comb.arg0 = m.a;
-//                    comb.arg1 = m.b;
-//                    unit.ops[rgbalpha] = GL_SUBTRACT;
-//                    nextUnit();
-//                    if( m_bSupportModAdd_ATI )
-//                    {
-//                        res.units[unitNo].Combs[rgbalpha].arg0 = MUX_COMBINED;
-//                        res.units[unitNo].Combs[rgbalpha].arg2 = m.c;
-//                        res.units[unitNo].Combs[rgbalpha].arg1 = m.d;
-//                        res.units[unitNo].ops[rgbalpha] = GL_MODULATE_ADD_ATI;
-//                        nextUnit();
-//                    }
-//                    else
-//                    {
-//                        res.units[unitNo].Combs[rgbalpha].arg0 = m.a;
-//                        res.units[unitNo].Combs[rgbalpha].arg1 = m.b;
-//                        res.units[unitNo].Combs[rgbalpha].arg2 = m.c;
-//                        res.units[unitNo].ops[rgbalpha] = GL_INTERPOLATE;
-//                        nextUnit();
-//                    }
-//                }
-//                else
-//                {
-//                    comb.arg0 = m.a;
-//                    comb.arg1 = m.c;
-//                    comb.arg2 = m.d;
-//                    unit.ops[rgbalpha] = GL_INTERPOLATE;
-//                    nextUnit();
-//                }
-//                break;
-//            }
-//        }
-//    }
-//
-//    res.numOfUnits = min(m_maxTexUnits, max(unitNos[0],unitNos[1]));
-//
-//    if( unitNos[0]>m_maxTexUnits || unitNos[1]>m_maxTexUnits )
-//    {
-//        TRACE0("Unit overflows");
-//    }
-//
-//    for( int j=0; j<2; j++ )
-//    {
-//        if( unitNos[j]<res.numOfUnits )
-//        {
-//            for( int i=unitNos[j]; i<res.numOfUnits; i++ )
-//            {
-//                res.units[i].Combs[j].arg0 = MUX_COMBINED;
-//                res.units[i].ops[j] = GL_REPLACE;
-//            }
-//        }
-//    }
-//
-//    res.units[0].tex = 0;
-//    res.units[1].tex = 1;
-//
-//    res.primIsUsed = mux.isUsed(MUX_PRIM);
-//    res.envIsUsed = mux.isUsed(MUX_ENV);
-//    res.lodFracIsUsed = mux.isUsed(MUX_LODFRAC) || mux.isUsed(MUX_PRIMLODFRAC);
-//
-//    return SaveParsedResult(res);
-return 0;
+    return 0;
+    /*
+    if( m_maxTexUnits<3) 
+        return  ParseDecodedMux2Units();
+
+    OGLExtCombinerSaveType res;
+    for( int k=0; k<8; k++ )
+        res.units[k].tex = -1;
+    
+    COGLDecodedMux &mux = *(COGLDecodedMux*)m_pDecodedMux;
+
+    int unitNos[2];
+    for( int rgbalpha = 0; rgbalpha<2; rgbalpha++ )
+    {
+        unitNos[rgbalpha] = 0;
+        for( int cycle = 0; cycle<2; cycle++ )
+        {
+            int &unitNo = unitNos[rgbalpha];
+            OGLExtCombinerType &unit = res.units[unitNo];
+            OGLExt1CombType &comb = unit.Combs[rgbalpha];
+            CombinerFormatType type = m_pDecodedMux->splitType[cycle*2+rgbalpha];
+            N64CombinerType &m = m_pDecodedMux->m_n64Combiners[cycle*2+rgbalpha];
+            comb.arg0 = comb.arg1 = comb.arg2 = CM_IGNORE_BYTE;
+
+            switch( type )
+            {
+            case CM_FMT_TYPE_NOT_USED:
+                comb.arg0 = MUX_COMBINED;
+                unit.ops[rgbalpha] = GL_REPLACE;
+                nextUnit();
+                break;
+            case CM_FMT_TYPE_D:                 // = A
+                comb.arg0 = m.d;
+                unit.ops[rgbalpha] = GL_REPLACE;
+                nextUnit();
+                break;
+            case CM_FMT_TYPE_A_ADD_D:           // = A+D
+                comb.arg0 = m.a;
+                comb.arg1 = m.d;
+                unit.ops[rgbalpha] = GL_ADD;
+                nextUnit();
+                break;
+            case CM_FMT_TYPE_A_SUB_B:           // = A-B
+                comb.arg0 = m.a;
+                comb.arg1 = m.b;
+                unit.ops[rgbalpha] = GL_SUBTRACT_ARB;
+                nextUnit();
+                break;
+            case CM_FMT_TYPE_A_MOD_C:           // = A*C
+                comb.arg0 = m.a;
+                comb.arg1 = m.c;
+                unit.ops[rgbalpha] = GL_MODULATE;
+                nextUnit();
+                break;
+            case CM_FMT_TYPE_A_MOD_C_ADD_D:     // = A*C+D
+                if( m_bSupportModAdd_ATI )
+                {
+                    comb.arg0 = m.a;
+                    comb.arg2 = m.c;
+                    comb.arg1 = m.d;
+                    unit.ops[rgbalpha] = GL_MODULATE_ADD_ATI;
+                    nextUnit();
+                }
+                else
+                {
+                    if( unitNo < m_maxTexUnits-1 )
+                    {
+                        comb.arg0 = m.a;
+                        comb.arg1 = m.c;
+                        unit.ops[rgbalpha] = GL_MODULATE;
+                        nextUnit();
+                        res.units[unitNo].Combs[rgbalpha].arg0 = MUX_COMBINED;
+                        res.units[unitNo].Combs[rgbalpha].arg1 = m.d;
+                        res.units[unitNo].ops[rgbalpha] = GL_ADD;
+                        nextUnit();
+                    }
+                    else
+                    {
+                        comb.arg0 = m.a;
+                        comb.arg1 = m.c;
+                        comb.arg2 = m.d;
+                        unit.ops[rgbalpha] = GL_INTERPOLATE_ARB;
+                        nextUnit();
+                    }
+                }
+                break;
+            case CM_FMT_TYPE_A_LERP_B_C:        // = (A-B)*C+B
+                comb.arg0 = m.a;
+                comb.arg1 = m.b;
+                comb.arg2 = m.c;
+                unit.ops[rgbalpha] = GL_INTERPOLATE_ARB;
+                nextUnit();
+                break;
+            case CM_FMT_TYPE_A_SUB_B_ADD_D:     // = A-B+D
+                if( unitNo < m_maxTexUnits-1 )
+                {
+                    comb.arg0 = m.a;
+                    comb.arg1 = m.b;
+                    unit.ops[rgbalpha] = GL_SUBTRACT_ARB;
+                    nextUnit();
+                    res.units[unitNo].Combs[rgbalpha].arg0 = MUX_COMBINED;
+                    res.units[unitNo].Combs[rgbalpha].arg1 = m.d;
+                    res.units[unitNo].ops[rgbalpha] = GL_ADD;
+                    nextUnit();
+                }
+                else
+                {
+                    comb.arg0 = m.a;
+                    comb.arg1 = m.c;
+                    comb.arg2 = m.d;
+                    unit.ops[rgbalpha] = GL_INTERPOLATE_ARB;
+                    nextUnit();
+                }
+                break;
+            case CM_FMT_TYPE_A_SUB_B_MOD_C:     // = (A-B)*C
+                if( unitNo < m_maxTexUnits-1 )
+                {
+                    comb.arg0 = m.a;
+                    comb.arg1 = m.b;
+                    unit.ops[rgbalpha] = GL_SUBTRACT_ARB;
+                    nextUnit();
+                    res.units[unitNo].Combs[rgbalpha].arg0 = MUX_COMBINED;
+                    res.units[unitNo].Combs[rgbalpha].arg1 = m.c;
+                    res.units[unitNo].ops[rgbalpha] = GL_MODULATE;
+                    nextUnit();
+                }
+                else
+                {
+                    comb.arg0 = m.a;
+                    comb.arg1 = m.c;
+                    comb.arg2 = m.d;
+                    unit.ops[rgbalpha] = GL_INTERPOLATE_ARB;
+                    nextUnit();
+                }
+                break;
+            case CM_FMT_TYPE_A_B_C_D:           // = (A-B)*C+D
+            default:
+                if( unitNo < m_maxTexUnits-1 )
+                {
+                    comb.arg0 = m.a;
+                    comb.arg1 = m.b;
+                    unit.ops[rgbalpha] = GL_SUBTRACT_ARB;
+                    nextUnit();
+                    if( m_bSupportModAdd_ATI )
+                    {
+                        res.units[unitNo].Combs[rgbalpha].arg0 = MUX_COMBINED;
+                        res.units[unitNo].Combs[rgbalpha].arg2 = m.c;
+                        res.units[unitNo].Combs[rgbalpha].arg1 = m.d;
+                        res.units[unitNo].ops[rgbalpha] = GL_MODULATE_ADD_ATI;
+                        nextUnit();
+                    }
+                    else
+                    {
+                        res.units[unitNo].Combs[rgbalpha].arg0 = m.a;
+                        res.units[unitNo].Combs[rgbalpha].arg1 = m.b;
+                        res.units[unitNo].Combs[rgbalpha].arg2 = m.c;
+                        res.units[unitNo].ops[rgbalpha] = GL_INTERPOLATE_ARB;
+                        nextUnit();
+                    }
+                }
+                else
+                {
+                    comb.arg0 = m.a;
+                    comb.arg1 = m.c;
+                    comb.arg2 = m.d;
+                    unit.ops[rgbalpha] = GL_INTERPOLATE_ARB;
+                    nextUnit();
+                }
+                break;
+            }
+        }
+    }
+        
+    res.numOfUnits = min(m_maxTexUnits, max(unitNos[0],unitNos[1]));
+
+    if( unitNos[0]>m_maxTexUnits || unitNos[1]>m_maxTexUnits ) 
+    {
+        TRACE0("Unit overflows");
+    }
+
+    for( int j=0; j<2; j++ )
+    {
+        if( unitNos[j]<res.numOfUnits )
+        {
+            for( int i=unitNos[j]; i<res.numOfUnits; i++ )
+            {
+                res.units[i].Combs[j].arg0 = MUX_COMBINED;
+                res.units[i].ops[j] = GL_REPLACE;
+            }
+        }
+    }
+
+    res.units[0].tex = 0;
+    res.units[1].tex = 1;
+
+    res.primIsUsed = mux.isUsed(MUX_PRIM);
+    res.envIsUsed = mux.isUsed(MUX_ENV);
+    res.lodFracIsUsed = mux.isUsed(MUX_LODFRAC) || mux.isUsed(MUX_PRIMLODFRAC);
+
+    return SaveParsedResult(res);
+    */
 }
 
 int COGLColorCombiner4::ParseDecodedMux2Units()
 {
     OGLExtCombinerSaveType res;
-    for( int k=0; k<8; k++ )    res.units[k].tex = -1;
+    for( int k=0; k<8; k++ )
+        res.units[k].tex = -1;
 
     res.numOfUnits = 2;
 
@@ -429,51 +434,53 @@ int COGLColorCombiner4::ParseDecodedMux2Units()
             comb.arg0 = MUX_COMBINED;
             unit.ops[i%2] = GL_REPLACE;
             break;
-        case CM_FMT_TYPE_D:             // = A
+        case CM_FMT_TYPE_D:                 // = A
             comb.arg0 = m.d;
             unit.ops[i%2] = GL_REPLACE;
             break;
-//        case CM_FMT_TYPE_A_ADD_D:           // = A+D
-//            comb.arg0 = m.a;
-//            comb.arg1 = m.d;
-//            unit.ops[i%2] = GL_ADD;
-//            break;
-//        case CM_FMT_TYPE_A_SUB_B:           // = A-B
-//            comb.arg0 = m.a;
-//            comb.arg1 = m.b;
-//            unit.ops[i%2] = GL_SUBTRACT;
-//            break;
-//        case CM_FMT_TYPE_A_MOD_C:           // = A*C
-//            comb.arg0 = m.a;
-//            comb.arg1 = m.c;
-//            unit.ops[i%2] = GL_MODULATE;
-//            break;
-//        case CM_FMT_TYPE_A_MOD_C_ADD_D: // = A*C+D
-//            comb.arg0 = m.a;
-//            comb.arg1 = m.c;
-//            comb.arg2 = m.d;
-//            unit.ops[i%2] = GL_INTERPOLATE;
-//            break;
-//        case CM_FMT_TYPE_A_LERP_B_C:        // = (A-B)*C+B
-//            comb.arg0 = m.a;
-//            comb.arg1 = m.b;
-//            comb.arg2 = m.c;
-//            unit.ops[i%2] = GL_INTERPOLATE;
-//            break;
-//        case CM_FMT_TYPE_A_SUB_B_ADD_D: // = A-B+D
-//            // fix me, to use 2 texture units
-//            comb.arg0 = m.a;
-//            comb.arg1 = m.b;
-//            unit.ops[i%2] = GL_SUBTRACT;
-//            break;
-//        case CM_FMT_TYPE_A_SUB_B_MOD_C: // = (A-B)*C
-//            // fix me, to use 2 texture units
-//            comb.arg0 = m.a;
-//            comb.arg1 = m.c;
-//            unit.ops[i%2] = GL_MODULATE;
-//            break;
-//            break;
-//        case CM_FMT_TYPE_A_B_C_D:           // = (A-B)*C+D
+        /*
+        case CM_FMT_TYPE_A_ADD_D:           // = A+D
+            comb.arg0 = m.a;
+            comb.arg1 = m.d;
+            unit.ops[i%2] = GL_ADD;
+            break;
+        case CM_FMT_TYPE_A_SUB_B:           // = A-B
+            comb.arg0 = m.a;
+            comb.arg1 = m.b;
+            unit.ops[i%2] = GL_SUBTRACT_ARB;
+            break;
+        case CM_FMT_TYPE_A_MOD_C:           // = A*C
+            comb.arg0 = m.a;
+            comb.arg1 = m.c;
+            unit.ops[i%2] = GL_MODULATE;
+            break;
+        case CM_FMT_TYPE_A_MOD_C_ADD_D:     // = A*C+D
+            comb.arg0 = m.a;
+            comb.arg1 = m.c;
+            comb.arg2 = m.d;
+            unit.ops[i%2] = GL_INTERPOLATE_ARB;
+            break;
+        case CM_FMT_TYPE_A_LERP_B_C:        // = (A-B)*C+B
+            comb.arg0 = m.a;
+            comb.arg1 = m.b;
+            comb.arg2 = m.c;
+            unit.ops[i%2] = GL_INTERPOLATE_ARB;
+            break;
+        case CM_FMT_TYPE_A_SUB_B_ADD_D:     // = A-B+D
+            // fix me, to use 2 texture units
+            comb.arg0 = m.a;
+            comb.arg1 = m.b;
+            unit.ops[i%2] = GL_SUBTRACT_ARB;
+            break;
+        case CM_FMT_TYPE_A_SUB_B_MOD_C:     // = (A-B)*C
+            // fix me, to use 2 texture units
+            comb.arg0 = m.a;
+            comb.arg1 = m.c;
+            unit.ops[i%2] = GL_MODULATE;
+            break;
+            break;
+        case CM_FMT_TYPE_A_B_C_D:           // = (A-B)*C+D
+        */
         default:
             comb.arg0 = m.a;
             comb.arg1 = m.b;

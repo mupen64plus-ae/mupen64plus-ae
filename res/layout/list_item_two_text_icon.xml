@@ -29,7 +29,8 @@
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="false" />
 
         <TextView
             android:id="@+id/text2"
@@ -38,7 +39,8 @@
             android:layout_alignStart="@id/text1"
             android:layout_below="@id/text1"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:textColor="?android:attr/textColorSecondary"
+            android:textIsSelectable="false" />
     </RelativeLayout>
 
     <LinearLayout

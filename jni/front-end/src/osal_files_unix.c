@@ -35,12 +35,22 @@
 #include "osal_files.h"
 
 /* definitions for system directories to search when looking for mupen64plus plugins */
+#ifdef PAULSCODE
 #if defined(PLUGINDIR)
   const int   osal_libsearchdirs = 3;
   const char *osal_libsearchpath[3] = { PLUGINDIR, "/data/data/paulscode.android.mupen64plusae/lib/", "./" };
 #else
   const int   osal_libsearchdirs = 2;
   const char *osal_libsearchpath[2] = { "/data/data/paulscode.android.mupen64plusae/lib/",  "./" };
+#endif
+#else // !PAULSCODE
+#if defined(PLUGINDIR)
+  const int   osal_libsearchdirs = 4;
+  const char *osal_libsearchpath[4] = { PLUGINDIR, "/usr/local/lib/mupen64plus",  "/usr/lib/mupen64plus", "./" };
+#else
+  const int   osal_libsearchdirs = 3;
+  const char *osal_libsearchpath[3] = { "/usr/local/lib/mupen64plus",  "/usr/lib/mupen64plus", "./" };
+#endif
 #endif
 
 osal_lib_search *osal_library_search(const char *searchpath)

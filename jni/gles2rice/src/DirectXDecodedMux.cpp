@@ -149,7 +149,6 @@ void CDirectXDecodedMux::ReformatAgainWithTwoTexels(void)
                         }
                     }
                 }
-
             }
 
             if( CountTexel1Cycle(m2) < 2 )
@@ -157,8 +156,6 @@ void CDirectXDecodedMux::ReformatAgainWithTwoTexels(void)
                 continue;   //2nd cycle does not have two texels
             }
         }
-
-
     }
 }
 

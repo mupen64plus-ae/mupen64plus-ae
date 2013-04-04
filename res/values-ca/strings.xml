@@ -1,0 +1,388 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">Velocitat %1$d %%</string>
+  <string name="menuItem_slotSave">Guarda l\'slot</string>
+  <string name="menuItem_slotLoad">Carrega slot</string>
+  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_fileSave">Guarda a fitxer…</string>
+  <string name="menuItem_fileLoad">Carrega des de fitxer</string>
+  <string name="menuItem_setSpeed">Velocitat de joc</string>
+  <string name="menuItem_paks">\t\nController Paks</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Jugador 1: buit</string>
+  <string name="menuItem_pak1_mem">Jugador 1: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Jugador 1: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Jugador 2: buit</string>
+  <string name="menuItem_pak2_mem">Jugador 2: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Jugador 2: Rumble Pak </string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Jugador 3: buit</string>
+  <string name="menuItem_pak3_mem">Jugador 3: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Jugador 3: Rumble Pak </string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Jugador 4: buit</string>
+  <string name="menuItem_pak4_mem">Jugador 4: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Jugador 4: Rumble Pak </string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">Modifica IME</string>
+  <string name="menuItem_exit">Surt</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Perfils</string>
+  <string name="menuItem_default">Per defecte</string>
+  <string name="menuItem_load">Carregant…</string>
+  <string name="menuItem_save">Guardant…</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">Adaptador USB de N64</string>
+  <string name="menuItem_ps3">PS3</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
+  <string name="menuItem_specialVisibility_show">Mostra funcions especials</string>
+  <string name="menuItem_specialVisibility_hide">Amaga funcions especials</string>
+  <string name="menuItem_axisInfo">Informació analògica</string>
+  <string name="menuItem_unmapAll">Desassigna-ho tot</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_rebuildingCheats">Regenerant base de dades de cheats…</string>
+  <string name="toast_launchingEmulator">Carregant emulador…</string>
+  <string name="toast_loadingSession">Auto-resumint el joc…</string>
+  <string name="toast_savingSession">Auto-guardant el joc…</string>
+  <string name="toast_loadingSlot">Carregant slot %1$d…</string>
+  <string name="toast_savingSlot">Guardant slot %1$d…</string>
+  <string name="toast_loadingFile">Carregant %1$s…</string>
+  <string name="toast_savingFile">Guardant %1$s…</string>
+  <string name="toast_overwritingFile">Sobreescrivint  %1$s…</string>
+  <!--Something happened (use '.')-->
+  <string name="toast_usingSlot">Uilitzant l\'slot %1$d.</string>
+  <string name="toast_sdInaccessible">La targeta SD no està accessible (desconnecta el cable USB i prova-ho de nou).</string>
+  <string name="toast_fileReadError">No es pot llegir el fitxer!</string>
+  <string name="toast_fileWriteError">No es pot escriure al fitxer!</string>
+  <string name="toast_migrateSlotSavesNotFound">No hi ha fitxers a copiar.</string>
+  <string name="toast_migrateSlotSavesSuccess">Migració completada amb èxit.</string>
+  <string name="toast_crashReportSent">Informe enviat.</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionPlay_title">Juga</string>
+  <string name="actionResume_title">Resumeix</string>
+  <string name="actionResume_summary">Impredictible si els cheats són utilitzats</string>
+  <string name="actionRestart_title">Reinicia</string>
+  <string name="actionRestart_summary">Recomanat si els cheats són utilitzats</string>
+  <string name="actionDeviceInfo_title">Informació del terminal</string>
+  <string name="actionDeviceInfo_summary">Informació del maquinari i model</string>
+  <string name="actionControllerInfo_title">Informació del comandament</string>
+  <string name="actionControllerInfo_summary">Informació del maquinari i model del perifèric</string>
+  <string name="actionControllerDiagnostics_title">Diagnostic del comandament</string>
+  <string name="actionControllerDiagnostics_summary">Provar capacitat de comunicació</string>
+  <string name="actionMigrateSlotSaves_title">Migrar arxius de guardat</string>
+  <string name="actionMigrateSlotSaves_summary">Copia els teus slots de guardat de l\'aplicació vella a aquesta</string>
+  <string name="actionReloadAssets_title">Recarrega els recursos de l\'aplicació</string>
+  <string name="actionReloadAssets_summary">NO afecta la configuració de l\'usuari, ROM, partides i altres dades personalitzades</string>
+  <string name="actionCrashTest_title">Test</string>
+  <string name="actionCrashTest_summary">Envia un informe de configuració als programadors</string>
+  <string name="actionResetUserPrefs_title">Reinicia</string>
+  <string name="actionResetUserPrefs_summary">Restaura la configuració per defecte</string>
+  <string name="actionResetUserPrefs_popupMessage">Vols reiniciar les preferències als seus valors per defecte?</string>
+  <string name="actionHelp_title">Ajuda</string>
+  <string name="actionHelp_message">El Mupen64Plus es desenvolupat i mantingut per voluntaris.⏎ ⏎ Si us plau ajuda\'ns a millorar-lo!</string>
+  <string name="actionHelp_faq">FAQ</string>
+  <string name="actionHelp_reportbug">Reporta una errada</string>
+  <string name="actionAbout_title">Sobre</string>
+  <string name="actionAbout_message">Versió: %1$s⏎ Codi de versió: %2$d</string>
+  <string name="actionAbout_credits">Crèdits</string>
+  <string name="actionAbout_changelog">Registre de canvis</string>
+  <!--Preference Screens-->
+  <string name="screenSettings_title">Configuració</string>
+  <string name="screenInput_title">Entrada</string>
+  <string name="screenInput_summary">Configuració del comandament</string>
+  <string name="screenTouchscreen_title">Pantalla tàctil</string>
+  <string name="screenTouchscreen_summary">Configuració del comandament en pantalla</string>
+  <string name="screenTouchpad_title">Touchpad</string>
+  <string name="screenTouchpad_summary">Configuració per Xperia PLAY</string>
+  <string name="screenVideo_title">Vídeo</string>
+  <string name="screenVideo_summary">Configuració de vídeo</string>
+  <string name="screenAudio_title">Àudio</string>
+  <string name="screenAudio_summary">Configuració del so</string>
+  <string name="screenPlugin_title">Plug-ins</string>
+  <string name="screenPlugin_summary">Configuració del nucli</string>
+  <string name="screenAdvanced_title">Avançat</string>
+  <string name="screenAdvanced_summary">Emmagatzematge i opcions de debug</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Configuració dels cheats (mantingues oprimit per mostrar notes)</string>
+  <string name="categoryHardware_title">Maquinari</string>
+  <string name="categoryOther_title">Altres</string>
+  <string name="categoryTouchscreenBehavior_title">\t\nFuncionament</string>
+  <string name="categoryTouchscreenAppearance_title">Aparença</string>
+  <string name="categorySinglePlayer_title">Jugador 1</string>
+  <string name="categoryMultiPlayer_title">Multijugador</string>
+  <string name="categoryGles2N64_title">Configuració de GLES2N64</string>
+  <string name="categoryGles2Rice_title">Configuració de GLES2Rice</string>
+  <string name="categoryDiagnostics_title">\t\nDiagnòstics</string>
+  <string name="categoryData_title">Dades</string>
+  <string name="categoryCrashReports_title">Informes d\'error</string>
+  <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">\t\nHabilita cheats</string>
+  <string name="playShowCheats_summary">La càrrega del menú és més lenta quan es troben activats</string>
+  <string name="touchscreenEnabled_title">Habilita pantalla tàctil</string>
+  <string name="touchscreenFeedback_title">Retroalimentació hàptica</string>
+  <string name="touchscreenFeedback_summary">Vibra en prémer botons</string>
+  <string name="touchpadEnabled_title">Habilita touchpad</string>
+  <string name="inputOctagonConstraints_title">Límits del joystick octagonal </string>
+  <string name="inputOctagonConstraints_summary">Restringeix el moviment analògic a un octàgon, com en un comandament real de N64</string>
+  <string name="inputVolumeMappable_title">Tecles de volum assignables</string>
+  <string name="inputVolumeMappable_summary">Permetre que les tecles de volum siguin assignades a controls</string>
+  <string name="inputShareController_title">Compartir comandament</string>
+  <string name="inputShareController_summary">Permet que un únic dispositiu d\'entrada controli a diversos jugadors a la vegada</string>
+  <string name="videoStretch_title">Estirar pantalla</string>
+  <string name="videoStretch_summary">Pot afectar la relació d\'aspecte</string>
+  <string name="videoUseFramelimiter_title">Utilitza framelimiter</string>
+  <string name="videoUseFramelimiter_summary">Activa aquesta opció per a una experiència de joc més fluida (alenteix alguns jocs)</string>
+  <string name="videoRgba8888_title">Mode RGBA_8888</string>
+  <string name="videoRgba8888_summary">Millora els gràfics en alguns terminals</string>
+  <string name="gles2N64Fog_title">boira</string>
+  <string name="gles2N64Fog_summary">(manca treballar-hi)</string>
+  <string name="gles2N64Sai_title">Filtre de textura 2xSaI</string>
+  <string name="gles2N64Sai_summary">Redueix la pixelació de les textures</string>
+  <string name="gles2N64ScreenClear_title">Forçar el netejat de pantalla</string>
+  <string name="gles2N64ScreenClear_summary">Deshabilita per a una major velocitat (pot causar errors de vídeo)</string>
+  <string name="gles2N64AlphaTest_title">Test alfa</string>
+  <string name="gles2N64AlphaTest_summary">Deshabilita per millorar la velocitat (pot causar textures negres)</string>
+  <string name="gles2N64DepthTest_title">Test de profunditat</string>
+  <string name="gles2N64DepthTest_summary">Deshabilita per a una major velocitat (pot provocar textures negres)</string>
+  <string name="gles2RiceAutoFrameskip_title">Salt de quadres automàtic (frameskip)</string>
+  <string name="gles2RiceAutoFrameskip_summary">Millora la velocitat del joc en detriment de la velocitat de quadres (frameskip)</string>
+  <string name="gles2RiceFastTextureCrc_title">CRC ràpid de textures</string>
+  <string name="gles2RiceFastTextureCrc_summary">Millorar la velocitat de joc reduint la qualitat d\'elements 2D</string>
+  <string name="gles2RiceFastTexture_title">Carrega ràpida de textures</string>
+  <string name="gles2RiceFastTexture_summary">Corregeix els cercles de transició</string>
+  <string name="gles2RiceForceTextureFilter_title">Filtrar de textures</string>
+  <string name="gles2RiceForceTextureFilter_summary">Arregla la brillantor de textures i el desenfocament dels objectes distants</string>
+  <string name="gles2RiceHiResTextures_title">Textures en alta resolució</string>
+  <string name="gles2RiceHiResTextures_summary">Utilitza pacs de textures millorades</string>
+  <string name="audioSwapChannels_title">Intercanvia els canals d\'àudio</string>
+  <string name="audioSwapChannels_summary">Intercanviar els canals d\'àudio esquerre i dret </string>
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Mantenir botons automàticament</string>
+  <string name="touchscreenAutoHold_entryDisabled">Deshabilitat</string>
+  <string name="touchscreenAutoHold_entryLongPress">En lliscar</string>
+  <string name="touchscreenAutoHold_entrySlideOut">En lliscar</string>
+  <string name="touchscreenAutoHoldables_title">botons mantenibles</string>
+  <string name="touchscreenRefresh_title">Animació del joystick </string>
+  <string name="touchscreenRefresh_entryNever">Mai</string>
+  <string name="touchscreenRefresh_entryOccasionally">Ocasionalment</string>
+  <string name="touchscreenRefresh_entryFrequently">Freqüentment</string>
+  <string name="touchscreenLayout_title">Disposició de botons en pantalla</string>
+  <string name="touchscreenLayout_entryAnalog">Analògic (per roymustang16)</string>
+  <string name="touchscreenLayout_entryDigital">Digital (per roymustang16)</string>
+  <string name="touchscreenLayout_entryCustom">Personalitzat (visita http://tinyurl.com/984ofyo)</string>
+  <string name="touchpadLayout_title">Disposició de botons de touchpad</string>
+  <string name="touchpadLayout_entryDefault">Pad esquerre: Control analògic; Pad dret: Botons C</string>
+  <string name="touchpadLayout_entryReverse">Pad esquerre: Botons C; Pad dret: Control analògic</string>
+  <string name="videoOrientation_title">Orientació de la pantalla</string>
+  <string name="videoOrientation_entryLandscape">Apaïsat</string>
+  <string name="videoOrientation_entryReverseLandscape">Apaïsat invertit</string>
+  <string name="videoOrientation_entryPortrait">Vertical</string>
+  <string name="videoOrientation_entryReversePortrait">Vertical invertit</string>
+  <string name="videoPosition_title">Posició de pantalla en mode apaïsat</string>
+  <string name="videoPosition_entryBottom">Abaix</string>
+  <string name="videoPosition_entryMiddle">Al mig</string>
+  <string name="videoPosition_entryTop">Adalt</string>
+  <string name="videoFpsRefresh_title">Mostra velocitat de quadres (framerate)</string>
+  <string name="videoFpsRefresh_entryNever">Mai</string>
+  <string name="videoFpsRefresh_entryOccasionally">Ocasionalment</string>
+  <string name="videoFpsRefresh_entryFrequently">Freqüentment</string>
+  <string name="videoHardwareType_title">Reducció del parpelleig</string>
+  <string name="videoHardwareType_entryAuto">Auto-detecta des del model de mòbil/tablet</string>
+  <string name="videoHardwareType_entryStandard">Perfil estàndard</string>
+  <string name="videoHardwareType_entryI">\t\nPerfil I</string>
+  <string name="videoHardwareType_entryO1">Perfil O-1</string>
+  <string name="videoHardwareType_entryO2">Perfil O-2</string>
+  <string name="videoHardwareType_entryQ">Perfil Q</string>
+  <string name="videoHardwareType_entryT">\t\nPerfil T</string>
+  <string name="gles2N64Frameskip_title">Salt de quadres (Frameskip)</string>
+  <string name="gles2N64Frameskip_entryNever">Mai saltar quadres (frameskip)</string>
+  <string name="gles2N64Frameskip_entryUpTo1">No més de 1 frame</string>
+  <string name="gles2N64Frameskip_entryUpTo2">No més de 2 frames</string>
+  <string name="gles2N64Frameskip_entryUpTo3">No més de 3 frames</string>
+  <string name="gles2N64Frameskip_entryUpTo4">No més de 4 frames</string>
+  <string name="gles2N64Frameskip_entryUpTo5">No més de 5 frames</string>
+  <string name="gles2N64Frameskip_entryExactly1">Exactament 1 frame</string>
+  <string name="gles2N64Frameskip_entryExactly2">Exactament 2 frames</string>
+  <string name="gles2N64Frameskip_entryExactly3">Exactament 3 frames</string>
+  <string name="gles2N64Frameskip_entryExactly4">Exactament 4 frames</string>
+  <string name="gles2N64Frameskip_entryExactly5">Exactament 5 frames</string>
+  <string name="gles2RiceMipmapping_title">Mapeig de MIPs</string>
+  <string name="gles2RiceMipmapping_entryNone">Cap</string>
+  <string name="gles2RiceMipmapping_entryNearest">Més proper</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
+  <string name="gles2RiceTextureEnhancement_title">Augment de qualitat de textures</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Cap</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Scale 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Agut</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Més agut</string>
+  <string name="audioResampleAlg_title">Algorisme de remostreig</string>
+  <string name="audioResampleAlg_entryTrivial">Trivial</string>
+  <string name="audioResampleAlg_entryLinear">Interpolació lineal</string>
+  <string name="audioResampleAlg_entryZoh">Retenció d\'ordre zero</string>
+  <string name="audioResampleAlg_entrySincFastest">Funció sinc (ràpid)</string>
+  <string name="audioResampleAlg_entrySincMedium">Funció sinc (mitjà)</string>
+  <string name="audioResampleAlg_entrySincBest">Funció sinc (millor)</string>
+  <string name="pluginVideo_title">Vídeo</string>
+  <string name="pluginVideo_entryNone">Cap (vídeo deshabilitat)</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10⏎ <small>(Android GLES2 adaptació de GLN64 per Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)⏎ <small>(GLES2 adaptat per a Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
+  <string name="pluginAudio_title">Àudio</string>
+  <string name="pluginAudio_entryNone">Cap (àudio deshabilitat)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10⏎ <small>(Adaptació del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginInput_title">\t\nEntrada</string>
+  <string name="pluginInput_entryNone">Cap (dispositius d\'entrada deshabilitats)</string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
+  <string name="pluginRsp_title">Reality signal processor (RSP)</string>
+  <string name="pluginRsp_entryNone">Cap (RSP disabled)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10⏎ <small>(Adaptació a Android del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10⏎ <small>(Àudo deshabilitat, speed hack per Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="pluginCore_title">Nucli d\'emulació</string>
+  <string name="pluginCore_entryV110">core, v1.10⏎ <small>(Adaptació a Android del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="r4300Emulator_title">Emulador R4300</string>
+  <string name="r4300Emulator_entryPureInterpreter">Intèrpret pur</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Intèrpret  a cache</string>
+  <string name="r4300Emulator_entryDynarec">Recompilador dinàmic (dynarec)</string>
+  <string name="navigationMode_title">Accessibilitat</string>
+  <string name="navigationMode_summary">Mode de navegació del menú: %1$s</string>
+  <string name="navigationMode_entryAuto">Seleccionar automàticament de la configuració del dispositiu</string>
+  <string name="navigationMode_entryStandard">Mode estàndard</string>
+  <string name="navigationMode_entryOuya">Mode OUYA (sense pantalla tàctil, entrada només a través de comandaments de joc)</string>
+  <string name="localeOverride_title">Idioma</string>
+  <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
+  <!--ACRA Preferences (key names must not be changed)-->
+  <string name="acraEnable_title">Habilita l\'enviament d\'informes d\'errades</string>
+  <string name="acraEnable_summary">Cap tipus d\'informació personal es recollida</string>
+  <string name="acraUserEmail_title">Informació de contacte</string>
+  <string name="acraUserEmail_summary">El teu nom d\'usuari de paulscode.com (opcional)</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Opacitat de la pantalla tàctil</string>
+  <string name="videoActionBarTransparency_title">Opacitat de la barra d\'accions</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <string name="pathPreference_dialogTitle">Carpeta seleccionada: %1$s</string>
+  <string name="pathSelectedGame_title">Joc</string>
+  <string name="pathSelectedGame_default">~roms/n64</string>
+  <string name="pathCustomTouchscreen_title">Carpeta amb dades de disposició</string>
+  <string name="pathCustomTouchscreen_default">~</string>
+  <string name="pathHiResTextures_title">Importa un pac de textures</string>
+  <string name="pathHiResTextures_summary">Aplicar textures personalitzades (en format ZIP) a un joc</string>
+  <string name="pathHiResTextures_default">~</string>
+  <string name="pathGameSaves_title">Carpeta de partides de joc</string>
+  <string name="pathGameSaves_default">!mupen64plus</string>
+  <!--Player Map Preferences-->
+  <string name="playerMap_title">Multijugador</string>
+  <string name="playerMap_summary">Definir controlador de cada jugador</string>
+  <!--Input Map Preferences-->
+  <string name="inputMap1_title">Comandament</string>
+  <string name="inputMap2_title">Jugador 2</string>
+  <string name="inputMap3_title">Jugador 3</string>
+  <string name="inputMap4_title">Jugador 4</string>
+  <string name="inputMap_summary">Botons i funcions especials d\'assignació</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Confirmació</string>
+  <string name="confirmResetGame_message">Vols reinicialitzar el joc? Tots els progressos fets des l\'última vegada que vas guardar la partida es perdran.</string>
+  <string name="confirmOverwriteFile_message">Sobreescriu %1$s?</string>
+  <string name="confirmLoadProfile_message">Carregar perfil \"%1$s\" per a %2$s?</string>
+  <string name="confirmUnmapAll_message">Desassigna tots el controls per a %$1s?</string>
+  <string name="confirmMigrateSlotSaves_message">Vols copiar els teus antics slots de guardat? Si cal es crearan còpies de seguretat.</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Registre de canvis</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">nom de fitxer</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Inicialitzant</string>
+  <string name="assetExtractor_progress">%1$.0f%% completat: %2$s</string>
+  <string name="assetExtractor_finished">Finalitzat</string>
+  <string name="assetExtractor_failed">Error en extreure dades de l\'aplicació.⏎ Si us plau, desconnecta el cable USB, reinicia el dispositiu i executa novament l\'aplicació.⏎ Per obtenir ajuda, visita% 1 $ s.</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Cheat %1$d</string>
+  <string name="cheats_longPress">(mantingues premut per mostrar el text complet)</string>
+  <string name="cheat_disabled">(deshabilitat)</string>
+  <string name="cheatOption_title">Text complet</string>
+  <string name="cheatNotes_title">Notes</string>
+  <string name="cheatNotes_none">(no hi ha notes disponibles per aquest cheat)</string>
+  <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Extraient textures</string>
+  <string name="pathHiResTexturesTask_message">Si us plau, sigues pacient. Aquest proces pot tardar una mica.</string>
+  <string name="pathHiResTexturesTask_errorMessage">Error extraient les textures!</string>
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Directori superior</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Terminal %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Terminal %1$d</string>
+  <string name="playerMapPreference_popupTitle">Jugador %1$d</string>
+  <string name="playerMapPreference_popupMessage">Jugador %1$d, prem un botó a joystick del teu comandament…⏎ ⏎ Terminals connectats:⏎ %2$s</string>
+  <string name="playerMapPreference_popupUnmap">\t\nDessasignar</string>
+  <string name="playerMapPreference_button">Jugador %1$d⏎ %2$s</string>
+  <string name="playerMapPreference_reminder">Avisam quan els jugadors no estan assignats</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupMessage">Prem un botó, tecla o joystick a assignar… ⏎ ⏎ Assignacions actives:⏎ %1$s</string>
+  <string name="inputMapActivity_popupUnmap">Dessasignar</string>
+  <string name="inputMapActivity_aPadXperiaPlay">Estic analògic controlat amb touchpad</string>
+  <string name="inputMapActivity_cPadXperiaPlay">C-pad controlat amb el touchpad</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analog →</string>
+  <string name="inputMapActivity_btnAL">Analog ←</string>
+  <string name="inputMapActivity_btnAD">Analog ↓</string>
+  <string name="inputMapActivity_btnAU">Analog ↑</string>
+  <string name="inputMapActivity_incrementSlot">Incrementa slot</string>
+  <string name="inputMapActivity_reset">Reinicia</string>
+  <string name="inputMapActivity_pause">Pausa</string>
+  <string name="inputMapActivity_stop">Atura</string>
+  <string name="inputMapActivity_frameAdvance">Avanç de quadres (frame)</string>
+  <string name="inputMapActivity_fastForward">Avanç ràpid</string>
+  <string name="inputMapActivity_speedDown">Reduir velocitat</string>
+  <string name="inputMapActivity_speedUp">Accelerar</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Tecla de retorn</string>
+  <string name="inputMapActivity_simulateMenu">Tecla de menú</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Prem un botó o tecla…</string>
+  <string name="diagnosticActivity_textMotion_text">\t\nPantalla tàctil o joystick…</string>
+</resources>

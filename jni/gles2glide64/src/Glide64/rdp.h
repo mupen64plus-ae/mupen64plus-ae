@@ -45,7 +45,6 @@ extern char out_buf[2048];
 extern wxUint32 frame_count; // frame counter
 
 //GlideHQ support
-//#define TEXTURE_FILTER
 #ifdef TEXTURE_FILTER
 #include "../GlideHQ/Ext_TxFilter.h"
 #endif

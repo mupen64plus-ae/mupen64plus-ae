@@ -1,12 +1,17 @@
-
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := xperia-touchpad
-LOCAL_SRC_FILES := main.c
-LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
+LOCAL_MODULE := xperia-touchpad
 
-LOCAL_CFLAGS += -O3 -ffast-math -frename-registers -fomit-frame-pointer -fsingle-precision-constant -fpredictive-commoning -fno-strict-aliasing -fvisibility=hidden
+LOCAL_SRC_FILES := main.c
+
+LOCAL_CFLAGS := $(COMMON_CFLAGS)
+
+LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
+
+LOCAL_LDLIBS := \
+    -landroid   \
+    -llog       \
 
 include $(BUILD_SHARED_LIBRARY)

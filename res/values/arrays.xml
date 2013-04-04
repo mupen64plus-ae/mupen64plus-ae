@@ -15,6 +15,7 @@
     <!-- Locales -->
     <string-array name="localeOverride_values" translatable="false">
         <item></item>
+        <item>ca</item>
         <item>de</item>
         <item>en</item>
         <item>es</item>
@@ -22,6 +23,7 @@
         <item>gl</item>
         <item>hr</item>
         <item>it</item>
+        <item>hu</item>
         <item>nl</item>
         <!-- <item>nb</item> -->
         <item>pl</item>
@@ -32,37 +34,6 @@
     </string-array>
 
     <string name="localeOverride_default" translatable="false"></string>
-
-    <!-- Touchscreen Layouts -->
-    <string-array name="touchscreenLayout_entries" translatable="false">
-        <item>@string/touchscreenLayout_entryAnalog</item>
-        <item>@string/touchscreenLayout_entryDigital</item>
-        <item>@string/touchscreenLayout_entryCustom</item>
-    </string-array>
-    <string-array name="touchscreenLayout_values" translatable="false">
-        <item>Mupen64Plus-AE-Analog</item>
-        <item>Mupen64Plus-AE-Digital</item>
-        <item>Custom</item>
-    </string-array>
-
-    <string name="touchscreenLayout_default" translatable="false">Mupen64Plus-AE-Analog</string>
-    <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
-
-    <!-- Touchscreen Sizes -->
-    <string-array name="touchscreenSize_entries" translatable="false">
-        <item>@string/touchscreenSize_entryTiny</item>
-        <item>@string/touchscreenSize_entrySmall</item>
-        <item>@string/touchscreenSize_entryNormal</item>
-        <item>@string/touchscreenSize_entryTablet</item>
-    </string-array>
-    <string-array name="touchscreenSize_values" translatable="false">
-        <item>-Tiny</item>
-        <item>-Small</item>
-        <item></item> <!-- Intentionally empty -->
-        <item>-Tablet</item>
-    </string-array>
-
-    <string name="touchscreenSize_default" translatable="false"></string>
 
     <!-- Touchscreen Refresh List -->
     <string-array name="touchscreenRefresh_entries" translatable="false">
@@ -128,6 +99,49 @@
 
     <string name="touchscreenAutoHoldables_default" translatable="false">13~12~5</string>
 
+    <!-- Touchscreen Button Styles -->
+    <string-array name="touchscreenStyle_entries" translatable="false">
+        <item>@string/touchscreenStyle_entryOutline</item>
+        <item>@string/touchscreenStyle_entryShaded</item>
+    </string-array>
+    <string-array name="touchscreenStyle_values" translatable="false">
+        <item>../../images/Mupen64Plus-AE-Outline</item>
+        <item>../../images/Mupen64Plus-AE-Shaded</item>
+    </string-array>
+
+    <string name="touchscreenStyle_default" translatable="false">../../images/Mupen64Plus-AE-Outline</string>
+    
+    <!-- Touchscreen Layout Heights -->
+    <string-array name="touchscreenHeight_entries" translatable="false">
+        <item>@string/touchscreenHeight_entryAuto</item>
+        <item>@string/touchscreenHeight_entryFullHeight</item>
+        <item>@string/touchscreenHeight_entryHalfHeight</item>
+    </string-array>
+    <string-array name="touchscreenHeight_values" translatable="false">
+        <item></item>
+        <item>-Full-Height</item>
+        <item>-Half-Height</item>
+    </string-array>
+
+    <string name="touchscreenHeight_default" translatable="false"></string>
+
+    <!-- Touchscreen Layouts -->
+    <string-array name="touchscreenLayout_entries" translatable="false">
+        <item>@string/touchscreenLayout_entryAnalog</item>
+        <item>@string/touchscreenLayout_entryDigital</item>
+        <item>@string/touchscreenLayout_entryAll</item>
+        <item>@string/touchscreenLayout_entryCustom</item>
+    </string-array>
+    <string-array name="touchscreenLayout_values" translatable="false">
+        <item>Mupen64Plus-AE-Analog</item>
+        <item>Mupen64Plus-AE-Digital</item>
+        <item>Mupen64Plus-AE-All</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string name="touchscreenLayout_default" translatable="false">Mupen64Plus-AE-Analog</string>
+    <string name="touchscreenLayout_fpsOnly" translatable="false">Mupen64Plus-AE-Just-FPS</string>
+
     <!-- Xperia Play Touchpad Layouts -->
     <string-array name="touchpadLayout_entries" translatable="false">
         <item>@string/touchpadLayout_entryDefault</item>
@@ -135,7 +149,7 @@
     </string-array>
     <string-array name="touchpadLayout_values" translatable="false">
         <item>Mupen64Plus-AE-Xperia-Play</item>
-        <item>Mupen64Plus-AE-Analog-Right</item>
+        <item>Mupen64Plus-AE-Xperia-Play-Swapped</item>
     </string-array>
 
     <string name="touchpadLayout_default" translatable="false">Mupen64Plus-AE-Xperia-Play</string>
@@ -251,6 +265,30 @@
     </string-array>
     
     <string name="gles2RiceMipmapping_default">0</string>
+
+    <!-- GLES2Rice Screen Update List -->
+    <string-array name="gles2RiceScreenUpdate_entries">
+        <item>@string/gles2RiceScreenUpdate_entryRomDefault</item>
+        <item>@string/gles2RiceScreenUpdate_entryVIOriginUpdate</item>
+        <item>@string/gles2RiceScreenUpdate_entryVIOriginChange</item>
+        <item>@string/gles2RiceScreenUpdate_entryCIChange</item>
+        <item>@string/gles2RiceScreenUpdate_entryFirstCIChange</item>
+        <item>@string/gles2RiceScreenUpdate_entryFirstPrimDraw</item>
+        <item>@string/gles2RiceScreenUpdate_entryBeforeScreenClear</item>
+        <item>@string/gles2RiceScreenUpdate_entryAfterScreenDrawn</item>
+    </string-array>
+    <string-array name="gles2RiceScreenUpdate_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
+    <string name="gles2RiceScreenUpdate_default">4</string>
     
     <!-- GLES2Rice Texture Enhancement Algorithm List -->
     <string-array name="gles2RiceTextureEnhancement_entries">
@@ -327,14 +365,14 @@
     <!-- Input Plugins -->
     <string-array name="pluginInput_entries" translatable="false">
         <item>@string/pluginInput_entryNone</item>
-        <item>@string/pluginInput_entrySdl</item>
+        <item>@string/pluginInput_entryAndroid</item>
     </string-array>
     <string-array name="pluginInput_values" translatable="false">
         <item></item>
-        <item>libinput-sdl.so</item>
+        <item>libinput-android.so</item>
     </string-array>
 
-    <string name="pluginInput_default" translatable="false">libinput-sdl.so</string>
+    <string name="pluginInput_default" translatable="false">libinput-android.so</string>
 
     <!-- RSP Plugins -->
     <string-array name="pluginRsp_entries" translatable="false">
@@ -408,8 +446,6 @@
         <item>@string/inputMapActivity_btnAL</item>
         <item>@string/inputMapActivity_btnAD</item>
         <item>@string/inputMapActivity_btnAU</item>
-        <item>@string/inputMapActivity_rumble</item>
-        <item>@string/inputMapActivity_mempak</item>
         <item>@string/inputMapActivity_incrementSlot</item>
         <item>@string/inputMapActivity_saveSlot</item>
         <item>@string/inputMapActivity_loadSlot</item>
@@ -419,8 +455,8 @@
         <item>@string/inputMapActivity_speedDown</item>
         <item>@string/inputMapActivity_speedUp</item>
         <item>@string/inputMapActivity_fastForward</item>
-        <!-- <item>@string/inputMapActivity_frameAdvance</item> -->
-        <!-- <item>@string/inputMapActivity_gameshark</item> -->
+        <item>@string/inputMapActivity_frameAdvance</item>
+        <item>@string/inputMapActivity_gameshark</item>
         <item>@string/inputMapActivity_simulateBack</item>
         <item>@string/inputMapActivity_simulateMenu</item>
     </string-array>
@@ -443,8 +479,6 @@
         <item>17</item>
         <item>18</item>
         <item>19</item>
-        <item>15</item>
-        <item>14</item>
         <item>20</item>
         <item>21</item>
         <item>22</item>
@@ -454,8 +488,8 @@
         <item>29</item>
         <item>28</item>
         <item>26</item>
-        <!-- <item>27</item> -->
-        <!-- <item>30</item> -->
+        <item>27</item>
+        <item>30</item>
         <item>31</item>
         <item>32</item>
     </string-array>

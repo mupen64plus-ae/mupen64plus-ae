@@ -204,7 +204,8 @@ H_START:\t%08X\nV_START:\t%08X\nVI Width=%f(x %f), VI Height=%f(x %f)\n\n",
 void DumpVertexArray(void)
 {
     DebuggerAppendMsg("----Vertexes----\n");
-    try{
+    try
+    {
         for( int i=0; i<32; i++ )
         {
             FiddledVtx &v = g_pVtxBase[i];
@@ -212,7 +213,8 @@ void DumpVertexArray(void)
                 v.rgba.r, v.rgba.g, v.rgba.b, v.rgba.a);
             DebuggerAppendMsg("\tx=%f,y=%f,z=%f,rhw=%f\n", g_vecProjected[i].x, g_vecProjected[i].y, g_vecProjected[i].z, g_vecProjected[i].w);
         }
-    }catch(...)
+    }
+    catch(...)
     {
         DebuggerAppendMsg("Invalid memory pointer of vertex array\n");
     }
@@ -306,18 +308,18 @@ void DumpDlistAt(uint32 dwPC)
 void DumpMatrixAt(uint32 dwPC)
 {
     Matrix mat;
-    uint32 dwI;
-    uint32 dwJ;
     const float fRecip = 1.0f / 65536.0f;
 
-    for (dwI = 0; dwI < 4; dwI++) {
-        for (dwJ = 0; dwJ < 4; dwJ++) {
-
+    for (uint32 dwI = 0; dwI < 4; dwI++)
+    {
+        for (uint32 dwJ = 0; dwJ < 4; dwJ++)
+        {
             int nDataHi = *(short  *)(g_pRDRAMu8 + ((dwPC+(dwI<<3)+(dwJ<<1)     )^0x2));
             int nDataLo = *(uint16 *)(g_pRDRAMu8 + ((dwPC+(dwI<<3)+(dwJ<<1) + 32)^0x2));
             mat.m[dwI][dwJ] = (float)((nDataHi << 16) | nDataLo) * fRecip;
         }
     }
+
     TRACE0("Dump Matrix in Memory");
     DebuggerAppendMsg(
         " %#+12.5f %#+12.5f %#+12.5f %#+12.5f\n"
@@ -412,7 +414,6 @@ void DumpCachedTexture(uint32 index)
 extern uint32 gObjTlutAddr;
 void DumpInfo(int thingToDump)
 {
-    uint32 i;
     switch(thingToDump)
     {
     case DUMP_COLORS:
@@ -427,7 +428,7 @@ void DumpInfo(int thingToDump)
         break;
     case DUMP_LIGHT:
         DebuggerAppendMsg("----Light Colors----\nNumber of Lights: %d\n",GetNumLights());
-        for( i=0; i<GetNumLights()+2; i++)
+        for( uint32 i=0; i<GetNumLights()+2; i++)
         {
             DebuggerAppendMsg("Light %d:\t%08X, (%d,%d,%d)\n", i, gRSPn64lights[i].dwRGBA,gRSPn64lights[i].x,gRSPn64lights[i].y,gRSPn64lights[i].z );
         }
@@ -561,7 +562,8 @@ void SetLogToFile(bool log)
 
 void __cdecl DebuggerAppendMsg(const char * Message, ...)
 {
-    if( !logToScreen && !logToFile )    return;
+    if( !logToScreen && !logToFile )
+        return;
 
     char Msg[5000];
     va_list ap;
@@ -626,10 +628,9 @@ void DumpHex(uint32 rdramAddr, int count)
 
 uint32 StrToHex(char *HexStr)
 {
-    uint32      k;
-    uint32  temp = 0;
+    uint32 temp = 0;
 
-    for(k = 0; k < strlen(HexStr); k++)
+    for(uint32 k = 0; k < strlen(HexStr); k++)
     {
         if(HexStr[k] <= '9' && HexStr[k] >= '0')
         {
@@ -657,28 +658,28 @@ uint32 StrToHex(char *HexStr)
 
 void DEBUGGER_PAUSE_COUNT_N(uint32 val)
 {
-if (eventToPause == (int)val)
+    if (eventToPause == (int)val)
     {   
-    if(debuggerPauseCount>0) 
-        debuggerPauseCount--;
-    if(debuggerPauseCount==0)
+        if(debuggerPauseCount>0) 
+            debuggerPauseCount--;
+        if(debuggerPauseCount==0)
         {
-        CGraphicsContext::Get()->UpdateFrame();
-        debuggerPause = true;
+            CGraphicsContext::Get()->UpdateFrame();
+            debuggerPause = true;
         }   
     }
 }
 
 void DEBUGGER_PAUSE_COUNT_N_WITHOUT_UPDATE(uint32 val)
 {
-if(eventToPause == (int)val)
+    if(eventToPause == (int)val)
     {
-    if(debuggerPauseCount>0) 
-        debuggerPauseCount--;
-    if(debuggerPauseCount==0)
+        if(debuggerPauseCount>0) 
+            debuggerPauseCount--;
+        if(debuggerPauseCount==0)
         {
-        debuggerPauseCount = countToPause;
-        debuggerPause = true;
+            debuggerPauseCount = countToPause;
+            debuggerPause = true;
         }   
     }
 }

@@ -23,14 +23,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <android/log.h>
 
 #include "m64p_types.h"
 #include "main.h"
 #include "compare_core.h"
 #include "core_interface.h"
 
+#ifdef ANDROID
+#include <android/log.h>
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "compare_core", __VA_ARGS__)
+#endif
 
 /* local variables */
 
@@ -53,7 +55,7 @@ static void stop_it(void)
     (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
 
     errors++;
-#ifndef NO_ASM  // paulscode (don't use asm if NO_ASM defined)
+#ifndef NO_ASM
   #if !defined(WIN32)
     #if defined(__i386__) || defined(__x86_64__)
         if (errors > 7)

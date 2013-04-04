@@ -48,11 +48,15 @@
 #else  /* Linux-like UNIX */
 
   #include <limits.h>  // for PATH_MAX
-//#define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so.2"
+#ifdef PAULSCODE
   #define OSAL_DEFAULT_DYNLIB_FILENAME "libcore.so"
   #define OSAL_DIR_SEPARATOR           '/'
-  //#define OSAL_CURRENT_DIR             "./"
   #define OSAL_CURRENT_DIR             "/data/data/paulscode.android.mupen64plus/lib/"
+#else
+  #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so.2"
+  #define OSAL_DIR_SEPARATOR           '/'
+  #define OSAL_CURRENT_DIR             "./"
+#endif
   #define OSAL_DLL_EXTENSION           ".so"
   #define osal_insensitive_strcmp(x, y) strcasecmp(x, y)
 

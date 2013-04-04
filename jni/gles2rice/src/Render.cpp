@@ -180,7 +180,6 @@ void CRender::SetProjection(const Matrix & mat, bool bPush, bool bReplace)
         {
             gRSP.projectionMtxs[gRSP.projectionMtxTop] = mat * gRSP.projectionMtxs[gRSP.projectionMtxTop];
         }
-
     }
     
     gRSP.bMatrixIsUpdated = true;
@@ -331,32 +330,32 @@ void CRender::RenderReset()
 
 bool CRender::FillRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor)
 {
-  LOG_UCODE("FillRect: X0=%d, Y0=%d, X1=%d, Y1=%d, Color=0x%8X", nX0, nY0, nX1, nY1, dwColor);
+    LOG_UCODE("FillRect: X0=%d, Y0=%d, X1=%d, Y1=%d, Color=0x%8X", nX0, nY0, nX1, nY1, dwColor);
 
-  if (g_CI.dwSize != TXT_SIZE_16b && frameBufferOptions.bIgnore) 
-    return true;
+    if (g_CI.dwSize != TXT_SIZE_16b && frameBufferOptions.bIgnore) 
+        return true;
 
-  if (status.bHandleN64RenderTexture && !status.bDirectWriteIntoRDRAM)
-     status.bFrameBufferIsDrawn = true;
+    if (status.bHandleN64RenderTexture && !status.bDirectWriteIntoRDRAM)
+        status.bFrameBufferIsDrawn = true;
 
-  if(status.bVIOriginIsUpdated == true && currentRomOptions.screenUpdateSetting==SCREEN_UPDATE_AT_1ST_PRIMITIVE)
-  {
-    status.bVIOriginIsUpdated=false;
-    CGraphicsContext::Get()->UpdateFrame();
-    DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_SET_CIMG, {DebuggerAppendMsg("Screen Update at 1st FillRectangle");});
-  }
+    if(status.bVIOriginIsUpdated == true && currentRomOptions.screenUpdateSetting==SCREEN_UPDATE_AT_1ST_PRIMITIVE)
+    {
+        status.bVIOriginIsUpdated=false;
+        CGraphicsContext::Get()->UpdateFrame();
+        DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_SET_CIMG, {DebuggerAppendMsg("Screen Update at 1st FillRectangle");});
+    }
 
   if (status.bCIBufferIsRendered && status.bVIOriginIsUpdated == true && currentRomOptions.screenUpdateSetting==SCREEN_UPDATE_BEFORE_SCREEN_CLEAR )
-    {
-    if ((nX0==0 && nY0 == 0 && (nX1 == (int) g_CI.dwWidth || nX1 == (int) g_CI.dwWidth-1)) ||
-        (nX0==gRDP.scissor.left && nY0 == gRDP.scissor.top  && (nX1 == gRDP.scissor.right || nX1 == gRDP.scissor.right-1)) ||
-        ((nX0+nX1 == (int)g_CI.dwWidth || nX0+nX1 == (int)g_CI.dwWidth-1 || nX0+nX1 == gRDP.scissor.left+gRDP.scissor.right || nX0+nX1 == gRDP.scissor.left+gRDP.scissor.right-1) && (nY0 == gRDP.scissor.top || nY0 == 0 || nY0+nY1 == gRDP.scissor.top+gRDP.scissor.bottom || nY0+nY1 == gRDP.scissor.top+gRDP.scissor.bottom-1)))
-        {
-            status.bVIOriginIsUpdated=false;
-            CGraphicsContext::Get()->UpdateFrame();
-            DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_SET_CIMG,{DebuggerAppendMsg("Screen Update Before Screen Clear");});
-        }
-    }
+  {
+      if ((nX0==0 && nY0 == 0 && (nX1 == (int) g_CI.dwWidth || nX1 == (int) g_CI.dwWidth-1)) ||
+          (nX0==gRDP.scissor.left && nY0 == gRDP.scissor.top  && (nX1 == gRDP.scissor.right || nX1 == gRDP.scissor.right-1)) ||
+          ((nX0+nX1 == (int)g_CI.dwWidth || nX0+nX1 == (int)g_CI.dwWidth-1 || nX0+nX1 == gRDP.scissor.left+gRDP.scissor.right || nX0+nX1 == gRDP.scissor.left+gRDP.scissor.right-1) && (nY0 == gRDP.scissor.top || nY0 == 0 || nY0+nY1 == gRDP.scissor.top+gRDP.scissor.bottom || nY0+nY1 == gRDP.scissor.top+gRDP.scissor.bottom-1)))
+      {
+          status.bVIOriginIsUpdated=false;
+          CGraphicsContext::Get()->UpdateFrame();
+          DEBUGGER_PAUSE_AND_DUMP_NO_UPDATE(NEXT_SET_CIMG,{DebuggerAppendMsg("Screen Update Before Screen Clear");});
+      }
+  }
 
 
     SetFillMode(RICE_FILLMODE_SOLID);
@@ -602,7 +601,7 @@ bool CRender::TexRect(int nX0, int nY0, int nX1, int nY1, float fS0, float fT0, 
     if( options.bEnableHacks )
     {
         // Goldeneye HACK
-        if( options.bEnableHacks && nY1 - nY0 < 2 ) 
+        if( nY1 - nY0 < 2 ) 
             nY1 = nY1+2;
 
         //// Text edge hack
@@ -1064,15 +1063,11 @@ void myVec3Transform(float *vecout, float *vecin, float* m)
     vecout[2] = (m[2]*vecin[0]+m[6]*vecin[1]+m[10]*vecin[2]+m[14])/w;
 }
 
-void CRender::SetTextureEnable(bool bEnable)
+void CRender::SetTextureEnableAndScale(int dwTile, bool bEnable, float fScaleX, float fScaleY)
 {
     gRSP.bTextureEnabled = bEnable;
 
-}
-
-void CRender::SetTextureScale(int dwTile,  float fScaleX, float fScaleY)
-{
-    if( gRSP.bTextureEnabled )
+    if( bEnable )
     {
         if( gRSP.curTile != (unsigned int)dwTile )
             gRDP.textureIsChanged = true;
@@ -1244,12 +1239,12 @@ bool CRender::DrawTriangles()
             }
         }
 
-        if( t==1 && !(m_pColorCombiner->m_bTex1Enabled) ) break;
+        if( t==1 && !(m_pColorCombiner->m_bTex1Enabled) )
+            break;
 
-        uint32 i;
         if( halfscaleS < 1 )
         {
-            for( i=0; i<gRSP.numVertices; i++ )
+            for( uint32 i=0; i<gRSP.numVertices; i++ )
             {
                 if( t == 0 )
                 {
@@ -1278,7 +1273,7 @@ bool CRender::DrawTriangles()
         bool clampS=true;
         bool clampT=true;
 
-        for( i=0; i<gRSP.numVertices; i++ )
+        for( uint32 i=0; i<gRSP.numVertices; i++ )
         {
             float w = CDeviceBuilder::GetGeneralDeviceType() == OGL_DEVICE ? g_vtxProjected5[i][3] : g_vtxBuffer[i].rhw; 
             if( w < 0 || g_vtxBuffer[i].tcord[t].u > 1.0 || g_vtxBuffer[i].tcord[t].u < 0.0  )
@@ -1288,7 +1283,7 @@ bool CRender::DrawTriangles()
             }
         }
 
-        for( i=0; i<gRSP.numVertices; i++ )
+        for( uint32 i=0; i<gRSP.numVertices; i++ )
         {
             float w = CDeviceBuilder::GetGeneralDeviceType() == OGL_DEVICE ? g_vtxProjected5[i][3] : g_vtxBuffer[i].rhw; 
             if( w < 0 || g_vtxBuffer[i].tcord[t].v > 1.0 || g_vtxBuffer[i].tcord[t].v < 0.0  )
@@ -1449,7 +1444,7 @@ bool SaveCITextureToFile(TxtrCacheEntry &entry, char *filename, bool bShow, bool
             if( entry.ti.Size == TXT_SIZE_4b )
             {
                 if( idx%8 ) idx = (idx/8+1)*8;
-        }
+            }
             else
             {
                 if( idx%4 ) idx = (idx/4+1)*4;
@@ -1461,7 +1456,8 @@ bool SaveCITextureToFile(TxtrCacheEntry &entry, char *filename, bool bShow, bool
     }
 
     // Create BMP color indexed file
-    if( strcasecmp(right(filename,4),".bmp") != 0 ) strcat(filename,".bmp");
+    if( strcasecmp(right(filename,4),".bmp") != 0 )
+        strcat(filename,".bmp");
 
     BITMAPFILEHEADER fileHeader;
     BITMAPINFOHEADER infoHeader;
@@ -1661,7 +1657,7 @@ void CRender::SaveTextureToFile(int tex, TextureChannel channel, bool bShow)
                 g_textures[tex].pTextureEntry->ti.Size, channel == TXT_ALPHA ? "a" : channel == TXT_RGBA ? "all" : "rgb");
             SaveTextureToFile(*pEnhancedTexture, filename, channel, true, true);
             DebuggerAppendMsg("Whole texture is stored at: %s", filename);
-    }
+        }
     }
 }
 #endif
@@ -1794,7 +1790,6 @@ void CRender::UpdateClipRectangle()
     if( status.bHandleN64RenderTexture )
     {
         //windowSetting.fMultX = windowSetting.fMultY = 1;
-
         windowSetting.vpLeftW = 0;
         windowSetting.vpTopW = 0;
         windowSetting.vpRightW = newRenderTextureInfo.bufferWidth;
@@ -1846,7 +1841,6 @@ void CRender::UpdateClipRectangle()
         gRSP.clip_ratio_bottom = centery + halfy * gRSP.clip_ratio_posy;
     }
 
-
     UpdateScissorWithClipRatio();
 }
 
@@ -1893,7 +1887,8 @@ void CRender::UpdateScissorWithClipRatio()
 }
 
 
-void CRender::InitOtherModes(void)                  // Set other modes not covered by color combiner or alpha blender
+// Set other modes not covered by color combiner or alpha blender
+void CRender::InitOtherModes(void)
 {
     ApplyTextureFilter();
 

@@ -31,15 +31,20 @@ import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
 
+import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
-import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.input.map.PlayerMap;import paulscode.android.mupen64plusae.util.OUYAInterface;
+import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 
 /**
@@ -144,7 +149,13 @@ public class UserPrefs
     /** True if the touchscreen overlay is hidden. */
     public final boolean isTouchscreenHidden;
     
-    /** The filename of the selected touchscreen layout. */
+    /** Factor applied to the final calculated visible touchmap scale. */
+    public final float touchscreenScale;
+    
+    /** The folder name of the selected touchscreen style. */
+    public final String touchscreenStyle;
+    
+    /** The folder name of the selected touchscreen layout. */
     public final String touchscreenLayout;
     
     /** True if a custom touchscreen is provided. */
@@ -272,6 +283,9 @@ public class UserPrefs
     
     /** The mipmapping algorithm to use in GLES2Rice */
     public final String gles2RiceMipmappingAlg;
+
+    /** The screen update setting to use in GLES2Rice */
+    public final String gles2RiceScreenUpdateType;
     
     /** The texture enhancement algorithm to be used in the gles2rice library */
     public final String gles2RiceTextureEnhancement;
@@ -289,13 +303,16 @@ public class UserPrefs
     public final boolean isOuyaMode;
     
     // Shared preferences keys and key templates
+    private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     private static final String KEYTEMPLATE_INPUT_MAP_STRING = "inputMapString%1$d";
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     // ... add more as needed
     
     // Shared preferences default values
-    public static final String DEFAULT_INPUT_MAP_STRING = InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
+    public static final int DEFAULT_PAK_TYPE = CoreInterface.PAK_TYPE_MEMORY;
+    public static final String DEFAULT_INPUT_MAP_STRING = OUYAInterface.IS_OUYA_HARDWARE ?
+            InputMap.DEFAULT_INPUT_MAP_STRING_OUYA : InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     // ... add more as needed
@@ -308,6 +325,7 @@ public class UserPrefs
      * 
      * @param context The application context.
      */
+    @SuppressLint( "InlinedApi" )
     public UserPrefs( Context context )
     {
         AppData appData = new AppData( context );
@@ -424,8 +442,9 @@ public class UserPrefs
         isGles2RiceFastTextureCrcEnabled = mPreferences.getBoolean( "gles2RiceFastTextureCrc", true );
         isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
         isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
-        gles2RiceMipmappingAlg = mPreferences.getString("gles2RiceMipmapping", "0");
-        gles2RiceTextureEnhancement = mPreferences.getString("gles2RiceTextureEnhancement", "0");
+        gles2RiceMipmappingAlg = mPreferences.getString( "gles2RiceMipmapping", "0" );
+        gles2RiceScreenUpdateType = mPreferences.getString( "gles2RiceScreenUpdate", "4" );
+        gles2RiceTextureEnhancement = mPreferences.getString( "gles2RiceTextureEnhancement", "0" );
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
         
         // Audio prefs
@@ -439,7 +458,7 @@ public class UserPrefs
         else if( navMode.equals( "standard" ) )
             isOuyaMode = false;
         else
-            isOuyaMode = appData.hardwareInfo.isOUYA;
+            isOuyaMode = OUYAInterface.IS_OUYA_HARDWARE;
         
         // Determine the touchscreen layout
         boolean isCustom = false;
@@ -454,12 +473,44 @@ public class UserPrefs
             }
             else
             {
-                // Substitute the "Touch" skin if analog stick is never redrawn
-                if( layout.equals( "Mupen64Plus-AE-Analog" ) && touchscreenRefresh == 0 )
-                    layout = "Mupen64Plus-AE-Touch";
+                // Use the "No-stick" skin if analog input is shown but stick ("hat") is not animated
+                if( layout.equals( "Mupen64Plus-AE-Analog" ) || layout.equals( "Mupen64Plus-AE-All" ) )
+                {
+                    if( touchscreenRefresh == 0 )
+                        layout += "-Nostick";
+                    else
+                        layout += "-Stick";
+                }
                 
-                folder = appData.touchscreenLayoutsDir + layout
-                        + mPreferences.getString( "touchscreenSize", "" );
+                String height = mPreferences.getString( "touchscreenHeight", "" );
+                if( TextUtils.isEmpty( height ) )
+                {
+                    // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
+                    if( context != null && context instanceof Activity )
+                    {
+                        DisplayMetrics metrics = new DisplayMetrics();
+                        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
+                        float screenWidthInches = (float) metrics.widthPixels / (float) metrics.xdpi;
+                        float screenHeightInches = (float) metrics.heightPixels / (float) metrics.ydpi;
+                        float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
+                        if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE ||
+                            videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                            videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
+                        {
+                            layout += "-Half-Height";
+                        }
+                        else
+                        {
+                            layout += "-Full-Height";
+                        }
+                    }
+                }
+                else
+                {
+                    layout += height;
+                }
+                
+                folder = appData.touchscreenLayoutsDir + layout;
             }
         }
         else if( isFpsEnabled )
@@ -469,6 +520,15 @@ public class UserPrefs
         }
         isTouchscreenCustom = isCustom;
         touchscreenLayout = folder;
+        
+        // Determine the touchscreen style
+        folder = "";
+        if( inputPlugin.enabled && isTouchscreenEnabled && !isCustom ) {
+            folder = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
+        }
+        touchscreenStyle = folder;
+        
+        touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f; 
         
         // Determine which players are "plugged in"
         isPlugged1 = isInputEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;
@@ -513,6 +573,11 @@ public class UserPrefs
         }
     }
     
+    public int getPakType( int player )
+    {
+        return getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE );
+    }
+    
     public String getInputMapString( int player )
     {
         return getString( KEYTEMPLATE_INPUT_MAP_STRING, player, DEFAULT_INPUT_MAP_STRING );
@@ -526,6 +591,11 @@ public class UserPrefs
     public boolean getPlayerMapReminder()
     {
         return getBoolean( KEY_PLAYER_MAP_REMINDER, DEFAULT_PLAYER_MAP_REMINDER );
+    }
+    
+    public void putPakType( int player, int value )
+    {
+        putInt( KEYTEMPLATE_PAK_TYPE, player, value );
     }
     
     public void putInputMapString( int player, String value )
@@ -554,6 +624,12 @@ public class UserPrefs
         return getBoolean( key, defaultValue );
     }
     
+    private int getInt( String keyTemplate, int index, int defaultValue )
+    {
+        String key = String.format( Locale.US, keyTemplate, index );
+        return mPreferences.getInt( key, defaultValue );
+    }
+    
     private String getString( String keyTemplate, int index, String defaultValue )
     {
         String key = String.format( Locale.US, keyTemplate, index );
@@ -569,6 +645,12 @@ public class UserPrefs
     {
         String key = String.format( Locale.US, keyTemplate, index );
         putBoolean( key, value );
+    }
+    
+    private void putInt( String keyTemplate, int index, int value )
+    {
+        String key = String.format( Locale.US, keyTemplate, index );
+        mPreferences.edit().putInt( key, value ).commit();
     }
     
     private void putString( String keyTemplate, int index, String value )
@@ -629,7 +711,7 @@ public class UserPrefs
             {
                 try
                 {
-                    mutableSet.add( Integer.parseInt( s ) );
+                    mutableSet.add( Integer.valueOf( s ) );
                 }
                 catch( NumberFormatException ignored )
                 {

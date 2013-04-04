@@ -11,6 +11,15 @@
   <string name="menuItem_fileSave">Gardar a un arquivo…</string>
   <string name="menuItem_fileLoad">Cargar dende un arquivo…</string>
   <string name="menuItem_setSpeed">Velocidade do xogo</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Cambiar IME</string>
   <string name="menuItem_exit">Saír</string>
   <!--Input Mapping Activity-->
@@ -157,11 +166,6 @@
   <string name="touchscreenLayout_entryAnalog">Analóxico (por roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Dixital (por roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Personalizado (ver http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Tamaño de pantalla</string>
-  <string name="touchscreenSize_entryTiny">Miúda</string>
-  <string name="touchscreenSize_entrySmall">Pequena</string>
-  <string name="touchscreenSize_entryNormal">Normal</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Disposición do touchpad</string>
   <string name="touchpadLayout_entryDefault">Pad esquerdo: control analóxico; pad dereito: Botóns C</string>
   <string name="touchpadLayout_entryReverse">Pad esquerdo: Botóns C; pad dereito: control analóxico</string>
@@ -207,16 +211,15 @@
   <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2 port do Rice Video para m64p v1.99.5 por Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Son</string>
   <string name="pluginAudio_entryNone">Nada (son desactivado)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port do Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Nada (dispositivo de entrada desactivado)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10\n<small>(Android port do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Nada (RSP desactivado)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(Non procesar son, hack de velocidade por by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port do Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(Non procesar son, hack de velocidade por by Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Núcleo de emulación</string>
-  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port do Mupen64Plus por Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port do Mupen64Plus por Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intérprete cacheado</string>
@@ -273,7 +276,6 @@
   <string name="changeLog_dialogTitle">Rexistro de modificacións</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
-  <string name="hintSetSpeed">velocidade entre 10 e 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Iniciando</string>
   <string name="assetExtractor_progress">%1$.0f%% feito: %2$s</string>
@@ -287,7 +289,6 @@
   <string name="cheatNotes_title">Notas</string>
   <string name="cheatNotes_none">(non hai notas para este truco)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Elixa paquete de textura (formato ZIP)</string>
   <string name="pathHiResTexturesTask_title">Desempaquetando texturas</string>
   <string name="pathHiResTexturesTask_message">Teña paciencia. Este proceso pode levar un tempo.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problema desempaquetando texturas!</string>
@@ -326,10 +327,6 @@
   <string name="inputMapActivity_btnAL">Analóxico ←</string>
   <string name="inputMapActivity_btnAD">Analóxico ↓</string>
   <string name="inputMapActivity_btnAU">Analóxico ↑</string>
-  <string name="inputMapActivity_rumble">Rumble Pak</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion Pak</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Incrementar slot</string>
   <string name="inputMapActivity_reset">Restablecer</string>
   <string name="inputMapActivity_pause">Pausa</string>

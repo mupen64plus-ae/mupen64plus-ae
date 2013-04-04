@@ -165,10 +165,6 @@ public class TouchController extends AbstractController implements OnTouchListen
     @TargetApi( 9 )
     public boolean onTouch( View view, MotionEvent event )
     {
-        // Eclair is needed for multi-touch tracking (getPointerId, getPointerCount)
-        if( !AppData.IS_ECLAIR )
-            return false;
-        
         // Filter by source, if applicable
         int source = AppData.IS_GINGERBREAD ? event.getSource() : 0;
         if( mSourceFilter != 0 && mSourceFilter != source )

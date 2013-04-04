@@ -73,9 +73,9 @@ public:
     static  int          m_maxAnisotropy;
 
 protected:
-    static  uint32      m_dwWindowStyle;     // Saved window style for mode switches
-    static  uint32      m_dwWindowExStyle;   // Saved window style for mode switches
-    static  uint32      m_dwStatusWindowStyle;     // Saved window style for mode switches
+    static  uint32      m_dwWindowStyle;       // Saved window style for mode switches
+    static  uint32      m_dwWindowExStyle;     // Saved window style for mode switches
+    static  uint32      m_dwStatusWindowStyle; // Saved window style for mode switches
 
     static  bool        m_deviceCapsIsInitialized;
 

@@ -11,14 +11,37 @@
   <string name="menuItem_fileSave">Spremi u datoteku…</string>
   <string name="menuItem_fileLoad">Učitaj iz datoteke…</string>
   <string name="menuItem_setSpeed">Brzina igre</string>
+  <string name="menuItem_paks">Pakovi kontrolera</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Igrač 1: Prazno</string>
+  <string name="menuItem_pak1_mem">Igrač 1: Memorijski Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Igrač 1; Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Igrač 2: Prazno</string>
+  <string name="menuItem_pak2_mem">Igrač 2: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Igrač 2: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Igrač 3: Prazno</string>
+  <string name="menuItem_pak3_mem">Igrač 3: Memorijski Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Igrač 3: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Igrač 4: Prazno</string>
+  <string name="menuItem_pak4_mem">Igrač 4: Memorijski Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Igrač 4: Rumble Pak</string>
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">Promjena zadanog unosa</string>
   <string name="menuItem_exit">Izlaz</string>
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profili</string>
   <string name="menuItem_default">Zadano</string>
-  <string name="menuItem_load">Učitaj...</string>
-  <string name="menuItem_save">Spremi...</string>
+  <string name="menuItem_load">Učitaj…</string>
+  <string name="menuItem_save">Spremi…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">N64 USB Adapter</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
@@ -146,8 +169,8 @@
   <string name="gles2RiceFastTextureCrc_summary">Poboljšava brzinu igre uz trošak 2D elemenata</string>
   <string name="gles2RiceFastTexture_title">Brzo učitavanje teksture</string>
   <string name="gles2RiceFastTexture_summary">Ispravlja kružne prijelaze</string>
-  <string name="gles2RiceForceTextureFilter_title">Prisilno filtriranje teksture</string>
-  <string name="gles2RiceForceTextureFilter_summary">Ispravlja točkaste teksture</string>
+  <string name="gles2RiceForceTextureFilter_title">Filtriranje teksture</string>
+  <string name="gles2RiceForceTextureFilter_summary">Ispravlja točkaste teksture i mutnost udaljenih objekata</string>
   <string name="gles2RiceHiResTextures_title">Korisničke teksture</string>
   <string name="gles2RiceHiResTextures_summary">Korištenje korisničko uvezenih tekstura</string>
   <string name="audioSwapChannels_title">Zamjena zvučnih kanala</string>
@@ -166,11 +189,6 @@
   <string name="touchscreenLayout_entryAnalog">Analog (autor \"roymustang16\")</string>
   <string name="touchscreenLayout_entryDigital">Digital (autor \"roymustang16\")</string>
   <string name="touchscreenLayout_entryCustom">Korisnički (pogledati http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Veličina</string>
-  <string name="touchscreenSize_entryTiny">Sitno</string>
-  <string name="touchscreenSize_entrySmall">Malo</string>
-  <string name="touchscreenSize_entryNormal">Normalno</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Raspored dodirne površine</string>
   <string name="touchpadLayout_entryDefault">Lijeva strana: Analogna kontrola; Desna strana: C tipke</string>
   <string name="touchpadLayout_entryReverse">Lijeva strana: C tipke; Desna strana: Analogna kontrola</string>
@@ -207,6 +225,29 @@
   <string name="gles2N64Frameskip_entryExactly3">Preskakati točno 3 slike</string>
   <string name="gles2N64Frameskip_entryExactly4">Preskakati točno 4 slike</string>
   <string name="gles2N64Frameskip_entryExactly5">Preskakati točno 5 slika</string>
+  <string name="gles2RiceMipmapping_title">Mipmapiranje</string>
+  <string name="gles2RiceMipmapping_entryNone">Nema</string>
+  <string name="gles2RiceMipmapping_entryNearest">Najbliže</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Bilinearno</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Trilinearno</string>
+  <string name="gles2RiceScreenUpdate_title">Način osvježivanja ekrana</string>
+  <string name="gles2RiceScreenUpdate_entryRomDefault">Zadano</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI podrijetlo osvježavanja</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI podrijetlo promijene</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">CI promjena</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Prva CI promjena</string>
+  <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Prvo primitivno crtanje</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Prije čišćenja ekrana</string>
+  <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Nakon crtanja ekrana</string>
+  <string name="gles2RiceTextureEnhancement_title">Raširenje/poboljšanje teksture</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Nema</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Proširi 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Zaoštri</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Još zaoštri</string>
   <string name="audioResampleAlg_title">Algoritam zvuka</string>
   <string name="audioResampleAlg_entryTrivial">Trivijalno</string>
   <string name="audioResampleAlg_entryLinear">Linearna interpolacija</string>
@@ -220,16 +261,16 @@
   <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Zvuk</string>
   <string name="pluginAudio_entryNone">Nema (zvuk isključen)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Kontroler</string>
   <string name="pluginInput_entryNone">Nema (kontroler isključen)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">RSP</string>
   <string name="pluginRsp_entryNone">Nema (RSP isključen)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(No audio processing, speed hack by Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Izvorni tip emulacije</string>
-  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
+  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port of Mupen64Plus by Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">R4300 emulator</string>
   <string name="r4300Emulator_entryPureInterpreter">Čisti interpretator</string>
   <string name="r4300Emulator_entryCachedInterpreter">Priručni interpretator</string>
@@ -248,6 +289,7 @@
   <string name="acraUserEmail_summary">Vaše paulscode.com korisničko ime (nije potrebno)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Prozirnost</string>
+  <string name="videoActionBarTransparency_title">Vidljivost naredbenog izbornika</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -286,7 +328,6 @@
   <string name="changeLog_dialogTitle">Što je novo?</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ime datoteke</string>
-  <string name="hintSetSpeed">brzina između 10 do 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Pokretanje</string>
   <string name="assetExtractor_progress">%1$.0f%% : %2$s</string>
@@ -300,7 +341,6 @@
   <string name="cheatNotes_title">Detalji</string>
   <string name="cheatNotes_none">(nema detalja)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Odabir teksture (ZIP format)</string>
   <string name="pathHiResTexturesTask_title">Raspakiravanje teksture</string>
   <string name="pathHiResTexturesTask_message">Molimo pričekajte. Ovaj proces može potrajati.</string>
   <string name="pathHiResTexturesTask_errorMessage">Došlo je do greške sa raspakiravanjem teksture!</string>
@@ -340,10 +380,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <string name="inputMapActivity_rumble">Rumble Pak</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion Pak</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Promjena broja spremnika</string>
   <string name="inputMapActivity_reset">Reset</string>
   <string name="inputMapActivity_pause">Pauza</string>

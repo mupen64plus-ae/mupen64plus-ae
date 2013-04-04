@@ -128,6 +128,8 @@ public class NativeInputSource extends View
                 pointerIds, pointerCoords, metaState, xPrecision, yPrecision, deviceId, edgeFlags,
                 source, flags );
         
-        return dispatchTouchEvent( event );
+        boolean result = dispatchTouchEvent( event );
+        event.recycle();
+        return result;
     }
 }

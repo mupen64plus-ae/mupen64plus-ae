@@ -29,7 +29,7 @@ COGLTexture::COGLTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
     CTexture(dwWidth,dwHeight,usage),
     m_glFmt(GL_RGBA)
 {
-    // Fix me, if usage is AS_RENDER_TARGET, we need to create pbuffer instead of regular texture
+    // FIXME: If usage is AS_RENDER_TARGET, we need to create pbuffer instead of regular texture
 
     m_dwTextureFmt = TEXTURE_FMT_A8R8G8B8;  // Always use 32bit to load texture
     glGenTextures( 1, &m_dwTextureName );
@@ -55,7 +55,7 @@ COGLTexture::COGLTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
     {
     case TXT_QUALITY_DEFAULT:
         if( options.colorQuality == TEXTURE_FMT_A4R4G4B4 ) 
-            m_glFmt = GL_RGBA8_OES;
+            m_glFmt = GL_RGBA4;
         break;
     case TXT_QUALITY_32BIT:
         break;
@@ -68,7 +68,7 @@ COGLTexture::COGLTexture(uint32 dwWidth, uint32 dwHeight, TextureUsage usage) :
 
 COGLTexture::~COGLTexture()
 {
-    // Fix me, if usage is AS_RENDER_TARGET, we need to destroy the pbuffer
+    // FIXME: If usage is AS_RENDER_TARGET, we need to destroy the pbuffer
 
     glDeleteTextures(1, &m_dwTextureName );
     OPENGL_CHECK_ERRORS;
@@ -107,9 +107,6 @@ void COGLTexture::EndUpdate(DrawInfo *di)
     // Copy the image data from main memory to video card texture memory
 
     //GL_BGRA_IMG works on adreno but not inside profiler.
-#ifdef GLES_2
-//#define GL_BGRA GL_BGRA_IMG
-#endif
     glTexImage2D(GL_TEXTURE_2D, 0, m_glFmt, m_dwCreatedTextureWidth, m_dwCreatedTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pTexture);
 
     OPENGL_CHECK_ERRORS;

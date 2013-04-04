@@ -21,18 +21,21 @@
 package paulscode.android.mupen64plusae.persistent;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.acra.ACRA;
 import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -77,9 +80,6 @@ import android.util.Log;
  */
 public class AppData
 {
-    /** True if device is running Eclair or later (5 - Android 2.0.x) */
-    public static final boolean IS_ECLAIR = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR;
-    
     /** True if device is running Gingerbread or later (9 - Android 2.3.x) */
     public static final boolean IS_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
     
@@ -199,7 +199,7 @@ public class AppData
         }
         oldDataDir = storageDir + "/Android/data/trev.android.mupen64plusae";
         libsDir = "/data/data/" + packageName + "/lib/";
-        touchscreenLayoutsDir = dataDir + "/skins/gamepads/";
+        touchscreenLayoutsDir = dataDir + "/skins/touchscreens/";
         touchpadLayoutsDir = dataDir + "/skins/touchpads/";
         fontsDir = dataDir + "/skins/fonts/";
         
@@ -212,8 +212,15 @@ public class AppData
         String appDataFilename = packageName + "_appdata";
         mPreferences = context.getSharedPreferences( appDataFilename, Context.MODE_PRIVATE );
         
+        // Get the contents of the libraries directory
+        ArrayList<CharSequence> names = new ArrayList<CharSequence>();
+        ArrayList<String> paths = new ArrayList<String>();
+        FileUtil.populate( new File( libsDir ), false, false, true, names, paths );
+        String libnames = TextUtils.join( "\n", names );
+
         // Record some info in the crash reporter
         ErrorReporter reporter = ACRA.getErrorReporter();
+        reportMultilineText( reporter, "Libraries", libnames );
         reporter.putCustomData( "CPU Features", hardwareInfo.features );
         reporter.putCustomData( "CPU Hardware", hardwareInfo.hardware );
         reporter.putCustomData( "CPU Processor", hardwareInfo.processor );
@@ -405,7 +412,6 @@ public class AppData
         public final String features;
         public final int hardwareType;
         public final boolean isXperiaPlay;
-        public final boolean isOUYA;
         
         public HardwareInfo()
         {
@@ -458,6 +464,8 @@ public class AppData
                     || hardware.contains( "amlogic meson3" )
                     || hardware.contains( "rk30board" )
                     || hardware.contains( "smdk4210" )
+                    || hardware.contains( "riogrande" )
+                    || hardware.contains( "manta" )
                     || hardware.contains( "cardhu" ) )
                 hardwareType = HARDWARE_TYPE_OMAP_2;
             
@@ -484,8 +492,6 @@ public class AppData
             
             // Identify whether this is an Xperia PLAY
             isXperiaPlay = hardware.contains( "zeus" );
-            // TODO: Check for OUYA framework, rather than relying on proc/cpuinfo
-            isOUYA = ( (hardware.contains( "cardhu" )) && (Build.BOARD != null) && (Build.BOARD.contains( "unknown" )) && (Build.BRAND != null) && (Build.BRAND.contains( "generic" )) );
         }
     }
 }

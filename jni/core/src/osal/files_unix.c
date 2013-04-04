@@ -70,19 +70,23 @@ bool macSetBundlePath(char* buffer)
 #if defined(SHAREDIR)
   #define XSTR(S) STR(S) /* this wacky preprocessor thing is necessary to generate a quote-enclosed */
   #define STR(S) #S      /* copy of the SHAREDIR macro, which is defined by the makefile via gcc -DSHAREDIR="..." */
-  /* TODO mupen64plus-ae specific hack */
-//  static const int   datasearchdirs = 4;
-//  static const char *datasearchpath[4] = { XSTR(SHAREDIR), "/usr/local/share/mupen64plus",  "/usr/share/mupen64plus", "./" };
+  #ifdef ANDROID
   static const int   datasearchdirs = 3;
   static const char *datasearchpath[3] = { XSTR(SHAREDIR), "data/",  "./" };
+  #else
+  static const int   datasearchdirs = 4;
+  static const char *datasearchpath[4] = { XSTR(SHAREDIR), "/usr/local/share/mupen64plus",  "/usr/share/mupen64plus", "./" };
+  #endif
   #undef STR
   #undef XSTR
 #else
-    /* TODO mupen64plus-ae specific hack */
-//  static const int   datasearchdirs = 3;
-//  static const char *datasearchpath[3] = { "/usr/local/share/mupen64plus",  "/usr/share/mupen64plus", "./" };
-    static const int   datasearchdirs =2;
-    static const char *datasearchpath[2] = { "data/",  "./" };
+  #ifdef ANDROID
+  static const int   datasearchdirs = 2;
+  static const char *datasearchpath[2] = { "data/",  "./" };
+  #else
+  static const int   datasearchdirs = 3;
+  static const char *datasearchpath[3] = { "/usr/local/share/mupen64plus",  "/usr/share/mupen64plus", "./" };
+  #endif
 #endif
 
 /* local functions */
@@ -221,16 +225,20 @@ const char * osal_get_user_configpath(void)
     int rval;
     
     /* first, try the XDG_CONFIG_HOME environment variable */
-    /* TODO mupen64plus-ae specific hack */
-//  rval = get_xdg_dir(retpath, "XDG_CONFIG_HOME", "mupen64plus/");
+    #ifdef ANDROID
     rval = get_xdg_dir(retpath, "XDG_CONFIG_HOME", "data/");
+    #else
+    rval = get_xdg_dir(retpath, "XDG_CONFIG_HOME", "mupen64plus/");
+    #endif
     if (rval == 0)
         return retpath;
 
     /* then try the HOME environment variable */
-    /* TODO mupen64plus-ae specific hack */
-//  rval = get_xdg_dir(retpath, "HOME", ".config/mupen64plus/");
+    #ifdef ANDROID
     rval = get_xdg_dir(retpath, "HOME", "./");
+    #else
+    rval = get_xdg_dir(retpath, "HOME", ".config/mupen64plus/");
+    #endif
     if (rval == 0)
         return retpath;
 
@@ -246,16 +254,20 @@ const char * osal_get_user_datapath(void)
     int rval;
     
     /* first, try the XDG_DATA_HOME environment variable */
-    /* TODO mupen64plus-ae specific hack */
-//  rval = get_xdg_dir(retpath, "XDG_DATA_HOME", "mupen64plus/");
+    #ifdef ANDROID
     rval = get_xdg_dir(retpath, "XDG_DATA_HOME", "data/");
+    #else
+    rval = get_xdg_dir(retpath, "XDG_DATA_HOME", "mupen64plus/");
+    #endif
     if (rval == 0)
         return retpath;
 
     /* then try the HOME environment variable */
-    /* TODO mupen64plus-ae specific hack */
-//    rval = get_xdg_dir(retpath, "HOME", ".local/share/mupen64plus/");
+    #ifdef ANDROID
     rval = get_xdg_dir(retpath, "HOME", "./");
+    #else
+    rval = get_xdg_dir(retpath, "HOME", ".local/share/mupen64plus/");
+    #endif
     if (rval == 0)
         return retpath;
 
@@ -271,16 +283,20 @@ const char * osal_get_user_cachepath(void)
     int rval;
     
     /* first, try the XDG_CACHE_HOME environment variable */
-    /* TODO mupen64plus-ae specific hack */
-//  rval = get_xdg_dir(retpath, "XDG_CACHE_HOME", "mupen64plus/");
+    #ifdef ANDROID
     rval = get_xdg_dir(retpath, "XDG_CACHE_HOME", "data/");
+    #else
+    rval = get_xdg_dir(retpath, "XDG_CACHE_HOME", "mupen64plus/");
+    #endif
     if (rval == 0)
         return retpath;
 
     /* then try the HOME environment variable */
-    /* TODO mupen64plus-ae specific hack */
-//  rval = get_xdg_dir(retpath, "HOME", ".cache/mupen64plus/");
+    #ifdef ANDROID
     rval = get_xdg_dir(retpath, "HOME", "./");
+    #else
+    rval = get_xdg_dir(retpath, "HOME", ".cache/mupen64plus/");
+    #endif
     if (rval == 0)
         return retpath;
 

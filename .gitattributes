@@ -21,6 +21,9 @@
 *.ver text
 *.xml text
 
+# use linux line ending
+*.sh text eol=lf
+
 # don't modify binary files
 *.gif binary
 *.gz binary
@@ -32,7 +35,5 @@
 *dynamiclib_win32.c binary
 *files_win32.c binary
 *.vcproj binary
+*.vcxproj binary
 *.sln binary
-
-# use linux line ending
-*.sh binary

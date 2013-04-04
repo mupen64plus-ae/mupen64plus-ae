@@ -25,9 +25,10 @@
 
 extern "C" {
   #include "hle.h"
+  #include "alist_internal.h"
 }
 
-static u16 DeWindowLUT [0x420] = {
+static const u16 DeWindowLUT [0x420] = {
     0x0000, 0xFFF3, 0x005D, 0xFF38, 0x037A, 0xF736, 0x0B37, 0xC00E,
     0x7FFF, 0x3FF2, 0x0B37, 0x08CA, 0x037A, 0x00C8, 0x005D, 0x000D,
     0x0000, 0xFFF3, 0x005D, 0xFF38, 0x037A, 0xF736, 0x0B37, 0xC00E,
@@ -209,7 +210,7 @@ static void InnerLoop ();
     u32 t5;// = 0x0AC0;
     u32 t4;// = (inst1 & 0x1E);
 
-void MP3 () {
+void MP3 (u32 inst1, u32 inst2) {
     // Initialization Code
     u32 readPtr; // s5
     u32 writePtr; // s6

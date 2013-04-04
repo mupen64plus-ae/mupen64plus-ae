@@ -20,8 +20,8 @@
  */
 package paulscode.android.mupen64plusae.input.map;
 
-import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import paulscode.android.mupen64plusae.GameOverlay;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
@@ -31,6 +31,7 @@ import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 /**
@@ -56,11 +57,11 @@ public class VisibleTouchMap extends TouchMap
     /** Y-coordinate of the FPS text centroid, in percent. */
     private int mFpsTextY;
     
-    /** The number of frames over which to compute FPS. */
-    private int mFpsRecalcPeriod;
-    
     /** The current FPS value. */
     private int mFpsValue;
+    
+    /** The minimum size to scale the FPS indicator. */
+    private float mFpsMinScale;
     
     /** True if the FPS indicator should be drawn. */
     private final boolean mFpsEnabled;
@@ -72,7 +73,7 @@ public class VisibleTouchMap extends TouchMap
     private final String mFontsDir;
     
     /** The set of images representing the FPS string. */
-    private final ArrayList<Image> mFpsDigits;
+    private final CopyOnWriteArrayList<Image> mFpsDigits;
     
     /** The set of images representing the numerals 0, 1, 2, ..., 9. */
     private final Image[] mNumerals;
@@ -92,18 +93,20 @@ public class VisibleTouchMap extends TouchMap
      * @param resources The resources of the activity associated with this touch map.
      * @param fpsEnabled True to display the FPS indicator.
      * @param fontsDir The directory containing the FPS font resources.
+     * @param imageDir The directory containing the button images.
      * @param alpha The opacity of the visible elements.
      */
-    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, int alpha )
+    public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, String imageDir, int alpha )
     {
         super( resources );
         mFpsEnabled = fpsEnabled;
         mFontsDir = fontsDir;
-        mFpsDigits = new ArrayList<Image>();
+        imageFolder = imageDir;
+        mFpsDigits = new CopyOnWriteArrayList<Image>();
         mNumerals = new Image[10];
-        autoHoldImages = new Image[BUTTON_STRING_MAP.size()];
-        autoHoldX = new int[BUTTON_STRING_MAP.size()];
-        autoHoldY = new int[BUTTON_STRING_MAP.size()];
+        autoHoldImages = new Image[NUM_N64_PSEUDOBUTTONS];
+        autoHoldX = new int[NUM_N64_PSEUDOBUTTONS];
+        autoHoldY = new int[NUM_N64_PSEUDOBUTTONS];
         mTouchscreenTransparency = alpha;
     }
     
@@ -119,7 +122,6 @@ public class VisibleTouchMap extends TouchMap
         mFpsFrame = null;
         mFpsFrameX = mFpsFrameY = 0;
         mFpsTextX = mFpsTextY = 50;
-        mFpsRecalcPeriod = 15;
         mFpsValue = 0;
         mFpsDigits.clear();
         for( int i = 0; i < mNumerals.length; i++ )
@@ -130,6 +132,62 @@ public class VisibleTouchMap extends TouchMap
             autoHoldX[i] = 0;
         for( int i = 0; i < autoHoldY.length; i++ )
             autoHoldY[i] = 0;
+    }
+    
+    /**
+     * Recomputes the map data for a given digitizer size, and
+     * recalculates the scaling factor.
+     * 
+     * @param w The width of the digitizer, in pixels.
+     * @param h The height of the digitizer, in pixels.
+     * @param metrics Metrics about the display (for use in scaling).
+     * @param scalingFactor Factor applied to the final calculated scale.
+     */
+    public void resize( int w, int h, DisplayMetrics metrics, float scalingFactor )
+    {
+        scale = 1.0f;
+        
+        if( metrics != null )
+        {
+            float screenWidthPixels;
+            float screenWidthInches;
+            float screenHeightPixels;
+            float screenHeightInches;
+            if( metrics.widthPixels > metrics.heightPixels )
+            {
+                screenWidthPixels = metrics.widthPixels;
+                screenWidthInches = screenWidthPixels / (float) metrics.xdpi;
+                screenHeightPixels = metrics.heightPixels;
+                screenHeightInches = screenHeightPixels / (float) metrics.ydpi;
+            }
+            else
+            {
+                screenWidthPixels = metrics.heightPixels;
+                screenWidthInches = screenWidthPixels / (float) metrics.ydpi;
+                screenHeightPixels = metrics.widthPixels;
+                screenHeightInches = screenHeightPixels / (float) metrics.xdpi;
+            }
+            if( referenceScreenWidthPixels > 0 )
+                scale = screenWidthPixels / (float) referenceScreenWidthPixels;
+            
+            float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
+            if( screenSizeInches < Utility.MINIMUM_TABLET_SIZE && screenHeightInches > screenWidthInches )
+            {
+                // This is a phone in portrait mode.  TODO: Anything special?
+            }
+
+            if( buttonsNoScaleBeyondScreenWidthInches > 0.0f )
+            {
+                float inchScale = buttonsNoScaleBeyondScreenWidthInches / screenWidthInches;
+                // Don't allow controls to exceeded the maximum physical size
+                if( inchScale < 1.0f )
+                    scale *= inchScale;
+            }
+        }
+        // Apply the scaling factor (derived from user prefs)
+        scale *= scalingFactor;
+        
+        resize( w, h );
     }
     
     /*
@@ -145,10 +203,11 @@ public class VisibleTouchMap extends TouchMap
         // Compute analog foreground location (centered)
         if( analogBackImage != null && analogForeImage != null )
         {
-            int cX = analogBackImage.x + analogBackImage.hWidth;
-            int cY = analogBackImage.y + analogBackImage.hHeight;
+            int cX = analogBackImage.x + (int) ( analogBackImage.hWidth * scale );
+            int cY = analogBackImage.y + (int) ( analogBackImage.hHeight * scale );
+            analogForeImage.setScale( scale );
             analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
-                    analogBackImage.width, analogBackImage.height );
+                    (int) ( analogBackImage.width * scale ), (int) ( analogBackImage.height * scale ) );
         }
         
         // Compute auto-hold overlay locations
@@ -158,19 +217,31 @@ public class VisibleTouchMap extends TouchMap
             {
                 int cX = (int) ( w * ( (float) autoHoldX[i] / 100f ) );
                 int cY = (int) ( h * ( (float) autoHoldY[i] / 100f ) );
+                autoHoldImages[i].setScale( scale );
                 autoHoldImages[i].fitCenter( cX, cY, w, h );
             }
         }
         
         // Compute FPS frame location
+        float fpsScale = scale;
+        if( mFpsMinScale > scale )
+            fpsScale = mFpsMinScale;
         if( mFpsFrame != null )
         {
+            
             int cX = (int) ( w * ( mFpsFrameX / 100f ) );
             int cY = (int) ( h * ( mFpsFrameY / 100f ) );
+            mFpsFrame.setScale( fpsScale );
             mFpsFrame.fitCenter( cX, cY, w, h );
+        }
+        for( int i = 0; i < mNumerals.length; i++ )
+        {
+            if( mNumerals[i] != null )
+                mNumerals[i].setScale( fpsScale );
         }
         
         // Compute the FPS digit locations
+        refreshFpsImages();
         refreshFpsPositions();
     }
     
@@ -256,20 +327,20 @@ public class VisibleTouchMap extends TouchMap
         if( analogForeImage != null && analogBackImage != null )
         {
             // Get the location of stick center
-            int hX = analogBackImage.hWidth + (int) ( axisFractionX * analogMaximum );
-            int hY = analogBackImage.hHeight - (int) ( axisFractionY * analogMaximum );
+            int hX = (int) ( ( analogBackImage.hWidth + ( axisFractionX * analogMaximum ) ) * scale );
+            int hY = (int) ( ( analogBackImage.hHeight - ( axisFractionY * analogMaximum ) ) * scale );
             
             // Use other values if invalid
             if( hX < 0 )
-                hX = analogBackImage.hWidth;
+                hX = (int) ( analogBackImage.hWidth * scale );
             if( hY < 0 )
-                hY = analogBackImage.hHeight;
+                hY = (int) ( analogBackImage.hHeight * scale );
             
             // Update the position of the stick
             int cX = analogBackImage.x + hX;
             int cY = analogBackImage.y + hY;
             analogForeImage.fitCenter( cX, cY, analogBackImage.x, analogBackImage.y,
-                    analogBackImage.width, analogBackImage.height );
+                    (int) ( analogBackImage.width * scale ), (int) ( analogBackImage.height * scale ) );
             return true;
         }
         return false;
@@ -353,23 +424,23 @@ public class VisibleTouchMap extends TouchMap
         int y = 0;
         if( mFpsFrame != null )
         {
-            x = mFpsFrame.x + (int) ( mFpsFrame.width * ( mFpsTextX / 100f ) );
-            y = mFpsFrame.y + (int) ( mFpsFrame.height * ( mFpsTextY / 100f ) );
+            x = mFpsFrame.x + (int) ( ( mFpsFrame.width * mFpsFrame.scale ) * ( mFpsTextX / 100f ) );
+            y = mFpsFrame.y + (int) ( ( mFpsFrame.height * mFpsFrame.scale ) * ( mFpsTextY / 100f ) );
         }
         
         // Compute the width of the FPS text
         int totalWidth = 0;
         for( Image digit : mFpsDigits )
-            totalWidth += digit.width;
+            totalWidth += (int) ( digit.width * digit.scale );
         
         // Compute the starting position of the FPS text
-        x = x - (int) ( totalWidth / 2f );
+        x -= (int) ( totalWidth / 2f );
         
         // Compute the position of each digit
         for( Image digit : mFpsDigits )
         {
-            digit.setPos( x, y - digit.hHeight );
-            x += digit.width;
+            digit.setPos( x, y - (int) ( digit.hHeight * digit.scale ) );
+            x += (int) ( digit.width * digit.scale );
         }
     }
     
@@ -412,9 +483,9 @@ public class VisibleTouchMap extends TouchMap
             String info )
     {
         if( info.contains( "fps" ) )
-            loadFpsIndicator( directory, filename, section );
+            loadFpsIndicator( imageFolder, filename, section );
         else if( filename.contains( "AUTOHOLD" ) )
-            loadAutoHold( directory, filename, section, info );
+            loadAutoHold( imageFolder, filename, section, info );
         else
             super.loadAssetSection( directory, filename, section, info );
     }
@@ -438,12 +509,8 @@ public class VisibleTouchMap extends TouchMap
         mFpsTextX = SafeMethods.toInt( section.get( "numx" ), 50 );
         mFpsTextY = SafeMethods.toInt( section.get( "numy" ), 50 );
         
-        // Refresh rate (in frames.. integer greater than 1)
-        mFpsRecalcPeriod = SafeMethods.toInt( section.get( "rate" ), 15 );
-        
-        // Need at least 2 frames to calculate FPS
-        if( mFpsRecalcPeriod < 2 )
-            mFpsRecalcPeriod = 2;
+        // Minimum factor the FPS indicator can be scaled by
+        mFpsMinScale = SafeMethods.toFloat( section.get( "minPixels" ), 0 ) / (float) mFpsFrame.width;
         
         // Numeral font
         String fpsFont = section.get( "font" );

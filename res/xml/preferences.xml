@@ -131,7 +131,32 @@
                                 mupen64:maximumValue="100"
                                 mupen64:stepSize="10"
                                 mupen64:units="%" />
+                            <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+                                android:defaultValue="100"
+                                android:dependency="touchscreenEnabled"
+                                android:key="touchscreenScale"
+                                android:title="@string/touchscreenScale_title"
+                                mupen64:maximumValue="200"
+                                mupen64:minimumValue="50"
+                                mupen64:stepSize="1"
+                                mupen64:units="%" />
 
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenStyle_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenStyle_entries"
+                                android:entryValues="@array/touchscreenStyle_values"
+                                android:key="touchscreenStyle"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenStyle_title" />
+                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                                android:defaultValue="@string/touchscreenHeight_default"
+                                android:dependency="touchscreenEnabled"
+                                android:entries="@array/touchscreenHeight_entries"
+                                android:entryValues="@array/touchscreenHeight_values"
+                                android:key="touchscreenHeight"
+                                android:summary="@string/selectedValue"
+                                android:title="@string/touchscreenHeight_title" />
                             <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                                 android:defaultValue="@string/touchscreenLayout_default"
                                 android:dependency="touchscreenEnabled"
@@ -140,14 +165,6 @@
                                 android:key="touchscreenLayout"
                                 android:summary="@string/selectedValue"
                                 android:title="@string/touchscreenLayout_title" />
-                            <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                                android:defaultValue="@string/touchscreenSize_default"
-                                android:dependency="touchscreenEnabled"
-                                android:entries="@array/touchscreenSize_entries"
-                                android:entryValues="@array/touchscreenSize_values"
-                                android:key="touchscreenSize"
-                                android:summary="@string/selectedValue"
-                                android:title="@string/touchscreenSize_title" />
 
                             <paulscode.android.mupen64plusae.persistent.PathPreference
                                 android:defaultValue="@string/pathCustomTouchscreen_default"
@@ -381,6 +398,14 @@
                         android:key="gles2RiceMipmapping"
                         android:summary="@string/selectedValue"
                         android:title="@string/gles2RiceMipmapping_title" />
+
+                    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                            android:defaultValue="@string/gles2RiceScreenUpdate_default"
+                            android:entries="@array/gles2RiceScreenUpdate_entries"
+                            android:entryValues="@array/gles2RiceScreenUpdate_values"
+                            android:key="gles2RiceScreenUpdate"
+                            android:summary="@string/selectedValue"
+                            android:title="@string/gles2RiceScreenUpdate_title" />
                         
                     <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                         android:defaultValue="@string/gles2RiceTextureEnhancement_default"
@@ -468,13 +493,13 @@
                     android:key="pluginCore"
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginCore_title" />
-              <!-- <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/r4300Emulator_default"
                     android:entries="@array/r4300Emulator_entries"
                     android:entryValues="@array/r4300Emulator_values"
                     android:key="r4300Emulator"
                     android:summary="@string/selectedValue"
-                    android:title="@string/r4300Emulator_title" /> -->
+                    android:title="@string/r4300Emulator_title" />
             </PreferenceScreen>
             <PreferenceScreen
                 android:icon="@drawable/ic_debug"
@@ -488,6 +513,10 @@
                     android:key="navigationMode"
                     android:summary="@string/navigationMode_summary"
                     android:title="@string/navigationMode_title" />
+                <Preference
+                    android:key="actionDeviceInfo"
+                    android:summary="@string/actionDeviceInfo_summary"
+                    android:title="@string/actionDeviceInfo_title" />
 
                 <PreferenceCategory
                     android:key="categoryData"
@@ -506,24 +535,6 @@
                         android:key="actionReloadAssets"
                         android:summary="@string/actionReloadAssets_summary"
                         android:title="@string/actionReloadAssets_title" />
-                </PreferenceCategory>
-                <PreferenceCategory
-                    android:key="categoryDiagnostics"
-                    android:title="@string/categoryDiagnostics_title" >
-                    <Preference
-                        android:key="actionDeviceInfo"
-                        android:summary="@string/actionDeviceInfo_summary"
-                        android:title="@string/actionDeviceInfo_title" />
-                    <Preference
-                        android:key="actionControllerInfo"
-                        android:summary="@string/actionControllerInfo_summary"
-                        android:title="@string/actionControllerInfo_title" />
-                    <Preference
-                        android:key="actionControllerDiagnostics"
-                        android:summary="@string/actionControllerDiagnostics_summary"
-                        android:title="@string/actionControllerDiagnostics_title" >
-                        <intent android:action=".input.DiagnosticActivity" />
-                    </Preference>
                 </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryCrashReports"

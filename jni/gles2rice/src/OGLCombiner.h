@@ -61,6 +61,7 @@ public:
     void BlendFunc(uint32 srcFunc, uint32 desFunc);
     void Enable();
     void Disable();
+
 protected:
     friend class OGLDeviceBuilder;
     COGLBlender(CRender *pRender) : CBlender(pRender), m_pOGLRender((OGLRender*)pRender) {};

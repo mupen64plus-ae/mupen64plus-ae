@@ -11,6 +11,28 @@
   <string name="menuItem_fileSave">In Datei speichern…</string>
   <string name="menuItem_fileLoad">Aus Datei laden…</string>
   <string name="menuItem_setSpeed">Spielgeschwindigkeit</string>
+  <string name="menuItem_paks">Controller Paks</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Spieler 1: Leer</string>
+  <string name="menuItem_pak1_mem">Spieler 1: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Spieler 1: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Spieler 2: Leer</string>
+  <string name="menuItem_pak2_mem">Spieler 2: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Spieler 2: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Spieler 3: Leer</string>
+  <string name="menuItem_pak3_mem">Spieler 3: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Spieler 3: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Spieler 4: Leer</string>
+  <string name="menuItem_pak4_mem">Spieler 4: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Spieler 4: Rumble Pak</string>
+  <!--capitalize since trademark-->
   <string name="menuItem_setIme">IME wechseln</string>
   <string name="menuItem_exit">Verlassen</string>
   <!--Input Mapping Activity-->
@@ -19,6 +41,7 @@
   <string name="menuItem_load">Lade…</string>
   <string name="menuItem_save">Speichert…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">N64-USB-Adapter</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia Play</string>
@@ -166,11 +189,6 @@
   <string name="touchscreenLayout_entryAnalog">Analog (von roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (von roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Benutzerdefiniert (siehe http://tinyurl.com/984ofyo)</string>
-  <string name="touchscreenSize_title">Bildschirmgröße</string>
-  <string name="touchscreenSize_entryTiny">Winzig</string>
-  <string name="touchscreenSize_entrySmall">Klein</string>
-  <string name="touchscreenSize_entryNormal">Normal</string>
-  <string name="touchscreenSize_entryTablet">Tablet</string>
   <string name="touchpadLayout_title">Touchpad-Layout</string>
   <string name="touchpadLayout_entryDefault">Linkes Pad: Analog-Stick; rechtes Pad: C-Knöpfe</string>
   <string name="touchpadLayout_entryReverse">Linkes Pad: C-Knöpfe; rechtes Pad: Analog-Stick</string>
@@ -207,6 +225,29 @@
   <string name="gles2N64Frameskip_entryExactly3">Genau 3 Frames</string>
   <string name="gles2N64Frameskip_entryExactly4">Genau 4 Frames</string>
   <string name="gles2N64Frameskip_entryExactly5">Genau 5 Frames</string>
+  <string name="gles2RiceMipmapping_title">Mipmapping</string>
+  <string name="gles2RiceMipmapping_entryNone">Kein</string>
+  <string name="gles2RiceMipmapping_entryNearest">Nah</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
+  <string name="gles2RiceScreenUpdate_title">Aktualisierung des Bildes</string>
+  <string name="gles2RiceScreenUpdate_entryRomDefault">ROM Standart</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI origin Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">CI Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Erste CI Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Erstes primitive Draw</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Vor Screen Clear</string>
+  <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Nach Screen Clear</string>
+  <string name="gles2RiceTextureEnhancement_title">Texturen Hochskallieren / Verbessern</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Keine</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Skaliere 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x Sal</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Schärfen</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Mehr Schärfen</string>
   <string name="audioResampleAlg_title">Resample-Algorithmus</string>
   <string name="audioResampleAlg_entryTrivial">Trivial</string>
   <string name="audioResampleAlg_entryLinear">Lineare Interpolation</string>
@@ -216,20 +257,20 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (beste)</string>
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Keins (Video deaktiviert)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (Android GLES2-Port von GLN64 von Orkin, Adventus, Yongzh, Paul Lamb)</string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (GLES2-Port von Rice Video für m64p v1.99.5 von Rice, Kris (Metricity))</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android-GLES2-Portierung von GLN64 von Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2-Portierung von Rice Video für m64p v1.99.5 von Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Keins (Audio deaktiviert)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Eingabe</string>
   <string name="pluginInput_entryNone">Keins (Eingabe deaktiviert)</string>
-  <string name="pluginInput_entrySdl">input-sdl, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality Signal Processor (RSP)</string>
   <string name="pluginRsp_entryNone">Keins (RSP deaktiviert)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (keine Audioberechnung, Geschwindigkeits-Hack von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(Geschwindigkeits-Hack ohne Audioberechnung von Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Emulationskern</string>
-  <string name="pluginCore_entryV110">core, v1.10 (Android-Port von Mupen64Plus von Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
+  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">R4300 Emulator</string>
   <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Cached Interpreter</string>
@@ -237,7 +278,7 @@
   <string name="navigationMode_title">Erreichbarkeit</string>
   <string name="navigationMode_summary">Menü-Navigationsmethode: %1$s</string>
   <string name="navigationMode_entryAuto">Automatisch nach Gerätekonfiguration richten</string>
-  <string name="navigationMode_entryStandard">Standartmodus</string>
+  <string name="navigationMode_entryStandard">Standardmodus</string>
   <string name="navigationMode_entryOuya">OUYA Modus (kein Touchscreen; Reine Gamepadeingabe)</string>
   <string name="localeOverride_title">Sprache</string>
   <string name="localeOverride_entrySystemDefault">System Standard</string>
@@ -248,6 +289,7 @@
   <string name="acraUserEmail_summary">Dein paulscode.com-Benutzername (optional)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Touchscreen-Transparenz</string>
+  <string name="videoActionBarTransparency_title">Actionbar Sichtbarkeit</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
@@ -286,7 +328,6 @@
   <string name="changeLog_dialogTitle">Changelog</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">Dateiname</string>
-  <string name="hintSetSpeed">Geschwindigkeit zwischen 10 und 300</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Wird initialisiert</string>
   <string name="assetExtractor_progress">%1$.0f%% fertig: %2$s</string>
@@ -300,7 +341,6 @@
   <string name="cheatNotes_title">Notizen</string>
   <string name="cheatNotes_none">(für diesen Cheat sind keine Notizen vorhanden)</string>
   <!--Hi-Res Texture Unpacking-->
-  <string name="pathHiResTexturesPath_title">Wähle ein Texturpaket (ZIP-Format)</string>
   <string name="pathHiResTexturesTask_title">Entpacke Texturen</string>
   <string name="pathHiResTexturesTask_message">Bitte Geduld haben. Dieser Vorgang kann eine Weile dauern.</string>
   <string name="pathHiResTexturesTask_errorMessage">Problem beim Entpacken der Texturen!</string>
@@ -340,10 +380,6 @@
   <string name="inputMapActivity_btnAL">Analog ←</string>
   <string name="inputMapActivity_btnAD">Analog ↓</string>
   <string name="inputMapActivity_btnAU">Analog ↑</string>
-  <string name="inputMapActivity_rumble">Rumble-Pack</string>
-  <!--capitalize since trademark-->
-  <string name="inputMapActivity_mempak">Expansion-Pack</string>
-  <!--capitalize since trademark-->
   <string name="inputMapActivity_incrementSlot">Slot erhöhen</string>
   <string name="inputMapActivity_reset">Zurücksetzen</string>
   <string name="inputMapActivity_pause">Pausieren</string>
