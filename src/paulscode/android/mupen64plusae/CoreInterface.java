@@ -55,9 +55,9 @@ import android.view.WindowManager;
  */
 public class CoreInterface
 {
-    public interface OnEmuStateChangeListener
+    public interface OnStateCallbackListener
     {
-        public void onEmuStateChange( int newState );
+        public void onStateCallback( int paramChanged, int newValue );
     }
     
     // Public constants
@@ -65,6 +65,18 @@ public class CoreInterface
     public static final int EMULATOR_STATE_STOPPED = 1;
     public static final int EMULATOR_STATE_RUNNING = 2;
     public static final int EMULATOR_STATE_PAUSED = 3;
+
+    public static final int M64CORE_EMU_STATE = 1;
+    public static final int M64CORE_VIDEO_MODE = 2;
+    public static final int M64CORE_SAVESTATE_SLOT = 3;
+    public static final int M64CORE_SPEED_FACTOR = 4;
+    public static final int M64CORE_SPEED_LIMITER = 5;
+    public static final int M64CORE_VIDEO_SIZE = 6;
+    public static final int M64CORE_AUDIO_VOLUME = 7;
+    public static final int M64CORE_AUDIO_MUTE = 8;
+    public static final int M64CORE_INPUT_GAMESHARK = 9;
+    public static final int M64CORE_STATE_LOADCOMPLETE = 10;
+    public static final int M64CORE_STATE_SAVECOMPLETE = 11;
     
     // Private constants
     private static final long[] VIBRATE_PATTERN = { 0, 500, 0 };
@@ -79,8 +91,8 @@ public class CoreInterface
     private static Object sAudioBuffer;
     private static AppData sAppData = null;
     private static UserPrefs sUserPrefs = null;
-    private static OnEmuStateChangeListener emuStateChangeListener = null;
-    private static final Object emuStateLock = new Object();
+    private static OnStateCallbackListener stateCallbackListener = null;
+    private static final Object stateCallbackLock = new Object();
     private static String sCheatOptions;
     private static boolean sIsRestarting;
     
@@ -230,20 +242,20 @@ public class CoreInterface
         return selectedGame;
     }
     
-    public static void setOnEmuStateChangeListener( OnEmuStateChangeListener listener )
+    public static void setOnStateCallbackListener( OnStateCallbackListener listener )
     {
-        synchronized( emuStateLock )
+        synchronized( stateCallbackLock )
         {
-            emuStateChangeListener = listener;
+            stateCallbackListener = listener;
         }
     }
     
-    public static void emuStateCallback( int newState )
+    public static void stateCallback( int paramChanged, int newValue )
     {
-        synchronized( emuStateLock )
+        synchronized( stateCallbackLock )
         {
-            if( emuStateChangeListener != null )
-                emuStateChangeListener.onEmuStateChange( newState );
+            if( stateCallbackListener != null )
+                stateCallbackListener.onStateCallback( paramChanged, newValue );
         }
     }
     
@@ -251,14 +263,14 @@ public class CoreInterface
     {
         final int waitState = state;
         final Object lock = new Object();
-        setOnEmuStateChangeListener( new OnEmuStateChangeListener()
+        setOnStateCallbackListener( new OnStateCallbackListener()
         {
             @Override
-            public void onEmuStateChange( int newState )
+            public void onStateCallback( int paramChanged, int newValue )
             {
-                if( newState == waitState )
+                if( paramChanged == M64CORE_EMU_STATE && newValue == waitState )
                 {
-                    setOnEmuStateChangeListener( null );
+                    setOnStateCallbackListener( null );
                     synchronized( lock )
                     {
                         lock.notify();

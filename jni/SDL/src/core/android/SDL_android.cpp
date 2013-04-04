@@ -61,7 +61,7 @@ static jmethodID midGetScreenStretch;
 static jmethodID midGetScreenPosition;
 static jmethodID midGetAutoFrameSkip;
 static jmethodID midGetMaxFrameSkip;
-static jmethodID midEmuStateCallback;
+static jmethodID midStateCallback;
 static jmethodID midShowToast;
 static jmethodID midAudioInit;
 static jmethodID midAudioWriteShortBuffer;
@@ -114,8 +114,8 @@ extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* env, jclass cls)
                                 "getAutoFrameSkip", "()Z");
     midGetMaxFrameSkip = mEnv->GetStaticMethodID(mActivityClass,
                                 "getMaxFrameSkip", "()I");
-    midEmuStateCallback = mEnv->GetStaticMethodID(mActivityClass,
-                                "emuStateCallback", "(I)V");
+    midStateCallback = mEnv->GetStaticMethodID(mActivityClass,
+                                "stateCallback", "(II)V");
     midShowToast = mEnv->GetStaticMethodID(mActivityClass,
                                 "showToast", "(Ljava/lang/String;)V");
     midAudioInit = mEnv->GetStaticMethodID(mActivityClass, 
@@ -129,7 +129,7 @@ extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* env, jclass cls)
 
     if(!midCreateGLContext || !midVibrate || !midUseRGBA8888 || !midFlipBuffers || !midGetDataDir ||
        !midGetHardwareType || !midGetExtraArgs || !midGetROMPath || !midGetScreenStretch || !midGetScreenPosition ||
-       !midGetAutoFrameSkip || !midGetMaxFrameSkip || ! midEmuStateCallback || !midShowToast ||
+       !midGetAutoFrameSkip || !midGetMaxFrameSkip || ! midStateCallback || !midShowToast ||
        !midAudioInit || !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit)
     {
         __android_log_print(ANDROID_LOG_WARN, "SDL", "SDL: Couldn't locate Java callbacks, check that they're named and typed correctly");
@@ -278,10 +278,10 @@ extern "C" DECLSPEC int SDLCALL Android_JNI_GetMaxFrameSkip()
     __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Android_JNI_GetMaxFrameSkip returning %i", (int) i );
     return (int) i;
 }
-extern "C" DECLSPEC void SDLCALL Android_JNI_EMU_STATE_Callback( int newState )
+extern "C" DECLSPEC void SDLCALL Android_JNI_State_Callback( int paramChanged, int newValue )
 {
-    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Emulator state changed to %i", newState );
-    mEnv->CallStaticVoidMethod( mActivityClass, midEmuStateCallback, newState );
+    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Emulator param %i changed to %i", paramChanged, newValue );
+    mEnv->CallStaticVoidMethod( mActivityClass, midStateCallback, paramChanged, newValue );
 }
 
 // paulscode, added for showing the user a short message

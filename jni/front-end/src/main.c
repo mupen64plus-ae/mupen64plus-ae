@@ -361,19 +361,30 @@ static void FrameCallback(unsigned int FrameIndex)
 }
 void StateCallback( void *Context, m64p_core_param ParamChanged, int NewValue )
 {
-    /*----ParamChanged---------------
+    /*----ParamChanged-----------------
      *    --------NewValue--------
-     *    M64CORE_EMU_STATE         1
+     *    M64CORE_EMU_STATE           1
      *            M64EMU_STOPPED 1
      *            M64EMU_RUNNING 2
      *            M64EMU_PAUSED  3
-     *    M64CORE_VIDEO_MODE        2
-     *    M64CORE_SAVESTATE_SLOT    3
-     *    M64CORE_SPEED_FACTOR      4
-     *    M64CORE_SPEED_LIMITER     5
+     *    M64CORE_VIDEO_MODE          2
+     *    M64CORE_SAVESTATE_SLOT      3
+     *    M64CORE_SPEED_FACTOR        4
+     *    M64CORE_SPEED_LIMITER       5
+	 *    M64CORE_VIDEO_SIZE          6
+	 *    M64CORE_AUDIO_VOLUME        7
+	 *    M64CORE_AUDIO_MUTE          8
+	 *    M64CORE_INPUT_GAMESHARK     9
+	 *    M64CORE_STATE_LOADCOMPLETE 10
+	 *            (successful)   1
+	 *            (unsuccessful) 0
+	 *    M64CORE_STATE_SAVECOMPLETE 11
+	 *            (successful)   1
+	 *            (unsuccessful) 0
      */
-    if( ParamChanged == M64CORE_EMU_STATE )
-        Android_JNI_EMU_STATE_Callback( NewValue );
+
+    if( ParamChanged == M64CORE_EMU_STATE || ParamChanged == M64CORE_STATE_SAVECOMPLETE || ParamChanged == M64CORE_STATE_LOADCOMPLETE )
+        Android_JNI_State_Callback( ParamChanged, NewValue );
 }
 
 /*********************************************************************************************************

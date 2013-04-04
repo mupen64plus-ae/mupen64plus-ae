@@ -244,7 +244,7 @@
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Activer le rapport de plantage</string>
   <string name="acraEnable_summary">Aucune donnée personnelle n\'est collectée</string>
-  <string name="acraUserEmail_title">Information de contact</string>
+  <string name="acraUserEmail_title">Informations de contact</string>
   <string name="acraUserEmail_summary">Votre nom d\'utilisateur paulscode.com (facultatif)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>

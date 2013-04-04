@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.CoreInterface.OnEmuStateChangeListener;
+import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -350,15 +350,15 @@ public class GameMenuHandler
         // ////
         // paulscode: temporary workaround for ASDP bug after emulator shuts down
         Notifier.showToast( mActivity, R.string.toast_savingSession );
-        CoreInterface.setOnEmuStateChangeListener( new OnEmuStateChangeListener()
+        CoreInterface.setOnStateCallbackListener( new OnStateCallbackListener()
         {
             @Override
-            public void onEmuStateChange( int newState )
+            public void onStateCallback( int paramChanged, int newValue )
             {
-                if( newState == CoreInterface.EMULATOR_STATE_RUNNING )
+                if( paramChanged == CoreInterface.M64CORE_STATE_SAVECOMPLETE )
                 {
                     System.exit( 0 ); // Bad, bad..
-                    CoreInterface.setOnEmuStateChangeListener( null );
+                    CoreInterface.setOnStateCallbackListener( null );
                     mActivity.finish();
                 }
             }
