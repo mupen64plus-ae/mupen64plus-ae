@@ -460,7 +460,7 @@ grSstWinOpen(
 # else // _DEBUG
   sprintf(caption, "Glide64mk2");
 # endif // _DEBUG
-  CoreVideo_SetCaption(caption);
+  //CoreVideo_SetCaption(caption);
 
   glViewport(0, viewport_offset, width, height);
   lfb_color_fmt = color_format;

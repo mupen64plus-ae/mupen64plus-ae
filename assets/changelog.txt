@@ -6,6 +6,8 @@
 - Added mipmapping option for gles2rice video plugin
 - Added texture filter option for gles2rice video plugin
 - Added option to change action bar transparency
+- Fixed missing touch controls on ASUS Transformer
+- Utilized new callback for auto-save (fixes incorrect state reported after save-state while paused)
 [20:2.1.0]
 - Fixed stretch-screen bug in gles2rice video plugin (fixes Mario Kart multiplayer, Zelda blue action icon, and many others)
 - Added screen position option for portrait mode

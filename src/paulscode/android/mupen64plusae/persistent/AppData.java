@@ -448,6 +448,7 @@ public class AppData
                     || hardware.contains( "smdkv" )
                     || hardware.contains( "herring" )
                     || hardware.contains( "aries" )
+                    || hardware.contains( "expresso10" )
                     || ( hardware.contains( "tuna" )
                          && !IS_JELLY_BEAN ) )
                 hardwareType = HARDWARE_TYPE_OMAP;
@@ -473,6 +474,7 @@ public class AppData
                     || hardware.contains( "meson-m1" )
                     || hardware.contains( "smdkc" )
                     || hardware.contains( "smdk4x12" )
+                    || hardware.contains( "sun6i" )
                     || ( features != null && features.contains( "vfpv3d16" ) ) )
                 hardwareType = HARDWARE_TYPE_TEGRA;
             
