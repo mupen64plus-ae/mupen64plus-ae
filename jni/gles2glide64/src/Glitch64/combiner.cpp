@@ -230,11 +230,11 @@ static char shader_log[2048];
 void check_compile(GLuint shader)
 {
   GLint success;
-  glGetShaderiv(vertex_shader_object,GL_COMPILE_STATUS,&success);
+  glGetShaderiv(shader,GL_COMPILE_STATUS,&success);
   if(!success)
   {
     char log[1024];
-    glGetShaderInfoLog(vertex_shader_object,1024,NULL,log);
+    glGetShaderInfoLog(shader,1024,NULL,log);
     LOGINFO(log);
   }
 }
@@ -242,11 +242,11 @@ void check_compile(GLuint shader)
 void check_link(GLuint program)
 {
   GLint success;
-  glGetProgramiv(vertex_shader_object,GL_LINK_STATUS,&success);
+  glGetProgramiv(program,GL_LINK_STATUS,&success);
   if(!success)
   {
     char log[1024];
-    glGetProgramInfoLog(vertex_shader_object,1024,NULL,log);
+    glGetProgramInfoLog(program,1024,NULL,log);
     LOGINFO(log);
   }
 }
