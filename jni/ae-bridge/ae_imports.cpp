@@ -241,7 +241,7 @@ extern DECLSPEC int Android_JNI_GetAutoFrameSkip()
 
 extern DECLSPEC int Android_JNI_GetMaxFrameSkip()
 {
-    return GetBooleanAsInt(midGetMaxFrameSkip);
+    return GetInt(midGetMaxFrameSkip);
 }
 
 extern DECLSPEC int Android_JNI_GetScreenStretch()
