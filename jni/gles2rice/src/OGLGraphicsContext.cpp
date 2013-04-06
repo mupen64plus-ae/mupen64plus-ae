@@ -23,19 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     #include <SDL.h>
     // paulscode, holds information about the graphics:
 #endif
-////
-// JNI linkage:
-#include <jni.h>
-//// paulscode, added for logcat output:
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "GLES2Rice (OGLGraphicsContext.cpp)", __VA_ARGS__)
-////
-//// paulscode, added for callback to flip the EGL buffer
-extern "C" void Android_JNI_SwapWindow();
-//// paulscode, added for switching between modes RGBA8888 and RGB565
-// (part of the color banding fix)
-extern "C" int Android_JNI_UseRGBA8888();
-////
+
+#include "ae_bridge.h"
 
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"

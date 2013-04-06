@@ -46,22 +46,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef USE_SDL
     #include <SDL.h>
 #endif
-////
-//// paulscode, added for logcat output:
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "GLES2Rice (Video.cpp)", __VA_ARGS__)
-////
-#define SCREEN_POSITION_BOTTOM      0
-#define SCREEN_POSITION_MIDDLE      1
-#define SCREEN_POSITION_TOP         2
 
-// paulscode, moved screen dimension configuration here
-extern m64p_handle l_ConfigVideoGeneral;
-//// paulscode, maintain aspect ratio, or stretch to fill the screen:
-extern "C" int Android_JNI_GetScreenStretch();
-//// Gillou68310, screen position when in portrait mode:
-extern "C" int Android_JNI_GetScreenPosition();
-////
+#include "ae_bridge.h"
 
 //=======================================================
 // local variables

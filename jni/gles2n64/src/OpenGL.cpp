@@ -28,43 +28,8 @@
 
 #include "FrameSkipper.h"
 
-// JNI linkage:
-#include <jni.h>
-//// paulscode, added for logcat output:
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "gles2N64 (OpenGL)", __VA_ARGS__)
-////
+#include "ae_bridge.h"
 
-//// paulscode, added for different configurations based on hardware
-// (part of the missing shadows and stars bug fix)
-extern "C" int Android_JNI_GetHardwareType();
-//// paulscode, added for switching between modes RGBA8888 and RGB565
-// (part of the color banding fix)
-extern "C" int Android_JNI_UseRGBA8888();
-// Must match the static final int's in AppData.java!
-#define HARDWARE_TYPE_UNKNOWN       0
-#define HARDWARE_TYPE_OMAP          1
-#define HARDWARE_TYPE_OMAP_2        2
-#define HARDWARE_TYPE_QUALCOMM      3
-#define HARDWARE_TYPE_IMAP          4
-#define HARDWARE_TYPE_TEGRA         5
-////
-#define SCREEN_POSITION_BOTTOM      0
-#define SCREEN_POSITION_MIDDLE      1
-#define SCREEN_POSITION_TOP         2
-
-//#define BATCH_TEST
-//#define TEXTURECACHE_TEST
-//#define RENDERSTATE_TEST
-//#define SHADER_TEST
-
-//// paulscode, added for callback to flip the EGL buffer
-// (part of the black-screen bug fix)
-extern "C" void Android_JNI_SwapWindow();
-//// paulscode, maintain aspect ratio, or stretch to fill the screen:
-extern "C" int Android_JNI_GetScreenStretch();
-//// Gillou68310, screen position when in portrait mode:
-extern "C" int Android_JNI_GetScreenPosition();
 //// paulscode, function prototype missing from Yongzh's code
 void OGL_UpdateDepthUpdate();
 ////

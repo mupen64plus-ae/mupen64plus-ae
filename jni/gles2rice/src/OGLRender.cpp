@@ -29,24 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <ostream>
 #include <fstream>
 
-// JNI linkage:
-#include <jni.h>
-//// paulscode, added for logcat output:
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "gles2rice (OGLRenderer)", __VA_ARGS__)
-////
-
-//// paulscode, added for different configurations based on hardware
-// (part of the missing shadows and stars bug fix)
-extern "C" int Android_JNI_GetHardwareType();
-// Must match the static final int's in AppData.java!
-#define HARDWARE_TYPE_UNKNOWN       0
-#define HARDWARE_TYPE_OMAP          1
-#define HARDWARE_TYPE_OMAP_2        2
-#define HARDWARE_TYPE_QUALCOMM      3
-#define HARDWARE_TYPE_IMAP          4
-#define HARDWARE_TYPE_TEGRA         5
-///
+#include "ae_bridge.h"
 
 //#include "liblinux/BMGLibPNG.h"
 

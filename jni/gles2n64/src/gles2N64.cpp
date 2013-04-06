@@ -20,18 +20,7 @@
 #include "FrameSkipper.h"
 #include "ticks.h"
 
-// JNI linkage:
-#include <jni.h>
-
-// paulscode, added for logcat output
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "gles2N64", __VA_ARGS__)
-//
-
-// TODO: get rid of this, it should be handled from the config file:
-extern "C" int Android_JNI_GetAutoFrameSkip();
-extern "C" int Android_JNI_GetMaxFrameSkip();
-//
+#include "ae_bridge.h"
 
 ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = NULL;
 

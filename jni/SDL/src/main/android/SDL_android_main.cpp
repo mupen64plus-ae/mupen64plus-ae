@@ -5,16 +5,10 @@
 /*******************************************************************************
                  Functions called by JNI
 *******************************************************************************/
-#include <jni.h>
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "SDL_android_main", __VA_ARGS__)
+#include "ae_bridge.h"
 
 // Called before SDL_main() to initialize JNI bindings in SDL library
 extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* env, jclass cls);
-// Used to look up any extra commandline args
-extern "C" DECLSPEC char * SDLCALL Android_JNI_GetExtraArgs();
-// Used to look up which ROM to run
-extern "C" DECLSPEC char * SDLCALL Android_JNI_GetROMPath();
 
 // Library init
 extern "C" DECLSPEC jint SDLCALL JNI_OnLoad(JavaVM* vm, void* reserved)
