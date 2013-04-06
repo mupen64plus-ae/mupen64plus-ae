@@ -43,14 +43,15 @@ import android.util.Log;
  */
 public class CoreInterfaceNative extends CoreInterface
 {
-    // *************************************************
-    // *************************************************
-    // *************************************************
-    // Input Plug-in Methods
+    // TODO: These should all have javadoc comments. 
+    // It would better document calls going in/out of native code.
+    
+    // ************************************************************************
+    // ************************************************************************
+    // Java <-> C communication (input-android)
     // jni/input-android/plugin.c
-    // *************************************************
-    // *************************************************
-    // *************************************************
+    // ************************************************************************
+    // ************************************************************************
     
     public static native void jniInitInput();
     
@@ -69,22 +70,23 @@ public class CoreInterfaceNative extends CoreInterface
             sVibrators[controllerNum].cancel();
     }    
     
-    // *************************************************
-    // *************************************************
-    // *************************************************
-    // Call-outs made TO the native code
-    // See jni/front-end/src/main.c
-    //     jni/input-sdl/src/plugin.c
-    //     jni/SDL/src/core/android/SDL_android.cpp
-    //     jni/SDL/src/main/android/SDL_android_main.cpp
-    // *************************************************
-    // *************************************************
-    // *************************************************
+    // ************************************************************************
+    // ************************************************************************
+    // Java <-> C communication (ae-bridge)
+    // ************************************************************************
+    // ************************************************************************
     
-    // TODO: These should all have javadoc comments. 
-    // It would better document calls going in/out of native code.
+    //-------------------------------------------------------------------------
+    // Call-outs made TO native code
+    // jni/ae-bridge/ae_bridge_main.cpp
+    //-------------------------------------------------------------------------
     
     public static native void init();
+    
+    //-------------------------------------------------------------------------
+    // Call-outs made TO native code
+    // jni/ae-bridge/ae_exports.cpp
+    //-------------------------------------------------------------------------
     
     public static native void fileLoadEmulator( String filename );
     
@@ -98,19 +100,11 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native String getHeaderName( String filename );
     
-    public static native void onAccel( float x, float y, float z );
-    
-    public static native void onResize( int x, int y, int format );
-    
     public static native void pauseEmulator();
-    
-    public static native void quit();
     
     public static native void resetEmulator();
     
     public static native void resumeEmulator();
-    
-    public static native void runAudioThread();
     
     public static native int stateEmulator();
     
@@ -123,67 +117,19 @@ public class CoreInterfaceNative extends CoreInterface
     public static native void stateSetSpeed( int percent );
 
     public static native void stopEmulator();
-    
-    // TODO: Remove this from JNI
-    public static native void updateVirtualGamePadStates( int controllerNum, boolean[] buttons,
-            int axisX, int axisY );
 
-    // ********************************************
-    // ********************************************
-    // ********************************************
-    // Call-ins made FROM the native code
-    // See jni/SDL/src/core/android/SDL_android.cpp
-    // ********************************************
-    // ********************************************
-    // ********************************************
+    //-------------------------------------------------------------------------
+    // Call-ins made FROM native code
+    // jni/ae-bridge/ae_imports.cpp
+    //-------------------------------------------------------------------------
     
-    public static boolean createGLContext( int majorVersion, int minorVersion )
+    public static void stateCallback( int paramChanged, int newValue )
     {
-        return sSurface.createGLContext( majorVersion, minorVersion );
-    }
-    
-    public static void flipBuffers()
-    {
-        sSurface.flipBuffers();
-        
-        // Update frame rate info
-        if( sFpsRecalcPeriod > 0 && sFpsListener != null )
+        synchronized( sStateCallbackLock )
         {
-            sFrameCount++;
-            if( sFrameCount >= sFpsRecalcPeriod )
-            {
-                long currentTime = System.currentTimeMillis();
-                float fFPS = ( (float) sFrameCount / (float) ( currentTime - sLastFpsTime ) ) * 1000.0f;
-                sFpsListener.onFpsChanged( Math.round( fFPS ) );
-                sFrameCount = 0;
-                sLastFpsTime = currentTime;
-            }
+            if( sStateCallbackListener != null )
+                sStateCallbackListener.onStateCallback( paramChanged, newValue );
         }
-    }
-    
-    public static boolean getAutoFrameSkip()
-    {
-        return sUserPrefs.isGles2N64AutoFrameskipEnabled;
-    }
-    
-    public static int getMaxFrameSkip()
-    {
-        return sUserPrefs.gles2N64MaxFrameskip;
-    }
-    
-    public static boolean getScreenStretch()
-    {
-        return sUserPrefs.isStretched;
-    }
-    
-    public static int getScreenPosition()
-    {
-        return sUserPrefs.videoPosition;
-    }
-    
-    public static boolean useRGBA8888()
-    {
-        return sUserPrefs.isRgba8888;
     }
     
     public static int getHardwareType()
@@ -248,17 +194,85 @@ public class CoreInterfaceNative extends CoreInterface
         return selectedGame;
     }
     
-    /**
-     * Constructs any extra parameters to pass to the front-end, based on user preferences
-     * 
-     * @return Object handle to String containing space-separated parameters.
-     */
     public static Object getExtraArgs()
     {
         String extraArgs = sUserPrefs.isFramelimiterEnabled ? "" : "--nospeedlimit ";
         if( sCheatOptions != null )
             extraArgs += sCheatOptions;
         return extraArgs.trim();
+    }
+    
+    public static boolean getAutoFrameSkip()
+    {
+        return sUserPrefs.isGles2N64AutoFrameskipEnabled;
+    }
+    
+    public static int getMaxFrameSkip()
+    {
+        return sUserPrefs.gles2N64MaxFrameskip;
+    }
+    
+    public static int getScreenPosition()
+    {
+        return sUserPrefs.videoPosition;
+    }
+    
+    public static boolean getScreenStretch()
+    {
+        return sUserPrefs.isStretched;
+    }
+    
+    public static boolean useRGBA8888()
+    {
+        return sUserPrefs.isRgba8888;
+    }
+    
+    // ************************************************************************
+    // ************************************************************************
+    // Java <-> C communication (SDL)
+    // ************************************************************************
+    // ************************************************************************
+    
+    //-------------------------------------------------------------------------
+    // Call-outs made TO native code
+    // jni/SDL/src/core/android/SDL_android.cpp
+    //-------------------------------------------------------------------------
+    
+    public static native void onResize( int x, int y, int format );
+    
+    public static native void onAccel( float x, float y, float z );
+    
+    public static native void quit();
+    
+    public static native void runAudioThread();
+
+    //-------------------------------------------------------------------------
+    // Call-ins made FROM native code
+    // jni/SDL/src/core/android/SDL_android.cpp
+    //-------------------------------------------------------------------------
+    
+    public static boolean createGLContext( int majorVersion, int minorVersion )
+    {
+        return sSurface.createGLContext( majorVersion, minorVersion );
+    }
+    
+    public static void flipBuffers()
+    {
+        sSurface.flipBuffers();
+        
+        // Update frame rate info
+        if( sFpsRecalcPeriod > 0 && sFpsListener != null )
+        {
+            sFrameCount++;
+            if( sFrameCount >= sFpsRecalcPeriod )
+            {
+                long currentTime = System.currentTimeMillis();
+                float fFPS = ( (float) sFrameCount / (float) ( currentTime - sLastFpsTime ) ) * 1000.0f;
+                sFpsListener.onFpsChanged( Math.round( fFPS ) );
+                sFrameCount = 0;
+                sLastFpsTime = currentTime;
+            }
+        }
     }
     
     public static void audioInit(int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames) {
@@ -279,19 +293,6 @@ public class CoreInterfaceNative extends CoreInterface
         audioStartThread();
         
         Log.v("SDL", "SDL audio: got " + ((sAudioTrack.getChannelCount() >= 2) ? "stereo" : "mono") + " " + ((sAudioTrack.getAudioFormat() == AudioFormat.ENCODING_PCM_16BIT) ? "16-bit" : "8-bit") + " " + ((float)sAudioTrack.getSampleRate() / 1000f) + "kHz, " + desiredFrames + " frames buffer");
-    }
-    
-    public static void audioStartThread() {
-        sAudioThread = new Thread(new Runnable() {
-            public void run() {
-                sAudioTrack.play();
-                runAudioThread();
-            }
-        });
-        
-        // I'd take REALTIME if I could get it!
-        sAudioThread.setPriority(Thread.MAX_PRIORITY);
-        sAudioThread.start();
     }
     
     public static void audioWriteShortBuffer(short[] buffer) {
@@ -348,24 +349,17 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
-    public static void stateCallback( int paramChanged, int newValue )
-    {
-        synchronized( sStateCallbackLock )
-        {
-            if( sStateCallbackListener != null )
-                sStateCallbackListener.onStateCallback( paramChanged, newValue );
-        }
-    }
-    
-    public static void showToast( String message )
-    {
-        if( sActivity != null )
-            Notifier.showToast( sActivity, message );
-    }
-    
-    public static void vibrate( boolean active )
-    {
-        // TODO: Remove this from JNI
+    public static void audioStartThread() {
+        sAudioThread = new Thread(new Runnable() {
+            public void run() {
+                sAudioTrack.play();
+                runAudioThread();
+            }
+        });
+        
+        // I'd take REALTIME if I could get it!
+        sAudioThread.setPriority(Thread.MAX_PRIORITY);
+        sAudioThread.start();
     }
     
     public static void runOnUiThread( Runnable action )
@@ -392,5 +386,5 @@ public class CoreInterfaceNative extends CoreInterface
         msg.arg1 = COMMAND_CHANGE_TITLE;
         msg.obj = title;
         commandHandler.sendMessage( msg );
-    }
+    }    
 }
