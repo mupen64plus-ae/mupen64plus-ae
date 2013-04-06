@@ -60,6 +60,9 @@ extern "C" {
  Imported Java methods (to be called from C)
  *******************************************************************************/
 
+// Initialization
+extern void         SDL_Android_Init(JNIEnv* env, jclass cls);
+
 // Native utilities
 extern void         Android_JNI_State_Callback(int paramChanged, int newValue);
 

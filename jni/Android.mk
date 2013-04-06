@@ -6,7 +6,7 @@ SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL/include/
 PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 SAMPLERATE_INCLUDES := $(JNI_LOCAL_PATH)/libsamplerate/
 
-SDL_MAIN_ENTRY := ../../../SDL/src/main/android/SDL_android_main.cpp
+SDL_MAIN_ENTRY := ../../../ae-bridge/ae_bridge_main.cpp
 
 COMMON_CFLAGS :=                    \
     -O3                             \
