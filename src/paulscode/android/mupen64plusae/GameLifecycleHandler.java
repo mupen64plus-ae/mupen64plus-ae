@@ -106,9 +106,11 @@ public class GameLifecycleHandler implements View.OnKeyListener
     
     static
     {
+        FileUtil.loadNativeLibName( "ae-imports" );
         FileUtil.loadNativeLibName( "SDL" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
+        FileUtil.loadNativeLibName( "ae-exports" );
     }
 
     public GameLifecycleHandler( Activity activity )

@@ -1,5 +1,6 @@
 JNI_LOCAL_PATH := $(call my-dir)
 
+AE_BRIDGE_INCLUDES := $(JNI_LOCAL_PATH)/ae-bridge/
 M64P_API_INCLUDES := $(JNI_LOCAL_PATH)/core/src/api/
 SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL/include/
 PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/

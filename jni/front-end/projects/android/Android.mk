@@ -4,13 +4,14 @@ include $(CLEAR_VARS)
 SRCDIR := ../../src
 
 LOCAL_MODULE := front-end
-LOCAL_SHARED_LIBRARIES := SDL core
+LOCAL_SHARED_LIBRARIES := ae-imports SDL core
 #LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=         \
     $(LOCAL_PATH)/$(SRCDIR) \
     $(M64P_API_INCLUDES)    \
     $(SDL_INCLUDES)         \
+    $(AE_BRIDGE_INCLUDES)   \
 
 LOCAL_SRC_FILES :=                      \
     $(SDL_MAIN_ENTRY)                   \
