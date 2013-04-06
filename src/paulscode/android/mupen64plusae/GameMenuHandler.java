@@ -263,7 +263,7 @@ public class GameMenuHandler
         mCustomSpeed = !mCustomSpeed;
         int speed = mCustomSpeed ? mSpeedFactor : BASELINE_SPEED_FACTOR;
         
-        CoreInterfaceNative.stateSetSpeed( speed );
+        CoreInterfaceNative.emuSetSpeed( speed );
         mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, speed ) );
     }
     
@@ -274,7 +274,7 @@ public class GameMenuHandler
         mAppData.putLastSlot( mSlot );
         
         // Set the slot in the core
-        CoreInterfaceNative.stateSetSlotEmulator( mSlot );
+        CoreInterfaceNative.emuSetSlot( mSlot );
         
         // Refresh the slot item in the top-level options menu
         if( mSlotMenuItem != null )
@@ -312,13 +312,13 @@ public class GameMenuHandler
     private void saveSlot()
     {
         Notifier.showToast( mActivity, R.string.toast_savingSlot, mSlot );
-        CoreInterfaceNative.stateSaveEmulator();
+        CoreInterfaceNative.emuSaveSlot();
     }
     
     private void loadSlot()
     {
         Notifier.showToast( mActivity, R.string.toast_loadingSlot, mSlot );
-        CoreInterfaceNative.stateLoadEmulator();
+        CoreInterfaceNative.emuLoadSlot();
     }
     
     private void saveFileFromPrompt()
@@ -369,21 +369,21 @@ public class GameMenuHandler
                 public void onConfirm()
                 {
                     Notifier.showToast( mActivity, R.string.toast_overwritingFile, file.getName() );
-                    CoreInterfaceNative.fileSaveEmulator( file.getAbsolutePath() );
+                    CoreInterfaceNative.emuSaveFile( file.getAbsolutePath() );
                 }
             } );
         }
         else
         {
             Notifier.showToast( mActivity, R.string.toast_savingFile, file.getName() );
-            CoreInterfaceNative.fileSaveEmulator( file.getAbsolutePath() );
+            CoreInterfaceNative.emuSaveFile( file.getAbsolutePath() );
         }
     }
     
     private void loadState( File file )
     {
         Notifier.showToast( mActivity, R.string.toast_loadingFile, file.getName() );
-        CoreInterfaceNative.fileLoadEmulator( file.getAbsolutePath() );
+        CoreInterfaceNative.emuLoadFile( file.getAbsolutePath() );
     }
     
     private void setIme()
@@ -437,7 +437,7 @@ public class GameMenuHandler
                 {
                     mSpeedFactor = seek.getProgress() + MIN_SPEED_FACTOR;
                     mCustomSpeed = true;
-                    CoreInterfaceNative.stateSetSpeed( mSpeedFactor );
+                    CoreInterfaceNative.emuSetSpeed( mSpeedFactor );
                     
                     mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed,
                             mSpeedFactor ) );
@@ -472,7 +472,7 @@ public class GameMenuHandler
                 }
             }
         } );
-        CoreInterfaceNative.fileSaveEmulator( mAutoSaveFile );
+        CoreInterfaceNative.emuSaveFile( mAutoSaveFile );
         // ////
     }
 }

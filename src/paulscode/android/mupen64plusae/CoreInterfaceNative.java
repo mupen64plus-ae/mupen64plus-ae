@@ -88,36 +88,36 @@ public class CoreInterfaceNative extends CoreInterface
     // jni/ae-bridge/ae_exports.cpp
     //-------------------------------------------------------------------------
     
-    public static native void fileLoadEmulator( String filename );
-    
-    public static native void fileSaveEmulator( String filename );
-    
-    public static native void frameAdvance();
+    public static native void emuGameShark( boolean pressed );
 
-    public static native void gameShark( boolean pressed );
-
-    public static native String getHeaderCRC( String filename );
+    public static native void emuPause();
     
+    public static native void emuResume();
+    
+    public static native void emuReset();
+    
+    public static native void emuStop();
+
+    public static native void emuAdvanceFrame();
+    
+    public static native void emuSetSpeed( int percent );
+
+    public static native void emuSetSlot( int slotID );
+    
+    public static native void emuLoadSlot();
+    
+    public static native void emuSaveSlot();
+    
+    public static native void emuLoadFile( String filename );
+    
+    public static native void emuSaveFile( String filename );
+    
+    public static native int emuGetState();
+
     public static native String getHeaderName( String filename );
     
-    public static native void pauseEmulator();
+    public static native String getHeaderCRC( String filename );
     
-    public static native void resetEmulator();
-    
-    public static native void resumeEmulator();
-    
-    public static native int stateEmulator();
-    
-    public static native void stateLoadEmulator();
-    
-    public static native void stateSaveEmulator();
-    
-    public static native void stateSetSlotEmulator( int slotID );
-    
-    public static native void stateSetSpeed( int percent );
-
-    public static native void stopEmulator();
-
     //-------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/ae-bridge/ae_imports.cpp
