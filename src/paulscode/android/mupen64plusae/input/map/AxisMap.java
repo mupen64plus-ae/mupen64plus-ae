@@ -20,6 +20,8 @@ public class AxisMap extends SerializableMap
     public static final int AXIS_CLASS_STICK = 2;
     public static final int AXIS_CLASS_TRIGGER = 3;
     public static final int AXIS_CLASS_OUYA_LX_STICK = 101;
+    public static final int AXIS_CLASS_RAPHNET_STICK = 102;
+    public static final int AXIS_CLASS_RAPHNET_TRIGGER = 103;
     
     private static final int SIGNATURE_HASH_XBOX360 = 449832952;
     private static final int SIGNATURE_HASH_XBOX360_WIRELESS = -412618953;
@@ -105,6 +107,16 @@ public class AxisMap extends SerializableMap
         if( device.getName().contains( "OUYA" ) )
         {
             setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
+        }
+        // Check if the controller is a raphnet N64/USB adapter, to compensate for range of motion
+        // http://raphnet-tech.com/products/gc_n64_usb_adapters/
+        if( device.getName().contains( "raphnet.net GC/N64 to USB, v2" ))
+        {
+            setClass( MotionEvent.AXIS_X, AXIS_CLASS_RAPHNET_STICK );
+            setClass( MotionEvent.AXIS_Y, AXIS_CLASS_RAPHNET_STICK );
+            setClass( MotionEvent.AXIS_RX, AXIS_CLASS_RAPHNET_STICK );
+            setClass( MotionEvent.AXIS_RY, AXIS_CLASS_RAPHNET_STICK );
+            setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_RAPHNET_TRIGGER );
         }
     }
     

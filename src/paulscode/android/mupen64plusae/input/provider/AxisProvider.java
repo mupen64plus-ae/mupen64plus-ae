@@ -163,31 +163,41 @@ public class AxisProvider extends AbstractProvider
                     // User has specified that we ignore this axis
                     strength = 0;
                 }
-                else if( axisClass != AxisMap.AXIS_CLASS_UNKNOWN && device != null )
+                else if( device != null )
                 {
                     // User has specified that we normalize this axis
                     MotionRange motionRange = device.getMotionRange( axisCode,
                             InputDevice.SOURCE_JOYSTICK );
                     if( motionRange != null )
                     {
-                        if( axisClass == AxisMap.AXIS_CLASS_STICK )
+                        switch( axisClass )
                         {
-                            // Normalize to [-1,1]
-                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange()
-                                    * 2f - 1f;
-                        }
-                        else if( axisClass == AxisMap.AXIS_CLASS_TRIGGER )
-                        {
-                            // Normalize to [0,1]
-                            strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
-                        }
-                        else if( axisClass == AxisMap.AXIS_CLASS_OUYA_LX_STICK )
-                        {
-                            // Remove bias in OUYA left x-axis (usually ~ .15, but occassionaly up to .33)
-                            if( strength > 0.3333f )
-                                strength = (strength - 0.3333f) / 0.6666f;
-                            else if( strength > 0 )
-                                strength = 0;
+                            case AxisMap.AXIS_CLASS_STICK:
+                                // Normalize to [-1,1]
+                                strength = ( strength - motionRange.getMin() ) / motionRange.getRange() * 2f - 1f;
+                                break;
+                            case AxisMap.AXIS_CLASS_TRIGGER:
+                                // Normalize to [0,1]
+                                strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
+                                break;
+                            case AxisMap.AXIS_CLASS_OUYA_LX_STICK:
+                                // Remove bias in OUYA left x-axis (usually ~ .15, but occassionaly up to .33)
+                                if( strength > 0.3333f )
+                                    strength = (strength - 0.3333f) / 0.6666f;
+                                else if( strength > 0 )
+                                    strength = 0;
+                                break;
+                            case AxisMap.AXIS_CLASS_RAPHNET_STICK:
+                                // Normalize to [-1,1]
+                                strength = strength / 0.69f;
+                                break;
+                            case AxisMap.AXIS_CLASS_RAPHNET_TRIGGER:
+                                // Normalize to [0,1]
+                                strength = (strength + 0.8f) / 1.6f;
+                                break;
+                            case AxisMap.AXIS_CLASS_UNKNOWN:
+                            default:
+                                // Do nothing
                         }
                     }
                 }
