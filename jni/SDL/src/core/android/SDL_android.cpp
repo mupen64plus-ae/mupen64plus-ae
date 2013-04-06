@@ -56,19 +56,7 @@ static jclass mActivityClass;
 
 // method signatures
 static jmethodID midCreateGLContext;
-static jmethodID midVibrate;
-static jmethodID midUseRGBA8888;
 static jmethodID midFlipBuffers;
-static jmethodID midGetDataDir;
-static jmethodID midGetHardwareType;
-static jmethodID midGetExtraArgs;
-static jmethodID midGetROMPath;
-static jmethodID midGetScreenStretch;
-static jmethodID midGetScreenPosition;
-static jmethodID midGetAutoFrameSkip;
-static jmethodID midGetMaxFrameSkip;
-static jmethodID midStateCallback;
-static jmethodID midShowToast;
 static jmethodID midAudioInit;
 static jmethodID midAudioWriteShortBuffer;
 static jmethodID midAudioWriteByteBuffer;
@@ -114,32 +102,8 @@ extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* mEnv, jclass cls)
 
     midCreateGLContext = mEnv->GetStaticMethodID(mActivityClass,
                                 "createGLContext","(II)Z");
-    midVibrate = mEnv->GetStaticMethodID(mActivityClass,
-                                "vibrate","(Z)V");
-    midUseRGBA8888 = mEnv->GetStaticMethodID(mActivityClass,
-                                "useRGBA8888","()Z");
     midFlipBuffers = mEnv->GetStaticMethodID(mActivityClass,
                                 "flipBuffers","()V");
-    midGetDataDir = mEnv->GetStaticMethodID(mActivityClass,
-                                "getDataDir", "()Ljava/lang/Object;");
-    midGetHardwareType = mEnv->GetStaticMethodID(mActivityClass,
-                                "getHardwareType", "()I");
-    midGetExtraArgs = mEnv->GetStaticMethodID(mActivityClass,
-                                "getExtraArgs", "()Ljava/lang/Object;");
-    midGetROMPath = mEnv->GetStaticMethodID(mActivityClass,
-                                "getROMPath", "()Ljava/lang/Object;");
-    midGetScreenStretch = mEnv->GetStaticMethodID(mActivityClass,
-                                "getScreenStretch", "()Z");
-    midGetScreenPosition = mEnv->GetStaticMethodID(mActivityClass,
-                                "getScreenPosition", "()I");
-    midGetAutoFrameSkip = mEnv->GetStaticMethodID(mActivityClass,
-                                "getAutoFrameSkip", "()Z");
-    midGetMaxFrameSkip = mEnv->GetStaticMethodID(mActivityClass,
-                                "getMaxFrameSkip", "()I");
-    midStateCallback = mEnv->GetStaticMethodID(mActivityClass,
-                                "stateCallback", "(II)V");
-    midShowToast = mEnv->GetStaticMethodID(mActivityClass,
-                                "showToast", "(Ljava/lang/String;)V");
     midAudioInit = mEnv->GetStaticMethodID(mActivityClass, 
                                 "audioInit", "(IZZI)V");
     midAudioWriteShortBuffer = mEnv->GetStaticMethodID(mActivityClass,
@@ -149,11 +113,8 @@ extern "C" DECLSPEC void SDLCALL SDL_Android_Init(JNIEnv* mEnv, jclass cls)
     midAudioQuit = mEnv->GetStaticMethodID(mActivityClass,
                                 "audioQuit", "()V");
 
-    if(!midCreateGLContext || !midVibrate || !midUseRGBA8888 || !midFlipBuffers || !midGetDataDir ||
-       !midGetHardwareType || !midGetExtraArgs || !midGetROMPath || !midGetScreenStretch || !midGetScreenPosition ||
-       !midGetAutoFrameSkip || !midGetMaxFrameSkip || ! midStateCallback || !midShowToast ||
-       !midAudioInit || !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit)
-    {
+    if(!midCreateGLContext || !midFlipBuffers || !midAudioInit ||
+       !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit) {
         __android_log_print(ANDROID_LOG_WARN, "SDL", "SDL: Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
 }
@@ -193,16 +154,6 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     Android_RunAudioThread();
 }
 
-//// paulscode, added for different configurations based on hardware
-// (part of the missing shadows and stars bug fix)
-extern "C" DECLSPEC int SDLCALL Android_JNI_GetHardwareType()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jint hardwareType = mEnv->CallStaticIntMethod(mActivityClass, midGetHardwareType);
-    return (int) hardwareType;
-}
-////
-
 /*******************************************************************************
              Functions called by SDL into Java
 *******************************************************************************/
@@ -217,118 +168,11 @@ extern "C" DECLSPEC SDL_bool SDLCALL Android_JNI_CreateContext(int majorVersion,
     }
 }
 
-extern "C" DECLSPEC void SDLCALL Android_JNI_Vibrate( int active )
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jboolean a = JNI_FALSE;
-    if( active )
-        a = JNI_TRUE;
-    mEnv->CallStaticVoidMethod( mActivityClass, midVibrate, a ); 
-}
-
-extern "C" DECLSPEC int SDLCALL Android_JNI_UseRGBA8888()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    if (mEnv->CallStaticBooleanMethod(mActivityClass, midUseRGBA8888)) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
 extern "C" DECLSPEC void SDLCALL Android_JNI_SwapWindow()
 {
     JNIEnv *mEnv = Android_JNI_GetEnv();
     mEnv->CallStaticVoidMethod(mActivityClass, midFlipBuffers); 
 }
-
-static jstring dataDirString = NULL;
-static char appDataDir[60];
-extern "C" DECLSPEC char * SDLCALL Android_JNI_GetDataDir()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    dataDirString = (jstring) mEnv->CallStaticObjectMethod( mActivityClass, midGetDataDir );
-    const char *nativeString = mEnv->GetStringUTFChars( dataDirString, 0 );
-    strcpy( appDataDir, nativeString );
-    mEnv->ReleaseStringUTFChars( dataDirString, nativeString );
-    return appDataDir;
-}
-
-static jstring buffString = NULL;
-static char buffArray[1024];
-extern "C" DECLSPEC char * SDLCALL Android_JNI_GetExtraArgs()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    buffString = (jstring) mEnv->CallStaticObjectMethod( mActivityClass, midGetExtraArgs );
-    const char *nativeString = mEnv->GetStringUTFChars( buffString, 0 );
-    strcpy( buffArray, nativeString );
-    mEnv->ReleaseStringUTFChars( buffString, nativeString );
-    return buffArray;
-}
-extern "C" DECLSPEC char * SDLCALL Android_JNI_GetROMPath()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    buffString = (jstring) mEnv->CallStaticObjectMethod( mActivityClass, midGetROMPath );
-    const char *nativeString = mEnv->GetStringUTFChars( buffString, 0 );
-    strcpy( buffArray, nativeString );
-    mEnv->ReleaseStringUTFChars( buffString, nativeString );
-    return buffArray;
-}
-extern "C" DECLSPEC int SDLCALL Android_JNI_GetScreenStretch()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jboolean b;
-    b = mEnv->CallStaticBooleanMethod( mActivityClass, midGetScreenStretch );
-    if( b == JNI_TRUE )
-        return 1;
-    else
-        return 0;
-}
-
-extern "C" DECLSPEC int SDLCALL Android_JNI_GetScreenPosition()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "About to call midGetScreenPosition" );
-    jint i = mEnv->CallStaticIntMethod( mActivityClass, midGetScreenPosition );
-    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Android_JNI_GetScreenPosition returning %i", (int) i );
-    return (int) i;
-}
-
-extern "C" DECLSPEC int SDLCALL Android_JNI_GetAutoFrameSkip()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jboolean b;
-    b = mEnv->CallStaticBooleanMethod( mActivityClass, midGetAutoFrameSkip );
-    if( b == JNI_TRUE )
-        return 1;
-    else
-        return 0;
-}
-extern "C" DECLSPEC int SDLCALL Android_JNI_GetMaxFrameSkip()
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "About to call midGetMaxFrameSkip" );
-    jint i = mEnv->CallStaticIntMethod( mActivityClass, midGetMaxFrameSkip );
-    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Android_JNI_GetMaxFrameSkip returning %i", (int) i );
-    return (int) i;
-}
-extern "C" DECLSPEC void SDLCALL Android_JNI_State_Callback( int paramChanged, int newValue )
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    __android_log_print( ANDROID_LOG_VERBOSE, "SDL-android", "Emulator param %i changed to %i", paramChanged, newValue );
-    mEnv->CallStaticVoidMethod( mActivityClass, midStateCallback, paramChanged, newValue );
-}
-
-// paulscode, added for showing the user a short message
-static jstring jmessage = NULL;
-extern "C" DECLSPEC void SDLCALL Android_JNI_ShowToast( const char *message )
-{
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jmessage = mEnv->NewStringUTF( message );
-    mEnv->CallStaticVoidMethod( mActivityClass, midShowToast, jmessage );
-    mEnv->DeleteLocalRef( jmessage );
-}
-//
 
 extern "C" DECLSPEC void SDLCALL Android_JNI_SetActivityTitle(const char *title)
 {

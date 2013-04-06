@@ -62,6 +62,7 @@ extern "C" {
 
 // Initialization
 extern void         SDL_Android_Init(JNIEnv* env, jclass cls);
+extern void         SDL_Android_Init_Extras(JNIEnv* env, jclass cls);
 
 // Native utilities
 extern void         Android_JNI_State_Callback(int paramChanged, int newValue);

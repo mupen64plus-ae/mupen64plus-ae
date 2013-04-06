@@ -41,6 +41,7 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNativ
 {
     /* This interface could expand with ABI negotiation, calbacks, etc. */
     SDL_Android_Init(env, cls);
+    SDL_Android_Init_Extras(env, cls);
 
     /* Run the application code! */
     int status;
