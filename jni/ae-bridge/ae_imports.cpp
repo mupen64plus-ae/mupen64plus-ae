@@ -40,9 +40,7 @@ static JavaVM* mJavaVM;
 static jclass mActivityClass;
 
 // Imported java method references
-static jmethodID midVibrate;
 static jmethodID midStateCallback;
-static jmethodID midShowToast;
 static jmethodID midGetHardwareType;
 static jmethodID midGetDataDir;
 static jmethodID midGetROMPath;
@@ -171,9 +169,7 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
 
     mActivityClass = (jclass) env->NewGlobalRef(cls);
 
-    midVibrate              = env->GetStaticMethodID(mActivityClass, "vibrate",            "(Z)V");
     midStateCallback        = env->GetStaticMethodID(mActivityClass, "stateCallback",      "(II)V");
-    midShowToast            = env->GetStaticMethodID(mActivityClass, "showToast",          "(Ljava/lang/String;)V");
     midGetHardwareType      = env->GetStaticMethodID(mActivityClass, "getHardwareType",    "()I");
     midGetDataDir           = env->GetStaticMethodID(mActivityClass, "getDataDir",         "()Ljava/lang/Object;");
     midGetROMPath           = env->GetStaticMethodID(mActivityClass, "getROMPath",         "()Ljava/lang/Object;");
@@ -184,9 +180,9 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
     midGetScreenStretch     = env->GetStaticMethodID(mActivityClass, "getScreenStretch",   "()Z");
     midUseRGBA8888          = env->GetStaticMethodID(mActivityClass, "useRGBA8888",        "()Z");
 
-    if (!midVibrate || !midStateCallback || !midShowToast || !midGetHardwareType ||
-        !midGetDataDir || !midGetROMPath || !midGetExtraArgs || !midGetAutoFrameSkip ||
-        !midGetMaxFrameSkip || !midGetScreenPosition || !midGetScreenStretch || !midUseRGBA8888)
+    if (!midStateCallback || !midGetHardwareType || !midGetDataDir || !midGetROMPath ||
+        !midGetExtraArgs || !midGetAutoFrameSkip || !midGetMaxFrameSkip ||
+        !midGetScreenPosition || !midGetScreenStretch || !midUseRGBA8888)
     {
         LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
@@ -195,21 +191,6 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
 /*******************************************************************************
  Functions called by native code
  *******************************************************************************/
-
-extern DECLSPEC void Android_JNI_Vibrate(int active)
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    jboolean a = active ? JNI_TRUE : JNI_FALSE;
-    env->CallStaticVoidMethod(mActivityClass, midVibrate, a);
-}
-
-extern DECLSPEC void Android_JNI_ShowToast(const char *message)
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    jmessage = env->NewStringUTF(message);
-    env->CallStaticVoidMethod(mActivityClass, midShowToast, jmessage);
-    env->DeleteLocalRef(jmessage);
-}
 
 extern DECLSPEC void Android_JNI_State_Callback(int paramChanged, int newValue)
 {
