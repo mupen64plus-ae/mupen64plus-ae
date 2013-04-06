@@ -111,9 +111,7 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNativ
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_gameShark(JNIEnv* env, jclass cls, jboolean pressed)
 {
-    int p = 0;
-    if (pressed == JNI_TRUE)
-        p = 1;
+    int p = pressed == JNI_TRUE ? 1 : 0;
     (*CoreDoCommand)(M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK, &p);
 }
 

@@ -115,6 +115,20 @@ static int Android_JNI_SetupThread(void)
     return 1;
 }
 
+static int GetBooleanAsInt(jmethodID methodID)
+{
+    JNIEnv *env = Android_JNI_GetEnv();
+    jboolean b = env->CallStaticBooleanMethod(mActivityClass, methodID);
+    return (b == JNI_TRUE) ? 1 : 0;
+}
+
+static int GetInt(jmethodID methodID)
+{
+    JNIEnv *env = Android_JNI_GetEnv();
+    jint i = env->CallStaticIntMethod(mActivityClass, methodID);
+    return (int) i;
+}
+
 /*******************************************************************************
  Functions called automatically by JNI framework
  *******************************************************************************/
@@ -134,7 +148,7 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
      */
     if (pthread_key_create(&mThreadKey, Android_JNI_ThreadDestroyed))
     {
-        __android_log_print(ANDROID_LOG_ERROR, "ae-bridge", "Error initializing pthread key");
+        LOGE("Error initializing pthread key");
     }
     else
     {
@@ -149,32 +163,32 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
  *******************************************************************************/
 
 // Called before SDL_main() to initialize JNI bindings
-extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* mEnv, jclass cls)
+extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
 {
-    __android_log_print(ANDROID_LOG_INFO, "SDL", "SDL_Android_Init()");
+    LOGI("SDL_Android_Init_Extras()");
 
     Android_JNI_SetupThread();
 
-    mActivityClass = (jclass) mEnv->NewGlobalRef(cls);
+    mActivityClass = (jclass) env->NewGlobalRef(cls);
 
-    midVibrate              = mEnv->GetStaticMethodID(mActivityClass, "vibrate",            "(Z)V");
-    midStateCallback        = mEnv->GetStaticMethodID(mActivityClass, "stateCallback",      "(II)V");
-    midShowToast            = mEnv->GetStaticMethodID(mActivityClass, "showToast",          "(Ljava/lang/String;)V");
-    midGetHardwareType      = mEnv->GetStaticMethodID(mActivityClass, "getHardwareType",    "()I");
-    midGetDataDir           = mEnv->GetStaticMethodID(mActivityClass, "getDataDir",         "()Ljava/lang/Object;");
-    midGetROMPath           = mEnv->GetStaticMethodID(mActivityClass, "getROMPath",         "()Ljava/lang/Object;");
-    midGetExtraArgs         = mEnv->GetStaticMethodID(mActivityClass, "getExtraArgs",       "()Ljava/lang/Object;");
-    midGetAutoFrameSkip     = mEnv->GetStaticMethodID(mActivityClass, "getAutoFrameSkip",   "()Z");
-    midGetMaxFrameSkip      = mEnv->GetStaticMethodID(mActivityClass, "getMaxFrameSkip",    "()I");
-    midGetScreenPosition    = mEnv->GetStaticMethodID(mActivityClass, "getScreenPosition",  "()I");
-    midGetScreenStretch     = mEnv->GetStaticMethodID(mActivityClass, "getScreenStretch",   "()Z");
-    midUseRGBA8888          = mEnv->GetStaticMethodID(mActivityClass, "useRGBA8888",        "()Z");
+    midVibrate              = env->GetStaticMethodID(mActivityClass, "vibrate",            "(Z)V");
+    midStateCallback        = env->GetStaticMethodID(mActivityClass, "stateCallback",      "(II)V");
+    midShowToast            = env->GetStaticMethodID(mActivityClass, "showToast",          "(Ljava/lang/String;)V");
+    midGetHardwareType      = env->GetStaticMethodID(mActivityClass, "getHardwareType",    "()I");
+    midGetDataDir           = env->GetStaticMethodID(mActivityClass, "getDataDir",         "()Ljava/lang/Object;");
+    midGetROMPath           = env->GetStaticMethodID(mActivityClass, "getROMPath",         "()Ljava/lang/Object;");
+    midGetExtraArgs         = env->GetStaticMethodID(mActivityClass, "getExtraArgs",       "()Ljava/lang/Object;");
+    midGetAutoFrameSkip     = env->GetStaticMethodID(mActivityClass, "getAutoFrameSkip",   "()Z");
+    midGetMaxFrameSkip      = env->GetStaticMethodID(mActivityClass, "getMaxFrameSkip",    "()I");
+    midGetScreenPosition    = env->GetStaticMethodID(mActivityClass, "getScreenPosition",  "()I");
+    midGetScreenStretch     = env->GetStaticMethodID(mActivityClass, "getScreenStretch",   "()Z");
+    midUseRGBA8888          = env->GetStaticMethodID(mActivityClass, "useRGBA8888",        "()Z");
 
     if (!midVibrate || !midStateCallback || !midShowToast || !midGetHardwareType ||
         !midGetDataDir || !midGetROMPath || !midGetExtraArgs || !midGetAutoFrameSkip ||
         !midGetMaxFrameSkip || !midGetScreenPosition || !midGetScreenStretch || !midUseRGBA8888)
     {
-        __android_log_print(ANDROID_LOG_ERROR, "ae-bridge", "Couldn't locate Java callbacks, check that they're named and typed correctly");
+        LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
 }
 
@@ -184,114 +198,82 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* mEnv, jclass cls)
 
 extern DECLSPEC void Android_JNI_Vibrate(int active)
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jboolean a = JNI_FALSE;
-    if (active)
-        a = JNI_TRUE;
-    mEnv->CallStaticVoidMethod(mActivityClass, midVibrate, a);
+    JNIEnv *env = Android_JNI_GetEnv();
+    jboolean a = active ? JNI_TRUE : JNI_FALSE;
+    env->CallStaticVoidMethod(mActivityClass, midVibrate, a);
 }
 
 extern DECLSPEC void Android_JNI_ShowToast(const char *message)
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jmessage = mEnv->NewStringUTF(message);
-    mEnv->CallStaticVoidMethod(mActivityClass, midShowToast, jmessage);
-    mEnv->DeleteLocalRef(jmessage);
+    JNIEnv *env = Android_JNI_GetEnv();
+    jmessage = env->NewStringUTF(message);
+    env->CallStaticVoidMethod(mActivityClass, midShowToast, jmessage);
+    env->DeleteLocalRef(jmessage);
 }
 
 extern DECLSPEC void Android_JNI_State_Callback(int paramChanged, int newValue)
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    __android_log_print(ANDROID_LOG_VERBOSE, "SDL-android", "Emulator param %i changed to %i", paramChanged, newValue);
-    mEnv->CallStaticVoidMethod(mActivityClass, midStateCallback, paramChanged, newValue);
+    JNIEnv *env = Android_JNI_GetEnv();
+    LOGV("Emulator param %i changed to %i", paramChanged, newValue);
+    env->CallStaticVoidMethod(mActivityClass, midStateCallback, paramChanged, newValue);
 }
 
 extern DECLSPEC int Android_JNI_GetHardwareType()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jint hardwareType = mEnv->CallStaticIntMethod(mActivityClass, midGetHardwareType);
-    return (int) hardwareType;
+    return GetInt(midGetHardwareType);
 }
 
 extern DECLSPEC char * Android_JNI_GetDataDir()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    dataDirString = (jstring) mEnv->CallStaticObjectMethod(mActivityClass, midGetDataDir);
-    const char *nativeString = mEnv->GetStringUTFChars(dataDirString, 0);
+    JNIEnv *env = Android_JNI_GetEnv();
+    dataDirString = (jstring) env->CallStaticObjectMethod(mActivityClass, midGetDataDir);
+    const char *nativeString = env->GetStringUTFChars(dataDirString, 0);
     strcpy(appDataDir, nativeString);
-    mEnv->ReleaseStringUTFChars(dataDirString, nativeString);
+    env->ReleaseStringUTFChars(dataDirString, nativeString);
     return appDataDir;
 }
 
 extern DECLSPEC char * Android_JNI_GetROMPath()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    buffString = (jstring) mEnv->CallStaticObjectMethod(mActivityClass, midGetROMPath);
-    const char *nativeString = mEnv->GetStringUTFChars(buffString, 0);
+    JNIEnv *env = Android_JNI_GetEnv();
+    buffString = (jstring) env->CallStaticObjectMethod(mActivityClass, midGetROMPath);
+    const char *nativeString = env->GetStringUTFChars(buffString, 0);
     strcpy(buffArray, nativeString);
-    mEnv->ReleaseStringUTFChars(buffString, nativeString);
+    env->ReleaseStringUTFChars(buffString, nativeString);
     return buffArray;
 }
 
 extern DECLSPEC char * Android_JNI_GetExtraArgs()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    buffString = (jstring) mEnv->CallStaticObjectMethod(mActivityClass, midGetExtraArgs);
-    const char *nativeString = mEnv->GetStringUTFChars(buffString, 0);
+    JNIEnv *env = Android_JNI_GetEnv();
+    buffString = (jstring) env->CallStaticObjectMethod(mActivityClass, midGetExtraArgs);
+    const char *nativeString = env->GetStringUTFChars(buffString, 0);
     strcpy(buffArray, nativeString);
-    mEnv->ReleaseStringUTFChars(buffString, nativeString);
+    env->ReleaseStringUTFChars(buffString, nativeString);
     return buffArray;
 }
 
 extern DECLSPEC int Android_JNI_GetAutoFrameSkip()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jboolean b;
-    b = mEnv->CallStaticBooleanMethod(mActivityClass, midGetAutoFrameSkip);
-    if (b == JNI_TRUE)
-        return 1;
-    else
-        return 0;
+    return GetBooleanAsInt(midGetAutoFrameSkip);
 }
 
 extern DECLSPEC int Android_JNI_GetMaxFrameSkip()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    __android_log_print(ANDROID_LOG_VERBOSE, "SDL-android", "About to call midGetMaxFrameSkip");
-    jint i = mEnv->CallStaticIntMethod(mActivityClass, midGetMaxFrameSkip);
-    __android_log_print(ANDROID_LOG_VERBOSE, "SDL-android", "Android_JNI_GetMaxFrameSkip returning %i", (int) i);
-    return (int) i;
+    return GetBooleanAsInt(midGetMaxFrameSkip);
 }
 
 extern DECLSPEC int Android_JNI_GetScreenStretch()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    jboolean b;
-    b = mEnv->CallStaticBooleanMethod(mActivityClass, midGetScreenStretch);
-    if (b == JNI_TRUE)
-        return 1;
-    else
-        return 0;
+    return GetBooleanAsInt(midGetScreenStretch);
 }
 
 extern DECLSPEC int Android_JNI_GetScreenPosition()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    __android_log_print(ANDROID_LOG_VERBOSE, "SDL-android", "About to call midGetScreenPosition");
-    jint i = mEnv->CallStaticIntMethod(mActivityClass, midGetScreenPosition);
-    __android_log_print(ANDROID_LOG_VERBOSE, "SDL-android", "Android_JNI_GetScreenPosition returning %i", (int) i);
-    return (int) i;
+    return GetInt(midGetScreenPosition);
 }
 
 extern DECLSPEC int Android_JNI_UseRGBA8888()
 {
-    JNIEnv *mEnv = Android_JNI_GetEnv();
-    if (mEnv->CallStaticBooleanMethod(mActivityClass, midUseRGBA8888))
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return GetBooleanAsInt(midUseRGBA8888);
 }
