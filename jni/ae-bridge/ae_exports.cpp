@@ -19,7 +19,76 @@
  * Authors: Paul Lamb, littleguy77
  */
 
+#include <SDL.h>
 #include "ae_bridge.h"
+
+#define M64P_CORE_PROTOTYPES
+#include "m64p_frontend.h"
+
+#ifdef M64P_BIG_ENDIAN
+  #define sl(mot) mot
+#else
+  #define sl(mot) (((mot & 0xFF) << 24) | ((mot & 0xFF00) <<  8) | ((mot & 0xFF0000) >>  8) | ((mot & 0xFF000000) >> 24))
+#endif
+
+/*******************************************************************************
+ Functions called internally
+ *******************************************************************************/
+
+static void swap_rom(unsigned char* localrom, int loadlength)
+{
+    unsigned char temp;
+    int i;
+
+    /* Btyeswap if .v64 image. */
+    if (localrom[0] == 0x37)
+    {
+        for (i = 0; i < loadlength; i += 2)
+        {
+            temp = localrom[i];
+            localrom[i] = localrom[i + 1];
+            localrom[i + 1] = temp;
+        }
+    }
+    /* Wordswap if .n64 image. */
+    else if (localrom[0] == 0x40)
+    {
+        for (i = 0; i < loadlength; i += 4)
+        {
+            temp = localrom[i];
+            localrom[i] = localrom[i + 3];
+            localrom[i + 3] = temp;
+            temp = localrom[i + 1];
+            localrom[i + 1] = localrom[i + 2];
+            localrom[i + 2] = temp;
+        }
+    }
+}
+
+static char * trim(char *str)
+{
+    unsigned int i;
+    char *p = str;
+
+    while (isspace(*p))
+        p++;
+
+    if (str != p)
+    {
+        for (i = 0; i <= strlen(p); ++i)
+            str[i] = p[i];
+    }
+
+    p = str + strlen(str) - 1;
+    if (p > str)
+    {
+        while (isspace(*p))
+            p--;
+        p[1] = '\0';
+    }
+
+    return str;
+}
 
 /*******************************************************************************
  Functions called automatically by JNI framework
@@ -29,4 +98,171 @@
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     return JNI_VERSION_1_4;
+}
+
+/*******************************************************************************
+ Functions called by Java code
+ *******************************************************************************/
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_frameAdvance(JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand)(M64CMD_ADVANCE_FRAME, 0, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_gameShark(JNIEnv* env, jclass cls, jboolean pressed)
+{
+    int p = 0;
+    if (pressed == JNI_TRUE)
+        p = 1;
+    (*CoreDoCommand)(M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK, &p);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_pauseEmulator(JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand)(M64CMD_PAUSE, 0, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_resumeEmulator(JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand)(M64CMD_RESUME, 0, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_resetEmulator(JNIEnv* env, jclass cls)
+{
+    // (*CoreDoCommand) ( M64CMD_RESET, 0, NULL );
+    do_Start = 1;
+    (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stopEmulator(JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSetSlotEmulator(JNIEnv* env, jclass cls, jint slotID)
+{
+    (*CoreDoCommand)(M64CMD_STATE_SET_SLOT, (int) slotID, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSaveEmulator(JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand)(M64CMD_STATE_SAVE, 1, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateLoadEmulator(JNIEnv* env, jclass cls)
+{
+    (*CoreDoCommand)(M64CMD_STATE_LOAD, 0, NULL);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_fileSaveEmulator(JNIEnv* env, jclass cls, jstring filename)
+{
+    const char *nativeString = env->GetStringUTFChars(filename, 0);
+    (*CoreDoCommand)(M64CMD_STATE_SAVE, 1, (void *) nativeString);
+    env->ReleaseStringUTFChars(filename, nativeString);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_fileLoadEmulator(JNIEnv* env, jclass cls, jstring filename)
+{
+    const char *nativeString = env->GetStringUTFChars(filename, 0);
+    (*CoreDoCommand)(M64CMD_STATE_LOAD, 0, (void *) nativeString);
+    env->ReleaseStringUTFChars(filename, nativeString);
+}
+
+extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateEmulator(JNIEnv* env, jclass cls)
+{
+    int state = 0;
+    (*CoreDoCommand)(M64CMD_CORE_STATE_QUERY, M64CORE_EMU_STATE, &state);
+    if (state == M64EMU_STOPPED)
+        return (jint) 1;
+    else if (state == M64EMU_RUNNING)
+        return (jint) 2;
+    else if (state == M64EMU_PAUSED)
+        return (jint) 3;
+    else
+        return (jint) 0;
+}
+
+static char strBuff[1024];
+extern "C" DECLSPEC jstring Java_paulscode_android_mupen64plusae_CoreInterfaceNative_getHeaderName(JNIEnv* env, jclass cls, jstring jFilename)
+{
+    const char *nativeS = env->GetStringUTFChars(jFilename, 0);
+    strcpy(strBuff, nativeS);
+    env->ReleaseStringUTFChars(jFilename, nativeS);
+
+    FILE *fPtr = fopen(strBuff, "rb");
+    if (fPtr == NULL)
+    {
+        LOGE("Error: couldn't open ROM file '%s' for reading.\n", strBuff);
+        return NULL;
+    }
+
+    m64p_rom_header *hdr = (m64p_rom_header *) malloc(sizeof(m64p_rom_header));
+
+    if (hdr == NULL)
+    {
+        LOGE("Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n", sizeof(m64p_rom_header), strBuff);
+        fclose(fPtr);
+        return NULL;
+    }
+    else if (fread(hdr, 1, sizeof(m64p_rom_header), fPtr) != sizeof(m64p_rom_header))
+    {
+        LOGE("Error: couldn't read %li bytes from ROM image file '%s'.\n", sizeof(m64p_rom_header), strBuff);
+        free(hdr);
+        fclose(fPtr);
+        return NULL;
+    }
+    fclose(fPtr);
+
+    swap_rom((unsigned char *) hdr, sizeof(m64p_rom_header));
+
+    trim((char*)hdr->Name);
+    strcpy(strBuff, (char*)hdr->Name);
+    free(hdr);
+
+    return env->NewStringUTF(strBuff);
+}
+
+extern "C" DECLSPEC jstring Java_paulscode_android_mupen64plusae_CoreInterfaceNative_getHeaderCRC(JNIEnv* env, jclass cls, jstring jFilename)
+{
+    const char *nativeS = env->GetStringUTFChars(jFilename, 0);
+    strcpy(strBuff, nativeS);
+    env->ReleaseStringUTFChars(jFilename, nativeS);
+
+    FILE *fPtr = fopen(strBuff, "rb");
+    if (fPtr == NULL)
+    {
+        LOGE("Error: couldn't open ROM file '%s' for reading.\n", strBuff);
+        return NULL;
+    }
+
+    m64p_rom_header *hdr = (m64p_rom_header *) malloc(sizeof(m64p_rom_header));
+
+    if (hdr == NULL)
+    {
+        LOGE("Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n", sizeof(m64p_rom_header), strBuff);
+        fclose(fPtr);
+        return NULL;
+    }
+    else if (fread(hdr, 1, sizeof(m64p_rom_header), fPtr) != sizeof(m64p_rom_header))
+    {
+        LOGE("Error: couldn't read %li bytes from ROM image file '%s'.\n", sizeof(m64p_rom_header), strBuff);
+        free(hdr);
+        fclose(fPtr);
+        return NULL;
+    }
+    fclose(fPtr);
+
+    swap_rom((unsigned char *) hdr, sizeof(m64p_rom_header));
+
+    sprintf(strBuff, "%x %x", sl((unsigned int) hdr->CRC1), sl((unsigned int) hdr->CRC2));
+
+    free(hdr);
+
+    return env->NewStringUTF(strBuff);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_stateSetSpeed(JNIEnv* env, jclass cls, jint percent)
+{
+    int speed_factor = (int) percent;
+    (*CoreDoCommand)(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &speed_factor);
 }
