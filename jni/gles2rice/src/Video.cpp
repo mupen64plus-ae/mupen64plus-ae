@@ -42,12 +42,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Video.h"
 #include "version.h"
 
-//// paulscode, added for SDL linkage:
-#ifdef USE_SDL
-    #include <SDL.h>
-#endif
-
+#ifdef PAULSCODE
 #include "ae_bridge.h"
+#endif
 
 //=======================================================
 // local variables
@@ -309,7 +306,7 @@ static bool StartVideo(void)
         CDeviceBuilder::GetBuilder()->CreateGraphicsContext();
         CGraphicsContext::InitWindowInfo();
 
-#ifdef USE_SDL
+#ifdef PAULSCODE
         /* Initialize SDL */
         printf( "Initializing SDL video subsystem...\n" );
         if (SDL_InitSubSystem( SDL_INIT_VIDEO ) == -1)
@@ -334,89 +331,53 @@ static bool StartVideo(void)
         }
 
         //// paulscode, screen stretch and aspect ratio
-          bool romPAL, stretchVideo;
-          // determine if this is a PAL or NTSC type ROM
-          switch( g_GraphicsInfo.HEADER[0x3e] )
-          {
-              // PAL codes
-              case 0x44:
-              case 0x46:
-              case 0x49:
-              case 0x50:
-              case 0x53:
-              case 0x55:
-              case 0x58:
-              case 0x59:
-                  romPAL = true;
-                  break;
-              // NTSC codes
-              case 0x37:
-              case 0x41:
-              case 0x45:
-              case 0x4a:
-                  romPAL = false;
-                  break;
-              // Fallback for unknown codes
-              default:
-                  romPAL = false;
-          }
-          // Calculate aspect ratio
-          const float ratio = ( romPAL ? 9.0f/11.0f : 0.75f );
+
+        // Calculate aspect ratio
+        bool stretchVideo = (bool) Android_JNI_GetScreenStretch();
+        int screenPosition = (int) Android_JNI_GetScreenPosition();
+
           int videoWidth = videoInfo->current_w;
           int videoHeight = videoInfo->current_h;
-          int screenPosition;
-          int x, y;
 
-          stretchVideo = (bool) Android_JNI_GetScreenStretch();
-          screenPosition = (int) Android_JNI_GetScreenPosition();
           if( !stretchVideo )
           {
-              videoWidth = (int) ( videoInfo->current_h / ratio );
+              videoWidth = (int) ( videoInfo->current_h / status.fRatio );
               if( videoWidth > videoInfo->current_w )
               {
                   videoWidth = videoInfo->current_w;
-                  videoHeight = (int) ( videoInfo->current_w * ratio );
+                  videoHeight = (int) ( videoInfo->current_w * status.fRatio );
               }
-              
+
               switch( screenPosition )
               {
                   case SCREEN_POSITION_BOTTOM:
-                      x = 0;
-                      y = 0;
+                      windowSetting.xpos = 0;
+                      windowSetting.ypos = 0;
                       break;
-            
+
                   case SCREEN_POSITION_MIDDLE:
-                      x = ( videoInfo->current_w - videoWidth ) / 2;
-                      y = ( videoInfo->current_h - videoHeight ) / 2;
+                      windowSetting.xpos = ( videoInfo->current_w - videoWidth ) / 2;
+                      windowSetting.ypos = ( videoInfo->current_h - videoHeight ) / 2;
                       break;
-            
+
                   case SCREEN_POSITION_TOP:
-                      x = videoInfo->current_w - videoWidth;
-                      y = videoInfo->current_h - videoHeight;
+                      windowSetting.xpos = videoInfo->current_w - videoWidth;
+                      windowSetting.ypos = videoInfo->current_h - videoHeight;
                       break;
               }
           }
           else
           {
-              x = ( videoInfo->current_w - videoWidth ) / 2;
-              y = ( videoInfo->current_h - videoHeight ) / 2;
+              windowSetting.xpos = ( videoInfo->current_w - videoWidth ) / 2;
+              windowSetting.ypos = ( videoInfo->current_h - videoHeight ) / 2;
           }
-          
-          //set xpos and ypos
-          windowSetting.xpos = x;
-          windowSetting.ypos = y;
-    
+
           //set width and height
           windowSetting.uDisplayWidth = videoWidth;
           windowSetting.uDisplayHeight = videoHeight;
-        
-          printf( "Screen dimensions: %i,%i\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );     
-          ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenWidth", videoWidth, "Width of output window or fullscreen width" );
-          ConfigSetDefaultInt( l_ConfigVideoGeneral, "ScreenHeight", videoHeight, "Height of output window or fullscreen height" );
 #endif
 
-        bool res = CGraphicsContext::Get()->Initialize( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
-                                                        !windowSetting.bDisplayFullscreen );
+        bool res = CGraphicsContext::Get()->Initialize(640, 480, !windowSetting.bDisplayFullscreen);
         if (!res)
         {
             g_CritialSection.Unlock();
@@ -655,27 +616,27 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     l_DebugCallContext = Context;
 
     /* attach and call the CoreGetAPIVersions function, check Config and Video Extension API versions for compatibility */
-//    ptr_CoreGetAPIVersions CoreAPIVersionFunc;
-//    CoreAPIVersionFunc = (ptr_CoreGetAPIVersions) osal_dynlib_getproc(CoreLibHandle, "CoreGetAPIVersions");
-//    if (CoreAPIVersionFunc == NULL)
-//    {
-//        DebugMessage(M64MSG_ERROR, "Core emulator broken; no CoreAPIVersionFunc() function found.");
-//        return M64ERR_INCOMPATIBLE;
-//    }
-//    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
-//    (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, NULL);
-//    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000))
-//    {
-//        DebugMessage(M64MSG_ERROR, "Emulator core Config API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
-//                VERSION_PRINTF_SPLIT(ConfigAPIVersion), VERSION_PRINTF_SPLIT(CONFIG_API_VERSION));
-//        return M64ERR_INCOMPATIBLE;
-//    }
-//    if ((VidextAPIVersion & 0xffff0000) != (VIDEXT_API_VERSION & 0xffff0000))
-//    {
-//        DebugMessage(M64MSG_ERROR, "Emulator core Video Extension API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
-//                VERSION_PRINTF_SPLIT(VidextAPIVersion), VERSION_PRINTF_SPLIT(VIDEXT_API_VERSION));
-//        return M64ERR_INCOMPATIBLE;
-//    }
+    ptr_CoreGetAPIVersions CoreAPIVersionFunc;
+    CoreAPIVersionFunc = (ptr_CoreGetAPIVersions) osal_dynlib_getproc(CoreLibHandle, "CoreGetAPIVersions");
+    if (CoreAPIVersionFunc == NULL)
+    {
+        DebugMessage(M64MSG_ERROR, "Core emulator broken; no CoreAPIVersionFunc() function found.");
+        return M64ERR_INCOMPATIBLE;
+    }
+    int ConfigAPIVersion, DebugAPIVersion, VidextAPIVersion;
+    (*CoreAPIVersionFunc)(&ConfigAPIVersion, &DebugAPIVersion, &VidextAPIVersion, NULL);
+    if ((ConfigAPIVersion & 0xffff0000) != (CONFIG_API_VERSION & 0xffff0000))
+    {
+        DebugMessage(M64MSG_ERROR, "Emulator core Config API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
+                VERSION_PRINTF_SPLIT(ConfigAPIVersion), VERSION_PRINTF_SPLIT(CONFIG_API_VERSION));
+        return M64ERR_INCOMPATIBLE;
+    }
+    if ((VidextAPIVersion & 0xffff0000) != (VIDEXT_API_VERSION & 0xffff0000))
+    {
+        DebugMessage(M64MSG_ERROR, "Emulator core Video Extension API (v%i.%i.%i) incompatible with plugin (v%i.%i.%i)",
+                VERSION_PRINTF_SPLIT(VidextAPIVersion), VERSION_PRINTF_SPLIT(VIDEXT_API_VERSION));
+        return M64ERR_INCOMPATIBLE;
+    }
 
     /* Get the core config function pointers from the library handle */
     ConfigOpenSection = (ptr_ConfigOpenSection) osal_dynlib_getproc(CoreLibHandle, "ConfigOpenSection");
@@ -1033,24 +994,26 @@ EXPORT void CALL ShowCFB(void)
 //void ReadScreen2( void *dest, int *width, int *height, int bFront )
 EXPORT void CALL ReadScreen2(void *dest, int *width, int *height, int bFront)
 {
-//    if (width == NULL || height == NULL)
-//        return;
-//
-//    *width = windowSetting.uDisplayWidth;
-//    *height = windowSetting.uDisplayHeight;
-//
-//    if (dest == NULL)
-//        return;
-//
-//    GLint oldMode;
-//    glGetIntegerv( GL_READ_BUFFER, &oldMode );
-//    if (bFront)
-//        glReadBuffer( GL_FRONT );
-//    else
-//        glReadBuffer( GL_BACK );
-//    glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
-//                 GL_RGB, GL_UNSIGNED_BYTE, dest );
-//    glReadBuffer( oldMode );
+    if (width == NULL || height == NULL)
+        return;
+
+    *width = windowSetting.uDisplayWidth;
+    *height = windowSetting.uDisplayHeight;
+
+    if (dest == NULL)
+        return;
+
+#if SDL_VIDEO_OPENGL
+    GLint oldMode;
+    glGetIntegerv( GL_READ_BUFFER, &oldMode );
+    if (bFront)
+        glReadBuffer( GL_FRONT );
+    else
+        glReadBuffer( GL_BACK );
+    glReadPixels( 0, 0, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight,
+                 GL_RGB, GL_UNSIGNED_BYTE, dest );
+    glReadBuffer( oldMode );
+#endif
 }
     
 

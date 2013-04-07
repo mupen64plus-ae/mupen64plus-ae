@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <vector>
 
-#include <SDL_opengl.h>
+#include "osal_opengl.h"
 
 #include "OGLCombiner.h"
 #include "OGLExtCombiner.h"
@@ -32,7 +32,19 @@ typedef struct {
     uint32  dwMux1;
 
     bool    fogIsUsed;
+    bool    alphaTest;
+    GLuint  fragmentShaderID;
+    GLuint  vertexShaderID;
     GLuint  programID;
+
+    GLint  PrimColorLocation;
+    GLint  EnvColorLocation;
+    GLint  PrimFracLocation;
+    GLint  EnvFracLocation;
+    GLint  AlphaRefLocation;
+    GLint FogColorLocation;
+    GLint FogMinMaxLocation;
+
 } OGLShaderCombinerSaveType;
 
 
@@ -40,6 +52,8 @@ class COGL_FragmentProgramCombiner : public COGLColorCombiner4
 {
 public:
     bool Initialize(void);
+    float m_AlphaRef;
+    void UpdateFog(bool bEnable);
 
 protected:
     friend class OGLDeviceBuilder;

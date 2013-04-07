@@ -21,11 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "Combiner.h"
 #include "Render.h"
-#include "osal_opengl.h"
-#define VS_POSITION 0
-#define VS_COLOR 1
-#define VS_TEXCOORD0 2
-#define VS_TEXCOORD1 3
 
 class OGLRender : public CRender
 {
@@ -72,6 +67,8 @@ public:
     void SetTextureVFlag(TextureUVFlag dwFlag, uint32 tile);
     virtual void BindTexture(GLuint texture, int unitno);
     virtual void DisBindTexture(GLuint texture, int unitno);
+    virtual void TexCoord2f(float u, float v);
+    virtual void TexCoord(TLITVERTEX &vtxInfo);
 
     void DrawSimple2DTexture(float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, COLOR dif, COLOR spe, float z, float rhw);
     void DrawSimpleRect(int nX0, int nY0, int nX1, int nY1, uint32 dwColor, float depth, float rhw);
