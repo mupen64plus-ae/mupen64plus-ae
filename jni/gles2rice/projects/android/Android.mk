@@ -32,7 +32,7 @@ LOCAL_SRC_FILES :=                      \
     $(SRCDIR)/OGLDecodedMux.cpp         \
     $(SRCDIR)/OGLExtCombiner.cpp        \
     $(SRCDIR)/OGLExtRender.cpp          \
-    $(SRCDIR)/OGLFragmentShaders.cpp    \
+    $(SRCDIR)/OGLES2FragmentShaders.cpp \
     $(SRCDIR)/OGLGraphicsContext.cpp    \
     $(SRCDIR)/OGLRender.cpp             \
     $(SRCDIR)/OGLRenderExt.cpp          \
@@ -62,7 +62,7 @@ LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DANDROID           \
     -DNO_ASM            \
-    -DUSE_SDL           \
+    -DPAULSCODE         \
     -fsigned-char       \
     #-DBGR_SHADER        \
     #-DSDL_NO_COMPAT     \

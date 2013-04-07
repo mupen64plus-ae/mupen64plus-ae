@@ -27,6 +27,8 @@ public:
     void Initialize(void);
     void BindTexture(GLuint texture, int unitno);
     void DisBindTexture(GLuint texture, int unitno);
+    void TexCoord2f(float u, float v);
+    void TexCoord(TLITVERTEX &vtxInfo);
     void SetTextureUFlag(TextureUVFlag dwFlag, uint32 tile);
     void SetTextureVFlag(TextureUVFlag dwFlag, uint32 tile);
     void EnableTexUnit(int unitno, BOOL flag);

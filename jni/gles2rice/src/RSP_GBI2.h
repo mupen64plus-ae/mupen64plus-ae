@@ -175,7 +175,7 @@ void RSP_GBI2_MoveWord(Gfx *gfx)
             }
 
             SetFogMinMax(fMin, fMax, fMult, fOff);
-            FOG_DUMP(TRACE3("Set Fog: Min=%f, Max=%f, Data=0x%08X", fMin, fMax, gfx->mw2.value));
+            FOG_DUMP(TRACE3("Set Fog: Min=%f, Max=%f, Data=0x%08X", fMin, fMax, gfx->gbi2moveword.value));
         }
         break;
     case RSP_MOVE_WORD_LIGHTCOL:
@@ -586,7 +586,7 @@ void RSP_GBI2_GeometryMode(Gfx *gfx)
     uint32 dwOr  = ((gfx->words.w1)) & 0x00FFFFFF;
 
 #ifdef DEBUGGER
-        LOG_UCODE("    0x%08x 0x%08x =(x & 0x%08x) | 0x%08x", gfx->words.cmd0, gfx->words.cmd1, dwAnd, dwOr);
+        LOG_UCODE("    0x%08x 0x%08x =(x & 0x%08x) | 0x%08x", gfx->words.w0, gfx->words.w1, dwAnd, dwOr);
 
         if ((~dwAnd) & RSP_ZELDA_ZBUFFER)               LOG_UCODE("  Disabling ZBuffer");
         //if ((~dwAnd) & RSP_ZELDA_TEXTURE_ENABLE)        LOG_UCODE("  Disabling Texture");

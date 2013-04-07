@@ -32,14 +32,37 @@ void OGLRender::DrawText(const char* str, RECT *rect)
 
 void OGLRender::DrawSpriteR_Render()    // With Rotation
 {
-    glViewportWrapper(windowSetting.xpos, windowSetting.ypos, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
+    glViewportWrapper(0, windowSetting.statusBarHeightToUse, windowSetting.uDisplayWidth, windowSetting.uDisplayHeight);
 
     GLboolean cullface = glIsEnabled(GL_CULL_FACE);
     glDisable(GL_CULL_FACE);
 
-    //glColor4fv(gRDP.fvPrimitiveColor);
+#if SDL_VIDEO_OPENGL
 
+    glBegin(GL_TRIANGLES);
+    glColor4fv(gRDP.fvPrimitiveColor);
 
+    OGLRender::TexCoord(g_texRectTVtx[0]);
+    glVertex3f(g_texRectTVtx[0].x, g_texRectTVtx[0].y, -g_texRectTVtx[0].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[1]);
+    glVertex3f(g_texRectTVtx[1].x, g_texRectTVtx[1].y, -g_texRectTVtx[1].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[2]);
+    glVertex3f(g_texRectTVtx[2].x, g_texRectTVtx[2].y, -g_texRectTVtx[2].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[0]);
+    glVertex3f(g_texRectTVtx[0].x, g_texRectTVtx[0].y, -g_texRectTVtx[0].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[2]);
+    glVertex3f(g_texRectTVtx[2].x, g_texRectTVtx[2].y, -g_texRectTVtx[2].z);
+
+    OGLRender::TexCoord(g_texRectTVtx[3]);
+    glVertex3f(g_texRectTVtx[3].x, g_texRectTVtx[3].y, -g_texRectTVtx[3].z);
+
+    glEnd();
+
+#elif SDL_VIDEO_OPENGL_ES2
 
     GLfloat colour[] = {
             gRDP.fvPrimitiveColor[0], gRDP.fvPrimitiveColor[1], gRDP.fvPrimitiveColor[2], gRDP.fvPrimitiveColor[3],
@@ -81,11 +104,12 @@ void OGLRender::DrawSpriteR_Render()    // With Rotation
     glDrawArrays(GL_TRIANGLES,0,6);
     //OPENGL_CHECK_ERRORS;
 
-
     //Restore old pointers
     glVertexAttribPointer(VS_COLOR, 4, GL_UNSIGNED_BYTE,GL_TRUE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
     glVertexAttribPointer(VS_POSITION,4,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][0]));
     glVertexAttribPointer(VS_TEXCOORD0,2,GL_FLOAT,GL_FALSE, sizeof( TLITVERTEX ), &(g_vtxBuffer[0].tcord[0].u));
+
+#endif
 
     if( cullface ) glEnable(GL_CULL_FACE);
 }

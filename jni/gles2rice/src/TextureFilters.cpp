@@ -1422,7 +1422,6 @@ void FindAllHiResTextures(void)
     if (!osal_is_directory(foldername))
     {
         DebugMessage(M64MSG_WARNING, "Couldn't open hi-res texture directory: %s", foldername);
-        options.bLoadHiResTextures = false;
         return;
     }
     else
@@ -2213,6 +2212,7 @@ void LoadHiresTexture( TxtrCacheEntry &entry )
         entry.pEnhancedTexture->m_bIsEnhancedTexture = true;
         entry.dwEnhancementFlag = TEXTURE_EXTERNAL;
 
+        DebugMessage(M64MSG_VERBOSE, "Loaded hi-res texture: %s", filename_rgb);
     }
     else
     {
