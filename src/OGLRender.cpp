@@ -40,7 +40,9 @@ UVFlagMap OGLXUVFlagMaps[] =
     {TEXTURE_UV_FLAG_CLAMP, GL_CLAMP},
 };
 
-static GLuint disabledTextureID;
+#if SDL_VIDEO_OPENGL_ES2
+  static GLuint disabledTextureID;
+#endif
 
 //===================================================================
 OGLRender::OGLRender()
