@@ -177,7 +177,7 @@ public class CoreInterface
                     CoreInterfaceNative.setControllerConfig( 2, sUserPrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
                     CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
                     
-                    CoreInterfaceNative.init();
+                    CoreInterfaceNative.sdlInit();
                 }
             }, "CoreThread" );
             sCoreThread.start();

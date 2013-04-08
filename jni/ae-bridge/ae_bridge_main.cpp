@@ -37,7 +37,7 @@ extern DECLSPEC jint JNI_OnLoad(JavaVM* vm, void* reserved)
  *******************************************************************************/
 
 // Start up the SDL app
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_init(JNIEnv* env, jclass cls, jobject obj)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlInit(JNIEnv* env, jclass cls, jobject obj)
 {
     /* This interface could expand with ABI negotiation, calbacks, etc. */
     SDL_Android_Init(env, cls);
