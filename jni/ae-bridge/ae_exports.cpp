@@ -106,6 +106,27 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
  Functions called by Java code
  *******************************************************************************/
 
+extern "C" DECLSPEC void SDLCALL Java_org_libsdl_app_SDLActivity_onNativeResize(JNIEnv* env, jclass jcls, jint width, jint height, jint format);
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlOnResize(JNIEnv* env, jclass jcls, jint width, jint height, jint format)
+{
+    // Simple wrapper so that we don't have to touch the original SDL code
+    Java_org_libsdl_app_SDLActivity_onNativeResize(env, jcls, width, height, format);
+}
+
+extern "C" DECLSPEC void SDLCALL Java_org_libsdl_app_SDLActivity_nativeQuit(JNIEnv* env, jclass cls);
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlQuit(JNIEnv* env, jclass cls)
+{
+    // Simple wrapper so that we don't have to touch the original SDL code
+    Java_org_libsdl_app_SDLActivity_nativeQuit(env, cls);
+}
+
+extern "C" DECLSPEC void SDLCALL Java_org_libsdl_app_SDLActivity_nativeRunAudioThread(JNIEnv* env, jclass cls);
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlRunAudioThread(JNIEnv* env, jclass cls)
+{
+    // Simple wrapper so that we don't have to touch the original SDL code
+    Java_org_libsdl_app_SDLActivity_nativeRunAudioThread(env, cls);
+}
+
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGameShark(JNIEnv* env, jclass cls, jboolean pressed)
 {
     int p = pressed == JNI_TRUE ? 1 : 0;

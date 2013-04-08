@@ -88,6 +88,12 @@ public class CoreInterfaceNative extends CoreInterface
     // jni/ae-bridge/ae_exports.cpp
     //-------------------------------------------------------------------------
     
+    public static native void sdlOnResize( int x, int y, int format );
+    
+    public static native void sdlQuit();
+    
+    public static native void sdlRunAudioThread();
+
     public static native void emuGameShark( boolean pressed );
 
     public static native void emuPause();
@@ -234,19 +240,6 @@ public class CoreInterfaceNative extends CoreInterface
     // ************************************************************************
     
     //-------------------------------------------------------------------------
-    // Call-outs made TO native code
-    // jni/SDL/src/core/android/SDL_android.cpp
-    //-------------------------------------------------------------------------
-    
-    public static native void onResize( int x, int y, int format );
-    
-    public static native void onAccel( float x, float y, float z );
-    
-    public static native void quit();
-    
-    public static native void runAudioThread();
-
-    //-------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/SDL/src/core/android/SDL_android.cpp
     //-------------------------------------------------------------------------
@@ -353,7 +346,7 @@ public class CoreInterfaceNative extends CoreInterface
         sAudioThread = new Thread(new Runnable() {
             public void run() {
                 sAudioTrack.play();
-                runAudioThread();
+                sdlRunAudioThread();
             }
         });
         

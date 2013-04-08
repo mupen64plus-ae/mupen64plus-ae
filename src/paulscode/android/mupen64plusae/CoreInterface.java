@@ -207,7 +207,7 @@ public class CoreInterface
             pauseEmulator( true );
             
             // Tell the core to quit
-            CoreInterfaceNative.quit();
+            CoreInterfaceNative.sdlQuit();
             
             // Now wait for the core thread to quit
             try
@@ -292,7 +292,7 @@ public class CoreInterface
                 Log.w( "CoreInterface", "Pixel format unknown: " + format );
                 break;
         }
-        CoreInterfaceNative.onResize( width, height, sdlFormat );
+        CoreInterfaceNative.sdlOnResize( width, height, sdlFormat );
     }
     
     public static void waitForEmuState( final int state )
