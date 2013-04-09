@@ -31,8 +31,6 @@ import paulscode.android.mupen64plusae.util.Utility;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 /**
@@ -376,21 +374,7 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static void setActivityTitle( String title )
     {
-        Handler commandHandler = new Handler()
-        {
-            @Override
-            public void handleMessage( Message msg )
-            {
-                if( msg.arg1 == COMMAND_CHANGE_TITLE )
-                {
-                    sActivity.setTitle( (CharSequence) msg.obj );
-                }
-            }
-        };
-        
-        Message msg = commandHandler.obtainMessage();
-        msg.arg1 = COMMAND_CHANGE_TITLE;
-        msg.obj = title;
-        commandHandler.sendMessage( msg );
+        // No-op interface to guarantee compatibility with all SDL versions
+        // TODO: Probably not necessary since SDL 2.0 checks whether this function exists before calling it...
     }
 }
