@@ -42,18 +42,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Video.h"
 #include "version.h"
 
-#ifdef PAULSCODE
-#include <SDL.h>
-#include <jni.h>
-extern "C" int Android_JNI_GetScreenStretch();
-
-// (part of the screen position in portrait mode feature)
-extern "C" int Android_JNI_GetScreenPosition();
-#define SCREEN_POSITION_BOTTOM      0
-#define SCREEN_POSITION_MIDDLE      1
-#define SCREEN_POSITION_TOP         2
-#endif
-
 //=======================================================
 // local variables
 
@@ -313,77 +301,6 @@ static bool StartVideo(void)
     try {
         CDeviceBuilder::GetBuilder()->CreateGraphicsContext();
         CGraphicsContext::InitWindowInfo();
-
-#ifdef PAULSCODE
-        /* Initialize SDL */
-        printf( "Initializing SDL video subsystem...\n" );
-        if (SDL_InitSubSystem( SDL_INIT_VIDEO ) == -1)
-        {
-            printf( "Error initializing SDL video subsystem: %s\n", SDL_GetError() );
-            return false;
-        }
-        /* Video Info */
-        printf( "Getting video info...\n" );
-        const SDL_VideoInfo *videoInfo;
-        if( !( videoInfo = SDL_GetVideoInfo() ) )
-        {
-            printf( "Video query failed: %s\n", SDL_GetError() );
-            SDL_QuitSubSystem( SDL_INIT_VIDEO );
-            return false;
-        }
-        m64p_handle l_ConfigVideoGeneral = NULL;
-        if( ConfigOpenSection( "Video-General", &l_ConfigVideoGeneral ) != M64ERR_SUCCESS )
-        {
-            DebugMessage( M64MSG_ERROR, "Unable to open Video-General configuration section" );
-            return false;
-        }
-
-        //// paulscode, screen stretch and aspect ratio
-
-        // Calculate aspect ratio
-        bool stretchVideo = (bool) Android_JNI_GetScreenStretch();
-        int screenPosition = (int) Android_JNI_GetScreenPosition();
-
-          int videoWidth = videoInfo->current_w;
-          int videoHeight = videoInfo->current_h;
-
-          if( !stretchVideo )
-          {
-              videoWidth = (int) ( videoInfo->current_h / status.fRatio );
-              if( videoWidth > videoInfo->current_w )
-              {
-                  videoWidth = videoInfo->current_w;
-                  videoHeight = (int) ( videoInfo->current_w * status.fRatio );
-              }
-
-              switch( screenPosition )
-              {
-                  case SCREEN_POSITION_BOTTOM:
-                      windowSetting.xpos = 0;
-                      windowSetting.ypos = 0;
-                      break;
-
-                  case SCREEN_POSITION_MIDDLE:
-                      windowSetting.xpos = ( videoInfo->current_w - videoWidth ) / 2;
-                      windowSetting.ypos = ( videoInfo->current_h - videoHeight ) / 2;
-                      break;
-
-                  case SCREEN_POSITION_TOP:
-                      windowSetting.xpos = videoInfo->current_w - videoWidth;
-                      windowSetting.ypos = videoInfo->current_h - videoHeight;
-                      break;
-              }
-          }
-          else
-          {
-              windowSetting.xpos = ( videoInfo->current_w - videoWidth ) / 2;
-              windowSetting.ypos = ( videoInfo->current_h - videoHeight ) / 2;
-          }
-
-          //set width and height
-          windowSetting.uDisplayWidth = videoWidth;
-          windowSetting.uDisplayHeight = videoHeight;
-#endif
 
         bool res = CGraphicsContext::Get()->Initialize(640, 480, !windowSetting.bDisplayFullscreen);
         if (!res)

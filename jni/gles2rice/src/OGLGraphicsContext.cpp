@@ -24,9 +24,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <android/log.h>
 #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "GLES2Rice (OGLGraphicsContext.cpp)", __VA_ARGS__)
 
-extern "C" void Android_JNI_SwapWindow();
 // (part of the color banding fix)
 extern "C" int Android_JNI_UseRGBA8888();
+extern "C" int Android_JNI_GetScreenStretch();
+// (part of the screen position in portrait mode feature)
+extern "C" int Android_JNI_GetScreenPosition();
+#define SCREEN_POSITION_BOTTOM      0
+#define SCREEN_POSITION_MIDDLE      1
+#define SCREEN_POSITION_TOP         2
 #endif
 
 #define M64P_PLUGIN_PROTOTYPES 1
@@ -94,16 +99,13 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     if( options.colorQuality == TEXTURE_FMT_A4R4G4B4 ) colorBufferDepth = 16;
 
     // init sdl & gl
-#ifndef PAULSCODE
     DebugMessage(M64MSG_VERBOSE, "Initializing video subsystem...");
     if (CoreVideo_Init() != M64ERR_SUCCESS)   
         return false;
-#endif
 
     /* hard-coded attribute values */
     const int iDOUBLEBUFFER = 1;
 
-#if SDL_VIDEO_OPENGL
     /* set opengl attributes */
     CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, iDOUBLEBUFFER);
     CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, bVerticalSync);
@@ -124,6 +126,88 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
             CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 16);
     }
 
+#ifdef PAULSCODE
+    /* Video Info */
+    printf( "Getting video info...\n" );
+    const SDL_VideoInfo *videoInfo;
+    if( !( videoInfo = SDL_GetVideoInfo() ) )
+    {
+        printf( "Video query failed: %s\n", SDL_GetError() );
+        SDL_QuitSubSystem( SDL_INIT_VIDEO );
+        return false;
+    }
+    m64p_handle l_ConfigVideoGeneral = NULL;
+    if( ConfigOpenSection( "Video-General", &l_ConfigVideoGeneral ) != M64ERR_SUCCESS )
+    {
+        DebugMessage( M64MSG_ERROR, "Unable to open Video-General configuration section" );
+        return false;
+    }
+
+    // Calculate aspect ratio
+    bool stretchVideo = (bool) Android_JNI_GetScreenStretch();
+    int screenPosition = (int) Android_JNI_GetScreenPosition();
+
+    int videoWidth = videoInfo->current_w;
+    int videoHeight = videoInfo->current_h;
+
+    if( !stretchVideo )
+    {
+        videoWidth = (int) ( videoInfo->current_h / status.fRatio );
+        if( videoWidth > videoInfo->current_w )
+        {
+            videoWidth = videoInfo->current_w;
+            videoHeight = (int) ( videoInfo->current_w * status.fRatio );
+        }
+
+        switch( screenPosition )
+        {
+            case SCREEN_POSITION_BOTTOM:
+            windowSetting.xpos = 0;
+            windowSetting.ypos = 0;
+            break;
+
+            case SCREEN_POSITION_MIDDLE:
+            windowSetting.xpos = ( videoInfo->current_w - videoWidth ) / 2;
+            windowSetting.ypos = ( videoInfo->current_h - videoHeight ) / 2;
+            break;
+
+            case SCREEN_POSITION_TOP:
+            windowSetting.xpos = videoInfo->current_w - videoWidth;
+            windowSetting.ypos = videoInfo->current_h - videoHeight;
+            break;
+        }
+    }
+    else
+    {
+        windowSetting.xpos = ( videoInfo->current_w - videoWidth ) / 2;
+        windowSetting.ypos = ( videoInfo->current_h - videoHeight ) / 2;
+    }
+
+    //set width and height
+    windowSetting.uDisplayWidth = videoWidth;
+    windowSetting.uDisplayHeight = videoHeight;
+
+    // Added for switching between RGBA8888 and RGB565
+    // (part of the color banding fix)
+    int bitsPP;
+    if( Android_JNI_UseRGBA8888() )
+    bitsPP = 32;
+    else
+    bitsPP = 16;
+
+    /* Set the video mode */
+    SDL_Surface* hScreen;
+    printf( "Setting video mode %dx%d...\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );
+    // TODO: I should actually check what the pixelformat is, rather than assuming 16 bpp (RGB_565) or 32 bpp (RGBA_8888):
+    //    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 16, SDL_HWSURFACE )))
+    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, bitsPP, SDL_HWSURFACE )))
+    {
+        printf( "Problem setting videomode %dx%d: %s\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, SDL_GetError() );
+        SDL_QuitSubSystem( SDL_INIT_VIDEO );
+        return false;
+    }
+
+#else // !PAULSCODE
     /* Set the video mode */
     m64p_video_mode ScreenMode = bWindowed ? M64VIDEO_WINDOWED : M64VIDEO_FULLSCREEN;
     if (CoreVideo_SetVideoMode(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, ScreenMode) != M64ERR_SUCCESS)
@@ -132,6 +216,7 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
         CoreVideo_Quit();
         return false;
     }
+#endif
 
     /* check that our opengl attributes were properly set */
     int iActual;
@@ -148,29 +233,9 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
         if (iActual != depthBufferDepth)
             DebugMessage(M64MSG_WARNING, "Failed to set GL_DEPTH_SIZE to %i. (it's %i)", depthBufferDepth, iActual);
 
+#if SDL_VIDEO_OPENGL
     /* Get function pointers to OpenGL extensions (blame Microsoft Windows for this) */
     OGLExtensions_Init();
-#endif
-
-#ifdef PAULSCODE
-// Added for switching between RGBA8888 and RGB565
-// (part of the color banding fix)
-int bitsPP;
-if( Android_JNI_UseRGBA8888() )
-    bitsPP = 32;
-else
-    bitsPP = 16;
-    /* Set the video mode */
-    SDL_Surface* hScreen;
-    printf( "Setting video mode %dx%d...\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );
-// TODO: I should actually check what the pixelformat is, rather than assuming 16 bpp (RGB_565) or 32 bpp (RGBA_8888):
-//    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 16, SDL_HWSURFACE )))
-    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, bitsPP, SDL_HWSURFACE )))
-    {
-        printf( "Problem setting videomode %dx%d: %s\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, SDL_GetError() );
-        SDL_QuitSubSystem( SDL_INIT_VIDEO );
-        return false;
-    }
 #endif
 
     char caption[500];
