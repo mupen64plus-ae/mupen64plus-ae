@@ -171,13 +171,12 @@ else
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
         return false;
     }
+#endif
 
-#else // not PAULSCODE
     char caption[500];
     sprintf(caption, "%s v%i.%i.%i", PLUGIN_NAME, VERSION_PRINTF_SPLIT(PLUGIN_VERSION));
     CoreVideo_SetCaption(caption);
     SetWindowMode();
-#endif
 
     InitState();
     InitOGLExtension();
