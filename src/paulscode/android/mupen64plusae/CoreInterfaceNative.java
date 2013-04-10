@@ -137,7 +137,14 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
+        // SDL 1.3
         return sSurface.createGLContext( majorVersion, minorVersion );
+    }
+    
+    public static boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
+    {
+        // SDL 2.0
+        return sSurface.createGLContext( majorVersion, minorVersion, configSpec );
     }
     
     public static void flipBuffers()

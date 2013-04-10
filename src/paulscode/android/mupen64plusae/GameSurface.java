@@ -82,6 +82,62 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     
     public boolean createGLContext( int majorVersion, int minorVersion )
     {
+        // Generate a bit mask to limit the configuration search to compatible GLES versions
+        final int UNKNOWN = 0;
+        final int EGL_OPENGL_ES_BIT = 1;
+        final int EGL_OPENGL_ES2_BIT = 4;
+        final int renderableType;
+
+        // Determine which version of EGL we're using.
+        switch ( majorVersion )
+        {
+            case 1:
+                renderableType = EGL_OPENGL_ES_BIT;
+                break;
+
+            case 2:
+                renderableType = EGL_OPENGL_ES2_BIT;
+                break;
+
+            default: // Shouldn't happen.
+                renderableType = UNKNOWN;
+                break;
+        }
+        
+        // Specify the desired EGL frame buffer configuration
+        // @formatter:off
+        final int[] configSpec;
+        if( mIsRgba8888 )
+        {
+            // User has requested 32-bit color
+            configSpec = new int[]
+            { 
+                EGL10.EGL_RED_SIZE,    8,                   // request 8 bits of red
+                EGL10.EGL_GREEN_SIZE,  8,                   // request 8 bits of green
+                EGL10.EGL_BLUE_SIZE,   8,                   // request 8 bits of blue
+                EGL10.EGL_ALPHA_SIZE,  8,                   // request 8 bits of alpha
+                EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                EGL10.EGL_NONE                              // terminate array
+            };
+        }
+        else
+        {
+            // User will take whatever color depth is available
+            configSpec = new int[] 
+            { 
+                EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                EGL10.EGL_NONE                              // terminate array
+            };
+        }
+        // @formatter:on            
+        
+        return createGLContext( majorVersion, minorVersion, configSpec );
+    }
+
+    public boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
+    {
         Log.v( "GameSurface", "Starting up OpenGL ES " + majorVersion + "." + minorVersion );
         try
         {
@@ -103,58 +159,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                 Log.e( "GameSurface", "Couldn't initialize EGL display connection" );
                 return false;
             }
-            
-            // Generate a bit mask to limit the configuration search to compatible GLES versions
-            final int UNKNOWN = 0;
-            final int EGL_OPENGL_ES_BIT = 1;
-            final int EGL_OPENGL_ES2_BIT = 4;
-            final int renderableType;
-
-            // Determine which version of EGL we're using.
-            switch ( majorVersion )
-            {
-                case 1:
-                    renderableType = EGL_OPENGL_ES_BIT;
-                    break;
-
-                case 2:
-                    renderableType = EGL_OPENGL_ES2_BIT;
-                    break;
-
-                default: // Shouldn't happen.
-                    renderableType = UNKNOWN;
-                    break;
-            }
-
-            
-            // Specify the desired EGL frame buffer configuration
-            // @formatter:off
-            final int[] configSpec;
-            if( mIsRgba8888 )
-            {
-                // User has requested 32-bit color
-                configSpec = new int[]
-                { 
-                    EGL10.EGL_RED_SIZE,    8,                   // request 8 bits of red
-                    EGL10.EGL_GREEN_SIZE,  8,                   // request 8 bits of green
-                    EGL10.EGL_BLUE_SIZE,   8,                   // request 8 bits of blue
-                    EGL10.EGL_ALPHA_SIZE,  8,                   // request 8 bits of alpha
-                    EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
-                    EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
-                    EGL10.EGL_NONE                              // terminate array
-                };
-            }
-            else
-            {
-                // User will take whatever color depth is available
-                configSpec = new int[] 
-                { 
-                    EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
-                    EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
-                    EGL10.EGL_NONE                              // terminate array
-                };
-            }
-            // @formatter:on            
             
             // Get an EGL frame buffer configuration that is compatible with the display and specification
             final EGLConfig[] configs = new EGLConfig[1];
