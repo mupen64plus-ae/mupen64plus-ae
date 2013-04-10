@@ -42,6 +42,12 @@
 #define RSP_STATUS_INTR_ON_BREAK    0x40
 #define RSP_STATUS_TASKDONE         0x200
 
+/* some rdp status flags */
+#define DP_STATUS_FREEZE            0x2
+
+/* some mips interface interrupt flags */
+#define MI_INTR_SP                  0x1
+
 
 /* helper functions prototypes */
 static unsigned int sum_bytes(const unsigned char *bytes, unsigned int size);
@@ -85,7 +91,7 @@ static void rsp_break(unsigned int setbits)
 
     if ((*rsp.SP_STATUS_REG & RSP_STATUS_INTR_ON_BREAK))
     {
-        *rsp.MI_INTR_REG |= 0x1;
+        *rsp.MI_INTR_REG |= MI_INTR_SP;
         rsp.CheckInterrupts();
     }
 }
@@ -95,7 +101,7 @@ static void forward_gfx_task()
     if (rsp.ProcessDlistList != NULL)
     {
         rsp.ProcessDlistList();
-        *rsp.DPC_STATUS_REG &= ~0x0002;
+        *rsp.DPC_STATUS_REG &= ~DP_STATUS_FREEZE;
     }
 }
 
@@ -156,8 +162,19 @@ static int try_fast_audio_dispatching()
     }
     else
     {
-        // FIXME: very strange test
-        if (*(udata_ptr + (0 ^ (3-S8))) != 0xf)
+        if (*(unsigned int*)(udata_ptr + 0x10) == 0x00000001)
+        {
+            /**
+             * Musyx ucode found in following games:
+             * RogueSquadron, ResidentEvil2, SnowCrossPolaris, TheWorldIsNotEnough,
+             * RugratsInParis, NBAShowTime, HydroThunder, Tarzan,
+             * GauntletLegend, Rush2049, IndianaJones, BattleForNaboo
+             * TODO: implement ucode
+             **/
+            DebugMessage(M64MSG_WARNING, "MusyX ucode not implemented.");
+            /* return 1; */
+        }
+        else
         {
             /**
              * Many games including:
