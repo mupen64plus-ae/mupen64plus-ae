@@ -33,10 +33,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
@@ -140,6 +143,9 @@ public class AppData
     /** The name of the error log file. */
     public final String error_log;
     
+    /** The usable size of the screen, in pixels, not including the window decor. */
+    public final Point screenSize;
+    
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
     
@@ -207,6 +213,22 @@ public class AppData
         mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
         gles2n64_conf = dataDir + "/data/gles2n64.conf";
         error_log = dataDir + "/error.log";
+        
+        // Screen size
+        final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        if( display == null )
+        {
+            screenSize = new Point( 0,0 );
+        }
+        else
+        {
+            @SuppressWarnings( "deprecation" )
+            int l1 = display.getWidth();
+            @SuppressWarnings( "deprecation" )
+            int l2 = display.getHeight();
+            screenSize = l1 > l2 ? new Point( l1, l2 ) : new Point( l2, l1 );
+        }
         
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";

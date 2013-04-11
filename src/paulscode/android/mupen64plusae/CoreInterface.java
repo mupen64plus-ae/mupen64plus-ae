@@ -26,10 +26,12 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.media.AudioTrack;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.Display;
 
 /**
  * A class that consolidates all interactions with the emulator core.
@@ -377,8 +379,17 @@ public class CoreInterface
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin.path + '"' );
     
         mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
-        mupen64plus_cfg.put( "Video-General", "ScreenWidth", "800" );
-        mupen64plus_cfg.put( "Video-General", "ScreenHeight", "480" );
+        if( user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                || user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
+        {
+            mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( appData.screenSize.y ) );
+            mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( appData.screenSize.x ) );
+        }
+        else
+        {
+            mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( appData.screenSize.x ) );
+            mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( appData.screenSize.y ) );
+        }
         
         mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", booleanToString( user.isGles2RiceAutoFrameskipEnabled ) );
