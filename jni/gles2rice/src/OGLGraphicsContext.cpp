@@ -127,80 +127,64 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     }
 
 #ifdef PAULSCODE
-    /* Video Info */
-    printf( "Getting video info...\n" );
-    const SDL_VideoInfo *videoInfo;
-    if( !( videoInfo = SDL_GetVideoInfo() ) )
-    {
-        printf( "Video query failed: %s\n", SDL_GetError() );
-        SDL_QuitSubSystem( SDL_INIT_VIDEO );
-        return false;
-    }
-    m64p_handle l_ConfigVideoGeneral = NULL;
-    if( ConfigOpenSection( "Video-General", &l_ConfigVideoGeneral ) != M64ERR_SUCCESS )
-    {
-        DebugMessage( M64MSG_ERROR, "Unable to open Video-General configuration section" );
-        return false;
-    }
 
-    // Calculate aspect ratio
-    bool stretchVideo = (bool) Android_JNI_GetScreenStretch();
-    int screenPosition = (int) Android_JNI_GetScreenPosition();
-
-    int videoWidth = videoInfo->current_w;
-    int videoHeight = videoInfo->current_h;
-
-    if( !stretchVideo )
+    // Recalculate viewport size and position in pixels to maintain aspect ratio (pillarbox/letterbox)
+    if( !Android_JNI_GetScreenStretch() )
     {
-        videoWidth = (int) ( videoInfo->current_h / status.fRatio );
-        if( videoWidth > videoInfo->current_w )
+        // Initialize to the values provided in config file
+        int maxWidth = windowSetting.uDisplayWidth;
+        int maxHeight = windowSetting.uDisplayHeight;
+        int displayWidth = maxWidth;
+        int displayHeight = maxHeight;
+
+        // Rescale width and height to maintain aspect ratio
+        if( maxHeight / maxWidth > status.fRatio )
         {
-            videoWidth = videoInfo->current_w;
-            videoHeight = (int) ( videoInfo->current_w * status.fRatio );
+            // Typically, letterbox when in portrait
+            displayWidth = maxWidth;
+            displayHeight = (int) ( maxWidth * status.fRatio );
+        }
+        else
+        {
+            // Typically, pillarbox when in landscape
+            displayHeight = maxHeight;
+            displayWidth = (int) ( maxHeight / status.fRatio );
         }
 
-        switch( screenPosition )
+        // Horizontal position: centered
+        windowSetting.xpos = ( maxWidth - displayWidth ) / 2;
+
+        // Vertical position: user-defined
+        switch( Android_JNI_GetScreenPosition() )
         {
             case SCREEN_POSITION_BOTTOM:
-            windowSetting.xpos = 0;
             windowSetting.ypos = 0;
             break;
 
             case SCREEN_POSITION_MIDDLE:
-            windowSetting.xpos = ( videoInfo->current_w - videoWidth ) / 2;
-            windowSetting.ypos = ( videoInfo->current_h - videoHeight ) / 2;
+            windowSetting.ypos = ( maxHeight - displayHeight ) / 2;
             break;
 
             case SCREEN_POSITION_TOP:
-            windowSetting.xpos = videoInfo->current_w - videoWidth;
-            windowSetting.ypos = videoInfo->current_h - videoHeight;
+            windowSetting.ypos = maxHeight - displayHeight;
             break;
         }
-    }
-    else
-    {
-        windowSetting.xpos = ( videoInfo->current_w - videoWidth ) / 2;
-        windowSetting.ypos = ( videoInfo->current_h - videoHeight ) / 2;
+
+        // Update display width and height
+        windowSetting.uDisplayWidth = displayWidth;
+        windowSetting.uDisplayHeight = displayHeight;
     }
 
-    //set width and height
-    windowSetting.uDisplayWidth = videoWidth;
-    windowSetting.uDisplayHeight = videoHeight;
-
-    // Added for switching between RGBA8888 and RGB565
-    // (part of the color banding fix)
-    int bitsPP;
-    if( Android_JNI_UseRGBA8888() )
-    bitsPP = 32;
-    else
-    bitsPP = 16;
+    // Allow user to reduce color depth for performance
+    if( !Android_JNI_UseRGBA8888() )
+        colorBufferDepth = 16;
 
     /* Set the video mode */
     SDL_Surface* hScreen;
     printf( "Setting video mode %dx%d...\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );
     // TODO: I should actually check what the pixelformat is, rather than assuming 16 bpp (RGB_565) or 32 bpp (RGBA_8888):
     //    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 16, SDL_HWSURFACE )))
-    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, bitsPP, SDL_HWSURFACE )))
+    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, SDL_HWSURFACE )))
     {
         printf( "Problem setting videomode %dx%d: %s\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, SDL_GetError() );
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
