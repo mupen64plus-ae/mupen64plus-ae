@@ -5,7 +5,9 @@ SRCDIR := src
 
 LOCAL_MODULE := SDL
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+LOCAL_SHARED_LIBRARIES := ae-imports
+
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include $(AE_BRIDGE_INCLUDES)
 
 LOCAL_SRC_FILES :=                                      \
     $(subst $(LOCAL_PATH)/,,                            \

@@ -204,20 +204,20 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_SAVE_SLOT:
                     Log.v( "PeripheralController", "FUNC_SAVE_SLOT" );
-                    CoreInterfaceNative.stateSaveEmulator();
+                    CoreInterfaceNative.emuSaveSlot();
                     break;
                 case InputMap.FUNC_LOAD_SLOT:
                     Log.v( "PeripheralController", "FUNC_LOAD_SLOT" );
-                    CoreInterfaceNative.stateLoadEmulator();
+                    CoreInterfaceNative.emuLoadSlot();
                     break;
                 case InputMap.FUNC_RESET:
                     Log.v( "PeripheralController", "FUNC_RESET" );
-                    CoreInterfaceNative.resetEmulator();
+                    CoreInterfaceNative.emuReset();
                     // TODO: CoreInterfaceNative.resetEmulator() needs some fine-tuning
                     break;
                 case InputMap.FUNC_STOP:
                     Log.v( "PeripheralController", "FUNC_STOP" );
-                    CoreInterfaceNative.stopEmulator();
+                    CoreInterfaceNative.emuStop();
                     break;
                 case InputMap.FUNC_PAUSE:
                     Log.v( "PeripheralController", "FUNC_PAUSE" );
@@ -229,11 +229,11 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    CoreInterfaceNative.stateSetSpeed( 300 );
+                    CoreInterfaceNative.emuSetSpeed( 300 );
                     break;
                 case InputMap.FUNC_FRAME_ADVANCE:
                     Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
-                    CoreInterfaceNative.frameAdvance();
+                    CoreInterfaceNative.emuAdvanceFrame();
                     break;
                 case InputMap.FUNC_SPEED_UP:
                     Log.v( "PeripheralController", "FUNC_SPEED_UP" );
@@ -247,7 +247,7 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    CoreInterfaceNative.gameShark( true );
+                    CoreInterfaceNative.emuGameShark( true );
                     break;
                 case InputMap.FUNC_SIMULATE_BACK:
                     String[] back_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_BACK ) };
@@ -269,13 +269,13 @@ public class PeripheralController extends AbstractController implements
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
                     if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
-                        CoreInterfaceNative.stateSetSpeed( GameMenuHandler.sInstance.mSpeedFactor );
+                        CoreInterfaceNative.emuSetSpeed( GameMenuHandler.sInstance.mSpeedFactor );
                     else
-                        CoreInterfaceNative.stateSetSpeed( 100 );
+                        CoreInterfaceNative.emuSetSpeed( 100 );
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    CoreInterfaceNative.gameShark( false );
+                    CoreInterfaceNative.emuGameShark( false );
                     break;
                 default:
                     return false;
@@ -296,6 +296,6 @@ public class PeripheralController extends AbstractController implements
         speed = Utility.clamp( speed, GameMenuHandler.MIN_SPEED_FACTOR,
                 GameMenuHandler.MAX_SPEED_FACTOR );
         
-        CoreInterfaceNative.stateSetSpeed( speed );
+        CoreInterfaceNative.emuSetSpeed( speed );
     }
 }

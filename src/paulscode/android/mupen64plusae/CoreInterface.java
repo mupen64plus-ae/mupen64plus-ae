@@ -183,7 +183,7 @@ public class CoreInterface
                         CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
                     }
                     
-                    CoreInterfaceNative.init();
+                    CoreInterfaceNative.sdlInit();
                 }
             }, "CoreThread" );
             sCoreThread.start();
@@ -198,7 +198,7 @@ public class CoreInterface
                 sIsRestarting = false;
                 
                 Notifier.showToast( sActivity, R.string.toast_loadingSession );
-                CoreInterfaceNative.fileLoadEmulator( sUserPrefs.selectedGameAutoSavefile );
+                CoreInterfaceNative.emuLoadFile( sUserPrefs.selectedGameAutoSavefile );
             }
             
             resumeEmulator();
@@ -213,7 +213,7 @@ public class CoreInterface
             pauseEmulator( true );
             
             // Tell the core to quit
-            CoreInterfaceNative.quit();
+            CoreInterfaceNative.sdlQuit();
             
             // Now wait for the core thread to quit
             try
@@ -235,7 +235,7 @@ public class CoreInterface
     {
         if( sCoreThread != null )
         {
-            CoreInterfaceNative.resumeEmulator();
+            CoreInterfaceNative.emuResume();
         }
     }
     
@@ -243,13 +243,13 @@ public class CoreInterface
     {
         if( sCoreThread != null )
         {
-            CoreInterfaceNative.pauseEmulator();
+            CoreInterfaceNative.emuPause();
             
             // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
             if( autoSave )
             {
                 Notifier.showToast( sActivity, R.string.toast_savingSession );
-                CoreInterfaceNative.fileSaveEmulator( sUserPrefs.selectedGameAutoSavefile );
+                CoreInterfaceNative.emuSaveFile( sUserPrefs.selectedGameAutoSavefile );
             }
         }
     }
@@ -298,7 +298,7 @@ public class CoreInterface
                 Log.w( "CoreInterface", "Pixel format unknown: " + format );
                 break;
         }
-        CoreInterfaceNative.onResize( width, height, sdlFormat );
+        CoreInterfaceNative.sdlOnResize( width, height, sdlFormat );
     }
     
     public static void waitForEmuState( final int state )

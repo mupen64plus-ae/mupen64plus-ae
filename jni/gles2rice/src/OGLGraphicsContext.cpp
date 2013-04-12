@@ -18,22 +18,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "osal_opengl.h"
 
-#ifdef PAULSCODE
-#include <SDL.h>
-#include <jni.h>
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "GLES2Rice (OGLGraphicsContext.cpp)", __VA_ARGS__)
-
-// (part of the color banding fix)
-extern "C" int Android_JNI_UseRGBA8888();
-extern "C" int Android_JNI_GetScreenStretch();
-// (part of the screen position in portrait mode feature)
-extern "C" int Android_JNI_GetScreenPosition();
-#define SCREEN_POSITION_BOTTOM      0
-#define SCREEN_POSITION_MIDDLE      1
-#define SCREEN_POSITION_TOP         2
-#endif
-
 #define M64P_PLUGIN_PROTOTYPES 1
 #include "m64p_plugin.h"
 #include "Config.h"
@@ -46,6 +30,10 @@ extern "C" int Android_JNI_GetScreenPosition();
 #include "TextureManager.h"
 #include "Video.h"
 #include "version.h"
+
+#ifdef PAULSCODE
+#include "ae_bridge.h"
+#endif
 
 COGLGraphicsContext::COGLGraphicsContext() :
     m_bSupportMultiTexture(false),
