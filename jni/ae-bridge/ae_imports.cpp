@@ -258,3 +258,85 @@ extern DECLSPEC int Android_JNI_UseRGBA8888()
 {
     return GetBooleanAsInt(midUseRGBA8888);
 }
+
+extern DECLSPEC void Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2)
+{
+    // Part of the missing shadows and stars bug fix
+    if( hardwareType == HARDWARE_TYPE_OMAP )
+    {
+        *f1 = bias > 0 ? 0.2f : 0.0f;
+        *f2 = bias > 0 ? 0.2f : 0.0f;
+    }
+    else if( hardwareType == HARDWARE_TYPE_OMAP_2 )
+    {
+        *f1 = bias > 0 ? -1.5f : 0.0f;
+        *f2 = bias > 0 ? -1.5f : 0.0f;
+    }
+    else if( hardwareType == HARDWARE_TYPE_QUALCOMM )
+    {
+        *f1 = bias > 0 ? -0.2f : 0.0f;
+        *f2 = bias > 0 ? -0.2f : 0.0f;
+    }
+    else if( hardwareType == HARDWARE_TYPE_IMAP )
+    {
+        *f1 = bias > 0 ? -0.001f : 0.0f;
+        *f2 = bias > 0 ? -0.001f : 0.0f;
+    }
+    else if( hardwareType == HARDWARE_TYPE_TEGRA )
+    {
+        *f1 = bias > 0 ? -2.0f : 0.0f;
+        *f2 = bias > 0 ? -2.0f : 0.0f;
+    }
+    else // HARDWARE_TYPE_UNKNOWN
+    {
+        *f1 = bias > 0 ? -0.2f : 0.0f;
+        *f2 = bias > 0 ? -0.2f : 0.0f;
+    }
+}
+
+extern DECLSPEC void Android_JNI_GetDisplaySize(const int maxWidth, const int maxHeight, const float aspect, int* width, int* height, int* xpos, int* ypos)
+{
+    if( Android_JNI_GetScreenStretch() )
+    {
+        // Fill screen (may distort aspect ratio)
+        *width = maxWidth;
+        *height = maxHeight;
+        *xpos = 0;
+        *ypos = 0;
+    }
+    if( !Android_JNI_GetScreenStretch() )
+    {
+        // Maintain aspect ratio (may pillarbox/letterbox)
+        if( maxHeight / maxWidth > aspect )
+        {
+            // Typically, letterbox when in portrait
+            *width = maxWidth;
+            *height = (int) ( maxWidth * aspect );
+        }
+        else
+        {
+            // Typically, pillarbox when in landscape
+            *height = maxHeight;
+            *width = (int) ( maxHeight / aspect );
+        }
+
+        // Horizontal position: centered
+        *xpos = ( maxWidth - *width ) / 2;
+
+        // Vertical position: user-defined
+        switch( Android_JNI_GetScreenPosition() )
+        {
+            case SCREEN_POSITION_BOTTOM:
+            *ypos = 0;
+            break;
+
+            case SCREEN_POSITION_MIDDLE:
+            *ypos = ( maxHeight - *height ) / 2;
+            break;
+
+            case SCREEN_POSITION_TOP:
+            *ypos = maxHeight - *height;
+            break;
+        }
+    }
+}

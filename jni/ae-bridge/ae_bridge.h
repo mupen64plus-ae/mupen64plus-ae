@@ -77,6 +77,9 @@ extern int          Android_JNI_GetMaxFrameSkip();
 extern int          Android_JNI_GetScreenPosition();
 extern int          Android_JNI_GetScreenStretch();
 extern int          Android_JNI_UseRGBA8888();
+extern void         Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2);
+extern void         Android_JNI_GetDisplaySize(const int maxWidth, const int maxHeight, const float aspect,
+                                                    int* width, int* height, int* xpos, int* ypos);
 
 // SDL functions - TODO: Remove (plugins shouldn't be calling these directly)
 extern void         Android_JNI_SwapWindow();
