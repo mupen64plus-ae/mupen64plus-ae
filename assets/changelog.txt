@@ -1,3 +1,7 @@
+[25:2.2.1]
+- Fixed crash when input plugin disabled
+- Added support for raphnet GC/N64 controller adapter
+- Updated ODK to version 1.0.2
 [24:2.2.0]
 - Added Hungarian (Magyar) translation
 - Major update to touchscreen skins framework
