@@ -104,13 +104,6 @@ public class GameLifecycleHandler implements View.OnKeyListener
     private AppData mAppData;
     private UserPrefs mUserPrefs;
     
-    static
-    {
-        FileUtil.loadNativeLibName( "SDL" );
-        FileUtil.loadNativeLibName( "core" );
-        FileUtil.loadNativeLibName( "front-end" );
-    }
-
     public GameLifecycleHandler( Activity activity )
     {
         mActivity = activity;
@@ -129,6 +122,9 @@ public class GameLifecycleHandler implements View.OnKeyListener
         // Load native libraries
         if( mIsXperiaPlay )
             FileUtil.loadNativeLibName( "xperia-touchpad" );
+        FileUtil.loadNativeLibName( "SDL" );
+        FileUtil.loadNativeLibName( "core" );
+        FileUtil.loadNativeLibName( "front-end" );
         FileUtil.loadNativeLib( mUserPrefs.videoPlugin.path );
         FileUtil.loadNativeLib( mUserPrefs.audioPlugin.path );
         FileUtil.loadNativeLib( mUserPrefs.inputPlugin.path );
