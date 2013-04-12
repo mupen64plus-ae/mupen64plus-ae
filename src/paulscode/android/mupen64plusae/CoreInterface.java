@@ -31,7 +31,6 @@ import android.graphics.PixelFormat;
 import android.media.AudioTrack;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.Display;
 
 /**
  * A class that consolidates all interactions with the emulator core.
