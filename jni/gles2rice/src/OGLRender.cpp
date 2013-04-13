@@ -350,37 +350,7 @@ void OGLRender::ApplyZBias(int bias)
     float f2 = bias > 0 ? -3.0f : 0.0f;  // z offset += -3.0 * 1 bit
 
 #ifdef PAULSCODE
-    // (part of the missing shadows and stars bug fix)
-    if( hardwareType == HARDWARE_TYPE_OMAP )
-    {
-        f1 = bias > 0 ? 0.2f : 0.0f;
-        f2 = bias > 0 ? 0.2f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_OMAP_2 )
-    {
-        f1 = bias > 0 ? -1.5f : 0.0f;
-        f2 = bias > 0 ? -1.5f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_QUALCOMM )
-    {
-        f1 = bias > 0 ? -0.2f : 0.0f;
-        f2 = bias > 0 ? -0.2f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_IMAP )
-    {
-        f1 = bias > 0 ? -0.001f : 0.0f;
-        f2 = bias > 0 ? -0.001f : 0.0f;
-    }
-    else if( hardwareType == HARDWARE_TYPE_TEGRA )
-    {
-        f1 = bias > 0 ? -2.0f : 0.0f;
-        f2 = bias > 0 ? -2.0f : 0.0f;
-    }
-    else  // HARDWARE_TYPE_UNKNOWN
-    {
-        f1 = bias > 0 ? -0.2f : 0.0f;
-        f2 = bias > 0 ? -0.2f : 0.0f;
-    }
+    Android_JNI_GetPolygonOffset(hardwareType, bias, &f1, &f2);
 #endif
 
     if (bias > 0)

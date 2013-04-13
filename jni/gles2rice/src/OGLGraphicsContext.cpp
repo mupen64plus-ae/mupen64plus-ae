@@ -115,53 +115,14 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     }
 
 #ifdef PAULSCODE
-
-    // Recalculate viewport size and position in pixels to maintain aspect ratio (pillarbox/letterbox)
-    if( !Android_JNI_GetScreenStretch() )
-    {
-        // Initialize to the values provided in config file
-        int maxWidth = windowSetting.uDisplayWidth;
-        int maxHeight = windowSetting.uDisplayHeight;
-        int displayWidth = maxWidth;
-        int displayHeight = maxHeight;
-
-        // Rescale width and height to maintain aspect ratio
-        if( maxHeight / maxWidth > status.fRatio )
-        {
-            // Typically, letterbox when in portrait
-            displayWidth = maxWidth;
-            displayHeight = (int) ( maxWidth * status.fRatio );
-        }
-        else
-        {
-            // Typically, pillarbox when in landscape
-            displayHeight = maxHeight;
-            displayWidth = (int) ( maxHeight / status.fRatio );
-        }
-
-        // Horizontal position: centered
-        windowSetting.xpos = ( maxWidth - displayWidth ) / 2;
-
-        // Vertical position: user-defined
-        switch( Android_JNI_GetScreenPosition() )
-        {
-            case SCREEN_POSITION_BOTTOM:
-            windowSetting.ypos = 0;
-            break;
-
-            case SCREEN_POSITION_MIDDLE:
-            windowSetting.ypos = ( maxHeight - displayHeight ) / 2;
-            break;
-
-            case SCREEN_POSITION_TOP:
-            windowSetting.ypos = maxHeight - displayHeight;
-            break;
-        }
-
-        // Update display width and height
-        windowSetting.uDisplayWidth = displayWidth;
-        windowSetting.uDisplayHeight = displayHeight;
-    }
+    // Recalculate viewport to maintain aspect ratio
+    int width, height, xpos, ypos;
+    Android_JNI_GetDisplaySize(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, status.fRatio,
+                               &width, &height, &xpos, &ypos);
+    windowSetting.uDisplayWidth = width;
+    windowSetting.uDisplayHeight = height;
+    windowSetting.xpos = xpos;
+    windowSetting.ypos = ypos;
 
     // Allow user to reduce color depth for performance
     if( !Android_JNI_UseRGBA8888() )
