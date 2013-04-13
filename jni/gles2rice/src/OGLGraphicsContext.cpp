@@ -127,20 +127,8 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     // Allow user to reduce color depth for performance
     if( !Android_JNI_UseRGBA8888() )
         colorBufferDepth = 16;
+#endif
 
-    /* Set the video mode */
-    SDL_Surface* hScreen;
-    printf( "Setting video mode %dx%d...\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight );
-    // TODO: I should actually check what the pixelformat is, rather than assuming 16 bpp (RGB_565) or 32 bpp (RGBA_8888):
-    //    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, 16, SDL_HWSURFACE )))
-    if (!(hScreen = SDL_SetVideoMode( windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, SDL_HWSURFACE )))
-    {
-        printf( "Problem setting videomode %dx%d: %s\n", windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, SDL_GetError() );
-        SDL_QuitSubSystem( SDL_INIT_VIDEO );
-        return false;
-    }
-
-#else // !PAULSCODE
     /* Set the video mode */
     m64p_video_mode ScreenMode = bWindowed ? M64VIDEO_WINDOWED : M64VIDEO_FULLSCREEN;
     if (CoreVideo_SetVideoMode(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, colorBufferDepth, ScreenMode) != M64ERR_SUCCESS)
@@ -149,7 +137,6 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
         CoreVideo_Quit();
         return false;
     }
-#endif
 
     /* check that our opengl attributes were properly set */
     int iActual;
