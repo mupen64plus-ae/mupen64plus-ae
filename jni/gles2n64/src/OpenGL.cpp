@@ -147,36 +147,9 @@ void OGL_InitStates()
     //// paulscode, added for different configurations based on hardware
     // (part of the missing shadows and stars bug fix)
     int hardwareType = Android_JNI_GetHardwareType();
-    if( hardwareType == HARDWARE_TYPE_OMAP )
-    {
-        printf( "Using settings for hardware profile OMAP (0.2f, 0.2f)" );
-        glPolygonOffset( 0.2f, 0.2f );
-    }
-    else if( hardwareType == HARDWARE_TYPE_OMAP_2 )
-    {
-        printf( "Using settings for hardware profile OMAP, type #2 (-1.5f, -1.5f)" );
-        glPolygonOffset( -1.5f, -1.5f );
-    }
-    else if( hardwareType == HARDWARE_TYPE_QUALCOMM )
-    {
-        printf( "Using settings for hardware profile QUALCOMM (-0.2f, -0.2f)" );
-        glPolygonOffset( -0.2f, -0.2f );
-    }
-    else if( hardwareType == HARDWARE_TYPE_IMAP )
-    {
-        printf( "Using settings for hardware profile IMAP (-0.001f, -0.001f)" );
-        glPolygonOffset( -0.001f, -0.001f );
-    }
-    else if( hardwareType == HARDWARE_TYPE_TEGRA )
-    {
-        printf( "Using settings for hardware profile TEGRA (-2.0f, -2.0f)" );
-        glPolygonOffset( -2.0f, -2.0f );
-    }
-    else  // HARDWARE_TYPE_UNKNOWN
-    {
-        printf( "Hardware profile not recognized, using default settings (-0.2f, -0.2f)" );
-        glPolygonOffset( -0.2f, -0.2f );
-    }
+    float f1, f2;
+    Android_JNI_GetPolygonOffset(hardwareType, 1, &f1, &f2);
+    glPolygonOffset( f1, f2 );
     ////
 
 // some other settings that have been tried, which do not work:
@@ -301,45 +274,8 @@ else
 
 //// paulscode, fixes the screen-size problem
     const float ratio = ( config.romPAL ? 9.0f/11.0f : 0.75f );
-    int videoWidth = videoInfo->current_w;
-    int videoHeight = videoInfo->current_h;
-    int screenPosition;
-    int x, y;
-    
-    config.stretchVideo = (bool) Android_JNI_GetScreenStretch();
-    screenPosition = (int) Android_JNI_GetScreenPosition();
-    if( !config.stretchVideo )
-    {
-        videoWidth = (int) ( videoInfo->current_h / ratio );
-        if( videoWidth > videoInfo->current_w )
-        {
-            videoWidth = videoInfo->current_w;
-            videoHeight = (int) ( videoInfo->current_w * ratio );
-        }
-        
-        switch( screenPosition )
-        {
-            case SCREEN_POSITION_BOTTOM:
-                x = 0;
-                y = 0;
-                break;
-            
-            case SCREEN_POSITION_MIDDLE:
-                x = ( videoInfo->current_w - videoWidth ) / 2;
-                y = ( videoInfo->current_h - videoHeight ) / 2;
-                break;
-            
-            case SCREEN_POSITION_TOP:
-                x = videoInfo->current_w - videoWidth;
-                y = videoInfo->current_h - videoHeight;
-                break;
-        }
-    }
-    else
-    {
-        x = ( videoInfo->current_w - videoWidth ) / 2;
-        y = ( videoInfo->current_h - videoHeight ) / 2;
-    }
+    int videoWidth, videoHeight, x, y;
+    Android_JNI_GetDisplaySize(videoInfo->current_w, videoInfo->current_h, ratio, &videoWidth, &videoHeight, &x, &y);
     
     //xpos and ypos from config file
     float xpos = (float)x + ((float)videoWidth * ((float)config.window.xpos/800.f));
