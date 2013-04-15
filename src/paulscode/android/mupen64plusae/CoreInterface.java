@@ -339,6 +339,13 @@ public class CoreInterface
     {
         //@formatter:off
         
+        // GLES2N64 config file
+        ConfigFile gles2n64_conf = new ConfigFile( appData.gles2n64_conf );
+        gles2n64_conf.put( "[<sectionless!>]", "enable fog", booleanToString( user.isGles2N64FogEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", booleanToString( user.isGles2N64AlphaTestEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "force screen clear", booleanToString( user.isGles2N64ScreenClearEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "hack z", booleanToString( !user.isGles2N64DepthTestEnabled ) ); // hack z enabled means that depth test is disabled
+
         // Core and GLES2RICE config file
         ConfigFile mupen64plus_cfg = new ConfigFile( appData.mupen64plus_cfg );
         mupen64plus_cfg.put( "Core", "Version", "1.00" );
@@ -386,11 +393,15 @@ public class CoreInterface
         if( user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 || user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
         {
+            gles2n64_conf.put( "[<sectionless!>]", "window width", Integer.toString( appData.screenSize.y ) );
+            gles2n64_conf.put( "[<sectionless!>]", "window height", Integer.toString( appData.screenSize.x ) );
             mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( appData.screenSize.y ) );
             mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( appData.screenSize.x ) );
         }
         else
         {
+            gles2n64_conf.put( "[<sectionless!>]", "window width", Integer.toString( appData.screenSize.x ) );
+            gles2n64_conf.put( "[<sectionless!>]", "window height", Integer.toString( appData.screenSize.y ) );
             mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( appData.screenSize.x ) );
             mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( appData.screenSize.y ) );
         }
@@ -410,15 +421,8 @@ public class CoreInterface
         else
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
         
-        mupen64plus_cfg.save();
-        
-        // GLES2N64 config file
-        ConfigFile gles2n64_conf = new ConfigFile( appData.gles2n64_conf );
-        gles2n64_conf.put( "[<sectionless!>]", "enable fog", booleanToString( user.isGles2N64FogEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", booleanToString( user.isGles2N64AlphaTestEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "force screen clear", booleanToString( user.isGles2N64ScreenClearEnabled ) );
-        gles2n64_conf.put( "[<sectionless!>]", "hack z", booleanToString( !user.isGles2N64DepthTestEnabled ) ); // hack z enabled means that depth test is disabled
         gles2n64_conf.save();        
+        mupen64plus_cfg.save();
         //@formatter:on
     }
     

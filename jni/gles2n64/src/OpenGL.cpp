@@ -233,8 +233,6 @@ void OGL_ResizeWindow(int x, int y, int width, int height)
 #ifdef USE_SDL
 bool OGL_SDL_Start()
 {
-   const SDL_VideoInfo *videoInfo;
-
     /* Initialize SDL */
     LOG(LOG_MINIMAL, "Initializing SDL video subsystem...\n" );
     if (SDL_InitSubSystem( SDL_INIT_VIDEO ) == -1)
@@ -243,16 +241,8 @@ bool OGL_SDL_Start()
         return FALSE;
     }
 
-    /* Video Info */
-    LOG(LOG_VERBOSE,"Getting video info...\n" );
-    if (!(videoInfo = SDL_GetVideoInfo()))
-    {
-        LOG(LOG_VERBOSE,"Video query failed: %s\n", SDL_GetError() );
-        SDL_QuitSubSystem( SDL_INIT_VIDEO );
-        return FALSE;
-    }
-    int current_w = videoInfo->current_w;
-    int current_h = videoInfo->current_h;
+    int current_w = config.window.width;
+    int current_h = config.window.height;
 
     /* Set the video mode */
     LOG(LOG_MINIMAL, "Setting video mode %dx%d...\n", current_w, current_h );
