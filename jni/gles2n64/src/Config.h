@@ -12,7 +12,7 @@ struct Config
 
     struct
     {
-        int xpos, ypos, width, height;
+        int xpos, ypos, width, height, refwidth, refheight;
     } window;
 
     struct

@@ -59,6 +59,8 @@ Option configOptions[] =
     {"window ypos", &config.window.ypos, 0},
     {"window width", &config.window.width, 800},
     {"window height", &config.window.height, 480},
+    {"window refwidth", &config.window.refwidth, 800},
+    {"window refheight", &config.window.refheight, 480},
     {"", NULL, 0},
 
     {"#Framebuffer Settings:",NULL,0},

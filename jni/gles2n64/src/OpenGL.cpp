@@ -280,8 +280,8 @@ else
     Android_JNI_GetDisplaySize(current_w, current_h, ratio, &videoWidth, &videoHeight, &x, &y);
     
     //re-scale width and height on per-rom basis
-    float width = (float)videoWidth * (float)config.window.width / 800.f;
-    float height = (float)videoHeight * (float)config.window.height / 480.f;
+    float width = (float)videoWidth * (float)config.window.refwidth / 800.f;
+    float height = (float)videoHeight * (float)config.window.refheight / 480.f;
     
     //re-center video if it was re-scaled per-rom
     x -= (width - (float)videoWidth) / 2.f;
