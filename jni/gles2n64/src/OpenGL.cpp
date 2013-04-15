@@ -251,9 +251,11 @@ bool OGL_SDL_Start()
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
         return FALSE;
     }
+    int current_w = videoInfo->current_w;
+    int current_h = videoInfo->current_h;
 
     /* Set the video mode */
-    LOG(LOG_MINIMAL, "Setting video mode %dx%d...\n", videoInfo->current_w, videoInfo->current_h );
+    LOG(LOG_MINIMAL, "Setting video mode %dx%d...\n", current_w, current_h );
 
 // TODO: I should actually check what the pixelformat is, rather than assuming 16 bpp (RGB_565) or 32 bpp (RGBA_8888):
 //// paulscode, added for switching between modes RGBA8888 and RGB565
@@ -265,9 +267,9 @@ else
     bitsPP = 16;
 ////
 
-    if (!(OGL.hScreen = SDL_SetVideoMode( videoInfo->current_w, videoInfo->current_h, bitsPP, SDL_HWSURFACE )))
+    if (!(OGL.hScreen = SDL_SetVideoMode( current_w, current_h, bitsPP, SDL_HWSURFACE )))
     {
-        LOG(LOG_ERROR, "Problem setting videomode %dx%d: %s\n", videoInfo->current_w, videoInfo->current_h, SDL_GetError() );
+        LOG(LOG_ERROR, "Problem setting videomode %dx%d: %s\n", current_w, current_h, SDL_GetError() );
         SDL_QuitSubSystem( SDL_INIT_VIDEO );
         return FALSE;
     }
@@ -275,7 +277,7 @@ else
 //// paulscode, fixes the screen-size problem
     const float ratio = ( config.romPAL ? 9.0f/11.0f : 0.75f );
     int videoWidth, videoHeight, x, y;
-    Android_JNI_GetDisplaySize(videoInfo->current_w, videoInfo->current_h, ratio, &videoWidth, &videoHeight, &x, &y);
+    Android_JNI_GetDisplaySize(current_w, current_h, ratio, &videoWidth, &videoHeight, &x, &y);
     
     //xpos and ypos from config file
     float xpos = (float)x + ((float)videoWidth * ((float)config.window.xpos/800.f));
