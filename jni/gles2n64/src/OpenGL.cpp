@@ -9,6 +9,10 @@
 //// paulscode, added for SDL linkage:
 #ifdef USE_SDL
     #include <SDL.h>
+     // TODO: Remove this bandaid for SDL 2.0 compatibility (needed for SDL_SetVideoMode)
+    #if SDL_VERSION_ATLEAST(2,0,0)
+    #include "sdl2_compat.h" // Slightly hacked version of core/vidext_sdl2_compat.h
+    #endif
 #endif
 ////
 
@@ -257,6 +261,8 @@ else
     bitsPP = 16;
 ////
 
+    // TODO: Replace SDL_SetVideoMode with something that is SDL 2.0 compatible
+    //       Better yet, eliminate all SDL calls by using the Mupen64Plus core api
     if (!(OGL.hScreen = SDL_SetVideoMode( current_w, current_h, bitsPP, SDL_HWSURFACE )))
     {
         LOG(LOG_ERROR, "Problem setting videomode %dx%d: %s\n", current_w, current_h, SDL_GetError() );
