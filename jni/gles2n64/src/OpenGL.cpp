@@ -279,23 +279,19 @@ else
     int videoWidth, videoHeight, x, y;
     Android_JNI_GetDisplaySize(current_w, current_h, ratio, &videoWidth, &videoHeight, &x, &y);
     
-    //xpos and ypos from config file
-    float xpos = (float)x + ((float)videoWidth * ((float)config.window.xpos/800.f));
-    float ypos = (float)y + ((float)videoHeight * ((float)config.window.ypos/480.f));
+    //re-scale width and height on per-rom basis
+    float width = (float)videoWidth * (float)config.window.width / 800.f;
+    float height = (float)videoHeight * (float)config.window.height / 480.f;
     
-    //width and height from config file
-    float width = (float)videoWidth + ((float)videoWidth * (((float)config.window.width - 800.f)/800.f));
-    float height = (float)videoHeight + ((float)videoHeight * (((float)config.window.height - 480.f)/480.f));
-    
-    //center video
-    xpos = xpos - ( width - (float)videoWidth )/2.f;
-    ypos = ypos - ( height - (float)videoHeight )/2.f;
+    //re-center video if it was re-scaled per-rom
+    x -= (width - (float)videoWidth) / 2.f;
+    y -= (height - (float)videoHeight) / 2.f;
     
     //set xpos and ypos
-    config.window.xpos = (int)xpos;
-    config.window.ypos = (int)ypos;
-    config.framebuffer.xpos = (int)xpos;
-    config.framebuffer.ypos = (int)ypos;
+    config.window.xpos = x;
+    config.window.ypos = y;
+    config.framebuffer.xpos = x;
+    config.framebuffer.ypos = y;
     
     //set width and height
     config.window.width = (int)width;
