@@ -92,6 +92,8 @@ public class CoreInterfaceNative extends CoreInterface
 
     public static native void sdlRunAudioThread();
 
+    public static native boolean sdlVersionAtLeast( int major, int minor, int patch );
+
     public static native void emuGameShark( boolean pressed );
     
     public static native void emuPause();
