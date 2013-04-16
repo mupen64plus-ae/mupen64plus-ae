@@ -273,6 +273,10 @@ public class CoreInterfaceNative extends CoreInterface
                     configSpec[j + 1] = configSpec[i + 1];
                     j += 2;
                 }
+                else
+                {
+                    Log.w("CoreInterfaceNative", "Retrying GL context creation without EGL_BUFFER_SIZE=" + configSpec[i + 1] );
+                }
                 i += 2;
             }
             configSpec[j] = EGL10.EGL_NONE;
