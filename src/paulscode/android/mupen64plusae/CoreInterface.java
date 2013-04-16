@@ -254,9 +254,23 @@ public class CoreInterface
         }
     }
     
-    @SuppressWarnings( "deprecation" )
     public static void onResize( int format, int width, int height )
     {
+        // Pixel format constants changed in SDL changesets 6683, 6957 (C, Java) on SDL 2.0 branch
+        if( CoreInterfaceNative.sdlVersionAtLeast( 2, 0, 0 ) )
+        {
+            onResize_2_0( format, width, height );
+        }
+        else
+        {
+            onResize_1_3( format, width, height );
+        }
+    }
+    
+    @SuppressWarnings( "deprecation" )
+    private static void onResize_1_3( int format, int width, int height )
+    {
+        // SDL 1.3
         int sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565 by default
         switch( format )
         {
@@ -287,6 +301,54 @@ public class CoreInterface
             case PixelFormat.RGB_888:
                 // Not sure this is right, maybe SDL_PIXELFORMAT_RGB24 instead?
                 sdlFormat = 0x86161804; // SDL_PIXELFORMAT_RGB888
+                break;
+            case PixelFormat.OPAQUE:
+                /*
+                 * TODO: Not sure this is right, Android API says,
+                 * "System chooses an opaque format", but how do we know which one??
+                 */
+                break;
+            default:
+                Log.w( "CoreInterface", "Pixel format unknown: " + format );
+                break;
+        }
+        CoreInterfaceNative.sdlOnResize( width, height, sdlFormat );
+    }
+    
+    @SuppressWarnings( "deprecation" )
+    private static void onResize_2_0( int format, int width, int height )
+    {
+        // SDL 2.0
+        int sdlFormat = 0x15151002; // SDL_PIXELFORMAT_RGB565 by default
+        switch( format )
+        {
+            case PixelFormat.A_8:
+                break;
+            case PixelFormat.LA_88:
+                break;
+            case PixelFormat.L_8:
+                break;
+            case PixelFormat.RGBA_4444:
+                sdlFormat = 0x15421002; // SDL_PIXELFORMAT_RGBA4444
+                break;
+            case PixelFormat.RGBA_5551:
+                sdlFormat = 0x15441002; // SDL_PIXELFORMAT_RGBA5551
+                break;
+            case PixelFormat.RGBA_8888:
+                sdlFormat = 0x16462004; // SDL_PIXELFORMAT_RGBA8888
+                break;
+            case PixelFormat.RGBX_8888:
+                sdlFormat = 0x16261804; // SDL_PIXELFORMAT_RGBX8888
+                break;
+            case PixelFormat.RGB_332:
+                sdlFormat = 0x14110801; // SDL_PIXELFORMAT_RGB332
+                break;
+            case PixelFormat.RGB_565:
+                sdlFormat = 0x15151002; // SDL_PIXELFORMAT_RGB565
+                break;
+            case PixelFormat.RGB_888:
+                // Not sure this is right, maybe SDL_PIXELFORMAT_RGB24 instead?
+                sdlFormat = 0x16161804; // SDL_PIXELFORMAT_RGB888
                 break;
             case PixelFormat.OPAQUE:
                 /*
