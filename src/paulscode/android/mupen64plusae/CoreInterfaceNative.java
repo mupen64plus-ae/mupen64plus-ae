@@ -23,6 +23,8 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 import java.util.Locale;
 
+import javax.microedition.khronos.egl.EGL10;
+
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -253,7 +255,30 @@ public class CoreInterfaceNative extends CoreInterface
     public static boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
     {
         // SDL 2.0
-        return sSurface.createGLContext( majorVersion, minorVersion, configSpec );
+        boolean result = sSurface.createGLContext( majorVersion, minorVersion, configSpec );
+        
+        if( !result )
+        {
+            // Some devices don't seem to like the EGL_BUFFER_SIZE request. If context creation fails,
+            // try it again without the buffer size request.
+            // TODO: Solve the root issue rather than applying this bandaid.
+            int i = 0;
+            int j = 0;
+            while( configSpec[i] != EGL10.EGL_NONE )
+            {
+                // Copy all config elements except the buffer size element
+                if( configSpec[i] != EGL10.EGL_BUFFER_SIZE )
+                {
+                    configSpec[j] = configSpec[i];
+                    configSpec[j + 1] = configSpec[i + 1];
+                    j += 2;
+                }
+                i += 2;
+            }
+            configSpec[j] = EGL10.EGL_NONE;
+            result = sSurface.createGLContext( majorVersion, minorVersion, configSpec );
+        }
+        return result;
     }
     
     public static void flipBuffers()
