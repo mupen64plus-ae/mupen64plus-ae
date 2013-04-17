@@ -275,12 +275,19 @@ public class CoreInterfaceNative extends CoreInterface
                 }
                 else
                 {
-                    Log.w("CoreInterfaceNative", "Retrying GL context creation without EGL_BUFFER_SIZE=" + configSpec[i + 1] );
+                    Log.w( "CoreInterfaceNative", "Retrying GL context creation without EGL_BUFFER_SIZE=" + configSpec[i + 1] );
                 }
                 i += 2;
             }
             configSpec[j] = EGL10.EGL_NONE;
             result = sSurface.createGLContext( majorVersion, minorVersion, configSpec );
+            
+            if( !result )
+            {
+                // Secondary fallback, ignore SDL's requested config and just use what we had been using in SDL 1.3
+                Log.w( "CoreInterfaceNative", "Retrying GL context creation using legacy settings" );
+                result = createGLContext( majorVersion, minorVersion );
+            }
         }
         return result;
     }
