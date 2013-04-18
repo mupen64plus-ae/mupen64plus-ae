@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-SRCDIR := src
+SRCDIR := ../../src
 
 LOCAL_MODULE := glide64mk2
 LOCAL_SHARED_LIBRARIES := ae-imports SDL core
