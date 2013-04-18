@@ -426,32 +426,21 @@ grSstWinOpen(
   viewport_offset = 0; //-10 //-20;
 
   // ZIGGY not sure, but it might be better to let the system choose
-//  CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
-//  CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, vsync);
-//  CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 16);
-     SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
-     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-  //CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, 24);
+  CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
+  CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, vsync);
+  CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 16);
+  //   SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
+  //   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  //   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  //   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  //   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+  CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, 16);
 
-//  printf("(II) Setting video mode %dx%d...\n", width, height);
-
-  if (SDL_InitSubSystem( SDL_INIT_VIDEO ) == -1)
+  printf("(II) Setting video mode %dx%d...\n", width, height);
+  if(CoreVideo_SetVideoMode(width, height, 0, fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED) != M64ERR_SUCCESS)
   {
-      LOGINFO( "Error initializing SDL video subsystem: %s\n", SDL_GetError() );
-      return false;
-  }
-
-
-
-  SDL_Surface* hScreen;
-  if (!(hScreen = SDL_SetVideoMode( width, height, 32, SDL_HWSURFACE )))
-  {
-	  LOGINFO("Problem setting videomode %dx%d: %s\n", width, height, SDL_GetError());
-      SDL_QuitSubSystem( SDL_INIT_VIDEO );
-      return false;
+    printf("(EE) Error setting videomode %dx%d\n", width, height);
+    return false;
   }
 
   char caption[500];
@@ -460,7 +449,7 @@ grSstWinOpen(
 # else // _DEBUG
   sprintf(caption, "Glide64mk2");
 # endif // _DEBUG
-  //CoreVideo_SetCaption(caption);
+  CoreVideo_SetCaption(caption);
 
   glViewport(0, viewport_offset, width, height);
   lfb_color_fmt = color_format;
