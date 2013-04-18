@@ -93,8 +93,8 @@ static int a_combiner_ext = 0;
 "#define gl_TexCoord vTexCoord        \n"
 
 #define SHADER_VARYING \
-"varying vec4 gl_FrontColor;          \n" \
-"varying vec4 gl_TexCoord[4];         \n"
+"varying highp vec4 gl_FrontColor;          \n" \
+"varying highp vec4 gl_TexCoord[4];         \n"
 
 static const char* fragment_shader_header =
 SHADER_HEADER
@@ -182,10 +182,10 @@ static const char* fragment_shader_end =
 static const char* vertex_shader =
 SHADER_HEADER
 "#define Z_MAX 65536.0                                                                   \n"
-"attribute mediump vec4 aVertex;                                                                 \n"
-"attribute vec4 aColor;                                                                  \n"
-"attribute vec4 aMultiTexCoord0;                                                         \n"
-"attribute vec4 aMultiTexCoord1;                                                         \n"
+"attribute highp vec4 aVertex;                                                                 \n"
+"attribute highp vec4 aColor;                                                                  \n"
+"attribute highp vec4 aMultiTexCoord0;                                                         \n"
+"attribute highp vec4 aMultiTexCoord1;                                                         \n"
 "attribute float aFog;                                                         \n"
 "                                                                                        \n"
 "uniform vec3 vertexOffset;                                                              \n" //Moved some calculations from grDrawXXX to shader
