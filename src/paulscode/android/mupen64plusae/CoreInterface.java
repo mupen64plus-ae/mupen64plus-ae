@@ -28,11 +28,9 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.media.AudioTrack;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.Display;
 
 /**
  * A class that consolidates all interactions with the emulator core.
@@ -469,12 +467,6 @@ public class CoreInterface
             mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( appData.screenSize.x ) );
             mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( appData.screenSize.y ) );
         }
-        
-        Display display = sActivity.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        mupen64plus_cfg.put( "Video-General", "ScreenWidth", size.x + "" );
-        mupen64plus_cfg.put( "Video-General", "ScreenHeight", size.y + "" );
         
         mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", booleanToString( user.isGles2RiceAutoFrameskipEnabled ) );
