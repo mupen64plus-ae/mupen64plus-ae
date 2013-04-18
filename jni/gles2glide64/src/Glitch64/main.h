@@ -23,7 +23,8 @@
 
 #include <m64p_types.h>
 
-#define LOG(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define LOG(...) // WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define LOGINFO(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
 void WriteLog(m64p_msg_level level, const char *msg, ...);
 
 
@@ -66,43 +67,13 @@ extern int buffer_cleared; // mark that the buffer has been cleared, used to che
 
 #ifdef _WIN32
 #include <windows.h>
-extern "C" {
-    #include <SDL_opengl.h>
-    extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
-    extern PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
-    extern PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebufferEXT;
-    extern PFNGLBINDRENDERBUFFEREXTPROC glBindRenderbufferEXT;
-    extern PFNGLBLENDFUNCSEPARATEEXTPROC glBlendFuncSeparateEXT;
-    extern PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatusEXT;
-    extern PFNGLCOMPILESHADERARBPROC glCompileShaderARB;
-    extern PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObjectARB;
-    extern PFNGLCREATESHADEROBJECTARBPROC glCreateShaderObjectARB;
-    extern PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffersEXT;
-    extern PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT;
-    extern PFNGLFOGCOORDFEXTPROC glFogCoordfEXT;
-    extern PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC glFramebufferRenderbufferEXT;
-    extern PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2DEXT;
-    extern PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffersEXT;
-    extern PFNGLGENRENDERBUFFERSEXTPROC glGenRenderbuffersEXT;
-    extern PFNGLGETINFOLOGARBPROC glGetInfoLogARB;
-    extern PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB;
-    extern PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB;
-    extern PFNGLLINKPROGRAMARBPROC glLinkProgramARB;
-    extern PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
-    extern PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorageEXT;
-    extern PFNGLSECONDARYCOLOR3FPROC glSecondaryColor3f;
-    extern PFNGLSHADERSOURCEARBPROC glShaderSourceARB;
-    extern PFNGLUNIFORM1FARBPROC glUniform1fARB;
-    extern PFNGLUNIFORM1IARBPROC glUniform1iARB;
-    extern PFNGLUNIFORM4FARBPROC glUniform4fARB;
-    extern PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObjectARB;
-    typedef const char * (WINAPI * PFNWGLGETEXTENSIONSSTRINGARBPROC) (HDC hdc);
-}
+#include <GL/glew.h>
 #else
 #include <stdio.h>
 //#define printf(...)
 #define GL_GLEXT_PROTOTYPES
-#include <SDL_opengl.h>
+//#include <GLES2/gl2.h>
+#include <SDL_opengles2.h>
 #endif // _WIN32
 #include "glide.h"
 
@@ -117,29 +88,12 @@ void updateCombinera(int i);
 void remove_tex(unsigned int idmin, unsigned int idmax);
 void add_tex(unsigned int id);
 
-#ifdef _WIN32
-extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
-extern PFNGLMULTITEXCOORD2FARBPROC glMultiTexCoord2fARB;
-extern PFNGLBLENDFUNCSEPARATEEXTPROC glBlendFuncSeparateEXT;
-extern PFNGLFOGCOORDFPROC glFogCoordfEXT;
-
-extern PFNGLCREATESHADEROBJECTARBPROC glCreateShaderObjectARB;
-extern PFNGLSHADERSOURCEARBPROC glShaderSourceARB;
-extern PFNGLCOMPILESHADERARBPROC glCompileShaderARB;
-extern PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObjectARB;
-extern PFNGLATTACHOBJECTARBPROC glAttachObjectARB;
-extern PFNGLLINKPROGRAMARBPROC glLinkProgramARB;
-extern PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObjectARB;
-extern PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB;
-extern PFNGLUNIFORM1IARBPROC glUniform1iARB;
-extern PFNGLUNIFORM4IARBPROC glUniform4iARB;
-extern PFNGLUNIFORM4FARBPROC glUniform4fARB;
-extern PFNGLUNIFORM1FARBPROC glUniform1fARB;
-extern PFNGLDELETEOBJECTARBPROC glDeleteObjectARB;
-extern PFNGLGETINFOLOGARBPROC glGetInfoLogARB;
-extern PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB;
-extern PFNGLSECONDARYCOLOR3FPROC glSecondaryColor3f;
-#endif
+//Vertex Attribute Locations
+#define POSITION_ATTR 0
+#define COLOUR_ATTR 1
+#define TEXCOORD_0_ATTR 2
+#define TEXCOORD_1_ATTR 3
+#define FOG_ATTR 4
 
 extern int w_buffer_mode;
 extern int nbTextureUnits;
@@ -177,6 +131,7 @@ void free_combiners();
 void compile_shader();
 void set_lambda();
 void set_copy_shader();
+void disable_textureSizes();
 
 // config functions
 
@@ -271,40 +226,25 @@ grConstantColorValueExt(GrChipID_t    tmu,
 #define CHECK_FRAMEBUFFER_STATUS() \
 {\
  GLenum status; \
- status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
+ status = glCheckFramebufferStatus(GL_FRAMEBUFFER); \
  /*display_warning("%x\n", status);*/\
  switch(status) { \
- case GL_FRAMEBUFFER_COMPLETE_EXT: \
+ case GL_FRAMEBUFFER_COMPLETE: \
    /*display_warning("framebuffer complete!\n");*/\
    break; \
- case GL_FRAMEBUFFER_UNSUPPORTED_EXT: \
+ case GL_FRAMEBUFFER_UNSUPPORTED: \
    display_warning("framebuffer GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");\
     /* you gotta choose different formats */ \
    /*assert(0);*/ \
    break; \
- case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT: \
+ case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: \
    display_warning("framebuffer INCOMPLETE_ATTACHMENT\n");\
    break; \
- case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT: \
-   display_warning("framebuffer FRAMEBUFFER_MISSING_ATTACHMENT\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT: \
+ case 0x8CD9:  /*GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:*/ \
    display_warning("framebuffer FRAMEBUFFER_DIMENSIONS\n");\
    break; \
- /*case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT: \
-   display_warning("framebuffer INCOMPLETE_DUPLICATE_ATTACHMENT\n");\
-   break;*/ \
- case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT: \
-   display_warning("framebuffer INCOMPLETE_FORMATS\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: \
-   display_warning("framebuffer INCOMPLETE_DRAW_BUFFER\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT: \
-   display_warning("framebuffer INCOMPLETE_READ_BUFFER\n");\
-   break; \
- case GL_FRAMEBUFFER_BINDING_EXT: \
-   display_warning("framebuffer BINDING_EXT\n");\
+ case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: \
+   display_warning("framebuffer INCOMPLETE_MISSING_ATTACHMENT\n");\
    break; \
  default: \
    break; \

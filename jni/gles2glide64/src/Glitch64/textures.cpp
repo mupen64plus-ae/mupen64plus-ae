@@ -68,11 +68,6 @@ typedef struct _texlist
 static int nbTex = 0;
 static texlist *list = NULL;
 
-#ifdef _WIN32
-extern PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffersEXT;
-extern PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT;
-extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB;
-#endif
 void remove_tex(unsigned int idmin, unsigned int idmax)
 {
   unsigned int *t;
@@ -322,83 +317,87 @@ int grTexFormatSize(int fmt)
 
 int grTexFormat2GLPackedFmt(int fmt, int * gltexfmt, int * glpixfmt, int * glpackfmt)
 {
-  int factor = -1;
-  switch(fmt) {
-  case GR_TEXFMT_ALPHA_8:
-    factor = 1;
-    *gltexfmt = GL_INTENSITY8;
-    *glpixfmt = GL_LUMINANCE;
+    *gltexfmt = GL_RGBA;
+    *glpixfmt = GL_RGBA;
     *glpackfmt = GL_UNSIGNED_BYTE;
-    break;
-  case GR_TEXFMT_INTENSITY_8: // I8 support - H.Morii
-    factor = 1;
-    *gltexfmt = GL_LUMINANCE8;
-    *glpixfmt = GL_LUMINANCE;
-    *glpackfmt = GL_UNSIGNED_BYTE;
-    break;
-  case GR_TEXFMT_ALPHA_INTENSITY_44:
-    break;
-  case GR_TEXFMT_RGB_565:
-    factor = 2;
-    *gltexfmt = GL_RGB;
-    *glpixfmt = GL_RGB;
-    *glpackfmt = GL_UNSIGNED_SHORT_5_6_5;
-    break;
-  case GR_TEXFMT_ARGB_1555:
-    if (ati_sucks > 0) return -1; // ATI sucks as usual (fixes slowdown on ATI)
-    factor = 2;
-    *gltexfmt = GL_RGB5_A1;
-    *glpixfmt = GL_BGRA;
-    *glpackfmt = GL_UNSIGNED_SHORT_1_5_5_5_REV;
-    break;
-  case GR_TEXFMT_ALPHA_INTENSITY_88:
-    factor = 2;
-    *gltexfmt = GL_LUMINANCE8_ALPHA8;
-    *glpixfmt = GL_LUMINANCE_ALPHA;
-    *glpackfmt = GL_UNSIGNED_BYTE;
-    break;
-  case GR_TEXFMT_ARGB_4444:
-    factor = 2;
-    *gltexfmt = GL_RGBA4;
-    *glpixfmt = GL_BGRA;
-    *glpackfmt = GL_UNSIGNED_SHORT_4_4_4_4_REV;
-    break;
-  case GR_TEXFMT_ARGB_8888:
-    factor = 4;
-    *gltexfmt = GL_RGBA8;
-    *glpixfmt = GL_BGRA;
-    *glpackfmt = GL_UNSIGNED_INT_8_8_8_8_REV;
-    break;
-  case GR_TEXFMT_ARGB_CMP_DXT1:  // FXT1,DXT1,5 support - H.Morii
-    // HACKALERT: 3Dfx Glide uses GR_TEXFMT_ARGB_CMP_DXT1 for both opaque DXT1 and DXT1 with 1bit alpha.
-    // GlideHQ compiled with GLIDE64_DXTN option enabled, uses opaqe DXT1 only.
-    factor = 8; // HACKALERT: factor holds block bytes
-    *gltexfmt = GL_COMPRESSED_RGB_S3TC_DXT1_EXT; // these variables aren't used
-    *glpixfmt = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-    *glpackfmt = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-    break;
-  case GR_TEXFMT_ARGB_CMP_DXT3:
-    factor = 16;
-    *gltexfmt = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-    *glpixfmt = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-    *glpackfmt = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-    break;
-  case GR_TEXFMT_ARGB_CMP_DXT5:
-    factor = 16;
-    *gltexfmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-    *glpixfmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-    *glpackfmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-    break;
-  case GR_TEXFMT_ARGB_CMP_FXT1:
-    factor = 8;
-    *gltexfmt = GL_COMPRESSED_RGBA_FXT1_3DFX;
-    *glpixfmt = GL_COMPRESSED_RGBA_FXT1_3DFX;
-    *glpackfmt = GL_COMPRESSED_RGBA_FXT1_3DFX; // XXX: what should we do about GL_COMPRESSED_RGB_FXT1_3DFX?
-    break;
-  default:
-    display_warning("grTexFormat2GLPackedFmt : unknown texture format: %x", fmt);
-  }
-  return factor;
+    return 0;
+//  int factor = -1;
+//  switch(fmt) {
+//  case GR_TEXFMT_ALPHA_8:
+//    factor = 1;
+//    *gltexfmt = GL_INTENSITY8;
+//    *glpixfmt = GL_LUMINANCE;
+//    *glpackfmt = GL_UNSIGNED_BYTE;
+//    break;
+//  case GR_TEXFMT_INTENSITY_8: // I8 support - H.Morii
+//    factor = 1;
+//    *gltexfmt = GL_LUMINANCE8;
+//    *glpixfmt = GL_LUMINANCE;
+//    *glpackfmt = GL_UNSIGNED_BYTE;
+//    break;
+//  case GR_TEXFMT_ALPHA_INTENSITY_44:
+//    break;
+//  case GR_TEXFMT_RGB_565:
+//    factor = 2;
+//    *gltexfmt = GL_RGB;
+//    *glpixfmt = GL_RGB;
+//    *glpackfmt = GL_UNSIGNED_SHORT_5_6_5;
+//    break;
+//  case GR_TEXFMT_ARGB_1555:
+//    if (ati_sucks > 0) return -1; // ATI sucks as usual (fixes slowdown on ATI)
+//    factor = 2;
+//    *gltexfmt = GL_RGB5_A1;
+//    *glpixfmt = GL_BGRA;
+//    *glpackfmt = GL_UNSIGNED_SHORT_1_5_5_5_REV;
+//    break;
+//  case GR_TEXFMT_ALPHA_INTENSITY_88:
+//    factor = 2;
+//    *gltexfmt = GL_LUMINANCE8_ALPHA8;
+//    *glpixfmt = GL_LUMINANCE_ALPHA;
+//    *glpackfmt = GL_UNSIGNED_BYTE;
+//    break;
+//  case GR_TEXFMT_ARGB_4444:
+//    factor = 2;
+//    *gltexfmt = GL_RGBA4;
+//    *glpixfmt = GL_BGRA;
+//    *glpackfmt = GL_UNSIGNED_SHORT_4_4_4_4_REV;
+//    break;
+//  case GR_TEXFMT_ARGB_8888:
+//    factor = 4;
+//    *gltexfmt = GL_RGBA8;
+//    *glpixfmt = GL_BGRA;
+//    *glpackfmt = GL_UNSIGNED_INT_8_8_8_8_REV;
+//    break;
+//  case GR_TEXFMT_ARGB_CMP_DXT1:  // FXT1,DXT1,5 support - H.Morii
+//    // HACKALERT: 3Dfx Glide uses GR_TEXFMT_ARGB_CMP_DXT1 for both opaque DXT1 and DXT1 with 1bit alpha.
+//    // GlideHQ compiled with GLIDE64_DXTN option enabled, uses opaqe DXT1 only.
+//    factor = 8; // HACKALERT: factor holds block bytes
+//    *gltexfmt = GL_COMPRESSED_RGB_S3TC_DXT1_EXT; // these variables aren't used
+//    *glpixfmt = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+//    *glpackfmt = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+//    break;
+//  case GR_TEXFMT_ARGB_CMP_DXT3:
+//    factor = 16;
+//    *gltexfmt = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+//    *glpixfmt = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+//    *glpackfmt = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+//    break;
+//  case GR_TEXFMT_ARGB_CMP_DXT5:
+//    factor = 16;
+//    *gltexfmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+//    *glpixfmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+//    *glpackfmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+//    break;
+//  case GR_TEXFMT_ARGB_CMP_FXT1:
+//    factor = 8;
+//    *gltexfmt = GL_COMPRESSED_RGBA_FXT1_3DFX;
+//    *glpixfmt = GL_COMPRESSED_RGBA_FXT1_3DFX;
+//    *glpackfmt = GL_COMPRESSED_RGBA_FXT1_3DFX; // XXX: what should we do about GL_COMPRESSED_RGB_FXT1_3DFX?
+//    break;
+//  default:
+//    display_warning("grTexFormat2GLPackedFmt : unknown texture format: %x", fmt);
+//  }
+//  return factor;
 }
 
 FX_ENTRY void FX_CALL
@@ -451,7 +450,7 @@ grTexDownloadMipMap( GrChipID_t tmu,
         }
       }
       factor = 1;
-      glformat = GL_INTENSITY8;
+	  glformat = GL_RGBA;
       break;
     case GR_TEXFMT_INTENSITY_8: // I8 support - H.Morii
       for (i=0; i<height; i++)
@@ -466,7 +465,7 @@ grTexDownloadMipMap( GrChipID_t tmu,
         }
       }
       factor = 1;
-      glformat = GL_LUMINANCE8;
+      glformat = GL_ALPHA;
       break;
     case GR_TEXFMT_ALPHA_INTENSITY_44:
 #if 1
@@ -492,7 +491,7 @@ grTexDownloadMipMap( GrChipID_t tmu,
         }
       }
       factor = 1;
-      glformat = GL_LUMINANCE4_ALPHA4;
+      glformat = GL_LUMINANCE_ALPHA;
 #endif
       break;
     case GR_TEXFMT_RGB_565:
@@ -538,7 +537,7 @@ grTexDownloadMipMap( GrChipID_t tmu,
         }
       }
       factor = 2;
-      glformat = GL_RGB5_A1;
+      glformat = GL_RGBA;
       break;
     case GR_TEXFMT_ALPHA_INTENSITY_88:
       for (i=0; i<height; i++)
@@ -553,7 +552,7 @@ grTexDownloadMipMap( GrChipID_t tmu,
         }
       }
       factor = 2;
-      glformat = GL_LUMINANCE8_ALPHA8;
+      glformat = GL_LUMINANCE_ALPHA;
       break;
     case GR_TEXFMT_ARGB_4444:
 
@@ -577,7 +576,7 @@ grTexDownloadMipMap( GrChipID_t tmu,
         }
       }
       factor = 2;
-      glformat = GL_RGBA4;
+      glformat = GL_RGBA;
       break;
     case GR_TEXFMT_ARGB_8888:
       for (i=0; i<height; i++)
@@ -595,24 +594,24 @@ grTexDownloadMipMap( GrChipID_t tmu,
         }
       }
       factor = 4;
-      glformat = GL_RGBA8;
+      glformat = GL_RGBA;
       break;
-    case GR_TEXFMT_ARGB_CMP_DXT1: // FXT1,DXT1,5 support - H.Morii
-      factor = 8;                 // HACKALERT: factor holds block bytes
-      glformat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-      break;
-    case GR_TEXFMT_ARGB_CMP_DXT3: // FXT1,DXT1,5 support - H.Morii
-      factor = 16;                 // HACKALERT: factor holds block bytes
-      glformat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-      break;
-    case GR_TEXFMT_ARGB_CMP_DXT5:
-      factor = 16;
-      glformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-      break;
-    case GR_TEXFMT_ARGB_CMP_FXT1:
-      factor = 8;
-      glformat = GL_COMPRESSED_RGBA_FXT1_3DFX;
-      break;
+//    case GR_TEXFMT_ARGB_CMP_DXT1: // FXT1,DXT1,5 support - H.Morii
+//      factor = 8;                 // HACKALERT: factor holds block bytes
+//      glformat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+//      break;
+//    case GR_TEXFMT_ARGB_CMP_DXT3: // FXT1,DXT1,5 support - H.Morii
+//      factor = 16;                 // HACKALERT: factor holds block bytes
+//      glformat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+//      break;
+//    case GR_TEXFMT_ARGB_CMP_DXT5:
+//      factor = 16;
+//      glformat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+//      break;
+//    case GR_TEXFMT_ARGB_CMP_FXT1:
+//      factor = 8;
+//      glformat = GL_COMPRESSED_RGBA_FXT1_3DFX;
+//      break;
     default:
       display_warning("grTexDownloadMipMap : unknown texture format: %x", info->format);
       factor = 0;
@@ -620,9 +619,9 @@ grTexDownloadMipMap( GrChipID_t tmu,
   }
 
   if (nbTextureUnits <= 2)
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTexture(GL_TEXTURE0);
   else
-    glActiveTextureARB(GL_TEXTURE2_ARB);
+    glActiveTexture(GL_TEXTURE1);
 
   switch(info->format)
   {
@@ -642,20 +641,25 @@ grTexDownloadMipMap( GrChipID_t tmu,
   if (largest_supported_anisotropy > 1.0f)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest_supported_anisotropy);
 
-  switch(info->format)
-  {
-  case GR_TEXFMT_ARGB_CMP_DXT1:
-  case GR_TEXFMT_ARGB_CMP_DXT3:
-  case GR_TEXFMT_ARGB_CMP_DXT5:
-  case GR_TEXFMT_ARGB_CMP_FXT1:
-    glCompressedTexImage2DARB(GL_TEXTURE_2D, 0, (glformat ? glformat : gltexfmt), width, height, 0, (width*height*factor)>>4, info->data);
-    break;
-  default:
-    if (glformat) {
-      glTexImage2D(GL_TEXTURE_2D, 0, glformat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
-    } else
-      glTexImage2D(GL_TEXTURE_2D, 0, gltexfmt, width, height, 0, glpixfmt, glpackfmt, info->data);
-  }
+//  switch(info->format)
+//  {
+//  case GR_TEXFMT_ARGB_CMP_DXT1:
+//  case GR_TEXFMT_ARGB_CMP_DXT3:
+//  case GR_TEXFMT_ARGB_CMP_DXT5:
+//  case GR_TEXFMT_ARGB_CMP_FXT1:
+//    glCompressedTexImage2DARB(GL_TEXTURE_2D, 0, (glformat ? glformat : gltexfmt), width, height, 0, (width*height*factor)>>4, info->data);
+//    break;
+  //case GR_TEXFMT_ALPHA_8:
+	//  glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, texture);
+	//  break;
+//  default:
+//	  if (glformat) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
+//    } else {
+//      glTexImage2D(GL_TEXTURE_2D, 0, gltexfmt, width, height, 0, glpixfmt, glpackfmt, info->data);
+//	  LOGINFO("glTexImage2D: alternate\n");
+//    }
+//  }
 
   glBindTexture(GL_TEXTURE_2D, default_texture);
 }
@@ -673,7 +677,7 @@ grTexSource( GrChipID_t tmu,
   if (tmu == GR_TMU1 || nbTextureUnits <= 2)
   {
     if (tmu == GR_TMU1 && nbTextureUnits <= 2) return;
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTexture(GL_TEXTURE0);
 
     if (info->aspectRatioLog2 < 0)
     {
@@ -697,7 +701,7 @@ grTexSource( GrChipID_t tmu,
   }
   else
   {
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTexture(GL_TEXTURE1);
 
     if (info->aspectRatioLog2 < 0)
     {
@@ -791,7 +795,7 @@ grTexFilterMode(
     if (magfilter_mode == GR_TEXTUREFILTER_POINT_SAMPLED) mag_filter0 = GL_NEAREST;
     else mag_filter0 = GL_LINEAR;
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTexture(GL_TEXTURE0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter0);
   }
@@ -803,7 +807,7 @@ grTexFilterMode(
     if (magfilter_mode == GR_TEXTUREFILTER_POINT_SAMPLED) mag_filter1 = GL_NEAREST;
     else mag_filter1 = GL_LINEAR;
 
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTexture(GL_TEXTURE1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter1);
   }
@@ -829,7 +833,7 @@ grTexClampMode(
       wrap_s0 = GL_CLAMP_TO_EDGE;
       break;
     case GR_TEXTURECLAMP_MIRROR_EXT:
-      wrap_s0 = GL_MIRRORED_REPEAT_ARB;
+      wrap_s0 = GL_MIRRORED_REPEAT;
       break;
     default:
       display_warning("grTexClampMode : unknown s_clampmode : %x", s_clampmode);
@@ -843,12 +847,12 @@ grTexClampMode(
       wrap_t0 = GL_CLAMP_TO_EDGE;
       break;
     case GR_TEXTURECLAMP_MIRROR_EXT:
-      wrap_t0 = GL_MIRRORED_REPEAT_ARB;
+      wrap_t0 = GL_MIRRORED_REPEAT;
       break;
     default:
       display_warning("grTexClampMode : unknown t_clampmode : %x", t_clampmode);
     }
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTexture(GL_TEXTURE0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t0);
   }
@@ -863,7 +867,7 @@ grTexClampMode(
       wrap_s1 = GL_CLAMP_TO_EDGE;
       break;
     case GR_TEXTURECLAMP_MIRROR_EXT:
-      wrap_s1 = GL_MIRRORED_REPEAT_ARB;
+      wrap_s1 = GL_MIRRORED_REPEAT;
       break;
     default:
       display_warning("grTexClampMode : unknown s_clampmode : %x", s_clampmode);
@@ -877,12 +881,12 @@ grTexClampMode(
       wrap_t1 = GL_CLAMP_TO_EDGE;
       break;
     case GR_TEXTURECLAMP_MIRROR_EXT:
-      wrap_t1 = GL_MIRRORED_REPEAT_ARB;
+      wrap_t1 = GL_MIRRORED_REPEAT;
       break;
     default:
       display_warning("grTexClampMode : unknown t_clampmode : %x", t_clampmode);
     }
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTexture(GL_TEXTURE1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t1);
   }

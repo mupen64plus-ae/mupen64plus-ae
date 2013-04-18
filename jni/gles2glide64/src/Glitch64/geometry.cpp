@@ -19,6 +19,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif // _WIN32
@@ -26,6 +27,7 @@
 #include "main.h"
 
 #define Z_MAX (65536.0f)
+#define VERTEX_SIZE 156 //Size of vertex struct
 
 static int xy_off;
 static int xy_en;
@@ -46,18 +48,20 @@ int w_buffer_mode;
 int inverted_culling;
 int culling_mode;
 
+void* previous_pointers;
+
 inline float ZCALC(const float & z, const float & q) {
   float res = z_en ? ((z) / Z_MAX) / (q) : 1.0f;
   return res;
 }
 
-#define zclamp (1.0f-1.0f/zscale)
-static inline void zclamp_glVertex4f(float a, float b, float c, float d)
-{
-  if (c<zclamp) c = zclamp;
-  glVertex4f(a,b,c,d);
-}
-#define glVertex4f(a,b,c,d) zclamp_glVertex4f(a,b,c,d)
+//#define zclamp (1.0f-1.0f/zscale)
+//static inline void zclamp_glVertex4f(float a, float b, float c, float d)
+//{
+//  if (c<zclamp) c = zclamp;
+//  glVertex4f(a,b,c,d);
+//}
+//#define glVertex4f(a,b,c,d) zclamp_glVertex4f(a,b,c,d)
 
 
 static inline float ytex(int tmu, float y) {
@@ -246,44 +250,68 @@ grDepthMask( FxBool mask )
 }
 
 float biasFactor = 0;
+bool biasFound = false;
 void FindBestDepthBias()
 {
-  float f, bestz = 0.25f;
-  int x;
-  if (biasFactor) return;
-  biasFactor = 64.0f; // default value
-  glPushAttrib(GL_ALL_ATTRIB_BITS);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_ALWAYS);
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glDrawBuffer(GL_BACK);
-  glReadBuffer(GL_BACK);
-  glDisable(GL_BLEND);
-  glDisable(GL_ALPHA_TEST);
-  glColor4ub(255,255,255,255);
-  glDepthMask(GL_TRUE);
-  for (x=0, f=1.0f; f<=65536.0f; x+=4, f*=2.0f) {
-    float z;
-    glPolygonOffset(0, f);
-    glBegin(GL_TRIANGLE_STRIP);
-    glVertex3f(float(x+4 - widtho)/(width/2), float(0 - heighto)/(height/2), 0.5);
-    glVertex3f(float(x - widtho)/(width/2), float(0 - heighto)/(height/2), 0.5);
-    glVertex3f(float(x+4 - widtho)/(width/2), float(4 - heighto)/(height/2), 0.5);
-    glVertex3f(float(x - widtho)/(width/2), float(4 - heighto)/(height/2), 0.5);
-    glEnd();
+  //float f, bestz = 0.25f;
+  //int x;
+  if (biasFound) return;
 
-    glReadPixels(x+2, 2+viewport_offset, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
-    z -= 0.75f + 8e-6f;
-    if (z<0.0f) z = -z;
-    if (z > 0.01f) continue;
-    if (z < bestz) {
-      bestz = z;
-      biasFactor = f;
-    }
-    //printf("f %g z %g\n", f, z);
-  }
-  //printf(" --> bias factor %g\n", biasFactor);
-  glPopAttrib();
+  const char* renderer = (const char*)glGetString(GL_RENDERER);
+
+//  if(strstr(renderer,"SGX") != NULL)
+//  {
+//    biasFactor = -1.5f;
+//  }
+//  else if(strstr(renderer,"Adreno") != NULL)
+//  {
+//    biasFactor = 0.2f;
+//  }
+//  else if(strstr(renderer,"Tegra") != NULL)
+//  {
+//    biasFactor = -2.0f;
+//  }
+//  else
+//  {
+    biasFactor = 0.2f;
+//  }
+  biasFound = true;
+
+  LOGINFO("Renderer:%s biasFactor:%f\n",renderer,biasFactor);
+
+  // default value
+ //  glPushAttrib(GL_ALL_ATTRIB_BITS);
+//  glEnable(GL_DEPTH_TEST);
+//  glDepthFunc(GL_ALWAYS);
+//  glEnable(GL_POLYGON_OFFSET_FILL);
+//  glDrawBuffer(GL_BACK);
+//  glReadBuffer(GL_BACK);
+//  glDisable(GL_BLEND);
+//  glDisable(GL_ALPHA_TEST);
+//  glColor4ub(255,255,255,255);
+//  glDepthMask(GL_TRUE);
+//  for (x=0, f=1.0f; f<=65536.0f; x+=4, f*=2.0f) {
+//    float z;
+//    glPolygonOffset(0, f);
+//    glBegin(GL_TRIANGLE_STRIP);
+//    glVertex3f(float(x+4 - widtho)/(width/2), float(0 - heighto)/(height/2), 0.5);
+//    glVertex3f(float(x - widtho)/(width/2), float(0 - heighto)/(height/2), 0.5);
+//    glVertex3f(float(x+4 - widtho)/(width/2), float(4 - heighto)/(height/2), 0.5);
+//    glVertex3f(float(x - widtho)/(width/2), float(4 - heighto)/(height/2), 0.5);
+//    glEnd();
+//
+//    glReadPixels(x+2, 2+viewport_offset, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
+//    z -= 0.75f + 8e-6f;
+//    if (z<0.0f) z = -z;
+//    if (z > 0.01f) continue;
+//    if (z < bestz) {
+//      bestz = z;
+//      biasFactor = f;
+//    }
+//    //printf("f %g z %g\n", f, z);
+//  }
+//  //printf(" --> bias factor %g\n", biasFactor);
+//  glPopAttrib();
 }
 
 FX_ENTRY void FX_CALL
@@ -310,291 +338,178 @@ grDepthBiasLevel( FxI32 level )
 FX_ENTRY void FX_CALL
 grDrawTriangle( const void *a, const void *b, const void *c )
 {
-  float *a_x = (float*)a + xy_off/sizeof(float);
-  float *a_y = (float*)a + xy_off/sizeof(float) + 1;
-  float *a_z = (float*)a + z_off/sizeof(float);
-  float *a_q = (float*)a + q_off/sizeof(float);
-  unsigned char *a_pargb = (unsigned char*)a + pargb_off;
-  float *a_s0 = (float*)a + st0_off/sizeof(float);
-  float *a_t0 = (float*)a + st0_off/sizeof(float) + 1;
-  float *a_s1 = (float*)a + st1_off/sizeof(float);
-  float *a_t1 = (float*)a + st1_off/sizeof(float) + 1;
-  float *a_fog = (float*)a + fog_ext_off/sizeof(float);
+  LOG("grDrawTriangle()\r\n\t");
+  static unsigned char triangle[VERTEX_SIZE*3];
+  memcpy(&triangle[VERTEX_SIZE*0],a,VERTEX_SIZE);
+  memcpy(&triangle[VERTEX_SIZE*1],b,VERTEX_SIZE);
+  memcpy(&triangle[VERTEX_SIZE*2],c,VERTEX_SIZE);
 
-  float *b_x = (float*)b + xy_off/sizeof(float);
-  float *b_y = (float*)b + xy_off/sizeof(float) + 1;
-  float *b_z = (float*)b + z_off/sizeof(float);
-  float *b_q = (float*)b + q_off/sizeof(float);
-  unsigned char *b_pargb = (unsigned char*)b + pargb_off;
-  float *b_s0 = (float*)b + st0_off/sizeof(float);
-  float *b_t0 = (float*)b + st0_off/sizeof(float) + 1;
-  float *b_s1 = (float*)b + st1_off/sizeof(float);
-  float *b_t1 = (float*)b + st1_off/sizeof(float) + 1;
-  float *b_fog = (float*)b + fog_ext_off/sizeof(float);
-
-  float *c_x = (float*)c + xy_off/sizeof(float);
-  float *c_y = (float*)c + xy_off/sizeof(float) + 1;
-  float *c_z = (float*)c + z_off/sizeof(float);
-  float *c_q = (float*)c + q_off/sizeof(float);
-  unsigned char *c_pargb = (unsigned char*)c + pargb_off;
-  float *c_s0 = (float*)c + st0_off/sizeof(float);
-  float *c_t0 = (float*)c + st0_off/sizeof(float) + 1;
-  float *c_s1 = (float*)c + st1_off/sizeof(float);
-  float *c_t1 = (float*)c + st1_off/sizeof(float) + 1;
-  float *c_fog = (float*)c + fog_ext_off/sizeof(float);
-  LOG("grDrawTriangle()\r\n");
-
-  // ugly ? i know but nvidia drivers are losing the viewport otherwise
-
-  if(nvidia_viewport_hack && !render_to_texture)
-  {
-    glViewport(0, viewport_offset, viewport_width, viewport_height);
-    nvidia_viewport_hack = 0;
-  }
-
-  reloadTexture();
-
-  if(need_to_compile) compile_shader();
-
-  glBegin(GL_TRIANGLES);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *a_s0 / *a_q / (float)tex1_width,
-      ytex(0, *a_t0 / *a_q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *a_s1 / *a_q / (float)tex0_width,
-      ytex(1, *a_t1 / *a_q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*a_s0 / *a_q / (float)tex0_width,
-      ytex(0, *a_t0 / *a_q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(a_pargb[2]/255.0f, a_pargb[1]/255.0f, a_pargb[0]/255.0f, a_pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *a_q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *a_fog) / 255.0f, 0.0f, 0.0f);
-  }
-  glVertex4f((*a_x - (float)widtho) / (float)(width/2) / *a_q,
-    -(*a_y - (float)heighto) / (float)(height/2) / *a_q, ZCALC(*a_z, *a_q), 1.0f / *a_q);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *b_s0 / *b_q / (float)tex1_width,
-      ytex(0, *b_t0 / *b_q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *b_s1 / *b_q / (float)tex0_width,
-      ytex(1, *b_t1 / *b_q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*b_s0 / *b_q / (float)tex0_width,
-      ytex(0, *b_t0 / *b_q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(b_pargb[2]/255.0f, b_pargb[1]/255.0f, b_pargb[0]/255.0f, b_pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *b_q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *b_fog) / 255.0f, 0.0f, 0.0f);
-  }
-
-  glVertex4f((*b_x - (float)widtho) / (float)(width/2) / *b_q,
-    -(*b_y - (float)heighto) / (float)(height/2) / *b_q, ZCALC(*b_z, *b_q), 1.0f / *b_q);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *c_s0 / *c_q / (float)tex1_width,
-      ytex(0, *c_t0 / *c_q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *c_s1 / *c_q / (float)tex0_width,
-      ytex(1, *c_t1 / *c_q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*c_s0 / *c_q / (float)tex0_width,
-      ytex(0, *c_t0 / *c_q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(c_pargb[2]/255.0f, c_pargb[1]/255.0f, c_pargb[0]/255.0f, c_pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *c_q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *c_fog) / 255.0f, 0.0f, 0.0f);
-  }
-  glVertex4f((*c_x - (float)widtho) / (float)(width/2) / *c_q,
-    -(*c_y - (float)heighto) / (float)(height/2) / *c_q, ZCALC(*c_z ,*c_q), 1.0f / *c_q);
-
-  glEnd();
+  grDrawVertexArrayContiguous(GR_TRIANGLE_FAN,3,triangle,VERTEX_SIZE);
 }
 
 FX_ENTRY void FX_CALL
 grDrawPoint( const void *pt )
 {
-  float *x = (float*)pt + xy_off/sizeof(float);
-  float *y = (float*)pt + xy_off/sizeof(float) + 1;
-  float *z = (float*)pt + z_off/sizeof(float);
-  float *q = (float*)pt + q_off/sizeof(float);
-  unsigned char *pargb = (unsigned char*)pt + pargb_off;
-  float *s0 = (float*)pt + st0_off/sizeof(float);
-  float *t0 = (float*)pt + st0_off/sizeof(float) + 1;
-  float *s1 = (float*)pt + st1_off/sizeof(float);
-  float *t1 = (float*)pt + st1_off/sizeof(float) + 1;
-  float *fog = (float*)pt + fog_ext_off/sizeof(float);
-  LOG("grDrawPoint()\r\n");
-
-  if(nvidia_viewport_hack && !render_to_texture)
-  {
-    glViewport(0, viewport_offset, viewport_width, viewport_height);
-    nvidia_viewport_hack = 0;
-  }
-
-  reloadTexture();
-
-  if(need_to_compile) compile_shader();
-
-  glBegin(GL_POINTS);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *s0 / *q / (float)tex1_width,
-      ytex(0, *t0 / *q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *s1 / *q / (float)tex0_width,
-      ytex(1, *t1 / *q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*s0 / *q / (float)tex0_width,
-      ytex(0, *t0 / *q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(pargb[2]/255.0f, pargb[1]/255.0f, pargb[0]/255.0f, pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *fog) / 255.0f, 0.0f, 0.0f);
-  }
-  glVertex4f((*x - (float)widtho) / (float)(width/2) / *q,
-    -(*y - (float)heighto) / (float)(height/2) / *q, ZCALC(*z ,*q), 1.0f / *q);
-
-  glEnd();
+//  float *x = (float*)pt + xy_off/sizeof(float);
+//  float *y = (float*)pt + xy_off/sizeof(float) + 1;
+//  float *z = (float*)pt + z_off/sizeof(float);
+//  float *q = (float*)pt + q_off/sizeof(float);
+//  unsigned char *pargb = (unsigned char*)pt + pargb_off;
+//  float *s0 = (float*)pt + st0_off/sizeof(float);
+//  float *t0 = (float*)pt + st0_off/sizeof(float) + 1;
+//  float *s1 = (float*)pt + st1_off/sizeof(float);
+//  float *t1 = (float*)pt + st1_off/sizeof(float) + 1;
+//  float *fog = (float*)pt + fog_ext_off/sizeof(float);
+//  LOG("grDrawPoint()\r\n");
+//
+//  if(nvidia_viewport_hack && !render_to_texture)
+//  {
+//    glViewport(0, viewport_offset, viewport_width, viewport_height);
+//    nvidia_viewport_hack = 0;
+//  }
+//
+//  reloadTexture();
+//
+//  if(need_to_compile) compile_shader();
+//
+//  glBegin(GL_POINTS);
+//
+//  if (nbTextureUnits > 2)
+//  {
+//    if (st0_en)
+//      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *s0 / *q / (float)tex1_width,
+//      ytex(0, *t0 / *q / (float)tex1_height));
+//    if (st1_en)
+//      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *s1 / *q / (float)tex0_width,
+//      ytex(1, *t1 / *q / (float)tex0_height));
+//  }
+//  else
+//  {
+//    if (st0_en)
+//      glTexCoord2f(*s0 / *q / (float)tex0_width,
+//      ytex(0, *t0 / *q / (float)tex0_height));
+//  }
+//  if (pargb_en)
+//    glColor4f(pargb[2]/255.0f, pargb[1]/255.0f, pargb[0]/255.0f, pargb[3]/255.0f);
+//  if (fog_enabled && fog_coord_support)
+//  {
+//    if(!fog_ext_en || fog_enabled != 2)
+//      glSecondaryColor3f((1.0f / *q) / 255.0f, 0.0f, 0.0f);
+//    else
+//      glSecondaryColor3f((1.0f / *fog) / 255.0f, 0.0f, 0.0f);
+//  }
+//  glVertex4f((*x - (float)widtho) / (float)(width/2) / *q,
+//    -(*y - (float)heighto) / (float)(height/2) / *q, ZCALC(*z ,*q), 1.0f / *q);
+//
+//  glEnd();
 }
 
 FX_ENTRY void FX_CALL
 grDrawLine( const void *a, const void *b )
 {
-  float *a_x = (float*)a + xy_off/sizeof(float);
-  float *a_y = (float*)a + xy_off/sizeof(float) + 1;
-  float *a_z = (float*)a + z_off/sizeof(float);
-  float *a_q = (float*)a + q_off/sizeof(float);
-  unsigned char *a_pargb = (unsigned char*)a + pargb_off;
-  float *a_s0 = (float*)a + st0_off/sizeof(float);
-  float *a_t0 = (float*)a + st0_off/sizeof(float) + 1;
-  float *a_s1 = (float*)a + st1_off/sizeof(float);
-  float *a_t1 = (float*)a + st1_off/sizeof(float) + 1;
-  float *a_fog = (float*)a + fog_ext_off/sizeof(float);
-
-  float *b_x = (float*)b + xy_off/sizeof(float);
-  float *b_y = (float*)b + xy_off/sizeof(float) + 1;
-  float *b_z = (float*)b + z_off/sizeof(float);
-  float *b_q = (float*)b + q_off/sizeof(float);
-  unsigned char *b_pargb = (unsigned char*)b + pargb_off;
-  float *b_s0 = (float*)b + st0_off/sizeof(float);
-  float *b_t0 = (float*)b + st0_off/sizeof(float) + 1;
-  float *b_s1 = (float*)b + st1_off/sizeof(float);
-  float *b_t1 = (float*)b + st1_off/sizeof(float) + 1;
-  float *b_fog = (float*)b + fog_ext_off/sizeof(float);
-  LOG("grDrawLine()\r\n");
-
-  if(nvidia_viewport_hack && !render_to_texture)
-  {
-    glViewport(0, viewport_offset, viewport_width, viewport_height);
-    nvidia_viewport_hack = 0;
-  }
-
-  reloadTexture();
-
-  if(need_to_compile) compile_shader();
-
-  glBegin(GL_LINES);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *a_s0 / *a_q / (float)tex1_width, ytex(0, *a_t0 / *a_q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *a_s1 / *a_q / (float)tex0_width, ytex(1, *a_t1 / *a_q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*a_s0 / *a_q / (float)tex0_width, ytex(0, *a_t0 / *a_q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(a_pargb[2]/255.0f, a_pargb[1]/255.0f, a_pargb[0]/255.0f, a_pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *a_q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *a_fog) / 255.0f, 0.0f, 0.0f);
-  }
-  glVertex4f((*a_x - (float)widtho) / (float)(width/2) / *a_q,
-    -(*a_y - (float)heighto) / (float)(height/2) / *a_q, ZCALC(*a_z, *a_q), 1.0f / *a_q);
-
-  if (nbTextureUnits > 2)
-  {
-    if (st0_en)
-      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *b_s0 / *b_q / (float)tex1_width,
-      ytex(0, *b_t0 / *b_q / (float)tex1_height));
-    if (st1_en)
-      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *b_s1 / *b_q / (float)tex0_width,
-      ytex(1, *b_t1 / *b_q / (float)tex0_height));
-  }
-  else
-  {
-    if (st0_en)
-      glTexCoord2f(*b_s0 / *b_q / (float)tex0_width,
-      ytex(0, *b_t0 / *b_q / (float)tex0_height));
-  }
-  if (pargb_en)
-    glColor4f(b_pargb[2]/255.0f, b_pargb[1]/255.0f, b_pargb[0]/255.0f, b_pargb[3]/255.0f);
-  if (fog_enabled && fog_coord_support)
-  {
-    if(!fog_ext_en || fog_enabled != 2)
-      glSecondaryColor3f((1.0f / *b_q) / 255.0f, 0.0f, 0.0f);
-    else
-      glSecondaryColor3f((1.0f / *b_fog) / 255.0f, 0.0f, 0.0f);
-  }
-  glVertex4f((*b_x - (float)widtho) / (float)(width/2) / *b_q,
-    -(*b_y - (float)heighto) / (float)(height/2) / *b_q, ZCALC(*b_z, *b_q), 1.0f / *b_q);
-
-  glEnd();
+//  float *a_x = (float*)a + xy_off/sizeof(float);
+//  float *a_y = (float*)a + xy_off/sizeof(float) + 1;
+//  float *a_z = (float*)a + z_off/sizeof(float);
+//  float *a_q = (float*)a + q_off/sizeof(float);
+//  unsigned char *a_pargb = (unsigned char*)a + pargb_off;
+//  float *a_s0 = (float*)a + st0_off/sizeof(float);
+//  float *a_t0 = (float*)a + st0_off/sizeof(float) + 1;
+//  float *a_s1 = (float*)a + st1_off/sizeof(float);
+//  float *a_t1 = (float*)a + st1_off/sizeof(float) + 1;
+//  float *a_fog = (float*)a + fog_ext_off/sizeof(float);
+//
+//  float *b_x = (float*)b + xy_off/sizeof(float);
+//  float *b_y = (float*)b + xy_off/sizeof(float) + 1;
+//  float *b_z = (float*)b + z_off/sizeof(float);
+//  float *b_q = (float*)b + q_off/sizeof(float);
+//  unsigned char *b_pargb = (unsigned char*)b + pargb_off;
+//  float *b_s0 = (float*)b + st0_off/sizeof(float);
+//  float *b_t0 = (float*)b + st0_off/sizeof(float) + 1;
+//  float *b_s1 = (float*)b + st1_off/sizeof(float);
+//  float *b_t1 = (float*)b + st1_off/sizeof(float) + 1;
+//  float *b_fog = (float*)b + fog_ext_off/sizeof(float);
+//  LOG("grDrawLine()\r\n");
+//
+//  if(nvidia_viewport_hack && !render_to_texture)
+//  {
+//    glViewport(0, viewport_offset, viewport_width, viewport_height);
+//    nvidia_viewport_hack = 0;
+//  }
+//
+//  reloadTexture();
+//
+//  if(need_to_compile) compile_shader();
+//
+//  glBegin(GL_LINES);
+//
+//  if (nbTextureUnits > 2)
+//  {
+//    if (st0_en)
+//      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *a_s0 / *a_q / (float)tex1_width, ytex(0, *a_t0 / *a_q / (float)tex1_height));
+//    if (st1_en)
+//      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *a_s1 / *a_q / (float)tex0_width, ytex(1, *a_t1 / *a_q / (float)tex0_height));
+//  }
+//  else
+//  {
+//    if (st0_en)
+//      glTexCoord2f(*a_s0 / *a_q / (float)tex0_width, ytex(0, *a_t0 / *a_q / (float)tex0_height));
+//  }
+//  if (pargb_en)
+//    glColor4f(a_pargb[2]/255.0f, a_pargb[1]/255.0f, a_pargb[0]/255.0f, a_pargb[3]/255.0f);
+//  if (fog_enabled && fog_coord_support)
+//  {
+//    if(!fog_ext_en || fog_enabled != 2)
+//      glSecondaryColor3f((1.0f / *a_q) / 255.0f, 0.0f, 0.0f);
+//    else
+//      glSecondaryColor3f((1.0f / *a_fog) / 255.0f, 0.0f, 0.0f);
+//  }
+//  glVertex4f((*a_x - (float)widtho) / (float)(width/2) / *a_q,
+//    -(*a_y - (float)heighto) / (float)(height/2) / *a_q, ZCALC(*a_z, *a_q), 1.0f / *a_q);
+//
+//  if (nbTextureUnits > 2)
+//  {
+//    if (st0_en)
+//      glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *b_s0 / *b_q / (float)tex1_width,
+//      ytex(0, *b_t0 / *b_q / (float)tex1_height));
+//    if (st1_en)
+//      glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *b_s1 / *b_q / (float)tex0_width,
+//      ytex(1, *b_t1 / *b_q / (float)tex0_height));
+//  }
+//  else
+//  {
+//    if (st0_en)
+//      glTexCoord2f(*b_s0 / *b_q / (float)tex0_width,
+//      ytex(0, *b_t0 / *b_q / (float)tex0_height));
+//  }
+//  if (pargb_en)
+//    glColor4f(b_pargb[2]/255.0f, b_pargb[1]/255.0f, b_pargb[0]/255.0f, b_pargb[3]/255.0f);
+//  if (fog_enabled && fog_coord_support)
+//  {
+//    if(!fog_ext_en || fog_enabled != 2)
+//      glSecondaryColor3f((1.0f / *b_q) / 255.0f, 0.0f, 0.0f);
+//    else
+//      glSecondaryColor3f((1.0f / *b_fog) / 255.0f, 0.0f, 0.0f);
+//  }
+//  glVertex4f((*b_x - (float)widtho) / (float)(width/2) / *b_q,
+//    -(*b_y - (float)heighto) / (float)(height/2) / *b_q, ZCALC(*b_z, *b_q), 1.0f / *b_q);
+//
+//  glEnd();
 }
 
 FX_ENTRY void FX_CALL
 grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
 {
+	//LOG("grDrawVertexArray(%d,%d)\r\n", mode, Count);
+	//if(mode == GR_TRIANGLE_FAN)
+	//{
+	//	grDrawVertexArrayContiguous(mode,Count,(void**)pointers2,156);
+	//}
+	//else
+	//{
+	//	display_warning("grDrawVertexArray : unknown mode : %x", mode);
+	//}
+	//return;
+	
   unsigned int i;
   float *x, *y, *q, *s0, *t0, *s1, *t1, *z, *fog;
   unsigned char *pargb;
@@ -611,56 +526,39 @@ grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
 
   if(need_to_compile) compile_shader();
 
-  switch(mode)
+  if(mode != GR_TRIANGLE_FAN)
   {
-  case GR_TRIANGLE_FAN:
-    glBegin(GL_TRIANGLE_FAN);
-    break;
-  default:
     display_warning("grDrawVertexArray : unknown mode : %x", mode);
   }
 
-  for (i=0; i<Count; i++)
+  if (previous_pointers != pointers2)
   {
-    x = (float*)pointers[i] + xy_off/sizeof(float);
-    y = (float*)pointers[i] + xy_off/sizeof(float) + 1;
-    z = (float*)pointers[i] + z_off/sizeof(float);
-    q = (float*)pointers[i] + q_off/sizeof(float);
-    pargb = (unsigned char*)pointers[i] + pargb_off;
-    s0 = (float*)pointers[i] + st0_off/sizeof(float);
-    t0 = (float*)pointers[i] + st0_off/sizeof(float) + 1;
-    s1 = (float*)pointers[i] + st1_off/sizeof(float);
-    t1 = (float*)pointers[i] + st1_off/sizeof(float) + 1;
-    fog = (float*)pointers[i] + fog_ext_off/sizeof(float);
+    x = (float*) pointers[0] + xy_off / sizeof(float);
+    pargb = (unsigned char*) pointers[0] + pargb_off;
+    s0 = (float*) pointers[0] + st0_off / sizeof(float);
+    s1 = (float*) pointers[0] + st1_off / sizeof(float);
+    fog = (float*) pointers[0] + fog_ext_off / sizeof(float);
 
-    if (nbTextureUnits > 2)
-    {
-      if (st0_en)
-        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *s0 / *q / (float)tex1_width,
-        ytex(0, *t0 / *q / (float)tex1_height));
-      if (st1_en)
-        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *s1 / *q / (float)tex0_width,
-        ytex(1, *t1 / *q / (float)tex0_height));
-    }
-    else
-    {
-      if (st0_en)
-        glTexCoord2f(*s0 / *q / (float)tex0_width,
-        ytex(0, *t0 / *q / (float)tex0_height));
-    }
-    if (pargb_en)
-      glColor4f(pargb[2]/255.0f, pargb[1]/255.0f, pargb[0]/255.0f, pargb[3]/255.0f);
-    if (fog_enabled && fog_coord_support)
-    {
-      if(!fog_ext_en || fog_enabled != 2)
-        glSecondaryColor3f((1.0f / *q) / 255.0f, 0.0f, 0.0f);
-      else
-        glSecondaryColor3f((1.0f / *fog) / 255.0f, 0.0f, 0.0f);
-    }
-    glVertex4f((*x - (float)widtho) / (float)(width/2) / *q,
-      -(*y - (float)heighto) / (float)(height/2) / *q, ZCALC(*z, *q), 1.0f / *q);
+    glEnableVertexAttribArray(POSITION_ATTR);
+    glVertexAttribPointer(POSITION_ATTR, 4, GL_FLOAT, false, VERTEX_SIZE, x); //Position
+
+    glEnableVertexAttribArray(COLOUR_ATTR);
+    glVertexAttribPointer(COLOUR_ATTR, 4, GL_UNSIGNED_BYTE, true, VERTEX_SIZE,
+        pargb); //Colour
+
+    glEnableVertexAttribArray(TEXCOORD_0_ATTR);
+    glVertexAttribPointer(TEXCOORD_0_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s1); //Tex0
+
+    glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+    glVertexAttribPointer(TEXCOORD_1_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s0); //Tex1
+
+    glEnableVertexAttribArray(FOG_ATTR);
+    glVertexAttribPointer(FOG_ATTR, 1, GL_FLOAT, false, VERTEX_SIZE, fog); //Fog
+
+    previous_pointers = pointers2;
   }
-  glEnd();
+
+  glDrawArrays(GL_TRIANGLE_FAN,0,Count);
 }
 
 FX_ENTRY void FX_CALL
@@ -669,6 +567,7 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
   unsigned int i;
   float *x, *y, *q, *s0, *t0, *s1, *t1, *z, *fog;
   unsigned char *pargb;
+
   LOG("grDrawVertexArrayContiguous(%d,%d,%d)\r\n", mode, Count, stride);
 
   if(nvidia_viewport_hack && !render_to_texture)
@@ -677,64 +576,51 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
     nvidia_viewport_hack = 0;
   }
 
+  if(stride != 156)
+  {
+	  LOGINFO("Incompatible stride\n");
+  }
+
   reloadTexture();
 
   if(need_to_compile) compile_shader();
 
+  if (pointers != previous_pointers)
+  {
+    x = (float*) ((unsigned char*) pointers) + xy_off / sizeof(float);
+    pargb = (unsigned char*) pointers + pargb_off;
+    s0 = (float*) ((unsigned char*) pointers) + st0_off / sizeof(float);
+    s1 = (float*) ((unsigned char*) pointers) + st1_off / sizeof(float);
+    fog = (float*) ((unsigned char*) pointers) + fog_ext_off / sizeof(float);
+
+    glEnableVertexAttribArray(POSITION_ATTR);
+    glVertexAttribPointer(POSITION_ATTR, 4, GL_FLOAT, false, VERTEX_SIZE, x); //Position
+
+    glEnableVertexAttribArray(COLOUR_ATTR);
+    glVertexAttribPointer(COLOUR_ATTR, 4, GL_UNSIGNED_BYTE, true, VERTEX_SIZE,
+        pargb); //Colour
+
+    glEnableVertexAttribArray(TEXCOORD_0_ATTR);
+    glVertexAttribPointer(TEXCOORD_0_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s1); //Tex0
+
+    glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+    glVertexAttribPointer(TEXCOORD_1_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s0); //Tex1
+
+    glEnableVertexAttribArray(FOG_ATTR);
+    glVertexAttribPointer(FOG_ATTR, 1, GL_FLOAT, false, VERTEX_SIZE, fog); //Fog
+
+    previous_pointers = pointers;
+  }
+
   switch(mode)
   {
   case GR_TRIANGLE_STRIP:
-    glBegin(GL_TRIANGLE_STRIP);
+	  glDrawArrays(GL_TRIANGLE_STRIP,0,Count);
     break;
   case GR_TRIANGLE_FAN:
-    glBegin(GL_TRIANGLE_FAN);
+	  glDrawArrays(GL_TRIANGLE_FAN,0,Count);
     break;
   default:
     display_warning("grDrawVertexArrayContiguous : unknown mode : %x", mode);
   }
-
-  for (i=0; i<Count; i++)
-  {
-    x = (float*)((unsigned char*)pointers+stride*i) + xy_off/sizeof(float);
-    y = (float*)((unsigned char*)pointers+stride*i) + xy_off/sizeof(float) + 1;
-    z = (float*)((unsigned char*)pointers+stride*i) + z_off/sizeof(float);
-    q = (float*)((unsigned char*)pointers+stride*i) + q_off/sizeof(float);
-    pargb = (unsigned char*)pointers+stride*i + pargb_off;
-    s0 = (float*)((unsigned char*)pointers+stride*i) + st0_off/sizeof(float);
-    t0 = (float*)((unsigned char*)pointers+stride*i) + st0_off/sizeof(float) + 1;
-    s1 = (float*)((unsigned char*)pointers+stride*i) + st1_off/sizeof(float);
-    t1 = (float*)((unsigned char*)pointers+stride*i) + st1_off/sizeof(float) + 1;
-    fog = (float*)((unsigned char*)pointers+stride*i) + fog_ext_off/sizeof(float);
-
-    //if(*fog == 0.0f) *fog = 1.0f;
-
-    if (nbTextureUnits > 2)
-    {
-      if (st0_en)
-        glMultiTexCoord2fARB(GL_TEXTURE1_ARB, *s0 / *q / (float)tex1_width,
-        ytex(0, *t0 / *q / (float)tex1_height));
-      if (st1_en)
-        glMultiTexCoord2fARB(GL_TEXTURE0_ARB, *s1 / *q / (float)tex0_width,
-        ytex(1, *t1 / *q / (float)tex0_height));
-    }
-    else
-    {
-      if (st0_en)
-        glTexCoord2f(*s0 / *q / (float)tex0_width,
-        ytex(0, *t0 / *q / (float)tex0_height));
-    }
-    if (pargb_en)
-      glColor4f(pargb[2]/255.0f, pargb[1]/255.0f, pargb[0]/255.0f, pargb[3]/255.0f);
-    if (fog_enabled && fog_coord_support)
-    {
-      if(!fog_ext_en || fog_enabled != 2)
-        glSecondaryColor3f((1.0f / *q) / 255.0f, 0.0f, 0.0f);
-      else
-        glSecondaryColor3f((1.0f / *fog) / 255.0f, 0.0f, 0.0f);
-    }
-
-    glVertex4f((*x - (float)widtho) / (float)(width/2) / *q,
-      -(*y - (float)heighto) / (float)(height/2) / *q, ZCALC(*z, *q), 1.0f / *q);
-  }
-  glEnd();
 }

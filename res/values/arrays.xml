@@ -339,11 +339,13 @@
         <item>@string/pluginVideo_entryNone</item>
         <item>@string/pluginVideo_entryGles2N64</item>
         <item>@string/pluginVideo_entryGles2Rice</item>
+        <item>@string/pluginVideo_entryGlide64mk2</item>
     </string-array>
     <string-array name="pluginVideo_values" translatable="false">
         <item></item>
         <item>libgles2n64.so</item>
         <item>libgles2rice.so</item>
+        <item>libglide64mk2.so</item>
     </string-array>
 
     <string name="pluginVideo_default" translatable="false">libgles2n64.so</string>
