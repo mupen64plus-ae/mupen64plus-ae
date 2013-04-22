@@ -56,11 +56,12 @@
  * (0:disable, 1:enable, 2:extreme) */
 #define AGGRESSIVE_QUANTIZATION 1
 
-#include "TxHiResCache.h"
-#include "TxDbg.h"
 #include <zlib.h>
 #include <string>
 #include <SDL.h>
+#include "TxHiResCache.h"
+#include "TxDbg.h"
+#include "../Glide64/Gfx_1.3.h"
 
 TxHiResCache::~TxHiResCache()
 {
@@ -193,8 +194,10 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
   char curpath[MAX_PATH];
   char cbuf[MAX_PATH];
   wcstombs(cbuf, dir_path.wstring().c_str(), MAX_PATH);
-  GETCWD(MAX_PATH, curpath);
-  CHDIR(cbuf);
+  if (GETCWD(MAX_PATH, curpath) == NULL)
+      ERRLOG("Error while retrieving working directory!");
+  if (CHDIR(cbuf) != 0)
+      ERRLOG("Error while changing current directory to '%s'!", cbuf);
 #endif
 
   /* NOTE: I could use the boost::wdirectory_iterator and boost::wpath
@@ -1082,7 +1085,8 @@ TxHiResCache::loadHiResTextures(boost::filesystem::wpath dir_path, boolean repla
 
   }
 
-  CHDIR(curpath);
+  if (CHDIR(curpath) != 0)
+      ERRLOG("Error while changing current directory back to original path of '%s'!", curpath);
 
   return 1;
 }

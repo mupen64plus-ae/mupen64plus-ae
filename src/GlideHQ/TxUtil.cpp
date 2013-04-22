@@ -341,7 +341,7 @@ TxUtil::RiceCRC32(const uint8* src, int width, int height, int size, int rowStri
   int cur_height;
   uint32_t pos;
   uint32_t word;
-  uint32_t word_hash;
+  uint32_t word_hash = 0;
   uint32_t tmp;
   const uint32_t bytes_per_width = ((width << size) + 1) >> 1;
 
@@ -371,7 +371,7 @@ TxUtil::RiceCRC32_CI4(const uint8* src, int width, int height, int size, int row
   int cur_height;
   uint32_t pos;
   uint32_t word;
-  uint32_t word_hash;
+  uint32_t word_hash = 0;
   uint32_t tmp;
   const uint32_t bytes_per_width = ((width << size) + 1) >> 1;
 
@@ -422,7 +422,7 @@ TxUtil::RiceCRC32_CI8(const uint8* src, int width, int height, int size, int row
   int cur_height;
   uint32_t pos;
   uint32_t word;
-  uint32_t word_hash;
+  uint32_t word_hash = 0;
   uint32_t tmp;
   const uint32_t bytes_per_width = ((width << size) + 1) >> 1;
 

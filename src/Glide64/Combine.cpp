@@ -15599,7 +15599,7 @@ void Combine ()
   wxUint32 actual_combine, current_combine, color_combine, alpha_combine;
   int left, right;
 
-  actual_combine = cmb_mode_c;
+  actual_combine = current_combine = cmb_mode_c;
   color_combine = actual_combine;
   if ((rdp.cycle2 & 0xFFFF) == 0x1FFF)
     actual_combine = (rdp.cycle1 << 16) | (rdp.cycle1 & 0xFFFF);
@@ -16022,6 +16022,9 @@ void ColorCombinerToExtension ()
     ext_local = GR_CMBX_CONSTANT_COLOR;
     ext_local_a = GR_CMBX_CONSTANT_ALPHA;
     break;
+  default:
+    ext_local = GR_CMBX_ZERO;
+    ext_local_a = GR_CMBX_ZERO;
   };
   switch (cmb.c_oth)
   {
@@ -16037,6 +16040,9 @@ void ColorCombinerToExtension ()
     ext_other = GR_CMBX_CONSTANT_COLOR;
     ext_other_a = GR_CMBX_CONSTANT_ALPHA;
     break;
+  default:
+    ext_other = GR_CMBX_ZERO;
+    ext_other_a = GR_CMBX_ZERO;
   };
   switch (cmb.c_fac)
   {
@@ -16084,6 +16090,9 @@ void ColorCombinerToExtension ()
     cmb.c_ext_c = GR_CMBX_TEXTURE_ALPHA;
     cmb.c_ext_c_invert = 1;
     break;
+  default:
+    cmb.c_ext_c = GR_CMBX_ZERO;
+    cmb.c_ext_c_invert = 0;
   }
 
   switch (cmb.c_fnc)
@@ -16175,6 +16184,7 @@ void ColorCombinerToExtension ()
     cmb.c_ext_d_invert = 0;
     break;
   case GR_COMBINE_FUNCTION_SCALE_MINUS_LOCAL_ADD_LOCAL_ALPHA:
+  default:
     cmb.c_ext_a = GR_CMBX_ZERO;
     cmb.c_ext_a_mode = GR_FUNC_MODE_ZERO;
     cmb.c_ext_b = ext_local;
@@ -16382,6 +16392,10 @@ void TexColorCombinerToExtension (GrChipID_t tmu)
     tc_ext_c = GR_CMBX_DETAIL_FACTOR;
     tc_ext_c_invert = 1;
     break;
+  default:
+    tc_ext_c = GR_CMBX_ZERO;
+    tc_ext_c_invert = 0;
+    break;
   }
 
   switch (tmu_func)
@@ -16480,6 +16494,16 @@ void TexColorCombinerToExtension (GrChipID_t tmu)
     tc_ext_d = GR_CMBX_LOCAL_TEXTURE_ALPHA;
     tc_ext_d_invert = 0;
     break;
+  default:
+    tc_ext_a = GR_CMBX_LOCAL_TEXTURE_RGB;
+    tc_ext_a_mode = GR_FUNC_MODE_ZERO;
+    tc_ext_b = GR_CMBX_LOCAL_TEXTURE_RGB;
+    tc_ext_b_mode = GR_FUNC_MODE_ZERO;
+    tc_ext_c = GR_CMBX_ZERO;
+    tc_ext_c_invert = 0;
+    tc_ext_d = GR_CMBX_ZERO;
+    tc_ext_d_invert = 0;
+    break;
   }
 
   if (tmu == GR_TMU0)
@@ -16559,6 +16583,10 @@ void TexAlphaCombinerToExtension (GrChipID_t tmu)
     ta_ext_c = GR_CMBX_DETAIL_FACTOR;
     ta_ext_c_invert = 1;
     break;
+  default:
+    ta_ext_c = GR_CMBX_ZERO;
+    ta_ext_c_invert = 0;
+    break;
   }
 
   switch (tmu_a_func)
@@ -16625,6 +16653,16 @@ void TexAlphaCombinerToExtension (GrChipID_t tmu)
     ta_ext_b = GR_CMBX_LOCAL_TEXTURE_ALPHA;
     ta_ext_b_mode = GR_FUNC_MODE_NEGATIVE_X;
     ta_ext_d = GR_CMBX_B;
+    ta_ext_d_invert = 0;
+    break;
+  default:
+    ta_ext_a = GR_CMBX_LOCAL_TEXTURE_ALPHA;
+    ta_ext_a_mode = GR_FUNC_MODE_ZERO;
+    ta_ext_b = GR_CMBX_LOCAL_TEXTURE_ALPHA;
+    ta_ext_b_mode = GR_FUNC_MODE_ZERO;
+    ta_ext_c = GR_CMBX_ZERO;
+    ta_ext_c_invert = 0;
+    ta_ext_d = GR_CMBX_ZERO;
     ta_ext_d_invert = 0;
     break;
   }

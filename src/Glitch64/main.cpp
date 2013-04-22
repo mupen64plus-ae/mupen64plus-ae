@@ -63,7 +63,7 @@ static inline void opt_glCopyTexImage2D( GLenum target,
   glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
   glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &fmt);
   //printf("copyteximage %dx%d fmt %x oldfmt %x\n", width, height, internalFormat, fmt);
-  if (w == width && h == height && fmt == internalFormat) {
+  if (w == (int) width && h == (int) height && fmt == (int) internalFormat) {
     if (x+width >= screen_width) {
       width = screen_width - x;
       //printf("resizing w --> %d\n", width);
@@ -334,8 +334,8 @@ grClipWindow( FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy )
     maxy = th - maxy;
     miny = th - miny;
     FxU32 tmp = maxy; maxy = miny; miny = tmp;
-    if (maxx > width) maxx = width;
-    if (maxy > height) maxy = height;
+    if (maxx > (FxU32) width) maxx = width;
+    if (maxy > (FxU32) height) maxy = height;
     if (int(minx) < 0) minx = 0;
     if (int(miny) < 0) miny = 0;
     if (maxx < minx) maxx = minx;
@@ -605,9 +605,10 @@ grSstWinOpen(
   glGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC)wglGetProcAddress("glGenRenderbuffersEXT");
   glRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC)wglGetProcAddress("glRenderbufferStorageEXT");
   glFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)wglGetProcAddress("glFramebufferRenderbufferEXT");
+  use_fbo = config.fbo && (glFramebufferRenderbufferEXT != NULL);
+#else
+  use_fbo = config.fbo;
 #endif // _WIN32
-
-  use_fbo = config.fbo && glFramebufferRenderbufferEXT;
 
   printf("use_fbo %d\n", use_fbo);
 
@@ -747,7 +748,7 @@ grSstWinClose( GrContext_t context )
   try // I don't know why, but opengl can be killed before this function call when emulator is closed (Gonetz).
     // ZIGGY : I found the problem : it is a function pointer, when the extension isn't supported , it is then zero, so just need to check the pointer prior to do the call.
   {
-    if (use_fbo && glBindFramebufferEXT)
+    if (use_fbo)
       glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
   }
   catch (...)
@@ -891,9 +892,9 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
 
     int rtmu = startAddress < grTexMinAddress(GR_TMU1)? 0 : 1;
     int size = pBufferWidth*pBufferHeight*2; //grTexFormatSize(fmt);
-    if (tmu_usage[rtmu].min > pBufferAddress)
+    if ((unsigned int) tmu_usage[rtmu].min > pBufferAddress)
       tmu_usage[rtmu].min = pBufferAddress;
-    if (tmu_usage[rtmu].max < pBufferAddress+size)
+    if ((unsigned int) tmu_usage[rtmu].max < pBufferAddress+size)
       tmu_usage[rtmu].max = pBufferAddress+size;
     //   printf("tmu %d usage now %gMb - %gMb\n",
     //          rtmu, tmu_usage[rtmu].min/1024.0f, tmu_usage[rtmu].max/1024.0f);
@@ -1036,7 +1037,7 @@ int CheckTextureBufferFormat(GrChipID_t tmu, FxU32 startAddress, GrTexInfo *info
   int found, i;
   if (!use_fbo) {
     for (found=i=0; i<2; i++)
-      if (tmu_usage[i].min <= startAddress && tmu_usage[i].max > startAddress) {
+      if ((FxU32) tmu_usage[i].min <= startAddress && (FxU32) tmu_usage[i].max > startAddress) {
         //printf("tmu %d == framebuffer %x\n", tmu, startAddress);
         found = 1;
         break;

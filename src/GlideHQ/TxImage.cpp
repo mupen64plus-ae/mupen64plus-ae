@@ -32,6 +32,7 @@
 #include "TxReSample.h"
 #include "TxDbg.h"
 #include <stdlib.h>
+#include "../Glide64/Gfx_1.3.h"
 
 boolean
 TxImage::getPNGInfo(FILE *fp, png_structp *png_ptr, png_infop *info_ptr)
@@ -249,8 +250,8 @@ TxImage::writePNG(uint8* src, FILE* fp, int width, int height, int rowStride, ui
   png_structp png_ptr;
   png_infop info_ptr;
   png_color_8 sig_bit;
-  png_colorp palette_ptr;
-  png_bytep trans_ptr;//, tex_ptr;
+  png_colorp palette_ptr = NULL;
+  png_bytep trans_ptr = NULL;
   int bit_depth, color_type, row_bytes, num_palette;
   int i;
   //uint16 srcfmt, destfmt;
@@ -496,7 +497,7 @@ TxImage::readBMP(FILE* fp, int* width, int* height, uint16* format)
   uint8 *image = NULL;
   uint8 *image_row = NULL;
   uint8 *tmpimage = NULL;
-  int row_bytes, pos, i, j;
+  unsigned int row_bytes, pos, i, j;
   /* Windows Bitmap */
   BITMAPFILEHEADER bmp_fhdr;
   BITMAPINFOHEADER bmp_ihdr;
@@ -542,7 +543,8 @@ TxImage::readBMP(FILE* fp, int* width, int* height, uint16* format)
       for (i = 0; i < bmp_ihdr.biHeight; i++) {
         /* read in image */
         fseek(fp, pos, SEEK_SET);
-        fread(tmpimage, row_bytes, 1, fp);
+        if (fread(tmpimage, 1, row_bytes, fp) != row_bytes)
+            ERRLOG("fread() failed for row of '%i' bytes in 8/32-bit BMP image", row_bytes);
         tmpimage += row_bytes;
         pos -= row_bytes;
       }
@@ -558,7 +560,8 @@ TxImage::readBMP(FILE* fp, int* width, int* height, uint16* format)
       for (i = 0; i < bmp_ihdr.biHeight; i++) {
         /* read in image */
         fseek(fp, pos, SEEK_SET);
-        fread(image_row, row_bytes, 1, fp);
+        if (fread(image_row, 1, row_bytes, fp) != row_bytes)
+            ERRLOG("fread failed for row of '%i' bytes in 4-bit BMP image", row_bytes);
         /* expand 4bpp to 8bpp. stuff 4bit values into 8bit comps. */
         for (j = 0; j < row_bytes; j++) {
           tmpimage[j << 1] = image_row[j] & 0x0f;
@@ -584,7 +587,8 @@ TxImage::readBMP(FILE* fp, int* width, int* height, uint16* format)
       for (i = 0; i < bmp_ihdr.biHeight; i++) {
         /* read in image */
         fseek(fp, pos, SEEK_SET);
-        fread(image_row, row_bytes, 1, fp);
+        if (fread(image_row, 1, row_bytes, fp) != row_bytes)
+            ERRLOG("fread failed for row of '%i' bytes in 24-bit BMP image", row_bytes);
         /* convert 24bpp to 32bpp. */
         for (j = 0; j < bmp_ihdr.biWidth; j++) {
           tmpimage[(j << 2)]     = image_row[j * 3];
@@ -792,7 +796,8 @@ TxImage::readDDS(FILE* fp, int* width, int* height, uint16* format)
     *format = tmpformat;
 
     fseek(fp, 128, SEEK_SET); /* size of header is 128 bytes */
-    fread(image, dds_fhdr.dwLinearSize, 1, fp);
+    if (fread(image, 1, dds_fhdr.dwLinearSize, fp) != dds_fhdr.dwLinearSize)
+        ERRLOG("fread failed to read DDS image of '%i' bytes", dds_fhdr.dwLinearSize);
   }
 
   return image;

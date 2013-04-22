@@ -1211,13 +1211,12 @@ TxQuantize::ARGB8888_RGB565_ErrD(uint32* src, uint32* dst, int width, int height
   for (i = 0; i < width; i++) errR[i] = errG[i] = errB[i] = 0;
 
   for (y = 0; y < height; y++) {
+    qr = qg = qb = 0;
     for (x = 0; x < width; x++) {
       /* incoming pixel values */
       ir = ((*src >> 16) & 0xFF) * 10000;
       ig = ((*src >>  8) & 0xFF) * 10000;
       ib = ((*src      ) & 0xFF) * 10000;
-
-      if (x == 0) qr = qg = qb = 0;
 
       /* quantize pixel values. 
        * qr * 0.4375 is the error from the pixel to the left, 
@@ -1313,13 +1312,12 @@ TxQuantize::ARGB8888_ARGB1555_ErrD(uint32* src, uint32* dst, int width, int heig
   for (i = 0; i < width; i++) errR[i] = errG[i] = errB[i] = 0;
 
   for (y = 0; y < height; y++) {
+    qr = qg = qb = 0;
     for (x = 0; x < width; x++) {
       /* incoming pixel values */
       ir = ((*src >> 16) & 0xFF) * 10000;
       ig = ((*src >>  8) & 0xFF) * 10000;
       ib = ((*src      ) & 0xFF) * 10000;
-
-      if (x == 0) qr = qg = qb = 0;
 
       /* quantize pixel values. 
        * qr * 0.4375 is the error from the pixel to the left, 
@@ -1422,14 +1420,13 @@ TxQuantize::ARGB8888_ARGB4444_ErrD(uint32* src, uint32* dst, int width, int heig
   for (i = 0; i < width; i++) errR[i] = errG[i] = errB[i] = errA[i] = 0;
 
   for (y = 0; y < height; y++) {
+    qr = qg = qb = qa = 0;
     for (x = 0; x < width; x++) {
       /* incoming pixel values */
       ir = ((*src >> 16) & 0xFF) * 10000;
       ig = ((*src >>  8) & 0xFF) * 10000;
       ib = ((*src      ) & 0xFF) * 10000;
       ia = ((*src >> 24) & 0xFF) * 10000;
-
-      if (x == 0) qr = qg = qb = qa = 0;
 
       /* quantize pixel values. 
        * qr * 0.4375 is the error from the pixel to the left, 
@@ -1544,14 +1541,13 @@ TxQuantize::ARGB8888_AI44_ErrD(uint32* src, uint32* dst, int width, int height)
   for (i = 0; i < width; i++) errI[i] = errA[i] = 0;
 
   for (y = 0; y < height; y++) {
+    qi = qa = 0;
     for (x = 0; x < width; x++) {
       /* 3dfx style Intensity = R * 0.299 + G * 0.587 + B * 0.114 */
       ii = ((*src >> 16) & 0xFF) * 2990 +
            ((*src >>  8) & 0xFF) * 5870 +
            ((*src      ) & 0xFF) * 1140;
       ia = ((*src >> 24) & 0xFF) * 10000;
-
-      if (x == 0) qi = qa = 0;
 
       /* quantize pixel values. 
        * qi * 0.4375 is the error from the pixel to the left, 
