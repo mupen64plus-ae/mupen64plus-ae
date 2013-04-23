@@ -29,6 +29,12 @@
 #define Z_MAX (65536.0f)
 #define VERTEX_SIZE 156 //Size of vertex struct
 
+#ifdef PAULSCODE
+#include "ae_bridge.h"
+static float polygonOffsetFactor;
+static float polygonOffsetUnits;
+#endif
+
 static int xy_off;
 static int xy_en;
 static int z_en;
@@ -250,68 +256,49 @@ grDepthMask( FxBool mask )
 }
 
 float biasFactor = 0;
-bool biasFound = false;
 void FindBestDepthBias()
 {
-  //float f, bestz = 0.25f;
-  //int x;
-  if (biasFound) return;
+#ifdef PAULSCODE
+  int hardwareType = Android_JNI_GetHardwareType();
+  Android_JNI_GetPolygonOffset(hardwareType, 1, &polygonOffsetFactor, &polygonOffsetUnits);
+#else
+  float f, bestz = 0.25f;
+  int x;
+  if (biasFactor) return;
+  biasFactor = 64.0f; // default value
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_ALWAYS);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glDrawBuffer(GL_BACK);
+  glReadBuffer(GL_BACK);
+  glDisable(GL_BLEND);
+  glDisable(GL_ALPHA_TEST);
+  glColor4ub(255,255,255,255);
+  glDepthMask(GL_TRUE);
+  for (x=0, f=1.0f; f<=65536.0f; x+=4, f*=2.0f) {
+    float z;
+    glPolygonOffset(0, f);
+    glBegin(GL_TRIANGLE_STRIP);
+    glVertex3f(float(x+4 - widtho)/(width/2), float(0 - heighto)/(height/2), 0.5);
+    glVertex3f(float(x - widtho)/(width/2), float(0 - heighto)/(height/2), 0.5);
+    glVertex3f(float(x+4 - widtho)/(width/2), float(4 - heighto)/(height/2), 0.5);
+    glVertex3f(float(x - widtho)/(width/2), float(4 - heighto)/(height/2), 0.5);
+    glEnd();
 
-  const char* renderer = (const char*)glGetString(GL_RENDERER);
-
-//  if(strstr(renderer,"SGX") != NULL)
-//  {
-//    biasFactor = -1.5f;
-//  }
-//  else if(strstr(renderer,"Adreno") != NULL)
-//  {
-//    biasFactor = 0.2f;
-//  }
-//  else if(strstr(renderer,"Tegra") != NULL)
-//  {
-//    biasFactor = -2.0f;
-//  }
-//  else
-//  {
-    biasFactor = 0.2f;
-//  }
-  biasFound = true;
-
-  LOGINFO("Renderer:%s biasFactor:%f\n",renderer,biasFactor);
-
-  // default value
- //  glPushAttrib(GL_ALL_ATTRIB_BITS);
-//  glEnable(GL_DEPTH_TEST);
-//  glDepthFunc(GL_ALWAYS);
-//  glEnable(GL_POLYGON_OFFSET_FILL);
-//  glDrawBuffer(GL_BACK);
-//  glReadBuffer(GL_BACK);
-//  glDisable(GL_BLEND);
-//  glDisable(GL_ALPHA_TEST);
-//  glColor4ub(255,255,255,255);
-//  glDepthMask(GL_TRUE);
-//  for (x=0, f=1.0f; f<=65536.0f; x+=4, f*=2.0f) {
-//    float z;
-//    glPolygonOffset(0, f);
-//    glBegin(GL_TRIANGLE_STRIP);
-//    glVertex3f(float(x+4 - widtho)/(width/2), float(0 - heighto)/(height/2), 0.5);
-//    glVertex3f(float(x - widtho)/(width/2), float(0 - heighto)/(height/2), 0.5);
-//    glVertex3f(float(x+4 - widtho)/(width/2), float(4 - heighto)/(height/2), 0.5);
-//    glVertex3f(float(x - widtho)/(width/2), float(4 - heighto)/(height/2), 0.5);
-//    glEnd();
-//
-//    glReadPixels(x+2, 2+viewport_offset, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
-//    z -= 0.75f + 8e-6f;
-//    if (z<0.0f) z = -z;
-//    if (z > 0.01f) continue;
-//    if (z < bestz) {
-//      bestz = z;
-//      biasFactor = f;
-//    }
-//    //printf("f %g z %g\n", f, z);
-//  }
-//  //printf(" --> bias factor %g\n", biasFactor);
-//  glPopAttrib();
+    glReadPixels(x+2, 2+viewport_offset, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &z);
+    z -= 0.75f + 8e-6f;
+    if (z<0.0f) z = -z;
+    if (z > 0.01f) continue;
+    if (z < bestz) {
+      bestz = z;
+      biasFactor = f;
+    }
+    //printf("f %g z %g\n", f, z);
+  }
+  //printf(" --> bias factor %g\n", biasFactor);
+  glPopAttrib();
+#endif
 }
 
 FX_ENTRY void FX_CALL
@@ -320,10 +307,14 @@ grDepthBiasLevel( FxI32 level )
   LOG("grDepthBiasLevel(%d)\r\n", level);
   if (level)
   {
+    #ifdef PAULSCODE
+    glPolygonOffset(polygonOffsetFactor, polygonOffsetUnits);
+    #else
     if(w_buffer_mode)
       glPolygonOffset(1.0f, -(float)level*zscale/255.0f);
     else
       glPolygonOffset(0, (float)level*biasFactor);
+    #endif
     glEnable(GL_POLYGON_OFFSET_FILL);
   }
   else

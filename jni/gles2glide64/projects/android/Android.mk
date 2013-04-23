@@ -60,6 +60,7 @@ LOCAL_CFLAGS :=         \
     -DANDROID           \
     -DNOSSE             \
     -DNO_ASM            \
+    -DPAULSCODE         \
     -fsigned-char       \
     
 LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
