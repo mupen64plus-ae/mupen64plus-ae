@@ -643,6 +643,8 @@ public class Utility
                         Log.d( LOG_TAG, "--> Line received: " + line );
                         fullResponse.add( line );
                     }
+
+                    in.close();
                 }
                 catch( IOException e )
                 {
