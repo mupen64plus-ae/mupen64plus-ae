@@ -13236,11 +13236,16 @@ gn Pokemon Snap (U)
  cn Have\Apple
   803AE51F 0001
  cn [Enable All Levels]
+  cd This is needed to be able to Play all Levels of the Game
   810C2212 0006
  cn Hide First Digit In Roll Of Film
   80388F5A 009D
  cn See Entire Introduction Fully & Various In-Game Effects
   81049C7E 025A
+ cn Camera Movement Bugfix
+  cd Fixes unresponsive camera bug.  First level only -- Use in combination with [Enable All Levels].  Go to level 1 then change level, and the camera will continue to work in the new level)
+  D1382D1C 802C
+  80382D0F 0000
 
 crc 39119872-07722E9F-C:45
 gn  Pokemon Snap Station (U)
@@ -13283,6 +13288,10 @@ gn  Pokemon Snap Station (U)
   80388F5A 009D
  cn See Entire Introduction Fully & Various In-Game Effects
   81049C7E 025A
+ cn Camera Movement Bugfix
+  cd Fixes unresponsive camera bug.  First level only -- Use in combination with [Enable All Levels].  Go to level 1 then change level, and the camera will continue to work in the new level)
+  D1382D1C 802C
+  80382D0F 0000
 
 crc 90F5D9B3-9D0EDCF0-C:45
 gn Pokemon Stadium (U)
