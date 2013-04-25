@@ -68,6 +68,11 @@ typedef struct _texlist
 static int nbTex = 0;
 static texlist *list = NULL;
 
+#ifdef _WIN32
+extern PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffersEXT;
+extern PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT;
+extern PFNGLCOMPRESSEDTEXIMAGE2DARBPROC glCompressedTexImage2DARB;
+#endif
 void remove_tex(unsigned int idmin, unsigned int idmax)
 {
   unsigned int *t;
