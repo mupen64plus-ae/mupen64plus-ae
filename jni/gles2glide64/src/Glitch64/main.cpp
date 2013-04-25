@@ -498,7 +498,7 @@ grSstWinOpen(
   width = ConfigGetParamInt(video_general_section, "ScreenWidth");
   height = ConfigGetParamInt(video_general_section, "ScreenHeight");
   fullscreen = ConfigGetParamBool(video_general_section, "Fullscreen");
-  int vsync = 1; //ConfigGetParamBool(video_general_section, "VerticalSync");
+  int vsync = ConfigGetParamBool(video_general_section, "VerticalSync");
   //viewport_offset = ((screen_resolution>>2) > 20) ? screen_resolution >> 2 : 20;
   // ZIGGY viewport_offset is WIN32 specific, with SDL just set it to zero
   viewport_offset = 0; //-10 //-20;
@@ -1709,7 +1709,6 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 
 }
 
-extern "C" void Android_JNI_SwapWindow();
 // #include <unistd.h>
 FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
@@ -1726,9 +1725,7 @@ grBufferSwap( FxU32 swap_interval )
     return;
   }
 
-  //CoreVideo_GL_SwapBuffers();
-  Android_JNI_SwapWindow();
-  
+  CoreVideo_GL_SwapBuffers();
   for (i = 0; i < nb_fb; i++)
     fbs[i].buff_clear = 1;
 
