@@ -50,40 +50,42 @@ extern void (*renderCallback)(int);
 wrapper_config config = {0, 0, 0, 0};
 int screen_width, screen_height;
 
-//static inline void opt_glCopyTexImage2D( GLenum target,
-//                                        GLint level,
-//                                        GLenum internalFormat,
-//                                        GLint x,
-//                                        GLint y,
-//                                        GLsizei width,
-//                                        GLsizei height,
-//                                        GLint border )
-//
-//{
-//  int w, h, fmt;
-//  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-//  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
-//  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &fmt);
-//  //printf("copyteximage %dx%d fmt %x oldfmt %x\n", width, height, internalFormat, fmt);
-//  if (w == width && h == height && fmt == internalFormat) {
-//    if (x+width >= screen_width) {
-//      width = screen_width - x;
-//      //printf("resizing w --> %d\n", width);
-//    }
-//    if (y+height >= screen_height+viewport_offset) {
-//      height = screen_height+viewport_offset - y;
-//      //printf("resizing h --> %d\n", height);
-//    }
-//    glCopyTexSubImage2D(target, level, 0, 0, x, y, width, height);
-//  } else {
-//    //printf("copyteximage %dx%d fmt %x old %dx%d oldfmt %x\n", width, height, internalFormat, w, h, fmt);
-//    //       glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, internalFormat, GL_UNSIGNED_BYTE, 0);
-//    //       glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &fmt);
-//    //       printf("--> %dx%d newfmt %x\n", width, height, fmt);
-//    glCopyTexImage2D(target, level, internalFormat, x, y, width, height, border);
-//  }
-//}
-//#define glCopyTexImage2D opt_glCopyTexImage2D
+/*
+static inline void opt_glCopyTexImage2D( GLenum target,
+                                        GLint level,
+                                        GLenum internalFormat,
+                                        GLint x,
+                                        GLint y,
+                                        GLsizei width,
+                                        GLsizei height,
+                                        GLint border )
+
+{
+  int w, h, fmt;
+  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
+  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
+  glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &fmt);
+  //printf("copyteximage %dx%d fmt %x oldfmt %x\n", width, height, internalFormat, fmt);
+  if (w == (int) width && h == (int) height && fmt == (int) internalFormat) {
+    if (x+width >= screen_width) {
+      width = screen_width - x;
+      //printf("resizing w --> %d\n", width);
+    }
+    if (y+height >= screen_height+viewport_offset) {
+      height = screen_height+viewport_offset - y;
+      //printf("resizing h --> %d\n", height);
+    }
+    glCopyTexSubImage2D(target, level, 0, 0, x, y, width, height);
+  } else {
+    //printf("copyteximage %dx%d fmt %x old %dx%d oldfmt %x\n", width, height, internalFormat, w, h, fmt);
+    //       glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, internalFormat, GL_UNSIGNED_BYTE, 0);
+    //       glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &fmt);
+    //       printf("--> %dx%d newfmt %x\n", width, height, fmt);
+    glCopyTexImage2D(target, level, internalFormat, x, y, width, height, border);
+  }
+}
+#define glCopyTexImage2D opt_glCopyTexImage2D
+*/
 
 
 #ifdef _WIN32
@@ -337,8 +339,8 @@ grClipWindow( FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy )
     maxy = th - maxy;
     miny = th - miny;
     FxU32 tmp = maxy; maxy = miny; miny = tmp;
-    if (maxx > width) maxx = width;
-    if (maxy > height) maxy = height;
+    if (maxx > (FxU32) width) maxx = width;
+    if (maxy > (FxU32) height) maxy = height;
     if (int(minx) < 0) minx = 0;
     if (int(miny) < 0) miny = 0;
     if (maxx < minx) maxx = minx;
@@ -382,8 +384,6 @@ int isExtensionSupported(const char *extension)
     return 0;
 
   extensions = glGetString(GL_EXTENSIONS);
-  if(extensions == NULL)
-	  return 0;
 
   start = extensions;
   for (;;)
@@ -495,7 +495,6 @@ grSstWinOpen(
     printf("Could not open video settings");
     return false;
   }
-
   width = ConfigGetParamInt(video_general_section, "ScreenWidth");
   height = ConfigGetParamInt(video_general_section, "ScreenHeight");
   fullscreen = ConfigGetParamBool(video_general_section, "Fullscreen");
@@ -563,17 +562,21 @@ grSstWinOpen(
   nbTextureUnits = 2;
 #endif
 
-//  if (isExtensionSupported("GL_EXT_blend_func_separate") == 0)
-//    blend_func_separate_support = 0;
-//  else
+  blend_func_separate_support = 1;
+  packed_pixels_support = 0;
+/*
+  if (isExtensionSupported("GL_EXT_blend_func_separate") == 0)
+    blend_func_separate_support = 0;
+  else
     blend_func_separate_support = 1;
 
-  //if (isExtensionSupported("GL_EXT_packed_pixels") == 0)
+  if (isExtensionSupported("GL_EXT_packed_pixels") == 0)
     packed_pixels_support = 0;
-  //else {
-  //  printf("packed pixels extension used\n");
-  //  packed_pixels_support = 1;
-  //}
+  else {
+    printf("packed pixels extension used\n");
+    packed_pixels_support = 1;
+  }
+*/
 
   if (isExtensionSupported("GL_ARB_texture_non_power_of_two") == 0)
     npot_support = 0;
@@ -611,9 +614,10 @@ grSstWinOpen(
   glGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC)wglGetProcAddress("glGenRenderbuffersEXT");
   glRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC)wglGetProcAddress("glRenderbufferStorageEXT");
   glFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)wglGetProcAddress("glFramebufferRenderbufferEXT");
-#endif // _WIN32
-
+  use_fbo = config.fbo && (glFramebufferRenderbufferEXT != NULL);
+#else
   use_fbo = config.fbo;
+#endif // _WIN32
 
   LOGINFO("use_fbo %d\n", use_fbo);
 
@@ -644,7 +648,7 @@ grSstWinOpen(
 #endif // _WIN32
   }
 
-   if (isExtensionSupported("GL_EXT_texture_compression_s3tc") == 0  && show_warning)
+  if (isExtensionSupported("GL_EXT_texture_compression_s3tc") == 0  && show_warning)
     display_warning("Your video card doesn't support GL_EXT_texture_compression_s3tc extension");
   if (isExtensionSupported("GL_3DFX_texture_compression_FXT1") == 0  && show_warning)
     display_warning("Your video card doesn't support GL_3DFX_texture_compression_FXT1 extension");
@@ -710,22 +714,24 @@ grSstWinOpen(
   init_textures();
   init_combiner();
 
+/*
   // Aniso filter check
-  //if (config.anisofilter > 0 )
-  //  glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest_supported_anisotropy);
+  if (config.anisofilter > 0 )
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest_supported_anisotropy);
 
   // ATI hack - certain texture formats are slow on ATI?
   // Hmm, perhaps the internal format need to be specified explicitly...
-//  {
-//    GLint ifmt;
-//    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV, NULL);
-//    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &ifmt);
-//    if (ifmt != GL_RGB5_A1) {
-//      display_warning("ATI SUCKS %x\n", ifmt);
-//      ati_sucks = 1;
-//    } else
-//      ati_sucks = 0;
-//  }
+  {
+    GLint ifmt;
+    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV, NULL);
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &ifmt);
+    if (ifmt != GL_RGB5_A1) {
+      display_warning("ATI SUCKS %x\n", ifmt);
+      ati_sucks = 1;
+    } else
+      ati_sucks = 0;
+  }
+*/
 
   return 1;
 }
@@ -897,9 +903,9 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
 
     int rtmu = startAddress < grTexMinAddress(GR_TMU1)? 0 : 1;
     int size = pBufferWidth*pBufferHeight*2; //grTexFormatSize(fmt);
-    if (tmu_usage[rtmu].min > pBufferAddress)
+    if ((unsigned int) tmu_usage[rtmu].min > pBufferAddress)
       tmu_usage[rtmu].min = pBufferAddress;
-    if (tmu_usage[rtmu].max < pBufferAddress+size)
+    if ((unsigned int) tmu_usage[rtmu].max < pBufferAddress+size)
       tmu_usage[rtmu].max = pBufferAddress+size;
     //   printf("tmu %d usage now %gMb - %gMb\n",
     //          rtmu, tmu_usage[rtmu].min/1024.0f, tmu_usage[rtmu].max/1024.0f);
@@ -1042,7 +1048,7 @@ int CheckTextureBufferFormat(GrChipID_t tmu, FxU32 startAddress, GrTexInfo *info
   int found, i;
   if (!use_fbo) {
     for (found=i=0; i<2; i++)
-      if (tmu_usage[i].min <= startAddress && tmu_usage[i].max > startAddress) {
+      if ((FxU32) tmu_usage[i].min <= startAddress && (FxU32) tmu_usage[i].max > startAddress) {
         //printf("tmu %d == framebuffer %x\n", tmu, startAddress);
         found = 1;
         break;
@@ -1624,16 +1630,17 @@ grRenderBuffer( GrBuffer_t buffer )
         //glScalef(1, 1, zscale);
         inverted_culling = 0;
       } else {
-        //float m[4*4] = {1.0f, 0.0f, 0.0f, 0.0f,
-        //  0.0f,-1.0f, 0.0f, 0.0f,
-        //  0.0f, 0.0f, 1.0f, 0.0f,
-        //  0.0f, 0.0f, 0.0f, 1.0f};
-        //glMatrixMode(GL_MODELVIEW);
-        //glLoadMatrixf(m);
-        //// VP z fix
-        //glTranslatef(0, 0, 1-zscale);
-        //glScalef(1, 1*1, zscale);
-
+/*
+        float m[4*4] = {1.0f, 0.0f, 0.0f, 0.0f,
+          0.0f,-1.0f, 0.0f, 0.0f,
+          0.0f, 0.0f, 1.0f, 0.0f,
+          0.0f, 0.0f, 0.0f, 1.0f};
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(m);
+        // VP z fix
+        glTranslatef(0, 0, 1-zscale);
+        glScalef(1, 1*1, zscale);
+*/
         inverted_culling = 1;
         grCullMode(culling_mode);
       }
@@ -1707,8 +1714,6 @@ extern "C" void Android_JNI_SwapWindow();
 FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
 {
-    //glClearColor(1.0f,0.0f,0.0f,1.0f);
-    //glClear(GL_COLOR_BUFFER_BIT);
 //	glFinish();
 //  printf("rendercallback is %p\n", renderCallback);
   if(renderCallback)

@@ -103,7 +103,6 @@ extern "C" {
 #include <stdio.h>
 //#define printf(...)
 #define GL_GLEXT_PROTOTYPES
-//#include <GLES2/gl2.h>
 #include <SDL_opengles2.h>
 #endif // _WIN32
 #include "glide.h"
@@ -295,11 +294,11 @@ grConstantColorValueExt(GrChipID_t    tmu,
  case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: \
    display_warning("framebuffer INCOMPLETE_ATTACHMENT\n");\
    break; \
- case 0x8CD9:  /*GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:*/ \
-   display_warning("framebuffer FRAMEBUFFER_DIMENSIONS\n");\
-   break; \
  case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: \
-   display_warning("framebuffer INCOMPLETE_MISSING_ATTACHMENT\n");\
+   display_warning("framebuffer FRAMEBUFFER_MISSING_ATTACHMENT\n");\
+   break; \
+ case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS: \
+   display_warning("framebuffer FRAMEBUFFER_DIMENSIONS\n");\
    break; \
  default: \
    break; \

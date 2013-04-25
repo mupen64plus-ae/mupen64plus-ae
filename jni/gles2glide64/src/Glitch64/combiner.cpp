@@ -62,11 +62,9 @@ int need_to_compile;
 
 static GLuint fragment_shader_object;
 static GLuint fragment_depth_shader_object;
-static GLuint fragment_bw_shader_object;
 static GLuint vertex_shader_object;
 static GLuint program_object_default;
 static GLuint program_object_depth;
-static GLuint program_object_bw;
 static GLuint program_object;
 static int constant_color_location;
 static int ccolor0_location;
@@ -80,35 +78,31 @@ static int tex1_combiner_ext = 0;
 static int c_combiner_ext = 0;
 static int a_combiner_ext = 0;
 
-//#ifdef SDL_VIDEO_OPENGL
-//#define GLSL_VERSION "120"
-//#else
 #define GLSL_VERSION "100"
-//#endif
 
 #define SHADER_HEADER \
-"#version " GLSL_VERSION "               \n" \
-"#define gl_Color vFrontColor    \n" \
-"#define gl_FrontColor vFrontColor    \n" \
-"#define gl_TexCoord vTexCoord        \n"
+"#version " GLSL_VERSION "          \n" \
+"#define gl_Color vFrontColor       \n" \
+"#define gl_FrontColor vFrontColor  \n" \
+"#define gl_TexCoord vTexCoord      \n"
 
 #define SHADER_VARYING \
-"varying highp vec4 gl_FrontColor;          \n" \
-"varying highp vec4 gl_TexCoord[4];         \n"
+"varying highp vec4 gl_FrontColor;  \n" \
+"varying highp vec4 gl_TexCoord[4]; \n"
 
 static const char* fragment_shader_header =
 SHADER_HEADER
-"precision lowp float;                \n"
-"uniform sampler2D texture0;          \n"
-"uniform sampler2D texture1;          \n"
-"uniform sampler2D ditherTex;         \n"
-"uniform vec4 constant_color;         \n"
-"uniform vec4 ccolor0;                \n"
-"uniform vec4 ccolor1;                \n"
-"uniform vec4 chroma_color;           \n"
-"uniform float lambda;                \n"
-"uniform vec3 fogColor;               \n"
-"uniform float alphaRef;              \n"
+"precision lowp float;             \n"
+"uniform sampler2D texture0;       \n"
+"uniform sampler2D texture1;       \n"
+"uniform sampler2D ditherTex;      \n"
+"uniform vec4 constant_color;      \n"
+"uniform vec4 ccolor0;             \n"
+"uniform vec4 ccolor1;             \n"
+"uniform vec4 chroma_color;        \n"
+"uniform float lambda;             \n"
+"uniform vec3 fogColor;            \n"
+"uniform float alphaRef;           \n"
 SHADER_VARYING
 "                                  \n"
 "void test_chroma(vec4 ctexture1); \n"
@@ -129,16 +123,6 @@ static const char* fragment_shader_dither =
 
 static const char* fragment_shader_default =
 "  gl_FragColor = texture2D(texture0, vec2(gl_TexCoord[0])); \n"
-;
-
-static const char* fragment_shader_depth =
-"  gl_FragDepth = dot(texture2D(texture0, vec2(gl_TexCoord[0])), vec4(32*64*32/65536.0, 64*32/65536.0, 32/65536.0, 0))*0.5 + 0.5; \n"
-;
-
-static const char* fragment_shader_bw =
-"  vec4 readtex0 = texture2D(texture0, vec2(gl_TexCoord[0])); \n"
-"  gl_FragColor = vec4(vec3(readtex0.b),                      \n"
-"                 readtex0.r + readtex0.g * 8.0 / 256.0);     \n"
 ;
 
 static const char* fragment_shader_readtex0color =
@@ -175,49 +159,48 @@ static const char* fragment_shader_fog =
 
 static const char* fragment_shader_end =
 "if(gl_FragColor.a <= alphaRef) {discard;}   \n"
-"                                          \n"
-"}                                         \n"
+"                                \n"
+"}                               \n"
 ;
 
 static const char* vertex_shader =
 SHADER_HEADER
-"#define Z_MAX 65536.0                                                                   \n"
-"attribute highp vec4 aVertex;                                                                 \n"
-"attribute highp vec4 aColor;                                                                  \n"
-"attribute highp vec4 aMultiTexCoord0;                                                         \n"
-"attribute highp vec4 aMultiTexCoord1;                                                         \n"
-"attribute float aFog;                                                         \n"
-"                                                                                        \n"
-"uniform vec3 vertexOffset;                                                              \n" //Moved some calculations from grDrawXXX to shader
-"uniform vec4 textureSizes;                                                              \n" 
-"uniform vec3 fogModeEndScale;                                                           \n" //0 = Mode, 1 = gl_Fog.end, 2 = gl_Fog.scale
-SHADER_VARYING					                                    
-"                                                                                        \n"
-"void main()                                                                             \n"
-"{                                                                                       \n"
-"  float q = aVertex.w;                                                                  \n"
-"  float invertY = vertexOffset.z;                                                       \n" //Usually 1.0 but -1.0 when rendering to a texture (see inverted_culling grRenderBuffer)
-"  gl_Position.x = (aVertex.x - vertexOffset.x) / vertexOffset.x;                        \n"
-"  gl_Position.y = invertY *-(aVertex.y - vertexOffset.y) / vertexOffset.y;              \n"
-"  gl_Position.z = aVertex.z / Z_MAX;                                                    \n"
-"  gl_Position.w = 1.0;                                                                  \n"
-"  gl_Position /= q;                                                                     \n"
-"  gl_FrontColor = aColor.bgra;                                                          \n"
-"                                                                                        \n"
-"  gl_TexCoord[0] = vec4(aMultiTexCoord0.xy / q / textureSizes.xy,0,1);                  \n"
-"  gl_TexCoord[1] = vec4(aMultiTexCoord1.xy / q / textureSizes.zw,0,1);                  \n"
-"                                                                                        \n"
-"  float fogV = (1.0 / mix(q,aFog,fogModeEndScale[0])) / 255.0;                                                         \n"
-"  //if(fogMode == 2) {                                                                    \n"
-"  //  fogV = 1.0 / aFog / 255                                                           \n"
-"  //}                                                                                     \n"
-"                                                                                        \n"
-"  float f = (fogModeEndScale[1] - fogV) * fogModeEndScale[2];                            \n"
-"  f = clamp(f, 0.0, 1.0);                                                               \n"
-"  gl_TexCoord[0].b = f;                                                                 \n" 
-"  gl_TexCoord[2].b = aVertex.x;                                                         \n" 
-"  gl_TexCoord[2].a = aVertex.y;                                                         \n" 
-"}                                                                                       \n" 
+"#define Z_MAX 65536.0                                          \n"
+"attribute highp vec4 aVertex;                                  \n"
+"attribute highp vec4 aColor;                                   \n"
+"attribute highp vec4 aMultiTexCoord0;                          \n"
+"attribute highp vec4 aMultiTexCoord1;                          \n"
+"attribute float aFog;                                          \n"
+"uniform vec3 vertexOffset;                                     \n" //Moved some calculations from grDrawXXX to shader
+"uniform vec4 textureSizes;                                     \n" 
+"uniform vec3 fogModeEndScale;                                  \n" //0 = Mode, 1 = gl_Fog.end, 2 = gl_Fog.scale
+SHADER_VARYING
+"                                                               \n"
+"void main()                                                    \n"
+"{                                                              \n"
+"  float q = aVertex.w;                                                     \n"
+"  float invertY = vertexOffset.z;                                          \n" //Usually 1.0 but -1.0 when rendering to a texture (see inverted_culling grRenderBuffer)
+"  gl_Position.x = (aVertex.x - vertexOffset.x) / vertexOffset.x;           \n"
+"  gl_Position.y = invertY *-(aVertex.y - vertexOffset.y) / vertexOffset.y; \n"
+"  gl_Position.z = aVertex.z / Z_MAX;                                       \n"
+"  gl_Position.w = 1.0;                                                     \n"
+"  gl_Position /= q;                                                        \n"
+"  gl_FrontColor = aColor.bgra;                                             \n"
+"                                                                           \n"
+"  gl_TexCoord[0] = vec4(aMultiTexCoord0.xy / q / textureSizes.xy,0,1);     \n"
+"  gl_TexCoord[1] = vec4(aMultiTexCoord1.xy / q / textureSizes.zw,0,1);     \n"
+"                                                                           \n"
+"  float fogV = (1.0 / mix(q,aFog,fogModeEndScale[0])) / 255.0;             \n"
+"  //if(fogMode == 2) {                                                     \n"
+"  //  fogV = 1.0 / aFog / 255                                              \n"
+"  //}                                                                      \n"
+"                                                                           \n"
+"  float f = (fogModeEndScale[1] - fogV) * fogModeEndScale[2];              \n"
+"  f = clamp(f, 0.0, 1.0);                                                  \n"
+"  gl_TexCoord[0].b = f;                                                    \n"
+"  gl_TexCoord[2].b = aVertex.x;                                            \n" 
+"  gl_TexCoord[2].a = aVertex.y;                                            \n" 
+"}                                                                          \n" 
 ;
 
 static char fragment_shader_color_combiner[1024];
@@ -272,7 +255,6 @@ void init_combiner()
   int texture1_location;
   char *fragment_shader;
   int log_length;
-  int success;
 
 #ifndef ANDROID
   // depth shader
@@ -313,7 +295,6 @@ void init_combiner()
   glShaderSource(vertex_shader_object, 1, &vertex_shader, NULL);
   glCompileShader(vertex_shader_object);
   check_compile(vertex_shader_object);
-
 
   // depth program
   program_object = glCreateProgram();
@@ -497,22 +478,21 @@ void disable_textureSizes()
 
 void compile_shader()
 {
-int texture0_location;
+  int texture0_location;
   int texture1_location;
   int ditherTex_location;
-   int vertexOffset_location;
+  int vertexOffset_location;
   int textureSizes_location;
   char *fragment_shader;
   int i;
   int chroma_color_location;
   int log_length;
-  int success;
 
   need_to_compile = 0;
 
   for(i=0; i<number_of_programs; i++)
   {
-	  shader_program_key prog = shader_programs[i];
+    shader_program_key prog = shader_programs[i];
     if(prog.color_combiner == color_combiner_key &&
       prog.alpha_combiner == alpha_combiner_key &&
       prog.texture0_combiner == texture0_combiner_key &&
@@ -536,6 +516,7 @@ int texture0_location;
     shader_programs = (shader_program_key*)realloc(shader_programs, (number_of_programs+1)*sizeof(shader_program_key));
   else
     shader_programs = (shader_program_key*)malloc(sizeof(shader_program_key));
+  //printf("number of shaders %d\n", number_of_programs);
 
   shader_programs[number_of_programs].color_combiner = color_combiner_key;
   shader_programs[number_of_programs].alpha_combiner = alpha_combiner_key;
@@ -586,7 +567,6 @@ int texture0_location;
   program_object = glCreateProgram();
   shader_programs[number_of_programs].program_object = program_object;
 
-  
   glBindAttribLocation(program_object,POSITION_ATTR,"aPosition");
   glBindAttribLocation(program_object,COLOUR_ATTR,"aColor");
   glBindAttribLocation(program_object,TEXCOORD_0_ATTR,"aMultiTexCoord0");
@@ -630,7 +610,7 @@ void set_copy_shader()
   texture0_location = glGetUniformLocation(program_object_default, "texture0");
   glUniform1i(texture0_location, 0);
 
-  alphaRef_location = glGetUniformLocation(program_object_default,"alphaRef");
+  alphaRef_location = glGetUniformLocation(program_object_default, "alphaRef");
   if(alphaRef_location != -1)
       glUniform1f(alphaRef_location,alpha_test ? alpha_ref/255.0f : -1.0f);
 }
@@ -644,7 +624,7 @@ void set_depth_shader()
   texture0_location = glGetUniformLocation(program_object_depth, "texture0");
   glUniform1i(texture0_location, 0);
 
-  alphaRef_location = glGetUniformLocation(program_object_depth,"alphaRef");
+  alphaRef_location = glGetUniformLocation(program_object_depth, "alphaRef");
   if(alphaRef_location != -1)
       glUniform1f(alphaRef_location,alpha_test ? alpha_ref/255.0f : -1.0f);
 }
@@ -857,40 +837,42 @@ grColorCombine(
   need_to_compile = 1;
 }
 
-//int setOtherAlphaSource(int other)
-//{
-//  switch(other)
-//  {
-//  case GR_COMBINE_OTHER_ITERATED:
-//    return GL_PRIMARY_COLOR_ARB;
-//    break;
-//  case GR_COMBINE_OTHER_TEXTURE:
-//    return GL_PREVIOUS_ARB;
-//    break;
-//  case GR_COMBINE_OTHER_CONSTANT:
-//    return GL_CONSTANT_ARB;
-//    break;
-//  default:
-//    display_warning("unknwown other alpha source : %x", other);
-//  }
-//  return 0;
-//}
-//
-//int setLocalAlphaSource(int local)
-//{
-//  switch(local)
-//  {
-//  case GR_COMBINE_LOCAL_ITERATED:
-//    return GL_PRIMARY_COLOR_ARB;
-//    break;
-//  case GR_COMBINE_LOCAL_CONSTANT:
-//    return GL_CONSTANT_ARB;
-//    break;
-//  default:
-//    display_warning("unknwown local alpha source : %x", local);
-//  }
-//  return 0;
-//}
+/*
+int setOtherAlphaSource(int other)
+{
+  switch(other)
+  {
+  case GR_COMBINE_OTHER_ITERATED:
+    return GL_PRIMARY_COLOR_ARB;
+    break;
+  case GR_COMBINE_OTHER_TEXTURE:
+    return GL_PREVIOUS_ARB;
+    break;
+  case GR_COMBINE_OTHER_CONSTANT:
+    return GL_CONSTANT_ARB;
+    break;
+  default:
+    display_warning("unknwown other alpha source : %x", other);
+  }
+  return 0;
+}
+
+int setLocalAlphaSource(int local)
+{
+  switch(local)
+  {
+  case GR_COMBINE_LOCAL_ITERATED:
+    return GL_PRIMARY_COLOR_ARB;
+    break;
+  case GR_COMBINE_LOCAL_CONSTANT:
+    return GL_CONSTANT_ARB;
+    break;
+  default:
+    display_warning("unknwown local alpha source : %x", local);
+  }
+  return 0;
+}
+*/
 
 void writeGLSLAlphaOther(int other)
 {
@@ -1528,10 +1510,13 @@ grAlphaBlendFunction(
     display_warning("grAlphaBlendFunction : alpha_df = %x", alpha_df);
   }
   glEnable(GL_BLEND);
-  //if (blend_func_separate_support)
-    glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
-  //else
-  //  glBlendFunc(sfactorRGB, dfactorRGB);
+  glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
+/*
+  if (blend_func_separate_support)
+    glBlendFuncSeparateEXT(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
+  else
+    glBlendFunc(sfactorRGB, dfactorRGB);
+*/
 }
 
 FX_ENTRY void FX_CALL
@@ -1608,13 +1593,14 @@ guFogGenerateLinear(GrFog_t *fogtable,
                     float nearZ, float farZ )
 {
   LOG("guFogGenerateLinear(%f,%f)\r\n", nearZ, farZ);
-//  glFogi(GL_FOG_MODE, GL_LINEAR);
-//  glFogi(GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT);
-//  glFogf(GL_FOG_START, nearZ / 255.0f);
-//  glFogf(GL_FOG_END, farZ / 255.0f);
+/*
+  glFogi(GL_FOG_MODE, GL_LINEAR);
+  glFogi(GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT);
+  glFogf(GL_FOG_START, nearZ / 255.0f);
+  glFogf(GL_FOG_END, farZ / 255.0f);
+*/
   fogStart = nearZ / 255.0f;
   fogEnd = farZ / 255.0f;
-
 }
 
 FX_ENTRY void FX_CALL 
@@ -1646,7 +1632,7 @@ grFogColorValue( GrColor_t fogcolor )
     display_warning("grFogColorValue: unknown color format : %x", lfb_color_fmt);
   }
 
-  //glFogfv(GL_FOG_COLOR, fogColor);
+  //glFogfv(GL_FOG_COLOR, color); 
 }
 
 // chroma
@@ -1704,7 +1690,7 @@ static void setPattern()
   GLubyte stip[32*4];
   for(i=0; i<32; i++)
   {
-    unsigned int val = rand() << 17 | (rand() & 1) << 16 | rand() << 1 | rand() & 1;
+    unsigned int val = (rand() << 17) | ((rand() & 1) << 16) | (rand() << 1) | (rand() & 1);
     stip[i*4+0] = (val >> 24) & 0xFF;
     stip[i*4+1] = (val >> 16) & 0xFF;
     stip[i*4+2] = (val >> 8) & 0xFF;
