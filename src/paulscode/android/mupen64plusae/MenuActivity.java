@@ -192,6 +192,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Initialize the OUYA interface if running on OUYA
         if( OUYAInterface.IS_OUYA_HARDWARE )
             OUYAInterface.init( this );
+        
+        // Popup a warning if the installation appears to be corrupt
+        if( !mAppData.isValidInstallation )
+        {
+            CharSequence title = getText( R.string.invalidInstall_title );
+            CharSequence message = getText( R.string.invalidInstall_message );
+            new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+        }
     }
     
     @Override

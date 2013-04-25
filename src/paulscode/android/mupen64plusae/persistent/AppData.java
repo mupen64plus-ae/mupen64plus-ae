@@ -143,6 +143,9 @@ public class AppData
     /** The name of the error log file. */
     public final String error_log;
     
+    /** Whether the installation is valid. */
+    public final boolean isValidInstallation;
+    
     /** The usable size of the screen, in pixels, not including the window decor. */
     public final Point screenSize;
     
@@ -213,6 +216,21 @@ public class AppData
         mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
         gles2n64_conf = dataDir + "/data/gles2n64.conf";
         error_log = dataDir + "/error.log";
+        
+        // Installation validity
+        // @formatter:off
+        isValidInstallation =
+                libraryExists( "audio-sdl" )        &&
+                libraryExists( "core" )             &&
+                libraryExists( "front-end" )        &&
+                libraryExists( "gles2n64" )         &&
+                libraryExists( "gles2rice" )        &&
+                libraryExists( "input-android" )    &&
+                libraryExists( "rsp-hle-nosound" )  &&
+                libraryExists( "rsp-hle" )          &&
+                libraryExists( "SDL" )              &&
+                libraryExists( "xperia-touchpad" );
+        // @formatter:on
         
         // Screen size
         final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
@@ -398,6 +416,12 @@ public class AppData
     private void putString( String key, String value )
     {
         mPreferences.edit().putString( key, value ).commit();
+    }
+    
+    private boolean libraryExists( String undecoratedName )
+    {
+        File library = new File( libsDir + "lib" + undecoratedName + ".so" );
+        return library.exists();
     }
     
     /**
