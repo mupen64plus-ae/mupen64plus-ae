@@ -278,6 +278,7 @@
   <string name="confirmUnmapAll_message">%1$s için tüm girdilerin eşlemelerini kaldır?</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Değişiklik kaydı</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">dosya adı</string>
   <!--Asset Extractor-->

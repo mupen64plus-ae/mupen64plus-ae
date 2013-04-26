@@ -335,6 +335,7 @@
   <string name="confirmMigrateSlotSaves_message">Êtes-vous sûr de vouloir copier vos anciens emplacements de sauvegarde ? Un backup sera effectué si nécessaire.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Notes de version</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nomdefichier</string>
   <!--Asset Extractor-->

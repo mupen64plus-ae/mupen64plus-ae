@@ -56,13 +56,13 @@
   <!--Something happening (typically use '-ing' and '…')-->
   <string name="toast_rebuildingCheats">Cheat-Datenbank wird neu aufgebaut…</string>
   <string name="toast_launchingEmulator">Emulator wird gestartet…</string>
-  <string name="toast_loadingSession">Autom. Speicherung wird fortgesetzt...</string>
+  <string name="toast_loadingSession">Autom. Speicherung wird fortgesetzt…</string>
   <string name="toast_savingSession">Spiel wird autom. gespeichert…</string>
   <string name="toast_loadingSlot">Slot %1$d wird geladen…</string>
   <string name="toast_savingSlot">Slot %1$d wird gespeichert…</string>
   <string name="toast_loadingFile">%1$s wird geladen…</string>
   <string name="toast_savingFile">%1$s wird gespeichert…</string>
-  <string name="toast_overwritingFile">Überschreibe %1$s...</string>
+  <string name="toast_overwritingFile">Überschreibe %1$s…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Nutze nun Slot %1$d.</string>
   <string name="toast_sdInaccessible">SD-Karte nicht verfügbar (Trenne das USB-Kabel und versuche es erneut).</string>
@@ -335,6 +335,7 @@
   <string name="confirmMigrateSlotSaves_message">Bist du sicher, dass du deine alten Slot-Speicherstände kopieren willst? Falls nötig werden Backups erstellt.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Changelog</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">Dateiname</string>
   <!--Asset Extractor-->

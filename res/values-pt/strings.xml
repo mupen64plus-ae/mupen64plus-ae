@@ -335,6 +335,7 @@
   <string name="confirmMigrateSlotSaves_message">Tem certeza que deseja copiar seus jogos antigos? Backups serão feitos se necessário.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Atualizações recentes</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
   <!--Asset Extractor-->

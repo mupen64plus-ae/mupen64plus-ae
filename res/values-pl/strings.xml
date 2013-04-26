@@ -335,6 +335,7 @@
   <string name="confirmMigrateSlotSaves_message">Czy jesteś pewien że chcesz skopiować starsze wersje zapisów gry? W razie konieczności zostanie wykonana kopia zapasowa.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Lista zmian</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nazwa pliku</string>
   <!--Asset Extractor-->

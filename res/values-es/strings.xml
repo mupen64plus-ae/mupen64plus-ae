@@ -331,6 +331,7 @@
   <string name="confirmMigrateSlotSaves_message">¿Estás seguro de que quieres copiar tus slots de guardado viejos? Se crearán respaldos de ser necesario.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Registro de cambios</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nombre de archivo</string>
   <!--Asset Extractor-->

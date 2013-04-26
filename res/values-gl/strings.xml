@@ -274,6 +274,7 @@
   <string name="confirmMigrateSlotSaves_message">Queres copiar os teus slot de gardado vellos? Faranse respaldos de ser necesario.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Rexistro de modificacións</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
   <!--Asset Extractor-->

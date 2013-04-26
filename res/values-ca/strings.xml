@@ -317,6 +317,7 @@
   <string name="confirmMigrateSlotSaves_message">Vols copiar els teus antics slots de guardat? Si cal es crearan còpies de seguretat.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Registre de canvis</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nom de fitxer</string>
   <!--Asset Extractor-->
