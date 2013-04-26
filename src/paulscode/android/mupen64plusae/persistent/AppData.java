@@ -207,7 +207,7 @@ public class AppData
             dataDir = storageDir;
         }
         oldDataDir = storageDir + "/Android/data/trev.android.mupen64plusae";
-        libsDir = "/data/data/" + packageName + "/lib/";
+        libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
         touchscreenLayoutsDir = dataDir + "/skins/touchscreens/";
         touchpadLayoutsDir = dataDir + "/skins/touchpads/";
         fontsDir = dataDir + "/skins/fonts/";
