@@ -95,6 +95,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String PLUGIN_CORE = "pluginCore";
     private static final String R4300_EMULATOR = "r4300Emulator";
     private static final String VIDEO_POSITION = "videoPosition";
+    private static final String VIDEO_ACTION_BAR_TRANSPARENCY = "videoActionBarTransparency";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String NAVIGATION_MODE = "navigationMode";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
@@ -182,6 +183,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         if( !mUserPrefs.isGles2RiceEnabled )
             PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
+        
+        if( !AppData.IS_HONEYCOMB || mUserPrefs.isOuyaMode )
+            PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_ACTION_BAR_TRANSPARENCY );
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
