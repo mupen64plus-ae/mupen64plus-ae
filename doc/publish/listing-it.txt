@@ -24,14 +24,17 @@ I 99 CENTESIMI SONO SOLO PER LE DONAZIONI
 
 Mupen64Plus, Android Edition (AE) è un emulatore della N64 per Android. È attualmente in beta testing, che significa che è un work in progress. Ci sono ancora molti problemi grafici, di velocità e audio, anche su dispositivi moderni. Visita www.paulscode.com per essere coinvolto nello sviluppo e testing, ed anche alla correzione dei bug e FAQ.
 
-Questa è l'applicazione ufficiale, che fu rimossa un paio di giorni fa dopo che alcuni competitori hanno compilato delle false richieste di rimozione per il violamento della DMCA. Trev (Keowsktech) pubblicò l'app sul suo account per un paio di mesi mentre stavo lavorando per i problemi di account con Google. Ora che il mio account è stato ripristinato, lui rimuoverà la sua app. Tutti i futuri aggiornamenti verranno pubblicati da questo account.
+Al fine di evitare problemi potenziali di copyright relativi alle immagini dei giochi, ho deciso di usare solo immagini di giochi e demo a dominio pubblico. Tuttavia, se l'app viene rimossa un'altra volta dal negozio, potrai comunque ricevere aggiornamenti futuri gratuiti su paulscode.com
 
-Credo che parte del motivo del ritardo nella lavorazione delle mie contro richieste della DMCA erano i potenziali problemi di copyright relative alle immagini dei giochi che avevo pubblicato sull'app. Ho deciso di usare solo giochi e demo a dominio pubblico per le immagini in futuro, per prevenire che questo problema si ripeti. Tuttavia, se l'app viene rimossa un'altra volta dal negozio, potrai comunque ricevere aggiornamenti futuri gratuiti su paulscode.com
-
-Questa app ha una licenza GNU GPL v2, e il codice sorgente completo è disponibile nel deposito GIT a https://github.com/paulscode/mupen64plus-ae Se qualsiasi sviluppatore vorrebbe avere l'accesso in scrittura al deposito, per favore contattami (Paul) sul forum di supporto. Se hai bisogno di ramificare il progetto, fammi sapere e ti posso aiutare a configurare.
+Questa app ha una licenza GNU GPL v3 e il codice sorgente completo è disponibile nel deposito GIT a https://github.com/paulscode/mupen64plus-ae Se qualsiasi sviluppatore vorrebbe avere l'accesso in scrittura al deposito, per favore contattami (Paul) sul forum di supporto. Se hai bisogno di ramificare il progetto, fammi sapere e ti posso aiutare a configurare.
 
 OTTIMIZZATO PER XPERIA PLAY
 - Input analogico dal touchpad
+
+PERMESSI
+Internet - Internet è usato per segnalare crash. Non scarica virus, spyware, o ad di qualsiasi tipo, e non ottiene nessuna informazione privata. Le normali tariffe dati si applicano
+Archiviazione su SD - Lo spazio del dispositivo è usato per scrivere i salvataggi e i profili personalizzati di input
+Vibrazione - Se il tuo dispositivo lo supporta, la vibrazione è usata per l'emulazione del Rumble Pak e il feedback aptico dei tasti
 
 PER INIZIARE
 - Trasferisci ROM in qualsiasi posto nella tua memoria interna/scheda SD

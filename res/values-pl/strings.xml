@@ -11,14 +11,27 @@
   <string name="menuItem_fileSave">Zapisz do pliku…</string>
   <string name="menuItem_fileLoad">Załaduj z pliku…</string>
   <string name="menuItem_setSpeed">Szybkość gry</string>
+  <string name="menuItem_paks">Controller Paki</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Gracz 1: Pusty</string>
+  <string name="menuItem_pak1_mem">Gracz 1: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Gracz 1: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Gracz 2: Pusty</string>
+  <string name="menuItem_pak2_mem">Gracz 2: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Gracz 2: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Gracz 3: Pusty</string>
+  <string name="menuItem_pak3_mem">Gracz 3: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Gracz 3: Rumble Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Gracz 4: Pusty</string>
+  <string name="menuItem_pak4_mem">Gracz 4: Memory Pak</string>
   <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Gracz 4: Rumble Pak</string>
   <!--capitalize since trademark-->
   <string name="menuItem_setIme">Zmień IME</string>
   <string name="menuItem_exit">Wyjście</string>
@@ -28,6 +41,7 @@
   <string name="menuItem_load">Ładuję…</string>
   <string name="menuItem_save">Zapisuję…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">Adapter USB dla kontrolera N64</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
@@ -155,8 +169,8 @@
   <string name="gles2RiceFastTextureCrc_summary">Poprawia szybkość gry kosztem jakości elementów 2D</string>
   <string name="gles2RiceFastTexture_title">Szybkie ładowanie tekstur</string>
   <string name="gles2RiceFastTexture_summary">Poprawia przejścia okręgów</string>
-  <string name="gles2RiceForceTextureFilter_title">Wymusza filtrowanie tekstur</string>
-  <string name="gles2RiceForceTextureFilter_summary">Naprawia rozpikselowane tekstury</string>
+  <string name="gles2RiceForceTextureFilter_title">Filtrowanie tekstur</string>
+  <string name="gles2RiceForceTextureFilter_summary">Naprawia rozpikselowane tekstury i smużenie na odległych obiektach</string>
   <string name="gles2RiceHiResTextures_title">Tekstury wysokiej rozdzielczości</string>
   <string name="gles2RiceHiResTextures_summary">Użyj importowanej paczki tekstur</string>
   <string name="audioSwapChannels_title">Zamień kanały audio</string>
@@ -171,9 +185,17 @@
   <string name="touchscreenRefresh_entryNever">Nigdy</string>
   <string name="touchscreenRefresh_entryOccasionally">Okazjonalnie</string>
   <string name="touchscreenRefresh_entryFrequently">Często</string>
+  <string name="touchscreenStyle_title">Styl przycisku</string>
+  <string name="touchscreenStyle_entryOutline">Krawędzie zewnętrzne</string>
+  <string name="touchscreenStyle_entryShaded">Zacienione</string>
+  <string name="touchscreenHeight_title">Pionowy rozstaw przycisków</string>
+  <string name="touchscreenHeight_entryAuto">Auto</string>
+  <string name="touchscreenHeight_entryFullHeight">Pełna wysokość</string>
+  <string name="touchscreenHeight_entryHalfHeight">Połowa wysokości</string>
   <string name="touchscreenLayout_title">Ułożenie klawiszy ekranowych</string>
   <string name="touchscreenLayout_entryAnalog">Analogowe (dzięki roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Cyfrowe (dzięki roymustang16)</string>
+  <string name="touchscreenLayout_entryAll">Oba (przez roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Własne (zobacz http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Układ touchpada</string>
   <string name="touchpadLayout_entryDefault">Lewy pad: Drążek analogowy; Prawy pad: Przyciski C</string>
@@ -216,10 +238,19 @@
   <string name="gles2RiceMipmapping_entryNearest">Najbliższy punkt</string>
   <string name="gles2RiceMipmapping_entryBilinear">Dwuliniowe</string>
   <string name="gles2RiceMipmapping_entryTrilinear">Trójliniowe</string>
-  <string name="gles2RiceTextureEnhancement_title">Upscaling tekstur</string>
+  <string name="gles2RiceScreenUpdate_title">Metoda odświeżania ekranu</string>
+  <string name="gles2RiceScreenUpdate_entryRomDefault">Domyślne dla ROMu</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">Aktualizacja źródła VI</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">Zmiana źródła VI</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">Zmiana CI</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Zmiana pierwszego CI</string>
+  <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Wstępne rysowanie prymitywne</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Przed wyczyszczeniem ekranu</string>
+  <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Po wyrysowaniu ekranu</string>
+  <string name="gles2RiceTextureEnhancement_title">Upscaling/ulepszanie tekstur</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Żadne</string>
   <string name="gles2RiceTextureEnhancement_entryScale2x">Skalowanie 2x</string>
-  <string name="gles2RiceTextureEnhancement_entry2xsai">Filtr 2xSal</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">Filtr 2x Sal</string>
   <string name="gles2RiceTextureEnhancement_entryHq2x">Filtr HQ2x</string>
   <string name="gles2RiceTextureEnhancement_entryLq2x">Filtr LQ2x</string>
   <string name="gles2RiceTextureEnhancement_entryHq4x">Filtr HQ4x</string>
@@ -238,12 +269,13 @@
   <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Dźwięk</string>
   <string name="pluginAudio_entryNone">Brak (wyłączony dźwięk)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Androidowy port Mupen64Plus przez Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Urządzenie wejścia</string>
   <string name="pluginInput_entryNone">Brak (wyłączony kontroler)</string>
+  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Brak (RSP wyłączone)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
+  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Androidowy port Mupen64Plus przez Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(Bez przetwarzania dźwięku, speed hack od Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Rdzeń emulacji</string>
   <string name="pluginCore_entryV110">core, v1.10\n<small>(Androidowy port Mupen64Plus od Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
@@ -264,8 +296,9 @@
   <string name="acraUserEmail_title">Informacje kontaktowe</string>
   <string name="acraUserEmail_summary">Twoja nazwa użytkownika na paulscode.com (nie wymagane)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
-  <string name="touchscreenTransparency_title">Przejrzystość ekranu dotykowego</string>
-  <string name="videoActionBarTransparency_title">Przezroczystość paska</string>
+  <string name="touchscreenTransparency_title">Przejrzystość przycisków</string>
+  <string name="touchscreenScale_title">Skala przycisków</string>
+  <string name="videoActionBarTransparency_title">Przejrzystość paska akcji</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

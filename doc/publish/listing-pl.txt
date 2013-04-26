@@ -13,7 +13,7 @@ Emulator Nintendo 64 dla systemu Android. Mupen64Plus AE jest w fazie beta.
 [App Description]
 
 
-APLIKACJA NIE JEST DOSTARCZANA RAZEM Z GRAMI
+TA APLIKACJA NIE JEST DOSTARCZANA RAZEM Z GRAMI
 - Musisz posiadać prawa to danego ROMu przed jego uruchomieniem!
 - Duża liczba gier/dem na licencji Public Domain jest dostępna na stronie www.pdroms.de
 
@@ -24,14 +24,17 @@ APLIKACJA NIE JEST DOSTARCZANA RAZEM Z GRAMI
 
 Mupen64Plus, Android Edition (AE) to emulator N64 na platformę Android. W tej chwili wciąż jest w fazie beta-testów, co oznacza, że prace nadal są w toku. Wciąż jeszcze występuje wiele problemów graficznych, dźwiękowych oraz lagów, nawet na nowych urządzeniach. Odwiedź www.paulscode.com aby wspomóc rozwój i testowanie aplikacji, jak i poprawianie błędów i pisanie FAQ.
 
-To jest oficjalna aplikacja, która została zdjęta kilka miesięcy temu, gdy nasi konkurenci wypełnili fałszywe zgłoszenie o naruszeniu regulaminu. Trev (Keowsktech) opublikował tą aplikację na swoim koncie na kilka miesięcy, podczas gdy ja pracowałem nad odzyskaniem konta Google. Teraz, gdy moje konto zostało przywrócone, Trev zdejmie swoje wydanie w najbliższym czasie. Wszystkie następne aktualizacje będą publikowane na tym koncie.
+W celu uniknięcia potencjalnych problemów z prawami autorskimi, zdecydowałem się wykorzystać wyłącznie gry na licencji public domain i dema do zrzutów ekranu. Jednakże, jeśli aplikacja znowu zostanie usunięta z Marketu, nadal będzie istniała możliwość pobierania darmowych aktualizacji z paulscode.com.
 
-Wydaje mi się, że powodem dla którego proces przywrócenia konta był tak długi było użycie zrzutów ekranu, które mogły być chronione prawami autorskimi. Dlatego w przyszłości będę używać zrzutów ekranów gier dostępnych na licencji Public Domain i dem aby ustrzec się powrotu tych problemów w przyszłości. Jednak, jeśli aplikacja ponownie zostanie usunięta, będzie można ją pobrać z mojej strony internetowej paulscode.com
-
-Ta aplikacja jest na licencji GNU GPL v2, a jej kod źródłowy jest dostępny na repozytorium GIT pod adresem https://github.com/paulscode/mupen64plus-ae Jeśli któryś z deweloperów chciałby uzyskać prawo zapisu, proszę się ze mną skontaktować (Paul) na forum. Jeśli potrzebujesz pomocy przy kodzie programu, po prostu daj mi znać, a ja postaram się ci pomóc.
+Ta aplikacja jest na licencji GNU GPL v3 i pełny kod źródłowy jest dostępny poprzez publiczne repozytorium GIT pod adresem https://github.com/paulscode/mupen64plus-ae. Jeżeli jacykolwiek deweloperzy chcieliby uzyskać dostęp do repozytorium, proszę napisać do mnie (Paul) na forum wsparcia technicznego. Jeżeli potrzebujesz pomocy w rozgałęzianiu projektu, daj mi znać, a pomogę Ci wszystko skonfigurować.
 
 ZOPTYMALIZOWANE DLA XPERIA PLAY
 - Obsługa drążka analogowego z poziomu touchpada!
+
+UPRAWNIENIA
+POŁĄCZENIA SIECIOWE - Połączenie używane jest w celu wysyłania raportów błędów. Aplikacja nie pobiera wirusów, programów szpiegujących, ani jakichkolwiek reklam, oraz nie zbiera informacji prywatnych. Obwiązują standardowe ceny przesyłu danych.
+MODYFIKOWANIE LUB USUWANIE ZAWARTOŚCI KARTY SD - Karta jest używana do zapisu stanów gry oraz własnych układów klawiszy.
+STEROWANIE WIBRACJAMI - Jeżeli Twoje urządzenie wspiera tą funkcję, wibracje są używane w celu emulacji Rumble Paka i sprzężenia zwrotnego przycisków.
 
 JAK ZACZĄĆ GRAĆ
 - Przenieś ROMy w dowolne miejsce w pamięci wewnętrznej albo na karcie SD
@@ -39,5 +42,5 @@ JAK ZACZĄĆ GRAĆ
 - Domyślna ścieżka karty SD na większości urządzeń to /mnt/sdcard/
 - Gry muszą posiadać rozszerzenie .n64, .v64, .z64, ewentualnie mogą się znajdować w archiwach .zip
 
-Pomoc, FAQ, Poprawki, Instrukcja dla kopii zapasowych:
+POMOC, FAQ, POPRAWKI, INSTRUKCJE TWORZENIA KOPII ZAPASOWYCH:
 - http://www.paulscode.com

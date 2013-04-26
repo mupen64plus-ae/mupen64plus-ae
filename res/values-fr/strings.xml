@@ -185,9 +185,17 @@
   <string name="touchscreenRefresh_entryNever">Jamais</string>
   <string name="touchscreenRefresh_entryOccasionally">Parfois</string>
   <string name="touchscreenRefresh_entryFrequently">Fréquemment</string>
+  <string name="touchscreenStyle_title">Apparence des boutons</string>
+  <string name="touchscreenStyle_entryOutline">Contours</string>
+  <string name="touchscreenStyle_entryShaded">Ombres</string>
+  <string name="touchscreenHeight_title">Espacement vertical des boutons</string>
+  <string name="touchscreenHeight_entryAuto">Auto</string>
+  <string name="touchscreenHeight_entryFullHeight">Hauteur complète</string>
+  <string name="touchscreenHeight_entryHalfHeight">Moitié de la hauteur</string>
   <string name="touchscreenLayout_title">Thème de commandes virtuelles</string>
   <string name="touchscreenLayout_entryAnalog">Analogique (par roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Numérique (par roymustang16)</string>
+  <string name="touchscreenLayout_entryAll">Les deux (par roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Personnalisé (voir http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Disposition du pavé tactile</string>
   <string name="touchpadLayout_entryDefault">Pavé de gauche : stick analogique - Pavé de droite : boutons C</string>
@@ -289,6 +297,7 @@
   <string name="acraUserEmail_summary">Votre nom d\'utilisateur paulscode.com (facultatif)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Transparence des commandes virtuelles</string>
+  <string name="touchscreenScale_title">Échelle des boutons</string>
   <string name="videoActionBarTransparency_title">Opacité de la barre d\'action</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->

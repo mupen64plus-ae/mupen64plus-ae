@@ -25,14 +25,18 @@ La version à 0.74€/0.99$ ne sert qu'à rémunérer l'équipe et soutenir le d
 Mupen64Plus Android Edition (AE) est un émulateur Nintendo 64 pour Android. Cette application est actuellement en phase de beta-test, ce qui signifie qu'elle est continuellement améliorée. Toutefois de nombreux problèmes subsistent en termes de visuels, lag ou audio et ce, même sur des appareil Android modernes.
 Veuillez visiter wwww.paulscode.com pour intégrer l'équipe de développement ou de test ainsi que pour avoir accès aux listes de correction des bugs et aux questions fréquemment posées.
 
-Ceci est l'application officielle, qui a été retirée de Google Play précédemment. L'application a été publiée sous le compte "Keowsktech" pendant quelques mois le temps de résoudre un problème de compte avec Google. Le compte "Keowsktech" va cesser de supporter cette appli, toutes les prochaines mises à jour seront publiées sur le compte de Paul Lamb.
+Pour éviter toute violation de copyright, nous avons décidé de n'utiliser que des captures d'écran basées sur des jeux et démos tombés dans le domaine publique. Si l'application venait à être retirée de Google Play pour une raison ou une autre, vous pourrez toujours obtenir la dernière mise à jour gratuitement sur paulscode.com.
 
-Nous pensons que l'une des raisons qui a retardé la réhabilitation du compte de cette application est une possible utilisation frauduleuse de captures d'écran de jeux sous licence. Toutes les captures d'écran sont désormais basées sur des jeux et démos tombés dans le domaine publique. Si l'application venait à être retirée de Google Play pour une raison ou une autre, vous pourrez toujours obtenir la dernière mise à jour gratuitement sur paulscode.com.
-
-Cette application est sous licence GNU GPL v2, et le code source complet est disponible grâce au dépôt GIT public https://github.com/paulscode/mupen64plus-ae. Si un développeur désire l'accès en écriture au dépôt, merci d'entrer en contact avec le développeur principal (Paul) sur le forum. Si vous avez besoin d'aide pour orienter le projet, merci de le lui faire savoir afin qu'il puisse vous aider à démarrer.
+Cette application est licenciée sous GNU GPL v3, et le code source complet est disponible grace au référentiel GIT public https://github.com/paulscode/mupen64plus-ae. Si un développeur désire l'accès en écriture au référentiel, merci d'entrer en contact avec le développeur principal (Paul) sur le forum. Si vous avez besoin d'aide pour orienter le projet, merci de le lui faire savoir afin qu'il puisse vous aider à démarrer.
 
 APPLICATION OPTIMISÉE POUR LE XPERIA PLAY
 -Utilisez le pavé tactile comme stick analogique !
+
+AUTORISATIONS
+Accès à internet - L'accès à internet est utilisé pour envoyé les rapports de plantage. Aucun virus, spyware ou publicité d'aucune sorte ne sera téléchargé. Aucune donnée personnelle ne sera collectée. Assurez vous d'avoir un abonnement autorisant l'accès à internet.
+Modifier ou sauvegarder sur périphérique de stockage - 
+Permet à l'application d'enregistrer les sauvegardes et profils personnalisés sur le périphérique de stockage.
+Vibrations - Si votre appareil le supporte, les vibrations seront utilisées pour émuler le Rumble Pak et offrir un retour haptique.
 
 GUIDE D'UTILISATION
 -Transférez vos ROMs sur votre appareil (mémoire interne ou carte SD)
