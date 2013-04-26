@@ -628,9 +628,9 @@ grTexDownloadMipMap( GrChipID_t tmu,
   }
 
   if (nbTextureUnits <= 2)
-    glActiveTexture(GL_TEXTURE0);
-  else
     glActiveTexture(GL_TEXTURE1);
+  else
+    glActiveTexture(GL_TEXTURE2);
 
   switch(info->format)
   {
