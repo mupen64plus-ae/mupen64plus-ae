@@ -160,15 +160,35 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
                 return false;
             }
             
-            // Get an EGL frame buffer configuration that is compatible with the display and specification
-            final EGLConfig[] configs = new EGLConfig[1];
-            final int[] num_config = new int[1];
-            if( !egl.eglChooseConfig( display, configSpec, configs, 1, num_config ) || num_config[0] == 0 )
+            // Get the number of frame buffer configurations that are compatible with the display and specification
+            final int[] num_config_out = new int[1];
+            egl.eglChooseConfig( display, configSpec, null, 0, num_config_out );
+            final int num_config = num_config_out[0];
+            
+            // Get the compatible EGL frame buffer configurations
+            final EGLConfig[] configs = new EGLConfig[num_config];
+            boolean success = egl.eglChooseConfig( display, configSpec, configs, num_config, null );
+            int bestConfig = 0;
+            for( int i = 0; i < num_config; i++ )
+            {
+                Log.i( "GameSurface", "Config[" + i + "]:"
+                        + configAttribString( egl, display, configs[i], " Buf", EGL10.EGL_BUFFER_SIZE )
+                        + configAttribString( egl, display, configs[i], " R", EGL10.EGL_RED_SIZE )
+                        + configAttribString( egl, display, configs[i], " G", EGL10.EGL_GREEN_SIZE )
+                        + configAttribString( egl, display, configs[i], " B", EGL10.EGL_BLUE_SIZE )
+                        + configAttribString( egl, display, configs[i], " A", EGL10.EGL_ALPHA_SIZE )
+                        + configAttribString( egl, display, configs[i], " D", EGL10.EGL_DEPTH_SIZE )
+                        + configAttribString( egl, display, configs[i], " S", EGL10.EGL_STENCIL_SIZE )
+                        );
+            }
+            if( !success || num_config == 0 )
             {
                 Log.e( "GameSurface", "Couldn't find compatible EGL frame buffer configuration" );
                 return false;
             }
-            EGLConfig config = configs[0];
+            
+            // Select the best configuration
+            EGLConfig config = configs[bestConfig];
             
             // Create an EGL rendering context and ensure that it supports the requested GLES version, display
             // connection, and frame buffer configuration (http://stackoverflow.com/a/5930935/254218)
@@ -210,6 +230,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             }
             return false;
         }
+    }
+    
+    private static String configAttribString( EGL10 egl, EGLDisplay display, EGLConfig config, String prefix, int attribute )
+    {
+        int[] value = new int[1];
+        egl.eglGetConfigAttrib( display, config, attribute, value );
+        return prefix + Integer.toString( value[0] );
     }
     
     public void flipBuffers()
