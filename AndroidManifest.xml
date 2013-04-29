@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="paulscode.android.mupen64plusae"
     android:installLocation="auto"
-    android:versionCode="24"
-    android:versionName="2.2.0 (debug)" >
+    android:versionCode="25"
+    android:versionName="2.2.1" >
 
     <uses-feature android:glEsVersion="0x00020000" />
 
