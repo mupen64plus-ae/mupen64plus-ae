@@ -189,7 +189,7 @@ public class AxisProvider extends AbstractProvider
                                 break;
                             case AxisMap.AXIS_CLASS_RAPHNET_STICK:
                                 // Normalize to [-1,1]
-                                strength = strength / 0.69f;
+                                strength = strength / 0.65f;
                                 break;
                             case AxisMap.AXIS_CLASS_RAPHNET_TRIGGER:
                                 // Normalize to [0,1]
