@@ -72,7 +72,8 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     {
         // Required for reading CRC header
         FileUtil.loadNativeLibName( "ae-imports" );
-        FileUtil.loadNativeLibName( "SDL" );
+        //FileUtil.loadNativeLibName( "SDL" );
+        FileUtil.loadNativeLibName( "SDL2" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
         FileUtil.loadNativeLibName( "ae-exports" );

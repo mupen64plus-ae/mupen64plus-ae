@@ -123,7 +123,8 @@ public class GameLifecycleHandler implements View.OnKeyListener
         if( mIsXperiaPlay )
             FileUtil.loadNativeLibName( "xperia-touchpad" );
         FileUtil.loadNativeLibName( "ae-imports" );
-        FileUtil.loadNativeLibName( "SDL" );
+        //FileUtil.loadNativeLibName( "SDL" );
+        FileUtil.loadNativeLibName( "SDL2" );
         FileUtil.loadNativeLibName( "core" );
         FileUtil.loadNativeLibName( "front-end" );
         FileUtil.loadNativeLibName( "ae-exports" );
