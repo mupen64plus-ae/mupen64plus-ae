@@ -281,6 +281,7 @@
   <string name="confirmMigrateSlotSaves_message">Вы действительно хотите скопировать старый слот сохранений? Резервное копирование будет сделано, если это необходимо.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Список изменений</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">имя файла</string>
   <!--Asset Extractor-->

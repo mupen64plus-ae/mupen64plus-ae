@@ -333,6 +333,7 @@
   <string name="confirmMigrateSlotSaves_message">あなたがあなたの古いセーブファイルをコピーしてもよろしいですか？ バックアップは、必要に応じて行われます。</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">変更履歴</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ファイル名</string>
   <!--Asset Extractor-->

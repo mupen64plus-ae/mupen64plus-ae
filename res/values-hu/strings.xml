@@ -326,6 +326,7 @@
   <string name="confirmMigrateSlotSaves_message">Biztos át akarod másolni a régi mentéseidet? Biztonsági mentések fognak készülni, ha szükséges.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Változások</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">Fájl neve</string>
   <!--Asset Extractor-->

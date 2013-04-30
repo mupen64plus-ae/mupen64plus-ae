@@ -326,6 +326,7 @@
   <string name="confirmMigrateSlotSaves_message">Jeste li sigurni da želite kopirati svoje stare spremnike? Ako je potrebno, pričuvne kopije će biti napravljene.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Što je novo?</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ime datoteke</string>
   <!--Asset Extractor-->

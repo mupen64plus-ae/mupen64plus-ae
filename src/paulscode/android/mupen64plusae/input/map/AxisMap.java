@@ -110,7 +110,7 @@ public class AxisMap extends SerializableMap
         }
         // Check if the controller is a raphnet N64/USB adapter, to compensate for range of motion
         // http://raphnet-tech.com/products/gc_n64_usb_adapters/
-        if( device.getName().contains( "raphnet.net GC/N64 to USB, v2" ))
+        if( device.getName().contains( "raphnet.net GC/N64" ) )
         {
             setClass( MotionEvent.AXIS_X, AXIS_CLASS_RAPHNET_STICK );
             setClass( MotionEvent.AXIS_Y, AXIS_CLASS_RAPHNET_STICK );

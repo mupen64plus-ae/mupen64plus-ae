@@ -184,8 +184,14 @@ public class SafeMethods
                 {
                     output.add( line );
                 }
+
+                // Done with reading
+                buffer.close();
+
                 if( output.size() > 0 )
+                {
                     return output.toArray( new String[ output.size() ] );
+                }
             }
         }
         catch( IOException ioe )

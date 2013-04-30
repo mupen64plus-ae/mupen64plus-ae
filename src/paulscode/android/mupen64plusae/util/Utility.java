@@ -568,7 +568,7 @@ public class Utility
     /**
      * Returns display metrics for the specified view.
      * 
-     * @param v An instance of View (must be the child of an Activity).
+     * @param view An instance of View (must be the child of an Activity).
      * 
      * @return DisplayMetrics instance, or null if there was a problem.
      */
@@ -643,6 +643,8 @@ public class Utility
                         Log.d( LOG_TAG, "--> Line received: " + line );
                         fullResponse.add( line );
                     }
+
+                    in.close();
                 }
                 catch( IOException e )
                 {
@@ -669,7 +671,7 @@ public class Utility
         private boolean checkRootMethod1()
         {
             String buildTags = android.os.Build.TAGS;
-            
+
             if( buildTags != null && buildTags.contains( "test-keys" ) )
             {
                 return true;

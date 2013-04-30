@@ -19,25 +19,28 @@ DIESE APP BEINHALTET KEINE ROMS
 
 99¢ SIND NUR EINE SPENDE
 - Diese App gibt es auch kostenfrei auf meiner Website (OHNE WERBUNG!)
-- Bitte zieh die Spende in betracht
-- Spenden helfen vielen open-source Projekten und deren Entwicklern
+- Bitte ziehe die Spende in Betracht
+- Spenden helfen VIELEN Open-Source-Projekten und deren Entwicklern
 
-Mupen64Plus, Android Edition (AE) ist ein N64 Emulator für Android. Derzeit befindet sich das Projekt noch in der Beta und ist damit noch im Entwicklungsprozess.Aktuell gibt es noch viele Lag-, Grafik- und Audioprobleme - selbst auf Modernen Geräten. Besuche www.paulscode.com  um an der Entwicklung und am Testprozess teilzuhaben. Ausserdem findest du dort Informationen über Bugfixes und FAQ.
+Mupen64Plus, Android Edition (AE) ist ein N64-Emulator für Android. Derzeit befindet sich das Projekt noch im Beta-Test und ist somit noch im Entwicklungsprozess. Momentan gibt es selbst auf modernen Geräten noch viele Verzögerungs-, Grafik- und Audioprobleme. Besuche www.paulscode.com um an der Entwicklung und am Testprozess mitzuwirken. Außerdem findest du dort Informationen über Fehlerbereinigungen und oft gestellte Fragen.
 
-Dies ist die offizielle App welche vor ein paar Monaten aus dem Play Store genommen wurde weil einige Konkurrenten gefakte DMCA Meldungen publizierten. Trev (Keowsktech) hat diese App über seinen Account veröffentlicht währen ich mit Google an meinen Accountproblemen gearbeitet habe.
+Um mögliche Urheberrechtsprobleme im Zusammenhang mit Bildschirmfotos zu umgehen, habe ich beschlossen nur gemeinfreie Spiele und Demos hierfür zu nutzen. Falls die App dennoch erneut vom Market genommen werden sollte, werden zukünftige Versionen weiterhin über paulscode.com kostenfrei erhältlich sein.
 
-Ich glaube, dass ein Grund für die Verzögerung in meiner DMCA Gegandarstellung die Screenshots der Spiele waren die ich für diese App genutzt habe. Diese stellten eine potentielle Copyrightverletzung dar. Ich habe mich entschieden in Zukunft nur noch Screenshots von öffentlich zugänglichen Spielen und Demos zu nutzen um weiteren Probleme vorzubeugen. Falls wie App, warum auch immer, wiedermal vom Market genommen werden sollte wird sie weiterhin über paulscode.com kostenfrei erhältlich sein.
-
-Die App ist lizensiert von GNU GPL v2. Der vollständige Quellcode ist für die Öffentlichkeit im GIT Repository verfügbar unter: https://github.com/paulscode/mupen64plus-ae. Wenn ein Entwickler Zugriff darauf möchte kann er mich (Paul) einfach im Forum darauf anschreiben. Wenn du Hilfe bei deinem Projekt brauchst lass es mich Wissen.
+Die App ist unter der GNU GPL v3 lizensiert. Der vollständige Quellcode ist im öffentlich zugänglichen GIT-Repository unter https://github.com/paulscode/mupen64plus-ae verfügbar. Wenn ein Entwickler Schreibzugriff für das Repository möchte, kann er mich (Paul) einfach im Forum darauf anschreiben. Wenn du Hilfe bei deinem Projekt brauchst, lass es mich wissen.
 
 XPERIA PLAY OPTIMIERT
 - Analoge Steuerung über das Touchpad!
 
+BERECHTIGUNGEN
+Internet - Das Internet wird genutzt um Absturzberichte zu senden. Es werden keine Viren, Spyware oder Werbung jeglicher Art heruntergeladen und es werden keine personenbezogenen Informationen gesammelt.
+Speicher - Der Gerätespeicher wird verwendet um Spielstände und benutzerdefinierte Eingabeprofile zu speichern.
+Vibration - Wenn dein Gerät dies unterstützt, wird die Vibration für die Rumble Pak-Emulation und haptisches Feedback verwendet.
+
 ERSTE SCHRITTE
-- Kopiere ROMs irgendwo auf deinen Telefonspeicher oder deine SD-Karte.
+- Kopiere ROMs irgendwo auf deinen Telefonspeicher oder deine SD-Karte
 - Suche die ROM innerhalb der App
 - Normalerweise ist die SD-Karte unter /mnt/sdcard zu finden
-- Die ROMs müssen im .n64, v64 oder im z64 sein. ZIP Dateien werden auch erkannt.
+- Die ROMs müssen im .n64-, .v64 oder im .z64-Format sein. Optional können diese auch in ZIP-Dateien gespeichert sein.
 
-HILFE, FAQS, BUG-FIXES UND SPIEL BACKUP ANLEITUNGEN:
+HILFE, FAQS, BUG-FIXES UND SPIELBACKUP ANLEITUNGEN:
 - http://www.paulscode.com

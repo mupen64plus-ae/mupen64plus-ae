@@ -38,8 +38,8 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profile</string>
   <string name="menuItem_default">Standard</string>
-  <string name="menuItem_load">Lade…</string>
-  <string name="menuItem_save">Speichert…</string>
+  <string name="menuItem_load">Laden…</string>
+  <string name="menuItem_save">Speichern…</string>
   <string name="menuItem_ouya">OUYA</string>
   <string name="menuItem_n64Adapter">N64-USB-Adapter</string>
   <string name="menuItem_ps3">PS3</string>
@@ -54,22 +54,22 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Cheat-Datenbank wird wiederaufgebaut…</string>
+  <string name="toast_rebuildingCheats">Cheat-Datenbank wird neu aufgebaut…</string>
   <string name="toast_launchingEmulator">Emulator wird gestartet…</string>
-  <string name="toast_loadingSession">Spiel wird autom. fortgesetzt…</string>
+  <string name="toast_loadingSession">Autom. Speicherung wird fortgesetzt…</string>
   <string name="toast_savingSession">Spiel wird autom. gespeichert…</string>
   <string name="toast_loadingSlot">Slot %1$d wird geladen…</string>
   <string name="toast_savingSlot">Slot %1$d wird gespeichert…</string>
   <string name="toast_loadingFile">%1$s wird geladen…</string>
   <string name="toast_savingFile">%1$s wird gespeichert…</string>
-  <string name="toast_overwritingFile">%1$s wird überschrieben…</string>
+  <string name="toast_overwritingFile">Überschreibe %1$s…</string>
   <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">Slot %1$d wird nun benutzt.</string>
-  <string name="toast_sdInaccessible">SD-Karte nicht erreichbar (trenne USB und versuche es erneut).</string>
+  <string name="toast_usingSlot">Nutze nun Slot %1$d.</string>
+  <string name="toast_sdInaccessible">SD-Karte nicht verfügbar (Trenne das USB-Kabel und versuche es erneut).</string>
   <string name="toast_fileReadError">Kann Datei nicht lesen!</string>
   <string name="toast_fileWriteError">Kann Datei nicht schreiben!</string>
-  <string name="toast_migrateSlotSavesNotFound">Keine Dateien zum kopieren.</string>
-  <string name="toast_migrateSlotSavesSuccess">Import erfolgreich.</string>
+  <string name="toast_migrateSlotSavesNotFound">Keine Dateien zum Kopieren.</string>
+  <string name="toast_migrateSlotSavesSuccess">Migration erfolgreich.</string>
   <string name="toast_crashReportSent">Bericht gesendet.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -79,26 +79,26 @@
   <!--Actions (simply launch an action, aren't related to persistent data)-->
   <string name="actionPlay_title">Spielen</string>
   <string name="actionResume_title">Fortsetzen</string>
-  <string name="actionResume_summary">Unberechenbar, wenn Cheats benutzt werden</string>
+  <string name="actionResume_summary">Unberechenbar, wenn Cheats genutzt werden</string>
   <string name="actionRestart_title">Neustart</string>
-  <string name="actionRestart_summary">Empfohlen, wenn Cheats benutzt werden</string>
+  <string name="actionRestart_summary">Empfohlen, wenn Cheats genutzt werden</string>
   <string name="actionDeviceInfo_title">Geräteinformationen</string>
-  <string name="actionDeviceInfo_summary">Gerätehardware- und Modellinformationen</string>
+  <string name="actionDeviceInfo_summary">Hardware- und Modellinformationen</string>
   <string name="actionControllerInfo_title">Controllerinfo</string>
-  <string name="actionControllerInfo_summary">Peripherie-Hardware- und Modellinformationen</string>
+  <string name="actionControllerInfo_summary">Peripheriehardware- und Modellinformationen</string>
   <string name="actionControllerDiagnostics_title">Controllerdiagnose</string>
-  <string name="actionControllerDiagnostics_summary">Rohe Verbindungsfähigkeit testen</string>
+  <string name="actionControllerDiagnostics_summary">Grobe Verbindungskapazität testen</string>
   <string name="actionMigrateSlotSaves_title">Speicherstände importieren</string>
-  <string name="actionMigrateSlotSaves_summary">Kopiere deine Slot-Speicherstände von der alten App in diese</string>
+  <string name="actionMigrateSlotSaves_summary">Kopiere deine Slot-Speicherstände von der alten App in die Aktuelle</string>
   <string name="actionReloadAssets_title">App-Ressourcen erneut laden</string>
   <string name="actionReloadAssets_summary">Dies hat KEINE Auswirkungen auf benutzerdefinierte Einstellungen, ROMs, Speicherstände oder andere Benutzerdaten.</string>
   <string name="actionCrashTest_title">Test</string>
-  <string name="actionCrashTest_summary">Einen Konfigurationsbericht an die Entwickler senden</string>
+  <string name="actionCrashTest_summary">Konfigurationsbericht an Entwickler senden</string>
   <string name="actionResetUserPrefs_title">Zurücksetzen</string>
   <string name="actionResetUserPrefs_summary">Standardeinstellungen wiederherstellen</string>
   <string name="actionResetUserPrefs_popupMessage">Alle Einstellungen auf Standard zurücksetzen?</string>
   <string name="actionHelp_title">Hilfe</string>
-  <string name="actionHelp_message">Mupen64Plus wird von Freiwilligen entwickelt und instand gehalten.\n\nBitte hilf uns, es zu verbessen!</string>
+  <string name="actionHelp_message">Mupen64Plus wird von Freiwilligen entwickelt und instand gehalten.\n\nBitte hilf uns es zu verbessen!</string>
   <string name="actionHelp_faq">FAQ</string>
   <string name="actionHelp_reportbug">Bug melden</string>
   <string name="actionAbout_title">Über</string>
@@ -141,10 +141,10 @@
   <string name="touchscreenFeedback_title">Haptisches Feedback</string>
   <string name="touchscreenFeedback_summary">Vibration bei Tastendruck</string>
   <string name="touchpadEnabled_title">Touchpad aktivieren</string>
-  <string name="inputOctagonConstraints_title">Achteckige Joysticklimitierung</string>
+  <string name="inputOctagonConstraints_title">Oktagonale Joysticklimitierung</string>
   <string name="inputOctagonConstraints_summary">Die Analogstick-Bewegung wird auf ein Achteck eingeschränkt, wie beim echten N64-Controller.</string>
   <string name="inputVolumeMappable_title">Belegbare Lautstärketasten</string>
-  <string name="inputVolumeMappable_summary">Ermöglicht, die Lautstärketasten mit Steuerelementen zu belegen.</string>
+  <string name="inputVolumeMappable_summary">Ermöglicht die Lautstärketasten mit Steuerelementen zu belegen.</string>
   <string name="inputShareController_title">Controller teilen</string>
   <string name="inputShareController_summary">Ermöglicht einem einzelnen Eingabegerät mehrere Spieler auf einmal zu steuern</string>
   <string name="videoStretch_title">Bild strecken</string>
@@ -158,7 +158,7 @@
   <string name="gles2N64Sai_title">2xSal Texturfilter</string>
   <string name="gles2N64Sai_summary">Verringert Texturverpixelung</string>
   <string name="gles2N64ScreenClear_title">Bildschirmleerung erzwingen</string>
-  <string name="gles2N64ScreenClear_summary">Deaktivieren für mehr Geschwindigkeit (könnte Video-Glitches verursachen)</string>
+  <string name="gles2N64ScreenClear_summary">Deaktivieren für mehr Geschwindigkeit (kann Video-Glitches verursachen)</string>
   <string name="gles2N64AlphaTest_title">Alpha-Test</string>
   <string name="gles2N64AlphaTest_summary">Deaktivieren für mehr Geschwindigkeit (verursacht schwarze Texturen)</string>
   <string name="gles2N64DepthTest_title">Tiefen-Test</string>
@@ -172,22 +172,30 @@
   <string name="gles2RiceForceTextureFilter_title">Texturfilter erzwingen</string>
   <string name="gles2RiceForceTextureFilter_summary">Behebt verpixelte Texturen</string>
   <string name="gles2RiceHiResTextures_title">Hochauflösende Texturen</string>
-  <string name="gles2RiceHiResTextures_summary">Importierte Texturpakete benutzen</string>
+  <string name="gles2RiceHiResTextures_summary">Nutze importierte Texturenpakete</string>
   <string name="audioSwapChannels_title">Audiokanäle tauschen</string>
   <string name="audioSwapChannels_summary">Linken und rechten Audiokanal tauschen</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
   <string name="touchscreenAutoHold_title">Autom. Button halten</string>
   <string name="touchscreenAutoHold_entryDisabled">Deaktiviert</string>
   <string name="touchscreenAutoHold_entryLongPress">Bei langem Drücken</string>
-  <string name="touchscreenAutoHold_entrySlideOut">Bei wegsliden</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Beim Wegsliden</string>
   <string name="touchscreenAutoHoldables_title">Haltbare Buttons</string>
   <string name="touchscreenRefresh_title">Joystickanimation</string>
   <string name="touchscreenRefresh_entryNever">Nie</string>
   <string name="touchscreenRefresh_entryOccasionally">Gelegentlich</string>
   <string name="touchscreenRefresh_entryFrequently">Häufig</string>
+  <string name="touchscreenStyle_title">Button Aussehen</string>
+  <string name="touchscreenStyle_entryOutline">Umrandung</string>
+  <string name="touchscreenStyle_entryShaded">Schattiert</string>
+  <string name="touchscreenHeight_title">vertikaler Button-Abstand</string>
+  <string name="touchscreenHeight_entryAuto">Auto</string>
+  <string name="touchscreenHeight_entryFullHeight">Volle Höhe</string>
+  <string name="touchscreenHeight_entryHalfHeight">Halbe Höhe</string>
   <string name="touchscreenLayout_title">Touchscreen-Layout</string>
   <string name="touchscreenLayout_entryAnalog">Analog (von roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (von roymustang16)</string>
+  <string name="touchscreenLayout_entryAll">Beide (by roymustang16)</string>
   <string name="touchscreenLayout_entryCustom">Benutzerdefiniert (siehe http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Touchpad-Layout</string>
   <string name="touchpadLayout_entryDefault">Linkes Pad: Analog-Stick; rechtes Pad: C-Knöpfe</string>
@@ -214,7 +222,7 @@
   <string name="videoHardwareType_entryQ">Q-Profil</string>
   <string name="videoHardwareType_entryT">T-Profil</string>
   <string name="gles2N64Frameskip_title">Frameskip</string>
-  <string name="gles2N64Frameskip_entryNever">Frames nie überspringen</string>
+  <string name="gles2N64Frameskip_entryNever">Kein Frameskip</string>
   <string name="gles2N64Frameskip_entryUpTo1">Nicht mehr als 1 Frame</string>
   <string name="gles2N64Frameskip_entryUpTo2">Nicht mehr als 2 Frames</string>
   <string name="gles2N64Frameskip_entryUpTo3">Nicht mehr als 3 Frames</string>
@@ -231,15 +239,15 @@
   <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
   <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
   <string name="gles2RiceScreenUpdate_title">Aktualisierung des Bildes</string>
-  <string name="gles2RiceScreenUpdate_entryRomDefault">ROM Standart</string>
-  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
-  <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI origin Änderung</string>
-  <string name="gles2RiceScreenUpdate_entryCIChange">CI Änderung</string>
-  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Erste CI Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryRomDefault">ROM-Standard</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI-Origin-Aktualisierung</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">VI-Origin-Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">CI-Änderung</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Erste CI-Änderung</string>
   <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Erstes primitive Draw</string>
-  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Vor Screen Clear</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Vor Bildschirmlöschung</string>
   <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Nach Screen Clear</string>
-  <string name="gles2RiceTextureEnhancement_title">Texturen Hochskallieren / Verbessern</string>
+  <string name="gles2RiceTextureEnhancement_title">Texturen Hochskalieren/Verbessern</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Keine</string>
   <string name="gles2RiceTextureEnhancement_entryScale2x">Skaliere 2x</string>
   <string name="gles2RiceTextureEnhancement_entry2xsai">2x Sal</string>
@@ -263,18 +271,18 @@
   <string name="pluginAudio_entryNone">Keins (Audio deaktiviert)</string>
   <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Eingabe</string>
-  <string name="pluginInput_entryNone">Keins (Eingabe deaktiviert)</string>
+  <string name="pluginInput_entryNone">Kein (Eingabe deaktiviert)</string>
   <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality Signal Processor (RSP)</string>
-  <string name="pluginRsp_entryNone">Keins (RSP deaktiviert)</string>
+  <string name="pluginRsp_entryNone">Kein (RSP deaktiviert)</string>
   <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(Geschwindigkeits-Hack ohne Audioberechnung von Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Emulationskern</string>
   <string name="pluginCore_entryV110">core, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
-  <string name="r4300Emulator_title">R4300 Emulator</string>
-  <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
+  <string name="r4300Emulator_title">R4300-Emulator</string>
+  <string name="r4300Emulator_entryPureInterpreter">Reiner Interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Cached Interpreter</string>
-  <string name="r4300Emulator_entryDynarec">Dynamischer Recopiler (dynarec)</string>
+  <string name="r4300Emulator_entryDynarec">Dynamischer Recompiler (dynarec)</string>
   <string name="navigationMode_title">Erreichbarkeit</string>
   <string name="navigationMode_summary">Menü-Navigationsmethode: %1$s</string>
   <string name="navigationMode_entryAuto">Automatisch nach Gerätekonfiguration richten</string>
@@ -289,6 +297,7 @@
   <string name="acraUserEmail_summary">Dein paulscode.com-Benutzername (optional)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Touchscreen-Transparenz</string>
+  <string name="touchscreenScale_title">Buttongröße</string>
   <string name="videoActionBarTransparency_title">Actionbar Sichtbarkeit</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
@@ -323,19 +332,20 @@
   <string name="confirmOverwriteFile_message">%1$s überschreiben?</string>
   <string name="confirmLoadProfile_message">Lade Profil \"%1$s\" für %2$s?</string>
   <string name="confirmUnmapAll_message">Alle Tastenbelegungen für %1$s entfernen?</string>
-  <string name="confirmMigrateSlotSaves_message">Bist du sicher, dass du deine alten Slot-Speicherstände kopieren willst? Backups werden erstellt, falls nötig.</string>
+  <string name="confirmMigrateSlotSaves_message">Bist du sicher, dass du deine alten Slot-Speicherstände kopieren willst? Falls nötig werden Backups erstellt.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Changelog</string>
+  <!--Corrupt Installation Warning-->
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">Dateiname</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Wird initialisiert</string>
   <string name="assetExtractor_progress">%1$.0f%% fertig: %2$s</string>
   <string name="assetExtractor_finished">Abgeschlossen</string>
-  <string name="assetExtractor_failed">Fehler beim Extrahieren der App Daten.\nBitte entferne das USB-Kabel, starte das Gerät neu und starte dann die App erneut.\nBesuche %1$s für Hilfe.</string>
+  <string name="assetExtractor_failed">Fehler beim Extrahieren der App-Daten.\nBitte entferne das USB-Kabel, starte das Gerät neu und starte dann die App erneut.\nBesuche %1$s für Hilfe.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Cheat %1$d</string>
-  <string name="cheats_longPress">(lange drücken für vollständigen Text)</string>
+  <string name="cheats_longPress">(lange drücken für ganzen Text)</string>
   <string name="cheat_disabled">(deaktiviert)</string>
   <string name="cheatOption_title">Vollständiger Text</string>
   <string name="cheatNotes_title">Notizen</string>
@@ -389,8 +399,8 @@
   <string name="inputMapActivity_speedDown">Verlangsamen</string>
   <string name="inputMapActivity_speedUp">Beschleunigen</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
-  <string name="inputMapActivity_simulateBack">Zurück Knopf</string>
-  <string name="inputMapActivity_simulateMenu">Menü Knopf</string>
+  <string name="inputMapActivity_simulateBack">Zurück-Knopf</string>
+  <string name="inputMapActivity_simulateMenu">Menü-Knopf</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Knopf oder Taste drücken…</string>
   <string name="diagnosticActivity_textMotion_text">Bildschirm oder Joystick berühren…</string>

@@ -24,14 +24,17 @@ O VALOR DE 99 CENTAVOS É SOMENTE UMA DOAÇÃO
 
 O Mupen64Plus, Android Edition (AE), é um emulador de N64 para Android. No momento, está em beta testing, o que significa que é um trabalho ainda em constante progresso. Ainda há muitos problemas gráficos, de lag e áudio, mesmo nos dispositivos mais modernos. Visite www.paulscode.com para contribuir com os testes e desenvolvimento, assim como correção de erros e para ter respondidas as suas perguntas mais frequentes.
 
-Esse é o aplicativo oficial, que foi excluído do Google Play alguns meses atrás depois que alguns competidores preencheram falsamente formulários de violação de direitos autorais. O Trev (Keowsktech) disponibilizou o aplicativo na sua conta por alguns meses, enquanto eu estava resolvendo esses problemas com o Google. Agora que minha conta foi restaurada, ele deixará de publicar a sua versão num futuro próximo, e todas as atualizações do emulador serão publicadas nessa conta.
+Para evitar problemas de Copyryght com as imagens de jogos, eu decidi colocar apenas jogos de dominio público e demos nas imagens. No entanto, se o emulador for removido da Play Store novamente, você ainda pode adquirir futuras atualizações de graça no site paulscode.com.
 
-Eu acredito que parte do atraso na admissão dos meus argumentos contra as alegações de violação aos direitos autorais foi por conta de potenciais problemas de copyright relacionados aos screenshots dos jogos que eu tinha postado para o aplicativo. Eu decidi usar tão somente jogos e demos de domínio público no futuro para prevenir esse tipo de problema novamente. De qualquer forma, se o aplicativo for retirado do Google Play novamente, você poderá encontrar as atualizações de graça em www.paulscode.com.
-
-Esse aplicativo é baseado nas licenças da GNU GPL v2, e o código fonte integral está disponível no repositório público GIT em https://github.com/paulscode/mupen64plus-ae . Se algum desenvolvedor quiser permissão para alteração no repositório, por favor entre em contato comigo (Paul) no fórum. Se você quiser ajuda para iniciar sua própria versão do emulador, entre em contato comigo e eu posso te ajudar a dar o início ao seu projeto.
+Este aplicativo está licensiado sob a GNU GPL v3, e o código completo está disponivel no repositório GIT público em https://github.com/paulscode/mupen64plus-ae, se algum desenvolvedor quiser ter acesso a escrever no repositório, entre em contato comigo (Paul) no fórum. Se você tiver problemas fazendo modificações no projeto, fale comigo, e eu posso te ajudar.
 
 OTIMIZADO PARA O XPERIA PLAY
 - Suporte de controle analógico pelo touchpad!
+
+PERMISSÕES
+Internet - A internet é usada para enviar relatório de erros. Ele NÃO baixa virus, spywares, ou propagandas de qualquer tipo. Taxas normais de dados aplicadas.
+Gravar no armazenamento externo - O armazenamento do dispositivo é usado para salvar jogos e perfis de controles custumizados.
+Vibrar - Se o seu dispositivo suportar, a vibração é usada para emular o Rumble Pak e feedback tátil dos botões.
 
 Como jogar:
 - Transfira as ROMS para qualquer pasta da memória interna ou cartão SD
