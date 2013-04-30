@@ -35,7 +35,6 @@ import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -121,17 +120,11 @@ public class GameLifecycleHandler implements View.OnKeyListener
         
         // Load native libraries
         if( mIsXperiaPlay )
-            FileUtil.loadNativeLibName( "xperia-touchpad" );
-        FileUtil.loadNativeLibName( "ae-imports" );
-        //FileUtil.loadNativeLibName( "SDL" );
-        FileUtil.loadNativeLibName( "SDL2" );
-        FileUtil.loadNativeLibName( "core" );
-        FileUtil.loadNativeLibName( "front-end" );
-        FileUtil.loadNativeLibName( "ae-exports" );
-        FileUtil.loadNativeLib( mUserPrefs.videoPlugin.path );
-        FileUtil.loadNativeLib( mUserPrefs.audioPlugin.path );
-        FileUtil.loadNativeLib( mUserPrefs.inputPlugin.path );
-        FileUtil.loadNativeLib( mUserPrefs.rspPlugin.path );
+            CoreInterfaceNative.loadNativeLibName( "xperia-touchpad" );
+        CoreInterfaceNative.loadNativeLib( mUserPrefs.videoPlugin.path );
+        CoreInterfaceNative.loadNativeLib( mUserPrefs.audioPlugin.path );
+        CoreInterfaceNative.loadNativeLib( mUserPrefs.inputPlugin.path );
+        CoreInterfaceNative.loadNativeLib( mUserPrefs.rspPlugin.path );
         
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
@@ -244,8 +237,6 @@ public class GameLifecycleHandler implements View.OnKeyListener
     @SuppressLint( "InlinedApi" )
     private void initControllers( View inputSource )
     {
-        // TODO: Register multiplayer/gamepad vibrators
-        
         Vibrator vibrator = null;
         // Do not use vibrator if running on OUYA
         if( !OUYAInterface.IS_OUYA_HARDWARE )

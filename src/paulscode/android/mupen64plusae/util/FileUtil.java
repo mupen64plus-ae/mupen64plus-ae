@@ -286,51 +286,6 @@ public class FileUtil
         copyFile( file, backup );
     }
     
-    /**
-     * Loads the specified native library name (without "lib" and ".so").
-     * 
-     * @param libname absolute path to a native .so file (may optionally be in quotes)
-     */
-    public static void loadNativeLibName( String libname )
-    {
-        Log.v( "FileUtil", "Loading native library '" + libname + "'" );
-        try
-        {
-            System.loadLibrary( libname );
-        }
-        catch( UnsatisfiedLinkError e )
-        {
-            Log.e( "FileUtil", "Unable to load native library '" + libname + "'" );
-        }
-    }
-    
-    /**
-     * Loads the native .so file specified.
-     * 
-     * @param filepath absolute path to a native .so file (may optionally be in quotes)
-     */
-    public static void loadNativeLib( String filepath )
-    {
-        String filename = null;
-        
-        if( filepath != null && filepath.length() > 0 )
-        {
-            filename = filepath.replace( "\"", "" );
-            if( filename.equalsIgnoreCase( "dummy" ) )
-                return;
-            
-            Log.v( "FileUtil", "Loading native library '" + filename + "'" );
-            try
-            {
-                System.load( filename );
-            }
-            catch( UnsatisfiedLinkError e )
-            {
-                Log.e( "FileUtil", "Unable to load native library '" + filename + "'", e );
-            }
-        }
-    }
-    
     public static void writeStringToFile( File file, String text ) throws IOException
     {
         FileWriter out = new FileWriter( file );

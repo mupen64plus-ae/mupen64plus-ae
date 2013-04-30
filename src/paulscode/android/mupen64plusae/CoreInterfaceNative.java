@@ -43,6 +43,61 @@ import android.util.Log;
  */
 public class CoreInterfaceNative extends CoreInterface
 {
+    static
+    {
+        loadNativeLibName( "ae-imports" );
+        //loadNativeLibName( "SDL" );
+        loadNativeLibName( "SDL2" );
+        loadNativeLibName( "core" );
+        loadNativeLibName( "front-end" );
+        loadNativeLibName( "ae-exports" );
+    }
+
+    /**
+     * Loads the specified native library name (without "lib" and ".so").
+     * 
+     * @param libname absolute path to a native .so file (may optionally be in quotes)
+     */
+    public static void loadNativeLibName( String libname )
+    {
+        Log.v( "FileUtil", "Loading native library '" + libname + "'" );
+        try
+        {
+            System.loadLibrary( libname );
+        }
+        catch( UnsatisfiedLinkError e )
+        {
+            Log.e( "FileUtil", "Unable to load native library '" + libname + "'" );
+        }
+    }
+
+    /**
+     * Loads the native .so file specified.
+     * 
+     * @param filepath absolute path to a native .so file (may optionally be in quotes)
+     */
+    public static void loadNativeLib( String filepath )
+    {
+        String filename = null;
+        
+        if( filepath != null && filepath.length() > 0 )
+        {
+            filename = filepath.replace( "\"", "" );
+            if( filename.equalsIgnoreCase( "dummy" ) )
+                return;
+            
+            Log.v( "FileUtil", "Loading native library '" + filename + "'" );
+            try
+            {
+                System.load( filename );
+            }
+            catch( UnsatisfiedLinkError e )
+            {
+                Log.e( "FileUtil", "Unable to load native library '" + filename + "'", e );
+            }
+        }
+    }    
+
     // TODO: These should all have javadoc comments. 
     // It would better document calls going in/out of native code.
     
