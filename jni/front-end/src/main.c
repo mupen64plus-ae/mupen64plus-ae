@@ -660,10 +660,7 @@ int main(int argc, char *argv[])
 
     /* bootstrap some special parameters from the command line */
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
-    {
-        DebugMessage(M64MSG_ERROR, "ParseCommandLineInitial not 0, returning 1.\n");
         return 1;
-    }
 
     #ifdef PAULSCODE
     // paulscode, hack to allow configuration file to be in home directory
@@ -681,10 +678,7 @@ int main(int argc, char *argv[])
 
     /* load the Mupen64Plus core library */
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)
-    {
-        DebugMessage(M64MSG_ERROR, "AttachCoreLib unsuccessful, returning 2.\n");
         return 2;
-    }
 
     /* start the Mupen64Plus core library, load the configuration file */
     #ifdef PAULSCODE
