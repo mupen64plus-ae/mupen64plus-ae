@@ -119,7 +119,6 @@ public class CoreInterface
     
     // Audio objects
     protected static AudioTrack sAudioTrack = null;
-    protected static Object sAudioBuffer;
     
     // Frame rate listener
     protected static OnFpsChangedListener sFpsListener;
