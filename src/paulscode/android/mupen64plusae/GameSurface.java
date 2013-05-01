@@ -168,18 +168,35 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             // Get the compatible EGL frame buffer configurations
             final EGLConfig[] configs = new EGLConfig[num_config];
             boolean success = egl.eglChooseConfig( display, configSpec, configs, num_config, null );
-            int bestConfig = 0;
+            int bestConfig = -1;
             for( int i = 0; i < num_config; i++ )
             {
                 Log.i( "GameSurface", "Config[" + i + "]:"
-                        + configAttribString( egl, display, configs[i], " Buf", EGL10.EGL_BUFFER_SIZE )
+                        + configAttribString( egl, display, configs[i], " BS", EGL10.EGL_BUFFER_SIZE )
                         + configAttribString( egl, display, configs[i], " R", EGL10.EGL_RED_SIZE )
                         + configAttribString( egl, display, configs[i], " G", EGL10.EGL_GREEN_SIZE )
                         + configAttribString( egl, display, configs[i], " B", EGL10.EGL_BLUE_SIZE )
                         + configAttribString( egl, display, configs[i], " A", EGL10.EGL_ALPHA_SIZE )
                         + configAttribString( egl, display, configs[i], " D", EGL10.EGL_DEPTH_SIZE )
                         + configAttribString( egl, display, configs[i], " S", EGL10.EGL_STENCIL_SIZE )
+                        + configAttribString( egl, display, configs[i], " AM", EGL10.EGL_ALPHA_MASK_SIZE )
+                        + configAttribString( egl, display, configs[i], " CC", EGL10.EGL_CONFIG_CAVEAT )
+                        + configAttribString( egl, display, configs[i], " RT", EGL10.EGL_RENDERABLE_TYPE )
+                        + configAttribString( egl, display, configs[i], " NR", EGL10.EGL_NATIVE_RENDERABLE )
+                        + configAttribString( egl, display, configs[i], " NVT", EGL10.EGL_NATIVE_VISUAL_TYPE )
+                        + configAttribString( egl, display, configs[i], " SB", EGL10.EGL_SAMPLE_BUFFERS )
+                        + configAttribString( egl, display, configs[i], " Sa", EGL10.EGL_SAMPLES )
+                        + configAttribString( egl, display, configs[i], " ST", EGL10.EGL_SURFACE_TYPE )
                         );
+                if( bestConfig < 0 )
+                {
+                    // "Best" config is the first one that is fast and egl-conformant (i.e. not slow, not non-conformant)
+                    int caveatValue = configAttrib( egl, display, configs[i], EGL10.EGL_CONFIG_CAVEAT );
+                    if( caveatValue == EGL10.EGL_NONE )
+                    {
+                        bestConfig = i;
+                    }
+                }
             }
             if( !success || num_config == 0 )
             {
@@ -188,6 +205,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             }
             
             // Select the best configuration
+            Log.i( "GameSurface", "Using Config[" + bestConfig + "]" );
             EGLConfig config = configs[bestConfig];
             
             // Create an EGL rendering context and ensure that it supports the requested GLES version, display
@@ -232,11 +250,33 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         }
     }
     
-    private static String configAttribString( EGL10 egl, EGLDisplay display, EGLConfig config, String prefix, int attribute )
+    private static int configAttrib( EGL10 egl, EGLDisplay display, EGLConfig config, int attribute )
     {
         int[] value = new int[1];
         egl.eglGetConfigAttrib( display, config, attribute, value );
-        return prefix + Integer.toString( value[0] );
+        return value[0];
+    }
+    
+    private static String configAttribString( EGL10 egl, EGLDisplay display, EGLConfig config, String prefix, int attribute )
+    {
+        int value = configAttrib( egl, display, config, attribute );
+        String output = Integer.toString( value );
+        switch( value )
+        {
+            case EGL10.EGL_DONT_CARE:
+                output = "|DONT_CARE";
+                break;
+            case EGL10.EGL_NONE:
+                output = "|NONE";
+                break;
+            case EGL10.EGL_RGB_BUFFER:
+                output = "|RGB_BUFFER";
+                break;
+            case EGL10.EGL_LUMINANCE_BUFFER:
+                output = "|LUMINANCE_BUFFER";
+                break;
+        }
+        return prefix + output;
     }
     
     public void flipBuffers()
