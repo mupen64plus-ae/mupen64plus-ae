@@ -20,16 +20,8 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-import java.util.Locale;
-
 import javax.microedition.khronos.egl.EGL10;
 
-import paulscode.android.mupen64plusae.util.ErrorLogger;
-import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.SafeMethods;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -136,7 +128,7 @@ public class CoreInterfaceNative extends CoreInterface
     // jni/ae-bridge/ae_bridge_main.cpp
     //-------------------------------------------------------------------------
     
-    public static native void sdlInit();
+    public static native void sdlInit( Object[] args);
     
     //-------------------------------------------------------------------------
     // Call-outs made TO native code
@@ -200,69 +192,6 @@ public class CoreInterfaceNative extends CoreInterface
         int autoDetected = sAppData.hardwareInfo.hardwareType;
         int overridden = sUserPrefs.videoHardwareType;
         return overridden < 0 ? autoDetected : overridden;
-    }
-    
-    public static Object getDataDir()
-    {
-        return sAppData.dataDir;
-    }
-    
-    public static Object getROMPath()
-    {
-        String selectedGame = sUserPrefs.selectedGame;
-        boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
-        boolean isSelectedGameZipped = !isSelectedGameNull && selectedGame.length() >= 5
-                && selectedGame.toLowerCase( Locale.US ).endsWith( ".zip" );
-        
-        if( sActivity == null )
-            return null;
-        
-        if( isSelectedGameNull )
-        {
-            SafeMethods.exit( "Invalid ROM", sActivity, 2000 );
-        }
-        else if( isSelectedGameZipped )
-        {
-            // Create the temp folder if it doesn't exist:
-            String tmpFolderName = sAppData.dataDir + "/tmp";
-            File tmpFolder = new File( tmpFolderName );
-            tmpFolder.mkdir();
-            
-            // Clear the folder if anything is in there:
-            String[] children = tmpFolder.list();
-            for( String child : children )
-            {
-                FileUtil.deleteFolder( new File( tmpFolder, child ) );
-            }
-            
-            // Unzip the ROM
-            String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
-            if( selectedGameUnzipped == null )
-            {
-                Log.v( "CoreInterface", "Cannot play zipped ROM: '" + selectedGame + "'" );
-                
-                Notifier.clear();
-                
-                if( ErrorLogger.hasError() )
-                    ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
-                
-                // Kick back out to the main menu
-                sActivity.finish();
-            }
-            else
-            {
-                return selectedGameUnzipped;
-            }
-        }
-        return selectedGame;
-    }
-    
-    public static Object getExtraArgs()
-    {
-        String extraArgs = sUserPrefs.isFramelimiterEnabled ? "" : "--nospeedlimit ";
-        if( sCheatOptions != null )
-            extraArgs += sCheatOptions;
-        return extraArgs.trim();
     }
     
     public static boolean getAutoFrameSkip()
