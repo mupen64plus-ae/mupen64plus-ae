@@ -228,7 +228,7 @@ public class AppData
                 libraryExists( "input-android" )    &&
                 libraryExists( "rsp-hle-nosound" )  &&
                 libraryExists( "rsp-hle" )          &&
-                libraryExists( "SDL" )              &&
+                libraryExists( "SDL2" )             &&
                 libraryExists( "xperia-touchpad" );
         // @formatter:on
         
