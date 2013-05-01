@@ -87,18 +87,18 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         final int EGL_OPENGL_ES_BIT = 1;
         final int EGL_OPENGL_ES2_BIT = 4;
         final int renderableType;
-
+        
         // Determine which version of EGL we're using.
-        switch ( majorVersion )
+        switch( majorVersion )
         {
             case 1:
                 renderableType = EGL_OPENGL_ES_BIT;
                 break;
-
+            
             case 2:
                 renderableType = EGL_OPENGL_ES2_BIT;
                 break;
-
+            
             default: // Shouldn't happen.
                 renderableType = UNKNOWN;
                 break;
@@ -135,7 +135,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         
         return createGLContext( majorVersion, minorVersion, configSpec );
     }
-
+    
     public boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
     {
         Log.v( "GameSurface", "Starting up OpenGL ES " + majorVersion + "." + minorVersion );

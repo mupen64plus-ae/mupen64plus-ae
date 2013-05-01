@@ -44,7 +44,7 @@ public class CoreInterfaceNative extends CoreInterface
         loadNativeLibName( "front-end" );
         loadNativeLibName( "ae-exports" );
     }
-
+    
     /**
      * Loads the specified native library name (without "lib" and ".so").
      * 
@@ -62,7 +62,7 @@ public class CoreInterfaceNative extends CoreInterface
             Log.e( "FileUtil", "Unable to load native library '" + libname + "'" );
         }
     }
-
+    
     /**
      * Loads the native .so file specified.
      * 
@@ -88,9 +88,9 @@ public class CoreInterfaceNative extends CoreInterface
                 Log.e( "FileUtil", "Unable to load native library '" + filename + "'", e );
             }
         }
-    }    
-
-    // TODO: These should all have javadoc comments. 
+    }
+    
+    // TODO: These should all have javadoc comments.
     // It would better document calls going in/out of native code.
     
     // ************************************************************************
@@ -102,9 +102,9 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void jniInitInput();
     
-    public static native void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY );   
+    public static native void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY );
     
-    public static native void setControllerConfig( int controllerNum, boolean plugged, int pakType );   
+    public static native void setControllerConfig( int controllerNum, boolean plugged, int pakType );
     
     public static void rumble( int controllerNum, boolean active )
     {
@@ -115,7 +115,7 @@ public class CoreInterfaceNative extends CoreInterface
             sVibrators[controllerNum].vibrate( VIBRATE_TIMEOUT );
         else
             sVibrators[controllerNum].cancel();
-    }    
+    }
     
     // ************************************************************************
     // ************************************************************************
@@ -123,26 +123,26 @@ public class CoreInterfaceNative extends CoreInterface
     // ************************************************************************
     // ************************************************************************
     
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Call-outs made TO native code
     // jni/ae-bridge/ae_bridge_main.cpp
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     
-    public static native void sdlInit( Object[] args);
+    public static native void sdlInit( Object[] args );
     
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Call-outs made TO native code
     // jni/ae-bridge/ae_exports.cpp
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     
     public static native void sdlOnResize( int x, int y, int format );
     
     public static native void sdlQuit();
-
+    
     public static native void sdlRunAudioThread();
-
+    
     public static native boolean sdlVersionAtLeast( int major, int minor, int patch );
-
+    
     public static native void emuGameShark( boolean pressed );
     
     public static native void emuPause();
@@ -170,22 +170,22 @@ public class CoreInterfaceNative extends CoreInterface
     public static native int emuGetState();
     
     public static native String getHeaderName( String filename );
-
+    
     public static native String getHeaderCRC( String filename );
     
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/ae-bridge/ae_imports.cpp
-    //-------------------------------------------------------------------------
-
+    // ------------------------------------------------------------------------
+    
     public static void stateCallback( int paramChanged, int newValue )
     {
         synchronized( sStateCallbackLock )
         {
             if( sStateCallbackListener != null )
                 sStateCallbackListener.onStateCallback( paramChanged, newValue );
-            }
         }
+    }
     
     public static int getHardwareType()
     {
@@ -225,10 +225,10 @@ public class CoreInterfaceNative extends CoreInterface
     // ************************************************************************
     // ************************************************************************
     
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/SDL/src/core/android/SDL_android.cpp
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
