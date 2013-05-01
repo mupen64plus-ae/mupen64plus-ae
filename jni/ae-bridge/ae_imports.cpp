@@ -181,7 +181,6 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
 extern DECLSPEC void Android_JNI_State_Callback(int paramChanged, int newValue)
 {
     JNIEnv *env = Android_JNI_GetEnv();
-    LOGV("Emulator param %i changed to %i", paramChanged, newValue);
     env->CallStaticVoidMethod(mActivityClass, midStateCallback, paramChanged, newValue);
 }
 
