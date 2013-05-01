@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
@@ -42,7 +41,6 @@ public class AxisMap extends SerializableMap
         if( map == null )
         {
             // Add an entry to the map if not found
-            Log.v( "AxisMap", "Auto-classifying " + device.getName() );
             map = new AxisMap( device );
             sAllMaps.put( id, map );
         }

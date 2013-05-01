@@ -52,7 +52,6 @@ public class CoreInterfaceNative extends CoreInterface
      */
     public static void loadNativeLibName( String libname )
     {
-        Log.v( "FileUtil", "Loading native library '" + libname + "'" );
         try
         {
             System.loadLibrary( libname );
@@ -78,7 +77,6 @@ public class CoreInterfaceNative extends CoreInterface
             if( filename.equalsIgnoreCase( "dummy" ) )
                 return;
             
-            Log.v( "FileUtil", "Loading native library '" + filename + "'" );
             try
             {
                 System.load( filename );
