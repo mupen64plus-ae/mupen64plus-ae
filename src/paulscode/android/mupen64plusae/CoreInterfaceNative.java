@@ -399,6 +399,7 @@ public class CoreInterfaceNative extends CoreInterface
         if( sAudioTrack != null )
         {
             sAudioTrack.stop();
+            sAudioTrack.release();
             sAudioTrack = null;
         }
     }
