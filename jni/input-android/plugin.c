@@ -22,6 +22,7 @@
 #include <string.h>
 #include <jni.h>
 #include <android/log.h>
+#include <pthread.h>
 
 #include "m64p_plugin.h"
 
@@ -65,7 +66,7 @@ static const unsigned short const BUTTON_BITS[] =
 };
 
 // Internal variables
-static JNIEnv* _jniEnv = NULL;
+static JavaVM* mJavaVM;
 static jclass _jniClass = NULL;
 static jmethodID _jniRumble = NULL;
 static int _androidPluggedState[4];
@@ -75,9 +76,95 @@ static signed char _androidAnalogX[4];
 static signed char _androidAnalogY[4];
 static int _pluginInitialized = 0;
 static CONTROL* _controllerInfos = NULL;
+static pthread_key_t mThreadKey;
 
 // Function declarations
 static void DebugMessage(int level, const char *message, ...);
+
+
+/*******************************************************************************
+ Functions called internally
+ *******************************************************************************/
+
+static void Android_JNI_ThreadDestroyed(void* value)
+{
+    /* The thread is being destroyed, detach it from the Java VM and set the mThreadKey value to NULL as required */
+    JNIEnv *env = (JNIEnv*) value;
+    if (env != NULL)
+    {
+        (*mJavaVM)->DetachCurrentThread( mJavaVM );
+        pthread_setspecific(mThreadKey, NULL);
+    }
+}
+
+static JNIEnv* Android_JNI_GetEnv(void)
+{
+    /* From http://developer.android.com/guide/practices/jni.html
+     * All threads are Linux threads, scheduled by the kernel.
+     * They're usually started from managed code (using Thread.start), but they can also be created elsewhere and then
+     * attached to the JavaVM. For example, a thread started with pthread_create can be attached with the
+     * JNI AttachCurrentThread or AttachCurrentThreadAsDaemon functions. Until a thread is attached, it has no JNIEnv,
+     * and cannot make JNI calls.
+     * Attaching a natively-created thread causes a java.lang.Thread object to be constructed and added to the "main"
+     * ThreadGroup, making it visible to the debugger. Calling AttachCurrentThread on an already-attached thread
+     * is a no-op.
+     * Note: You can call this function any number of times for the same thread, there's no harm in it
+     */
+
+    JNIEnv *env;
+    int status = (*mJavaVM)->AttachCurrentThread(mJavaVM, &env, NULL);
+    if (status < 0)
+    {
+        return 0;
+    }
+
+    return env;
+}
+
+static int Android_JNI_SetupThread(void)
+{
+    /* From http://developer.android.com/guide/practices/jni.html
+     * Threads attached through JNI must call DetachCurrentThread before they exit. If coding this directly is awkward,
+     * in Android 2.0 (Eclair) and higher you can use pthread_key_create to define a destructor function that will be
+     * called before the thread exits, and call DetachCurrentThread from there. (Use that key with pthread_setspecific
+     * to store the JNIEnv in thread-local-storage; that way it'll be passed into your destructor as the argument.)
+     * Note: The destructor is not called unless the stored value is != NULL
+     * Note: You can call this function any number of times for the same thread, there's no harm in it
+     *       (except for some lost CPU cycles)
+     */
+    JNIEnv *env = Android_JNI_GetEnv();
+    pthread_setspecific(mThreadKey, (void*) env);
+    return 1;
+}
+
+/*******************************************************************************
+ Functions called automatically by JNI framework
+ *******************************************************************************/
+
+// Library init
+extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+    JNIEnv *env;
+    mJavaVM = vm;
+    if ((*mJavaVM)->GetEnv(mJavaVM, (void**) &env, JNI_VERSION_1_4) != JNI_OK)
+    {
+        return -1;
+    }
+    /*
+     * Create mThreadKey so we can keep track of the JNIEnv assigned to each thread
+     * Refer to http://developer.android.com/guide/practices/design/jni.html for the rationale behind this
+     */
+    if (pthread_key_create(&mThreadKey, Android_JNI_ThreadDestroyed))
+    {
+    	DebugMessage(M64MSG_ERROR, "Error initializing pthread key");
+    }
+    else
+    {
+        Android_JNI_SetupThread();
+    }
+
+    return JNI_VERSION_1_4;
+}
 
 //*****************************************************************************
 // JNI exported function definitions
@@ -88,8 +175,7 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_
 {
     DebugMessage(M64MSG_INFO, "jniInitInput()");
 
-    _jniEnv = env;
-    _jniClass = cls;
+    _jniClass = (jclass) (*env)->NewGlobalRef( env, cls );
 
     _jniRumble = (*env)->GetStaticMethodID(env, cls, "rumble", "(IZ)V");
     if (!_jniRumble)
@@ -138,11 +224,9 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_
 
 JNIEXPORT void JNICALL JNI_Rumble(int controllerNum, int active)
 {
-    if (_jniEnv == NULL)
-        return;
-
+	JNIEnv *env = Android_JNI_GetEnv();
     jboolean a = active == 0 ? JNI_FALSE : JNI_TRUE;
-    (*_jniEnv)->CallStaticVoidMethod(_jniEnv, _jniClass, _jniRumble, controllerNum, a);
+    (*env)->CallStaticVoidMethod(env, _jniClass, _jniRumble, controllerNum, a);
 }
 
 //*****************************************************************************
