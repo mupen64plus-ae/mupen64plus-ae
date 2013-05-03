@@ -404,12 +404,6 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
-    public static void runOnUiThread( Runnable action )
-    {
-        if( sActivity != null )
-            sActivity.runOnUiThread( action );
-    }
-    
     public static void setActivityTitle( String title )
     {
         // No-op interface to guarantee compatibility with all SDL versions
