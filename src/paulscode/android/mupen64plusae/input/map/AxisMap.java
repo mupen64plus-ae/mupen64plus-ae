@@ -28,6 +28,10 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
     
+    private static final String NAME_STRING_NYKO_PLAYPAD = "NYKO PLAYPAD";
+    private static final String NAME_STRING_OUYA = "OUYA";
+    private static final String NAME_STRING_RAPHNET = "raphnet.net GC/N64";
+    
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
     private final String mSignature;
     
@@ -91,9 +95,22 @@ public class AxisMap extends SerializableMap
                 break;
             
             case SIGNATURE_HASH_NYKO_PLAYPAD:
-                // Ignore AXIS_HAT_X/Y because they are sent with (and overpower) AXIS_X/Y
-                setClass( MotionEvent.AXIS_HAT_X, AXIS_CLASS_IGNORED );
-                setClass( MotionEvent.AXIS_HAT_Y, AXIS_CLASS_IGNORED );
+                if( !device.getName().contains( NAME_STRING_NYKO_PLAYPAD ) )
+                {
+                    // The first batch of Nyko Playpad controllers have a quirk in the firmware
+                    // where AXIS_HAT_X/Y are sent with (and overpower) AXIS_X/Y, and do not
+                    // provide a recognizable name for the controller.  Newer batches of this
+                    // controller fix the quirk, making it a vanilla controller.  However the
+                    // AXIS_HAT_X/Y channels are now used for the d-pad, so we can't apply a
+                    // universal solution for all versions of this controller.  Fortunately, the
+                    // new version also returns a good name that we can use to differentiate
+                    // controller firmware versions.
+                    // 
+                    // For original firmware, ignore AXIS_HAT_X/Y because they are sent with (and
+                    // overpower) AXIS_X/Y, so ignore the HAT_X/Y signals
+                    setClass( MotionEvent.AXIS_HAT_X, AXIS_CLASS_IGNORED );
+                    setClass( MotionEvent.AXIS_HAT_Y, AXIS_CLASS_IGNORED );
+                }
                 break;
             
             case SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD:
@@ -102,13 +119,13 @@ public class AxisMap extends SerializableMap
                 break;
         }
         // Check if the controller is OUYA, to compensate for the +X axis bias
-        if( device.getName().contains( "OUYA" ) )
+        if( device.getName().contains( NAME_STRING_OUYA ) )
         {
             setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
         }
         // Check if the controller is a raphnet N64/USB adapter, to compensate for range of motion
         // http://raphnet-tech.com/products/gc_n64_usb_adapters/
-        if( device.getName().contains( "raphnet.net GC/N64" ) )
+        if( device.getName().contains( NAME_STRING_RAPHNET ) )
         {
             setClass( MotionEvent.AXIS_X, AXIS_CLASS_RAPHNET_STICK );
             setClass( MotionEvent.AXIS_Y, AXIS_CLASS_RAPHNET_STICK );
