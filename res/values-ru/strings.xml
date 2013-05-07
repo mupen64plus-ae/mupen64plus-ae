@@ -124,6 +124,7 @@
   <string name="playShowCheats_title">Включить читы</string>
   <string name="playShowCheats_summary">Загрузка меню медленнее при включенном</string>
   <string name="touchscreenEnabled_title">Использовать тачскрин</string>
+  <string name="touchscreenFeedback_summary">Вибрировать при нажатии</string>
   <string name="touchpadEnabled_title">Использовать экранные кнопки</string>
   <string name="inputOctagonConstraints_title">Восьмиугольные пределы джойстика</string>
   <string name="inputOctagonConstraints_summary">Ограничение движения в аналоговом виде восьмиугольника, как настоящий N64 контроллер</string>
@@ -160,6 +161,7 @@
   <string name="audioSwapChannels_title">Поменять местами аудио каналы</string>
   <string name="audioSwapChannels_summary">Меняет местами звук слева и справа</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_entryDisabled">Отключить</string>
   <string name="touchscreenAutoHold_entryLongPress">При долгом нажатии</string>
   <string name="touchscreenAutoHold_entrySlideOut">При смещении</string>
   <string name="touchscreenRefresh_title">Анимация джойстика </string>
@@ -205,6 +207,10 @@
   <string name="gles2N64Frameskip_entryExactly3">Всегда 3</string>
   <string name="gles2N64Frameskip_entryExactly4">Всегда 4</string>
   <string name="gles2N64Frameskip_entryExactly5">Всегда 5</string>
+  <string name="gles2RiceMipmapping_title">MIP-текстурирование</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Билинейный</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Трилинейный</string>
+  <string name="gles2RiceTextureEnhancement_title">Масштабирование текстур/улучшение</string>
   <string name="audioResampleAlg_title">Алгоритм дискретизации</string>
   <string name="audioResampleAlg_entryTrivial">Тривиальный</string>
   <string name="audioResampleAlg_entryLinear">Линейная интерполяция</string>
@@ -282,6 +288,7 @@
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Список изменений</string>
   <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">Предупреждение</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">имя файла</string>
   <!--Asset Extractor-->

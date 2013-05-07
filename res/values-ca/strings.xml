@@ -185,6 +185,8 @@
   <string name="touchscreenRefresh_entryNever">Mai</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalment</string>
   <string name="touchscreenRefresh_entryFrequently">Freqüentment</string>
+  <string name="touchscreenStyle_title">Estil del botó</string>
+  <string name="touchscreenHeight_entryAuto">Auto</string>
   <string name="touchscreenLayout_title">Disposició de botons en pantalla</string>
   <string name="touchscreenLayout_entryAnalog">Analògic (per roymustang16)</string>
   <string name="touchscreenLayout_entryDigital">Digital (per roymustang16)</string>
@@ -230,6 +232,9 @@
   <string name="gles2RiceMipmapping_entryNearest">Més proper</string>
   <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
   <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
+  <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Pintat primitiu</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Abans de netejar la pantalla</string>
+  <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Desprès del pintat de pantalla</string>
   <string name="gles2RiceTextureEnhancement_title">Augment de qualitat de textures</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Cap</string>
   <string name="gles2RiceTextureEnhancement_entryScale2x">Scale 2x</string>
@@ -318,6 +323,7 @@
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Registre de canvis</string>
   <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_message">Probalbement el Mupen64 Plus AE no s\'ha instal·lat correctament. Si experimentes aquest errors reinstal·la la aplicació si us plau.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nom de fitxer</string>
   <!--Asset Extractor-->
