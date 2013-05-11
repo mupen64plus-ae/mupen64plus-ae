@@ -130,10 +130,8 @@ PKG_CONFIG = $(CROSS_COMPILE)pkg-config
 # On 32-bit x86 systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(PIC), 1)
   CFLAGS += -fPIC
-  LDFLAGS += -fPIC
 else
   CFLAGS += -fno-PIC
-  LDFLAGS += -fno-PIC
 endif
 
 ifeq ($(BIG_ENDIAN), 1)
@@ -146,7 +144,7 @@ ifeq ($(ARCH_DETECTED), 64BITS_32)
     $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
   endif
   CFLAGS += -m32
-  LDFLAGS += -m32 -Wl,-m,elf_i386
+  LDFLAGS += -Wl,-m,elf_i386
 endif
 
 # set special flags per-system
@@ -169,11 +167,9 @@ ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
-      LDFLAGS += -arch x86_64
       LDLIBS += -ldl
     else
       CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
-      LDFLAGS += -arch i686
       LDLIBS += -ldl -read_only_relocs suppress
     endif
   endif
@@ -267,7 +263,7 @@ RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
 COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
-LINK.o = $(Q_LD)$(CC) $(LDFLAGS) $(TARGET_ARCH)
+LINK.o = $(Q_LD)$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 # set special flags for given Makefile parameters
 ifeq ($(DEBUG),1)
@@ -361,7 +357,7 @@ CFLAGS += -MD
 
 ifeq ($(LTO), 1)
   CFLAGS += -flto
-  LDFLAGS += -fuse-linker-plugin $(CFLAGS)
+  LDFLAGS += -fuse-linker-plugin
 endif
 
 # standard build rules
