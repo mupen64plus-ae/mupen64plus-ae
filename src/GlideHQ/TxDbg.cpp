@@ -26,7 +26,7 @@
 #include "TxDbg.h"
 #include <string.h>
 #include <stdarg.h>
-#include <boost/format.hpp>
+#include <string>
 
 TxDbg::TxDbg()
 {
@@ -64,7 +64,7 @@ TxDbg::output(const int level, const wchar_t *format, ...)
   //swprintf(newformat, 4095, L"%d:\t", level);
   //wcscat(newformat, format);
   //vfwprintf(_dbgfile, newformat, args);
-  newformat = boost::str(boost::wformat(L"%d:\t%ls") % level % format);
+  newformat = std::to_wstring(level) + L":\t" + format;
   vfwprintf(_dbgfile, newformat.c_str(), args);
   fflush(_dbgfile);
 #ifdef GHQCHK

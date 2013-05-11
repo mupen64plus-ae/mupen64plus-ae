@@ -30,7 +30,6 @@
 #include "TxDbg.h"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include <boost/format.hpp>
 
 void TxFilter::clear()
 {
@@ -629,6 +628,7 @@ TxFilter::dmptx(uint8 *src, int width, int height, int rowStridePixel, uint16 gf
     /* dump it to disk */
     FILE *fp = NULL;
     std::wstring tmpbuf;
+    wchar_t texid[36];
 
     /* create directories */
     tmpbuf.assign(_datapath + L"/texture_dump");
@@ -647,11 +647,11 @@ TxFilter::dmptx(uint8 *src, int width, int height, int rowStridePixel, uint16 gf
       return 0;
 
     if ((n64fmt >> 8) == 0x2) {
-      tmpbuf.append(boost::str(boost::wformat(L"/%ls#%08X#%01X#%01X#%08X_ciByRGBA.png")
-                               % _ident.c_str() % (uint32)(r_crc64 & 0xffffffff) % (n64fmt >> 8) % (n64fmt & 0xf) % (uint32)(r_crc64 >> 32)));
+      swprintf(texid, 36, L"%08X#%01X#%01X#%08X", (uint32)(r_crc64 & 0xffffffff), (uint32)(n64fmt >> 8), (uint32)(n64fmt & 0xf), (uint32)(r_crc64 >> 32));
+      tmpbuf.append(L"/" + _ident + L"#" + texid + L"_ciByRGBA.png");
     } else {
-      tmpbuf.append(boost::str(boost::wformat(L"/%ls#%08X#%01X#%01X_all.png")
-                               % _ident.c_str() % (uint32)(r_crc64 & 0xffffffff) % (n64fmt >> 8) % (n64fmt & 0xf)));
+      swprintf(texid, 36, L"%08X#%01X#%01X",  (uint32)(r_crc64 & 0xffffffff), (uint32)(n64fmt >> 8), (uint32)(n64fmt & 0xf));
+      tmpbuf.append(L"/" + _ident + L"#" + texid + L"_all.png");
     }
 
 #ifdef WIN32
