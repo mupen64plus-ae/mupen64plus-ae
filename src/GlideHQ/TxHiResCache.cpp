@@ -28,10 +28,6 @@
 #pragma warning(disable: 4786)
 #endif
 
-/* dump processed hirestextures to disk 
- * (0:disable, 1:enable) */
-#define DUMP_CACHE 1
-
 /* handle oversized textures by
  *   0: minification
  *   1: Glide64 style tiling
@@ -65,7 +61,7 @@
 
 TxHiResCache::~TxHiResCache()
 {
-#if DUMP_CACHE
+#ifdef DUMP_CACHE
   if ((_options & DUMP_HIRESTEXCACHE) && !_haveCache && !_abortLoad) {
     /* dump cache to disk */
     std::wstring filename = _ident + L"_HIRESTEXTURES.dat";
@@ -106,7 +102,7 @@ TxHiResCache::TxHiResCache(int maxwidth, int maxheight, int maxbpp, int options,
     return;
   }
 
-#if DUMP_CACHE
+#ifdef DUMP_CACHE
   /* read in hires texture cache */
   if (_options & DUMP_HIRESTEXCACHE) {
     /* find it on disk */

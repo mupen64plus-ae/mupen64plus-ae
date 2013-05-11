@@ -615,6 +615,7 @@ TxFilter::dmptx(uint8 *src, int width, int height, int rowStridePixel, uint16 gf
   if (!(_options & DUMP_TEX))
     return 0;
 
+#ifdef DUMP_CACHE
   DBG_INFO(80, L"gfmt = %02x n64fmt = %02x\n", gfmt, n64fmt);
   DBG_INFO(80, L"hirestex: r_crc64:%08X %08X\n",
            (uint32)(r_crc64 >> 32), (uint32)(r_crc64 & 0xffffffff));
@@ -666,6 +667,7 @@ TxFilter::dmptx(uint8 *src, int width, int height, int rowStridePixel, uint16 gf
       return 1;
     }
   }
+#endif
 
   return 0;
 }

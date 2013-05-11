@@ -25,9 +25,6 @@
 #pragma warning(disable: 4786)
 #endif
 
-/* dump cache to disk (0:disable, 1:enable) */
-#define DUMP_CACHE 1
-
 #include "TxTexCache.h"
 #include "TxDbg.h"
 #include <zlib.h>
@@ -36,7 +33,7 @@
 
 TxTexCache::~TxTexCache()
 {
-#if DUMP_CACHE
+#ifdef DUMP_CACHE
   if (_options & DUMP_TEXCACHE) {
     /* dump cache to disk */
     std::wstring filename = _ident + L"_MEMORYCACHE.dat";
@@ -57,7 +54,7 @@ TxTexCache::TxTexCache(int options, int cachesize, const wchar_t *datapath, cons
   if (_cachepath.empty() || _ident.empty() || !_cacheSize)
     _options &= ~DUMP_TEXCACHE;
 
-#if DUMP_CACHE
+#ifdef DUMP_CACHE
   if (_options & DUMP_TEXCACHE) {
     /* find it on disk */
     std::wstring filename = _ident + L"_MEMORYCACHE.dat";
