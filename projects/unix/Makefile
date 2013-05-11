@@ -92,7 +92,7 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
-OPTFLAGS ?= -O3
+OPTFLAGS ?= -O3 -flto
 WARNFLAGS ?= -Wall
 
 # default configuration programs
@@ -279,7 +279,7 @@ targets:
 	@echo "    PLUGINDIR=path == default path to search for plugins"
 	@echo "    SHAREDIR=path  == default path to search for shared data files"
 	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
-	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3)"
+	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIE=(1|0)      == Force enable/disable of position independent executables"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
@@ -290,7 +290,6 @@ targets:
 	@echo "    DESTDIR=path   == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
-	@echo "    LTO=1         == enable experimental build with link-time optimization"
 	@echo "    V=1            == show verbose compiler output"
 
 all: $(TARGET)
@@ -312,11 +311,6 @@ uninstall:
 # build dependency files
 CFLAGS += -MD
 -include $(OBJECTS:.o=.d)
-
-ifeq ($(LTO), 1)
-  CFLAGS += -flto
-  LDFLAGS += -fuse-linker-plugin -fwhole-program
-endif
 
 # standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
