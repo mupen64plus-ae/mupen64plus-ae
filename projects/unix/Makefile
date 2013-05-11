@@ -130,7 +130,6 @@ BOOST_SUFFIX ?=
 BOOST_THREAD_SUFFIX ?=
 
 # default configuration programs
-SDL_CONFIG = $(CROSS_COMPILE)sdl-config
 PKG_CONFIG = $(CROSS_COMPILE)pkg-config
 
 ifeq ($(CPU), X86)
@@ -231,26 +230,26 @@ endif
 LDLIBS += $(GL_LIBS)
 
 # test for presence of SDL
-ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-  $(error No SDL development libraries found!)
-endif
-ifeq ($(OS),FREEBSD)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags) -D__unix__
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
-ifeq ($(OS),OSX)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags) -D__unix__
+ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
+  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+    $(error No SDL development libraries found!)
+  endif
+  ifeq ($(OS),OSX)
+    SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
     # sdl-config on mac screws up when we're trying to build a library and not an executable
     # SDL 1.3 is supposed to fix that, if it's ever released
-    LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
+    SDL_LDLIBS += -L/usr/local/lib -lSDL -Wl,-framework,Cocoa
+  else
+    SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+    SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
+  endif
 endif
-ifeq ($(OS),LINUX)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags) -D__unix__
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
-ifeq ($(OS), MINGW)
-  CFLAGS += $(shell $(SDL_CONFIG) --cflags)
-  LDLIBS += $(shell $(SDL_CONFIG) --libs)
+CFLAGS += $(SDL_CFLAGS)
+LDLIBS += $(SDL_LDLIBS)
+
+ifneq ($(OS), MINGW)
+  CPPFLAGS += -D__unix__
 endif
 
 # set mupen64plus core API header path
