@@ -129,9 +129,6 @@ LDFLAGS += $(SHARED)
 BOOST_SUFFIX ?=
 BOOST_THREAD_SUFFIX ?=
 
-# default configuration programs
-PKG_CONFIG = $(CROSS_COMPILE)pkg-config
-
 ifeq ($(CPU), X86)
   CFLAGS +=  -mmmx -msse
 endif
@@ -192,42 +189,54 @@ ifeq ($(OS), FREEBSD)
   LDLIBS += -lc
 endif
 
-# search for OpenGL libraries
-GL_LIBS=
-ifeq ($(OS), OSX)
-  GL_LIBS = -framework OpenGL
-endif
-ifeq ($(OS), MINGW)
-  GL_LIBS = -lopengl32
+ifeq ($(origin PKG_CONFIG), undefined)
+  PKG_CONFIG = $(CROSS_COMPILE)pkg-config
+  ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
+    $(error $(PKG_CONFIG) not found)
+  endif
 endif
 
-ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
-  $(error $(PKG_CONFIG) not found)
-endif
-ifeq ($(shell pkg-config --modversion libpng 2>/dev/null),)
-  $(error No libpng development libraries found!)
-endif
 ifeq ($(OS), OSX) # use system zlib on OSX
   LDLIBS += -lz
-else
+endif
+
+ifeq ($(origin ZLIB_CFLAGS) $(origin ZLIB_LDLIBS), undefined undefined)
   ifeq ($(shell $(PKG_CONFIG) --modversion zlib 2>/dev/null),)
     $(error No zlib development libraries found!)
   endif
-  CFLAGS += $(shell $(PKG_CONFIG) --cflags zlib)
-  LDLIBS +=  $(shell $(PKG_CONFIG) --libs zlib)
+  ZLIB_CFLAGS += $(shell $(PKG_CONFIG) --cflags zlib)
+  ZLIB_LDLIBS +=  $(shell $(PKG_CONFIG) --libs zlib)
 endif
+CFLAGS += $(ZLIB_CFLAGS)
+LDLIBS += $(ZLIB_LDLIBS)
 
-CFLAGS += $(shell $(PKG_CONFIG) --cflags libpng)
-LDLIBS +=  $(shell $(PKG_CONFIG) --libs libpng)
+ifeq ($(origin LIBPNG_CFLAGS) $(origin LIBPNG_LDLIBS), undefined undefined)
+  ifeq ($(shell $(PKG_CONFIG) --modversion libpng 2>/dev/null),)
+    $(error No libpng development libraries found!)
+  endif
+  LIBPNG_CFLAGS += $(shell $(PKG_CONFIG) --cflags libpng)
+  LIBPNG_LDLIBS +=  $(shell $(PKG_CONFIG) --libs libpng)
+endif
+CFLAGS += $(LIBPNG_CFLAGS)
+LDLIBS += $(LIBPNG_LDLIBS)
 
-ifeq ("$(GL_LIBS)", "")
+
+# search for OpenGL libraries
+ifeq ($(OS), OSX)
+  GL_LDLIBS = -framework OpenGL
+endif
+ifeq ($(OS), MINGW)
+  GL_LDLIBS = -lopengl32
+endif
+ifeq ($(origin GL_CFLAGS) $(origin GL_LDLIBS), undefined undefined)
   ifeq ($(shell $(PKG_CONFIG) --modversion gl 2>/dev/null),)
     $(error No OpenGL development libraries found!)
   endif
-  CFLAGS += $(shell $(PKG_CONFIG) --cflags gl)
-  GL_LIBS = $(shell $(PKG_CONFIG) --libs gl)
+  GL_CFLAGS += $(shell $(PKG_CONFIG) --cflags gl)
+  GL_LDLIBS +=  $(shell $(PKG_CONFIG) --libs gl)
 endif
-LDLIBS += $(GL_LIBS)
+CFLAGS += $(GL_CFLAGS)
+LDLIBS += $(GL_LDLIBS)
 
 # test for presence of SDL
 ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
