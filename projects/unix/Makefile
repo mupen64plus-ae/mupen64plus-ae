@@ -122,9 +122,6 @@ WARNFLAGS ?= -Wall
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 LDFLAGS += $(SHARED)
 
-# default configuration programs
-PKG_CONFIG = $(CROSS_COMPILE)pkg-config
-
 # Since we are building a shared library, we must compile with -fPIC on some architectures
 # On 32-bit x86 systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(PIC), 1)
@@ -186,28 +183,47 @@ endif
 CFLAGS += $(SDL_CFLAGS)
 LDLIBS += $(SDL_LDLIBS)
 
-# test for presence of speexdsp
-ifneq ($(strip $(shell $(PKG_CONFIG) speexdsp --modversion 2> /dev/null)),)
-  ifneq ($(NO_SPEEX), 1)
-    # set speexdsp flags and libraries
-    CFLAGS += $(shell $(PKG_CONFIG) speexdsp --cflags) -DUSE_SPEEX
-    LDLIBS += $(shell $(PKG_CONFIG) speexdsp --libs)
+# test for essential build dependencies
+ifeq ($(origin PKG_CONFIG), undefined)
+  PKG_CONFIG = $(CROSS_COMPILE)pkg-config
+  ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
+    $(error $(PKG_CONFIG) not found)
   endif
-else
-  # warn user
-  $(warning No libspeexdsp development libraries found.  Mupen64plus-sdl-audio will be built without speex-* resampler.)
+endif
+
+# test for presence of speexdsp
+ifneq ($(NO_SPEEX), 1)
+  ifeq ($(origin SPEEX_CFLAGS) $(origin SPEEX_LDLIBS), undefined undefined)
+    ifneq ($(strip $(shell $(PKG_CONFIG) speexdsp --modversion 2> /dev/null)),)
+      # set speexdsp flags and libraries
+      SPEEX_CFLAGS += $(shell $(PKG_CONFIG) speexdsp --cflags) -DUSE_SPEEX
+      SPEEX_LDLIBS += $(shell $(PKG_CONFIG) speexdsp --libs)
+    else
+      # warn user
+      $(warning No libspeexdsp development libraries found.  Mupen64plus-sdl-audio will be built without speex-* resampler.)
+    endif
+  else
+    SPEEX_CFLAGS += -DUSE_SPEEX
+  endif
+  CFLAGS += $(SPEEX_CFLAGS)
+  LDLIBS += $(SPEEX_LDLIBS)
 endif
 
 # test for presence of libsamplerate
-ifneq ($(strip $(shell $(PKG_CONFIG) samplerate --modversion 2> /dev/null)),)
-  ifneq ($(NO_SRC), 1)
-    # set libsamplerate flags and libraries
-    CFLAGS	+= $(shell $(PKG_CONFIG) samplerate --cflags) -DUSE_SRC
-    LDLIBS += $(shell $(PKG_CONFIG) samplerate --libs)
+ifneq ($(NO_SRC), 1)
+  ifeq ($(origin SRC_CFLAGS) $(origin SRC_LDLIBS), undefined undefined)
+    ifneq ($(strip $(shell $(PKG_CONFIG) samplerate --modversion 2> /dev/null)),)
+      # set libsamplerate flags and libraries
+      SRC_CFLAGS += $(shell $(PKG_CONFIG) samplerate --cflags) -DUSE_SRC
+      SRC_LDLIBS += $(shell $(PKG_CONFIG) samplerate --libs)
+    else
+      $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without src-* resampler.)
+    endif
+  else
+    SRC_CFLAGS += -DUSE_SRC
   endif
-else
-  # warn user
-  $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without src-* resampler.)
+  CFLAGS += $(SRC_CFLAGS)
+  LDLIBS += $(SRC_LDLIBS)
 endif
 
 # test for the presence of OSS
