@@ -95,9 +95,6 @@ endif
 OPTFLAGS ?= -O3 -flto
 WARNFLAGS ?= -Wall
 
-# default configuration programs
-SDL_CONFIG = $(CROSS_COMPILE)sdl-config
-
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -I../../src
 ifeq ($(OS), MINGW)
   CFLAGS += -lpthread
@@ -132,8 +129,17 @@ ifeq ($(OS), OSX)
   endif
 
   # The mac version of SDL requires inclusion of SDL_main in the executable
-  CFLAGS += $(shell $(SDL_CONFIG) --cflags)
-  LDLIBS += -ldl $(shell $(SDL_CONFIG) --libs)
+  ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
+    SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+    ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+      $(error No SDL development libraries found!)
+    endif
+    SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+    SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
+  endif
+  CFLAGS += $(SDL_CFLAGS)
+  LDLIBS += $(SDL_LDLIBS)
+
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
