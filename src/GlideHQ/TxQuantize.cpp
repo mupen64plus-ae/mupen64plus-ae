@@ -25,11 +25,12 @@
 #pragma warning(disable: 4786)
 #endif
 
+#include <functional>
+#include <thread>
+
 /* NOTE: The codes are not optimized. They can be made faster. */
 
 #include "TxQuantize.h"
-#include <boost/thread.hpp>
-#include <boost/bind.hpp>
 
 TxQuantize::TxQuantize()
 {
@@ -1773,27 +1774,27 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      boost::thread *thrd[MAX_NUMCORE];
+      std::thread *thrd[MAX_NUMCORE];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (width * blkheight) << (2 - bpp_shift);
       unsigned int destStride = srcStride << bpp_shift;
       for (i = 0; i < numcore - 1; i++) {
-        thrd[i] = new boost::thread(boost::bind(quantizer,
-                                                this,
-                                                (uint32*)src,
-                                                (uint32*)dest,
-                                                width,
-                                                blkheight));
+        thrd[i] = new std::thread(std::bind(quantizer,
+                                            this,
+                                            (uint32*)src,
+                                            (uint32*)dest,
+                                            width,
+                                            blkheight));
         src  += srcStride;
         dest += destStride;
       }
-      thrd[i] = new boost::thread(boost::bind(quantizer,
-                                              this,
-                                              (uint32*)src,
-                                              (uint32*)dest,
-                                              width,
-                                              height - blkheight * i));
+      thrd[i] = new std::thread(std::bind(quantizer,
+                                          this,
+                                          (uint32*)src,
+                                          (uint32*)dest,
+                                          width,
+                                          height - blkheight * i));
       for (i = 0; i < numcore; i++) {
         thrd[i]->join();
         delete thrd[i];
@@ -1840,27 +1841,27 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      boost::thread *thrd[MAX_NUMCORE];
+      std::thread *thrd[MAX_NUMCORE];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (width * blkheight) << 2;
       unsigned int destStride = srcStride >> bpp_shift;
       for (i = 0; i < numcore - 1; i++) {
-        thrd[i] = new boost::thread(boost::bind(quantizer,
-                                                this,
-                                                (uint32*)src,
-                                                (uint32*)dest,
-                                                width,
-                                                blkheight));
+        thrd[i] = new std::thread(std::bind(quantizer,
+                                            this,
+                                            (uint32*)src,
+                                            (uint32*)dest,
+                                            width,
+                                            blkheight));
         src  += srcStride;
         dest += destStride;
       }
-      thrd[i] = new boost::thread(boost::bind(quantizer,
-                                              this,
-                                              (uint32*)src,
-                                              (uint32*)dest,
-                                              width,
-                                              height - blkheight * i));
+      thrd[i] = new std::thread(std::bind(quantizer,
+                                          this,
+                                          (uint32*)src,
+                                          (uint32*)dest,
+                                          width,
+                                          height - blkheight * i));
       for (i = 0; i < numcore; i++) {
         thrd[i]->join();
         delete thrd[i];
@@ -1906,31 +1907,31 @@ TxQuantize::FXT1(uint8 *src, uint8 *dest,
       numcore--;
     }
     if (blkrow > 0 && numcore > 1) {
-      boost::thread *thrd[MAX_NUMCORE];
+      std::thread *thrd[MAX_NUMCORE];
       unsigned int i;
       int blkheight = blkrow << 2;
       unsigned int srcStride = (srcwidth * blkheight) << 2;
       unsigned int destStride = dstRowStride * blkrow;
       for (i = 0; i < numcore - 1; i++) {
-        thrd[i] = new boost::thread(boost::bind(_tx_compress_fxt1,
-                                                srcwidth,
-                                                blkheight,
-                                                4,
-                                                src,
-                                                srcRowStride,
-                                                dest,
-                                                dstRowStride));
+        thrd[i] = new std::thread(std::bind(_tx_compress_fxt1,
+                                            srcwidth,
+                                            blkheight,
+                                            4,
+                                            src,
+                                            srcRowStride,
+                                            dest,
+                                            dstRowStride));
         src  += srcStride;
         dest += destStride;
       }
-      thrd[i] = new boost::thread(boost::bind(_tx_compress_fxt1,
-                                              srcwidth,
-                                              srcheight - blkheight * i,
-                                              4,
-                                              src,
-                                              srcRowStride,
-                                              dest,
-                                              dstRowStride));
+      thrd[i] = new std::thread(std::bind(_tx_compress_fxt1,
+                                          srcwidth,
+                                          srcheight - blkheight * i,
+                                          4,
+                                          src,
+                                          srcRowStride,
+                                          dest,
+                                          dstRowStride));
       for (i = 0; i < numcore; i++) {
         thrd[i]->join();
         delete thrd[i];
@@ -2012,31 +2013,31 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
         numcore--;
       }
       if (blkrow > 0 && numcore > 1) {
-        boost::thread *thrd[MAX_NUMCORE];
+        std::thread *thrd[MAX_NUMCORE];
         unsigned int i;
         int blkheight = blkrow << 2;
         unsigned int srcStride = (srcwidth * blkheight) << 2;
         unsigned int destStride = dstRowStride * blkrow;
         for (i = 0; i < numcore - 1; i++) {
-          thrd[i] = new boost::thread(boost::bind(_tx_compress_dxtn,
-                                                  4,
-                                                  srcwidth,
-                                                  blkheight,
-                                                  src,
-                                                  compression,
-                                                  dest,
-                                                  dstRowStride));
+          thrd[i] = new std::thread(std::bind(_tx_compress_dxtn,
+                                              4,
+                                              srcwidth,
+                                              blkheight,
+                                              src,
+                                              compression,
+                                              dest,
+                                              dstRowStride));
           src  += srcStride;
           dest += destStride;
         }
-        thrd[i] = new boost::thread(boost::bind(_tx_compress_dxtn,
-                                                4,
-                                                srcwidth,
-                                                srcheight - blkheight * i,
-                                                src,
-                                                compression,
-                                                dest,
-                                                dstRowStride));
+        thrd[i] = new std::thread(std::bind(_tx_compress_dxtn,
+                                            4,
+                                            srcwidth,
+                                            srcheight - blkheight * i,
+                                            src,
+                                            compression,
+                                            dest,
+                                            dstRowStride));
         for (i = 0; i < numcore; i++) {
           thrd[i]->join();
           delete thrd[i];

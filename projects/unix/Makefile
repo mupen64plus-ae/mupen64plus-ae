@@ -67,7 +67,6 @@ ifeq ("$(patsubst MINGW%,MINGW,$(UNAME))","MINGW")
   SHARED = -shared
   PIC = 0
   BOOST_SUFFIX = -mt
-  BOOST_THREAD_SUFFIX = _win32-mt
 endif
 ifeq ("$(OS)","NONE")
   $(error OS type "$(UNAME)" not supported.  Please file bug report at 'http://code.google.com/p/mupen64plus/issues')
@@ -127,7 +126,6 @@ CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility
 CXXFLAGS += -fvisibility-inlines-hidden -std=gnu++11
 LDFLAGS += $(SHARED)
 BOOST_SUFFIX ?=
-BOOST_THREAD_SUFFIX ?=
 
 ifeq ($(CPU), X86)
   CFLAGS +=  -mmmx -msse
@@ -374,15 +372,7 @@ SOURCE += \
 	$(SRCDIR)/GlideHQ/tc-1.1+/texstore.c
 
 CFLAGS += -DTEXTURE_FILTER
-LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX) -lboost_thread$(BOOST_THREAD_SUFFIX)
-
-  ifeq ($(OS), MINGW)
-    CFLAGS += -DBOOST_THREAD_USE_LIB
-    LDLIBS += -lpthread
-  else
-    CFLAGS += -pthread
-    LDLIBS += -pthread
-  endif
+LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX)
 endif
 
 ifeq ($(OS),MINGW)
