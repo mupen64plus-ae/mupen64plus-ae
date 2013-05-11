@@ -123,7 +123,6 @@ CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility
 LDFLAGS += $(SHARED)
 
 # default configuration programs
-SDL_CONFIG = $(CROSS_COMPILE)sdl-config
 PKG_CONFIG = $(CROSS_COMPILE)pkg-config
 
 # Since we are building a shared library, we must compile with -fPIC on some architectures
@@ -176,25 +175,16 @@ ifeq ($(OS), OSX)
 endif
 
 # test for presence of SDL
-ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-  $(error No SDL development libraries found!)
+ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
+  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+    $(error No SDL development libraries found!)
+  endif
+  SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+  SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
-ifeq ($(OS),FREEBSD)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
-ifeq ($(OS),OSX)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
-ifeq ($(OS),LINUX)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
-ifeq ($(OS),MINGW)
-    CFLAGS += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
+CFLAGS += $(SDL_CFLAGS)
+LDLIBS += $(SDL_LDLIBS)
 
 # test for presence of speexdsp
 ifneq ($(strip $(shell $(PKG_CONFIG) speexdsp --modversion 2> /dev/null)),)
