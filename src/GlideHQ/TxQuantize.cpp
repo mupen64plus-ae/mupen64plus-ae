@@ -1767,6 +1767,7 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
       return 0;
     }
 
+#if !defined(NO_FILTER_THREAD)
     unsigned int numcore = _numcore;
     unsigned int blkrow = 0;
     while (numcore > 1 && blkrow == 0) {
@@ -1802,6 +1803,9 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
     } else {
       (*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
     }
+#else
+    (*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
+#endif
 
   } else if (srcformat == GR_TEXFMT_ARGB_8888) {
     switch (destformat) {
@@ -1834,6 +1838,7 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
       return 0;
     }
 
+#if !defined(NO_FILTER_THREAD)
     unsigned int numcore = _numcore;
     unsigned int blkrow = 0;
     while (numcore > 1 && blkrow == 0) {
@@ -1869,6 +1874,9 @@ TxQuantize::quantize(uint8* src, uint8* dest, int width, int height, uint16 srcf
     } else {
       (*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
     }
+#else
+    (*this.*quantizer)((uint32*)src, (uint32*)dest, width, height);
+#endif
 
   } else {
     return 0;
@@ -1900,6 +1908,7 @@ TxQuantize::FXT1(uint8 *src, uint8 *dest,
     int dstRowStride = ((srcwidth + 7) & ~7) << 1;
     int srcRowStride = (srcwidth << 2);
 
+#if !defined(NO_FILTER_THREAD)
     unsigned int numcore = _numcore;
     unsigned int blkrow = 0;
     while (numcore > 1 && blkrow == 0) {
@@ -1945,6 +1954,15 @@ TxQuantize::FXT1(uint8 *src, uint8 *dest,
                            dest,          /* destination */
                            dstRowStride); /* 16 bytes per 8x4 texel */
     }
+#else
+    (*_tx_compress_fxt1)(srcwidth,      /* width */
+                         srcheight,     /* height */
+                         4,             /* comps: ARGB8888=4, RGB888=3 */
+                         src,           /* source */
+                         srcRowStride,  /* width*comps */
+                         dest,          /* destination */
+                         dstRowStride); /* 16 bytes per 8x4 texel */
+#endif
 
     /* dxtn adjusts width and height to M8 and M4 respectively by replication */
     *destwidth  = (srcwidth  + 7) & ~7;
@@ -2006,6 +2024,7 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
         *destformat = GR_TEXFMT_ARGB_CMP_DXT1;
       }
 
+#if !defined(NO_FILTER_THREAD)
       unsigned int numcore = _numcore;
       unsigned int blkrow = 0;
       while (numcore > 1 && blkrow == 0) {
@@ -2052,6 +2071,16 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
                              dstRowStride); /* DXT1 = 8 bytes per 4x4 texel
                                              * others = 16 bytes per 4x4 texel */
       }
+#else
+      (*_tx_compress_dxtn)(4,             /* comps: ARGB8888=4, RGB888=3 */
+                           srcwidth,      /* width */
+                           srcheight,     /* height */
+                           src,           /* source */
+                           compression,   /* format */
+                           dest,          /* destination */
+                           dstRowStride); /* DXT1 = 8 bytes per 4x4 texel
+                                           * others = 16 bytes per 4x4 texel */
+#endif
 
       /* dxtn adjusts width and height to M4 by replication */
       *destwidth  = (srcwidth  + 3) & ~3;

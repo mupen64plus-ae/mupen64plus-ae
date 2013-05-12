@@ -262,6 +262,7 @@ TxFilter::filter(uint8 *src, int srcwidth, int srcheight, uint16 srcformat, uint
         uint8 *_texture = texture;
         uint8 *_tmptex  = tmptex;
 
+#if !defined(NO_FILTER_THREAD)
         unsigned int numcore = _numcore;
         unsigned int blkrow = 0;
         while (numcore > 1 && blkrow == 0) {
@@ -297,6 +298,9 @@ TxFilter::filter(uint8 *src, int srcwidth, int srcheight, uint16 srcformat, uint
         } else {
           filter_8888((uint32*)_texture, srcwidth, srcheight, (uint32*)_tmptex, filter);
         }
+#else
+        filter_8888((uint32*)_texture, srcwidth, srcheight, (uint32*)_tmptex, filter);
+#endif
 
         if (filter & ENHANCEMENT_MASK) {
           srcwidth  <<= scale_shift;
