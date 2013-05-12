@@ -53,19 +53,26 @@ TxDbg::~TxDbg()
 void
 TxDbg::output(const int level, const wchar_t *format, ...)
 {
-  va_list args;
-  //wchar_t newformat[4095];
+#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+  wchar_t newformat[4095];
+#else
   std::wstring newformat;
+#endif
+
+  va_list args;
 
   if (level > _level)
     return;
 
   va_start(args, format);
-  //swprintf(newformat, 4095, L"%d:\t", level);
-  //wcscat(newformat, format);
-  //vfwprintf(_dbgfile, newformat, args);
+#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+  swprintf(newformat, L"%d:\t", level);
+  wcscat(newformat, format);
+  vfwprintf(_dbgfile, newformat, args);
+#else
   newformat = std::to_wstring(level) + L":\t" + format;
   vfwprintf(_dbgfile, newformat.c_str(), args);
+#endif
   fflush(_dbgfile);
 #ifdef GHQCHK
   //vwprintf(newformat, args);
