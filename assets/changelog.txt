@@ -6,6 +6,7 @@
 [25:2.2.1]
 - Fixed Pokemon Snap camera control bug (must enable cheat)
 - Fixed crash when input plugin disabled
+- Fixed crash when cheats enabled
 - Warn user if installation appears to be corrupt
 - Doubled maximum possible touchscreen scale
 - Added support for raphnet GC/N64 controller adapter
