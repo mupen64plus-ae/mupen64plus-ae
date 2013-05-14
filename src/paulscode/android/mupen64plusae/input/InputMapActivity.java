@@ -43,6 +43,7 @@ import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -56,11 +57,13 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -68,10 +71,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class InputMapActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
 {
+    private static final int MAX_DEADZONE = 20;
+    
     // Visual settings
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
     private static final int UNMAPPED_BUTTON_FILTER = 0x66FFFFFF;
@@ -300,6 +306,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             case R.id.menuItem_save:
                 saveProfile();
                 break;
+            case R.id.menuItem_deadzone:
+                setDeadzone();
+                break;
             case R.id.menuItem_specialVisibility:
                 mUserPrefs.putSpecialVisibility( mPlayer,
                         !mUserPrefs.getSpecialVisibility( mPlayer ) );
@@ -337,6 +346,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             {
                 mMap.deserialize( mapString );
                 mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
+                mUserPrefs.putInputDeadzone( mPlayer, 0 );
                 refreshAllButtons();
             }
         } );
@@ -362,9 +372,18 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         try
         {
-            mMap.deserialize( FileUtil.readStringFromFile( file ) );
+            String[] lines = FileUtil.readStringFromFile( file ).split( "\n" );            
+            String line1 = lines.length > 0 ? lines[0] : "";
+            String line2 = lines.length > 1 ? lines[1] : "0";
+            
+            // First line of file contains button map
+            mMap.deserialize( line1 );
             mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
             refreshAllButtons();
+
+            // Second line of file contains deadzone value
+            int deadzone = SafeMethods.toInt( line2, 0 );
+            mUserPrefs.putInputDeadzone( mPlayer, deadzone );
         }
         catch( IOException e )
         {
@@ -416,13 +435,57 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         try
         {
             Notifier.showToast( this, R.string.toast_savingFile, file.getName() );
-            FileUtil.writeStringToFile( file, mMap.serialize() );
+            String text = mMap.serialize() + "\n" + mUserPrefs.getInputDeadzone( mPlayer );
+            FileUtil.writeStringToFile( file, text );
         }
         catch( IOException e )
         {
             Log.e( "InputMapActivity", "Error saving profile: ", e );
             Notifier.showToast( this, R.string.toast_fileWriteError );
         }
+    }
+    
+    private void setDeadzone()
+    {
+        final LayoutInflater inflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View layout = inflater.inflate( R.layout.seek_bar_preference, (ViewGroup) findViewById( R.id.rootLayout ) );
+        
+        final SeekBar seek = (SeekBar) layout.findViewById( R.id.seekbar );
+        final TextView text = (TextView) layout.findViewById( R.id.textFeedback );
+        final CharSequence title = getText( R.string.menuItem_deadzone );
+        
+        final int oldDeadzone = mUserPrefs.getInputDeadzone( mPlayer );
+        text.setText( Integer.toString( oldDeadzone ) + " %" );
+        seek.setMax( MAX_DEADZONE );
+        seek.setProgress( oldDeadzone );
+        seek.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
+        {
+            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
+            {
+                text.setText( Integer.toString( progress ) + " %"  );
+            }
+            
+            public void onStartTrackingTouch( SeekBar seekBar )
+            {
+            }
+            
+            public void onStopTrackingTouch( SeekBar seekBar )
+            {
+            }
+        } );
+        
+        Prompt.prefillBuilder( this, title, null, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    int newDeadzone = seek.getProgress();
+                    mUserPrefs.putInputDeadzone( mPlayer, newDeadzone );
+                }
+            }
+        } ).setView( layout ).create().show();
     }
     
     private void refreshSpecialVisibility()

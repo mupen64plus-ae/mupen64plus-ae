@@ -301,22 +301,22 @@ public class GameLifecycleHandler implements View.OnKeyListener
         if( mUserPrefs.isInputEnabled1 )
         {
             mControllers.add( new PeripheralController( 1, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap1, mKeyProvider, axisProvider ) );
+                    mUserPrefs.inputMap1, mUserPrefs.inputDeadzone1, mKeyProvider, axisProvider ) );
         }
         if( mUserPrefs.isInputEnabled2 )
         {
             mControllers.add( new PeripheralController( 2, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap2, mKeyProvider, axisProvider ) );
+                    mUserPrefs.inputMap2, mUserPrefs.inputDeadzone2, mKeyProvider, axisProvider ) );
         }
         if( mUserPrefs.isInputEnabled3 )
         {
             mControllers.add( new PeripheralController( 3, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap3, mKeyProvider, axisProvider ) );
+                    mUserPrefs.inputMap3, mUserPrefs.inputDeadzone3, mKeyProvider, axisProvider ) );
         }
         if( mUserPrefs.isInputEnabled4 )
         {
             mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap4, mKeyProvider, axisProvider ) );
+                    mUserPrefs.inputMap4, mUserPrefs.inputDeadzone4, mKeyProvider, axisProvider ) );
         }
     }
     

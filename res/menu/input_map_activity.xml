@@ -33,6 +33,10 @@
         </menu>
     </item>
     <item
+        android:id="@+id/menuItem_deadzone"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menuItem_deadzone"/>
+    <item
         android:id="@+id/menuItem_specialVisibility"
         android:title="@string/menuItem_specialVisibility_show"/>
     <item
