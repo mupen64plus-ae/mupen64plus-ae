@@ -1,5 +1,6 @@
 [26:2.3.0]
 - Upgraded to SDL 2.0 multimedia library
+- Added controller deadzone preference (see button mapping screen)
 - Fixed crash related to rumble (stale JNI references)
 - Fixed crash related to audio (uninitialized audio tracks)
 - Fixed unmappable d-pad on newer batches of Nyko Playpad controller
