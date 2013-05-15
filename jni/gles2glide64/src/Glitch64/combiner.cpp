@@ -29,6 +29,8 @@
 #include "glide.h"
 #include "main.h"
 
+void vbo_draw();
+
 static int fct[4], source0[4], operand0[4], source1[4], operand1[4], source2[4], operand2[4];
 static int fcta[4],sourcea0[4],operanda0[4],sourcea1[4],operanda1[4],sourcea2[4],operanda2[4];
 static int alpha_ref, alpha_func;
@@ -656,6 +658,8 @@ grConstantColorValue( GrColor_t value )
   default:
     display_warning("grConstantColorValue: unknown color format : %x", lfb_color_fmt);
   }
+
+  vbo_draw();
 
   constant_color_location = glGetUniformLocation(program_object, "constant_color");
   glUniform4f(constant_color_location, texture_env_color[0], texture_env_color[1], 
@@ -1678,7 +1682,7 @@ grChromakeyValue( GrColor_t value )
   default:
     display_warning("grChromakeyValue: unknown color format : %x", lfb_color_fmt);
   }
-
+  vbo_draw();
   chroma_color_location = glGetUniformLocation(program_object, "chroma_color");
   glUniform4f(chroma_color_location, chroma_color[0], chroma_color[1],
     chroma_color[2], chroma_color[3]);
@@ -2790,6 +2794,7 @@ grConstantColorValueExt(GrChipID_t    tmu,
     display_warning("grConstantColorValue: unknown color format : %x", lfb_color_fmt);
   }
 
+  vbo_draw();
   if(num_tex == 0)
   {
     ccolor0_location = glGetUniformLocation(program_object, "ccolor0");

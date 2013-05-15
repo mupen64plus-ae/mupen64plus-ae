@@ -106,6 +106,7 @@ extern "C" {
 #include <SDL_opengles2.h>
 #endif // _WIN32
 #include "glide.h"
+#include "glState.cpp"
 
 void display_warning(const unsigned char *text, ...);
 void display_warning(const char *text, ...);
@@ -141,6 +142,10 @@ extern PFNGLGETINFOLOGARBPROC glGetInfoLogARB;
 extern PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB;
 extern PFNGLSECONDARYCOLOR3FPROC glSecondaryColor3f;
 #endif
+void check_compile(GLuint shader);
+void check_link(GLuint program);
+void vbo_enable();
+void vbo_disable();
 
 //Vertex Attribute Locations
 #define POSITION_ATTR 0

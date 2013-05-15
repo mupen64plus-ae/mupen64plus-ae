@@ -1381,6 +1381,7 @@ static void render_rectangle(int texture_number,
     0.0f
   };
 
+  vbo_disable();
   glDisableVertexAttribArray(COLOUR_ATTR);
   glDisableVertexAttribArray(TEXCOORD_1_ATTR);
   glDisableVertexAttribArray(FOG_ATTR);
@@ -1396,6 +1397,7 @@ static void render_rectangle(int texture_number,
   disable_textureSizes();
 
   glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+  vbo_enable();
 
 
 /*
@@ -1681,6 +1683,7 @@ grAuxBufferExt( GrBuffer_t buffer )
 FX_ENTRY void FX_CALL
 grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 {
+  vbo_draw();
   LOG("grBufferClear(%d,%d,%d)\r\n", color, alpha, depth);
   switch(lfb_color_fmt)
   {
@@ -1715,6 +1718,7 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
 {
+  vbo_draw();
 //	glFinish();
 //  printf("rendercallback is %p\n", renderCallback);
   if(renderCallback)

@@ -25,9 +25,13 @@
 #endif // _WIN32
 #include "glide.h"
 #include "main.h"
+#include "../Glide64/winlnxdefs.h"
+#include "../Glide64/rdp.h"
+
+
 
 #define Z_MAX (65536.0f)
-#define VERTEX_SIZE 156 //Size of vertex struct
+#define VERTEX_SIZE sizeof(VERTEX) //Size of vertex struct
 
 #ifdef PAULSCODE
 #include "ae_bridge.h"
@@ -54,7 +58,78 @@ int w_buffer_mode;
 int inverted_culling;
 int culling_mode;
 
-void* previous_pointers;
+#define VERTEX_BUFFER_SIZE 1500 //Max amount of vertices to buffer, this seems large enough.
+static VERTEX vertex_buffer[VERTEX_BUFFER_SIZE];
+static int vertex_buffer_count = 0;
+static GLenum vertex_draw_mode;
+static bool vertex_buffer_enabled = false;
+
+void vbo_init()
+{
+  
+}
+
+void vbo_draw()
+{
+  if(vertex_buffer_count)
+  {
+    glDrawArrays(vertex_draw_mode,0,vertex_buffer_count);
+    vertex_buffer_count = 0;
+  }
+}
+
+//Buffer vertices instead of glDrawArrays(...)
+void vbo_buffer(GLenum mode,GLint first,GLsizei count,void* pointers)
+{
+  if((count != 3 && mode != GL_TRIANGLES) || vertex_buffer_count + count > VERTEX_BUFFER_SIZE)
+  {
+    vbo_draw();
+  }
+
+  memcpy(&vertex_buffer[vertex_buffer_count],pointers,count * VERTEX_SIZE);
+  vertex_buffer_count += count;
+
+  if(count == 3 || mode == GL_TRIANGLES)
+  {
+    vertex_draw_mode = GL_TRIANGLES;
+  }
+  else
+  {
+    vertex_draw_mode = mode;
+    vbo_draw(); //Triangle fans and strips can't be joined as easily, just draw them straight away.
+  }
+
+
+}
+
+void vbo_enable()
+{
+  if(vertex_buffer_enabled)
+    return;
+
+  vertex_buffer_enabled = true;
+  glEnableVertexAttribArray(POSITION_ATTR);
+  glVertexAttribPointer(POSITION_ATTR, 4, GL_FLOAT, false, VERTEX_SIZE, &vertex_buffer[0].x); //Position
+
+  glEnableVertexAttribArray(COLOUR_ATTR);
+  glVertexAttribPointer(COLOUR_ATTR, 4, GL_UNSIGNED_BYTE, true, VERTEX_SIZE, &vertex_buffer[0].b); //Colour
+
+  glEnableVertexAttribArray(TEXCOORD_0_ATTR);
+  glVertexAttribPointer(TEXCOORD_0_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, &vertex_buffer[0].coord[2]); //Tex0
+
+  glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+  glVertexAttribPointer(TEXCOORD_1_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, &vertex_buffer[0].coord[0]); //Tex1
+
+  glEnableVertexAttribArray(FOG_ATTR);
+  glVertexAttribPointer(FOG_ATTR, 1, GL_FLOAT, false, VERTEX_SIZE, &vertex_buffer[0].f); //Fog
+}
+
+void vbo_disable()
+{
+  vbo_draw();
+  vertex_buffer_enabled = false;
+}
+
 
 inline float ZCALC(const float & z, const float & q) {
   float res = z_en ? ((z) / Z_MAX) / (q) : 1.0f;
@@ -87,6 +162,8 @@ void init_geometry()
 
   glDisable(GL_CULL_FACE);
   glDisable(GL_DEPTH_TEST);
+
+  vbo_init();
 }
 
 FX_ENTRY void FX_CALL
@@ -331,12 +408,26 @@ FX_ENTRY void FX_CALL
 grDrawTriangle( const void *a, const void *b, const void *c )
 {
   LOG("grDrawTriangle()\r\n\t");
-  static unsigned char triangle[VERTEX_SIZE*3];
-  memcpy(&triangle[VERTEX_SIZE*0],a,VERTEX_SIZE);
-  memcpy(&triangle[VERTEX_SIZE*1],b,VERTEX_SIZE);
-  memcpy(&triangle[VERTEX_SIZE*2],c,VERTEX_SIZE);
+  
+  if(nvidia_viewport_hack && !render_to_texture)
+  {
+    glViewport(0, viewport_offset, viewport_width, viewport_height);
+    nvidia_viewport_hack = 0;
+  }
 
-  grDrawVertexArrayContiguous(GR_TRIANGLE_FAN,3,triangle,VERTEX_SIZE);
+  reloadTexture();
+
+  if(need_to_compile) compile_shader();
+
+  if(vertex_buffer_count + 3 > VERTEX_BUFFER_SIZE)
+  {
+    vbo_draw();
+  }
+  vertex_draw_mode = GL_TRIANGLES;
+  memcpy(&vertex_buffer[vertex_buffer_count],a,VERTEX_SIZE);
+  memcpy(&vertex_buffer[vertex_buffer_count+1],b,VERTEX_SIZE);
+  memcpy(&vertex_buffer[vertex_buffer_count+2],c,VERTEX_SIZE);
+  vertex_buffer_count += 3;
 }
 
 FX_ENTRY void FX_CALL
@@ -495,9 +586,6 @@ grDrawLine( const void *a, const void *b )
 FX_ENTRY void FX_CALL
 grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
 {
-  unsigned int i;
-  float *x, *y, *q, *s0, *t0, *s1, *t1, *z, *fog;
-  unsigned char *pargb;
   void **pointers = (void**)pointers2;
   LOG("grDrawVertexArray(%d,%d)\r\n", mode, Count);
 
@@ -516,42 +604,13 @@ grDrawVertexArray(FxU32 mode, FxU32 Count, void *pointers2)
     display_warning("grDrawVertexArray : unknown mode : %x", mode);
   }
 
-  if (previous_pointers != pointers2)
-  {
-    x = (float*) pointers[0] + xy_off / sizeof(float);
-    pargb = (unsigned char*) pointers[0] + pargb_off;
-    s0 = (float*) pointers[0] + st0_off / sizeof(float);
-    s1 = (float*) pointers[0] + st1_off / sizeof(float);
-    fog = (float*) pointers[0] + fog_ext_off / sizeof(float);
-
-    glEnableVertexAttribArray(POSITION_ATTR);
-    glVertexAttribPointer(POSITION_ATTR, 4, GL_FLOAT, false, VERTEX_SIZE, x); //Position
-
-    glEnableVertexAttribArray(COLOUR_ATTR);
-    glVertexAttribPointer(COLOUR_ATTR, 4, GL_UNSIGNED_BYTE, true, VERTEX_SIZE,
-        pargb); //Colour
-
-    glEnableVertexAttribArray(TEXCOORD_0_ATTR);
-    glVertexAttribPointer(TEXCOORD_0_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s1); //Tex0
-
-    glEnableVertexAttribArray(TEXCOORD_1_ATTR);
-    glVertexAttribPointer(TEXCOORD_1_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s0); //Tex1
-
-    glEnableVertexAttribArray(FOG_ATTR);
-    glVertexAttribPointer(FOG_ATTR, 1, GL_FLOAT, false, VERTEX_SIZE, fog); //Fog
-
-    previous_pointers = pointers2;
-  }
-
-  glDrawArrays(GL_TRIANGLE_FAN,0,Count);
+  vbo_enable();
+  vbo_buffer(GL_TRIANGLE_FAN,0,Count,pointers[0]);
 }
 
 FX_ENTRY void FX_CALL
 grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 stride)
 {
-  unsigned int i;
-  float *x, *y, *q, *s0, *t0, *s1, *t1, *z, *fog;
-  unsigned char *pargb;
   LOG("grDrawVertexArrayContiguous(%d,%d,%d)\r\n", mode, Count, stride);
 
   if(nvidia_viewport_hack && !render_to_texture)
@@ -569,40 +628,15 @@ grDrawVertexArrayContiguous(FxU32 mode, FxU32 Count, void *pointers, FxU32 strid
 
   if(need_to_compile) compile_shader();
 
-  if (pointers != previous_pointers)
-  {
-    x = (float*) ((unsigned char*) pointers) + xy_off / sizeof(float);
-    pargb = (unsigned char*) pointers + pargb_off;
-    s0 = (float*) ((unsigned char*) pointers) + st0_off / sizeof(float);
-    s1 = (float*) ((unsigned char*) pointers) + st1_off / sizeof(float);
-    fog = (float*) ((unsigned char*) pointers) + fog_ext_off / sizeof(float);
-
-    glEnableVertexAttribArray(POSITION_ATTR);
-    glVertexAttribPointer(POSITION_ATTR, 4, GL_FLOAT, false, VERTEX_SIZE, x); //Position
-
-    glEnableVertexAttribArray(COLOUR_ATTR);
-    glVertexAttribPointer(COLOUR_ATTR, 4, GL_UNSIGNED_BYTE, true, VERTEX_SIZE,
-        pargb); //Colour
-
-    glEnableVertexAttribArray(TEXCOORD_0_ATTR);
-    glVertexAttribPointer(TEXCOORD_0_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s1); //Tex0
-
-    glEnableVertexAttribArray(TEXCOORD_1_ATTR);
-    glVertexAttribPointer(TEXCOORD_1_ATTR, 2, GL_FLOAT, false, VERTEX_SIZE, s0); //Tex1
-
-    glEnableVertexAttribArray(FOG_ATTR);
-    glVertexAttribPointer(FOG_ATTR, 1, GL_FLOAT, false, VERTEX_SIZE, fog); //Fog
-
-    previous_pointers = pointers;
-  }
+  vbo_enable();
 
   switch(mode)
   {
   case GR_TRIANGLE_STRIP:
-	  glDrawArrays(GL_TRIANGLE_STRIP,0,Count);
+    vbo_buffer(GL_TRIANGLE_STRIP,0,Count,pointers);
     break;
   case GR_TRIANGLE_FAN:
-	  glDrawArrays(GL_TRIANGLE_FAN,0,Count);
+    vbo_buffer(GL_TRIANGLE_FAN,0,Count,pointers);
     break;
   default:
     display_warning("grDrawVertexArrayContiguous : unknown mode : %x", mode);
