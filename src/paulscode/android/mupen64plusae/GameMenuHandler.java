@@ -27,10 +27,10 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnIntegerListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptIntegerListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -322,10 +322,10 @@ public class GameMenuHandler
         CharSequence title = mActivity.getText( R.string.menuItem_fileSave );
         CharSequence hint = mActivity.getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( mActivity, title, null, hint, inputType, new OnTextListener()
+        Prompt.promptText( mActivity, title, null, hint, inputType, new PromptTextListener()
         {
             @Override
-            public void onText( CharSequence text, int which )
+            public void onDialogClosed( CharSequence text, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                     saveState( text.toString() );
@@ -339,10 +339,10 @@ public class GameMenuHandler
         CoreInterface.pauseEmulator( false );
         CharSequence title = mActivity.getText( R.string.menuItem_fileLoad );
         File startPath = new File( mManualSaveDir );
-        Prompt.promptFile( mActivity, title, null, startPath, new OnFileListener()
+        Prompt.promptFile( mActivity, title, null, startPath, new PromptFileListener()
         {
             @Override
-            public void onFile( File file, int which )
+            public void onDialogClosed( File file, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                     loadState( file );
@@ -358,7 +358,7 @@ public class GameMenuHandler
         {
             String title = mActivity.getString( R.string.confirm_title );
             String message = mActivity.getString( R.string.confirmOverwriteFile_message, filename );
-            Prompt.promptConfirm( mActivity, title, message, new OnConfirmListener()
+            Prompt.promptConfirm( mActivity, title, message, new PromptConfirmListener()
             {
                 @Override
                 public void onConfirm()
@@ -398,10 +398,10 @@ public class GameMenuHandler
         final CharSequence title = mActivity.getText( R.string.menuItem_setSpeed );
         
         Prompt.promptInteger( mActivity, title, "%1$d %%", mSpeedFactor, MIN_SPEED_FACTOR,
-                MAX_SPEED_FACTOR, new OnIntegerListener()
+                MAX_SPEED_FACTOR, new PromptIntegerListener()
         {            
             @Override
-            public void onInteger( Integer value, int which )
+            public void onDialogClosed( Integer value, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {

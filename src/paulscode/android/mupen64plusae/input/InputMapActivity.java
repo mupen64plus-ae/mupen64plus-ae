@@ -39,11 +39,11 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
-import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnIntegerListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptInputCodeListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptIntegerListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -337,7 +337,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 ? getString( R.string.confirmUnmapAll_message, getTitle() )
                 : getString( R.string.confirmLoadProfile_message, profileName, getTitle() );
         
-        Prompt.promptConfirm( this, title, message, new OnConfirmListener()
+        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
             public void onConfirm()
@@ -355,10 +355,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         CharSequence title = getText( R.string.menuItem_fileLoad );
         File startPath = new File( mUserPrefs.profileDir );
         
-        Prompt.promptFile( this, title, null, startPath, new OnFileListener()
+        Prompt.promptFile( this, title, null, startPath, new PromptFileListener()
         {
             @Override
-            public void onFile( File file, int which )
+            public void onDialogClosed( File file, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                     loadProfile( file );
@@ -396,10 +396,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         CharSequence hint = getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
         
-        Prompt.promptText( this, title, null, hint, inputType, new OnTextListener()
+        Prompt.promptText( this, title, null, hint, inputType, new PromptTextListener()
         {
             @Override
-            public void onText( CharSequence text, int which )
+            public void onDialogClosed( CharSequence text, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
@@ -410,7 +410,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                         String title = getString( R.string.confirm_title );
                         String message = getString( R.string.confirmOverwriteFile_message, filename );
                         Prompt.promptConfirm( InputMapActivity.this, title, message,
-                                new OnConfirmListener()
+                                new PromptConfirmListener()
                                 {
                                     @Override
                                     public void onConfirm()
@@ -448,10 +448,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         final CharSequence title = getText( R.string.menuItem_deadzone );
         final int deadzone = mUserPrefs.getInputDeadzone( mPlayer );
         
-        Prompt.promptInteger( this, title, "%1$d %%", deadzone, 0, MAX_DEADZONE, new OnIntegerListener()
+        Prompt.promptInteger( this, title, "%1$d %%", deadzone, 0, MAX_DEADZONE, new PromptIntegerListener()
         {
             @Override
-            public void onInteger( Integer value, int which )
+            public void onDialogClosed( Integer value, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
@@ -522,10 +522,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         String btnText = getString( R.string.inputMapActivity_popupUnmap );
         
         Prompt.promptInputCode( this, title, message, btnText,
-                mUnmappableInputCodes, new OnInputCodeListener()
+                mUnmappableInputCodes, new PromptInputCodeListener()
                 {
                     @Override
-                    public void OnInputCode( int inputCode, int hardwareId )
+                    public void onInputCode( int inputCode, int hardwareId )
                     {
                         if( inputCode == 0 )
                             mMap.unmapCommand( index );
