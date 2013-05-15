@@ -45,6 +45,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
@@ -118,6 +119,22 @@ public class Prompt
          * @param which The DialogInterface button pressed by the user.
          */
         public void onText( CharSequence text, int which );
+    }
+    
+    /**
+     * The listener interface for receiving an integer provided by the user.
+     * 
+     * @see Prompt#promptInteger
+     */
+    public interface OnIntegerListener
+    {
+        /**
+         * Process the integer provided by the user.
+         * 
+         * @param value The integer provided by the user, or null.
+         * @param which The DialogInterface button pressed by the user.
+         */
+        public void onInteger( Integer value, int which );
     }
     
     /**
@@ -354,6 +371,55 @@ public class Prompt
         // Create and launch the dialog, adding the edit-text widget in the process
         prefillBuilder( context, title, message, internalListener ).setView( editText ).create()
                 .show();
+    }
+    
+    /**
+     * Open a dialog to prompt the user for an integer.
+     *
+     * @param context The activity context.
+     * @param title The title of the dialog.
+     * @param format The string format for the displayed value (e.g. "%1$d %%"), or null to display number only.
+     * @param initial The initial (default) value shown in the dialog.
+     * @param min The minimum value permitted.
+     * @param max The maximum value permitted.
+     * @param listener The listener to process the integer, when provided.
+     */
+    public static void promptInteger( Context context, CharSequence title, String format,
+            final int initial, final int min, final int max, final OnIntegerListener listener )
+    {
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View layout = inflater.inflate( R.layout.seek_bar_preference, null );
+        final SeekBar seek = (SeekBar) layout.findViewById( R.id.seekbar );
+        final TextView text = (TextView) layout.findViewById( R.id.textFeedback );        
+        final String finalFormat = TextUtils.isEmpty( format ) ? "%1$d" : format;
+        
+        text.setText( String.format( finalFormat, initial ) );
+        seek.setMax( max - min );
+        seek.setProgress( initial - min );
+        seek.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
+        {
+            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
+            {
+                text.setText( String.format( finalFormat, progress + min ) );
+            }
+            
+            public void onStartTrackingTouch( SeekBar seekBar )
+            {
+            }
+            
+            public void onStopTrackingTouch( SeekBar seekBar )
+            {
+            }
+        } );
+        
+        prefillBuilder( context, title, null, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                listener.onInteger( seek.getProgress() + min, which );
+            }
+        } ).setView( layout ).create().show();
     }
     
     /**

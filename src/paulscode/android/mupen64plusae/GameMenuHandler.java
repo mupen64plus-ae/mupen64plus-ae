@@ -29,22 +29,17 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
+import paulscode.android.mupen64plusae.util.Prompt.OnIntegerListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Vibrator;
 import android.text.InputType;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 public class GameMenuHandler
 {
@@ -400,42 +395,17 @@ public class GameMenuHandler
     {
         CoreInterface.pauseEmulator( false );
         
-        final LayoutInflater inflater = (LayoutInflater) mActivity
-                .getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View layout = inflater.inflate( R.layout.seek_bar_preference,
-                (ViewGroup) mActivity.findViewById( R.id.rootLayout ) );
-        
-        final SeekBar seek = (SeekBar) layout.findViewById( R.id.seekbar );
-        final TextView text = (TextView) layout.findViewById( R.id.textFeedback );
         final CharSequence title = mActivity.getText( R.string.menuItem_setSpeed );
         
-        text.setText( Integer.toString( mSpeedFactor ) );
-        seek.setMax( MAX_SPEED_FACTOR - MIN_SPEED_FACTOR );
-        seek.setProgress( mSpeedFactor - MIN_SPEED_FACTOR );
-        seek.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
-        {
-            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
-            {
-                text.setText( Integer.toString( progress + MIN_SPEED_FACTOR ) );
-            }
-            
-            public void onStartTrackingTouch( SeekBar seekBar )
-            {
-            }
-            
-            public void onStopTrackingTouch( SeekBar seekBar )
-            {
-            }
-        } );
-        
-        Prompt.prefillBuilder( mActivity, title, null, new OnClickListener()
-        {
+        Prompt.promptInteger( mActivity, title, "%1$d %%", mSpeedFactor, MIN_SPEED_FACTOR,
+                MAX_SPEED_FACTOR, new OnIntegerListener()
+        {            
             @Override
-            public void onClick( DialogInterface dialog, int which )
+            public void onInteger( Integer value, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    mSpeedFactor = seek.getProgress() + MIN_SPEED_FACTOR;
+                    mSpeedFactor = value;
                     mCustomSpeed = true;
                     CoreInterfaceNative.emuSetSpeed( mSpeedFactor );
                     
@@ -445,7 +415,7 @@ public class GameMenuHandler
                 
                 CoreInterface.resumeEmulator();
             }
-        } ).setView( layout ).create().show();
+        } );
     }
     
     private void quitToMenu()

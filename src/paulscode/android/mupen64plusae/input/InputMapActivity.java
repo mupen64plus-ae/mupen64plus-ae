@@ -42,6 +42,7 @@ import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
 import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
+import paulscode.android.mupen64plusae.util.Prompt.OnIntegerListener;
 import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
@@ -57,13 +58,11 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -71,7 +70,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class InputMapActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
@@ -447,45 +445,20 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     
     private void setDeadzone()
     {
-        final LayoutInflater inflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View layout = inflater.inflate( R.layout.seek_bar_preference, (ViewGroup) findViewById( R.id.rootLayout ) );
-        
-        final SeekBar seek = (SeekBar) layout.findViewById( R.id.seekbar );
-        final TextView text = (TextView) layout.findViewById( R.id.textFeedback );
         final CharSequence title = getText( R.string.menuItem_deadzone );
+        final int deadzone = mUserPrefs.getInputDeadzone( mPlayer );
         
-        final int oldDeadzone = mUserPrefs.getInputDeadzone( mPlayer );
-        text.setText( Integer.toString( oldDeadzone ) + " %" );
-        seek.setMax( MAX_DEADZONE );
-        seek.setProgress( oldDeadzone );
-        seek.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
-        {
-            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
-            {
-                text.setText( Integer.toString( progress ) + " %"  );
-            }
-            
-            public void onStartTrackingTouch( SeekBar seekBar )
-            {
-            }
-            
-            public void onStopTrackingTouch( SeekBar seekBar )
-            {
-            }
-        } );
-        
-        Prompt.prefillBuilder( this, title, null, new DialogInterface.OnClickListener()
+        Prompt.promptInteger( this, title, "%1$d %%", deadzone, 0, MAX_DEADZONE, new OnIntegerListener()
         {
             @Override
-            public void onClick( DialogInterface dialog, int which )
+            public void onInteger( Integer value, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    int newDeadzone = seek.getProgress();
-                    mUserPrefs.putInputDeadzone( mPlayer, newDeadzone );
+                    mUserPrefs.putInputDeadzone( mPlayer, value );
                 }
             }
-        } ).setView( layout ).create().show();
+        } );
     }
     
     private void refreshSpecialVisibility()
