@@ -254,7 +254,7 @@ public class UserPrefs
     /** The manually-overridden hardware type, used for flicker reduction. */
     public final int videoHardwareType;
     
-    /** True if Gles2N64 video plug-in is enabled. */
+    /** True if gles2n64 video plug-in is enabled. */
     public final boolean isGles2N64Enabled;
     
     /** The maximum frameskip in the gles2n64 library. */
@@ -278,7 +278,7 @@ public class UserPrefs
     /** True if depth test is enabled in the gles2n64 library. */
     public final boolean isGles2N64DepthTestEnabled;
     
-    /** True if Gles2Rice video plug-in is enabled. */
+    /** True if gles2rice video plug-in is enabled. */
     public final boolean isGles2RiceEnabled;
     
     /** True if auto-frameskip is enabled in the gles2rice library. */
@@ -293,10 +293,10 @@ public class UserPrefs
     /** True if force texture filter is enabled in the gles2rice library. */
     public final boolean isGles2RiceForceTextureFilterEnabled;
     
-    /** The mipmapping algorithm to use in GLES2Rice */
+    /** The mipmapping algorithm to use in gles2rice */
     public final String gles2RiceMipmappingAlg;
 
-    /** The screen update setting to use in GLES2Rice */
+    /** The screen update setting to use in gles2rice */
     public final String gles2RiceScreenUpdateType;
     
     /** The texture enhancement algorithm to be used in the gles2rice library */
@@ -305,6 +305,9 @@ public class UserPrefs
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
+    /** True if gles2glide64 video plug-in is enabled. */
+    public final boolean isGles2Glide64Enabled;
+        
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
     
@@ -464,6 +467,9 @@ public class UserPrefs
         gles2RiceScreenUpdateType = mPreferences.getString( "gles2RiceScreenUpdate", "4" );
         gles2RiceTextureEnhancement = mPreferences.getString( "gles2RiceTextureEnhancement", "0" );
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
+        
+        // Video prefs - gles2glide64
+        isGles2Glide64Enabled = videoPlugin.name.equals( "libgles2glide64.so" );
         
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
