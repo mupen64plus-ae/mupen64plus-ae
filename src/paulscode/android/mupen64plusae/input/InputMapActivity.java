@@ -39,10 +39,12 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.ListItemTwoTextIconPopulator;
-import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnFileListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
-import paulscode.android.mupen64plusae.util.Prompt.OnTextListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptInputCodeListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptIntegerListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -72,6 +74,8 @@ import android.widget.TextView;
 
 public class InputMapActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
 {
+    private static final int MAX_DEADZONE = 20;
+    
     // Visual settings
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
     private static final int UNMAPPED_BUTTON_FILTER = 0x66FFFFFF;
@@ -300,6 +304,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             case R.id.menuItem_save:
                 saveProfile();
                 break;
+            case R.id.menuItem_deadzone:
+                setDeadzone();
+                break;
             case R.id.menuItem_specialVisibility:
                 mUserPrefs.putSpecialVisibility( mPlayer,
                         !mUserPrefs.getSpecialVisibility( mPlayer ) );
@@ -330,13 +337,14 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 ? getString( R.string.confirmUnmapAll_message, getTitle() )
                 : getString( R.string.confirmLoadProfile_message, profileName, getTitle() );
         
-        Prompt.promptConfirm( this, title, message, new OnConfirmListener()
+        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
             public void onConfirm()
             {
                 mMap.deserialize( mapString );
                 mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
+                mUserPrefs.putInputDeadzone( mPlayer, 0 );
                 refreshAllButtons();
             }
         } );
@@ -347,10 +355,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         CharSequence title = getText( R.string.menuItem_fileLoad );
         File startPath = new File( mUserPrefs.profileDir );
         
-        Prompt.promptFile( this, title, null, startPath, new OnFileListener()
+        Prompt.promptFile( this, title, null, startPath, new PromptFileListener()
         {
             @Override
-            public void onFile( File file, int which )
+            public void onDialogClosed( File file, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                     loadProfile( file );
@@ -362,9 +370,18 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         try
         {
-            mMap.deserialize( FileUtil.readStringFromFile( file ) );
+            String[] lines = FileUtil.readStringFromFile( file ).split( "\n" );            
+            String line1 = lines.length > 0 ? lines[0] : "";
+            String line2 = lines.length > 1 ? lines[1] : "0";
+            
+            // First line of file contains button map
+            mMap.deserialize( line1 );
             mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
             refreshAllButtons();
+
+            // Second line of file contains deadzone value
+            int deadzone = SafeMethods.toInt( line2, 0 );
+            mUserPrefs.putInputDeadzone( mPlayer, deadzone );
         }
         catch( IOException e )
         {
@@ -379,10 +396,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         CharSequence hint = getText( R.string.hintFileSave );
         int inputType = InputType.TYPE_CLASS_TEXT;
         
-        Prompt.promptText( this, title, null, hint, inputType, new OnTextListener()
+        Prompt.promptText( this, title, null, hint, inputType, new PromptTextListener()
         {
             @Override
-            public void onText( CharSequence text, int which )
+            public void onDialogClosed( CharSequence text, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
@@ -393,7 +410,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                         String title = getString( R.string.confirm_title );
                         String message = getString( R.string.confirmOverwriteFile_message, filename );
                         Prompt.promptConfirm( InputMapActivity.this, title, message,
-                                new OnConfirmListener()
+                                new PromptConfirmListener()
                                 {
                                     @Override
                                     public void onConfirm()
@@ -416,13 +433,32 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         try
         {
             Notifier.showToast( this, R.string.toast_savingFile, file.getName() );
-            FileUtil.writeStringToFile( file, mMap.serialize() );
+            String text = mMap.serialize() + "\n" + mUserPrefs.getInputDeadzone( mPlayer );
+            FileUtil.writeStringToFile( file, text );
         }
         catch( IOException e )
         {
             Log.e( "InputMapActivity", "Error saving profile: ", e );
             Notifier.showToast( this, R.string.toast_fileWriteError );
         }
+    }
+    
+    private void setDeadzone()
+    {
+        final CharSequence title = getText( R.string.menuItem_deadzone );
+        final int deadzone = mUserPrefs.getInputDeadzone( mPlayer );
+        
+        Prompt.promptInteger( this, title, "%1$d %%", deadzone, 0, MAX_DEADZONE, new PromptIntegerListener()
+        {
+            @Override
+            public void onDialogClosed( Integer value, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    mUserPrefs.putInputDeadzone( mPlayer, value );
+                }
+            }
+        } );
     }
     
     private void refreshSpecialVisibility()
@@ -486,10 +522,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         String btnText = getString( R.string.inputMapActivity_popupUnmap );
         
         Prompt.promptInputCode( this, title, message, btnText,
-                mUnmappableInputCodes, new OnInputCodeListener()
+                mUnmappableInputCodes, new PromptInputCodeListener()
                 {
                     @Override
-                    public void OnInputCode( int inputCode, int hardwareId )
+                    public void onInputCode( int inputCode, int hardwareId )
                     {
                         if( inputCode == 0 )
                             mMap.unmapCommand( index );

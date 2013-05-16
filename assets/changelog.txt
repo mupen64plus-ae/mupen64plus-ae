@@ -1,6 +1,13 @@
+[26:2.3.0]
+- Upgraded to SDL 2.0 multimedia library
+- Added controller deadzone preference (see button mapping screen)
+- Fixed crash related to rumble (stale JNI references)
+- Fixed crash related to audio (uninitialized audio tracks)
+- Fixed unmappable d-pad on newer batches of Nyko Playpad controller
 [25:2.2.1]
 - Fixed Pokemon Snap camera control bug (must enable cheat)
 - Fixed crash when input plugin disabled
+- Fixed crash when cheats enabled
 - Warn user if installation appears to be corrupt
 - Doubled maximum possible touchscreen scale
 - Added support for raphnet GC/N64 controller adapter

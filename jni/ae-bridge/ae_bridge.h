@@ -69,9 +69,6 @@ extern void         Android_JNI_State_Callback(int paramChanged, int newValue);
 
 // Native utilities - TODO: Move to configuration file if possible
 extern int          Android_JNI_GetHardwareType();
-extern char*        Android_JNI_GetDataDir();
-extern char*        Android_JNI_GetROMPath();
-extern char*        Android_JNI_GetExtraArgs();
 extern int          Android_JNI_GetAutoFrameSkip();
 extern int          Android_JNI_GetMaxFrameSkip();
 extern int          Android_JNI_GetScreenPosition();

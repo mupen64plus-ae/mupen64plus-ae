@@ -332,6 +332,8 @@
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Registro de cambios</string>
   <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">Advertencia</string>
+  <string name="invalidInstall_message">Puede que Mupen64 Plus AE no se haya instalado correctamente. Por favor prueba a reinstalar la aplicación si experimentas crasheos.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nombre de archivo</string>
   <!--Asset Extractor-->

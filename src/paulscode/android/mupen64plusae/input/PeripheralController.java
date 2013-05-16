@@ -49,6 +49,9 @@ public class PeripheralController extends AbstractController implements
     /** The map from input codes to N64/Mupen commands. */
     private final InputMap mInputMap;
     
+    /** The analog deadzone, between 0 and 1, inclusive. */
+    private final float mDeadzoneFraction;
+    
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
     
@@ -82,13 +85,14 @@ public class PeripheralController extends AbstractController implements
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
-            AbstractProvider... providers )
+            int inputDeadzone, AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
         // Assign the maps
         mPlayerMap = playerMap;
         mInputMap = inputMap;
+        mDeadzoneFraction = ( (float) inputDeadzone ) / 100f;
         
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
@@ -163,6 +167,10 @@ public class PeripheralController extends AbstractController implements
     {
         boolean keyDown = strength > AbstractProvider.STRENGTH_THRESHOLD;
         int n64Index = mInputMap.get( inputCode );
+        
+        // Rescale strength to account for deadzone
+        strength = ( strength - mDeadzoneFraction ) / ( 1f - mDeadzoneFraction );
+        strength = Utility.clamp( strength, 0f, 1f );
         
         if( n64Index >= 0 && n64Index < NUM_N64_BUTTONS )
         {

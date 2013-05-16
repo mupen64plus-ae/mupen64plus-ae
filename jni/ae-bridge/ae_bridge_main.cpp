@@ -37,7 +37,7 @@ extern DECLSPEC jint JNI_OnLoad(JavaVM* vm, void* reserved)
  *******************************************************************************/
 
 // Start up the SDL app
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlInit(JNIEnv* env, jclass cls, jobject obj)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlInit(JNIEnv* env, jclass cls, jobjectArray jargv)
 {
     /* This interface could expand with ABI negotiation, calbacks, etc. */
     SDL_Android_Init(env, cls);
@@ -53,47 +53,17 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNativ
         argv[2] = NULL;
         status = SDL_main( 2, argv );
     */
-    // Retrieve the (space-separated) extra args string from Java:
-    char *extraArgs = Android_JNI_GetExtraArgs();
-
-    char **argv;              // Map to hold the indices
-    int argc = 1;             // First arg is reserved for program name
-    char *index = extraArgs;  // Start at the beginning of the string
-
-    // Loop through the args string to count them:
-    while( index != NULL )
-    {
-        argc++;                        // Count the arg
-        index = strchr( index + 1, ' ' );  // Advance to next space
-    }
-    argc += 2;  // Last two args are the ROM path and NULL
 
     // Allocate enough char pointers to index all the args:
-    argv = (char **) malloc( sizeof( char *) * argc );
-
-    argv[0] = strdup( "mupen64plus" );  // Store the first arg
-
-    char *argSpace;     // Index for pointing to the next space
-    argc = 1;           // Reuse argc rather than making a new counter
-    index = extraArgs;  // Rewind back to the beginning of the string
-
-    // Loop through the args string again, this time to index them:
-    while( index != NULL )
+    int argc = env->GetArrayLength(jargv);
+    char **argv = (char **) malloc(sizeof(char *) * argc);
+    for(int i = 0; i < argc; i++)
     {
-        argSpace = strchr( index + 1, ' ' );  // Find the end of the arg
-        // Make sure this isn't the last arg:
-        if( argSpace != NULL )
-           argSpace[0] = '\0'; // Change space to end-of-string
-        argv[argc] = strdup( index );  // Have to strdup, or args not recognized
-        if( argSpace == NULL )
-            index = NULL;  // Last arg, end the loop
-        else
-            index = argSpace + 1; // Advance to the next arg
-        argc++;  // Count the arg
+        jstring jarg = (jstring) env->GetObjectArrayElement(jargv, i);
+        const char *arg = env->GetStringUTFChars(jarg, 0);
+        argv[i] = strdup(arg);
+        env->ReleaseStringUTFChars(jarg, arg);
     }
-    argv[argc] = strdup( Android_JNI_GetROMPath() );
-    argc++;  // Count the ROM path arg
-    argv[argc] = NULL;  // End of args
 
     status = SDL_main( argc, argv );  // Launch the emulator
 

@@ -34,7 +34,7 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
@@ -355,7 +355,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             String title = getString( R.string.confirm_title );
             String message = getString( R.string.confirmMigrateSlotSaves_message );
-            Prompt.promptConfirm( this, title, message, new OnConfirmListener()
+            Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
             {
                 @Override
                 public void onConfirm()
@@ -379,7 +379,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         String title = getString( R.string.confirm_title );
         String message = getString( R.string.actionResetUserPrefs_popupMessage );
-        Prompt.promptConfirm( this, title, message, new OnConfirmListener()
+        Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
         {
             @Override
             public void onConfirm()

@@ -649,19 +649,6 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 int main(int argc, char *argv[])
 {
     int i;
-    #ifdef PAULSCODE
-    char *appHomePath = (char *) Android_JNI_GetDataDir();
-    if( chdir( appHomePath ) != 0 )
-    {
-        DebugMessage(M64MSG_ERROR, "Unable to enter Android data folder '%s' (required for config read/write functions)", appHomePath);
-        return 2;
-    }
-    DebugMessage(M64MSG_VERBOSE, "Using Android data folder '%s' for config read/write functions", appHomePath);
-    setenv( "HOME", appHomePath, 1 );
-    setenv( "XDG_CONFIG_HOME", appHomePath, 1 );
-    setenv( "XDG_DATA_HOME", appHomePath, 1 );
-    setenv( "XDG_CACHE_HOME", appHomePath, 1 );
-    #endif
 
     printf(" __  __                         __   _  _   ____  _             \n");  
     printf("|  \\/  |_   _ _ __   ___ _ __  / /_ | || | |  _ \\| |_   _ ___ \n");
@@ -673,25 +660,25 @@ int main(int argc, char *argv[])
 
     /* bootstrap some special parameters from the command line */
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
-    {
-        DebugMessage(M64MSG_ERROR, "ParseCommandLineInitial not 0, returning 1.\n");
         return 1;
-    }
-
-    /* load the Mupen64Plus core library */
-    if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)
-    {
-        DebugMessage(M64MSG_ERROR, "AttachCoreLib unsuccessful, returning 2.\n");
-        return 2;
-    }
 
     #ifdef PAULSCODE
     // paulscode, hack to allow configuration file to be in home directory
-    if( l_ConfigDirPath == NULL )
+    if( chdir( l_ConfigDirPath ) != 0 )
     {
-        l_ConfigDirPath = appHomePath;
+        DebugMessage(M64MSG_ERROR, "Unable to enter Android data folder '%s' (required for config read/write functions)", l_ConfigDirPath);
+        return 2;
     }
+    DebugMessage(M64MSG_VERBOSE, "Using Android data folder '%s' for config read/write functions", l_ConfigDirPath);
+    setenv( "HOME", l_ConfigDirPath, 1 );
+    setenv( "XDG_CONFIG_HOME", l_ConfigDirPath, 1 );
+    setenv( "XDG_DATA_HOME", l_ConfigDirPath, 1 );
+    setenv( "XDG_CACHE_HOME", l_ConfigDirPath, 1 );
     #endif
+
+    /* load the Mupen64Plus core library */
+    if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)
+        return 2;
 
     /* start the Mupen64Plus core library, load the configuration file */
     #ifdef PAULSCODE

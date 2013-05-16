@@ -28,11 +28,10 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
 import paulscode.android.mupen64plusae.persistent.PlayerMapPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Prompt.OnConfirmListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.TaskHandler.Task;
@@ -66,18 +65,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     
     // Handle to the thread populating the cheat options
     private Thread crcThread = null;
-    
-    // Don't need to call these every time the orientation changes
-    static
-    {
-        // Required for reading CRC header
-        FileUtil.loadNativeLibName( "ae-imports" );
-        //FileUtil.loadNativeLibName( "SDL" );
-        FileUtil.loadNativeLibName( "SDL2" );
-        FileUtil.loadNativeLibName( "core" );
-        FileUtil.loadNativeLibName( "front-end" );
-        FileUtil.loadNativeLibName( "ae-exports" );
-    }
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -172,7 +159,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         {
             CharSequence title = getText( R.string.confirm_title );
             CharSequence message = getText( R.string.confirmResetGame_message );
-            Prompt.promptConfirm( this, title, message, new OnConfirmListener()
+            Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
             {
                 @Override
                 public void onConfirm()

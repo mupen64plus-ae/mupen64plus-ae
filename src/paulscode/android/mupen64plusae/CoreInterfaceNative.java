@@ -20,16 +20,10 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-import java.util.Locale;
-
 import javax.microedition.khronos.egl.EGL10;
 
-import paulscode.android.mupen64plusae.util.ErrorLogger;
-import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import paulscode.android.mupen64plusae.util.Utility;
+
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -43,7 +37,60 @@ import android.util.Log;
  */
 public class CoreInterfaceNative extends CoreInterface
 {
-    // TODO: These should all have javadoc comments. 
+    static
+    {
+        loadNativeLibName( "ae-imports" );
+        //loadNativeLibName( "SDL" );
+        loadNativeLibName( "SDL2" );
+        loadNativeLibName( "core" );
+        loadNativeLibName( "front-end" );
+        loadNativeLibName( "ae-exports" );
+    }
+    
+    /**
+     * Loads the specified native library name (without "lib" and ".so").
+     * 
+     * @param libname absolute path to a native .so file (may optionally be in quotes)
+     */
+    public static void loadNativeLibName( String libname )
+    {
+        try
+        {
+            System.loadLibrary( libname );
+        }
+        catch( UnsatisfiedLinkError e )
+        {
+            Log.e( "FileUtil", "Unable to load native library '" + libname + "'" );
+        }
+    }
+    
+    /**
+     * Loads the native .so file specified.
+     * 
+     * @param filepath absolute path to a native .so file (may optionally be in quotes)
+     */
+    public static void loadNativeLib( String filepath )
+    {
+        String filename = null;
+        
+        if( filepath != null && filepath.length() > 0 )
+        {
+            filename = filepath.replace( "\"", "" );
+            if( filename.equalsIgnoreCase( "dummy" ) )
+                return;
+            
+            try
+            {
+                System.load( filename );
+            }
+            catch( UnsatisfiedLinkError e )
+            {
+                Log.e( "FileUtil", "Unable to load native library '" + filename + "'", e );
+            }
+        }
+    }
+    
+    // TODO: These should all have javadoc comments.
     // It would better document calls going in/out of native code.
     
     // ************************************************************************
@@ -55,9 +102,9 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void jniInitInput();
     
-    public static native void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY );   
+    public static native void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY );
     
-    public static native void setControllerConfig( int controllerNum, boolean plugged, int pakType );   
+    public static native void setControllerConfig( int controllerNum, boolean plugged, int pakType );
     
     public static void rumble( int controllerNum, boolean active )
     {
@@ -68,7 +115,7 @@ public class CoreInterfaceNative extends CoreInterface
             sVibrators[controllerNum].vibrate( VIBRATE_TIMEOUT );
         else
             sVibrators[controllerNum].cancel();
-    }    
+    }
     
     // ************************************************************************
     // ************************************************************************
@@ -76,26 +123,26 @@ public class CoreInterfaceNative extends CoreInterface
     // ************************************************************************
     // ************************************************************************
     
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Call-outs made TO native code
     // jni/ae-bridge/ae_bridge_main.cpp
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     
-    public static native void sdlInit();
+    public static native void sdlInit( Object[] args );
     
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Call-outs made TO native code
     // jni/ae-bridge/ae_exports.cpp
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     
     public static native void sdlOnResize( int x, int y, int format );
     
     public static native void sdlQuit();
-
+    
     public static native void sdlRunAudioThread();
-
+    
     public static native boolean sdlVersionAtLeast( int major, int minor, int patch );
-
+    
     public static native void emuGameShark( boolean pressed );
     
     public static native void emuPause();
@@ -123,91 +170,28 @@ public class CoreInterfaceNative extends CoreInterface
     public static native int emuGetState();
     
     public static native String getHeaderName( String filename );
-
+    
     public static native String getHeaderCRC( String filename );
     
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/ae-bridge/ae_imports.cpp
-    //-------------------------------------------------------------------------
-
+    // ------------------------------------------------------------------------
+    
     public static void stateCallback( int paramChanged, int newValue )
     {
         synchronized( sStateCallbackLock )
         {
             if( sStateCallbackListener != null )
                 sStateCallbackListener.onStateCallback( paramChanged, newValue );
-            }
         }
+    }
     
     public static int getHardwareType()
     {
         int autoDetected = sAppData.hardwareInfo.hardwareType;
         int overridden = sUserPrefs.videoHardwareType;
         return overridden < 0 ? autoDetected : overridden;
-    }
-    
-    public static Object getDataDir()
-    {
-        return sAppData.dataDir;
-    }
-    
-    public static Object getROMPath()
-    {
-        String selectedGame = sUserPrefs.selectedGame;
-        boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
-        boolean isSelectedGameZipped = !isSelectedGameNull && selectedGame.length() >= 5
-                && selectedGame.toLowerCase( Locale.US ).endsWith( ".zip" );
-        
-        if( sActivity == null )
-            return null;
-        
-        if( isSelectedGameNull )
-        {
-            SafeMethods.exit( "Invalid ROM", sActivity, 2000 );
-        }
-        else if( isSelectedGameZipped )
-        {
-            // Create the temp folder if it doesn't exist:
-            String tmpFolderName = sAppData.dataDir + "/tmp";
-            File tmpFolder = new File( tmpFolderName );
-            tmpFolder.mkdir();
-            
-            // Clear the folder if anything is in there:
-            String[] children = tmpFolder.list();
-            for( String child : children )
-            {
-                FileUtil.deleteFolder( new File( tmpFolder, child ) );
-            }
-            
-            // Unzip the ROM
-            String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
-            if( selectedGameUnzipped == null )
-            {
-                Log.v( "CoreInterface", "Cannot play zipped ROM: '" + selectedGame + "'" );
-                
-                Notifier.clear();
-                
-                if( ErrorLogger.hasError() )
-                    ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
-                
-                // Kick back out to the main menu
-                sActivity.finish();
-            }
-            else
-            {
-                return selectedGameUnzipped;
-            }
-        }
-        return selectedGame;
-    }
-    
-    public static Object getExtraArgs()
-    {
-        String extraArgs = sUserPrefs.isFramelimiterEnabled ? "" : "--nospeedlimit ";
-        if( sCheatOptions != null )
-            extraArgs += sCheatOptions;
-        return extraArgs.trim();
     }
     
     public static boolean getAutoFrameSkip()
@@ -241,10 +225,10 @@ public class CoreInterfaceNative extends CoreInterface
     // ************************************************************************
     // ************************************************************************
     
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/SDL/src/core/android/SDL_android.cpp
-    //-------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
@@ -311,97 +295,113 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
-    public static void audioInit(int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames) {
+    public static void audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
+    {
+        // Be sure audio is stopped so that we can restart it
+        audioQuit();
+        
+        // Audio configuration
         int channelConfig = isStereo ? AudioFormat.CHANNEL_OUT_STEREO : AudioFormat.CHANNEL_OUT_MONO;
         int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
-        int frameSize = (isStereo ? 2 : 1) * (is16Bit ? 2 : 1);
+        int frameSize = ( isStereo ? 2 : 1 ) * ( is16Bit ? 2 : 1 );
         
-        Log.v("SDL", "SDL audio: wanted " + (isStereo ? "stereo" : "mono") + " " + (is16Bit ? "16-bit" : "8-bit") + " " + ((float)sampleRate / 1000f) + "kHz, " + desiredFrames + " frames buffer");
+        // Let the user pick a larger buffer if they really want -- but ye gods they probably
+        // shouldn't, the minimums are horrifyingly high latency already
+        int minBufSize = AudioTrack.getMinBufferSize( sampleRate, channelConfig, audioFormat );
+        int defaultFrames = ( minBufSize + frameSize - 1 ) / frameSize;
+        desiredFrames = Math.max( desiredFrames, defaultFrames );
         
-        // Let the user pick a larger buffer if they really want -- but ye
-        // gods they probably shouldn't, the minimums are horrifyingly high
-        // latency already
-        desiredFrames = Math.max(desiredFrames, (AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat) + frameSize - 1) / frameSize);
+        sAudioTrack = new AudioTrack( AudioManager.STREAM_MUSIC, sampleRate, channelConfig, audioFormat, desiredFrames
+                * frameSize, AudioTrack.MODE_STREAM );
         
-        sAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate,
-                channelConfig, audioFormat, desiredFrames * frameSize, AudioTrack.MODE_STREAM);
-        
-        audioStartThread();
-        
-        Log.v("SDL", "SDL audio: got " + ((sAudioTrack.getChannelCount() >= 2) ? "stereo" : "mono") + " " + ((sAudioTrack.getAudioFormat() == AudioFormat.ENCODING_PCM_16BIT) ? "16-bit" : "8-bit") + " " + ((float)sAudioTrack.getSampleRate() / 1000f) + "kHz, " + desiredFrames + " frames buffer");
+        // if( sAudioThread == null )
+        assert ( sAudioThread == null );
+        {
+            sAudioThread = new Thread( new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        sAudioTrack.play();
+                        sdlRunAudioThread();
+                    }
+                    catch( IllegalStateException ise )
+                    {
+                        Log.e( "CoreInterfaceNative", "audioStartThread IllegalStateException", ise );
+                    }
+                }
+            }, "Audio Thread" );
+            
+            sAudioThread.setPriority( Thread.MAX_PRIORITY );
+            sAudioThread.start();
+        }
     }
     
-    public static void audioWriteShortBuffer(short[] buffer) {
-        for (int i = 0; i < buffer.length; ) {
-            int result = sAudioTrack.write(buffer, i, buffer.length - i);
-            if (result > 0) {
+    public static void audioWriteShortBuffer( short[] buffer )
+    {
+        for( int i = 0; i < buffer.length; )
+        {
+            int result = sAudioTrack.write( buffer, i, buffer.length - i );
+            if( result > 0 )
+            {
                 i += result;
-            } else if (result == 0) {
-                try {
-                    Thread.sleep(1);
-                } catch(InterruptedException e) {
-                    // Nom nom
-                }
-            } else {
-                Log.w("SDL", "SDL audio: error return from write(short)");
+            }
+            else if( result == 0 )
+            {
+                SafeMethods.sleep( 1 );
+            }
+            else
+            {
+                Log.w( "CoreInterfaceNative", "SDL Audio: Error returned from write(short[])" );
                 return;
             }
         }
     }
     
-    public static void audioWriteByteBuffer(byte[] buffer) {
-        for (int i = 0; i < buffer.length; ) {
-            int result = sAudioTrack.write(buffer, i, buffer.length - i);
-            if (result > 0) {
+    public static void audioWriteByteBuffer( byte[] buffer )
+    {
+        for( int i = 0; i < buffer.length; )
+        {
+            int result = sAudioTrack.write( buffer, i, buffer.length - i );
+            if( result > 0 )
+            {
                 i += result;
-            } else if (result == 0) {
-                try {
-                    Thread.sleep(1);
-                } catch(InterruptedException e) {
-                    // Nom nom
-                }
-            } else {
-                Log.w("SDL", "SDL audio: error return from write(short)");
+            }
+            else if( result == 0 )
+            {
+                SafeMethods.sleep( 1 );
+            }
+            else
+            {
+                Log.w( "CoreInterfaceNative", "SDL Audio: Error returned from write(byte[])" );
                 return;
             }
         }
     }
-
-    public static void audioQuit() {
-        if (sAudioThread != null) {
-            try {
+    
+    public static void audioQuit()
+    {
+        if( sAudioThread != null )
+        {
+            try
+            {
                 sAudioThread.join();
-            } catch(InterruptedException e) {
-                Log.v("SDL", "Problem stopping audio thread: " + e);
+            }
+            catch( InterruptedException e )
+            {
+                Log.v( "CoreInterfaceNative", "Problem stopping audio thread: " + e );
             }
             sAudioThread = null;
-
-            //Log.v("SDL", "Finished waiting for audio thread");
         }
-
-        if (sAudioTrack != null) {
+        
+        if( sAudioTrack != null )
+        {
             sAudioTrack.stop();
+            sAudioTrack.release();
             sAudioTrack = null;
         }
-    }
-    
-    public static void audioStartThread() {
-        sAudioThread = new Thread(new Runnable() {
-            public void run() {
-                sAudioTrack.play();
-                sdlRunAudioThread();
-        }
-        });
-    
-        // I'd take REALTIME if I could get it!
-        sAudioThread.setPriority(Thread.MAX_PRIORITY);
-        sAudioThread.start();
-    }
-    
-    public static void runOnUiThread( Runnable action )
-    {
-        if( sActivity != null )
-            sActivity.runOnUiThread( action );
     }
     
     public static void setActivityTitle( String title )

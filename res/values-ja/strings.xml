@@ -190,6 +190,8 @@
   <string name="touchscreenStyle_entryShaded">影付きの</string>
   <string name="touchscreenHeight_title">垂直ボタンの間隔</string>
   <string name="touchscreenHeight_entryAuto">オート</string>
+  <string name="touchscreenHeight_entryFullHeight">フルハイト</string>
+  <string name="touchscreenHeight_entryHalfHeight">ハーフハイト</string>
   <string name="touchscreenLayout_title">タッチスクリーン·レイアウト</string>
   <string name="touchscreenLayout_entryAnalog">アナログ (roymustang16によって)</string>
   <string name="touchscreenLayout_entryDigital">デジタル (roymustang16によって)</string>
@@ -334,6 +336,8 @@
   <!--Change Log-->
   <string name="changeLog_dialogTitle">変更履歴</string>
   <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">警告</string>
+  <string name="invalidInstall_message">Mupen64Plus AEは正しくインストールしていない可能性。 任意のプログラムのクラッシュが発生した場合アプリケーションを再インストールしてください。</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ファイル名</string>
   <!--Asset Extractor-->

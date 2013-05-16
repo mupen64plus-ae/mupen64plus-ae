@@ -45,6 +45,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
@@ -80,7 +81,7 @@ public class Prompt
      * 
      * @see Prompt#promptConfirm
      */
-    public interface OnConfirmListener
+    public interface PromptConfirmListener
     {
         /**
          * Handle the user's confirmation.
@@ -93,15 +94,17 @@ public class Prompt
      * 
      * @see Prompt#promptFile
      */
-    public interface OnFileListener
+    public interface PromptFileListener
     {
         /**
-         * Process the file selected by the user.
+         * Called when the dialog is dismissed and should be used to process the file selected by
+         * the user.
          * 
-         * @param file The file selected by the user, or null.
+         * @param file The file selected by the user, or null if the user clicks the dialog's
+         * negative button.
          * @param which The DialogInterface button pressed by the user.
          */
-        public void onFile( File file, int which );
+        public void onDialogClosed( File file, int which );
     }
     
     /**
@@ -109,15 +112,35 @@ public class Prompt
      * 
      * @see Prompt#promptText
      */
-    public interface OnTextListener
+    public interface PromptTextListener
     {
         /**
-         * Process the text provided by the user.
+         * Called when the dialog is dismissed and should be used to process the text provided by
+         * the user.
          * 
-         * @param text The text provided by the user, or null.
+         * @param text The text provided by the user, or null if the user clicks the dialog's
+         * negative button.
          * @param which The DialogInterface button pressed by the user.
          */
-        public void onText( CharSequence text, int which );
+        public void onDialogClosed( CharSequence text, int which );
+    }
+    
+    /**
+     * The listener interface for receiving an integer provided by the user.
+     * 
+     * @see Prompt#promptInteger
+     */
+    public interface PromptIntegerListener
+    {
+        /**
+         * Called when the dialog is dismissed and should be used to process the integer provided
+         * by the user.
+         * 
+         * @param value The integer provided by the user, or null if the user clicks the
+         * dialog's negative button.
+         * @param which The DialogInterface button pressed by the user.
+         */
+        public void onDialogClosed( Integer value, int which );
     }
     
     /**
@@ -125,15 +148,16 @@ public class Prompt
      * 
      * @see Prompt#promptInputCode
      */
-    public interface OnInputCodeListener
+    public interface PromptInputCodeListener
     {
         /**
          * Process the input code provided by the user.
          * 
-         * @param inputCode The input code provided by the user, or 0.
+         * @param inputCode The input code provided by the user, or 0 if the user clicks the
+         * dialog's positive button.
          * @param hardwareId The identifier of the source device.
          */
-        public void OnInputCode( int inputCode, int hardwareId );
+        public void onInputCode( int inputCode, int hardwareId );
     }
     
     /**
@@ -248,7 +272,7 @@ public class Prompt
      * @param listener The listener to process the confirmation.
      */
     public static void promptConfirm( Context context, CharSequence title, CharSequence message,
-            final OnConfirmListener listener )
+            final PromptConfirmListener listener )
     {
         // When the user clicks Ok, notify the downstream listener
         OnClickListener internalListener = new OnClickListener()
@@ -268,14 +292,14 @@ public class Prompt
     /**
      * Open a dialog to prompt the user for a file.
      * 
-     * @param context the context
-     * @param title the title of the dialog
-     * @param message the message to be shown inside the dialog
-     * @param startPath the parent directory holding the files to select from
-     * @param listener the listener to process the file, when selected
+     * @param context The activity context.
+     * @param title The title of the dialog.
+     * @param message The message to be shown inside the dialog.
+     * @param startPath The parent directory holding the files to select from.
+     * @param listener The listener to process the file, when selected.
      */
     public static void promptFile( Context context, CharSequence title, CharSequence message,
-            File startPath, final OnFileListener listener )
+            File startPath, final PromptFileListener listener )
     {
         // Don't even open the dialog if the path doesn't exist
         if( !startPath.exists() )
@@ -293,10 +317,10 @@ public class Prompt
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which >= 0 && which < names.size() )
-                    listener.onFile( new File( paths.get( which ) ),
+                    listener.onDialogClosed( new File( paths.get( which ) ),
                             DialogInterface.BUTTON_POSITIVE );
                 else
-                    listener.onFile( null, which );
+                    listener.onDialogClosed( null, which );
             }
         };
         
@@ -331,7 +355,7 @@ public class Prompt
      * @param listener The listener to process the text, when provided.
      */
     public static void promptText( Context context, CharSequence title, CharSequence message,
-            CharSequence hint, int inputType, final OnTextListener listener )
+            CharSequence hint, int inputType, final PromptTextListener listener )
     {
         // Create an edit-text widget, and add the hint text
         final EditText editText = new EditText( context );
@@ -345,15 +369,64 @@ public class Prompt
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
-                    listener.onText( editText.getText().toString(), which );
+                    listener.onDialogClosed( editText.getText().toString(), which );
                 else
-                    listener.onText( null, which );
+                    listener.onDialogClosed( null, which );
             }
         };
         
         // Create and launch the dialog, adding the edit-text widget in the process
         prefillBuilder( context, title, message, internalListener ).setView( editText ).create()
                 .show();
+    }
+    
+    /**
+     * Open a dialog to prompt the user for an integer.
+     *
+     * @param context The activity context.
+     * @param title The title of the dialog.
+     * @param format The string format for the displayed value (e.g. "%1$d %%"), or null to display number only.
+     * @param initial The initial (default) value shown in the dialog.
+     * @param min The minimum value permitted.
+     * @param max The maximum value permitted.
+     * @param listener The listener to process the integer, when provided.
+     */
+    public static void promptInteger( Context context, CharSequence title, String format,
+            final int initial, final int min, final int max, final PromptIntegerListener listener )
+    {
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View layout = inflater.inflate( R.layout.seek_bar_preference, null );
+        final SeekBar seek = (SeekBar) layout.findViewById( R.id.seekbar );
+        final TextView text = (TextView) layout.findViewById( R.id.textFeedback );        
+        final String finalFormat = TextUtils.isEmpty( format ) ? "%1$d" : format;
+        
+        text.setText( String.format( finalFormat, initial ) );
+        seek.setMax( max - min );
+        seek.setProgress( initial - min );
+        seek.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener()
+        {
+            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser )
+            {
+                text.setText( String.format( finalFormat, progress + min ) );
+            }
+            
+            public void onStartTrackingTouch( SeekBar seekBar )
+            {
+            }
+            
+            public void onStopTrackingTouch( SeekBar seekBar )
+            {
+            }
+        } );
+        
+        prefillBuilder( context, title, null, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                listener.onDialogClosed( seek.getProgress() + min, which );
+            }
+        } ).setView( layout ).create().show();
     }
     
     /**
@@ -368,7 +441,7 @@ public class Prompt
      */
     public static void promptInputCode( Context context, CharSequence title, CharSequence message,
             CharSequence positiveButtonText, List<Integer> ignoredKeyCodes,
-            final OnInputCodeListener listener )
+            final PromptInputCodeListener listener )
     {
         // Create a widget to dispatch key/motion event data
         FrameLayout view = new FrameLayout( context );
@@ -392,7 +465,7 @@ public class Prompt
             public void onClick( DialogInterface dialog, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
-                    listener.OnInputCode( 0, 0 );
+                    listener.onInputCode( 0, 0 );
             }
         };
         
@@ -431,7 +504,7 @@ public class Prompt
             {
                 if( inputCode != 0 && strength > AbstractProvider.STRENGTH_THRESHOLD )
                 {
-                    listener.OnInputCode( inputCode, hardwareId );
+                    listener.onInputCode( inputCode, hardwareId );
                     dialog.dismiss();
                 }
             }
@@ -458,7 +531,7 @@ public class Prompt
      * @param title The title of the dialog.
      * @param message The message to be shown inside the dialog.
      * @param listener The listener to process user clicks.
-     * @return The builder for the dialog
+     * @return The builder for the dialog.
      */
     public static Builder prefillBuilder( Context context, CharSequence title,
             CharSequence message, OnClickListener listener )

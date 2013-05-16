@@ -42,21 +42,11 @@ static jclass mActivityClass;
 // Imported java method references
 static jmethodID midStateCallback;
 static jmethodID midGetHardwareType;
-static jmethodID midGetDataDir;
-static jmethodID midGetROMPath;
-static jmethodID midGetExtraArgs;
 static jmethodID midGetAutoFrameSkip;
 static jmethodID midGetMaxFrameSkip;
 static jmethodID midGetScreenPosition;
 static jmethodID midGetScreenStretch;
 static jmethodID midUseRGBA8888;
-
-// Buffers
-static jstring jmessage = NULL;
-static jstring dataDirString = NULL;
-static jstring buffString = NULL;
-static char appDataDir[60];
-static char buffArray[1024];
 
 /*******************************************************************************
  Functions called internally
@@ -171,17 +161,13 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
 
     midStateCallback        = env->GetStaticMethodID(mActivityClass, "stateCallback",      "(II)V");
     midGetHardwareType      = env->GetStaticMethodID(mActivityClass, "getHardwareType",    "()I");
-    midGetDataDir           = env->GetStaticMethodID(mActivityClass, "getDataDir",         "()Ljava/lang/Object;");
-    midGetROMPath           = env->GetStaticMethodID(mActivityClass, "getROMPath",         "()Ljava/lang/Object;");
-    midGetExtraArgs         = env->GetStaticMethodID(mActivityClass, "getExtraArgs",       "()Ljava/lang/Object;");
     midGetAutoFrameSkip     = env->GetStaticMethodID(mActivityClass, "getAutoFrameSkip",   "()Z");
     midGetMaxFrameSkip      = env->GetStaticMethodID(mActivityClass, "getMaxFrameSkip",    "()I");
     midGetScreenPosition    = env->GetStaticMethodID(mActivityClass, "getScreenPosition",  "()I");
     midGetScreenStretch     = env->GetStaticMethodID(mActivityClass, "getScreenStretch",   "()Z");
     midUseRGBA8888          = env->GetStaticMethodID(mActivityClass, "useRGBA8888",        "()Z");
 
-    if (!midStateCallback || !midGetHardwareType || !midGetDataDir || !midGetROMPath ||
-        !midGetExtraArgs || !midGetAutoFrameSkip || !midGetMaxFrameSkip ||
+    if (!midStateCallback || !midGetHardwareType || !midGetAutoFrameSkip || !midGetMaxFrameSkip ||
         !midGetScreenPosition || !midGetScreenStretch || !midUseRGBA8888)
     {
         LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
@@ -195,43 +181,12 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
 extern DECLSPEC void Android_JNI_State_Callback(int paramChanged, int newValue)
 {
     JNIEnv *env = Android_JNI_GetEnv();
-    LOGV("Emulator param %i changed to %i", paramChanged, newValue);
     env->CallStaticVoidMethod(mActivityClass, midStateCallback, paramChanged, newValue);
 }
 
 extern DECLSPEC int Android_JNI_GetHardwareType()
 {
     return GetInt(midGetHardwareType);
-}
-
-extern DECLSPEC char * Android_JNI_GetDataDir()
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    dataDirString = (jstring) env->CallStaticObjectMethod(mActivityClass, midGetDataDir);
-    const char *nativeString = env->GetStringUTFChars(dataDirString, 0);
-    strcpy(appDataDir, nativeString);
-    env->ReleaseStringUTFChars(dataDirString, nativeString);
-    return appDataDir;
-}
-
-extern DECLSPEC char * Android_JNI_GetROMPath()
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    buffString = (jstring) env->CallStaticObjectMethod(mActivityClass, midGetROMPath);
-    const char *nativeString = env->GetStringUTFChars(buffString, 0);
-    strcpy(buffArray, nativeString);
-    env->ReleaseStringUTFChars(buffString, nativeString);
-    return buffArray;
-}
-
-extern DECLSPEC char * Android_JNI_GetExtraArgs()
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    buffString = (jstring) env->CallStaticObjectMethod(mActivityClass, midGetExtraArgs);
-    const char *nativeString = env->GetStringUTFChars(buffString, 0);
-    strcpy(buffArray, nativeString);
-    env->ReleaseStringUTFChars(buffString, nativeString);
-    return buffArray;
 }
 
 extern DECLSPEC int Android_JNI_GetAutoFrameSkip()

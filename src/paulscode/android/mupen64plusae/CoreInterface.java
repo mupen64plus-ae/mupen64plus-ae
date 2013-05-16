@@ -20,10 +20,18 @@
  */
 package paulscode.android.mupen64plusae;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Locale;
+
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
+import paulscode.android.mupen64plusae.util.ErrorLogger;
+import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.SafeMethods;
+import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -111,7 +119,6 @@ public class CoreInterface
     
     // Audio objects
     protected static AudioTrack sAudioTrack = null;
-    protected static Object sAudioBuffer;
     
     // Frame rate listener
     protected static OnFpsChangedListener sFpsListener;
@@ -156,7 +163,7 @@ public class CoreInterface
     public static void setStartupMode( String cheatArgs, boolean isRestarting )
     {
         if( cheatArgs != null && isRestarting )
-            sCheatOptions = "--cheats " + cheatArgs; // Restart game with selected cheats
+            sCheatOptions = cheatArgs; // Restart game with selected cheats
         else
             sCheatOptions = null;
         sIsRestarting = isRestarting;
@@ -183,7 +190,21 @@ public class CoreInterface
                         CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
                     }
                     
-                    CoreInterfaceNative.sdlInit();
+                    ArrayList<String> arglist = new ArrayList<String>();
+                    arglist.add( "mupen64plus" );
+                    arglist.add( "--configdir" );
+                    arglist.add( sAppData.dataDir );
+                    if( !sUserPrefs.isFramelimiterEnabled )
+                    {
+                        arglist.add( "--nospeedlimit" );
+                    }
+                    if( sCheatOptions != null )
+                    {
+                        arglist.add( "--cheats" );
+                        arglist.add( sCheatOptions );
+                    }
+                    arglist.add( getROMPath() );                    
+                    CoreInterfaceNative.sdlInit( arglist.toArray() );
                 }
             }, "CoreThread" );
             sCoreThread.start();
@@ -491,5 +512,55 @@ public class CoreInterface
     private static String booleanToString( boolean b )
     {
         return b ? "1" : "0";
+    }    
+    
+    private static String getROMPath()
+    {
+        String selectedGame = sUserPrefs.selectedGame;
+        boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
+        boolean isSelectedGameZipped = !isSelectedGameNull && selectedGame.length() >= 5
+                && selectedGame.toLowerCase( Locale.US ).endsWith( ".zip" );
+        
+        if( sActivity == null )
+            return null;
+        
+        if( isSelectedGameNull )
+        {
+            SafeMethods.exit( "Invalid ROM", sActivity, 2000 );
+        }
+        else if( isSelectedGameZipped )
+        {
+            // Create the temp folder if it doesn't exist:
+            String tmpFolderName = sAppData.dataDir + "/tmp";
+            File tmpFolder = new File( tmpFolderName );
+            tmpFolder.mkdir();
+            
+            // Clear the folder if anything is in there:
+            String[] children = tmpFolder.list();
+            for( String child : children )
+            {
+                FileUtil.deleteFolder( new File( tmpFolder, child ) );
+            }
+            
+            // Unzip the ROM
+            String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
+            if( selectedGameUnzipped == null )
+            {
+                Log.v( "CoreInterface", "Cannot play zipped ROM: '" + selectedGame + "'" );
+                
+                Notifier.clear();
+                
+                if( ErrorLogger.hasError() )
+                    ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
+                
+                // Kick back out to the main menu
+                sActivity.finish();
+            }
+            else
+            {
+                return selectedGameUnzipped;
+            }
+        }
+        return selectedGame;
     }
 }

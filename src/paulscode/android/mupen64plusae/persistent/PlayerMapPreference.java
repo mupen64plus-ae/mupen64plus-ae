@@ -25,7 +25,7 @@ import java.util.List;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Prompt.OnInputCodeListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptInputCodeListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -182,10 +182,10 @@ public class PlayerMapPreference extends DialogPreference implements
         String btnText = context.getString( R.string.playerMapPreference_popupUnmap );
         
         Prompt.promptInputCode( getContext(), title, message, btnText, mUnmappableKeyCodes,
-                new OnInputCodeListener()
+                new PromptInputCodeListener()
                 {
                     @Override
-                    public void OnInputCode( int inputCode, int hardwareId )
+                    public void onInputCode( int inputCode, int hardwareId )
                     {
                         if( inputCode == 0 )
                             mMap.unmapPlayer( player );

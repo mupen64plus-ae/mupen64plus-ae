@@ -194,6 +194,18 @@ public class UserPrefs
     /** The button map for Player 4. */
     public final InputMap inputMap4;
     
+    /** The deadzone for Player 1, in percent. */
+    public final int inputDeadzone1;
+    
+    /** The deadzone for Player 2, in percent. */
+    public final int inputDeadzone2;
+    
+    /** The deadzone for Player 3, in percent. */
+    public final int inputDeadzone3;
+    
+    /** The deadzone for Player 4, in percent. */
+    public final int inputDeadzone4;
+    
     /** The player map for multi-player gaming. */
     public final PlayerMap playerMap;
     
@@ -305,6 +317,7 @@ public class UserPrefs
     // Shared preferences keys and key templates
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     private static final String KEYTEMPLATE_INPUT_MAP_STRING = "inputMapString%1$d";
+    private static final String KEYTEMPLATE_INPUT_DEADZONE = "inputDeadzone%1$d";
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     // ... add more as needed
@@ -313,6 +326,7 @@ public class UserPrefs
     public static final int DEFAULT_PAK_TYPE = CoreInterface.PAK_TYPE_MEMORY;
     public static final String DEFAULT_INPUT_MAP_STRING = OUYAInterface.IS_OUYA_HARDWARE ?
             InputMap.DEFAULT_INPUT_MAP_STRING_OUYA : InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
+    public static final int DEFAULT_INPUT_DEADZONE = 0;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     // ... add more as needed
@@ -409,6 +423,10 @@ public class UserPrefs
         inputMap3 = new InputMap( getInputMapString( 3 ) );
         inputMap4 = new InputMap( getInputMapString( 4 ) );
         playerMap = new PlayerMap( mPreferences.getString( "playerMap", "" ) );
+        inputDeadzone1 = getInputDeadzone( 1 );
+        inputDeadzone2 = getInputDeadzone( 2 );
+        inputDeadzone3 = getInputDeadzone( 3 );
+        inputDeadzone4 = getInputDeadzone( 4 );
         
         // Video prefs
         videoOrientation = getSafeInt( mPreferences, "videoOrientation", 0 );
@@ -583,6 +601,11 @@ public class UserPrefs
         return getString( KEYTEMPLATE_INPUT_MAP_STRING, player, DEFAULT_INPUT_MAP_STRING );
     }
     
+    public int getInputDeadzone( int player )
+    {
+        return getInt( KEYTEMPLATE_INPUT_DEADZONE, player, DEFAULT_INPUT_DEADZONE );
+    }
+
     public boolean getSpecialVisibility( int player )
     {
         return getBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, DEFAULT_SPECIAL_VISIBILITY );
@@ -603,6 +626,11 @@ public class UserPrefs
         putString( KEYTEMPLATE_INPUT_MAP_STRING, player, value );
     }
     
+    public void putInputDeadzone( int player, int value )
+    {
+        putInt( KEYTEMPLATE_INPUT_DEADZONE, player, value );
+    }
+
     public void putSpecialVisibility( int player, boolean value )
     {
         putBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, value );
