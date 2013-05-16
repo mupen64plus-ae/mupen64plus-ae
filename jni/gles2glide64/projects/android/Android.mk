@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 SRCDIR := ../../src
 
-LOCAL_MODULE := glide64mk2
+LOCAL_MODULE := gles2glide64
 LOCAL_SHARED_LIBRARIES := ae-imports $(SDL_MODULE) core
 LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
