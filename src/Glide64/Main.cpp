@@ -1219,9 +1219,9 @@ int InitGfx ()
 
       ghq_dmptex_toggle_key = 0;
 
-      swprintf(romname, 256, L"%hs", rdp.RomName);
-      swprintf(foldername, sizeof(foldername), L"%hs", ConfigGetUserDataPath());
-      swprintf(cachename, sizeof(cachename), L"%hs", ConfigGetUserCachePath());
+      swprintf(romname, sizeof(romname) / sizeof(*romname), L"%hs", rdp.RomName);
+      swprintf(foldername, sizeof(foldername) / sizeof(*foldername), L"%hs", ConfigGetUserDataPath());
+      swprintf(cachename, sizeof(cachename) / sizeof(*cachename), L"%hs", ConfigGetUserCachePath());
 
       settings.ghq_use = (int)ext_ghq_init(voodoo.max_tex_size, // max texture width supported by hardware
         voodoo.max_tex_size, // max texture height supported by hardware
