@@ -49,9 +49,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
         super( context, attribs );
         
         getHolder().addCallback( this );
-        setFocusable( true );
-        setFocusableInTouchMode( true );
-        requestFocus();
     }
     
     public void setColorMode( boolean isRgba8888 )

@@ -40,6 +40,7 @@ public class GameOverlay extends View implements TouchController.OnStateChangedL
     public GameOverlay( Context context, AttributeSet attribs )
     {
         super( context, attribs );
+        requestFocus();
     }
     
     public void initialize( VisibleTouchMap touchMap, boolean drawingEnabled, float scalingFactor, int fpsRefreshPeriod, int hatRefreshPeriod )

@@ -183,7 +183,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         }
         
         // Initialize user interface devices
-        View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mSurface;
+        View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mOverlay;
         if( mUserPrefs.inputPlugin.enabled )
             initControllers( inputSource );
         
