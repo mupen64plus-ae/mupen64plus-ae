@@ -169,6 +169,8 @@ public class OUYAInterface
     /**
      * Returns the OUYA player number for the specified controller
      *
+     * @param deviceId The device ID of the controller to get the player number from.
+     *
      * @return zero-based player number, or -1 if device is not a controller assigned to a player
      */
     public static int getPlayerNumByDeviceId( int deviceId )
@@ -200,7 +202,6 @@ public class OUYAInterface
     /**
      * Initializes the OuyaFacade and OuyaController interfaces, saves a handle to the context,
      * and reads the public key
-     *
      */
     public static void init( Context context )
     {
@@ -304,7 +305,6 @@ public class OUYAInterface
     
     /**
      * Sends a request for name and price information about a list of products
-     * 
      */
     public static void requestProducts( List<String> productIdentifiers, CancelIgnoringOuyaResponseListener listener )
     {
@@ -392,8 +392,8 @@ public class OUYAInterface
     
     /**
      * Decrypts a purchase response string from the server to get the purchase id
-     * 
-     * @return Id of the purchase, or -1 if there was a problem
+     *
+     * @return ID of the purchase, or -1 if there was a problem
      */
     public static int decryptPurchaseResponse( String response )
     {
@@ -450,30 +450,53 @@ public class OUYAInterface
     }
     
     /**
-     * The product class provides a container for a purchasable product's identifier, name, and price.
-     * 
+     * The Product class provides a container for a purchasable product's identifier, name, and price.
      */
     public static class Product
     {
         private String identifier;
         private String name;
         private int priceInCents;
-        
+
+        /**
+         * Constructor
+         *
+         * @param identifier   The product identifier
+         * @param name         The name of the product
+         * @param priceInCents The price of the product in cents
+         */
         public Product( String identifier, String name, int priceInCents )
         {
             this.identifier = identifier;
             this.name = name;
             this.priceInCents = priceInCents;
         }
-        
+
+        /**
+         * Gets the product identifier.
+         *
+         * @return The product identifier.
+         */
         public String getIdentifier()
         {
             return identifier;
         }
+
+        /**
+         * Gets the name of the product.
+         *
+         * @return The name of the product.
+         */
         public String getName()
         {
             return name;
         }
+
+        /**
+         * Gets the price of the product in cents.
+         *
+         * @return The price of the product in cents.
+         */
         public int getPriceInCents()
         {
             return priceInCents;
@@ -482,7 +505,6 @@ public class OUYAInterface
     
     /**
      * Interface for handling the server response after requesting product information.
-     * 
      */
     public static interface CancelIgnoringOuyaResponseListener
     {
