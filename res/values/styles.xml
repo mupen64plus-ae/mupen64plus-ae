@@ -3,8 +3,13 @@
 
     <style name="appTheme" parent="@android:style/Theme" />
 
-    <style name="playTheme" parent="@style/appTheme">
+    <style name="appTheme.NoTransition">
         <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <style name="appTheme.Black">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
     </style>
 
     <style name="btnMappable" parent="@android:style/Widget.Button">
