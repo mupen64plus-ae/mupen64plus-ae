@@ -2022,6 +2022,11 @@ static void rdp_loadblock()
   if (rdp.tiles[tile].size == 3)
     cnt <<= 1;
 
+  if (((rdp.tiles[tile].t_mem + cnt) << 3) > sizeof(rdp.tmem)) {
+    WriteLog(M64MSG_INFO, "rdp_loadblock wanted to write %u bytes after the end of tmem", ((rdp.tiles[tile].t_mem + cnt) << 3) - sizeof(rdp.tmem));
+    cnt = (sizeof(rdp.tmem) >> 3) - (rdp.tiles[tile].t_mem);
+  }
+
   if (rdp.timg.size == 3)
     LoadBlock32b(tile, ul_s, ul_t, lr_s, dxt);
   else
