@@ -578,7 +578,7 @@ public class Utility
             return null;
         
         Context context = view.getContext();
-        if( context == null || !( context instanceof Activity ) )
+        if( !( context instanceof Activity ) )
             return null;
         DisplayMetrics metrics = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );

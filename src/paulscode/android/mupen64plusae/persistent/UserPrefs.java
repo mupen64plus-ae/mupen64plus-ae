@@ -504,7 +504,7 @@ public class UserPrefs
                 if( TextUtils.isEmpty( height ) )
                 {
                     // Use the "Tablet" skin if the device is a tablet or is in portrait orientation
-                    if( context != null && context instanceof Activity )
+                    if( context instanceof Activity )
                     {
                         DisplayMetrics metrics = new DisplayMetrics();
                         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics( metrics );
