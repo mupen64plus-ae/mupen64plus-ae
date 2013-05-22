@@ -1,6 +1,6 @@
 [26:2.3.0]
 - Upgraded to SDL 2.0 multimedia library
-- Added gles2glide video plugin
+- Added gles2glide64 video plugin
 - Fixed extreme lag on (US) Galaxy S3/ S4, HTC One, Xperia Z, and others
 - Added controller deadzone preference (see button mapping screen)
 - Fixed crash related to rumble (stale JNI references)
