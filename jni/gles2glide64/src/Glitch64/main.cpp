@@ -39,6 +39,8 @@
 #include "main.h"
 #include "m64p.h"
 
+#define OPENGL_CHECK_ERRORS { const GLenum errcode = glGetError(); if (errcode != GL_NO_ERROR) LOG("OpenGL Error code %i in '%s' line %i\n", errcode, __FILE__, __LINE__-1); }
+
 #ifdef VPDEBUG
 #include <IL/il.h>
 #endif
@@ -48,6 +50,7 @@ extern void (*renderCallback)(int);
 wrapper_config config = {0, 0, 0, 0};
 int screen_width, screen_height;
 
+/*
 static inline void opt_glCopyTexImage2D( GLenum target,
                                         GLint level,
                                         GLenum internalFormat,
@@ -63,7 +66,7 @@ static inline void opt_glCopyTexImage2D( GLenum target,
   glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
   glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &fmt);
   //printf("copyteximage %dx%d fmt %x oldfmt %x\n", width, height, internalFormat, fmt);
-  if (w == width && h == height && fmt == internalFormat) {
+  if (w == (int) width && h == (int) height && fmt == (int) internalFormat) {
     if (x+width >= screen_width) {
       width = screen_width - x;
       //printf("resizing w --> %d\n", width);
@@ -82,6 +85,7 @@ static inline void opt_glCopyTexImage2D( GLenum target,
   }
 }
 #define glCopyTexImage2D opt_glCopyTexImage2D
+*/
 
 
 #ifdef _WIN32
@@ -209,7 +213,7 @@ void display_warning(const char *text, ...)
   static int first_message = 100;
   if (first_message)
   {
-    char buf[1000];
+    char buf[4096];
 
     va_list ap;
 
@@ -217,6 +221,7 @@ void display_warning(const char *text, ...)
     vsprintf(buf, text, ap);
     va_end(ap);
     first_message--;
+    LOGINFO(buf);
   }
 }
 
@@ -334,8 +339,8 @@ grClipWindow( FxU32 minx, FxU32 miny, FxU32 maxx, FxU32 maxy )
     maxy = th - maxy;
     miny = th - miny;
     FxU32 tmp = maxy; maxy = miny; miny = tmp;
-    if (maxx > width) maxx = width;
-    if (maxy > height) maxy = height;
+    if (maxx > (FxU32) width) maxx = width;
+    if (maxy > (FxU32) height) maxy = height;
     if (int(minx) < 0) minx = 0;
     if (int(miny) < 0) miny = 0;
     if (maxx < minx) maxx = minx;
@@ -369,6 +374,7 @@ grSstSelect( int which_sst )
 
 int isExtensionSupported(const char *extension)
 {
+  return 0;
   const GLubyte *extensions = NULL;
   const GLubyte *start;
   GLubyte *where, *terminator;
@@ -544,19 +550,21 @@ grSstWinOpen(
   glMultiTexCoord2fARB = (PFNGLMULTITEXCOORD2FARBPROC)wglGetProcAddress("glMultiTexCoord2fARB");
 #endif // _WIN32
 
-  nbTextureUnits = 0;
-  glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &nbTextureUnits);
+  nbTextureUnits = 4;
+  //glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &nbTextureUnits);
   if (nbTextureUnits == 1) display_warning("You need a video card that has at least 2 texture units");
 
-  nbAuxBuffers = 0;
-  glGetIntegerv(GL_AUX_BUFFERS, &nbAuxBuffers);
+  nbAuxBuffers = 4;
+  //glGetIntegerv(GL_AUX_BUFFERS, &nbAuxBuffers);
   if (nbAuxBuffers > 0)
     printf("Congratulations, you have %d auxilliary buffers, we'll use them wisely !\n", nbAuxBuffers);
-
 #ifdef VOODOO1
   nbTextureUnits = 2;
 #endif
 
+  blend_func_separate_support = 1;
+  packed_pixels_support = 0;
+/*
   if (isExtensionSupported("GL_EXT_blend_func_separate") == 0)
     blend_func_separate_support = 0;
   else
@@ -568,6 +576,7 @@ grSstWinOpen(
     printf("packed pixels extension used\n");
     packed_pixels_support = 1;
   }
+*/
 
   if (isExtensionSupported("GL_ARB_texture_non_power_of_two") == 0)
     npot_support = 0;
@@ -605,11 +614,12 @@ grSstWinOpen(
   glGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC)wglGetProcAddress("glGenRenderbuffersEXT");
   glRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC)wglGetProcAddress("glRenderbufferStorageEXT");
   glFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)wglGetProcAddress("glFramebufferRenderbufferEXT");
+  use_fbo = config.fbo && (glFramebufferRenderbufferEXT != NULL);
+#else
+  use_fbo = config.fbo;
 #endif // _WIN32
 
-  use_fbo = config.fbo && glFramebufferRenderbufferEXT;
-
-  printf("use_fbo %d\n", use_fbo);
+  LOGINFO("use_fbo %d\n", use_fbo);
 
   if (isExtensionSupported("GL_ARB_shading_language_100") &&
     isExtensionSupported("GL_ARB_shader_objects") &&
@@ -663,10 +673,10 @@ grSstWinOpen(
   //   do_benchmarks();
 
   // VP try to resolve z precision issues
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glTranslatef(0, 0, 1-zscale);
-  glScalef(1, 1, zscale);
+//  glMatrixMode(GL_MODELVIEW);
+//  glLoadIdentity();
+//  glTranslatef(0, 0, 1-zscale);
+//  glScalef(1, 1, zscale);
 
   widtho = width/2;
   heighto = height/2;
@@ -675,7 +685,7 @@ grSstWinOpen(
 
   current_buffer = GL_BACK;
 
-  texture_unit = GL_TEXTURE0_ARB;
+  texture_unit = GL_TEXTURE0;
 
   {
     int i;
@@ -704,6 +714,7 @@ grSstWinOpen(
   init_textures();
   init_combiner();
 
+/*
   // Aniso filter check
   if (config.anisofilter > 0 )
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest_supported_anisotropy);
@@ -720,6 +731,7 @@ grSstWinOpen(
     } else
       ati_sucks = 0;
   }
+*/
 
   return 1;
 }
@@ -747,8 +759,8 @@ grSstWinClose( GrContext_t context )
   try // I don't know why, but opengl can be killed before this function call when emulator is closed (Gonetz).
     // ZIGGY : I found the problem : it is a function pointer, when the extension isn't supported , it is then zero, so just need to check the pointer prior to do the call.
   {
-    if (use_fbo && glBindFramebufferEXT)
-      glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
+    if (use_fbo)
+      glBindFramebuffer( GL_FRAMEBUFFER, 0 );
   }
   catch (...)
   {
@@ -760,8 +772,8 @@ grSstWinClose( GrContext_t context )
     for (i=0; i<nb_fb; i++)
     {
       glDeleteTextures( 1, &(fbs[i].texid) );
-      glDeleteFramebuffersEXT( 1, &(fbs[i].fbid) );
-      glDeleteRenderbuffersEXT( 1, &(fbs[i].zbid) );
+      glDeleteFramebuffers( 1, &(fbs[i].fbid) );
+      glDeleteRenderbuffers( 1, &(fbs[i].zbid) );
     }
   }
 #endif
@@ -839,8 +851,8 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
     //printf("saving %dx%d\n", pBufferWidth, pBufferHeight);
     // save color buffer
     if (nbAuxBuffers > 0) {
-      glDrawBuffer(GL_AUX0);
-      current_buffer = GL_AUX0;
+      //glDrawBuffer(GL_AUX0);
+      //current_buffer = GL_AUX0;
     } else {
       int tw, th;
       if (pBufferWidth < screen_width)
@@ -851,8 +863,8 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
         th = pBufferHeight;
       else
         th = screen_height;
-      glReadBuffer(GL_BACK);
-      glActiveTextureARB(texture_unit);
+      //glReadBuffer(GL_BACK);
+      glActiveTexture(texture_unit);
       glBindTexture(GL_TEXTURE_2D, color_texture);
       // save incrementally the framebuffer
       if (save_w) {
@@ -891,9 +903,9 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
 
     int rtmu = startAddress < grTexMinAddress(GR_TMU1)? 0 : 1;
     int size = pBufferWidth*pBufferHeight*2; //grTexFormatSize(fmt);
-    if (tmu_usage[rtmu].min > pBufferAddress)
+    if ((unsigned int) tmu_usage[rtmu].min > pBufferAddress)
       tmu_usage[rtmu].min = pBufferAddress;
-    if (tmu_usage[rtmu].max < pBufferAddress+size)
+    if ((unsigned int) tmu_usage[rtmu].max < pBufferAddress+size)
       tmu_usage[rtmu].max = pBufferAddress+size;
     //   printf("tmu %d usage now %gMb - %gMb\n",
     //          rtmu, tmu_usage[rtmu].min/1024.0f, tmu_usage[rtmu].max/1024.0f);
@@ -969,11 +981,11 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
       {
         if (fbs[i].width == width && fbs[i].height == height) //select already allocated FBO
         {
-          glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
-          glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, fbs[i].fbid );
-          glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, fbs[i].texid, 0 );
-          glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, fbs[i].zbid );
-          glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbs[i].zbid );
+          glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+          glBindFramebuffer( GL_FRAMEBUFFER, fbs[i].fbid );
+          glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbs[i].texid, 0 );
+          glBindRenderbuffer( GL_RENDERBUFFER, fbs[i].zbid );
+          glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbs[i].zbid );
           glViewport( 0, 0, width, height);
           glScissor( 0, 0, width, height);
           if (fbs[i].buff_clear)
@@ -988,8 +1000,8 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
         }
         else //create new FBO at the same address, delete old one
         {
-          glDeleteFramebuffersEXT( 1, &(fbs[i].fbid) );
-          glDeleteRenderbuffersEXT( 1, &(fbs[i].zbid) );
+          glDeleteFramebuffers( 1, &(fbs[i].fbid) );
+          glDeleteRenderbuffers( 1, &(fbs[i].zbid) );
           if (nb_fb > 1)
             memmove(&(fbs[i]), &(fbs[i+1]), sizeof(fb)*(nb_fb-i));
           nb_fb--;
@@ -1000,10 +1012,10 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
 
     remove_tex(pBufferAddress, pBufferAddress + width*height*2/*grTexFormatSize(fmt)*/);
     //create new FBO
-    glGenFramebuffersEXT( 1, &(fbs[nb_fb].fbid) );
-    glGenRenderbuffersEXT( 1, &(fbs[nb_fb].zbid) );
-    glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, fbs[nb_fb].zbid );
-    glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
+    glGenFramebuffers( 1, &(fbs[nb_fb].fbid) );
+    glGenRenderbuffers( 1, &(fbs[nb_fb].zbid) );
+    glBindRenderbuffer( GL_RENDERBUFFER, fbs[nb_fb].zbid );
+    glRenderbufferStorage( GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
     fbs[nb_fb].address = pBufferAddress;
     fbs[nb_fb].width = width;
     fbs[nb_fb].height = height;
@@ -1016,10 +1028,10 @@ FX_ENTRY void FX_CALL grTextureBufferExt( GrChipID_t  		tmu,
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
-    glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, fbs[nb_fb].fbid);
-    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,
-      GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, fbs[nb_fb].texid, 0);
-    glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbs[nb_fb].zbid );
+    glBindFramebuffer( GL_FRAMEBUFFER, fbs[nb_fb].fbid);
+    glFramebufferTexture2D(GL_FRAMEBUFFER,
+      GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbs[nb_fb].texid, 0);
+    glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbs[nb_fb].zbid );
     glViewport(0,0,width,height);
     glScissor(0,0,width,height);
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
@@ -1036,7 +1048,7 @@ int CheckTextureBufferFormat(GrChipID_t tmu, FxU32 startAddress, GrTexInfo *info
   int found, i;
   if (!use_fbo) {
     for (found=i=0; i<2; i++)
-      if (tmu_usage[i].min <= startAddress && tmu_usage[i].max > startAddress) {
+      if ((FxU32) tmu_usage[i].min <= startAddress && (FxU32) tmu_usage[i].max > startAddress) {
         //printf("tmu %d == framebuffer %x\n", tmu, startAddress);
         found = 1;
         break;
@@ -1344,6 +1356,51 @@ static void render_rectangle(int texture_number,
                              int src_width, int src_height,
                              int tex_width, int tex_height, int invert)
 {
+  LOGINFO("render_rectangle(%d,%d,%d,%d,%d,%d,%d,%d)",texture_number,dst_x,dst_y,src_width,src_height,tex_width,tex_height,invert);
+  int vertexOffset_location;
+  int textureSizes_location;
+  static float data[] = {
+    ((int)dst_x),                             //X 0
+    invert*-((int)dst_y),                     //Y 0 
+    0.0f,                                     //U 0 
+    0.0f,                                     //V 0
+
+    ((int)dst_x),                             //X 1
+    invert*-((int)dst_y + (int)src_height),   //Y 1
+    0.0f,                                     //U 1
+    (float)src_height / (float)tex_height,    //V 1
+
+    ((int)dst_x + (int)src_width), 
+    invert*-((int)dst_y + (int)src_height),
+    (float)src_width / (float)tex_width,
+    (float)src_height / (float)tex_height,
+
+    ((int)dst_x),
+    invert*-((int)dst_y),
+    0.0f,
+    0.0f
+  };
+
+  vbo_disable();
+  glDisableVertexAttribArray(COLOUR_ATTR);
+  glDisableVertexAttribArray(TEXCOORD_1_ATTR);
+  glDisableVertexAttribArray(FOG_ATTR);
+
+  glVertexAttribPointer(POSITION_ATTR,2,GL_FLOAT,false,2,data); //Position
+  glVertexAttribPointer(TEXCOORD_0_ATTR,2,GL_FLOAT,false,2,&data[2]); //Tex
+
+  glEnableVertexAttribArray(COLOUR_ATTR);
+  glEnableVertexAttribArray(TEXCOORD_1_ATTR);
+  glEnableVertexAttribArray(FOG_ATTR);
+
+
+  disable_textureSizes();
+
+  glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+  vbo_enable();
+
+
+/*
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1365,6 +1422,7 @@ static void render_rectangle(int texture_number,
   glVertex2f(((int)dst_x - widtho) / (float)(width/2),
     invert*-((int)dst_y - heighto) / (float)(height/2));
   glEnd();
+*/
 
   compile_shader();
 
@@ -1382,11 +1440,11 @@ void reloadTexture()
 
   buffer_cleared = 1;
 
-  glPushAttrib(GL_ALL_ATTRIB_BITS);
-  glActiveTextureARB(texture_unit);
+  //glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glActiveTexture(texture_unit);
   glBindTexture(GL_TEXTURE_2D, pBufferAddress);
-  glDisable(GL_ALPHA_TEST);
-  glDrawBuffer(current_buffer);
+  //glDisable(GL_ALPHA_TEST);
+  //glDrawBuffer(current_buffer);
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   set_copy_shader();
   glDisable(GL_DEPTH_TEST);
@@ -1398,7 +1456,7 @@ void reloadTexture()
     width,  height,
     width, height, -1);
   glBindTexture(GL_TEXTURE_2D, default_texture);
-  glPopAttrib();
+  //glPopAttrib();
 }
 
 void updateTexture()
@@ -1413,11 +1471,11 @@ void updateTexture()
       return;
     }
 
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    //glPushAttrib(GL_ALL_ATTRIB_BITS);
 
     // save result of render to texture into actual texture
-    glReadBuffer(current_buffer);
-    glActiveTextureARB(texture_unit);
+    //glReadBuffer(current_buffer);
+    glActiveTexture(texture_unit);
     // ZIGGY
     // deleting the texture before resampling it increases speed on certain old
     // nvidia cards (geforce 2 for example), unfortunatly it slows down a lot
@@ -1428,7 +1486,7 @@ void updateTexture()
       0, viewport_offset, width, height, 0);
 
     glBindTexture(GL_TEXTURE_2D, default_texture);
-    glPopAttrib();
+    //glPopAttrib();
   }
 }
 
@@ -1448,7 +1506,7 @@ FX_ENTRY void FX_CALL grFramebufferCopyExt(int x, int y, int w, int h,
     if (from == GR_FBCOPY_BUFFER_BACK && to == GR_FBCOPY_BUFFER_FRONT) {
       //printf("save depth buffer %d\n", render_to_texture);
       // save the depth image in a texture
-      glReadBuffer(current_buffer);
+      //glReadBuffer(current_buffer);
       glBindTexture(GL_TEXTURE_2D, depth_texture);
       glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
         0, viewport_offset, tw, th, 0);
@@ -1457,10 +1515,10 @@ FX_ENTRY void FX_CALL grFramebufferCopyExt(int x, int y, int w, int h,
     }
     if (from == GR_FBCOPY_BUFFER_FRONT && to == GR_FBCOPY_BUFFER_BACK) {
       //printf("writing to depth buffer %d\n", render_to_texture);
-      glPushAttrib(GL_ALL_ATTRIB_BITS);
-      glDisable(GL_ALPHA_TEST);
-      glDrawBuffer(current_buffer);
-      glActiveTextureARB(texture_unit);
+      //glPushAttrib(GL_ALL_ATTRIB_BITS);
+      //glDisable(GL_ALPHA_TEST);
+      //glDrawBuffer(current_buffer);
+      glActiveTexture(texture_unit);
       glBindTexture(GL_TEXTURE_2D, depth_texture);
       glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
       set_depth_shader();
@@ -1473,7 +1531,7 @@ FX_ENTRY void FX_CALL grFramebufferCopyExt(int x, int y, int w, int h,
         tw, th, -1);
       glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       glBindTexture(GL_TEXTURE_2D, default_texture);
-      glPopAttrib();
+      //glPopAttrib();
       return;
     }
 
@@ -1498,10 +1556,10 @@ grRenderBuffer( GrBuffer_t buffer )
       updateTexture();
 
       // VP z fix
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      glTranslatef(0, 0, 1-zscale);
-      glScalef(1, 1, zscale);
+      //glMatrixMode(GL_MODELVIEW);
+      //glLoadIdentity();
+      //glTranslatef(0, 0, 1-zscale);
+      //glScalef(1, 1, zscale);
       inverted_culling = 0;
       grCullMode(culling_mode);
 
@@ -1510,8 +1568,8 @@ grRenderBuffer( GrBuffer_t buffer )
       widtho = savedWidtho;
       heighto = savedHeighto;
       if (use_fbo) {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, 0 );
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindRenderbuffer( GL_RENDERBUFFER, 0 );
       }
       curBufferAddr = 0;
 
@@ -1522,7 +1580,7 @@ grRenderBuffer( GrBuffer_t buffer )
       if (!use_fbo && render_to_texture == 2) {
         // restore color buffer
         if (nbAuxBuffers > 0) {
-          glDrawBuffer(GL_BACK);
+          //glDrawBuffer(GL_BACK);
           current_buffer = GL_BACK;
         } else if (save_w) {
           int tw = 1, th = 1;
@@ -1535,10 +1593,10 @@ grRenderBuffer( GrBuffer_t buffer )
             while (th < screen_height) th <<= 1;
           }
 
-          glPushAttrib(GL_ALL_ATTRIB_BITS);
-          glDisable(GL_ALPHA_TEST);
-          glDrawBuffer(GL_BACK);
-          glActiveTextureARB(texture_unit);
+          //glPushAttrib(GL_ALL_ATTRIB_BITS);
+          //glDisable(GL_ALPHA_TEST);
+          //glDrawBuffer(GL_BACK);
+          glActiveTexture(texture_unit);
           glBindTexture(GL_TEXTURE_2D, color_texture);
           glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
           set_copy_shader();
@@ -1549,7 +1607,7 @@ grRenderBuffer( GrBuffer_t buffer )
             save_w,  save_h,
             tw, th, -1);
           glBindTexture(GL_TEXTURE_2D, default_texture);
-          glPopAttrib();
+          //glPopAttrib();
 
           save_w = save_h = 0;
         }
@@ -1557,7 +1615,7 @@ grRenderBuffer( GrBuffer_t buffer )
 #endif
       render_to_texture = 0;
     }
-    glDrawBuffer(GL_BACK);
+    //glDrawBuffer(GL_BACK);
     break;
   case 6: // RENDER TO TEXTURE
     if(!render_to_texture)
@@ -1570,12 +1628,13 @@ grRenderBuffer( GrBuffer_t buffer )
 
     {
       if (!use_fbo) {
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glTranslatef(0, 0, 1-zscale);
-        glScalef(1, 1, zscale);
+        //glMatrixMode(GL_MODELVIEW);
+        //glLoadIdentity();
+        //glTranslatef(0, 0, 1-zscale);
+        //glScalef(1, 1, zscale);
         inverted_culling = 0;
       } else {
+/*
         float m[4*4] = {1.0f, 0.0f, 0.0f, 0.0f,
           0.0f,-1.0f, 0.0f, 0.0f,
           0.0f, 0.0f, 1.0f, 0.0f,
@@ -1585,6 +1644,7 @@ grRenderBuffer( GrBuffer_t buffer )
         // VP z fix
         glTranslatef(0, 0, 1-zscale);
         glScalef(1, 1*1, zscale);
+*/
         inverted_culling = 1;
         grCullMode(culling_mode);
       }
@@ -1611,7 +1671,7 @@ grAuxBufferExt( GrBuffer_t buffer )
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_ALWAYS);
     glDisable(GL_CULL_FACE);
-    glDisable(GL_ALPHA_TEST);
+    //glDisable(GL_ALPHA_TEST);
     glDepthMask(GL_TRUE);
     grTexFilterMode(GR_TMU1, GR_TEXTUREFILTER_POINT_SAMPLED, GR_TEXTUREFILTER_POINT_SAMPLED);
   } else {
@@ -1623,6 +1683,7 @@ grAuxBufferExt( GrBuffer_t buffer )
 FX_ENTRY void FX_CALL
 grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 {
+  vbo_draw();
   LOG("grBufferClear(%d,%d,%d)\r\n", color, alpha, depth);
   switch(lfb_color_fmt)
   {
@@ -1643,9 +1704,9 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
   }
 
   if (w_buffer_mode)
-    glClearDepth(1.0f - ((1.0f + (depth >> 4) / 4096.0f) * (1 << (depth & 0xF))) / 65528.0);
+    glClearDepthf(1.0f - ((1.0f + (depth >> 4) / 4096.0f) * (1 << (depth & 0xF))) / 65528.0);
   else
-    glClearDepth(depth / 65535.0f);
+    glClearDepthf(depth / 65535.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // ZIGGY TODO check that color mask is on
@@ -1657,8 +1718,8 @@ grBufferClear( GrColor_t color, GrAlpha_t alpha, FxU32 depth )
 FX_ENTRY void FX_CALL
 grBufferSwap( FxU32 swap_interval )
 {
-	glFinish();
-  glUseProgramObjectARB(0);
+  vbo_draw();
+//	glFinish();
 //  printf("rendercallback is %p\n", renderCallback);
   if(renderCallback)
       (*renderCallback)(1);
@@ -1719,10 +1780,10 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
     switch(buffer)
     {
     case GR_BUFFER_FRONTBUFFER:
-      glReadBuffer(GL_FRONT);
+      //glReadBuffer(GL_FRONT);
       break;
     case GR_BUFFER_BACKBUFFER:
-      glReadBuffer(GL_BACK);
+      //glReadBuffer(GL_BACK);
       break;
     default:
       display_warning("grLfbLock : unknown buffer : %x", buffer);
@@ -1736,7 +1797,7 @@ grLfbLock( GrLock_t type, GrBuffer_t buffer, GrLfbWriteMode_t writeMode,
         info->strideInBytes = width*4;
         info->writeMode = GR_LFBWRITEMODE_888;
         info->origin = origin;
-        glReadPixels(0, viewport_offset, width, height, GL_BGRA, GL_UNSIGNED_BYTE, frameBuffer);
+        //glReadPixels(0, viewport_offset, width, height, GL_BGRA, GL_UNSIGNED_BYTE, frameBuffer);
       } else {
         buf = (unsigned char*)malloc(width*height*4);
 
@@ -1798,10 +1859,10 @@ grLfbReadRegion( GrBuffer_t src_buffer,
   switch(src_buffer)
   {
   case GR_BUFFER_FRONTBUFFER:
-    glReadBuffer(GL_FRONT);
+    //glReadBuffer(GL_FRONT);
     break;
   case GR_BUFFER_BACKBUFFER:
-    glReadBuffer(GL_BACK);
+    //glReadBuffer(GL_BACK);
     break;
     /*case GR_BUFFER_AUXBUFFER:
     glReadBuffer(current_buffer);
@@ -1863,7 +1924,7 @@ grLfbWriteRegion( GrBuffer_t dst_buffer,
   unsigned int tex_width = 1, tex_height = 1;
   LOG("grLfbWriteRegion(%d,%d,%d,%d,%d,%d,%d,%d)\r\n",dst_buffer, dst_x, dst_y, src_format, src_width, src_height, pixelPipeline, src_stride);
 
-  glPushAttrib(GL_ALL_ATTRIB_BITS);
+  //glPushAttrib(GL_ALL_ATTRIB_BITS);
 
   while (tex_width < src_width) tex_width <<= 1;
   while (tex_height < src_height) tex_height <<= 1;
@@ -1871,10 +1932,10 @@ grLfbWriteRegion( GrBuffer_t dst_buffer,
   switch(dst_buffer)
   {
   case GR_BUFFER_BACKBUFFER:
-    glDrawBuffer(GL_BACK);
+    //glDrawBuffer(GL_BACK);
     break;
   case GR_BUFFER_AUXBUFFER:
-    glDrawBuffer(current_buffer);
+    //glDrawBuffer(current_buffer);
     break;
   default:
     display_warning("grLfbWriteRegion : unknown buffer : %x", dst_buffer);
@@ -1884,8 +1945,8 @@ grLfbWriteRegion( GrBuffer_t dst_buffer,
   {
     buf = (unsigned char*)malloc(tex_width*tex_height*4);
 
-    texture_number = GL_TEXTURE0_ARB;
-    glActiveTextureARB(texture_number);
+    texture_number = GL_TEXTURE0;
+    glActiveTexture(texture_number);
 
     const unsigned int half_stride = src_stride / 2;
     switch(src_format)
@@ -1995,15 +2056,15 @@ grLfbWriteRegion( GrBuffer_t dst_buffer,
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_ALWAYS);
 
-    glDrawBuffer(GL_BACK);
+    //glDrawBuffer(GL_BACK);
     glClear( GL_DEPTH_BUFFER_BIT );
     glDepthMask(1);
-    glDrawPixels(src_width, src_height+(viewport_offset), GL_DEPTH_COMPONENT, GL_FLOAT, buf);
+    //glDrawPixels(src_width, src_height+(viewport_offset), GL_DEPTH_COMPONENT, GL_FLOAT, buf);
 
     free(buf);
   }
-  glDrawBuffer(current_buffer);
-  glPopAttrib();
+  //glDrawBuffer(current_buffer);
+  //glPopAttrib();
   return FXTRUE;
 }
 

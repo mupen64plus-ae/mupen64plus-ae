@@ -29,9 +29,12 @@
 #include "glide.h"
 #include "main.h"
 
+void vbo_draw();
+
 static int fct[4], source0[4], operand0[4], source1[4], operand1[4], source2[4], operand2[4];
 static int fcta[4],sourcea0[4],operanda0[4],sourcea1[4],operanda1[4],sourcea2[4],operanda2[4];
 static int alpha_ref, alpha_func;
+bool alpha_test = 0;
 
 float texture_env_color[4];
 float ccolor0[4];
@@ -44,6 +47,10 @@ static int chroma_other_alpha;
 static int dither_enabled;
 int blackandwhite0;
 int blackandwhite1;
+
+float fogStart,fogEnd;
+float fogColor[4];
+
 #ifdef _WIN32
 static float farF;
 static float nearF;
@@ -55,12 +62,12 @@ float lambda_color[2][4];
 // shaders variables
 int need_to_compile;
 
-static GLhandleARB fragment_shader_object;
-static GLhandleARB fragment_depth_shader_object;
-static GLhandleARB vertex_shader_object;
-static GLhandleARB program_object_default;
-static GLhandleARB program_object_depth;
-static GLhandleARB program_object;
+static GLuint fragment_shader_object;
+static GLuint fragment_depth_shader_object;
+static GLuint vertex_shader_object;
+static GLuint program_object_default;
+static GLuint program_object_depth;
+static GLuint program_object;
 static int constant_color_location;
 static int ccolor0_location;
 static int ccolor1_location;
@@ -73,7 +80,21 @@ static int tex1_combiner_ext = 0;
 static int c_combiner_ext = 0;
 static int a_combiner_ext = 0;
 
+#define GLSL_VERSION "100"
+
+#define SHADER_HEADER \
+"#version " GLSL_VERSION "          \n" \
+"#define gl_Color vFrontColor       \n" \
+"#define gl_FrontColor vFrontColor  \n" \
+"#define gl_TexCoord vTexCoord      \n"
+
+#define SHADER_VARYING \
+"varying highp vec4 gl_FrontColor;  \n" \
+"varying highp vec4 gl_TexCoord[4]; \n"
+
 static const char* fragment_shader_header =
+SHADER_HEADER
+"precision lowp float;             \n"
 "uniform sampler2D texture0;       \n"
 "uniform sampler2D texture1;       \n"
 "uniform sampler2D ditherTex;      \n"
@@ -82,7 +103,9 @@ static const char* fragment_shader_header =
 "uniform vec4 ccolor1;             \n"
 "uniform vec4 chroma_color;        \n"
 "uniform float lambda;             \n"
-"varying vec4 fogValue;            \n"
+"uniform vec3 fogColor;            \n"
+"uniform float alphaRef;           \n"
+SHADER_VARYING
 "                                  \n"
 "void test_chroma(vec4 ctexture1); \n"
 "                                  \n"
@@ -133,28 +156,53 @@ static const char* fragment_shader_readtex1bw_2 =
 static const char* fragment_shader_fog =
 "  float fog;                                                                         \n"
 "  fog = gl_TexCoord[0].b;                                                            \n"
-"  gl_FragColor = vec4(mix(gl_Fog.color.rgb, gl_FragColor.rgb, fog), gl_FragColor.a); \n"
+"  gl_FragColor.rgb = mix(fogColor, gl_FragColor.rgb, fog); \n"
 ;
 
 static const char* fragment_shader_end =
+"if(gl_FragColor.a <= alphaRef) {discard;}   \n"
+"                                \n"
 "}                               \n"
 ;
 
 static const char* vertex_shader =
-"varying vec4 fogValue;                                         \n"
+SHADER_HEADER
+"#define Z_MAX 65536.0                                          \n"
+"attribute highp vec4 aVertex;                                  \n"
+"attribute highp vec4 aColor;                                   \n"
+"attribute highp vec4 aMultiTexCoord0;                          \n"
+"attribute highp vec4 aMultiTexCoord1;                          \n"
+"attribute float aFog;                                          \n"
+"uniform vec3 vertexOffset;                                     \n" //Moved some calculations from grDrawXXX to shader
+"uniform vec4 textureSizes;                                     \n" 
+"uniform vec3 fogModeEndScale;                                  \n" //0 = Mode, 1 = gl_Fog.end, 2 = gl_Fog.scale
+SHADER_VARYING
 "                                                               \n"
 "void main()                                                    \n"
 "{                                                              \n"
-"  gl_Position = ftransform();                                  \n"
-"  gl_FrontColor = gl_Color;                                    \n"
-"  gl_TexCoord[0] = gl_MultiTexCoord0;                          \n"
-"  gl_TexCoord[1] = gl_MultiTexCoord1;                          \n"
-"  float f = (gl_Fog.end - gl_SecondaryColor.r) * gl_Fog.scale; \n" // fog value passed through secondary color (workaround ATI bug)
-"  f = clamp(f, 0.0, 1.0);                                      \n"
-"  gl_TexCoord[0].b = f;                                        \n" // various data passed through
-"  gl_TexCoord[2].b = gl_Vertex.x;                              \n" // texture coordinates
-"  gl_TexCoord[2].a = gl_Vertex.y;                              \n" // again it is the only way
-"}                                                              \n" // i've found to get it working fast with ATI drivers
+"  float q = aVertex.w;                                                     \n"
+"  float invertY = vertexOffset.z;                                          \n" //Usually 1.0 but -1.0 when rendering to a texture (see inverted_culling grRenderBuffer)
+"  gl_Position.x = (aVertex.x - vertexOffset.x) / vertexOffset.x;           \n"
+"  gl_Position.y = invertY *-(aVertex.y - vertexOffset.y) / vertexOffset.y; \n"
+"  gl_Position.z = aVertex.z / Z_MAX;                                       \n"
+"  gl_Position.w = 1.0;                                                     \n"
+"  gl_Position /= q;                                                        \n"
+"  gl_FrontColor = aColor.bgra;                                             \n"
+"                                                                           \n"
+"  gl_TexCoord[0] = vec4(aMultiTexCoord0.xy / q / textureSizes.xy,0,1);     \n"
+"  gl_TexCoord[1] = vec4(aMultiTexCoord1.xy / q / textureSizes.zw,0,1);     \n"
+"                                                                           \n"
+"  float fogV = (1.0 / mix(q,aFog,fogModeEndScale[0])) / 255.0;             \n"
+"  //if(fogMode == 2) {                                                     \n"
+"  //  fogV = 1.0 / aFog / 255                                              \n"
+"  //}                                                                      \n"
+"                                                                           \n"
+"  float f = (fogModeEndScale[1] - fogV) * fogModeEndScale[2];              \n"
+"  f = clamp(f, 0.0, 1.0);                                                  \n"
+"  gl_TexCoord[0].b = f;                                                    \n"
+"  gl_TexCoord[2].b = aVertex.x;                                            \n" 
+"  gl_TexCoord[2].a = aVertex.y;                                            \n" 
+"}                                                                          \n" 
 ;
 
 static char fragment_shader_color_combiner[1024];
@@ -164,35 +212,35 @@ static char fragment_shader_texture0[1024];
 static char fragment_shader_chroma[1024];
 static char shader_log[2048];
 
-void updateCombiner(int i)
+void check_compile(GLuint shader)
 {
-  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
-  glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, fct[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, source0[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB, operand0[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB, source1[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB, operand1[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB_ARB, source2[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB_ARB, operand2[i]);
+  GLint success;
+  glGetShaderiv(shader,GL_COMPILE_STATUS,&success);
+  if(!success)
+  {
+    char log[1024];
+    glGetShaderInfoLog(shader,1024,NULL,log);
+    LOGINFO(log);
+  }
 }
 
-void updateCombinera(int i)
+void check_link(GLuint program)
 {
-  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
-  glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, fcta[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, sourcea0[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA_ARB, operanda0[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_ARB, sourcea1[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA_ARB, operanda1[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_ALPHA_ARB, sourcea2[i]);
-  glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_ALPHA_ARB, operanda2[i]);
+  GLint success;
+  glGetProgramiv(program,GL_LINK_STATUS,&success);
+  if(!success)
+  {
+    char log[1024];
+    glGetProgramInfoLog(program,1024,NULL,log);
+    LOGINFO(log);
+  }
 }
 
 void init_combiner()
 {
   int texture[4] = {0, 0, 0, 0};
 
-  glActiveTextureARB(GL_TEXTURE0_ARB);
+  glActiveTexture(GL_TEXTURE0);
   glEnable(GL_TEXTURE_2D);
 
   // creating a fake texture
@@ -201,7 +249,7 @@ void init_combiner()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-  glActiveTextureARB(GL_TEXTURE1_ARB);
+  glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, default_texture);
   glEnable(GL_TEXTURE_2D);
 
@@ -210,8 +258,9 @@ void init_combiner()
   char *fragment_shader;
   int log_length;
 
+#ifndef ANDROID
   // depth shader
-  fragment_depth_shader_object = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+  fragment_depth_shader_object = glCreateShader(GL_FRAGMENT_SHADER);
 
   char s[128];
   // ZIGGY convert a 565 texture into depth component
@@ -222,13 +271,15 @@ void init_combiner()
   strcpy(fragment_shader, fragment_shader_header);
   strcat(fragment_shader, s);
   strcat(fragment_shader, fragment_shader_end);
-  glShaderSourceARB(fragment_depth_shader_object, 1, (const GLcharARB**)&fragment_shader, NULL);
+  glShaderSource(fragment_depth_shader_object, 1, (const GLchar**)&fragment_shader, NULL);
   free(fragment_shader);
 
-  glCompileShaderARB(fragment_depth_shader_object);
+  glCompileShader(fragment_depth_shader_object);
+  check_compile(fragment_depth_shader_object);
+#endif
 
   // default shader
-  fragment_shader_object = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+  fragment_shader_object = glCreateShader(GL_FRAGMENT_SHADER);
 
   fragment_shader = (char*)malloc(strlen(fragment_shader_header)+
     strlen(fragment_shader_default)+
@@ -236,62 +287,58 @@ void init_combiner()
   strcpy(fragment_shader, fragment_shader_header);
   strcat(fragment_shader, fragment_shader_default);
   strcat(fragment_shader, fragment_shader_end);
-  glShaderSourceARB(fragment_shader_object, 1, (const GLcharARB**)&fragment_shader, NULL);
+  glShaderSource(fragment_shader_object, 1, (const GLchar**)&fragment_shader, NULL);
   free(fragment_shader);
 
-  glCompileShaderARB(fragment_shader_object);
+  glCompileShader(fragment_shader_object);
+  check_compile(fragment_shader_object);
 
-  vertex_shader_object = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-  glShaderSourceARB(vertex_shader_object, 1, &vertex_shader, NULL);
-  glCompileShaderARB(vertex_shader_object);
+  vertex_shader_object = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vertex_shader_object, 1, &vertex_shader, NULL);
+  glCompileShader(vertex_shader_object);
+  check_compile(vertex_shader_object);
 
   // depth program
-  program_object = glCreateProgramObjectARB();
+  program_object = glCreateProgram();
   program_object_depth = program_object;
-  glAttachObjectARB(program_object, fragment_depth_shader_object);
-  glAttachObjectARB(program_object, vertex_shader_object);
-  glLinkProgramARB(program_object);
-  glUseProgramObjectARB(program_object);
+  glAttachShader(program_object, fragment_depth_shader_object);
+  glAttachShader(program_object, vertex_shader_object);
 
-  glGetObjectParameterivARB(program_object, GL_OBJECT_LINK_STATUS_ARB , &log_length);
-  if(!log_length)
-  {
-    glGetInfoLogARB(fragment_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-    glGetInfoLogARB(vertex_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-    glGetInfoLogARB(program_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-  }
+  glBindAttribLocation(program_object,POSITION_ATTR,"aPosition");
+  glBindAttribLocation(program_object,COLOUR_ATTR,"aColor");
+  glBindAttribLocation(program_object,TEXCOORD_0_ATTR,"aMultiTexCoord0");
+  glBindAttribLocation(program_object,TEXCOORD_1_ATTR,"aMultiTexCoord1");
+  glBindAttribLocation(program_object,FOG_ATTR,"aFog");
 
-  texture0_location = glGetUniformLocationARB(program_object, "texture0");
-  texture1_location = glGetUniformLocationARB(program_object, "texture1");
-  glUniform1iARB(texture0_location, 0);
-  glUniform1iARB(texture1_location, 1);
+  glLinkProgram(program_object);
+  check_link(program_object);
+  glUseProgram(program_object);
+
+  texture0_location = glGetUniformLocation(program_object, "texture0");
+  texture1_location = glGetUniformLocation(program_object, "texture1");
+  glUniform1i(texture0_location, 0);
+  glUniform1i(texture1_location, 1);
 
   // default program
-  program_object = glCreateProgramObjectARB();
+  program_object = glCreateProgram();
   program_object_default = program_object;
-  glAttachObjectARB(program_object, fragment_shader_object);
-  glAttachObjectARB(program_object, vertex_shader_object);
-  glLinkProgramARB(program_object);
-  glUseProgramObjectARB(program_object);
+  glAttachShader(program_object, fragment_shader_object);
+  glAttachShader(program_object, vertex_shader_object);
 
-  glGetObjectParameterivARB(program_object, GL_OBJECT_LINK_STATUS_ARB , &log_length);
-  if(!log_length)
-  {
-    glGetInfoLogARB(fragment_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-    glGetInfoLogARB(vertex_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-    glGetInfoLogARB(program_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-  }
+  glBindAttribLocation(program_object,POSITION_ATTR,"aPosition");
+  glBindAttribLocation(program_object,COLOUR_ATTR,"aColor");
+  glBindAttribLocation(program_object,TEXCOORD_0_ATTR,"aMultiTexCoord0");
+  glBindAttribLocation(program_object,TEXCOORD_1_ATTR,"aMultiTexCoord1");
+  glBindAttribLocation(program_object,FOG_ATTR,"aFog");
 
-  texture0_location = glGetUniformLocationARB(program_object, "texture0");
-  texture1_location = glGetUniformLocationARB(program_object, "texture1");
-  glUniform1iARB(texture0_location, 0);
-  glUniform1iARB(texture1_location, 1);
+  glLinkProgram(program_object);
+  check_link(program_object);
+  glUseProgram(program_object);
+
+  texture0_location = glGetUniformLocation(program_object, "texture0");
+  texture1_location = glGetUniformLocation(program_object, "texture1");
+  glUniform1i(texture0_location, 0);
+  glUniform1i(texture1_location, 1);
 
   strcpy(fragment_shader_color_combiner, "");
   strcpy(fragment_shader_alpha_combiner, "");
@@ -361,8 +408,17 @@ typedef struct _shader_program_key
   int dither_enabled;
   int blackandwhite0;
   int blackandwhite1;
-  GLhandleARB fragment_shader_object;
-  GLhandleARB program_object;
+  GLuint fragment_shader_object;
+  GLuint program_object;
+  int texture0_location;
+  int texture1_location;
+  int vertexOffset_location;
+  int textureSizes_location;
+  int fogModeEndScale_location;
+  int fogColor_location;
+  int alphaRef_location;
+  int ditherTex_location;
+  int chroma_color_location;
 } shader_program_key;
 
 static shader_program_key* shader_programs = NULL;
@@ -374,11 +430,61 @@ static int texture1_combiner_key;
 static int texture0_combinera_key;
 static int texture1_combinera_key;
 
+void update_uniforms(shader_program_key prog)
+{
+  glUniform1i(prog.texture0_location, 0);
+  glUniform1i(prog.texture1_location, 1);
+
+  glUniform3f(prog.vertexOffset_location,widtho,heighto,inverted_culling ? -1.0f : 1.0f);
+  glUniform4f(prog.textureSizes_location,tex0_width,tex0_height,tex1_width,tex1_height);
+
+  glUniform3f(prog.fogModeEndScale_location,
+    fog_enabled != 2 ? 0.0f : 1.0f,
+    fogEnd,
+    1.0f / (fogEnd - fogStart)
+    );
+
+  if(prog.fogColor_location != -1)
+  {
+    glUniform3f(prog.fogColor_location,fogColor[0],fogColor[1],fogColor[2]);
+  }
+
+  glUniform1f(prog.alphaRef_location,alpha_test ? alpha_ref/255.0f : -1.0f);
+
+  constant_color_location = glGetUniformLocation(program_object, "constant_color");
+  glUniform4f(constant_color_location, texture_env_color[0], texture_env_color[1],
+    texture_env_color[2], texture_env_color[3]);
+
+  ccolor0_location = glGetUniformLocation(program_object, "ccolor0");
+  glUniform4f(ccolor0_location, ccolor0[0], ccolor0[1], ccolor0[2], ccolor0[3]);
+
+  ccolor1_location = glGetUniformLocation(program_object, "ccolor1");
+  glUniform4f(ccolor1_location, ccolor1[0], ccolor1[1], ccolor1[2], ccolor1[3]);
+
+  glUniform4f(prog.chroma_color_location, chroma_color[0], chroma_color[1],
+    chroma_color[2], chroma_color[3]);
+
+  if(dither_enabled)
+  {
+    glUniform1i(prog.ditherTex_location, 2);
+  }
+
+  set_lambda();
+}
+
+void disable_textureSizes() 
+{
+  int textureSizes_location = glGetUniformLocation(program_object_default,"textureSizes");
+  glUniform4f(textureSizes_location,1,1,1,1);
+}
+
 void compile_shader()
 {
   int texture0_location;
   int texture1_location;
   int ditherTex_location;
+  int vertexOffset_location;
+  int textureSizes_location;
   char *fragment_shader;
   int i;
   int chroma_color_location;
@@ -388,47 +494,22 @@ void compile_shader()
 
   for(i=0; i<number_of_programs; i++)
   {
-    if(shader_programs[i].color_combiner == color_combiner_key &&
-      shader_programs[i].alpha_combiner == alpha_combiner_key &&
-      shader_programs[i].texture0_combiner == texture0_combiner_key &&
-      shader_programs[i].texture1_combiner == texture1_combiner_key &&
-      shader_programs[i].texture0_combinera == texture0_combinera_key &&
-      shader_programs[i].texture1_combinera == texture1_combinera_key &&
-      shader_programs[i].fog_enabled == fog_enabled &&
-      shader_programs[i].chroma_enabled == chroma_enabled &&
-      shader_programs[i].dither_enabled == dither_enabled &&
-      shader_programs[i].blackandwhite0 == blackandwhite0 &&
-      shader_programs[i].blackandwhite1 == blackandwhite1)
+    shader_program_key prog = shader_programs[i];
+    if(prog.color_combiner == color_combiner_key &&
+      prog.alpha_combiner == alpha_combiner_key &&
+      prog.texture0_combiner == texture0_combiner_key &&
+      prog.texture1_combiner == texture1_combiner_key &&
+      prog.texture0_combinera == texture0_combinera_key &&
+      prog.texture1_combinera == texture1_combinera_key &&
+      prog.fog_enabled == fog_enabled &&
+      prog.chroma_enabled == chroma_enabled &&
+      prog.dither_enabled == dither_enabled &&
+      prog.blackandwhite0 == blackandwhite0 &&
+      prog.blackandwhite1 == blackandwhite1)
     {
       program_object = shader_programs[i].program_object;
-      glUseProgramObjectARB(program_object);
-
-      texture0_location = glGetUniformLocationARB(program_object, "texture0");
-      texture1_location = glGetUniformLocationARB(program_object, "texture1");
-      glUniform1iARB(texture0_location, 0);
-      glUniform1iARB(texture1_location, 1);
-
-      constant_color_location = glGetUniformLocationARB(program_object, "constant_color");
-      glUniform4fARB(constant_color_location, texture_env_color[0], texture_env_color[1], 
-        texture_env_color[2], texture_env_color[3]);
-
-      ccolor0_location = glGetUniformLocationARB(program_object, "ccolor0");
-      glUniform4fARB(ccolor0_location, ccolor0[0], ccolor0[1], ccolor0[2], ccolor0[3]);
-
-      ccolor1_location = glGetUniformLocationARB(program_object, "ccolor1");
-      glUniform4fARB(ccolor1_location, ccolor1[0], ccolor1[1], ccolor1[2], ccolor1[3]);
-
-      chroma_color_location = glGetUniformLocationARB(program_object, "chroma_color");
-      glUniform4fARB(chroma_color_location, chroma_color[0], chroma_color[1],
-        chroma_color[2], chroma_color[3]);
-
-      if(dither_enabled)
-      {
-        ditherTex_location = glGetUniformLocationARB(program_object, "ditherTex");
-        glUniform1iARB(ditherTex_location, 2);
-      }
-
-      set_lambda();
+      glUseProgram(program_object);
+      update_uniforms(prog);
       return;
     }
   }
@@ -479,58 +560,39 @@ void compile_shader()
   strcat(fragment_shader, fragment_shader_end);
   if(chroma_enabled) strcat(fragment_shader, fragment_shader_chroma);
 
-  shader_programs[number_of_programs].fragment_shader_object = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-  glShaderSourceARB(shader_programs[number_of_programs].fragment_shader_object, 1, (const GLcharARB**)&fragment_shader, NULL);
-  free(fragment_shader);
+  shader_programs[number_of_programs].fragment_shader_object = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(shader_programs[number_of_programs].fragment_shader_object, 1, (const GLchar**)&fragment_shader, NULL);
 
-  glCompileShaderARB(shader_programs[number_of_programs].fragment_shader_object);
+  glCompileShader(shader_programs[number_of_programs].fragment_shader_object);
+  check_compile(shader_programs[number_of_programs].fragment_shader_object);
 
-  program_object = glCreateProgramObjectARB();
+  program_object = glCreateProgram();
   shader_programs[number_of_programs].program_object = program_object;
-  glAttachObjectARB(program_object, shader_programs[number_of_programs].fragment_shader_object);
-  glAttachObjectARB(program_object, vertex_shader_object);
-  glLinkProgramARB(program_object);
-  glUseProgramObjectARB(program_object);
 
-  glGetObjectParameterivARB(program_object, GL_OBJECT_LINK_STATUS_ARB , &log_length);
-  if(!log_length)
-  {
-    glGetInfoLogARB(shader_programs[number_of_programs].fragment_shader_object, 
-      2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-    glGetInfoLogARB(vertex_shader_object, 2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-    glGetInfoLogARB(program_object, 
-      2048, &log_length, shader_log);
-    if(log_length) display_warning(shader_log);
-  }
+  glBindAttribLocation(program_object,POSITION_ATTR,"aPosition");
+  glBindAttribLocation(program_object,COLOUR_ATTR,"aColor");
+  glBindAttribLocation(program_object,TEXCOORD_0_ATTR,"aMultiTexCoord0");
+  glBindAttribLocation(program_object,TEXCOORD_1_ATTR,"aMultiTexCoord1");
+  glBindAttribLocation(program_object,FOG_ATTR,"aFog");
 
-  texture0_location = glGetUniformLocationARB(program_object, "texture0");
-  texture1_location = glGetUniformLocationARB(program_object, "texture1");
-  glUniform1iARB(texture0_location, 0);
-  glUniform1iARB(texture1_location, 1);
+  glAttachShader(program_object, shader_programs[number_of_programs].fragment_shader_object);
+  glAttachShader(program_object, vertex_shader_object);
 
-  constant_color_location = glGetUniformLocationARB(program_object, "constant_color");
-  glUniform4fARB(constant_color_location, texture_env_color[0], texture_env_color[1], 
-    texture_env_color[2], texture_env_color[3]);
+  glLinkProgram(program_object);
+  check_link(program_object);
+  glUseProgram(program_object);
 
-  ccolor0_location = glGetUniformLocationARB(program_object, "ccolor0");
-  glUniform4fARB(ccolor0_location, ccolor0[0], ccolor0[1], ccolor0[2], ccolor0[3]);
 
-  ccolor1_location = glGetUniformLocationARB(program_object, "ccolor1");
-  glUniform4fARB(ccolor1_location, ccolor1[0], ccolor1[1], ccolor1[2], ccolor1[3]);
+  shader_programs[number_of_programs].texture0_location = glGetUniformLocation(program_object, "texture0");
+  shader_programs[number_of_programs].texture1_location = glGetUniformLocation(program_object, "texture1");
+  shader_programs[number_of_programs].vertexOffset_location = glGetUniformLocation(program_object, "vertexOffset");
+  shader_programs[number_of_programs].textureSizes_location = glGetUniformLocation(program_object, "textureSizes");
+  shader_programs[number_of_programs].fogModeEndScale_location = glGetUniformLocation(program_object, "fogModeEndScale");
+  shader_programs[number_of_programs].fogColor_location = glGetUniformLocation(program_object, "fogColor");
+  shader_programs[number_of_programs].alphaRef_location = glGetUniformLocation(program_object, "alphaRef");
 
-  chroma_color_location = glGetUniformLocationARB(program_object, "chroma_color");
-  glUniform4fARB(chroma_color_location, chroma_color[0], chroma_color[1],
-    chroma_color[2], chroma_color[3]);
+  update_uniforms(shader_programs[number_of_programs]);
 
-  if(dither_enabled)
-  {
-    ditherTex_location = glGetUniformLocationARB(program_object, "ditherTex");
-    glUniform1iARB(ditherTex_location, 2);
-  }
-
-  set_lambda();
   number_of_programs++;
 }
 
@@ -544,25 +606,35 @@ void free_combiners()
 void set_copy_shader()
 {
   int texture0_location;
+  int alphaRef_location;
 
-  glUseProgramObjectARB(program_object_default);
-  texture0_location = glGetUniformLocationARB(program_object, "texture0");
-  glUniform1iARB(texture0_location, 0);
+  glUseProgram(program_object_default);
+  texture0_location = glGetUniformLocation(program_object_default, "texture0");
+  glUniform1i(texture0_location, 0);
+
+  alphaRef_location = glGetUniformLocation(program_object_default, "alphaRef");
+  if(alphaRef_location != -1)
+      glUniform1f(alphaRef_location,alpha_test ? alpha_ref/255.0f : -1.0f);
 }
 
 void set_depth_shader()
 {
   int texture0_location;
+  int alphaRef_location;
 
-  glUseProgramObjectARB(program_object_depth);
-  texture0_location = glGetUniformLocationARB(program_object, "texture0");
-  glUniform1iARB(texture0_location, 0);
+  glUseProgram(program_object_depth);
+  texture0_location = glGetUniformLocation(program_object_depth, "texture0");
+  glUniform1i(texture0_location, 0);
+
+  alphaRef_location = glGetUniformLocation(program_object_depth, "alphaRef");
+  if(alphaRef_location != -1)
+      glUniform1f(alphaRef_location,alpha_test ? alpha_ref/255.0f : -1.0f);
 }
 
 void set_lambda()
 {
-  int lambda_location = glGetUniformLocationARB(program_object, "lambda");
-  glUniform1fARB(lambda_location, lambda);
+  int lambda_location = glGetUniformLocation(program_object, "lambda");
+  glUniform1f(lambda_location, lambda);
 }
 
 FX_ENTRY void FX_CALL 
@@ -587,44 +659,11 @@ grConstantColorValue( GrColor_t value )
     display_warning("grConstantColorValue: unknown color format : %x", lfb_color_fmt);
   }
 
-  constant_color_location = glGetUniformLocationARB(program_object, "constant_color");
-  glUniform4fARB(constant_color_location, texture_env_color[0], texture_env_color[1], 
+  vbo_draw();
+
+  constant_color_location = glGetUniformLocation(program_object, "constant_color");
+  glUniform4f(constant_color_location, texture_env_color[0], texture_env_color[1], 
     texture_env_color[2], texture_env_color[3]);
-}
-
-int setOtherColorSource(int other)
-{
-  switch(other)
-  {
-  case GR_COMBINE_OTHER_ITERATED:
-    return GL_PRIMARY_COLOR_ARB;
-    break;
-  case GR_COMBINE_OTHER_TEXTURE:
-    return GL_PREVIOUS_ARB;
-    break;
-  case GR_COMBINE_OTHER_CONSTANT:
-    return GL_CONSTANT_ARB;
-    break;
-  default:
-    display_warning("unknwown other color source : %x", other);
-  }
-  return 0;
-}
-
-int setLocalColorSource(int local)
-{
-  switch(local)
-  {
-  case GR_COMBINE_LOCAL_ITERATED:
-    return GL_PRIMARY_COLOR_ARB;
-    break;
-  case GR_COMBINE_LOCAL_CONSTANT:
-    return GL_CONSTANT_ARB;
-    break;
-  default:
-    display_warning("unknwown local color source : %x", local);
-  }
-  return 0;
 }
 
 void writeGLSLColorOther(int other)
@@ -802,6 +841,7 @@ grColorCombine(
   need_to_compile = 1;
 }
 
+/*
 int setOtherAlphaSource(int other)
 {
   switch(other)
@@ -836,6 +876,7 @@ int setLocalAlphaSource(int local)
   }
   return 0;
 }
+*/
 
 void writeGLSLAlphaOther(int other)
 {
@@ -1473,10 +1514,13 @@ grAlphaBlendFunction(
     display_warning("grAlphaBlendFunction : alpha_df = %x", alpha_df);
   }
   glEnable(GL_BLEND);
+  glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
+/*
   if (blend_func_separate_support)
     glBlendFuncSeparateEXT(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
   else
     glBlendFunc(sfactorRGB, dfactorRGB);
+*/
 }
 
 FX_ENTRY void FX_CALL
@@ -1495,20 +1539,22 @@ grAlphaTestFunction( GrCmpFnc_t function )
   switch(function)
   {
   case GR_CMP_GREATER:
-    glAlphaFunc(GL_GREATER, alpha_ref/255.0f);
+    //glAlphaFunc(GL_GREATER, alpha_ref/255.0f);
     break;
   case GR_CMP_GEQUAL:
-    glAlphaFunc(GL_GEQUAL, alpha_ref/255.0f);
+    //glAlphaFunc(GL_GEQUAL, alpha_ref/255.0f);
     break;
   case GR_CMP_ALWAYS:
-    glAlphaFunc(GL_ALWAYS, alpha_ref/255.0f);
-    glDisable(GL_ALPHA_TEST);
+    //glAlphaFunc(GL_ALWAYS, alpha_ref/255.0f);
+    //glDisable(GL_ALPHA_TEST);
+    alpha_test = false;
     return;
     break;
   default:
     display_warning("grAlphaTestFunction : unknown function : %x", function);
   }
-  glEnable(GL_ALPHA_TEST);
+  //glEnable(GL_ALPHA_TEST);
+  alpha_test = true;
 }
 
 // fog
@@ -1520,17 +1566,17 @@ grFogMode( GrFogMode_t mode )
   switch(mode)
   {
   case GR_FOG_DISABLE:
-    glDisable(GL_FOG);
+    //glDisable(GL_FOG);
     fog_enabled = 0;
     break;
   case GR_FOG_WITH_TABLE_ON_Q:
-    glEnable(GL_FOG);
-    glFogi(GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT);
+    //glEnable(GL_FOG);
+    //glFogi(GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT);
     fog_enabled = 1;
     break;
   case GR_FOG_WITH_TABLE_ON_FOGCOORD_EXT:
-    glEnable(GL_FOG);
-    glFogi(GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT);
+    //glEnable(GL_FOG);
+    //glFogi(GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT);
     fog_enabled = 2;
     break;
   default:
@@ -1551,10 +1597,14 @@ guFogGenerateLinear(GrFog_t *fogtable,
                     float nearZ, float farZ )
 {
   LOG("guFogGenerateLinear(%f,%f)\r\n", nearZ, farZ);
+/*
   glFogi(GL_FOG_MODE, GL_LINEAR);
   glFogi(GL_FOG_COORDINATE_SOURCE_EXT, GL_FOG_COORDINATE_EXT);
   glFogf(GL_FOG_START, nearZ / 255.0f);
   glFogf(GL_FOG_END, farZ / 255.0f);
+*/
+  fogStart = nearZ / 255.0f;
+  fogEnd = farZ / 255.0f;
 }
 
 FX_ENTRY void FX_CALL 
@@ -1566,28 +1616,27 @@ grFogTable( const GrFog_t ft[] )
 FX_ENTRY void FX_CALL 
 grFogColorValue( GrColor_t fogcolor )
 {
-  float color[4];
   LOG("grFogColorValue(%x)\r\n", fogcolor);
 
   switch(lfb_color_fmt)
   {
   case GR_COLORFORMAT_ARGB:
-    color[3] = ((fogcolor >> 24) & 0xFF) / 255.0f;
-    color[0] = ((fogcolor >> 16) & 0xFF) / 255.0f;
-    color[1] = ((fogcolor >>  8) & 0xFF) / 255.0f;
-    color[2] = (fogcolor & 0xFF) / 255.0f;
+    fogColor[3] = ((fogcolor >> 24) & 0xFF) / 255.0f;
+    fogColor[0] = ((fogcolor >> 16) & 0xFF) / 255.0f;
+    fogColor[1] = ((fogcolor >>  8) & 0xFF) / 255.0f;
+    fogColor[2] = (fogcolor & 0xFF) / 255.0f;
     break;
   case GR_COLORFORMAT_RGBA:
-    color[0] = ((fogcolor >> 24) & 0xFF) / 255.0f;
-    color[1] = ((fogcolor >> 16) & 0xFF) / 255.0f;
-    color[2] = ((fogcolor >>  8) & 0xFF) / 255.0f;
-    color[3] = (fogcolor & 0xFF) / 255.0f;
+    fogColor[0] = ((fogcolor >> 24) & 0xFF) / 255.0f;
+    fogColor[1] = ((fogcolor >> 16) & 0xFF) / 255.0f;
+    fogColor[2] = ((fogcolor >>  8) & 0xFF) / 255.0f;
+    fogColor[3] = (fogcolor & 0xFF) / 255.0f;
     break;
   default:
     display_warning("grFogColorValue: unknown color format : %x", lfb_color_fmt);
   }
 
-  glFogfv(GL_FOG_COLOR, color); 
+  //glFogfv(GL_FOG_COLOR, color); 
 }
 
 // chroma
@@ -1633,9 +1682,9 @@ grChromakeyValue( GrColor_t value )
   default:
     display_warning("grChromakeyValue: unknown color format : %x", lfb_color_fmt);
   }
-
-  chroma_color_location = glGetUniformLocationARB(program_object, "chroma_color");
-  glUniform4fARB(chroma_color_location, chroma_color[0], chroma_color[1],
+  vbo_draw();
+  chroma_color_location = glGetUniformLocation(program_object, "chroma_color");
+  glUniform4f(chroma_color_location, chroma_color[0], chroma_color[1],
     chroma_color[2], chroma_color[3]);
 }
 
@@ -1667,7 +1716,7 @@ static void setPattern()
       texture[(i*32+j*8+7)*4+3] = ((stip[i*4+j] >> 0) & 1) ? 255 : 0;
     }
   }
-  glActiveTextureARB(GL_TEXTURE2_ARB);
+  glActiveTexture(GL_TEXTURE2);
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, 33*1024*1024);
   glTexImage2D(GL_TEXTURE_2D, 0, 4, 32, 32, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
@@ -1693,19 +1742,19 @@ grStippleMode( GrStippleMode_t mode )
   {
   case GR_STIPPLE_DISABLE:
     dither_enabled = 0;
-    glActiveTextureARB(GL_TEXTURE2_ARB);
+    glActiveTexture(GL_TEXTURE2);
     glDisable(GL_TEXTURE_2D);
     break;
   case GR_STIPPLE_PATTERN:
     setPattern();
     dither_enabled = 1;
-    glActiveTextureARB(GL_TEXTURE2_ARB);
+    glActiveTexture(GL_TEXTURE2);
     glEnable(GL_TEXTURE_2D);
     break;
   case GR_STIPPLE_ROTATE:
     setPattern();
     dither_enabled = 1;
-    glActiveTextureARB(GL_TEXTURE2_ARB);
+    glActiveTexture(GL_TEXTURE2);
     glEnable(GL_TEXTURE_2D);
     break;
   default:
@@ -2745,14 +2794,15 @@ grConstantColorValueExt(GrChipID_t    tmu,
     display_warning("grConstantColorValue: unknown color format : %x", lfb_color_fmt);
   }
 
+  vbo_draw();
   if(num_tex == 0)
   {
-    ccolor0_location = glGetUniformLocationARB(program_object, "ccolor0");
-    glUniform4fARB(ccolor0_location, ccolor0[0], ccolor0[1], ccolor0[2], ccolor0[3]);
+    ccolor0_location = glGetUniformLocation(program_object, "ccolor0");
+    glUniform4f(ccolor0_location, ccolor0[0], ccolor0[1], ccolor0[2], ccolor0[3]);
   }
   else
   {
-    ccolor1_location = glGetUniformLocationARB(program_object, "ccolor1");
-    glUniform4fARB(ccolor1_location, ccolor1[0], ccolor1[1], ccolor1[2], ccolor1[3]);
+    ccolor1_location = glGetUniformLocation(program_object, "ccolor1");
+    glUniform4f(ccolor1_location, ccolor1[0], ccolor1[1], ccolor1[2], ccolor1[3]);
   }
 }

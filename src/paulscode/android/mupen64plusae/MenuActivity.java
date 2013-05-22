@@ -184,6 +184,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !mUserPrefs.isGles2RiceEnabled )
             PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
         
+        if( mUserPrefs.isGles2Glide64Enabled )
+            PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_POSITION );
+        
         if( !AppData.IS_HONEYCOMB || mUserPrefs.isOuyaMode )
             PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_ACTION_BAR_TRANSPARENCY );
         

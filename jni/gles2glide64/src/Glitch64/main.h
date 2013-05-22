@@ -23,7 +23,8 @@
 
 #include <m64p_types.h>
 
-#define LOG(...) WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define LOG(...) // WriteLog(M64MSG_VERBOSE, __VA_ARGS__)
+#define LOGINFO(...) WriteLog(M64MSG_INFO, __VA_ARGS__)
 void WriteLog(m64p_msg_level level, const char *msg, ...);
 
 
@@ -102,9 +103,10 @@ extern "C" {
 #include <stdio.h>
 //#define printf(...)
 #define GL_GLEXT_PROTOTYPES
-#include <SDL_opengl.h>
+#include <SDL_opengles2.h>
 #endif // _WIN32
 #include "glide.h"
+#include "glState.cpp"
 
 void display_warning(const unsigned char *text, ...);
 void display_warning(const char *text, ...);
@@ -140,6 +142,17 @@ extern PFNGLGETINFOLOGARBPROC glGetInfoLogARB;
 extern PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB;
 extern PFNGLSECONDARYCOLOR3FPROC glSecondaryColor3f;
 #endif
+void check_compile(GLuint shader);
+void check_link(GLuint program);
+void vbo_enable();
+void vbo_disable();
+
+//Vertex Attribute Locations
+#define POSITION_ATTR 0
+#define COLOUR_ATTR 1
+#define TEXCOORD_0_ATTR 2
+#define TEXCOORD_1_ATTR 3
+#define FOG_ATTR 4
 
 extern int w_buffer_mode;
 extern int nbTextureUnits;
@@ -177,6 +190,7 @@ void free_combiners();
 void compile_shader();
 void set_lambda();
 void set_copy_shader();
+void disable_textureSizes();
 
 // config functions
 
@@ -271,40 +285,25 @@ grConstantColorValueExt(GrChipID_t    tmu,
 #define CHECK_FRAMEBUFFER_STATUS() \
 {\
  GLenum status; \
- status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
+ status = glCheckFramebufferStatus(GL_FRAMEBUFFER); \
  /*display_warning("%x\n", status);*/\
  switch(status) { \
- case GL_FRAMEBUFFER_COMPLETE_EXT: \
+ case GL_FRAMEBUFFER_COMPLETE: \
    /*display_warning("framebuffer complete!\n");*/\
    break; \
- case GL_FRAMEBUFFER_UNSUPPORTED_EXT: \
+ case GL_FRAMEBUFFER_UNSUPPORTED: \
    display_warning("framebuffer GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");\
     /* you gotta choose different formats */ \
    /*assert(0);*/ \
    break; \
- case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT: \
+ case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: \
    display_warning("framebuffer INCOMPLETE_ATTACHMENT\n");\
    break; \
- case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT: \
+ case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: \
    display_warning("framebuffer FRAMEBUFFER_MISSING_ATTACHMENT\n");\
    break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT: \
+ case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS: \
    display_warning("framebuffer FRAMEBUFFER_DIMENSIONS\n");\
-   break; \
- /*case GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT: \
-   display_warning("framebuffer INCOMPLETE_DUPLICATE_ATTACHMENT\n");\
-   break;*/ \
- case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT: \
-   display_warning("framebuffer INCOMPLETE_FORMATS\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: \
-   display_warning("framebuffer INCOMPLETE_DRAW_BUFFER\n");\
-   break; \
- case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT: \
-   display_warning("framebuffer INCOMPLETE_READ_BUFFER\n");\
-   break; \
- case GL_FRAMEBUFFER_BINDING_EXT: \
-   display_warning("framebuffer BINDING_EXT\n");\
    break; \
  default: \
    break; \

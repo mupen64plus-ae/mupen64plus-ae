@@ -140,6 +140,9 @@ public class AppData
     /** The name of the gles2n64 configuration file. */
     public final String gles2n64_conf;
     
+    /** The name of the gles2glide64 configuration file. */
+    public final String gles2glide64_conf;
+    
     /** The name of the error log file. */
     public final String error_log;
     
@@ -215,6 +218,7 @@ public class AppData
         // Files
         mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
         gles2n64_conf = dataDir + "/data/gles2n64.conf";
+        gles2glide64_conf = dataDir + "/data/Glide64mk2.ini";
         error_log = dataDir + "/error.log";
         
         // Installation validity
