@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 15;
+    private static final int ASSET_VERSION = 16;
     
     /** The total number of assets to be extracted (for computing progress %). */
     private static final int TOTAL_ASSETS = 119;
