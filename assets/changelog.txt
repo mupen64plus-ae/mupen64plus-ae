@@ -1,12 +1,12 @@
 [26:2.3.0]
-- Upgraded to SDL 2.0 multimedia library
-- Added gles2glide64 video plugin
-- Fixed extreme lag on (US) Galaxy S3/ S4, HTC One, Xperia Z, and others
+- Added gles2glide64 video plugin (fixes broken graphics in many games)
+- Fixed extreme lag on Galaxy S3/S4 (US), HTC One, Xperia Z, and others
 - Added controller deadzone preference (see button mapping screen)
+- Fixed unmappable d-pad on newer batches of Nyko Playpad controller
 - Fixed crash related to rumble (stale JNI references)
 - Fixed crash related to audio (uninitialized audio tracks)
-- Fixed unmappable d-pad on newer batches of Nyko Playpad controller
 - Fixed possible crash on OUYA
+- Upgraded to SDL 2.0 multimedia library
 [25:2.2.1]
 - Fixed Pokemon Snap camera control bug (must enable cheat)
 - Fixed crash when input plugin disabled
