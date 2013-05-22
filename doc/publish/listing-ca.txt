@@ -15,23 +15,26 @@ Emulador de Nintendo64 per Android. Mupen64Plus AE està encara en fase de prove
 
 AQUESTA APLICACIÓ NO INCORPORA ROMS
 -Has de tenir els drets d'una Rom abans de poder jugar-hi!
-- 
+-
 
 ELS 99¢ CORRESPONEN ÚNICAMENT A DONACIONS
 -Aquesta aplicació es pot descarrega gratuïtament des de la meva pàgina (Sense anuncis!)
 -Siusplau considera de fer una donació
-- Les donacions ajuden a molts projectes lliures i programadors 
+- Les donacions ajuden a molts projectes lliures i programadors
 
 Mupen64Plus, Android Edition (AE) és un emulador de N64 per Android. Actualment es troba en fase de proves, el que significa que encara està en desenvolupament. Encara hi ha molts problemes gràfics, de velocitat i d'àudio, fins i tot en dispositius moderns. Visita www.paulscode.com per involucrar-te en el desenvolupament i en la fase de proves, a més d'obtenir correccions d'errors i respostes a preguntes freqüents.
 
-Aquesta és l'aplicació oficial, la qual va ser retirada fa alguns mesos després que certs competidors presentessin falsos informes de infringimient a la llei DMCA. Trev (Keowsktech) va publicar l'aplicació des del seu compte durant un temps mentre jo estava resolent els meus problemes amb Google. Ara que el meu compte ha estat restaurat, ell retirarà d'aquí a poc la seva altra versió. Totes les actualitzacions futures seran publicades des d'aquest compte.
+In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
 
-Penso que hi va haver una demora en el processament del meva contrademanda per possibles problemes de drets d'autor, relacionats amb les captures de jocs que vaig publicar per l'aplicació. He decidit utilitzar d'ara endavant captures de títols de domini públic, per evitar que torni a succeir aquest inconvenient. Tanmateix, si l'aplicació es retirada novament de la botiga, encara podràs obtenir futures actualitzacions de manera gratuïta a paulscode.com.
-
-Aquesta aplicació està llicenciada sota la GNU GPL v2, i el codi font complet està disponible a través del repositori GIT públic en https://github.com/paulscode/mupen64plus-ae. Si ets un desenvolupador i vols accedir a aquest repositori, si us plau entra en contacte amb mi (Paul) en el fòrum de suport. Si necessites ajuda creant un fork del projecte, només fes-m'ho saber i et donaré un cop de mà.
+This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
 
 OPTIMITZAT PER XPERIA PLAY!
 - Entrada analògica utilitzant el ratolí tàctil!
+
+PERMISSIONS
+Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
+Write External Storage - The device storage is used for writing savegames and custom input profiles.
+Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
 
 PRIMERS PASSOS
 - Transfereix ROMs des de qualsevol lloc al teu emmagatzematge intern/SD

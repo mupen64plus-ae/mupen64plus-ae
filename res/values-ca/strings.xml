@@ -85,9 +85,7 @@
   <string name="actionDeviceInfo_title">Informació del terminal</string>
   <string name="actionDeviceInfo_summary">Informació del maquinari i model</string>
   <string name="actionControllerInfo_title">Informació del comandament</string>
-  <string name="actionControllerInfo_summary">Informació del maquinari i model del perifèric</string>
   <string name="actionControllerDiagnostics_title">Diagnostic del comandament</string>
-  <string name="actionControllerDiagnostics_summary">Provar capacitat de comunicació</string>
   <string name="actionMigrateSlotSaves_title">Migrar arxius de guardat</string>
   <string name="actionMigrateSlotSaves_summary">Copia els teus slots de guardat de l\'aplicació vella a aquesta</string>
   <string name="actionReloadAssets_title">Recarrega els recursos de l\'aplicació</string>
@@ -131,7 +129,6 @@
   <string name="categoryMultiPlayer_title">Multijugador</string>
   <string name="categoryGles2N64_title">Configuració de GLES2N64</string>
   <string name="categoryGles2Rice_title">Configuració de GLES2Rice</string>
-  <string name="categoryDiagnostics_title">\t\nDiagnòstics</string>
   <string name="categoryData_title">Dades</string>
   <string name="categoryCrashReports_title">Informes d\'error</string>
   <!--Checkbox Preferences-->
@@ -253,20 +250,13 @@
   <string name="audioResampleAlg_entrySincBest">Funció sinc (millor)</string>
   <string name="pluginVideo_title">Vídeo</string>
   <string name="pluginVideo_entryNone">Cap (vídeo deshabilitat)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10⏎ <small>(Android GLES2 adaptació de GLN64 per Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)⏎ <small>(GLES2 adaptat per a Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Àudio</string>
   <string name="pluginAudio_entryNone">Cap (àudio deshabilitat)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10⏎ <small>(Adaptació del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">\t\nEntrada</string>
   <string name="pluginInput_entryNone">Cap (dispositius d\'entrada deshabilitats)</string>
-  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Cap (RSP disabled)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10⏎ <small>(Adaptació a Android del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10⏎ <small>(Àudo deshabilitat, speed hack per Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Nucli d\'emulació</string>
-  <string name="pluginCore_entryV110">core, v1.10⏎ <small>(Adaptació a Android del Mupen64Plus per Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intèrpret pur</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intèrpret  a cache</string>

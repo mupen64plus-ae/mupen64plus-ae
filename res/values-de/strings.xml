@@ -85,9 +85,7 @@
   <string name="actionDeviceInfo_title">Geräteinformationen</string>
   <string name="actionDeviceInfo_summary">Hardware- und Modellinformationen</string>
   <string name="actionControllerInfo_title">Controllerinfo</string>
-  <string name="actionControllerInfo_summary">Peripheriehardware- und Modellinformationen</string>
   <string name="actionControllerDiagnostics_title">Controllerdiagnose</string>
-  <string name="actionControllerDiagnostics_summary">Grobe Verbindungskapazität testen</string>
   <string name="actionMigrateSlotSaves_title">Speicherstände importieren</string>
   <string name="actionMigrateSlotSaves_summary">Kopiere deine Slot-Speicherstände von der alten App in die Aktuelle</string>
   <string name="actionReloadAssets_title">App-Ressourcen erneut laden</string>
@@ -131,7 +129,6 @@
   <string name="categoryMultiPlayer_title">Multiplayer</string>
   <string name="categoryGles2N64_title">GLES2N64-Einstellungen</string>
   <string name="categoryGles2Rice_title">GLES2Rice-Einstellungen</string>
-  <string name="categoryDiagnostics_title">Diagnose</string>
   <string name="categoryData_title">Daten</string>
   <string name="categoryCrashReports_title">Absturzberichte</string>
   <!--Checkbox Preferences-->
@@ -265,20 +262,13 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (beste)</string>
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Keins (Video deaktiviert)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android-GLES2-Portierung von GLN64 von Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2-Portierung von Rice Video für m64p v1.99.5 von Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Keins (Audio deaktiviert)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Eingabe</string>
   <string name="pluginInput_entryNone">Kein (Eingabe deaktiviert)</string>
-  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality Signal Processor (RSP)</string>
   <string name="pluginRsp_entryNone">Kein (RSP deaktiviert)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(Geschwindigkeits-Hack ohne Audioberechnung von Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Emulationskern</string>
-  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android-Portierung von Mupen64Plus von Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">R4300-Emulator</string>
   <string name="r4300Emulator_entryPureInterpreter">Reiner Interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Cached Interpreter</string>

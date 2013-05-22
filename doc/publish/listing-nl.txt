@@ -24,14 +24,17 @@ DEZE APP WORDT GELEVERD ZONDER ROMS
 
 Mupen64Plus, Android Edition (AE) is een N64 emulator voor Android. Het wordt momenteel beta getest, wat betekent dat het "werk in uitvoering" is. Er zijn nog altijd veel grafische, snelheid, en geluid problemen, zelfs op moderne apparaten. Bezoek www.paulscode.com om betrokken te raken bij de ontwikkeling en het testen, en ook om oplossingen voor bugs en FAQ's te bekijken.
 
-Dit is de officiële app, die enkele maanden terug werd verwijderd n.a.v. valse "DCMA take-down notices" van sommige concurrenten. Trev (Keowsktech) publiceerde enkele maanden de app onder zijn account, omdat ik problemen aan het oplossen was met Google m.b.t. mijn account. Nu mijn account hersteld is, zal hij zijn tak binnenkort verwijderen. Alle toekomstige updates zullen gepubliceerd worden vanaf dit account. 
+Om copyrightkwesties door spelscreenshots te vermijden, heb ik besloten alleen screenshots te gebruiken van spellen uit het publieke domein en demo's. Mocht desondanks deze app weer uit de Play Store gehaald worden zijn updates alsnog steeds gratis verkrijgbaar op paulscode.com.
 
-Ik denk dat de vertraging in het verwerken van mijn tegen-claims m.b.t. DCMA deels werden veroorzaakt door potentiële copyright problemen m.b.t. schermafbeeldingen van spellen die ik had geplaatst voor de app. Ik heb besloten in de toekomst alleen nog maar schermafbeeldingen van openbare spellen en demo's te gebruiken, om dit probleem te voorkomen. Maar als de app weer wordt verwijderd van de Markt, kunt u nog steeds gratis updates krijgen via paulscode.com.
-
-Op deze app is de GNU GPL v2 van toepassing, en de volledige bron code is beschikbaar via GIT op https://github.com/paulscode/mupen64plus-ae . Als een ontwikkelaar schrijf toegang hiervoor wil, neem dan contact met mij (Paul) op via het ondersteunende forum. Als je hulp nodig hebt om een vertakking te maken van het project, laat mij dat dan weten.
+Deze app is valt onder de GNU GPL v3 licentie. De volledige broncode is beschikbaar via de publieke GIT repository op https://github.com/paulscode/mupen64plus-ae. Als er ontwikkelaars zijn die schrijftoegang tot de repository willen, neem dan contact met mij (Paul) op, op het supportforum. Als je hulp nodig hebt het project te branchen, laat het me weten, dan help ik je het op te zetten.
 
 GEOPTIMALISEERD VOOR XPERIA PLAY
 - Analoge invoer van het touchpad!
+
+PERMISSIES
+Internet - De internetverbinding wordt gebruikt om crashrapporten te versturen. Er worden GEEN virussen, spyware of advertenties van enige soort gedownload. Persoonlijke gegevens worden NIET verzameld. Normale kosten voor data zijn van toepassing.
+Schrijf naar Externe Opslag - Externe opslag wordt gebruikt voor opgeslagen spellen en eigen invoerprofielen.
+Vibreren - Als uw apparaat het ondersteunt, wordt vibratie gebruikt voor Rumble Pavck-emulatie en haptische knopfeedback
 
 BEGINNEN
 - Verplaats ROM's naar willekeurige plaatsen op de interne opslag/SD kaart

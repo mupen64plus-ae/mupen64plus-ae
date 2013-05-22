@@ -1,0 +1,46 @@
+[Reklam Text]
+
+
+Nintendo64 emulator för Android. Mupen64Plus AE Beta testas.
+
+
+
+
+
+
+
+
+[App Beskrivning]
+
+
+DEN HÄR APPEN KOMMER INTE MED SPEL ROMS
+Du måste ha rätt till en given ROM innan du spelar det!
+- A number of public domain games/demos are available at www.pdroms.de
+
+99¢ IS FOR DONATIONS ONLY
+Denna appen är gratis att ladda ner på min websida (INGA ANNONSER)
+Snälla överväg att donera
+Donationer stöder MÅNGA open-source projekt och utvecklare
+
+Mupen64plus, Android Edition (AE) är en N64 emulator för android. Den är för nuvarande i Beta testning, vilket betyder att den inte är klar. Det är fortfarande många grafiska, lagg, och audio problem, även på morderna enheter. Besök www.paulscode.com för att bli inblandad i utvecklingen och testningen, samt buggfixar och frågor.
+
+In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
+
+This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
+
+XPERIA PLAY OPTIMERAD
+Analog ingång från pekplattan!
+
+BEHÖRIGHETER
+Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
+Write External Storage - The device storage is used for writing savegames and custom input profiles.
+Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
+
+KOMMA IGÅNG
+Överför ROMs var som helst till ditt interna minne/SD kort
+Bläddra till dem inifrån appen
+Standard SD kort mapp på mesta enheter är /mnt/sdcard
+ROMs måste vara i .n64, .v64, eller .z64 format, alternativt .zip fil
+
+HELP, FAQS, BUG-FIXES, GAME BACKUP INSTRUCTIONS:
+http://www.paulscode.com

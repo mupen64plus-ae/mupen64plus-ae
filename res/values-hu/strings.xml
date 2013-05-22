@@ -85,9 +85,7 @@
   <string name="actionDeviceInfo_title">Készülék infó</string>
   <string name="actionDeviceInfo_summary">Készülék hardver és modell infó</string>
   <string name="actionControllerInfo_title">Kontroller infó</string>
-  <string name="actionControllerInfo_summary">Periféria hardver és modell infó</string>
   <string name="actionControllerDiagnostics_title">Kontroller diagnosztika</string>
-  <string name="actionControllerDiagnostics_summary">Nyers kommunikációs képesség tesztelése</string>
   <string name="actionMigrateSlotSaves_title">Mentett fájlok mozgatása</string>
   <string name="actionMigrateSlotSaves_summary">Másold a régi alkalmazásból a mentett fájlaidat ebbe</string>
   <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
@@ -131,7 +129,6 @@
   <string name="categoryMultiPlayer_title">Többjátékos</string>
   <string name="categoryGles2N64_title">GLES2N64 beállítások</string>
   <string name="categoryGles2Rice_title">GLES2Rice beállítások</string>
-  <string name="categoryDiagnostics_title">Diagnosztika</string>
   <string name="categoryData_title">Adat</string>
   <string name="categoryCrashReports_title">Összeomlás jelentések</string>
   <!--Checkbox Preferences-->
@@ -257,20 +254,13 @@
   <string name="audioResampleAlg_entrySincBest">Szinkronizálás (legjobb)</string>
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Nincs (video kikapcsolva)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Hang</string>
   <string name="pluginAudio_entryNone">Nincs (hang kikapcsolva)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Bevitel</string>
   <string name="pluginInput_entryNone">Nincs (bevitel kikapcsolva)</string>
-  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Nincs (RSP kikapcsolva)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken)</small></string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(No audio processing, speed hack by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Emulációs mag</string>
-  <string name="pluginCore_entryV110">core, v1.10\n<small>(Android port of Mupen64Plus by Hactarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">R4300 emulátor</string>
   <string name="r4300Emulator_entryPureInterpreter">Tiszta interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Gyorsítótárazott interpreter</string>

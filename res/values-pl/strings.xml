@@ -85,9 +85,7 @@
   <string name="actionDeviceInfo_title">Informacje o urządzeniu</string>
   <string name="actionDeviceInfo_summary">Informacje o sprzęcie i modelu</string>
   <string name="actionControllerInfo_title">Informacje o kontrolerze</string>
-  <string name="actionControllerInfo_summary">Sprzęt wewnętrzny i informacje o modelu</string>
   <string name="actionControllerDiagnostics_title">Diagnostyka kontrolera</string>
-  <string name="actionControllerDiagnostics_summary">Test kompatybilności komunikacji RAW</string>
   <string name="actionMigrateSlotSaves_title">Eksportuj zapisy stanu</string>
   <string name="actionMigrateSlotSaves_summary">Skopiuj sloty zapisu ze starej wersji do obecnie używanej</string>
   <string name="actionReloadAssets_title">Załaduj ponownie zasoby aplikacji</string>
@@ -131,7 +129,6 @@
   <string name="categoryMultiPlayer_title">Gra wieloosobowa</string>
   <string name="categoryGles2N64_title">Ustawienia GLES2N64</string>
   <string name="categoryGles2Rice_title">Ustawienia GLES2Rice</string>
-  <string name="categoryDiagnostics_title">Diagnostyka</string>
   <string name="categoryData_title">Dane</string>
   <string name="categoryCrashReports_title">Raporty błędów</string>
   <!--Checkbox Preferences-->
@@ -265,20 +262,13 @@
   <string name="audioResampleAlg_entrySincBest">Synchronizacja (najlepsza)</string>
   <string name="pluginVideo_title">Obraz</string>
   <string name="pluginVideo_entryNone">Brak (wyłączony obraz)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10\n<small>(Android GLES2 port of GLN64 by Orkin, Adventus, Yongzh, Paul Lamb)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b)\n<small>(GLES2 port of Rice Video for m64p v1.99.5 by Rice, Kris (Metricity))</small></string>
   <string name="pluginAudio_title">Dźwięk</string>
   <string name="pluginAudio_entryNone">Brak (wyłączony dźwięk)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10\n<small>(Androidowy port Mupen64Plus przez Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
   <string name="pluginInput_title">Urządzenie wejścia</string>
   <string name="pluginInput_entryNone">Brak (wyłączony kontroler)</string>
-  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Brak (RSP wyłączone)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10\n<small>(Androidowy port Mupen64Plus przez Hacktarux, JttL, Ebenblues, Richard Goedeken)</small></string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10\n<small>(Bez przetwarzania dźwięku, speed hack od Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="pluginCore_title">Rdzeń emulacji</string>
-  <string name="pluginCore_entryV110">core, v1.10\n<small>(Androidowy port Mupen64Plus od Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</small></string>
   <string name="r4300Emulator_title">Emulator R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Czysty interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Buforowany interpreter</string>
@@ -336,6 +326,8 @@
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Lista zmian</string>
   <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">Uwaga</string>
+  <string name="invalidInstall_message">Aplikacja Mupen64 Plus AE mogła nie zostać poprawnie zainstalowana. Jeżeli występują problemy, proszę spróbować zainstalować ją ponownie.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nazwa pliku</string>
   <!--Asset Extractor-->

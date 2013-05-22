@@ -24,14 +24,17 @@
 
 Mupen64Plus AE -- эмулятор N64 для Android. В настоящее время он находится в стадии разработки, так что многие функции реализованы не до конца. Даже на мощных устройствах возможны задержки графики и звука. На www.paulscode.com вы найдёте найти ответы на основные вопросы, а также сможете принять участие в поиске ошибок и тестировании новых версий.
 
-Это официальный релиз Mupen64Plus AE. Предыдущую версию приложения удалили из Маркета по ложному обвинению в нарушении авторских прав, сфабрикованному конкурентами, после чего приложение в течении некоторого времени размещал Trev (Keowsktech). Теперь статус официальной вновь приобретает эта версия.
+In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
 
-В качестве одной из официальных причин удаления предыдущей версии упоминалось использование в качестве промо-материала снимков экрана из игр. Отныне я (Поль, примеч. переводчика) буду использовать для скриншотов только свободно распространяемые игры. Тем не менее, если приложение всё же будет повторно удалено, вы всегда сможете найти последнюю версию на paulscode.com.
-
-Mupen64Plus AE распространяется на условиях GNU GPL. Полный исходный код может быть найден на https://github.com/paulscode/mupen64plus-ae. Автор приветствует помощь в разработке; если вы хотите получить доступ на запись в репозиторий или проконсультироваться относительно исходного кода, свяжитесь со мной при помощи форума поддержки.
+This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
 
 ОПТИМИЗИРОВАНО ДЛЯ XPERIA PLAY
 - Поддержка тачпада!
+
+PERMISSIONS
+Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
+Write External Storage - The device storage is used for writing savegames and custom input profiles.
+Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
 
 КРАТКАЯ ИНСТРУКЦИЯ:
 - Поместите ROMы в память телефона / на SD карту

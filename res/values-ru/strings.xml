@@ -71,9 +71,7 @@
   <string name="actionDeviceInfo_title">Сведения об устройстве</string>
   <string name="actionDeviceInfo_summary">Модель и аппаратные характеристики</string>
   <string name="actionControllerInfo_title">Устройства ввода</string>
-  <string name="actionControllerInfo_summary">Периферийные устройства и информация о модели</string>
   <string name="actionControllerDiagnostics_title">Проверка устройств ввода</string>
-  <string name="actionControllerDiagnostics_summary">Проверить работоспособность средств ввода</string>
   <string name="actionMigrateSlotSaves_title">Импортировать сохранения</string>
   <string name="actionMigrateSlotSaves_summary">Скопировать файлы сохранений в эту версию эмулятора</string>
   <string name="actionReloadAssets_title">Перезагрузить ресурсы</string>
@@ -117,7 +115,6 @@
   <string name="categoryMultiPlayer_title">Мультиплеер</string>
   <string name="categoryGles2N64_title">Настройки GLES2N64</string>
   <string name="categoryGles2Rice_title">Настройки GLES2Rice</string>
-  <string name="categoryDiagnostics_title">Диагностика</string>
   <string name="categoryData_title">Данные</string>
   <string name="categoryCrashReports_title">Сообщения об ошибках</string>
   <!--Checkbox Preferences-->
@@ -220,19 +217,13 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (лучший)</string>
   <string name="pluginVideo_title">Видео плагин</string>
   <string name="pluginVideo_entryNone">Заглушка (выключить изображение)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (порт GLN64 под Android и GLES2 за авторством Orkin, Adventus, Yongzh, Paul Lamb)</string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (порт Rice Video под GLES2 для m64p v1.99.5 за авторством Rice, Kris (Metricity))</string>
   <string name="pluginAudio_title">Звуковой плагин</string>
   <string name="pluginAudio_entryNone">Заглушка (выключить звук)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (порт под Android для Mupen64Plus за авторством Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Плагин ввода</string>
   <string name="pluginInput_entryNone">Заглушка</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Выключен</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (порт под Android для Mupen64Plus за авторством Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (спид-хак, без поддержки звука Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Ядро эмулятора</string>
-  <string name="pluginCore_entryV110">core, v1.10 (порт Mupen64Plus под Android за авторством Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="r4300Emulator_title">R4300 Эмулятор</string>
   <string name="r4300Emulator_entryPureInterpreter">Интерпретация</string>
   <string name="r4300Emulator_entryCachedInterpreter">Интерпретация с кешированием</string>

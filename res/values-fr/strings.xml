@@ -85,9 +85,7 @@
   <string name="actionDeviceInfo_title">Informations matérielles</string>
   <string name="actionDeviceInfo_summary">Modèle de l\'appareil</string>
   <string name="actionControllerInfo_title">Informations sur la manette</string>
-  <string name="actionControllerInfo_summary">Informations et modèle de périphérique</string>
   <string name="actionControllerDiagnostics_title">Diagnostiquer la manette</string>
-  <string name="actionControllerDiagnostics_summary">Teste la transmission de données de la manette à l\'appareil</string>
   <string name="actionMigrateSlotSaves_title">Migrer les fichiers de sauvegarde</string>
   <string name="actionMigrateSlotSaves_summary">Copie vos emplacements de sauvegarde de l\'ancienne application vers la nouvelle</string>
   <string name="actionReloadAssets_title">Recharger les ressources de l\'application</string>
@@ -131,7 +129,6 @@
   <string name="categoryMultiPlayer_title">Multijoueur</string>
   <string name="categoryGles2N64_title">Paramètres GLES2N64</string>
   <string name="categoryGles2Rice_title">Paramètres GLES2Rice</string>
-  <string name="categoryDiagnostics_title">Diagnostiques</string>
   <string name="categoryData_title">Données</string>
   <string name="categoryCrashReports_title">Rapports de plantages</string>
   <!--Checkbox Preferences-->
@@ -265,20 +262,13 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (meilleur qualité)</string>
   <string name="pluginVideo_title">Vidéo</string>
   <string name="pluginVideo_entryNone">Sans (vidéo désactivée)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64, v1.10 (portage Android GLES2 de GLN64 par Orkin, Adventus, Yongzh, Paul Lamb)</string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice, v0.1.0(b) (portage GLES2 de Rice Video pour m64p v1.99.5 par Rice, Kris (Metricity))</string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Sans (audio désactivé)</string>
-  <string name="pluginAudio_entrySdl">audio-sdl, v1.10 (portage Android de Mupen64Plus par Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
   <string name="pluginInput_title">Contrôles</string>
   <string name="pluginInput_entryNone">Sans (contrôles désactivés)</string>
-  <string name="pluginInput_entryAndroid">input-android, v1.0</string>
   <string name="pluginRsp_title">Processeur Reality Signal (RSP)</string>
   <string name="pluginRsp_entryNone">Sans (RSP désactivé)</string>
-  <string name="pluginRsp_entryHle">rsp-hle, v1.10 (portage Android de Mupen64Plus par Hacktarux, JttL, Ebenblues, Richard Goedeken)</string>
-  <string name="pluginRsp_entryHleNoSound">rsp-hle-nosound, v1.10 (Pas de calcul audio, speed hack par Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="pluginCore_title">Noyau d\'émulation</string>
-  <string name="pluginCore_entryV110">noyau, v1.10 (portage Android de Mupen64Plus par Hacktarux, JttL, Ebenblues, Richard Goedeken, Paul Lamb)</string>
   <string name="r4300Emulator_title">Émulateur R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Interpréteur pur</string>
   <string name="r4300Emulator_entryCachedInterpreter">Interpréteur en cache</string>
@@ -336,6 +326,8 @@
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Notes de version</string>
   <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">Avertissement</string>
+  <string name="invalidInstall_message">Mupen64 Plus AE pourrait ne pas avoir été installé correctement. Veuillez réinstaller l\'application en cas de plantages.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nomdefichier</string>
   <!--Asset Extractor-->
