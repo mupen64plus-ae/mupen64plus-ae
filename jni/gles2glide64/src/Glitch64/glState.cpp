@@ -12,17 +12,10 @@ void inline cache_glActiveTexture (GLenum texture)
 }
 #define glActiveTexture(texture) cache_glActiveTexture(texture)
 
-static GLenum cached_BindTexture_target;
-static GLuint cached_BindTexture_texture;
 void inline cache_glBindTexture (GLenum target, GLuint texture)
 {
-  if(target != cached_BindTexture_target || texture != cached_BindTexture_texture)
-  {
     vbo_draw();
     glBindTexture(target, texture);
-    cached_BindTexture_target = target;
-    cached_BindTexture_texture = texture;
-  }
 }
 #define glBindTexture(target, texture) cache_glBindTexture(target, texture)
 
