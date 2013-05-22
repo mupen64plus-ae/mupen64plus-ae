@@ -183,7 +183,7 @@
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
   <string name="touchscreenRefresh_entryFrequently">Frecuentemente</string>
   <string name="touchscreenStyle_title">Estilo de botón</string>
-  <string name="touchscreenStyle_entryOutline">Lineas de borde</string>
+  <string name="touchscreenStyle_entryOutline">Líneas de borde</string>
   <string name="touchscreenStyle_entryShaded">Sombreado</string>
   <string name="touchscreenHeight_title">Espaciado vertical de botones</string>
   <string name="touchscreenHeight_entryAuto">Auto</string>

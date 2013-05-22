@@ -101,6 +101,7 @@ public class AxisProvider extends AbstractProvider
      * For a detailed explanation, see <a href=http://stackoverflow.com/questions/13103902/
      * android-recommended-way-of-safely-supporting-newer-apis-has-error-if-the-class-i>here</a>.
      */
+    @TargetApi( 12 )
     public class GenericMotionListener implements View.OnGenericMotionListener
     {
         /*
@@ -109,7 +110,6 @@ public class AxisProvider extends AbstractProvider
          * @see android.view.View.OnGenericMotionListener#onGenericMotion(android.view.View,
          * android.view.MotionEvent)
          */
-        @TargetApi( 12 )
         @Override
         public boolean onGenericMotion( View v, MotionEvent event )
         {
@@ -150,7 +150,6 @@ public class AxisProvider extends AbstractProvider
             return true;
         }
         
-        @TargetApi( 12 )
         private float normalizeStrength( float strength, AxisMap axisInfo, InputDevice device,
                 int axisCode )
         {
