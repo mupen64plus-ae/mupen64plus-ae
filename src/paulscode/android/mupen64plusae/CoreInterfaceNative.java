@@ -404,7 +404,13 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static void setActivityTitle( String title )
     {
-        // No-op interface to guarantee compatibility with all SDL versions
-        // TODO: Probably not necessary since SDL 2.0 checks whether this function exists before calling it...
+        // No-op implementation of SDL interface
+        // See SDL2/src/core/android/SDL_android.cpp
+    }
+    
+    public static void sendMessage( int command, int param )
+    {
+        // No-op implementation of SDL interface
+        // See SDL2/src/core/android/SDL_android.cpp
     }
 }
