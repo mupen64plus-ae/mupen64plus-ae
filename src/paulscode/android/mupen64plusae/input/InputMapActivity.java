@@ -236,7 +236,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         setupButton( R.id.buttonAU,            InputMap.AXIS_U );
         setupButton( R.id.buttonIncrementSlot, InputMap.FUNC_INCREMENT_SLOT );
         setupButton( R.id.buttonSaveSlot,      InputMap.FUNC_SAVE_SLOT );
-        setupButton( R.id.buttonReset,         InputMap.FUNC_RESET );
         setupButton( R.id.buttonLoadSlot,      InputMap.FUNC_LOAD_SLOT );
         setupButton( R.id.buttonPause,         InputMap.FUNC_PAUSE );
         setupButton( R.id.buttonStop,          InputMap.FUNC_STOP );

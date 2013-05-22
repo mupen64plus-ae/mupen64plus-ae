@@ -149,8 +149,6 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void emuResume();
     
-    public static native void emuReset();
-    
     public static native void emuStop();
     
     public static native void emuAdvanceFrame();

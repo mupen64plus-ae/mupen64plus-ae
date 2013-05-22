@@ -148,13 +148,6 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNativ
     (*CoreDoCommand)(M64CMD_RESUME, 0, NULL);
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuReset(JNIEnv* env, jclass cls)
-{
-    // (*CoreDoCommand) ( M64CMD_RESET, 0, NULL );
-    do_Start = 1;
-    (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
-}
-
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStop(JNIEnv* env, jclass cls)
 {
     (*CoreDoCommand)(M64CMD_STOP, 0, NULL);

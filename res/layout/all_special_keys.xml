@@ -10,15 +10,15 @@
         android:layout_marginTop="5dp" >
 
         <Button
-            android:id="@+id/buttonIncrementSlot"
+            android:id="@+id/buttonGameshark"
             style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_incrementSlot" />
+            android:text="@string/inputMapActivity_gameshark" />
 
         <Button
-            android:id="@+id/buttonSaveSlot"
+            android:id="@+id/buttonIncrementSlot"
             style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_saveSlot" />
+            android:text="@string/inputMapActivity_incrementSlot" />
     </TableRow>
 
     <TableRow
@@ -27,15 +27,15 @@
         android:layout_marginTop="5dp" >
 
         <Button
-            android:id="@+id/buttonReset"
-            style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_reset" />
-
-        <Button
             android:id="@+id/buttonLoadSlot"
             style="@style/btnSpecialMappable"
-            android:layout_marginLeft="5dp"
             android:text="@string/inputMapActivity_loadSlot" />
+
+        <Button
+            android:id="@+id/buttonSaveSlot"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapActivity_saveSlot" />
     </TableRow>
 
     <TableRow
@@ -61,6 +61,23 @@
         android:layout_marginTop="5dp" >
 
         <Button
+            android:id="@+id/buttonFastForward"
+            style="@style/btnSpecialMappable"
+            android:text="@string/inputMapActivity_fastForward" />
+
+        <Button
+            android:id="@+id/buttonFrameAdvance"
+            style="@style/btnSpecialMappable"
+            android:layout_marginLeft="5dp"
+            android:text="@string/inputMapActivity_frameAdvance" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" >
+
+        <Button
             android:id="@+id/buttonSpeedDown"
             style="@style/btnSpecialMappable"
             android:text="@string/inputMapActivity_speedDown" />
@@ -78,43 +95,15 @@
         android:layout_marginTop="5dp" >
 
         <Button
-            android:id="@+id/buttonFastForward"
-            style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_fastForward" />
-
-        <Button
             android:id="@+id/buttonSimulateBack"
             style="@style/btnSpecialMappable"
-            android:layout_marginLeft="5dp"
             android:text="@string/inputMapActivity_simulateBack" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
 
         <Button
             android:id="@+id/buttonSimulateMenu"
             style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_simulateMenu" />
-
-        <Button
-            android:id="@+id/buttonFrameAdvance"
-            style="@style/btnSpecialMappable"
             android:layout_marginLeft="5dp"
-            android:text="@string/inputMapActivity_frameAdvance" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
-
-        <Button
-            android:id="@+id/buttonGameshark"
-            style="@style/btnSpecialMappable"
-            android:text="@string/inputMapActivity_gameshark" />
+            android:text="@string/inputMapActivity_simulateMenu" />
     </TableRow>
 
 </TableLayout>

@@ -218,11 +218,6 @@ public class PeripheralController extends AbstractController implements
                     Log.v( "PeripheralController", "FUNC_LOAD_SLOT" );
                     CoreInterfaceNative.emuLoadSlot();
                     break;
-                case InputMap.FUNC_RESET:
-                    Log.v( "PeripheralController", "FUNC_RESET" );
-                    CoreInterfaceNative.emuReset();
-                    // TODO: CoreInterfaceNative.resetEmulator() needs some fine-tuning
-                    break;
                 case InputMap.FUNC_STOP:
                     Log.v( "PeripheralController", "FUNC_STOP" );
                     CoreInterfaceNative.emuStop();
