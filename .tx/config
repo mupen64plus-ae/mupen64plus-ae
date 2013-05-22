@@ -6,11 +6,11 @@ file_filter = res/values-<lang>/strings.xml
 source_file = res/values/strings.xml
 source_lang = en
 type = ANDROID
-minimum_perc = 80
+minimum_perc = 50
 
 [mupen64plus-ae.market-listing]
 file_filter = doc/publish/listing-<lang>.txt
 source_file = doc/publish/listing.txt
 source_lang = en
 type = TXT
-minimum_perc = 80
+minimum_perc = 1
