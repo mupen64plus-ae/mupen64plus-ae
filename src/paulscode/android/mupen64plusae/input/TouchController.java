@@ -24,6 +24,7 @@ import java.util.Set;
 
 import paulscode.android.mupen64plusae.input.map.TouchMap;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.os.Vibrator;
@@ -341,7 +342,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                                 if( index == TouchMap.UNMAPPED )
                                 {
                                     // Finger slid onto nothing, engage auto-hold button
-                                    if( mVibrator != null )
+                                    if( mVibrator != null && !OUYAInterface.IS_OUYA_HARDWARE )
                                     {
                                         mVibrator.cancel();
                                         mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1 );
@@ -362,7 +363,7 @@ public class TouchController extends AbstractController implements OnTouchListen
             // Finger is on a valid button
             
             // Provide simple vibration feedback for any valid button when first touched
-            if( touched && mTouchscreenFeedback && mVibrator != null )
+            if( touched && mTouchscreenFeedback && mVibrator != null && !OUYAInterface.IS_OUYA_HARDWARE )
             {
                 boolean firstTouched;
                 if( index < NUM_N64_BUTTONS )
@@ -431,7 +432,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                         else
                         {
                             // Engage auto-hold if long-pressed
-                            if( mVibrator != null )
+                            if( mVibrator != null && !OUYAInterface.IS_OUYA_HARDWARE )
                             {
                                 mVibrator.cancel();
                                 mVibrator.vibrate( AUTOHOLD_VIBRATE_PATTERN, -1 );
