@@ -286,15 +286,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
             // Get EGL instance
             EGL10 egl = (EGL10) EGLContext.getEGL();
             
-            // Wait for native-side executions to complete before doing any further GL rendering calls
-            egl.eglWaitNative( EGL10.EGL_CORE_NATIVE_ENGINE, null );
-            
-            // -- Drawing from the core occurs here -- //
-            
-            // Wait for GL executions to complete before doing any further native-side rendering calls
-            egl.eglWaitGL();
-            
-            // Rendering is complete, swap the buffers
+            // Swap the buffers
             egl.eglSwapBuffers( mEGLDisplay, mEGLSurface );
         }
         catch( IllegalArgumentException e )
