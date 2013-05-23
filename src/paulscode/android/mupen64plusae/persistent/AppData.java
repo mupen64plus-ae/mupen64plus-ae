@@ -224,11 +224,14 @@ public class AppData
         // Installation validity
         // @formatter:off
         isValidInstallation =
+                libraryExists( "ae-exports" )       &&
+                libraryExists( "ae-imports" )       &&
                 libraryExists( "audio-sdl" )        &&
                 libraryExists( "core" )             &&
                 libraryExists( "front-end" )        &&
                 libraryExists( "gles2n64" )         &&
                 libraryExists( "gles2rice" )        &&
+                libraryExists( "gles2glide64" )     &&
                 libraryExists( "input-android" )    &&
                 libraryExists( "rsp-hle-nosound" )  &&
                 libraryExists( "rsp-hle" )          &&
