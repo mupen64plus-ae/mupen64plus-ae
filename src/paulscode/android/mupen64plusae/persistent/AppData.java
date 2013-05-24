@@ -519,7 +519,8 @@ public class AppData
                     || hardware.contains( "smdk4210" )
                     || hardware.contains( "riogrande" )
                     || hardware.contains( "manta" )
-                    || hardware.contains( "cardhu" ) )
+                    || hardware.contains( "cardhu" )
+                    || hardware.contains( "mt6517" ) )
                 hardwareType = HARDWARE_TYPE_OMAP_2;
             
             else if(   hardware.contains( "liberty" )
