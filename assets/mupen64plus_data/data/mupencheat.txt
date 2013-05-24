@@ -13366,6 +13366,12 @@ gn Pokemon Snap (U)
   cd Fixes unresponsive camera bug.  First level only -- Use in combination with [Enable All Levels].  Go to level 1 then change level, and the camera will continue to work in the new level)
   D1382D1C 802C
   80382D0F 0000
+ cn Picture Selection Bugfix
+  cd Allow pictures to be selectable at the end of the course
+  D11E3184 2881
+  811E3184 2001
+  D11E3186 0098
+  811E3186 0001
 
 crc 39119872-07722E9F-C:45
 gn  Pokemon Snap Station (U)
@@ -13412,6 +13418,12 @@ gn  Pokemon Snap Station (U)
   cd Fixes unresponsive camera bug.  First level only -- Use in combination with [Enable All Levels].  Go to level 1 then change level, and the camera will continue to work in the new level)
   D1382D1C 802C
   80382D0F 0000
+ cn Picture Selection Bugfix
+  cd Allow pictures to be selectable at the end of the course
+  D11E3184 2881
+  811E3184 2001
+  D11E3186 0098
+  811E3186 0001
 
 crc 90F5D9B3-9D0EDCF0-C:45
 gn Pokemon Stadium (U)

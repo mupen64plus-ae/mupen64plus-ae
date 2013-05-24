@@ -7338,6 +7338,7 @@ Cheat10="[Enable All Levels]",810C2212 0006
 Cheat11="Hide First Digit In Roll Of Film",80388F5A 009D
 Cheat12="See Entire Introduction Fully & Various In-Game Effects",81049C7E 025A
 Cheat13="Camera Movement Bugfix",D1382D1C 802C,80382D0F 0000
+Cheat14="Picture Selection Bugfix",D11E3184 2881,811E3184 2001,D11E3186 0098,811E3186 0001
 Cheat0_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue Again.
 Cheat1_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue Again.
 Cheat2_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue Again.
@@ -7346,6 +7347,7 @@ Cheat4_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue
 Cheat5_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue Again.
 Cheat10_N=This is needed to be able to Play all Levels of the Game
 Cheat13_N=Fixes unresponsive camera bug.  First level only -- Use in combination with [Enable All Levels].  Go to level 1 then change level, and the camera will continue to work in the new level)
+Cheat14_N=Allow pictures to be selectable at the end of the course
 
 //----
 
@@ -7365,6 +7367,7 @@ Cheat10="[Enable All Levels]",810C2212 0006
 Cheat11="Hide First Digit In Roll Of Film",80388F5A 009D
 Cheat12="See Entire Introduction Fully & Various In-Game Effects",81049C7E 025A
 Cheat13="Camera Movement Bugfix",D1382D1C 802C,80382D0F 0000
+Cheat14="Picture Selection Bugfix",D11E3184 2881,811E3184 2001,D11E3186 0098,811E3186 0001
 Cheat0_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue Again.
 Cheat1_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue Again.
 Cheat2_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue Again.
@@ -7373,6 +7376,7 @@ Cheat4_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue
 Cheat5_N=To Activated thos Cheat Code, Press L To Stop & Press Start to Continue Again.
 Cheat10_N=This is needed to be able to Play all Levels of the Game
 Cheat13_N=Fixes unresponsive camera bug.  First level only -- Use in combination with [Enable All Levels].  Go to level 1 then change level, and the camera will continue to work in the new level)
+Cheat14_N=Allow pictures to be selectable at the end of the course
 
 //----
 
