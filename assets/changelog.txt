@@ -3,6 +3,8 @@
 - Fixed extreme lag on Galaxy S3/S4 (US), HTC One, Xperia Z, and others
 - Added controller deadzone preference (see button mapping screen)
 - Fixed unmappable d-pad on newer batches of Nyko Playpad controller
+- Fixed Pokemon Snap photo selection bug (must enable cheat)
+- Fixed Pilot Wings 64 shadow bug (must enable cheat)
 - Fixed crash related to rumble (stale JNI references)
 - Fixed crash related to audio (uninitialized audio tracks)
 - Fixed possible crash on OUYA
