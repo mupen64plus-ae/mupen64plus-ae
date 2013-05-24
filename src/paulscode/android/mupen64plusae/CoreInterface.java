@@ -495,6 +495,7 @@ public class CoreInterface
             mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( appData.screenSize.x ) );
             mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( appData.screenSize.y ) );
         }
+        mupen64plus_cfg.put( "Video-General", "VerticalSync", Integer.toString( 0 ) );
         
         mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", booleanToString( user.isGles2RiceAutoFrameskipEnabled ) );
