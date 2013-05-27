@@ -509,7 +509,7 @@ grSstWinOpen(
   CoreVideo_GL_SetAttribute(M64P_GL_DEPTH_SIZE, 16);
 
   printf("(II) Setting video mode %dx%d...\n", width, height);
-  if(CoreVideo_SetVideoMode(width, height, 0, fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED) != M64ERR_SUCCESS)
+  if(CoreVideo_SetVideoMode(width, height, 0, fullscreen ? M64VIDEO_FULLSCREEN : M64VIDEO_WINDOWED, (m64p_video_flags) 0) != M64ERR_SUCCESS)
   {
     printf("(EE) Error setting videomode %dx%d\n", width, height);
     return false;
