@@ -546,9 +546,12 @@ public class CoreInterface
             
             // Clear the folder if anything is in there:
             String[] children = tmpFolder.list();
-            for( String child : children )
+            if( children != null )
             {
-                FileUtil.deleteFolder( new File( tmpFolder, child ) );
+                for( String child : children )
+                {
+                    FileUtil.deleteFolder( new File( tmpFolder, child ) );
+                }
             }
             
             // Unzip the ROM
