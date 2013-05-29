@@ -263,13 +263,21 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (beste)</string>
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Geen (video uitgeschakeld)</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(aangepaste versie van GLN64 v0.4.1)</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(aangepaste versie van Rice Video v6.1.0(b))</small></string>
+  <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(aangepaste versie van Glide64 Final (10e Jubileum))</small></string>
   <string name="pluginAudio_title">Geluid</string>
   <string name="pluginAudio_entryNone">Geen (geluid uitgeschakeld)</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v1.99.5</string>
   <string name="pluginInput_title">Invoer</string>
   <string name="pluginInput_entryNone">Geen (invoer uitgeschakeld)</string>
+  <string name="pluginInput_entryAndroid">input-android</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Geen (RSP uitgeschakeld)</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v1.99.5</string>
+  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v1.99.5\n<small>(geen geluidsverwerking, snelheidshack)</small></string>
   <string name="pluginCore_title">Emulatiekern</string>
+  <string name="pluginCore_entryV110">mupen64plus-core, v1.99.5</string>
   <string name="r4300Emulator_title">R4300 emulator</string>
   <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Gecachete interpreter</string>
@@ -311,7 +319,7 @@
   <string name="inputMap2_title">Speler 2</string>
   <string name="inputMap3_title">Speler 3</string>
   <string name="inputMap4_title">Speler 4</string>
-  <string name="inputMap_summary">Knop en speciale functie toewijzing</string>
+  <string name="inputMap_summary">Knop- en speciale functie-toewijzing</string>
   <!--**************************************************************************-->
   <!--Dialogs and Other Feedback-->
   <!--Developers: Use formatting arguments rather than string concatenation:-->
