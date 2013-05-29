@@ -27,6 +27,7 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_PS3 = -528816963;
     private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
+    private static final int SIGNATURE_HASH_MOGA_PRO = -1933523749;
     
     private static final String NAME_STRING_NYKO_PLAYPAD = "NYKO PLAYPAD";
     private static final String NAME_STRING_OUYA = "OUYA";
@@ -130,6 +131,14 @@ public class AxisMap extends SerializableMap
                 // Bug in controller firmware cross-wires throttle and right stick up/down
                 setClass( MotionEvent.AXIS_THROTTLE, AXIS_CLASS_STICK );
                 signatureName = "Logitech Wingman Rumblepad";
+                break;
+            
+            case SIGNATURE_HASH_MOGA_PRO:
+                // Ignore two spurious axes
+                // http://www.paulscode.com/forum/index.php?topic=581.msg10094#msg10094
+                setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_2, AXIS_CLASS_IGNORED );
+                signatureName = "Moga Pro";
                 break;
         }
         // Check if the controller is OUYA, to compensate for the +X axis bias
