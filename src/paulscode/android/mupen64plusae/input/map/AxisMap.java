@@ -35,6 +35,7 @@ public class AxisMap extends SerializableMap
     
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
     private final String mSignature;
+    private final String mSignatureName;
     
     public static AxisMap getMap( InputDevice device )
     {
@@ -72,6 +73,7 @@ public class AxisMap extends SerializableMap
         // Construct the signature based on the available axes
         Collections.sort( axisCodes );
         mSignature = TextUtils.join( ",", axisCodes );
+        String signatureName = "Default";
         
         // Use the signature to override faulty auto-classifications
         switch( mSignature.hashCode() )
@@ -81,6 +83,8 @@ public class AxisMap extends SerializableMap
                 // Resting value is -1 on the analog triggers; fix that
                 setClass( MotionEvent.AXIS_Z, AXIS_CLASS_TRIGGER );
                 setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_TRIGGER );
+                signatureName = mSignature.hashCode() == SIGNATURE_HASH_XBOX360_WIRELESS ?
+                    "Xbox 360 wireless" : "Xbox 360 compatible";
                 break;
             
             case SIGNATURE_HASH_PS3:
@@ -93,6 +97,7 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_GENERIC_6, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_7, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_8, AXIS_CLASS_IGNORED );
+                signatureName = "PS3 compatible";
                 break;
             
             case SIGNATURE_HASH_NYKO_PLAYPAD:
@@ -117,18 +122,21 @@ public class AxisMap extends SerializableMap
                     // TODO: Reduce the cludginess of this logic to minimize maintenance
                     setClass( MotionEvent.AXIS_HAT_X, AXIS_CLASS_IGNORED );
                     setClass( MotionEvent.AXIS_HAT_Y, AXIS_CLASS_IGNORED );
+                    signatureName = "Nyko PlayPad series (original firmware)";
                 }
                 break;
             
             case SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD:
                 // Bug in controller firmware cross-wires throttle and right stick up/down
                 setClass( MotionEvent.AXIS_THROTTLE, AXIS_CLASS_STICK );
+                signatureName = "Logitech Wingman Rumblepad";
                 break;
         }
         // Check if the controller is OUYA, to compensate for the +X axis bias
         if( device.getName().contains( NAME_STRING_OUYA ) )
         {
             setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
+            signatureName = "OUYA controller";
         }
         // Check if the controller is a raphnet N64/USB adapter, to compensate for range of motion
         // http://raphnet-tech.com/products/gc_n64_usb_adapters/
@@ -139,7 +147,9 @@ public class AxisMap extends SerializableMap
             setClass( MotionEvent.AXIS_RX, AXIS_CLASS_RAPHNET_STICK );
             setClass( MotionEvent.AXIS_RY, AXIS_CLASS_RAPHNET_STICK );
             setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_RAPHNET_TRIGGER );
+            signatureName = "Raphnet adapter";
         }
+        mSignatureName = signatureName;
     }
     
     public void setClass( int axisCode, int axisClass )
@@ -162,21 +172,7 @@ public class AxisMap extends SerializableMap
     
     public String getSignatureName()
     {
-        switch( mSignature.hashCode() )
-        {
-            case SIGNATURE_HASH_XBOX360:
-                return "Xbox 360 compatible";
-            case SIGNATURE_HASH_XBOX360_WIRELESS:
-                return "Xbox 360 wireless";
-            case SIGNATURE_HASH_PS3:
-                return "PS3 compatible";
-            case SIGNATURE_HASH_NYKO_PLAYPAD:
-                return "Nyko PlayPad series";
-            case SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD:
-                return "Logitech Wingman Rumblepad";
-            default:
-                return "Default";
-        }
+        return mSignatureName;
     }
     
     @TargetApi( 12 )
