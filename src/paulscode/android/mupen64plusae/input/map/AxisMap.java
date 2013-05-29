@@ -31,6 +31,7 @@ public class AxisMap extends SerializableMap
     private static final String NAME_STRING_NYKO_PLAYPAD = "NYKO PLAYPAD";
     private static final String NAME_STRING_OUYA = "OUYA";
     private static final String NAME_STRING_RAPHNET = "raphnet.net GC/N64";
+    private static final String NAME_STRING_MAD_CATZ = "Mad Catz";
     
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
     private final String mSignature;
@@ -95,7 +96,8 @@ public class AxisMap extends SerializableMap
                 break;
             
             case SIGNATURE_HASH_NYKO_PLAYPAD:
-                if( !device.getName().contains( NAME_STRING_NYKO_PLAYPAD ) )
+                if( !device.getName().contains( NAME_STRING_NYKO_PLAYPAD ) &&
+                        !device.getName().contains( NAME_STRING_MAD_CATZ ) )
                 {
                     // The first batch of Nyko Playpad controllers have a quirk in the firmware
                     // where AXIS_HAT_X/Y are sent with (and overpower) AXIS_X/Y, and do not
@@ -106,8 +108,13 @@ public class AxisMap extends SerializableMap
                     // new version also returns a good name that we can use to differentiate
                     // controller firmware versions.
                     // 
+                    // The Mad Catz C.T.R.L.R. controller has the same axis signature as the Nyko
+                    // Playpad, but without the Nyko defect, so we have to check that as well.
+                    //
                     // For original firmware, ignore AXIS_HAT_X/Y because they are sent with (and
-                    // overpower) AXIS_X/Y, so ignore the HAT_X/Y signals
+                    // overpower) AXIS_X/Y
+                    //
+                    // TODO: Reduce the cludginess of this logic to minimize maintenance
                     setClass( MotionEvent.AXIS_HAT_X, AXIS_CLASS_IGNORED );
                     setClass( MotionEvent.AXIS_HAT_Y, AXIS_CLASS_IGNORED );
                 }
