@@ -30,7 +30,6 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -531,11 +530,16 @@ public class CoreInterface
                 && selectedGame.toLowerCase( Locale.US ).endsWith( ".zip" );
         
         if( sActivity == null )
-            return null;
-        
-        if( isSelectedGameNull )
         {
-            SafeMethods.exit( "Invalid ROM", sActivity, 2000 );
+            return null;
+        }
+        else if( isSelectedGameNull )
+        {
+            Log.e( "CoreInterface", "ROM does not exist: '" + selectedGame + "'" );            
+            if( ErrorLogger.hasError() )
+                ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
+            sActivity.finish();
+            return null;
         }
         else if( isSelectedGameZipped )
         {
@@ -558,21 +562,20 @@ public class CoreInterface
             String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
             if( selectedGameUnzipped == null )
             {
-                Log.v( "CoreInterface", "Cannot play zipped ROM: '" + selectedGame + "'" );
-                
-                Notifier.clear();
-                
+                Log.e( "CoreInterface", "ROM cannot be unzipped: '" + selectedGame + "'" );                
                 if( ErrorLogger.hasError() )
                     ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
-                
-                // Kick back out to the main menu
                 sActivity.finish();
+                return null;
             }
             else
             {
                 return selectedGameUnzipped;
             }
         }
-        return selectedGame;
+        else
+        {
+            return selectedGame;
+        }
     }
 }
