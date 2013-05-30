@@ -33,6 +33,9 @@ import java.io.OutputStream;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+/**
+ *  A class for extracting the emulator assets.
+ */
 public class AssetExtractor
 {
     public interface OnExtractionProgressListener
@@ -40,6 +43,16 @@ public class AssetExtractor
         public void onExtractionProgress( String nextFileExtracted );
     }
     
+    /**
+     * Extracts all the assets from a source path to a given destination path.
+     * 
+     * @param assetManager A handle to the asset manager.
+     * @param srcPath      The source path containing the assets.
+     * @param dstPath      The destination path for the assets.
+     * @param onProgress   A progress listener.
+     * 
+     * @return True if the assets could be extracted. False otherwise.
+     */
     public static boolean extractAssets( AssetManager assetManager, String srcPath, String dstPath,
             OnExtractionProgressListener onProgress )
     {
@@ -65,10 +78,8 @@ public class AssetExtractor
                     return false;
             }
         }
-        else
+        else // srcPath is a file.
         {
-            // srcPath is a file
-            
             // Call the progress listener before extracting
             if( onProgress != null )
                 onProgress.onExtractionProgress( dstPath );
@@ -133,6 +144,14 @@ public class AssetExtractor
         return result;
     }
     
+    /**
+     * Counts all of the assets in a given source path.
+     * 
+     * @param assetManager A handle to the asset manager.
+     * @param srcPath      The path containing the assets to count.
+     * 
+     * @return The number of assets in the given source path.
+     */
     public static int countAssets( AssetManager assetManager, String srcPath )
     {
         int count = 0;
@@ -159,6 +178,14 @@ public class AssetExtractor
         return count;
     }
     
+    /**
+     * Gets a string array list of assets in a given source path.
+     *  
+     * @param assetManager A handle to the asset manager.
+     * @param srcPath      The path containing the assets.
+     * 
+     * @return A list of all the assets in the source path.
+     */
     private static String[] getAssetList( AssetManager assetManager, String srcPath )
     {
         String[] srcSubPaths = null;

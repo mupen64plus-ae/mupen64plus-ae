@@ -216,6 +216,13 @@ public class DeviceUtil
         return ranges;
     }
     
+    /**
+     * Gets the name of an axis class.
+     * 
+     * @param axisClass The axis class to get the name of.
+     * 
+     * @return The name of the axis class.
+     */
     public static String getAxisClassName( int axisClass )
     {
         switch( axisClass )
@@ -233,6 +240,14 @@ public class DeviceUtil
         }
     }
     
+    /**
+     * Gets the name of an action.
+     * 
+     * @param action        The action being performed.
+     * @param isMotionEvent Whether or not the action is a motion event.
+     * 
+     * @return The name of the action being performed.
+     */
     public static String getActionName( int action, boolean isMotionEvent )
     {
         switch( action )
@@ -264,6 +279,13 @@ public class DeviceUtil
         }
     }
     
+    /**
+     * Gets the name of the source performing an action.
+     * 
+     * @param source A number representing the source.
+     * 
+     * @return The name of the source.
+     */
     public static String getSourceName( int source )
     {
         switch( source )

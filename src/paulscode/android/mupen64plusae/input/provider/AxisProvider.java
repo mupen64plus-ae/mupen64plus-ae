@@ -82,6 +82,7 @@ public class AxisProvider extends AbstractProvider
      * Manually dispatches a MotionEvent through the provider's listening chain.
      * 
      * @param event The MotionEvent object containing full information about the event.
+     * 
      * @return True if the listener has consumed the event, false otherwise.
      */
     public boolean onGenericMotion( MotionEvent event )

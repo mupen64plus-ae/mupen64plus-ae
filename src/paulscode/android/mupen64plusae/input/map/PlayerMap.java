@@ -66,7 +66,8 @@ public class PlayerMap extends SerializableMap
      * Gets a human-readable summary of the devices mapped to a player.
      * 
      * @param context The activity context.
-     * @param player The index to the player.
+     * @param player  The index to the player.
+     * 
      * @return Description of the devices mapped to the given player.
      */
     public String getDeviceSummary( Context context, int player )

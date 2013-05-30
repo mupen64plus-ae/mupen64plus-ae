@@ -59,7 +59,7 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
      * Instantiates a new multi-select list preference.
      * 
      * @param context The current context.
-     * @param attrs The attributes provided from the xml resource.
+     * @param attrs   The attributes provided from the xml resource.
      */
     public MultiSelectListPreference( Context context, AttributeSet attrs )
     {
@@ -203,8 +203,9 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
     /**
      * Deserialize the selected values array from a string.
      * 
-     * @param value The serialized value of the array.
+     * @param value     The serialized value of the array.
      * @param delimiter The delimiter used between array elements in the serialization.
+     * 
      * @return The array of selected values.
      */
     public static List<String> deserialize( String value, String delimiter )
@@ -216,6 +217,7 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
      * Deserialize the selected values array from a string using the default delimiter.
      * 
      * @param value The serialized value of the array.
+     * 
      * @return The array of selected values.
      */
     public static List<String> deserialize( String value )
@@ -227,7 +229,8 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
      * Serialize the selected values array to a string.
      * 
      * @param selectedValues The array of selected values.
-     * @param delimiter The delimiter used between array elements in the serialization.
+     * @param delimiter      The delimiter used between array elements in the serialization.
+     *
      * @return The serialized value of the array.
      */
     public static String serialize( List<String> selectedValues, String delimiter )
@@ -239,6 +242,7 @@ public class MultiSelectListPreference extends ListPreference implements OnMulti
      * Serialize the selected values array to a string using the default delimiter.
      * 
      * @param selectedValues The array of selected values.
+     * 
      * @return The serialized value of the array.
      */
     public static String serialize( List<String> selectedValues )

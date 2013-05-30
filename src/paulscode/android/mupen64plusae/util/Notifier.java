@@ -74,8 +74,8 @@ public class Notifier
     /**
      * Pop up a temporary message on the device.
      * 
-     * @param activity The activity to display from.
-     * @param resId The resource identifier of the message string
+     * @param activity   The activity to display from.
+     * @param resId      The resource identifier of the message string
      * @param formatArgs The format arguments that will be used for substitution.
      */
     public static void showToast( Activity activity, int resId, Object... formatArgs )
@@ -85,8 +85,9 @@ public class Notifier
     
     /**
      * Pop up a temporary message on the device.
+     * 
      * @param activity The activity to display from
-     * @param message The message string to display.
+     * @param message  The message string to display.
      */
     public static void showToast( Activity activity, String message )
     {

@@ -79,9 +79,9 @@ public class PeripheralController extends AbstractController implements
     /**
      * Instantiates a new peripheral controller.
      * 
-     * @param player The player number, between 1 and 4, inclusive.
+     * @param player    The player number, between 1 and 4, inclusive.
      * @param playerMap The map from hardware identifiers to players.
-     * @param inputMap The map from input codes to N64/Mupen commands.
+     * @param inputMap  The map from input codes to N64/Mupen commands.
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
@@ -160,7 +160,8 @@ public class PeripheralController extends AbstractController implements
      * Apply user input to the N64 controller state.
      * 
      * @param inputCode The universal input code that was dispatched.
-     * @param strength The input strength, between 0 and 1, inclusive.
+     * @param strength  The input strength, between 0 and 1, inclusive.
+     * 
      * @return True, if controller state changed.
      */
     private boolean apply( int inputCode, float strength )

@@ -52,6 +52,7 @@ import android.view.View;
 public class Utility
 {
     public static final float MINIMUM_TABLET_SIZE = 6.5f;
+    
     /**
      * Clamps a value to the limit defined by min and max.
      * 
@@ -111,6 +112,7 @@ public class Utility
      * @param seg2pt2_x X-coordinate for the second end of the second line segment.
      * @param seg2pt2_y Y-coordinate for the second end of the second line segment.
      * @param crossPt Changed to the point of intersection if there is one, otherwise unchanged.
+     * 
      * @return True if the two line segments intersect.
      */
     private static boolean segsCross( float seg1pt1_x, float seg1pt1_y, float seg1pt2_x,
@@ -144,6 +146,12 @@ public class Utility
         return false;
     }
     
+    /**
+     * Launches a URI from a resource in a given context.
+     * 
+     * @param context The context to launch a URI from.
+     * @param resId   The ID of the resource to create the URI from.
+     */
     public static void launchUri( Context context, int resId )
     {
         String uri = context.getString( resId );
@@ -151,6 +159,14 @@ public class Utility
         context.startActivity( intent );
     }
     
+    /**
+     * Reads the header name of a given ROM.
+     * 
+     * @param filename The path to the ROM (or ZIP file the ROM is contained in).
+     * @param tempDir  The desired temporary directory to perform the reading in.
+     * 
+     * @return The header name of the given ROM, or null if an error occurs.
+     */
     public static String getHeaderName( String filename, String tempDir )
     {
         ErrorLogger.put( "READ_HEADER", "fail", "" );
@@ -393,6 +409,14 @@ public class Utility
         return null;
     }
     
+    /**
+     * Unzips the first ROM found in a given ZipFile.
+     * 
+     * @param archive   The archive to search for the ROM in.
+     * @param outputDir The output directory for the ROM (if found).
+     * 
+     * @return The absolute path to the outputted ROM, or null if an error occurs.
+     */
     public static String unzipFirstROM( File archive, String outputDir )
     {
         String romName, romExt;
@@ -417,7 +441,7 @@ public class Utility
         {
             ZipFile zipfile = new ZipFile( archive );
             Enumeration<? extends ZipEntry> e = zipfile.entries();
-            
+
             while( e.hasMoreElements() )
             {
                 ZipEntry entry = e.nextElement();
@@ -533,7 +557,10 @@ public class Utility
         return true;
     }
 
-    // Unzips a specific entry from a ZIP file.
+    // Unzips a specific entry from a ZIP file into the given output directory.
+    //
+    // Returns the absolute path to the outputted entry.
+    // Returns null if the entry passed in happens to be a directory.
     private static String unzipEntry( ZipFile zipfile, ZipEntry entry, String outputDir )
             throws IOException
     {

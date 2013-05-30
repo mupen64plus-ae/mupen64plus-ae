@@ -163,12 +163,13 @@ public class Prompt
     /**
      * Create a {@link ListAdapter} where each list item has a specified layout.
      * 
-     * @param <T> The type of the data to be wrapped.
-     * @param context The current context.
-     * @param items The data source for the list items.
+     * @param <T>         The type of the data to be wrapped.
+     * @param context     The current context.
+     * @param items       The data source for the list items.
      * @param layoutResId The layout resource to be used for each list item.
-     * @param textResId The {@link TextView} resource within the layout to be populated by default.
-     * @param populator The object to populate the fields in each list item.
+     * @param textResId   The {@link TextView} resource within the layout to be populated by default.
+     * @param populator   The object to populate the fields in each list item.
+     * 
      * @return An adapter that can be used to create list dialogs.
      */
     public static <T> ArrayAdapter<T> createAdapter( Context context, List<T> items,
@@ -200,10 +201,11 @@ public class Prompt
     /**
      * Create a {@link ListAdapter} where each list item has two text fields and an icon.
      * 
-     * @param <T> The type of the data to be wrapped.
-     * @param context The activity context.
-     * @param items The data source for list items.
+     * @param <T>       The type of the data to be wrapped.
+     * @param context   The activity context.
+     * @param items     The data source for list items.
      * @param populator The object to populate the fields in each list item.
+     * 
      * @return An adapter that can be used to create list dialogs.
      */
     public static <T> ArrayAdapter<T> createAdapter( Context context, List<T> items,
@@ -266,9 +268,9 @@ public class Prompt
     /**
      * Open a dialog to prompt the user for a confirmation (Ok/Cancel).
      * 
-     * @param context The activity context.
-     * @param title The title of the dialog.
-     * @param message The message to be shown inside the dialog.
+     * @param context  The activity context.
+     * @param title    The title of the dialog.
+     * @param message  The message to be shown inside the dialog.
      * @param listener The listener to process the confirmation.
      */
     public static void promptConfirm( Context context, CharSequence title, CharSequence message,
@@ -292,11 +294,11 @@ public class Prompt
     /**
      * Open a dialog to prompt the user for a file.
      * 
-     * @param context The activity context.
-     * @param title The title of the dialog.
-     * @param message The message to be shown inside the dialog.
+     * @param context   The activity context.
+     * @param title     The title of the dialog.
+     * @param message   The message to be shown inside the dialog.
      * @param startPath The parent directory holding the files to select from.
-     * @param listener The listener to process the file, when selected.
+     * @param listener  The listener to process the file, when selected.
      */
     public static void promptFile( Context context, CharSequence title, CharSequence message,
             File startPath, final PromptFileListener listener )
@@ -347,12 +349,12 @@ public class Prompt
     /**
      * Open a dialog to prompt the user for text.
      * 
-     * @param context The activity context.
-     * @param title The title of the dialog.
-     * @param message The message to be shown inside the dialog.
-     * @param hint The hint to be shown inside the text edit widget.
+     * @param context   The activity context.
+     * @param title     The title of the dialog.
+     * @param message   The message to be shown inside the dialog.
+     * @param hint      The hint to be shown inside the text edit widget.
      * @param inputType The type of input expected, e.g. InputType.TYPE_CLASS_NUMBER.
-     * @param listener The listener to process the text, when provided.
+     * @param listener  The listener to process the text, when provided.
      */
     public static void promptText( Context context, CharSequence title, CharSequence message,
             CharSequence hint, int inputType, final PromptTextListener listener )
@@ -383,12 +385,12 @@ public class Prompt
     /**
      * Open a dialog to prompt the user for an integer.
      *
-     * @param context The activity context.
-     * @param title The title of the dialog.
-     * @param format The string format for the displayed value (e.g. "%1$d %%"), or null to display number only.
-     * @param initial The initial (default) value shown in the dialog.
-     * @param min The minimum value permitted.
-     * @param max The maximum value permitted.
+     * @param context  The activity context.
+     * @param title    The title of the dialog.
+     * @param format   The string format for the displayed value (e.g. "%1$d %%"), or null to display number only.
+     * @param initial  The initial (default) value shown in the dialog.
+     * @param min      The minimum value permitted.
+     * @param max      The maximum value permitted.
      * @param listener The listener to process the integer, when provided.
      */
     public static void promptInteger( Context context, CharSequence title, String format,
@@ -432,12 +434,12 @@ public class Prompt
     /**
      * Open a dialog to prompt the user for an input code.
      * 
-     * @param context The activity context.
-     * @param title The title of the dialog.
-     * @param message The message to be shown inside the dialog.
+     * @param context            The activity context.
+     * @param title              The title of the dialog.
+     * @param message            The message to be shown inside the dialog.
      * @param positiveButtonText The text to be shown on the positive button, or null.
-     * @param ignoredKeyCodes The key codes to ignore.
-     * @param listener The listener to process the input code, when provided.
+     * @param ignoredKeyCodes    The key codes to ignore.
+     * @param listener           The listener to process the input code, when provided.
      */
     public static void promptInputCode( Context context, CharSequence title, CharSequence message,
             CharSequence positiveButtonText, List<Integer> ignoredKeyCodes,
@@ -527,10 +529,11 @@ public class Prompt
      * default the cancelable flag is set to false, to fix a bug with in-game dialogs where games
      * stay paused after user presses the back key.
      * 
-     * @param context The activity context.
-     * @param title The title of the dialog.
-     * @param message The message to be shown inside the dialog.
+     * @param context  The activity context.
+     * @param title    The title of the dialog.
+     * @param message  The message to be shown inside the dialog.
      * @param listener The listener to process user clicks.
+     * 
      * @return The builder for the dialog.
      */
     public static Builder prefillBuilder( Context context, CharSequence title,

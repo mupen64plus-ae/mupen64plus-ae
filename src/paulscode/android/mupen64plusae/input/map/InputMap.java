@@ -131,7 +131,9 @@ public class InputMap extends SerializableMap
      * Gets the N64/Mupen command mapped to a given input code.
      * 
      * @param inputCode The standardized input code.
+     * 
      * @return The N64/Mupen command the code is mapped to, or UNMAPPED.
+     * 
      * @see AbstractProvider
      * @see InputMap#UNMAPPED
      */
@@ -144,7 +146,7 @@ public class InputMap extends SerializableMap
      * Maps an input code to an N64/Mupen command.
      * 
      * @param inputCode The standardized input code to be mapped.
-     * @param command The index to the N64/Mupen command.
+     * @param command   The index to the N64/Mupen command.
      */
     public void map( int inputCode, int command )
     {
@@ -182,6 +184,7 @@ public class InputMap extends SerializableMap
      * Checks if an N64/Mupen command is mapped to at least one input code.
      * 
      * @param command The index to the N64/Mupen64 command.
+     * 
      * @return True, if the mapping exists.
      */
     public boolean isMapped( int command )
@@ -193,6 +196,7 @@ public class InputMap extends SerializableMap
      * Gets a description of the input codes mapped to an N64/Mupen command.
      * 
      * @param command The index to the N64/Mupen command.
+     * 
      * @return Description of the input codes mapped to the given command.
      */
     public String getMappedCodeInfo( int command )

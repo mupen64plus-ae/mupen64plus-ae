@@ -48,9 +48,9 @@ public class Image
      * Constructor: Loads an image file and sets the initial properties.
      * 
      * @param res
-     *            Handle to the app resources.
+     *            A handle to the app resources.
      * @param filename
-     *            Path to the image file.
+     *            The path to the image file.
      */
     public Image( Resources res, String filename )
     {
@@ -75,12 +75,12 @@ public class Image
     }
     
     /**
-     * Constructor: Creates a clone copy of another Image.
+     * Constructor: Creates a clone copy of a given Image.
      * 
      * @param res
-     *            Handle to the app resources.
+     *            A handle to the app resources.
      * @param clone
-     *            Image to copy.
+     *            The Image to make a copy of.
      */
     public Image( Resources res, Image clone )
     {
@@ -233,7 +233,7 @@ public class Image
      * Sets the alpha value of the image.
      * 
      * @param alpha
-     *            alpha value.
+     *            Alpha value.
      */
     public void setAlpha( int alpha ) 
     {

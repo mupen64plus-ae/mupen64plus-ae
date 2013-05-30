@@ -90,11 +90,11 @@ public class VisibleTouchMap extends TouchMap
     /**
      * Instantiates a new visible touch map.
      * 
-     * @param resources The resources of the activity associated with this touch map.
+     * @param resources  The resources of the activity associated with this touch map.
      * @param fpsEnabled True to display the FPS indicator.
-     * @param fontsDir The directory containing the FPS font resources.
-     * @param imageDir The directory containing the button images.
-     * @param alpha The opacity of the visible elements.
+     * @param fontsDir   The directory containing the FPS font resources.
+     * @param imageDir   The directory containing the button images.
+     * @param alpha      The opacity of the visible elements.
      */
     public VisibleTouchMap( Resources resources, boolean fpsEnabled, String fontsDir, String imageDir, int alpha )
     {
@@ -320,6 +320,7 @@ public class VisibleTouchMap extends TouchMap
      * 
      * @param axisFractionX The x-axis fraction, between -1 and 1, inclusive.
      * @param axisFractionY The y-axis fraction, between -1 and 1, inclusive.
+     * 
      * @return True if the analog assets changed.
      */
     public boolean updateAnalog( float axisFractionX, float axisFractionY )
@@ -350,6 +351,7 @@ public class VisibleTouchMap extends TouchMap
      * Updates the FPS indicator assets to reflect a new value.
      * 
      * @param fps The new FPS value.
+     * 
      * @return True if the FPS assets changed.
      */
     public boolean updateFps( int fps )
@@ -375,7 +377,8 @@ public class VisibleTouchMap extends TouchMap
      * Updates the auto-hold assets to reflect a new value.
      * 
      * @param pressed The new autohold state value.
-     * @param index The index of the auto-hold mask.
+     * @param index   The index of the auto-hold mask.
+     * 
      * @return True if the autohold assets changed.
      */
     public boolean updateAutoHold( boolean pressed, int index )
@@ -537,9 +540,9 @@ public class VisibleTouchMap extends TouchMap
      * Loads auto-hold assets and properties from the filesystem.
      * 
      * @param directory The directory containing the auto-hold assets.
-     * @param filename The filename of the auto-hold assets, without extension.
-     * @param section The configuration section containing the auto-hold properties.
-     * @param info The information section containing the auto-hold button.
+     * @param filename  The filename of the auto-hold assets, without extension.
+     * @param section   The configuration section containing the auto-hold properties.
+     * @param info      The information section containing the auto-hold button.
      */
     private void loadAutoHold( final String directory, String filename, ConfigSection section,
             String info )

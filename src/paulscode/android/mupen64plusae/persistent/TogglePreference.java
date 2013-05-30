@@ -33,6 +33,7 @@ public class TogglePreference extends Preference implements OnCheckedChangeListe
 
     /**
      * Sets the internal value of this TogglePreference according to the value passed.
+     * 
      * @param value The value to set the internal value of this TogglePreference to.
      */
     public void setValue( boolean value )
@@ -44,6 +45,7 @@ public class TogglePreference extends Preference implements OnCheckedChangeListe
 
     /**
      * Gets the internal value that is currently set.
+     * 
      * @return The currently set internal value for this TogglePreference.
      */
     public boolean getValue()

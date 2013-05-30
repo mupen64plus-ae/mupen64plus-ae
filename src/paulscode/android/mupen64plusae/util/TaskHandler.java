@@ -48,10 +48,12 @@ public class TaskHandler
      * Launches the specified task on a separate thread, and displays a "please wait" modal dialog
      * until the process has completed. Upon completion, the task's onComplete() method is called
      * from the specified activity's UI thread.
+     * 
      * @param activity Parent activity requesting the task.
-     * @param title Title to give the dialog window and the task thread.
-     * @param message Message to display in the dialog window.
-     * @param task Task to be run.
+     * @param title    Title to give the dialog window and the task thread.
+     * @param message  Message to display in the dialog window.
+     * @param task     Task to be run.
+     * 
      * @return Handle to the new thread running the task.
      */
     public static Thread run( Activity activity, String title, String message, Task task )
@@ -87,9 +89,11 @@ public class TaskHandler
      * Silently launches the specified task on a separate thread, without displaying any messages
      * to the user.  Upon completion, the task's onComplete() method is called from the specified
      * activity's UI thread.
+     * 
      * @param activity Parent activity requesting the task.
-     * @param title Title to give the task thread.
-     * @param task Task to be run.
+     * @param title    Title to give the task thread.
+     * @param task     Task to be run.
+     * 
      * @return Handle to the new thread running the task.
      */
     public static Thread run( Activity activity, String title, Task task )

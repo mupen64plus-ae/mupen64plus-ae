@@ -62,7 +62,8 @@ public class ConfigFile
     private LinkedList<ConfigSection> mConfigList;     // Sections in the proper order for easy saving
 
     /**
-     * Constructor: Reads the entire config file, and saves the data in 'configMap'
+     * Constructor: Reads the entire config file, and saves the data in 'configMap'.
+     * 
      * @param filename The config file to read from.
      */
     public ConfigFile( String filename )
@@ -72,8 +73,10 @@ public class ConfigFile
     }
 
     /**
-     * Looks up a config section that matches the specified regex (not necessarily the only match)
+     * Looks up a config section that matches the specified regex (not necessarily the only match).
+     * 
      * @param regex A regular expression to match a section title from.
+     * 
      * @return ConfigSection containing parameters for a config section that matches, or null if no matches were found.
      */
     public ConfigSection match( String regex )
@@ -96,9 +99,11 @@ public class ConfigFile
     }
 
     /**
-     * Looks up a config section by its title
+     * Looks up a config section by its title.
+     * 
      * @param sectionTitle Title of the section containing the parameter.
-     * @return ConfigSection containing parameters, or null if not found.
+     * 
+     * @return A ConfigSection containing parameters, or null if not found.
      */
     public ConfigSection get( String sectionTitle )
     {
@@ -109,10 +114,12 @@ public class ConfigFile
     }
 
     /**
-     * Looks up the specified parameter under the specified section title
+     * Looks up the specified parameter under the specified section title.
+     * 
      * @param sectionTitle Title of the section containing the parameter.
-     * @param parameter Name of the parameter.
-     * @return Value of the parameter, or null if not found.
+     * @param parameter    Name of the parameter.
+     * 
+     * @return The value of the specified parameter, or null if not found.
      */
     public String get( String sectionTitle, String parameter )
     {
@@ -139,9 +146,10 @@ public class ConfigFile
     /**
      * Assigns the specified value to the specified parameter under the
      * specified section.
-     * @param sectionTitle Title of the section to contain the parameter.
-     * @param parameter Name of the parameter.
-     * @param value value to give the parameter.
+     * 
+     * @param sectionTitle The title of the section to contain the parameter.
+     * @param parameter    The name of the parameter.
+     * @param value        The value to give the parameter.
      */
     public void put( String sectionTitle, String parameter, String value )
     {
@@ -173,8 +181,10 @@ public class ConfigFile
     }
 
     /**
-     * Reads the entire config file, and saves the data in 'configMap'
+     * Reads the entire config file, and saves the data in 'configMap'.
+     * 
      * @param filename The config file to read from.
+     * 
      * @return True if successful.
      */
     public boolean load( String filename )
@@ -242,7 +252,8 @@ public class ConfigFile
     
     /**
      * Saves the data from 'configMap' back to the config file.
-     * @return True if successful.
+     * 
+     * @return True if successful. False otherwise.
      */
     public boolean save()
     {
@@ -299,6 +310,7 @@ public class ConfigFile
     
     /**
      * Returns a handle to the configMap keyset.
+     * 
      * @return keyset containing all the config section titles.
      */
     public Set<String> keySet()
@@ -317,8 +329,9 @@ public class ConfigFile
         
         /**
          * Constructor: Associate the parameter and value
-         * @param parameter Parameter name.
-         * @param value Parameter's value.
+         * 
+         * @param parameter The name of the parameter.
+         * @param value     The value of the parameter.
          */
         public ConfigParameter( String parameter, String value )
         {
@@ -342,9 +355,10 @@ public class ConfigFile
         
         /**
          * Constructor: Saves the relevant information about the line.
-         * @param type   The type of line
-         * @param line   The line itself
-         * @param param  Config parameters pertaining to the line
+         * 
+         * @param type   The type of line.
+         * @param line   The line itself.
+         * @param param  Config parameters pertaining to the line.
          */
         public ConfigLine( int type, String line, ConfigParameter param )
         {
@@ -353,6 +367,13 @@ public class ConfigFile
             confParam = param;
         }
         
+        /**
+         * Saves the ConfigLine.
+         * 
+         * @param fw The file to save the ConfigLine to.
+         * 
+         * @throws IOException If a writing error occurs.
+         */
         public void save( FileWriter fw ) throws IOException
         {
             int x;
@@ -392,6 +413,7 @@ public class ConfigFile
 
         /**
          * Constructor: Creates an empty config section
+         * 
          * @param sectionName The section title.
          */
         public ConfigSection( String sectionName )
@@ -407,9 +429,10 @@ public class ConfigFile
 
         // TODO: Clean this method up a bit?
         /**
-         * Constructor: Reads the next section of the config file, and saves it in 'parameters'
+         * Constructor: Reads the next section of the config file, and saves it in 'parameters'.
+         * 
          * @param sectionName The section title.
-         * @param br Config file to read from.
+         * @param br          The config file to read from.
          */
         public ConfigSection( String sectionName, BufferedReader br )
         {
@@ -513,6 +536,7 @@ public class ConfigFile
         
         /**
          * Returns a handle to the parameter keyset.
+         * 
          * @return keyset containing all the parameters.
          */
         public Set<String> keySet()
@@ -522,7 +546,9 @@ public class ConfigFile
         
         /**
          * Returns the value of the specified parameter.
+         * 
          * @param parameter Name of the parameter.
+         * 
          * @return Parameter's value, or null if not found.
          */
         public String get( String parameter )
@@ -544,8 +570,9 @@ public class ConfigFile
         /**
          * Adds the specified parameter to this config section, updates
          * the value if it already exists, or removes the parameter.
-         * @param parameter Name of the parameter.
-         * @param value Parameter's value, or null to remove.
+         * 
+         * @param parameter The name of the parameter.
+         * @param value     The parameter's value, or null to remove.
          */
         public void put( String parameter, String value )
         {
@@ -568,8 +595,10 @@ public class ConfigFile
 
         /**
          * Writes the entire section to file.
+         * 
          * @param fw File to write to.
-         * @throws IOException
+         * 
+         * @throws IOException if a writing error occurs.
          */
         public void save( FileWriter fw ) throws IOException
         {

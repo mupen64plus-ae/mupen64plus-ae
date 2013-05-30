@@ -30,36 +30,72 @@ public class ErrorLogger
     private static ConfigFile mLogfile;
     private static String mMessage = null;
     
+    /**
+     * Initializes this ErrorLogger.
+     * 
+     * @param filename The config file to log to.
+     */
     public static void initialize( String filename )
     {
         mLogfile = new ConfigFile( filename );
     }
     
+    /**
+     * Checks if the logger has any errors.
+     * 
+     * @return True if the logger has any errors. False otherwise.
+     */
     public static boolean hasError()
     {
-        return mMessage != null;
+        return (mMessage != null);
     }
     
+    /**
+     * Gets the last error
+     * 
+     * @return The last error.
+     */
     public static String getLastError()
     {
         return mMessage;
     }
     
+    /**
+     * Sets a given message as the last error.
+     * 
+     * @param message The message to set as the last error.
+     */
     public static void setLastError( String message )
     {
         mMessage = message;
     }
     
+    /**
+     * Clears the last error.
+     */
     public static void clearLastError()
     {
         mMessage = null;
     }
     
+    /**
+     * Writes the last error to the config file.
+     * 
+     * @param section   The title of the section to contain the last error.
+     * @param parameter The name of the parameter to be assigned the last error.
+     */
     public static void putLastError( String section, String parameter )
     {
         put( section, parameter, mMessage );
     }
     
+    /**
+     * Writes a given value to a given parameter which is in the given section.
+     * 
+     * @param section   The title of the section to contain the parameter.
+     * @param parameter The name of the parameter that will be assigned the value.
+     * @param value     The string to assign to the parameter.
+     */
     public static void put( String section, String parameter, String value )
     {
         if( mLogfile != null )

@@ -124,12 +124,12 @@ public class TouchController extends AbstractController implements OnTouchListen
     /**
      * Instantiates a new touch controller.
      * 
-     * @param touchMap The map from touch coordinates to N64 controls.
-     * @param view The view receiving touch event data.
-     * @param listener The listener for controller state changes.
-     * @param isOctagonal True if the analog stick should be constrained to an octagon.
-     * @param vibrator The haptic feedback device.
-     * @param autoHoldMethod The method for auto-holding buttons.
+     * @param touchMap            The map from touch coordinates to N64 controls.
+     * @param view                The view receiving touch event data.
+     * @param listener            The listener for controller state changes.
+     * @param isOctagonal         True if the analog stick should be constrained to an octagon.
+     * @param vibrator            The haptic feedback device.
+     * @param autoHoldMethod      The method for auto-holding buttons.
      * @param touchscreenFeedback True if haptic feedback should be used.
      * @param autoHoldableButtons The N64 commands that correspond to auto-holdable buttons.
      */
@@ -237,9 +237,9 @@ public class TouchController extends AbstractController implements OnTouchListen
      * the ranges listed below are safe.
      * 
      * @param touchstate The touch state of each pointer. True indicates down, false indicates up.
-     * @param pointerX The x-coordinate of each pointer, between 0 and (screenwidth-1), inclusive.
-     * @param pointerY The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive.
-     * @param maxPid Maximum ID of the pointers that have changed (speed optimization).
+     * @param pointerX   The x-coordinate of each pointer, between 0 and (screenwidth-1), inclusive.
+     * @param pointerY   The y-coordinate of each pointer, between 0 and (screenheight-1), inclusive.
+     * @param maxPid     Maximum ID of the pointers that have changed (speed optimization).
      */
     private void processTouches( boolean[] touchstate, int[] pointerX, int[] pointerY,
             long[] elapsedTime, int maxPid )
@@ -279,10 +279,10 @@ public class TouchController extends AbstractController implements OnTouchListen
     /**
      * Process a touch as if intended for a button. Values outside the ranges listed below are safe.
      * 
-     * @param touched Whether the button is pressed.
+     * @param touched   Whether the button is pressed or not.
      * @param xLocation The x-coordinate of the touch, between 0 and (screenwidth-1), inclusive.
      * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
-     * @param pid The identifier of the touch pointer.
+     * @param pid       The identifier of the touch pointer.
      */
     private void processButtonTouch( boolean touched, int xLocation, int yLocation,
             long timeElapsed, int pid )
@@ -451,6 +451,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * Checks if the button mapped to an N64 command is auto-holdable.
      * 
      * @param commandIndex The index to the N64 command.
+     * 
      * @return True if the button mapped to the command is auto-holdable.
      */
     private boolean isAutoHoldable( int commandIndex )
@@ -461,8 +462,8 @@ public class TouchController extends AbstractController implements OnTouchListen
     /**
      * Sets the state of a button, and handles the D-Pad diagonals.
      * 
-     * @param index Which button is affected.
-     * @param touched Whether the button is pressed.
+     * @param index   Which button is affected.
+     * @param touched Whether the button is pressed or not.
      */
     private void setTouchState( int index, boolean touched )
     {
@@ -506,6 +507,7 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param pointerId The pointer identifier.
      * @param xLocation The x-coordinate of the touch, between 0 and (screenwidth-1), inclusive.
      * @param yLocation The y-coordinate of the touch, between 0 and (screenheight-1), inclusive.
+     * 
      * @return True, if the analog state changed.
      */
     private boolean processAnalogTouch( int pointerId, int xLocation, int yLocation )

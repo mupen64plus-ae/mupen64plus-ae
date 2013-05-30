@@ -141,6 +141,7 @@ public class FileUtil
      * Deletes a given folder directory in the form of a {@link File}
      * 
      * @param folder The folder to delete.
+     * 
      * @return True if the folder was deleted, false otherwise.
      */
     public static boolean deleteFolder( File folder )
@@ -168,8 +169,9 @@ public class FileUtil
      * <p>
      * This method assumes no backups will want to be made.
      * 
-     * @param src Source file.
+     * @param src  Source file.
      * @param dest Desired destination.
+     * 
      * @return True if the copy succeeded, false otherwise.
      */
     public static boolean copyFile( File src, File dest )
@@ -181,11 +183,12 @@ public class FileUtil
      * Copies a {@code src} {@link File} to a desired destination represented by a {@code dest}
      * {@link File}
      * <p>
-     * This method supports the making of backups of src.
+     * This method supports the making of backups of the src File.
      * 
-     * @param src Source file
-     * @param dest Desired destination
+     * @param src         Source file
+     * @param dest        Desired destination
      * @param makeBackups True if backups are wanted, false otherwise.
+     * 
      * @return True if the copy succeeded, false otherwise.
      */
     public static boolean copyFile( File src, File dest, boolean makeBackups )
@@ -286,6 +289,14 @@ public class FileUtil
         copyFile( file, backup );
     }
     
+    /**
+     * Writes a given string to a specified file.
+     * 
+     * @param file The file to write the string to.
+     * @param text The string of text to write to the file.
+     * 
+     * @throws IOException If a writing error occurs.
+     */
     public static void writeStringToFile( File file, String text ) throws IOException
     {
         FileWriter out = new FileWriter( file );
@@ -293,6 +304,15 @@ public class FileUtil
         out.close();
     }
     
+    /**
+     * Creates a string from the contents of a File.
+     * 
+     * @param file The File to read a string from.
+     * 
+     * @return The file contents as a string.
+     * 
+     * @throws IOException If a reading error occurs.
+     */
     public static String readStringFromFile( File file ) throws IOException
     {
         // From http://stackoverflow.com/a/326440/254218

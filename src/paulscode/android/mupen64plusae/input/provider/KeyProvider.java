@@ -57,7 +57,7 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
     /**
      * Instantiates a new key provider.
      * 
-     * @param formula The decoding formula to be used.
+     * @param formula      The decoding formula to be used.
      * @param ignoredCodes List of key codes that should be ignored.
      */
     public KeyProvider( ImeFormula formula, List<Integer> ignoredCodes )
@@ -70,8 +70,8 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
     /**
      * Instantiates a new key provider.
      * 
-     * @param view The view receiving KeyEvent data.
-     * @param formula The decoding formula to be used.
+     * @param view         The view receiving KeyEvent data.
+     * @param formula      The decoding formula to be used.
      * @param ignoredCodes List of key codes that should be ignored.
      */
     public KeyProvider( View view, ImeFormula formula, List<Integer> ignoredCodes )
@@ -88,8 +88,8 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
     /**
      * Instantiates a new key provider.
      * 
-     * @param builder The builder for the dialog receiving KeyEvent data.
-     * @param formula The decoding formula to be used.
+     * @param builder      The builder for the dialog receiving KeyEvent data.
+     * @param formula      The decoding formula to be used.
      * @param ignoredCodes List of key codes that should be ignored.
      */
     public KeyProvider( Builder builder, ImeFormula formula, List<Integer> ignoredCodes )
@@ -127,7 +127,8 @@ public class KeyProvider extends AbstractProvider implements View.OnKeyListener,
      * Manually dispatches a KeyEvent through the provider's listening chain.
      * 
      * @param keyCode The code for the physical key that was pressed.
-     * @param event The KeyEvent object containing full information about the event.
+     * @param event   The KeyEvent object containing full information about the event.
+     * 
      * @return True if the listener has consumed the event, false otherwise.
      */
     public boolean onKey( int keyCode, KeyEvent event )

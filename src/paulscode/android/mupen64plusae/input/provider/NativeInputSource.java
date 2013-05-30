@@ -54,8 +54,9 @@ public class NativeInputSource extends View
     /**
      * Called by the native activity when a key event occurs.
      * 
-     * @param action The kind of action being performed, such as {@link MotionEvent#ACTION_DOWN}.
+     * @param action  The kind of action being performed, such as {@link MotionEvent#ACTION_DOWN}.
      * @param keyCode The key code.
+     * 
      * @return True if the event was handled, false otherwise.
      */
     public boolean onNativeKey( int action, int keyCode )
@@ -66,15 +67,13 @@ public class NativeInputSource extends View
     /**
      * Called by the native activity when a touch event occurs.
      * 
-     * @param source The source of this event.
-     * @param action The kind of action being performed, such as {@link MotionEvent#ACTION_DOWN}.
+     * @param source       The source of this event.
+     * @param action       The kind of action being performed, such as {@link MotionEvent#ACTION_DOWN}.
      * @param pointerCount The number of pointers that will be in this event.
-     * @param pointerIds An array of <em>pointerCount</em> values providing an identifier for each
-     *            pointer.
-     * @param pointerX An array of <em>pointerCount</em> values providing the x-coordinate for each
-     *            pointer.
-     * @param pointerY An array of <em>pointerCount</em> values providing the y-coordinate for each
-     *            pointer.
+     * @param pointerIds   An array of <em>pointerCount</em> values providing an identifier for each pointer.
+     * @param pointerX     An array of <em>pointerCount</em> values providing the x-coordinate for each pointer.
+     * @param pointerY     An array of <em>pointerCount</em> values providing the y-coordinate for each pointer.
+     *            
      * @return True if the event was handled, false otherwise.
      */
     @TargetApi( 9 )
@@ -115,6 +114,7 @@ public class NativeInputSource extends View
      * @param edgeFlags A bitfield indicating which edges, if any, were touched by this MotionEvent.
      * @param source The source of this event.
      * @param flags The motion event flags
+     * 
      * @return True if the event was handled, false otherwise.
      */
     @TargetApi( 9 )

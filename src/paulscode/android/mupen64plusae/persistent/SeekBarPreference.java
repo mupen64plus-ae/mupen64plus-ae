@@ -127,6 +127,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Sets the type of units this SeekBarPreference uses (e.g. "%").
+     * 
      * @param units The unit type for this SeekBarPreference to use.
      */
     public void setUnits( String units )
@@ -136,6 +137,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set value.
+     * 
      * @return The currently set value in this SeekBarPreference.
      */
     public int getValue()
@@ -145,6 +147,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set minimum value.
+     * 
      * @return The currently set minimum value for this SeekBarPreference.
      */
     public int getMinValue()
@@ -154,6 +157,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set maximum value.
+     * 
      * @return The currently set maximum value for this SeekBarPreference.
      */
     public int getMaxValue()
@@ -163,6 +167,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set increment step size.
+     * 
      * @return The currently set increment step size for this SeekBarPreference.
      */
     public int getStepSize()
@@ -172,6 +177,7 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the currently set units.
+     * 
      * @return The currently set unit type this SeekBarPreference uses.
      */
     public String getUnits()
@@ -181,7 +187,9 @@ public class SeekBarPreference extends DialogPreference implements OnSeekBarChan
 
     /**
      * Gets the value as a string with units appended.
+     * 
      * @param value The value to use in the string.
+     * 
      * @return The value as a String.
      */
     public String getValueString( int value )

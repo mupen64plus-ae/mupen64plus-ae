@@ -82,6 +82,7 @@ public class PathPreference extends DialogPreference
 
     /**
      * Sets the path that PathPrefence will use.
+     * 
      * @param value The path that this PathPreference instance will use.
      */
     public void setValue( String value )
@@ -100,6 +101,7 @@ public class PathPreference extends DialogPreference
 
     /**
      * Sets the specific selection mode to use.
+     * 
      * @param value The selection mode to use.</p>
      *              <li>0 = Directories can only be used as a choice.
      *              <li>1 = Files can only be used as a choice.
@@ -112,6 +114,7 @@ public class PathPreference extends DialogPreference
 
     /**
      * Gets the path value being used.
+     * 
      * @return The path value being used by this PathPreference.
      */
     public String getValue()
@@ -121,6 +124,7 @@ public class PathPreference extends DialogPreference
 
     /**
      * Gets the current selection mode being used.
+     * 
      * @return The current selection mode being used by this PathPreference.
      */
     public int getSelectionMode()

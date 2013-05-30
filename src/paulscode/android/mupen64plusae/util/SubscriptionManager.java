@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * A small class to encapsulate the management of subscriptions.
  * 
- * @param <Subscriber> the type of object to subscribe
+ * @param <Subscriber> The type of object to subscribe
  */
 public class SubscriptionManager<Subscriber>
 {

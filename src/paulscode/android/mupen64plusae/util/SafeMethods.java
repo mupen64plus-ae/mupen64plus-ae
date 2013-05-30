@@ -37,6 +37,7 @@ public class SafeMethods
      * 
      * @param val String containing the boolean to convert.
      * @param fail Value to use if unable to convert val to a boolean.
+     * 
      * @return The converted boolean, or the specified value if unsuccessful.
      */
     public static boolean toBoolean( String val, boolean fail )
@@ -61,6 +62,7 @@ public class SafeMethods
      * 
      * @param val String containing the number to convert.
      * @param fail Value to use if unable to convert val to an integer.
+     * 
      * @return The converted integer, or the specified value if unsuccessful.
      */
     public static int toInt( String val, int fail )
@@ -83,8 +85,9 @@ public class SafeMethods
     /**
      * Safely converts a string into a float.
      * 
-     * @param val String containing the number to convert.
+     * @param val  String containing the number to convert.
      * @param fail Value to use if unable to convert val to a float.
+     * 
      * @return The converted float, or the specified value if unsuccessful.
      */
     public static float toFloat( String val, float fail )
@@ -143,8 +146,9 @@ public class SafeMethods
     /**
      * Safely executes a command and its arguments in a separate native process
      * 
-     * @param cmd Array containing the command and its arguments.
+     * @param cmd  Array containing the command and its arguments.
      * @param wait Whether or not to wait for the command to finish executing.
+     * 
      * @return Array containing the output (if any), or null if wait was false.
      */
     public static String[] exec( String[] cmd, boolean wait )
@@ -176,6 +180,7 @@ public class SafeMethods
         {}
         catch( InterruptedException ie )
         {}
+        
         return null;
     }
 }

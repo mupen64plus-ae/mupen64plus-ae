@@ -216,7 +216,9 @@ public class TouchMap
      * 
      * @param xLocation The x-coordinate of the touch, in pixels.
      * @param yLocation The y-coordinate of the touch, in pixels.
+     * 
      * @return The N64 button the location is mapped to, or UNMAPPED.
+     * 
      * @see TouchMap#UNMAPPED
      */
     public int getButtonPress( int xLocation, int yLocation )
@@ -254,6 +256,7 @@ public class TouchMap
      * Gets the N64 button mapped to a given mask color.
      * 
      * @param color The mask color.
+     * 
      * @return The N64 button the color is mapped to, or UNMAPPED.
      */
     private int getButtonFromColor( int color )
@@ -279,6 +282,7 @@ public class TouchMap
      * 
      * @param xLocation The x-coordinate of the touch, in pixels.
      * @param yLocation The y-coordinate of the touch, in pixels.
+     * 
      * @return The analog displacement, in pixels.
      */
     public Point getAnalogDisplacement( int xLocation, int yLocation )
@@ -300,6 +304,7 @@ public class TouchMap
      * 
      * @param dX The x-displacement of the stick, in pixels.
      * @param dY The y-displacement of the stick, in pixels.
+     * 
      * @return The constrained analog displacement, in pixels.
      */
     public Point getConstrainedDisplacement( int dX, int dY )
@@ -310,7 +315,8 @@ public class TouchMap
     /**
      * Gets the analog strength, accounting for deadzone and motion limits.
      * 
-     * @param displacement The pythagorean displacement of the analog stick, in pixels.
+     * @param displacement The Pythagorean displacement of the analog stick, in pixels.
+     * 
      * @return The analog strength, between 0 and 1, inclusive.
      */
     public float getAnalogStrength( float displacement )
@@ -323,6 +329,7 @@ public class TouchMap
      * Checks if a touch is within capture range of the analog stick.
      * 
      * @param displacement The displacement of the touch with respect to analog center, in pixels.
+     * 
      * @return True, if the touch is in capture range of the stick.
      */
     public boolean isInCaptureRange( float displacement )
@@ -391,7 +398,7 @@ public class TouchMap
     /**
      * Loads all assets and properties specified in a configuration file.
      * 
-     * @param pad_ini The configuration file.
+     * @param pad_ini   The configuration file.
      * @param directory The directory containing the assets.
      */
     protected void loadAllAssets( ConfigFile pad_ini, String directory )
@@ -421,9 +428,9 @@ public class TouchMap
      * in subclasses to handle new asset types.
      * 
      * @param directory The directory containing the assets.
-     * @param filename The name of the asset, without file extension.
-     * @param section The configuration section containing the properties.
-     * @param info The meta-information provided inside the configuration section.
+     * @param filename  The name of the asset, without file extension.
+     * @param section   The configuration section containing the properties.
+     * @param info      The meta-information provided inside the configuration section.
      */
     protected void loadAssetSection( final String directory, String filename,
             ConfigSection section, String info )
@@ -437,9 +444,9 @@ public class TouchMap
     /**
      * Loads analog assets and properties from the filesystem.
      * 
-     * @param directory The directory containing the analog assets.
-     * @param filename The filename of the analog assets, without extension.
-     * @param section The configuration section containing the analog properties.
+     * @param directory      The directory containing the analog assets.
+     * @param filename       The filename of the analog assets, without extension.
+     * @param section        The configuration section containing the analog properties.
      * @param loadForeground True to load the analog foreground in addition to the background.
      */
     private void loadAnalog( final String directory, String filename, ConfigSection section,
@@ -474,8 +481,8 @@ public class TouchMap
      * Loads button assets and properties from the filesystem.
      * 
      * @param directory The directory containing the button assets.
-     * @param filename The filename of the button assets, without extension.
-     * @param section The configuration section containing the button properties.
+     * @param filename  The filename of the button assets, without extension.
+     * @param section   The configuration section containing the button properties.
      */
     private void loadButton( final String directory, String filename, ConfigSection section )
     {
@@ -493,6 +500,7 @@ public class TouchMap
      * Checks if a configuration parameter is a filename.
      * 
      * @param parameter The configuration parameter.
+     * 
      * @return True, if it is a filename.
      */
     private boolean isFilename( String parameter )

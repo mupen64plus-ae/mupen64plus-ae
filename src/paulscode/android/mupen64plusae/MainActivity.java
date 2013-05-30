@@ -178,7 +178,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
     /**
      * Update the status text from the UI thread.
      * 
-     * @param resId Resource id for the format string.
+     * @param resId      The resource ID for the format string.
      * @param formatArgs The format arguments that will be used for substitution.
      */
     private void updateText( int resId, Object... formatArgs )

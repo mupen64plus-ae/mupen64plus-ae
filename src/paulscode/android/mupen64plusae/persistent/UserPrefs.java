@@ -712,9 +712,10 @@ public class UserPrefs
     /**
      * Gets the selected value of a ListPreference, as an integer.
      * 
-     * @param preferences The object containing the ListPreference.
-     * @param key The key of the ListPreference.
+     * @param preferences  The object containing the ListPreference.
+     * @param key          The key of the ListPreference.
      * @param defaultValue The value to use if parsing fails.
+     * 
      * @return The value of the selected entry, as an integer.
      */
     private static int getSafeInt( SharedPreferences preferences, String key, int defaultValue )
@@ -733,7 +734,8 @@ public class UserPrefs
      * Gets the selected values of a MultiSelectListPreference, as an integer set.
      *
      * @param preferences The object containing the MultiSelectListPreference.
-     * @param key The key of the MultiSelectListPreference.
+     * @param key         The key of the MultiSelectListPreference.
+     * 
      * @return The values, as an integer set.
      */
     private static Set<Integer> getSafeIntSet( SharedPreferences preferences, String key )
@@ -772,9 +774,9 @@ public class UserPrefs
         /**
          * Instantiates a new plug-in meta-info object.
          * 
-         * @param prefs The shared preferences containing plug-in information.
+         * @param prefs   The shared preferences containing plug-in information.
          * @param libsDir The directory containing the plug-in file.
-         * @param key The shared preference key for the plug-in.
+         * @param key     The shared preference key for the plug-in.
          */
         public Plugin( SharedPreferences prefs, String libsDir, String key )
         {
