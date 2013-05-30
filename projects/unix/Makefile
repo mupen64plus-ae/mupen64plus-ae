@@ -168,8 +168,6 @@ ifeq ($(OS), OSX)
   else
     OSX_SYSROOT := /Developer/SDKs
   endif
-  # clang needs to link against libstdc++
-  LDLIBS += -lstdc++
 
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
