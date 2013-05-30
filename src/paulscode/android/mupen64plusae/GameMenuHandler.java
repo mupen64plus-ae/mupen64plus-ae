@@ -296,12 +296,15 @@ public class GameMenuHandler
         // Set the pak in the core
         CoreInterfaceNative.setControllerConfig( player - 1, true, pakType );
         
-        // Refresh the pak submenu
+        // Ensure the item is valid
         if( item != null )
+        {
+            // Refresh the pak submenu
             item.setChecked( true );
         
-        // Send a toast message
-        Notifier.showToast( mActivity, item.getTitle().toString() + "." );
+            // Send a toast message
+            Notifier.showToast( mActivity, item.getTitle().toString() + "." );
+        }
     }
     
     private void saveSlot()
