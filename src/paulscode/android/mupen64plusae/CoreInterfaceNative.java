@@ -176,6 +176,12 @@ public class CoreInterfaceNative extends CoreInterface
     // jni/ae-bridge/ae_imports.cpp
     // ------------------------------------------------------------------------
     
+    /**
+     * Callback for when an emulator's state/parameter has changed.
+     * 
+     * @param paramChanged The changed paramter's ID.
+     * @param newValue     The new value of the changed parameter.
+     */
     public static void stateCallback( int paramChanged, int newValue )
     {
         synchronized( sStateCallbackLock )
@@ -185,33 +191,69 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
+    /**
+     * Returns the hardware type of a device.
+     * <p>
+     * Note: This checks if the device is a device
+     *       that has a custom profile for flicker reduction.
+     *       If a device has a custom profile, this is returned
+     *       instead.
+     *       
+     * @return The hardware type of the device, or the custom profile
+     *         of the device (if it is a device that has one).
+     */
     public static int getHardwareType()
     {
         int autoDetected = sAppData.hardwareInfo.hardwareType;
         int overridden = sUserPrefs.videoHardwareType;
-        return overridden < 0 ? autoDetected : overridden;
+        return (overridden < 0) ? autoDetected : overridden;
     }
     
+    /**
+     * Checks if the GLES2N64 plugin is using auto-frameskip.
+     * 
+     * @return True if auto-framskip is enabled. False otherwise.
+     */
     public static boolean getAutoFrameSkip()
     {
         return sUserPrefs.isGles2N64AutoFrameskipEnabled;
     }
     
+    /**
+     * Gets the maximum frameskips allowed for the GLES2N64 plugin.
+     * 
+     * @return The number of max frameskps allowed.
+     */
     public static int getMaxFrameSkip()
     {
         return sUserPrefs.gles2N64MaxFrameskip;
     }
     
+    /**
+     * Gets the screen position.
+     * 
+     * @return The screens position.
+     */
     public static int getScreenPosition()
     {
         return sUserPrefs.videoPosition;
     }
     
+    /**
+     * Checks if the emulator is using screen stretching
+     * 
+     * @return True if screen stretching is used. False otherwise.
+     */
     public static boolean getScreenStretch()
     {
         return sUserPrefs.isStretched;
     }
     
+    /**
+     * Checks if the emulator is using RGBA 8888.
+     * 
+     * @return True if RGBA 8888 is being used. False otherwise.
+     */
     public static boolean useRGBA8888()
     {
         return sUserPrefs.isRgba8888;
@@ -228,12 +270,33 @@ public class CoreInterfaceNative extends CoreInterface
     // jni/SDL/src/core/android/SDL_android.cpp
     // ------------------------------------------------------------------------
     
+    /**
+     * Legacy GL context creation (used in SDL 1.3)
+     * 
+     * @param majorVersion The major GL version number.
+     * @param minorVersion The minor GL version number.
+     * 
+     * @return True if the context was able to be created. False if not.
+     */
     public static boolean createGLContext( int majorVersion, int minorVersion )
     {
         // SDL 1.3
         return sSurface.createGLContext( majorVersion, minorVersion );
     }
     
+    /**
+     * Creates a GL context for SDL 2.0
+     * <p>
+     * Note: If the GL context creation fails the first time, this method
+     *       will fall back to using legacy GL context creation, ignoring
+     *       the specified configSpec, and attempt to make a valid context.
+     * 
+     * @param majorVersion The major GL version number.
+     * @param minorVersion The minor GL version number.
+     * @param configSpec   The configuration to use.
+     * 
+     * @return True if the context was able to be created. False if not.
+     */
     public static boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
     {
         // SDL 2.0
@@ -274,6 +337,9 @@ public class CoreInterfaceNative extends CoreInterface
         return result;
     }
     
+    /**
+     * Swaps the GL buffers of the GameSurface in use.
+     */
     public static void flipBuffers()
     {
         sSurface.flipBuffers();
@@ -293,6 +359,14 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
+    /**
+     * Initializes the audio subsystem.
+     * 
+     * @param sampleRate    The sample rate for playback in hertz.
+     * @param is16Bit       Whether or not the audio is 16 bits per sample.
+     * @param isStereo      Whether or not the audio is stereo or mono.
+     * @param desiredFrames The desired frames per sample.
+     */
     public static void audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
     {
         // Be sure audio is stopped so that we can restart it
@@ -337,6 +411,11 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
+    /**
+     * Writes audio data into a given short buffer.
+     * 
+     * @param buffer The short array which the audio data will be written to.
+     */
     public static void audioWriteShortBuffer( short[] buffer )
     {
         for( int i = 0; i < buffer.length; )
@@ -358,6 +437,11 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
+    /**
+     * Writes audio data into a given byte buffer.
+     * 
+     * @param buffer The byte array which the audio data will be written to.
+     */
     public static void audioWriteByteBuffer( byte[] buffer )
     {
         for( int i = 0; i < buffer.length; )
@@ -378,7 +462,10 @@ public class CoreInterfaceNative extends CoreInterface
             }
         }
     }
-    
+
+    /**
+     * Shuts down the audio thread.
+     */
     public static void audioQuit()
     {
         if( sAudioThread != null )
