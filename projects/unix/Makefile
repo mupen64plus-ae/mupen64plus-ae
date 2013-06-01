@@ -333,7 +333,7 @@ OBJDIR = _obj$(POSTFIX)
 SOURCE = \
 	$(SRCDIR)/Glitch64/combiner.cpp \
 	$(SRCDIR)/Glitch64/geometry.cpp \
-	$(SRCDIR)/Glitch64/main.cpp \
+	$(SRCDIR)/Glitch64/glitchmain.cpp \
 	$(SRCDIR)/Glitch64/textures.cpp \
 	$(SRCDIR)/Glide64/3dmath.cpp \
 	$(SRCDIR)/Glide64/Combine.cpp \
