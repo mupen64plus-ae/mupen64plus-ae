@@ -129,7 +129,7 @@
     <ClCompile Include="..\..\src\Glide64\osal_dynamiclib_win32.c">
       <Filter>Glide64\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Glitch64\main.cpp">
+    <ClCompile Include="..\..\src\Glitch64\glitchmain.cpp">
       <Filter>Glitch64</Filter>
     </ClCompile>
   </ItemGroup>

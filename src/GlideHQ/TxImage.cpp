@@ -497,7 +497,8 @@ TxImage::readBMP(FILE* fp, int* width, int* height, uint16* format)
   uint8 *image = NULL;
   uint8 *image_row = NULL;
   uint8 *tmpimage = NULL;
-  unsigned int row_bytes, pos, i, j;
+  unsigned int row_bytes, pos;
+  int i, j;
   /* Windows Bitmap */
   BITMAPFILEHEADER bmp_fhdr;
   BITMAPINFOHEADER bmp_ihdr;
@@ -563,7 +564,7 @@ TxImage::readBMP(FILE* fp, int* width, int* height, uint16* format)
         if (fread(image_row, 1, row_bytes, fp) != row_bytes)
             ERRLOG("fread failed for row of '%i' bytes in 4-bit BMP image", row_bytes);
         /* expand 4bpp to 8bpp. stuff 4bit values into 8bit comps. */
-        for (j = 0; j < row_bytes; j++) {
+        for (j = 0; j < (int) row_bytes; j++) {
           tmpimage[j << 1] = image_row[j] & 0x0f;
           tmpimage[(j << 1) + 1] = (image_row[j] & 0xf0) >> 4;
         }

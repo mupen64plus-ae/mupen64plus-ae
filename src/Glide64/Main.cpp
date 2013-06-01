@@ -915,9 +915,11 @@ void DisplayLoadProgress(const wchar_t *format, ...)
 
 int InitGfx ()
 {
+#ifdef TEXTURE_FILTER
   wchar_t romname[256];
   wchar_t foldername[PATH_MAX + 64];
   wchar_t cachename[PATH_MAX + 64];
+#endif
   if (fullscreen)
     ReleaseGfx ();
 

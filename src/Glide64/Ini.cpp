@@ -56,7 +56,8 @@
 #endif
 
 #ifdef _WIN32
-#define PATH_MAX _MAX_PATH
+  #define PATH_MAX _MAX_PATH
+  #define stricmp _stricmp
 #endif
 
 FILE *ini;
