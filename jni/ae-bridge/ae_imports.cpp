@@ -44,8 +44,6 @@ static jmethodID midStateCallback;
 static jmethodID midGetHardwareType;
 static jmethodID midGetAutoFrameSkip;
 static jmethodID midGetMaxFrameSkip;
-static jmethodID midGetScreenPosition;
-static jmethodID midGetScreenStretch;
 static jmethodID midUseRGBA8888;
 
 /*******************************************************************************
@@ -163,12 +161,9 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
     midGetHardwareType      = env->GetStaticMethodID(mActivityClass, "getHardwareType",    "()I");
     midGetAutoFrameSkip     = env->GetStaticMethodID(mActivityClass, "getAutoFrameSkip",   "()Z");
     midGetMaxFrameSkip      = env->GetStaticMethodID(mActivityClass, "getMaxFrameSkip",    "()I");
-    midGetScreenPosition    = env->GetStaticMethodID(mActivityClass, "getScreenPosition",  "()I");
-    midGetScreenStretch     = env->GetStaticMethodID(mActivityClass, "getScreenStretch",   "()Z");
     midUseRGBA8888          = env->GetStaticMethodID(mActivityClass, "useRGBA8888",        "()Z");
 
-    if (!midStateCallback || !midGetHardwareType || !midGetAutoFrameSkip || !midGetMaxFrameSkip ||
-        !midGetScreenPosition || !midGetScreenStretch || !midUseRGBA8888)
+    if (!midStateCallback || !midGetHardwareType || !midGetAutoFrameSkip || !midGetMaxFrameSkip || !midUseRGBA8888)
     {
         LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
@@ -197,16 +192,6 @@ extern DECLSPEC int Android_JNI_GetAutoFrameSkip()
 extern DECLSPEC int Android_JNI_GetMaxFrameSkip()
 {
     return GetInt(midGetMaxFrameSkip);
-}
-
-extern DECLSPEC int Android_JNI_GetScreenStretch()
-{
-    return GetBooleanAsInt(midGetScreenStretch);
-}
-
-extern DECLSPEC int Android_JNI_GetScreenPosition()
-{
-    return GetInt(midGetScreenPosition);
 }
 
 extern DECLSPEC int Android_JNI_UseRGBA8888()
@@ -246,52 +231,5 @@ extern DECLSPEC void Android_JNI_GetPolygonOffset(const int hardwareType, const 
     {
         *f1 = bias > 0 ? -0.2f : 0.0f;
         *f2 = bias > 0 ? -0.2f : 0.0f;
-    }
-}
-
-extern DECLSPEC void Android_JNI_GetDisplaySize(const int maxWidth, const int maxHeight, const float aspect, int* width, int* height, int* xpos, int* ypos)
-{
-    if( Android_JNI_GetScreenStretch() )
-    {
-        // Fill screen (may distort aspect ratio)
-        *width = maxWidth;
-        *height = maxHeight;
-        *xpos = 0;
-        *ypos = 0;
-    }
-    if( !Android_JNI_GetScreenStretch() )
-    {
-        // Maintain aspect ratio (may pillarbox/letterbox)
-        if( maxHeight / maxWidth > aspect )
-        {
-            // Typically, letterbox when in portrait
-            *width = maxWidth;
-            *height = (int) ( maxWidth * aspect );
-        }
-        else
-        {
-            // Typically, pillarbox when in landscape
-            *height = maxHeight;
-            *width = (int) ( maxHeight / aspect );
-        }
-
-        // Horizontal position: centered
-        *xpos = ( maxWidth - *width ) / 2;
-
-        // Vertical position: user-defined
-        switch( Android_JNI_GetScreenPosition() )
-        {
-            case SCREEN_POSITION_BOTTOM:
-            *ypos = 0;
-            break;
-
-            case SCREEN_POSITION_MIDDLE:
-            *ypos = ( maxHeight - *height ) / 2;
-            break;
-
-            case SCREEN_POSITION_TOP:
-            *ypos = maxHeight - *height;
-            break;
-        }
     }
 }

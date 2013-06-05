@@ -115,15 +115,6 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
     }
 
 #ifdef PAULSCODE
-    // Recalculate viewport to maintain aspect ratio
-    int width, height, xpos, ypos;
-    Android_JNI_GetDisplaySize(windowSetting.uDisplayWidth, windowSetting.uDisplayHeight, status.fRatio,
-                               &width, &height, &xpos, &ypos);
-    windowSetting.uDisplayWidth = width;
-    windowSetting.uDisplayHeight = height;
-    windowSetting.xpos = xpos;
-    windowSetting.ypos = ypos;
-
     // Allow user to reduce color depth for performance
     if( !Android_JNI_UseRGBA8888() )
         colorBufferDepth = 16;

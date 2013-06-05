@@ -45,11 +45,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
+import android.widget.FrameLayout;
 
 //@formatter:off
 /**
@@ -142,6 +144,10 @@ public class GameLifecycleHandler implements View.OnKeyListener
         
         // Set the screen orientation
         mActivity.setRequestedOrientation( mUserPrefs.videoOrientation );
+        
+        // If the orientation changes, the screensize info changes, so we refresh data/prefs
+        mAppData = new AppData( mActivity );
+        mUserPrefs = new UserPrefs( mActivity );
     }
     
     @SuppressLint( "InlinedApi" )
@@ -156,6 +162,13 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mActivity.setContentView( R.layout.game_activity );
         mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
+        
+        // Update the GameSurface size
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
+        params.width = mUserPrefs.videoRenderWidth;
+        params.height = mUserPrefs.videoRenderHeight;
+        params.gravity = mUserPrefs.videoPosition | Gravity.CENTER_HORIZONTAL;
+        mSurface.setLayoutParams( params );
         
         // Configure the action bar introduced in higher Android versions
         if( AppData.IS_HONEYCOMB && !mUserPrefs.isOuyaMode )

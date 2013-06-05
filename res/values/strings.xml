@@ -232,7 +232,7 @@
     <string name="videoOrientation_entryPortrait">Portrait</string>
     <string name="videoOrientation_entryReversePortrait">Reverse portrait</string>
     
-    <string name="videoPosition_title">Portrait screen position</string> 	
+    <string name="videoPosition_title">Vertical screen position</string> 	
     <string name="videoPosition_entryBottom">Bottom</string>  	
     <string name="videoPosition_entryMiddle">Middle</string> 	
     <string name="videoPosition_entryTop">Top</string>

@@ -34,7 +34,8 @@ import org.apache.commons.lang.WordUtils;
 import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
-import paulscode.android.mupen64plusae.input.map.PlayerMap;import paulscode.android.mupen64plusae.util.OUYAInterface;
+import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -45,6 +46,7 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.KeyEvent;
 
 /**
@@ -230,8 +232,14 @@ public class UserPrefs
     /** The screen orientation for the game activity. */
     public final int videoOrientation;
     
-    /** The screen position in portrait mode. */
+    /** The vertical screen position. */
     public final int videoPosition;
+    
+    /** The width of the renderable portion of the screen. */
+    public final int videoRenderWidth;
+    
+    /** The height of the renderable portion of the screen. */
+    public final int videoRenderHeight;
     
     /** The action bar transparency value. */
     public final int videoActionBarTransparency;
@@ -433,10 +441,7 @@ public class UserPrefs
         
         // Video prefs
         videoOrientation = getSafeInt( mPreferences, "videoOrientation", 0 );
-        if( (videoOrientation == 1 ) || ( videoOrientation == 9)) 
-            videoPosition = getSafeInt( mPreferences, "videoPosition", 1 );
-        else
-            videoPosition = 1;
+        videoPosition = getSafeInt( mPreferences, "videoPosition", Gravity.CENTER_VERTICAL );
         transparencyPercent = mPreferences.getInt( "videoActionBarTransparency", 50 );
         videoActionBarTransparency = ( 255 * transparencyPercent ) / 100;
         videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
@@ -585,6 +590,34 @@ public class UserPrefs
             unmappables.add( KeyEvent.KEYCODE_VOLUME_MUTE );
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
+        
+        // Determine the pixel dimensions of the rendering context
+        boolean isLandscape = videoOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            || videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+        int width = isLandscape ? appData.maxScreenSize.x : appData.maxScreenSize.y;
+        int height = isLandscape ? appData.maxScreenSize.y : appData.maxScreenSize.x;
+        if( !isStretched )
+        {
+            // Maintain aspect ratio (may pillarbox/letterbox)
+            float aspect = 0.75f; // TODO: Handle PAL
+            float maxWidth = width;
+            float maxHeight = height;
+            
+            if( maxHeight / maxWidth > aspect )
+            {
+                // Typically, letterbox when in portrait
+                width = (int) maxWidth;
+                height = (int) ( maxWidth * aspect );
+            }
+            else
+            {
+                // Typically, pillarbox when in landscape
+                height = (int) maxHeight;
+                width = (int) ( maxHeight / aspect );
+            }
+        }
+        videoRenderWidth = width;
+        videoRenderHeight = height;
     }
     
     public void enforceLocale( Activity activity )

@@ -38,10 +38,6 @@ typedef struct {
     int     vpLeftW, vpTopW, vpRightW, vpBottomW, vpWidthW, vpHeightW;
 
     int     statusBarHeight, statusBarHeightToUse, toolbarHeight, toolbarHeightToUse;
-#ifdef PAULSCODE
-    // Screen position feature
-    int     xpos, ypos;
-#endif
     BOOL    screenSaverStatus;
 
     struct {

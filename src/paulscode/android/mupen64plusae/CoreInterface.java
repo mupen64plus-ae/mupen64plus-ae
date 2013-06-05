@@ -33,7 +33,6 @@ import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.media.AudioTrack;
 import android.os.Vibrator;
@@ -423,6 +422,8 @@ public class CoreInterface
         
         // GLES2N64 config file
         ConfigFile gles2n64_conf = new ConfigFile( appData.gles2n64_conf );
+        gles2n64_conf.put( "[<sectionless!>]", "window width", Integer.toString( user.videoRenderWidth ) );
+        gles2n64_conf.put( "[<sectionless!>]", "window height", Integer.toString( user.videoRenderHeight ) );
         gles2n64_conf.put( "[<sectionless!>]", "enable fog", booleanToString( user.isGles2N64FogEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", booleanToString( user.isGles2N64AlphaTestEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "force screen clear", booleanToString( user.isGles2N64ScreenClearEnabled ) );
@@ -430,10 +431,7 @@ public class CoreInterface
 
         // GLES2GLIDE64 config file
         ConfigFile gles2glide64_conf = new ConfigFile( appData.gles2glide64_conf );
-        if( user.isStretched )
-            gles2glide64_conf.put( "DEFAULT", "aspect", "2" );
-        else
-            gles2glide64_conf.put( "DEFAULT", "aspect", "0" );
+        gles2glide64_conf.put( "DEFAULT", "aspect", "2" ); // Stretch to GameSurface, Java will manage aspect ratio
         
         // Core and GLES2RICE config file
         ConfigFile mupen64plus_cfg = new ConfigFile( appData.mupen64plus_cfg );
@@ -448,7 +446,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "Core", "ScreenshotPath", "\"\"" );
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + user.slotSaveDir + '"' );
         mupen64plus_cfg.put( "Core", "SharedDataPath", "\"\"" );
-    
+        
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.00" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", "0" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Fullscreen", "0" );
@@ -466,7 +464,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Fast Forward", "0" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Frame Advance", "0" );
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Gameshark", "0" );
-    
+        
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.00" );
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", booleanToString( user.audioSwapChannels ) );
         mupen64plus_cfg.put( "Audio-SDL", "RESAMPLE", user.audioResampleAlg);
@@ -477,23 +475,9 @@ public class CoreInterface
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + user.audioPlugin.path + '"' );
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + user.inputPlugin.path + '"' );
         mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin.path + '"' );
-    
-        mupen64plus_cfg.put( "Video-General", "Version", "1.00" );
-        if( user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                || user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
-        {
-            gles2n64_conf.put( "[<sectionless!>]", "window width", Integer.toString( appData.screenSize.y ) );
-            gles2n64_conf.put( "[<sectionless!>]", "window height", Integer.toString( appData.screenSize.x ) );
-            mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( appData.screenSize.y ) );
-            mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( appData.screenSize.x ) );
-        }
-        else
-        {
-            gles2n64_conf.put( "[<sectionless!>]", "window width", Integer.toString( appData.screenSize.x ) );
-            gles2n64_conf.put( "[<sectionless!>]", "window height", Integer.toString( appData.screenSize.y ) );
-            mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( appData.screenSize.x ) );
-            mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( appData.screenSize.y ) );
-        }
+        
+        mupen64plus_cfg.put( "Video-General", "ScreenWidth", Integer.toString( user.videoRenderWidth ) );
+        mupen64plus_cfg.put( "Video-General", "ScreenHeight", Integer.toString( user.videoRenderHeight ) );
         mupen64plus_cfg.put( "Video-General", "VerticalSync", Integer.toString( 0 ) );
         
         mupen64plus_cfg.put( "Video-Rice", "Version", "1.00" );
@@ -505,7 +489,7 @@ public class CoreInterface
         mupen64plus_cfg.put( "Video-Rice", "ScreenUpdateSetting", user.gles2RiceScreenUpdateType );
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", user.gles2RiceTextureEnhancement );
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );
-    
+        
         if( user.isGles2RiceForceTextureFilterEnabled )
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "2");
         else

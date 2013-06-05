@@ -44,7 +44,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -144,6 +143,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_HEIGHT, R.string.touchscreenHeight_default, R.array.touchscreenHeight_values );
         PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_LAYOUT, R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
         PrefUtil.validateListPreference( res, prefs, TOUCHPAD_LAYOUT, R.string.touchpadLayout_default, R.array.touchpadLayout_values );
+        PrefUtil.validateListPreference( res, prefs, VIDEO_POSITION, R.string.videoPosition_default, R.array.videoPosition_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_INPUT, R.string.pluginInput_default, R.array.pluginInput_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_VIDEO, R.string.pluginVideo_default, R.array.pluginVideo_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_AUDIO, R.string.pluginAudio_default, R.array.pluginAudio_values );
@@ -183,9 +183,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         if( !mUserPrefs.isGles2RiceEnabled )
             PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
-        
-        if( mUserPrefs.isGles2Glide64Enabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_POSITION );
         
         if( !AppData.IS_HONEYCOMB || mUserPrefs.isOuyaMode )
             PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_ACTION_BAR_TRANSPARENCY );
@@ -269,11 +266,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Enable the video menu only if the video plug-in is not a dummy
         PrefUtil.enablePreference( this, SCREEN_VIDEO, user.videoPlugin.enabled );
-        
-        // Enable the screen position prefs only if the screen is in portrait mode and not stretched
-        boolean isPortrait = user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                || user.videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-        PrefUtil.enablePreference( this, VIDEO_POSITION, isPortrait && !user.isStretched );
         
         // Enable the auto-holdables pref if auto-hold is not disabled
         PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, user.isTouchscreenEnabled

@@ -176,12 +176,12 @@
         <item>@string/videoPosition_entryBottom</item>
     </string-array>
     <string-array name="videoPosition_values" translatable="false">
-        <item>2</item>
-        <item>1</item>
-        <item>0</item>
+        <item>48</item> <!-- Gravity.TOP -->
+        <item>16</item> <!-- Gravity.CENTER_VERTICAL -->
+        <item>80</item> <!-- Gravity.BOTTOM -->
     </string-array>
 
-    <string name="videoPosition_default" translatable="false">1</string>
+    <string name="videoPosition_default" translatable="false">16</string>
 
     <!-- Framerate Refresh List -->
     <string-array name="videoFpsRefresh_entries" translatable="false">

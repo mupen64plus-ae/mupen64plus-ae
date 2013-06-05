@@ -272,8 +272,10 @@ else
 
 //// paulscode, fixes the screen-size problem
     const float ratio = ( config.romPAL ? 9.0f/11.0f : 0.75f );
-    int videoWidth, videoHeight, x, y;
-    Android_JNI_GetDisplaySize(current_w, current_h, ratio, &videoWidth, &videoHeight, &x, &y);
+    int videoWidth = current_w;
+    int videoHeight = current_h;
+    int x = 0;
+    int y = 0;
     
     //re-scale width and height on per-rom basis
     float width = (float)videoWidth * (float)config.window.refwidth / 800.f;

@@ -150,7 +150,7 @@ public class AppData
     public final boolean isValidInstallation;
     
     /** The usable size of the screen, in pixels, not including the window decor. */
-    public final Point screenSize;
+    public final Point maxScreenSize;
     
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
@@ -244,7 +244,7 @@ public class AppData
         Display display = windowManager.getDefaultDisplay();
         if( display == null )
         {
-            screenSize = new Point( 0,0 );
+            maxScreenSize = new Point( 0,0 );
         }
         else
         {
@@ -252,7 +252,7 @@ public class AppData
             int l1 = display.getWidth();
             @SuppressWarnings( "deprecation" )
             int l2 = display.getHeight();
-            screenSize = l1 > l2 ? new Point( l1, l2 ) : new Point( l2, l1 );
+            maxScreenSize = l1 > l2 ? new Point( l1, l2 ) : new Point( l2, l1 );
         }
         
         // Preference object for persisting app data

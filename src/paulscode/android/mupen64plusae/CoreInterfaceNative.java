@@ -230,26 +230,6 @@ public class CoreInterfaceNative extends CoreInterface
     }
     
     /**
-     * Gets the screen position.
-     * 
-     * @return The screens position.
-     */
-    public static int getScreenPosition()
-    {
-        return sUserPrefs.videoPosition;
-    }
-    
-    /**
-     * Checks if the emulator is using screen stretching
-     * 
-     * @return True if screen stretching is used. False otherwise.
-     */
-    public static boolean getScreenStretch()
-    {
-        return sUserPrefs.isStretched;
-    }
-    
-    /**
      * Checks if the emulator is using RGBA 8888.
      * 
      * @return True if RGBA 8888 is being used. False otherwise.

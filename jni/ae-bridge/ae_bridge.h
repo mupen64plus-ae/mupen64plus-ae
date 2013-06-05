@@ -51,11 +51,6 @@ extern "C" {
 #define HARDWARE_TYPE_IMAP          4
 #define HARDWARE_TYPE_TEGRA         5
 
-// arrays.xml
-#define SCREEN_POSITION_BOTTOM      0
-#define SCREEN_POSITION_MIDDLE      1
-#define SCREEN_POSITION_TOP         2
-
 /*******************************************************************************
  Imported Java methods (to be called from C)
  *******************************************************************************/
@@ -71,12 +66,8 @@ extern void         Android_JNI_State_Callback(int paramChanged, int newValue);
 extern int          Android_JNI_GetHardwareType();
 extern int          Android_JNI_GetAutoFrameSkip();
 extern int          Android_JNI_GetMaxFrameSkip();
-extern int          Android_JNI_GetScreenPosition();
-extern int          Android_JNI_GetScreenStretch();
 extern int          Android_JNI_UseRGBA8888();
 extern void         Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2);
-extern void         Android_JNI_GetDisplaySize(const int maxWidth, const int maxHeight, const float aspect,
-                                                    int* width, int* height, int* xpos, int* ypos);
 
 // SDL functions - TODO: Remove (plugins shouldn't be calling these directly)
 extern void         Android_JNI_SwapWindow();
