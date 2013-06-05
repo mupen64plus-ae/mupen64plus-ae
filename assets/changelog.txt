@@ -1,6 +1,8 @@
 [27:2.3.1]
+- Fixed junk graphics in the margins for gles2rice video plugin
+- Added video resolution/scaling preferences
 - Fixed crash when opening zipped ROMs
-- Added support for Moga Pro controller (use controller in HID mode)
+- Added support for Moga Pro controller (use controller in HID mode B)
 - Added support for Mad Catz C.T.R.L.R. controller
 - Added flicker reduction profile for Iconia B1 A71
 - Updated ACRA crash reporting system to 4.5.0-stable
