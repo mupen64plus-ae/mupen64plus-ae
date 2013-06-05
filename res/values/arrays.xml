@@ -183,6 +183,42 @@
 
     <string name="videoPosition_default" translatable="false">16</string>
 
+    <!-- Screen Resolution List -->
+    <string-array name="videoResolution_entries" translatable="false">
+        <item>@string/videoResolution_entryNative</item>
+        <item>@string/videoResolution_entry960x720</item>
+        <item>@string/videoResolution_entry800x600</item>
+        <item>@string/videoResolution_entry640x480</item>
+        <item>@string/videoResolution_entry480x360</item>
+        <item>@string/videoResolution_entry320x240</item>
+        <item>@string/videoResolution_entry160x120</item>
+    </string-array>
+    <string-array name="videoResolution_values" translatable="false">
+        <item>0</item>
+        <item>720</item>
+        <item>600</item>
+        <item>480</item>
+        <item>360</item>
+        <item>240</item>
+        <item>120</item>
+    </string-array>
+
+    <string name="videoResolution_default" translatable="false">0</string>
+
+    <!-- Screen Scaling List -->
+    <string-array name="videoScaling_entries" translatable="false">
+        <item>@string/videoScaling_entryNone</item>
+        <item>@string/videoScaling_entryZoom</item>
+        <item>@string/videoScaling_entryStretch</item>
+    </string-array>
+    <string-array name="videoScaling_values" translatable="false">
+        <item>none</item>
+        <item>zoom</item>
+        <item>stretch</item>
+    </string-array>
+
+    <string name="videoScaling_default" translatable="false">zoom</string>
+
     <!-- Framerate Refresh List -->
     <string-array name="videoFpsRefresh_entries" translatable="false">
         <item>@string/videoFpsRefresh_entryNever</item>

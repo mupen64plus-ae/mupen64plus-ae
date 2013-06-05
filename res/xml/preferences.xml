@@ -290,6 +290,20 @@
                     android:key="videoPosition"
                     android:summary="@string/selectedValue"
                     android:title="@string/videoPosition_title" />
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/videoResolution_default"
+                    android:entries="@array/videoResolution_entries"
+                    android:entryValues="@array/videoResolution_values"
+                    android:key="videoResolution"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/videoResolution_title" />
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/videoScaling_default"
+                    android:entries="@array/videoScaling_entries"
+                    android:entryValues="@array/videoScaling_values"
+                    android:key="videoScaling"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/videoScaling_title" />
 
                 <paulscode.android.mupen64plusae.persistent.SeekBarPreference
                     android:defaultValue="50"
@@ -314,11 +328,6 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/videoHardwareType_title" />
 
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="videoStretch"
-                    android:summary="@string/videoStretch_summary"
-                    android:title="@string/videoStretch_title" />
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="videoUseFramelimiter"

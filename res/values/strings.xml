@@ -166,8 +166,6 @@
     <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
     <string name="inputShareController_title">Share controller</string>
     <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
-    <string name="videoStretch_title">Stretch screen</string>
-    <string name="videoStretch_summary">May skew aspect ratio</string>
     <string name="videoUseFramelimiter_title">Use framelimiter</string>
     <string name="videoUseFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
     <string name="videoRgba8888_title">RGBA_8888 mode</string>
@@ -236,6 +234,20 @@
     <string name="videoPosition_entryBottom">Bottom</string>  	
     <string name="videoPosition_entryMiddle">Middle</string> 	
     <string name="videoPosition_entryTop">Top</string>
+    
+    <string name="videoResolution_title">Rendered resolution</string>
+    <string name="videoResolution_entryNative">Native (highest quality)</string>
+    <string name="videoResolution_entry960x720">960 x 720</string>
+    <string name="videoResolution_entry800x600">800 x 600</string>
+    <string name="videoResolution_entry640x480">640 x 480</string>
+    <string name="videoResolution_entry480x360">480 x 360</string>
+    <string name="videoResolution_entry320x240">320 x 240</string>
+    <string name="videoResolution_entry160x120">160 x 120 (highest framerate)</string>
+    
+    <string name="videoScaling_title">Screen scaling</string>
+    <string name="videoScaling_entryNone">None\n<small>Use exact resolution selected above</small></string>
+    <string name="videoScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
+    <string name="videoScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
     
     <string name="videoFpsRefresh_title">Display framerate</string>
     <string name="videoFpsRefresh_entryNever">Never</string>

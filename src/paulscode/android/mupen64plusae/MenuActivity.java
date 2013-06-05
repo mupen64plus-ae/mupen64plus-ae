@@ -94,6 +94,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String PLUGIN_CORE = "pluginCore";
     private static final String R4300_EMULATOR = "r4300Emulator";
     private static final String VIDEO_POSITION = "videoPosition";
+    private static final String VIDEO_RESOLUTION = "videoResolution";
+    private static final String VIDEO_SCALING = "videoScaling";
     private static final String VIDEO_ACTION_BAR_TRANSPARENCY = "videoActionBarTransparency";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String NAVIGATION_MODE = "navigationMode";
@@ -144,6 +146,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_LAYOUT, R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
         PrefUtil.validateListPreference( res, prefs, TOUCHPAD_LAYOUT, R.string.touchpadLayout_default, R.array.touchpadLayout_values );
         PrefUtil.validateListPreference( res, prefs, VIDEO_POSITION, R.string.videoPosition_default, R.array.videoPosition_values );
+        PrefUtil.validateListPreference( res, prefs, VIDEO_RESOLUTION, R.string.videoResolution_default, R.array.videoResolution_values );
+        PrefUtil.validateListPreference( res, prefs, VIDEO_SCALING, R.string.videoScaling_default, R.array.videoScaling_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_INPUT, R.string.pluginInput_default, R.array.pluginInput_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_VIDEO, R.string.pluginVideo_default, R.array.pluginVideo_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_AUDIO, R.string.pluginAudio_default, R.array.pluginAudio_values );

@@ -164,9 +164,10 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
         // Update the GameSurface size
+        mSurface.getHolder().setFixedSize( mUserPrefs.videoRenderWidth, mUserPrefs.videoRenderHeight );
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
-        params.width = mUserPrefs.videoRenderWidth;
-        params.height = mUserPrefs.videoRenderHeight;
+        params.width = mUserPrefs.videoSurfaceWidth;
+        params.height = mUserPrefs.videoSurfaceHeight;
         params.gravity = mUserPrefs.videoPosition | Gravity.CENTER_HORIZONTAL;
         mSurface.setLayoutParams( params );
         

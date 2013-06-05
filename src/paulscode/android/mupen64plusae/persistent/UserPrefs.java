@@ -235,11 +235,17 @@ public class UserPrefs
     /** The vertical screen position. */
     public final int videoPosition;
     
-    /** The width of the renderable portion of the screen. */
+    /** The width of the OpenGL rendering context, in pixels. */
     public final int videoRenderWidth;
     
-    /** The height of the renderable portion of the screen. */
+    /** The height of the OpenGL rendering context, in pixels. */
     public final int videoRenderHeight;
+    
+    /** The width of the viewing surface, in pixels. */
+    public final int videoSurfaceWidth;
+    
+    /** The height of the viewing surface, in pixels. */
+    public final int videoSurfaceHeight;
     
     /** The action bar transparency value. */
     public final int videoActionBarTransparency;
@@ -249,9 +255,6 @@ public class UserPrefs
     
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
-    
-    /** True if the video should be stretched. */
-    public final boolean isStretched;
     
     /** True if framelimiter is used. */
     public final boolean isFramelimiterEnabled;
@@ -447,7 +450,6 @@ public class UserPrefs
         videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
         isFpsEnabled = videoFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
-        isStretched = mPreferences.getBoolean( "videoStretch", false );
         isRgba8888 = mPreferences.getBoolean( "videoRgba8888", false );
         isFramelimiterEnabled = mPreferences.getBoolean( "videoUseFramelimiter", false );
         
@@ -591,33 +593,78 @@ public class UserPrefs
         }
         unmappableKeyCodes = Collections.unmodifiableList( unmappables );
         
-        // Determine the pixel dimensions of the rendering context
-        boolean isLandscape = videoOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            || videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-        int width = isLandscape ? appData.maxScreenSize.x : appData.maxScreenSize.y;
-        int height = isLandscape ? appData.maxScreenSize.y : appData.maxScreenSize.x;
-        if( !isStretched )
+        // Determine the pixel dimensions of the rendering context and view surface
         {
-            // Maintain aspect ratio (may pillarbox/letterbox)
-            float aspect = 0.75f; // TODO: Handle PAL
-            float maxWidth = width;
-            float maxHeight = height;
+            boolean isLandscape = videoOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    || videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+            int stretchWidth = isLandscape ? appData.maxScreenSize.x : appData.maxScreenSize.y;
+            int stretchHeight = isLandscape ? appData.maxScreenSize.y : appData.maxScreenSize.x;
             
-            if( maxHeight / maxWidth > aspect )
+            float aspect = 0.75f; // TODO: Handle PAL
+            boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;
+            int zoomWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
+            int zoomHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
+            
+            int hResolution = getSafeInt( mPreferences, "videoResolution", 0 );
+            String scaling = mPreferences.getString( "videoScaling", "zoom" );
+            if( hResolution == 0 )
             {
-                // Typically, letterbox when in portrait
-                width = (int) maxWidth;
-                height = (int) ( maxWidth * aspect );
+                // Native resolution
+                boolean isZoomed = scaling.equals( "zoom" );
+                videoRenderWidth = videoSurfaceWidth = isZoomed ? zoomWidth : stretchWidth;
+                videoRenderHeight = videoSurfaceHeight = isZoomed ? zoomHeight : stretchHeight;
             }
             else
             {
-                // Typically, pillarbox when in landscape
-                height = (int) maxHeight;
-                width = (int) ( maxHeight / aspect );
+                // Non-native resolution
+                switch( hResolution )
+                {
+                    case 720:
+                        videoRenderWidth = 960;
+                        videoRenderHeight = 720;
+                        break;
+                    case 600:
+                        videoRenderWidth = 800;
+                        videoRenderHeight = 600;
+                        break;
+                    case 480:
+                        videoRenderWidth = 640;
+                        videoRenderHeight = 480;
+                        break;
+                    case 360:
+                        videoRenderWidth = 480;
+                        videoRenderHeight = 360;
+                        break;
+                    case 240:
+                        videoRenderWidth = 320;
+                        videoRenderHeight = 240;
+                        break;
+                    case 120:
+                        videoRenderWidth = 160;
+                        videoRenderHeight = 120;
+                        break;
+                    default:
+                        videoRenderWidth = Math.round( (float) hResolution / aspect );
+                        videoRenderHeight = hResolution;
+                        break;
+                }
+                if( scaling.equals( "zoom" ) )
+                {
+                    videoSurfaceWidth = zoomWidth;
+                    videoSurfaceHeight = zoomHeight;
+                }
+                else if( scaling.equals( "stretch" ) )
+                {
+                    videoSurfaceWidth = stretchWidth;
+                    videoSurfaceHeight = stretchHeight;
+                }
+                else // scaling.equals( "none" )
+                {
+                    videoSurfaceWidth = videoRenderWidth;
+                    videoSurfaceHeight = videoRenderHeight;
+                }
             }
         }
-        videoRenderWidth = width;
-        videoRenderHeight = height;
     }
     
     public void enforceLocale( Activity activity )
