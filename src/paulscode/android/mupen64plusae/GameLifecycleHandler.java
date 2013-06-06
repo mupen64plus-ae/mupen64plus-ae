@@ -22,6 +22,8 @@ package paulscode.android.mupen64plusae;
 
 import java.util.ArrayList;
 
+import com.bda.controller.Controller;
+
 import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.TouchController;
@@ -31,6 +33,7 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -97,6 +100,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
     private final ArrayList<AbstractController> mControllers;
     private VisibleTouchMap mTouchscreenMap;
     private KeyProvider mKeyProvider;
+    private Controller mMogaController;
     
     // Internal flags
     private final boolean mIsXperiaPlay;
@@ -110,11 +114,15 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mActivity = activity;
         mControllers = new ArrayList<AbstractController>();
         mIsXperiaPlay = !( activity instanceof GameActivity );
+        mMogaController = Controller.getInstance( mActivity );
     }
     
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
+        // Initialize MOGA controller API
+        mMogaController.init();
+        
         // Get app data and user preferences
         mAppData = new AppData( mActivity );
         mUserPrefs = new UserPrefs( mActivity );
@@ -213,11 +221,18 @@ public class GameLifecycleHandler implements View.OnKeyListener
     public void onResume()
     {
         CoreInterface.resumeEmulator();
+        mMogaController.onResume();
     }
     
     public void onPause()
     {
         CoreInterface.pauseEmulator( true );
+        mMogaController.onPause();
+    }
+    
+    public void onDestroy()
+    {
+        mMogaController.exit();
     }
     
     @Override
@@ -306,6 +321,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         // Create the input providers shared among all peripheral controllers
         mKeyProvider = new KeyProvider( inputSource, ImeFormula.DEFAULT,
                 mUserPrefs.unmappableKeyCodes );
+        MogaProvider mogaProvider = new MogaProvider( mMogaController );
         AbstractProvider axisProvider = AppData.IS_HONEYCOMB_MR1
                 ? new AxisProvider( inputSource )
                 : null;
@@ -314,22 +330,22 @@ public class GameLifecycleHandler implements View.OnKeyListener
         if( mUserPrefs.isInputEnabled1 )
         {
             mControllers.add( new PeripheralController( 1, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap1, mUserPrefs.inputDeadzone1, mKeyProvider, axisProvider ) );
+                    mUserPrefs.inputMap1, mUserPrefs.inputDeadzone1, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled2 )
         {
             mControllers.add( new PeripheralController( 2, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap2, mUserPrefs.inputDeadzone2, mKeyProvider, axisProvider ) );
+                    mUserPrefs.inputMap2, mUserPrefs.inputDeadzone2, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled3 )
         {
             mControllers.add( new PeripheralController( 3, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap3, mUserPrefs.inputDeadzone3, mKeyProvider, axisProvider ) );
+                    mUserPrefs.inputMap3, mUserPrefs.inputDeadzone3, mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled4 )
         {
             mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap4, mUserPrefs.inputDeadzone4, mKeyProvider, axisProvider ) );
+                    mUserPrefs.inputMap4, mUserPrefs.inputDeadzone4, mKeyProvider, axisProvider, mogaProvider ) );
         }
     }
     

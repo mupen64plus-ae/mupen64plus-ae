@@ -48,6 +48,8 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.bda.controller.Controller;
+
 public class PlayMenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnSharedPreferenceChangeListener
 {
@@ -66,11 +68,17 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
     // Handle to the thread populating the cheat options
     private Thread crcThread = null;
     
+    // MOGA controller interface
+    private Controller mMogaController = Controller.getInstance( this );
+    
     @SuppressWarnings( "deprecation" )
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        
+        // Initialize MOGA controller API
+        mMogaController.init();
         
         // Get app data and user preferences
         mAppData = new AppData( this );
@@ -86,7 +94,14 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         
         // Hide the multi-player menu if not needed
         if( !mUserPrefs.playerMap.isEnabled() )
+        {
             PrefUtil.removePreference( this, SCREEN_PLAY, PLAYER_MAP );
+        }
+        else
+        {
+            PlayerMapPreference preference = (PlayerMapPreference) findPreference( PLAYER_MAP );
+            preference.setMogaController( mMogaController );
+        }
         
         // Hide or populate the cheats category depending on user preference
         if( mUserPrefs.isCheatOptionsShown )
@@ -116,6 +131,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         super.onResume();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+        mMogaController.onResume();
     }
     
     @Override
@@ -124,6 +140,14 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         super.onPause();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+        mMogaController.onPause();
+    }
+    
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        mMogaController.exit();
     }
     
     @Override

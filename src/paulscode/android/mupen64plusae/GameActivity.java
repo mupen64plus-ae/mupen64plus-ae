@@ -74,4 +74,11 @@ public class GameActivity extends Activity
         super.onPause();
         mLifecycleHandler.onPause();
     }
+    
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        mLifecycleHandler.onDestroy();
+    }
 }

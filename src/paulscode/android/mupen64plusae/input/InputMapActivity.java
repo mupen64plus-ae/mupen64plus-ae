@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import com.bda.controller.Controller;
+
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -32,6 +34,7 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputLi
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
+import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
@@ -96,8 +99,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     // Input mapping and listening
     private final InputMap mMap = new InputMap();
     private KeyProvider mKeyProvider;
+    private MogaProvider mMogaProvider;
     private AxisProvider mAxisProvider;
     private List<Integer> mUnmappableInputCodes;
+    private Controller mMogaController = Controller.getInstance( this );
     
     // Widgets
     private final Button[] mN64Buttons = new Button[InputMap.NUM_MAPPABLES];
@@ -110,6 +115,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        
+        // Initialize MOGA controller API
+        mMogaController.init();
         
         // Get the user preferences wrapper
         mUserPrefs = new UserPrefs( this );
@@ -140,6 +148,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         {
             mKeyProvider = new KeyProvider( ImeFormula.DEFAULT, mUnmappableInputCodes );
             mKeyProvider.registerListener( this );
+            mMogaProvider = new MogaProvider( mMogaController );
+            mMogaProvider.registerListener( this );
             if( AppData.IS_HONEYCOMB_MR1 )
             {
                 mAxisProvider = new AxisProvider();
@@ -159,6 +169,27 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         
         // Refresh everything
         refreshAllButtons();
+    }
+    
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        mMogaController.onResume();
+    }
+    
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        mMogaController.onPause();
+    }
+    
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        mMogaController.exit();
     }
     
     private void initLayoutOuya()
@@ -520,7 +551,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 mMap.getMappedCodeInfo( index ) );
         String btnText = getString( R.string.inputMapActivity_popupUnmap );
         
-        Prompt.promptInputCode( this, title, message, btnText,
+        Prompt.promptInputCode( this, mMogaController, title, message, btnText,
                 mUnmappableInputCodes, new PromptInputCodeListener()
                 {
                     @Override
@@ -535,6 +566,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                             mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
                             refreshAllButtons();
                         }
+                        
+                        // Refresh our MOGA provider since the prompt disconnected it
+                        mMogaProvider = new MogaProvider( mMogaController );
+                        mMogaProvider.registerListener( InputMapActivity.this );
                     }
                 } );
     }

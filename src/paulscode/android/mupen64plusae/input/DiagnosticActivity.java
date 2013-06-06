@@ -30,19 +30,55 @@ import paulscode.android.mupen64plusae.util.DeviceUtil;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.InputDevice.MotionRange;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-public class DiagnosticActivity extends Activity
+import com.bda.controller.Controller;
+import com.bda.controller.ControllerListener;
+import com.bda.controller.StateEvent;
+
+public class DiagnosticActivity extends Activity implements ControllerListener
 {
+    private Controller mMogaController = Controller.getInstance( this );
+    
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
         new UserPrefs( this ).enforceLocale( this );
         setContentView( R.layout.diagnostic_activity );
+        
+        mMogaController.init();
+        mMogaController.setListener( this, new Handler() );
+    }
+    
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        mMogaController.onResume();
+    }
+    
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        mMogaController.onPause();
+    }
+    
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        mMogaController.exit();
+    }
+    
+    @Override
+    public void onStateEvent( StateEvent event )
+    {
     }
     
     @Override
@@ -77,6 +113,26 @@ public class DiagnosticActivity extends Activity
         {
             message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
         }
+        
+        TextView view = (TextView) findViewById( R.id.textKey );
+        view.setText( message );
+    }
+    
+    @Override
+    @TargetApi( 12 )
+    public void onKeyEvent( com.bda.controller.KeyEvent event )
+    {
+        int keyCode = event.getKeyCode();
+        
+        String message = "KeyEvent:";
+        message += "\nDevice: " + getHardwareSummary( AbstractProvider.getHardwareId( event ) );
+        message += "\nAction: MOGA_" + DeviceUtil.getActionName( event.getAction(), false );
+        message += "\nKeyCode: " + keyCode;
+        
+        if( AppData.IS_HONEYCOMB_MR1 )
+        {
+            message += "\n\n" + KeyEvent.keyCodeToString( keyCode );
+        }        
         
         TextView view = (TextView) findViewById( R.id.textKey );
         view.setText( message );
@@ -125,6 +181,25 @@ public class DiagnosticActivity extends Activity
             }
         }
         
+        TextView view = (TextView) findViewById( R.id.textMotion );
+        view.setText( message );
+    }
+    
+    @Override
+    public void onMotionEvent( com.bda.controller.MotionEvent event )
+    {
+        String message = "MotionEvent:";
+        message += "\nDevice: " + getHardwareSummary( AbstractProvider.getHardwareId( event ) );
+        message += "\nAction: MOGA_MOTION";
+        message += "\n";
+        // @formatter:off
+        message += String.format( "\nAXIS_X (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_X ) );
+        message += String.format( "\nAXIS_Y (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_Y ) );
+        message += String.format( "\nAXIS_Z (moga): %+.2f",        event.getAxisValue( com.bda.controller.MotionEvent.AXIS_Z ) );
+        message += String.format( "\nAXIS_RZ (moga): %+.2f",       event.getAxisValue( com.bda.controller.MotionEvent.AXIS_RZ ) );
+        message += String.format( "\nAXIS_LTRIGGER (moga): %+.2f", event.getAxisValue( com.bda.controller.MotionEvent.AXIS_LTRIGGER ) );
+        message += String.format( "\nAXIS_RTRIGGER (moga): %+.2f", event.getAxisValue( com.bda.controller.MotionEvent.AXIS_RTRIGGER ) );
+        // @formatter:on
         TextView view = (TextView) findViewById( R.id.textMotion );
         view.setText( message );
     }

@@ -22,6 +22,8 @@ package paulscode.android.mupen64plusae.persistent;
 
 import java.util.List;
 
+import com.bda.controller.Controller;
+
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -51,6 +53,7 @@ public class PlayerMapPreference extends DialogPreference implements
     private CheckBox checkBoxReminder;
     
     private String mValue = "";
+    private Controller mMogaController;
     
     public PlayerMapPreference( Context context, AttributeSet attrs )
     {
@@ -76,6 +79,16 @@ public class PlayerMapPreference extends DialogPreference implements
         showDialog( null );
     }
     
+    public void setMogaController( Controller mogaController )
+    {
+        mMogaController = mogaController;
+    }
+
+    public Controller getMogaController()
+    {
+        return mMogaController;
+    }
+
     @Override
     protected Object onGetDefaultValue( TypedArray a, int index )
     {
@@ -181,7 +194,7 @@ public class PlayerMapPreference extends DialogPreference implements
                 mMap.getDeviceSummary( context, player ) );
         String btnText = context.getString( R.string.playerMapPreference_popupUnmap );
         
-        Prompt.promptInputCode( getContext(), title, message, btnText, mUnmappableKeyCodes,
+        Prompt.promptInputCode( getContext(), mMogaController, title, message, btnText, mUnmappableKeyCodes,
                 new PromptInputCodeListener()
                 {
                     @Override

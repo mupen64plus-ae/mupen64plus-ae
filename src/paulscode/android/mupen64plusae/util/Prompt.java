@@ -24,11 +24,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bda.controller.Controller;
+
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider.OnInputListener;
 import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
+import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import android.app.AlertDialog;
@@ -438,13 +441,14 @@ public class Prompt
      * Open a dialog to prompt the user for an input code.
      * 
      * @param context            The activity context.
+     * @param moga               The MOGA controller interface.
      * @param title              The title of the dialog.
      * @param message            The message to be shown inside the dialog.
      * @param neutralButtonText  The text to be shown on the neutral button, or null.
      * @param ignoredKeyCodes    The key codes to ignore.
      * @param listener           The listener to process the input code, when provided.
      */
-    public static void promptInputCode( Context context, CharSequence title, CharSequence message,
+    public static void promptInputCode( Context context, Controller moga, CharSequence title, CharSequence message,
             CharSequence neutralButtonText, List<Integer> ignoredKeyCodes,
             final PromptInputCodeListener listener )
     {
@@ -467,6 +471,7 @@ public class Prompt
         
         // Create the input event providers
         providers.add( new KeyProvider( view, ImeFormula.DEFAULT, ignoredKeyCodes ) );
+        providers.add( new MogaProvider( moga ) );
         if( AppData.IS_HONEYCOMB_MR1 )
             providers.add( new AxisProvider( view ) );
         
