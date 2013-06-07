@@ -610,9 +610,9 @@ public class UserPrefs
             if( hResolution == 0 )
             {
                 // Native resolution
-                boolean isZoomed = scaling.equals( "zoom" );
-                videoRenderWidth = videoSurfaceWidth = isZoomed ? zoomWidth : stretchWidth;
-                videoRenderHeight = videoSurfaceHeight = isZoomed ? zoomHeight : stretchHeight;
+                boolean isStretched = scaling.equals( "stretch" );
+                videoRenderWidth = videoSurfaceWidth = isStretched ? stretchWidth : zoomWidth;
+                videoRenderHeight = videoSurfaceHeight = isStretched ? stretchHeight : zoomHeight;
             }
             else
             {
