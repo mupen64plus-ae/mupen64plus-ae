@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import javax.microedition.khronos.egl.EGL10;
 
+import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 
 import android.media.AudioFormat;
@@ -108,7 +109,7 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static void rumble( int controllerNum, boolean active )
     {
-        if( sVibrators[controllerNum] == null )
+        if( sVibrators[controllerNum] == null || OUYAInterface.IS_OUYA_HARDWARE )
             return;
         
         if( active )
