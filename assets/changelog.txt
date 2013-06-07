@@ -1,11 +1,11 @@
 [27:2.3.1]
+- Added support for MOGA Pocket/Pro via MOGA Pivot app (no menu navigation in mode A)
 - Fixed junk graphics in the margins for gles2rice video plugin
 - Added video resolution/scaling preferences
-- Fixed crash when opening zipped ROMs
-- Added support for Moga Pro controller (use controller in HID mode B)
 - Added support for Mad Catz C.T.R.L.R. controller
 - Added flicker reduction profile for Iconia B1 A71
 - Fixed crash when rumble pak selected on OUYA
+- Fixed crash when opening some zipped ROMs
 - Updated ACRA crash reporting system to 4.5.0-stable
 [26:2.3.0]
 - Added gles2glide64 video plugin (fixes broken graphics in many games)
