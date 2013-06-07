@@ -96,7 +96,6 @@
   <string name="actionResetUserPrefs_summary">Restaurar configuración por defecto</string>
   <string name="actionResetUserPrefs_popupMessage">¿Reiniciar todas las preferencias a sus valores por defecto?</string>
   <string name="actionHelp_title">Ayuda</string>
-  <string name="actionHelp_message">Mupen64Plus es desarrollado y mantenido por voluntarios.\n\nPor favor, ¡ayúdanos a mejorarlo!</string>
   <string name="actionHelp_faq">Preguntas frecuentes</string>
   <string name="actionHelp_reportbug">Reportar bug</string>
   <string name="actionAbout_title">Acerca de</string>
@@ -144,8 +143,6 @@
   <string name="inputVolumeMappable_summary">Permitir que las teclas de volumen sean asignadas a controles</string>
   <string name="inputShareController_title">Compartir mando</string>
   <string name="inputShareController_summary">Permite que un único dispositivo de entrada controle a varios jugadores al mismo tiempo</string>
-  <string name="videoStretch_title">Estirar pantalla</string>
-  <string name="videoStretch_summary">Puede afectar a la relación de aspecto</string>
   <string name="videoUseFramelimiter_title">Usar limitador de cuadros</string>
   <string name="videoUseFramelimiter_summary">Activa esta opción para un gameplay más fluido (ralentiza algunos juegos)</string>
   <string name="videoRgba8888_title">Modo RGBA_8888</string>
@@ -202,7 +199,6 @@
   <string name="videoOrientation_entryReverseLandscape">Paisaje invertido</string>
   <string name="videoOrientation_entryPortrait">Retrato</string>
   <string name="videoOrientation_entryReversePortrait">Retrato invertido</string>
-  <string name="videoPosition_title">Posicion de pantalla en modo retrato</string>
   <string name="videoPosition_entryBottom">Abajo</string>
   <string name="videoPosition_entryMiddle">En medio</string>
   <string name="videoPosition_entryTop">Arriba</string>

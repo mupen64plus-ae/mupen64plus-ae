@@ -97,7 +97,6 @@
   <string name="actionResetUserPrefs_summary">既定値にリセット</string>
   <string name="actionResetUserPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
   <string name="actionHelp_title">ヘルプ</string>
-  <string name="actionHelp_message">Mupen64Plusはボランティアによって開発され維持されます。\n\n私たちはそれを改善するために助けてください！</string>
   <string name="actionHelp_faq">よくある質問</string>
   <string name="actionHelp_reportbug">バグレポート</string>
   <string name="actionAbout_title">ついて</string>
@@ -145,8 +144,6 @@
   <string name="inputVolumeMappable_summary">コントローラのボタンとしてボリュームキーを使用</string>
   <string name="inputShareController_title">共有コントローラ</string>
   <string name="inputShareController_summary">入力デバイスは、一度に複数のプレーヤーを制御することができます。</string>
-  <string name="videoStretch_title">ストレッチ画面</string>
-  <string name="videoStretch_summary">それはスキューアスペクト比かもしれない</string>
   <string name="videoUseFramelimiter_title">フレームリミッター</string>
   <string name="videoUseFramelimiter_summary">スムーズなゲームプレイのためにこれを有効 （一部のゲームが遅くなる）</string>
   <string name="videoRgba8888_title">RGBA_8888 モード</string>
@@ -203,7 +200,6 @@
   <string name="videoOrientation_entryReverseLandscape">反転横方向</string>
   <string name="videoOrientation_entryPortrait">縦方向</string>
   <string name="videoOrientation_entryReversePortrait">反転縦方向</string>
-  <string name="videoPosition_title">肖像画の画面位置</string>
   <string name="videoPosition_entryBottom">下部</string>
   <string name="videoPosition_entryMiddle">中央</string>
   <string name="videoPosition_entryTop">上部</string>

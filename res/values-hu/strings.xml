@@ -96,7 +96,6 @@
   <string name="actionResetUserPrefs_summary">Alapértelmezett beállítások használata</string>
   <string name="actionResetUserPrefs_popupMessage">Minden beállítást az alapértelmezettre?</string>
   <string name="actionHelp_title">Segítség</string>
-  <string name="actionHelp_message">A Mupen64Plus-t önkéntesek készítették.\nKérjük segíts fejleszteni.</string>
   <string name="actionHelp_faq">GYIK</string>
   <string name="actionHelp_reportbug">Bug jelentése</string>
   <string name="actionAbout_title">Névjegy</string>
@@ -144,8 +143,6 @@
   <string name="inputVolumeMappable_summary">Hangerő gombok programozásának engedélyezése</string>
   <string name="inputShareController_title">Kontroller megosztása</string>
   <string name="inputShareController_summary">Egy beviteli eszközt több játékos is irányíthat</string>
-  <string name="videoStretch_title">Képernyő nyújtása</string>
-  <string name="videoStretch_summary">Elferdítheti a képkocka arányt</string>
   <string name="videoUseFramelimiter_title">Framelimiter használata</string>
   <string name="videoUseFramelimiter_summary">Engedélyezd a simább játékmenetért (lelassít néhány játékot)</string>
   <string name="videoRgba8888_title">RGBA_8888 mód</string>
@@ -194,7 +191,6 @@
   <string name="videoOrientation_entryReverseLandscape">Fordított elforgatott</string>
   <string name="videoOrientation_entryPortrait">Portré</string>
   <string name="videoOrientation_entryReversePortrait">Fordított portré</string>
-  <string name="videoPosition_title">Portré képernyő pozíciója</string>
   <string name="videoPosition_entryBottom">Alul</string>
   <string name="videoPosition_entryMiddle">Középen</string>
   <string name="videoPosition_entryTop">Felül</string>

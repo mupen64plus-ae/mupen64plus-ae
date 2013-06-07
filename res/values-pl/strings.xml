@@ -97,7 +97,6 @@
   <string name="actionResetUserPrefs_summary">Przywróc ustawienia domyślne</string>
   <string name="actionResetUserPrefs_popupMessage">Przywrócić wszystkie ustawienia do ich domyślnego stanu?</string>
   <string name="actionHelp_title">Pomoc</string>
-  <string name="actionHelp_message">Mupen64Plus jest rozwijany i utrzymywany przez ochotników.\n\nProsimy, pomóź nam go usprawniać!</string>
   <string name="actionHelp_faq">FAQ</string>
   <string name="actionHelp_reportbug">Zgłoś błąd</string>
   <string name="actionAbout_title">O aplikacji</string>
@@ -145,8 +144,6 @@
   <string name="inputVolumeMappable_summary">Pozwól na przypisanie przycisków głośności</string>
   <string name="inputShareController_title">Współdzielenie kontrolera</string>
   <string name="inputShareController_summary">Pozwól jednemu kontrolerowi na kontrolowanie kilku graczy jednocześnie</string>
-  <string name="videoStretch_title">Rozciągnij ekran</string>
-  <string name="videoStretch_summary">Może wpłynąć na proporcje obrazu</string>
   <string name="videoUseFramelimiter_title">Użyj ograniczenia klatek</string>
   <string name="videoUseFramelimiter_summary">Włącz by zapewnić większą płynność gier (może powodować spowolnienia w niektórych grach)</string>
   <string name="videoRgba8888_title">Tryb RGBA_8888</string>
@@ -203,7 +200,6 @@
   <string name="videoOrientation_entryReverseLandscape">Odwrócony poziomo</string>
   <string name="videoOrientation_entryPortrait">Pionowa</string>
   <string name="videoOrientation_entryReversePortrait">Odwrócony pionowo</string>
-  <string name="videoPosition_title">Pionowa orientacja ekranu</string>
   <string name="videoPosition_entryBottom">Dół</string>
   <string name="videoPosition_entryMiddle">Środek</string>
   <string name="videoPosition_entryTop">Góra</string>

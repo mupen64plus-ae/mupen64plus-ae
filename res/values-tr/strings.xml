@@ -96,7 +96,6 @@
   <string name="actionResetUserPrefs_summary">Varsayılan ayarları geri yükle</string>
   <string name="actionResetUserPrefs_popupMessage">Tüm tercihleri varsayılanlara çek?</string>
   <string name="actionHelp_title">Yardım</string>
-  <string name="actionHelp_message">Mupen64Plus gönüllüler tarafından geliştiriliyor ve sürdürülüyor.\n \n Lütfen geliştirmemize yardım edin!</string>
   <string name="actionHelp_faq">SSS</string>
   <string name="actionHelp_reportbug">Hata raporla</string>
   <string name="actionAbout_title">Hakkında</string>
@@ -144,8 +143,6 @@
   <string name="inputVolumeMappable_summary">Ses tuşlarının denetimler için haritalanmasına izin ver</string>
   <string name="inputShareController_title">Kumandayı paylaş</string>
   <string name="inputShareController_summary">Tek bir girdi aygıtının aynı anda birden fazla oyuncuyu kontrol etmesine izin ver</string>
-  <string name="videoStretch_title">Ekranı uzat</string>
-  <string name="videoStretch_summary">Görüş oranına uymayabilir</string>
   <string name="videoUseFramelimiter_title">Kare sabitleyici kullan</string>
   <string name="videoUseFramelimiter_summary">Akıcı bir oynayış için etkinleştirin (bazı oyunları yavaşlatır)</string>
   <string name="videoRgba8888_title">RGBA_8888 modu</string>
@@ -202,7 +199,6 @@
   <string name="videoOrientation_entryReverseLandscape">Ters Manzara</string>
   <string name="videoOrientation_entryPortrait">Portre</string>
   <string name="videoOrientation_entryReversePortrait">Ters portre</string>
-  <string name="videoPosition_title">Portre ekran konumu</string>
   <string name="videoPosition_entryBottom">Alt</string>
   <string name="videoPosition_entryMiddle">Orta</string>
   <string name="videoPosition_entryTop">Üst</string>

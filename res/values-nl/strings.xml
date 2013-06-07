@@ -97,7 +97,6 @@
   <string name="actionResetUserPrefs_summary">Herstel standaardinstellingen</string>
   <string name="actionResetUserPrefs_popupMessage">Alle voorkeuren naar standaardwaarden terugzetten?</string>
   <string name="actionHelp_title">Help</string>
-  <string name="actionHelp_message">Mupen64Plus wordt ontwikkeld en onderhouden door vrijwilligers.⏎ ⏎ Help ons alstublieft het te verbeteren!</string>
   <string name="actionHelp_faq">Veelgestelde vragen</string>
   <string name="actionHelp_reportbug">Meld bug</string>
   <string name="actionAbout_title">Over</string>
@@ -145,8 +144,6 @@
   <string name="inputVolumeMappable_summary">Sta het toe om volumeknoppen toe te wijzen</string>
   <string name="inputShareController_title">Deel controller</string>
   <string name="inputShareController_summary">Laat meerdere spelers besturen met 1 invoerapparaat</string>
-  <string name="videoStretch_title">Scherm oprekken</string>
-  <string name="videoStretch_summary">Kan beeldverhouding verstoren</string>
   <string name="videoUseFramelimiter_title">Limiteer beeldverversing</string>
   <string name="videoUseFramelimiter_summary">Schakel in voor vloeiender spelen (vertraagt sommige spellen)</string>
   <string name="videoRgba8888_title">RGBA_8888 modus</string>
@@ -203,7 +200,6 @@
   <string name="videoOrientation_entryReverseLandscape">Omgekeerd landschap</string>
   <string name="videoOrientation_entryPortrait">Portet</string>
   <string name="videoOrientation_entryReversePortrait">Omgekeerd portret</string>
-  <string name="videoPosition_title">Schermpositie in portretstand</string>
   <string name="videoPosition_entryBottom">Onderkant</string>
   <string name="videoPosition_entryMiddle">Midden</string>
   <string name="videoPosition_entryTop">Bovenkant</string>

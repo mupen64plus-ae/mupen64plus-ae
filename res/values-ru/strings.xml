@@ -82,7 +82,6 @@
   <string name="actionResetUserPrefs_summary">Восстановить настройки по умолчанию</string>
   <string name="actionResetUserPrefs_popupMessage">Сбросить настройки на дефолтные?</string>
   <string name="actionHelp_title">Помощь</string>
-  <string name="actionHelp_message">Mupen64Plus разрабатывается добровольцами.\n\nВнесите свой вклад!</string>
   <string name="actionHelp_faq">ЧАВО</string>
   <string name="actionHelp_reportbug">Сообщить об ошибке</string>
   <string name="actionAbout_title">О программе</string>
@@ -129,8 +128,6 @@
   <string name="inputVolumeMappable_summary">Разрешить переназначение кнопок управления звуком</string>
   <string name="inputShareController_title">Совместное использование контроллера</string>
   <string name="inputShareController_summary">Разрешить одному устройству ввода управлять несколькими игроками сразу</string>
-  <string name="videoStretch_title">Растянуть экран</string>
-  <string name="videoStretch_summary">Можно искажать соотношение сторон</string>
   <string name="videoUseFramelimiter_title">Ограничить FPS</string>
   <string name="videoUseFramelimiter_summary">Плавнее, но ниже FPS</string>
   <string name="videoRgba8888_title">Режим RGBA_8888</string>

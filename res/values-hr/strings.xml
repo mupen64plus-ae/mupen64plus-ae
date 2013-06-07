@@ -97,7 +97,6 @@
   <string name="actionResetUserPrefs_summary">Vraćanje postavki na zadano</string>
   <string name="actionResetUserPrefs_popupMessage">Resetirati sve postavke na zadano?</string>
   <string name="actionHelp_title">Pomoć</string>
-  <string name="actionHelp_message">Mupen64Plus je razvijen i održavan od strane volontera.\n\nPomozite nam ga poboljšati!</string>
   <string name="actionHelp_faq">FAQ</string>
   <string name="actionHelp_reportbug">Prijava greške</string>
   <string name="actionAbout_title">O programu</string>
@@ -145,8 +144,6 @@
   <string name="inputVolumeMappable_summary">Tipke za glasnoću zvuka će se moći označiti za kontrolu</string>
   <string name="inputShareController_title">Podjela kontrolera</string>
   <string name="inputShareController_summary">Dozvoljava upravljanje sa više igrača na jednom kontroleru</string>
-  <string name="videoStretch_title">Proširi ekran</string>
-  <string name="videoStretch_summary">Može iskriviti omjer reza</string>
   <string name="videoUseFramelimiter_title">Koristi framelimiter</string>
   <string name="videoUseFramelimiter_summary">Omogućiti za glađe igranje (usporava neke igre)</string>
   <string name="videoRgba8888_title">RGBA_8888</string>
@@ -203,7 +200,6 @@
   <string name="videoOrientation_entryReverseLandscape">Obrnuti pejzaž</string>
   <string name="videoOrientation_entryPortrait">Portret</string>
   <string name="videoOrientation_entryReversePortrait">Obrnuti portret</string>
-  <string name="videoPosition_title">Portretna pozicija ekrana</string>
   <string name="videoPosition_entryBottom">Dno</string>
   <string name="videoPosition_entryMiddle">Sredina</string>
   <string name="videoPosition_entryTop">Vrh</string>

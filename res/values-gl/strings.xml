@@ -82,7 +82,6 @@
   <string name="actionResetUserPrefs_summary">Restaurar axustes predefinidos</string>
   <string name="actionResetUserPrefs_popupMessage">Restablecer todas as preferencias ao predefinido?</string>
   <string name="actionHelp_title">Axuda</string>
-  <string name="actionHelp_message">Mupen64Plus é desenvolvido e mantido por voluntarios.\n\nPor favor, axúdanos a melloralo!</string>
   <string name="actionHelp_faq">Preguntas habituais</string>
   <string name="actionHelp_reportbug">Informar de bug</string>
   <string name="actionAbout_title">Acerca de</string>
@@ -126,8 +125,6 @@
   <string name="inputVolumeMappable_summary">Permitir que as teclas de volume sexan asignables aos controis</string>
   <string name="inputShareController_title">Compartir mando</string>
   <string name="inputShareController_summary">Permite que un único dispositivo controle múltiples xogadores ao mesmo tempo</string>
-  <string name="videoStretch_title">Estirar pantalla</string>
-  <string name="videoStretch_summary">Pode distorsionar a relación de aspecto</string>
   <string name="videoUseFramelimiter_title">Usar limitador de cadros</string>
   <string name="videoUseFramelimiter_summary">Activar para un xogo máis fluído (atrasa algúns xogos)</string>
   <string name="videoRgba8888_title">Modo RGBA_8888</string>
