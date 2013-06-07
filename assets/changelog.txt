@@ -5,6 +5,7 @@
 - Added support for Moga Pro controller (use controller in HID mode B)
 - Added support for Mad Catz C.T.R.L.R. controller
 - Added flicker reduction profile for Iconia B1 A71
+- Fixed crash when rumble pak selected on OUYA
 - Updated ACRA crash reporting system to 4.5.0-stable
 [26:2.3.0]
 - Added gles2glide64 video plugin (fixes broken graphics in many games)
