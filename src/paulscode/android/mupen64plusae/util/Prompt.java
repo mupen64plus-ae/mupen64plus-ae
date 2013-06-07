@@ -151,13 +151,16 @@ public class Prompt
     public interface PromptInputCodeListener
     {
         /**
-         * Process the input code provided by the user.
+         * Called when the dialog is dismissed and should be used to process the input code
+         * provided by the user.
          * 
-         * @param inputCode The input code provided by the user, or 0 if the user clicks the
-         * dialog's positive button.
-         * @param hardwareId The identifier of the source device.
+         * @param inputCode The input code provided by the user, or 0 if the user clicks one of
+         * the dialog's buttons.
+         * @param hardwareId The identifier of the source device, or 0 if the user clicks one of
+         * the dialog's buttons.
+         * @param which The DialogInterface button pressed by the user.
          */
-        public void onInputCode( int inputCode, int hardwareId );
+        public void onDialogClosed( int inputCode, int hardwareId, int which );
     }
     
     /**
@@ -437,14 +440,16 @@ public class Prompt
      * @param context            The activity context.
      * @param title              The title of the dialog.
      * @param message            The message to be shown inside the dialog.
-     * @param positiveButtonText The text to be shown on the positive button, or null.
+     * @param neutralButtonText  The text to be shown on the neutral button, or null.
      * @param ignoredKeyCodes    The key codes to ignore.
      * @param listener           The listener to process the input code, when provided.
      */
     public static void promptInputCode( Context context, CharSequence title, CharSequence message,
-            CharSequence positiveButtonText, List<Integer> ignoredKeyCodes,
+            CharSequence neutralButtonText, List<Integer> ignoredKeyCodes,
             final PromptInputCodeListener listener )
     {
+        final ArrayList<AbstractProvider> providers = new ArrayList<AbstractProvider>();
+        
         // Create a widget to dispatch key/motion event data
         FrameLayout view = new FrameLayout( context );
         ImageView image = new ImageView( context );
@@ -460,20 +465,27 @@ public class Prompt
         view.setFocusableInTouchMode( true );
         view.requestFocus();
         
+        // Create the input event providers
+        providers.add( new KeyProvider( view, ImeFormula.DEFAULT, ignoredKeyCodes ) );
+        if( AppData.IS_HONEYCOMB_MR1 )
+            providers.add( new AxisProvider( view ) );
+        
         // Notify the client when the user clicks the dialog's positive button
         DialogInterface.OnClickListener clickListener = new OnClickListener()
         {
             @Override
             public void onClick( DialogInterface dialog, int which )
             {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                    listener.onInputCode( 0, 0 );
+                for( AbstractProvider provider : providers )
+                    provider.unregisterAllListeners();
+                listener.onDialogClosed( 0, 0, which );
             }
         };
         
         // Create the dialog, customizing the view and button text in the process
         final AlertDialog dialog = prefillBuilder( context, title, message, clickListener )
-                .setPositiveButton( positiveButtonText, clickListener ).setView( view ).create();
+                .setNeutralButton( neutralButtonText, clickListener ).setPositiveButton( null, null )
+                .setView( view ).create();
         
         OnInputListener inputListener = new OnInputListener()
         {
@@ -506,19 +518,17 @@ public class Prompt
             {
                 if( inputCode != 0 && strength > AbstractProvider.STRENGTH_THRESHOLD )
                 {
-                    listener.onInputCode( inputCode, hardwareId );
+                    for( AbstractProvider provider : providers )
+                        provider.unregisterAllListeners();
+                    listener.onDialogClosed( inputCode, hardwareId, DialogInterface.BUTTON_POSITIVE );
                     dialog.dismiss();
                 }
             }
         };
         
-        // Connect the upstream key event listener
-        new KeyProvider( view, ImeFormula.DEFAULT, ignoredKeyCodes )
-                .registerListener( inputListener );
-        
-        // Connect the upstream motion event listener
-        if( AppData.IS_HONEYCOMB_MR1 )
-            new AxisProvider( view ).registerListener( inputListener );
+        // Connect the upstream event listeners
+        for( AbstractProvider provider : providers )
+            provider.registerListener( inputListener );
         
         // Launch the dialog
         dialog.show();

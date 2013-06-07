@@ -524,14 +524,17 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 mUnmappableInputCodes, new PromptInputCodeListener()
                 {
                     @Override
-                    public void onInputCode( int inputCode, int hardwareId )
+                    public void onDialogClosed( int inputCode, int hardwareId, int which )
                     {
-                        if( inputCode == 0 )
-                            mMap.unmapCommand( index );
-                        else
-                            mMap.map( inputCode, index );
-                        mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
-                        refreshAllButtons();
+                        if( which != DialogInterface.BUTTON_NEGATIVE )
+                        {
+                            if( which == DialogInterface.BUTTON_POSITIVE )
+                                mMap.map( inputCode, index );
+                            else
+                                mMap.unmapCommand( index );
+                            mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
+                            refreshAllButtons();
+                        }
                     }
                 } );
     }

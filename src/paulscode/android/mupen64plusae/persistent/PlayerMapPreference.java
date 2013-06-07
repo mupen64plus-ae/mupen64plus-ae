@@ -185,13 +185,16 @@ public class PlayerMapPreference extends DialogPreference implements
                 new PromptInputCodeListener()
                 {
                     @Override
-                    public void onInputCode( int inputCode, int hardwareId )
+                    public void onDialogClosed( int inputCode, int hardwareId, int which )
                     {
-                        if( inputCode == 0 )
-                            mMap.unmapPlayer( player );
-                        else
-                            mMap.map( hardwareId, player );
-                        updateViews();
+                        if( which != DialogInterface.BUTTON_NEGATIVE )
+                        {
+                            if( which == DialogInterface.BUTTON_POSITIVE )
+                                mMap.map( hardwareId, player );
+                            else
+                                mMap.unmapPlayer( player );
+                            updateViews();
+                        }
                     }
                 } );
     }
