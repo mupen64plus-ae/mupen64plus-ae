@@ -33,13 +33,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
 /**
  * A convenience class for retrieving and persisting data defined internally by the application.
@@ -149,9 +146,6 @@ public class AppData
     /** Whether the installation is valid. */
     public final boolean isValidInstallation;
     
-    /** The usable size of the screen, in pixels, not including the window decor. */
-    public final Point maxScreenSize;
-    
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
     
@@ -238,22 +232,6 @@ public class AppData
                 libraryExists( "SDL2" )             &&
                 libraryExists( "xperia-touchpad" );
         // @formatter:on
-        
-        // Screen size
-        final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        if( display == null )
-        {
-            maxScreenSize = new Point( 0,0 );
-        }
-        else
-        {
-            @SuppressWarnings( "deprecation" )
-            int l1 = display.getWidth();
-            @SuppressWarnings( "deprecation" )
-            int l2 = display.getHeight();
-            maxScreenSize = l1 > l2 ? new Point( l1, l2 ) : new Point( l2, l1 );
-        }
         
         // Preference object for persisting app data
         String appDataFilename = packageName + "_appdata";

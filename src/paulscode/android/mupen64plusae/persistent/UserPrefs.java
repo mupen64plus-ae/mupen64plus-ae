@@ -46,8 +46,10 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 
 /**
  * A convenience class for quickly, safely, and consistently retrieving typed user preferences.
@@ -353,6 +355,7 @@ public class UserPrefs
      * 
      * @param context The application context.
      */
+    @SuppressWarnings( "deprecation" )
     @SuppressLint( "InlinedApi" )
     public UserPrefs( Context context )
     {
@@ -595,10 +598,11 @@ public class UserPrefs
         
         // Determine the pixel dimensions of the rendering context and view surface
         {
-            boolean isLandscape = videoOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                    || videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-            int stretchWidth = isLandscape ? appData.maxScreenSize.x : appData.maxScreenSize.y;
-            int stretchHeight = isLandscape ? appData.maxScreenSize.y : appData.maxScreenSize.x;
+            // Screen size
+            final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
+            Display display = windowManager.getDefaultDisplay();
+            int stretchWidth = display == null ? 0 : display.getWidth();
+            int stretchHeight = display == null ? 0 : display.getHeight();
             
             float aspect = 0.75f; // TODO: Handle PAL
             boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;

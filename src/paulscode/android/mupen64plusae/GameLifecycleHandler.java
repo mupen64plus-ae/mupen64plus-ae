@@ -145,8 +145,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         // Set the screen orientation
         mActivity.setRequestedOrientation( mUserPrefs.videoOrientation );
         
-        // If the orientation changes, the screensize info changes, so we refresh data/prefs
-        mAppData = new AppData( mActivity );
+        // If the orientation changes, the screensize info changes, so we must refresh dependencies
         mUserPrefs = new UserPrefs( mActivity );
     }
     
