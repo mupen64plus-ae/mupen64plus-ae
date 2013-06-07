@@ -29,7 +29,7 @@ In order to avoid potential copyright issues related to game screenshots, I've d
 This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
 
 XPERIA PLAY OPTIMERAD
-Analog ingång från pekplattan!
+Analog input från touchskärm!
 
 BEHÖRIGHETER
 Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.

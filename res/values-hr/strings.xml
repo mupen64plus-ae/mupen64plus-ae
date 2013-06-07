@@ -45,6 +45,7 @@
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
+  <string name="menuItem_deadzone">Mrtva zona</string>
   <string name="menuItem_specialVisibility_show">Prikaži specijalne funkcije</string>
   <string name="menuItem_specialVisibility_hide">Sakrij specijalne funkcije</string>
   <string name="menuItem_axisInfo">Analog info</string>
@@ -182,9 +183,17 @@
   <string name="touchscreenRefresh_entryNever">Nikad</string>
   <string name="touchscreenRefresh_entryOccasionally">Nekad</string>
   <string name="touchscreenRefresh_entryFrequently">Često</string>
+  <string name="touchscreenStyle_title">Izgled tipki</string>
+  <string name="touchscreenStyle_entryOutline">Obris</string>
+  <string name="touchscreenStyle_entryShaded">Osjenčan</string>
+  <string name="touchscreenHeight_title">Vertikalni razmak tipki</string>
+  <string name="touchscreenHeight_entryAuto">Automatski</string>
+  <string name="touchscreenHeight_entryFullHeight">Potpuno</string>
+  <string name="touchscreenHeight_entryHalfHeight">Polovično</string>
   <string name="touchscreenLayout_title">Raspored dodirnog ekrana</string>
   <string name="touchscreenLayout_entryAnalog">Analog (autor \"roymustang16\")</string>
   <string name="touchscreenLayout_entryDigital">Digital (autor \"roymustang16\")</string>
+  <string name="touchscreenLayout_entryAll">Oboje (autor \"roymustang16\")</string>
   <string name="touchscreenLayout_entryCustom">Korisnički (pogledati http://tinyurl.com/984ofyo)</string>
   <string name="touchpadLayout_title">Raspored dodirne površine</string>
   <string name="touchpadLayout_entryDefault">Lijeva strana: Analogna kontrola; Desna strana: C tipke</string>
@@ -254,13 +263,21 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (najkvalitetnije)</string>
   <string name="pluginVideo_title">Grafika</string>
   <string name="pluginVideo_entryNone">Nema (grafika isključena)</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64⏎\n<small>(adaptacija: GLN64 v0.4.1)</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice⏎\n<small>(adaptatcija: Rice Video v6.1.0(b))</small></string>
+  <string name="pluginVideo_entryGles2Glide64">gles2glide64⏎\n<small>(adaptacija: Glide64 Final (10. godišnjica))</small></string>
   <string name="pluginAudio_title">Zvuk</string>
   <string name="pluginAudio_entryNone">Nema (zvuk isključen)</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v1.99.5</string>
   <string name="pluginInput_title">Kontroler</string>
   <string name="pluginInput_entryNone">Nema (kontroler isključen)</string>
+  <string name="pluginInput_entryAndroid">input-android</string>
   <string name="pluginRsp_title">RSP</string>
   <string name="pluginRsp_entryNone">Nema (RSP isključen)</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v1.99.5</string>
+  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v1.99.5\n<small>(bez zvuka, brže)</small></string>
   <string name="pluginCore_title">Izvorni tip emulacije</string>
+  <string name="pluginCore_entryV110">mupen64plus-core, v1.99.5</string>
   <string name="r4300Emulator_title">R4300 emulator</string>
   <string name="r4300Emulator_entryPureInterpreter">Čisti interpretator</string>
   <string name="r4300Emulator_entryCachedInterpreter">Priručni interpretator</string>
@@ -279,6 +296,7 @@
   <string name="acraUserEmail_summary">Vaše paulscode.com korisničko ime (nije potrebno)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Prozirnost</string>
+  <string name="touchscreenScale_title">Razmjer tipki</string>
   <string name="videoActionBarTransparency_title">Vidljivost naredbenog izbornika</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
@@ -317,6 +335,8 @@
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Što je novo?</string>
   <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">Upozorenje</string>
+  <string name="invalidInstall_message">Mupen64 Plus AE se možda nije ispravno instalirao. Pokušajte ponovno instalirati aplikaciju u slučaju da dođe do grešaka.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ime datoteke</string>
   <!--Asset Extractor-->

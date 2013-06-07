@@ -24,17 +24,17 @@ OVA APLIKACIJA NE SADRŽAVA ROM-OVE IGARA
 
 Mupen64Plus, Android Edition (AE) je N64 emulator za Android. Trenutno je u stanju testiranja, što znači da još uvijek nije dovršen. Tu još uvijek postoji veliki broj grafičkih i zvučnih grešaka, čak i na modernim uređajima. Posjetite www.paulscode.com ako želite pomoći u ispitivanju i razvijanju programa.
 
-In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
+Za izbjegavanje kršenja autorskih prava, koriste se slike sa igrama i demonstracijama koje su pod javnom domenom. U slučaju povlačenja aplikacije iz Play Trgovine, još uvijek će biti moguće besplatno preuzimanje budućih ažuriranja na paulscode.com.
 
-This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
+Aplikacija je licencirana pod GNU GPL v3, a cijeli izvorni kod je dostupan na javnom GIT spemištu: https://github.com/paulscode/mupen64plus-ae . U slučaju da netko od razvijatelja želi pristup pisanja u spremištu ili treba pomoć oko granjanja projekta, kontaktirajte autora na forumu (Paul).
 
 OPTIMIZIRANO ZA XPERIA PLAY
 - Analogni unos preko dodirne površine!
 
-PERMISSIONS
-Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
-Write External Storage - The device storage is used for writing savegames and custom input profiles.
-Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
+DOZVOLE
+Puni Mrežni Pristup - Internet služi za slanje prijava za rušenje. Ne preuzima nikakav zlonamjeran sadržaj niti reklame i ne sakupljava privatne podatke. Primjenuju se normalne brzine prijenosa podataka.
+Izmjena ili brisanje sadržaja USB pohrane - Podatkovni prostor uređaja služi za spremište igara i korisničko napravljenih profila za unos.
+Upravljanje Vibracijom - Ako ga vaš uređaj podržava, vibracija se koristi u emulaciji Rumble Pak-a i za tipke pri dodiru.
 
 UVODNI POSTUPCI
 - Prebacite svoje ROM-ove bilo gdje na SD kartici ili memoriji uređaja
