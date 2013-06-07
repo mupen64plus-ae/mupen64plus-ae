@@ -121,6 +121,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         int currVer = mAppData.appVersionCode;
         if( lastVer != currVer )
         {
+            // First run after install/update, greet user with changelog, then help dialog
+            actionHelp();            
             ChangeLog log = new ChangeLog( getAssets() );
             if( log.show( this, lastVer + 1, currVer ) )
             {
@@ -399,8 +401,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private void actionHelp()
     {
-        String title = getString( R.string.actionHelp_title );
-        String message = getString( R.string.actionHelp_message );
+        CharSequence title = getText( R.string.actionHelp_title );
+        CharSequence message = getText( R.string.actionHelp_message );
         String faq = getString( R.string.actionHelp_faq );
         String bug = getString( R.string.actionHelp_reportbug );
         OnClickListener listener = new OnClickListener()

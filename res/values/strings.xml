@@ -115,7 +115,7 @@
     <string name="actionResetUserPrefs_summary">Restore default settings</string>
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?</string>
     <string name="actionHelp_title">Help</string>
-    <string name="actionHelp_message">Mupen64Plus is developed and maintained by volunteers.\n\nPlease help us improve it!</string>
+    <string name="actionHelp_message">Mupen64Plus is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the video plugin.\n\nTo fix lag, try changing the video frameskip setting or the video plugin.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the button size or layout.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.</small>\n\nThank you for helping us improve the app!</string>
     <string name="actionHelp_faq">FAQ</string>
     <string name="actionHelp_reportbug">Report bug</string>
     <string name="actionAbout_title">About</string>
