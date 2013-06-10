@@ -32,6 +32,7 @@ import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -169,10 +170,6 @@ public class PeripheralController extends AbstractController implements
         boolean keyDown = strength > AbstractProvider.STRENGTH_THRESHOLD;
         int n64Index = mInputMap.get( inputCode );
         
-        // Rescale strength to account for deadzone
-        strength = ( strength - mDeadzoneFraction ) / ( 1f - mDeadzoneFraction );
-        strength = Utility.clamp( strength, 0f, 1f );
-        
         if( n64Index >= 0 && n64Index < NUM_N64_BUTTONS )
         {
             mState.buttons[n64Index] = keyDown;
@@ -198,9 +195,30 @@ public class PeripheralController extends AbstractController implements
                     return false;
             }
             
-            // Update the net position of the analog stick
-            mState.axisFractionX = mStrengthXpos - mStrengthXneg;
-            mState.axisFractionY = mStrengthYpos - mStrengthYneg;
+            // Calculate the net position of the analog stick
+            float rawX = mStrengthXpos - mStrengthXneg;
+            float rawY = mStrengthYpos - mStrengthYneg;
+            float magnitude = FloatMath.sqrt( ( rawX * rawX ) + ( rawY * rawY ) );
+            
+            // Update controller state
+            if( magnitude > mDeadzoneFraction )
+            {
+                // Normalize the vector
+                float normalizedX = rawX / magnitude;
+                float normalizedY = rawY / magnitude;
+
+                // Rescale strength to account for deadzone
+                magnitude = ( magnitude - mDeadzoneFraction ) / ( 1f - mDeadzoneFraction );
+                magnitude = Utility.clamp( magnitude, 0f, 1f );
+                mState.axisFractionX = normalizedX * magnitude;
+                mState.axisFractionY = normalizedY * magnitude;
+            }
+            else
+            {
+                // In the deadzone 
+                mState.axisFractionX = 0;
+                mState.axisFractionY = 0;
+            }
         }
         else if( keyDown )
         {
