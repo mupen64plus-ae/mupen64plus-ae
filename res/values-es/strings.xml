@@ -45,6 +45,7 @@
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
+  <string name="menuItem_deadzone">Zona de Muerte</string>
   <string name="menuItem_specialVisibility_show">Mostrar funciones especiales</string>
   <string name="menuItem_specialVisibility_hide">Ocultar funciones especiales</string>
   <string name="menuItem_axisInfo">Información analógica</string>
@@ -202,6 +203,15 @@
   <string name="videoPosition_entryBottom">Abajo</string>
   <string name="videoPosition_entryMiddle">En medio</string>
   <string name="videoPosition_entryTop">Arriba</string>
+  <string name="videoResolution_title">Resolución renderendizada</string>
+  <string name="videoResolution_entryNative">Nativo (mejor calidad)</string>
+  <string name="videoResolution_entry960x720">960 X 720</string>
+  <string name="videoResolution_entry800x600">800 X 600</string>
+  <string name="videoResolution_entry640x480">640 X 480</string>
+  <string name="videoResolution_entry480x360">480 X 360</string>
+  <string name="videoResolution_entry320x240">320 X 240</string>
+  <string name="videoResolution_entry160x120">160 x 120 (mayor FPS)</string>
+  <string name="videoScaling_title">Tamaño de la pantalla</string>
   <string name="videoFpsRefresh_title">Mostrar velocidad de cuadros</string>
   <string name="videoFpsRefresh_entryNever">Nunca</string>
   <string name="videoFpsRefresh_entryOccasionally">Ocasionalmente</string>

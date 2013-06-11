@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--Input Mapping Activity-->
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_rebuildingCheats">Ombyggnad fusk databas...</string>
+  <string name="toast_launchingEmulator">Startar emulator...</string>
+  <string name="toast_loadingSession">Auto-återupptar spelet...</string>
+  <string name="toast_savingSession">Auto-spara spel...</string>
+  <string name="toast_loadingSlot">Laddar slot %1$d...</string>
+  <string name="toast_savingSlot">Sparar slot %1$d...</string>
+  <string name="toast_loadingFile">Laddar %1$s...</string>
+  <string name="toast_savingFile">Sparar %1$s...</string>
+  <string name="toast_overwritingFile">Skriver över %1$s...</string>
+  <!--Something happened (use '.')-->
+  <string name="toast_usingSlot">Använder nu slot %1$d.</string>
+  <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
+  <string name="toast_crashReportSent">Rapport skickad.</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionPlay_title">Spela</string>
+  <string name="actionResume_title">Återuppta</string>
+  <string name="actionResume_summary">Oförutsägbar om fusk används</string>
+  <string name="actionRestart_title">Starta om</string>
+  <string name="actionRestart_summary">Rekommenderad om fusk används</string>
+  <string name="actionDeviceInfo_title">Enhets info</string>
+  <string name="actionDeviceInfo_summary">Enhets hårdvaru och modell information</string>
+  <string name="actionControllerInfo_title">Kontroll info</string>
+  <string name="actionControllerDiagnostics_title">Kontroll diagnostik</string>
+  <string name="actionMigrateSlotSaves_title">Emigrera sparfiler</string>
+  <string name="actionMigrateSlotSaves_summary">Kopiera dina sparfiler från den gamla appen till denna</string>
+  <string name="actionReloadAssets_title">Ladda om app resurser</string>
+  <string name="actionReloadAssets_summary">Påverkar INTE användarinställningar, ROMs, sparfiler, eller andra egna data</string>
+  <string name="actionCrashTest_title">Test</string>
+  <string name="actionCrashTest_summary">Skicka en konfiguration rapport till utvecklarna</string>
+  <string name="actionResetUserPrefs_title">Ladda om</string>
+  <string name="actionResetUserPrefs_summary">Återställa standardinställningar</string>
+  <string name="actionResetUserPrefs_popupMessage">Återställ alla inställningar till standardinställningarna?</string>
+  <string name="actionHelp_title">Hjälp</string>
+  <string name="actionHelp_faq">FAQ</string>
+  <string name="actionHelp_reportbug">Rapportera bugg</string>
+  <string name="actionAbout_title">Om</string>
+  <string name="actionAbout_message">Version: %1$s⏎\nVersion kod: %2$d</string>
+  <string name="actionAbout_credits">krediter</string>
+  <string name="actionAbout_changelog">Ändringslogg</string>
+  <!--Preference Screens-->
+  <string name="screenSettings_title">Inställningar</string>
+  <string name="screenInput_title">ingång</string>
+  <string name="screenInput_summary">Kontroll inställningar</string>
+  <string name="screenTouchscreen_title">Touchskärm</string>
+  <string name="screenTouchscreen_summary">On-screen kontroll inställningar</string>
+  <string name="screenTouchpad_title">Pekplatta</string>
+  <string name="screenTouchpad_summary">Xperia PLAY inställningar</string>
+  <string name="screenVideo_title">Video</string>
+  <string name="screenVideo_summary">Grafik inställningar</string>
+  <string name="screenAudio_title">Ljud</string>
+  <string name="screenAudio_summary">Ljud inställningar</string>
+  <string name="screenPlugin_title">Plug-ins</string>
+  <string name="screenPlugin_summary">Core inställningar</string>
+  <string name="screenAdvanced_title">Avancerat</string>
+  <string name="screenAdvanced_summary">Lagring och debug inställningar</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Fusk alternativ (håll in för beskrivning)</string>
+  <string name="categoryHardware_title">Hårdvara</string>
+  <string name="categoryOther_title">Andra</string>
+  <string name="categorySinglePlayer_title">Spelare 1</string>
+  <string name="categoryMultiPlayer_title">Multi-player</string>
+  <string name="categoryGles2N64_title">GLES2N64 inställningar</string>
+  <string name="categoryGles2Rice_title">GLES2Rice inställningar</string>
+  <string name="categoryData_title">Data</string>
+  <string name="categoryCrashReports_title">Felrapporter</string>
+  <!--Checkbox Preferences-->
+  <string name="touchscreenEnabled_title">Aktivera touchskärm</string>
+  <string name="touchpadEnabled_title">Aktivera pekplatta</string>
+  <string name="inputOctagonConstraints_title">Octagonal joystick gränser</string>
+  <string name="inputOctagonConstraints_summary">Begränsa analog rörelse till en oktagon, som en riktig N64 controller</string>
+  <string name="inputVolumeMappable_title">Mappable volymknapparna</string>
+  <string name="inputVolumeMappable_summary">Tillåt volymknapparna at bli mappade till kontroller</string>
+  <string name="inputShareController_title">Dela controller</string>
+  <string name="inputShareController_summary">Låt en enda inmatningsenhet för att styra flera spelare på gång</string>
+  <string name="videoUseFramelimiter_title">Använd framelimiter</string>
+  <string name="videoUseFramelimiter_summary">Aktivera för smidigare gameplay (saktar vissa spel)</string>
+  <string name="videoRgba8888_title">RGBA_8888 läge</string>
+  <string name="videoRgba8888_summary">Förbättrar grafik på vissa anordningar</string>
+  <string name="gles2N64Fog_title">Dimma</string>
+  <string name="gles2N64Fog_summary">(behövs arbete)</string>
+  <string name="gles2N64Sai_title">2xSaI textur filter</string>
+  <string name="gles2N64Sai_summary">Minskar textur bildpunktuppdelning</string>
+  <string name="gles2N64ScreenClear_title">Tving skärm klarning</string>
+  <string name="gles2N64ScreenClear_summary">Inaktivera för hastighet (kan orsaka video buggar)</string>
+  <string name="gles2N64AlphaTest_title">Alpha test</string>
+  <string name="gles2N64AlphaTest_summary">Inaktivera för hastighet (kan orsaka svarta texturer)</string>
+  <string name="gles2N64DepthTest_title">Djup test</string>
+  <string name="gles2N64DepthTest_summary">Inaktivera för hastighet (orsakar blinkande bakgrund)</string>
+  <string name="gles2RiceAutoFrameskip_title">Auto frameskip</string>
+  <string name="gles2RiceAutoFrameskip_summary">Förbättrar spel hastighet till kostnad av framerate</string>
+  <string name="gles2RiceFastTextureCrc_title">Snabbare textur CRC</string>
+  <string name="gles2RiceFastTextureCrc_summary">Förbättrar spel hastighet till kostnad av 2D-elementer</string>
+  <string name="gles2RiceFastTexture_title">Snabb textur laddning</string>
+  <string name="gles2RiceFastTexture_summary">Fixar cirkel övergångar</string>
+  <string name="gles2RiceHiResTextures_title">Högupplösta texturer</string>
+  <string name="gles2RiceHiResTextures_summary">Använd importerade textur förpackningar</string>
+  <string name="audioSwapChannels_title">Byt ljudkanaler</string>
+  <string name="audioSwapChannels_summary">Byt de vänstra och högra ljudkanalerna</string>
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenRefresh_title">Styrspak animation</string>
+  <string name="touchscreenRefresh_entryNever">Aldrig</string>
+  <string name="touchscreenRefresh_entryOccasionally">Ibland</string>
+  <string name="touchscreenRefresh_entryFrequently">Ofta</string>
+  <string name="touchscreenLayout_entryAnalog">Analog (av roymustang16)</string>
+  <string name="touchscreenLayout_entryDigital">digital (av roymustang16)</string>
+  <string name="touchscreenLayout_entryCustom">Anpassad (se http://tinyurl.com/984ofyo)</string>
+  <string name="touchpadLayout_title">Pekplatta layout</string>
+  <string name="touchpadLayout_entryDefault">Vänster pad: Analog kontroll; Höger pad: C knappar</string>
+  <string name="touchpadLayout_entryReverse">Vänster pad: C knappar; Höger pad: Analog kontrol</string>
+  <string name="videoOrientation_title">Skärmorientering</string>
+  <string name="videoOrientation_entryLandscape">Landskap</string>
+  <string name="videoOrientation_entryReverseLandscape">Omvänd landskap</string>
+  <string name="videoOrientation_entryPortrait">Porträtt</string>
+  <string name="videoOrientation_entryReversePortrait">Omvänd porträtt</string>
+  <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoFpsRefresh_title">Visa framerate</string>
+  <string name="videoFpsRefresh_entryNever">Aldrig</string>
+  <string name="videoFpsRefresh_entryOccasionally">Ibland</string>
+  <string name="videoFpsRefresh_entryFrequently">Ofta</string>
+  <string name="videoHardwareType_title">Flimmer minskning</string>
+  <string name="videoHardwareType_entryAuto">Auto-upptäck från mobil/tablett modell</string>
+  <string name="gles2N64Frameskip_title">Frameskip</string>
+  <string name="gles2N64Frameskip_entryNever">Aldrig hoppa ramar</string>
+  <string name="gles2N64Frameskip_entryUpTo1">Inte mer än 1 ram</string>
+  <string name="gles2N64Frameskip_entryUpTo2">Inte mer än 2 ramar</string>
+  <string name="gles2N64Frameskip_entryUpTo3">Inte mer än 3 ramar</string>
+  <string name="gles2N64Frameskip_entryUpTo4">Inte mer än 4 ramar</string>
+  <string name="gles2N64Frameskip_entryUpTo5">Inte mer än 5 ramar</string>
+  <string name="gles2N64Frameskip_entryExactly1">Precis 1 ram</string>
+  <string name="gles2N64Frameskip_entryExactly2">Precis 2 ramar</string>
+  <string name="gles2N64Frameskip_entryExactly3">Precis 3 ramar</string>
+  <string name="gles2N64Frameskip_entryExactly4">Precis 4 ramar</string>
+  <string name="gles2N64Frameskip_entryExactly5">Precis 5 ramar</string>
+  <string name="audioResampleAlg_title">Omsampling algoritm</string>
+  <string name="audioResampleAlg_entryTrivial">Trivial</string>
+  <string name="audioResampleAlg_entryLinear">Linjär interpolering</string>
+  <string name="audioResampleAlg_entryZoh">Noll order håll</string>
+  <string name="audioResampleAlg_entrySincFastest">Sinc (snabbast)</string>
+  <string name="audioResampleAlg_entrySincMedium">Sinc (medium)</string>
+  <string name="audioResampleAlg_entrySincBest">Sinc (bäst)</string>
+  <string name="pluginVideo_title">Video</string>
+  <string name="pluginVideo_entryNone">Ingen (video inaktiverad)</string>
+  <string name="pluginAudio_title">Ljud</string>
+  <string name="pluginAudio_entryNone">Ingen (ljud inaktiverad)</string>
+  <string name="pluginInput_title">ingång</string>
+  <string name="pluginInput_entryNone">Ingen (input inaktiverad)</string>
+  <string name="pluginRsp_title">Reality signalprocessor (RSP)</string>
+  <string name="pluginRsp_entryNone">Ingen (RSP inaktiverad)</string>
+  <string name="pluginCore_title">Emulation kärna</string>
+  <!--ACRA Preferences (key names must not be changed)-->
+  <string name="acraEnable_title">Aktivera kraschrapporteringen</string>
+  <string name="acraEnable_summary">Ingen personlig information samlas in</string>
+  <string name="acraUserEmail_title">Kontakt info</string>
+  <string name="acraUserEmail_summary">Din paulscode.com username (valfritt)</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <string name="pathPreference_dialogTitle">Vald mapp: %1$s</string>
+  <string name="pathSelectedGame_title">Spel</string>
+  <string name="pathSelectedGame_default">~roms/n64</string>
+  <string name="pathCustomTouchscreen_title">Anpassad layout mapp</string>
+  <string name="pathCustomTouchscreen_default">~</string>
+  <string name="pathHiResTextures_title">Import textur pack</string>
+  <string name="pathHiResTextures_default">~</string>
+  <string name="pathGameSaves_title">Spel spar mapp</string>
+  <string name="pathGameSaves_default">!mupen64plus</string>
+  <!--Player Map Preferences-->
+  <string name="playerMap_title">Multi-player</string>
+  <!--Input Map Preferences-->
+  <string name="inputMap1_title">Kontroller</string>
+  <string name="inputMap2_title">Spelare 2</string>
+  <string name="inputMap3_title">Spelare 3</string>
+  <string name="inputMap4_title">Spelare 4</string>
+  <string name="inputMap_summary">Knapp och speciell funktion mapning</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Konfirmation</string>
+  <string name="confirmResetGame_message">Återställ spelet? Alla framsteg har sparats kommer att förloras.</string>
+  <string name="confirmOverwriteFile_message">Skriva över %1$s?</string>
+  <!--Change Log-->
+  <!--Corrupt Installation Warning-->
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">filnamn</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Initierar</string>
+  <string name="assetExtractor_progress">%1$.0f%% gjort: %2$s</string>
+  <string name="assetExtractor_finished">Färdig</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Fuska %1$d</string>
+  <string name="cheats_longPress">(lång-tryck för full text)</string>
+  <string name="cheat_disabled">(inaktiverad)</string>
+  <string name="cheatNotes_title">Anteckningar</string>
+  <string name="cheatNotes_none">(inga anteckningar tillgängliga för detta fusk)</string>
+  <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Uppackning texturer</string>
+  <string name="pathHiResTexturesTask_message">Var god och vänta. Denna process kan ta lite tid.</string>
+  <string name="pathHiResTexturesTask_errorMessage">Problem uppackning texturer!</string>
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Enhet %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Enhet %1$d</string>
+  <string name="playerMapPreference_popupTitle">Spelare %1$d</string>
+  <string name="playerMapPreference_popupMessage">Spelare %1$d, tryck på en knapp eller stick på handkontrollen…⏎\n⏎\nAktuella enheter:\n%2$s</string>
+  <string name="playerMapPreference_popupUnmap">Unmap</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupUnmap">Unmap</string>
+  <string name="inputMapActivity_reset">Ladda om</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Tryck på en knapp...</string>
+  <string name="diagnosticActivity_textMotion_text">Tryck skärmen eller joysticken...</string>
+</resources>

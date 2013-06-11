@@ -14,7 +14,7 @@ Emulador de Nintendo 64 para Android. Mupen64Plus AE se encuentra en fase de pru
 
 
 ESTA APLICACIÓN NO INCLUYE ROMS
-- ¡Tienes que poseer legítimamente el cartucho de juego de una ROM antes de jugar con ella!
+- Tenés que tener la ROM para poder jugar.
 - En www.pdroms.de puedes encontrar juegos/demos de dominio público
 
 99¢ ÚNICAMENTE PARA DONACIONES
