@@ -76,16 +76,19 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String SCREEN_AUDIO = "screenAudio";
     
     private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
+    private static final String CATEGORY_TOUCHSCREEN_BEHAVIOR = "categoryTouchscreenBehavior";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
+    private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
     private static final String TOUCHSCREEN_AUTO_HOLDABLES = "touchscreenAutoHoldables";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
     private static final String TOUCHSCREEN_LAYOUT = "touchscreenLayout";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
+    private static final String TOUCHPAD_FEEDBACK = "touchpadFeedback";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String PLUGIN_VIDEO = "pluginVideo";
     private static final String PLUGIN_INPUT = "pluginInput";
@@ -134,9 +137,17 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
         if( !mAppData.hardwareInfo.isXperiaPlay )
             prefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
+        
         // Disable the touchscreen when running on OUYA
         if( OUYAInterface.IS_OUYA_HARDWARE )
             prefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
+        
+        // Disable haptic feedback if permission not granted
+        if( !mAppData.hasVibratePermission )
+        {
+            prefs.edit().putBoolean( TOUCHSCREEN_FEEDBACK, false ).commit();
+            prefs.edit().putBoolean( TOUCHPAD_FEEDBACK, false ).commit();
+        }
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
@@ -198,6 +209,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         if( mUserPrefs.isOuyaMode )
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
+        
+        if( !mAppData.hasVibratePermission )
+        {
+            PrefUtil.removePreference( this, CATEGORY_TOUCHSCREEN_BEHAVIOR, TOUCHSCREEN_FEEDBACK );
+            PrefUtil.removePreference( this, SCREEN_TOUCHPAD, TOUCHPAD_FEEDBACK );
+        }
         
         // Initialize the OUYA interface if running on OUYA
         if( OUYAInterface.IS_OUYA_HARDWARE )
