@@ -6,6 +6,8 @@
 - Added flicker reduction profile for Iconia B1 A71
 - Fixed crash when rumble pak selected on OUYA
 - Fixed crash when opening some zipped ROMs
+- Tweaked controller deadzone calculation for smoother behavior
+- Added Swedish (Svenska) translation
 - Updated ACRA crash reporting system to 4.5.0-stable
 [26:2.3.0]
 - Added gles2glide64 video plugin (fixes broken graphics in many games)
@@ -27,7 +29,6 @@
 - Added support for raphnet GC/N64 controller adapter
 - Updated ODK to version 1.0.2
 [24:2.2.0]
-- Added Hungarian (Magyar) translation
 - Major update to touchscreen skins framework
 - Added alternate button style (colored, filled)
 - Buttons auto-scale according to device size (overridable)
@@ -36,6 +37,7 @@
 - Reduced the installed size of the app
 - Fixed loss of rumble when using hard-keys on some Jelly Bean devices
 - Fixed analog controls for official wireless Xbox 360 controller (D-pad is unfixable)
+- Added Hungarian (Magyar) translation
 - Updated some OUYA-related internals
 [23:2.1.3]
 - Fixed input-related crash affecting some Android 4.1 devices
