@@ -38,7 +38,6 @@ import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -170,6 +169,9 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
+        // Refresh the objects and data files interfacing to the emulator core
+        CoreInterface.refresh( mActivity, mSurface );
+        
         // Update the GameSurface size
         mSurface.getHolder().setFixedSize( mUserPrefs.videoRenderWidth, mUserPrefs.videoRenderHeight );
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
@@ -213,9 +215,6 @@ public class GameLifecycleHandler implements View.OnKeyListener
         
         // Initialize the game surface
         mSurface.setColorMode( mUserPrefs.isRgba8888 );
-        
-        // Refresh the objects and data files interfacing to the emulator core
-        CoreInterface.refresh( mActivity, mSurface );
     }
     
     public void onResume()
@@ -266,8 +265,8 @@ public class GameLifecycleHandler implements View.OnKeyListener
     private void initControllers( View inputSource )
     {
         Vibrator vibrator = null;
-        // Do not use vibrator if running on OUYA
-        if( !OUYAInterface.IS_OUYA_HARDWARE )
+        // Vibrator object MUST be null if permission not granted, to meet our code contracts
+        if( mAppData.hasVibratePermission )
         {
             // By default, send Player 1 rumbles through phone vibrator
             vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );

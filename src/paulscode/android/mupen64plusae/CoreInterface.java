@@ -136,9 +136,9 @@ public class CoreInterface
     @TargetApi( 11 )
     public static void registerVibrator( int player, Vibrator vibrator )
     {
-        boolean isUseable = AppData.IS_HONEYCOMB ? vibrator.hasVibrator() : true;
+        boolean hasVibrator = AppData.IS_HONEYCOMB ? vibrator.hasVibrator() : true;
 
-        if( isUseable && player > 0 && player < 5 )
+        if( sAppData.hasVibratePermission && hasVibrator && player > 0 && player < 5 )
         {
             sVibrators[player - 1] = vibrator;
         }
