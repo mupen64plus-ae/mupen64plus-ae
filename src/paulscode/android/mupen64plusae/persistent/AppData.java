@@ -120,9 +120,6 @@ public class AppData
     /** The directory for storing internal app data. */
     public final String dataDir;
     
-    /** The directory where app data was stored in the old version. */
-    public final String oldDataDir;
-    
     /** The directory containing the native Mupen64Plus libraries. */
     public final String libsDir;
     
@@ -209,7 +206,6 @@ public class AppData
             storageDir = context.getFilesDir().getAbsolutePath();
             dataDir = storageDir;
         }
-        oldDataDir = storageDir + "/Android/data/trev.android.mupen64plusae";
         libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
         touchscreenLayoutsDir = dataDir + "/skins/touchscreens/";
         touchpadLayoutsDir = dataDir + "/skins/touchpads/";

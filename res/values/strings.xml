@@ -85,8 +85,6 @@
     <string name="toast_sdInaccessible">SD card not accessible (disconnect USB cable and try again).</string>
     <string name="toast_fileReadError">Could not read file!</string>
     <string name="toast_fileWriteError">Could not write file!</string>
-    <string name="toast_migrateSlotSavesNotFound">No files to copy.</string>
-    <string name="toast_migrateSlotSavesSuccess">Migration succeeded.</string>
     <string name="toast_crashReportSent">Report sent.</string>
     
     <!-- ************************************************************************** -->
@@ -105,8 +103,6 @@
     <string name="actionDeviceInfo_summary">Device hardware and model information</string>
     <string name="actionControllerInfo_title">Controller info</string>
     <string name="actionControllerDiagnostics_title">Controller diagnostics</string>
-    <string name="actionMigrateSlotSaves_title">Migrate savefiles</string>
-    <string name="actionMigrateSlotSaves_summary">Copy your slot saves from the old app into this one</string>
     <string name="actionReloadAssets_title">Reload app resources</string>
     <string name="actionReloadAssets_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
     <string name="actionCrashTest_title">Test</string>
@@ -390,7 +386,6 @@
     <string name="confirmOverwriteFile_message">Overwrite %1$s?</string>
     <string name="confirmLoadProfile_message">Load profile \"%1$s\" for %2$s?</string>
     <string name="confirmUnmapAll_message">Unmap all inputs for %1$s?</string>
-    <string name="confirmMigrateSlotSaves_message">Are you sure you want to copy your old slot saves? Backups will be made if necessary.</string>
 
     <!-- Change Log -->
     <string name="changeLog_dialogTitle">Change log</string>

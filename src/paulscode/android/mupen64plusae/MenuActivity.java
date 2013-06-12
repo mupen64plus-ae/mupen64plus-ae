@@ -61,8 +61,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String ACTION_PLAY = "actionPlay";
     private static final String ACTION_DEVICE_INFO = "actionDeviceInfo";
-    private static final String ACTION_CONTROLLER_INFO = "actionControllerInfo";
-    private static final String ACTION_MIGRATE_SLOT_SAVES = "actionMigrateSlotSaves";
     private static final String ACTION_CRASH_TEST = "actionCrashTest";
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
@@ -181,8 +179,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         // Handle certain menu items that require extra processing or aren't actually preferences
         PrefUtil.setOnPreferenceClickListener( this, ACTION_DEVICE_INFO, this );
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_CONTROLLER_INFO, this );
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_MIGRATE_SLOT_SAVES, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_USER_PREFS, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_HELP, this );
@@ -320,12 +316,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( key.equals( ACTION_DEVICE_INFO ) )
             actionDeviceInfo();
         
-        else if( key.equals( ACTION_CONTROLLER_INFO ) )
-            actionControllerInfo();
-        
-        else if( key.equals( ACTION_MIGRATE_SLOT_SAVES ) )
-            actionMigrateSlotSaves();
-        
         else if( key.equals( ACTION_RELOAD_ASSETS ) )
             actionReloadAssets();
         
@@ -351,39 +341,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         String title = getString( R.string.actionDeviceInfo_title );
         String message = DeviceUtil.getCpuInfo();
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void actionControllerInfo()
-    {
-        String title = getString( R.string.actionControllerInfo_title );
-        String message = DeviceUtil.getPeripheralInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void actionMigrateSlotSaves()
-    {
-        final File oldDir = new File( mAppData.oldDataDir + "/data/save/" );
-        if( !oldDir.exists() )
-        {
-            String title = getString( R.string.actionMigrateSlotSaves_title );
-            String message = getString( R.string.toast_migrateSlotSavesNotFound );
-            new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-        }
-        else
-        {
-            String title = getString( R.string.confirm_title );
-            String message = getString( R.string.confirmMigrateSlotSaves_message );
-            Prompt.promptConfirm( this, title, message, new PromptConfirmListener()
-            {
-                @Override
-                public void onConfirm()
-                {
-                    File newDir = new File( mUserPrefs.slotSaveDir );
-                    FileUtil.copyFile( oldDir, newDir, true );
-                    Notifier.showToast( MenuActivity.this, R.string.toast_migrateSlotSavesSuccess );
-                }
-            } );
-        }
     }
     
     private void actionReloadAssets()

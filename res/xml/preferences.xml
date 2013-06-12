@@ -537,10 +537,6 @@
                         mupen64:selectionMode="0" />
 
                     <Preference
-                        android:key="actionMigrateSlotSaves"
-                        android:summary="@string/actionMigrateSlotSaves_summary"
-                        android:title="@string/actionMigrateSlotSaves_title" />
-                    <Preference
                         android:key="actionReloadAssets"
                         android:summary="@string/actionReloadAssets_summary"
                         android:title="@string/actionReloadAssets_title" />
