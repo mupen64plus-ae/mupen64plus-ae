@@ -44,6 +44,7 @@ ifeq ("$(UNAME)","Darwin")
   OS = OSX
   SO_EXTENSION = dylib
   SHARED = -bundle
+  BOOST_SUFFIX = -mt
 endif
 ifeq ("$(UNAME)","FreeBSD")
   OS = FREEBSD
@@ -172,15 +173,14 @@ ifeq ($(OS), OSX)
     OSX_SYSROOT := /Developer/SDKs
   endif
 
+  CXXFLAGS += -std=c++11 -stdlib=libc++
   ifeq ($(CPU), X86)
+    LDFLAGS += -bundle -L/opt/local/lib
+    LDLIBS += -ldl
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
-      LDFLAGS += -bundle
-      LDLIBS += -ldl
     else
       CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
-      LDFLAGS += -bundle
-      LDLIBS += -ldl
     endif
   endif
 endif
@@ -306,7 +306,9 @@ ifeq ($(DEBUG),1)
   CFLAGS += -g
   INSTALL_STRIP_FLAG ?= 
 else
-  INSTALL_STRIP_FLAG ?= -s
+  ifneq ($(OS),OSX)
+    INSTALL_STRIP_FLAG ?= -s
+  endif
 endif
 ifeq ($(NO_ASM), 1)
   CFLAGS += -DNO_ASM
@@ -381,7 +383,7 @@ SOURCE += $(SRCDIR)/Glide64/osal_dynamiclib_win32.c
 else
 SOURCE += $(SRCDIR)/Glide64/osal_dynamiclib_unix.c
 endif
-
+ 
 
 
 # generate a list of object files build, make a temporary directory for them
