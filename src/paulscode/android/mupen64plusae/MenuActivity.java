@@ -165,6 +165,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, PLUGIN_RSP, R.string.pluginRsp_default, R.array.pluginRsp_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_CORE, R.string.pluginCore_default, R.array.pluginCore_values );
         PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
+        PrefUtil.validateListPreference( res, prefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
