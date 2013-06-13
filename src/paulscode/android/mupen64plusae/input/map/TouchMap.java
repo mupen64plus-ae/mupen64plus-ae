@@ -321,7 +321,8 @@ public class TouchMap
      */
     public float getAnalogStrength( float displacement )
     {
-        float p = ( displacement - ( analogDeadzone * scale ) ) / ( ( analogMaximum * scale ) - ( analogDeadzone * scale ) );
+        displacement /= scale;
+        float p = ( displacement - analogDeadzone ) / ( analogMaximum - analogDeadzone );
         return Utility.clamp( p, 0.0f, 1.0f );
     }
     
@@ -334,8 +335,8 @@ public class TouchMap
      */
     public boolean isInCaptureRange( float displacement )
     {
-        return ( displacement >= ( analogDeadzone * scale ) )
-                && ( displacement < ( analogMaximum * scale ) + ( analogPadding * scale ) );
+        displacement /= scale;
+        return ( displacement >= analogDeadzone ) && ( displacement < analogMaximum + analogPadding );
     }
     
     /**
