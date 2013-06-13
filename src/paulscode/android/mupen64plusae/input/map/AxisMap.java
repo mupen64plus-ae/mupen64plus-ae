@@ -31,7 +31,8 @@ public class AxisMap extends SerializableMap
     
     private static final String NAME_STRING_NYKO_PLAYPAD = "NYKO PLAYPAD";
     private static final String NAME_STRING_OUYA = "OUYA";
-    private static final String NAME_STRING_RAPHNET = "raphnet.net GC/N64";
+    private static final String NAME_STRING_RAPHNET_1 = "raphnet.net GC/N64_USB";
+    private static final String NAME_STRING_RAPHNET_2 = "raphnet.net GC/N64 to USB, v2";
     private static final String NAME_STRING_MAD_CATZ = "Mad Catz";
     
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
@@ -141,15 +142,20 @@ public class AxisMap extends SerializableMap
                 signatureName = "Moga Pro";
                 break;
         }
+        
+        String deviceName = device.getName();
+        
         // Check if the controller is OUYA, to compensate for the +X axis bias
-        if( device.getName().contains( NAME_STRING_OUYA ) )
+        if( deviceName.contains( NAME_STRING_OUYA ) )
         {
             setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
             signatureName = "OUYA controller";
         }
         // Check if the controller is a raphnet N64/USB adapter, to compensate for range of motion
         // http://raphnet-tech.com/products/gc_n64_usb_adapters/
-        if( device.getName().contains( NAME_STRING_RAPHNET ) )
+        // https://github.com/paulscode/mupen64plus-ae/issues/89
+        // https://github.com/paulscode/mupen64plus-ae/issues/99
+        if( deviceName.contains( NAME_STRING_RAPHNET_1 ) || deviceName.contains( NAME_STRING_RAPHNET_2 ) )
         {
             setClass( MotionEvent.AXIS_X, AXIS_CLASS_RAPHNET_STICK );
             setClass( MotionEvent.AXIS_Y, AXIS_CLASS_RAPHNET_STICK );

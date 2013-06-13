@@ -189,7 +189,13 @@ public class AxisProvider extends AbstractProvider
                                 break;
                             case AxisMap.AXIS_CLASS_RAPHNET_STICK:
                                 // Normalize to [-1,1]
-                                strength = strength / 0.65f;
+                                // The Raphnet adapters through v2.x assume the N64 controller produces values in the
+                                // range [-127,127].  However, the official N64 spec says that raw values of +/- 80
+                                // indicate full strength.  Therefore we rescale by dividing by 80/127 = 0.63.
+                                // https://github.com/paulscode/mupen64plus-ae/issues/89
+                                // https://github.com/paulscode/mupen64plus-ae/issues/99
+                                // http://naesten.dyndns.org:8080/psyq/man/os/osContGetReadData.html
+                                strength = strength / 0.63f;
                                 break;
                             case AxisMap.AXIS_CLASS_RAPHNET_TRIGGER:
                                 // Normalize to [0,1]
