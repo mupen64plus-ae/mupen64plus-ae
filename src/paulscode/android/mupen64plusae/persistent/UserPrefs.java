@@ -327,8 +327,11 @@ public class UserPrefs
     /** The audio resampling algorithm to use. */
     public final String audioResampleAlg;
     
-    /** True if OUYA navigation mode is enabled. */
-    public final boolean isOuyaMode;
+    /** True if big-screen navigation mode is enabled. */
+    public final boolean isBigScreenMode;
+    
+    /** True if the action bar is available. */
+    public final boolean isActionBarAvailable;
     
     // Shared preferences keys and key templates
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
@@ -485,14 +488,15 @@ public class UserPrefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         audioResampleAlg = mPreferences.getString( "audioResampleAlg", "trivial" );
         
-        // Navigation mode
+        // User interface modes
         String navMode = mPreferences.getString( "navigationMode", "auto" );
-        if( navMode.equals( "ouya" ) )
-            isOuyaMode = true;
+        if( navMode.equals( "bigscreen" ) )
+            isBigScreenMode = true;
         else if( navMode.equals( "standard" ) )
-            isOuyaMode = false;
+            isBigScreenMode = false;
         else
-            isOuyaMode = OUYAInterface.IS_OUYA_HARDWARE;
+            isBigScreenMode = OUYAInterface.IS_OUYA_HARDWARE; // TODO: Add other systems as they enter market
+        isActionBarAvailable = AppData.IS_HONEYCOMB && !isBigScreenMode;
         
         // Determine the touchscreen layout
         boolean isCustom = false;

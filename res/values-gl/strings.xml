@@ -216,7 +216,7 @@
   <string name="navigationMode_summary">Modo de navegación do menú: %1$s</string>
   <string name="navigationMode_entryAuto">Selección auto. a partir da configuración do dispositivo</string>
   <string name="navigationMode_entryStandard">Modo estándar</string>
-  <string name="navigationMode_entryOuya">Modo OUYA (sen pantalla táctil, só con mando externo) </string>
+  <string name="navigationMode_entryBigScreen">Modo OUYA (sen pantalla táctil, só con mando externo) </string>
   <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Predefinido do sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->

@@ -282,7 +282,7 @@
   <string name="navigationMode_summary">Mode de navegació del menú: %1$s</string>
   <string name="navigationMode_entryAuto">Seleccionar automàticament de la configuració del dispositiu</string>
   <string name="navigationMode_entryStandard">Mode estàndard</string>
-  <string name="navigationMode_entryOuya">Mode OUYA (sense pantalla tàctil, entrada només a través de comandaments de joc)</string>
+  <string name="navigationMode_entryBigScreen">Mode OUYA (sense pantalla tàctil, entrada només a través de comandaments de joc)</string>
   <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->

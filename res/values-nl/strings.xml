@@ -282,7 +282,7 @@
   <string name="navigationMode_summary">Menunavigatiemodus: %1$s</string>
   <string name="navigationMode_entryAuto">Automatisch selecteren uit apparaatconfiguratie</string>
   <string name="navigationMode_entryStandard">Standaardmodus</string>
-  <string name="navigationMode_entryOuya">OUYA-modus (geen aanraakscherm; alleen gamepadinvoer)</string>
+  <string name="navigationMode_entryBigScreen">OUYA-modus (geen aanraakscherm; alleen gamepadinvoer)</string>
   <string name="localeOverride_title">Taal</string>
   <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
   <!--ACRA Preferences (key names must not be changed)-->

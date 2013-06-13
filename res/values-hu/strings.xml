@@ -265,7 +265,7 @@
   <string name="navigationMode_summary">Menü navigációs mód: %1$s</string>
   <string name="navigationMode_entryAuto">A készülék konfigurációból auto-kiválasztás</string>
   <string name="navigationMode_entryStandard">Alap mód</string>
-  <string name="navigationMode_entryOuya">OUYA mód (nincs érintőpanel; csak gamepad bevitel)</string>
+  <string name="navigationMode_entryBigScreen">OUYA mód (nincs érintőpanel; csak gamepad bevitel)</string>
   <string name="localeOverride_title">Nyelv</string>
   <string name="localeOverride_entrySystemDefault">Rendszer alapértelmezett</string>
   <!--ACRA Preferences (key names must not be changed)-->

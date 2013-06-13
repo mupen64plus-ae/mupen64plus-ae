@@ -273,7 +273,7 @@
   <string name="navigationMode_summary">Menü navigasyon modu: %1$s</string>
   <string name="navigationMode_entryAuto">Cihaz yapılandırması tarafından otomatik seçilen</string>
   <string name="navigationMode_entryStandard">Standart mod</string>
-  <string name="navigationMode_entryOuya">OUYA modu (dokunmatik ekran yok; sadece oyun kumandası)</string>
+  <string name="navigationMode_entryBigScreen">OUYA modu (dokunmatik ekran yok; sadece oyun kumandası)</string>
   <string name="localeOverride_title">Dil</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
   <!--ACRA Preferences (key names must not be changed)-->

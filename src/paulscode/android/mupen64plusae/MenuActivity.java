@@ -136,8 +136,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !mAppData.hardwareInfo.isXperiaPlay )
             prefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
         
-        // Disable the touchscreen when running on OUYA
-        if( OUYAInterface.IS_OUYA_HARDWARE )
+        // Disable the touchscreen when running in big-screen mode
+        if( mUserPrefs.isBigScreenMode )
             prefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
         
         // Disable haptic feedback if permission not granted
@@ -197,13 +197,13 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !mUserPrefs.isGles2RiceEnabled )
             PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
         
-        if( !AppData.IS_HONEYCOMB || mUserPrefs.isOuyaMode )
+        if( !mUserPrefs.isActionBarAvailable )
             PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_ACTION_BAR_TRANSPARENCY );
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
         
-        if( mUserPrefs.isOuyaMode )
+        if( mUserPrefs.isBigScreenMode )
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
         
         if( !mAppData.hasVibratePermission )

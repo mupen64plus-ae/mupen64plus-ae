@@ -282,7 +282,7 @@
   <string name="navigationMode_summary">メニューナビゲーションモード：%1$s</string>
   <string name="navigationMode_entryAuto">デバイス構成から自動選択</string>
   <string name="navigationMode_entryStandard">スタンダードモード</string>
-  <string name="navigationMode_entryOuya">OUYAモード（ゲームパッドのみ）</string>
+  <string name="navigationMode_entryBigScreen">OUYAモード（ゲームパッドのみ）</string>
   <string name="localeOverride_title">言語</string>
   <string name="localeOverride_entrySystemDefault">システムのデフォルト</string>
   <!--ACRA Preferences (key names must not be changed)-->

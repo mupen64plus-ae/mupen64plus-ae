@@ -296,7 +296,7 @@
   <string name="navigationMode_summary">Mode de navigation de menu : %1$s</string>
   <string name="navigationMode_entryAuto">Choix automatique selon la configuration de l\'appareil</string>
   <string name="navigationMode_entryStandard">Mode standard</string>
-  <string name="navigationMode_entryOuya">Mode OUYA (écran tactile désactivé : contrôles à la manette uniquement)</string>
+  <string name="navigationMode_entryBigScreen">Mode OUYA (écran tactile désactivé : contrôles à la manette uniquement)</string>
   <string name="localeOverride_title">Langue</string>
   <string name="localeOverride_entrySystemDefault">Système par défaut</string>
   <!--ACRA Preferences (key names must not be changed)-->

@@ -282,7 +282,7 @@
   <string name="navigationMode_summary">Način navigacije izbornika: %1$s</string>
   <string name="navigationMode_entryAuto">Automatski odabir</string>
   <string name="navigationMode_entryStandard">Standardno</string>
-  <string name="navigationMode_entryOuya">OUYA (bez dodirnog ekrana; koristi se samo kontroler)</string>
+  <string name="navigationMode_entryBigScreen">OUYA (bez dodirnog ekrana; koristi se samo kontroler)</string>
   <string name="localeOverride_title">Jezik</string>
   <string name="localeOverride_entrySystemDefault">Zadano</string>
   <!--ACRA Preferences (key names must not be changed)-->

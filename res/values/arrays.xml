@@ -452,17 +452,17 @@
     <string-array name="navigationMode_entries" translatable="false">
         <item>@string/navigationMode_entryAuto</item>
         <item>@string/navigationMode_entryStandard</item>
-        <item>@string/navigationMode_entryOuya</item>
+        <item>@string/navigationMode_entryBigScreen</item>
     </string-array>
     <string-array name="navigationMode_values" translatable="false">
         <item>auto</item>
         <item>standard</item>
-        <item>ouya</item>
+        <item>bigscreen</item>
     </string-array>
 
     <string name="navigationMode_default" translatable="false">auto</string>
 
-    <!-- OUYA Input Mapping Screen -->
+    <!-- Big-Screen Input Mapping Screen -->
     <string-array name="inputMapActivity_entries" translatable="false">
         <item>@string/inputMapActivity_btnL</item>
         <item>@string/inputMapActivity_btnR</item>

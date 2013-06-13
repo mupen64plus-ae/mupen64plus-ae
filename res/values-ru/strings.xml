@@ -240,7 +240,7 @@
   <string name="navigationMode_summary">Режим навигации в меню: %1$s</string>
   <string name="navigationMode_entryAuto">Автоопределение из настроек</string>
   <string name="navigationMode_entryStandard">Стандартный режим</string>
-  <string name="navigationMode_entryOuya">Режим OUYA (ввод только с геймпада)</string>
+  <string name="navigationMode_entryBigScreen">Режим OUYA (ввод только с геймпада)</string>
   <string name="localeOverride_title">Язык</string>
   <string name="localeOverride_entrySystemDefault">Система по умолчанию</string>
   <!--ACRA Preferences (key names must not be changed)-->

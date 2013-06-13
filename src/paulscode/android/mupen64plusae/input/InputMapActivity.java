@@ -144,7 +144,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         
         // Set up input listeners
         mUnmappableInputCodes = mUserPrefs.unmappableKeyCodes;
-        if( !mUserPrefs.isOuyaMode )
+        if( !mUserPrefs.isBigScreenMode )
         {
             mKeyProvider = new KeyProvider( ImeFormula.DEFAULT, mUnmappableInputCodes );
             mKeyProvider.registerListener( this );
@@ -162,8 +162,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         setTitle( title );
         
         // Initialize the layout
-        if( mUserPrefs.isOuyaMode )
-            initLayoutOuya();
+        if( mUserPrefs.isBigScreenMode )
+            initLayoutBigScreenMode();
         else
             initLayoutDefault();
         
@@ -192,10 +192,10 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         mMogaController.exit();
     }
     
-    private void initLayoutOuya()
+    private void initLayoutBigScreenMode()
     {
-        setContentView( R.layout.input_map_activity_ouya );
-        mListView = (ListView) findViewById( R.id.input_map_activity_ouya );
+        setContentView( R.layout.input_map_activity_bigscreen );
+        mListView = (ListView) findViewById( R.id.input_map_activity_bigscreen );
         mListView.setOnItemClickListener( this );
     }
     
@@ -295,8 +295,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         refreshSpecialVisibility();
         
         // Hide menu items that do not apply
-        mMenuSpecialVisibility.setVisible( !mUserPrefs.isOuyaMode );
-        menu.findItem( R.id.menuItem_exit ).setVisible( !mUserPrefs.isOuyaMode );
+        mMenuSpecialVisibility.setVisible( !mUserPrefs.isBigScreenMode );
+        menu.findItem( R.id.menuItem_exit ).setVisible( !mUserPrefs.isBigScreenMode );
         menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         
         return super.onCreateOptionsMenu( menu );
@@ -577,7 +577,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     @Override
     public boolean onKeyDown( int keyCode, KeyEvent event )
     {
-        if( mUserPrefs.isOuyaMode )
+        if( mUserPrefs.isBigScreenMode )
             return super.onKeyDown( keyCode, event );
         else
             return mKeyProvider.onKey( keyCode, event ) || super.onKeyDown( keyCode, event );
@@ -586,7 +586,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     @Override
     public boolean onKeyUp( int keyCode, KeyEvent event )
     {
-        if( mUserPrefs.isOuyaMode )
+        if( mUserPrefs.isBigScreenMode )
             return super.onKeyUp( keyCode, event );
         else
             return mKeyProvider.onKey( keyCode, event ) || super.onKeyUp( keyCode, event );
@@ -598,7 +598,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
     {
         if( !AppData.IS_HONEYCOMB_MR1 )
             return false;
-        else if( mUserPrefs.isOuyaMode )
+        else if( mUserPrefs.isBigScreenMode )
             return super.onGenericMotionEvent( event );
         else
             return mAxisProvider.onGenericMotion( event ) || super.onGenericMotionEvent( event );
