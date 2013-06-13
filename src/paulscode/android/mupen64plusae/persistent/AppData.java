@@ -177,7 +177,6 @@ public class AppData
         hardwareInfo = new HardwareInfo();
         packageName = context.getPackageName();
         hasVibratePermission = hasPermission( context, android.Manifest.permission.VIBRATE );
-        Log.v( "AppData", "Vibrate permission: " + hasVibratePermission );
         
         PackageInfo info;
         String version = "";
