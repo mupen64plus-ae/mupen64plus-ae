@@ -69,8 +69,6 @@
   <string name="toast_sdInaccessible">La targeta SD no està accessible (desconnecta el cable USB i prova-ho de nou).</string>
   <string name="toast_fileReadError">No es pot llegir el fitxer!</string>
   <string name="toast_fileWriteError">No es pot escriure al fitxer!</string>
-  <string name="toast_migrateSlotSavesNotFound">No hi ha fitxers a copiar.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migració completada amb èxit.</string>
   <string name="toast_crashReportSent">Informe enviat.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -87,8 +85,6 @@
   <string name="actionDeviceInfo_summary">Informació del maquinari i model</string>
   <string name="actionControllerInfo_title">Informació del comandament</string>
   <string name="actionControllerDiagnostics_title">Diagnostic del comandament</string>
-  <string name="actionMigrateSlotSaves_title">Migrar arxius de guardat</string>
-  <string name="actionMigrateSlotSaves_summary">Copia els teus slots de guardat de l\'aplicació vella a aquesta</string>
   <string name="actionReloadAssets_title">Recarrega els recursos de l\'aplicació</string>
   <string name="actionReloadAssets_summary">NO afecta la configuració de l\'usuari, ROM, partides i altres dades personalitzades</string>
   <string name="actionCrashTest_title">Test</string>
@@ -327,7 +323,6 @@
   <string name="confirmOverwriteFile_message">Sobreescriu %1$s?</string>
   <string name="confirmLoadProfile_message">Carregar perfil \"%1$s\" per a %2$s?</string>
   <string name="confirmUnmapAll_message">Desassigna tots el controls per a %$1s?</string>
-  <string name="confirmMigrateSlotSaves_message">Vols copiar els teus antics slots de guardat? Si cal es crearan còpies de seguretat.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Registre de canvis</string>
   <!--Corrupt Installation Warning-->

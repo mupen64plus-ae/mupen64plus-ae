@@ -69,8 +69,6 @@
   <string name="toast_sdInaccessible">Cartão SD não acessível (desconecte o cabo USB e tente novamente).</string>
   <string name="toast_fileReadError">Não foi possível ler o arquivo!</string>
   <string name="toast_fileWriteError">Não foi possível salvar o arquivo!</string>
-  <string name="toast_migrateSlotSavesNotFound">Nenhum arquivo para copiar.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migração concluída.</string>
   <string name="toast_crashReportSent">Relatório enviado.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -87,8 +85,6 @@
   <string name="actionDeviceInfo_summary">Informações de Hardware e modelo do dispositivo</string>
   <string name="actionControllerInfo_title">Informação do Controle</string>
   <string name="actionControllerDiagnostics_title">Diagnóstico do Controle</string>
-  <string name="actionMigrateSlotSaves_title">Migrar jogos salvos</string>
-  <string name="actionMigrateSlotSaves_summary">Copiar os jogos salvos do emulador antigo para esse</string>
   <string name="actionReloadAssets_title">Recarregar dados do emulador</string>
   <string name="actionReloadAssets_summary">Não afeta configurações do usuário, ROMs, jogos salvos, ou outros dados externos</string>
   <string name="actionCrashTest_title">Testar</string>
@@ -327,7 +323,6 @@
   <string name="confirmOverwriteFile_message">Sobrescrever %1$s?</string>
   <string name="confirmLoadProfile_message">Carregar perfil \"%1$s\" para %2$s?</string>
   <string name="confirmUnmapAll_message">Desmapear todos os controles de %1$s?</string>
-  <string name="confirmMigrateSlotSaves_message">Tem certeza que deseja copiar seus jogos antigos? Backups serão feitos se necessário.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Atualizações recentes</string>
   <!--Corrupt Installation Warning-->

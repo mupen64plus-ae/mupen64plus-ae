@@ -69,8 +69,6 @@
   <string name="toast_sdInaccessible">Scheda SD non accessibile (disconnetti cavo USB e riprova)</string>
   <string name="toast_fileReadError">Errore leggendo il file!</string>
   <string name="toast_fileWriteError">Errore scrivendo il file</string>
-  <string name="toast_migrateSlotSavesNotFound">Nessun file da copiare.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migrazione riuscita.</string>
   <string name="toast_crashReportSent">Segnalazione inviata.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -87,8 +85,6 @@
   <string name="actionDeviceInfo_summary">Informazioni su hardware e modello del dispositivo</string>
   <string name="actionControllerInfo_title">Info sul controller</string>
   <string name="actionControllerDiagnostics_title">Diagnostica controller</string>
-  <string name="actionMigrateSlotSaves_title">Migra salvataggi</string>
-  <string name="actionMigrateSlotSaves_summary">Copia i tuoi salvataggi slot dalla vecchia app a questa</string>
   <string name="actionReloadAssets_title">Ricarica risorse app</string>
   <string name="actionReloadAssets_summary">NON influenza impostazioni utente, ROM, salvataggi o altri dati personalizzati</string>
   <string name="actionCrashTest_title">Prova</string>
@@ -341,7 +337,6 @@
   <string name="confirmOverwriteFile_message">Sovrascrivere %1$s?</string>
   <string name="confirmLoadProfile_message">Caricare il profilo \"%1$s\" per %2$s?</string>
   <string name="confirmUnmapAll_message">Rimuovere tasti impostati da tutti gli input per %1$s?</string>
-  <string name="confirmMigrateSlotSaves_message">Sei sicuro che vuoi copiare i tuoi vecchi salvataggi slot? I backup verranno fatti se necessario.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Cambiamenti recenti</string>
   <!--Corrupt Installation Warning-->

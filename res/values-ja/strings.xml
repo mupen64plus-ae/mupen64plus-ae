@@ -69,8 +69,6 @@
   <string name="toast_sdInaccessible">アプリケーションデータにアクセスできません。 （USBモードでデバイスですか？）</string>
   <string name="toast_fileReadError">ファイルを読み取れませんでした！</string>
   <string name="toast_fileWriteError">ファイルを書き込めませんでした！</string>
-  <string name="toast_migrateSlotSavesNotFound">コピーするファイルがありません。</string>
-  <string name="toast_migrateSlotSavesSuccess">移行に成功。</string>
   <string name="toast_crashReportSent">エラーレポートを送信しました。</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -87,8 +85,6 @@
   <string name="actionDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
   <string name="actionControllerInfo_title">コントローラ情報</string>
   <string name="actionControllerDiagnostics_title">コントローラ診断</string>
-  <string name="actionMigrateSlotSaves_title">セーブファイルを移行</string>
-  <string name="actionMigrateSlotSaves_summary">このアプリケーションに古いアプリケーションからコピーセーブファイル。</string>
   <string name="actionReloadAssets_title">データを再ロード</string>
   <string name="actionReloadAssets_summary">アプリケーションのデータ·ファイルを再ロード</string>
   <string name="actionCrashTest_title">テスト</string>
@@ -327,7 +323,6 @@
   <string name="confirmOverwriteFile_message">%1$s上書き?</string>
   <string name="confirmLoadProfile_message">%2$sのプロファイル%1$sを読み込む？</string>
   <string name="confirmUnmapAll_message">%1$sに対するすべての入力をアンマップ？</string>
-  <string name="confirmMigrateSlotSaves_message">あなたがあなたの古いセーブファイルをコピーしてもよろしいですか？ バックアップは、必要に応じて行われます。</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">変更履歴</string>
   <!--Corrupt Installation Warning-->

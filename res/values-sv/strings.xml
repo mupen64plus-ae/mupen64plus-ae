@@ -47,8 +47,6 @@
   <string name="actionDeviceInfo_summary">Enhets hårdvaru och modell information</string>
   <string name="actionControllerInfo_title">Kontroll info</string>
   <string name="actionControllerDiagnostics_title">Kontroll diagnostik</string>
-  <string name="actionMigrateSlotSaves_title">Emigrera sparfiler</string>
-  <string name="actionMigrateSlotSaves_summary">Kopiera dina sparfiler från den gamla appen till denna</string>
   <string name="actionReloadAssets_title">Ladda om app resurser</string>
   <string name="actionReloadAssets_summary">Påverkar INTE användarinställningar, ROMs, sparfiler, eller andra egna data</string>
   <string name="actionCrashTest_title">Test</string>
@@ -145,6 +143,8 @@
   <string name="videoFpsRefresh_entryFrequently">Ofta</string>
   <string name="videoHardwareType_title">Flimmer minskning</string>
   <string name="videoHardwareType_entryAuto">Auto-upptäck från mobil/tablett modell</string>
+  <string name="videoHardwareType_entryStandard">Standard profil</string>
+  <string name="videoHardwareType_entryI">I profil</string>
   <string name="gles2N64Frameskip_title">Frameskip</string>
   <string name="gles2N64Frameskip_entryNever">Aldrig hoppa ramar</string>
   <string name="gles2N64Frameskip_entryUpTo1">Inte mer än 1 ram</string>

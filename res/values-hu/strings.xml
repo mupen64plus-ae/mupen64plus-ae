@@ -68,8 +68,6 @@
   <string name="toast_sdInaccessible">SD kártya nem elérhető (USB-t csatlakoztasd le majd próbáld újra)</string>
   <string name="toast_fileReadError">Nem lehet olvasni a fájlt!</string>
   <string name="toast_fileWriteError">Nem lehet írni a fájlt!</string>
-  <string name="toast_migrateSlotSavesNotFound">Nincsenek másolandó fájlok</string>
-  <string name="toast_migrateSlotSavesSuccess">Mozgatás sikeres</string>
   <string name="toast_crashReportSent">Jelentése elküldve.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -86,8 +84,6 @@
   <string name="actionDeviceInfo_summary">Készülék hardver és modell infó</string>
   <string name="actionControllerInfo_title">Kontroller infó</string>
   <string name="actionControllerDiagnostics_title">Kontroller diagnosztika</string>
-  <string name="actionMigrateSlotSaves_title">Mentett fájlok mozgatása</string>
-  <string name="actionMigrateSlotSaves_summary">Másold a régi alkalmazásból a mentett fájlaidat ebbe</string>
   <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
   <string name="actionReloadAssets_summary">Nem befolyásolja a felhasználói beállításokat, a ROMokat, vagy az egyéni adatokat</string>
   <string name="actionCrashTest_title">Teszt</string>
@@ -309,7 +305,6 @@
   <string name="confirmOverwriteFile_message">Felülírod %1$s ?</string>
   <string name="confirmLoadProfile_message">\"%1$s\" for %2$s profil betöltése?</string>
   <string name="confirmUnmapAll_message"> %1$s beviteli eszköz kiosztásának megszüntetése?</string>
-  <string name="confirmMigrateSlotSaves_message">Biztos át akarod másolni a régi mentéseidet? Biztonsági mentések fognak készülni, ha szükséges.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Változások</string>
   <!--Corrupt Installation Warning-->

@@ -68,8 +68,6 @@
   <string name="toast_sdInaccessible">SD-Karte nicht verfügbar (Trenne das USB-Kabel und versuche es erneut).</string>
   <string name="toast_fileReadError">Kann Datei nicht lesen!</string>
   <string name="toast_fileWriteError">Kann Datei nicht schreiben!</string>
-  <string name="toast_migrateSlotSavesNotFound">Keine Dateien zum Kopieren.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migration erfolgreich.</string>
   <string name="toast_crashReportSent">Bericht gesendet.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -86,8 +84,6 @@
   <string name="actionDeviceInfo_summary">Hardware- und Modellinformationen</string>
   <string name="actionControllerInfo_title">Controllerinfo</string>
   <string name="actionControllerDiagnostics_title">Controllerdiagnose</string>
-  <string name="actionMigrateSlotSaves_title">Speicherstände importieren</string>
-  <string name="actionMigrateSlotSaves_summary">Kopiere deine Slot-Speicherstände von der alten App in die Aktuelle</string>
   <string name="actionReloadAssets_title">App-Ressourcen erneut laden</string>
   <string name="actionReloadAssets_summary">Dies hat KEINE Auswirkungen auf benutzerdefinierte Einstellungen, ROMs, Speicherstände oder andere Benutzerdaten.</string>
   <string name="actionCrashTest_title">Test</string>
@@ -318,7 +314,6 @@
   <string name="confirmOverwriteFile_message">%1$s überschreiben?</string>
   <string name="confirmLoadProfile_message">Lade Profil \"%1$s\" für %2$s?</string>
   <string name="confirmUnmapAll_message">Alle Tastenbelegungen für %1$s entfernen?</string>
-  <string name="confirmMigrateSlotSaves_message">Bist du sicher, dass du deine alten Slot-Speicherstände kopieren willst? Falls nötig werden Backups erstellt.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Changelog</string>
   <!--Corrupt Installation Warning-->

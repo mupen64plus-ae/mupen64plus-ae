@@ -54,8 +54,6 @@
   <string name="toast_sdInaccessible">Карта недоступна</string>
   <string name="toast_fileReadError">Не удалось прочитать файл!</string>
   <string name="toast_fileWriteError">Не удалось записать файл!</string>
-  <string name="toast_migrateSlotSavesNotFound">Нет файлов для копирования</string>
-  <string name="toast_migrateSlotSavesSuccess">Перенос прошёл успешно</string>
   <string name="toast_crashReportSent">Отчёт отправлен.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -72,8 +70,6 @@
   <string name="actionDeviceInfo_summary">Модель и аппаратные характеристики</string>
   <string name="actionControllerInfo_title">Устройства ввода</string>
   <string name="actionControllerDiagnostics_title">Проверка устройств ввода</string>
-  <string name="actionMigrateSlotSaves_title">Импортировать сохранения</string>
-  <string name="actionMigrateSlotSaves_summary">Скопировать файлы сохранений в эту версию эмулятора</string>
   <string name="actionReloadAssets_title">Перезагрузить ресурсы</string>
   <string name="actionReloadAssets_summary">Не влияет на настройки пользователя, ROMs, сохранения игр, или другие пользовательские данные</string>
   <string name="actionCrashTest_title">Проверка</string>
@@ -283,7 +279,6 @@
   <string name="confirmOverwriteFile_message">Перезаписать %1$s?</string>
   <string name="confirmLoadProfile_message">Загрузить профиль \"%1$s\" для %2$s?</string>
   <string name="confirmUnmapAll_message">Сбросить все ассоциации для %1$s?</string>
-  <string name="confirmMigrateSlotSaves_message">Вы действительно хотите скопировать старый слот сохранений? Резервное копирование будет сделано, если это необходимо.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Список изменений</string>
   <!--Corrupt Installation Warning-->

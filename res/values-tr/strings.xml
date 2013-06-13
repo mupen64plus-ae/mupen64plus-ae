@@ -68,8 +68,6 @@
   <string name="toast_sdInaccessible">SD kart erişilemez (USB kablosunu çıkartıp tekrar deneyin)</string>
   <string name="toast_fileReadError">Dosya okunamadı!</string>
   <string name="toast_fileWriteError">Dosyaya yazılamadı!</string>
-  <string name="toast_migrateSlotSavesNotFound">Kopyalanacak dosya yok.</string>
-  <string name="toast_migrateSlotSavesSuccess">Taşıma başarılı.</string>
   <string name="toast_crashReportSent">Rapor gönderildi.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -86,8 +84,6 @@
   <string name="actionDeviceInfo_summary">Aygıt donanımı ve model bilgisi</string>
   <string name="actionControllerInfo_title">Kumanda bilgisi</string>
   <string name="actionControllerDiagnostics_title">Kumanda tanılama</string>
-  <string name="actionMigrateSlotSaves_title">Kayıt dosyalarını taşı</string>
-  <string name="actionMigrateSlotSaves_summary">Slot kayıtlarını eski uygulamanızdan buna kopyalayın</string>
   <string name="actionReloadAssets_title">Uygulama kaynaklarını tekrar yükle</string>
   <string name="actionReloadAssets_summary">Kullanıcı ayarlarını, ROM\'ları, oyun kayıtlarını veya diğer özel verileri etkilemez</string>
   <string name="actionCrashTest_title">Sına</string>
@@ -318,7 +314,6 @@
   <string name="confirmOverwriteFile_message">Üzerine yazılsınmı %1$s? </string>
   <string name="confirmLoadProfile_message">%2$s için \"%1$s\" profilini yükle?</string>
   <string name="confirmUnmapAll_message">%1$s için tüm girdilerin eşlemelerini kaldır?</string>
-  <string name="confirmMigrateSlotSaves_message">Eski yuva kayıtlarınızı kopyalamak istediğinizden emin misiniz ? Eğer önemli ise yedekler oluşturulacak.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Değişiklik kaydı</string>
   <!--Corrupt Installation Warning-->

@@ -69,8 +69,6 @@
   <string name="toast_sdInaccessible">SD-kaart niet beschikbaar (verwijder de USB-kabel en probeer opnieuw).</string>
   <string name="toast_fileReadError">Kon bestand niet lezen!</string>
   <string name="toast_fileWriteError">Kon bestand niet schrijven!</string>
-  <string name="toast_migrateSlotSavesNotFound">Geen bestanden om te kopiëren.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migratie gelukt.</string>
   <string name="toast_crashReportSent">Rapport verzonden.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -87,8 +85,6 @@
   <string name="actionDeviceInfo_summary">Apparaathardware en modelinformatie</string>
   <string name="actionControllerInfo_title">Controller info</string>
   <string name="actionControllerDiagnostics_title">Controllerdiagnose</string>
-  <string name="actionMigrateSlotSaves_title">Opgeslagen spelen overzetten</string>
-  <string name="actionMigrateSlotSaves_summary">kopieer opgeslagen spellen van de oude naar deze app </string>
   <string name="actionReloadAssets_title">Applicatiebronnen herladen</string>
   <string name="actionReloadAssets_summary">Heeft geen invloed op gebruikersinstellingen, ROM\'s, opgeslagen spellen, of andere eigen gegevens</string>
   <string name="actionCrashTest_title">Test</string>
@@ -327,7 +323,6 @@
   <string name="confirmOverwriteFile_message">%1$s overschrijven?</string>
   <string name="confirmLoadProfile_message">Profiel \"%1$s\" laden voor %2$s?</string>
   <string name="confirmUnmapAll_message">Alle invoertoewijzigingen verwijderen voor %1$s?</string>
-  <string name="confirmMigrateSlotSaves_message">Weet u zeker dat u uw oude opgeslagen slots wilt kopiëren?  Er worden zo nodig back-ups gemaakt.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Wijzigingsgeschiedenis</string>
   <!--Corrupt Installation Warning-->

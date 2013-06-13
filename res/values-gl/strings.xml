@@ -54,8 +54,6 @@
   <string name="toast_sdInaccessible">Non se pode acceder á SD (desconecte o cable USB e probe de novo)</string>
   <string name="toast_fileReadError">Non se puido ler o arquivo!</string>
   <string name="toast_fileWriteError">Non se puido escribir o arquivo!</string>
-  <string name="toast_migrateSlotSavesNotFound">Non hai arquivos a copiar.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migración satisfactoria.</string>
   <string name="toast_crashReportSent">Informe enviado.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -72,8 +70,6 @@
   <string name="actionDeviceInfo_summary">Hardware do dispositivo e info. do modelo</string>
   <string name="actionControllerInfo_title">Info. do mando</string>
   <string name="actionControllerDiagnostics_title">Diagnose do mando</string>
-  <string name="actionMigrateSlotSaves_title">Migrar arquivos de gardado</string>
-  <string name="actionMigrateSlotSaves_summary">Copiar os slot de gardado da vella aplicación nesta</string>
   <string name="actionReloadAssets_title">Recargar recursos da aplicación</string>
   <string name="actionReloadAssets_summary">NON afecta aos axustes, ROMs, partidas gardadas ou outros datos personalizados</string>
   <string name="actionCrashTest_title">Proba</string>
@@ -259,7 +255,6 @@
   <string name="confirmOverwriteFile_message">Sobrescribir %1$s?</string>
   <string name="confirmLoadProfile_message">Cargar perfil \"%1$s\" para %2$s?</string>
   <string name="confirmUnmapAll_message">Desasignar todas as entradas para %1$s?</string>
-  <string name="confirmMigrateSlotSaves_message">Queres copiar os teus slot de gardado vellos? Faranse respaldos de ser necesario.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Rexistro de modificacións</string>
   <!--Corrupt Installation Warning-->

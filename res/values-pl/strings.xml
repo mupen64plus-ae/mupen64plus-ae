@@ -69,8 +69,6 @@
   <string name="toast_sdInaccessible">Nie można uzyskać dostępu do karty SD (odłącz kabel USB i spróbuj ponownie).</string>
   <string name="toast_fileReadError">Nie można odczytać pliku!</string>
   <string name="toast_fileWriteError">Nie można zapisać pliku!</string>
-  <string name="toast_migrateSlotSavesNotFound">Brak plików do skopiowania.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migracja zakończona sukcesem.</string>
   <string name="toast_crashReportSent">Raport wysłany.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -87,8 +85,6 @@
   <string name="actionDeviceInfo_summary">Informacje o sprzęcie i modelu</string>
   <string name="actionControllerInfo_title">Informacje o kontrolerze</string>
   <string name="actionControllerDiagnostics_title">Diagnostyka kontrolera</string>
-  <string name="actionMigrateSlotSaves_title">Eksportuj zapisy stanu</string>
-  <string name="actionMigrateSlotSaves_summary">Skopiuj sloty zapisu ze starej wersji do obecnie używanej</string>
   <string name="actionReloadAssets_title">Załaduj ponownie zasoby aplikacji</string>
   <string name="actionReloadAssets_summary">Nie wpływa na ustawienia użytkownika, ROM\'y, zapisy stanu i inne dane osobiste</string>
   <string name="actionCrashTest_title">Test</string>
@@ -327,7 +323,6 @@
   <string name="confirmOverwriteFile_message">Nadpisać %1$s?</string>
   <string name="confirmLoadProfile_message">Załaduj profil \"%1$s\" dla %2$s?</string>
   <string name="confirmUnmapAll_message">Odmapuj ustawienia dla %1$s?</string>
-  <string name="confirmMigrateSlotSaves_message">Czy jesteś pewien że chcesz skopiować starsze wersje zapisów gry? W razie konieczności zostanie wykonana kopia zapasowa.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Lista zmian</string>
   <!--Corrupt Installation Warning-->

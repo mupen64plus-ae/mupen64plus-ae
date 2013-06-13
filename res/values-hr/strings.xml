@@ -69,8 +69,6 @@
   <string name="toast_sdInaccessible">SD kartica nije dostupna (iskopčajte USB kabel i pokušajte ponovo).</string>
   <string name="toast_fileReadError">Nije moguće očitavanje podataka iz datoteke!</string>
   <string name="toast_fileWriteError">Nije moguće zapisati podatke u datoteku!</string>
-  <string name="toast_migrateSlotSavesNotFound">Nema datoteka za kopiranje.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migracija uspješno završena.</string>
   <string name="toast_crashReportSent">Izvještaj poslan.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -87,8 +85,6 @@
   <string name="actionDeviceInfo_summary">Informacije o hardveru i modelu uređaja</string>
   <string name="actionControllerInfo_title">Informacije o kontroleru</string>
   <string name="actionControllerDiagnostics_title">Dijagnostika kontrolera</string>
-  <string name="actionMigrateSlotSaves_title">Migracija spremnika</string>
-  <string name="actionMigrateSlotSaves_summary">Kopiranje spremnika iz stare aplikacije u ovu</string>
   <string name="actionReloadAssets_title">Ponovno učitaj resurse</string>
   <string name="actionReloadAssets_summary">Nema nikakav utjecaj na korisničke postavke, igre, spremnike ili ostale korisničke podatke</string>
   <string name="actionCrashTest_title">Ispitaj</string>
@@ -327,7 +323,6 @@
   <string name="confirmOverwriteFile_message">Prepisati %1$s?</string>
   <string name="confirmLoadProfile_message">Učitati profil \"%1$s\" za %2$s?</string>
   <string name="confirmUnmapAll_message">Odznači sve unose za %1$s?</string>
-  <string name="confirmMigrateSlotSaves_message">Jeste li sigurni da želite kopirati svoje stare spremnike? Ako je potrebno, pričuvne kopije će biti napravljene.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Što je novo?</string>
   <!--Corrupt Installation Warning-->

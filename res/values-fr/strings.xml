@@ -69,8 +69,6 @@
   <string name="toast_sdInaccessible">Carte SD indisponible (veuillez déconnecter le cable USB puis réessayer)</string>
   <string name="toast_fileReadError">Le fichier ne peut être lu !</string>
   <string name="toast_fileWriteError">Le fichier ne peut être modifié !</string>
-  <string name="toast_migrateSlotSavesNotFound">Aucun fichier à copier.</string>
-  <string name="toast_migrateSlotSavesSuccess">Migration réussie.</string>
   <string name="toast_crashReportSent">Rapport envoyé.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -87,8 +85,6 @@
   <string name="actionDeviceInfo_summary">Modèle de l\'appareil</string>
   <string name="actionControllerInfo_title">Informations sur la manette</string>
   <string name="actionControllerDiagnostics_title">Diagnostiquer la manette</string>
-  <string name="actionMigrateSlotSaves_title">Migrer les fichiers de sauvegarde</string>
-  <string name="actionMigrateSlotSaves_summary">Copie vos emplacements de sauvegarde de l\'ancienne application vers la nouvelle</string>
   <string name="actionReloadAssets_title">Recharger les ressources de l\'application</string>
   <string name="actionReloadAssets_summary">N\'affecte PAS les paramètres utilisateurs, ROMs, sauvegardes ou autres données personnalisées</string>
   <string name="actionCrashTest_title">Test</string>
@@ -341,7 +337,6 @@
   <string name="confirmOverwriteFile_message">Écraser %1$s ?</string>
   <string name="confirmLoadProfile_message">Voulez-vous charger le profil \"%1$s\" pour %2$s ?</string>
   <string name="confirmUnmapAll_message">Désassigner toutes les touches de %1$s ?</string>
-  <string name="confirmMigrateSlotSaves_message">Êtes-vous sûr de vouloir copier vos anciens emplacements de sauvegarde ? Un backup sera effectué si nécessaire.</string>
   <!--Change Log-->
   <string name="changeLog_dialogTitle">Notes de version</string>
   <!--Corrupt Installation Warning-->

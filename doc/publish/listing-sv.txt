@@ -14,7 +14,7 @@ Nintendo64 emulator för Android. Mupen64Plus AE Beta testas.
 
 
 DEN HÄR APPEN KOMMER INTE MED SPEL ROMS
-Du måste ha rätt till en given ROM innan du spelar det!
+Du måste äga rätten till en given ROM innan du spelar den!
 - A number of public domain games/demos are available at www.pdroms.de
 
 99¢ IS FOR DONATIONS ONLY
