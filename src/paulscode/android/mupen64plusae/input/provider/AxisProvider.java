@@ -160,14 +160,13 @@ public class AxisProvider extends AbstractProvider
                 
                 if( axisClass == AxisMap.AXIS_CLASS_IGNORED )
                 {
-                    // User has specified that we ignore this axis
+                    // We should ignore this axis
                     strength = 0;
                 }
                 else if( device != null )
                 {
-                    // User has specified that we normalize this axis
-                    MotionRange motionRange = device.getMotionRange( axisCode,
-                            InputDevice.SOURCE_JOYSTICK );
+                    // We should normalize this axis
+                    MotionRange motionRange = device.getMotionRange( axisCode, InputDevice.SOURCE_JOYSTICK );
                     if( motionRange != null )
                     {
                         switch( axisClass )
@@ -180,26 +179,26 @@ public class AxisProvider extends AbstractProvider
                                 // Normalize to [0,1]
                                 strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
                                 break;
-                            case AxisMap.AXIS_CLASS_OUYA_LX_STICK:
-                                // Remove bias in OUYA left x-axis (usually ~ .15, but occassionaly up to .33)
+                            case AxisMap.AXIS_CLASS_OUYA_X_STICK:
+                                // Remove bias in OUYA left x-axis (usually ~ 0.15, but occassionally up to 0.33)
                                 if( strength > 0.3333f )
                                     strength = (strength - 0.3333f) / 0.6666f;
                                 else if( strength > 0 )
                                     strength = 0;
                                 break;
-                            case AxisMap.AXIS_CLASS_RAPHNET_STICK:
+                            case AxisMap.AXIS_CLASS_N64_USB_STICK:
                                 // Normalize to [-1,1]
-                                // The Raphnet adapters through v2.x assume the N64 controller produces values in the
-                                // range [-127,127].  However, the official N64 spec says that raw values of +/- 80
-                                // indicate full strength.  Therefore we rescale by dividing by 80/127 = 0.63.
+                                // The Raphnet adapters through v2.x and some other USB adapters assume the N64
+                                // controller produces values in the range [-127,127].  However, the official N64 spec
+                                // says that raw values of +/- 80 indicate full strength.  Therefore we rescale by
+                                // multiplying by 127/80 (dividing by 0.63).
+                                // http://naesten.dyndns.org:8080/psyq/man/os/osContGetReadData.html
+                                // http://raphnet-tech.com/products/gc_n64_usb_adapters/
                                 // https://github.com/paulscode/mupen64plus-ae/issues/89
                                 // https://github.com/paulscode/mupen64plus-ae/issues/99
-                                // http://naesten.dyndns.org:8080/psyq/man/os/osContGetReadData.html
+                                // https://github.com/paulscode/mupen64plus-ae/issues/188
+                                // http://www.paulscode.com/forum/index.php?topic=1076
                                 strength = strength / 0.63f;
-                                break;
-                            case AxisMap.AXIS_CLASS_RAPHNET_TRIGGER:
-                                // Normalize to [0,1]
-                                strength = (strength + 0.8f) / 1.6f;
                                 break;
                             case AxisMap.AXIS_CLASS_UNKNOWN:
                             default:

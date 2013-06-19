@@ -18,9 +18,8 @@ public class AxisMap extends SerializableMap
     public static final int AXIS_CLASS_IGNORED = 1;
     public static final int AXIS_CLASS_STICK = 2;
     public static final int AXIS_CLASS_TRIGGER = 3;
-    public static final int AXIS_CLASS_OUYA_LX_STICK = 101;
-    public static final int AXIS_CLASS_RAPHNET_STICK = 102;
-    public static final int AXIS_CLASS_RAPHNET_TRIGGER = 103;
+    public static final int AXIS_CLASS_OUYA_X_STICK = 101;
+    public static final int AXIS_CLASS_N64_USB_STICK = 102;
     
     private static final int SIGNATURE_HASH_XBOX360 = 449832952;
     private static final int SIGNATURE_HASH_XBOX360_WIRELESS = -412618953;
@@ -28,12 +27,6 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
     private static final int SIGNATURE_HASH_MOGA_PRO = -1933523749;
-    
-    private static final String NAME_STRING_NYKO_PLAYPAD = "NYKO PLAYPAD";
-    private static final String NAME_STRING_OUYA = "OUYA";
-    private static final String NAME_STRING_RAPHNET_1 = "raphnet.net GC/N64_USB";
-    private static final String NAME_STRING_RAPHNET_2 = "raphnet.net GC/N64 to USB, v2";
-    private static final String NAME_STRING_MAD_CATZ = "Mad Catz";
     
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
     private final String mSignature;
@@ -76,6 +69,7 @@ public class AxisMap extends SerializableMap
         Collections.sort( axisCodes );
         mSignature = TextUtils.join( ",", axisCodes );
         String signatureName = "Default";
+        String deviceName = device.getName();
         
         // Use the signature to override faulty auto-classifications
         switch( mSignature.hashCode() )
@@ -103,8 +97,8 @@ public class AxisMap extends SerializableMap
                 break;
             
             case SIGNATURE_HASH_NYKO_PLAYPAD:
-                if( !device.getName().contains( NAME_STRING_NYKO_PLAYPAD ) &&
-                        !device.getName().contains( NAME_STRING_MAD_CATZ ) )
+                if( !deviceName.contains( "NYKO PLAYPAD" ) &&
+                    !deviceName.contains( "Mad Catz" ) )
                 {
                     // The first batch of Nyko Playpad controllers have a quirk in the firmware
                     // where AXIS_HAT_X/Y are sent with (and overpower) AXIS_X/Y, and do not
@@ -120,8 +114,6 @@ public class AxisMap extends SerializableMap
                     //
                     // For original firmware, ignore AXIS_HAT_X/Y because they are sent with (and
                     // overpower) AXIS_X/Y
-                    //
-                    // TODO: Reduce the cludginess of this logic to minimize maintenance
                     setClass( MotionEvent.AXIS_HAT_X, AXIS_CLASS_IGNORED );
                     setClass( MotionEvent.AXIS_HAT_Y, AXIS_CLASS_IGNORED );
                     signatureName = "Nyko PlayPad series (original firmware)";
@@ -135,35 +127,31 @@ public class AxisMap extends SerializableMap
                 break;
             
             case SIGNATURE_HASH_MOGA_PRO:
-                // Ignore two spurious axes
+                // Ignore two spurious axes for MOGA Pro in HID (B) mode (as of MOGA Pivot v1.15)
                 // http://www.paulscode.com/forum/index.php?topic=581.msg10094#msg10094
                 setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_2, AXIS_CLASS_IGNORED );
-                signatureName = "Moga Pro";
+                signatureName = "Moga Pro (HID mode)";
                 break;
         }
         
-        String deviceName = device.getName();
-        
         // Check if the controller is OUYA, to compensate for the +X axis bias
-        if( deviceName.contains( NAME_STRING_OUYA ) )
+        if( deviceName.contains( "OUYA" ) )
         {
-            setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_LX_STICK );
+            setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_X_STICK );
             signatureName = "OUYA controller";
         }
-        // Check if the controller is a raphnet N64/USB adapter, to compensate for range of motion
-        // http://raphnet-tech.com/products/gc_n64_usb_adapters/
-        // https://github.com/paulscode/mupen64plus-ae/issues/89
-        // https://github.com/paulscode/mupen64plus-ae/issues/99
-        if( deviceName.contains( NAME_STRING_RAPHNET_1 ) || deviceName.contains( NAME_STRING_RAPHNET_2 ) )
+        
+        // Check if the controller is an N64/USB adapter, to compensate for range of motion
+        if( deviceName.contains( "raphnet.net GC/N64_USB" ) ||
+            deviceName.contains( "raphnet.net GC/N64 to USB, v2" ) ||
+            deviceName.contains( "HuiJia  USB GamePad" ) ) // double space is not a typo
         {
-            setClass( MotionEvent.AXIS_X, AXIS_CLASS_RAPHNET_STICK );
-            setClass( MotionEvent.AXIS_Y, AXIS_CLASS_RAPHNET_STICK );
-            setClass( MotionEvent.AXIS_RX, AXIS_CLASS_RAPHNET_STICK );
-            setClass( MotionEvent.AXIS_RY, AXIS_CLASS_RAPHNET_STICK );
-            setClass( MotionEvent.AXIS_RZ, AXIS_CLASS_RAPHNET_TRIGGER );
-            signatureName = "Raphnet adapter";
+            setClass( MotionEvent.AXIS_X, AXIS_CLASS_N64_USB_STICK );
+            setClass( MotionEvent.AXIS_Y, AXIS_CLASS_N64_USB_STICK );
+            signatureName = "N64 USB adapter";
         }
+        
         mSignatureName = signatureName;
     }
     
