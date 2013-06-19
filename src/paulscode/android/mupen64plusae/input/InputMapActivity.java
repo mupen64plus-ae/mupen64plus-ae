@@ -77,7 +77,10 @@ import android.widget.TextView;
 
 public class InputMapActivity extends Activity implements OnInputListener, OnClickListener, OnItemClickListener
 {
+    private static final int MIN_DEADZONE = 0;
     private static final int MAX_DEADZONE = 20;
+    private static final int MIN_SENSITIVITY = 50;
+    private static final int MAX_SENSITIVITY = 200;
     
     // Visual settings
     private static final float UNMAPPED_BUTTON_ALPHA = 0.2f;
@@ -337,6 +340,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             case R.id.menuItem_deadzone:
                 setDeadzone();
                 break;
+            case R.id.menuItem_sensitivity:
+                setSensitivity();
+                break;
             case R.id.menuItem_specialVisibility:
                 mUserPrefs.putSpecialVisibility( mPlayer,
                         !mUserPrefs.getSpecialVisibility( mPlayer ) );
@@ -374,7 +380,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             {
                 mMap.deserialize( mapString );
                 mUserPrefs.putInputMapString( mPlayer, mMap.serialize() );
-                mUserPrefs.putInputDeadzone( mPlayer, 0 );
+                mUserPrefs.putInputDeadzone( mPlayer, UserPrefs.DEFAULT_INPUT_DEADZONE );
+                mUserPrefs.putInputSensitivity( mPlayer, UserPrefs.DEFAULT_INPUT_SENSITIVITY );
                 refreshAllButtons();
             }
         } );
@@ -402,7 +409,8 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         {
             String[] lines = FileUtil.readStringFromFile( file ).split( "\n" );            
             String line1 = lines.length > 0 ? lines[0] : "";
-            String line2 = lines.length > 1 ? lines[1] : "0";
+            String line2 = lines.length > 1 ? lines[1] : Integer.toString( UserPrefs.DEFAULT_INPUT_DEADZONE );
+            String line3 = lines.length > 2 ? lines[2] : Integer.toString( UserPrefs.DEFAULT_INPUT_SENSITIVITY );
             
             // First line of file contains button map
             mMap.deserialize( line1 );
@@ -410,8 +418,12 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
             refreshAllButtons();
 
             // Second line of file contains deadzone value
-            int deadzone = SafeMethods.toInt( line2, 0 );
+            int deadzone = SafeMethods.toInt( line2, UserPrefs.DEFAULT_INPUT_DEADZONE );
             mUserPrefs.putInputDeadzone( mPlayer, deadzone );
+
+            // Third line of file contains sensitivity value
+            int sensitivity = SafeMethods.toInt( line3, UserPrefs.DEFAULT_INPUT_SENSITIVITY );
+            mUserPrefs.putInputSensitivity( mPlayer, sensitivity );
         }
         catch( IOException e )
         {
@@ -463,7 +475,9 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         try
         {
             Notifier.showToast( this, R.string.toast_savingFile, file.getName() );
-            String text = mMap.serialize() + "\n" + mUserPrefs.getInputDeadzone( mPlayer );
+            String text = mMap.serialize() + "\n"
+                    + mUserPrefs.getInputDeadzone( mPlayer ) + "\n"
+                    + mUserPrefs.getInputSensitivity( mPlayer );
             FileUtil.writeStringToFile( file, text );
         }
         catch( IOException e )
@@ -478,7 +492,7 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         final CharSequence title = getText( R.string.menuItem_deadzone );
         final int deadzone = mUserPrefs.getInputDeadzone( mPlayer );
         
-        Prompt.promptInteger( this, title, "%1$d %%", deadzone, 0, MAX_DEADZONE, new PromptIntegerListener()
+        Prompt.promptInteger( this, title, "%1$d %%", deadzone, MIN_DEADZONE, MAX_DEADZONE, new PromptIntegerListener()
         {
             @Override
             public void onDialogClosed( Integer value, int which )
@@ -486,6 +500,24 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
                     mUserPrefs.putInputDeadzone( mPlayer, value );
+                }
+            }
+        } );
+    }
+    
+    private void setSensitivity()
+    {
+        final CharSequence title = getText( R.string.menuItem_sensitivity );
+        final int sensitivity = mUserPrefs.getInputSensitivity( mPlayer );
+        
+        Prompt.promptInteger( this, title, "%1$d %%", sensitivity, MIN_SENSITIVITY, MAX_SENSITIVITY, new PromptIntegerListener()
+        {
+            @Override
+            public void onDialogClosed( Integer value, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                {
+                    mUserPrefs.putInputSensitivity( mPlayer, value );
                 }
             }
         } );

@@ -329,22 +329,26 @@ public class GameLifecycleHandler implements View.OnKeyListener
         if( mUserPrefs.isInputEnabled1 )
         {
             mControllers.add( new PeripheralController( 1, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap1, mUserPrefs.inputDeadzone1, mKeyProvider, axisProvider, mogaProvider ) );
+                    mUserPrefs.inputMap1, mUserPrefs.inputDeadzone1, mUserPrefs.inputSensitivity1,
+                    mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled2 )
         {
             mControllers.add( new PeripheralController( 2, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap2, mUserPrefs.inputDeadzone2, mKeyProvider, axisProvider, mogaProvider ) );
+                    mUserPrefs.inputMap2, mUserPrefs.inputDeadzone2, mUserPrefs.inputSensitivity2,
+                    mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled3 )
         {
             mControllers.add( new PeripheralController( 3, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap3, mUserPrefs.inputDeadzone3, mKeyProvider, axisProvider, mogaProvider ) );
+                    mUserPrefs.inputMap3, mUserPrefs.inputDeadzone3, mUserPrefs.inputSensitivity3,
+                    mKeyProvider, axisProvider, mogaProvider ) );
         }
         if( mUserPrefs.isInputEnabled4 )
         {
             mControllers.add( new PeripheralController( 4, mUserPrefs.playerMap,
-                    mUserPrefs.inputMap4, mUserPrefs.inputDeadzone4, mKeyProvider, axisProvider, mogaProvider ) );
+                    mUserPrefs.inputMap4, mUserPrefs.inputDeadzone4, mUserPrefs.inputSensitivity4,
+                    mKeyProvider, axisProvider, mogaProvider ) );
         }
     }
     

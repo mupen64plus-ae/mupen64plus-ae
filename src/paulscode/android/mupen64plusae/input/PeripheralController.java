@@ -53,6 +53,9 @@ public class PeripheralController extends AbstractController implements
     /** The analog deadzone, between 0 and 1, inclusive. */
     private final float mDeadzoneFraction;
     
+    /** The analog sensitivity, the amount by which to scale stick values, nominally 1. */
+    private final float mSensitivityFraction;
+    
     /** The user input providers. */
     private final ArrayList<AbstractProvider> mProviders;
     
@@ -83,10 +86,12 @@ public class PeripheralController extends AbstractController implements
      * @param player    The player number, between 1 and 4, inclusive.
      * @param playerMap The map from hardware identifiers to players.
      * @param inputMap  The map from input codes to N64/Mupen commands.
+     * @param inputDeadzone The analog deadzone in percent.
+     * @param inputSensitivity The analog sensitivity in percent.
      * @param providers The user input providers. Null elements are safe.
      */
     public PeripheralController( int player, PlayerMap playerMap, InputMap inputMap,
-            int inputDeadzone, AbstractProvider... providers )
+            int inputDeadzone, int inputSensitivity, AbstractProvider... providers )
     {
         setPlayerNumber( player );
         
@@ -94,6 +99,7 @@ public class PeripheralController extends AbstractController implements
         mPlayerMap = playerMap;
         mInputMap = inputMap;
         mDeadzoneFraction = ( (float) inputDeadzone ) / 100f;
+        mSensitivityFraction = ( (float) inputSensitivity ) / 100f;
         
         // Assign the non-null input providers
         mProviders = new ArrayList<AbstractProvider>();
@@ -196,8 +202,8 @@ public class PeripheralController extends AbstractController implements
             }
             
             // Calculate the net position of the analog stick
-            float rawX = mStrengthXpos - mStrengthXneg;
-            float rawY = mStrengthYpos - mStrengthYneg;
+            float rawX = mSensitivityFraction * ( mStrengthXpos - mStrengthXneg );
+            float rawY = mSensitivityFraction * ( mStrengthYpos - mStrengthYneg );
             float magnitude = FloatMath.sqrt( ( rawX * rawX ) + ( rawY * rawY ) );
             
             // Update controller state

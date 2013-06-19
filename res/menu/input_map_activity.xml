@@ -37,6 +37,10 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/menuItem_deadzone"/>
     <item
+        android:id="@+id/menuItem_sensitivity"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menuItem_sensitivity"/>
+    <item
         android:id="@+id/menuItem_specialVisibility"
         android:title="@string/menuItem_specialVisibility_show"/>
     <item

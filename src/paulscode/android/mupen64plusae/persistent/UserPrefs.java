@@ -210,6 +210,18 @@ public class UserPrefs
     /** The deadzone for Player 4, in percent. */
     public final int inputDeadzone4;
     
+    /** The sensitivity for Player 1, in percent. */
+    public final int inputSensitivity1;
+    
+    /** The sensitivity for Player 2, in percent. */
+    public final int inputSensitivity2;
+    
+    /** The sensitivity for Player 3, in percent. */
+    public final int inputSensitivity3;
+    
+    /** The sensitivity for Player 4, in percent. */
+    public final int inputSensitivity4;
+    
     /** The player map for multi-player gaming. */
     public final PlayerMap playerMap;
     
@@ -337,6 +349,7 @@ public class UserPrefs
     private static final String KEYTEMPLATE_PAK_TYPE = "inputPakType%1$d";
     private static final String KEYTEMPLATE_INPUT_MAP_STRING = "inputMapString%1$d";
     private static final String KEYTEMPLATE_INPUT_DEADZONE = "inputDeadzone%1$d";
+    private static final String KEYTEMPLATE_INPUT_SENSITIVITY = "inputSensitivity%1$d";
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
     // ... add more as needed
@@ -346,6 +359,7 @@ public class UserPrefs
     public static final String DEFAULT_INPUT_MAP_STRING = OUYAInterface.IS_OUYA_HARDWARE ?
             InputMap.DEFAULT_INPUT_MAP_STRING_OUYA : InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
     public static final int DEFAULT_INPUT_DEADZONE = 0;
+    public static final int DEFAULT_INPUT_SENSITIVITY = 100;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
     // ... add more as needed
@@ -447,6 +461,10 @@ public class UserPrefs
         inputDeadzone2 = getInputDeadzone( 2 );
         inputDeadzone3 = getInputDeadzone( 3 );
         inputDeadzone4 = getInputDeadzone( 4 );
+        inputSensitivity1 = getInputSensitivity( 1 );
+        inputSensitivity2 = getInputSensitivity( 2 );
+        inputSensitivity3 = getInputSensitivity( 3 );
+        inputSensitivity4 = getInputSensitivity( 4 );
         
         // Video prefs
         videoOrientation = getSafeInt( mPreferences, "videoOrientation", 0 );
@@ -699,7 +717,12 @@ public class UserPrefs
     {
         return getInt( KEYTEMPLATE_INPUT_DEADZONE, player, DEFAULT_INPUT_DEADZONE );
     }
-
+    
+    public int getInputSensitivity( int player )
+    {
+        return getInt( KEYTEMPLATE_INPUT_SENSITIVITY, player, DEFAULT_INPUT_SENSITIVITY );
+    }
+    
     public boolean getSpecialVisibility( int player )
     {
         return getBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, DEFAULT_SPECIAL_VISIBILITY );
@@ -724,7 +747,12 @@ public class UserPrefs
     {
         putInt( KEYTEMPLATE_INPUT_DEADZONE, player, value );
     }
-
+    
+    public void putInputSensitivity( int player, int value )
+    {
+        putInt( KEYTEMPLATE_INPUT_SENSITIVITY, player, value );
+    }
+    
     public void putSpecialVisibility( int player, boolean value )
     {
         putBoolean( KEYTEMPLATE_SPECIAL_VISIBILITY, player, value );
