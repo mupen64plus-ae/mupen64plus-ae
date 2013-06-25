@@ -30,10 +30,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-// The mac version of SDL requires inclusion of SDL_main in the executable
-#ifdef __APPLE__
-	 #include <SDL_main.h>
-#endif
+#include <SDL_main.h>
 
 #include "cheat.h"
 #include "main.h"

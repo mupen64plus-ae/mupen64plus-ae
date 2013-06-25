@@ -128,18 +128,6 @@ ifeq ($(OS), OSX)
     OSX_SYSROOT := /Developer/SDKs
   endif
 
-  # The mac version of SDL requires inclusion of SDL_main in the executable
-  ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
-    SDL_CONFIG = $(CROSS_COMPILE)sdl-config
-    ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-      $(error No SDL development libraries found!)
-    endif
-    SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
-  endif
-  CFLAGS += $(SDL_CFLAGS)
-  LDLIBS += $(SDL_LDLIBS)
-
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
@@ -149,11 +137,20 @@ ifeq ($(OS), OSX)
   endif
 endif
 
+# test for presence of SDL
+ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
+  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+    $(error No SDL development libraries found!)
+  endif
+  SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+  SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
+endif
+CFLAGS += $(SDL_CFLAGS)
+LDLIBS += $(SDL_LDLIBS)
+
 ifeq ($(OS), MINGW)
-  # Do NOT include SDL_main for Windows; we are building a console app!
-  # NO -mwindows either!  (it will still be a valid 32-bit Windows program)
-  CFLAGS += -I/usr/local/include/SDL -D_GNU_SOURCE=1
-  LDLIBS += -L/usr/local/lib -lmingw32 -lSDL
+  LDLIBS += -mconsole
 endif
 
 ifeq ($(BIG_ENDIAN), 1)
