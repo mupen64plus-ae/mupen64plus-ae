@@ -1,13 +1,23 @@
-Mupen64Plus-UI-Console README
------------------------------
+===============================================================================
+-------------------------------------------------------------------------------
+Mupen64plus-ui-console README                                              v2.0
+-------------------------------------------------------------------------------
+===============================================================================
 
-README Sections
-  1. Command-line options
+The latest documentation for this plugin can be found at:
 
-1. Command-line options
-------------------------
+https://code.google.com/p/mupen64plus/wiki/UIConsoleUsage
 
-Run 'mupen64plus --help' for a complete list of command-line options:
+-------------------------------------------------------------------------------
+Console Options
+-------------------------------------------------------------------------------
+
+At startup, the mupen64plus program will look for a user configuration file
+called 'mupen64plus.cfg'.  If this file does not exist, it will be created and
+default settings will be written. If desired, an alternate config directory can
+be specified using the --configdir commandline option.
+
+Run 'mupen64plus --help' for a complete list of commandline options: 
 
  $ mupen64plus --help
 Usage: mupen64plus [parameter(s)] [romfile]
@@ -48,5 +58,24 @@ Parameters:
     'all'                 : enable all of the available cheat codes
     (codelist)            : a comma-separated list of cheat code numbers to enable,
                             with dashes to use code variables (ex 1-2 to use cheat 1 option 2)
+
+-------------------------------------------------------------------------------
+Cheats
+-------------------------------------------------------------------------------
+
+To list the available cheats in the rom:
+
+mupen64plus --cheats list "/path/to/my/rom.v64"
+
+If there are cheats in the rom, you will get (in the output console):
+
+UI-Console: 3 cheat code(s) found for ROM 'MY ROM'
+   0: [Enable All Levels] (This is needed to be able to Play all Levels of the Game)
+   1: [Enable All Weapons] (This is needed to be able to Play with all Weapons of the Game)
+   2: etc...
+
+All you have to do to use this cheats is:
+
+mupen64plus --cheats 0,1,2 "/path/to/my/rom.v64"
 
 
