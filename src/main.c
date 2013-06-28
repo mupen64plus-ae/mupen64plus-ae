@@ -232,7 +232,7 @@ static void printUsage(const char *progname)
            "    --nospeedlimit        : disable core speed limiter (should be used with dummy audio plugin)\n"
            "    --cheats (cheat-spec) : enable or list cheat codes for the given rom file\n"
            "    --corelib (filepath)  : use core library (filepath) (can be only filename or full path)\n"
-           "    --configdir (dir)     : force configation directory to (dir); should contain mupen64plus.conf\n"
+           "    --configdir (dir)     : force configation directory to (dir); should contain mupen64plus.cfg\n"
            "    --datadir (dir)       : search for shared data files (.ini files, languages, etc) in (dir)\n"
            "    --plugindir (dir)     : search for plugins in (dir)\n"
            "    --sshotdir (dir)      : set screenshot directory to (dir)\n"
