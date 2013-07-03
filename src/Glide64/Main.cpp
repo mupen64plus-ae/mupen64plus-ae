@@ -1432,13 +1432,13 @@ EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *PluginType, int *Plugi
         *PluginType = M64PLUGIN_GFX;
 
     if (PluginVersion != NULL)
-        *PluginVersion = 0x016305;
+        *PluginVersion = PLUGIN_VERSION;
 
     if (APIVersion != NULL)
         *APIVersion = VIDEO_PLUGIN_API_VERSION;
 
     if (PluginNamePtr != NULL)
-        *PluginNamePtr = "Glide64mk2 Video Plugin";
+        *PluginNamePtr = PLUGIN_NAME;
 
     if (Capabilities != NULL)
     {

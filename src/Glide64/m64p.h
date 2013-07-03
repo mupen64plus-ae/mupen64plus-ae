@@ -32,6 +32,8 @@
 #include "winlnxdefs.h"
 #include <stdio.h>
 
+#define PLUGIN_NAME                 "Glide64mk2 Video Plugin"
+#define PLUGIN_VERSION              0x020000
 #define VIDEO_PLUGIN_API_VERSION	0x020200
 #define CONFIG_API_VERSION          0x020000
 #define VIDEXT_API_VERSION          0x030000
