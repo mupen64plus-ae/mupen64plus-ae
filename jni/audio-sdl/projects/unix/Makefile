@@ -117,23 +117,17 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
-OPTFLAGS ?= -O3
+OPTFLAGS ?= -O3 -flto
 WARNFLAGS ?= -Wall
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src
 LDFLAGS += $(SHARED)
-
-# default configuration programs
-SDL_CONFIG = $(CROSS_COMPILE)sdl-config
-PKG_CONFIG = $(CROSS_COMPILE)pkg-config
 
 # Since we are building a shared library, we must compile with -fPIC on some architectures
 # On 32-bit x86 systems we do not want to use -fPIC because we don't have to and it has a big performance penalty on this arch
 ifeq ($(PIC), 1)
   CFLAGS += -fPIC
-  LDFLAGS += -fPIC
 else
   CFLAGS += -fno-PIC
-  LDFLAGS += -fno-PIC
 endif
 
 ifeq ($(BIG_ENDIAN), 1)
@@ -146,7 +140,7 @@ ifeq ($(ARCH_DETECTED), 64BITS_32)
     $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
   endif
   CFLAGS += -m32
-  LDFLAGS += -m32 -Wl,-m,elf_i386
+  LDFLAGS += -Wl,-m,elf_i386
 endif
 
 # set special flags per-system
@@ -169,59 +163,67 @@ ifeq ($(OS), OSX)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
-      LDFLAGS += -arch x86_64
       LDLIBS += -ldl
     else
       CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
-      LDFLAGS += -arch i686
       LDLIBS += -ldl -read_only_relocs suppress
     endif
   endif
 endif
 
 # test for presence of SDL
-ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
-  $(error No SDL development libraries found!)
+ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
+  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+    $(error No SDL development libraries found!)
+  endif
+  SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+  SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
 endif
-ifeq ($(OS),FREEBSD)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
-ifeq ($(OS),OSX)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
-ifeq ($(OS),LINUX)
-    CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
-endif
-ifeq ($(OS),MINGW)
-    CFLAGS += $(shell $(SDL_CONFIG) --cflags)
-    LDLIBS += $(shell $(SDL_CONFIG) --libs)
+CFLAGS += $(SDL_CFLAGS)
+LDLIBS += $(SDL_LDLIBS)
+
+# test for essential build dependencies
+ifeq ($(origin PKG_CONFIG), undefined)
+  PKG_CONFIG = $(CROSS_COMPILE)pkg-config
+  ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
+    $(error $(PKG_CONFIG) not found)
+  endif
 endif
 
 # test for presence of speexdsp
-ifneq ($(strip $(shell $(PKG_CONFIG) speexdsp --modversion 2> /dev/null)),)
-  ifneq ($(NO_SPEEX), 1)
-    # set speexdsp flags and libraries
-    CFLAGS += $(shell $(PKG_CONFIG) speexdsp --cflags) -DUSE_SPEEX
-    LDLIBS += $(shell $(PKG_CONFIG) speexdsp --libs)
+ifneq ($(NO_SPEEX), 1)
+  ifeq ($(origin SPEEX_CFLAGS) $(origin SPEEX_LDLIBS), undefined undefined)
+    ifneq ($(strip $(shell $(PKG_CONFIG) speexdsp --modversion 2> /dev/null)),)
+      # set speexdsp flags and libraries
+      SPEEX_CFLAGS += $(shell $(PKG_CONFIG) speexdsp --cflags) -DUSE_SPEEX
+      SPEEX_LDLIBS += $(shell $(PKG_CONFIG) speexdsp --libs)
+    else
+      # warn user
+      $(warning No libspeexdsp development libraries found.  Mupen64plus-sdl-audio will be built without speex-* resampler.)
+    endif
+  else
+    SPEEX_CFLAGS += -DUSE_SPEEX
   endif
-else
-  # warn user
-  $(warning No libspeexdsp development libraries found.  Mupen64plus-sdl-audio will be built without speex-* resampler.)
+  CFLAGS += $(SPEEX_CFLAGS)
+  LDLIBS += $(SPEEX_LDLIBS)
 endif
 
 # test for presence of libsamplerate
-ifneq ($(strip $(shell $(PKG_CONFIG) samplerate --modversion 2> /dev/null)),)
-  ifneq ($(NO_SRC), 1)
-    # set libsamplerate flags and libraries
-    CFLAGS	+= $(shell $(PKG_CONFIG) samplerate --cflags) -DUSE_SRC
-    LDLIBS += $(shell $(PKG_CONFIG) samplerate --libs)
+ifneq ($(NO_SRC), 1)
+  ifeq ($(origin SRC_CFLAGS) $(origin SRC_LDLIBS), undefined undefined)
+    ifneq ($(strip $(shell $(PKG_CONFIG) samplerate --modversion 2> /dev/null)),)
+      # set libsamplerate flags and libraries
+      SRC_CFLAGS += $(shell $(PKG_CONFIG) samplerate --cflags) -DUSE_SRC
+      SRC_LDLIBS += $(shell $(PKG_CONFIG) samplerate --libs)
+    else
+      $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without src-* resampler.)
+    endif
+  else
+    SRC_CFLAGS += -DUSE_SRC
   endif
-else
-  # warn user
-  $(warning No libsamplerate development libraries found.  Mupen64plus-sdl-audio will be built without src-* resampler.)
+  CFLAGS += $(SRC_CFLAGS)
+  LDLIBS += $(SRC_LDLIBS)
 endif
 
 # test for the presence of OSS
@@ -267,7 +269,7 @@ RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
 COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
-LINK.o = $(Q_LD)$(CC) $(LDFLAGS) $(TARGET_ARCH)
+LINK.o = $(Q_LD)$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 # set special flags for given Makefile parameters
 ifeq ($(DEBUG),1)
@@ -323,7 +325,7 @@ targets:
 	@echo "  Options:"
 	@echo "    BITS=32       == build 32-bit binaries on 64-bit machine"
 	@echo "    APIDIR=path   == path to find Mupen64Plus Core headers"
-	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3)"
+	@echo "    OPTFLAGS=flag == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    NO_SRC=1      == build without libsamplerate; disables src-* high-quality audio resampling"
@@ -337,7 +339,6 @@ targets:
 	@echo "    DESTDIR=path  == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1       == add debugging symbols"
-	@echo "    LTO=1         == enable experimental build with link-time optimization"
 	@echo "    V=1           == show verbose compiler output"
 
 
@@ -358,11 +359,6 @@ rebuild: clean all
 # build dependency files
 CFLAGS += -MD
 -include $(OBJECTS:.o=.d)
-
-ifeq ($(LTO), 1)
-  CFLAGS += -flto
-  LDFLAGS += -fuse-linker-plugin $(CFLAGS)
-endif
 
 # standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.c

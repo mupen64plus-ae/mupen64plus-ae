@@ -1,12 +1,18 @@
 SDL Audio plugin for Mupen64Plus
 ---------------------------------
 
-Mupen64Plus-audio-sdl - LATEST REVISION
----------------------------------------
+Mupen64Plus-audio-sdl - v2.0 - July 4, 2013
+-------------------------------------------
+ - Add support for resampling with speexdsp library
+ - Add more resampling quality options
  - Bugfix: Don't assume OSS is installed in all linux systems.
  - Bugfix: Some combinations of VolumeSetLevel and VolumeMute caused VolumeGetString to return "Mute" when not muted
  - Make SDL volume handling the default, since OSS is no longer included in the kernel.
  - Minor refactoring of volume handling code.
+ - MS Visual Studio 2012 project files
+ - Makefile improvements
+   - support for ARM and MINGW architectures
+   - support for cross-compiling (MXE win32 builds under Unix)
 
 Mupen64Plus-audio-sdl v1.99.5 - March 10, 2012
 --------------------------------------------------

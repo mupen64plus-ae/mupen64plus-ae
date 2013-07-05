@@ -596,14 +596,13 @@ static void my_audio_callback(void *userdata, unsigned char *stream, int len)
         }
         else
 #endif
-        {
-#if SDL_VERSION_ATLEAST(1,3,0)
-#warning Mixing disabled with SDL >= 1.3 because it creates distorted audio
+        /* TODO mupen64plus-ae specific hack */
+        if (1) {
             input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, stream, len, newsamplerate);
-#else
+	} else {
             input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, mixBuffer, len, newsamplerate);
+            memset(stream, 0, len);
             SDL_MixAudio(stream, mixBuffer, len, VolSDL);
-#endif
         }
         memmove(primaryBuffer, &primaryBuffer[input_used], buffer_pos - input_used);
         buffer_pos -= input_used;
