@@ -276,8 +276,9 @@ void osd_exit(void)
     // delete message queue
     SDL_LockMutex(osd_list_lock);
     list_for_each_entry_safe(msg, safe, &l_messageQueue, osd_message_t, list) {
-        free(msg->text);
-        free(msg);
+        osd_remove_message(msg);
+        if (!msg->user_managed)
+            free(msg);
     }
     SDL_UnlockMutex(osd_list_lock);
 
@@ -336,6 +337,7 @@ void osd_render()
     // setup for drawing text
     glDisable(GL_FOG);
     glDisable(GL_LIGHTING);
+    glDisable(GL_ALPHA_TEST);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glDisable(GL_SCISSOR_TEST);
