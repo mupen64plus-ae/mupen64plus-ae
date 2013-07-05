@@ -99,9 +99,6 @@ static void uc9_draw_object (wxUint8 * addr, wxUint32 type)
 {
   wxUint32 textured, vnum, vsize;
   switch (type) {
-    case 0: //null
-      textured = vnum = vsize = 0;
-      break;
     case 1: //sh tri
       textured = 0;
       vnum = 3;
@@ -121,6 +118,10 @@ static void uc9_draw_object (wxUint8 * addr, wxUint32 type)
       textured = 1;
       vnum = 4;
       vsize = 16;
+      break;
+    case 0: //null
+    default:
+      textured = vnum = vsize = 0;
       break;
   }
   VERTEX vtx[4];
@@ -253,7 +254,7 @@ static void uc9_fmlight ()
   wxUint32 a = -1024 + (rdp.cmd1&0xFFF);
   FRDP ("uc9:fmlight matrix: %d, num: %d, dmem: %04lx\n", mid, rdp.num_lights, a);
 
-  M44 *m;
+  M44 *m = NULL;
   switch (mid) {
   case 4:
     m = (M44*)rdp.model;
@@ -382,8 +383,8 @@ static void uc9_mtxtrnsp ()
 static void uc9_mtxcat ()
 {
   LRDP("uc9:mtxcat ");
-  M44 *s;
-  M44 *t;
+  M44 *s = NULL;
+  M44 *t = NULL;
   wxUint32 S = rdp.cmd0&0xF;
   wxUint32 T = (rdp.cmd1>>16)&0xF;
   wxUint32 D = rdp.cmd1&0xF;

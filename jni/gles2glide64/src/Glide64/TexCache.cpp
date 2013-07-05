@@ -37,6 +37,7 @@
 //
 //****************************************************************
 
+#include <SDL.h>
 #include "Gfx_1.3.h"
 #include "TexCache.h"
 #include "Combine.h"
@@ -159,7 +160,7 @@ uint32_t textureCRC(uint8_t *addr, int width, int height, int line)
   for (; height; height--) {
     for (i = width; i; --i) {
       twopixel_crc = i * (uint64_t)(pixelpos[1] + pixelpos[0] + crc);
-      crc = (twopixel_crc >> 32) + twopixel_crc;
+      crc = (uint32_t) ((twopixel_crc >> 32) + twopixel_crc);
       pixelpos += 2;
     }
     crc = ((unsigned int)height * (uint64_t)crc >> 32) + height * crc;
@@ -538,11 +539,10 @@ void TexCache ()
       if (ghq_dmptex_toggle_key) {
         DisplayLoadProgress(L"Texture dump - ON\n");
         ClearCache();
-        #pragma message( "TODO: should sleep here" )
-//        wxThread::Sleep(1000);
+        SDL_Delay(1000);
       } else {
         DisplayLoadProgress(L"Texture dump - OFF\n");
-//        wxThread::Sleep(1000);
+        SDL_Delay(1000);
       }
     }
   }

@@ -56,7 +56,8 @@
 #endif
 
 #ifdef _WIN32
-#define PATH_MAX _MAX_PATH
+  #define PATH_MAX _MAX_PATH
+  #define stricmp _stricmp
 #endif
 
 FILE *ini;
@@ -257,8 +258,9 @@ void INI_InsertSpace(int space)
     fseek(ini, 0L, SEEK_END);
     int t2 = ftell(ini);
     fseek(ini, t1, SEEK_SET);
-    ftruncate(file, t2+space);
-     }
+    if (ftruncate(file, t2+space) != 0)
+        ERRLOG("Failed to truncate .ini file to %i bytes", t2+space);
+    }
 #endif // _WIN32
 
     while (1) {
@@ -268,9 +270,11 @@ void INI_InsertSpace(int space)
         if (len > 2048) len = 2048;
 
         fseek (ini,-len,SEEK_CUR);
-        fread (chunk,1,len,ini);
+        if (fread(chunk,1,len,ini) != (size_t) len)
+            ERRLOG("Failed to read %i bytes from .ini file", len);
         fseek (ini,-len+space,SEEK_CUR);
-        fwrite (chunk,1,len,ini);
+        if (fwrite(chunk,1,len,ini) != (size_t) len)
+            ERRLOG("Failed to write %i bytes to .ini file", len);
         fseek (ini,-len-space,SEEK_CUR);
     }
 
@@ -284,7 +288,8 @@ void INI_InsertSpace(int space)
     fseek(ini, 0L, SEEK_END);
     int t2 = ftell(ini);
     fseek(ini, t1, SEEK_SET);
-    ftruncate(file, t2+space);
+    if (ftruncate(file, t2+space) != 0)
+        ERRLOG("Failed to truncate .ini file to %i bytes", t2+space);
      }
 #endif // _WIN32
 }
@@ -307,7 +312,8 @@ BOOL INI_FindSection (const char *sectionname, BOOL create)
     while(!feof(ini)) {
         ret = 0;
         *line=0;
-        fgets(line,255,ini);
+        if (fgets(line,255,ini) == NULL)
+            break;
 
         // remove enter
         i=strlen(line);
@@ -368,11 +374,14 @@ BOOL INI_FindSection (const char *sectionname, BOOL create)
         // create the section
         fseek(ini,last_line,SEEK_SET);
         INI_InsertSpace ((!last_line_ret) * 2 + 6 + strlen(sectionname));
-        if (!last_line_ret) fwrite (&cr, 1, 2, ini);
-        fwrite (&cr, 1, 2, ini);
+        if (!last_line_ret)
+            if (fwrite(&cr, 1, 2, ini) != 2)
+                ERRLOG("Failed to write <CR><LF> to .ini file");
         sprintf (section, "[%s]", sectionname);
-        fwrite (section, 1, strlen(section), ini);
-        fwrite (&cr, 1, 2, ini);
+        if (fwrite(&cr, 1, 2, ini) != 2 ||
+            fwrite(section, 1, strlen(section), ini) != strlen(section) ||
+            fwrite(&cr, 1, 2, ini) != 2)
+            ERRLOG("Failed to write Section line to .ini file");
         sectionstart = ftell(ini);
         last_line = sectionstart;
         last_line_ret = 1;
@@ -395,7 +404,8 @@ const char *INI_ReadString (const char *itemname, char *value, const char *def_v
     while(!feof(ini)) {
         ret = 0;
         *line=0;
-        fgets(line,255,ini);
+        if (fgets(line,255,ini) == NULL)
+            break;
 
         // remove enter
         i=strlen(line);
@@ -465,10 +475,13 @@ const char *INI_ReadString (const char *itemname, char *value, const char *def_v
     {
         fseek(ini,last_line,SEEK_SET);
         INI_InsertSpace ((!last_line_ret) * 2 + strlen(itemname) + strlen(def_value) + 5);
-        if (!last_line_ret) fwrite (&cr, 1, 2, ini);
+        if (!last_line_ret)
+            if (fwrite(&cr, 1, 2, ini) != 2)
+                ERRLOG("Failed to write <CR><LF> to .ini file");
         sprintf (line, "%s = %s", itemname, def_value);
-        fwrite (line, 1, strlen(line), ini);
-        fwrite (&cr, 1, 2, ini);
+        if (fwrite(line, 1, strlen(line), ini) != strlen(line) ||
+            fwrite(&cr, 1, 2, ini) != 2)
+            ERRLOG("Failed to write key,value line to .ini file");
         last_line = ftell(ini);
         last_line_ret = 1;
     }
@@ -489,7 +502,7 @@ void INI_WriteString (const char *itemname, const char *value)
     while(!feof(ini)) {
         ret = 0;
         *line=0;
-        fgets(line,255,ini);
+        if (fgets(line,255,ini) == NULL) break;
 
         // remove enter
         i=strlen(line);
@@ -541,8 +554,11 @@ void INI_WriteString (const char *itemname, const char *value)
             INI_InsertSpace (-i + (strlen(itemname) + strlen(value) + 5));
             sprintf (line, "%s = %s", itemname, value);
             fseek (ini, -i, SEEK_CUR);
-            fwrite (line, 1, strlen(line), ini);
-            fwrite (&cr, 1, 2, ini);
+            if (fwrite(line, 1, strlen(line), ini) != strlen(line) ||
+                fwrite(&cr, 1, 2, ini) != 2)
+            {
+                ERRLOG("Failed to write line '%s' to .ini file", line);
+            }
             last_line = ftell(ini);
             last_line_ret = 1;
             return;
@@ -552,10 +568,15 @@ void INI_WriteString (const char *itemname, const char *value)
     // uh-oh, not found.  we need to create
     fseek(ini,last_line,SEEK_SET);
     INI_InsertSpace ((!last_line_ret) * 2 + strlen(itemname) + strlen(value) + 5);
-    if (!last_line_ret) fwrite (&cr, 1, 2, ini);
     sprintf (line, "%s = %s", itemname, value);
-    fwrite (line, 1, strlen(line), ini);
-    fwrite (&cr, 1, 2, ini);
+    if (!last_line_ret)
+        if (fwrite(&cr, 1, 2, ini) != 2)
+            ERRLOG("Failed to write <CR> to .ini file");
+    if (fwrite(line, 1, strlen(line), ini) != strlen(line) ||
+        fwrite(&cr, 1, 2, ini) != 2)
+    {
+        ERRLOG("Failed to write line '%s' to .ini file", line);
+    }
     last_line = ftell(ini);
     last_line_ret = 1;
     return;

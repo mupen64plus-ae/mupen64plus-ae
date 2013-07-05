@@ -18,7 +18,7 @@ LOCAL_C_INCLUDES :=                             \
 LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glitch64/combiner.cpp             \
     $(SRCDIR)/Glitch64/geometry.cpp             \
-    $(SRCDIR)/Glitch64/main.cpp                 \
+    $(SRCDIR)/Glitch64/glitchmain.cpp           \
     $(SRCDIR)/Glitch64/textures.cpp             \
     $(SRCDIR)/Glide64/osal_dynamiclib_unix.c    \
     $(SRCDIR)/Glide64/3dmath.cpp                \
