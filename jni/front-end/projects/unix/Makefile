@@ -92,11 +92,8 @@ ifeq ("$(CPU)","NONE")
 endif
 
 # base CFLAGS, LDLIBS, and LDFLAGS
-OPTFLAGS ?= -O3
+OPTFLAGS ?= -O3 -flto
 WARNFLAGS ?= -Wall
-
-# default configuration programs
-SDL_CONFIG = $(CROSS_COMPILE)sdl-config
 
 CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -I../../src
 ifeq ($(OS), MINGW)
@@ -109,10 +106,9 @@ endif
 
 ifeq ($(PIE), 1)
   CFLAGS += -fPIE
-  LDFLAGS += -fPIE -pie
+  LDFLAGS += -pie
 else
   CFLAGS += -fno-PIE
-  LDFLAGS += -fno-PIE
 endif
 
 # set special flags per-system
@@ -132,25 +128,29 @@ ifeq ($(OS), OSX)
     OSX_SYSROOT := /Developer/SDKs
   endif
 
-  # The mac version of SDL requires inclusion of SDL_main in the executable
-  CFLAGS += $(shell $(SDL_CONFIG) --cflags)
-  LDLIBS += -ldl $(shell $(SDL_CONFIG) --libs)
   ifeq ($(CPU), X86)
     ifeq ($(ARCH_DETECTED), 64BITS)
       CFLAGS += -pipe -arch x86_64 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
-      LDFLAGS += -arch x86_64
     else
       CFLAGS += -pipe -mmmx -msse -fomit-frame-pointer -arch i686 -mmacosx-version-min=$(OSX_SDK) -isysroot $(OSX_SYSROOT)/MacOSX$(OSX_SDK).sdk
-      LDFLAGS += -arch i686
     endif
   endif
 endif
 
+# test for presence of SDL
+ifeq ($(origin SDL_CFLAGS) $(origin SDL_LDLIBS), undefined undefined)
+  SDL_CONFIG = $(CROSS_COMPILE)sdl-config
+  ifeq ($(shell which $(SDL_CONFIG) 2>/dev/null),)
+    $(error No SDL development libraries found!)
+  endif
+  SDL_CFLAGS  += $(shell $(SDL_CONFIG) --cflags)
+  SDL_LDLIBS += $(shell $(SDL_CONFIG) --libs)
+endif
+CFLAGS += $(SDL_CFLAGS)
+LDLIBS += $(SDL_LDLIBS)
+
 ifeq ($(OS), MINGW)
-  # Do NOT include SDL_main for Windows; we are building a console app!
-  # NO -mwindows either!  (it will still be a valid 32-bit Windows program)
-  CFLAGS += -I/usr/local/include/SDL -D_GNU_SOURCE=1
-  LDLIBS += -L/usr/local/lib -lmingw32 -lSDL
+  LDLIBS += -mconsole
 endif
 
 ifeq ($(BIG_ENDIAN), 1)
@@ -163,7 +163,7 @@ ifeq ($(ARCH_DETECTED), 64BITS_32)
     $(error Do not use the BITS=32 option with FreeBSD, use -m32 and -m elf_i386)
   endif
   CFLAGS += -m32
-  LDFLAGS += -m32 -Wl,-m,elf_i386
+  LDFLAGS += -Wl,-m,elf_i386
 endif
 
 # set mupen64plus core API header path
@@ -203,7 +203,7 @@ RM       ?= rm -f
 INSTALL  ?= install
 MKDIR ?= mkdir -p
 COMPILE.c = $(Q_CC)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
-LINK.o = $(Q_LD)$(CC) $(LDFLAGS) $(TARGET_ARCH)
+LINK.o = $(Q_LD)$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 # set special flags for given Makefile parameters
 # note: COREDIR _must_ end in a slash if you want it to work; not necessary for the others
@@ -282,7 +282,7 @@ targets:
 	@echo "    PLUGINDIR=path == default path to search for plugins"
 	@echo "    SHAREDIR=path  == default path to search for shared data files"
 	@echo "    APIDIR=path    == path to find Mupen64Plus Core headers"
-	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3)"
+	@echo "    OPTFLAGS=flags == compiler optimization (default: -O3 -flto)"
 	@echo "    WARNFLAGS=flag == compiler warning levels (default: -Wall)"
 	@echo "    PIE=(1|0)      == Force enable/disable of position independent executables"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
@@ -293,7 +293,6 @@ targets:
 	@echo "    DESTDIR=path   == path to prepend to all installation paths (only for packagers)"
 	@echo "  Debugging Options:"
 	@echo "    DEBUG=1        == add debugging symbols to application binary"
-	@echo "    LTO=1         == enable experimental build with link-time optimization"
 	@echo "    V=1            == show verbose compiler output"
 
 all: $(TARGET)
@@ -315,11 +314,6 @@ uninstall:
 # build dependency files
 CFLAGS += -MD
 -include $(OBJECTS:.o=.d)
-
-ifeq ($(LTO), 1)
-  CFLAGS += -flto
-  LDFLAGS += -fuse-linker-plugin -fwhole-program $(CFLAGS)
-endif
 
 # standard build rules
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
