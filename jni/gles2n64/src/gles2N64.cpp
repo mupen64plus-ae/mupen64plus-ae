@@ -190,6 +190,10 @@ EXPORT void CALL ProcessRDPList(void)
 {
 }
 
+EXPORT void CALL ResizeVideoOutput(int Width, int Height)
+{
+}
+
 EXPORT void CALL RomClosed (void)
 {
 }
