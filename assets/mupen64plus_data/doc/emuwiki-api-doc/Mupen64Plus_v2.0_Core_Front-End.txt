@@ -2,7 +2,7 @@
 
 = Mupen64Plus v2.0 Core<-->Front-End API =
 
-Most libmupen64plus functions return an <tt>m64p_error</tt> return code, which is an enumerated type defined in [[Mupen64Plus v2.0 headers#core.h|core.h]].  Front-end code should check the return value of each call to a libmupen64plus function.
+Most libmupen64plus functions return an <tt>m64p_error</tt> return code, which is an enumerated type defined in [[Mupen64Plus v2.0 headers#m64p_types.h|m64p_types.h]].  Front-end code should check the return value of each call to a libmupen64plus function.
 
 == Startup/Shutdown Functions ==
 {| border="1"
@@ -42,7 +42,7 @@ Most libmupen64plus functions return an <tt>m64p_error</tt> return code, which i
 |-
 |Input Parameters
 |'''<tt>PluginType</tt>''' Enumerated type specifying the plugin type to attach to the core.  If this type of plugin is currently attached to the core, an error will be returned.<br />
-'''<tt>PluginLibHandle</tt>''' Dynamic library handle (defined in [[Mupen64Plus v2.0 headers#core.h|core.h]]) corresponding with the plugin object to attach.
+'''<tt>PluginLibHandle</tt>''' Dynamic library handle (defined in [[Mupen64Plus v2.0 headers#m64p_types.h|m64p_types.h]]) corresponding with the plugin object to attach.
 |-
 |Requirements
 |Both the core library and the plugin library must already be initialized with the <tt>CoreStartup()/PluginStartup()</tt> functions, and a ROM must be open.  This function cannot be called while the emulator is running.  The plugins must be attached in the following order: Video, Audio, Input, RSP.
@@ -131,6 +131,11 @@ Most libmupen64plus functions return an <tt>m64p_error</tt> return code, which i
 |'''<tt>ParamInt</tt>''' An <tt>m64p_core_param</tt> enumerated type specifying the desired state variable'''<br /><tt>ParamPtr</tt>''' Pointer to an integer to receive the value of the requested state variable.
 |None
 |-
+|M64CMD_CORE_STATE_SET
+|This command will set the value of a state parameter in the emulator core
+|'''<tt>ParamInt</tt>''' An <tt>m64p_core_param</tt> enumerated type specifying the desired state variable'''<br /><tt>ParamPtr</tt>''' Pointer to an integer to containing the value of the requested state variable.
+|The initial requirements vary depending upon the variable being set.  Setting some variables requires the emulator to be running.
+|-
 |M64CMD_STATE_LOAD
 |This command will attempt to load a saved state file.  If '''<tt>ParamPtr</tt>''' is not NULL, this function will load a state file from a full pathname specified by this pointer.  Otherwise ('''<tt>ParamPtr</tt>''' is NULL), it will load from the current slot.
 |'''<tt>ParamInt</tt>''' Ignored'''<br /><tt>ParamPtr</tt>''' Pointer to string containing state file path and name, or NULL
@@ -138,7 +143,7 @@ Most libmupen64plus functions return an <tt>m64p_error</tt> return code, which i
 |-
 |M64CMD_STATE_SAVE
 |This command will save a state file.  If '''<tt>ParamPtr</tt>''' is not NULL, this function will save a state file to a full pathname specified by this pointer.  Otherwise ('''<tt>ParamPtr</tt>''' is NULL), it will save to the current slot.
-|'''<tt>ParamInt</tt>''' If 1, a Mupen64Plus state file will be saved.  If 2, a Project64 state file will be saved.'''<br /><tt>ParamPtr</tt>''' Pointer to string containing state file path and name, or NULL<br />
+|'''<tt>ParamInt</tt>''' This parameter will only be used if '''<tt>ParamPtr</tt>''' is not NULL. If 1, a Mupen64Plus state file will be saved.  If 2, a Project64 compressed state file will be saved. If 3, a Project64 uncompressed state file will be saved. '''<br /><tt>ParamPtr</tt>''' Pointer to string containing state file path and name, or NULL<br />
 |The emulator must be currently running or paused.  This command will execute asynchronously.
 |-
 |M64CMD_STATE_SET_SLOT
@@ -165,9 +170,100 @@ Most libmupen64plus functions return an <tt>m64p_error</tt> return code, which i
 |This will cause the core to save a screenshot at the next possible opportunity.
 |N/A
 |The emulator must be currently running or paused.  This command will execute asynchronously.
+|-
+|M64CMD_READ_SCREEN
+|This command will copy the current contents of the video display to the buffer pointer by '''<tt>ParamPtr</tt>'''.
+|'''<tt>ParamInt</tt>''' 1 to copy the buffer that is currently displayed (front buffer), 0 to copy the buffer that is being drawn (back buffer).'''<br /><tt>ParamPtr</tt>'''A pointer to a buffer of at least width*height*3 bytes. The buffer will be filled with the current display. The format is RGB888 with the origin in the lower left corner.
+|The emulator must be currently running or paused.
+|-
+|M64CMD_RESET
+|Reset the emulated machine.
+|'''<tt>ParamInt</tt>''' 0 to do a soft reset, 1 to do a hard reset.'''<br /><tt>ParamPtr</tt>''' Ignored
+|The emulator must be currently running or paused.
+|-
+|M64CMD_ADVANCE_FRAME
+|Advance one frame (the emulator will run until the next frame, then pause).
+|'''<tt>ParamInt</tt>''' Ignored'''<br /><tt>ParamPtr</tt>''' Ignored
+|The emulator must be currently running or paused.
 |}
 <br />
 
+
+== Core State Parameters ==
+These core parameters may be read and/or written using the M64CMD_CORE_STATE_QUERY and M64CMD_CORE_STATE_SET commands.  The front-end application will receive a callback (via the <tt>StateCallback</tt> function pointer given to the '''<tt>CoreStartup</tt>''' function) when these parameters change value.  This callback will be sent even if the function which caused the state change was called by the front-end application itself.  Not all of these parameters are readable or writable.  Each parameter's value is held in a single 32-bit integer.  The meaning of this integer is given in the Parameter Encoding column. See the table below for details on these core parameters.
+<br />
+{| border="1"
+!Name!!Readable!!Writable!!<tt>int</tt> Parameter Encoding!!Notes
+|-
+|M64CORE_EMU_STATE
+|Yes
+|Yes
+|<tt>enum m64p_emu_state</tt>
+|<tt>1</tt>=Stopped, <tt>2</tt>=Running, <tt>3</tt>=Paused
+|-
+|M64CORE_VIDEO_MODE
+|Yes
+|Yes
+|<tt>enum m64p_video_mode</tt>
+|<tt>1</tt>=None (video not running), <tt>2</tt>=Windowed, <tt>3</tt>=Fullscreen
+|-
+|M64CORE_SAVESTATE_SLOT
+|Yes
+|Yes
+|
+|Valid values are 0 through 9.
+|-
+|M64CORE_SPEED_FACTOR
+|Yes
+|Yes
+|Emulator playback speed in percent
+|Valid values are 1 to 1000.
+|-
+|M64CORE_SPEED_LIMITER
+|Yes
+|Yes
+|<tt>1</tt> to enable speed limiter, or <tt>0</tt> to disable speed limiter.
+|When speed limiter is disabled, emulator will run as fast as possible (useful for benchmarking).
+|-
+|M64CORE_VIDEO_SIZE
+|Yes
+|Yes
+|<tt>(ScreenWidth << 16) + ScreenHeight</tt>
+|This parameter can only be read or written when the emulator is running or paused.  This parameter may be written by the front-end application in response to a window resizing event.  Upon receiving this command, the core will pass the new width and height to the ResizeVideoOutput function in the video plugin (video API v2.2.0).  If the video plugin supports resizing, it will update its viewport and then call the video extension function VidExt_ResizeWindow to update the window manager.
+|-
+|M64CORE_AUDIO_VOLUME
+|Yes
+|Yes
+|Volume level in percent, 0 - 100
+|
+|-
+|M64CORE_AUDIO_MUTE
+|Yes
+|Yes
+|<tt>1</tt> if muted, otherwise <tt>0</tt>
+|
+|-
+|M64CORE_INPUT_GAMESHARK
+|Yes
+|Yes
+|<tt>1</tt> when Gameshark button pressed, <tt>0</tt> when button released.
+|Callback function will be invoked on both button press and release.
+|-
+|M64CORE_STATE_LOADCOMPLETE
+|No
+|No
+|<tt>1</tt> if state loading was successful, <tt>0</tt> if state loading failed.
+|This parameter cannot be read or written.  It is only used for callbacks, because the state load/save operations are asynchronous.
+|-
+|M64CORE_STATE_SAVECOMPLETE
+|No
+|No
+|<tt>1</tt> if state saving was successful, <tt>0</tt> if state saving failed.
+|This parameter cannot be read or written.  It is only used for callbacks, because the state load/save operations are asynchronous.
+|}
+<br />
+
+== ROM Handling Functions ==
 {| border="1"
 |Prototype
 |'''<tt>m64p_error CoreGetRomSettings(m64p_rom_settings *RomSettings, int RomSettingsLength, int Crc1, int Crc2)</tt>'''
@@ -192,13 +288,13 @@ Most libmupen64plus functions return an <tt>m64p_error</tt> return code, which i
 |'''<tt>m64p_error CoreOverrideVidExt(m64p_video_extension_functions *VideoFunctionStruct);</tt>'''
 |-
 |Input Parameters
-|'''<tt>VideoFunctionStruct</tt>''' Pointer to a structure (defined in [[Mupen64Plus v2.0 headers#vidext.h|vidext.h]]) containing pointers to the Front-end's custom Video Extension functions to override the default SDL functions
+|'''<tt>VideoFunctionStruct</tt>''' Pointer to a structure (defined in [[Mupen64Plus v2.0 headers#m64p_types.h|m64p_types.h]]) containing pointers to the Front-end's custom Video Extension functions to override the default SDL functions
 |-
 |Requirements
 |The Mupen64Plus library must already be initialized before calling this function.  This function cannot be called while the emulator is running.
 |-
 |Usage
-|This function overrides the core's internal SDL-based OpenGL functions which are called from the video plugin to perform various basic tasks like opening the video window, toggling between windowed and fullscreen modes, and swapping frame buffers after a frame has been rendered.  This override functionality allows a front-end to define its own video extension functions to be used instead of the SDL functions, such as for the purpose of embedding the emulator display window inside of a Qt GUI window.  If any of the function pointers in the structure are NULL, the override function will be disabled and the core's internal SDL functions will be used.  The v2.0 core expects the <tt>Functions</tt> struct member to be equal to 9 or more.
+|This function overrides the core's internal SDL-based OpenGL functions which are called from the video plugin to perform various basic tasks like opening the video window, toggling between windowed and fullscreen modes, and swapping frame buffers after a frame has been rendered.  This override functionality allows a front-end to define its own video extension functions to be used instead of the SDL functions, such as for the purpose of embedding the emulator display window inside of a Qt GUI window.  If any of the function pointers in the structure are NULL, the override function will be disabled and the core's internal SDL functions will be used.  The core library with a Video Extension API v3.0 expects the <tt>Functions</tt> struct member to be equal to 11 or more.
 |}
 <br />
 

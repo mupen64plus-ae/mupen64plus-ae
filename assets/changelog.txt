@@ -1,3 +1,9 @@
+[28:2.3.2]
+- Updated core to version 2.0
+- Updated plugins to latest versions
+- Added sensitivity preference for controller analog sticks
+- Fixed analog scaling for Mayflash N64/USB adapter
+- Removed obsolete items in the Advanced menu
 [27:2.3.1]
 - Added support for MOGA Pocket/Pro via MOGA Pivot app (no menu navigation in mode A)
 - Fixed junk graphics in the margins for gles2rice video plugin
