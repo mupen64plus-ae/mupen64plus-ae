@@ -93,7 +93,7 @@
   <string name="actionResetUserPrefs_summary">Restaurar configuração padrão</string>
   <string name="actionResetUserPrefs_popupMessage">Restauras todas as configurações para o padrão?</string>
   <string name="actionHelp_title">Ajuda</string>
-  <string name="actionHelp_message">Mupen64Plus é desenvolvido e mantido por voluntários.<small>\n\nPara corrigir falhas nos gráficos, tente mudar o <i>plugin de vídeo</i>.\n\nPara corrigir lag, tente configurar a configuração de <i>video frameskip</i> ou <i>plugin de vídeo</i>.\n\nSe não conseguir jogar uma ROM, tente descompactá-la antes ou procure outra versão da ROM.\n\nPara problemas com o controle na tela, tente mudar o <i>button scale</i> ou <i>button layout</i>.\n\nPara outros problemas, ou se nada acima resolver, clique no botão <i>FAQ</i> abaixo. Para problemas não relativos ao jogo, clique no botão <i>Report bug</i> abaixo.  Nós respondemos a maioria dos posts dentro de 24 horas. Sério.\n\n</small>Obrigado por nos ajudar a melhorar o app!</string>
+  <string name="actionHelp_message">Mupen64Plus é desenvolvido e mantido por voluntários.<small>\n\nPara corrigir falhas nos gráficos, tente mudar o <i>plugin de vídeo</i>.\n\nPara corrigir lag, tente configurar a configuração de <i>vídeo frameskip</i> ou <i>plugin de vídeo</i>.\n\nSe não conseguir jogar uma ROM, tente descompactá-la antes ou procure outra versão da ROM.\n\nPara problemas com o controle na tela, tente mudar o <i>button scale</i> ou <i>button layout</i>.\n\nPara outros problemas, ou se nada acima resolver, clique no botão <i>FAQ</i> abaixo. Para problemas não relativos ao jogo, clique no botão <i>Report bug</i> abaixo.  Nós respondemos a maioria dos posts dentro de 24 horas. Sério.\n\n</small>Obrigado por nos ajudar a melhorar o app!</string>
   <string name="actionHelp_faq">Dúvidas frequentes</string>
   <string name="actionHelp_reportbug">Relatar bug</string>
   <string name="actionAbout_title">Sobre</string>
@@ -270,7 +270,7 @@
   <string name="pluginVideo_title">Vídeo</string>
   <string name="pluginVideo_entryNone">Nenhum (vídeo desabilitado)</string>
   <string name="pluginVideo_entryGles2N64">gles2n64⏎\n<small>(adaptação do GLN64 v0.4.1)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice⏎\n<small>(adaptação do Rice Video v6.1.0(b))</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice⏎\n<small>(adaptação do Rice Vídeo v6.1.0(b))</small></string>
   <string name="pluginVideo_entryGles2Glide64">gles2glide64⏎\n<small>(adaptação do Glide64 Final (Aniversário de 10 anos))</small></string>
   <string name="pluginAudio_title">Áudio</string>
   <string name="pluginAudio_entryNone">Nenhum (áudio desabilitado)</string>

@@ -5,8 +5,8 @@
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="menuItem_toggleSpeed">Hastighet %1$d %%</string>
-  <string name="menuItem_fileSave">Spara till fil...</string>
-  <string name="menuItem_fileLoad">Ladda från fil...</string>
+  <string name="menuItem_fileSave">Spara till fil…</string>
+  <string name="menuItem_fileLoad">Ladda från fil…</string>
   <string name="menuItem_setSpeed">Spel hastighet</string>
   <!--capitalize since trademark-->
   <!--capitalize since trademark-->
@@ -21,8 +21,8 @@
   <!--Input Mapping Activity-->
   <string name="menuItem_profiles">Profiler</string>
   <string name="menuItem_default">Standard</string>
-  <string name="menuItem_load">Ladda...</string>
-  <string name="menuItem_save">Spara...</string>
+  <string name="menuItem_load">Ladda…</string>
+  <string name="menuItem_save">Spara…</string>
   <string name="menuItem_ouya">OUYA</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
@@ -35,15 +35,15 @@
   <!--Developers: Follow punctuation and grammar as shown below-->
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
-  <string name="toast_rebuildingCheats">Ombyggnad fusk databas...</string>
-  <string name="toast_launchingEmulator">Startar emulator...</string>
-  <string name="toast_loadingSession">Auto-återupptar spelet...</string>
-  <string name="toast_savingSession">Auto-spara spel...</string>
-  <string name="toast_loadingSlot">Laddar slot %1$d...</string>
-  <string name="toast_savingSlot">Sparar slot %1$d...</string>
-  <string name="toast_loadingFile">Laddar %1$s...</string>
-  <string name="toast_savingFile">Sparar %1$s...</string>
-  <string name="toast_overwritingFile">Skriver över %1$s...</string>
+  <string name="toast_rebuildingCheats">Ombyggnad fusk databas…</string>
+  <string name="toast_launchingEmulator">Startar emulator…</string>
+  <string name="toast_loadingSession">Auto-återupptar spelet…</string>
+  <string name="toast_savingSession">Auto-spara spel…</string>
+  <string name="toast_loadingSlot">Laddar slot %1$d…</string>
+  <string name="toast_savingSlot">Sparar slot %1$d…</string>
+  <string name="toast_loadingFile">Laddar %1$s…</string>
+  <string name="toast_savingFile">Sparar %1$s…</string>
+  <string name="toast_overwritingFile">Skriver över %1$s…</string>
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Använder nu slot %1$d.</string>
   <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
@@ -312,6 +312,6 @@
   <string name="inputMapActivity_speedUp">Snabba up</string>
   <string name="inputMapActivity_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
-  <string name="diagnosticActivity_textKey_text">Tryck på en knapp...</string>
-  <string name="diagnosticActivity_textMotion_text">Tryck skärmen eller joysticken...</string>
+  <string name="diagnosticActivity_textKey_text">Tryck på en knapp…</string>
+  <string name="diagnosticActivity_textMotion_text">Tryck skärmen eller joysticken…</string>
 </resources>
