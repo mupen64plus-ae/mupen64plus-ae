@@ -224,14 +224,14 @@
   <string name="pluginVideo_entryNone">Заглушка (выключить изображение)</string>
   <string name="pluginAudio_title">Звуковой плагин</string>
   <string name="pluginAudio_entryNone">Заглушка (выключить звук)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v1.99.5</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Плагин ввода</string>
   <string name="pluginInput_entryNone">Заглушка</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Выключен</string>
-  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v1.99.5</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
   <string name="pluginCore_title">Ядро эмулятора</string>
-  <string name="pluginCore_entryV110">mupen64plus-core, v1.99.5</string>
+  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
   <string name="r4300Emulator_title">R4300 Эмулятор</string>
   <string name="r4300Emulator_entryPureInterpreter">Интерпретация</string>
   <string name="r4300Emulator_entryCachedInterpreter">Интерпретация с кешированием</string>

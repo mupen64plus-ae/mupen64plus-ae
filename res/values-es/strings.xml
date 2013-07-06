@@ -263,12 +263,12 @@
   <string name="pluginVideo_entryNone">Ninguno (video deshabilitado)</string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Ninguno (audio deshabilitado)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v1.99.5</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Ninguno (dispositivos de entrada deshabilitados)</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Ninguno (RSP deshabilitado)</string>
-  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v1.99.5</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
   <string name="pluginCore_title">Núcleo de emulación</string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
