@@ -333,6 +333,12 @@ public class UserPrefs
     /** True if gles2glide64 video plug-in is enabled. */
     public final boolean isGles2Glide64Enabled;
         
+    /** The maximum frameskip in the gles2glide64 library. */
+    public final int gles2Glide64MaxFrameskip;
+    
+    /** True if auto-frameskip is enabled in the gles2glide64 library. */
+    public final boolean isGles2Glide64AutoFrameskipEnabled;
+    
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
     
@@ -501,6 +507,9 @@ public class UserPrefs
         
         // Video prefs - gles2glide64
         isGles2Glide64Enabled = videoPlugin.name.equals( "libgles2glide64.so" );
+        maxFrameskip = getSafeInt( mPreferences, "gles2Glide64Frameskip", 0 );
+        isGles2Glide64AutoFrameskipEnabled = maxFrameskip < 0;
+        gles2Glide64MaxFrameskip = Math.abs( maxFrameskip );
         
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );

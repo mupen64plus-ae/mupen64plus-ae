@@ -432,6 +432,8 @@ public class CoreInterface
         // GLES2GLIDE64 config file
         ConfigFile gles2glide64_conf = new ConfigFile( appData.gles2glide64_conf );
         gles2glide64_conf.put( "DEFAULT", "aspect", "2" ); // Stretch to GameSurface, Java will manage aspect ratio
+        gles2glide64_conf.put( "DEFAULT", "autoframeskip", booleanToString( user.isGles2Glide64AutoFrameskipEnabled ) );
+        gles2glide64_conf.put( "DEFAULT", "maxframeskip", Integer.toString( user.gles2Glide64MaxFrameskip ) );
         
         // Core and GLES2RICE config file
         ConfigFile mupen64plus_cfg = new ConfigFile( appData.mupen64plus_cfg );

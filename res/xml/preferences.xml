@@ -438,6 +438,17 @@
                         android:title="@string/pathHiResTextures_title"
                         mupen64:selectionMode="1" />
                 </PreferenceCategory>
+                <PreferenceCategory
+                    android:key="categoryGles2Glide64"
+                    android:title="@string/categoryGles2Glide64_title" >
+                    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                        android:defaultValue="@string/gles2Glide64Frameskip_default"
+                        android:entries="@array/gles2Glide64Frameskip_entries"
+                        android:entryValues="@array/gles2Glide64Frameskip_values"
+                        android:key="gles2Glide64Frameskip"
+                        android:summary="@string/selectedValue"
+                        android:title="@string/gles2Glide64Frameskip_title" />
+                </PreferenceCategory>
             </PreferenceScreen>
             <PreferenceScreen
                 android:icon="@drawable/ic_speaker"

@@ -22,5 +22,6 @@
     <string name="inputMapActivity_title" translatable="false">@string/playerMapPreference_popupTitle</string>
     <string name="inputMapActivity_saveSlot" translatable="false">@string/menuItem_slotSave</string>
     <string name="inputMapActivity_loadSlot" translatable="false">@string/menuItem_slotLoad</string>
+    <string name="gles2Glide64Frameskip_title" translatable="false">@string/gles2N64Frameskip_title</string>
 
 </resources>

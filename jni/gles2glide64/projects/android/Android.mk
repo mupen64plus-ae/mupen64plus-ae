@@ -28,12 +28,14 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/Glide64/Debugger.cpp              \
     $(SRCDIR)/Glide64/DepthBufferRender.cpp     \
     $(SRCDIR)/Glide64/FBtoScreen.cpp            \
+    $(SRCDIR)/Glide64/FrameSkipper.cpp          \
     $(SRCDIR)/Glide64/Ini.cpp                   \
     $(SRCDIR)/Glide64/Keys.cpp                  \
     $(SRCDIR)/Glide64/Main.cpp                  \
     $(SRCDIR)/Glide64/rdp.cpp                   \
     $(SRCDIR)/Glide64/TexBuffer.cpp             \
     $(SRCDIR)/Glide64/TexCache.cpp              \
+    $(SRCDIR)/Glide64/ticks.c                   \
     $(SRCDIR)/Glide64/Util.cpp                  \
 #    $(SRCDIR)/GlideHQ/Ext_TxFilter.cpp          \
 #    $(SRCDIR)/GlideHQ/TxFilterExport.cpp        \

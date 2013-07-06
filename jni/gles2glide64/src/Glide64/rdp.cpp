@@ -51,6 +51,11 @@
 #include "FBtoScreen.h"
 #include "CRC.h"
 
+#ifdef PAULSCODE
+#include "FrameSkipper.h"
+extern FrameSkipper frameSkipper;
+#endif
+
 /*
 const int NumOfFormats = 3;
 SCREEN_SHOT_FORMAT ScreenShotFormats[NumOfFormats] = { {wxT("BMP"), wxT("bmp"), wxBITMAP_TYPE_BMP}, {wxT("PNG"), wxT("png"), wxBITMAP_TYPE_PNG}, {wxT("JPEG"), wxT("jpeg"), wxBITMAP_TYPE_JPEG} };
@@ -629,7 +634,11 @@ extern "C" {
 EXPORT void CALL ProcessDList(void)
 {
   SoftLocker lock(mutexProcessDList);
+#ifdef PAULSCODE
+  if (frameSkipper.willSkipNext() || !lock.IsOk()) //mutex is busy
+#else
   if (!lock.IsOk()) //mutex is busy
+#endif
   {
     if (!fullscreen)
       drawNoFullscreenMessage();

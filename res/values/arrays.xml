@@ -286,6 +286,36 @@
 
     <string name="gles2N64Frameskip_default" translatable="false">-2</string>
 
+    <!-- GLES2Glide64 Frameskip List (re-use gles2n64 strings)-->
+    <string-array name="gles2Glide64Frameskip_entries" translatable="false">
+        <item>@string/gles2N64Frameskip_entryNever</item>
+        <item>@string/gles2N64Frameskip_entryUpTo1</item>
+        <item>@string/gles2N64Frameskip_entryUpTo2</item>
+        <item>@string/gles2N64Frameskip_entryUpTo3</item>
+        <item>@string/gles2N64Frameskip_entryUpTo4</item>
+        <item>@string/gles2N64Frameskip_entryUpTo5</item>
+        <item>@string/gles2N64Frameskip_entryExactly1</item>
+        <item>@string/gles2N64Frameskip_entryExactly2</item>
+        <item>@string/gles2N64Frameskip_entryExactly3</item>
+        <item>@string/gles2N64Frameskip_entryExactly4</item>
+        <item>@string/gles2N64Frameskip_entryExactly5</item>
+    </string-array>
+    <string-array name="gles2Glide64Frameskip_values" translatable="false">
+        <item>0</item>
+        <item>-1</item>
+        <item>-2</item>
+        <item>-3</item>
+        <item>-4</item>
+        <item>-5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string name="gles2Glide64Frameskip_default" translatable="false">-5</string>
+
     <!-- GLES2Rice Mipmapping List -->
     <string-array name="gles2RiceMipmapping_entries">
         <item>@string/gles2RiceMipmapping_entryNone</item>

@@ -147,6 +147,7 @@
     <string name="categoryMultiPlayer_title">Multi-player</string>
     <string name="categoryGles2N64_title">GLES2N64 settings</string>
     <string name="categoryGles2Rice_title">GLES2Rice settings</string>
+    <string name="categoryGles2Glide64_title">GLES2Glide64 settings</string>
     <string name="categoryData_title">Data</string>
     <string name="categoryCrashReports_title">Crash reports</string>
 

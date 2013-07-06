@@ -211,6 +211,10 @@ typedef struct {
   int buff_clear;
   int swapmode;
   int lodmode;
+#ifdef PAULSCODE
+  int autoframeskip;
+  int maxframeskip;
+#endif
   int aspectmode;
   int use_hotkeys;
 

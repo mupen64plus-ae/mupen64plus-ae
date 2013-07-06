@@ -1,6 +1,6 @@
 [28:2.3.2]
-- Updated core to version 2.0
-- Updated plugins to latest versions
+- Added auto-frameskip feature to gles2glide64
+- Updated core and plugins to version 2.0
 - Added sensitivity preference for controller analog sticks
 - Fixed analog scaling for Mayflash N64/USB adapter
 - Removed obsolete items in the Advanced menu

@@ -77,6 +77,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String CATEGORY_TOUCHSCREEN_BEHAVIOR = "categoryTouchscreenBehavior";
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
+    private static final String CATEGORY_GLES2_GLIDE64 = "categoryGles2Glide64";
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
@@ -197,6 +198,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         if( !mUserPrefs.isGles2RiceEnabled )
             PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
+        
+        if( !mUserPrefs.isGles2Glide64Enabled )
+            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_GLIDE64 );
         
         if( !mUserPrefs.isActionBarAvailable )
             PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_ACTION_BAR_TRANSPARENCY );

@@ -169,6 +169,12 @@ float      pal_percent = 0.0f;
 // ref rate
 // 60=0x0, 70=0x1, 72=0x2, 75=0x3, 80=0x4, 90=0x5, 100=0x6, 85=0x7, 120=0x8, none=0xff
 
+#ifdef PAULSCODE
+#include "ae_bridge.h"
+#include "FrameSkipper.h"
+FrameSkipper frameSkipper;
+#endif
+
 unsigned long BMASK = 0x7FFFFF;
 // Reality display processor structure
 RDP rdp;
@@ -591,6 +597,15 @@ void ReadSpecialSettings (const char * name)
     ini->Read(_T("swapmode"), &(settings.swapmode));
     ini->Read(_T("aspect"), &(settings.aspectmode));
     ini->Read(_T("lodmode"), &(settings.lodmode));
+#ifdef PAULSCODE
+    ini->Read(_T("autoframeskip"), &(settings.autoframeskip));
+    ini->Read(_T("maxframeskip"), &(settings.maxframeskip));
+    if( settings.autoframeskip )
+      frameSkipper.setSkips( FrameSkipper::AUTO, settings.maxframeskip );
+    else
+      frameSkipper.setSkips( FrameSkipper::MANUAL, settings.maxframeskip );
+#endif
+
     /*
     TODO-port: fix resolutions
     int resolution;
@@ -1807,6 +1822,10 @@ EXPORT int CALL RomOpen (void)
   if (code == 0x5000) region = 1; // Europe (PAL)
   if (code == 0x5500) region = 0; // Australia (NTSC)
 
+#ifdef PAULSCODE
+  frameSkipper.setTargetFPS(region == 1 ? 50 : 60);
+#endif
+
   char name[21] = "DEFAULT";
   ReadSpecialSettings (name);
 
@@ -1858,6 +1877,13 @@ EXPORT int CALL RomOpen (void)
   }
   // **
   return true;
+}
+
+EXPORT void CALL RomResumed(void)
+{
+#ifdef PAULSCODE
+  frameSkipper.start();
+#endif
 }
 
 /******************************************************************
@@ -1947,6 +1973,9 @@ output:   none
 wxUint32 update_screen_count = 0;
 EXPORT void CALL UpdateScreen (void)
 {
+#ifdef PAULSCODE
+  frameSkipper.update();
+#endif
 #ifdef LOG_KEY
   if (CheckKeyPressed(G64_VK_SPACE, 0x0001))
   {
