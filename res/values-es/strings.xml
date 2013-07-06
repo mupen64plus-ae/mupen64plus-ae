@@ -93,6 +93,7 @@
   <string name="actionResetUserPrefs_summary">Restaurar configuración por defecto</string>
   <string name="actionResetUserPrefs_popupMessage">¿Reiniciar todas las preferencias a sus valores por defecto?</string>
   <string name="actionHelp_title">Ayuda</string>
+  <string name="actionHelp_message">Mupen64Plus es programado y mantenido por voluntarios.<small>⏎\n⏎\nPara corregir errores graficos, prueba cambiando el <i>Plugin de video</i>.⏎\n⏎\nPara corregir relentizaciones, prueba cambiando la configuracion de <i>frameskip de video</i> o el <i>plugin de video</i>.⏎\n⏎\nPara ROMS que no se ejecutan, intenta descomprimiendo la ROM, o prueba una version distinta de la ROM.⏎\n⏎\nPara problemas con los controles tactiles, prueba cambiando el <i>tamaño de los botones</i> o el <i>layout</i>.⏎\n⏎\nPara otros problemas, o si todavia estas atascado, por favor toca el boton <i>FAQ</i> ubicado en la parte baja. para errores que no se relacionan con algun juego, toca el boton <i>Reportar error</i> ubicado en la parte baja. Respondemos a la gran mayoria de las consultas dentro de las 24 horas siguientes. Sinceramente.⏎\n⏎\n</small>Gracias por ayudarnos a mejorar la aplicacion!</string>
   <string name="actionHelp_faq">Preguntas frecuentes</string>
   <string name="actionHelp_reportbug">Reportar bug</string>
   <string name="actionAbout_title">Acerca de</string>
@@ -262,10 +263,12 @@
   <string name="pluginVideo_entryNone">Ninguno (video deshabilitado)</string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Ninguno (audio deshabilitado)</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v1.99.5</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Ninguno (dispositivos de entrada deshabilitados)</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Ninguno (RSP deshabilitado)</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v1.99.5</string>
   <string name="pluginCore_title">Núcleo de emulación</string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
@@ -275,7 +278,6 @@
   <string name="navigationMode_summary">Modo de navegación del menú: %1$s</string>
   <string name="navigationMode_entryAuto">Seleccionar automáticamente a partir de la configuración del dispositivo</string>
   <string name="navigationMode_entryStandard">Modo estándar</string>
-  <string name="navigationMode_entryBigScreen">Modo OUYA (sin pantalla táctil; entrada sólo a través de mandos de juego)</string>
   <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Predeterminado del sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->

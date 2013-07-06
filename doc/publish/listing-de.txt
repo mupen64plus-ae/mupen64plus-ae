@@ -1,46 +1,46 @@
-[Promotional Text]
+[Werbetext]
 
 
-Nintendo 64 Emulator für Android. Mupen64Plus AE ist noch in der Betaphase.
-
-
-
+Nintendo 64-Emulator für Android. Mupen64Plus AE ist im Betatest.
 
 
 
 
 
-[App Description]
+
+
+
+[App-Beschreibung]
 
 
 DIESE APP BEINHALTET KEINE ROMS
-- Du musst der rechtliche Besitzer einer ROM sein bevor du sie nutzen darfst!
-- Eine Reihe öffentlich zugänglicher Spiele/Demos ist auf www.pdroms.de zu finden
+- Du musst die Rechte an einem ROM besitzen, bevor du es spielst!
+- Eine Reihe von Public-Domain-Spielen/-Demos ist erhältlich auf www.pdroms.de
 
 99¢ SIND NUR EINE SPENDE
-- Diese App gibt es auch kostenfrei auf meiner Website (OHNE WERBUNG!)
-- Bitte ziehe die Spende in Betracht
-- Spenden helfen VIELEN Open-Source-Projekten und deren Entwicklern
+- Diese App ist kostenlos auf meiner Website herunterladbar (KEINE WERBUNG!)
+- Bitte erwäge eine Spende
+- Spenden stützen VIELE Open-Source-Projekte und -Entwickler
 
-Mupen64Plus, Android Edition (AE) ist ein N64-Emulator für Android. Derzeit befindet sich das Projekt noch im Beta-Test und ist somit noch im Entwicklungsprozess. Momentan gibt es selbst auf modernen Geräten noch viele Verzögerungs-, Grafik- und Audioprobleme. Besuche www.paulscode.com um an der Entwicklung und am Testprozess mitzuwirken. Außerdem findest du dort Informationen über Fehlerbereinigungen und oft gestellte Fragen.
+Mupen64Plus, Android Edition (AE) ist ein N64-Emulator für Android. Er ist zurzeit im Betatest, das heißt, er ist unfertig. Es gibt noch viele Grafik-, Verzögerungs- und Audioprobleme, selbst auf modernen Geräten. Besuche www.paulscode.com, um bei Entwicklung und Testprozess mitzuwirken, sowie für Bugfixes und FAQs.
 
-Um mögliche Urheberrechtsprobleme im Zusammenhang mit Bildschirmfotos zu umgehen, habe ich beschlossen nur gemeinfreie Spiele und Demos hierfür zu nutzen. Falls die App dennoch erneut vom Market genommen werden sollte, werden zukünftige Versionen weiterhin über paulscode.com kostenfrei erhältlich sein.
+Um mögliche Urheberrechtsprobleme verbunden mit Screenshots zu umgehen, habe ich beschlossen, nur Public-Domain-Spiele und -Demos für Screenshots zu nutzen. Falls die App dennoch erneut vom Market genommen werden sollte, wirst du weiterhin zukünftige Updates kostenlos auf paulscode.com bekommen.
 
-Die App ist unter der GNU GPL v3 lizensiert. Der vollständige Quellcode ist im öffentlich zugänglichen GIT-Repository unter https://github.com/paulscode/mupen64plus-ae verfügbar. Wenn ein Entwickler Schreibzugriff für das Repository möchte, kann er mich (Paul) einfach im Forum darauf anschreiben. Wenn du Hilfe bei deinem Projekt brauchst, lass es mich wissen.
+Diese App ist unter der GNU GPL v3 lizenziert, und der vollständige Quellcode ist im öffentlichen GIT-Repository auf https://github.com/paulscode/mupen64plus-ae verfügbar. Wenn ein Entwickler Schreibzugriff für das Repository möchte, kontaktiere mich (Paul) einfach im Support-Forum. Wenn du Hilfe beim Branchen des Projekts brauchst, lass es mich einfach wissen, und ich kann dir helfen, es eingerichtet zu bekommen.
 
-XPERIA PLAY OPTIMIERT
-- Analoge Steuerung über das Touchpad!
+XPERIA PLAY-OPTIMIERT
+- Analoge Eingabe über das Touchpad!
 
 BERECHTIGUNGEN
-Internet - Das Internet wird genutzt um Absturzberichte zu senden. Es werden keine Viren, Spyware oder Werbung jeglicher Art heruntergeladen und es werden keine personenbezogenen Informationen gesammelt.
-Speicher - Der Gerätespeicher wird verwendet um Spielstände und benutzerdefinierte Eingabeprofile zu speichern.
-Vibration - Wenn dein Gerät dies unterstützt, wird die Vibration für die Rumble Pak-Emulation und haptisches Feedback verwendet.
+Internet - Das Internet wird genutzt, um Absturzberichte zu senden. Es lädt keine Viren, Spyware oder Werbung jeglicher Art herunter, und es sammelt keine privaten Informationen. Es gelten die normalen Datenkosten.
+Externen Speicher beschreiben - Der Gerätespeicher wird genutzt, um darauf Spielstände und benutzerdefinierte Eingabeprofile zu schreiben.
+Vibration - Wenn dein Gerät es unterstützt, wird Vibration für Rumble Pak-Emulation und haptisches Knopf-Feedback genutzt.
 
 ERSTE SCHRITTE
-- Kopiere ROMs irgendwo auf deinen Telefonspeicher oder deine SD-Karte
-- Suche die ROM innerhalb der App
-- Normalerweise ist die SD-Karte unter /mnt/sdcard zu finden
-- Die ROMs müssen im .n64-, .v64 oder im .z64-Format sein. Optional können diese auch in ZIP-Dateien gespeichert sein.
+- Übertrage ROMs irgendwohin auf deine/n internen Speicher/SD-Karte
+- Navigiere zu ihnen von innerhalb der App
+- Das Standard-Verzeichnis der SD-Karte ist auf den meisten Geräten /mnt/sdcard
+- Die ROMs müssen im .n64-, .v64- oder .z64-Format sein, optional in .zip-Dateien
 
-HILFE, FAQS, BUG-FIXES UND SPIELBACKUP ANLEITUNGEN:
+HILFE, FAQS, BUGFIXES, SPIEL-BACKUP-ANLEITUNG:
 - http://www.paulscode.com

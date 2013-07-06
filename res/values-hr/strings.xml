@@ -93,6 +93,7 @@
   <string name="actionResetUserPrefs_summary">Vraćanje postavki na zadano</string>
   <string name="actionResetUserPrefs_popupMessage">Resetirati sve postavke na zadano?</string>
   <string name="actionHelp_title">Pomoć</string>
+  <string name="actionHelp_message">Mupen64Plus je razvijen i održan od strane volontera.<small>\n\nZa ispravljanje grafičkih grešaka, promjenite <i>grafički dodatak</i> i/ili postavke.\n\nZa ROM-ove koji ne rade ispravno, pokušajte koristiti drugu inačicu ROM-a ili izvadite ROM iz komprimirane datoteke u slučaju da se nalazi u njoj.\n\nZa ispravljanje grešaka dodirnog ekrana, promjenite <i>veličinu tipki</i> ili <i>raspored tipki</i>.\n\nZa ostale probleme pogledajte <i>FAQ</i>.  Za greške koje nisu povezane sa ROM-ovima, prijavite ih putem opcije <i>Prijavite grešku</i>. Većinom se javljamo u roku od 24 sata.\n\n</small>Zahvaljujemo na podržavanju naše aplikacije!</string>
   <string name="actionHelp_faq">FAQ</string>
   <string name="actionHelp_reportbug">Prijava greške</string>
   <string name="actionAbout_title">O programu</string>
@@ -196,9 +197,22 @@
   <string name="videoOrientation_entryReverseLandscape">Obrnuti pejzaž</string>
   <string name="videoOrientation_entryPortrait">Portret</string>
   <string name="videoOrientation_entryReversePortrait">Obrnuti portret</string>
+  <string name="videoPosition_title">Vertikalna pozicija ekrana</string>
   <string name="videoPosition_entryBottom">Dno</string>
   <string name="videoPosition_entryMiddle">Sredina</string>
   <string name="videoPosition_entryTop">Vrh</string>
+  <string name="videoResolution_title">Rezolucija</string>
+  <string name="videoResolution_entryNative">Identična uređaju (najviša kvaliteta)</string>
+  <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoResolution_entry800x600">800 x 600</string>
+  <string name="videoResolution_entry640x480">640 x 480</string>
+  <string name="videoResolution_entry480x360">480 x 360</string>
+  <string name="videoResolution_entry320x240">320 x 240</string>
+  <string name="videoResolution_entry160x120">160 x 120 (najveća brzina)</string>
+  <string name="videoScaling_title">Skaliranje ekrana</string>
+  <string name="videoScaling_entryNone">Bez skaliranja\n<small>Koristi se točno određena rezolucija</small></string>
+  <string name="videoScaling_entryZoom">Zumiranje\n<small>Popunuje ekran, bez iskrivljenja (sa crnim praznim prostorom)</small></string>
+  <string name="videoScaling_entryStretch">Raširi\n<small>Popunuje ekran, bez praznog prostora (sa iskrivljenjem)</small></string>
   <string name="videoFpsRefresh_title">Prikaži FPS</string>
   <string name="videoFpsRefresh_entryNever">Nikad</string>
   <string name="videoFpsRefresh_entryOccasionally">Nekad</string>
@@ -278,7 +292,7 @@
   <string name="navigationMode_summary">Način navigacije izbornika: %1$s</string>
   <string name="navigationMode_entryAuto">Automatski odabir</string>
   <string name="navigationMode_entryStandard">Standardno</string>
-  <string name="navigationMode_entryBigScreen">OUYA (bez dodirnog ekrana; koristi se samo kontroler)</string>
+  <string name="navigationMode_entryBigScreen">Veliki ekran (bez dodirnog ekrana; koristi se samo kontroler ili tipkovnica)</string>
   <string name="localeOverride_title">Jezik</string>
   <string name="localeOverride_entrySystemDefault">Zadano</string>
   <!--ACRA Preferences (key names must not be changed)-->

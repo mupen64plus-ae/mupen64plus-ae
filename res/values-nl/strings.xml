@@ -93,6 +93,7 @@
   <string name="actionResetUserPrefs_summary">Herstel standaardinstellingen</string>
   <string name="actionResetUserPrefs_popupMessage">Alle voorkeuren naar standaardwaarden terugzetten?</string>
   <string name="actionHelp_title">Help</string>
+  <string name="actionHelp_message">Mupen64Plus is ontwikkeld en wordt onderhouden door vrijwilligers.<small>\n\nGrafische problemen? Kies een andere <i>video plugin</i>.\n\nLast van lag? Probeer de <i>video beelden overslaan</i>-instelling of kies een andere <i>video plugin</i>.\n\nAls ROMs onspeelbaar zijn, probeer deze uit te pakken of probeer een andere versie van de ROM.\n\nProblemen met de touchscreenbediening? Probeer een andere <i>knopschaal</i> of <i>knopindeling</i>.\n\nBij andere problemen, of als u nog steeds problemen ondervindt, klik dan op de <i>Veelgestelde vragen</i> knop hieronder. In geval van fouten die niet met een bepaald spel te maken hebben, klik op de <i>Meld bug</i>-knop hieronder.  We beantwoorden de meeste berichten binnen 24 uur. Eerlijk waar.\n\n</small>Bedankt voor de hulp om de app beter te maken!</string>
   <string name="actionHelp_faq">Veelgestelde vragen</string>
   <string name="actionHelp_reportbug">Meld bug</string>
   <string name="actionAbout_title">Over</string>
@@ -196,9 +197,22 @@
   <string name="videoOrientation_entryReverseLandscape">Omgekeerd landschap</string>
   <string name="videoOrientation_entryPortrait">Portet</string>
   <string name="videoOrientation_entryReversePortrait">Omgekeerd portret</string>
+  <string name="videoPosition_title">Vertikale schermpositie</string>
   <string name="videoPosition_entryBottom">Onderkant</string>
   <string name="videoPosition_entryMiddle">Midden</string>
   <string name="videoPosition_entryTop">Bovenkant</string>
+  <string name="videoResolution_title">Gerenderde resolutie</string>
+  <string name="videoResolution_entryNative">Eigen (hoogste kwaliteit)</string>
+  <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoResolution_entry800x600">800 x 600</string>
+  <string name="videoResolution_entry640x480">640 x 480</string>
+  <string name="videoResolution_entry480x360">480 x 360</string>
+  <string name="videoResolution_entry320x240">320 x 240</string>
+  <string name="videoResolution_entry160x120">160 x 120 (hoogste beeldfrequentie)</string>
+  <string name="videoScaling_title">Schermschaling</string>
+  <string name="videoScaling_entryNone">Geen\n<small>Gebruik precies de geselecteerde resolutie</small></string>
+  <string name="videoScaling_entryZoom">Zoom\n<small>Scherm vullen zonder vervorming (voegt zwarte balken toe)</small></string>
+  <string name="videoScaling_entryStretch">Uitrekken\n<small>Schermvullend zonder zwarte balken (geeft vervorming)</small></string>
   <string name="videoFpsRefresh_title">Framesnelheid weergeven</string>
   <string name="videoFpsRefresh_entryNever">Nooit</string>
   <string name="videoFpsRefresh_entryOccasionally">Soms</string>
@@ -278,7 +292,7 @@
   <string name="navigationMode_summary">Menunavigatiemodus: %1$s</string>
   <string name="navigationMode_entryAuto">Automatisch selecteren uit apparaatconfiguratie</string>
   <string name="navigationMode_entryStandard">Standaardmodus</string>
-  <string name="navigationMode_entryBigScreen">OUYA-modus (geen aanraakscherm; alleen gamepadinvoer)</string>
+  <string name="navigationMode_entryBigScreen">Groot scherm-modus (geen touchscreen; alleen gamepad/toetsenbord)</string>
   <string name="localeOverride_title">Taal</string>
   <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
   <!--ACRA Preferences (key names must not be changed)-->

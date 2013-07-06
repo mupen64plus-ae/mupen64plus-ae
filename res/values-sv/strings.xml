@@ -4,6 +4,10 @@
   <!--Menu Strings-->
   <!--**************************************************************************-->
   <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">Hastighet %1$d %%</string>
+  <string name="menuItem_fileSave">Spara till fil...</string>
+  <string name="menuItem_fileLoad">Ladda från fil...</string>
+  <string name="menuItem_setSpeed">Spel hastighet</string>
   <!--capitalize since trademark-->
   <!--capitalize since trademark-->
   <!--capitalize since trademark-->
@@ -13,7 +17,19 @@
   <!--capitalize since trademark-->
   <!--capitalize since trademark-->
   <!--capitalize since trademark-->
+  <string name="menuItem_exit">Avsluta</string>
   <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Profiler</string>
+  <string name="menuItem_default">Standard</string>
+  <string name="menuItem_load">Ladda...</string>
+  <string name="menuItem_save">Spara...</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_ps3">PS3</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
+  <string name="menuItem_specialVisibility_show">Visa speciella funktioner</string>
+  <string name="menuItem_specialVisibility_hide">Göm speciella funktioner</string>
+  <string name="menuItem_axisInfo">Analog info</string>
   <!--**************************************************************************-->
   <!--Toast Messages-->
   <!--Developers: Follow punctuation and grammar as shown below-->
@@ -31,6 +47,7 @@
   <!--Something happened (use '.')-->
   <string name="toast_usingSlot">Använder nu slot %1$d.</string>
   <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
+  <string name="toast_fileReadError">Kunde ej läsa fil!</string>
   <string name="toast_crashReportSent">Rapport skickad.</string>
   <!--**************************************************************************-->
   <!--Preference Menu Strings-->
@@ -81,6 +98,7 @@
   <string name="categoryCheats_title">Fusk alternativ (håll in för beskrivning)</string>
   <string name="categoryHardware_title">Hårdvara</string>
   <string name="categoryOther_title">Andra</string>
+  <string name="categoryTouchscreenAppearance_title">Utseende</string>
   <string name="categorySinglePlayer_title">Spelare 1</string>
   <string name="categoryMultiPlayer_title">Multi-player</string>
   <string name="categoryGles2N64_title">GLES2N64 inställningar</string>
@@ -88,6 +106,8 @@
   <string name="categoryData_title">Data</string>
   <string name="categoryCrashReports_title">Felrapporter</string>
   <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Aktivera fusk</string>
+  <string name="playShowCheats_summary">Meny laddning är långsammare när aktiverad</string>
   <string name="touchscreenEnabled_title">Aktivera touchskärm</string>
   <string name="touchpadEnabled_title">Aktivera pekplatta</string>
   <string name="inputOctagonConstraints_title">Octagonal joystick gränser</string>
@@ -121,6 +141,7 @@
   <string name="audioSwapChannels_title">Byt ljudkanaler</string>
   <string name="audioSwapChannels_summary">Byt de vänstra och högra ljudkanalerna</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_entryDisabled">Inaktiverad</string>
   <string name="touchscreenRefresh_title">Styrspak animation</string>
   <string name="touchscreenRefresh_entryNever">Aldrig</string>
   <string name="touchscreenRefresh_entryOccasionally">Ibland</string>
@@ -136,7 +157,14 @@
   <string name="videoOrientation_entryReverseLandscape">Omvänd landskap</string>
   <string name="videoOrientation_entryPortrait">Porträtt</string>
   <string name="videoOrientation_entryReversePortrait">Omvänd porträtt</string>
+  <string name="videoPosition_entryBottom">Botten</string>
+  <string name="videoPosition_entryMiddle">Mitten</string>
+  <string name="videoPosition_entryTop">Toppen</string>
   <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoResolution_entry800x600">800 x 600</string>
+  <string name="videoResolution_entry640x480">640 x 480</string>
+  <string name="videoResolution_entry480x360">480 x 360</string>
+  <string name="videoResolution_entry320x240">320 x 240</string>
   <string name="videoFpsRefresh_title">Visa framerate</string>
   <string name="videoFpsRefresh_entryNever">Aldrig</string>
   <string name="videoFpsRefresh_entryOccasionally">Ibland</string>
@@ -145,6 +173,7 @@
   <string name="videoHardwareType_entryAuto">Auto-upptäck från mobil/tablett modell</string>
   <string name="videoHardwareType_entryStandard">Standard profil</string>
   <string name="videoHardwareType_entryI">I profil</string>
+  <string name="videoHardwareType_entryT">T profil</string>
   <string name="gles2N64Frameskip_title">Frameskip</string>
   <string name="gles2N64Frameskip_entryNever">Aldrig hoppa ramar</string>
   <string name="gles2N64Frameskip_entryUpTo1">Inte mer än 1 ram</string>
@@ -157,6 +186,14 @@
   <string name="gles2N64Frameskip_entryExactly3">Precis 3 ramar</string>
   <string name="gles2N64Frameskip_entryExactly4">Precis 4 ramar</string>
   <string name="gles2N64Frameskip_entryExactly5">Precis 5 ramar</string>
+  <string name="gles2RiceMipmapping_entryNone">Inga</string>
+  <string name="gles2RiceMipmapping_entryNearest">Närmaste</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Inga</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Skala 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x Sal</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
   <string name="audioResampleAlg_title">Omsampling algoritm</string>
   <string name="audioResampleAlg_entryTrivial">Trivial</string>
   <string name="audioResampleAlg_entryLinear">Linjär interpolering</string>
@@ -173,6 +210,10 @@
   <string name="pluginRsp_title">Reality signalprocessor (RSP)</string>
   <string name="pluginRsp_entryNone">Ingen (RSP inaktiverad)</string>
   <string name="pluginCore_title">Emulation kärna</string>
+  <string name="navigationMode_entryAuto">Auto-välj från enhetens konfiguration</string>
+  <string name="navigationMode_entryStandard">Standard läge</string>
+  <string name="localeOverride_title">Språk</string>
+  <string name="localeOverride_entrySystemDefault">System standard</string>
   <!--ACRA Preferences (key names must not be changed)-->
   <string name="acraEnable_title">Aktivera kraschrapporteringen</string>
   <string name="acraEnable_summary">Ingen personlig information samlas in</string>
@@ -208,18 +249,23 @@
   <string name="confirm_title">Konfirmation</string>
   <string name="confirmResetGame_message">Återställ spelet? Alla framsteg har sparats kommer att förloras.</string>
   <string name="confirmOverwriteFile_message">Skriva över %1$s?</string>
+  <string name="confirmLoadProfile_message">Ladda profil \"%1$s\" för %2$s?</string>
   <!--Change Log-->
+  <string name="changeLog_dialogTitle">Ändringar</string>
   <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">Varning</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">filnamn</string>
   <!--Asset Extractor-->
   <string name="assetExtractor_initializing">Initierar</string>
   <string name="assetExtractor_progress">%1$.0f%% gjort: %2$s</string>
   <string name="assetExtractor_finished">Färdig</string>
+  <string name="assetExtractor_failed">Error under extraktionen av app data.\nVar vänlig koppla ur USB kabeln, starta om enheten och starta om applikationen.\nFör hjälp, vänligen besök %1$s.</string>
   <!--Cheats Configuration-->
   <string name="cheats_defaultName">Fuska %1$d</string>
   <string name="cheats_longPress">(lång-tryck för full text)</string>
   <string name="cheat_disabled">(inaktiverad)</string>
+  <string name="cheatOption_title">Full text</string>
   <string name="cheatNotes_title">Anteckningar</string>
   <string name="cheatNotes_none">(inga anteckningar tillgängliga för detta fusk)</string>
   <!--Hi-Res Texture Unpacking-->
@@ -235,9 +281,36 @@
   <string name="playerMapPreference_popupTitle">Spelare %1$d</string>
   <string name="playerMapPreference_popupMessage">Spelare %1$d, tryck på en knapp eller stick på handkontrollen…⏎\n⏎\nAktuella enheter:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Unmap</string>
+  <string name="playerMapPreference_button">Spelare %1$d⏎\n%2$s</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Unmap</string>
+  <string name="inputMapActivity_cPadXperiaPlay">C-pad styrs med pekplatta</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analog →</string>
+  <string name="inputMapActivity_btnAL">Analog ←</string>
+  <string name="inputMapActivity_btnAD">Analog ↓</string>
+  <string name="inputMapActivity_btnAU">Analog ↑</string>
   <string name="inputMapActivity_reset">Ladda om</string>
+  <string name="inputMapActivity_pause">Paus</string>
+  <string name="inputMapActivity_stop">Stopp</string>
+  <string name="inputMapActivity_fastForward">Snabbspolning</string>
+  <string name="inputMapActivity_speedDown">Sakta ner</string>
+  <string name="inputMapActivity_speedUp">Snabba up</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
   <!--Controller Diagnostics-->
   <string name="diagnosticActivity_textKey_text">Tryck på en knapp...</string>
   <string name="diagnosticActivity_textMotion_text">Tryck skärmen eller joysticken...</string>

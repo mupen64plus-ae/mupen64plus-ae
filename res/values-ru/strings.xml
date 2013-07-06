@@ -28,9 +28,11 @@
   <string name="menuItem_load">Загрузка…</string>
   <string name="menuItem_save">Сохранение…</string>
   <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">N64 USB Адаптер</string>
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
+  <string name="menuItem_deadzone">Мертвая зона</string>
   <string name="menuItem_specialVisibility_show">Показать дополнительные возможности</string>
   <string name="menuItem_specialVisibility_hide">Скрыть дополнительные возможности</string>
   <string name="menuItem_axisInfo">Аналоговая информация</string>
@@ -210,6 +212,7 @@
   <string name="gles2RiceMipmapping_entryBilinear">Билинейный</string>
   <string name="gles2RiceMipmapping_entryTrilinear">Трилинейный</string>
   <string name="gles2RiceTextureEnhancement_title">Масштабирование текстур/улучшение</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Масштаб 2x</string>
   <string name="audioResampleAlg_title">Алгоритм дискретизации</string>
   <string name="audioResampleAlg_entryTrivial">Тривиальный</string>
   <string name="audioResampleAlg_entryLinear">Линейная интерполяция</string>
@@ -226,6 +229,7 @@
   <string name="pluginInput_entryNone">Заглушка</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Выключен</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v1.99.5</string>
   <string name="pluginCore_title">Ядро эмулятора</string>
   <string name="pluginCore_entryV110">mupen64plus-core, v1.99.5</string>
   <string name="r4300Emulator_title">R4300 Эмулятор</string>
@@ -236,7 +240,6 @@
   <string name="navigationMode_summary">Режим навигации в меню: %1$s</string>
   <string name="navigationMode_entryAuto">Автоопределение из настроек</string>
   <string name="navigationMode_entryStandard">Стандартный режим</string>
-  <string name="navigationMode_entryBigScreen">Режим OUYA (ввод только с геймпада)</string>
   <string name="localeOverride_title">Язык</string>
   <string name="localeOverride_entrySystemDefault">Система по умолчанию</string>
   <!--ACRA Preferences (key names must not be changed)-->

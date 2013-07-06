@@ -278,7 +278,6 @@
   <string name="navigationMode_summary">Tryb nawigacji po Menu: %1$s</string>
   <string name="navigationMode_entryAuto">Automatyczny wybór z konfiguracji użytkownika</string>
   <string name="navigationMode_entryStandard">Tryb standardowy</string>
-  <string name="navigationMode_entryBigScreen">Tryb OUYA (brak ekranu dotykowego; tylko gamepad)</string>
   <string name="localeOverride_title">Język</string>
   <string name="localeOverride_entrySystemDefault">Domyślne ustawienia systemowe</string>
   <!--ACRA Preferences (key names must not be changed)-->

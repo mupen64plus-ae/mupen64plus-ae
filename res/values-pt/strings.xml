@@ -93,6 +93,7 @@
   <string name="actionResetUserPrefs_summary">Restaurar configuração padrão</string>
   <string name="actionResetUserPrefs_popupMessage">Restauras todas as configurações para o padrão?</string>
   <string name="actionHelp_title">Ajuda</string>
+  <string name="actionHelp_message">Mupen64Plus é desenvolvido e mantido por voluntários.<small>\n\nPara corrigir falhas nos gráficos, tente mudar o <i>plugin de vídeo</i>.\n\nPara corrigir lag, tente configurar a configuração de <i>video frameskip</i> ou <i>plugin de vídeo</i>.\n\nSe não conseguir jogar uma ROM, tente descompactá-la antes ou procure outra versão da ROM.\n\nPara problemas com o controle na tela, tente mudar o <i>button scale</i> ou <i>button layout</i>.\n\nPara outros problemas, ou se nada acima resolver, clique no botão <i>FAQ</i> abaixo. Para problemas não relativos ao jogo, clique no botão <i>Report bug</i> abaixo.  Nós respondemos a maioria dos posts dentro de 24 horas. Sério.\n\n</small>Obrigado por nos ajudar a melhorar o app!</string>
   <string name="actionHelp_faq">Dúvidas frequentes</string>
   <string name="actionHelp_reportbug">Relatar bug</string>
   <string name="actionAbout_title">Sobre</string>
@@ -196,9 +197,22 @@
   <string name="videoOrientation_entryReverseLandscape">Paisagem invertida</string>
   <string name="videoOrientation_entryPortrait">Retrato</string>
   <string name="videoOrientation_entryReversePortrait">Retrato invertido</string>
+  <string name="videoPosition_title">Posição vertical da tela</string>
   <string name="videoPosition_entryBottom">Em baixo</string>
   <string name="videoPosition_entryMiddle">No meio</string>
   <string name="videoPosition_entryTop">Em cima</string>
+  <string name="videoResolution_title">Resolução renderizada</string>
+  <string name="videoResolution_entryNative">Nativo (maior qualidade)</string>
+  <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoResolution_entry800x600">800 x 600</string>
+  <string name="videoResolution_entry640x480">640 x 480</string>
+  <string name="videoResolution_entry480x360">480 x 360</string>
+  <string name="videoResolution_entry320x240">320 x 240</string>
+  <string name="videoResolution_entry160x120">160 x 120 (maior framerate)</string>
+  <string name="videoScaling_title">Dimensionamento da tela</string>
+  <string name="videoScaling_entryNone">Nenhum\n<small>Usar a resolução selecionada acima</small></string>
+  <string name="videoScaling_entryZoom">Zoom\n<small> Preencher tela, sem distorção (adiciona bordas pretas)</small></string>
+  <string name="videoScaling_entryStretch">Esticar\n<small>Preencher tela, não adiciona bordas (pode distorcer)</small></string>
   <string name="videoFpsRefresh_title">Exibir taxa de frames</string>
   <string name="videoFpsRefresh_entryNever">Nunca</string>
   <string name="videoFpsRefresh_entryOccasionally">Ocasionalmente</string>
@@ -278,7 +292,7 @@
   <string name="navigationMode_summary">Modo de menu de navegação: %1$s</string>
   <string name="navigationMode_entryAuto">Seleção automática a partir da configuração do dispositivo</string>
   <string name="navigationMode_entryStandard">Modo padrão</string>
-  <string name="navigationMode_entryBigScreen">Modo OUYA (sem touchscreen, entrada somente por gamepad)</string>
+  <string name="navigationMode_entryBigScreen">Modo tela grande (controle somente por teclado/joystick)</string>
   <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Padrão</string>
   <!--ACRA Preferences (key names must not be changed)-->

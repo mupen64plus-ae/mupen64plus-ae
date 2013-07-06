@@ -196,9 +196,22 @@
   <string name="videoOrientation_entryReverseLandscape">反転横方向</string>
   <string name="videoOrientation_entryPortrait">縦方向</string>
   <string name="videoOrientation_entryReversePortrait">反転縦方向</string>
+  <string name="videoPosition_title">垂直画面位置</string>
   <string name="videoPosition_entryBottom">下部</string>
   <string name="videoPosition_entryMiddle">中央</string>
   <string name="videoPosition_entryTop">上部</string>
+  <string name="videoResolution_title">レンダリング解像度</string>
+  <string name="videoResolution_entryNative">ネイティブ (最高画質)</string>
+  <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoResolution_entry800x600">800 x 600</string>
+  <string name="videoResolution_entry640x480">640 x 480</string>
+  <string name="videoResolution_entry480x360">480 x 360</string>
+  <string name="videoResolution_entry320x240">320 x 240</string>
+  <string name="videoResolution_entry160x120">160 x 120 (最高フレームレート)</string>
+  <string name="videoScaling_title">画面スケーリング</string>
+  <string name="videoScaling_entryNone">なし\n<small>選択された正確な解像度を使用</small></string>
+  <string name="videoScaling_entryZoom">ズーム\n<small>画面がいっぱいに - いいえ歪み (レターボックス追加)</small></string>
+  <string name="videoScaling_entryStretch">ストレッチ\n<small>画面いっぱい - ないレターボックス (歪みの原因となる)</small></string>
   <string name="videoFpsRefresh_title">フレームレート表示</string>
   <string name="videoFpsRefresh_entryNever">決して</string>
   <string name="videoFpsRefresh_entryOccasionally">時折</string>
@@ -278,7 +291,7 @@
   <string name="navigationMode_summary">メニューナビゲーションモード：%1$s</string>
   <string name="navigationMode_entryAuto">デバイス構成から自動選択</string>
   <string name="navigationMode_entryStandard">スタンダードモード</string>
-  <string name="navigationMode_entryBigScreen">OUYAモード（ゲームパッドのみ）</string>
+  <string name="navigationMode_entryBigScreen">ビッグスクリーンモード (無タッチスクリーン入力;のみゲームパッド/キーボード入力)</string>
   <string name="localeOverride_title">言語</string>
   <string name="localeOverride_entrySystemDefault">システムのデフォルト</string>
   <!--ACRA Preferences (key names must not be changed)-->
