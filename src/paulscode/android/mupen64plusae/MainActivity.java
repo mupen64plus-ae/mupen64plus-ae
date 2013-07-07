@@ -21,10 +21,12 @@
 package paulscode.android.mupen64plusae;
 
 import java.io.File;
+import java.util.List;
 
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.AssetExtractor;
+import paulscode.android.mupen64plusae.util.AssetExtractor.ExtractionFailure;
 import paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -33,6 +35,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -130,19 +133,20 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
         {
             // This runs on non-UI thread and ensures that the app is responsive during the lengthy
             // extraction process
-            boolean success = true;
+            List<ExtractionFailure> failures = null;
             
             // Extract the assets if they are out of date
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
                 FileUtil.deleteFolder( new File( mAppData.dataDir ) );
                 mAssetsExtracted = 0;
-                success = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.dataDir,
+                
+                failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.dataDir,
                         MainActivity.this );
             }
             
             // Launch menu activity if successful; post failure notice otherwise
-            if( success )
+            if( failures == null || failures.size() == 0 )
             {
                 mAppData.putAssetVersion( ASSET_VERSION );
                 updateText( R.string.assetExtractor_finished );
@@ -155,8 +159,16 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
             }
             else
             {
+                // There was an error, update the on-screen text and don't start next activity
                 String weblink = getResources().getString( R.string.assetExtractor_uriHelp );
-                updateText( R.string.assetExtractor_failed, weblink );
+                String message = getString( R.string.assetExtractor_failed, weblink );
+                String textHtml =  message.replace( "\n", "<br/>" )+ "<p><small>";
+                for( ExtractionFailure failure : failures )
+                {
+                    textHtml += failure.toString() + "<br/>";
+                }
+                textHtml += "</small>";
+                updateText( Html.fromHtml( textHtml ) );
             }
         }
     };
@@ -183,8 +195,18 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
      */
     private void updateText( int resId, Object... formatArgs )
     {
-        // Ensures that text view is updated from the UI thread
         final String text = getString( resId, formatArgs );
+        updateText( text );
+    }
+
+    /**
+     * Update the status text from the UI thread.
+     * 
+     * @param text The text to be displayed
+     */
+    private void updateText( final CharSequence text )
+    {
+        // Ensures that text view is updated from the UI thread
         runOnUiThread( new Runnable()
         {
             @Override

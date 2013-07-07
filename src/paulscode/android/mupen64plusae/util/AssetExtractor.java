@@ -29,6 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -43,6 +45,44 @@ public class AssetExtractor
         public void onExtractionProgress( String nextFileExtracted );
     }
     
+    public enum FailureReason
+    {
+        FILE_UNWRITABLE,
+        FILE_UNCLOSABLE,
+        ASSET_UNCLOSABLE,
+        IO_EXCEPTION
+    }
+    
+    public static class ExtractionFailure
+    {
+        public final String srcPath;
+        public final String dstPath;
+        public final FailureReason reason;
+        public ExtractionFailure( String srcPath, String dstPath, FailureReason reason )
+        {
+            this.srcPath = srcPath;
+            this.dstPath = dstPath;
+            this.reason = reason;
+        }
+        
+        @Override
+        public String toString()
+        {
+            switch( reason )
+            {
+                case FILE_UNWRITABLE:
+                    return "Failed to open output file " + dstPath;
+                case FILE_UNCLOSABLE:
+                    return "Failed to close output file " + dstPath;
+                case ASSET_UNCLOSABLE:
+                    return "Failed to close asset " + srcPath;
+                case IO_EXCEPTION:
+                default:
+                    return "Failed to extract asset " + srcPath + " to file " + dstPath;
+            }
+        }
+    }
+    
     /**
      * Extracts all the assets from a source path to a given destination path.
      * 
@@ -51,12 +91,12 @@ public class AssetExtractor
      * @param dstPath      The destination path for the assets.
      * @param onProgress   A progress listener.
      * 
-     * @return True if the assets could be extracted. False otherwise.
+     * @return A list containing all extraction failures, if any.  Never null.
      */
-    public static boolean extractAssets( AssetManager assetManager, String srcPath, String dstPath,
+    public static List<ExtractionFailure> extractAssets( AssetManager assetManager, String srcPath, String dstPath,
             OnExtractionProgressListener onProgress )
     {
-        boolean result = true;
+        final List<ExtractionFailure> failures = new ArrayList<ExtractionFailure>();
         
         if( srcPath.startsWith( "/" ) )
             srcPath = srcPath.substring( 1 );
@@ -74,8 +114,7 @@ public class AssetExtractor
             for( String srcSubPath : srcSubPaths )
             {
                 String suffix = "/" + srcSubPath;
-                if( !extractAssets( assetManager, srcPath + suffix, dstPath + suffix, onProgress ) )
-                    return false;
+                failures.addAll( extractAssets( assetManager, srcPath + suffix, dstPath + suffix, onProgress ) );
             }
         }
         else // srcPath is a file.
@@ -104,13 +143,15 @@ public class AssetExtractor
             }
             catch( FileNotFoundException e )
             {
-                Log.e( "AssetExtractor", "Failed to open output file " + dstPath, e );
-                result = false;
+                ExtractionFailure failure = new ExtractionFailure( srcPath, dstPath, FailureReason.FILE_UNWRITABLE ); 
+                Log.e( "AssetExtractor", failure.toString() );
+                failures.add( failure );
             }
             catch( IOException e )
             {
-                Log.e( "AssetExtractor", "Failed to extract asset " + srcPath + " to " + dstPath, e );
-                result = false;
+                ExtractionFailure failure = new ExtractionFailure( srcPath, dstPath, FailureReason.IO_EXCEPTION ); 
+                Log.e( "AssetExtractor", failure.toString() );
+                failures.add( failure );
             }
             finally
             {
@@ -122,8 +163,9 @@ public class AssetExtractor
                     }
                     catch( IOException e )
                     {
-                        Log.e( "AssetExtractor", "Failed to close output file " + dstPath, e );
-                        result = false;
+                        ExtractionFailure failure = new ExtractionFailure( srcPath, dstPath, FailureReason.FILE_UNCLOSABLE ); 
+                        Log.e( "AssetExtractor", failure.toString() );
+                        failures.add( failure );
                     }
                 }
                 if( in != null )
@@ -134,48 +176,15 @@ public class AssetExtractor
                     }
                     catch( IOException e )
                     {
-                        Log.e( "AssetExtractor", "Failed to close asset " + srcPath, e );
-                        result = false;
+                        ExtractionFailure failure = new ExtractionFailure( srcPath, dstPath, FailureReason.ASSET_UNCLOSABLE ); 
+                        Log.e( "AssetExtractor", failure.toString() );
+                        failures.add( failure );
                     }
                 }
             }
         }
         
-        return result;
-    }
-    
-    /**
-     * Counts all of the assets in a given source path.
-     * 
-     * @param assetManager A handle to the asset manager.
-     * @param srcPath      The path containing the assets to count.
-     * 
-     * @return The number of assets in the given source path.
-     */
-    public static int countAssets( AssetManager assetManager, String srcPath )
-    {
-        int count = 0;
-        
-        // TODO: This function takes a surprisingly long time to complete.
-        if( srcPath.startsWith( "/" ) )
-            srcPath = srcPath.substring( 1 );
-        
-        String[] srcSubPaths = getAssetList( assetManager, srcPath );
-        if( srcSubPaths.length > 0 )
-        {
-            // srcPath is a directory
-            for( String srcSubPath : srcSubPaths )
-            {
-                count += countAssets( assetManager, srcPath + "/" + srcSubPath );
-            }
-        }
-        else
-        {
-            // srcPath is a file
-            count++;
-        }
-        
-        return count;
+        return failures;
     }
     
     /**
