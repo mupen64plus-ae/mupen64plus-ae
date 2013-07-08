@@ -1,9 +1,10 @@
 [28:2.3.2]
 - Added auto-frameskip feature to gles2glide64
-- Updated core and plugins to version 2.0
+- Fixed file extraction failure on Android 2.2 and below
 - Added sensitivity preference for controller analog sticks
 - Fixed analog scaling for Mayflash N64/USB adapter
 - Removed obsolete items in the Advanced menu
+- Updated core and plugins to version 2.0
 [27:2.3.1]
 - Added support for MOGA Pocket/Pro via MOGA Pivot app (no menu navigation in mode A)
 - Fixed junk graphics in the margins for gles2rice video plugin
