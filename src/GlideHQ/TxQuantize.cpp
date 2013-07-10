@@ -41,7 +41,7 @@ TxQuantize::TxQuantize()
 
   /* get dxtn extensions */
   _tx_compress_fxt1 = TxLoadLib::getInstance()->getfxtCompressTexFuncExt();
-  _tx_compress_dxtn = TxLoadLib::getInstance()->getdxtCompressTexFuncExt();
+  _tx_compress_dxtn_rgba = TxLoadLib::getInstance()->getdxtCompressTexFuncExt();
 }
 
 
@@ -1990,7 +1990,7 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
 
   boolean bRet = 0;
 
-  if (_tx_compress_dxtn &&
+  if (_tx_compress_dxtn_rgba &&
       srcwidth >= 4 && srcheight >= 4) {
     /* compress to dxtn
      * width and height must be larger than 4
@@ -2038,7 +2038,7 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
         unsigned int srcStride = (srcwidth * blkheight) << 2;
         unsigned int destStride = dstRowStride * blkrow;
         for (i = 0; i < numcore - 1; i++) {
-          thrd[i] = new std::thread(std::bind(_tx_compress_dxtn,
+          thrd[i] = new std::thread(std::bind(_tx_compress_dxtn_rgba,
                                               4,
                                               srcwidth,
                                               blkheight,
@@ -2049,7 +2049,7 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
           src  += srcStride;
           dest += destStride;
         }
-        thrd[i] = new std::thread(std::bind(_tx_compress_dxtn,
+        thrd[i] = new std::thread(std::bind(_tx_compress_dxtn_rgba,
                                             4,
                                             srcwidth,
                                             srcheight - blkheight * i,
@@ -2062,7 +2062,7 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
           delete thrd[i];
         }
       } else {
-        (*_tx_compress_dxtn)(4,             /* comps: ARGB8888=4, RGB888=3 */
+        (*_tx_compress_dxtn_rgba)(4,             /* comps: ARGB8888=4, RGB888=3 */
                              srcwidth,      /* width */
                              srcheight,     /* height */
                              src,           /* source */
@@ -2072,7 +2072,7 @@ TxQuantize::DXTn(uint8 *src, uint8 *dest,
                                              * others = 16 bytes per 4x4 texel */
       }
 #else
-      (*_tx_compress_dxtn)(4,             /* comps: ARGB8888=4, RGB888=3 */
+      (*_tx_compress_dxtn_rgba)(4,             /* comps: ARGB8888=4, RGB888=3 */
                            srcwidth,      /* width */
                            srcheight,     /* height */
                            src,           /* source */

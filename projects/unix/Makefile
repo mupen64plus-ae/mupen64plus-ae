@@ -211,7 +211,6 @@ endif
 CFLAGS += $(LIBPNG_CFLAGS)
 LDLIBS += $(LIBPNG_LDLIBS)
 
-
 # search for OpenGL libraries
 ifeq ($(OS), OSX)
   GL_LDLIBS = -framework OpenGL
@@ -366,8 +365,14 @@ SOURCE += \
 	$(SRCDIR)/GlideHQ/tc-1.1+/wrapper.c \
 	$(SRCDIR)/GlideHQ/tc-1.1+/texstore.c
 
-CPPFLAGS += -DTEXTURE_FILTER -DARGB -DYUV # -DDUMP_CACHE
+CPPFLAGS += -DTEXTURE_FILTER # -DDUMP_CACHE
 LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX)
+
+  ifeq ($(TXCDXTN), 1)
+    CPPFLAGS += -DTXCDXTN_EXTERNAL
+  else 
+    SOURCE += $(SRCDIR)/GlideHQ/tc-1.1+/dxtn.c
+  endif
 endif
 
 ifeq ($(OS),MINGW)
@@ -404,6 +409,7 @@ targets:
 	@echo "    PIC=(1|0)     == Force enable/disable of position independent code"
 	@echo "    POSTFIX=name  == String added to the name of the the build (default: '')"
 	@echo "    HIRES=(1|0)   == Enables/Disables support for hires textures and texture filters (default: 1)"
+	@echo "    TXCDXTN=(1|0) == Enable/Disable external txc_dxtn library (default: 0)"
 	@echo "  Install Options:"
 	@echo "    PREFIX=path   == install/uninstall prefix (default: /usr/local)"
 	@echo "    SHAREDIR=path == path to install shared data files (default: PREFIX/share/mupen64plus)"

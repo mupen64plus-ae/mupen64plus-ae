@@ -42,14 +42,14 @@ TxLoadLib::TxLoadLib()
     _dxtnlib = LoadLibrary("dxtn");
 
   if (_dxtnlib) {
-    if (!_tx_compress_dxtn)
-      _tx_compress_dxtn = (dxtCompressTexFuncExt)DLSYM(_dxtnlib, "tx_compress_dxtn");
+    if (!_tx_compress_dxtn_rgba)
+      _tx_compress_dxtn_rgba = (dxtCompressTexFuncExt)DLSYM(_dxtnlib, "tx_compress_dxtn_rgba");
 
     if (!_tx_compress_fxt1)
       _tx_compress_fxt1 = (fxtCompressTexFuncExt)DLSYM(_dxtnlib, "fxt1_encode");
   }
 #else
-  _tx_compress_dxtn = tx_compress_dxtn;
+  _tx_compress_dxtn_rgba = tx_compress_dxtn_rgba;
   _tx_compress_fxt1 = fxt1_encode;
 
 #endif
@@ -74,7 +74,7 @@ TxLoadLib::getfxtCompressTexFuncExt()
 dxtCompressTexFuncExt
 TxLoadLib::getdxtCompressTexFuncExt()
 {
-  return _tx_compress_dxtn;
+  return _tx_compress_dxtn_rgba;
 }
 
 

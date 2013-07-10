@@ -33,7 +33,6 @@
 #include "types.h"
 #include "internal.h"
 
-
 void
 _mesa_upscale_teximage2d (unsigned int inWidth, unsigned int inHeight,
 			  unsigned int outWidth, unsigned int outHeight,

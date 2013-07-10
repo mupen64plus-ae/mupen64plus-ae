@@ -34,7 +34,7 @@
 #ifdef __cplusplus
 extern "C"{
 #endif
-void tx_compress_dxtn(int srccomps, int width, int height,
+void tx_compress_dxtn_rgba(int srccomps, int width, int height,
                       const void *source, int destformat, void *dest,
                       int destRowStride);
 
@@ -62,7 +62,7 @@ private:
   HMODULE _dxtnlib;
 #endif
   fxtCompressTexFuncExt _tx_compress_fxt1;
-  dxtCompressTexFuncExt _tx_compress_dxtn;
+  dxtCompressTexFuncExt _tx_compress_dxtn_rgba;
   TxLoadLib();
 public:
   static TxLoadLib* getInstance() {
