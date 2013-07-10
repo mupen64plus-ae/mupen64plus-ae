@@ -27,6 +27,8 @@
  */
 
 #include <assert.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include "types.h"
 #include "internal.h"
@@ -90,4 +92,68 @@ _mesa_upscale_teximage2d (unsigned int inWidth, unsigned int inHeight,
 	}
     }
 #endif
+}
+
+void reorder_source_3(byte *tex, dword width, dword height, int srcRowStride)
+{
+    byte *line;
+    byte t;
+    dword i, j;
+
+    for (i = 0; i < height; i++) {
+        line = &tex[srcRowStride * i];
+        for (j = 0; j < width; j++) {
+            t = line[2];
+            line[2] = line[0];
+            line[0] = t;
+            line += 3;
+        }
+    }
+}
+
+void *reorder_source_3_alloc(const byte *source, dword width, dword height, int srcRowStride)
+{
+    byte *tex;
+
+    tex = malloc(height * srcRowStride);
+    if (!tex)
+        goto out;
+
+    memcpy(tex, source, height * srcRowStride);
+    reorder_source_3(tex, width, height, srcRowStride);
+
+out:
+    return tex;
+}
+
+void reorder_source_4(byte *tex, dword width, dword height, int srcRowStride)
+{
+    byte *line;
+    byte t;
+    dword i, j;
+
+    for (i = 0; i < height; i++) {
+        line = &tex[srcRowStride * i];
+        for (j = 0; j < width; j++) {
+            t = line[2];
+            line[2] = line[0];
+            line[0] = t;
+            line += 4;
+        }
+    }
+}
+
+void *reorder_source_4_alloc(const byte *source, dword width, dword height, int srcRowStride)
+{
+    byte *tex;
+
+    tex = malloc(height * srcRowStride);
+    if (!tex)
+        goto out;
+
+    memcpy(tex, source, height * srcRowStride);
+    reorder_source_4(tex, width, height, srcRowStride);
+
+out:
+    return tex;
 }

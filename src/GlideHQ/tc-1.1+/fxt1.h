@@ -26,13 +26,13 @@
 #ifndef FXT1_H_included
 #define FXT1_H_included
 
-TAPI int TAPIENTRY
-fxt1_encode (int width, int height, int comps,
+TAPI void TAPIENTRY
+fxt1_encode (unsigned int width, unsigned int height, int comps,
              const void *source, int srcRowStride,
              void *dest, int destRowStride);
 
 TAPI void TAPIENTRY
-fxt1_decode_1 (const void *texture, int stride /* in pixels */,
-	       int i, int j, byte *rgba);
+fxt1_decode_1 (const void *texture, int stride,
+               int i, int j, byte *rgba);
 
 #endif
