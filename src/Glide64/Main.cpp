@@ -1407,7 +1407,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle, void *Con
     if (configDir)
     {
         SetConfigDir(configDir);
-        CoreVideo_Init();
         ReadSettings();
 		return M64ERR_SUCCESS;
     }

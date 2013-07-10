@@ -497,7 +497,7 @@ grSstWinOpen(
   // ZIGGY viewport_offset is WIN32 specific, with SDL just set it to zero
   viewport_offset = 0; //-10 //-20;
 
-  // ZIGGY not sure, but it might be better to let the system choose
+  CoreVideo_Init();
   CoreVideo_GL_SetAttribute(M64P_GL_DOUBLEBUFFER, 1);
   CoreVideo_GL_SetAttribute(M64P_GL_SWAP_CONTROL, vsync);
   CoreVideo_GL_SetAttribute(M64P_GL_BUFFER_SIZE, 16);
@@ -798,6 +798,9 @@ grSstWinClose( GrContext_t context )
   //SDL_QuitSubSystem(SDL_INIT_VIDEO);
   //sleep(2);
 #endif
+
+  CoreVideo_Quit();
+
   return FXTRUE;
 }
 
