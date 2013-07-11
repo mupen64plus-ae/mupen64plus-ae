@@ -51,6 +51,9 @@ static void tx_compress_dxtn_init()
 {
     m64p_error rval;
 
+    if (_tx_compress_dxtn)
+        return;
+
     rval = osal_dynlib_open(&dxtn_lib_handle, DXTN_LIBNAME);
     if (rval != M64ERR_SUCCESS) {
         WriteLog(M64MSG_WARNING, "Failed to open %s", DXTN_LIBNAME);
