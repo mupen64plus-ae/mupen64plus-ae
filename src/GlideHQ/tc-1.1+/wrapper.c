@@ -118,7 +118,7 @@ fetch_2d_texel_rgba_dxt5 (int texImage_RowStride,
 
 
 static
-tx_compress_dxtn (int srccomps, int width, int height,
+void tx_compress_dxtn (int srccomps, int width, int height,
 		  const byte *source, int destformat, byte *dest,
 		  int destRowStride)
 {
