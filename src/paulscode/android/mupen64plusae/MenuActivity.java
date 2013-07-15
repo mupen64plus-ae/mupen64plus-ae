@@ -89,6 +89,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String TOUCHPAD_FEEDBACK = "touchpadFeedback";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
+    private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
     private static final String PLUGIN_VIDEO = "pluginVideo";
     private static final String PLUGIN_INPUT = "pluginInput";
     private static final String PLUGIN_AUDIO = "pluginAudio";
@@ -137,9 +138,12 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( !mAppData.hardwareInfo.isXperiaPlay )
             prefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
         
-        // Disable the touchscreen when running in big-screen mode
+        // Set some prefs when running in big-screen mode
         if( mUserPrefs.isBigScreenMode )
+        {
             prefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
+            prefs.edit().putBoolean( INPUT_VOLUME_MAPPABLE, true ).commit();
+        }
         
         // Disable haptic feedback if permission not granted
         if( !mAppData.hasVibratePermission )
@@ -209,7 +213,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
         
         if( mUserPrefs.isBigScreenMode )
+        {
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
+            PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, INPUT_VOLUME_MAPPABLE );
+        }
         
         if( !mAppData.hasVibratePermission )
         {
