@@ -179,13 +179,6 @@ public class AxisProvider extends AbstractProvider
                                 // Normalize to [0,1]
                                 strength = ( strength - motionRange.getMin() ) / motionRange.getRange();
                                 break;
-                            case AxisMap.AXIS_CLASS_OUYA_X_STICK:
-                                // Remove bias in OUYA left x-axis (usually ~ 0.15, but occassionally up to 0.33)
-                                if( strength > 0.3333f )
-                                    strength = (strength - 0.3333f) / 0.6666f;
-                                else if( strength > 0 )
-                                    strength = 0;
-                                break;
                             case AxisMap.AXIS_CLASS_N64_USB_STICK:
                                 // Normalize to [-1,1]
                                 // The Raphnet adapters through v2.x and some other USB adapters assume the N64

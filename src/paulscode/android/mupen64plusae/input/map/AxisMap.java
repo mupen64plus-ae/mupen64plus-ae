@@ -18,7 +18,6 @@ public class AxisMap extends SerializableMap
     public static final int AXIS_CLASS_IGNORED = 1;
     public static final int AXIS_CLASS_STICK = 2;
     public static final int AXIS_CLASS_TRIGGER = 3;
-    public static final int AXIS_CLASS_OUYA_X_STICK = 101;
     public static final int AXIS_CLASS_N64_USB_STICK = 102;
     
     private static final int SIGNATURE_HASH_XBOX360 = 449832952;
@@ -133,13 +132,6 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_GENERIC_2, AXIS_CLASS_IGNORED );
                 signatureName = "Moga Pro (HID mode)";
                 break;
-        }
-        
-        // Check if the controller is OUYA, to compensate for the +X axis bias
-        if( deviceName.contains( "OUYA" ) )
-        {
-            setClass( MotionEvent.AXIS_X, AXIS_CLASS_OUYA_X_STICK );
-            signatureName = "OUYA controller";
         }
         
         // Check if the controller is an N64/USB adapter, to compensate for range of motion
