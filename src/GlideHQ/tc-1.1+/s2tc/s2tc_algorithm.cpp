@@ -57,7 +57,7 @@ namespace
 	}
 	inline color_t make_color_t(int i)
 	{
-		return (color_t) {i >> 3, i >> 2, i >> 3};
+		return (color_t) {(signed char)(i >> 3), (signed char)(i >> 2), (signed char)(i >> 3)};
 	}
 	inline bool operator==(const color_t &a, const color_t &b)
 	{
@@ -706,7 +706,7 @@ namespace
 	// REFINE_ALWAYS: refine, do not check
 	inline void s2tc_dxt5_encode_alpha_refine_always(bitarray<uint64_t, 16, 3> &out, const unsigned char *in, int iw, int w, int h, unsigned char &a0, unsigned char &a1)
 	{
-		unsigned char ramp[2] = {
+		unsigned char ramp[6] = {
 			a0,
 			a1
 		};
@@ -1282,7 +1282,6 @@ namespace
 						}
 						else
 						{
-							int alphadiffuse = 8 - alphabits;
 							for(y = 0; y < h; ++y)
 								for(x = 0; x < w; ++x)
 									out[(x + y * w) * 4 + 3] = rgba[(x + y * w) * srccomps + 3] >> (8 - alphabits);
