@@ -146,13 +146,6 @@ do {                                \
    (DST)[3] = (SRC)[3];             \
 } while (0)
 
-void
-_mesa_upscale_teximage2d (unsigned int inWidth, unsigned int inHeight,
-			  unsigned int outWidth, unsigned int outHeight,
-			  unsigned int comps,
-			  const byte *src, int srcRowStride,
-			  unsigned char *dest);
-
 /** Copy a 4-element unsigned byte vector */
 static inline void
 COPY_4UBV(uint8_t dst[4], const uint8_t src[4])

@@ -25,12 +25,12 @@
 
 #include "types.h"
 #include "internal.h"
+#include <SDL_opengl.h>
 #include "../../Glide64/m64p.h"
 
-typedef void (*dxtCompressTexFuncExt)(int srccomps, int width,
-                                      int height, const byte *srcPixData,
-                                      int destformat, byte *dest,
-                                      int dstRowStride);
+typedef void (*dxtCompressTexFuncExt)(GLint srccomps, GLint width, GLint height,
+		                      const GLubyte *srcPixData, GLenum destformat,
+                                      GLubyte *dest, GLint dstRowStride);
 static dxtCompressTexFuncExt _tx_compress_dxtn = NULL;
 
 #ifdef TXCDXTN_EXTERNAL
@@ -70,85 +70,7 @@ static void tx_compress_dxtn_init()
 
 #else
 
-#include "dxtn.h"
-
-#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT   0x83F0
-#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT  0x83F1
-#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT  0x83F2
-#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT  0x83F3
-
-TAPI void TAPIENTRY
-fetch_2d_texel_rgb_dxt1 (int texImage_RowStride,
-			 const byte *texImage_Data,
-			 int i, int j,
-			 byte *texel)
-{
-    dxt1_rgb_decode_1(texImage_Data, texImage_RowStride, i, j, texel);
-}
-
-
-TAPI void TAPIENTRY
-fetch_2d_texel_rgba_dxt1 (int texImage_RowStride,
-			  const byte *texImage_Data,
-			  int i, int j,
-			  byte *texel)
-{
-    dxt1_rgba_decode_1(texImage_Data, texImage_RowStride, i, j, texel);
-}
-
-
-TAPI void TAPIENTRY
-fetch_2d_texel_rgba_dxt3 (int texImage_RowStride,
-			  const byte *texImage_Data,
-			  int i, int j,
-			  byte *texel)
-{
-    dxt3_rgba_decode_1(texImage_Data, texImage_RowStride, i, j, texel);
-}
-
-
-TAPI void TAPIENTRY
-fetch_2d_texel_rgba_dxt5 (int texImage_RowStride,
-			  const byte *texImage_Data,
-			  int i, int j,
-			  byte *texel)
-{
-    dxt5_rgba_decode_1(texImage_Data, texImage_RowStride, i, j, texel);
-}
-
-
-static
-void tx_compress_dxtn (int srccomps, int width, int height,
-		  const byte *source, int destformat, byte *dest,
-		  int destRowStride)
-{
-    int srcRowStride = width * srccomps;
-
-    switch (destformat) {
-	case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-	    dxt1_rgb_encode(width, height, srccomps,
-			    source, srcRowStride,
-			    dest, destRowStride);
-	    break;
-	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-	    dxt1_rgba_encode(width, height, srccomps,
-			     source, srcRowStride,
-			     dest, destRowStride);
-	    break;
-	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-	    dxt3_rgba_encode(width, height, srccomps,
-			     source, srcRowStride,
-			     dest, destRowStride);
-	    break;
-	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-	    dxt5_rgba_encode(width, height, srccomps,
-			     source, srcRowStride,
-			     dest, destRowStride);
-	    break;
-	default:
-	    assert(0);
-    }
-}
+#include "s2tc/txc_dxtn.h"
 
 static void tx_compress_dxtn_init()
 {

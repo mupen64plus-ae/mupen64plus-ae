@@ -361,7 +361,6 @@ SOURCE += \
 	$(SRCDIR)/GlideHQ/TxReSample.cpp \
 	$(SRCDIR)/GlideHQ/TxDbg.cpp \
 	$(SRCDIR)/GlideHQ/tc-1.1+/fxt1.c \
-	$(SRCDIR)/GlideHQ/tc-1.1+/dxtn.c \
 	$(SRCDIR)/GlideHQ/tc-1.1+/wrapper.c \
 	$(SRCDIR)/GlideHQ/tc-1.1+/texstore.c
 
@@ -371,7 +370,9 @@ LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX)
   ifeq ($(TXCDXTN), 1)
     CPPFLAGS += -DTXCDXTN_EXTERNAL
   else 
-    SOURCE += $(SRCDIR)/GlideHQ/tc-1.1+/dxtn.c
+    SOURCE += \
+	$(SRCDIR)/GlideHQ/tc-1.1+/s2tc/s2tc_algorithm.cpp \
+	$(SRCDIR)/GlideHQ/tc-1.1+/s2tc/s2tc_libtxc_dxtn.cpp
   endif
 endif
 
