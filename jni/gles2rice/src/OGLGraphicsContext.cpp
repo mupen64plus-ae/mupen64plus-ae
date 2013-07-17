@@ -31,10 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Video.h"
 #include "version.h"
 
-#ifdef PAULSCODE
-#include "ae_bridge.h"
-#endif
-
 COGLGraphicsContext::COGLGraphicsContext() :
     m_bSupportMultiTexture(false),
     m_bSupportTextureEnvCombine(false),
@@ -113,12 +109,6 @@ bool COGLGraphicsContext::Initialize(uint32 dwWidth, uint32 dwHeight, BOOL bWind
         else
             CoreVideo_GL_SetAttribute(M64P_GL_MULTISAMPLESAMPLES, 16);
     }
-
-#ifdef PAULSCODE
-    // Allow user to reduce color depth for performance
-    if( !Android_JNI_UseRGBA8888() )
-        colorBufferDepth = 16;
-#endif
 
     /* Set the video mode */
     m64p_video_mode ScreenMode = bWindowed ? M64VIDEO_WINDOWED : M64VIDEO_FULLSCREEN;
