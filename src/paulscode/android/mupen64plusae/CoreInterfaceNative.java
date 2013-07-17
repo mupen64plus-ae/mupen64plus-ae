@@ -209,26 +209,6 @@ public class CoreInterfaceNative extends CoreInterface
     }
     
     /**
-     * Checks if the GLES2N64 plugin is using auto-frameskip.
-     * 
-     * @return True if auto-framskip is enabled. False otherwise.
-     */
-    public static boolean getAutoFrameSkip()
-    {
-        return sUserPrefs.isGles2N64AutoFrameskipEnabled;
-    }
-    
-    /**
-     * Gets the maximum frameskips allowed for the GLES2N64 plugin.
-     * 
-     * @return The number of max frameskps allowed.
-     */
-    public static int getMaxFrameSkip()
-    {
-        return sUserPrefs.gles2N64MaxFrameskip;
-    }
-    
-    /**
      * Checks if the emulator is using RGBA 8888.
      * 
      * @return True if RGBA 8888 is being used. False otherwise.

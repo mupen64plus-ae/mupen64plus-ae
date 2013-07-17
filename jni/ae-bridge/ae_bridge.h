@@ -64,8 +64,6 @@ extern void         Android_JNI_State_Callback(int paramChanged, int newValue);
 
 // Native utilities - TODO: Move to configuration file if possible
 extern int          Android_JNI_GetHardwareType();
-extern int          Android_JNI_GetAutoFrameSkip();
-extern int          Android_JNI_GetMaxFrameSkip();
 extern int          Android_JNI_UseRGBA8888();
 extern void         Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2);
 

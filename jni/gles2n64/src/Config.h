@@ -44,6 +44,7 @@ struct Config
     int     zHack;
 
     int     autoFrameSkip;
+    int     maxFrameSkip;
     int     targetFPS;
     int     frameRenderRate;
     int     verticalSync;

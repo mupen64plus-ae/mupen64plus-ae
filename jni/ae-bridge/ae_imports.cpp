@@ -42,8 +42,6 @@ static jclass mActivityClass;
 // Imported java method references
 static jmethodID midStateCallback;
 static jmethodID midGetHardwareType;
-static jmethodID midGetAutoFrameSkip;
-static jmethodID midGetMaxFrameSkip;
 static jmethodID midUseRGBA8888;
 
 /*******************************************************************************
@@ -159,11 +157,9 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
 
     midStateCallback        = env->GetStaticMethodID(mActivityClass, "stateCallback",      "(II)V");
     midGetHardwareType      = env->GetStaticMethodID(mActivityClass, "getHardwareType",    "()I");
-    midGetAutoFrameSkip     = env->GetStaticMethodID(mActivityClass, "getAutoFrameSkip",   "()Z");
-    midGetMaxFrameSkip      = env->GetStaticMethodID(mActivityClass, "getMaxFrameSkip",    "()I");
     midUseRGBA8888          = env->GetStaticMethodID(mActivityClass, "useRGBA8888",        "()Z");
 
-    if (!midStateCallback || !midGetHardwareType || !midGetAutoFrameSkip || !midGetMaxFrameSkip || !midUseRGBA8888)
+    if (!midStateCallback || !midGetHardwareType || !midUseRGBA8888)
     {
         LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
@@ -182,16 +178,6 @@ extern DECLSPEC void Android_JNI_State_Callback(int paramChanged, int newValue)
 extern DECLSPEC int Android_JNI_GetHardwareType()
 {
     return GetInt(midGetHardwareType);
-}
-
-extern DECLSPEC int Android_JNI_GetAutoFrameSkip()
-{
-    return GetBooleanAsInt(midGetAutoFrameSkip);
-}
-
-extern DECLSPEC int Android_JNI_GetMaxFrameSkip()
-{
-    return GetInt(midGetMaxFrameSkip);
 }
 
 extern DECLSPEC int Android_JNI_UseRGBA8888()

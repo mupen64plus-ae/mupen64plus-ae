@@ -99,6 +99,7 @@ Option configOptions[] =
 
     {"#Frame skip:", NULL, 0},
     {"auto frameskip", &config.autoFrameSkip, 0},
+    {"max frameskip", &config.maxFrameSkip, 0},
     {"target FPS", &config.targetFPS, 20},
     {"frame render rate", &config.frameRenderRate, 1},
     {"vertical sync", &config.verticalSync, 0},

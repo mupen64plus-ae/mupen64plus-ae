@@ -46,15 +46,6 @@ EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle CoreLibHandle,
         gSPInitNeon();
     }
 #endif
-    ticksInitialize();
-
-    int max_frames = Android_JNI_GetMaxFrameSkip();
-// TODO: get rid of this, it should be handled through the config file:
-    if( Android_JNI_GetAutoFrameSkip() )
-        frameSkipper.setSkips( FrameSkipper::AUTO, max_frames );
-    else
-        frameSkipper.setSkips( FrameSkipper::MANUAL, max_frames );
-//
     return M64ERR_SUCCESS;
 }
 
@@ -131,6 +122,12 @@ EXPORT int CALL InitiateGFX (GFX_INFO Gfx_Info)
 
     Config_LoadConfig();
     Config_LoadRomConfig(Gfx_Info.HEADER);
+
+    ticksInitialize();
+    if( config.autoFrameSkip )
+        frameSkipper.setSkips( FrameSkipper::AUTO, config.maxFrameSkip );
+    else
+        frameSkipper.setSkips( FrameSkipper::MANUAL, config.maxFrameSkip );
 
     OGL_Start();
 

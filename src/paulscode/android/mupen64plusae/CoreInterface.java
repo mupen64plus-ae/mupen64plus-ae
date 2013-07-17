@@ -424,6 +424,8 @@ public class CoreInterface
         ConfigFile gles2n64_conf = new ConfigFile( appData.gles2n64_conf );
         gles2n64_conf.put( "[<sectionless!>]", "window width", Integer.toString( user.videoRenderWidth ) );
         gles2n64_conf.put( "[<sectionless!>]", "window height", Integer.toString( user.videoRenderHeight ) );
+        gles2n64_conf.put( "[<sectionless!>]", "auto frameskip", booleanToString( user.isGles2N64AutoFrameskipEnabled ) );
+        gles2n64_conf.put( "[<sectionless!>]", "max frameskip", Integer.toString( user.gles2N64MaxFrameskip ) );
         gles2n64_conf.put( "[<sectionless!>]", "enable fog", booleanToString( user.isGles2N64FogEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "enable alpha test", booleanToString( user.isGles2N64AlphaTestEnabled ) );
         gles2n64_conf.put( "[<sectionless!>]", "force screen clear", booleanToString( user.isGles2N64ScreenClearEnabled ) );
