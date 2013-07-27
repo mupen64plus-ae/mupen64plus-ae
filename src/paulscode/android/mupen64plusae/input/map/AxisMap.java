@@ -26,6 +26,7 @@ public class AxisMap extends SerializableMap
     private static final int SIGNATURE_HASH_NYKO_PLAYPAD = 1245841466;
     private static final int SIGNATURE_HASH_LOGITECH_WINGMAN_RUMBLEPAD = 1247256123;
     private static final int SIGNATURE_HASH_MOGA_PRO = -1933523749;
+    private static final int SIGNATURE_HASH_OUYA = 699487739;
     
     private static final SparseArray<AxisMap> sAllMaps = new SparseArray<AxisMap>();
     private final String mSignature;
@@ -131,6 +132,15 @@ public class AxisMap extends SerializableMap
                 setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
                 setClass( MotionEvent.AXIS_GENERIC_2, AXIS_CLASS_IGNORED );
                 signatureName = "Moga Pro (HID mode)";
+                break;
+                
+            case SIGNATURE_HASH_OUYA:
+                // Ignore phantom triggers
+                setClass( MotionEvent.AXIS_GENERIC_1, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_2, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_3, AXIS_CLASS_IGNORED );
+                setClass( MotionEvent.AXIS_GENERIC_4, AXIS_CLASS_IGNORED );
+                signatureName = "OUYA controller";
                 break;
         }
         
