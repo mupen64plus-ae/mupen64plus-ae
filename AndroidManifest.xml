@@ -33,6 +33,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="tv.ouya.intent.category.GAME" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:host="*" />
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.n64" />
+                <data android:pathPattern=".*\\.N64" />
+                <data android:pathPattern=".*\\.v64" />
+                <data android:pathPattern=".*\\.V64" />
+                <data android:pathPattern=".*\\.z64" />
+                <data android:pathPattern=".*\\.Z64" />
+            </intent-filter>
         </activity>
         <activity
             android:name="paulscode.android.mupen64plusae.MenuActivity"

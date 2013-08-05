@@ -33,8 +33,11 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
@@ -82,6 +85,14 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        
+        // Save the path of the ROM, if it was passed to the activity
+        Uri dataUri = this.getIntent().getData();
+        if( dataUri != null )
+        {
+            Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putString( "pathSelectedGame", dataUri.getPath() ).commit();
+        }
         
         // Enforce any locale overrides
         new UserPrefs( this ).enforceLocale( this );

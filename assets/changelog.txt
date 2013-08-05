@@ -1,6 +1,7 @@
 [29:2.3.3]
 - Fixed input/player mapping with the OUYA controller (broken by last OUYA firmware update)
 - Removed OUYA controller deadzone hack (improves analog precision on retail controllers)
+- Game ROMS can be launched directly from file manager apps
 [28:2.3.2]
 - Added auto-frameskip feature to gles2glide64
 - Fixed file extraction failure on Android 2.2 and below
