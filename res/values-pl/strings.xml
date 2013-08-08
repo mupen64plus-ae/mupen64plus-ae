@@ -260,16 +260,12 @@
   <string name="pluginVideo_entryGles2Glide64">gles2glide64⏎\n<small>(adaptacja Glide64 Final (10th Anniversary))</small></string>
   <string name="pluginAudio_title">Dźwięk</string>
   <string name="pluginAudio_entryNone">Brak (wyłączony dźwięk)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Urządzenie wejścia</string>
   <string name="pluginInput_entryNone">Brak (wyłączony kontroler)</string>
   <string name="pluginInput_entryAndroid">input-android</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Brak (RSP wyłączone)</string>
-  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
-  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0⏎\n<small>(brak przetwarzania audio, speed hack)</small></string>
   <string name="pluginCore_title">Rdzeń emulacji</string>
-  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
   <string name="r4300Emulator_title">Emulator R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Czysty interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Buforowany interpreter</string>

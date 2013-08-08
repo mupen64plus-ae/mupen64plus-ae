@@ -46,6 +46,7 @@
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Zone inactive</string>
+  <string name="menuItem_sensitivity">Sensibilité</string>
   <string name="menuItem_specialVisibility_show">Afficher les fonctions spéciales</string>
   <string name="menuItem_specialVisibility_hide">Masquer les fonctions spéciales</string>
   <string name="menuItem_axisInfo">Infos stick analogique</string>
@@ -126,6 +127,7 @@
   <string name="categoryMultiPlayer_title">Multijoueur</string>
   <string name="categoryGles2N64_title">Paramètres GLES2N64</string>
   <string name="categoryGles2Rice_title">Paramètres GLES2Rice</string>
+  <string name="categoryGles2Glide64_title">Paramètres GLES2Glide64</string>
   <string name="categoryData_title">Données</string>
   <string name="categoryCrashReports_title">Rapports de plantages</string>
   <!--Checkbox Preferences-->

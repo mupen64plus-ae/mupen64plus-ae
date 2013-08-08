@@ -46,6 +46,7 @@
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Zona de Muerte</string>
+  <string name="menuItem_sensitivity">Sensibilidad</string>
   <string name="menuItem_specialVisibility_show">Mostrar funciones especiales</string>
   <string name="menuItem_specialVisibility_hide">Ocultar funciones especiales</string>
   <string name="menuItem_axisInfo">Información analógica</string>
@@ -126,6 +127,7 @@
   <string name="categoryMultiPlayer_title">Multijugador</string>
   <string name="categoryGles2N64_title">Opciones del plugin GLES2N64</string>
   <string name="categoryGles2Rice_title">Opciones del plugin GLES2Rice</string>
+  <string name="categoryGles2Glide64_title">Opciones del plugin GLES2Glide64</string>
   <string name="categoryData_title">Datos</string>
   <string name="categoryCrashReports_title">Informes de fallos</string>
   <!--Checkbox Preferences-->
@@ -263,12 +265,10 @@
   <string name="pluginVideo_entryNone">Ninguno (video deshabilitado)</string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Ninguno (audio deshabilitado)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Ninguno (dispositivos de entrada deshabilitados)</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Ninguno (RSP deshabilitado)</string>
-  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
   <string name="pluginCore_title">Núcleo de emulación</string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>

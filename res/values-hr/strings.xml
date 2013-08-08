@@ -46,6 +46,7 @@
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Mrtva zona</string>
+  <string name="menuItem_sensitivity">Osjetljivost</string>
   <string name="menuItem_specialVisibility_show">Prikaži specijalne funkcije</string>
   <string name="menuItem_specialVisibility_hide">Sakrij specijalne funkcije</string>
   <string name="menuItem_axisInfo">Analog info</string>
@@ -126,6 +127,7 @@
   <string name="categoryMultiPlayer_title">Više igrača</string>
   <string name="categoryGles2N64_title">GLES2N64 postavke</string>
   <string name="categoryGles2Rice_title">GLES2Rice postavke</string>
+  <string name="categoryGles2Glide64_title">GLES2Glide64 postavke</string>
   <string name="categoryData_title">Podaci</string>
   <string name="categoryCrashReports_title">Izvještaji rušenja</string>
   <!--Checkbox Preferences-->

@@ -46,6 +46,7 @@
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Deadzone</string>
+  <string name="menuItem_sensitivity">Gevoeligheid</string>
   <string name="menuItem_specialVisibility_show">Laat speciale functies zien</string>
   <string name="menuItem_specialVisibility_hide">Verberg speciale functies</string>
   <string name="menuItem_axisInfo">Analoge informatie</string>
@@ -126,6 +127,7 @@
   <string name="categoryMultiPlayer_title">Meerdere spelers</string>
   <string name="categoryGles2N64_title">GLES2N64 instellingen</string>
   <string name="categoryGles2Rice_title">GLES2Rice instellingen</string>
+  <string name="categoryGles2Glide64_title">GLES2Glide64 instellingen</string>
   <string name="categoryData_title">Gegevens</string>
   <string name="categoryCrashReports_title">Crash rapporten</string>
   <!--Checkbox Preferences-->
@@ -274,16 +276,13 @@
   <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(aangepaste versie van Glide64 Final (10e Jubileum))</small></string>
   <string name="pluginAudio_title">Geluid</string>
   <string name="pluginAudio_entryNone">Geen (geluid uitgeschakeld)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Invoer</string>
   <string name="pluginInput_entryNone">Geen (invoer uitgeschakeld)</string>
   <string name="pluginInput_entryAndroid">input-android</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Geen (RSP uitgeschakeld)</string>
-  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
   <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0\n<small>(geen geluidsverwerking, snelheidshack)</small></string>
   <string name="pluginCore_title">Emulatiekern</string>
-  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
   <string name="r4300Emulator_title">R4300 emulator</string>
   <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Gecachete interpreter</string>

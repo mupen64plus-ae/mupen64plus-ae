@@ -13,30 +13,31 @@ Nintendo 64 emulator for Android. Mupen64Plus AE er en betaversjon.
 [App Description]
 
 
-DENNE APP KOMMER IKKE MED ROMS
+DENNE APPEN FØLGER IKKE MED ROMS
 - Du må ha rettighetene til en gitt ROM før du spiller den!
 - Mange offentlig eiendom spill/demoer er tilgjengelig hos www.pdroms.de
 
-99¢ ER BARE FOR DONASJONER
+6 NOK ER BARE FOR DONASJONER
 - Denne app kan lastes ned gratis fra nettsiden min (INGEN REKLAMER!)
 - Vennligst vurder å donere
 - Donasjoner støtte MANGE åpen kildekode prosjekter og utviklere
 
-Mupen64Plus, Android Edition (AE) er en N64 emulator for Android. Denne er en betaversjon, som betyr at det er et arbeid som pågår. Det er fortsatt mange grafisk, forsinkelser, og lyd problemer, til og med på moderne enheter. Besøk www.paulscode.com for å engasjere deg i utvikling og testing, samt løsninger til problemer og hjelpespørsmål.
+Mupen64Plus, Android Edition (AE) er en N64 emulator for Android. Denne er en betaversjon, som betyr at det er et arbeid som pågår. Det er fortsatt mange grafiske, forsinkelse, og lyd problemer, til og med på moderne enheter. Besøk www.paulscode.com for å engasjere deg i utvikling og testing, samt løsninger til problemer og hjelpespørsmål.
 
 In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
 
-This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
+Dette programmet er lisensiert av GNU GPL v3, og hele kildekoden er tilgjengelig via det offentlige GIT depotet i https://github.com/paulscode/mupen64plus-ae
+Hvis noen utviklere ønsker skrivetilgang til depotet, vennligst ta ta med meg (Paul) på supportforumet. Hvis du trenger hjelp med å forgrene projektet, bare gi meg beskjed og jeg kan hjelpe deg med å få satt det opp.
 
-XPERIA PLAY OPTIMERT
+XPERIA PLAY OPTIMISERT
 - Analog inndata fra styreplaten!
 
-PERMISSIONS
-Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
-Write External Storage - The device storage is used for writing savegames and custom input profiles.
-Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
+Tillatelser
+Internet - Nettet er brukt for å sende krasjrapporter. Den laster ikke ned virus, spionprogramvare eller noen slags reklamer, og den samler ikke privat informasjon. Vanlige mobilnettverk priser gjelder.
+Skrive til ekstern lagring - Enhetens lagring er brukt for å lagre savegames og egendefinerte input profiler
+Vibrasjon - Hvis enheten støtter det, vibrasjon er brukt for Rumble Pak emulering og haptiske tilbakemeldinger
 
-KOMME I GANG
+KOM I GANG
 - Overfør ROMs hvor som helst på harddisken/SD-kortet
 - Bla til dem fra appen
 - Standard SD-kort mappe på de fleste enhetene er /mnt/sdcard
