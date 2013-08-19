@@ -138,33 +138,7 @@ EXPORT void CALL ProcessDList(void)
 {
     OGL.frame_dl++;
 
-    if (config.autoFrameSkip)
-    {
-        OGL_UpdateFrameTime();
-
-        if (OGL.consecutiveSkips < 1)
-        {
-            unsigned t = 0;
-            for(int i = 0; i < OGL_FRAMETIME_NUM; i++) t += OGL.frameTime[i];
-            t *= config.targetFPS;
-            if (config.romPAL) t = (t * 5) / 6;
-            if (t > (OGL_FRAMETIME_NUM * 1000))
-            {
-                OGL.consecutiveSkips++;
-                OGL.frameSkipped++;
-                RSP.busy = FALSE;
-                RSP.DList++;
-
-                /* avoid hang on frameskip */
-                *REG.MI_INTR |= MI_INTR_DP;
-                CheckInterrupts();
-                *REG.MI_INTR |= MI_INTR_SP;
-                CheckInterrupts();
-                return;
-            }
-        }
-    }
-    else if (frameSkipper.willSkipNext())
+    if (frameSkipper.willSkipNext())
     {
         OGL.frameSkipped++;
         RSP.busy = FALSE;
