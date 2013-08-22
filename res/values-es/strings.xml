@@ -199,6 +199,7 @@
   <string name="videoOrientation_entryReverseLandscape">Paisaje invertido</string>
   <string name="videoOrientation_entryPortrait">Retrato</string>
   <string name="videoOrientation_entryReversePortrait">Retrato invertido</string>
+  <string name="videoPosition_title">Posición de pantalla vertical</string>
   <string name="videoPosition_entryBottom">Abajo</string>
   <string name="videoPosition_entryMiddle">En medio</string>
   <string name="videoPosition_entryTop">Arriba</string>
@@ -211,6 +212,9 @@
   <string name="videoResolution_entry320x240">320 X 240</string>
   <string name="videoResolution_entry160x120">160 x 120 (mayor FPS)</string>
   <string name="videoScaling_title">Tamaño de la pantalla</string>
+  <string name="videoScaling_entryNone">Nada⏎\n<small>Usar exactamente la resolución de arriba</small></string>
+  <string name="videoScaling_entryZoom">Zoom⏎\n<small>Toda la pantalla, sin distorsión (agrega barras negras)</small></string>
+  <string name="videoScaling_entryStretch">Estirar⏎\n<small>Pantalla completa, sin barras negras (agrega distorsión)</small></string>
   <string name="videoFpsRefresh_title">Mostrar velocidad de cuadros</string>
   <string name="videoFpsRefresh_entryNever">Nunca</string>
   <string name="videoFpsRefresh_entryOccasionally">Ocasionalmente</string>
@@ -242,6 +246,10 @@
   <string name="gles2RiceMipmapping_entryTrilinear">Trilineal</string>
   <string name="gles2RiceScreenUpdate_title">Método de actualización de la pantalla</string>
   <string name="gles2RiceScreenUpdate_entryRomDefault">ROM predeterminado</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">Origen de la Actualización VI</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">Cambio del Origen VI</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">Cambio de CI</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Primer cambio de CI</string>
   <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Primer trazo primitivo</string>
   <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Antes de limpiar la pantalla</string>
   <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Después de dibujar la pantalla</string>
@@ -263,13 +271,21 @@
   <string name="audioResampleAlg_entrySincBest">Función sinc (mejor)</string>
   <string name="pluginVideo_title">Video</string>
   <string name="pluginVideo_entryNone">Ninguno (video deshabilitado)</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64⏎\n<small>(adaptación de GLN64 v0.4.1)</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice⏎\n<small>(adaptacion del video Rice v6.1.0(b))</small></string>
+  <string name="pluginVideo_entryGles2Glide64">gles2glide64⏎\n<small>(adaptación de Glide64 Final (10mo Aniversario))</small></string>
   <string name="pluginAudio_title">Audio</string>
   <string name="pluginAudio_entryNone">Ninguno (audio deshabilitado)</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Ninguno (dispositivos de entrada deshabilitados)</string>
+  <string name="pluginInput_entryAndroid">entrada-android</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Ninguno (RSP deshabilitado)</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
+  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0⏎\n<small>(sin procesamiento de audio, mayor velocidad)</small></string>
   <string name="pluginCore_title">Núcleo de emulación</string>
+  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intérprete en caché</string>
@@ -278,6 +294,7 @@
   <string name="navigationMode_summary">Modo de navegación del menú: %1$s</string>
   <string name="navigationMode_entryAuto">Seleccionar automáticamente a partir de la configuración del dispositivo</string>
   <string name="navigationMode_entryStandard">Modo estándar</string>
+  <string name="navigationMode_entryBigScreen">Modo de pantalla enorme (sin touchscreen; solo entrada de gemepad/teclado)</string>
   <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Predeterminado del sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->

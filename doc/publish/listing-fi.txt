@@ -1,0 +1,46 @@
+[Promotional Text]
+
+
+Nintendo64 emulator for Android. Mupen64Plus AE is in Beta testing.
+
+
+
+
+
+
+
+
+[App Lisätiedot]
+
+
+Tämä App:si ei tule ROM:ien kanssa
+-Sinulla täytyy olla oikeudet annettu ROM:iin ennen kuin pelaat sitä!
+- A number of public domain games/demos are available at www.pdroms.de
+
+99¢ IS FOR DONATIONS ONLY
+-Tämä APP:si on ilmanen ladata minun sivuiltani (EI MAINOKSIA!)
+-Ajattele lahjoitusta, Kiitos
+- Donations support MANY open-source projects and developers
+
+Mupen64Plus, Android Edition (AE) is an N64 emulator for Android. It is currently in Beta testing, which means it is a work in progress. There are still many graphical, lag, and audio problems, even on modern devices. Visit www.paulscode.com to get involved in development and testing, as well as bug-fixes and FAQs.
+
+In order to avoid potential copyright issues related to game screenshots, I've decided to use only public domain games and demos for screenshots. However, if the app gets pulled from the Market again, you will still be able to acquire future updates for free on paulscode.com.
+
+This app is licensed by the GNU GPL v3, and the full source code is available through the public GIT repository at https://github.com/paulscode/mupen64plus-ae If any developers would like write access to the repository, please get in touch with me (Paul) on the support forum. If you need help branching the project, just let me know, and I can help you get set up.
+
+XPERIA PLAY OPTIMIZED
+- Analog input from the touchpad!
+
+PERMISSIONS
+Internet - The internet is used to send crash reports.  It does not download viruses, spyware, or ads of any kind, and it does not collect any private information.  Normal data rates apply.
+Write External Storage - The device storage is used for writing savegames and custom input profiles.
+Vibrate - If your device supports it, vibrate is used for Rumble Pak emulation and haptic button feedback
+
+GETTING STARTED
+- Transfer ROMs anywhere to your internal storage/SD card
+- Browse to them from within the app
+- Default SD card directory on most devices is /mnt/sdcard
+- ROMs must be in .n64, .v64, or .z64 format, optionally in .zip files
+
+HELP, FAQS, BUG-FIXES, GAME BACKUP INSTRUCTIONS:
+- http://www.paulscode.com
