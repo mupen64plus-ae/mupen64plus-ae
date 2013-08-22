@@ -1,3 +1,5 @@
+[30:2.3.4]
+- Fixed auto-frameskip regression in gles2n64 video plugin
 [29:2.3.3]
 - Fixed input/player mapping with the OUYA controller (broken by last OUYA firmware update)
 - Removed OUYA controller deadzone hack (improves analog precision on retail controllers)
