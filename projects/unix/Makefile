@@ -364,7 +364,7 @@ SOURCE += \
 	$(SRCDIR)/GlideHQ/tc-1.1+/wrapper.c \
 	$(SRCDIR)/GlideHQ/tc-1.1+/texstore.c
 
-CPPFLAGS += -DTEXTURE_FILTER # -DDUMP_CACHE
+CPPFLAGS += -DTEXTURE_FILTER -DDUMP_CACHE
 LDLIBS += -lboost_filesystem$(BOOST_SUFFIX) -lboost_system$(BOOST_SUFFIX)
 
   ifeq ($(TXCDXTN), 1)
