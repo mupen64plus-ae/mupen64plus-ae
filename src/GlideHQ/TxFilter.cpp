@@ -30,6 +30,9 @@
 #include "TxDbg.h"
 #include <functional>
 #include <thread>
+#if defined(__MINGW32__)
+#define swprintf _snwprintf
+#endif
 
 void TxFilter::clear()
 {
