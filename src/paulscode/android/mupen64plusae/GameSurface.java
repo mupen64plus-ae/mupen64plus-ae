@@ -29,13 +29,12 @@ import javax.microedition.khronos.egl.EGLSurface;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
  * Represents a graphical area of memory that can be drawn to.
  */
-public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
+public class GameSurface extends SurfaceView
 {
     // Internal flags
     private boolean mIsRgba8888 = false;
@@ -47,34 +46,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback
     public GameSurface( Context context, AttributeSet attribs )
     {
         super( context, attribs );
-        
-        getHolder().addCallback( this );
     }
     
     public void setColorMode( boolean isRgba8888 )
     {
         mIsRgba8888 = isRgba8888;
-    }
-    
-    @Override
-    public void surfaceCreated( SurfaceHolder holder )
-    {
-        Log.i( "GameSurface", "surfaceCreated: " );
-    }
-    
-    @Override
-    public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
-    {
-        Log.i( "GameSurface", "surfaceChanged: " );
-        CoreInterface.onResize( format, width, height );
-        CoreInterface.startupEmulator();
-    }
-    
-    @Override
-    public void surfaceDestroyed( SurfaceHolder holder )
-    {
-        Log.i( "GameSurface", "surfaceDestroyed: " );
-        CoreInterface.shutdownEmulator();
     }
     
     public boolean createGLContext( int majorVersion, int minorVersion )

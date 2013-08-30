@@ -47,9 +47,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
@@ -88,7 +90,7 @@ import android.widget.FrameLayout;
  */
 //@formatter:on
 
-public class GameLifecycleHandler implements View.OnKeyListener
+public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.Callback
 {
     // Activity and views
     private Activity mActivity;
@@ -156,6 +158,7 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mUserPrefs = new UserPrefs( mActivity );
     }
     
+    @SuppressWarnings( "deprecation" )
     @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
@@ -171,6 +174,10 @@ public class GameLifecycleHandler implements View.OnKeyListener
         
         // Refresh the objects and data files interfacing to the emulator core
         CoreInterface.refresh( mActivity, mSurface );
+        
+        // Listen to game surface events (created, changed, destroyed)
+        mSurface.getHolder().addCallback( this );
+        mSurface.getHolder().setFormat( SurfaceHolder.SURFACE_TYPE_GPU );
         
         // Update the GameSurface size
         mSurface.getHolder().setFixedSize( mUserPrefs.videoRenderWidth, mUserPrefs.videoRenderHeight );
@@ -223,10 +230,31 @@ public class GameLifecycleHandler implements View.OnKeyListener
         mMogaController.onResume();
     }
     
+    @Override
+    public void surfaceCreated( SurfaceHolder holder )
+    {
+        Log.i( "GameLifecycleHandler", "surfaceCreated" );
+    }
+    
+    @Override
+    public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
+    {
+        Log.i( "GameLifecycleHandler", "surfaceChanged" );
+        CoreInterface.onResize( format, width, height );
+        CoreInterface.startupEmulator();
+    }
+    
     public void onPause()
     {
         CoreInterface.pauseEmulator( true );
         mMogaController.onPause();
+    }
+    
+    @Override
+    public void surfaceDestroyed( SurfaceHolder holder )
+    {
+        Log.i( "GameLifecycleHandler", "surfaceDestroyed" );
+        CoreInterface.shutdownEmulator();
     }
     
     public void onDestroy()
