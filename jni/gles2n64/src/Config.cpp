@@ -138,7 +138,7 @@ void Config_WriteConfig(const char *filename)
     for(int i=0; i<configOptionsSize; i++)
     {
         Option *o = &configOptions[i];
-        fprintf(f, o->name);
+        fprintf(f, "%s", o->name);
         if (o->data) fprintf(f,"=%i", *(o->data));
         fprintf(f, "\n");
     }
