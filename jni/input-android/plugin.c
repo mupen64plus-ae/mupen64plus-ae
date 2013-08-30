@@ -273,20 +273,20 @@ static void DebugMessage(int level, const char* message, ...)
     switch (level)
     {
     case M64MSG_ERROR:
-        __android_log_print(ANDROID_LOG_ERROR, "input-android", msgbuf);
+        __android_log_print(ANDROID_LOG_ERROR, "input-android", "%s", msgbuf);
         break;
     case M64MSG_WARNING:
-        __android_log_print(ANDROID_LOG_WARN, "input-android", msgbuf);
+        __android_log_print(ANDROID_LOG_WARN, "input-android", "%s", msgbuf);
         break;
     case M64MSG_INFO:
-        __android_log_print(ANDROID_LOG_INFO, "input-android", msgbuf);
+        __android_log_print(ANDROID_LOG_INFO, "input-android", "%s", msgbuf);
         break;
     case M64MSG_STATUS:
-        __android_log_print(ANDROID_LOG_DEBUG, "input-android", msgbuf);
+        __android_log_print(ANDROID_LOG_DEBUG, "input-android", "%s", msgbuf);
         break;
     case M64MSG_VERBOSE:
     default:
-        //__android_log_print( ANDROID_LOG_VERBOSE, "input-android", msgbuf );
+        //__android_log_print( ANDROID_LOG_VERBOSE, "input-android", "%s", msgbuf );
         break;
     }
 }
