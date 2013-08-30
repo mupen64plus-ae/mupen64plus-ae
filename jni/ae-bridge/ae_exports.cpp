@@ -120,13 +120,6 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     Java_org_libsdl_app_SDLActivity_nativeQuit(env, cls);
 }
 
-extern "C" DECLSPEC void SDLCALL Java_org_libsdl_app_SDLActivity_nativeRunAudioThread(JNIEnv* env, jclass cls);
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlRunAudioThread(JNIEnv* env, jclass cls)
-{
-    // Simple wrapper so that we don't have to touch the original SDL code
-    Java_org_libsdl_app_SDLActivity_nativeRunAudioThread(env, cls);
-}
-
 extern "C" DECLSPEC jboolean SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlVersionAtLeast(JNIEnv* env, jclass cls, jint major, jint minor, jint patch)
 {
     return SDL_VERSION_ATLEAST(major, minor, patch) ? JNI_TRUE : JNI_FALSE;
