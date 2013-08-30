@@ -212,13 +212,13 @@ extern "C" DECLSPEC jstring Java_paulscode_android_mupen64plusae_CoreInterfaceNa
 
     if (hdr == NULL)
     {
-        LOGE("Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n", sizeof(m64p_rom_header), strBuff);
+        LOGE("Error: couldn't allocate %i-byte buffer for ROM header from file '%s'.\n", sizeof(m64p_rom_header), strBuff);
         fclose(fPtr);
         return NULL;
     }
     else if (fread(hdr, 1, sizeof(m64p_rom_header), fPtr) != sizeof(m64p_rom_header))
     {
-        LOGE("Error: couldn't read %li bytes from ROM image file '%s'.\n", sizeof(m64p_rom_header), strBuff);
+        LOGE("Error: couldn't read %i bytes from ROM image file '%s'.\n", sizeof(m64p_rom_header), strBuff);
         free(hdr);
         fclose(fPtr);
         return NULL;
@@ -251,13 +251,13 @@ extern "C" DECLSPEC jstring Java_paulscode_android_mupen64plusae_CoreInterfaceNa
 
     if (hdr == NULL)
     {
-        LOGE("Error: couldn't allocate %li-byte buffer for ROM header from file '%s'.\n", sizeof(m64p_rom_header), strBuff);
+        LOGE("Error: couldn't allocate %i-byte buffer for ROM header from file '%s'.\n", sizeof(m64p_rom_header), strBuff);
         fclose(fPtr);
         return NULL;
     }
     else if (fread(hdr, 1, sizeof(m64p_rom_header), fPtr) != sizeof(m64p_rom_header))
     {
-        LOGE("Error: couldn't read %li bytes from ROM image file '%s'.\n", sizeof(m64p_rom_header), strBuff);
+        LOGE("Error: couldn't read %i bytes from ROM image file '%s'.\n", sizeof(m64p_rom_header), strBuff);
         free(hdr);
         fclose(fPtr);
         return NULL;
