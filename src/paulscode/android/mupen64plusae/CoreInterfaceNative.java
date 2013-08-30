@@ -138,8 +138,6 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void sdlQuit();
     
-    public static native void sdlRunAudioThread();
-    
     public static native boolean sdlVersionAtLeast( int major, int minor, int patch );
     
     public static native void emuGameShark( boolean pressed );
@@ -296,6 +294,11 @@ public class CoreInterfaceNative extends CoreInterface
         return result;
     }
     
+    public static void deleteGLContext()
+    {
+        // TODO
+    }
+    
     /**
      * Swaps the GL buffers of the GameSurface in use.
      */
@@ -326,48 +329,38 @@ public class CoreInterfaceNative extends CoreInterface
      * @param isStereo      Whether or not the audio is stereo or mono.
      * @param desiredFrames The desired frames per sample.
      */
-    public static void audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
+    public static int audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
     {
-        // Be sure audio is stopped so that we can restart it
-        audioQuit();
-        
-        // Audio configuration
-        int channelConfig = isStereo ? AudioFormat.CHANNEL_OUT_STEREO : AudioFormat.CHANNEL_OUT_MONO;
-        int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
-        int frameSize = ( isStereo ? 2 : 1 ) * ( is16Bit ? 2 : 1 );
-        
-        // Let the user pick a larger buffer if they really want -- but ye gods they probably
-        // shouldn't, the minimums are horrifyingly high latency already
-        int minBufSize = AudioTrack.getMinBufferSize( sampleRate, channelConfig, audioFormat );
-        int defaultFrames = ( minBufSize + frameSize - 1 ) / frameSize;
-        desiredFrames = Math.max( desiredFrames, defaultFrames );
-        
-        sAudioTrack = new AudioTrack( AudioManager.STREAM_MUSIC, sampleRate, channelConfig, audioFormat, desiredFrames
-                * frameSize, AudioTrack.MODE_STREAM );
-        
-        // if( sAudioThread == null )
-        assert ( sAudioThread == null );
+        if( sAudioTrack == null )
         {
-            sAudioThread = new Thread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        sAudioTrack.play();
-                        sdlRunAudioThread();
-                    }
-                    catch( IllegalStateException ise )
-                    {
-                        Log.e( "CoreInterfaceNative", "audioStartThread IllegalStateException", ise );
-                    }
-                }
-            }, "Audio Thread" );
+            // Audio configuration
+            int channelConfig = isStereo ? AudioFormat.CHANNEL_OUT_STEREO : AudioFormat.CHANNEL_OUT_MONO;
+            int audioFormat = is16Bit ? AudioFormat.ENCODING_PCM_16BIT : AudioFormat.ENCODING_PCM_8BIT;
+            int frameSize = ( isStereo ? 2 : 1 ) * ( is16Bit ? 2 : 1 );
             
-            sAudioThread.setPriority( Thread.MAX_PRIORITY );
-            sAudioThread.start();
+            // Let the user pick a larger buffer if they really want -- but ye gods they probably
+            // shouldn't, the minimums are horrifyingly high latency already
+            int minBufSize = AudioTrack.getMinBufferSize( sampleRate, channelConfig, audioFormat );
+            int defaultFrames = ( minBufSize + frameSize - 1 ) / frameSize;
+            desiredFrames = Math.max( desiredFrames, defaultFrames );
+        
+            sAudioTrack = new AudioTrack( AudioManager.STREAM_MUSIC, sampleRate, channelConfig, audioFormat, desiredFrames
+                    * frameSize, AudioTrack.MODE_STREAM );
+        
+            // Instantiating AudioTrack can "succeed" without an exception and the track may still be invalid
+            // Ref: https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/media/java/android/media/AudioTrack.java
+            // Ref: http://developer.android.com/reference/android/media/AudioTrack.html#getState()
+            
+            if( sAudioTrack.getState() != AudioTrack.STATE_INITIALIZED )
+            {
+                Log.e( "CoreInterfaceNative", "Failed during initialization of audio track" );
+                sAudioTrack = null;
+                return -1;
+            }
+            
+            sAudioTrack.play();
         }
+        return 0;
     }
     
     /**
@@ -427,19 +420,6 @@ public class CoreInterfaceNative extends CoreInterface
      */
     public static void audioQuit()
     {
-        if( sAudioThread != null )
-        {
-            try
-            {
-                sAudioThread.join();
-            }
-            catch( InterruptedException e )
-            {
-                Log.v( "CoreInterfaceNative", "Problem stopping audio thread: " + e );
-            }
-            sAudioThread = null;
-        }
-        
         if( sAudioTrack != null )
         {
             sAudioTrack.stop();
@@ -448,15 +428,17 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
-    public static void setActivityTitle( String title )
+    public static boolean setActivityTitle( String title )
     {
         // No-op implementation of SDL interface
         // See SDL2/src/core/android/SDL_android.cpp
+        return true;
     }
     
-    public static void sendMessage( int command, int param )
+    public static boolean sendMessage( int command, int param )
     {
         // No-op implementation of SDL interface
         // See SDL2/src/core/android/SDL_android.cpp
+        return true;
     }
 }
