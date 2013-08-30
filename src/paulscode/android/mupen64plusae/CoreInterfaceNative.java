@@ -138,8 +138,6 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void sdlQuit();
     
-    public static native boolean sdlVersionAtLeast( int major, int minor, int patch );
-    
     public static native void emuGameShark( boolean pressed );
     
     public static native void emuPause();
@@ -228,71 +226,6 @@ public class CoreInterfaceNative extends CoreInterface
     // ------------------------------------------------------------------------
     
     /**
-     * Legacy GL context creation (used in SDL 1.3)
-     * 
-     * @param majorVersion The major GL version number.
-     * @param minorVersion The minor GL version number.
-     * 
-     * @return True if the context was able to be created. False if not.
-     */
-    public static boolean createGLContext( int majorVersion, int minorVersion )
-    {
-        // SDL 1.3
-        // Generate a bit mask to limit the configuration search to compatible GLES versions
-        final int UNKNOWN = 0;
-        final int EGL_OPENGL_ES_BIT = 1;
-        final int EGL_OPENGL_ES2_BIT = 4;
-        final int renderableType;
-        
-        // Determine which version of EGL we're using.
-        switch( majorVersion )
-        {
-            case 1:
-                renderableType = EGL_OPENGL_ES_BIT;
-                break;
-            
-            case 2:
-                renderableType = EGL_OPENGL_ES2_BIT;
-                break;
-            
-            default: // Shouldn't happen.
-                renderableType = UNKNOWN;
-                break;
-        }
-        
-        // Specify the desired EGL frame buffer configuration
-        // @formatter:off
-        final int[] configSpec;
-        if( sUserPrefs.isRgba8888 )
-        {
-            // User has requested 32-bit color
-            configSpec = new int[]
-            { 
-                EGL10.EGL_RED_SIZE,    8,                   // request 8 bits of red
-                EGL10.EGL_GREEN_SIZE,  8,                   // request 8 bits of green
-                EGL10.EGL_BLUE_SIZE,   8,                   // request 8 bits of blue
-                EGL10.EGL_ALPHA_SIZE,  8,                   // request 8 bits of alpha
-                EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
-                EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
-                EGL10.EGL_NONE                              // terminate array
-            };
-        }
-        else
-        {
-            // User will take whatever color depth is available
-            configSpec = new int[] 
-            { 
-                EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
-                EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
-                EGL10.EGL_NONE                              // terminate array
-            };
-        }
-        // @formatter:on            
-        
-        return sSurface.createGLContext( majorVersion, minorVersion, configSpec );
-    }
-    
-    /**
      * Creates a GL context for SDL 2.0
      * <p>
      * Note: If the GL context creation fails the first time, this method
@@ -307,7 +240,6 @@ public class CoreInterfaceNative extends CoreInterface
      */
     public static boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
     {
-        // SDL 2.0
         boolean result = sSurface.createGLContext( majorVersion, minorVersion, configSpec );
         
         if( !result )
@@ -339,7 +271,58 @@ public class CoreInterfaceNative extends CoreInterface
             {
                 // Secondary fallback, ignore SDL's requested config and just use what we had been using in SDL 1.3
                 Log.w( "CoreInterfaceNative", "Retrying GL context creation using legacy settings" );
-                result = createGLContext( majorVersion, minorVersion );
+                
+                // Generate a bit mask to limit the configuration search to compatible GLES versions
+                final int UNKNOWN = 0;
+                final int EGL_OPENGL_ES_BIT = 1;
+                final int EGL_OPENGL_ES2_BIT = 4;
+                final int renderableType;
+                
+                // Determine which version of EGL we're using.
+                switch( majorVersion )
+                {
+                    case 1:
+                        renderableType = EGL_OPENGL_ES_BIT;
+                        break;
+                    
+                    case 2:
+                        renderableType = EGL_OPENGL_ES2_BIT;
+                        break;
+                    
+                    default: // Shouldn't happen.
+                        renderableType = UNKNOWN;
+                        break;
+                }
+                
+                // Specify the desired EGL frame buffer configuration
+                // @formatter:off
+                final int[] configSpec1;
+                if( sUserPrefs.isRgba8888 )
+                {
+                    // User has requested 32-bit color
+                    configSpec1 = new int[]
+                    { 
+                        EGL10.EGL_RED_SIZE,    8,                   // request 8 bits of red
+                        EGL10.EGL_GREEN_SIZE,  8,                   // request 8 bits of green
+                        EGL10.EGL_BLUE_SIZE,   8,                   // request 8 bits of blue
+                        EGL10.EGL_ALPHA_SIZE,  8,                   // request 8 bits of alpha
+                        EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                        EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                        EGL10.EGL_NONE                              // terminate array
+                    };
+                }
+                else
+                {
+                    // User will take whatever color depth is available
+                    configSpec1 = new int[] 
+                    { 
+                        EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                        EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                        EGL10.EGL_NONE                              // terminate array
+                    };
+                }
+                // @formatter:on            
+                result = sSurface.createGLContext( majorVersion, minorVersion, configSpec1 );
             }
         }
         return result;

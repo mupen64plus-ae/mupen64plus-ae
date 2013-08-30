@@ -98,8 +98,7 @@ public class CoreInterface
     // Private constants
     protected static final long VIBRATE_TIMEOUT = 1000;
     protected static final int COMMAND_CHANGE_TITLE = 1;
-    protected static final SparseIntArray PIXEL_FORMAT_MAP_1_3 = new SparseIntArray();
-    protected static final SparseIntArray PIXEL_FORMAT_MAP_2_0 = new SparseIntArray();
+    protected static final SparseIntArray PIXEL_FORMAT_MAP = new SparseIntArray();
     
     // External objects from Java side
     protected static Activity sActivity = null;
@@ -134,25 +133,15 @@ public class CoreInterface
     @SuppressWarnings( "deprecation" )
     private static void init()
     {
-        // Pixel format constants changed in SDL changesets 6683, 6957 (C, Java) on SDL 2.0 branch
         // @formatter:off
-        PIXEL_FORMAT_MAP_1_3.append( 0, 0x85151002 );                     // SDL_PIXELFORMAT_RGB565 by default
-        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGBA_4444, 0x85421002 ); // SDL_PIXELFORMAT_RGBA4444
-        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGBA_5551, 0x85441002 ); // SDL_PIXELFORMAT_RGBA5551
-        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGBA_8888, 0x86462004 ); // SDL_PIXELFORMAT_RGBA8888
-        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGBX_8888, 0x86262004 ); // SDL_PIXELFORMAT_RGBX8888
-        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGB_332,   0x84110801 ); // SDL_PIXELFORMAT_RGB332
-        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGB_565,   0x85151002 ); // SDL_PIXELFORMAT_RGB565
-        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGB_888,   0x86161804 ); // SDL_PIXELFORMAT_RGB888
-        
-        PIXEL_FORMAT_MAP_2_0.append( 0, 0x15151002 );                     // SDL_PIXELFORMAT_RGB565 by default
-        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGBA_4444, 0x15421002 ); // SDL_PIXELFORMAT_RGBA4444
-        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGBA_5551, 0x15441002 ); // SDL_PIXELFORMAT_RGBA5551
-        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGBA_8888, 0x16462004 ); // SDL_PIXELFORMAT_RGBA8888
-        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGBX_8888, 0x16261804 ); // SDL_PIXELFORMAT_RGBX8888
-        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGB_332,   0x14110801 ); // SDL_PIXELFORMAT_RGB332
-        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGB_565,   0x15151002 ); // SDL_PIXELFORMAT_RGB565
-        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGB_888,   0x16161804 ); // SDL_PIXELFORMAT_RGB888
+        PIXEL_FORMAT_MAP.append( 0, 0x15151002 );                     // SDL_PIXELFORMAT_RGB565 by default
+        PIXEL_FORMAT_MAP.append( PixelFormat.RGBA_4444, 0x15421002 ); // SDL_PIXELFORMAT_RGBA4444
+        PIXEL_FORMAT_MAP.append( PixelFormat.RGBA_5551, 0x15441002 ); // SDL_PIXELFORMAT_RGBA5551
+        PIXEL_FORMAT_MAP.append( PixelFormat.RGBA_8888, 0x16462004 ); // SDL_PIXELFORMAT_RGBA8888
+        PIXEL_FORMAT_MAP.append( PixelFormat.RGBX_8888, 0x16261804 ); // SDL_PIXELFORMAT_RGBX8888
+        PIXEL_FORMAT_MAP.append( PixelFormat.RGB_332,   0x14110801 ); // SDL_PIXELFORMAT_RGB332
+        PIXEL_FORMAT_MAP.append( PixelFormat.RGB_565,   0x15151002 ); // SDL_PIXELFORMAT_RGB565
+        PIXEL_FORMAT_MAP.append( PixelFormat.RGB_888,   0x16161804 ); // SDL_PIXELFORMAT_RGB888
         // @formatter:on
     }
     
@@ -309,14 +298,11 @@ public class CoreInterface
     
     public static void onResize( int format, int width, int height )
     {
-        SparseIntArray formatMap = CoreInterfaceNative.sdlVersionAtLeast( 2, 0, 0 )
-                ? PIXEL_FORMAT_MAP_2_0
-                : PIXEL_FORMAT_MAP_1_3;
-        int sdlFormat = formatMap.get( format );
+        int sdlFormat = PIXEL_FORMAT_MAP.get( format );
         if( sdlFormat == 0 )
         {
             // Unknown format, use default format keyed to 0
-            sdlFormat = formatMap.get( 0 );
+            sdlFormat = PIXEL_FORMAT_MAP.get( 0 );
             Log.w( "CoreInterface", "Pixel format unknown: " + format );
         }
         CoreInterfaceNative.sdlOnResize( width, height, sdlFormat );

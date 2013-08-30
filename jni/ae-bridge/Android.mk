@@ -24,7 +24,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := ae-exports
 
-LOCAL_SHARED_LIBRARIES := ae-imports $(SDL_MODULE) core front-end
+LOCAL_SHARED_LIBRARIES := ae-imports SDL2 core front-end
 
 LOCAL_C_INCLUDES := $(M64P_API_INCLUDES) $(SDL_INCLUDES)
 
