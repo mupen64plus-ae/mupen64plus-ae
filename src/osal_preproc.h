@@ -47,6 +47,11 @@
 
 #else  /* Linux-like UNIX */
 
+  #if defined(ANDROID)
+    #include <android/log.h>
+    #define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "UI-Console", __VA_ARGS__)
+  #endif
+
   #include <limits.h>  // for PATH_MAX
   #define OSAL_DEFAULT_DYNLIB_FILENAME "libmupen64plus.so.2"
   #define OSAL_DIR_SEPARATOR           '/'

@@ -88,6 +88,23 @@ void DebugMessage(int level, const char *message, ...)
 
 void DebugCallback(void *Context, int level, const char *message)
 {
+#ifdef ANDROID
+    if (level == M64MSG_ERROR)
+        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "%s", message);
+    else if (level == M64MSG_WARNING)
+        __android_log_print(ANDROID_LOG_WARN, (const char *) Context, "%s", message);
+    else if (level == M64MSG_INFO)
+        __android_log_print(ANDROID_LOG_INFO, (const char *) Context, "%s", message);
+    else if (level == M64MSG_STATUS)
+        __android_log_print(ANDROID_LOG_DEBUG, (const char *) Context, "%s", message);
+    else if (level == M64MSG_VERBOSE)
+    {
+        if (g_Verbose)
+            __android_log_print(ANDROID_LOG_VERBOSE, (const char *) Context, "%s", message);
+    }
+    else
+        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Unknown: %s", message);
+#else
     if (level == M64MSG_ERROR)
         printf("%s Error: %s\n", (const char *) Context, message);
     else if (level == M64MSG_WARNING)
@@ -103,6 +120,7 @@ void DebugCallback(void *Context, int level, const char *message)
     }
     else
         printf("%s Unknown: %s\n", (const char *) Context, message);
+#endif
 }
 
 static void FrameCallback(unsigned int FrameIndex)
