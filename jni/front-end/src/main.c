@@ -242,17 +242,10 @@ static m64p_error OpenConfigurationHandles(void)
     /* Set default values for my Config parameters */
     (*ConfigSetDefaultFloat)(l_ConfigUI, "Version", CONFIG_PARAM_VERSION,  "Mupen64Plus UI-Console config parameter set version number.  Please don't change this version number.");
     (*ConfigSetDefaultString)(l_ConfigUI, "PluginDir", OSAL_CURRENT_DIR, "Directory in which to search for plugins");
-    #ifdef PAULSCODE
-    (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "libgles2n64" OSAL_DLL_EXTENSION, "Filename of video plugin");
-    (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "libaudio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
-    (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "libinput-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
-    (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "librsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
-    #else
     (*ConfigSetDefaultString)(l_ConfigUI, "VideoPlugin", "mupen64plus-video-rice" OSAL_DLL_EXTENSION, "Filename of video plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "AudioPlugin", "mupen64plus-audio-sdl" OSAL_DLL_EXTENSION, "Filename of audio plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "InputPlugin", "mupen64plus-input-sdl" OSAL_DLL_EXTENSION, "Filename of input plugin");
     (*ConfigSetDefaultString)(l_ConfigUI, "RspPlugin", "mupen64plus-rsp-hle" OSAL_DLL_EXTENSION, "Filename of RSP plugin");
-    #endif
 
     if (bSaveConfig && ConfigSaveSection != NULL) /* ConfigSaveSection was added in Config API v2.1.0 */
         (*ConfigSaveSection)("UI-Console");
@@ -658,20 +651,6 @@ int main(int argc, char *argv[])
     /* bootstrap some special parameters from the command line */
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
         return 1;
-
-    #ifdef PAULSCODE
-    // paulscode, hack to allow configuration file to be in home directory
-    if( chdir( l_ConfigDirPath ) != 0 )
-    {
-        DebugMessage(M64MSG_ERROR, "Unable to enter Android data folder '%s' (required for config read/write functions)", l_ConfigDirPath);
-        return 2;
-    }
-    DebugMessage(M64MSG_VERBOSE, "Using Android data folder '%s' for config read/write functions", l_ConfigDirPath);
-    setenv( "HOME", l_ConfigDirPath, 1 );
-    setenv( "XDG_CONFIG_HOME", l_ConfigDirPath, 1 );
-    setenv( "XDG_DATA_HOME", l_ConfigDirPath, 1 );
-    setenv( "XDG_CACHE_HOME", l_ConfigDirPath, 1 );
-    #endif
 
     /* load the Mupen64Plus core library */
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)

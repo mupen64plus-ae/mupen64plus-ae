@@ -190,6 +190,8 @@ public class CoreInterface
                     
                     ArrayList<String> arglist = new ArrayList<String>();
                     arglist.add( "mupen64plus" );
+                    arglist.add( "--corelib" );
+                    arglist.add( sAppData.coreLib );
                     arglist.add( "--configdir" );
                     arglist.add( sAppData.dataDir );
                     if( !sUserPrefs.isFramelimiterEnabled )
