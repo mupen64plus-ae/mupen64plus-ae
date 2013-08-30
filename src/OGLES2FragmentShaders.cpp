@@ -551,7 +551,7 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
             GLint nLength;
             glGetShaderInfoLog(res.fragmentShaderID, 1024, &nLength, Log);
             printf("Error compiling shader!\n %s",oglNewFP);
-            printf(Log);
+            printf("%s", Log);
         }
 
         res.programID = glCreateProgram();
