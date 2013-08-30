@@ -29,11 +29,6 @@
 #include "compare_core.h"
 #include "core_interface.h"
 
-#ifdef ANDROID
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "compare_core", __VA_ARGS__)
-#endif
-
 /* local variables */
 
 static FILE *fPipe = NULL;

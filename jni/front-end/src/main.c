@@ -32,12 +32,6 @@
 
 #include <SDL_main.h>
 
-#ifdef ANDROID
-#include <SDL.h>
-#include <android/log.h>
-#define printf(...) __android_log_print(ANDROID_LOG_VERBOSE, "front_end", __VA_ARGS__)
-#endif
-
 #include "cheat.h"
 #include "main.h"
 #include "plugin.h"
@@ -100,20 +94,20 @@ void DebugCallback(void *Context, int level, const char *message)
 {
 #ifdef ANDROID
     if (level == M64MSG_ERROR)
-        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Error: %s\n", message);
+        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "%s", message);
     else if (level == M64MSG_WARNING)
-        __android_log_print(ANDROID_LOG_WARN, (const char *) Context, "Warning: %s\n", message);
+        __android_log_print(ANDROID_LOG_WARN, (const char *) Context, "%s", message);
     else if (level == M64MSG_INFO)
-        __android_log_print(ANDROID_LOG_INFO, (const char *) Context, "Info: %s\n", message);
+        __android_log_print(ANDROID_LOG_INFO, (const char *) Context, "%s", message);
     else if (level == M64MSG_STATUS)
-        __android_log_print(ANDROID_LOG_DEBUG, (const char *) Context, "Status: %s\n", message);
+        __android_log_print(ANDROID_LOG_DEBUG, (const char *) Context, "%s", message);
     else if (level == M64MSG_VERBOSE)
     {
         if (g_Verbose)
-            __android_log_print(ANDROID_LOG_VERBOSE, (const char *) Context, "%s\n", message);
+            __android_log_print(ANDROID_LOG_VERBOSE, (const char *) Context, "%s", message);
     }
     else
-        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Unknown: %s\n", message);
+        __android_log_print(ANDROID_LOG_ERROR, (const char *) Context, "Unknown: %s", message);
 #else
     if (level == M64MSG_ERROR)
         printf("%s Error: %s\n", (const char *) Context, message);
