@@ -462,8 +462,8 @@ public class CoreInterface
         mupen64plus_cfg.put( "Core", "CurrentStateSlot", String.valueOf( appData.getLastSlot() ) );                         // Save state slot (0-9) to use when saving/loading the emulator state
         mupen64plus_cfg.put( "Core", "ScreenshotPath", EMPTY );                                                             // Path to directory where screenshots are saved. If this is blank, the default value of ${UserConfigPath}/screenshot will be used
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + user.slotSaveDir + '"' );                                       // Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserConfigPath}/save will be used
-        mupen64plus_cfg.put( "Core", "SaveSRAMPath", EMPTY );                                                               // Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used
-        mupen64plus_cfg.put( "Core", "SharedDataPath", EMPTY );                                                             // Path to a directory to search when looking for shared data files
+        mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + user.sramSaveDir + '"' );                                        // Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used
+        mupen64plus_cfg.put( "Core", "SharedDataPath", '"' + appData.sharedDataDir + '"' );                                 // Path to a directory to search when looking for shared data files
         
         mupen64plus_cfg.put( "CoreEvents", "Version", "1.000000" );                                                         // Mupen64Plus CoreEvents config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "CoreEvents", "Kbd Mapping Stop", EMPTY );
