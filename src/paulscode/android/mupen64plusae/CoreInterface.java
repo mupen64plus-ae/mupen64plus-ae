@@ -37,6 +37,7 @@ import android.graphics.PixelFormat;
 import android.media.AudioTrack;
 import android.os.Vibrator;
 import android.util.Log;
+import android.util.SparseIntArray;
 
 /**
  * A class that consolidates all interactions with the emulator core.
@@ -97,6 +98,8 @@ public class CoreInterface
     // Private constants
     protected static final long VIBRATE_TIMEOUT = 1000;
     protected static final int COMMAND_CHANGE_TITLE = 1;
+    protected static final SparseIntArray PIXEL_FORMAT_MAP_1_3 = new SparseIntArray();
+    protected static final SparseIntArray PIXEL_FORMAT_MAP_2_0 = new SparseIntArray();
     
     // External objects from Java side
     protected static Activity sActivity = null;
@@ -124,6 +127,36 @@ public class CoreInterface
     protected static int sFrameCount = -1;
     protected static long sLastFpsTime = 0;
     
+    static
+    {
+        init();
+    }
+    
+    @SuppressWarnings( "deprecation" )
+    private static void init()
+    {
+        // Pixel format constants changed in SDL changesets 6683, 6957 (C, Java) on SDL 2.0 branch
+        // @formatter:off
+        PIXEL_FORMAT_MAP_1_3.append( 0, 0x85151002 );                     // SDL_PIXELFORMAT_RGB565 by default
+        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGBA_4444, 0x85421002 ); // SDL_PIXELFORMAT_RGBA4444
+        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGBA_5551, 0x85441002 ); // SDL_PIXELFORMAT_RGBA5551
+        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGBA_8888, 0x86462004 ); // SDL_PIXELFORMAT_RGBA8888
+        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGBX_8888, 0x86262004 ); // SDL_PIXELFORMAT_RGBX8888
+        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGB_332,   0x84110801 ); // SDL_PIXELFORMAT_RGB332
+        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGB_565,   0x85151002 ); // SDL_PIXELFORMAT_RGB565
+        PIXEL_FORMAT_MAP_1_3.append( PixelFormat.RGB_888,   0x86161804 ); // SDL_PIXELFORMAT_RGB888
+        
+        PIXEL_FORMAT_MAP_2_0.append( 0, 0x15151002 );                     // SDL_PIXELFORMAT_RGB565 by default
+        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGBA_4444, 0x15421002 ); // SDL_PIXELFORMAT_RGBA4444
+        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGBA_5551, 0x15441002 ); // SDL_PIXELFORMAT_RGBA5551
+        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGBA_8888, 0x16462004 ); // SDL_PIXELFORMAT_RGBA8888
+        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGBX_8888, 0x16261804 ); // SDL_PIXELFORMAT_RGBX8888
+        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGB_332,   0x14110801 ); // SDL_PIXELFORMAT_RGB332
+        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGB_565,   0x15151002 ); // SDL_PIXELFORMAT_RGB565
+        PIXEL_FORMAT_MAP_2_0.append( PixelFormat.RGB_888,   0x16161804 ); // SDL_PIXELFORMAT_RGB888
+        // @formatter:on
+    }
+    
     public static void refresh( Activity activity, GameSurface surface )
     {
         sActivity = activity;
@@ -137,7 +170,7 @@ public class CoreInterface
     public static void registerVibrator( int player, Vibrator vibrator )
     {
         boolean hasVibrator = AppData.IS_HONEYCOMB ? vibrator.hasVibrator() : true;
-
+        
         if( sAppData.hasVibratePermission && hasVibrator && player > 0 && player < 5 )
         {
             sVibrators[player - 1] = vibrator;
@@ -203,7 +236,7 @@ public class CoreInterface
                         arglist.add( "--cheats" );
                         arglist.add( sCheatOptions );
                     }
-                    arglist.add( getROMPath() );                    
+                    arglist.add( getROMPath() );
                     CoreInterfaceNative.sdlInit( arglist.toArray() );
                 }
             }, "CoreThread" );
@@ -277,109 +310,15 @@ public class CoreInterface
     
     public static void onResize( int format, int width, int height )
     {
-        // Pixel format constants changed in SDL changesets 6683, 6957 (C, Java) on SDL 2.0 branch
-        if( CoreInterfaceNative.sdlVersionAtLeast( 2, 0, 0 ) )
+        SparseIntArray formatMap = CoreInterfaceNative.sdlVersionAtLeast( 2, 0, 0 )
+                ? PIXEL_FORMAT_MAP_2_0
+                : PIXEL_FORMAT_MAP_1_3;
+        int sdlFormat = formatMap.get( format );
+        if( sdlFormat == 0 )
         {
-            onResize_2_0( format, width, height );
-        }
-        else
-        {
-            onResize_1_3( format, width, height );
-        }
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private static void onResize_1_3( int format, int width, int height )
-    {
-        // SDL 1.3
-        int sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565 by default
-        switch( format )
-        {
-            case PixelFormat.A_8:
-                break;
-            case PixelFormat.LA_88:
-                break;
-            case PixelFormat.L_8:
-                break;
-            case PixelFormat.RGBA_4444:
-                sdlFormat = 0x85421002; // SDL_PIXELFORMAT_RGBA4444
-                break;
-            case PixelFormat.RGBA_5551:
-                sdlFormat = 0x85441002; // SDL_PIXELFORMAT_RGBA5551
-                break;
-            case PixelFormat.RGBA_8888:
-                sdlFormat = 0x86462004; // SDL_PIXELFORMAT_RGBA8888
-                break;
-            case PixelFormat.RGBX_8888:
-                sdlFormat = 0x86262004; // SDL_PIXELFORMAT_RGBX8888
-                break;
-            case PixelFormat.RGB_332:
-                sdlFormat = 0x84110801; // SDL_PIXELFORMAT_RGB332
-                break;
-            case PixelFormat.RGB_565:
-                sdlFormat = 0x85151002; // SDL_PIXELFORMAT_RGB565
-                break;
-            case PixelFormat.RGB_888:
-                // Not sure this is right, maybe SDL_PIXELFORMAT_RGB24 instead?
-                sdlFormat = 0x86161804; // SDL_PIXELFORMAT_RGB888
-                break;
-            case PixelFormat.OPAQUE:
-                /*
-                 * TODO: Not sure this is right, Android API says,
-                 * "System chooses an opaque format", but how do we know which one??
-                 */
-                break;
-            default:
-                Log.w( "CoreInterface", "Pixel format unknown: " + format );
-                break;
-        }
-        CoreInterfaceNative.sdlOnResize( width, height, sdlFormat );
-    }
-    
-    @SuppressWarnings( "deprecation" )
-    private static void onResize_2_0( int format, int width, int height )
-    {
-        // SDL 2.0
-        int sdlFormat = 0x15151002; // SDL_PIXELFORMAT_RGB565 by default
-        switch( format )
-        {
-            case PixelFormat.A_8:
-                break;
-            case PixelFormat.LA_88:
-                break;
-            case PixelFormat.L_8:
-                break;
-            case PixelFormat.RGBA_4444:
-                sdlFormat = 0x15421002; // SDL_PIXELFORMAT_RGBA4444
-                break;
-            case PixelFormat.RGBA_5551:
-                sdlFormat = 0x15441002; // SDL_PIXELFORMAT_RGBA5551
-                break;
-            case PixelFormat.RGBA_8888:
-                sdlFormat = 0x16462004; // SDL_PIXELFORMAT_RGBA8888
-                break;
-            case PixelFormat.RGBX_8888:
-                sdlFormat = 0x16261804; // SDL_PIXELFORMAT_RGBX8888
-                break;
-            case PixelFormat.RGB_332:
-                sdlFormat = 0x14110801; // SDL_PIXELFORMAT_RGB332
-                break;
-            case PixelFormat.RGB_565:
-                sdlFormat = 0x15151002; // SDL_PIXELFORMAT_RGB565
-                break;
-            case PixelFormat.RGB_888:
-                // Not sure this is right, maybe SDL_PIXELFORMAT_RGB24 instead?
-                sdlFormat = 0x16161804; // SDL_PIXELFORMAT_RGB888
-                break;
-            case PixelFormat.OPAQUE:
-                /*
-                 * TODO: Not sure this is right, Android API says,
-                 * "System chooses an opaque format", but how do we know which one??
-                 */
-                break;
-            default:
-                Log.w( "CoreInterface", "Pixel format unknown: " + format );
-                break;
+            // Unknown format, use default format keyed to 0
+            sdlFormat = formatMap.get( 0 );
+            Log.w( "CoreInterface", "Pixel format unknown: " + format );
         }
         CoreInterfaceNative.sdlOnResize( width, height, sdlFormat );
     }
@@ -535,7 +474,7 @@ public class CoreInterface
     private static String boolToNum( boolean b )
     {
         return b ? "1" : "0";
-    }    
+    }
     
     private static String getROMPath()
     {
@@ -550,7 +489,7 @@ public class CoreInterface
         }
         else if( isSelectedGameNull )
         {
-            Log.e( "CoreInterface", "ROM does not exist: '" + selectedGame + "'" );            
+            Log.e( "CoreInterface", "ROM does not exist: '" + selectedGame + "'" );
             if( ErrorLogger.hasError() )
                 ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
             sActivity.finish();
@@ -577,7 +516,7 @@ public class CoreInterface
             String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
             if( selectedGameUnzipped == null )
             {
-                Log.e( "CoreInterface", "ROM cannot be unzipped: '" + selectedGame + "'" );                
+                Log.e( "CoreInterface", "ROM cannot be unzipped: '" + selectedGame + "'" );
                 if( ErrorLogger.hasError() )
                     ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
                 sActivity.finish();
