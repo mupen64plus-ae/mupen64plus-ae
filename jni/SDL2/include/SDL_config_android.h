@@ -127,8 +127,8 @@
 /* Enable various video drivers */
 #define SDL_VIDEO_DRIVER_ANDROID 1
 
-/* Enable OpenGL ES */
-#define SDL_VIDEO_OPENGL_ES 1
+/* Enable OpenGL ES2 */
+#define SDL_VIDEO_OPENGL_ES2	1
 #define SDL_VIDEO_RENDER_OGL_ES 1
 #define SDL_VIDEO_RENDER_OGL_ES2    1
 
