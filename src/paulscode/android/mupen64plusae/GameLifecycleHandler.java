@@ -219,9 +219,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // Override the peripheral controllers' key provider, to add some extra functionality
         inputSource.setOnKeyListener( this );
-        
-        // Initialize the game surface
-        mSurface.setColorMode( mUserPrefs.isRgba8888 );
     }
     
     public void onResume()
