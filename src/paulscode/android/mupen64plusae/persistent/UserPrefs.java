@@ -105,6 +105,9 @@ public class UserPrefs
     /** The subdirectory containing slot save files. */
     public final String slotSaveDir;
     
+    /** The subdirectory containing SRAM/EEPROM data (in-game saves). */
+    public final String sramSaveDir;
+    
     /** The subdirectory containing auto save files. */
     public final String autoSaveDir;
     
@@ -416,6 +419,7 @@ public class UserPrefs
         selectedGame = mPreferences.getString( "pathSelectedGame", "" );
         gameSaveDir = mPreferences.getString( "pathGameSaves", "" );
         slotSaveDir = gameSaveDir + "/SlotSaves";
+        sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         profileDir = gameSaveDir + "/InputProfiles";
         File game = new File( selectedGame );

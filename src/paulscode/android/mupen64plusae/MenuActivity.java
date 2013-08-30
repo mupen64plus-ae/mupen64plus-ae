@@ -456,7 +456,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                     }
                     else
                     {
-                        String outputFolder = mAppData.dataDir + "/data/hires_texture/"
+                        String outputFolder = mAppData.sharedDataDir + "/hires_texture/"
                                 + headerName;
                         FileUtil.deleteFolder( new File( outputFolder ) );
                         Utility.unzipAll( new File( filename ), outputFolder );

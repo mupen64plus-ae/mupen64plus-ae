@@ -532,7 +532,7 @@ public class CoreInterface
         else if( isSelectedGameZipped )
         {
             // Create the temp folder if it doesn't exist:
-            String tmpFolderName = sAppData.dataDir + "/tmp";
+            String tmpFolderName = sAppData.tempDir;
             File tmpFolder = new File( tmpFolderName );
             tmpFolder.mkdir();
             

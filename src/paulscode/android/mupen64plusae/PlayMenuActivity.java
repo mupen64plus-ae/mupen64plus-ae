@@ -202,7 +202,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         Notifier.showToast( PlayMenuActivity.this, R.string.toast_rebuildingCheats );
         
         // Place to unzip the ROM if necessary
-        final String tmpFolderName = mAppData.dataDir + "/tmp";
+        final String tmpFolderName = mAppData.tempDir;
         
         // Define the task to be done on a separate thread
         Task task = new Task()
@@ -237,7 +237,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             return;
         
         // Get the appropriate section of the config file, using CRC as the key
-        ConfigFile mupen64plus_cht = new ConfigFile( mAppData.dataDir + "/data/mupen64plus.cht" );
+        ConfigFile mupen64plus_cht = new ConfigFile( mAppData.mupen64plus_cht );
         ConfigSection configSection = mupen64plus_cht.match( "^" + crc.replace( ' ', '.' ) + ".*" );
         
         if( configSection == null )

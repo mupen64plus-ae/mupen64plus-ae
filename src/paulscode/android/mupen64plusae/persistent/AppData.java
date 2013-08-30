@@ -120,6 +120,12 @@ public class AppData
     /** The directory for storing internal app data. */
     public final String dataDir;
     
+    /** The directory for storing extra plugin-specific/cheats data. */
+    public final String sharedDataDir;
+    
+    /** The directory for temporary files. */
+    public final String tempDir;
+    
     /** The directory containing the native Mupen64Plus libraries. */
     public final String libsDir;
     
@@ -132,16 +138,22 @@ public class AppData
     /** The directory containing all fonts. */
     public final String fontsDir;
     
-    /** The name of the mupen64 core configuration file. */
+    /** The path of the core library. */
+    public final String coreLib;
+    
+    /** The path of the Mupen64Plus base configuration file. */
     public final String mupen64plus_cfg;
     
-    /** The name of the gles2n64 configuration file. */
+    /** The path of the gles2n64 configuration file. */
     public final String gles2n64_conf;
     
-    /** The name of the gles2glide64 configuration file. */
+    /** The path of the gles2glide64 configuration file. */
     public final String gles2glide64_conf;
     
-    /** The name of the error log file. */
+    /** The path of the Mupen64Plus cheats file. */
+    public final String mupen64plus_cht;
+    
+    /** The path of the error log file. */
     public final String error_log;
     
     /** Whether the installation is valid. */
@@ -205,15 +217,19 @@ public class AppData
             storageDir = context.getFilesDir().getAbsolutePath();
             dataDir = storageDir;
         }
+        sharedDataDir = dataDir + "/data";
+        tempDir = dataDir + "/tmp";
         libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
         touchscreenLayoutsDir = dataDir + "/skins/touchscreens/";
         touchpadLayoutsDir = dataDir + "/skins/touchpads/";
         fontsDir = dataDir + "/skins/fonts/";
         
         // Files
+        coreLib = libsDir + "/libcore.so";
         mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
-        gles2n64_conf = dataDir + "/data/gles2n64.conf";
-        gles2glide64_conf = dataDir + "/data/Glide64mk2.ini";
+        gles2n64_conf = sharedDataDir + "/gles2n64.conf";
+        gles2glide64_conf = sharedDataDir + "/Glide64mk2.ini";
+        mupen64plus_cht = sharedDataDir + "/mupen64plus.cht";
         error_log = dataDir + "/error.log";
         
         // Installation validity
