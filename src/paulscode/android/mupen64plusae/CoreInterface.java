@@ -115,7 +115,6 @@ public class CoreInterface
     
     // Threading objects
     protected static Thread sCoreThread;
-    protected static Thread sAudioThread = null;
     protected static final Object sStateCallbackLock = new Object();
     
     // Audio objects

@@ -28,20 +28,25 @@
 #include "../SDL_sysaudio.h"
 #include "SDL_assert.h"
 
+#ifdef __GNUC__
+/* The configure script already did any necessary checking */
+#  define SDL_XAUDIO2_HAS_SDK 1
+#else
 #include <dxsdkver.h> /* XAudio2 exists as of the March 2008 DirectX SDK */
 #if (!defined(_DXSDK_BUILD_MAJOR) || (_DXSDK_BUILD_MAJOR < 1284))
 #  pragma message("Your DirectX SDK is too old. Disabling XAudio2 support.")
 #else
 #  define SDL_XAUDIO2_HAS_SDK 1
 #endif
+#endif /* __GNUC__ */
 
 #ifdef SDL_XAUDIO2_HAS_SDK
 
 #define INITGUID 1
-#include <XAudio2.h>
+#include <xaudio2.h>
 
 /* Hidden "this" pointer for the audio functions */
-#define _THIS	SDL_AudioDevice *this
+#define _THIS   SDL_AudioDevice *this
 
 struct SDL_PrivateAudioData
 {
@@ -69,13 +74,12 @@ XAUDIO2_DetectDevices(int iscapture, SDL_AddAudioDevice addfn)
     IXAudio2 *ixa2 = NULL;
     UINT32 devcount = 0;
     UINT32 i = 0;
-    void *ptr = NULL;
 
     if (iscapture) {
         SDL_SetError("XAudio2: capture devices unsupported.");
         return;
     } else if (XAudio2Create(&ixa2, 0, XAUDIO2_DEFAULT_PROCESSOR) != S_OK) {
-        SDL_SetError("XAudio2: XAudio2Create() failed.");
+        SDL_SetError("XAudio2: XAudio2Create() failed at detection.");
         return;
     } else if (IXAudio2_GetDeviceCount(ixa2, &devcount) != S_OK) {
         SDL_SetError("XAudio2: IXAudio2::GetDeviceCount() failed.");
@@ -232,22 +236,22 @@ XAUDIO2_OpenDevice(_THIS, const char *devname, int iscapture)
     IXAudio2SourceVoice *source = NULL;
     UINT32 devId = 0;  /* 0 == system default device. */
 
-	static IXAudio2VoiceCallbackVtbl callbacks_vtable = {
-	    VoiceCBOnVoiceProcessPassStart,
+    static IXAudio2VoiceCallbackVtbl callbacks_vtable = {
+        VoiceCBOnVoiceProcessPassStart,
         VoiceCBOnVoiceProcessPassEnd,
         VoiceCBOnStreamEnd,
         VoiceCBOnBufferStart,
         VoiceCBOnBufferEnd,
         VoiceCBOnLoopEnd,
         VoiceCBOnVoiceError
-	};
+    };
 
-	static IXAudio2VoiceCallback callbacks = { &callbacks_vtable };
+    static IXAudio2VoiceCallback callbacks = { &callbacks_vtable };
 
     if (iscapture) {
         return SDL_SetError("XAudio2: capture devices unsupported.");
     } else if (XAudio2Create(&ixa2, 0, XAUDIO2_DEFAULT_PROCESSOR) != S_OK) {
-        return SDL_SetError("XAudio2: XAudio2Create() failed.");
+        return SDL_SetError("XAudio2: XAudio2Create() failed at open.");
     }
 
     if (devname != NULL) {
@@ -405,7 +409,7 @@ XAUDIO2_Init(SDL_AudioDriverImpl * impl)
 
     if (XAudio2Create(&ixa2, 0, XAUDIO2_DEFAULT_PROCESSOR) != S_OK) {
         WIN_CoUninitialize();
-        SDL_SetError("XAudio2: XAudio2Create() failed");
+        SDL_SetError("XAudio2: XAudio2Create() failed at initialization");
         return 0;  /* not available. */
     }
     IXAudio2_Release(ixa2);
