@@ -312,9 +312,6 @@ public class UserPrefs
     /** True if auto-frameskip is enabled in the gles2rice library. */
     public final boolean isGles2RiceAutoFrameskipEnabled;
     
-    /** True if fast texture CRC is enabled in the gles2rice library. */
-    public final boolean isGles2RiceFastTextureCrcEnabled;
-    
     /** True if fast texture loading is enabled in the gles2rice library. */
     public final boolean isGles2RiceFastTextureLoadingEnabled;
     
@@ -501,7 +498,6 @@ public class UserPrefs
         // Video prefs - gles2rice
         isGles2RiceEnabled = videoPlugin.name.equals( "libgles2rice.so" );
         isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
-        isGles2RiceFastTextureCrcEnabled = mPreferences.getBoolean( "gles2RiceFastTextureCrc", true );
         isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
         isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
         gles2RiceMipmappingAlg = mPreferences.getString( "gles2RiceMipmapping", "0" );

@@ -385,11 +385,6 @@
                         android:summary="@string/gles2RiceAutoFrameskip_summary"
                         android:title="@string/gles2RiceAutoFrameskip_title" />
                     <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="gles2RiceFastTextureCrc"
-                        android:summary="@string/gles2RiceFastTextureCrc_summary"
-                        android:title="@string/gles2RiceFastTextureCrc_title" />
-                    <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="gles2RiceFastTexture"
                         android:summary="@string/gles2RiceFastTexture_summary"

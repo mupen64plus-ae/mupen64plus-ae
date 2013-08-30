@@ -180,8 +180,6 @@
     <string name="gles2N64DepthTest_summary">Disable for speed (causes flashing background)</string>
     <string name="gles2RiceAutoFrameskip_title">Auto frameskip</string>
     <string name="gles2RiceAutoFrameskip_summary">Improves game speed at cost of framerate</string>
-    <string name="gles2RiceFastTextureCrc_title">Fast texture CRC</string>
-    <string name="gles2RiceFastTextureCrc_summary">Improves game speed at cost of 2D elements</string>
     <string name="gles2RiceFastTexture_title">Fast texture loading</string>
     <string name="gles2RiceFastTexture_summary">Fixes circle transitions</string>
     <string name="gles2RiceForceTextureFilter_title">Texture filtering</string>
