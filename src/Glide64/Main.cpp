@@ -55,6 +55,9 @@
 #include <time.h>
 #define PATH_MAX MAX_PATH
 #endif
+#ifndef PATH_MAX
+  #define PATH_MAX 4096
+#endif
 #include "osal_dynamiclib.h"
 #ifdef TEXTURE_FILTER // Hiroshi Morii <koolsmoky@users.sourceforge.net>
 #include <stdarg.h>
