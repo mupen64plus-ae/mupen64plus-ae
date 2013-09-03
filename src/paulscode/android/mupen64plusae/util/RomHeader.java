@@ -91,7 +91,7 @@ public class RomHeader
                 Log.e( "RomHeader", "ROM file could not be closed", e );
             }
         }
-        crc = String.format( "%x %x", crc1, crc2 );
+        crc = String.format( "%08X %08X", crc1, crc2 );
     }
     
     private byte readByte( DataInputStream in )

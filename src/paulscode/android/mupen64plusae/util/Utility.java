@@ -287,50 +287,16 @@ public class Utility
             }
             else
             {
-                RomHeader header = new RomHeader( new File( uzFile ) );
-                String headerCRC = checkCRC( header.crc );
-
-                new File( uzFile ).delete();
-
+                File file = new File( uzFile );
+                String headerCRC = new RomHeader( file ).crc;
+                file.delete();
                 return headerCRC;
             }
         }
         else
         {
-            RomHeader header = new RomHeader( new File( filename ) );
-            return checkCRC( header.crc );
+            return new RomHeader( new File( filename ) ).crc;
         }
-    }
-
-    /**
-     * Checks the CRC values that are retrieved from an N64 ROM.
-     *
-     * @param CRC The CRC value from the N64 ROM to check.
-     *
-     * @return If the CRC length is 17, then the CRC will be returned in an uppercase form. <p>
-     *         If the CRC is null, or has a length less than 3, null is returned. <p>
-     *         If the CRC doesn't contain a space, or if its last character is a space, null is returned.
-     */
-    public static String checkCRC( String CRC )
-    {
-        // The smallest possible CRCs are "0 0", "1 a", etc.
-        if( CRC == null || CRC.length() < 3 )
-            return null;
-        
-        // The CRC should always contain a space, and it
-        // shouldn't be the last character
-        int x = CRC.indexOf( ' ' );
-        if( x < 1 || x >= CRC.length() - 1 )
-            return null;
-        
-        // We probably have the full CRC, just upper-case it.
-        if( CRC.length() == 17 )
-            return CRC.toUpperCase( Locale.US );
-        
-        String CRC_1 = "00000000" + CRC.substring( 0, x ).toUpperCase( Locale.US ).trim();
-        String CRC_2 = "00000000" + CRC.substring( x + 1, CRC.length() ).toUpperCase( Locale.US ).trim();
-        return CRC_1.substring( CRC_1.length() - 8, CRC_1.length() ) + " "
-                + CRC_2.substring( CRC_2.length() - 8, CRC_2.length() );
     }
     
     public static String getTexturePackName( String filename )
