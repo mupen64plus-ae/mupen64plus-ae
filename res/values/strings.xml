@@ -243,6 +243,7 @@
     <string name="videoScaling_title">Screen scaling</string>
     <string name="videoScaling_entryNone">None\n<small>Use exact resolution selected above</small></string>
     <string name="videoScaling_entryZoom">Zoom\n<small>Fill screen, no distortion (adds black bars)</small></string>
+    <string name="videoScaling_entryCrop">Crop\n<small>Fill screen, no distortion (cuts off graphics)</small></string>
     <string name="videoScaling_entryStretch">Stretch\n<small>Fill screen, no black bars (adds distortion)</small></string>
     
     <string name="videoFpsRefresh_title">Display framerate</string>

@@ -210,11 +210,13 @@
     <string-array name="videoScaling_entries" translatable="false">
         <item>@string/videoScaling_entryNone</item>
         <item>@string/videoScaling_entryZoom</item>
+        <item>@string/videoScaling_entryCrop</item>
         <item>@string/videoScaling_entryStretch</item>
     </string-array>
     <string-array name="videoScaling_values" translatable="false">
         <item>none</item>
         <item>zoom</item>
+        <item>crop</item>
         <item>stretch</item>
     </string-array>
 

@@ -639,15 +639,29 @@ public class UserPrefs
             boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;
             int zoomWidth = isLetterboxed ? stretchWidth : Math.round( (float) stretchHeight / aspect );
             int zoomHeight = isLetterboxed ? Math.round( (float) stretchWidth * aspect ) : stretchHeight;
+            int cropWidth = isLetterboxed ? Math.round( (float) stretchHeight / aspect ) : stretchWidth;
+            int cropHeight = isLetterboxed ? stretchHeight : Math.round( (float) stretchWidth * aspect );
             
             int hResolution = getSafeInt( mPreferences, "videoResolution", 0 );
             String scaling = mPreferences.getString( "videoScaling", "zoom" );
             if( hResolution == 0 )
             {
                 // Native resolution
-                boolean isStretched = scaling.equals( "stretch" );
-                videoRenderWidth = videoSurfaceWidth = isStretched ? stretchWidth : zoomWidth;
-                videoRenderHeight = videoSurfaceHeight = isStretched ? stretchHeight : zoomHeight;
+                if( scaling.equals( "stretch" ) )
+                {
+                    videoRenderWidth = videoSurfaceWidth = stretchWidth;
+                    videoRenderHeight = videoSurfaceHeight = stretchHeight;
+                }
+                else if( scaling.equals( "crop" ) )
+                {
+                    videoRenderWidth = videoSurfaceWidth = cropWidth;
+                    videoRenderHeight = videoSurfaceHeight = cropHeight;
+                }
+                else // scaling.equals( "zoom") || scaling.equals( "none" )
+                {
+                    videoRenderWidth = videoSurfaceWidth = zoomWidth;
+                    videoRenderHeight = videoSurfaceHeight = zoomHeight;
+                }
             }
             else
             {
@@ -687,6 +701,11 @@ public class UserPrefs
                 {
                     videoSurfaceWidth = zoomWidth;
                     videoSurfaceHeight = zoomHeight;
+                }
+                else if( scaling.equals( "crop" ) )
+                {
+                    videoSurfaceWidth = cropWidth;
+                    videoSurfaceHeight = cropHeight;
                 }
                 else if( scaling.equals( "stretch" ) )
                 {
