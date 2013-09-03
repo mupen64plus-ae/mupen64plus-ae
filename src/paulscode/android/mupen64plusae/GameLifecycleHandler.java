@@ -158,7 +158,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mUserPrefs = new UserPrefs( mActivity );
     }
     
-    @SuppressWarnings( "deprecation" )
     @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
@@ -177,7 +176,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );
-        mSurface.getHolder().setFormat( SurfaceHolder.SURFACE_TYPE_GPU );
         
         // Update the GameSurface size
         mSurface.getHolder().setFixedSize( mUserPrefs.videoRenderWidth, mUserPrefs.videoRenderHeight );
