@@ -162,10 +162,6 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native int emuGetState();
     
-    public static native String getHeaderName( String filename );
-    
-    public static native String getHeaderCRC( String filename );
-    
     // ------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/ae-bridge/ae_imports.cpp

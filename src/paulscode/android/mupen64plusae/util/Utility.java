@@ -34,7 +34,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import paulscode.android.mupen64plusae.CoreInterfaceNative;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -211,7 +210,7 @@ public class Utility
             }
             else
             {
-                String headerName = CoreInterfaceNative.getHeaderName( uzFile );
+                String headerName = new RomHeader( new File( uzFile ) ).name;
                 try
                 {
                     new File( uzFile ).delete();
@@ -224,7 +223,7 @@ public class Utility
         }
         else
         {
-            return CoreInterfaceNative.getHeaderName( filename );
+            return new RomHeader( new File( filename ) ).name;
         }
     }
 
@@ -288,7 +287,8 @@ public class Utility
             }
             else
             {
-                String headerCRC = checkCRC( CoreInterfaceNative.getHeaderCRC( uzFile ) );
+                RomHeader header = new RomHeader( new File( uzFile ) );
+                String headerCRC = checkCRC( header.crc );
 
                 new File( uzFile ).delete();
 
@@ -297,7 +297,8 @@ public class Utility
         }
         else
         {
-            return checkCRC( CoreInterfaceNative.getHeaderCRC( filename ) );
+            RomHeader header = new RomHeader( new File( filename ) );
+            return checkCRC( header.crc );
         }
     }
 
