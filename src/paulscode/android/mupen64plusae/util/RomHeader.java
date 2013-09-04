@@ -8,7 +8,11 @@ import java.io.IOException;
 
 import android.util.Log;
 
-public class RomHeader
+/**
+ * Utility class for retrieving information
+ * about the header of a given ROM file.
+ */
+public final class RomHeader
 {
     // @formatter:off
     public final byte init_PI_BSB_DOM1_LAT_REG;  // 0x00
@@ -29,7 +33,12 @@ public class RomHeader
     public final short countryCode;              // 0x3E
     // @formatter:on
     public final String crc;
-    
+
+    /**
+     * Constructor.
+     * 
+     * @param file The ROM file to get the header information about.
+     */
     public RomHeader( File file )
     {
         DataInputStream in = null;
