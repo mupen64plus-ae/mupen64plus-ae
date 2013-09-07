@@ -121,6 +121,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
+        Log.i( "GameLifecycleHandler", "onCreate" );
+        
         // Initialize MOGA controller API
         mMogaController.init();
         
@@ -211,8 +213,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         inputSource.setOnKeyListener( this );
     }
     
+    public void onStart()
+    {
+        Log.i( "GameLifecycleHandler", "onStart" );
+    }
+    
     public void onResume()
     {
+        Log.i( "GameLifecycleHandler", "onResume" );
         CoreInterface.resumeEmulator();
         mMogaController.onResume();
     }
@@ -231,8 +239,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         CoreInterface.startupEmulator();
     }
     
+    public void onWindowFocusChanged( boolean hasFocus )
+    {
+        Log.i( "GameLifecycleHandler", "onWindowFocusChanged: " + hasFocus );
+    }
+    
     public void onPause()
     {
+        Log.i( "GameLifecycleHandler", "onPause" );
         CoreInterface.pauseEmulator( true );
         mMogaController.onPause();
     }
@@ -244,8 +258,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         CoreInterface.shutdownEmulator();
     }
     
+    public void onStop()
+    {
+        Log.i( "GameLifecycleHandler", "onStop" );
+    }
+    
     public void onDestroy()
     {
+        Log.i( "GameLifecycleHandler", "onDestroy" );
         mMogaController.exit();
     }
     
@@ -289,7 +309,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         }
         
         // Create the touchpad controls, if applicable
-        TouchController touchpadController = null;        
+        TouchController touchpadController = null;
         if( mIsXperiaPlay )
         {
             // Create the map for the touchpad

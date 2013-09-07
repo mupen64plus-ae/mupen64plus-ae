@@ -54,14 +54,28 @@ public class GameActivityXperiaPlay extends NativeActivity
     }
     
     @Override
+    public void onWindowFocusChanged( boolean hasFocus )
+    {
+        super.onWindowFocusChanged( hasFocus );
+        mLifecycleHandler.onWindowFocusChanged( hasFocus );
+    }
+    
+    @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         UserPrefs userPrefs = new UserPrefs( this );
         mMenuHandler = new GameMenuHandler( this, userPrefs.manualSaveDir, userPrefs.selectedGameAutoSavefile );
-
+        
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
         mLifecycleHandler.onCreateEnd( savedInstanceState );
+    }
+    
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        mLifecycleHandler.onStart();
     }
     
     @Override
@@ -76,6 +90,13 @@ public class GameActivityXperiaPlay extends NativeActivity
     {
         super.onPause();
         mLifecycleHandler.onPause();
+    }
+    
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        mLifecycleHandler.onStop();
     }
     
     @Override
