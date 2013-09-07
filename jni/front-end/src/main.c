@@ -801,16 +801,7 @@ int main(int argc, char *argv[])
     }
 
     /* run the game */
-    #ifdef PAULSCODE
-    // paulscode: workaround for broken M64CMD_RESET.  Set do_Start = 1 before M64CMD_STOP to reset the emulator.
-    while( do_Start )
-    {
-        do_Start = 0;
-        (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-    }
-    #else
     (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-    #endif
 
     /* detach plugins from core and unload them */
     for (i = 0; i < 4; i++)

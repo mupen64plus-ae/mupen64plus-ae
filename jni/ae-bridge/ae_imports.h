@@ -71,9 +71,6 @@ extern void         Android_JNI_GetPolygonOffset(const int hardwareType, const i
 // Called by gles2n64
 extern void         Android_JNI_SwapWindow();
 
-// Global flags - TODO: Remove when ASDP bug fixed
-extern int do_Start;
-
 #ifdef __cplusplus
 }
 #endif
