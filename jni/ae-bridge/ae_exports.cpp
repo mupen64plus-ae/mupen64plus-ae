@@ -62,68 +62,6 @@ static pSdlOnResize     sdlOnResize     = NULL;
 static pCoreDoCommand   coreDoCommand   = NULL;
 static pFrontMain       frontMain       = NULL;
 
-// Other work variables
-static char strBuff[1024];
-
-/*******************************************************************************
- Functions called internally
- *******************************************************************************/
-
-static void swap_rom(unsigned char* localrom, int loadlength)
-{
-    unsigned char temp;
-    int i;
-
-    /* Btyeswap if .v64 image. */
-    if (localrom[0] == 0x37)
-    {
-        for (i = 0; i < loadlength; i += 2)
-        {
-            temp = localrom[i];
-            localrom[i] = localrom[i + 1];
-            localrom[i + 1] = temp;
-        }
-    }
-    /* Wordswap if .n64 image. */
-    else if (localrom[0] == 0x40)
-    {
-        for (i = 0; i < loadlength; i += 4)
-        {
-            temp = localrom[i];
-            localrom[i] = localrom[i + 3];
-            localrom[i + 3] = temp;
-            temp = localrom[i + 1];
-            localrom[i + 1] = localrom[i + 2];
-            localrom[i + 2] = temp;
-        }
-    }
-}
-
-static char * trim(char *str)
-{
-    unsigned int i;
-    char *p = str;
-
-    while (isspace(*p))
-        p++;
-
-    if (str != p)
-    {
-        for (i = 0; i <= strlen(p); ++i)
-            str[i] = p[i];
-    }
-
-    p = str + strlen(str) - 1;
-    if (p > str)
-    {
-        while (isspace(*p))
-            p--;
-        p[1] = '\0';
-    }
-
-    return str;
-}
-
 /*******************************************************************************
  Functions called automatically by JNI framework
  *******************************************************************************/
