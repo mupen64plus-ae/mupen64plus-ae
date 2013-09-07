@@ -47,7 +47,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -56,39 +55,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
-
-//@formatter:off
-/**
- * (start)
- *    |
- * onCreate <-- (killed) <-----\
- *    |                        |
- * onStart <-- onRestart <--\  |
- *    |                     |  |
- * onResume <------------\  |  |
- *    |                  |  |  |
- * [*onSurfaceCreated*]  |  |  |
- *    |                  |  |  |
- * [*onSurfaceChanged*]  |  |  |
- *    |                  |  |  |
- * (running)             |  |  |   
- *    |                  |  |  |
- * onPause --------------/  |  |
- *    |                     |  |
- * [*onSurfaceDestroyed*]   |  |
- *    |                     |  |
- * onStop ------------------/--/
- *    |
- * onDestroy
- *    |
- * (end)
- * 
- * 
- * [*doesn't always occur*]
- * 
- * 
- */
-//@formatter:on
 
 public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.Callback
 {
@@ -110,18 +76,22 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     private AppData mAppData;
     private UserPrefs mUserPrefs;
     
+    // Lifecycle tracker
+    private final GameLifecycleTracker mLifecycleTracker;
+    
     public GameLifecycleHandler( Activity activity )
     {
         mActivity = activity;
         mControllers = new ArrayList<AbstractController>();
         mIsXperiaPlay = !( activity instanceof GameActivity );
         mMogaController = Controller.getInstance( mActivity );
+        mLifecycleTracker = new GameLifecycleTracker();
     }
     
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
-        Log.i( "GameLifecycleHandler", "onCreate" );
+        mLifecycleTracker.onCreate( savedInstanceState );
         
         // Initialize MOGA controller API
         mMogaController.init();
@@ -215,57 +185,52 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     
     public void onStart()
     {
-        Log.i( "GameLifecycleHandler", "onStart" );
+        mLifecycleTracker.onStart();
     }
     
     public void onResume()
     {
-        Log.i( "GameLifecycleHandler", "onResume" );
-        CoreInterface.resumeEmulator();
+        mLifecycleTracker.onResume();
         mMogaController.onResume();
     }
     
     @Override
     public void surfaceCreated( SurfaceHolder holder )
     {
-        Log.i( "GameLifecycleHandler", "surfaceCreated" );
+        mLifecycleTracker.surfaceCreated( holder );
     }
     
     @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
-        Log.i( "GameLifecycleHandler", "surfaceChanged" );
-        CoreInterface.onResize( format, width, height );
-        CoreInterface.startupEmulator();
+        mLifecycleTracker.surfaceChanged( holder, format, width, height );
     }
     
     public void onWindowFocusChanged( boolean hasFocus )
     {
-        Log.i( "GameLifecycleHandler", "onWindowFocusChanged: " + hasFocus );
+        mLifecycleTracker.onWindowFocusChanged( hasFocus );
     }
     
     public void onPause()
     {
-        Log.i( "GameLifecycleHandler", "onPause" );
-        CoreInterface.pauseEmulator( true );
+        mLifecycleTracker.onPause();
         mMogaController.onPause();
     }
     
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
-        Log.i( "GameLifecycleHandler", "surfaceDestroyed" );
-        CoreInterface.shutdownEmulator();
+        mLifecycleTracker.surfaceDestroyed( holder );
     }
     
     public void onStop()
     {
-        Log.i( "GameLifecycleHandler", "onStop" );
+        mLifecycleTracker.onStop();
     }
     
     public void onDestroy()
     {
-        Log.i( "GameLifecycleHandler", "onDestroy" );
+        mLifecycleTracker.onDestroy();
         mMogaController.exit();
     }
     

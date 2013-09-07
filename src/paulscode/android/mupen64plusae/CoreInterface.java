@@ -199,7 +199,7 @@ public class CoreInterface
                 public void run()
                 {
                     // Initialize input-android plugin if and only if it is selected
-                    // TODO: Find a more elegant solution, and be careful about lib name change
+                    // TODO: Move to config file, and be careful about lib name change
                     if( sUserPrefs.inputPlugin.name.equals( "libinput-android.so" ) )
                     {
                         System.load( sUserPrefs.inputPlugin.path );
@@ -234,17 +234,12 @@ public class CoreInterface
             // Wait for the emulator to start running
             waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
             
-            // Auto-load state and resume
+            // Auto-load state if desired
             if( !sIsRestarting )
             {
-                // Clear the flag so that subsequent calls don't reset
-                sIsRestarting = false;
-                
                 Notifier.showToast( sActivity, R.string.toast_loadingSession );
                 CoreInterfaceNative.emuLoadFile( sUserPrefs.selectedGameAutoSavefile );
             }
-            
-            resumeEmulator();
         }
     }
     
@@ -252,9 +247,6 @@ public class CoreInterface
     {
         if( sCoreThread != null )
         {
-            // Pause and auto-save state
-            pauseEmulator( true );
-            
             // Tell the core to quit
             CoreInterfaceNative.emuStop();
             
