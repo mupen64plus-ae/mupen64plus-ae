@@ -35,6 +35,7 @@ public class GameActivityXperiaPlay extends NativeActivity
     
     public GameActivityXperiaPlay()
     {
+        System.loadLibrary( "xperia-touchpad" );
         mLifecycleHandler = new GameLifecycleHandler( this );
     }
     

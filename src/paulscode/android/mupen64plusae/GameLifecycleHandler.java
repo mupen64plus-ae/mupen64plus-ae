@@ -129,14 +129,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mUserPrefs = new UserPrefs( mActivity );
         mUserPrefs.enforceLocale( mActivity );
         
-        // Load native libraries
-        if( mIsXperiaPlay )
-            CoreInterfaceNative.loadNativeLibName( "xperia-touchpad" );
-        CoreInterfaceNative.loadNativeLib( mUserPrefs.videoPlugin.path );
-        CoreInterfaceNative.loadNativeLib( mUserPrefs.audioPlugin.path );
-        CoreInterfaceNative.loadNativeLib( mUserPrefs.inputPlugin.path );
-        CoreInterfaceNative.loadNativeLib( mUserPrefs.rspPlugin.path );
-        
         // For Honeycomb, let the action bar overlay the rendered view (rather than squeezing it)
         // For earlier APIs, remove the title bar to yield more space
         Window window = mActivity.getWindow();

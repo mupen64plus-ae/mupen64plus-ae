@@ -202,6 +202,7 @@ public class CoreInterface
                     // TODO: Find a more elegant solution, and be careful about lib name change
                     if( sUserPrefs.inputPlugin.name.equals( "libinput-android.so" ) )
                     {
+                        System.load( sUserPrefs.inputPlugin.path );
                         CoreInterfaceNative.jniInitInput();
                         CoreInterfaceNative.setControllerConfig( 0, sUserPrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
                         CoreInterfaceNative.setControllerConfig( 1, sUserPrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
