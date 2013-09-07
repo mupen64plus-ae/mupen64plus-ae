@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 SRCDIR := ../../src
 
 LOCAL_MODULE := front-end
-LOCAL_SHARED_LIBRARIES := ae-imports SDL2 core
+LOCAL_SHARED_LIBRARIES := ae-imports SDL2
 #LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=         \
