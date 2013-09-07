@@ -106,6 +106,28 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
  Functions called by Java code
  *******************************************************************************/
 
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlInit(JNIEnv* env, jclass cls, jobjectArray jargv)
+{
+    // Initialize dependencies
+    SDL_Android_Init_Extras(env, cls);
+    SDL_Android_Init(env, cls);
+    SDL_SetMainReady();
+
+    // Repackage the command-line args
+    int argc = env->GetArrayLength(jargv);
+    char **argv = (char **) malloc(sizeof(char *) * argc);
+    for (int i = 0; i < argc; i++)
+    {
+        jstring jarg = (jstring) env->GetObjectArrayElement(jargv, i);
+        const char *arg = env->GetStringUTFChars(jarg, 0);
+        argv[i] = strdup(arg);
+        env->ReleaseStringUTFChars(jarg, arg);
+    }
+
+    // Launch main emulator loop (continues until emuStop is called)
+    SDL_main(argc, argv);
+}
+
 extern "C" DECLSPEC void SDLCALL Java_org_libsdl_app_SDLActivity_onNativeResize(JNIEnv* env, jclass jcls, jint width, jint height, jint format);
 extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlOnResize(JNIEnv* env, jclass jcls, jint width, jint height, jint format)
 {

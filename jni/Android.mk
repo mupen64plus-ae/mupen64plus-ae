@@ -6,8 +6,6 @@ SDL_INCLUDES := $(JNI_LOCAL_PATH)/SDL2/include/
 PNG_INCLUDES := $(JNI_LOCAL_PATH)/png/include/
 SAMPLERATE_INCLUDES := $(JNI_LOCAL_PATH)/libsamplerate/
 
-SDL_MAIN_ENTRY := ../../../ae-bridge/ae_bridge_main.cpp
-
 COMMON_CFLAGS :=                    \
     -O3                             \
     -ffast-math                     \

@@ -630,6 +630,10 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 /*********************************************************************************************************
 * main function
 */
+#ifdef PAULSCODE
+// Allow main function to be called dynamically from external library
+DECLSPEC
+#endif
 int main(int argc, char *argv[])
 {
     int i;

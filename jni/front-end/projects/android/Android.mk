@@ -14,7 +14,6 @@ LOCAL_C_INCLUDES :=         \
     $(AE_BRIDGE_INCLUDES)   \
 
 LOCAL_SRC_FILES :=                      \
-    $(SDL_MAIN_ENTRY)                   \
     $(SRCDIR)/cheat.c                   \
     $(SRCDIR)/compare_core.c            \
     $(SRCDIR)/core_interface.c          \

@@ -80,15 +80,10 @@ public class CoreInterfaceNative extends CoreInterface
     
     // ------------------------------------------------------------------------
     // Call-outs made TO native code
-    // jni/ae-bridge/ae_bridge_main.cpp
+    // jni/ae-bridge/ae_exports.cpp
     // ------------------------------------------------------------------------
     
     public static native void sdlInit( Object[] args );
-    
-    // ------------------------------------------------------------------------
-    // Call-outs made TO native code
-    // jni/ae-bridge/ae_exports.cpp
-    // ------------------------------------------------------------------------
     
     public static native void sdlOnResize( int x, int y, int format );
     
