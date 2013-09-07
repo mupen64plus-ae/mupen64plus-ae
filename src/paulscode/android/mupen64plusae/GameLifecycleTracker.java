@@ -124,6 +124,7 @@ public class GameLifecycleTracker
     public void onStart()
     {
         Log.i( "GameLifecycleTracker", "onStart" );
+        CoreInterfaceNative.loadLibraries();
         tryStartup();
     }
     
@@ -174,6 +175,7 @@ public class GameLifecycleTracker
     {
         Log.i( "GameLifecycleTracker", "onStop" );
         tryShutdown();
+        CoreInterfaceNative.unloadLibraries();
     }
     
     public void onDestroy()

@@ -38,10 +38,6 @@ public class CoreInterfaceNative extends CoreInterface
 {
     static
     {
-        System.loadLibrary( "ae-imports" );
-        System.loadLibrary( "SDL2" );
-        System.loadLibrary( "core" );
-        System.loadLibrary( "front-end" );
         System.loadLibrary( "ae-exports" );
     }
     
@@ -84,6 +80,10 @@ public class CoreInterfaceNative extends CoreInterface
     // ------------------------------------------------------------------------
     
     public static native void sdlInit( Object[] args );
+    
+    public static native void loadLibraries();
+    
+    public static native void unloadLibraries();
     
     public static native void sdlOnResize( int x, int y, int format );
     
