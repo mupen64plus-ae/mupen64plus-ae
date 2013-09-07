@@ -193,7 +193,7 @@ public class CoreInterfaceNative extends CoreInterface
      */
     public static boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
     {
-        boolean result = sSurface.createGLContext( majorVersion, minorVersion, configSpec );
+        boolean result = sSurface.createGLContext( majorVersion, minorVersion, configSpec, true );
         
         if( !result )
         {
@@ -218,7 +218,7 @@ public class CoreInterfaceNative extends CoreInterface
                 i += 2;
             }
             configSpec[j] = EGL10.EGL_NONE;
-            result = sSurface.createGLContext( majorVersion, minorVersion, configSpec );
+            result = sSurface.createGLContext( majorVersion, minorVersion, configSpec, true );
             
             if( !result )
             {
@@ -275,7 +275,7 @@ public class CoreInterfaceNative extends CoreInterface
                     };
                 }
                 // @formatter:on            
-                result = sSurface.createGLContext( majorVersion, minorVersion, configSpec1 );
+                result = sSurface.createGLContext( majorVersion, minorVersion, configSpec1, true );
             }
         }
         return result;
