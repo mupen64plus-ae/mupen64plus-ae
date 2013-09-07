@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -57,8 +56,6 @@ public class GameMenuHandler
     
     private final String mManualSaveDir;
     
-    private final String mAutoSaveFile;
-    
     private MenuItem mSlotMenuItem;
     
     private MenuItem mGameSpeedItem;
@@ -77,11 +74,10 @@ public class GameMenuHandler
     
     public static GameMenuHandler sInstance = null;
     
-    public GameMenuHandler( Activity activity, String manualSaveDir, String autoSaveFile )
+    public GameMenuHandler( Activity activity, String manualSaveDir )
     {
         mActivity = activity;
         mManualSaveDir = manualSaveDir;
-        mAutoSaveFile = autoSaveFile;
         sInstance = this;
     }
     
@@ -246,7 +242,7 @@ public class GameMenuHandler
                 setIme();
                 break;
             case R.id.menuItem_exit:
-                quitToMenu();
+                mActivity.finish();
                 break;
             default:
                 break;
@@ -419,33 +415,5 @@ public class GameMenuHandler
                 CoreInterface.resumeEmulator();
             }
         } );
-    }
-    
-    private void quitToMenu()
-    {
-        // Return to previous activity (MenuActivity)
-        // It's easier just to finish so that everything will be reloaded next time
-        // mActivity.finish();
-        
-        // TODO: Uncomment the line above and delete the block below
-        
-        // ////
-        // paulscode: temporary workaround for ASDP bug after emulator shuts down
-        Notifier.showToast( mActivity, R.string.toast_savingSession );
-        CoreInterface.setOnStateCallbackListener( new OnStateCallbackListener()
-        {
-            @Override
-            public void onStateCallback( int paramChanged, int newValue )
-            {
-                if( paramChanged == CoreInterface.M64CORE_STATE_SAVECOMPLETE )
-                {
-                    System.exit( 0 ); // Bad, bad..
-                    CoreInterface.setOnStateCallbackListener( null );
-                    mActivity.finish();
-                }
-            }
-        } );
-        CoreInterfaceNative.emuSaveFile( mAutoSaveFile );
-        // ////
     }
 }

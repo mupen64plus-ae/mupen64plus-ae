@@ -64,7 +64,7 @@ public class GameActivityXperiaPlay extends NativeActivity
     protected void onCreate( Bundle savedInstanceState )
     {
         UserPrefs userPrefs = new UserPrefs( this );
-        mMenuHandler = new GameMenuHandler( this, userPrefs.manualSaveDir, userPrefs.selectedGameAutoSavefile );
+        mMenuHandler = new GameMenuHandler( this, userPrefs.manualSaveDir );
         
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
