@@ -596,13 +596,14 @@ static void my_audio_callback(void *userdata, unsigned char *stream, int len)
         }
         else
 #endif
-        /* TODO mupen64plus-ae specific hack */
-        if (1) {
+        {
+#ifdef PAULSCODE
             input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, stream, len, newsamplerate);
-	} else {
+#else
             input_used = resample(primaryBuffer, buffer_pos, oldsamplerate, mixBuffer, len, newsamplerate);
             memset(stream, 0, len);
             SDL_MixAudio(stream, mixBuffer, len, VolSDL);
+#endif
         }
         memmove(primaryBuffer, &primaryBuffer[input_used], buffer_pos - input_used);
         buffer_pos -= input_used;

@@ -21,5 +21,6 @@ LOCAL_SRC_FILES :=                      \
 LOCAL_CFLAGS :=         \
     $(COMMON_CFLAGS)    \
     -DUSE_SRC           \
+    -DPAULSCODE         \
 
 include $(BUILD_SHARED_LIBRARY)
