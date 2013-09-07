@@ -20,7 +20,7 @@
 #include "FrameSkipper.h"
 #include "ticks.h"
 
-#include "ae_bridge.h"
+#include "ae_imports.h"
 
 ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = NULL;
 

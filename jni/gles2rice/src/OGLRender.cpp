@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "TextureManager.h"
 
 #ifdef PAULSCODE
-#include "ae_bridge.h"
+#include "ae_imports.h"
 static int hardwareType = HARDWARE_TYPE_UNKNOWN;
 #endif
 

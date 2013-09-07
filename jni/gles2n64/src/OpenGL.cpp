@@ -32,7 +32,7 @@
 
 #include "FrameSkipper.h"
 
-#include "ae_bridge.h"
+#include "ae_imports.h"
 
 //// paulscode, function prototype missing from Yongzh's code
 void OGL_UpdateDepthUpdate();

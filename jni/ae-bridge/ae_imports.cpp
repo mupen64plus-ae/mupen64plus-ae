@@ -19,9 +19,9 @@
  * Authors: Paul Lamb, littleguy77
  */
 
-#include <SDL.h>
 #include <pthread.h>
-#include "ae_bridge.h"
+#include "SDL.h"
+#include "ae_imports.h"
 
 /*******************************************************************************
  Globals used externally

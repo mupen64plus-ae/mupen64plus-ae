@@ -41,7 +41,7 @@
 #include "osal_preproc.h"
 
 #ifdef PAULSCODE
-#include "ae_bridge.h"
+#include "ae_imports.h"
 #endif
 
 /* Version number for UI-Console config section parameters */

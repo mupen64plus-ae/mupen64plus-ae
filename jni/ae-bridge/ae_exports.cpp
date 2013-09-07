@@ -22,7 +22,7 @@
 #include <dlfcn.h>
 #include "SDL.h"
 #include "m64p_types.h"
-#include "ae_bridge.h"
+#include "ae_imports.h"
 
 #ifdef M64P_BIG_ENDIAN
   #define sl(mot) mot

@@ -34,7 +34,7 @@
 #define VERTEX_SIZE sizeof(VERTEX) //Size of vertex struct
 
 #ifdef PAULSCODE
-#include "ae_bridge.h"
+#include "ae_imports.h"
 static float polygonOffsetFactor;
 static float polygonOffsetUnits;
 #endif
