@@ -87,8 +87,6 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void sdlOnResize( int x, int y, int format );
     
-    public static native void sdlQuit();
-    
     public static native void emuGameShark( boolean pressed );
     
     public static native void emuPause();

@@ -256,7 +256,7 @@ public class CoreInterface
             pauseEmulator( true );
             
             // Tell the core to quit
-            CoreInterfaceNative.sdlQuit();
+            CoreInterfaceNative.emuStop();
             
             // Now wait for the core thread to quit
             try
