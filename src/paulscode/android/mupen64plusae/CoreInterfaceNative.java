@@ -283,7 +283,7 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static void deleteGLContext()
     {
-        // TODO
+        sSurface.destroyGLContext();
     }
     
     /**
