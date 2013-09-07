@@ -226,7 +226,7 @@ public class CoreInterface
                         arglist.add( sCheatOptions );
                     }
                     arglist.add( getROMPath() );
-                    CoreInterfaceNative.sdlInit( arglist.toArray() );
+                    CoreInterfaceNative.emuStart( arglist.toArray() );
                 }
             }, "CoreThread" );
             sCoreThread.start();

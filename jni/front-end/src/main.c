@@ -174,7 +174,7 @@ void StateCallback( void *Context, m64p_core_param ParamChanged, int NewValue )
      */
 
     if( ParamChanged == M64CORE_EMU_STATE || ParamChanged == M64CORE_STATE_SAVECOMPLETE || ParamChanged == M64CORE_STATE_LOADCOMPLETE )
-        Android_JNI_State_Callback( ParamChanged, NewValue );
+        Android_JNI_StateCallback( ParamChanged, NewValue );
 }
 #endif
 

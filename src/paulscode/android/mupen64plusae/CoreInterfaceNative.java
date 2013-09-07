@@ -79,21 +79,19 @@ public class CoreInterfaceNative extends CoreInterface
     // jni/ae-bridge/ae_exports.cpp
     // ------------------------------------------------------------------------
     
-    public static native void sdlInit( Object[] args );
+    public static native void sdlOnResize( int x, int y, int format );
     
     public static native void loadLibraries();
     
     public static native void unloadLibraries();
     
-    public static native void sdlOnResize( int x, int y, int format );
+    public static native void emuStart( Object[] args );
     
-    public static native void emuGameShark( boolean pressed );
-    
-    public static native void emuPause();
+    public static native void emuStop();
     
     public static native void emuResume();
     
-    public static native void emuStop();
+    public static native void emuPause();
     
     public static native void emuAdvanceFrame();
     
@@ -108,6 +106,8 @@ public class CoreInterfaceNative extends CoreInterface
     public static native void emuLoadFile( String filename );
     
     public static native void emuSaveFile( String filename );
+    
+    public static native void emuGameShark( boolean pressed );
     
     public static native int emuGetState();
     

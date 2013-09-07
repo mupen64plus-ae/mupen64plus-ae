@@ -157,9 +157,9 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
  *******************************************************************************/
 
 // Called before SDL_main() to initialize JNI bindings
-extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
+extern DECLSPEC void Android_JNI_InitBridge(JNIEnv* env, jclass cls)
 {
-    LOGI("SDL_Android_Init_Extras()");
+    LOGI("Android_JNI_InitBridge()");
 
     Android_JNI_SetupThread();
 
@@ -180,7 +180,7 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
  Functions called by native code
  *******************************************************************************/
 
-extern DECLSPEC void Android_JNI_State_Callback(int paramChanged, int newValue)
+extern DECLSPEC void Android_JNI_StateCallback(int paramChanged, int newValue)
 {
     JNIEnv *env = Android_JNI_GetEnv();
     env->CallStaticVoidMethod(mActivityClass, midStateCallback, paramChanged, newValue);

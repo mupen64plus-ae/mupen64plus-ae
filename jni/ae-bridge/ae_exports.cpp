@@ -20,11 +20,9 @@
  */
 
 #include <dlfcn.h>
-#include <SDL.h>
+#include "SDL.h"
+#include "m64p_types.h"
 #include "ae_bridge.h"
-
-#define M64P_CORE_PROTOTYPES
-#include "m64p_frontend.h"
 
 #ifdef M64P_BIG_ENDIAN
   #define sl(mot) mot
@@ -32,11 +30,44 @@
   #define sl(mot) (((mot & 0xFF) << 24) | ((mot & 0xFF00) <<  8) | ((mot & 0xFF0000) >>  8) | ((mot & 0xFF000000) >> 24))
 #endif
 
+
+/*******************************************************************************
+ Variables used internally
+ *******************************************************************************/
+
+// JNI objects
+static JavaVM* mVm;
+static void* mReserved;
+
+// Library handles
+static void *handleAEI;         // libae-imports.so
+static void *handleSDL;         // libSDL2.so
+static void *handleCore;        // libcore.so
+static void *handleFront;       // libfront-end.so
+
+// Function types
+typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
+typedef int         (*pAeiInit)         (JNIEnv* env, jclass cls);
+typedef int         (*pSdlInit)         (JNIEnv* env, jclass cls);
+typedef void        (*pVoidFunc)        ();
+typedef void        (*pSdlOnResize)     (JNIEnv* env, jclass jcls, jint width, jint height, jint format);
+typedef m64p_error  (*pCoreDoCommand)   (m64p_command, int, void *);
+typedef int         (*pFrontMain)       (int argc, char* argv[]);
+
+// Function pointers
+static pAeiInit         aeiInit         = NULL;
+static pSdlInit         sdlInit         = NULL;
+static pVoidFunc        sdlMainReady    = NULL;
+static pSdlOnResize     sdlOnResize     = NULL;
+static pCoreDoCommand   coreDoCommand   = NULL;
+static pFrontMain       frontMain       = NULL;
+
+// Other work variables
+static char strBuff[1024];
+
 /*******************************************************************************
  Functions called internally
  *******************************************************************************/
-
-static char strBuff[1024];
 
 static void swap_rom(unsigned char* localrom, int loadlength)
 {
@@ -97,10 +128,6 @@ static char * trim(char *str)
  Functions called automatically by JNI framework
  *******************************************************************************/
 
-static JavaVM* mVm;
-static void* mReserved;
-
-// Library init
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     mVm = vm;
@@ -112,28 +139,10 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
  Functions called by Java code
  *******************************************************************************/
 
-// Library handles
-static void *handleAEI;         // libae-imports.so
-static void *handleSDL;         // libSDL2.so
-static void *handleCore;        // libcore.so
-static void *handleFront;       // libfront-end.so
-
-// Function types
-typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
-typedef int         (*pAeiInit)         (JNIEnv* env, jclass cls);
-typedef int         (*pSdlInit)         (JNIEnv* env, jclass cls);
-typedef void        (*pVoidFunc)        ();
-typedef void        (*pSdlOnResize)     (JNIEnv* env, jclass jcls, jint width, jint height, jint format);
-typedef m64p_error  (*pCoreDoCommand)   (m64p_command, int, void *);
-typedef int         (*pFrontMain)       (int argc, char* argv[]);
-
-// Function pointers
-static pAeiInit         aeiInit         = NULL;
-static pSdlInit         sdlInit         = NULL;
-static pVoidFunc        sdlMainReady    = NULL;
-static pSdlOnResize     sdlOnResize     = NULL;
-static pCoreDoCommand   coreDoCommand   = NULL;
-static pFrontMain       frontMain       = NULL;
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlOnResize(JNIEnv* env, jclass jcls, jint width, jint height, jint format)
+{
+    sdlOnResize(env, jcls, width, height, format);
+}
 
 extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_loadLibraries(JNIEnv* env, jclass cls)
 {
@@ -166,7 +175,7 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     JNI_OnLoad1 = NULL;
 
     // Find library functions
-    aeiInit         = (pAeiInit)        dlsym(handleAEI,    "SDL_Android_Init_Extras");
+    aeiInit         = (pAeiInit)        dlsym(handleAEI,    "Android_JNI_InitBridge");
     sdlInit         = (pSdlInit)        dlsym(handleSDL,    "SDL_Android_Init");
     sdlMainReady    = (pVoidFunc)       dlsym(handleSDL,    "SDL_SetMainReady");
     sdlOnResize     = (pSdlOnResize)    dlsym(handleSDL,    "Java_org_libsdl_app_SDLActivity_onNativeResize");
@@ -205,7 +214,7 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     handleAEI       = NULL;
 }
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlInit(JNIEnv* env, jclass cls, jobjectArray jargv)
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStart(JNIEnv* env, jclass cls, jobjectArray jargv)
 {
     // Initialize dependencies
     aeiInit(env, cls);
@@ -227,20 +236,9 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     frontMain(argc, argv);
 }
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlOnResize(JNIEnv* env, jclass jcls, jint width, jint height, jint format)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStop(JNIEnv* env, jclass cls)
 {
-    sdlOnResize(env, jcls, width, height, format);
-}
-
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGameShark(JNIEnv* env, jclass cls, jboolean pressed)
-{
-    int p = pressed == JNI_TRUE ? 1 : 0;
-    coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK, &p);
-}
-
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuPause(JNIEnv* env, jclass cls)
-{
-    coreDoCommand(M64CMD_PAUSE, 0, NULL);
+    coreDoCommand(M64CMD_STOP, 0, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuResume(JNIEnv* env, jclass cls)
@@ -248,9 +246,9 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNativ
     coreDoCommand(M64CMD_RESUME, 0, NULL);
 }
 
-extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStop(JNIEnv* env, jclass cls)
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuPause(JNIEnv* env, jclass cls)
 {
-    coreDoCommand(M64CMD_STOP, 0, NULL);
+    coreDoCommand(M64CMD_PAUSE, 0, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuAdvanceFrame(JNIEnv* env, jclass cls)
@@ -291,6 +289,12 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNativ
     const char *nativeString = env->GetStringUTFChars(filename, 0);
     coreDoCommand(M64CMD_STATE_SAVE, 1, (void *) nativeString);
     env->ReleaseStringUTFChars(filename, nativeString);
+}
+
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGameShark(JNIEnv* env, jclass cls, jboolean pressed)
+{
+    int p = pressed == JNI_TRUE ? 1 : 0;
+    coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK, &p);
 }
 
 extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGetState(JNIEnv* env, jclass cls)

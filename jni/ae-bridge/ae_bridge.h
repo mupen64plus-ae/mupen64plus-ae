@@ -56,19 +56,19 @@ extern "C" {
  Imported Java methods (to be called from C)
  *******************************************************************************/
 
-// Initialization
+// Called by ae-exports
 extern void         SDL_Android_Init(JNIEnv* env, jclass cls);
-extern void         SDL_Android_Init_Extras(JNIEnv* env, jclass cls);
+extern void         Android_JNI_InitBridge(JNIEnv* env, jclass cls);
 
-// Native utilities
-extern void         Android_JNI_State_Callback(int paramChanged, int newValue);
+// Called by front-end
+extern void         Android_JNI_StateCallback(int paramChanged, int newValue);
 
-// Native utilities - TODO: Move to configuration file if possible
+// Called by video plugins
 extern int          Android_JNI_GetHardwareType();
 extern int          Android_JNI_UseRGBA8888();
 extern void         Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2);
 
-// SDL functions - TODO: Remove (plugins shouldn't be calling these directly)
+// Called by gles2n64
 extern void         Android_JNI_SwapWindow();
 
 // Global flags - TODO: Remove when ASDP bug fixed
