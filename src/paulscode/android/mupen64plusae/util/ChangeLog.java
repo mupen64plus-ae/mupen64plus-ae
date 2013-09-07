@@ -32,7 +32,7 @@ import android.content.res.AssetManager;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-public class ChangeLog
+public final class ChangeLog
 {
     private static final String ASSET_NAME = "changelog.txt";
     
@@ -106,7 +106,7 @@ public class ChangeLog
         }
     }
     
-    public class ChangeNote
+    public static final class ChangeNote
     {
         public final int versionCode;
         public final String versionString;

@@ -30,7 +30,7 @@ import android.text.TextUtils;
 /**
  * A boilerplate class for safely doing things, with simple exception handling.
  */
-public class SafeMethods
+public final class SafeMethods
 {
     /**
      * Safely converts a string into a boolean.

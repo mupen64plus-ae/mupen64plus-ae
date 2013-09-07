@@ -54,7 +54,7 @@ import android.widget.TextView;
 /**
  * A utility class that generates dialogs to prompt the user for information.
  */
-public class Prompt
+public final class Prompt
 {
     /**
      * An interface that simplifies the population of list items.

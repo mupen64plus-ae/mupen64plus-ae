@@ -28,7 +28,7 @@ import java.util.List;
  * 
  * @param <Subscriber> The type of object to subscribe
  */
-public class SubscriptionManager<Subscriber>
+public final class SubscriptionManager<Subscriber>
 {
     private final ArrayList<Subscriber> mSubscribers;
 

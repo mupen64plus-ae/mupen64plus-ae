@@ -43,7 +43,7 @@ import android.util.Log;
 /**
  *  A class for extracting the emulator assets.
  */
-public class AssetExtractor
+public final class AssetExtractor
 {
     public interface OnExtractionProgressListener
     {
@@ -59,7 +59,7 @@ public class AssetExtractor
         FILE_IO_EXCEPTION,
     }
     
-    public static class ExtractionFailure
+    public static final class ExtractionFailure
     {
         public final String srcPath;
         public final String dstPath;

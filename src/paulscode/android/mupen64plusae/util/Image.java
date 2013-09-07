@@ -30,7 +30,7 @@ import android.graphics.drawable.BitmapDrawable;
 /**
  * The Image class provides a simple interface to common image manipulation methods.
  */
-public class Image
+public final class Image
 {
     public final Bitmap image;
     public final BitmapDrawable drawable;

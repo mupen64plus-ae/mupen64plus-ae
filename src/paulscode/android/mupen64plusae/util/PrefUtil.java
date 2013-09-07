@@ -29,7 +29,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 
-public class PrefUtil
+public final class PrefUtil
 {
     @SuppressWarnings( "deprecation" )
     public static void setOnPreferenceClickListener( PreferenceActivity activity, String key,

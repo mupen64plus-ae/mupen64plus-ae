@@ -43,7 +43,7 @@ import android.util.Log;
 /**
  * Utility class that provides methods which simplify file I/O tasks.
  */
-public class FileUtil
+public final class FileUtil
 {
     public static void populate( File startPath, boolean includeParent, boolean includeDirectories,
             boolean includeFiles, List<CharSequence> outNames, List<String> outPaths )

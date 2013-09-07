@@ -25,7 +25,7 @@ import paulscode.android.mupen64plusae.persistent.ConfigFile;
 /**
  * A small class to encapsulate the error logging process for Mupen64PlusAE.
  */
-public class ErrorLogger
+public final class ErrorLogger
 {
     private static ConfigFile mLogfile;
     private static String mMessage = null;

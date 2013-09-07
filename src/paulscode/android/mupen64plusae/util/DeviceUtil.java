@@ -36,7 +36,7 @@ import android.view.InputDevice;
 import android.view.InputDevice.MotionRange;
 import android.view.MotionEvent;
 
-public class DeviceUtil
+public final class DeviceUtil
 {
     /**
      * Gets the hardware information from /proc/cpuinfo.

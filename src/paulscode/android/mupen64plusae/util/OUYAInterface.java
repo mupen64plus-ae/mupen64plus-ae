@@ -47,7 +47,7 @@ import java.util.List;
  * ODK jars.  Any exceptions caught should be handled gracefully in order not to break the app on non-OUYA
  * devices running a build without the ODK jars.
  */
-public class OUYAInterface
+public final class OUYAInterface
 {
     /** PaulsCode OUYA developer UUID */
     private static final String DEVELOPER_ID = "68d84579-c1e2-4418-8976-cda2692133f1";

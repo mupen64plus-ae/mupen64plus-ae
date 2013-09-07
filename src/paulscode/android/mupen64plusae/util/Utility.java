@@ -48,7 +48,7 @@ import android.view.View;
 /**
  * Utility class which collects a bunch of commonly used methods into one class.
  */
-public class Utility
+public final class Utility
 {
     public static final float MINIMUM_TABLET_SIZE = 6.5f;
     

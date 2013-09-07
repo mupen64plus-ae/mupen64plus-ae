@@ -30,7 +30,7 @@ import android.widget.Toast;
 /**
  * A small class to encapsulate the notification process for Mupen64PlusAE.
  */
-public class Notifier
+public final class Notifier
 {
     private static final int NOTIFICATION_ID = 10001;
     
