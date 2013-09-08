@@ -39,6 +39,7 @@ public class CoreInterfaceNative extends CoreInterface
     static
     {
         System.loadLibrary( "ae-exports" );
+        System.loadLibrary( "input-android" );
     }
     
     // TODO: These should all have javadoc comments.

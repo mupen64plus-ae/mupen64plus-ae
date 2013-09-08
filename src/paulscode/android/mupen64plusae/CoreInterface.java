@@ -198,17 +198,12 @@ public class CoreInterface
                 @Override
                 public void run()
                 {
-                    // Initialize input-android plugin if and only if it is selected
-                    // TODO: Move to config file, and be careful about lib name change
-                    if( sUserPrefs.inputPlugin.name.equals( "libinput-android.so" ) )
-                    {
-                        System.load( sUserPrefs.inputPlugin.path );
-                        CoreInterfaceNative.jniInitInput();
-                        CoreInterfaceNative.setControllerConfig( 0, sUserPrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
-                        CoreInterfaceNative.setControllerConfig( 1, sUserPrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
-                        CoreInterfaceNative.setControllerConfig( 2, sUserPrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
-                        CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
-                    }
+                    // Initialize input-android plugin (even if we aren't going to use it)
+                    CoreInterfaceNative.jniInitInput();
+                    CoreInterfaceNative.setControllerConfig( 0, sUserPrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
+                    CoreInterfaceNative.setControllerConfig( 1, sUserPrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
+                    CoreInterfaceNative.setControllerConfig( 2, sUserPrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
+                    CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
                     
                     ArrayList<String> arglist = new ArrayList<String>();
                     arglist.add( "mupen64plus" );
