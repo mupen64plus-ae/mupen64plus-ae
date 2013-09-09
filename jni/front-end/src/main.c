@@ -646,6 +646,20 @@ int main(int argc, char *argv[])
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
         return 1;
 
+    #ifdef PAULSCODE
+    // paulscode, hack to allow configuration file to be in home directory
+    if( chdir( l_ConfigDirPath ) != 0 )
+    {
+        DebugMessage(M64MSG_ERROR, "Unable to enter Android data folder '%s' (required for config read/write functions)", l_ConfigDirPath);
+        return 2;
+    }
+    DebugMessage(M64MSG_VERBOSE, "Using Android data folder '%s' for config read/write functions", l_ConfigDirPath);
+    setenv( "HOME", l_ConfigDirPath, 1 );
+    setenv( "XDG_CONFIG_HOME", l_ConfigDirPath, 1 );
+    setenv( "XDG_DATA_HOME", l_ConfigDirPath, 1 );
+    setenv( "XDG_CACHE_HOME", l_ConfigDirPath, 1 );
+    #endif
+
     /* load the Mupen64Plus core library */
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)
         return 2;
