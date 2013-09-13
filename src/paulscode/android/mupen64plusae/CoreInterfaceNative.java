@@ -80,8 +80,6 @@ public class CoreInterfaceNative extends CoreInterface
     // jni/ae-bridge/ae_exports.cpp
     // ------------------------------------------------------------------------
     
-    public static native void sdlOnResize( int x, int y, int format );
-    
     public static native void loadLibraries();
     
     public static native void unloadLibraries();

@@ -143,7 +143,6 @@ public class GameLifecycleTracker
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
         Log.i( "GameLifecycleTracker", "surfaceChanged" );
-        CoreInterface.onResize( format, width, height );
         mIsSurface = true;
         tryRunning();
     }

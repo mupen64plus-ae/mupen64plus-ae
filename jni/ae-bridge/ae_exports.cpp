@@ -49,16 +49,16 @@ static void *handleFront;       // libfront-end.so
 typedef jint        (*pJNI_OnLoad)      (JavaVM* vm, void* reserved);
 typedef int         (*pAeiInit)         (JNIEnv* env, jclass cls);
 typedef int         (*pSdlInit)         (JNIEnv* env, jclass cls);
+typedef void        (*pSdlSetScreen)    (int width, int height, Uint32 format);
 typedef void        (*pVoidFunc)        ();
-typedef void        (*pSdlOnResize)     (JNIEnv* env, jclass jcls, jint width, jint height, jint format);
 typedef m64p_error  (*pCoreDoCommand)   (m64p_command, int, void *);
 typedef int         (*pFrontMain)       (int argc, char* argv[]);
 
 // Function pointers
 static pAeiInit         aeiInit         = NULL;
 static pSdlInit         sdlInit         = NULL;
+static pSdlSetScreen    sdlSetScreen    = NULL;
 static pVoidFunc        sdlMainReady    = NULL;
-static pSdlOnResize     sdlOnResize     = NULL;
 static pCoreDoCommand   coreDoCommand   = NULL;
 static pFrontMain       frontMain       = NULL;
 
@@ -76,11 +76,6 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 /*******************************************************************************
  Functions called by Java code
  *******************************************************************************/
-
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_sdlOnResize(JNIEnv* env, jclass jcls, jint width, jint height, jint format)
-{
-    sdlOnResize(env, jcls, width, height, format);
-}
 
 extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_loadLibraries(JNIEnv* env, jclass cls)
 {
@@ -115,13 +110,13 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     // Find library functions
     aeiInit         = (pAeiInit)        dlsym(handleAEI,    "Android_JNI_InitBridge");
     sdlInit         = (pSdlInit)        dlsym(handleSDL,    "SDL_Android_Init");
+    sdlSetScreen    = (pSdlSetScreen)   dlsym(handleSDL,    "Android_SetScreenResolution");
     sdlMainReady    = (pVoidFunc)       dlsym(handleSDL,    "SDL_SetMainReady");
-    sdlOnResize     = (pSdlOnResize)    dlsym(handleSDL,    "Java_org_libsdl_app_SDLActivity_onNativeResize");
     coreDoCommand   = (pCoreDoCommand)  dlsym(handleCore,   "CoreDoCommand");
     frontMain       = (pFrontMain)      dlsym(handleFront,  "SDL_main");
 
     // Make sure we don't have any typos
-    if (!aeiInit || !sdlInit || !sdlMainReady || !sdlOnResize || !coreDoCommand || !frontMain)
+    if (!aeiInit || !sdlInit || !sdlSetScreen || !sdlMainReady || !coreDoCommand || !frontMain)
     {
         LOGE("Could not load library functions: be sure they are named and typedef'd correctly");
     }
@@ -134,8 +129,8 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     // Nullify function pointers
     aeiInit         = NULL;
     sdlInit         = NULL;
+    sdlSetScreen    = NULL;
     sdlMainReady    = NULL;
-    sdlOnResize     = NULL;
     coreDoCommand   = NULL;
     frontMain       = NULL;
 
@@ -157,6 +152,7 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     // Initialize dependencies
     aeiInit(env, cls);
     sdlInit(env, cls);
+    sdlSetScreen(0, 0, SDL_PIXELFORMAT_RGB565);
     sdlMainReady();
 
     // Repackage the command-line args
