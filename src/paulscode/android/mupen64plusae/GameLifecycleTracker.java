@@ -72,47 +72,54 @@ public class GameLifecycleTracker
     /** True if the surface is available. */
     private boolean mIsSurface = false;
     
-    /** True if the emulator has started up (i.e. is ready to run). */
-    private boolean mIsStarted = false;
+    /** Emulator state. */
+    private int mCoreState = CoreInterface.EMULATOR_STATE_STOPPED;
     
-    /** True if the emulator is running (i.e. not paused). */
-    private boolean mIsRunning = false;
-    
-    private void tryStartup()
+    private boolean isSafeToRender()
     {
-        if( mIsFocused && mIsResumed && mIsSurface && !mIsStarted )
-        {
-            mIsStarted = true;
-            CoreInterface.startupEmulator();
-        }
+        return mIsFocused && mIsResumed && mIsSurface;
     }
     
     private void tryRunning()
     {
-        if( mIsFocused && mIsResumed && mIsSurface && !mIsRunning )
+        if( isSafeToRender() && ( mCoreState != CoreInterface.EMULATOR_STATE_RUNNING ) )
         {
-            tryStartup();
-            mIsRunning = true;
-            CoreInterface.resumeEmulator();
+            switch( mCoreState )
+            {
+                case CoreInterface.EMULATOR_STATE_STOPPED:
+                    mCoreState = CoreInterface.EMULATOR_STATE_RUNNING;
+                    CoreInterfaceNative.loadLibraries();
+                    CoreInterface.startupEmulator();
+                    break;
+                case CoreInterface.EMULATOR_STATE_PAUSED:
+                    mCoreState = CoreInterface.EMULATOR_STATE_RUNNING;
+                    CoreInterface.resumeEmulator();
+                    break;
+                default:
+                    Log.e( "GameLifecycleTracker", "Can't start emulator from an unknown state" );
+                    break;
+            }
         }
     }
     
-    private void tryHalting()
+    private void tryPausing()
     {
-        if( mIsRunning )
+        if( mCoreState != CoreInterface.EMULATOR_STATE_PAUSED )
         {
-            mIsRunning = false;
+            mCoreState = CoreInterface.EMULATOR_STATE_PAUSED;
             CoreInterface.pauseEmulator( true );
         }
     }
     
-    private void tryShutdown()
+    private void tryStopping()
     {
-        if( mIsStarted )
+        if( mCoreState != CoreInterface.EMULATOR_STATE_STOPPED )
         {
-            tryHalting();
-            mIsStarted = false;
+            // Never go directly from running to stopped; always pause (and autosave) first
+            tryPausing();
+            mCoreState = CoreInterface.EMULATOR_STATE_STOPPED;
             CoreInterface.shutdownEmulator();
+            CoreInterfaceNative.unloadLibraries();
         }
     }
     
@@ -124,8 +131,6 @@ public class GameLifecycleTracker
     public void onStart()
     {
         Log.i( "GameLifecycleTracker", "onStart" );
-        CoreInterfaceNative.loadLibraries();
-        tryStartup();
     }
     
     public void onResume()
@@ -149,8 +154,7 @@ public class GameLifecycleTracker
     
     public void onWindowFocusChanged( boolean hasFocus )
     {
-        // Only try to run; don't try to halt. User might just be touching the in-game menu. If the
-        // window loses focus to another app, halt will be invoked on pause or surface destroyed.
+        // Only try to run; don't try to pause. User may just be touching the in-game menu.
         Log.i( "GameLifecycleTracker", "onWindowFocusChanged: " + hasFocus );
         mIsFocused = hasFocus;
         tryRunning();
@@ -160,21 +164,19 @@ public class GameLifecycleTracker
     {
         Log.i( "GameLifecycleTracker", "onPause" );
         mIsResumed = false;
-        tryHalting();
+        tryPausing();
     }
     
     public void surfaceDestroyed( SurfaceHolder holder )
     {
         Log.i( "GameLifecycleTracker", "surfaceDestroyed" );
         mIsSurface = false;
-        tryHalting();
+        tryStopping();
     }
     
     public void onStop()
     {
         Log.i( "GameLifecycleTracker", "onStop" );
-        tryShutdown();
-        CoreInterfaceNative.unloadLibraries();
     }
     
     public void onDestroy()
