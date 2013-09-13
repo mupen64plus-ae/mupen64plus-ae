@@ -212,6 +212,10 @@ public class CoreInterface
                 Notifier.showToast( sActivity, R.string.toast_loadingSession );
                 CoreInterfaceNative.emuLoadFile( sUserPrefs.selectedGameAutoSavefile );
             }
+            
+			// Clear the flag so that the auto-save is loaded whenever the
+			// operating system stops and restarts the activity
+            sIsRestarting = false;
         }
     }
     
