@@ -147,10 +147,9 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 /*******************************************************************************
- Functions called during main initialization
+ Functions called by native code
  *******************************************************************************/
 
-// Called before SDL_main() to initialize JNI bindings
 extern DECLSPEC void Android_JNI_InitBridge(JNIEnv* env, jclass cls)
 {
     LOGI("Android_JNI_InitBridge()");
@@ -169,10 +168,6 @@ extern DECLSPEC void Android_JNI_InitBridge(JNIEnv* env, jclass cls)
         LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
 }
-
-/*******************************************************************************
- Functions called by native code
- *******************************************************************************/
 
 extern DECLSPEC void Android_JNI_StateCallback(int paramChanged, int newValue)
 {

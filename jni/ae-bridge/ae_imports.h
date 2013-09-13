@@ -57,7 +57,6 @@ extern "C" {
  *******************************************************************************/
 
 // Called by ae-exports
-extern void         SDL_Android_Init(JNIEnv* env, jclass cls);
 extern void         Android_JNI_InitBridge(JNIEnv* env, jclass cls);
 
 // Called by front-end
