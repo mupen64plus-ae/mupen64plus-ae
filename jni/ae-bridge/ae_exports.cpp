@@ -77,15 +77,19 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
  Functions called internally
  *******************************************************************************/
 
-static void reloadLibraries()
+static void reloadLibraries(const char* libPath)
 {
     LOGI("Loading native libraries");
 
-    // TODO: Pass the library path as a function argument
-    const char* pathAEI   = "/data/data/paulscode.android.mupen64plusae/lib/libae-imports.so";
-    const char* pathSDL   = "/data/data/paulscode.android.mupen64plusae/lib/libSDL2.so";
-    const char* pathCore  = "/data/data/paulscode.android.mupen64plusae/lib/libcore.so";
-    const char* pathFront = "/data/data/paulscode.android.mupen64plusae/lib/libfront-end.so";
+    // Construct the library paths
+    char pathAEI[256];
+    char pathSDL[256];
+    char pathCore[256];
+    char pathFront[256];
+    sprintf(pathAEI,    "%s/libae-imports.so",  libPath);
+    sprintf(pathSDL,    "%s/libSDL2.so",        libPath);
+    sprintf(pathCore,   "%s/libcore.so",        libPath);
+    sprintf(pathFront,  "%s/libfront-end.so",   libPath);
 
     // Close shared libraries
     if (handleFront) dlclose(handleFront);
@@ -132,10 +136,12 @@ static void reloadLibraries()
  Functions called by Java code
  *******************************************************************************/
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStart(JNIEnv* env, jclass cls, jobjectArray jargv)
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStart(JNIEnv* env, jclass cls, jstring jlibPath, jobjectArray jargv)
 {
     // Reload the libraries to ensure that static variables are re-initialized
-    reloadLibraries();
+    const char *libPath = env->GetStringUTFChars(jlibPath, 0);
+    reloadLibraries(libPath);
+    env->ReleaseStringUTFChars(jlibPath, libPath);
 
     // Initialize dependencies
     aeiInit(env, cls);
