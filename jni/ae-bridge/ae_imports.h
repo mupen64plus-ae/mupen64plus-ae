@@ -24,6 +24,7 @@
 
 #include <jni.h>
 #include <android/log.h>
+#include "m64p_types.h"
 
 // Generally we should use the core's Debug API, but these can be used in a pinch
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, "ae-bridge", __VA_ARGS__)
@@ -60,7 +61,7 @@ extern "C" {
 extern void         Android_JNI_InitBridge(JNIEnv* env, jclass cls);
 
 // Called by front-end
-extern void         Android_JNI_StateCallback(int paramChanged, int newValue);
+extern void         Android_JNI_StateCallback(void* context, m64p_core_param paramChanged, int newValue);
 
 // Called by video plugins
 extern int          Android_JNI_GetHardwareType();

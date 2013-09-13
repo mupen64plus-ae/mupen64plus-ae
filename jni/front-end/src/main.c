@@ -147,37 +147,6 @@ static void FrameCallback(unsigned int FrameIndex)
         }
     }
 }
-
-#ifdef PAULSCODE
-void StateCallback( void *Context, m64p_core_param ParamChanged, int NewValue )
-{
-    /*----ParamChanged-----------------
-     *    --------NewValue--------
-     *    M64CORE_EMU_STATE           1
-     *            M64EMU_STOPPED 1
-     *            M64EMU_RUNNING 2
-     *            M64EMU_PAUSED  3
-     *    M64CORE_VIDEO_MODE          2
-     *    M64CORE_SAVESTATE_SLOT      3
-     *    M64CORE_SPEED_FACTOR        4
-     *    M64CORE_SPEED_LIMITER       5
-	 *    M64CORE_VIDEO_SIZE          6
-	 *    M64CORE_AUDIO_VOLUME        7
-	 *    M64CORE_AUDIO_MUTE          8
-	 *    M64CORE_INPUT_GAMESHARK     9
-	 *    M64CORE_STATE_LOADCOMPLETE 10
-	 *            (successful)   1
-	 *            (unsuccessful) 0
-	 *    M64CORE_STATE_SAVECOMPLETE 11
-	 *            (successful)   1
-	 *            (unsuccessful) 0
-     */
-
-    if( ParamChanged == M64CORE_EMU_STATE || ParamChanged == M64CORE_STATE_SAVECOMPLETE || ParamChanged == M64CORE_STATE_LOADCOMPLETE )
-        Android_JNI_StateCallback( ParamChanged, NewValue );
-}
-#endif
-
 /*********************************************************************************************************
  *  Configuration handling
  */
@@ -670,7 +639,7 @@ int main(int argc, char *argv[])
 
     /* start the Mupen64Plus core library, load the configuration file */
     #ifdef PAULSCODE
-    m64p_error rval = (*CoreStartup)( CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, StateCallback );
+    m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, Android_JNI_StateCallback);
     #else
     m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, NULL);
     #endif

@@ -169,10 +169,31 @@ extern DECLSPEC void Android_JNI_InitBridge(JNIEnv* env, jclass cls)
     }
 }
 
-extern DECLSPEC void Android_JNI_StateCallback(int paramChanged, int newValue)
+extern DECLSPEC void Android_JNI_StateCallback(void* context, m64p_core_param paramChanged, int newValue)
 {
+    /*----ParamChanged-----------------
+     *    --------NewValue--------
+     *    M64CORE_EMU_STATE           1
+     *            M64EMU_STOPPED 1
+     *            M64EMU_RUNNING 2
+     *            M64EMU_PAUSED  3
+     *    M64CORE_VIDEO_MODE          2
+     *    M64CORE_SAVESTATE_SLOT      3
+     *    M64CORE_SPEED_FACTOR        4
+     *    M64CORE_SPEED_LIMITER       5
+	 *    M64CORE_VIDEO_SIZE          6
+	 *    M64CORE_AUDIO_VOLUME        7
+	 *    M64CORE_AUDIO_MUTE          8
+	 *    M64CORE_INPUT_GAMESHARK     9
+	 *    M64CORE_STATE_LOADCOMPLETE 10
+	 *            (successful)   1
+	 *            (unsuccessful) 0
+	 *    M64CORE_STATE_SAVECOMPLETE 11
+	 *            (successful)   1
+	 *            (unsuccessful) 0
+     */
     JNIEnv *env = Android_JNI_GetEnv();
-    env->CallStaticVoidMethod(mActivityClass, midStateCallback, paramChanged, newValue);
+    env->CallStaticVoidMethod(mActivityClass, midStateCallback, (int) paramChanged, newValue);
 }
 
 extern DECLSPEC int Android_JNI_GetHardwareType()
