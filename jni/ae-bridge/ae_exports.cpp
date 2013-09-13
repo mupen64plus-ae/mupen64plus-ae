@@ -172,69 +172,69 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStop(JNIEnv* env, jclass cls)
 {
-    coreDoCommand(M64CMD_STOP, 0, NULL);
+    if (coreDoCommand) coreDoCommand(M64CMD_STOP, 0, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuResume(JNIEnv* env, jclass cls)
 {
-    coreDoCommand(M64CMD_RESUME, 0, NULL);
+    if (coreDoCommand) coreDoCommand(M64CMD_RESUME, 0, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuPause(JNIEnv* env, jclass cls)
 {
-    coreDoCommand(M64CMD_PAUSE, 0, NULL);
+    if (coreDoCommand) coreDoCommand(M64CMD_PAUSE, 0, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuAdvanceFrame(JNIEnv* env, jclass cls)
 {
-    coreDoCommand(M64CMD_ADVANCE_FRAME, 0, NULL);
+    if (coreDoCommand) coreDoCommand(M64CMD_ADVANCE_FRAME, 0, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuSetSpeed(JNIEnv* env, jclass cls, jint percent)
 {
     int speed_factor = (int) percent;
-    coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &speed_factor);
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_FACTOR, &speed_factor);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuSetSlot(JNIEnv* env, jclass cls, jint slotID)
 {
-    coreDoCommand(M64CMD_STATE_SET_SLOT, (int) slotID, NULL);
+    if (coreDoCommand) coreDoCommand(M64CMD_STATE_SET_SLOT, (int) slotID, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuLoadSlot(JNIEnv* env, jclass cls)
 {
-    coreDoCommand(M64CMD_STATE_LOAD, 0, NULL);
+    if (coreDoCommand) coreDoCommand(M64CMD_STATE_LOAD, 0, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuSaveSlot(JNIEnv* env, jclass cls)
 {
-    coreDoCommand(M64CMD_STATE_SAVE, 1, NULL);
+    if (coreDoCommand) coreDoCommand(M64CMD_STATE_SAVE, 1, NULL);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuLoadFile(JNIEnv* env, jclass cls, jstring filename)
 {
     const char *nativeString = env->GetStringUTFChars(filename, 0);
-    coreDoCommand(M64CMD_STATE_LOAD, 0, (void *) nativeString);
+    if (coreDoCommand) coreDoCommand(M64CMD_STATE_LOAD, 0, (void *) nativeString);
     env->ReleaseStringUTFChars(filename, nativeString);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuSaveFile(JNIEnv* env, jclass cls, jstring filename)
 {
     const char *nativeString = env->GetStringUTFChars(filename, 0);
-    coreDoCommand(M64CMD_STATE_SAVE, 1, (void *) nativeString);
+    if (coreDoCommand) coreDoCommand(M64CMD_STATE_SAVE, 1, (void *) nativeString);
     env->ReleaseStringUTFChars(filename, nativeString);
 }
 
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGameShark(JNIEnv* env, jclass cls, jboolean pressed)
 {
     int p = pressed == JNI_TRUE ? 1 : 0;
-    coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK, &p);
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_INPUT_GAMESHARK, &p);
 }
 
 extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGetState(JNIEnv* env, jclass cls)
 {
     int state = 0;
-    coreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_EMU_STATE, &state);
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_EMU_STATE, &state);
     if (state == M64EMU_STOPPED)
         return (jint) 1;
     else if (state == M64EMU_RUNNING)
