@@ -88,7 +88,6 @@ public class GameLifecycleTracker
             {
                 case CoreInterface.EMULATOR_STATE_STOPPED:
                     mCoreState = CoreInterface.EMULATOR_STATE_RUNNING;
-                    CoreInterfaceNative.loadLibraries();
                     CoreInterface.startupEmulator();
                     break;
                 case CoreInterface.EMULATOR_STATE_PAUSED:
@@ -119,7 +118,6 @@ public class GameLifecycleTracker
             tryPausing();
             mCoreState = CoreInterface.EMULATOR_STATE_STOPPED;
             CoreInterface.shutdownEmulator();
-            CoreInterfaceNative.unloadLibraries();
         }
     }
     

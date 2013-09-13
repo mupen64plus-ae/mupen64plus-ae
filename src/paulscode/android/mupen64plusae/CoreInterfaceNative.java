@@ -80,10 +80,6 @@ public class CoreInterfaceNative extends CoreInterface
     // jni/ae-bridge/ae_exports.cpp
     // ------------------------------------------------------------------------
     
-    public static native void loadLibraries();
-    
-    public static native void unloadLibraries();
-    
     public static native void emuStart( Object[] args );
     
     public static native void emuStop();

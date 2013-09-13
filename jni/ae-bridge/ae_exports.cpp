@@ -74,23 +74,29 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 /*******************************************************************************
- Functions called by Java code
+ Functions called internally
  *******************************************************************************/
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_loadLibraries(JNIEnv* env, jclass cls)
+static void reloadLibraries()
 {
     LOGI("Loading native libraries");
 
     // TODO: Pass the library path as a function argument
-    const char* pathAEI = "/data/data/paulscode.android.mupen64plusae/lib/libae-imports.so";
-    const char* pathSDL = "/data/data/paulscode.android.mupen64plusae/lib/libSDL2.so";
-    const char* pathCore = "/data/data/paulscode.android.mupen64plusae/lib/libcore.so";
+    const char* pathAEI   = "/data/data/paulscode.android.mupen64plusae/lib/libae-imports.so";
+    const char* pathSDL   = "/data/data/paulscode.android.mupen64plusae/lib/libSDL2.so";
+    const char* pathCore  = "/data/data/paulscode.android.mupen64plusae/lib/libcore.so";
     const char* pathFront = "/data/data/paulscode.android.mupen64plusae/lib/libfront-end.so";
 
+    // Close shared libraries
+    if (handleFront) dlclose(handleFront);
+    if (handleCore)  dlclose(handleCore);
+    if (handleSDL)   dlclose(handleSDL);
+    if (handleAEI)   dlclose(handleAEI);
+
     // Open shared libraries
-    handleAEI = dlopen(pathAEI, RTLD_NOW);
-    handleSDL = dlopen(pathSDL, RTLD_NOW);
-    handleCore = dlopen(pathCore, RTLD_NOW);
+    handleAEI   = dlopen(pathAEI,   RTLD_NOW);
+    handleSDL   = dlopen(pathSDL,   RTLD_NOW);
+    handleCore  = dlopen(pathCore,  RTLD_NOW);
     handleFront = dlopen(pathFront, RTLD_NOW);
 
     // Make sure we don't have any typos
@@ -122,33 +128,15 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterf
     }
 }
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_unloadLibraries(JNIEnv* env, jclass cls)
-{
-    LOGI("Unloading native libraries");
-
-    // Nullify function pointers
-    aeiInit         = NULL;
-    sdlInit         = NULL;
-    sdlSetScreen    = NULL;
-    sdlMainReady    = NULL;
-    coreDoCommand   = NULL;
-    frontMain       = NULL;
-
-    // Close shared libraries
-    if (handleFront) dlclose(handleFront);
-    if (handleCore)  dlclose(handleCore);
-    if (handleSDL)   dlclose(handleSDL);
-    if (handleAEI)   dlclose(handleAEI);
-
-    // Nullify handles
-    handleFront     = NULL;
-    handleCore      = NULL;
-    handleSDL       = NULL;
-    handleAEI       = NULL;
-}
+/*******************************************************************************
+ Functions called by Java code
+ *******************************************************************************/
 
 extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStart(JNIEnv* env, jclass cls, jobjectArray jargv)
 {
+    // Reload the libraries to ensure that static variables are re-initialized
+    reloadLibraries();
+
     // Initialize dependencies
     aeiInit(env, cls);
     sdlInit(env, cls);
