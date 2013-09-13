@@ -121,8 +121,11 @@ public class CoreInterfaceNative extends CoreInterface
     {
         synchronized( sStateCallbackLock )
         {
-            if( sStateCallbackListener != null )
-                sStateCallbackListener.onStateCallback( paramChanged, newValue );
+            for( int i = sStateCallbackListeners.size(); i > 0; i-- )
+            {
+                // Traverse the list backwards in case any listeners remove themselves
+                sStateCallbackListeners.get( i - 1 ).onStateCallback( paramChanged, newValue );
+            }
         }
     }
     

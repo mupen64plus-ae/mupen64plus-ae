@@ -103,7 +103,7 @@ public class CoreInterface
     protected static final Vibrator[] sVibrators = new Vibrator[4];
     protected static AppData sAppData = null;
     protected static UserPrefs sUserPrefs = null;
-    protected static OnStateCallbackListener sStateCallbackListener = null;
+    protected static final ArrayList<OnStateCallbackListener> sStateCallbackListeners = new ArrayList<OnStateCallbackListener>();
     
     // Internal flags/caches
     protected static boolean sIsRestarting = false;
@@ -142,11 +142,21 @@ public class CoreInterface
         }
     }
     
-    public static void setOnStateCallbackListener( OnStateCallbackListener listener )
+    public static void addOnStateCallbackListener( OnStateCallbackListener listener )
     {
         synchronized( sStateCallbackLock )
         {
-            sStateCallbackListener = listener;
+            // Do not allow multiple instances, in case listeners want to remove themselves
+            if( !sStateCallbackListeners.contains( listener ) )
+                sStateCallbackListeners.add( listener );
+        }
+    }
+    
+    public static void removeOnStateCallbackListener( OnStateCallbackListener listener )
+    {
+        synchronized( sStateCallbackLock )
+        {
+            sStateCallbackListeners.remove( listener );
         }
     }
     
@@ -268,14 +278,14 @@ public class CoreInterface
     public static void waitForEmuState( final int state )
     {
         final Object lock = new Object();
-        setOnStateCallbackListener( new OnStateCallbackListener()
+        addOnStateCallbackListener( new OnStateCallbackListener()
         {
             @Override
             public void onStateCallback( int paramChanged, int newValue )
             {
                 if( paramChanged == M64CORE_EMU_STATE && newValue == state )
                 {
-                    setOnStateCallbackListener( null );
+                    removeOnStateCallbackListener( this );
                     synchronized( lock )
                     {
                         lock.notify();
