@@ -80,6 +80,10 @@ public class GameMenuHandler implements OnStateCallbackListener
         mSlotSubMenu = mSlotMenuItem.getSubMenu();
         mGameSpeedItem = menu.findItem( R.id.menuItem_toggleSpeed );
         
+        // Initialize the UI text to something sane
+        mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, 100 ) );
+        mSlotMenuItem.setTitle( mActivity.getString( R.string.menuItem_setSlot, 0 ) );
+        
         // Get the app data and user prefs after the activity has been created
         mUserPrefs = new UserPrefs( mActivity );
         
