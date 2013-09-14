@@ -233,18 +233,25 @@ public class CoreInterface
             }, "CoreThread" );
             sCoreThread.start();
             
-            // Wait for the emulator to start running
-            waitForEmuState( CoreInterface.EMULATOR_STATE_RUNNING );
-            
             // Auto-load state if desired
             if( !sIsRestarting )
             {
                 Notifier.showToast( sActivity, R.string.toast_loadingSession );
-                CoreInterfaceNative.emuLoadFile( sUserPrefs.selectedGameAutoSavefile );
+                addOnStateCallbackListener( new OnStateCallbackListener()
+                {
+                    @Override
+                    public void onStateCallback( int paramChanged, int newValue )
+                    {
+                        if( paramChanged == M64CORE_EMU_STATE && newValue == EMULATOR_STATE_RUNNING )
+                        {
+                            removeOnStateCallbackListener( this );
+                            CoreInterfaceNative.emuLoadFile( sUserPrefs.selectedGameAutoSavefile );
+                        }
+                    }
+                } );
             }
             
-			// Clear the flag so that the auto-save is loaded whenever the
-			// operating system stops and restarts the activity
+            // Ensure the auto-save is loaded if the operating system stops & restarts the activity
             sIsRestarting = false;
         }
     }
@@ -449,37 +456,6 @@ public class CoreInterface
     {
         CoreInterfaceNative.emuPause();
         CoreInterfaceNative.advanceFrame();
-    }
-    
-    public static void waitForEmuState( final int state )
-    {
-        final Object lock = new Object();
-        addOnStateCallbackListener( new OnStateCallbackListener()
-        {
-            @Override
-            public void onStateCallback( int paramChanged, int newValue )
-            {
-                if( paramChanged == M64CORE_EMU_STATE && newValue == state )
-                {
-                    removeOnStateCallbackListener( this );
-                    synchronized( lock )
-                    {
-                        lock.notify();
-                    }
-                }
-            }
-        } );
-        
-        synchronized( lock )
-        {
-            try
-            {
-                lock.wait();
-            }
-            catch( InterruptedException ignored )
-            {
-            }
-        }
     }
     
     /**
