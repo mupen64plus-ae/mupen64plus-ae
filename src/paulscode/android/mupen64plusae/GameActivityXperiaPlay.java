@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
 import android.os.Bundle;
@@ -63,8 +62,8 @@ public class GameActivityXperiaPlay extends NativeActivity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        UserPrefs userPrefs = new UserPrefs( this );
-        mMenuHandler = new GameMenuHandler( this, userPrefs.manualSaveDir );
+        mMenuHandler = new GameMenuHandler( this );
+        CoreInterface.addOnStateCallbackListener( mMenuHandler  );
         
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
@@ -102,6 +101,8 @@ public class GameActivityXperiaPlay extends NativeActivity
     @Override
     protected void onDestroy()
     {
+        CoreInterface.removeOnStateCallbackListener( mMenuHandler  );
+        
         super.onDestroy();
         mLifecycleHandler.onDestroy();
     }

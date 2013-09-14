@@ -30,11 +30,18 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.Prompt;
+import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptIntegerListener;
+import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.media.AudioTrack;
 import android.os.Vibrator;
+import android.text.InputType;
 import android.util.Log;
 
 /**
@@ -121,6 +128,19 @@ public class CoreInterface
     protected static int sFpsRecalcPeriod = 0;
     protected static int sFrameCount = -1;
     protected static long sLastFpsTime = 0;
+    
+    // Speed info
+    private static final int BASELINE_SPEED = 100;
+    private static final int DEFAULT_SPEED = 250;
+    private static final int MAX_SPEED = 300;
+    private static final int MIN_SPEED = 10;
+    private static final int DELTA_SPEED = 10;
+    private static boolean sUseCustomSpeed = false;
+    private static int sCustomSpeed = DEFAULT_SPEED;
+    
+    // Slot info
+    private static final int NUM_SLOTS = 10;
+    private static int sCurrentSlot = 0;
     
     public static void refresh( Activity activity, GameSurface surface )
     {
@@ -273,6 +293,162 @@ public class CoreInterface
                 CoreInterfaceNative.emuSaveFile( sUserPrefs.selectedGameAutoSavefile );
             }
         }
+    }
+    
+    public static void togglePause()
+    {
+        int state = CoreInterfaceNative.emuGetState();
+        if( state == EMULATOR_STATE_PAUSED )
+            CoreInterfaceNative.emuResume();
+        else if( state == EMULATOR_STATE_RUNNING )
+            CoreInterfaceNative.emuPause();
+    }
+    
+    public static void setSlot( int value )
+    {
+        sCurrentSlot = value % NUM_SLOTS;
+        CoreInterfaceNative.emuSetSlot( sCurrentSlot );
+        Notifier.showToast( sActivity, R.string.toast_usingSlot, sCurrentSlot );
+        
+        // TODO: We might not need this anymore... need to check
+        sAppData.putLastSlot( sCurrentSlot );
+    }
+    
+    public static void incrementSlot()
+    {
+        setSlot( sCurrentSlot + 1 );
+    }
+    
+    public static void saveSlot()
+    {
+        Notifier.showToast( sActivity, R.string.toast_savingSlot, sCurrentSlot );
+        CoreInterfaceNative.emuSaveSlot();
+    }
+    
+    public static void loadSlot()
+    {
+        Notifier.showToast( sActivity, R.string.toast_loadingSlot, sCurrentSlot );
+        CoreInterfaceNative.emuLoadSlot();
+    }
+    
+    public static void saveFileFromPrompt()
+    {
+        CoreInterface.pauseEmulator( false );
+        CharSequence title = sActivity.getText( R.string.menuItem_fileSave );
+        CharSequence hint = sActivity.getText( R.string.hintFileSave );
+        int inputType = InputType.TYPE_CLASS_TEXT;
+        Prompt.promptText( sActivity, title, null, hint, inputType, new PromptTextListener()
+        {
+            @Override
+            public void onDialogClosed( CharSequence text, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                    saveState( text.toString() );
+                CoreInterface.resumeEmulator();
+            }
+        } );
+    }
+    
+    public static void loadFileFromPrompt()
+    {
+        CoreInterface.pauseEmulator( false );
+        CharSequence title = sActivity.getText( R.string.menuItem_fileLoad );
+        File startPath = new File( sUserPrefs.manualSaveDir );
+        Prompt.promptFile( sActivity, title, null, startPath, new PromptFileListener()
+        {
+            @Override
+            public void onDialogClosed( File file, int which )
+            {
+                if( which == DialogInterface.BUTTON_POSITIVE )
+                    loadState( file );
+                CoreInterface.resumeEmulator();
+            }
+        } );
+    }
+    
+    public static void saveState( final String filename )
+    {
+        final File file = new File( sUserPrefs.manualSaveDir + "/" + filename );
+        if( file.exists() )
+        {
+            String title = sActivity.getString( R.string.confirm_title );
+            String message = sActivity.getString( R.string.confirmOverwriteFile_message, filename );
+            Prompt.promptConfirm( sActivity, title, message, new PromptConfirmListener()
+            {
+                @Override
+                public void onConfirm()
+                {
+                    Notifier.showToast( sActivity, R.string.toast_overwritingFile, file.getName() );
+                    CoreInterfaceNative.emuSaveFile( file.getAbsolutePath() );
+                }
+            } );
+        }
+        else
+        {
+            Notifier.showToast( sActivity, R.string.toast_savingFile, file.getName() );
+            CoreInterfaceNative.emuSaveFile( file.getAbsolutePath() );
+        }
+    }
+    
+    public static void loadState( File file )
+    {
+        Notifier.showToast( sActivity, R.string.toast_loadingFile, file.getName() );
+        CoreInterfaceNative.emuLoadFile( file.getAbsolutePath() );
+    }
+    
+    public static void setCustomSpeedFromPrompt()
+    {
+        CoreInterfaceNative.emuPause();
+        final CharSequence title = sActivity.getText( R.string.menuItem_setSpeed );
+        Prompt.promptInteger( sActivity, title, "%1$d %%", sCustomSpeed, MIN_SPEED, MAX_SPEED,
+                new PromptIntegerListener()
+                {
+                    @Override
+                    public void onDialogClosed( Integer value, int which )
+                    {
+                        if( which == DialogInterface.BUTTON_POSITIVE )
+                        {
+                            setCustomSpeed( value );
+                        }
+                        CoreInterfaceNative.emuResume();
+                    }
+                } );
+    }
+    
+    public static void incrementCustomSpeed()
+    {
+        setCustomSpeed( sCustomSpeed + DELTA_SPEED );
+    }
+    
+    public static void decrementCustomSpeed()
+    {
+        setCustomSpeed( sCustomSpeed - DELTA_SPEED );
+    }
+    
+    public static void setCustomSpeed( int value )
+    {
+        sCustomSpeed = Utility.clamp( value, MIN_SPEED, MAX_SPEED );
+        sUseCustomSpeed = true;
+        CoreInterfaceNative.emuSetSpeed( sCustomSpeed );
+    }
+    
+    public static void toggleSpeed()
+    {
+        sUseCustomSpeed = !sUseCustomSpeed;
+        int speed = sUseCustomSpeed ? sCustomSpeed : BASELINE_SPEED;
+        CoreInterfaceNative.emuSetSpeed( speed );
+    }
+    
+    public static void fastForward( boolean pressed )
+    {
+        int speed = pressed ? sCustomSpeed : BASELINE_SPEED;
+        CoreInterfaceNative.emuSetSpeed( speed );
+    }
+    
+    public static void advanceFrame()
+    {
+        CoreInterfaceNative.emuPause();
+        CoreInterfaceNative.advanceFrame();
     }
     
     public static void waitForEmuState( final int state )

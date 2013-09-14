@@ -20,41 +20,21 @@
  */
 package paulscode.android.mupen64plusae;
 
-import java.io.File;
-
+import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
-import paulscode.android.mupen64plusae.util.Prompt;
-import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.util.Prompt.PromptFileListener;
-import paulscode.android.mupen64plusae.util.Prompt.PromptIntegerListener;
-import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Vibrator;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
-public class GameMenuHandler
+public class GameMenuHandler implements OnStateCallbackListener
 {
-    private static final int BASELINE_SPEED_FACTOR = 100;
-    
-    private static final int DEFAULT_SPEED_FACTOR = 250;
-    
-    public static final int MAX_SPEED_FACTOR = 300;
-    
-    public static final int MIN_SPEED_FACTOR = 10;
-    
-    private static final int NUM_SLOTS = 10;
-    
     private final Activity mActivity;
-    
-    private final String mManualSaveDir;
     
     private MenuItem mSlotMenuItem;
     
@@ -62,23 +42,34 @@ public class GameMenuHandler
     
     private Menu mSlotSubMenu;
     
-    private AppData mAppData;
-    
     private UserPrefs mUserPrefs;
     
-    public int mSlot = 0;
-    
-    public boolean mCustomSpeed = false;
-    
-    public int mSpeedFactor = DEFAULT_SPEED_FACTOR;
-    
-    public static GameMenuHandler sInstance = null;
-    
-    public GameMenuHandler( Activity activity, String manualSaveDir )
+    public GameMenuHandler( Activity activity )
     {
         mActivity = activity;
-        mManualSaveDir = manualSaveDir;
-        sInstance = this;
+    }
+    
+    @Override
+    public void onStateCallback( int paramChanged, int newValue )
+    {
+        if( paramChanged == CoreInterface.M64CORE_SPEED_FACTOR )
+        {
+            mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, newValue ) );
+        }
+        else if( paramChanged == CoreInterface.M64CORE_SAVESTATE_SLOT )
+        {
+            // Refresh the slot item in the top-level options menu
+            if( mSlotMenuItem != null )
+                mSlotMenuItem.setTitle( mActivity.getString( R.string.menuItem_setSlot, newValue ) );
+            
+            // Refresh the slot submenu
+            if( mSlotSubMenu != null )
+            {
+                MenuItem item = mSlotSubMenu.getItem( newValue );
+                if( item != null )
+                    item.setChecked( true );
+            }
+        }
     }
     
     public void onCreateOptionsMenu( Menu menu )
@@ -88,15 +79,9 @@ public class GameMenuHandler
         mSlotMenuItem = menu.findItem( R.id.menuItem_setSlot );
         mSlotSubMenu = mSlotMenuItem.getSubMenu();
         mGameSpeedItem = menu.findItem( R.id.menuItem_toggleSpeed );
-        mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed,
-                BASELINE_SPEED_FACTOR ) );
         
         // Get the app data and user prefs after the activity has been created
-        mAppData = new AppData( mActivity );
         mUserPrefs = new UserPrefs( mActivity );
-        
-        // Initialize to the last slot used
-        setSlot( mAppData.getLastSlot(), false );
         
         // Initialize the pak menus (reverse order since some get hidden)
         initializePakMenu( menu, 4, mUserPrefs.isPlugged4, mUserPrefs.getPakType( 4 ) );
@@ -155,34 +140,34 @@ public class GameMenuHandler
         switch( item.getItemId() )
         {
             case R.id.menuItem_slot0:
-                setSlot( 0, true );
+                CoreInterface.setSlot( 0 );
                 break;
             case R.id.menuItem_slot1:
-                setSlot( 1, true );
+                CoreInterface.setSlot( 1 );
                 break;
             case R.id.menuItem_slot2:
-                setSlot( 2, true );
+                CoreInterface.setSlot( 2 );
                 break;
             case R.id.menuItem_slot3:
-                setSlot( 3, true );
+                CoreInterface.setSlot( 3 );
                 break;
             case R.id.menuItem_slot4:
-                setSlot( 4, true );
+                CoreInterface.setSlot( 4 );
                 break;
             case R.id.menuItem_slot5:
-                setSlot( 5, true );
+                CoreInterface.setSlot( 5 );
                 break;
             case R.id.menuItem_slot6:
-                setSlot( 6, true );
+                CoreInterface.setSlot( 6 );
                 break;
             case R.id.menuItem_slot7:
-                setSlot( 7, true );
+                CoreInterface.setSlot( 7 );
                 break;
             case R.id.menuItem_slot8:
-                setSlot( 8, true );
+                CoreInterface.setSlot( 8 );
                 break;
             case R.id.menuItem_slot9:
-                setSlot( 9, true );
+                CoreInterface.setSlot( 9 );
                 break;
             case R.id.menuItem_pak1_empty:
                 setPak( 1, CoreInterface.PAK_TYPE_NONE, item );
@@ -221,22 +206,22 @@ public class GameMenuHandler
                 setPak( 4, CoreInterface.PAK_TYPE_RUMBLE, item );
                 break;
             case R.id.menuItem_toggleSpeed:
-                toggleSpeed();
+                CoreInterface.toggleSpeed();
                 break;
             case R.id.menuItem_slotSave:
-                saveSlot();
+                CoreInterface.saveSlot();
                 break;
             case R.id.menuItem_slotLoad:
-                loadSlot();
+                CoreInterface.loadSlot();
                 break;
             case R.id.menuItem_fileSave:
-                saveFileFromPrompt();
+                CoreInterface.saveFileFromPrompt();
                 break;
             case R.id.menuItem_fileLoad:
-                loadFileFromPrompt();
+                CoreInterface.loadFileFromPrompt();
                 break;
             case R.id.menuItem_setSpeed:
-                setSpeed();
+                CoreInterface.setCustomSpeedFromPrompt();
                 break;
             case R.id.menuItem_setIme:
                 setIme();
@@ -247,41 +232,6 @@ public class GameMenuHandler
             default:
                 break;
         }
-    }
-    
-    private void toggleSpeed()
-    {
-        mCustomSpeed = !mCustomSpeed;
-        int speed = mCustomSpeed ? mSpeedFactor : BASELINE_SPEED_FACTOR;
-        
-        CoreInterfaceNative.emuSetSpeed( speed );
-        mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, speed ) );
-    }
-    
-    public void setSlot( int value, boolean notify )
-    {
-        // Sanity check and persist the value
-        mSlot = value % NUM_SLOTS;
-        mAppData.putLastSlot( mSlot );
-        
-        // Set the slot in the core
-        CoreInterfaceNative.emuSetSlot( mSlot );
-        
-        // Refresh the slot item in the top-level options menu
-        if( mSlotMenuItem != null )
-            mSlotMenuItem.setTitle( mActivity.getString( R.string.menuItem_setSlot, mSlot ) );
-        
-        // Refresh the slot submenu
-        if( mSlotSubMenu != null )
-        {
-            MenuItem item = mSlotSubMenu.getItem( mSlot );
-            if( item != null )
-                item.setChecked( true );
-        }
-        
-        // Send a toast if requested
-        if( notify )
-            Notifier.showToast( mActivity, R.string.toast_usingSlot, mSlot );
     }
     
     public void setPak( int player, int pakType, MenuItem item )
@@ -303,83 +253,6 @@ public class GameMenuHandler
         }
     }
     
-    private void saveSlot()
-    {
-        Notifier.showToast( mActivity, R.string.toast_savingSlot, mSlot );
-        CoreInterfaceNative.emuSaveSlot();
-    }
-    
-    private void loadSlot()
-    {
-        Notifier.showToast( mActivity, R.string.toast_loadingSlot, mSlot );
-        CoreInterfaceNative.emuLoadSlot();
-    }
-    
-    private void saveFileFromPrompt()
-    {
-        CoreInterface.pauseEmulator( false );
-        CharSequence title = mActivity.getText( R.string.menuItem_fileSave );
-        CharSequence hint = mActivity.getText( R.string.hintFileSave );
-        int inputType = InputType.TYPE_CLASS_TEXT;
-        Prompt.promptText( mActivity, title, null, hint, inputType, new PromptTextListener()
-        {
-            @Override
-            public void onDialogClosed( CharSequence text, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                    saveState( text.toString() );
-                CoreInterface.resumeEmulator();
-            }
-        } );
-    }
-    
-    private void loadFileFromPrompt()
-    {
-        CoreInterface.pauseEmulator( false );
-        CharSequence title = mActivity.getText( R.string.menuItem_fileLoad );
-        File startPath = new File( mManualSaveDir );
-        Prompt.promptFile( mActivity, title, null, startPath, new PromptFileListener()
-        {
-            @Override
-            public void onDialogClosed( File file, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                    loadState( file );
-                CoreInterface.resumeEmulator();
-            }
-        } );
-    }
-    
-    private void saveState( final String filename )
-    {
-        final File file = new File( mManualSaveDir + "/" + filename );
-        if( file.exists() )
-        {
-            String title = mActivity.getString( R.string.confirm_title );
-            String message = mActivity.getString( R.string.confirmOverwriteFile_message, filename );
-            Prompt.promptConfirm( mActivity, title, message, new PromptConfirmListener()
-            {
-                @Override
-                public void onConfirm()
-                {
-                    Notifier.showToast( mActivity, R.string.toast_overwritingFile, file.getName() );
-                    CoreInterfaceNative.emuSaveFile( file.getAbsolutePath() );
-                }
-            } );
-        }
-        else
-        {
-            Notifier.showToast( mActivity, R.string.toast_savingFile, file.getName() );
-            CoreInterfaceNative.emuSaveFile( file.getAbsolutePath() );
-        }
-    }
-    
-    private void loadState( File file )
-    {
-        Notifier.showToast( mActivity, R.string.toast_loadingFile, file.getName() );
-        CoreInterfaceNative.emuLoadFile( file.getAbsolutePath() );
-    }
-    
     private void setIme()
     {
         InputMethodManager imeManager = (InputMethodManager) mActivity
@@ -388,32 +261,5 @@ public class GameMenuHandler
         {
             imeManager.showInputMethodPicker();
         }
-    }
-    
-    private void setSpeed()
-    {
-        CoreInterface.pauseEmulator( false );
-        
-        final CharSequence title = mActivity.getText( R.string.menuItem_setSpeed );
-        
-        Prompt.promptInteger( mActivity, title, "%1$d %%", mSpeedFactor, MIN_SPEED_FACTOR,
-                MAX_SPEED_FACTOR, new PromptIntegerListener()
-        {            
-            @Override
-            public void onDialogClosed( Integer value, int which )
-            {
-                if( which == DialogInterface.BUTTON_POSITIVE )
-                {
-                    mSpeedFactor = value;
-                    mCustomSpeed = true;
-                    CoreInterfaceNative.emuSetSpeed( mSpeedFactor );
-                    
-                    mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed,
-                            mSpeedFactor ) );
-                }
-                
-                CoreInterface.resumeEmulator();
-            }
-        } );
     }
 }

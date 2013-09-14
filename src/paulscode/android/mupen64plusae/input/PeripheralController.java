@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.CoreInterfaceNative;
-import paulscode.android.mupen64plusae.GameMenuHandler;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
@@ -70,15 +69,6 @@ public class PeripheralController extends AbstractController implements
     
     /** The negative analogy-y strength, between 0 and 1, inclusive. */
     private float mStrengthYneg;
-    
-    /** Toggle so pause function also acts as resume. */
-    private boolean doPause = false;
-    
-    /** Difference in emulation speed after modification by mapped speed-up and slow-down functions. */
-    private int speedOffset = 0;
-    
-    /** Amount to change the speed with each speed-up or slow-down function press. */
-    private static final int SPEED_INC = 10;
     
     /**
      * Instantiates a new peripheral controller.
@@ -232,46 +222,39 @@ public class PeripheralController extends AbstractController implements
             {
                 case InputMap.FUNC_INCREMENT_SLOT:
                     Log.v( "PeripheralController", "FUNC_INCREMENT_SLOT" );
-                    if( GameMenuHandler.sInstance != null )
-                        GameMenuHandler.sInstance.setSlot( GameMenuHandler.sInstance.mSlot + 1, true );
+                    CoreInterface.incrementSlot();
                     break;
                 case InputMap.FUNC_SAVE_SLOT:
                     Log.v( "PeripheralController", "FUNC_SAVE_SLOT" );
-                    CoreInterfaceNative.emuSaveSlot();
+                    CoreInterface.saveSlot();
                     break;
                 case InputMap.FUNC_LOAD_SLOT:
                     Log.v( "PeripheralController", "FUNC_LOAD_SLOT" );
-                    CoreInterfaceNative.emuLoadSlot();
+                    CoreInterface.loadSlot();
                     break;
                 case InputMap.FUNC_STOP:
                     Log.v( "PeripheralController", "FUNC_STOP" );
-                    CoreInterfaceNative.emuStop();
+                    CoreInterface.shutdownEmulator();
                     break;
                 case InputMap.FUNC_PAUSE:
                     Log.v( "PeripheralController", "FUNC_PAUSE" );
-                    if( doPause )
-                        CoreInterface.pauseEmulator( false );
-                    else
-                        CoreInterface.resumeEmulator();
-                    doPause = !doPause;
+                    CoreInterface.togglePause();
                     break;
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    CoreInterfaceNative.emuSetSpeed( 300 );
+                    CoreInterface.fastForward( true );
                     break;
                 case InputMap.FUNC_FRAME_ADVANCE:
                     Log.v( "PeripheralController", "FUNC_FRAME_ADVANCE" );
-                    CoreInterfaceNative.emuAdvanceFrame();
+                    CoreInterface.advanceFrame();
                     break;
                 case InputMap.FUNC_SPEED_UP:
                     Log.v( "PeripheralController", "FUNC_SPEED_UP" );
-                    speedOffset += SPEED_INC;
-                    setSpeed();
+                    CoreInterface.incrementCustomSpeed();
                     break;
                 case InputMap.FUNC_SPEED_DOWN:
                     Log.v( "PeripheralController", "FUNC_SPEED_DOWN" );
-                    speedOffset -= SPEED_INC;
-                    setSpeed();
+                    CoreInterface.decrementCustomSpeed();
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
@@ -285,21 +268,17 @@ public class PeripheralController extends AbstractController implements
                     String[] menu_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_MENU ) };
                     SafeMethods.exec( menu_cmd, false );
                     break;
-// TODO: Less hackish method of synchronizing slots and speeds between PeripheralController and GameMenuHandler
                 default:
                     return false;
             }
         }
-        else
+        else // keyUp
         {
             switch( n64Index )
             {
                 case InputMap.FUNC_FAST_FORWARD:
                     Log.v( "PeripheralController", "FUNC_FAST_FORWARD" );
-                    if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
-                        CoreInterfaceNative.emuSetSpeed( GameMenuHandler.sInstance.mSpeedFactor );
-                    else
-                        CoreInterfaceNative.emuSetSpeed( 100 );
+                    CoreInterface.fastForward( false );
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
@@ -310,20 +289,5 @@ public class PeripheralController extends AbstractController implements
             }
         }
         return true;
-    }
-    
-    private void setSpeed()
-    {
-        int speed = 100;
-        if( GameMenuHandler.sInstance != null && GameMenuHandler.sInstance.mCustomSpeed )
-            speed = GameMenuHandler.sInstance.mSpeedFactor;
-        
-        speed += speedOffset;
-        
-        // Clamp the speed to valid values.
-        speed = Utility.clamp( speed, GameMenuHandler.MIN_SPEED_FACTOR,
-                GameMenuHandler.MAX_SPEED_FACTOR );
-        
-        CoreInterfaceNative.emuSetSpeed( speed );
     }
 }

@@ -20,7 +20,6 @@
  */
 package paulscode.android.mupen64plusae;
 
-import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -60,8 +59,8 @@ public class GameActivity extends Activity
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
-        UserPrefs userPrefs = new UserPrefs( this );
-        mMenuHandler = new GameMenuHandler( this, userPrefs.manualSaveDir );
+        mMenuHandler = new GameMenuHandler( this );
+        CoreInterface.addOnStateCallbackListener( mMenuHandler  );
         
         mLifecycleHandler.onCreateBegin( savedInstanceState );
         super.onCreate( savedInstanceState );
@@ -99,6 +98,8 @@ public class GameActivity extends Activity
     @Override
     protected void onDestroy()
     {
+        CoreInterface.removeOnStateCallbackListener( mMenuHandler  );
+        
         super.onDestroy();
         mLifecycleHandler.onDestroy();
     }
