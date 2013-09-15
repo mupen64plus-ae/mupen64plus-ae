@@ -168,7 +168,6 @@ public class AppData
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
     private static final String KEY_LAST_APP_VERSION_CODE = "lastAppVersion";
-    private static final String KEY_LAST_SLOT = "lastSlot";
     private static final String KEY_LAST_ROM = "lastRom";
     private static final String KEY_LAST_CRC = "lastCrc";
     // ... add more as needed
@@ -176,7 +175,6 @@ public class AppData
     // Shared preferences default values
     private static final int DEFAULT_ASSET_VERSION = 0;
     private static final int DEFAULT_LAST_APP_VERSION_CODE = 0;
-    private static final int DEFAULT_LAST_SLOT = 0;
     private static final String DEFAULT_LAST_ROM = "";
     private static final String DEFAULT_LAST_CRC = "";
     
@@ -324,16 +322,6 @@ public class AppData
     }
     
     /**
-     * Gets the last savegame slot.
-     * 
-     * @return The last slot.
-     */
-    public int getLastSlot()
-    {
-        return getInt( KEY_LAST_SLOT, DEFAULT_LAST_SLOT );
-    }
-    
-    /**
      * Gets the last ROM that the CRC was computed for.
      * 
      * @return The last ROM.
@@ -371,16 +359,6 @@ public class AppData
     public void putLastAppVersionCode( int value )
     {
         putInt( KEY_LAST_APP_VERSION_CODE, value );
-    }
-    
-    /**
-     * Persists the last savegame slot.
-     * 
-     * @param value The last slot.
-     */
-    public void putLastSlot( int value )
-    {
-        putInt( KEY_LAST_SLOT, value );
     }
     
     /**

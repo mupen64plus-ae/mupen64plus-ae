@@ -315,9 +315,6 @@ public class CoreInterface
         int slot = value % NUM_SLOTS;
         CoreInterfaceNative.emuSetSlot( slot );
         Notifier.showToast( sActivity, R.string.toast_usingSlot, slot );
-        
-        // TODO: We might not need this anymore... need to check
-        sAppData.putLastSlot( slot );
     }
     
     public static void incrementSlot()
@@ -506,7 +503,6 @@ public class CoreInterface
         mupen64plus_cfg.put( "Core", "DisableExtraMem", "False" );                                                          // Disable 4MB expansion RAM pack. May be necessary for some games
         mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );                                                   // Increment the save state slot after each save operation
         mupen64plus_cfg.put( "Core", "EnableDebugger", "False" );                                                           // Activate the R4300 debugger when ROM execution begins, if core was built with Debugger support
-        mupen64plus_cfg.put( "Core", "CurrentStateSlot", String.valueOf( appData.getLastSlot() ) );                         // Save state slot (0-9) to use when saving/loading the emulator state
         mupen64plus_cfg.put( "Core", "ScreenshotPath", EMPTY );                                                             // Path to directory where screenshots are saved. If this is blank, the default value of ${UserConfigPath}/screenshot will be used
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + user.slotSaveDir + '"' );                                       // Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserConfigPath}/save will be used
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + user.sramSaveDir + '"' );                                        // Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used
