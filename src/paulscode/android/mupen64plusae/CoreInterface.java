@@ -140,7 +140,6 @@ public class CoreInterface
     
     // Slot info
     private static final int NUM_SLOTS = 10;
-    private static int sCurrentSlot = 0;
     
     public static void refresh( Activity activity, GameSurface surface )
     {
@@ -313,28 +312,31 @@ public class CoreInterface
     
     public static void setSlot( int value )
     {
-        sCurrentSlot = value % NUM_SLOTS;
-        CoreInterfaceNative.emuSetSlot( sCurrentSlot );
-        Notifier.showToast( sActivity, R.string.toast_usingSlot, sCurrentSlot );
+        int slot = value % NUM_SLOTS;
+        CoreInterfaceNative.emuSetSlot( slot );
+        Notifier.showToast( sActivity, R.string.toast_usingSlot, slot );
         
         // TODO: We might not need this anymore... need to check
-        sAppData.putLastSlot( sCurrentSlot );
+        sAppData.putLastSlot( slot );
     }
     
     public static void incrementSlot()
     {
-        setSlot( sCurrentSlot + 1 );
+        int slot = CoreInterfaceNative.emuGetSlot();
+        setSlot( slot + 1 );
     }
     
     public static void saveSlot()
     {
-        Notifier.showToast( sActivity, R.string.toast_savingSlot, sCurrentSlot );
+        int slot = CoreInterfaceNative.emuGetSlot();
+        Notifier.showToast( sActivity, R.string.toast_savingSlot, slot );
         CoreInterfaceNative.emuSaveSlot();
     }
     
     public static void loadSlot()
     {
-        Notifier.showToast( sActivity, R.string.toast_loadingSlot, sCurrentSlot );
+        int slot = CoreInterfaceNative.emuGetSlot();
+        Notifier.showToast( sActivity, R.string.toast_loadingSlot, slot );
         CoreInterfaceNative.emuLoadSlot();
     }
     
