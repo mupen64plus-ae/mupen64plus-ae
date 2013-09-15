@@ -238,3 +238,17 @@ extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_CoreInterfaceNativ
     else
         return (jint) 0;
 }
+
+extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGetSpeed(JNIEnv* env, jclass cls)
+{
+    int speed = 0;
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SPEED_FACTOR, &speed);
+    return (jint) speed;
+}
+
+extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGetSlot(JNIEnv* env, jclass cls)
+{
+    int slot = 0;
+    if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SAVESTATE_SLOT, &slot);
+    return (jint) slot;
+}

@@ -106,6 +106,10 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native int emuGetState();
     
+    public static native int emuGetSpeed();
+    
+    public static native int emuGetSlot();
+    
     // ------------------------------------------------------------------------
     // Call-ins made FROM native code
     // jni/ae-bridge/ae_imports.cpp
