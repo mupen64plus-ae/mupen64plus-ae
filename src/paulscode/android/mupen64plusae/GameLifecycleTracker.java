@@ -72,9 +72,6 @@ public class GameLifecycleTracker
     /** True if the surface is available. */
     private boolean mIsSurface = false;
     
-    /** Emulator state. */
-    private int mCoreState = CoreInterface.EMULATOR_STATE_STOPPED;
-    
     private boolean isSafeToRender()
     {
         return mIsFocused && mIsResumed && mIsSurface;
@@ -82,20 +79,18 @@ public class GameLifecycleTracker
     
     private void tryRunning()
     {
-        if( isSafeToRender() && ( mCoreState != CoreInterface.EMULATOR_STATE_RUNNING ) )
+        int state = CoreInterfaceNative.emuGetState();
+        if( isSafeToRender() && ( state != CoreInterface.EMULATOR_STATE_RUNNING ) )
         {
-            switch( mCoreState )
+            switch( state )
             {
-                case CoreInterface.EMULATOR_STATE_STOPPED:
-                    mCoreState = CoreInterface.EMULATOR_STATE_RUNNING;
+                case CoreInterface.EMULATOR_STATE_UNKNOWN:
                     CoreInterface.startupEmulator();
                     break;
                 case CoreInterface.EMULATOR_STATE_PAUSED:
-                    mCoreState = CoreInterface.EMULATOR_STATE_RUNNING;
                     CoreInterface.resumeEmulator();
                     break;
                 default:
-                    Log.e( "GameLifecycleTracker", "Can't start emulator from an unknown state" );
                     break;
             }
         }
@@ -103,20 +98,18 @@ public class GameLifecycleTracker
     
     private void tryPausing()
     {
-        if( mCoreState != CoreInterface.EMULATOR_STATE_PAUSED )
+        if( CoreInterfaceNative.emuGetState() != CoreInterface.EMULATOR_STATE_PAUSED )
         {
-            mCoreState = CoreInterface.EMULATOR_STATE_PAUSED;
             CoreInterface.pauseEmulator( true );
         }
     }
     
     private void tryStopping()
     {
-        if( mCoreState != CoreInterface.EMULATOR_STATE_STOPPED )
+        if( CoreInterfaceNative.emuGetState() != CoreInterface.EMULATOR_STATE_STOPPED )
         {
             // Never go directly from running to stopped; always pause (and autosave) first
             tryPausing();
-            mCoreState = CoreInterface.EMULATOR_STATE_STOPPED;
             CoreInterface.shutdownEmulator();
         }
     }
