@@ -454,7 +454,7 @@ public class CoreInterface
     public static void advanceFrame()
     {
         CoreInterfaceNative.emuPause();
-        CoreInterfaceNative.advanceFrame();
+        CoreInterfaceNative.emuAdvanceFrame();
     }
     
     /**
