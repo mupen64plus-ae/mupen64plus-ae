@@ -24,6 +24,7 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.PathPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.CrashTester;
@@ -58,6 +59,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
+    
+    private static final String PATH_SELECTED_GAME = "pathSelectedGame";
     
     private static final String ACTION_PLAY = "actionPlay";
     private static final String ACTION_DEVICE_INFO = "actionDeviceInfo";
@@ -109,6 +112,23 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
+    
+    @Override
+    protected void onNewIntent( Intent intent )
+    {
+        // If the activity is already running and is launched again (e.g. from a file manager app),
+        // the existing instance will be reused rather than a new one created. This behavior is
+        // specified in the manifest (launchMode = singleTask). In that situation, any activities
+        // above this on the stack (e.g. GameActivity, PlayMenuActivity) will be destroyed
+        // gracefully and onNewIntent() will be called on this instance. onCreate() will NOT be
+        // called again on this instance. Currently, the only info that may be passed via the intent
+        // is the selected game path, so we only need to refresh that aspect of the UI.  This will
+        // happen anyhow in onResume(), so we don't really need to do much here.
+        super.onNewIntent( intent );
+        
+        // Only remember the last intent used
+        setIntent( intent );
+    }
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -251,8 +271,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     {
         super.onResume();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        refreshViews( sharedPreferences, mUserPrefs );
         sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+        refreshViews();
     }
     
     @Override
@@ -276,43 +296,52 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         else
         {
             // Just refresh the preference screens in place
-            mUserPrefs = new UserPrefs( this );
-            refreshViews( sharedPreferences, mUserPrefs );
+            refreshViews();
         }
     }
     
     @TargetApi( 9 )
     @SuppressWarnings( "deprecation" )
-    private void refreshViews( SharedPreferences sharedPreferences, UserPrefs user )
+    private void refreshViews()
     {
+        // Refresh the preferences object
+        mUserPrefs = new UserPrefs( this );
+        
         // Enable the play menu only if the selected game actually exists
         File selectedGame = new File( mUserPrefs.selectedGame );
         boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
         PrefUtil.enablePreference( this, ACTION_PLAY, isValidGame );
         
+        // Update the summary text for the selected game
+        PathPreference pp = (PathPreference) findPreference( PATH_SELECTED_GAME );
+        if( pp != null )
+        {
+            pp.setSummary( selectedGame.getName() );
+        }
+        
         // Enable the input menu only if the input plug-in is not a dummy
-        PrefUtil.enablePreference( this, SCREEN_INPUT, user.inputPlugin.enabled );
+        PrefUtil.enablePreference( this, SCREEN_INPUT, mUserPrefs.inputPlugin.enabled );
         
         // Enable the audio menu only if the audio plug-in is not a dummy
-        PrefUtil.enablePreference( this, SCREEN_AUDIO, user.audioPlugin.enabled );
+        PrefUtil.enablePreference( this, SCREEN_AUDIO, mUserPrefs.audioPlugin.enabled );
         
         // Enable the video menu only if the video plug-in is not a dummy
-        PrefUtil.enablePreference( this, SCREEN_VIDEO, user.videoPlugin.enabled );
+        PrefUtil.enablePreference( this, SCREEN_VIDEO, mUserPrefs.videoPlugin.enabled );
         
         // Enable the auto-holdables pref if auto-hold is not disabled
-        PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, user.isTouchscreenEnabled
-                && user.touchscreenAutoHold != TouchController.AUTOHOLD_METHOD_DISABLED );
+        PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, mUserPrefs.isTouchscreenEnabled
+                && mUserPrefs.touchscreenAutoHold != TouchController.AUTOHOLD_METHOD_DISABLED );
         
         // Enable the custom touchscreen prefs under certain conditions
-        PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, user.isTouchscreenEnabled
-                && user.isTouchscreenCustom );
-        PrefUtil.enablePreference( this, TOUCHSCREEN_STYLE, user.isTouchscreenEnabled
-                && !user.isTouchscreenCustom );
-        PrefUtil.enablePreference( this, TOUCHSCREEN_HEIGHT, user.isTouchscreenEnabled
-                && !user.isTouchscreenCustom );
+        PrefUtil.enablePreference( this, PATH_CUSTOM_TOUCHSCREEN, mUserPrefs.isTouchscreenEnabled
+                && mUserPrefs.isTouchscreenCustom );
+        PrefUtil.enablePreference( this, TOUCHSCREEN_STYLE, mUserPrefs.isTouchscreenEnabled
+                && !mUserPrefs.isTouchscreenCustom );
+        PrefUtil.enablePreference( this, TOUCHSCREEN_HEIGHT, mUserPrefs.isTouchscreenEnabled
+                && !mUserPrefs.isTouchscreenCustom );
         
         // Enable the custom hardware profile prefs only when custom video hardware type is selected
-        PrefUtil.enablePreference( this, CUSTOM_POLYGON_OFFSET, user.videoHardwareType == 999 );
+        PrefUtil.enablePreference( this, CUSTOM_POLYGON_OFFSET, mUserPrefs.videoHardwareType == 999 );
         
         // Update the summary text in a particular way for ACRA user info
         EditTextPreference pref = (EditTextPreference) findPreference( ACRA_USER_EMAIL );
