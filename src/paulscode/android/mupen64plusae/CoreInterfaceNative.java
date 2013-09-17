@@ -102,6 +102,8 @@ public class CoreInterfaceNative extends CoreInterface
     
     public static native void emuSaveFile( String filename );
     
+    public static native void emuScreenshot();
+    
     public static native void emuGameShark( boolean pressed );
     
     public static native int emuGetState();

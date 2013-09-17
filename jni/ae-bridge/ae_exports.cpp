@@ -228,6 +228,11 @@ extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNativ
     env->ReleaseStringUTFChars(filename, nativeString);
 }
 
+extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuScreenshot(JNIEnv* env, jclass cls)
+{
+    if (coreDoCommand) coreDoCommand(M64CMD_TAKE_NEXT_SCREENSHOT, 0, NULL);
+}
+
 extern "C" DECLSPEC void Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuGameShark(JNIEnv* env, jclass cls, jboolean pressed)
 {
     int p = pressed == JNI_TRUE ? 1 : 0;
