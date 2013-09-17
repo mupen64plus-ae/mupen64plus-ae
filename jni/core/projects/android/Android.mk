@@ -5,10 +5,12 @@ SRCDIR := ../../src
 
 LOCAL_MODULE := core
 LOCAL_SHARED_LIBRARIES := SDL2
+LOCAL_STATIC_LIBRARIES := png
 LOCAL_ARM_MODE := arm
 
 LOCAL_C_INCLUDES :=         \
     $(LOCAL_PATH)/$(SRCDIR) \
+    $(PNG_INCLUDES)         \
     $(SDL_INCLUDES)         \
     $(SYSROOT)/usr/include/ \
 #   ^ Workaround for some reason 4.6 gcc doesnt include the usr/include directory
@@ -39,6 +41,7 @@ LOCAL_SRC_FILES :=                              \
     $(SRCDIR)/memory/tlb.c                      \
     $(SRCDIR)/osal/dynamiclib_unix.c            \
     $(SRCDIR)/osal/files_unix.c                 \
+    $(SRCDIR)/osd/screenshot.cpp                \
     $(SRCDIR)/plugin/dummy_audio.c              \
     $(SRCDIR)/plugin/dummy_input.c              \
     $(SRCDIR)/plugin/dummy_rsp.c                \
