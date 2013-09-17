@@ -40,10 +40,6 @@
 #include "compare_core.h"
 #include "osal_preproc.h"
 
-#ifdef PAULSCODE
-#include "ae_imports.h"
-#endif
-
 /* Version number for UI-Console config section parameters */
 #define CONFIG_PARAM_VERSION     1.00
 
@@ -600,8 +596,9 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
 * main function
 */
 #ifdef PAULSCODE
-// Allow main function to be called dynamically from external library
-DECLSPEC
+// Declare state callback and allow main to be called dynamically from external library
+#include "ae_imports.h"
+EXPORT
 #endif
 int main(int argc, char *argv[])
 {
@@ -618,20 +615,6 @@ int main(int argc, char *argv[])
     /* bootstrap some special parameters from the command line */
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
         return 1;
-
-    #ifdef PAULSCODE
-    // paulscode, hack to allow configuration file to be in home directory
-    if( chdir( l_ConfigDirPath ) != 0 )
-    {
-        DebugMessage(M64MSG_ERROR, "Unable to enter Android data folder '%s' (required for config read/write functions)", l_ConfigDirPath);
-        return 2;
-    }
-    DebugMessage(M64MSG_VERBOSE, "Using Android data folder '%s' for config read/write functions", l_ConfigDirPath);
-    setenv( "HOME", l_ConfigDirPath, 1 );
-    setenv( "XDG_CONFIG_HOME", l_ConfigDirPath, 1 );
-    setenv( "XDG_DATA_HOME", l_ConfigDirPath, 1 );
-    setenv( "XDG_CACHE_HOME", l_ConfigDirPath, 1 );
-    #endif
 
     /* load the Mupen64Plus core library */
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)

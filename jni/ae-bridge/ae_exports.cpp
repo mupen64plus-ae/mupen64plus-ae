@@ -19,6 +19,7 @@
  * Authors: Paul Lamb, littleguy77
  */
 
+#include <stdlib.h>
 #include <dlfcn.h>
 #include "SDL.h"
 #include "m64p_types.h"
@@ -136,12 +137,20 @@ static void reloadLibraries(const char* libPath)
  Functions called by Java code
  *******************************************************************************/
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStart(JNIEnv* env, jclass cls, jstring jlibPath, jobjectArray jargv)
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_emuStart(JNIEnv* env, jclass cls, jstring jlibPath, jstring jconfigPath, jobjectArray jargv)
 {
     // Reload the libraries to ensure that static variables are re-initialized
     const char *libPath = env->GetStringUTFChars(jlibPath, 0);
     reloadLibraries(libPath);
     env->ReleaseStringUTFChars(jlibPath, libPath);
+
+    // Define some environment variables needed by rice video plugin
+    const char *configPath = env->GetStringUTFChars(jconfigPath, 0);
+    setenv( "HOME", configPath, 1 );
+    setenv( "XDG_CONFIG_HOME", configPath, 1 );
+    setenv( "XDG_DATA_HOME", configPath, 1 );
+    setenv( "XDG_CACHE_HOME", configPath, 1 );
+    env->ReleaseStringUTFChars(jconfigPath, configPath);
 
     // Initialize dependencies
     aeiInit(env, cls);
