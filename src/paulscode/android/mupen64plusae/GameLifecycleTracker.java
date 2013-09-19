@@ -20,6 +20,8 @@
  */
 package paulscode.android.mupen64plusae;
 
+import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.jni.NativeExports;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -79,15 +81,15 @@ public class GameLifecycleTracker
     
     private void tryRunning()
     {
-        int state = CoreInterfaceNative.emuGetState();
-        if( isSafeToRender() && ( state != CoreInterface.EMULATOR_STATE_RUNNING ) )
+        int state = NativeExports.emuGetState();
+        if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ) )
         {
             switch( state )
             {
-                case CoreInterface.EMULATOR_STATE_UNKNOWN:
+                case NativeConstants.EMULATOR_STATE_UNKNOWN:
                     CoreInterface.startupEmulator();
                     break;
-                case CoreInterface.EMULATOR_STATE_PAUSED:
+                case NativeConstants.EMULATOR_STATE_PAUSED:
                     CoreInterface.resumeEmulator();
                     break;
                 default:
@@ -98,7 +100,7 @@ public class GameLifecycleTracker
     
     private void tryPausing()
     {
-        if( CoreInterfaceNative.emuGetState() != CoreInterface.EMULATOR_STATE_PAUSED )
+        if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_PAUSED )
         {
             CoreInterface.pauseEmulator( true );
         }
@@ -106,7 +108,7 @@ public class GameLifecycleTracker
     
     private void tryStopping()
     {
-        if( CoreInterfaceNative.emuGetState() != CoreInterface.EMULATOR_STATE_STOPPED )
+        if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_STOPPED )
         {
             // Never go directly from running to stopped; always pause (and autosave) first
             tryPausing();

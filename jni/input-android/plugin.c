@@ -47,22 +47,22 @@
 // Internal constants
 static const unsigned short const BUTTON_BITS[] =
 {
-    0x0001,  // R_DPAD
-    0x0002,  // L_DPAD
-    0x0004,  // D_DPAD
-    0x0008,  // U_DPAD
-    0x0010,  // START_BUTTON
-    0x0020,  // Z_TRIG
-    0x0040,  // B_BUTTON
-    0x0080,  // A_BUTTON
-    0x0100,  // R_CBUTTON
-    0x0200,  // L_CBUTTON
-    0x0400,  // D_CBUTTON
-    0x0800,  // U_CBUTTON
-    0x1000,  // R_TRIG
-    0x2000,  // L_TRIG
-    0x4000,  // Reserved1
-    0x8000   // Reserved2
+        0x0001,  // R_DPAD
+        0x0002,  // L_DPAD
+        0x0004,  // D_DPAD
+        0x0008,  // U_DPAD
+        0x0010,  // START_BUTTON
+        0x0020,  // Z_TRIG
+        0x0040,  // B_BUTTON
+        0x0080,  // A_BUTTON
+        0x0100,  // R_CBUTTON
+        0x0200,  // L_CBUTTON
+        0x0400,  // D_CBUTTON
+        0x0800,  // U_CBUTTON
+        0x1000,  // R_TRIG
+        0x2000,  // L_TRIG
+        0x4000,  // Reserved1
+        0x8000   // Reserved2
 };
 
 // Internal variables
@@ -81,7 +81,6 @@ static pthread_key_t mThreadKey;
 // Function declarations
 static void DebugMessage(int level, const char *message, ...);
 
-
 /*******************************************************************************
  Functions called internally
  *******************************************************************************/
@@ -92,7 +91,7 @@ static void Android_JNI_ThreadDestroyed(void* value)
     JNIEnv *env = (JNIEnv*) value;
     if (env != NULL)
     {
-        (*mJavaVM)->DetachCurrentThread( mJavaVM );
+        (*mJavaVM)->DetachCurrentThread(mJavaVM);
         pthread_setspecific(mThreadKey, NULL);
     }
 }
@@ -137,11 +136,34 @@ static int Android_JNI_SetupThread(void)
     return 1;
 }
 
+static unsigned char DataCRC(unsigned char* data, int length)
+{
+    unsigned char remainder = data[0];
+
+    int iByte = 1;
+    unsigned char bBit = 0;
+
+    while (iByte <= length)
+    {
+        int highBit = ((remainder & 0x80) != 0);
+        remainder = remainder << 1;
+
+        remainder += (iByte < length && (data[iByte] & (0x80 >> bBit))) ? 1 : 0;
+
+        remainder ^= (highBit) ? 0x85 : 0;
+
+        bBit++;
+        iByte += bBit / 8;
+        bBit %= 8;
+    }
+
+    return remainder;
+}
+
 /*******************************************************************************
  Functions called automatically by JNI framework
  *******************************************************************************/
 
-// Library init
 extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     JNIEnv *env;
@@ -156,7 +178,7 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
      */
     if (pthread_key_create(&mThreadKey, Android_JNI_ThreadDestroyed))
     {
-    	DebugMessage(M64MSG_ERROR, "Error initializing pthread key");
+        DebugMessage(M64MSG_ERROR, "Error initializing pthread key");
     }
     else
     {
@@ -170,12 +192,11 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 // JNI exported function definitions
 //*****************************************************************************
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_jniInitInput(
-        JNIEnv* env, jclass cls, jobject obj)
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_init(JNIEnv* env, jclass cls, jobject obj)
 {
-    DebugMessage(M64MSG_INFO, "jniInitInput()");
+    DebugMessage(M64MSG_INFO, "init()");
 
-    _jniClass = (jclass) (*env)->NewGlobalRef( env, cls );
+    _jniClass = (jclass)(*env)->NewGlobalRef(env, cls);
 
     _jniRumble = (*env)->GetStaticMethodID(env, cls, "rumble", "(IZ)V");
     if (!_jniRumble)
@@ -184,8 +205,8 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_
     }
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_setControllerConfig(
-        JNIEnv* env, jclass jcls, jint controllerNum, jboolean plugged, jint pakType)
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_setConfig(JNIEnv* env, jclass jcls, jint controllerNum, jboolean plugged,
+        jint pakType)
 {
     if (controllerNum < 4 && controllerNum > -1)
     {
@@ -202,11 +223,10 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_
     }
 }
 
-JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_setControllerState(
-        JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons, jint mp64pXAxis, jint mp64pYAxis)
+JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_setState(JNIEnv* env, jclass jcls, jint controllerNum, jbooleanArray mp64pButtons,
+        jint mp64pXAxis, jint mp64pYAxis)
 {
-    jboolean* elements = (*env)->GetBooleanArrayElements(env, mp64pButtons,
-            NULL);
+    jboolean* elements = (*env)->GetBooleanArrayElements(env, mp64pButtons, NULL);
     int b;
     for (b = 0; b < 16; b++)
     {
@@ -224,37 +244,9 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_CoreInterfaceNative_
 
 JNIEXPORT void JNICALL JNI_Rumble(int controllerNum, int active)
 {
-	JNIEnv *env = Android_JNI_GetEnv();
+    JNIEnv *env = Android_JNI_GetEnv();
     jboolean a = active == 0 ? JNI_FALSE : JNI_TRUE;
     (*env)->CallStaticVoidMethod(env, _jniClass, _jniRumble, controllerNum, a);
-}
-
-//*****************************************************************************
-// Internal helper function definitions
-//*****************************************************************************
-
-static unsigned char DataCRC(unsigned char* data, int length)
-{
-    unsigned char remainder = data[0];
-
-    int iByte = 1;
-    unsigned char bBit = 0;
-
-    while (iByte <= length)
-    {
-        int highBit = ((remainder & 0x80) != 0);
-        remainder = remainder << 1;
-
-        remainder += (iByte < length && data[iByte] & (0x80 >> bBit)) ? 1 : 0;
-
-        remainder ^= (highBit) ? 0x85 : 0;
-
-        bBit++;
-        iByte += bBit / 8;
-        bBit %= 8;
-    }
-
-    return remainder;
 }
 
 //*****************************************************************************

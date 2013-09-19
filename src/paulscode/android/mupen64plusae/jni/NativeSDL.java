@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU General Public License along with Mupen64PlusAE. If
  * not, see <http://www.gnu.org/licenses/>.
  * 
- * Authors: Paul Lamb
+ * Authors: Paul Lamb, littleguy77
  */
-package paulscode.android.mupen64plusae;
+package paulscode.android.mupen64plusae.jni;
 
 import javax.microedition.khronos.egl.EGL10;
 
+import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -29,171 +30,25 @@ import android.media.AudioTrack;
 import android.util.Log;
 
 /**
- * The portion of the core interface that directly bridges Java and C code. Any function names
- * changed here should also be changed in the corresponding C code, and vice versa.
+ * Call-ins made from the native SDL2 library to Java. The function names are defined by SDL2 and
+ * should not be changed.
  * 
+ * @see jni/SDL2/src/core/android/SDL_android.cpp
  * @see CoreInterface
  */
-public class CoreInterfaceNative extends CoreInterface
+public class NativeSDL extends CoreInterface
 {
-    static
-    {
-        System.loadLibrary( "ae-exports" );
-        System.loadLibrary( "input-android" );
-    }
-    
-    // TODO: These should all have javadoc comments.
-    // It would better document calls going in/out of native code.
-    
-    // ************************************************************************
-    // ************************************************************************
-    // Java <-> C communication (input-android)
-    // jni/input-android/plugin.c
-    // ************************************************************************
-    // ************************************************************************
-    
-    public static native void jniInitInput();
-    
-    public static native void setControllerState( int controllerNum, boolean[] buttons, int axisX, int axisY );
-    
-    public static native void setControllerConfig( int controllerNum, boolean plugged, int pakType );
-    
-    public static void rumble( int controllerNum, boolean active )
-    {
-        if( sVibrators[controllerNum] == null )
-            return;
-        
-        if( active )
-            sVibrators[controllerNum].vibrate( VIBRATE_TIMEOUT );
-        else
-            sVibrators[controllerNum].cancel();
-    }
-    
-    // ************************************************************************
-    // ************************************************************************
-    // Java <-> C communication (ae-bridge)
-    // ************************************************************************
-    // ************************************************************************
-    
-    // ------------------------------------------------------------------------
-    // Call-outs made TO native code
-    // jni/ae-bridge/ae_exports.cpp
-    // ------------------------------------------------------------------------
-    
-    public static native void emuStart( String libPath, String configPath, Object[] args );
-    
-    public static native void emuStop();
-    
-    public static native void emuResume();
-    
-    public static native void emuPause();
-    
-    public static native void emuAdvanceFrame();
-    
-    public static native void emuSetSpeed( int percent );
-    
-    public static native void emuSetSlot( int slotID );
-    
-    public static native void emuLoadSlot();
-    
-    public static native void emuSaveSlot();
-    
-    public static native void emuLoadFile( String filename );
-    
-    public static native void emuSaveFile( String filename );
-    
-    public static native void emuScreenshot();
-    
-    public static native void emuGameShark( boolean pressed );
-    
-    public static native int emuGetState();
-    
-    public static native int emuGetSpeed();
-    
-    public static native int emuGetSlot();
-    
-    // ------------------------------------------------------------------------
-    // Call-ins made FROM native code
-    // jni/ae-bridge/ae_imports.cpp
-    // ------------------------------------------------------------------------
-    
     /**
-     * Callback for when an emulator's state/parameter has changed.
-     * 
-     * @param paramChanged The changed paramter's ID.
-     * @param newValue     The new value of the changed parameter.
-     */
-    public static void stateCallback( int paramChanged, int newValue )
-    {
-        synchronized( sStateCallbackLock )
-        {
-            for( int i = sStateCallbackListeners.size(); i > 0; i-- )
-            {
-                // Traverse the list backwards in case any listeners remove themselves
-                sStateCallbackListeners.get( i - 1 ).onStateCallback( paramChanged, newValue );
-            }
-        }
-    }
-    
-    /**
-     * Returns the hardware type of a device.
-     * <p>
-     * Note: This checks if the device is a device
-     *       that has a custom profile for flicker reduction.
-     *       If a device has a custom profile, this is returned
-     *       instead.
-     *       
-     * @return The hardware type of the device, or the custom profile
-     *         of the device (if it is a device that has one).
-     */
-    public static int getHardwareType()
-    {
-        int autoDetected = sAppData.hardwareInfo.hardwareType;
-        int overridden = sUserPrefs.videoHardwareType;
-        return (overridden < 0) ? autoDetected : overridden;
-    }
-    
-    /**
-     * Returns the custom polygon offset.
-     */
-    public static float getCustomPolygonOffset()
-    {
-        return sUserPrefs.customPolygonOffset;
-    }
-
-    /**
-     * Checks if the emulator is using RGBA 8888.
-     * 
-     * @return True if RGBA 8888 is being used. False otherwise.
-     */
-    public static boolean useRGBA8888()
-    {
-        return sUserPrefs.isRgba8888;
-    }
-    
-    // ************************************************************************
-    // ************************************************************************
-    // Java <-> C communication (SDL)
-    // ************************************************************************
-    // ************************************************************************
-    
-    // ------------------------------------------------------------------------
-    // Call-ins made FROM native code
-    // jni/SDL/src/core/android/SDL_android.cpp
-    // ------------------------------------------------------------------------
-    
-    /**
-     * Creates a GL context for SDL 2.0
-     * <p>
-     * Note: If the GL context creation fails the first time, this method
-     *       will fall back to using legacy GL context creation, ignoring
-     *       the specified configSpec, and attempt to make a valid context.
+     * Creates a GL context for SDL2. If the GL context creation fails the first time, this method
+     * will fall back to using legacy GL context creation, ignoring the specified configSpec, and
+     * attempt to make a valid context.
      * 
      * @param majorVersion The major GL version number.
      * @param minorVersion The minor GL version number.
      * @param configSpec   The configuration to use.
      * 
      * @return True if the context was able to be created. False if not.
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
      */
     public static boolean createGLContext( int majorVersion, int minorVersion, int[] configSpec )
     {
@@ -201,8 +56,8 @@ public class CoreInterfaceNative extends CoreInterface
         
         if( !result )
         {
-            // Some devices don't seem to like the EGL_BUFFER_SIZE request. If context creation fails,
-            // try it again without the buffer size request.
+            // Some devices don't seem to like the EGL_BUFFER_SIZE request. If context creation
+            // fails, try it again without the buffer size request.
             // TODO: Solve the root issue rather than applying this bandaid.
             int i = 0;
             int j = 0;
@@ -285,6 +140,11 @@ public class CoreInterfaceNative extends CoreInterface
         return result;
     }
     
+    /**
+     * Destroys the GL context for SDL2. If the surface is already destroyed this is a no-op.
+     * 
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
+     */
     public static void deleteGLContext()
     {
         sSurface.destroyGLContext();
@@ -292,6 +152,8 @@ public class CoreInterfaceNative extends CoreInterface
     
     /**
      * Swaps the GL buffers of the GameSurface in use.
+     * 
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
      */
     public static void flipBuffers()
     {
@@ -313,12 +175,16 @@ public class CoreInterfaceNative extends CoreInterface
     }
     
     /**
-     * Initializes the audio subsystem.
+     * Initializes the audio subsystem. Calling this on an audio subsystem that is already
+     * initialized is a no-op.
      * 
      * @param sampleRate    The sample rate for playback in hertz.
      * @param is16Bit       Whether or not the audio is 16 bits per sample.
      * @param isStereo      Whether or not the audio is stereo or mono.
      * @param desiredFrames The desired frames per sample.
+     * 
+     * @return 0 on success, -1 if audio track is invalid.
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
      */
     public static int audioInit( int sampleRate, boolean is16Bit, boolean isStereo, int desiredFrames )
     {
@@ -334,12 +200,12 @@ public class CoreInterfaceNative extends CoreInterface
             int minBufSize = AudioTrack.getMinBufferSize( sampleRate, channelConfig, audioFormat );
             int defaultFrames = ( minBufSize + frameSize - 1 ) / frameSize;
             desiredFrames = Math.max( desiredFrames, defaultFrames );
-        
+            
             sAudioTrack = new AudioTrack( AudioManager.STREAM_MUSIC, sampleRate, channelConfig, audioFormat, desiredFrames
                     * frameSize, AudioTrack.MODE_STREAM );
-        
-            // Instantiating AudioTrack can "succeed" without an exception and the track may still be invalid
-            // Ref: https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/media/java/android/media/AudioTrack.java
+            
+            // Instantiating AudioTrack can "succeed" without an exception and the track may still be invalid.
+            // Ref: http://goo.gl/jPX4Al
             // Ref: http://developer.android.com/reference/android/media/AudioTrack.html#getState()
             
             if( sAudioTrack.getState() != AudioTrack.STATE_INITIALIZED )
@@ -358,6 +224,7 @@ public class CoreInterfaceNative extends CoreInterface
      * Writes audio data into a given short buffer.
      * 
      * @param buffer The short array which the audio data will be written to.
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
      */
     public static void audioWriteShortBuffer( short[] buffer )
     {
@@ -384,6 +251,7 @@ public class CoreInterfaceNative extends CoreInterface
      * Writes audio data into a given byte buffer.
      * 
      * @param buffer The byte array which the audio data will be written to.
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
      */
     public static void audioWriteByteBuffer( byte[] buffer )
     {
@@ -405,9 +273,11 @@ public class CoreInterfaceNative extends CoreInterface
             }
         }
     }
-
+    
     /**
-     * Shuts down the audio thread.
+     * Shuts down the audio thread. Calling this on a thread that is already shut down is a no-op.
+     * 
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
      */
     public static void audioQuit()
     {
@@ -419,17 +289,23 @@ public class CoreInterfaceNative extends CoreInterface
         }
     }
     
+    /**
+     * No-op implementation of SDL2 interface.
+     * 
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
+     */
     public static boolean setActivityTitle( String title )
     {
-        // No-op implementation of SDL interface
-        // See SDL2/src/core/android/SDL_android.cpp
         return true;
     }
     
+    /**
+     * No-op implementation of SDL2 interface.
+     * 
+     * @see jni/SDL2/src/core/android/SDL_android.cpp
+     */
     public static boolean sendMessage( int command, int param )
     {
-        // No-op implementation of SDL interface
-        // See SDL2/src/core/android/SDL_android.cpp
         return true;
     }
 }

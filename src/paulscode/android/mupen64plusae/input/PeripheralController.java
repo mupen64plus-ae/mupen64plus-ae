@@ -23,10 +23,10 @@ package paulscode.android.mupen64plusae.input;
 import java.util.ArrayList;
 
 import paulscode.android.mupen64plusae.CoreInterface;
-import paulscode.android.mupen64plusae.CoreInterfaceNative;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
+import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -258,7 +258,7 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    CoreInterfaceNative.emuGameShark( true );
+                    NativeExports.emuGameShark( true );
                     break;
                 case InputMap.FUNC_SIMULATE_BACK:
                     String[] back_cmd = { "input", "keyevent", String.valueOf( KeyEvent.KEYCODE_BACK ) };
@@ -282,7 +282,7 @@ public class PeripheralController extends AbstractController implements
                     break;
                 case InputMap.FUNC_GAMESHARK:
                     Log.v( "PeripheralController", "FUNC_GAMESHARK" );
-                    CoreInterfaceNative.emuGameShark( false );
+                    NativeExports.emuGameShark( false );
                     break;
                 default:
                     return false;

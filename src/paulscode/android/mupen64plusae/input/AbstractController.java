@@ -22,7 +22,7 @@ package paulscode.android.mupen64plusae.input;
 
 import java.util.ArrayList;
 
-import paulscode.android.mupen64plusae.CoreInterfaceNative;
+import paulscode.android.mupen64plusae.jni.NativeInput;
 
 /**
  * The abstract base class for implementing all N64 controllers.
@@ -158,7 +158,7 @@ public abstract class AbstractController
     {
         int axisX = Math.round( AXIS_SCALE * mState.axisFractionX );
         int axisY = Math.round( AXIS_SCALE * mState.axisFractionY );
-        CoreInterfaceNative.setControllerState( mPlayerNumber - 1, mState.buttons, axisX, axisY );
+        NativeInput.setState( mPlayerNumber - 1, mState.buttons, axisX, axisY );
     }
     
     /**

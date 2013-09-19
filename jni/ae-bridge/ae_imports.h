@@ -58,7 +58,7 @@ extern "C" {
  *******************************************************************************/
 
 // Called by ae-exports
-extern void         Android_JNI_InitBridge(JNIEnv* env, jclass cls);
+extern void         Android_JNI_InitImports(JNIEnv* env, jclass cls);
 
 // Called by front-end
 extern void         Android_JNI_StateCallback(void* context, m64p_core_param paramChanged, int newValue);

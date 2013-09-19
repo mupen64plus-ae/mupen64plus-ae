@@ -21,6 +21,8 @@
 package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
+import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Notifier;
@@ -52,11 +54,11 @@ public class GameMenuHandler implements OnStateCallbackListener
     @Override
     public void onStateCallback( int paramChanged, int newValue )
     {
-        if( paramChanged == CoreInterface.M64CORE_SPEED_FACTOR )
+        if( paramChanged == NativeConstants.M64CORE_SPEED_FACTOR )
         {
             mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, newValue ) );
         }
-        else if( paramChanged == CoreInterface.M64CORE_SAVESTATE_SLOT )
+        else if( paramChanged == NativeConstants.M64CORE_SAVESTATE_SLOT )
         {
             // Refresh the slot item in the top-level options menu
             if( mSlotMenuItem != null )
@@ -103,13 +105,13 @@ public class GameMenuHandler implements OnStateCallbackListener
         switch( pakType )
         {
             default:
-            case CoreInterface.PAK_TYPE_NONE:
+            case NativeConstants.PAK_TYPE_NONE:
                 pakIndex = 0;
                 break;
-            case CoreInterface.PAK_TYPE_MEMORY:
+            case NativeConstants.PAK_TYPE_MEMORY:
                 pakIndex = 1;
                 break;
-            case CoreInterface.PAK_TYPE_RUMBLE:
+            case NativeConstants.PAK_TYPE_RUMBLE:
                 pakIndex = 2;
                 break;
         }
@@ -174,40 +176,40 @@ public class GameMenuHandler implements OnStateCallbackListener
                 CoreInterface.setSlot( 9 );
                 break;
             case R.id.menuItem_pak1_empty:
-                setPak( 1, CoreInterface.PAK_TYPE_NONE, item );
+                setPak( 1, NativeConstants.PAK_TYPE_NONE, item );
                 break;
             case R.id.menuItem_pak2_empty:
-                setPak( 2, CoreInterface.PAK_TYPE_NONE, item );
+                setPak( 2, NativeConstants.PAK_TYPE_NONE, item );
                 break;
             case R.id.menuItem_pak3_empty:
-                setPak( 3, CoreInterface.PAK_TYPE_NONE, item );
+                setPak( 3, NativeConstants.PAK_TYPE_NONE, item );
                 break;
             case R.id.menuItem_pak4_empty:
-                setPak( 4, CoreInterface.PAK_TYPE_NONE, item );
+                setPak( 4, NativeConstants.PAK_TYPE_NONE, item );
                 break;
             case R.id.menuItem_pak1_mem:
-                setPak( 1, CoreInterface.PAK_TYPE_MEMORY, item );
+                setPak( 1, NativeConstants.PAK_TYPE_MEMORY, item );
                 break;
             case R.id.menuItem_pak2_mem:
-                setPak( 2, CoreInterface.PAK_TYPE_MEMORY, item );
+                setPak( 2, NativeConstants.PAK_TYPE_MEMORY, item );
                 break;
             case R.id.menuItem_pak3_mem:
-                setPak( 3, CoreInterface.PAK_TYPE_MEMORY, item );
+                setPak( 3, NativeConstants.PAK_TYPE_MEMORY, item );
                 break;
             case R.id.menuItem_pak4_mem:
-                setPak( 4, CoreInterface.PAK_TYPE_MEMORY, item );
+                setPak( 4, NativeConstants.PAK_TYPE_MEMORY, item );
                 break;
             case R.id.menuItem_pak1_rumble:
-                setPak( 1, CoreInterface.PAK_TYPE_RUMBLE, item );
+                setPak( 1, NativeConstants.PAK_TYPE_RUMBLE, item );
                 break;
             case R.id.menuItem_pak2_rumble:
-                setPak( 2, CoreInterface.PAK_TYPE_RUMBLE, item );
+                setPak( 2, NativeConstants.PAK_TYPE_RUMBLE, item );
                 break;
             case R.id.menuItem_pak3_rumble:
-                setPak( 3, CoreInterface.PAK_TYPE_RUMBLE, item );
+                setPak( 3, NativeConstants.PAK_TYPE_RUMBLE, item );
                 break;
             case R.id.menuItem_pak4_rumble:
-                setPak( 4, CoreInterface.PAK_TYPE_RUMBLE, item );
+                setPak( 4, NativeConstants.PAK_TYPE_RUMBLE, item );
                 break;
             case R.id.menuItem_toggleSpeed:
                 CoreInterface.toggleSpeed();
@@ -244,14 +246,14 @@ public class GameMenuHandler implements OnStateCallbackListener
         mUserPrefs.putPakType( player, pakType );
         
         // Set the pak in the core
-        CoreInterfaceNative.setControllerConfig( player - 1, true, pakType );
+        NativeInput.setConfig( player - 1, true, pakType );
         
         // Ensure the item is valid
         if( item != null )
         {
             // Refresh the pak submenu
             item.setChecked( true );
-        
+            
             // Send a toast message
             Notifier.showToast( mActivity, item.getTitle().toString() + "." );
         }

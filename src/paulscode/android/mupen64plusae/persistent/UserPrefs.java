@@ -31,10 +31,10 @@ import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.WordUtils;
 
-import paulscode.android.mupen64plusae.CoreInterface;
 import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
+import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
@@ -336,7 +336,7 @@ public class UserPrefs
 
     /** True if gles2glide64 video plug-in is enabled. */
     public final boolean isGles2Glide64Enabled;
-        
+    
     /** The maximum frameskip in the gles2glide64 library. */
     public final int gles2Glide64MaxFrameskip;
     
@@ -365,7 +365,7 @@ public class UserPrefs
     // ... add more as needed
     
     // Shared preferences default values
-    public static final int DEFAULT_PAK_TYPE = CoreInterface.PAK_TYPE_MEMORY;
+    public static final int DEFAULT_PAK_TYPE = NativeConstants.PAK_TYPE_MEMORY;
     public static final String DEFAULT_INPUT_MAP_STRING = OUYAInterface.IS_OUYA_HARDWARE ?
             InputMap.DEFAULT_INPUT_MAP_STRING_OUYA : InputMap.DEFAULT_INPUT_MAP_STRING_GENERIC;
     public static final int DEFAULT_INPUT_DEADZONE = 0;
@@ -593,12 +593,13 @@ public class UserPrefs
         
         // Determine the touchscreen style
         folder = "";
-        if( inputPlugin.enabled && isTouchscreenEnabled && !isCustom ) {
+        if( inputPlugin.enabled && isTouchscreenEnabled && !isCustom )
+        {
             folder = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
         }
         touchscreenStyle = folder;
         
-        touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f; 
+        touchscreenScale = ( (float) mPreferences.getInt( "touchscreenScale", 100 ) ) / 100.0f;
         
         // Determine which players are "plugged in"
         isPlugged1 = isInputEnabled1 || isTouchscreenEnabled || isTouchpadEnabled;
@@ -881,7 +882,7 @@ public class UserPrefs
     
     /**
      * Gets the selected values of a MultiSelectListPreference, as an integer set.
-     *
+     * 
      * @param preferences The object containing the MultiSelectListPreference.
      * @param key         The key of the MultiSelectListPreference.
      * 
@@ -905,7 +906,7 @@ public class UserPrefs
         }
         return Collections.unmodifiableSet( mutableSet );
     }
-
+    
     /**
      * A tiny class containing inter-dependent plug-in information.
      */

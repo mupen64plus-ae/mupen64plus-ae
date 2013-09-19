@@ -150,9 +150,9 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
  Functions called by native code
  *******************************************************************************/
 
-extern DECLSPEC void Android_JNI_InitBridge(JNIEnv* env, jclass cls)
+extern DECLSPEC void Android_JNI_InitImports(JNIEnv* env, jclass cls)
 {
-    LOGI("Android_JNI_InitBridge()");
+    LOGI("Android_JNI_InitImports()");
 
     Android_JNI_SetupThread();
 

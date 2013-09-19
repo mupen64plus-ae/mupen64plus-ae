@@ -24,6 +24,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.jni.NativeExports;
+import paulscode.android.mupen64plusae.jni.NativeImports;
+import paulscode.android.mupen64plusae.jni.NativeInput;
+import paulscode.android.mupen64plusae.jni.NativeSDL;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -51,7 +56,11 @@ import android.util.Log;
  * the core launches. This is much cleaner and safer than using public static fields (i.e. globals),
  * since client code need not know how and when to update each global object.
  * 
- * @see CoreInterfaceNative
+ * @see NativeConstants
+ * @see NativeExports
+ * @see NativeImports
+ * @see NativeInput
+ * @see NativeSDL
  */
 public class CoreInterface
 {
@@ -75,34 +84,6 @@ public class CoreInterface
          */
         public void onFpsChanged( int newValue );
     }
-    
-    // Public constants
-    // @formatter:off
-    public static final int EMULATOR_STATE_UNKNOWN = 0;
-    public static final int EMULATOR_STATE_STOPPED = 1;
-    public static final int EMULATOR_STATE_RUNNING = 2;
-    public static final int EMULATOR_STATE_PAUSED  = 3;
-    
-    public static final int M64CORE_EMU_STATE          = 1;
-    public static final int M64CORE_VIDEO_MODE         = 2;
-    public static final int M64CORE_SAVESTATE_SLOT     = 3;
-    public static final int M64CORE_SPEED_FACTOR       = 4;
-    public static final int M64CORE_SPEED_LIMITER      = 5;
-    public static final int M64CORE_VIDEO_SIZE         = 6;
-    public static final int M64CORE_AUDIO_VOLUME       = 7;
-    public static final int M64CORE_AUDIO_MUTE         = 8;
-    public static final int M64CORE_INPUT_GAMESHARK    = 9;
-    public static final int M64CORE_STATE_LOADCOMPLETE = 10;
-    public static final int M64CORE_STATE_SAVECOMPLETE = 11;
-    
-    public static final int PAK_TYPE_NONE   = 1;
-    public static final int PAK_TYPE_MEMORY = 2;
-    public static final int PAK_TYPE_RUMBLE = 5;
-    // @formatter:on
-    
-    // Private constants
-    protected static final long VIBRATE_TIMEOUT = 1000;
-    protected static final int COMMAND_CHANGE_TITLE = 1;
     
     // External objects from Java side
     protected static Activity sActivity = null;
@@ -205,11 +186,11 @@ public class CoreInterface
                 public void run()
                 {
                     // Initialize input-android plugin (even if we aren't going to use it)
-                    CoreInterfaceNative.jniInitInput();
-                    CoreInterfaceNative.setControllerConfig( 0, sUserPrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
-                    CoreInterfaceNative.setControllerConfig( 1, sUserPrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
-                    CoreInterfaceNative.setControllerConfig( 2, sUserPrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
-                    CoreInterfaceNative.setControllerConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
+                    NativeInput.init();
+                    NativeInput.setConfig( 0, sUserPrefs.isPlugged1, sUserPrefs.getPakType( 1 ) );
+                    NativeInput.setConfig( 1, sUserPrefs.isPlugged2, sUserPrefs.getPakType( 2 ) );
+                    NativeInput.setConfig( 2, sUserPrefs.isPlugged3, sUserPrefs.getPakType( 3 ) );
+                    NativeInput.setConfig( 3, sUserPrefs.isPlugged4, sUserPrefs.getPakType( 4 ) );
                     
                     ArrayList<String> arglist = new ArrayList<String>();
                     arglist.add( "mupen64plus" );
@@ -227,7 +208,7 @@ public class CoreInterface
                         arglist.add( sCheatOptions );
                     }
                     arglist.add( getROMPath() );
-                    CoreInterfaceNative.emuStart( sAppData.libsDir, sAppData.dataDir, arglist.toArray() );
+                    NativeExports.emuStart( sAppData.libsDir, sAppData.dataDir, arglist.toArray() );
                 }
             }, "CoreThread" );
             sCoreThread.start();
@@ -241,10 +222,11 @@ public class CoreInterface
                     @Override
                     public void onStateCallback( int paramChanged, int newValue )
                     {
-                        if( paramChanged == M64CORE_EMU_STATE && newValue == EMULATOR_STATE_RUNNING )
+                        if( paramChanged == NativeConstants.M64CORE_EMU_STATE
+                                && newValue == NativeConstants.EMULATOR_STATE_RUNNING )
                         {
                             removeOnStateCallbackListener( this );
-                            CoreInterfaceNative.emuLoadFile( sUserPrefs.selectedGameAutoSavefile );
+                            NativeExports.emuLoadFile( sUserPrefs.selectedGameAutoSavefile );
                         }
                     }
                 } );
@@ -260,7 +242,7 @@ public class CoreInterface
         if( sCoreThread != null )
         {
             // Tell the core to quit
-            CoreInterfaceNative.emuStop();
+            NativeExports.emuStop();
             
             // Now wait for the core thread to quit
             try
@@ -275,14 +257,14 @@ public class CoreInterface
         }
         
         // Clean up other resources
-        CoreInterfaceNative.audioQuit();
+        NativeSDL.audioQuit();
     }
     
     public static void resumeEmulator()
     {
         if( sCoreThread != null )
         {
-            CoreInterfaceNative.emuResume();
+            NativeExports.emuResume();
         }
     }
     
@@ -290,51 +272,51 @@ public class CoreInterface
     {
         if( sCoreThread != null )
         {
-            CoreInterfaceNative.emuPause();
+            NativeExports.emuPause();
             
             // Auto-save in case device doesn't resume properly (e.g. OS kills process, battery dies, etc.)
             if( autoSave )
             {
                 Notifier.showToast( sActivity, R.string.toast_savingSession );
-                CoreInterfaceNative.emuSaveFile( sUserPrefs.selectedGameAutoSavefile );
+                NativeExports.emuSaveFile( sUserPrefs.selectedGameAutoSavefile );
             }
         }
     }
     
     public static void togglePause()
     {
-        int state = CoreInterfaceNative.emuGetState();
-        if( state == EMULATOR_STATE_PAUSED )
-            CoreInterfaceNative.emuResume();
-        else if( state == EMULATOR_STATE_RUNNING )
-            CoreInterfaceNative.emuPause();
+        int state = NativeExports.emuGetState();
+        if( state == NativeConstants.EMULATOR_STATE_PAUSED )
+            NativeExports.emuResume();
+        else if( state == NativeConstants.EMULATOR_STATE_RUNNING )
+            NativeExports.emuPause();
     }
     
     public static void setSlot( int value )
     {
         int slot = value % NUM_SLOTS;
-        CoreInterfaceNative.emuSetSlot( slot );
+        NativeExports.emuSetSlot( slot );
         Notifier.showToast( sActivity, R.string.toast_usingSlot, slot );
     }
     
     public static void incrementSlot()
     {
-        int slot = CoreInterfaceNative.emuGetSlot();
+        int slot = NativeExports.emuGetSlot();
         setSlot( slot + 1 );
     }
     
     public static void saveSlot()
     {
-        int slot = CoreInterfaceNative.emuGetSlot();
+        int slot = NativeExports.emuGetSlot();
         Notifier.showToast( sActivity, R.string.toast_savingSlot, slot );
-        CoreInterfaceNative.emuSaveSlot();
+        NativeExports.emuSaveSlot();
     }
     
     public static void loadSlot()
     {
-        int slot = CoreInterfaceNative.emuGetSlot();
+        int slot = NativeExports.emuGetSlot();
         Notifier.showToast( sActivity, R.string.toast_loadingSlot, slot );
-        CoreInterfaceNative.emuLoadSlot();
+        NativeExports.emuLoadSlot();
     }
     
     public static void saveFileFromPrompt()
@@ -385,26 +367,26 @@ public class CoreInterface
                 public void onConfirm()
                 {
                     Notifier.showToast( sActivity, R.string.toast_overwritingFile, file.getName() );
-                    CoreInterfaceNative.emuSaveFile( file.getAbsolutePath() );
+                    NativeExports.emuSaveFile( file.getAbsolutePath() );
                 }
             } );
         }
         else
         {
             Notifier.showToast( sActivity, R.string.toast_savingFile, file.getName() );
-            CoreInterfaceNative.emuSaveFile( file.getAbsolutePath() );
+            NativeExports.emuSaveFile( file.getAbsolutePath() );
         }
     }
     
     public static void loadState( File file )
     {
         Notifier.showToast( sActivity, R.string.toast_loadingFile, file.getName() );
-        CoreInterfaceNative.emuLoadFile( file.getAbsolutePath() );
+        NativeExports.emuLoadFile( file.getAbsolutePath() );
     }
     
     public static void setCustomSpeedFromPrompt()
     {
-        CoreInterfaceNative.emuPause();
+        NativeExports.emuPause();
         final CharSequence title = sActivity.getText( R.string.menuItem_setSpeed );
         Prompt.promptInteger( sActivity, title, "%1$d %%", sCustomSpeed, MIN_SPEED, MAX_SPEED,
                 new PromptIntegerListener()
@@ -416,7 +398,7 @@ public class CoreInterface
                         {
                             setCustomSpeed( value );
                         }
-                        CoreInterfaceNative.emuResume();
+                        NativeExports.emuResume();
                     }
                 } );
     }
@@ -435,26 +417,26 @@ public class CoreInterface
     {
         sCustomSpeed = Utility.clamp( value, MIN_SPEED, MAX_SPEED );
         sUseCustomSpeed = true;
-        CoreInterfaceNative.emuSetSpeed( sCustomSpeed );
+        NativeExports.emuSetSpeed( sCustomSpeed );
     }
     
     public static void toggleSpeed()
     {
         sUseCustomSpeed = !sUseCustomSpeed;
         int speed = sUseCustomSpeed ? sCustomSpeed : BASELINE_SPEED;
-        CoreInterfaceNative.emuSetSpeed( speed );
+        NativeExports.emuSetSpeed( speed );
     }
     
     public static void fastForward( boolean pressed )
     {
         int speed = pressed ? sCustomSpeed : BASELINE_SPEED;
-        CoreInterfaceNative.emuSetSpeed( speed );
+        NativeExports.emuSetSpeed( speed );
     }
     
     public static void advanceFrame()
     {
-        CoreInterfaceNative.emuPause();
-        CoreInterfaceNative.emuAdvanceFrame();
+        NativeExports.emuPause();
+        NativeExports.emuAdvanceFrame();
     }
     
     /**
