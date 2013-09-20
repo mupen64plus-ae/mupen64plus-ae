@@ -85,32 +85,36 @@ public class CoreInterface
         public void onFpsChanged( int newValue );
     }
     
-    // External objects from Java side
-    protected static Activity sActivity = null;
-    protected static GameSurface sSurface = null;
+    // Haptic objects - used by NativeInput
     protected static final Vibrator[] sVibrators = new Vibrator[4];
-    protected static AppData sAppData = null;
-    protected static UserPrefs sUserPrefs = null;
+    
+    // Core state callbacks - used by NativeImports
     protected static final ArrayList<OnStateCallbackListener> sStateCallbackListeners = new ArrayList<OnStateCallbackListener>();
-    
-    // Internal flags/caches
-    protected static boolean sIsRestarting = false;
-    protected static String sCheatOptions = null;
-    
-    // Threading objects
-    protected static Thread sCoreThread;
     protected static final Object sStateCallbackLock = new Object();
     
-    // Audio objects
-    protected static AudioTrack sAudioTrack = null;
+    // User/app data - used by NativeImports, NativeSDL
+    protected static AppData sAppData = null;
+    protected static UserPrefs sUserPrefs = null;
     
-    // Frame rate listener
+    // Audio/video objects - used by NativeSDL
+    protected static AudioTrack sAudioTrack = null;
+    protected static GameSurface sSurface = null;
+    
+    // Frame rate info - used by NativeSDL
     protected static OnFpsChangedListener sFpsListener;
     protected static int sFpsRecalcPeriod = 0;
     protected static int sFrameCount = -1;
     protected static long sLastFpsTime = 0;
     
-    // Speed info
+    // Activity and threading objects - used internally
+    private static Activity sActivity = null;
+    private static Thread sCoreThread;
+    
+    // Startup info - used internally
+    protected static boolean sIsRestarting = false;
+    protected static String sCheatOptions = null;
+    
+    // Speed info - used internally
     private static final int BASELINE_SPEED = 100;
     private static final int DEFAULT_SPEED = 250;
     private static final int MAX_SPEED = 300;
@@ -119,7 +123,7 @@ public class CoreInterface
     private static boolean sUseCustomSpeed = false;
     private static int sCustomSpeed = DEFAULT_SPEED;
     
-    // Slot info
+    // Slot info - used internally
     private static final int NUM_SLOTS = 10;
     
     public static void initialize( Activity activity, GameSurface surface, String cheatArgs, boolean isRestarting )
