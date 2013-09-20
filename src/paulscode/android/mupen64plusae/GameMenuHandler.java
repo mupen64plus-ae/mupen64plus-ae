@@ -22,6 +22,7 @@ package paulscode.android.mupen64plusae;
 
 import paulscode.android.mupen64plusae.CoreInterface.OnStateCallbackListener;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
@@ -84,9 +85,9 @@ public class GameMenuHandler implements OnStateCallbackListener
         mSlotSubMenu = mSlotMenuItem.getSubMenu();
         mGameSpeedItem = menu.findItem( R.id.menuItem_toggleSpeed );
         
-        // Initialize the UI text to something sane
-        mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, 100 ) );
-        mSlotMenuItem.setTitle( mActivity.getString( R.string.menuItem_setSlot, 0 ) );
+        // Initialize the UI text and menu state
+        onStateCallback( NativeConstants.M64CORE_SPEED_FACTOR, NativeExports.emuGetSpeed() );
+        onStateCallback( NativeConstants.M64CORE_SAVESTATE_SLOT, NativeExports.emuGetSlot() );
         
         // Get the app data and user prefs after the activity has been created
         mUserPrefs = new UserPrefs( mActivity );

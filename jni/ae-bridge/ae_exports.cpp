@@ -257,7 +257,7 @@ extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_
 
 extern "C" DECLSPEC jint Java_paulscode_android_mupen64plusae_jni_NativeExports_emuGetSpeed(JNIEnv* env, jclass cls)
 {
-    int speed = 0;
+    int speed = 100;
     if (coreDoCommand) coreDoCommand(M64CMD_CORE_STATE_QUERY, M64CORE_SPEED_FACTOR, &speed);
     return (jint) speed;
 }
