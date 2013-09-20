@@ -350,12 +350,13 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Notify user that the game activity is starting
         Notifier.showToast( this, R.string.toast_launchingEmulator );
         
-        // Set the startup mode for the core
-        CoreInterface.setStartupMode( getCheatArgs(), isRestarting );
-        
         // Launch the appropriate game activity
         Intent intent = userPrefs.isTouchpadEnabled ? new Intent( this,
                 GameActivityXperiaPlay.class ) : new Intent( this, GameActivity.class );
+        
+        // Pass the startup info via the intent
+        intent.putExtra( GameActivity.EXTRA_CHEAT_ARGS, getCheatArgs() );
+        intent.putExtra( GameActivity.EXTRA_DO_RESTART, isRestarting );
         
         startActivity( intent );
     }

@@ -176,8 +176,11 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mSurface = (GameSurface) mActivity.findViewById( R.id.gameSurface );
         mOverlay = (GameOverlay) mActivity.findViewById( R.id.gameOverlay );
         
-        // Refresh the objects and data files interfacing to the emulator core
-        CoreInterface.refresh( mActivity, mSurface );
+        // Initialize the objects and data files interfacing to the emulator core
+        Bundle extras = mActivity.getIntent().getExtras();
+        String cheatArgs = extras.getString( GameActivity.EXTRA_CHEAT_ARGS );
+        boolean doRestart = extras.getBoolean( GameActivity.EXTRA_DO_RESTART, false );
+        CoreInterface.initialize( mActivity, mSurface, cheatArgs, doRestart );
         
         // Listen to game surface events (created, changed, destroyed)
         mSurface.getHolder().addCallback( this );

@@ -122,8 +122,14 @@ public class CoreInterface
     // Slot info
     private static final int NUM_SLOTS = 10;
     
-    public static void refresh( Activity activity, GameSurface surface )
+    public static void initialize( Activity activity, GameSurface surface, String cheatArgs, boolean isRestarting )
     {
+        if( cheatArgs != null && isRestarting )
+            sCheatOptions = cheatArgs; // Restart game with selected cheats
+        else
+            sCheatOptions = null;
+        sIsRestarting = isRestarting;
+        
         sActivity = activity;
         sSurface = surface;
         sAppData = new AppData( sActivity );
@@ -164,15 +170,6 @@ public class CoreInterface
     {
         sFpsListener = fpsListener;
         sFpsRecalcPeriod = fpsRecalcPeriod;
-    }
-    
-    public static void setStartupMode( String cheatArgs, boolean isRestarting )
-    {
-        if( cheatArgs != null && isRestarting )
-            sCheatOptions = cheatArgs; // Restart game with selected cheats
-        else
-            sCheatOptions = null;
-        sIsRestarting = isRestarting;
     }
     
     public static void startupEmulator()
