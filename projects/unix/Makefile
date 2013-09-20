@@ -439,7 +439,7 @@ clean:
 rebuild: clean all
 
 # build dependency files
-CFLAGS += -MD
+CFLAGS += -MD -MP
 -include $(OBJECTS:.o=.d)
 
 CXXFLAGS += $(CFLAGS)
