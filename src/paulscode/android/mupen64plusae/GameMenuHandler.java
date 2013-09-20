@@ -38,9 +38,9 @@ public class GameMenuHandler implements OnStateCallbackListener
 {
     private final Activity mActivity;
     
-    private MenuItem mSlotMenuItem;
-    
     private MenuItem mGameSpeedItem;
+    
+    private MenuItem mSlotMenuItem;
     
     private Menu mSlotSubMenu;
     
@@ -56,7 +56,9 @@ public class GameMenuHandler implements OnStateCallbackListener
     {
         if( paramChanged == NativeConstants.M64CORE_SPEED_FACTOR )
         {
-            mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, newValue ) );
+            // Refresh the speed item in the top-level options menu
+            if( mGameSpeedItem != null )
+                mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, newValue ) );
         }
         else if( paramChanged == NativeConstants.M64CORE_SAVESTATE_SLOT )
         {
