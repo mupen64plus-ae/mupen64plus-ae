@@ -304,7 +304,7 @@ uninstall:
 	$(RM) "$(DESTDIR)$(BINDIR)/$(TARGET)" "$(DESTDIR)$(MANDIR)/man6/mupen64plus.6"
 
 # build dependency files
-CFLAGS += -MD
+CFLAGS += -MD -MP
 -include $(OBJECTS:.o=.d)
 
 # standard build rules
