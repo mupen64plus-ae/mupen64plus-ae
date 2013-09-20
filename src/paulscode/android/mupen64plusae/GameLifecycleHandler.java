@@ -35,6 +35,8 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
+import paulscode.android.mupen64plusae.jni.NativeConstants;
+import paulscode.android.mupen64plusae.jni.NativeExports;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
@@ -47,6 +49,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -55,6 +58,43 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
+
+//@formatter:off
+/**
+* (start)
+*    |
+* onCreate <-- (killed) <---------\
+*    |                            |
+* onStart  <-- onRestart <-----\  |
+*    |                         |  |
+* onResume <----------------\  |  |
+*    |                      |  |  |
+* [*onSurfaceCreated*]      |  |  |
+*    |                      |  |  |
+* [*onSurfaceChanged*]      |  |  |
+*    |                      |  |  |
+* [*onWindowFocusChanged*]  |  |  |
+*    |                      |  |  |
+* (running)                 |  |  |
+*    |                      |  |  |
+* [*onWindowFocusChanged*]  |  |  |
+*    |                      |  |  |
+* onPause ------------------/  |  |
+*    |                         |  |
+* [*onSurfaceDestroyed*]       |  |
+*    |                         |  |
+* onStop ----------------------/--/
+*    |
+* onDestroy
+*    |
+* (end)
+* 
+* 
+* [*non-deterministic sequence*]
+* 
+* 
+*/
+//@formatter:on
 
 public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.Callback
 {
@@ -72,12 +112,14 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     // Internal flags
     private final boolean mIsXperiaPlay;
     
+    // Lifecycle state tracking
+    private boolean mIsFocused = false;     // true if the window is focused
+    private boolean mIsResumed = false;     // true if the activity is resumed
+    private boolean mIsSurface = false;     // true if the surface is available
+    
     // App data and user preferences
     private AppData mAppData;
     private UserPrefs mUserPrefs;
-    
-    // Lifecycle tracker
-    private final GameLifecycleTracker mLifecycleTracker;
     
     public GameLifecycleHandler( Activity activity )
     {
@@ -85,13 +127,12 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mControllers = new ArrayList<AbstractController>();
         mIsXperiaPlay = !( activity instanceof GameActivity );
         mMogaController = Controller.getInstance( mActivity );
-        mLifecycleTracker = new GameLifecycleTracker();
     }
     
     @TargetApi( 11 )
     public void onCreateBegin( Bundle savedInstanceState )
     {
-        mLifecycleTracker.onCreate( savedInstanceState );
+        Log.i( "GameLifecycleHandler", "onCreate" );
         
         // Initialize MOGA controller API
         mMogaController.init();
@@ -185,52 +226,65 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     
     public void onStart()
     {
-        mLifecycleTracker.onStart();
+        Log.i( "GameLifecycleHandler", "onStart" );
     }
     
     public void onResume()
     {
-        mLifecycleTracker.onResume();
+        Log.i( "GameLifecycleHandler", "onResume" );
+        mIsResumed = true;
+        tryRunning();
+        
         mMogaController.onResume();
     }
     
     @Override
     public void surfaceCreated( SurfaceHolder holder )
     {
-        mLifecycleTracker.surfaceCreated( holder );
+        Log.i( "GameLifecycleHandler", "surfaceCreated" );
     }
     
     @Override
     public void surfaceChanged( SurfaceHolder holder, int format, int width, int height )
     {
-        mLifecycleTracker.surfaceChanged( holder, format, width, height );
+        Log.i( "GameLifecycleHandler", "surfaceChanged" );
+        mIsSurface = true;
+        tryRunning();
     }
     
     public void onWindowFocusChanged( boolean hasFocus )
     {
-        mLifecycleTracker.onWindowFocusChanged( hasFocus );
+        // Only try to run; don't try to pause. User may just be touching the in-game menu.
+        Log.i( "GameLifecycleHandler", "onWindowFocusChanged: " + hasFocus );
+        mIsFocused = hasFocus;
+        tryRunning();
     }
     
     public void onPause()
     {
-        mLifecycleTracker.onPause();
+        Log.i( "GameLifecycleHandler", "onPause" );
+        mIsResumed = false;
+        tryPausing();
+        
         mMogaController.onPause();
     }
     
     @Override
     public void surfaceDestroyed( SurfaceHolder holder )
     {
-        mLifecycleTracker.surfaceDestroyed( holder );
+        Log.i( "GameLifecycleHandler", "surfaceDestroyed" );
+        mIsSurface = false;
+        tryStopping();
     }
     
     public void onStop()
     {
-        mLifecycleTracker.onStop();
+        Log.i( "GameLifecycleHandler", "onStop" );
     }
     
     public void onDestroy()
     {
-        mLifecycleTracker.onDestroy();
+        Log.i( "GameLifecycleHandler", "onDestroy" );
         mMogaController.exit();
     }
     
@@ -373,6 +427,48 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         else
         {
             actionBar.show();
+        }
+    }
+    
+    private boolean isSafeToRender()
+    {
+        return mIsFocused && mIsResumed && mIsSurface;
+    }
+    
+    private void tryRunning()
+    {
+        int state = NativeExports.emuGetState();
+        if( isSafeToRender() && ( state != NativeConstants.EMULATOR_STATE_RUNNING ) )
+        {
+            switch( state )
+            {
+                case NativeConstants.EMULATOR_STATE_UNKNOWN:
+                    CoreInterface.startupEmulator();
+                    break;
+                case NativeConstants.EMULATOR_STATE_PAUSED:
+                    CoreInterface.resumeEmulator();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    private void tryPausing()
+    {
+        if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_PAUSED )
+        {
+            CoreInterface.pauseEmulator( true );
+        }
+    }
+    
+    private void tryStopping()
+    {
+        if( NativeExports.emuGetState() != NativeConstants.EMULATOR_STATE_STOPPED )
+        {
+            // Never go directly from running to stopped; always pause (and autosave) first
+            tryPausing();
+            CoreInterface.shutdownEmulator();
         }
     }
 }
