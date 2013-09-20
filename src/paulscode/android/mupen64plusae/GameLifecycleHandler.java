@@ -34,9 +34,9 @@ import paulscode.android.mupen64plusae.input.provider.AxisProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider;
 import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
-import paulscode.android.mupen64plusae.input.provider.NativeInputSource;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
 import paulscode.android.mupen64plusae.jni.NativeExports;
+import paulscode.android.mupen64plusae.jni.NativeXperiaTouchpad;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.Demultiplexer;
@@ -216,7 +216,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         }
         
         // Initialize user interface devices
-        View inputSource = mIsXperiaPlay ? new NativeInputSource( mActivity ) : mOverlay;
+        View inputSource = mIsXperiaPlay ? new NativeXperiaTouchpad( mActivity ) : mOverlay;
         if( mUserPrefs.inputPlugin.enabled )
             initControllers( inputSource );
         
@@ -334,7 +334,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             // Create the map for the touchpad
             TouchMap touchpadMap = new TouchMap( mActivity.getResources() );
             touchpadMap.load( mUserPrefs.touchpadLayout );
-            touchpadMap.resize( NativeInputSource.PAD_WIDTH, NativeInputSource.PAD_HEIGHT );
+            touchpadMap.resize( NativeXperiaTouchpad.PAD_WIDTH, NativeXperiaTouchpad.PAD_HEIGHT );
             
             // Create the touchpad controller
             touchpadController = new TouchController( touchpadMap, inputSource, null,

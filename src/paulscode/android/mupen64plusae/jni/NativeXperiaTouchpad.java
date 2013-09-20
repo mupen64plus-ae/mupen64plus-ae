@@ -18,7 +18,7 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.input.provider;
+package paulscode.android.mupen64plusae.jni;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -29,10 +29,13 @@ import android.view.MotionEvent.PointerCoords;
 import android.view.View;
 
 /**
- * A class to simplify the handling of key and touch events from a native activity. This class
- * impersonates an Android view, so that it can be used as a drop-in replacement in client software.
+ * Calls made between the native xperia-touchpad library and Java. Any function names changed here
+ * should also be changed in the corresponding C code, and vice versa. This class impersonates an
+ * Android view, so that it can be used as a drop-in replacement in client software.
+ * 
+ * @see jni/xperia-touchpad/main.c
  */
-public class NativeInputSource extends View
+public class NativeXperiaTouchpad extends View
 {
     // Touchpad dimensions, in pixels
     public static final int PAD_WIDTH = 966;
@@ -43,7 +46,7 @@ public class NativeInputSource extends View
      * 
      * @param context The context associated with the input events.
      */
-    public NativeInputSource( Context context )
+    public NativeXperiaTouchpad( Context context )
     {
         super( context );
         RegisterThis();

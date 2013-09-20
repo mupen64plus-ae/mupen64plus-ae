@@ -719,7 +719,7 @@ JNI_OnLoad( JavaVM * vm, void * reserved )
         return -1;
     }
 
-    const char* interface_path = "paulscode/android/mupen64plusae/input/provider/NativeInputSource";
+    const char* interface_path = "paulscode/android/mupen64plusae/jni/NativeXperiaTouchpad";
     jclass java_activity_class = ( *env )->FindClass( env, interface_path );
 
     if( !java_activity_class )
