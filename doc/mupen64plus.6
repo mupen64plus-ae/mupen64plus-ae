@@ -31,6 +31,9 @@ Run emulator in fullscreen display mode.
 Run emulator in windowed display mode.
 .It Fl -resolution Ar res
 Display resolution (640\(mu480, 800\(mu600, 1024\(mu768, etc)
+.It Fl -nospeedlimit
+Disable core speed limiter.
+This should be used with the dummy audio plugin.
 .It Fl -cheats Ar cheat-spec
 Enable or list cheat codes for the given rom file.
 .It Fl -corelib Ar filepath
@@ -102,13 +105,10 @@ The format of
 .Ar param\(hyspec
 is
 .Dl Section\(hyName[Param\(hyName]=Value
-.It Fl -saveoptions
-Save the given command\(hyline options into the
+.It Fl -nosaveoptions
+Do not save the given command\(hyline options into the
 .Nm
 configuration file to use as defaults in the future.
-Since the console front\(hyend needs to load the core library before reading the configuration file, the
-.Fl -corelib
-option cannot be saved.
 .It Fl -verbose
 Print lots of information.
 Useful for debugging but unnecessary for normal use.
