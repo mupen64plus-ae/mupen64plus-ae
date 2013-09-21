@@ -32,7 +32,7 @@ The most current documentation can be found at the project's
 .Lk https://code.google.com/p/mupen64plus/ homepage .
 .Pp
 The options are as follows:
-.Bl -tag -width Ds
+.Bl -tag -width x
 .It Fl h , Fl -help
 Print help message.
 .It Fl -noosd
@@ -92,7 +92,7 @@ to select an RSP plugin for use during emulation.
 Specifies which mode the emulator core should run in.
 .Ar mode
 should be set to one of the following numbers:
-.Bl -tag -width Ds
+.Bl -inset
 .It 0
 Pure Interpreter
 .It 1
@@ -128,7 +128,7 @@ Print lots of information.
 Useful for debugging but unnecessary for normal use.
 .El
 .Sh plugin\(hyspec
-.Bl -tag -width Ds
+.Bl -ohang
 .It (plugin\(hyname)
 Filename (without path) of plugin to use.
 Application will search through several directories to look for a matching plugin name.
@@ -138,7 +138,7 @@ Full directory path and filename of plugin.
 Use the dummy plugin.
 .El
 .Sh cheat\(hyspec
-.Bl -tag -width Ds
+.Bl -ohang
 .It Sq list
 Show all of the available cheat codes.
 .It Sq all
@@ -151,7 +151,7 @@ The following shortcut keys can be used during emulation.
 These are the default key values; nearly all of them may be set to different keys by editing the
 .Nm
 configuration file.
-.Bl -tag -width Ds
+.Bl -tag -width Alt-Enter
 .It Escape
 Quit the emulator.
 .It 0\(en9
