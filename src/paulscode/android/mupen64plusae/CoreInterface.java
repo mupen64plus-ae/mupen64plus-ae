@@ -128,10 +128,7 @@ public class CoreInterface
     
     public static void initialize( Activity activity, GameSurface surface, String cheatArgs, boolean isRestarting )
     {
-        if( cheatArgs != null && isRestarting )
-            sCheatOptions = cheatArgs; // Restart game with selected cheats
-        else
-            sCheatOptions = null;
+        sCheatOptions = cheatArgs;
         sIsRestarting = isRestarting;
         
         sActivity = activity;
