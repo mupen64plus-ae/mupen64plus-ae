@@ -630,9 +630,10 @@ app_thread_entry( void* param )
         AInputQueue_detachLooper( app_instance->inputQueue );
     }
 
+    // Notify and wait for OnDestroy before destroying the mutex
     app_instance->destroyed = 1;
 
-    pthread_cond_broadcast( &app_instance->cond );
+    pthread_cond_wait( &app_instance->cond, &app_instance->mutex );
     pthread_mutex_unlock( &app_instance->mutex );
     pthread_mutex_destroy( &app_instance->mutex );
 
