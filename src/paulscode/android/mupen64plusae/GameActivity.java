@@ -46,6 +46,13 @@ public class GameActivity extends Activity
     }
     
     @Override
+    public boolean onPrepareOptionsMenu( Menu menu )
+    {
+        mMenuHandler.onPrepareOptionsMenu( menu );
+        return super.onPrepareOptionsMenu( menu );
+    }
+    
+    @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
         mMenuHandler.onOptionsItemSelected( item );

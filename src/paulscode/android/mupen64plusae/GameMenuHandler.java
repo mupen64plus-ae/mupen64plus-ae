@@ -39,12 +39,6 @@ public class GameMenuHandler implements OnStateCallbackListener
 {
     private final Activity mActivity;
     
-    private MenuItem mGameSpeedItem;
-    
-    private MenuItem mSlotMenuItem;
-    
-    private Menu mSlotSubMenu;
-    
     private UserPrefs mUserPrefs;
     
     public GameMenuHandler( Activity activity )
@@ -52,42 +46,24 @@ public class GameMenuHandler implements OnStateCallbackListener
         mActivity = activity;
     }
     
+    @TargetApi( 11 )
     @Override
     public void onStateCallback( int paramChanged, int newValue )
     {
-        if( paramChanged == NativeConstants.M64CORE_SPEED_FACTOR )
+        if( AppData.IS_HONEYCOMB )
         {
-            // Refresh the speed item in the top-level options menu
-            if( mGameSpeedItem != null )
-                mGameSpeedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, newValue ) );
-        }
-        else if( paramChanged == NativeConstants.M64CORE_SAVESTATE_SLOT )
-        {
-            // Refresh the slot item in the top-level options menu
-            if( mSlotMenuItem != null )
-                mSlotMenuItem.setTitle( mActivity.getString( R.string.menuItem_setSlot, newValue ) );
-            
-            // Refresh the slot submenu
-            if( mSlotSubMenu != null )
+            if( paramChanged == NativeConstants.M64CORE_SPEED_FACTOR
+                    || paramChanged == NativeConstants.M64CORE_SAVESTATE_SLOT )
             {
-                MenuItem item = mSlotSubMenu.getItem( newValue );
-                if( item != null )
-                    item.setChecked( true );
+                mActivity.invalidateOptionsMenu();
             }
         }
     }
     
     public void onCreateOptionsMenu( Menu menu )
     {
-        // Inflate the in-game menu, record the dynamic menu items/submenus for later
+        // Inflate the in-game menu
         mActivity.getMenuInflater().inflate( R.menu.game_activity, menu );
-        mSlotMenuItem = menu.findItem( R.id.menuItem_setSlot );
-        mSlotSubMenu = mSlotMenuItem.getSubMenu();
-        mGameSpeedItem = menu.findItem( R.id.menuItem_toggleSpeed );
-        
-        // Initialize the UI text and menu state
-        onStateCallback( NativeConstants.M64CORE_SPEED_FACTOR, NativeExports.emuGetSpeed() );
-        onStateCallback( NativeConstants.M64CORE_SAVESTATE_SLOT, NativeExports.emuGetSlot() );
         
         // Get the app data and user prefs after the activity has been created
         mUserPrefs = new UserPrefs( mActivity );
@@ -97,6 +73,36 @@ public class GameMenuHandler implements OnStateCallbackListener
         initializePakMenu( menu, 3, mUserPrefs.isPlugged3, mUserPrefs.getPakType( 3 ) );
         initializePakMenu( menu, 2, mUserPrefs.isPlugged2, mUserPrefs.getPakType( 2 ) );
         initializePakMenu( menu, 1, mUserPrefs.isPlugged1, mUserPrefs.getPakType( 1 ) );
+    }
+    
+    public void onPrepareOptionsMenu( Menu menu )
+    {
+        // Refresh the speed item in the top-level options menu
+        MenuItem speedItem = menu.findItem( R.id.menuItem_toggleSpeed );
+        if( speedItem != null )
+        {
+            int speed = NativeExports.emuGetSpeed();
+            speedItem.setTitle( mActivity.getString( R.string.menuItem_toggleSpeed, speed ) );
+        }
+        
+        // Refresh the slot item in the top-level options menu
+        MenuItem slotItem = menu.findItem( R.id.menuItem_setSlot );
+        if( slotItem != null )
+        {
+            int slot = NativeExports.emuGetSlot();
+            slotItem.setTitle( mActivity.getString( R.string.menuItem_setSlot, slot ) );
+            
+            // Refresh the slot submenu
+            Menu subMenu = slotItem.getSubMenu();
+            if( subMenu != null )
+            {
+                MenuItem item = subMenu.getItem( slot );
+                if( item != null )
+                {
+                    item.setChecked( true );
+                }
+            }
+        }
     }
     
     @TargetApi( 11 )

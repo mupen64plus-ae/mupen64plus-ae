@@ -46,6 +46,13 @@ public class GameActivityXperiaPlay extends NativeActivity
     }
     
     @Override
+    public boolean onPrepareOptionsMenu( Menu menu )
+    {
+        mMenuHandler.onPrepareOptionsMenu( menu );
+        return super.onPrepareOptionsMenu( menu );
+    }
+    
+    @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
         mMenuHandler.onOptionsItemSelected( item );
