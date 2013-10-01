@@ -5,9 +5,9 @@
   <!--**************************************************************************-->
   <!--In-Game Menu-->
   <string name="menuItem_toggleSpeed">Velocidade %1$d %%</string>
-  <string name="menuItem_slotSave">Gardar slot</string>
-  <string name="menuItem_slotLoad">Cargar slot</string>
-  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_slotSave">Gardar rañura</string>
+  <string name="menuItem_slotLoad">Cargar rañura</string>
+  <string name="menuItem_setSlot">Rañura %1$d</string>
   <string name="menuItem_fileSave">Gardar a un arquivo…</string>
   <string name="menuItem_fileLoad">Cargar dende un arquivo…</string>
   <string name="menuItem_setSpeed">Velocidade do xogo</string>
@@ -46,6 +46,7 @@
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Zona morta</string>
+  <string name="menuItem_sensitivity">Sensibilidade</string>
   <string name="menuItem_specialVisibility_show">Amosar funcións especiais</string>
   <string name="menuItem_specialVisibility_hide">Agochar funcións especiais</string>
   <string name="menuItem_axisInfo">Info. analóxica</string>
@@ -59,13 +60,13 @@
   <string name="toast_launchingEmulator">Executando emulador…</string>
   <string name="toast_loadingSession">Reanudar auto. xogo…</string>
   <string name="toast_savingSession">Gardar auto. xogo…</string>
-  <string name="toast_loadingSlot">Cargando slot %1$d…</string>
-  <string name="toast_savingSlot">Gardando slot %1$d…</string>
+  <string name="toast_loadingSlot">Cargando rañura %1$d…</string>
+  <string name="toast_savingSlot">Gardando rañura %1$d…</string>
   <string name="toast_loadingFile">Cargando %1$s…</string>
   <string name="toast_savingFile">Gardando %1$s…</string>
   <string name="toast_overwritingFile">Sobrescribindo %1$s…</string>
   <!--Something happened (use '.')-->
-  <string name="toast_usingSlot">Usando o slot %1$d.</string>
+  <string name="toast_usingSlot">Usando a rañura %1$d.</string>
   <string name="toast_sdInaccessible">Non se pode acceder á SD (desconecte o cable USB e probe de novo)</string>
   <string name="toast_fileReadError">Non se puido ler o arquivo!</string>
   <string name="toast_fileWriteError">Non se puido escribir o arquivo!</string>
@@ -93,7 +94,7 @@
   <string name="actionResetUserPrefs_summary">Restaurar axustes predefinidos</string>
   <string name="actionResetUserPrefs_popupMessage">Restablecer todas as preferencias ao predefinido?</string>
   <string name="actionHelp_title">Axuda</string>
-  <string name="actionHelp_message">Mupen64Plus desenvólvese e mantense por voluntarios.<small>\n\nPara correxir erros gráficos, proba a mudar o <i>plugin de vídeo</i>.\n\nPara correxir o atraso, proba a mudar o axuste da <i>taxa de refresco do vídeo</i> ou o <i>plugin de vídeo</i>.\n\nPara ROMS non reproducibles, proba a descomprimir primeiro a ROM ou proba unha versión distinta da mesma.\n\nPara problemas de control da pantalla táctil, proba a mudar a <i>escala de botón</i> ou a <i>disposición de botón</i>.\n\nPara outros problemas ou se segues atoado, por favor, preme o seguinte botón das <i>Preguntas habituais</i>.  Para erros non específicos dun xogo, preme o seguinte botón de <i>Informar erro</i>.  Respondemos á maioría de mensaxes en 24 horas.  Honestamente.\n\n</small>Grazas por axudarnos a mellorar a aplicación!</string>
+  <string name="actionHelp_message">Mupen64Plus desenvólvese e mantense por voluntarios.<small>\n\nPara corrixir erros gráficos, proba a mudar o <i>complemento de vídeo</i>.\n\nPara corrixir o atraso, proba a mudar o axuste da <i>taxa de refresco do vídeo</i> ou o <i>complemento de vídeo</i>.\n\nPara ROMS non reproducibles, proba a descomprimir primeiro a ROM ou proba unha versión distinta da mesma.\n\nPara problemas de control da pantalla táctil, proba a mudar a <i>escala de botón</i> ou a <i>disposición de botón</i>.\n\nPara outros problemas ou se segues atoado, por favor, preme o seguinte botón das <i>Preguntas habituais</i>.  Para erros non específicos dun xogo, preme o seguinte botón de <i>Informar erro</i>.  Respondemos á maioría de mensaxes en 24 horas.  Honestamente.\n\n</small>Grazas por axudarnos a mellorar a aplicación!</string>
   <string name="actionHelp_faq">Preguntas habituais</string>
   <string name="actionHelp_reportbug">Informar de bug</string>
   <string name="actionAbout_title">Acerca de</string>
@@ -112,7 +113,7 @@
   <string name="screenVideo_summary">Axustes dos gráficos</string>
   <string name="screenAudio_title">Son</string>
   <string name="screenAudio_summary">Axustes do son</string>
-  <string name="screenPlugin_title">Plug-ins</string>
+  <string name="screenPlugin_title">Complementos</string>
   <string name="screenPlugin_summary">Axustes do núcleo</string>
   <string name="screenAdvanced_title">Avanzado</string>
   <string name="screenAdvanced_summary">Axustes de almacenamento e depuración</string>
@@ -126,6 +127,7 @@
   <string name="categoryMultiPlayer_title">Multixogador</string>
   <string name="categoryGles2N64_title">Axustes do GLES2N64</string>
   <string name="categoryGles2Rice_title">Axustes do GLES2Rice</string>
+  <string name="categoryGles2Glide64_title">Axustes do GLES2Glide64</string>
   <string name="categoryData_title">Datos</string>
   <string name="categoryCrashReports_title">Informes de erros</string>
   <!--Checkbox Preferences-->
@@ -172,6 +174,7 @@
   <string name="touchscreenAutoHold_entryDisabled">Desactivado</string>
   <string name="touchscreenAutoHold_entryLongPress">Ao manter apertado</string>
   <string name="touchscreenAutoHold_entrySlideOut">Ao deslizar</string>
+  <string name="touchscreenAutoHoldables_title">Botóns mantibles</string>
   <string name="touchscreenRefresh_title">Animación do joystick</string>
   <string name="touchscreenRefresh_entryNever">Nunca</string>
   <string name="touchscreenRefresh_entryOccasionally">Ocasionalmente</string>
@@ -243,6 +246,10 @@
   <string name="gles2RiceMipmapping_entryTrilinear">Trilineal</string>
   <string name="gles2RiceScreenUpdate_title">Método de actualización de pantalla</string>
   <string name="gles2RiceScreenUpdate_entryRomDefault">Predefinido da ROM</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">Orixe de actualización VI</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">Orixe de troco VI</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">Troco de CI</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Primeiro troco de CI</string>
   <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Primeiro trazo primitivo</string>
   <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Antes de limpar a pantalla</string>
   <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Despois de debuxar a pantalla</string>
@@ -269,11 +276,16 @@
   <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(adaptación do Glide64 Final (10º aniversario))</small></string>
   <string name="pluginAudio_title">Son</string>
   <string name="pluginAudio_entryNone">Nada (son desactivado)</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Entrada</string>
   <string name="pluginInput_entryNone">Nada (dispositivo de entrada desactivado)</string>
+  <string name="pluginInput_entryAndroid">entrada-android</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Nada (RSP desactivado)</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
+  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0\n<small>(non procesar son, hack de velocidade)</small></string>
   <string name="pluginCore_title">Núcleo de emulación</string>
+  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intérprete puro</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intérprete cacheado</string>
@@ -282,6 +294,7 @@
   <string name="navigationMode_summary">Modo de navegación do menú: %1$s</string>
   <string name="navigationMode_entryAuto">Selección auto. a partir da configuración do dispositivo</string>
   <string name="navigationMode_entryStandard">Modo estándar</string>
+  <string name="navigationMode_entryBigScreen">Modo a toda pantalla (sen pantalla táctil, só con mando/teclado externo)</string>
   <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Predefinido do sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -385,7 +398,7 @@
   <string name="inputMapActivity_btnAL">Analóxico ←</string>
   <string name="inputMapActivity_btnAD">Analóxico ↓</string>
   <string name="inputMapActivity_btnAU">Analóxico ↑</string>
-  <string name="inputMapActivity_incrementSlot">Incrementar slot</string>
+  <string name="inputMapActivity_incrementSlot">Incrementar rañura</string>
   <string name="inputMapActivity_reset">Restablecer</string>
   <string name="inputMapActivity_pause">Pausa</string>
   <string name="inputMapActivity_stop">Para</string>

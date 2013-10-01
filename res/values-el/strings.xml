@@ -1,0 +1,389 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">΄Ταχύτητα %1$d %%</string>
+  <string name="menuItem_slotSave">Αποθήκευσης θέσης</string>
+  <string name="menuItem_slotLoad">Φόρτωμα θέσης</string>
+  <string name="menuItem_setSlot">Θέση %1$d</string>
+  <string name="menuItem_fileSave">Αποθήκευση σε αρχείο…</string>
+  <string name="menuItem_fileLoad">Φόρτωση από αρχείο…</string>
+  <string name="menuItem_setSpeed">Ταχύτητα παιχνιδιού</string>
+  <string name="menuItem_paks">Controller Paks</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_empty">Παίκτης 1: Άδειο</string>
+  <string name="menuItem_pak1_mem">Παίκτης 1: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak1_rumble">Παίκτης 1: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_empty">Παίκτης 2: Άδειο</string>
+  <string name="menuItem_pak2_mem">Παίκτης 2: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak2_rumble">Παίκτης 2: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_empty">Παίκτης 3: Άδειο</string>
+  <string name="menuItem_pak3_mem">Παίκτης 3: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak3_rumble">Παίκτης 3: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_empty">Παίκτης 4: Άδειο</string>
+  <string name="menuItem_pak4_mem">Παίκτης 4: Memory Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_pak4_rumble">Παίκτης 4: Rumble Pak</string>
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">Αλλαγή IME</string>
+  <string name="menuItem_exit">Έξοδος</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_profiles">Προφίλ</string>
+  <string name="menuItem_default">Προεπιλεγμένο</string>
+  <string name="menuItem_load">Φόρτωμα…</string>
+  <string name="menuItem_save">Αποθήκευση…</string>
+  <string name="menuItem_ouya">OUYA</string>
+  <string name="menuItem_n64Adapter">Αντάπτορας USB N64</string>
+  <string name="menuItem_ps3">PS3</string>
+  <string name="menuItem_xbox360">Xbox 360</string>
+  <string name="menuItem_xperiaPlay">Xperia PLAY</string>
+  <string name="menuItem_deadzone">Νεκρή ζώνη</string>
+  <string name="menuItem_specialVisibility_show">Εμφάνιση ειδικών λειτουργιών</string>
+  <string name="menuItem_specialVisibility_hide">Απόκρυψη ειδικών λειτουργιών</string>
+  <string name="menuItem_axisInfo">Πληροφορίες αναλογικού</string>
+  <string name="menuItem_unmapAll">Διαγρ. όλων των αντιστοιχίσεων</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+  <string name="toast_rebuildingCheats">Ανακατασκευή βάσης δεδομένων κωδικών</string>
+  <string name="toast_launchingEmulator">Έναρξη εξομοιωτή...</string>
+  <string name="toast_loadingSession">Αυτόμ. επαναφορά παιχνιδιού...</string>
+  <string name="toast_savingSession">Αυτόμ. αποθήκευση παιχνιδού...</string>
+  <string name="toast_loadingSlot">Φόρτωμα θέσης %1$d…</string>
+  <string name="toast_savingSlot">Αποθήκευση θέσης %1$d…</string>
+  <string name="toast_loadingFile">Φόρτωμα %1$s…</string>
+  <string name="toast_savingFile">Αποθήκευση %1$s…</string>
+  <string name="toast_overwritingFile">Αντικατάσταση %1$s…</string>
+  <!--Something happened (use '.')-->
+  <string name="toast_usingSlot">Χρήση θέσης %1$d.</string>
+  <string name="toast_sdInaccessible">Η κάρτα SD δεν είναι διαθέσιμη (αποσυνδέστε το καλώδιο USB και δοκιμάστε ξανά).</string>
+  <string name="toast_fileReadError">Αδυναμία ανάγνωσης αρχείου!</string>
+  <string name="toast_fileWriteError">Αδυναμία εγγραφής αρχείου!</string>
+  <string name="toast_crashReportSent">Η αναφορά αποστάλθηκε.</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionPlay_title">Παίξιμο</string>
+  <string name="actionResume_title">Συνέχιση</string>
+  <string name="actionResume_summary">Απρόβλεπτο αν έχουν χρησιμοποιηθεί κωδικοί</string>
+  <string name="actionRestart_title">Επανεκκίνηση</string>
+  <string name="actionRestart_summary">Προτείνεται αν έχει γίνει χρήση κωδικών</string>
+  <string name="actionDeviceInfo_title">Πληροφορίες συσκευής</string>
+  <string name="actionDeviceInfo_summary">Υλικό συσκευής και πληροφορίες μοντέλου</string>
+  <string name="actionControllerInfo_title">Πληροφορίες χειριστηρίου</string>
+  <string name="actionControllerDiagnostics_title">Διαγνωστικά χειριστηρίου</string>
+  <string name="actionReloadAssets_title">Ανανέωση πόρων εφαρμογής</string>
+  <string name="actionReloadAssets_summary">ΔΕΝ επηρεάζει ρυθμίσεις χρήστη, αρχεία ROM, αποθηκευμένα παιχνίδια, ή άλλα προσαρμοσμένα δεδομένα</string>
+  <string name="actionCrashTest_title">Δοκιμή</string>
+  <string name="actionCrashTest_summary">Αποστολή αναφοράς διαμόρφωσης στους προγραμματιστές</string>
+  <string name="actionResetUserPrefs_title">Επανεκκίνηση</string>
+  <string name="actionResetUserPrefs_summary">Επαναφορά προεπιλογών</string>
+  <string name="actionResetUserPrefs_popupMessage">Επαναφορά όλων των ρυθμίσεων στις προεπιλογές τους;</string>
+  <string name="actionHelp_title">Βοήθεια</string>
+  <string name="actionHelp_faq">Συχνές Ερωτήσεις</string>
+  <string name="actionHelp_reportbug">Αναφορά σφάλματος</string>
+  <string name="actionAbout_title">Σχετικά</string>
+  <string name="actionAbout_message">Έκδοση: %1$s\nΈκδοση κώδικα: %2$d</string>
+  <string name="actionAbout_credits">Συντελεστές</string>
+  <string name="actionAbout_changelog">Αρχείο αλλαγών</string>
+  <!--Preference Screens-->
+  <string name="screenSettings_title">Ρυθμίσεις</string>
+  <string name="screenInput_title">Εισαγωγή</string>
+  <string name="screenInput_summary">Ρυθμίσεις χειρισμού</string>
+  <string name="screenTouchscreen_title">Οθόνη αφής</string>
+  <string name="screenTouchscreen_summary">Ρυθμίσεις χειριστηρίου οθόνης</string>
+  <string name="screenTouchpad_title">Επιφάνεια αφής</string>
+  <string name="screenTouchpad_summary">Ρυθμίσεις Xperia PLAY</string>
+  <string name="screenVideo_title">Βίντεο</string>
+  <string name="screenVideo_summary">Ρυθμίσεις γραφικών</string>
+  <string name="screenAudio_title">Ήχος</string>
+  <string name="screenAudio_summary">Ρυθμίσεις ήχου</string>
+  <string name="screenPlugin_title">Πρόσθετα</string>
+  <string name="screenPlugin_summary">Επολογή plugin για κάθε υποσύστημα</string>
+  <string name="screenAdvanced_title">Προχωρημένα</string>
+  <string name="screenAdvanced_summary">Ρυθμίσεις αποθ. χώρου και αποσφαλμάτωσης</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Ρυθμίσεις κωδικών (παρατ. πάτημα για σημειώσεις)</string>
+  <string name="categoryHardware_title">Υλικό</string>
+  <string name="categoryOther_title">Άλλα</string>
+  <string name="categoryTouchscreenBehavior_title">Συμπεριφορά</string>
+  <string name="categoryTouchscreenAppearance_title">Εμφάνιση</string>
+  <string name="categorySinglePlayer_title">Παίκτης 1</string>
+  <string name="categoryMultiPlayer_title">Πολλαπλών παικτών</string>
+  <string name="categoryGles2N64_title">Ρυθμίσεις GLES2N64</string>
+  <string name="categoryGles2Rice_title">Ρυθμίσεις GLES2Rice</string>
+  <string name="categoryData_title">Δεδομένα</string>
+  <string name="categoryCrashReports_title">Αναφορές σφαλμάτων</string>
+  <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Ενεργοποίηση κωδικών</string>
+  <string name="playShowCheats_summary">Το μενού φορτώνει πιο αργά όταν είναι ενεργοποιημένο</string>
+  <string name="touchscreenEnabled_title">Ενεργοποίηση οθόνης αφής</string>
+  <string name="touchscreenFeedback_title">Ανάδραση αφής</string>
+  <string name="touchscreenFeedback_summary">Δόνηση σε πάτημα πλήκτρου</string>
+  <string name="touchpadEnabled_title">Ενεργοποίηση επιφάνειας αφής</string>
+  <string name="inputOctagonConstraints_title">Όρια οχταγωνικού μοχλού</string>
+  <string name="inputOctagonConstraints_summary">Περιορισμός αναλογικής κίνησης σε οχτάγωνο, όπως σε ένα πραγματικό N64 χειριστήριο</string>
+  <string name="inputVolumeMappable_title">Πλήκτρα έντασης</string>
+  <string name="inputVolumeMappable_summary">Επιτρέπει την χρήση των πλήκτρων έντασης ως κουμπιά χειριστηρίου</string>
+  <string name="inputShareController_title">Κοινή χρήση χειριστηρίου</string>
+  <string name="inputShareController_summary">Επιτρέπει σε μία συσκευή εισόδου να χειρλιζεται πολλούς παίκτες</string>
+  <string name="videoUseFramelimiter_title">Χρήση περιοριστή καρέ</string>
+  <string name="videoUseFramelimiter_summary">Ενεργοποίηση για ομαλή εμπειρία παιχνιδιού (μπορεί να επιβραδύνει κάποια παιχνίδια)</string>
+  <string name="videoRgba8888_title">Λειτουργία RGBA_8888</string>
+  <string name="videoRgba8888_summary">Βελτιώνει τα γραφικά σε κάποιες συσκευές</string>
+  <string name="gles2N64Fog_title">Ομίχλη</string>
+  <string name="gles2N64Fog_summary">(χρειάζεται δουλειά)</string>
+  <string name="gles2N64Sai_title">2xSaI φίλτρο υφής</string>
+  <string name="gles2N64Sai_summary">Μειώνει το πιξέλιασμα υφών</string>
+  <string name="gles2N64ScreenClear_title">Αναγκαστικός καθαρισμός οθόνης</string>
+  <string name="gles2N64ScreenClear_summary">Απενεργοποίηση για τα ταχύτητα (μπορεί να προκαλέσει γραφικές ανωμαλίες )</string>
+  <string name="gles2N64AlphaTest_title">Δοκιμή διαφάνειας alpha</string>
+  <string name="gles2N64AlphaTest_summary">Απενεργοποιημένο για ταχύτητα (προκαλεί μαύρες υφές)</string>
+  <string name="gles2N64DepthTest_title">Δοκιμή βάθους</string>
+  <string name="gles2N64DepthTest_summary">Απενεργοποίηση για ταχύτητα (προκαλεί αναβόσβημα του φόντου)</string>
+  <string name="gles2RiceAutoFrameskip_title">Αυτόμ. παράλειψη καρέ</string>
+  <string name="gles2RiceAutoFrameskip_summary">Βελτιώνει την ταχύτητα παιχνιδιού με κόστος τον ρυθμό καρέ</string>
+  <string name="gles2RiceFastTextureCrc_title">Γρήγορο CRC υφών</string>
+  <string name="gles2RiceFastTextureCrc_summary">Βελτιώνει την ταχύτητα παιχνιδιού με κόστος τα στοιχεία 2D </string>
+  <string name="gles2RiceFastTexture_title">Γρήγορο φόρτωμα υφών</string>
+  <string name="gles2RiceFastTexture_summary">Διορθώνει τις μεταβάσεις κύκλου</string>
+  <string name="gles2RiceForceTextureFilter_title">Φιλτράρισμα υφών</string>
+  <string name="gles2RiceForceTextureFilter_summary">Διορθώνει το τρεμόπαιγμα υφών και το θόλωμα σε μακρινά αντικείμενα</string>
+  <string name="gles2RiceHiResTextures_title">Υφές υψηλής ανάλυσης</string>
+  <string name="gles2RiceHiResTextures_summary">Χρήση εισαγόμενων πακέτων υφών</string>
+  <string name="audioSwapChannels_title">Εναλλαγή καναλιών ήχου</string>
+  <string name="audioSwapChannels_summary">Εναλλαγή του αριστερού και δεξιού καναλιού ήχου</string>
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Αυτόμ. κράτημα πλήκτρου</string>
+  <string name="touchscreenAutoHold_entryDisabled">Απενεργοποιημένο</string>
+  <string name="touchscreenAutoHold_entryLongPress">Στο παρατετ. πάτημα</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Στην ολίσθηση</string>
+  <string name="touchscreenAutoHoldables_title">Πλήκτρα που μπορούν να κρατηθούν</string>
+  <string name="touchscreenRefresh_title">Κίνηση μοχλού</string>
+  <string name="touchscreenRefresh_entryNever">Ποτέ</string>
+  <string name="touchscreenRefresh_entryOccasionally">Περιστασιακά</string>
+  <string name="touchscreenRefresh_entryFrequently">Συχνά</string>
+  <string name="touchscreenStyle_title">Στυλ πλήκτρων</string>
+  <string name="touchscreenStyle_entryOutline">Περιγράμματα</string>
+  <string name="touchscreenStyle_entryShaded">Σκιασμένα</string>
+  <string name="touchscreenHeight_title">Κατακόρυφο κενό πλήκτρων</string>
+  <string name="touchscreenHeight_entryAuto">Αυτόματο</string>
+  <string name="touchscreenHeight_entryFullHeight">Πλήρες ύψος</string>
+  <string name="touchscreenHeight_entryHalfHeight">Μισό ύψος</string>
+  <string name="touchscreenLayout_title">Διάταξη πλήκτρων</string>
+  <string name="touchscreenLayout_entryAnalog">Αναλογικό (από roymustang16)</string>
+  <string name="touchscreenLayout_entryDigital">Ψηφιακό (από roymustang16)</string>
+  <string name="touchscreenLayout_entryAll">Και τα δυο (από roymustang16)</string>
+  <string name="touchscreenLayout_entryCustom">Προσαρμοσμένο (βλέπε http://tinyurl.com/984ofyo)</string>
+  <string name="touchpadLayout_title">Διάταξη επιφάνειας αφής</string>
+  <string name="touchpadLayout_entryDefault">Αριστερά: Αναλογικός μοχλός, Δεξιά: κουμπιά C</string>
+  <string name="touchpadLayout_entryReverse">Αριστερά: κουμπιά C, Δεξιά: Αναλογικός μοχλός</string>
+  <string name="videoOrientation_title">Προσανατολισμός οθόνης</string>
+  <string name="videoOrientation_entryLandscape">Τοπίο</string>
+  <string name="videoOrientation_entryReverseLandscape">Ανεστραμμένο τοπίο</string>
+  <string name="videoOrientation_entryPortrait">Πορτραίτο</string>
+  <string name="videoOrientation_entryReversePortrait">Ανεστραμμένο Πορτραίτο</string>
+  <string name="videoPosition_entryBottom">Κάτω μέρος</string>
+  <string name="videoPosition_entryMiddle">Μέση</string>
+  <string name="videoPosition_entryTop">Πάνω μέρος</string>
+  <string name="videoFpsRefresh_title">Προβολή ρυθμού καρέ</string>
+  <string name="videoFpsRefresh_entryNever">Ποτέ</string>
+  <string name="videoFpsRefresh_entryOccasionally">Περιστασιακά</string>
+  <string name="videoFpsRefresh_entryFrequently">Συχνά</string>
+  <string name="videoHardwareType_title">Μείωση τρεμοπαίγματος</string>
+  <string name="videoHardwareType_entryAuto">Αυτόμ. ανίχνευση από το μοντέλου του τηλεφώνου/τάμπλετ</string>
+  <string name="videoHardwareType_entryStandard">Κανονικό προφίλ</string>
+  <string name="videoHardwareType_entryI">I προφίλ</string>
+  <string name="videoHardwareType_entryO1">O-1 προφίλ</string>
+  <string name="videoHardwareType_entryO2">O-2 προφίλ</string>
+  <string name="videoHardwareType_entryQ">Q προφίλ</string>
+  <string name="videoHardwareType_entryT">T προφίλ</string>
+  <string name="gles2N64Frameskip_title">Παράλειψη καρέ</string>
+  <string name="gles2N64Frameskip_entryNever">Καμία παράλειψη καρέ </string>
+  <string name="gles2N64Frameskip_entryUpTo1">Όχι πάνω από 1 καρέ</string>
+  <string name="gles2N64Frameskip_entryUpTo2">Όχι πάνω από 2 καρέ</string>
+  <string name="gles2N64Frameskip_entryUpTo3">Όχι πάνω από 3 καρέ</string>
+  <string name="gles2N64Frameskip_entryUpTo4">Όχι πάνω από 4 καρέ</string>
+  <string name="gles2N64Frameskip_entryUpTo5">Όχι πάνω από 5 καρέ</string>
+  <string name="gles2N64Frameskip_entryExactly1">Ακριβώς 1 καρέ</string>
+  <string name="gles2N64Frameskip_entryExactly2">Ακριβώς 2 καρέ</string>
+  <string name="gles2N64Frameskip_entryExactly3">Ακριβώς 3 καρέ</string>
+  <string name="gles2N64Frameskip_entryExactly4">Ακριβώς 4 καρέ</string>
+  <string name="gles2N64Frameskip_entryExactly5">Ακριβώς 5 καρέ</string>
+  <string name="gles2RiceMipmapping_title">Mipmapping</string>
+  <string name="gles2RiceMipmapping_entryNone">Κανένα</string>
+  <string name="gles2RiceMipmapping_entryNearest">Κοντινό</string>
+  <string name="gles2RiceMipmapping_entryBilinear">Διγραμμικό</string>
+  <string name="gles2RiceMipmapping_entryTrilinear">Τριγραμμικό</string>
+  <string name="gles2RiceScreenUpdate_title">Μέθοδος ανανέωσης οθόνης</string>
+  <string name="gles2RiceScreenUpdate_entryRomDefault">Προεπιλεγμένο ROM</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">Ανανέωση προέλευσης VI</string>
+  <string name="gles2RiceScreenUpdate_entryVIOriginChange">Αλλαγή προέλευσης VI</string>
+  <string name="gles2RiceScreenUpdate_entryCIChange">Αλλαγή CI</string>
+  <string name="gles2RiceScreenUpdate_entryFirstCIChange">Πρώτη αλλαγή CI</string>
+  <string name="gles2RiceScreenUpdate_entryFirstPrimDraw">Σχεδίαση πρώτου</string>
+  <string name="gles2RiceScreenUpdate_entryBeforeScreenClear">Πριν την εκκαθάριση οθόνης</string>
+  <string name="gles2RiceScreenUpdate_entryAfterScreenDrawn">Μετά την σχεδίαση οθόνης</string>
+  <string name="gles2RiceTextureEnhancement_title">Κλιμάκωση/βελτίωση υφών</string>
+  <string name="gles2RiceTextureEnhancement_entryNone">Καμία</string>
+  <string name="gles2RiceTextureEnhancement_entryScale2x">Κλίμακα 2x</string>
+  <string name="gles2RiceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen">Όξυνση</string>
+  <string name="gles2RiceTextureEnhancement_entrySharpen_more">Περισσότερη όξυνση</string>
+  <string name="audioResampleAlg_title">Αλγόριθμος αναδειγματοληψίας</string>
+  <string name="audioResampleAlg_entryTrivial">Ασήμαντος</string>
+  <string name="audioResampleAlg_entryLinear">Γραμμική παρεμβολή</string>
+  <string name="audioResampleAlg_entryZoh">Αναμονή μηδενικής τάξης</string>
+  <string name="audioResampleAlg_entrySincFastest">Sinc (ταχύτατο)</string>
+  <string name="audioResampleAlg_entrySincMedium">Sinc (μεσαίο)</string>
+  <string name="audioResampleAlg_entrySincBest">Sinc (βέλτιστο)</string>
+  <string name="pluginVideo_title">Βίντεο</string>
+  <string name="pluginVideo_entryNone">Κανένα (βίντεο απενεργοποιημένο)</string>
+  <string name="pluginAudio_title">Ήχος</string>
+  <string name="pluginAudio_entryNone">Κανένας (ήχος απενεργοποιημένος)</string>
+  <string name="pluginInput_title">Εισαγωγή</string>
+  <string name="pluginInput_entryNone">Καμία (εισαγωγή απενεργοποιημένη)</string>
+  <string name="pluginRsp_title">Reality signal processor (RSP)</string>
+  <string name="pluginRsp_entryNone">Κανένα  (RSP απενεργοποιημένο)</string>
+  <string name="pluginCore_title">Πυρήνας εξωμοίωσης</string>
+  <string name="r4300Emulator_title">Εξομειωτής R4300</string>
+  <string name="r4300Emulator_entryPureInterpreter">Καθαρός διερμηνέας</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Διερμηνέας προσωρινής αποθήκευσης</string>
+  <string name="r4300Emulator_entryDynarec">Δυναμικός επαναμεταγλωτιστής (dynarec)</string>
+  <string name="navigationMode_title">Προσβασιμότητα</string>
+  <string name="navigationMode_summary">Λειτουργία πλοήγης μενού: %1$s</string>
+  <string name="navigationMode_entryAuto">Αυτόμ. επιλογή από διαμόρφωση συσκευής</string>
+  <string name="navigationMode_entryStandard">Κανονική λειτουργία</string>
+  <string name="localeOverride_title">Γλώσσα</string>
+  <string name="localeOverride_entrySystemDefault">Προεπιλογή συστήματος</string>
+  <!--ACRA Preferences (key names must not be changed)-->
+  <string name="acraEnable_title">Ενεργοποίηση αναφοράς σφαλμάτων</string>
+  <string name="acraEnable_summary">Καμία προσωπική πληροφορία δεν συλλέγεται</string>
+  <string name="acraUserEmail_title">Στοιχεία επικοινωνίας</string>
+  <string name="acraUserEmail_summary">Όνομα χρήστη paulscode.com (προαιρετικό)</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Ορατότητα πλήκτρων</string>
+  <string name="touchscreenScale_title">Κλίμακα πλήκτρων</string>
+  <string name="videoActionBarTransparency_title">Ορατότητα μπάρας ενεργειών</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+  <string name="pathPreference_dialogTitle">Επιλεγμένος φάκελος: %1$s</string>
+  <string name="pathSelectedGame_title">Παιχνίδι</string>
+  <string name="pathSelectedGame_default">~roms/n64</string>
+  <string name="pathCustomTouchscreen_title">Προσαρμοσμένης διάταξης φάκελος</string>
+  <string name="pathCustomTouchscreen_default">~</string>
+  <string name="pathHiResTextures_title">Προσθήκη πακέτου υφής</string>
+  <string name="pathHiResTextures_summary">Εφαρμογή προσαρμοσμένων υφών (αρχείο ZIP) σε ένα παιχνίδι</string>
+  <string name="pathHiResTextures_default">~</string>
+  <string name="pathGameSaves_title">Φάκελος αποθήκευσης παιχνιδιών</string>
+  <!--Player Map Preferences-->
+  <string name="playerMap_title">Πολλαπλών παικτών</string>
+  <string name="playerMap_summary">Ορισμός χειριστηρίου κάθε παίκτη</string>
+  <!--Input Map Preferences-->
+  <string name="inputMap1_title">Χειριστήριο</string>
+  <string name="inputMap2_title">Παίκτης 2</string>
+  <string name="inputMap3_title">Παίκτης 3</string>
+  <string name="inputMap4_title">Παίκτης 4</string>
+  <string name="inputMap_summary">Αντιστοίχιση κουμπιών και ειδικών λειτουργιών</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Επιβεβαίωση</string>
+  <string name="confirmResetGame_message">Επανεκκίνηση παιχνιδιού; Όλη η πρόοδος από την τελευταία αποθήκευση θα χαθεί</string>
+  <string name="confirmOverwriteFile_message">Αντικατάσταση %1$s;</string>
+  <string name="confirmLoadProfile_message">Φόρτωση προφίλ \"%1$s\" για %2$s;</string>
+  <string name="confirmUnmapAll_message">Διαγρ. αντιστοιχίσεων όλων των εισόδων για %1$s;</string>
+  <!--Change Log-->
+  <string name="changeLog_dialogTitle">Αρχείο αλλαγών</string>
+  <!--Corrupt Installation Warning-->
+  <string name="invalidInstall_title">Προσοχή</string>
+  <string name="invalidInstall_message">Το Mupen64 Plus AE μπορεί να μην εγκαταστάθηκε σωστά. Παρακαλώ δοκιμάστε την επανεγκατάσταση της εφαρμογής αν βιώσετε κρασαρίσματα.</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">διαδρομή αρχείου</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Αρχικοποίηση</string>
+  <string name="assetExtractor_progress">%1$.0f%% ολοκλ: %2$s</string>
+  <string name="assetExtractor_finished">Ολοκληρώθηκε</string>
+  <string name="assetExtractor_failed">Σφάλμα εξαγωγής δεδομένων εφαρμογής.\nΠαρακαλώ αποσυνδέστε το καλώδιο USB, επανεκκινήστε την συσκευή, και τρέξτε ξανά την εφαρμογή.\nΓια βοήθεια, επισκεφτείτε %1$s.</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Κωδικός %1$d</string>
+  <string name="cheats_longPress">(παρατετ. πάτημα για πλήρες κείμενο)</string>
+  <string name="cheat_disabled">(απενεργοποιημένος)</string>
+  <string name="cheatOption_title">Πλήρες κείμενο</string>
+  <string name="cheatNotes_title">Σημειώσεις</string>
+  <string name="cheatNotes_none">(δεν υπάρχουν σημειώσεις για αυτόν τον κωδικό)</string>
+  <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Ξεπακετάρισμα υφών</string>
+  <string name="pathHiResTexturesTask_message">Παρακαλώ περιμένετε. Αυτή ενέργεια μπορεί να πάρει λίγη ώρα.</string>
+  <string name="pathHiResTexturesTask_errorMessage">Σφάλμα ξεπακεταρίσματος υφών!</string>
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Γονικός φάκελος</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Συσκευή %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Συσκευή %1$d</string>
+  <string name="playerMapPreference_popupTitle">Παίκτης %1$d</string>
+  <string name="playerMapPreference_popupMessage">Παίκτης %1$d, πατήστε ένα πλήκτρο ή μοχλό στο χειριστήριο σας…\n\nΤρέχουσες συσκευές:\n%2$s</string>
+  <string name="playerMapPreference_popupUnmap">Διαγρ. αντιστοίχισης</string>
+  <string name="playerMapPreference_button">Παίκτης %1$d\n%2$s</string>
+  <string name="playerMapPreference_reminder">Υπενθύμιση μη αντιστοίχισης παικτών</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupMessage">Πατήστε ένα πλήκτρο ή μοχλό για αντιστοίχιση…\n\nΤρέχουσες αντιστοιχίσειςs:\n%1$s</string>
+  <string name="inputMapActivity_popupUnmap">Διαγρ. αντιστοίχισης</string>
+  <string name="inputMapActivity_aPadXperiaPlay">Χειρισμός αναλογικού μοχλού με την οθόνη αφής</string>
+  <string name="inputMapActivity_cPadXperiaPlay">Χειρισμός C-pad με οθόνης αφής</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analog →</string>
+  <string name="inputMapActivity_btnAL">Analog ←</string>
+  <string name="inputMapActivity_btnAD">Analog ↓</string>
+  <string name="inputMapActivity_btnAU">Analog ↑</string>
+  <string name="inputMapActivity_incrementSlot">Θέση προσαύξησης</string>
+  <string name="inputMapActivity_reset">Επανεκκίνηση</string>
+  <string name="inputMapActivity_pause">Παύση</string>
+  <string name="inputMapActivity_stop">Διακοπή</string>
+  <string name="inputMapActivity_frameAdvance">Προόδος καρέ</string>
+  <string name="inputMapActivity_fastForward">Γρήγορη προώθηση</string>
+  <string name="inputMapActivity_speedDown">Ελλάτωση ταχύτητας</string>
+  <string name="inputMapActivity_speedUp">Αύξηση ταχύτητας</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Πλήκτρο επιστροφής</string>
+  <string name="inputMapActivity_simulateMenu">Πλήκτρο μενού</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Πατήστε ένα πλήκτρο ή κουμπί</string>
+  <string name="diagnosticActivity_textMotion_text">Αγγίξτε την οθόνη αφής ή το joystick</string>
+</resources>

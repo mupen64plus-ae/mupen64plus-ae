@@ -45,6 +45,7 @@
   <string name="menuItem_ps3">PS3</string>
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
+  <string name="menuItem_sensitivity">Hassasiyet</string>
   <string name="menuItem_specialVisibility_show">Özel işlevleri göster</string>
   <string name="menuItem_specialVisibility_hide">Özel işlevleri gizle</string>
   <string name="menuItem_axisInfo">Analog bilgisi</string>
@@ -124,6 +125,7 @@
   <string name="categoryMultiPlayer_title">Çoklu Oyuncu</string>
   <string name="categoryGles2N64_title">GLES2N64 Ayarları</string>
   <string name="categoryGles2Rice_title">GLES2Rice Ayarları</string>
+  <string name="categoryGles2Glide64_title">GLES2Glide64 ayarları</string>
   <string name="categoryData_title">Veri</string>
   <string name="categoryCrashReports_title">Çökme Raporları</string>
   <!--Checkbox Preferences-->
@@ -195,9 +197,16 @@
   <string name="videoOrientation_entryReverseLandscape">Ters Manzara</string>
   <string name="videoOrientation_entryPortrait">Portre</string>
   <string name="videoOrientation_entryReversePortrait">Ters portre</string>
+  <string name="videoPosition_title">Dikey ekran konumu</string>
   <string name="videoPosition_entryBottom">Alt</string>
   <string name="videoPosition_entryMiddle">Orta</string>
   <string name="videoPosition_entryTop">Üst</string>
+  <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoResolution_entry800x600">800 x 600</string>
+  <string name="videoResolution_entry640x480">640 x 480</string>
+  <string name="videoResolution_entry480x360">480 x 360</string>
+  <string name="videoResolution_entry320x240">320 x 240</string>
+  <string name="videoScaling_title">Ekran ölçekleme</string>
   <string name="videoFpsRefresh_title">Ekran kare hızı</string>
   <string name="videoFpsRefresh_entryNever">Asla</string>
   <string name="videoFpsRefresh_entryOccasionally">Bazen</string>
@@ -256,11 +265,14 @@
   <string name="pluginVideo_entryNone">Hiçbiri (video devre dışı)</string>
   <string name="pluginAudio_title">Ses</string>
   <string name="pluginAudio_entryNone">Hiçbiri (ses devre dışı)</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Girdi</string>
   <string name="pluginInput_entryNone">Hiçbiri( girdi devre dışı)</string>
   <string name="pluginRsp_title">Gerçeklik Sinyali İşlemcisi (RSP)</string>
   <string name="pluginRsp_entryNone">Hiçbiri (RSP devre dışı)</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
   <string name="pluginCore_title">Öykünüm çekirdeği</string>
+  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
   <string name="r4300Emulator_title">R4300 Öykünücüsü</string>
   <string name="r4300Emulator_entryPureInterpreter">Saf yorumlayıcı</string>
   <string name="r4300Emulator_entryCachedInterpreter">Önbellekli yorumlayıcı</string>
@@ -269,6 +281,7 @@
   <string name="navigationMode_summary">Menü navigasyon modu: %1$s</string>
   <string name="navigationMode_entryAuto">Cihaz yapılandırması tarafından otomatik seçilen</string>
   <string name="navigationMode_entryStandard">Standart mod</string>
+  <string name="navigationMode_entryBigScreen">Büyük ekran modu (dokunmatik ekran yok; sadece oyun kolu ve klavye)</string>
   <string name="localeOverride_title">Dil</string>
   <string name="localeOverride_entrySystemDefault">Sistem varsayılanı</string>
   <!--ACRA Preferences (key names must not be changed)-->
