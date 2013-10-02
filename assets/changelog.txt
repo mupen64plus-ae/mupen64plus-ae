@@ -1,5 +1,6 @@
 [31:2.3.5]
 - Added 'crop' setting for video scaling (useful for widescreen games)
+- Added Greek translation
 - Devs and expert users can modify the config files directly (not generally useful for most users)
 - Updated SDL to version 2.0.0-release
 [30:2.3.4]
