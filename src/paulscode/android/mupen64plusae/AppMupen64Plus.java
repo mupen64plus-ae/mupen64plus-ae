@@ -58,7 +58,7 @@ import org.acra.sender.HttpSender.Type;
 @ReportsCrashes
 (
     formKey = "",
-    formUri = "https://paulscode.iriscouch.com/acra-mupen64plusae/_design/acra-storage/_update/report",
+    formUri = "http://paulscode.iriscouch.com/acra-mupen64plusae/_design/acra-storage/_update/report",
     reportType = Type.JSON,
     httpMethod = Method.PUT,
     formUriBasicAuthLogin = "reporter",
