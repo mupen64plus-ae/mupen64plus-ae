@@ -50,6 +50,7 @@ import static org.acra.ReportField.USER_CRASH_DATE;
 import static org.acra.ReportField.USER_EMAIL;
 
 import org.acra.ACRA;
+import org.acra.ACRAConfiguration;
 import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender.Method;
 import org.acra.sender.HttpSender.Type;
@@ -62,7 +63,6 @@ import org.acra.sender.HttpSender.Type;
     reportType = Type.JSON,
     httpMethod = Method.PUT,
     formUriBasicAuthLogin = "reporter",
-    formUriBasicAuthPassword = "perorter",
     logcatArguments = { "-t", "300" },
     logcatFilterByPid = true,
     customReportContent =
@@ -106,6 +106,15 @@ public class AppMupen64Plus extends android.app.Application
         super.onCreate();
         
         // Initialize ACRA crash reporting system
-        ACRA.init( this );
+        try
+        {
+            ACRAConfiguration config = ACRA.getNewDefaultConfig( this );
+            config.setFormUriBasicAuthPassword( getPackageName().substring( 0, 29 ) );
+            ACRA.setConfig( config );
+            ACRA.init( this );
+        }
+        catch( Exception ignored )
+        {
+        }
     }
 }
