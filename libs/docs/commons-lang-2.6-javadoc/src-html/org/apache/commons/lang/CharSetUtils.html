@@ -1,0 +1,459 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<FONT color="green">003</FONT>     * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<FONT color="green">008</FONT>     * <a name="line.8"></a>
+<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<FONT color="green">010</FONT>     * <a name="line.10"></a>
+<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * See the License for the specific language governing permissions and<a name="line.14"></a>
+<FONT color="green">015</FONT>     * limitations under the License.<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    package org.apache.commons.lang;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>    import org.apache.commons.lang.text.StrBuilder;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    /**<a name="line.21"></a>
+<FONT color="green">022</FONT>     * &lt;p&gt;Operations on &lt;code&gt;CharSet&lt;/code&gt;s.&lt;/p&gt;<a name="line.22"></a>
+<FONT color="green">023</FONT>     *<a name="line.23"></a>
+<FONT color="green">024</FONT>     * &lt;p&gt;This class handles &lt;code&gt;null&lt;/code&gt; input gracefully.<a name="line.24"></a>
+<FONT color="green">025</FONT>     * An exception will not be thrown for a &lt;code&gt;null&lt;/code&gt; input.<a name="line.25"></a>
+<FONT color="green">026</FONT>     * Each method documents its behaviour in more detail.&lt;/p&gt;<a name="line.26"></a>
+<FONT color="green">027</FONT>     * <a name="line.27"></a>
+<FONT color="green">028</FONT>     * &lt;p&gt;#ThreadSafe#&lt;/p&gt;<a name="line.28"></a>
+<FONT color="green">029</FONT>     * @see CharSet<a name="line.29"></a>
+<FONT color="green">030</FONT>     * @author Apache Software Foundation<a name="line.30"></a>
+<FONT color="green">031</FONT>     * @author Phil Steitz<a name="line.31"></a>
+<FONT color="green">032</FONT>     * @author Gary Gregory<a name="line.32"></a>
+<FONT color="green">033</FONT>     * @since 1.0<a name="line.33"></a>
+<FONT color="green">034</FONT>     * @version $Id: CharSetUtils.java 1057072 2011-01-10 01:55:57Z niallp $<a name="line.34"></a>
+<FONT color="green">035</FONT>     */<a name="line.35"></a>
+<FONT color="green">036</FONT>    public class CharSetUtils {<a name="line.36"></a>
+<FONT color="green">037</FONT>    <a name="line.37"></a>
+<FONT color="green">038</FONT>        /**<a name="line.38"></a>
+<FONT color="green">039</FONT>         * &lt;p&gt;CharSetUtils instances should NOT be constructed in standard programming.<a name="line.39"></a>
+<FONT color="green">040</FONT>         * Instead, the class should be used as &lt;code&gt;CharSetUtils.evaluateSet(null);&lt;/code&gt;.&lt;/p&gt;<a name="line.40"></a>
+<FONT color="green">041</FONT>         *<a name="line.41"></a>
+<FONT color="green">042</FONT>         * &lt;p&gt;This constructor is public to permit tools that require a JavaBean instance<a name="line.42"></a>
+<FONT color="green">043</FONT>         * to operate.&lt;/p&gt;<a name="line.43"></a>
+<FONT color="green">044</FONT>         */<a name="line.44"></a>
+<FONT color="green">045</FONT>        public CharSetUtils() {<a name="line.45"></a>
+<FONT color="green">046</FONT>          super();<a name="line.46"></a>
+<FONT color="green">047</FONT>        }<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>        // Factory<a name="line.49"></a>
+<FONT color="green">050</FONT>        //-----------------------------------------------------------------------<a name="line.50"></a>
+<FONT color="green">051</FONT>        /**<a name="line.51"></a>
+<FONT color="green">052</FONT>         * &lt;p&gt;Creates a &lt;code&gt;CharSet&lt;/code&gt; instance which allows a certain amount of<a name="line.52"></a>
+<FONT color="green">053</FONT>         * set logic to be performed.&lt;/p&gt;<a name="line.53"></a>
+<FONT color="green">054</FONT>         * &lt;p&gt;The syntax is:&lt;/p&gt;<a name="line.54"></a>
+<FONT color="green">055</FONT>         * &lt;ul&gt;<a name="line.55"></a>
+<FONT color="green">056</FONT>         *  &lt;li&gt;&amp;quot;aeio&amp;quot; which implies 'a','e',..&lt;/li&gt;<a name="line.56"></a>
+<FONT color="green">057</FONT>         *  &lt;li&gt;&amp;quot;^e&amp;quot; implies not e.&lt;/li&gt;<a name="line.57"></a>
+<FONT color="green">058</FONT>         *  &lt;li&gt;&amp;quot;ej-m&amp;quot; implies e,j-&amp;gt;m. e,j,k,l,m.&lt;/li&gt;<a name="line.58"></a>
+<FONT color="green">059</FONT>         * &lt;/ul&gt;<a name="line.59"></a>
+<FONT color="green">060</FONT>         * <a name="line.60"></a>
+<FONT color="green">061</FONT>         * &lt;pre&gt;<a name="line.61"></a>
+<FONT color="green">062</FONT>         * CharSetUtils.evaluateSet(null)    = null<a name="line.62"></a>
+<FONT color="green">063</FONT>         * CharSetUtils.evaluateSet([])      = CharSet matching nothing<a name="line.63"></a>
+<FONT color="green">064</FONT>         * CharSetUtils.evaluateSet(["a-e"]) = CharSet matching a,b,c,d,e<a name="line.64"></a>
+<FONT color="green">065</FONT>         * &lt;/pre&gt;<a name="line.65"></a>
+<FONT color="green">066</FONT>         *<a name="line.66"></a>
+<FONT color="green">067</FONT>         * @param set  the set, may be null<a name="line.67"></a>
+<FONT color="green">068</FONT>         * @return a CharSet instance, &lt;code&gt;null&lt;/code&gt; if null input<a name="line.68"></a>
+<FONT color="green">069</FONT>         * @deprecated Use {@link CharSet#getInstance(String[])}.<a name="line.69"></a>
+<FONT color="green">070</FONT>         *             Method will be removed in Commons Lang 3.0.<a name="line.70"></a>
+<FONT color="green">071</FONT>         */<a name="line.71"></a>
+<FONT color="green">072</FONT>        public static CharSet evaluateSet(String[] set) {<a name="line.72"></a>
+<FONT color="green">073</FONT>            if (set == null) {<a name="line.73"></a>
+<FONT color="green">074</FONT>                return null;<a name="line.74"></a>
+<FONT color="green">075</FONT>            }<a name="line.75"></a>
+<FONT color="green">076</FONT>            return new CharSet(set); <a name="line.76"></a>
+<FONT color="green">077</FONT>        }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>        // Squeeze<a name="line.79"></a>
+<FONT color="green">080</FONT>        //-----------------------------------------------------------------------<a name="line.80"></a>
+<FONT color="green">081</FONT>        /**<a name="line.81"></a>
+<FONT color="green">082</FONT>         * &lt;p&gt;Squeezes any repetitions of a character that is mentioned in the<a name="line.82"></a>
+<FONT color="green">083</FONT>         * supplied set.&lt;/p&gt;<a name="line.83"></a>
+<FONT color="green">084</FONT>         *<a name="line.84"></a>
+<FONT color="green">085</FONT>         * &lt;pre&gt;<a name="line.85"></a>
+<FONT color="green">086</FONT>         * CharSetUtils.squeeze(null, *)        = null<a name="line.86"></a>
+<FONT color="green">087</FONT>         * CharSetUtils.squeeze("", *)          = ""<a name="line.87"></a>
+<FONT color="green">088</FONT>         * CharSetUtils.squeeze(*, null)        = *<a name="line.88"></a>
+<FONT color="green">089</FONT>         * CharSetUtils.squeeze(*, "")          = *<a name="line.89"></a>
+<FONT color="green">090</FONT>         * CharSetUtils.squeeze("hello", "k-p") = "helo"<a name="line.90"></a>
+<FONT color="green">091</FONT>         * CharSetUtils.squeeze("hello", "a-e") = "hello"<a name="line.91"></a>
+<FONT color="green">092</FONT>         * &lt;/pre&gt;<a name="line.92"></a>
+<FONT color="green">093</FONT>         *<a name="line.93"></a>
+<FONT color="green">094</FONT>         * @see CharSet#getInstance(java.lang.String) for set-syntax.<a name="line.94"></a>
+<FONT color="green">095</FONT>         * @param str  the string to squeeze, may be null<a name="line.95"></a>
+<FONT color="green">096</FONT>         * @param set  the character set to use for manipulation, may be null<a name="line.96"></a>
+<FONT color="green">097</FONT>         * @return modified String, &lt;code&gt;null&lt;/code&gt; if null string input<a name="line.97"></a>
+<FONT color="green">098</FONT>         */<a name="line.98"></a>
+<FONT color="green">099</FONT>        public static String squeeze(String str, String set) {<a name="line.99"></a>
+<FONT color="green">100</FONT>            if (StringUtils.isEmpty(str) || StringUtils.isEmpty(set)) {<a name="line.100"></a>
+<FONT color="green">101</FONT>                return str;<a name="line.101"></a>
+<FONT color="green">102</FONT>            }<a name="line.102"></a>
+<FONT color="green">103</FONT>            String[] strs = new String[1];<a name="line.103"></a>
+<FONT color="green">104</FONT>            strs[0] = set;<a name="line.104"></a>
+<FONT color="green">105</FONT>            return squeeze(str, strs);<a name="line.105"></a>
+<FONT color="green">106</FONT>        }<a name="line.106"></a>
+<FONT color="green">107</FONT>    <a name="line.107"></a>
+<FONT color="green">108</FONT>        /**<a name="line.108"></a>
+<FONT color="green">109</FONT>         * &lt;p&gt;Squeezes any repetitions of a character that is mentioned in the<a name="line.109"></a>
+<FONT color="green">110</FONT>         * supplied set.&lt;/p&gt;<a name="line.110"></a>
+<FONT color="green">111</FONT>         *<a name="line.111"></a>
+<FONT color="green">112</FONT>         * &lt;p&gt;An example is:&lt;/p&gt;<a name="line.112"></a>
+<FONT color="green">113</FONT>         * &lt;ul&gt;<a name="line.113"></a>
+<FONT color="green">114</FONT>         *   &lt;li&gt;squeeze(&amp;quot;hello&amp;quot;, {&amp;quot;el&amp;quot;}) =&gt; &amp;quot;helo&amp;quot;&lt;/li&gt;<a name="line.114"></a>
+<FONT color="green">115</FONT>         * &lt;/ul&gt;<a name="line.115"></a>
+<FONT color="green">116</FONT>         * <a name="line.116"></a>
+<FONT color="green">117</FONT>         * @see CharSet#getInstance(java.lang.String) for set-syntax.<a name="line.117"></a>
+<FONT color="green">118</FONT>         * @param str  the string to squeeze, may be null<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @param set  the character set to use for manipulation, may be null<a name="line.119"></a>
+<FONT color="green">120</FONT>         * @return modified String, &lt;code&gt;null&lt;/code&gt; if null string input<a name="line.120"></a>
+<FONT color="green">121</FONT>         */<a name="line.121"></a>
+<FONT color="green">122</FONT>        public static String squeeze(String str, String[] set) {<a name="line.122"></a>
+<FONT color="green">123</FONT>            if (StringUtils.isEmpty(str) || ArrayUtils.isEmpty(set)) {<a name="line.123"></a>
+<FONT color="green">124</FONT>                return str;<a name="line.124"></a>
+<FONT color="green">125</FONT>            }<a name="line.125"></a>
+<FONT color="green">126</FONT>            CharSet chars = CharSet.getInstance(set);<a name="line.126"></a>
+<FONT color="green">127</FONT>            StrBuilder buffer = new StrBuilder(str.length());<a name="line.127"></a>
+<FONT color="green">128</FONT>            char[] chrs = str.toCharArray();<a name="line.128"></a>
+<FONT color="green">129</FONT>            int sz = chrs.length;<a name="line.129"></a>
+<FONT color="green">130</FONT>            char lastChar = ' ';<a name="line.130"></a>
+<FONT color="green">131</FONT>            char ch = ' ';<a name="line.131"></a>
+<FONT color="green">132</FONT>            for (int i = 0; i &lt; sz; i++) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                ch = chrs[i];<a name="line.133"></a>
+<FONT color="green">134</FONT>                if (chars.contains(ch)) {<a name="line.134"></a>
+<FONT color="green">135</FONT>                    if ((ch == lastChar) &amp;&amp; (i != 0)) {<a name="line.135"></a>
+<FONT color="green">136</FONT>                        continue;<a name="line.136"></a>
+<FONT color="green">137</FONT>                    }<a name="line.137"></a>
+<FONT color="green">138</FONT>                }<a name="line.138"></a>
+<FONT color="green">139</FONT>                buffer.append(ch);<a name="line.139"></a>
+<FONT color="green">140</FONT>                lastChar = ch;<a name="line.140"></a>
+<FONT color="green">141</FONT>            }<a name="line.141"></a>
+<FONT color="green">142</FONT>            return buffer.toString();<a name="line.142"></a>
+<FONT color="green">143</FONT>        }<a name="line.143"></a>
+<FONT color="green">144</FONT>    <a name="line.144"></a>
+<FONT color="green">145</FONT>        // Count<a name="line.145"></a>
+<FONT color="green">146</FONT>        //-----------------------------------------------------------------------<a name="line.146"></a>
+<FONT color="green">147</FONT>        /**<a name="line.147"></a>
+<FONT color="green">148</FONT>         * &lt;p&gt;Takes an argument in set-syntax, see evaluateSet,<a name="line.148"></a>
+<FONT color="green">149</FONT>         * and returns the number of characters present in the specified string.&lt;/p&gt;<a name="line.149"></a>
+<FONT color="green">150</FONT>         *<a name="line.150"></a>
+<FONT color="green">151</FONT>         * &lt;pre&gt;<a name="line.151"></a>
+<FONT color="green">152</FONT>         * CharSetUtils.count(null, *)        = 0<a name="line.152"></a>
+<FONT color="green">153</FONT>         * CharSetUtils.count("", *)          = 0<a name="line.153"></a>
+<FONT color="green">154</FONT>         * CharSetUtils.count(*, null)        = 0<a name="line.154"></a>
+<FONT color="green">155</FONT>         * CharSetUtils.count(*, "")          = 0<a name="line.155"></a>
+<FONT color="green">156</FONT>         * CharSetUtils.count("hello", "k-p") = 3<a name="line.156"></a>
+<FONT color="green">157</FONT>         * CharSetUtils.count("hello", "a-e") = 1<a name="line.157"></a>
+<FONT color="green">158</FONT>         * &lt;/pre&gt;<a name="line.158"></a>
+<FONT color="green">159</FONT>         *<a name="line.159"></a>
+<FONT color="green">160</FONT>         * @see CharSet#getInstance(java.lang.String) for set-syntax.<a name="line.160"></a>
+<FONT color="green">161</FONT>         * @param str  String to count characters in, may be null<a name="line.161"></a>
+<FONT color="green">162</FONT>         * @param set  String set of characters to count, may be null<a name="line.162"></a>
+<FONT color="green">163</FONT>         * @return character count, zero if null string input<a name="line.163"></a>
+<FONT color="green">164</FONT>         */<a name="line.164"></a>
+<FONT color="green">165</FONT>        public static int count(String str, String set) {<a name="line.165"></a>
+<FONT color="green">166</FONT>            if (StringUtils.isEmpty(str) || StringUtils.isEmpty(set)) {<a name="line.166"></a>
+<FONT color="green">167</FONT>                return 0;<a name="line.167"></a>
+<FONT color="green">168</FONT>            }<a name="line.168"></a>
+<FONT color="green">169</FONT>            String[] strs = new String[1];<a name="line.169"></a>
+<FONT color="green">170</FONT>            strs[0] = set;<a name="line.170"></a>
+<FONT color="green">171</FONT>            return count(str, strs);<a name="line.171"></a>
+<FONT color="green">172</FONT>        }<a name="line.172"></a>
+<FONT color="green">173</FONT>        <a name="line.173"></a>
+<FONT color="green">174</FONT>        /**<a name="line.174"></a>
+<FONT color="green">175</FONT>         * &lt;p&gt;Takes an argument in set-syntax, see evaluateSet,<a name="line.175"></a>
+<FONT color="green">176</FONT>         * and returns the number of characters present in the specified string.&lt;/p&gt;<a name="line.176"></a>
+<FONT color="green">177</FONT>         *<a name="line.177"></a>
+<FONT color="green">178</FONT>         * &lt;p&gt;An example would be:&lt;/p&gt;<a name="line.178"></a>
+<FONT color="green">179</FONT>         * &lt;ul&gt;<a name="line.179"></a>
+<FONT color="green">180</FONT>         *  &lt;li&gt;count(&amp;quot;hello&amp;quot;, {&amp;quot;c-f&amp;quot;, &amp;quot;o&amp;quot;}) returns 2.&lt;/li&gt;<a name="line.180"></a>
+<FONT color="green">181</FONT>         * &lt;/ul&gt;<a name="line.181"></a>
+<FONT color="green">182</FONT>         *<a name="line.182"></a>
+<FONT color="green">183</FONT>         * @see CharSet#getInstance(java.lang.String) for set-syntax.<a name="line.183"></a>
+<FONT color="green">184</FONT>         * @param str  String to count characters in, may be null<a name="line.184"></a>
+<FONT color="green">185</FONT>         * @param set  String[] set of characters to count, may be null<a name="line.185"></a>
+<FONT color="green">186</FONT>         * @return character count, zero if null string input<a name="line.186"></a>
+<FONT color="green">187</FONT>         */<a name="line.187"></a>
+<FONT color="green">188</FONT>        public static int count(String str, String[] set) {<a name="line.188"></a>
+<FONT color="green">189</FONT>            if (StringUtils.isEmpty(str) || ArrayUtils.isEmpty(set)) {<a name="line.189"></a>
+<FONT color="green">190</FONT>                return 0;<a name="line.190"></a>
+<FONT color="green">191</FONT>            }<a name="line.191"></a>
+<FONT color="green">192</FONT>            CharSet chars = CharSet.getInstance(set);<a name="line.192"></a>
+<FONT color="green">193</FONT>            int count = 0;<a name="line.193"></a>
+<FONT color="green">194</FONT>            char[] chrs = str.toCharArray();<a name="line.194"></a>
+<FONT color="green">195</FONT>            int sz = chrs.length;<a name="line.195"></a>
+<FONT color="green">196</FONT>            for(int i=0; i&lt;sz; i++) {<a name="line.196"></a>
+<FONT color="green">197</FONT>                if(chars.contains(chrs[i])) {<a name="line.197"></a>
+<FONT color="green">198</FONT>                    count++;<a name="line.198"></a>
+<FONT color="green">199</FONT>                }<a name="line.199"></a>
+<FONT color="green">200</FONT>            }<a name="line.200"></a>
+<FONT color="green">201</FONT>            return count;<a name="line.201"></a>
+<FONT color="green">202</FONT>        }<a name="line.202"></a>
+<FONT color="green">203</FONT>    <a name="line.203"></a>
+<FONT color="green">204</FONT>        // Keep<a name="line.204"></a>
+<FONT color="green">205</FONT>        //-----------------------------------------------------------------------<a name="line.205"></a>
+<FONT color="green">206</FONT>        /**<a name="line.206"></a>
+<FONT color="green">207</FONT>         * &lt;p&gt;Takes an argument in set-syntax, see evaluateSet,<a name="line.207"></a>
+<FONT color="green">208</FONT>         * and keeps any of characters present in the specified string.&lt;/p&gt;<a name="line.208"></a>
+<FONT color="green">209</FONT>         *<a name="line.209"></a>
+<FONT color="green">210</FONT>         * &lt;pre&gt;<a name="line.210"></a>
+<FONT color="green">211</FONT>         * CharSetUtils.keep(null, *)        = null<a name="line.211"></a>
+<FONT color="green">212</FONT>         * CharSetUtils.keep("", *)          = ""<a name="line.212"></a>
+<FONT color="green">213</FONT>         * CharSetUtils.keep(*, null)        = ""<a name="line.213"></a>
+<FONT color="green">214</FONT>         * CharSetUtils.keep(*, "")          = ""<a name="line.214"></a>
+<FONT color="green">215</FONT>         * CharSetUtils.keep("hello", "hl")  = "hll"<a name="line.215"></a>
+<FONT color="green">216</FONT>         * CharSetUtils.keep("hello", "le")  = "ell"<a name="line.216"></a>
+<FONT color="green">217</FONT>         * &lt;/pre&gt;<a name="line.217"></a>
+<FONT color="green">218</FONT>         *<a name="line.218"></a>
+<FONT color="green">219</FONT>         * @see CharSet#getInstance(java.lang.String) for set-syntax.<a name="line.219"></a>
+<FONT color="green">220</FONT>         * @param str  String to keep characters from, may be null<a name="line.220"></a>
+<FONT color="green">221</FONT>         * @param set  String set of characters to keep, may be null<a name="line.221"></a>
+<FONT color="green">222</FONT>         * @return modified String, &lt;code&gt;null&lt;/code&gt; if null string input<a name="line.222"></a>
+<FONT color="green">223</FONT>         * @since 2.0<a name="line.223"></a>
+<FONT color="green">224</FONT>         */<a name="line.224"></a>
+<FONT color="green">225</FONT>        public static String keep(String str, String set) {<a name="line.225"></a>
+<FONT color="green">226</FONT>            if (str == null) {<a name="line.226"></a>
+<FONT color="green">227</FONT>                return null;<a name="line.227"></a>
+<FONT color="green">228</FONT>            }<a name="line.228"></a>
+<FONT color="green">229</FONT>            if (str.length() == 0 || StringUtils.isEmpty(set)) {<a name="line.229"></a>
+<FONT color="green">230</FONT>                return "";<a name="line.230"></a>
+<FONT color="green">231</FONT>            }<a name="line.231"></a>
+<FONT color="green">232</FONT>            String[] strs = new String[1];<a name="line.232"></a>
+<FONT color="green">233</FONT>            strs[0] = set;<a name="line.233"></a>
+<FONT color="green">234</FONT>            return keep(str, strs);<a name="line.234"></a>
+<FONT color="green">235</FONT>        }<a name="line.235"></a>
+<FONT color="green">236</FONT>        <a name="line.236"></a>
+<FONT color="green">237</FONT>        /**<a name="line.237"></a>
+<FONT color="green">238</FONT>         * &lt;p&gt;Takes an argument in set-syntax, see evaluateSet,<a name="line.238"></a>
+<FONT color="green">239</FONT>         * and keeps any of characters present in the specified string.&lt;/p&gt;<a name="line.239"></a>
+<FONT color="green">240</FONT>         *<a name="line.240"></a>
+<FONT color="green">241</FONT>         * &lt;p&gt;An example would be:&lt;/p&gt;<a name="line.241"></a>
+<FONT color="green">242</FONT>         * &lt;ul&gt;<a name="line.242"></a>
+<FONT color="green">243</FONT>         *  &lt;li&gt;keep(&amp;quot;hello&amp;quot;, {&amp;quot;c-f&amp;quot;, &amp;quot;o&amp;quot;})<a name="line.243"></a>
+<FONT color="green">244</FONT>         *   returns &amp;quot;eo&amp;quot;&lt;/li&gt;<a name="line.244"></a>
+<FONT color="green">245</FONT>         * &lt;/ul&gt;<a name="line.245"></a>
+<FONT color="green">246</FONT>         *<a name="line.246"></a>
+<FONT color="green">247</FONT>         * @see CharSet#getInstance(java.lang.String) for set-syntax.<a name="line.247"></a>
+<FONT color="green">248</FONT>         * @param str  String to keep characters from, may be null<a name="line.248"></a>
+<FONT color="green">249</FONT>         * @param set  String[] set of characters to keep, may be null<a name="line.249"></a>
+<FONT color="green">250</FONT>         * @return modified String, &lt;code&gt;null&lt;/code&gt; if null string input<a name="line.250"></a>
+<FONT color="green">251</FONT>         * @since 2.0<a name="line.251"></a>
+<FONT color="green">252</FONT>         */<a name="line.252"></a>
+<FONT color="green">253</FONT>        public static String keep(String str, String[] set) {<a name="line.253"></a>
+<FONT color="green">254</FONT>            if (str == null) {<a name="line.254"></a>
+<FONT color="green">255</FONT>                return null;<a name="line.255"></a>
+<FONT color="green">256</FONT>            }<a name="line.256"></a>
+<FONT color="green">257</FONT>            if (str.length() == 0 || ArrayUtils.isEmpty(set)) {<a name="line.257"></a>
+<FONT color="green">258</FONT>                return "";<a name="line.258"></a>
+<FONT color="green">259</FONT>            }<a name="line.259"></a>
+<FONT color="green">260</FONT>            return modify(str, set, true);<a name="line.260"></a>
+<FONT color="green">261</FONT>        }<a name="line.261"></a>
+<FONT color="green">262</FONT>    <a name="line.262"></a>
+<FONT color="green">263</FONT>        // Delete<a name="line.263"></a>
+<FONT color="green">264</FONT>        //-----------------------------------------------------------------------<a name="line.264"></a>
+<FONT color="green">265</FONT>        /**<a name="line.265"></a>
+<FONT color="green">266</FONT>         * &lt;p&gt;Takes an argument in set-syntax, see evaluateSet,<a name="line.266"></a>
+<FONT color="green">267</FONT>         * and deletes any of characters present in the specified string.&lt;/p&gt;<a name="line.267"></a>
+<FONT color="green">268</FONT>         *<a name="line.268"></a>
+<FONT color="green">269</FONT>         * &lt;pre&gt;<a name="line.269"></a>
+<FONT color="green">270</FONT>         * CharSetUtils.delete(null, *)        = null<a name="line.270"></a>
+<FONT color="green">271</FONT>         * CharSetUtils.delete("", *)          = ""<a name="line.271"></a>
+<FONT color="green">272</FONT>         * CharSetUtils.delete(*, null)        = *<a name="line.272"></a>
+<FONT color="green">273</FONT>         * CharSetUtils.delete(*, "")          = *<a name="line.273"></a>
+<FONT color="green">274</FONT>         * CharSetUtils.delete("hello", "hl")  = "eo"<a name="line.274"></a>
+<FONT color="green">275</FONT>         * CharSetUtils.delete("hello", "le")  = "ho"<a name="line.275"></a>
+<FONT color="green">276</FONT>         * &lt;/pre&gt;<a name="line.276"></a>
+<FONT color="green">277</FONT>         *<a name="line.277"></a>
+<FONT color="green">278</FONT>         * @see CharSet#getInstance(java.lang.String) for set-syntax.<a name="line.278"></a>
+<FONT color="green">279</FONT>         * @param str  String to delete characters from, may be null<a name="line.279"></a>
+<FONT color="green">280</FONT>         * @param set  String set of characters to delete, may be null<a name="line.280"></a>
+<FONT color="green">281</FONT>         * @return modified String, &lt;code&gt;null&lt;/code&gt; if null string input<a name="line.281"></a>
+<FONT color="green">282</FONT>         */<a name="line.282"></a>
+<FONT color="green">283</FONT>        public static String delete(String str, String set) {<a name="line.283"></a>
+<FONT color="green">284</FONT>            if (StringUtils.isEmpty(str) || StringUtils.isEmpty(set)) {<a name="line.284"></a>
+<FONT color="green">285</FONT>                return str;<a name="line.285"></a>
+<FONT color="green">286</FONT>            }<a name="line.286"></a>
+<FONT color="green">287</FONT>            String[] strs = new String[1];<a name="line.287"></a>
+<FONT color="green">288</FONT>            strs[0] = set;<a name="line.288"></a>
+<FONT color="green">289</FONT>            return delete(str, strs);<a name="line.289"></a>
+<FONT color="green">290</FONT>        }<a name="line.290"></a>
+<FONT color="green">291</FONT>        <a name="line.291"></a>
+<FONT color="green">292</FONT>        /**<a name="line.292"></a>
+<FONT color="green">293</FONT>         * &lt;p&gt;Takes an argument in set-syntax, see evaluateSet,<a name="line.293"></a>
+<FONT color="green">294</FONT>         * and deletes any of characters present in the specified string.&lt;/p&gt;<a name="line.294"></a>
+<FONT color="green">295</FONT>         *<a name="line.295"></a>
+<FONT color="green">296</FONT>         * &lt;p&gt;An example would be:&lt;/p&gt;<a name="line.296"></a>
+<FONT color="green">297</FONT>         * &lt;ul&gt;<a name="line.297"></a>
+<FONT color="green">298</FONT>         *  &lt;li&gt;delete(&amp;quot;hello&amp;quot;, {&amp;quot;c-f&amp;quot;, &amp;quot;o&amp;quot;}) returns<a name="line.298"></a>
+<FONT color="green">299</FONT>         *   &amp;quot;hll&amp;quot;&lt;/li&gt;<a name="line.299"></a>
+<FONT color="green">300</FONT>         * &lt;/ul&gt;<a name="line.300"></a>
+<FONT color="green">301</FONT>         *<a name="line.301"></a>
+<FONT color="green">302</FONT>         * @see CharSet#getInstance(java.lang.String) for set-syntax.<a name="line.302"></a>
+<FONT color="green">303</FONT>         * @param str  String to delete characters from, may be null<a name="line.303"></a>
+<FONT color="green">304</FONT>         * @param set  String[] set of characters to delete, may be null<a name="line.304"></a>
+<FONT color="green">305</FONT>         * @return modified String, &lt;code&gt;null&lt;/code&gt; if null string input<a name="line.305"></a>
+<FONT color="green">306</FONT>         */<a name="line.306"></a>
+<FONT color="green">307</FONT>        public static String delete(String str, String[] set) {<a name="line.307"></a>
+<FONT color="green">308</FONT>            if (StringUtils.isEmpty(str) || ArrayUtils.isEmpty(set)) {<a name="line.308"></a>
+<FONT color="green">309</FONT>                return str;<a name="line.309"></a>
+<FONT color="green">310</FONT>            }<a name="line.310"></a>
+<FONT color="green">311</FONT>            return modify(str, set, false);<a name="line.311"></a>
+<FONT color="green">312</FONT>        }<a name="line.312"></a>
+<FONT color="green">313</FONT>    <a name="line.313"></a>
+<FONT color="green">314</FONT>        //-----------------------------------------------------------------------<a name="line.314"></a>
+<FONT color="green">315</FONT>        /**<a name="line.315"></a>
+<FONT color="green">316</FONT>         * Implementation of delete and keep<a name="line.316"></a>
+<FONT color="green">317</FONT>         *<a name="line.317"></a>
+<FONT color="green">318</FONT>         * @param str String to modify characters within<a name="line.318"></a>
+<FONT color="green">319</FONT>         * @param set String[] set of characters to modify<a name="line.319"></a>
+<FONT color="green">320</FONT>         * @param expect whether to evaluate on match, or non-match<a name="line.320"></a>
+<FONT color="green">321</FONT>         * @return modified String<a name="line.321"></a>
+<FONT color="green">322</FONT>         */<a name="line.322"></a>
+<FONT color="green">323</FONT>        private static String modify(String str, String[] set, boolean expect) {<a name="line.323"></a>
+<FONT color="green">324</FONT>            CharSet chars = CharSet.getInstance(set);<a name="line.324"></a>
+<FONT color="green">325</FONT>            StrBuilder buffer = new StrBuilder(str.length());<a name="line.325"></a>
+<FONT color="green">326</FONT>            char[] chrs = str.toCharArray();<a name="line.326"></a>
+<FONT color="green">327</FONT>            int sz = chrs.length;<a name="line.327"></a>
+<FONT color="green">328</FONT>            for(int i=0; i&lt;sz; i++) {<a name="line.328"></a>
+<FONT color="green">329</FONT>                if(chars.contains(chrs[i]) == expect) {<a name="line.329"></a>
+<FONT color="green">330</FONT>                    buffer.append(chrs[i]);<a name="line.330"></a>
+<FONT color="green">331</FONT>                }<a name="line.331"></a>
+<FONT color="green">332</FONT>            }<a name="line.332"></a>
+<FONT color="green">333</FONT>            return buffer.toString();<a name="line.333"></a>
+<FONT color="green">334</FONT>        }<a name="line.334"></a>
+<FONT color="green">335</FONT>    <a name="line.335"></a>
+<FONT color="green">336</FONT>        // Translate<a name="line.336"></a>
+<FONT color="green">337</FONT>        //-----------------------------------------------------------------------<a name="line.337"></a>
+<FONT color="green">338</FONT>        /**<a name="line.338"></a>
+<FONT color="green">339</FONT>         * &lt;p&gt;Translate characters in a String.<a name="line.339"></a>
+<FONT color="green">340</FONT>         * This is a multi character search and replace routine.&lt;/p&gt;<a name="line.340"></a>
+<FONT color="green">341</FONT>         *<a name="line.341"></a>
+<FONT color="green">342</FONT>         * &lt;p&gt;An example is:&lt;/p&gt;<a name="line.342"></a>
+<FONT color="green">343</FONT>         * &lt;ul&gt;<a name="line.343"></a>
+<FONT color="green">344</FONT>         *   &lt;li&gt;translate(&amp;quot;hello&amp;quot;, &amp;quot;ho&amp;quot;, &amp;quot;jy&amp;quot;)<a name="line.344"></a>
+<FONT color="green">345</FONT>         *    =&amp;gt; jelly&lt;/li&gt;<a name="line.345"></a>
+<FONT color="green">346</FONT>         * &lt;/ul&gt;<a name="line.346"></a>
+<FONT color="green">347</FONT>         *<a name="line.347"></a>
+<FONT color="green">348</FONT>         * &lt;p&gt;If the length of characters to search for is greater than the<a name="line.348"></a>
+<FONT color="green">349</FONT>         * length of characters to replace, then the last character is <a name="line.349"></a>
+<FONT color="green">350</FONT>         * used.&lt;/p&gt;<a name="line.350"></a>
+<FONT color="green">351</FONT>         * <a name="line.351"></a>
+<FONT color="green">352</FONT>         * &lt;pre&gt;<a name="line.352"></a>
+<FONT color="green">353</FONT>         * CharSetUtils.translate(null, *, *) = null<a name="line.353"></a>
+<FONT color="green">354</FONT>         * CharSetUtils.translate("", *, *)   = ""<a name="line.354"></a>
+<FONT color="green">355</FONT>         * &lt;/pre&gt;<a name="line.355"></a>
+<FONT color="green">356</FONT>         *<a name="line.356"></a>
+<FONT color="green">357</FONT>         * @param str  String to replace characters in, may be null<a name="line.357"></a>
+<FONT color="green">358</FONT>         * @param searchChars   a set of characters to search for, must not be null<a name="line.358"></a>
+<FONT color="green">359</FONT>         * @param replaceChars  a set of characters to replace, must not be null or empty (&amp;quot;&amp;quot;)<a name="line.359"></a>
+<FONT color="green">360</FONT>         * @return translated String, &lt;code&gt;null&lt;/code&gt; if null string input<a name="line.360"></a>
+<FONT color="green">361</FONT>         * @throws NullPointerException if &lt;code&gt;searchChars&lt;/code&gt; or &lt;code&gt;replaceChars&lt;/code&gt; <a name="line.361"></a>
+<FONT color="green">362</FONT>         *  is &lt;code&gt;null&lt;/code&gt;<a name="line.362"></a>
+<FONT color="green">363</FONT>         * @throws ArrayIndexOutOfBoundsException if &lt;code&gt;replaceChars&lt;/code&gt; is empty (&amp;quot;&amp;quot;)<a name="line.363"></a>
+<FONT color="green">364</FONT>         * @deprecated Use {@link StringUtils#replaceChars(String, String, String)}.<a name="line.364"></a>
+<FONT color="green">365</FONT>         *             Method will be removed in Commons Lang 3.0.<a name="line.365"></a>
+<FONT color="green">366</FONT>         *  NOTE: StringUtils#replaceChars behaves differently when 'searchChars' is longer<a name="line.366"></a>
+<FONT color="green">367</FONT>         *  than 'replaceChars'. CharSetUtils#translate will use the last char of the replacement<a name="line.367"></a>
+<FONT color="green">368</FONT>         *  string whereas StringUtils#replaceChars will delete<a name="line.368"></a>
+<FONT color="green">369</FONT>         */<a name="line.369"></a>
+<FONT color="green">370</FONT>        public static String translate(String str, String searchChars, String replaceChars) {<a name="line.370"></a>
+<FONT color="green">371</FONT>            if (StringUtils.isEmpty(str)) {<a name="line.371"></a>
+<FONT color="green">372</FONT>                return str;<a name="line.372"></a>
+<FONT color="green">373</FONT>            }<a name="line.373"></a>
+<FONT color="green">374</FONT>            StrBuilder buffer = new StrBuilder(str.length());<a name="line.374"></a>
+<FONT color="green">375</FONT>            char[] chrs = str.toCharArray();<a name="line.375"></a>
+<FONT color="green">376</FONT>            char[] withChrs = replaceChars.toCharArray();<a name="line.376"></a>
+<FONT color="green">377</FONT>            int sz = chrs.length;<a name="line.377"></a>
+<FONT color="green">378</FONT>            int withMax = replaceChars.length() - 1;<a name="line.378"></a>
+<FONT color="green">379</FONT>            for(int i=0; i&lt;sz; i++) {<a name="line.379"></a>
+<FONT color="green">380</FONT>                int idx = searchChars.indexOf(chrs[i]);<a name="line.380"></a>
+<FONT color="green">381</FONT>                if(idx != -1) {<a name="line.381"></a>
+<FONT color="green">382</FONT>                    if(idx &gt; withMax) {<a name="line.382"></a>
+<FONT color="green">383</FONT>                        idx = withMax;<a name="line.383"></a>
+<FONT color="green">384</FONT>                    }<a name="line.384"></a>
+<FONT color="green">385</FONT>                    buffer.append(withChrs[idx]);<a name="line.385"></a>
+<FONT color="green">386</FONT>                } else {<a name="line.386"></a>
+<FONT color="green">387</FONT>                    buffer.append(chrs[i]);<a name="line.387"></a>
+<FONT color="green">388</FONT>                }<a name="line.388"></a>
+<FONT color="green">389</FONT>            }<a name="line.389"></a>
+<FONT color="green">390</FONT>            return buffer.toString();<a name="line.390"></a>
+<FONT color="green">391</FONT>        }<a name="line.391"></a>
+<FONT color="green">392</FONT>    <a name="line.392"></a>
+<FONT color="green">393</FONT>    }<a name="line.393"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

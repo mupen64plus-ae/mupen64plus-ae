@@ -1,0 +1,1135 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<FONT color="green">003</FONT>     * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<FONT color="green">010</FONT>     *<a name="line.10"></a>
+<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * See the License for the specific language governing permissions and<a name="line.14"></a>
+<FONT color="green">015</FONT>     * limitations under the License.<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    package org.apache.commons.lang;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.lang.reflect.Method;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.lang.reflect.Modifier;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.ArrayList;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.HashMap;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Iterator;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.List;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.Map;<a name="line.25"></a>
+<FONT color="green">026</FONT>    <a name="line.26"></a>
+<FONT color="green">027</FONT>    import org.apache.commons.lang.text.StrBuilder;<a name="line.27"></a>
+<FONT color="green">028</FONT>    <a name="line.28"></a>
+<FONT color="green">029</FONT>    /**<a name="line.29"></a>
+<FONT color="green">030</FONT>     * &lt;p&gt;Operates on classes without using reflection.&lt;/p&gt;<a name="line.30"></a>
+<FONT color="green">031</FONT>     *<a name="line.31"></a>
+<FONT color="green">032</FONT>     * &lt;p&gt;This class handles invalid &lt;code&gt;null&lt;/code&gt; inputs as best it can.<a name="line.32"></a>
+<FONT color="green">033</FONT>     * Each method documents its behaviour in more detail.&lt;/p&gt;<a name="line.33"></a>
+<FONT color="green">034</FONT>     *<a name="line.34"></a>
+<FONT color="green">035</FONT>     * &lt;p&gt;The notion of a &lt;code&gt;canonical name&lt;/code&gt; includes the human<a name="line.35"></a>
+<FONT color="green">036</FONT>     * readable name for the type, for example &lt;code&gt;int[]&lt;/code&gt;. The<a name="line.36"></a>
+<FONT color="green">037</FONT>     * non-canonical method variants work with the JVM names, such as<a name="line.37"></a>
+<FONT color="green">038</FONT>     * &lt;code&gt;[I&lt;/code&gt;. &lt;/p&gt;<a name="line.38"></a>
+<FONT color="green">039</FONT>     *<a name="line.39"></a>
+<FONT color="green">040</FONT>     * @author Apache Software Foundation<a name="line.40"></a>
+<FONT color="green">041</FONT>     * @author Gary Gregory<a name="line.41"></a>
+<FONT color="green">042</FONT>     * @author Norm Deane<a name="line.42"></a>
+<FONT color="green">043</FONT>     * @author Alban Peignier<a name="line.43"></a>
+<FONT color="green">044</FONT>     * @author Tomasz Blachowicz<a name="line.44"></a>
+<FONT color="green">045</FONT>     * @since 2.0<a name="line.45"></a>
+<FONT color="green">046</FONT>     * @version $Id: ClassUtils.java 1057072 2011-01-10 01:55:57Z niallp $<a name="line.46"></a>
+<FONT color="green">047</FONT>     */<a name="line.47"></a>
+<FONT color="green">048</FONT>    public class ClassUtils {<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        /**<a name="line.50"></a>
+<FONT color="green">051</FONT>         * &lt;p&gt;The package separator character: &lt;code&gt;'&amp;#x2e;' == {@value}&lt;/code&gt;.&lt;/p&gt;<a name="line.51"></a>
+<FONT color="green">052</FONT>         */<a name="line.52"></a>
+<FONT color="green">053</FONT>        public static final char PACKAGE_SEPARATOR_CHAR = '.';<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>        /**<a name="line.55"></a>
+<FONT color="green">056</FONT>         * &lt;p&gt;The package separator String: &lt;code&gt;"&amp;#x2e;"&lt;/code&gt;.&lt;/p&gt;<a name="line.56"></a>
+<FONT color="green">057</FONT>         */<a name="line.57"></a>
+<FONT color="green">058</FONT>        public static final String PACKAGE_SEPARATOR = String.valueOf(PACKAGE_SEPARATOR_CHAR);<a name="line.58"></a>
+<FONT color="green">059</FONT>    <a name="line.59"></a>
+<FONT color="green">060</FONT>        /**<a name="line.60"></a>
+<FONT color="green">061</FONT>         * &lt;p&gt;The inner class separator character: &lt;code&gt;'$' == {@value}&lt;/code&gt;.&lt;/p&gt;<a name="line.61"></a>
+<FONT color="green">062</FONT>         */<a name="line.62"></a>
+<FONT color="green">063</FONT>        public static final char INNER_CLASS_SEPARATOR_CHAR = '$';<a name="line.63"></a>
+<FONT color="green">064</FONT>    <a name="line.64"></a>
+<FONT color="green">065</FONT>        /**<a name="line.65"></a>
+<FONT color="green">066</FONT>         * &lt;p&gt;The inner class separator String: &lt;code&gt;"$"&lt;/code&gt;.&lt;/p&gt;<a name="line.66"></a>
+<FONT color="green">067</FONT>         */<a name="line.67"></a>
+<FONT color="green">068</FONT>        public static final String INNER_CLASS_SEPARATOR = String.valueOf(INNER_CLASS_SEPARATOR_CHAR);<a name="line.68"></a>
+<FONT color="green">069</FONT>    <a name="line.69"></a>
+<FONT color="green">070</FONT>        /**<a name="line.70"></a>
+<FONT color="green">071</FONT>         * Maps primitive &lt;code&gt;Class&lt;/code&gt;es to their corresponding wrapper &lt;code&gt;Class&lt;/code&gt;.<a name="line.71"></a>
+<FONT color="green">072</FONT>         */<a name="line.72"></a>
+<FONT color="green">073</FONT>        private static final Map primitiveWrapperMap = new HashMap();<a name="line.73"></a>
+<FONT color="green">074</FONT>        static {<a name="line.74"></a>
+<FONT color="green">075</FONT>             primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);<a name="line.75"></a>
+<FONT color="green">076</FONT>             primitiveWrapperMap.put(Byte.TYPE, Byte.class);<a name="line.76"></a>
+<FONT color="green">077</FONT>             primitiveWrapperMap.put(Character.TYPE, Character.class);<a name="line.77"></a>
+<FONT color="green">078</FONT>             primitiveWrapperMap.put(Short.TYPE, Short.class);<a name="line.78"></a>
+<FONT color="green">079</FONT>             primitiveWrapperMap.put(Integer.TYPE, Integer.class);<a name="line.79"></a>
+<FONT color="green">080</FONT>             primitiveWrapperMap.put(Long.TYPE, Long.class);<a name="line.80"></a>
+<FONT color="green">081</FONT>             primitiveWrapperMap.put(Double.TYPE, Double.class);<a name="line.81"></a>
+<FONT color="green">082</FONT>             primitiveWrapperMap.put(Float.TYPE, Float.class);<a name="line.82"></a>
+<FONT color="green">083</FONT>             primitiveWrapperMap.put(Void.TYPE, Void.TYPE);<a name="line.83"></a>
+<FONT color="green">084</FONT>        }<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>        /**<a name="line.86"></a>
+<FONT color="green">087</FONT>         * Maps wrapper &lt;code&gt;Class&lt;/code&gt;es to their corresponding primitive types.<a name="line.87"></a>
+<FONT color="green">088</FONT>         */<a name="line.88"></a>
+<FONT color="green">089</FONT>        private static final Map wrapperPrimitiveMap = new HashMap();<a name="line.89"></a>
+<FONT color="green">090</FONT>        static {<a name="line.90"></a>
+<FONT color="green">091</FONT>            for (Iterator it = primitiveWrapperMap.keySet().iterator(); it.hasNext();) {<a name="line.91"></a>
+<FONT color="green">092</FONT>                Class primitiveClass = (Class) it.next();<a name="line.92"></a>
+<FONT color="green">093</FONT>                Class wrapperClass = (Class) primitiveWrapperMap.get(primitiveClass);<a name="line.93"></a>
+<FONT color="green">094</FONT>                if (!primitiveClass.equals(wrapperClass)) {<a name="line.94"></a>
+<FONT color="green">095</FONT>                    wrapperPrimitiveMap.put(wrapperClass, primitiveClass);<a name="line.95"></a>
+<FONT color="green">096</FONT>                }<a name="line.96"></a>
+<FONT color="green">097</FONT>            }<a name="line.97"></a>
+<FONT color="green">098</FONT>        }<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>        /**<a name="line.100"></a>
+<FONT color="green">101</FONT>         * Maps a primitive class name to its corresponding abbreviation used in array class names.<a name="line.101"></a>
+<FONT color="green">102</FONT>         */<a name="line.102"></a>
+<FONT color="green">103</FONT>        private static final Map abbreviationMap = new HashMap();<a name="line.103"></a>
+<FONT color="green">104</FONT>    <a name="line.104"></a>
+<FONT color="green">105</FONT>        /**<a name="line.105"></a>
+<FONT color="green">106</FONT>         * Maps an abbreviation used in array class names to corresponding primitive class name.<a name="line.106"></a>
+<FONT color="green">107</FONT>         */<a name="line.107"></a>
+<FONT color="green">108</FONT>        private static final Map reverseAbbreviationMap = new HashMap();<a name="line.108"></a>
+<FONT color="green">109</FONT>    <a name="line.109"></a>
+<FONT color="green">110</FONT>        /**<a name="line.110"></a>
+<FONT color="green">111</FONT>         * Add primitive type abbreviation to maps of abbreviations.<a name="line.111"></a>
+<FONT color="green">112</FONT>         *<a name="line.112"></a>
+<FONT color="green">113</FONT>         * @param primitive Canonical name of primitive type<a name="line.113"></a>
+<FONT color="green">114</FONT>         * @param abbreviation Corresponding abbreviation of primitive type<a name="line.114"></a>
+<FONT color="green">115</FONT>         */<a name="line.115"></a>
+<FONT color="green">116</FONT>        private static void addAbbreviation(String primitive, String abbreviation) {<a name="line.116"></a>
+<FONT color="green">117</FONT>            abbreviationMap.put(primitive, abbreviation);<a name="line.117"></a>
+<FONT color="green">118</FONT>            reverseAbbreviationMap.put(abbreviation, primitive);<a name="line.118"></a>
+<FONT color="green">119</FONT>        }<a name="line.119"></a>
+<FONT color="green">120</FONT>    <a name="line.120"></a>
+<FONT color="green">121</FONT>        /**<a name="line.121"></a>
+<FONT color="green">122</FONT>         * Feed abbreviation maps<a name="line.122"></a>
+<FONT color="green">123</FONT>         */<a name="line.123"></a>
+<FONT color="green">124</FONT>        static {<a name="line.124"></a>
+<FONT color="green">125</FONT>            addAbbreviation("int", "I");<a name="line.125"></a>
+<FONT color="green">126</FONT>            addAbbreviation("boolean", "Z");<a name="line.126"></a>
+<FONT color="green">127</FONT>            addAbbreviation("float", "F");<a name="line.127"></a>
+<FONT color="green">128</FONT>            addAbbreviation("long", "J");<a name="line.128"></a>
+<FONT color="green">129</FONT>            addAbbreviation("short", "S");<a name="line.129"></a>
+<FONT color="green">130</FONT>            addAbbreviation("byte", "B");<a name="line.130"></a>
+<FONT color="green">131</FONT>            addAbbreviation("double", "D");<a name="line.131"></a>
+<FONT color="green">132</FONT>            addAbbreviation("char", "C");<a name="line.132"></a>
+<FONT color="green">133</FONT>        }<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>        /**<a name="line.135"></a>
+<FONT color="green">136</FONT>         * &lt;p&gt;ClassUtils instances should NOT be constructed in standard programming.<a name="line.136"></a>
+<FONT color="green">137</FONT>         * Instead, the class should be used as<a name="line.137"></a>
+<FONT color="green">138</FONT>         * &lt;code&gt;ClassUtils.getShortClassName(cls)&lt;/code&gt;.&lt;/p&gt;<a name="line.138"></a>
+<FONT color="green">139</FONT>         *<a name="line.139"></a>
+<FONT color="green">140</FONT>         * &lt;p&gt;This constructor is public to permit tools that require a JavaBean<a name="line.140"></a>
+<FONT color="green">141</FONT>         * instance to operate.&lt;/p&gt;<a name="line.141"></a>
+<FONT color="green">142</FONT>         */<a name="line.142"></a>
+<FONT color="green">143</FONT>        public ClassUtils() {<a name="line.143"></a>
+<FONT color="green">144</FONT>          super();<a name="line.144"></a>
+<FONT color="green">145</FONT>        }<a name="line.145"></a>
+<FONT color="green">146</FONT>    <a name="line.146"></a>
+<FONT color="green">147</FONT>        // Short class name<a name="line.147"></a>
+<FONT color="green">148</FONT>        // ----------------------------------------------------------------------<a name="line.148"></a>
+<FONT color="green">149</FONT>        /**<a name="line.149"></a>
+<FONT color="green">150</FONT>         * &lt;p&gt;Gets the class name minus the package name for an &lt;code&gt;Object&lt;/code&gt;.&lt;/p&gt;<a name="line.150"></a>
+<FONT color="green">151</FONT>         *<a name="line.151"></a>
+<FONT color="green">152</FONT>         * @param object  the class to get the short name for, may be null<a name="line.152"></a>
+<FONT color="green">153</FONT>         * @param valueIfNull  the value to return if null<a name="line.153"></a>
+<FONT color="green">154</FONT>         * @return the class name of the object without the package name, or the null value<a name="line.154"></a>
+<FONT color="green">155</FONT>         */<a name="line.155"></a>
+<FONT color="green">156</FONT>        public static String getShortClassName(Object object, String valueIfNull) {<a name="line.156"></a>
+<FONT color="green">157</FONT>            if (object == null) {<a name="line.157"></a>
+<FONT color="green">158</FONT>                return valueIfNull;<a name="line.158"></a>
+<FONT color="green">159</FONT>            }<a name="line.159"></a>
+<FONT color="green">160</FONT>            return getShortClassName(object.getClass());<a name="line.160"></a>
+<FONT color="green">161</FONT>        }<a name="line.161"></a>
+<FONT color="green">162</FONT>    <a name="line.162"></a>
+<FONT color="green">163</FONT>        /**<a name="line.163"></a>
+<FONT color="green">164</FONT>         * &lt;p&gt;Gets the class name minus the package name from a &lt;code&gt;Class&lt;/code&gt;.&lt;/p&gt;<a name="line.164"></a>
+<FONT color="green">165</FONT>         *<a name="line.165"></a>
+<FONT color="green">166</FONT>         * @param cls  the class to get the short name for.<a name="line.166"></a>
+<FONT color="green">167</FONT>         * @return the class name without the package name or an empty string<a name="line.167"></a>
+<FONT color="green">168</FONT>         */<a name="line.168"></a>
+<FONT color="green">169</FONT>        public static String getShortClassName(Class cls) {<a name="line.169"></a>
+<FONT color="green">170</FONT>            if (cls == null) {<a name="line.170"></a>
+<FONT color="green">171</FONT>                return StringUtils.EMPTY;<a name="line.171"></a>
+<FONT color="green">172</FONT>            }<a name="line.172"></a>
+<FONT color="green">173</FONT>            return getShortClassName(cls.getName());<a name="line.173"></a>
+<FONT color="green">174</FONT>        }<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>        /**<a name="line.176"></a>
+<FONT color="green">177</FONT>         * &lt;p&gt;Gets the class name minus the package name from a String.&lt;/p&gt;<a name="line.177"></a>
+<FONT color="green">178</FONT>         *<a name="line.178"></a>
+<FONT color="green">179</FONT>         * &lt;p&gt;The string passed in is assumed to be a class name - it is not checked.&lt;/p&gt;<a name="line.179"></a>
+<FONT color="green">180</FONT>         *<a name="line.180"></a>
+<FONT color="green">181</FONT>         * @param className  the className to get the short name for<a name="line.181"></a>
+<FONT color="green">182</FONT>         * @return the class name of the class without the package name or an empty string<a name="line.182"></a>
+<FONT color="green">183</FONT>         */<a name="line.183"></a>
+<FONT color="green">184</FONT>        public static String getShortClassName(String className) {<a name="line.184"></a>
+<FONT color="green">185</FONT>            if (className == null) {<a name="line.185"></a>
+<FONT color="green">186</FONT>                return StringUtils.EMPTY;<a name="line.186"></a>
+<FONT color="green">187</FONT>            }<a name="line.187"></a>
+<FONT color="green">188</FONT>            if (className.length() == 0) {<a name="line.188"></a>
+<FONT color="green">189</FONT>                return StringUtils.EMPTY;<a name="line.189"></a>
+<FONT color="green">190</FONT>            }<a name="line.190"></a>
+<FONT color="green">191</FONT>    <a name="line.191"></a>
+<FONT color="green">192</FONT>            StrBuilder arrayPrefix = new StrBuilder();<a name="line.192"></a>
+<FONT color="green">193</FONT>    <a name="line.193"></a>
+<FONT color="green">194</FONT>            // Handle array encoding<a name="line.194"></a>
+<FONT color="green">195</FONT>            if (className.startsWith("[")) {<a name="line.195"></a>
+<FONT color="green">196</FONT>                while (className.charAt(0) == '[') {<a name="line.196"></a>
+<FONT color="green">197</FONT>                    className = className.substring(1);<a name="line.197"></a>
+<FONT color="green">198</FONT>                    arrayPrefix.append("[]");<a name="line.198"></a>
+<FONT color="green">199</FONT>                }<a name="line.199"></a>
+<FONT color="green">200</FONT>                // Strip Object type encoding<a name="line.200"></a>
+<FONT color="green">201</FONT>                if (className.charAt(0) == 'L' &amp;&amp; className.charAt(className.length() - 1) == ';') {<a name="line.201"></a>
+<FONT color="green">202</FONT>                    className = className.substring(1, className.length() - 1);<a name="line.202"></a>
+<FONT color="green">203</FONT>                }<a name="line.203"></a>
+<FONT color="green">204</FONT>            }<a name="line.204"></a>
+<FONT color="green">205</FONT>    <a name="line.205"></a>
+<FONT color="green">206</FONT>            if (reverseAbbreviationMap.containsKey(className)) {<a name="line.206"></a>
+<FONT color="green">207</FONT>                className = (String)reverseAbbreviationMap.get(className);<a name="line.207"></a>
+<FONT color="green">208</FONT>            }<a name="line.208"></a>
+<FONT color="green">209</FONT>    <a name="line.209"></a>
+<FONT color="green">210</FONT>            int lastDotIdx = className.lastIndexOf(PACKAGE_SEPARATOR_CHAR);<a name="line.210"></a>
+<FONT color="green">211</FONT>            int innerIdx = className.indexOf(<a name="line.211"></a>
+<FONT color="green">212</FONT>                    INNER_CLASS_SEPARATOR_CHAR, lastDotIdx == -1 ? 0 : lastDotIdx + 1);<a name="line.212"></a>
+<FONT color="green">213</FONT>            String out = className.substring(lastDotIdx + 1);<a name="line.213"></a>
+<FONT color="green">214</FONT>            if (innerIdx != -1) {<a name="line.214"></a>
+<FONT color="green">215</FONT>                out = out.replace(INNER_CLASS_SEPARATOR_CHAR, PACKAGE_SEPARATOR_CHAR);<a name="line.215"></a>
+<FONT color="green">216</FONT>            }<a name="line.216"></a>
+<FONT color="green">217</FONT>            return out + arrayPrefix;<a name="line.217"></a>
+<FONT color="green">218</FONT>        }<a name="line.218"></a>
+<FONT color="green">219</FONT>    <a name="line.219"></a>
+<FONT color="green">220</FONT>        // Package name<a name="line.220"></a>
+<FONT color="green">221</FONT>        // ----------------------------------------------------------------------<a name="line.221"></a>
+<FONT color="green">222</FONT>        /**<a name="line.222"></a>
+<FONT color="green">223</FONT>         * &lt;p&gt;Gets the package name of an &lt;code&gt;Object&lt;/code&gt;.&lt;/p&gt;<a name="line.223"></a>
+<FONT color="green">224</FONT>         *<a name="line.224"></a>
+<FONT color="green">225</FONT>         * @param object  the class to get the package name for, may be null<a name="line.225"></a>
+<FONT color="green">226</FONT>         * @param valueIfNull  the value to return if null<a name="line.226"></a>
+<FONT color="green">227</FONT>         * @return the package name of the object, or the null value<a name="line.227"></a>
+<FONT color="green">228</FONT>         */<a name="line.228"></a>
+<FONT color="green">229</FONT>        public static String getPackageName(Object object, String valueIfNull) {<a name="line.229"></a>
+<FONT color="green">230</FONT>            if (object == null) {<a name="line.230"></a>
+<FONT color="green">231</FONT>                return valueIfNull;<a name="line.231"></a>
+<FONT color="green">232</FONT>            }<a name="line.232"></a>
+<FONT color="green">233</FONT>            return getPackageName(object.getClass());<a name="line.233"></a>
+<FONT color="green">234</FONT>        }<a name="line.234"></a>
+<FONT color="green">235</FONT>    <a name="line.235"></a>
+<FONT color="green">236</FONT>        /**<a name="line.236"></a>
+<FONT color="green">237</FONT>         * &lt;p&gt;Gets the package name of a &lt;code&gt;Class&lt;/code&gt;.&lt;/p&gt;<a name="line.237"></a>
+<FONT color="green">238</FONT>         *<a name="line.238"></a>
+<FONT color="green">239</FONT>         * @param cls  the class to get the package name for, may be &lt;code&gt;null&lt;/code&gt;.<a name="line.239"></a>
+<FONT color="green">240</FONT>         * @return the package name or an empty string<a name="line.240"></a>
+<FONT color="green">241</FONT>         */<a name="line.241"></a>
+<FONT color="green">242</FONT>        public static String getPackageName(Class cls) {<a name="line.242"></a>
+<FONT color="green">243</FONT>            if (cls == null) {<a name="line.243"></a>
+<FONT color="green">244</FONT>                return StringUtils.EMPTY;<a name="line.244"></a>
+<FONT color="green">245</FONT>            }<a name="line.245"></a>
+<FONT color="green">246</FONT>            return getPackageName(cls.getName());<a name="line.246"></a>
+<FONT color="green">247</FONT>        }<a name="line.247"></a>
+<FONT color="green">248</FONT>    <a name="line.248"></a>
+<FONT color="green">249</FONT>        /**<a name="line.249"></a>
+<FONT color="green">250</FONT>         * &lt;p&gt;Gets the package name from a &lt;code&gt;String&lt;/code&gt;.&lt;/p&gt;<a name="line.250"></a>
+<FONT color="green">251</FONT>         *<a name="line.251"></a>
+<FONT color="green">252</FONT>         * &lt;p&gt;The string passed in is assumed to be a class name - it is not checked.&lt;/p&gt;<a name="line.252"></a>
+<FONT color="green">253</FONT>         * &lt;p&gt;If the class is unpackaged, return an empty string.&lt;/p&gt;<a name="line.253"></a>
+<FONT color="green">254</FONT>         *<a name="line.254"></a>
+<FONT color="green">255</FONT>         * @param className  the className to get the package name for, may be &lt;code&gt;null&lt;/code&gt;<a name="line.255"></a>
+<FONT color="green">256</FONT>         * @return the package name or an empty string<a name="line.256"></a>
+<FONT color="green">257</FONT>         */<a name="line.257"></a>
+<FONT color="green">258</FONT>        public static String getPackageName(String className) {<a name="line.258"></a>
+<FONT color="green">259</FONT>            if (className == null || className.length() == 0) {<a name="line.259"></a>
+<FONT color="green">260</FONT>                return StringUtils.EMPTY;<a name="line.260"></a>
+<FONT color="green">261</FONT>            }<a name="line.261"></a>
+<FONT color="green">262</FONT>    <a name="line.262"></a>
+<FONT color="green">263</FONT>            // Strip array encoding<a name="line.263"></a>
+<FONT color="green">264</FONT>            while (className.charAt(0) == '[') {<a name="line.264"></a>
+<FONT color="green">265</FONT>                className = className.substring(1);<a name="line.265"></a>
+<FONT color="green">266</FONT>            }<a name="line.266"></a>
+<FONT color="green">267</FONT>            // Strip Object type encoding<a name="line.267"></a>
+<FONT color="green">268</FONT>            if (className.charAt(0) == 'L' &amp;&amp; className.charAt(className.length() - 1) == ';') {<a name="line.268"></a>
+<FONT color="green">269</FONT>                className = className.substring(1);<a name="line.269"></a>
+<FONT color="green">270</FONT>            }<a name="line.270"></a>
+<FONT color="green">271</FONT>    <a name="line.271"></a>
+<FONT color="green">272</FONT>            int i = className.lastIndexOf(PACKAGE_SEPARATOR_CHAR);<a name="line.272"></a>
+<FONT color="green">273</FONT>            if (i == -1) {<a name="line.273"></a>
+<FONT color="green">274</FONT>                return StringUtils.EMPTY;<a name="line.274"></a>
+<FONT color="green">275</FONT>            }<a name="line.275"></a>
+<FONT color="green">276</FONT>            return className.substring(0, i);<a name="line.276"></a>
+<FONT color="green">277</FONT>        }<a name="line.277"></a>
+<FONT color="green">278</FONT>    <a name="line.278"></a>
+<FONT color="green">279</FONT>        // Superclasses/Superinterfaces<a name="line.279"></a>
+<FONT color="green">280</FONT>        // ----------------------------------------------------------------------<a name="line.280"></a>
+<FONT color="green">281</FONT>        /**<a name="line.281"></a>
+<FONT color="green">282</FONT>         * &lt;p&gt;Gets a &lt;code&gt;List&lt;/code&gt; of superclasses for the given class.&lt;/p&gt;<a name="line.282"></a>
+<FONT color="green">283</FONT>         *<a name="line.283"></a>
+<FONT color="green">284</FONT>         * @param cls  the class to look up, may be &lt;code&gt;null&lt;/code&gt;<a name="line.284"></a>
+<FONT color="green">285</FONT>         * @return the &lt;code&gt;List&lt;/code&gt; of superclasses in order going up from this one<a name="line.285"></a>
+<FONT color="green">286</FONT>         *  &lt;code&gt;null&lt;/code&gt; if null input<a name="line.286"></a>
+<FONT color="green">287</FONT>         */<a name="line.287"></a>
+<FONT color="green">288</FONT>        public static List getAllSuperclasses(Class cls) {<a name="line.288"></a>
+<FONT color="green">289</FONT>            if (cls == null) {<a name="line.289"></a>
+<FONT color="green">290</FONT>                return null;<a name="line.290"></a>
+<FONT color="green">291</FONT>            }<a name="line.291"></a>
+<FONT color="green">292</FONT>            List classes = new ArrayList();<a name="line.292"></a>
+<FONT color="green">293</FONT>            Class superclass = cls.getSuperclass();<a name="line.293"></a>
+<FONT color="green">294</FONT>            while (superclass != null) {<a name="line.294"></a>
+<FONT color="green">295</FONT>                classes.add(superclass);<a name="line.295"></a>
+<FONT color="green">296</FONT>                superclass = superclass.getSuperclass();<a name="line.296"></a>
+<FONT color="green">297</FONT>            }<a name="line.297"></a>
+<FONT color="green">298</FONT>            return classes;<a name="line.298"></a>
+<FONT color="green">299</FONT>        }<a name="line.299"></a>
+<FONT color="green">300</FONT>    <a name="line.300"></a>
+<FONT color="green">301</FONT>        /**<a name="line.301"></a>
+<FONT color="green">302</FONT>         * &lt;p&gt;Gets a &lt;code&gt;List&lt;/code&gt; of all interfaces implemented by the given<a name="line.302"></a>
+<FONT color="green">303</FONT>         * class and its superclasses.&lt;/p&gt;<a name="line.303"></a>
+<FONT color="green">304</FONT>         *<a name="line.304"></a>
+<FONT color="green">305</FONT>         * &lt;p&gt;The order is determined by looking through each interface in turn as<a name="line.305"></a>
+<FONT color="green">306</FONT>         * declared in the source file and following its hierarchy up. Then each<a name="line.306"></a>
+<FONT color="green">307</FONT>         * superclass is considered in the same way. Later duplicates are ignored,<a name="line.307"></a>
+<FONT color="green">308</FONT>         * so the order is maintained.&lt;/p&gt;<a name="line.308"></a>
+<FONT color="green">309</FONT>         *<a name="line.309"></a>
+<FONT color="green">310</FONT>         * @param cls  the class to look up, may be &lt;code&gt;null&lt;/code&gt;<a name="line.310"></a>
+<FONT color="green">311</FONT>         * @return the &lt;code&gt;List&lt;/code&gt; of interfaces in order,<a name="line.311"></a>
+<FONT color="green">312</FONT>         *  &lt;code&gt;null&lt;/code&gt; if null input<a name="line.312"></a>
+<FONT color="green">313</FONT>         */<a name="line.313"></a>
+<FONT color="green">314</FONT>        public static List getAllInterfaces(Class cls) {<a name="line.314"></a>
+<FONT color="green">315</FONT>            if (cls == null) {<a name="line.315"></a>
+<FONT color="green">316</FONT>                return null;<a name="line.316"></a>
+<FONT color="green">317</FONT>            }<a name="line.317"></a>
+<FONT color="green">318</FONT>    <a name="line.318"></a>
+<FONT color="green">319</FONT>            List interfacesFound = new ArrayList();<a name="line.319"></a>
+<FONT color="green">320</FONT>            getAllInterfaces(cls, interfacesFound);<a name="line.320"></a>
+<FONT color="green">321</FONT>    <a name="line.321"></a>
+<FONT color="green">322</FONT>            return interfacesFound;<a name="line.322"></a>
+<FONT color="green">323</FONT>        }<a name="line.323"></a>
+<FONT color="green">324</FONT>    <a name="line.324"></a>
+<FONT color="green">325</FONT>        /**<a name="line.325"></a>
+<FONT color="green">326</FONT>         * Get the interfaces for the specified class.<a name="line.326"></a>
+<FONT color="green">327</FONT>         *<a name="line.327"></a>
+<FONT color="green">328</FONT>         * @param cls  the class to look up, may be &lt;code&gt;null&lt;/code&gt;<a name="line.328"></a>
+<FONT color="green">329</FONT>         * @param interfacesFound the &lt;code&gt;Set&lt;/code&gt; of interfaces for the class<a name="line.329"></a>
+<FONT color="green">330</FONT>         */<a name="line.330"></a>
+<FONT color="green">331</FONT>        private static void getAllInterfaces(Class cls, List interfacesFound) {<a name="line.331"></a>
+<FONT color="green">332</FONT>            while (cls != null) {<a name="line.332"></a>
+<FONT color="green">333</FONT>                Class[] interfaces = cls.getInterfaces();<a name="line.333"></a>
+<FONT color="green">334</FONT>    <a name="line.334"></a>
+<FONT color="green">335</FONT>                for (int i = 0; i &lt; interfaces.length; i++) {<a name="line.335"></a>
+<FONT color="green">336</FONT>                    if (!interfacesFound.contains(interfaces[i])) {<a name="line.336"></a>
+<FONT color="green">337</FONT>                        interfacesFound.add(interfaces[i]);<a name="line.337"></a>
+<FONT color="green">338</FONT>                        getAllInterfaces(interfaces[i], interfacesFound);<a name="line.338"></a>
+<FONT color="green">339</FONT>                    }<a name="line.339"></a>
+<FONT color="green">340</FONT>                }<a name="line.340"></a>
+<FONT color="green">341</FONT>    <a name="line.341"></a>
+<FONT color="green">342</FONT>                cls = cls.getSuperclass();<a name="line.342"></a>
+<FONT color="green">343</FONT>             }<a name="line.343"></a>
+<FONT color="green">344</FONT>         }<a name="line.344"></a>
+<FONT color="green">345</FONT>    <a name="line.345"></a>
+<FONT color="green">346</FONT>        // Convert list<a name="line.346"></a>
+<FONT color="green">347</FONT>        // ----------------------------------------------------------------------<a name="line.347"></a>
+<FONT color="green">348</FONT>        /**<a name="line.348"></a>
+<FONT color="green">349</FONT>         * &lt;p&gt;Given a &lt;code&gt;List&lt;/code&gt; of class names, this method converts them into classes.&lt;/p&gt;<a name="line.349"></a>
+<FONT color="green">350</FONT>         *<a name="line.350"></a>
+<FONT color="green">351</FONT>         * &lt;p&gt;A new &lt;code&gt;List&lt;/code&gt; is returned. If the class name cannot be found, &lt;code&gt;null&lt;/code&gt;<a name="line.351"></a>
+<FONT color="green">352</FONT>         * is stored in the &lt;code&gt;List&lt;/code&gt;. If the class name in the &lt;code&gt;List&lt;/code&gt; is<a name="line.352"></a>
+<FONT color="green">353</FONT>         * &lt;code&gt;null&lt;/code&gt;, &lt;code&gt;null&lt;/code&gt; is stored in the output &lt;code&gt;List&lt;/code&gt;.&lt;/p&gt;<a name="line.353"></a>
+<FONT color="green">354</FONT>         *<a name="line.354"></a>
+<FONT color="green">355</FONT>         * @param classNames  the classNames to change<a name="line.355"></a>
+<FONT color="green">356</FONT>         * @return a &lt;code&gt;List&lt;/code&gt; of Class objects corresponding to the class names,<a name="line.356"></a>
+<FONT color="green">357</FONT>         *  &lt;code&gt;null&lt;/code&gt; if null input<a name="line.357"></a>
+<FONT color="green">358</FONT>         * @throws ClassCastException if classNames contains a non String entry<a name="line.358"></a>
+<FONT color="green">359</FONT>         */<a name="line.359"></a>
+<FONT color="green">360</FONT>        public static List convertClassNamesToClasses(List classNames) {<a name="line.360"></a>
+<FONT color="green">361</FONT>            if (classNames == null) {<a name="line.361"></a>
+<FONT color="green">362</FONT>                return null;<a name="line.362"></a>
+<FONT color="green">363</FONT>            }<a name="line.363"></a>
+<FONT color="green">364</FONT>            List classes = new ArrayList(classNames.size());<a name="line.364"></a>
+<FONT color="green">365</FONT>            for (Iterator it = classNames.iterator(); it.hasNext();) {<a name="line.365"></a>
+<FONT color="green">366</FONT>                String className = (String) it.next();<a name="line.366"></a>
+<FONT color="green">367</FONT>                try {<a name="line.367"></a>
+<FONT color="green">368</FONT>                    classes.add(Class.forName(className));<a name="line.368"></a>
+<FONT color="green">369</FONT>                } catch (Exception ex) {<a name="line.369"></a>
+<FONT color="green">370</FONT>                    classes.add(null);<a name="line.370"></a>
+<FONT color="green">371</FONT>                }<a name="line.371"></a>
+<FONT color="green">372</FONT>            }<a name="line.372"></a>
+<FONT color="green">373</FONT>            return classes;<a name="line.373"></a>
+<FONT color="green">374</FONT>        }<a name="line.374"></a>
+<FONT color="green">375</FONT>    <a name="line.375"></a>
+<FONT color="green">376</FONT>        /**<a name="line.376"></a>
+<FONT color="green">377</FONT>         * &lt;p&gt;Given a &lt;code&gt;List&lt;/code&gt; of &lt;code&gt;Class&lt;/code&gt; objects, this method converts<a name="line.377"></a>
+<FONT color="green">378</FONT>         * them into class names.&lt;/p&gt;<a name="line.378"></a>
+<FONT color="green">379</FONT>         *<a name="line.379"></a>
+<FONT color="green">380</FONT>         * &lt;p&gt;A new &lt;code&gt;List&lt;/code&gt; is returned. &lt;code&gt;null&lt;/code&gt; objects will be copied into<a name="line.380"></a>
+<FONT color="green">381</FONT>         * the returned list as &lt;code&gt;null&lt;/code&gt;.&lt;/p&gt;<a name="line.381"></a>
+<FONT color="green">382</FONT>         *<a name="line.382"></a>
+<FONT color="green">383</FONT>         * @param classes  the classes to change<a name="line.383"></a>
+<FONT color="green">384</FONT>         * @return a &lt;code&gt;List&lt;/code&gt; of class names corresponding to the Class objects,<a name="line.384"></a>
+<FONT color="green">385</FONT>         *  &lt;code&gt;null&lt;/code&gt; if null input<a name="line.385"></a>
+<FONT color="green">386</FONT>         * @throws ClassCastException if &lt;code&gt;classes&lt;/code&gt; contains a non-&lt;code&gt;Class&lt;/code&gt; entry<a name="line.386"></a>
+<FONT color="green">387</FONT>         */<a name="line.387"></a>
+<FONT color="green">388</FONT>        public static List convertClassesToClassNames(List classes) {<a name="line.388"></a>
+<FONT color="green">389</FONT>            if (classes == null) {<a name="line.389"></a>
+<FONT color="green">390</FONT>                return null;<a name="line.390"></a>
+<FONT color="green">391</FONT>            }<a name="line.391"></a>
+<FONT color="green">392</FONT>            List classNames = new ArrayList(classes.size());<a name="line.392"></a>
+<FONT color="green">393</FONT>            for (Iterator it = classes.iterator(); it.hasNext();) {<a name="line.393"></a>
+<FONT color="green">394</FONT>                Class cls = (Class) it.next();<a name="line.394"></a>
+<FONT color="green">395</FONT>                if (cls == null) {<a name="line.395"></a>
+<FONT color="green">396</FONT>                    classNames.add(null);<a name="line.396"></a>
+<FONT color="green">397</FONT>                } else {<a name="line.397"></a>
+<FONT color="green">398</FONT>                    classNames.add(cls.getName());<a name="line.398"></a>
+<FONT color="green">399</FONT>                }<a name="line.399"></a>
+<FONT color="green">400</FONT>            }<a name="line.400"></a>
+<FONT color="green">401</FONT>            return classNames;<a name="line.401"></a>
+<FONT color="green">402</FONT>        }<a name="line.402"></a>
+<FONT color="green">403</FONT>    <a name="line.403"></a>
+<FONT color="green">404</FONT>        // Is assignable<a name="line.404"></a>
+<FONT color="green">405</FONT>        // ----------------------------------------------------------------------<a name="line.405"></a>
+<FONT color="green">406</FONT>        /**<a name="line.406"></a>
+<FONT color="green">407</FONT>         * &lt;p&gt;Checks if an array of Classes can be assigned to another array of Classes.&lt;/p&gt;<a name="line.407"></a>
+<FONT color="green">408</FONT>         *<a name="line.408"></a>
+<FONT color="green">409</FONT>         * &lt;p&gt;This method calls {@link #isAssignable(Class, Class) isAssignable} for each<a name="line.409"></a>
+<FONT color="green">410</FONT>         * Class pair in the input arrays. It can be used to check if a set of arguments<a name="line.410"></a>
+<FONT color="green">411</FONT>         * (the first parameter) are suitably compatible with a set of method parameter types<a name="line.411"></a>
+<FONT color="green">412</FONT>         * (the second parameter).&lt;/p&gt;<a name="line.412"></a>
+<FONT color="green">413</FONT>         *<a name="line.413"></a>
+<FONT color="green">414</FONT>         * &lt;p&gt;Unlike the {@link Class#isAssignableFrom(java.lang.Class)} method, this<a name="line.414"></a>
+<FONT color="green">415</FONT>         * method takes into account widenings of primitive classes and<a name="line.415"></a>
+<FONT color="green">416</FONT>         * &lt;code&gt;null&lt;/code&gt;s.&lt;/p&gt;<a name="line.416"></a>
+<FONT color="green">417</FONT>         *<a name="line.417"></a>
+<FONT color="green">418</FONT>         * &lt;p&gt;Primitive widenings allow an int to be assigned to a &lt;code&gt;long&lt;/code&gt;,<a name="line.418"></a>
+<FONT color="green">419</FONT>         * &lt;code&gt;float&lt;/code&gt; or &lt;code&gt;double&lt;/code&gt;. This method returns the correct<a name="line.419"></a>
+<FONT color="green">420</FONT>         * result for these cases.&lt;/p&gt;<a name="line.420"></a>
+<FONT color="green">421</FONT>         *<a name="line.421"></a>
+<FONT color="green">422</FONT>         * &lt;p&gt;&lt;code&gt;Null&lt;/code&gt; may be assigned to any reference type. This method will<a name="line.422"></a>
+<FONT color="green">423</FONT>         * return &lt;code&gt;true&lt;/code&gt; if &lt;code&gt;null&lt;/code&gt; is passed in and the toClass is<a name="line.423"></a>
+<FONT color="green">424</FONT>         * non-primitive.&lt;/p&gt;<a name="line.424"></a>
+<FONT color="green">425</FONT>         *<a name="line.425"></a>
+<FONT color="green">426</FONT>         * &lt;p&gt;Specifically, this method tests whether the type represented by the<a name="line.426"></a>
+<FONT color="green">427</FONT>         * specified &lt;code&gt;Class&lt;/code&gt; parameter can be converted to the type<a name="line.427"></a>
+<FONT color="green">428</FONT>         * represented by this &lt;code&gt;Class&lt;/code&gt; object via an identity conversion<a name="line.428"></a>
+<FONT color="green">429</FONT>         * widening primitive or widening reference conversion. See<a name="line.429"></a>
+<FONT color="green">430</FONT>         * &lt;em&gt;&lt;a href="http://java.sun.com/docs/books/jls/"&gt;The Java Language Specification&lt;/a&gt;&lt;/em&gt;,<a name="line.430"></a>
+<FONT color="green">431</FONT>         * sections 5.1.1, 5.1.2 and 5.1.4 for details.&lt;/p&gt;<a name="line.431"></a>
+<FONT color="green">432</FONT>         *<a name="line.432"></a>
+<FONT color="green">433</FONT>         * @param classArray  the array of Classes to check, may be &lt;code&gt;null&lt;/code&gt;<a name="line.433"></a>
+<FONT color="green">434</FONT>         * @param toClassArray  the array of Classes to try to assign into, may be &lt;code&gt;null&lt;/code&gt;<a name="line.434"></a>
+<FONT color="green">435</FONT>         * @return &lt;code&gt;true&lt;/code&gt; if assignment possible<a name="line.435"></a>
+<FONT color="green">436</FONT>         */<a name="line.436"></a>
+<FONT color="green">437</FONT>        public static boolean isAssignable(Class[] classArray, Class[] toClassArray) {<a name="line.437"></a>
+<FONT color="green">438</FONT>            return isAssignable(classArray, toClassArray, false);<a name="line.438"></a>
+<FONT color="green">439</FONT>        }<a name="line.439"></a>
+<FONT color="green">440</FONT>    <a name="line.440"></a>
+<FONT color="green">441</FONT>        /**<a name="line.441"></a>
+<FONT color="green">442</FONT>         * &lt;p&gt;Checks if an array of Classes can be assigned to another array of Classes.&lt;/p&gt;<a name="line.442"></a>
+<FONT color="green">443</FONT>         *<a name="line.443"></a>
+<FONT color="green">444</FONT>         * &lt;p&gt;This method calls {@link #isAssignable(Class, Class) isAssignable} for each<a name="line.444"></a>
+<FONT color="green">445</FONT>         * Class pair in the input arrays. It can be used to check if a set of arguments<a name="line.445"></a>
+<FONT color="green">446</FONT>         * (the first parameter) are suitably compatible with a set of method parameter types<a name="line.446"></a>
+<FONT color="green">447</FONT>         * (the second parameter).&lt;/p&gt;<a name="line.447"></a>
+<FONT color="green">448</FONT>         *<a name="line.448"></a>
+<FONT color="green">449</FONT>         * &lt;p&gt;Unlike the {@link Class#isAssignableFrom(java.lang.Class)} method, this<a name="line.449"></a>
+<FONT color="green">450</FONT>         * method takes into account widenings of primitive classes and<a name="line.450"></a>
+<FONT color="green">451</FONT>         * &lt;code&gt;null&lt;/code&gt;s.&lt;/p&gt;<a name="line.451"></a>
+<FONT color="green">452</FONT>         *<a name="line.452"></a>
+<FONT color="green">453</FONT>         * &lt;p&gt;Primitive widenings allow an int to be assigned to a &lt;code&gt;long&lt;/code&gt;,<a name="line.453"></a>
+<FONT color="green">454</FONT>         * &lt;code&gt;float&lt;/code&gt; or &lt;code&gt;double&lt;/code&gt;. This method returns the correct<a name="line.454"></a>
+<FONT color="green">455</FONT>         * result for these cases.&lt;/p&gt;<a name="line.455"></a>
+<FONT color="green">456</FONT>         *<a name="line.456"></a>
+<FONT color="green">457</FONT>         * &lt;p&gt;&lt;code&gt;Null&lt;/code&gt; may be assigned to any reference type. This method will<a name="line.457"></a>
+<FONT color="green">458</FONT>         * return &lt;code&gt;true&lt;/code&gt; if &lt;code&gt;null&lt;/code&gt; is passed in and the toClass is<a name="line.458"></a>
+<FONT color="green">459</FONT>         * non-primitive.&lt;/p&gt;<a name="line.459"></a>
+<FONT color="green">460</FONT>         *<a name="line.460"></a>
+<FONT color="green">461</FONT>         * &lt;p&gt;Specifically, this method tests whether the type represented by the<a name="line.461"></a>
+<FONT color="green">462</FONT>         * specified &lt;code&gt;Class&lt;/code&gt; parameter can be converted to the type<a name="line.462"></a>
+<FONT color="green">463</FONT>         * represented by this &lt;code&gt;Class&lt;/code&gt; object via an identity conversion<a name="line.463"></a>
+<FONT color="green">464</FONT>         * widening primitive or widening reference conversion. See<a name="line.464"></a>
+<FONT color="green">465</FONT>         * &lt;em&gt;&lt;a href="http://java.sun.com/docs/books/jls/"&gt;The Java Language Specification&lt;/a&gt;&lt;/em&gt;,<a name="line.465"></a>
+<FONT color="green">466</FONT>         * sections 5.1.1, 5.1.2 and 5.1.4 for details.&lt;/p&gt;<a name="line.466"></a>
+<FONT color="green">467</FONT>         *<a name="line.467"></a>
+<FONT color="green">468</FONT>         * @param classArray  the array of Classes to check, may be &lt;code&gt;null&lt;/code&gt;<a name="line.468"></a>
+<FONT color="green">469</FONT>         * @param toClassArray  the array of Classes to try to assign into, may be &lt;code&gt;null&lt;/code&gt;<a name="line.469"></a>
+<FONT color="green">470</FONT>         * @param autoboxing  whether to use implicit autoboxing/unboxing between primitives and wrappers<a name="line.470"></a>
+<FONT color="green">471</FONT>         * @return &lt;code&gt;true&lt;/code&gt; if assignment possible<a name="line.471"></a>
+<FONT color="green">472</FONT>         * @since 2.5<a name="line.472"></a>
+<FONT color="green">473</FONT>         */<a name="line.473"></a>
+<FONT color="green">474</FONT>        public static boolean isAssignable(Class[] classArray, Class[] toClassArray, boolean autoboxing) {<a name="line.474"></a>
+<FONT color="green">475</FONT>            if (ArrayUtils.isSameLength(classArray, toClassArray) == false) {<a name="line.475"></a>
+<FONT color="green">476</FONT>                return false;<a name="line.476"></a>
+<FONT color="green">477</FONT>            }<a name="line.477"></a>
+<FONT color="green">478</FONT>            if (classArray == null) {<a name="line.478"></a>
+<FONT color="green">479</FONT>                classArray = ArrayUtils.EMPTY_CLASS_ARRAY;<a name="line.479"></a>
+<FONT color="green">480</FONT>            }<a name="line.480"></a>
+<FONT color="green">481</FONT>            if (toClassArray == null) {<a name="line.481"></a>
+<FONT color="green">482</FONT>                toClassArray = ArrayUtils.EMPTY_CLASS_ARRAY;<a name="line.482"></a>
+<FONT color="green">483</FONT>            }<a name="line.483"></a>
+<FONT color="green">484</FONT>            for (int i = 0; i &lt; classArray.length; i++) {<a name="line.484"></a>
+<FONT color="green">485</FONT>                if (isAssignable(classArray[i], toClassArray[i], autoboxing) == false) {<a name="line.485"></a>
+<FONT color="green">486</FONT>                    return false;<a name="line.486"></a>
+<FONT color="green">487</FONT>                }<a name="line.487"></a>
+<FONT color="green">488</FONT>            }<a name="line.488"></a>
+<FONT color="green">489</FONT>            return true;<a name="line.489"></a>
+<FONT color="green">490</FONT>        }<a name="line.490"></a>
+<FONT color="green">491</FONT>    <a name="line.491"></a>
+<FONT color="green">492</FONT>        /**<a name="line.492"></a>
+<FONT color="green">493</FONT>         * &lt;p&gt;Checks if one &lt;code&gt;Class&lt;/code&gt; can be assigned to a variable of<a name="line.493"></a>
+<FONT color="green">494</FONT>         * another &lt;code&gt;Class&lt;/code&gt;.&lt;/p&gt;<a name="line.494"></a>
+<FONT color="green">495</FONT>         *<a name="line.495"></a>
+<FONT color="green">496</FONT>         * &lt;p&gt;Unlike the {@link Class#isAssignableFrom(java.lang.Class)} method,<a name="line.496"></a>
+<FONT color="green">497</FONT>         * this method takes into account widenings of primitive classes and<a name="line.497"></a>
+<FONT color="green">498</FONT>         * &lt;code&gt;null&lt;/code&gt;s.&lt;/p&gt;<a name="line.498"></a>
+<FONT color="green">499</FONT>         *<a name="line.499"></a>
+<FONT color="green">500</FONT>         * &lt;p&gt;Primitive widenings allow an int to be assigned to a long, float or<a name="line.500"></a>
+<FONT color="green">501</FONT>         * double. This method returns the correct result for these cases.&lt;/p&gt;<a name="line.501"></a>
+<FONT color="green">502</FONT>         *<a name="line.502"></a>
+<FONT color="green">503</FONT>         * &lt;p&gt;&lt;code&gt;Null&lt;/code&gt; may be assigned to any reference type. This method<a name="line.503"></a>
+<FONT color="green">504</FONT>         * will return &lt;code&gt;true&lt;/code&gt; if &lt;code&gt;null&lt;/code&gt; is passed in and the<a name="line.504"></a>
+<FONT color="green">505</FONT>         * toClass is non-primitive.&lt;/p&gt;<a name="line.505"></a>
+<FONT color="green">506</FONT>         *<a name="line.506"></a>
+<FONT color="green">507</FONT>         * &lt;p&gt;Specifically, this method tests whether the type represented by the<a name="line.507"></a>
+<FONT color="green">508</FONT>         * specified &lt;code&gt;Class&lt;/code&gt; parameter can be converted to the type<a name="line.508"></a>
+<FONT color="green">509</FONT>         * represented by this &lt;code&gt;Class&lt;/code&gt; object via an identity conversion<a name="line.509"></a>
+<FONT color="green">510</FONT>         * widening primitive or widening reference conversion. See<a name="line.510"></a>
+<FONT color="green">511</FONT>         * &lt;em&gt;&lt;a href="http://java.sun.com/docs/books/jls/"&gt;The Java Language Specification&lt;/a&gt;&lt;/em&gt;,<a name="line.511"></a>
+<FONT color="green">512</FONT>         * sections 5.1.1, 5.1.2 and 5.1.4 for details.&lt;/p&gt;<a name="line.512"></a>
+<FONT color="green">513</FONT>         *<a name="line.513"></a>
+<FONT color="green">514</FONT>         * @param cls  the Class to check, may be null<a name="line.514"></a>
+<FONT color="green">515</FONT>         * @param toClass  the Class to try to assign into, returns false if null<a name="line.515"></a>
+<FONT color="green">516</FONT>         * @return &lt;code&gt;true&lt;/code&gt; if assignment possible<a name="line.516"></a>
+<FONT color="green">517</FONT>         */<a name="line.517"></a>
+<FONT color="green">518</FONT>        public static boolean isAssignable(Class cls, Class toClass) {<a name="line.518"></a>
+<FONT color="green">519</FONT>            return isAssignable(cls, toClass, false);<a name="line.519"></a>
+<FONT color="green">520</FONT>        }<a name="line.520"></a>
+<FONT color="green">521</FONT>    <a name="line.521"></a>
+<FONT color="green">522</FONT>        /**<a name="line.522"></a>
+<FONT color="green">523</FONT>         * &lt;p&gt;Checks if one &lt;code&gt;Class&lt;/code&gt; can be assigned to a variable of<a name="line.523"></a>
+<FONT color="green">524</FONT>         * another &lt;code&gt;Class&lt;/code&gt;.&lt;/p&gt;<a name="line.524"></a>
+<FONT color="green">525</FONT>         *<a name="line.525"></a>
+<FONT color="green">526</FONT>         * &lt;p&gt;Unlike the {@link Class#isAssignableFrom(java.lang.Class)} method,<a name="line.526"></a>
+<FONT color="green">527</FONT>         * this method takes into account widenings of primitive classes and<a name="line.527"></a>
+<FONT color="green">528</FONT>         * &lt;code&gt;null&lt;/code&gt;s.&lt;/p&gt;<a name="line.528"></a>
+<FONT color="green">529</FONT>         *<a name="line.529"></a>
+<FONT color="green">530</FONT>         * &lt;p&gt;Primitive widenings allow an int to be assigned to a long, float or<a name="line.530"></a>
+<FONT color="green">531</FONT>         * double. This method returns the correct result for these cases.&lt;/p&gt;<a name="line.531"></a>
+<FONT color="green">532</FONT>         *<a name="line.532"></a>
+<FONT color="green">533</FONT>         * &lt;p&gt;&lt;code&gt;Null&lt;/code&gt; may be assigned to any reference type. This method<a name="line.533"></a>
+<FONT color="green">534</FONT>         * will return &lt;code&gt;true&lt;/code&gt; if &lt;code&gt;null&lt;/code&gt; is passed in and the<a name="line.534"></a>
+<FONT color="green">535</FONT>         * toClass is non-primitive.&lt;/p&gt;<a name="line.535"></a>
+<FONT color="green">536</FONT>         *<a name="line.536"></a>
+<FONT color="green">537</FONT>         * &lt;p&gt;Specifically, this method tests whether the type represented by the<a name="line.537"></a>
+<FONT color="green">538</FONT>         * specified &lt;code&gt;Class&lt;/code&gt; parameter can be converted to the type<a name="line.538"></a>
+<FONT color="green">539</FONT>         * represented by this &lt;code&gt;Class&lt;/code&gt; object via an identity conversion<a name="line.539"></a>
+<FONT color="green">540</FONT>         * widening primitive or widening reference conversion. See<a name="line.540"></a>
+<FONT color="green">541</FONT>         * &lt;em&gt;&lt;a href="http://java.sun.com/docs/books/jls/"&gt;The Java Language Specification&lt;/a&gt;&lt;/em&gt;,<a name="line.541"></a>
+<FONT color="green">542</FONT>         * sections 5.1.1, 5.1.2 and 5.1.4 for details.&lt;/p&gt;<a name="line.542"></a>
+<FONT color="green">543</FONT>         *<a name="line.543"></a>
+<FONT color="green">544</FONT>         * @param cls  the Class to check, may be null<a name="line.544"></a>
+<FONT color="green">545</FONT>         * @param toClass  the Class to try to assign into, returns false if null<a name="line.545"></a>
+<FONT color="green">546</FONT>         * @param autoboxing  whether to use implicit autoboxing/unboxing between primitives and wrappers<a name="line.546"></a>
+<FONT color="green">547</FONT>         * @return &lt;code&gt;true&lt;/code&gt; if assignment possible<a name="line.547"></a>
+<FONT color="green">548</FONT>         * @since 2.5<a name="line.548"></a>
+<FONT color="green">549</FONT>         */<a name="line.549"></a>
+<FONT color="green">550</FONT>        public static boolean isAssignable(Class cls, Class toClass, boolean autoboxing) {<a name="line.550"></a>
+<FONT color="green">551</FONT>            if (toClass == null) {<a name="line.551"></a>
+<FONT color="green">552</FONT>                return false;<a name="line.552"></a>
+<FONT color="green">553</FONT>            }<a name="line.553"></a>
+<FONT color="green">554</FONT>            // have to check for null, as isAssignableFrom doesn't<a name="line.554"></a>
+<FONT color="green">555</FONT>            if (cls == null) {<a name="line.555"></a>
+<FONT color="green">556</FONT>                return !(toClass.isPrimitive());<a name="line.556"></a>
+<FONT color="green">557</FONT>            }<a name="line.557"></a>
+<FONT color="green">558</FONT>            //autoboxing:<a name="line.558"></a>
+<FONT color="green">559</FONT>            if (autoboxing) {<a name="line.559"></a>
+<FONT color="green">560</FONT>                if (cls.isPrimitive() &amp;&amp; !toClass.isPrimitive()) {<a name="line.560"></a>
+<FONT color="green">561</FONT>                    cls = primitiveToWrapper(cls);<a name="line.561"></a>
+<FONT color="green">562</FONT>                    if (cls == null) {<a name="line.562"></a>
+<FONT color="green">563</FONT>                        return false;<a name="line.563"></a>
+<FONT color="green">564</FONT>                    }<a name="line.564"></a>
+<FONT color="green">565</FONT>                }<a name="line.565"></a>
+<FONT color="green">566</FONT>                if (toClass.isPrimitive() &amp;&amp; !cls.isPrimitive()) {<a name="line.566"></a>
+<FONT color="green">567</FONT>                    cls = wrapperToPrimitive(cls);<a name="line.567"></a>
+<FONT color="green">568</FONT>                    if (cls == null) {<a name="line.568"></a>
+<FONT color="green">569</FONT>                        return false;<a name="line.569"></a>
+<FONT color="green">570</FONT>                    }<a name="line.570"></a>
+<FONT color="green">571</FONT>                }<a name="line.571"></a>
+<FONT color="green">572</FONT>            }<a name="line.572"></a>
+<FONT color="green">573</FONT>            if (cls.equals(toClass)) {<a name="line.573"></a>
+<FONT color="green">574</FONT>                return true;<a name="line.574"></a>
+<FONT color="green">575</FONT>            }<a name="line.575"></a>
+<FONT color="green">576</FONT>            if (cls.isPrimitive()) {<a name="line.576"></a>
+<FONT color="green">577</FONT>                if (toClass.isPrimitive() == false) {<a name="line.577"></a>
+<FONT color="green">578</FONT>                    return false;<a name="line.578"></a>
+<FONT color="green">579</FONT>                }<a name="line.579"></a>
+<FONT color="green">580</FONT>                if (Integer.TYPE.equals(cls)) {<a name="line.580"></a>
+<FONT color="green">581</FONT>                    return Long.TYPE.equals(toClass)<a name="line.581"></a>
+<FONT color="green">582</FONT>                        || Float.TYPE.equals(toClass)<a name="line.582"></a>
+<FONT color="green">583</FONT>                        || Double.TYPE.equals(toClass);<a name="line.583"></a>
+<FONT color="green">584</FONT>                }<a name="line.584"></a>
+<FONT color="green">585</FONT>                if (Long.TYPE.equals(cls)) {<a name="line.585"></a>
+<FONT color="green">586</FONT>                    return Float.TYPE.equals(toClass)<a name="line.586"></a>
+<FONT color="green">587</FONT>                        || Double.TYPE.equals(toClass);<a name="line.587"></a>
+<FONT color="green">588</FONT>                }<a name="line.588"></a>
+<FONT color="green">589</FONT>                if (Boolean.TYPE.equals(cls)) {<a name="line.589"></a>
+<FONT color="green">590</FONT>                    return false;<a name="line.590"></a>
+<FONT color="green">591</FONT>                }<a name="line.591"></a>
+<FONT color="green">592</FONT>                if (Double.TYPE.equals(cls)) {<a name="line.592"></a>
+<FONT color="green">593</FONT>                    return false;<a name="line.593"></a>
+<FONT color="green">594</FONT>                }<a name="line.594"></a>
+<FONT color="green">595</FONT>                if (Float.TYPE.equals(cls)) {<a name="line.595"></a>
+<FONT color="green">596</FONT>                    return Double.TYPE.equals(toClass);<a name="line.596"></a>
+<FONT color="green">597</FONT>                }<a name="line.597"></a>
+<FONT color="green">598</FONT>                if (Character.TYPE.equals(cls)) {<a name="line.598"></a>
+<FONT color="green">599</FONT>                    return Integer.TYPE.equals(toClass)<a name="line.599"></a>
+<FONT color="green">600</FONT>                        || Long.TYPE.equals(toClass)<a name="line.600"></a>
+<FONT color="green">601</FONT>                        || Float.TYPE.equals(toClass)<a name="line.601"></a>
+<FONT color="green">602</FONT>                        || Double.TYPE.equals(toClass);<a name="line.602"></a>
+<FONT color="green">603</FONT>                }<a name="line.603"></a>
+<FONT color="green">604</FONT>                if (Short.TYPE.equals(cls)) {<a name="line.604"></a>
+<FONT color="green">605</FONT>                    return Integer.TYPE.equals(toClass)<a name="line.605"></a>
+<FONT color="green">606</FONT>                        || Long.TYPE.equals(toClass)<a name="line.606"></a>
+<FONT color="green">607</FONT>                        || Float.TYPE.equals(toClass)<a name="line.607"></a>
+<FONT color="green">608</FONT>                        || Double.TYPE.equals(toClass);<a name="line.608"></a>
+<FONT color="green">609</FONT>                }<a name="line.609"></a>
+<FONT color="green">610</FONT>                if (Byte.TYPE.equals(cls)) {<a name="line.610"></a>
+<FONT color="green">611</FONT>                    return Short.TYPE.equals(toClass)<a name="line.611"></a>
+<FONT color="green">612</FONT>                        || Integer.TYPE.equals(toClass)<a name="line.612"></a>
+<FONT color="green">613</FONT>                        || Long.TYPE.equals(toClass)<a name="line.613"></a>
+<FONT color="green">614</FONT>                        || Float.TYPE.equals(toClass)<a name="line.614"></a>
+<FONT color="green">615</FONT>                        || Double.TYPE.equals(toClass);<a name="line.615"></a>
+<FONT color="green">616</FONT>                }<a name="line.616"></a>
+<FONT color="green">617</FONT>                // should never get here<a name="line.617"></a>
+<FONT color="green">618</FONT>                return false;<a name="line.618"></a>
+<FONT color="green">619</FONT>            }<a name="line.619"></a>
+<FONT color="green">620</FONT>            return toClass.isAssignableFrom(cls);<a name="line.620"></a>
+<FONT color="green">621</FONT>        }<a name="line.621"></a>
+<FONT color="green">622</FONT>    <a name="line.622"></a>
+<FONT color="green">623</FONT>        /**<a name="line.623"></a>
+<FONT color="green">624</FONT>         * &lt;p&gt;Converts the specified primitive Class object to its corresponding<a name="line.624"></a>
+<FONT color="green">625</FONT>         * wrapper Class object.&lt;/p&gt;<a name="line.625"></a>
+<FONT color="green">626</FONT>         *<a name="line.626"></a>
+<FONT color="green">627</FONT>         * &lt;p&gt;NOTE: From v2.2, this method handles &lt;code&gt;Void.TYPE&lt;/code&gt;,<a name="line.627"></a>
+<FONT color="green">628</FONT>         * returning &lt;code&gt;Void.TYPE&lt;/code&gt;.&lt;/p&gt;<a name="line.628"></a>
+<FONT color="green">629</FONT>         *<a name="line.629"></a>
+<FONT color="green">630</FONT>         * @param cls  the class to convert, may be null<a name="line.630"></a>
+<FONT color="green">631</FONT>         * @return the wrapper class for &lt;code&gt;cls&lt;/code&gt; or &lt;code&gt;cls&lt;/code&gt; if<a name="line.631"></a>
+<FONT color="green">632</FONT>         * &lt;code&gt;cls&lt;/code&gt; is not a primitive. &lt;code&gt;null&lt;/code&gt; if null input.<a name="line.632"></a>
+<FONT color="green">633</FONT>         * @since 2.1<a name="line.633"></a>
+<FONT color="green">634</FONT>         */<a name="line.634"></a>
+<FONT color="green">635</FONT>        public static Class primitiveToWrapper(Class cls) {<a name="line.635"></a>
+<FONT color="green">636</FONT>            Class convertedClass = cls;<a name="line.636"></a>
+<FONT color="green">637</FONT>            if (cls != null &amp;&amp; cls.isPrimitive()) {<a name="line.637"></a>
+<FONT color="green">638</FONT>                convertedClass = (Class) primitiveWrapperMap.get(cls);<a name="line.638"></a>
+<FONT color="green">639</FONT>            }<a name="line.639"></a>
+<FONT color="green">640</FONT>            return convertedClass;<a name="line.640"></a>
+<FONT color="green">641</FONT>        }<a name="line.641"></a>
+<FONT color="green">642</FONT>    <a name="line.642"></a>
+<FONT color="green">643</FONT>        /**<a name="line.643"></a>
+<FONT color="green">644</FONT>         * &lt;p&gt;Converts the specified array of primitive Class objects to an array of<a name="line.644"></a>
+<FONT color="green">645</FONT>         * its corresponding wrapper Class objects.&lt;/p&gt;<a name="line.645"></a>
+<FONT color="green">646</FONT>         *<a name="line.646"></a>
+<FONT color="green">647</FONT>         * @param classes  the class array to convert, may be null or empty<a name="line.647"></a>
+<FONT color="green">648</FONT>         * @return an array which contains for each given class, the wrapper class or<a name="line.648"></a>
+<FONT color="green">649</FONT>         * the original class if class is not a primitive. &lt;code&gt;null&lt;/code&gt; if null input.<a name="line.649"></a>
+<FONT color="green">650</FONT>         * Empty array if an empty array passed in.<a name="line.650"></a>
+<FONT color="green">651</FONT>         * @since 2.1<a name="line.651"></a>
+<FONT color="green">652</FONT>         */<a name="line.652"></a>
+<FONT color="green">653</FONT>        public static Class[] primitivesToWrappers(Class[] classes) {<a name="line.653"></a>
+<FONT color="green">654</FONT>            if (classes == null) {<a name="line.654"></a>
+<FONT color="green">655</FONT>                return null;<a name="line.655"></a>
+<FONT color="green">656</FONT>            }<a name="line.656"></a>
+<FONT color="green">657</FONT>    <a name="line.657"></a>
+<FONT color="green">658</FONT>            if (classes.length == 0) {<a name="line.658"></a>
+<FONT color="green">659</FONT>                return classes;<a name="line.659"></a>
+<FONT color="green">660</FONT>            }<a name="line.660"></a>
+<FONT color="green">661</FONT>    <a name="line.661"></a>
+<FONT color="green">662</FONT>            Class[] convertedClasses = new Class[classes.length];<a name="line.662"></a>
+<FONT color="green">663</FONT>            for (int i = 0; i &lt; classes.length; i++) {<a name="line.663"></a>
+<FONT color="green">664</FONT>                convertedClasses[i] = primitiveToWrapper(classes[i]);<a name="line.664"></a>
+<FONT color="green">665</FONT>            }<a name="line.665"></a>
+<FONT color="green">666</FONT>            return convertedClasses;<a name="line.666"></a>
+<FONT color="green">667</FONT>        }<a name="line.667"></a>
+<FONT color="green">668</FONT>    <a name="line.668"></a>
+<FONT color="green">669</FONT>        /**<a name="line.669"></a>
+<FONT color="green">670</FONT>         * &lt;p&gt;Converts the specified wrapper class to its corresponding primitive<a name="line.670"></a>
+<FONT color="green">671</FONT>         * class.&lt;/p&gt;<a name="line.671"></a>
+<FONT color="green">672</FONT>         *<a name="line.672"></a>
+<FONT color="green">673</FONT>         * &lt;p&gt;This method is the counter part of &lt;code&gt;primitiveToWrapper()&lt;/code&gt;.<a name="line.673"></a>
+<FONT color="green">674</FONT>         * If the passed in class is a wrapper class for a primitive type, this<a name="line.674"></a>
+<FONT color="green">675</FONT>         * primitive type will be returned (e.g. &lt;code&gt;Integer.TYPE&lt;/code&gt; for<a name="line.675"></a>
+<FONT color="green">676</FONT>         * &lt;code&gt;Integer.class&lt;/code&gt;). For other classes, or if the parameter is<a name="line.676"></a>
+<FONT color="green">677</FONT>         * &lt;b&gt;null&lt;/b&gt;, the return value is &lt;b&gt;null&lt;/b&gt;.&lt;/p&gt;<a name="line.677"></a>
+<FONT color="green">678</FONT>         *<a name="line.678"></a>
+<FONT color="green">679</FONT>         * @param cls the class to convert, may be &lt;b&gt;null&lt;/b&gt;<a name="line.679"></a>
+<FONT color="green">680</FONT>         * @return the corresponding primitive type if &lt;code&gt;cls&lt;/code&gt; is a<a name="line.680"></a>
+<FONT color="green">681</FONT>         * wrapper class, &lt;b&gt;null&lt;/b&gt; otherwise<a name="line.681"></a>
+<FONT color="green">682</FONT>         * @see #primitiveToWrapper(Class)<a name="line.682"></a>
+<FONT color="green">683</FONT>         * @since 2.4<a name="line.683"></a>
+<FONT color="green">684</FONT>         */<a name="line.684"></a>
+<FONT color="green">685</FONT>        public static Class wrapperToPrimitive(Class cls) {<a name="line.685"></a>
+<FONT color="green">686</FONT>            return (Class) wrapperPrimitiveMap.get(cls);<a name="line.686"></a>
+<FONT color="green">687</FONT>        }<a name="line.687"></a>
+<FONT color="green">688</FONT>    <a name="line.688"></a>
+<FONT color="green">689</FONT>        /**<a name="line.689"></a>
+<FONT color="green">690</FONT>         * &lt;p&gt;Converts the specified array of wrapper Class objects to an array of<a name="line.690"></a>
+<FONT color="green">691</FONT>         * its corresponding primitive Class objects.&lt;/p&gt;<a name="line.691"></a>
+<FONT color="green">692</FONT>         *<a name="line.692"></a>
+<FONT color="green">693</FONT>         * &lt;p&gt;This method invokes &lt;code&gt;wrapperToPrimitive()&lt;/code&gt; for each element<a name="line.693"></a>
+<FONT color="green">694</FONT>         * of the passed in array.&lt;/p&gt;<a name="line.694"></a>
+<FONT color="green">695</FONT>         *<a name="line.695"></a>
+<FONT color="green">696</FONT>         * @param classes  the class array to convert, may be null or empty<a name="line.696"></a>
+<FONT color="green">697</FONT>         * @return an array which contains for each given class, the primitive class or<a name="line.697"></a>
+<FONT color="green">698</FONT>         * &lt;b&gt;null&lt;/b&gt; if the original class is not a wrapper class. &lt;code&gt;null&lt;/code&gt; if null input.<a name="line.698"></a>
+<FONT color="green">699</FONT>         * Empty array if an empty array passed in.<a name="line.699"></a>
+<FONT color="green">700</FONT>         * @see #wrapperToPrimitive(Class)<a name="line.700"></a>
+<FONT color="green">701</FONT>         * @since 2.4<a name="line.701"></a>
+<FONT color="green">702</FONT>         */<a name="line.702"></a>
+<FONT color="green">703</FONT>        public static Class[] wrappersToPrimitives(Class[] classes) {<a name="line.703"></a>
+<FONT color="green">704</FONT>            if (classes == null) {<a name="line.704"></a>
+<FONT color="green">705</FONT>                return null;<a name="line.705"></a>
+<FONT color="green">706</FONT>            }<a name="line.706"></a>
+<FONT color="green">707</FONT>    <a name="line.707"></a>
+<FONT color="green">708</FONT>            if (classes.length == 0) {<a name="line.708"></a>
+<FONT color="green">709</FONT>                return classes;<a name="line.709"></a>
+<FONT color="green">710</FONT>            }<a name="line.710"></a>
+<FONT color="green">711</FONT>    <a name="line.711"></a>
+<FONT color="green">712</FONT>            Class[] convertedClasses = new Class[classes.length];<a name="line.712"></a>
+<FONT color="green">713</FONT>            for (int i = 0; i &lt; classes.length; i++) {<a name="line.713"></a>
+<FONT color="green">714</FONT>                convertedClasses[i] = wrapperToPrimitive(classes[i]);<a name="line.714"></a>
+<FONT color="green">715</FONT>            }<a name="line.715"></a>
+<FONT color="green">716</FONT>            return convertedClasses;<a name="line.716"></a>
+<FONT color="green">717</FONT>        }<a name="line.717"></a>
+<FONT color="green">718</FONT>    <a name="line.718"></a>
+<FONT color="green">719</FONT>        // Inner class<a name="line.719"></a>
+<FONT color="green">720</FONT>        // ----------------------------------------------------------------------<a name="line.720"></a>
+<FONT color="green">721</FONT>        /**<a name="line.721"></a>
+<FONT color="green">722</FONT>         * &lt;p&gt;Is the specified class an inner class or static nested class.&lt;/p&gt;<a name="line.722"></a>
+<FONT color="green">723</FONT>         *<a name="line.723"></a>
+<FONT color="green">724</FONT>         * @param cls  the class to check, may be null<a name="line.724"></a>
+<FONT color="green">725</FONT>         * @return &lt;code&gt;true&lt;/code&gt; if the class is an inner or static nested class,<a name="line.725"></a>
+<FONT color="green">726</FONT>         *  false if not or &lt;code&gt;null&lt;/code&gt;<a name="line.726"></a>
+<FONT color="green">727</FONT>         */<a name="line.727"></a>
+<FONT color="green">728</FONT>        public static boolean isInnerClass(Class cls) {<a name="line.728"></a>
+<FONT color="green">729</FONT>            if (cls == null) {<a name="line.729"></a>
+<FONT color="green">730</FONT>                return false;<a name="line.730"></a>
+<FONT color="green">731</FONT>            }<a name="line.731"></a>
+<FONT color="green">732</FONT>            return cls.getName().indexOf(INNER_CLASS_SEPARATOR_CHAR) &gt;= 0;<a name="line.732"></a>
+<FONT color="green">733</FONT>        }<a name="line.733"></a>
+<FONT color="green">734</FONT>    <a name="line.734"></a>
+<FONT color="green">735</FONT>        // Class loading<a name="line.735"></a>
+<FONT color="green">736</FONT>        // ----------------------------------------------------------------------<a name="line.736"></a>
+<FONT color="green">737</FONT>        /**<a name="line.737"></a>
+<FONT color="green">738</FONT>         * Returns the class represented by &lt;code&gt;className&lt;/code&gt; using the<a name="line.738"></a>
+<FONT color="green">739</FONT>         * &lt;code&gt;classLoader&lt;/code&gt;.  This implementation supports the syntaxes<a name="line.739"></a>
+<FONT color="green">740</FONT>         * "&lt;code&gt;java.util.Map.Entry[]&lt;/code&gt;", "&lt;code&gt;java.util.Map$Entry[]&lt;/code&gt;",<a name="line.740"></a>
+<FONT color="green">741</FONT>         * "&lt;code&gt;[Ljava.util.Map.Entry;&lt;/code&gt;", and "&lt;code&gt;[Ljava.util.Map$Entry;&lt;/code&gt;".<a name="line.741"></a>
+<FONT color="green">742</FONT>         *<a name="line.742"></a>
+<FONT color="green">743</FONT>         * @param classLoader  the class loader to use to load the class<a name="line.743"></a>
+<FONT color="green">744</FONT>         * @param className  the class name<a name="line.744"></a>
+<FONT color="green">745</FONT>         * @param initialize  whether the class must be initialized<a name="line.745"></a>
+<FONT color="green">746</FONT>         * @return the class represented by &lt;code&gt;className&lt;/code&gt; using the &lt;code&gt;classLoader&lt;/code&gt;<a name="line.746"></a>
+<FONT color="green">747</FONT>         * @throws ClassNotFoundException if the class is not found<a name="line.747"></a>
+<FONT color="green">748</FONT>         */<a name="line.748"></a>
+<FONT color="green">749</FONT>        public static Class getClass(<a name="line.749"></a>
+<FONT color="green">750</FONT>                ClassLoader classLoader, String className, boolean initialize) throws ClassNotFoundException {<a name="line.750"></a>
+<FONT color="green">751</FONT>            try {<a name="line.751"></a>
+<FONT color="green">752</FONT>                Class clazz;<a name="line.752"></a>
+<FONT color="green">753</FONT>                if (abbreviationMap.containsKey(className)) {<a name="line.753"></a>
+<FONT color="green">754</FONT>                    String clsName = "[" + abbreviationMap.get(className);<a name="line.754"></a>
+<FONT color="green">755</FONT>                    clazz = Class.forName(clsName, initialize, classLoader).getComponentType();<a name="line.755"></a>
+<FONT color="green">756</FONT>                } else {<a name="line.756"></a>
+<FONT color="green">757</FONT>                    clazz = Class.forName(toCanonicalName(className), initialize, classLoader);<a name="line.757"></a>
+<FONT color="green">758</FONT>                }<a name="line.758"></a>
+<FONT color="green">759</FONT>                return clazz;<a name="line.759"></a>
+<FONT color="green">760</FONT>            } catch (ClassNotFoundException ex) {<a name="line.760"></a>
+<FONT color="green">761</FONT>                // allow path separators (.) as inner class name separators<a name="line.761"></a>
+<FONT color="green">762</FONT>                int lastDotIndex = className.lastIndexOf(PACKAGE_SEPARATOR_CHAR);<a name="line.762"></a>
+<FONT color="green">763</FONT>    <a name="line.763"></a>
+<FONT color="green">764</FONT>                if (lastDotIndex != -1) {<a name="line.764"></a>
+<FONT color="green">765</FONT>                    try {<a name="line.765"></a>
+<FONT color="green">766</FONT>                        return getClass(classLoader, className.substring(0, lastDotIndex) +<a name="line.766"></a>
+<FONT color="green">767</FONT>                                INNER_CLASS_SEPARATOR_CHAR + className.substring(lastDotIndex + 1),<a name="line.767"></a>
+<FONT color="green">768</FONT>                                initialize);<a name="line.768"></a>
+<FONT color="green">769</FONT>                    } catch (ClassNotFoundException ex2) {<a name="line.769"></a>
+<FONT color="green">770</FONT>                    }<a name="line.770"></a>
+<FONT color="green">771</FONT>                }<a name="line.771"></a>
+<FONT color="green">772</FONT>    <a name="line.772"></a>
+<FONT color="green">773</FONT>                throw ex;<a name="line.773"></a>
+<FONT color="green">774</FONT>            }<a name="line.774"></a>
+<FONT color="green">775</FONT>        }<a name="line.775"></a>
+<FONT color="green">776</FONT>    <a name="line.776"></a>
+<FONT color="green">777</FONT>        /**<a name="line.777"></a>
+<FONT color="green">778</FONT>         * Returns the (initialized) class represented by &lt;code&gt;className&lt;/code&gt;<a name="line.778"></a>
+<FONT color="green">779</FONT>         * using the &lt;code&gt;classLoader&lt;/code&gt;.  This implementation supports<a name="line.779"></a>
+<FONT color="green">780</FONT>         * the syntaxes "&lt;code&gt;java.util.Map.Entry[]&lt;/code&gt;",<a name="line.780"></a>
+<FONT color="green">781</FONT>         * "&lt;code&gt;java.util.Map$Entry[]&lt;/code&gt;", "&lt;code&gt;[Ljava.util.Map.Entry;&lt;/code&gt;",<a name="line.781"></a>
+<FONT color="green">782</FONT>         * and "&lt;code&gt;[Ljava.util.Map$Entry;&lt;/code&gt;".<a name="line.782"></a>
+<FONT color="green">783</FONT>         *<a name="line.783"></a>
+<FONT color="green">784</FONT>         * @param classLoader  the class loader to use to load the class<a name="line.784"></a>
+<FONT color="green">785</FONT>         * @param className  the class name<a name="line.785"></a>
+<FONT color="green">786</FONT>         * @return the class represented by &lt;code&gt;className&lt;/code&gt; using the &lt;code&gt;classLoader&lt;/code&gt;<a name="line.786"></a>
+<FONT color="green">787</FONT>         * @throws ClassNotFoundException if the class is not found<a name="line.787"></a>
+<FONT color="green">788</FONT>         */<a name="line.788"></a>
+<FONT color="green">789</FONT>        public static Class getClass(ClassLoader classLoader, String className) throws ClassNotFoundException {<a name="line.789"></a>
+<FONT color="green">790</FONT>            return getClass(classLoader, className, true);<a name="line.790"></a>
+<FONT color="green">791</FONT>        }<a name="line.791"></a>
+<FONT color="green">792</FONT>    <a name="line.792"></a>
+<FONT color="green">793</FONT>        /**<a name="line.793"></a>
+<FONT color="green">794</FONT>         * Returns the (initialized) class represented by &lt;code&gt;className&lt;/code&gt;<a name="line.794"></a>
+<FONT color="green">795</FONT>         * using the current thread's context class loader. This implementation<a name="line.795"></a>
+<FONT color="green">796</FONT>         * supports the syntaxes "&lt;code&gt;java.util.Map.Entry[]&lt;/code&gt;",<a name="line.796"></a>
+<FONT color="green">797</FONT>         * "&lt;code&gt;java.util.Map$Entry[]&lt;/code&gt;", "&lt;code&gt;[Ljava.util.Map.Entry;&lt;/code&gt;",<a name="line.797"></a>
+<FONT color="green">798</FONT>         * and "&lt;code&gt;[Ljava.util.Map$Entry;&lt;/code&gt;".<a name="line.798"></a>
+<FONT color="green">799</FONT>         *<a name="line.799"></a>
+<FONT color="green">800</FONT>         * @param className  the class name<a name="line.800"></a>
+<FONT color="green">801</FONT>         * @return the class represented by &lt;code&gt;className&lt;/code&gt; using the current thread's context class loader<a name="line.801"></a>
+<FONT color="green">802</FONT>         * @throws ClassNotFoundException if the class is not found<a name="line.802"></a>
+<FONT color="green">803</FONT>         */<a name="line.803"></a>
+<FONT color="green">804</FONT>        public static Class getClass(String className) throws ClassNotFoundException {<a name="line.804"></a>
+<FONT color="green">805</FONT>            return getClass(className, true);<a name="line.805"></a>
+<FONT color="green">806</FONT>        }<a name="line.806"></a>
+<FONT color="green">807</FONT>    <a name="line.807"></a>
+<FONT color="green">808</FONT>        /**<a name="line.808"></a>
+<FONT color="green">809</FONT>         * Returns the class represented by &lt;code&gt;className&lt;/code&gt; using the<a name="line.809"></a>
+<FONT color="green">810</FONT>         * current thread's context class loader. This implementation supports the<a name="line.810"></a>
+<FONT color="green">811</FONT>         * syntaxes "&lt;code&gt;java.util.Map.Entry[]&lt;/code&gt;", "&lt;code&gt;java.util.Map$Entry[]&lt;/code&gt;",<a name="line.811"></a>
+<FONT color="green">812</FONT>         * "&lt;code&gt;[Ljava.util.Map.Entry;&lt;/code&gt;", and "&lt;code&gt;[Ljava.util.Map$Entry;&lt;/code&gt;".<a name="line.812"></a>
+<FONT color="green">813</FONT>         *<a name="line.813"></a>
+<FONT color="green">814</FONT>         * @param className  the class name<a name="line.814"></a>
+<FONT color="green">815</FONT>         * @param initialize  whether the class must be initialized<a name="line.815"></a>
+<FONT color="green">816</FONT>         * @return the class represented by &lt;code&gt;className&lt;/code&gt; using the current thread's context class loader<a name="line.816"></a>
+<FONT color="green">817</FONT>         * @throws ClassNotFoundException if the class is not found<a name="line.817"></a>
+<FONT color="green">818</FONT>         */<a name="line.818"></a>
+<FONT color="green">819</FONT>        public static Class getClass(String className, boolean initialize) throws ClassNotFoundException {<a name="line.819"></a>
+<FONT color="green">820</FONT>            ClassLoader contextCL = Thread.currentThread().getContextClassLoader();<a name="line.820"></a>
+<FONT color="green">821</FONT>            ClassLoader loader = contextCL == null ? ClassUtils.class.getClassLoader() : contextCL;<a name="line.821"></a>
+<FONT color="green">822</FONT>            return getClass(loader, className, initialize );<a name="line.822"></a>
+<FONT color="green">823</FONT>        }<a name="line.823"></a>
+<FONT color="green">824</FONT>    <a name="line.824"></a>
+<FONT color="green">825</FONT>        // Public method<a name="line.825"></a>
+<FONT color="green">826</FONT>        // ----------------------------------------------------------------------<a name="line.826"></a>
+<FONT color="green">827</FONT>        /**<a name="line.827"></a>
+<FONT color="green">828</FONT>         * &lt;p&gt;Returns the desired Method much like &lt;code&gt;Class.getMethod&lt;/code&gt;, however<a name="line.828"></a>
+<FONT color="green">829</FONT>         * it ensures that the returned Method is from a public class or interface and not<a name="line.829"></a>
+<FONT color="green">830</FONT>         * from an anonymous inner class. This means that the Method is invokable and<a name="line.830"></a>
+<FONT color="green">831</FONT>         * doesn't fall foul of Java bug<a name="line.831"></a>
+<FONT color="green">832</FONT>         * &lt;a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4071957"&gt;4071957&lt;/a&gt;).<a name="line.832"></a>
+<FONT color="green">833</FONT>         *<a name="line.833"></a>
+<FONT color="green">834</FONT>         *  &lt;code&gt;&lt;pre&gt;Set set = Collections.unmodifiableSet(...);<a name="line.834"></a>
+<FONT color="green">835</FONT>         *  Method method = ClassUtils.getPublicMethod(set.getClass(), "isEmpty",  new Class[0]);<a name="line.835"></a>
+<FONT color="green">836</FONT>         *  Object result = method.invoke(set, new Object[]);&lt;/pre&gt;&lt;/code&gt;<a name="line.836"></a>
+<FONT color="green">837</FONT>         * &lt;/p&gt;<a name="line.837"></a>
+<FONT color="green">838</FONT>         *<a name="line.838"></a>
+<FONT color="green">839</FONT>         * @param cls  the class to check, not null<a name="line.839"></a>
+<FONT color="green">840</FONT>         * @param methodName  the name of the method<a name="line.840"></a>
+<FONT color="green">841</FONT>         * @param parameterTypes  the list of parameters<a name="line.841"></a>
+<FONT color="green">842</FONT>         * @return the method<a name="line.842"></a>
+<FONT color="green">843</FONT>         * @throws NullPointerException if the class is null<a name="line.843"></a>
+<FONT color="green">844</FONT>         * @throws SecurityException if a a security violation occured<a name="line.844"></a>
+<FONT color="green">845</FONT>         * @throws NoSuchMethodException if the method is not found in the given class<a name="line.845"></a>
+<FONT color="green">846</FONT>         *  or if the metothod doen't conform with the requirements<a name="line.846"></a>
+<FONT color="green">847</FONT>         */<a name="line.847"></a>
+<FONT color="green">848</FONT>        public static Method getPublicMethod(Class cls, String methodName, Class parameterTypes[])<a name="line.848"></a>
+<FONT color="green">849</FONT>                throws SecurityException, NoSuchMethodException {<a name="line.849"></a>
+<FONT color="green">850</FONT>    <a name="line.850"></a>
+<FONT color="green">851</FONT>            Method declaredMethod = cls.getMethod(methodName, parameterTypes);<a name="line.851"></a>
+<FONT color="green">852</FONT>            if (Modifier.isPublic(declaredMethod.getDeclaringClass().getModifiers())) {<a name="line.852"></a>
+<FONT color="green">853</FONT>                return declaredMethod;<a name="line.853"></a>
+<FONT color="green">854</FONT>            }<a name="line.854"></a>
+<FONT color="green">855</FONT>    <a name="line.855"></a>
+<FONT color="green">856</FONT>            List candidateClasses = new ArrayList();<a name="line.856"></a>
+<FONT color="green">857</FONT>            candidateClasses.addAll(getAllInterfaces(cls));<a name="line.857"></a>
+<FONT color="green">858</FONT>            candidateClasses.addAll(getAllSuperclasses(cls));<a name="line.858"></a>
+<FONT color="green">859</FONT>    <a name="line.859"></a>
+<FONT color="green">860</FONT>            for (Iterator it = candidateClasses.iterator(); it.hasNext(); ) {<a name="line.860"></a>
+<FONT color="green">861</FONT>                Class candidateClass = (Class) it.next();<a name="line.861"></a>
+<FONT color="green">862</FONT>                if (!Modifier.isPublic(candidateClass.getModifiers())) {<a name="line.862"></a>
+<FONT color="green">863</FONT>                    continue;<a name="line.863"></a>
+<FONT color="green">864</FONT>                }<a name="line.864"></a>
+<FONT color="green">865</FONT>                Method candidateMethod;<a name="line.865"></a>
+<FONT color="green">866</FONT>                try {<a name="line.866"></a>
+<FONT color="green">867</FONT>                    candidateMethod = candidateClass.getMethod(methodName, parameterTypes);<a name="line.867"></a>
+<FONT color="green">868</FONT>                } catch (NoSuchMethodException ex) {<a name="line.868"></a>
+<FONT color="green">869</FONT>                    continue;<a name="line.869"></a>
+<FONT color="green">870</FONT>                }<a name="line.870"></a>
+<FONT color="green">871</FONT>                if (Modifier.isPublic(candidateMethod.getDeclaringClass().getModifiers())) {<a name="line.871"></a>
+<FONT color="green">872</FONT>                    return candidateMethod;<a name="line.872"></a>
+<FONT color="green">873</FONT>                }<a name="line.873"></a>
+<FONT color="green">874</FONT>            }<a name="line.874"></a>
+<FONT color="green">875</FONT>    <a name="line.875"></a>
+<FONT color="green">876</FONT>            throw new NoSuchMethodException("Can't find a public method for " +<a name="line.876"></a>
+<FONT color="green">877</FONT>                    methodName + " " + ArrayUtils.toString(parameterTypes));<a name="line.877"></a>
+<FONT color="green">878</FONT>        }<a name="line.878"></a>
+<FONT color="green">879</FONT>    <a name="line.879"></a>
+<FONT color="green">880</FONT>        // ----------------------------------------------------------------------<a name="line.880"></a>
+<FONT color="green">881</FONT>        /**<a name="line.881"></a>
+<FONT color="green">882</FONT>         * Converts a class name to a JLS style class name.<a name="line.882"></a>
+<FONT color="green">883</FONT>         *<a name="line.883"></a>
+<FONT color="green">884</FONT>         * @param className  the class name<a name="line.884"></a>
+<FONT color="green">885</FONT>         * @return the converted name<a name="line.885"></a>
+<FONT color="green">886</FONT>         */<a name="line.886"></a>
+<FONT color="green">887</FONT>        private static String toCanonicalName(String className) {<a name="line.887"></a>
+<FONT color="green">888</FONT>            className = StringUtils.deleteWhitespace(className);<a name="line.888"></a>
+<FONT color="green">889</FONT>            if (className == null) {<a name="line.889"></a>
+<FONT color="green">890</FONT>                throw new NullArgumentException("className");<a name="line.890"></a>
+<FONT color="green">891</FONT>            } else if (className.endsWith("[]")) {<a name="line.891"></a>
+<FONT color="green">892</FONT>                StrBuilder classNameBuffer = new StrBuilder();<a name="line.892"></a>
+<FONT color="green">893</FONT>                while (className.endsWith("[]")) {<a name="line.893"></a>
+<FONT color="green">894</FONT>                    className = className.substring(0, className.length() - 2);<a name="line.894"></a>
+<FONT color="green">895</FONT>                    classNameBuffer.append("[");<a name="line.895"></a>
+<FONT color="green">896</FONT>                }<a name="line.896"></a>
+<FONT color="green">897</FONT>                String abbreviation = (String) abbreviationMap.get(className);<a name="line.897"></a>
+<FONT color="green">898</FONT>                if (abbreviation != null) {<a name="line.898"></a>
+<FONT color="green">899</FONT>                    classNameBuffer.append(abbreviation);<a name="line.899"></a>
+<FONT color="green">900</FONT>                } else {<a name="line.900"></a>
+<FONT color="green">901</FONT>                    classNameBuffer.append("L").append(className).append(";");<a name="line.901"></a>
+<FONT color="green">902</FONT>                }<a name="line.902"></a>
+<FONT color="green">903</FONT>                className = classNameBuffer.toString();<a name="line.903"></a>
+<FONT color="green">904</FONT>            }<a name="line.904"></a>
+<FONT color="green">905</FONT>            return className;<a name="line.905"></a>
+<FONT color="green">906</FONT>        }<a name="line.906"></a>
+<FONT color="green">907</FONT>    <a name="line.907"></a>
+<FONT color="green">908</FONT>        /**<a name="line.908"></a>
+<FONT color="green">909</FONT>         * &lt;p&gt;Converts an array of &lt;code&gt;Object&lt;/code&gt; in to an array of &lt;code&gt;Class&lt;/code&gt; objects.<a name="line.909"></a>
+<FONT color="green">910</FONT>         * If any of these objects is null, a null element will be inserted into the array.&lt;/p&gt;<a name="line.910"></a>
+<FONT color="green">911</FONT>         *<a name="line.911"></a>
+<FONT color="green">912</FONT>         * &lt;p&gt;This method returns &lt;code&gt;null&lt;/code&gt; for a &lt;code&gt;null&lt;/code&gt; input array.&lt;/p&gt;<a name="line.912"></a>
+<FONT color="green">913</FONT>         *<a name="line.913"></a>
+<FONT color="green">914</FONT>         * @param array an &lt;code&gt;Object&lt;/code&gt; array<a name="line.914"></a>
+<FONT color="green">915</FONT>         * @return a &lt;code&gt;Class&lt;/code&gt; array, &lt;code&gt;null&lt;/code&gt; if null array input<a name="line.915"></a>
+<FONT color="green">916</FONT>         * @since 2.4<a name="line.916"></a>
+<FONT color="green">917</FONT>         */<a name="line.917"></a>
+<FONT color="green">918</FONT>        public static Class[] toClass(Object[] array) {<a name="line.918"></a>
+<FONT color="green">919</FONT>            if (array == null) {<a name="line.919"></a>
+<FONT color="green">920</FONT>                return null;<a name="line.920"></a>
+<FONT color="green">921</FONT>            } else if (array.length == 0) {<a name="line.921"></a>
+<FONT color="green">922</FONT>                return ArrayUtils.EMPTY_CLASS_ARRAY;<a name="line.922"></a>
+<FONT color="green">923</FONT>            }<a name="line.923"></a>
+<FONT color="green">924</FONT>            Class[] classes = new Class[array.length];<a name="line.924"></a>
+<FONT color="green">925</FONT>            for (int i = 0; i &lt; array.length; i++) {<a name="line.925"></a>
+<FONT color="green">926</FONT>                classes[i] = array[i] == null ? null : array[i].getClass();<a name="line.926"></a>
+<FONT color="green">927</FONT>            }<a name="line.927"></a>
+<FONT color="green">928</FONT>            return classes;<a name="line.928"></a>
+<FONT color="green">929</FONT>        }<a name="line.929"></a>
+<FONT color="green">930</FONT>    <a name="line.930"></a>
+<FONT color="green">931</FONT>        // Short canonical name<a name="line.931"></a>
+<FONT color="green">932</FONT>        // ----------------------------------------------------------------------<a name="line.932"></a>
+<FONT color="green">933</FONT>        /**<a name="line.933"></a>
+<FONT color="green">934</FONT>         * &lt;p&gt;Gets the canonical name minus the package name for an &lt;code&gt;Object&lt;/code&gt;.&lt;/p&gt;<a name="line.934"></a>
+<FONT color="green">935</FONT>         *<a name="line.935"></a>
+<FONT color="green">936</FONT>         * @param object  the class to get the short name for, may be null<a name="line.936"></a>
+<FONT color="green">937</FONT>         * @param valueIfNull  the value to return if null<a name="line.937"></a>
+<FONT color="green">938</FONT>         * @return the canonical name of the object without the package name, or the null value<a name="line.938"></a>
+<FONT color="green">939</FONT>         * @since 2.4<a name="line.939"></a>
+<FONT color="green">940</FONT>         */<a name="line.940"></a>
+<FONT color="green">941</FONT>        public static String getShortCanonicalName(Object object, String valueIfNull) {<a name="line.941"></a>
+<FONT color="green">942</FONT>            if (object == null) {<a name="line.942"></a>
+<FONT color="green">943</FONT>                return valueIfNull;<a name="line.943"></a>
+<FONT color="green">944</FONT>            }<a name="line.944"></a>
+<FONT color="green">945</FONT>            return getShortCanonicalName(object.getClass().getName());<a name="line.945"></a>
+<FONT color="green">946</FONT>        }<a name="line.946"></a>
+<FONT color="green">947</FONT>    <a name="line.947"></a>
+<FONT color="green">948</FONT>        /**<a name="line.948"></a>
+<FONT color="green">949</FONT>         * &lt;p&gt;Gets the canonical name minus the package name from a &lt;code&gt;Class&lt;/code&gt;.&lt;/p&gt;<a name="line.949"></a>
+<FONT color="green">950</FONT>         *<a name="line.950"></a>
+<FONT color="green">951</FONT>         * @param cls  the class to get the short name for.<a name="line.951"></a>
+<FONT color="green">952</FONT>         * @return the canonical name without the package name or an empty string<a name="line.952"></a>
+<FONT color="green">953</FONT>         * @since 2.4<a name="line.953"></a>
+<FONT color="green">954</FONT>         */<a name="line.954"></a>
+<FONT color="green">955</FONT>        public static String getShortCanonicalName(Class cls) {<a name="line.955"></a>
+<FONT color="green">956</FONT>            if (cls == null) {<a name="line.956"></a>
+<FONT color="green">957</FONT>                return StringUtils.EMPTY;<a name="line.957"></a>
+<FONT color="green">958</FONT>            }<a name="line.958"></a>
+<FONT color="green">959</FONT>            return getShortCanonicalName(cls.getName());<a name="line.959"></a>
+<FONT color="green">960</FONT>        }<a name="line.960"></a>
+<FONT color="green">961</FONT>    <a name="line.961"></a>
+<FONT color="green">962</FONT>        /**<a name="line.962"></a>
+<FONT color="green">963</FONT>         * &lt;p&gt;Gets the canonical name minus the package name from a String.&lt;/p&gt;<a name="line.963"></a>
+<FONT color="green">964</FONT>         *<a name="line.964"></a>
+<FONT color="green">965</FONT>         * &lt;p&gt;The string passed in is assumed to be a canonical name - it is not checked.&lt;/p&gt;<a name="line.965"></a>
+<FONT color="green">966</FONT>         *<a name="line.966"></a>
+<FONT color="green">967</FONT>         * @param canonicalName  the class name to get the short name for<a name="line.967"></a>
+<FONT color="green">968</FONT>         * @return the canonical name of the class without the package name or an empty string<a name="line.968"></a>
+<FONT color="green">969</FONT>         * @since 2.4<a name="line.969"></a>
+<FONT color="green">970</FONT>         */<a name="line.970"></a>
+<FONT color="green">971</FONT>        public static String getShortCanonicalName(String canonicalName) {<a name="line.971"></a>
+<FONT color="green">972</FONT>            return ClassUtils.getShortClassName(getCanonicalName(canonicalName));<a name="line.972"></a>
+<FONT color="green">973</FONT>        }<a name="line.973"></a>
+<FONT color="green">974</FONT>    <a name="line.974"></a>
+<FONT color="green">975</FONT>        // Package name<a name="line.975"></a>
+<FONT color="green">976</FONT>        // ----------------------------------------------------------------------<a name="line.976"></a>
+<FONT color="green">977</FONT>        /**<a name="line.977"></a>
+<FONT color="green">978</FONT>         * &lt;p&gt;Gets the package name from the canonical name of an &lt;code&gt;Object&lt;/code&gt;.&lt;/p&gt;<a name="line.978"></a>
+<FONT color="green">979</FONT>         *<a name="line.979"></a>
+<FONT color="green">980</FONT>         * @param object  the class to get the package name for, may be null<a name="line.980"></a>
+<FONT color="green">981</FONT>         * @param valueIfNull  the value to return if null<a name="line.981"></a>
+<FONT color="green">982</FONT>         * @return the package name of the object, or the null value<a name="line.982"></a>
+<FONT color="green">983</FONT>         * @since 2.4<a name="line.983"></a>
+<FONT color="green">984</FONT>         */<a name="line.984"></a>
+<FONT color="green">985</FONT>        public static String getPackageCanonicalName(Object object, String valueIfNull) {<a name="line.985"></a>
+<FONT color="green">986</FONT>            if (object == null) {<a name="line.986"></a>
+<FONT color="green">987</FONT>                return valueIfNull;<a name="line.987"></a>
+<FONT color="green">988</FONT>            }<a name="line.988"></a>
+<FONT color="green">989</FONT>            return getPackageCanonicalName(object.getClass().getName());<a name="line.989"></a>
+<FONT color="green">990</FONT>        }<a name="line.990"></a>
+<FONT color="green">991</FONT>    <a name="line.991"></a>
+<FONT color="green">992</FONT>        /**<a name="line.992"></a>
+<FONT color="green">993</FONT>         * &lt;p&gt;Gets the package name from the canonical name of a &lt;code&gt;Class&lt;/code&gt;.&lt;/p&gt;<a name="line.993"></a>
+<FONT color="green">994</FONT>         *<a name="line.994"></a>
+<FONT color="green">995</FONT>         * @param cls  the class to get the package name for, may be &lt;code&gt;null&lt;/code&gt;.<a name="line.995"></a>
+<FONT color="green">996</FONT>         * @return the package name or an empty string<a name="line.996"></a>
+<FONT color="green">997</FONT>         * @since 2.4<a name="line.997"></a>
+<FONT color="green">998</FONT>         */<a name="line.998"></a>
+<FONT color="green">999</FONT>        public static String getPackageCanonicalName(Class cls) {<a name="line.999"></a>
+<FONT color="green">1000</FONT>            if (cls == null) {<a name="line.1000"></a>
+<FONT color="green">1001</FONT>                return StringUtils.EMPTY;<a name="line.1001"></a>
+<FONT color="green">1002</FONT>            }<a name="line.1002"></a>
+<FONT color="green">1003</FONT>            return getPackageCanonicalName(cls.getName());<a name="line.1003"></a>
+<FONT color="green">1004</FONT>        }<a name="line.1004"></a>
+<FONT color="green">1005</FONT>    <a name="line.1005"></a>
+<FONT color="green">1006</FONT>        /**<a name="line.1006"></a>
+<FONT color="green">1007</FONT>         * &lt;p&gt;Gets the package name from the canonical name. &lt;/p&gt;<a name="line.1007"></a>
+<FONT color="green">1008</FONT>         *<a name="line.1008"></a>
+<FONT color="green">1009</FONT>         * &lt;p&gt;The string passed in is assumed to be a canonical name - it is not checked.&lt;/p&gt;<a name="line.1009"></a>
+<FONT color="green">1010</FONT>         * &lt;p&gt;If the class is unpackaged, return an empty string.&lt;/p&gt;<a name="line.1010"></a>
+<FONT color="green">1011</FONT>         *<a name="line.1011"></a>
+<FONT color="green">1012</FONT>         * @param canonicalName  the canonical name to get the package name for, may be &lt;code&gt;null&lt;/code&gt;<a name="line.1012"></a>
+<FONT color="green">1013</FONT>         * @return the package name or an empty string<a name="line.1013"></a>
+<FONT color="green">1014</FONT>         * @since 2.4<a name="line.1014"></a>
+<FONT color="green">1015</FONT>         */<a name="line.1015"></a>
+<FONT color="green">1016</FONT>        public static String getPackageCanonicalName(String canonicalName) {<a name="line.1016"></a>
+<FONT color="green">1017</FONT>            return ClassUtils.getPackageName(getCanonicalName(canonicalName));<a name="line.1017"></a>
+<FONT color="green">1018</FONT>        }<a name="line.1018"></a>
+<FONT color="green">1019</FONT>    <a name="line.1019"></a>
+<FONT color="green">1020</FONT>        /**<a name="line.1020"></a>
+<FONT color="green">1021</FONT>         * &lt;p&gt;Converts a given name of class into canonical format.<a name="line.1021"></a>
+<FONT color="green">1022</FONT>         * If name of class is not a name of array class it returns<a name="line.1022"></a>
+<FONT color="green">1023</FONT>         * unchanged name.&lt;/p&gt;<a name="line.1023"></a>
+<FONT color="green">1024</FONT>         * &lt;p&gt;Example:<a name="line.1024"></a>
+<FONT color="green">1025</FONT>         * &lt;ul&gt;<a name="line.1025"></a>
+<FONT color="green">1026</FONT>         * &lt;li&gt;&lt;code&gt;getCanonicalName("[I") = "int[]"&lt;/code&gt;&lt;/li&gt;<a name="line.1026"></a>
+<FONT color="green">1027</FONT>         * &lt;li&gt;&lt;code&gt;getCanonicalName("[Ljava.lang.String;") = "java.lang.String[]"&lt;/code&gt;&lt;/li&gt;<a name="line.1027"></a>
+<FONT color="green">1028</FONT>         * &lt;li&gt;&lt;code&gt;getCanonicalName("java.lang.String") = "java.lang.String"&lt;/code&gt;&lt;/li&gt;<a name="line.1028"></a>
+<FONT color="green">1029</FONT>         * &lt;/ul&gt;<a name="line.1029"></a>
+<FONT color="green">1030</FONT>         * &lt;/p&gt;<a name="line.1030"></a>
+<FONT color="green">1031</FONT>         *<a name="line.1031"></a>
+<FONT color="green">1032</FONT>         * @param className the name of class<a name="line.1032"></a>
+<FONT color="green">1033</FONT>         * @return canonical form of class name<a name="line.1033"></a>
+<FONT color="green">1034</FONT>         * @since 2.4<a name="line.1034"></a>
+<FONT color="green">1035</FONT>         */<a name="line.1035"></a>
+<FONT color="green">1036</FONT>        private static String getCanonicalName(String className) {<a name="line.1036"></a>
+<FONT color="green">1037</FONT>            className = StringUtils.deleteWhitespace(className);<a name="line.1037"></a>
+<FONT color="green">1038</FONT>            if (className == null) {<a name="line.1038"></a>
+<FONT color="green">1039</FONT>                return null;<a name="line.1039"></a>
+<FONT color="green">1040</FONT>            } else {<a name="line.1040"></a>
+<FONT color="green">1041</FONT>                int dim = 0;<a name="line.1041"></a>
+<FONT color="green">1042</FONT>                while (className.startsWith("[")) {<a name="line.1042"></a>
+<FONT color="green">1043</FONT>                    dim++;<a name="line.1043"></a>
+<FONT color="green">1044</FONT>                    className = className.substring(1);<a name="line.1044"></a>
+<FONT color="green">1045</FONT>                }<a name="line.1045"></a>
+<FONT color="green">1046</FONT>                if (dim &lt; 1) {<a name="line.1046"></a>
+<FONT color="green">1047</FONT>                    return className;<a name="line.1047"></a>
+<FONT color="green">1048</FONT>                } else {<a name="line.1048"></a>
+<FONT color="green">1049</FONT>                    if (className.startsWith("L")) {<a name="line.1049"></a>
+<FONT color="green">1050</FONT>                        className = className.substring(<a name="line.1050"></a>
+<FONT color="green">1051</FONT>                            1,<a name="line.1051"></a>
+<FONT color="green">1052</FONT>                            className.endsWith(";")<a name="line.1052"></a>
+<FONT color="green">1053</FONT>                                ? className.length() - 1<a name="line.1053"></a>
+<FONT color="green">1054</FONT>                                : className.length());<a name="line.1054"></a>
+<FONT color="green">1055</FONT>                    } else {<a name="line.1055"></a>
+<FONT color="green">1056</FONT>                        if (className.length() &gt; 0) {<a name="line.1056"></a>
+<FONT color="green">1057</FONT>                            className = (String) reverseAbbreviationMap.get(<a name="line.1057"></a>
+<FONT color="green">1058</FONT>                                className.substring(0, 1));<a name="line.1058"></a>
+<FONT color="green">1059</FONT>                        }<a name="line.1059"></a>
+<FONT color="green">1060</FONT>                    }<a name="line.1060"></a>
+<FONT color="green">1061</FONT>                    StrBuilder canonicalClassNameBuffer = new StrBuilder(className);<a name="line.1061"></a>
+<FONT color="green">1062</FONT>                    for (int i = 0; i &lt; dim; i++) {<a name="line.1062"></a>
+<FONT color="green">1063</FONT>                        canonicalClassNameBuffer.append("[]");<a name="line.1063"></a>
+<FONT color="green">1064</FONT>                    }<a name="line.1064"></a>
+<FONT color="green">1065</FONT>                    return canonicalClassNameBuffer.toString();<a name="line.1065"></a>
+<FONT color="green">1066</FONT>                }<a name="line.1066"></a>
+<FONT color="green">1067</FONT>            }<a name="line.1067"></a>
+<FONT color="green">1068</FONT>        }<a name="line.1068"></a>
+<FONT color="green">1069</FONT>    }<a name="line.1069"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

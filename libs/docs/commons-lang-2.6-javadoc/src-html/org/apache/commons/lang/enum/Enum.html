@@ -1,0 +1,721 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<FONT color="green">003</FONT>     * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<FONT color="green">008</FONT>     * <a name="line.8"></a>
+<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<FONT color="green">010</FONT>     * <a name="line.10"></a>
+<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * See the License for the specific language governing permissions and<a name="line.14"></a>
+<FONT color="green">015</FONT>     * limitations under the License.<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    package org.apache.commons.lang.enum;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.io.Serializable;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.lang.reflect.InvocationTargetException;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.lang.reflect.Method;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.ArrayList;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.Collections;<a name="line.23"></a>
+<FONT color="green">024</FONT>    import java.util.HashMap;<a name="line.24"></a>
+<FONT color="green">025</FONT>    import java.util.Iterator;<a name="line.25"></a>
+<FONT color="green">026</FONT>    import java.util.List;<a name="line.26"></a>
+<FONT color="green">027</FONT>    import java.util.Map;<a name="line.27"></a>
+<FONT color="green">028</FONT>    import java.util.WeakHashMap;<a name="line.28"></a>
+<FONT color="green">029</FONT>    <a name="line.29"></a>
+<FONT color="green">030</FONT>    import org.apache.commons.lang.ClassUtils;<a name="line.30"></a>
+<FONT color="green">031</FONT>    import org.apache.commons.lang.StringUtils;<a name="line.31"></a>
+<FONT color="green">032</FONT>    <a name="line.32"></a>
+<FONT color="green">033</FONT>    /**<a name="line.33"></a>
+<FONT color="green">034</FONT>     * &lt;p&gt;Abstract superclass for type-safe enums.&lt;/p&gt;<a name="line.34"></a>
+<FONT color="green">035</FONT>     *<a name="line.35"></a>
+<FONT color="green">036</FONT>     * &lt;p&gt;One feature of the C programming language lacking in Java is enumerations. The<a name="line.36"></a>
+<FONT color="green">037</FONT>     * C implementation based on ints was poor and open to abuse. The original Java<a name="line.37"></a>
+<FONT color="green">038</FONT>     * recommendation and most of the JDK also uses int constants. It has been recognised<a name="line.38"></a>
+<FONT color="green">039</FONT>     * however that a more robust type-safe class-based solution can be designed. This<a name="line.39"></a>
+<FONT color="green">040</FONT>     * class follows the basic Java type-safe enumeration pattern.&lt;/p&gt;<a name="line.40"></a>
+<FONT color="green">041</FONT>     *<a name="line.41"></a>
+<FONT color="green">042</FONT>     * &lt;p&gt;&lt;em&gt;NOTE:&lt;/em&gt;Due to the way in which Java ClassLoaders work, comparing<a name="line.42"></a>
+<FONT color="green">043</FONT>     * Enum objects should always be done using &lt;code&gt;equals()&lt;/code&gt;, not &lt;code&gt;==&lt;/code&gt;.<a name="line.43"></a>
+<FONT color="green">044</FONT>     * The equals() method will try == first so in most cases the effect is the same.&lt;/p&gt;<a name="line.44"></a>
+<FONT color="green">045</FONT>     * <a name="line.45"></a>
+<FONT color="green">046</FONT>     * &lt;p&gt;Of course, if you actually want (or don't mind) Enums in different class<a name="line.46"></a>
+<FONT color="green">047</FONT>     * loaders being non-equal, then you can use &lt;code&gt;==&lt;/code&gt;.&lt;/p&gt;<a name="line.47"></a>
+<FONT color="green">048</FONT>     * <a name="line.48"></a>
+<FONT color="green">049</FONT>     * &lt;h4&gt;Simple Enums&lt;/h4&gt;<a name="line.49"></a>
+<FONT color="green">050</FONT>     *<a name="line.50"></a>
+<FONT color="green">051</FONT>     * &lt;p&gt;To use this class, it must be subclassed. For example:&lt;/p&gt;<a name="line.51"></a>
+<FONT color="green">052</FONT>     *<a name="line.52"></a>
+<FONT color="green">053</FONT>     * &lt;pre&gt;<a name="line.53"></a>
+<FONT color="green">054</FONT>     * public final class ColorEnum extends Enum {<a name="line.54"></a>
+<FONT color="green">055</FONT>     *   public static final ColorEnum RED = new ColorEnum("Red");<a name="line.55"></a>
+<FONT color="green">056</FONT>     *   public static final ColorEnum GREEN = new ColorEnum("Green");<a name="line.56"></a>
+<FONT color="green">057</FONT>     *   public static final ColorEnum BLUE = new ColorEnum("Blue");<a name="line.57"></a>
+<FONT color="green">058</FONT>     *<a name="line.58"></a>
+<FONT color="green">059</FONT>     *   private ColorEnum(String color) {<a name="line.59"></a>
+<FONT color="green">060</FONT>     *     super(color);<a name="line.60"></a>
+<FONT color="green">061</FONT>     *   }<a name="line.61"></a>
+<FONT color="green">062</FONT>     * <a name="line.62"></a>
+<FONT color="green">063</FONT>     *   public static ColorEnum getEnum(String color) {<a name="line.63"></a>
+<FONT color="green">064</FONT>     *     return (ColorEnum) getEnum(ColorEnum.class, color);<a name="line.64"></a>
+<FONT color="green">065</FONT>     *   }<a name="line.65"></a>
+<FONT color="green">066</FONT>     * <a name="line.66"></a>
+<FONT color="green">067</FONT>     *   public static Map getEnumMap() {<a name="line.67"></a>
+<FONT color="green">068</FONT>     *     return getEnumMap(ColorEnum.class);<a name="line.68"></a>
+<FONT color="green">069</FONT>     *   }<a name="line.69"></a>
+<FONT color="green">070</FONT>     * <a name="line.70"></a>
+<FONT color="green">071</FONT>     *   public static List getEnumList() {<a name="line.71"></a>
+<FONT color="green">072</FONT>     *     return getEnumList(ColorEnum.class);<a name="line.72"></a>
+<FONT color="green">073</FONT>     *   }<a name="line.73"></a>
+<FONT color="green">074</FONT>     * <a name="line.74"></a>
+<FONT color="green">075</FONT>     *   public static Iterator iterator() {<a name="line.75"></a>
+<FONT color="green">076</FONT>     *     return iterator(ColorEnum.class);<a name="line.76"></a>
+<FONT color="green">077</FONT>     *   }<a name="line.77"></a>
+<FONT color="green">078</FONT>     * }<a name="line.78"></a>
+<FONT color="green">079</FONT>     * &lt;/pre&gt;<a name="line.79"></a>
+<FONT color="green">080</FONT>     *<a name="line.80"></a>
+<FONT color="green">081</FONT>     * &lt;p&gt;As shown, each enum has a name. This can be accessed using &lt;code&gt;getName&lt;/code&gt;.&lt;/p&gt;<a name="line.81"></a>
+<FONT color="green">082</FONT>     *<a name="line.82"></a>
+<FONT color="green">083</FONT>     * &lt;p&gt;The &lt;code&gt;getEnum&lt;/code&gt; and &lt;code&gt;iterator&lt;/code&gt; methods are recommended.<a name="line.83"></a>
+<FONT color="green">084</FONT>     * Unfortunately, Java restrictions require these to be coded as shown in each subclass.<a name="line.84"></a>
+<FONT color="green">085</FONT>     * An alternative choice is to use the {@link EnumUtils} class.&lt;/p&gt;<a name="line.85"></a>
+<FONT color="green">086</FONT>     * <a name="line.86"></a>
+<FONT color="green">087</FONT>     * &lt;h4&gt;Subclassed Enums&lt;/h4&gt;<a name="line.87"></a>
+<FONT color="green">088</FONT>     * &lt;p&gt;A hierarchy of Enum classes can be built. In this case, the superclass is<a name="line.88"></a>
+<FONT color="green">089</FONT>     * unaffected by the addition of subclasses (as per normal Java). The subclasses<a name="line.89"></a>
+<FONT color="green">090</FONT>     * may add additional Enum constants &lt;em&gt;of the type of the superclass&lt;/em&gt;. The<a name="line.90"></a>
+<FONT color="green">091</FONT>     * query methods on the subclass will return all of the Enum constants from the<a name="line.91"></a>
+<FONT color="green">092</FONT>     * superclass and subclass.&lt;/p&gt;<a name="line.92"></a>
+<FONT color="green">093</FONT>     *<a name="line.93"></a>
+<FONT color="green">094</FONT>     * &lt;pre&gt;<a name="line.94"></a>
+<FONT color="green">095</FONT>     * public final class ExtraColorEnum extends ColorEnum {<a name="line.95"></a>
+<FONT color="green">096</FONT>     *   // NOTE: Color enum declared above is final, change that to get this<a name="line.96"></a>
+<FONT color="green">097</FONT>     *   // example to compile.<a name="line.97"></a>
+<FONT color="green">098</FONT>     *   public static final ColorEnum YELLOW = new ExtraColorEnum("Yellow");<a name="line.98"></a>
+<FONT color="green">099</FONT>     *<a name="line.99"></a>
+<FONT color="green">100</FONT>     *   private ExtraColorEnum(String color) {<a name="line.100"></a>
+<FONT color="green">101</FONT>     *     super(color);<a name="line.101"></a>
+<FONT color="green">102</FONT>     *   }<a name="line.102"></a>
+<FONT color="green">103</FONT>     * <a name="line.103"></a>
+<FONT color="green">104</FONT>     *   public static ColorEnum getEnum(String color) {<a name="line.104"></a>
+<FONT color="green">105</FONT>     *     return (ColorEnum) getEnum(ExtraColorEnum.class, color);<a name="line.105"></a>
+<FONT color="green">106</FONT>     *   }<a name="line.106"></a>
+<FONT color="green">107</FONT>     * <a name="line.107"></a>
+<FONT color="green">108</FONT>     *   public static Map getEnumMap() {<a name="line.108"></a>
+<FONT color="green">109</FONT>     *     return getEnumMap(ExtraColorEnum.class);<a name="line.109"></a>
+<FONT color="green">110</FONT>     *   }<a name="line.110"></a>
+<FONT color="green">111</FONT>     * <a name="line.111"></a>
+<FONT color="green">112</FONT>     *   public static List getEnumList() {<a name="line.112"></a>
+<FONT color="green">113</FONT>     *     return getEnumList(ExtraColorEnum.class);<a name="line.113"></a>
+<FONT color="green">114</FONT>     *   }<a name="line.114"></a>
+<FONT color="green">115</FONT>     * <a name="line.115"></a>
+<FONT color="green">116</FONT>     *   public static Iterator iterator() {<a name="line.116"></a>
+<FONT color="green">117</FONT>     *     return iterator(ExtraColorEnum.class);<a name="line.117"></a>
+<FONT color="green">118</FONT>     *   }<a name="line.118"></a>
+<FONT color="green">119</FONT>     * }<a name="line.119"></a>
+<FONT color="green">120</FONT>     * &lt;/pre&gt;<a name="line.120"></a>
+<FONT color="green">121</FONT>     *<a name="line.121"></a>
+<FONT color="green">122</FONT>     * &lt;p&gt;This example will return RED, GREEN, BLUE, YELLOW from the List and iterator<a name="line.122"></a>
+<FONT color="green">123</FONT>     * methods in that order. The RED, GREEN and BLUE instances will be the same (==) <a name="line.123"></a>
+<FONT color="green">124</FONT>     * as those from the superclass ColorEnum. Note that YELLOW is declared as a<a name="line.124"></a>
+<FONT color="green">125</FONT>     * ColorEnum and not an ExtraColorEnum.&lt;/p&gt;<a name="line.125"></a>
+<FONT color="green">126</FONT>     * <a name="line.126"></a>
+<FONT color="green">127</FONT>     * &lt;h4&gt;Functional Enums&lt;/h4&gt;<a name="line.127"></a>
+<FONT color="green">128</FONT>     *<a name="line.128"></a>
+<FONT color="green">129</FONT>     * &lt;p&gt;The enums can have functionality by defining subclasses and<a name="line.129"></a>
+<FONT color="green">130</FONT>     * overriding the &lt;code&gt;getEnumClass()&lt;/code&gt; method:&lt;/p&gt;<a name="line.130"></a>
+<FONT color="green">131</FONT>     * <a name="line.131"></a>
+<FONT color="green">132</FONT>     * &lt;pre&gt;<a name="line.132"></a>
+<FONT color="green">133</FONT>     *   public static final OperationEnum PLUS = new PlusOperation();<a name="line.133"></a>
+<FONT color="green">134</FONT>     *   private static final class PlusOperation extends OperationEnum {<a name="line.134"></a>
+<FONT color="green">135</FONT>     *     private PlusOperation() {<a name="line.135"></a>
+<FONT color="green">136</FONT>     *       super("Plus");<a name="line.136"></a>
+<FONT color="green">137</FONT>     *     }<a name="line.137"></a>
+<FONT color="green">138</FONT>     *     public int eval(int a, int b) {<a name="line.138"></a>
+<FONT color="green">139</FONT>     *       return a + b;<a name="line.139"></a>
+<FONT color="green">140</FONT>     *     }<a name="line.140"></a>
+<FONT color="green">141</FONT>     *   }<a name="line.141"></a>
+<FONT color="green">142</FONT>     *   public static final OperationEnum MINUS = new MinusOperation();<a name="line.142"></a>
+<FONT color="green">143</FONT>     *   private static final class MinusOperation extends OperationEnum {<a name="line.143"></a>
+<FONT color="green">144</FONT>     *     private MinusOperation() {<a name="line.144"></a>
+<FONT color="green">145</FONT>     *       super("Minus");<a name="line.145"></a>
+<FONT color="green">146</FONT>     *     }<a name="line.146"></a>
+<FONT color="green">147</FONT>     *     public int eval(int a, int b) {<a name="line.147"></a>
+<FONT color="green">148</FONT>     *       return a - b;<a name="line.148"></a>
+<FONT color="green">149</FONT>     *     }<a name="line.149"></a>
+<FONT color="green">150</FONT>     *   }<a name="line.150"></a>
+<FONT color="green">151</FONT>     *<a name="line.151"></a>
+<FONT color="green">152</FONT>     *   private OperationEnum(String color) {<a name="line.152"></a>
+<FONT color="green">153</FONT>     *     super(color);<a name="line.153"></a>
+<FONT color="green">154</FONT>     *   }<a name="line.154"></a>
+<FONT color="green">155</FONT>     * <a name="line.155"></a>
+<FONT color="green">156</FONT>     *   public final Class getEnumClass() {     // NOTE: new method!<a name="line.156"></a>
+<FONT color="green">157</FONT>     *     return OperationEnum.class;<a name="line.157"></a>
+<FONT color="green">158</FONT>     *   }<a name="line.158"></a>
+<FONT color="green">159</FONT>     *<a name="line.159"></a>
+<FONT color="green">160</FONT>     *   public abstract double eval(double a, double b);<a name="line.160"></a>
+<FONT color="green">161</FONT>     * <a name="line.161"></a>
+<FONT color="green">162</FONT>     *   public static OperationEnum getEnum(String name) {<a name="line.162"></a>
+<FONT color="green">163</FONT>     *     return (OperationEnum) getEnum(OperationEnum.class, name);<a name="line.163"></a>
+<FONT color="green">164</FONT>     *   }<a name="line.164"></a>
+<FONT color="green">165</FONT>     * <a name="line.165"></a>
+<FONT color="green">166</FONT>     *   public static Map getEnumMap() {<a name="line.166"></a>
+<FONT color="green">167</FONT>     *     return getEnumMap(OperationEnum.class);<a name="line.167"></a>
+<FONT color="green">168</FONT>     *   }<a name="line.168"></a>
+<FONT color="green">169</FONT>     * <a name="line.169"></a>
+<FONT color="green">170</FONT>     *   public static List getEnumList() {<a name="line.170"></a>
+<FONT color="green">171</FONT>     *     return getEnumList(OperationEnum.class);<a name="line.171"></a>
+<FONT color="green">172</FONT>     *   }<a name="line.172"></a>
+<FONT color="green">173</FONT>     * <a name="line.173"></a>
+<FONT color="green">174</FONT>     *   public static Iterator iterator() {<a name="line.174"></a>
+<FONT color="green">175</FONT>     *     return iterator(OperationEnum.class);<a name="line.175"></a>
+<FONT color="green">176</FONT>     *   }<a name="line.176"></a>
+<FONT color="green">177</FONT>     * }<a name="line.177"></a>
+<FONT color="green">178</FONT>     * &lt;/pre&gt;<a name="line.178"></a>
+<FONT color="green">179</FONT>     * &lt;p&gt;The code above will work on JDK 1.2. If JDK1.3 and later is used,<a name="line.179"></a>
+<FONT color="green">180</FONT>     * the subclasses may be defined as anonymous.&lt;/p&gt;<a name="line.180"></a>
+<FONT color="green">181</FONT>     * <a name="line.181"></a>
+<FONT color="green">182</FONT>     * &lt;h4&gt;Nested class Enums&lt;/h4&gt;<a name="line.182"></a>
+<FONT color="green">183</FONT>     *<a name="line.183"></a>
+<FONT color="green">184</FONT>     * &lt;p&gt;Care must be taken with class loading when defining a static nested class<a name="line.184"></a>
+<FONT color="green">185</FONT>     * for enums. The static nested class can be loaded without the surrounding outer<a name="line.185"></a>
+<FONT color="green">186</FONT>     * class being loaded. This can result in an empty list/map/iterator being returned.<a name="line.186"></a>
+<FONT color="green">187</FONT>     * One solution is to define a static block that references the outer class where<a name="line.187"></a>
+<FONT color="green">188</FONT>     * the constants are defined. For example:&lt;/p&gt;<a name="line.188"></a>
+<FONT color="green">189</FONT>     *<a name="line.189"></a>
+<FONT color="green">190</FONT>     * &lt;pre&gt;<a name="line.190"></a>
+<FONT color="green">191</FONT>     * public final class Outer {<a name="line.191"></a>
+<FONT color="green">192</FONT>     *   public static final BWEnum BLACK = new BWEnum("Black");<a name="line.192"></a>
+<FONT color="green">193</FONT>     *   public static final BWEnum WHITE = new BWEnum("White");<a name="line.193"></a>
+<FONT color="green">194</FONT>     *<a name="line.194"></a>
+<FONT color="green">195</FONT>     *   // static nested enum class<a name="line.195"></a>
+<FONT color="green">196</FONT>     *   public static final class BWEnum extends Enum {<a name="line.196"></a>
+<FONT color="green">197</FONT>     * <a name="line.197"></a>
+<FONT color="green">198</FONT>     *     static {<a name="line.198"></a>
+<FONT color="green">199</FONT>     *       // explicitly reference BWEnum class to force constants to load<a name="line.199"></a>
+<FONT color="green">200</FONT>     *       Object obj = Outer.BLACK;<a name="line.200"></a>
+<FONT color="green">201</FONT>     *     }<a name="line.201"></a>
+<FONT color="green">202</FONT>     * <a name="line.202"></a>
+<FONT color="green">203</FONT>     *     // ... other methods omitted<a name="line.203"></a>
+<FONT color="green">204</FONT>     *   }<a name="line.204"></a>
+<FONT color="green">205</FONT>     * }<a name="line.205"></a>
+<FONT color="green">206</FONT>     * &lt;/pre&gt;<a name="line.206"></a>
+<FONT color="green">207</FONT>     * <a name="line.207"></a>
+<FONT color="green">208</FONT>     * &lt;p&gt;Although the above solves the problem, it is not recommended. The best solution<a name="line.208"></a>
+<FONT color="green">209</FONT>     * is to define the constants in the enum class, and hold references in the outer class:<a name="line.209"></a>
+<FONT color="green">210</FONT>     *<a name="line.210"></a>
+<FONT color="green">211</FONT>     * &lt;pre&gt;<a name="line.211"></a>
+<FONT color="green">212</FONT>     * public final class Outer {<a name="line.212"></a>
+<FONT color="green">213</FONT>     *   public static final BWEnum BLACK = BWEnum.BLACK;<a name="line.213"></a>
+<FONT color="green">214</FONT>     *   public static final BWEnum WHITE = BWEnum.WHITE;<a name="line.214"></a>
+<FONT color="green">215</FONT>     *<a name="line.215"></a>
+<FONT color="green">216</FONT>     *   // static nested enum class<a name="line.216"></a>
+<FONT color="green">217</FONT>     *   public static final class BWEnum extends Enum {<a name="line.217"></a>
+<FONT color="green">218</FONT>     *     // only define constants in enum classes - private if desired<a name="line.218"></a>
+<FONT color="green">219</FONT>     *     private static final BWEnum BLACK = new BWEnum("Black");<a name="line.219"></a>
+<FONT color="green">220</FONT>     *     private static final BWEnum WHITE = new BWEnum("White");<a name="line.220"></a>
+<FONT color="green">221</FONT>     * <a name="line.221"></a>
+<FONT color="green">222</FONT>     *     // ... other methods omitted<a name="line.222"></a>
+<FONT color="green">223</FONT>     *   }<a name="line.223"></a>
+<FONT color="green">224</FONT>     * }<a name="line.224"></a>
+<FONT color="green">225</FONT>     * &lt;/pre&gt;<a name="line.225"></a>
+<FONT color="green">226</FONT>     * <a name="line.226"></a>
+<FONT color="green">227</FONT>     * &lt;p&gt;For more details, see the 'Nested' test cases.<a name="line.227"></a>
+<FONT color="green">228</FONT>     * <a name="line.228"></a>
+<FONT color="green">229</FONT>     * @deprecated Replaced by {@link org.apache.commons.lang.enums.Enum org.apache.commons.lang.enums.Enum} <a name="line.229"></a>
+<FONT color="green">230</FONT>     *          and will be removed in version 3.0. All classes in this package are deprecated and repackaged to <a name="line.230"></a>
+<FONT color="green">231</FONT>     *          {@link org.apache.commons.lang.enums} since &lt;code&gt;enum&lt;/code&gt; is a Java 1.5 keyword. <a name="line.231"></a>
+<FONT color="green">232</FONT>     * @see org.apache.commons.lang.enums.Enum<a name="line.232"></a>
+<FONT color="green">233</FONT>     * @author Apache Avalon project<a name="line.233"></a>
+<FONT color="green">234</FONT>     * @author Apache Software Foundation<a name="line.234"></a>
+<FONT color="green">235</FONT>     * @author Chris Webb<a name="line.235"></a>
+<FONT color="green">236</FONT>     * @author Mike Bowler<a name="line.236"></a>
+<FONT color="green">237</FONT>     * @since 1.0<a name="line.237"></a>
+<FONT color="green">238</FONT>     * @version $Id: Enum.java 912394 2010-02-21 20:16:22Z niallp $<a name="line.238"></a>
+<FONT color="green">239</FONT>     */<a name="line.239"></a>
+<FONT color="green">240</FONT>    public abstract class Enum implements Comparable, Serializable {<a name="line.240"></a>
+<FONT color="green">241</FONT>    <a name="line.241"></a>
+<FONT color="green">242</FONT>        /**<a name="line.242"></a>
+<FONT color="green">243</FONT>         * Required for serialization support. Lang version 1.0.1 serial compatibility.<a name="line.243"></a>
+<FONT color="green">244</FONT>         * <a name="line.244"></a>
+<FONT color="green">245</FONT>         * @see java.io.Serializable<a name="line.245"></a>
+<FONT color="green">246</FONT>         */<a name="line.246"></a>
+<FONT color="green">247</FONT>        private static final long serialVersionUID = -487045951170455942L;<a name="line.247"></a>
+<FONT color="green">248</FONT>        <a name="line.248"></a>
+<FONT color="green">249</FONT>        // After discussion, the default size for HashMaps is used, as the<a name="line.249"></a>
+<FONT color="green">250</FONT>        // sizing algorithm changes across the JDK versions<a name="line.250"></a>
+<FONT color="green">251</FONT>        /**<a name="line.251"></a>
+<FONT color="green">252</FONT>         * An empty &lt;code&gt;Map&lt;/code&gt;, as JDK1.2 didn't have an empty map.<a name="line.252"></a>
+<FONT color="green">253</FONT>         */<a name="line.253"></a>
+<FONT color="green">254</FONT>        private static final Map EMPTY_MAP = Collections.unmodifiableMap(new HashMap(0));<a name="line.254"></a>
+<FONT color="green">255</FONT>        <a name="line.255"></a>
+<FONT color="green">256</FONT>        /**<a name="line.256"></a>
+<FONT color="green">257</FONT>         * &lt;code&gt;Map&lt;/code&gt;, key of class name, value of &lt;code&gt;Entry&lt;/code&gt;.<a name="line.257"></a>
+<FONT color="green">258</FONT>         */<a name="line.258"></a>
+<FONT color="green">259</FONT>        private static Map cEnumClasses<a name="line.259"></a>
+<FONT color="green">260</FONT>            // LANG-334: To avoid exposing a mutating map,<a name="line.260"></a>
+<FONT color="green">261</FONT>            // we copy it each time we add to it. This is cheaper than<a name="line.261"></a>
+<FONT color="green">262</FONT>            // using a synchronized map since we are almost entirely reads<a name="line.262"></a>
+<FONT color="green">263</FONT>            = new WeakHashMap();<a name="line.263"></a>
+<FONT color="green">264</FONT>        <a name="line.264"></a>
+<FONT color="green">265</FONT>        /**<a name="line.265"></a>
+<FONT color="green">266</FONT>         * The string representation of the Enum.<a name="line.266"></a>
+<FONT color="green">267</FONT>         */<a name="line.267"></a>
+<FONT color="green">268</FONT>        private final String iName;<a name="line.268"></a>
+<FONT color="green">269</FONT>        <a name="line.269"></a>
+<FONT color="green">270</FONT>        /**<a name="line.270"></a>
+<FONT color="green">271</FONT>         * The hashcode representation of the Enum.<a name="line.271"></a>
+<FONT color="green">272</FONT>         */<a name="line.272"></a>
+<FONT color="green">273</FONT>        private transient final int iHashCode;<a name="line.273"></a>
+<FONT color="green">274</FONT>        <a name="line.274"></a>
+<FONT color="green">275</FONT>        /**<a name="line.275"></a>
+<FONT color="green">276</FONT>         * The toString representation of the Enum.<a name="line.276"></a>
+<FONT color="green">277</FONT>         * @since 2.0<a name="line.277"></a>
+<FONT color="green">278</FONT>         */<a name="line.278"></a>
+<FONT color="green">279</FONT>        protected transient String iToString = null;<a name="line.279"></a>
+<FONT color="green">280</FONT>    <a name="line.280"></a>
+<FONT color="green">281</FONT>        /**<a name="line.281"></a>
+<FONT color="green">282</FONT>         * &lt;p&gt;Enable the iterator to retain the source code order.&lt;/p&gt;<a name="line.282"></a>
+<FONT color="green">283</FONT>         */<a name="line.283"></a>
+<FONT color="green">284</FONT>        private static class Entry {<a name="line.284"></a>
+<FONT color="green">285</FONT>            /**<a name="line.285"></a>
+<FONT color="green">286</FONT>             * Map of Enum name to Enum.<a name="line.286"></a>
+<FONT color="green">287</FONT>             */<a name="line.287"></a>
+<FONT color="green">288</FONT>            final Map map = new HashMap();<a name="line.288"></a>
+<FONT color="green">289</FONT>            /**<a name="line.289"></a>
+<FONT color="green">290</FONT>             * Map of Enum name to Enum.<a name="line.290"></a>
+<FONT color="green">291</FONT>             */<a name="line.291"></a>
+<FONT color="green">292</FONT>            final Map unmodifiableMap = Collections.unmodifiableMap(map);<a name="line.292"></a>
+<FONT color="green">293</FONT>            /**<a name="line.293"></a>
+<FONT color="green">294</FONT>             * List of Enums in source code order.<a name="line.294"></a>
+<FONT color="green">295</FONT>             */<a name="line.295"></a>
+<FONT color="green">296</FONT>            final List list = new ArrayList(25);<a name="line.296"></a>
+<FONT color="green">297</FONT>            /**<a name="line.297"></a>
+<FONT color="green">298</FONT>             * Map of Enum name to Enum.<a name="line.298"></a>
+<FONT color="green">299</FONT>             */<a name="line.299"></a>
+<FONT color="green">300</FONT>            final List unmodifiableList = Collections.unmodifiableList(list);<a name="line.300"></a>
+<FONT color="green">301</FONT>    <a name="line.301"></a>
+<FONT color="green">302</FONT>            /**<a name="line.302"></a>
+<FONT color="green">303</FONT>             * &lt;p&gt;Restrictive constructor.&lt;/p&gt;<a name="line.303"></a>
+<FONT color="green">304</FONT>             */<a name="line.304"></a>
+<FONT color="green">305</FONT>            protected Entry() {<a name="line.305"></a>
+<FONT color="green">306</FONT>                super();<a name="line.306"></a>
+<FONT color="green">307</FONT>            }<a name="line.307"></a>
+<FONT color="green">308</FONT>        }<a name="line.308"></a>
+<FONT color="green">309</FONT>    <a name="line.309"></a>
+<FONT color="green">310</FONT>        /**<a name="line.310"></a>
+<FONT color="green">311</FONT>         * &lt;p&gt;Constructor to add a new named item to the enumeration.&lt;/p&gt;<a name="line.311"></a>
+<FONT color="green">312</FONT>         *<a name="line.312"></a>
+<FONT color="green">313</FONT>         * @param name  the name of the enum object,<a name="line.313"></a>
+<FONT color="green">314</FONT>         *  must not be empty or &lt;code&gt;null&lt;/code&gt;<a name="line.314"></a>
+<FONT color="green">315</FONT>         * @throws IllegalArgumentException if the name is &lt;code&gt;null&lt;/code&gt;<a name="line.315"></a>
+<FONT color="green">316</FONT>         *  or an empty string<a name="line.316"></a>
+<FONT color="green">317</FONT>         * @throws IllegalArgumentException if the getEnumClass() method returns<a name="line.317"></a>
+<FONT color="green">318</FONT>         *  a null or invalid Class<a name="line.318"></a>
+<FONT color="green">319</FONT>         */<a name="line.319"></a>
+<FONT color="green">320</FONT>        protected Enum(String name) {<a name="line.320"></a>
+<FONT color="green">321</FONT>            super();<a name="line.321"></a>
+<FONT color="green">322</FONT>            init(name);<a name="line.322"></a>
+<FONT color="green">323</FONT>            iName = name;<a name="line.323"></a>
+<FONT color="green">324</FONT>            iHashCode = 7 + getEnumClass().hashCode() + 3 * name.hashCode();<a name="line.324"></a>
+<FONT color="green">325</FONT>            // cannot create toString here as subclasses may want to include other data<a name="line.325"></a>
+<FONT color="green">326</FONT>        }<a name="line.326"></a>
+<FONT color="green">327</FONT>    <a name="line.327"></a>
+<FONT color="green">328</FONT>        /**<a name="line.328"></a>
+<FONT color="green">329</FONT>         * Initializes the enumeration.<a name="line.329"></a>
+<FONT color="green">330</FONT>         * <a name="line.330"></a>
+<FONT color="green">331</FONT>         * @param name  the enum name<a name="line.331"></a>
+<FONT color="green">332</FONT>         * @throws IllegalArgumentException if the name is null or empty or duplicate<a name="line.332"></a>
+<FONT color="green">333</FONT>         * @throws IllegalArgumentException if the enumClass is null or invalid<a name="line.333"></a>
+<FONT color="green">334</FONT>         */<a name="line.334"></a>
+<FONT color="green">335</FONT>        private void init(String name) {<a name="line.335"></a>
+<FONT color="green">336</FONT>            if (StringUtils.isEmpty(name)) {<a name="line.336"></a>
+<FONT color="green">337</FONT>                throw new IllegalArgumentException("The Enum name must not be empty or null");<a name="line.337"></a>
+<FONT color="green">338</FONT>            }<a name="line.338"></a>
+<FONT color="green">339</FONT>            <a name="line.339"></a>
+<FONT color="green">340</FONT>            Class enumClass = getEnumClass();<a name="line.340"></a>
+<FONT color="green">341</FONT>            if (enumClass == null) {<a name="line.341"></a>
+<FONT color="green">342</FONT>                throw new IllegalArgumentException("getEnumClass() must not be null");<a name="line.342"></a>
+<FONT color="green">343</FONT>            }<a name="line.343"></a>
+<FONT color="green">344</FONT>            Class cls = getClass();<a name="line.344"></a>
+<FONT color="green">345</FONT>            boolean ok = false;<a name="line.345"></a>
+<FONT color="green">346</FONT>            while (cls != null &amp;&amp; cls != Enum.class &amp;&amp; cls != ValuedEnum.class) {<a name="line.346"></a>
+<FONT color="green">347</FONT>                if (cls == enumClass) {<a name="line.347"></a>
+<FONT color="green">348</FONT>                    ok = true;<a name="line.348"></a>
+<FONT color="green">349</FONT>                    break;<a name="line.349"></a>
+<FONT color="green">350</FONT>                }<a name="line.350"></a>
+<FONT color="green">351</FONT>                cls = cls.getSuperclass();<a name="line.351"></a>
+<FONT color="green">352</FONT>            }<a name="line.352"></a>
+<FONT color="green">353</FONT>            if (ok == false) {<a name="line.353"></a>
+<FONT color="green">354</FONT>                throw new IllegalArgumentException("getEnumClass() must return a superclass of this class");<a name="line.354"></a>
+<FONT color="green">355</FONT>            }<a name="line.355"></a>
+<FONT color="green">356</FONT>    <a name="line.356"></a>
+<FONT color="green">357</FONT>            Entry entry;<a name="line.357"></a>
+<FONT color="green">358</FONT>            synchronized( Enum.class ) { // LANG-334<a name="line.358"></a>
+<FONT color="green">359</FONT>                // create entry<a name="line.359"></a>
+<FONT color="green">360</FONT>                entry = (Entry) cEnumClasses.get(enumClass);<a name="line.360"></a>
+<FONT color="green">361</FONT>                if (entry == null) {<a name="line.361"></a>
+<FONT color="green">362</FONT>                    entry = createEntry(enumClass);<a name="line.362"></a>
+<FONT color="green">363</FONT>                    Map myMap = new WeakHashMap( ); // we avoid the (Map) constructor to achieve JDK 1.2 support<a name="line.363"></a>
+<FONT color="green">364</FONT>                    myMap.putAll( cEnumClasses );<a name="line.364"></a>
+<FONT color="green">365</FONT>                    myMap.put(enumClass, entry);<a name="line.365"></a>
+<FONT color="green">366</FONT>                    cEnumClasses = myMap;<a name="line.366"></a>
+<FONT color="green">367</FONT>                }<a name="line.367"></a>
+<FONT color="green">368</FONT>            }<a name="line.368"></a>
+<FONT color="green">369</FONT>            if (entry.map.containsKey(name)) {<a name="line.369"></a>
+<FONT color="green">370</FONT>                throw new IllegalArgumentException("The Enum name must be unique, '" + name + "' has already been added");<a name="line.370"></a>
+<FONT color="green">371</FONT>            }<a name="line.371"></a>
+<FONT color="green">372</FONT>            entry.map.put(name, this);<a name="line.372"></a>
+<FONT color="green">373</FONT>            entry.list.add(this);<a name="line.373"></a>
+<FONT color="green">374</FONT>        }<a name="line.374"></a>
+<FONT color="green">375</FONT>    <a name="line.375"></a>
+<FONT color="green">376</FONT>        /**<a name="line.376"></a>
+<FONT color="green">377</FONT>         * &lt;p&gt;Handle the deserialization of the class to ensure that multiple<a name="line.377"></a>
+<FONT color="green">378</FONT>         * copies are not wastefully created, or illegal enum types created.&lt;/p&gt;<a name="line.378"></a>
+<FONT color="green">379</FONT>         *<a name="line.379"></a>
+<FONT color="green">380</FONT>         * @return the resolved object<a name="line.380"></a>
+<FONT color="green">381</FONT>         */<a name="line.381"></a>
+<FONT color="green">382</FONT>        protected Object readResolve() {<a name="line.382"></a>
+<FONT color="green">383</FONT>            Entry entry = (Entry) cEnumClasses.get(getEnumClass());<a name="line.383"></a>
+<FONT color="green">384</FONT>            if (entry == null) {<a name="line.384"></a>
+<FONT color="green">385</FONT>                return null;<a name="line.385"></a>
+<FONT color="green">386</FONT>            }<a name="line.386"></a>
+<FONT color="green">387</FONT>            return entry.map.get(getName());<a name="line.387"></a>
+<FONT color="green">388</FONT>        }<a name="line.388"></a>
+<FONT color="green">389</FONT>        <a name="line.389"></a>
+<FONT color="green">390</FONT>        //--------------------------------------------------------------------------------<a name="line.390"></a>
+<FONT color="green">391</FONT>    <a name="line.391"></a>
+<FONT color="green">392</FONT>        /**<a name="line.392"></a>
+<FONT color="green">393</FONT>         * &lt;p&gt;Gets an &lt;code&gt;Enum&lt;/code&gt; object by class and name.&lt;/p&gt;<a name="line.393"></a>
+<FONT color="green">394</FONT>         * <a name="line.394"></a>
+<FONT color="green">395</FONT>         * @param enumClass  the class of the Enum to get, must not<a name="line.395"></a>
+<FONT color="green">396</FONT>         *  be &lt;code&gt;null&lt;/code&gt;<a name="line.396"></a>
+<FONT color="green">397</FONT>         * @param name  the name of the &lt;code&gt;Enum&lt;/code&gt; to get,<a name="line.397"></a>
+<FONT color="green">398</FONT>         *  may be &lt;code&gt;null&lt;/code&gt;<a name="line.398"></a>
+<FONT color="green">399</FONT>         * @return the enum object, or &lt;code&gt;null&lt;/code&gt; if the enum does not exist<a name="line.399"></a>
+<FONT color="green">400</FONT>         * @throws IllegalArgumentException if the enum class<a name="line.400"></a>
+<FONT color="green">401</FONT>         *  is &lt;code&gt;null&lt;/code&gt;<a name="line.401"></a>
+<FONT color="green">402</FONT>         */<a name="line.402"></a>
+<FONT color="green">403</FONT>        protected static Enum getEnum(Class enumClass, String name) {<a name="line.403"></a>
+<FONT color="green">404</FONT>            Entry entry = getEntry(enumClass);<a name="line.404"></a>
+<FONT color="green">405</FONT>            if (entry == null) {<a name="line.405"></a>
+<FONT color="green">406</FONT>                return null;<a name="line.406"></a>
+<FONT color="green">407</FONT>            }<a name="line.407"></a>
+<FONT color="green">408</FONT>            return (Enum) entry.map.get(name);<a name="line.408"></a>
+<FONT color="green">409</FONT>        }<a name="line.409"></a>
+<FONT color="green">410</FONT>    <a name="line.410"></a>
+<FONT color="green">411</FONT>        /**<a name="line.411"></a>
+<FONT color="green">412</FONT>         * &lt;p&gt;Gets the &lt;code&gt;Map&lt;/code&gt; of &lt;code&gt;Enum&lt;/code&gt; objects by<a name="line.412"></a>
+<FONT color="green">413</FONT>         * name using the &lt;code&gt;Enum&lt;/code&gt; class.&lt;/p&gt;<a name="line.413"></a>
+<FONT color="green">414</FONT>         *<a name="line.414"></a>
+<FONT color="green">415</FONT>         * &lt;p&gt;If the requested class has no enum objects an empty<a name="line.415"></a>
+<FONT color="green">416</FONT>         * &lt;code&gt;Map&lt;/code&gt; is returned.&lt;/p&gt;<a name="line.416"></a>
+<FONT color="green">417</FONT>         * <a name="line.417"></a>
+<FONT color="green">418</FONT>         * @param enumClass  the class of the &lt;code&gt;Enum&lt;/code&gt; to get,<a name="line.418"></a>
+<FONT color="green">419</FONT>         *  must not be &lt;code&gt;null&lt;/code&gt;<a name="line.419"></a>
+<FONT color="green">420</FONT>         * @return the enum object Map<a name="line.420"></a>
+<FONT color="green">421</FONT>         * @throws IllegalArgumentException if the enum class is &lt;code&gt;null&lt;/code&gt;<a name="line.421"></a>
+<FONT color="green">422</FONT>         * @throws IllegalArgumentException if the enum class is not a subclass of Enum<a name="line.422"></a>
+<FONT color="green">423</FONT>         */<a name="line.423"></a>
+<FONT color="green">424</FONT>        protected static Map getEnumMap(Class enumClass) {<a name="line.424"></a>
+<FONT color="green">425</FONT>            Entry entry = getEntry(enumClass);<a name="line.425"></a>
+<FONT color="green">426</FONT>            if (entry == null) {<a name="line.426"></a>
+<FONT color="green">427</FONT>                return EMPTY_MAP;<a name="line.427"></a>
+<FONT color="green">428</FONT>            }<a name="line.428"></a>
+<FONT color="green">429</FONT>            return entry.unmodifiableMap;<a name="line.429"></a>
+<FONT color="green">430</FONT>        }<a name="line.430"></a>
+<FONT color="green">431</FONT>    <a name="line.431"></a>
+<FONT color="green">432</FONT>        /**<a name="line.432"></a>
+<FONT color="green">433</FONT>         * &lt;p&gt;Gets the &lt;code&gt;List&lt;/code&gt; of &lt;code&gt;Enum&lt;/code&gt; objects using the<a name="line.433"></a>
+<FONT color="green">434</FONT>         * &lt;code&gt;Enum&lt;/code&gt; class.&lt;/p&gt;<a name="line.434"></a>
+<FONT color="green">435</FONT>         *<a name="line.435"></a>
+<FONT color="green">436</FONT>         * &lt;p&gt;The list is in the order that the objects were created (source code order).<a name="line.436"></a>
+<FONT color="green">437</FONT>         * If the requested class has no enum objects an empty &lt;code&gt;List&lt;/code&gt; is<a name="line.437"></a>
+<FONT color="green">438</FONT>         * returned.&lt;/p&gt;<a name="line.438"></a>
+<FONT color="green">439</FONT>         * <a name="line.439"></a>
+<FONT color="green">440</FONT>         * @param enumClass  the class of the &lt;code&gt;Enum&lt;/code&gt; to get,<a name="line.440"></a>
+<FONT color="green">441</FONT>         *  must not be &lt;code&gt;null&lt;/code&gt;<a name="line.441"></a>
+<FONT color="green">442</FONT>         * @return the enum object Map<a name="line.442"></a>
+<FONT color="green">443</FONT>         * @throws IllegalArgumentException if the enum class is &lt;code&gt;null&lt;/code&gt;<a name="line.443"></a>
+<FONT color="green">444</FONT>         * @throws IllegalArgumentException if the enum class is not a subclass of Enum<a name="line.444"></a>
+<FONT color="green">445</FONT>         */<a name="line.445"></a>
+<FONT color="green">446</FONT>        protected static List getEnumList(Class enumClass) {<a name="line.446"></a>
+<FONT color="green">447</FONT>            Entry entry = getEntry(enumClass);<a name="line.447"></a>
+<FONT color="green">448</FONT>            if (entry == null) {<a name="line.448"></a>
+<FONT color="green">449</FONT>                return Collections.EMPTY_LIST;<a name="line.449"></a>
+<FONT color="green">450</FONT>            }<a name="line.450"></a>
+<FONT color="green">451</FONT>            return entry.unmodifiableList;<a name="line.451"></a>
+<FONT color="green">452</FONT>        }<a name="line.452"></a>
+<FONT color="green">453</FONT>    <a name="line.453"></a>
+<FONT color="green">454</FONT>        /**<a name="line.454"></a>
+<FONT color="green">455</FONT>         * &lt;p&gt;Gets an &lt;code&gt;Iterator&lt;/code&gt; over the &lt;code&gt;Enum&lt;/code&gt; objects in<a name="line.455"></a>
+<FONT color="green">456</FONT>         * an &lt;code&gt;Enum&lt;/code&gt; class.&lt;/p&gt;<a name="line.456"></a>
+<FONT color="green">457</FONT>         *<a name="line.457"></a>
+<FONT color="green">458</FONT>         * &lt;p&gt;The &lt;code&gt;Iterator&lt;/code&gt; is in the order that the objects were<a name="line.458"></a>
+<FONT color="green">459</FONT>         * created (source code order). If the requested class has no enum<a name="line.459"></a>
+<FONT color="green">460</FONT>         * objects an empty &lt;code&gt;Iterator&lt;/code&gt; is returned.&lt;/p&gt;<a name="line.460"></a>
+<FONT color="green">461</FONT>         * <a name="line.461"></a>
+<FONT color="green">462</FONT>         * @param enumClass  the class of the &lt;code&gt;Enum&lt;/code&gt; to get,<a name="line.462"></a>
+<FONT color="green">463</FONT>         *  must not be &lt;code&gt;null&lt;/code&gt;<a name="line.463"></a>
+<FONT color="green">464</FONT>         * @return an iterator of the Enum objects<a name="line.464"></a>
+<FONT color="green">465</FONT>         * @throws IllegalArgumentException if the enum class is &lt;code&gt;null&lt;/code&gt;<a name="line.465"></a>
+<FONT color="green">466</FONT>         * @throws IllegalArgumentException if the enum class is not a subclass of Enum<a name="line.466"></a>
+<FONT color="green">467</FONT>         */<a name="line.467"></a>
+<FONT color="green">468</FONT>        protected static Iterator iterator(Class enumClass) {<a name="line.468"></a>
+<FONT color="green">469</FONT>            return Enum.getEnumList(enumClass).iterator();<a name="line.469"></a>
+<FONT color="green">470</FONT>        }<a name="line.470"></a>
+<FONT color="green">471</FONT>    <a name="line.471"></a>
+<FONT color="green">472</FONT>        //-----------------------------------------------------------------------<a name="line.472"></a>
+<FONT color="green">473</FONT>        /**<a name="line.473"></a>
+<FONT color="green">474</FONT>         * &lt;p&gt;Gets an &lt;code&gt;Entry&lt;/code&gt; from the map of Enums.&lt;/p&gt;<a name="line.474"></a>
+<FONT color="green">475</FONT>         * <a name="line.475"></a>
+<FONT color="green">476</FONT>         * @param enumClass  the class of the &lt;code&gt;Enum&lt;/code&gt; to get<a name="line.476"></a>
+<FONT color="green">477</FONT>         * @return the enum entry<a name="line.477"></a>
+<FONT color="green">478</FONT>         */<a name="line.478"></a>
+<FONT color="green">479</FONT>        private static Entry getEntry(Class enumClass) {<a name="line.479"></a>
+<FONT color="green">480</FONT>            if (enumClass == null) {<a name="line.480"></a>
+<FONT color="green">481</FONT>                throw new IllegalArgumentException("The Enum Class must not be null");<a name="line.481"></a>
+<FONT color="green">482</FONT>            }<a name="line.482"></a>
+<FONT color="green">483</FONT>            if (Enum.class.isAssignableFrom(enumClass) == false) {<a name="line.483"></a>
+<FONT color="green">484</FONT>                throw new IllegalArgumentException("The Class must be a subclass of Enum");<a name="line.484"></a>
+<FONT color="green">485</FONT>            }<a name="line.485"></a>
+<FONT color="green">486</FONT>            Entry entry = (Entry) cEnumClasses.get(enumClass);<a name="line.486"></a>
+<FONT color="green">487</FONT>    <a name="line.487"></a>
+<FONT color="green">488</FONT>            if (entry == null) {<a name="line.488"></a>
+<FONT color="green">489</FONT>                try {<a name="line.489"></a>
+<FONT color="green">490</FONT>                    // LANG-76 - try to force class initialization for JDK 1.5+<a name="line.490"></a>
+<FONT color="green">491</FONT>                    Class.forName(enumClass.getName(), true, enumClass.getClassLoader());<a name="line.491"></a>
+<FONT color="green">492</FONT>                    entry = (Entry) cEnumClasses.get(enumClass);<a name="line.492"></a>
+<FONT color="green">493</FONT>                } catch (Exception e) {<a name="line.493"></a>
+<FONT color="green">494</FONT>                    // Ignore<a name="line.494"></a>
+<FONT color="green">495</FONT>                }<a name="line.495"></a>
+<FONT color="green">496</FONT>            }<a name="line.496"></a>
+<FONT color="green">497</FONT>    <a name="line.497"></a>
+<FONT color="green">498</FONT>            return entry;<a name="line.498"></a>
+<FONT color="green">499</FONT>        }<a name="line.499"></a>
+<FONT color="green">500</FONT>        <a name="line.500"></a>
+<FONT color="green">501</FONT>        /**<a name="line.501"></a>
+<FONT color="green">502</FONT>         * &lt;p&gt;Creates an &lt;code&gt;Entry&lt;/code&gt; for storing the Enums.&lt;/p&gt;<a name="line.502"></a>
+<FONT color="green">503</FONT>         *<a name="line.503"></a>
+<FONT color="green">504</FONT>         * &lt;p&gt;This accounts for subclassed Enums.&lt;/p&gt;<a name="line.504"></a>
+<FONT color="green">505</FONT>         * <a name="line.505"></a>
+<FONT color="green">506</FONT>         * @param enumClass  the class of the &lt;code&gt;Enum&lt;/code&gt; to get<a name="line.506"></a>
+<FONT color="green">507</FONT>         * @return the enum entry<a name="line.507"></a>
+<FONT color="green">508</FONT>         */<a name="line.508"></a>
+<FONT color="green">509</FONT>        private static Entry createEntry(Class enumClass) {<a name="line.509"></a>
+<FONT color="green">510</FONT>            Entry entry = new Entry();<a name="line.510"></a>
+<FONT color="green">511</FONT>            Class cls = enumClass.getSuperclass();<a name="line.511"></a>
+<FONT color="green">512</FONT>            while (cls != null &amp;&amp; cls != Enum.class &amp;&amp; cls != ValuedEnum.class) {<a name="line.512"></a>
+<FONT color="green">513</FONT>                Entry loopEntry = (Entry) cEnumClasses.get(cls);<a name="line.513"></a>
+<FONT color="green">514</FONT>                if (loopEntry != null) {<a name="line.514"></a>
+<FONT color="green">515</FONT>                    entry.list.addAll(loopEntry.list);<a name="line.515"></a>
+<FONT color="green">516</FONT>                    entry.map.putAll(loopEntry.map);<a name="line.516"></a>
+<FONT color="green">517</FONT>                    break;  // stop here, as this will already have had superclasses added<a name="line.517"></a>
+<FONT color="green">518</FONT>                }<a name="line.518"></a>
+<FONT color="green">519</FONT>                cls = cls.getSuperclass();<a name="line.519"></a>
+<FONT color="green">520</FONT>            }<a name="line.520"></a>
+<FONT color="green">521</FONT>            return entry;<a name="line.521"></a>
+<FONT color="green">522</FONT>        }<a name="line.522"></a>
+<FONT color="green">523</FONT>        <a name="line.523"></a>
+<FONT color="green">524</FONT>        //-----------------------------------------------------------------------<a name="line.524"></a>
+<FONT color="green">525</FONT>        /**<a name="line.525"></a>
+<FONT color="green">526</FONT>         * &lt;p&gt;Retrieve the name of this Enum item, set in the constructor.&lt;/p&gt;<a name="line.526"></a>
+<FONT color="green">527</FONT>         * <a name="line.527"></a>
+<FONT color="green">528</FONT>         * @return the &lt;code&gt;String&lt;/code&gt; name of this Enum item<a name="line.528"></a>
+<FONT color="green">529</FONT>         */<a name="line.529"></a>
+<FONT color="green">530</FONT>        public final String getName() {<a name="line.530"></a>
+<FONT color="green">531</FONT>            return iName;<a name="line.531"></a>
+<FONT color="green">532</FONT>        }<a name="line.532"></a>
+<FONT color="green">533</FONT>    <a name="line.533"></a>
+<FONT color="green">534</FONT>        /**<a name="line.534"></a>
+<FONT color="green">535</FONT>         * &lt;p&gt;Retrieves the Class of this Enum item, set in the constructor.&lt;/p&gt;<a name="line.535"></a>
+<FONT color="green">536</FONT>         * <a name="line.536"></a>
+<FONT color="green">537</FONT>         * &lt;p&gt;This is normally the same as &lt;code&gt;getClass()&lt;/code&gt;, but for<a name="line.537"></a>
+<FONT color="green">538</FONT>         * advanced Enums may be different. If overridden, it must return a<a name="line.538"></a>
+<FONT color="green">539</FONT>         * constant value.&lt;/p&gt;<a name="line.539"></a>
+<FONT color="green">540</FONT>         * <a name="line.540"></a>
+<FONT color="green">541</FONT>         * @return the &lt;code&gt;Class&lt;/code&gt; of the enum<a name="line.541"></a>
+<FONT color="green">542</FONT>         * @since 2.0<a name="line.542"></a>
+<FONT color="green">543</FONT>         */<a name="line.543"></a>
+<FONT color="green">544</FONT>        public Class getEnumClass() {<a name="line.544"></a>
+<FONT color="green">545</FONT>            return getClass();<a name="line.545"></a>
+<FONT color="green">546</FONT>        }<a name="line.546"></a>
+<FONT color="green">547</FONT>    <a name="line.547"></a>
+<FONT color="green">548</FONT>        /**<a name="line.548"></a>
+<FONT color="green">549</FONT>         * &lt;p&gt;Tests for equality.&lt;/p&gt;<a name="line.549"></a>
+<FONT color="green">550</FONT>         *<a name="line.550"></a>
+<FONT color="green">551</FONT>         * &lt;p&gt;Two Enum objects are considered equal<a name="line.551"></a>
+<FONT color="green">552</FONT>         * if they have the same class names and the same names.<a name="line.552"></a>
+<FONT color="green">553</FONT>         * Identity is tested for first, so this method usually runs fast.&lt;/p&gt;<a name="line.553"></a>
+<FONT color="green">554</FONT>         * <a name="line.554"></a>
+<FONT color="green">555</FONT>         * &lt;p&gt;If the parameter is in a different class loader than this instance,<a name="line.555"></a>
+<FONT color="green">556</FONT>         * reflection is used to compare the names.&lt;/p&gt;<a name="line.556"></a>
+<FONT color="green">557</FONT>         *<a name="line.557"></a>
+<FONT color="green">558</FONT>         * @param other  the other object to compare for equality<a name="line.558"></a>
+<FONT color="green">559</FONT>         * @return &lt;code&gt;true&lt;/code&gt; if the Enums are equal<a name="line.559"></a>
+<FONT color="green">560</FONT>         */<a name="line.560"></a>
+<FONT color="green">561</FONT>        public final boolean equals(Object other) {<a name="line.561"></a>
+<FONT color="green">562</FONT>            if (other == this) {<a name="line.562"></a>
+<FONT color="green">563</FONT>                return true;<a name="line.563"></a>
+<FONT color="green">564</FONT>            } else if (other == null) {<a name="line.564"></a>
+<FONT color="green">565</FONT>                return false;<a name="line.565"></a>
+<FONT color="green">566</FONT>            } else if (other.getClass() == this.getClass()) {<a name="line.566"></a>
+<FONT color="green">567</FONT>                // Ok to do a class cast to Enum here since the test above<a name="line.567"></a>
+<FONT color="green">568</FONT>                // guarantee both<a name="line.568"></a>
+<FONT color="green">569</FONT>                // classes are in the same class loader.<a name="line.569"></a>
+<FONT color="green">570</FONT>                return iName.equals(((Enum) other).iName);<a name="line.570"></a>
+<FONT color="green">571</FONT>            } else {<a name="line.571"></a>
+<FONT color="green">572</FONT>                // This and other are in different class loaders, we must check indirectly<a name="line.572"></a>
+<FONT color="green">573</FONT>                if (other.getClass().getName().equals(this.getClass().getName()) == false) {<a name="line.573"></a>
+<FONT color="green">574</FONT>                    return false;<a name="line.574"></a>
+<FONT color="green">575</FONT>                }<a name="line.575"></a>
+<FONT color="green">576</FONT>                return iName.equals( getNameInOtherClassLoader(other) );<a name="line.576"></a>
+<FONT color="green">577</FONT>            }<a name="line.577"></a>
+<FONT color="green">578</FONT>        }<a name="line.578"></a>
+<FONT color="green">579</FONT>        <a name="line.579"></a>
+<FONT color="green">580</FONT>        /**<a name="line.580"></a>
+<FONT color="green">581</FONT>         * &lt;p&gt;Returns a suitable hashCode for the enumeration.&lt;/p&gt;<a name="line.581"></a>
+<FONT color="green">582</FONT>         *<a name="line.582"></a>
+<FONT color="green">583</FONT>         * @return a hashcode based on the name<a name="line.583"></a>
+<FONT color="green">584</FONT>         */<a name="line.584"></a>
+<FONT color="green">585</FONT>        public final int hashCode() {<a name="line.585"></a>
+<FONT color="green">586</FONT>            return iHashCode;<a name="line.586"></a>
+<FONT color="green">587</FONT>        }<a name="line.587"></a>
+<FONT color="green">588</FONT>    <a name="line.588"></a>
+<FONT color="green">589</FONT>        /**<a name="line.589"></a>
+<FONT color="green">590</FONT>         * &lt;p&gt;Tests for order.&lt;/p&gt;<a name="line.590"></a>
+<FONT color="green">591</FONT>         *<a name="line.591"></a>
+<FONT color="green">592</FONT>         * &lt;p&gt;The default ordering is alphabetic by name, but this<a name="line.592"></a>
+<FONT color="green">593</FONT>         * can be overridden by subclasses.&lt;/p&gt;<a name="line.593"></a>
+<FONT color="green">594</FONT>         * <a name="line.594"></a>
+<FONT color="green">595</FONT>         * &lt;p&gt;If the parameter is in a different class loader than this instance,<a name="line.595"></a>
+<FONT color="green">596</FONT>         * reflection is used to compare the names.&lt;/p&gt;<a name="line.596"></a>
+<FONT color="green">597</FONT>         *<a name="line.597"></a>
+<FONT color="green">598</FONT>         * @see java.lang.Comparable#compareTo(Object)<a name="line.598"></a>
+<FONT color="green">599</FONT>         * @param other  the other object to compare to<a name="line.599"></a>
+<FONT color="green">600</FONT>         * @return -ve if this is less than the other object, +ve if greater<a name="line.600"></a>
+<FONT color="green">601</FONT>         *  than, &lt;code&gt;0&lt;/code&gt; of equal<a name="line.601"></a>
+<FONT color="green">602</FONT>         * @throws ClassCastException if other is not an Enum<a name="line.602"></a>
+<FONT color="green">603</FONT>         * @throws NullPointerException if other is &lt;code&gt;null&lt;/code&gt;<a name="line.603"></a>
+<FONT color="green">604</FONT>         */<a name="line.604"></a>
+<FONT color="green">605</FONT>        public int compareTo(Object other) {<a name="line.605"></a>
+<FONT color="green">606</FONT>            if (other == this) {<a name="line.606"></a>
+<FONT color="green">607</FONT>                return 0;<a name="line.607"></a>
+<FONT color="green">608</FONT>            }<a name="line.608"></a>
+<FONT color="green">609</FONT>            if (other.getClass() != this.getClass()) {<a name="line.609"></a>
+<FONT color="green">610</FONT>                if (other.getClass().getName().equals(this.getClass().getName())) {<a name="line.610"></a>
+<FONT color="green">611</FONT>                    return iName.compareTo( getNameInOtherClassLoader(other) );<a name="line.611"></a>
+<FONT color="green">612</FONT>                }<a name="line.612"></a>
+<FONT color="green">613</FONT>                throw new ClassCastException(<a name="line.613"></a>
+<FONT color="green">614</FONT>                        "Different enum class '" + ClassUtils.getShortClassName(other.getClass()) + "'");<a name="line.614"></a>
+<FONT color="green">615</FONT>            }<a name="line.615"></a>
+<FONT color="green">616</FONT>            return iName.compareTo(((Enum) other).iName);<a name="line.616"></a>
+<FONT color="green">617</FONT>        }<a name="line.617"></a>
+<FONT color="green">618</FONT>    <a name="line.618"></a>
+<FONT color="green">619</FONT>        /**<a name="line.619"></a>
+<FONT color="green">620</FONT>         * &lt;p&gt;Use reflection to return an objects class name.&lt;/p&gt;<a name="line.620"></a>
+<FONT color="green">621</FONT>         *<a name="line.621"></a>
+<FONT color="green">622</FONT>         * @param other The object to determine the class name for<a name="line.622"></a>
+<FONT color="green">623</FONT>         * @return The class name<a name="line.623"></a>
+<FONT color="green">624</FONT>         */<a name="line.624"></a>
+<FONT color="green">625</FONT>        private String getNameInOtherClassLoader(Object other) {<a name="line.625"></a>
+<FONT color="green">626</FONT>            try {<a name="line.626"></a>
+<FONT color="green">627</FONT>                Method mth = other.getClass().getMethod("getName", null);<a name="line.627"></a>
+<FONT color="green">628</FONT>                String name = (String) mth.invoke(other, null);<a name="line.628"></a>
+<FONT color="green">629</FONT>                return name;<a name="line.629"></a>
+<FONT color="green">630</FONT>            } catch (NoSuchMethodException e) {<a name="line.630"></a>
+<FONT color="green">631</FONT>                // ignore - should never happen<a name="line.631"></a>
+<FONT color="green">632</FONT>            } catch (IllegalAccessException e) {<a name="line.632"></a>
+<FONT color="green">633</FONT>                // ignore - should never happen<a name="line.633"></a>
+<FONT color="green">634</FONT>            } catch (InvocationTargetException e) {<a name="line.634"></a>
+<FONT color="green">635</FONT>                // ignore - should never happen<a name="line.635"></a>
+<FONT color="green">636</FONT>            }<a name="line.636"></a>
+<FONT color="green">637</FONT>            throw new IllegalStateException("This should not happen");<a name="line.637"></a>
+<FONT color="green">638</FONT>        }<a name="line.638"></a>
+<FONT color="green">639</FONT>    <a name="line.639"></a>
+<FONT color="green">640</FONT>        /**<a name="line.640"></a>
+<FONT color="green">641</FONT>         * &lt;p&gt;Human readable description of this Enum item.&lt;/p&gt;<a name="line.641"></a>
+<FONT color="green">642</FONT>         * <a name="line.642"></a>
+<FONT color="green">643</FONT>         * @return String in the form &lt;code&gt;type[name]&lt;/code&gt;, for example:<a name="line.643"></a>
+<FONT color="green">644</FONT>         * &lt;code&gt;Color[Red]&lt;/code&gt;. Note that the package name is stripped from<a name="line.644"></a>
+<FONT color="green">645</FONT>         * the type name.<a name="line.645"></a>
+<FONT color="green">646</FONT>         */<a name="line.646"></a>
+<FONT color="green">647</FONT>        public String toString() {<a name="line.647"></a>
+<FONT color="green">648</FONT>            if (iToString == null) {<a name="line.648"></a>
+<FONT color="green">649</FONT>                String shortName = ClassUtils.getShortClassName(getEnumClass());<a name="line.649"></a>
+<FONT color="green">650</FONT>                iToString = shortName + "[" + getName() + "]";<a name="line.650"></a>
+<FONT color="green">651</FONT>            }<a name="line.651"></a>
+<FONT color="green">652</FONT>            return iToString;<a name="line.652"></a>
+<FONT color="green">653</FONT>        }<a name="line.653"></a>
+<FONT color="green">654</FONT>        <a name="line.654"></a>
+<FONT color="green">655</FONT>    }<a name="line.655"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
