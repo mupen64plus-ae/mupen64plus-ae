@@ -1135,7 +1135,7 @@ void OGL_ClearDepthBuffer()
 //    glClearDepthf( depth );  // broken on Qualcomm Adreno
     glClearDepthf( 1.0f );  // fixes missing graphics on Qualcomm Adreno
     glClearColor( 0, 0, 0, 1 );
-    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT );
+    glClear( GL_DEPTH_BUFFER_BIT );
     OGL_UpdateDepthUpdate();
     glEnable( GL_SCISSOR_TEST );
 ////////
