@@ -1539,8 +1539,6 @@ void gSPBgRect1Cyc( u32 bg )
 
 void gSPBgRectCopy( u32 bg )
 {
-
-    return;
     u32 address = RSP_SegmentToPhysical( bg );
     uObjBg *objBg = (uObjBg*)&RDRAM[address];
 
