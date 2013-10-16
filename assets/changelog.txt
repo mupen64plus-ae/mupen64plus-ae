@@ -1,6 +1,6 @@
 [32:2.4.0]
-- Fixed green rooms in Zelda OOT when using gles2n64 video plugin
-- Fixed gles2n64 black screens (Turok series, Banjo Kazooie HUD, Waverace intermissions, and more)
+- Fixed green rooms in Zelda OOT when using gles2n64 video plugin (thanks go to Squarepusher; aka twinaphex)
+- Fixed gles2n64 black screens (Turok series, Banjo Kazooie HUD, Waverace intermissions, and more) (thanks go to Squarepusher; aka twinaphex)
 [31:2.3.5]
 - Added 'crop' setting for video scaling (useful for widescreen games)
 - Added Greek translation
