@@ -1,5 +1,6 @@
 [32:2.4.0]
 - A HUGE THANK YOU to Squarepusher (aka twinaphex) of RetroArch fame for all of the fixes in this revision
+- Fixed crashes in Perfect Dark, completely playable now
 - Fixed green rooms in Zelda OOT when using gles2n64 video plugin
 - Fixed gles2n64 black screens (Turok series, Banjo Kazooie HUD, Waverace intermissions, and more)
 [31:2.3.5]
