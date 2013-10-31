@@ -283,13 +283,14 @@ void COGLGraphicsContext::InitState(void)
     glDepthRange(-1, 1);
 
 #elif SDL_VIDEO_OPENGL_ES2
-    glDepthRangef(0.0f, 1.0f);
+    glDepthRangef(-1.0f, 1.0f);
 #endif
     OPENGL_CHECK_ERRORS;
 }
 
 void COGLGraphicsContext::InitOGLExtension(void)
 {
+#if SDL_VIDEO_OPENGL
     // important extension features, it is very bad not to have these feature
     m_bSupportMultiTexture = IsExtensionSupported(OSAL_GL_ARB_MULTITEXTURE);
     m_bSupportTextureEnvCombine = IsExtensionSupported("GL_EXT_texture_env_combine");
@@ -303,7 +304,11 @@ void COGLGraphicsContext::InitOGLExtension(void)
     m_bSupportRescaleNormal = IsExtensionSupported("GL_EXT_rescale_normal");
     m_bSupportLODBias = IsExtensionSupported("GL_EXT_texture_lod_bias");
     m_bSupportAnisotropicFiltering = IsExtensionSupported("GL_EXT_texture_filter_anisotropic");
-
+#else
+    m_bSupportMultiTexture = true;
+    m_bSupportFogCoord = false;
+    m_bSupportAnisotropicFiltering = true;
+#endif
     // Compute maxAnisotropicFiltering
     m_maxAnisotropicFiltering = 0;
 
@@ -328,6 +333,7 @@ void COGLGraphicsContext::InitOGLExtension(void)
         m_maxAnisotropicFiltering = options.anisotropicFiltering;
     }
 
+#if SDL_VIDEO_OPENGL
     // Nvidia only extension features (optional)
     m_bSupportNVRegisterCombiner = IsExtensionSupported("GL_NV_register_combiners");
     m_bSupportTextureMirrorRepeat = IsExtensionSupported("GL_IBM_texture_mirrored_repeat") || IsExtensionSupported("ARB_texture_mirrored_repeat");
@@ -336,7 +342,9 @@ void COGLGraphicsContext::InitOGLExtension(void)
     m_bSupportBlendColor = IsExtensionSupported("GL_EXT_blend_color");
     m_bSupportBlendSubtract = IsExtensionSupported("GL_EXT_blend_subtract");
     m_bSupportNVTextureEnvCombine4 = IsExtensionSupported("GL_NV_texture_env_combine4");
-
+#else
+    m_supportTextureMirror = true;
+#endif
 }
 
 bool COGLGraphicsContext::IsExtensionSupported(const char* pExtName)
