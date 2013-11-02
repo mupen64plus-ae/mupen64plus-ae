@@ -434,7 +434,7 @@
                         mupen64:selectionMode="1" />
 
                     <CheckBoxPreference
-                        android:defaultValue="true"
+                        android:defaultValue="false"
                         android:key="gles2RiceFog"
                         android:summary="@string/gles2RiceFog_summary"
                         android:title="@string/gles2RiceFog_title" />
