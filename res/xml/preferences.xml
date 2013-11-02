@@ -432,6 +432,12 @@
                         android:summary="@string/pathHiResTextures_summary"
                         android:title="@string/pathHiResTextures_title"
                         mupen64:selectionMode="1" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="gles2RiceFog"
+                        android:summary="@string/gles2RiceFog_summary"
+                        android:title="@string/gles2RiceFog_title" />
                 </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryGles2Glide64"

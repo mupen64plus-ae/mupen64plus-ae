@@ -186,6 +186,8 @@
     <string name="gles2RiceForceTextureFilter_summary">Fixes texture shimmering and blur on distant objects</string>
     <string name="gles2RiceHiResTextures_title">High resolution textures</string>
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
+    <string name="gles2RiceFog_title">Fog</string>
+    <string name="gles2RiceFog_summary">Show fog effects</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
 

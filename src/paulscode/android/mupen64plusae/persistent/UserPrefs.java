@@ -330,6 +330,9 @@ public class UserPrefs
     /** True if hi-resolution textures are enabled in the gles2rice library. */
     public final boolean isGles2RiceHiResTexturesEnabled;
     
+    /** True if fog is enabled in the gles2rice library. */
+    public final boolean isGles2RiceFogEnabled;
+
     /** True if gles2glide64 video plug-in is enabled. */
     public final boolean isGles2Glide64Enabled;
         
@@ -504,6 +507,7 @@ public class UserPrefs
         gles2RiceScreenUpdateType = mPreferences.getString( "gles2RiceScreenUpdate", "4" );
         gles2RiceTextureEnhancement = mPreferences.getString( "gles2RiceTextureEnhancement", "0" );
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
+        isGles2RiceFogEnabled = mPreferences.getBoolean( "gles2RiceFog", false );
         
         // Video prefs - gles2glide64
         isGles2Glide64Enabled = videoPlugin.name.equals( "libgles2glide64.so" );

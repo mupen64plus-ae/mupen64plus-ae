@@ -1,5 +1,10 @@
 [32:2.4.0]
-- A HUGE THANK YOU to Squarepusher (aka twinaphex) of RetroArch fame for all of the fixes in this revision
+- Major fixes to gles2rice by Gillou68310
+- Fixed black textures with gles2rice
+- Fixed multitexturing issues with gles2rice (for example, logo on shield in Zelda OOT)
+- Fixed bug with gles2rice where fences in Zelda MM are rendered without transparency
+- Fixed some messed up textures in gles2rice (for example the horse in Zelda)
+- A HUGE THANK YOU to Squarepusher (aka twinaphex) of RetroArch fame for all of the other fixes in this revision!
 - Fixed crashes in Perfect Dark, completely playable now
 - Fixed green rooms in Zelda OOT when using gles2n64 video plugin
 - Fixed gles2n64 black screens (Turok series, Banjo Kazooie HUD, Waverace intermissions, and more)

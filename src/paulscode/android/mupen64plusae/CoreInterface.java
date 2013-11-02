@@ -444,6 +444,7 @@ public class CoreInterface
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "0");
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancement", user.gles2RiceTextureEnhancement );                        // Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)
         mupen64plus_cfg.put( "Video-Rice", "TextureEnhancementControl", "1" );                                              // Secondary texture enhancement filter (0 = none, 1-4 = filtered)
+        mupen64plus_cfg.put( "Video-Rice", "FogMethod", boolToNum( user.isGles2RiceFogEnabled ) );                          // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
         
         gles2n64_conf.save();
         gles2glide64_conf.save();
