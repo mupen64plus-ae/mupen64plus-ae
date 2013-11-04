@@ -901,6 +901,9 @@ namespace
 					c[2].g = rgba[(x + y * iw) * 4 + 1];
 					c[2].b = rgba[(x + y * iw) * 4 + 2];
 					ca[2]  = rgba[(x + y * iw) * 4 + 3];
+					if (dxt == DXT1)
+						if(ca[2] == 0)
+							continue;
 					// MODE_FAST doesn't work for normalmaps, so this works
 
 					int d = ColorDist(c[2], c0);
@@ -938,6 +941,9 @@ namespace
 					c[n].g = rgba[(x + y * iw) * 4 + 1];
 					c[n].b = rgba[(x + y * iw) * 4 + 2];
 					ca[n]  = rgba[(x + y * iw) * 4 + 3];
+					if (dxt == DXT1)
+						if(ca[n] == 0)
+							continue;
 					++n;
 				}
 			if(n == 0)
