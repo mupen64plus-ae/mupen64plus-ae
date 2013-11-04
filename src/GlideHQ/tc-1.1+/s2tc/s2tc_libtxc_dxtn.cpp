@@ -155,7 +155,7 @@ void tx_compress_dxtn(GLint srccomps, GLint width, GLint height,
 
 	ColorDistMode cd = WAVG;
 	int nrandom = -1;
-	RefinementMode refine = REFINE_LOOP;
+	RefinementMode refine = REFINE_ALWAYS;
 	DitherMode dither = DITHER_FLOYDSTEINBERG;
 #if 0
 	{
