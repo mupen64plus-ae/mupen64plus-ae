@@ -405,10 +405,9 @@ namespace
 					bestj = j;
 				}
 			}
-		if(besti != 0)
-			c[0] = c[besti];
-		if(bestj != 1)
-			c[1] = c[bestj];
+		T c0 = c[besti];
+		c[1] = c[bestj];
+		c[0] = c0;
 	}
 	template <class T, class F>
 	inline void reduce_colors_inplace_2fixpoints(T *c, int n, int m, F dist, const T &fix0, const T &fix1)
