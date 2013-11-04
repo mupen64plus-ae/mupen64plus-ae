@@ -880,7 +880,7 @@ namespace
 
 			color_t c0 = make_color_t(0, 0, 0);
 
-			// dummy values because we don't know whether the first pixel willw rite
+			// dummy values because we don't know whether the first pixel will write
 			c[0].r = 31;
 			c[0].g = 63;
 			c[0].b = 31;
@@ -903,8 +903,6 @@ namespace
 					c[2].b = rgba[(x + y * iw) * 4 + 2];
 					ca[2]  = rgba[(x + y * iw) * 4 + 3];
 					// MODE_FAST doesn't work for normalmaps, so this works
-					if(!ca[2])
-						continue;
 
 					int d = ColorDist(c[2], c0);
 					if(d > dmax)
@@ -1130,7 +1128,7 @@ namespace
 	template<DxtMode dxt, ColorDistFunc ColorDist>
 	inline s2tc_encode_block_func_t s2tc_encode_block_func(int nrandom, RefinementMode refine)
 	{
-		if(!supports_fast<ColorDist>::value  || nrandom >= 0)
+		if(!supports_fast<ColorDist>::value || nrandom >= 0)
 			return s2tc_encode_block_func<dxt, ColorDist, MODE_NORMAL>(refine);
 		else
 			return s2tc_encode_block_func<dxt, ColorDist, MODE_FAST>(refine);
