@@ -35,6 +35,8 @@ DECLSPEC int do_Start = 1;
 
 static pthread_key_t mThreadKey;
 static JavaVM* mJavaVM;
+// Store custom polygon offset natively to reduce JNI calls
+static float customPolygonOffset = -0.2f;
 
 // Imported java class reference
 static jclass mActivityClass;
@@ -42,6 +44,7 @@ static jclass mActivityClass;
 // Imported java method references
 static jmethodID midStateCallback;
 static jmethodID midGetHardwareType;
+static jmethodID midGetCustomPolygonOffset;
 static jmethodID midUseRGBA8888;
 
 /*******************************************************************************
@@ -113,6 +116,13 @@ static int GetInt(jmethodID methodID)
     return (int) i;
 }
 
+static float GetFloat(jmethodID methodID)
+{
+    JNIEnv *env = Android_JNI_GetEnv();
+    jfloat f = env->CallStaticFloatMethod(mActivityClass, methodID);
+    return (float) f;
+}
+
 /*******************************************************************************
  Functions called automatically by JNI framework
  *******************************************************************************/
@@ -155,11 +165,12 @@ extern DECLSPEC void SDL_Android_Init_Extras(JNIEnv* env, jclass cls)
 
     mActivityClass = (jclass) env->NewGlobalRef(cls);
 
-    midStateCallback        = env->GetStaticMethodID(mActivityClass, "stateCallback",      "(II)V");
-    midGetHardwareType      = env->GetStaticMethodID(mActivityClass, "getHardwareType",    "()I");
-    midUseRGBA8888          = env->GetStaticMethodID(mActivityClass, "useRGBA8888",        "()Z");
+    midStateCallback          = env->GetStaticMethodID(mActivityClass, "stateCallback",          "(II)V");
+    midGetHardwareType        = env->GetStaticMethodID(mActivityClass, "getHardwareType",        "()I");
+    midGetCustomPolygonOffset = env->GetStaticMethodID(mActivityClass, "getCustomPolygonOffset", "()F");
+    midUseRGBA8888            = env->GetStaticMethodID(mActivityClass, "useRGBA8888",            "()Z");
 
-    if (!midStateCallback || !midGetHardwareType || !midUseRGBA8888)
+    if (!midStateCallback || !midGetHardwareType || !midGetCustomPolygonOffset || !midUseRGBA8888)
     {
         LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
@@ -177,7 +188,12 @@ extern DECLSPEC void Android_JNI_State_Callback(int paramChanged, int newValue)
 
 extern DECLSPEC int Android_JNI_GetHardwareType()
 {
-    return GetInt(midGetHardwareType);
+    int hardwareType = GetInt( midGetHardwareType );
+    if( hardwareType == HARDWARE_TYPE_CUSTOM )
+    {
+        customPolygonOffset = GetFloat( midGetCustomPolygonOffset );
+    }
+    return hardwareType;
 }
 
 extern DECLSPEC int Android_JNI_UseRGBA8888()
@@ -212,6 +228,11 @@ extern DECLSPEC void Android_JNI_GetPolygonOffset(const int hardwareType, const 
     {
         *f1 = bias > 0 ? -2.0f : 0.0f;
         *f2 = bias > 0 ? -2.0f : 0.0f;
+    }
+    else if( hardwareType == HARDWARE_TYPE_CUSTOM )
+    {
+        *f1 = bias > 0 ? customPolygonOffset : 0.0f;
+        *f2 = bias > 0 ? customPolygonOffset : 0.0f;
     }
     else // HARDWARE_TYPE_UNKNOWN
     {

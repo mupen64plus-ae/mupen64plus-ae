@@ -90,6 +90,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHPAD_FEEDBACK = "touchpadFeedback";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
+    private static final String CUSTOM_POLYGON_OFFSET = "customPolygonOffset";
     private static final String PLUGIN_VIDEO = "pluginVideo";
     private static final String PLUGIN_INPUT = "pluginInput";
     private static final String PLUGIN_AUDIO = "pluginAudio";
@@ -309,6 +310,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 && !user.isTouchscreenCustom );
         PrefUtil.enablePreference( this, TOUCHSCREEN_HEIGHT, user.isTouchscreenEnabled
                 && !user.isTouchscreenCustom );
+        
+        // Enable the custom hardware profile prefs only when custom video hardware type is selected
+        PrefUtil.enablePreference( this, CUSTOM_POLYGON_OFFSET, user.videoHardwareType == 999 );
         
         // Update the summary text in a particular way for ACRA user info
         EditTextPreference pref = (EditTextPreference) findPreference( ACRA_USER_EMAIL );

@@ -201,6 +201,14 @@ public class CoreInterfaceNative extends CoreInterface
     }
     
     /**
+     * Returns the custom polygon offset.
+     */
+    public static float getCustomPolygonOffset()
+    {
+        return sUserPrefs.customPolygonOffset;
+    }
+
+    /**
      * Checks if the emulator is using RGBA 8888.
      * 
      * @return True if RGBA 8888 is being used. False otherwise.

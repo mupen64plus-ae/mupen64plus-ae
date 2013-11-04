@@ -246,6 +246,7 @@
         <item>@string/videoHardwareType_entryO2</item>
         <item>@string/videoHardwareType_entryQ</item>
         <item>@string/videoHardwareType_entryT</item>
+        <item>@string/videoHardwareType_entryCustom</item>
     </string-array>
     <string-array name="videoHardwareType_values" translatable="false">
         <item>-1</item>
@@ -255,6 +256,7 @@
         <item>2</item>
         <item>3</item>
         <item>5</item>
+        <item>999</item>
     </string-array>
 
     <string name="videoHardwareType_default" translatable="false">-1</string>

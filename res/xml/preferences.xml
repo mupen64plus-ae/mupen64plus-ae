@@ -328,6 +328,13 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/videoHardwareType_title" />
 
+                <EditTextPreference
+                    android:defaultValue="-0.2"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:key="customPolygonOffset"
+                    android:summary="@string/customPolygonOffset_summary"
+                    android:title="@string/customPolygonOffset_title" />
+
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="videoUseFramelimiter"

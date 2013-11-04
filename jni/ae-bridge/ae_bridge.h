@@ -50,6 +50,7 @@ extern "C" {
 #define HARDWARE_TYPE_QUALCOMM      3
 #define HARDWARE_TYPE_IMAP          4
 #define HARDWARE_TYPE_TEGRA         5
+#define HARDWARE_TYPE_CUSTOM        999
 
 /*******************************************************************************
  Imported Java methods (to be called from C)

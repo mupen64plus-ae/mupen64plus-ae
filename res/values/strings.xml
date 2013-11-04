@@ -261,6 +261,9 @@
     <string name="videoHardwareType_entryO2">O-2 profile</string>
     <string name="videoHardwareType_entryQ">Q profile</string>
     <string name="videoHardwareType_entryT">T profile</string>
+    <string name="videoHardwareType_entryCustom">Custom profile</string>
+    <string name="customPolygonOffset_title">Polygon offset</string>
+    <string name="customPolygonOffset_summary">Custom flicker reduction bias</string>
     
     <string name="gles2N64Frameskip_title">Frameskip</string>
     <string name="gles2N64Frameskip_entryNever">Never skip frames</string>

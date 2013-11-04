@@ -36,6 +36,7 @@ import paulscode.android.mupen64plusae.R;
 import paulscode.android.mupen64plusae.input.map.InputMap;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
+import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -282,6 +283,9 @@ public class UserPrefs
     /** The manually-overridden hardware type, used for flicker reduction. */
     public final int videoHardwareType;
     
+    /** The polygon offset to use if hardware type is 'custom'. */
+    public final float customPolygonOffset;
+    
     /** True if gles2n64 video plug-in is enabled. */
     public final boolean isGles2N64Enabled;
     
@@ -484,6 +488,7 @@ public class UserPrefs
         videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
         isFpsEnabled = videoFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
+        customPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "customPolygonOffset", "-0.2" ), -0.2f );
         isRgba8888 = mPreferences.getBoolean( "videoRgba8888", false );
         isFramelimiterEnabled = mPreferences.getBoolean( "videoUseFramelimiter", false );
         
