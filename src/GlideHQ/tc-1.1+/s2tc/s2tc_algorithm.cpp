@@ -705,12 +705,12 @@ namespace
 	// REFINE_ALWAYS: refine, do not check
 	inline void s2tc_dxt5_encode_alpha_refine_always(bitarray<uint64_t, 16, 3> &out, const unsigned char *in, int iw, int w, int h, unsigned char &a0, unsigned char &a1)
 	{
-		unsigned char ramp[6] = {
+		unsigned char ramp[2] = {
 			a0,
 			a1
 		};
 		s2tc_evaluate_colors_result_t<unsigned char, int, 1> r2;
-		s2tc_try_encode_block<unsigned char, int, 3, false, true, 6>(out, r2, alpha_dist, in, iw, w, h, ramp);
+		s2tc_try_encode_block<unsigned char, int, 3, false, true, 2>(out, r2, alpha_dist, in, iw, w, h, ramp);
 		r2.evaluate(a0, a1);
 
 		if(a1 == a0)
@@ -758,7 +758,7 @@ namespace
 			a1
 		};
 		s2tc_evaluate_colors_result_null_t<unsigned char> r2;
-		s2tc_try_encode_block<unsigned char, int, 3, false, true, 6>(out, r2, alpha_dist, in, iw, w, h, ramp);
+		s2tc_try_encode_block<unsigned char, int, 3, false, true, 2>(out, r2, alpha_dist, in, iw, w, h, ramp);
 	}
 
 	// REFINE_LOOP: refine, take result over only if score improved, loop until it did not
