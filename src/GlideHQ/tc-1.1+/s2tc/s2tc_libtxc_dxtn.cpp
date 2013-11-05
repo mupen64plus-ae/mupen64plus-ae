@@ -157,7 +157,7 @@ void tx_compress_dxtn(GLint srccomps, GLint width, GLint height,
 	int nrandom = -1;
 	RefinementMode refine = REFINE_ALWAYS;
 	DitherMode dither = DITHER_FLOYDSTEINBERG;
-#if 0
+#ifdef M64P_S2TC_ENV_CONF
 	{
 		const char *v = getenv("S2TC_DITHER_MODE");
 		if(v)
@@ -170,6 +170,28 @@ void tx_compress_dxtn(GLint srccomps, GLint width, GLint height,
 				dither = DITHER_FLOYDSTEINBERG;
 			else
 				fprintf(stderr, "Invalid dither mode: %s\n", v);
+		}
+	}
+	{
+		const char *v = getenv("S2TC_COLORDIST_MODE");
+		if(v)
+		{
+			if(!strcasecmp(v, "RGB"))
+				cd = RGB;
+			else if(!strcasecmp(v, "YUV"))
+				cd = YUV;
+			else if(!strcasecmp(v, "SRGB"))
+				cd = SRGB;
+			else if(!strcasecmp(v, "SRGB_MIXED"))
+				cd = SRGB_MIXED;
+			else if(!strcasecmp(v, "AVG"))
+				cd = AVG;
+			else if(!strcasecmp(v, "WAVG"))
+				cd = WAVG;
+			else if(!strcasecmp(v, "NORMALMAP"))
+				cd = NORMALMAP;
+			else
+				fprintf(stderr, "Invalid color dist mode: %s\n", v);
 		}
 	}
 	{
@@ -192,6 +214,7 @@ void tx_compress_dxtn(GLint srccomps, GLint width, GLint height,
 		}
 	}
 #endif
+
 	switch (destformat) {
 		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
