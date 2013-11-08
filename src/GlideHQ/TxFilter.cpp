@@ -28,8 +28,10 @@
 #include "TxFilter.h"
 #include "TextureFilters.h"
 #include "TxDbg.h"
+#ifndef NO_FILTER_THREAD
 #include <functional>
 #include <thread>
+#endif
 #if defined(__MINGW32__)
 #define swprintf _snwprintf
 #endif

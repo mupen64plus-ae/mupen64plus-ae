@@ -25,8 +25,10 @@
 #pragma warning(disable: 4786)
 #endif
 
+#ifndef NO_FILTER_THREAD
 #include <functional>
 #include <thread>
+#endif
 
 /* NOTE: The codes are not optimized. They can be made faster. */
 
