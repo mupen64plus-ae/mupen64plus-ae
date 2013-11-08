@@ -25,31 +25,35 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define ENABLE  1
 #define DISABLE  0
 
-#define ALPHA_TEST "    if(gl_FragColor.a < AlphaRef) discard;                        \n"
+#define ALPHA_TEST "    if(gl_FragColor.a < AlphaRef) discard;       \n"
 
 GLuint vertexProgram = 9999;
 const char *vertexShader =
-"#version " GLSL_VERSION "                                          \n"\
-"attribute mediump vec4 aPosition;                                  \n"\
-"attribute lowp vec4    aColor;                                     \n"\
-"attribute lowp vec2    aTexCoord0;                                 \n"\
-"attribute lowp vec2    aTexCoord1;                                 \n"\
-"attribute lowp vec2    aAtlasTransform;                            \n"\
-"                                                                   \n"\
-"                                                                   \n"\
-"varying lowp float   vFactor;                                      \n"\
-"varying lowp vec4    vShadeColor;                                  \n"\
-"varying mediump vec2 vTexCoord0;                                   \n"\
-"varying lowp vec2    vTexCoord1;                                   \n"\
-"                                                                   \n"\
-"void main()                                                        \n"\
-"{                                                                  \n"\
-"gl_Position = aPosition; //gl_Position.z = max(0.0,gl_Position.z); \n"\
-"vShadeColor = aColor;                                              \n"\
-"vTexCoord0 =  aTexCoord0;                                          \n"\
-"vTexCoord1 =  aTexCoord1;                                          \n"\
-"}                                                                  \n"\
-"                                                                   \n";
+"#version " GLSL_VERSION "                                           \n"\
+"attribute mediump vec4  aPosition;                                  \n"\
+"attribute lowp vec4     aColor;                                     \n"\
+"attribute lowp vec2     aTexCoord0;                                 \n"\
+"attribute lowp vec2     aTexCoord1;                                 \n"\
+"attribute lowp vec2     aAtlasTransform;                            \n"\
+"attribute mediump float aFogCoord;                                  \n"\
+"                                                                    \n"\
+"uniform vec2  FogMinMax;                                            \n"\
+"                                                                    \n"\
+"varying lowp float   vFog;                                          \n"\
+"varying lowp vec4    vShadeColor;                                   \n"\
+"varying mediump vec2 vTexCoord0;                                    \n"\
+"varying lowp vec2    vTexCoord1;                                    \n"\
+"                                                                    \n"\
+"void main()                                                         \n"\
+"{                                                                   \n"\
+"gl_Position = aPosition;                                            \n"\
+"vShadeColor = aColor;                                               \n"\
+"vTexCoord0 =  aTexCoord0;                                           \n"\
+"vTexCoord1 =  aTexCoord1;                                           \n"\
+"vFog = (FogMinMax[1] - aFogCoord) / (FogMinMax[1] - FogMinMax[0]);  \n"\
+"vFog = clamp(vFog, 0.0, 1.0);                                       \n"\
+"}                                                                   \n"\
+"                                                                    \n";
 
 const char *fragmentHeader =
 "#define saturate(x) clamp( x, 0.0, 1.0 )                   \n"\
@@ -68,9 +72,8 @@ const char *fragmentHeader =
 "uniform vec4  PrimFrac;                                    \n"\
 "uniform float AlphaRef;                                    \n"\
 "uniform vec4  FogColor;                                    \n"\
-"uniform vec2  FogMinMax;                                   \n"\
 "                                                           \n"\
-"varying lowp float    vFactor;                             \n"\
+"varying lowp float    vFog;                                \n"\
 "varying lowp vec4     vShadeColor;                         \n"\
 "varying mediump vec2  vTexCoord0;                          \n"\
 "varying lowp vec2     vTexCoord1;                          \n"\
@@ -88,22 +91,18 @@ const char *fragmentHeader =
 "#endif                                                     \n";
 
 const char *fragmentFooter =
-"                                                                           \n"\
-"#ifdef FOG                                                                 \n"\
-"   float z = gl_FragCoord.z * 2.0 - 1.0;                                   \n"\
-"   float FogFactor = (FogMinMax[1] - z) / (FogMinMax[1] - FogMinMax[0]);   \n"\
-"   FogFactor = clamp(FogFactor, 0.0, 1.0);                                 \n"\
-"                                                                           \n"\
-"   gl_FragColor.rgb = mix(FogColor.rgb, comb.rgb, FogFactor );             \n"\
-"   gl_FragColor.a = comb.a;                                                \n"\
-"#else                                                                      \n"\
-"   gl_FragColor = comb;                                                    \n"\
-"#endif                                                                     \n"\
-"                                                                           \n"\
-"#ifdef ALPHA_TEST                                                          \n"\
-   ALPHA_TEST                                                                  
-"#endif                                                                     \n"\
-"}                                                                          \n";
+"                                                           \n"\
+"#ifdef FOG                                                 \n"\
+"   gl_FragColor.rgb = mix(FogColor.rgb, comb.rgb, vFog);   \n"\
+"   gl_FragColor.a = comb.a;                                \n"\
+"#else                                                      \n"\
+"   gl_FragColor = comb;                                    \n"\
+"#endif                                                     \n"\
+"                                                           \n"\
+"#ifdef ALPHA_TEST                                          \n"\
+   ALPHA_TEST                                                  
+"#endif                                                     \n"\
+"}                                                          \n";
 
 //Fragment shader for InitCycleCopy
 const char *fragmentCopy =
@@ -326,6 +325,8 @@ void COGL_FragmentProgramCombiner::InitCombinerCycleCopy(void)
     glDisableVertexAttribArray(VS_COLOR);
     OPENGL_CHECK_ERRORS;
     glDisableVertexAttribArray(VS_TEXCOORD1);
+    OPENGL_CHECK_ERRORS;
+    glDisableVertexAttribArray(VS_FOG);
     OPENGL_CHECK_ERRORS;
     COGLTexture* pTexture = g_textures[gRSP.curTile].m_pCOGLTexture;
     if( pTexture )
@@ -575,6 +576,8 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
             OPENGL_CHECK_ERRORS;
             glBindAttribLocation(res.programID,VS_POSITION,"aPosition");
             OPENGL_CHECK_ERRORS;
+            glBindAttribLocation(res.programID,VS_FOG,"aFogCoord");
+            OPENGL_CHECK_ERRORS;
             
             glLinkProgram(res.programID);
             OPENGL_CHECK_ERRORS;
@@ -651,6 +654,11 @@ void COGL_FragmentProgramCombiner::GenerateCombinerSetting(int index)
     glEnableVertexAttribArray(VS_COLOR);
     OPENGL_CHECK_ERRORS;
     glVertexAttribPointer(VS_COLOR, 4, GL_UNSIGNED_BYTE,GL_TRUE, sizeof(uint8)*4, &(g_oglVtxColors[0][0]) );
+    OPENGL_CHECK_ERRORS;
+
+    glEnableVertexAttribArray(VS_FOG);
+    OPENGL_CHECK_ERRORS;
+    glVertexAttribPointer(VS_FOG,1,GL_FLOAT,GL_FALSE,sizeof(float)*5,&(g_vtxProjected5[0][4]));
     OPENGL_CHECK_ERRORS;
 }
 
