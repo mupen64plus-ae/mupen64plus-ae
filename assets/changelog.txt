@@ -1,3 +1,6 @@
+[32:2.4.1]
+- Fixed hi-res texture regression with gles2rice
+- Added customizable flicker-reduction profile (for fixing shadow glitches)
 [32:2.4.0]
 - Major fixes to gles2rice by Gillou68310
 - Fixed black textures with gles2rice
