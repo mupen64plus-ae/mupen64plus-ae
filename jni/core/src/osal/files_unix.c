@@ -236,7 +236,11 @@ const char * osal_get_user_datapath(void)
     int rval;
     
     /* first, try the XDG_DATA_HOME environment variable */
+    #ifdef ANDROID
+    rval = get_xdg_dir(retpath, "XDG_DATA_HOME", "data/");
+    #else
     rval = get_xdg_dir(retpath, "XDG_DATA_HOME", "mupen64plus/");
+    #endif
     if (rval == 0)
         return retpath;
 
@@ -257,7 +261,11 @@ const char * osal_get_user_cachepath(void)
     int rval;
     
     /* first, try the XDG_CACHE_HOME environment variable */
+    #ifdef ANDROID
+    rval = get_xdg_dir(retpath, "XDG_CACHE_HOME", "data/");
+    #else
     rval = get_xdg_dir(retpath, "XDG_CACHE_HOME", "mupen64plus/");
+    #endif
     if (rval == 0)
         return retpath;
 
