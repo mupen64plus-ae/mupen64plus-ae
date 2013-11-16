@@ -437,7 +437,6 @@ public class CoreInterface
         mupen64plus_cfg.put( "Video-Rice", "FastTextureLoading", boolToTF( user.isGles2RiceFastTextureLoadingEnabled ) );   // Use a faster algorithm to speed up texture loading and CRC computation
         mupen64plus_cfg.put( "Video-Rice", "SkipFrame", boolToTF( user.isGles2RiceAutoFrameskipEnabled ) );                 // If this option is enabled, the plugin will skip every other frame
         mupen64plus_cfg.put( "Video-Rice", "LoadHiResTextures", boolToTF( user.isGles2RiceHiResTexturesEnabled ) );         // Enable hi-resolution texture file loading
-        mupen64plus_cfg.put( "Video-Rice", "Mipmapping", user.gles2RiceMipmappingAlg );                                     // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
         if( user.isGles2RiceForceTextureFilterEnabled )                                                                     // Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)
             mupen64plus_cfg.put( "Video-Rice", "ForceTextureFilter", "2");
         else

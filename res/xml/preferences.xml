@@ -403,21 +403,12 @@
                         android:title="@string/gles2RiceForceTextureFilter_title" />
 
                     <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                        android:defaultValue="@string/gles2RiceMipmapping_default"
-                        android:entries="@array/gles2RiceMipmapping_entries"
-                        android:entryValues="@array/gles2RiceMipmapping_values"
-                        android:key="gles2RiceMipmapping"
+                        android:defaultValue="@string/gles2RiceScreenUpdate_default"
+                        android:entries="@array/gles2RiceScreenUpdate_entries"
+                        android:entryValues="@array/gles2RiceScreenUpdate_values"
+                        android:key="gles2RiceScreenUpdate"
                         android:summary="@string/selectedValue"
-                        android:title="@string/gles2RiceMipmapping_title" />
-
-                    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                            android:defaultValue="@string/gles2RiceScreenUpdate_default"
-                            android:entries="@array/gles2RiceScreenUpdate_entries"
-                            android:entryValues="@array/gles2RiceScreenUpdate_values"
-                            android:key="gles2RiceScreenUpdate"
-                            android:summary="@string/selectedValue"
-                            android:title="@string/gles2RiceScreenUpdate_title" />
-                        
+                        android:title="@string/gles2RiceScreenUpdate_title" />
                     <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                         android:defaultValue="@string/gles2RiceTextureEnhancement_default"
                         android:entries="@array/gles2RiceTextureEnhancement_entries"

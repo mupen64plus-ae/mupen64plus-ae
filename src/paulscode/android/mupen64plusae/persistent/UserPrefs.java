@@ -322,9 +322,6 @@ public class UserPrefs
     /** True if force texture filter is enabled in the gles2rice library. */
     public final boolean isGles2RiceForceTextureFilterEnabled;
     
-    /** The mipmapping algorithm to use in gles2rice */
-    public final String gles2RiceMipmappingAlg;
-
     /** The screen update setting to use in gles2rice */
     public final String gles2RiceScreenUpdateType;
     
@@ -508,7 +505,6 @@ public class UserPrefs
         isGles2RiceAutoFrameskipEnabled = mPreferences.getBoolean( "gles2RiceAutoFrameskip", false );
         isGles2RiceFastTextureLoadingEnabled = mPreferences.getBoolean( "gles2RiceFastTexture", false );
         isGles2RiceForceTextureFilterEnabled = mPreferences.getBoolean( "gles2RiceForceTextureFilter", false );
-        gles2RiceMipmappingAlg = mPreferences.getString( "gles2RiceMipmapping", "0" );
         gles2RiceScreenUpdateType = mPreferences.getString( "gles2RiceScreenUpdate", "4" );
         gles2RiceTextureEnhancement = mPreferences.getString( "gles2RiceTextureEnhancement", "0" );
         isGles2RiceHiResTexturesEnabled = mPreferences.getBoolean( "gles2RiceHiResTextures", true );
