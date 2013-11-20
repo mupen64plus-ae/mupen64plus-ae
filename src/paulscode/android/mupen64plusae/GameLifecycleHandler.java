@@ -163,7 +163,6 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         mUserPrefs = new UserPrefs( mActivity );
     }
     
-    @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
     public void onCreateEnd( Bundle savedInstanceState )
     {
@@ -196,12 +195,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         // Configure the action bar introduced in higher Android versions
         if( mUserPrefs.isActionBarAvailable )
         {
-            // SDK version at least HONEYCOMB, so there should be software buttons on this device:
-            View view = mSurface.getRootView();
-            if( view != null )
-                view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
             mActivity.getActionBar().hide();
-            
             ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
             color.setAlpha( mUserPrefs.videoActionBarTransparency );
             mActivity.getActionBar().setBackgroundDrawable( color );
@@ -260,6 +254,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         // Only try to run; don't try to pause. User may just be touching the in-game menu.
         Log.i( "GameLifecycleHandler", "onWindowFocusChanged: " + hasFocus );
         mIsFocused = hasFocus;
+        if( hasFocus )
+            hideSystemBars();
         tryRunning();
     }
     
@@ -301,7 +297,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         if( keyCode == KeyEvent.KEYCODE_BACK && mUserPrefs.isActionBarAvailable )
         {
             if( keyDown )
-                toggleActionBar( view.getRootView() );
+                toggleActionBar();
             return true;
         }
         
@@ -411,7 +407,21 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     
     @SuppressLint( "InlinedApi" )
     @TargetApi( 11 )
-    private void toggleActionBar( View rootView )
+    private void hideSystemBars()
+    {
+        // Only applies to Honeycomb devices
+        if( !AppData.IS_HONEYCOMB )
+            return;
+        
+        View view = mSurface.getRootView();
+        if( view != null )
+        {
+            view.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
+        }
+    }
+    
+    @TargetApi( 11 )
+    private void toggleActionBar()
     {
         // Only applies to Honeycomb devices
         if( !AppData.IS_HONEYCOMB )
@@ -422,10 +432,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         if( actionBar.isShowing() )
         {
             actionBar.hide();
-            
-            // Make the home buttons almost invisible again
-            if( rootView != null )
-                rootView.setSystemUiVisibility( View.SYSTEM_UI_FLAG_LOW_PROFILE ); // == STATUS_BAR_HIDDEN for Honeycomb
+            hideSystemBars();
         }
         else
         {
