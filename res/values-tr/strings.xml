@@ -157,14 +157,13 @@
   <string name="gles2N64DepthTest_summary">Performans için pasifleştirin (parlayan arkaplana neden olur)</string>
   <string name="gles2RiceAutoFrameskip_title">Otomatik kare atlama</string>
   <string name="gles2RiceAutoFrameskip_summary">Kare sayısı pahasına oyun hızını iyileştirir</string>
-  <string name="gles2RiceFastTextureCrc_title">Hızlı doku CRC\'si</string>
-  <string name="gles2RiceFastTextureCrc_summary">2B öğe pahasına oyun hızını iyileştirir</string>
   <string name="gles2RiceFastTexture_title">Hızlı doku yükleme</string>
   <string name="gles2RiceFastTexture_summary">Dairesel geçişleri düzeltir</string>
   <string name="gles2RiceForceTextureFilter_title">Doku filtresini zorla</string>
   <string name="gles2RiceForceTextureFilter_summary">Karelenmiş dokuları düzeltir</string>
   <string name="gles2RiceHiResTextures_title">Yüksek çözünürlüklü dokular</string>
   <string name="gles2RiceHiResTextures_summary">İçe aktarılmış doku paketleri kullan</string>
+  <string name="gles2RiceFog_title">Sis</string>
   <string name="audioSwapChannels_title">Ses kanallarını değiştir</string>
   <string name="audioSwapChannels_summary">Sol ve sağ ses kanallarını değiştir</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

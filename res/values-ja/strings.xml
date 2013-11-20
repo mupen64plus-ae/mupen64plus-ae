@@ -158,14 +158,13 @@
   <string name="gles2N64DepthTest_summary">点滅している背景を修正するには、この設定を有効にします。</string>
   <string name="gles2RiceAutoFrameskip_title">オートフレームスキップ</string>
   <string name="gles2RiceAutoFrameskip_summary">FPSの費用で速度を向上させる。</string>
-  <string name="gles2RiceFastTextureCrc_title">高速テクスチャCRC</string>
-  <string name="gles2RiceFastTextureCrc_summary">設定が無効になっている場合、2D要素が改善され</string>
   <string name="gles2RiceFastTexture_title">高速テクスチャの読み込み</string>
   <string name="gles2RiceFastTexture_summary">サークルの遷移を修正</string>
   <string name="gles2RiceForceTextureFilter_title">テクスチャフィルタの使用を強制し</string>
   <string name="gles2RiceForceTextureFilter_summary">ピクセル化されたテクスチャを修正</string>
   <string name="gles2RiceHiResTextures_title">高解像度のテクスチャ</string>
   <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
+  <string name="gles2RiceFog_title">霧</string>
   <string name="audioSwapChannels_title">オーディオチャンネルを交換</string>
   <string name="audioSwapChannels_summary">スワップ左右のオーディオチャンネル</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

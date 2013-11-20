@@ -159,14 +159,13 @@
   <string name="gles2N64DepthTest_summary">Isključiti za brzinu (može stvarati bljeskavu površinu)</string>
   <string name="gles2RiceAutoFrameskip_title">Automatski frameskip</string>
   <string name="gles2RiceAutoFrameskip_summary">Povećava brzinu igre uz trošak FPS-a</string>
-  <string name="gles2RiceFastTextureCrc_title">Brzo učitavanje CRC teksture</string>
-  <string name="gles2RiceFastTextureCrc_summary">Poboljšava brzinu igre uz trošak 2D elemenata</string>
   <string name="gles2RiceFastTexture_title">Brzo učitavanje teksture</string>
   <string name="gles2RiceFastTexture_summary">Ispravlja kružne prijelaze</string>
   <string name="gles2RiceForceTextureFilter_title">Filtriranje teksture</string>
   <string name="gles2RiceForceTextureFilter_summary">Ispravlja točkaste teksture i mutnost udaljenih objekata</string>
   <string name="gles2RiceHiResTextures_title">Korisničke teksture</string>
   <string name="gles2RiceHiResTextures_summary">Korištenje korisničko uvezenih tekstura</string>
+  <string name="gles2RiceFog_title">Magla</string>
   <string name="audioSwapChannels_title">Zamjena zvučnih kanala</string>
   <string name="audioSwapChannels_summary">Zamjena lijevog i desnog kanala zvuka</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

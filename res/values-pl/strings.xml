@@ -159,14 +159,13 @@
   <string name="gles2N64DepthTest_summary">Wyłącz by przyspieszyć (może powodować migotanie tła)</string>
   <string name="gles2RiceAutoFrameskip_title">Automatyczne pomijanie klatek</string>
   <string name="gles2RiceAutoFrameskip_summary">Poprawia szybkość gry kosztem obniżenia liczby wyświetlanych klatek</string>
-  <string name="gles2RiceFastTextureCrc_title">Szybkie tekstury CRC</string>
-  <string name="gles2RiceFastTextureCrc_summary">Poprawia szybkość gry kosztem jakości elementów 2D</string>
   <string name="gles2RiceFastTexture_title">Szybkie ładowanie tekstur</string>
   <string name="gles2RiceFastTexture_summary">Poprawia przejścia okręgów</string>
   <string name="gles2RiceForceTextureFilter_title">Filtrowanie tekstur</string>
   <string name="gles2RiceForceTextureFilter_summary">Naprawia rozpikselowane tekstury i smużenie na odległych obiektach</string>
   <string name="gles2RiceHiResTextures_title">Tekstury wysokiej rozdzielczości</string>
   <string name="gles2RiceHiResTextures_summary">Użyj importowanej paczki tekstur</string>
+  <string name="gles2RiceFog_title">Mgła</string>
   <string name="audioSwapChannels_title">Zamień kanały audio</string>
   <string name="audioSwapChannels_summary">Zamień prawy i lewy kanał audio</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

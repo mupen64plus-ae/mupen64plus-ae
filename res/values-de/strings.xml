@@ -159,14 +159,13 @@
   <string name="gles2N64DepthTest_summary">Deaktivieren für mehr Geschwindigkeit (verursacht blinkenden Hintergrund)</string>
   <string name="gles2RiceAutoFrameskip_title">Auto-Frameskip</string>
   <string name="gles2RiceAutoFrameskip_summary">Verbessert die Spielgeschwindigkeit auf Kosten der Framerate</string>
-  <string name="gles2RiceFastTextureCrc_title">Schneller Textur-CRC</string>
-  <string name="gles2RiceFastTextureCrc_summary">Verbessert die Spielgeschwindigkeit auf Kosten von 2D-Elementen</string>
   <string name="gles2RiceFastTexture_title">Schnelles Texturladen</string>
   <string name="gles2RiceFastTexture_summary">Behebt Kreisübergänge</string>
   <string name="gles2RiceForceTextureFilter_title">Texturfilterung</string>
   <string name="gles2RiceForceTextureFilter_summary">Behebt Texturschimmern und Unschärfe auf entfernten Objekten</string>
   <string name="gles2RiceHiResTextures_title">Hochauflösende Texturen</string>
   <string name="gles2RiceHiResTextures_summary">Importierte Texturenpakete nutzen</string>
+  <string name="gles2RiceFog_title">Nebel</string>
   <string name="audioSwapChannels_title">Audiokanäle tauschen</string>
   <string name="audioSwapChannels_summary">Linken und rechten Audiokanal tauschen</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

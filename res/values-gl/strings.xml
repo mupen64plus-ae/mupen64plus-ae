@@ -159,14 +159,13 @@
   <string name="gles2N64DepthTest_summary">Desactivar para velocidade (causa fondos escintilantes)</string>
   <string name="gles2RiceAutoFrameskip_title">Salto de cadros auto.</string>
   <string name="gles2RiceAutoFrameskip_summary">Mellora a velocidade de xogo a custo da velocidade de cadros</string>
-  <string name="gles2RiceFastTextureCrc_title">CRC rápido de texturas</string>
-  <string name="gles2RiceFastTextureCrc_summary">Mellora a velocidade de xogo a custo de elementos 2D</string>
   <string name="gles2RiceFastTexture_title">Carga rápida de textura</string>
   <string name="gles2RiceFastTexture_summary">Corrixe transicións redundantes</string>
   <string name="gles2RiceForceTextureFilter_title">Forzar filtrado de textura</string>
   <string name="gles2RiceForceTextureFilter_summary">Corrixe texturas pixeladas</string>
   <string name="gles2RiceHiResTextures_title">Texturas de alta resolución</string>
   <string name="gles2RiceHiResTextures_summary">Usa paquetes de texturas importados</string>
+  <string name="gles2RiceFog_title">Néboa</string>
   <string name="audioSwapChannels_title">Intercambiar canles de son</string>
   <string name="audioSwapChannels_summary">Intercambiar canles de son esquerdo e dereito</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

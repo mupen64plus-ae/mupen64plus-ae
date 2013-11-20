@@ -156,14 +156,13 @@
   <string name="gles2N64DepthTest_summary">Inaktivera för hastighet (orsakar blinkande bakgrund)</string>
   <string name="gles2RiceAutoFrameskip_title">Auto frameskip</string>
   <string name="gles2RiceAutoFrameskip_summary">Förbättrar spel hastighet till kostnad av framerate</string>
-  <string name="gles2RiceFastTextureCrc_title">Snabbare textur CRC</string>
-  <string name="gles2RiceFastTextureCrc_summary">Förbättrar spel hastighet till kostnad av 2D-elementer</string>
   <string name="gles2RiceFastTexture_title">Snabb textur laddning</string>
   <string name="gles2RiceFastTexture_summary">Fixar cirkel övergångar</string>
   <string name="gles2RiceForceTextureFilter_title">Textur filtrering</string>
   <string name="gles2RiceForceTextureFilter_summary">Fixar texture skimrande och oskärpa på avlägsna föremål</string>
   <string name="gles2RiceHiResTextures_title">Högupplösta texturer</string>
   <string name="gles2RiceHiResTextures_summary">Använd importerade textur förpackningar</string>
+  <string name="gles2RiceFog_title">Dimma</string>
   <string name="audioSwapChannels_title">Byt ljudkanaler</string>
   <string name="audioSwapChannels_summary">Byt de vänstra och högra ljudkanalerna</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

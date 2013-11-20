@@ -46,6 +46,7 @@
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Νεκρή ζώνη</string>
+  <string name="menuItem_sensitivity">Ευαισθησία</string>
   <string name="menuItem_specialVisibility_show">Εμφάνιση ειδικών λειτουργιών</string>
   <string name="menuItem_specialVisibility_hide">Απόκρυψη ειδικών λειτουργιών</string>
   <string name="menuItem_axisInfo">Πληροφορίες αναλογικού</string>
@@ -93,6 +94,7 @@
   <string name="actionResetUserPrefs_summary">Επαναφορά προεπιλογών</string>
   <string name="actionResetUserPrefs_popupMessage">Επαναφορά όλων των ρυθμίσεων στις προεπιλογές τους;</string>
   <string name="actionHelp_title">Βοήθεια</string>
+  <string name="actionHelp_message">Mupen64Plus αναπτύσσεται και συντηρείται από εθελοντές.<small>\n\nΓια να διορθώσετε δυσλειτουργίες σε γραφικά, δοκιμάστε να αλλάξετε το <i>πρόσθετο γραφικών</i>.\n\nΓια να διορθώσετε τις καθυστερήσεις, δοκιμάστε να αλλάξετε την <i>παράλειψη καρέ βίντεο</i> ή το <i>πρόσθετο γραφικών</i>.\n\nΓια ROMS που δεν παίζουν, δοκιμάστε να ξε-συμπιέσετε το ROM πρώτα ή να δοκιμάσετε διαφορετική έκδοση του ROM.\n\nΓια προβλήματα με τον χειρισμό μέσω οθόνης αφής, δοκιμάστε να αλλάξετε την <i>κλίμακα κουμπιών</i> ή την <i>διάταξη κουμπιών</i>.\n\nΓια άλλα θέματα, ή αν έχει κολλήσει, δοκιμάστε το κουμπί <i>FAQ</i> παρακάτω.  Για προβλήματα που δεν σχετίζονται με συγκεκριμένα παιχνίδια, πατήστε το κουμπί <i>Αναφορά σφάλματος</i> παρακάτω.  Απαντάμε στην πλειοψηφία των μηνυμάτων μέσα σε 24 ώρες. Ειλικρινά.\n\n</small>Ευχαριστούμε για την βοήθειά σας στην βελτίωση της εφαρμογής!</string>
   <string name="actionHelp_faq">Συχνές Ερωτήσεις</string>
   <string name="actionHelp_reportbug">Αναφορά σφάλματος</string>
   <string name="actionAbout_title">Σχετικά</string>
@@ -125,6 +127,7 @@
   <string name="categoryMultiPlayer_title">Πολλαπλών παικτών</string>
   <string name="categoryGles2N64_title">Ρυθμίσεις GLES2N64</string>
   <string name="categoryGles2Rice_title">Ρυθμίσεις GLES2Rice</string>
+  <string name="categoryGles2Glide64_title">Ρυθμίσεις GLES2Glide64</string>
   <string name="categoryData_title">Δεδομένα</string>
   <string name="categoryCrashReports_title">Αναφορές σφαλμάτων</string>
   <!--Checkbox Preferences-->
@@ -156,14 +159,13 @@
   <string name="gles2N64DepthTest_summary">Απενεργοποίηση για ταχύτητα (προκαλεί αναβόσβημα του φόντου)</string>
   <string name="gles2RiceAutoFrameskip_title">Αυτόμ. παράλειψη καρέ</string>
   <string name="gles2RiceAutoFrameskip_summary">Βελτιώνει την ταχύτητα παιχνιδιού με κόστος τον ρυθμό καρέ</string>
-  <string name="gles2RiceFastTextureCrc_title">Γρήγορο CRC υφών</string>
-  <string name="gles2RiceFastTextureCrc_summary">Βελτιώνει την ταχύτητα παιχνιδιού με κόστος τα στοιχεία 2D </string>
   <string name="gles2RiceFastTexture_title">Γρήγορο φόρτωμα υφών</string>
   <string name="gles2RiceFastTexture_summary">Διορθώνει τις μεταβάσεις κύκλου</string>
   <string name="gles2RiceForceTextureFilter_title">Φιλτράρισμα υφών</string>
   <string name="gles2RiceForceTextureFilter_summary">Διορθώνει το τρεμόπαιγμα υφών και το θόλωμα σε μακρινά αντικείμενα</string>
   <string name="gles2RiceHiResTextures_title">Υφές υψηλής ανάλυσης</string>
   <string name="gles2RiceHiResTextures_summary">Χρήση εισαγόμενων πακέτων υφών</string>
+  <string name="gles2RiceFog_title">Ομίχλη</string>
   <string name="audioSwapChannels_title">Εναλλαγή καναλιών ήχου</string>
   <string name="audioSwapChannels_summary">Εναλλαγή του αριστερού και δεξιού καναλιού ήχου</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -196,9 +198,22 @@
   <string name="videoOrientation_entryReverseLandscape">Ανεστραμμένο τοπίο</string>
   <string name="videoOrientation_entryPortrait">Πορτραίτο</string>
   <string name="videoOrientation_entryReversePortrait">Ανεστραμμένο Πορτραίτο</string>
+  <string name="videoPosition_title">Κάθετη θέαση</string>
   <string name="videoPosition_entryBottom">Κάτω μέρος</string>
   <string name="videoPosition_entryMiddle">Μέση</string>
   <string name="videoPosition_entryTop">Πάνω μέρος</string>
+  <string name="videoResolution_title">Ανάλυση σχεδίασης</string>
+  <string name="videoResolution_entryNative">Φυσική (μεγαλύτερη ποιότητα)</string>
+  <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoResolution_entry800x600">800 x 600</string>
+  <string name="videoResolution_entry640x480">640 x 480</string>
+  <string name="videoResolution_entry480x360">480 x 360</string>
+  <string name="videoResolution_entry320x240">320 x 240</string>
+  <string name="videoResolution_entry160x120">160 x 120 (περισσότερα καρέ)</string>
+  <string name="videoScaling_title">Κλιμάκωση οθόνης</string>
+  <string name="videoScaling_entryNone">Καμία\n<small>Χρήση ίδιας ανάλυσης με παραπάνω</small></string>
+  <string name="videoScaling_entryZoom">Zoom\n<small>Γέμισμα οθόνης, καμία παραμόρφωση (προσθήκη μαύρων μπαρών)</small></string>
+  <string name="videoScaling_entryStretch">Τέντωμα\n<small>Γέμισμα οθόνης, χωρίς μαύρες μπάρες (παραμορφώνει)</small></string>
   <string name="videoFpsRefresh_title">Προβολή ρυθμού καρέ</string>
   <string name="videoFpsRefresh_entryNever">Ποτέ</string>
   <string name="videoFpsRefresh_entryOccasionally">Περιστασιακά</string>
@@ -255,13 +270,21 @@
   <string name="audioResampleAlg_entrySincBest">Sinc (βέλτιστο)</string>
   <string name="pluginVideo_title">Βίντεο</string>
   <string name="pluginVideo_entryNone">Κανένα (βίντεο απενεργοποιημένο)</string>
+  <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(προσαρμογή του GLN64 v0.4.1)</small></string>
+  <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(προσαρμογή του Rice Video v6.1.0(b))</small></string>
+  <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(προσαρμογή του Glide64 Final (10th Anniversary))</small></string>
   <string name="pluginAudio_title">Ήχος</string>
   <string name="pluginAudio_entryNone">Κανένας (ήχος απενεργοποιημένος)</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Εισαγωγή</string>
   <string name="pluginInput_entryNone">Καμία (εισαγωγή απενεργοποιημένη)</string>
+  <string name="pluginInput_entryAndroid">εισαγωγή-android</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Κανένα  (RSP απενεργοποιημένο)</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
+  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0\n<small>(χωρίς επεξεργασία ήχου, για ταχύτητα)</small></string>
   <string name="pluginCore_title">Πυρήνας εξωμοίωσης</string>
+  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
   <string name="r4300Emulator_title">Εξομειωτής R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Καθαρός διερμηνέας</string>
   <string name="r4300Emulator_entryCachedInterpreter">Διερμηνέας προσωρινής αποθήκευσης</string>
@@ -270,6 +293,7 @@
   <string name="navigationMode_summary">Λειτουργία πλοήγης μενού: %1$s</string>
   <string name="navigationMode_entryAuto">Αυτόμ. επιλογή από διαμόρφωση συσκευής</string>
   <string name="navigationMode_entryStandard">Κανονική λειτουργία</string>
+  <string name="navigationMode_entryBigScreen">Λειτ. μεγάλης οθόνης (όχι οθόνη αφής: χρήση μόνο χειριστηρίου/πληκτρολόγιου)</string>
   <string name="localeOverride_title">Γλώσσα</string>
   <string name="localeOverride_entrySystemDefault">Προεπιλογή συστήματος</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -293,6 +317,7 @@
   <string name="pathHiResTextures_summary">Εφαρμογή προσαρμοσμένων υφών (αρχείο ZIP) σε ένα παιχνίδι</string>
   <string name="pathHiResTextures_default">~</string>
   <string name="pathGameSaves_title">Φάκελος αποθήκευσης παιχνιδιών</string>
+  <string name="pathGameSaves_default">!mupen64plus</string>
   <!--Player Map Preferences-->
   <string name="playerMap_title">Πολλαπλών παικτών</string>
   <string name="playerMap_summary">Ορισμός χειριστηρίου κάθε παίκτη</string>

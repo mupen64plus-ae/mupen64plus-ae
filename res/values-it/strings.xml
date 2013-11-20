@@ -157,14 +157,13 @@
   <string name="gles2N64DepthTest_summary">Disabilita per prestazioni (causa sfondo lampeggiante)</string>
   <string name="gles2RiceAutoFrameskip_title">Salto fotogrammi automatico</string>
   <string name="gles2RiceAutoFrameskip_summary">Migliora velocità gioco al costo della frequenza fotogrammi</string>
-  <string name="gles2RiceFastTextureCrc_title">CRC texture veloce</string>
-  <string name="gles2RiceFastTextureCrc_summary">Migliora la velocità del gioco al costo degli elementi 2D</string>
   <string name="gles2RiceFastTexture_title">Caricamento veloce texture</string>
   <string name="gles2RiceFastTexture_summary">Sistema le transizioni a cerchio</string>
   <string name="gles2RiceForceTextureFilter_title">Filtro texture</string>
   <string name="gles2RiceForceTextureFilter_summary">Sistema texture lampeggianti e sfocatura su oggetti distanti</string>
   <string name="gles2RiceHiResTextures_title">Texture ad alta risoluzione</string>
   <string name="gles2RiceHiResTextures_summary">Usa pacchetti texture importati</string>
+  <string name="gles2RiceFog_title">Nebbia</string>
   <string name="audioSwapChannels_title">Inverti canali audio</string>
   <string name="audioSwapChannels_summary">Inverte i canali audio sinistra e destra</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

@@ -150,14 +150,13 @@
   <string name="gles2N64DepthTest_summary">При отключении возможны блики</string>
   <string name="gles2RiceAutoFrameskip_title">Автоматический пропуск кадров</string>
   <string name="gles2RiceAutoFrameskip_summary">Улучшает скорость ценой FPS</string>
-  <string name="gles2RiceFastTextureCrc_title">Быстрая CRC текстур</string>
-  <string name="gles2RiceFastTextureCrc_summary">Улучшает скорость ценой качества 2D</string>
   <string name="gles2RiceFastTexture_title">Быстрая загрузка текстур</string>
   <string name="gles2RiceFastTexture_summary">Исправления окружных переходов</string>
   <string name="gles2RiceForceTextureFilter_title">Усилить фильтрацию текстур</string>
   <string name="gles2RiceForceTextureFilter_summary">Исправления неровных текстур</string>
   <string name="gles2RiceHiResTextures_title">Текстуры высокого разрешения</string>
   <string name="gles2RiceHiResTextures_summary">Использовать импортированные пакеты текстур</string>
+  <string name="gles2RiceFog_title">Туман</string>
   <string name="audioSwapChannels_title">Поменять местами аудио каналы</string>
   <string name="audioSwapChannels_summary">Меняет местами звук слева и справа</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

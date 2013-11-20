@@ -155,14 +155,13 @@
   <string name="gles2N64DepthTest_summary">Kapcsold ki a sebességért (villogó hátteret okoz)</string>
   <string name="gles2RiceAutoFrameskip_title">Automata képkockaugrás </string>
   <string name="gles2RiceAutoFrameskip_summary">Növeli a játék sebességét, fps szám ellenében</string>
-  <string name="gles2RiceFastTextureCrc_title">Gyors CRC textúrázó</string>
-  <string name="gles2RiceFastTextureCrc_summary">Növeli a játék sebességet 2D elemek árán</string>
   <string name="gles2RiceFastTexture_title">Gyors textúra betöltés</string>
   <string name="gles2RiceFastTexture_summary">Kijavítja a kör átmeneteket</string>
   <string name="gles2RiceForceTextureFilter_title">Textúra szűrés</string>
   <string name="gles2RiceForceTextureFilter_summary">Kijavítja a textúrák csillogását, és homályosodását messzi tárgyaknál</string>
   <string name="gles2RiceHiResTextures_title">Magas felbontású textúrák</string>
   <string name="gles2RiceHiResTextures_summary">Importált textúra csomagok használata</string>
+  <string name="gles2RiceFog_title">Köd</string>
   <string name="audioSwapChannels_title">Hang csatornák megcserélése</string>
   <string name="audioSwapChannels_summary">Kicseréli a bal és jobb hang csatornákat</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

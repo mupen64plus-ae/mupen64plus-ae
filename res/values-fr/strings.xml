@@ -143,6 +143,8 @@
   <string name="inputVolumeMappable_summary">Permet d\'utiliser les boutons de volume comme contrôles</string>
   <string name="inputShareController_title">Partager la manette</string>
   <string name="inputShareController_summary">Autorise une unique manette à contrôler plusieurs joueurs à la fois</string>
+  <string name="videoImmersiveMode_title">Mode immersif</string>
+  <string name="videoImmersiveMode_summary">Masquer complètement les barres d\'état et de navigation</string>
   <string name="videoUseFramelimiter_title">Utiliser un limitateur de FPS</string>
   <string name="videoUseFramelimiter_summary">Activer pour une expérience de jeu plus fluide (ralentit certains jeux)</string>
   <string name="videoRgba8888_title">Mode RGBA_8888</string>
@@ -159,14 +161,14 @@
   <string name="gles2N64DepthTest_summary">Désactivez pour obtenir un gain de vitesse (entraine un clignotement de l\'arrière plan)</string>
   <string name="gles2RiceAutoFrameskip_title">Saut d\'images automatique</string>
   <string name="gles2RiceAutoFrameskip_summary">Améliore la vitesse du jeu au détriment de la cadence d\'affichage</string>
-  <string name="gles2RiceFastTextureCrc_title">Calcul rapide du CRC des textures</string>
-  <string name="gles2RiceFastTextureCrc_summary">Améliore la vitesse du jeu au détriment des éléments 2D</string>
   <string name="gles2RiceFastTexture_title">Chargement rapide des textures</string>
   <string name="gles2RiceFastTexture_summary">Corrige les transitions en cercle</string>
   <string name="gles2RiceForceTextureFilter_title">Forcer le filtre des textures</string>
   <string name="gles2RiceForceTextureFilter_summary">Corrige la pixellisation des textures</string>
   <string name="gles2RiceHiResTextures_title">Textures haute résolution</string>
   <string name="gles2RiceHiResTextures_summary">Utilise des packs de textures importés</string>
+  <string name="gles2RiceFog_title">Brouillard</string>
+  <string name="gles2RiceFog_summary">Montrer les effets de brouillard</string>
   <string name="audioSwapChannels_title">Inversion des voies audio</string>
   <string name="audioSwapChannels_summary">Inverse le canal audio droit et le canal audio gauche</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->

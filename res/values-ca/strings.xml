@@ -156,14 +156,13 @@
   <string name="gles2N64DepthTest_summary">Deshabilita per a una major velocitat (pot provocar textures negres)</string>
   <string name="gles2RiceAutoFrameskip_title">Salt de quadres automàtic (frameskip)</string>
   <string name="gles2RiceAutoFrameskip_summary">Millora la velocitat del joc en detriment de la velocitat de quadres (frameskip)</string>
-  <string name="gles2RiceFastTextureCrc_title">CRC ràpid de textures</string>
-  <string name="gles2RiceFastTextureCrc_summary">Millorar la velocitat de joc reduint la qualitat d\'elements 2D</string>
   <string name="gles2RiceFastTexture_title">Carrega ràpida de textures</string>
   <string name="gles2RiceFastTexture_summary">Corregeix els cercles de transició</string>
   <string name="gles2RiceForceTextureFilter_title">Filtrar de textures</string>
   <string name="gles2RiceForceTextureFilter_summary">Arregla la brillantor de textures i el desenfocament dels objectes distants</string>
   <string name="gles2RiceHiResTextures_title">Textures en alta resolució</string>
   <string name="gles2RiceHiResTextures_summary">Utilitza pacs de textures millorades</string>
+  <string name="gles2RiceFog_title">boira</string>
   <string name="audioSwapChannels_title">Intercanvia els canals d\'àudio</string>
   <string name="audioSwapChannels_summary">Intercanviar els canals d\'àudio esquerre i dret </string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
