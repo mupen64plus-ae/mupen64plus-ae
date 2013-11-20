@@ -146,8 +146,6 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
 
     // Define some environment variables needed by rice video plugin
     const char *configPath = env->GetStringUTFChars(jconfigPath, 0);
-    setenv( "HOME", configPath, 1 );
-    setenv( "XDG_CONFIG_HOME", configPath, 1 );
     setenv( "XDG_DATA_HOME", configPath, 1 );
     setenv( "XDG_CACHE_HOME", configPath, 1 );
     env->ReleaseStringUTFChars(jconfigPath, configPath);
