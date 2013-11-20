@@ -39,6 +39,7 @@ import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -274,6 +275,9 @@ public class UserPrefs
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
     
+    /** True if immersive mode should be used (KitKat only). */
+    public final boolean isImmersiveModeEnabled;
+    
     /** True if framelimiter is used. */
     public final boolean isFramelimiterEnabled;
     
@@ -384,6 +388,7 @@ public class UserPrefs
      */
     @SuppressWarnings( "deprecation" )
     @SuppressLint( "InlinedApi" )
+    @TargetApi( 17 )
     public UserPrefs( Context context )
     {
         AppData appData = new AppData( context );
@@ -486,6 +491,7 @@ public class UserPrefs
         isFpsEnabled = videoFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
         customPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "customPolygonOffset", "-0.2" ), -0.2f );
+        isImmersiveModeEnabled = mPreferences.getBoolean( "videoImmersiveMode", false );
         isRgba8888 = mPreferences.getBoolean( "videoRgba8888", false );
         isFramelimiterEnabled = mPreferences.getBoolean( "videoUseFramelimiter", false );
         
@@ -638,8 +644,24 @@ public class UserPrefs
             // Screen size
             final WindowManager windowManager = (WindowManager) context.getSystemService(android.content.Context.WINDOW_SERVICE);
             Display display = windowManager.getDefaultDisplay();
-            int stretchWidth = display == null ? 0 : display.getWidth();
-            int stretchHeight = display == null ? 0 : display.getHeight();
+            int stretchWidth;
+            int stretchHeight;
+            if( display == null )
+            {
+                stretchWidth = stretchHeight = 0;
+            }
+            else if( AppData.IS_KITKAT && isImmersiveModeEnabled )
+            {
+                DisplayMetrics metrics = new DisplayMetrics();
+                display.getRealMetrics( metrics );
+                stretchWidth = metrics.widthPixels;
+                stretchHeight = metrics.heightPixels;
+            }
+            else
+            {
+                stretchWidth = display.getWidth();
+                stretchHeight = display.getHeight();
+            }
             
             float aspect = 0.75f; // TODO: Handle PAL
             boolean isLetterboxed = ( (float) stretchHeight / (float) stretchWidth ) > aspect;

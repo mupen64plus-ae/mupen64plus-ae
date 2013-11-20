@@ -305,6 +305,12 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/videoScaling_title" />
 
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="videoImmersiveMode"
+                    android:summary="@string/videoImmersiveMode_summary"
+                    android:title="@string/videoImmersiveMode_title" />
+
                 <paulscode.android.mupen64plusae.persistent.SeekBarPreference
                     android:defaultValue="50"
                     android:key="videoActionBarTransparency"

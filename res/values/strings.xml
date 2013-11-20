@@ -164,6 +164,8 @@
     <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
     <string name="inputShareController_title">Share controller</string>
     <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
+    <string name="videoImmersiveMode_title">Immersive mode</string>
+    <string name="videoImmersiveMode_summary">Completely hide navigation and status bars</string>
     <string name="videoUseFramelimiter_title">Use framelimiter</string>
     <string name="videoUseFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
     <string name="videoRgba8888_title">RGBA_8888 mode</string>

@@ -103,6 +103,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String VIDEO_POSITION = "videoPosition";
     private static final String VIDEO_RESOLUTION = "videoResolution";
     private static final String VIDEO_SCALING = "videoScaling";
+    private static final String VIDEO_IMMERSIVE_MODE = "videoImmersiveMode";
     private static final String VIDEO_ACTION_BAR_TRANSPARENCY = "videoActionBarTransparency";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String NAVIGATION_MODE = "navigationMode";
@@ -226,6 +227,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         
         if( !mUserPrefs.isGles2Glide64Enabled )
             PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_GLIDE64 );
+        
+        if( !AppData.IS_KITKAT )
+            PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_IMMERSIVE_MODE );
         
         if( !mUserPrefs.isActionBarAvailable )
             PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_ACTION_BAR_TRANSPARENCY );
