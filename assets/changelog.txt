@@ -1,6 +1,7 @@
 [34:2.5.0]
 - Added immersive mode for KitKat devices (see video settings)
 - Reorganized internal code to follow Android best practices
+- Added English-UK translation variant
 [33:2.4.1]
 - Fixed hi-res texture regression with gles2rice
 - Added customizable flicker-reduction profile (for fixing shadow glitches)
