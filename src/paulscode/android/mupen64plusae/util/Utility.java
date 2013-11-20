@@ -318,9 +318,10 @@ public final class Utility
             Log.e( "Utility", ErrorLogger.getLastError() );
             return null;
         }
+        ZipFile zipfile = null;
         try
         {
-            ZipFile zipfile = new ZipFile( archive );
+            zipfile = new ZipFile( archive );
             Enumeration<? extends ZipEntry> e = zipfile.entries();
             while( e.hasMoreElements() )
             {
@@ -371,6 +372,17 @@ public final class Utility
             Log.e( "Utility", "Unzip error", e );
             return null;
         }
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
         ErrorLogger.setLastError( "No compatible textures found in .zip archive" );
         Log.e( "Utility", ErrorLogger.getLastError() );
         return null;
@@ -403,10 +415,10 @@ public final class Utility
             Log.e( "Utility", ErrorLogger.getLastError() );
             return null;
         }
-
+        ZipFile zipfile = null;
         try
         {
-            ZipFile zipfile = new ZipFile( archive );
+            zipfile = new ZipFile( archive );
             Enumeration<? extends ZipEntry> e = zipfile.entries();
 
             while( e.hasMoreElements() )
@@ -446,7 +458,18 @@ public final class Utility
             Log.e( "Utility", "Unzip error", e );
             return null;
         }
-
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
+        }
+        
         ErrorLogger.setLastError( "No compatible ROMs found in .zip archive" );
         Log.e( "Utility", ErrorLogger.getLastError() );
 
