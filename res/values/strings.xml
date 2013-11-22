@@ -132,8 +132,6 @@
     <string name="screenDisplay_summary">Layout settings</string>
     <string name="screenVideo_title">Video</string>
     <string name="screenVideo_summary">Graphics settings</string>
-    <string name="screenPlugin_title">Plug-ins</string>
-    <string name="screenPlugin_summary">Core settings</string>
     <string name="screenAdvanced_title">Advanced</string>
     <string name="screenAdvanced_summary">Storage and debug settings</string>
 
@@ -305,7 +303,7 @@
     <string name="gles2RiceTextureEnhancement_entrySharpen">Sharpen</string>
     <string name="gles2RiceTextureEnhancement_entrySharpen_more">Sharpen more</string>
 
-    <string name="pluginVideo_title">Video</string>
+    <string name="pluginVideo_title">Video plugin</string>
     <string name="pluginVideo_entryNone">None (video disabled)</string>
     <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>

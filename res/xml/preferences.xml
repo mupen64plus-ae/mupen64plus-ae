@@ -353,6 +353,14 @@
                     android:summary="@string/videoRgba8888_summary"
                     android:title="@string/videoRgba8888_title" />
 
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/pluginVideo_default"
+                    android:entries="@array/pluginVideo_entries"
+                    android:entryValues="@array/pluginVideo_values"
+                    android:key="pluginVideo"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/pluginVideo_title" />
+
                 <PreferenceCategory
                     android:key="categoryGles2N64"
                     android:title="@string/categoryGles2N64_title" >
@@ -461,26 +469,6 @@
             android:key="categoryOther"
             android:title="@string/categoryOther_title" >
             <PreferenceScreen
-                android:icon="@drawable/ic_plugin"
-                android:key="screenPlugin"
-                android:summary="@string/screenPlugin_summary"
-                android:title="@string/screenPlugin_title" >
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/pluginVideo_default"
-                    android:entries="@array/pluginVideo_entries"
-                    android:entryValues="@array/pluginVideo_values"
-                    android:key="pluginVideo"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/pluginVideo_title" />
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/r4300Emulator_default"
-                    android:entries="@array/r4300Emulator_entries"
-                    android:entryValues="@array/r4300Emulator_values"
-                    android:key="r4300Emulator"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/r4300Emulator_title" />
-            </PreferenceScreen>
-            <PreferenceScreen
                 android:icon="@drawable/ic_debug"
                 android:key="screenAdvanced"
                 android:summary="@string/screenAdvanced_summary"
@@ -492,6 +480,13 @@
                     android:key="navigationMode"
                     android:summary="@string/navigationMode_summary"
                     android:title="@string/navigationMode_title" />
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/r4300Emulator_default"
+                    android:entries="@array/r4300Emulator_entries"
+                    android:entryValues="@array/r4300Emulator_values"
+                    android:key="r4300Emulator"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/r4300Emulator_title" />
 
                 <Preference
                     android:key="actionDeviceInfo"

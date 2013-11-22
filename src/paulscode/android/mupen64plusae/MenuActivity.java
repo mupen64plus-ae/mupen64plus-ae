@@ -315,9 +315,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             pp.setSummary( selectedGame.getName() );
         }
         
-        // Enable the video menu only if the video plug-in is not a dummy
-        PrefUtil.enablePreference( this, SCREEN_VIDEO, mUserPrefs.videoPlugin.enabled );
-        
         // Enable the auto-holdables pref if auto-hold is not disabled
         PrefUtil.enablePreference( this, TOUCHSCREEN_AUTO_HOLDABLES, mUserPrefs.isTouchscreenEnabled
                 && mUserPrefs.touchscreenAutoHold != TouchController.AUTOHOLD_METHOD_DISABLED );
