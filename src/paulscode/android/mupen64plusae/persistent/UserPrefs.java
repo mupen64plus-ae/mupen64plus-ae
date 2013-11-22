@@ -125,9 +125,6 @@ public class UserPrefs
     /** The selected input plug-in. */
     public final Plugin inputPlugin;
     
-    /** The selected emulator core. */
-    public final Plugin corePlugin;
-    
     /** The selected R4300 emulator. */
     public final String r4300Emulator;
     
@@ -433,7 +430,6 @@ public class UserPrefs
         videoPlugin = new Plugin( mPreferences, appData.libsDir, "pluginVideo" );
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "pluginAudio" );
         inputPlugin = new Plugin( mPreferences, appData.libsDir, "pluginInput" );
-        corePlugin = new Plugin( mPreferences, appData.libsDir, "pluginCore" );
         
         // R4300 emulator
         r4300Emulator = mPreferences.getString( "r4300Emulator", "2" );

@@ -446,16 +446,6 @@
 
     <string name="pluginInput_default" translatable="false">libinput-android.so</string>
 
-    <!-- Core Plugins -->
-    <string-array name="pluginCore_entries" translatable="false">
-        <item>@string/pluginCore_entryV110</item>
-    </string-array>
-    <string-array name="pluginCore_values" translatable="false">
-        <item>libcore.so</item>
-    </string-array>
-
-    <string name="pluginCore_default" translatable="false">libcore.so</string>
-
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">
         <item>@string/r4300Emulator_entryPureInterpreter</item>

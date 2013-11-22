@@ -325,8 +325,6 @@
     <string name="pluginInput_title">Input</string>
     <string name="pluginInput_entryNone">None (input disabled)</string>
     <string name="pluginInput_entryAndroid">input-android</string>
-    <string name="pluginCore_title">Emulation core</string>
-    <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
     
     <string name="r4300Emulator_title">R4300 emulator</string>
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>

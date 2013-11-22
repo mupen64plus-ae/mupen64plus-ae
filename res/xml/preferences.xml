@@ -505,13 +505,6 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginAudio_title" />
                 <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/pluginCore_default"
-                    android:entries="@array/pluginCore_entries"
-                    android:entryValues="@array/pluginCore_values"
-                    android:key="pluginCore"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/pluginCore_title" />
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/r4300Emulator_default"
                     android:entries="@array/r4300Emulator_entries"
                     android:entryValues="@array/r4300Emulator_values"
