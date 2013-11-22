@@ -75,15 +75,4 @@ public class NativeImports extends CoreInterface
     {
         return sUserPrefs.customPolygonOffset;
     }
-    
-    /**
-     * Checks if the emulator is using RGBA 8888.
-     * 
-     * @return True if RGBA 8888 is being used, false otherwise.
-     * @see jni/ae-bridge/ae_imports.cpp
-     */
-    public static boolean useRGBA8888()
-    {
-        return sUserPrefs.isRgba8888;
-    }
 }

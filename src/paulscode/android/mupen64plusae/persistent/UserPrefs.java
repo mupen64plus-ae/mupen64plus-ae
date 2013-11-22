@@ -269,9 +269,6 @@ public class UserPrefs
     /** True if framelimiter is used. */
     public final boolean isFramelimiterEnabled;
     
-    /** True if RGBA8888 mode should be used for video. */
-    public final boolean isRgba8888;
-    
     /** The manually-overridden hardware type, used for flicker reduction. */
     public final int videoHardwareType;
     
@@ -473,7 +470,6 @@ public class UserPrefs
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
         customPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "customPolygonOffset", "-0.2" ), -0.2f );
         isImmersiveModeEnabled = mPreferences.getBoolean( "videoImmersiveMode", false );
-        isRgba8888 = mPreferences.getBoolean( "videoRgba8888", false );
         isFramelimiterEnabled = mPreferences.getBoolean( "videoUseFramelimiter", false );
         
         // Video prefs - gles2n64

@@ -39,7 +39,6 @@ static jclass mActivityClass;
 static jmethodID midStateCallback;
 static jmethodID midGetHardwareType;
 static jmethodID midGetCustomPolygonOffset;
-static jmethodID midUseRGBA8888;
 
 /*******************************************************************************
  Functions called internally
@@ -94,13 +93,6 @@ static int Android_JNI_SetupThread(void)
     JNIEnv *env = Android_JNI_GetEnv();
     pthread_setspecific(mThreadKey, (void*) env);
     return 1;
-}
-
-static int GetBooleanAsInt(jmethodID methodID)
-{
-    JNIEnv *env = Android_JNI_GetEnv();
-    jboolean b = env->CallStaticBooleanMethod(mActivityClass, methodID);
-    return (b == JNI_TRUE) ? 1 : 0;
 }
 
 static int GetInt(jmethodID methodID)
@@ -161,9 +153,8 @@ extern DECLSPEC void Android_JNI_InitImports(JNIEnv* env, jclass cls)
     midStateCallback          = env->GetStaticMethodID(mActivityClass, "stateCallback",          "(II)V");
     midGetHardwareType        = env->GetStaticMethodID(mActivityClass, "getHardwareType",        "()I");
     midGetCustomPolygonOffset = env->GetStaticMethodID(mActivityClass, "getCustomPolygonOffset", "()F");
-    midUseRGBA8888            = env->GetStaticMethodID(mActivityClass, "useRGBA8888",            "()Z");
 
-    if (!midStateCallback || !midGetHardwareType || !midGetCustomPolygonOffset || !midUseRGBA8888)
+    if (!midStateCallback || !midGetHardwareType || !midGetCustomPolygonOffset)
     {
         LOGE("Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
@@ -204,11 +195,6 @@ extern DECLSPEC int Android_JNI_GetHardwareType()
         customPolygonOffset = GetFloat( midGetCustomPolygonOffset );
     }
     return hardwareType;
-}
-
-extern DECLSPEC int Android_JNI_UseRGBA8888()
-{
-    return GetBooleanAsInt(midUseRGBA8888);
 }
 
 extern DECLSPEC void Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2)

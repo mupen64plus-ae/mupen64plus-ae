@@ -65,7 +65,6 @@ extern void         Android_JNI_StateCallback(void* context, m64p_core_param par
 
 // Called by video plugins
 extern int          Android_JNI_GetHardwareType();
-extern int          Android_JNI_UseRGBA8888();
 extern void         Android_JNI_GetPolygonOffset(const int hardwareType, const int bias, float* f1, float* f2);
 
 // Called by gles2n64

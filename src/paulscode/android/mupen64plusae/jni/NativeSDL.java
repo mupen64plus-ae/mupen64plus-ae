@@ -109,30 +109,12 @@ public class NativeSDL extends CoreInterface
                 // Specify the desired EGL frame buffer configuration
                 // @formatter:off
                 final int[] configSpec1;
-                if( sUserPrefs.isRgba8888 )
-                {
-                    // User has requested 32-bit color
-                    configSpec1 = new int[]
-                    { 
-                        EGL10.EGL_RED_SIZE,    8,                   // request 8 bits of red
-                        EGL10.EGL_GREEN_SIZE,  8,                   // request 8 bits of green
-                        EGL10.EGL_BLUE_SIZE,   8,                   // request 8 bits of blue
-                        EGL10.EGL_ALPHA_SIZE,  8,                   // request 8 bits of alpha
-                        EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
-                        EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
-                        EGL10.EGL_NONE                              // terminate array
-                    };
-                }
-                else
-                {
-                    // User will take whatever color depth is available
-                    configSpec1 = new int[] 
-                    { 
-                        EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
-                        EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
-                        EGL10.EGL_NONE                              // terminate array
-                    };
-                }
+                configSpec1 = new int[] 
+                { 
+                    EGL10.EGL_DEPTH_SIZE, 16,                   // request 16-bit depth (Z) buffer
+                    EGL10.EGL_RENDERABLE_TYPE, renderableType,  // limit search to requested GLES version
+                    EGL10.EGL_NONE                              // terminate array
+                };
                 // @formatter:on            
                 result = sSurface.createGLContext( majorVersion, minorVersion, configSpec1, true );
             }

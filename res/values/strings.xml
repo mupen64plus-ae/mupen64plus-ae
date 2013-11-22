@@ -165,8 +165,6 @@
     <string name="videoImmersiveMode_summary">Completely hide navigation and status bars</string>
     <string name="videoUseFramelimiter_title">Use framelimiter</string>
     <string name="videoUseFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
-    <string name="videoRgba8888_title">RGBA_8888 mode</string>
-    <string name="videoRgba8888_summary">Improves graphics on some devices</string>
     <string name="gles2N64Fog_title">Fog</string>
     <string name="gles2N64Fog_summary">(needs work)</string>
     <string name="gles2N64Sai_title">2xSaI texture filter</string>
