@@ -510,6 +510,7 @@
                     android:key="navigationMode"
                     android:summary="@string/navigationMode_summary"
                     android:title="@string/navigationMode_title" />
+
                 <Preference
                     android:key="actionDeviceInfo"
                     android:summary="@string/actionDeviceInfo_summary"
