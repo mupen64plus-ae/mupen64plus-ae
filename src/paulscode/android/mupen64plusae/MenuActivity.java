@@ -89,6 +89,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String VIDEO_IMMERSIVE_MODE = "videoImmersiveMode";
     private static final String VIDEO_ACTION_BAR_TRANSPARENCY = "videoActionBarTransparency";
     private static final String NAVIGATION_MODE = "navigationMode";
+    private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     private static final String LOCALE_OVERRIDE = "localeOverride";
     
@@ -285,6 +286,9 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 && !mUserPrefs.isTouchscreenCustom );
         PrefUtil.enablePreference( this, TOUCHSCREEN_HEIGHT, mUserPrefs.isTouchscreenEnabled
                 && !mUserPrefs.isTouchscreenCustom );
+        
+        // Enable audio prefs if audio is enabled
+        PrefUtil.enablePreference( this, AUDIO_SWAP_CHANNELS, mUserPrefs.audioPlugin.enabled );
         
         // Update the summary text in a particular way for ACRA user info
         EditTextPreference pref = (EditTextPreference) findPreference( ACRA_USER_EMAIL );
