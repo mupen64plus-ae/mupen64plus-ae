@@ -56,22 +56,12 @@ public class NativeConfigFiles
         ConfigFile mupen64plus_cfg = new ConfigFile( appData.mupen64plus_cfg );
         
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.000000" );                                                          // Mupen64Plus SDL Audio Plugin config parameter version number
-        mupen64plus_cfg.put( "Audio-SDL", "DEFAULT_FREQUENCY", "33600" );                                                   // Frequency which is used if rom doesn't want to change it
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", boolToTF( user.audioSwapChannels ) );                            // Swaps left and right channels
-        mupen64plus_cfg.put( "Audio-SDL", "PRIMARY_BUFFER_SIZE", "16384" );                                                 // Size of primary buffer in output samples. This is where audio is loaded after it's extracted from n64's memory.
-        mupen64plus_cfg.put( "Audio-SDL", "PRIMARY_BUFFER_TARGET", "10240" );                                               // Fullness level target for Primary audio buffer, in equivalent output samples
-        mupen64plus_cfg.put( "Audio-SDL", "SECONDARY_BUFFER_SIZE", "2048" );                                                // Size of secondary buffer in output samples. This is SDL's hardware buffer.
-        mupen64plus_cfg.put( "Audio-SDL", "VOLUME_CONTROL_TYPE", "1" );                                                     // Volume control type: 1 = SDL (only affects Mupen64Plus output)  2 = OSS mixer (adjusts master PC volume)
-        mupen64plus_cfg.put( "Audio-SDL", "VOLUME_ADJUST", "5" );                                                           // Percentage change each time the volume is increased or decreased
-        mupen64plus_cfg.put( "Audio-SDL", "VOLUME_DEFAULT", "80" );                                                         // Default volume when a game is started.  Only used if VOLUME_CONTROL_TYPE is 1
         
         mupen64plus_cfg.put( "Core", "Version", "1.010000" );                                                               // Mupen64Plus Core config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );                                                          // Draw on-screen display if True, otherwise don't draw OSD
         mupen64plus_cfg.put( "Core", "R4300Emulator", user.r4300Emulator );                                                 // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
-        mupen64plus_cfg.put( "Core", "NoCompiledJump", "False" );                                                           // Disable compiled jump commands in dynamic recompiler (should be set to False) 
-        mupen64plus_cfg.put( "Core", "DisableExtraMem", "False" );                                                          // Disable 4MB expansion RAM pack. May be necessary for some games
         mupen64plus_cfg.put( "Core", "AutoStateSlotIncrement", "False" );                                                   // Increment the save state slot after each save operation
-        mupen64plus_cfg.put( "Core", "EnableDebugger", "False" );                                                           // Activate the R4300 debugger when ROM execution begins, if core was built with Debugger support
         mupen64plus_cfg.put( "Core", "ScreenshotPath", EMPTY );                                                             // Path to directory where screenshots are saved. If this is blank, the default value of ${UserConfigPath}/screenshot will be used
         mupen64plus_cfg.put( "Core", "SaveStatePath", '"' + user.slotSaveDir + '"' );                                       // Path to directory where emulator save states (snapshots) are saved. If this is blank, the default value of ${UserConfigPath}/save will be used
         mupen64plus_cfg.put( "Core", "SaveSRAMPath", '"' + user.sramSaveDir + '"' );                                        // Path to directory where SRAM/EEPROM data (in-game saves) are stored. If this is blank, the default value of ${UserConfigPath}/save will be used
