@@ -338,9 +338,6 @@ public class UserPrefs
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
     
-    /** The audio resampling algorithm to use. */
-    public final String audioResampleAlg;
-    
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
     
@@ -508,7 +505,6 @@ public class UserPrefs
         
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
-        audioResampleAlg = mPreferences.getString( "audioResampleAlg", "trivial" );
         
         // User interface modes
         String navMode = mPreferences.getString( "navigationMode", "auto" );

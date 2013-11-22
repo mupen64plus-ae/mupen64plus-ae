@@ -460,14 +460,6 @@
                     android:key="audioSwapChannels"
                     android:summary="@string/audioSwapChannels_summary"
                     android:title="@string/audioSwapChannels_title" />
-
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/audioResampleAlg_default"
-                    android:entries="@array/audioResampleAlg_entries"
-                    android:entryValues="@array/audioResampleAlg_values"
-                    android:key="audioResampleAlg"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/audioResampleAlg_title" />
             </PreferenceScreen>
         </PreferenceCategory>
         <PreferenceCategory

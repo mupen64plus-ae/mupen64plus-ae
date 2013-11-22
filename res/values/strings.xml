@@ -304,14 +304,6 @@
     <string name="gles2RiceTextureEnhancement_entrySharpen">Sharpen</string>
     <string name="gles2RiceTextureEnhancement_entrySharpen_more">Sharpen more</string>
     
-    <string name="audioResampleAlg_title">Resampling algorithm</string>
-    <string name="audioResampleAlg_entryTrivial">Trivial</string>
-    <string name="audioResampleAlg_entryLinear">Linear interpolation</string>
-    <string name="audioResampleAlg_entryZoh">Zero order hold</string>
-    <string name="audioResampleAlg_entrySincFastest">Sinc (fastest)</string>
-    <string name="audioResampleAlg_entrySincMedium">Sinc (medium)</string>
-    <string name="audioResampleAlg_entrySincBest">Sinc (best)</string>
-    
     <string name="pluginVideo_title">Video</string>
     <string name="pluginVideo_entryNone">None (video disabled)</string>
     <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(adaptation of GLN64 v0.4.1)</small></string>

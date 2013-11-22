@@ -386,26 +386,6 @@
 
     <string name="gles2RiceTextureEnhancement_default">0</string>
 
-    <!-- Audio Resampling Algorithm List -->
-    <string-array name="audioResampleAlg_entries" translatable="false">
-        <item>@string/audioResampleAlg_entryTrivial</item>
-        <item>@string/audioResampleAlg_entryLinear</item>
-        <item>@string/audioResampleAlg_entryZoh</item>
-        <item>@string/audioResampleAlg_entrySincFastest</item>
-        <item>@string/audioResampleAlg_entrySincMedium</item>
-        <item>@string/audioResampleAlg_entrySincBest</item>
-    </string-array>
-    <string-array name="audioResampleAlg_values" translatable="false">
-        <item>trivial</item>
-        <item>src-linear</item>
-        <item>src-zero-order-hold</item>
-        <item>src-sinc-fastest</item>
-        <item>src-sinc-medium-quality</item>
-        <item>src-sinc-best-quality</item>
-    </string-array>
-
-    <string name="audioResampleAlg_default" translatable="false">trivial</string>
-
     <!-- Video Plugins -->
     <string-array name="pluginVideo_entries" translatable="false">
         <item>@string/pluginVideo_entryNone</item>
