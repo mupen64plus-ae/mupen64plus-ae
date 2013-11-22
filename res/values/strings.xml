@@ -325,10 +325,6 @@
     <string name="pluginInput_title">Input</string>
     <string name="pluginInput_entryNone">None (input disabled)</string>
     <string name="pluginInput_entryAndroid">input-android</string>
-    <string name="pluginRsp_title">Reality signal processor (RSP)</string>
-    <string name="pluginRsp_entryNone">None (RSP disabled)</string>
-    <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
-    <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0\n<small>(no audio processing, speed hack)</small></string>
     <string name="pluginCore_title">Emulation core</string>
     <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
     

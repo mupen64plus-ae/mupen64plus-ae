@@ -113,7 +113,7 @@ public class NativeConfigFiles
         mupen64plus_cfg.put( "UI-Console", "VideoPlugin", '"' + user.videoPlugin.path + '"' );                              // Filename of video plugin
         mupen64plus_cfg.put( "UI-Console", "AudioPlugin", '"' + user.audioPlugin.path + '"' );                              // Filename of audio plugin
         mupen64plus_cfg.put( "UI-Console", "InputPlugin", '"' + user.inputPlugin.path + '"' );                              // Filename of input plugin
-        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + user.rspPlugin.path + '"' );                                  // Filename of RSP plugin
+        mupen64plus_cfg.put( "UI-Console", "RspPlugin", '"' + appData.rspLib + '"' );                                       // Filename of RSP plugin
         
         mupen64plus_cfg.put( "Video-General", "Fullscreen", "False" );                                                      // Use fullscreen mode if True, or windowed mode if False
         mupen64plus_cfg.put( "Video-General", "ScreenWidth", String.valueOf( user.videoRenderWidth ) );                     // Width of output window or fullscreen width

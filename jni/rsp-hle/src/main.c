@@ -127,13 +127,6 @@ static int try_fast_audio_dispatching()
     const OSTask_t * const task = get_task();
     const unsigned char * const udata_ptr = rsp.RDRAM + task->ucode_data;
 
-#ifdef PAULSCODE
-#ifdef M64P_NO_AUDIO
-    // mupen64plus-ae supports an alternative build config that excludes rsp audio processing,
-    // which can be used in conjunction with the dummy audio plugin to save a few CPU cycles
-    return 1;
-#endif
-#endif
     if (*(unsigned int*)(udata_ptr + 0) == 0x00000001)
     {
         if (*(unsigned int*)(udata_ptr + 0x30) == 0xf0000f00)

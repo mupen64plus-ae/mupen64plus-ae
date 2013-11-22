@@ -97,7 +97,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String PLUGIN_VIDEO = "pluginVideo";
     private static final String PLUGIN_INPUT = "pluginInput";
     private static final String PLUGIN_AUDIO = "pluginAudio";
-    private static final String PLUGIN_RSP = "pluginRsp";
     private static final String PLUGIN_CORE = "pluginCore";
     private static final String R4300_EMULATOR = "r4300Emulator";
     private static final String VIDEO_POSITION = "videoPosition";
@@ -189,7 +188,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, PLUGIN_INPUT, R.string.pluginInput_default, R.array.pluginInput_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_VIDEO, R.string.pluginVideo_default, R.array.pluginVideo_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_AUDIO, R.string.pluginAudio_default, R.array.pluginAudio_values );
-        PrefUtil.validateListPreference( res, prefs, PLUGIN_RSP, R.string.pluginRsp_default, R.array.pluginRsp_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_CORE, R.string.pluginCore_default, R.array.pluginCore_values );
         PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
         PrefUtil.validateListPreference( res, prefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );

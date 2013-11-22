@@ -505,13 +505,6 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginAudio_title" />
                 <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/pluginRsp_default"
-                    android:entries="@array/pluginRsp_entries"
-                    android:entryValues="@array/pluginRsp_values"
-                    android:key="pluginRsp"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/pluginRsp_title" />
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/pluginCore_default"
                     android:entries="@array/pluginCore_entries"
                     android:entryValues="@array/pluginCore_values"

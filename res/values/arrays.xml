@@ -446,20 +446,6 @@
 
     <string name="pluginInput_default" translatable="false">libinput-android.so</string>
 
-    <!-- RSP Plugins -->
-    <string-array name="pluginRsp_entries" translatable="false">
-        <item>@string/pluginRsp_entryNone</item>
-        <item>@string/pluginRsp_entryHle</item>
-        <item>@string/pluginRsp_entryHleNoSound</item>
-    </string-array>
-    <string-array name="pluginRsp_values" translatable="false">
-        <item></item>
-        <item>librsp-hle.so</item>
-        <item>librsp-hle-nosound.so</item>
-    </string-array>
-
-    <string name="pluginRsp_default" translatable="false">librsp-hle.so</string>
-
     <!-- Core Plugins -->
     <string-array name="pluginCore_entries" translatable="false">
         <item>@string/pluginCore_entryV110</item>

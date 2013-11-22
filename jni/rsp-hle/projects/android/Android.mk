@@ -3,12 +3,12 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 SRCDIR := ../../src
 
-MY_LOCAL_MODULE := rsp-hle
-MY_LOCAL_ARM_MODE := arm
+LOCAL_MODULE := rsp-hle
+LOCAL_ARM_MODE := arm
 
-MY_LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
+LOCAL_C_INCLUDES := $(M64P_API_INCLUDES)
 
-MY_LOCAL_SRC_FILES :=       \
+LOCAL_SRC_FILES :=          \
     $(SRCDIR)/alist.c       \
     $(SRCDIR)/cicx105.c     \
     $(SRCDIR)/jpeg.c        \
@@ -18,40 +18,10 @@ MY_LOCAL_SRC_FILES :=       \
     $(SRCDIR)/ucode3.cpp    \
     $(SRCDIR)/ucode3mp3.cpp \
 
-MY_LOCAL_CFLAGS := $(COMMON_CFLAGS) -DPAULSCODE
+LOCAL_CFLAGS := $(COMMON_CFLAGS)
 
-MY_LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
+LOCAL_CPPFLAGS := $(COMMON_CPPFLAGS)
 
-MY_LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/rsp_api_export.ver
-
-######### Standard RSP Module #################################################
-
-include $(CLEAR_VARS)
-
-LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
-LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES)
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES)
-LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS)
-LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
-LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
-
-LOCAL_MODULE := $(MY_LOCAL_MODULE)
-
-include $(BUILD_SHARED_LIBRARY)
-
-######### Same Module, No Sound ###############################################
-
-include $(CLEAR_VARS)
-
-LOCAL_ARM_MODE          := $(MY_LOCAL_ARM_MODE)
-LOCAL_C_INCLUDES        := $(MY_LOCAL_C_INCLUDES)
-LOCAL_SRC_FILES         := $(MY_LOCAL_SRC_FILES)
-LOCAL_CFLAGS            := $(MY_LOCAL_CFLAGS)
-LOCAL_CPPFLAGS          := $(MY_LOCAL_CPPFLAGS)
-LOCAL_LDFLAGS           := $(MY_LOCAL_LDFLAGS)
-
-# Only difference is the module name and a flag
-LOCAL_MODULE := $(MY_LOCAL_MODULE)-nosound
-LOCAL_CFLAGS += -DM64P_NO_AUDIO
+LOCAL_LDFLAGS := -Wl,-version-script,$(LOCAL_PATH)/$(SRCDIR)/rsp_api_export.ver
 
 include $(BUILD_SHARED_LIBRARY)

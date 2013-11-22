@@ -144,6 +144,9 @@ public class AppData
     /** The path of the core library. */
     public final String coreLib;
     
+    /** The path of the RSP library. */
+    public final String rspLib;
+    
     /** The path of the Mupen64Plus base configuration file. */
     public final String mupen64plus_cfg;
     
@@ -227,6 +230,7 @@ public class AppData
         
         // Files
         coreLib = libsDir + "/libcore.so";
+        rspLib = libsDir + "/librsp-hle.so";
         mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
         gles2n64_conf = sharedDataDir + "/gles2n64.conf";
         gles2glide64_conf = sharedDataDir + "/Glide64mk2.ini";
@@ -245,7 +249,6 @@ public class AppData
                 libraryExists( "gles2rice" )        &&
                 libraryExists( "gles2glide64" )     &&
                 libraryExists( "input-android" )    &&
-                libraryExists( "rsp-hle-nosound" )  &&
                 libraryExists( "rsp-hle" )          &&
                 libraryExists( "SDL2" )             &&
                 libraryExists( "xperia-touchpad" );

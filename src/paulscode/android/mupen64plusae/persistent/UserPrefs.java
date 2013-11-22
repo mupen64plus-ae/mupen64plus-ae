@@ -125,9 +125,6 @@ public class UserPrefs
     /** The selected input plug-in. */
     public final Plugin inputPlugin;
     
-    /** The selected Reality Signal Processor. */
-    public final Plugin rspPlugin;
-    
     /** The selected emulator core. */
     public final Plugin corePlugin;
     
@@ -436,7 +433,6 @@ public class UserPrefs
         videoPlugin = new Plugin( mPreferences, appData.libsDir, "pluginVideo" );
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "pluginAudio" );
         inputPlugin = new Plugin( mPreferences, appData.libsDir, "pluginInput" );
-        rspPlugin = new Plugin( mPreferences, appData.libsDir, "pluginRsp" );
         corePlugin = new Plugin( mPreferences, appData.libsDir, "pluginCore" );
         
         // R4300 emulator
