@@ -236,9 +236,6 @@ public class UserPrefs
     /** The set of key codes that are not allowed to be mapped. **/
     public final List<Integer> unmappableKeyCodes;
     
-    /** True if the analog is constrained to an octagon. */
-    public final boolean isOctagonalJoystick;
-    
     /** The screen orientation for the game activity. */
     public final int videoOrientation;
     
@@ -449,7 +446,6 @@ public class UserPrefs
         touchpadLayout = appData.touchpadLayoutsDir + mPreferences.getString( "touchpadLayout", "" );
         
         // Input prefs
-        isOctagonalJoystick = mPreferences.getBoolean( "inputOctagonConstraints", true );
         isInputEnabled1 = mPreferences.getBoolean( "inputEnabled1", false );
         isInputEnabled2 = mPreferences.getBoolean( "inputEnabled2", false );
         isInputEnabled3 = mPreferences.getBoolean( "inputEnabled3", false );

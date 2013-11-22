@@ -335,8 +335,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
             touchpadMap.resize( NativeXperiaTouchpad.PAD_WIDTH, NativeXperiaTouchpad.PAD_HEIGHT );
             
             // Create the touchpad controller
-            touchpadController = new TouchController( touchpadMap, inputSource, null,
-                    mUserPrefs.isOctagonalJoystick, vibrator,
+            touchpadController = new TouchController( touchpadMap, inputSource, null, vibrator,
                     TouchController.AUTOHOLD_METHOD_DISABLED, mUserPrefs.isTouchpadFeedbackEnabled,
                     null );
             mControllers.add( touchpadController );
@@ -350,9 +349,8 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         {
             // Create the touchscreen controller
             TouchController touchscreenController = new TouchController( mTouchscreenMap,
-                    inputSource, mOverlay, mUserPrefs.isOctagonalJoystick, vibrator,
-                    mUserPrefs.touchscreenAutoHold, mUserPrefs.isTouchscreenFeedbackEnabled,
-                    mUserPrefs.touchscreenAutoHoldables );
+                    inputSource, mOverlay, vibrator, mUserPrefs.touchscreenAutoHold,
+                    mUserPrefs.isTouchscreenFeedbackEnabled, mUserPrefs.touchscreenAutoHoldables );
             mControllers.add( touchscreenController );
             
             // If using touchpad & touchscreen together...

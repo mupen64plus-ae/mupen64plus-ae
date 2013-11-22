@@ -214,11 +214,6 @@
                     </paulscode.android.mupen64plusae.persistent.TogglePreference>
 
                     <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="inputOctagonConstraints"
-                        android:summary="@string/inputOctagonConstraints_summary"
-                        android:title="@string/inputOctagonConstraints_title" />
-                    <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="inputVolumeMappable"
                         android:summary="@string/inputVolumeMappable_summary"

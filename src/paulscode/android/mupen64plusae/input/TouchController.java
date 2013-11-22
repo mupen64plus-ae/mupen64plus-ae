@@ -82,9 +82,6 @@ public class TouchController extends AbstractController implements OnTouchListen
     /** The map from pointer ids to N64 controls. */
     private final SparseIntArray mPointerMap = new SparseIntArray();
     
-    /** Whether the analog stick should be constrained to an octagon. */
-    private final boolean mIsOctagonal;
-    
     /** The method used for auto-holding buttons. */
     private final int mAutoHoldMethod;
     
@@ -126,19 +123,17 @@ public class TouchController extends AbstractController implements OnTouchListen
      * @param touchMap            The map from touch coordinates to N64 controls.
      * @param view                The view receiving touch event data.
      * @param listener            The listener for controller state changes.
-     * @param isOctagonal         True if the analog stick should be constrained to an octagon.
      * @param vibrator            The haptic feedback device. MUST BE NULL if vibrate permission not granted.
      * @param autoHoldMethod      The method for auto-holding buttons.
      * @param touchscreenFeedback True if haptic feedback should be used.
      * @param autoHoldableButtons The N64 commands that correspond to auto-holdable buttons.
      */
     public TouchController( TouchMap touchMap, View view, OnStateChangedListener listener,
-            boolean isOctagonal, Vibrator vibrator, int autoHoldMethod,
-            boolean touchscreenFeedback, Set<Integer> autoHoldableButtons )
+            Vibrator vibrator, int autoHoldMethod, boolean touchscreenFeedback,
+            Set<Integer> autoHoldableButtons )
     {
         mListener = listener;
         mTouchMap = touchMap;
-        mIsOctagonal = isOctagonal;
         mVibrator = vibrator;
         mAutoHoldMethod = autoHoldMethod;
         mTouchscreenFeedback = touchscreenFeedback;
@@ -526,14 +521,12 @@ public class TouchController extends AbstractController implements OnTouchListen
         if( pointerId == mAnalogPid )
         {
             // User is controlling the analog stick
-            if( mIsOctagonal )
-            {
-                // Limit range of motion to an octagon (like the real N64 controller)
-                point = mTouchMap.getConstrainedDisplacement( dX, dY );
-                dX = point.x;
-                dY = point.y;
-                displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
-            }
+            
+            // Limit range of motion to an octagon (like the real N64 controller)
+            point = mTouchMap.getConstrainedDisplacement( dX, dY );
+            dX = point.x;
+            dY = point.y;
+            displacement = FloatMath.sqrt( ( dX * dX ) + ( dY * dY ) );
             
             // Fraction of full-throttle, between 0 and 1, inclusive
             float p = mTouchMap.getAnalogStrength( displacement );
