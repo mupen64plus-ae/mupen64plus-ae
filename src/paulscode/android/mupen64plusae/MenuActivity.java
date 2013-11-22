@@ -71,17 +71,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String SCREEN_VIDEO = "screenVideo";
     
     private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
-    private static final String CATEGORY_TOUCHSCREEN_BEHAVIOR = "categoryTouchscreenBehavior";
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
-    private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
     private static final String TOUCHSCREEN_AUTO_HOLDABLES = "touchscreenAutoHoldables";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
     private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
     private static final String TOUCHSCREEN_LAYOUT = "touchscreenLayout";
     private static final String PATH_CUSTOM_TOUCHSCREEN = "pathCustomTouchscreen";
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
-    private static final String TOUCHPAD_FEEDBACK = "touchpadFeedback";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
     private static final String PLUGIN_AUDIO = "pluginAudio";
@@ -152,13 +149,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             prefs.edit().putBoolean( INPUT_VOLUME_MAPPABLE, true ).commit();
         }
         
-        // Disable haptic feedback if permission not granted
-        if( !mAppData.hasVibratePermission )
-        {
-            prefs.edit().putBoolean( TOUCHSCREEN_FEEDBACK, false ).commit();
-            prefs.edit().putBoolean( TOUCHPAD_FEEDBACK, false ).commit();
-        }
-        
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
         
@@ -212,12 +202,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, INPUT_VOLUME_MAPPABLE );
-        }
-        
-        if( !mAppData.hasVibratePermission )
-        {
-            PrefUtil.removePreference( this, CATEGORY_TOUCHSCREEN_BEHAVIOR, TOUCHSCREEN_FEEDBACK );
-            PrefUtil.removePreference( this, SCREEN_TOUCHPAD, TOUCHPAD_FEEDBACK );
         }
         
         // Initialize the OUYA interface if running on OUYA

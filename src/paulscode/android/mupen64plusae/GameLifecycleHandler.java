@@ -316,14 +316,9 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
     @SuppressLint( "InlinedApi" )
     private void initControllers( View inputSource )
     {
-        Vibrator vibrator = null;
-        // Vibrator object MUST be null if permission not granted, to meet our code contracts
-        if( mAppData.hasVibratePermission )
-        {
-            // By default, send Player 1 rumbles through phone vibrator
-            vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
-            CoreInterface.registerVibrator( 1, vibrator );
-        }
+        // By default, send Player 1 rumbles through phone vibrator
+        Vibrator vibrator = (Vibrator) mActivity.getSystemService( Context.VIBRATOR_SERVICE );
+        CoreInterface.registerVibrator( 1, vibrator );
         
         // Create the touchpad controls, if applicable
         TouchController touchpadController = null;

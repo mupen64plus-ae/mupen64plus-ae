@@ -143,7 +143,7 @@ public class CoreInterface
     {
         boolean hasVibrator = AppData.IS_HONEYCOMB ? vibrator.hasVibrator() : true;
         
-        if( sAppData.hasVibratePermission && hasVibrator && player > 0 && player < 5 )
+        if( hasVibrator && player > 0 && player < 5 )
         {
             sVibrators[player - 1] = vibrator;
         }

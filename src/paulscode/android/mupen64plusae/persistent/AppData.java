@@ -32,7 +32,6 @@ import paulscode.android.mupen64plusae.util.FileUtil;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
@@ -107,9 +106,6 @@ public class AppData
     
     /** The package name. */
     public final String packageName;
-    
-    /** True if the app was installed with vibration permissions. */
-    public final boolean hasVibratePermission;
     
     /** The app version string. */
     public final String appVersion;
@@ -195,7 +191,6 @@ public class AppData
     {
         hardwareInfo = new HardwareInfo();
         packageName = context.getPackageName();
-        hasVibratePermission = hasPermission( context, android.Manifest.permission.VIBRATE );
         
         PackageInfo info;
         String version = "";
@@ -412,12 +407,6 @@ public class AppData
     {
         File library = new File( libsDir + "lib" + undecoratedName + ".so" );
         return library.exists();
-    }
-    
-    private static boolean hasPermission( Context context, String permission )
-    {
-        int result = context.getPackageManager().checkPermission( permission, context.getPackageName() );
-        return( result == PackageManager.PERMISSION_GRANTED );
     }
     
     /**
