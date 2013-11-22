@@ -68,6 +68,62 @@
             android:key="categoryHardware"
             android:title="@string/categoryHardware_title" >
             <PreferenceScreen
+                android:icon="@drawable/ic_display"
+                android:key="screenDisplay"
+                android:summary="@string/screenDisplay_summary"
+                android:title="@string/screenDisplay_title" >
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/videoOrientation_default"
+                    android:entries="@array/videoOrientation_entries"
+                    android:entryValues="@array/videoOrientation_values"
+                    android:key="videoOrientation"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/videoOrientation_title" />
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/videoPosition_default"
+                    android:entries="@array/videoPosition_entries"
+                    android:entryValues="@array/videoPosition_values"
+                    android:key="videoPosition"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/videoPosition_title" />
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/videoResolution_default"
+                    android:entries="@array/videoResolution_entries"
+                    android:entryValues="@array/videoResolution_values"
+                    android:key="videoResolution"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/videoResolution_title" />
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/videoScaling_default"
+                    android:entries="@array/videoScaling_entries"
+                    android:entryValues="@array/videoScaling_values"
+                    android:key="videoScaling"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/videoScaling_title" />
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="videoImmersiveMode"
+                    android:summary="@string/videoImmersiveMode_summary"
+                    android:title="@string/videoImmersiveMode_title" />
+
+                <paulscode.android.mupen64plusae.persistent.SeekBarPreference
+                    android:defaultValue="50"
+                    android:key="videoActionBarTransparency"
+                    android:title="@string/videoActionBarTransparency_title"
+                    mupen64:maximumValue="100"
+                    mupen64:stepSize="10"
+                    mupen64:units="%" />
+
+                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                    android:defaultValue="@string/videoFpsRefresh_default"
+                    android:entries="@array/videoFpsRefresh_entries"
+                    android:entryValues="@array/videoFpsRefresh_values"
+                    android:key="videoFpsRefresh"
+                    android:summary="@string/selectedValue"
+                    android:title="@string/videoFpsRefresh_title" />
+            </PreferenceScreen>
+            <PreferenceScreen
                 android:icon="@drawable/ic_controller"
                 android:key="screenInput"
                 android:summary="@string/screenInput_summary"
@@ -271,56 +327,6 @@
                 android:key="screenVideo"
                 android:summary="@string/screenVideo_summary"
                 android:title="@string/screenVideo_title" >
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/videoOrientation_default"
-                    android:entries="@array/videoOrientation_entries"
-                    android:entryValues="@array/videoOrientation_values"
-                    android:key="videoOrientation"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/videoOrientation_title" />
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/videoPosition_default"
-                    android:entries="@array/videoPosition_entries"
-                    android:entryValues="@array/videoPosition_values"
-                    android:key="videoPosition"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/videoPosition_title" />
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/videoResolution_default"
-                    android:entries="@array/videoResolution_entries"
-                    android:entryValues="@array/videoResolution_values"
-                    android:key="videoResolution"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/videoResolution_title" />
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/videoScaling_default"
-                    android:entries="@array/videoScaling_entries"
-                    android:entryValues="@array/videoScaling_values"
-                    android:key="videoScaling"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/videoScaling_title" />
-
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="videoImmersiveMode"
-                    android:summary="@string/videoImmersiveMode_summary"
-                    android:title="@string/videoImmersiveMode_title" />
-
-                <paulscode.android.mupen64plusae.persistent.SeekBarPreference
-                    android:defaultValue="50"
-                    android:key="videoActionBarTransparency"
-                    android:title="@string/videoActionBarTransparency_title"
-                    mupen64:maximumValue="100"
-                    mupen64:stepSize="10"
-                    mupen64:units="%" />
-
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/videoFpsRefresh_default"
-                    android:entries="@array/videoFpsRefresh_entries"
-                    android:entryValues="@array/videoFpsRefresh_values"
-                    android:key="videoFpsRefresh"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/videoFpsRefresh_title" />
                 <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/videoHardwareType_default"
                     android:entries="@array/videoHardwareType_entries"

@@ -128,6 +128,8 @@
     <string name="screenTouchscreen_summary">On-screen controller settings</string>
     <string name="screenTouchpad_title">Touchpad</string>
     <string name="screenTouchpad_summary">Xperia PLAY settings</string>
+    <string name="screenDisplay_title">Display</string>
+    <string name="screenDisplay_summary">Layout settings</string>
     <string name="screenVideo_title">Video</string>
     <string name="screenVideo_summary">Graphics settings</string>
     <string name="screenAudio_title">Audio</string>
