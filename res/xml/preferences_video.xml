@@ -4,6 +4,13 @@
     android:key="screenVideo" >
 
     <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+        android:defaultValue="@string/pluginVideo_default"
+        android:entries="@array/pluginVideo_entries"
+        android:entryValues="@array/pluginVideo_values"
+        android:key="pluginVideo"
+        android:summary="@string/selectedValue"
+        android:title="@string/pluginVideo_title" />
+    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
         android:defaultValue="@string/videoHardwareType_default"
         android:entries="@array/videoHardwareType_entries"
         android:entryValues="@array/videoHardwareType_values"
@@ -23,14 +30,6 @@
         android:key="videoUseFramelimiter"
         android:summary="@string/videoUseFramelimiter_summary"
         android:title="@string/videoUseFramelimiter_title" />
-
-    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-        android:defaultValue="@string/pluginVideo_default"
-        android:entries="@array/pluginVideo_entries"
-        android:entryValues="@array/pluginVideo_values"
-        android:key="pluginVideo"
-        android:summary="@string/selectedValue"
-        android:title="@string/pluginVideo_title" />
 
     <PreferenceCategory
         android:key="categoryGles2N64"
