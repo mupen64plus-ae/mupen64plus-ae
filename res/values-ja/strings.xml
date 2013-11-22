@@ -110,8 +110,8 @@
   <string name="screenTouchpad_summary">XperiaPLAY 設定</string>
   <string name="screenVideo_title">ビデオ</string>
   <string name="screenVideo_summary">グラフィック設定</string>
-  <string name="screenAudio_title">オーディオ</string>
-  <string name="screenAudio_summary">サウンド設定</string>
+  <string name="categoryAudio_title">オーディオ</string>
+  <string name="categoryAudio_summary">サウンド設定</string>
   <string name="screenPlugin_title">アドバンスド</string>
   <string name="screenPlugin_summary">オーディオ、プロセッサ、コア、など。</string>
   <string name="screenAdvanced_title">アドバンスド</string>

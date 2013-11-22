@@ -73,7 +73,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
     private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
     private static final String SCREEN_VIDEO = "screenVideo";
-    private static final String SCREEN_AUDIO = "screenAudio";
     
     private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
     private static final String CATEGORY_TOUCHSCREEN_BEHAVIOR = "categoryTouchscreenBehavior";
@@ -315,9 +314,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             pp.setSummary( selectedGame.getName() );
         }
-        
-        // Enable the audio menu only if the audio plug-in is not a dummy
-        PrefUtil.enablePreference( this, SCREEN_AUDIO, mUserPrefs.audioPlugin.enabled );
         
         // Enable the video menu only if the video plug-in is not a dummy
         PrefUtil.enablePreference( this, SCREEN_VIDEO, mUserPrefs.videoPlugin.enabled );

@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY postavke</string>
   <string name="screenVideo_title">Grafika</string>
   <string name="screenVideo_summary">Postavke grafike</string>
-  <string name="screenAudio_title">Zvuk</string>
-  <string name="screenAudio_summary">Postavke zvuka</string>
+  <string name="categoryAudio_title">Zvuk</string>
+  <string name="categoryAudio_summary">Postavke zvuka</string>
   <string name="screenPlugin_title">Dodaci</string>
   <string name="screenPlugin_summary">Odabir dodataka za grafiku, zvuk i ostalo</string>
   <string name="screenAdvanced_title">Napredno</string>

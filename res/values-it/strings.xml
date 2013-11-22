@@ -110,8 +110,8 @@
   <string name="screenTouchpad_summary">Impostazioni Xperia PLAY</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Impostazioni grafiche</string>
-  <string name="screenAudio_title">Audio</string>
-  <string name="screenAudio_summary">Impostazioni audio</string>
+  <string name="categoryAudio_title">Audio</string>
+  <string name="categoryAudio_summary">Impostazioni audio</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Impostazioni core</string>
   <string name="screenAdvanced_title">Avanzate</string>

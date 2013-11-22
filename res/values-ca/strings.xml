@@ -109,8 +109,8 @@
   <string name="screenTouchpad_summary">Configuració per Xperia PLAY</string>
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Configuració de vídeo</string>
-  <string name="screenAudio_title">Àudio</string>
-  <string name="screenAudio_summary">Configuració del so</string>
+  <string name="categoryAudio_title">Àudio</string>
+  <string name="categoryAudio_summary">Configuració del so</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Configuració del nucli</string>
   <string name="screenAdvanced_title">Avançat</string>

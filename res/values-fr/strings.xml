@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Paramètres de l\'Xperia PLAY</string>
   <string name="screenVideo_title">Vidéo</string>
   <string name="screenVideo_summary">Paramètres graphiques</string>
-  <string name="screenAudio_title">Audio</string>
-  <string name="screenAudio_summary">Paramètres sonores</string>
+  <string name="categoryAudio_title">Audio</string>
+  <string name="categoryAudio_summary">Paramètres sonores</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Paramètres du noyau</string>
   <string name="screenAdvanced_title">Paramètres avancés</string>

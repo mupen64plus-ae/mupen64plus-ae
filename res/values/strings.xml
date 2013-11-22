@@ -132,8 +132,6 @@
     <string name="screenDisplay_summary">Layout settings</string>
     <string name="screenVideo_title">Video</string>
     <string name="screenVideo_summary">Graphics settings</string>
-    <string name="screenAudio_title">Audio</string>
-    <string name="screenAudio_summary">Sound settings</string>
     <string name="screenPlugin_title">Plug-ins</string>
     <string name="screenPlugin_summary">Core settings</string>
     <string name="screenAdvanced_title">Advanced</string>
@@ -151,6 +149,7 @@
     <string name="categoryGles2Rice_title">GLES2Rice settings</string>
     <string name="categoryGles2Glide64_title">GLES2Glide64 settings</string>
     <string name="categoryData_title">Data</string>
+    <string name="categoryAudio_title">Audio</string>
     <string name="categoryCrashReports_title">Crash reports</string>
 
     <!-- Checkbox Preferences -->
@@ -311,7 +310,7 @@
     <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
     <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
     <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
-    <string name="pluginAudio_title">Audio</string>
+    <string name="pluginAudio_title">Audio plugin</string>
     <string name="pluginAudio_entryNone">None (audio disabled)</string>
     <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
 

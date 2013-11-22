@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Axustes Xperia PLAY</string>
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Axustes dos gráficos</string>
-  <string name="screenAudio_title">Son</string>
-  <string name="screenAudio_summary">Axustes do son</string>
+  <string name="categoryAudio_title">Son</string>
+  <string name="categoryAudio_summary">Axustes do son</string>
   <string name="screenPlugin_title">Complementos</string>
   <string name="screenPlugin_summary">Axustes do núcleo</string>
   <string name="screenAdvanced_title">Avanzado</string>
