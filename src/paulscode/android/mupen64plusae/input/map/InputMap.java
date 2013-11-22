@@ -35,7 +35,7 @@ import paulscode.android.mupen64plusae.input.provider.AbstractProvider;
 public class InputMap extends SerializableMap
 {
     // Default maps for various popular devices
-    public static final String DEFAULT_INPUT_MAP_STRING_GENERIC = "0:22,1:21,2:20,3:19,4:108,5:-35,5:-47,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,12:-45,13:102,16:-1,17:-2,18:-3,19:-4";
+    public static final String DEFAULT_INPUT_MAP_STRING_GENERIC = "0:22,1:21,2:20,3:19,4:108,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
     public static final String DEFAULT_INPUT_MAP_STRING_OUYA = "0:22,1:21,2:20,3:19,4:100,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4,32:97";
     public static final String DEFAULT_INPUT_MAP_STRING_N64_ADAPTER = "0:201,1:203,2:202,3:200,4:197,5:196,6:190,7:189,8:-30,9:-29,10:-23,11:-24,12:195,13:194,16:-1,17:-2,18:-3,19:-4"; 
     public static final String DEFAULT_INPUT_MAP_STRING_PS3 = "0:22,1:21,2:20,3:19,4:108,5:-35,6:99,7:96,8:-23,9:-24,10:-29,11:-30,12:103,13:102,16:-1,17:-2,18:-3,19:-4";
@@ -152,7 +152,23 @@ public class InputMap extends SerializableMap
     {
         // Map the input if a valid index was given
         if( command >= 0 && command < NUM_MAPPABLES && inputCode != 0 )
+        {
+            if( inputCode < 0 )
+            {
+                // If an analog input is mapped, it should be the only thing mapped to this command
+                unmapCommand( command );
+            }
+            else
+            {
+                // If a digital input is mapped, no analog inputs can be mapped to this command
+                for( int i = mMap.size() - 1; i >= 0; i-- )
+                {
+                    if( mMap.valueAt( i ) == command && mMap.keyAt( i ) < 0 )
+                        mMap.removeAt( i );
+                }                
+            }
             mMap.put( inputCode, command );
+        }
     }
     
     /**
