@@ -29,14 +29,10 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ChangeLog;
 import paulscode.android.mupen64plusae.util.CrashTester;
 import paulscode.android.mupen64plusae.util.DeviceUtil;
-import paulscode.android.mupen64plusae.util.ErrorLogger;
-import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
-import paulscode.android.mupen64plusae.util.TaskHandler;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -76,9 +72,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
     private static final String CATEGORY_TOUCHSCREEN_BEHAVIOR = "categoryTouchscreenBehavior";
-    private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
-    private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
-    private static final String CATEGORY_GLES2_GLIDE64 = "categoryGles2Glide64";
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_FEEDBACK = "touchscreenFeedback";
@@ -91,8 +84,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHPAD_FEEDBACK = "touchpadFeedback";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
-    private static final String CUSTOM_POLYGON_OFFSET = "customPolygonOffset";
-    private static final String PLUGIN_VIDEO = "pluginVideo";
     private static final String PLUGIN_AUDIO = "pluginAudio";
     private static final String R4300_EMULATOR = "r4300Emulator";
     private static final String VIDEO_POSITION = "videoPosition";
@@ -100,7 +91,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String VIDEO_SCALING = "videoScaling";
     private static final String VIDEO_IMMERSIVE_MODE = "videoImmersiveMode";
     private static final String VIDEO_ACTION_BAR_TRANSPARENCY = "videoActionBarTransparency";
-    private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String NAVIGATION_MODE = "navigationMode";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     private static final String LOCALE_OVERRIDE = "localeOverride";
@@ -181,7 +171,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, VIDEO_POSITION, R.string.videoPosition_default, R.array.videoPosition_values );
         PrefUtil.validateListPreference( res, prefs, VIDEO_RESOLUTION, R.string.videoResolution_default, R.array.videoResolution_values );
         PrefUtil.validateListPreference( res, prefs, VIDEO_SCALING, R.string.videoScaling_default, R.array.videoScaling_values );
-        PrefUtil.validateListPreference( res, prefs, PLUGIN_VIDEO, R.string.pluginVideo_default, R.array.pluginVideo_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_AUDIO, R.string.pluginAudio_default, R.array.pluginAudio_values );
         PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
         PrefUtil.validateListPreference( res, prefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );
@@ -203,7 +192,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_USER_PREFS, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_HELP, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_ABOUT, this );
-        PrefUtil.setOnPreferenceClickListener( this, PATH_HI_RES_TEXTURES, this );
         
         // Handle crash tests in a particular way (see CrashTester for more info)
         findPreference( ACTION_CRASH_TEST ).setOnPreferenceClickListener( new CrashTester( this ) );
@@ -211,15 +199,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Hide certain categories altogether if they're not applicable. Normally we just rely on
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
-        if( !mUserPrefs.isGles2N64Enabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_N64 );
-        
-        if( !mUserPrefs.isGles2RiceEnabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
-        
-        if( !mUserPrefs.isGles2Glide64Enabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_GLIDE64 );
-        
         if( !AppData.IS_KITKAT )
             PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_IMMERSIVE_MODE );
         
@@ -274,8 +253,8 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        if( key.equals( PLUGIN_VIDEO ) || key.equals( TOUCHPAD_ENABLED )
-                || key.equals( NAVIGATION_MODE ) || key.equals( LOCALE_OVERRIDE ) )
+        if( key.equals( TOUCHPAD_ENABLED ) || key.equals( NAVIGATION_MODE )
+                || key.equals( LOCALE_OVERRIDE ) )
         {
             // Sometimes one preference change affects the hierarchy or layout of the views. In this
             // case it's easier just to restart the activity than try to figure out what to fix.
@@ -284,10 +263,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             // * Change the input mapping layout when Xperia Play touchpad en/disabled
             finish();
             startActivity( getIntent() );
-        }
-        else if( key.equals( PATH_HI_RES_TEXTURES ) )
-        {
-            processTexturePak( sharedPreferences.getString( PATH_HI_RES_TEXTURES, "" ) );
         }
         else
         {
@@ -326,9 +301,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 && !mUserPrefs.isTouchscreenCustom );
         PrefUtil.enablePreference( this, TOUCHSCREEN_HEIGHT, mUserPrefs.isTouchscreenEnabled
                 && !mUserPrefs.isTouchscreenCustom );
-        
-        // Enable the custom hardware profile prefs only when custom video hardware type is selected
-        PrefUtil.enablePreference( this, CUSTOM_POLYGON_OFFSET, mUserPrefs.videoHardwareType == 999 );
         
         // Update the summary text in a particular way for ACRA user info
         EditTextPreference pref = (EditTextPreference) findPreference( ACRA_USER_EMAIL );
@@ -453,54 +425,5 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         new Builder( this ).setTitle( title ).setMessage( message ).setNegativeButton( null, null )
                 .setNeutralButton( credits, listener ).setPositiveButton( changelog, listener )
                 .create().show();
-    }
-    
-    private void processTexturePak( final String filename )
-    {
-        if( TextUtils.isEmpty( filename ) )
-        {
-            ErrorLogger.put( "Video", "pathHiResTextures",
-                    "Filename not specified in MenuActivity.processTexturePak" );
-            Notifier.showToast( this, R.string.pathHiResTexturesTask_errorMessage );
-            return;
-        }
-        
-        TaskHandler.Task task = new TaskHandler.Task()
-        {
-            @Override
-            public void run()
-            {
-                String headerName = Utility.getTexturePackName( filename );
-                if( !ErrorLogger.hasError() )
-                {
-                    if( TextUtils.isEmpty( headerName ) )
-                    {
-                        ErrorLogger
-                                .setLastError( "getTexturePackName returned null in MenuActivity.processTexturePak" );
-                        ErrorLogger.putLastError( "Video", "pathHiResTextures" );
-                    }
-                    else
-                    {
-                        String outputFolder = mAppData.sharedDataDir + "/hires_texture/"
-                                + headerName;
-                        FileUtil.deleteFolder( new File( outputFolder ) );
-                        Utility.unzipAll( new File( filename ), outputFolder );
-                    }
-                }
-            }
-            
-            @Override
-            public void onComplete()
-            {
-                if( ErrorLogger.hasError() )
-                    Notifier.showToast( MenuActivity.this,
-                            R.string.pathHiResTexturesTask_errorMessage );
-                ErrorLogger.clearLastError();
-            }
-        };
-        
-        String title = getString( R.string.pathHiResTexturesTask_title );
-        String message = getString( R.string.pathHiResTexturesTask_message );
-        TaskHandler.run( this, title, message, task );
     }
 }

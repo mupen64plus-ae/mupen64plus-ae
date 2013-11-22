@@ -67,6 +67,17 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="paulscode.android.mupen64plusae.VideoMenuActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/appTheme.NoTransition" >
+            <intent-filter>
+                <action android:name=".VideoMenuActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="paulscode.android.mupen64plusae.input.InputMapActivity"
             android:exported="false"
             android:label="@string/app_name" >
