@@ -70,7 +70,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String ACTION_HELP = "actionHelp";
     private static final String ACTION_ABOUT = "actionAbout";
     
-    private static final String SCREEN_INPUT = "screenInput";
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
     private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
     private static final String SCREEN_VIDEO = "screenVideo";
@@ -95,7 +94,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
     private static final String CUSTOM_POLYGON_OFFSET = "customPolygonOffset";
     private static final String PLUGIN_VIDEO = "pluginVideo";
-    private static final String PLUGIN_INPUT = "pluginInput";
     private static final String PLUGIN_AUDIO = "pluginAudio";
     private static final String R4300_EMULATOR = "r4300Emulator";
     private static final String VIDEO_POSITION = "videoPosition";
@@ -184,7 +182,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, VIDEO_POSITION, R.string.videoPosition_default, R.array.videoPosition_values );
         PrefUtil.validateListPreference( res, prefs, VIDEO_RESOLUTION, R.string.videoResolution_default, R.array.videoResolution_values );
         PrefUtil.validateListPreference( res, prefs, VIDEO_SCALING, R.string.videoScaling_default, R.array.videoScaling_values );
-        PrefUtil.validateListPreference( res, prefs, PLUGIN_INPUT, R.string.pluginInput_default, R.array.pluginInput_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_VIDEO, R.string.pluginVideo_default, R.array.pluginVideo_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_AUDIO, R.string.pluginAudio_default, R.array.pluginAudio_values );
         PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
@@ -318,9 +315,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         {
             pp.setSummary( selectedGame.getName() );
         }
-        
-        // Enable the input menu only if the input plug-in is not a dummy
-        PrefUtil.enablePreference( this, SCREEN_INPUT, mUserPrefs.inputPlugin.enabled );
         
         // Enable the audio menu only if the audio plug-in is not a dummy
         PrefUtil.enablePreference( this, SCREEN_AUDIO, mUserPrefs.audioPlugin.enabled );

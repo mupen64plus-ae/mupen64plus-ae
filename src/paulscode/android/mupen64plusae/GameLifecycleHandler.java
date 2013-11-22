@@ -214,8 +214,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         
         // Initialize user interface devices
         View inputSource = mIsXperiaPlay ? new NativeXperiaTouchpad( mActivity ) : mOverlay;
-        if( mUserPrefs.inputPlugin.enabled )
-            initControllers( inputSource );
+        initControllers( inputSource );
         
         // Override the peripheral controllers' key provider, to add some extra functionality
         inputSource.setOnKeyListener( this );

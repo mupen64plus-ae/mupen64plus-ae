@@ -122,9 +122,6 @@ public class UserPrefs
     /** The selected audio plug-in. */
     public final Plugin audioPlugin;
     
-    /** The selected input plug-in. */
-    public final Plugin inputPlugin;
-    
     /** The selected R4300 emulator. */
     public final String r4300Emulator;
     
@@ -429,7 +426,6 @@ public class UserPrefs
         // Plug-ins
         videoPlugin = new Plugin( mPreferences, appData.libsDir, "pluginVideo" );
         audioPlugin = new Plugin( mPreferences, appData.libsDir, "pluginAudio" );
-        inputPlugin = new Plugin( mPreferences, appData.libsDir, "pluginInput" );
         
         // R4300 emulator
         r4300Emulator = mPreferences.getString( "r4300Emulator", "2" );
@@ -531,7 +527,7 @@ public class UserPrefs
         // Determine the touchscreen layout
         boolean isCustom = false;
         String folder = "";
-        if( inputPlugin.enabled && isTouchscreenEnabled )
+        if( isTouchscreenEnabled )
         {
             String layout = mPreferences.getString( "touchscreenLayout", "" );
             if( layout.equals( "Custom" ) )
@@ -591,7 +587,7 @@ public class UserPrefs
         
         // Determine the touchscreen style
         folder = "";
-        if( inputPlugin.enabled && isTouchscreenEnabled && !isCustom )
+        if( isTouchscreenEnabled && !isCustom )
         {
             folder = mPreferences.getString( "touchscreenStyle", "Mupen64Plus-AE-Outline" );
         }

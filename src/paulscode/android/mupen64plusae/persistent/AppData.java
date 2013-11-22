@@ -147,6 +147,9 @@ public class AppData
     /** The path of the RSP library. */
     public final String rspLib;
     
+    /** The path of the input library. */
+    public final String inputLib;
+    
     /** The path of the Mupen64Plus base configuration file. */
     public final String mupen64plus_cfg;
     
@@ -231,6 +234,7 @@ public class AppData
         // Files
         coreLib = libsDir + "/libcore.so";
         rspLib = libsDir + "/librsp-hle.so";
+        inputLib = libsDir + "/libinput-android.so";
         mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
         gles2n64_conf = sharedDataDir + "/gles2n64.conf";
         gles2glide64_conf = sharedDataDir + "/Glide64mk2.ini";

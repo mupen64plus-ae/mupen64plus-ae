@@ -491,13 +491,6 @@
                     android:summary="@string/selectedValue"
                     android:title="@string/pluginVideo_title" />
                 <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/pluginInput_default"
-                    android:entries="@array/pluginInput_entries"
-                    android:entryValues="@array/pluginInput_values"
-                    android:key="pluginInput"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/pluginInput_title" />
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
                     android:defaultValue="@string/pluginAudio_default"
                     android:entries="@array/pluginAudio_entries"
                     android:entryValues="@array/pluginAudio_values"
