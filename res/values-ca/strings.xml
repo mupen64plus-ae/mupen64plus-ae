@@ -77,7 +77,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Juga</string>
+  <string name="screenPlay_title">Juga</string>
   <string name="actionResume_title">Resumeix</string>
   <string name="actionResume_summary">Impredictible si els cheats són utilitzats</string>
   <string name="actionRestart_title">Reinicia</string>
@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Configuració per Xperia PLAY</string>
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Configuració de vídeo</string>
-  <string name="screenAudio_title">Àudio</string>
-  <string name="screenAudio_summary">Configuració del so</string>
+  <string name="categoryAudio_title">Àudio</string>
+  <string name="categoryAudio_summary">Configuració del so</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Configuració del nucli</string>
   <string name="screenAdvanced_title">Avançat</string>
@@ -143,10 +143,10 @@
   <string name="inputVolumeMappable_summary">Permetre que les tecles de volum siguin assignades a controls</string>
   <string name="inputShareController_title">Compartir comandament</string>
   <string name="inputShareController_summary">Permet que un únic dispositiu d\'entrada controli a diversos jugadors a la vegada</string>
-  <string name="videoImmersiveMode_title">Mode de Immersive</string>
-  <string name="videoImmersiveMode_summary">Amaga completament la navegació i la barra d\'estat</string>
-  <string name="videoUseFramelimiter_title">Utilitza framelimiter</string>
-  <string name="videoUseFramelimiter_summary">Activa aquesta opció per a una experiència de joc més fluida (alenteix alguns jocs)</string>
+  <string name="displayImmersiveMode_title">Mode de Immersive</string>
+  <string name="displayImmersiveMode_summary">Amaga completament la navegació i la barra d\'estat</string>
+  <string name="coreUseFramelimiter_title">Utilitza framelimiter</string>
+  <string name="coreUseFramelimiter_summary">Activa aquesta opció per a una experiència de joc més fluida (alenteix alguns jocs)</string>
   <string name="videoRgba8888_title">Mode RGBA_8888</string>
   <string name="videoRgba8888_summary">Millora els gràfics en alguns terminals</string>
   <string name="gles2N64Fog_title">boira</string>
@@ -196,32 +196,32 @@
   <string name="touchpadLayout_title">Disposició de botons de touchpad</string>
   <string name="touchpadLayout_entryDefault">Pad esquerre: Control analògic; Pad dret: Botons C</string>
   <string name="touchpadLayout_entryReverse">Pad esquerre: Botons C; Pad dret: Control analògic</string>
-  <string name="videoOrientation_title">Orientació de la pantalla</string>
-  <string name="videoOrientation_entryLandscape">Apaïsat</string>
-  <string name="videoOrientation_entryReverseLandscape">Apaïsat invertit</string>
-  <string name="videoOrientation_entryPortrait">Vertical</string>
-  <string name="videoOrientation_entryReversePortrait">Vertical invertit</string>
-  <string name="videoPosition_title">Posició vertical de la pantalla</string>
-  <string name="videoPosition_entryBottom">Abaix</string>
-  <string name="videoPosition_entryMiddle">Al mig</string>
-  <string name="videoPosition_entryTop">Adalt</string>
-  <string name="videoResolution_title">Resolució de renderitzat</string>
-  <string name="videoResolution_entryNative">Natiu (la millor qualitat)</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoResolution_entry160x120">160 x 120 (framerate més alt)</string>
-  <string name="videoScaling_title">Escalat de pantalla</string>
-  <string name="videoScaling_entryNone">cap\n<small> Utilitza la resolució exacta seleccionada anteriorment </small></string>
-  <string name="videoScaling_entryZoom">Zoom\n<small>Emplena la pantalla, sense distorsió (afegeix barres negres) </small></string>
-  <string name="videoScaling_entryCrop">Crop\n<small>Emplena la pantalla, sense distorsió (retalla gràfics) </small></string>
-  <string name="videoScaling_entryStretch">Stretch\n<small>Emplena la pantalla, sense barres negres (afegeix distorsió) </small></string>
-  <string name="videoFpsRefresh_title">Mostra velocitat de quadres (framerate)</string>
-  <string name="videoFpsRefresh_entryNever">Mai</string>
-  <string name="videoFpsRefresh_entryOccasionally">Ocasionalment</string>
-  <string name="videoFpsRefresh_entryFrequently">Freqüentment</string>
+  <string name="displayOrientation_title">Orientació de la pantalla</string>
+  <string name="displayOrientation_entryLandscape">Apaïsat</string>
+  <string name="displayOrientation_entryReverseLandscape">Apaïsat invertit</string>
+  <string name="displayOrientation_entryPortrait">Vertical</string>
+  <string name="displayOrientation_entryReversePortrait">Vertical invertit</string>
+  <string name="displayPosition_title">Posició vertical de la pantalla</string>
+  <string name="displayPosition_entryBottom">Abaix</string>
+  <string name="displayPosition_entryMiddle">Al mig</string>
+  <string name="displayPosition_entryTop">Adalt</string>
+  <string name="displayResolution_title">Resolució de renderitzat</string>
+  <string name="displayResolution_entryNative">Natiu (la millor qualitat)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (framerate més alt)</string>
+  <string name="displayScaling_title">Escalat de pantalla</string>
+  <string name="displayScaling_entryNone">cap\n<small> Utilitza la resolució exacta seleccionada anteriorment </small></string>
+  <string name="displayScaling_entryZoom">Zoom\n<small>Emplena la pantalla, sense distorsió (afegeix barres negres) </small></string>
+  <string name="displayScaling_entryCrop">Crop\n<small>Emplena la pantalla, sense distorsió (retalla gràfics) </small></string>
+  <string name="displayScaling_entryStretch">Stretch\n<small>Emplena la pantalla, sense barres negres (afegeix distorsió) </small></string>
+  <string name="displayFpsRefresh_title">Mostra velocitat de quadres (framerate)</string>
+  <string name="displayFpsRefresh_entryNever">Mai</string>
+  <string name="displayFpsRefresh_entryOccasionally">Ocasionalment</string>
+  <string name="displayFpsRefresh_entryFrequently">Freqüentment</string>
   <string name="videoHardwareType_title">Reducció del parpelleig</string>
   <string name="videoHardwareType_entryAuto">Auto-detecta des del model de mòbil/tablet</string>
   <string name="videoHardwareType_entryStandard">Perfil estàndard</string>
@@ -231,8 +231,8 @@
   <string name="videoHardwareType_entryQ">Perfil Q</string>
   <string name="videoHardwareType_entryT">\t\nPerfil T</string>
   <string name="videoHardwareType_entryCustom">Perfil personalitzat</string>
-  <string name="customPolygonOffset_title">Polygon offset</string>
-  <string name="customPolygonOffset_summary">Flicker reduction bias personalitzat</string>
+  <string name="videoPolygonOffset_title">Polygon offset</string>
+  <string name="videoPolygonOffset_summary">Flicker reduction bias personalitzat</string>
   <string name="gles2N64Frameskip_title">Salt de quadres (Frameskip)</string>
   <string name="gles2N64Frameskip_entryNever">Mai saltar quadres (frameskip)</string>
   <string name="gles2N64Frameskip_entryUpTo1">No més de 1 frame</string>
@@ -275,14 +275,14 @@
   <string name="audioResampleAlg_entrySincFastest">Funció sinc (ràpid)</string>
   <string name="audioResampleAlg_entrySincMedium">Funció sinc (mitjà)</string>
   <string name="audioResampleAlg_entrySincBest">Funció sinc (millor)</string>
-  <string name="pluginVideo_title">Vídeo</string>
-  <string name="pluginVideo_entryNone">Cap (vídeo deshabilitat)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64⏎\n<small>(adaptació de GLN64 v0.4.1)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice⏎\n<small>(adaptatció de Rice Video v6.1.0(b))</small></string>
-  <string name="pluginVideo_entryGles2Glide64">gles2glide64⏎\n<small>(adaptatció de Glide64 Final (10th Anniversary))</small></string>
-  <string name="pluginAudio_title">Àudio</string>
-  <string name="pluginAudio_entryNone">Cap (àudio deshabilitat)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="videoPlugin_title">Vídeo</string>
+  <string name="videoPlugin_entryNone">Cap (vídeo deshabilitat)</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64⏎\n<small>(adaptació de GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice⏎\n<small>(adaptatció de Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64⏎\n<small>(adaptatció de Glide64 Final (10th Anniversary))</small></string>
+  <string name="audioPlugin_title">Àudio</string>
+  <string name="audioPlugin_entryNone">Cap (àudio deshabilitat)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">\t\nEntrada</string>
   <string name="pluginInput_entryNone">Cap (dispositius d\'entrada deshabilitats)</string>
   <string name="pluginInput_entryAndroid">input-android</string>
@@ -311,7 +311,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Opacitat de la pantalla tàctil</string>
   <string name="touchscreenScale_title">Escala del botó</string>
-  <string name="videoActionBarTransparency_title">Opacitat de la barra d\'accions</string>
+  <string name="displayActionBarTransparency_title">Opacitat de la barra d\'accions</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

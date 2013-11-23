@@ -68,7 +68,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Играть</string>
+  <string name="screenPlay_title">Играть</string>
   <string name="actionResume_title">Продолжить</string>
   <string name="actionResume_summary">Возможно использование чит-кодов</string>
   <string name="actionRestart_title">Перезапуск</string>
@@ -102,8 +102,8 @@
   <string name="screenTouchpad_summary">Для Xperia PLAY</string>
   <string name="screenVideo_title">Видео</string>
   <string name="screenVideo_summary">Настройки графики</string>
-  <string name="screenAudio_title">Звук</string>
-  <string name="screenAudio_summary">Аудио параметры</string>
+  <string name="categoryAudio_title">Звук</string>
+  <string name="categoryAudio_summary">Аудио параметры</string>
   <string name="screenPlugin_title">Плагины</string>
   <string name="screenPlugin_summary">Параметры эмулятора</string>
   <string name="screenAdvanced_title">Другое</string>
@@ -134,8 +134,8 @@
   <string name="inputVolumeMappable_summary">Разрешить переназначение кнопок управления звуком</string>
   <string name="inputShareController_title">Совместное использование контроллера</string>
   <string name="inputShareController_summary">Разрешить одному устройству ввода управлять несколькими игроками сразу</string>
-  <string name="videoUseFramelimiter_title">Ограничить FPS</string>
-  <string name="videoUseFramelimiter_summary">Плавнее, но ниже FPS</string>
+  <string name="coreUseFramelimiter_title">Ограничить FPS</string>
+  <string name="coreUseFramelimiter_summary">Плавнее, но ниже FPS</string>
   <string name="videoRgba8888_title">Режим RGBA_8888</string>
   <string name="videoRgba8888_summary">Улучшает картинку на некоторых устройствах</string>
   <string name="gles2N64Fog_title">Туман</string>
@@ -175,31 +175,31 @@
   <string name="touchpadLayout_title">Расположение экранных кнопок</string>
   <string name="touchpadLayout_entryDefault">Слева джойстик, справа кнопки</string>
   <string name="touchpadLayout_entryReverse">Слева кнопки, справа джойстик</string>
-  <string name="videoOrientation_title">Ориентация экрана</string>
-  <string name="videoOrientation_entryLandscape">Альбомная</string>
-  <string name="videoOrientation_entryReverseLandscape">Зеркальная альбомная</string>
-  <string name="videoOrientation_entryPortrait">Портретная</string>
-  <string name="videoOrientation_entryReversePortrait">Зеркальная портретная</string>
-  <string name="videoPosition_title">Вертикальное положение экрана</string>
-  <string name="videoPosition_entryBottom">Низ</string>
-  <string name="videoPosition_entryMiddle">Середина</string>
-  <string name="videoPosition_entryTop">Верх</string>
-  <string name="videoResolution_title">Разрешение рендерера</string>
-  <string name="videoResolution_entryNative">Родное (высокое качество)</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoResolution_entry160x120">160 x 120 (Наибольшая частота кадров)</string>
-  <string name="videoScaling_title">Размер экрана</string>
-  <string name="videoScaling_entryNone">По умолчанию\n<small>Использовать разрешение заданное выше</small></string>
-  <string name="videoScaling_entryZoom">Максимальное\n<small>Без искажений, но с чёрными полосами</small></string>
-  <string name="videoScaling_entryStretch">На весь экран\n<small>Без чёрных полос, возможно нарушение пропорций</small></string>
-  <string name="videoFpsRefresh_title">Отображать FPS</string>
-  <string name="videoFpsRefresh_entryNever">Никогда</string>
-  <string name="videoFpsRefresh_entryOccasionally">Изредка</string>
-  <string name="videoFpsRefresh_entryFrequently">Часто</string>
+  <string name="displayOrientation_title">Ориентация экрана</string>
+  <string name="displayOrientation_entryLandscape">Альбомная</string>
+  <string name="displayOrientation_entryReverseLandscape">Зеркальная альбомная</string>
+  <string name="displayOrientation_entryPortrait">Портретная</string>
+  <string name="displayOrientation_entryReversePortrait">Зеркальная портретная</string>
+  <string name="displayPosition_title">Вертикальное положение экрана</string>
+  <string name="displayPosition_entryBottom">Низ</string>
+  <string name="displayPosition_entryMiddle">Середина</string>
+  <string name="displayPosition_entryTop">Верх</string>
+  <string name="displayResolution_title">Разрешение рендерера</string>
+  <string name="displayResolution_entryNative">Родное (высокое качество)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (Наибольшая частота кадров)</string>
+  <string name="displayScaling_title">Размер экрана</string>
+  <string name="displayScaling_entryNone">По умолчанию\n<small>Использовать разрешение заданное выше</small></string>
+  <string name="displayScaling_entryZoom">Максимальное\n<small>Без искажений, но с чёрными полосами</small></string>
+  <string name="displayScaling_entryStretch">На весь экран\n<small>Без чёрных полос, возможно нарушение пропорций</small></string>
+  <string name="displayFpsRefresh_title">Отображать FPS</string>
+  <string name="displayFpsRefresh_entryNever">Никогда</string>
+  <string name="displayFpsRefresh_entryOccasionally">Изредка</string>
+  <string name="displayFpsRefresh_entryFrequently">Часто</string>
   <string name="videoHardwareType_title">Уменьшение мерцания</string>
   <string name="videoHardwareType_entryAuto">Автоматическое определение модели телефона/планшета </string>
   <string name="videoHardwareType_entryStandard">Стандартный профиль</string>
@@ -239,14 +239,14 @@
   <string name="audioResampleAlg_entrySincFastest">Sinc (быстрый)</string>
   <string name="audioResampleAlg_entrySincMedium">Sinc (средний)</string>
   <string name="audioResampleAlg_entrySincBest">Sinc (лучший)</string>
-  <string name="pluginVideo_title">Видео плагин</string>
-  <string name="pluginVideo_entryNone">Заглушка (выключить изображение)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(порт GLN64 v0.4.1)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(порт Rice Video v6.1.0(b))</small></string>
-  <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(порт Glide64 Final (10th Anniversary))</small></string>
-  <string name="pluginAudio_title">Звуковой плагин</string>
-  <string name="pluginAudio_entryNone">Заглушка (выключить звук)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="videoPlugin_title">Видео плагин</string>
+  <string name="videoPlugin_entryNone">Заглушка (выключить изображение)</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(порт GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(порт Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(порт Glide64 Final (10th Anniversary))</small></string>
+  <string name="audioPlugin_title">Звуковой плагин</string>
+  <string name="audioPlugin_entryNone">Заглушка (выключить звук)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Плагин ввода</string>
   <string name="pluginInput_entryNone">Заглушка</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
@@ -274,7 +274,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Прозрачность оверлея</string>
   <string name="touchscreenScale_title">Размер кнопок</string>
-  <string name="videoActionBarTransparency_title">Прозрачность верхней панели</string>
+  <string name="displayActionBarTransparency_title">Прозрачность верхней панели</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

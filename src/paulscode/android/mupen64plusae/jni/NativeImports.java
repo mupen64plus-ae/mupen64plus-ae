@@ -73,6 +73,6 @@ public class NativeImports extends CoreInterface
      */
     public static float getCustomPolygonOffset()
     {
-        return sUserPrefs.customPolygonOffset;
+        return sUserPrefs.videoPolygonOffset;
     }
 }

@@ -49,8 +49,8 @@ public class VideoMenuActivity extends PreferenceActivity implements
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
     private static final String CATEGORY_GLES2_GLIDE64 = "categoryGles2Glide64";
     
-    private static final String PLUGIN_VIDEO = "pluginVideo";
-    private static final String CUSTOM_POLYGON_OFFSET = "customPolygonOffset";
+    private static final String VIDEO_PLUGIN = "videoPlugin";
+    private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     
     // App data and user preferences
@@ -75,8 +75,8 @@ public class VideoMenuActivity extends PreferenceActivity implements
         
         // Ensure that selected plugin names and other list preferences are valid
         Resources res = getResources();
-        PrefUtil.validateListPreference( res, prefs, PLUGIN_VIDEO, R.string.pluginVideo_default,
-                R.array.pluginVideo_values );
+        PrefUtil.validateListPreference( res, prefs, VIDEO_PLUGIN, R.string.videoPlugin_default,
+                R.array.videoPlugin_values );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_video );
@@ -117,7 +117,7 @@ public class VideoMenuActivity extends PreferenceActivity implements
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        if( key.equals( PLUGIN_VIDEO ) )
+        if( key.equals( VIDEO_PLUGIN ) )
         {
             // Rebuild the menu; the easiest way is to simply restart the activity
             finish();
@@ -141,7 +141,7 @@ public class VideoMenuActivity extends PreferenceActivity implements
         
         // Enable the custom hardware profile prefs only when custom video hardware type is
         // selected
-        PrefUtil.enablePreference( this, CUSTOM_POLYGON_OFFSET, mUserPrefs.videoHardwareType == 999 );
+        PrefUtil.enablePreference( this, VIDEO_POLYGON_OFFSET, mUserPrefs.videoHardwareType == 999 );
     }
     
     private void processTexturePak( final String filename )

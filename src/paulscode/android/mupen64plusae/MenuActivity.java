@@ -58,7 +58,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String PATH_SELECTED_GAME = "pathSelectedGame";
     
-    private static final String ACTION_PLAY = "actionPlay";
     private static final String ACTION_DEVICE_INFO = "actionDeviceInfo";
     private static final String ACTION_CRASH_TEST = "actionCrashTest";
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
@@ -66,6 +65,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String ACTION_HELP = "actionHelp";
     private static final String ACTION_ABOUT = "actionAbout";
     
+    private static final String SCREEN_PLAY = "screenPlay";
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
     private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
     private static final String SCREEN_DISPLAY = "screenDisplay";
@@ -81,14 +81,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
     private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
     private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
-    private static final String PLUGIN_AUDIO = "pluginAudio";
-    private static final String R4300_EMULATOR = "r4300Emulator";
-    private static final String VIDEO_POSITION = "videoPosition";
-    private static final String VIDEO_RESOLUTION = "videoResolution";
-    private static final String VIDEO_SCALING = "videoScaling";
-    private static final String VIDEO_IMMERSIVE_MODE = "videoImmersiveMode";
-    private static final String VIDEO_ACTION_BAR_TRANSPARENCY = "videoActionBarTransparency";
+    private static final String DISPLAY_POSITION = "displayPosition";
+    private static final String DISPLAY_RESOLUTION = "displayResolution";
+    private static final String DISPLAY_SCALING = "displayScaling";
+    private static final String DISPLAY_IMMERSIVE_MODE = "displayImmersiveMode";
+    private static final String DISPLAY_ACTION_BAR_TRANSPARENCY = "displayActionBarTransparency";
     private static final String NAVIGATION_MODE = "navigationMode";
+    private static final String R4300_EMULATOR = "r4300Emulator";
+    private static final String AUDIO_PLUGIN = "audioPlugin";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     private static final String LOCALE_OVERRIDE = "localeOverride";
@@ -159,10 +159,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_HEIGHT, R.string.touchscreenHeight_default, R.array.touchscreenHeight_values );
         PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_LAYOUT, R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
         PrefUtil.validateListPreference( res, prefs, TOUCHPAD_LAYOUT, R.string.touchpadLayout_default, R.array.touchpadLayout_values );
-        PrefUtil.validateListPreference( res, prefs, VIDEO_POSITION, R.string.videoPosition_default, R.array.videoPosition_values );
-        PrefUtil.validateListPreference( res, prefs, VIDEO_RESOLUTION, R.string.videoResolution_default, R.array.videoResolution_values );
-        PrefUtil.validateListPreference( res, prefs, VIDEO_SCALING, R.string.videoScaling_default, R.array.videoScaling_values );
-        PrefUtil.validateListPreference( res, prefs, PLUGIN_AUDIO, R.string.pluginAudio_default, R.array.pluginAudio_values );
+        PrefUtil.validateListPreference( res, prefs, DISPLAY_POSITION, R.string.displayPosition_default, R.array.displayPosition_values );
+        PrefUtil.validateListPreference( res, prefs, DISPLAY_RESOLUTION, R.string.displayResolution_default, R.array.displayResolution_values );
+        PrefUtil.validateListPreference( res, prefs, DISPLAY_SCALING, R.string.displayScaling_default, R.array.displayScaling_values );
+        PrefUtil.validateListPreference( res, prefs, AUDIO_PLUGIN, R.string.audioPlugin_default, R.array.audioPlugin_values );
         PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
         PrefUtil.validateListPreference( res, prefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );
         
@@ -191,10 +191,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
         if( !AppData.IS_KITKAT )
-            PrefUtil.removePreference( this, SCREEN_DISPLAY, VIDEO_IMMERSIVE_MODE );
+            PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_IMMERSIVE_MODE );
         
         if( !mUserPrefs.isActionBarAvailable )
-            PrefUtil.removePreference( this, SCREEN_DISPLAY, VIDEO_ACTION_BAR_TRANSPARENCY );
+            PrefUtil.removePreference( this, SCREEN_DISPLAY, DISPLAY_ACTION_BAR_TRANSPARENCY );
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
@@ -266,7 +266,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Enable the play menu only if the selected game actually exists
         File selectedGame = new File( mUserPrefs.selectedGame );
         boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
-        PrefUtil.enablePreference( this, ACTION_PLAY, isValidGame );
+        PrefUtil.enablePreference( this, SCREEN_PLAY, isValidGame );
         
         // Update the summary text for the selected game
         PathPreference pp = (PathPreference) findPreference( PATH_SELECTED_GAME );

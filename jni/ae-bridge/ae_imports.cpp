@@ -30,7 +30,7 @@
 static pthread_key_t mThreadKey;
 static JavaVM* mJavaVM;
 // Store custom polygon offset natively to reduce JNI calls
-static float customPolygonOffset = -0.2f;
+static float videoPolygonOffset = -0.2f;
 
 // Imported java class reference
 static jclass mActivityClass;
@@ -192,7 +192,7 @@ extern DECLSPEC int Android_JNI_GetHardwareType()
     int hardwareType = GetInt( midGetHardwareType );
     if( hardwareType == HARDWARE_TYPE_CUSTOM )
     {
-        customPolygonOffset = GetFloat( midGetCustomPolygonOffset );
+        videoPolygonOffset = GetFloat( midGetCustomPolygonOffset );
     }
     return hardwareType;
 }
@@ -227,8 +227,8 @@ extern DECLSPEC void Android_JNI_GetPolygonOffset(const int hardwareType, const 
     }
     else if( hardwareType == HARDWARE_TYPE_CUSTOM )
     {
-        *f1 = bias > 0 ? customPolygonOffset : 0.0f;
-        *f2 = bias > 0 ? customPolygonOffset : 0.0f;
+        *f1 = bias > 0 ? videoPolygonOffset : 0.0f;
+        *f2 = bias > 0 ? videoPolygonOffset : 0.0f;
     }
     else // HARDWARE_TYPE_UNKNOWN
     {

@@ -77,7 +77,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Παίξιμο</string>
+  <string name="screenPlay_title">Παίξιμο</string>
   <string name="actionResume_title">Συνέχιση</string>
   <string name="actionResume_summary">Απρόβλεπτο αν έχουν χρησιμοποιηθεί κωδικοί</string>
   <string name="actionRestart_title">Επανεκκίνηση</string>
@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Ρυθμίσεις Xperia PLAY</string>
   <string name="screenVideo_title">Βίντεο</string>
   <string name="screenVideo_summary">Ρυθμίσεις γραφικών</string>
-  <string name="screenAudio_title">Ήχος</string>
-  <string name="screenAudio_summary">Ρυθμίσεις ήχου</string>
+  <string name="categoryAudio_title">Ήχος</string>
+  <string name="categoryAudio_summary">Ρυθμίσεις ήχου</string>
   <string name="screenPlugin_title">Πρόσθετα</string>
   <string name="screenPlugin_summary">Επολογή plugin για κάθε υποσύστημα</string>
   <string name="screenAdvanced_title">Προχωρημένα</string>
@@ -143,8 +143,8 @@
   <string name="inputVolumeMappable_summary">Επιτρέπει την χρήση των πλήκτρων έντασης ως κουμπιά χειριστηρίου</string>
   <string name="inputShareController_title">Κοινή χρήση χειριστηρίου</string>
   <string name="inputShareController_summary">Επιτρέπει σε μία συσκευή εισόδου να χειρλιζεται πολλούς παίκτες</string>
-  <string name="videoUseFramelimiter_title">Χρήση περιοριστή καρέ</string>
-  <string name="videoUseFramelimiter_summary">Ενεργοποίηση για ομαλή εμπειρία παιχνιδιού (μπορεί να επιβραδύνει κάποια παιχνίδια)</string>
+  <string name="coreUseFramelimiter_title">Χρήση περιοριστή καρέ</string>
+  <string name="coreUseFramelimiter_summary">Ενεργοποίηση για ομαλή εμπειρία παιχνιδιού (μπορεί να επιβραδύνει κάποια παιχνίδια)</string>
   <string name="videoRgba8888_title">Λειτουργία RGBA_8888</string>
   <string name="videoRgba8888_summary">Βελτιώνει τα γραφικά σε κάποιες συσκευές</string>
   <string name="gles2N64Fog_title">Ομίχλη</string>
@@ -193,31 +193,31 @@
   <string name="touchpadLayout_title">Διάταξη επιφάνειας αφής</string>
   <string name="touchpadLayout_entryDefault">Αριστερά: Αναλογικός μοχλός, Δεξιά: κουμπιά C</string>
   <string name="touchpadLayout_entryReverse">Αριστερά: κουμπιά C, Δεξιά: Αναλογικός μοχλός</string>
-  <string name="videoOrientation_title">Προσανατολισμός οθόνης</string>
-  <string name="videoOrientation_entryLandscape">Τοπίο</string>
-  <string name="videoOrientation_entryReverseLandscape">Ανεστραμμένο τοπίο</string>
-  <string name="videoOrientation_entryPortrait">Πορτραίτο</string>
-  <string name="videoOrientation_entryReversePortrait">Ανεστραμμένο Πορτραίτο</string>
-  <string name="videoPosition_title">Κάθετη θέαση</string>
-  <string name="videoPosition_entryBottom">Κάτω μέρος</string>
-  <string name="videoPosition_entryMiddle">Μέση</string>
-  <string name="videoPosition_entryTop">Πάνω μέρος</string>
-  <string name="videoResolution_title">Ανάλυση σχεδίασης</string>
-  <string name="videoResolution_entryNative">Φυσική (μεγαλύτερη ποιότητα)</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoResolution_entry160x120">160 x 120 (περισσότερα καρέ)</string>
-  <string name="videoScaling_title">Κλιμάκωση οθόνης</string>
-  <string name="videoScaling_entryNone">Καμία\n<small>Χρήση ίδιας ανάλυσης με παραπάνω</small></string>
-  <string name="videoScaling_entryZoom">Zoom\n<small>Γέμισμα οθόνης, καμία παραμόρφωση (προσθήκη μαύρων μπαρών)</small></string>
-  <string name="videoScaling_entryStretch">Τέντωμα\n<small>Γέμισμα οθόνης, χωρίς μαύρες μπάρες (παραμορφώνει)</small></string>
-  <string name="videoFpsRefresh_title">Προβολή ρυθμού καρέ</string>
-  <string name="videoFpsRefresh_entryNever">Ποτέ</string>
-  <string name="videoFpsRefresh_entryOccasionally">Περιστασιακά</string>
-  <string name="videoFpsRefresh_entryFrequently">Συχνά</string>
+  <string name="displayOrientation_title">Προσανατολισμός οθόνης</string>
+  <string name="displayOrientation_entryLandscape">Τοπίο</string>
+  <string name="displayOrientation_entryReverseLandscape">Ανεστραμμένο τοπίο</string>
+  <string name="displayOrientation_entryPortrait">Πορτραίτο</string>
+  <string name="displayOrientation_entryReversePortrait">Ανεστραμμένο Πορτραίτο</string>
+  <string name="displayPosition_title">Κάθετη θέαση</string>
+  <string name="displayPosition_entryBottom">Κάτω μέρος</string>
+  <string name="displayPosition_entryMiddle">Μέση</string>
+  <string name="displayPosition_entryTop">Πάνω μέρος</string>
+  <string name="displayResolution_title">Ανάλυση σχεδίασης</string>
+  <string name="displayResolution_entryNative">Φυσική (μεγαλύτερη ποιότητα)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (περισσότερα καρέ)</string>
+  <string name="displayScaling_title">Κλιμάκωση οθόνης</string>
+  <string name="displayScaling_entryNone">Καμία\n<small>Χρήση ίδιας ανάλυσης με παραπάνω</small></string>
+  <string name="displayScaling_entryZoom">Zoom\n<small>Γέμισμα οθόνης, καμία παραμόρφωση (προσθήκη μαύρων μπαρών)</small></string>
+  <string name="displayScaling_entryStretch">Τέντωμα\n<small>Γέμισμα οθόνης, χωρίς μαύρες μπάρες (παραμορφώνει)</small></string>
+  <string name="displayFpsRefresh_title">Προβολή ρυθμού καρέ</string>
+  <string name="displayFpsRefresh_entryNever">Ποτέ</string>
+  <string name="displayFpsRefresh_entryOccasionally">Περιστασιακά</string>
+  <string name="displayFpsRefresh_entryFrequently">Συχνά</string>
   <string name="videoHardwareType_title">Μείωση τρεμοπαίγματος</string>
   <string name="videoHardwareType_entryAuto">Αυτόμ. ανίχνευση από το μοντέλου του τηλεφώνου/τάμπλετ</string>
   <string name="videoHardwareType_entryStandard">Κανονικό προφίλ</string>
@@ -268,14 +268,14 @@
   <string name="audioResampleAlg_entrySincFastest">Sinc (ταχύτατο)</string>
   <string name="audioResampleAlg_entrySincMedium">Sinc (μεσαίο)</string>
   <string name="audioResampleAlg_entrySincBest">Sinc (βέλτιστο)</string>
-  <string name="pluginVideo_title">Βίντεο</string>
-  <string name="pluginVideo_entryNone">Κανένα (βίντεο απενεργοποιημένο)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(προσαρμογή του GLN64 v0.4.1)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(προσαρμογή του Rice Video v6.1.0(b))</small></string>
-  <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(προσαρμογή του Glide64 Final (10th Anniversary))</small></string>
-  <string name="pluginAudio_title">Ήχος</string>
-  <string name="pluginAudio_entryNone">Κανένας (ήχος απενεργοποιημένος)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="videoPlugin_title">Βίντεο</string>
+  <string name="videoPlugin_entryNone">Κανένα (βίντεο απενεργοποιημένο)</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(προσαρμογή του GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(προσαρμογή του Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(προσαρμογή του Glide64 Final (10th Anniversary))</small></string>
+  <string name="audioPlugin_title">Ήχος</string>
+  <string name="audioPlugin_entryNone">Κανένας (ήχος απενεργοποιημένος)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Εισαγωγή</string>
   <string name="pluginInput_entryNone">Καμία (εισαγωγή απενεργοποιημένη)</string>
   <string name="pluginInput_entryAndroid">εισαγωγή-android</string>
@@ -304,7 +304,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Ορατότητα πλήκτρων</string>
   <string name="touchscreenScale_title">Κλίμακα πλήκτρων</string>
-  <string name="videoActionBarTransparency_title">Ορατότητα μπάρας ενεργειών</string>
+  <string name="displayActionBarTransparency_title">Ορατότητα μπάρας ενεργειών</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

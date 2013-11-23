@@ -77,7 +77,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Spelen</string>
+  <string name="screenPlay_title">Spelen</string>
   <string name="actionResume_title">Hervat</string>
   <string name="actionResume_summary">Onvoorspelbaar als cheats worden gebruikt</string>
   <string name="actionRestart_title">Herstart</string>
@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY instellingen</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafische instellingen</string>
-  <string name="screenAudio_title">Geluid</string>
-  <string name="screenAudio_summary">Geluidinstellingen</string>
+  <string name="categoryAudio_title">Geluid</string>
+  <string name="categoryAudio_summary">Geluidinstellingen</string>
   <string name="screenPlugin_title">Invoegtoepassingen</string>
   <string name="screenPlugin_summary">Core-instellingen</string>
   <string name="screenAdvanced_title">Geavanceerd</string>
@@ -143,8 +143,8 @@
   <string name="inputVolumeMappable_summary">Sta het toe om volumeknoppen toe te wijzen</string>
   <string name="inputShareController_title">Deel controller</string>
   <string name="inputShareController_summary">Laat meerdere spelers besturen met 1 invoerapparaat</string>
-  <string name="videoUseFramelimiter_title">Limiteer beeldverversing</string>
-  <string name="videoUseFramelimiter_summary">Schakel in voor vloeiender spelen (vertraagt sommige spellen)</string>
+  <string name="coreUseFramelimiter_title">Limiteer beeldverversing</string>
+  <string name="coreUseFramelimiter_summary">Schakel in voor vloeiender spelen (vertraagt sommige spellen)</string>
   <string name="videoRgba8888_title">RGBA_8888 modus</string>
   <string name="videoRgba8888_summary">Verbetert beeld op sommige apparaten</string>
   <string name="gles2N64Fog_title">Mist</string>
@@ -193,31 +193,31 @@
   <string name="touchpadLayout_title">Touchpadindeling</string>
   <string name="touchpadLayout_entryDefault">Links: Analoge controller; Rechts: C-knoppen</string>
   <string name="touchpadLayout_entryReverse">Links: C-knoppen; Rechts: Analoge controller</string>
-  <string name="videoOrientation_title">Schermoriëntatie</string>
-  <string name="videoOrientation_entryLandscape">Landschap</string>
-  <string name="videoOrientation_entryReverseLandscape">Omgekeerd landschap</string>
-  <string name="videoOrientation_entryPortrait">Portet</string>
-  <string name="videoOrientation_entryReversePortrait">Omgekeerd portret</string>
-  <string name="videoPosition_title">Vertikale schermpositie</string>
-  <string name="videoPosition_entryBottom">Onderkant</string>
-  <string name="videoPosition_entryMiddle">Midden</string>
-  <string name="videoPosition_entryTop">Bovenkant</string>
-  <string name="videoResolution_title">Gerenderde resolutie</string>
-  <string name="videoResolution_entryNative">Eigen (hoogste kwaliteit)</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoResolution_entry160x120">160 x 120 (hoogste beeldfrequentie)</string>
-  <string name="videoScaling_title">Schermschaling</string>
-  <string name="videoScaling_entryNone">Geen\n<small>Gebruik precies de geselecteerde resolutie</small></string>
-  <string name="videoScaling_entryZoom">Zoom\n<small>Scherm vullen zonder vervorming (voegt zwarte balken toe)</small></string>
-  <string name="videoScaling_entryStretch">Uitrekken\n<small>Schermvullend zonder zwarte balken (geeft vervorming)</small></string>
-  <string name="videoFpsRefresh_title">Framesnelheid weergeven</string>
-  <string name="videoFpsRefresh_entryNever">Nooit</string>
-  <string name="videoFpsRefresh_entryOccasionally">Soms</string>
-  <string name="videoFpsRefresh_entryFrequently">Vaak</string>
+  <string name="displayOrientation_title">Schermoriëntatie</string>
+  <string name="displayOrientation_entryLandscape">Landschap</string>
+  <string name="displayOrientation_entryReverseLandscape">Omgekeerd landschap</string>
+  <string name="displayOrientation_entryPortrait">Portet</string>
+  <string name="displayOrientation_entryReversePortrait">Omgekeerd portret</string>
+  <string name="displayPosition_title">Vertikale schermpositie</string>
+  <string name="displayPosition_entryBottom">Onderkant</string>
+  <string name="displayPosition_entryMiddle">Midden</string>
+  <string name="displayPosition_entryTop">Bovenkant</string>
+  <string name="displayResolution_title">Gerenderde resolutie</string>
+  <string name="displayResolution_entryNative">Eigen (hoogste kwaliteit)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (hoogste beeldfrequentie)</string>
+  <string name="displayScaling_title">Schermschaling</string>
+  <string name="displayScaling_entryNone">Geen\n<small>Gebruik precies de geselecteerde resolutie</small></string>
+  <string name="displayScaling_entryZoom">Zoom\n<small>Scherm vullen zonder vervorming (voegt zwarte balken toe)</small></string>
+  <string name="displayScaling_entryStretch">Uitrekken\n<small>Schermvullend zonder zwarte balken (geeft vervorming)</small></string>
+  <string name="displayFpsRefresh_title">Framesnelheid weergeven</string>
+  <string name="displayFpsRefresh_entryNever">Nooit</string>
+  <string name="displayFpsRefresh_entryOccasionally">Soms</string>
+  <string name="displayFpsRefresh_entryFrequently">Vaak</string>
   <string name="videoHardwareType_title">Knipperonderdrukking</string>
   <string name="videoHardwareType_entryAuto">Automatische herkenning van telefoon-/tabletmodel</string>
   <string name="videoHardwareType_entryStandard">Standaardprofiel</string>
@@ -268,13 +268,13 @@
   <string name="audioResampleAlg_entrySincFastest">Sinc (snelst)</string>
   <string name="audioResampleAlg_entrySincMedium">Sinc (gemiddeld)</string>
   <string name="audioResampleAlg_entrySincBest">Sinc (beste)</string>
-  <string name="pluginVideo_title">Video</string>
-  <string name="pluginVideo_entryNone">Geen (video uitgeschakeld)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(aangepaste versie van GLN64 v0.4.1)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(aangepaste versie van Rice Video v6.1.0(b))</small></string>
-  <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(aangepaste versie van Glide64 Final (10e Jubileum))</small></string>
-  <string name="pluginAudio_title">Geluid</string>
-  <string name="pluginAudio_entryNone">Geen (geluid uitgeschakeld)</string>
+  <string name="videoPlugin_title">Video</string>
+  <string name="videoPlugin_entryNone">Geen (video uitgeschakeld)</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(aangepaste versie van GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(aangepaste versie van Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(aangepaste versie van Glide64 Final (10e Jubileum))</small></string>
+  <string name="audioPlugin_title">Geluid</string>
+  <string name="audioPlugin_entryNone">Geen (geluid uitgeschakeld)</string>
   <string name="pluginInput_title">Invoer</string>
   <string name="pluginInput_entryNone">Geen (invoer uitgeschakeld)</string>
   <string name="pluginInput_entryAndroid">input-android</string>
@@ -301,7 +301,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knoptransparantie</string>
   <string name="touchscreenScale_title">Knopschaal</string>
-  <string name="videoActionBarTransparency_title">Actiebalk doorzichtigheid</string>
+  <string name="displayActionBarTransparency_title">Actiebalk doorzichtigheid</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

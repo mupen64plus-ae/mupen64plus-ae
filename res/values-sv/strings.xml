@@ -75,7 +75,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Spela</string>
+  <string name="screenPlay_title">Spela</string>
   <string name="actionResume_title">Återuppta</string>
   <string name="actionResume_summary">Oförutsägbar om fusk används</string>
   <string name="actionRestart_title">Starta om</string>
@@ -108,8 +108,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY inställningar</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik inställningar</string>
-  <string name="screenAudio_title">Ljud</string>
-  <string name="screenAudio_summary">Ljud inställningar</string>
+  <string name="categoryAudio_title">Ljud</string>
+  <string name="categoryAudio_summary">Ljud inställningar</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Core inställningar</string>
   <string name="screenAdvanced_title">Avancerat</string>
@@ -140,8 +140,8 @@
   <string name="inputVolumeMappable_summary">Tillåt volymknapparna at bli mappade till kontroller</string>
   <string name="inputShareController_title">Dela controller</string>
   <string name="inputShareController_summary">Låt en enda inmatningsenhet för att styra flera spelare på gång</string>
-  <string name="videoUseFramelimiter_title">Använd framelimiter</string>
-  <string name="videoUseFramelimiter_summary">Aktivera för smidigare gameplay (saktar vissa spel)</string>
+  <string name="coreUseFramelimiter_title">Använd framelimiter</string>
+  <string name="coreUseFramelimiter_summary">Aktivera för smidigare gameplay (saktar vissa spel)</string>
   <string name="videoRgba8888_title">RGBA_8888 läge</string>
   <string name="videoRgba8888_summary">Förbättrar grafik på vissa anordningar</string>
   <string name="gles2N64Fog_title">Dimma</string>
@@ -184,25 +184,25 @@
   <string name="touchpadLayout_title">Pekplatta layout</string>
   <string name="touchpadLayout_entryDefault">Vänster pad: Analog kontroll; Höger pad: C knappar</string>
   <string name="touchpadLayout_entryReverse">Vänster pad: C knappar; Höger pad: Analog kontrol</string>
-  <string name="videoOrientation_title">Skärmorientering</string>
-  <string name="videoOrientation_entryLandscape">Landskap</string>
-  <string name="videoOrientation_entryReverseLandscape">Omvänd landskap</string>
-  <string name="videoOrientation_entryPortrait">Porträtt</string>
-  <string name="videoOrientation_entryReversePortrait">Omvänd porträtt</string>
-  <string name="videoPosition_entryBottom">Botten</string>
-  <string name="videoPosition_entryMiddle">Mitten</string>
-  <string name="videoPosition_entryTop">Toppen</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoResolution_entry160x120">160 x 120 (högsta framerate)</string>
-  <string name="videoScaling_title">Skärm skalning</string>
-  <string name="videoFpsRefresh_title">Visa framerate</string>
-  <string name="videoFpsRefresh_entryNever">Aldrig</string>
-  <string name="videoFpsRefresh_entryOccasionally">Ibland</string>
-  <string name="videoFpsRefresh_entryFrequently">Ofta</string>
+  <string name="displayOrientation_title">Skärmorientering</string>
+  <string name="displayOrientation_entryLandscape">Landskap</string>
+  <string name="displayOrientation_entryReverseLandscape">Omvänd landskap</string>
+  <string name="displayOrientation_entryPortrait">Porträtt</string>
+  <string name="displayOrientation_entryReversePortrait">Omvänd porträtt</string>
+  <string name="displayPosition_entryBottom">Botten</string>
+  <string name="displayPosition_entryMiddle">Mitten</string>
+  <string name="displayPosition_entryTop">Toppen</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (högsta framerate)</string>
+  <string name="displayScaling_title">Skärm skalning</string>
+  <string name="displayFpsRefresh_title">Visa framerate</string>
+  <string name="displayFpsRefresh_entryNever">Aldrig</string>
+  <string name="displayFpsRefresh_entryOccasionally">Ibland</string>
+  <string name="displayFpsRefresh_entryFrequently">Ofta</string>
   <string name="videoHardwareType_title">Flimmer minskning</string>
   <string name="videoHardwareType_entryAuto">Auto-upptäck från mobil/tablett modell</string>
   <string name="videoHardwareType_entryStandard">Standard profil</string>
@@ -246,10 +246,10 @@
   <string name="audioResampleAlg_entrySincFastest">Sinc (snabbast)</string>
   <string name="audioResampleAlg_entrySincMedium">Sinc (medium)</string>
   <string name="audioResampleAlg_entrySincBest">Sinc (bäst)</string>
-  <string name="pluginVideo_title">Video</string>
-  <string name="pluginVideo_entryNone">Ingen (video inaktiverad)</string>
-  <string name="pluginAudio_title">Ljud</string>
-  <string name="pluginAudio_entryNone">Ingen (ljud inaktiverad)</string>
+  <string name="videoPlugin_title">Video</string>
+  <string name="videoPlugin_entryNone">Ingen (video inaktiverad)</string>
+  <string name="audioPlugin_title">Ljud</string>
+  <string name="audioPlugin_entryNone">Ingen (ljud inaktiverad)</string>
   <string name="pluginInput_title">ingång</string>
   <string name="pluginInput_entryNone">Ingen (input inaktiverad)</string>
   <string name="pluginRsp_title">Reality signalprocessor (RSP)</string>
@@ -273,7 +273,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knapp opacitet</string>
   <string name="touchscreenScale_title">Knapp skala</string>
-  <string name="videoActionBarTransparency_title">Action bar opacitet</string>
+  <string name="displayActionBarTransparency_title">Action bar opacitet</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

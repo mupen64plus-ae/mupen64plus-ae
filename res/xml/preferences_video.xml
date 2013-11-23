@@ -4,12 +4,12 @@
     android:key="screenVideo" >
 
     <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-        android:defaultValue="@string/pluginVideo_default"
-        android:entries="@array/pluginVideo_entries"
-        android:entryValues="@array/pluginVideo_values"
-        android:key="pluginVideo"
+        android:defaultValue="@string/videoPlugin_default"
+        android:entries="@array/videoPlugin_entries"
+        android:entryValues="@array/videoPlugin_values"
+        android:key="videoPlugin"
         android:summary="@string/selectedValue"
-        android:title="@string/pluginVideo_title" />
+        android:title="@string/videoPlugin_title" />
     <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
         android:defaultValue="@string/videoHardwareType_default"
         android:entries="@array/videoHardwareType_entries"
@@ -21,9 +21,9 @@
     <EditTextPreference
         android:defaultValue="-0.2"
         android:inputType="numberDecimal|numberSigned"
-        android:key="customPolygonOffset"
-        android:summary="@string/customPolygonOffset_summary"
-        android:title="@string/customPolygonOffset_title" />
+        android:key="videoPolygonOffset"
+        android:summary="@string/videoPolygonOffset_summary"
+        android:title="@string/videoPolygonOffset_title" />
 
     <PreferenceCategory
         android:key="categoryGles2N64"

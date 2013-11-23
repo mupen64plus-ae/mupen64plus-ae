@@ -157,46 +157,46 @@
     <string name="touchpadLayout_default" translatable="false">Mupen64Plus-AE-Xperia-Play</string>
 
     <!-- Screen Orientation List -->
-    <string-array name="videoOrientation_entries" translatable="false">
-        <item>@string/videoOrientation_entryLandscape</item>
-        <item>@string/videoOrientation_entryReverseLandscape</item>
-        <item>@string/videoOrientation_entryPortrait</item>
-        <item>@string/videoOrientation_entryReversePortrait</item>
+    <string-array name="displayOrientation_entries" translatable="false">
+        <item>@string/displayOrientation_entryLandscape</item>
+        <item>@string/displayOrientation_entryReverseLandscape</item>
+        <item>@string/displayOrientation_entryPortrait</item>
+        <item>@string/displayOrientation_entryReversePortrait</item>
     </string-array>
-    <string-array name="videoOrientation_values" translatable="false">
+    <string-array name="displayOrientation_values" translatable="false">
         <item>0</item> <!-- ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -->
         <item>8</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -->
         <item>1</item> <!-- ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -->
         <item>9</item> <!-- ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -->
     </string-array>
 
-    <string name="videoOrientation_default" translatable="false">0</string>
+    <string name="displayOrientation_default" translatable="false">0</string>
 
     <!-- Screen Position List -->
-    <string-array name="videoPosition_entries" translatable="false">
-        <item>@string/videoPosition_entryTop</item>
-        <item>@string/videoPosition_entryMiddle</item>
-        <item>@string/videoPosition_entryBottom</item>
+    <string-array name="displayPosition_entries" translatable="false">
+        <item>@string/displayPosition_entryTop</item>
+        <item>@string/displayPosition_entryMiddle</item>
+        <item>@string/displayPosition_entryBottom</item>
     </string-array>
-    <string-array name="videoPosition_values" translatable="false">
+    <string-array name="displayPosition_values" translatable="false">
         <item>48</item> <!-- Gravity.TOP -->
         <item>16</item> <!-- Gravity.CENTER_VERTICAL -->
         <item>80</item> <!-- Gravity.BOTTOM -->
     </string-array>
 
-    <string name="videoPosition_default" translatable="false">16</string>
+    <string name="displayPosition_default" translatable="false">16</string>
 
     <!-- Screen Resolution List -->
-    <string-array name="videoResolution_entries" translatable="false">
-        <item>@string/videoResolution_entryNative</item>
-        <item>@string/videoResolution_entry960x720</item>
-        <item>@string/videoResolution_entry800x600</item>
-        <item>@string/videoResolution_entry640x480</item>
-        <item>@string/videoResolution_entry480x360</item>
-        <item>@string/videoResolution_entry320x240</item>
-        <item>@string/videoResolution_entry160x120</item>
+    <string-array name="displayResolution_entries" translatable="false">
+        <item>@string/displayResolution_entryNative</item>
+        <item>@string/displayResolution_entry960x720</item>
+        <item>@string/displayResolution_entry800x600</item>
+        <item>@string/displayResolution_entry640x480</item>
+        <item>@string/displayResolution_entry480x360</item>
+        <item>@string/displayResolution_entry320x240</item>
+        <item>@string/displayResolution_entry160x120</item>
     </string-array>
-    <string-array name="videoResolution_values" translatable="false">
+    <string-array name="displayResolution_values" translatable="false">
         <item>0</item>
         <item>720</item>
         <item>600</item>
@@ -206,37 +206,37 @@
         <item>120</item>
     </string-array>
 
-    <string name="videoResolution_default" translatable="false">0</string>
+    <string name="displayResolution_default" translatable="false">0</string>
 
     <!-- Screen Scaling List -->
-    <string-array name="videoScaling_entries" translatable="false">
-        <item>@string/videoScaling_entryNone</item>
-        <item>@string/videoScaling_entryZoom</item>
-        <item>@string/videoScaling_entryCrop</item>
-        <item>@string/videoScaling_entryStretch</item>
+    <string-array name="displayScaling_entries" translatable="false">
+        <item>@string/displayScaling_entryNone</item>
+        <item>@string/displayScaling_entryZoom</item>
+        <item>@string/displayScaling_entryCrop</item>
+        <item>@string/displayScaling_entryStretch</item>
     </string-array>
-    <string-array name="videoScaling_values" translatable="false">
+    <string-array name="displayScaling_values" translatable="false">
         <item>none</item>
         <item>zoom</item>
         <item>crop</item>
         <item>stretch</item>
     </string-array>
 
-    <string name="videoScaling_default" translatable="false">zoom</string>
+    <string name="displayScaling_default" translatable="false">zoom</string>
 
     <!-- Framerate Refresh List -->
-    <string-array name="videoFpsRefresh_entries" translatable="false">
-        <item>@string/videoFpsRefresh_entryNever</item>
-        <item>@string/videoFpsRefresh_entryOccasionally</item>
-        <item>@string/videoFpsRefresh_entryFrequently</item>
+    <string-array name="displayFpsRefresh_entries" translatable="false">
+        <item>@string/displayFpsRefresh_entryNever</item>
+        <item>@string/displayFpsRefresh_entryOccasionally</item>
+        <item>@string/displayFpsRefresh_entryFrequently</item>
     </string-array>
-    <string-array name="videoFpsRefresh_values" translatable="false">
+    <string-array name="displayFpsRefresh_values" translatable="false">
         <item>0</item>
         <item>60</item>
         <item>15</item>
     </string-array>
 
-    <string name="videoFpsRefresh_default" translatable="false">0</string>
+    <string name="displayFpsRefresh_default" translatable="false">0</string>
 
     <!-- Hardware Profile List -->
     <string-array name="videoHardwareType_entries" translatable="false">
@@ -387,32 +387,32 @@
     <string name="gles2RiceTextureEnhancement_default">0</string>
 
     <!-- Video Plugins -->
-    <string-array name="pluginVideo_entries" translatable="false">
-        <item>@string/pluginVideo_entryNone</item>
-        <item>@string/pluginVideo_entryGles2N64</item>
-        <item>@string/pluginVideo_entryGles2Rice</item>
-        <item>@string/pluginVideo_entryGles2Glide64</item>
+    <string-array name="videoPlugin_entries" translatable="false">
+        <item>@string/videoPlugin_entryNone</item>
+        <item>@string/videoPlugin_entryGles2N64</item>
+        <item>@string/videoPlugin_entryGles2Rice</item>
+        <item>@string/videoPlugin_entryGles2Glide64</item>
     </string-array>
-    <string-array name="pluginVideo_values" translatable="false">
+    <string-array name="videoPlugin_values" translatable="false">
         <item></item>
         <item>libgles2n64.so</item>
         <item>libgles2rice.so</item>
         <item>libgles2glide64.so</item>
     </string-array>
 
-    <string name="pluginVideo_default" translatable="false">libgles2n64.so</string>
+    <string name="videoPlugin_default" translatable="false">libgles2n64.so</string>
 
     <!-- Audio Plugins -->
-    <string-array name="pluginAudio_entries" translatable="false">
-        <item>@string/pluginAudio_entryNone</item>
-        <item>@string/pluginAudio_entrySdl</item>
+    <string-array name="audioPlugin_entries" translatable="false">
+        <item>@string/audioPlugin_entryNone</item>
+        <item>@string/audioPlugin_entrySdl</item>
     </string-array>
-    <string-array name="pluginAudio_values" translatable="false">
+    <string-array name="audioPlugin_values" translatable="false">
         <item></item>
         <item>libaudio-sdl.so</item>
     </string-array>
 
-    <string name="pluginAudio_default" translatable="false">libaudio-sdl.so</string>
+    <string name="audioPlugin_default" translatable="false">libaudio-sdl.so</string>
 
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">

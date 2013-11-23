@@ -76,7 +76,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Oyna</string>
+  <string name="screenPlay_title">Oyna</string>
   <string name="actionResume_title">Devam Et</string>
   <string name="actionResume_summary">Hileler kullanılıyorsa tahmin edilemez</string>
   <string name="actionRestart_title">Yeniden Başlat</string>
@@ -109,8 +109,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY ayarları</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik ayarları</string>
-  <string name="screenAudio_title">Ses</string>
-  <string name="screenAudio_summary">Ses Ayarları</string>
+  <string name="categoryAudio_title">Ses</string>
+  <string name="categoryAudio_summary">Ses Ayarları</string>
   <string name="screenPlugin_title">Eklentiler</string>
   <string name="screenPlugin_summary">Temel ayarlar</string>
   <string name="screenAdvanced_title">Gelişmiş</string>
@@ -141,8 +141,8 @@
   <string name="inputVolumeMappable_summary">Ses tuşlarının denetimler için haritalanmasına izin ver</string>
   <string name="inputShareController_title">Kumandayı paylaş</string>
   <string name="inputShareController_summary">Tek bir girdi aygıtının aynı anda birden fazla oyuncuyu kontrol etmesine izin ver</string>
-  <string name="videoUseFramelimiter_title">Kare sabitleyici kullan</string>
-  <string name="videoUseFramelimiter_summary">Akıcı bir oynayış için etkinleştirin (bazı oyunları yavaşlatır)</string>
+  <string name="coreUseFramelimiter_title">Kare sabitleyici kullan</string>
+  <string name="coreUseFramelimiter_summary">Akıcı bir oynayış için etkinleştirin (bazı oyunları yavaşlatır)</string>
   <string name="videoRgba8888_title">RGBA_8888 modu</string>
   <string name="videoRgba8888_summary">Bazı aygıtlarda grafikleri iyileştirir</string>
   <string name="gles2N64Fog_title">Sis</string>
@@ -191,25 +191,25 @@
   <string name="touchpadLayout_title">Dokunmatik yüzey düzeni</string>
   <string name="touchpadLayout_entryDefault">Sol tık: Analog kontrol; Sağ tık: C tuşları</string>
   <string name="touchpadLayout_entryReverse">Sol tık:  C tuşları ; Sağ tık:Analog kontrol</string>
-  <string name="videoOrientation_title">Ekran yönlendirmesi</string>
-  <string name="videoOrientation_entryLandscape">Manzara</string>
-  <string name="videoOrientation_entryReverseLandscape">Ters Manzara</string>
-  <string name="videoOrientation_entryPortrait">Portre</string>
-  <string name="videoOrientation_entryReversePortrait">Ters portre</string>
-  <string name="videoPosition_title">Dikey ekran konumu</string>
-  <string name="videoPosition_entryBottom">Alt</string>
-  <string name="videoPosition_entryMiddle">Orta</string>
-  <string name="videoPosition_entryTop">Üst</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoScaling_title">Ekran ölçekleme</string>
-  <string name="videoFpsRefresh_title">Ekran kare hızı</string>
-  <string name="videoFpsRefresh_entryNever">Asla</string>
-  <string name="videoFpsRefresh_entryOccasionally">Bazen</string>
-  <string name="videoFpsRefresh_entryFrequently">Sıkça</string>
+  <string name="displayOrientation_title">Ekran yönlendirmesi</string>
+  <string name="displayOrientation_entryLandscape">Manzara</string>
+  <string name="displayOrientation_entryReverseLandscape">Ters Manzara</string>
+  <string name="displayOrientation_entryPortrait">Portre</string>
+  <string name="displayOrientation_entryReversePortrait">Ters portre</string>
+  <string name="displayPosition_title">Dikey ekran konumu</string>
+  <string name="displayPosition_entryBottom">Alt</string>
+  <string name="displayPosition_entryMiddle">Orta</string>
+  <string name="displayPosition_entryTop">Üst</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayScaling_title">Ekran ölçekleme</string>
+  <string name="displayFpsRefresh_title">Ekran kare hızı</string>
+  <string name="displayFpsRefresh_entryNever">Asla</string>
+  <string name="displayFpsRefresh_entryOccasionally">Bazen</string>
+  <string name="displayFpsRefresh_entryFrequently">Sıkça</string>
   <string name="videoHardwareType_title">Titreme azaltma</string>
   <string name="videoHardwareType_entryAuto">Telefon/tablet modelinden otomatik olarak algıla</string>
   <string name="videoHardwareType_entryStandard">Standart profil</string>
@@ -260,11 +260,11 @@
   <string name="audioResampleAlg_entrySincFastest">Sinc (en hızlı)</string>
   <string name="audioResampleAlg_entrySincMedium">Sinc (orta)</string>
   <string name="audioResampleAlg_entrySincBest">Sinc (en iyi)</string>
-  <string name="pluginVideo_title">Video</string>
-  <string name="pluginVideo_entryNone">Hiçbiri (video devre dışı)</string>
-  <string name="pluginAudio_title">Ses</string>
-  <string name="pluginAudio_entryNone">Hiçbiri (ses devre dışı)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="videoPlugin_title">Video</string>
+  <string name="videoPlugin_entryNone">Hiçbiri (video devre dışı)</string>
+  <string name="audioPlugin_title">Ses</string>
+  <string name="audioPlugin_entryNone">Hiçbiri (ses devre dışı)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Girdi</string>
   <string name="pluginInput_entryNone">Hiçbiri( girdi devre dışı)</string>
   <string name="pluginRsp_title">Gerçeklik Sinyali İşlemcisi (RSP)</string>
@@ -291,7 +291,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Dokunmatik ekran şeffaflığı</string>
   <string name="touchscreenScale_title">Düğme boyutu</string>
-  <string name="videoActionBarTransparency_title">İşlem çubuğu donması</string>
+  <string name="displayActionBarTransparency_title">İşlem çubuğu donması</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

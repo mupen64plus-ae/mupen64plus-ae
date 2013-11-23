@@ -237,10 +237,10 @@ public class UserPrefs
     public final List<Integer> unmappableKeyCodes;
     
     /** The screen orientation for the game activity. */
-    public final int videoOrientation;
+    public final int displayOrientation;
     
     /** The vertical screen position. */
-    public final int videoPosition;
+    public final int displayPosition;
     
     /** The width of the OpenGL rendering context, in pixels. */
     public final int videoRenderWidth;
@@ -255,10 +255,10 @@ public class UserPrefs
     public final int videoSurfaceHeight;
     
     /** The action bar transparency value. */
-    public final int videoActionBarTransparency;
+    public final int displayActionBarTransparency;
     
     /** The number of frames over which FPS is calculated (0 = disabled). */
-    public final int videoFpsRefresh;
+    public final int displayFpsRefresh;
     
     /** True if the FPS indicator is displayed. */
     public final boolean isFpsEnabled;
@@ -273,7 +273,7 @@ public class UserPrefs
     public final int videoHardwareType;
     
     /** The polygon offset to use if hardware type is 'custom'. */
-    public final float customPolygonOffset;
+    public final float videoPolygonOffset;
     
     /** True if gles2n64 video plug-in is enabled. */
     public final boolean isGles2N64Enabled;
@@ -415,8 +415,8 @@ public class UserPrefs
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
         
         // Plug-ins
-        videoPlugin = new Plugin( mPreferences, appData.libsDir, "pluginVideo" );
-        audioPlugin = new Plugin( mPreferences, appData.libsDir, "pluginAudio" );
+        videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );
+        audioPlugin = new Plugin( mPreferences, appData.libsDir, "audioPlugin" );
         
         // R4300 emulator
         r4300Emulator = mPreferences.getString( "r4300Emulator", "2" );
@@ -461,16 +461,16 @@ public class UserPrefs
         inputSensitivity4 = getInputSensitivity( 4 );
         
         // Video prefs
-        videoOrientation = getSafeInt( mPreferences, "videoOrientation", 0 );
-        videoPosition = getSafeInt( mPreferences, "videoPosition", Gravity.CENTER_VERTICAL );
-        transparencyPercent = mPreferences.getInt( "videoActionBarTransparency", 50 );
-        videoActionBarTransparency = ( 255 * transparencyPercent ) / 100;
-        videoFpsRefresh = getSafeInt( mPreferences, "videoFpsRefresh", 0 );
-        isFpsEnabled = videoFpsRefresh > 0;
+        displayOrientation = getSafeInt( mPreferences, "displayOrientation", 0 );
+        displayPosition = getSafeInt( mPreferences, "displayPosition", Gravity.CENTER_VERTICAL );
+        transparencyPercent = mPreferences.getInt( "displayActionBarTransparency", 50 );
+        displayActionBarTransparency = ( 255 * transparencyPercent ) / 100;
+        displayFpsRefresh = getSafeInt( mPreferences, "displayFpsRefresh", 0 );
+        isFpsEnabled = displayFpsRefresh > 0;
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
-        customPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "customPolygonOffset", "-0.2" ), -0.2f );
-        isImmersiveModeEnabled = mPreferences.getBoolean( "videoImmersiveMode", false );
-        isFramelimiterEnabled = mPreferences.getBoolean( "videoUseFramelimiter", false );
+        videoPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "videoPolygonOffset", "-0.2" ), -0.2f );
+        isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
+        isFramelimiterEnabled = mPreferences.getBoolean( "coreUseFramelimiter", false );
         
         // Video prefs - gles2n64
         isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
@@ -546,8 +546,8 @@ public class UserPrefs
                         float screenHeightInches = (float) metrics.heightPixels / (float) metrics.ydpi;
                         float screenSizeInches = (float) Math.sqrt( ( screenWidthInches * screenWidthInches ) + ( screenHeightInches * screenHeightInches ) );
                         if( screenSizeInches >= Utility.MINIMUM_TABLET_SIZE ||
-                            videoOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
-                            videoOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
+                            displayOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
+                            displayOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT )
                         {
                             layout += "-Half-Height";
                         }
@@ -646,8 +646,8 @@ public class UserPrefs
             int cropWidth = isLetterboxed ? Math.round( (float) stretchHeight / aspect ) : stretchWidth;
             int cropHeight = isLetterboxed ? stretchHeight : Math.round( (float) stretchWidth * aspect );
             
-            int hResolution = getSafeInt( mPreferences, "videoResolution", 0 );
-            String scaling = mPreferences.getString( "videoScaling", "zoom" );
+            int hResolution = getSafeInt( mPreferences, "displayResolution", 0 );
+            String scaling = mPreferences.getString( "displayScaling", "zoom" );
             if( hResolution == 0 )
             {
                 // Native resolution

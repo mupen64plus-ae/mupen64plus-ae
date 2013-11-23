@@ -75,7 +75,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Játék</string>
+  <string name="screenPlay_title">Játék</string>
   <string name="actionResume_title">Folytatás</string>
   <string name="actionResume_summary">Bizonytalan csalások használatánál</string>
   <string name="actionRestart_title">Újraindítás</string>
@@ -108,8 +108,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY beállítások</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafikai beállítások</string>
-  <string name="screenAudio_title">Hang</string>
-  <string name="screenAudio_summary">Hang beállítások</string>
+  <string name="categoryAudio_title">Hang</string>
+  <string name="categoryAudio_summary">Hang beállítások</string>
   <string name="screenPlugin_title">Pluginek</string>
   <string name="screenPlugin_summary">Mag beállítások</string>
   <string name="screenAdvanced_title">Haladó</string>
@@ -139,8 +139,8 @@
   <string name="inputVolumeMappable_summary">Hangerő gombok programozásának engedélyezése</string>
   <string name="inputShareController_title">Kontroller megosztása</string>
   <string name="inputShareController_summary">Egy beviteli eszközt több játékos is irányíthat</string>
-  <string name="videoUseFramelimiter_title">Framelimiter használata</string>
-  <string name="videoUseFramelimiter_summary">Engedélyezd a simább játékmenetért (lelassít néhány játékot)</string>
+  <string name="coreUseFramelimiter_title">Framelimiter használata</string>
+  <string name="coreUseFramelimiter_summary">Engedélyezd a simább játékmenetért (lelassít néhány játékot)</string>
   <string name="videoRgba8888_title">RGBA_8888 mód</string>
   <string name="videoRgba8888_summary">Fokozhatja a grafikát néhány készüléken</string>
   <string name="gles2N64Fog_title">Köd</string>
@@ -181,18 +181,18 @@
   <string name="touchpadLayout_title">Érintőpad kiosztás</string>
   <string name="touchpadLayout_entryDefault">Bal pad: analóg irányítás; jobb pad? C gombok</string>
   <string name="touchpadLayout_entryReverse">Bal pad: C gombok; Jobb pad: Analóg irányítás</string>
-  <string name="videoOrientation_title">Képernyő orientáció</string>
-  <string name="videoOrientation_entryLandscape">Elforgatott</string>
-  <string name="videoOrientation_entryReverseLandscape">Fordított elforgatott</string>
-  <string name="videoOrientation_entryPortrait">Portré</string>
-  <string name="videoOrientation_entryReversePortrait">Fordított portré</string>
-  <string name="videoPosition_entryBottom">Alul</string>
-  <string name="videoPosition_entryMiddle">Középen</string>
-  <string name="videoPosition_entryTop">Felül</string>
-  <string name="videoFpsRefresh_title">FPS szám mutatása</string>
-  <string name="videoFpsRefresh_entryNever">Soha</string>
-  <string name="videoFpsRefresh_entryOccasionally">Néha</string>
-  <string name="videoFpsRefresh_entryFrequently">Gyakran</string>
+  <string name="displayOrientation_title">Képernyő orientáció</string>
+  <string name="displayOrientation_entryLandscape">Elforgatott</string>
+  <string name="displayOrientation_entryReverseLandscape">Fordított elforgatott</string>
+  <string name="displayOrientation_entryPortrait">Portré</string>
+  <string name="displayOrientation_entryReversePortrait">Fordított portré</string>
+  <string name="displayPosition_entryBottom">Alul</string>
+  <string name="displayPosition_entryMiddle">Középen</string>
+  <string name="displayPosition_entryTop">Felül</string>
+  <string name="displayFpsRefresh_title">FPS szám mutatása</string>
+  <string name="displayFpsRefresh_entryNever">Soha</string>
+  <string name="displayFpsRefresh_entryOccasionally">Néha</string>
+  <string name="displayFpsRefresh_entryFrequently">Gyakran</string>
   <string name="videoHardwareType_title">Vibrálás csökkentése</string>
   <string name="videoHardwareType_entryAuto">Telefon/tablet alapján auto-felismerés</string>
   <string name="videoHardwareType_entryStandard">Alap profil</string>
@@ -243,10 +243,10 @@
   <string name="audioResampleAlg_entrySincFastest">Szinkronizálás (leggyorsabb)</string>
   <string name="audioResampleAlg_entrySincMedium">Szinkronizálás (közepes)</string>
   <string name="audioResampleAlg_entrySincBest">Szinkronizálás (legjobb)</string>
-  <string name="pluginVideo_title">Video</string>
-  <string name="pluginVideo_entryNone">Nincs (video kikapcsolva)</string>
-  <string name="pluginAudio_title">Hang</string>
-  <string name="pluginAudio_entryNone">Nincs (hang kikapcsolva)</string>
+  <string name="videoPlugin_title">Video</string>
+  <string name="videoPlugin_entryNone">Nincs (video kikapcsolva)</string>
+  <string name="audioPlugin_title">Hang</string>
+  <string name="audioPlugin_entryNone">Nincs (hang kikapcsolva)</string>
   <string name="pluginInput_title">Bevitel</string>
   <string name="pluginInput_entryNone">Nincs (bevitel kikapcsolva)</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
@@ -269,7 +269,7 @@
   <string name="acraUserEmail_summary">A paulscode.com felh. neved (választható)</string>
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Érintőkijelző átlátszóság</string>
-  <string name="videoActionBarTransparency_title">Action bar átlátszóság</string>
+  <string name="displayActionBarTransparency_title">Action bar átlátszóság</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

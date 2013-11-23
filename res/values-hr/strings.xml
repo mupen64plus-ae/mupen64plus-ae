@@ -77,7 +77,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Igraj</string>
+  <string name="screenPlay_title">Igraj</string>
   <string name="actionResume_title">Nastavi</string>
   <string name="actionResume_summary">Nepredvidivo ako se koriste opcije za varanje, automatsko učitavanje</string>
   <string name="actionRestart_title">Pokreni</string>
@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY postavke</string>
   <string name="screenVideo_title">Grafika</string>
   <string name="screenVideo_summary">Postavke grafike</string>
-  <string name="screenAudio_title">Zvuk</string>
-  <string name="screenAudio_summary">Postavke zvuka</string>
+  <string name="categoryAudio_title">Zvuk</string>
+  <string name="categoryAudio_summary">Postavke zvuka</string>
   <string name="screenPlugin_title">Dodaci</string>
   <string name="screenPlugin_summary">Odabir dodataka za grafiku, zvuk i ostalo</string>
   <string name="screenAdvanced_title">Napredno</string>
@@ -143,8 +143,8 @@
   <string name="inputVolumeMappable_summary">Tipke za glasnoću zvuka će se moći označiti za kontrolu</string>
   <string name="inputShareController_title">Podjela kontrolera</string>
   <string name="inputShareController_summary">Dozvoljava upravljanje sa više igrača na jednom kontroleru</string>
-  <string name="videoUseFramelimiter_title">Koristi framelimiter</string>
-  <string name="videoUseFramelimiter_summary">Omogućiti za glađe igranje (usporava neke igre)</string>
+  <string name="coreUseFramelimiter_title">Koristi framelimiter</string>
+  <string name="coreUseFramelimiter_summary">Omogućiti za glađe igranje (usporava neke igre)</string>
   <string name="videoRgba8888_title">RGBA_8888</string>
   <string name="videoRgba8888_summary">Poboljšava grafiku na nekim uređajima</string>
   <string name="gles2N64Fog_title">Magla</string>
@@ -193,31 +193,31 @@
   <string name="touchpadLayout_title">Raspored dodirne površine</string>
   <string name="touchpadLayout_entryDefault">Lijeva strana: Analogna kontrola; Desna strana: C tipke</string>
   <string name="touchpadLayout_entryReverse">Lijeva strana: C tipke; Desna strana: Analogna kontrola</string>
-  <string name="videoOrientation_title">Orijentacija ekrana</string>
-  <string name="videoOrientation_entryLandscape">Pejzaž</string>
-  <string name="videoOrientation_entryReverseLandscape">Obrnuti pejzaž</string>
-  <string name="videoOrientation_entryPortrait">Portret</string>
-  <string name="videoOrientation_entryReversePortrait">Obrnuti portret</string>
-  <string name="videoPosition_title">Vertikalna pozicija ekrana</string>
-  <string name="videoPosition_entryBottom">Dno</string>
-  <string name="videoPosition_entryMiddle">Sredina</string>
-  <string name="videoPosition_entryTop">Vrh</string>
-  <string name="videoResolution_title">Rezolucija</string>
-  <string name="videoResolution_entryNative">Identična uređaju (najviša kvaliteta)</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoResolution_entry160x120">160 x 120 (najveća brzina)</string>
-  <string name="videoScaling_title">Skaliranje ekrana</string>
-  <string name="videoScaling_entryNone">Bez skaliranja\n<small>Koristi se točno određena rezolucija</small></string>
-  <string name="videoScaling_entryZoom">Zumiranje\n<small>Popunuje ekran, bez iskrivljenja (sa crnim praznim prostorom)</small></string>
-  <string name="videoScaling_entryStretch">Raširi\n<small>Popunuje ekran, bez praznog prostora (sa iskrivljenjem)</small></string>
-  <string name="videoFpsRefresh_title">Prikaži FPS</string>
-  <string name="videoFpsRefresh_entryNever">Nikad</string>
-  <string name="videoFpsRefresh_entryOccasionally">Nekad</string>
-  <string name="videoFpsRefresh_entryFrequently">Često</string>
+  <string name="displayOrientation_title">Orijentacija ekrana</string>
+  <string name="displayOrientation_entryLandscape">Pejzaž</string>
+  <string name="displayOrientation_entryReverseLandscape">Obrnuti pejzaž</string>
+  <string name="displayOrientation_entryPortrait">Portret</string>
+  <string name="displayOrientation_entryReversePortrait">Obrnuti portret</string>
+  <string name="displayPosition_title">Vertikalna pozicija ekrana</string>
+  <string name="displayPosition_entryBottom">Dno</string>
+  <string name="displayPosition_entryMiddle">Sredina</string>
+  <string name="displayPosition_entryTop">Vrh</string>
+  <string name="displayResolution_title">Rezolucija</string>
+  <string name="displayResolution_entryNative">Identična uređaju (najviša kvaliteta)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (najveća brzina)</string>
+  <string name="displayScaling_title">Skaliranje ekrana</string>
+  <string name="displayScaling_entryNone">Bez skaliranja\n<small>Koristi se točno određena rezolucija</small></string>
+  <string name="displayScaling_entryZoom">Zumiranje\n<small>Popunuje ekran, bez iskrivljenja (sa crnim praznim prostorom)</small></string>
+  <string name="displayScaling_entryStretch">Raširi\n<small>Popunuje ekran, bez praznog prostora (sa iskrivljenjem)</small></string>
+  <string name="displayFpsRefresh_title">Prikaži FPS</string>
+  <string name="displayFpsRefresh_entryNever">Nikad</string>
+  <string name="displayFpsRefresh_entryOccasionally">Nekad</string>
+  <string name="displayFpsRefresh_entryFrequently">Često</string>
   <string name="videoHardwareType_title">Smanjenje treperenja</string>
   <string name="videoHardwareType_entryAuto">Automatski detektiraj profil prepoznavanjem uređaja</string>
   <string name="videoHardwareType_entryStandard">Standardni profil</string>
@@ -268,14 +268,14 @@
   <string name="audioResampleAlg_entrySincFastest">Sinc (najbrže)</string>
   <string name="audioResampleAlg_entrySincMedium">Sinc (srednje)</string>
   <string name="audioResampleAlg_entrySincBest">Sinc (najkvalitetnije)</string>
-  <string name="pluginVideo_title">Grafika</string>
-  <string name="pluginVideo_entryNone">Nema (grafika isključena)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64⏎\n<small>(adaptacija: GLN64 v0.4.1)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice⏎\n<small>(adaptatcija: Rice Video v6.1.0(b))</small></string>
-  <string name="pluginVideo_entryGles2Glide64">gles2glide64⏎\n<small>(adaptacija: Glide64 Final (10. godišnjica))</small></string>
-  <string name="pluginAudio_title">Zvuk</string>
-  <string name="pluginAudio_entryNone">Nema (zvuk isključen)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="videoPlugin_title">Grafika</string>
+  <string name="videoPlugin_entryNone">Nema (grafika isključena)</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64⏎\n<small>(adaptacija: GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice⏎\n<small>(adaptatcija: Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64⏎\n<small>(adaptacija: Glide64 Final (10. godišnjica))</small></string>
+  <string name="audioPlugin_title">Zvuk</string>
+  <string name="audioPlugin_entryNone">Nema (zvuk isključen)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Kontroler</string>
   <string name="pluginInput_entryNone">Nema (kontroler isključen)</string>
   <string name="pluginInput_entryAndroid">input-android</string>
@@ -304,7 +304,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Prozirnost</string>
   <string name="touchscreenScale_title">Razmjer tipki</string>
-  <string name="videoActionBarTransparency_title">Vidljivost naredbenog izbornika</string>
+  <string name="displayActionBarTransparency_title">Vidljivost naredbenog izbornika</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

@@ -77,7 +77,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">プレー</string>
+  <string name="screenPlay_title">プレー</string>
   <string name="actionResume_title">再開</string>
   <string name="actionResume_summary">チートを使用している場合は動作しない場合があります。</string>
   <string name="actionRestart_title">再起動</string>
@@ -110,8 +110,8 @@
   <string name="screenTouchpad_summary">XperiaPLAY 設定</string>
   <string name="screenVideo_title">ビデオ</string>
   <string name="screenVideo_summary">グラフィック設定</string>
-  <string name="screenAudio_title">オーディオ</string>
-  <string name="screenAudio_summary">サウンド設定</string>
+  <string name="categoryAudio_title">オーディオ</string>
+  <string name="categoryAudio_summary">サウンド設定</string>
   <string name="screenPlugin_title">アドバンスド</string>
   <string name="screenPlugin_summary">オーディオ、プロセッサ、コア、など。</string>
   <string name="screenAdvanced_title">アドバンスド</string>
@@ -142,8 +142,8 @@
   <string name="inputVolumeMappable_summary">コントローラのボタンとしてボリュームキーを使用</string>
   <string name="inputShareController_title">共有コントローラ</string>
   <string name="inputShareController_summary">入力デバイスは、一度に複数のプレーヤーを制御することができます。</string>
-  <string name="videoUseFramelimiter_title">フレームリミッター</string>
-  <string name="videoUseFramelimiter_summary">スムーズなゲームプレイのためにこれを有効 （一部のゲームが遅くなる）</string>
+  <string name="coreUseFramelimiter_title">フレームリミッター</string>
+  <string name="coreUseFramelimiter_summary">スムーズなゲームプレイのためにこれを有効 （一部のゲームが遅くなる）</string>
   <string name="videoRgba8888_title">RGBA_8888 モード</string>
   <string name="videoRgba8888_summary">いくつかのデバイス上でグラフィックスをかもしれない向上させる。</string>
   <string name="gles2N64Fog_title">霧</string>
@@ -192,31 +192,31 @@
   <string name="touchpadLayout_title">タッチパッド·レイアウト</string>
   <string name="touchpadLayout_entryDefault">左パッド： アナログ制御; 右パッド： Cボタン</string>
   <string name="touchpadLayout_entryReverse">左パッド： Cボタ; 右パッド: アナログ制御</string>
-  <string name="videoOrientation_title">画面の向き</string>
-  <string name="videoOrientation_entryLandscape">横方向</string>
-  <string name="videoOrientation_entryReverseLandscape">反転横方向</string>
-  <string name="videoOrientation_entryPortrait">縦方向</string>
-  <string name="videoOrientation_entryReversePortrait">反転縦方向</string>
-  <string name="videoPosition_title">垂直画面位置</string>
-  <string name="videoPosition_entryBottom">下部</string>
-  <string name="videoPosition_entryMiddle">中央</string>
-  <string name="videoPosition_entryTop">上部</string>
-  <string name="videoResolution_title">レンダリング解像度</string>
-  <string name="videoResolution_entryNative">ネイティブ (最高画質)</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoResolution_entry160x120">160 x 120 (最高フレームレート)</string>
-  <string name="videoScaling_title">画面スケーリング</string>
-  <string name="videoScaling_entryNone">なし\n<small>選択された正確な解像度を使用</small></string>
-  <string name="videoScaling_entryZoom">ズーム\n<small>画面がいっぱいに - いいえ歪み (レターボックス追加)</small></string>
-  <string name="videoScaling_entryStretch">ストレッチ\n<small>画面いっぱい - ないレターボックス (歪みの原因となる)</small></string>
-  <string name="videoFpsRefresh_title">フレームレート表示</string>
-  <string name="videoFpsRefresh_entryNever">決して</string>
-  <string name="videoFpsRefresh_entryOccasionally">時折</string>
-  <string name="videoFpsRefresh_entryFrequently">頻繁</string>
+  <string name="displayOrientation_title">画面の向き</string>
+  <string name="displayOrientation_entryLandscape">横方向</string>
+  <string name="displayOrientation_entryReverseLandscape">反転横方向</string>
+  <string name="displayOrientation_entryPortrait">縦方向</string>
+  <string name="displayOrientation_entryReversePortrait">反転縦方向</string>
+  <string name="displayPosition_title">垂直画面位置</string>
+  <string name="displayPosition_entryBottom">下部</string>
+  <string name="displayPosition_entryMiddle">中央</string>
+  <string name="displayPosition_entryTop">上部</string>
+  <string name="displayResolution_title">レンダリング解像度</string>
+  <string name="displayResolution_entryNative">ネイティブ (最高画質)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (最高フレームレート)</string>
+  <string name="displayScaling_title">画面スケーリング</string>
+  <string name="displayScaling_entryNone">なし\n<small>選択された正確な解像度を使用</small></string>
+  <string name="displayScaling_entryZoom">ズーム\n<small>画面がいっぱいに - いいえ歪み (レターボックス追加)</small></string>
+  <string name="displayScaling_entryStretch">ストレッチ\n<small>画面いっぱい - ないレターボックス (歪みの原因となる)</small></string>
+  <string name="displayFpsRefresh_title">フレームレート表示</string>
+  <string name="displayFpsRefresh_entryNever">決して</string>
+  <string name="displayFpsRefresh_entryOccasionally">時折</string>
+  <string name="displayFpsRefresh_entryFrequently">頻繁</string>
   <string name="videoHardwareType_title">フリッカー低減</string>
   <string name="videoHardwareType_entryAuto">携帯電話/タブレットモデルから自動検出</string>
   <string name="videoHardwareType_entryStandard">標準プロファイル</string>
@@ -267,14 +267,14 @@
   <string name="audioResampleAlg_entrySincFastest">Sinc （最速）</string>
   <string name="audioResampleAlg_entrySincMedium">Sinc （中通り）</string>
   <string name="audioResampleAlg_entrySincBest">Sinc （最高）</string>
-  <string name="pluginVideo_title">ビデオ</string>
-  <string name="pluginVideo_entryNone">なし（ビデオ無効）</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(GLN64 v0.4.1の適応)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(Rice Video v6.1.0(b)の適応)</small></string>
-  <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(Glide64ファイナルの適応(10周年記念))</small></string>
-  <string name="pluginAudio_title">オーディオ設定</string>
-  <string name="pluginAudio_entryNone">なし（オーディオ無効）</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="videoPlugin_title">ビデオ</string>
+  <string name="videoPlugin_entryNone">なし（ビデオ無効）</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(GLN64 v0.4.1の適応)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(Rice Video v6.1.0(b)の適応)</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(Glide64ファイナルの適応(10周年記念))</small></string>
+  <string name="audioPlugin_title">オーディオ設定</string>
+  <string name="audioPlugin_entryNone">なし（オーディオ無効）</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">入力デバイス</string>
   <string name="pluginInput_entryNone">なし（入力無効）</string>
   <string name="pluginInput_entryAndroid">input-android</string>
@@ -303,7 +303,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">タッチスクリーンの透明度</string>
   <string name="touchscreenScale_title">ボタンのスケール</string>
-  <string name="videoActionBarTransparency_title">アクションバーの不透明</string>
+  <string name="displayActionBarTransparency_title">アクションバーの不透明</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->

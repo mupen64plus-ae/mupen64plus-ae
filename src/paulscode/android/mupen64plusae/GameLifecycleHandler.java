@@ -157,7 +157,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         window.setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Set the screen orientation
-        mActivity.setRequestedOrientation( mUserPrefs.videoOrientation );
+        mActivity.setRequestedOrientation( mUserPrefs.displayOrientation );
         
         // If the orientation changes, the screensize info changes, so we must refresh dependencies
         mUserPrefs = new UserPrefs( mActivity );
@@ -189,7 +189,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mSurface.getLayoutParams();
         params.width = mUserPrefs.videoSurfaceWidth;
         params.height = mUserPrefs.videoSurfaceHeight;
-        params.gravity = mUserPrefs.videoPosition | Gravity.CENTER_HORIZONTAL;
+        params.gravity = mUserPrefs.displayPosition | Gravity.CENTER_HORIZONTAL;
         mSurface.setLayoutParams( params );
         
         // Configure the action bar introduced in higher Android versions
@@ -197,7 +197,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
         {
             mActivity.getActionBar().hide();
             ColorDrawable color = new ColorDrawable( Color.parseColor( "#303030" ) );
-            color.setAlpha( mUserPrefs.videoActionBarTransparency );
+            color.setAlpha( mUserPrefs.displayActionBarTransparency );
             mActivity.getActionBar().setBackgroundDrawable( color );
         }
         
@@ -209,7 +209,7 @@ public class GameLifecycleHandler implements View.OnKeyListener, SurfaceHolder.C
                     mUserPrefs.isFpsEnabled, mAppData.fontsDir, mUserPrefs.touchscreenStyle, mUserPrefs.touchscreenTransparency );
             mTouchscreenMap.load( mUserPrefs.touchscreenLayout );
             mOverlay.initialize( mTouchscreenMap, !mUserPrefs.isTouchscreenHidden, mUserPrefs.touchscreenScale,
-                    mUserPrefs.videoFpsRefresh, mUserPrefs.touchscreenRefresh );
+                    mUserPrefs.displayFpsRefresh, mUserPrefs.touchscreenRefresh );
         }
         
         // Initialize user interface devices

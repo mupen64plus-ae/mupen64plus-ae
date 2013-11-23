@@ -77,7 +77,7 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="actionPlay_title">Spielen</string>
+  <string name="screenPlay_title">Spielen</string>
   <string name="actionResume_title">Fortsetzen</string>
   <string name="actionResume_summary">Unberechenbar, wenn Cheats genutzt werden</string>
   <string name="actionRestart_title">Neustart</string>
@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY-Einstellungen</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafikeinstellungen</string>
-  <string name="screenAudio_title">Audio</string>
-  <string name="screenAudio_summary">Audioeinstellungen</string>
+  <string name="categoryAudio_title">Audio</string>
+  <string name="categoryAudio_summary">Audioeinstellungen</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Kerneinstellungen</string>
   <string name="screenAdvanced_title">Erweitert</string>
@@ -143,8 +143,8 @@
   <string name="inputVolumeMappable_summary">Ermöglicht, die Lautstärketasten mit Steuerelementen zu belegen</string>
   <string name="inputShareController_title">Controller teilen</string>
   <string name="inputShareController_summary">Ermöglicht einem einzelnen Eingabegerät mehrere Spieler auf einmal zu steuern</string>
-  <string name="videoUseFramelimiter_title">Framebegrenzer verwenden</string>
-  <string name="videoUseFramelimiter_summary">Einschalten für flüssigeres Gameplay (verlangsamt manche Spiele)</string>
+  <string name="coreUseFramelimiter_title">Framebegrenzer verwenden</string>
+  <string name="coreUseFramelimiter_summary">Einschalten für flüssigeres Gameplay (verlangsamt manche Spiele)</string>
   <string name="videoRgba8888_title">RGBA_8888-Modus</string>
   <string name="videoRgba8888_summary">Verbessert die Grafik auf manchen Geräten</string>
   <string name="gles2N64Fog_title">Nebel</string>
@@ -193,31 +193,31 @@
   <string name="touchpadLayout_title">Touchpad-Layout</string>
   <string name="touchpadLayout_entryDefault">Linkes Pad: Analog-Stick; rechtes Pad: C-Knöpfe</string>
   <string name="touchpadLayout_entryReverse">Linkes Pad: C-Knöpfe; rechtes Pad: Analog-Stick</string>
-  <string name="videoOrientation_title">Bildschirmausrichtung</string>
-  <string name="videoOrientation_entryLandscape">Querformat</string>
-  <string name="videoOrientation_entryReverseLandscape">Querformat, umgekehrt</string>
-  <string name="videoOrientation_entryPortrait">Hochformat</string>
-  <string name="videoOrientation_entryReversePortrait">Hochformat, umgekehrt</string>
-  <string name="videoPosition_title">Vertikale Bildschirmposition</string>
-  <string name="videoPosition_entryBottom">Unterseite</string>
-  <string name="videoPosition_entryMiddle">Mitte</string>
-  <string name="videoPosition_entryTop">Oberseite</string>
-  <string name="videoResolution_title">Gerenderte Auflösung</string>
-  <string name="videoResolution_entryNative">Nativ (höchste Qualität)</string>
-  <string name="videoResolution_entry960x720">960 x 720</string>
-  <string name="videoResolution_entry800x600">800 x 600</string>
-  <string name="videoResolution_entry640x480">640 x 480</string>
-  <string name="videoResolution_entry480x360">480 x 360</string>
-  <string name="videoResolution_entry320x240">320 x 240</string>
-  <string name="videoResolution_entry160x120">160 x 120 (höchste Framerate)</string>
-  <string name="videoScaling_title">Bildschirmskalierung</string>
-  <string name="videoScaling_entryNone">Keine\n<small>Exakte oben ausgewählte Auflösung nutzen</small></string>
-  <string name="videoScaling_entryZoom">Zoom\n<small>Bildschirm füllen, keine Verzerrung (fügt schwarze Balken hinzu)</small></string>
-  <string name="videoScaling_entryStretch">Strecken\n<small>Bildschirm füllen, keine schwarzen Balken (fügt Verzerrung hinzu)</small></string>
-  <string name="videoFpsRefresh_title">Framerate anzeigen</string>
-  <string name="videoFpsRefresh_entryNever">Nie</string>
-  <string name="videoFpsRefresh_entryOccasionally">Gelegentlich</string>
-  <string name="videoFpsRefresh_entryFrequently">Häufig</string>
+  <string name="displayOrientation_title">Bildschirmausrichtung</string>
+  <string name="displayOrientation_entryLandscape">Querformat</string>
+  <string name="displayOrientation_entryReverseLandscape">Querformat, umgekehrt</string>
+  <string name="displayOrientation_entryPortrait">Hochformat</string>
+  <string name="displayOrientation_entryReversePortrait">Hochformat, umgekehrt</string>
+  <string name="displayPosition_title">Vertikale Bildschirmposition</string>
+  <string name="displayPosition_entryBottom">Unterseite</string>
+  <string name="displayPosition_entryMiddle">Mitte</string>
+  <string name="displayPosition_entryTop">Oberseite</string>
+  <string name="displayResolution_title">Gerenderte Auflösung</string>
+  <string name="displayResolution_entryNative">Nativ (höchste Qualität)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (höchste Framerate)</string>
+  <string name="displayScaling_title">Bildschirmskalierung</string>
+  <string name="displayScaling_entryNone">Keine\n<small>Exakte oben ausgewählte Auflösung nutzen</small></string>
+  <string name="displayScaling_entryZoom">Zoom\n<small>Bildschirm füllen, keine Verzerrung (fügt schwarze Balken hinzu)</small></string>
+  <string name="displayScaling_entryStretch">Strecken\n<small>Bildschirm füllen, keine schwarzen Balken (fügt Verzerrung hinzu)</small></string>
+  <string name="displayFpsRefresh_title">Framerate anzeigen</string>
+  <string name="displayFpsRefresh_entryNever">Nie</string>
+  <string name="displayFpsRefresh_entryOccasionally">Gelegentlich</string>
+  <string name="displayFpsRefresh_entryFrequently">Häufig</string>
   <string name="videoHardwareType_title">Flimmerreduktion</string>
   <string name="videoHardwareType_entryAuto">Auto-Erkennung anhand des Telefon-/Tabletmodells</string>
   <string name="videoHardwareType_entryStandard">Standard-Profil</string>
@@ -268,14 +268,14 @@
   <string name="audioResampleAlg_entrySincFastest">Sinc (schnellste)</string>
   <string name="audioResampleAlg_entrySincMedium">Sinc (mittel)</string>
   <string name="audioResampleAlg_entrySincBest">Sinc (beste)</string>
-  <string name="pluginVideo_title">Video</string>
-  <string name="pluginVideo_entryNone">Keins (Video deaktiviert)</string>
-  <string name="pluginVideo_entryGles2N64">gles2n64\n<small>(Adaption von GLN64 v0.4.1)</small></string>
-  <string name="pluginVideo_entryGles2Rice">gles2rice\n<small>(Adaption von Rice Video v6.1.0(b))</small></string>
-  <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(Adaption von Glide64 Final (10th Anniversary))</small></string>
-  <string name="pluginAudio_title">Audio</string>
-  <string name="pluginAudio_entryNone">Keins (Audio deaktiviert)</string>
-  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+  <string name="videoPlugin_title">Video</string>
+  <string name="videoPlugin_entryNone">Keins (Video deaktiviert)</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(Adaption von GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(Adaption von Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(Adaption von Glide64 Final (10th Anniversary))</small></string>
+  <string name="audioPlugin_title">Audio</string>
+  <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">Eingabe</string>
   <string name="pluginInput_entryNone">Keins (Eingabe deaktiviert)</string>
   <string name="pluginInput_entryAndroid">input-android</string>
@@ -304,7 +304,7 @@
   <!--Seek Bar Preferences (selected value and units will become the summary-->
   <string name="touchscreenTransparency_title">Knopf-Deckkraft</string>
   <string name="touchscreenScale_title">Knopf-Maßstab</string>
-  <string name="videoActionBarTransparency_title">Actionbar-Deckkraft</string>
+  <string name="displayActionBarTransparency_title">Actionbar-Deckkraft</string>
   <!--Path Preferences (selected path will become the summary)-->
   <!--'~' indicates rel path & use storage dir if path doesn't exist-->
   <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
