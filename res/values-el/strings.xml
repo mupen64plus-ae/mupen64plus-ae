@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Ρυθμίσεις Xperia PLAY</string>
   <string name="screenVideo_title">Βίντεο</string>
   <string name="screenVideo_summary">Ρυθμίσεις γραφικών</string>
-  <string name="categoryAudio_title">Ήχος</string>
-  <string name="categoryAudio_summary">Ρυθμίσεις ήχου</string>
+  <string name="screenAudio_title">Ήχος</string>
+  <string name="screenAudio_summary">Ρυθμίσεις ήχου</string>
   <string name="screenPlugin_title">Πρόσθετα</string>
   <string name="screenPlugin_summary">Επολογή plugin για κάθε υποσύστημα</string>
   <string name="screenAdvanced_title">Προχωρημένα</string>

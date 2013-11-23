@@ -46,6 +46,7 @@
   <string name="menuItem_xbox360">Xbox 360</string>
   <string name="menuItem_xperiaPlay">Xperia PLAY</string>
   <string name="menuItem_deadzone">Deadzone</string>
+  <string name="menuItem_sensitivity">Sensibilitat</string>
   <string name="menuItem_specialVisibility_show">Mostra funcions especials</string>
   <string name="menuItem_specialVisibility_hide">Amaga funcions especials</string>
   <string name="menuItem_axisInfo">Informació analògica</string>
@@ -56,7 +57,7 @@
   <!--**************************************************************************-->
   <!--Something happening (typically use '-ing' and '…')-->
   <string name="toast_rebuildingCheats">Regenerant base de dades de cheats…</string>
-  <string name="toast_launchingEmulator">Carregant emulador…</string>
+  <string name="toast_launchingEmulator">Carregant emulador...</string>
   <string name="toast_loadingSession">Auto-resumint el joc…</string>
   <string name="toast_savingSession">Auto-guardant el joc…</string>
   <string name="toast_loadingSlot">Carregant slot %1$d…</string>
@@ -93,6 +94,7 @@
   <string name="actionResetUserPrefs_summary">Restaura la configuració per defecte</string>
   <string name="actionResetUserPrefs_popupMessage">Vols reiniciar les preferències als seus valors per defecte?</string>
   <string name="actionHelp_title">Ajuda</string>
+  <string name="actionHelp_message">Mupen64Plus és desenvolupat i mantingut per voluntaris. <small> \n\nPer solucionar errors gràfics, provi a canviar el <i>plugin de vídeo</i> .\n\nPer solucionar lag, intenti canviar el  <i>frameskip del vídeo</i> o el <i>plugin de vídeo</i> .\n\nPer ROMS no reproduïbles, intenti descomprimir el ROM primer o provar una versió diferent de la ROM.\n\nPer qüestions de control de pantalla tàctil, provi a canviar <i>l\'escalat botons</i> o <i>la disposició dels botons</i>.\n\nPer a altres problemes, o si encara està encallat, si us plau feu clic al botó de <i>FAQ</i> que hi ha a continuació. Per a errors que no es produeixen en jocs específics, feu clic al botó <i>d\'informe error </i> que hi ha sota. Responem a la gran majoria de posts en 24 hores. Honestament.\n\n</small> Gràcies per ajudar-nos a millorar l\'aplicació!</string>
   <string name="actionHelp_faq">FAQ</string>
   <string name="actionHelp_reportbug">Reporta una errada</string>
   <string name="actionAbout_title">Sobre</string>
@@ -109,8 +111,8 @@
   <string name="screenTouchpad_summary">Configuració per Xperia PLAY</string>
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Configuració de vídeo</string>
-  <string name="categoryAudio_title">Àudio</string>
-  <string name="categoryAudio_summary">Configuració del so</string>
+  <string name="screenAudio_title">Àudio</string>
+  <string name="screenAudio_summary">Configuració del so</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Configuració del nucli</string>
   <string name="screenAdvanced_title">Avançat</string>
@@ -125,6 +127,7 @@
   <string name="categoryMultiPlayer_title">Multijugador</string>
   <string name="categoryGles2N64_title">Configuració de GLES2N64</string>
   <string name="categoryGles2Rice_title">Configuració de GLES2Rice</string>
+  <string name="categoryGles2Glide64_title">Configuració de GLES2Glide64</string>
   <string name="categoryData_title">Dades</string>
   <string name="categoryCrashReports_title">Informes d\'error</string>
   <!--Checkbox Preferences-->
@@ -140,6 +143,8 @@
   <string name="inputVolumeMappable_summary">Permetre que les tecles de volum siguin assignades a controls</string>
   <string name="inputShareController_title">Compartir comandament</string>
   <string name="inputShareController_summary">Permet que un únic dispositiu d\'entrada controli a diversos jugadors a la vegada</string>
+  <string name="videoImmersiveMode_title">Mode de Immersive</string>
+  <string name="videoImmersiveMode_summary">Amaga completament la navegació i la barra d\'estat</string>
   <string name="videoUseFramelimiter_title">Utilitza framelimiter</string>
   <string name="videoUseFramelimiter_summary">Activa aquesta opció per a una experiència de joc més fluida (alenteix alguns jocs)</string>
   <string name="videoRgba8888_title">Mode RGBA_8888</string>
@@ -163,6 +168,7 @@
   <string name="gles2RiceHiResTextures_title">Textures en alta resolució</string>
   <string name="gles2RiceHiResTextures_summary">Utilitza pacs de textures millorades</string>
   <string name="gles2RiceFog_title">boira</string>
+  <string name="gles2RiceFog_summary">Mostra efectes de boira</string>
   <string name="audioSwapChannels_title">Intercanvia els canals d\'àudio</string>
   <string name="audioSwapChannels_summary">Intercanviar els canals d\'àudio esquerre i dret </string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -195,9 +201,23 @@
   <string name="videoOrientation_entryReverseLandscape">Apaïsat invertit</string>
   <string name="videoOrientation_entryPortrait">Vertical</string>
   <string name="videoOrientation_entryReversePortrait">Vertical invertit</string>
+  <string name="videoPosition_title">Posició vertical de la pantalla</string>
   <string name="videoPosition_entryBottom">Abaix</string>
   <string name="videoPosition_entryMiddle">Al mig</string>
   <string name="videoPosition_entryTop">Adalt</string>
+  <string name="videoResolution_title">Resolució de renderitzat</string>
+  <string name="videoResolution_entryNative">Natiu (la millor qualitat)</string>
+  <string name="videoResolution_entry960x720">960 x 720</string>
+  <string name="videoResolution_entry800x600">800 x 600</string>
+  <string name="videoResolution_entry640x480">640 x 480</string>
+  <string name="videoResolution_entry480x360">480 x 360</string>
+  <string name="videoResolution_entry320x240">320 x 240</string>
+  <string name="videoResolution_entry160x120">160 x 120 (framerate més alt)</string>
+  <string name="videoScaling_title">Escalat de pantalla</string>
+  <string name="videoScaling_entryNone">cap\n<small> Utilitza la resolució exacta seleccionada anteriorment </small></string>
+  <string name="videoScaling_entryZoom">Zoom\n<small>Emplena la pantalla, sense distorsió (afegeix barres negres) </small></string>
+  <string name="videoScaling_entryCrop">Crop\n<small>Emplena la pantalla, sense distorsió (retalla gràfics) </small></string>
+  <string name="videoScaling_entryStretch">Stretch\n<small>Emplena la pantalla, sense barres negres (afegeix distorsió) </small></string>
   <string name="videoFpsRefresh_title">Mostra velocitat de quadres (framerate)</string>
   <string name="videoFpsRefresh_entryNever">Mai</string>
   <string name="videoFpsRefresh_entryOccasionally">Ocasionalment</string>
@@ -210,6 +230,9 @@
   <string name="videoHardwareType_entryO2">Perfil O-2</string>
   <string name="videoHardwareType_entryQ">Perfil Q</string>
   <string name="videoHardwareType_entryT">\t\nPerfil T</string>
+  <string name="videoHardwareType_entryCustom">Perfil personalitzat</string>
+  <string name="customPolygonOffset_title">Polygon offset</string>
+  <string name="customPolygonOffset_summary">Flicker reduction bias personalitzat</string>
   <string name="gles2N64Frameskip_title">Salt de quadres (Frameskip)</string>
   <string name="gles2N64Frameskip_entryNever">Mai saltar quadres (frameskip)</string>
   <string name="gles2N64Frameskip_entryUpTo1">No més de 1 frame</string>
@@ -259,12 +282,16 @@
   <string name="pluginVideo_entryGles2Glide64">gles2glide64⏎\n<small>(adaptatció de Glide64 Final (10th Anniversary))</small></string>
   <string name="pluginAudio_title">Àudio</string>
   <string name="pluginAudio_entryNone">Cap (àudio deshabilitat)</string>
+  <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="pluginInput_title">\t\nEntrada</string>
   <string name="pluginInput_entryNone">Cap (dispositius d\'entrada deshabilitats)</string>
   <string name="pluginInput_entryAndroid">input-android</string>
   <string name="pluginRsp_title">Reality signal processor (RSP)</string>
   <string name="pluginRsp_entryNone">Cap (RSP disabled)</string>
+  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
+  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0\n<small>(no es processa l\'àudio, speed hack)</small></string>
   <string name="pluginCore_title">Nucli d\'emulació</string>
+  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
   <string name="r4300Emulator_title">Emulador R4300</string>
   <string name="r4300Emulator_entryPureInterpreter">Intèrpret pur</string>
   <string name="r4300Emulator_entryCachedInterpreter">Intèrpret  a cache</string>
@@ -273,6 +300,7 @@
   <string name="navigationMode_summary">Mode de navegació del menú: %1$s</string>
   <string name="navigationMode_entryAuto">Seleccionar automàticament de la configuració del dispositiu</string>
   <string name="navigationMode_entryStandard">Mode estàndard</string>
+  <string name="navigationMode_entryBigScreen">Pantalla completa (No hi ha comandament tàctil;utilitzar només amb comandament/teclat)</string>
   <string name="localeOverride_title">Idioma</string>
   <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->

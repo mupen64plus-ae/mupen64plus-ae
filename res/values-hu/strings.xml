@@ -108,8 +108,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY beállítások</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafikai beállítások</string>
-  <string name="categoryAudio_title">Hang</string>
-  <string name="categoryAudio_summary">Hang beállítások</string>
+  <string name="screenAudio_title">Hang</string>
+  <string name="screenAudio_summary">Hang beállítások</string>
   <string name="screenPlugin_title">Pluginek</string>
   <string name="screenPlugin_summary">Mag beállítások</string>
   <string name="screenAdvanced_title">Haladó</string>

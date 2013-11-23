@@ -102,8 +102,8 @@
   <string name="screenTouchpad_summary">Для Xperia PLAY</string>
   <string name="screenVideo_title">Видео</string>
   <string name="screenVideo_summary">Настройки графики</string>
-  <string name="categoryAudio_title">Звук</string>
-  <string name="categoryAudio_summary">Аудио параметры</string>
+  <string name="screenAudio_title">Звук</string>
+  <string name="screenAudio_summary">Аудио параметры</string>
   <string name="screenPlugin_title">Плагины</string>
   <string name="screenPlugin_summary">Параметры эмулятора</string>
   <string name="screenAdvanced_title">Другое</string>

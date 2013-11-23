@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Paramètres de l\'Xperia PLAY</string>
   <string name="screenVideo_title">Vidéo</string>
   <string name="screenVideo_summary">Paramètres graphiques</string>
-  <string name="categoryAudio_title">Audio</string>
-  <string name="categoryAudio_summary">Paramètres sonores</string>
+  <string name="screenAudio_title">Audio</string>
+  <string name="screenAudio_summary">Paramètres sonores</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Paramètres du noyau</string>
   <string name="screenAdvanced_title">Paramètres avancés</string>
@@ -216,6 +216,7 @@
   <string name="videoScaling_title">Mise à l\'échelle de l\'écran</string>
   <string name="videoScaling_entryNone">Aucune\n<small>Utilise la résolution exacte sélectionnée ci-dessus</small></string>
   <string name="videoScaling_entryZoom">Zoom\n<small>Plein écran, sans distorsion (ajout de bandes noires)</small></string>
+  <string name="videoScaling_entryCrop">Crop\n<small>Remplissage de l\'écran, pas de distorsion (image coupée)</small></string>
   <string name="videoScaling_entryStretch">Étiré\n<small>Plein écran, sans bandes noires (ajout de distorsion)</small></string>
   <string name="videoFpsRefresh_title">Afficher le nombre d\'images par seconde</string>
   <string name="videoFpsRefresh_entryNever">Jamais</string>
@@ -229,6 +230,9 @@
   <string name="videoHardwareType_entryO2">Profile O-2</string>
   <string name="videoHardwareType_entryQ">Profile Q</string>
   <string name="videoHardwareType_entryT">Profile T</string>
+  <string name="videoHardwareType_entryCustom">Profil personnalisé</string>
+  <string name="customPolygonOffset_title">Polygon offset</string>
+  <string name="customPolygonOffset_summary">Biais de réduction du clignotement personnalisé</string>
   <string name="gles2N64Frameskip_title">Saut d\'images</string>
   <string name="gles2N64Frameskip_entryNever">Ne jamais sauter d\'image</string>
   <string name="gles2N64Frameskip_entryUpTo1">Pas plus d\'une image</string>

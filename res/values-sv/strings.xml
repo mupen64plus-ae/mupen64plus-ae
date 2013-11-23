@@ -108,8 +108,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY inställningar</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik inställningar</string>
-  <string name="categoryAudio_title">Ljud</string>
-  <string name="categoryAudio_summary">Ljud inställningar</string>
+  <string name="screenAudio_title">Ljud</string>
+  <string name="screenAudio_summary">Ljud inställningar</string>
   <string name="screenPlugin_title">Plug-ins</string>
   <string name="screenPlugin_summary">Core inställningar</string>
   <string name="screenAdvanced_title">Avancerat</string>

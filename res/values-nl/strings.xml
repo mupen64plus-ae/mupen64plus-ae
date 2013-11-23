@@ -111,8 +111,8 @@
   <string name="screenTouchpad_summary">Xperia PLAY instellingen</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafische instellingen</string>
-  <string name="categoryAudio_title">Geluid</string>
-  <string name="categoryAudio_summary">Geluidinstellingen</string>
+  <string name="screenAudio_title">Geluid</string>
+  <string name="screenAudio_summary">Geluidinstellingen</string>
   <string name="screenPlugin_title">Invoegtoepassingen</string>
   <string name="screenPlugin_summary">Core-instellingen</string>
   <string name="screenAdvanced_title">Geavanceerd</string>
