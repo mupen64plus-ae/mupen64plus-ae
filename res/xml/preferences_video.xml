@@ -25,12 +25,6 @@
         android:summary="@string/customPolygonOffset_summary"
         android:title="@string/customPolygonOffset_title" />
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="videoUseFramelimiter"
-        android:summary="@string/videoUseFramelimiter_summary"
-        android:title="@string/videoUseFramelimiter_title" />
-
     <PreferenceCategory
         android:key="categoryGles2N64"
         android:title="@string/categoryGles2N64_title" >

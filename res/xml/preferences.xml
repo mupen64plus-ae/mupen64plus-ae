@@ -346,32 +346,23 @@
                     android:key="navigationMode"
                     android:summary="@string/navigationMode_summary"
                     android:title="@string/navigationMode_title" />
-                <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-                    android:defaultValue="@string/r4300Emulator_default"
-                    android:entries="@array/r4300Emulator_entries"
-                    android:entryValues="@array/r4300Emulator_values"
-                    android:key="r4300Emulator"
-                    android:summary="@string/selectedValue"
-                    android:title="@string/r4300Emulator_title" />
-
-                <Preference
-                    android:key="actionDeviceInfo"
-                    android:summary="@string/actionDeviceInfo_summary"
-                    android:title="@string/actionDeviceInfo_title" />
 
                 <PreferenceCategory
-                    android:key="categoryData"
-                    android:title="@string/categoryData_title" >
-                    <paulscode.android.mupen64plusae.persistent.PathPreference
-                        android:defaultValue="@string/pathGameSaves_default"
-                        android:key="pathGameSaves"
-                        android:title="@string/pathGameSaves_title"
-                        mupen64:selectionMode="0" />
+                    android:key="categoryCore"
+                    android:title="@string/categoryCore_title" >
+                    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                        android:defaultValue="@string/r4300Emulator_default"
+                        android:entries="@array/r4300Emulator_entries"
+                        android:entryValues="@array/r4300Emulator_values"
+                        android:key="r4300Emulator"
+                        android:summary="@string/selectedValue"
+                        android:title="@string/r4300Emulator_title" />
 
-                    <Preference
-                        android:key="actionReloadAssets"
-                        android:summary="@string/actionReloadAssets_summary"
-                        android:title="@string/actionReloadAssets_title" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="videoUseFramelimiter"
+                        android:summary="@string/videoUseFramelimiter_summary"
+                        android:title="@string/videoUseFramelimiter_title" />
                 </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryAudio"
@@ -389,6 +380,28 @@
                         android:key="audioSwapChannels"
                         android:summary="@string/audioSwapChannels_summary"
                         android:title="@string/audioSwapChannels_title" />
+                </PreferenceCategory>
+                <PreferenceCategory
+                    android:key="categoryDiagnostics"
+                    android:title="@string/categoryDiagnostics_title" >
+                    <Preference
+                        android:key="actionDeviceInfo"
+                        android:summary="@string/actionDeviceInfo_summary"
+                        android:title="@string/actionDeviceInfo_title" />
+                </PreferenceCategory>
+                <PreferenceCategory
+                    android:key="categoryData"
+                    android:title="@string/categoryData_title" >
+                    <paulscode.android.mupen64plusae.persistent.PathPreference
+                        android:defaultValue="@string/pathGameSaves_default"
+                        android:key="pathGameSaves"
+                        android:title="@string/pathGameSaves_title"
+                        mupen64:selectionMode="0" />
+
+                    <Preference
+                        android:key="actionReloadAssets"
+                        android:summary="@string/actionReloadAssets_summary"
+                        android:title="@string/actionReloadAssets_title" />
                 </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryCrashReports"
