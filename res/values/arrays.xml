@@ -322,22 +322,6 @@
 
     <string name="gles2Glide64Frameskip_default" translatable="false">-5</string>
 
-    <!-- GLES2Rice Mipmapping List -->
-    <string-array name="gles2RiceMipmapping_entries">
-        <item>@string/gles2RiceMipmapping_entryNone</item>
-        <item>@string/gles2RiceMipmapping_entryNearest</item>
-        <item>@string/gles2RiceMipmapping_entryBilinear</item>
-        <item>@string/gles2RiceMipmapping_entryTrilinear</item>
-    </string-array>
-    <string-array name="gles2RiceMipmapping_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-    
-    <string name="gles2RiceMipmapping_default">0</string>
-
     <!-- GLES2Rice Screen Update List -->
     <string-array name="gles2RiceScreenUpdate_entries">
         <item>@string/gles2RiceScreenUpdate_entryRomDefault</item>
@@ -360,7 +344,7 @@
         <item>7</item>
     </string-array>
 
-    <string name="gles2RiceScreenUpdate_default">4</string>
+    <string name="gles2RiceScreenUpdate_default" translatable="false">4</string>
     
     <!-- GLES2Rice Texture Enhancement Algorithm List -->
     <string-array name="gles2RiceTextureEnhancement_entries">
@@ -384,7 +368,7 @@
         <item>7</item>
     </string-array>
 
-    <string name="gles2RiceTextureEnhancement_default">0</string>
+    <string name="gles2RiceTextureEnhancement_default" translatable="false">0</string>
 
     <!-- Video Plugins -->
     <string-array name="videoPlugin_entries" translatable="false">

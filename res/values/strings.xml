@@ -95,7 +95,6 @@
     <!-- ************************************************************************** -->
 
     <!-- Actions (simply launch an action, aren't related to persistent data) -->
-    <string name="screenPlay_title">Play</string>
     <string name="actionResume_title">Resume</string>
     <string name="actionResume_summary">Unpredictable if cheats are used</string>
     <string name="actionRestart_title">Restart</string>
@@ -121,6 +120,7 @@
     <string name="actionAbout_changelog">Changelog</string>
 
     <!-- Preference Screens -->
+    <string name="screenPlay_title">Play</string>
     <string name="screenSettings_title">Settings</string>
     <string name="screenInput_title">Input</string>
     <string name="screenInput_summary">Control settings</string>
@@ -133,7 +133,7 @@
     <string name="screenVideo_title">Video</string>
     <string name="screenVideo_summary">Graphics settings</string>
     <string name="screenAdvanced_title">Advanced</string>
-    <string name="screenAdvanced_summary">Storage and debug settings</string>
+    <string name="screenAdvanced_summary">Core, storage, and debug settings</string>
 
     <!-- Preference Categories -->
     <string name="categoryCheats_title">Cheat options (long-press for notes)</string>
@@ -146,9 +146,9 @@
     <string name="categoryGles2N64_title">GLES2N64 settings</string>
     <string name="categoryGles2Rice_title">GLES2Rice settings</string>
     <string name="categoryGles2Glide64_title">GLES2Glide64 settings</string>
-    <string name="categoryData_title">Data</string>
     <string name="categoryCore_title">Core</string>
     <string name="categoryAudio_title">Audio</string>
+    <string name="categoryData_title">Data</string>
     <string name="categoryDiagnostics_title">Diagnostics</string>
     <string name="categoryCrashReports_title">Crash reports</string>
 
@@ -165,8 +165,6 @@
     <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
     <string name="displayImmersiveMode_title">Immersive mode</string>
     <string name="displayImmersiveMode_summary">Completely hide navigation and status bars</string>
-    <string name="coreUseFramelimiter_title">Use framelimiter</string>
-    <string name="coreUseFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
     <string name="gles2N64Fog_title">Fog</string>
     <string name="gles2N64Fog_summary">(needs work)</string>
     <string name="gles2N64Sai_title">2xSaI texture filter</string>
@@ -187,6 +185,8 @@
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
     <string name="gles2RiceFog_title">Fog</string>
     <string name="gles2RiceFog_summary">Show fog effects</string>
+    <string name="coreUseFramelimiter_title">Use framelimiter</string>
+    <string name="coreUseFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
 
@@ -252,6 +252,12 @@
     <string name="displayFpsRefresh_entryOccasionally">Occasionally</string>
     <string name="displayFpsRefresh_entryFrequently">Frequently</string>
 
+    <string name="videoPlugin_title">Video plugin</string>
+    <string name="videoPlugin_entryNone">None (video disabled)</string>
+    <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
+    <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
+    <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
+
     <string name="videoHardwareType_title">Flicker reduction</string>
     <string name="videoHardwareType_entryAuto">Auto-detect from phone/tablet model</string>
     <string name="videoHardwareType_entryStandard">Standard profile</string>
@@ -277,12 +283,6 @@
     <string name="gles2N64Frameskip_entryExactly4">Exactly 4 frames</string>
     <string name="gles2N64Frameskip_entryExactly5">Exactly 5 frames</string>
 
-    <string name="gles2RiceMipmapping_title">Mipmapping</string>
-    <string name="gles2RiceMipmapping_entryNone">None</string>
-    <string name="gles2RiceMipmapping_entryNearest">Nearest</string>
-    <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
-    <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
-
     <string name="gles2RiceScreenUpdate_title">Screen update method</string>
     <string name="gles2RiceScreenUpdate_entryRomDefault">ROM default</string>
     <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
@@ -303,25 +303,20 @@
     <string name="gles2RiceTextureEnhancement_entrySharpen">Sharpen</string>
     <string name="gles2RiceTextureEnhancement_entrySharpen_more">Sharpen more</string>
 
-    <string name="videoPlugin_title">Video plugin</string>
-    <string name="videoPlugin_entryNone">None (video disabled)</string>
-    <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(adaptation of GLN64 v0.4.1)</small></string>
-    <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptation of Rice Video v6.1.0(b))</small></string>
-    <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
-    <string name="audioPlugin_title">Audio plugin</string>
-    <string name="audioPlugin_entryNone">None (audio disabled)</string>
-    <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
+    <string name="navigationMode_title">Accessibility</string>
+    <string name="navigationMode_summary">Menu navigation mode: %1$s</string>
+    <string name="navigationMode_entryAuto">Auto-select from device configuration</string>
+    <string name="navigationMode_entryStandard">Standard mode</string>
+    <string name="navigationMode_entryBigScreen">Big-screen mode (no touchscreen; gamepad/keyboard input only)</string>
 
     <string name="r4300Emulator_title">R4300 emulator</string>
     <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
     <string name="r4300Emulator_entryCachedInterpreter">Cached interpreter</string>
     <string name="r4300Emulator_entryDynarec">Dynamic recompiler (dynarec)</string>
 
-    <string name="navigationMode_title">Accessibility</string>
-    <string name="navigationMode_summary">Menu navigation mode: %1$s</string>
-    <string name="navigationMode_entryAuto">Auto-select from device configuration</string>
-    <string name="navigationMode_entryStandard">Standard mode</string>
-    <string name="navigationMode_entryBigScreen">Big-screen mode (no touchscreen; gamepad/keyboard input only)</string>
+    <string name="audioPlugin_title">Audio plugin</string>
+    <string name="audioPlugin_entryNone">None (audio disabled)</string>
+    <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
 
     <string name="localeOverride_title">Language</string>
     <string name="localeOverride_entrySystemDefault">System default</string>
