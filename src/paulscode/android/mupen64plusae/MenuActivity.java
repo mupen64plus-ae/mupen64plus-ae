@@ -68,7 +68,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     
     private static final String SCREEN_TOUCHPAD = "screenTouchpad";
     private static final String SCREEN_TOUCHSCREEN = "screenTouchscreen";
-    private static final String SCREEN_VIDEO = "screenVideo";
+    private static final String SCREEN_DISPLAY = "screenDisplay";
     
     private static final String CATEGORY_SINGLE_PLAYER = "categorySinglePlayer";
     
@@ -191,10 +191,10 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
         if( !AppData.IS_KITKAT )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_IMMERSIVE_MODE );
+            PrefUtil.removePreference( this, SCREEN_DISPLAY, VIDEO_IMMERSIVE_MODE );
         
         if( !mUserPrefs.isActionBarAvailable )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, VIDEO_ACTION_BAR_TRANSPARENCY );
+            PrefUtil.removePreference( this, SCREEN_DISPLAY, VIDEO_ACTION_BAR_TRANSPARENCY );
         
         if( !mAppData.hardwareInfo.isXperiaPlay )
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHPAD );
