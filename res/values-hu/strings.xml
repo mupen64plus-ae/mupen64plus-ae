@@ -75,7 +75,6 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="screenPlay_title">Játék</string>
   <string name="actionResume_title">Folytatás</string>
   <string name="actionResume_summary">Bizonytalan csalások használatánál</string>
   <string name="actionRestart_title">Újraindítás</string>
@@ -90,7 +89,6 @@
   <string name="actionCrashTest_summary">Küldj egy konfigurációs jelentést a küszítőknek</string>
   <string name="actionResetUserPrefs_title">Újraindítás</string>
   <string name="actionResetUserPrefs_summary">Alapértelmezett beállítások használata</string>
-  <string name="actionResetUserPrefs_popupMessage">Minden beállítást az alapértelmezettre?</string>
   <string name="actionHelp_title">Segítség</string>
   <string name="actionHelp_faq">GYIK</string>
   <string name="actionHelp_reportbug">Bug jelentése</string>
@@ -99,6 +97,7 @@
   <string name="actionAbout_credits">Kreditek</string>
   <string name="actionAbout_changelog">Változások</string>
   <!--Preference Screens-->
+  <string name="screenPlay_title">Játék</string>
   <string name="screenSettings_title">Beállítások</string>
   <string name="screenInput_title">Bevitel</string>
   <string name="screenInput_summary">Irányítás beállítások</string>
@@ -108,12 +107,7 @@
   <string name="screenTouchpad_summary">Xperia PLAY beállítások</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafikai beállítások</string>
-  <string name="categoryAudio_title">Hang</string>
-  <string name="categoryAudio_summary">Hang beállítások</string>
-  <string name="screenPlugin_title">Pluginek</string>
-  <string name="screenPlugin_summary">Mag beállítások</string>
   <string name="screenAdvanced_title">Haladó</string>
-  <string name="screenAdvanced_summary">Tároló és debug beállítások</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Csalás beállítások (hosszan nyomd a jegyzetekért)</string>
   <string name="categoryHardware_title">Hardver</string>
@@ -124,7 +118,9 @@
   <string name="categoryMultiPlayer_title">Többjátékos</string>
   <string name="categoryGles2N64_title">GLES2N64 beállítások</string>
   <string name="categoryGles2Rice_title">GLES2Rice beállítások</string>
+  <string name="categoryAudio_title">Hang</string>
   <string name="categoryData_title">Adat</string>
+  <string name="categoryDiagnostics_title">Diagnosztika</string>
   <string name="categoryCrashReports_title">Összeomlás jelentések</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Csalás engedélyezése</string>
@@ -133,16 +129,10 @@
   <string name="touchscreenFeedback_title">Haptic visszajelzés</string>
   <string name="touchscreenFeedback_summary">Gombnyomáskor rezgés</string>
   <string name="touchpadEnabled_title">Érintőpad bekapcsolása</string>
-  <string name="inputOctagonConstraints_title">Nyolszögű joystick határai</string>
-  <string name="inputOctagonConstraints_summary">Nyolcszögű analóg mozgatásra korlátozás, mint egy igazi N64 kontroller</string>
   <string name="inputVolumeMappable_title">Programozható hangerő gombok</string>
   <string name="inputVolumeMappable_summary">Hangerő gombok programozásának engedélyezése</string>
   <string name="inputShareController_title">Kontroller megosztása</string>
   <string name="inputShareController_summary">Egy beviteli eszközt több játékos is irányíthat</string>
-  <string name="coreUseFramelimiter_title">Framelimiter használata</string>
-  <string name="coreUseFramelimiter_summary">Engedélyezd a simább játékmenetért (lelassít néhány játékot)</string>
-  <string name="videoRgba8888_title">RGBA_8888 mód</string>
-  <string name="videoRgba8888_summary">Fokozhatja a grafikát néhány készüléken</string>
   <string name="gles2N64Fog_title">Köd</string>
   <string name="gles2N64Fog_summary">(dolgozunk rajta)</string>
   <string name="gles2N64Sai_title">2xSaI textúra szűrő</string>
@@ -162,6 +152,8 @@
   <string name="gles2RiceHiResTextures_title">Magas felbontású textúrák</string>
   <string name="gles2RiceHiResTextures_summary">Importált textúra csomagok használata</string>
   <string name="gles2RiceFog_title">Köd</string>
+  <string name="coreUseFramelimiter_title">Framelimiter használata</string>
+  <string name="coreUseFramelimiter_summary">Engedélyezd a simább játékmenetért (lelassít néhány játékot)</string>
   <string name="audioSwapChannels_title">Hang csatornák megcserélése</string>
   <string name="audioSwapChannels_summary">Kicseréli a bal és jobb hang csatornákat</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -193,6 +185,7 @@
   <string name="displayFpsRefresh_entryNever">Soha</string>
   <string name="displayFpsRefresh_entryOccasionally">Néha</string>
   <string name="displayFpsRefresh_entryFrequently">Gyakran</string>
+  <string name="videoPlugin_entryNone">Nincs (video kikapcsolva)</string>
   <string name="videoHardwareType_title">Vibrálás csökkentése</string>
   <string name="videoHardwareType_entryAuto">Telefon/tablet alapján auto-felismerés</string>
   <string name="videoHardwareType_entryStandard">Alap profil</string>
@@ -213,11 +206,6 @@
   <string name="gles2N64Frameskip_entryExactly3">Pontosan 3 képkocka</string>
   <string name="gles2N64Frameskip_entryExactly4">Pontosan 4 képkocka</string>
   <string name="gles2N64Frameskip_entryExactly5">Pontosan 5 képkocka</string>
-  <string name="gles2RiceMipmapping_title">Mipmapping</string>
-  <string name="gles2RiceMipmapping_entryNone">Nincs</string>
-  <string name="gles2RiceMipmapping_entryNearest">Legközelebbi</string>
-  <string name="gles2RiceMipmapping_entryBilinear">Bilinear</string>
-  <string name="gles2RiceMipmapping_entryTrilinear">Trilinear</string>
   <string name="gles2RiceScreenUpdate_title">Képernyő frissítési módszer</string>
   <string name="gles2RiceScreenUpdate_entryRomDefault">ROM alapértelmezett</string>
   <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
@@ -236,30 +224,15 @@
   <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
   <string name="gles2RiceTextureEnhancement_entrySharpen">Élesítés</string>
   <string name="gles2RiceTextureEnhancement_entrySharpen_more">Több élesítés</string>
-  <string name="audioResampleAlg_title">Algoritmus újra mintavételezése</string>
-  <string name="audioResampleAlg_entryTrivial">Jelentéktelen</string>
-  <string name="audioResampleAlg_entryLinear">Lineáris interpoláció</string>
-  <string name="audioResampleAlg_entryZoh">Zero order hold</string>
-  <string name="audioResampleAlg_entrySincFastest">Szinkronizálás (leggyorsabb)</string>
-  <string name="audioResampleAlg_entrySincMedium">Szinkronizálás (közepes)</string>
-  <string name="audioResampleAlg_entrySincBest">Szinkronizálás (legjobb)</string>
-  <string name="videoPlugin_title">Video</string>
-  <string name="videoPlugin_entryNone">Nincs (video kikapcsolva)</string>
-  <string name="audioPlugin_title">Hang</string>
-  <string name="audioPlugin_entryNone">Nincs (hang kikapcsolva)</string>
-  <string name="pluginInput_title">Bevitel</string>
-  <string name="pluginInput_entryNone">Nincs (bevitel kikapcsolva)</string>
-  <string name="pluginRsp_title">Reality signal processor (RSP)</string>
-  <string name="pluginRsp_entryNone">Nincs (RSP kikapcsolva)</string>
-  <string name="pluginCore_title">Emulációs mag</string>
-  <string name="r4300Emulator_title">R4300 emulátor</string>
-  <string name="r4300Emulator_entryPureInterpreter">Tiszta interpreter</string>
-  <string name="r4300Emulator_entryCachedInterpreter">Gyorsítótárazott interpreter</string>
-  <string name="r4300Emulator_entryDynarec">Dinamikus újrafordító (dynarec)</string>
   <string name="navigationMode_title">Kisegítő lehetőségek</string>
   <string name="navigationMode_summary">Menü navigációs mód: %1$s</string>
   <string name="navigationMode_entryAuto">A készülék konfigurációból auto-kiválasztás</string>
   <string name="navigationMode_entryStandard">Alap mód</string>
+  <string name="r4300Emulator_title">R4300 emulátor</string>
+  <string name="r4300Emulator_entryPureInterpreter">Tiszta interpreter</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Gyorsítótárazott interpreter</string>
+  <string name="r4300Emulator_entryDynarec">Dinamikus újrafordító (dynarec)</string>
+  <string name="audioPlugin_entryNone">Nincs (hang kikapcsolva)</string>
   <string name="localeOverride_title">Nyelv</string>
   <string name="localeOverride_entrySystemDefault">Rendszer alapértelmezett</string>
   <!--ACRA Preferences (key names must not be changed)-->

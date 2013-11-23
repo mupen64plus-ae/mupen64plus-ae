@@ -68,7 +68,6 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="screenPlay_title">Играть</string>
   <string name="actionResume_title">Продолжить</string>
   <string name="actionResume_summary">Возможно использование чит-кодов</string>
   <string name="actionRestart_title">Перезапуск</string>
@@ -83,7 +82,6 @@
   <string name="actionCrashTest_summary">Отправить отчёт разработчикам</string>
   <string name="actionResetUserPrefs_title">Сброс</string>
   <string name="actionResetUserPrefs_summary">Восстановить настройки по умолчанию</string>
-  <string name="actionResetUserPrefs_popupMessage">Сбросить настройки на дефолтные?</string>
   <string name="actionHelp_title">Помощь</string>
   <string name="actionHelp_message">Mupen64Plus разрабатывается добровольцами.<small>\n\nДля решения проблем с графикой попробуйте другой плагин видео.\n\nДля повышения производительности измените настройки пропуска кадров.\n\nПри ошибке открытия образа игры извлеките его из архива или найдите другую версию.\n\nбла-бла-бла, короче пользуйтесь настройками, иначе зачем я столько переводил?\n\nПри появлении других проблем воспользуйтесь ЧАВО и форумом (см. ниже).\n</small>\n\nЗаранее спасибо.</string>
   <string name="actionHelp_faq">ЧАВО</string>
@@ -93,6 +91,7 @@
   <string name="actionAbout_credits">Благодарности</string>
   <string name="actionAbout_changelog">Список изменений</string>
   <!--Preference Screens-->
+  <string name="screenPlay_title">Играть</string>
   <string name="screenSettings_title">Настройки</string>
   <string name="screenInput_title">Ввод</string>
   <string name="screenInput_summary">Настройки управления</string>
@@ -102,12 +101,7 @@
   <string name="screenTouchpad_summary">Для Xperia PLAY</string>
   <string name="screenVideo_title">Видео</string>
   <string name="screenVideo_summary">Настройки графики</string>
-  <string name="categoryAudio_title">Звук</string>
-  <string name="categoryAudio_summary">Аудио параметры</string>
-  <string name="screenPlugin_title">Плагины</string>
-  <string name="screenPlugin_summary">Параметры эмулятора</string>
   <string name="screenAdvanced_title">Другое</string>
-  <string name="screenAdvanced_summary">Диагностика и другие настройки</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Чит-коды (нажмите и удерживайте для показа справки)</string>
   <string name="categoryHardware_title">Оборудование</string>
@@ -119,7 +113,9 @@
   <string name="categoryGles2N64_title">Настройки GLES2N64</string>
   <string name="categoryGles2Rice_title">Настройки GLES2Rice</string>
   <string name="categoryGles2Glide64_title">Настройки GLES2Glide64 settings</string>
+  <string name="categoryAudio_title">Звук</string>
   <string name="categoryData_title">Данные</string>
+  <string name="categoryDiagnostics_title">Диагностика</string>
   <string name="categoryCrashReports_title">Сообщения об ошибках</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Включить читы</string>
@@ -128,16 +124,10 @@
   <string name="touchscreenFeedback_title">Виброотклик</string>
   <string name="touchscreenFeedback_summary">Вибрировать при нажатии</string>
   <string name="touchpadEnabled_title">Использовать экранные кнопки</string>
-  <string name="inputOctagonConstraints_title">Восьмиугольные пределы джойстика</string>
-  <string name="inputOctagonConstraints_summary">Ограничение движения в аналоговом виде восьмиугольника, как настоящий N64 контроллер</string>
   <string name="inputVolumeMappable_title">Использовать звуковые кнопки</string>
   <string name="inputVolumeMappable_summary">Разрешить переназначение кнопок управления звуком</string>
   <string name="inputShareController_title">Совместное использование контроллера</string>
   <string name="inputShareController_summary">Разрешить одному устройству ввода управлять несколькими игроками сразу</string>
-  <string name="coreUseFramelimiter_title">Ограничить FPS</string>
-  <string name="coreUseFramelimiter_summary">Плавнее, но ниже FPS</string>
-  <string name="videoRgba8888_title">Режим RGBA_8888</string>
-  <string name="videoRgba8888_summary">Улучшает картинку на некоторых устройствах</string>
   <string name="gles2N64Fog_title">Туман</string>
   <string name="gles2N64Fog_summary">(требует доработки)</string>
   <string name="gles2N64Sai_title">2xSaI фильтрация текстур</string>
@@ -157,6 +147,8 @@
   <string name="gles2RiceHiResTextures_title">Текстуры высокого разрешения</string>
   <string name="gles2RiceHiResTextures_summary">Использовать импортированные пакеты текстур</string>
   <string name="gles2RiceFog_title">Туман</string>
+  <string name="coreUseFramelimiter_title">Ограничить FPS</string>
+  <string name="coreUseFramelimiter_summary">Плавнее, но ниже FPS</string>
   <string name="audioSwapChannels_title">Поменять местами аудио каналы</string>
   <string name="audioSwapChannels_summary">Меняет местами звук слева и справа</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -200,6 +192,10 @@
   <string name="displayFpsRefresh_entryNever">Никогда</string>
   <string name="displayFpsRefresh_entryOccasionally">Изредка</string>
   <string name="displayFpsRefresh_entryFrequently">Часто</string>
+  <string name="videoPlugin_entryNone">Заглушка (выключить изображение)</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(порт GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(порт Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(порт Glide64 Final (10th Anniversary))</small></string>
   <string name="videoHardwareType_title">Уменьшение мерцания</string>
   <string name="videoHardwareType_entryAuto">Автоматическое определение модели телефона/планшета </string>
   <string name="videoHardwareType_entryStandard">Стандартный профиль</string>
@@ -220,10 +216,6 @@
   <string name="gles2N64Frameskip_entryExactly3">Всегда 3</string>
   <string name="gles2N64Frameskip_entryExactly4">Всегда 4</string>
   <string name="gles2N64Frameskip_entryExactly5">Всегда 5</string>
-  <string name="gles2RiceMipmapping_title">MIP-текстурирование</string>
-  <string name="gles2RiceMipmapping_entryNone">Нет</string>
-  <string name="gles2RiceMipmapping_entryBilinear">Билинейный</string>
-  <string name="gles2RiceMipmapping_entryTrilinear">Трилинейный</string>
   <string name="gles2RiceScreenUpdate_title">Обновление экрана</string>
   <string name="gles2RiceTextureEnhancement_title">Масштабирование текстур/улучшение</string>
   <string name="gles2RiceTextureEnhancement_entryNone">Нет</string>
@@ -232,38 +224,17 @@
   <string name="gles2RiceTextureEnhancement_entryHq2x">HQ2x</string>
   <string name="gles2RiceTextureEnhancement_entryLq2x">LQ2x</string>
   <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
-  <string name="audioResampleAlg_title">Алгоритм дискретизации</string>
-  <string name="audioResampleAlg_entryTrivial">Тривиальный</string>
-  <string name="audioResampleAlg_entryLinear">Линейная интерполяция</string>
-  <string name="audioResampleAlg_entryZoh">Экстраполятор нулевого порядка</string>
-  <string name="audioResampleAlg_entrySincFastest">Sinc (быстрый)</string>
-  <string name="audioResampleAlg_entrySincMedium">Sinc (средний)</string>
-  <string name="audioResampleAlg_entrySincBest">Sinc (лучший)</string>
-  <string name="videoPlugin_title">Видео плагин</string>
-  <string name="videoPlugin_entryNone">Заглушка (выключить изображение)</string>
-  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(порт GLN64 v0.4.1)</small></string>
-  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(порт Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(порт Glide64 Final (10th Anniversary))</small></string>
-  <string name="audioPlugin_title">Звуковой плагин</string>
-  <string name="audioPlugin_entryNone">Заглушка (выключить звук)</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="pluginInput_title">Плагин ввода</string>
-  <string name="pluginInput_entryNone">Заглушка</string>
-  <string name="pluginRsp_title">Reality signal processor (RSP)</string>
-  <string name="pluginRsp_entryNone">Выключен</string>
-  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
-  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0\n<small>(спид-хак, без поддержки звука)</small></string>
-  <string name="pluginCore_title">Ядро эмулятора</string>
-  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
-  <string name="r4300Emulator_title">R4300 Эмулятор</string>
-  <string name="r4300Emulator_entryPureInterpreter">Интерпретация</string>
-  <string name="r4300Emulator_entryCachedInterpreter">Интерпретация с кешированием</string>
-  <string name="r4300Emulator_entryDynarec">Рекомпиляция</string>
   <string name="navigationMode_title">Всякая хрень</string>
   <string name="navigationMode_summary">Режим навигации в меню: %1$s</string>
   <string name="navigationMode_entryAuto">Автоопределение из настроек</string>
   <string name="navigationMode_entryStandard">Стандартный режим</string>
   <string name="navigationMode_entryBigScreen">Скрыть все панели (ввод только с клавиатуры/геймпада)</string>
+  <string name="r4300Emulator_title">R4300 Эмулятор</string>
+  <string name="r4300Emulator_entryPureInterpreter">Интерпретация</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Интерпретация с кешированием</string>
+  <string name="r4300Emulator_entryDynarec">Рекомпиляция</string>
+  <string name="audioPlugin_entryNone">Заглушка (выключить звук)</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_title">Язык</string>
   <string name="localeOverride_entrySystemDefault">Система по умолчанию</string>
   <!--ACRA Preferences (key names must not be changed)-->

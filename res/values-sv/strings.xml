@@ -75,7 +75,6 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="screenPlay_title">Spela</string>
   <string name="actionResume_title">Återuppta</string>
   <string name="actionResume_summary">Oförutsägbar om fusk används</string>
   <string name="actionRestart_title">Starta om</string>
@@ -90,15 +89,15 @@
   <string name="actionCrashTest_summary">Skicka en konfiguration rapport till utvecklarna</string>
   <string name="actionResetUserPrefs_title">Ladda om</string>
   <string name="actionResetUserPrefs_summary">Återställa standardinställningar</string>
-  <string name="actionResetUserPrefs_popupMessage">Återställ alla inställningar till standardinställningarna?</string>
   <string name="actionHelp_title">Hjälp</string>
   <string name="actionHelp_faq">FAQ</string>
   <string name="actionHelp_reportbug">Rapportera bugg</string>
   <string name="actionAbout_title">Om</string>
-  <string name="actionAbout_message">Version: %1$s⏎\nVersion kod: %2$d</string>
+  <string name="actionAbout_message">Version: %1$s\nVersion kod: %2$d</string>
   <string name="actionAbout_credits">krediter</string>
   <string name="actionAbout_changelog">Ändringslogg</string>
   <!--Preference Screens-->
+  <string name="screenPlay_title">Spela</string>
   <string name="screenSettings_title">Inställningar</string>
   <string name="screenInput_title">ingång</string>
   <string name="screenInput_summary">Kontroll inställningar</string>
@@ -108,12 +107,7 @@
   <string name="screenTouchpad_summary">Xperia PLAY inställningar</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafik inställningar</string>
-  <string name="categoryAudio_title">Ljud</string>
-  <string name="categoryAudio_summary">Ljud inställningar</string>
-  <string name="screenPlugin_title">Plug-ins</string>
-  <string name="screenPlugin_summary">Core inställningar</string>
   <string name="screenAdvanced_title">Avancerat</string>
-  <string name="screenAdvanced_summary">Lagring och debug inställningar</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Fusk alternativ (håll in för beskrivning)</string>
   <string name="categoryHardware_title">Hårdvara</string>
@@ -125,6 +119,7 @@
   <string name="categoryGles2N64_title">GLES2N64 inställningar</string>
   <string name="categoryGles2Rice_title">GLES2Rice inställningar</string>
   <string name="categoryGles2Glide64_title">GLES2Glide64 inställningar</string>
+  <string name="categoryAudio_title">Ljud</string>
   <string name="categoryData_title">Data</string>
   <string name="categoryCrashReports_title">Felrapporter</string>
   <!--Checkbox Preferences-->
@@ -134,16 +129,10 @@
   <string name="touchscreenFeedback_title">Haptisk återkoppling</string>
   <string name="touchscreenFeedback_summary">Vibrera vid knapptryckning</string>
   <string name="touchpadEnabled_title">Aktivera pekplatta</string>
-  <string name="inputOctagonConstraints_title">Octagonal joystick gränser</string>
-  <string name="inputOctagonConstraints_summary">Begränsa analog rörelse till en oktagon, som en riktig N64 kontroller</string>
   <string name="inputVolumeMappable_title">Mappable volymknapparna</string>
   <string name="inputVolumeMappable_summary">Tillåt volymknapparna at bli mappade till kontroller</string>
   <string name="inputShareController_title">Dela controller</string>
   <string name="inputShareController_summary">Låt en enda inmatningsenhet för att styra flera spelare på gång</string>
-  <string name="coreUseFramelimiter_title">Använd framelimiter</string>
-  <string name="coreUseFramelimiter_summary">Aktivera för smidigare gameplay (saktar vissa spel)</string>
-  <string name="videoRgba8888_title">RGBA_8888 läge</string>
-  <string name="videoRgba8888_summary">Förbättrar grafik på vissa anordningar</string>
   <string name="gles2N64Fog_title">Dimma</string>
   <string name="gles2N64Fog_summary">(behövs arbete)</string>
   <string name="gles2N64Sai_title">2xSaI textur filter</string>
@@ -163,6 +152,8 @@
   <string name="gles2RiceHiResTextures_title">Högupplösta texturer</string>
   <string name="gles2RiceHiResTextures_summary">Använd importerade textur förpackningar</string>
   <string name="gles2RiceFog_title">Dimma</string>
+  <string name="coreUseFramelimiter_title">Använd framelimiter</string>
+  <string name="coreUseFramelimiter_summary">Aktivera för smidigare gameplay (saktar vissa spel)</string>
   <string name="audioSwapChannels_title">Byt ljudkanaler</string>
   <string name="audioSwapChannels_summary">Byt de vänstra och högra ljudkanalerna</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -203,6 +194,7 @@
   <string name="displayFpsRefresh_entryNever">Aldrig</string>
   <string name="displayFpsRefresh_entryOccasionally">Ibland</string>
   <string name="displayFpsRefresh_entryFrequently">Ofta</string>
+  <string name="videoPlugin_entryNone">Ingen (video inaktiverad)</string>
   <string name="videoHardwareType_title">Flimmer minskning</string>
   <string name="videoHardwareType_entryAuto">Auto-upptäck från mobil/tablett modell</string>
   <string name="videoHardwareType_entryStandard">Standard profil</string>
@@ -223,11 +215,6 @@
   <string name="gles2N64Frameskip_entryExactly3">Precis 3 ramar</string>
   <string name="gles2N64Frameskip_entryExactly4">Precis 4 ramar</string>
   <string name="gles2N64Frameskip_entryExactly5">Precis 5 ramar</string>
-  <string name="gles2RiceMipmapping_title">Mipmapping</string>
-  <string name="gles2RiceMipmapping_entryNone">Inga</string>
-  <string name="gles2RiceMipmapping_entryNearest">Närmaste</string>
-  <string name="gles2RiceMipmapping_entryBilinear">Bilineär</string>
-  <string name="gles2RiceMipmapping_entryTrilinear">Trilinjär</string>
   <string name="gles2RiceScreenUpdate_title">Skärm uppdateringsmetod</string>
   <string name="gles2RiceScreenUpdate_entryRomDefault">ROM standard</string>
   <string name="gles2RiceTextureEnhancement_title">Textur uppskalning/förbättring</string>
@@ -239,30 +226,15 @@
   <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
   <string name="gles2RiceTextureEnhancement_entrySharpen">Skärpa</string>
   <string name="gles2RiceTextureEnhancement_entrySharpen_more">Skärpa mer</string>
-  <string name="audioResampleAlg_title">Omsampling algoritm</string>
-  <string name="audioResampleAlg_entryTrivial">Trivial</string>
-  <string name="audioResampleAlg_entryLinear">Linjär interpolering</string>
-  <string name="audioResampleAlg_entryZoh">Noll order håll</string>
-  <string name="audioResampleAlg_entrySincFastest">Sinc (snabbast)</string>
-  <string name="audioResampleAlg_entrySincMedium">Sinc (medium)</string>
-  <string name="audioResampleAlg_entrySincBest">Sinc (bäst)</string>
-  <string name="videoPlugin_title">Video</string>
-  <string name="videoPlugin_entryNone">Ingen (video inaktiverad)</string>
-  <string name="audioPlugin_title">Ljud</string>
-  <string name="audioPlugin_entryNone">Ingen (ljud inaktiverad)</string>
-  <string name="pluginInput_title">ingång</string>
-  <string name="pluginInput_entryNone">Ingen (input inaktiverad)</string>
-  <string name="pluginRsp_title">Reality signalprocessor (RSP)</string>
-  <string name="pluginRsp_entryNone">Ingen (RSP inaktiverad)</string>
-  <string name="pluginCore_title">Emulation kärna</string>
-  <string name="r4300Emulator_title">R4300 emulator</string>
-  <string name="r4300Emulator_entryPureInterpreter">Ren interpreter</string>
-  <string name="r4300Emulator_entryCachedInterpreter">Cachad interpreter</string>
-  <string name="r4300Emulator_entryDynarec">Dynamisk recompiler (dynarec)</string>
   <string name="navigationMode_title">Tillgänglighet</string>
   <string name="navigationMode_summary">Meny navigeringsläge: %1$s</string>
   <string name="navigationMode_entryAuto">Auto-välj från enhetens konfiguration</string>
   <string name="navigationMode_entryStandard">Standard läge</string>
+  <string name="r4300Emulator_title">R4300 emulator</string>
+  <string name="r4300Emulator_entryPureInterpreter">Ren interpreter</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Cachad interpreter</string>
+  <string name="r4300Emulator_entryDynarec">Dynamisk recompiler (dynarec)</string>
+  <string name="audioPlugin_entryNone">Ingen (ljud inaktiverad)</string>
   <string name="localeOverride_title">Språk</string>
   <string name="localeOverride_entrySystemDefault">System standard</string>
   <!--ACRA Preferences (key names must not be changed)-->
@@ -336,9 +308,9 @@
   <string name="playerMap_deviceWithName">Enhet %1$d (%2$s)</string>
   <string name="playerMap_deviceWithoutName">Enhet %1$d</string>
   <string name="playerMapPreference_popupTitle">Spelare %1$d</string>
-  <string name="playerMapPreference_popupMessage">Spelare %1$d, tryck på en knapp eller stick på handkontrollen…⏎\n⏎\nAktuella enheter:\n%2$s</string>
+  <string name="playerMapPreference_popupMessage">Spelare %1$d, tryck på en knapp eller stick på handkontrollen…\n\nAktuella enheter:\n%2$s</string>
   <string name="playerMapPreference_popupUnmap">Unmap</string>
-  <string name="playerMapPreference_button">Spelare %1$d⏎\n%2$s</string>
+  <string name="playerMapPreference_button">Spelare %1$d\n%2$s</string>
   <string name="playerMapPreference_reminder">Påminn mig när spelarna inte mappas</string>
   <!--Input Mapping-->
   <string name="inputMapActivity_popupUnmap">Unmap</string>

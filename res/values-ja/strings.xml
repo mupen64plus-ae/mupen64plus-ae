@@ -77,7 +77,6 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="screenPlay_title">プレー</string>
   <string name="actionResume_title">再開</string>
   <string name="actionResume_summary">チートを使用している場合は動作しない場合があります。</string>
   <string name="actionRestart_title">再起動</string>
@@ -92,7 +91,6 @@
   <string name="actionCrashTest_summary">開発者へのコンフィギュレーションレポートを送って。</string>
   <string name="actionResetUserPrefs_title">リセット</string>
   <string name="actionResetUserPrefs_summary">既定値にリセット</string>
-  <string name="actionResetUserPrefs_popupMessage">デフォルトにすべての設定をリセットしますか？</string>
   <string name="actionHelp_title">ヘルプ</string>
   <string name="actionHelp_faq">よくある質問</string>
   <string name="actionHelp_reportbug">バグレポート</string>
@@ -101,6 +99,7 @@
   <string name="actionAbout_credits">クレジット</string>
   <string name="actionAbout_changelog">変更履歴</string>
   <!--Preference Screens-->
+  <string name="screenPlay_title">プレー</string>
   <string name="screenSettings_title">設定</string>
   <string name="screenInput_title">入力</string>
   <string name="screenInput_summary">コントロール設定</string>
@@ -110,12 +109,7 @@
   <string name="screenTouchpad_summary">XperiaPLAY 設定</string>
   <string name="screenVideo_title">ビデオ</string>
   <string name="screenVideo_summary">グラフィック設定</string>
-  <string name="categoryAudio_title">オーディオ</string>
-  <string name="categoryAudio_summary">サウンド設定</string>
-  <string name="screenPlugin_title">アドバンスド</string>
-  <string name="screenPlugin_summary">オーディオ、プロセッサ、コア、など。</string>
   <string name="screenAdvanced_title">アドバンスド</string>
-  <string name="screenAdvanced_summary">ストレージおよびデバッグ設定。</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">詳細情報を表示するチートを長押し</string>
   <string name="categoryHardware_title">ハードウェア設定</string>
@@ -127,7 +121,9 @@
   <string name="categoryGles2N64_title">GLES2N64設定</string>
   <string name="categoryGles2Rice_title">GLES2Rice設定</string>
   <string name="categoryGles2Glide64_title">GLES2Glide64設定</string>
+  <string name="categoryAudio_title">オーディオ設定</string>
   <string name="categoryData_title">データ</string>
+  <string name="categoryDiagnostics_title">診断</string>
   <string name="categoryCrashReports_title">クラッシュレポート</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">チートをイネーブル</string>
@@ -136,16 +132,10 @@
   <string name="touchscreenFeedback_title">触覚フィードバック</string>
   <string name="touchscreenFeedback_summary">ボタンを押した際に振動</string>
   <string name="touchpadEnabled_title">タッチパッドを有効</string>
-  <string name="inputOctagonConstraints_title">八角形のようにアナログスティックをエミュレート</string>
-  <string name="inputOctagonConstraints_summary">八角形のパスにアナログ動きを拘束。 これは、元のN64のコントローラのようなものだ。</string>
   <string name="inputVolumeMappable_title">ボリュームキーを有効</string>
   <string name="inputVolumeMappable_summary">コントローラのボタンとしてボリュームキーを使用</string>
   <string name="inputShareController_title">共有コントローラ</string>
   <string name="inputShareController_summary">入力デバイスは、一度に複数のプレーヤーを制御することができます。</string>
-  <string name="coreUseFramelimiter_title">フレームリミッター</string>
-  <string name="coreUseFramelimiter_summary">スムーズなゲームプレイのためにこれを有効 （一部のゲームが遅くなる）</string>
-  <string name="videoRgba8888_title">RGBA_8888 モード</string>
-  <string name="videoRgba8888_summary">いくつかのデバイス上でグラフィックスをかもしれない向上させる。</string>
   <string name="gles2N64Fog_title">霧</string>
   <string name="gles2N64Fog_summary">(WIP)</string>
   <string name="gles2N64Sai_title">2xSaiテクスチャフィルタ</string>
@@ -165,6 +155,8 @@
   <string name="gles2RiceHiResTextures_title">高解像度のテクスチャ</string>
   <string name="gles2RiceHiResTextures_summary">インポートしたテクスチャパックを使用</string>
   <string name="gles2RiceFog_title">霧</string>
+  <string name="coreUseFramelimiter_title">フレームリミッター</string>
+  <string name="coreUseFramelimiter_summary">スムーズなゲームプレイのためにこれを有効 （一部のゲームが遅くなる）</string>
   <string name="audioSwapChannels_title">オーディオチャンネルを交換</string>
   <string name="audioSwapChannels_summary">スワップ左右のオーディオチャンネル</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -217,6 +209,10 @@
   <string name="displayFpsRefresh_entryNever">決して</string>
   <string name="displayFpsRefresh_entryOccasionally">時折</string>
   <string name="displayFpsRefresh_entryFrequently">頻繁</string>
+  <string name="videoPlugin_entryNone">なし（ビデオ無効）</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(GLN64 v0.4.1の適応)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(Rice Video v6.1.0(b)の適応)</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(Glide64ファイナルの適応(10周年記念))</small></string>
   <string name="videoHardwareType_title">フリッカー低減</string>
   <string name="videoHardwareType_entryAuto">携帯電話/タブレットモデルから自動検出</string>
   <string name="videoHardwareType_entryStandard">標準プロファイル</string>
@@ -237,11 +233,6 @@
   <string name="gles2N64Frameskip_entryExactly3">唯一の3フレームをスキップ</string>
   <string name="gles2N64Frameskip_entryExactly4">唯一の4フレームをスキップ</string>
   <string name="gles2N64Frameskip_entryExactly5">唯一の5フレームをスキップ</string>
-  <string name="gles2RiceMipmapping_title">ミップマッピング</string>
-  <string name="gles2RiceMipmapping_entryNone">なし</string>
-  <string name="gles2RiceMipmapping_entryNearest">最近傍</string>
-  <string name="gles2RiceMipmapping_entryBilinear">バイリニア</string>
-  <string name="gles2RiceMipmapping_entryTrilinear">トライリニア・</string>
   <string name="gles2RiceScreenUpdate_title">画面の更新方法</string>
   <string name="gles2RiceScreenUpdate_entryRomDefault">ROMのデフォルト</string>
   <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">VI原点アップデート</string>
@@ -260,39 +251,17 @@
   <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
   <string name="gles2RiceTextureEnhancement_entrySharpen">研ぐ</string>
   <string name="gles2RiceTextureEnhancement_entrySharpen_more">続き研ぐ</string>
-  <string name="audioResampleAlg_title">再サンプリングアルゴリズム</string>
-  <string name="audioResampleAlg_entryTrivial">些細</string>
-  <string name="audioResampleAlg_entryLinear">線形補間</string>
-  <string name="audioResampleAlg_entryZoh">ゼロ次ホールド</string>
-  <string name="audioResampleAlg_entrySincFastest">Sinc （最速）</string>
-  <string name="audioResampleAlg_entrySincMedium">Sinc （中通り）</string>
-  <string name="audioResampleAlg_entrySincBest">Sinc （最高）</string>
-  <string name="videoPlugin_title">ビデオ</string>
-  <string name="videoPlugin_entryNone">なし（ビデオ無効）</string>
-  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(GLN64 v0.4.1の適応)</small></string>
-  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(Rice Video v6.1.0(b)の適応)</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(Glide64ファイナルの適応(10周年記念))</small></string>
-  <string name="audioPlugin_title">オーディオ設定</string>
-  <string name="audioPlugin_entryNone">なし（オーディオ無効）</string>
-  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
-  <string name="pluginInput_title">入力デバイス</string>
-  <string name="pluginInput_entryNone">なし（入力無効）</string>
-  <string name="pluginInput_entryAndroid">input-android</string>
-  <string name="pluginRsp_title">RSP</string>
-  <string name="pluginRsp_entryNone">なし（RSP無効）</string>
-  <string name="pluginRsp_entryHle">mupen64plus-rsp-hle, v2.0</string>
-  <string name="pluginRsp_entryHleNoSound">mupen64plus-rsp-hle-nosound, v2.0⏎\n<small>(オーディオ処理は無効)</small></string>
-  <string name="pluginCore_title">コア</string>
-  <string name="pluginCore_entryV110">mupen64plus-core, v2.0</string>
-  <string name="r4300Emulator_title">R4300エミュレータ</string>
-  <string name="r4300Emulator_entryPureInterpreter">純粋なインタプリタ</string>
-  <string name="r4300Emulator_entryCachedInterpreter">キャッシュインタプリタ</string>
-  <string name="r4300Emulator_entryDynarec">動的リコンパイラ (DynaRec)</string>
   <string name="navigationMode_title">アクセシビリティ</string>
   <string name="navigationMode_summary">メニューナビゲーションモード：%1$s</string>
   <string name="navigationMode_entryAuto">デバイス構成から自動選択</string>
   <string name="navigationMode_entryStandard">スタンダードモード</string>
   <string name="navigationMode_entryBigScreen">ビッグスクリーンモード (無タッチスクリーン入力;のみゲームパッド/キーボード入力)</string>
+  <string name="r4300Emulator_title">R4300エミュレータ</string>
+  <string name="r4300Emulator_entryPureInterpreter">純粋なインタプリタ</string>
+  <string name="r4300Emulator_entryCachedInterpreter">キャッシュインタプリタ</string>
+  <string name="r4300Emulator_entryDynarec">動的リコンパイラ (DynaRec)</string>
+  <string name="audioPlugin_entryNone">なし（オーディオ無効）</string>
+  <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_title">言語</string>
   <string name="localeOverride_entrySystemDefault">システムのデフォルト</string>
   <!--ACRA Preferences (key names must not be changed)-->

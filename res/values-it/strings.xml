@@ -76,7 +76,6 @@
   <!--Developers: In general, capitalize first word only and avoid punctuation-->
   <!--**************************************************************************-->
   <!--Actions (simply launch an action, aren't related to persistent data)-->
-  <string name="screenPlay_title">Gioca</string>
   <string name="actionResume_title">Riprendi</string>
   <string name="actionResume_summary">Imprevedibile se vengono usati trucchi</string>
   <string name="actionRestart_title">Riavvia</string>
@@ -91,7 +90,6 @@
   <string name="actionCrashTest_summary">Manda un rapporto di configurazione agli sviluppatori</string>
   <string name="actionResetUserPrefs_title">Resetta</string>
   <string name="actionResetUserPrefs_summary">Ripristina impostazioni di default</string>
-  <string name="actionResetUserPrefs_popupMessage">Resettare tutte le preferenze al loro default?</string>
   <string name="actionHelp_title">Aiuto</string>
   <string name="actionHelp_message">Mupen64Plus è sviluppato e mantenuto da volontari.<small>\n\nPer sistemare errori grafici, prova a cambiare il <i>plugin video</i>.\n\nPer sistemare il lag, prova a cambiare l\'impostazione <i>frameskip video</i> o il <i>plugin video</i>.\n\nPer ROM ingiocabili, prova a decomprimere la ROM o prova una diversa versione della ROM.\n\nPer problemi di controlli touchscreen, prova a cambiare la <i>grandezza tasti</i> o il <i>layout tasti</i>.\n\nPer altri problemi, o se sei ancora bloccato, per favore clicca il tasto <i>FAQ</i> sotto. Per bug non specifici al gioco, clicca il tasto <i>Segnala bug</i> sotto.  Rispondiamo alla vasta maggioranza di post in 24 ore.  Onestamente.\n\n</small>Grazie per aiutarci a migliorare l\'app!</string>
   <string name="actionHelp_faq">FAQ</string>
@@ -101,6 +99,7 @@
   <string name="actionAbout_credits">Crediti</string>
   <string name="actionAbout_changelog">log cambiamenti</string>
   <!--Preference Screens-->
+  <string name="screenPlay_title">Gioca</string>
   <string name="screenSettings_title">Impostazioni</string>
   <string name="screenInput_title">Input</string>
   <string name="screenInput_summary">Impostazioni controlli</string>
@@ -110,12 +109,7 @@
   <string name="screenTouchpad_summary">Impostazioni Xperia PLAY</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Impostazioni grafiche</string>
-  <string name="categoryAudio_title">Audio</string>
-  <string name="categoryAudio_summary">Impostazioni audio</string>
-  <string name="screenPlugin_title">Plug-ins</string>
-  <string name="screenPlugin_summary">Impostazioni core</string>
   <string name="screenAdvanced_title">Avanzate</string>
-  <string name="screenAdvanced_summary">Impostazioni memoria e debug</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opzioni trucchi (lascia premuto per le note)</string>
   <string name="categoryHardware_title">Hardware</string>
@@ -126,7 +120,9 @@
   <string name="categoryMultiPlayer_title">Multigiocatore</string>
   <string name="categoryGles2N64_title">Impostazioni GLES2N64</string>
   <string name="categoryGles2Rice_title">Impostazioni GLES2Rice</string>
+  <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Dati</string>
+  <string name="categoryDiagnostics_title">Diagnostiche</string>
   <string name="categoryCrashReports_title">Segnalazioni crash</string>
   <!--Checkbox Preferences-->
   <string name="playShowCheats_title">Abilita trucchi</string>
@@ -135,16 +131,10 @@
   <string name="touchscreenFeedback_title">Feedback aptico</string>
   <string name="touchscreenFeedback_summary">Vibra su pressione tasti</string>
   <string name="touchpadEnabled_title">Abilita touchpad</string>
-  <string name="inputOctagonConstraints_title">Limite joystick ottagonale</string>
-  <string name="inputOctagonConstraints_summary">Forza il movimento dell\'analogico in un ottagono, come un vero controller N64</string>
   <string name="inputVolumeMappable_title">Tasti volume impostabili</string>
   <string name="inputVolumeMappable_summary">Abilita i tasti volume ad essere impostati a controlli</string>
   <string name="inputShareController_title">Condividi controller</string>
   <string name="inputShareController_summary">Abilita un singolo dispositivo di input di controllare giocatori multipli contemporaneamente</string>
-  <string name="coreUseFramelimiter_title">Usa limitatore fotogrammi</string>
-  <string name="coreUseFramelimiter_summary">Abilita per gameplay più fluido (rallenta alcuni giochi)</string>
-  <string name="videoRgba8888_title">Modalità RGBA_8888</string>
-  <string name="videoRgba8888_summary">Migliora grafica su alcuni dispositivi</string>
   <string name="gles2N64Fog_title">Nebbia</string>
   <string name="gles2N64Fog_summary">(dobbiamo lavorarci)</string>
   <string name="gles2N64Sai_title">Filtro texture 2xSal</string>
@@ -164,6 +154,8 @@
   <string name="gles2RiceHiResTextures_title">Texture ad alta risoluzione</string>
   <string name="gles2RiceHiResTextures_summary">Usa pacchetti texture importati</string>
   <string name="gles2RiceFog_title">Nebbia</string>
+  <string name="coreUseFramelimiter_title">Usa limitatore fotogrammi</string>
+  <string name="coreUseFramelimiter_summary">Abilita per gameplay più fluido (rallenta alcuni giochi)</string>
   <string name="audioSwapChannels_title">Inverti canali audio</string>
   <string name="audioSwapChannels_summary">Inverte i canali audio sinistra e destra</string>
   <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
@@ -216,6 +208,10 @@
   <string name="displayFpsRefresh_entryNever">Mai</string>
   <string name="displayFpsRefresh_entryOccasionally">Occasionalmente</string>
   <string name="displayFpsRefresh_entryFrequently">Frequentemente</string>
+  <string name="videoPlugin_entryNone">Nessuno (video disabilitato)</string>
+  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(adattamento di GLN64 v0.4.1)</small></string>
+  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adattamento di Rice Video v6.1.0(b))</small></string>
+  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adattamento di Glide64 Finale (10° Aniversario))</small></string>
   <string name="videoHardwareType_title">Riduzione tremolamento</string>
   <string name="videoHardwareType_entryAuto">Individua automaticamente dal modello del telefono/tablet</string>
   <string name="videoHardwareType_entryStandard">Profilo standard</string>
@@ -236,11 +232,6 @@
   <string name="gles2N64Frameskip_entryExactly3">Esattamente 3 fotogrammi</string>
   <string name="gles2N64Frameskip_entryExactly4">Esattamente 4 fotogrammi</string>
   <string name="gles2N64Frameskip_entryExactly5">Esattamente 5 fotogrammi</string>
-  <string name="gles2RiceMipmapping_title">Mipmapping</string>
-  <string name="gles2RiceMipmapping_entryNone">Nessuno</string>
-  <string name="gles2RiceMipmapping_entryNearest">Più vicino</string>
-  <string name="gles2RiceMipmapping_entryBilinear">Bilineare</string>
-  <string name="gles2RiceMipmapping_entryTrilinear">Trilineare</string>
   <string name="gles2RiceScreenUpdate_title">Metodo di aggiornamento schermo</string>
   <string name="gles2RiceScreenUpdate_entryRomDefault">Default della rom</string>
   <string name="gles2RiceScreenUpdate_entryVIOriginUpdate">Aggiornamento VI origin</string>
@@ -259,35 +250,16 @@
   <string name="gles2RiceTextureEnhancement_entryHq4x">HQ4x</string>
   <string name="gles2RiceTextureEnhancement_entrySharpen">Nitido</string>
   <string name="gles2RiceTextureEnhancement_entrySharpen_more">Più nitido</string>
-  <string name="audioResampleAlg_title">Algoritmo di ricampionamento</string>
-  <string name="audioResampleAlg_entryTrivial">banale</string>
-  <string name="audioResampleAlg_entryLinear">Interpolazione lineare</string>
-  <string name="audioResampleAlg_entryZoh">Zero order hold</string>
-  <string name="audioResampleAlg_entrySincFastest">Sincr (più veloce)</string>
-  <string name="audioResampleAlg_entrySincMedium">Sincr (medio)</string>
-  <string name="audioResampleAlg_entrySincBest">Sincr (migliore)</string>
-  <string name="videoPlugin_title">Video</string>
-  <string name="videoPlugin_entryNone">Nessuno (video disabilitato)</string>
-  <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(adattamento di GLN64 v0.4.1)</small></string>
-  <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adattamento di Rice Video v6.1.0(b))</small></string>
-  <string name="videoPlugin_entryGles2Glide64">gles2glide64\n<small>(adattamento di Glide64 Finale (10° Aniversario))</small></string>
-  <string name="audioPlugin_title">Audio</string>
-  <string name="audioPlugin_entryNone">Nessuno (audio disabilitato)</string>
-  <string name="pluginInput_title">Input</string>
-  <string name="pluginInput_entryNone">Nessuno (input disabilitato)</string>
-  <string name="pluginInput_entryAndroid">input-android</string>
-  <string name="pluginRsp_title">Processore di segnale della realtà (RSP)</string>
-  <string name="pluginRsp_entryNone">Nessuno (RSP disabilitato)</string>
-  <string name="pluginCore_title">Core emulazione</string>
-  <string name="r4300Emulator_title">Emulatore R4300</string>
-  <string name="r4300Emulator_entryPureInterpreter">Interprete puro</string>
-  <string name="r4300Emulator_entryCachedInterpreter">Interprete in cache</string>
-  <string name="r4300Emulator_entryDynarec">Ricompilatore dinamico (dynarec)</string>
   <string name="navigationMode_title">Accessibilità</string>
   <string name="navigationMode_summary">Modalità di navigazione menu: %1$s</string>
   <string name="navigationMode_entryAuto">Seleziona automaticamente dalla configurazione del dispositivo</string>
   <string name="navigationMode_entryStandard">Modalità standard</string>
   <string name="navigationMode_entryBigScreen">Modalità grande-schermo (niente touchscreen; solo input gamepad/tastiera)</string>
+  <string name="r4300Emulator_title">Emulatore R4300</string>
+  <string name="r4300Emulator_entryPureInterpreter">Interprete puro</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Interprete in cache</string>
+  <string name="r4300Emulator_entryDynarec">Ricompilatore dinamico (dynarec)</string>
+  <string name="audioPlugin_entryNone">Nessuno (audio disabilitato)</string>
   <string name="localeOverride_title">Linguaggio</string>
   <string name="localeOverride_entrySystemDefault">Default di sistema</string>
   <!--ACRA Preferences (key names must not be changed)-->
