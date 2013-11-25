@@ -173,7 +173,7 @@ public class CoreInterface
         sFpsRecalcPeriod = fpsRecalcPeriod;
     }
     
-    public static void startupEmulator()
+    public static synchronized void startupEmulator()
     {
         if( sCoreThread == null )
         {
@@ -238,7 +238,7 @@ public class CoreInterface
         }
     }
     
-    public static void shutdownEmulator()
+    public static synchronized void shutdownEmulator()
     {
         if( sCoreThread != null )
         {
@@ -261,7 +261,7 @@ public class CoreInterface
         }
     }
     
-    public static void resumeEmulator()
+    public static synchronized void resumeEmulator()
     {
         if( sCoreThread != null )
         {
@@ -269,7 +269,7 @@ public class CoreInterface
         }
     }
     
-    public static void pauseEmulator( boolean autoSave )
+    public static synchronized void pauseEmulator( boolean autoSave )
     {
         if( sCoreThread != null )
         {
