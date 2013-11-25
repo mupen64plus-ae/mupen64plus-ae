@@ -57,6 +57,7 @@ public class NativeConfigFiles
         
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.000000" );                                                          // Mupen64Plus SDL Audio Plugin config parameter version number
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", boolToTF( user.audioSwapChannels ) );                            // Swaps left and right channels
+        mupen64plus_cfg.put( "Audio-SDL", "SECONDARY_BUFFER_SIZE", String.valueOf( user.audioSecondaryBufferSize ) );       // Size of secondary buffer in output samples. This is SDL's hardware buffer.
         
         mupen64plus_cfg.put( "Core", "Version", "1.010000" );                                                               // Mupen64Plus Core config parameter set version number.  Please don't change this version number.
         mupen64plus_cfg.put( "Core", "OnScreenDisplay", "False" );                                                          // Draw on-screen display if True, otherwise don't draw OSD

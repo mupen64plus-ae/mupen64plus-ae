@@ -368,6 +368,13 @@
                         android:key="audioPlugin"
                         android:summary="@string/selectedValue"
                         android:title="@string/audioPlugin_title" />
+                    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
+                        android:defaultValue="@string/audioBufferSize_default"
+                        android:entries="@array/audioBufferSize_entries"
+                        android:entryValues="@array/audioBufferSize_values"
+                        android:key="audioBufferSize"
+                        android:summary="@string/selectedValue"
+                        android:title="@string/audioBufferSize_title" />
 
                     <CheckBoxPreference
                         android:defaultValue="false"

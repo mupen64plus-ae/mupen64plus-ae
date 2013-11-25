@@ -89,6 +89,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String NAVIGATION_MODE = "navigationMode";
     private static final String R4300_EMULATOR = "r4300Emulator";
     private static final String AUDIO_PLUGIN = "audioPlugin";
+    private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
     private static final String AUDIO_SWAP_CHANNELS = "audioSwapChannels";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     private static final String LOCALE_OVERRIDE = "localeOverride";
@@ -163,6 +164,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, DISPLAY_RESOLUTION, R.string.displayResolution_default, R.array.displayResolution_values );
         PrefUtil.validateListPreference( res, prefs, DISPLAY_SCALING, R.string.displayScaling_default, R.array.displayScaling_values );
         PrefUtil.validateListPreference( res, prefs, AUDIO_PLUGIN, R.string.audioPlugin_default, R.array.audioPlugin_values );
+        PrefUtil.validateListPreference( res, prefs, AUDIO_BUFFER_SIZE, R.string.audioBufferSize_default, R.array.audioBufferSize_values );
         PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
         PrefUtil.validateListPreference( res, prefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );
         
@@ -288,6 +290,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 && !mUserPrefs.isTouchscreenCustom );
         
         // Enable audio prefs if audio is enabled
+        PrefUtil.enablePreference( this, AUDIO_BUFFER_SIZE, mUserPrefs.audioPlugin.enabled );
         PrefUtil.enablePreference( this, AUDIO_SWAP_CHANNELS, mUserPrefs.audioPlugin.enabled );
         
         // Update the summary text in a particular way for ACRA user info

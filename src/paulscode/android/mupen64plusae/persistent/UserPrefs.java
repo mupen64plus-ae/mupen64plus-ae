@@ -335,6 +335,9 @@ public class UserPrefs
     /** True if the left and right audio channels are swapped. */
     public final boolean audioSwapChannels;
     
+    /** Size of secondary buffer in output samples. This is SDL's hardware buffer, which directly affects latency. */
+    public final int audioSecondaryBufferSize;
+    
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
     
@@ -500,6 +503,7 @@ public class UserPrefs
         
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
+        audioSecondaryBufferSize = getSafeInt( mPreferences, "audioBufferSize", 2048 );
         isFramelimiterEnabled = !mPreferences.getString( "audioPlugin", "" ).equals( "nospeedlimit" );
         
         // User interface modes

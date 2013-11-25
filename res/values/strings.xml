@@ -317,6 +317,11 @@
     <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
     <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
 
+    <string name="audioBufferSize_title">Audio buffer size</string>
+    <string name="audioBufferSize_entry2048">Default</string>
+    <string name="audioBufferSize_entry128">Low-latency (experimental)</string>
+    <string name="audioBufferSize_entry8">Ultra-low latency (experimental)</string>
+
     <string name="localeOverride_title">Language</string>
     <string name="localeOverride_entrySystemDefault">System default</string>
 
