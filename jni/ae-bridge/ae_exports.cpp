@@ -75,14 +75,15 @@ extern jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 /*******************************************************************************
- Functions called internally
+ Functions called by Java code
  *******************************************************************************/
 
-static void reloadLibraries(const char* libPath)
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_loadLibraries(JNIEnv* env, jclass cls, jstring jlibPath)
 {
     LOGI("Loading native libraries");
 
     // Construct the library paths
+    const char *libPath = env->GetStringUTFChars(jlibPath, 0);
     char pathAEI[256];
     char pathSDL[256];
     char pathCore[256];
@@ -91,12 +92,7 @@ static void reloadLibraries(const char* libPath)
     sprintf(pathSDL,    "%s/libSDL2.so",        libPath);
     sprintf(pathCore,   "%s/libcore.so",        libPath);
     sprintf(pathFront,  "%s/libfront-end.so",   libPath);
-
-    // Close shared libraries
-    if (handleFront) dlclose(handleFront);
-    if (handleCore)  dlclose(handleCore);
-    if (handleSDL)   dlclose(handleSDL);
-    if (handleAEI)   dlclose(handleAEI);
+    env->ReleaseStringUTFChars(jlibPath, libPath);
 
     // Open shared libraries
     handleAEI   = dlopen(pathAEI,   RTLD_NOW);
@@ -133,17 +129,34 @@ static void reloadLibraries(const char* libPath)
     }
 }
 
-/*******************************************************************************
- Functions called by Java code
- *******************************************************************************/
-
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring jlibPath, jstring jconfigPath, jobjectArray jargv)
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_unloadLibraries(JNIEnv* env, jclass cls)
 {
-    // Reload the libraries to ensure that static variables are re-initialized
-    const char *libPath = env->GetStringUTFChars(jlibPath, 0);
-    reloadLibraries(libPath);
-    env->ReleaseStringUTFChars(jlibPath, libPath);
+    // Unload the libraries to ensure that static variables are re-initialized next time
+    LOGI("Unloading native libraries");
 
+    // Nullify function pointers
+    aeiInit         = NULL;
+    sdlInit         = NULL;
+    sdlSetScreen    = NULL;
+    sdlMainReady    = NULL;
+    coreDoCommand   = NULL;
+    frontMain       = NULL;
+
+    // Close shared libraries
+    if (handleFront) dlclose(handleFront);
+    if (handleCore)  dlclose(handleCore);
+    if (handleSDL)   dlclose(handleSDL);
+    if (handleAEI)   dlclose(handleAEI);
+
+    // Nullify handles
+    handleFront     = NULL;
+    handleCore      = NULL;
+    handleSDL       = NULL;
+    handleAEI       = NULL;
+}
+
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring jconfigPath, jobjectArray jargv)
+{
     // Define some environment variables needed by rice video plugin
     const char *configPath = env->GetStringUTFChars(jconfigPath, 0);
     setenv( "XDG_DATA_HOME", configPath, 1 );

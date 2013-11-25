@@ -38,7 +38,11 @@ public class NativeExports
     
     // TODO: Add javadoc
     
-    public static native void emuStart( String libPath, String configPath, Object[] args );
+    public static native void loadLibraries( String libPath );
+    
+    public static native void unloadLibraries();
+    
+    public static native void emuStart( String configPath, Object[] args );
     
     public static native void emuStop();
     

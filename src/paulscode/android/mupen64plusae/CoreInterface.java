@@ -177,6 +177,9 @@ public class CoreInterface
     {
         if( sCoreThread == null )
         {
+            // Load the native libraries
+            NativeExports.loadLibraries( sAppData.libsDir );
+            
             // Start the core thread if not already running
             sCoreThread = new Thread( new Runnable()
             {
@@ -206,7 +209,7 @@ public class CoreInterface
                         arglist.add( sCheatOptions );
                     }
                     arglist.add( getROMPath() );
-                    NativeExports.emuStart( sAppData.libsDir, sAppData.dataDir, arglist.toArray() );
+                    NativeExports.emuStart( sAppData.dataDir, arglist.toArray() );
                 }
             }, "CoreThread" );
             sCoreThread.start();
@@ -252,6 +255,9 @@ public class CoreInterface
                 Log.i( "CoreInterface", "Problem stopping core thread: " + e );
             }
             sCoreThread = null;
+            
+            // Unload the native libraries
+            NativeExports.unloadLibraries();
         }
     }
     
