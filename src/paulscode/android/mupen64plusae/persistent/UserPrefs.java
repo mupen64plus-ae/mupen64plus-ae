@@ -470,7 +470,6 @@ public class UserPrefs
         videoHardwareType = getSafeInt( mPreferences, "videoHardwareType", -1 );
         videoPolygonOffset = SafeMethods.toFloat( mPreferences.getString( "videoPolygonOffset", "-0.2" ), -0.2f );
         isImmersiveModeEnabled = mPreferences.getBoolean( "displayImmersiveMode", false );
-        isFramelimiterEnabled = mPreferences.getBoolean( "coreUseFramelimiter", false );
         
         // Video prefs - gles2n64
         isGles2N64Enabled = videoPlugin.name.equals( "libgles2n64.so" );
@@ -501,6 +500,7 @@ public class UserPrefs
         
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
+        isFramelimiterEnabled = !mPreferences.getString( "audioPlugin", "" ).equals( "nospeedlimit" );
         
         // User interface modes
         String navMode = mPreferences.getString( "navigationMode", "auto" );
@@ -929,7 +929,7 @@ public class UserPrefs
         public Plugin( SharedPreferences prefs, String libsDir, String key )
         {
             name = prefs.getString( key, "" );
-            enabled = !TextUtils.isEmpty( name );
+            enabled = name.endsWith( ".so" );
             path = enabled ? libsDir + name : "dummy";
         }
     }

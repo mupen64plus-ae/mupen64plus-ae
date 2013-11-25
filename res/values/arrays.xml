@@ -389,10 +389,12 @@
     <!-- Audio Plugins -->
     <string-array name="audioPlugin_entries" translatable="false">
         <item>@string/audioPlugin_entryNone</item>
+        <item>@string/audioPlugin_entryNoneNoSpeedLimit</item>
         <item>@string/audioPlugin_entrySdl</item>
     </string-array>
     <string-array name="audioPlugin_values" translatable="false">
         <item></item>
+        <item>nospeedlimit</item>
         <item>libaudio-sdl.so</item>
     </string-array>
 

@@ -185,8 +185,6 @@
     <string name="gles2RiceHiResTextures_summary">Use imported texture packs</string>
     <string name="gles2RiceFog_title">Fog</string>
     <string name="gles2RiceFog_summary">Show fog effects</string>
-    <string name="coreUseFramelimiter_title">Use framelimiter</string>
-    <string name="coreUseFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
     <string name="audioSwapChannels_title">Swap audio channels</string>
     <string name="audioSwapChannels_summary">Swap the left and right audio channels</string>
 
@@ -316,6 +314,7 @@
 
     <string name="audioPlugin_title">Audio plugin</string>
     <string name="audioPlugin_entryNone">None (audio disabled)</string>
+    <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
     <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
 
     <string name="localeOverride_title">Language</string>

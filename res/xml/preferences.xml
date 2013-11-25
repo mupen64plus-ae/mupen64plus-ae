@@ -357,12 +357,6 @@
                         android:key="r4300Emulator"
                         android:summary="@string/selectedValue"
                         android:title="@string/r4300Emulator_title" />
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="coreUseFramelimiter"
-                        android:summary="@string/coreUseFramelimiter_summary"
-                        android:title="@string/coreUseFramelimiter_title" />
                 </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryAudio"
