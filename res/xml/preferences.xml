@@ -376,14 +376,6 @@
                         android:title="@string/audioSwapChannels_title" />
                 </PreferenceCategory>
                 <PreferenceCategory
-                    android:key="categoryDiagnostics"
-                    android:title="@string/categoryDiagnostics_title" >
-                    <Preference
-                        android:key="actionDeviceInfo"
-                        android:summary="@string/actionDeviceInfo_summary"
-                        android:title="@string/actionDeviceInfo_title" />
-                </PreferenceCategory>
-                <PreferenceCategory
                     android:key="categoryData"
                     android:title="@string/categoryData_title" >
                     <paulscode.android.mupen64plusae.persistent.PathPreference
@@ -396,6 +388,14 @@
                         android:key="actionReloadAssets"
                         android:summary="@string/actionReloadAssets_summary"
                         android:title="@string/actionReloadAssets_title" />
+                </PreferenceCategory>
+                <PreferenceCategory
+                    android:key="categoryDiagnostics"
+                    android:title="@string/categoryDiagnostics_title" >
+                    <Preference
+                        android:key="actionDeviceInfo"
+                        android:summary="@string/actionDeviceInfo_summary"
+                        android:title="@string/actionDeviceInfo_title" />
                 </PreferenceCategory>
                 <PreferenceCategory
                     android:key="categoryCrashReports"
