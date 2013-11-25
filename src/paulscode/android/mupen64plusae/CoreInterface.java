@@ -253,9 +253,6 @@ public class CoreInterface
             }
             sCoreThread = null;
         }
-        
-        // Clean up other resources
-        NativeSDL.audioQuit();
     }
     
     public static void resumeEmulator()
