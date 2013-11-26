@@ -115,6 +115,14 @@ public class VideoMenuActivity extends PreferenceActivity implements
     }
     
     @Override
+    public void finish()
+    {
+        // Disable transition animation to behave like any other screen in the menu hierarchy
+        super.finish();
+        overridePendingTransition( 0, 0 );
+    }
+    
+    @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
         if( key.equals( VIDEO_PLUGIN ) )
