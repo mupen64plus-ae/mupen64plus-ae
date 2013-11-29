@@ -196,6 +196,9 @@ JNIEXPORT void JNICALL Java_paulscode_android_mupen64plusae_jni_NativeInput_init
 {
     DebugMessage(M64MSG_INFO, "init()");
 
+    // Discard stale pointer
+    _controllerInfos = NULL;
+
     _jniClass = (jclass)(*env)->NewGlobalRef(env, cls);
 
     _jniRumble = (*env)->GetStaticMethodID(env, cls, "rumble", "(IZ)V");
