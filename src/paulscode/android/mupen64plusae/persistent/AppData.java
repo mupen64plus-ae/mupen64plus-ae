@@ -158,6 +158,9 @@ public class AppData
     /** The path of the Mupen64Plus cheats file. */
     public final String mupen64plus_cht;
     
+    /** The path of the Mupen64Plus ini file. */
+    public final String mupen64plus_ini;
+    
     /** The path of the error log file. */
     public final String error_log;
     
@@ -234,6 +237,7 @@ public class AppData
         gles2n64_conf = sharedDataDir + "/gles2n64.conf";
         gles2glide64_conf = sharedDataDir + "/Glide64mk2.ini";
         mupen64plus_cht = sharedDataDir + "/mupen64plus.cht";
+        mupen64plus_ini = sharedDataDir + "/mupen64plus.ini";
         error_log = dataDir + "/error.log";
         
         // Installation validity
