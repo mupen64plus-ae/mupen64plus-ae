@@ -212,7 +212,6 @@ public class CoreInterface
                     NativeExports.emuStart( sAppData.dataDir, arglist.toArray() );
                 }
             }, "CoreThread" );
-            sCoreThread.start();
             
             // Auto-load state if desired
             if( !sIsRestarting )
@@ -235,6 +234,9 @@ public class CoreInterface
             
             // Ensure the auto-save is loaded if the operating system stops & restarts the activity
             sIsRestarting = false;
+            
+            // Start the core on its own thread
+            sCoreThread.start();
         }
     }
     
