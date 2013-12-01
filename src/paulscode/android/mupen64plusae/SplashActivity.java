@@ -47,7 +47,7 @@ import android.widget.TextView;
  * The main activity that presents the splash screen, extracts the assets if necessary, and launches
  * the main menu activity.
  */
-public class MainActivity extends Activity implements OnExtractionProgressListener
+public class SplashActivity extends Activity implements OnExtractionProgressListener
 {
     /**
      * Asset version number, used to determine stale assets. Increment this number every time the
@@ -153,7 +153,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
                 mAssetsExtracted = 0;
                 
                 failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.dataDir,
-                        MainActivity.this );
+                        SplashActivity.this );
             }
             
             // Launch menu activity if successful; post failure notice otherwise
@@ -163,7 +163,7 @@ public class MainActivity extends Activity implements OnExtractionProgressListen
                 updateText( R.string.assetExtractor_finished );
                 
                 // Launch the MenuActivity
-                startActivity( new Intent( MainActivity.this, MenuActivity.class ) );
+                startActivity( new Intent( SplashActivity.this, MenuActivity.class ) );
                 
                 // We never want to come back to this activity, so finish it
                 finish();

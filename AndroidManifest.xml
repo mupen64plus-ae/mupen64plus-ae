@@ -23,7 +23,7 @@
         android:label="@string/app_name"
         android:theme="@style/appTheme" >
         <activity
-            android:name="paulscode.android.mupen64plusae.MainActivity"
+            android:name="paulscode.android.mupen64plusae.SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/appTheme.Black" >
             <intent-filter>

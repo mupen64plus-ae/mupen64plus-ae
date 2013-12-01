@@ -341,7 +341,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private void actionReloadAssets()
     {
         mAppData.putAssetVersion( 0 );
-        startActivity( new Intent( this, MainActivity.class ) );
+        startActivity( new Intent( this, SplashActivity.class ) );
         finish();
     }
     
