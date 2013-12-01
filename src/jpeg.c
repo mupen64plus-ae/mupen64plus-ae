@@ -33,7 +33,7 @@
 #define SUBBLOCK_SIZE 64
 
 typedef void (*tile_line_emitter_t)(const int16_t *y, const int16_t *u, uint32_t address);
-typedef void (*std_macroblock_decoder_t)(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
+typedef void (*subblock_transform_t)(int16_t* dst, const int16_t* src);
 
 /* rdram operations */
 // FIXME: these functions deserve their own module
@@ -43,7 +43,10 @@ static uint32_t rdram_read_u32(uint32_t address);
 static void rdram_write_many_u32(const uint32_t *src, uint32_t address, unsigned int count);
 
 /* standard jpeg ucode decoder */
-static void jpeg_decode_std(const char * const version, const std_macroblock_decoder_t decode_mb, const tile_line_emitter_t emit_line);
+static void jpeg_decode_std(const char * const version,
+        const subblock_transform_t transform_luma,
+        const subblock_transform_t transform_chroma,
+        const tile_line_emitter_t emit_line);
 
 /* helper functions */
 static uint8_t clamp_u8(int16_t x);
@@ -60,9 +63,11 @@ static void EmitYUVTileLine(const int16_t *y, const int16_t *u, uint32_t address
 static void EmitRGBATileLine(const int16_t *y, const int16_t *u, uint32_t address);
 
 /* macroblocks operations */
-static void DecodeMacroblock1(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc, int32_t *v_dc, const int16_t *qtable);
-static void DecodeMacroblock2(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
-static void DecodeMacroblock3(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
+static void decode_macroblock_ob(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc, int32_t *v_dc, const int16_t *qtable);
+static void decode_macroblock_std(
+        const subblock_transform_t transform_luma,
+        const subblock_transform_t transform_chroma,
+        int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE]);
 static void EmitTilesMode0(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 static void EmitTilesMode2(const tile_line_emitter_t emit_line, const int16_t *macroblock, uint32_t address);
 
@@ -145,7 +150,7 @@ static const float IDCT_K[10] =
  **************************************************************************/
 void jpeg_decode_PS0()
 {
-    jpeg_decode_std("PS0", DecodeMacroblock3, EmitYUVTileLine);
+    jpeg_decode_std("PS0", RescaleYSubBlock, RescaleUVSubBlock, EmitYUVTileLine);
 }
 
 /***************************************************************************
@@ -154,7 +159,7 @@ void jpeg_decode_PS0()
  **************************************************************************/
 void jpeg_decode_PS()
 {
-    jpeg_decode_std("PS", DecodeMacroblock2, EmitRGBATileLine);
+    jpeg_decode_std("PS", NULL, NULL, EmitRGBATileLine);
 }
 
 /***************************************************************************
@@ -197,7 +202,7 @@ void jpeg_decode_OB()
         int16_t macroblock[6*SUBBLOCK_SIZE];
 
         rdram_read_many_u16((uint16_t*)macroblock, address, 6*SUBBLOCK_SIZE);
-        DecodeMacroblock1(macroblock, &y_dc, &u_dc, &v_dc, (qscale != 0) ? qtable : NULL);
+        decode_macroblock_ob(macroblock, &y_dc, &u_dc, &v_dc, (qscale != 0) ? qtable : NULL);
         EmitTilesMode2(EmitYUVTileLine, macroblock, address);
 
         address += (2*6*SUBBLOCK_SIZE);
@@ -206,7 +211,10 @@ void jpeg_decode_OB()
 
 
 /* local functions */
-static void jpeg_decode_std(const char * const version, const std_macroblock_decoder_t decode_mb, const tile_line_emitter_t emit_line)
+static void jpeg_decode_std(const char * const version,
+        const subblock_transform_t transform_luma,
+        const subblock_transform_t transform_chroma,
+        const tile_line_emitter_t emit_line)
 {
     int16_t qtables[3][SUBBLOCK_SIZE];
     unsigned int mb;
@@ -259,7 +267,8 @@ static void jpeg_decode_std(const char * const version, const std_macroblock_dec
     for (mb = 0; mb < macroblock_count; ++mb)
     {
         rdram_read_many_u16((uint16_t*)macroblock, address, macroblock_size);
-        decode_mb(macroblock, subblock_count, (const int16_t (*)[SUBBLOCK_SIZE])qtables);
+        decode_macroblock_std(transform_luma, transform_chroma,
+                macroblock, subblock_count, (const int16_t (*)[SUBBLOCK_SIZE])qtables);
 
         if (mode == 0)
         {
@@ -399,7 +408,7 @@ static void EmitTilesMode2(const tile_line_emitter_t emit_line, const int16_t *m
     }
 }
 
-static void DecodeMacroblock1(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc, int32_t *v_dc, const int16_t *qtable)
+static void decode_macroblock_ob(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc, int32_t *v_dc, const int16_t *qtable)
 {
     int sb;
 
@@ -426,28 +435,10 @@ static void DecodeMacroblock1(int16_t *macroblock, int32_t *y_dc, int32_t *u_dc,
     }
 }
 
-static void DecodeMacroblock2(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE])
-{
-    unsigned int sb;
-    unsigned int q = 0;
-
-    for (sb = 0; sb < subblock_count; ++sb)
-    {
-        int16_t tmp_sb[SUBBLOCK_SIZE];
-        const int isChromaSubBlock = (subblock_count - sb <= 2);
-
-        if (isChromaSubBlock) { ++q; }
-
-        MultSubBlocks(macroblock, macroblock, qtables[q], 4);
-        ZigZagSubBlock(tmp_sb, macroblock);
-        InverseDCTSubBlock(macroblock, tmp_sb);
-
-        macroblock += SUBBLOCK_SIZE;
-    }
-
-}
-
-static void DecodeMacroblock3(int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE])
+static void decode_macroblock_std(
+        const subblock_transform_t transform_luma,
+        const subblock_transform_t transform_chroma,
+        int16_t *macroblock, unsigned int subblock_count, const int16_t qtables[3][SUBBLOCK_SIZE])
 {
     unsigned int sb;
     unsigned int q = 0;
@@ -465,11 +456,13 @@ static void DecodeMacroblock3(int16_t *macroblock, unsigned int subblock_count, 
 
         if (isChromaSubBlock)
         {
-            RescaleUVSubBlock(macroblock, macroblock);
+            if (transform_chroma != NULL)
+                transform_chroma(macroblock, macroblock);
         }
         else
         {
-            RescaleYSubBlock(macroblock, macroblock);
+            if (transform_luma != NULL)
+                transform_luma(macroblock, macroblock);
         }
 
         macroblock += SUBBLOCK_SIZE;
