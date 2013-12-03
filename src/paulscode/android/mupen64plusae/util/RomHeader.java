@@ -3,7 +3,6 @@ package paulscode.android.mupen64plusae.util;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import android.util.Log;
@@ -24,8 +23,8 @@ public final class RomHeader
     public final int release;                    // 0x0C
     public final int crc1;                       // 0x10
     public final int crc2;                       // 0x14
-    public final int unknown1;                   // 0x18
-    public final int unknown2;                   // 0x19
+    public final byte unknown1;                  // 0x18
+    public final byte unknown2;                  // 0x19
     public final String name;                    // 0x20
     public final int unknown3;                   // 0x34
     public final int manufacturerId;             // 0x38
@@ -33,7 +32,7 @@ public final class RomHeader
     public final short countryCode;              // 0x3E
     // @formatter:on
     public final String crc;
-
+    
     /**
      * Constructor.
      * 
@@ -41,17 +40,9 @@ public final class RomHeader
      */
     public RomHeader( File file )
     {
-        DataInputStream in = null;
-        try
-        {
-            in = new DataInputStream( new FileInputStream( file ) );
-        }
-        catch( FileNotFoundException e )
-        {
-            Log.e( "RomHeader", "ROM file not found", e );
-        }
+        byte[] buffer = readFile( file );
         
-        if( in == null )
+        if( buffer == null )
         {
             init_PI_BSB_DOM1_LAT_REG = 0;
             init_PI_BSB_DOM1_PGS_REG = 0;
@@ -64,7 +55,7 @@ public final class RomHeader
             crc2 = 0;
             unknown1 = 0;
             unknown2 = 0;
-            name = null;
+            name = "";
             unknown3 = 0;
             manufacturerId = 0;
             cartridgeId = 0;
@@ -72,73 +63,108 @@ public final class RomHeader
         }
         else
         {
-            init_PI_BSB_DOM1_LAT_REG = readByte( in );
-            init_PI_BSB_DOM1_PGS_REG = readByte( in );
-            init_PI_BSB_DOM1_PWD_REG = readByte( in );
-            init_PI_BSB_DOM1_PGS_REG2 = readByte( in );
-            clockRate = readInt( in );
-            pc = readInt( in );
-            release = readInt( in );
-            crc1 = readInt( in );
-            crc2 = readInt( in );
-            unknown1 = readInt( in );
-            unknown2 = readInt( in );
-            byte[] nameBytes = new byte[20];
-            for( int i = 0; i < nameBytes.length; i++ )
-                nameBytes[i] = readByte( in );
-            name = new String( nameBytes );
-            unknown3 = readInt( in );
-            manufacturerId = readInt( in );
-            cartridgeId = readShort( in );
-            countryCode = readShort( in );
+            swapBytes( buffer );
+            init_PI_BSB_DOM1_LAT_REG = buffer[0x00];
+            init_PI_BSB_DOM1_PGS_REG = buffer[0x01];
+            init_PI_BSB_DOM1_PWD_REG = buffer[0x02];
+            init_PI_BSB_DOM1_PGS_REG2 = buffer[0x03];
+            clockRate = readInt( buffer, 0x04 );
+            pc = readInt( buffer, 0x08 );
+            release = readInt( buffer, 0x0C );
+            crc1 = readInt( buffer, 0x10 );
+            crc2 = readInt( buffer, 0x14 );
+            unknown1 = buffer[0x18];
+            unknown2 = buffer[0x19];
+            name = readString( buffer, 0x20, 0x34 ).trim();
+            unknown3 = readInt( buffer, 0x34 );
+            manufacturerId = readInt( buffer, 0x38 );
+            cartridgeId = readShort( buffer, 0x3C );
+            countryCode = readShort( buffer, 0x3E );
+        }
+        crc = String.format( "%08X %08X", crc1, crc2 );
+    }
+    
+    private static byte[] readFile( File file )
+    {
+        byte[] buffer = new byte[0x40];
+        DataInputStream in = null;
+        try
+        {
+            in = new DataInputStream( new FileInputStream( file ) );
+            in.read( buffer );
+        }
+        catch( IOException e )
+        {
+            Log.e( "RomHeader", "ROM file could not be read", e );
+            buffer = null;
+        }
+        finally
+        {
             try
             {
-                in.close();
+                if( in != null )
+                    in.close();
             }
             catch( IOException e )
             {
                 Log.e( "RomHeader", "ROM file could not be closed", e );
             }
         }
-        crc = String.format( "%08X %08X", crc1, crc2 );
+        return buffer;
     }
     
-    private byte readByte( DataInputStream in )
+    private static void swapBytes( byte[] buffer )
     {
-        try
+        if( buffer[0] == 0x37 )
         {
-            return in.readByte();
+            // Byteswap if .v64 image
+            for( int i = 0; i < buffer.length; i += 2 )
+            {
+                byte temp = buffer[i];
+                buffer[i] = buffer[i + 1];
+                buffer[i + 1] = temp;
+            }
         }
-        catch( IOException e )
+        else if( buffer[0] == 0x40 )
         {
-            Log.e( "RomHeader", "ROM file could not read char", e );
-            return 0;
+            // Wordswap if .n64 image
+            for( int i = 0; i < buffer.length; i += 4 )
+            {
+                byte temp = buffer[i];
+                buffer[i] = buffer[i + 3];
+                buffer[i + 3] = temp;
+                temp = buffer[i + 1];
+                buffer[i + 1] = buffer[i + 2];
+                buffer[i + 2] = temp;
+            }
         }
     }
     
-    private int readInt( DataInputStream in )
+    private static int readInt( byte[] buffer, int start )
     {
-        try
-        {
-            return in.readInt();
-        }
-        catch( IOException e )
-        {
-            Log.e( "RomHeader", "ROM file could not read int", e );
-            return 0;
-        }
+        // @formatter:off
+        return  (buffer[start + 3] & 0xFF)       |
+                (buffer[start + 2] & 0xFF) << 8  |
+                (buffer[start + 1] & 0xFF) << 16 |
+                (buffer[start + 0] & 0xFF) << 24;
+        // @formatter:on
     }
     
-    private short readShort( DataInputStream in )
+    private static short readShort( byte[] buffer, int start )
     {
-        try
-        {
-            return in.readShort();
-        }
-        catch( IOException e )
-        {
-            Log.e( "RomHeader", "ROM file could not read short", e );
-            return 0;
-        }
+        // @formatter:off
+        int value = (buffer[start + 1] & 0xFF) |
+                    (buffer[start + 0] & 0xFF) << 8;
+        // @formatter:on
+        return (short) value;
+    }
+    
+    private String readString( byte[] buffer, int start, int end )
+    {
+        // Arrays.copyOfRange( buffer, start, end ) requires API 9, so do it manually
+        byte[] newBuffer = new byte[end - start];
+        for( int i = 0; i < newBuffer.length; i++ )
+            newBuffer[i] = buffer[start + i];
+        return new String( newBuffer );
     }
 }
