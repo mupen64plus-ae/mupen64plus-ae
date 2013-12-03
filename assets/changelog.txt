@@ -1,3 +1,9 @@
+[34:2.4.2]
+- Fixed audio latency on many devices
+- Fixed cheat menu regression
+- Fixed controller buttons not staying pressed (you MUST reset button mappings)
+- Fixed help popup bug
+- Devs and expert users can modify more settings in the config files (not generally useful for most users)
 [33:2.4.1]
 - Fixed hi-res texture regression with gles2rice
 - Added customizable flicker-reduction profile (for fixing shadow glitches)
