@@ -164,8 +164,6 @@
     <string name="inputVolumeMappable_summary">Allow volume keys to be mapped to controls</string>
     <string name="inputShareController_title">Share controller</string>
     <string name="inputShareController_summary">Allow a single input device to control multiple players at once</string>
-    <string name="videoUseFramelimiter_title">Use framelimiter</string>
-    <string name="videoUseFramelimiter_summary">Enable for smoother gameplay (slows some games)</string>
     <string name="videoRgba8888_title">RGBA_8888 mode</string>
     <string name="videoRgba8888_summary">Improves graphics on some devices</string>
     <string name="gles2N64Fog_title">Fog</string>
@@ -319,6 +317,7 @@
     <string name="pluginVideo_entryGles2Glide64">gles2glide64\n<small>(adaptation of Glide64 Final (10th Anniversary))</small></string>
     <string name="pluginAudio_title">Audio</string>
     <string name="pluginAudio_entryNone">None (audio disabled)</string>
+    <string name="pluginAudio_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
     <string name="pluginAudio_entrySdl">mupen64plus-audio-sdl, v2.0</string>
     <string name="pluginInput_title">Input</string>
     <string name="pluginInput_entryNone">None (input disabled)</string>

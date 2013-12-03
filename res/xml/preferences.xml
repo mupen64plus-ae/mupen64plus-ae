@@ -337,11 +337,6 @@
 
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="videoUseFramelimiter"
-                    android:summary="@string/videoUseFramelimiter_summary"
-                    android:title="@string/videoUseFramelimiter_title" />
-                <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="videoRgba8888"
                     android:summary="@string/videoRgba8888_summary"
                     android:title="@string/videoRgba8888_title" />

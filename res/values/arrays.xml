@@ -424,10 +424,12 @@
     <!-- Audio Plugins -->
     <string-array name="pluginAudio_entries" translatable="false">
         <item>@string/pluginAudio_entryNone</item>
+        <item>@string/pluginAudio_entryNoneNoSpeedLimit</item>
         <item>@string/pluginAudio_entrySdl</item>
     </string-array>
     <string-array name="pluginAudio_values" translatable="false">
         <item></item>
+        <item>nospeedlimit</item>
         <item>libaudio-sdl.so</item>
     </string-array>
 
