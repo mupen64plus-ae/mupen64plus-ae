@@ -412,7 +412,7 @@
         <item>8</item>
         </string-array>
 
-    <string name="audioBufferSize_default" translatable="false">2048</string>
+    <string name="audioBufferSize_default" translatable="false">8</string>
 
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">
