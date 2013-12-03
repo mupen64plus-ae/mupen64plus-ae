@@ -471,6 +471,20 @@
 
     <string name="pluginCore_default" translatable="false">libcore.so</string>
 
+    <!-- Audio Buffer Size -->
+    <string-array name="audioBufferSize_entries" translatable="false">
+        <item>@string/audioBufferSize_entry2048</item>
+        <item>@string/audioBufferSize_entry128</item>
+        <item>@string/audioBufferSize_entry8</item>
+    </string-array>
+    <string-array name="audioBufferSize_values" translatable="false">
+        <item>2048</item>
+        <item>128</item>
+        <item>8</item>
+        </string-array>
+
+    <string name="audioBufferSize_default" translatable="false">2048</string>
+
     <!-- R4300 Emulator -->
     <string-array name="r4300Emulator_entries" translatable="false">
         <item>@string/r4300Emulator_entryPureInterpreter</item>

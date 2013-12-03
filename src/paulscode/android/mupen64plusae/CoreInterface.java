@@ -369,6 +369,7 @@ public class CoreInterface
         
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.000000" );                                                          // Mupen64Plus SDL Audio Plugin config parameter version number
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", boolToTF( user.audioSwapChannels ) );                            // Swaps left and right channels
+        mupen64plus_cfg.put( "Audio-SDL", "SECONDARY_BUFFER_SIZE", String.valueOf( user.audioSecondaryBufferSize ) );       // Size of secondary buffer in output samples. This is SDL's hardware buffer.
         mupen64plus_cfg.put( "Audio-SDL", "RESAMPLE", '"' + user.audioResampleAlg + '"' );                                  // Audio resampling algorithm. src-sinc-best-quality, src-sinc-medium-quality, src-sinc-fastest, src-zero-order-hold, src-linear, speex-fixed-{10-0}, trivial
         
         mupen64plus_cfg.put( "Core", "Version", "1.010000" );                                                               // Mupen64Plus Core config parameter set version number.  Please don't change this version number.

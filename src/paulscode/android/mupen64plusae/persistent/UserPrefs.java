@@ -349,6 +349,9 @@ public class UserPrefs
     /** The audio resampling algorithm to use. */
     public final String audioResampleAlg;
     
+    /** Size of secondary buffer in output samples. This is SDL's hardware buffer, which directly affects latency. */
+    public final int audioSecondaryBufferSize;
+    
     /** True if big-screen navigation mode is enabled. */
     public final boolean isBigScreenMode;
     
@@ -518,6 +521,7 @@ public class UserPrefs
         // Audio prefs
         audioSwapChannels = mPreferences.getBoolean( "audioSwapChannels", false );
         audioResampleAlg = mPreferences.getString( "audioResampleAlg", "trivial" );
+        audioSecondaryBufferSize = getSafeInt( mPreferences, "audioBufferSize", 2048 );
         isFramelimiterEnabled = !mPreferences.getString( "pluginAudio", "" ).equals( "nospeedlimit" );
         
         // User interface modes

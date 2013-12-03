@@ -103,6 +103,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String VIDEO_ACTION_BAR_TRANSPARENCY = "videoActionBarTransparency";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     private static final String NAVIGATION_MODE = "navigationMode";
+    private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
     private static final String ACRA_USER_EMAIL = "acra.user.email";
     private static final String LOCALE_OVERRIDE = "localeOverride";
     
@@ -170,6 +171,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         PrefUtil.validateListPreference( res, prefs, PLUGIN_AUDIO, R.string.pluginAudio_default, R.array.pluginAudio_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_RSP, R.string.pluginRsp_default, R.array.pluginRsp_values );
         PrefUtil.validateListPreference( res, prefs, PLUGIN_CORE, R.string.pluginCore_default, R.array.pluginCore_values );
+        PrefUtil.validateListPreference( res, prefs, AUDIO_BUFFER_SIZE, R.string.audioBufferSize_default, R.array.audioBufferSize_values );
         PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
         PrefUtil.validateListPreference( res, prefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );
         
