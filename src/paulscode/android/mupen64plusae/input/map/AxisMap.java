@@ -98,7 +98,8 @@ public class AxisMap extends SerializableMap
             
             case SIGNATURE_HASH_NYKO_PLAYPAD:
                 if( !deviceName.contains( "NYKO PLAYPAD" ) &&
-                    !deviceName.contains( "Mad Catz" ) )
+                    !deviceName.contains( "Mad Catz" ) &&
+                    !deviceName.contains( "ipega" ) )
                 {
                     // The first batch of Nyko Playpad controllers have a quirk in the firmware
                     // where AXIS_HAT_X/Y are sent with (and overpower) AXIS_X/Y, and do not
@@ -109,8 +110,9 @@ public class AxisMap extends SerializableMap
                     // new version also returns a good name that we can use to differentiate
                     // controller firmware versions.
                     // 
-                    // The Mad Catz C.T.R.L.R. controller has the same axis signature as the Nyko
-                    // Playpad, but without the Nyko defect, so we have to check that as well.
+                    // The Mad Catz C.T.R.L.R. and IPEGA PG-9025 controller have the same axis
+                    // signature as the Nyko Playpad, but without the Nyko defect, so we have to
+                    // check that as well.
                     //
                     // For original firmware, ignore AXIS_HAT_X/Y because they are sent with (and
                     // overpower) AXIS_X/Y
