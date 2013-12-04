@@ -1,7 +1,11 @@
-[34:2.5.0]
-- Added immersive mode for KitKat devices (see video settings)
-- Reorganized internal code to follow Android best practices
-- Added English-UK translation variant
+[34:2.4.2]
+- Doom 64 is now playable, thanks to ptitSeb of OpenPandora fame
+- Fixed audio latency on most devices (see Audio menu)
+- Fixed gles2rice missing heart bug for Zelda games
+- Fixed cheat menu regression
+- Fixed controller buttons not staying pressed (you MUST reset button mappings)
+- Fixed help popup bug
+- Devs and expert users can modify more settings in the config files (not generally useful for most users)
 [33:2.4.1]
 - Fixed hi-res texture regression with gles2rice
 - Added customizable flicker-reduction profile (for fixing shadow glitches)
