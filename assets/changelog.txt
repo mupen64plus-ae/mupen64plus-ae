@@ -1,5 +1,7 @@
 [34:2.4.2]
-- Fixed audio latency on many devices (see Audio menu)
+- Doom 64 is now playable, thanks to ptitSeb of OpenPandora fame
+- Fixed audio latency on most devices (see Audio menu)
+- Fixed gles2rice missing heart bug for Zelda games
 - Fixed cheat menu regression
 - Fixed controller buttons not staying pressed (you MUST reset button mappings)
 - Fixed help popup bug
