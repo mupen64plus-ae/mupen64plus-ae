@@ -1,3 +1,5 @@
+[35:2.4.3]
+- Fixed bug where IPEGA d-pad was being ignored
 [34:2.4.2]
 - Doom 64 is now playable, thanks to ptitSeb of OpenPandora fame
 - Fixed audio latency on most devices (see Audio menu)
