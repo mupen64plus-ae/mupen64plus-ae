@@ -33,9 +33,6 @@ import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import paulscode.android.mupen64plusae.util.SafeMethods;
-import paulscode.android.mupen64plusae.util.TaskHandler;
-import paulscode.android.mupen64plusae.util.TaskHandler.Task;
-import paulscode.android.mupen64plusae.util.Utility;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -107,16 +104,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         if( mUserPrefs.isCheatOptionsShown )
         {
             // Populate cheats category with menu items
-            if( mUserPrefs.selectedGame.equals( mAppData.getLastRom() ) )
-            {
-                // Use the cached CRC and add the cheats menu items
-                build( mAppData.getLastCrc() );
-            }
-            else
-            {
-                // Recompute the CRC in a separate thread, then add the cheats menu items
-                rebuild( mUserPrefs.selectedGame );
-            }
+            build( mUserPrefs.selectedGameHeader.crc );
         }
         else
         {
@@ -194,38 +182,6 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
             return true;
         }
         return false;
-    }
-    
-    private void rebuild( final String rom )
-    {
-        Log.v( "PlayMenuActivity", "rebuilding for ROM = " + rom );
-        Notifier.showToast( PlayMenuActivity.this, R.string.toast_rebuildingCheats );
-        
-        // Place to unzip the ROM if necessary
-        final String tmpFolderName = mAppData.tempDir;
-        
-        // Define the task to be done on a separate thread
-        Task task = new Task()
-        {
-            private String crc;
-            
-            @Override
-            public void run()
-            {
-                crc = Utility.getHeaderCRC( rom, tmpFolderName );
-            }
-            
-            @Override
-            public void onComplete()
-            {
-                mAppData.putLastRom( rom );
-                mAppData.putLastCrc( crc );
-                build( crc );
-            }
-        };
-        
-        // Run the task on a separate thread
-        crcThread = TaskHandler.run( this, "ReadGameHeader", task );
     }
     
     @SuppressWarnings( "deprecation" )

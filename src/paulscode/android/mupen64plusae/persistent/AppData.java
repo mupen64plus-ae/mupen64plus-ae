@@ -167,15 +167,11 @@ public class AppData
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
     private static final String KEY_LAST_APP_VERSION_CODE = "lastAppVersion";
-    private static final String KEY_LAST_ROM = "lastRom";
-    private static final String KEY_LAST_CRC = "lastCrc";
     // ... add more as needed
     
     // Shared preferences default values
     private static final int DEFAULT_ASSET_VERSION = 0;
     private static final int DEFAULT_LAST_APP_VERSION_CODE = 0;
-    private static final String DEFAULT_LAST_ROM = "";
-    private static final String DEFAULT_LAST_CRC = "";
     
     // ... add more as needed
     
@@ -319,26 +315,6 @@ public class AppData
     }
     
     /**
-     * Gets the last ROM that the CRC was computed for.
-     * 
-     * @return The last ROM.
-     */
-    public String getLastRom()
-    {
-        return getString( KEY_LAST_ROM, DEFAULT_LAST_ROM );
-    }
-    
-    /**
-     * Gets the last CRC computed.
-     * 
-     * @return The last CRC.
-     */
-    public String getLastCrc()
-    {
-        return getString( KEY_LAST_CRC, DEFAULT_LAST_CRC );
-    }
-    
-    /**
      * Persists the asset version.
      * 
      * @param value The asset version.
@@ -358,44 +334,14 @@ public class AppData
         putInt( KEY_LAST_APP_VERSION_CODE, value );
     }
     
-    /**
-     * Persists the last ROM that the CRC was computed for.
-     * 
-     * @param value The last ROM.
-     */
-    public void putLastRom( String value )
-    {
-        putString( KEY_LAST_ROM, value );
-    }
-    
-    /**
-     * Persists the last CRC computed.
-     * 
-     * @param value The last CRC.
-     */
-    public void putLastCrc( String value )
-    {
-        putString( KEY_LAST_CRC, value );
-    }
-    
     private int getInt( String key, int defaultValue )
     {
         return mPreferences.getInt( key, defaultValue );
     }
     
-    private String getString( String key, String defaultValue )
-    {
-        return mPreferences.getString( key, defaultValue );
-    }
-    
     private void putInt( String key, int value )
     {
         mPreferences.edit().putInt( key, value ).commit();
-    }
-    
-    private void putString( String key, String value )
-    {
-        mPreferences.edit().putString( key, value ).commit();
     }
     
     private boolean libraryExists( String undecoratedName )
