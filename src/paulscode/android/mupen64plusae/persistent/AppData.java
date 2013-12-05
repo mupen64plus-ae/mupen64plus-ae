@@ -113,55 +113,55 @@ public class AppData
     /** The app version code. */
     public final int appVersionCode;
     
-    /** The user storage directory (typically the external storage directory). */
-    public final String storageDir;
+    /** The device's storage directory (typically the external storage directory). */
+    private final String storageDir;
     
-    /** The directory for storing internal app data. */
+    /** The directory for storing internal app data. Contents deleted on uninstall. */
     public final String dataDir;
     
-    /** The directory for storing extra plugin-specific/cheats data. */
+    /** The directory for storing extra plugin-specific/cheats data. Contents deleted on uninstall. */
     public final String sharedDataDir;
     
-    /** The directory for temporary files. */
+    /** The directory for temporary files. Contents deleted on uninstall. */
     public final String tempDir;
     
-    /** The directory containing the native Mupen64Plus libraries. */
+    /** The directory containing the native Mupen64Plus libraries. Contents deleted on uninstall, not accessible without root. */
     public final String libsDir;
     
-    /** The directory containing all touchscreen layout folders. */
+    /** The directory containing all touchscreen layout folders. Contents deleted on uninstall. */
     public final String touchscreenLayoutsDir;
     
-    /** The directory containing all Xperia Play layout folders. */
+    /** The directory containing all Xperia Play layout folders. Contents deleted on uninstall. */
     public final String touchpadLayoutsDir;
     
-    /** The directory containing all fonts. */
+    /** The directory containing all fonts. Contents deleted on uninstall. */
     public final String fontsDir;
     
-    /** The path of the core library. */
+    /** The path of the core library. Deleted on uninstall, not accessible without root. */
     public final String coreLib;
     
-    /** The path of the RSP library. */
+    /** The path of the RSP library. Deleted on uninstall, not accessible without root. */
     public final String rspLib;
     
-    /** The path of the input library. */
+    /** The path of the input library. Deleted on uninstall, not accessible without root. */
     public final String inputLib;
     
-    /** The path of the Mupen64Plus base configuration file. */
+    /** The path of the Mupen64Plus base configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupen64plus_cfg;
     
-    /** The path of the gles2n64 configuration file. */
+    /** The path of the gles2n64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String gles2n64_conf;
     
-    /** The path of the gles2glide64 configuration file. */
+    /** The path of the gles2glide64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String gles2glide64_conf;
     
-    /** The path of the Mupen64Plus cheats file. */
+    /** The path of the Mupen64Plus cheats file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupen64plus_cht;
     
-    /** The path of the Mupen64Plus ini file. */
+    /** The path of the Mupen64Plus ini file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupen64plus_ini;
     
-    /** The path of the error log file. */
+    /** The path of the error log file. Deleted on uninstall, sometimes overwritten on update. */
     public final String error_log;
     
     /** Whether the installation is valid. */
