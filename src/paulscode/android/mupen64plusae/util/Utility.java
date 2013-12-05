@@ -269,18 +269,17 @@ public final class Utility
             return false;
         }
         
+        ZipFile zipfile = null;
         try
         {
-            File f;
-            ZipFile zipfile = new ZipFile( archive );
+            zipfile = new ZipFile( archive );
             Enumeration<? extends ZipEntry> e = zipfile.entries();
-
             while( e.hasMoreElements() )
             {
                 ZipEntry entry = e.nextElement();
                 if( entry != null && !entry.isDirectory() )
                 {
-                    f = new File( outputDir + "/" + entry.toString() );
+                    File f = new File( outputDir + "/" + entry.toString() );
                     f = f.getParentFile();
                     if( f != null )
                     {
@@ -304,6 +303,17 @@ public final class Utility
         {
             Log.e( "unzipAll", "Exception: ", e );
             return false;
+        }
+        finally
+        {
+            if( zipfile != null )
+                try
+                {
+                    zipfile.close();
+                }
+                catch( IOException ignored )
+                {
+                }
         }
         return true;
     }
