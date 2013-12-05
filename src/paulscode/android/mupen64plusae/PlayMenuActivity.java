@@ -347,6 +347,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         new File( userPrefs.slotSaveDir ).mkdirs();
         new File( userPrefs.sramSaveDir ).mkdirs();
         new File( userPrefs.autoSaveDir ).mkdirs();
+        new File( userPrefs.coreUserConfigDir ).mkdirs();
         new File( userPrefs.coreUserDataDir ).mkdirs();
         new File( userPrefs.coreUserCacheDir ).mkdirs();
         

@@ -117,12 +117,6 @@ public class AppData
     private final String storageDir;
     
     /**
-     * The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file.
-     * Contents deleted on uninstall.
-     */
-    public final String coreUserConfigDir;
-    
-    /**
      * The subdirectory returned from the core's ConfigGetSharedDataPath() method. Location of extra
      * plugin-specific/cheats data. Contents deleted on uninstall.
      */
@@ -152,9 +146,6 @@ public class AppData
     /** The path of the input library. Deleted on uninstall, not accessible without root. */
     public final String inputLib;
     
-    /** The path of the Mupen64Plus base configuration file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String mupen64plus_cfg;
-    
     /** The path of the gles2n64 configuration file. Deleted on uninstall, sometimes overwritten on update. */
     public final String gles2n64_conf;
     
@@ -166,9 +157,6 @@ public class AppData
     
     /** The path of the Mupen64Plus ini file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupen64plus_ini;
-    
-    /** The path of the error log file. Deleted on uninstall, sometimes overwritten on update. */
-    public final String error_log;
     
     /** Whether the installation is valid. */
     public final boolean isValidInstallation;
@@ -221,30 +209,27 @@ public class AppData
         if( DOWNLOAD_TO_SDCARD )
         {
             storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-            coreUserConfigDir = storageDir + "/Android/data/" + packageName;
+            coreSharedDataDir = storageDir + "/Android/data/" + packageName;
         }
         else
         {
             storageDir = context.getFilesDir().getAbsolutePath();
-            coreUserConfigDir = storageDir;
+            coreSharedDataDir = storageDir;
         }
-        coreSharedDataDir = coreUserConfigDir + "/data";
-        tempDir = coreUserConfigDir + "/tmp";
+        tempDir = coreSharedDataDir + "/tmp";
         libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
-        touchscreenLayoutsDir = coreUserConfigDir + "/skins/touchscreens/";
-        touchpadLayoutsDir = coreUserConfigDir + "/skins/touchpads/";
-        fontsDir = coreUserConfigDir + "/skins/fonts/";
+        touchscreenLayoutsDir = coreSharedDataDir + "/skins/touchscreens/";
+        touchpadLayoutsDir = coreSharedDataDir + "/skins/touchpads/";
+        fontsDir = coreSharedDataDir + "/skins/fonts/";
         
         // Files
         coreLib = libsDir + "/libcore.so";
         rspLib = libsDir + "/librsp-hle.so";
         inputLib = libsDir + "/libinput-android.so";
-        mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
         gles2n64_conf = coreSharedDataDir + "/gles2n64.conf";
         gles2glide64_conf = coreSharedDataDir + "/Glide64mk2.ini";
         mupen64plus_cht = coreSharedDataDir + "/mupen64plus.cht";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
-        error_log = coreUserConfigDir + "/error.log";
         
         // Installation validity
         // @formatter:off

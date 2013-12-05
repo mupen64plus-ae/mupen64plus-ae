@@ -53,10 +53,10 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
      * Asset version number, used to determine stale assets. Increment this number every time the
      * assets are updated on disk.
      */
-    private static final int ASSET_VERSION = 21;
+    private static final int ASSET_VERSION = 22;
     
     /** The total number of assets to be extracted (for computing progress %). */
-    private static final int TOTAL_ASSETS = 124;
+    private static final int TOTAL_ASSETS = 123;
     
     /** The minimum duration that the splash screen is shown, in milliseconds. */
     private static final int SPLASH_DELAY = 1000;
@@ -101,7 +101,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         mAppData = new AppData( this );
         
         // Initialize the error logger
-        ErrorLogger.initialize( mAppData.error_log );
+        ErrorLogger.initialize( new UserPrefs( this ).error_log );
         
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
@@ -149,10 +149,10 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
             // Extract the assets if they are out of date
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
-                FileUtil.deleteFolder( new File( mAppData.coreUserConfigDir ) );
+                FileUtil.deleteFolder( new File( mAppData.coreSharedDataDir ) );
                 mAssetsExtracted = 0;
                 
-                failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.coreUserConfigDir,
+                failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.coreSharedDataDir,
                         SplashActivity.this );
             }
             

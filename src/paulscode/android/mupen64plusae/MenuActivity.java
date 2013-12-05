@@ -362,7 +362,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
                 PreferenceManager.setDefaultValues( MenuActivity.this, R.xml.preferences, true );
                 
                 // Also reset any manual overrides the user may have made in the config file
-                File configFile = new File( mAppData.mupen64plus_cfg );
+                File configFile = new File( mUserPrefs.mupen64plus_cfg );
                 if( configFile.exists() )
                     configFile.delete();
                 

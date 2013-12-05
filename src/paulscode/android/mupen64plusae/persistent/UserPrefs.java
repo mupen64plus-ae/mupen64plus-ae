@@ -116,6 +116,9 @@ public class UserPrefs
     /** The subdirectory containing input map profiles. */
     public final String profileDir;
     
+    /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
+    public final String coreUserConfigDir;
+    
     /** The subdirectory returned from the core's ConfigGetUserDataPath() method. */
     public final String coreUserDataDir;
     
@@ -124,6 +127,12 @@ public class UserPrefs
     
     /** The subdirectory where hi-res textures must be unzipped. */
     public final String hiResTextureDir;
+    
+    /** The path of the Mupen64Plus base configuration file. */
+    public final String mupen64plus_cfg;
+    
+    /** The path of the error log file. */
+    public final String error_log;
     
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
@@ -422,12 +431,15 @@ public class UserPrefs
         sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         profileDir = gameSaveDir + "/InputProfiles";
+        coreUserConfigDir = gameSaveDir + "/CoreConfig/UserConfig";
         coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
         coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
         hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what gles2rice assumes natively
         File game = new File( selectedGame );
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";
+        mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
+        error_log = coreUserConfigDir + "/error.log";
         
         // Plug-ins
         videoPlugin = new Plugin( mPreferences, appData.libsDir, "videoPlugin" );

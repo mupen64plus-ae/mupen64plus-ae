@@ -53,7 +53,7 @@ public class NativeConfigFiles
         gles2glide64_conf.put( "DEFAULT", "maxframeskip", String.valueOf( user.gles2Glide64MaxFrameskip ) );
         
         // Core and GLES2RICE config file
-        ConfigFile mupen64plus_cfg = new ConfigFile( appData.mupen64plus_cfg );
+        ConfigFile mupen64plus_cfg = new ConfigFile( user.mupen64plus_cfg );
         
         mupen64plus_cfg.put( "Audio-SDL", "Version", "1.000000" );                                                          // Mupen64Plus SDL Audio Plugin config parameter version number
         mupen64plus_cfg.put( "Audio-SDL", "SWAP_CHANNELS", boolToTF( user.audioSwapChannels ) );                            // Swaps left and right channels

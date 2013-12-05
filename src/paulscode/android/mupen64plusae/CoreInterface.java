@@ -198,7 +198,7 @@ public class CoreInterface
                     arglist.add( "--corelib" );
                     arglist.add( sAppData.coreLib );
                     arglist.add( "--configdir" );
-                    arglist.add( sAppData.coreUserConfigDir );
+                    arglist.add( sUserPrefs.coreUserConfigDir );
                     if( !sUserPrefs.isFramelimiterEnabled )
                     {
                         arglist.add( "--nospeedlimit" );
