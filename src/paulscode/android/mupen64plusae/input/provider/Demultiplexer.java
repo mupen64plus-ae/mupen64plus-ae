@@ -18,8 +18,9 @@
  * 
  * Authors: littleguy77
  */
-package paulscode.android.mupen64plusae.util;
+package paulscode.android.mupen64plusae.input.provider;
 
+import paulscode.android.mupen64plusae.util.SubscriptionManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
