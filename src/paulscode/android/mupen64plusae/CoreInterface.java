@@ -209,7 +209,7 @@ public class CoreInterface
                         arglist.add( sCheatOptions );
                     }
                     arglist.add( getROMPath() );
-                    NativeExports.emuStart( sAppData.dataDir, arglist.toArray() );
+                    NativeExports.emuStart( sUserPrefs.coreUserDataDir, sUserPrefs.coreUserCacheDir, arglist.toArray() );
                 }
             }, "CoreThread" );
             

@@ -155,13 +155,15 @@ extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_Native
     handleAEI       = NULL;
 }
 
-extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring jconfigPath, jobjectArray jargv)
+extern "C" DECLSPEC void SDLCALL Java_paulscode_android_mupen64plusae_jni_NativeExports_emuStart(JNIEnv* env, jclass cls, jstring juserDataPath, jstring juserCachePath, jobjectArray jargv)
 {
     // Define some environment variables needed by rice video plugin
-    const char *configPath = env->GetStringUTFChars(jconfigPath, 0);
-    setenv( "XDG_DATA_HOME", configPath, 1 );
-    setenv( "XDG_CACHE_HOME", configPath, 1 );
-    env->ReleaseStringUTFChars(jconfigPath, configPath);
+    const char *userDataPath = env->GetStringUTFChars(juserDataPath, 0);
+    const char *userCachePath = env->GetStringUTFChars(juserCachePath, 0);
+    setenv( "XDG_DATA_HOME", userDataPath, 1 );
+    setenv( "XDG_CACHE_HOME", userCachePath, 1 );
+    env->ReleaseStringUTFChars(juserDataPath, userDataPath);
+    env->ReleaseStringUTFChars(juserCachePath, userCachePath);
 
     // Initialize dependencies
     jclass nativeImports = env->FindClass("paulscode/android/mupen64plusae/jni/NativeImports");

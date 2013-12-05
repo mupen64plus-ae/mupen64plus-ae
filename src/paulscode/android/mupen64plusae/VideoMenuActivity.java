@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
@@ -53,8 +52,7 @@ public class VideoMenuActivity extends PreferenceActivity implements
     private static final String VIDEO_POLYGON_OFFSET = "videoPolygonOffset";
     private static final String PATH_HI_RES_TEXTURES = "pathHiResTextures";
     
-    // App data and user preferences
-    private AppData mAppData = null;
+    // User preferences
     private UserPrefs mUserPrefs = null;
     
     @SuppressWarnings( "deprecation" )
@@ -63,8 +61,7 @@ public class VideoMenuActivity extends PreferenceActivity implements
     {
         super.onCreate( savedInstanceState );
         
-        // Get app data and user preferences
-        mAppData = new AppData( this );
+        // Get user preferences
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
         
@@ -178,8 +175,7 @@ public class VideoMenuActivity extends PreferenceActivity implements
                     }
                     else
                     {
-                        String outputFolder = mAppData.sharedDataDir + "/hires_texture/"
-                                + headerName;
+                        String outputFolder = mUserPrefs.hiResTextureDir + headerName;
                         FileUtil.deleteFolder( new File( outputFolder ) );
                         Utility.unzipAll( new File( filename ), outputFolder );
                     }

@@ -116,6 +116,15 @@ public class UserPrefs
     /** The subdirectory containing input map profiles. */
     public final String profileDir;
     
+    /** The subdirectory returned from the core's ConfigGetUserDataPath() method. */
+    public final String coreUserDataDir;
+    
+    /** The subdirectory returned from the core's ConfigGetUserCachePath() method. */
+    public final String coreUserCacheDir;
+    
+    /** The subdirectory where hi-res textures must be unzipped. */
+    public final String hiResTextureDir;
+    
     /** The selected video plug-in. */
     public final Plugin videoPlugin;
     
@@ -413,6 +422,9 @@ public class UserPrefs
         sramSaveDir = slotSaveDir; // Version3: consider gameSaveDir + "/InGameSaves";
         autoSaveDir = gameSaveDir + "/AutoSaves";
         profileDir = gameSaveDir + "/InputProfiles";
+        coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
+        coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
+        hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/";
         File game = new File( selectedGame );
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";

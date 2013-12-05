@@ -42,7 +42,7 @@ public class NativeExports
     
     public static native void unloadLibraries();
     
-    public static native void emuStart( String configPath, Object[] args );
+    public static native void emuStart( String userDataPath, String userCachePath, Object[] args );
     
     public static native void emuStop();
     
