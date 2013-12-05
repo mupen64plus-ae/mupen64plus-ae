@@ -424,7 +424,7 @@ public class UserPrefs
         profileDir = gameSaveDir + "/InputProfiles";
         coreUserDataDir = gameSaveDir + "/CoreConfig/UserData";
         coreUserCacheDir = gameSaveDir + "/CoreConfig/UserCache";
-        hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/";
+        hiResTextureDir = coreUserDataDir + "/mupen64plus/hires_texture/"; // MUST match what gles2rice assumes natively
         File game = new File( selectedGame );
         manualSaveDir = gameSaveDir + "/" + game.getName();
         selectedGameAutoSavefile = autoSaveDir + "/" + game.getName() + ".sav";

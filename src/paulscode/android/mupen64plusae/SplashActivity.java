@@ -149,10 +149,10 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
             // Extract the assets if they are out of date
             if( mAppData.getAssetVersion() != ASSET_VERSION )
             {
-                FileUtil.deleteFolder( new File( mAppData.dataDir ) );
+                FileUtil.deleteFolder( new File( mAppData.coreUserConfigDir ) );
                 mAssetsExtracted = 0;
                 
-                failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.dataDir,
+                failures = AssetExtractor.extractAssets( getAssets(), SOURCE_DIR, mAppData.coreUserConfigDir,
                         SplashActivity.this );
             }
             

@@ -116,11 +116,17 @@ public class AppData
     /** The device's storage directory (typically the external storage directory). */
     private final String storageDir;
     
-    /** The directory for storing internal app data. Contents deleted on uninstall. */
-    public final String dataDir;
+    /**
+     * The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file.
+     * Contents deleted on uninstall.
+     */
+    public final String coreUserConfigDir;
     
-    /** The directory for storing extra plugin-specific/cheats data. Contents deleted on uninstall. */
-    public final String sharedDataDir;
+    /**
+     * The subdirectory returned from the core's ConfigGetSharedDataPath() method. Location of extra
+     * plugin-specific/cheats data. Contents deleted on uninstall.
+     */
+    public final String coreSharedDataDir;
     
     /** The directory for temporary files. Contents deleted on uninstall. */
     public final String tempDir;
@@ -215,30 +221,30 @@ public class AppData
         if( DOWNLOAD_TO_SDCARD )
         {
             storageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-            dataDir = storageDir + "/Android/data/" + packageName;
+            coreUserConfigDir = storageDir + "/Android/data/" + packageName;
         }
         else
         {
             storageDir = context.getFilesDir().getAbsolutePath();
-            dataDir = storageDir;
+            coreUserConfigDir = storageDir;
         }
-        sharedDataDir = dataDir + "/data";
-        tempDir = dataDir + "/tmp";
+        coreSharedDataDir = coreUserConfigDir + "/data";
+        tempDir = coreUserConfigDir + "/tmp";
         libsDir = context.getFilesDir().getParentFile().getAbsolutePath() + "/lib/";
-        touchscreenLayoutsDir = dataDir + "/skins/touchscreens/";
-        touchpadLayoutsDir = dataDir + "/skins/touchpads/";
-        fontsDir = dataDir + "/skins/fonts/";
+        touchscreenLayoutsDir = coreUserConfigDir + "/skins/touchscreens/";
+        touchpadLayoutsDir = coreUserConfigDir + "/skins/touchpads/";
+        fontsDir = coreUserConfigDir + "/skins/fonts/";
         
         // Files
         coreLib = libsDir + "/libcore.so";
         rspLib = libsDir + "/librsp-hle.so";
         inputLib = libsDir + "/libinput-android.so";
-        mupen64plus_cfg = dataDir + "/mupen64plus.cfg";
-        gles2n64_conf = sharedDataDir + "/gles2n64.conf";
-        gles2glide64_conf = sharedDataDir + "/Glide64mk2.ini";
-        mupen64plus_cht = sharedDataDir + "/mupen64plus.cht";
-        mupen64plus_ini = sharedDataDir + "/mupen64plus.ini";
-        error_log = dataDir + "/error.log";
+        mupen64plus_cfg = coreUserConfigDir + "/mupen64plus.cfg";
+        gles2n64_conf = coreSharedDataDir + "/gles2n64.conf";
+        gles2glide64_conf = coreSharedDataDir + "/Glide64mk2.ini";
+        mupen64plus_cht = coreSharedDataDir + "/mupen64plus.cht";
+        mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
+        error_log = coreUserConfigDir + "/error.log";
         
         // Installation validity
         // @formatter:off
