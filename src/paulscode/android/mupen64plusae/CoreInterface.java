@@ -22,7 +22,6 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import paulscode.android.mupen64plusae.jni.NativeConfigFiles;
 import paulscode.android.mupen64plusae.jni.NativeConstants;
@@ -32,8 +31,6 @@ import paulscode.android.mupen64plusae.jni.NativeInput;
 import paulscode.android.mupen64plusae.jni.NativeSDL;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.ErrorLogger;
-import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
@@ -208,7 +205,7 @@ public class CoreInterface
                         arglist.add( "--cheats" );
                         arglist.add( sCheatOptions );
                     }
-                    arglist.add( getROMPath() );
+                    arglist.add( sUserPrefs.selectedGame );
                     NativeExports.emuStart( sUserPrefs.coreUserDataDir, sUserPrefs.coreUserCacheDir, arglist.toArray() );
                 }
             }, "CoreThread" );
@@ -440,62 +437,5 @@ public class CoreInterface
     {
         NativeExports.emuPause();
         NativeExports.emuAdvanceFrame();
-    }
-    
-    private static String getROMPath()
-    {
-        String selectedGame = sUserPrefs.selectedGame;
-        boolean isSelectedGameNull = selectedGame == null || !( new File( selectedGame ) ).exists();
-        boolean isSelectedGameZipped = !isSelectedGameNull && selectedGame.length() >= 5
-                && selectedGame.toLowerCase( Locale.US ).endsWith( ".zip" );
-        
-        if( sActivity == null )
-        {
-            return null;
-        }
-        else if( isSelectedGameNull )
-        {
-            Log.e( "CoreInterface", "ROM does not exist: '" + selectedGame + "'" );
-            if( ErrorLogger.hasError() )
-                ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
-            sActivity.finish();
-            return null;
-        }
-        else if( isSelectedGameZipped )
-        {
-            // Create the temp folder if it doesn't exist:
-            String tmpFolderName = sAppData.tempDir;
-            File tmpFolder = new File( tmpFolderName );
-            tmpFolder.mkdir();
-            
-            // Clear the folder if anything is in there:
-            String[] children = tmpFolder.list();
-            if( children != null )
-            {
-                for( String child : children )
-                {
-                    FileUtil.deleteFolder( new File( tmpFolder, child ) );
-                }
-            }
-            
-            // Unzip the ROM
-            String selectedGameUnzipped = Utility.unzipFirstROM( new File( selectedGame ), tmpFolderName );
-            if( selectedGameUnzipped == null )
-            {
-                Log.e( "CoreInterface", "ROM cannot be unzipped: '" + selectedGame + "'" );
-                if( ErrorLogger.hasError() )
-                    ErrorLogger.putLastError( "OPEN_ROM", "fail_crash" );
-                sActivity.finish();
-                return null;
-            }
-            else
-            {
-                return selectedGameUnzipped;
-            }
-        }
-        else
-        {
-            return selectedGame;
-        }
     }
 }
