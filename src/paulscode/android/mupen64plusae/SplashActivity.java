@@ -28,7 +28,6 @@ import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.AssetExtractor;
 import paulscode.android.mupen64plusae.util.AssetExtractor.ExtractionFailure;
 import paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener;
-import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import android.app.Activity;
@@ -99,9 +98,6 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         
         // Get app data
         mAppData = new AppData( this );
-        
-        // Initialize the error logger
-        ErrorLogger.initialize( new UserPrefs( this ).error_log );
         
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );

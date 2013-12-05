@@ -23,7 +23,6 @@ package paulscode.android.mupen64plusae;
 import java.io.File;
 
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.ErrorLogger;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.PrefUtil;
@@ -36,6 +35,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class VideoMenuActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener
@@ -153,42 +153,33 @@ public class VideoMenuActivity extends PreferenceActivity implements
     {
         if( TextUtils.isEmpty( filename ) )
         {
-            ErrorLogger.put( "Video", "pathHiResTextures",
-                    "Filename not specified in MenuActivity.processTexturePak" );
+            Log.e( "VideoMenuActivity", "Filename not specified in processTexturePak" );
             Notifier.showToast( this, R.string.pathHiResTexturesTask_errorMessage );
             return;
         }
         
         TaskHandler.Task task = new TaskHandler.Task()
         {
+            private boolean success = false;
+            
             @Override
             public void run()
             {
                 String headerName = Utility.getTexturePackName( filename );
-                if( !ErrorLogger.hasError() )
+                if( !TextUtils.isEmpty( headerName ) )
                 {
-                    if( TextUtils.isEmpty( headerName ) )
-                    {
-                        ErrorLogger
-                                .setLastError( "getTexturePackName returned null in MenuActivity.processTexturePak" );
-                        ErrorLogger.putLastError( "Video", "pathHiResTextures" );
-                    }
-                    else
-                    {
-                        String outputFolder = mUserPrefs.hiResTextureDir + headerName;
-                        FileUtil.deleteFolder( new File( outputFolder ) );
-                        Utility.unzipAll( new File( filename ), outputFolder );
-                    }
+                    String outputFolder = mUserPrefs.hiResTextureDir + headerName;
+                    FileUtil.deleteFolder( new File( outputFolder ) );
+                    success = Utility.unzipAll( new File( filename ), outputFolder );
                 }
             }
             
             @Override
             public void onComplete()
             {
-                if( ErrorLogger.hasError() )
+                if( !success )
                     Notifier.showToast( VideoMenuActivity.this,
                             R.string.pathHiResTexturesTask_errorMessage );
-                ErrorLogger.clearLastError();
             }
         };
         

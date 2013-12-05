@@ -157,25 +157,29 @@ public final class Utility
         context.startActivity( intent );
     }
     
+    /**
+     * Returns the name embedded in a zipped texture pack.
+     * 
+     * @param filename The path to the zipped texture pack.
+     * @return The name, or null if there were any errors.
+     */
     public static String getTexturePackName( String filename )
     {
-        int x;
         String textureName, textureExt;
         String supportedExt = ".png";
         File archive = new File( filename );
         
         if( !archive.exists() )
-            ErrorLogger
-                    .setLastError( "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
-        else if( !archive.isFile() )
-            ErrorLogger.setLastError( "Zip file '" + archive.getAbsolutePath()
-                    + "' is not a file (method unzipFirstROM)" );
-        
-        if( ErrorLogger.hasError() )
         {
-            Log.e( "Utility", ErrorLogger.getLastError() );
+            Log.e( "getTexturePackName", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
             return null;
         }
+        else if( !archive.isFile() )
+        {
+            Log.e( "getTexturePackName", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
+            return null;
+        }
+        
         ZipFile zipfile = null;
         try
         {
@@ -193,7 +197,7 @@ public final class Utility
                                 textureName.length() ).toLowerCase( Locale.US );
                         if( supportedExt.contains( textureExt ) )
                         {
-                            x = textureName.indexOf( '#' );
+                            int x = textureName.indexOf( '#' );
                             if( x > 0 && x < textureName.length() )
                             {
                                 textureName = textureName.substring( 0, x );
@@ -211,23 +215,17 @@ public final class Utility
         }
         catch( ZipException ze )
         {
-            ErrorLogger
-                    .setLastError( "Zip Error!  Ensure file is a valid .zip archive and is not corrupt" );
-            Log.e( "Utility", "ZipException in method getTexturePackName", ze );
+            Log.e( "getTexturePackName", "ZipException: ", ze );
             return null;
         }
         catch( IOException ioe )
         {
-            ErrorLogger
-                    .setLastError( "IO Error!  Please report, so problem can be fixed in future update" );
-            Log.e( "Utility", "IOException in method getTexturePackName", ioe );
+            Log.e( "getTexturePackName", "IOException: ", ioe );
             return null;
         }
         catch( Exception e )
         {
-            ErrorLogger
-                    .setLastError( "Error! Please report, so problem can be fixed in future update" );
-            Log.e( "Utility", "Unzip error", e );
+            Log.e( "getTexturePackName", "Exception: ", e );
             return null;
         }
         finally
@@ -241,8 +239,7 @@ public final class Utility
                 {
                 }
         }
-        ErrorLogger.setLastError( "No compatible textures found in .zip archive" );
-        Log.e( "Utility", ErrorLogger.getLastError() );
+        Log.e( "getTexturePackName", "No compatible textures found in .zip archive" );
         return null;
     }
     
@@ -257,20 +254,21 @@ public final class Utility
     public static boolean unzipAll( File archive, String outputDir )
     {
         if( archive == null )
-            ErrorLogger.setLastError( "Zip file null in method unzipAll" );
-        else if( !archive.exists() )
-            ErrorLogger
-                    .setLastError( "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
-        else if( !archive.isFile() )
-            ErrorLogger.setLastError( "Zip file '" + archive.getAbsolutePath()
-                    + "' is not a file (method unzipFirstROM)" );
-        
-        if( ErrorLogger.hasError() )
         {
-            Log.e( "Utility", ErrorLogger.getLastError() );
+            Log.e( "unzipAll", "Zip file is null" );
             return false;
         }
-
+        else if( !archive.exists() )
+        {
+            Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
+            return false;
+        }
+        else if( !archive.isFile() )
+        {
+            Log.e( "unzipAll", "Zip file '" + archive.getAbsolutePath() + "' is not a file" );
+            return false;
+        }
+        
         try
         {
             File f;
@@ -294,26 +292,19 @@ public final class Utility
         }
         catch( ZipException ze )
         {
-            ErrorLogger
-                    .setLastError( "Zip Error!  Ensure file is a valid .zip archive and is not corrupt" );
-            Log.e( "Utility", "ZipException in method unzipAll", ze );
+            Log.e( "unzipAll", "ZipException: ", ze );
             return false;
         }
         catch( IOException ioe )
         {
-            ErrorLogger
-                    .setLastError( "IO Error!  Please report, so problem can be fixed in future update" );
-            Log.e( "Utility", "IOException in method unzipAll", ioe );
+            Log.e( "unzipAll", "IOException: ", ioe );
             return false;
         }
         catch( Exception e )
         {
-            ErrorLogger
-                    .setLastError( "Error! Please report, so problem can be fixed in future update" );
-            Log.e( "Utility", "Unzip error", e );
+            Log.e( "unzipAll", "Exception: ", e );
             return false;
         }
-
         return true;
     }
 
@@ -326,9 +317,7 @@ public final class Utility
     {
         if( entry.isDirectory() )
         {
-            ErrorLogger.setLastError( "Error! .zip entry '" + entry.getName()
-                    + "' is a directory, not a file" );
-            Log.e( "Utility", ErrorLogger.getLastError() );
+            Log.e( "unzipEntry", "Zip entry '" + entry.getName() + "' is not a file" );
             return null;
         }
         
