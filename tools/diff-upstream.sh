@@ -1,5 +1,6 @@
 #! /bin/sh
 
+cd ..
 mkdir -p tmp/upstream
 cd tmp/upstream/
 

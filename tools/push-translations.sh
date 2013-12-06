@@ -2,6 +2,7 @@
 
 # Push the transifex translation files using the command-line tool.
 
+cd ..
 echo
 echo "WARNING:"
 echo
