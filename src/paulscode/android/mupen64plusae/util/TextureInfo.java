@@ -72,8 +72,8 @@ public class TextureInfo
             romName = m.group( 1 );
             romCrc = m.group( 2 );
             paletteCrc = TextUtils.isEmpty( m.group( 5 ) ) ? "FFFFFFFF" : m.group( 5 );
-            pixelFormat = SafeMethods.toInt( m.group( 3 ), -1 );
-            textureFormat = SafeMethods.toInt( m.group( 4 ), -1 );
+            pixelFormat = SafeMethods.toInt( m.group( 3 ), PIXEL_FORMAT_INVALID );
+            textureFormat = SafeMethods.toInt( m.group( 4 ), TEXTURE_FORMAT_INVALID );
             String suffix = m.group( 6 );
             
             if( "ci.bmp".equals( suffix ) )
