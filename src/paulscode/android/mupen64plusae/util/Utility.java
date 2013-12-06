@@ -29,7 +29,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -165,10 +166,7 @@ public final class Utility
      */
     public static String getTexturePackName( String filename )
     {
-        String textureName, textureExt;
-        String supportedExt = ".png";
-        File archive = new File( filename );
-        
+        File archive = new File( filename );       
         if( !archive.exists() )
         {
             Log.e( "getTexturePackName", "Zip file '" + archive.getAbsolutePath() + "' does not exist" );
@@ -180,6 +178,9 @@ public final class Utility
             return null;
         }
         
+        // See gles2rice/src/TextureFilters.cpp FindAllTexturesFromFolder(...)
+        final Pattern pattern = Pattern.compile( "([^\\/]+?)#([0-9a-fA-F]+?)#([0-3])#([0-4])"
+                + "#?([^_]*)_(ci\\.bmp|ciByRGBA\\.png|allciByRGBA\\.png|rgb\\.png|all\\.png)" );
         ZipFile zipfile = null;
         try
         {
@@ -190,25 +191,17 @@ public final class Utility
                 ZipEntry entry = e.nextElement();
                 if( entry != null && !entry.isDirectory() )
                 {
-                    textureName = entry.getName();
-                    if( textureName != null && textureName.length() > 3 )
+                    Matcher m = pattern.matcher( entry.getName() );
+                    if( m.find() )
                     {
-                        textureExt = textureName.substring( textureName.length() - 4,
-                                textureName.length() ).toLowerCase( Locale.US );
-                        if( supportedExt.contains( textureExt ) )
-                        {
-                            int x = textureName.indexOf( '#' );
-                            if( x > 0 && x < textureName.length() )
-                            {
-                                textureName = textureName.substring( 0, x );
-                                if( textureName.length() > 0 )
-                                {
-                                    x = textureName.lastIndexOf( '/' );
-                                    if( x >= 0 && x < textureName.length() )
-                                        return textureName.substring( x + 1, textureName.length() );
-                                }
-                            }
-                        }
+                        // String fullName = m.group(0);
+                        String romName = m.group(1);
+                        // String romCrc = m.group(2);
+                        // String pixelSize = m.group(3);
+                        // String textureFormat = m.group(4);
+                        // String paletteCrc = m.group(5);
+                        // String imageType = m.group(6);
+                        return romName;
                     }
                 }
             }
