@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -178,9 +176,6 @@ public final class Utility
             return null;
         }
         
-        // See gles2rice/src/TextureFilters.cpp FindAllTexturesFromFolder(...)
-        final Pattern pattern = Pattern.compile( "([^\\/]+?)#([0-9a-fA-F]+?)#([0-3])#([0-4])"
-                + "#?([^_]*)_(ci\\.bmp|ciByRGBA\\.png|allciByRGBA\\.png|rgb\\.png|all\\.png)" );
         ZipFile zipfile = null;
         try
         {
@@ -191,18 +186,9 @@ public final class Utility
                 ZipEntry entry = e.nextElement();
                 if( entry != null && !entry.isDirectory() )
                 {
-                    Matcher m = pattern.matcher( entry.getName() );
-                    if( m.find() )
-                    {
-                        // String fullName = m.group(0);
-                        String romName = m.group(1);
-                        // String romCrc = m.group(2);
-                        // String pixelSize = m.group(3);
-                        // String textureFormat = m.group(4);
-                        // String paletteCrc = m.group(5);
-                        // String imageType = m.group(6);
-                        return romName;
-                    }
+                    TextureInfo info = new TextureInfo( entry.getName() );
+                    if( info.imageFormat != TextureInfo.IMAGE_FORMAT_INVALID )
+                        return info.romName;
                 }
             }
         }
