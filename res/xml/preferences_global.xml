@@ -337,14 +337,6 @@
                     android:title="@string/actionReloadAssets_title" />
             </PreferenceCategory>
             <PreferenceCategory
-                android:key="categoryDiagnostics"
-                android:title="@string/categoryDiagnostics_title" >
-                <Preference
-                    android:key="actionDeviceInfo"
-                    android:summary="@string/actionDeviceInfo_summary"
-                    android:title="@string/actionDeviceInfo_title" />
-            </PreferenceCategory>
-            <PreferenceCategory
                 android:key="categoryCrashReports"
                 android:title="@string/categoryCrashReports_title" >
                 <CheckBoxPreference

@@ -26,7 +26,6 @@ import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.CrashTester;
-import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -208,10 +207,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         // Handle the clicks on certain menu items that aren't actually preferences
         String key = preference.getKey();
         
-        if( key.equals( ACTION_DEVICE_INFO ) )
-            actionDeviceInfo();
-        
-        else if( key.equals( ACTION_RELOAD_ASSETS ) )
+        if( key.equals( ACTION_RELOAD_ASSETS ) )
             actionReloadAssets();
         
         else if( key.equals( ACTION_RESET_USER_PREFS ) )
@@ -223,13 +219,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         
         // Tell Android that we handled the click
         return true;
-    }
-    
-    private void actionDeviceInfo()
-    {
-        String title = getString( R.string.actionDeviceInfo_title );
-        String message = DeviceUtil.getCpuInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
     private void actionReloadAssets()

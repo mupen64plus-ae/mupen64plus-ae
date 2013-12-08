@@ -37,7 +37,6 @@ import paulscode.android.mupen64plusae.input.provider.KeyProvider.ImeFormula;
 import paulscode.android.mupen64plusae.input.provider.MogaProvider;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
-import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.Prompt;
@@ -50,10 +49,8 @@ import paulscode.android.mupen64plusae.util.Prompt.PromptTextListener;
 import paulscode.android.mupen64plusae.util.SafeMethods;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.InputType;
@@ -300,7 +297,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
         // Hide menu items that do not apply
         mMenuSpecialVisibility.setVisible( !mUserPrefs.isBigScreenMode );
         menu.findItem( R.id.menuItem_exit ).setVisible( !mUserPrefs.isBigScreenMode );
-        menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         
         return super.onCreateOptionsMenu( menu );
     }
@@ -347,15 +343,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                 mUserPrefs.putSpecialVisibility( mPlayer,
                         !mUserPrefs.getSpecialVisibility( mPlayer ) );
                 refreshSpecialVisibility();
-                break;
-            case R.id.menuItem_axisInfo:
-                showAxisInfo();
-                break;
-            case R.id.menuItem_controllerInfo:
-                showControllerInfo();
-                break;
-            case R.id.menuItem_controllerDiagnostics:
-                startActivity( new Intent( this, DiagnosticActivity.class ) );
                 break;
             case R.id.menuItem_exit:
                 finish();
@@ -539,20 +526,6 @@ public class InputMapActivity extends Activity implements OnInputListener, OnCli
                     ? R.string.menuItem_specialVisibility_hide
                     : R.string.menuItem_specialVisibility_show );
         }
-    }
-    
-    private void showAxisInfo()
-    {
-        String title = getString( R.string.menuItem_axisInfo );
-        String message = DeviceUtil.getAxisInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
-    }
-    
-    private void showControllerInfo()
-    {
-        String title = getString( R.string.menuItem_controllerInfo );
-        String message = DeviceUtil.getPeripheralInfo();
-        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
     
     @Override

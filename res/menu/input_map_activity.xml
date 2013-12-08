@@ -44,15 +44,6 @@
         android:id="@+id/menuItem_specialVisibility"
         android:title="@string/menuItem_specialVisibility_show"/>
     <item
-        android:id="@+id/menuItem_axisInfo"
-        android:title="@string/menuItem_axisInfo"/>
-    <item
-        android:id="@+id/menuItem_controllerInfo"
-        android:title="@string/menuItem_controllerInfo"/>
-    <item
-        android:id="@+id/menuItem_controllerDiagnostics"
-        android:title="@string/menuItem_controllerDiagnostics"/>
-    <item
         android:id="@+id/menuItem_unmapAll"
         android:title="@string/menuItem_unmapAll"/>
     <item
