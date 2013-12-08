@@ -22,36 +22,38 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
+import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.PathPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ChangeLog;
+import paulscode.android.mupen64plusae.util.DeviceUtil;
+import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
+import paulscode.android.mupen64plusae.util.RomInfo;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
-public class MenuActivity extends PreferenceActivity implements OnPreferenceClickListener,
-        OnSharedPreferenceChangeListener
+public class MenuActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
     
     private static final String PATH_SELECTED_GAME = "pathSelectedGame";
-    private static final String ACTION_HELP = "actionHelp";
-    private static final String ACTION_ABOUT = "actionAbout";
     private static final String SCREEN_PLAY = "screenPlay";
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
@@ -109,7 +111,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         if( lastVer != currVer )
         {
             // First run after install/update, greet user with changelog, then help dialog
-            actionHelp();            
+            popupFaq();
             ChangeLog log = new ChangeLog( getAssets() );
             if( log.show( this, lastVer + 1, currVer ) )
             {
@@ -159,10 +161,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         languagePref.setEntryValues( mUserPrefs.localeCodes );
         languagePref.setEntries( mUserPrefs.localeNames );
         
-        // Handle certain menu items that require extra processing or aren't actually preferences
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_HELP, this );
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_ABOUT, this );
-        
         // Initialize the OUYA interface if running on OUYA
         if( OUYAInterface.IS_OUYA_HARDWARE )
             OUYAInterface.init( this );
@@ -174,6 +172,149 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             CharSequence message = getText( R.string.invalidInstall_message );
             new Builder( this ).setTitle( title ).setMessage( message ).create().show();
         }
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu )
+    {
+        getMenuInflater().inflate( R.menu.menu_activity, menu );
+        return super.onCreateOptionsMenu( menu );
+    }
+    
+    @Override
+    public boolean onPrepareOptionsMenu( Menu menu )
+    {
+        MenuItem item = menu.findItem( R.id.menuItem_gameSettings );
+        String romName = mUserPrefs.selectedGameHeader.name;
+        boolean isValid = !TextUtils.isEmpty( romName );
+        String title;
+        if( isValid )
+            title = getString( R.string.menuItem_gameSettingsNamed, romName );
+        else
+            title = getString( R.string.menuItem_gameSettings );
+        item.setTitle( title );
+        item.setEnabled( isValid );
+        return super.onPrepareOptionsMenu( menu );
+    }
+    
+    @Override
+    public boolean onMenuItemSelected( int featureId, MenuItem item )
+    {
+        switch( item.getItemId() )
+        {
+            case R.id.menuItem_gameSettings:
+                // TODO startActivity( new Intent( this, SettingsGameActivity.class ) );
+                popupGameSettingsTodo();
+                return true;
+            case R.id.menuItem_globalSettings:
+                startActivity( new Intent( this, SettingsGlobalActivity.class ) );
+                return true;
+            case R.id.menuItem_touchscreenProfiles:
+                // TODO
+                popupTodo();
+                return true;
+            case R.id.menuItem_controllerProfiles:
+                // TODO
+                popupTodo();
+                return true;
+            case R.id.menuItem_customCheats:
+                // TODO
+                popupTodo();
+                return true;
+            case R.id.menuItem_faq:
+                popupFaq();
+                return true;
+            case R.id.menuItem_helpForum:
+                Utility.launchUri( MenuActivity.this, R.string.uri_forum );
+                return true;
+            case R.id.menuItem_controllerDiagnostics:
+                startActivity( new Intent( this, DiagnosticActivity.class ) );
+                return true;
+            case R.id.menuItem_submitBugReport:
+                Utility.launchUri( MenuActivity.this, R.string.uri_bugReport );
+                return true;
+            case R.id.menuItem_appVersion:
+                popupAppVersion();
+                return true;
+            case R.id.menuItem_changelog:
+                new ChangeLog( getAssets() ).show( MenuActivity.this, 0, mAppData.appVersionCode );
+                return true;
+            case R.id.menuItem_axisInfo:
+                popupAxisInfo();
+                return true;
+            case R.id.menuItem_controllerInfo:
+                popupControllerInfo();
+                return true;
+            case R.id.menuItem_deviceInfo:
+                popupDeviceInfo();
+                return true;
+            case R.id.menuItem_credits:
+                Utility.launchUri( MenuActivity.this, R.string.uri_credits );
+                return true;
+            default:
+                return super.onMenuItemSelected( featureId, item );
+        }
+    }
+    
+    private void popupFaq()
+    {
+        CharSequence title = getText( R.string.menuItem_faq );
+        CharSequence message = getText( R.string.popup_faq );
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void popupAxisInfo()
+    {
+        String title = getString( R.string.menuItem_axisInfo );
+        String message = DeviceUtil.getAxisInfo();
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void popupControllerInfo()
+    {
+        String title = getString( R.string.menuItem_controllerInfo );
+        String message = DeviceUtil.getPeripheralInfo();
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void popupDeviceInfo()
+    {
+        String title = getString( R.string.actionDeviceInfo_title );
+        String message = DeviceUtil.getCpuInfo();
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void popupAppVersion()
+    {
+        String title = getString( R.string.menuItem_appVersion );
+        String message = getString( R.string.popup_version, mAppData.appVersion, mAppData.appVersionCode );
+        new Builder( this ).setTitle( title ).setMessage( message ).create().show();
+    }
+    
+    private void popupGameSettingsTodo()
+    {
+        Notifier.showToast( this,
+                String.format( getString( R.string.toast_loadingGameSettings ), mUserPrefs.selectedGameHeader.name ) );
+        
+        new AsyncTask<Void, Void, RomInfo>()
+        {
+            @Override
+            protected RomInfo doInBackground( Void... params )
+            {
+                return new RomInfo( new File( mUserPrefs.selectedGame ), new ConfigFile( mAppData.mupen64plus_ini ) );
+            }
+            
+            @Override
+            protected void onPostExecute( RomInfo result )
+            {
+                new Builder( MenuActivity.this ).setTitle( "TODO" ).setMessage( result.goodName ).create().show();
+            }
+        }.execute();
+    }
+    
+    private void popupTodo()
+    {
+        new Builder( this ).setMessage( "TODO" ).create().show();
     }
     
     @Override
@@ -226,73 +367,6 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         // Update the summary text for the selected game
         PathPreference pp = (PathPreference) findPreference( PATH_SELECTED_GAME );
         if( pp != null )
-        {
             pp.setSummary( selectedGame.getName() );
-        }
-    }
-    
-    @Override
-    public boolean onPreferenceClick( Preference preference )
-    {
-        // Handle the clicks on certain menu items that aren't actually preferences
-        String key = preference.getKey();
-        
-        if( key.equals( ACTION_HELP ) )
-            actionHelp();
-        
-        else if( key.equals( ACTION_ABOUT ) )
-            actionAbout();
-        
-        else
-            // Let Android handle all other preference clicks
-            return false;
-        
-        // Tell Android that we handled the click
-        return true;
-    }
-    
-    private void actionHelp()
-    {
-        CharSequence title = getText( R.string.actionHelp_title );
-        CharSequence message = getText( R.string.actionHelp_message );
-        String faq = getString( R.string.actionHelp_faq );
-        String bug = getString( R.string.actionHelp_reportbug );
-        OnClickListener listener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                if( which == DialogInterface.BUTTON_NEUTRAL )
-                    Utility.launchUri( MenuActivity.this, R.string.actionHelp_uriFaq );
-                else if( which == DialogInterface.BUTTON_POSITIVE )
-                    Utility.launchUri( MenuActivity.this, R.string.actionHelp_uriBug );
-            }
-        };
-        new Builder( this ).setTitle( title ).setMessage( message )
-                .setNeutralButton( faq, listener ).setNegativeButton( null, null )
-                .setPositiveButton( bug, listener ).create().show();
-    }
-    
-    private void actionAbout()
-    {
-        String title = getString( R.string.actionAbout_title );
-        String message = getString( R.string.actionAbout_message, mAppData.appVersion,
-                mAppData.appVersionCode );
-        String credits = getString( R.string.actionAbout_credits );
-        String changelog = getString( R.string.actionAbout_changelog );
-        OnClickListener listener = new OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                if( which == DialogInterface.BUTTON_NEUTRAL )
-                    Utility.launchUri( MenuActivity.this, R.string.actionAbout_uriCredits );
-                else if( which == DialogInterface.BUTTON_POSITIVE )
-                    new ChangeLog( getAssets() ).show( MenuActivity.this, 0, mAppData.appVersionCode );
-            }
-        };
-        new Builder( this ).setTitle( title ).setMessage( message ).setNegativeButton( null, null )
-                .setNeutralButton( credits, listener ).setPositiveButton( changelog, listener )
-                .create().show();
     }
 }
