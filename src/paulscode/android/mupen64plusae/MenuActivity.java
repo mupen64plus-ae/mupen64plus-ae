@@ -36,6 +36,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -52,6 +53,21 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     private static final String ACTION_HELP = "actionHelp";
     private static final String ACTION_ABOUT = "actionAbout";
     private static final String SCREEN_PLAY = "screenPlay";
+    
+    private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
+    private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
+    private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
+    private static final String TOUCHSCREEN_LAYOUT = "touchscreenLayout";
+    private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
+    private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
+    private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
+    private static final String DISPLAY_POSITION = "displayPosition";
+    private static final String DISPLAY_RESOLUTION = "displayResolution";
+    private static final String DISPLAY_SCALING = "displayScaling";
+    private static final String NAVIGATION_MODE = "navigationMode";
+    private static final String R4300_EMULATOR = "r4300Emulator";
+    private static final String AUDIO_PLUGIN = "audioPlugin";
+    private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
     private static final String LOCALE_OVERRIDE = "localeOverride";
     
     // App data and user preferences
@@ -101,8 +117,36 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
             }
         }
         
+        // Disable the Xperia PLAY plugin as necessary
+        if( !mAppData.hardwareInfo.isXperiaPlay )
+            mPrefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
+        
+        // Set some prefs when running in big-screen mode
+        if( mUserPrefs.isBigScreenMode )
+        {
+            mPrefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
+            mPrefs.edit().putBoolean( INPUT_VOLUME_MAPPABLE, true ).commit();
+        }
+        
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
         PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_play, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_video, false );
+        
+        // Ensure that selected plugin names and other list preferences are valid
+        Resources res = getResources();
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_STYLE, R.string.touchscreenStyle_default, R.array.touchscreenStyle_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_HEIGHT, R.string.touchscreenHeight_default, R.array.touchscreenHeight_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_LAYOUT, R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHPAD_LAYOUT, R.string.touchpadLayout_default, R.array.touchpadLayout_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_POSITION, R.string.displayPosition_default, R.array.displayPosition_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_RESOLUTION, R.string.displayResolution_default, R.array.displayResolution_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING, R.string.displayScaling_default, R.array.displayScaling_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_PLUGIN, R.string.audioPlugin_default, R.array.audioPlugin_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_BUFFER_SIZE, R.string.audioBufferSize_default, R.array.audioBufferSize_values );
+        PrefUtil.validateListPreference( res, mPrefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
+        PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
