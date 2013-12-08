@@ -85,6 +85,7 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
+    private SharedPreferences mPrefs = null;
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -96,17 +97,17 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         // Disable the Xperia PLAY plugin as necessary
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
         if( !mAppData.hardwareInfo.isXperiaPlay )
-            prefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
+            mPrefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
         
         // Set some prefs when running in big-screen mode
         if( mUserPrefs.isBigScreenMode )
         {
-            prefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
-            prefs.edit().putBoolean( INPUT_VOLUME_MAPPABLE, true ).commit();
+            mPrefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
+            mPrefs.edit().putBoolean( INPUT_VOLUME_MAPPABLE, true ).commit();
         }
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
@@ -114,17 +115,17 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         
         // Ensure that selected plugin names and other list preferences are valid
         Resources res = getResources();
-        PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_STYLE, R.string.touchscreenStyle_default, R.array.touchscreenStyle_values );
-        PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_HEIGHT, R.string.touchscreenHeight_default, R.array.touchscreenHeight_values );
-        PrefUtil.validateListPreference( res, prefs, TOUCHSCREEN_LAYOUT, R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
-        PrefUtil.validateListPreference( res, prefs, TOUCHPAD_LAYOUT, R.string.touchpadLayout_default, R.array.touchpadLayout_values );
-        PrefUtil.validateListPreference( res, prefs, DISPLAY_POSITION, R.string.displayPosition_default, R.array.displayPosition_values );
-        PrefUtil.validateListPreference( res, prefs, DISPLAY_RESOLUTION, R.string.displayResolution_default, R.array.displayResolution_values );
-        PrefUtil.validateListPreference( res, prefs, DISPLAY_SCALING, R.string.displayScaling_default, R.array.displayScaling_values );
-        PrefUtil.validateListPreference( res, prefs, AUDIO_PLUGIN, R.string.audioPlugin_default, R.array.audioPlugin_values );
-        PrefUtil.validateListPreference( res, prefs, AUDIO_BUFFER_SIZE, R.string.audioBufferSize_default, R.array.audioBufferSize_values );
-        PrefUtil.validateListPreference( res, prefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
-        PrefUtil.validateListPreference( res, prefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_STYLE, R.string.touchscreenStyle_default, R.array.touchscreenStyle_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_HEIGHT, R.string.touchscreenHeight_default, R.array.touchscreenHeight_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_LAYOUT, R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHPAD_LAYOUT, R.string.touchpadLayout_default, R.array.touchpadLayout_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_POSITION, R.string.displayPosition_default, R.array.displayPosition_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_RESOLUTION, R.string.displayResolution_default, R.array.displayResolution_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING, R.string.displayScaling_default, R.array.displayScaling_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_PLUGIN, R.string.audioPlugin_default, R.array.audioPlugin_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_BUFFER_SIZE, R.string.audioBufferSize_default, R.array.audioBufferSize_values );
+        PrefUtil.validateListPreference( res, mPrefs, R4300_EMULATOR, R.string.r4300Emulator_default, R.array.r4300Emulator_values );
+        PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE, R.string.navigationMode_default, R.array.navigationMode_values );
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences_global );
@@ -175,16 +176,14 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
     protected void onPause()
     {
         super.onPause();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+        mPrefs.unregisterOnSharedPreferenceChangeListener( this );
     }
     
     @Override
     protected void onResume()
     {
         super.onResume();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+        mPrefs.registerOnSharedPreferenceChangeListener( this );
         refreshViews();
     }
     
@@ -287,10 +286,8 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
             public void onConfirm()
             {
                 // Reset the user preferences
-                SharedPreferences preferences = PreferenceManager
-                        .getDefaultSharedPreferences( SettingsGlobalActivity.this );
-                preferences.unregisterOnSharedPreferenceChangeListener( SettingsGlobalActivity.this );
-                preferences.edit().clear().commit();
+                mPrefs.unregisterOnSharedPreferenceChangeListener( SettingsGlobalActivity.this );
+                mPrefs.edit().clear().commit();
                 PreferenceManager.setDefaultValues( SettingsGlobalActivity.this, R.xml.preferences, true );
                 
                 // Also reset any manual overrides the user may have made in the config file

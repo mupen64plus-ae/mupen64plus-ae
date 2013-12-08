@@ -57,6 +57,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     // App data and user preferences
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
+    private SharedPreferences mPrefs = null;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -85,6 +86,7 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
         mAppData = new AppData( this );
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         int lastVer = mAppData.getLastAppVersionCode();
         int currVer = mAppData.appVersionCode;
@@ -134,16 +136,14 @@ public class MenuActivity extends PreferenceActivity implements OnPreferenceClic
     protected void onPause()
     {
         super.onPause();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+        mPrefs.unregisterOnSharedPreferenceChangeListener( this );
     }
     
     @Override
     protected void onResume()
     {
         super.onResume();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+        mPrefs.registerOnSharedPreferenceChangeListener( this );
         refreshViews();
     }
     

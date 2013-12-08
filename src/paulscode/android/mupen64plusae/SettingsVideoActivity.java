@@ -54,6 +54,7 @@ public class SettingsVideoActivity extends PreferenceActivity implements
     
     // User preferences
     private UserPrefs mUserPrefs = null;
+    private SharedPreferences mPrefs = null;
     
     @SuppressWarnings( "deprecation" )
     @Override
@@ -64,15 +65,15 @@ public class SettingsVideoActivity extends PreferenceActivity implements
         // Get user preferences
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
+        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
         
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
         // new release)
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
         PreferenceManager.setDefaultValues( this, R.xml.preferences_video, false );
         
         // Ensure that selected plugin names and other list preferences are valid
         Resources res = getResources();
-        PrefUtil.validateListPreference( res, prefs, VIDEO_PLUGIN, R.string.videoPlugin_default,
+        PrefUtil.validateListPreference( res, mPrefs, VIDEO_PLUGIN, R.string.videoPlugin_default,
                 R.array.videoPlugin_values );
         
         // Load user preference menu structure from XML and update view
@@ -98,16 +99,14 @@ public class SettingsVideoActivity extends PreferenceActivity implements
     protected void onPause()
     {
         super.onPause();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+        mPrefs.unregisterOnSharedPreferenceChangeListener( this );
     }
     
     @Override
     protected void onResume()
     {
         super.onResume();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        sharedPreferences.registerOnSharedPreferenceChangeListener( this );
+        mPrefs.registerOnSharedPreferenceChangeListener( this );
         refreshViews();
     }
     
