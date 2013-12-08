@@ -78,12 +78,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="paulscode.android.mupen64plusae.VideoMenuActivity"
+            android:name="paulscode.android.mupen64plusae.SettingsVideoActivity"
             android:exported="false"
             android:label="@string/screenVideo_title"
             android:theme="@style/appTheme.NoTransition" >
             <intent-filter>
-                <action android:name=".VideoMenuActivity" />
+                <action android:name=".SettingsVideoActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

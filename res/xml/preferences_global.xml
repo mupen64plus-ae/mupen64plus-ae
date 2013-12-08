@@ -268,7 +268,7 @@
             android:key="screenVideo"
             android:summary="@string/screenVideo_summary"
             android:title="@string/screenVideo_title" >
-            <intent android:action=".VideoMenuActivity" />
+            <intent android:action=".SettingsVideoActivity" />
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory

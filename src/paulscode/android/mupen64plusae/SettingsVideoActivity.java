@@ -37,7 +37,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class VideoMenuActivity extends PreferenceActivity implements
+public class SettingsVideoActivity extends PreferenceActivity implements
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences.xml
@@ -153,7 +153,7 @@ public class VideoMenuActivity extends PreferenceActivity implements
     {
         if( TextUtils.isEmpty( filename ) )
         {
-            Log.e( "VideoMenuActivity", "Filename not specified in processTexturePak" );
+            Log.e( "SettingsVideoActivity", "Filename not specified in processTexturePak" );
             Notifier.showToast( this, R.string.pathHiResTexturesTask_errorMessage );
             return;
         }
@@ -178,7 +178,7 @@ public class VideoMenuActivity extends PreferenceActivity implements
             public void onComplete()
             {
                 if( !success )
-                    Notifier.showToast( VideoMenuActivity.this,
+                    Notifier.showToast( SettingsVideoActivity.this,
                             R.string.pathHiResTexturesTask_errorMessage );
             }
         };
