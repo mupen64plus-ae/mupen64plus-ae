@@ -67,6 +67,17 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="paulscode.android.mupen64plusae.SettingsGlobalActivity"
+            android:exported="false"
+            android:label="@string/screenSettingsGlobal_title"
+            android:theme="@style/appTheme.NoTransition" >
+            <intent-filter>
+                <action android:name=".SettingsGlobalActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="paulscode.android.mupen64plusae.VideoMenuActivity"
             android:exported="false"
             android:label="@string/screenVideo_title"

@@ -121,7 +121,7 @@
 
     <!-- Preference Screens -->
     <string name="screenPlay_title">Play</string>
-    <string name="screenSettings_title">Settings</string>
+    <string name="screenSettingsGlobal_title">Global settings</string>
     <string name="screenInput_title">Input</string>
     <string name="screenInput_summary">Control settings</string>
     <string name="screenTouchscreen_title">Touchscreen</string>
