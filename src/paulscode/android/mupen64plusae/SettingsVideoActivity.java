@@ -68,7 +68,7 @@ public class SettingsVideoActivity extends PreferenceActivity implements
         // Ensure that any missing preferences are populated with defaults (e.g. preference added to
         // new release)
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-        PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_video, false );
         
         // Ensure that selected plugin names and other list preferences are valid
         Resources res = getResources();
