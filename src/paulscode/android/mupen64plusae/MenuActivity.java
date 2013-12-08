@@ -194,6 +194,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
             title = getString( R.string.menuItem_gameSettings );
         item.setTitle( title );
         item.setEnabled( isValid );
+        menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         return super.onPrepareOptionsMenu( menu );
     }
     
