@@ -34,7 +34,6 @@ import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.RomInfo;
 import paulscode.android.mupen64plusae.util.Utility;
-import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,7 +53,6 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     // These constants must match the keys used in res/xml/preferences.xml
     
     private static final String PATH_SELECTED_GAME = "pathSelectedGame";
-    private static final String SCREEN_PLAY = "screenPlay";
     
     private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
     private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
@@ -356,19 +354,14 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         }
     }
     
-    @TargetApi( 9 )
     @SuppressWarnings( "deprecation" )
     private void refreshViews()
     {
         // Refresh the preferences object
         mUserPrefs = new UserPrefs( this );
         
-        // Enable the play menu only if the selected game actually exists
-        File selectedGame = new File( mUserPrefs.selectedGame );
-        boolean isValidGame = selectedGame.exists() && selectedGame.isFile();
-        PrefUtil.enablePreference( this, SCREEN_PLAY, isValidGame );
-        
         // Update the summary text for the selected game
+        File selectedGame = new File( mUserPrefs.selectedGame );
         PathPreference pp = (PathPreference) findPreference( PATH_SELECTED_GAME );
         if( pp != null )
             pp.setSummary( selectedGame.getName() );
