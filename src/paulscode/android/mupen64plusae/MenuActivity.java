@@ -185,10 +185,10 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     public boolean onPrepareOptionsMenu( Menu menu )
     {
         MenuItem item = menu.findItem( R.id.menuItem_gameSettings );
-        String romName = mUserPrefs.selectedGameHeader.name;
-        boolean isValid = !TextUtils.isEmpty( romName );
+        String romName = mAppData.romLookup.getBaseGoodName( mUserPrefs.selectedGameHeader.crc );
+        boolean isValid = romName != null;
         String title;
-        if( isValid )
+        if( !TextUtils.isEmpty( romName ) )
             title = getString( R.string.menuItem_gameSettingsNamed, romName );
         else
             title = getString( R.string.menuItem_gameSettings );
@@ -297,7 +297,8 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     private void popupGameSettingsTodo()
     {
         Notifier.showToast( this,
-                String.format( getString( R.string.toast_loadingGameSettings ), mUserPrefs.selectedGameHeader.name ) );
+                String.format( getString( R.string.toast_loadingGameSettings ),
+                        mAppData.romLookup.getBaseGoodName( mUserPrefs.selectedGameHeader.crc ) ) );
         
         new AsyncTask<Void, Void, RomInfo>()
         {
