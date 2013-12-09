@@ -34,6 +34,7 @@ import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.RomInfo;
 import paulscode.android.mupen64plusae.util.Utility;
+import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -176,6 +177,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     public boolean onCreateOptionsMenu( Menu menu )
     {
         getMenuInflater().inflate( R.menu.menu_activity, menu );
+        menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         return super.onCreateOptionsMenu( menu );
     }
     
@@ -192,7 +194,6 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
             title = getString( R.string.menuItem_gameSettings );
         item.setTitle( title );
         item.setEnabled( isValid );
-        menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         return super.onPrepareOptionsMenu( menu );
     }
     
@@ -354,11 +355,16 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         }
     }
     
+    @TargetApi( 11 )
     @SuppressWarnings( "deprecation" )
     private void refreshViews()
     {
         // Refresh the preferences object
         mUserPrefs = new UserPrefs( this );
+        
+        // Refresh the action bar
+        if( AppData.IS_HONEYCOMB )
+            invalidateOptionsMenu();
         
         // Update the summary text for the selected game
         File selectedGame = new File( mUserPrefs.selectedGame );
