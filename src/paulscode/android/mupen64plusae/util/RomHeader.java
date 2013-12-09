@@ -80,6 +80,7 @@ public final class RomHeader
             manufacturerId = 0;
             cartridgeId = 0;
             countryCode = 0;
+            crc = "";
         }
         else
         {
@@ -100,8 +101,8 @@ public final class RomHeader
             manufacturerId = readInt( buffer, 0x38 );
             cartridgeId = readShort( buffer, 0x3C );
             countryCode = readShort( buffer, 0x3E );
+            crc = String.format( "%08X %08X", crc1, crc2 );
         }
-        crc = String.format( "%08X %08X", crc1, crc2 );
     }
     
     private static byte[] readFile( File file )
