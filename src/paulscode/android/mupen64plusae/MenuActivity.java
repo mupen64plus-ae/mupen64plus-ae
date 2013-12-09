@@ -280,7 +280,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     
     private void popupDeviceInfo()
     {
-        String title = getString( R.string.actionDeviceInfo_title );
+        String title = getString( R.string.menuItem_deviceInfo );
         String message = DeviceUtil.getCpuInfo();
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }
