@@ -26,12 +26,10 @@ import paulscode.android.mupen64plusae.input.TouchController;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.CrashTester;
-import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
 import paulscode.android.mupen64plusae.util.Prompt;
 import paulscode.android.mupen64plusae.util.Prompt.PromptConfirmListener;
 import android.annotation.TargetApi;
-import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -48,7 +46,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
 {
     // These constants must match the keys used in res/xml/preferences.xml
     
-    private static final String ACTION_DEVICE_INFO = "actionDeviceInfo";
     private static final String ACTION_CRASH_TEST = "actionCrashTest";
     private static final String ACTION_RELOAD_ASSETS = "actionReloadAssets";
     private static final String ACTION_RESET_USER_PREFS = "actionResetUserPrefs";
@@ -96,7 +93,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         mUserPrefs = new UserPrefs( this );
         
         // Handle certain menu items that require extra processing or aren't actually preferences
-        PrefUtil.setOnPreferenceClickListener( this, ACTION_DEVICE_INFO, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RELOAD_ASSETS, this );
         PrefUtil.setOnPreferenceClickListener( this, ACTION_RESET_USER_PREFS, this );
         
@@ -119,18 +115,6 @@ public class SettingsGlobalActivity extends PreferenceActivity implements OnPref
         {
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, SCREEN_TOUCHSCREEN );
             PrefUtil.removePreference( this, CATEGORY_SINGLE_PLAYER, INPUT_VOLUME_MAPPABLE );
-        }
-        
-        // Initialize the OUYA interface if running on OUYA
-        if( OUYAInterface.IS_OUYA_HARDWARE )
-            OUYAInterface.init( this );
-        
-        // Popup a warning if the installation appears to be corrupt
-        if( !mAppData.isValidInstallation )
-        {
-            CharSequence title = getText( R.string.invalidInstall_title );
-            CharSequence message = getText( R.string.invalidInstall_message );
-            new Builder( this ).setTitle( title ).setMessage( message ).create().show();
         }
     }
     
