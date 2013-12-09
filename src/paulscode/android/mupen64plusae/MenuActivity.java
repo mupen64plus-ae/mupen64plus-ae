@@ -203,6 +203,9 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     {
         switch( item.getItemId() )
         {
+            case R.id.menuItem_play:
+                startActivity( new Intent( this, PlayMenuActivity.class ) );
+                return true;
             case R.id.menuItem_gameSettings:
                 // TODO startActivity( new Intent( this, SettingsGameActivity.class ) );
                 popupGameSettingsTodo();

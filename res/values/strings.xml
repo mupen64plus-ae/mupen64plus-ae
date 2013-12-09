@@ -65,6 +65,7 @@
     <string name="menuItem_unmapAll">Unmap all</string>
 
     <!-- Menu Activity -->
+    <string name="menuItem_play">Play</string>
     <string name="menuItem_settings">Settings</string>
     <string name="menuItem_gameSettings">Game-specific settings</string>
     <string name="menuItem_gameSettingsNamed">%1$s settings</string>
