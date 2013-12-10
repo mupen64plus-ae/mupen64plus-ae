@@ -29,7 +29,6 @@ import org.acra.ErrorReporter;
 
 import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.FileUtil;
-import paulscode.android.mupen64plusae.util.RomLookup;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -159,17 +158,11 @@ public class AppData
     /** The path of the Mupen64Plus ini file. Deleted on uninstall, sometimes overwritten on update. */
     public final String mupen64plus_ini;
     
-    /** The ROM lookup table. */
-    public final RomLookup romLookup;
-    
     /** Whether the installation is valid. */
     public final boolean isValidInstallation;
     
     /** The object used to persist the settings. */
     private final SharedPreferences mPreferences;
-    
-    /** The ROM lookup table. */
-    private static RomLookup sRomLookup = null;
     
     // Shared preferences keys
     private static final String KEY_ASSET_VERSION = "assetVersion";
@@ -233,13 +226,6 @@ public class AppData
         gles2glide64_conf = coreSharedDataDir + "/Glide64mk2.ini";
         mupen64plus_cht = coreSharedDataDir + "/mupen64plus.cht";
         mupen64plus_ini = coreSharedDataDir + "/mupen64plus.ini";
-        
-        if( sRomLookup == null )
-        {
-            // Construction is expensive; only do it once
-            sRomLookup = new RomLookup( mupen64plus_ini );
-        }
-        romLookup = sRomLookup;
         
         // Installation validity
         // @formatter:off

@@ -24,7 +24,6 @@ import java.io.File;
 
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
-import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.PathPreference;
 import paulscode.android.mupen64plusae.persistent.UserPrefs;
 import paulscode.android.mupen64plusae.util.ChangeLog;
@@ -32,7 +31,7 @@ import paulscode.android.mupen64plusae.util.DeviceUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
 import paulscode.android.mupen64plusae.util.OUYAInterface;
 import paulscode.android.mupen64plusae.util.PrefUtil;
-import paulscode.android.mupen64plusae.util.RomInfo;
+import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -77,6 +76,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     private AppData mAppData = null;
     private UserPrefs mUserPrefs = null;
     private SharedPreferences mPrefs = null;
+    private RomDetail mRomDetail = null;
     
     @Override
     protected void onNewIntent( Intent intent )
@@ -106,6 +106,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         mUserPrefs = new UserPrefs( this );
         mUserPrefs.enforceLocale( this );
         mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
+        RomDetail.initializeDatabase( mAppData.mupen64plus_ini );
         
         int lastVer = mAppData.getLastAppVersionCode();
         int currVer = mAppData.appVersionCode;
@@ -187,7 +188,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     public boolean onPrepareOptionsMenu( Menu menu )
     {
         MenuItem item = menu.findItem( R.id.menuItem_gameSettings );
-        String romName = mAppData.romLookup.getBaseGoodName( mUserPrefs.selectedGameHeader.crc );
+        String romName = mRomDetail.baseName;
         boolean isValid = romName != null;
         String title;
         if( !TextUtils.isEmpty( romName ) )
@@ -298,25 +299,23 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     
     private void popupGameSettingsTodo()
     {
-        Notifier.showToast( this,
-                String.format( getString( R.string.toast_loadingGameSettings ),
-                        mAppData.romLookup.getBaseGoodName( mUserPrefs.selectedGameHeader.crc ) ) );
+        Notifier.showToast( this, String.format( getString( R.string.toast_loadingGameSettings ), mRomDetail.baseName ) );
         
-        new AsyncTask<Void, Void, RomInfo>()
+        new AsyncTask<Void, Void, RomDetail>()
         {
             private Bitmap art;
             
             @Override
-            protected RomInfo doInBackground( Void... params )
+            protected RomDetail doInBackground( Void... params )
             {
-                RomInfo info = new RomInfo( new File( mUserPrefs.selectedGame ), new ConfigFile(
-                        mAppData.mupen64plus_ini ) );
-                art = mAppData.romLookup.getCoverArt( mUserPrefs.selectedGameHeader.crc, true );
-                return info;
+                String md5 = RomDetail.computeMd5( new File( mUserPrefs.selectedGame ) );
+                RomDetail result = RomDetail.lookupByMd5( md5 );
+                art = result.getCoverArt( true );
+                return result;
             }
             
             @Override
-            protected void onPostExecute( RomInfo result )
+            protected void onPostExecute( RomDetail result )
             {
                 ImageView view = new ImageView( MenuActivity.this );
                 if( art != null )
@@ -375,6 +374,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     {
         // Refresh the preferences object
         mUserPrefs = new UserPrefs( this );
+        mRomDetail = RomDetail.lookupByCrc( mUserPrefs.selectedGameHeader.crc );
         
         // Refresh the action bar
         if( AppData.IS_HONEYCOMB )
