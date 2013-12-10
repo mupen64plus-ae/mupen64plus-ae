@@ -165,7 +165,7 @@ public class RomDetail
             
             // Generate the cover art URL string
             _artUrl = _baseName == null ? null : String.format( URL_TEMPLATE,
-                    _baseName.replace( ' ', '_' ).replace( "'", "" ) );
+                    _baseName.replace( ' ', '_' ).replace( "'", "" ).replace( '-', '_' ) );
             
             // Some ROMs have multiple entries. Instead of duplicating common data, the ini file
             // just references another entry.
