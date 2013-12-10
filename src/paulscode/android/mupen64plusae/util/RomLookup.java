@@ -20,14 +20,23 @@
  */
 package paulscode.android.mupen64plusae.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 
 import paulscode.android.mupen64plusae.persistent.ConfigFile;
 import paulscode.android.mupen64plusae.persistent.ConfigFile.ConfigSection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class RomLookup
 {
+    private static final String URL_TEMPLATE = "https://dl.dropboxusercontent.com/u/3899306/CoverArt/%s.png";
     private final HashMap<String, ConfigSection> mCrcMap = new HashMap<String, ConfigSection>();
     
     public RomLookup( String mupen64plus_ini )
@@ -67,5 +76,50 @@ public class RomLookup
         
         Log.i( "RomLookup", "Found good name = " + name );
         return name.split( " \\(" )[0];
+    }
+    
+    public Bitmap getCoverArt( String crc, boolean download )
+    {
+        // TODO: Get cached data if download == false
+        
+        String name = getBaseGoodName( crc );
+        if( TextUtils.isEmpty( name ) )
+            return null;
+        
+        name = name.trim().replace( ' ', '_' ).replace( "'", "" );
+        
+        URL url = null;
+        URLConnection connection = null;
+        InputStream stream = null;
+        Bitmap bitmap = null;
+        try
+        {
+            url = new URL( String.format( URL_TEMPLATE, name ) );
+            connection = url.openConnection();
+            stream = connection.getInputStream();
+            bitmap = BitmapFactory.decodeStream( stream );
+        }
+        catch( MalformedURLException e )
+        {
+            Log.w( "RomItem", "MalformedURLException: ", e );
+        }
+        catch( IOException e )
+        {
+            Log.w( "RomItem", "IOException: ", e );
+        }
+        finally
+        {
+            try
+            {
+                if( stream != null )
+                    stream.close();
+            }
+            catch( IOException e )
+            {
+                Log.w( "RomItem", "IOException on close: ", e );
+            }
+        }
+        
+        return bitmap;
     }
 }

@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -48,6 +49,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 public class MenuActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
 {
@@ -302,16 +304,27 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         
         new AsyncTask<Void, Void, RomInfo>()
         {
+            private Bitmap art;
+            
             @Override
             protected RomInfo doInBackground( Void... params )
             {
-                return new RomInfo( new File( mUserPrefs.selectedGame ), new ConfigFile( mAppData.mupen64plus_ini ) );
+                RomInfo info = new RomInfo( new File( mUserPrefs.selectedGame ), new ConfigFile(
+                        mAppData.mupen64plus_ini ) );
+                art = mAppData.romLookup.getCoverArt( mUserPrefs.selectedGameHeader.crc, true );
+                return info;
             }
             
             @Override
             protected void onPostExecute( RomInfo result )
             {
-                new Builder( MenuActivity.this ).setTitle( "TODO" ).setMessage( result.goodName ).create().show();
+                ImageView view = new ImageView( MenuActivity.this );
+                if( art != null )
+                    view.setImageBitmap( art );
+                else
+                    view.setImageResource( R.drawable.default_coverart );
+                new Builder( MenuActivity.this ).setTitle( "TODO" ).setMessage( result.goodName ).setView( view )
+                        .create().show();
             }
         }.execute();
     }
