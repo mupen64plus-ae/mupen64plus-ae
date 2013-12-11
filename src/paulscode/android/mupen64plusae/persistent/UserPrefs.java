@@ -89,12 +89,6 @@ import android.view.WindowManager;
  */
 public class UserPrefs
 {
-    /** Display names of locales that are both available on the device and translated for Mupen. */
-    public final String[] localeNames;
-    
-    /** Codes of locales that are both available on the device and translated for Mupen. */
-    public final String[] localeCodes;
-    
     /** The filename of the ROM selected by the user. */
     public final String selectedGame;
     
@@ -390,6 +384,8 @@ public class UserPrefs
     
     private final SharedPreferences mPreferences;
     private final Locale mLocale;
+    private final String[] mLocaleNames;
+    private final String[] mLocaleCodes;
     
     /**
      * Instantiates a new user preferences wrapper.
@@ -428,8 +424,8 @@ public class UserPrefs
             }
         }
         entries[0] = context.getString( R.string.localeOverride_entrySystemDefault );
-        localeNames = entries;
-        localeCodes = values;
+        mLocaleNames = entries;
+        mLocaleCodes = values;
         
         // Files
         selectedGame = mPreferences.getString( "pathSelectedGame", "" );
@@ -776,12 +772,12 @@ public class UserPrefs
     {
         // Get the current locale
         String currentCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, null );
-        final int currentIndex = ArrayUtils.indexOf( localeCodes, currentCode );
+        final int currentIndex = ArrayUtils.indexOf( mLocaleCodes, currentCode );
         
         // Populate and show the language menu
         Builder builder = new Builder( activity );
         builder.setTitle( R.string.menuItem_localeOverride );
-        builder.setSingleChoiceItems( localeNames, currentIndex, new DialogInterface.OnClickListener()
+        builder.setSingleChoiceItems( mLocaleNames, currentIndex, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick( DialogInterface dialog, int which )
@@ -789,7 +785,7 @@ public class UserPrefs
                 dialog.dismiss();
                 if( which >= 0 && which != currentIndex )
                 {
-                    mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, localeCodes[which] ).commit();
+                    mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, mLocaleCodes[which] ).commit();
                     activity.finish();
                     activity.startActivity( activity.getIntent() );
                 }
