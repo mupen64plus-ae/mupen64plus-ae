@@ -201,18 +201,29 @@ public class GalleryActivity extends Activity implements OnClickListener
     @Override
     public void onClick( View v )
     {
-        File startPath = new File( mUserPrefs.selectedGame );
+        promptFile( new File( mUserPrefs.selectedGame ) );
+    }
+    
+    private void promptFile( File startPath )
+    {
         String title = startPath.getPath();
         String message = null;
-        Prompt.promptFile( this, title, message, startPath, new PromptFileListener()
+        Prompt.promptFile( this, title, message, startPath, true, true, true, new PromptFileListener()
         {
             @Override
             public void onDialogClosed( File file, int which )
             {
                 if( which == DialogInterface.BUTTON_POSITIVE )
                 {
-                    mUserPrefs.putPathSelectedGame( file.getAbsolutePath() );
-                    refreshViews();
+                    if( file.isFile() )
+                    {
+                        mUserPrefs.putPathSelectedGame( file.getAbsolutePath() );
+                        refreshViews();
+                    }
+                    else
+                    {
+                        promptFile( file );
+                    }
                 }
             }
         } );

@@ -300,14 +300,18 @@ public final class Prompt
     /**
      * Open a dialog to prompt the user for a file.
      * 
-     * @param context   The activity context.
-     * @param title     The title of the dialog.
-     * @param message   The message to be shown inside the dialog.
-     * @param startPath The parent directory holding the files to select from.
+     * @param context       The activity context.
+     * @param title         The title of the dialog.
+     * @param message       The message to be shown inside the dialog.
+     * @param startPath     The directory holding the files to select from.
+     * @param includeParent True to include the parent directory in list
+     * @param includeDirs   True to include child directories in list
+     * @param includeFiles  True to include child files in list
      * @param listener  The listener to process the file, when selected.
      */
     public static void promptFile( Context context, CharSequence title, CharSequence message,
-            File startPath, final PromptFileListener listener )
+            File startPath, boolean includeParent, boolean includeDirs, boolean includeFiles,
+            final PromptFileListener listener )
     {
         // Don't even open the dialog if the path doesn't exist
         if( !startPath.exists() )
@@ -316,7 +320,7 @@ public final class Prompt
         // Get the filenames and absolute paths
         final List<CharSequence> names = new ArrayList<CharSequence>();
         final List<String> paths = new ArrayList<String>();
-        FileUtil.populate( startPath, false, false, true, names, paths );
+        FileUtil.populate( startPath, includeParent, includeDirs, includeFiles, names, paths );
         
         // When the user clicks a file, notify the downstream listener
         OnClickListener internalListener = new OnClickListener()
@@ -350,6 +354,21 @@ public final class Prompt
         
         // Create and launch the dialog
         builder.create().show();
+    }
+    
+    /**
+     * Open a dialog to prompt the user for a file.
+     * 
+     * @param context   The activity context.
+     * @param title     The title of the dialog.
+     * @param message   The message to be shown inside the dialog.
+     * @param startPath The directory holding the files to select from.
+     * @param listener  The listener to process the file, when selected.
+     */
+    public static void promptFile( Context context, CharSequence title, CharSequence message,
+            File startPath, final PromptFileListener listener )
+    {
+        promptFile( context, title, message, startPath, false, false, true, listener );
     }
     
     /**
