@@ -35,8 +35,6 @@
         <item>ja</item>
     </string-array>
 
-    <string name="localeOverride_default" translatable="false"></string>
-
     <!-- Touchscreen Refresh List -->
     <string-array name="touchscreenRefresh_entries" translatable="false">
         <item>@string/touchscreenRefresh_entryNever</item>

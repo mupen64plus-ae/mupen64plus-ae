@@ -380,10 +380,12 @@ public class UserPrefs
     public static final int DEFAULT_INPUT_SENSITIVITY = 100;
     public static final boolean DEFAULT_SPECIAL_VISIBILITY = false;
     public static final boolean DEFAULT_PLAYER_MAP_REMINDER = true;
+    public static final String DEFAULT_LOCALE_OVERRIDE = "";
     // ... add more as needed
     
     private final SharedPreferences mPreferences;
     private final Locale mLocale;
+    private final String mLocaleCode;
     private final String[] mLocaleNames;
     private final String[] mLocaleCodes;
     
@@ -401,8 +403,8 @@ public class UserPrefs
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Locale
-        String language = mPreferences.getString( KEY_LOCALE_OVERRIDE, null );
-        mLocale = TextUtils.isEmpty( language ) ? Locale.getDefault() : createLocale( language );
+        mLocaleCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, DEFAULT_LOCALE_OVERRIDE );
+        mLocale = TextUtils.isEmpty( mLocaleCode ) ? Locale.getDefault() : createLocale( mLocaleCode );
         Locale[] availableLocales = Locale.getAvailableLocales();
         String[] values = context.getResources().getStringArray( R.array.localeOverride_values );
         String[] entries = new String[values.length];
@@ -770,9 +772,8 @@ public class UserPrefs
     
     public void changeLocale( final Activity activity )
     {
-        // Get the current locale
-        String currentCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, null );
-        final int currentIndex = ArrayUtils.indexOf( mLocaleCodes, currentCode );
+        // Get the index of the current locale
+        final int currentIndex = ArrayUtils.indexOf( mLocaleCodes, mLocaleCode );
         
         // Populate and show the language menu
         Builder builder = new Builder( activity );
