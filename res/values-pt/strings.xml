@@ -91,6 +91,7 @@
   <string name="actionCrashTest_summary">Enviar relatório de configuração aos desenvolvedores</string>
   <string name="actionResetUserPrefs_title">Reiniciar</string>
   <string name="actionResetUserPrefs_summary">Restaurar configuração padrão</string>
+  <string name="actionResetUserPrefs_popupMessage">Reiniciar todas as preferências para o padrão?<small>\n\nTodas as configurações manuais que você possa ter feito ao arquivo de configuração serão substituídas.</small></string>
   <string name="actionHelp_title">Ajuda</string>
   <string name="actionHelp_message">Mupen64Plus é desenvolvido e mantido por voluntários.<small>\n\nPara corrigir falhas nos gráficos, tente mudar o <i>plugin de vídeo</i>.\n\nPara corrigir lag, tente alterar a configuração de <i>frameskip</i> ou do <i>plugin de vídeo</i>.\n\nSe não conseguir jogar uma ROM, tente descompactá-la antes ou procure outra versão da ROM.\n\nPara problemas com o controle na tela, tente mudar a <i>Escala do botão</i> ou o <i>Tipo de controle de toque</i>.\n\nPara outros problemas, ou se nada acima resolver, clique no botão <i>FAQ</i> abaixo. Para problemas não relacionados ao jogo, clique no botão <i>Relatar bug</i> abaixo.  Nós respondemos a maioria dos posts dentro de 24 horas. Sério.\n\n</small>Obrigado por nos ajudar a melhorar o app!</string>
   <string name="actionHelp_faq">Dúvidas frequentes</string>
@@ -108,9 +109,12 @@
   <string name="screenTouchscreen_summary">Configuração do controle de toque</string>
   <string name="screenTouchpad_title">Touchpad</string>
   <string name="screenTouchpad_summary">Configurações do Xperia PLAY</string>
+  <string name="screenDisplay_title">Tela</string>
+  <string name="screenDisplay_summary">Configurações de Layout</string>
   <string name="screenVideo_title">Vídeo</string>
   <string name="screenVideo_summary">Configurações gráficas</string>
   <string name="screenAdvanced_title">Avançado</string>
+  <string name="screenAdvanced_summary">Núcleo, armazenamento e configurações de depuração</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opções de Cheats (toque longo para ver notas)</string>
   <string name="categoryHardware_title">Hardware</string>
@@ -122,6 +126,7 @@
   <string name="categoryGles2N64_title">Configurações do GLES2N64</string>
   <string name="categoryGles2Rice_title">Configurações do GLES2Rice</string>
   <string name="categoryGles2Glide64_title">Configurações do GLES2Glide64</string>
+  <string name="categoryCore_title">Núcleo</string>
   <string name="categoryAudio_title">Áudio</string>
   <string name="categoryData_title">Dados</string>
   <string name="categoryDiagnostics_title">Diagnósticos</string>
@@ -137,6 +142,8 @@
   <string name="inputVolumeMappable_summary">Permite que as teclas de volume sejam usadas como controle</string>
   <string name="inputShareController_title">Compartilhar controle</string>
   <string name="inputShareController_summary">Permitir um único controle controlar todos os multiplos jogadores de uma vez</string>
+  <string name="displayImmersiveMode_title">Modo imersivo</string>
+  <string name="displayImmersiveMode_summary">Esconder completamente as barras de navegação e de status</string>
   <string name="gles2N64Fog_title">Névoa</string>
   <string name="gles2N64Fog_summary">(precisa de ajustes)</string>
   <string name="gles2N64Sai_title">Filtro de textura 2xSaI</string>
@@ -156,6 +163,7 @@
   <string name="gles2RiceHiResTextures_title">Texturas de alta resolução</string>
   <string name="gles2RiceHiResTextures_summary">Usa pacotes com texturas melhoradas</string>
   <string name="gles2RiceFog_title">Névoa</string>
+  <string name="gles2RiceFog_summary">Exibir efeitos de névoa</string>
   <string name="coreUseFramelimiter_title">Usar limite de frames</string>
   <string name="coreUseFramelimiter_summary">Habilite para uma experiência de jogo suave (desacelera alguns jogos)</string>
   <string name="audioSwapChannels_title">Trocar canais de áudio</string>
@@ -205,11 +213,13 @@
   <string name="displayScaling_title">Dimensionamento da tela</string>
   <string name="displayScaling_entryNone">Nenhum\n<small>Usar a resolução selecionada acima</small></string>
   <string name="displayScaling_entryZoom">Zoom\n<small> Preencher tela, sem distorção (adiciona bordas pretas)</small></string>
+  <string name="displayScaling_entryCrop">Cortar\n<small>Preenche a tela sem distorção (corta a imagem)</small></string>
   <string name="displayScaling_entryStretch">Esticar\n<small>Preencher tela, não adiciona bordas (pode distorcer)</small></string>
   <string name="displayFpsRefresh_title">Exibir taxa de frames</string>
   <string name="displayFpsRefresh_entryNever">Nunca</string>
   <string name="displayFpsRefresh_entryOccasionally">Ocasionalmente</string>
   <string name="displayFpsRefresh_entryFrequently">Frequentemente</string>
+  <string name="videoPlugin_title">Plugin de vídeo</string>
   <string name="videoPlugin_entryNone">Nenhum (vídeo desabilitado)</string>
   <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(adaptação do GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptação do Rice Vídeo v6.1.0(b))</small></string>
@@ -222,6 +232,9 @@
   <string name="videoHardwareType_entryO2">Perfil O-2</string>
   <string name="videoHardwareType_entryQ">Perfil Q</string>
   <string name="videoHardwareType_entryT">Perfil T</string>
+  <string name="videoHardwareType_entryCustom">Perfil custumizado</string>
+  <string name="videoPolygonOffset_title">Offset do polígono</string>
+  <string name="videoPolygonOffset_summary">Redução de flicker custumizada</string>
   <string name="gles2N64Frameskip_title">Pulo de frames</string>
   <string name="gles2N64Frameskip_entryNever">Nunca pular frames</string>
   <string name="gles2N64Frameskip_entryUpTo1">Não mais que 1 frame</string>
@@ -261,6 +274,7 @@
   <string name="r4300Emulator_entryPureInterpreter">Interpretador puro</string>
   <string name="r4300Emulator_entryCachedInterpreter">Interpretador com Cache</string>
   <string name="r4300Emulator_entryDynarec">Recompilador dinâmico (dynarec)</string>
+  <string name="audioPlugin_title">Plugin de áudio</string>
   <string name="audioPlugin_entryNone">Nenhum (áudio desabilitado)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_title">Idioma</string>

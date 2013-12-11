@@ -91,6 +91,7 @@
   <string name="actionCrashTest_summary">Wyślij raport konfiguracji do twórców aplikacji</string>
   <string name="actionResetUserPrefs_title">Reset</string>
   <string name="actionResetUserPrefs_summary">Przywróc ustawienia domyślne</string>
+  <string name="actionResetUserPrefs_popupMessage">Zresetować wszystkie ustawienia do wartości domyślnych?<small>\n\nWszelkie ręczne modyfikacje dokonane w pliku konfiguracyjnym zostaną zastąpione.</small></string>
   <string name="actionHelp_title">Pomoc</string>
   <string name="actionHelp_message">Mupen64Plus jest opracowany i prowadzony przez wolontariuszy.<small>\n\nAby naprawić błędy graficzne, spróbuj zmienić <i>wtyczkę obrazu</i>.\n\nAby naprawić opóźnienia, spróbuj zmienić ustawienia <i>pomijania klatek obrazu</i> lub <i>wtyczkę obrazu</i>.\n\nDla nieodtwarzalnych ROMÓW, spróbuj najpierw rozpakować ROM lub wypróbuj jego inną wersję.\n\nW przypadku problemów z kontrolerem ekranu dotykowego, spróbuj zmienić <i>skalę przycisków</i> lub <i>ułożenie klawiszy ekranowych</i>.\n\nW przypadku innych problemów, lub jeśli gdzieś nadal utkwiłeś, kliknij poniższy przycisk <i>FAQ</i>.  Dla błędów nie dotyczących gier kliknij poniższy przycisk <i>Zgłoś błąd</i>. Odpowiemy na większości postów w ciągu 24 godzin.  To gwarantujemy.\n\n</small>Dziękujemy za pomoc i za wsparcie naszej aplikacji</string>
   <string name="actionHelp_faq">FAQ</string>
@@ -108,9 +109,12 @@
   <string name="screenTouchscreen_summary">Ustawienia ekranowego kontrolera dotykowego</string>
   <string name="screenTouchpad_title">Touchpad</string>
   <string name="screenTouchpad_summary">Ustawienia Xperia PLAY</string>
+  <string name="screenDisplay_title">Ekran</string>
+  <string name="screenDisplay_summary">Ustawienia układu</string>
   <string name="screenVideo_title">Obraz</string>
   <string name="screenVideo_summary">Ustawienia graficzne</string>
   <string name="screenAdvanced_title">Ustawienia zaawansowane</string>
+  <string name="screenAdvanced_summary">Ustawienia rdzeni, miejsca zapisu i debugowania</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Opcje cheatów (przytrzymaj by zobaczyć opis)</string>
   <string name="categoryHardware_title">Sprzęt</string>
@@ -122,6 +126,7 @@
   <string name="categoryGles2N64_title">Ustawienia GLES2N64</string>
   <string name="categoryGles2Rice_title">Ustawienia GLES2Rice</string>
   <string name="categoryGles2Glide64_title">Ustawienia GLES2Glide64</string>
+  <string name="categoryCore_title">Rdzeń</string>
   <string name="categoryAudio_title">Dźwięk</string>
   <string name="categoryData_title">Dane</string>
   <string name="categoryDiagnostics_title">Diagnostyka</string>
@@ -137,6 +142,8 @@
   <string name="inputVolumeMappable_summary">Pozwól na przypisanie przycisków głośności</string>
   <string name="inputShareController_title">Współdzielenie kontrolera</string>
   <string name="inputShareController_summary">Pozwól jednemu kontrolerowi na kontrolowanie kilku graczy jednocześnie</string>
+  <string name="displayImmersiveMode_title">Tryb angażujący</string>
+  <string name="displayImmersiveMode_summary">Całkowicie ukryj paski nawigacji i stanu</string>
   <string name="gles2N64Fog_title">Mgła</string>
   <string name="gles2N64Fog_summary">(wciąż niedopracowane)</string>
   <string name="gles2N64Sai_title">Filtr tekstur 2xSal</string>
@@ -156,6 +163,7 @@
   <string name="gles2RiceHiResTextures_title">Tekstury wysokiej rozdzielczości</string>
   <string name="gles2RiceHiResTextures_summary">Użyj importowanej paczki tekstur</string>
   <string name="gles2RiceFog_title">Mgła</string>
+  <string name="gles2RiceFog_summary">Pokaż efekty mgły</string>
   <string name="coreUseFramelimiter_title">Użyj ograniczenia klatek</string>
   <string name="coreUseFramelimiter_summary">Włącz by zapewnić większą płynność gier (może powodować spowolnienia w niektórych grach)</string>
   <string name="audioSwapChannels_title">Zamień kanały audio</string>
@@ -205,11 +213,13 @@
   <string name="displayScaling_title">Skalowanie ekranu</string>
   <string name="displayScaling_entryNone">Brak\n<small>Użyj dokładną rozdzielczość wybraną powyżej</small></string>
   <string name="displayScaling_entryZoom">Powiększenie\n<small>Wypełnij ekran, bez zniekształcenia (dodaje czarne pasy)</small></string>
+  <string name="displayScaling_entryCrop">Przytnij\n<small>Wypełnij ekran, bez zniekształceń (odcina grafikę)</small></string>
   <string name="displayScaling_entryStretch">Powiększenie\n<small>Wypełnij ekran, bez czarnych pasów (dodaje zniekształcenie)</small></string>
   <string name="displayFpsRefresh_title">Wyświetl liczbę klatek na sekundę</string>
   <string name="displayFpsRefresh_entryNever">Nigdy</string>
   <string name="displayFpsRefresh_entryOccasionally">Okazjonalnie</string>
   <string name="displayFpsRefresh_entryFrequently">Często</string>
+  <string name="videoPlugin_title">Wtyczka wideo</string>
   <string name="videoPlugin_entryNone">Brak (wyłączony obraz)</string>
   <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(adaptacja GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(adaptacja Rice Video v6.1.0(b))</small></string>
@@ -222,6 +232,9 @@
   <string name="videoHardwareType_entryO2">Profil O-2</string>
   <string name="videoHardwareType_entryQ">Profil Q</string>
   <string name="videoHardwareType_entryT">Profil T</string>
+  <string name="videoHardwareType_entryCustom">Własny profil</string>
+  <string name="videoPolygonOffset_title">Przesunięcie wielokąta</string>
+  <string name="videoPolygonOffset_summary">Własne nastawienie redukcji migotania</string>
   <string name="gles2N64Frameskip_title">Pomijanie klatek</string>
   <string name="gles2N64Frameskip_entryNever">Nigdy nie pomijaj klatek</string>
   <string name="gles2N64Frameskip_entryUpTo1">Nie więcej niż 1 klatka</string>
@@ -261,6 +274,7 @@
   <string name="r4300Emulator_entryPureInterpreter">Czysty interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Buforowany interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamiczny rekompilator (dynarec)</string>
+  <string name="audioPlugin_title">Wtyczka dźwięku</string>
   <string name="audioPlugin_entryNone">Brak (wyłączony dźwięk)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_title">Język</string>

@@ -91,6 +91,7 @@
   <string name="actionCrashTest_summary">Einen Konfigurationsbericht an die Entwickler senden</string>
   <string name="actionResetUserPrefs_title">Zurücksetzen</string>
   <string name="actionResetUserPrefs_summary">Standardeinstellungen wiederherstellen</string>
+  <string name="actionResetUserPrefs_popupMessage">Alle Einstellungen auf Standardwerte zurücksetzen?<small>\n\nAlle manuellen Änderungen, die Sie an der Konfigurationsdatei vorgenommen haben, werden überschrieben.</small></string>
   <string name="actionHelp_title">Hilfe</string>
   <string name="actionHelp_message">Mupen64Plus wird von Freiwilligen entwickelt und gepflegt.<small>\n\nUm grafische Glitches zu beheben, versuche das <i>Videoplugin</i> zu ändern.\n\nUm Lag zu beheben, versuche die <i>Video-Frameskip</i>-Einstellung oder das <i>Videoplugin</i> zu ändern.\n\nBei unspielbaren ROMs, versuche das ROM erst zu entpacken oder versuche eine andere Version des ROM.\n\nBei Touchscreen-Steuerungsproblemen, versuche den <i>Knopf-Maßstab</i> oder das <i>Knopf-Layout</i> zu ändern.\n\nBei anderen Problemen, oder wenn du immer noch festsitzt, drücke bitte den <i>FAQ</i>-Knopf unterhalb. Bei nicht spielspezifischen Bugs drücke den <i>Bug melden</i>-Knopf unterhalb. Wir antworten auf die überwiegende Mehrheit der Posts innerhalb von 24 Stunden. Ehrlich.\n\n</small>Danke, dass du uns hilfst, die App zu verbessern!</string>
   <string name="actionHelp_faq">FAQ</string>
@@ -108,9 +109,12 @@
   <string name="screenTouchscreen_summary">On-Screen-Controllereinstellungen</string>
   <string name="screenTouchpad_title">Touchpad</string>
   <string name="screenTouchpad_summary">Xperia PLAY-Einstellungen</string>
+  <string name="screenDisplay_title">Anzeige</string>
+  <string name="screenDisplay_summary">Layout-Einstellungen</string>
   <string name="screenVideo_title">Video</string>
   <string name="screenVideo_summary">Grafikeinstellungen</string>
   <string name="screenAdvanced_title">Erweitert</string>
+  <string name="screenAdvanced_summary">Kern-, Speicher- und Debug-Einstellungen</string>
   <!--Preference Categories-->
   <string name="categoryCheats_title">Cheatoptionen (lange drücken für Anmerkungen)</string>
   <string name="categoryHardware_title">Hardware</string>
@@ -122,6 +126,7 @@
   <string name="categoryGles2N64_title">GLES2N64-Einstellungen</string>
   <string name="categoryGles2Rice_title">GLES2Rice-Einstellungen</string>
   <string name="categoryGles2Glide64_title">GLES2Glide64-Einstellungen</string>
+  <string name="categoryCore_title">Kern</string>
   <string name="categoryAudio_title">Audio</string>
   <string name="categoryData_title">Daten</string>
   <string name="categoryDiagnostics_title">Diagnose</string>
@@ -137,6 +142,8 @@
   <string name="inputVolumeMappable_summary">Ermöglicht, die Lautstärketasten mit Steuerelementen zu belegen</string>
   <string name="inputShareController_title">Controller teilen</string>
   <string name="inputShareController_summary">Ermöglicht einem einzelnen Eingabegerät mehrere Spieler auf einmal zu steuern</string>
+  <string name="displayImmersiveMode_title">Immersive-Modus</string>
+  <string name="displayImmersiveMode_summary">Die Navigation und Statusleisten vollständig verstecken</string>
   <string name="gles2N64Fog_title">Nebel</string>
   <string name="gles2N64Fog_summary">(benötigt Arbeit)</string>
   <string name="gles2N64Sai_title">2xSal Texturfilter</string>
@@ -156,6 +163,7 @@
   <string name="gles2RiceHiResTextures_title">Hochauflösende Texturen</string>
   <string name="gles2RiceHiResTextures_summary">Importierte Texturenpakete nutzen</string>
   <string name="gles2RiceFog_title">Nebel</string>
+  <string name="gles2RiceFog_summary">Nebeleffekte anzeigen</string>
   <string name="coreUseFramelimiter_title">Framebegrenzer verwenden</string>
   <string name="coreUseFramelimiter_summary">Einschalten für flüssigeres Gameplay (verlangsamt manche Spiele)</string>
   <string name="audioSwapChannels_title">Audiokanäle tauschen</string>
@@ -205,11 +213,13 @@
   <string name="displayScaling_title">Bildschirmskalierung</string>
   <string name="displayScaling_entryNone">Keine\n<small>Exakte oben ausgewählte Auflösung nutzen</small></string>
   <string name="displayScaling_entryZoom">Zoom\n<small>Bildschirm füllen, keine Verzerrung (fügt schwarze Balken hinzu)</small></string>
+  <string name="displayScaling_entryCrop">Zuschneiden\n<small>Bildschirm füllen, keine Verzerrung (beschneidet die Grafik)</small></string>
   <string name="displayScaling_entryStretch">Strecken\n<small>Bildschirm füllen, keine schwarzen Balken (fügt Verzerrung hinzu)</small></string>
   <string name="displayFpsRefresh_title">Framerate anzeigen</string>
   <string name="displayFpsRefresh_entryNever">Nie</string>
   <string name="displayFpsRefresh_entryOccasionally">Gelegentlich</string>
   <string name="displayFpsRefresh_entryFrequently">Häufig</string>
+  <string name="videoPlugin_title">Video Plugin</string>
   <string name="videoPlugin_entryNone">Keins (Video deaktiviert)</string>
   <string name="videoPlugin_entryGles2N64">gles2n64\n<small>(Adaption von GLN64 v0.4.1)</small></string>
   <string name="videoPlugin_entryGles2Rice">gles2rice\n<small>(Adaption von Rice Video v6.1.0(b))</small></string>
@@ -222,6 +232,9 @@
   <string name="videoHardwareType_entryO2">O-2-Profil</string>
   <string name="videoHardwareType_entryQ">Q-Profil</string>
   <string name="videoHardwareType_entryT">T-Profil</string>
+  <string name="videoHardwareType_entryCustom">Benutzerdefiniertes Profil</string>
+  <string name="videoPolygonOffset_title">Polygonversatz</string>
+  <string name="videoPolygonOffset_summary">Benutzerdefinierte Verzerrung der Flimmerreduktion</string>
   <string name="gles2N64Frameskip_title">Frameskip</string>
   <string name="gles2N64Frameskip_entryNever">Frames nie überspringen</string>
   <string name="gles2N64Frameskip_entryUpTo1">Nicht mehr als 1 Frame</string>
@@ -261,6 +274,7 @@
   <string name="r4300Emulator_entryPureInterpreter">Reiner Interpreter</string>
   <string name="r4300Emulator_entryCachedInterpreter">Gecachter Interpreter</string>
   <string name="r4300Emulator_entryDynarec">Dynamischer Recompiler (dynarec)</string>
+  <string name="audioPlugin_title">Audio Plugin</string>
   <string name="audioPlugin_entryNone">Keins (Audio deaktiviert)</string>
   <string name="audioPlugin_entrySdl">mupen64plus-audio-sdl, v2.0</string>
   <string name="localeOverride_title">Sprache</string>
@@ -280,7 +294,7 @@
   <string name="pathPreference_dialogTitle">Ausgewählter Ordner: %1$s</string>
   <string name="pathSelectedGame_title">Spiel</string>
   <string name="pathSelectedGame_default">~roms/n64</string>
-  <string name="pathCustomTouchscreen_title">Benutzerdefiniertes Layout-Ordner</string>
+  <string name="pathCustomTouchscreen_title">Benutzerdefinierter Layout-Ordner</string>
   <string name="pathCustomTouchscreen_default">~</string>
   <string name="pathHiResTextures_title">Texturenpaket importieren</string>
   <string name="pathHiResTextures_summary">Benutzerdefinierte Texturen (ZIP-Format) auf ein Spiel anwenden</string>
