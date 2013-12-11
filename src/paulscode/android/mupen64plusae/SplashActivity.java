@@ -167,7 +167,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         getWindow().setFlags( LayoutParams.FLAG_KEEP_SCREEN_ON, LayoutParams.FLAG_KEEP_SCREEN_ON );
         
         // Lay out the content
-        setContentView( R.layout.main_activity );
+        setContentView( R.layout.splash_activity );
         mTextView = (TextView) findViewById( R.id.mainText );
         
         if( mUserPrefs.isBigScreenMode )

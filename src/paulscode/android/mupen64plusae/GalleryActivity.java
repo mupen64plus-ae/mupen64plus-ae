@@ -112,7 +112,7 @@ public class GalleryActivity extends Activity implements OnClickListener
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
     {
-        getMenuInflater().inflate( R.menu.menu_activity, menu );
+        getMenuInflater().inflate( R.menu.gallery_activity, menu );
         menu.findItem( R.id.menuItem_axisInfo ).setVisible( AppData.IS_HONEYCOMB_MR1 );
         return super.onCreateOptionsMenu( menu );
     }
