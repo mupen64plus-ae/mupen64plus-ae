@@ -101,7 +101,7 @@
         <activity
             android:name="paulscode.android.mupen64plusae.input.DiagnosticActivity"
             android:exported="false"
-            android:label="@string/actionControllerDiagnostics_title" >
+            android:label="@string/menuItem_controllerDiagnostics" >
             <intent-filter>
                 <action android:name=".input.DiagnosticActivity" />
 
