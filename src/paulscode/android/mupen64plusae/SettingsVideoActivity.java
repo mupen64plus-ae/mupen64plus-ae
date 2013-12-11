@@ -42,7 +42,7 @@ public class SettingsVideoActivity extends PreferenceActivity implements
 {
     // These constants must match the keys used in res/xml/preferences.xml
     
-    private static final String SCREEN_VIDEO = "screenVideo";
+    private static final String SCREEN_SETTINGS_VIDEO_ACTIVITY = "screenSettingsVideoActivity";
     
     private static final String CATEGORY_GLES2_RICE = "categoryGles2Rice";
     private static final String CATEGORY_GLES2_N64 = "categoryGles2N64";
@@ -86,13 +86,13 @@ public class SettingsVideoActivity extends PreferenceActivity implements
         // the built-in dependency disabler, but here the categories are so large that hiding them
         // provides a better user experience.
         if( !mUserPrefs.isGles2N64Enabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_N64 );
+            PrefUtil.removePreference( this, SCREEN_SETTINGS_VIDEO_ACTIVITY, CATEGORY_GLES2_N64 );
         
         if( !mUserPrefs.isGles2RiceEnabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_RICE );
+            PrefUtil.removePreference( this, SCREEN_SETTINGS_VIDEO_ACTIVITY, CATEGORY_GLES2_RICE );
         
         if( !mUserPrefs.isGles2Glide64Enabled )
-            PrefUtil.removePreference( this, SCREEN_VIDEO, CATEGORY_GLES2_GLIDE64 );
+            PrefUtil.removePreference( this, SCREEN_SETTINGS_VIDEO_ACTIVITY, CATEGORY_GLES2_GLIDE64 );
     }
     
     @Override

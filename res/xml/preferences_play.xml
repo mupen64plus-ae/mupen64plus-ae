@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:key="screenPlay" >
+    android:key="screenPlayMenuActivity" >
 
     <paulscode.android.mupen64plusae.persistent.PlayerMapPreference
         android:icon="@drawable/ic_users"

@@ -51,7 +51,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         OnSharedPreferenceChangeListener
 {
     // These constants must match the keys used in res/xml/preferences_play.xml
-    private static final String SCREEN_PLAY = "screenPlay";
+    private static final String SCREEN_PLAY_MENU_ACTIVITY = "screenPlayMenuActivity";
     private static final String ACTION_RESUME = "actionResume";
     private static final String ACTION_RESTART = "actionRestart";
     private static final String PLAYER_MAP = "playerMap";
@@ -92,7 +92,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         // Hide the multi-player menu if not needed
         if( !mUserPrefs.playerMap.isEnabled() )
         {
-            PrefUtil.removePreference( this, SCREEN_PLAY, PLAYER_MAP );
+            PrefUtil.removePreference( this, SCREEN_PLAY_MENU_ACTIVITY, PLAYER_MAP );
         }
         else
         {
@@ -109,7 +109,7 @@ public class PlayMenuActivity extends PreferenceActivity implements OnPreference
         else
         {
             // Hide the cheats category
-            PrefUtil.removePreference( this, SCREEN_PLAY, CATEGORY_CHEATS );
+            PrefUtil.removePreference( this, SCREEN_PLAY_MENU_ACTIVITY, CATEGORY_CHEATS );
         }
     }
     

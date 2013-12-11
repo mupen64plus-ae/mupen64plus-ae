@@ -13,6 +13,18 @@
     <!-- Strings only seen in the eclipse editor -->
     <string name="inputMapActivity_dummyFeedback" translatable="false">KEYCODE_XXXX</string>
 
+    <!-- Activity titles, aliased to other strings -->
+    <string name="SplashActivity_title" translatable="false">@string/app_name</string>
+    <string name="MenuActivity_title" translatable="false">@string/app_name</string>
+    <string name="PlayMenuActivity_title" translatable="false">@string/menuItem_play</string>
+    <string name="SettingsGlobalActivity_title" translatable="false">@string/menuItem_globalSettings</string>
+    <string name="SettingsGameActivity_title" translatable="false">@string/menuItem_gameSettings</string>
+    <string name="SettingsGameActivity_titleNamed" translatable="false">@string/menuItem_gameSettingsNamed</string>
+    <string name="SettingsVideoActivity_title" translatable="false">@string/screenVideo_title</string>
+    <string name="InputMapActivity_title" translatable="false">@string/app_name</string>
+    <string name="DiagnosticActivity_title" translatable="false">@string/menuItem_controllerDiagnostics</string>
+    <string name="GameActivity_title" translatable="false">@string/app_name</string>
+    
     <!-- Aliases to other strings -->
     <string name="selectedValue" translatable="false">%1$s</string>
     <string name="touchpadFeedback_title" translatable="false">@string/touchscreenFeedback_title</string>
