@@ -30,9 +30,13 @@ import paulscode.android.mupen64plusae.util.AssetExtractor.ExtractionFailure;
 import paulscode.android.mupen64plusae.util.AssetExtractor.OnExtractionProgressListener;
 import paulscode.android.mupen64plusae.util.FileUtil;
 import paulscode.android.mupen64plusae.util.Notifier;
+import paulscode.android.mupen64plusae.util.OUYAInterface;
+import paulscode.android.mupen64plusae.util.PrefUtil;
+import paulscode.android.mupen64plusae.util.RomDetail;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -66,14 +70,32 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
      */
     private static final String SOURCE_DIR = "mupen64plus_data";
     
-    /** Persistent application data. */
-    private AppData mAppData;
-    
     /** The text view that displays extraction progress info. */
     private TextView mTextView;
     
     /** The running count of assets extracted. */
     private int mAssetsExtracted;
+    
+    // App data and user preferences
+    private AppData mAppData = null;
+    private UserPrefs mUserPrefs = null;
+    private SharedPreferences mPrefs = null;
+    
+    // These constants must match the keys used in res/xml/preferences*.xml
+    private static final String TOUCHSCREEN_ENABLED = "touchscreenEnabled";
+    private static final String TOUCHSCREEN_STYLE = "touchscreenStyle";
+    private static final String TOUCHSCREEN_HEIGHT = "touchscreenHeight";
+    private static final String TOUCHSCREEN_LAYOUT = "touchscreenLayout";
+    private static final String TOUCHPAD_ENABLED = "touchpadEnabled";
+    private static final String TOUCHPAD_LAYOUT = "touchpadLayout";
+    private static final String INPUT_VOLUME_MAPPABLE = "inputVolumeMappable";
+    private static final String DISPLAY_POSITION = "displayPosition";
+    private static final String DISPLAY_RESOLUTION = "displayResolution";
+    private static final String DISPLAY_SCALING = "displayScaling";
+    private static final String NAVIGATION_MODE = "navigationMode";
+    private static final String R4300_EMULATOR = "r4300Emulator";
+    private static final String AUDIO_PLUGIN = "audioPlugin";
+    private static final String AUDIO_BUFFER_SIZE = "audioBufferSize";
     
     /*
      * (non-Javadoc)
@@ -85,19 +107,59 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
     {
         super.onCreate( savedInstanceState );
         
+        // Get app data and user preferences
+        mAppData = new AppData( this );
+        mUserPrefs = new UserPrefs( this );
+        mUserPrefs.enforceLocale( this );
+        mPrefs = PreferenceManager.getDefaultSharedPreferences( this );
+        
         // Save the path of the ROM, if it was passed to the activity
         Uri dataUri = this.getIntent().getData();
         if( dataUri != null )
+            mPrefs.edit().putString( "pathSelectedGame", dataUri.getPath() ).commit();
+        
+        // Disable the Xperia PLAY plugin as necessary
+        if( !mAppData.hardwareInfo.isXperiaPlay )
+            mPrefs.edit().putBoolean( TOUCHPAD_ENABLED, false ).commit();
+        
+        // Set some prefs when running in big-screen mode
+        if( mUserPrefs.isBigScreenMode )
         {
-            Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.putString( "pathSelectedGame", dataUri.getPath() ).commit();
+            mPrefs.edit().putBoolean( TOUCHSCREEN_ENABLED, false ).commit();
+            mPrefs.edit().putBoolean( INPUT_VOLUME_MAPPABLE, true ).commit();
         }
         
-        // Enforce any locale overrides
-        new UserPrefs( this ).enforceLocale( this );
+        // Ensure that any missing preferences are populated with defaults (e.g. preference added to new release)
+        PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_global, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_play, false );
+        PreferenceManager.setDefaultValues( this, R.xml.preferences_video, false );
         
-        // Get app data
-        mAppData = new AppData( this );
+        // Ensure that selected plugin names and other list preferences are valid
+        // @formatter:off
+        Resources res = getResources();
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_STYLE,  R.string.touchscreenStyle_default,  R.array.touchscreenStyle_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_HEIGHT, R.string.touchscreenHeight_default, R.array.touchscreenHeight_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHSCREEN_LAYOUT, R.string.touchscreenLayout_default, R.array.touchscreenLayout_values );
+        PrefUtil.validateListPreference( res, mPrefs, TOUCHPAD_LAYOUT,    R.string.touchpadLayout_default,    R.array.touchpadLayout_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_POSITION,   R.string.displayPosition_default,   R.array.displayPosition_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_RESOLUTION, R.string.displayResolution_default, R.array.displayResolution_values );
+        PrefUtil.validateListPreference( res, mPrefs, DISPLAY_SCALING,    R.string.displayScaling_default,    R.array.displayScaling_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_PLUGIN,       R.string.audioPlugin_default,       R.array.audioPlugin_values );
+        PrefUtil.validateListPreference( res, mPrefs, AUDIO_BUFFER_SIZE,  R.string.audioBufferSize_default,   R.array.audioBufferSize_values );
+        PrefUtil.validateListPreference( res, mPrefs, R4300_EMULATOR,     R.string.r4300Emulator_default,     R.array.r4300Emulator_values );
+        PrefUtil.validateListPreference( res, mPrefs, NAVIGATION_MODE,    R.string.navigationMode_default,    R.array.navigationMode_values );
+        // @formatter:on
+        
+        // Refresh the preference data wrapper
+        mUserPrefs = new UserPrefs( this );
+        
+        // Initialize ROM database
+        RomDetail.initializeDatabase( mAppData.mupen64plus_ini );
+        
+        // Initialize the OUYA interface if running on OUYA
+        if( OUYAInterface.IS_OUYA_HARDWARE )
+            OUYAInterface.init( this );
         
         // Initialize the toast/status bar notifier
         Notifier.initialize( this );
@@ -109,7 +171,7 @@ public class SplashActivity extends Activity implements OnExtractionProgressList
         setContentView( R.layout.main_activity );
         mTextView = (TextView) findViewById( R.id.mainText );
         
-        if( new UserPrefs( this ).isBigScreenMode )
+        if( mUserPrefs.isBigScreenMode )
         {
             ImageView splash = (ImageView) findViewById( R.id.mainImage );
             splash.setImageResource( R.drawable.publisherlogo_ouya );
