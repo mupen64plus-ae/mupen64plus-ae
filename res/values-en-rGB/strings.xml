@@ -81,7 +81,7 @@
   <string name="actionResume_summary">Unpredictable if cheats are used</string>
   <string name="actionRestart_title">Restart</string>
   <string name="actionRestart_summary">Recommended if cheats are used</string>
-  <string name="menuItem_deviceInfo">Device info</string>
+  <string name="menuItem_systemInfo">Device info</string>
   <string name="actionDeviceInfo_summary">Device hardware and model information</string>
   <string name="menuItem_controllerInfo">Controller info</string>
   <string name="menuItem_controllerDiagnostics">Controller diagnostics</string>
@@ -94,8 +94,8 @@
   <string name="menuItem_help">Help</string>
   <string name="popup_faq">Mupen64Plus is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the <i>video plugin</i>.\n\nTo fix lag, try changing the <i>video frameskip</i> setting or the <i>video plugin</i>.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the <i>button scale</i> or <i>button layout</i>.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.\n\n</small>Thank you for helping us improve the app!</string>
   <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_submitBugReport">Report bug</string>
-  <string name="menuItem_info">About</string>
+  <string name="menuItem_reportBug">Report bug</string>
+  <string name="menuItem_about">About</string>
   <string name="popup_version">Version: %1$s\nVersion code: %2$d</string>
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_changelog">Changelog</string>

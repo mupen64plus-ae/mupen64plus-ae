@@ -79,7 +79,7 @@
   <string name="actionResume_summary">Oförutsägbar om fusk används</string>
   <string name="actionRestart_title">Starta om</string>
   <string name="actionRestart_summary">Rekommenderad om fusk används</string>
-  <string name="menuItem_deviceInfo">Enhets info</string>
+  <string name="menuItem_systemInfo">Enhets info</string>
   <string name="actionDeviceInfo_summary">Enhets hårdvaru och modell information</string>
   <string name="menuItem_controllerInfo">Kontroll info</string>
   <string name="menuItem_controllerDiagnostics">Kontroll diagnostik</string>
@@ -91,8 +91,8 @@
   <string name="actionResetUserPrefs_summary">Återställa standardinställningar</string>
   <string name="menuItem_help">Hjälp</string>
   <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_submitBugReport">Rapportera bugg</string>
-  <string name="menuItem_info">Om</string>
+  <string name="menuItem_reportBug">Rapportera bugg</string>
+  <string name="menuItem_about">Om</string>
   <string name="popup_version">Version: %1$s\nVersion kod: %2$d</string>
   <string name="menuItem_credits">krediter</string>
   <string name="menuItem_changelog">Ändringslogg</string>

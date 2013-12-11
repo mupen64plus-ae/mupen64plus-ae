@@ -171,7 +171,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
             case R.id.menuItem_controllerDiagnostics:
                 startActivity( new Intent( this, DiagnosticActivity.class ) );
                 return true;
-            case R.id.menuItem_submitBugReport:
+            case R.id.menuItem_reportBug:
                 Utility.launchUri( MenuActivity.this, R.string.uri_bugReport );
                 return true;
             case R.id.menuItem_appVersion:
@@ -186,7 +186,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
             case R.id.menuItem_controllerInfo:
                 popupControllerInfo();
                 return true;
-            case R.id.menuItem_deviceInfo:
+            case R.id.menuItem_systemInfo:
                 popupDeviceInfo();
                 return true;
             case R.id.menuItem_credits:
@@ -223,7 +223,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     
     private void popupDeviceInfo()
     {
-        String title = getString( R.string.menuItem_deviceInfo );
+        String title = getString( R.string.menuItem_systemInfo );
         String message = DeviceUtil.getCpuInfo();
         new Builder( this ).setTitle( title ).setMessage( message ).create().show();
     }

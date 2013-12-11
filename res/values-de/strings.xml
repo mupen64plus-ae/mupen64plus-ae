@@ -81,7 +81,7 @@
   <string name="actionResume_summary">Unberechenbar, wenn Cheats genutzt werden</string>
   <string name="actionRestart_title">Neustart</string>
   <string name="actionRestart_summary">Empfohlen, wenn Cheats genutzt werden</string>
-  <string name="menuItem_deviceInfo">Geräteinformationen</string>
+  <string name="menuItem_systemInfo">Geräteinformationen</string>
   <string name="actionDeviceInfo_summary">Gerätehardware- und Modellinformationen</string>
   <string name="menuItem_controllerInfo">Controllerinfo</string>
   <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
@@ -95,8 +95,8 @@
   <string name="menuItem_help">Hilfe</string>
   <string name="popup_faq">Mupen64Plus wird von Freiwilligen entwickelt und gepflegt.<small>\n\nUm grafische Glitches zu beheben, versuche das <i>Videoplugin</i> zu ändern.\n\nUm Lag zu beheben, versuche die <i>Video-Frameskip</i>-Einstellung oder das <i>Videoplugin</i> zu ändern.\n\nBei unspielbaren ROMs, versuche das ROM erst zu entpacken oder versuche eine andere Version des ROM.\n\nBei Touchscreen-Steuerungsproblemen, versuche den <i>Knopf-Maßstab</i> oder das <i>Knopf-Layout</i> zu ändern.\n\nBei anderen Problemen, oder wenn du immer noch festsitzt, drücke bitte den <i>FAQ</i>-Knopf unterhalb. Bei nicht spielspezifischen Bugs drücke den <i>Bug melden</i>-Knopf unterhalb. Wir antworten auf die überwiegende Mehrheit der Posts innerhalb von 24 Stunden. Ehrlich.\n\n</small>Danke, dass du uns hilfst, die App zu verbessern!</string>
   <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_submitBugReport">Bug melden</string>
-  <string name="menuItem_info">Über</string>
+  <string name="menuItem_reportBug">Bug melden</string>
+  <string name="menuItem_about">Über</string>
   <string name="popup_version">Version: %1$s\nVersionscode: %2$d</string>
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_changelog">Changelog</string>

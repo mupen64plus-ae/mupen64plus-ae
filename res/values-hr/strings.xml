@@ -81,7 +81,7 @@
   <string name="actionResume_summary">Nepredvidivo ako se koriste opcije za varanje, automatsko učitavanje</string>
   <string name="actionRestart_title">Pokreni</string>
   <string name="actionRestart_summary">Preporučljivo ako se koriste opcije za varanje, bez automatskog učitavanja</string>
-  <string name="menuItem_deviceInfo">Informacije o uređaju</string>
+  <string name="menuItem_systemInfo">Informacije o uređaju</string>
   <string name="actionDeviceInfo_summary">Informacije o hardveru i modelu uređaja</string>
   <string name="menuItem_controllerInfo">Informacije o kontroleru</string>
   <string name="menuItem_controllerDiagnostics">Dijagnostika kontrolera</string>
@@ -94,8 +94,8 @@
   <string name="menuItem_help">Pomoć</string>
   <string name="popup_faq">Mupen64Plus je razvijen i održan od strane volontera.<small>\n\nZa ispravljanje grafičkih grešaka, promjenite <i>grafički dodatak</i> i/ili postavke.\n\nZa ROM-ove koji ne rade ispravno, pokušajte koristiti drugu inačicu ROM-a ili izvadite ROM iz komprimirane datoteke u slučaju da se nalazi u njoj.\n\nZa ispravljanje grešaka dodirnog ekrana, promjenite <i>veličinu tipki</i> ili <i>raspored tipki</i>.\n\nZa ostale probleme pogledajte <i>FAQ</i>.  Za greške koje nisu povezane sa ROM-ovima, prijavite ih putem opcije <i>Prijavite grešku</i>. Većinom se javljamo u roku od 24 sata.\n\n</small>Zahvaljujemo na podržavanju naše aplikacije!</string>
   <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_submitBugReport">Prijava greške</string>
-  <string name="menuItem_info">O programu</string>
+  <string name="menuItem_reportBug">Prijava greške</string>
+  <string name="menuItem_about">O programu</string>
   <string name="popup_version">Inačica: %1$s\nKod inačice: %2$d</string>
   <string name="menuItem_credits">Zasluge</string>
   <string name="menuItem_changelog">Promjene u novoj inačici</string>

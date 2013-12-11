@@ -80,7 +80,7 @@
   <string name="actionResume_summary">Hileler kullanılıyorsa tahmin edilemez</string>
   <string name="actionRestart_title">Yeniden Başlat</string>
   <string name="actionRestart_summary">Hileler kullanılıyorsa tavsiye edilir</string>
-  <string name="menuItem_deviceInfo">Aygıt bilgisi</string>
+  <string name="menuItem_systemInfo">Aygıt bilgisi</string>
   <string name="actionDeviceInfo_summary">Aygıt donanımı ve model bilgisi</string>
   <string name="menuItem_controllerInfo">Kumanda bilgisi</string>
   <string name="menuItem_controllerDiagnostics">Kumanda tanılama</string>
@@ -92,8 +92,8 @@
   <string name="actionResetUserPrefs_summary">Varsayılan ayarları geri yükle</string>
   <string name="menuItem_help">Yardım</string>
   <string name="menuItem_faq">SSS</string>
-  <string name="menuItem_submitBugReport">Hata raporla</string>
-  <string name="menuItem_info">Hakkında</string>
+  <string name="menuItem_reportBug">Hata raporla</string>
+  <string name="menuItem_about">Hakkında</string>
   <string name="popup_version">Sürüm: %1$s\n Sürüm kodu: %2$d</string>
   <string name="menuItem_credits">Katkıda Bulunanlar</string>
   <string name="menuItem_changelog">Değişim Kayıtları</string>

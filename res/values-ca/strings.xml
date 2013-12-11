@@ -81,7 +81,7 @@
   <string name="actionResume_summary">Impredictible si els cheats són utilitzats</string>
   <string name="actionRestart_title">Reinicia</string>
   <string name="actionRestart_summary">Recomanat si els cheats són utilitzats</string>
-  <string name="menuItem_deviceInfo">Informació del terminal</string>
+  <string name="menuItem_systemInfo">Informació del terminal</string>
   <string name="actionDeviceInfo_summary">Informació del maquinari i model</string>
   <string name="menuItem_controllerInfo">Informació del comandament</string>
   <string name="menuItem_controllerDiagnostics">Diagnostic del comandament</string>
@@ -94,8 +94,8 @@
   <string name="menuItem_help">Ajuda</string>
   <string name="popup_faq">Mupen64Plus és desenvolupat i mantingut per voluntaris. <small> \n\nPer solucionar errors gràfics, provi a canviar el <i>plugin de vídeo</i> .\n\nPer solucionar lag, intenti canviar el  <i>frameskip del vídeo</i> o el <i>plugin de vídeo</i> .\n\nPer ROMS no reproduïbles, intenti descomprimir el ROM primer o provar una versió diferent de la ROM.\n\nPer qüestions de control de pantalla tàctil, provi a canviar <i>l\'escalat botons</i> o <i>la disposició dels botons</i>.\n\nPer a altres problemes, o si encara està encallat, si us plau feu clic al botó de <i>FAQ</i> que hi ha a continuació. Per a errors que no es produeixen en jocs específics, feu clic al botó <i>d\'informe error </i> que hi ha sota. Responem a la gran majoria de posts en 24 hores. Honestament.\n\n</small> Gràcies per ajudar-nos a millorar l\'aplicació!</string>
   <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_submitBugReport">Reporta una errada</string>
-  <string name="menuItem_info">Sobre</string>
+  <string name="menuItem_reportBug">Reporta una errada</string>
+  <string name="menuItem_about">Sobre</string>
   <string name="popup_version">Versió: %1$s Codi de versió: %2$d</string>
   <string name="menuItem_credits">Crèdits</string>
   <string name="menuItem_changelog">Registre de canvis</string>

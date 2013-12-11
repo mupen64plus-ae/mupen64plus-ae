@@ -72,7 +72,7 @@
   <string name="actionResume_summary">Возможно использование чит-кодов</string>
   <string name="actionRestart_title">Перезапуск</string>
   <string name="actionRestart_summary">Рекомендуется при использовании читов.</string>
-  <string name="menuItem_deviceInfo">Сведения об устройстве</string>
+  <string name="menuItem_systemInfo">Сведения об устройстве</string>
   <string name="actionDeviceInfo_summary">Модель и аппаратные характеристики</string>
   <string name="menuItem_controllerInfo">Устройства ввода</string>
   <string name="menuItem_controllerDiagnostics">Проверка устройств ввода</string>
@@ -85,8 +85,8 @@
   <string name="menuItem_help">Помощь</string>
   <string name="popup_faq">Mupen64Plus разрабатывается добровольцами.<small>\n\nДля решения проблем с графикой попробуйте другой плагин видео.\n\nДля повышения производительности измените настройки пропуска кадров.\n\nПри ошибке открытия образа игры извлеките его из архива или найдите другую версию.\n\nбла-бла-бла, короче пользуйтесь настройками, иначе зачем я столько переводил?\n\nПри появлении других проблем воспользуйтесь ЧАВО и форумом (см. ниже).\n</small>\n\nЗаранее спасибо.</string>
   <string name="menuItem_faq">ЧАВО</string>
-  <string name="menuItem_submitBugReport">Сообщить об ошибке</string>
-  <string name="menuItem_info">О программе</string>
+  <string name="menuItem_reportBug">Сообщить об ошибке</string>
+  <string name="menuItem_about">О программе</string>
   <string name="popup_version">Версия: %1$s\nКод версии: %2$d</string>
   <string name="menuItem_credits">Благодарности</string>
   <string name="menuItem_changelog">Список изменений</string>

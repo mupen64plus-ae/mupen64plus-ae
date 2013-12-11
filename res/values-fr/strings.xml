@@ -81,7 +81,7 @@
   <string name="actionResume_summary">Déconseillé en cas d\'utilisation de cheat codes</string>
   <string name="actionRestart_title">Redémarrer</string>
   <string name="actionRestart_summary">Recommandé en cas d\'utilisation de cheats codes</string>
-  <string name="menuItem_deviceInfo">Informations matérielles</string>
+  <string name="menuItem_systemInfo">Informations matérielles</string>
   <string name="actionDeviceInfo_summary">Modèle de l\'appareil</string>
   <string name="menuItem_controllerInfo">Informations sur la manette</string>
   <string name="menuItem_controllerDiagnostics">Diagnostiquer la manette</string>
@@ -95,8 +95,8 @@
   <string name="menuItem_help">Aide</string>
   <string name="popup_faq">Mupen64Plus est développé et entretenu par des volontaires bénévoles.<small>\n\nEn cas de problèmes visuels, essayez de changer le <i>plugin vidéo</i>.\n\nPour améliorer les performances, essayez de modifier les paramètres de <i>saut d\'images</i> ou de changer le <i>plugin vidéo</i>.\n\nSi les ROMs ne se lancent pas, essayez de dézipper la ROM ou essayez une version différente de la ROM.\n\nEn cas de problèmes de contrôles à l\'écran tactile, essayez de changer <i>l\'échelle des boutons</i> ou la <i>disposition des boutons</i>\n\nPour d\'autres problèmes, ou si vous êtes bloqué, merci d\'utiliser le bouton <i>FAQ</i> ci-dessous. Pour des bugs non liés à un jeu particulier, utilisez le bouton <i>Signaler un bug</i> ci-dessous. Nous répondons à la vaste majorité des messages en moins de 24 heures. Promis.\n\n</small>Merci de nous aider à améliorer l\'application !</string>
   <string name="menuItem_faq">FAQ</string>
-  <string name="menuItem_submitBugReport">Signaler un bug</string>
-  <string name="menuItem_info">À propos</string>
+  <string name="menuItem_reportBug">Signaler un bug</string>
+  <string name="menuItem_about">À propos</string>
   <string name="popup_version">Version: %1$s\nCode de version: %2$d</string>
   <string name="menuItem_credits">Équipe de Mupen64Plus</string>
   <string name="menuItem_changelog">Liste des modifications</string>

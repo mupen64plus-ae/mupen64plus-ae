@@ -81,7 +81,7 @@
   <string name="actionResume_summary">チートを使用している場合は動作しない場合があります。</string>
   <string name="actionRestart_title">再起動</string>
   <string name="actionRestart_summary">チートを使用している場合にお勧め。</string>
-  <string name="menuItem_deviceInfo">デバイス情報</string>
+  <string name="menuItem_systemInfo">デバイス情報</string>
   <string name="actionDeviceInfo_summary">デバイスハードウェアとモデル情報</string>
   <string name="menuItem_controllerInfo">コントローラ情報</string>
   <string name="menuItem_controllerDiagnostics">コントローラ診断</string>
@@ -93,8 +93,8 @@
   <string name="actionResetUserPrefs_summary">既定値にリセット</string>
   <string name="menuItem_help">ヘルプ</string>
   <string name="menuItem_faq">よくある質問</string>
-  <string name="menuItem_submitBugReport">バグレポート</string>
-  <string name="menuItem_info">ついて</string>
+  <string name="menuItem_reportBug">バグレポート</string>
+  <string name="menuItem_about">ついて</string>
   <string name="popup_version">バージョン: %1$s\nバージョンコード: %2$d</string>
   <string name="menuItem_credits">クレジット</string>
   <string name="menuItem_changelog">変更履歴</string>

@@ -81,7 +81,7 @@
   <string name="actionResume_summary">Impredecible si se aplican cheats</string>
   <string name="actionRestart_title">Reiniciar</string>
   <string name="actionRestart_summary">Recomendado si se aplican cheats</string>
-  <string name="menuItem_deviceInfo">Información del dispositivo</string>
+  <string name="menuItem_systemInfo">Información del dispositivo</string>
   <string name="actionDeviceInfo_summary">Información de hardware y modelo del dispositivo</string>
   <string name="menuItem_controllerInfo">Información del mando</string>
   <string name="menuItem_controllerDiagnostics">Diagnósticos del mando</string>
@@ -94,8 +94,8 @@
   <string name="menuItem_help">Ayuda</string>
   <string name="popup_faq">Mupen64Plus es programado y mantenido por voluntarios.<small>\n\nPara corregir errores graficos, prueba cambiando el <i>Plugin de video</i>.\n\nPara corregir relentizaciones, prueba cambiando la configuracion de <i>frameskip de video</i> o el <i>plugin de video</i>.\n\nPara ROMS que no se ejecutan, intenta descomprimiendo la ROM, o prueba una version distinta de la ROM.\n\nPara problemas con los controles tactiles, prueba cambiando el <i>tamaño de los botones</i> o el <i>layout</i>.\n\nPara otros problemas, o si todavia estas atascado, por favor toca el boton <i>FAQ</i> ubicado en la parte baja. para errores que no se relacionan con algún juego, toca el boton <i>Reportar error</i> ubicado en la parte baja. Respondemos a la gran mayoría de las consultas dentro de las 24 horas siguientes. Sinceramente.\n\n</small>Gracias por ayudarnos a mejorar la aplicacion!</string>
   <string name="menuItem_faq">Preguntas frecuentes</string>
-  <string name="menuItem_submitBugReport">Reportar bug</string>
-  <string name="menuItem_info">Acerca de</string>
+  <string name="menuItem_reportBug">Reportar bug</string>
+  <string name="menuItem_about">Acerca de</string>
   <string name="popup_version">Versión: %1$s\nCódigo de versión: %2$d</string>
   <string name="menuItem_credits">Créditos</string>
   <string name="menuItem_changelog">Registro de cambios</string>

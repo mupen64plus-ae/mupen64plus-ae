@@ -77,12 +77,12 @@
     <string name="menuItem_faq">FAQ</string>
     <string name="menuItem_helpForum">Help forum</string>
     <string name="menuItem_controllerDiagnostics">Controller diagnostics</string>
-    <string name="menuItem_submitBugReport">Submit bug report</string>
-    <string name="menuItem_info">Info</string>
+    <string name="menuItem_reportBug">Report bug</string>
+    <string name="menuItem_about">About</string>
     <string name="menuItem_credits">Credits</string>
     <string name="menuItem_appVersion">App version</string>
     <string name="menuItem_changelog">Changelog</string>
-    <string name="menuItem_deviceInfo">System info</string>
+    <string name="menuItem_systemInfo">System info</string>
     <string name="menuItem_axisInfo">Analog info</string>
     <string name="menuItem_controllerInfo">Controller info</string>
     <string name="menuItem_localeOverride">Language</string>

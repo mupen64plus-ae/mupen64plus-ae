@@ -81,7 +81,7 @@
   <string name="actionResume_summary">Onvoorspelbaar als cheats worden gebruikt</string>
   <string name="actionRestart_title">Herstart</string>
   <string name="actionRestart_summary">Aanbevolen als cheats worden gebruikt</string>
-  <string name="menuItem_deviceInfo">Apparaat info</string>
+  <string name="menuItem_systemInfo">Apparaat info</string>
   <string name="actionDeviceInfo_summary">Apparaathardware en modelinformatie</string>
   <string name="menuItem_controllerInfo">Controller info</string>
   <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
@@ -94,8 +94,8 @@
   <string name="menuItem_help">Help</string>
   <string name="popup_faq">Mupen64Plus is ontwikkeld en wordt onderhouden door vrijwilligers.<small>\n\nGrafische problemen? Kies een andere <i>video plugin</i>.\n\nLast van lag? Probeer de <i>video beelden overslaan</i>-instelling of kies een andere <i>video plugin</i>.\n\nAls ROMs onspeelbaar zijn, probeer deze uit te pakken of probeer een andere versie van de ROM.\n\nProblemen met de touchscreenbediening? Probeer een andere <i>knopschaal</i> of <i>knopindeling</i>.\n\nBij andere problemen, of als u nog steeds problemen ondervindt, klik dan op de <i>Veelgestelde vragen</i> knop hieronder. In geval van fouten die niet met een bepaald spel te maken hebben, klik op de <i>Meld bug</i>-knop hieronder.  We beantwoorden de meeste berichten binnen 24 uur. Eerlijk waar.\n\n</small>Bedankt voor de hulp om de app beter te maken!</string>
   <string name="menuItem_faq">Veelgestelde vragen</string>
-  <string name="menuItem_submitBugReport">Meld bug</string>
-  <string name="menuItem_info">Over</string>
+  <string name="menuItem_reportBug">Meld bug</string>
+  <string name="menuItem_about">Over</string>
   <string name="popup_version">Versie: %1$s Code versie: %2$d</string>
   <string name="menuItem_credits">Credits</string>
   <string name="menuItem_changelog">Wijzigingsgeschiedenis</string>

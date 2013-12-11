@@ -81,7 +81,7 @@
   <string name="actionResume_summary">Imprevisible cos trucos en uso</string>
   <string name="actionRestart_title">Reiniciar</string>
   <string name="actionRestart_summary">Recomendado cos trucos en uso</string>
-  <string name="menuItem_deviceInfo">Info. do dispositivo</string>
+  <string name="menuItem_systemInfo">Info. do dispositivo</string>
   <string name="actionDeviceInfo_summary">Hardware do dispositivo e info. do modelo</string>
   <string name="menuItem_controllerInfo">Info. do mando</string>
   <string name="menuItem_controllerDiagnostics">Diagnose do mando</string>
@@ -94,8 +94,8 @@
   <string name="menuItem_help">Axuda</string>
   <string name="popup_faq">Mupen64Plus desenvólvese e mantense por voluntarios.<small>\n\nPara corrixir erros gráficos, proba a mudar o <i>complemento de vídeo</i>.\n\nPara corrixir o atraso, proba a mudar o axuste da <i>taxa de refresco do vídeo</i> ou o <i>complemento de vídeo</i>.\n\nPara ROMS non reproducibles, proba a descomprimir primeiro a ROM ou proba unha versión distinta da mesma.\n\nPara problemas de control da pantalla táctil, proba a mudar a <i>escala de botón</i> ou a <i>disposición de botón</i>.\n\nPara outros problemas ou se segues atoado, por favor, preme o seguinte botón das <i>Preguntas habituais</i>.  Para erros non específicos dun xogo, preme o seguinte botón de <i>Informar erro</i>.  Respondemos á maioría de mensaxes en 24 horas.  Honestamente.\n\n</small>Grazas por axudarnos a mellorar a aplicación!</string>
   <string name="menuItem_faq">Preguntas habituais</string>
-  <string name="menuItem_submitBugReport">Informar de bug</string>
-  <string name="menuItem_info">Acerca de</string>
+  <string name="menuItem_reportBug">Informar de bug</string>
+  <string name="menuItem_about">Acerca de</string>
   <string name="popup_version">Versión: %1$s\nCódigo de versión: %2$d</string>
   <string name="menuItem_credits">Créditos</string>
   <string name="menuItem_changelog">Rexistro de modificacións</string>

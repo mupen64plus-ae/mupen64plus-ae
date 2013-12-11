@@ -48,16 +48,16 @@
                     android:id="@+id/menuItem_controllerDiagnostics"
                     android:title="@string/menuItem_controllerDiagnostics"/>
                 <item
-                    android:id="@+id/menuItem_submitBugReport"
-                    android:title="@string/menuItem_submitBugReport"/>
+                    android:id="@+id/menuItem_reportBug"
+                    android:title="@string/menuItem_reportBug"/>
             </group>
         </menu>
     </item>
     <item
-        android:id="@+id/menuItem_info"
+        android:id="@+id/menuItem_about"
         android:icon="@drawable/ic_about"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/menuItem_info">
+        android:title="@string/menuItem_about">
         <menu>
             <group>
                 <item
@@ -73,8 +73,8 @@
                     android:id="@+id/menuItem_controllerInfo"
                     android:title="@string/menuItem_controllerInfo"/>
                 <item
-                    android:id="@+id/menuItem_deviceInfo"
-                    android:title="@string/menuItem_deviceInfo"/>
+                    android:id="@+id/menuItem_systemInfo"
+                    android:title="@string/menuItem_systemInfo"/>
                 <item
                     android:id="@+id/menuItem_credits"
                     android:title="@string/menuItem_credits"/>

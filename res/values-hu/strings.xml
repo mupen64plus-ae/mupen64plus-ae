@@ -79,7 +79,7 @@
   <string name="actionResume_summary">Bizonytalan csalások használatánál</string>
   <string name="actionRestart_title">Újraindítás</string>
   <string name="actionRestart_summary">Ajánlott csalások használatánál</string>
-  <string name="menuItem_deviceInfo">Készülék infó</string>
+  <string name="menuItem_systemInfo">Készülék infó</string>
   <string name="actionDeviceInfo_summary">Készülék hardver és modell infó</string>
   <string name="menuItem_controllerInfo">Kontroller infó</string>
   <string name="menuItem_controllerDiagnostics">Kontroller diagnosztika</string>
@@ -91,8 +91,8 @@
   <string name="actionResetUserPrefs_summary">Alapértelmezett beállítások használata</string>
   <string name="menuItem_help">Segítség</string>
   <string name="menuItem_faq">GYIK</string>
-  <string name="menuItem_submitBugReport">Bug jelentése</string>
-  <string name="menuItem_info">Névjegy</string>
+  <string name="menuItem_reportBug">Bug jelentése</string>
+  <string name="menuItem_about">Névjegy</string>
   <string name="popup_version">Verzió: %1$s\nVerzió kód: %2$d</string>
   <string name="menuItem_credits">Kreditek</string>
   <string name="menuItem_changelog">Változások</string>
