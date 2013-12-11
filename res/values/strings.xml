@@ -135,8 +135,6 @@
     <string name="actionResetUserPrefs_popupMessage">Reset all preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
 
     <!-- Preference Screens -->
-    <string name="screenPlay_title">Play</string>
-    <string name="screenSettingsGlobal_title">Global settings</string>
     <string name="screenInput_title">Input</string>
     <string name="screenInput_summary">Control settings</string>
     <string name="screenTouchscreen_title">Touchscreen</string>
