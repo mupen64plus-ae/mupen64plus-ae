@@ -81,5 +81,10 @@
             </group>
         </menu>
     </item>
+    <item
+        android:id="@+id/menuItem_localeOverride"
+        android:icon="@drawable/ic_location"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menuItem_localeOverride"/>
 
 </menu>

@@ -22,6 +22,8 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.PathPreference;
@@ -33,13 +35,13 @@ import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -103,11 +105,6 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
         
         // Load user preference menu structure from XML and update view
         addPreferencesFromResource( R.xml.preferences );
-        
-        // Populate the language menu
-        ListPreference languagePref = (ListPreference) findPreference( LOCALE_OVERRIDE );
-        languagePref.setEntryValues( mUserPrefs.localeCodes );
-        languagePref.setEntries( mUserPrefs.localeNames );
         
         // Popup a warning if the installation appears to be corrupt
         if( !mAppData.isValidInstallation )
@@ -199,11 +196,40 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
             case R.id.menuItem_credits:
                 Utility.launchUri( MenuActivity.this, R.string.uri_credits );
                 return true;
+            case R.id.menuItem_localeOverride:
+                changeLocale();
+                return true;
             default:
                 return super.onMenuItemSelected( featureId, item );
         }
     }
     
+    private void changeLocale()
+    {
+        // Get the current locale
+        String currentCode = mPrefs.getString( LOCALE_OVERRIDE, null );
+        final int currentIndex = ArrayUtils.indexOf( mUserPrefs.localeCodes, currentCode );
+        
+        // Populate and show the language menu
+        Builder builder = new Builder( this );
+        builder.setTitle( R.string.menuItem_localeOverride );
+        builder.setSingleChoiceItems( mUserPrefs.localeNames, currentIndex, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                dialog.dismiss();
+                if( which >= 0 && which != currentIndex )
+                {
+                    mPrefs.edit().putString( LOCALE_OVERRIDE, mUserPrefs.localeCodes[which] ).commit();
+                    finish();
+                    startActivity( getIntent() );
+                }
+            }
+        } );
+        builder.create().show();
+    }
+
     private void popupFaq()
     {
         CharSequence title = getText( R.string.menuItem_faq );
@@ -293,21 +319,7 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key )
     {
-        if( key.equals( LOCALE_OVERRIDE ) )
-        {
-            // Sometimes one preference change affects the hierarchy or layout of the views. In this
-            // case it's easier just to restart the activity than try to figure out what to fix.
-            // Examples:
-            // * Restore the preference categories that were removed in refreshViews(...)
-            // * Change the input mapping layout when Xperia Play touchpad en/disabled
-            finish();
-            startActivity( getIntent() );
-        }
-        else
-        {
-            // Just refresh the preference screens in place
-            refreshViews();
-        }
+        refreshViews();
     }
     
     @TargetApi( 11 )

@@ -53,11 +53,4 @@
         android:title="@string/pathSelectedGame_title"
         mupen64:selectionMode="1" />
 
-    <paulscode.android.mupen64plusae.persistent.CompatibleListPreference
-        android:defaultValue="@string/localeOverride_default"
-        android:entryValues="@array/localeOverride_values"
-        android:icon="@drawable/ic_location"
-        android:key="localeOverride"
-        android:title="@string/localeOverride_title" />
-
 </PreferenceScreen>
