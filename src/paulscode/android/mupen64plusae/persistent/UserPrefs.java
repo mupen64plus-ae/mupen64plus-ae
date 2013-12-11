@@ -42,7 +42,9 @@ import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -373,6 +375,7 @@ public class UserPrefs
     private static final String KEYTEMPLATE_INPUT_SENSITIVITY = "inputSensitivity%1$d";
     private static final String KEYTEMPLATE_SPECIAL_VISIBILITY = "inputSpecialVisibility%1$d";
     private static final String KEY_PLAYER_MAP_REMINDER = "playerMapReminder";
+    private static final String KEY_LOCALE_OVERRIDE = "localeOverride";
     // ... add more as needed
     
     // Shared preferences default values
@@ -402,7 +405,7 @@ public class UserPrefs
         mPreferences = PreferenceManager.getDefaultSharedPreferences( context );
         
         // Locale
-        String language = mPreferences.getString( "localeOverride", null );
+        String language = mPreferences.getString( KEY_LOCALE_OVERRIDE, null );
         mLocale = TextUtils.isEmpty( language ) ? Locale.getDefault() : createLocale( language );
         Locale[] availableLocales = Locale.getAvailableLocales();
         String[] values = context.getResources().getStringArray( R.array.localeOverride_values );
@@ -769,6 +772,32 @@ public class UserPrefs
         }
     }
     
+    public void changeLocale( final Activity activity )
+    {
+        // Get the current locale
+        String currentCode = mPreferences.getString( KEY_LOCALE_OVERRIDE, null );
+        final int currentIndex = ArrayUtils.indexOf( localeCodes, currentCode );
+        
+        // Populate and show the language menu
+        Builder builder = new Builder( activity );
+        builder.setTitle( R.string.menuItem_localeOverride );
+        builder.setSingleChoiceItems( localeNames, currentIndex, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick( DialogInterface dialog, int which )
+            {
+                dialog.dismiss();
+                if( which >= 0 && which != currentIndex )
+                {
+                    mPreferences.edit().putString( KEY_LOCALE_OVERRIDE, localeCodes[which] ).commit();
+                    activity.finish();
+                    activity.startActivity( activity.getIntent() );
+                }
+            }
+        } );
+        builder.create().show();
+    }
+
     public int getPakType( int player )
     {
         return getInt( KEYTEMPLATE_PAK_TYPE, player, DEFAULT_PAK_TYPE );

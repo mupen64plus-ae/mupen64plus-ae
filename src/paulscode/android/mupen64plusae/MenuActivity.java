@@ -22,8 +22,6 @@ package paulscode.android.mupen64plusae;
 
 import java.io.File;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import paulscode.android.mupen64plusae.input.DiagnosticActivity;
 import paulscode.android.mupen64plusae.persistent.AppData;
 import paulscode.android.mupen64plusae.persistent.PathPreference;
@@ -35,7 +33,6 @@ import paulscode.android.mupen64plusae.util.RomDetail;
 import paulscode.android.mupen64plusae.util.Utility;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -53,7 +50,6 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
 {
     // These constants must match the keys used in res/xml/preferences.xml
     private static final String PATH_SELECTED_GAME = "pathSelectedGame";
-    private static final String LOCALE_OVERRIDE = "localeOverride";
     
     // App data and user preferences
     private AppData mAppData = null;
@@ -197,39 +193,13 @@ public class MenuActivity extends PreferenceActivity implements OnSharedPreferen
                 Utility.launchUri( MenuActivity.this, R.string.uri_credits );
                 return true;
             case R.id.menuItem_localeOverride:
-                changeLocale();
+                mUserPrefs.changeLocale( this );
                 return true;
             default:
                 return super.onMenuItemSelected( featureId, item );
         }
     }
     
-    private void changeLocale()
-    {
-        // Get the current locale
-        String currentCode = mPrefs.getString( LOCALE_OVERRIDE, null );
-        final int currentIndex = ArrayUtils.indexOf( mUserPrefs.localeCodes, currentCode );
-        
-        // Populate and show the language menu
-        Builder builder = new Builder( this );
-        builder.setTitle( R.string.menuItem_localeOverride );
-        builder.setSingleChoiceItems( mUserPrefs.localeNames, currentIndex, new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick( DialogInterface dialog, int which )
-            {
-                dialog.dismiss();
-                if( which >= 0 && which != currentIndex )
-                {
-                    mPrefs.edit().putString( LOCALE_OVERRIDE, mUserPrefs.localeCodes[which] ).commit();
-                    finish();
-                    startActivity( getIntent() );
-                }
-            }
-        } );
-        builder.create().show();
-    }
-
     private void popupFaq()
     {
         CharSequence title = getText( R.string.menuItem_faq );
